@@ -49,7 +49,6 @@ void Func_020050e4(void)
     if (Func_080770c0(0xf2e) != 0)
         Func_0808a0f0(8, 0, 0);
 
-    state = *(u8 **)0x03001ebc;
     mode = Data_02000240[225];
     switch (mode) {
     case 1:
@@ -77,6 +76,7 @@ void Func_020050e4(void)
     default:
         goto default_mode;
     }
+    state = *(u8 **)0x03001ebc;
 
 mode_1_to_3:
     *(s32 *)(state + 0x1c0) = 0x200;
@@ -85,8 +85,8 @@ mode_1_to_3:
     goto schedule_task;
 
 mode_10_group:
-    *(s32 *)(state + 0x1c0) = 0x209;
     Func_08009258(192 << 4);
+    *(s32 *)(state + 0x1c0) = 0x209;
     record = Func_0808a080(24);
     Func_080091e0(record, 0);
     if (Func_080770c0(0x314) != 0)
@@ -94,16 +94,16 @@ mode_10_group:
     goto finish;
 
 mode_21_to_22:
-    *(s32 *)(state + 0x1c0) = 0x200;
     Func_08009258(224 << 4);
+    *(s32 *)(state + 0x1c0) = 0x200;
     task = Func_0200138c;
 
 schedule_task:
     Func_080000d0(task, 200 << 4);
     Func_080000c0(1);
     Func_08009128();
-    Func_080000c0(1);
     goto finish;
+    Func_080000c0(1);
 
 mode_11_to_12:
     *(s32 *)(state + 0x1c0) = 0x200;

@@ -224,10 +224,10 @@ void Func_02001238(void)
     if (Func_0808a070(0, 0) != 0) {
         Func_0808a010(0x1e);
         Func_0808a1b8(0xa, 0x8000, 0);
+        DIALOGUE_COUNTER++;
         Func_0808a010(0x1e);
         Func_0808a110(0xa, 4);
         Func_0808a010(0x14);
-        DIALOGUE_COUNTER++;
         Func_0808a180(0xa, 0);
     } else {
         Func_0808a010(0x1e);
@@ -272,9 +272,9 @@ void Func_02001238(void)
         Func_0808a010(0x1e);
         Func_0808a110(0xe, 4);
         Func_0808a010(0x14);
-        DIALOGUE_COUNTER++;
         Func_0808a180(0xe, 0);
     } else {
+        DIALOGUE_COUNTER++;
         Func_0808a010(0x1e);
         Func_0808a110(0xe, 4);
         Func_0808a010(0x14);

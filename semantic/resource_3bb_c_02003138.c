@@ -51,10 +51,10 @@ void Func_02003138(s32 arg0, s32 arg1)
         return;
     }
 
-    state = object[0x54];
     if (state != 1) {
         return;
     }
+    state = object[0x54];
 
     owner = *(u8 **)(object + 0x50);
     dest = Func_08000140(17, 0x608) + 0x400;
@@ -70,11 +70,11 @@ void Func_02003138(s32 arg0, s32 arg1)
 
     object[0x5c] = state;
 
-    Func_08009060(*(s32 *)(owner + 0x28));
     *(s32 *)(owner + 0x28) = 0;
-    owner[0x27] = 0;
+    Func_08009060(*(s32 *)(owner + 0x28));
     owner[5] &= (u8)~0x20;
     *(u16 *)(owner + 8) = (*(u16 *)(owner + 8) & 0xfc00) | (result & 0x3ff);
     owner[0x25] = 0;
     owner[0x26] = 0;
+    owner[0x27] = 0;
 }

@@ -1331,6 +1331,15 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   // reload. Mode cohort: exact under alias-strict-off alone.
   "exact/resource_397_c_020002a0.c",
 ]);
+// Measured scope of this flag, so it is not mistaken for a global build
+// setting: swept across all 175 overlay owners whose first divergence is
+// register-allocation:push, it left 110 unchanged, improved 37, and made 26
+// WORSE, reaching byte-exact on none of them. It is a per-row lever for the
+// specific tell below, not evidence about how the original was compiled.
+//
+// A ten-owner sample of the same class showed 1 exact, 5 better and 0 worse,
+// which looked like a global signal and is not one -- the regressions only
+// appear at full scale. Route it per row, on a byte-exact result.
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // resource_3ad:01b0 tests flag 0x202 and then sets it, so the pooled word is
   // read twice and the rerun caches it in r5 across the guarded block where the

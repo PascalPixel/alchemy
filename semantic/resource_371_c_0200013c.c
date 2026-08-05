@@ -61,9 +61,9 @@ void Func_0200013c(u8 *object)
     }
 
     {
+        s32 z = *(s32 *)(object + 0x10);
         s32 x = *(s32 *)(object + 0x08);
         s32 y = *(s32 *)(object + 0x0c);
-        s32 z = *(s32 *)(object + 0x10);
         spawned = Func_080090c8(0x11d, x, y, z);
     }
     Func_080f9010(0xf6);
@@ -71,11 +71,11 @@ void Func_0200013c(u8 *object)
         return;
     }
 
-    spawned[0x55] = 0;
     record = *(u8 **)(spawned + 0x50);
+    *(void (**)(u8 *))(spawned + 0x6c) = Func_0200011c;
+    spawned[0x55] = 0;
     record[9] = (u8)((record[9] & ~0x0c) | 0x04);
     Func_080091e0(spawned, 0);
     Func_08009080(spawned, 1);
     *(u16 *)(spawned + 0x64) = 0;
-    *(void (**)(u8 *))(spawned + 0x6c) = Func_0200011c;
 }

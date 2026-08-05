@@ -31,19 +31,19 @@ void Func_02001984(void)
             Func_020000a0(0x00780000, 0, 0x00e80000, 0xdf);
             break;
 
-        case 5:
         case 6:
-        case 7:
+                break;
+                break;
+        case 5:
             if (Func_080770c0(0x70) != 0)
-                break;
             if (Func_080770c0(0x302) == 0)
-                break;
             Func_080770c8(0x200);
+        case 7:
             if (Data_02000240[225] == 5)
                 Func_080770c8(0x23f);
             Func_080000c0(1);
-            if (Func_080770c0(0x109) != 0)
                 break;
+            if (Func_080770c0(0x109) != 0)
             Func_0808a0f0(8, 0x03180000, 0x01180000);
             *(u32 *)(Func_0808a080(8) + 108) = 0x02008cf9;
             break;

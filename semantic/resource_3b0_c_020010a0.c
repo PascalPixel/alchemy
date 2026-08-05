@@ -7,8 +7,8 @@ void Func_020010a0(void)
 {
     u32 *pair=*(u32 **)*Data_03001e70;
     u32 dx=Func_08000120(Data_02009940), dz=Func_08000118(Data_02009928);
+    Data_02009940 = (u16)Data_02009940;
     pair[0]+=dx; pair[1]+=dz*4; Data_02009924+=dx; Data_02009920+=dz*4;
     Data_02009940 += (Func_080000f8()*384u)>>16;
     Data_02009928 = (Data_02009928 + (Func_080000f8()>>7)) & 0xffff;
-    Data_02009940 = (u16)Data_02009940;
 }

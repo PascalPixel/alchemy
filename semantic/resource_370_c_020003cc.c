@@ -204,14 +204,14 @@ L_0416:
 
     Func_0808a010(60);
     Func_0808a368();
+    goto L_exit;                    /* long `bl` at 0x02000470 */
     Func_080f9010(17);
     Func_0808a010(300);
     Func_0808a238(2, 72);
-    goto L_exit;                    /* long `bl` at 0x02000470 */
 
-L_0474:
     Func_080f9010(112);
     Func_08015060(list_window);
+L_0474:
     Func_08015018(list_window, 2);
     Func_08015018(window_b, 2);
     Func_08015018(window_a, 2);
@@ -249,10 +249,10 @@ L_04a8:
 
     /* Scene walk.  One step normally; the two cheat gates extend it. */
     Func_08077098();
-    Func_08015360(*(u8 *)(workspace + 0x205), *(u8 *)(workspace + 0x206));
     r5 = 1;
     r7 = 0;
 L_0522:
+    Func_08015360(*(u8 *)(workspace + 0x205), *(u8 *)(workspace + 0x206));
     Func_080000c0(6);
     r6 = Func_08015320(r7);
     if (r6 == -1) {

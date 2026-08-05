@@ -60,10 +60,10 @@ void Func_020034a0(void)
         effect->x -= offset >> 1;
         effect->y -= offset;
     } else {
-        random_value = Func_080000f8();
         offset = (s32)(((random_value << 5) >> 16) << 16);
         effect->x += offset;
         effect->y += offset >> 1;
+        random_value = Func_080000f8();
     }
 
     presentation[38] = 0;

@@ -137,9 +137,9 @@ repeatPrompt:
         Func_0808a188(8, 0, 20);
         *(u16 *)(workspace + 472) += 1;
     } else {
+        *(u16 *)(workspace + 472) += 1;
         Func_0808a010(10);
         Func_0808a138(8, 2);
-        *(u16 *)(workspace + 472) += 1;
         Func_0808a188(8, 0, 20);
     }
     Func_0808a110(8, 3);

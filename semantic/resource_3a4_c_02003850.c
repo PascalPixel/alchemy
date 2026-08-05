@@ -136,10 +136,10 @@ void Func_02003850(s32 slot, s32 heading)
 
     probe[0] = *(s32 *)(record + 8);
     probe[1] = *(s32 *)(record + 12);
-    probe[2] = *(s32 *)(record + 16);
     Func_08000128(0x180000, heading, probe);        /* 192 << 13 */
     Func_08009150(record, probe[0], *(s32 *)(record + 12), probe[2]);
     Func_08009158(record);
+    probe[2] = *(s32 *)(record + 16);
     Func_080f9010(233);
 
     for (;;) {

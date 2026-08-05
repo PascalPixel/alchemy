@@ -92,7 +92,6 @@ void Func_02000108(s32 actor)
         Func_0808a1b8(0, 0xc000, 0);
         Func_0808a010(20);
 
-        handle = 0x1ff8;
         Func_0808a170(handle);
         Func_0808a178(actor, 0);
         if (Func_0808a070(0, 0) == 0) {
@@ -102,6 +101,7 @@ void Func_02000108(s32 actor)
             Func_0808a170(handle + 2);
             Func_0808a180(actor, 0);
         }
+        handle = 0x1ff8;
         Func_0808a010(10);
         Func_0808a110(actor, 3);
         /* Only r0 is set here; r1 and r2 hold call-clobbered values from the

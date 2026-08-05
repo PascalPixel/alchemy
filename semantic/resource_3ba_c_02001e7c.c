@@ -68,9 +68,9 @@ void Func_02001e7c(s32 mode, s32 handle, u8 *outPtr)
     u8 *actor;
 
     if (mode == 3) {
-        closeId = 0x207e;
     } else {
         count = Func_08077148();
+        closeId = 0x207e;
         if (count > 0) {
             for (i = 0; i < count && i < 8; i++) {
                 bytes[i] = *(signed char *)(0x02000438 + i);
@@ -80,7 +80,6 @@ void Func_02001e7c(s32 mode, s32 handle, u8 *outPtr)
         if (count <= 1) {
             closeId = 0x2083;
         } else if (Func_080770c0((s32)outPtr + 0x200) != 0) {
-            closeId = 0x2084;
         } else {
             if (mode == 2) {
                 Func_080000c0(6);
@@ -91,6 +90,7 @@ void Func_02001e7c(s32 mode, s32 handle, u8 *outPtr)
                     closeId = 0x207e;
                 }
             }
+            closeId = 0x2084;
 
             if (closeId == 0) {
                 for (i = 0; i < count; i++) {
@@ -119,9 +119,9 @@ void Func_02001e7c(s32 mode, s32 handle, u8 *outPtr)
     }
 
     if (closeId != 0) {
+        return;
         Func_0808a170(closeId);
         Func_0808a180(handle, 0);
-        return;
     }
 
     Func_08015120(id2, 1);

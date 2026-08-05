@@ -35,6 +35,8 @@ void Func_08009148();
 
 s32 Func_020030ac(s32 handleA, s32 handleB)
 {
+    s32 permuted_3;
+    s32 permuted_4;
     u8 *workspace = *(u8 **)0x03001f3c;
     u8 *record;
     s32 flag = Func_080770c0(0x211);
@@ -55,12 +57,14 @@ s32 Func_020030ac(s32 handleA, s32 handleB)
         z = *(s32 *)(workspace + 236) + 0x100000;
         cue = *(u16 *)(workspace + 228);
     } else {
-        z = *(s32 *)(workspace + 236) - 0x100000;
-        cue = *(u16 *)(workspace + 226);
+        permuted_3 = *(s32 *)(workspace + 236) - 0x100000;
+        permuted_4 = *(u16 *)(workspace + 226);
+        z  = permuted_3;
+        cue  = permuted_4;
     }
 
-    *(s16 *)(record + 100) = (s16)cue;
     *(s32 *)(record + 52) = 0x4000;
+    *(s16 *)(record + 100) = (s16)cue;
     *(s32 *)(record + 48) = 0x10000;
 
     Func_08009150(record, x, 0, z);
@@ -79,8 +83,8 @@ s32 Func_020030ac(s32 handleA, s32 handleB)
         Func_08015120(handleB, 2);
     }
 
-    selector = *(s32 *)&Data_02000240[500];
     Func_08015120(selector, 1);
+    selector = *(s32 *)&Data_02000240[500];
     Func_08015040(0x96a, 3);
     Func_08009148(record);
 

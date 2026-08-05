@@ -107,10 +107,10 @@ void Func_0200076c(void)
     walker = Func_0808a080(31);
 
     steps = 0;
-    probe[0] = (actor->x & 0xFFF00000) + 0x80000;
     probe[1] = actor->field0C;
     probe[2] = (actor->z & 0xFFF00000) + 0x80000;
     Func_08000128(0x100000, Data_0200cc38[actor->attributes >> 13], probe);
+    probe[0] = (actor->x & 0xFFF00000) + 0x80000;
 
     x = walker->x;
     z = walker->z;
@@ -135,7 +135,6 @@ void Func_0200076c(void)
     }
 
     if ((Data_03001ae8 & 0x20) != 0) {
-        mode = 2;
         stride = -8;
         for (;;) {
             next = x - 0x100000;
@@ -146,6 +145,7 @@ void Func_0200076c(void)
             x = next;
         }
     } else if ((Data_03001ae8 & 0x10) != 0) {
+        mode = 2;
         mode = 3;
         stride = 8;
         for (;;) {
@@ -170,8 +170,8 @@ void Func_0200076c(void)
     Func_0808a100(sceneId, 8);
     Func_0808a010(6);
 
-    walker->field30 = 0x8000;
     walker->field34 = 0x3333;
+    walker->field30 = 0x8000;
     Func_08009080(walker, mode);
     Func_08009150(walker, x, 0, z);
     Func_0808a010(6);

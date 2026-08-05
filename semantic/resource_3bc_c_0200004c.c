@@ -104,8 +104,6 @@ void Func_0200004c(void)
         entry = &Data_0200cc20[slot * 6];
 
         for (row = 18; row <= 22; row++) {
-            value = *entry;
-            entry++;
             if ((u32)(object->x - (row << 21) + 0x0031FFFF) <= 0x0013FFFE) {
                 if (tileRow == 11 && value == 4) {
                     *target = (s16)value;
@@ -114,11 +112,13 @@ void Func_0200004c(void)
                     *target = (s16)value;
                 }
             }
+            entry++;
+            value = *entry;
         }
     }
 
-    Data_0200d484++;
     if (Data_0200d484 > 17) {
         Data_0200d484 = 0;
     }
+    Data_0200d484++;
 }

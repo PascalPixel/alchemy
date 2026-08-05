@@ -44,8 +44,8 @@ void Func_02002adc(s32 arg0)
     Func_0808a360();
     Func_0808a370();
 
-    *(u16 *)(0x0200cac8 + 26) = (u16)(arg0 * 60);
     *(u16 *)(0x0200c0f6 + 26) = (u16)absScaled;
+    *(u16 *)(0x0200cac8 + 26) = (u16)(arg0 * 60);
 
     if (arg0 < 0) {
         Func_0808a010(30);
@@ -53,8 +53,8 @@ void Func_02002adc(s32 arg0)
         Func_020023bc(8);
         Func_02002940(3, 1);
         Func_0808a010(-60 * arg0 + 60);
-        trailingArg = 0;
     } else {
+        trailingArg = 0;
         Func_0808a010(30);
         Func_080f9010(arg0 + 0x5a);
         Func_020023bc(4);

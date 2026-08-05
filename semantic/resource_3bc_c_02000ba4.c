@@ -62,9 +62,9 @@ void Func_02000ba4(s32 index)
     s16 *table;
     s32 sceneId;
 
+    sceneId = *(s32 *)&table[250];
     workspace = Data_03001ebc;
     table = Data_02000240;
-    sceneId = *(s32 *)&table[250];
 
     if (table[225] != 2) {
         return;
@@ -77,9 +77,9 @@ void Func_02000ba4(s32 index)
     if (Func_020055fa(sceneId, 0) == 0) {
         Func_020056a6(0x2073 + index * 3 + 1);
         Func_020056be(index, 0);
+        Func_02005770();
         *(s32 *)(workspace + 448) = 0x200;
         *(s32 *)(workspace + 456) = 15;
-        Func_02005770();
         Func_0200577c();
         Func_02003262(index);
         Func_02005776();

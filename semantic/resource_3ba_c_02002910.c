@@ -52,21 +52,21 @@ static void enqueue_mmio_02002910(u32 value, volatile u32 *address)
 
 void Func_02002910(s32 actor, s32 map_x, s32 map_z)
 {
-    u8 *workspace = *(u8 **)0x03001e68;
     u8 *record = Func_0808a080(actor);
+    u8 *workspace = *(u8 **)0x03001e68;
     u8 *render;
     u32 phase;
 
     workspace[6] = 1;
     workspace[7] = 4;
     *(s32 *)0x0200c804 = *(s32 *)(record + 8);
+    render = *(u8 **)(record + 0x50);
     *(s32 *)0x0200c75c = *(s32 *)(record + 16);
     *(u32 *)0x0200c788 = *(u16 *)(record + 6);
-    render = *(u8 **)(record + 0x50);
 
-    Func_0808a1e0(actor, 2);
     record[0x23] |= 1;
     *(u16 *)(record + 6) = 0x4000;
+    Func_0808a1e0(actor, 2);
     Func_080091e0(record, 3);
     Func_08009080(record, 0);
     Func_08009080(record, 1);

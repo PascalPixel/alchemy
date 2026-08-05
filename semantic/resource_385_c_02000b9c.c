@@ -22,9 +22,9 @@ void Func_02000b9c(void)
 
     actor = Func_0808a080(0);
     Func_080f9010(158);
+    actor->presentation[9] |= 12;
     Func_08009178(Data_02009798, 49, 10);
     Func_080091c0(33, 20, 1, 3, 18, 10);
     actor->control_flags &= (u8)~1;
-    actor->presentation[9] |= 12;
     Func_02000a80(296, 176, 9);
 }

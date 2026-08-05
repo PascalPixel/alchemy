@@ -32,20 +32,20 @@ void Func_02000dd8(s32 slot)
     struct SpawnDescriptor finalEffect;
     u32 angle;
 
-    object[85] = 0;
     for (angle = 0; angle < 18; angle++) {
         Func_080000c0(1);
         *(u16 *)(state + 30) += (s32)-0x100;
         *(s32 *)(object + 8) -= Func_08000120(*(u16 *)(state + 30)) / 2;
         *(u32 *)(object + 56) = 0x80000000u;
     }
+    object[85] = 0;
 
-    *(u32 *)(object + 108) = 0x02008da9;
     Func_0808a090(slot, 192 << 10, 192 << 9);
-    Func_0808a0b8(slot, 160, 192);
+    *(u32 *)(object + 108) = 0x02008da9;
     *(s32 *)(object + 72) = 0xcccc;
-    object[85] = 3;
     object[34] = 0;
+    object[85] = 3;
+    Func_0808a0b8(slot, 160, 192);
     Func_0808a0e8(slot);
     Func_02000db8(object, 128 << 14);
 
@@ -69,10 +69,10 @@ void Func_02000dd8(s32 slot)
     Func_02000db8(object, 128 << 14);
 
     *(u32 *)(object + 108) = 0;
-    *(u16 *)(state + 30) = 128 << 5;
     finalEffect.kind = 214;
     finalEffect.positionX = 128 << 8;
     finalEffect.positionY = 0xcccc;
+    *(u16 *)(state + 30) = 128 << 5;
     finalEffect.targetX = 192 << 9;
     finalEffect.targetY = 0x13333;
     Func_0200013c(*(s32 *)(object + 8), *(s32 *)(object + 12),

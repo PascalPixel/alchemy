@@ -52,9 +52,9 @@ void Func_0200058c(void)
     }
     Func_0808a170(0x1cb3);
     Func_0808a188(14, 0, 10);
-    actor->facing = (u16)original_facing;
     Func_080000c0(1);
     Func_0808a020();
+    actor->facing = (u16)original_facing;
 
     actor->state_flags = 1;
     Func_080770c8(0x307);

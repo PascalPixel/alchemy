@@ -76,13 +76,13 @@ s32 Func_02000314(u8 *entity)
 
     record = Func_0808a080(0);
 
-    selector = 18;
     flag = 0;
+    selector = 18;
     if (*(s16 *)(workspace + 376) != 0 || base[0x0ea4] != 0) {
-        selector = 26;
         if ((*state & 2) != 0) {
             flag = 1;
         }
+        selector = 26;
     }
 
     Func_02001674(entity, record, selector, flag);

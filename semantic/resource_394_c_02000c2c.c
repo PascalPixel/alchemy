@@ -93,8 +93,8 @@ void Func_02000c2c(void *points)
         s32 z;
     } position;
     s32 facing;
-    s32 spawnX = 0;
     s32 spawnZ = 0;
+    s32 spawnX = 0;
     s32 quadrant;
     s32 transformed;
     s32 foundPosition;
@@ -109,8 +109,8 @@ void Func_02000c2c(void *points)
     position.z = cell_center(view->z);
     Func_08000128(0x00100000, facing, &position);
 
-    point = Func_02000b8c(
         points,
+    point = Func_02000b8c(
         fixed_to_tile(position.x),
         fixed_to_tile(position.z)
     );
@@ -146,8 +146,8 @@ void Func_02000c2c(void *points)
     if (!foundPosition)
         return;
 
-    position.x = cell_center(view->x);
     position.y = view->y;
+    position.x = cell_center(view->x);
     position.z = cell_center(view->z);
     transformed = Func_08000128(0x00080000, facing, &position);
 

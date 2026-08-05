@@ -58,8 +58,8 @@ void Func_020008a8(void)
     } else {
         Func_0808a170(0x1cc2);
         actor = Func_0808a080(16);
-        actor->accepted = 1;
         Func_020004b4(16);
         Func_0808a080(16)->accepted = 0;
+        actor->accepted = 1;
     }
 }

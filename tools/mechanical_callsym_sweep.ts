@@ -12,10 +12,11 @@
 // mechanical_unsign_sweep.ts. Skips (does not guess) whenever the call count
 // doesn't line up 1:1, since that means the correlation is ambiguous.
 import { execFileSync } from "node:child_process";
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { resolveSpan } from "./alchemist.ts";
-import { resolvedCallNames } from "./overlay_call_targets.ts";
+import { assembleOverlay } from "./overlay_disasm.ts";
+import { blSiteSymbols, symbolName } from "./bl_site_symbols.ts";
 
 const ROOT = dirname(Bun.fileURLToPath(import.meta.url).replace(/^file:\/\//, "")).replace(/\/tools$/, "");
 const OVERLAY_BASE = 0x02000000;
@@ -111,6 +112,17 @@ function rewriteCallSymbols(text: string, correctNames: string[], selfAddress: s
   return { text: output, changed: true };
 }
 
+
+const overlayImages = new Map<string, Uint8Array>();
+function overlayImageFor(overlay: string): Uint8Array {
+  let image = overlayImages.get(overlay);
+  if (image === undefined) {
+    image = assembleOverlay(join(ROOT, "assets", "code", `${overlay}_overlay.s`), OVERLAY_BASE);
+    overlayImages.set(overlay, image);
+  }
+  return image;
+}
+
 interface AlchemistVerdict {
   verdict: "exact" | "improved" | "refused" | "exhausted" | "unnecessary";
   baseline_differing_bytes: number;
@@ -171,21 +183,22 @@ async function main(): Promise<void> {
     if (span === undefined) { skipped++; continue; }
 
     const original = readFileSync(path, "utf8");
-    let correct: Map<number, string>;
+    // Names come from DECODING the reference bl encodings, not from
+    // resolvedCallNames(). That was this tool's original bug: an overlay bl
+    // does not store the assembler's PC-relative displacement, so the symbol
+    // must be named at the decoded address, which differs per call site even
+    // for the same callee. resolvedCallNames() reports where the veneer
+    // physically sits, which fixes the displacement's high halfword and
+    // leaves the low one wrong -- a near-miss that reads like an external
+    // toolchain problem. Three owners were written off that way before the
+    // rule was worked out (see tools/bl_site_symbols.ts).
+    let image: Uint8Array;
     try {
-      correct = resolvedCallNames(overlay, offset, offset + span);
+      image = overlayImageFor(overlay);
     } catch { skipped++; continue; }
-    if (correct.size === 0) { skipped++; continue; }
-    // resolvedCallNames()'s local-veneer branch doesn't zero-pad its hex
-    // address (unlike its imported-symbol branch) -- reproducing that here
-    // would generate exactly the "missing leading zero" malformed symbol the
-    // project already knows breaks adoption (see CRAFT_BRIEF.md). Normalize
-    // every name to 8 hex digits regardless of which branch produced it.
-    const correctNames = [...correct.entries()].sort((a, b) => a[0] - b[0])
-      .map(([, name]) => {
-        const digits = /^Func_([0-9a-f]+)$/i.exec(name);
-        return digits === null ? name : `Func_${digits[1].padStart(8, "0").toLowerCase()}`;
-      });
+    const sites = blSiteSymbols(image, OVERLAY_BASE + offset, span);
+    if (sites.length === 0) { skipped++; continue; }
+    const correctNames = sites.map(({ symbol }) => symbolName(symbol));
 
     const result = rewriteCallSymbols(original, correctNames, match[2].toLowerCase());
     if (result === null || !result.changed) { skipped++; continue; }
@@ -207,6 +220,10 @@ async function main(): Promise<void> {
     if (after.verdict === "exact" || after.verdict === "unnecessary") {
       const applied = runAdopt(id, path);
       if (applied) {
+        // overlay_adopt.ts --apply installs the placeholder but does not
+        // remove the now-superseded draft; leaving it behind means the owner
+        // exists in both trees at once.
+        unlinkSync(path);
         closed++;
         console.log(`${id} CLOSED via mechanical call-symbol fix, was ${preBytes} differing bytes`);
       } else {

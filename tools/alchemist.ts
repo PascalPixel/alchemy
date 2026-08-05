@@ -93,7 +93,18 @@ export interface StatementFacts {
   reads: string[];
 }
 
-export type Structure = Map<number, StatementFacts>;
+export interface Structure {
+  facts: Map<number, StatementFacts>;
+  // Lines belonging to a statement that spans several of them. parseScope
+  // makes one Unit per LINE, so a statement written across two lines becomes
+  // two independently movable units -- and reordering half of one produces
+  // text that can still parse as valid C. On resource_385:13c a two-line
+  // `*(s32 *)(object + 48) =` / call pair was split apart and recombined
+  // into a chained assignment reading an uninitialized temp, and the byte
+  // count fell, so nothing downstream rejected it. Any line in a multi-line
+  // statement -- its first line included -- is immovable and uncrossable.
+  spanned: Set<number>;
+}
 
 export function loadStructure(source: string, functionName: string): Structure | null {
   try {
@@ -103,10 +114,11 @@ export function loadStructure(source: string, functionName: string): Structure |
     if (run.exitCode !== 0) return null;
     const parsed = JSON.parse(run.stdout.toString()) as {
       error?: string;
-      statements?: Array<{ line: number; anchor: boolean; governed_by: number | null; writes: string[]; reads: string[] }>;
+      statements?: Array<{ line: number; end_line: number; anchor: boolean; governed_by: number | null; writes: string[]; reads: string[] }>;
     };
     if (parsed.error !== undefined || parsed.statements === undefined) return null;
-    const facts: Structure = new Map();
+    const facts = new Map<number, StatementFacts>();
+    const spanned = new Set<number>();
     for (const statement of parsed.statements) {
       facts.set(statement.line, {
         anchor: statement.anchor,
@@ -114,8 +126,11 @@ export function loadStructure(source: string, functionName: string): Structure |
         writes: statement.writes,
         reads: statement.reads,
       });
+      if (statement.end_line > statement.line) {
+        for (let line = statement.line; line <= statement.end_line; line++) spanned.add(line);
+      }
     }
-    return facts;
+    return { facts, spanned };
   } catch {
     return null; // never let an oracle failure weaken the regex fallback
   }
@@ -364,15 +379,16 @@ export function generateMoves(parsed: ParsedFunction, structure: Structure | nul
   // The oracle knows a construct's real role; the regex rule only its shape.
   // Falling back to the regex on a miss keeps the conservative behaviour.
   const anchored = (unit: Unit): boolean => {
-    const facts = structure?.get(unit.line);
+    if (structure?.spanned.has(unit.line)) return true; // part of a multi-line statement
+    const facts = structure?.facts.get(unit.line);
     if (facts !== undefined) return facts.anchor || facts.governedBy !== null;
     return isControlAnchor(unit);
   };
   const flows = (unit: Unit, crossed: Unit[]): boolean => {
-    const moving = structure?.get(unit.line);
+    const moving = structure?.facts.get(unit.line);
     if (moving === undefined) return preservesDataflow(unit, crossed);
     for (const other of crossed) {
-      const facts = structure.get(other.line);
+      const facts = structure.facts.get(other.line);
       if (facts === undefined) return preservesDataflow(unit, crossed);
       for (const name of moving.writes) {
         if (facts.reads.includes(name) || facts.writes.includes(name)) return false;
@@ -860,6 +876,38 @@ function selfTest(): void {
     if (move.description.includes("Data_0200e79c")) {
       throw new Error(`moved a statement across a block containing a jump: ${move.description}`);
     }
+  }
+
+  // Regression: a statement spanning several lines parses into several
+  // Units, so moving one alone rewrites the statement into different code
+  // that can still compile. On resource_385:13c a two-line
+  // `*(s32 *)(object + 48) =` / call pair was split and recombined into a
+  // chained assignment reading an uninitialized temp, and the byte count
+  // fell -- nothing downstream rejected it. The oracle reports the span;
+  // every line of it must be immovable and uncrossable.
+  const spanFixture = [
+    "void Func_02000800(void)",
+    "{",
+    "    s32 a;",
+    "    s32 b;",
+    "",
+    "    a = 1;",
+    "    b = 2;",
+    "    a = 3;",
+    "}",
+    "",
+  ].join("\n");
+  const spanParsed = parseFunction(spanFixture, "Func_02000800");
+  if (spanParsed === null) throw new Error("failed to parse span fixture");
+  const touchesSpan = (moves: Move[]): boolean =>
+    moves.some((move) => move.description.includes("b = 2"));
+  // Without the span fact the move exists, so the assertion below is not vacuous.
+  if (!touchesSpan(generateMoves(spanParsed, null))) {
+    throw new Error("span fixture generated no move to suppress; test would be vacuous");
+  }
+  const spanStructure: Structure = { facts: new Map(), spanned: new Set([7]) };
+  if (touchesSpan(generateMoves(spanParsed, spanStructure))) {
+    throw new Error("moved a line belonging to a multi-line statement");
   }
 
   console.log("self-test=ok tool=alchemist");

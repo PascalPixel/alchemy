@@ -5,8 +5,9 @@
  * story flags; the first set flag chooses the corresponding shared result.
  */
 extern const s32 Data_0200e718[];
-extern s32 Func_080770c0(s32 flag);
 
+
+extern s32 Func_02007708(s32 flag);
 s32 Func_02003448(s32 slot)
 {
     s32 first_flag;
@@ -31,7 +32,7 @@ s32 Func_02003448(s32 slot)
     }
 
     for (choice = 0; choice <= 8; choice += 1) {
-        if (Func_080770c0(first_flag + choice) != 0) {
+        if (Func_02007708(first_flag + choice) != 0) {
             return Data_0200e718[choice];
         }
     }

@@ -855,12 +855,8 @@ AlchemyC_02000474:
 	bx	r0
 AlchemyC_02000a00:
 	.space 0x58
-	push	{lr}
-	movs	r1, #15
-	bl	sub_02001f1e
-	movs	r0, #0
-	pop	{r1}
-	bx	r1
+AlchemyC_02000a58:
+	.space 0xe
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

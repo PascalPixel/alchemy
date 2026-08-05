@@ -11,8 +11,8 @@ extern s32 Func_03000380();
  */
 u16 Func_02000ecc(u16 color, s32 adjustment)
 {
-    s16 red = (s16)(color & 31);
     s16 green = (s16)((color >> 5) & 31);
+    s16 red = (s16)(color & 31);
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 

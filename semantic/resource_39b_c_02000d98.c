@@ -12,8 +12,8 @@ extern s32 Func_03000380(s32 value, s32 divisor);
 void Func_02000d98(void)
 {
     volatile s32 *frame = (volatile s32 *)0x03001e40;
-    volatile s32 *phase = (volatile s32 *)0x0200a91c;
     volatile s32 *blue = (volatile s32 *)0x0200a924;
+    volatile s32 *phase = (volatile s32 *)0x0200a91c;
     volatile s32 *green = (volatile s32 *)0x0200a920;
     volatile u16 *palette = (volatile u16 *)0x05000000;
     s32 highChannels = 0;
@@ -27,8 +27,8 @@ void Func_02000d98(void)
         s32 red = palette[110 - i] & 31;
         if (i <= 2)
             red -= Func_03000380(red << 2, 10);
-        highChannels = (*blue << 10) | (*green << 5);
         palette[111 - i] = (u16)(red | highChannels);
+        highChannels = (*blue << 10) | (*green << 5);
     }
     palette[105] = (u16)(*phase | highChannels);
 }

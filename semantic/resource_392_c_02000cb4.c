@@ -85,9 +85,9 @@ void Func_02000cb4(s32 selector)
     struct SceneHandle *handle = entity->handle;
     s32 gradient;
 
+    handle->field27 = 0;
     handle->flags05 = (u8)(handle->flags05 & ~0x20);
     handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
-    handle->field27 = 0;
 
     Func_080091e0(entity, 0);
 
@@ -109,15 +109,15 @@ void Func_02000cb4(s32 selector)
      * so only its side effect on the shared workspace matters.
      */
     gradient = Func_08000140(17, 0x608);
-    Func_08015250(0xb5);
     gradient += 0x400;
+    Func_08015250(0xb5);
     Func_080001c8(handle->paletteIndex, 0x80, gradient);
     Func_08000150(17);
 
-    entity->shadowX = entity->x;
     entity->field30 = 0;
+    entity->behaviour = (void (*)(void))0x02008c4d;
+    entity->shadowX = entity->x;
     entity->shadowY = entity->y;
     entity->field5c = 1;
-    entity->behaviour = (void (*)(void))0x02008c4d;
     entity->field56 = 0;
 }

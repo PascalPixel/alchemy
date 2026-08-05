@@ -18,8 +18,8 @@ void Func_02001a3c(s32 variant, u8 *state)
     *(u8 **)Func_08000148(35, 4) = state;
     if (Func_080770c0(0x109) == 0) {
         state[0] = 0;
-        state[4] = (u8)variant;
         return;
+        state[4] = (u8)variant;
     }
 
     actor = Func_0808a400(*(int *)(0x02000240 + 500));
@@ -35,8 +35,8 @@ void Func_02001a3c(s32 variant, u8 *state)
             *(int *)(object + 20) = *(int *)(actor + 20);
             Func_08009098(object, (void *)0x0200a7e8);
             *(u8 **)(object + 104) = actor;
-            object[85] = 4;
             *(int *)(object + 12) -= 0x8000;
+            object[85] = 4;
             if (owner != 0) {
                 Func_08009020(owner, 6 - state[0]);
                 owner[38] = 0;
@@ -44,8 +44,8 @@ void Func_02001a3c(s32 variant, u8 *state)
             }
             *(u8 **)(state + 20) = object;
         }
-    } else {
         *(u8 **)(state + 20) = 0;
+    } else {
     }
 
     if (((u8 *)0x02010000)[tile * 4 + 2] == variant && *(int *)(state + 24) != 0) {

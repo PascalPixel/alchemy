@@ -293,9 +293,9 @@ void Func_020008c0(void)
     if (Func_0808a070(0, 0) != 0) goto aborted;
     goto staged;
 
-aborted:
     Func_0808a170(0x1440);
     Func_0808a188(0x2012, 0, 10);
+aborted:
     Func_0808a1b8(19, 0x3000, 0);
     Func_0808a110(18, 4);
     Func_0808a188(0x2012, 0, 10);

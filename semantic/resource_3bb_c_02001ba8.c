@@ -57,6 +57,9 @@ void Func_02001ba8(s32 arg0)
     u8 *object;
     s32 clamped;
 
+    s32 permuted_19;
+    s32 permuted_16;
+    s32 permuted_27;
     Func_08077168(0);
     Func_08077168(1);
     Func_08077168(2);
@@ -69,18 +72,21 @@ void Func_02001ba8(s32 arg0)
     Func_0808a200(arg0, 0);
     object = Func_08077008(arg0);
 
-    *(u16 *)(object + 0x38) = *(u16 *)(object + 0x34);
+    permuted_16 = *(u16 *)(object + 0x34);
     *(u16 *)(object + 0x3a) = *(u16 *)(object + 0x36);
     object[0x131] = 0;
+    *(u16 *)(object + 0x38) = permuted_16;
 
-    clamped = Clamp0to16384(Func_03000380(*(short *)(object + 0x38) << 14, *(short *)(object + 0x34)));
-    *(u16 *)(object + 20) = (u16)clamped;
     if (clamped == 0 && *(short *)(object + 0x38) != 0) {
         *(u16 *)(object + 20) = 1;
     }
+    permuted_19 = Clamp0to16384(Func_03000380(*(short *)(object + 0x38) << 14, *(short *)(object + 0x34)));
+    clamped  = permuted_19;
+    *(u16 *)(object + 20) = (u16)clamped;
 
-    clamped = Clamp0to16384(Func_03000380(*(short *)(object + 0x3a) << 14, *(short *)(object + 0x36)));
+    permuted_27 = Clamp0to16384(Func_03000380(*(short *)(object + 0x3a) << 14, *(short *)(object + 0x36)));
     *(u16 *)(object + 22) = (u16)clamped;
+    clamped  = permuted_27;
     if (clamped == 0 && *(short *)(object + 0x3a) != 0) {
         *(u16 *)(object + 22) = 1;
     }

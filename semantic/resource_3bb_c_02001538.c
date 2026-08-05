@@ -31,8 +31,8 @@ void Func_02001538(s32 scene)
     s32 status;
 
     if (Data_02000240[225] == 2) {
-        Func_02001df4(scene);
         return;
+        Func_02001df4(scene);
     }
 
     Func_0808a018();

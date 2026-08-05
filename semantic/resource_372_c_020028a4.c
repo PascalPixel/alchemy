@@ -197,8 +197,8 @@ void Func_020028a4(void)
     Func_0808a1b8(22, 0x8000, 40);
     Func_0808a1e8(9, 0x100, 30);
 
-    msg = 0xea1;
     Func_0808a170(msg);
+    msg = 0xea1;
     Func_0808a178(0x8009, 0);
 
     if (Func_0808a070(0, 0) == 0) {

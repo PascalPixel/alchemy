@@ -1687,7 +1687,8 @@ AlchemyC_02000528:
 AlchemyC_02000cc0:
 	.space 0x10
 AlchemyC_02000cd0:
-	.space 0x28
+	.space 0x26
+	.2byte 0x0000
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #0
@@ -2373,7 +2374,8 @@ AlchemyC_02000d78:
 	.2byte 0x9f00
 	.2byte 0x0200
 AlchemyC_02001378:
-	.space 0x18
+	.space 0x16
+	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -3142,7 +3144,8 @@ AlchemyC_020018f4:
 	.2byte 0x0205
 	.2byte 0x0000
 AlchemyC_02001bfc:
-	.space 0x18
+	.space 0x16
+	.2byte 0x0000
 	.4byte 0x47204c00
 	.4byte 0x03000380
 	.4byte 0x47204c00

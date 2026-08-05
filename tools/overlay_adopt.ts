@@ -177,6 +177,48 @@ function selfTest(): void {
   console.log("self-test=ok");
 }
 
+interface AuditInterval { start: number; end: number; kind: string }
+
+/**
+ * Refuse a span that is not contained in ONE audited executable interval.
+ *
+ * A byte-identical rebuild is necessary but not sufficient. A registered span
+ * often runs two bytes past the end of the function's audited `thumb` interval
+ * into the trailing `executable_alignment` -- and because that padding is zero
+ * either way, the overlay still rebuilds byte-for-byte. Adopting there quietly
+ * claims alignment padding as reconstructed C and inflates the Full-C metric.
+ *
+ * Twelve owners were adopted that way before this check existed. Nothing
+ * caught it until full_c_progress.ts refused the spans two steps later, by
+ * which point the adoptions were committed. That check is the authority on
+ * what counts; this applies the same rule at the point of action, where the
+ * span is still easy to correct.
+ */
+function auditedInterval(fn: FunctionRow): void {
+  const report = join(ROOT, "metrics", "gs1-en-executable.json");
+  if (!existsSync(report)) return; // nothing to check against; other gates still apply
+  const audit = JSON.parse(readFileSync(report, "utf8")) as {
+    overlays: Array<{ id: string; intervals: AuditInterval[] }>;
+  };
+  const overlay = audit.overlays.find((row) => row.id === fn.overlay);
+  if (overlay === undefined) return; // un-audited overlay: not this check's call to make
+  const start = fn.entry;
+  const end = start + fn.span_bytes;
+  if (overlay.intervals.some((interval) => interval.start <= start && end <= interval.end)) return;
+
+  const touched = overlay.intervals.filter((interval) => interval.start < end && start < interval.end);
+  const detail = touched.length === 0
+    ? "no audited executable interval covers it"
+    : touched.map((i) => `[0x${hex8(i.start)},0x${hex8(i.end)}) ${i.kind}`).join(" + ");
+  const code = touched.find((interval) => interval.kind === "thumb" || interval.kind === "arm");
+  const suggestion = code !== undefined && code.start === start && code.end < end
+    ? ` -- the audited code ends at 0x${hex8(code.end)}; retry with --span ${code.end - start}`
+    : "";
+  throw new Error(
+    `${fn.id} span 0x${hex8(start)}..0x${hex8(end)} is not inside one audited executable interval: ${detail}${suggestion}`,
+  );
+}
+
 function main(): void {
   if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") {
     selfTest();
@@ -204,6 +246,7 @@ function main(): void {
   }
   const stem = hex8(fn.entry);
   if (fn.entry - OVERLAY_BASE !== fn.offset) throw new Error("inventory entry and offset disagree");
+  auditedInterval(fn);
 
   const assembly = join(CODE, `${fn.overlay}_overlay.s`);
   const baseline = assembleOverlay(assembly, OVERLAY_BASE);

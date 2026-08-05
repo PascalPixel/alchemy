@@ -2004,7 +2004,8 @@ AlchemyC_02000d14:
 	.2byte 0x09a6
 	.2byte 0x0000
 AlchemyC_020010f0:
-	.space 0xc
+	.space 0xa
+	.2byte 0x0000
 	push	{lr}
 	movs	r0, #8
 	sub	sp, #8
@@ -2038,7 +2039,8 @@ AlchemyC_020010f0:
 	.2byte 0x09a2
 	.2byte 0x0000
 AlchemyC_02001148:
-	.space 0x10
+	.space 0xe
+	.2byte 0x0000
 	push	{lr}
 	sub	sp, #8
 	bl	sub_0200267a

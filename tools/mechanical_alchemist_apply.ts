@@ -47,9 +47,19 @@ function runAdopt(id: string, source: string, span: number): boolean {
 async function main(): Promise<void> {
   const limitArg = Bun.argv.find((arg) => arg.startsWith("--limit="));
   const limit = limitArg !== undefined ? Number.parseInt(limitArg.split("=")[1], 10) : Infinity;
+  // --shard=I/N: process only files where index % N === I, so multiple
+  // instances can run concurrently over disjoint file sets (each spawns its
+  // own alchemist.ts/overlay_adopt.ts subprocesses, so no two instances ever
+  // touch the same file).
+  const shardArg = Bun.argv.find((arg) => arg.startsWith("--shard="));
+  const [shardIndex, shardCount] = shardArg !== undefined
+    ? shardArg.split("=")[1].split("/").map(Number)
+    : [0, 1];
   const semanticDir = join(ROOT, "semantic");
   const files = readdirSync(semanticDir)
     .filter((name) => /^resource_[0-9a-f]+_c_[0-9a-f]{8}\.c$/i.test(name))
+    .sort()
+    .filter((_name, index) => index % shardCount === shardIndex)
     .slice(0, limit);
 
   let closed = 0;

@@ -37,22 +37,22 @@ struct SceneObject {
 };
 
 /* Resolved whole-owner call targets. */
-extern void * Func_02000b8c();
-extern s32 Func_02000be4();
-extern s32 Func_08000128();
-extern void * Func_08000148();
-extern void Func_08009080();
-extern void Func_080090e0();
-extern void Func_08009150();
-extern void Func_08009158();
-extern void Func_0808a010();
-extern void Func_0808a018();
-extern void Func_0808a020();
-extern void * Func_0808a080();
-extern void Func_0808a090();
-extern void Func_0808a0e0();
-extern void Func_0808a100();
-extern void Func_080f9010();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static s32 cell_center(s32 coordinate)
 {
@@ -79,6 +79,30 @@ static s32 facing_quadrant(s32 facing)
     return facing >> 14;
 }
 
+extern void * Func_02001cf2();
+extern s32 Func_02001c9c();
+extern void * Func_0200182a();
+extern s32 Func_02001ce6();
+extern s32 Func_020018d2();
+extern s32 Func_02001d90();
+extern void Func_02001e22();
+extern void Func_02001e6a();
+extern void Func_02001e28();
+extern void Func_02001eb8();
+extern void Func_02001de2();
+extern void Func_02001e0e();
+extern void Func_02001e54();
+extern void Func_02001ea4();
+extern void * Func_02001dfc();
+extern void Func_02001e9c();
+extern void Func_02001eba();
+extern void Func_02001e90();
+extern void Func_02001ee0();
+extern void Func_02001e66();
+extern void Func_02001e46();
+extern void Func_02001f2e();
+extern void Func_02001f34();
+extern void Func_02001ece();
 void Func_02000c2c(void *points)
 {
     static const u8 *const rotationByQuadrant = (const u8 *)0x02009164;
@@ -101,16 +125,16 @@ void Func_02000c2c(void *points)
     s32 attempt;
     u8 *effect;
 
-    view = Func_0808a080(0);
+    view = Func_02001cf2(0);
     facing = (view->heading + 0x2000) & 0xc000;
 
     position.x = cell_center(view->x);
     position.y = view->y;
     position.z = cell_center(view->z);
-    Func_08000128(0x00100000, facing, &position);
+    Func_02001c9c(0x00100000, facing, &position);
 
         points,
-    point = Func_02000b8c(
+    point = Func_0200182a(
         fixed_to_tile(position.x),
         fixed_to_tile(position.z)
     );
@@ -121,9 +145,9 @@ void Func_02000c2c(void *points)
     for (attempt = 0; attempt <= 10; attempt++) {
         position.x = tile_to_fixed(point->x);
         position.z = tile_to_fixed(point->z);
-        Func_08000128(0x00100000, facing, &position);
+        Func_02001ce6(0x00100000, facing, &position);
 
-        if (Func_02000be4(
+        if (Func_020018d2(
                 fixed_to_tile(position.x),
                 fixed_to_tile(position.z),
                 point->vertical) != 0) {
@@ -149,36 +173,36 @@ void Func_02000c2c(void *points)
     position.y = view->y;
     position.x = cell_center(view->x);
     position.z = cell_center(view->z);
-    transformed = Func_08000128(0x00080000, facing, &position);
+    transformed = Func_02001d90(0x00080000, facing, &position);
 
     object = (volatile struct SceneObject *)point->object;
     quadrant = facing_quadrant(facing);
-    Func_0808a018(transformed, facing);
-    Func_0808a100(0, 8);
-    Func_0808a010(6);
+    Func_02001e22(transformed, facing);
+    Func_02001e6a(0, 8);
+    Func_02001e28(6);
 
     object->scale = 0x00008000;
     object->color = 0x00003333;
-    Func_080f9010(239);
-    Func_08009080(object, rotationByQuadrant[quadrant]);
-    Func_08009150(object, spawnX, spawnZ, 0);
-    Func_0808a010(6);
-    Func_0808a100(0, 2);
+    Func_02001eb8(239);
+    Func_02001de2(object, rotationByQuadrant[quadrant]);
+    Func_02001e0e(object, spawnX, spawnZ, 0);
+    Func_02001e54(6);
+    Func_02001ea4(0, 2);
 
-    effect = Func_08000148(27, 0x00000ccc);
-    Func_080090e0(*(void **)(effect + 0x1e0), object);
-    Func_0808a090(0, 0x00004ccc, 0x00003333);
-    Func_0808a0e0(
+    effect = Func_02001dfc(27, 0x00000ccc);
+    Func_02001e22(*(void **)(effect + 0x1e0), object);
+    Func_02001e9c(0, 0x00004ccc, 0x00003333);
+    Func_02001eba(
         0,
         offsetXByQuadrant[quadrant],
         offsetZByQuadrant[quadrant]
     );
-    Func_0808a010(24);
-    Func_0808a100(0, 1);
-    Func_08009158(object);
-    Func_08009080(object, 1);
-    Func_080f9010(0x120);
-    Func_080f9010(213);
-    Func_0808a010(15);
-    Func_0808a020();
+    Func_02001e90(24);
+    Func_02001ee0(0, 1);
+    Func_02001e66(object);
+    Func_02001e46(object, 1);
+    Func_02001f2e(0x120);
+    Func_02001f34(213);
+    Func_02001eba(15);
+    Func_02001ece();
 }

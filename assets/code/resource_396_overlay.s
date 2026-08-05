@@ -802,17 +802,8 @@ AlchemyC_0200032c:
 	bl	.L_02000832
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	ldr	r0, [pc, #16]
-	movs	r1, #69
-	movs	r2, #35
-	movs	r3, #26
-	bl	.L_02000844
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x0205
-	.2byte 0x0000
+AlchemyC_02000504:
+	.space 0x18
 	push	{lr}
 	ldr	r0, [pc, #16]
 	movs	r1, #70

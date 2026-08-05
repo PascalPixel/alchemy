@@ -1,6 +1,8 @@
 #include "types.h"
-extern s32 Func_03000380(s32,s32);
 
+
+extern s32 Func_02003092(s32,s32);
+extern s32 Func_020030a0(s32,s32);
 void Func_02001754(u8 *object)
 {
     s32 velocity;
@@ -19,9 +21,9 @@ void Func_02001754(u8 *object)
     *(s32 *)(object + 60) = *(s32 *)(object + 12);
 
     permuted_7 = *(s32 *)(object + 48);
-    *(s32 *)(object + 48) = velocity - Func_03000380(velocity, 28);
+    *(s32 *)(object + 48) = velocity - Func_02003092(velocity, 28);
     permuted_10 = *(s32 *)(object + 52);
     velocity  = permuted_7;
     velocity  = permuted_10;
-    *(s32 *)(object + 52) = velocity - Func_03000380(velocity, 28);
+    *(s32 *)(object + 52) = velocity - Func_020030a0(velocity, 28);
 }

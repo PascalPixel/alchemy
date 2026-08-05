@@ -78,7 +78,7 @@ void Func_0808b674(s32 event_id)
     s32 tile_x;
     s32 tile_z;
     s32 tile_offset;
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 12; index++) {
         ((u32 *)descriptor)[index] = descriptor_template[index];

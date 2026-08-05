@@ -89,7 +89,7 @@ void Func_08099838(void)
     DisplayEffect_08099838 *effect = object->effect;
     EffectController_08099838 *controller = effect->controller;
     void (*watcher)(void) = Func_08099678;
-    s32 cycle;
+    u32 cycle;
 
     Func_080f9010(0x82);
     Func_08009080(object, 0);

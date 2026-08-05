@@ -119,8 +119,8 @@ void Func_080cbc0c(void *scene)
         (struct Particle_080cbc0c *)(runtime + 0x7080);
     const u8 *initial_x = (const u8 *)0x080ee016;
     const u8 *initial_y = (const u8 *)0x080ee037;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(void **)(runtime + 0x7828) = scene;
     Func_080cd508((u32)global_runtime);

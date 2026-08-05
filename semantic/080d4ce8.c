@@ -76,9 +76,9 @@ void Func_080d4ce8(struct Scene_080d4ce8 *scene)
         (struct Particle_080d4ce8 *)0x02010000;
     struct Point_080d4ce8 *points =
         (struct Point_080d4ce8 *)(runtime + 0x7080);
-    s32 frame;
+    u32 frame;
     s32 item_count;
-    s32 index;
+    u32 index;
 
     *(struct Scene_080d4ce8 **)(runtime + 0x7828) = scene;
     Func_080cd594(1);
@@ -141,7 +141,7 @@ void Func_080d4ce8(struct Scene_080d4ce8 *scene)
             s32 projected[3];
             s32 timing = *(u8 *)(0x080ee2a9 + index);
             s32 created = 0;
-            s32 slot;
+            u32 slot;
 
             Func_080e3944(&points[index].x, projected);
             projected[0] /= 2;

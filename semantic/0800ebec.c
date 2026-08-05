@@ -191,7 +191,7 @@ static s32 ProbeRing_0800ebec(const Object_0800ebec *self,
                               s32 probe[3])
 {
     static const s32 offsets[4] = { 0x1000, -0x1000, 0x2000, -0x2000 };
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 4; index++) {
         CopyPosition_0800ebec(probe, self->position_08);
@@ -215,7 +215,7 @@ s32 Func_0800ebec(Object_0800ebec *self)
     s32 chosen_angle = 0;  /* sp+0x0c */
     s32 travel_word = 0;   /* sp+0x00: accepted heading, in the high half */
     s32 free_slots;
-    s32 index;
+    u32 index;
     s32 angle;
     Object_0800ebec *other;
     Stats_0800ebec *stats;

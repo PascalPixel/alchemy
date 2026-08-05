@@ -43,8 +43,8 @@ void Func_080d9fc8(void *argument)
         (struct Sprite_080d9fc8 *)(runtime + 0x7080);
     s32 center;
     s32 direction;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(0);

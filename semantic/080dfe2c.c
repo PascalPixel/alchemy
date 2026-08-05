@@ -52,8 +52,8 @@ void Func_080dfe2c(void *argument)
         (struct Object_080dfe2c *)(runtime + 0x7080);
     struct Object_080dfe2c *particles =
         (struct Object_080dfe2c *)0x02010000;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(0);
@@ -97,7 +97,7 @@ void Func_080dfe2c(void *argument)
 
             if (sprite->active == 5) {
                 struct Object_080dfe2c *group = &particles[i * 32];
-                s32 j;
+                u32 j;
 
                 Func_080f9010(133);
                 *(s32 *)(runtime + 0x77a8) = 4;

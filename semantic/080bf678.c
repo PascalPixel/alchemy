@@ -185,7 +185,7 @@ void Func_080bf678(void)
     Scene_080bf678 *scene = GetScene_080bf678();
     s32 list_count = scene->has_second_list != 0 ? 2 : 1;
     s32 list_index;
-    s32 group_index;
+    u32 group_index;
     const s32 *groups = default_groups;
     s32 special_groups[2];
 

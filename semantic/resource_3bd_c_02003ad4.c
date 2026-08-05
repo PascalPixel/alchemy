@@ -38,7 +38,7 @@ void Func_02003ad4(void)
 {
     s32 position[3];
     u8 *effect;
-    s32 index;
+    u32 index;
 
     Func_0808a550();
     effect = Data_03001f30;

@@ -86,7 +86,7 @@ void Func_02004a2c(void)
     struct Object_02004a2c *objectA;
     struct Object_02004a2c *objectB;
     s32 step;
-    s32 frame;
+    u32 frame;
 
     objectA = Func_0808a080(0);
     objectB = Func_0808a080(20);

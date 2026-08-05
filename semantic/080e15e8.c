@@ -153,7 +153,7 @@ static void SpawnSparks_080e15e8(s32 x, s32 y,
 {
     struct Spark_080e15e8 *spark = SPARKS_080E15E8;
     s32 spawned = 0;
-    s32 index;
+    u32 index;
 
     for (index = 0; index < SPARK_COUNT_080E15E8; index++, spark++) {
         s32 speed;
@@ -242,9 +242,9 @@ void Func_080e15e8(struct Cast_080e15e8 *cast)
     s32 depth[3];                                    /* sp+136 */
     u8 fade[32];                                     /* sp+304 */
 
-    s32 row;
-    s32 column;
-    s32 index;
+    u32 row;
+    u32 column;
+    u32 index;
 
     *(struct Cast_080e15e8 **)(workspace + 0x7828) = cast;
     Func_080cd594(0x2000);
@@ -694,7 +694,7 @@ void Func_080e15e8(struct Cast_080e15e8 *cast)
         }
 
         if ((u32)phase <= 63) {
-            s32 slot;
+            u32 slot;
 
             /* Six fixed frames clear the plate through the ARM fill helper. */
             {
@@ -860,7 +860,7 @@ void Func_080e15e8(struct Cast_080e15e8 *cast)
             s32 centre = scroll_x >> 17;
 
             for (index = 0; index < 3; index++) {
-                s32 slot = index & 3;
+                u32 slot = index & 3;
                 s32 angle = (s32)(Func_08004458() & 0xffff);
                 s32 x;
                 s32 y;

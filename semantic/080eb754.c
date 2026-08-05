@@ -71,8 +71,8 @@ void Func_080eb754(struct Scene_080eb754 *scene)
     s32 scroll = 0;
     s32 ramp = 0;
     s32 wave = 0;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(struct Scene_080eb754 **)(runtime + 0x7828) = scene;
     Func_080cd594(0);
@@ -357,7 +357,7 @@ void Func_080eb754(struct Scene_080eb754 *scene)
                     Func_080e3980(
                         scene->object_ids[i], position);
                     if (position[0] > x_limit) {
-                        s32 j;
+                        u32 j;
                         struct Particle_080eb754 *spawn =
                             &bursts[i * 32];
 

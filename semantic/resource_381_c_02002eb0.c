@@ -69,7 +69,7 @@ void Func_02002eb0(u8 *descriptor)
     u8 *entity;
     u8 *sub;
     u8 *peer;
-    int i;
+    unsigned int i;
     unsigned int id;
 
     Func_080f9010(292);

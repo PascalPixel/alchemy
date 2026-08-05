@@ -59,7 +59,7 @@ void Func_0200441c(u8 *desc)
     u8 *obj;
     u8 *spr;
     const u16 *tbl;
-    s32 i;
+    u32 i;
     u32 v;
 
     gp = *(u8 **)0x03001f30;

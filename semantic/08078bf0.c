@@ -65,7 +65,7 @@ const struct EffectTable_08078bf0 *Func_08079ad8(s32 table_id);
 static void ClearTransientEffects_08078bf0(
     struct EffectSlot_08078bf0 effects[32]
 ) {
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 32; index++) {
         if (effects[index].effect & 0x8000) {
@@ -82,8 +82,8 @@ static void ClearTransientEffects_08078bf0(
 static void CompactEffectsRight_08078bf0(
     struct EffectSlot_08078bf0 effects[32]
 ) {
-    s32 read_index;
-    s32 write_index = 31;
+    u32 read_index;
+    u32 write_index = 31;
 
     for (read_index = 31; read_index >= 0; read_index--) {
         if (effects[read_index].effect != 0) {
@@ -100,8 +100,8 @@ static void CompactEffectsRight_08078bf0(
 static void CompactEffectsLeft_08078bf0(
     struct EffectSlot_08078bf0 effects[32]
 ) {
-    s32 read_index;
-    s32 write_index = 0;
+    u32 read_index;
+    u32 write_index = 0;
 
     for (read_index = 0; read_index < 32; read_index++) {
         if (effects[read_index].effect != 0) {
@@ -119,7 +119,7 @@ static s32 HasExactEffect_08078bf0(
     const struct EffectSlot_08078bf0 effects[32],
     u16 effect
 ) {
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 32; index++) {
         if (effects[index].effect == effect) {
@@ -133,7 +133,7 @@ static s32 HasBaseEffect_08078bf0(
     const struct EffectSlot_08078bf0 effects[32],
     u16 effect
 ) {
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 32; index++) {
         if ((effects[index].effect & 0x3fff) == effect) {
@@ -147,7 +147,7 @@ static s32 InsertEffect_08078bf0(
     struct EffectSlot_08078bf0 effects[32],
     u16 effect
 ) {
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 32; index++) {
         if (effects[index].effect == 0) {
@@ -175,7 +175,7 @@ s32 Func_08078bf0(s32 owner) {
     struct OwnerEffects_08078bf0 *state = Func_08077394(owner);
     const struct EffectTable_08078bf0 *table =
         Func_08079ad8(state->effect_table_id);
-    s32 index;
+    u32 index;
 
     if (state->effect_table_id == 0) {
         return 0;

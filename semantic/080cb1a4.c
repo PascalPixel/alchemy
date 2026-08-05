@@ -52,7 +52,7 @@ void Func_080cb1a4(void *argument)
     s32 secondary_height;
     s32 target_x;
     s32 target_z;
-    s32 frame;
+    u32 frame;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(0);
@@ -153,7 +153,7 @@ void Func_080cb1a4(void *argument)
         if ((u32)(frame - 56) <= 11) {
             s32 base_offset = ((frame - 56) / 2) << 11;
             s32 radius = frame - 46;
-            s32 i;
+            u32 i;
 
             for (i = 0; i < 16; i++) {
                 s32 angle = i << 12;

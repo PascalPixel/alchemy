@@ -50,7 +50,7 @@ static u16 *FillTilemapRows_080f24a0(
     s32 row;
 
     for (row = 0; row < row_count; row++) {
-        s32 column;
+        u32 column;
 
         for (column = 0; column < 30; column++)
             *destination++ = first_tile++;
@@ -73,7 +73,7 @@ void Func_080f24a0(void)
     DisplayRuntime_080f24a0 *runtime = Data_03001efc;
     u8 *asset;
     u16 *tilemap;
-    s32 index;
+    u32 index;
 
     *display_control = 0;
 

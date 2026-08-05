@@ -21,7 +21,7 @@ s32 Func_0200058c(u8 *object)
     s32 bucket = *(u16 *)(object + 6) >> 12;
     s32 delta = deltas[bucket];
     s32 *found;
-    s32 index;
+    u32 index;
 
     position[0] = *(s32 *)(object + 8) + (delta & (s32)0xffff0000);
     position[1] = *(s32 *)(object + 12);

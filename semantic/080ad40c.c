@@ -9,7 +9,7 @@ s32 Func_08009008(void *, s32 *, s32 *, s32);
 void Func_080ad40c(void)
 {
     u8 *state = Data_03001f2c;
-    s32 index;
+    u32 index;
     s32 motion[2];
     s32 request[4];
 

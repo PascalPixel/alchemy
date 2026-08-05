@@ -110,7 +110,7 @@ void Func_0200168c(struct Descriptor_0200168c *descriptor)
     struct Object_0200168c *slots[2];
     u8 *base = *(u8 **)0x03001F30;
     u8 *table = (u8 *)0x03001B10;
-    s32 i;
+    u32 i;
 
     for (i = 0; i <= 1; i++) {
         struct Object_0200168c *object;

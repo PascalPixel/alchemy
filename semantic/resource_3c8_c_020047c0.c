@@ -49,7 +49,7 @@ void Func_020047c0(void)
 {
     struct ParticleSpec_020047c0 spec;
     u8 *state = *(u8 **)0x03001ebc;
-    s32 wave;
+    u32 wave;
     s32 repeat = 0;
 
     *(s32 *)(state + 0x1c0) = 0x202;
@@ -65,7 +65,7 @@ void Func_020047c0(void)
     Func_0808a210(0x02380000, -1, 0x01680000, 1);
 
     for (wave = 0; wave <= 12; wave++) {
-        s32 inner;
+        u32 inner;
 
         spec.spread_x =
             (s32)(((Func_080000f8() << 1) >> 16) * 0x4ccc) + 0x17ffc;

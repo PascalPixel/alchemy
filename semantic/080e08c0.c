@@ -64,9 +64,9 @@ void Func_080e08c0(struct Scene_080e08c0 *scene)
         (struct Point_080e08c0 *)(runtime + 0x7080);
     struct Particle_080e08c0 *particles =
         (struct Particle_080e08c0 *)0x02010000;
-    s32 frame;
-    s32 group;
-    s32 index;
+    u32 frame;
+    u32 group;
+    u32 index;
     s32 label_y;
 
     *(struct Scene_080e08c0 **)(runtime + 0x7828) = scene;

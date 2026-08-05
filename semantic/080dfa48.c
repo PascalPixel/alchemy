@@ -59,8 +59,8 @@ void Func_080dfa48(void *argument, s32 variant)
         (struct Particle_080dfa48 *)(runtime + 0x7080);
     s32 main_point[3];
     s32 point[3];
-    s32 frame;
-    s32 index;
+    u32 frame;
+    u32 index;
     s32 palette_resource;
 
     *(void **)(runtime + 0x7828) = argument;

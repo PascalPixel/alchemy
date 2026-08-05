@@ -61,7 +61,7 @@ void Func_080b7738(void)
 {
     u16 ids[14];
     s32 count;
-    s32 index;
+    u32 index;
     s32 first_priority;
     s32 second_priority;
 
@@ -116,7 +116,7 @@ void Func_080b7738(void)
             } else if (type == 2) {
                 struct Component_080b7738 **components =
                     object->components_50;
-                s32 component_index;
+                u32 component_index;
 
                 for (component_index = 0; component_index < 4;
                      component_index++) {
@@ -151,7 +151,7 @@ void Func_080b7738(void)
             } else if (type == 2) {
                 struct Component_080b7738 **components =
                     object->components_50;
-                s32 component_index;
+                u32 component_index;
 
                 for (component_index = 0; component_index < 4;
                      component_index++) {

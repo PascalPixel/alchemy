@@ -30,7 +30,7 @@ struct Slot *Func_080165d8(void *entry, s32 field12, s32 x, s32 y,
     s32 savedY;
     s32 savedField12;
     const u16 *source;
-    s32 index;
+    u32 index;
 
     savedEntry = entry;
     savedY = y;

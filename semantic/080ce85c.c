@@ -62,7 +62,7 @@ void Func_080ce85c(struct Scene_080ce85c *scene)
     s32 horizontal_offset;
     s32 frame;
     s32 total_frames;
-    s32 index;
+    u32 index;
 
     *(struct Scene_080ce85c **)(runtime + 0x7828) = scene;
     Func_080cd594(0);
@@ -122,7 +122,7 @@ void Func_080ce85c(struct Scene_080ce85c *scene)
                     s32 projected[3];
                     s32 angle;
                     s32 quadrant;
-                    s32 point;
+                    u32 point;
 
                     if (frame == start + 32) {
                         Func_080d6888(scene->object_ids[index],

@@ -37,8 +37,8 @@ s16 Func_080c1afc(s32 *difference)
     s32 owner_count;
     s32 sum;
     s32 level;
-    s32 index;
-    s32 record_id;
+    u32 index;
+    u32 record_id;
     s32 score;
     s32 minimum;
     s32 selected;

@@ -109,7 +109,7 @@ void Func_02002440(struct Source *source)
     u8 *workspace;
     struct Obj *obj;
     struct Sprite *sprite;
-    s32 i;
+    u32 i;
     s32 shape;
     u16 packed;
 

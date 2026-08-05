@@ -90,7 +90,7 @@ s32 Func_080a7d68(void)
     s32 preview_variant = state->preview_variant;
     s32 redraw = 1;
     s32 result;
-    s32 i;
+    u32 i;
 
     Func_08077008(state->actor_ids[selection]);
     Func_08015270(state->preview_window);

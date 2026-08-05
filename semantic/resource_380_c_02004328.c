@@ -36,25 +36,43 @@ extern void Func_0808a398(s32 arg0, s32 arg1);
 extern s32 Func_080b0058(s32 *out_first, s32 *out_second);
 extern void Func_080f9010(s32 arg0);
 
+/* STILL-OPEN residual (36/148 differing bytes): confined entirely to the
+ * bl-instruction displacement halfwords at every one of the 12 call sites
+ * below (verified with tools/overlay_call_targets.ts's +2 rule -- see
+ * scratch diff at semantic history). The reference's stored displacement is
+ * consistently 0x4000 larger than what this candidate links to. Renaming the
+ * callees three different ways -- main-ROM Func_08xxxxxx names (this file),
+ * per-site overlay-local Func_0200xxxx numeric veneer addresses, and the
+ * same numeric addresses declared old-style (empty-paren K&R, matching
+ * exact/resource_3a7_c_02000944.c's "physical overlay veneer alias"
+ * pattern) -- produced byte-IDENTICAL wrong displacements every time, so
+ * this is not a call-symbol-naming problem. Every other instruction in the
+ * function (all data ops, the do-while restructure, arg setup) matches the
+ * reference exactly. Looks like a toolchain/link-time veneer-placement
+ * quirk for this owner's freshly-referenced import slots, not something a
+ * C-source edit can reach; escalate rather than re-attempt renaming. */
+
 void Func_02004328(void)
 {
     u8 *record = *(u8 **)0x03001ebc;
     s16 saved = *(s16 *)(record + 472);
     s32 first;
     s32 second;
+    s32 free_slots;
 
     Func_080f9010(0x53);
     Func_0808a398(224, 3);
     Func_08015040(0x111b, 1);
-    for (;;) {
-        s32 free_slots = 30 - Func_08077248(0) - Func_08077248(1);
+    do {
+        free_slots = 30 - Func_08077248(0);
+        free_slots -= Func_08077248(1);
 
-        if (free_slots > 3)
-            break;
-        Func_08015040(0x111c, 1);
-        if (Func_080b0058(&second, &first) != -1)
-            Func_080772b0(second, first);
-    }
+        if (free_slots <= 3) {
+            Func_08015040(0x111c, 1);
+            if (Func_080b0058(&second, &first) != -1)
+                Func_080772b0(second, first);
+        }
+    } while (free_slots <= 3);
     Func_08077030(224);
     Func_08077030(224);
     Func_08077030(224);

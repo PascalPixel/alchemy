@@ -50,7 +50,7 @@ s32 Func_02004260(s32 arg0)
     s32 first = Func_08077040(224);
     s32 second = Func_08077038(first, 224);
     u8 *record;
-    s32 slot;
+    s32 slot = 0;
 
     if (object == 0)
         return first;

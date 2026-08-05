@@ -39,10 +39,10 @@ extern s32 Func_0808a080(s32 id);
 
 void Func_0200478c(s32 base, u32 count)
 {
-    s32 zero = 0;
     u8 *array = (u8 *)Func_08000148(33, 404);
+    s32 zero = 0;
+    u8 *slot = array;
     volatile u32 *dma = (volatile u32 *)0x040000d4;
-    u8 *slot;
     u32 index;
 
     dma[0] = (u32)&zero;
@@ -51,7 +51,6 @@ void Func_0200478c(s32 base, u32 count)
 
     if (count > 10)
         count = 10;
-    slot = array;
     for (index = 0; index < count; index++) {
         s32 object = Func_0808a080(base + index);
 

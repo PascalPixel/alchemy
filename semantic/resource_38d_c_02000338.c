@@ -76,8 +76,8 @@ void Func_02000338(void)
     played = 0;
 
     if (*(s16 *)(workspace + 364) != 9) {
-        cue = 158;
         goto play;
+        cue = 158;
     }
     if (Func_080770c0(512) == 0) {
         cue = 188;

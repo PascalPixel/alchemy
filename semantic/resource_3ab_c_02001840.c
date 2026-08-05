@@ -27,16 +27,16 @@ void Func_02001840(s32 actor)
     if (Func_080770c0(0x109) == 0)
 
     record[35] &= (u8)~1;
-    record[97] = 1;
     trajectory = Func_08000140(17, 0x608);
+    record[97] = 1;
     Func_08015250(181);
     Func_080001c8(sprite[28], 128, trajectory + 0x400);
     Func_08000150(17);
 
-    *(s32 *)(record + 56) = *(s32 *)(record + 8);
     *(s32 *)(record + 60) = *(s32 *)(record + 12);
-    record[92] = 1;
     *(s32 *)(record + 108) = 0x020097d9;
+    *(s32 *)(record + 56) = *(s32 *)(record + 8);
     record[86] = 0;
+    record[92] = 1;
     *(s32 *)(record + 48) = 0;
 }

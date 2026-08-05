@@ -61,9 +61,9 @@ void Func_02001770(const SoftDouble *packed, SoftFloatRecord *record)
             return;
         }
 
-        record->exponent = -1022;
         mantissaHigh = (lowWord >> 24) | (mantissaHigh << 8);
         lowWord <<= 8;
+        record->exponent = -1022;
         record->cls = 3u;
 
         while (mantissaHigh <= 0x0fffffffu) {
@@ -72,9 +72,9 @@ void Func_02001770(const SoftDouble *packed, SoftFloatRecord *record)
             record->exponent -= 1;
         }
 
-        record->low = lowWord;
         record->high = mantissaHigh;
         return;
+        record->low = lowWord;
     }
 
     if (exponent == 0x7ffu) {
@@ -83,10 +83,10 @@ void Func_02001770(const SoftDouble *packed, SoftFloatRecord *record)
             return;
         }
 
-        record->cls = (mantissaHigh & 0x00080000u) != 0u ? 1u : 0u;
         record->low = lowWord;
         record->high = mantissaHigh;
         return;
+        record->cls = (mantissaHigh & 0x00080000u) != 0u ? 1u : 0u;
     }
 
     record->exponent = (s32)exponent - 1023;

@@ -75,10 +75,10 @@ void Func_02002768(void)
         rule++;
     } while (1);
 
+    placement->facing = 0x3000;
     while (placement->id != 57) {
         placement++;
     }
     placement->x = 0x17940000;
     placement->z = 0x0d480000;
-    placement->facing = 0x3000;
 }

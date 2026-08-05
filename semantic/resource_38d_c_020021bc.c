@@ -148,8 +148,8 @@ void Func_020021bc(void)
     /* The interior literal pool is hopped in the middle of this group; r5 is
      * live across it and holds 0xfffc0000 for all four stores. */
     record = Func_0808a080(21);
-    *(s32 *)(record + 12) = (s32)0xfffc0000;
     record = Func_0808a080(22);
+    *(s32 *)(record + 12) = (s32)0xfffc0000;
     *(s32 *)(record + 12) = (s32)0xfffc0000;
     record = Func_0808a080(23);
     *(s32 *)(record + 12) = (s32)0xfffc0000;

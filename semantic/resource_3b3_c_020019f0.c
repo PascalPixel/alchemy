@@ -50,8 +50,9 @@
 
 s32 Func_020019f0(u8 *source, u8 *target)
 {
-    s32 sx = *(s32 *)(source + 8);
+    s32 permuted_1;
     s32 sz = *(s32 *)(source + 16);
+    s32 sx = *(s32 *)(source + 8);
     s32 tx = *(s32 *)(target + 8);
     s32 ty;
     s32 sy;
@@ -69,8 +70,8 @@ s32 Func_020019f0(u8 *source, u8 *target)
     if (sx + -0x100000 >= tx) return 0;
     if (tx >= sx + 0x100000) return 0;
 
-    ty = *(s32 *)(target + 12);
     if (ty < 0) ty += 0xffff;
+    ty = *(s32 *)(target + 12);
     sy = *(s32 *)(source + 12);
     if (sy < 0) sy += 0xffff;
     if ((ty >> 16) != (sy >> 16)) return 0;
@@ -87,9 +88,10 @@ s32 Func_020019f0(u8 *source, u8 *target)
      * ordinary comparison is exact here. */
     if (source_layer > target_layer) {
         target[35] &= 0xfe;
-        target_record[9] = (u8)((target_record[9] & 0xf3) | (source_layer << 2));
+        permuted_1 = (u8)((target_record[9] & 0xf3) | (source_layer << 2));
         target_record[21] =
             (u8)((target_record[21] & 0xf3) | (source_record[21] & 12));
+        target_record[9]  = permuted_1;
     }
 
     return 1;

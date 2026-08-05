@@ -323,10 +323,10 @@ outer_gate_open:
 
 shared_gate_close:
     workspace = Data_03001ebc;
-    *(s32 *)(workspace + 456) = 40;
     Func_0808a368();
-    Func_0808a370();
+    *(s32 *)(workspace + 456) = 40;
     goto gates_done;
+    Func_0808a370();
 
 inner_gate_open:
     workspace = Data_03001ebc;

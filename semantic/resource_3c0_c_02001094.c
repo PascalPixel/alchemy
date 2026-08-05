@@ -40,21 +40,21 @@ void Func_02001094(void)
     for (actorId = 8; actorId <= 10; actorId++) {
         actor = Func_0808a080(actorId);
         if (actor != 0) {
+            (*(u8 **)(actor + 80))[38] = 0;
             if (Func_080770c0(0x109) == 0) {
                 *(s32 *)(actor + 24) = 0x800;
                 *(s32 *)(actor + 28) = 0x800;
             }
-            (*(u8 **)(actor + 80))[38] = 0;
         }
     }
 
     actor = Func_0808a080(11);
     if (actor != 0) {
         u8 *presentation = *(u8 **)(actor + 80);
+        presentation[38] = 0;
         if (*(u8 **)(presentation + 40) != 0)
             (*(u8 **)(presentation + 40))[5] = 10;
         presentation[37] = 1;
-        presentation[38] = 0;
     }
 
     if (Func_080770c0(0x315) != 0) Func_080770c8(0x9b7);

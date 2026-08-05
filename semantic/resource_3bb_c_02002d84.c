@@ -40,9 +40,9 @@ extern void Func_080000c0(s32 arg0);
 
 void Func_02002d84(s32 arg0)
 {
-    u8 *current = Data_03001e68;
-    u8 *object = Func_0808a080(arg0);
     u8 *flagCell = (u8 *)0x02000432;
+    u8 *object = Func_0808a080(arg0);
+    u8 *current = Data_03001e68;
 
     if (*flagCell == 1) {
         *flagCell = 0;
@@ -53,14 +53,14 @@ void Func_02002d84(s32 arg0)
         Func_0808a010(30);
     }
 
+    object[0x55] = 3;
     current[7] = 0;
     current[6] = 15;
     *(u32 *)(object + 8) = *(u32 *)0x0200cca4;
     *(u32 *)(object + 16) = *(u32 *)0x0200cbfc;
     *(u16 *)(object + 6) = (u16)*(u32 *)0x0200cc28;
-    *(u32 *)(object + 0x38) = 0x80000000;
     *(u32 *)(object + 0x40) = 0x80000000;
-    object[0x55] = 3;
+    *(u32 *)(object + 0x38) = 0x80000000;
     object[0x22] = 0;
     *(u32 *)(object + 0x24) = 0;
     *(u32 *)(object + 0x2c) = 0;

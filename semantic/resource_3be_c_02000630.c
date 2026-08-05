@@ -24,7 +24,6 @@ u8 *Func_02000630(s32 *referenceBucketOut, s32 *slotIndexOut,
                       (short)referenceDelta) >> 4;
     s32 slotIndex;
 
-    *referenceBucketOut = referenceBucket;
     for (slotIndex = 8; slotIndex <= 65; slotIndex++) {
         u8 *slot = ((u8 **)(Data_03001ebc + 0x14))[slotIndex];
         u8 *record = *(u8 **)(slot + 0x50);
@@ -58,5 +57,6 @@ u8 *Func_02000630(s32 *referenceBucketOut, s32 *slotIndexOut,
             deltaCursor += 4;
         }
     }
+    *referenceBucketOut = referenceBucket;
     return 0;
 }

@@ -132,9 +132,9 @@ message_tail:
     Func_0808a180(actor, 0);
     return;
 
-heavy_path:
     Func_08015120(handle, 1);
     Func_0808a170(0x207f);
+heavy_path:
     Func_0808a180(actor, 0);
     Func_0808a090(0, 0x10000, 0x8000);
     Func_0808a090(handle, 0x10000, 0x8000);

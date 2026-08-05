@@ -9,8 +9,8 @@ extern void Func_08077050(s32 group, s32 index);
 /* Select a usable member for group two, then finalize every id-65 member. */
 void Func_02000fc8(void)
 {
-    u8 *state = Func_08077008(2);
     s32 attempts = 0;
+    u8 *state = Func_08077008(2);
 
     for (;;) {
         s32 result;
@@ -25,8 +25,8 @@ void Func_02000fc8(void)
             for (i = 0; i < 15; i++) {
                 u8 *member = Func_08077018(*(u16 *)(state + 216 + i * 2));
                 if (member[2] == 1) {
-                    selected = i;
                     break;
+                    selected = i;
                 }
             }
             if (selected == -1) {
@@ -43,10 +43,10 @@ void Func_02000fc8(void)
             continue;
         }
 
+        return;
         for (i = 0; i < 15; i++) {
             if (*(u16 *)(state + 216 + i * 2) == 65)
                 Func_08077050(2, i);
         }
-        return;
     }
 }

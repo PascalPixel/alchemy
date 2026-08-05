@@ -85,9 +85,9 @@ void Func_02001fa4(void)
         Func_0808a018();
 
         /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
+        probe[1] = *(s32 *)(subject + 12);
         x = (*(s32 *)(subject + 8) & (s32)0xfff00000) + 0x80000;
         probe[0] = x;
-        probe[1] = *(s32 *)(subject + 12);
         z = (*(s32 *)(subject + 16) & (s32)0xfff00000) + 0x80000;
         probe[2] = z;
 
@@ -109,9 +109,9 @@ void Func_02001fa4(void)
 
         /* Rewind the probe to the position it held before 0x02004392. */
         probe[0] = x;
+        *(s32 *)(subject + 52) = 0x1999;
         probe[2] = z;
         *(s32 *)(subject + 48) = 0x20000;
-        *(s32 *)(subject + 52) = 0x1999;
         *(u16 *)(subject + 100) = 0;
         Func_08009150(subject, x, *(s32 *)(subject + 12), z);
         /* Same import as the probe above, two arguments here. */

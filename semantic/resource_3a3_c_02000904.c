@@ -82,14 +82,14 @@ void Func_02000904(void)
         Func_08009180(64, 0, 0, 32, 32, 32);
         Func_080091c0(64, 0, 32, 32, 0, 0);
         Func_0808a088(17);
-        hidden = 20;
         goto joined_actors;
     } else if (Func_080770c0(0x240) != 0) {
+        hidden = 20;
         /* `movs r0,#144 / lsls r0,#2` = 576 = 0x240. */
         Func_08009180(0, 64, 0, 32, 32, 32);
         Func_080091c0(0, 64, 32, 32, 0, 0);
-        Func_0808a088(16);
         hidden = 17;
+        Func_0808a088(16);
         goto joined_actors;
     }
 

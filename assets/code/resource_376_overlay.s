@@ -588,11 +588,8 @@ AlchemyC_02000320:
 	.space 0xc
 AlchemyC_0200032c:
 	.space 0xc
-	push	{lr}
-	movs	r0, #5
-	bl	.L_020005fa
-	pop	{r0}
-	bx	r0
+AlchemyC_02000338:
+	.space 0xc
 AlchemyC_02000344:
 	.space 0xc
 AlchemyC_02000350:

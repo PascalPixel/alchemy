@@ -102,7 +102,6 @@ s32 Func_02000bd4(void)
     Func_080091c0(14, 11, 12, 4, 100, 11);
     Func_080091c0(48, 10, 5, 6, 120, 10);
 
-    id = 26;
     do {
         record = Func_0808a080(id);
         Func_08009080(record, 4);
@@ -111,6 +110,7 @@ s32 Func_02000bd4(void)
         record[35] = 2;
         id = id + 1;
     } while (id <= 30);
+    id = 26;
 
     record = Func_0808a080(18);
     record[35] = 2;
@@ -155,10 +155,10 @@ s32 Func_02000bd4(void)
     }
 
     record = Func_0808a080(32);
-    value = *(s32 *)(record + 8) >> 20;
-    record[85] = 0;
     record[35] = 2;
+    record[85] = 0;
     Func_080091c0(52, 28, 1, 3, value, 10);
+    value = *(s32 *)(record + 8) >> 20;
 
     record = Func_0808a080(33);
     value = *(s32 *)(record + 8) >> 20;

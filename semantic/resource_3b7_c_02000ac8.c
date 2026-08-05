@@ -153,9 +153,9 @@ s32 Func_02000ac8(void)
     /* r0 still holds whatever the call above left; no argument is set. */
     Func_0808a460();
 
-menu:
     coins = *(s32 *)&Data_02000240[16];
     tickets = Func_080772e0(229);
+menu:
 
     Func_0808a170(0xe43);
     Func_0808a178(-1, 0);
@@ -213,9 +213,9 @@ confirm_ticket:
         }
     }
 
-play:
     window = Func_08015010(20, 15, 9, 4, 2);
     Func_08015080(0xe4c, window, 0, 0);
+play:
     Func_08015080(0xe4d, window, 0, 8);
     Func_080000c0(5);
     Func_080f9010(0x74);
@@ -226,8 +226,8 @@ input_wait:
 
 input_check:
     if ((*(volatile s32 *)0x03001c94 & 1) != 0) {       /* A */
-        goto input_accepted;
     }
+        goto input_accepted;
     if ((*(volatile s32 *)0x03001c94 & 2) == 0) {       /* B */
         goto input_wait;
     }

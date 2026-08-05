@@ -104,21 +104,21 @@ void Func_02003a0c(void)
     u8 *record;
     u8 *workspace;
 
-    Func_0808a018();
     Data_0200db50[0] = 128 << 11;
-    Data_0200db60[0] = 0xffff8000;
+    Func_0808a018();
     Func_0808a030(0x0200d160);
+    Data_0200db60[0] = 0xffff8000;
     Func_080000c0(1);
 
     Func_0808a0f0(21, 182 << 16, 0x026a0000);
     record = Func_0808a080(21);
     *(u16 *)(record + 6) = (u16)(192 << 8);
-    Func_0808a0f0(20, 218 << 16, 129 << 18);
-    record = Func_0808a080(20);
     *(u16 *)(record + 6) = (u16)(176 << 8);
+    Func_0808a0f0(20, 218 << 16, 129 << 18);
+    *(u16 *)(record + 6) = (u16)(176 << 8);
+    record = Func_0808a080(20);
     Func_0808a0f0(22, 204 << 16, 0x020e0000);
     record = Func_0808a080(22);
-    *(u16 *)(record + 6) = (u16)(176 << 8);
     Func_0808a0f0(23, 0, 0);
 
     Func_0808a158(0, 15);

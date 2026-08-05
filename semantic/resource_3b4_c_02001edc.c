@@ -69,9 +69,9 @@ void Func_02001edc(void)
             Func_0808a1e0(10, 1);
             ((u8 *)Func_0808a080(10))[35] = 1;
         }
+    }
         last = (u8 *)Func_0808a080(11);
         marker = 0;
-    }
 
     last[35] = marker;
     ((u8 *)Func_0808a080(12))[35] = marker;

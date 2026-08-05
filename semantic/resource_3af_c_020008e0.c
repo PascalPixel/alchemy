@@ -54,7 +54,8 @@ s32 Func_020008e0(u8 *record)
     u32 countdown;
     u32 draw;
 
-    countdown = record[98];
+    s32 permuted_3;
+    permuted_3 = record[98];
     if (countdown != 0) {
         countdown += 255;               /* stored as a byte: a decrement */
     } else {
@@ -68,6 +69,7 @@ s32 Func_020008e0(u8 *record)
         }
         countdown = ((((u32)Func_080000f8() * 80) >> 16) + 80);
     }
+    countdown  = permuted_3;
     record[98] = (u8)countdown;
     return 1;
 }

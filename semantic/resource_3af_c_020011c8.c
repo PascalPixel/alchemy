@@ -77,10 +77,10 @@ void Func_020011c8(void)
 
         Func_0808a090(20, 0x6666, 0x3333);
         record = Func_0808a080(20);
-        record[90] &= 0xfe;
         Func_0808a0d0(20, 202, 204 << 2);
         Func_0808a010(1);
         record = Func_0808a080(20);
+        record[90] &= 0xfe;
         record[90] |= 1;
         Func_0808a010(20);
         Func_0808a130(20, 2);

@@ -28,14 +28,14 @@ void Func_0200384c(void)
     Func_080091e0(selected, 0);
 
     actor54[85] = 0;
-    selected[85] = 0;
     *(s32 *)(selected + 40) = 0;
+    selected[85] = 0;
     selected[97] = 1;
     actor54[97] = 1;
     for (ticks = 60; ticks != 0; ticks--) {
-        *(s32 *)(selected + 40) += 0x3333;
-        *(s32 *)(actor54 + 40) += 0x3333;
         Func_080000c0(1);
+        *(s32 *)(actor54 + 40) += 0x3333;
+        *(s32 *)(selected + 40) += 0x3333;
     }
 
     Func_0808a368();

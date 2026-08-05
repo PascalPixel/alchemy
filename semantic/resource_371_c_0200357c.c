@@ -57,16 +57,16 @@ void Func_0200357c(void)
     Func_0808a158(0, 15);
     actor0 = Func_0808a080(0);
     Func_080091e0(actor0, 0);
+    actor8->state_flags = 0;
     actor8 = Func_0808a080(8);
     Func_080091e0(actor8, 0);
     Func_0808a090(8, 0x6666, 0x3333);
-    actor8->state_flags = 0;
     Func_0808a098(8, Data_0200d218);
     Func_080000d0(Func_020034a0, 3200);
 
+    Data_03001ebc->scene_timer = 32;
     Data_03001ebc->scene_value = 256;
     Func_0808a330(0x10003, 1);
-    Data_03001ebc->scene_timer = 32;
     Func_0808a360();
     Func_0808a010(120);
     Func_0808a5c0(0x16666, 300);

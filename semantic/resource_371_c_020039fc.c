@@ -194,8 +194,8 @@ void Func_020039fc(s32 palette)
     record = Func_0808a080(*(s32 *)(0x02000240 + (250 << 1)));   /* +500 */
     record[84] = 0;
 
-    workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + (228 << 1)) = 16;       /* +456 */
+    workspace = *(u8 **)0x03001ebc;
 
     Func_0808a360();
     Func_0808a370();
@@ -205,8 +205,8 @@ void Func_020039fc(s32 palette)
     Queue_020039fc((u32)(buffer + (210 << 6)), 0x06002000, 0x84000140);
     Func_0808a010(2);
 
-    *frame = 0x0d00;
     Queue_020039fc((u32)(buffer + (186 << 6)), 0x06002000, 0x84000140);
+    *frame = 0x0d00;
     Func_0808a010(2);
 
     *frame = 0x0c00;
@@ -219,9 +219,9 @@ void Func_020039fc(s32 palette)
     Func_0808a010(2);
 
     highA = (u16)(160 << 4);                     /* 0x0a00 */
-    *frame = highA;
     Queue_020039fc((u32)(buffer + (228 << 5)), 0x06002000, 0x84000140);
     Func_0808a010(2);
+    *frame = highA;
 
     highLow = (u16)(144 << 4);                   /* 0x0900 */
     *frame = highLow;
@@ -255,8 +255,8 @@ void Func_020039fc(s32 palette)
     Queue_020039fc((u32)(buffer + (210 << 6)), 0x06002000, 0x84000140);
     Func_0808a010(4);
 
-    *frame = 0x0c00;
     Queue_020039fc((u32)(buffer + (234 << 6)), 0x06002000, 0x84000140);
+    *frame = 0x0c00;
 
     Func_08009238();
     Func_080000d0((s32)Func_0200395c + 1, 200 << 4);     /* 3200 */

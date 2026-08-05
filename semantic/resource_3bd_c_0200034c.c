@@ -99,8 +99,8 @@ u8 *Func_0200034c(s32 *directionOut, s32 *slotOut, s32 *kindIndexOut)
                     }
                 }
 
-                *slotOut = slot;
                 return world;
+                *slotOut = slot;
             }
         }
     }

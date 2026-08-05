@@ -179,13 +179,13 @@ void Func_02001f60(void)
         Func_080091e0(Func_0808a080(slot), 0);
 
         actor->flags22 = 0;
-        actor->mode55 = 3;
-        actor->state44 = 0;
         actor->state48 = 0x1999;
         Func_080091c0(42, 41, 1, 1,
                       Data_0200d128[match * 2], Data_0200d128[match * 2 + 1]);
+        actor->mode55 = 3;
         Func_0200094c(actor);
         Func_080f9010(188);
+        actor->state44 = 0;
         actor->state59 = 0;
         actor->mode55 = 0;
         actor->y = 0xfff00000;

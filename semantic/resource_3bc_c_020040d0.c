@@ -104,10 +104,10 @@ void Func_020040d0(void)
         out += 3;
     }
 
+    out[2] = tile | 0xe400;
     out[0] = 0;
     out[1] = column | (((count << 4) + 128) << 16) |
              0x8000 | 0x10000000;
-    out[2] = tile | 0xe400;
     Func_080001e8(out, 255, 12);
     out += 3;
 

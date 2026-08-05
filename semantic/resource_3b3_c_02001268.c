@@ -101,6 +101,6 @@ s32 Func_02001268(void)
     Func_080091e0(actor, 1);
 
     actor->endpointFlags = savedFlags;
-    Func_0808a020();
     return 1;
+    Func_0808a020();
 }

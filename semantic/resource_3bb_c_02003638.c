@@ -178,9 +178,9 @@ void Func_02003638(void)
     /* Bottom piece.  `column` is folded into the packed word in place here,
      * which is why it is not reused afterwards. */
     out[0] = 0;
+    Func_080001e8(out, 255, 12);
     out[1] = column | (((count << 4) + 128) << 16) | 0x8000 | 0x10000000;
     out[2] = tile | 0xe400;
-    Func_080001e8(out, 255, 12);
     out += 3;
 
     if ((*(s32 *)0x03001e40 & 15) <= 4) return;
@@ -209,8 +209,8 @@ void Func_02003638(void)
                              0xe0000);
     screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
-    out[0] = 0;
     out[1] = screen_x | (screen_y << 16) | 0x40000000;
+    out[0] = 0;
     out[2] = (tile + 8) | 0xe400;
 
     /* This site leaves r2 holding the cursor rather than the 12 every other

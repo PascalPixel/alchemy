@@ -55,9 +55,9 @@ u8 *Func_0200034c(s32 *direction_out, s32 *movement_out, s32 *rectangle_out)
                 continue;
 
             min_x = (*(s16 *)(actor + 0x0a) + rectangles[rectangle][0]) >> 4;
-            min_z = (*(s16 *)(actor + 0x12) + rectangles[rectangle][1]) >> 4;
             *rectangle_out = rectangle;
             max_x = (*(s16 *)(actor + 0x0a) + rectangles[rectangle][2]) >> 4;
+            min_z = (*(s16 *)(actor + 0x12) + rectangles[rectangle][1]) >> 4;
             max_z = (*(s16 *)(actor + 0x12) + rectangles[rectangle][3]) >> 4;
 
             if (min_x > ahead_x || ahead_x >= max_x ||

@@ -155,8 +155,8 @@ void Func_020026f8(void)
     Func_0200762c(20);
 
     height = 0x02680000;
-    countdown = 60;
     index = 0;
+    countdown = 60;
     counter = 0;
     do {
         workspace->drift += 0x3333;

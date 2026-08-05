@@ -40,8 +40,8 @@ void Func_02000608(s32 row, s32 actorSlot, s32 targetX, s32 elevation,
     s32 dy1 = delta[3] < 0 ? -delta[3] : delta[3];
     s32 width = (dx0 + dx1) >> 4;
     s32 height = (dy0 + dy1) >> 4;
-    s32 oldX = *(s32 *)(actor + 8) + (delta[0] << 16);
     s32 oldY = *(s32 *)(actor + 16) + (delta[1] << 16);
+    s32 oldX = *(s32 *)(actor + 8) + (delta[0] << 16);
     s32 oldTileX = oldX >> 20;
     s32 oldTileY = oldY >> 20;
     s32 moveX;

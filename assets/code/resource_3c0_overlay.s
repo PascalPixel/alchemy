@@ -946,11 +946,8 @@ AlchemyC_020003ac:
 	bl	.L_02000da2
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	movs	r0, #10
-	bl	.L_02000dae
-	pop	{r0}
-	bx	r0
+AlchemyC_02000814:
+	.space 0xc
 	push	{lr}
 	movs	r0, #11
 	bl	sub_02000dba

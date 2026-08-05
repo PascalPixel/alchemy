@@ -1,16 +1,19 @@
 #include "types.h"
 
-extern s32 Func_03000380(s32 channel, s32 amount);
 
+
+extern s32 Func_020030ea(s32 channel, s32 amount);
+extern s32 Func_020030f8(s32 channel, s32 amount);
+extern s32 Func_02003106(s32 channel, s32 amount);
 u16 Func_020017d0(u16 colour, s32 amount)
 {
     s32 green = (colour >> 5) & 31;
     s32 red = colour & 31;
     s32 blue = (colour >> 10) & 31;
 
-    red += Func_03000380(red, amount << 2);
-    green -= Func_03000380(green, amount);
-    blue -= Func_03000380(blue, amount);
+    red += Func_020030ea(red, amount << 2);
+    green -= Func_020030f8(green, amount);
+    blue -= Func_02003106(blue, amount);
     if (red > 31)
         red = 31;
 

@@ -8,28 +8,51 @@
  * transition rectangles drawn before and after each pass. The four-word
  * descriptor is consumed by this overlay's established general spawner.
  */
-extern s32 Func_080000f8(void);
-extern void Func_08009180(s32, s32, s32, s32, s32, s32);
-extern void Func_0808a010(s32);
-extern void Func_080f9010(s32);
-extern void Func_0200013c(s32, s32, s32, s32, s32, s32, u32, void *);
 
+
+
+
+
+
+extern void Func_02007a2e(s32);
+extern void Func_020077e4(s32, s32, s32, s32, s32, s32);
+extern void Func_020077f4(s32, s32, s32, s32, s32, s32);
+extern void Func_0200780a(s32, s32, s32, s32, s32, s32);
+extern void Func_0200781a(s32, s32, s32, s32, s32, s32);
+extern void Func_0200782e(s32, s32, s32, s32, s32, s32);
+extern void Func_0200783e(s32, s32, s32, s32, s32, s32);
+extern s32 Func_02007814(void);
+extern s32 Func_02007828(void);
+extern void Func_02002000(s32, s32, s32, s32, s32, s32, u32, void *);
+extern s32 Func_02007862(void);
+extern s32 Func_02007876(void);
+extern void Func_02002052(s32, s32, s32, s32, s32, s32, u32, void *);
+extern s32 Func_020078b0(void);
+extern s32 Func_020078c4(void);
+extern void Func_0200209c(s32, s32, s32, s32, s32, s32, u32, void *);
+extern void Func_02007a12(s32);
+extern void Func_02007998(s32, s32, s32, s32, s32, s32);
+extern void Func_020079ac(s32, s32, s32, s32, s32, s32);
+extern void Func_020079c4(s32, s32, s32, s32, s32, s32);
+extern void Func_020079d6(s32, s32, s32, s32, s32, s32);
+extern void Func_020079ee(s32, s32, s32, s32, s32, s32);
+extern void Func_02007a04(s32, s32, s32, s32, s32, s32);
 void Func_02001db4(s32 variant)
 {
     s32 descriptor[4];
     s32 pass;
 
-    Func_080f9010(0xd3);
+    Func_02007a2e(0xd3);
 
     if (variant == 0) {
-        Func_08009180(111, 57, 113, 42, 1, 1);
-        Func_08009180(111, 59, 113, 43, 1, 1);
+        Func_020077e4(111, 57, 113, 42, 1, 1);
+        Func_020077f4(111, 59, 113, 43, 1, 1);
     } else if (variant == 1) {
-        Func_08009180(113, 58, 112, 46, 1, 1);
-        Func_08009180(115, 58, 113, 46, 1, 1);
+        Func_0200780a(113, 58, 112, 46, 1, 1);
+        Func_0200781a(115, 58, 113, 46, 1, 1);
     } else {
-        Func_08009180(115, 57, 116, 44, 1, 1);
-        Func_08009180(113, 57, 115, 44, 1, 1);
+        Func_0200782e(115, 57, 116, 44, 1, 1);
+        Func_0200783e(113, 57, 115, 44, 1, 1);
     }
 
     descriptor[1] = 7;
@@ -44,45 +67,45 @@ void Func_02001db4(s32 variant)
         for (slot = 0; slot <= 7; slot++) {
             if ((slot & 1) != 0) {
                 if (variant == 0) {
-                    u32 randomX = (u32)(Func_080000f8() << 3) >> 16;
-                    u32 randomY = (u32)(Func_080000f8() << 3) >> 16;
-                    Func_0200013c(
+                    u32 randomX = (u32)(Func_02007814() << 3) >> 16;
+                    u32 randomY = (u32)(Func_02007828() << 3) >> 16;
+                    Func_02002000(
                         (s32)(randomX * 0x3333) - 0xcccc,
                         variant, (s32)(randomY * 0x3333) - 0xcccc,
                         0x03180000, 0, right,
                         0x00090000, descriptor);
                 } else if (variant == 1) {
-                    u32 randomX = (u32)(Func_080000f8() << 3) >> 16;
-                    u32 randomY = (u32)(Func_080000f8() << 3) >> 16;
-                    Func_0200013c(
+                    u32 randomX = (u32)(Func_02007862() << 3) >> 16;
+                    u32 randomY = (u32)(Func_02007876() << 3) >> 16;
+                    Func_02002052(
                         0, (s32)(randomY * 0x3333) - 0xcccc,
                         right + 0x00600000, 0, 0x02ea0000,
                         (s32)(randomX * 0x3333) - 0xcccc,
                         0x00090000, descriptor);
                 } else {
-                    u32 randomX = (u32)(Func_080000f8() << 3) >> 16;
-                    u32 randomY = (u32)(Func_080000f8() << 3) >> 16;
-                    Func_0200013c(
+                    u32 randomX = (u32)(Func_020078b0() << 3) >> 16;
+                    u32 randomY = (u32)(Func_020078c4() << 3) >> 16;
+                    Func_0200209c(
                         left, 0, 0x02ca0000,
                         (s32)(randomX * 0x3333) - 0xcccc,
                         0, (s32)(randomY * 0x3333) - 0xcccc,
                         0x00090000, descriptor);
                 }
-                Func_0808a010(1);
+                Func_02007a12(1);
             }
             left -= 0x10000;
             right += 0x10000;
         }
 
         if (variant == 0) {
-            Func_08009180(111, 58, 113, 43 + pass, 1, 1);
-            Func_08009180(111, 59, 113, 44 + pass, 1, 1);
+            Func_02007998(111, 58, 113, 43 + pass, 1, 1);
+            Func_020079ac(111, 59, 113, 44 + pass, 1, 1);
         } else if (variant == 1) {
-            Func_08009180(114, 58, 113 + pass, 46, 1, 1);
-            Func_08009180(115, 58, 114 + pass, 46, 1, 1);
+            Func_020079c4(114, 58, 113 + pass, 46, 1, 1);
+            Func_020079d6(115, 58, 114 + pass, 46, 1, 1);
         } else {
-            Func_08009180(114, 57, 115 - pass, 44, 1, 1);
-            Func_08009180(113, 57, 114 - pass, 44, 1, 1);
+            Func_020079ee(114, 57, 115 - pass, 44, 1, 1);
+            Func_02007a04(113, 57, 114 - pass, 44, 1, 1);
         }
     }
 }

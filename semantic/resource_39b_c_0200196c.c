@@ -22,6 +22,7 @@ void Func_0200196c(void)
     u8 *actor;
     u8 *workspace;
 
+    s32 permuted_11;
     if (Func_080770c0(0x250) != 0) return;
     Func_080770c8(0x250);
     Func_0808a018();
@@ -30,8 +31,9 @@ void Func_0200196c(void)
     actor = Func_0808a080(14); *(int *)(actor + 24) = -0x10000;
     Func_0808a0f0(3, 0x880000, 0x900000);
     Func_0808a1b8(3, 0x10000, 10);
-    workspace = *(u8 **)0x03001ebc;
+    permuted_11 = *(u8 **)0x03001ebc;
     *(int *)(workspace + 448) = 0x201;
+    workspace  = permuted_11;
     Func_0808a360();
     Func_0808a370();
     Func_0808a010(60);

@@ -45,15 +45,15 @@ void Func_02003948(void)
             if ((member & 1) != 0) {
                 if ((member & 2) != 0) {
                     s32 sample = (s32)((Func_080000f8() * 5) >> 16);
-                    s32 x = (105 - sample) << 16;
                     s32 z = baseZ - group * 0x80000 + 0x022e0000;
+                    s32 x = (105 - sample) << 16;
 
                     Func_0200013c(x, 0, z, 0, 0, -0x4000,
                                   0x90000, extra);
                 } else {
                     s32 sample = (s32)((Func_080000f8() * 5) >> 16);
-                    s32 x = ((group * 4 + member) << 17) + (183 << 16);
                     s32 z = (620 - sample) << 16;
+                    s32 x = ((group * 4 + member) << 17) + (183 << 16);
 
                     Func_0200013c(x, 0, z, 0x4000, 0, 0,
                                   0x90000, extra);

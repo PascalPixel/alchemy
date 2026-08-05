@@ -91,20 +91,20 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
     entry = table[idx];
     Func_08009080(object, (s32)entry);
 
-    object[0x55] = 0;
     ownerRecord[0x26] = 0;
+    object[0x55] = 0;
     *(u32 *)(object + 0x6c) = 0x02008105;
-    *(s32 *)(object + 0x44) = a4;
     *(s32 *)(object + 0x48) = a5;
     *(s32 *)(object + 0x4c) = a6;
+    *(s32 *)(object + 0x44) = a4;
 
     callResult = Func_08009098(0);
     ownerRecord[9] = (ownerRecord[9] & ~0x0c) | (*(u8 *)(*(u8 **)(callResult + 0x50) + 9) & 0x0c);
 
     *(s32 *)(object + 0x30) = 0;
     *(s32 *)(object + 0x34) = 0;
-    field64 = (u16 *)(object + 0x64);
     *field64 = 0;
+    field64 = (u16 *)(object + 0x64);
 
     if ((flags & 0xffff0000) == 0 || extra == 0) {
         return;

@@ -76,8 +76,8 @@ void Func_020027ec(void)
     record = Func_0808a080(8);
     record[91] = 0;
     Func_080f9010(152);
-    record = Func_0808a080(8);
     *(s32 *)(record + 40) = 128 << 12;
+    record = Func_0808a080(8);
     Func_0808a100(8, 1);
     Func_0808a170(0x17be);
     Func_0808a188(8, 0, 20);
@@ -91,10 +91,10 @@ void Func_020027ec(void)
     Func_0808a178(8, 0);
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a010(10);
+        *(u16 *)(workspace + 472) += 2;
         Func_0808a110(8, 3);
         Func_0808a010(20);
         Func_0808a188(8, 0, 20);
-        *(u16 *)(workspace + 472) += 2;
     } else {
         Func_0808a010(10);
         Func_0808a138(8, 2);
@@ -121,8 +121,8 @@ repeatPrompt:
             Func_0808a010(10);
             Func_0808a1e8(8, 0x102, 60);
             Func_0808a170(0x17e0);
-            Func_0808a178(8, 0);
             goto repeatPrompt;
+            Func_0808a178(8, 0);
         }
     }
     Func_0808a170(0x17c9);

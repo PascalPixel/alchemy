@@ -145,21 +145,21 @@ void Func_020016bc(void)
     handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
     handle->field27 = 0;            /* stored from r8, which is 0 here */
 
-    entity->field5c = 1;
     entity->field55 = 0;            /* stored from r8, which is 0 here */
-    entity->y = 0x000a0000;
     entity->field61 = 1;
+    entity->field5c = 1;
+    entity->y = 0x000a0000;
 
     gradient = Func_08000140(17, 0x608);
-    Func_08015250(0xb5);
     gradient += 0x400;
+    Func_08015250(0xb5);
     Func_080001c8(handle->paletteIndex, 0x80, gradient);
     Func_08000150(17);
 
+    entity->field40 = entity->z;
     entity->field30 = 0;            /* stored from r8, which is 0 here */
     entity->field38 = entity->x;
     entity->field3c = entity->y;
-    entity->field40 = entity->z;
 
     /* 0x0200b90d = file offset 0x390c + the Thumb bit = Func_0200390c, the
      * byte-exact task in assets/code/resource_3a8_c_0200390c.c. */

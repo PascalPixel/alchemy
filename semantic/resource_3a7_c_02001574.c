@@ -33,10 +33,10 @@ u64 Func_02001574(u64 value, u32 count)
     }
 
     if ((int)(32 - count) <= 0) {
-        resultLo = hi >> (count - 32u);
-        resultHi = 0u;
     } else {
+        resultHi = 0u;
         resultLo = (lo >> count) | (hi << (32u - count));
+        resultLo = hi >> (count - 32u);
         resultHi = hi >> count;
     }
 

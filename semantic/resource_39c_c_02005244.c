@@ -21,10 +21,14 @@
 
 typedef s32 (*BinaryFixedHelper)(s32 left, s32 right);
 
-extern s32 Func_08000110(s32 value);
-extern s32 Func_030001d8(s32 value);
-extern s32 Func_0300013c(s32 distance, s32 delta);
 
+
+
+
+extern s32 Func_0200af24(s32 value);
+extern s32 Func_0200ac82(s32 value);
+extern s32 Func_0200afac(s32 distance, s32 delta);
+extern s32 Func_0200afc2(s32 distance, s32 delta);
 void Func_02005244(u8 *object)
 {
     u8 *target = *(u8 **)(object + 104);
@@ -47,12 +51,12 @@ void Func_02005244(u8 *object)
     *(s32 *)(object + 60) = (s32)0x80000000;
     *(s32 *)(object + 64) = (s32)0x80000000;
 
-    distance = Func_030001d8(tileX * tileX + tileZ * tileZ) << 16;
+    distance = Func_0200af24(tileX * tileX + tileZ * tileZ) << 16;
     deltaX = targetX - *(s32 *)(object + 8);
     deltaZ = targetZ - *(s32 *)(object + 16);
 
     if (distance < 0x400000) {
-        distance = Func_08000110(
+        distance = Func_0200ac82(
             fixedMultiply(deltaX, deltaX) +
             fixedMultiply(deltaZ, deltaZ));
     }
@@ -67,8 +71,8 @@ void Func_02005244(u8 *object)
         *(s32 *)(object + 16) = targetZ;
     } else {
         if (distance > step) {
-            deltaX = fixedMultiply(Func_0300013c(distance, deltaX), step);
-            deltaZ = fixedMultiply(Func_0300013c(distance, deltaZ), step);
+            deltaX = fixedMultiply(Func_0200afac(distance, deltaX), step);
+            deltaZ = fixedMultiply(Func_0200afc2(distance, deltaZ), step);
         }
         *(s32 *)(object + 8) += deltaX;
         *(s32 *)(object + 16) += deltaZ;

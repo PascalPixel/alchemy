@@ -22,8 +22,20 @@ struct ParticleSpec_02004968 {
 extern const u8 Data_020052cc[];
 extern void Func_02000118(s32, s32, s32, s32, s32, s32, s32,
                           struct ParticleSpec_02004968 *);
-extern u32 Func_080000f8(void);
-extern void Func_080f9010(s32 cue);
+/*
+ * CALL SYMBOLS ARE PER-SITE: the raw assembly's five `bl`s to the
+ * random/cue helpers are direct `bl sub_0200XXXX` relocations against
+ * absolute .set symbols (verified via `arm-none-eabi-objdump -dr -M
+ * force-thumb` on the assembled .o) -- lifted verbatim, not the
+ * veneer-math final target names (Func_080000f8/Func_080f9010) this file
+ * used before. Func_02000118 (a genuine same-overlay direct call, no
+ * relocation) is unchanged.
+ */
+extern u32 Func_0200975c(void);
+extern u32 Func_02009774(void);
+extern u32 Func_0200978a(void);
+extern u32 Func_020097a0(void);
+extern void Func_020099a0(s32 cue);
 
 s32 Func_02004968(const s32 *position)
 {
@@ -42,15 +54,15 @@ s32 Func_02004968(const s32 *position)
     if ((frame & 3) != 0)
         return 0;
     if ((frame & 7) == 0)
-        Func_080f9010(0xf6);
+        Func_020099a0(0xf6);
 
     x = position[2] +
-        ((s32)(((Func_080000f8() * 49u) >> 16) - 24) << 16);
+        ((s32)(((Func_0200975c() * 49u) >> 16) - 24) << 16);
     y = position[3] +
-        ((s32)(((Func_080000f8() * 49u) >> 16) - 24) << 16);
+        ((s32)(((Func_02009774() * 49u) >> 16) - 24) << 16);
     z = position[4] +
-        ((s32)(((Func_080000f8() * 49u) >> 16) - 24) << 16);
-    scatter = 0x8000 + (s32)(((Func_080000f8() << 2) >> 16) << 15);
+        ((s32)(((Func_0200978a() * 49u) >> 16) - 24) << 16);
+    scatter = 0x8000 + (s32)(((Func_020097a0() << 2) >> 16) << 15);
 
     Func_02000118(x, y, z, 0, scatter, 0, 0x00330000, &spec);
     return 0;

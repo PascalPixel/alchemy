@@ -5982,7 +5982,7 @@
 <rect x="406.105578" y="86.016578" width="5.699201" height="5.11371" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x08091174–0x080911e8: 116 bytes">
-<rect x="411.804779" y="86.016578" width="5.6992" height="5.11371" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="411.804779" y="86.016578" width="5.6992" height="5.11371" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x080942e0–0x08094354: 116 bytes">
 <rect x="417.503979" y="86.016578" width="5.699201" height="5.11371" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
@@ -7726,7 +7726,7 @@
 <rect x="430.405315" y="258.922761" width="5.173304" height="5.536418" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 </g>
 <g aria-label="0x080f377c–0x080f37ec: 112 bytes">
-<rect x="430.405315" y="264.459179" width="5.173304" height="5.439287" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="430.405315" y="264.459179" width="5.173304" height="5.439287" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x080f4100–0x080f4168: 104 bytes">
 <rect x="430.405315" y="269.898466" width="5.173304" height="5.050767" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
@@ -9862,9 +9862,9 @@
 <rect x="536.829121" y="227.069514" width="0.170879" height="52.930486" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 </g>
 <text class="weyard" x="6" y="17">MAIN IMAGE</text>
-<text class="weyard" x="534" y="17" text-anchor="end">DONE 24.7%</text>
+<text class="weyard" x="534" y="17" text-anchor="end">DONE 24.8%</text>
 <rect x="6" y="288" width="10" height="10" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
-<text class="weyard" x="20" y="293" dominant-baseline="middle">Semantic 75.3%</text>
+<text class="weyard" x="20" y="293" dominant-baseline="middle">Semantic 75.2%</text>
 <rect x="134" y="288" width="10" height="10" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 <text class="weyard" x="148" y="293" dominant-baseline="middle">Permanent ASM 5.6%</text>
 <rect x="294" y="288" width="10" height="10" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>

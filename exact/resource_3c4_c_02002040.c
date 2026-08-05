@@ -8,6 +8,11 @@
  * `negs r1,r1` after `movs r1,#1` materialises -1, so the two middle calls
  * take signed -1 arguments.
  *
+ * Call symbols are the per-site stored-displacement identities decoded from
+ * the reference `bl` fields (+2 rule): Func_020050f2/Func_02005104 are
+ * Func_080091c0, Func_0200520a/Func_02005218 are Func_0808a3c0, and
+ * Func_020051ca/Func_020051d4 are Func_0808a0f0.
+ *
  * The tail at 0x02002090 is a secondary entry into this owner used by
  * Func_02001fc4, which is not admitted (see this overlay's report).
  *
@@ -15,17 +20,20 @@
  */
 #include "types.h"
 
-void Func_080091c0();
-void Func_0808a0f0();
-void Func_0808a3c0();
+void Func_020050f2();
+void Func_02005104();
+void Func_0200520a();
+void Func_02005218();
+void Func_020051ca();
+void Func_020051d4();
 
 void Func_02002040(void)
 {
-    Func_080091c0(8, 113, 1, 1, 8, 49);
-    Func_080091c0(49, 107, 1, 1, 49, 43);
-    Func_0808a3c0(100, -1, -1);
-    Func_0808a3c0(101, -1, -1);
-    Func_0808a0f0(15, 0, 0);
+    Func_020050f2(8, 113, 1, 1, 8, 49);
+    Func_02005104(49, 107, 1, 1, 49, 43);
+    Func_0200520a(100, -1, -1);
+    Func_02005218(101, -1, -1);
+    Func_020051ca(15, 0, 0);
     /* secondary entry 0x02002090 */
-    Func_0808a0f0(16, 0, 0);
+    Func_020051d4(16, 0, 0);
 }

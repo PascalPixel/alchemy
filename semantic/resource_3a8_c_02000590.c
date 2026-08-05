@@ -642,8 +642,8 @@ void Func_02000590(void)
     if (*(s16 *)(scene + 364) == 9) {
         Func_0808a0d0(0, 224, 458);
         entity = Func_0808a080(0);
-        pose = 0xc000;
     } else {
+        pose = 0xc000;
         Func_0808a0d0(0, 40, 248);
         entity = Func_0808a080(0);
         pose = 0x4000;

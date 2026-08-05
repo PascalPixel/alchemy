@@ -19,6 +19,7 @@ static s32 Abs_02000758(s32 value)
 s32 Func_02000758(s32 *result)
 {
     s32 permuted_22;
+    s32 permuted_29;
     const s32 *const deltas = (const s32 *)0x02009718;
     const s32 *const referenceDeltas = (const s32 *)0x020096c0;
     s32 referenceBucket;
@@ -47,8 +48,9 @@ s32 Func_02000758(s32 *result)
     referenceStepZ = (s32)((u32)referenceDelta << 16);
     basePosition[0] = *(s32 *)(slot + 8) + referenceStepX;
     basePosition[1] = *(s32 *)(slot + 12);
-    basePosition[2] = *(s32 *)(slot + 16) + referenceStepZ;
+    permuted_29 = *(s32 *)(slot + 16) + referenceStepZ;
     result[3] = basePosition[1];
+    basePosition[2]  = permuted_29;
 
     for (;;) {
         s32 z;

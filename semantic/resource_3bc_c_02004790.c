@@ -57,8 +57,8 @@ s32 Func_02004790(void)
 
     heading = (*(u16 *)(record + 6) + 0x2000) & 0xc000;
 
-    probe[0] = (*(s32 *)(record + 8) & (s32)0xfff00000) + 0x80000;
     probe[1] = *(s32 *)(record + 12);
+    probe[0] = (*(s32 *)(record + 8) & (s32)0xfff00000) + 0x80000;
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + 0x80000;
 
     Func_02009046(0x100000, heading, probe);
@@ -67,8 +67,8 @@ s32 Func_02004790(void)
         return result;
     }
 
-    probe[0] = (*(s32 *)(record + 8) & (s32)0xfff00000) + 0x80000;
     probe[1] = *(s32 *)(record + 12);
+    probe[0] = (*(s32 *)(record + 8) & (s32)0xfff00000) + 0x80000;
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + 0x80000;
 
     Func_02009078(0x200000, heading, probe);

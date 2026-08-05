@@ -129,12 +129,12 @@ s32 Func_020006ec(void)
     }
 
     switch (*scene) {
-    case 1:
         if (Func_080770c0(0x815) != 0) {
             break;
         }
         Func_080770c8(0x815);
         Func_080770c8(0x85c);
+    case 1:
         break;
 
     case 33:
@@ -161,7 +161,6 @@ s32 Func_020006ec(void)
         Func_020024a8();
         break;
 
-    case 49:
         if (Func_080770c0(0x94f) != 0) {
             break;
         }
@@ -169,6 +168,7 @@ s32 Func_020006ec(void)
             break;
         }
         Func_02000a8c();
+    case 49:
         break;
 
     case 64:

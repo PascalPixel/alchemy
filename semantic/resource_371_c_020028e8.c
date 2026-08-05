@@ -89,6 +89,21 @@ void Func_020028e8(void)
             Func_08009158(lead);
         }
     } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
+    } else if (lead->x > 0x177a0000) {
         Func_08009150(lead, 0x177a0000, *(volatile s32 *)12, 0x0d480000);
         Func_08009158(lead);
     }
@@ -122,7 +137,6 @@ void Func_020028e8(void)
     }
 
     selected = Func_0808a080(Data_0200e79c);
-    selected->presentation = 0x3000;
     Func_0808a1e8(Data_0200e79c, 256, 0);
     Func_0808a138(Data_0200e79c, 2);
     Func_0808a170(0x2644);
@@ -130,6 +144,7 @@ void Func_020028e8(void)
     if (effect != 0) {
         Func_080090d0(effect);
     }
+    selected->presentation = 0x3000;
     Func_0808a100(0, 1);
     Func_0808a010(40);
     Func_0808a128(Data_0200e79c, 6, 40);
@@ -157,13 +172,13 @@ void Func_020028e8(void)
     Func_0808a090(55, 0x10000, 0x8000);
     actor55 = Func_0808a080(55);
     actor55 = (struct SceneActor_020028e8 *)((u8 *)actor55);
-    ((u8 *)actor55)[90] &= 0xfe;
     Func_0808a100(55, 2);
     Func_08009150(actor55, 0x176d0000, 0, 0x0d580000);
     Func_08009158(actor55);
     Func_0808a100(55, 1);
     Func_0808a010(10);
     Func_0808a100(55, 2);
+    ((u8 *)actor55)[90] &= 0xfe;
     Func_08009150(actor55, 0x17710000, 0, 0x0d580000);
     Func_08009158(actor55);
     Func_0808a100(55, 1);

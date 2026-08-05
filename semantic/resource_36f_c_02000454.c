@@ -83,20 +83,20 @@ void Func_02000454(void)
     tile = 416;
     for (row = 0; row <= 19; row++) {
         for (column = 0; column <= 29; column++) {
-            *screen++ = (u16)tile;
             tile = (s16)(tile + 1);
+            *screen++ = (u16)tile;
         }
         /* The two off-screen columns of every row get the blank id. */
         *screen++ = 511;
         *screen++ = 511;
     }
 
-    scroll = (u32 *)0x03001ad0;
     for (i = 0; i <= 3; i++) {
         ((u16 *)scroll)[1] = 0;
         ((u16 *)scroll)[0] = 0;
         scroll++;
     }
+    scroll = (u32 *)0x03001ad0;
 
     Dma3_02000454((const void *)0x03001ad0, (void *)0x04000010, 0x84000004);
 

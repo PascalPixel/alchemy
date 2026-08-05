@@ -72,8 +72,8 @@ void Func_02000260(void)
         if (Func_0808a070(0, 0) == 0) {
             Func_0808a180(11, 0);
             Func_080770c8(0x8a6);
-        } else {
             *(u16 *)(Data_03001ebc + 472) += 1;
+        } else {
             Func_0808a180(11, 0);
         }
     } else {

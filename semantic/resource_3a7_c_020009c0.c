@@ -103,10 +103,10 @@ void Func_020009c0(void)
         u8 *entry = Func_0808a080(index + 11);
 
         if (*(s32 *)(entry + 40) >= 0 && *(s32 *)(entry + 12) <= 0x0000ffff) {
+            *(s32 *)(entry + 40) = 0;
             Func_02000b8c(entry);
             *(s32 *)(entry + 12) = 0x00ff0000;
             *(s32 *)(entry + 72) = 0;
-            *(s32 *)(entry + 40) = 0;
             entry[91] = 0;
             Func_080f9010(106);
         }

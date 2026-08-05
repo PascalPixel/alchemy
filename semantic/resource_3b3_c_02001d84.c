@@ -49,12 +49,12 @@ void Func_02001d84(void)
             continue;
         }
 
+        probe[2] = *(s32 *)(actor + 16);
         probe[0] = *(s32 *)(actor + 8);
         probe[1] = *(s32 *)(actor + 12);
-        probe[2] = *(s32 *)(actor + 16);
-        state = actor + 0x55;
-        if (Func_080091d8(actor, probe) == -1)
             *state = 3;
+        if (Func_080091d8(actor, probe) == -1)
+        state = actor + 0x55;
 
         Func_0200101c(0, record[0], record[2], (u8 *)(record + 3));
         Func_0200101c(2, record[0], record[2], (u8 *)(record + 3));

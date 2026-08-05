@@ -57,10 +57,10 @@ void Func_02000674(void)
     entry = Func_0808a080(10);
     entry[0x54] = 0;
 
+    *displayControl = 0x0140;
     Func_080000c0(1);
     *displayControl = 0x1140;
     Func_0808a180(-1, 0);
-    *displayControl = 0x0140;
 
     entry = Func_0808a080(0);
     entry[0x54] = 1;
@@ -78,9 +78,9 @@ void Func_02000674(void)
     Func_0808a1b8(3, 0, 0);
     Func_0808a1b8(2, 0xe000, 0);
 
-    *(u32 *)(*workspace + 0x1c8) = 60;
     Func_0808a360();
     Func_0808a370();
+    *(u32 *)(*workspace + 0x1c8) = 60;
     Func_0808a010(20);
     *(u32 *)(*workspace + 0x1c8) = 24;
 
@@ -149,9 +149,9 @@ void Func_02000674(void)
         Func_0808a010(30);
         Func_0808a110(1, 3);
         Func_0808a010(20);
-        Func_0808a180(1, 0);
         *(u16 *)(*workspace + 0x1d8) += 1;
         *(u16 *)(*workspace + 0x1d8) += 2;
+        Func_0808a180(1, 0);
     } else {
         Func_0808a010(10);
         Func_0808a110(0, 33);

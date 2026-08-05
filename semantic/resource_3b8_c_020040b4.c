@@ -43,6 +43,7 @@ void Func_0808a1b8();
 
 s32 Func_020040b4(void)
 {
+    s32 permuted_13;
     s16 *table = (s16 *)0x02000240;
     s16 listA[8];
     s16 listB[8];
@@ -56,7 +57,8 @@ s32 Func_020040b4(void)
     Func_08009190(2);
     Func_08009190(4);
 
-    step = table[0xe1];
+    step  = permuted_13;
+    permuted_13 = table[0xe1];
     raw = (u16)table[0xe1];
     if (step == 90) {
         Func_080770c8(0x962);
@@ -85,16 +87,16 @@ s32 Func_020040b4(void)
             u8 *sub = *(u8 **)(record + 0x50);
             s32 handle;
 
-            record[0x5c] = 1;
             record[0x55] = (u8)slot;              /* slot is 0 on this path */
-            *(u32 *)(record + 0x0c) = 0x40000;
-            sub[0x27] = (u8)slot;
             sub[5] = (u8)(sub[5] & ~0x20);
+            *(u32 *)(record + 0x0c) = 0x40000;
+            record[0x5c] = 1;
+            sub[0x27] = (u8)slot;
             sub[9] = (u8)(sub[9] & 0x0f);
 
             handle = Func_08000140(17, 0x608);
-            Func_08015250(205);                   /* result discarded */
             handle += 0x400;
+            Func_08015250(205);                   /* result discarded */
             Func_080001c8(sub[28], 128, handle);
             Func_08000150(17);
         }
@@ -136,10 +138,10 @@ s32 Func_020040b4(void)
         }
         Func_08077150(1);
         Func_08077150(2);
+        table[0xe1] = 8;
         Func_08077150(3);
         Func_08077318();
         Func_020017e8();
-        table[0xe1] = 8;
     }
 
     if (table[0xe1] == 98) {

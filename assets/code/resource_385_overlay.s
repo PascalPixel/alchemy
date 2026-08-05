@@ -718,7 +718,8 @@ AlchemyC_020004a4:
 AlchemyC_020004ac:
 	.space 0x8
 AlchemyC_020004b4:
-	.space 0x24
+	.space 0x22
+	.2byte 0x0000
 AlchemyC_020004d8:
 	.space 0x34
 AlchemyC_0200050c:

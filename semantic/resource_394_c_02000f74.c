@@ -7,7 +7,7 @@ struct DmaTransfer {
 };
 
 /* Resolved whole-owner call targets. */
-extern void Func_0808a338();
+
 
 /*
  * Capture the two hardware-palette banks into their non-contiguous work-buffer
@@ -15,6 +15,7 @@ extern void Func_0808a338();
  *
  * Owner span: 0x02000f74-0x02000fb4.  Its literal pool begins at 0x02000fa4.
  */
+extern void Func_020020aa();
 void Func_02000f74(void)
 {
     volatile struct DmaTransfer *const dma3 =
@@ -29,5 +30,5 @@ void Func_02000f74(void)
     dma3->destination = destination + 0x1c0;
     dma3->control = 0x84000070;
 
-    Func_0808a338(0x10000, 0);
+    Func_020020aa(0x10000, 0);
 }

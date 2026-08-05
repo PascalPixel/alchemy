@@ -17,17 +17,17 @@ extern s32 Func_08000290(s32 resource);
 void Func_02002124(s32 actor)
 {
     volatile u16 *cursor = (volatile u16 *)0x0200c57c;
-    volatile u32 *dma3 = (volatile u32 *)0x040000d4;
     u8 *table = (u8 *)0x0200be44;
     s32 handle = Func_08000170(0x1ca0);
+    volatile u32 *dma3 = (volatile u32 *)0x040000d4;
     s32 table_byte;
 
     if ((short)*cursor == -1)
         *cursor = (u16)Func_080001d0();
 
     table_byte = table[actor];
-    if (actor == 8)
         actor = 4;
+    if (actor == 8)
 
     Func_080001a8(Func_08000290(0xe7), handle);
 

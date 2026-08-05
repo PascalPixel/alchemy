@@ -40,12 +40,12 @@ void Func_02002aec(s32 actor)
     *(u32 *)(record + 16) = Data_0200c75c;
     *(unsigned short *)(record + 6) = (unsigned short)Data_0200c788;
 
-    *(u32 *)(record + 56) = 0x80000000;
     *(u32 *)(record + 64) = 0x80000000;
+    record[0x22] = 0;
+    *(u32 *)(record + 56) = 0x80000000;
     record[0x55] = 3;
     *(u32 *)(record + 36) = 0;
     *(u32 *)(record + 44) = 0;
-    record[0x22] = 0;
     *(u32 *)(record + 12) = 0;
     *(u32 *)(record + 20) = 0;
 

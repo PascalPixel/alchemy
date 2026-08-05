@@ -59,9 +59,9 @@ void Func_020031c0(void)
             *(u16 *)state = 9;
             Func_08009080(actor, 1);
 
-            target_x = *(s32 *)(workspace + 0xe8) + 0x000c0000;
             if (*(s32 *)(workspace + 0xe8) >= *(s32 *)(actor + 8))
                 target_x = *(s32 *)(workspace + 0xe8) + (s32)0xfff40000;
+            target_x = *(s32 *)(workspace + 0xe8) + 0x000c0000;
 
             if (Func_080770c0(0x211) != 0) {
                 target_z = *(s32 *)(workspace + 0xec) + 0x00100000;

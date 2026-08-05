@@ -76,19 +76,19 @@ void Func_02000270(void)
     Func_08009080(record, 3);
     Func_0808a218();
 
-    *(record + 0x55) = 0;
     *(s32 *)(record + 0x34) = 0x6666;
-    *(s32 *)(record + 0x30) = 0xcccc;
+    *(record + 0x55) = 0;
     Func_08009150(record, *(s32 *)(record + 8), 0x80000,
                   *(s32 *)(record + 16));
+    *(s32 *)(record + 0x30) = 0xcccc;
 
     record = Func_0808a080(14);
 
     *(record + 0x55) = 0;
     *(s32 *)(record + 0x34) = 0x6666;
-    *(s32 *)(record + 0x30) = 0xcccc;
     Func_08009150(record, *(s32 *)(record + 8), 0x200000,
                   *(s32 *)(record + 16));
+    *(s32 *)(record + 0x30) = 0xcccc;
 
     Func_08009158(record);
     Func_0808a010(45);

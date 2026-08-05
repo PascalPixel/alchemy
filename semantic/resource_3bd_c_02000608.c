@@ -146,17 +146,17 @@ void Func_02000608(
     s32 height;
     s32 state;
 
-    header = (struct ObjectHeader *)Func_0808a080(0);
     state = header->state >> 12;
+    header = (struct ObjectHeader *)Func_0808a080(0);
     object = (struct SceneObject *)Func_0808a080(objectId);
     footprint = &Data_0200bf0c[footprintIndex];
 
     height = footprint_span(footprint->z0, footprint->z1);
     width = footprint_span(footprint->x0, footprint->x1);
 
-    object->effectScale = 0x00008000;
     object->effectColor = 0x00001999;
     originalX = object->x;
+    object->effectScale = 0x00008000;
     originalZ = object->z;
     originalCellX = footprint_cell(originalX, footprint->x0);
     originalCellZ = footprint_cell(originalZ, footprint->z0);

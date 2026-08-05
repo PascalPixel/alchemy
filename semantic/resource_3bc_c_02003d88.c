@@ -18,8 +18,8 @@ s32 Func_02003d88(u8 *object)
                   *(s32 *)(object + 8),
                   *(s32 *)(object + 12) + 0x02400000,
                   *(s32 *)(object + 16));
-    record[0x55] = 0;
     Func_08009098(record, (void *)0x0200ce74);
+    record[0x55] = 0;
     Func_080f9010(0x53);
     *index = 0;
     return 0;

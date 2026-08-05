@@ -96,10 +96,10 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
     current[6] = 1;
 
     current[7] = 4;
+    *(u32 *)0x0200cc28 = *(u16 *)(resultObj + 6);
     *(u32 *)0x0200cca4 = *(s32 *)(resultObj + 8);
     *(u32 *)0x0200cbfc = *(s32 *)(resultObj + 16);
     ownerRecord = *(u8 **)(resultObj + 0x50);
-    *(u32 *)0x0200cc28 = *(u16 *)(resultObj + 6);
 
     Func_0808a1e0(arg0, 2);
 
@@ -137,9 +137,9 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
     AppendIfRoom(counter, 16, 0x04000052, 0x20000);
     EndCritical(regIME, saved);
 
-    *(s32 *)(resultObj + 0x18) = 0x11000;
     *(s32 *)(resultObj + 0x1c) = 0xf000;
     Func_0808a010(1);
+    *(s32 *)(resultObj + 0x18) = 0x11000;
 
     *(s32 *)(resultObj + 0x18) = 0x10000;
     *(s32 *)(resultObj + 0x1c) = 0x10000;

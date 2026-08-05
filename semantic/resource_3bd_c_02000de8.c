@@ -50,9 +50,9 @@ void Func_02000de8(void)
     Func_080f9010(0x98);
     Func_08009080(record, 7);
 
+    *(s32 *)(record + 0x28) = 0x40000;
     *(s32 *)(record + 0x30) = 0x30000;
     *(s32 *)(record + 0x34) = 0x20000;
-    *(s32 *)(record + 0x28) = 0x40000;
     record[0x55] &= 0x7e;
 
     Func_080091e0(record, 0);

@@ -51,9 +51,9 @@ void Func_02001898(s32 arg0, s32 arg1, s32 arg2)
 
     if ((*(s32 *)(objectB + 8) >> 20) != arg1 / 2) {
         half = (shiftedArg1 - *(s32 *)(objectB + 8)) / 2;
+        stackHalf = (shiftedArg2 - *(s32 *)(objectB + 16)) / 2;
     } else {
         half = 0;
-        stackHalf = (shiftedArg2 - *(s32 *)(objectB + 16)) / 2;
     }
 
     Func_0808a100((s32)idx, 8);

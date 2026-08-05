@@ -57,8 +57,8 @@ void Func_02002820(void)
     Func_0808a090(11, 0x19999, 0xcccc);
     Func_0808a090(0, 0x19999, 0xcccc);
 
-    object = Func_0808a080(11);
     *(u16 *)(object + 6) = 0x8000;
+    object = Func_0808a080(11);
 
     Func_0808a360();
     Func_0808a100(0, 2);

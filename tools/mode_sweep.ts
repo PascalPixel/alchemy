@@ -52,6 +52,12 @@ export const FORK_MODES = [
   // the explorer nor the router ever named it, so it was invisible to every
   // sweep. It is what closes 080b5ad4.
   "-fthumb-group-value2-in-place",
+  // Grouped-DMA control-word class, fork commit cee872a (2026-08-05):
+  // rematerialise a shared pool-class control word per transfer, and the
+  // sched2 pool-load-late ready-list tie-break. Witnesses 080f377c and
+  // 08091174.
+  "-fthumb-group-control-rematerialize",
+  "-fthumb-sched-pool-load-late",
 ] as const;
 
 export const STOCK_SWITCHES = [

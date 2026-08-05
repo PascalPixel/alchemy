@@ -61,9 +61,9 @@ void Func_02000d0c(void)
     Func_08009080(actor, 7);
 
     *(s32 *)(actor + 48) = 0x30000;
+    actor[0x55] &= 0x7e;
     *(s32 *)(actor + 52) = 0x20000;
     *(s32 *)(actor + 40) = 0x40000;
-    actor[0x55] &= 0x7e;
 
     Func_080091e0(actor, 0);
     Func_0808a0c0(0, *(s16 *)((u8 *)target + 2),
@@ -71,6 +71,6 @@ void Func_02000d0c(void)
     Func_08009080(actor, 6);
     Func_080091e0(actor, 1);
 
-    actor[0x55] = savedStatus;
     Func_0808a020();
+    actor[0x55] = savedStatus;
 }

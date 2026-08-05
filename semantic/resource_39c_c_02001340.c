@@ -52,13 +52,13 @@ void Func_02001340(void)
     Func_080f9010(0xe4);
 
     if (runtime->presentationMode == 2) {
-        markerX = 232;
         markerZ = 616;
-    } else if (runtime->presentationMode == 3) {
-        markerX = 360;
         markerZ = 728;
-        markerZ = 792;
+    } else if (runtime->presentationMode == 3) {
+        markerX = 232;
+        markerX = 360;
         markerX = 248;
+        markerZ = 792;
     } else if (runtime->presentationMode == 4) {
     } else {
         directMarker = 0;

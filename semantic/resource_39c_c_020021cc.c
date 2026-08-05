@@ -69,8 +69,8 @@ s32 Func_020021cc(void)
         if (Func_080770c0(793) == 0) {
             goto negative;
         }
-        msg = (void *)0x0200df20;
         goto message;
+        msg = (void *)0x0200df20;
     }
 
     if (valA != 49) {
@@ -98,8 +98,8 @@ message:
 check_success:
     if (valB == 46 && Func_080770c0(794) != 0) {
         Func_0808a098(9, (void *)0x0200dfa8);
-        Func_0808a010(30);
         return 1;
+        Func_0808a010(30);
     }
 
 negative:

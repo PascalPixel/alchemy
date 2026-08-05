@@ -149,10 +149,10 @@ s32 Func_02003d20(void)
     s32 sharedMessageArg5;
 
     Func_080770c8(0x111);
-    Data_02000240[289] = 11;
     Data_02000240[288] = 57;
-    *(s32 *)(Data_03001ebc + 448) = 516;
+    Data_02000240[289] = 11;
     bldcnt[0] = 0x3f40;
+    *(s32 *)(Data_03001ebc + 448) = 516;
     bldcnt[1] = 0x1010;
     Func_02004fcc(21, Data_02001000);
     Func_0808a408(0);
@@ -167,16 +167,16 @@ s32 Func_02003d20(void)
         switch (Data_02000240[225]) {
         case 1:
         case 2:
+            break;
         case 3:
             if (Func_080770c0(0x875) != 0) {
                 Func_080091c0(66, 5, 27, 23, 2, 5);
             }
-            break;
 
+            break;
         case 5:
         case 6:
             Func_0808a5e0(170);
-            break;
 
         case 15:
             Func_02000030(Func_0808a080(0), 1);

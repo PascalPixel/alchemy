@@ -72,6 +72,7 @@ s32 Func_02001148(void)
     u8 *inner;
     u32 index;
 
+    s32 permuted_1;
     *(s32 *)(Data_03001ebc + 448) = 256;
     Func_0808a5e0(169);
     if (Data_02000240[225] > 9) {
@@ -89,9 +90,10 @@ s32 Func_02001148(void)
         Func_0808a0f0(17, 0, 0);
     }
     for (index = 0; index <= 2; index++) {
-        record = Func_0808a080(index + 23);
-        inner = *(u8 **)(record + 80);
+        permuted_1 = *(u8 **)(record + 80);
         inner[9] = (inner[9] & ~13) | 4;
+        inner  = permuted_1;
+        record = Func_0808a080(index + 23);
         record[85] = 0;
         record[89] = 8;
         Func_080091e0(record, 0);
@@ -110,9 +112,9 @@ s32 Func_02001148(void)
         Func_080000d0(0x02008325, 3200);
     }
     Func_0808a158(18, 2);
+    record[85] = 0;
     *(s32 *)(Func_0808a080(18) + 108) = 0x02008501;
     record = Func_0808a080(19);
-    record[85] = 0;
     *(s32 *)(record + 12) = 0x100000;
     *(s32 *)(record + 60) = 0x100000;
     *(s32 *)(record + 24) = 0x8ccc;

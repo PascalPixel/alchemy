@@ -72,6 +72,7 @@ void Func_02000524(void)
     s32 x;
     s32 z;
 
+    s32 permuted_14;
     workspace = Data_03001ebc;
 
     Func_0808a018();
@@ -84,9 +85,10 @@ void Func_02000524(void)
         }
     }
 
-    variant = (s16)(*(u16 *)(workspace + 364) - 2);
-    x = Data_02009e70[variant].f04;
+    permuted_14 = (s16)(*(u16 *)(workspace + 364) - 2);
     z = Data_02009e70[variant].f06;
+    variant  = permuted_14;
+    x = Data_02009e70[variant].f04;
 
     if (variant == 1) {
         Func_080f9010(188);

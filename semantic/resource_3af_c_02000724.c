@@ -111,16 +111,16 @@ s32 Func_02000724(u8 *record)
 
     switch (*state) {
     case 0:
+        next = *(u16 *)state + 1;
         draw = ((u32)Func_080000f8() * 40) >> 16;
         if (draw != 0) {
             return 1;
         }
-        next = *(u16 *)state + 1;
         break;
 
-    case 1:
         next = *(u16 *)state + 1;
         break;
+    case 1:
 
     case 2:
         *(s32 *)(record + 40) = 128 << 11;

@@ -105,11 +105,11 @@ step134c:                                               /* 0x0200122e */
      * not the retry path" outcomes fall to the same exit, so there is exactly
      * one call site here despite three predecessors.
      */
-step1394:
     if ((Func_02001394() & 0xff) == 0 && retryFromStep134c != 0) {
         goto step134c;
     }
     goto finishAffirmative;
+step1394:
 
 step12c4:                                               /* 0x0200124e */
     if ((Func_020012c4() & 0xff) != 0) {

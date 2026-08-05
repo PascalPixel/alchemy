@@ -86,13 +86,13 @@ s32 Func_020003dc(void)
      * 0, 2 and 3 before bit 3 is set.
      */
     record = Func_0808a080(31);
-    record[0x23] = 0;
     attributes = *(u8 **)(record + 0x50);
     attributes[9] = (u8)((attributes[9] & ~13) | 8);
+    record[0x23] = 0;
 
+    attributes = *(u8 **)(record + 0x50);
     record = Func_0808a080(32);
     record[0x23] = 0;
-    attributes = *(u8 **)(record + 0x50);
     attributes[9] = (u8)((attributes[9] & ~13) | 8);
 
     if (Func_080770c0(0x8bc) != 0) {

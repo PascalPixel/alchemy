@@ -38,8 +38,8 @@ void Func_02002334(void)
     Func_02001e74();
     Func_0808a1e0(8, 3);
     actor = Func_0808a080(11);
-    actor[85] = 0;
     actor = Func_0808a080(12);
+    actor[85] = 0;
     actor[85] = 0;
     Func_02001df8();
 

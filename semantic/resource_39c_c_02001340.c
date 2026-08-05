@@ -57,9 +57,9 @@ void Func_02001340(void)
     } else if (runtime->presentationMode == 3) {
         markerX = 360;
         markerZ = 728;
-    } else if (runtime->presentationMode == 4) {
-        markerX = 248;
         markerZ = 792;
+        markerX = 248;
+    } else if (runtime->presentationMode == 4) {
     } else {
         directMarker = 0;
     }

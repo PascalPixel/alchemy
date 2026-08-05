@@ -40,13 +40,15 @@ void Func_02001b1c(void)
     s32 buffer;
 
     /* movs/lsls build 0xf80000, 0x80000 and 0x980000. */
+    s32 permuted_8;
     object = Func_080090c8(22, (s32)0xf80000, (s32)0x80000, (s32)0x980000);
     if (object == NULL) {
         return;
     }
 
-    record = *(u8 **)(object + 80);
     record[38] = 0;
+    record  = permuted_8;
+    permuted_8 = *(u8 **)(object + 80);
     record[39] = 0;
     /* movs r3,#33 / negs r3,r3 gives the mask ~0x20. */
     record[5] &= (u8)~0x20;

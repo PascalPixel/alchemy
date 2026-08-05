@@ -92,12 +92,12 @@ void Func_02002a48(u8 *record)
         *(s32 *)(record + 28) += 0x000007ae;
     } else {
         heading = Data_0200d23c;
+        *(s32 *)(record + 24) += 0x00001999;
         if (heading == 0) {
             *(s32 *)(record + 8) += 0x8000;
         } else if (heading == 0x8000) {
             *(s32 *)(record + 8) += 0xffff8000;
         }
-        *(s32 *)(record + 24) += 0x00001999;
         *(s32 *)(record + 28) += 0xfda6f337;
     }
 

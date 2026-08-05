@@ -76,10 +76,10 @@ void Func_02001160(void)
     Func_0808a010(20);
     Func_0808a110(15, 3);
     Func_0808a010(20);
+    *(s32 *)(record + 24) = 0xcccc;
     Func_0808a090(15, 0xcccc, 0x6666);
     Func_02000f80();
     Func_0808a138(15, 3);
-    *(s32 *)(record + 24) = 0xcccc;
     Func_0808a0f0(19, 232 << 16, 168 << 16);
     Func_0808a0f0(20, 232 << 16, 168 << 16);
     record = Func_0808a080(19);

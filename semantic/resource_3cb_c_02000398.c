@@ -88,7 +88,7 @@ s32 Func_02000398(void)
     s32 handle;
     s32 budget = 900;
     s32 result = 0;
-    s32 block;
+    u32 block;
     s32 stalls;
     s32 status;
     u8 *payload;

@@ -1341,6 +1341,11 @@ const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
   // turns the leaf's `push {lr}` into `push {r5, lr}`. Paired with the
   // low-destination tie-break for its two `(id, 192 << 8, n)` calls.
   "exact/resource_38c_c_0200035c.c",
+  // resource_3a5:0498 is the same tell with a pair of ids: it tests 0x8b2 and
+  // 0x8b3, then sets 0x8b3 and 0x8b2, so both constants are built twice and
+  // the rerun caches one in r5 across the guarded block. Took the row from 62
+  // differing bytes to 0.
+  "exact/resource_3a5_c_02000498.c",
   "exact/resource_37a_c_02000054.c",
   "exact/resource_37a_c_02000108.c",
   "exact/resource_37a_c_02000150.c",

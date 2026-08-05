@@ -40,16 +40,25 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
-extern void Func_020020d0(void);
-extern void Func_02002310(void);
-extern void Func_02002428(void);
-extern void Func_02002490(void);
-extern void Func_020025c0(void);
-extern void Func_020026c0(void);
-extern void Func_02002804(void);
-extern void Func_02002934(void);
-extern void Func_020029dc(void);
 
+
+
+
+
+
+
+
+
+
+extern void Func_0200410c(void);
+extern void Func_02004358(void);
+extern void Func_0200447c(void);
+extern void Func_020044f0(void);
+extern void Func_0200462c(void);
+extern void Func_02004738(void);
+extern void Func_02004888(void);
+extern void Func_020049c4(void);
+extern void Func_02004a78(void);
 s32 Func_02002020(void)
 {
     s16 scene;
@@ -57,23 +66,23 @@ s32 Func_02002020(void)
     *(s32 *)(Data_03001ebc + 448) = 516;
     scene = Data_02000240[224];
     if (scene == 77) {
-        Func_020020d0();
+        Func_0200410c();
     } else if (scene == 79) {
-        Func_02002310();
+        Func_02004358();
     } else if (scene == 80) {
-        Func_02002428();
+        Func_0200447c();
     } else if (scene == 81) {
-        Func_02002490();
+        Func_020044f0();
     } else if (scene == 82) {
-        Func_020025c0();
+        Func_0200462c();
     } else if (scene == 83) {
-        Func_020026c0();
+        Func_02004738();
     } else if (scene == 85) {
-        Func_02002804();
+        Func_02004888();
     } else if (scene == 86) {
-        Func_02002934();
+        Func_020049c4();
     } else if (scene == 87) {
-        Func_020029dc();
+        Func_02004a78();
     }
     return 0;
 }

@@ -88,8 +88,8 @@ void Func_0200330c(s32 slot, u32 requested)
 
     /* DMA3: fixed-source 32-bit fill of the whole 404-byte workspace. */
     zero = 0;
-    dma = (u32 *)0x040000d4;
     dma[0] = (u32)&zero;
+    dma = (u32 *)0x040000d4;
     dma[1] = (u32)field;
     dma[2] = 0x85000065;
 

@@ -120,8 +120,8 @@ void Func_02001410(void) {
     Func_0808a330(0x7FFF, 0);
     Func_0808a348(0x28);
     Func_0808a010(0x28);
-    Func_080000d8(0x020090C5);
     var_r5 = 0;
+    Func_080000d8(0x020090C5);
     do {
         Func_0808a0f0(var_r5 + 0x10, 0, 0);
         var_r5 += 1;
@@ -133,9 +133,9 @@ void Func_02001410(void) {
     Func_02002820(1);
     FIELD(temp_r9, s32 *, 0x40C) = 0;
     Func_080091f0(0x10000, 0x10000, 0x10000);
-    var_r5_2 = 0;
     Func_0808a010(0x50);
     Func_02002c9c();
+    var_r5_2 = 0;
     temp_r0 = Func_0808a228();
     FIELD(temp_r0, s8 *, 0x55) = 0;
     FIELD(temp_r0, s32 *, 8) = 0xE70000;

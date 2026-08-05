@@ -119,8 +119,8 @@ void Func_020003f0(void)
     Func_080000d0((void *)0x020083c1, 2000);
     Func_080000c0(1);
     Func_08000130(1, 0, (void *)0x0200836d);
-    Func_080f9010(231);
     *timer = 0;
+    Func_080f9010(231);
     do {
         Func_080000c0(1);
         ++*timer;
@@ -144,8 +144,8 @@ void Func_020003f0(void)
     Func_080000d8((void *)0x020083c1);
 
     displayWord = *(volatile u16 **)0x020092c8;
-    *displayWord ^= 1;
     Func_02000194();
+    *displayWord ^= 1;
     Func_08009128();
     Func_0808a020();
 }

@@ -143,8 +143,8 @@ table_a_4:
     Func_0808a100(8, 1);
     Func_080000c0(6);
     Func_0808a100(8, 3);
-    Func_080000c0(6);
     slot = 8;
+    Func_080000c0(6);
     goto join_req1;
 
 table_a_5:

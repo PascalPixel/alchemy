@@ -50,14 +50,14 @@ s32 Func_02000400(struct Subject_02000400 *subject)
         return 0;
     }
 
-    candidate = Func_0808a080(0);
-    distance_limit = 18;
     override = 0;
+    candidate = Func_0808a080(0);
     if (*(s16 *)(Data_03001e8c->scene + 376) != 0 ||
         Data_03001e8c->block->extended_range != 0) {
         distance_limit = 26;
         override = (subject->flags & 2) != 0;
     }
+    distance_limit = 18;
     Func_02000350(subject, candidate, distance_limit, override);
     return 0;
 }

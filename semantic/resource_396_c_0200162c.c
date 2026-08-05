@@ -14,8 +14,8 @@ void Func_0200162c(void)
     s32 *counter = (s32 *)0x0200adcc;
     s32 *origin = (s32 *)0x0200adc0;
     s32 frame = *counter;
-    s32 decade = Func_03000380(frame, 10);
     s32 chained = 0;
+    s32 decade = Func_03000380(frame, 10);
 
     if ((u32)frame <= 44 &&
         (frame == 0 || frame == 10 || frame == 20 ||
@@ -35,9 +35,9 @@ void Func_0200162c(void)
                 chained = Func_0808a498(owner, chained);
                 effect[85] = 0;
                 owner[9] &= (u8)~0x0c;
+                *(u16 *)(effect + 100) = 0;
                 Func_080091e0(effect, 0);
                 Func_08009080(effect, 1);
-                *(u16 *)(effect + 100) = 0;
 
                 sector = Func_030003f0(360, count);
                 *(u16 *)(effect + 102) =

@@ -38,9 +38,9 @@ void Func_02002ddc(void) {
     Func_080000c0(1);
     FIELD(Func_0808a080(9), s8 *, 0x55) = 0;
     Func_0808a0f0(9, 0x680000, 0x01080000);
-    temp_r5_2 = 0xffe00000;
     FIELD(Func_0808a080(9), s32 *, 0xC) = temp_r5_2;
     FIELD(Func_0808a080(9), s32 *, 0x3C) = temp_r5_2;
+    temp_r5_2 = 0xffe00000;
     FIELD(Func_0808a228(), s8 *, 0x55) = 0;
     Func_0808a208(0x0000cccc, 0x00001999);
     Func_0808a210(0x800000, -1, 0xB80000, 1);

@@ -56,9 +56,9 @@ static s32 Fixed20_020055c0(s32 raw)
 
 void Func_020055c0(void)
 {
-    s32 *record = *Data_03001edc;
     u8 *runtime = Data_03001ebc;
     u8 *slot = ((u8 **)(runtime + 0x14))[Data_02000434];
+    s32 *record = *Data_03001edc;
     u8 savedSlotFlags = slot[0x55];
     s32 variant = *(short *)(0x0200de44 + (((*(u32 *)0x03001ae8 >> 4) & 15) * 2));
     s32 probe[3];
@@ -91,13 +91,13 @@ void Func_020055c0(void)
         return;
     }
 
-    object = (u8 *)record[6];
     if (object != 0) {
         *(u16 *)(object + 100) = (u16)result;
         Func_08009098(object, (void *)0x0200de2c);
         Func_08009080(object, 7);
         record[6] = result;
     }
+    object = (u8 *)record[6];
 
     if (cell[2] == record[1] && record[0] != 0) {
         u8 *source = (u8 *)record[5];
@@ -141,10 +141,10 @@ void Func_020055c0(void)
     Func_080f9010(0x98);
     Func_08009080(slot, 7);
 
-    *(s32 *)(slot + 0x30) = 0x30000;
     *(s32 *)(slot + 0x34) = 0x20000;
-    *(s32 *)(slot + 0x28) = 0x40000;
+    *(s32 *)(slot + 0x30) = 0x30000;
     slot[0x55] &= 0x7e;
+    *(s32 *)(slot + 0x28) = 0x40000;
 
     Func_080091e0(slot, 0);
     Func_0808a0c0(0, *(short *)((u8 *)probe + 2), *(short *)((u8 *)probe + 10));
@@ -185,8 +185,8 @@ check_frame:
         Func_080091e0(slot, 1);
     }
 
-    record[2] = 0;
     Func_0808a020();
+    record[2] = 0;
     *(s32 *)(runtime + 0x1b4) +=
         ((RelocatedMultiply_020055c0)0x03000118)(*(s32 *)(runtime + 0x1b0), 0x200000);
 }

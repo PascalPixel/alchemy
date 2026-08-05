@@ -59,6 +59,7 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
     /* ldmia/stmia copy the three-word table into the frame before anything
      * else runs. */
     s32 permuted_8;
+    s32 permuted_0;
     permuted_8 = Data_0200a418[0];
     table[1] = Data_0200a418[1];
     table[0]  = permuted_8;
@@ -82,11 +83,11 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
     Func_08009098(object, entry);
 
     object[85] = 0;
-    record[38] = 0;
     *(void **)(object + 108) = (void *)Func_02001bdc;
     *(s32 *)(object + 68) = d;
     *(s32 *)(object + 72) = e;
     *(s32 *)(object + 76) = f;
+    record[38] = 0;
     *(s32 *)(object + 48) = 0;
     *(s32 *)(object + 52) = 0;
     /* movs r0,#13 / negs r0,r0 gives the mask ~0x0c, kept in fp for reuse. */
@@ -101,8 +102,9 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
     }
 
     if ((flags & 0x20000) != 0) {
+        permuted_0 = (u8)((record[9] & ~0x0c) | ((source[0] & 3) << 2));
         object[35] &= (u8)0xfe;
-        record[9] = (u8)((record[9] & ~0x0c) | ((source[0] & 3) << 2));
+        record[9]  = permuted_0;
     }
 
     if ((flags & 0x80000) != 0) {
@@ -116,7 +118,6 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
 
     /* The same table entry is reloaded here; its word at +12 is the divisor
      * of both scaling calls. */
-    entry = (u8 *)table[flags & 15];
     if ((flags & 0x80000) != 0) {
         *(s32 *)(object + 48) =
             Func_03000380(*(s32 *)(source + 16) - *(s32 *)(object + 24),
@@ -128,6 +129,7 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
                           *(s32 *)(entry + 12));
         scaled = *(s32 *)(source + 20) + (s32)0xffff0000;
     }
+    entry = (u8 *)table[flags & 15];
     /* Both arms converge on this call. */
     *(s32 *)(object + 52) = Func_03000380(scaled, *(s32 *)(entry + 12));
 }

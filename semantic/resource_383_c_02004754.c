@@ -47,13 +47,14 @@ u8 *Func_02004754(u8 *options, s16 *facing)
     best_id = -1;
     /* Read twice, exactly as the assembly does: unsigned for the difference
      * and sign-extended for the fallback value of the write-back register. */
-    target = *(u16 *)facing;
     best_angle = *facing;
+    target = *(u16 *)facing;
 
-    p = options + 4;
     best_dist = 0x8000;
+    p = options + 4;
 
     for (i = 0; i < 3; i++) {
+        p += 4;
         angle = p[1] << 8;
         dist = (s16)(angle - target);
         if (dist < 0) {
@@ -61,10 +62,9 @@ u8 *Func_02004754(u8 *options, s16 *facing)
         }
         if (p[0] != 0xff && dist < best_dist) {
             best_dist = dist;
-            best_id = p[0];
             best_angle = (s16)angle;
+            best_id = p[0];
         }
-        p += 4;
     }
 
     if (best_id == -1) {

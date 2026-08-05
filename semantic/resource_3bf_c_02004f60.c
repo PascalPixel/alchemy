@@ -105,18 +105,18 @@ void Func_02004f60(void)
     case 3:
     case 4:
     case 5:
-    case 6:
     case 7:
         *(s32 *)(state + 0x1C0) = 0x200;
         Func_080000d0((Task_02004f60)Func_02001718, 200 << 4);
+    case 6:
         Func_080000d0((Task_02004f60)Func_0200175c, 200 << 4);
         Func_080000d0((Task_02004f60)Func_020017bc, 200 << 4);
         install_id = 224;
         goto install_mode;
 
-    case 12:
     case 19:
         *(s32 *)(state + 0x1C0) = 0x209;
+    case 12:
         install_id = 192;
         goto install_mode;
 
@@ -149,8 +149,8 @@ install_mode:
         goto tail;
     }
 
-tail:
     Func_0808a158(18, 1);
+tail:
     Func_0808a158(17, 1);
     Func_0808a158(21, 1);
     Func_0808a158(12, 1);

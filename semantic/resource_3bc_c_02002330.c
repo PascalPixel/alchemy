@@ -97,11 +97,11 @@ void Func_02002330(s32 actor)
         Func_02004710(0, 0x460, 0xb8);
         Func_02006f14(actor, 0);
         Func_02005d36(0);
-        ((u8 *)Data_02000240)[498] = 1;
         Func_02005c88(0);
         Func_02006f64(0, 0);
         Func_02004fcc(actor, 5);
     } else if (state == 1) {
+        ((u8 *)Data_02000240)[498] = 1;
         Func_02006f3a(0x20c2);
         Func_02006f52(actor, 0);
     }

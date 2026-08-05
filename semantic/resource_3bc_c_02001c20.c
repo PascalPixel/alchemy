@@ -36,8 +36,8 @@ void Func_02001c20(s32 actor)
     u8 *record;
 
     if (Data_02000240[225] == 2) {
-        Func_0200288c();
         return;
+        Func_0200288c();
     }
 
     Func_0808a018();
@@ -58,16 +58,16 @@ void Func_02001c20(s32 actor)
         Func_02003b18();
         Func_080000c0(2);
 
-        record = Func_0808a080(10);
-        record[0x55] = (u8)state;
         *(s32 *)(record + 0x30) = 0xcccc;
         *(s32 *)(record + 0x34) = 0x6666;
+        record[0x55] = (u8)state;
+        record = Func_0808a080(10);
         Func_08009150(record, *(s32 *)(record + 8), 0x40000,
                       *(s32 *)(record + 0x10));
         record = Func_0808a080(11);
+        *(s32 *)(record + 0x34) = 0x6666;
         record[0x55] = (u8)state;
         *(s32 *)(record + 0x30) = 0xcccc;
-        *(s32 *)(record + 0x34) = 0x6666;
         Func_08009150(record, *(s32 *)(record + 8), 0x200000,
                       *(s32 *)(record + 0x10));
         Func_08009158(record);

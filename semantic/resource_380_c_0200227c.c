@@ -88,9 +88,9 @@ void Func_0200227c(void)
     object = Func_0808a080(14);
     *(s32 *)(object + 104) = handle;
     *(u8 *)(object + 90) |= 1;
-    *(s32 *)(object + 24) = 0x10000;
     *(s32 *)(object + 28) = 0x10000;
     helper = Func_0808a080(11);
+    *(s32 *)(object + 24) = 0x10000;
     *(u8 *)(object + 85) = *(u8 *)(helper + 85);
     *(s32 *)(object + 12) = 0;
     Func_08009098(object, table);

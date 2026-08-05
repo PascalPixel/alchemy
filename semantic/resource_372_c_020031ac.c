@@ -125,9 +125,9 @@ void Func_020031ac(void)
     s32 clear;      /* sl in its third role: the 254 mask */
 
     obj19 = Func_0808a080(19);
+    spr19 = *(u8 **)(obj19 + 80);
     obj27 = Func_0808a080(27);
     spr27 = *(u8 **)(obj27 + 80);
-    spr19 = *(u8 **)(obj19 + 80);
 
     Func_0808a208(0x10000, 0x2000);                 /* 128<<9, 128<<6 */
     Func_0808a210(0x6e0000, -1, 0x58b0000, 1);      /* 220<<15 */

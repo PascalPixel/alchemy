@@ -81,13 +81,15 @@ void Func_02003b90(void)
     s32 step;
     s32 position[3];
 
+    s32 permuted_12;
     subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
     facing = *(u16 *)(subject + 6) >> 12;
 
     step = Data_0200c3d4[facing];
     position[0] = *(s32 *)(subject + 8) + (step & 0xffff0000);
-    position[1] = *(s32 *)(subject + 12);
+    permuted_12 = *(s32 *)(subject + 12);
     position[2] = *(s32 *)(subject + 16) + (step << 16);
+    position[1]  = permuted_12;
 
     occupant = Func_02003b48(position);
     if (occupant == 0) return;
@@ -109,9 +111,9 @@ void Func_02003b90(void)
 
     occupant[34] = 2;
 
-    step = Data_0200c3d4[facing];
     position[0] = *(s32 *)(occupant + 8) + (step & 0xffff0000);
     position[1] = *(s32 *)(occupant + 12);
+    step = Data_0200c3d4[facing];
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
 
     if (Func_080091d8(occupant, position) > 0) return;

@@ -76,18 +76,18 @@ s32 Func_02003344(s32 arg0, s32 arg1)
     }
 
     *(u16 *)(object + 0x64) = *field64;
-    *(s32 *)(object + 0x34) = 0x4000;
     *(s32 *)(object + 0x30) = 0x10000;
+    *(s32 *)(object + 0x34) = 0x4000;
 
     Func_08009150(object, posDelta, 0, dirOffset);
     Func_080770c8(0x211);
     Func_08009098(object, (void *)0x0200cb9c);
 
-    status = *(s16 *)(object + 0x64);
     while (status != 0) {
         Func_080000c0(1);
         status = *(s16 *)(object + 0x64);
     }
+    status = *(s16 *)(object + 0x64);
 
     if (flag == 0) {
         Func_02002380(0, arg1);

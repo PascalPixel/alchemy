@@ -1,10 +1,13 @@
 #include "types.h"
 
-extern void Func_08000128(s32 distance, s32 heading, s32 position[3]);
-extern void Func_080001b8(s32 slot);
-extern void Func_080090d0(u8 *effect);
+
+
+
 
 /* Advance the effect's expanding path for eighty ticks, then retire it. */
+extern void Func_02003032(s32 distance, s32 heading, s32 position[3]);
+extern void Func_0200306e(s32 slot);
+extern void Func_02003094(u8 *effect);
 void Func_020015ac(u8 *effect)
 {
     s16 age = *(s16 *)(effect + 100);
@@ -15,7 +18,7 @@ void Func_020015ac(u8 *effect)
         position[0] = *(s32 *)(effect + 56);
         position[1] = *(s32 *)(effect + 60);
         position[2] = *(s32 *)(effect + 64);
-        Func_08000128(age << 16,
+        Func_02003032(age << 16,
                       age * 0x300 + *(s16 *)(effect + 102),
                       position);
         *(s32 *)(effect + 8) = position[0];
@@ -30,7 +33,7 @@ void Func_020015ac(u8 *effect)
         u8 *owner = *(u8 **)(effect + 80);
         *(u16 *)(effect + 100) = (u16)(age + 1);
 
-        Func_080001b8(owner[28]);
-        Func_080090d0(effect);
+        Func_0200306e(owner[28]);
+        Func_02003094(effect);
     }
 }

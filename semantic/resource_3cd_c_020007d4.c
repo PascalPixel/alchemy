@@ -1,6 +1,7 @@
-extern void Func_08015348(void);
 
+
+extern void Func_02001020(void);
 void Func_020007d4(void)
 {
-    Func_08015348();
+    Func_02001020();
 }

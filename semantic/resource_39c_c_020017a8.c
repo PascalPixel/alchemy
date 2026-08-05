@@ -22,15 +22,15 @@
  * retained rather than guessed.
  */
 
-extern void Func_08009180(s32, s32, s32, s32, s32, s32);
-extern u32 Func_080000f8(void);
-extern void Func_0200013c(s32, s32, s32, s32, s32, s32, u32, s32 *);
-extern void Func_0808a010(s32);
-extern void Func_02003b24(s32, s32, s32);
-extern void Func_020015e0(s32, s32, s32);
-extern void Func_080f9010(s32);
-extern void Func_080000d0(void *, s32);
-extern void Func_080091f8(void);
+
+
+
+
+
+
+
+
+
 
 static s32 FormationJitter_020017a8(u32 randomValue)
 {
@@ -38,13 +38,27 @@ static s32 FormationJitter_020017a8(u32 randomValue)
     return (s32)(sample * 0x3333) - 0xcccc;
 }
 
+extern void Func_020071ce(s32, s32, s32, s32, s32, s32);
+extern void Func_020071de(s32, s32, s32, s32, s32, s32);
+extern void Func_020071a6(s32, s32, s32, s32, s32, s32, u32, s32 *);
+extern u32 Func_020071be(void);
+extern u32 Func_02001998(void);
+extern void Func_02007310(s32);
+extern void Func_020053a2(s32, s32, s32);
+extern void Func_020072a4(s32, s32, s32, s32, s32, s32);
+extern void Func_02002e8e(s32, s32, s32);
+extern void Func_02007366(s32);
+extern void Func_02002ea4(s32, s32, s32);
+extern void Func_0200752e(s32);
+extern void Func_02007258(void *, s32);
+extern void Func_0200731c(void);
 void Func_020017a8(s32 handle)
 {
     s32 extra[4];
     u32 group;
 
-    Func_08009180(78, 59, 110, 36, 1, 1);
-    Func_08009180(76, 59, 109, 36, 1, 1);
+    Func_020071ce(78, 59, 110, 36, 1, 1);
+    Func_020071de(76, 59, 109, 36, 1, 1);
 
     extra[1] = 7;
     extra[2] = 0x8000;
@@ -58,32 +72,32 @@ void Func_020017a8(s32 handle)
             s32 mirrored = -member;
 
             if ((member & 1) != 0) {
-                Func_0200013c(
+                Func_020071a6(
                     0x2480000,
                     0,
                     baseX,
-                    FormationJitter_020017a8(Func_080000f8()),
-                    FormationJitter_020017a8(Func_080000f8()),
+                    FormationJitter_020017a8(Func_020071be()),
+                    FormationJitter_020017a8(Func_02001998()),
                     0,
                     0x90000,
                     extra);
-                Func_0808a010(1);
+                Func_02007310(1);
             }
 
-            Func_02003b24(
+            Func_020053a2(
                 0x2d80000 + ((mirrored - group * 16) << 16),
                 0,
                 0x2480000);
             baseX -= 0x10000;
         }
 
-        Func_08009180(76, 59, 108 - group, 36, 2, 1);
-        Func_020015e0(handle, group, group + 1);
+        Func_020072a4(76, 59, 108 - group, 36, 2, 1);
+        Func_02002e8e(handle, group, group + 1);
     }
 
-    Func_0808a010(handle);
-    Func_020015e0(0, 2, 3);
-    Func_080f9010(0xd3);
-    Func_080000d0((void *)0x02009791, 3200);
-    Func_080091f8();
+    Func_02007366(handle);
+    Func_02002ea4(0, 2, 3);
+    Func_0200752e(0xd3);
+    Func_02007258((void *)0x02009791, 3200);
+    Func_0200731c();
 }

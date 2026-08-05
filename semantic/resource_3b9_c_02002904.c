@@ -21,26 +21,36 @@
  * passed values.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a090(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0808a360(void);
-extern void Func_0808a100(s32 arg0, s32 arg1);
-extern void Func_0808a0c0(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0808a0b8(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0808a368(void);
-extern void Func_0808a370(void);
-extern void Func_0808a248(s32 arg0);
 
+
+
+
+
+
+
+
+
+
+extern void Func_020054fc(void);
+extern void Func_02005526(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_02005632(void);
+extern void Func_0200557a(s32 arg0, s32 arg1);
+extern void Func_02005568(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_02005576(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_0200557c(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_02005670(void);
+extern void Func_0200567c(void);
+extern void Func_02005652(s32 arg0);
 void Func_02002904(void)
 {
-    Func_0808a018();
-    Func_0808a090(0, 0x19999, 0xcccc);
-    Func_0808a360();
-    Func_0808a100(0, 2);
-    Func_0808a0c0(0, 800, 428);
-    Func_0808a0c0(0, 700, 428);
-    Func_0808a0b8(0, 600, 428);
-    Func_0808a368();
-    Func_0808a370();
-    Func_0808a248(22);
+    Func_020054fc();
+    Func_02005526(0, 0x19999, 0xcccc);
+    Func_02005632();
+    Func_0200557a(0, 2);
+    Func_02005568(0, 800, 428);
+    Func_02005576(0, 700, 428);
+    Func_0200557c(0, 600, 428);
+    Func_02005670();
+    Func_0200567c();
+    Func_02005652(22);
 }

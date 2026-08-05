@@ -31,43 +31,63 @@
  * shape; every id/constant is recorded as a passed value.
  */
 
-extern void Func_02000894(s32 id);
-extern void Func_0808a170(s32 dialogue_id);
-extern void Func_080f9010(s32 arg0);
-extern void Func_080091f0(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0808a208(s32 arg0, s32 arg1);
-extern void Func_0808a210(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_0808a218(void);
-extern void Func_0808a010(s32 frames);
-extern void Func_0808a138(s32 id, s32 arg1);
-extern void Func_0808a188(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a1f0(s32 id, s32 arg1);
-extern void Func_0808a130(s32 id, s32 arg1);
 
+
+
+
+
+
+
+
+
+
+
+
+
+extern void Func_0200a922(s32 dialogue_id);
+extern void Func_020053c8(s32 id);
+extern void Func_0200aa06(s32 arg0);
+extern void Func_0200a806(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_0200a986(s32 arg0, s32 arg1);
+extern void Func_0200a992(s32 arg0, s32 arg1);
+extern void Func_0200a9aa(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200a9b6(void);
+extern void Func_0200a8a4(s32 frames);
+extern void Func_0200a95c(s32 id, s32 arg1);
+extern void Func_0200a996(s32 id, s32 arg1, s32 arg2);
+extern void Func_0200a96e(s32 id, s32 arg1);
+extern void Func_0200542c(s32 id);
+extern void Func_0200a9ce(s32 id, s32 arg1);
+extern void Func_0200a8d4(s32 frames);
+extern void Func_0200a9be(s32 id, s32 arg1, s32 arg2);
+extern void Func_0200a9e8(s32 id, s32 arg1);
+extern void Func_0200a8ee(s32 frames);
+extern void Func_0200a99e(s32 id, s32 arg1);
+extern void Func_02005464(s32 id);
 void Func_02004b28(void)
 {
-    Func_0808a170(0x2829);
-    Func_02000894(21);
-    Func_080f9010(62);
-    Func_080091f0(128 << 9, 128 << 9, 128 << 9);
-    Func_0808a208(0x0004cccc, 0x9999);
-    Func_0808a208(128 << 11, 128 << 8);
-    Func_0808a210(192 << 16, (s32)0xffc00000, 238 << 16, 1);
-    Func_0808a218();
+    Func_0200a922(0x2829);
+    Func_020053c8(21);
+    Func_0200aa06(62);
+    Func_0200a806(128 << 9, 128 << 9, 128 << 9);
+    Func_0200a986(0x0004cccc, 0x9999);
+    Func_0200a992(128 << 11, 128 << 8);
+    Func_0200a9aa(192 << 16, (s32)0xffc00000, 238 << 16, 1);
+    Func_0200a9b6();
 
-    Func_0808a010(40);
-    Func_0808a138(21, 1);
-    Func_0808a188(0x2015, 0, 40);
+    Func_0200a8a4(40);
+    Func_0200a95c(21, 1);
+    Func_0200a996(0x2015, 0, 40);
 
-    Func_0808a138(6, 3);
-    Func_02000894(6);
-    Func_0808a1f0(21, 129 << 1);
+    Func_0200a96e(6, 3);
+    Func_0200542c(6);
+    Func_0200a9ce(21, 129 << 1);
 
-    Func_0808a010(60);
-    Func_0808a188(0x2015, 0, 80);
-    Func_0808a1f0(6, 129 << 1);
+    Func_0200a8d4(60);
+    Func_0200a9be(0x2015, 0, 80);
+    Func_0200a9e8(6, 129 << 1);
 
-    Func_0808a010(40);
-    Func_0808a130(6, 2);
-    Func_02000894(6);
+    Func_0200a8ee(40);
+    Func_0200a99e(6, 2);
+    Func_02005464(6);
 }

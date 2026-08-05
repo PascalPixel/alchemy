@@ -21,18 +21,26 @@
  * real 0x0200013c prologue; the other six resolve through veneers.
  */
 
-extern void Func_08009180(s32, s32, s32, s32, s32, s32);
-extern u32 Func_080000f8(void);
-extern void Func_0200013c(s32, s32, s32, s32, s32, s32, u32, s32 *);
-extern void Func_0808a010(s32);
 
+
+
+
+
+extern void Func_0200936c(s32, s32, s32, s32, s32, s32);
+extern u32 Func_02009334(void);
+extern void Func_02003b0a(s32, s32, s32, s32, s32, s32, u32, s32 *);
+extern u32 Func_02009368(void);
+extern void Func_02003b40(s32, s32, s32, s32, s32, s32, u32, s32 *);
+extern void Func_020094b6(s32);
+extern void Func_0200942c(s32, s32, s32, s32, s32, s32);
+extern void Func_02009442(s32, s32, s32, s32, s32, s32);
 void Func_02003948(void)
 {
     s32 extra[4];
     s32 group;
     s32 baseZ = (s32)0xfffe0000;
 
-    Func_08009180(76, 61, 74, 38, 1, 1);
+    Func_0200936c(76, 61, 74, 38, 1, 1);
 
     extra[1] = 5;
     extra[2] = 0x8000;
@@ -44,28 +52,28 @@ void Func_02003948(void)
         for (member = 1; member <= 7; member++) {
             if ((member & 1) != 0) {
                 if ((member & 2) != 0) {
-                    s32 sample = (s32)((Func_080000f8() * 5) >> 16);
+                    s32 sample = (s32)((Func_02009334() * 5) >> 16);
                     s32 z = baseZ - group * 0x80000 + 0x022e0000;
                     s32 x = (105 - sample) << 16;
 
-                    Func_0200013c(x, 0, z, 0, 0, -0x4000,
+                    Func_02003b0a(x, 0, z, 0, 0, -0x4000,
                                   0x90000, extra);
                 } else {
-                    s32 sample = (s32)((Func_080000f8() * 5) >> 16);
+                    s32 sample = (s32)((Func_02009368() * 5) >> 16);
                     s32 z = (620 - sample) << 16;
                     s32 x = ((group * 4 + member) << 17) + (183 << 16);
 
-                    Func_0200013c(x, 0, z, 0x4000, 0, 0,
+                    Func_02003b40(x, 0, z, 0x4000, 0, 0,
                                   0x90000, extra);
                 }
 
-                Func_0808a010(1);
+                Func_020094b6(1);
             }
 
             baseZ -= 0x20000;
         }
 
-        Func_08009180(71, 59, 70, 34 - group, 1, 1);
-        Func_08009180(71, 59, 75 + group, 38, 1, 1);
+        Func_0200942c(71, 59, 70, 34 - group, 1, 1);
+        Func_02009442(71, 59, 75 + group, 38, 1, 1);
     }
 }

@@ -95,18 +95,18 @@ void Func_02000384(void)
         Func_0808a018();
         Func_0808a100(9, 7);
         Func_08009178(Data_0200b1c0, 10, 69);
+        return;
         Func_0808a170(0x156c);
         Func_0808a180(9, 0);
         Func_0808a100(9, 8);
         Func_08009178(Data_0200b1d6, 10, 69);
         Func_0808a020();
-        return;
     }
 
     Func_0808a018();
 
-    record = Func_0808a080(9);
     *(u16 *)(record + 100) = 10;
+    record = Func_0808a080(9);
 
     Func_0808a098(9, Data_0200a4f4);
     Func_0808a170(0x1534);

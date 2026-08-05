@@ -16,6 +16,7 @@ static s32 Abs_02000758(s32 value)
  */
 s32 Func_02000758(s32 *record)
 {
+    s32 permuted_24;
     const s32 (*bounds)[4] = (const s32 (*)[4])0x0200a758;
     const s32 *steps = (const s32 *)0x0200a700;
     s32 direction;
@@ -27,8 +28,8 @@ s32 Func_02000758(s32 *record)
     s32 wholeGridSteps = 0;
     u8 *object;
 
-    record[5] = 0;
     object = Func_02000630(&direction, record + 1, record);
+    record[5] = 0;
     if (object == 0)
         return 0;
 
@@ -40,8 +41,9 @@ s32 Func_02000758(s32 *record)
 
     basePosition[0] = *(s32 *)(object + 8) + (steps[direction] & (s32)0xffff0000);
     basePosition[1] = *(s32 *)(object + 12);
-    basePosition[2] = *(s32 *)(object + 16) + (s32)((unsigned int)steps[direction] << 16);
+    permuted_24 = *(s32 *)(object + 16) + (s32)((unsigned int)steps[direction] << 16);
     record[3] = basePosition[1];
+    basePosition[2]  = permuted_24;
 
     for (;;) {
         record[4] = basePosition[2] + (bounds[record[0]][1] << 16);
@@ -62,10 +64,10 @@ s32 Func_02000758(s32 *record)
 found:
     object[34] = 0;
     if (wholeGridSteps == 0)
-        return 0;
     record[2] = *(s32 *)(object + 8) +
         (steps[direction] & (s32)0xffff0000) * wholeGridSteps;
     record[3] = *(s32 *)(object + 12);
+        return 0;
     record[4] = *(s32 *)(object + 16) +
         (s32)((unsigned int)steps[direction] << 16) * wholeGridSteps;
     return 1;

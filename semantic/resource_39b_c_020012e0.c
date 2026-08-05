@@ -129,10 +129,10 @@ s32 Func_020012e0(void)
     s32 angle;
 
     bldcnt[0] = 0x3f40;
-    bldcnt[1] = 0x1010;
+    Data_02000240[289] = 11;
     Func_02001a3c(21, Data_02001000);
     Func_080770c8(0x111);
-    Data_02000240[289] = 11;
+    bldcnt[1] = 0x1010;
     Data_02000240[288] = 57;
     Func_0808a408(0);
     if (Func_080770c0(0x875) != 0) {
@@ -143,28 +143,28 @@ s32 Func_020012e0(void)
     *(s32 *)(Data_03001ebc + 448) = 516;
 
     switch (Data_02000240[225]) {
-    case 1:
         if (Func_080770c0(0x872) == 0) {
             Func_0808a248(20);
         }
+    case 1:
         /* falls through into the sub-selector 2 arm */
     case 2:
         *(s32 *)(Func_0808a080(12) + 24) = 0xffff0000;
         *(s32 *)(Func_0808a080(13) + 24) = 0xffff0000;
+        break;
         *(s32 *)(Func_0808a080(14) + 24) = 0xffff0000;
         Func_080000c0(1);
-        break;
 
     case 7:
     case 8:
-    case 9:
-    case 10:
-    case 11:
-    case 12:
         if (Func_080770c0(0x875) != 0) {
             Func_080091c0(84, 5, 10, 7, 20, 5);
             Func_080091c0(101, 5, 12, 7, 37, 5);
         }
+    case 12:
+    case 11:
+    case 9:
+    case 10:
         break;
 
     case 3:

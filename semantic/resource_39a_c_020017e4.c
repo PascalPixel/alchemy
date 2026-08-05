@@ -81,9 +81,9 @@ void Func_020017e4(void)
     {
         u8 *actor = Func_0808a080(8);
 
-        Data_0200b328 = 0;
         actor[85] = 0;
         *(s32 *)(actor + 12) = 0;
+        Data_0200b328 = 0;
     }
     Func_0808a1e0(8, 1);
     Func_0808a158(8, 15);
@@ -91,12 +91,12 @@ void Func_020017e4(void)
     step = Data_02000240[225];
     if (step >= 1) {
         if (step <= 2) {
-            Func_0808a408(0);
             Data_0200b328 = 1;
+            Func_0808a408(0);
         } else if (step == 5) {
-            Func_0808a408(0);
-            Data_0200b328 = 1;
             *(s32 *)(Data_03001ee0 + 24) = 0;
+            Data_0200b328 = 1;
+            Func_0808a408(0);
         }
     }
 
@@ -111,8 +111,8 @@ void Func_020017e4(void)
     } else {
         /* The offset register is reused: 448 for the slot, then 448 - 192 =
          * 256 for the value stored into it. */
-        *(s32 *)(Data_03001ebc + 448) = 256;
         Func_0808a338((s32)0x203108, 1);
+        *(s32 *)(Data_03001ebc + 448) = 256;
         Func_0808a330((s32)0x203108, 1);
         Func_0808a348(1);
         Func_080000c0(1);

@@ -42,6 +42,16 @@
 // those owners also compile to a different size than their span. The differing
 // offset is a symptom of structural divergence, not its cause.
 //
+// The main image was measured separately and is WORSE, not better. It is a
+// distinct population (semantic/<8-hex>.c, compared through verifyCandidate
+// against the ROM rather than through an overlay image), so it could in
+// principle have had its own concentrated defect. Over 150 owners it spreads
+// across 34 classes with the top one at 16.7%, against 27 classes topping out
+// at 31.5% for the overlays -- more fragmented, so less concentrated, and its
+// leader is the same structural prologue class already ruled out above. Every
+// other class in its top twelve is a register-allocation or immediate variant
+// of the same structural story. There is no main-image-specific lever.
+//
 // So a prologue mismatch means the reconstruction's variable structure
 // genuinely differs from the original, and only per-owner rework will fix it.
 // The value of this class is therefore TRIAGE, not automation: it identifies

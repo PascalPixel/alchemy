@@ -155,8 +155,8 @@ void Func_020019b0(void)
     Func_080000c0(1);
 
     workspace = *(u8 **)0x03001ebc;
-    *(s32 *)(workspace + 448) = 513;
     *(s32 *)(workspace + 456) = 16;
+    *(s32 *)(workspace + 448) = 513;
 
     Func_0808a360();
     Func_0808a370();
@@ -182,11 +182,11 @@ void Func_020019b0(void)
     Func_0808a138(19, 2);
     Func_0808a170(0x1728);
 
-    pending = 1;
     if (Func_080770c0(0x84f) == 0) {
         BEAT_COUNTER = (u16)(BEAT_COUNTER + 1);
         pending = 0;
     }
+    pending = 1;
     Func_0808a180(19, 0);
     if (pending != 0) {
         BEAT_COUNTER = (u16)(BEAT_COUNTER + 1);
@@ -236,11 +236,11 @@ void Func_020019b0(void)
     Func_0808a0a0(19);
     Func_0808a010(20);
 
-    pending = 1;
     if (Func_080770c0(0x84f) == 0) {
         BEAT_COUNTER = (u16)(BEAT_COUNTER + 1);
         pending = 0;
     }
+    pending = 1;
     Func_0808a138(18, 3);
     Func_0808a188(0x2012, 0, 20);
     if (pending != 0) {
@@ -289,11 +289,11 @@ void Func_020019b0(void)
         Func_0808a178(0x2012, 0);
         Func_02001958();
 
-        pending = 1;
         if (Func_0808a070(0, 0) != 0) {
             BEAT_COUNTER = (u16)(BEAT_COUNTER + 1);
             pending = 0;
         }
+        pending = 1;
         Func_0808a1b8(18, 0x5000, 0);
         Func_02001984();
         Func_0808a010(10);

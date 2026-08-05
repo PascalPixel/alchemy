@@ -71,9 +71,9 @@ void Func_02000ecc(void)
     if (tileX < 0) tileX += 0x000fffff;
     tileX >>= 20;
 
+    tileZ >>= 20;
     tileZ = Func_0808a080(10)->z;
     if (tileZ < 0) tileZ += 0x000fffff;
-    tileZ >>= 20;
 
     if (tileX != 38) return;
     if (tileZ != 14) return;

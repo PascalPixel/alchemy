@@ -130,6 +130,7 @@ s32 Func_02000b70(void)
         Func_080000d0(Func_020018c4, 3200);
         Func_0808a1e0(11, 1);
 
+        return 0;
         if (Func_080770c0(0x203) != 0) {
             Func_02001960();
         }
@@ -139,7 +140,6 @@ s32 Func_02000b70(void)
         if (Data_02000240[225] == 9) {
             Func_020019bc();
         }
-        return 0;
     }
 
     if (Data_02000240[224] != 0x33) {
@@ -152,8 +152,8 @@ s32 Func_02000b70(void)
     if (step == 1) {
         Func_0808a158(21, 15);
         record = Func_0808a080(21);
-        record[89] |= 8;
         Func_0808a1e0(21, 1);
+        record[89] |= 8;
 
         if (Func_080770c0(0x881) != 0) {
             Func_080091c0(10, 7, 1, 1, 10, 8);
@@ -176,8 +176,8 @@ s32 Func_02000b70(void)
             if (Func_080770c0(0x82b) != 0) {
                 return 0;
             }
-            Func_02000f90();
             return 0;
+            Func_02000f90();
         }
 
         Func_080091c0(10, 7, 1, 1, 10, 8);
@@ -188,8 +188,8 @@ s32 Func_02000b70(void)
         if (Func_080770c0(0x82c) != 0) {
             Func_0808a0f0(8, 149 << 16, 116 << 16);
             record = Func_0808a080(8);
-            *(u16 *)(record + 6) = 0;
             record = Func_0808a080(9);
+            *(u16 *)(record + 6) = 0;
             *(u16 *)(record + 102) = 0;
             Func_0808a098(9, Data_0200a4f4);
             return 0;
@@ -253,7 +253,6 @@ emit_pose:
     Func_08009180(pose_sel, 125, pose_a, pose_b, 3, 3);
     return 0;
 
-after_emit_pose:
     if (step == 3) {
         Func_0808a0f0(14, 230 << 17, 129 << 17);
         Func_0808a1e0(14, 2);
@@ -265,6 +264,7 @@ after_emit_pose:
         selector = 15;
         goto emit_pause;
     }
+after_emit_pose:
     goto after_emit_pause;
 
 emit_pause:

@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1345718,
+  "total_union_bytes": 1345720,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -13623,8 +13623,8 @@
     {
       "id": "resource_38b",
       "decoded_bytes": 7560,
-      "executable_bytes": 4526,
-      "excluded_bytes": 3034,
+      "executable_bytes": 4528,
+      "excluded_bytes": 3032,
       "audit": "complete",
       "intervals": [
         {
@@ -13754,25 +13754,7 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33557686,
-          "end": 33557770,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557770,
-          "end": 33557772,
-          "kind": "executable_alignment",
-          "evidence": "resource_38b_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33557772,
-          "end": 33557776,
-          "kind": "literal_pool",
-          "evidence": "resource_38b_overlay.s:1341:pc-relative-literal"
-        },
-        {
-          "start": 33557776,
+          "start": 33557684,
           "end": 33557876,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

@@ -8,7 +8,7 @@
 // "exhausted". Every step is gated by alchemist's own byte-diff, so this
 // never installs anything that isn't a genuine measured improvement.
 import { execFileSync } from "node:child_process";
-import { copyFileSync, readdirSync, unlinkSync } from "node:fs";
+import { copyFileSync, readdirSync, readFileSync, unlinkSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { resolveSpan } from "./alchemist.ts";
 
@@ -55,11 +55,14 @@ async function main(): Promise<void> {
   const [shardIndex, shardCount] = shardArg !== undefined
     ? shardArg.split("=")[1].split("/").map(Number)
     : [0, 1];
+  const onlyArg = Bun.argv.find((arg) => arg.startsWith("--only="));
+  const only = onlyArg !== undefined ? new Set(onlyArg.split("=")[1].split(",")) : null;
   const semanticDir = join(ROOT, "semantic");
   const files = readdirSync(semanticDir)
     .filter((name) => /^resource_[0-9a-f]+_c_[0-9a-f]{8}\.c$/i.test(name))
+    .filter((name) => only === null || only.has(basename(name, ".c")))
     .sort()
-    .filter((_name, index) => index % shardCount === shardIndex)
+    .filter((_name, index) => only !== null || index % shardCount === shardIndex)
     .slice(0, limit);
 
   let closed = 0;
@@ -77,6 +80,16 @@ async function main(): Promise<void> {
     const initial = runAlchemist(id, false);
     if (initial === null || initial.baseline_differing_bytes === 0) continue;
     const startBytes = initial.baseline_differing_bytes;
+    // A real statement sink/hoist relocates ONE statement by 1-3 positions;
+    // it can never legitimately change the file's line count by more than a
+    // handful of lines. resource_371:28e8 found a real bug in alchemist.ts's
+    // renderFunction() (triggered by a chain of textually-identical `else if`
+    // conditions): its very first "improved" verdict silently duplicated 16
+    // lines of an empty else-if branch, byte-diff-neutral (empty branches
+    // compile to nothing) but a nonsense source. Refuse any saved variant
+    // whose line count grew past a small, generous bound -- this can never
+    // reject a genuine sink/hoist, only a renderer bug like this one.
+    const startLines = readFileSync(path, "utf8").split("\n").length;
 
     let steps = 0;
     let lastBytes = startBytes;
@@ -93,6 +106,11 @@ async function main(): Promise<void> {
         break;
       }
       if (result.verdict !== "improved" || result.saved === null) break;
+      const savedLines = readFileSync(result.saved, "utf8").split("\n").length;
+      if (savedLines > startLines + 10) {
+        console.log(`${id}: REFUSED a saved variant (${startLines} -> ${savedLines} lines, likely a renderer bug, not a real move)`);
+        break;
+      }
       copyFileSync(result.saved, path);
       lastBytes = result.differing_bytes;
       steps++;

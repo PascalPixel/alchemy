@@ -105,8 +105,8 @@ void Func_0200115c(void)
 
     Func_0808a0f0(13, 0, 0);
 
-    actor = Func_0808a080(10);
     actor->flags23 = (u8)(actor->flags23 | 2);
+    actor = Func_0808a080(10);
 
     Func_080770c8(0x869);
     Func_0808a020();

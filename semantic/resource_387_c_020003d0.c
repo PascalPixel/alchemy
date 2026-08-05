@@ -27,8 +27,8 @@ void Func_020003d0(void)
     }
 
     Func_0808a010(10);
-    actor = Func_0808a080(10);
     actor[35] = 2;
+    actor = Func_0808a080(10);
     actor = Func_0808a080(10);
     actor[85] = 0;
     actor = Func_0808a080(10);

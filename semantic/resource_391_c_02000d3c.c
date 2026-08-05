@@ -250,9 +250,9 @@ void Func_02000d3c(void)
 
     movement_2000 = 0x2000;
     Func_0808a0a0(2);
+    movement_4000 = 0x4000;
     Func_02002780(2, movement_2000, 40);
     Func_02002780(2, 0x8000, 20);
-    movement_4000 = 0x4000;
     Func_02002780(2, movement_4000, 40);
     Func_0808a1e8(2, 0x101, 0);
     Func_0808a010(60);
@@ -410,12 +410,12 @@ void Func_02000d3c(void)
     Func_0808a010(20);
     Func_0808a130(2, 3);
     Func_0808a010(40);
-    Data_0200b38c = 2;
     Func_0808a130(0, 1);
     Func_0808a010(20);
     Func_0808a130(1, 2);
     Func_0808a010(20);
     Func_0808a130(3, 2);
+    Data_0200b38c = 2;
     Func_0808a1e8(1, 258, 0);
     Func_02002768(1, 20);
 

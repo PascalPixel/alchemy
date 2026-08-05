@@ -204,8 +204,8 @@ s32 Func_02000b70(void)
             return 0;
         }
         record = Func_0808a080(11);
-        *(u16 *)(record + 102) = 1;
         Func_0808a098(11, Data_0200a4f4);
+        *(u16 *)(record + 102) = 1;
         return 0;
     }
 

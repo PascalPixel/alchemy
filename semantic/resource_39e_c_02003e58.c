@@ -112,10 +112,10 @@ s32 Func_02003e58(void)
             } else {
                 record = Func_0808a080(19);
                 record[85] = 0;
-                *(s32 *)(record + 12) = 0xc0000;
-                *(s32 *)(record + 60) = 0xc0000;
                 *(s32 *)(record + 24) = 0xcccc;
+                *(s32 *)(record + 60) = 0xc0000;
                 *(s32 *)(record + 28) = 0x8000;
+                *(s32 *)(record + 12) = 0xc0000;
                 record[89] |= 8;
                 *(u16 *)(*(u8 **)(record + 80) + 30) = 0x8000;
                 Func_080091c0(14, 11, 1, 1, 14, 10);

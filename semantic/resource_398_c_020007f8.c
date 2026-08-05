@@ -68,6 +68,7 @@ void Func_020007f8(void)
     s32 place[3];
 
     s32 permuted_24;
+    s32 permuted_48;
     player = Func_0808a080(0);
     heading = *(u16 *)(player + 6) >> 12;
     step = Data_02009064[heading];
@@ -108,8 +109,9 @@ void Func_020007f8(void)
     Func_08009158(target);
 
     *(s32 *)(target + 8) = place[0];
-    *(s32 *)(target + 16) = place[2];
+    permuted_48 = place[2];
     *(s32 *)(target + 36) = (s32)blocker;
+    *(s32 *)(target + 16) = permuted_48;
     *(s32 *)(target + 44) = (s32)blocker;
 
     Func_08009080(player, 1);

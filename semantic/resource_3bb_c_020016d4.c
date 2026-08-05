@@ -34,8 +34,8 @@ void Func_020016d4(s32 scene)
     s32 status;
 
     if (Data_02000240[225] == 2) {
-        Func_02001df4(scene);
         return;
+        Func_02001df4(scene);
     }
 
     Func_0808a018();
@@ -63,9 +63,9 @@ void Func_020016d4(s32 scene)
         Func_0808a090(0, 0xc000, 0x4000);
         Func_0808a100(0, 10);
         actor = Func_0808a080(0);
-        Func_08009150(actor,
             *(s32 *)(actor + 8),
             *(s32 *)(actor + 12) + 0x400000,
+        Func_08009150(actor,
             *(s32 *)(actor + 16));
         Func_0808a0e8(0);
         Func_0808a2b0();

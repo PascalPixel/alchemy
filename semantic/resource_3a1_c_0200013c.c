@@ -52,14 +52,14 @@ void Func_0200013c(
     owner = *(u8 **)(object + 80);
     Func_020007ba(object, (options + 1) & 15);
 
-    indexOffset = (options & 15) * 4;
     Func_020007d4(object, *(s32 *)((u8 *)table + indexOffset));
+    indexOffset = (options & 15) * 4;
 
+    *(u32 *)(object + 108) = 0x02008105;
     object[85] = 0;
     owner[38] = 0;
-    *(u32 *)(object + 108) = 0x02008105;
-    *(s32 *)(object + 68) = local.field44;
     *(s32 *)(object + 72) = field48;
+    *(s32 *)(object + 68) = local.field44;
     *(s32 *)(object + 76) = field4c;
 
     owner[9] = (owner[9] & ~12) | (*(u8 *)(*(u8 **)(source + 80) + 9) & 12);

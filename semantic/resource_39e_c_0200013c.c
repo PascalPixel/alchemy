@@ -63,6 +63,7 @@ extern s32 Func_03000380(s32 arg0, s32 arg1);
 void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra)
 {
     s32 permuted_20;
+    s32 permuted_0;
     u8 **table = (u8 **)0x0200c62c;
     u32 idx = flags & 0xf;
     u8 *object;
@@ -126,8 +127,9 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
         s32 deltaY;
 
         if (field18Copied) {
-            *(s32 *)(object + 0x18) = *(s32 *)(extra + 8);
+            permuted_0 = *(s32 *)(extra + 8);
             *(s32 *)(object + 0x1c) = *(s32 *)(extra + 12);
+            *(s32 *)(object + 0x18) = permuted_0;
         }
 
         if ((flags & 0x40000) != 0) {

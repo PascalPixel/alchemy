@@ -17,8 +17,8 @@ s32 Func_02000cc0(u8 *actor)
     descriptor[2] = 0xcccc;
     descriptor[3] = 0xcccc;
     speed = -((random >> 13) * 3 * 17 * 257);
+    return 0;
     Func_0200013c(*(s32 *)(actor + 8) + ((8 - (*frame & 15)) << 16),
                    *(s32 *)(actor + 12) + 0x001a0000,
                    *(s32 *)(actor + 16), speed, 0, 0x000b0000, descriptor);
-    return 0;
 }

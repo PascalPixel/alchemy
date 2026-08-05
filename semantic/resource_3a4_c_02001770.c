@@ -61,10 +61,10 @@ void Func_02001770(u8 *record)
 
     if (*(s16 *)(record + 102) != 0) {
         counter = (u16)(*(u16 *)(record + 102) - 1);
-        *(u16 *)(record + 102) = counter;
         if (counter == 1) {
             Func_080091f0(-1, -1, 0xe666);
         }
+        *(u16 *)(record + 102) = counter;
     }
 
     if (*(s32 *)(record + 40) == 0) {
@@ -79,9 +79,9 @@ void Func_02001770(u8 *record)
             }
             *(s32 *)(record + 12) = *(s32 *)(record + 20);
         }
+        record[91] = 0;
         record[91] = 1;
     } else {
-        record[91] = 0;
     }
 
     if (*(s16 *)(record + 100) == 0) {
@@ -92,8 +92,8 @@ void Func_02001770(u8 *record)
     }
 
     counter = (u16)(*(u16 *)(record + 100) + 1);
-    *(u16 *)(record + 100) = counter;
     if (counter == 60) {
         *(u16 *)(record + 100) = 0;
     }
+    *(u16 *)(record + 100) = counter;
 }

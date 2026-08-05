@@ -79,8 +79,8 @@ void Func_02003788(void)
 
     Func_0808a580(0, 0, 10);
 
-    self[0x55] = 3;
     *(s32 *)(self + 0x6c) = 0;
+    self[0x55] = 3;
 
     Func_0808a5e8();
     Func_0808a020();

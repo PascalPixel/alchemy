@@ -44,6 +44,7 @@ extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
 
 void Func_02004c68(void)
 {
+    s32 permuted_46;
     u8 *workspace = Data_03001e70;
     u8 *camera = workspace + 356;
     u8 *actor0;
@@ -101,8 +102,8 @@ void Func_02004c68(void)
         Func_080000c0(1);
     }
 
-    *(s32 *)(camera + 12) = 0x04000000;
     Func_08009128();
+    *(s32 *)(camera + 12) = 0x04000000;
     Func_080000c0(2);
 
     actor0 = Func_0808a080(0);
@@ -110,14 +111,15 @@ void Func_02004c68(void)
     actor13 = Func_0808a080(13);
     *(s32 *)(actor13 + 16) = 0x006e0000;
     actor13 = Func_0808a080(13);
-    *(s32 *)(actor13 + 64) = *(s32 *)(Func_0808a080(13) + 16);
+    permuted_46 = *(s32 *)(Func_0808a080(13) + 16);
     Func_0808a010(30);
+    *(s32 *)(actor13 + 64) = permuted_46;
 
     Func_0808a0d0(0, 176 << 2, 146 << 2);
     actor0 = Func_0808a080(0);
-    *(s32 *)(actor0 + 68) = 0;
     Func_0808a100(0, 6);
     Func_0808a010(6);
+    *(s32 *)(actor0 + 68) = 0;
     Func_0808a100(0, 7);
 
     actor0 = Func_0808a080(0);

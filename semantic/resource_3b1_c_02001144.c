@@ -20,6 +20,11 @@
  * +-12 box around `(x, z)`, or NULL if none does.
  *
  * Raw callee naming.
+ *
+ * STILL-OPEN residual, 36 differing bytes (down from 56 after the loop
+ * restructure to `i=8..65`/`*table++`, then alchemist.ts's declaration-sink
+ * move applied here). alchemist tiers: [class,depend-count,model-divergence,
+ * original-order,priority,unaligned] -- no further licensed move improves it.
  */
 
 extern u8 *Data_03001ebc;
@@ -28,9 +33,9 @@ u8 *Func_02001144(s32 x, s32 z)
 {
     u8 **table = (u8 **)(Data_03001ebc + 0x34);
     s32 x_max = x + 12;
-    s32 x_min = x - 12;
     s32 z_min = z - 12;
     s32 z_max = z + 12;
+    s32 x_min = x - 12;
     u32 i;
 
     for (i = 8; i <= 65; i++) {

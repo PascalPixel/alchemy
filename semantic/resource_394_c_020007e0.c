@@ -38,41 +38,61 @@
 extern u16 *Data_020092c4;
 
 /* Resolved whole-owner call targets. */
-extern void Func_080091c0();
-extern void Func_0808a010();
-extern void Func_0808a018();
-extern void Func_0808a020();
-extern void Func_0808a090();
-extern void Func_0808a0b8();
-extern void Func_0808a0e0();
-extern void Func_0808a0e8();
-extern void Func_0808a100();
-extern void Func_080f9010();
 
+
+
+
+
+
+
+
+
+
+
+extern void Func_02001882();
+extern void Func_020018ca();
+extern void Func_02001888();
+extern void Func_0200190e();
+extern void Func_020018ba();
+extern void Func_020018ea();
+extern void Func_020018d4();
+extern void Func_020018b2();
+extern void Func_02001902();
+extern void Func_020018e4();
+extern void Func_02001900();
+extern void Func_020018d6();
+extern void Func_02001926();
+extern void Func_0200191c();
+extern void Func_02001934();
+extern void Func_02001974();
+extern void Func_0200197a();
+extern void Func_020018ee();
+extern void Func_020018fe();
+extern void Func_0200193a();
 void Func_020007e0(void)
 {
-    Func_0808a018();
-    Func_0808a100(0, 8);
-    Func_0808a010(6);
-    Func_080f9010(0xef);
-    Func_0808a090(8, 0x8000, 0x3333);
-    Func_0808a100(8, 2);
-    Func_0808a0b8(8, 0x48, 0xb0);
-    Func_0808a010(6);
-    Func_0808a100(0, 2);
-    Func_0808a090(0, 0x4ccc, 0x3333);
-    Func_0808a0e0(0, -8, 0);
-    Func_0808a010(24);
-    Func_0808a100(0, 1);
-    Func_0808a0e8(8);
-    Func_0808a100(8, 1);
-    Func_080f9010(288);
-    Func_080f9010(213);
-    Func_080091c0(5, 9, 1, 4, 6, 9);
+    Func_02001882();
+    Func_020018ca(0, 8);
+    Func_02001888(6);
+    Func_0200190e(0xef);
+    Func_020018ba(8, 0x8000, 0x3333);
+    Func_020018ea(8, 2);
+    Func_020018d4(8, 0x48, 0xb0);
+    Func_020018b2(6);
+    Func_02001902(0, 2);
+    Func_020018e4(0, 0x4ccc, 0x3333);
+    Func_02001900(0, -8, 0);
+    Func_020018d6(24);
+    Func_02001926(0, 1);
+    Func_0200191c(8);
+    Func_02001934(8, 1);
+    Func_02001974(288);
+    Func_0200197a(213);
+    Func_020018ee(5, 9, 1, 4, 6, 9);
     {
         s32 four = 4;
-        Func_080091c0(0, 0, 1, four, four, 9);
+        Func_020018fe(0, 0, 1, four, four, 9);
     }
     *Data_020092c4 = 1;
-    Func_0808a020();
+    Func_0200193a();
 }

@@ -11,25 +11,35 @@
  * 0x02002f12..0x02002f14 and carries no pool tail.
  */
 
-extern void Func_02003208();
-extern void Func_0808a018();
-extern void Func_0808a020();
-extern void Func_0808a090();
-extern void Func_0808a0d0();
-extern void Func_0808a1b8();
-extern void Func_0808a1e0();
-extern void Func_0808a210();
-extern void Func_0808a248();
 
+
+
+
+
+
+
+
+
+
+extern void Func_02006594();
+extern void Func_020065c2();
+extern void Func_020065ec();
+extern void Func_02006668();
+extern void Func_02006678();
+extern void Func_02006680();
+extern void Func_020060fc();
+extern void Func_020066b6();
+extern void Func_020066d4();
+extern void Func_020065f0();
 void Func_02002eb8(void) {
-    Func_0808a018();
-    Func_0808a090(0, 0x8000, 0x4000);
-    Func_0808a0d0(0, 0x68, 0x98);
-    Func_0808a1b8(0, 0x4000, 0x3C);
-    Func_0808a1e0(0x11, 0);
-    Func_0808a1e0(0x12, 0);
-    Func_02003208();
-    Func_0808a210(-1, -1, -1, 0);
-    Func_0808a248(1);
-    Func_0808a020();
+    Func_02006594();
+    Func_020065c2(0, 0x8000, 0x4000);
+    Func_020065ec(0, 0x68, 0x98);
+    Func_02006668(0, 0x4000, 0x3C);
+    Func_02006678(0x11, 0);
+    Func_02006680(0x12, 0);
+    Func_020060fc();
+    Func_020066b6(-1, -1, -1, 0);
+    Func_020066d4(1);
+    Func_020065f0();
 }

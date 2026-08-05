@@ -2288,13 +2288,8 @@ AlchemyC_020011c8:
 	.4byte 0x0000e666
 AlchemyC_02001380:
 	.space 0x4
-	push	{lr}
-	movs	r0, #12
-	movs	r1, #0
-	movs	r2, #0
-	bl	sub_020028f2
-	pop	{r0}
-	bx	r0
+AlchemyC_02001384:
+	.space 0x10
 	push	{r5, lr}
 	ldr	r5, [pc, #216]
 	movs	r1, #224

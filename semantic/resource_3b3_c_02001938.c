@@ -66,13 +66,13 @@ s32 Func_02001938(u8 *a, u8 *b)
     {
         u8 *linkedA = *(u8 **)(a + 0x50);
         u8 *linkedB = *(u8 **)(b + 0x50);
-        s32 fieldA = (linkedA[9] >> 2) & 3;
         s32 fieldB = (linkedB[9] >> 2) & 3;
+        s32 fieldA = (linkedA[9] >> 2) & 3;
 
         if (fieldA < fieldB) {
             a[0x23] &= 0xfe;
-            linkedA[9] = (linkedA[9] & 0xf3) | (fieldB << 2);
             linkedA[21] = (linkedA[21] & 0xf3) | (linkedB[21] & 0x0c);
+            linkedA[9] = (linkedA[9] & 0xf3) | (fieldB << 2);
         }
     }
 

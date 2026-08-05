@@ -8,8 +8,8 @@ s32 Func_020003ac(u8 *entity)
 {
     u8 *base = Data_03001e8c[0];
     u8 *workspace = Data_03001e8c[12];
-    s32 selector = 18;
     s32 flag = 0;
+    s32 selector = 18;
     u8 *leader;
 
     if (*(s32 *)(entity + 56) == (s32)0x80000000)

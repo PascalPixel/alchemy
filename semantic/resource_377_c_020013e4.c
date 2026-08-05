@@ -132,11 +132,11 @@ void Func_020013e4(void)
     Func_080000c0(1);
     Func_0808a200(18, 1);
 
-    object = Func_080090c8(22, 0x1480000, 0x20000, 0xC30000);
     object->field55 = 0;
+    object = Func_080090c8(22, 0x1480000, 0x20000, 0xC30000);
+    sprite->flags27 = 0;
     sprite = object->sprite;
     object->field0c = 0x50000;
-    sprite->flags27 = 0;
     sprite->flags05 &= ~0x20;
     sprite->mode09 &= 0x0F;
 

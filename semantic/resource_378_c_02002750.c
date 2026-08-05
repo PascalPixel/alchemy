@@ -41,6 +41,6 @@ void Func_02002750(s32 actorId, s32 tag)
     actorRecord = *(u8 **)(actor + 80);
     mixed = (u8)((actorRecord[9] & 0x0c) |
                  (effectRecord[9] & (u8)~0x0c));
-    *(u8 **)(effect + 104) = actor;
     effectRecord[9] = mixed;
+    *(u8 **)(effect + 104) = actor;
 }

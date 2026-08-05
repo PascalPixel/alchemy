@@ -248,8 +248,8 @@ void Func_02000170(void)
 
     Func_0808a188(13, 0, 20);
 
-    line = 0xfbf;
     Func_0808a170(line);
+    line = 0xfbf;
     Func_0808a1b8(1, 0, 10);
     Func_0808a138(1, 2);
 

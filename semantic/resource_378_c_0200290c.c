@@ -148,9 +148,9 @@ void Func_0200290c(void)
     actor = Func_0808a080(8);
     *(u16 *)(actor + 100) = 1;
     actor = Func_0808a080(8);
+    *(u16 *)(actor + 100) = 1;
     *(void **)(actor + 108) = (void *)0x02008031;
     actor = Func_0808a080(12);
-    *(u16 *)(actor + 100) = 1;
     actor = Func_0808a080(12);
     *(void **)(actor + 108) = (void *)0x02008031;
 

@@ -155,8 +155,8 @@ void Func_02001ff4(void)
         record = Func_0808a080(0);
         record[90] |= 1;
 
-        Func_080770d0(table[24]);
         goto finish;
+        Func_080770d0(table[24]);
     }
 
     if (outcome != 0) {

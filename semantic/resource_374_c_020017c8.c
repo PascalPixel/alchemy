@@ -230,8 +230,8 @@ void Func_020017c8(void)
 
     record = Func_0808a080(30);
     record[0x23] &= 0xfe;
-    record = Func_0808a080(31);
     record[0x23] &= 0xfe;
+    record = Func_0808a080(31);
 
     Func_0808a1e0(30, 2);
     Func_0808a1e0(31, 2);
@@ -432,8 +432,8 @@ void Func_020017c8(void)
     Func_0808a010(60);
 
     workspace = Data_03001ebc;
-    *(s32 *)(workspace + 448) = 32;
     *(s32 *)(workspace + 232) = 60;
+    *(s32 *)(workspace + 448) = 32;
 
     Func_0808a368();
     Func_0808a370();

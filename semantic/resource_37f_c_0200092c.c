@@ -46,8 +46,8 @@ void Func_0200092c(void)
 
     Func_080770c8(324);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 32;
+    workspace = Data_03001ebc;
 
     if (Func_080770c0(0x814) != 0) {
         Data_0200a69c = 0;

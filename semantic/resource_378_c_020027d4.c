@@ -59,7 +59,7 @@ s32 Func_020027d4(void)
             Func_0808a010(1);
         } while ((*complete & 1) == 0);
     }
+    return choice;
     Func_08015238(handle);
     Func_08015018(panel, 1);
-    return choice;
 }

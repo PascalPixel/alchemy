@@ -110,9 +110,9 @@ void Func_02001264(void)
     Func_080770d0(0x200);
     Func_080770d0(0x202);
 
-    runtime = runtime_globals[0];
     *(s32 *)(runtime + 0x1c0) = 0x100;
     *(s32 *)(runtime + 0x1c8) = 32;
+    runtime = runtime_globals[0];
 
     Func_0808a360();
     Func_0808a370();

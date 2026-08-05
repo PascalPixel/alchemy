@@ -101,8 +101,8 @@ void Func_02000150(void)
     Func_0808a018();
 
     workspace = *(u8 **)0x03001ebc;
-    *(u32 *)(workspace + 448) = 256;
     *(u32 *)(workspace + 456) = 32;
+    *(u32 *)(workspace + 448) = 256;
 
     Func_0808a360();
     Func_0808a370();
@@ -247,8 +247,8 @@ void Func_02000150(void)
     Func_080770d0(0x12f);
 
     workspace = *(u8 **)0x03001ebc;
-    *(u32 *)(workspace + 448) = 516;
     *(u32 *)(workspace + 456) = 16;
+    *(u32 *)(workspace + 448) = 516;
 
     Func_0808a020();
 }

@@ -76,11 +76,11 @@ void Func_020010c0(void)
         Func_0808a0f0(actor_id, anchor->x, anchor->y);
     }
 
-    selected->motion_x = 0x6666;
-    selected->motion_y = 0x6666;
-    selected->displaced_axis += 0x180000;
     selected->mirrored_axis = selected->displaced_axis;
+    selected->motion_x = 0x6666;
+    selected->displaced_axis += 0x180000;
     selected->state = 25;
     selected->duration = 128;
     Func_0808a098(actor_id, Data_02009440);
+    selected->motion_y = 0x6666;
 }

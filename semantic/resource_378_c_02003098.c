@@ -17,15 +17,15 @@ void Func_02003098(s32 presentationValue, s32 x, s32 y, s32 z)
     s32 destination;
     u32 frame;
 
+    record = *(u8 **)(object + 80);
     if (object == 0)
         return;
     Func_0200661a(object, (const void *)0x0200b8f8);
-    record = *(u8 **)(object + 80);
     record[38] = 0;
     record[39] = 0;
+    *(s32 *)(object + 40) = 0x20000;
     record[5] &= (u8)~0x20;
     record[9] &= 0x0f;
-    *(s32 *)(object + 40) = 0x20000;
     *(s32 *)(object + 72) = 0x4000;
 
     destination = Func_02006636(17, 0x608);

@@ -13,6 +13,7 @@ extern s32 Func_02006748(s32 value, s32 divisor);
 /* Spawn one randomized child effect around the selected actor. */
 void Func_020031b8(s32 actorId)
 {
+    s32 permuted_14;
     u8 *actor = Func_020067d0(actorId);
     u8 *child;
     u8 *actorRecord;
@@ -27,9 +28,10 @@ void Func_020031b8(s32 actorId)
         - 0x000a0000;
     y = *(s32 *)(actor + 12) + ((Func_0200670e() & 15) << 16)
         - 0x00080000;
-    child = Func_02006768(0x11e, x, y, *(s32 *)(actor + 16));
+    permuted_14 = Func_02006768(0x11e, x, y, *(s32 *)(actor + 16));
     if (child == 0)
         return;
+    child  = permuted_14;
 
     child[85] = 0;
     childRecord = *(u8 **)(child + 80);

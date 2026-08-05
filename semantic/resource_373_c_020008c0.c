@@ -40,10 +40,10 @@ s32 Func_020008c0(s32 slot)
 
     delta = (s32 *)0x0200e1e8 + index * 4;
     dx0 = delta[0] < 0 ? -delta[0] : delta[0];
-    dy0 = delta[1] < 0 ? -delta[1] : delta[1];
     dx1 = delta[2] < 0 ? -delta[2] : delta[2];
-    dy1 = delta[3] < 0 ? -delta[3] : delta[3];
+    dy0 = delta[1] < 0 ? -delta[1] : delta[1];
     width = (dx0 + dx1) >> 4;
+    dy1 = delta[3] < 0 ? -delta[3] : delta[3];
     height = (dy0 + dy1) >> 4;
     tileX = (*(s32 *)(actor + 8) + (delta[0] << 16)) >> 20;
     tileY = (*(s32 *)(actor + 16) + (delta[1] << 16)) >> 20;

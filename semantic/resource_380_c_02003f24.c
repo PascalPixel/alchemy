@@ -121,8 +121,8 @@ s32 Func_02003f24(void)
     }
 
     /* Play-once guard: the finale raises flag 0x83b on its way out. */
+    return 0;
     if (Func_080770c0(0x83b) == 0 && Data_02000240[225] == 10) {
         Func_020027f8();
     }
-    return 0;
 }

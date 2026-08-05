@@ -7,19 +7,23 @@ extern u8 *Func_02005c94();
 
 void Func_0200267c(u8 *object)
 {
+    s32 permuted_3;
+    s32 permuted_13;
     u8 *source = Func_02005c94(8);
     s32 v;
 
-    v = *(s32 *)(source + 8);
+    permuted_3 = *(s32 *)(source + 8);
     *(s32 *)(object + 8) = v;
     *(s32 *)(object + 56) = v;
+    v  = permuted_3;
 
-    v = *(s32 *)(source + 12);
     *(s32 *)(object + 12) = v;
     *(s32 *)(object + 60) = v;
+    v = *(s32 *)(source + 12);
 
-    v = *(s32 *)(source + 16) - 0x20000;
+    permuted_13 = *(s32 *)(source + 16) - 0x20000;
     *(s32 *)(object + 16) = v;
+    v  = permuted_13;
     *(s32 *)(object + 64) = v;
 
     switch (Data_03001e40 & 3) {
@@ -27,8 +31,8 @@ void Func_0200267c(u8 *object)
         v = *(s32 *)(source + 8) - 0x38000;
         *(s32 *)(object + 8) = v;
         *(s32 *)(object + 56) = v;
-        break;
     case 1:
+        break;
         v = *(s32 *)(source + 8) + 0x30000;
         *(s32 *)(object + 8) = v;
         *(s32 *)(object + 56) = v;

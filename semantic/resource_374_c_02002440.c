@@ -125,29 +125,29 @@ void Func_02002440(struct Source *source)
         obj->f14 = source->f14;
         sprite = obj->f50;
         obj->f55 = 0;
-        obj->f64 = 0;
         obj->f68 = source;
+        obj->f64 = 0;
         if (sprite == NULL) continue;
 
         Func_08009020(sprite, 0);
-        *((u8 *)sprite + 0x26) = 0;
         Func_080001b8(sprite->f1c);
+        *((u8 *)sprite + 0x26) = 0;
 
         /* Halfword source, byte destination: the truncation is original. */
-        sprite->f1c = (u8)*(u16 *)(workspace + 70);
         sprite->f1d |= 1;
+        sprite->f1c = (u8)*(u16 *)(workspace + 70);
 
         /* Bits 5-14 of the table halfword replace the low 10 bits of f08. */
         packed = Data_03001b10[sprite->f1c * 2 + 1];
         sprite->f08 = (u16)((sprite->f08 & 0xfc00) | ((packed >> 5) & 0x3ff));
 
+        sprite->f28->f16 = 0;
         sprite->f05 = (u8)(((sprite->f05 & ~0x21) & 0x3f) | 0x40);
         sprite->f07 = (u8)((sprite->f07 & 0x3f) | 0x80);
-        sprite->f28->f16 = 0;
     }
 
-    made[0]->f6c = Func_020023ec;
     *((u8 *)made[0]->f50 + 9) = (u8)((*((u8 *)made[0]->f50 + 9) & ~13) | 8);
+    made[0]->f6c = Func_020023ec;
 
     *((u8 *)made[1]->f50 + 9) = (u8)((*((u8 *)made[1]->f50 + 9) & ~13) | 8);
     made[1]->f6c = Func_0200239c;

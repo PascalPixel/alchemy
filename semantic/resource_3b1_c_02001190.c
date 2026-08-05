@@ -52,6 +52,7 @@ static s32 Bucket_02001190(u16 heading)
 
 void Func_02001190(u8 *obj)
 {
+    s32 permuted_11;
     u8 *subject = Func_0808a080(0);
     u8 *p;
     u16 heading;
@@ -60,11 +61,12 @@ void Func_02001190(u8 *obj)
 
     Func_0808a1e0(obj, 2, 1);
 
-    p = Func_0808a080(obj);
     p[0x23] |= 1;
+    p = Func_0808a080(obj);
 
-    heading = *(u16 *)(subject + 6);
+    permuted_11 = *(u16 *)(subject + 6);
     bucket = Bucket_02001190(heading + 0x4000);
+    heading  = permuted_11;
     if (Func_02001280(bucket) == 0) {
         bucket = Bucket_02001190(heading - 0x4000);
         if (Func_02001280(bucket) == 0) {

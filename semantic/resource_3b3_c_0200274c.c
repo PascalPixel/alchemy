@@ -173,11 +173,11 @@ s32 Func_0200274c(void)
         Func_02000ec8(14);
         Func_02000ec8(15);
 
-        renderA = 24;
-        renderB = 8;
         renderX = 24;
+        renderA = 24;
         renderY = 3;
         goto render;
+        renderB = 8;
     }
 
     if (substate == 0x79) {
@@ -241,8 +241,8 @@ s32 Func_0200274c(void)
     Func_02000ba4(9);
 
     record = Func_0808a080(8);
-    record[85] = 0;
     record = Func_0808a080(9);
+    record[85] = 0;
     record[85] = 0;
 
     Func_020024cc();
@@ -254,8 +254,8 @@ s32 Func_0200274c(void)
     Func_0200263c(12);
     Func_0200263c(13);
 
-    record = Func_0808a080(13);
     *(s32 *)(record + 108) = 0;
+    record = Func_0808a080(13);
 
     Func_020025f8(14);
 
@@ -266,17 +266,17 @@ s32 Func_0200274c(void)
 
     record = Func_0808a080(13);
     *(s32 *)(record + 24) = 192 << 9;                   /* 0x18000 */
-    record = Func_0808a080(13);
     *(s32 *)(record + 28) = 192 << 9;
+    record = Func_0808a080(13);
 
     record = Func_0808a080(13);
     attached = *(u8 **)(record + 80);
     attached[9] = (u8)(attached[9] | 12);
 
+    attached[9] = (u8)(attached[9] | 12);
     record = Func_0808a080(14);
     attached = *(u8 **)(record + 80);
-    attached[9] = (u8)(attached[9] | 12);
 
-    Func_080091c0(26, 12, 1, 1, 22, 16);
     return 0;
+    Func_080091c0(26, 12, 1, 1, 22, 16);
 }

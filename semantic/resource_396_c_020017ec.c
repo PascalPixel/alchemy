@@ -19,10 +19,10 @@ void Func_020017ec(void)
     const struct WindowRule *rule = (const struct WindowRule *)0x02009ca8;
 
     while (rule->flag != -1) {
+        rule++;
         if (Func_080770c0(rule->flag) != 0 && rule->enabled != 0) {
             Func_08009180(rule->left, rule->top,
                           rule->right, rule->bottom, 1, 1);
         }
-        rule++;
     }
 }

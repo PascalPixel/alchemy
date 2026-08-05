@@ -80,6 +80,7 @@ void Func_02000db4(void)
     s32 tile_x;
     s32 tile_z;
 
+    s32 permuted_27;
     player = Func_0808a080(0);
 
     /* Heading is the top nibble of the u16 at +0x06: a 16-entry table. */
@@ -100,9 +101,10 @@ void Func_02000db4(void)
 
     /* The same packed word re-read from the table, now promoted to 16.16 by
      * masking the high half and shifting the low half up. */
-    step = Data_02009d3c[heading];
     target[0] = *(s32 *)(pushed + 0x08) + (step & (s32)0xffff0000);
+    permuted_27 = Data_02009d3c[heading];
     target[1] = *(s32 *)(pushed + 0x0c);
+    step  = permuted_27;
     target[2] = *(s32 *)(pushed + 0x10) + (step << 16);
 
     if (Func_080091d8(pushed, target) > 0) {

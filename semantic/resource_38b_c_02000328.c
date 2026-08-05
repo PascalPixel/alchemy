@@ -96,8 +96,8 @@ void Func_02000328(void)
     record = Func_0808a080(0);
     *(u8 *)(record + 0x55) = 0;
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 256;
+    workspace = Data_03001ebc;
 
     if (room == 6) {
         Func_0808a100(0, 2);

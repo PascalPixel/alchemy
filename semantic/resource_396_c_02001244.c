@@ -8,10 +8,11 @@ extern u32 Func_080000f8(void);
 /* Fade a captured RGB555 palette through the current three-channel profile. */
 void Func_02001244(void)
 {
+    s32 permuted_9;
+    s32 profile = Data_0200adb8;
     u8 *workspace = *(u8 **)0x03001ebc;
     u16 *captured = *(u16 **)0x03001ed0 + 16;
     volatile u16 *palette = (volatile u16 *)0x05000020;
-    s32 profile = Data_0200adb8;
     s32 redDelta = Data_02009f00[profile];
     s32 greenDelta = Data_02009f00[profile + 1];
     s32 blueDelta = Data_02009f00[profile + 2];
@@ -42,10 +43,11 @@ void Func_02001244(void)
 
         red = (color & 31) + redDelta;
         if (red > 31) red = 31;
-        green = ((color >> 5) & 31) + greenDelta;
-        color = captured[index];
+        permuted_9 = captured[index];
         blue = ((color >> 10) & 31) + blueDelta;
+        color  = permuted_9;
         if (green > 31) green = 31;
+        green = ((color >> 5) & 31) + greenDelta;
         if (blue > 31) blue = 31;
         if (red < 0) red = 0;
         if (green < 0) green = 0;

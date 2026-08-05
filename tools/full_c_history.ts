@@ -154,13 +154,15 @@ function overlayPlaceholders(source: string): Map<string, number> {
 function measuredTree(
   entries: TreeEntry[],
   sizes: ReadonlyMap<string, RegionSize>,
-): { main: number; overlays: number; accepted: Set<string>; excluded: string[] } {
+): { main: number; overlays: number; accepted: Map<string, number>; excluded: string[] } {
   let main = 0;
-  const accepted = new Set<string>();
+  const accepted = new Map<string, number>();
   const excluded: string[] = [];
   const paths = new Map(entries.map((entry) => [entry.path, entry]));
   for (const entry of entries) {
-    const match = /^src\/([0-9a-f]{8})\.c$/i.exec(entry.path);
+    // src/ is the pre-consolidation layout; exact/ is where the tree
+    // consolidation moved the main image's canonical exact C.
+    const match = /^(?:src|exact)\/([0-9a-f]{8})\.c$/i.exec(entry.path);
     if (!match) continue;
     const stem = match[1].toLowerCase();
     const region = sizes.get(stem);
@@ -174,39 +176,37 @@ function measuredTree(
       continue;
     }
     main += region.size;
-    accepted.add(entry.path);
+    accepted.set(entry.path, region.size);
   }
 
   let overlays = 0;
   for (const entry of entries) {
     const match = /^assets\/code\/(.+)_overlay\.s$/.exec(entry.path);
     if (!match) continue;
-    const prefix = `assets/code/${match[1]}_c_`;
-    const cAddresses = new Set(
-      entries
-        .map((candidate) => {
-          const found = candidate.path.startsWith(prefix)
-            ? candidate.path.match(/_c_([0-9a-f]{8})\.c$/i)
-            : null;
-          return found?.[1].toLowerCase();
-        })
-        .filter((value): value is string => value !== undefined),
-    );
+    // Overlay exact C moved from assets/code/ to exact/ in the tree
+    // consolidation; measure whichever layout the commit's tree carries.
+    const prefixes = [`assets/code/${match[1]}_c_`, `exact/${match[1]}_c_`];
+    const cPathsByAddress = new Map<string, string>();
+    for (const candidate of entries) {
+      const prefix = prefixes.find((value) => candidate.path.startsWith(value));
+      if (prefix === undefined) continue;
+      const found = candidate.path.match(/_c_([0-9a-f]{8})\.c$/i);
+      if (found) cPathsByAddress.set(found[1].toLowerCase(), candidate.path);
+    }
     const placeholders = overlayPlaceholders(blob(entry.oid));
-    for (const address of cAddresses) {
+    for (const [address, cPath] of cPathsByAddress) {
       const size = placeholders.get(address);
       if (size === undefined) {
-        excluded.push(`${prefix}${address}.c:no-placeholder`);
+        excluded.push(`${cPath}:no-placeholder`);
         continue;
       }
-      const cPath = `${prefix}${address}.c`;
       const cEntry = paths.get(cPath);
       if (!cEntry || !acceptableHistoricalC(blob(cEntry.oid))) {
         excluded.push(`${cPath}:noncanonical-C`);
         continue;
       }
       overlays += size;
-      accepted.add(cPath);
+      accepted.set(cPath, size);
     }
   }
   return { main, overlays, accepted, excluded };
@@ -227,17 +227,26 @@ function ledger(): HistoryLedger {
   const history = commits();
   const rows: HistoryEntry[] = [];
   let previous = 0;
-  let previousAccepted = new Set<string>();
+  let previousAccepted = new Map<string, number>();
   for (let index = 0; index < history.length; index++) {
     const commit = history[index];
     const measured = measuredTree(tree(commit.commit), sizes);
     const fullC = measured.main + measured.overlays;
     if (fullC > denominator) throw new Error(`${commit.commit}: numerator exceeds denominator`);
-    const removed = [...previousAccepted].filter((path) => !measured.accepted.has(path));
+    const removed = [...previousAccepted.keys()].filter((path) => !measured.accepted.has(path));
+    // A decrease can also happen with every path still present: an owner's
+    // AlchemyC placeholder span shrinking in place (an adoption-span
+    // correction, e.g. alignment padding no longer claimed). Name those paths
+    // so a decrease is only fatal when nothing accounts for it.
+    const shrunk = [...measured.accepted]
+      .filter(([path, size]) => (previousAccepted.get(path) ?? size) > size)
+      .map(([path, size]) => `${path}:-${previousAccepted.get(path)! - size}B`);
     const correction = fullC < previous
-      ? `measured C ownership decreased by ${previous - fullC} bytes; removed/reclassified paths: ${removed.join(", ")}`
+      ? `measured C ownership decreased by ${previous - fullC} bytes; ` +
+        `removed/reclassified paths: ${removed.join(", ") || "(none)"}` +
+        (shrunk.length ? `; spans shrunk in place: ${shrunk.join(", ")}` : "")
       : undefined;
-    if (fullC < previous && removed.length === 0) {
+    if (fullC < previous && removed.length === 0 && shrunk.length === 0) {
       throw new Error(`${commit.commit}: unexplained Full-C regression`);
     }
     rows.push({

@@ -186,9 +186,9 @@ void Func_0200109c(s32 scene)
 
     state = *Data_0200bf6c;
     state->mode = 0; /* store 0x0200128c */
+    state->field0a = 0x3000; /* store 0x020012a0 */
     state->mode_argument = 0; /* store 0x0200128e */
     state->field08 = 0x200; /* store 0x02001294 */
-    state->field0a = 0x3000; /* store 0x020012a0 */
     Func_080000d0(Data_02008f95, 0xC80);
 
     if (counter <= 2) { /* branch 0x020012ac; r5 is the incremented 0x02001000 byte */

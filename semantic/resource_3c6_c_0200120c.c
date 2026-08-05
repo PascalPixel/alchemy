@@ -94,8 +94,8 @@ s32 Func_0200120c(void)
 
     workspace = Data_03001ebc;
     /* r3 carries 448 as a displacement and then 256 as the stored value. */
-    *(s32 *)(workspace + 448) = 256;
     *(s32 *)(workspace + 456) = 24;
+    *(s32 *)(workspace + 448) = 256;
 
     Func_0808a100(19, 3);
     Func_0808a080(19)[0x59] = 0;
@@ -148,9 +148,9 @@ s32 Func_0200120c(void)
     record[0x23] |= 2;
 
     record = Func_0808a080(9);
+    sub = *(u8 **)(record + 0x50);
     record[0x59] = 0;
     record[0x23] |= 2;
-    sub = *(u8 **)(record + 0x50);
     sub[0x26] = 0;
     *(u16 *)(*(u8 **)(record + 0x50) + 30) = 0x4000;
 

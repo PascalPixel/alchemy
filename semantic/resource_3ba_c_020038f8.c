@@ -89,6 +89,9 @@ void Func_020038f8(void)
 
     s32 permuted_13;
     s32 permuted_40;
+    u32 permuted_43;
+    s32 permuted_25;
+    s32 permuted_27;
     subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
 
     direction = *(u16 *)(subject + 6) >> 12;
@@ -96,8 +99,8 @@ void Func_020038f8(void)
     step = Data_0200c154[direction];
     position[0] = *(s32 *)(subject + 8) + (s32)(step & 0xffff0000);
     permuted_13 = *(s32 *)(subject + 12);
-    position[2] = *(s32 *)(subject + 16) + (s32)(step << 16);
     position[1]  = permuted_13;
+    position[2] = *(s32 *)(subject + 16) + (s32)(step << 16);
 
     target = Func_020038b0(position);
     if (target == 0) {
@@ -106,9 +109,11 @@ void Func_020038f8(void)
 
     /* Is the cell one step beyond the target already taken? */
     step = Data_0200c154[direction];
-    position[0] = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
-    position[1] = *(s32 *)(target + 12);
+    permuted_25 = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
+    permuted_27 = *(s32 *)(target + 12);
+    position[0]  = permuted_25;
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
+    position[1]  = permuted_27;
 
     blocker = Func_020038b0(position);
     if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
@@ -129,8 +134,9 @@ void Func_020038f8(void)
 
     permuted_40 = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
     position[1] = *(s32 *)(target + 12);
-    step = Data_0200c154[direction];
+    permuted_43 = Data_0200c154[direction];
     position[0]  = permuted_40;
+    step  = permuted_43;
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
 
     if (Func_080091d8(target, position) > 0) {
@@ -140,9 +146,9 @@ void Func_020038f8(void)
     Func_08009080(subject, 8);
     Func_080000c0(15);
 
+    Func_08009150(target, position[0], position[1], position[2]);
     *(s32 *)(target + 0x30) = 0x3333;
     *(s32 *)(target + 0x34) = 0x3333;
-    Func_08009150(target, position[0], position[1], position[2]);
 
     *(s32 *)(subject + 0x30) = 0x3333;
     *(s32 *)(subject + 0x34) = 0x3333;

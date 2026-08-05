@@ -137,11 +137,11 @@ void Func_0200076c(void)
     if ((Data_03001ae8 & 0x20) != 0) {
         stride = -8;
         for (;;) {
+            steps++;
             next = x - 0x100000;
             if (Func_02000714(next, z) != 0) {
                 break;
             }
-            steps++;
             x = next;
         }
     } else if ((Data_03001ae8 & 0x10) != 0) {

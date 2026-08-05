@@ -87,8 +87,8 @@ void Func_02000564(void)
     *(s32 *)(actor + 28) = 0x8000;
     *(s32 *)(actor + 24) = 0x8000;
     actor = Func_0808a080(11);
-    *(s32 *)(actor + 28) = 0x8000;
     *(u32 *)(actor + 108) = 0x020080a5;
+    *(s32 *)(actor + 28) = 0x8000;
     actor = Func_0808a080(12);
     *(s32 *)(actor + 24) = 0x8000;
     *(s32 *)(actor + 28) = 0x8000;

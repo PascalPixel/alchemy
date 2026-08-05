@@ -53,6 +53,38 @@ export interface Unit {
 const DECLARATION = /^\s*(?:extern\s+)?(?:u8|u16|u32|s8|s16|s32|int|char|void|short|long|unsigned|signed)\b[^=()]*;\s*$/;
 const CALLISH = /\b[A-Za-z_][A-Za-z0-9_]*\s*\(/;
 
+// A control-flow header with no `{` governs whatever statement follows it, so
+// the two are one indivisible construct even though they are separate lines.
+// A header that DOES open a brace is parsed as a block instead and never
+// reaches this test. Reordering either half independently silently rebinds
+// which statement the condition controls: on resource_3ba:31c0 an
+// `if (...)` was hoisted above two assignments, making the first conditional
+// and the intended body unconditional, and on resource_3bd:bc8 a header sank
+// below its own body and captured the NEXT `if` instead. Both still reduced
+// the differing-byte count, so only a structural rule can reject them.
+const BRACELESS_CONTROL_HEADER = /^\s*(?:\}\s*)?(?:else\s+if\s*\(|if\s*\(|for\s*\(|while\s*\(|switch\s*\(|else\b|do\b)[^{]*$/;
+
+// A `goto` target, and the jump statements that decide what is reachable.
+// These anchor control flow exactly as a braceless header does: hoisting a
+// `return` makes the statements it passed dead, sinking it makes statements
+// live that previously were not, and moving anything across a label changes
+// whether the fallthrough path or only the `goto` path reaches it.
+// Matched ANYWHERE in the line, not just at its start: a one-line guard such
+// as `if (renderB != 9) continue;` is a self-contained statement the header
+// rule above deliberately does not catch, yet moving it past an assignment
+// still changes what executes on the jump path. `\b` keeps this off
+// identifiers that merely begin with a keyword (`returnValue`).
+const LABEL = /^\s*[A-Za-z_][A-Za-z0-9_]*\s*:\s*$/;
+const JUMP = /\b(?:return|goto|break|continue)\b/;
+
+function isControlAnchor(unit: Unit): boolean {
+  if (unit.kind !== "statement" || unit.lines.length !== 1) return false;
+  const line = unit.lines[0];
+  if (LABEL.test(line)) return true;
+  if (JUMP.test(line)) return true;
+  return BRACELESS_CONTROL_HEADER.test(line) && !/;\s*$/.test(line);
+}
+
 function parseScope(lines: string[], start: number, end: number): Unit[] {
   const units: Unit[] = [];
   let index = start;
@@ -229,6 +261,40 @@ function statementEffects(line: string): { writes: string | null; reads: Set<str
 // Classic dependence test: the moved statement's definition must not cross a
 // read or redefinition of that name (true/output dependence), and its own
 // inputs must not cross a redefinition of those names (anti-dependence).
+// The split temp must carry the captured value's own type. It was always
+// declared `s32`, which silently narrows a pointer into an integer -- a
+// constraint violation gcc only warns about, and one this target's 32-bit
+// pointers hide (seen on resource_3ae:e40, where `u8 *sub` became
+// `s32 permuted_191`). Recover the type from the assignment's destination,
+// and return null when it cannot be established so the caller can decline
+// to offer the move rather than guess.
+function splitTempType(parsed: ParsedFunction, lhs: string): string | null {
+  const target = lhs.trim();
+  // `*(u8 **)(p + 0x50) = v` stores a `u8 *`: the cast names the pointer to
+  // the destination, so the value is one indirection less.
+  const cast = /^\*\(\s*(?:const\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\*+)\s*\)/.exec(target);
+  if (cast !== null) {
+    const stars = cast[2].length - 1;
+    return stars === 0 ? cast[1] : `${cast[1]} ${"*".repeat(stars)}`;
+  }
+  const name = /^([A-Za-z_][A-Za-z0-9_]*)\s*(\[)?/.exec(target);
+  if (name === null) return null;
+  const isElement = name[2] === "[";
+  const declaration = new RegExp(
+    `^\\s*(?:const\\s+)?((?:unsigned\\s+|signed\\s+)?[A-Za-z_][A-Za-z0-9_]*(?:\\s*\\*+)?)\\s*${name[1]}\\s*(\\[[^\\]]*\\])?\\s*;`,
+  );
+  for (const line of [...parsed.before, ...parsed.body.flatMap((unit) => unit.lines)]) {
+    const found = declaration.exec(line);
+    if (found === null) continue;
+    // An element of `s32 place[3]` is an `s32`; the array itself is not a
+    // value this move can capture, so a non-element match on an array
+    // declaration is not usable.
+    if (isElement !== (found[2] !== undefined)) return null;
+    return found[1].replace(/\s+/g, " ").trim();
+  }
+  return null;
+}
+
 function preservesDataflow(unit: Unit, crossed: Unit[]): boolean {
   const moving = statementEffects(unit.lines[0]);
   for (const other of crossed) {
@@ -258,6 +324,12 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
           const span = scope.slice(Math.min(index, target), Math.max(index, target) + 1);
           if (unit.pinned && span.some((other) => other !== unit && other.pinned)) continue;
           if (span.some((other) => other.kind === "declaration")) continue;
+          // Never move a braceless control header, never move the statement
+          // it governs away from it, and never cross one -- all three rebind
+          // what the condition controls.
+          if (isControlAnchor(unit)) continue;
+          if (index > 0 && isControlAnchor(scope[index - 1])) continue;
+          if (span.some(isControlAnchor)) continue;
           if (!preservesDataflow(unit, span.filter((other) => other !== unit))) continue;
           moves.push({
             description: `${direction === 1 ? "sink" : "hoist"} [${label}#${index}] "${unit.lines[0].trim().slice(0, 60)}" by ${distance}`,
@@ -283,6 +355,11 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
           if (index + distance >= scope.length) continue;
           const crossed = scope.slice(index + 1, index + distance + 1);
           if (crossed.some((other) => other.kind === "declaration")) continue;
+          // Same braceless-header rule as sink/hoist: the sunk store must not
+          // cross a header, and a statement a header governs cannot be split
+          // out from under it.
+          if (crossed.some(isControlAnchor)) continue;
+          if (index > 0 && isControlAnchor(scope[index - 1])) continue;
           // Same dependence rule as sink/hoist above, applied to the halves
           // this move actually creates: the sunk `lhs = temp;` store must not
           // cross a read or redefinition of lhs, and the temp's own inputs
@@ -294,6 +371,8 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
             scope: null,
           };
           if (!preservesDataflow(halves, crossed)) continue;
+          const tempType = splitTempType(parsed, lhs);
+          if (tempType === null) continue;
           moves.push({
             description: `split [${label}#${index}] "${unit.lines[0].trim().slice(0, 60)}": temp at slot, store sunk by ${distance}`,
             apply: (input) => {
@@ -310,7 +389,10 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
               while (insertAt < output.body.length && output.body[insertAt].kind === "declaration") insertAt++;
               const declIndent = /^\s*/.exec(output.body[0]?.lines[0] ?? "    ")?.[0] ?? "    ";
               output.body.splice(insertAt, 0, {
-                kind: "declaration", lines: [`${declIndent}s32 ${temp};`], pinned: true, scope: null,
+                kind: "declaration",
+                lines: [`${declIndent}${tempType}${tempType.endsWith("*") ? "" : " "}${temp};`],
+                pinned: true,
+                scope: null,
               });
               return output;
             },
@@ -615,6 +697,70 @@ function selfTest(): void {
   // The rule must not over-refuse: an independent statement pair still moves.
   if (!dataflowMoves.some((move) => move.description.includes("other = 1"))) {
     throw new Error("dataflow rule wrongly blocked an independent statement's move");
+  }
+
+  // Regression: a split temp must be declared with the captured value's own
+  // type. It was hardcoded `s32`, which narrows a pointer to an integer --
+  // legal-looking only because this target's pointers are 32-bit (seen on
+  // resource_3ae:e40, where `u8 *sub` was captured into an `s32` temp).
+  const pointerSplitFixture = [
+    "void Func_02000400(void)",
+    "{",
+    "    u8 *object;",
+    "    u8 *sub;",
+    "",
+    "    object = Func_0808a080(10);",
+    "    sub = *(u8 **)(object + 0x50);",
+    "    Func_0808a170(1);",
+    "    Func_0808a188(2);",
+    "}",
+    "",
+  ].join("\n");
+  const pointerParsed = parseFunction(pointerSplitFixture, "Func_02000400");
+  if (pointerParsed === null) throw new Error("failed to parse pointer-split fixture");
+  const pointerSplit = generateMoves(pointerParsed).find((move) => move.description.includes("split"));
+  if (pointerSplit !== undefined) {
+    const rendered = renderFunction(pointerSplit.apply(pointerParsed));
+    if (/\bs32\s+permuted_/.test(rendered)) {
+      throw new Error(`split captured a pointer into an s32 temp:\n${rendered}`);
+    }
+    if (!/\bu8\s*\*\s*permuted_/.test(rendered)) {
+      throw new Error(`split temp did not take the pointer type of its destination:\n${rendered}`);
+    }
+  }
+
+  // Regression: control-flow anchors are indivisible. A braceless `if (...)`
+  // governs the next statement, a label is a `goto` target, and a jump
+  // decides what is reachable -- moving any of them, or moving a statement
+  // across one, silently rewrites control flow while still reducing the
+  // differing-byte count (resource_3ba:31c0, resource_3bd:bc8,
+  // resource_3b3:274c all produced such a variant before this rule).
+  const anchorFixture = [
+    "void Func_02000500(void)",
+    "{",
+    "    s32 a;",
+    "    s32 b;",
+    "",
+    "    if (a != 0)",
+    "        b = 1;",
+    "    a = 2;",
+    "    if (b != 9) return;",
+    "    b = 3;",
+    "}",
+    "",
+  ].join("\n");
+  const anchorParsed = parseFunction(anchorFixture, "Func_02000500");
+  if (anchorParsed === null) throw new Error("failed to parse control-anchor fixture");
+  for (const move of generateMoves(anchorParsed)) {
+    if (/"\s*(?:if|else|for|while)\b/.test(move.description)) {
+      throw new Error(`generated a move of a control-flow header: ${move.description}`);
+    }
+    if (/\b(?:return|goto|break|continue)\b/.test(move.description)) {
+      throw new Error(`generated a move of a jump statement: ${move.description}`);
+    }
+    if (/"\s*b = 1;/.test(move.description)) {
+      throw new Error(`moved the statement a braceless header governs: ${move.description}`);
+    }
   }
   console.log("self-test=ok tool=alchemist");
 }

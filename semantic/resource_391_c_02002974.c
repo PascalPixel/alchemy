@@ -171,15 +171,15 @@ void Func_02002974(void)
     z = reference[2] + (Func_080000f8() << 8);
     z = z + (s32)0xff800000;
 
+    sub = p->f50;
     p->f55 = 0;
     p->f0c = 0x00a00000;
-    sub = p->f50;
     p->f18 = 0xe666;
     p->f1c = 0xe666;
     p->f08 = x;
     p->f10 = z;
-    sub->f26 = 0;
     p->f23 = p->f23 & 0xfe;
+    sub->f26 = 0;
     sub->f09 = (sub->f09 & ~12) | 4;
 
     Func_08009080(p, 1);

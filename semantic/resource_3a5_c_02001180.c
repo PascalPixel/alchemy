@@ -39,9 +39,9 @@ void Func_02001180(void)
 
     Func_0808a100(0, 1);
     leader = Func_0808a080(0);
-    leader[90] &= (u8)~1;
     Func_0808a148(0, nearest_slot, 0);
     Func_0808a010(20);
+    leader[90] &= (u8)~1;
     Func_0808a1f0(0, 0x102);
     Func_0808a130(0, 2);
     Func_0808a010(60);

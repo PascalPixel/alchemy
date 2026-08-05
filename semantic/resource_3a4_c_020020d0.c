@@ -106,17 +106,17 @@ void Func_020020d0(void)
             Func_0808a168(10, 0x10000, Data_0200bd34);
         }
     } else {
-        state = *(u8 **)0x03001e70;
         Func_0808a0f0(10, 0, 0);
         Func_080091c0(0, 0, 1, 2, 3, 14);
+        state = *(u8 **)0x03001e70;
         *(u16 *)(state + 20) &= 0xfdff;
 
         Func_02003460(8);
         if (Func_080770c0(0x200) != 0) {
             Func_0808a100(8, 5);
             Func_080091c0(7, 13, 1, 1, 9, 13);
-            record = Func_0808a080(8);
             *(s32 *)(record + 12) = 0;
+            record = Func_0808a080(8);
             record[0x23] |= 2;
         }
 

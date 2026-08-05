@@ -117,6 +117,7 @@ extern s16 Data_02000240[];
 
 s32 Func_02000ca0(void)
 {
+    s32 permuted_14;
     u8 *workspace = *(u8 **)0x03001ebc;
     s32 sub;
 
@@ -207,12 +208,12 @@ s32 Func_02000ca0(void)
             case 10:
             case 11:
                 /* case C; falls through to the shared tail below. */
+                break;
                 if (Func_080770c0(0x9a9) != 0) {
                     Func_02000398();
                     Func_0808a0f0(9, 0x00f80000, 0x036c0000);
                 }
                 Func_0808a080(8)[35] = 2;
-                break;
 
             default:
                 /* 5, 6, 7, 12, 13: straight to the shared tail. */
@@ -243,12 +244,13 @@ s32 Func_02000ca0(void)
         Func_080091e0(Func_0808a080(10), 0);
         Func_080091e0(Func_0808a080(9), 0);
 
-        record = Func_0808a080(10);
         record[89] |= 0x80;
+        record = Func_0808a080(10);
 
         record = Func_0808a080(9);
-        sub = Data_02000240[225];
+        permuted_14 = Data_02000240[225];
         record[89] |= 0x80;
+        sub  = permuted_14;
 
         if (sub >= 5 && sub <= 6) {
             Func_02000c50();

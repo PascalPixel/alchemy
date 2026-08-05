@@ -4,5 +4,7 @@
 void Func_02000da8(u8 *object)
 {
     u8 *state = *(u8 **)(object + 80);
-    *(u16 *)(state + 30) += (s32)-0x800;
+    s32 turned = *(u16 *)(state + 30) - 0x800;
+
+    *(u16 *)(state + 30) = turned;
 }

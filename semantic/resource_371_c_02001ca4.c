@@ -151,9 +151,9 @@ void Func_02001ca4(void)
         flag = actor + 0x55;
         *flag = 2;
         *(s32 *)(actor + 0x48) = 0x4000;
-        *(s32 *)(actor + 0x30) = 0x10000;
         *(s32 *)(actor + 0x34) = 0x10000;
         *(s32 *)(actor + 0x28) = 0;
+        *(s32 *)(actor + 0x30) = 0x10000;
         *(s32 *)(actor + 0x14) = 0;
 
         Func_08009150(actor, 0x15d00000, 0, 0x05300000);
@@ -259,9 +259,9 @@ loop_test:
             goto loop_done;
         }
         Func_0808a170(0xc5c + step);
-        Func_0808a178(8, 0);
         step++;
         goto loop_test;
+        Func_0808a178(8, 0);
 
 loop_failed:
         Func_0808a100(0, 22);

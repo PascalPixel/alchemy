@@ -26,15 +26,15 @@ extern u8 *Data_03001ebc;
 
 u8 *Func_02001144(s32 x, s32 z)
 {
-    s32 x_min = x - 12;
+    u8 **table = (u8 **)(Data_03001ebc + 0x34);
     s32 x_max = x + 12;
+    s32 x_min = x - 12;
     s32 z_min = z - 12;
     s32 z_max = z + 12;
-    u8 **table = (u8 **)(Data_03001ebc + 0x34);
     u32 i;
 
-    for (i = 0; i < 58; i++) {
-        u8 *obj = table[i];
+    for (i = 8; i <= 65; i++) {
+        u8 *obj = *table++;
         s16 obj_x = *(s16 *)(obj + 10);
         s16 obj_z = *(s16 *)(obj + 18);
 

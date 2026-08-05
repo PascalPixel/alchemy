@@ -40,19 +40,50 @@
  * 0..65 with `cmp r4,#65 / bls`; a null slot is skipped but does NOT end the
  * scan, so the table is sparse rather than null-terminated.  What is appended
  * is the slot INDEX, not the pointer.
+ *
+ * STILL-OPEN residual, 16 bytes in the 7-instruction preamble
+ * (0x020031c4-0x020031d2): the reference frees the anchor argument's
+ * register (r1) early via a throwaway copy (`adds r2,r1,#0` / `asrs
+ * r2,r2,#20`) so the very next load -- the workspace pointer dereference --
+ * can land straight in r1, leaving one final `adds r1,r2,#0` needed only to
+ * move that same value into r1 for the `table = workspace + 20` step.  This
+ * source shifts the argument register in place (`asrs r1,r1,#20`, no copy),
+ * which keeps r1 occupied through the base subtraction and forces the
+ * workspace load into r2 instead; the eventual copy into r1 for `table`
+ * still happens but one step later.  Restructuring statement/declaration
+ * order (table-last, shift split into its own statement, base folded into
+ * the shift result, workspace hoisted before/after the shift) closed 11 of
+ * the original 27 differing bytes but could not reach the remaining 16:
+ * candidate_explain.ts shows the sequence tied through class/priority for
+ * most of the block but prints an explicit `?? model expects 171 to beat
+ * 165 ... actual pick suggests an unmodeled tier` at the r6=base store --
+ * an unmodeled register-pressure/dest-order heuristic decided gcc's real
+ * pick, not source statement order (alchemist.ts confirms `exhausted` with
+ * tiers [class,model-divergence,original-order,priority,unaligned] from
+ * this improved baseline too, 24 compiles, no licensed move helps).  Per
+ * the project's DEAD-END FINGERPRINT precedent, do not hand-permute this
+ * further without a new compiler-level lever.
  */
 
 extern u8 *Data_03001ebc;      /* workspace pointer */
 
 void Func_020031c0(s32 *out, s32 anchor)
 {
-    u8 **table = (u8 **)(Data_03001ebc + 20);
-    s32 base = 64 - (anchor >> 20);
-    s32 low = base + 8;
-    s32 high = base + 11;
-    u32 index;
+    s32 shifted = anchor;
+    u8 *workspace = Data_03001ebc;
+    s32 base;
+    s32 low;
+    s32 high;
+    u32 index = 0;
+    u8 **table;
 
-    for (index = 0; index <= 65; index++) {
+    shifted >>= 20;
+    base = 64 - shifted;
+    low = base + 8;
+    high = base + 11;
+    table = (u8 **)(workspace + 20);
+
+    for (; index <= 65; index++) {
         u8 *entry = table[index];
         s32 across;
         s32 along;

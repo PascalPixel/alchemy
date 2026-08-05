@@ -84,10 +84,10 @@ s32 Func_02001638(void)
     Data_02000240[279] = 0;
     Data_02000240[280] = 281;
 
-    scene = Data_02000240[224];
     if (scene == 0x5c) {
         return 0;
     }
+    scene = Data_02000240[224];
 
     *(s32 *)(Data_03001ebc + 448) = 256;
     Func_02001c1c();
@@ -99,9 +99,9 @@ s32 Func_02001638(void)
         Func_080091b8(23, 21, 4, 2, 0x48, 126);
         Func_080091b8(16, 42, 4, 2, 0x4c, 126);
         Func_080091b8(36, 44, 4, 2, 0x50, 126);
+        finalSlot = 0x54;
         finalA = 14;
         finalB = 55;
-        finalSlot = 0x54;
         goto kind2_tail;
     } else if (scene == 0x5a) {
         Func_080091b8(42, 5, 4, 2, 0x40, 126);
@@ -117,9 +117,9 @@ s32 Func_02001638(void)
         Func_080091b8(34, 43, 4, 2, 0x68, 126);
         Func_080091b8(6, 46, 4, 2, 0x6c, 126);
         Func_080091b8(27, 55, 4, 2, 0x70, 126);
-        finalA = 43;
-        finalB = 56;
         finalSlot = 0x74;
+        finalB = 56;
+        finalA = 43;
         goto kind2_tail;
     }
     goto maybe_scene_5b;

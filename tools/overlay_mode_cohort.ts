@@ -15,7 +15,7 @@ import {
   sourceToAssemblyPlan,
 } from "./alchemy_gcc.ts";
 import { type CandidateCompilerFamily } from "./match_m2c.ts";
-import { singleConfigs, pairConfigs } from "./mode_sweep.ts";
+import { singleConfigs, pairConfigs, tripleConfigs } from "./mode_sweep.ts";
 import { assembleOverlay, biasInImageLabelWords, OVERLAY_BASE } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
@@ -49,6 +49,8 @@ type Options = {
   output: string;
   scope: "families" | "singles";
   pairs: number;
+  tripleSeeds: string[];
+  triples: number;
   jobs: number;
   top: number;
 };
@@ -85,6 +87,7 @@ function optionsOf(argv: string[]): Options {
   const options: Options = {
     candidates: [], inventory: join(ROOT, "out/decomp/overlays.json"),
     output: join(ROOT, "out/overlay-mode-cohort"), scope: "families", pairs: 0,
+    tripleSeeds: [], triples: 0,
     jobs: Math.max(1, Math.min(12, (navigator.hardwareConcurrency || 8) - 2)), top: 12,
   };
   for (let index = 0; index < argv.length; index++) {
@@ -102,6 +105,8 @@ function optionsOf(argv: string[]): Options {
       if (scope !== "families" && scope !== "singles") throw new Error("--scope must be families or singles");
       options.scope = scope;
     } else if (argument === "--pairs") options.pairs = Number.parseInt(take(), 10);
+    else if (argument === "--triple-seeds") options.tripleSeeds = take().split(",").filter(Boolean);
+    else if (argument === "--triples") options.triples = Number.parseInt(take(), 10);
     else if (argument === "--jobs") options.jobs = Number.parseInt(take(), 10);
     else if (argument === "--top") options.top = Number.parseInt(take(), 10);
     else if (argument === "-h" || argument === "--help") {
@@ -111,6 +116,8 @@ function optionsOf(argv: string[]): Options {
         "  --inventory FILE      overlay inventory containing measured owner spans (default out/decomp/overlays.json)",
         "  --scope families|singles  compiler families only (default) or every exposed one-mode configuration",
         "  --pairs N             additionally test at most N deterministic compatible pairs (default 0)",
+        "  --triple-seeds IDS    comma-separated mode ids with pair/single evidence; enables evidence-gated triples",
+        "  --triples N           cap on seeded triples (default 0 = all seeded triples when seeds given)",
         "  --jobs N              concurrent compiler jobs (default min(12, CPUs-2))",
         "  --output, -o DIR      ignored cache and report directory (default out/overlay-mode-cohort)",
         "  --top N               per-region and aggregate rows to print (default 12)",
@@ -121,6 +128,10 @@ function optionsOf(argv: string[]): Options {
   }
   if (options.candidates.length === 0) throw new Error("at least one --candidate is required");
   if (!Number.isInteger(options.pairs) || options.pairs < 0) throw new Error("--pairs must be >= 0");
+  if (!Number.isInteger(options.triples) || options.triples < 0) throw new Error("--triples must be >= 0");
+  if (options.triples > 0 && options.tripleSeeds.length < 2) {
+    throw new Error("--triples needs --triple-seeds with at least two evidenced mode ids (tripleConfigs is evidence-gated)");
+  }
   if (!Number.isInteger(options.jobs) || options.jobs < 1 || options.jobs > 32) throw new Error("--jobs must be 1..32");
   if (!Number.isInteger(options.top) || options.top < 1) throw new Error("--top must be positive");
   return options;
@@ -203,8 +214,14 @@ function configsOf(options: Options): Config[] {
     ? all.filter((config) => config.ids.length === 0 || config.ids[0].startsWith("compiler-"))
     : all;
   const pairs = options.pairs === 0 ? [] : pairConfigs(options.pairs) as Config[];
+  // Triples stay evidence-gated: tripleConfigs only emits combinations where
+  // at least two constituents carry the caller-supplied single/pair evidence,
+  // so cubic blind permutation is impossible by construction.
+  const triples = options.tripleSeeds.length === 0
+    ? []
+    : tripleConfigs(options.tripleSeeds, options.triples === 0 ? Number.POSITIVE_INFINITY : options.triples) as Config[];
   const keyed = new Map<string, Config>();
-  for (const config of [...base, ...pairs]) keyed.set(canonicalJson(config), config);
+  for (const config of [...base, ...pairs, ...triples]) keyed.set(canonicalJson(config), config);
   return [...keyed.values()];
 }
 
@@ -251,7 +268,14 @@ function selfTest(): void {
   const key = hash("source", "target", canonicalJson({ family: "gcc296" }));
   const row: Score = { id: "x:0000", source: "x.c", config: { ids: [], flags: [], remove_flags: [], compiler_family: "gcc296" }, cache_key: key, cached: false, compiled: true, exact: false, expected_size: 2, differing_bytes: 1 };
   if (acceptedScore(row, key) === null || acceptedScore(row, `${key}x`) !== null) throw new Error("cache validation failed");
-  if (configsOf({ candidates: ["x:0000=x.c"], inventory: "x", output: "x", scope: "families", pairs: 0, jobs: 1, top: 1 }).length < 5) throw new Error("family configuration planning failed");
+  const familiesOnly: Options = { candidates: ["x:0000=x.c"], inventory: "x", output: "x", scope: "families", pairs: 0, tripleSeeds: [], triples: 0, jobs: 1, top: 1 };
+  if (configsOf(familiesOnly).length < 5) throw new Error("family configuration planning failed");
+  const seeded = configsOf({ ...familiesOnly, tripleSeeds: ["cse-two-insn-immediate-off", "sched-low-dest-first"] });
+  const tripleCount = seeded.filter((config) => config.ids.length === 3).length;
+  if (tripleCount === 0) throw new Error("seeded triple planning produced no triples");
+  if (!seeded.some((config) => config.ids.includes("cse-two-insn-immediate-off") && config.ids.length === 3)) {
+    throw new Error("seeded triples do not include their own seeds");
+  }
   const biased = biasInImageLabelWords(".Ltable:\n\t.word\t.Ltable\n");
   if (biased.biased !== 1 || !biased.text.includes(".Ltable + 0x8000")) throw new Error("overlay label-word bias is not applied");
   const defaultCallVia = overlayCallViaBase("resource_373", "exact/not-an-override.c");

@@ -21,7 +21,7 @@ void Func_02000c00(void)
     s32 mapActorId = *(volatile s32 *)0x02000434;
     u8 *mapActor = Func_0808a080(mapActorId);
     u8 *encounterActor = Func_0808a080(encounterActorId);
-    s32 frame;
+    u32 frame;
 
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);

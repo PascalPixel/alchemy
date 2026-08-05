@@ -16,7 +16,7 @@ void Func_02001244(void)
     s32 redDelta = Data_02009f00[profile];
     s32 greenDelta = Data_02009f00[profile + 1];
     s32 blueDelta = Data_02009f00[profile + 2];
-    s32 index;
+    u32 index;
 
     if (*(s16 *)(workspace + 382) != 0 || (*(volatile u32 *)0x03001e40 & 31) != 0)
         return;

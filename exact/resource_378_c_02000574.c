@@ -35,7 +35,9 @@ extern void Func_02003b68();
 extern void Func_02003c12();
 extern void Func_02003b70();
 extern void Func_02003c36();
-extern void Func_02003c46();
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern s32 Func_02003c46();
 extern s32 Func_02003ba6();
 extern void Func_02003c72();
 extern void Func_02003bb6();

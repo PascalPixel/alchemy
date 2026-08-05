@@ -168,12 +168,12 @@ void Func_02000bbc(void)
     Func_0808a178(handleA, 0);
 
     if (Func_0808a070(0, 0) == 1) {
-        bumped = 1;
         Func_0808a100(19, 4);
     } else {
-        Func_0808a100(19, 3);
         workspace = Data_03001ebc;
         *(u16 *)(workspace + 472) = (u16)(*(u16 *)(workspace + 472) + 1);
+        Func_0808a100(19, 3);
+        bumped = 1;
     }
 
     Func_0808a180(handleA, 0);

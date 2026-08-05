@@ -58,13 +58,16 @@ void Func_02004628(void)
     s32 step;
     s32 position[3];
 
-    subject = Func_0808a080(*(s32 *)((u8 *)Data_02000240 + 500));
+    s32 permuted_12;
+    s32 permuted_21;
     facing = *(unsigned short *)(subject + 6) >> 12;
+    subject = Func_0808a080(*(s32 *)((u8 *)Data_02000240 + 500));
 
     step = Data_0200cfc0[facing];
     position[0] = *(s32 *)(subject + 8) + (step & (s32)0xffff0000);
-    position[1] = *(s32 *)(subject + 12);
+    permuted_12 = *(s32 *)(subject + 12);
     position[2] = *(s32 *)(subject + 16) + (step << 16);
+    position[1]  = permuted_12;
 
     occupant = Func_020045e0(position);
     if (occupant == 0) {
@@ -72,9 +75,10 @@ void Func_02004628(void)
     }
 
     step = Data_0200cfc0[facing];
+    permuted_21 = *(s32 *)(occupant + 12);
     position[0] = *(s32 *)(occupant + 8) + (step & (s32)0xffff0000);
-    position[1] = *(s32 *)(occupant + 12);
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
+    position[1]  = permuted_21;
 
     blocker = Func_020045e0(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) {
@@ -92,9 +96,9 @@ void Func_02004628(void)
 
     occupant[34] = 2;
 
-    step = Data_0200cfc0[facing];
     position[0] = *(s32 *)(occupant + 8) + (step & (s32)0xffff0000);
     position[1] = *(s32 *)(occupant + 12);
+    step = Data_0200cfc0[facing];
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
 
     if (Func_080091d8(occupant, position) > 0) {

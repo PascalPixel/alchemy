@@ -109,8 +109,8 @@ void Func_020020a4(void)
     if (matched == 5) {
         if (Func_080770c0(0x984) != 0) {
             /* The only path that does not run Func_020053de. */
-            Func_0808a020();
             return;
+            Func_0808a020();
         }
         Func_0808a010(20);
         Func_0808a208(0xcccc, 0x1999);

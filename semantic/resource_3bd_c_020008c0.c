@@ -81,13 +81,13 @@ s32 Func_020008c0(s32 id)
         return 0;
     }
 
+    actorZ = *(s32 *)(actor + 16);
     footprint = &Data_0200bf0c[index];
     actorX = *(s32 *)(actor + 8);
-    actorZ = *(s32 *)(actor + 16);
 
+    cellX = adjustedX >> 20;
     adjustedX = add_wrapped(shift_left_16_wrapped(footprint->x0), actorX);
     adjustedZ = add_wrapped(shift_left_16_wrapped(footprint->z0), actorZ);
-    cellX = adjustedX >> 20;
     cellZ = adjustedZ >> 20;
 
     width = add_wrapped(absolute_wrapped(footprint->x0),
@@ -101,6 +101,6 @@ s32 Func_020008c0(s32 id)
 
     Func_080091c0(cellX, cellZ, width, height, worldX, worldZ);
     Func_02000244(0, adjustedX, adjustedZ, width, height, 255);
-    Func_02000244(2, adjustedX, adjustedZ, width, height, 255);
     return 1;
+    Func_02000244(2, adjustedX, adjustedZ, width, height, 255);
 }

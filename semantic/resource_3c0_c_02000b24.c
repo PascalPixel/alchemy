@@ -42,7 +42,7 @@ void Func_02000b24(s32 unused, s32 encounterActorId)
         }
     }
 
+    mapActor[85] = 3;
     mapActorId = *(volatile s32 *)0x02000434;
     mapActor = Func_0808a080(mapActorId);
-    mapActor[85] = 3;
 }

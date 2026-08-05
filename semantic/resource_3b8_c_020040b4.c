@@ -160,10 +160,10 @@ s32 Func_020040b4(void)
         Func_08077318();
         Func_080770c8(0x966);
         Func_080770c8(0x967);
+        table[0xe1] = 8;
         Func_0808a0f0(10, 0x380000, 0x780000);
         Func_0808a1b8(10, 0xf000, 0);
         Func_02000674();
-        table[0xe1] = 8;
     }
 
     return 0;

@@ -75,14 +75,14 @@ void Func_02001c20(s32 actor)
         Func_0808a010(45);
         record = Func_0808a080(10);
         record[0x55] = (u8)state;
-        *(s32 *)(record + 0x30) = 0xcccc;
         *(s32 *)(record + 0x34) = 0x6666;
+        *(s32 *)(record + 0x30) = 0xcccc;
         Func_08009150(record, *(s32 *)(record + 8), 0x200000,
                       *(s32 *)(record + 0x10));
         record = Func_0808a080(11);
         record[0x55] = (u8)state;
-        *(s32 *)(record + 0x30) = 0xcccc;
         *(s32 *)(record + 0x34) = 0x6666;
+        *(s32 *)(record + 0x30) = 0xcccc;
         Func_08009150(record, *(s32 *)(record + 8), 0x40000,
                       *(s32 *)(record + 0x10));
         Func_08009158(record);

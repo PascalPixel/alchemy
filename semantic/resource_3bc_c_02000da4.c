@@ -161,8 +161,8 @@ s32 Func_02000da4(void)
         object->field0C = 0x40000;
         object = Func_0808a080(11);
         object->field0C = 0x200000;
-        arg0 = 15;
         arg1 = 12;
+        arg0 = 15;
         arg4 = 13;
         arg5 = 12;
         goto sharedPanel;
@@ -293,11 +293,11 @@ afterPanel:
     object->mode = 2;
     object = Func_0808a080(9);
     object = Func_0808a080(10);
-    object->state = 0;
     object->mode = 2;
+    object->state = 0;
     object = Func_0808a080(11);
-    object->state = 0;
     object->mode = 2;
+    object->state = 0;
 
     Func_0808a100(8, 9);
 

@@ -112,9 +112,9 @@ void Func_02004628(void)
     *(s32 *)(occupant + 52) = 0x3333;
     Func_08009150(occupant, position[0], position[1], position[2]);
 
-    *(s32 *)(subject + 48) = 0x3333;
     *(s32 *)(subject + 52) = 0x3333;
     Func_08009150(subject, position[0], position[1], position[2]);
+    *(s32 *)(subject + 48) = 0x3333;
 
     Func_080f9010(238);
     Func_08009158(occupant);

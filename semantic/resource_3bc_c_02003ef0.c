@@ -72,11 +72,11 @@ void Func_02003ef0(void)
                 *(u16 *)(actor + 0x64) = *(u16 *)(workspace + 0xe2);
             }
 
-            *(s32 *)(actor + 0x34) = 0x4000;
-            *(s32 *)(actor + 0x30) = 0x10000;
             Func_08009150(actor, target_x, 0, target_z);
             Func_080770c8(0x211);
+            *(s32 *)(actor + 0x34) = 0x4000;
             Func_08009098(actor, (const void *)0x0200dad0);
+            *(s32 *)(actor + 0x30) = 0x10000;
         } else {
             s32 turn;
 

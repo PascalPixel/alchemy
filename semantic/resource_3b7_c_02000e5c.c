@@ -109,6 +109,8 @@ s32 Func_08000120();
 void Func_02000e5c(void)
 {
     s32 permuted_3;
+    s32 permuted_4;
+    s32 permuted_34;
     u8 *state = Data_0200a070;
     u8 *rec;
     s32 remaining;
@@ -138,9 +140,9 @@ void Func_02000e5c(void)
 
         remaining = 3;
         do {
-            *(s32 *)(cursor + 20) = *(s32 *)(cursor + 8);
             *(s32 *)(cursor + 12) = *(s32 *)(cursor + 0);
             *(s32 *)(cursor + 16) = *(s32 *)(cursor + 4);
+            *(s32 *)(cursor + 20) = *(s32 *)(cursor + 8);
             remaining = remaining - 1;
             cursor = cursor - 12;
         } while (remaining != 0);
@@ -151,9 +153,10 @@ void Func_02000e5c(void)
         vy = *(s32 *)(state + 68);
         permuted_3 = *(s32 *)(state + 8) + vy;
         *(s32 *)(state + 8) = y;
-        *(s32 *)(state + 4) = *(s32 *)(state + 4) + *(s32 *)(state + 64);
+        permuted_4 = *(s32 *)(state + 4) + *(s32 *)(state + 64);
         y  = permuted_3;
         *(s32 *)(state + 12) = *(s32 *)(state + 12) + *(s32 *)(state + 72);
+        *(s32 *)(state + 4) = permuted_4;
 
         if (y > 0) {
             /* Still airborne: gravity only, and nothing else this frame. */
@@ -260,10 +263,10 @@ void Func_02000e5c(void)
 
         /* Arena bounds.  The X limits are a function of Z and vice versa, so
          * the playable area is a lozenge rather than a rectangle. */
-        x_lo = 0x300000;        /* 192 << 14 */
-        x_hi = 0xc00000;        /* 192 << 16 */
         z_lo = 0x180000;        /* 192 << 13 */
         z_hi = 0x780000;        /* 240 << 15 */
+        x_lo = 0x300000;        /* 192 << 14 */
+        x_hi = 0xc00000;        /* 192 << 16 */
 
         z = *(s32 *)(state + 12);
 
@@ -519,8 +522,9 @@ collision:
     }
 
     /* The ground shadow: current X and Z at height zero. */
-    *(s32 *)(state + 52) = *(s32 *)(state + 4);
+    permuted_34 = *(s32 *)(state + 4);
     *(s32 *)(state + 60) = *(s32 *)(state + 12);
+    *(s32 *)(state + 52) = permuted_34;
     *(s32 *)(state + 56) = 0;
 
     if (Data_0200a0c0 == 1) {

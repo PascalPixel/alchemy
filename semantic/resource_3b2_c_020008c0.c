@@ -19,8 +19,8 @@ s32 Func_020008c0(s32 slot)
     a0 = delta[0] < 0 ? -delta[0] : delta[0];
     a1 = delta[1] < 0 ? -delta[1] : delta[1];
     tileX = (*(s32 *)(object + 8) + (delta[0] << 16)) >> 20;
-    tileZ = (*(s32 *)(object + 16) + (delta[1] << 16)) >> 20;
     globalX = (*(s32 *)(runtime + 316) >> 20) + tileX;
+    tileZ = (*(s32 *)(object + 16) + (delta[1] << 16)) >> 20;
     globalZ = (*(s32 *)(runtime + 320) >> 20) + tileZ;
     Func_080091c0(tileX, tileZ, width, depth, globalX, globalZ);
     Func_02000244(0, tileX, tileZ, width, depth, 255);

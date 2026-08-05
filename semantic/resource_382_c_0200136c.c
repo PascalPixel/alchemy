@@ -103,10 +103,10 @@ s32 Func_0200136c(void)
 
     record = Func_0808a080(14);
     *(u16 *)(record + 100) = 1;
-    *(s32 *)(record + 108) = 0x02008315;
-    record = Func_0808a080(15);
     *(u16 *)(record + 100) = 0;
     *(s32 *)(record + 108) = 0x02008315;
+    *(s32 *)(record + 108) = 0x02008315;
+    record = Func_0808a080(15);
 
     if (Func_080770c0(0x858) != 0) {
         Func_0808a0f0(19, 0xd80000, 0x1880000);

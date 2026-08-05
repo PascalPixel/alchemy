@@ -161,13 +161,13 @@ s32 Func_020006e0(void)
     *(s32 *)(record + 12) = (s32)0xfffc0000;
     record = Func_0808a080(23);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
-    record = Func_0808a080(24);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
+    record = Func_0808a080(24);
 
     goto done;
 
-run_scene:
     Func_020021bc();
+run_scene:
 
 done:
     return 0;

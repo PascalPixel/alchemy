@@ -45,8 +45,8 @@ void Func_02002e84(void)
             Func_03000380(frame * delta, duration));
 
         if (frame >= duration)
-            Data_0200cc2c = 0;
         Data_0200cc14 = 0;
+            Data_0200cc2c = 0;
     }
 
     Data_0200cc14 = phase;
@@ -61,9 +61,9 @@ void Func_02002e84(void)
         packed |= 0x40000000;
         packed |= (u32)((s32)(s16)Data_0200cc94 - 8) << 16;
         Data_0200cc50[1] = packed;
-        Data_0200cc50[2] = (u32)tile | 0x400;
         Func_080001e8(Data_0200cc50, 255);
     } else if (phase > 19) {
+        Data_0200cc50[2] = (u32)tile | 0x400;
     } else if (phase > 19) {
     } else if (phase > 19) {
     } else if (phase > 19) {

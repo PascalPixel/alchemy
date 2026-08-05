@@ -155,8 +155,8 @@ void Func_02001cd4(void)
     Func_0808a348(1);
     Func_080000c0(1);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 515;
+    workspace = Data_03001ebc;
     *(s32 *)(workspace + 456) = 1;
 
     Func_0808a360();
@@ -278,11 +278,11 @@ void Func_02001cd4(void)
     took_gate = 0;
     if (Func_0808a070(0, 0) == 1) {
         Func_02001c48(2);
-        took_gate = 1;
     } else {
+        took_gate = 1;
         workspace = Data_03001ebc;
-        *(u16 *)(workspace + 472) += 1;
         Func_0808a110(2, 3);
+        *(u16 *)(workspace + 472) += 1;
         Func_02001c5c(2, 192 << 8);
         Func_02001c48(2);
     }

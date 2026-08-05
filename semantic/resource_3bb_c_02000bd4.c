@@ -160,8 +160,8 @@ s32 Func_02000bd4(void)
     Func_080091c0(52, 28, 1, 3, value, 10);
     value = *(s32 *)(record + 8) >> 20;
 
-    record = Func_0808a080(33);
     value = *(s32 *)(record + 8) >> 20;
+    record = Func_0808a080(33);
     record[85] = 0;
     record[35] = 2;
     Func_080091c0(52, 28, 1, 3, value, 13);

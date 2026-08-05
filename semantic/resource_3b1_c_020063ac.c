@@ -30,7 +30,7 @@ void Func_020063ac(u8 *a, u8 *b)
 {
     s32 count_a = 0;
     s32 count_b = 0;
-    s32 i;
+    u32 i;
 
     for (i = 0; i <= 8; i++) {
         u8 *elem = a + i;

@@ -141,7 +141,7 @@ void Func_02003fb0(void)
 {
     u8 *camera;             /* fp - the record for actor 0 */
     u8 *actor;              /* r7 - whichever record is in hand */
-    s32 frame;
+    u32 frame;
 
     camera = Func_0808a080(0);
 

@@ -127,7 +127,7 @@ s32 Func_080de2f8(
     s32 duration;
     s32 resource;
     s32 frame;
-    u32 index;
+    s32 index;
     s32 result;
 
     work->context = context;

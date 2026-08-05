@@ -115,7 +115,7 @@ s32 Func_080cf8e0(struct SceneContext_080cf8e0 *context, s32 variant) {
     struct ActorEffect_080cf8e0 *target;
     s32 position[3];
     s32 actor;
-    u32 index;
+    s32 index;
     s32 frame;
     s32 palette;
 

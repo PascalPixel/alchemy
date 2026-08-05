@@ -126,7 +126,7 @@ s32 Func_0200274c(void)
     u8 *record;
     u8 *attached;
     s32 slot;
-    s32 index;
+    u32 index;
     struct Marker_0200274c *marker;
     s32 renderX;
     s32 renderY;

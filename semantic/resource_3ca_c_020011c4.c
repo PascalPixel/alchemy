@@ -65,8 +65,8 @@ void Func_020011c4(void)
     s32 handle;
     s32 counter;
     s32 half;
-    s32 column;
-    s32 i;
+    u32 column;
+    u32 i;
     u32 attr2;
 
     /*

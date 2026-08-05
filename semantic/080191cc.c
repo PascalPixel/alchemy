@@ -284,7 +284,7 @@ static void AnimateEffect_080191cc(
 /* Updates the eight active map-object lists and their attached sprite state. */
 void Func_080191cc(void) {
     struct FieldState_080191cc *field = Data_03001e8c;
-    u32 list_index;
+    s32 list_index;
 
     for (list_index = 0; list_index < 8; list_index++) {
         struct EffectList_080191cc *list = &field->effect_lists[list_index];

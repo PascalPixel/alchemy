@@ -78,7 +78,7 @@ void Func_080ce4e8(struct Scene_080ce4e8 *scene)
         (struct Particle_080ce4e8 *)0x02010000;
     void *effect_context;
     s32 frame;
-    u32 index;
+    s32 index;
 
     *(struct Scene_080ce4e8 **)(runtime + 0x7828) = scene;
     Func_080cd594(0);

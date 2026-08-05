@@ -182,7 +182,7 @@ void Func_080f2028(void) {
     s32 camera_offset = *(volatile u16 *)0x03001AD6;
     s32 origin_y;
     s32 vertical_span;
-    u32 entry_count = 0;
+    s32 entry_count = 0;
 
     if (Data_03001d20 == 0) {
         work->tick++;

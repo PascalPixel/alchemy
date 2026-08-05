@@ -10,7 +10,7 @@ extern s32 Func_080770c0(s32 flag);
 s32 Func_02003448(s32 slot)
 {
     s32 first_flag;
-    s32 choice;
+    u32 choice;
 
     switch (slot) {
     case 1:

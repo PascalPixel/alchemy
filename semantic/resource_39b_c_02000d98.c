@@ -17,7 +17,7 @@ void Func_02000d98(void)
     volatile s32 *green = (volatile s32 *)0x0200a920;
     volatile u16 *palette = (volatile u16 *)0x05000000;
     s32 highChannels = 0;
-    s32 i;
+    u32 i;
 
     if (Func_030003e0(*frame, 5) != 0)
         return;

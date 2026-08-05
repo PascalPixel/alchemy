@@ -70,7 +70,7 @@ s32 Func_02001148(void)
 {
     u8 *record;
     u8 *inner;
-    s32 index;
+    u32 index;
 
     *(s32 *)(Data_03001ebc + 448) = 256;
     Func_0808a5e0(169);

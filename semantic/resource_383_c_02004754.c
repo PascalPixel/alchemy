@@ -42,7 +42,7 @@ u8 *Func_02004754(u8 *options, s16 *facing)
     s32 target;
     s32 dist;
     s32 angle;
-    s32 i;
+    u32 i;
 
     best_id = -1;
     /* Read twice, exactly as the assembly does: unsigned for the difference

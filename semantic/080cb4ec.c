@@ -49,8 +49,8 @@ void Func_080cb4ec(void *object)
     struct Particle_080cb4ec *particles =
         (struct Particle_080cb4ec *)(runtime + 0x7080);
     s32 point[3];
-    u32 frame;
-    u32 index;
+    s32 frame;
+    s32 index;
 
     *(void **)(runtime + 0x7828) = object;
     Func_080cd594(1);

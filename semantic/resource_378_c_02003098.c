@@ -15,7 +15,7 @@ void Func_02003098(s32 presentationValue, s32 x, s32 y, s32 z)
     u8 *object = Func_02006614(22, x, y, z);
     u8 *record;
     s32 destination;
-    s32 frame;
+    u32 frame;
 
     if (object == 0)
         return;

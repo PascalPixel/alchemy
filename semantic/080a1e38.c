@@ -16,7 +16,7 @@ s32 Func_080a1e38(u16 *identifiers, s32 ordering) {
     u8 *criterion;
     s32 nonzero_count;
     s32 output_count;
-    u32 index;
+    s32 index;
 
     Func_080a1f74(ordering, criteria);
     nonzero_count = 0;

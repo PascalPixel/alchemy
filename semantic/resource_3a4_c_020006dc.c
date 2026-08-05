@@ -70,7 +70,7 @@ void Func_020006dc(void)
     u8 *record;
     u8 *actor;
     u16 *counter;
-    s32 i;
+    u32 i;
 
     record = *(u8 **)0x03001e70 + 0x164;
 

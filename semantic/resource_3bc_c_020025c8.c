@@ -30,22 +30,32 @@
  * established.
  */
 
-s32 Func_080770e0();           /* read a story value, established */
-void Func_0808a0f0();          /* place an entity at (x, z), established */
+/* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at every occurrence) -- declared/named as the literal per-site
+ * targets, not the shared ultimate-destination symbol. */
+s32 Func_02006f98();           /* Func_080770e0 veneer #1 */
+s32 Func_02006fa2();           /* Func_080770e0 veneer #2 */
+void Func_02007058();          /* Func_0808a0f0 veneer #1 */
+s32 Func_02006fc0();           /* Func_080770e0 veneer #3 */
+s32 Func_02006fca();           /* Func_080770e0 veneer #4 */
+void Func_0200707c();          /* Func_0808a0f0 veneer #2 */
+s32 Func_02006fe4();           /* Func_080770e0 veneer #5 */
+s32 Func_02006fee();           /* Func_080770e0 veneer #6 */
+void Func_020070a0();          /* Func_0808a0f0 veneer #3 */
 
 void Func_020025c8(void)
 {
     s32 x, z;
 
-    x = (Func_080770e0(896) << 20) + 0x80000;
-    z = (Func_080770e0(904) << 20) + 0x80000;
-    Func_0808a0f0(1, x, z);
+    x = (Func_02006f98(896) << 20) + 0x80000;
+    z = (Func_02006fa2(904) << 20) + 0x80000;
+    Func_02007058(1, x, z);
 
-    x = (Func_080770e0(912) << 20) + 0x80000;
-    z = (Func_080770e0(920) << 20) + 0x80000;
-    Func_0808a0f0(2, x, z);
+    x = (Func_02006fc0(912) << 20) + 0x80000;
+    z = (Func_02006fca(920) << 20) + 0x80000;
+    Func_0200707c(2, x, z);
 
-    x = (Func_080770e0(928) << 20) + 0x80000;
-    z = (Func_080770e0(936) << 20) + 0x80000;
-    Func_0808a0f0(3, x, z);
+    x = (Func_02006fe4(928) << 20) + 0x80000;
+    z = (Func_02006fee(936) << 20) + 0x80000;
+    Func_020070a0(3, x, z);
 }

@@ -30,7 +30,7 @@ void Func_08006240(void)
     volatile u16 *serial_send = (volatile u16 *)0x0400012a;
     u32 incoming_words[2];
     u16 *incoming = (u16 *)incoming_words;
-    u32 channel;
+    s32 channel;
 
     incoming_words[0] = *(volatile u32 *)0x04000120;
     incoming_words[1] = *(volatile u32 *)0x04000124;

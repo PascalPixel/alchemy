@@ -94,7 +94,7 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
     s32 variant;
     s32 table_index;
     s32 frame;
-    u32 i;
+    s32 i;
     Renderer_080db6e0 renderer;
 
     PTR_AT(runtime, 0x7828) = argument;

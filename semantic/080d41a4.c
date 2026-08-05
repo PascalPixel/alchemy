@@ -86,7 +86,7 @@ void Func_080d41a4(void *argument)
     s32 effect_count;
     s32 duration;
     s32 frame;
-    u32 i;
+    s32 i;
     Renderer_080d41a4 renderers[2];
 
     PTR_AT(runtime, 0x7828) = argument;
@@ -157,7 +157,7 @@ void Func_080d41a4(void *argument)
                     s32 required =
                         U16_AT((void *)0x080ee244, variant * 4);
                     s32 created = 0;
-                    u32 slot;
+                    s32 slot;
 
                     for (slot = 0; slot < 0x400; slot++) {
                         struct Particle_080d41a4 *particle =

@@ -37,16 +37,24 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;   /* pointer cell holding the scene workspace */
 
-void Func_0808a018();
-void Func_0808a170();
-void Func_0808a178();
-s32 Func_0808a070();
-void Func_0808a180();
-void Func_0808a368();
-void Func_0808a370();
-void Func_0808a360();
-void Func_0808a020();
-void Func_02002640();
+/* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at every occurrence, including the repeated Func_0808a170,
+ * Func_0808a180 and Func_0808a370 calls) -- declared/named as the literal
+ * per-site targets, not the shared ultimate-destination symbol. */
+void Func_020055ce();          /* Func_0808a018 veneer */
+void Func_0200568a();          /* Func_0808a170 veneer #1 */
+void Func_0200569a();          /* Func_0808a178 veneer */
+s32 Func_020055fa();           /* Func_0808a070 veneer */
+void Func_020056a6();          /* Func_0808a170 veneer #2 */
+void Func_020056be();          /* Func_0808a180 veneer #1 */
+void Func_02005770();          /* Func_0808a368 veneer */
+void Func_0200577c();          /* Func_0808a370 veneer #1 */
+void Func_02003262();          /* Func_02002640 veneer */
+void Func_02005776();          /* Func_0808a360 veneer */
+void Func_0200578a();          /* Func_0808a370 veneer #2 */
+void Func_020056e4();          /* Func_0808a170 veneer #3 */
+void Func_020056fc();          /* Func_0808a180 veneer #2 */
+void Func_02005648();          /* Func_0808a020 veneer */
 
 void Func_02000ba4(s32 index)
 {
@@ -62,24 +70,24 @@ void Func_02000ba4(s32 index)
         return;
     }
 
-    Func_0808a018();
-    Func_0808a170(0x2073 + index * 3);
-    Func_0808a178(index, 0);
+    Func_020055ce();
+    Func_0200568a(0x2073 + index * 3);
+    Func_0200569a(index, 0);
 
-    if (Func_0808a070(sceneId, 0) == 0) {
-        Func_0808a170(0x2073 + index * 3 + 1);
-        Func_0808a180(index, 0);
+    if (Func_020055fa(sceneId, 0) == 0) {
+        Func_020056a6(0x2073 + index * 3 + 1);
+        Func_020056be(index, 0);
         *(s32 *)(workspace + 448) = 0x200;
         *(s32 *)(workspace + 456) = 15;
-        Func_0808a368();
-        Func_0808a370();
-        Func_02002640(index);
-        Func_0808a360();
-        Func_0808a370();
+        Func_02005770();
+        Func_0200577c();
+        Func_02003262(index);
+        Func_02005776();
+        Func_0200578a();
     } else {
-        Func_0808a170(0x2073 + index * 3 + 2);
-        Func_0808a180(index, 0);
+        Func_020056e4(0x2073 + index * 3 + 2);
+        Func_020056fc(index, 0);
     }
 
-    Func_0808a020();
+    Func_02005648();
 }

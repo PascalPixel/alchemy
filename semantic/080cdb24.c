@@ -12,13 +12,13 @@ void Func_080cdb24(s32 mode)
 {
     volatile u16 *display_control = (volatile u16 *)0x0400000c;
     volatile u16 *screen = (volatile u16 *)0x06003800;
-    u32 row;
+    s32 row;
 
     Func_080cd594();
     *display_control = (u16)(mode | 0x6784);
 
     for (row = 0; row < 16; row++) {
-        u32 column;
+        s32 column;
         u16 tile = (u16)(0x0100 + row * 0x1000);
         u16 attribute = (u16)(row * 16);
 

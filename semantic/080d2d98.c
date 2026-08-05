@@ -181,7 +181,7 @@ void Func_080d2d98(struct SceneContext_080d2d98 *context) {
     s32 velocity_y = -0x40000;
     s32 row_offset = 0;
     s32 frame;
-    u32 index;
+    s32 index;
 
     work->context = context;
     Func_080cd594(0);

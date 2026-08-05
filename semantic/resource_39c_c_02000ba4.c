@@ -38,7 +38,7 @@ s32 Func_02000ba4(s32 arg0)
     static const s32 *const deltas = (const s32 *)0x0200dda8;
     u8 *object = Func_0808a080(arg0);
     s32 key = *(short *)(*(u8 **)(object + 0x50) + 0x28);
-    s32 index;
+    u32 index;
     s32 baseX;
     s32 baseZ;
     s32 positionX;

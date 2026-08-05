@@ -41,7 +41,7 @@ void Func_02000cb4(void)
     u8 *actor;
     s32 tile_x;
     s32 tile_z;
-    s32 i;
+    u32 i;
 
     /* Slot 8 is the scene's own actor; this owner does not null-check the
      * result, unlike 0x02000328 which does.  Noted, not "fixed". */

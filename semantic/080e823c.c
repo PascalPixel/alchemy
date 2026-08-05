@@ -76,8 +76,8 @@ void Func_080e823c(void *argument)
     struct Point_080e823c point;
     s32 path_x = 0xa00000;
     s32 path_z = 0x5c0000;
-    u32 frame;
-    u32 index;
+    s32 frame;
+    s32 index;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(0);
@@ -183,7 +183,7 @@ void Func_080e823c(void *argument)
                 if (frame >= trigger && frame < trigger + 4)
                     path_z += 0x80000;
                 if (frame == trigger + 3) {
-                    u32 subindex;
+                    s32 subindex;
 
                     for (subindex = 0; subindex < 4; subindex++) {
                         struct Particle_080e823c *particle =
@@ -239,7 +239,7 @@ void Func_080e823c(void *argument)
             if (particle->y > 0x780000) {
                 particle->timer++;
                 if (particle->timer == 1) {
-                    u32 subindex;
+                    s32 subindex;
 
                     particle->velocity_y =
                         -particle->velocity_y / 2;

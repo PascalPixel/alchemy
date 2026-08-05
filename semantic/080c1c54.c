@@ -61,7 +61,7 @@ void Func_080c1c54(s32 owner_id, s32 increase)
         (CopySnapshot_080c1c54)0x03001388;
     struct Snapshot_080c1c54 *original = Func_08004970(0x24);
     struct Owner_080c1c54 *owner = Func_08077008(owner_id);
-    u32 index;
+    s32 index;
     s32 value;
 
     copy_snapshot(original, &owner->primary, 0x24);

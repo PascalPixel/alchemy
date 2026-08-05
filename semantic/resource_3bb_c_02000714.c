@@ -77,6 +77,8 @@ void Func_02000714(void)
     s32 delta;
     u32 counter;
 
+    s32 permuted_3;
+    s32 permuted_11;
     subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
 
     id = 22;
@@ -84,12 +86,13 @@ void Func_02000714(void)
         record = Func_0808a080(id);
         record[91] = 0;
 
-        delta = *(s32 *)(record + 8) - *(s32 *)(subject + 8);
+        permuted_3 = *(s32 *)(record + 8) - *(s32 *)(subject + 8);
         if (delta >= 0) {
             if (delta > 0x9ffff) goto next;
         } else {
             if ((*(s32 *)(subject + 8) - *(s32 *)(record + 8)) > 0x9ffff) goto next;
         }
+        delta  = permuted_3;
 
         delta = *(s32 *)(record + 16) - *(s32 *)(subject + 16);
         if (delta >= 0) {
@@ -99,8 +102,9 @@ void Func_02000714(void)
         }
 
         if (Func_080770c0(260) != 0) {          /* 130 << 1 */
-            *(s32 *)(subject + 16) = *(s32 *)(record + 16);
+            permuted_11 = *(s32 *)(record + 16);
         } else {
+            *(s32 *)(subject + 16) = permuted_11;
             *(s32 *)(subject + 16) =
                 *(s32 *)(subject + 16) + *(s32 *)(record + 44);
         }
@@ -119,8 +123,8 @@ void Func_02000714(void)
         s32 stacked;
 
         if (Data_0200c834 != 0) {
-            arg1 = 10;
             arg2 = 1;
+            arg1 = 10;
             stacked = 11;
         } else {
             arg1 = 28;

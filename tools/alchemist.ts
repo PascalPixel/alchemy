@@ -140,11 +140,20 @@ export function parseFunction(source: string, functionName: string): ParsedFunct
 }
 
 function renderScope(units: Unit[]): string[] {
-  return units.flatMap((unit) =>
-    unit.kind === "block" && unit.scope !== null
-      ? [unit.lines[0], ...renderScope(unit.scope), unit.lines[unit.lines.length - 1]]
-      : unit.lines,
-  );
+  return units.flatMap((unit) => {
+    if (unit.kind !== "block" || unit.scope === null) return unit.lines;
+    // A one-line block (its own opening AND closing brace on the same source
+    // line -- either a genuinely empty `if (x) { }`, or a cascading
+    // `} else if (...) {` line, which closes the PREVIOUS sibling block and
+    // opens this one in a single line) has unit.lines[0] === the last
+    // element too. Emitting the open/scope/close triple unconditionally
+    // duplicated that one line, which on a chain of textually-identical
+    // `} else if (SAME_COND) {` lines silently multiplied the source (see
+    // resource_371:28e8, byte-diff-neutral since the duplicated branches
+    // were empty, so the compile gate never caught it).
+    if (unit.lines.length === 1) return unit.lines;
+    return [unit.lines[0], ...renderScope(unit.scope), unit.lines[unit.lines.length - 1]];
+  });
 }
 
 export function renderFunction(parsed: ParsedFunction): string {
@@ -496,6 +505,32 @@ function selfTest(): void {
   // pinned unit, but a plain store may hoist across it.
   if (moves.some((move) => move.description.includes("hoist") && move.description.includes("along = ") )) {
     throw new Error("pinned call statement should not hoist across other pinned units at distance crossing them");
+  }
+
+  // Regression: a chain of `} else if (SAME_COND) {` lines each closes the
+  // previous sibling block and opens the next on a SINGLE source line. That
+  // line becomes a one-line "block" unit whose first and last element are
+  // the same array entry; renderScope() used to always emit
+  // [open, ...scope, close], which for a one-line block silently duplicated
+  // it. Confirmed on resource_371:28e8: byte-diff-neutral (the branches were
+  // empty) so nothing else catches it -- only an exact round-trip check does.
+  const cascadeFixture = [
+    "void Func_02000200(void)",
+    "{",
+    "    if (x > 1) {",
+    "    } else if (x > 2) {",
+    "    } else if (x > 2) {",
+    "    } else if (x > 2) {",
+    "        y = 1;",
+    "    }",
+    "}",
+    "",
+  ].join("\n");
+  const cascadeParsed = parseFunction(cascadeFixture, "Func_02000200");
+  if (cascadeParsed === null) throw new Error("failed to parse cascading else-if fixture");
+  const cascadeRendered = renderFunction(cascadeParsed);
+  if (cascadeRendered !== cascadeFixture) {
+    throw new Error(`cascading else-if chain did not round-trip faithfully:\n${cascadeRendered}`);
   }
   console.log("self-test=ok tool=alchemist");
 }

@@ -58,9 +58,9 @@ void Func_080770c8();
 void Func_02001308(void)
 {
     s32 *slot = Func_0808a080(0);
+    u8 *workspace = Data_03001ebc;
     s32 x = slot[2] / 0x100000;   /* +8  */
     s32 z = slot[4] / 0x100000;   /* +16 */
-    u8 *workspace = Data_03001ebc;
 
     if (Func_080770c0(0x220) != 0) return;
     if (Data_02000240[294] != 0) return;
@@ -68,6 +68,6 @@ void Func_02001308(void)
     if ((u32)(x - 21) > 2) return;
     if (z <= 9 || z > 11) return;
 
-    Func_080770c8(0x220);
     *(s16 *)(workspace + 386) = 91;
+    Func_080770c8(0x220);
 }

@@ -151,10 +151,10 @@ s32 Func_02000240(void)
         }
         break;
 
-    case 10:
         *(u16 *)(work + 452) = 0x6f;
         *(u16 *)(work + 454) = 30;
         Func_02000564();
+    case 10:
         break;
 
     case 11:

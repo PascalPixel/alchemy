@@ -131,6 +131,7 @@ void Func_020008f8(s32 repeat)
     goto say_and_close;
 
 repeat_path:
+    line = 0xe31;
     if (handle == 0) {
         line = 0xe32;
         goto say_and_close;
@@ -140,7 +141,6 @@ repeat_path:
     if (Func_0808a070(0, 0) == 0) {
         goto refuse;
     }
-    line = 0xe31;
 
 say_and_close:
     Func_0808a170(line);

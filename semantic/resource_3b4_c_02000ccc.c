@@ -86,8 +86,8 @@ void Func_02000ccc(void)
 
     Func_0808a018();
 
-    slot = Func_0808a080(15);
     *(u16 *)((u8 *)(s32 *)slot[20] + 30) = (u16)clear;   /* [+80] -> +30 */
+    slot = Func_0808a080(15);
     Func_08009088(slot, 16);
 
     Func_080f9010(152);

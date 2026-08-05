@@ -95,11 +95,11 @@ void Func_02001c14(s32 actor, s32 partner)
 {
     u8 *workspace;
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 448 - 192;
     Func_0808a360();
     Func_0808a370();
     Func_0808a010(20);
+    workspace = Data_03001ebc;
 
     Func_02000bb8();
 
@@ -119,8 +119,8 @@ void Func_02001c14(s32 actor, s32 partner)
     Func_0808a170(0x1e39);
     Func_0808a188(partner, 0, 20);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 0x202;
+    workspace = Data_03001ebc;
     Func_0808a368();
     Func_0808a370();
     Func_0808a248(10);

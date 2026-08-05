@@ -137,6 +137,7 @@ void Func_02001444(void)
     u8 *slot;
     u8 *context;
 
+    s32 permuted_1;
     Func_080770c8(0x144);
 
     if (Func_080770c0(0x109) != 0) {
@@ -156,14 +157,14 @@ void Func_02001444(void)
         if (replaying != 0) {
             Func_02003950();
             Func_02003284();
-            Func_080000d0((void *)((s32)&Func_020034bc | 1), 200 << 4);
             Data_0200db50[1] = 128 << 14;
             Data_0200db60[1] = 0x13333;
+            Func_080000d0((void *)((s32)&Func_020034bc | 1), 200 << 4);
             Func_080000d0((void *)((s32)&Func_020031a8 | 1), 200 << 4);
         } else if (Func_080770c0(0x928) != 0) {
-            Func_02003950();
             Data_0200db50[1] = 0;
             Data_0200db60[1] = 0;
+            Func_02003950();
             Func_080000d0((void *)((s32)&Func_020031a8 | 1), 200 << 4);
         }
     }
@@ -175,8 +176,9 @@ void Func_02001444(void)
     selector = *(s16 *)(Data_02000240 + 450);
     switch (selector) {
     case 4:
-        slot = *(u8 **)(Func_0808a080(0) + 80);
+        permuted_1 = *(u8 **)(Func_0808a080(0) + 80);
         slot[9] = (u8)((slot[9] & ~12) | 4);
+        slot  = permuted_1;
         break;                  /* the only case that falls into the tail */
     case 10:
         if (Func_080770c0(0x928) != 0) {

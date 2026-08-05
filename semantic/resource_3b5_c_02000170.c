@@ -34,8 +34,8 @@ s32 Func_02000170(u8 *self)
     u8 *scene = globals[0];
     u8 *workspace = globals[12];        /* == *(u8 **)0x03001ebc */
     u16 *flags = (u16 *)(self + 100);
-    s32 range = 18;
     s32 force = 0;
+    s32 range = 18;
     u8 *player;
 
     /* Bit 0 of the actor's own flag halfword selects which partner to test. */

@@ -13,16 +13,16 @@ void Func_02000608(s32 row, s32 slot, s32 x, s32 elevation, s32 y,
                    void (*callback)(void))
 {
     u8 *runtime = *(u8 **)0x03001e70;
+    s32 *delta = (s32 *)0x0200adc0 + row * 4;
     u8 *lead = Func_0808a080(0);
     s32 direction = *(u16 *)(lead + 6) >> 12;
     u8 *object = Func_0808a080(slot);
-    s32 *delta = (s32 *)0x0200adc0 + row * 4;
-    s32 a0 = delta[0] < 0 ? -delta[0] : delta[0];
     s32 a1 = delta[1] < 0 ? -delta[1] : delta[1];
-    s32 a2 = delta[2] < 0 ? -delta[2] : delta[2];
+    s32 a0 = delta[0] < 0 ? -delta[0] : delta[0];
     s32 a3 = delta[3] < 0 ? -delta[3] : delta[3];
-    s32 width = (a0 + a2) >> 4, depth = (a1 + a3) >> 4;
     s32 originalX = *(s32 *)(object + 8) + (delta[0] << 16);
+    s32 a2 = delta[2] < 0 ? -delta[2] : delta[2];
+    s32 width = (a0 + a2) >> 4, depth = (a1 + a3) >> 4;
     s32 originalZ = *(s32 *)(object + 16) + (delta[1] << 16);
     s32 oldTileX = originalX >> 20, oldTileZ = originalZ >> 20;
     s32 moveX, moveZ, packed, tileX, tileZ, globalX, globalZ;

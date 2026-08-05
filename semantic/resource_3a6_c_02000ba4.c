@@ -36,9 +36,9 @@ s32 Func_02000ba4(s32 actorId)
         return 0;
 
     baseX = *(s32 *)(object + 8);
+    positionZ = (baseZ + (deltas[index * 4 + 1] << 16)) >> 20;
     baseZ = *(s32 *)(object + 16);
     positionX = (baseX + (deltas[index * 4] << 16)) >> 20;
-    positionZ = (baseZ + (deltas[index * 4 + 1] << 16)) >> 20;
     extentX = (Abs_02000ba4(deltas[index * 4]) +
                Abs_02000ba4(deltas[index * 4 + 2])) >> 4;
     extentZ = (Abs_02000ba4(deltas[index * 4 + 1]) +

@@ -45,9 +45,9 @@ void Func_0200013c(
     Func_08009098(object, (s32)entry);
 
     object[85] = 0;
+    *(s32 *)(object + 68) = field44;
     owner[38] = 0;
     *(u32 *)(object + 108) = 0x02008105;
-    *(s32 *)(object + 68) = field44;
     *(s32 *)(object + 72) = field48;
     *(s32 *)(object + 76) = field4c;
 

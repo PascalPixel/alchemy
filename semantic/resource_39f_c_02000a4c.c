@@ -11,8 +11,8 @@ u8 *Func_02000a4c(s32 x, s32 y, s32 z, s32 kind)
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);
-        owner[9] = (owner[9] & ~12) | 4;
         object[85] = 0;
+        owner[9] = (owner[9] & ~12) | 4;
         object[89] = 8;
         Func_080091e0(object, 0);
         Func_0808a160(object, 15);

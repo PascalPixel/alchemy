@@ -40,6 +40,19 @@
  * frame until it is at or below a tenth, then pins it to exactly a tenth.  The
  * counter caps the run at 32 frames, and THE TWO EXITS ARE NOT THE SAME — the
  * cap exits without pinning.  Folding them together would delete the clamp.
+ *
+ * STILL-OPEN residual, 6 bytes (after sinking the record+12 store below the
+ * record+28 store per alchemist.ts's move, applied below -- baseline was 25).
+ * All 6 remaining bytes are confined to the two `bl` instructions' own
+ * displacement encoding at 0x02001176 and 0x0200118e; resolvedCallNames()
+ * confirms both call sites already use the correct symbol (verified: renaming
+ * to their veneer addresses 0x02002b1c/0x02002a34 changed nothing, since that
+ * turned out to be a wrong reading of the reference disassembly, not the
+ * true target -- resolvedCallNames is the authority here, not a hand
+ * decode). This matches resource_380:4328's documented finding: a bl
+ * displacement anomaly confined to never-before-adopted overlay owners,
+ * reproducible with correct symbols, likely a toolchain/link-time
+ * veneer-placement quirk rather than a source issue. Not attempted further.
  */
 
 u8 *Func_0808a080();           /* record fetch, returns the record */
@@ -56,8 +69,8 @@ void Func_02001174(s32 index)
     for (;;) {
         if (frames > 31) return;
         Func_080000c0(1);
-        *(s32 *)(record + 12) += -0xcccc;
         *(s32 *)(record + 28) += -0x1999;
+        *(s32 *)(record + 12) += -0xcccc;
         frames++;
         if (*(s32 *)(record + 28) <= 0x1998) {
             *(s32 *)(record + 28) = 0x1999;

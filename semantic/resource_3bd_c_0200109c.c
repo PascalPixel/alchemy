@@ -87,10 +87,10 @@ void Func_0200109c(s32 scene)
         actor->y = 0x10000; /* store 0x020010ea */
     }
 
-    scene_kind = (s8)Data_02001001[0];
     scene_step = (s8)Data_02001001[1];
     state = *Data_0200bf6c;
     cell = Func_03000380((s32)scene_step << 16, 5);
+    scene_kind = (s8)Data_02001001[0];
     state->phase = (s16)(cell + 0x4000); /* store 0x02001118 */
     phase = (u8)Data_02001001[0];
     frame = Data_02001001[1];

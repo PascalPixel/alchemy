@@ -52,8 +52,8 @@ void Func_02002e08(void)
         for (index = 0; index <= 6; index++) {
             color = *palette;
             red = color & 0x1f;
-            green = (color >> 5) & 0x1f;
             blue = (color >> 10) & 0x1f;
+            green = (color >> 5) & 0x1f;
 
             if (red > 0) red--;
             if (green > 0) green--;

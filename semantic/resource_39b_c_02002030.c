@@ -38,9 +38,10 @@ static s32 Fixed20_02002030(s32 value)
 
 void Func_02002030(void)
 {
-    s32 *record = *Data_03001edc;
+    s32 permuted_16;
     u8 *runtime = Data_03001ebc;
     u8 *slot = ((u8 **)(runtime + 0x14))[Data_02000434];
+    s32 *record = *Data_03001edc;
     u8 saved_flags = slot[0x55];
     s32 variant = *(short *)(0x0200a7f4 + (((*(u32 *)0x03001ae8 >> 4) & 15) * 2));
     s32 probe[3];
@@ -54,10 +55,11 @@ void Func_02002030(void)
 
     probe[0] = (*(s32 *)(slot + 8) & (s32)0xfff00000) + 0x80000;
     probe[1] = *(s32 *)(slot + 20);
-    probe[2] = (*(s32 *)(slot + 16) & (s32)0xfff00000) + 0x80000;
+    permuted_16 = (*(s32 *)(slot + 16) & (s32)0xfff00000) + 0x80000;
     first_cell = (u8 *)0x02010000 +
         (Fixed20_02002030(probe[2]) * 128 + Fixed20_02002030(probe[0])) * 4;
     Func_08000128(0x200000, variant, probe);
+    probe[2]  = permuted_16;
     cell = (u8 *)0x02010000 +
         (Fixed20_02002030(probe[2]) * 128 + Fixed20_02002030(probe[0])) * 4;
 

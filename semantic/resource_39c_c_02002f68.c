@@ -137,8 +137,8 @@ void Func_02002f68(void)
             offset = 0x00c00000 - (item >> 1) - (row * 16);
             Func_0200013c(x, 0, offset, y, 0, 0x1999 * second,
                           0x000d0001, descriptor);
-            second = (s32)(((u32)(randomValue * 8)) >> 16);
             Func_0808a010(2);
+            second = (s32)(((u32)(randomValue * 8)) >> 16);
         }
     }
 

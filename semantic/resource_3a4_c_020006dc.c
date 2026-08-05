@@ -84,8 +84,8 @@ void Func_020006dc(void)
 
         if (i == 8) {
             actor = Func_0808a080(8);
-            *(s32 *)(actor + 0x18) = 0x1999;
             actor = Func_0808a080(8);
+            *(s32 *)(actor + 0x18) = 0x1999;
             *(s32 *)(actor + 0x1c) = 0x1999;
             Func_0808a0f0(8, 152 << 16, 216 << 16);
             Func_0808a098(8, Data_0200bd48);
@@ -94,12 +94,12 @@ void Func_020006dc(void)
 
     Func_08000130(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */
 
-    counter = (u16 *)0x0200d238;
     *counter = 0;
     do {
         Func_080000c0(1);
         *counter += 1;
     } while ((u32)(*counter << 16) <= (u32)(200 << 15));
+    counter = (u16 *)0x0200d238;
 
     Func_080000c0(1);
     Func_08000130(1, 0, 0);

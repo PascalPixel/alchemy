@@ -20,11 +20,11 @@ void Func_020031fc(void)
         u8 *sprite = *(u8 **)(particle + 80);
         s32 scale = 0x13333 + (s32)((Func_080000f8() << 15) >> 16);
 
-        sprite[38] = 0;
-        sprite[9] = (u8)((sprite[9] & ~12) | 8);
         particle[85] = 0;
         *(s32 *)(particle + 24) = scale;
+        sprite[38] = 0;
         *(s32 *)(particle + 28) = scale;
+        sprite[9] = (u8)((sprite[9] & ~12) | 8);
         Func_08009080(particle, 1);
         Func_08009098(particle, Data_0200d14c);
     }
@@ -37,6 +37,7 @@ void Func_020031fc(void)
             s32 cameraZ = quadrant == 1 ? 0x0c670000 : 0x0c690000;
 
             Func_0808a210(cameraX, -1, cameraZ, 1);
+        } else if (quadrant == 3) {
         } else if (quadrant == 3) {
             Func_0808a210(0x17c70000, -1, 0x0c670000, 1);
         }

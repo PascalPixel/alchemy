@@ -66,16 +66,16 @@ void Func_0200441c(u8 *desc)
     Func_080f9010(152);
 
     for (i = 0; i <= 1; i++) {
+        slot[i] = obj;
         obj = Func_080090c8(26, *(s32 *)(desc + 8), *(s32 *)(desc + 12),
                             *(s32 *)(desc + 16));
-        slot[i] = obj;
         if (obj == 0) {
             continue;
         }
 
-        *(s32 *)(obj + 20) = *(s32 *)(desc + 20);
         spr = *(u8 **)(obj + 80);
         obj[85] = 0;
+        *(s32 *)(obj + 20) = *(s32 *)(desc + 20);
         *(u16 *)(obj + 100) = 0;      /* frame counter, f64 in 0x020043c8 */
         *(u8 **)(obj + 104) = desc;   /* parent back-pointer, f68 */
         if (spr == 0) {
@@ -83,11 +83,11 @@ void Func_0200441c(u8 *desc)
         }
 
         Func_08009020(spr, 0);
-        spr[38] = 0;
         Func_080001b8(spr[28]);
+        spr[38] = 0;
 
-        spr[28] = (u8)*(u16 *)(gp + 70);
         spr[29] |= 1;
+        spr[28] = (u8)*(u16 *)(gp + 70);
 
         tbl = (const u16 *)0x03001b10;             /* 4 bytes per entry */
         v = ((u32)tbl[spr[28] * 2 + 1] << 17) >> 22;  /* (field & 0x7fff) >> 5 */
@@ -101,12 +101,12 @@ void Func_0200441c(u8 *desc)
     }
 
     /* Slot 0 */
-    *(void **)(slot[0] + 108) = (void *)Func_020043c8;
     {
         u8 *src = *(u8 **)(desc + 80);
         u8 *dst = *(u8 **)(slot[0] + 80);
         dst[9] = (u8)((dst[9] & ~12) | (src[9] & 12));
     }
+    *(void **)(slot[0] + 108) = (void *)Func_020043c8;
 
     /* Slot 1 */
     {

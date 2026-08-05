@@ -55,6 +55,7 @@ void Func_02003fb4(void *object);
 
 void Func_02004058(u8 *parent)
 {
+    s32 permuted_14;
     u8 *state = Data_03001f30;
     u8 *pieces[2];
     u8 *piece;
@@ -71,9 +72,9 @@ void Func_02004058(u8 *parent)
             continue;
         }
 
-        *(s32 *)(piece + 0x14) = *(s32 *)(parent + 0x14);
         record = *(u8 **)(piece + 0x50);
         piece[0x55] = 0;
+        *(s32 *)(piece + 0x14) = *(s32 *)(parent + 0x14);
         *(u16 *)(piece + 0x64) = 0;
         *(u8 **)(piece + 0x68) = parent;
         if (record == 0) {
@@ -99,7 +100,8 @@ void Func_02004058(u8 *parent)
     record = *(u8 **)(pieces[0] + 0x50);
 
     record = *(u8 **)(pieces[1] + 0x50);
+    permuted_14 = (u8)((record[9] & ~0x0c) | 0x04);
     *(void (**)(void *))(pieces[1] + 0x6c) = Func_02003fb4;
-    record[9] = (u8)((record[9] & ~0x0c) | 0x04);
     pieces[1][0x23] = 2;
+    record[9]  = permuted_14;
 }

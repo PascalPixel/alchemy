@@ -18,8 +18,8 @@ void Func_02003fb0(void)
     Func_0808a0d0(0, 0x1e0, 0x570);
     Func_0808a0f0(0, 0, 0);
     Func_0808a1b8(22, 0x3000, 20);
-    actor = Func_0808a080(22);
     actor[35] |= 1;
+    actor = Func_0808a080(22);
     Func_0808a0f0(22, 0x00f90000, 0x04d80000);
     Func_080000c0(1);
     Func_0808a170(0xed3);

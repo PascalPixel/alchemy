@@ -30,10 +30,10 @@ s32 Func_0200058c(u8 *actor)
     s16 type;
     u32 i;
 
+    occupant = Func_02000350(position, actor);
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);
     position[2] = *(s32 *)(actor + 16) + (s32)((unsigned int)packed << 16);
-    occupant = Func_02000350(position, actor);
     if (occupant != 0) {
         type = *(s16 *)(*(u8 **)(occupant + 80) + 40);
         for (i = 0; i < 6; i++) {
@@ -43,9 +43,9 @@ s32 Func_0200058c(u8 *actor)
         ClearMotion_0200058c(actor);
     }
 
-    position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);
     position[2] = *(s32 *)(actor + 16) + (s32)((unsigned int)packed << 16);
+    position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     if (Func_080091d8(actor, position) > 0)
         ClearMotion_0200058c(actor);
     return 0;

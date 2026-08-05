@@ -172,23 +172,23 @@ void Func_020003c8(void)
     /* Ten objects along a line: x starts at 148.0 and steps by 4.0. */
     x = 0x00940000;
     for (i = 0; i <= 9; i++) {
+        x = x + 0x40000;
         p = Func_080090c8(222, x, 0, 0x01020000);
         if (p != 0) {
             p->f55 = 0;
             Func_080091e0(p, 0);
             sub = p->f50;
+            p->f24 = speed;
             sub->f09 = sub->f09 & ~13;
             p->f64 = (u16)((((u32)(Func_080000f8() * 40)) >> 16) + 40);
-            speed = (s32)(((i & 3) << 16) + 0x10000) >> 1;
             p->f2c = 0x10000;
-            p->f24 = speed;
             if ((i & 1) != 0) {
                 p->f24 = -speed;
             }
             Func_08009080(p, 1);
             Func_08009098(p, Data_0200ae20);
+            speed = (s32)(((i & 3) << 16) + 0x10000) >> 1;
         }
-        x = x + 0x40000;
     }
 
     Func_08009180(91, 19, 72, 9, 5, 7);

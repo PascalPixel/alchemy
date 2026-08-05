@@ -7,9 +7,9 @@ extern void Func_08009080(u8 *actor, s32 mode);
 /* Complete 248-byte owner through the adjustment word at 0x020004fc. */
 s32 Func_02000408(u8 *actor, u8 *target, s32 distanceLimit, s32 force)
 {
-    s32 result = 0;
-    u8 *moving = actor + 0x5b;
     s16 *state = (s16 *)(actor + 0x64);
+    u8 *moving = actor + 0x5b;
+    s32 result = 0;
 
     if (*moving == 1 && *state == 0) {
         Func_08009080(actor, 1);
@@ -25,19 +25,19 @@ s32 Func_02000408(u8 *actor, u8 *target, s32 distanceLimit, s32 force)
         u16 clockwise = (angle + 0x1000) & 0xf000;
         u16 counterclockwise = (angle - 0x1000) & 0xf000;
 
+        *moving = 0;
         if (forward != facing && clockwise != facing &&
             counterclockwise != facing && force == 0) {
             *moving = 0;
             Func_08009080(actor, 2);
             *state = 0;
         } else {
-            *moving = 1;
             Func_08009080(actor, 1);
+            *moving = 1;
             *state = 1;
             result = 1;
         }
     } else {
-        *moving = 0;
         Func_08009080(actor, 2);
         *state = 0;
     }

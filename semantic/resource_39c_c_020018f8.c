@@ -37,9 +37,9 @@ void Func_020018f8(void)
 
     Func_08009180(78, 58, 110, 36, 1, 1);
 
-    options.count = 5;
     options.scaleStart = 0x8000;
     options.scaleEnd = 0x8000;
+    options.count = 5;
 
     for (row = 0; row < 3; row++) {
         for (pattern = 1; pattern <= 7; pattern++) {

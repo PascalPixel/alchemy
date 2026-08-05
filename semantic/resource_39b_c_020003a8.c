@@ -33,6 +33,9 @@ void Func_080f9010();
 
 void Func_020003a8(void)
 {
+    s32 permuted_17;
+    s32 permuted_9;
+    s32 permuted_11;
     u8 *leader = Func_0808a080(0);
     const s32 *steps = (const s32 *)0x0200a700;
     s32 packed = steps[*(u16 *)(leader + 6) >> 12];
@@ -40,9 +43,11 @@ void Func_020003a8(void)
     u8 *actor;
     u8 *blocked;
 
-    position[0] = *(s32 *)(leader + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(leader + 12);
-    position[2] = *(s32 *)(leader + 16) + (s32)((u32)packed << 16);
+    permuted_9 = *(s32 *)(leader + 8) + (packed & (s32)0xffff0000);
+    permuted_11 = *(s32 *)(leader + 16) + (s32)((u32)packed << 16);
+    position[0]  = permuted_9;
+    position[2]  = permuted_11;
 
     actor = (u8 *)Func_02000350(position, leader);
     if (actor == 0)
@@ -50,15 +55,16 @@ void Func_020003a8(void)
 
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);
-    position[2] = *(s32 *)(actor + 16) + (s32)((u32)packed << 16);
+    permuted_17 = *(s32 *)(actor + 16) + (s32)((u32)packed << 16);
     blocked = (u8 *)Func_02000350(position, actor);
     if (blocked != 0 && (blocked[0x59] & 1) != 0)
         return;
+    position[2]  = permuted_17;
 
-    position[0] = *(s32 *)(actor + 8);
-    position[1] = *(s32 *)(actor + 12) + 0x00100000;
     position[2] = *(s32 *)(actor + 16);
     blocked = (u8 *)Func_02000350(position, actor);
+    position[0] = *(s32 *)(actor + 8);
+    position[1] = *(s32 *)(actor + 12) + 0x00100000;
     if (blocked != 0 && (blocked[0x59] & 1) != 0)
         return;
 

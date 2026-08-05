@@ -15,6 +15,8 @@ extern void Func_0808a020(void);
 
 void Func_02001ec8(void)
 {
+    s32 permuted_15;
+    s32 permuted_14;
     s32 *record = *Data_03001edc;
     u8 *slot = ((u8 **)(Data_03001ebc + 0x14))[Data_02000434];
     u8 *object;
@@ -47,8 +49,9 @@ void Func_02001ec8(void)
         }
     }
 
-    object = (u8 *)record[5];
+    permuted_14 = (u8 *)record[5];
     counter = record[0];
+    permuted_15 = (*(s32 *)(object + 8) & (s32)0xfff00000) + 0x80000;
     if (counter <= 2) {
         object[0x54] = 1;
         for (i = counter; i <= 2; i++) {
@@ -57,9 +60,10 @@ void Func_02001ec8(void)
             Func_08009080(object, 5 - i);
         }
     }
+    object  = permuted_14;
     record[0] = 3;
-    *(s32 *)(object + 12) = (*(s32 *)(object + 8) & (s32)0xfff00000) + 0x80000;
-    *(s32 *)(object + 16) = (*(s32 *)(object + 16) & (s32)0xfff00000) + 0x80000;
+    *(s32 *)(object + 12) = permuted_15;
     Func_080770c8(0x161);
+    *(s32 *)(object + 16) = (*(s32 *)(object + 16) & (s32)0xfff00000) + 0x80000;
     Func_0808a020();
 }

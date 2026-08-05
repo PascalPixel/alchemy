@@ -41,7 +41,7 @@ static s32 FormationJitter_020017a8(u32 randomValue)
 void Func_020017a8(s32 handle)
 {
     s32 extra[4];
-    s32 group;
+    u32 group;
 
     Func_08009180(78, 59, 110, 36, 1, 1);
     Func_08009180(76, 59, 109, 36, 1, 1);
@@ -52,7 +52,7 @@ void Func_020017a8(s32 handle)
 
     for (group = 0; group <= 1; group++) {
         s32 baseX = 0x2d80000 - group * 0x100000;
-        s32 member;
+        u32 member;
 
         for (member = 0; member <= 7; member++) {
             s32 mirrored = -member;

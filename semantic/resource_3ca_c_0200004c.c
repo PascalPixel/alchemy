@@ -7,10 +7,11 @@ struct SceneWork_0200004c {
 };
 
 extern struct SceneWork_0200004c *Data_03001ebc;
-extern void Func_0808a248(s32 scene);
 
+
+extern void Func_020014c2(s32 scene);
 void Func_0200004c(void)
 {
-    Func_0808a248(Data_03001ebc->next_scene);
+    Func_020014c2(Data_03001ebc->next_scene);
     *(volatile u16 *)0x05000000 = 0;
 }

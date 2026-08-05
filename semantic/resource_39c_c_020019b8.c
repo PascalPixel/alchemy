@@ -14,6 +14,11 @@
  * own flag update and callback, and all exits share the scene close.  The
  * repeated rectangle calls are intentionally written out: each is a distinct
  * static call site and the source-order audit must be able to see all of them.
+ *
+ * Call symbols are per-site, lifted in program order from the reference
+ * disassembly (bun tools/overlay_show.ts resource_39c 19b8 1bd8), not from
+ * the imported function identity -- the same main-image import gets a
+ * different veneer symbol at each call site.
  */
 
 typedef struct PlacementResult {
@@ -25,98 +30,136 @@ typedef struct PlacementResult {
     void (*callback)(void);
 } PlacementResult;
 
-extern void Func_0808a018(void);
-extern s32 Func_02000758(PlacementResult *result);
-extern void Func_020008ec(s32 deltaIndex, s32 actorSlot,
+extern void Func_02007476(void);
+extern s32 Func_02002122(PlacementResult *result);
+extern void Func_020022e0(s32 deltaIndex, s32 actorSlot,
                           s32 x, s32 y, s32 z,
                           void (*callback)(void));
-extern void Func_0808a010(s32 frames);
-extern void Func_080f9010(s32 sound);
-extern void Func_02003860(void);
-extern void Func_08009180(s32 left, s32 top, s32 right, s32 bottom,
+extern void Func_020074a6(s32 frames);
+extern void Func_02007664(s32 sound);
+extern void Func_02005264(void);
+extern void Func_0200741e(s32 left, s32 top, s32 right, s32 bottom,
                           s32 style, s32 enabled);
-extern void Func_080770c8(s32 flag);
-extern void Func_080770d0(s32 flag);
-extern s32 Func_080770c0(s32 flag);
-extern void Func_0808a208(s32 distance, s32 height);
-extern void Func_0808a210(const void *resource, s32 direction,
+extern void Func_02007430(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_02007442(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_02007452(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_02007462(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_02007472(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_02007500();
+extern void Func_02007490(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020074a0(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020074b0(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020074c0(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020074d0(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020074e0(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020074f0(s32 left, s32 top, s32 right, s32 bottom,
+                          s32 style, s32 enabled);
+extern void Func_020023fc(s32 deltaIndex, s32 actorSlot,
+                          s32 x, s32 y, s32 z,
+                          void (*callback)(void));
+extern void Func_020075aa(s32 flag);
+extern void Func_02002424(s32 deltaIndex, s32 actorSlot,
+                          s32 x, s32 y, s32 z,
+                          void (*callback)(void));
+extern s32 Func_020075c2(s32 flag);
+extern void Func_020076fa(s32 distance, s32 height);
+extern void Func_02007712(const void *resource, s32 direction,
                           s32 position, s32 mode);
-extern void Func_0808a218(void);
-extern void Func_020017a8(s32 handle);
-extern void Func_020016c4(s32 handle);
-extern void Func_0808a020(void);
+extern void Func_0200771e(void);
+extern void Func_020075f4(s32 flag);
+extern void Func_02003316(s32 handle);
+extern void Func_02007620(s32 frames);
+extern void Func_02003324(s32 handle);
+extern void Func_0200760e(s32 flag);
+extern void Func_0200248c(s32 deltaIndex, s32 actorSlot,
+                          s32 x, s32 y, s32 z,
+                          void (*callback)(void));
+extern void Func_0200326a(s32 handle);
+extern void Func_02007640(s32 flag);
+extern void Func_0200766c(void);
 
 void Func_020019b8(void)
 {
     PlacementResult placement;
 
-    Func_0808a018();
+    Func_02007476();
 
-    if (Func_02000758(&placement) != 0) {
+    if (Func_02002122(&placement) != 0) {
     if (placement.actorSlot == 8) {
         if ((placement.x >> 20) == 11) {
-            Func_020008ec(placement.deltaIndex, 8,
+            Func_020022e0(placement.deltaIndex, 8,
                           placement.x, placement.y, placement.z,
                           placement.callback);
-            Func_0808a010(30);
-            Func_080f9010(0xd3);
-            Func_02003860();
+            Func_020074a6(30);
+            Func_02007664(0xd3);
+            Func_02005264();
 
-            Func_08009180(76, 60, 74, 38, 3, 1);
-            Func_08009180(77, 60, 76, 38, 2, 1);
-            Func_08009180(75, 58, 86, 41, 1, 3);
-            Func_08009180(75, 59, 86, 43, 1, 2);
-            Func_08009180(76, 59, 80, 49, 2, 1);
-            Func_08009180(77, 59, 82, 49, 2, 1);
-            Func_080770c8(0x302);
+            Func_0200741e(76, 60, 74, 38, 3, 1);
+            Func_02007430(77, 60, 76, 38, 2, 1);
+            Func_02007442(75, 58, 86, 41, 1, 3);
+            Func_02007452(75, 59, 86, 43, 1, 2);
+            Func_02007462(76, 59, 80, 49, 2, 1);
+            Func_02007472(77, 59, 82, 49, 2, 1);
+            Func_02007500(0x302);
         } else {
             placement.callback = (void (*)(void))0x0200b949;
 
-            Func_08009180(75, 57, 86, 41, 1, 1);
-            Func_08009180(71, 59, 86, 42, 1, 1);
-            Func_08009180(71, 59, 86, 43, 1, 1);
-            Func_08009180(71, 59, 86, 44, 1, 1);
-            Func_08009180(71, 59, 80, 49, 1, 1);
-            Func_08009180(71, 59, 81, 49, 1, 1);
-            Func_08009180(71, 59, 82, 49, 1, 1);
-            Func_08009180(78, 58, 83, 49, 1, 1);
+            Func_02007490(75, 57, 86, 41, 1, 1);
+            Func_020074a0(71, 59, 86, 42, 1, 1);
+            Func_020074b0(71, 59, 86, 43, 1, 1);
+            Func_020074c0(71, 59, 86, 44, 1, 1);
+            Func_020074d0(71, 59, 80, 49, 1, 1);
+            Func_020074e0(71, 59, 81, 49, 1, 1);
+            Func_020074f0(71, 59, 82, 49, 1, 1);
+            Func_02007500(78, 58, 83, 49, 1, 1);
 
-            Func_020008ec(placement.deltaIndex, placement.actorSlot,
+            Func_020023fc(placement.deltaIndex, placement.actorSlot,
                           placement.x, placement.y, placement.z,
                           placement.callback);
-            Func_080770d0(0x302);
+            Func_020075aa(0x302);
         }
     } else if (placement.actorSlot == 10) {
         s32 zTile = placement.z >> 20;
 
         if (zTile == 40) {
-            Func_020008ec(placement.deltaIndex, 10,
+            Func_02002424(placement.deltaIndex, 10,
                           placement.x, placement.y, placement.z,
                           placement.callback);
 
-            if (Func_080770c0(0x307) == 0) {
-                Func_0808a208(0x18000, 0x3000);
-                Func_0808a210((const void *)0x02ca0000,
+            if (Func_020075c2(0x307) == 0) {
+                Func_020076fa(0x18000, 0x3000);
+                Func_02007712((const void *)0x02ca0000,
                               -1, 0x2500000, 1);
-                Func_0808a218();
-                Func_080770c8(0x307);
-                Func_020017a8(5);
-                Func_0808a010(50);
+                Func_0200771e();
+                Func_020075f4(0x307);
+                Func_02003316(5);
+                Func_02007620(50);
             } else {
-                Func_020017a8(5);
+                Func_02003324(5);
             }
 
-            Func_080770c8(0x306);
+            Func_0200760e(0x306);
         } else if (zTile == 42) {
             placement.callback = (void (*)(void))0x020098f9;
-            Func_020008ec(placement.deltaIndex, 10,
+            Func_0200248c(placement.deltaIndex, 10,
                           placement.x, placement.y, placement.z,
                           placement.callback);
-            Func_020016c4(5);
-            Func_080770d0(0x306);
+            Func_0200326a(5);
+            Func_02007640(0x306);
         }
     }
     }
 
-    Func_0808a020();
+    Func_0200766c();
 }

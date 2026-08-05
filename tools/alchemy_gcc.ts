@@ -901,6 +901,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Pair-sweep exact, 2026-08-05, paired with -fthumb-call-arg1-before-arg0.
   "exact/resource_3c0_c_02000adc.c",
   "semantic/resource_3c0_c_02000adc.c",
+  // Lane-E exact, 2026-08-05: resource_389:09dc's remaining movs/lsls swap
+  // is the low-destination scheduler tie-break (single flag suffices).
+  "exact/resource_389_c_020009dc.c",
+  "semantic/resource_389_c_020009dc.c",
   // Round-2 pair-sweep exacts, 2026-08-05: paired with
   // -fno-cse-shift-immediate (3b9:04c8, 3bf:206c) and -ffixed-r14
   // (385:0a80); see those sets.
@@ -1389,6 +1393,11 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   "exact/resource_380_c_02000104.c",
   "exact/resource_39c_c_02000104.c",
   "exact/resource_39e_c_02000104.c",
+  // Lane-B exact, 2026-08-05: the u8** owner load may-aliases the u16
+  // counter store; strict aliasing lets sched2 sink it below the sext,
+  // -fno-strict-aliasing pins it at the reference position.
+  "exact/resource_39b_c_02001c20.c",
+  "semantic/resource_39b_c_02001c20.c",
   "exact/resource_39c_c_020003a8.c",
   "exact/resource_3c9_c_02000104.c",
   "exact/resource_3c9_c_0200215c.c",

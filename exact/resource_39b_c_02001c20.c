@@ -7,8 +7,10 @@ extern s32 Func_02004054();
 s32 Func_02001c20(u8 *object)
 {
     u8 *owner = *(u8 **)(object + 104);
-    s32 age = (short)(*(unsigned short *)(object + 100) + 1);
-    *(unsigned short *)(object + 100) = (unsigned short)age;
+    s32 age;
+
+    *(unsigned short *)(object + 100) += 1;
+    age = *(short *)(object + 100);
     if (age > 31)
         return 0;
     *(s32 *)(object + 24) = Func_02004054(age << 10);

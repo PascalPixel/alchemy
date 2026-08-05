@@ -61,9 +61,9 @@ void Func_020006f0(u8 *object)
             if (*(s32 *)(object + 104) != 0) {
                 Func_080f9010(229);
                 /* r7 is still the zero read from +0x28. */
-                *(s32 *)(object + 104) = 0;
                 *(u16 *)beat = 4;
                 Func_080091f0(0, 0x10000, 0x10000);
+                *(s32 *)(object + 104) = 0;
                 limit = *(s32 *)(object + 20);
             }
             *(s32 *)(object + 12) = limit;
@@ -82,8 +82,8 @@ void Func_020006f0(u8 *object)
         *(s32 *)(object + 40) = 0x00030000;     /* `movs r3,#192 / lsls #10` */
     }
 
-    *(u16 *)frame = (u16)(*(u16 *)frame + 1);
     if ((u16)*frame == 60) {
         *(u16 *)frame = 0;
     }
+    *(u16 *)frame = (u16)(*(u16 *)frame + 1);
 }

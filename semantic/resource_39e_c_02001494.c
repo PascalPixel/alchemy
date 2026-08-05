@@ -104,10 +104,10 @@ void Func_02001494(void)
     Func_0808a010(20);
     Func_0808a090(16, 192 << 9, 192 << 8);
     record = Func_0808a080(16);
-    record[90] &= 0xfe;
     Func_0808a0d0(16, 154 << 1, 136 << 1);
     Func_0808a010(1);
     record = Func_0808a080(16);
+    record[90] &= 0xfe;
     record[90] |= 1;
     Func_0808a188(16, 0, 50);
     Func_0808a0f0(17, 152 << 17, 216 << 16);
@@ -253,12 +253,12 @@ void Func_02001494(void)
     Func_0808a0d0(18, 240, 184);
     Func_0808a138(18, 2);
     Func_0808a010(20);
+    *(s32 *)(record + 12) = 192 << 12;
     Func_0808a0f0(19, 232 << 16, 168 << 16);
     Func_0808a0f0(20, 232 << 16, 168 << 16);
-    record = Func_0808a080(19);
-    *(s32 *)(record + 12) = 192 << 12;
-    record = Func_0808a080(19);
     *(u32 *)(record + 60) = 0x80000000;
+    record = Func_0808a080(19);
+    record = Func_0808a080(19);
     record = Func_0808a080(19);
     *(s32 *)(record + 24) = 0xcccc;
     record = Func_0808a080(19);
@@ -292,10 +292,10 @@ void Func_02001494(void)
     }
 
     workspace = Data_03001ebc;
-    *(u16 *)(workspace + 472) += 1;
     Func_0808a010(20);
     Func_0808a1e8(18, 0x105, 60);
     Func_0808a1b8(18, 128 << 7, 20);
+    *(u16 *)(workspace + 472) += 1;
     Func_0808a138(16, 2);
     Func_0808a010(20);
     Func_0808a178(16, 0);

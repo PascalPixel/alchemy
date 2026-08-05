@@ -89,8 +89,8 @@ void Func_02001af0(void) {
     Func_080000c0(1);
     Func_08009128();
     Func_080000c0(1);
-    temp_r7 = (void **)0x03001ebc;
     FIELD(*temp_r7, s32 *, 0x1C0) = 0x100;
+    temp_r7 = (void **)0x03001ebc;
     Func_0808a360();
     Func_0808a370();
     Func_0808a010(0x3C);
@@ -294,14 +294,14 @@ void Func_02001af0(void) {
     Func_0808a1b8(3, 0xE000, 0);
     Func_0808a010(0x14);
     if (Func_0808a070(0, 0) == 0) {
+        temp_r2_3 = *(u8 **)0x03001ebc;
         Func_0808a010(0x1E);
         Func_0808a180(0x18, 0);
-        temp_r2_3 = *(u8 **)0x03001ebc;
         FIELD(temp_r2_3, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_3, u16 *, 0x1D8) + 1);
     } else {
         Func_0808a010(0x1E);
-        temp_r2_4 = *(u8 **)0x03001ebc;
         FIELD(temp_r2_4, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_4, u16 *, 0x1D8) + 1);
+        temp_r2_4 = *(u8 **)0x03001ebc;
         Func_0808a180(0x18, 0);
     }
     Func_0808a010(0x14);
@@ -367,8 +367,8 @@ void Func_02001af0(void) {
     Func_0808a1b8(2, 0x8000, 0x14);
     Func_0808a188(0x18, 0, 0x14);
     Func_0808a208(0x30000, 0x6000);
-    Func_0808a210(0x980000, -1, 0xD80000, 1);
     temp_r6 = *(u8 **)0x03001e70;
+    Func_0808a210(0x980000, -1, 0xD80000, 1);
     FIELD((FIELD(temp_r6, s32 *, 0) + 0x164), s32 *, 0xC) = 0x03800000;
     Func_08009128();
     Func_080000c0(1);

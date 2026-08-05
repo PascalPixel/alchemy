@@ -105,10 +105,10 @@ void Func_02000cd4(void)
     Func_02000e92(*(s32 *)(record + 8) - 0xc0000,
                   *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x80000,
+                  *(s32 *)(record + 16) + 0x80000,
                   0x10000, scalar, 0, 0, 0);
     Func_02000eaa(*(s32 *)(record + 8),
                   *(s32 *)(record + 12),
-                  *(s32 *)(record + 16) + 0x80000,
                   0xcccc, 0x4ccc, 0, 0, 0);
     Func_02000ec8(*(s32 *)(record + 8) + 0xa0000,
                   *(s32 *)(record + 12),

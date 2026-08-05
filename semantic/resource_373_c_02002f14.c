@@ -134,8 +134,8 @@ void Func_02002f14(void)
      * mirror of the `== 1` test the sibling owner uses. */
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a1e8(1, 0x105, 60);
-    } else {
         RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
+    } else {
     }
 
     Func_0808a188(1, 0, 20);

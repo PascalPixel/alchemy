@@ -90,6 +90,7 @@ extern s32 Data_02009844[16];
 
 void Func_02000170(void)
 {
+    s32 permuted_46;
     u8 *pusher = Func_0808a080(0);
     s32 heading = *(u16 *)(pusher + 6) >> 12;
     s32 step = Data_02009844[heading];
@@ -122,8 +123,8 @@ void Func_02000170(void)
 
     target[34] = 2;
 
-    step = Data_02009844[heading];
     position[0] = *(s32 *)(target + 8) + (step & (s32)0xffff0000);
+    step = Data_02009844[heading];
     position[1] = *(s32 *)(target + 12);
     position[2] = *(s32 *)(target + 16) + (step << 16);
 
@@ -146,14 +147,15 @@ void Func_02000170(void)
     Func_08009158(target);
     Func_080f9010(288);
 
-    *(s32 *)(target + 8) = position[0];
+    permuted_46 = position[0];
     *(s32 *)(target + 16) = position[2];
+    *(s32 *)(target + 8) = permuted_46;
 
     *(s32 *)(target + 36) = 0;
-    *(s32 *)(target + 44) = 0;
     *(s32 *)(pusher + 36) = 0;
     *(s32 *)(pusher + 44) = 0;
     *(s32 *)(pusher + 56) = (s32)0x80000000;
+    *(s32 *)(target + 44) = 0;
     *(s32 *)(pusher + 64) = (s32)0x80000000;
 
     Func_08009080(pusher, 1);

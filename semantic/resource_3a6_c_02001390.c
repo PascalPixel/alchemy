@@ -36,17 +36,17 @@ void Func_02001390(void)
         if ((p.x >> 20) == 17) {
             Func_0808a100(p.actor, 3);
             record = Func_0808a080(p.actor);
-            record[0x55] = 0;
             record = Func_0808a080(p.actor);
+            record[0x55] = 0;
             *(s32 *)(record + 0x44) = 0;
             Func_0808a0e0(p.actor, -12, 0);
             Func_0808a0e8(p.actor);
             Func_0808a100(p.actor, 3);
             Func_0808a1e0(10, 3);
             record = Func_0808a080(p.actor);
-            record[0x55] = 3;
             Func_0808a0e0(p.actor, -6, 0);
             record = Func_0808a080(p.actor);
+            record[0x55] = 3;
             Func_02000cd0(record);
             Func_0808a100(p.actor, 8);
             record = Func_0808a080(p.actor);

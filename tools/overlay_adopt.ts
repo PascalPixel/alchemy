@@ -194,14 +194,49 @@ interface AuditInterval { start: number; end: number; kind: string }
  * what counts; this applies the same rule at the point of action, where the
  * span is still easy to correct.
  */
+let auditCache: Map<string, AuditInterval[]> | null = null;
+
+function auditIntervals(overlay: string): AuditInterval[] | undefined {
+  if (auditCache === null) {
+    const report = join(ROOT, "metrics", "gs1-en-executable.json");
+    auditCache = new Map();
+    if (existsSync(report)) {
+      const audit = JSON.parse(readFileSync(report, "utf8")) as {
+        overlays: Array<{ id: string; intervals: AuditInterval[] }>;
+      };
+      for (const row of audit.overlays) auditCache.set(row.id, row.intervals);
+    }
+  }
+  return auditCache.get(overlay);
+}
+
+/**
+ * The audited code length of the function entered at `entry`, when the audit
+ * ends its code interval sooner than the registered span does.
+ *
+ * A caller that adopts at a registered span will be refused by the check
+ * below whenever that span reaches into trailing alignment. Asking here first
+ * lets it adopt the real code instead of skipping the owner entirely.
+ * Returns undefined when the audit has nothing to say, so the caller keeps
+ * whatever span it already had.
+ */
+export function auditedCodeSpan(overlay: string, entry: number): number | undefined {
+  const intervals = auditIntervals(overlay);
+  if (intervals === undefined) return undefined;
+  // The interval CONTAINING the entry, not one starting at it: a single
+  // audited code run usually spans several consecutive functions, so an owner
+  // in the middle of one begins after the interval's start.
+  const code = intervals.find(
+    (interval) => interval.start <= entry && entry < interval.end
+      && (interval.kind === "thumb" || interval.kind === "arm"),
+  );
+  return code === undefined ? undefined : code.end - entry;
+}
+
 function auditedInterval(fn: FunctionRow): void {
-  const report = join(ROOT, "metrics", "gs1-en-executable.json");
-  if (!existsSync(report)) return; // nothing to check against; other gates still apply
-  const audit = JSON.parse(readFileSync(report, "utf8")) as {
-    overlays: Array<{ id: string; intervals: AuditInterval[] }>;
-  };
-  const overlay = audit.overlays.find((row) => row.id === fn.overlay);
-  if (overlay === undefined) return; // un-audited overlay: not this check's call to make
+  const intervals = auditIntervals(fn.overlay);
+  if (intervals === undefined) return; // un-audited overlay: not this check's call to make
+  const overlay = { intervals };
   const start = fn.entry;
   const end = start + fn.span_bytes;
   if (overlay.intervals.some((interval) => interval.start <= start && end <= interval.end)) return;

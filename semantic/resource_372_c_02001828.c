@@ -100,15 +100,15 @@ void Func_02001828(void)
     Func_0808a180(22, 0);
 
     obj = Func_0808a080(22);
-    obj[7] = one;                                 /* +0x1c */
     Func_0808a138(22, 1);
+    obj[7] = one;                                 /* +0x1c */
 
     Func_0808a010(20);
     Func_0808a190(22, 0);
     Func_0808a010(40);
-    msg += 5;
     Func_0808a138(22, 1);
     Func_0808a170(msg);
+    msg += 5;
     Func_0808a188(22, 0, 20);
     Func_0808a110(0, 3);
     Func_0808a110(22, 3);                         /* two arguments here */

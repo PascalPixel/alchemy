@@ -48,8 +48,8 @@ s32 Func_02001ffc(s32 arg0, s32 arg1)
     if (status == 0x8f) {
         id = 0x2076;
     } else if (status == 0x90) {
-        id = 0x2078;
     } else {
+        id = 0x2078;
         id = 0x207a;
     }
     Func_0808a170(id);

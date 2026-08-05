@@ -64,12 +64,14 @@ s32 Func_02003ddc(s32 handleA, s32 handleB)
     s32 yVal;
     u16 cue;
 
+    s32 permuted_3;
+    s32 permuted_4;
     workspace = *(u8 **)0x03001f3c;
 
     flag = Func_080770c0(0x211);
 
-    selector = *(s32 *)&Data_02000240[500];
     record = Func_0808a080(selector);
+    selector = *(s32 *)&Data_02000240[500];
 
     if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
         xVal = *(s32 *)(workspace + 232) + 0xc0000;
@@ -81,12 +83,14 @@ s32 Func_02003ddc(s32 handleA, s32 handleB)
         yVal = *(s32 *)(workspace + 236) + 0x100000;
         cue = *(u16 *)(workspace + 228);
     } else {
-        yVal = *(s32 *)(workspace + 236) - 0x100000;
-        cue = *(u16 *)(workspace + 226);
+        permuted_3 = *(s32 *)(workspace + 236) - 0x100000;
+        permuted_4 = *(u16 *)(workspace + 226);
+        yVal  = permuted_3;
+        cue  = permuted_4;
     }
 
-    *(s16 *)(record + 100) = (s16)cue;
     *(s32 *)(record + 52) = 0x4000;
+    *(s16 *)(record + 100) = (s16)cue;
     *(s32 *)(record + 48) = 0x10000;
 
     Func_08009150(record, xVal, 0, yVal);
@@ -105,8 +109,8 @@ s32 Func_02003ddc(s32 handleA, s32 handleB)
         Func_08015120(handleB, 2);
     }
 
-    selector = *(s32 *)&Data_02000240[500];
     Func_08015120(selector, 1);
+    selector = *(s32 *)&Data_02000240[500];
     Func_08015040(0x96a, 3);
     Func_08009148(record);
 

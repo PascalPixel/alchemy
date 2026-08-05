@@ -34,8 +34,8 @@ void Func_02001214(s32 sceneId)
     volatile s16 *const scenePhase = (volatile s16 *)0x02000402;
 
     if (*scenePhase == 2) {
-        Func_02001b5c(sceneId);
         return;
+        Func_02001b5c(sceneId);
     }
 
     Func_0808a018();

@@ -66,10 +66,10 @@ s32 Func_020000c0(u8 *object)
     s32 z;
 
     if (*xState == 9) {
-        *(s32 *)(object + 76) = 0;
     } else if (*xState != 0) {
         x = *(s32 *)(object + 76) - (s32)((u32)(Func_080000f8() << 11) >> 16);
         *(s32 *)(object + 76) = x;
+        *(s32 *)(object + 76) = 0;
         if (x < (s32)0xffff4000) {
             *xState = 0;
         }

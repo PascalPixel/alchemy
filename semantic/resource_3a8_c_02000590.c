@@ -620,9 +620,9 @@ void Func_02000590(void)
 
     Func_0808a0f0(14, 0x01670000, 0x013a0000);
     entity = Func_0808a080(14);
-    *(u16 *)(entity + 6) = 0xd000;
     Func_0808a0f0(20, 0x01c70000, 0x01b20000);
     entity = Func_0808a080(20);
+    *(u16 *)(entity + 6) = 0xd000;
     *(u16 *)(entity + 6) = 0xd000;
     Func_0808a0f0(21, 0x01d00000, 0x01a00000);
     entity = Func_0808a080(21);

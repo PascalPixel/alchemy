@@ -9,7 +9,7 @@ struct EffectParams {
     s32 rate2;
     s32 id;
     s32 selector;
-    s32 step;
+    u32 step;
     void (*callback)(u8 *particle);
 };
 
@@ -40,7 +40,7 @@ void Func_020018b8(void)
     struct EffectParams params;
     u8 *actor;
     s32 radial[3];
-    s32 step;
+    u32 step;
 
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);

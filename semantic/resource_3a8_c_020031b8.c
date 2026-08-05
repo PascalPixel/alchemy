@@ -134,8 +134,8 @@ void Func_020031b8(void)
      * across the call. */
     step = Data_0200bd84[facing];
 
-    destination[0] = object->x + (s32)(step & 0xffff0000);
     destination[1] = object->y;
+    destination[0] = object->x + (s32)(step & 0xffff0000);
     destination[2] = object->z + (s32)(step << 16);
 
     if (Func_080091d8(object, destination) > 0) {
@@ -146,9 +146,9 @@ void Func_020031b8(void)
     Func_080000c0(15);
     Func_080f9010(0xb9);
 
+    Func_08009150(object, destination[0], destination[1], destination[2]);
     object->field30 = 0x3333;
     object->field34 = 0x3333;
-    Func_08009150(object, destination[0], destination[1], destination[2]);
 
     hero->field30 = 0x3333;
     hero->field34 = 0x3333;
@@ -157,10 +157,10 @@ void Func_020031b8(void)
     Func_08009158(object);
     Func_0808a5e8();
 
-    object->x = destination[0];
-    object->z = destination[2];
     object->field24 = 0;
     object->field2c = 0;
+    object->x = destination[0];
+    object->z = destination[2];
 
     Func_08009080(hero, 1);
     Func_020032a4();

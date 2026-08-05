@@ -63,9 +63,9 @@ void Func_020018a4(void)
     }
 
     work = Func_08000168(0x900);
+    dma3[2] = 0x80000010;
     dma3[0] = 0x02009f80;
     dma3[1] = (u32)work;
-    dma3[2] = 0x80000010;
 
     for (index = 0; index <= 11; index++) {
         u16 color = *(u16 *)(work + 12 + index * 2);

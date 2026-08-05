@@ -116,22 +116,22 @@ void Func_02003850(s32 slot, s32 heading)
 
     Func_08009048(*(u8 **)(record + 0x50), 16);
     record[0x22] = 2;
-    *(s32 *)(companion + 8) = 0;
     *(s32 *)(companion + 16) = 0;
+    *(s32 *)(companion + 8) = 0;
     Func_0808a200(slot, 1);
     Func_0808a218();
     Func_0808a208(0x100000, 0x20000);               /* 128<<13, 128<<10 */
 
-    *(u16 *)(record + 6) = heading;
-    *(s32 *)(record + 0x30) = 0x20000;
-    *(s32 *)(record + 0x34) = 0xccc;
     record[0x5b] = 0;
+    *(u16 *)(record + 6) = heading;
+    *(s32 *)(record + 0x34) = 0xccc;
+    *(s32 *)(record + 0x30) = 0x20000;
 
     y = *(s32 *)(record + 12);
+    *(s16 *)(record + 100) = y >> 16;
     if (y < 0) {
         y += 0xffff;
     }
-    *(s16 *)(record + 100) = y >> 16;
     *(s16 *)(record + 102) = 0;
 
     probe[0] = *(s32 *)(record + 8);

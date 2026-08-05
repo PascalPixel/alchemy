@@ -71,6 +71,7 @@ void Func_02000de4(void)
     s32 line;
 
     /* The dialogue base held in r8 for the whole owner. */
+    s32 permuted_78;
     line = 0x125f;
 
     record[91] = 0;
@@ -93,10 +94,10 @@ void Func_02000de4(void)
 
     record = Func_0808a080(0);
     record[90] = (u8)(record[90] & 0xfe);
+    record[90] = (u8)(record[90] | 1);
     Func_0808a0d0(0, 384, 424);         /* 192 << 1, 212 << 1 */
     Func_0808a010(1);
     record = Func_0808a080(0);
-    record[90] = (u8)(record[90] | 1);
     Func_0808a010(30);
 
     Func_0808a180(2, 0);
@@ -142,11 +143,12 @@ void Func_02000de4(void)
     Func_0808a138(1, 1);
 
     record = Func_0808a080(1);
-    record[90] = (u8)(record[90] & 0xfe);
     Func_0808a0d0(1, 352, 408);         /* 176 << 1 */
     Func_0808a010(1);
     record = Func_0808a080(1);
+    permuted_78 = (u8)(record[90] & 0xfe);
     record[90] = (u8)(record[90] | 1);
+    record[90]  = permuted_78;
     Func_0808a010(10);
 
     Func_0808a0c8(2, 368, 408);         /* 184 << 1 */

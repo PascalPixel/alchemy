@@ -78,9 +78,9 @@ void Func_02001e80(void)
 
     /* Halfword field at +100 of the actor record. */
     actor = Func_0808a080(24);
-    *(s16 *)(actor + 100) = 1;
     actor = Func_0808a080(25);
     *(s16 *)(actor + 100) = 3;
+    *(s16 *)(actor + 100) = 1;
 
     /* The last two arguments go out on the stack. */
     Func_080091c0(14, 48, 4, 1, 14, 44);

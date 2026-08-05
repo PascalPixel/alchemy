@@ -47,11 +47,11 @@ void Func_02002db4(void)
     Func_0808a1b8(2, 176u << 8, 0);
     Func_0808a148(8, 10, 0);
 
-    shared = Data_03001ebc;
     *(u32 *)(shared + 0x1c0) = 0x209;
     Func_0808a200(0, 0);
     Func_0808a218();
     Func_08009128();
+    shared = Data_03001ebc;
     Func_080000c0(1);
     *(u32 *)(shared + 0x1c8) = 32;
     Func_020045cc();
@@ -71,13 +71,13 @@ void Func_02002db4(void)
     Func_0200463c(12, 3, 40);
     Func_0808a1b8(10, 192u << 6, 0);
     Func_0808a1b8(11, 192u << 6, 0);
+    *(u32 *)(shared + 0x1c0) = 0x200;
     Func_0808a1b8(12, 192u << 6, 0);
     Func_0808a010(20);
     Func_0200463c(10, 4, 20);
     Func_0808a180(10, 0);
-    *(u32 *)(shared + 0x1c0) = 0x200;
+    Data_02000240[0x22b] = 3;
     Func_0808a260(0x15, 17);
     Func_0808a268(0x15, 16);
-    Data_02000240[0x22b] = 3;
     Func_0808a250(12, 5);
 }

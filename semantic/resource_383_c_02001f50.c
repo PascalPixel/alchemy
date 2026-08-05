@@ -160,13 +160,13 @@ void Func_02001f50(void)
     flags[9] = (u8)((flags[9] & ~12) | 4);
     flags = *(u8 **)(record + 80);
 
+    record = Func_0808a080(1);
     flags = *(u8 **)(record + 80);
     flags[9]  = permuted_71;
     permuted_71 = (u8)((flags[9] & ~12) | 4);
-    record = Func_0808a080(1);
 
-    flags[9] = (u8)((flags[9] & ~12) | 4);
     record = Func_0808a080(2);
+    flags[9] = (u8)((flags[9] & ~12) | 4);
     flags = *(u8 **)(record + 80);
 
     /* 228 << 1 and 224 << 1.  The workspace pointer is re-read here, exactly
@@ -184,9 +184,9 @@ void Func_02001f50(void)
     Func_080770c8(0x853);
 
     record = Func_0808a080(24);
-    record = Func_0808a080(25);
     *(s16 *)(record + 100) = 5;
     *(s16 *)(record + 100) = 4;
+    record = Func_0808a080(25);
 
     Func_080000d0((void (*)(void))((s32)&Func_02002ba0 | 1), 3200);  /* 200 << 4 */
 

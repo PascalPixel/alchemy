@@ -50,14 +50,14 @@ void Func_020034bc(void)
     if (object == 0)
         return;
 
-    owner = *(u8 **)(object + 80);
     Func_08009098(object, 0x0200bc54);
     Func_0808a160(object, 3);
+    owner = *(u8 **)(object + 80);
     object[85] = 0;
-    *(u16 *)(object + 100) = Func_080000f8() & 0x0ffff000u;
     *(u16 *)(object + 102) = 0;
     *(u8 **)(object + 104) = actor;
     *(u32 *)(object + 108) = 0x0200b461;
+    *(u16 *)(object + 100) = Func_080000f8() & 0x0ffff000u;
     {
         s32 wave = Func_08000118((phase & 0x000fffff) >> 4);
         *(s32 *)(object + 48) = ((s32)((u32)wave * 24u)) >> 16;

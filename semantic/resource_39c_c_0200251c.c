@@ -76,9 +76,9 @@ void Func_0200251c(s32 arg0)
 
     if (id == 57) {
         Func_080770c8(824);
+    } else if (id == 59) {
         id = 825;
         goto matched;
-    } else if (id == 59) {
         Func_080770c8(825);
         id = 824;
         goto matched;
@@ -86,14 +86,14 @@ void Func_0200251c(s32 arg0)
 
     goto unmatched;
 
-matched:
     Func_080770d0(id);
     Func_080091c0(53, 10, 1, 1, 58, 7);
     goto close;
+matched:
 
-unmatched:
     Func_080770d0(824);
     Func_080770d0(825);
+unmatched:
     Func_080091c0(53, 11, 1, 1, 58, 7);
 
 close:

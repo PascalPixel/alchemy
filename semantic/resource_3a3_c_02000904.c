@@ -75,8 +75,8 @@ void Func_02000904(void)
 
     if (Func_080770c0(0x242) != 0) {
         Func_08009180(64, 32, 0, 32, 32, 32);
-        Func_080091c0(64, 32, 32, 32, 0, 0);
         hidden = 20;
+        Func_080091c0(64, 32, 32, 32, 0, 0);
         goto joined_actors;
     } else if (Func_080770c0(0x241) != 0) {
         Func_08009180(64, 0, 0, 32, 32, 32);
@@ -135,14 +135,14 @@ actors_ready:
     Func_0808a158(24, 15);
 
     record = Func_0808a080(22);
-    record[0x59] |= 8;
     record = Func_0808a080(23);
+    record[0x59] |= 8;
     record[0x59] |= 8;
     record = Func_0808a080(24);
     record[0x59] |= 8;
 
-    record = Func_0808a080(22);
     record[0x23] |= 2;
+    record = Func_0808a080(22);
     record = Func_0808a080(23);
     record[0x23] |= 2;
     record = Func_0808a080(24);

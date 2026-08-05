@@ -52,10 +52,13 @@ void Func_02001174(s32 index)
 
     record[0x55] = 0;
 
-    for (frames = 0; frames <= 31; frames++) {
+    frames = 0;
+    for (;;) {
+        if (frames > 31) return;
         Func_080000c0(1);
         *(s32 *)(record + 12) += -0xcccc;
         *(s32 *)(record + 28) += -0x1999;
+        frames++;
         if (*(s32 *)(record + 28) <= 0x1998) {
             *(s32 *)(record + 28) = 0x1999;
             return;

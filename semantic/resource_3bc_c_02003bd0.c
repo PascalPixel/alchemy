@@ -81,10 +81,10 @@ void Func_02003bd0(s32 selector, s32 arg1)
 
     gradient = Func_08000140(17, 0xc1 << 3) + (0x80 << 3);
 
-    zeroWord = 0;
-    *(volatile u32 *)0x040000d4 = (u32)&zeroWord;
-    *(volatile u32 *)0x040000d8 = (u32)gradient;
     *(volatile u32 *)0x040000dc = 0x85000020;
+    zeroWord = 0;
+    *(volatile u32 *)0x040000d8 = (u32)gradient;
+    *(volatile u32 *)0x040000d4 = (u32)&zeroWord;
 
     Func_08015250(arg1);
 
@@ -94,9 +94,9 @@ void Func_02003bd0(s32 selector, s32 arg1)
     entity[0x5c] = (u8)kind;
 
     weaponHandle = *(u32 *)(handle + 0x28);
-    Func_08009060(weaponHandle);
     *(u32 *)(handle + 0x28) = 0;
     handle[0x27] = 0;
+    Func_08009060(weaponHandle);
 
     handle[5] = (u8)(handle[5] & ~0x20);
 

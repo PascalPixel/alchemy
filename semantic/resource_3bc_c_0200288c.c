@@ -112,8 +112,8 @@ void Func_0200288c(s32 arg0)
     Func_0808a080(arg0);
     Func_0808a080(arg0);
 
-    selector = *(u32 *)&Data_02000240[500];
     record = Func_0808a080(selector);
+    selector = *(u32 *)&Data_02000240[500];
 
     Func_0808a018();
 
@@ -134,10 +134,10 @@ void Func_0200288c(s32 arg0)
         Func_0808a368();
         Func_0808a370();
 
-        idBase = selector << 4;
         Func_080770e8(idBase + 0x370, record[2] >> 20);
         selector++;
         Func_080770e8(idBase + 0x378, record[4] >> 20);
+        idBase = selector << 4;
 
         if (selector > 3) {
             Func_0808a248(10);

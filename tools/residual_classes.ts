@@ -17,6 +17,28 @@
 //
 // It only reports. Nothing here edits a source, so it is safe to run against a
 // tree while other work is in flight.
+//
+// FINDING, and the dead end it closes. The top class is the prologue: the
+// pushed callee-saved register list differs, and it is the FIRST divergence in
+// 63 of the first 200 owners. Those are the corpus's largest owners -- the top
+// twelve alone carry ~19,400 differing bytes behind that one instruction --
+// so it looks like the next `bl`-sized lever.
+//
+// It is not one. Recompiling resource_378:88c, resource_371:c28,
+// resource_37f:f8c and resource_379:74 at -O1, -Os and -O3 produces a
+// BYTE-IDENTICAL prologue to the routed flags in every case: the push list
+// never moves. Register allocation here follows the source's variable
+// structure, not the optimisation level, so no flag sweep will close these.
+// Nor is there a single direction to correct: most owners push MORE
+// callee-saved registers than the reference (got {r5,r6,r7,lr}, want {lr}),
+// but resource_379:74 pushes FEWER (got {lr}, want {r5,lr}).
+//
+// So a prologue mismatch means the reconstruction's variable structure
+// genuinely differs from the original, and only per-owner rework will fix it.
+// The value of this class is therefore TRIAGE, not automation: it identifies
+// which large owners are structurally wrong, and -- because a divergence at
+// offset 0 desynchronises the whole body -- how many bytes each one is
+// actually worth. Do not re-run a flag sweep against it.
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { assembleOverlay, compileOverlayCandidate, OVERLAY_BASE } from "./overlay_disasm.ts";

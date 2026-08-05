@@ -71,8 +71,8 @@ void Func_02000c5c(void)
 
     i = 9;
     do {
-        i--;
         Func_0808a0a0(8);
+        i--;
     } while (i >= 0);
 
     Func_0808a090(8, 0x10000, 0x8000);
@@ -95,8 +95,8 @@ void Func_02000c5c(void)
     Func_0808a010(10);
 
     Func_0808a250(72, 5 - slot);
-    Data_02000240[0x22B] = 3;
     Func_0808a260(0x91, 4);
+    Data_02000240[0x22B] = 3;
     Func_0808a268(0x91, 5);
     Func_080770c8(0x11A);
 }

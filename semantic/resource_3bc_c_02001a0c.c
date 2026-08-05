@@ -33,9 +33,9 @@ void Func_02001a0c(s32 actor)
     s32 x;
     s32 z;
 
-    record = Func_0808a080(actor);
-    map_x = *(s16 *)(record + 10);
     map_z = *(s16 *)(record + 18);
+    map_x = *(s16 *)(record + 10);
+    record = Func_0808a080(actor);
 
     Func_0808a018();
     Func_0808a090(actor, 0x10000, 0x8000);
@@ -53,11 +53,11 @@ void Func_02001a0c(s32 actor)
     Func_0808a0f0(actor, x, z - 0x500000);
 
     record = Func_0808a080(0);
-    *(s16 *)(record + 6) = (s16)0xc000;
     Func_0808a200(0, 0);
     Func_0808a360();
     Func_0808a370();
     Func_0808a170(0x20ed);
+    *(s16 *)(record + 6) = (s16)0xc000;
     Func_0808a110(actor, 3);
     Func_0808a180(actor, 0);
     Func_0808a138(actor, 2);

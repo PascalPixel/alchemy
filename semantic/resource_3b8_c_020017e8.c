@@ -95,11 +95,11 @@ void Func_020017e8(void)
     Func_0808a138(0, 2);
     Func_0808a010(30);
 
+    *(u16 *)(state + 0x536) = 31;
     for (index = 5; index <= 31; index++) {
         Func_080000c0(3);
         *cursor = (u16)index;
     }
-    *(u16 *)(state + 0x536) = 31;
 
     *(u32 *)((u8 *)slotBase[0] + 0x1c0) = 0x209;
     *(u32 *)((u8 *)slotBase[0] + 0x1c8) = 24;
@@ -127,10 +127,10 @@ void Func_020017e8(void)
     Func_0808a010(10);
     Func_0808a180(3, 0);
 
-    record = Func_0808a080(0);
     *(u32 *)(record + 16) += 0xfffd0000;
     record = Func_0808a080(0);
     *(u32 *)(record + 64) += 0xfffd0000;
+    record = Func_0808a080(0);
 
     Func_0808a100(0, 32);
     Func_0808a010(40);
@@ -162,8 +162,8 @@ void Func_020017e8(void)
         Func_0808a1e8(1, 0x103, 40);
         Func_0808a128(1, 4, 13);
         Func_0808a128(1, 4, 30);
-        *(u16 *)((u8 *)slotBase[0] + 0x1d8) += 1;
         Func_0808a180(1, 0);
+        *(u16 *)((u8 *)slotBase[0] + 0x1d8) += 1;
     }
 
     Func_0808a010(10);

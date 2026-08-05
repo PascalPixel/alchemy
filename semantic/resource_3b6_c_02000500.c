@@ -73,8 +73,8 @@ matched_message:
 
 fallback_message:
     /* Fallback arm: the full three-id sequence of the 0x020006ec family. */
-    message = 0x1fd5;
     Func_0808a170(message);
+    message = 0x1fd5;
     Func_0808a178(subject, 0);
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a010(10);

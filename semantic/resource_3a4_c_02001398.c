@@ -123,8 +123,8 @@ void Func_02001398(void)
         Func_0808a0d0(1, 198 << 2, 120);
         Func_0808a010(1);
 
-        handle = Func_0808a080(1);
         handle[90] = (u8)(handle[90] | 1);
+        handle = Func_0808a080(1);
 
         Func_080091f0(-1, -1, 0xe666);
         Func_0808a010(80);

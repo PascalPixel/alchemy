@@ -146,9 +146,9 @@ void Func_02001448(void)
     Func_0808a180(2, 0);
     Func_0808a010(140);
 
-    line += 8;
     Func_0808a148(1, 0, 0);
     Func_0808a170(line);
+    line += 8;
     Func_0808a180(1, 0);
 
     /* Three identical blocks: send slot N to actor 0's current tile. */

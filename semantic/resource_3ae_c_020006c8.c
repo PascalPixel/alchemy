@@ -68,8 +68,8 @@ void Func_020006c8(void)
         Func_0808a010(20);
         Func_0808a170(0x1f1c);
         Func_0808a180(11, 0);
-        Func_0808a020();
         return;
+        Func_0808a020();
     }
 
     Func_0808a010(20);
@@ -92,9 +92,9 @@ void Func_020006c8(void)
             Func_080770c8(0x8a8);
         } else {
             Func_0808a010(10);
-            *(u16 *)(Data_03001ebc + 472) += 1;
             Func_0808a180(11, 0);
             Func_0808a010(10);
+            *(u16 *)(Data_03001ebc + 472) += 1;
             Func_0808a1b8(11, 0, 0);
             Func_0808a010(30);
         }

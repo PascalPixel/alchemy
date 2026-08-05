@@ -120,13 +120,13 @@ s32 Func_020002ec(u8 *object)
         } else {
             Func_0808a1b8(22, 0xb000, 0);              /* 176 << 8 */
         }
+        goto tail;
         if ((((u32)Func_080000f8() << 2) >> 16) != 0) {
             *(s32 *)(Func_0808a080(22) + 40) = 0x20000;
             goto tail;
         }
         Func_0808a1e8(22, 0x103, 0);
         *(s32 *)(Func_0808a080(22) + 40) = 0x60000;    /* 192 << 11 */
-        goto tail;
 
     case 5:
         if (object[0x63] != 0) {

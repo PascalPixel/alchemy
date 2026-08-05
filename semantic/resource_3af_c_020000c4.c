@@ -135,9 +135,9 @@ s32 Func_020000c4(struct Ambient3af *actor)
         if (actor->motionC != actor->motionB) goto tail;
 
         actor->speedLimitA = 128 << 10;
-        actor->speedLimitB = 128 << 9;
         actor->xReversed = 0;
         actor->yReversed = 0;
+        actor->speedLimitB = 128 << 9;
         actor->phase = (u8)(actor->phase + 1);
         actor->drift = 0;
         goto tail;

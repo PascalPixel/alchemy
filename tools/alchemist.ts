@@ -122,6 +122,12 @@ export function loadStructure(source: string, functionName: string): Structure |
 }
 
 function isControlAnchor(unit: Unit): boolean {
+  // A multi-line block can hide a jump, and crossing it moves a statement
+  // onto or off that jump's path. On resource_371:6ec a global assignment
+  // was hoisted above two `if (...) { break; }` blocks, so it then ran on
+  // the break paths that previously skipped it -- and the byte count still
+  // went down, so only a structural rule rejects it.
+  if (unit.kind === "block") return unit.lines.some((line) => JUMP.test(line));
   if (unit.kind !== "statement" || unit.lines.length !== 1) return false;
   const line = unit.lines[0];
   if (LABEL.test(line)) return true;
@@ -831,6 +837,31 @@ function selfTest(): void {
       throw new Error(`moved the statement a braceless header governs: ${move.description}`);
     }
   }
+  // Regression: a multi-line block can hide a jump, and crossing it moves a
+  // statement onto or off that path. resource_371:6ec hoisted a global
+  // assignment above two `if (...) { break; }` blocks so it ran on the break
+  // paths, and the differing-byte count still fell.
+  const blockJumpFixture = [
+    "void Func_02000700(void)",
+    "{",
+    "    s32 a;",
+    "",
+    "    a = 1;",
+    "    if (a != 0) {",
+    "        break;",
+    "    }",
+    "    Data_0200e79c = 55;",
+    "}",
+    "",
+  ].join("\n");
+  const blockJumpParsed = parseFunction(blockJumpFixture, "Func_02000700");
+  if (blockJumpParsed === null) throw new Error("failed to parse block-jump fixture");
+  for (const move of generateMoves(blockJumpParsed)) {
+    if (move.description.includes("Data_0200e79c")) {
+      throw new Error(`moved a statement across a block containing a jump: ${move.description}`);
+    }
+  }
+
   console.log("self-test=ok tool=alchemist");
 }
 

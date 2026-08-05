@@ -22,8 +22,8 @@ s32 Func_020014d8(s32 first, s32 second)
     s32 result;
 
     input[0] = first;
-    input[1] = second;
     Func_02001770(input, &value);
+    input[1] = second;
 
     if (Func_02001564(&value) != 0 || Func_02001544(&value) != 0)
         return 0;

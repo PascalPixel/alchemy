@@ -117,9 +117,9 @@ void Func_02000754(void)
     if ((*(s32 *)0x03001e40 & 1) != 0) {
         *(s32 *)(workspace + 24) = 1;
         *(s32 *)(workspace + 28) = 1;
+        *(s32 *)(workspace + 28) = -1;
     } else {
         *(s32 *)(workspace + 24) = -1;
-        *(s32 *)(workspace + 28) = -1;
     }
 
     Func_080091f0(0x30000, 0x30000, 0x10000);
@@ -154,9 +154,9 @@ void Func_02000754(void)
         remaining--;
     } while (remaining >= 0);
 
-    level = 6;
-    trailing = 6;
     index = 0;
+    trailing = 6;
+    level = 6;
     do {
         Func_08000318(0x04000052,
                       (level << 10) | (level << 5) | trailing);

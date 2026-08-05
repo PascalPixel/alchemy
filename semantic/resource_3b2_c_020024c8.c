@@ -94,21 +94,21 @@ void Func_020024c8(void)
         }
         transition = ((u32)(companion16Column - 6) <= 2) ? 48 : 96;
     } else if (row == 14) {
+        transition = ((u32)(companion16Column - 6) <= 2) ? 32 : 80;
         if ((u32)(companion14Column - 6) <= 2) {
             return;
         }
-        transition = ((u32)(companion16Column - 6) <= 2) ? 32 : 80;
     } else if (row == 12) {
         if ((u32)(companion16Column - 6) <= 2) {
             return;
         }
-        transition = 48;
     } else if (row == 11) {
+        transition = 48;
         if ((u32)(companion16Column - 6) <= 2) {
             return;
         }
-        transition = 32;
     } else if (row == 9) {
+        transition = 32;
         return;
     }
 

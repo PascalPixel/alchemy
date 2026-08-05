@@ -221,8 +221,8 @@ void Func_02000590(void)
     Func_0808a098(33, Data_0200bdc4);
     Func_0808a098(34, Data_0200bdc4);
 
-    counter = Func_0808a080(21) + 100;
     *(s16 *)counter = 0;
+    counter = Func_0808a080(21) + 100;
     Func_0808a098(21, Data_0200bdc4);
 
     Func_0808a210(0x00ba0000, -1, 0x01100000, 1);
@@ -610,8 +610,8 @@ void Func_02000590(void)
     Func_0808a128(14, 4, 40);
     Func_0808a090(14, 0x00013333, 0x00009999);
 
-    entity = Func_0808a080(14);
     *(s16 *)(entity + 100) = 0;
+    entity = Func_0808a080(14);
     Func_0808a098(14, Data_0200be00);
     do {
         Func_080000c0(1);

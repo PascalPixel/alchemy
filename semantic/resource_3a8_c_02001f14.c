@@ -98,10 +98,10 @@ void Func_02001f14(void)
         break;
 
     case 4:
+        Data_0200d144 = 0;
         if (*(s16 *)(Func_0808a080(21) + 100) == 0) {
             return;
         }
-        Data_0200d144 = 0;
         break;
 
     default:

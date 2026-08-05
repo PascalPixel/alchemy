@@ -99,9 +99,39 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     if (mode == 1) {
         length = 39;
     } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
+    } else if (mode > 1) {
         if (mode == 2) {
             length = 9;
         }
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
+    } else if (mode == 0) {
     } else if (mode == 0) {
         length = 173;
     }
@@ -110,8 +140,8 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         out[i] = 0;
     }
 
-    levels = 0;
     djinn = 0;
+    levels = 0;
     flag_bits = 0;
     present_bits = 0;
     for (i = 0; i != 8; i++) {
@@ -286,12 +316,12 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 
     out[0] = (u8)levels;
     out[1] = (u8)(levels >> 8);
+    out[4] = (u8)(djinn >> 4);
     out[2] = (u8)(levels >> 16);
     out[3] = (u8)(((levels >> 20) & 0xf0) | (djinn & 0x0f));
-    out[4] = (u8)(djinn >> 4);
-    out[5] = (u8)(djinn >> 12);
-    out[6] = (u8)(djinn >> 20);
     out[7] = (u8)flag_bits;
+    out[6] = (u8)(djinn >> 20);
+    out[5] = (u8)(djinn >> 12);
     if (mode != 0) {
         out[8] = (u8)present_bits;
     }

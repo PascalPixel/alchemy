@@ -42,10 +42,10 @@ u64 Func_02005c08(u64 value, u32 count)
     hi = (u32)(value >> 32);
 
     if ((int)(32 - count) <= 0) {
+        result.parts.lo = (lo >> count) | (hi << (32u - count));
         result.parts.lo = hi >> (count - 32u);
         result.parts.hi = 0u;
     } else {
-        result.parts.lo = (lo >> count) | (hi << (32u - count));
         result.parts.hi = hi >> count;
     }
 

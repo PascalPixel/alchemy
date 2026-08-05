@@ -44,11 +44,11 @@ void Func_02004638(void)
     case 6: id = 0x241a; break;
     case 7: id = 0x241b; break;
 
-    case 5:
         Func_0808a170(21, 0xd000, 0);
         Func_0808a180(50);
         Func_0808a1b8(21, 0xb000, 0);
         Func_0808a010(50);
+    case 5:
         Func_0808a1b8(21, 0x5000, 0);
         Func_0808a010(50);
         Func_0808a1b8(0x2419);

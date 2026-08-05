@@ -30,9 +30,9 @@ void Func_02004520(s32 base, s32 lane)
     u32 frame = *(u32 *)0x03001e40;
     u32 branch;
 
-    spec.spread_x = 0xb333;
     spec.spread_y = 0xb333;
     spec.field22 = (u16)(((Func_080000f8() << 12) >> 16) + 0xf800);
+    spec.spread_x = 0xb333;
 
     if ((frame & 3) != 0)
         return;
@@ -40,10 +40,10 @@ void Func_02004520(s32 base, s32 lane)
     branch = (Func_080000f8() << 1) >> 16;
     if (branch != 0) {
         u32 horizontal = Func_080000f8();
+        s32 x = (base + (s32)(((horizontal << 1) >> 16) << 4)) << 16;
         s32 vertical = (s32)(((Func_080000f8() * 5u) >> 16) << 16) +
             0x00070000;
         s32 divided = Func_03000380(vertical, 10);
-        s32 x = (base + (s32)(((horizontal << 1) >> 16) << 4)) << 16;
 
         Func_02000118(x, 0, lane << 19, 0,
                       0, divided, 0x00880000, &spec);

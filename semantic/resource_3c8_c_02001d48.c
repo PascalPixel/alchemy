@@ -53,9 +53,9 @@ void Func_02001d48(void)
     if ((actor9->flags23 & 2) != 0) {
         Func_080091c0(45, 45, 1, 1, 46, 45);
     } else {
-        Func_080091c0(
             48,
             42,
+        Func_080091c0(
             1,
             1,
             actor9->positionX >> 20,
@@ -64,7 +64,6 @@ void Func_02001d48(void)
     }
 
     x = actor9->positionX >> 20;
-    y = actor9->positionY >> 20;
     if (x == 46 && y == 45 && Func_080770c0(0x301) == 0) {
         if ((actor0->positionY >> 20) <= 45) {
             serviceResult = Func_02000098(
@@ -76,9 +75,9 @@ void Func_02001d48(void)
             Func_0808a1e0(0, 3);
         }
 
-        Func_080091e0(Func_0808a080(9), 0);
-        actor9->flags22 = 0;
         actor9->mode55 = 3;
+        actor9->flags22 = 0;
+        Func_080091e0(Func_0808a080(9), 0);
         actor9->state48 = 0x1999;
         actor9->state44 = 0;
         Func_080091c0(43, 45, 1, 1, x, y);
@@ -111,6 +110,7 @@ void Func_02001d48(void)
         Func_080091c0(46, 41, 1, 1, x, 42);
         Func_080770c8(0x301);
     }
+    y = actor9->positionY >> 20;
 
     Func_0808a020();
 }

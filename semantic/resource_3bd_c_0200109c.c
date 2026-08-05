@@ -81,14 +81,14 @@ void Func_0200109c(s32 scene)
 
     /* 0x020010d4..0x020010ee: initialise records 11..15. */
     for (i = 0; i <= 4; i++) { /* branch 0x020010ee */
-        actor = Func_0808a080(i + 11);
         actor->flags = 0; /* store 0x020010e6 */
+        actor = Func_0808a080(i + 11);
+    }
         actor->x = 0x10000; /* store 0x020010e8 */
         actor->y = 0x10000; /* store 0x020010ea */
-    }
 
-    scene_step = (s8)Data_02001001[1];
     state = *Data_0200bf6c;
+    scene_step = (s8)Data_02001001[1];
     cell = Func_03000380((s32)scene_step << 16, 5);
     scene_kind = (s8)Data_02001001[0];
     state->phase = (s16)(cell + 0x4000); /* store 0x02001118 */

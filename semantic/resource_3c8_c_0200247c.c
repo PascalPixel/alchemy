@@ -110,7 +110,6 @@ void Func_0200247c(void)
     handleB = 0;
     Func_0808a018();
 
-    index = 0;
     slot = 10;
     do {
         actor = Func_0808a080(slot);
@@ -148,9 +147,9 @@ void Func_0200247c(void)
          * reflects the machine's address order. */
         goto check_settled_action;
 
+        scratch.x = actor->x;
     swap_with_free_slot:
         other = Func_0808a080(free + 10);
-        scratch.x = actor->x;
         scratch.y = actor->y;
         scratch.z = actor->z;
         actor->x = other->x;
@@ -213,6 +212,7 @@ void Func_0200247c(void)
         index++;
         slot++;
     } while (index <= 3);
+    index = 0;
 
     Func_0808a020();
 }

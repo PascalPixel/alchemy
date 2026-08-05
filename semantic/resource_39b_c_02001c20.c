@@ -1,8 +1,9 @@
 #include "types.h"
 
-extern s32 Func_08000118();
+
 
 /* Advance a spawned companion for 32 frames, following its owning actor. */
+extern s32 Func_02004054();
 s32 Func_02001c20(u8 *object)
 {
     u8 *owner = *(u8 **)(object + 104);
@@ -10,7 +11,7 @@ s32 Func_02001c20(u8 *object)
     *(unsigned short *)(object + 100) = (unsigned short)age;
     if (age > 31)
         return 0;
-    *(s32 *)(object + 24) = Func_08000118(age << 10);
+    *(s32 *)(object + 24) = Func_02004054(age << 10);
     *(s32 *)(object + 28) = *(s32 *)(object + 24);
     *(s32 *)(object + 8) = *(s32 *)(owner + 8);
     *(s32 *)(object + 12) += 0x10000;

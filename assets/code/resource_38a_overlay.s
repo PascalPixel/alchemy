@@ -468,23 +468,8 @@ AlchemyC_020003e4:
 	.4byte 0x477083d3
 	.2byte 0xf800
 	.2byte 0xffff
-	push	{r5, r6, r7, lr}
-	adds	r7, r0, #0
-	adds	r6, r1, #0
-	movs	r5, #60
-.L_020004dc:
-	cmp	r5, #0
-	beq.n	.L_020004ee
-	movs	r0, #1
-	bl	sub_02000b98
-	ldr	r3, [r7, #12]
-	subs	r5, #1
-	cmp	r3, r6
-	bgt.n	.L_020004dc
-.L_020004ee:
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+AlchemyC_020004d4:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

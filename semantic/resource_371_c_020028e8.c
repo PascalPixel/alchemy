@@ -80,8 +80,8 @@ void Func_020028e8(void)
     Func_0808a210(0x17880000, -1, 0x0d680000, 1);
     Func_0808a090(0, 0xcccc, 0x6666);
     Func_0808a100(0, 2);
-    ((u8 *)lead)[91] = 0;
     Func_08009140(lead);
+    ((u8 *)lead)[91] = 0;
 
     if (lead->y > 0x0d680000) {
         if (lead->x > 0x176e0000) {
@@ -178,14 +178,14 @@ void Func_020028e8(void)
     Func_0808a100(55, 1);
     Func_0808a010(10);
     Func_0808a100(55, 2);
-    ((u8 *)actor55)[90] &= 0xfe;
     Func_08009150(actor55, 0x17710000, 0, 0x0d580000);
     Func_08009158(actor55);
     Func_0808a100(55, 1);
     Func_08015040(0x264a, 1);
-    Data_03001ebc->scene_counter += 1;
+    ((u8 *)actor55)[90] &= 0xfe;
     Func_080772e8(242);
     Func_0808a010(20);
+    Data_03001ebc->scene_counter += 1;
 
     Func_0808a100(Data_0200e79c, 4);
     Func_0808a188(Data_0200e79c, 0, 10);

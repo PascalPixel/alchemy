@@ -115,9 +115,9 @@ void Func_02002be0(void)
     Func_08009080(record, 1);
     Func_08009098(record, Data_0200c01c);
 
-    *(s32 *)(record + 36) =
         (s32)(((u32)(Func_080000f8() * 3 << 1) >> 16) - 3) << 16;
     *(s32 *)(record + 44) =
         (s32)((u32)(Func_080000f8() * 3 << 9) >> 16) + (s32)0xfffffd00;
+    *(s32 *)(record + 36) =
     *(s32 *)(record + 40) = 128 << 12;
 }

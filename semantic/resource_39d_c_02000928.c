@@ -40,10 +40,10 @@ void Func_02000928(void)
     *(s32 *)(record + 0x28) = 0x40000;
     record[0x55] &= 0x7e;
 
+    record[0x55] = saved_mode;
     Func_080091e0(record, 0);
     Func_0808a0c0(0, *(s16 *)((u8 *)position + 2),
                      *(s16 *)((u8 *)position + 10));
     Func_08009080(record, 6);
     Func_080091e0(record, 1);
-    record[0x55] = saved_mode;
 }

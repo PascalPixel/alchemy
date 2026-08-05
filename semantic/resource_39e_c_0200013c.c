@@ -62,6 +62,7 @@ extern s32 Func_03000380(s32 arg0, s32 arg1);
 
 void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra)
 {
+    s32 permuted_20;
     u8 **table = (u8 **)0x0200c62c;
     u32 idx = flags & 0xf;
     u8 *object;
@@ -88,8 +89,9 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
 
     Func_08009080(object, (idx + 1) & 0xf);
 
-    entry = table[idx];
+    permuted_20 = table[idx];
     Func_08009098(object, (s32)entry);
+    entry  = permuted_20;
 
     object[0x55] = 0;
     ownerRecord[0x26] = 0;
@@ -129,6 +131,7 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
         }
 
         if ((flags & 0x40000) != 0) {
+setVerticalDelta:
             if (field18Copied) {
                 *(s32 *)(object + 0x30) =
                     Func_03000380(*(s32 *)(extra + 0x10) - *(s32 *)(object + 0x18), entryField0xc);
@@ -139,7 +142,6 @@ void Func_0200013c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8
                     Func_03000380(*(s32 *)(extra + 0x10) - 0x10000, entryField0xc);
                 deltaY = *(s32 *)(extra + 0x14) - 0x10000;
             }
-setVerticalDelta:
             *(s32 *)(object + 0x34) = Func_03000380(deltaY, entryField0xc);
         }
     }

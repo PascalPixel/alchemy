@@ -57,6 +57,7 @@ void Func_0808a020();
 void Func_020022c0(void)
 {
     u8 *slot;
+    s32 permuted_9;
     s32 shape[3];          /* sp+16, the burst's per-step parameters */
     u32 step;
 
@@ -118,8 +119,9 @@ void Func_020022c0(void)
 
         /* shape[0] + shape[0] / 2: the halving is the usual signed
          * round-toward-zero sequence (`lsrs #31 / adds / asrs #1`). */
-        spread = shape[0];
         shape[0] = spread + spread / 2;
+        spread  = permuted_9;
+        permuted_9 = shape[0];
 
         Func_02000ae8(*(s32 *)(slot + 8), 0, *(s32 *)(slot + 16),
                       shape[0], shape[1], shape[2], 1, 0);

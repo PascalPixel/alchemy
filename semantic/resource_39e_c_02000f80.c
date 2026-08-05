@@ -66,8 +66,8 @@ void Func_02000f80(void)
         Func_0808a0d0(15, 216, 168);
         Func_0808a0d0(15, 224, 168);
         amount = 0x2000;
-        goto emitSharedFacing;
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
+        goto emitSharedFacing;
         Func_0808a0d0(15, 232, 160);
         amount = 0x5000;
         goto emitSharedFacing;

@@ -6,8 +6,8 @@ extern s32 Func_02000890(s32 *a, s32 *b);
 
 s32 Func_020008cc(void)
 {
-    u8 *target = Func_0808a080(0);
     s32 best_distance = 0x280;
+    u8 *target = Func_0808a080(0);
     s32 best_slot = 0;
     s32 slot;
 

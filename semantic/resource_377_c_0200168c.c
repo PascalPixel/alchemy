@@ -107,6 +107,7 @@ void Func_020015e8();
 
 void Func_0200168c(struct Descriptor_0200168c *descriptor)
 {
+    s32 permuted_11;
     struct Object_0200168c *slots[2];
     u8 *base = *(u8 **)0x03001F30;
     u8 *table = (u8 *)0x03001B10;
@@ -119,8 +120,8 @@ void Func_0200168c(struct Descriptor_0200168c *descriptor)
 
         object = Func_080090c8(26, descriptor->arg0, descriptor->arg1,
                                descriptor->arg2);
-        slots[i] = object;
         if (object == 0) continue;
+        slots[i] = object;
 
         object->field14 = descriptor->arg3;
         sprite = object->sprite;
@@ -136,9 +137,9 @@ void Func_0200168c(struct Descriptor_0200168c *descriptor)
         sprite->index1c = (u8)*(u16 *)(base + 70);
         sprite->flags1d |= 1;
 
-        packed = *(u16 *)(table + sprite->index1c * 4 + 2);
         sprite->attr08 = (u16)((sprite->attr08 & 0xFC00) |
                                (((u32)packed << 17) >> 22));
+        packed = *(u16 *)(table + sprite->index1c * 4 + 2);
 
         sprite->flags05 = (u8)(((sprite->flags05 & ~0x20) & 0x3F) | 0x40);
         sprite->flags07 = (u8)((sprite->flags07 & 0x3F) | 0x80);
@@ -149,6 +150,7 @@ void Func_0200168c(struct Descriptor_0200168c *descriptor)
     slots[0]->sprite->mode09 = (u8)((slots[0]->sprite->mode09 & ~0x0C) | 8);
 
     slots[1]->callback = Func_020015e8;
-    slots[1]->sprite->mode09 = (u8)((slots[1]->sprite->mode09 & ~0x0C) | 8);
+    slots[1]->sprite->mode09  = permuted_11;
+    permuted_11 = (u8)((slots[1]->sprite->mode09 & ~0x0C) | 8);
     slots[1]->field23 = 2;
 }

@@ -18,8 +18,8 @@ void Func_02003324(void)
     u32 i;
 
     for (i = 0; i < 5; i++)
-        actors[i] = 66;
     Func_020031c0(actors, motion[3]);
+        actors[i] = 66;
 
     while (count < 5 && actors[count] != 66) {
         Func_0808a080(actors[count])[85] = 0;
@@ -28,7 +28,6 @@ void Func_02003324(void)
 
     Func_080f9010(223);
     for (frame = 0; frame <= 85; frame++) {
-        motion[3] += delta;
         for (i = 0; i < count; i++) {
             u8 *actor = Func_0808a080(actors[i]);
             u8 *target;
@@ -38,6 +37,7 @@ void Func_02003324(void)
             actor = Func_0808a080(actors[i]);
             *(s32 *)(target + 64) = *(s32 *)(actor + 16);
         }
+        motion[3] += delta;
         if ((frame & 3) == 3 && frame > 75)
             delta += (s32)0xffffcccd;
         if (delta <= 0x0ccb)

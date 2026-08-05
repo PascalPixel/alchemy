@@ -20,7 +20,13 @@
  *    correction inherited by the transposition rather than a per-overlay change.
  */
 
-s32 Func_03000380();   /* ARM-mode IWRAM helper: scale a channel by the adjustment */
+/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
+   (see resource_382:3ac for the rule, tools/bl_site_symbols.ts to derive
+   them). All three reach the same ARM-mode IWRAM helper that scales a
+   channel by the adjustment, and each still needs its own name. */
+s32 Func_02001b32();   /* 0x02000d14 */
+s32 Func_02001b40();   /* 0x02000d22 */
+s32 Func_02001b4e();   /* 0x02000d30 */
 
 /*
  * Apply the resource's asymmetric RGB555 colour adjustment.
@@ -35,12 +41,12 @@ u16 Func_02000cf4(u16 color, s32 adjustment)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Func_03000380(
+    red = (s16)(red + Func_02001b32(
         red,
         (s32)((u32)adjustment << 2)
     ));
-    green = (s16)(green - Func_03000380(green, adjustment));
-    blue = (s16)(blue - Func_03000380(blue, adjustment));
+    green = (s16)(green - Func_02001b40(green, adjustment));
+    blue = (s16)(blue - Func_02001b4e(blue, adjustment));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

@@ -84,7 +84,7 @@ void Func_02001744(void)
 {
     u8 options[40];        /* sp+16 */
     s32 handle;
-    s32 step;
+    u32 step;
 
     /* No argument register is set. */
     Func_0808a018();

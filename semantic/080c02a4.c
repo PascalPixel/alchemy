@@ -92,8 +92,8 @@ void Func_080c02a4(s32 resource, s32 mode)
 
     if (mode != 0x15b) {
         u32 fill;
-        s32 row;
-        s32 column;
+        u32 row;
+        u32 column;
 
         StartDma_080c02a4(
             (const void *)0x080c5b30,
@@ -180,7 +180,7 @@ void Func_080c02a4(s32 resource, s32 mode)
         u16 visible[32];
         s32 owner_count;
         s32 visible_count;
-        s32 index;
+        u32 index;
 
         state->active = 1;
         state->phase = 0;

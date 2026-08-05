@@ -42,7 +42,7 @@ s32 Func_080b1bd0(s32 combatant)
     struct MenuState *menu = Data_03001f2c;
     struct CombatantState *state = Func_08077008(combatant);
     s32 grid_window = Func_08015010(0x0f, 8, 0x0f, 4, 2);
-    s32 index = 0;
+    u32 index = 0;
     s32 result;
     volatile s32 branch_barrier = 0;
 

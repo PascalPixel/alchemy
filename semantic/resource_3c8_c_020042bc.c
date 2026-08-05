@@ -41,7 +41,7 @@ void Func_020042bc(void)
 {
     struct ParticleSpec_020042bc spec;
     u8 *state = *(u8 **)0x03001ebc;
-    s32 wave;
+    u32 wave;
     s32 repeat = 0;
 
     *(s32 *)(state + 0x1c0) = 0x202;
@@ -55,7 +55,7 @@ void Func_020042bc(void)
     Func_080f9010(0xa2);
 
     for (wave = 0; wave <= 9; wave++) {
-        s32 inner;
+        u32 inner;
 
         spec.spread_x =
             (s32)(((Func_080000f8() << 1) >> 16) * 0x4ccc) + 0x17ffc;
@@ -87,7 +87,7 @@ repeat_first_wave:
     Func_08009180(111, 7, 111, 10, 5, 2);
 
     for (wave = 0; wave <= 9; wave++) {
-        s32 inner;
+        u32 inner;
 
         spec.spread_x =
             (s32)(((Func_080000f8() << 1) >> 16) * 0x4ccc) + 0x17ffc;

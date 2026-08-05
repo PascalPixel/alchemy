@@ -74,7 +74,7 @@ void Func_080c91dc(struct Scene_080c91dc *scene)
     u16 *scanline_table = (u16 *)0x02010000;
     s32 y = -0x80;
     s32 offset = -16;
-    s32 i;
+    u32 i;
     s32 frame;
     s32 count;
     s32 duration;
@@ -197,7 +197,7 @@ void Func_080c91dc(struct Scene_080c91dc *scene)
                         32);
                 }
                 if ((u32)(effect->phase - 9) <= 2) {
-                    s32 spark;
+                    u32 spark;
 
                     for (spark = 0; spark < 32; spark++) {
                         if (sparks[spark].phase == -1) {

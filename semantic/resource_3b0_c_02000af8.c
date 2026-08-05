@@ -23,7 +23,7 @@ extern void Func_080f9010(s32);
 void Func_02000af8(void)
 {
     u8 *actor;
-    s32 frame;
+    u32 frame;
     Func_0808a018();
     Func_0808a158(0,15);
     actor=Func_0808a080(0); Func_080091e0(actor,0);

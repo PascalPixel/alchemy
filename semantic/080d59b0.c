@@ -43,8 +43,8 @@ void Func_080d59b0(void *argument)
     Renderer_080d59b0 renderers[2];
     struct Particle_080d59b0 *particles =
         (struct Particle_080d59b0 *)0x02010000;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(0);

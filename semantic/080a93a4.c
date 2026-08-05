@@ -71,7 +71,7 @@ s32 Func_080a93a4(
         *(MenuState_080a93a4 **)0x03001f2c;
     u16 selected_id;
     u16 *row_items;
-    s32 i;
+    u32 i;
 
     (void)unused;
     selection->absolute = selection->row * 5 + selection->column;

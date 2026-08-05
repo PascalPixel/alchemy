@@ -105,8 +105,8 @@ void Func_080d3854(void *argument)
     void *palette;
     Renderer_080d3854 renderers[2];
     s32 variant;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     PTR_AT(runtime, 0x7828) = argument;
     Func_080cd594(1);
@@ -204,7 +204,7 @@ void Func_080d3854(void *argument)
         }
 
         for (i = 0; i < S32_AT(argument, 0x14); i++) {
-            s32 pulse;
+            u32 pulse;
             for (pulse = 0; pulse < 7; pulse++) {
                 if (frame == i * 3 + pulse * 8 + 0x10) {
                     s16 character =

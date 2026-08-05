@@ -64,7 +64,7 @@ void Func_080da6cc(void *argument)
     s32 primary_id;
     s32 center_y;
     s32 frame;
-    s32 i;
+    u32 i;
 
     *(void **)(runtime + 0x7828) = argument;
     if (*(s32 *)((u8 *)argument + 4) == 1)

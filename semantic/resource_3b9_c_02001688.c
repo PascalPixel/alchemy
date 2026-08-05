@@ -84,7 +84,7 @@ void Func_02001688(void)
     u8 *workspace = Data_03001ebc;
     u8 *record;
     u8 *record21;
-    s32 i;
+    u32 i;
 
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);

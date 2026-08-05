@@ -38,8 +38,8 @@ extern void Func_080000c0(s32 arg0);
 void Func_02002844(void)
 {
     u16 *palette;
-    s32 whiteCount;
-    s32 index;
+    u32 whiteCount;
+    u32 index;
     u16 color;
     s32 red, green, blue;
 

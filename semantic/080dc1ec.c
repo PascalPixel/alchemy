@@ -93,8 +93,8 @@ void Func_080dc1ec(void *argument)
     s32 render_context = globals->render_context;
     u32 state[2];
     struct Position_080dc1ec camera;
-    s32 frame;
-    s32 index;
+    u32 frame;
+    u32 index;
 
     runtime->argument = argument;
     Func_080cd594(0);

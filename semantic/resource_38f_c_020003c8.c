@@ -115,7 +115,7 @@ void Func_020003c8(void)
     u8 *record;
     struct Obj *p;
     struct Sub *sub;
-    s32 i;
+    u32 i;
     s32 x;
     s32 speed;
 

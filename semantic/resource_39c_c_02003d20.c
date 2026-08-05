@@ -139,7 +139,7 @@ s32 Func_02003d20(void)
 {
     volatile u16 *bldcnt = (volatile u16 *)0x04000050;
     u8 *record;
-    s32 index;
+    u32 index;
     s32 flagId;
     s32 coordinate;
     s32 cleared;

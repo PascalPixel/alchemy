@@ -43,7 +43,7 @@ void Func_08021cb8(
     const u8 *resource;
     const u8 *source;
     u8 *output;
-    s32 index;
+    u32 index;
 
     decoded = Func_080048b0(17, 0x608);
     resource = Func_08002f40(0xf1);

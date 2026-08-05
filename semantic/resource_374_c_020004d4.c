@@ -63,7 +63,7 @@ void Func_080f9010();
 
 void Func_020004d4(void)
 {
-    s32 i;
+    u32 i;
     u8 *record;
     u8 *flag;
     u8 saved;

@@ -144,7 +144,7 @@ s32 Func_080b63c8(s32 mode)
     s32 resource;
     s32 result;
     s32 count;
-    s32 index;
+    u32 index;
     s32 panel;
     u32 fill;
 

@@ -58,7 +58,7 @@ void Func_020048e8(s32 selector, s32 arg1, s32 arg2)
 {
     u8 *record;
     const void *resource;
-    s32 i;
+    u32 i;
 
     switch (selector) {
     case 0:

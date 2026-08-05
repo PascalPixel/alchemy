@@ -84,7 +84,7 @@ void Func_020010c4(void)
     u8 *record;
     u8 *flags;
     u8 options[40];        /* sp+16 */
-    s32 tick;
+    u32 tick;
 
     record = Func_0808a080(0);
 

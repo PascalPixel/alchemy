@@ -29,7 +29,7 @@ void Func_020018a4(void)
     u16 tile = *(u16 *)(0x03001b10 + *selected_slot * 4 + 2) >> 5;
     volatile u32 *dma3 = (volatile u32 *)0x040000d4;
     u8 *work;
-    s32 index;
+    u32 index;
 
     if (*active != 0) {
         *phase = 2;

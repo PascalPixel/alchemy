@@ -17,7 +17,7 @@ s32 Func_020008c0(s32 slot)
     u8 *actor = Func_0808a080(slot);
     s16 kind = **(s16 **)(*(u8 **)(actor + 80) + 40);
     s32 *ids = (s32 *)0x0200a684;
-    s32 index;
+    u32 index;
     s32 *delta;
     s32 dx0;
     s32 dy0;

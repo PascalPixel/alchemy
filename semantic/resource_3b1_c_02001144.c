@@ -31,7 +31,7 @@ u8 *Func_02001144(s32 x, s32 z)
     s32 z_min = z - 12;
     s32 z_max = z + 12;
     u8 **table = (u8 **)(Data_03001ebc + 0x34);
-    s32 i;
+    u32 i;
 
     for (i = 0; i < 58; i++) {
         u8 *obj = table[i];

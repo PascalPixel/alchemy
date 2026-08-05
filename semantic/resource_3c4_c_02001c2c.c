@@ -60,7 +60,7 @@ void Func_080f9010();
 void Func_02001c2c(s32 subject)
 {
     s32 best = (s32)0xffb00000;
-    s32 index;
+    u32 index;
 
     for (index = 0; index <= 4; index++) {
         s32 slot = index + 10;

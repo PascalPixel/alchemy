@@ -48,19 +48,19 @@ void Func_020018b8(void)
     Func_080000c0(1);
 
     actor = Func_0808a080(0);
-    *(s32 *)(actor + 12) = 0x00820000;
     actor = Func_0808a080(0);
+    *(s32 *)(actor + 12) = 0x00820000;
     *(s32 *)(actor + 72) = 0x00008000;
     actor = Func_0808a080(0);
-    *(s32 *)(actor + 68) = 0;
     actor = Func_0808a080(0);
+    *(s32 *)(actor + 68) = 0;
     actor[85] = 0;
 
+    actor[85] = 3;
     Func_0808a360();
     Func_0808a370();
     Func_080f9010(204);
     actor = Func_0808a080(0);
-    actor[85] = 3;
     Func_0808a010(24);
 
     actor = Func_0808a080(0);
@@ -91,8 +91,8 @@ void Func_020018b8(void)
     Func_0808a1f0(0, 0x100);
 
     actor = Func_0808a080(0);
-    *(s32 *)(actor + 72) = 0x10000;
     actor = Func_0808a080(0);
     *(s32 *)(actor + 68) = 0x4000;
     Func_0808a020();
+    *(s32 *)(actor + 72) = 0x10000;
 }

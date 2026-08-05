@@ -94,8 +94,8 @@ s32 Func_02001004(void)
 
     record = Func_0808a080(8);
     *(s32 *)0x0200add0 = 0x02001000;
-    *(s32 *)(record + 12) = 0xfff60000;
     Func_02001224();
+    *(s32 *)(record + 12) = 0xfff60000;
     record[85] = 0;
     record[85] = 0;
     *(s32 *)(record + 12) = 0xfff60000;
@@ -116,8 +116,8 @@ s32 Func_02001004(void)
     *(s32 *)(camera + 276) = 0xe666;
     camera = Data_03001e70;
     *(s32 *)(camera + 268) += multiply16_16(*(s32 *)(camera + 236) + 0xa00000, 0x1999);
-    *(s32 *)(camera + 272) += multiply16_16(*(s32 *)(camera + 240) + 0x880000, 0x1999);
     *(s32 *)(camera + 280) = 0xe666;
+    *(s32 *)(camera + 272) += multiply16_16(*(s32 *)(camera + 240) + 0x880000, 0x1999);
     Func_080770c8(0x201);
     Func_080770c8(0x20d);
     Func_080770c8(0x20f);
@@ -126,8 +126,8 @@ s32 Func_02001004(void)
     Func_02000f58(0);
     *(s32 *)(Data_03001ebc + 448) = 514;
 
-    selector = Data_02000240[225];
     id = *(s32 *)((u8 *)Data_02000240 + 500);
+    selector = Data_02000240[225];
     record = Func_0808a080(id);
     if (selector == 50 || selector == 40 || selector == 30 || selector == 20) {
         Func_0808a360();

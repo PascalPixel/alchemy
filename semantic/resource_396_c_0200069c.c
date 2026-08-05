@@ -44,13 +44,13 @@ void Func_0200069c(void)
 
     Func_0808a090(0, 0x10000, 0x8000);
     Func_0808a090(1, 0x10000, 0x8000);
+    actor[35] &= 0xfe;
     Func_0808a090(2, 0x10000, 0x8000);
     Func_0808a090(3, 0x10000, 0x8000);
-    actor = Func_0808a080(3);
     actor[35] &= 0xfe;
+    actor = Func_0808a080(3);
     Func_0808a1e0(3, 2);
     actor = Func_0808a080(0);
-    actor[35] &= 0xfe;
     Func_0808a1e0(0, 2);
 
     actor = Func_0808a080(0);

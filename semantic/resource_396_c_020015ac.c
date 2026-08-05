@@ -26,9 +26,9 @@ void Func_020015ac(u8 *effect)
             *(s32 *)(effect + 24) -= 1310;
             *(s32 *)(effect + 28) -= 1310;
         }
-        *(u16 *)(effect + 100) = (u16)(age + 1);
     } else {
         u8 *owner = *(u8 **)(effect + 80);
+        *(u16 *)(effect + 100) = (u16)(age + 1);
 
         Func_080001b8(owner[28]);
         Func_080090d0(effect);

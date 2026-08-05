@@ -73,11 +73,11 @@ void Func_02003ce4(void)
             Func_080091f0(0x20000, 0x20000, 0x10000);   /* 128<<10 */
             h = *(u16 *)(a + 100);
         }
+        *(u16 *)(a + 100) = (u16)(h - 1);
         if (h == 20) {
             Func_080091f0(-1, -1, 0xe666);
             h = *(u16 *)(a + 100);
         }
-        *(u16 *)(a + 100) = (u16)(h - 1);
     }
 
     *(s32 *)(b + 8) = *(s32 *)(a + 8);
@@ -95,8 +95,8 @@ void Func_02003ce4(void)
             if (sel == 0 || sel == 4) {
                 delta = 0xa3d;
             } else if (sel == 3) {
-                delta = 0x51e;
             } else {
+                delta = 0x51e;
                 delta = -1966;
             }
             *(s32 *)(b + 24) += delta;

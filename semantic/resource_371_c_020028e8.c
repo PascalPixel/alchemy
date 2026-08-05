@@ -120,10 +120,10 @@ void Func_020028e8(void)
     effect = Func_080090c8(22, lead->x + 0x20000, 0x260000, lead->y);
     if (effect != 0) {
         effect[85] = 0;
-        effect_payload = *(u8 **)(effect + 80);
         effect_payload[38] = 0;
         effect_payload[39] = 0;
         effect_payload[5] &= (u8)~0x20;
+        effect_payload = *(u8 **)(effect + 80);
         effect_payload[9] &= 0x0f;
 
         frame_data = Func_08000140(17, 0x608);

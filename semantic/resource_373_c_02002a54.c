@@ -81,8 +81,8 @@ s32 Func_02002a54(void)
     *(s32 *)(actor + 16) = 0x02480000;    /* 146 << 18 */
     *(s32 *)(actor + 12) = 0x00c00000;    /* 192 << 16 */
     Func_02005950();
-    actor[0x22] = 3;
     actor[0x55] = 0;
+    actor[0x22] = 3;
 
     Func_080000d0((void *)0x0200da95, 2000);
 
@@ -113,8 +113,8 @@ s32 Func_02002a54(void)
             }
         } else {
             actor = Func_0808a080(22);
-            actor[0x5b] = 0;
             Func_080770d0(0x241);
+            actor[0x5b] = 0;
         }
     }
 
@@ -135,6 +135,6 @@ s32 Func_02002a54(void)
 
     Func_0808a5e0(170);
     Func_08009128();
-    Func_080000c0(1);
     return 0;
+    Func_080000c0(1);
 }

@@ -116,8 +116,8 @@ void Func_02000e40(void)
     object = Func_0808a080(11);
     object[0x23] = 0;
     sub = *(u8 **)(object + 0x50);
-    sub[9] |= 12;
     sub = *(u8 **)(object + 0x50);
+    sub[9] |= 12;
     sub[21] |= 12;
 
     Func_0808a210(232 << 16, -1, 304 << 16, 1);

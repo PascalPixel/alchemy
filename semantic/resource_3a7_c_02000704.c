@@ -48,7 +48,7 @@ void Func_02000704(void)
         u8 *entry = Func_0808a080(index);
 
         remaining--;
-        entry[35] |= 2;
         index++;
+        entry[35] |= 2;
     } while (remaining >= 0);
 }

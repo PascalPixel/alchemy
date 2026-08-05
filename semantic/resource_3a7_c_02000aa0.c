@@ -100,8 +100,8 @@ void Func_02000aa0(void)
         if (Func_080770c0(index + 0x200) != 0) {
             if (*(s32 *)(entry + 40) > 0
                 || *(s32 *)(entry + 12) <= 0x0020ffff) {
-                *(s32 *)(entry + 12) = 0x00ff0000;
                 *(s32 *)(entry + 72) = 0;
+                *(s32 *)(entry + 12) = 0x00ff0000;
                 *(s32 *)(entry + 40) = 0;
                 Func_080f9010(106);
             }

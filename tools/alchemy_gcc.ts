@@ -361,6 +361,9 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "0801d014", "0801d980",
   "080251d4", "080284dc", "080907b0", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540", "0809bb34", "080c0184", "080c08a8",
   "0808fecc", "08004760", "08005a78", "080037d4", "080b5ad4", "0800300c", "080f377c",
+  // 08091174 joins for the pool-load-late witness (2026-08-05): its group
+  // forms under the mode and the sched tie-break closes the last 6 bytes.
+  "08091174",
   "08002fb0", "08003e10",
   "080a1090",
 ]);
@@ -426,6 +429,11 @@ const CALL_ARG0_BEFORE_STORE_SOURCES = new Set(["08077f70"]);
 // 08098b10's clean semantic source is exact when the post-call byte-state
 // increment is retargeted to r2 by the strict post-reload compiler mode.
 const POSTCALL_BYTE_INCREMENT_R2_SOURCES = new Set(["08098b10"]);
+// Grouped-DMA control-word class, 2026-08-05 (fork commit cee872a).
+// 080f377c: shared pool-class control word rematerialised per transfer plus
+// the sched2 pool-load-late tie-break; 08091174: the tie-break alone.
+const GROUP_CONTROL_REMATERIALIZE_SOURCES = new Set(["080f377c"]);
+const SCHED_POOL_LOAD_LATE_SOURCES = new Set(["080f377c", "08091174"]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -682,6 +690,13 @@ const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
 const GROUPED_DMA_STORE_OVERLAY_SOURCES = new Set([
   "exact/resource_3bd_c_02000c98.c",
   "exact/resource_3ca_c_020010d4.c",
+  // Lane-D exacts, 2026-08-05: the resource_395 twins group under this mode
+  // alone once the source ADDRESS is a local born before the descriptor
+  // pointer (birth order gives from=r2, dma=r3, the reference economy).
+  "exact/resource_395_c_02001838.c",
+  "semantic/resource_395_c_02001838.c",
+  "exact/resource_395_c_02001858.c",
+  "semantic/resource_395_c_02001858.c",
   // resource_392:0c0c and resource_393:0ddc are exact-template twins of
   // resource_394:0fb4.  Keep the three descriptor stores on the compiler's
   // established grouped-DMA route; the per-overlay pools and veneers are the
@@ -751,6 +766,20 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "semantic/resource_382_c_020012c0.c",
   "exact/resource_385_c_02000d84.c",
   "semantic/resource_385_c_02000d84.c",
+  // Lane-C, 2026-08-05: triple-route twins (see the pool-immediate set for
+  // the r5-parking mechanism), the 3c4 placement twins, and
+  // resource_3b9:25f0 whose full 120-byte pool-inclusive span is exact.
+  // All pair with -fsched-low-dest-first.
+  "exact/resource_382_c_02001238.c",
+  "semantic/resource_382_c_02001238.c",
+  "exact/resource_385_c_020009f8.c",
+  "semantic/resource_385_c_020009f8.c",
+  "exact/resource_3c4_c_02001fdc.c",
+  "semantic/resource_3c4_c_02001fdc.c",
+  "exact/resource_3c4_c_02002040.c",
+  "semantic/resource_3c4_c_02002040.c",
+  "exact/resource_3b9_c_020025f0.c",
+  "semantic/resource_3b9_c_020025f0.c",
   // The largest open overlay owner is a long event call sheet whose repeated
   // wide immediates are independently materialized throughout the reference.
   // Sharing them changes the saved-register set and every later pool boundary.
@@ -914,6 +943,18 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_3bf_c_0200206c.c",
   "exact/resource_385_c_02000a80.c",
   "semantic/resource_385_c_02000a80.c",
+  // Lane-C, 2026-08-05: the triple-route twins, the 3c4 placement twins,
+  // and resource_3b9:25f0 (mechanisms at their NO_CSE_* entries).
+  "exact/resource_382_c_02001238.c",
+  "semantic/resource_382_c_02001238.c",
+  "exact/resource_385_c_020009f8.c",
+  "semantic/resource_385_c_020009f8.c",
+  "exact/resource_3c4_c_02001fdc.c",
+  "semantic/resource_3c4_c_02001fdc.c",
+  "exact/resource_3c4_c_02002040.c",
+  "semantic/resource_3c4_c_02002040.c",
+  "exact/resource_3b9_c_020025f0.c",
+  "semantic/resource_3b9_c_020025f0.c",
   // resource_3c1:0120 and :0194 (byte-identical twins) negate the shake
   // argument r2 for a three-argument call; the reference sets r0/r1 before
   // the negs, the low-destination tie-break, same tell as resource_38e:045c.
@@ -1258,6 +1299,9 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "exact/resource_3bf_c_0200206c.c",
   "semantic/resource_3bf_c_0200206c.c",
 ]);
+// Lane-C exacts routed through SCHED_LOW_DEST_FIRST above plus the CSE sets:
+// the 382:1238 / 385:09f8 triples and the 3c4 / 3b9 pairs are annotated at
+// their NO_CSE_* entries.
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;
 // the high-destination tie-break then orders the remaining r6 constant and
@@ -1335,6 +1379,14 @@ const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // (probed exact-shape-restoring 2026-08-05).
   "exact/resource_3c8_c_020016a4.c",
   "semantic/resource_3c8_c_020016a4.c",
+  // Lane-C triple-route twins, 2026-08-05: sched-low-dest-first fixes their
+  // 8-byte movs placement but exposes two r5-parking regressions, each
+  // suppressed by a different CSE gate (pool word 0x867 needs this flag;
+  // 408=204<<1 needs -fno-cse-two-insn-immediate). First evidenced triples.
+  "exact/resource_382_c_02001238.c",
+  "semantic/resource_382_c_02001238.c",
+  "exact/resource_385_c_020009f8.c",
+  "semantic/resource_385_c_020009f8.c",
   // Its nine literal-pool islands likewise reload recurring words locally;
   // sharing them changes both the saved-register set and pool boundaries.
   "exact/resource_38f_c_020008ec.c",
@@ -1728,6 +1780,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(POSTCALL_BYTE_INCREMENT_R2_SOURCES.has(stem)
       ? ["-fthumb-postcall-byte-increment-r2"]
       : []),
+    ...(GROUP_CONTROL_REMATERIALIZE_SOURCES.has(stem)
+      ? ["-fthumb-group-control-rematerialize"]
+      : []),
+    ...(SCHED_POOL_LOAD_LATE_SOURCES.has(stem)
+      ? ["-fthumb-sched-pool-load-late"]
+      : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
       : []),
@@ -2062,6 +2120,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // -fno-cse-shift-immediate host parity build (fork commit 6461a0c),
         // matching the linux-x64 pin below; admitted 2026-08-05.
         "c8ab73932d0de44ea5cf337ddcb4b50cdf2b17696bbfd925224c5026dc6a7e8d",
+        // -fthumb-group-control-rematerialize + -fthumb-sched-pool-load-late
+        // (fork commit cee872a): grouped-DMA control-word class, witnesses
+        // 080f377c and 08091174 byte-exact, 2,083-source regression zero
+        // drift unrouted -- admitted from a green `bun run verify`,
+        // 2026-08-05. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "52a086c84a620d4cc8d9acb7d53ecd5826892065edd7f289447ff44f77162d74",
       ],
     },
     gs2: {
@@ -2732,7 +2797,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "08011590", "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "080907b0", "08090824", "08094730", "08095160", "08095290", "080958a8", "08097540",
+    "08011590", "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fecc", "080907b0", "08090824", "08091174", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");

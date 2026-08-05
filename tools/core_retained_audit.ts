@@ -136,7 +136,12 @@ function manifests(asmPath: string, claimedPath: string): { asm: AsmRegion[]; cl
   });
   const claimed = claimedDocument.regions.map((item: any, index: number) => {
     const result = span(item, `claimed.regions[${index}]`);
-    if (typeof item.source !== "string" || !item.source.startsWith("src/")) throw new Error(`claimed.regions[${index}] is not a claimed C source`);
+    // Since the exact/semantic tree consolidation, main-image exact C lives in
+    // exact/<8hex>.c; src/ remains accepted for pre-consolidation manifests.
+    if (typeof item.source !== "string" ||
+        !(item.source.startsWith("src/") || /^exact\/[0-9a-f]{8}\.c$/i.test(item.source))) {
+      throw new Error(`claimed.regions[${index}] is not a claimed C source`);
+    }
     return { ...result, source: item.source };
   });
   return { asm, claimed };

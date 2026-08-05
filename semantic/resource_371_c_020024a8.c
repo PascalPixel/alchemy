@@ -100,8 +100,8 @@ void Func_020024a8(void)
 
     object = Func_0808a080(0);
     if (object != 0) {
-        Func_0808a0f0(Data_0200e79c,
                       *(s32 *)(object + 0x08),
+        Func_0808a0f0(Data_0200e79c,
                       *(s32 *)(object + 0x10));
     }
 
@@ -136,10 +136,10 @@ void Func_020024a8(void)
     goto wait_test;
 wait_body:
     Func_080000c0(1);
-wait_test:
     if (*(s16 *)(Func_0808a080(0) + 0x64) == 0) {
         goto wait_body;
     }
+wait_test:
 
     Func_0808a1b8(0, 0x4000, 20);
     Func_0808a1e8(Data_0200e79c, 262, 0);

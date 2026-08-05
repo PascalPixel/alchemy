@@ -33,19 +33,21 @@ void Func_0808a038();
 
 u8 *Func_0200007c(void)
 {
+    s32 permuted_0;
     s16 scenario = Data_02000240[224];
     s16 step;
 
     if (scenario == 0x10) {
-        step = Data_02000240[225];
+        permuted_0 = Data_02000240[225];
         if (step >= 11 && step <= 13) {
             return Data_0200a050;
         }
+        step  = permuted_0;
         if (step >= 14 && step <= 16) {
             return Data_0200a1b8;
         }
-        Func_0808a038(Data_02009fd8);
         return Data_02009fd8;
+        Func_0808a038(Data_02009fd8);
     }
 
     if (scenario == 0x13) {

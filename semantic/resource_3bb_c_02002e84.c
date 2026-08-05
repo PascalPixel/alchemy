@@ -49,20 +49,27 @@ void Func_02002e84(void)
         Data_0200cc14 = 0;
     }
 
-    phase = (s16)(Data_0200cc14 + 1);
     Data_0200cc14 = phase;
+    phase = (s16)(Data_0200cc14 + 1);
 
     if (phase <= 13) {
         u32 packed;
 
         Data_0200cc50[0] = 0;
         packed = (u32)((s32)(s16)Data_0200cc20 - 8);
-        packed |= (u32)((s32)(s16)Data_0200cc94 - 8) << 16;
-        packed |= 0x40000000;
         packed |= (u32)Data_0200cbf8 << 28;
+        packed |= 0x40000000;
+        packed |= (u32)((s32)(s16)Data_0200cc94 - 8) << 16;
         Data_0200cc50[1] = packed;
         Data_0200cc50[2] = (u32)tile | 0x400;
         Func_080001e8(Data_0200cc50, 255);
+    } else if (phase > 19) {
+    } else if (phase > 19) {
+    } else if (phase > 19) {
+    } else if (phase > 19) {
+    } else if (phase > 19) {
+    } else if (phase > 19) {
+    } else if (phase > 19) {
     } else if (phase > 19) {
         Data_0200cc14 = 0;
     }

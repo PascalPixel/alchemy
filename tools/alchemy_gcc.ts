@@ -408,6 +408,9 @@ const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
 const FIXED_LR_OVERLAY_SOURCES = new Set([
   "exact/resource_3ab_c_020007f4.c",
   "semantic/resource_3ab_c_020007f4.c",
+  // Round-2 pair-sweep exact, 2026-08-05, paired with -fsched-low-dest-first.
+  "exact/resource_385_c_02000a80.c",
+  "semantic/resource_385_c_02000a80.c",
 ]);
 const OPTIMIZE_O1_OVERLAY_SOURCES = new Set([
   "exact/resource_3ab_c_020007f4.c",
@@ -898,6 +901,15 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Pair-sweep exact, 2026-08-05, paired with -fthumb-call-arg1-before-arg0.
   "exact/resource_3c0_c_02000adc.c",
   "semantic/resource_3c0_c_02000adc.c",
+  // Round-2 pair-sweep exacts, 2026-08-05: paired with
+  // -fno-cse-shift-immediate (3b9:04c8, 3bf:206c) and -ffixed-r14
+  // (385:0a80); see those sets.
+  "exact/resource_3b9_c_020004c8.c",
+  "semantic/resource_3b9_c_020004c8.c",
+  "exact/resource_3bf_c_0200206c.c",
+  "semantic/resource_3bf_c_0200206c.c",
+  "exact/resource_385_c_02000a80.c",
+  "semantic/resource_385_c_02000a80.c",
   // resource_3c1:0120 and :0194 (byte-identical twins) negate the shake
   // argument r2 for a three-argument call; the reference sets r0/r1 before
   // the negs, the low-destination tie-break, same tell as resource_38e:045c.
@@ -1234,6 +1246,13 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // per-site sub_ call symbols (probed exact, 2026-08-04).
   "exact/resource_3c8_c_02002f30.c",
   "semantic/resource_3c8_c_02002f30.c",
+  // Round-2 pair-sweep exacts, 2026-08-05: byte-exact under this flag with
+  // -fsched-low-dest-first (see that set). Reachable locally only after the
+  // darwin cc1 parity restage exposed -fno-cse-shift-immediate on this host.
+  "exact/resource_3b9_c_020004c8.c",
+  "semantic/resource_3b9_c_020004c8.c",
+  "exact/resource_3bf_c_0200206c.c",
+  "semantic/resource_3bf_c_0200206c.c",
 ]);
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;

@@ -170,7 +170,7 @@ void Func_02002360(void)
     s32 vec_store[3];
     s32 desc_a[10];
     s32 desc_b[10];
-    s32 i;
+    u32 i;
     s32 first_pass;
 
     vec = (u8 *)vec_store;

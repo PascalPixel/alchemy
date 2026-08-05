@@ -73,9 +73,9 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
                                         s32 *kindIndexOut)
 {
     u8 *scene = RESOURCE_373_SCENE;
+    struct Resource373Object *player = Func_0200634e(0);
     struct Resource373Object **objects =
         (struct Resource373Object **)(scene + 0x34);
-    struct Resource373Object *player = Func_0200634e(0);
     s32 slot;
 
     *directionOut = ((const u16 *)player)[3] >> 12;   /* halfword at +6 */
@@ -114,9 +114,9 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
             probeZ = ((player->z >> 16) + ((step << 16) >> 16)) >> 4;
 
             boxX0 = (anchor->anchorX + box->x0) >> 4;
-            boxZ0 = (anchor->anchorZ + box->z0) >> 4;
             boxX1 = (anchor->anchorX + box->x1) >> 4;
             boxZ1 = (anchor->anchorZ + box->z1) >> 4;
+            boxZ0 = (anchor->anchorZ + box->z0) >> 4;
 
             if (boxX0 > probeX || probeX >= boxX1) {
                 continue;

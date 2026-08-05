@@ -131,9 +131,9 @@ void Func_02000248(void)
         for (frame = 0; frame != 180; frame++) {
             if (Func_030003e0(frame, 10) == 0) {
                 if ((step & 1) != 0) {
-                    *shake += (s32)0xffff0000;
                 } else {
                     *shake += 0x10000;
+                    *shake += (s32)0xffff0000;
                 }
                 step++;
             }

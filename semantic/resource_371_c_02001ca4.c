@@ -149,8 +149,8 @@ void Func_02001ca4(void)
         Func_0808a3d8();
 
         flag = actor + 0x55;
-        *flag = 2;
         *(s32 *)(actor + 0x48) = 0x4000;
+        *flag = 2;
         *(s32 *)(actor + 0x34) = 0x10000;
         *(s32 *)(actor + 0x28) = 0;
         *(s32 *)(actor + 0x30) = 0x10000;
@@ -172,8 +172,8 @@ void Func_02001ca4(void)
 
         *(s32 *)(actor + 0x6c) = 0;
 
-        Func_08009240(actor, 0);
         *(s32 *)(actor + 0x48) = 0x10000;
+        Func_08009240(actor, 0);
         Func_0808a180(8, 0);
         Func_080f9010(131);
         Func_0808a428(140, 0);

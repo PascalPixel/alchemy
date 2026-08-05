@@ -93,6 +93,7 @@ void Func_02000be0(void)
     s32 x;
     s32 z;
 
+    s32 permuted_156;
     if (Func_080770c0(0x808) != 0) {
         return;
     }
@@ -101,8 +102,8 @@ void Func_02000be0(void)
     Func_080f9010(17);
     Func_080770c8(0x808);
 
-    line = 0xf85;
     Func_0808a170(line);
+    line = 0xf85;
     Func_0808a188(14, 0, 10);
 
     Func_0808a090(0, 0x13333, 0x9999);
@@ -252,8 +253,9 @@ void Func_02000be0(void)
     Func_0808a090(14, 0x8000, 0x4000);
 
     actor = Func_0808a080(14);
-    *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) & 0xfe);
+    permuted_156 = (u8)(*(u8 *)(actor + 0x5a) & 0xfe);
     actor = Func_0808a080(15);
+    *(u8 *)(actor + 0x5a) = permuted_156;
     *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) & 0xfe);
 
     Func_0808a0c8(14, 0x188, 0x178);

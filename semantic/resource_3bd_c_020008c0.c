@@ -57,7 +57,7 @@ s32 Func_020008c0(s32 id)
 {
     u8 *actor = Func_0808a080(id);
     s32 kind = *(s16 *)(*(u8 **)(actor + 0x50) + 0x28);
-    s32 index;
+    u32 index;
     const struct Resource3bdFootprint *footprint;
     s32 actorX;
     s32 actorZ;

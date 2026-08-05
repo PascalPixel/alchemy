@@ -64,7 +64,7 @@ s32 Func_080b8574(Entry_080b8574 *output)
     s32 enemy_count;
     s32 baseline_count;
     s32 total = 0;
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 4; index++)
         Func_08077008(index);

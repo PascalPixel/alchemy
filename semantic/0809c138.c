@@ -116,7 +116,7 @@ void Func_0809c138(void)
     u8 saved_priorities[16];
     u32 saved_scene_mode;
     s16 saved_blend;
-    s32 index;
+    u32 index;
 
     if (scene->mode != 3) {
         return;

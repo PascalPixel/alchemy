@@ -43,7 +43,7 @@ s32 Func_080b362c(s32 combatant)
     struct CombatantState *state = Func_08077008(combatant);
     s32 result = 0;
     s32 count = 1;
-    s32 index = 0;
+    u32 index = 0;
     s32 redraw = 1;
     s32 grid_window = Func_08015010(0x0e, 8, 0x10, 4, 2);
     s32 detail_window = Func_08015010(0, 5, 0x1e, 3, 2);

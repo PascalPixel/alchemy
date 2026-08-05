@@ -22,7 +22,7 @@ void Func_0808ace0(s32 enable_rules) {
     s16 subarea;
     s16 value;
     s32 shift_first;
-    s32 index;
+    u32 index;
 
     battle = *(u8 **)0x03001EBC;
     area = *(s16 *)0x02000400;

@@ -68,8 +68,8 @@ void Func_080dbc30(struct Scene_080dbc30 *scene, s32 mode)
     s32 anchor[3];
     s32 object_positions[8][3];
     s32 palette_resource = 0;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(struct Scene_080dbc30 **)(runtime + 0x7828) = scene;
     Func_080cd594(0);

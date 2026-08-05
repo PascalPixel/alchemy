@@ -51,8 +51,8 @@ void Func_080cb7f8(void *argument)
     s32 point[3];
     s32 world[3];
     s32 screen[3];
-    s32 frame;
-    s32 index;
+    u32 frame;
+    u32 index;
     s32 palette_resource;
 
     *(void **)(runtime + 0x7828) = argument;

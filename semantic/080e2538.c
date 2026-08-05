@@ -88,7 +88,7 @@ void Func_080e2538(void *object)
     group_count =
         group_counts[*(s32 *)((u8 *)object + 24)];
     for (group = 0; group < group_count; group++) {
-        s32 index;
+        u32 index;
 
         anchors[group].y = -0x400000;
         anchors[group].velocity_y = 0;
@@ -124,7 +124,7 @@ void Func_080e2538(void *object)
             }
 
             if (frame >= start + 18) {
-                s32 index;
+                u32 index;
 
                 for (index = 0; index < 21; index++) {
                     struct Particle_080e2538 *particle =
@@ -170,7 +170,7 @@ void Func_080e2538(void *object)
 
             if (frame == start + 18) {
                 s32 count = *(s32 *)((u8 *)object + 20);
-                s32 index;
+                u32 index;
 
                 for (index = 0; index < count; index++) {
                     Func_080d6888(

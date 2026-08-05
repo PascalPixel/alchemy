@@ -40,8 +40,8 @@ void Func_080e6eac(s32 argument, s32 x, s32 y)
     struct Particle_080e6eac *second =
         (struct Particle_080e6eac *)0x02010000;
     s32 center_x = (x + 0x280000) / 2;
-    s32 frame;
-    s32 index;
+    u32 frame;
+    u32 index;
 
     *(volatile u16 *)0x04000020 = 0x80;
     *(volatile s32 *)0x04000028 = 0;

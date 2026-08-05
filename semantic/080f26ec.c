@@ -138,7 +138,7 @@ s32 Func_080f26ec(s32 long_version)
                     } else {
                         s16 blank = 0;
                         s16 *tilemap;
-                        s32 row;
+                        u32 row;
                         s32 destination =
                             Func_080022fc(0xa0 - width, 0xa0) * 0xf0 +
                             0x06004ec0;
@@ -147,7 +147,7 @@ s32 Func_080f26ec(s32 long_version)
                             &blank, (void *)destination, 0x810003c0);
                         tilemap = (s16 *)0x0600f6c0;
                         for (row = 0; row < 5; row++) {
-                            s32 column;
+                            u32 column;
                             for (column = 0; column < 32; column++)
                                 *tilemap++ = 0x013b;
                         }
@@ -167,7 +167,7 @@ wait_frame:
         void *palette;
         s16 *tilemap;
         s16 tile = 0x100;
-        s32 row;
+        u32 row;
 
         Func_08003bf8(1);
         Func_08004278((const void *)0x080f2029);
@@ -186,7 +186,7 @@ wait_frame:
 
         tilemap = (s16 *)0x06003000;
         for (row = 0; row < 20; row++) {
-            s32 column;
+            u32 column;
             for (column = 0; column < 30; column++)
                 *tilemap++ = tile++;
             *tilemap++ = 0x01ff;
@@ -199,7 +199,7 @@ wait_frame:
         if (long_version) {
             u8 *tiles = Func_080048f4(0x0e, 0x400);
             u8 *objects = (u8 *)state + 0x80;
-            s32 i;
+            u32 i;
 
             Func_080053e8((const void *)0x080f38bc, tiles);
             for (i = 0; i < 5; i++) {
@@ -225,7 +225,7 @@ wait_frame:
                 if (long_version) {
                     u8 *object = (u8 *)state + 0x80;
                     s32 x = 0x50;
-                    s32 i;
+                    u32 i;
 
                     for (i = 0; i < 3; i++) {
                         U16_AT(object, 6) =

@@ -18,7 +18,7 @@
 
 u32 *Func_080f9a18(u32 *record)
 {
-    int index;
+    unsigned int index;
 
     for (index = 0; index < 16; index++)
         *record++ = 0;

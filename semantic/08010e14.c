@@ -52,7 +52,7 @@ void Func_08010e14(s32 world_x, s32 world_y) {
     u32 fill_value;
     volatile u32 *tilemap;
     u32 tile_pair;
-    s32 row;
+    u32 row;
 
     /*
      * This is the power-of-two signed-division correction used by the
@@ -119,7 +119,7 @@ void Func_08010e14(s32 world_x, s32 world_y) {
     tilemap = (volatile u32 *)0x06003000;
     tile_pair = 0x01A901A8;
     for (row = 0; row < 20; row++) {
-        s32 column;
+        u32 column;
 
         for (column = 0; column < 15; column++) {
             *tilemap++ = tile_pair;

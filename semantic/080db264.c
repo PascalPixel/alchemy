@@ -92,8 +92,8 @@ void Func_080db264(void *argument)
     struct Particle_080db264 *particles =
         (struct Particle_080db264 *)0x02010000;
     s32 variant;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
     Renderer_080db264 renderers[2];
 
     PTR_AT(runtime, 0x7828) = argument;
@@ -138,7 +138,7 @@ void Func_080db264(void *argument)
             Func_080b50e8(0x85);
 
         if (frame <= 0x0f) {
-            s32 wave;
+            u32 wave;
 
             if (Func_080022fc(frame, 5) == 2)
                 ((ArmFill_080db264)0x03000168)(
@@ -152,7 +152,7 @@ void Func_080db264(void *argument)
                 s32 center_y =
                     -((s32)(Func_0800231c(angle) * 8) >> 16) - 8;
                 s32 created = 0;
-                s32 slot;
+                u32 slot;
 
                 if (variant == 0) {
                     const void *source =

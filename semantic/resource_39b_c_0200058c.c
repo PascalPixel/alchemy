@@ -28,7 +28,7 @@ s32 Func_0200058c(u8 *actor)
     s32 packed = steps[*(u16 *)(actor + 6) >> 12];
     u8 *occupant;
     s16 type;
-    s32 i;
+    u32 i;
 
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);

@@ -43,7 +43,7 @@ void Func_080dc454(void)
     s32 frame;
     s32 count;
     s32 total_frames;
-    s32 i;
+    u32 i;
 
     Func_080cd594(1);
     *(volatile u16 *)0x04000020 = 0x100;
@@ -85,7 +85,7 @@ void Func_080dc454(void)
                 s32 point0[3];
                 s32 source_point[3];
                 s32 point1[3];
-                s32 j;
+                u32 j;
 
                 if ((u32)phase > 63)
                     continue;

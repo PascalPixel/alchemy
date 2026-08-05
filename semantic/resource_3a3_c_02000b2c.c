@@ -52,9 +52,9 @@ void Func_02000b2c(void)
         Func_0808a0f0(15, 0x01270000, 0x02e80000);      /* 186<<18 */
         record = Func_0808a080(15);
         *(u16 *)(record + 6) = 0xb000;                  /* 176<<8 */
+        record[0x59] |= 4;
     } else {
         record = Func_0808a080(15);
-        record[0x59] |= 4;
     }
 
     record = Func_0808a080(17);

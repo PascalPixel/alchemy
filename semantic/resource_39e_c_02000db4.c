@@ -50,6 +50,7 @@ void Func_02000db4(void)
     record = Func_020051c6(19);
     i = 0;
     step = 8;
+    *(u16 *)(*(u8 **)(record + 80) + 30) = 0;
     do {
         Func_02005118(step);
         *(s32 *)(record + 16) += 0xffff0000;
@@ -57,7 +58,6 @@ void Func_02000db4(void)
         i++;
         step -= 2;
     } while (i <= 3);
-    *(u16 *)(*(u8 **)(record + 80) + 30) = 0;
     Func_02005370(227);
     Func_02000f4c(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0xfff80000, 0xffff3334,

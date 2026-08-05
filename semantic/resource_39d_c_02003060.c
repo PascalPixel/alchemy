@@ -88,6 +88,8 @@ void Func_0200013c();          /* local: spawn, eight arguments */
 
 void Func_02003060(void)
 {
+    s32 permuted_1;
+    s32 permuted_0;
     u8 *first = Func_0808a080(22);
     u8 *second = Func_0808a080(24);
     u8 params[40];
@@ -101,20 +103,21 @@ void Func_02003060(void)
     Func_080091e0(Func_0808a080(24), 0);
 
     *(s32 *)(params + 0) = 1;
-    *(s32 *)(params + 4) = 5;
     *(u16 *)(params + 24) = 284;               /* 142 << 1 */
     *(s32 *)(params + 8) = 0x6666;
     *(s32 *)(params + 12) = 0x30000;           /* 192 << 10, i.e. 3.0 */
+    *(s32 *)(params + 4) = 5;
 
     for (index = 0; index <= 31; index++) {
         Func_0808a010(1);
-        odd = index & 1;
         if (odd != 0) {
-            x = *(s32 *)(first + 8) + ((Func_080000f8() * 24) & ~0xffff) - 0xc0000;
-            y = *(s32 *)(first + 12) + ((Func_080000f8() * 32) & ~0xffff) + 0x200000;
+            permuted_0 = *(s32 *)(first + 8) + ((Func_080000f8() * 24) & ~0xffff) - 0xc0000;
+            permuted_1 = *(s32 *)(first + 12) + ((Func_080000f8() * 32) & ~0xffff) + 0x200000;
             Func_0200013c(x, y, *(s32 *)(first + 16), 0,
                           -0x40000, 0, 0x1b0000, params);
         } else {
+            x  = permuted_0;
+            y  = permuted_1;
             x = *(s32 *)(second + 8) + ((Func_080000f8() * 24) & ~0xffff) - 0xc0000;
             y = *(s32 *)(second + 12) + ((Func_080000f8() * 32) & ~0xffff) + 0x200000;
             Func_0200013c(x, y, *(s32 *)(second + 16), 0,
@@ -124,6 +127,7 @@ void Func_02003060(void)
             Func_0808a158(22, 256);            /* 128 << 1 */
             Func_0808a158(24, 256);
         }
+        odd = index & 1;
     }
 
     Func_0808a158(22, 0);

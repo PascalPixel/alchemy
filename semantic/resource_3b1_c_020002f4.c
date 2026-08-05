@@ -34,9 +34,9 @@ s32 Func_020002f4(u8 *object)
     object[89] = 8;
     Func_080091e0(object, 0);
 
+    object[35] = (u8) ((object[35] & 0xfe) | 2);
     record[9] = (u8) ((record[9] & (u8) -13) | 4);
     record[21] = (u8) ((record[21] & (u8) -13) | 4);
-    object[35] = (u8) ((object[35] & 0xfe) | 2);
 
     Func_0808a160(object, 15);
     return 1;

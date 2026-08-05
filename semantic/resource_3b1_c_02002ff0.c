@@ -115,7 +115,6 @@ s32 Func_02002ff0(void)
     Func_080770c8(324);
     *(s32 *)(Data_03001ebc + 448) = 521;
 
-    which = 0;
     switch (Data_02000240[225]) {
     case 1:
     case 2:
@@ -150,6 +149,7 @@ s32 Func_02002ff0(void)
     if (which != 0) {
         Func_0808a158(which, 2);
     }
+    which = 0;
 
     switch (Data_02000240[225]) {
     case 1:

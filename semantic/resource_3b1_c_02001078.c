@@ -64,8 +64,8 @@ void Func_02001078(void)
         } else if (Func_080770c0(0x92a) != 0) {
             variant = 0x91f;
         } else if (Func_080770c0(0x929) != 0) {
-            variant = 0x93d;
         } else {
+            variant = 0x93d;
             Func_02001804(16, 0x1e91, 0x934);
             return;
         }

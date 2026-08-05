@@ -178,18 +178,18 @@ void Func_02003c88(void)
     Func_0808a090(21, 128 << 9, 128 << 8);
 
     record = Func_0808a080(22);
-    record[90] &= 0xfe;
     Func_0808a0d0(22, 162, 0x27a);
     Func_0808a010(1);
     record = Func_0808a080(22);
+    record[90] &= 0xfe;
     record[90] |= 1;
 
-    record = Func_0808a080(21);
     record[90] &= 0xfe;
+    record = Func_0808a080(21);
+    record[90] |= 1;
     Func_0808a0d0(21, 162, 169 << 2);
     Func_0808a010(1);
     record = Func_0808a080(21);
-    record[90] |= 1;
 
     Func_0808a1b8(22, 192 << 6, 0);
     Func_02003a00(21, 208 << 8);

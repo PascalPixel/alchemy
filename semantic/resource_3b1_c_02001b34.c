@@ -144,10 +144,10 @@ void Func_02001b34(void)
     Func_0808a090(0, 0x26666, 0x13333);
 
     record = Func_0808a080(0);
-    record[0x5a] &= 0xfe;
     Func_0808a0d0(0, 0xb8 << 2, 0x82 << 2);
     Func_0808a010(1);
     record = Func_0808a080(0);
+    record[0x5a] &= 0xfe;
     record[0x5a] |= 1;
 
     Func_0808a1b8(0, 0x8000, 20);

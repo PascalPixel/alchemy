@@ -151,10 +151,10 @@ void Func_02000674(void)
         Func_0808a010(20);
         Func_0808a180(1, 0);
         *(u16 *)(*workspace + 0x1d8) += 1;
+        *(u16 *)(*workspace + 0x1d8) += 2;
     } else {
         Func_0808a010(10);
         Func_0808a110(0, 33);
-        *(u16 *)(*workspace + 0x1d8) += 2;
         Func_0808a010(30);
         Func_0808a110(1, 3);
         Func_0808a010(20);

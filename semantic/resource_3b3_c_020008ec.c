@@ -50,10 +50,10 @@ void Func_020008ec(s32 deltaIndex, s32 objectIndex, s32 x, s32 y, s32 z,
     u8 *object = Func_0808a080(objectIndex);
     const s32 *delta = &deltaTable[deltaIndex * 4];
     s32 depth = (Abs_020008ec(delta[1]) + Abs_020008ec(delta[3])) >> 4;
-    s32 width = (Abs_020008ec(delta[0]) + Abs_020008ec(delta[2])) >> 4;
     s32 originalX = *(s32 *)(object + 8);
     s32 originalZ = *(s32 *)(object + 16);
     s32 tileX = (originalX + delta[0] * 0x10000) >> 20;
+    s32 width = (Abs_020008ec(delta[0]) + Abs_020008ec(delta[2])) >> 4;
     s32 tileZ = (originalZ + delta[1] * 0x10000) >> 20;
     s32 packedStep;
     s32 halfStepX;

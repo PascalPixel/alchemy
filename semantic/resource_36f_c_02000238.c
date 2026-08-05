@@ -65,15 +65,15 @@ extern u32 Data_020086a0[];
 void Func_02000238(void)
 {
     u32 *write = Data_020086a0;
-    u32 *submit = Data_020086a0;
     s32 tile = *(u16 *)((u8 *)0x03001b10 + (Data_02008650[0] << 2) + 2) >> 5;
+    u32 *submit = Data_020086a0;
     u32 row;
 
     for (row = 0; row <= 17; row++) {
         s32 remaining;
 
-        write[0] = 0;
         write[1] = (u32)((88 + (row << 3)) << 16) | 136 | 0x8400;   /* 132 << 8 */
+        write[0] = 0;
         write[2] = 0xf000 | (u32)tile;                              /* 240 << 8 */
         write += 3;
 

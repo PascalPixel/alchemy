@@ -77,8 +77,8 @@ void Func_0200012c(u8 *object)
     case 4:
         Func_08009080(object, 2);
         /* 234 << 17, 128 << 14, 158 << 18. */
-        Func_08009150(object, 0x01d40000, 0x00200000, 0x02780000);
         *(s32 *) (object + 76) = 60;
+        Func_08009150(object, 0x01d40000, 0x00200000, 0x02780000);
         next = *phase + 1;
         goto store_phase;
 
@@ -94,23 +94,23 @@ void Func_0200012c(u8 *object)
         next = *phase + 1;
         goto store_phase;
 
+        goto advance_and_clear;
     case 7:
         if (actor[91] == 0) {
             Func_08009080(object, 3);
             object[99] = 2;
         }
-        goto advance_and_clear;
 
     case 9:
         Func_08009080(object, 2);
         /* 240 << 17, 128 << 14, 150 << 18. */
         Func_08009150(object, 0x01e00000, 0x00200000, 0x02580000);
-        *(s32 *) (object + 76) = 60;
         *phase = (u16) (*phase + 1);
         if (actor[91] != 0) {
             return;
         }
         object[99] = 3;
+        *(s32 *) (object + 76) = 60;
         return;
 
     case 10:
@@ -139,8 +139,8 @@ void Func_0200012c(u8 *object)
         return;
     }
 
-advance_and_clear:
     *phase = (u16) (*phase + 1);
+advance_and_clear:
     /* The stored 0 comes from the interior pool word at 0x02000210. */
     object[98] = 0;
     return;

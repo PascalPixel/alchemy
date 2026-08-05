@@ -137,9 +137,9 @@ void Func_02003638(void)
     out = (u32 *)workspace;
 
     /* Top piece. */
+    out[2] = tile | 0xe400;
     out[0] = 0;
     out[1] = ((104 - (count << 4)) << 16) | column | 0x8000;
-    out[2] = tile | 0xe400;
     Func_080001e8(out, 255, 12);
     out += 3;
 
@@ -154,16 +154,16 @@ void Func_02003638(void)
 
     /* The two middle pieces. */
     out[0] = 0;
-    out[1] = 0x700000 | column | 0x8000;            /* 224 << 15 */
     out[2] = (tile + 6) | 0xe400;
     Func_080001e8(out, 255, 12);
     out += 3;
+    out[1] = 0x700000 | column | 0x8000;            /* 224 << 15 */
 
-    out[0] = 0;
     out[1] = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
     out[2] = (tile + 6) | 0xe400;
     Func_080001e8(out, 255, 12);
     out += 3;
+    out[0] = 0;
 
     /* Right column: the same rows mirrored, with the row field advancing by
      * 0x100000 from 0x800000 instead of counting down. */

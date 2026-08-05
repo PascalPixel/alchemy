@@ -84,6 +84,7 @@ struct Resource373Actor *Func_080090c8();
 
 void Func_02005d68(struct Resource373Spawn *spawn)
 {
+    s32 permuted_20;
     struct Resource373Actor *halves[2];
     u8 *scene = RESOURCE_373_SCENE;
     struct Resource373Actor *first;
@@ -97,26 +98,27 @@ void Func_02005d68(struct Resource373Spawn *spawn)
         s32 tileGroup;
         s32 packed;
 
-        halves[index] = actor;
         if (actor == 0) {
             continue;
         }
+        halves[index] = actor;
 
         actor->field14 = spawn->field14;
-        sprite = actor->sprite;
         actor->field55 = 0;
         actor->field64 = 0;
-        actor->owner = spawn;
+        sprite = actor->sprite;
         if (sprite == 0) {
             continue;
         }
+        actor->owner = spawn;
 
         Func_08009020(sprite, 0);
         sprite->field26 = 0;
         Func_080001b8(sprite->tileGroup);
 
-        tileGroup = *(const u16 *)(scene + 0x46);
         sprite->tileGroup = (u8)tileGroup;
+        tileGroup  = permuted_20;
+        permuted_20 = *(const u16 *)(scene + 0x46);
         sprite->flags1d = (u8)(sprite->flags1d | 1);
 
         /* Bits 5..14 of the group's second halfword become bits 0..9. */
@@ -130,15 +132,15 @@ void Func_02005d68(struct Resource373Spawn *spawn)
         sprite->frame[22] = 0;
     }
 
-    first = halves[0];
     second = halves[1];
+    first = halves[0];
 
     first->behaviour = (void (*)(void))0x0200dd15;
     RESOURCE_373_SPRITE_FLAGS09(first->sprite) =
         (u8)((RESOURCE_373_SPRITE_FLAGS09(first->sprite) & ~0x0c) | 4);
 
+    second->flags23 = 2;
     second->behaviour = (void (*)(void))0x0200dcc5;
     RESOURCE_373_SPRITE_FLAGS09(second->sprite) =
         (u8)((RESOURCE_373_SPRITE_FLAGS09(second->sprite) & ~0x0c) | 4);
-    second->flags23 = 2;
 }

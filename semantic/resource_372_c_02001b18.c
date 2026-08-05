@@ -148,8 +148,8 @@ void Func_02001b18(void)
     Func_0808a100(30, 8);
     Func_0808a100(29, 8);
 
-    obj = Func_0808a080(30);
     *(s32 *)(obj + 24) = (s32)0xffff0000;
+    obj = Func_0808a080(30);
 
     Func_0808a1e0(32, 2);
     Func_0808a1e0(33, 2);
@@ -165,7 +165,6 @@ void Func_02001b18(void)
 
     /* Exactly 40 iterations: counter starts at 0, is incremented, then
      * `cmp #39 / bls` loops back. */
-    i = 0;
     do {
         Func_0808a080(32);
         Func_020042bc();
@@ -178,6 +177,7 @@ void Func_02001b18(void)
         i++;
         Func_080000c0(1);
     } while ((unsigned int)i <= 39);
+    i = 0;
 
     Data_0200d7f8 = 0;
     Data_0200d7fc = 0;
@@ -185,8 +185,8 @@ void Func_02001b18(void)
     Func_080000d0(Data_0200c5a9, 3200);
     Func_0808a010(40);
 
-    Data_0200d7fc = 1;
     Func_0808a010(30);
+    Data_0200d7fc = 1;
     Func_0808a0f0(19, 0x720000, 0x1220000);     /* 228<<15, 145<<17 */
 
     obj = Func_0808a080(19);
@@ -207,9 +207,9 @@ void Func_02001b18(void)
     Func_080091f0(0x50000, 0x50000, 0x10000);
     Func_080f9010(145);
 
-    Data_0200d7fc = 2;
     Func_0808a090(19, 0xcccc, 0x6666);
     Func_0808a0c0(19, 114, 0x14d);
+    Data_0200d7fc = 2;
     Func_0808a100(19, 2);
     Func_080091f0(0x20000, 0x20000, 0x10000);
     Func_080f9010(145);
@@ -228,8 +228,8 @@ void Func_02001b18(void)
     Func_080091f0(0x20000, 0x20000, 0x10000);
     Func_080f9010(145);                         /* one argument here */
 
-    Data_0200d7fc = 1;
     Func_0808a010(20);
+    Data_0200d7fc = 1;
     Func_0808a1f0(32, 0x102);
     Func_0808a138(32, 2);
     Func_0808a180(31, 0);
@@ -240,10 +240,10 @@ void Func_02001b18(void)
     Func_0808a138(30, 2);
     Func_0808a180(30, 0);
 
-    Data_0200d7f8 = 1;
     Func_0808a100(29, 1);
     Func_080000c0(1);
     Func_0808a158(29, 0);
+    Data_0200d7f8 = 1;
     Func_0808a1e8(29, 0x105, 20);
     Func_0808a1b8(29, 0x8000, 40);              /* 128<<8 */
     Func_0808a1b8(29, 0, 20);

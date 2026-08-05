@@ -247,8 +247,8 @@ void Func_020039fc(s32 palette)
     Queue_020039fc((u32)(buffer + (162 << 6)), 0x06002000, 0x84000140);
     Func_0808a010(4);
 
-    *frame = highA;
     Queue_020039fc((u32)(buffer + (186 << 6)), 0x06002000, 0x84000140);
+    *frame = highA;
     Func_0808a010(4);
 
     *frame = highB;

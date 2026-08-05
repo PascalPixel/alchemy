@@ -109,13 +109,13 @@ void Func_02002dec(void)
 
     obj = Func_0808a080(8);
     spr = *(u8 **)(obj + 80);
-    obj[35] = (u8)(obj[35] & 254);
     spr[9] = (u8)((spr[9] & ~12) | 4);
+    obj[35] = (u8)(obj[35] & 254);
 
+    *flag0 = (u8)(*flag0 & 254);
     obj = Func_0808a080(0);              /* one argument here */
     flag0 = obj + 35;
     spr = *(u8 **)(obj + 80);
-    *flag0 = (u8)(*flag0 & 254);
     spr[9] = (u8)((spr[9] & ~12) | 8);
 
     p = Func_0808a080(0);

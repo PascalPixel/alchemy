@@ -150,10 +150,10 @@ void Func_020015dc(void)
 
     /* Record 0's +0x55 flag is stashed in the frame and cleared for the whole
      * scene; the tail puts it back. */
+    *savedFlagSlot = 0;
     record = Func_0808a080(0);
     savedFlagSlot = record + 0x55;
     savedFlag = *savedFlagSlot;
-    *savedFlagSlot = 0;
 
     Func_0808a0f0(0, 0x01970000, 0x02b20000);
     Func_0808a0f0(21, 0x01880000, 0x03800000);

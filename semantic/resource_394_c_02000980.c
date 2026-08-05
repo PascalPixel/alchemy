@@ -67,9 +67,9 @@ s32 Func_02000980(void)
     u8 *actor;
     s32 shade;
 
-    *(u8 **)0x020092c4 = (u8 *)0x02001000;
     *(u8 **)0x020092c8 = (u8 *)0x02001002;
     *(u8 **)0x020092c0 = (u8 *)0x02001004;
+    *(u8 **)0x020092c4 = (u8 *)0x02001000;
 
     Func_080091b8(32, 0, 64, 32, 0, 64);
     Func_080091c0(0, 0, 32, 32, 0, 64);
@@ -80,8 +80,8 @@ s32 Func_02000980(void)
         *(u32 *)0x040000d8 = *(u32 *)0x020092c0;
         *(u32 *)0x040000dc = 0x84000012;
 
-        **(s16 **)0x020092c4 = 0;
         **(s16 **)0x020092c8 = 1;
+        **(s16 **)0x020092c4 = 0;
     }
 
     Func_02000a90(*(s16 **)0x020092c0);
@@ -93,17 +93,17 @@ s32 Func_02000980(void)
     actor = Func_0808a080(9);
     actor[0x55] = 0;
 
-    actor = Func_0808a080(10);
     *(u16 *)(actor + 32) = 8;
     shade = 0xc000;
+    actor = Func_0808a080(10);
     *(s32 *)(actor + 24) = shade;
     /* the literal pool sits here in the row; r0 and r3 carry across it */
     *(s32 *)(actor + 28) = shade;
 
     *(s32 *)(Data_03001ebc + 448) = 516;
 
+    return 0;
     if (Func_080770c0(0x845) == 0) {
         Func_02000e64(4);
     }
-    return 0;
 }

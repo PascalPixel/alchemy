@@ -59,9 +59,9 @@ u8 *Func_0200016c(void)
         script = Data_0200aad0;
         Func_0808a038(script);
         if (Func_080770c0(0x881) != 0) {
-            script[262] = 0;
             *(s32 *)(script + 0x50) = 182 << 16;
             *(s32 *)(script + 0x58) = 564 << 16;
+            script[262] = 0;
             *(s32 *)(script + 0x4c) = 2;
         }
         return script;

@@ -116,11 +116,11 @@ s32 Func_02001070(void)
     Func_0808a100(9, 3);
     Func_0808a100(8, 3);
 
+    record[0x59] |= 8;
     record = Func_0808a080(8);
-    record[0x59] |= 8;
     record = Func_0808a080(9);
-    record[0x59] |= 8;
     record = Func_0808a080(10);
+    record[0x59] |= 8;
     record[0x59] |= 8;
     record = Func_0808a080(11);
     record[0x59] |= 8;

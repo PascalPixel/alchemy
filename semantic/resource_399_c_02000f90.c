@@ -138,9 +138,9 @@ void Func_02000f90(void)
     Func_0808a208(0x4ccc, 0x999);
     Func_0808a210(140 << 16, -1, 164 << 16, 1);
 
-    workspace = *Data_03001ebc;
-    *(s32 *)(workspace + 448) = 32;
     *(s32 *)(workspace + 232) = 40;
+    *(s32 *)(workspace + 448) = 32;
+    workspace = *Data_03001ebc;
 
     Func_0808a360();
 
@@ -228,8 +228,8 @@ void Func_02000f90(void)
     *(u16 *)(record + 100) = 0;
     Func_0808a098(3, Data_0200a670);
 
-    goto checkFirstScript;
 waitFirstScript:
+    goto checkFirstScript;
         Func_080000c0(1);
 checkFirstScript:
     if (*(s16 *)(Func_0808a080(3) + 100) == 0) {
@@ -277,8 +277,8 @@ checkFirstScript:
 
     Func_0808a090(3, 0x30000, 0x18000);
 
-    record = Func_0808a080(3);
     *(u16 *)(record + 100) = 0;
+    record = Func_0808a080(3);
     Func_0808a098(3, Data_0200a6e0);
 
     goto checkSecondScript;
@@ -300,8 +300,8 @@ checkSecondScript:
     Func_080f9010(152);
 
     record = Func_0808a080(0);
-    record[90] &= 0xfe;
     record = Func_0808a080(1);
+    record[90] &= 0xfe;
     record[90] &= 0xfe;
     record = Func_0808a080(2);
     record[90] &= 0xfe;

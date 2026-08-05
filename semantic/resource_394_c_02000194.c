@@ -67,6 +67,7 @@ void Func_02000194(void)
         do {
             u8 *piece = *(u8 **)(record + 4);
 
+            record += 6;
             if (**(s16 **)0x020092c8 == 1) {
                 Func_08009080(piece, 4);
                 piece[35] = 3;
@@ -84,7 +85,6 @@ void Func_02000194(void)
                 piece[85] = 2;
                 *(s32 *)(piece + 12) = 0;
             }
-            record += 6;
         } while (record[0] != -1);
     }
 

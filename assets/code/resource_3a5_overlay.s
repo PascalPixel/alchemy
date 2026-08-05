@@ -512,13 +512,8 @@ AlchemyC_020000a0:
 	.4byte 0x0200a120
 	.4byte 0x02008105
 	.4byte 0xffff0000
-	push {lr}
-	movs r0, #13
-	movs r1, #3
-	movs r2, #3
-	bl .L_02002152
-	pop {r0}
-	bx r0
+AlchemyC_02000314:
+	.space 0x10
 	push {r5, r6, r7, lr}
 	adds r7, r0, #0
 	adds r6, r1, #0

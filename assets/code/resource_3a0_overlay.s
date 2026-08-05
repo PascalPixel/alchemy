@@ -559,17 +559,8 @@ AlchemyC_02000314:
 	strb	r3, [r0, #0]
 	pop	{r0}
 	bx	r0
-	push	{lr}
-	movs	r0, #19
-	bl	sub_0200172e
-	ldr	r2, [r0, #80]
-	movs	r1, #160
-	ldrh	r3, [r2, #30]
-	lsls	r1, r1, #5
-	adds	r3, r3, r1
-	strh	r3, [r2, #30]
-	pop	{r0}
-	bx	r0
+AlchemyC_02000358:
+	.space 0x18
 	push	{r5, lr}
 	movs	r0, #14
 	sub	sp, #56

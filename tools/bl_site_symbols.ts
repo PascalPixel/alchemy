@@ -24,6 +24,7 @@
 // the thumb bit changes nothing (the resolver masks it), and the per-overlay
 // `_call_via_rN` linking delta from callViaBankBase makes it worse (that
 // constant applies to the call-via bank, not to ordinary local callees).
+import { readdirSync, readFileSync } from "node:fs";
 import { assembleOverlay, OVERLAY_BASE } from "./overlay_disasm.ts";
 import { resolveSpan } from "./alchemist.ts";
 import { dirname, join } from "node:path";
@@ -104,8 +105,51 @@ function selfTest(): void {
   console.log("self-test=ok tool=bl_site_symbols");
 }
 
+// Find every owner whose source does not already name its calls at the
+// decoded addresses. Needs no compile -- it compares the reference encoding
+// against the names the source uses -- so it can sweep the whole corpus
+// cheaply and rank by how many bytes are at stake.
+function scan(): void {
+  const semanticDir = join(ROOT, "semantic");
+  const byOverlay = new Map<string, Uint8Array>();
+  const rows: Array<{ id: string; span: number; sites: number; named: number }> = [];
+
+  for (const name of readdirSync(semanticDir).sort()) {
+    const matched = /^(resource_[0-9a-f]+)_c_([0-9a-f]{8})\.c$/i.exec(name);
+    if (matched === null) continue;
+    const overlay = matched[1];
+    const offset = Number.parseInt(matched[2], 16) - OVERLAY_BASE;
+    const span = resolveSpan(overlay, offset);
+    if (span === undefined) continue;
+
+    let image = byOverlay.get(overlay);
+    if (image === undefined) {
+      try {
+        image = assembleOverlay(join(ROOT, "assets", "code", `${overlay}_overlay.s`), OVERLAY_BASE);
+      } catch { continue; }
+      byOverlay.set(overlay, image);
+    }
+
+    const sites = blSiteSymbols(image, OVERLAY_BASE + offset, span);
+    if (sites.length === 0) continue;
+    const source = readFileSync(join(semanticDir, name), "utf8");
+    // How many of the required per-site names the source already uses.
+    const named = sites.filter(({ symbol }) => source.includes(symbolName(symbol))).length;
+    if (named < sites.length) rows.push({ id: `${overlay}:${offset.toString(16)}`, span, sites: sites.length, named });
+  }
+
+  rows.sort((a, b) => b.span - a.span);
+  const bytes = rows.reduce((total, row) => total + row.span, 0);
+  console.log(`owners not naming every call site at its decoded address: ${rows.length} (${bytes} span bytes)`);
+  for (const row of rows.slice(0, 25)) {
+    console.log(`  ${row.id.padEnd(20)} span=${String(row.span).padStart(5)} sites=${row.sites} already_named=${row.named}`);
+  }
+  console.log("a bl-displacement residual is only PART of most of these; the span is an upper bound.");
+}
+
 async function main(): Promise<void> {
   if (Bun.argv.includes("--self-test")) return selfTest();
+  if (Bun.argv.includes("--scan")) return scan();
   const id = Bun.argv[2];
   const matched = /^(resource_[0-9a-f]+):(?:0x)?([0-9a-f]+)$/i.exec(id ?? "");
   if (matched === null) {

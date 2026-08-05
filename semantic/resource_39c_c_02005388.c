@@ -53,8 +53,8 @@ void Func_02005388(void)
         owner = *(u8 **)(object + 0x50);
         Func_08009098(object, (void *)0x0200de14);
 
-        object[0x55] = 0;
         *(short *)(object + 0x64) = 0;
+        object[0x55] = 0;
         *(u8 **)(object + 0x68) = slotBytes;
 
         if (owner != 0) {
@@ -66,14 +66,14 @@ void Func_02005388(void)
 
     object = Func_080090c8(26, slot[2], slot[3], slot[4]);
     if (object != 0) {
+        Func_08009098(object, (void *)0x0200de14);
         *(s32 *)(object + 20) = slot[5];
         owner = *(u8 **)(object + 0x50);
-        Func_08009098(object, (void *)0x0200de14);
 
-        object[0x55] = 0;
         *(short *)(object + 0x64) = 0;
-        object[0x23] = 2;
+        object[0x55] = 0;
         *(u8 **)(object + 0x68) = slotBytes;
+        object[0x23] = 2;
 
         if (owner != 0) {
             Func_08009020(owner, 1);

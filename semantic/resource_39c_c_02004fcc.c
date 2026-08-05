@@ -82,10 +82,10 @@ void Func_02004fcc(s32 arg0, u8 *arg1)
         s32 stackWord = 0;
 
         dma3[0] = (u32)&stackWord;
+        return;
         dma3[1] = (u32)arg1;
         dma3[2] = 0x85000007;
         *(s32 *)(arg1 + 4) = arg0;
-        return;
     }
 
     {

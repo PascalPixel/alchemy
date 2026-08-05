@@ -27,9 +27,9 @@ extern s32 Func_0300013c(s32 distance, s32 delta);
 
 void Func_02005244(u8 *object)
 {
-    BinaryFixedHelper fixedMultiply = (BinaryFixedHelper)0x03000118;
     u8 *target = *(u8 **)(object + 104);
     s32 targetX = *(s32 *)(target + 8);
+    BinaryFixedHelper fixedMultiply = (BinaryFixedHelper)0x03000118;
     s32 targetZ = *(s32 *)(target + 16);
     s32 deltaX = targetX - *(s32 *)(object + 8);
     s32 deltaZ = targetZ - *(s32 *)(object + 16);

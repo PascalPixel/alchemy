@@ -66,8 +66,8 @@ void Func_02002934(void)
     if (selector == 1 || selector == 98) {
         if (Func_080770c0(0x109) == 0) {
             entity = Func_0808a080(0);
-            Func_0808a018(entity);
             *(s32 *)(entity + 12) = 0x100000;   /* 128 << 13 */
+            Func_0808a018(entity);
             Func_0808a020();
         }
     } else if (selector == 99) {

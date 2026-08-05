@@ -45,10 +45,10 @@ void Func_02004a08(void)
     s32 response;
 
     actor = Func_0808a080(8);
-    position = *(s32 *)(actor + 8);
     if (position < 0) {
         position = (s32)((u32)position + 0x000fffff);
     }
+    position = *(s32 *)(actor + 8);
     if ((position >> 20) != 48) {
         return;
     }

@@ -153,9 +153,9 @@ s32 Func_02003d20(void)
     Data_02000240[289] = 11;
     bldcnt[0] = 0x3f40;
     *(s32 *)(Data_03001ebc + 448) = 516;
-    bldcnt[1] = 0x1010;
     Func_02004fcc(21, Data_02001000);
     Func_0808a408(0);
+    bldcnt[1] = 0x1010;
     if (Func_080770c0(0x875) != 0) {
         Func_080000d0(0x02008d59, 3200);
     } else {

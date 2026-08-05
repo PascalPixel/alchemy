@@ -92,8 +92,8 @@ void Func_02000518(void)
     other = Func_02004968(9);
     *(s32 *)(other + 40) = 160 << 13;
 
-    other = Func_02004974(9);
     *(s32 *)(other + 72) = spawnOffset;
+    other = Func_02004974(9);
 
     Func_0200499a(9, 192 << 10, 192 << 9);
     Func_020049b6(9, 152, 196 << 1);

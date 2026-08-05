@@ -99,8 +99,8 @@ void Func_020006c0(void)
         Func_080f9010(158);
     }
 
-    Func_08009178(Data_0200b190[variant - 1],
                   Data_0200b1a8[(variant - 1) * 2],
+    Func_08009178(Data_0200b190[variant - 1],
                   Data_0200b1a8[(variant - 1) * 2 + 1]);
 
     Func_0808a090(0, 0x8000, 0x4000);

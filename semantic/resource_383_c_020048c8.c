@@ -86,8 +86,8 @@ void Func_020048c8(void)
     u16 count;
 
     leader = Func_0808a400(0);
-    workspace = *(u8 **)0x03001ebc;
     blocked = 0;
+    workspace = *(u8 **)0x03001ebc;
 
     /* ---- object 2: steer towards object 0 ---------------------------- */
     follower = Func_0808a400(2);
@@ -143,8 +143,8 @@ void Func_020048c8(void)
             if (Func_02004840(exit) == 0) {
                 Func_0808a1f0(24, 2);
             } else {
-                Func_08009080(follower, 4);
                 blocked = 1;
+                Func_08009080(follower, 4);
                 goto actor25;
             }
         }
@@ -166,10 +166,10 @@ actor25:
             heading = (s16)(*(u16 *)(follower + 6) + 0x8000);
             exit = Func_02004754(cell, &heading);
             if (Func_02004840(exit) == 0) {
+                blocked += 2;
                 Func_0808a1f0(25, 2);
             } else {
                 Func_08009080(follower, 4);
-                blocked += 2;
                 goto tally;
             }
         }

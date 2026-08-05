@@ -100,7 +100,6 @@ void Func_020057fc(struct Resource373Emitter *emitter)
     Func_080f9010(131);
 
     emitter->x = 0;
-    emitter->y = 0;
     emitter->z = 0;
     emitter->field38 = (s32)0x80000000;
     emitter->field3c = (s32)0x80000000;
@@ -108,4 +107,5 @@ void Func_020057fc(struct Resource373Emitter *emitter)
     emitter->field24 = 0;
     emitter->field28 = 0;
     emitter->field2c = 0;
+    emitter->y = 0;
 }

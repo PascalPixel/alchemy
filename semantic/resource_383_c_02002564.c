@@ -86,14 +86,14 @@ void Func_02002564(void)
         Func_020026e4(24, 1, 2, Data_0200d5b0);
         expected = 3;
         descriptor = Data_0200d8bc;
-    case 0:
         goto next4;
+    case 0:
 
-    case 1:
         Func_020026e4(24, 1, 4, Data_0200d678);
-        goto next3;
         Func_020026e4(24, 2, 3, Data_0200d5d8);
+    case 1:
         expected = 1;
+        goto next3;
         descriptor = Data_0200d830;
 
         Func_020026e4(24, 2, 1, Data_0200d538);

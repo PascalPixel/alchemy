@@ -1693,27 +1693,8 @@ AlchemyC_02001ad0:
 	.2byte 0x0200
 AlchemyC_02001b9c:
 	.space 0x40
-	ldr	r3, [r0, #8]
-	ldr	r2, [r0, #68]
-	adds	r3, r3, r2
-	str	r3, [r0, #8]
-	ldr	r2, [r0, #72]
-	ldr	r3, [r0, #12]
-	adds	r3, r3, r2
-	str	r3, [r0, #12]
-	ldr	r2, [r0, #76]
-	ldr	r3, [r0, #16]
-	adds	r3, r3, r2
-	str	r3, [r0, #16]
-	ldr	r2, [r0, #48]
-	ldr	r3, [r0, #24]
-	adds	r3, r3, r2
-	str	r3, [r0, #24]
-	ldr	r2, [r0, #52]
-	ldr	r3, [r0, #28]
-	adds	r3, r3, r2
-	str	r3, [r0, #28]
-	bx	lr
+AlchemyC_02001bdc:
+	.space 0x2a
 	.2byte 0x0000
 AlchemyC_02001c08:
 	.space 0xe

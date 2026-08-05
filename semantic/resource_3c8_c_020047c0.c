@@ -84,8 +84,8 @@ repeat_wave:
         Func_080000c0(3);
 
         if (wave == 3 && repeat <= 2) {
-            repeat++;
             goto repeat_wave;
+            repeat++;
         }
         Func_080000d0(Func_02004600, 200 << 4);
         Func_08009180(58, wave + 12, 34, wave + 12, 3, 1);

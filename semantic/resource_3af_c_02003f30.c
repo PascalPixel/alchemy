@@ -134,13 +134,13 @@ void Func_02003f30(void)
     Func_0808a1b8(0, 224 << 8, 0);
 
     if (Func_0808a070(0, 0) == 1) {
+        return;
         Func_020039ec(0x2016);
         Func_0808a020();
-        return;
     }
 
-    workspace = Data_03001ebc;
     *(u16 *)(workspace + 472) += 1;
+    workspace = Data_03001ebc;
     Func_0808a190(0x2016, 0);
 
     Func_02000bb8();

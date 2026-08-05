@@ -55,20 +55,20 @@ void Func_0200391c(void)
         Data_0200dbb4 = 0;
     }
 
-    phase = (s16)(Data_0200dbb4 + 1);
     Data_0200dbb4 = phase;
+    phase = (s16)(Data_0200dbb4 + 1);
 
     if (phase <= 13) {
         u32 packed;
 
-        Data_0200dbf0[0] = 0;
+        Func_080001e8(Data_0200dbf0, 255);
         packed = (u32)((s32)(s16)Data_0200dbc0 - 8);
-        packed |= (u32)((s32)(s16)Data_0200dc34 - 8) << 16;
-        packed |= 0x40000000;
         packed |= (u32)Data_0200db98 << 28;
+        Data_0200dbf0[0] = 0;
+        packed |= 0x40000000;
+        packed |= (u32)((s32)(s16)Data_0200dc34 - 8) << 16;
         Data_0200dbf0[1] = packed;
         Data_0200dbf0[2] = (u32)tile | 0x400;
-        Func_080001e8(Data_0200dbf0, 255);
     } else if (phase > 19) {
         Data_0200dbb4 = 0;
     }

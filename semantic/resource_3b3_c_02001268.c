@@ -88,10 +88,10 @@ s32 Func_02001268(void)
     Func_080f9010(152);
     Func_08009080(actor, 7);
 
-    actor->speedA = 0x30000;
     actor->speedB = 0x20000;
     actor->lift = 0x40000;
     actor->endpointFlags &= 0x7e;
+    actor->speedA = 0x30000;
 
     Func_080091e0(actor, 0);
     probeX = *(s16 *)((u8 *)probe + 2);

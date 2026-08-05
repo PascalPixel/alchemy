@@ -93,10 +93,10 @@ void Func_02005d10(void)
         outcome = 1;
 
     Func_0808a138(actor0, 1);
+        *(u16 *)(Data_03001ebc + 472) += 2;
     if (outcome == 1)
         *(u16 *)(Data_03001ebc + 472) += 1;
     else if (outcome == 2)
-        *(u16 *)(Data_03001ebc + 472) += 2;
     Func_0808a130(actor0, 2);
     Func_0200486c(actor0);
     Func_0808a170(0x1f2d);

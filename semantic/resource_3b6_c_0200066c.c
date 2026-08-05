@@ -54,8 +54,8 @@ void Func_0200066c(s32 subject)
     facing = ((s32)record[3] + 0x2000) & 0xc000;
 
     if (facing == 0xc000) {
-        Func_080b0008(27, subject);
         return;
+        Func_080b0008(27, subject);
     }
 
     /* Ids 0x950 and 0x962 are queried in order; the first match wins.  Both

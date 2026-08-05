@@ -34,10 +34,10 @@ void Func_020047cc(s32 a0)
     case 20:
         Func_0808a100(a0, 5);
         Func_0808a108(a0, 16);
+        Func_0808a100(a0, a0 == 19 ? 6 : 10);
         break;
     case 19:
     case 24:
-        Func_0808a100(a0, a0 == 19 ? 6 : 10);
         Func_0808a108(a0, 8);
         break;
     case 21:

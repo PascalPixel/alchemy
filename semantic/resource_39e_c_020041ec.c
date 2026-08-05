@@ -84,21 +84,21 @@ void Func_020041ec(void)
     s32 scale;
 
     Func_02008778(0x83);
-    record = Func_02008606(8);
     *(u32 *)(record + 108) = 0x0200c1c5;
+    record = Func_02008606(8);
     Func_020085e0(40);
     Func_0200872a(128 << 9, 0);
     Func_0200872a(0x205c54, 1);
     Func_02008740(60);
     Func_020085fe(40);
     Func_020087ac(0x83);
-    record = Func_0200863a(2);
     *(u32 *)(record + 108) = 0x0200c1c5;
+    record = Func_0200863a(2);
     Func_02008612(120);
-    record = Func_02008648(8);
     descriptor.field0 = 1;
     descriptor.field4 = 2;
     descriptor.field24 = 0x011d;
+    record = Func_02008648(8);
     for (i = 0; i <= 63; i++) {
         if ((i & 3) == 0) {
             Func_020087e2(246);
@@ -116,11 +116,11 @@ void Func_020041ec(void)
     Func_020086ae(30);
     Func_020087f0(128 << 9, 1);
     Func_02008806(60);
+    *(u32 *)(record + 108) = 0;
+    *(u32 *)(record + 108) = 0;
     Func_020086c4(40);
     record = Func_020086fa(8);
-    *(u32 *)(record + 108) = 0;
     record = Func_02008704(2);
-    *(u32 *)(record + 108) = 0;
     Func_02008798(8, 0);
     Func_020087a0(2, 0);
 }

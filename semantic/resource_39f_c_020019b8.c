@@ -52,8 +52,8 @@ void Func_020019b8(void)
             if ((probe[2] >> 20) == 42) {
                 Func_080091c0(26, 20, 2, 4, 42, 23);
                 Func_0808a1e0(9, 1);
-                armed = 1;
                 Func_080770c8(0x312);
+                armed = 1;
             }
         } else if (probe[1] == 11) {
             if ((probe[2] >> 20) == 40) {
@@ -62,8 +62,8 @@ void Func_020019b8(void)
                 armed = 1;
                 Func_080770c8(0x313);
             }
-        } else {
             goto kind8;
+        } else {
         }
 
         if (armed == 0) {

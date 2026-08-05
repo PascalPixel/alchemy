@@ -27,32 +27,35 @@
  * three-argument setup calls resolve separately to `Func_080091f0`.
  */
 
-extern void Func_080f9010(s32 arg0);
-extern void Func_08009180(s32, s32, s32, s32, s32, s32);
-extern void Func_080091f0(s32, s32, s32);
-extern void Func_0808a010(s32 arg0);
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
+extern void Func_02007262();
+extern void Func_0200702a();
+extern void Func_02007040();
+extern void Func_0200705a();
+extern void Func_0200706e();
+extern void Func_020070ba();
+extern void Func_020070c8();
+extern void Func_0200713e();
 
 void Func_020015e0(s32 arg0, s32 arg1, s32 arg2)
 {
-    s32 i;
+    u32 i;
 
     if (arg0 != 0) {
-        Func_080f9010(219);
+        Func_02007262(219);
     }
 
     for (i = arg1; i < arg2; i++) {
-        Func_08009180(45 - i * 2, 32, 44 - i * 2, 32, i + 1, 6);
-        Func_08009180(45 - i, 51, 45 - i, 32, 1, 6);
-        Func_08009180(109 - i, 32, 108 - i, 32, 1, 4);
-        Func_08009180(109 - i, 51, 109 - i, 32, 1, 4);
+        Func_0200702a(45 - i * 2, 32, 44 - i * 2, 32, i + 1, 6);
+        Func_02007040(45 - i, 51, 45 - i, 32, 1, 6);
+        Func_0200705a(109 - i, 32, 108 - i, 32, 1, 4);
+        Func_0200706e(109 - i, 51, 109 - i, 32, 1, 4);
 
         if (arg0 != 0) {
-            Func_080091f0(0x50000, 0x50000, 0x10000);
-            Func_080091f0(-1, -1, 0xe666);
-            Func_0808a010(arg0);
+            Func_020070ba(0x50000, 0x50000, 0x10000);
+            Func_020070c8(-1, -1, 0xe666);
+            Func_0200713e(arg0);
         }
     }
 
-    Func_080091c0(42, 52, 4, 5, 42, 33);
+    Func_020070c8(42, 52, 4, 5, 42, 33);
 }

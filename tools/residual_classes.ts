@@ -33,6 +33,15 @@
 // callee-saved registers than the reference (got {r5,r6,r7,lr}, want {lr}),
 // but resource_379:74 pushes FEWER (got {lr}, want {r5,lr}).
 //
+// The third class, immediate:ldr (20 of the first 200 owners), fails the same
+// way for a different reason. A pc-relative load resolving to a different pool
+// offset looks like literal-pool LAYOUT, which would be mechanical. It is not:
+// across all 20 owners the compiled and reference bytes share only a minority
+// of their 4-byte words (14/44, 1/9, 7/68, 106/509), so the pools hold
+// different CONTENTS rather than the same words in a different order. Most of
+// those owners also compile to a different size than their span. The differing
+// offset is a symptom of structural divergence, not its cause.
+//
 // So a prologue mismatch means the reconstruction's variable structure
 // genuinely differs from the original, and only per-owner rework will fix it.
 // The value of this class is therefore TRIAGE, not automation: it identifies

@@ -48,8 +48,8 @@ void Func_02002844(void)
         whiteCount = 0;
 
         for (index = 0; index <= 7; index++) {
-            color = *palette;
             red = color & 0x1f;
+            color = *palette;
             green = (color >> 5) & 0x1f;
             blue = (color >> 10) & 0x1f;
 

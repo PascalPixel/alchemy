@@ -26,12 +26,12 @@ extern u8 *Func_0808a080(s32 arg0);
 
 u8 *Func_02000630(s32 *referenceBucketOut, s32 *slotIndexOut, s32 *keyIndexOut)
 {
-    const s32 *keyCursor = (const s32 *)0x0200dd90;
     const s32 *deltaCursor = (const s32 *)0x0200dda8;
     const s32 *referenceDeltas = (const s32 *)0x0200dd50;
     u8 *reference = Func_0808a080(0);
     s32 referenceBucket = *(u16 *)(reference + 6) >> 12;
     s32 referenceDelta = referenceDeltas[referenceBucket];
+    const s32 *keyCursor = (const s32 *)0x0200dd90;
     s32 referenceX = ((*(s32 *)(reference + 8) >> 16) +
                       (referenceDelta >> 16)) >> 4;
     s32 referenceZ = ((*(s32 *)(reference + 16) >> 16) +

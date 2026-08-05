@@ -35,17 +35,17 @@ s32 Func_02000cd0(u8 *object)
     s32 z;
 
     extra[0] = 0;
-    extra[1] = (Data_03001e40 & 1) != 0 ? 7 : 5;
     extra[2] = 0xcccc;
+    extra[1] = (Data_03001e40 & 1) != 0 ? 7 : 5;
     extra[3] = 0xcccc;
 
     randomUnit = (Func_080000f8() << 3) >> 16;
-    displacement = randomUnit * 3;
     displacement += displacement << 4;
+    displacement = randomUnit * 3;
     displacement += displacement << 8;
 
-    x = *(s32 *)(object + 8) + (8 - (Data_03001e40 & 0xf)) * 0x10000;
     y = *(s32 *)(object + 12) + 0x1a0000;
+    x = *(s32 *)(object + 8) + (8 - (Data_03001e40 & 0xf)) * 0x10000;
     z = *(s32 *)(object + 16);
 
     Func_0200013c(x, y, z, 0, (s32)(0u - displacement), 0,

@@ -91,9 +91,9 @@ void Func_02000d2c(void)
     u16 heading;
 
     state = (u8 *)Func_0808a080(10);
+    depth = *(s32 *)(state + 12);
     origin = *(s32 *)(state + 8);
     actor = *(u8 **)(state + 80);
-    depth = *(s32 *)(state + 12);
 
     Func_0808a018();
     Func_080f9010(141);
@@ -107,11 +107,11 @@ void Func_02000d2c(void)
     accumulator = 0;
     for (;;) {
         accumulator += 128 << 12;
+        *(u16 *)(actor + 30) =
             (u16)(*(u16 *)(actor + 30) + ((u32)accumulator >> 16));
         *(s32 *)(state + 8) =
-        *(u16 *)(actor + 30) =
-        heading = *(u16 *)(actor + 30);
             origin + (Func_08000120(*(u16 *)(actor + 30) + (128 << 7)) << 4);
+        heading = *(u16 *)(actor + 30);
         if (heading > 0x8fff) {
             break;
         }
@@ -142,8 +142,8 @@ void Func_02000d2c(void)
         *(u16 *)(actor + 30) = (u16)(step + heading);
 
         lobe = Func_08000120(*(u16 *)(actor + 30) + (128 << 7));
-        *(s32 *)(state + 8) = origin + (lobe << 4);
         cosine = Func_08000118(*(u16 *)(actor + 30) + (128 << 8));
+        *(s32 *)(state + 8) = origin + (lobe << 4);
 
         if (*(u16 *)(actor + 30) > (128 << 8)) {
             *(s32 *)(state + 12) = depth - (cosine << 3);

@@ -10,32 +10,34 @@ extern void Func_080f9010(s32);
 
 void Func_02001df8(void)
 {
+    s32 permuted_4;
     s32 *slot = ((s32 **)(Data_03001ebc + 0x14))[Data_02000434];
     u8 *object;
     u8 *owner;
 
-    object = Func_080090c8(26, slot[2], slot[3], slot[4]);
+    permuted_4 = Func_080090c8(26, slot[2], slot[3], slot[4]);
     if (object != 0) {
         *(s32 *)(object + 20) = slot[5];
         owner = *(u8 **)(object + 0x50);
+        *(s32 **)(object + 0x68) = slot;
         Func_08009098(object, (void *)0x0200a7c4);
         object[0x55] = 0;
-        *(short *)(object + 0x64) = 0;
-        *(s32 **)(object + 0x68) = slot;
         if (owner != 0) {
-            Func_08009020(owner, 2);
             owner[0x26] = 0;
+            Func_08009020(owner, 2);
             owner[9] = (owner[9] & ~0x0c) | 4;
         }
+        *(short *)(object + 0x64) = 0;
     }
+    object  = permuted_4;
 
     object = Func_080090c8(26, slot[2], slot[3], slot[4]);
     if (object != 0) {
         *(s32 *)(object + 20) = slot[5];
         owner = *(u8 **)(object + 0x50);
         Func_08009098(object, (void *)0x0200a7c4);
-        object[0x55] = 0;
         *(short *)(object + 0x64) = 0;
+        object[0x55] = 0;
         object[0x23] = 2;
         *(s32 **)(object + 0x68) = slot;
         if (owner != 0) {

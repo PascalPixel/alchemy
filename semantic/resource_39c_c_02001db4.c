@@ -55,9 +55,9 @@ void Func_02001db4(s32 variant)
                     u32 randomX = (u32)(Func_080000f8() << 3) >> 16;
                     u32 randomY = (u32)(Func_080000f8() << 3) >> 16;
                     Func_0200013c(
+                        0, (s32)(randomY * 0x3333) - 0xcccc,
                         right + 0x00600000, 0, 0x02ea0000,
                         (s32)(randomX * 0x3333) - 0xcccc,
-                        0, (s32)(randomY * 0x3333) - 0xcccc,
                         0x00090000, descriptor);
                 } else {
                     u32 randomX = (u32)(Func_080000f8() << 3) >> 16;

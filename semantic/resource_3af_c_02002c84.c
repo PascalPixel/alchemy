@@ -155,8 +155,8 @@ void Func_02002c84(void)
 
     /* Phase 1 -- ask who is in the party. */
     for (index = 0; index <= 3; index++) {
-        roster[index] = Func_02003150((s32)index);
         category[index] = 0;
+        roster[index] = Func_02003150((s32)index);
     }
 
     /* Phase 2 -- nine search blocks, in source order. */
@@ -184,9 +184,9 @@ void Func_02002c84(void)
     for (scan = 0; scan <= 3; scan++) {
         if (roster[scan] == 25) {
             matched[found] = 25;
+            break;
             category[found] = found;
             found++;
-            break;
         }
     }
     if (found == 4) goto scene;

@@ -121,8 +121,8 @@ void Func_02001db0(void)
     Func_0808a158(0, 15);
     Func_080091e0(Func_0808a080(0), 0);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 448 + 66;
+    workspace = Data_03001ebc;
     Func_0808a360();
 
     Func_0808a090(21, 0x19999, 0xcccc);

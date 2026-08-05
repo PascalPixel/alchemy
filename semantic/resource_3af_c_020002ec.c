@@ -113,7 +113,6 @@ s32 Func_020002ec(u8 *object)
         if (*(s32 *)(object + 56) != (s32)0x80000000) goto tail;
         if (*(s32 *)(object + 60) != *(s32 *)(object + 56)) goto tail;
         if (*(s32 *)(object + 64) != *(s32 *)(object + 60)) goto tail;
-        object[0x62]++;
         Func_080f9010(146);
         if (object[0x63] != 0) {
             Func_0808a1b8(22, 0xd000, 0);              /* 208 << 8 */
@@ -121,6 +120,7 @@ s32 Func_020002ec(u8 *object)
             Func_0808a1b8(22, 0xb000, 0);              /* 176 << 8 */
         }
         goto tail;
+        object[0x62]++;
         if ((((u32)Func_080000f8() << 2) >> 16) != 0) {
             *(s32 *)(Func_0808a080(22) + 40) = 0x20000;
             goto tail;
@@ -139,10 +139,10 @@ s32 Func_020002ec(u8 *object)
     case 7:
         if (*(s32 *)(object + 56) != (s32)0x80000000) goto tail;
         if (*(s32 *)(object + 60) != *(s32 *)(object + 56)) goto tail;
-        if (*(s32 *)(object + 64) != *(s32 *)(object + 60)) goto tail;
         *(s32 *)(object + 48) = 0x20000;               /* 128 << 10, 2.0 */
         *(s32 *)(object + 52) = 0x10000;               /* 128 <<  9, 1.0 */
         *(u16 *)(object + 100) = 0;
+        if (*(s32 *)(object + 64) != *(s32 *)(object + 60)) goto tail;
         *(u16 *)(object + 102) = 0;
         object[0x62]++;
         *(s32 *)(object + 76) = 0;

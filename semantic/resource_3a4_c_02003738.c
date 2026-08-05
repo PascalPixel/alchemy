@@ -56,6 +56,7 @@ void Func_02003738(u8 *record)
     s16 *countdown;
     s32 forward;
     s32 backward;
+    s32 permuted_24;
     Multiply16_16_02003738 multiply16_16 =
         (Multiply16_16_02003738)0x03000118;
 
@@ -82,10 +83,11 @@ void Func_02003738(u8 *record)
     probe[0] = *(s32 *)(record + 8);
     probe[1] = *(s32 *)(record + 12);
     probe[2] = *(s32 *)(record + 16);
-    Func_08000128(multiply16_16(distance, 0xc000), heading, probe);
-    *(s32 *)(record + 8) = probe[0];
     *(s32 *)(record + 16) = probe[2];
+    Func_08000128(multiply16_16(distance, 0xc000), heading, probe);
+    permuted_24 = probe[0];
     forward = Func_080091a8(2, probe[0], probe[2]);
+    *(s32 *)(record + 8) = permuted_24;
 
     Func_08000128(-multiply16_16(distance, 0x18000), heading, probe);
     backward = Func_080091a8(2, probe[0], probe[2]);

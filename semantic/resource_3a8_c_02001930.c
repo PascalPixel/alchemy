@@ -109,13 +109,13 @@ void Func_02001930(void)
 
     present = Func_080770c0(0x109);
     if (present != 0) {
-        s32 *slots = Data_03001ee0;
         s32 value = Func_080770c0(0x200);
+        s32 *slots = Data_03001ee0;
 
+        slots[6] = value;
         if (value != 0) {
             value = (s32)Func_0808a080(0);
         }
-        slots[6] = value;
     } else {
         Func_080770c8(0x200);
         if (Data_02000240[225] == 4) {
@@ -131,8 +131,8 @@ void Func_02001930(void)
             Func_0808a100(11, 5);
             Func_080091c0(0, 0, 1, 1, 9, 14);
             Func_080091c0(0, 0, 1, 1, 9, 45);
-            entity = Func_0808a080(11);
             entity->flags23 = (u8)(entity->flags23 | 2);
+            entity = Func_0808a080(11);
         }
     }
 
@@ -145,9 +145,9 @@ void Func_02001930(void)
     if (Func_080770c0(0x915) != 0) {
         Func_0808a0f0(10, 0x01aa0000, 0x02da0000);
         entity = Func_0808a080(10);
-        entity->facing = 0x5000;
         Func_08009180(88, 48, 88, 45, 2, 3);
         Func_08009180(24, 49, 24, 48, 2, 1);
+        entity->facing = 0x5000;
         Func_08009180(25, 42, 25, 47, 1, 1);
         Func_080091c0(22, 50, 2, 1, 24, 49);
     }

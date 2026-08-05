@@ -25,15 +25,15 @@ void Func_020018a4(void)
     s16 *phase = (s16 *)0x0200a6be;
     s16 *pulse = (s16 *)0x0200a6bc;
     s16 *decay = (s16 *)0x0200a6c0;
-    s16 *active = (s16 *)0x0200b030;
-    u16 tile = *(u16 *)(0x03001b10 + *selected_slot * 4 + 2) >> 5;
     volatile u32 *dma3 = (volatile u32 *)0x040000d4;
+    u16 tile = *(u16 *)(0x03001b10 + *selected_slot * 4 + 2) >> 5;
+    s16 *active = (s16 *)0x0200b030;
     u8 *work;
     u32 index;
 
     if (*active != 0) {
-        *phase = 2;
     } else if (Func_080770c0(0x104) != 0) {
+        *phase = 2;
         if (*phase > 0)
             *phase = (s16)(*phase - 1);
     } else if (*phase <= 1) {
@@ -102,9 +102,9 @@ void Func_020018a4(void)
             *decay = 0;
     }
 
-    dma3[0] = 0x0200a730;
     dma3[1] = (u32)work;
     dma3[2] = 0x84000240;
+    dma3[0] = 0x0200a730;
 
     if (*decay <= 118) {
         s32 limit = 128 - *pulse;

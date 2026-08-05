@@ -332,6 +332,33 @@ function revisions(local: string, remote: string): string[] {
   return lines(output(git(args), `outgoing revision scan ${local}`));
 }
 
+// A run of space-separated hex byte pairs: someone pasted bytes.
+const BYTE_DUMP = /(?:\b[0-9a-fA-F]{2}\b[ \t]+){7}\b[0-9a-fA-F]{2}\b/;
+
+/**
+ * Reject a commit MESSAGE that carries ROM bytes.
+ *
+ * Everything else in this file scans file blobs. Commit messages were never
+ * scanned at all, so the gate passing said nothing about them -- and messages
+ * are published to the remote exactly like file contents are.
+ *
+ * This deliberately checks one unambiguous thing: a run of space-separated hex
+ * byte pairs, which is a pasted byte dump and never ordinary prose. It does
+ * NOT try to detect quoted disassembly. A message legitimately discusses
+ * instructions ("the bl displacement", "the prologue pushes r7"), and any
+ * pattern loose enough to catch a pasted listing also blocks that, which would
+ * push authors to work around the gate rather than with it. Where to draw that
+ * line stays an author's judgement; this catches the case that is not a
+ * judgement call.
+ */
+export function commitMessageReason(message: string): string | undefined {
+  return BYTE_DUMP.test(message) ? "commit message contains a raw byte dump" : undefined;
+}
+
+function commitMessage(commit: string): string {
+  return output(git(["log", "-1", "--format=%B", commit]), `commit message ${commit}`).toString();
+}
+
 async function checkPush(): Promise<void> {
   const updates = lines(Buffer.from(await Bun.stdin.text()));
   const commits = new Set<string>();
@@ -341,6 +368,15 @@ async function checkPush(): Promise<void> {
     const [, local, , remote] = fields;
     if (ZERO_OID.test(local)) continue;
     for (const commit of revisions(local, remote)) commits.add(commit);
+  }
+  const messageFailures: string[] = [];
+  for (const commit of commits) {
+    const reason = commitMessageReason(commitMessage(commit));
+    if (reason !== undefined) messageFailures.push(`${commit.slice(0, 12)}: ${reason}`);
+  }
+  if (messageFailures.length > 0) {
+    for (const failure of messageFailures) console.error(failure);
+    throw new Error(`refusing to publish ${messageFailures.length} commit message(s)`);
   }
   const entries: Array<{ scope: string; path: string; data: () => Buffer }> =
     [];
@@ -489,6 +525,31 @@ function selfTest(): void {
     undefined
   ) {
     throw new Error("a binary extension was scanned for conflict markers");
+  }
+
+  // A pasted byte dump in a commit message is the case this catches.
+  if (
+    commitMessageReason("fixed the header\n\n00 11 22 33 44 55 66 77\n") ===
+    undefined
+  ) {
+    throw new Error("a byte dump in a commit message was accepted");
+  }
+  // Everything below is prose a real commit message contains, and blocking any
+  // of it would push authors around the gate instead of through it.
+  for (const accepted of [
+    "Close 12 owners the sweep left open\n",
+    // A full SHA is 40 hex characters and appears in ordinary messages.
+    "reverts 3d36cfb0aa11bb22cc33dd44ee55ff6677889900\n",
+    // Addresses and spans are how these commits describe their own work.
+    "resource_39b:e6c span 0x02000e6c..0x02000e78 is not audited\n",
+    // Discussing instructions must stay allowed; only pasted BYTES are not.
+    "the prologue pushes r7 where the reference does not\n",
+    // Two hex pairs in a row are a byte pair, not a dump.
+    "the low halfword ff 00 stayed wrong\n",
+  ]) {
+    if (commitMessageReason(accepted) !== undefined) {
+      throw new Error(`a legitimate commit message was rejected: ${accepted.trim()}`);
+    }
   }
 }
 

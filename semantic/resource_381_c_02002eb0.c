@@ -75,8 +75,8 @@ void Func_02002eb0(u8 *descriptor)
     Func_080f9010(292);
 
     for (i = 0; i <= 1; i++) {
-        entity = Func_080090c8(26,
                                *(s32 *)(descriptor + 8),
+        entity = Func_080090c8(26,
                                *(s32 *)(descriptor + 12),
                                *(s32 *)(descriptor + 16));
         made[i] = entity;
@@ -113,9 +113,9 @@ void Func_02002eb0(u8 *descriptor)
     /* Hook the two handlers and copy the reference entity's low flag bits. */
     *(void **)(made[0] + 108) = (void *)Func_02002e5c;
 
-    entity = Func_0808a080(15);
     sub = *(u8 **)(made[0] + 0x50);
     sub[9] = (u8)(((*(u8 **)(entity + 0x50))[9] & 12) | (sub[9] & ~13));
+    entity = Func_0808a080(15);
 
     entity = Func_0808a080(15);
     peer = made[1];

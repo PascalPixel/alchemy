@@ -123,8 +123,8 @@ void Func_02001510(void)
     Func_02001264();
 
     SCENE_H2 = 0;
-    SCENE_H0 = 0;
     SCENE_H1 = 0;
+    SCENE_H0 = 0;
     SCENE_H3 = 0;
 
     Func_0808a170(0x1001);
@@ -132,8 +132,8 @@ void Func_02001510(void)
     Func_0808a1e8(16, 256, 0);                  /* 128 << 1 */
     Func_0808a128(16, 6, 30);
     Func_0808a210(0x023e0000, -1, 0xae0000, 1); /* 174 << 16; r1 = 1 set
-                                                   before the pool hop */
     Func_0808a218();
+                                                   before the pool hop */
     Func_0808a010(30);
     Func_020025fc(0x8010, 20);
 

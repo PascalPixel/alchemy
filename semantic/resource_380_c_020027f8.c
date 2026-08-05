@@ -126,16 +126,16 @@ void Func_020027f8(void)
     Func_08009128();
 
     /* First drop-in: actor 0, against record 8 (the f8c pattern). */
-    record8.pointer = Func_0808a080(8);
     initialFieldValue = 0x1999;
     *(s32 *)(record8.pointer + 24) = initialFieldValue;
-    *(s32 *)(record8.pointer + 28) = initialFieldValue;
-    record = Func_0808a080(0);
-    channel = *(u8 **)(record + 0x50) + 38;
+    record8.pointer = Func_0808a080(8);
     loopDelta = 0;
+    *(s32 *)(record8.pointer + 28) = initialFieldValue;
+    channel = *(u8 **)(record + 0x50) + 38;
     *channel = loopDelta;
-    *(s32 *)(record + 24) = initialFieldValue;
+    record = Func_0808a080(0);
     *(s32 *)(record + 28) = initialFieldValue;
+    *(s32 *)(record + 24) = initialFieldValue;
     Func_0808a158(0, 256);
     Func_0808a0f0(0, 0x01d70000, 0x1220000);
     phase.pointer = record + 0x55;

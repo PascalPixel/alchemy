@@ -28,13 +28,22 @@
  * Func_080f9010 receives only r0=0x53 here.
  */
 
-extern void Func_08015040(s32 arg0, s32 arg1);
-extern void Func_08077030(s32 arg0);
-extern s32 Func_08077248(s32 arg0);
-extern void Func_080772b0(s32 arg0, s32 arg1);
-extern void Func_0808a398(s32 arg0, s32 arg1);
-extern s32 Func_080b0058(s32 *out_first, s32 *out_second);
-extern void Func_080f9010(s32 arg0);
+/* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
+   (see resource_382:3ac for the rule). Repeated callees therefore appear
+   several times under different names: Func_08077030 is called four times
+   and Func_08015040 and Func_08077248 twice each. */
+extern void Func_02008e52(s32 arg0);                        /* 0x0200433c -> 080f9010 */
+extern void Func_02008e4a(s32 arg0, s32 arg1);              /* 0x02004344 -> 0808a398 */
+extern void Func_02008c6a(s32 arg0, s32 arg1);              /* 0x0200434c -> 08015040 */
+extern s32 Func_02008cd0(s32 arg0);                         /* 0x02004352 -> 08077248 */
+extern s32 Func_02008cda(s32 arg0);                         /* 0x0200435c -> 08077248 */
+extern void Func_02008c88(s32 arg0, s32 arg1);              /* 0x0200436a -> 08015040 */
+extern s32 Func_02008e80(s32 *out_first, s32 *out_second);  /* 0x02004372 -> 080b0058 */
+extern void Func_02008d08(s32 arg0, s32 arg1);              /* 0x02004382 -> 080772b0 */
+extern void Func_02008cd8(s32 arg0);                        /* 0x0200438a -> 08077030 */
+extern void Func_02008cde(s32 arg0);                        /* 0x02004390 -> 08077030 */
+extern void Func_02008ce4(s32 arg0);                        /* 0x02004396 -> 08077030 */
+extern void Func_02008cea(s32 arg0);                        /* 0x0200439c -> 08077030 */
 
 /* STILL-OPEN residual (36/148 differing bytes): confined entirely to the
  * bl-instruction displacement halfwords at every one of the 12 call sites
@@ -60,22 +69,22 @@ void Func_02004328(void)
     s32 second;
     s32 free_slots;
 
-    Func_080f9010(0x53);
-    Func_0808a398(224, 3);
-    Func_08015040(0x111b, 1);
+    Func_02008e52(0x53);
+    Func_02008e4a(224, 3);
+    Func_02008c6a(0x111b, 1);
     do {
-        free_slots = 30 - Func_08077248(0);
-        free_slots -= Func_08077248(1);
+        free_slots = 30 - Func_02008cd0(0);
+        free_slots -= Func_02008cda(1);
 
         if (free_slots <= 3) {
-            Func_08015040(0x111c, 1);
-            if (Func_080b0058(&second, &first) != -1)
-                Func_080772b0(second, first);
+            Func_02008c88(0x111c, 1);
+            if (Func_02008e80(&second, &first) != -1)
+                Func_02008d08(second, first);
         }
     } while (free_slots <= 3);
-    Func_08077030(224);
-    Func_08077030(224);
-    Func_08077030(224);
-    Func_08077030(224);
+    Func_02008cd8(224);
+    Func_02008cde(224);
+    Func_02008ce4(224);
+    Func_02008cea(224);
     *(s16 *)(record + 472) = saved;
 }

@@ -148,11 +148,11 @@ SoftDouble Func_020015a4(SoftFloatRecord *record)
             if (high > 0x0fffffffu) {
                 biasedExponent = 1u;
             }
-        } else if (exponent >= 1024) {
-            biasedExponent = 0x7ffu;
             low = 0u;
+        } else if (exponent >= 1024) {
             high = 0u;
         } else {
+            biasedExponent = 0x7ffu;
             biasedExponent = (u32)(exponent + 0x3ff);
 
             if ((low & 0xffu) == 0x80u) {

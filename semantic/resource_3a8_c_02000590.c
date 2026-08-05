@@ -650,9 +650,9 @@ void Func_02000590(void)
     }
     *(u16 *)(entity + 6) = (u16)pose;
 
+    goto finish;
     Func_0808a4f0();
     Func_080770c8(0x911);
-    goto finish;
 
 aborted:
     /* Reached only by the two `bl 0x0200151c` gotos above.  Keep the four

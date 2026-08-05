@@ -25,13 +25,23 @@
  * binding, or translator escape is needed.
  */
 
-extern void Func_080000d8(void *callback);
-extern void Func_080001b8(s32 slot);
-extern s32 Func_03000380(s32 delta, s32 duration);
-extern s32 Func_080001e0(s32 packed);
-/* This import is used with the four historical arities below. */
-extern void Func_080001e8();
 
+
+
+
+/* This import is used with the four historical arities below. */
+
+
+extern void Func_02007828(void *callback);
+extern void Func_02007882(s32 slot);
+extern s32 Func_02007852(s32 delta, s32 duration);
+extern s32 Func_020078ee(s32 delta, s32 duration);
+extern s32 Func_0200794e(s32 delta, s32 duration);
+extern s32 Func_02007a0e(s32 packed);
+extern void Func_02007ad2();
+extern void Func_02007b4e();
+extern void Func_02007bac();
+extern void Func_02007c00();
 void Func_02002ee8(void)
 {
     volatile s16 *paletteSlot = (volatile s16 *)0x0200d9a4;
@@ -76,8 +86,8 @@ void Func_02002ee8(void)
             *queueCell = (u32)queue;
 
             if (command == -1) {
-                Func_080000d8((void *)0x0200aee9);
-                Func_080001b8(*paletteSlot);
+                Func_02007828((void *)0x0200aee9);
+                Func_02007882(*paletteSlot);
                 return;
             }
 
@@ -136,7 +146,7 @@ void Func_02002ee8(void)
         s32 target = (s16)*commandC;
         s32 start = (s16)*(volatile u16 *)0x0200dba8;
 
-        first = start + Func_03000380(progress * (target - start),
+        first = start + Func_02007852(progress * (target - start),
                                       (s16)*durationA);
         if (progress >= (s16)*durationA)
             *durationA = 0;
@@ -149,7 +159,7 @@ void Func_02002ee8(void)
         s32 target = (s16)*commandD;
         s32 start = (s16)*commandE;
 
-        second = start + Func_03000380(progress * (target - start),
+        second = start + Func_020078ee(progress * (target - start),
                                        (s16)*durationB);
         if (progress >= (s16)*durationB)
             *durationB = 0;
@@ -162,14 +172,14 @@ void Func_02002ee8(void)
         s32 target = (s16)*commandG;
         s32 start = (s16)*commandF;
 
-        third = start + Func_03000380(progress * (target - start),
+        third = start + Func_0200794e(progress * (target - start),
                                       (s16)*durationC);
         if (progress >= (s16)*durationC)
             *durationC = 0;
     }
 
     packed = (first & 0xffff) | ((second & 0xffff) << 16);
-    packed = Func_080001e0(packed);
+    packed = Func_02007a0e(packed);
     *(volatile s32 *)0x0200dbb0 += third;
 
     /* Mode 1 emits four records. */
@@ -182,7 +192,7 @@ void Func_02002ee8(void)
             write[1] |= 0x80004038u | ((u32)packed << 25);
             write[2] = 0x00f40000u | (u32)(tile + i * 8);
             if (y + 0x98 <= 0x12f)
-                Func_080001e8((void *)write, 0xec, write + 3, 0x80004000);
+                Func_02007ad2((void *)write, 0xec, write + 3, 0x80004000);
             write += 3;
         }
     /* Mode 3 emits two narrower records. */
@@ -195,7 +205,7 @@ void Func_02002ee8(void)
             write[1] |= 0x80004030u | ((u32)packed << 25);
             write[2] = 0x00f40000u | (u32)(tile + i * 8);
             if (y + 0x98 <= 0x12f)
-                Func_080001e8((void *)write, 0xec, write + 3, 0x80004000);
+                Func_02007b4e((void *)write, 0xec, write + 3, 0x80004000);
             write += 3;
         }
     /* Mode 4 emits a single record if its 0x98/0x12f bounds permit it. */
@@ -207,7 +217,7 @@ void Func_02002ee8(void)
             write[1] = ((u32)(y + 0x38) & 0x1ff) << 16;
             write[1] |= 0x80004030u | ((u32)packed << 25);
             write[2] = 0x00f40000u | (u32)tile;
-            Func_080001e8((void *)write, 0xec, write + 3);
+            Func_02007bac((void *)write, 0xec, write + 3);
             write += 3;
         }
     /* All other modes use the single centered record arm. */
@@ -216,7 +226,7 @@ void Func_02002ee8(void)
         write[1] = ((u32)(third + 0x98) & 0x1ff) << 16;
         write[1] |= 0x80000030u | ((u32)packed << 25);
         write[2] = 0x00f40000u | (u32)tile;
-        Func_080001e8((void *)write, 0xec);
+        Func_02007c00((void *)write, 0xec);
         write += 3;
     }
 

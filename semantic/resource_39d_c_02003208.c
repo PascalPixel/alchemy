@@ -21,8 +21,8 @@ void Func_02003208(void)
     Func_020031c0(actors, motion[3]);
 
     while (count < 5 && actors[count] != 66) {
-        Func_0808a080(actors[count])[85] = 0;
         count++;
+        Func_0808a080(actors[count])[85] = 0;
     }
 
     Func_080f9010(223);
@@ -32,8 +32,8 @@ void Func_02003208(void)
             u8 *actor = Func_0808a080(actors[i]);
             u8 *target;
 
-            *(s32 *)(actor + 16) += delta;
             target = Func_0808a080(actors[i]);
+            *(s32 *)(actor + 16) += delta;
             actor = Func_0808a080(actors[i]);
             *(s32 *)(target + 64) = *(s32 *)(actor + 16);
         }

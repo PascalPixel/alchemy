@@ -256,7 +256,7 @@ export function resolvedCallNames(overlay: string, owner: number, ownerEnd: numb
       site.site,
       detail.imported !== undefined
         ? `Func_${detail.imported.toString(16).padStart(8, "0")}`
-        : `Func_${(OVERLAY_BASE + site.target).toString(16)}`,
+        : `Func_${(OVERLAY_BASE + site.target).toString(16).padStart(8, "0")}`,
     );
   }
   return names;

@@ -850,6 +850,12 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3c8:2f30 (paired with -fno-cse-shift-immediate above): the
+  // reference sets r0,#0 before each shifted r1/r2 immediate build at every
+  // three-argument call site, same low-destination tie-break tell as
+  // resource_39e:2484 (probed exact, 2026-08-04).
+  "exact/resource_3c8_c_02002f30.c",
+  "semantic/resource_3c8_c_02002f30.c",
   // resource_3c1:0120 and :0194 (byte-identical twins) negate the shake
   // argument r2 for a three-argument call; the reference sets r0/r1 before
   // the negs, the low-destination tie-break, same tell as resource_38e:045c.
@@ -1170,6 +1176,13 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // 8 differing bytes (mode_cohort, 2026-08-04).
   "exact/resource_371_c_020017a4.c",
   "semantic/resource_371_c_020017a4.c",
+  // resource_3c8:2f30 rebuilds its shared 0x80<<7 (0x4000) call argument at
+  // each of its two use sites (sub_02007df6's r2, sub_02007eb8's r1)
+  // instead of caching it in a register across the intervening call;
+  // takes it from a 2-byte span overflow to byte-exact once paired with the
+  // per-site sub_ call symbols (probed exact, 2026-08-04).
+  "exact/resource_3c8_c_02002f30.c",
+  "semantic/resource_3c8_c_02002f30.c",
 ]);
 // resource_372:0ec4's five module-local calls make r7 unavailable in the
 // reference allocation.  Reserving it restores the exact saved-register set;
@@ -1242,6 +1255,12 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3c8:16a4 reloads its recurring 0x201 pool word at each of its
+  // two use sites instead of caching it in a callee-saved register across
+  // the intervening calls; this flag takes it from a 4-byte span overflow
+  // (probed exact-shape-restoring 2026-08-05).
+  "exact/resource_3c8_c_020016a4.c",
+  "semantic/resource_3c8_c_020016a4.c",
   // Its nine literal-pool islands likewise reload recurring words locally;
   // sharing them changes both the saved-register set and pool boundaries.
   "exact/resource_38f_c_020008ec.c",

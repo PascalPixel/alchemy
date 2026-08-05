@@ -13,6 +13,7 @@ void Func_0200131c(void)
 {
     u8 *record;
 
+    s32 permuted_37;
     Func_0808a018();
     Func_0808a0f0(0, 0x00a00000, 0x00800000);
     Func_0808a0f0(8, 0x00980000, 0x00700000);
@@ -48,11 +49,12 @@ void Func_0200131c(void)
     Func_0808a100(9, 1);
     Func_080000d8((u8 *)0x020092a5);
 
-    record = Func_0808a080(0); record[85] |= 2;
+    permuted_37 = Func_0808a080(0); record[85] |= 2;
     *(s32 *)(Func_0808a080(0) + 40) = 0x60000;
+    record  = permuted_37;
+    goto first_descent_test;
     *(s32 *)(Func_0808a080(0) + 44) = 0x60000;
     Func_0808a010(1);
-    goto first_descent_test;
 first_descent_wait:
     Func_0808a010(1);
 first_descent_test:
@@ -67,8 +69,8 @@ first_descent_test:
     Func_0808a010(2);
     *(s32 *)(Func_0808a080(0) + 40) = 0x30000;
     Func_0808a010(1);
-    goto second_descent_test;
 second_descent_wait:
+    goto second_descent_test;
     Func_0808a010(1);
 second_descent_test:
     if (*(s32 *)(Func_0808a080(0) + 12) != 0)

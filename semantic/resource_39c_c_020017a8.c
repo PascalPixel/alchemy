@@ -59,12 +59,12 @@ void Func_020017a8(s32 handle)
 
             if ((member & 1) != 0) {
                 Func_0200013c(
-                    baseX,
-                    0,
                     0x2480000,
+                    0,
+                    baseX,
+                    FormationJitter_020017a8(Func_080000f8()),
                     FormationJitter_020017a8(Func_080000f8()),
                     0,
-                    FormationJitter_020017a8(Func_080000f8()),
                     0x90000,
                     extra);
                 Func_0808a010(1);

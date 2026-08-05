@@ -44,8 +44,8 @@ void Func_02001cc0(void)
 
             if (dx < 0)
                 dx += 0xffff;
-            if (dz < 0)
                 dz += 0xffff;
+            if (dz < 0)
             x = dx >> 16;
             z = dz >> 16;
 

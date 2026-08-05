@@ -92,6 +92,8 @@ extern void Func_02000f6c(s32 arg0);
 
 s32 Func_02003644(void)
 {
+    s32 permuted_4;
+    s32 permuted_3;
     volatile u32 *dma3 = (volatile u32 *)0x040000d4;
     u8 *record;
     u8 *inner;
@@ -139,10 +141,12 @@ s32 Func_02003644(void)
             Func_0808a0f0(8, 0, 0);
         } else {
             record = Func_0808a080(8);
-            inner = *(u8 **)(record + 80);
-            inner[9] = (inner[9] & ~13) | 4;
+            permuted_3 = *(u8 **)(record + 80);
             (*(u8 **)(record + 80))[38] = 2;
+            inner  = permuted_3;
+            permuted_4 = (inner[9] & ~13) | 4;
             *(u16 *)(*(u8 **)(record + 80) + 30) = 0x4000;
+            inner[9]  = permuted_4;
         }
     }
 
@@ -173,8 +177,8 @@ s32 Func_02003644(void)
         *(s32 *)(Func_0808a080(10) + 108) = 0x0200b611;
 
         if (Data_02000240[225] == 52) {
-            stackWord = 0;
             dma3[0] = (u32)&stackWord;
+            stackWord = 0;
             dma3[1] = *(u32 *)0x0200bf6c;
             dma3[2] = 0x85000003;
             if (Func_080770c0(0x109) == 0) {
@@ -215,8 +219,8 @@ s32 Func_02003644(void)
 
         inner = *(u8 **)(Func_0808a080(16) + 80);
         inner[9] |= 12;
-        inner = *(u8 **)(Func_0808a080(20) + 80);
         inner[9] |= 12;
+        inner = *(u8 **)(Func_0808a080(20) + 80);
         Func_0808a080(16)[35] = 2;
         Func_0808a080(20)[35] = 2;
         Func_080091e0(Func_0808a080(16), 0);

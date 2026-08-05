@@ -74,9 +74,9 @@ void Func_02005e04(const SoftDouble *packed, SoftFloatRecord *record)
             record->exponent -= 1;
         }
 
-        record->low = lowWord;
         record->high = mantissaHigh;
         return;
+        record->low = lowWord;
     }
 
     if (exponent == 0x7ffu) {

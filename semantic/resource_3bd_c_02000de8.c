@@ -36,10 +36,10 @@ void Func_02000de8(void)
     u8 savedFlags = record[0x55];
     s32 position[3];
 
-    position[0] = *(s32 *)(record + 8);
-    position[1] = *(s32 *)(record + 12);
     position[2] = *(s32 *)(record + 16);
+    position[0] = *(s32 *)(record + 8);
     Func_08000128(0x200000, *(u16 *)(record + 6) & 0xf000, position);
+    position[1] = *(s32 *)(record + 12);
 
     if (Func_080091d8(record, position) != 0)
         return;

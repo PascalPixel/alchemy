@@ -60,20 +60,20 @@ SoftDouble Func_02005af0(s32 value)
             return (SoftDouble)0xC1E00000u;
         }
         record.low = (u32)(-value);
-        record.high = (u32)((-value) >> 31);
     } else {
         record.low = (u32)value;
         record.high = (u32)(value >> 31);
+        record.high = (u32)((-value) >> 31);
     }
 
     if (record.high <= 0x0FFFFFFFu) {
         do {
-            u32 low = record.low;
             u32 high = record.high;
+            u32 low = record.low;
 
-            record.low = low << 1;
             record.high = (high << 1) | (low >> 31);
             record.exponent -= 1;
+            record.low = low << 1;
         } while (record.high <= 0x0FFFFFFFu);
     }
 

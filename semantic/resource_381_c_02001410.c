@@ -131,9 +131,9 @@ void Func_02001410(void) {
     Func_0808a0f0(0xF, 0, 0);
     Func_02002820(0);
     Func_02002820(1);
-    var_r5_2 = 0;
     FIELD(temp_r9, s32 *, 0x40C) = 0;
     Func_080091f0(0x10000, 0x10000, 0x10000);
+    var_r5_2 = 0;
     Func_0808a010(0x50);
     Func_02002c9c();
     temp_r0 = Func_0808a228();
@@ -461,7 +461,6 @@ void Func_02001410(void) {
     Func_080f9010(0x121);
     Func_080000d8(0x0200A93D);
     Func_080091f0(0x10000, 0x10000, 0x10000);
-    var_r5_4 = 0xF;
     do {
         Func_0200284c(0);
         Func_080000c0(var_r5_4);
@@ -469,6 +468,7 @@ void Func_02001410(void) {
         Func_080000c0(var_r5_4);
         var_r5_4 -= 1;
     } while (var_r5_4 != -1);
+    var_r5_4 = 0xF;
     Func_0200284c(0);
     FIELD(temp_r9, s32 *, 0x40C) = 1;
     Func_080091f0(var_r5_4, var_r5_4, 0xE666);
@@ -531,7 +531,6 @@ void Func_02001410(void) {
         Func_0808a100(0, 0x1C);
     }
     Func_02002d48(1, 0x14, 0);
-    var_r5_5 = 0;
     do {
         Func_02002d94(temp_sl);
         Func_080000c0(1);
@@ -547,6 +546,7 @@ void Func_02001410(void) {
         FIELD(temp_r0_9, s32 *, 0x18) = 0x10000;
         FIELD(temp_r0_9, s32 *, 0x1C) = 0x10000;
     } while (var_r5_5 <= 0x17U);
+    var_r5_5 = 0;
     Func_0808a158(0xF, 0);
     Func_02002d48(0, 0x14, 0);
     Func_0808a170(0x110D);

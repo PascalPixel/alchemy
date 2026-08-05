@@ -73,9 +73,9 @@ void Func_02000de4(void)
     /* The dialogue base held in r8 for the whole owner. */
     line = 0x125f;
 
+    record[91] = 0;
     Func_0808a010(20);
     record = Func_0808a080(2);
-    record[91] = 0;
     Func_0808a128(2, 4, 0);
     Func_0808a010(40);
 

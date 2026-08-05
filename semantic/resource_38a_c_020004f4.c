@@ -46,14 +46,14 @@ void Func_020004f4(s32 slot)
         *(u32 *)(object + 56) = 0x80000000u;
     }
 
-    *(u32 *)(object + 108) = 0x020084c5;
     Func_0808a090(slot, 192 << 10, 192 << 9);
     Func_0808a0b8(slot, 188 << 1, 144 << 1);
-    *(s32 *)(object + 72) = 0xcccc;
     object[85] = 3;
-    object[34] = 0;
+    *(u32 *)(object + 108) = 0x020084c5;
+    *(s32 *)(object + 72) = 0xcccc;
     Func_0808a0e8(slot);
     Func_020004d4(object, 0);
+    object[34] = 0;
 
     Func_080f9010(188);
     Func_080091f0(160 << 11, 160 << 11, 128 << 9);
@@ -77,11 +77,11 @@ void Func_020004f4(s32 slot)
 
     *(u32 *)(object + 108) = 0;
     *(u16 *)(state + 30) = 128 << 5;
+    finalEffect.targetX = 192 << 9;
+    finalEffect.positionY = 0xcccc;
+    finalEffect.targetY = 0x13333;
     finalEffect.kind = 214;
     finalEffect.positionX = 128 << 8;
-    finalEffect.positionY = 0xcccc;
-    finalEffect.targetX = 192 << 9;
-    finalEffect.targetY = 0x13333;
     Func_0200013c(*(s32 *)(object + 8), *(s32 *)(object + 12),
                   *(s32 *)(object + 16), 0, 0, 0, 224 << 13,
                   &finalEffect);

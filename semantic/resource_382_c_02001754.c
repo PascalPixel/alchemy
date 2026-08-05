@@ -5,6 +5,8 @@ void Func_02001754(u8 *object)
 {
     s32 velocity;
 
+    s32 permuted_7;
+    s32 permuted_10;
     *(s32 *)(object + 8) += *(s32 *)(object + 48);
     *(s32 *)(object + 56) = *(s32 *)(object + 8);
     if (*(s16 *)(object + 100) != 0) {
@@ -16,8 +18,10 @@ void Func_02001754(u8 *object)
     }
     *(s32 *)(object + 60) = *(s32 *)(object + 12);
 
-    velocity = *(s32 *)(object + 48);
+    permuted_7 = *(s32 *)(object + 48);
     *(s32 *)(object + 48) = velocity - Func_03000380(velocity, 28);
-    velocity = *(s32 *)(object + 52);
+    permuted_10 = *(s32 *)(object + 52);
+    velocity  = permuted_7;
+    velocity  = permuted_10;
     *(s32 *)(object + 52) = velocity - Func_03000380(velocity, 28);
 }

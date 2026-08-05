@@ -48,6 +48,7 @@ export interface Unit {
   lines: string[];       // verbatim source lines
   pinned: boolean;       // contains a call -- never reordered across another pinned unit
   scope: Unit[] | null;  // for blocks: the units inside (excluding the brace lines)
+  line: number;          // 1-based source line, to match c_structure.py's facts
 }
 
 const DECLARATION = /^\s*(?:extern\s+)?(?:u8|u16|u32|s8|s16|s32|int|char|void|short|long|unsigned|signed)\b[^=()]*;\s*$/;
@@ -77,6 +78,49 @@ const BRACELESS_CONTROL_HEADER = /^\s*(?:\}\s*)?(?:else\s+if\s*\(|if\s*\(|for\s*
 const LABEL = /^\s*[A-Za-z_][A-Za-z0-9_]*\s*:\s*$/;
 const JUMP = /\b(?:return|goto|break|continue)\b/;
 
+// ---------------------------------------------------------------------------
+// Structural facts from a real parse (tools/c_structure.py). The regex rules
+// above are conservative -- they over-refuse rather than let a bad move
+// through -- so they remain the fallback when pycparser is unavailable. When
+// the oracle DOES answer, it is authoritative: it knows which statement a
+// braceless header actually governs and which names a statement truly
+// defines, where the line model can only pattern-match.
+
+export interface StatementFacts {
+  anchor: boolean;
+  governedBy: number | null;
+  writes: string[];
+  reads: string[];
+}
+
+export type Structure = Map<number, StatementFacts>;
+
+export function loadStructure(source: string, functionName: string): Structure | null {
+  try {
+    const run = Bun.spawnSync(["python3", join(ROOT, "tools/c_structure.py"), source, functionName], {
+      cwd: ROOT, stdout: "pipe", stderr: "pipe",
+    });
+    if (run.exitCode !== 0) return null;
+    const parsed = JSON.parse(run.stdout.toString()) as {
+      error?: string;
+      statements?: Array<{ line: number; anchor: boolean; governed_by: number | null; writes: string[]; reads: string[] }>;
+    };
+    if (parsed.error !== undefined || parsed.statements === undefined) return null;
+    const facts: Structure = new Map();
+    for (const statement of parsed.statements) {
+      facts.set(statement.line, {
+        anchor: statement.anchor,
+        governedBy: statement.governed_by,
+        writes: statement.writes,
+        reads: statement.reads,
+      });
+    }
+    return facts;
+  } catch {
+    return null; // never let an oracle failure weaken the regex fallback
+  }
+}
+
 function isControlAnchor(unit: Unit): boolean {
   if (unit.kind !== "statement" || unit.lines.length !== 1) return false;
   const line = unit.lines[0];
@@ -92,14 +136,14 @@ function parseScope(lines: string[], start: number, end: number): Unit[] {
     const line = lines[index];
     const trimmed = line.trim();
     if (trimmed === "") {
-      units.push({ kind: "declaration", lines: [line], pinned: true, scope: null });
+      units.push({ kind: "declaration", lines: [line], pinned: true, scope: null, line: index + 1 });
       index++;
       continue;
     }
     if (trimmed.startsWith("/*") || trimmed.startsWith("//") || /^\*(\s|\/|$)/.test(trimmed)) {
       // Comments attach to nothing; treat each run as an immovable unit so
       // rewrites keep them in place.
-      units.push({ kind: "declaration", lines: [line], pinned: true, scope: null });
+      units.push({ kind: "declaration", lines: [line], pinned: true, scope: null, line: index + 1 });
       index++;
       continue;
     }
@@ -120,12 +164,13 @@ function parseScope(lines: string[], start: number, end: number): Unit[] {
         lines: lines.slice(index, scan + 1),
         pinned: true, // blocks stay put; their inner statements permute
         scope: inner,
+        line: index + 1,
       });
       index = scan + 1;
       continue;
     }
     if (DECLARATION.test(line)) {
-      units.push({ kind: "declaration", lines: [line], pinned: true, scope: null });
+      units.push({ kind: "declaration", lines: [line], pinned: true, scope: null, line: index + 1 });
       index++;
       continue;
     }
@@ -134,6 +179,7 @@ function parseScope(lines: string[], start: number, end: number): Unit[] {
       lines: [line],
       pinned: CALLISH.test(trimmed.replace(/\*\([^)]*\)/g, "")),
       scope: null,
+      line: index + 1,
     });
     index++;
   }
@@ -307,8 +353,30 @@ function preservesDataflow(unit: Unit, crossed: Unit[]): boolean {
   return true;
 }
 
-export function generateMoves(parsed: ParsedFunction): Move[] {
+export function generateMoves(parsed: ParsedFunction, structure: Structure | null = null): Move[] {
   const moves: Move[] = [];
+  // The oracle knows a construct's real role; the regex rule only its shape.
+  // Falling back to the regex on a miss keeps the conservative behaviour.
+  const anchored = (unit: Unit): boolean => {
+    const facts = structure?.get(unit.line);
+    if (facts !== undefined) return facts.anchor || facts.governedBy !== null;
+    return isControlAnchor(unit);
+  };
+  const flows = (unit: Unit, crossed: Unit[]): boolean => {
+    const moving = structure?.get(unit.line);
+    if (moving === undefined) return preservesDataflow(unit, crossed);
+    for (const other of crossed) {
+      const facts = structure.get(other.line);
+      if (facts === undefined) return preservesDataflow(unit, crossed);
+      for (const name of moving.writes) {
+        if (facts.reads.includes(name) || facts.writes.includes(name)) return false;
+      }
+      for (const name of facts.writes) {
+        if (moving.reads.includes(name)) return false;
+      }
+    }
+    return true;
+  };
   forEachScope(parsed.body, "body", (scope, label) => {
     for (let index = 0; index < scope.length; index++) {
       const unit = scope[index];
@@ -327,10 +395,10 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
           // Never move a braceless control header, never move the statement
           // it governs away from it, and never cross one -- all three rebind
           // what the condition controls.
-          if (isControlAnchor(unit)) continue;
-          if (index > 0 && isControlAnchor(scope[index - 1])) continue;
-          if (span.some(isControlAnchor)) continue;
-          if (!preservesDataflow(unit, span.filter((other) => other !== unit))) continue;
+          if (anchored(unit)) continue;
+          if (index > 0 && anchored(scope[index - 1])) continue;
+          if (span.some(anchored)) continue;
+          if (!flows(unit, span.filter((other) => other !== unit))) continue;
           moves.push({
             description: `${direction === 1 ? "sink" : "hoist"} [${label}#${index}] "${unit.lines[0].trim().slice(0, 60)}" by ${distance}`,
             apply: (input) => {
@@ -358,8 +426,8 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
           // Same braceless-header rule as sink/hoist: the sunk store must not
           // cross a header, and a statement a header governs cannot be split
           // out from under it.
-          if (crossed.some(isControlAnchor)) continue;
-          if (index > 0 && isControlAnchor(scope[index - 1])) continue;
+          if (crossed.some(anchored)) continue;
+          if (index > 0 && anchored(scope[index - 1])) continue;
           // Same dependence rule as sink/hoist above, applied to the halves
           // this move actually creates: the sunk `lhs = temp;` store must not
           // cross a read or redefinition of lhs, and the temp's own inputs
@@ -369,6 +437,7 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
             lines: [`${lhs} = ${rhs};`],
             pinned: false,
             scope: null,
+            line: 0,
           };
           if (!preservesDataflow(halves, crossed)) continue;
           const tempType = splitTempType(parsed, lhs);
@@ -379,9 +448,9 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
               const output = cloneParsed(input);
               const editable = scopeAt(output, label);
               const temp = `permuted_${index}`;
-              editable[index] = { kind: "statement", lines: [`${indent}${temp} = ${rhs};`], pinned: false, scope: null };
+              editable[index] = { kind: "statement", lines: [`${indent}${temp} = ${rhs};`], pinned: false, scope: null, line: 0 };
               editable.splice(index + distance + 1, 0, {
-                kind: "statement", lines: [`${indent}${lhs} = ${temp};`], pinned: false, scope: null,
+                kind: "statement", lines: [`${indent}${lhs} = ${temp};`], pinned: false, scope: null, line: 0,
               });
               // C89: the declaration goes at the top of the function body,
               // after any existing declarations.
@@ -818,8 +887,15 @@ export async function main(): Promise<void> {
   // digits of the filename, so the variant file must carry the same stem.
   const variantPath = join(options.work, `variant_${(OVERLAY_BASE + options.offset).toString(16).padStart(8, "0")}.c`);
 
+  // Loaded once from the ORIGINAL file. Moves only reorder units, and each
+  // unit keeps the source line it was parsed from, so a statement's facts
+  // (what it defines, whether it anchors control flow) travel with it.
+  // Anchors and header-governed statements never move, so `governedBy`
+  // line references stay valid for the whole search.
+  const structure = loadStructure(options.source, functionName);
+
   for (let round = 1; best.score > 0 && compiles < options.budget; round++) {
-    const moves = generateMoves(best.parsed);
+    const moves = generateMoves(best.parsed, structure);
     let roundBest: { parsed: ParsedFunction; score: number; description: string } | null = null;
     for (const move of moves) {
       if (compiles >= options.budget) break;

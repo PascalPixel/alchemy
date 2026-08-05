@@ -16,6 +16,7 @@ import { readFileSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { resolveSpan } from "./alchemist.ts";
 import { assembleOverlay } from "./overlay_disasm.ts";
+import { auditedCodeSpan } from "./overlay_adopt.ts";
 import { blSiteSymbols, symbolName } from "./bl_site_symbols.ts";
 
 const ROOT = dirname(Bun.fileURLToPath(import.meta.url).replace(/^file:\/\//, "")).replace(/\/tools$/, "");
@@ -144,7 +145,14 @@ function runAdopt(id: string, source: string): boolean {
   try {
     const [overlay, offsetText] = id.split(":");
     const offset = Number.parseInt(offsetText, 16);
-    const span = resolveSpan(overlay, offset);
+    // Prefer the AUDITED code length over the registered span. A registered
+    // span often runs two bytes past the end of the function's audited code
+    // interval into trailing alignment; adopting there would claim padding as
+    // reconstructed C, so overlay_adopt.ts refuses it. Asking for the audited
+    // length turns those refusals back into legitimate closures -- this is
+    // where the near-exact band lives, and the whole reason those owners sat
+    // at "2 differing bytes".
+    const span = auditedCodeSpan(overlay, OVERLAY_BASE + offset) ?? resolveSpan(overlay, offset);
     const args = ["tools/overlay_adopt.ts", id, "--source", source, "--apply"];
     if (span !== undefined) args.push("--span", String(span));
     execFileSync("bun", args, { cwd: ROOT, encoding: "utf8", timeout: 60_000 });

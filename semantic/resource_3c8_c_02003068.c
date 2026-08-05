@@ -174,7 +174,7 @@ s32 Func_02003068(void)
     struct Sprite *sprite;
     s32 scene;
     s32 step;
-    s32 i;
+    u32 i;
 
     Func_0808a010(1);
     if (Func_080770c0(0x109) != 0) {

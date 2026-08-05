@@ -37,7 +37,7 @@ extern void Func_02009442(s32, s32, s32, s32, s32, s32);
 void Func_02003948(void)
 {
     s32 extra[4];
-    s32 group;
+    u32 group;
     s32 baseZ = (s32)0xfffe0000;
 
     Func_0200936c(76, 61, 74, 38, 1, 1);

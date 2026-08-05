@@ -141,7 +141,7 @@ s32 Func_020012e0(void)
     u16 *workspace = *(u16 **)0x03001ebc;
     u16 *tag = (u16 *)0x02002224;
     s32 installTable;
-    s32 member;
+    u32 member;
     s32 mode;
     s32 streak;
     s32 line;

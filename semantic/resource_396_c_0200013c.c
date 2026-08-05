@@ -87,11 +87,11 @@ void Func_0200013c(s32 x, s32 y, s32 z,
     sprite->state26 = 0;
     particle->mode55 = 0;
     particle->callback = Func_02000104;
-    particle->velocityX = velocityX;
-    particle->velocityZ = velocityZ;
     particle->velocityY = velocityY;
+    particle->velocityX = velocityX;
     sprite->flags9 = (u8)((sprite->flags9 & ~12)
                           | (template->sprite->flags9 & 12));
+    particle->velocityZ = velocityZ;
     particle->rate30 = 0;
     particle->rate34 = 0;
     particle->step64 = 0;

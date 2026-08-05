@@ -126,14 +126,26 @@ struct Selector_02000118 {
 extern struct Selector_02000118 *Data_0200d1d4[];
 
 /* Used for their return values. */
-s32 Func_03000380();
-void Func_08009080();
-void Func_08009098();
-struct Particle_02000118 *Func_080090c8();
-struct Particle_02000118 *Func_0808a080();
-void Func_0808a160();
+s32 Func_02004ff4();
+s32 Func_0200500c();
+s32 Func_0200501a();
+void Func_02004f4e();
+void Func_02004f68();
+struct Particle_02000118 *Func_02004f44();
+struct Particle_02000118 *Func_02004fe6();
+void Func_02005132();
+void Func_02005068();
+void Func_02005078();
 
-/* Old-style declarations: the imports' real interfaces are not known here. */
+/*
+ * CALL SYMBOLS ARE PER-SITE: assets/code/resource_3c8_overlay.s (offset
+ * range 0x02000118-0x020002d2) spells every one of these ten calls as a
+ * direct `bl sub_02004fXX`/`bl sub_020050XX` to an address inside this
+ * overlay's own 0x0200xxxx range -- lifted verbatim below, not re-derived
+ * from where those local routines ultimately jump on to (0x0808a080 etc,
+ * which this file's header comment used and which is invented veneer math,
+ * not the per-site symbol).
+ */
 
 void Func_02000118(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -146,7 +158,7 @@ void Func_02000118(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 id;
     s32 delta;
 
-    template = Func_0808a080(0);
+    template = Func_02004fe6(0);
 
     if ((flags & 0x00100000) != 0 && params != 0) {
         id = params->id24;
@@ -154,14 +166,14 @@ void Func_02000118(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
         id = 222;
     }
 
-    object = Func_080090c8(id, x, y, z);
+    object = Func_02004f44(id, x, y, z);
     if (object == 0) {
         return;
     }
     sprite = object->sprite;
 
-    Func_08009080(object, (flags + 1) & 15);
-    Func_08009098(object, Data_0200d1d4[flags & 15]);
+    Func_02004f4e(object, (flags + 1) & 15);
+    Func_02004f68(object, Data_0200d1d4[flags & 15]);
 
     object->mode55 = 0;
     sprite->state26 = 0;
@@ -182,7 +194,7 @@ void Func_02000118(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
 
     if ((flags & 0x00010000) != 0) {
-        Func_0808a160(object, params->mode);
+        Func_02005132(object, params->mode);
     }
 
     if ((flags & 0x00020000) != 0) {
@@ -199,20 +211,20 @@ void Func_02000118(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     if ((flags & 0x00040000) != 0) {
         selector = Data_0200d1d4[flags & 15];
         if ((flags & 0x00080000) != 0) {
-            object->rate30 = Func_03000380(params->unk10 - object->accum18,
+            object->rate30 = Func_02004ff4(params->unk10 - object->accum18,
                                            selector->unkC);
             delta = params->unk14 - object->accum1c;
         } else {
-            object->rate30 = Func_03000380(params->unk10 + 0xffff0000,
+            object->rate30 = Func_0200500c(params->unk10 + 0xffff0000,
                                            selector->unkC);
             delta = params->unk14 + 0xffff0000;
         }
-        object->rate34 = Func_03000380(delta, selector->unkC);
+        object->rate34 = Func_0200501a(delta, selector->unkC);
     }
 
     if ((flags & 0x00200000) != 0) {
-        Func_08009080(object, 1);
-        Func_08009098(object, params->unk1c);
+        Func_02005068(object, 1);
+        Func_02005078(object, params->unk1c);
     }
 
     if ((flags & 0x00400000) != 0) {

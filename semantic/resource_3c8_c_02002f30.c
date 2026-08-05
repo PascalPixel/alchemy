@@ -12,44 +12,37 @@
  *
  * Every constant here is materialised as `movs #imm ; lsls #shift`, so the
  * values below are exact: 0x80<<8 = 0x8000, 0x80<<7 = 0x4000, 130<<2 = 520,
- * 178<<2 = 712, 130<<18 = 0x02080000 and 196<<18 = 0x03100000.  The last two
- * are 16.16 world coordinates in the same scale the byte-exact siblings use
- * (0x02000754's 0x03280000-style arguments).
+ * 178<<2 = 712, 130<<18 = 0x02080000 and 196<<18 = 0x03100000.
  *
- * All nine `bl` sites are accounted for: 0x0808a018, 0x0808a090, 0x0808a0d0,
- * 0x0808a1b8, 0x02000058, 0x0808a140, 0x0808a010, 0x0808a248, 0x0808a020.
- * The first is reached with no argument register written, so no argument is
- * asserted for it.
- *
- * Import naming follows the note in resource_3c8_c_020002f0.c: each name is
- * the address its call site computes.  0x02002f3e - the address a *different*
- * owner (0x0200226c) branches to - lands in the middle of this routine's own
- * constant-building sequence, which is the direct proof that overlay branch
- * displacements are fixed up at load time and that an encoded address is an
- * import identity rather than a location.  Nothing in this file is a
- * continuation of another owner.
+ * CALL SYMBOLS ARE PER-SITE: the raw assembly (assets/code/resource_3c8_overlay.s
+ * around line 3973) spells eight of the nine calls as direct `bl sub_02007xxx`
+ * to absolute addresses inside the 0x0200xxxx EWRAM range (overlay-local or
+ * resident-service routines, NOT main-image ROM imports) -- lifted verbatim
+ * here, not re-derived from any veneer math. The fifth call (`bl .L_02002fc4`)
+ * is the one genuinely indirect main-image call, routed automatically through
+ * this overlay's own `_call_via_rN` bank; Func_02000058 is correct for it.
  */
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_0808a018();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a1b8();
+void Func_02007dc8();
+void Func_02007df6();
+void Func_02007e2c();
+void Func_02007eb8();
 void Func_02000058();
-void Func_0808a140();
-void Func_0808a010();
-void Func_0808a248();
-void Func_0808a020();
+void Func_02007e92();
+void Func_02007e08();
+void Func_02007f26();
+void Func_02007e22();
 
 void Func_02002f30(void)
 {
-    Func_0808a018();
-    Func_0808a090(0, 0x8000, 0x4000);
-    Func_0808a0d0(0, 520, 712);
-    Func_0808a1b8(0, 0x4000, 10);
+    Func_02007dc8();
+    Func_02007df6(0, 0x8000, 0x4000);
+    Func_02007e2c(0, 520, 712);
+    Func_02007eb8(0, 0x4000, 10);
     Func_02000058(0x02080000, 0, 0x03100000, 223);
-    Func_0808a140(0, 6, 0);
-    Func_0808a010(60);
-    Func_0808a248(20);
-    Func_0808a020();
+    Func_02007e92(0, 6, 0);
+    Func_02007e08(60);
+    Func_02007f26(20);
+    Func_02007e22();
 }

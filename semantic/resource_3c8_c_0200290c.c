@@ -76,24 +76,35 @@ struct EffectParams_0200290c {
     u8 unknown_24[4];
 };
 
-/* Used for their return values. */
+/*
+ * CALL SYMBOLS ARE PER-SITE: same fix as 0x020026f8 -- every `bl` here is a
+ * direct relocation against an absolute .set symbol at its own call site
+ * (verified via objdump on the assembled .o) except Func_02000118, the one
+ * genuine indirect call through this overlay's `_call_via_rN` bank. This
+ * header's own address list was already correct; the C body called the
+ * veneer-math resolved names instead.
+ */
 void Func_02000118();
-void Func_080000c0();
-s32 Func_080000f8();
-void Func_08009180();
-void Func_080091f0();
-void Func_080091f8();
-s32 Func_080770c0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-struct Actor_0200290c *Func_0808a080();
-void Func_0808a248();
-void Func_080f9010();
-
-/* Random source; the byte-exact siblings declare this family `(void)`. */
-
-/* Old-style declarations: the imports' real interfaces are not known here. */
+struct Actor_0200290c *Func_020077d6();
+s32 Func_020077d2();
+void Func_020077fc();
+void Func_02007796();
+void Func_0200797c();
+void Func_02007812();
+void Func_020077ea();
+void Func_02007998();
+void Func_0200782e();
+s32 Func_0200778a();
+s32 Func_020077a4();
+s32 Func_020077be();
+void Func_0200787e();
+void Func_0200780c();
+void Func_02007a94();
+void Func_02007a9a();
+void Func_02007900();
+void Func_0200790c();
+void Func_02007a68();
+void Func_02007964();
 
 void Func_0200290c(void)
 {
@@ -110,7 +121,7 @@ void Func_0200290c(void)
 
     workspace = (struct Workspace_0200290c *)(*(u8 **)0x03001e70 + 356);
 
-    actor = Func_0808a080(0);
+    actor = Func_020077d6(0);
     gridX = actor->gridX;
     gridZ = actor->gridZ;
     actor->y = 0;
@@ -119,20 +130,20 @@ void Func_0200290c(void)
     }
     actor->y = 0xfffe0000;
 
-    if (Func_080770c0(0x307) != 0) {
+    if (Func_020077d2(0x307) != 0) {
         return;
     }
 
     /* No argument register is written here; r0 still holds the 0 just
      * returned above, and that dataflow is preserved as written. */
-    Func_0808a018(0);
+    Func_020077fc(0);
 
-    Func_08009180(63, 29, 49, 20, 1, 1);
-    Func_080f9010(161);
-    Func_0808a010(30);
-    Func_080091f0(0x10000, 0x10000, 0x10000);
-    Func_080f9010(239);
-    Func_0808a010(20);
+    Func_02007796(63, 29, 49, 20, 1, 1);
+    Func_0200797c(161);
+    Func_02007812(30);
+    Func_020077ea(0x10000, 0x10000, 0x10000);
+    Func_02007998(239);
+    Func_0200782e(20);
 
     height = 0x02c00000;
     countdown = 60;
@@ -145,11 +156,11 @@ void Func_0200290c(void)
         if ((u32)(height - 0x02c80000) <= 0x0027ffff) {
             params.unk00 = 2;
             params.color1 =
-                (s32)((u32)(Func_080000f8() * 3) >> 16) * 0x3333 + 0xcccc;
+                (s32)((u32)(Func_0200778a() * 3) >> 16) * 0x3333 + 0xcccc;
             params.color2 =
-                (s32)((u32)(Func_080000f8() * 3) >> 16) * 0x3333 + 0xcccc;
+                (s32)((u32)(Func_020077a4() * 3) >> 16) * 0x3333 + 0xcccc;
             params.unk22 =
-                (u16)(((u32)(Func_080000f8() * 0x1000) >> 16) + 0xf800);
+                (u16)(((u32)(Func_020077be() * 0x1000) >> 16) + 0xf800);
 
             Func_02000118(
                 height,
@@ -164,11 +175,11 @@ void Func_0200290c(void)
             if (countdown == 0) {
                 countdown = 40;
                 index -= 4;
-                Func_08009180(index, 56, 44, 17, 3, 4);
+                Func_0200787e(index, 56, 44, 17, 3, 4);
             }
         }
 
-        Func_080000c0(1);
+        Func_0200780c(1);
         counter++;
         countdown--;
     } while (counter <= 0x13f);
@@ -177,13 +188,13 @@ void Func_0200290c(void)
     workspace->drift = rounded;
     workspace->drift = (rounded / 0x10000) << 16;
 
-    Func_080f9010(288);
-    Func_080f9010(188);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_080091f8();
+    Func_02007a94(288);
+    Func_02007a9a(188);
+    Func_02007900(-1, -1, 0xe666);
+    Func_0200790c();
 
     *(s32 *)(*(u8 **)0x03001ebc + 448) = 514;
 
-    Func_0808a248(19);
-    Func_0808a020();
+    Func_02007a68(19);
+    Func_02007964();
 }

@@ -164,8 +164,8 @@ SoftFloatRecord *Func_02001158(SoftFloatRecord *a, SoftFloatRecord *b,
             if (exponentA > exponentB) {
             } else {
                 valueB = 0;
-                exponentA = exponentB;
                 valueA = 0;
+                exponentA = exponentB;
             }
         } else {
             s32 count = exponentA - exponentB;
@@ -186,8 +186,8 @@ SoftFloatRecord *Func_02001158(SoftFloatRecord *a, SoftFloatRecord *b,
 
     if (a->sign == b->sign) {
         result->sign = a->sign;
-        result->exponent = exponentA;
         magnitude = valueA + valueB;
+        result->exponent = exponentA;
         result->low = (u32)magnitude;
         result->high = (u32)(magnitude >> 32);
     } else {

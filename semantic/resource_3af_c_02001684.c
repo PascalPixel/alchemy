@@ -85,8 +85,8 @@ void Func_02001684(void)
     if (Func_080770c0(0x922) != 0) {
         Func_0808a0f0(21, 132 << 17, 0x02be0000);
         record = Func_0808a080(21);
-        *(u16 *)(record + 6) = (u16)(160 << 7);
         record = Func_0808a080(21);
+        *(u16 *)(record + 6) = (u16)(160 << 7);
         *(u16 *)(record + 100) = (u16)(Func_030003e0(Func_080000f8(), 90) + 60);
         Func_0808a098(21, 0x0200c4d8);
 
@@ -98,7 +98,7 @@ void Func_02001684(void)
         Func_0808a0f0(22, 0, 0);
     } else if (Func_080770c0(0x923) != 0) {
         Func_0808a0f0(20, 246 << 16, 128 << 18);
-        record = Func_0808a080(20);
         *(u16 *)(record + 6) = 0;
+        record = Func_0808a080(20);
     }
 }

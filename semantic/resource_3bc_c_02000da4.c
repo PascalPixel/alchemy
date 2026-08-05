@@ -152,8 +152,8 @@ s32 Func_02000da4(void)
 
     object = Func_0808a080(11);
     Func_080091e0(object, 0);
-    object->state = 0;
     object->field0C = 0x40000;
+    object->state = 0;
 
     if (Func_080770c0(0x362) != 0) {
         Func_0808a100(9, 5);
@@ -169,7 +169,6 @@ s32 Func_02000da4(void)
     }
 
     object = Func_0808a080(9);
-    object->field18 = 0x18000;
     object->field1C = 0x18000;
     if (Func_080770c0(0x367) != 0) {
         arg0 = 0;
@@ -178,6 +177,7 @@ s32 Func_02000da4(void)
         arg5 = 12;
         goto sharedPanel;
     }
+    object->field18 = 0x18000;
     Func_080091c0(0, 25, 1, 1, 9, 12);
     goto afterPanel;
 
@@ -289,9 +289,9 @@ afterPanel:
         Func_080091c0(85, 9, 1, 4, object->x >> 20, 61);
     }
 
-    object = Func_0808a080(9);
     object->state = 0;
     object->mode = 2;
+    object = Func_0808a080(9);
     object = Func_0808a080(10);
     object->state = 0;
     object->mode = 2;

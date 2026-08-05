@@ -170,26 +170,26 @@ void Func_02003fb0(void)
     Func_0808a098(0, Data_0200e590);
 
     /* Three actors at the same X/Y with stepped Z (0x348, 0x34c, 0x350). */
-    actor = Func_0808a080(23);
     actor[0x55] = 0;
     *(s32 *)(actor + 16) = 0x03480000;
+    actor = Func_0808a080(23);
     *(s32 *)(actor + 8) = 0x01840000;
     *(s32 *)(actor + 12) = 0x00a00000;
     Func_080091e0(actor, 0);
 
-    actor = Func_0808a080(24);
-    actor[0x55] = 0;
     *(s32 *)(actor + 16) = 0x034c0000;
-    *(s32 *)(actor + 8) = 0x01840000;
     *(s32 *)(actor + 12) = 0x00a00000;
+    actor[0x55] = 0;
+    *(s32 *)(actor + 8) = 0x01840000;
+    actor = Func_0808a080(24);
     Func_080091e0(actor, 0);
 
     actor = Func_0808a080(25);
     actor[0x55] = 0;
-    *(s32 *)(actor + 16) = 0x03500000;
     *(s32 *)(actor + 8) = 0x01840000;
     *(s32 *)(actor + 12) = 0x00a00000;
     Func_080091e0(actor, 0);
+    *(s32 *)(actor + 16) = 0x03500000;
 
     Func_0808a228()[0x55] = 0;
 

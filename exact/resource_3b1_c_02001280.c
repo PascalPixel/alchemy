@@ -26,18 +26,18 @@
 
 extern u32 Data_0200e668[];
 
-u8 *Func_0808a080();
-s32 Func_02001144();
-s32 Func_080091d8();
+u8 *Func_02007772();
+s32 Func_020023f0();
+s32 Func_0200773c();
 
 s32 Func_02001280(s32 bucket)
 {
-    u8 *subject = Func_0808a080(0);
+    u8 *subject = Func_02007772(0);
     u32 packed = Data_0200e668[bucket];
     s32 x = *(s16 *)(subject + 10) + ((s32)packed >> 16);
     s32 z = *(s16 *)(subject + 18) + (s32)(s16)packed;
 
-    if (Func_02001144(x, z) != 0) {
+    if (Func_020023f0(x, z) != 0) {
         return 0;
     }
 
@@ -47,7 +47,7 @@ s32 Func_02001280(s32 bucket)
         point[1] = *(s32 *)(subject + 12);
         point[2] = z << 16;
 
-        if (Func_080091d8(subject, point) != 0) {
+        if (Func_0200773c(subject, point) != 0) {
             return 0;
         }
     }

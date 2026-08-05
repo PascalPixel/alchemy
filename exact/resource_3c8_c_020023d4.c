@@ -21,7 +21,7 @@
  * linking) -- lifted verbatim, not the veneer-math final target names this
  * file used before. The one true indirect call (selector's local-effect
  * dispatch) is routed automatically through this overlay's own
- * `_call_via_rN` bank; Func_02000b08 is correct for it, unchanged.
+ * `_call_via_rN` bank; Func_02002f68 is correct for it, unchanged.
  */
 u8 *Func_020072a2();
 u8 *Func_020072aa();
@@ -71,6 +71,6 @@ void Func_020023d4(s32 selector)
                   *(s32 *)(selectedRecord + 16));
     Func_02007340(selector);
     Func_02007456(188);
-    Func_02000b08(selector);
+    Func_02002f68(selector);
     Func_020072f2(30);
 }

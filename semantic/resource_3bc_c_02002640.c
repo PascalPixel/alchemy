@@ -48,12 +48,21 @@
 
 extern u8 Data_02000240[];
 
-void Func_08077168();          /* established, reset slot */
-void Func_08077150();          /* established, reset a member by handle */
-void Func_0808a200();          /* established shape (id, flag) */
-u8 *Func_08077008();           /* item/party record by id, established */
-s32 Func_03000380();           /* relocated IWRAM helper, established */
-void Func_0808a548();          /* established no-arg call */
+/* Every call below is per-site: the raw disassembly shows a DIFFERENT
+ * veneer target at each occurrence, even for the repeated Func_08077168
+ * and Func_03000380 calls -- symbols are the literal per-site targets, not
+ * the shared ultimate-destination name. */
+void Func_02007030();          /* 0x2002646 -> Func_08077168(0) veneer */
+void Func_02007036();          /* 0x200264c -> Func_08077168(1) veneer */
+void Func_0200703c();          /* 0x2002652 -> Func_08077168(2) veneer */
+void Func_02007042();          /* 0x2002658 -> Func_08077168(3) veneer */
+void Func_02007048();          /* 0x200265e -> Func_08077168(5) veneer */
+void Func_02007046();          /* 0x2002664 -> Func_08077150(id) veneer */
+void Func_02007168();          /* 0x2002676 -> Func_0808a200(id, 0) veneer */
+u8 *Func_02007016();           /* 0x200267c -> Func_08077008(id) veneer */
+s32 Func_02006ece();           /* 0x200269c -> Func_03000380 veneer #1 */
+s32 Func_02006f10();           /* 0x20026de -> Func_03000380 veneer #2 */
+void Func_02007288();          /* 0x2002706 -> Func_0808a548() veneer */
 
 void Func_02002640(s32 id)
 {
@@ -61,24 +70,24 @@ void Func_02002640(s32 id)
     s32 computed;
     s32 ratio;
 
-    Func_08077168(0);
-    Func_08077168(1);
-    Func_08077168(2);
-    Func_08077168(3);
-    Func_08077168(5);
-    Func_08077150(id);
+    Func_02007030(0);
+    Func_02007036(1);
+    Func_0200703c(2);
+    Func_02007042(3);
+    Func_02007048(5);
+    Func_02007046(id);
 
     *(s32 *)&Data_02000240[500] = id;
 
-    Func_0808a200(id, 0);
+    Func_02007168(id, 0);
 
-    record = Func_08077008(id);
+    record = Func_02007016(id);
 
     *(s16 *)(record + 56) = *(s16 *)(record + 52);
     *(s16 *)(record + 58) = *(s16 *)(record + 54);
     record[0x131] = 0;
 
-    computed = Func_03000380(*(s16 *)(record + 56) << 14, *(s16 *)(record + 52));
+    computed = Func_02006ece(*(s16 *)(record + 56) << 14, *(s16 *)(record + 52));
     if (computed > 0x4000) {
         ratio = 0x4000;
     } else if (computed < 0) {
@@ -91,7 +100,7 @@ void Func_02002640(s32 id)
         *(s16 *)(record + 20) = 1;
     }
 
-    computed = Func_03000380(*(s16 *)(record + 58) << 14, *(s16 *)(record + 54));
+    computed = Func_02006f10(*(s16 *)(record + 58) << 14, *(s16 *)(record + 54));
     if (computed > 0x4000) {
         ratio = 0x4000;
     } else if (computed < 0) {
@@ -104,5 +113,5 @@ void Func_02002640(s32 id)
         *(s16 *)(record + 22) = 1;
     }
 
-    Func_0808a548();
+    Func_02007288();
 }

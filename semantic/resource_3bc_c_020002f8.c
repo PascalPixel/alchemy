@@ -51,15 +51,29 @@ typedef struct Object {
 
 extern s16 Data_02000240[];
 
-s32 Func_080770c0();
-Object *Func_0808a080();
-void Func_0808a0b8();
-void Func_0808a0e8();
-void Func_08009150();
-void Func_080091e0();
-void Func_080091c0();
-void Func_080000c0();
-void Func_080770c8();
+/* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at each occurrence, including the repeated Func_0808a080,
+ * Func_08009150, Func_0808a0e8 and Func_080091e0 calls) -- declared/named
+ * as the literal per-site targets, not the shared ultimate-destination
+ * symbol.  0x02004d96 legitimately recurs (the entry-gate-arm
+ * Func_0808a0e8(sceneId) call and the tail Func_080770c8(0x367) call share
+ * one veneer address; both take a single s32 argument and return void, so
+ * one declaration covers both sites.) */
+s32 Func_02004cc2(s32 flag);                 /* Func_080770c0 veneer */
+Object *Func_02004d36(s32 id);               /* Func_0808a080 veneer #1 (id=10) */
+void Func_02004d70(s32 sceneId, s32 x, s32 z); /* Func_0808a0b8 veneer */
+void Func_02004d96(s32 sceneId);             /* Func_0808a0e8 veneer #1, reused by Func_080770c8 tail call */
+Object *Func_02004d54(s32 id);               /* Func_0808a080 veneer #2 (id=11) */
+void Func_02004c6a(Object *object, s32 x, s32 k, s32 z); /* Func_08009150 veneer #1 */
+Object *Func_02004d78(s32 id);               /* Func_0808a080 veneer #3 (id=10) */
+void Func_02004c8a(Object *object, s32 x, s32 k, s32 z); /* Func_08009150 veneer #2 */
+Object *Func_02004d98(s32 id);               /* Func_0808a080 veneer #4 (id=sceneId) */
+void Func_02004cae(Object *object, s32 x, s32 k, s32 z); /* Func_08009150 veneer #3 */
+void Func_02004cfe(Object *subject, s32 flag); /* Func_080091e0 veneer #1 */
+void Func_02004e0c(s32 sceneId);             /* Func_0808a0e8 veneer #2 */
+void Func_02004d00(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f); /* Func_080091c0 veneer */
+void Func_02004c06(s32 flag);                /* Func_080000c0 veneer */
+void Func_02004d26(Object *subject, s32 flag); /* Func_080091e0 veneer #2 */
 
 void Func_020002f8(void)
 {
@@ -71,43 +85,43 @@ void Func_020002f8(void)
     table = Data_02000240;
     sceneId = *(s32 *)&table[250];
 
-    if (Func_080770c0(0x362) != 0) {
+    if (Func_02004cc2(0x362) != 0) {
         return;
     }
 
-    object = Func_0808a080(10);
+    object = Func_02004d36(10);
     if (object != 0) {
-        Func_0808a0b8(sceneId,
+        Func_02004d70(sceneId,
                       *(s16 *)((u8 *)object + 0x0A),
                       *(s16 *)((u8 *)object + 0x12));
     }
-    Func_0808a0e8(sceneId);
+    Func_02004d96(sceneId);
 
-    object = Func_0808a080(11);
+    object = Func_02004d54(11);
     object->field55 = 0;
     object->field34 = 0x6666;
     object->field30 = 0xCCCC;
-    Func_08009150(object, object->x, 0x200000, object->z);
+    Func_02004c6a(object, object->x, 0x200000, object->z);
 
-    object = Func_0808a080(10);
+    object = Func_02004d78(10);
     object->field55 = 0;
     object->field34 = 0x6666;
     object->field30 = 0xCCCC;
-    Func_08009150(object, object->x, 0x40000, object->z);
+    Func_02004c8a(object, object->x, 0x40000, object->z);
 
-    subject = Func_0808a080(sceneId);
+    subject = Func_02004d98(sceneId);
     subject->field55 = 0;
-    subject->field30 = 0xCCCC;
     subject->field34 = 0x6666;
-    Func_08009150(subject, subject->x, 0x40000, subject->z);
+    subject->field30 = 0xCCCC;
+    Func_02004cae(subject, subject->x, 0x40000, subject->z);
 
-    Func_080091e0(subject, 1);
-    Func_0808a0e8(sceneId);
-    Func_080091c0(0, 24, 1, 1, 9, 12);
-    Func_080000c0(2);
-    Func_080091e0(subject, 1);
+    Func_02004cfe(subject, 1);
+    Func_02004e0c(sceneId);
+    Func_02004d00(0, 24, 1, 1, 9, 12);
+    Func_02004c06(2);
+    Func_02004d26(subject, 1);
 
     subject->field55 = 3;
     subject->field14 = subject->field0C;
-    Func_080770c8(0x367);
+    Func_02004d96(0x367);
 }

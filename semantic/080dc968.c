@@ -92,9 +92,9 @@ void Func_080dc968(struct Scene_080dc968 *scene)
     u16 saved_affine = *(volatile u16 *)0x03001ad4;
     s32 script_x = 0;
     s32 script_y = 0;
-    u32 frame;
-    u32 group;
-    u32 i;
+    s32 frame;
+    s32 group;
+    s32 i;
 
     *(struct Scene_080dc968 **)(runtime + 0x7828) = scene;
     Func_080cd594(0x2000);
@@ -184,7 +184,7 @@ void Func_080dc968(struct Scene_080dc968 *scene)
                 projection_input.unknown_0c = 0;
                 projection_input.y = 0xff0000;
                 for (i = 0; i < 3; i++) {
-                    u32 column;
+                    s32 column;
 
                     projection_input.z =
                         0x400000 - (script_y << 16)

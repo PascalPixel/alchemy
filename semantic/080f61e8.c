@@ -14,7 +14,7 @@ void Func_080f61e8(s32 resource_id)
         (volatile struct DmaChannel_080f61e8 *)0x040000d4;
     volatile u16 *palette = (volatile u16 *)0x05000000;
     u16 target[64];
-    u32 index;
+    s32 index;
 
     dma->source = Func_08002f40(resource_id);
     dma->destination = target;

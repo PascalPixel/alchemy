@@ -32,16 +32,16 @@
 
 extern s16 Data_02000240[];
 
-void Func_08015120();          /* release/select by handle, established (arg, 5) */
-void Func_0808a170();          /* display message by id */
-void Func_0808a180();
+void Func_020074d2();          /* Func_08015120 veneer, current site (release/select by handle, arg, 5) */
+void Func_02007632();          /* Func_0808a170 veneer, current site (display message by id) */
+void Func_0200764a();          /* Func_0808a180 veneer, current site */
 
 void Func_02002b50(s32 arg0, s32 arg1)
 {
     s16 state;
     s32 messageId;
 
-    Func_08015120(arg1, 5);
+    Func_020074d2(arg1, 5);
 
     state = Data_02000240[0xe0];
     if (state == 0x8f) {
@@ -51,7 +51,7 @@ void Func_02002b50(s32 arg0, s32 arg1)
     } else {
         messageId = 0x207a;
     }
-    Func_0808a170(messageId + 1);
+    Func_02007632(messageId + 1);
 
-    Func_0808a180(arg0, 0);
+    Func_0200764a(arg0, 0);
 }

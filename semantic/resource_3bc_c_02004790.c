@@ -36,9 +36,15 @@
 
 extern u8 Data_02000240[];
 
-u8 *Func_0808a080();           /* scene-record accessor, established */
-void Func_08000128();          /* advance a position block along a heading, established */
-s32 Func_020045e0();           /* in-overlay probe rejection, undrafted */
+/* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at every occurrence, including the repeated Func_08000128 and
+ * Func_020045e0 calls) -- declared/named as the literal per-site targets,
+ * not the shared ultimate-destination symbol. */
+u8 *Func_020091bc();           /* Func_0808a080 veneer */
+void Func_02009046();          /* Func_08000128 veneer #1 */
+s32 Func_02008dc6();           /* Func_020045e0 veneer #1 */
+void Func_02009078();          /* Func_08000128 veneer #2 */
+s32 Func_02008df8();           /* Func_020045e0 veneer #2 */
 
 s32 Func_02004790(void)
 {
@@ -47,7 +53,7 @@ s32 Func_02004790(void)
     s32 probe[3];
     s32 result;
 
-    record = Func_0808a080(*(s32 *)&Data_02000240[500]);
+    record = Func_020091bc(*(s32 *)&Data_02000240[500]);
 
     heading = (*(u16 *)(record + 6) + 0x2000) & 0xc000;
 
@@ -55,8 +61,8 @@ s32 Func_02004790(void)
     probe[1] = *(s32 *)(record + 12);
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + 0x80000;
 
-    Func_08000128(0x100000, heading, probe);
-    result = Func_020045e0(probe, record);
+    Func_02009046(0x100000, heading, probe);
+    result = Func_02008dc6(probe, record);
     if (result != 0) {
         return result;
     }
@@ -65,6 +71,6 @@ s32 Func_02004790(void)
     probe[1] = *(s32 *)(record + 12);
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + 0x80000;
 
-    Func_08000128(0x200000, heading, probe);
-    return Func_020045e0(probe, record);
+    Func_02009078(0x200000, heading, probe);
+    return Func_02008df8(probe, record);
 }

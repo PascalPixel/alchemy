@@ -50,7 +50,7 @@ void Func_020031c0(s32 *out, s32 anchor)
     s32 base = 64 - (anchor >> 20);
     s32 low = base + 8;
     s32 high = base + 11;
-    s32 index;
+    u32 index;
 
     for (index = 0; index <= 65; index++) {
         u8 *entry = table[index];

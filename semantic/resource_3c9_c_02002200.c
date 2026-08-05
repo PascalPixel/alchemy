@@ -54,7 +54,7 @@ void Func_02002200(u8 *caller)
     u8 *slots[2];
     u8 *object;
     u8 *record;
-    s32 i;
+    u32 i;
 
     Func_080f9010(0x83);
 

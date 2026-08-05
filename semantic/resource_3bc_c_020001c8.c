@@ -31,15 +31,23 @@ void Func_02004a1e();
 void Func_020001c8(void)
 {
     s32 polls;
+    s32 cond;
 
     Func_02004a0e(10);
 
+    cond = Data_0200d480;
     polls = 0;
-    while (Data_0200d480 != 3 || Data_0200d484 != 1) {
-        polls++;
-        Func_02004a1e(1);
-        if (polls > 119) {
-            break;
-        }
+    goto test;
+
+loop_body:
+    Func_02004a1e(1);
+    polls++;
+    if (polls > 119) {
+        return;
     }
+    cond = Data_0200d480;
+
+test:
+    if (cond != 3) goto loop_body;
+    if (Data_0200d484 != 1) goto loop_body;
 }

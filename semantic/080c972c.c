@@ -48,7 +48,7 @@ void Func_080c972c(void *argument)
     const u8 *config = (const u8 *)0x080ededc;
     s32 effect = *(s32 *)((u8 *)argument + 24);
     s32 frame;
-    u32 index;
+    s32 index;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(0x2001);

@@ -88,7 +88,7 @@ void Func_02001ff4(void)
     s32 *table;
     u8 *record;
     s32 outcome;
-    s32 i;
+    u32 i;
 
     outcome = 0;
 

@@ -87,7 +87,7 @@ void Func_02003850(s32 slot, s32 heading)
     s32 probe[3];
     u8 *record;
     u8 *companion;
-    s32 tries;
+    u32 tries;
     s32 y;
     s32 code;
 

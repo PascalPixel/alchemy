@@ -76,8 +76,8 @@ void Func_080d5e54(struct Scene_080d5e54 *scene)
     s32 position[3];
     s32 destination_position[3];
     s32 velocity[3];
-    u32 frame;
-    u32 i;
+    s32 frame;
+    s32 i;
 
     *(struct Scene_080d5e54 **)(runtime + 0x7828) = scene;
     Func_080cd594(0);
@@ -247,7 +247,7 @@ void Func_080d5e54(struct Scene_080d5e54 *scene)
             struct Object_080d5e54 *object =
                 Func_080b5098(id)->object;
             s32 base_frame = i * 8;
-            u32 particle_index;
+            s32 particle_index;
 
             Func_080049ac();
             Func_080051d8(effect_context, (u8 *)effect_context + 12);

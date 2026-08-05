@@ -397,6 +397,21 @@ const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair
   // at the 0x0200074e Func_02001078(9,0) site (movs r1,#0 before movs r0,#9).
   "exact/resource_3c3_c_02000730.c",
+  // Pair-sweep exact, 2026-08-05, paired with -fsched-low-dest-first.
+  "exact/resource_3c0_c_02000adc.c",
+  "semantic/resource_3c0_c_02000adc.c",
+]);
+// Pair-sweep exact, 2026-08-05: resource_3ab:07f4 is byte-exact only under
+// -O1 with lr treated as fixed. Both flags are overlay-first here; the sets
+// stay path-keyed like every other overlay route so the collision lint can
+// hold them to one source each.
+const FIXED_LR_OVERLAY_SOURCES = new Set([
+  "exact/resource_3ab_c_020007f4.c",
+  "semantic/resource_3ab_c_020007f4.c",
+]);
+const OPTIMIZE_O1_OVERLAY_SOURCES = new Set([
+  "exact/resource_3ab_c_020007f4.c",
+  "semantic/resource_3ab_c_020007f4.c",
 ]);
 // This main-image scheduler fingerprint leaves an independent r0 call-argument
 // copy immediately after a halfword store.  The reference places that copy
@@ -723,6 +738,16 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
   // carrying them through callee-saved registers across the whole owner.
   "exact/resource_38f_c_020008ec.c",
   "semantic/resource_38f_c_020008ec.c",
+  // Pair-sweep exacts, 2026-08-05: these three owners are byte-exact only
+  // under this flag together with -fsched-low-dest-first (see that set); the
+  // full 2,547-pair configuration matrix found the pair and the adoption
+  // dry-run confirmed each whole-overlay rebuild byte-identical.
+  "exact/resource_3b9_c_02002904.c",
+  "semantic/resource_3b9_c_02002904.c",
+  "exact/resource_382_c_020012c0.c",
+  "semantic/resource_382_c_020012c0.c",
+  "exact/resource_385_c_02000d84.c",
+  "semantic/resource_385_c_02000d84.c",
   // The largest open overlay owner is a long event call sheet whose repeated
   // wide immediates are independently materialized throughout the reference.
   // Sharing them changes the saved-register set and every later pool boundary.
@@ -862,6 +887,17 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_39e:2484 (probed exact, 2026-08-04).
   "exact/resource_3c8_c_02002f30.c",
   "semantic/resource_3c8_c_02002f30.c",
+  // Pair-sweep exacts, 2026-08-05, paired with -fno-cse-two-insn-immediate
+  // (see that set's matching entries).
+  "exact/resource_3b9_c_02002904.c",
+  "semantic/resource_3b9_c_02002904.c",
+  "exact/resource_382_c_020012c0.c",
+  "semantic/resource_382_c_020012c0.c",
+  "exact/resource_385_c_02000d84.c",
+  "semantic/resource_385_c_02000d84.c",
+  // Pair-sweep exact, 2026-08-05, paired with -fthumb-call-arg1-before-arg0.
+  "exact/resource_3c0_c_02000adc.c",
+  "semantic/resource_3c0_c_02000adc.c",
   // resource_3c1:0120 and :0194 (byte-identical twins) negate the shake
   // argument r2 for a three-argument call; the reference sets r0/r1 before
   // the negs, the low-destination tie-break, same tell as resource_38e:045c.
@@ -1632,6 +1668,10 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg1-before-arg0"]
       : []),
+    // -O1 is appended after the baseline -O2 and wins as the later option,
+    // matching exactly how the mode sweep scored this configuration.
+    ...(OPTIMIZE_O1_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-O1"] : []),
+    ...(FIXED_LR_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-ffixed-r14"] : []),
     ...(ENTRY_FRAME_CLUSTER_SOURCES.has(stem)
       ? ["-fthumb-entry-frame-cluster"]
       : []),
@@ -1755,10 +1795,14 @@ export function usesAgbccCompiler(target: CompilerTarget, source: string): boole
 // Return every non-baseline flag that live GS1 routing can select. Compiler
 // exploration uses this as an executable coverage contract: adding a routed
 // mode without adding a corresponding explorer mode must fail its self-test.
-export function evidencedRoutingFlags(): string[] {
+// Passing `compiler` restricts the walk to sources that family actually
+// compiles, so the flag-capability lint can probe each binary with exactly
+// the flags routing can hand it.
+export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
   const baseline = new Set([...CFLAGS, ...GS2_CFLAGS, ...AGBCC_CFLAGS]);
   const found = new Set<string>();
   const inspect = (source: string): void => {
+    if (compiler !== undefined && usesAgbccCompiler("gs1", source) !== (compiler === "agbcc")) return;
     for (const flag of cflagsForTargetSource("gs1", source)) {
       if (!baseline.has(flag)) found.add(flag);
     }
@@ -1792,6 +1836,9 @@ export function evidencedRoutingFlags(): string[] {
     ...UNSCHEDULED_OVERLAY_SOURCES,
     ...DEFAULT_ABI_OVERLAY_SOURCES,
     ...EARLY_LITERAL_POOL_OVERLAY_PATHS,
+    ...CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES,
+    ...FIXED_LR_OVERLAY_SOURCES,
+    ...OPTIMIZE_O1_OVERLAY_SOURCES,
   ]) inspect(join(ROOT, source));
   for (const stem of EARLY_LITERAL_POOL_OVERLAY_SOURCES) inspect(`/tmp/${stem}.c`);
   return [...found].sort();
@@ -1931,11 +1978,17 @@ export function externalSymbolAssembly(name: string, callViaBase = CALL_VIA_BASE
 // host-independent; a linux-x64 bundle is admitted only after the full
 // existing source-only build reproduces gs1-en.gba byte-identically with it,
 // exactly as any other verified assembler/toolchain substitution requires.
-type HostKey = "darwin-arm64" | "linux-x64";
+type HostKey = "darwin-arm64" | "darwin-x64" | "linux-x64" | "linux-arm64";
 
+// Every darwin/linux x arm64/x86_64 combination is a first-class host. A host
+// whose digest set is still empty is not "unsupported": it is admissible the
+// moment someone builds the committed fork source on it, reproduces the ROM
+// byte-identically under `bun run verify`, and pins the resulting digests.
 function hostKey(): HostKey | null {
   if (process.platform === "darwin" && process.arch === "arm64") return "darwin-arm64";
+  if (process.platform === "darwin" && process.arch === "x64") return "darwin-x64";
   if (process.platform === "linux" && process.arch === "x64") return "linux-x64";
+  if (process.platform === "linux" && process.arch === "arm64") return "linux-arm64";
   return null;
 }
 
@@ -1954,9 +2007,21 @@ function hostKey(): HostKey | null {
 const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly string[]>>> = {
   "darwin-arm64": {
     gs1: {
-      xgcc: ["87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed"],
-      cpp: ["f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575"],
-      tradcpp: ["822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b"],
+      xgcc: [
+        "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
+        // Full stage.sh gcc296 restage of fork commit 6461a0c (host parity
+        // with the linux -fno-cse-shift-immediate build) -- admitted from a
+        // green `bun run verify` on this host, 2026-08-05.
+        "df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3",
+      ],
+      cpp: [
+        "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
+        "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
+      ],
+      tradcpp: [
+        "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
+        "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
+      ],
       cc1: [
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
@@ -1966,6 +2031,9 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "d12bf2c7b96d2b1b6cec4c09b76f986249285070b1ca09d1ba1baf31b859cc18",
         "9ebef7d0fac03bbd44ce3016b8e06534cde5ef514b29042be9dcbf9414f248ff",
         "99b10b574bebe822798dd1c24eae495f08e08ec0af052a2fc8fa545ddfe67033",
+        // -fno-cse-shift-immediate host parity build (fork commit 6461a0c),
+        // matching the linux-x64 pin below; admitted 2026-08-05.
+        "c8ab73932d0de44ea5cf337ddcb4b50cdf2b17696bbfd925224c5026dc6a7e8d",
       ],
     },
     gs2: {
@@ -1974,6 +2042,19 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
       tradcpp0: ["7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3"],
       cc1: ["91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f"],
     },
+  },
+  // No approved builds exist for these two hosts yet. The empty sets are
+  // deliberate: they make the admission path explicit instead of rejecting the
+  // platform outright. Build with alchemy-gcc/build.sh + stage.sh on that
+  // host, run the full `bun run verify`, then pin the digests here from that
+  // green verify -- the same admission every listed digest already passed.
+  "darwin-x64": {
+    gs1: { xgcc: [], cpp: [], tradcpp: [], cc1: [] },
+    gs2: { xgcc: [], cpp0: [], tradcpp0: [], cc1: [] },
+  },
+  "linux-arm64": {
+    gs1: { xgcc: [], cpp: [], tradcpp: [], cc1: [] },
+    gs2: { xgcc: [], cpp0: [], tradcpp0: [], cc1: [] },
   },
   "linux-x64": {
     gs1: {
@@ -2023,52 +2104,82 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
   },
 };
 
-const LINUX_AGBCC_EXPECTED: readonly string[] = [
-  "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55",
-  "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37",
-  "21eca5a4e4d1138a1fdebccc03f6a140cbb74c072d3c10c299d64fa2cf13aef9",
-];
-
 const validated = new Set<CompilerTarget>();
 let agbccValidated = false;
 const experimentalValidated = new Set<string>();
-const AGBCC_EXPECTED: readonly string[] = [
-  "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207",
-];
+const AGBCC_EXPECTED: Record<HostKey, readonly string[]> = {
+  "darwin-arm64": [
+    "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207",
+  ],
+  "darwin-x64": [],
+  "linux-x64": [
+    "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55",
+    "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37",
+    "21eca5a4e4d1138a1fdebccc03f6a140cbb74c072d3c10c299d64fa2cf13aef9",
+  ],
+  "linux-arm64": [],
+};
 const PRET_EARLY_THUMB_EXPECTED: Record<HostKey, readonly string[]> = {
   "darwin-arm64": ["8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636"],
+  "darwin-x64": [],
   "linux-x64": ["c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082"],
+  "linux-arm64": [],
 };
 const GCC2951_EXPECTED: Record<HostKey, readonly string[]> = {
   "darwin-arm64": ["cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6"],
+  "darwin-x64": [],
   "linux-x64": [
     "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
     "edbee4fec1a1b59d0fd77273559aebbaf2c92b344bbeeb3539a10b689e71716d",
     "79859ae26c9c29d6b874fe27d4f4cdce72b80839ff05cc017906ef7e179c582a",
   ],
+  "linux-arm64": [],
 };
 // Stock gcc-3.0 comparison probe (built.sh gcc3 / stage.sh gcc3), used only to
 // test whether Golden Sun sources match unmodified GCC 3.0 codegen instead of
 // the gcc-2.96/Camelot-ABI fork. Locally-built linux-x64 digest, 2026-08-04.
 const GCC3_EXPECTED: Record<HostKey, readonly string[]> = {
   "darwin-arm64": [],
+  "darwin-x64": [],
   "linux-x64": [
     "78840db683cc441be9741153418e0fd991ea6f628a0c4f08cb4bdc1cf5ebdb9b",
   ],
+  "linux-arm64": [],
 };
 
 function outputText(value: Uint8Array): string {
   return Buffer.from(value).toString("utf8");
 }
 
+const UNSUPPORTED_HOST_MESSAGE =
+  "alchemy-gcc supports darwin/linux on arm64/x86_64; this platform is none of those";
+
+// The message a not-yet-admitted host gets. It names the admission procedure
+// instead of implying the platform is out of scope: cross-host parity is a
+// standing project rule, and the only thing an empty digest set means is that
+// nobody has run the admission on that host yet.
+function hostAdmissionMessage(host: HostKey, what: string): string {
+  return [
+    `alchemy-gcc has no approved ${what} digests for host ${host} yet.`,
+    "Admit this host: build the committed fork source (alchemy-gcc/build.sh),",
+    "stage it (alchemy-gcc/stage.sh), run the full `bun run verify`, and pin",
+    "the digests from that green verify -- the same admission every listed",
+    "digest already passed.",
+  ].join(" ");
+}
+
 export function validateBundle(target: CompilerTarget = "gs1"): void {
   if (validated.has(target)) return;
   const host = hostKey();
   if (host === null) {
-    throw new Error("alchemy-gcc requires native arm64 macOS or x64 Linux");
+    throw new Error(UNSUPPORTED_HOST_MESSAGE);
   }
   const bundle = bundleForTarget(target);
-  for (const [name, expected] of Object.entries(EXPECTED[host][target])) {
+  const entries = Object.entries(EXPECTED[host][target]);
+  if (entries.every(([, expected]) => expected.length === 0)) {
+    throw new Error(hostAdmissionMessage(host, target));
+  }
+  for (const [name, expected] of entries) {
     const path = join(bundle, name);
     let mode = 0;
     try {
@@ -2101,7 +2212,7 @@ export function validateAgbccBundle(): void {
   if (agbccValidated) return;
   const host = hostKey();
   if (host === null) {
-    throw new Error("alchemy-gcc requires native arm64 macOS or x64 Linux");
+    throw new Error(UNSUPPORTED_HOST_MESSAGE);
   }
   let mode = 0;
   try {
@@ -2113,7 +2224,10 @@ export function validateAgbccBundle(): void {
     throw new Error("alchemy-gcc agbcc bundle is missing executable old_agbcc");
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(AGBCC_DRIVER)).digest("hex");
-  const expectedAgbcc = host === "darwin-arm64" ? AGBCC_EXPECTED : LINUX_AGBCC_EXPECTED;
+  const expectedAgbcc = AGBCC_EXPECTED[host];
+  if (expectedAgbcc.length === 0) {
+    throw new Error(hostAdmissionMessage(host, "agbcc/old_agbcc"));
+  }
   if (!expectedAgbcc.includes(actual)) {
     throw new Error("alchemy-gcc agbcc/old_agbcc has an unapproved digest");
   }
@@ -2136,7 +2250,7 @@ function validateExperimentalCompiler(
   if (experimentalValidated.has(name)) return;
   const host = hostKey();
   if (host === null) {
-    throw new Error(`alchemy-gcc experimental ${name} requires native arm64 macOS or x64 Linux`);
+    throw new Error(UNSUPPORTED_HOST_MESSAGE);
   }
   let mode = 0;
   try {
@@ -2148,6 +2262,9 @@ function validateExperimentalCompiler(
     throw new Error(`alchemy-gcc experimental ${name} is missing executable cc1`);
   }
   const actual = new Bun.CryptoHasher("sha256").update(readFileSync(driver)).digest("hex");
+  if (expected[host].length === 0) {
+    throw new Error(hostAdmissionMessage(host, `experimental ${name}/cc1`));
+  }
   if (!expected[host].includes(actual)) {
     throw new Error(`alchemy-gcc experimental ${name}/cc1 has an unapproved digest`);
   }
@@ -2478,6 +2595,54 @@ export function overlayStemCollisionLint(): void {
       `these stem-keyed routing entries match more than one overlay source, so they ` +
       `apply to overlays they were never meant for -- move each to the path-keyed ` +
       `set naming the overlay it was added for: ${collisions.join("; ")}`,
+    );
+  }
+}
+
+// Cross-host parity gate: every flag the live routing tables can emit must be
+// accepted by the staged binary that would receive it. Digest pinning alone
+// cannot catch the skew this guards against -- a route added on one host
+// family (with that host's rebuilt, pinned binary) leaves every other host's
+// staged binary approved-but-behind, and the first symptom used to be an
+// unrelated-looking mid-build failure deep inside an overlay rebuild. This
+// lint turns that into an immediate, named, actionable failure.
+export function flagCapabilityLint(): void {
+  validateBundle("gs1");
+  validateAgbccBundle();
+  const gs1Flags = evidencedRoutingFlags("gcc296");
+  const agbccFlags = evidencedRoutingFlags("agbcc")
+    .filter((flag) => !AGBCC_CFLAGS.includes(flag as never));
+  const probes: Array<{ binary: string; argv: string[] }> = [
+    {
+      binary: "gs1 cc1 (via xgcc)",
+      argv: [driverForTarget("gs1"), `-B${bundleForTarget("gs1")}/`, ...CFLAGS, ...gs1Flags,
+        "-S", "-x", "c", "-o", "/dev/null", "/dev/null"],
+    },
+    {
+      // old_agbcc is cc1-shaped: no driver, no -x language selection.
+      binary: "agbcc/old_agbcc",
+      argv: [AGBCC_DRIVER, ...AGBCC_CFLAGS, ...agbccFlags, "-o", "/dev/null", "/dev/null"],
+    },
+  ];
+  const missing: string[] = [];
+  for (const probe of probes) {
+    const spawned = Bun.spawnSync(probe.argv, { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
+    const stderr = outputText(spawned.stderr);
+    for (const match of stderr.matchAll(/Unrecognized option `(-[^']+)'/g)) {
+      missing.push(`${probe.binary}: ${match[1]}`);
+    }
+    for (const match of stderr.matchAll(/Invalid option `([^']+)'/g)) {
+      missing.push(`${probe.binary}: -m${match[1]}`);
+    }
+  }
+  if (missing.length > 0) {
+    throw new Error(
+      `staged compiler is behind the committed routing tables; unrecognized flags: ` +
+      `${missing.join("; ")}. Rebuild and stage the committed fork source on this ` +
+      `host (alchemy-gcc/build.sh && alchemy-gcc/stage.sh), run the full ` +
+      "`bun run verify`, then pin the new digests from that green verify. " +
+      `Cross-host parity is a standing rule: a routing or mode change lands only ` +
+      `with every supported host family rebuilt, verified, and pinned.`,
     );
   }
 }
@@ -2941,7 +3106,8 @@ function main(): void {
   }
   if (argument === "--lint") {
     callbackArityLint();
-    console.log("lint=ok callback-arity overlay-stem-collisions");
+    flagCapabilityLint();
+    console.log("lint=ok callback-arity overlay-stem-collisions flag-capability");
     return;
   }
   if (argument === "agbcc") {

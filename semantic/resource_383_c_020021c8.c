@@ -89,9 +89,9 @@ void Func_020021c8(void)
     Func_0808a0f0(1, 0xe80000, 0x2e80000);      /* 232 << 16 */
 
     record = Func_0808a080(0);
+    record = Func_0808a080(1);
     flags = *(u8 **)(record + 80);
     flags[9] = (u8)((flags[9] & ~12) | 4);
-    record = Func_0808a080(1);
     flags = *(u8 **)(record + 80);
     flags[9] = (u8)((flags[9] & ~12) | 4);
     record = Func_0808a080(2);
@@ -110,8 +110,8 @@ void Func_020021c8(void)
 
     /* 228 << 1 and 224 << 1. */
     workspace = *(u8 **)0x03001ebc;
-    *(s32 *)(workspace + 456) = 24;
     *(s32 *)(workspace + 448) = 0x201;
+    *(s32 *)(workspace + 456) = 24;
 
     Func_0808a360();
     Func_0808a370();

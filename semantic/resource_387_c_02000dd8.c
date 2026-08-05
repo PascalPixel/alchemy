@@ -41,10 +41,10 @@ void Func_02000dd8(s32 slot)
     object[85] = 0;
 
     Func_0808a090(slot, 192 << 10, 192 << 9);
-    *(u32 *)(object + 108) = 0x02008da9;
-    *(s32 *)(object + 72) = 0xcccc;
     object[34] = 0;
+    *(s32 *)(object + 72) = 0xcccc;
     object[85] = 3;
+    *(u32 *)(object + 108) = 0x02008da9;
     Func_0808a0b8(slot, 160, 192);
     Func_0808a0e8(slot);
     Func_02000db8(object, 128 << 14);
@@ -68,9 +68,9 @@ void Func_02000dd8(s32 slot)
     Func_0808a0e8(slot);
     Func_02000db8(object, 128 << 14);
 
-    *(u32 *)(object + 108) = 0;
     finalEffect.kind = 214;
     finalEffect.positionX = 128 << 8;
+    *(u32 *)(object + 108) = 0;
     finalEffect.positionY = 0xcccc;
     *(u16 *)(state + 30) = 128 << 5;
     finalEffect.targetX = 192 << 9;

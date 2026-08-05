@@ -49,17 +49,17 @@ void Func_02000334(s32 flag, s32 left, s32 top, s32 variant)
     Func_0808a010(30);
     Func_0808a210(-1, -1, -1, 0);
 
-    actor[85] = 2;
     *(s32 *)(actor + 20) = (s32)0xff600000;
     *(s32 *)(actor + 72) = 0x8000;
+    actor[85] = 2;
     Func_080f9010(204);
     Func_0808a010(3);
-    actor[34] = 2;
     Func_0808a1e0(actorId, 3);
+    actor[34] = 2;
 
     for (frame = 29; frame >= 0; frame--) {
-        *(u16 *)(actor + 6) += 0x2000;
         Func_080000c0(1);
+        *(u16 *)(actor + 6) += 0x2000;
     }
 
     if (variant != 50)

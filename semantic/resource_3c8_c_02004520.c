@@ -19,11 +19,20 @@ struct ParticleSpec_02004520 {
  * random branches and their complete eight-argument spawn calls are explicit.
  */
 
-extern void Func_02000118(s32, s32, s32, s32, s32, s32, s32,
-                          struct ParticleSpec_02004520 *);
-extern s32 Func_03000380(s32 value, s32 divisor);
-extern u32 Func_080000f8(void);
 
+
+
+
+extern u32 Func_020092ee(void);
+extern u32 Func_0200930c(void);
+extern u32 Func_02009318(void);
+extern u32 Func_0200931e(void);
+extern s32 Func_0200931c(s32 value, s32 divisor);
+extern void Func_020046be(s32, s32, s32, s32, s32, s32, s32,
+                          struct ParticleSpec_02004520 *);
+extern u32 Func_02009360(void);
+extern void Func_020046ec(s32, s32, s32, s32, s32, s32, s32,
+                          struct ParticleSpec_02004520 *);
 void Func_02004520(s32 base, s32 lane)
 {
     struct ParticleSpec_02004520 spec;
@@ -31,28 +40,28 @@ void Func_02004520(s32 base, s32 lane)
     u32 branch;
 
     spec.spread_y = 0xb333;
-    spec.field22 = (u16)(((Func_080000f8() << 12) >> 16) + 0xf800);
+    spec.field22 = (u16)(((Func_020092ee() << 12) >> 16) + 0xf800);
     spec.spread_x = 0xb333;
 
     if ((frame & 3) != 0)
         return;
 
-    branch = (Func_080000f8() << 1) >> 16;
+    branch = (Func_0200930c() << 1) >> 16;
     if (branch != 0) {
-        u32 horizontal = Func_080000f8();
+        u32 horizontal = Func_02009318();
         s32 x = (base + (s32)(((horizontal << 1) >> 16) << 4)) << 16;
-        s32 vertical = (s32)(((Func_080000f8() * 5u) >> 16) << 16) +
+        s32 vertical = (s32)(((Func_0200931e() * 5u) >> 16) << 16) +
             0x00070000;
-        s32 divided = Func_03000380(vertical, 10);
+        s32 divided = Func_0200931c(vertical, 10);
 
-        Func_02000118(x, 0, lane << 19, 0,
+        Func_020046be(x, 0, lane << 19, 0,
                       0, divided, 0x00880000, &spec);
     } else {
-        s32 offset = (s32)((Func_080000f8() * 17u) >> 16);
+        s32 offset = (s32)((Func_02009360() * 17u) >> 16);
         s32 x = (base + offset) << 16;
         s32 z = (base << 19) - 0x00040000;
 
-        Func_02000118(x, 0, z, 0,
+        Func_020046ec(x, 0, z, 0,
                       0, 0, 0x00880000, &spec);
     }
 }

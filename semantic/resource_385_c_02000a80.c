@@ -7,14 +7,17 @@ struct SceneWork_02000a80 {
 };
 
 extern struct SceneWork_02000a80 *Data_03001ebc;
-extern void Func_0808a090(s32 actor, s32 width, s32 height);
-extern void Func_0808a0c8(s32 actor, s32 x, s32 y);
-extern void Func_0808a248(s32 value);
 
+
+
+
+extern void Func_02001ba0(s32 actor, s32 width, s32 height);
+extern void Func_02001bc2(s32 actor, s32 x, s32 y);
+extern void Func_02001c56(s32 value);
 void Func_02000a80(s32 x, s32 y, s32 value)
 {
-    Func_0808a090(0, 0x8000, 0x4000);
-    Func_0808a0c8(0, x, y);
+    Func_02001ba0(0, 0x8000, 0x4000);
+    Func_02001bc2(0, x, y);
     Data_03001ebc->scene_delay = 16;
-    Func_0808a248(value);
+    Func_02001c56(value);
 }

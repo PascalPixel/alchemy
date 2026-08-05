@@ -688,6 +688,16 @@ Compiler policy going forward:
    cannot silently spread to a same-address function in another code overlay.
 4. Keep experimental compiler modes default-off and source-scoped until shared
    evidence justifies anything broader.
+5. **Cross-host parity is a standing rule (2026-08-05, Pascal).** darwin/linux
+   on arm64/x86_64 are all first-class hosts. A compiler mode or routing change
+   lands only with every supported host family rebuilt from the committed fork
+   source, verified byte-identically, and digest-pinned. The
+   `flagCapabilityLint()` gate in `tools/alchemy_gcc.ts --lint` (part of
+   `bun test`) probes each staged binary with every flag live routing can emit,
+   so a host left behind fails immediately with the rebuild procedure named
+   instead of failing mid-build inside an unrelated overlay rebuild. Hosts
+   without approved digests yet are admissible, not unsupported: build, stage,
+   verify green, then pin.
 
 ## Permuter audit
 

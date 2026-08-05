@@ -119,8 +119,8 @@ void Func_02004fcc(s32 arg0, u8 *arg1)
             } else {
                 *(s32 *)(arg1 + 0x14) = 0;
             }
-        } else {
             *(s32 *)(arg1 + 0x14) = 0;
+        } else {
         }
 
         if (tableEntry[2] == arg0 && *(s32 *)(arg1 + 0x18) != 0) {

@@ -81,11 +81,11 @@ void Func_020039c8(void)
         for (;;) {
             cursor = Data_0200d260;
             entry = Data_0200bd28[(s16)cursor];
+            Data_0200d260 = 0;
             Data_0200d260 = (u16)(cursor + 1);
             if (entry != -1) {
                 break;
             }
-            Data_0200d260 = 0;
         }
 
         Data_0200d260 = (u16)(cursor + 2);

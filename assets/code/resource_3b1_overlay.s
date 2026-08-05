@@ -2524,52 +2524,8 @@ AlchemyC_02000fac:
 	.4byte 0x00019999
 	.2byte 0xe668
 	.2byte 0x0200
-	push	{r5, r6, r7, lr}
-	adds	r5, r0, #0
-	movs	r0, #0
-	sub	sp, #12
-	bl	sub_02007772
-	ldr	r3, [pc, #72]
-	lsls	r5, r5, #2
-	adds	r6, r0, #0
-	ldr	r3, [r3, r5]
-	movs	r2, #10
-	ldrsh	r1, [r6, r2]
-	asrs	r2, r3, #16
-	adds	r5, r1, r2
-	lsls	r3, r3, #16
-	movs	r1, #18
-	ldrsh	r2, [r6, r1]
-	asrs	r3, r3, #16
-	adds	r7, r2, r3
-	adds	r0, r5, #0
-	adds	r1, r7, #0
-	bl	.L_020023f0
-	cmp	r0, #0
-	bne.n	.L_020012ca
-	mov	r1, sp
-	lsls	r3, r5, #16
-	str	r3, [r1, #0]
-	ldr	r3, [r6, #12]
-	str	r3, [r1, #4]
-	lsls	r3, r7, #16
-	str	r3, [r1, #8]
-	adds	r0, r6, #0
-	bl	sub_0200773c
-	cmp	r0, #0
-	beq.n	.L_020012ce
-.L_020012ca:
-	movs	r0, #0
-	b.n	.L_020012d0
-.L_020012ce:
-	movs	r0, #1
-.L_020012d0:
-	add	sp, #12
-	pop	{r5, r6, r7}
-	pop	{r1}
-	bx	r1
-	.2byte 0xe668
-	.2byte 0x0200
+AlchemyC_02001280:
+	.space 0x5c
 AlchemyC_020012dc:
 	.space 0x48
 AlchemyC_02001324:

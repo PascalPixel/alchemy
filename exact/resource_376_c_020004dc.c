@@ -28,40 +28,40 @@
  * not yet established.
  */
 
-extern u8 *Func_0808a080(s32 actor_id);
-extern void Func_080b0008(s32 arg0, s32 actor_id);
-extern void Func_0808a018(void);
-extern s32 Func_080770c0(s32 flag_id);
-extern void Func_0808a170(s32 dialogue_id);
-extern void Func_0808a190(s32 actor_id, s32 mode);
-extern void Func_0808a180(s32 actor_id, s32 mode);
-extern void Func_0808a020(void);
+extern u8 *Func_020016a6(s32 actor_id);
+extern void Func_020017e2(s32 arg0, s32 actor_id);
+extern void Func_02001698(void);
+extern s32 Func_020016a0(s32 flag_id);
+extern void Func_02001772(s32 dialogue_id);
+extern void Func_02001778(s32 actor_id, s32 mode);
+extern void Func_0200178a(s32 actor_id, s32 mode);
+extern void Func_020016de(void);
 
 void Func_020004dc(void)
 {
     u8 *actor;
     u32 biased_direction;
 
-    actor = Func_0808a080(0);
+    actor = Func_020016a6(0);
     biased_direction = *(u16 *)(actor + 6);
     biased_direction += 0xffff5fff;
 
     if (biased_direction <= 0x3ffe) {
-        Func_080b0008(1, 21);
+        Func_020017e2(1, 21);
         return;
     }
 
-    Func_0808a018();
-    if (Func_080770c0(0x87a) != 0) {
-        Func_0808a170(0x1c06);
-        Func_0808a190(21, 0);
+    Func_02001698();
+    if (Func_02001686(0x87a) != 0) {
+        Func_02001750(0x1c06);
+        Func_02001778(21, 0);
     } else {
-        if (Func_080770c0(0x815) != 0) {
-            Func_0808a170(0x11a2);
+        if (Func_020016a0(0x815) != 0) {
+            Func_0200176a(0x11a2);
         } else {
-            Func_0808a170(0x0f53);
+            Func_02001772(0x0f53);
         }
-        Func_0808a180(21, 0);
+        Func_0200178a(21, 0);
     }
-    Func_0808a020();
+    Func_020016de();
 }

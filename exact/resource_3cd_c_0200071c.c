@@ -27,16 +27,16 @@
 
 extern u8 *Data_03001ebc;
 
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a100(s32 id, s32 arg1);
+extern u8 *Func_02000fd2(s32 id);
+extern void Func_02000fec(s32 id, s32 arg1);
 
 s32 Func_0200071c(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 516;
     *(s32 *)(Data_03001ebc + 456) = 24;
-    *(s32 *)(Func_0808a080(11) + 28) = 0x19999;
-    *(s32 *)(Func_0808a080(11) + 24) = 0x19999;
-    Func_0808a100(13, 5);
-    Func_0808a100(14, 2);
+    *(s32 *)(Func_02000fc8(11) + 28) = 0x19999;
+    *(s32 *)(Func_02000fd2(11) + 24) = 0x19999;
+    Func_02000fe4(13, 5);
+    Func_02000fec(14, 2);
     return 0;
 }

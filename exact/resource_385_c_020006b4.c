@@ -19,7 +19,9 @@ extern struct SceneWork_020006b4 *Data_03001ebc;
 extern void Func_020017a0(void);
 extern void Func_02001826(s32 dialogue);
 extern void Func_02001820(s32 actor, s32 mode, s32 value);
-extern void Func_02001840(s32 actor, s32 mode);
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern s32 Func_02001840(s32 actor, s32 mode);
 extern s32 Func_020017d0(s32 actor, s32 mode);
 extern void Func_0200186c(s32 actor, s32 mode);
 extern void Func_020017c4(s32 flag);

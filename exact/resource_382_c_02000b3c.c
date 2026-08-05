@@ -6,7 +6,9 @@ extern void Func_020024f8(void);
 extern void Func_02002596(int);
 extern void Func_0200256e(int,int);
 extern void Func_02002294(int,int,int);
-extern void Func_020025b8(int,int);
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern int Func_020025b8(int,int);
 extern int Func_02002540(int,int);
 extern void Func_020025e4(int,int);
 extern void Func_02002548(void);

@@ -641,6 +641,12 @@ const THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES = new Set([
   "exact/resource_3aa_c_02001494.c",
   "semantic/resource_3aa_c_02001494.c",
   "exact/resource_38f_c_020026cc.c",
+  // resource_3bc:01c8's wait loop reads the frame counter through a workspace
+  // pointer; the default model schedules the entry dereference away and folds
+  // it into the loop (56 bytes), the one-cycle model keeps the ldr/ldr pair at
+  // its reference entry position (60, byte-exact; derived-inventory mode
+  // cohort, 2026-08-05).
+  "exact/resource_3bc_c_020001c8.c",
 ]);
 // In resource_37a:0054 the cse rerun after the copy loop folds the shared
 // window base back into per-site constants; in resource_399:0abc it rewrites
@@ -1115,6 +1121,15 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_3bf_c_02000e80.c",
   "exact/resource_3bf_c_02000f30.c",
   "semantic/resource_3bf_c_02000f30.c",
+  // resource_382:0ef4's first call takes (0, 0x8000, 0x4000) and the reference
+  // sets movs r0,#0 between the r1/r2 immediate shifts -- the plain form of
+  // this tell (derived-inventory mode cohort exact under sched-low-dest-first,
+  // 2026-08-05).
+  "exact/resource_382_c_02000ef4.c",
+  // resource_3c9:1280's if-arm ends with (arg0, 0xcccc, 0x6666): the reference
+  // sets r0 from r5 before the two pool loads that build r1/r2 (same cohort
+  // probe, 2026-08-05).
+  "exact/resource_3c9_c_02001280.c",
 ]);
 // The reference objects for these owners re-materialise their shifted
 // (`movs rN,#K / lsls rN,rN,#n`, constraint K) immediates at every use site

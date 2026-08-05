@@ -9,7 +9,9 @@ extern void Func_02001da4(void);
 extern void Func_02001e0e(s32, s32, s32);
 extern void Func_02001d9c(s32);
 extern void Func_02001ebc(s32, s32);
-extern void Func_02001dd4(s32, s32);
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern s32 Func_02001dd4(s32, s32);
 extern void Func_02001dd0(void);
 void Func_020003c0(void)
 {

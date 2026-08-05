@@ -1328,50 +1328,8 @@ AlchemyC_02000578:
 	.4byte 0x00000881
 	.2byte 0x0000
 	.2byte 0xfff8
-	.2byte 0xb5e0
-	mov	r7, r8
-	push	{r7}
-	movs	r0, #8
-	sub	sp, #8
-	bl	sub_02001d90
-	ldr	r3, [r0, #8]
-	asrs	r3, r3, #20
-	mov	r8, r3
-	ldr	r3, [r0, #16]
-	ldr	r5, [pc, #64]
-	asrs	r7, r3, #20
-	movs	r6, #0
-.L_02000cd0:
-	ldrb	r3, [r5, #0]
-	ldrb	r2, [r5, #1]
-	movs	r0, #1
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #0
-	movs	r2, #1
-	movs	r3, #1
-	adds	r6, #2
-	bl	sub_02001d5c
-	adds	r5, #2
-	cmp	r6, #19
-	bls.n	.L_02000cd0
-	mov	r3, r8
-	str	r3, [sp, #0]
-	movs	r0, #0
-	movs	r1, #0
-	movs	r2, #1
-	movs	r3, #1
-	str	r7, [sp, #4]
-	bl	sub_02001d74
-	add	sp, #8
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.2byte 0x9d28
-	.2byte 0x0200
+AlchemyC_02000cb4:
+	.space 0x5c
 	push	{r5, lr}
 	ldr	r3, [pc, #96]
 	movs	r2, #224

@@ -24,8 +24,8 @@ s32 Func_020022d8(u8 *actor)
     *(s32 *)(descriptor + 8) = 0xb333;
     *(s32 *)(descriptor + 12) = 0xb333;
 
-    draw = (u32)Func_080000f8();
     x = *(s32 *)(actor + 8) + ((s32)((draw * 17) >> 16) - 8) * 0x10000;
+    draw = (u32)Func_080000f8();
     draw = (u32)Func_080000f8();
     y = *(s32 *)(actor + 12) + (s32)((draw * 17) >> 16) * 0x10000;
     draw = (u32)Func_080000f8();

@@ -74,8 +74,8 @@ void Func_02003364(void)
             obj[0x59] |= 0x80;
             *(u32 *)(obj + 0x6c) = 0x0200812d;
 
-            obj2[0x62] = 0;
             *(u32 *)(obj2 + 0x6c) = 0x02008285;
+            obj2[0x62] = 0;
             obj2 = Func_0808a080(8);
 
             if (Func_080770c0((s32)&Value_00000109) != 0) {
@@ -86,8 +86,8 @@ void Func_02003364(void)
     }
 
     if (Func_080770c0((s32)&Value_00000928) != 0) {
-        tailX = 0x1bc;
         tailY = 0x266;
+        tailX = 0x1bc;
         tailZ = 0xd000;
         goto simple_tail;
     }

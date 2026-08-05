@@ -51,9 +51,11 @@ void Func_02002b80(void)
     s32 companion9Row;
     s32 transition;
 
+    s32 permuted_7;
     column = *(s32 *)(Func_0808a080(14) + 8) >> 20;
-    row = *(s32 *)(Func_0808a080(14) + 16) >> 20;
+    permuted_7 = *(s32 *)(Func_0808a080(14) + 16) >> 20;
     companion18Row = *(s32 *)(Func_0808a080(18) + 16) >> 20;
+    row  = permuted_7;
     companion9Row = *(s32 *)(Func_0808a080(9) + 16) >> 20;
 
     transition = 0;
@@ -71,15 +73,15 @@ void Func_02002b80(void)
         }
         transition = ((u32)(companion18Row - 12) <= 2) ? 48 : 96;
     } else if (column == 9) {
-        if ((u32)(companion18Row - 12) <= 2) {
-            return;
-        }
         transition = 48;
-    } else if (column == 8) {
         if ((u32)(companion18Row - 12) <= 2) {
             return;
         }
+    } else if (column == 8) {
         transition = 32;
+        if ((u32)(companion18Row - 12) <= 2) {
+            return;
+        }
     } else if (column == 6) {
         return;
     }

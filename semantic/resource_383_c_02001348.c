@@ -90,10 +90,10 @@ void Func_02001348(void)
     Func_0808a138(0, 3);
     Func_0808a010(20);
 
-    line = 0x12c5;
     Func_08015040(line, 1);
-    line = line + 1;
     Func_0808a170(line);                /* 0x12c6 */
+    line = line + 1;
+    line = 0x12c5;
     Func_0808a010(30);
 
     Func_0808a100(8, 1);
@@ -238,8 +238,8 @@ void Func_02001348(void)
         Func_0808a170(line);
         Func_0808a138(10, 2);
         Func_0808a010(20);
-        line = line - 3;
         Func_0808a180(10, 0);
+        line = line - 3;
         Func_0808a170(line);            /* 0x12d9 */
     }
 
@@ -264,8 +264,8 @@ void Func_02001348(void)
     Func_080770c8(0x854);
 
     /* 224 << 1, then + 64: the workspace word at +448 becomes 0x200. */
-    workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 448) = 512;
+    workspace = *(u8 **)0x03001ebc;
 
     Func_0808a260(0x15, 17);
     Func_0808a268(0x15, 16);

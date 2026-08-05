@@ -39,15 +39,16 @@ extern s32 Func_0808a080(s32 id);
 
 void Func_0200478c(s32 base, u32 count)
 {
+    s32 permuted_6;
     u8 *array = (u8 *)Func_08000148(33, 404);
     s32 zero = 0;
     u8 *slot = array;
     volatile u32 *dma = (volatile u32 *)0x040000d4;
     u32 index;
 
+    dma[2] = 0x85000065;
     dma[0] = (u32)&zero;
     dma[1] = (u32)array;
-    dma[2] = 0x85000065;
 
     if (count > 10)
         count = 10;
@@ -58,9 +59,10 @@ void Func_0200478c(s32 base, u32 count)
         *(u8 *)(*(s32 *)(object + 80) + 38) = 0;
         *(u8 *)(object + 85) = 0;
         Func_080091e8(Func_0808a080(base + index), 1);
-        *(s32 *)(slot + 28) = *(s32 *)(0x0200d140 + index * 4);
+        permuted_6 = *(s32 *)(0x0200d140 + index * 4);
         *(s32 *)(slot + 32) = -*(s32 *)(0x0200d168 + index * 4);
         slot[36] = 3;
+        *(s32 *)(slot + 28) = permuted_6;
         slot += 40;
     }
     *(unsigned short *)(array + 400) = count;

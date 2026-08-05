@@ -46,8 +46,8 @@ extern void Func_0808a0f0(s32 actor, s32 x, s32 y);
 
 void Func_0200227c(void)
 {
-    s32 handle = Func_0808a080(0);
     s32 table = 0x0200cbd0;
+    s32 handle = Func_0808a080(0);
     s32 object;
     s32 helper;
 
@@ -76,9 +76,9 @@ void Func_0200227c(void)
     Func_08009098(object, table);
 
     object = Func_0808a080(11);
-    *(s32 *)(object + 104) = handle;
-    *(u8 *)(object + 90) |= 1;
     Func_08009098(object, table);
+    *(u8 *)(object + 90) |= 1;
+    *(s32 *)(object + 104) = handle;
 
     object = Func_0808a080(10);
     *(s32 *)(object + 104) = handle;

@@ -46,6 +46,7 @@ extern void Func_080f9010(s32 arg0);
 
 s32 Func_02004260(s32 arg0)
 {
+    s32 permuted_10;
     s32 object = Func_080090c8(22);
     s32 first = Func_08077040(224);
     s32 second = Func_08077038(first, 224);
@@ -56,8 +57,9 @@ s32 Func_02004260(s32 arg0)
         return first;
 
     Func_08009098(object, 0x0200cbe4);
-    record = *(u8 **)(object + 80);
+    permuted_10 = *(u8 **)(object + 80);
     record[38] = 0;
+    record  = permuted_10;
     record[39] = 0;
     record[5] &= ~33;
     record[9] &= 15;

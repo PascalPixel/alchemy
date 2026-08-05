@@ -80,6 +80,7 @@ void Func_02001f50(void)
     u8 *flags;
     s32 speaker;
 
+    s32 permuted_71;
     workspace = *(u8 **)0x03001ebc;
 
     Func_0808a018();
@@ -156,16 +157,17 @@ void Func_02001f50(void)
     /* Clear bits 2 and 3 of the +9 flag byte in each participant's +80
      * sub-record and set bit 2. */
     record = Func_0808a080(0);
-    flags = *(u8 **)(record + 80);
     flags[9] = (u8)((flags[9] & ~12) | 4);
+    flags = *(u8 **)(record + 80);
 
+    flags = *(u8 **)(record + 80);
+    flags[9]  = permuted_71;
+    permuted_71 = (u8)((flags[9] & ~12) | 4);
     record = Func_0808a080(1);
-    flags = *(u8 **)(record + 80);
-    flags[9] = (u8)((flags[9] & ~12) | 4);
 
+    flags[9] = (u8)((flags[9] & ~12) | 4);
     record = Func_0808a080(2);
     flags = *(u8 **)(record + 80);
-    flags[9] = (u8)((flags[9] & ~12) | 4);
 
     /* 228 << 1 and 224 << 1.  The workspace pointer is re-read here, exactly
      * as the assembly does. */
@@ -182,14 +184,14 @@ void Func_02001f50(void)
     Func_080770c8(0x853);
 
     record = Func_0808a080(24);
-    *(s16 *)(record + 100) = 5;
     record = Func_0808a080(25);
+    *(s16 *)(record + 100) = 5;
     *(s16 *)(record + 100) = 4;
 
     Func_080000d0((void (*)(void))((s32)&Func_02002ba0 | 1), 3200);  /* 200 << 4 */
 
-    workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 448) = 0x209;
+    workspace = *(u8 **)0x03001ebc;
 
     Func_0808a020();
 }

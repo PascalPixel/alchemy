@@ -15,8 +15,8 @@ void Func_020018b8(s32 useAlternate)
     volatile struct DmaTransfer *const dma3 =
         (volatile struct DmaTransfer *)0x040000d4;
 
-    dma3->source = useAlternate != 0 ? 0x0200a4e0 : 0x02009de0;
     dma3->destination = *(volatile u32 *)0x03001ed0;
+    dma3->source = useAlternate != 0 ? 0x0200a4e0 : 0x02009de0;
     dma3->control = 0x840000e0;
 
     Func_0808a330(0x10000, 0);

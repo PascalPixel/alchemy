@@ -53,7 +53,7 @@ Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 Eleven of those modules are already completely exact, byte-matching C.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=f2c9fac9)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=5250a4b2)
 
 ### Images and data
 
@@ -62,7 +62,7 @@ The non-code part of the ROM is split across two panels. This one follows
 encoded ROM data to individually understood and reusable assets. Brighter
 magenta means a more complete reconstruction.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=af050cbb)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
 
 ### Music and sound
 
@@ -71,7 +71,7 @@ their own maturity panel so audio progress remains legible instead of being
 compressed into the image chart. Brighter orange means a more complete
 reconstruction.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d62fa185)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
 
 Progress is measured by executable bytes rather than function counts, so every
 claimed byte must compile to the original game before it contributes to the

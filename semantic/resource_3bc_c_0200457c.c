@@ -59,8 +59,8 @@ void Func_0200457c(s32 assetId)
         *(u16 *)(Data_02001000 + 0) = 1;
         *(u16 *)(Data_02001000 + 2) = 1;
         *(u16 *)(Data_02001000 + 4) = *(u16 *)(workspace + 224);
-        *(u16 *)(Data_02001000 + 6) = (u16)companion;
         *(u16 *)(Data_02001000 + 8) = (u16)companion;
+        *(u16 *)(Data_02001000 + 6) = (u16)companion;
     }
 
     Func_080000d0(0x0200bef1, 0xc85);

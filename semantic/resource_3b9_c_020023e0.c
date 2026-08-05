@@ -76,8 +76,8 @@ void Func_020023e0(void)
     Func_0808a090(11, 0x19999, 0xcccc);
     Func_0808a090(0, 0x19999, 0xcccc);
 
-    record11 = Func_0808a080(11);
     *(u16 *)(record11 + 6) = 0;
+    record11 = Func_0808a080(11);
 
     Func_0808a360();
     Func_0808a100(0, 2);

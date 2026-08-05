@@ -87,14 +87,17 @@ void Func_020038f8(void)
     s32 direction;
     s32 position[3];
 
+    s32 permuted_13;
+    s32 permuted_40;
     subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
 
     direction = *(u16 *)(subject + 6) >> 12;
 
     step = Data_0200c154[direction];
     position[0] = *(s32 *)(subject + 8) + (s32)(step & 0xffff0000);
-    position[1] = *(s32 *)(subject + 12);
+    permuted_13 = *(s32 *)(subject + 12);
     position[2] = *(s32 *)(subject + 16) + (s32)(step << 16);
+    position[1]  = permuted_13;
 
     target = Func_020038b0(position);
     if (target == 0) {
@@ -124,9 +127,10 @@ void Func_020038f8(void)
 
     *(target + 0x22) = 2;
 
-    step = Data_0200c154[direction];
-    position[0] = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
+    permuted_40 = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
     position[1] = *(s32 *)(target + 12);
+    step = Data_0200c154[direction];
+    position[0]  = permuted_40;
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
 
     if (Func_080091d8(target, position) > 0) {

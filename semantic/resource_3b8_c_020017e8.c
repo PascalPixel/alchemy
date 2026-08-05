@@ -79,16 +79,16 @@ void Func_020017e8(void)
     /* A second workspace, from the pointer one word further on at
      * 0x03001ecc. */
     state = (u8 *)slotBase[4];
+    *(u16 *)(state + 0x536) = 1;
     cursor = (u16 *)(state + 0x52a);
     *cursor = 0;
-    *(u16 *)(state + 0x534) = 0x1f1f;
-    *(u16 *)(state + 0x536) = 1;
     Func_0808a360();
+    *(u16 *)(state + 0x534) = 0x1f1f;
     Func_0808a370();
 
     for (index = 1; index <= 5; index++) {
-        Func_080000c0(3);
         *cursor = (u16)index;
+        Func_080000c0(3);
     }
 
     Func_0808a010(40);
@@ -97,8 +97,8 @@ void Func_020017e8(void)
 
     *(u16 *)(state + 0x536) = 31;
     for (index = 5; index <= 31; index++) {
-        Func_080000c0(3);
         *cursor = (u16)index;
+        Func_080000c0(3);
     }
 
     *(u32 *)((u8 *)slotBase[0] + 0x1c0) = 0x209;

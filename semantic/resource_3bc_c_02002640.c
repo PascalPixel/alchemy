@@ -91,14 +91,14 @@ void Func_02002640(s32 id)
     if (computed > 0x4000) {
         ratio = 0x4000;
     } else if (computed < 0) {
-        ratio = 0;
     } else {
         ratio = computed;
+        ratio = 0;
     }
-    *(s16 *)(record + 20) = ratio;
     if (ratio == 0 && *(s16 *)(record + 56) != 0) {
         *(s16 *)(record + 20) = 1;
     }
+    *(s16 *)(record + 20) = ratio;
 
     computed = Func_02006f10(*(s16 *)(record + 58) << 14, *(s16 *)(record + 54));
     if (computed > 0x4000) {

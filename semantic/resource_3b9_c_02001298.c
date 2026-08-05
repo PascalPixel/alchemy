@@ -117,8 +117,8 @@ void Func_02001298(void)
 
     /* Cached-displacement additive/subtractive idiom on the workspace,
      * first named in resource_377_c_02000a0c.c. */
-    *(s32 *)(workspace + 448) = 512;   /* additive: 224<<1 + 64 */
     *(s32 *)(workspace + 456) = 32;    /* subtractive: 512 - 56 */
+    *(s32 *)(workspace + 448) = 512;   /* additive: 224<<1 + 64 */
 
     Func_0808a360();
     Func_0808a370();
@@ -203,8 +203,8 @@ void Func_02001298(void)
     /* Second write to the same two cached displacements: the additive
      * idiom's canonical value 513 (224<<1 + 65, same as
      * resource_3b9_c_0200160c.c) at +448, plain 16 at +456. */
-    *(s32 *)(workspace + 448) = 513;
     *(s32 *)(workspace + 456) = 16;
+    *(s32 *)(workspace + 448) = 513;
 
     Func_0808a368();
     Func_0808a370();

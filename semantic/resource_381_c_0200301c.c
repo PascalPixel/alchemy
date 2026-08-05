@@ -112,10 +112,10 @@ void Func_0200301c(void)
     do {
         px = particle->px;
         py = particle->py;
-        pz = particle->pz;
+        record = particle->record;
         height = particle->height;
         fall = particle->fall;
-        record = particle->record;
+        pz = particle->pz;
 
         x = particle->x;
         y = particle->y;

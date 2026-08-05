@@ -53,8 +53,8 @@ void Func_0200013c(
     *(u8 *)(object + 85) = 0;
     Func_08009098(object, *(s32 *)(0x0200cbc4 + slot));
     record[38] = 0;
-    record = *(u8 **)(object + 80);
     *(s32 *)(object + 108) = 0x02008105;
+    record = *(u8 **)(object + 80);
     *(s32 *)(object + 68) = a3;
     *(s32 *)(object + 72) = a4;
     record[9] = (record[9] & ~13)

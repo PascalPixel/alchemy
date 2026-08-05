@@ -97,8 +97,8 @@ void Func_02004b2c(void)
     Func_0808a090(24, 0x10000, 0x13333);
     Func_0808a090(25, 0x18000, 0x18000);        /* 192 << 9 twice */
 
-    Data_0200e4f8 = 0;
     Func_080000d0((void (*)(void))((s32)&Func_020048c8 | 1), 0x0c94, 0);
+    Data_0200e4f8 = 0;
 
     Func_080770d0(0x1ff);
     Func_0808a020();

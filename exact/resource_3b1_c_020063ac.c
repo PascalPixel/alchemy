@@ -19,12 +19,21 @@
  * the *other* array: `count_a` (from scanning `a`) indexes into `b`, and
  * `count_b` (from scanning `b`) indexes into `a`.
  *
- * Raw callee naming.
+ * Call symbols are per-site, not per-import: the raw region (assets/code/
+ * resource_3b1_overlay.s around line 9152) spells the six calls as
+ * `bl sub_0200c876`, `bl sub_0200c890`, `bl sub_0200c896`, `bl sub_0200c8b0`,
+ * `bl sub_0200c8b0` (again), `bl sub_0200c8b8` -- five distinct local
+ * veneers (the second scan's hit handler and the first `Func_080770c8` call
+ * share sub_0200c8b0).  A single shared main-image-style name per logical
+ * import (as this file previously used) produces the wrong pc-relative
+ * displacement at every site; use the exact local sub_ symbols instead.
  */
 
-s32 Func_080770c0();
-void Func_080770d0();
-void Func_080770c8();
+s32 Func_0200c876();
+void Func_0200c890();
+s32 Func_0200c896();
+void Func_0200c8b0();
+void Func_0200c8b8();
 
 void Func_020063ac(u8 *a, u8 *b)
 {
@@ -34,8 +43,8 @@ void Func_020063ac(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *elem = a + i;
-        if (Func_080770c0(elem) != 0) {
-            Func_080770d0(elem);
+        if (Func_0200c876(elem) != 0) {
+            Func_0200c890(elem);
             break;
         }
         count_a++;
@@ -43,13 +52,13 @@ void Func_020063ac(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *elem = b + i;
-        if (Func_080770c0(elem) != 0) {
-            Func_080770d0(elem);
+        if (Func_0200c896(elem) != 0) {
+            Func_0200c8b0(elem);
             break;
         }
         count_b++;
     }
 
-    Func_080770c8(b + count_a);
-    Func_080770c8(a + count_b);
+    Func_0200c8b0(b + count_a);
+    Func_0200c8b8(a + count_b);
 }

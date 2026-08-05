@@ -241,7 +241,25 @@ function auditedInterval(fn: FunctionRow): void {
   const end = start + fn.span_bytes;
   if (overlay.intervals.some((interval) => interval.start <= start && end <= interval.end)) return;
 
-  const touched = overlay.intervals.filter((interval) => interval.start < end && start < interval.end);
+  const touched = overlay.intervals.filter((interval) => interval.start < end && start < interval.end)
+    .sort((left, right) => left.start - right.start);
+
+  // A function's own literal pool -- and the alignment the compiler inserts
+  // between its code and that pool -- are emitted as part of the function's
+  // object code, so a C span covering them is claiming bytes its own source
+  // genuinely produces. Accept a run that TILES the span with no hole and
+  // ends in code or a pool.
+  //
+  // A run ending in alignment is the opposite case and stays refused: that
+  // padding sits after the function's last real byte and belongs to the next
+  // one's alignment, not to this owner. Twelve owners were adopted across
+  // exactly that boundary before this check existed, inflating the Full-C
+  // metric by 2 bytes each while the overlay still rebuilt byte-for-byte.
+  const tiles = touched.length > 0
+    && touched[0].start <= start && touched[touched.length - 1].end >= end
+    && touched.every((interval, index) => index === 0 || touched[index - 1].end === interval.start);
+  const last = touched[touched.length - 1];
+  if (tiles && last.kind !== "executable_alignment") return;
   const detail = touched.length === 0
     ? "no audited executable interval covers it"
     : touched.map((i) => `[0x${hex8(i.start)},0x${hex8(i.end)}) ${i.kind}`).join(" + ");

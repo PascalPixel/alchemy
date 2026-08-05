@@ -81,9 +81,9 @@ void Func_02002f68(void)
     Func_08009180(-45, 77, -45, 73, 9, 4);
     Func_0808a010(30);
 
-    *(s32 *)(descriptor + 0) = 1;
     *(s32 *)(descriptor + 4) = 5;
     *(u16 *)(descriptor + 24) = 0x11e;
+    *(s32 *)(descriptor + 0) = 1;
     *(u32 *)(descriptor + 28) = 0x0200de70;
 
     /* First sixteen-item row. */
@@ -134,10 +134,10 @@ void Func_02002f68(void)
             first = (s32)(((u32)(randomValue * 8)) >> 16);
             y = 0x000d0001 + 0x1999 * first;
             randomValue = Func_080000f8();
-            second = (s32)(((u32)(randomValue * 8)) >> 16);
             offset = 0x00c00000 - (item >> 1) - (row * 16);
             Func_0200013c(x, 0, offset, y, 0, 0x1999 * second,
                           0x000d0001, descriptor);
+            second = (s32)(((u32)(randomValue * 8)) >> 16);
             Func_0808a010(2);
         }
     }

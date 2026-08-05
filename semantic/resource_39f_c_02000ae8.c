@@ -57,6 +57,7 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     u16 *tag;
     s32 kind;
 
+    s32 permuted_51;
     party = Func_0808a080(0);
 
     /* 128 << 13.  With that bit set and an options block present the effect's
@@ -72,8 +73,8 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     Func_08009080(effect, (flags + 1) & 15);
     Func_08009098(effect, Data_0200b058[flags & 15]);
 
-    effect[85] = 0;
     block[38] = 0;
+    effect[85] = 0;
 
     /* 0x02008ab1 is Func_02000ab0 with the Thumb bit: the per-frame
      * integrator. */
@@ -89,8 +90,8 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     *(s32 *)(effect + 48) = 0;
     *(s32 *)(effect + 52) = 0;
 
-    tag = (u16 *)(effect + 100);
     *tag = 0;
+    tag = (u16 *)(effect + 100);
 
     /* Everything below is optional detail: the whole block is skipped unless
      * some high flag bit is set and an options record was supplied. */
@@ -102,12 +103,13 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
     if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
         effect[35] = (u8)(effect[35] & 0xfe);
-        block[9] = (u8)((block[9] & 0xf3) | ((options[0] & 3) << 2));
+        permuted_51 = (u8)((block[9] & 0xf3) | ((options[0] & 3) << 2));
     }
+        block[9]  = permuted_51;
 
     if ((flags & 0x80000) != 0) {                   /* 128 << 12 */
-        *(s32 *)(effect + 24) = *(s32 *)(options + 8);
         *(s32 *)(effect + 28) = *(s32 *)(options + 12);
+        *(s32 *)(effect + 24) = *(s32 *)(options + 8);
     }
 
     if ((flags & 0x40000) != 0) {                   /* 128 << 11 */

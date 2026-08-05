@@ -66,8 +66,8 @@ void Func_02001e08(void)
             Func_08009180(30, 57, 19, 57, 1, 1);
         }
         Func_0808a330((s32)0x203108, 1);
-        Func_0808a348(1);
         pass++;
+        Func_0808a348(1);
         Func_080000c0(2);
         /* The back edge is an unsigned compare against 3, so the body runs
          * for pass 0..3. */

@@ -88,7 +88,7 @@ void Func_02002c0c(s32 subject)
     *(s32 *)(actor + 48) = 0;
     *(s32 *)(actor + 60) = *(s32 *)(actor + 12);
 
+    actor[86] = 0;
     actor[92] = 1;
     *(void **)(actor + 108) = (void *)0x0200aba5;   /* Func_02002ba4 | Thumb */
-    actor[86] = 0;
 }

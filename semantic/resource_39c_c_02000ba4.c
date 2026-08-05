@@ -57,13 +57,13 @@ s32 Func_02000ba4(s32 arg0)
         return 0;
     }
 
-    baseX = *(s32 *)(object + 8);
     baseZ = *(s32 *)(object + 16);
+    baseX = *(s32 *)(object + 8);
 
     positionX = (baseX + (deltas[index * 4] << 16)) >> 20;
-    positionZ = (baseZ + (deltas[index * 4 + 1] << 16)) >> 20;
     extentX = (Abs_02000ba4(deltas[index * 4]) +
                Abs_02000ba4(deltas[index * 4 + 2])) >> 4;
+    positionZ = (baseZ + (deltas[index * 4 + 1] << 16)) >> 20;
     extentZ = (Abs_02000ba4(deltas[index * 4 + 1]) +
                Abs_02000ba4(deltas[index * 4 + 3])) >> 4;
 

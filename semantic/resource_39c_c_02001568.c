@@ -29,9 +29,9 @@ void Func_02001568(void)
     actor = Func_0808a080(0);
     *(s32 *)(actor + 12) += 0x20000;
 
+    *(s32 *)(actor + 60) = *(s32 *)(source + 12);
     actor = Func_0808a080(0);
     source = Func_0808a080(0);
-    *(s32 *)(actor + 60) = *(s32 *)(source + 12);
 
     Func_0808a010(5);
     Func_08009180(7, 2, 5, 11, 1, 1);

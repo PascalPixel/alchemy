@@ -26,11 +26,16 @@
  * as code" trap — all four are reached only through `ldr rN,[pc,#imm]`.  They
  * belong to this owner, and the next prologue begins at 0x020011c4.
  *
- * Both call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_3b3 1174 11b4`, assigning the
- * i-th occurrence in the source to the i-th site in address order:
- *   0x02001176 -> veneer 0x02002b1c -> Func_0808a080
- *   0x0200118e -> veneer 0x02002a34 -> Func_080000c0
+ * Both call sites are named at their PC-RELATIVE-DECODED addresses:
+ *   0x02001176 -> Func_02003c94   (veneer physically at 0x02002b1c)
+ *   0x0200118e -> Func_02003bc4   (veneer physically at 0x02002a34)
+ * An overlay `bl` does not store the assembler's PC-relative displacement, so
+ * decoding the reference encoding as if it did yields the address the symbol
+ * must carry for the assembler to reproduce those bytes. That address depends
+ * on the CALL SITE, not just the callee -- which is the mechanical reason the
+ * craft rule says symbols are per-site. Naming the veneer's physical address
+ * instead leaves the displacement low halfword wrong (see resource_382:3ac,
+ * where this rule was worked out).
  * The first `bl` is the very first instruction after the `push`, so r0 is
  * still this owner's own argument when it is made — the record index is passed
  * straight through rather than materialised.
@@ -41,26 +46,14 @@
  * counter caps the run at 32 frames, and THE TWO EXITS ARE NOT THE SAME — the
  * cap exits without pinning.  Folding them together would delete the clamp.
  *
- * STILL-OPEN residual, 6 bytes (after sinking the record+12 store below the
- * record+28 store per alchemist.ts's move, applied below -- baseline was 25).
- * All 6 remaining bytes are confined to the two `bl` instructions' own
- * displacement encoding at 0x02001176 and 0x0200118e; resolvedCallNames()
- * confirms both call sites already use the correct symbol (verified: renaming
- * to their veneer addresses 0x02002b1c/0x02002a34 changed nothing, since that
- * turned out to be a wrong reading of the reference disassembly, not the
- * true target -- resolvedCallNames is the authority here, not a hand
- * decode). This matches resource_380:4328's documented finding: a bl
- * displacement anomaly confined to never-before-adopted overlay owners,
- * reproducible with correct symbols, likely a toolchain/link-time
- * veneer-placement quirk rather than a source issue. Not attempted further.
  */
 
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_080000c0();          /* ROM dispatch stub table entry 0 */
+u8 *Func_02003c94();           /* record fetch, returns the record */
+void Func_02003bc4();          /* ROM dispatch stub table entry 0 */
 
 void Func_02001174(s32 index)
 {
-    u8 *record = Func_0808a080(index);
+    u8 *record = Func_02003c94(index);
     u32 frames;
 
     record[0x55] = 0;
@@ -68,7 +61,7 @@ void Func_02001174(s32 index)
     frames = 0;
     for (;;) {
         if (frames > 31) return;
-        Func_080000c0(1);
+        Func_02003bc4(1);
         *(s32 *)(record + 28) += -0x1999;
         *(s32 *)(record + 12) += -0xcccc;
         frames++;

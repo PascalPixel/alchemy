@@ -73,11 +73,11 @@ void Func_020007e8(void)
     Func_08000130(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */
 
     counter = (u16 *)0x0200d238;
-    *counter = 0;
     do {
         Func_080000c0(1);
         *counter += 1;
     } while ((u32)(*counter << 16) <= (u32)(200 << 15));
+    *counter = 0;
 
     Func_080000c0(1);
     Func_08000130(1, 0, 0);

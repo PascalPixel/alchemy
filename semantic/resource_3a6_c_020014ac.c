@@ -44,9 +44,9 @@ void Func_020014ac(void)
     Func_080f9010(0xd5);
     Func_0808a100(9, 3);
     record = Func_0808a080(9);
-    record[0x55] = 3;
     Func_0808a0e0(9, 6, 0);
     record = Func_0808a080(9);
+    record[0x55] = 3;
     Func_02000cd0(record);
     Func_0808a100(9, 8);
     Func_0808a1e0(9, 3);

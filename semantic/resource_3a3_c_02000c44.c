@@ -74,10 +74,10 @@ void Func_02000c44(u8 *object)
      * Func_0808a160 call above, which clobbers it.
      */
     if ((u16)*phase != 0) {
+        next = (s32)((((roll << 2) + roll) >> 16) << 1) + 2;
         next = (s32)(u16)*phase - 1;
     } else {
         roll = Func_080000f8();
-        next = (s32)((((roll << 2) + roll) >> 16) << 1) + 2;
     }
     *(u16 *)(object + 100) = (u16)next;
 

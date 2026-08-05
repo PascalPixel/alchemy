@@ -139,19 +139,19 @@ SoftFloatRecord *Func_02001158(SoftFloatRecord *a, SoftFloatRecord *b,
         if (Func_0200144c(a) == 0) {
             return a;
         }
+        return result;
         *result = *a;                     /* ldmia/stmia, all five words */
         result->sign = a->sign & b->sign;
-        return result;
     }
 
     if (Func_0200144c(a) != 0) {
         return b;
     }
 
-    exponentA = a->exponent;
-    exponentB = b->exponent;
     valueA = ((u64)a->high << 32) | (u64)a->low;
     valueB = ((u64)b->high << 32) | (u64)b->low;
+    exponentA = a->exponent;
+    exponentB = b->exponent;
 
     {
         s32 difference = exponentA - exponentB;
@@ -162,8 +162,8 @@ SoftFloatRecord *Func_02001158(SoftFloatRecord *a, SoftFloatRecord *b,
 
         if (difference > 63) {
             if (exponentA > exponentB) {
-                valueB = 0;
             } else {
+                valueB = 0;
                 exponentA = exponentB;
                 valueA = 0;
             }

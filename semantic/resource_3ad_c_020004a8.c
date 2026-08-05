@@ -206,8 +206,8 @@ void Func_020004a8(void)
     Func_0808a1b8(12, 0x4000, 0);
 
     Func_0808a1e8(12, 0x102, 70);
-    line += 3;
     Func_0808a170(line);
+    line += 3;
     Func_0808a180(12, 0);
     Func_0808a0c8(12, 168, 432);
     Func_0808a010(40);

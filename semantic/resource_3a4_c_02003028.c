@@ -261,9 +261,9 @@ void Func_02003028(void)
     Func_0808a0b0(3, Data_0200c12c);
     Func_0808a010(20);
 
+    Func_080770d0(0x12f);
     workspace = Data_03001ebc;
     *(s32 *)(workspace + (224 << 1)) = 516;
-    Func_080770d0(0x12f);
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + (228 << 1)) = 16;

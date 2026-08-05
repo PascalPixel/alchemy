@@ -123,8 +123,8 @@ void Func_02001d0c(void)
 
     waited = 0;
 
-    *(s32 *)(actor + 104) = 0;
     *(u16 *)(actor + 100) = 0;
+    *(s32 *)(actor + 104) = 0;
     *(u16 *)(actor + 102) = 0;
     *(s32 *)(actor + 72) = 0x6666;
     *(s32 *)(actor + 108) = PUBLISHED_02001770;
@@ -133,8 +133,8 @@ void Func_02001d0c(void)
     Func_0808a0c0(10, 212, 200);
     Func_0808a0c0(10, 103, 200);
 
-    *(s32 *)(actor + 108) = 0;
     actor[91] = 0;
+    *(s32 *)(actor + 108) = 0;
 
     Func_0808a010(10);
     Func_0808a100(10, 1);
@@ -181,8 +181,8 @@ void Func_02001d0c(void)
     Func_0808a090(10, 0x13333, 0x9999);
     Func_0808a0c0(10, 120, 215);
 
-    *(s32 *)(actor + 108) = 0;
     actor[91] = 0;
+    *(s32 *)(actor + 108) = 0;
 
     Func_0808a100(10, 1);
     Func_0808a010(16);

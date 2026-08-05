@@ -106,17 +106,17 @@ void Func_02000958(void)
         Func_0808a1b8(11, 0xc000, 0);
 
         object = (u8 *)Func_0808a080(10);
-        object[0x59] = 0;
         object[0x23] = 2;
+        object[0x59] = 0;
+        sub = *(u8 **)(object + 0x50);
         sub = *(u8 **)(object + 0x50);
         sub[9] |= 12;
-        sub = *(u8 **)(object + 0x50);
         sub[0x26] = 0;
         sub = *(u8 **)(object + 0x50);
         *(u16 *)(sub + 30) = 0xc000;
 
-        object = (u8 *)Func_0808a080(11);
         object[0x23] = 0;
+        object = (u8 *)Func_0808a080(11);
         sub = *(u8 **)(object + 0x50);
         sub[9] |= 12;
         sub = *(u8 **)(object + 0x50);

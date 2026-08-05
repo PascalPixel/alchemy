@@ -48,8 +48,8 @@ s32 Func_0200007c(void)
 
     if (scene == 0x4b) {
         if (Func_080770c0(0x909) != 0) {
-            Data_0200940c[142] = 0;
             Data_0200940c[166] = 0;
+            Data_0200940c[142] = 0;
         }
         return (s32)Data_0200940c;
     }

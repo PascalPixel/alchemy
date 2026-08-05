@@ -50,8 +50,8 @@ void Func_02000c44(u8 *object)
 
     if (*phase > 3) {
         *(s32 *)(object + 16) += 0x00020000;    /* `movs r2,#128 / lsls #10` */
-        *(s32 *)(object + 24) += 0x000007ae;
         *(s32 *)(object + 28) += 0x000007ae;
+        *(s32 *)(object + 24) += 0x000007ae;
     } else {
         /* `lsls r0,#15 / lsrs r0,#16` keeps bits 16..1 of the roll. */
         roll = (Func_080000f8() << 15) >> 16;

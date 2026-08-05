@@ -17,8 +17,8 @@ void Func_02000b6c(void)
         if (actor != 0)
             actor[0x55] = 0;
     }
-    Func_080f9010(158);
     index = *(s16 *)(workspace + 364) - 4;
+    Func_080f9010(158);
     entry = (const u8 *)0x0200a50c + index * 8;
     Func_08009178(*(s32 *)entry, *(u16 *)(entry + 4), *(u16 *)(entry + 6));
     Func_0808a090(0, 0x8000, 0x4000);

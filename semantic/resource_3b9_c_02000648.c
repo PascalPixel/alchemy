@@ -27,28 +27,41 @@
  * Uncertainty: Func_0808a1b8's arguments are unread beyond the actor id.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a110(s32 id, s32 arg1);
-extern void Func_0808a150(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
-extern void Func_02001c48(s32 arg0);
-extern void Func_02001c5c(s32 arg0, s32 arg1);
 
+
+
+
+
+
+
+
+
+extern void Func_02003240(void);
+extern void Func_020032da(s32 id, s32 arg1, s32 arg2);
+extern void Func_020032f0(s32 dialogueId);
+extern void Func_020022aa(s32 arg0);
+extern void Func_0200332a(s32 id, s32 arg1, s32 arg2);
+extern void Func_02003336(s32 id, s32 arg1, s32 arg2);
+extern void Func_02003342(s32 id, s32 arg1, s32 arg2);
+extern void Func_02003314(s32 id, s32 arg1, s32 arg2);
+extern void Func_020022de(s32 arg0);
+extern void Func_0200330a(s32 id, s32 arg1);
+extern void Func_020022ec(s32 arg0);
+extern void Func_0200230a(s32 arg0, s32 arg1);
+extern void Func_020032ae(void);
 void Func_02000648(void)
 {
-    Func_0808a018();
-    Func_0808a150(18, 0, 20);
-    Func_0808a170(0x2122);
-    Func_02001c48(18);
-    Func_0808a1b8(18, 0xd000, 20);
-    Func_0808a1b8(18, 0xb000, 20);
-    Func_0808a1b8(18, 0x8000, 40);
-    Func_0808a150(18, 0, 20);
-    Func_02001c48(18);
-    Func_0808a110(18, 3);
-    Func_02001c48(18);
-    Func_02001c5c(18, 0x5000);
-    Func_0808a020();
+    Func_02003240();
+    Func_020032da(18, 0, 20);
+    Func_020032f0(0x2122);
+    Func_020022aa(18);
+    Func_0200332a(18, 0xd000, 20);
+    Func_02003336(18, 0xb000, 20);
+    Func_02003342(18, 0x8000, 40);
+    Func_02003314(18, 0, 20);
+    Func_020022de(18);
+    Func_0200330a(18, 3);
+    Func_020022ec(18);
+    Func_0200230a(18, 0x5000);
+    Func_020032ae();
 }

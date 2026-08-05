@@ -217,30 +217,44 @@ async function main(): Promise<void> {
       continue;
     }
 
-    if (after.verdict === "exact" || after.verdict === "unnecessary") {
-      const applied = runAdopt(id, path);
-      if (applied) {
-        // overlay_adopt.ts --apply installs the placeholder but does not
-        // remove the now-superseded draft; leaving it behind means the owner
-        // exists in both trees at once.
-        unlinkSync(path);
-        closed++;
-        console.log(`${id} CLOSED via mechanical call-symbol fix, was ${preBytes} differing bytes`);
-      } else {
-        writeFileSync(path, original);
-        reverted++;
-        console.log(`${id} REVERTED (adopt failed after exact verdict)`);
-      }
+    const exactVerdict = after.verdict === "exact" || after.verdict === "unnecessary";
+    const better = after.differing_bytes < preBytes;
+    if (!exactVerdict && !better) {
+      writeFileSync(path, original);
+      reverted++;
       continue;
     }
 
-    if (after.differing_bytes < preBytes) {
-      improved++;
-      console.log(`${id} IMPROVED via mechanical call-symbol fix: ${preBytes} -> ${after.differing_bytes} differing bytes`);
-    } else {
+    // Try to adopt on ANY improvement, not just on an "exact" verdict.
+    // overlay_adopt.ts self-gates: it splices the candidate into the overlay's
+    // assembly, rebuilds, and refuses unless the WHOLE overlay comes back
+    // byte-identical -- which is the project's actual definition of exact, and
+    // strictly stronger than the windowed byte-diff alchemist reports. The two
+    // disagree in the near-exact band: 12 owners this sweep had left open at
+    // "2 differing bytes" rebuilt the overlay byte-for-byte and closed on the
+    // spot (resource_39b:e6c, resource_3a6:cd0, resource_385:4b4, ...). Gating
+    // adoption on the weaker signal was leaving finished work on the floor.
+    // A failed adopt costs one rebuild and reverts both files itself, so this
+    // is safe to attempt unconditionally.
+    if (runAdopt(id, path)) {
+      // overlay_adopt.ts --apply installs the placeholder but does not
+      // remove the now-superseded draft; leaving it behind means the owner
+      // exists in both trees at once.
+      unlinkSync(path);
+      closed++;
+      console.log(`${id} CLOSED via mechanical call-symbol fix, was ${preBytes} differing bytes`);
+      continue;
+    }
+
+    if (exactVerdict) {
       writeFileSync(path, original);
       reverted++;
+      console.log(`${id} REVERTED (adopt failed after exact verdict)`);
+      continue;
     }
+
+    improved++;
+    console.log(`${id} IMPROVED via mechanical call-symbol fix: ${preBytes} -> ${after.differing_bytes} differing bytes`);
   }
 
   console.log(`closed=${closed} improved=${improved} reverted=${reverted} skipped=${skipped} total=${files.length}`);

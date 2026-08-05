@@ -7,25 +7,33 @@ struct SceneWork_020006b4 {
 };
 
 extern struct SceneWork_020006b4 *Data_03001ebc;
-extern void Func_0808a018(void);
-extern void Func_0808a170(s32 dialogue);
-extern void Func_0808a150(s32 actor, s32 mode, s32 value);
-extern void Func_0808a178(s32 actor, s32 mode);
-extern s32 Func_0808a070(s32 actor, s32 mode);
-extern void Func_0808a180(s32 actor, s32 mode);
-extern void Func_080770c8(s32 flag);
-extern void Func_0808a020(void);
 
+
+
+
+
+
+
+
+
+extern void Func_020017a0(void);
+extern void Func_02001826(s32 dialogue);
+extern void Func_02001820(s32 actor, s32 mode, s32 value);
+extern void Func_02001840(s32 actor, s32 mode);
+extern s32 Func_020017d0(s32 actor, s32 mode);
+extern void Func_0200186c(s32 actor, s32 mode);
+extern void Func_020017c4(s32 flag);
+extern void Func_020017f0(void);
 void Func_020006b4(void)
 {
-    Func_0808a018();
-    Func_0808a170(0x1cb5);
-    Func_0808a150(16, 0, 2);
-    Func_0808a178(16, 0);
-    if (Func_0808a070(0, 0) != 0) {
+    Func_020017a0();
+    Func_02001826(0x1cb5);
+    Func_02001820(16, 0, 2);
+    Func_02001840(16, 0);
+    if (Func_020017d0(0, 0) != 0) {
         Data_03001ebc->branch_counter += 1;
     }
-    Func_0808a180(16, 0);
-    Func_080770c8(0x308);
-    Func_0808a020();
+    Func_0200186c(16, 0);
+    Func_020017c4(0x308);
+    Func_020017f0();
 }

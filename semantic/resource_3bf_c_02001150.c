@@ -79,8 +79,8 @@ void Func_02001150(void)
     u8 *actor10 = Func_0808a080(10);
     u8 *base = *(u8 **)0x03001e70;
     s32 *record = (s32 *)(base + 356);
-    u8 *workspace = *(u8 **)(base + 76);
     u32 flags = *(u32 *)0x03001e40;
+    u8 *workspace = *(u8 **)(base + 76);
     const s16 *table = (const s16 *)0x02000240;
 
     if ((flags & 1u) != 0u) {
@@ -94,16 +94,16 @@ void Func_02001150(void)
     if (Func_080770c0(262) != 0
         || *(s16 *)(workspace + 382) != 0
         || *(s16 *)(workspace + 384) == 0) {
-        actor9[91] = 1;
         actor10[91] = 1;
+        actor9[91] = 1;
         return;
     }
 
+    actor10[91] = 0;
     if (Func_080770c0(532) != 0) {
         return;
     }
     actor9[91] = 0;
-    actor10[91] = 0;
 
     if (Func_080770c0(532) == 0 && actor9[91] == 0) {
         u64 value = Func_02005af0(*(s32 *)(actor9 + 8));

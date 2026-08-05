@@ -131,9 +131,9 @@ void Func_02001e94(void)
     Func_0808a148(12, 0, 0);
     Func_0808a110(12, 3);
 
-    line += 6;
     Func_0808a010(30);
     Func_0808a170(line);
+    line += 6;
     Func_0808a180(12, 0);
 
     {

@@ -92,28 +92,28 @@ void Func_02000404(void)
 
     /* Beat 1.  The +0x18 field alternates between 0xffff0000 and 0x10000
      * around each portrait/line pair.  129 << 1 = 258. */
-    *(s32 *)(player + 24) = (s32)0xffff0000;
     Func_0808a1f0(0, 258);
     Func_0808a100(0, 16);
-    Func_0808a0c0(11, 111, 196);
+    *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
+    Func_0808a0c0(11, 111, 196);
     Func_0808a0d0(0, 128, 185);
 
     /* Beat 2. */
     Func_0808a010(20);
-    *(s32 *)(player + 24) = (s32)0xffff0000;
     Func_0808a1f0(0, 258);
     Func_0808a100(0, 16);
     Func_0808a0c0(11, 121, 190);
+    *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
     Func_0808a0d0(0, 141, 189);
 
     /* Beat 3. */
     Func_0808a010(20);
-    *(s32 *)(player + 24) = (s32)0xffff0000;
     Func_0808a1f0(0, 258);
     Func_0808a100(0, 16);
     Func_0808a0c0(11, 132, 186);
+    *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
 
     /* Restore bit 0 of the player's flag byte. */

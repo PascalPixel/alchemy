@@ -68,8 +68,8 @@ void Func_02000ed8(void)
     if ((s16)Data_02009d88 == 0) {
         Func_02000f3c(actor);
     }
-    count = (u16)(Data_02009d88 + 1);
     Data_02009d88 = count;
+    count = (u16)(Data_02009d88 + 1);
 
     /* 240 << 13 = 0x001e0000, compared against count << 16 — i.e. the
      * halfword test count == 30.  Wraps the 30-frame effect period. */

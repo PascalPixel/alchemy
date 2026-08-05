@@ -56,9 +56,9 @@ void Func_020028b0(void)
     s32 position;
 
     actor = Func_0808a080(10);
-    position = *(s32 *)(actor + 8);
     if (position < 0)
         position += 0x000fffff;
+    position = *(s32 *)(actor + 8);
     position >>= 20;
 
     Func_0808a018();

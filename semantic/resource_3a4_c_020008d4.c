@@ -61,8 +61,8 @@ void Func_020008d4(void)
     Func_0808a010(10);
 
     for (i = 23; i >= 0; i--) {
-        *(s32 *)(record + 12) += -0x10000;      /* pool 0xffff0000 */
         Func_080000c0(4);
+        *(s32 *)(record + 12) += -0x10000;      /* pool 0xffff0000 */
     }
 
     Func_08000130(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */

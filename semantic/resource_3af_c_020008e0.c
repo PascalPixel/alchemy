@@ -47,8 +47,10 @@
  * the constants 300, 80 and the two thresholds are exact.
  */
 
-extern s32 Func_080000f8(void);
 
+
+extern s32 Func_02004b62(void);
+extern s32 Func_02004b8c(void);
 s32 Func_020008e0(u8 *record)
 {
     u32 countdown;
@@ -59,7 +61,7 @@ s32 Func_020008e0(u8 *record)
     if (countdown != 0) {
         countdown += 255;               /* stored as a byte: a decrement */
     } else {
-        draw = ((u32)Func_080000f8() * 300) >> 16;
+        draw = ((u32)Func_02004b62() * 300) >> 16;
         if (draw > 200) {
             *(u16 *)(record + 6) = (u16)(208 << 8);
         } else if (draw > 100) {
@@ -67,7 +69,7 @@ s32 Func_020008e0(u8 *record)
         } else {
             *(u16 *)(record + 6) = 0;   /* the counter, known zero here */
         }
-        countdown = ((((u32)Func_080000f8() * 80) >> 16) + 80);
+        countdown = ((((u32)Func_02004b8c() * 80) >> 16) + 80);
     }
     countdown  = permuted_3;
     record[98] = (u8)countdown;

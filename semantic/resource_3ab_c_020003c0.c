@@ -1,16 +1,22 @@
 #include "types.h"
-extern void Func_0808a018(void);
-extern void Func_0808a0f0(s32, s32, s32);
-extern void Func_080770c8(s32);
-extern void Func_0808a398(s32, s32);
-extern void Func_0808a060(s32, s32);
-extern void Func_0808a020(void);
+
+
+
+
+
+
+extern void Func_02001da4(void);
+extern void Func_02001e0e(s32, s32, s32);
+extern void Func_02001d9c(s32);
+extern void Func_02001ebc(s32, s32);
+extern void Func_02001dd4(s32, s32);
+extern void Func_02001dd0(void);
 void Func_020003c0(void)
 {
-    Func_0808a018();
-    Func_0808a0f0(20, 0, 0);
-    Func_080770c8(0xfd1);
-    Func_0808a398(181, 3);
-    Func_0808a060(181, 0);
-    Func_0808a020();
+    Func_02001da4();
+    Func_02001e0e(20, 0, 0);
+    Func_02001d9c(0xfd1);
+    Func_02001ebc(181, 3);
+    Func_02001dd4(181, 0);
+    Func_02001dd0();
 }

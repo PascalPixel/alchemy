@@ -29,8 +29,9 @@
  * these raw offsets.
  */
 
-extern void Func_02005688(void *record);
 
+
+extern void Func_0200b096(void *record);
 void Func_020059f0(u8 *arg0)
 {
     if (*(u8 *)(arg0 + 99) != 0) {
@@ -38,7 +39,7 @@ void Func_020059f0(u8 *arg0)
 
         *(u32 *)(arg0 + 12) = *(u32 *)(arg0 + 76) + ((u32)(counter >> 2) << 16);
 
-        Func_02005688(arg0);
+        Func_0200b096(arg0);
 
         {
             u32 c = *(u8 *)(arg0 + 98);

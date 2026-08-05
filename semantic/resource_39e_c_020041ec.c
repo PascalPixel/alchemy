@@ -66,9 +66,17 @@ extern void Func_020087e2(s32 sound_id);
 extern void Func_02008850(s32 sound_id);
 extern void Func_020043fe(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 
+struct Descriptor {
+    u32 field0;
+    u32 field4;
+    u8 unused8[16];
+    u16 field24;
+    u8 unused26[6];
+};
+
 void Func_020041ec(void)
 {
-    u8 descriptor[32];
+    struct Descriptor descriptor;
     u8 *record;
     u32 i;
     s32 x;
@@ -88,9 +96,9 @@ void Func_020041ec(void)
     *(u32 *)(record + 108) = 0x0200c1c5;
     Func_02008612(120);
     record = Func_02008648(8);
-    *(u32 *)(descriptor + 0) = 1;
-    *(u32 *)(descriptor + 4) = 2;
-    *(u16 *)(descriptor + 24) = 0x011d;
+    descriptor.field0 = 1;
+    descriptor.field4 = 2;
+    descriptor.field24 = 0x011d;
     for (i = 0; i <= 63; i++) {
         if ((i & 3) == 0) {
             Func_020087e2(246);
@@ -101,7 +109,7 @@ void Func_020041ec(void)
             + (((u32)Func_020085de() << 5) & 0xffff0000) + 0xfff00000;
         scale = (((u32)((u32)Func_020085f2() << 2) >> 16) << 15) + (128 << 8);
         Func_020043fe(x, y, *(s32 *)(record + 16), 0,
-                      scale, 0, 152 << 13, descriptor);
+                      scale, 0, 152 << 13, (u8 *)&descriptor);
         Func_0200860e(2);
     }
     Func_02008850(220);

@@ -83,7 +83,7 @@ void Func_02000ec8();          /* local: spawn, eight arguments (entry 3) */
 void Func_02000cd4(void)
 {
     u8 *record = Func_020050e4(19);
-    s32 index;
+    u32 index;
     s32 angle;
     s32 scalar;
 

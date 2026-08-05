@@ -159,11 +159,11 @@ s32 Func_02002758(void)
         Func_080000d0(callback_to_install, 3200);
         break;
 
-    continue_case_12:
         if (Func_080770c0(0x856) != 0) {
             Func_0808a0f0(25, 0x780000, 0x2b80000);
             Func_0808a1b8(25, 0x8000, 0);
         }
+    continue_case_12:
         if (Func_080770c0(0x852) == 0) {
             break;
         }
@@ -172,10 +172,10 @@ s32 Func_02002758(void)
             Func_080091c0(14, 50, 3, 1, 14, 44);
             break;
         }
+        break;
         *(u16 *)(Func_0808a080(24) + 100) = 5;
         *(u16 *)(Func_0808a080(25) + 100) = 4;
         Func_080000d0(0x0200aba1, 3200);
-        break;
 
     case 13:
     case 14:

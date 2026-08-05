@@ -130,8 +130,8 @@ void Func_020001e4(void)
     }
 
     /* Skip-beat counter: the u16 at workspace+472. */
-    workspace = Data_03001ebc;
     *(u16 *)(workspace + 472) += 1;             /* 236 << 1 */
+    workspace = Data_03001ebc;
 
     Func_0808a188(12, 0, 10);
 
@@ -167,8 +167,8 @@ void Func_020001e4(void)
     Func_0808a0d0(12, 346, 263);
     Func_0808a010(1);
 
-    speaker = Func_0808a080(12);
     speaker->flags5a = (u8)(speaker->flags5a | 1);
+    speaker = Func_0808a080(12);
 
     Func_0808a090(11, 0x9999, 0x4ccc);          /* 0.6, 0.3 */
     Func_0808a0d0(11, 328, 263);

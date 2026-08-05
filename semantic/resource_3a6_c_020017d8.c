@@ -26,18 +26,18 @@ void Func_020017d8(s32 actorId, s32 cellX, s32 cellZ)
 
     Func_0808a018();
 
-    x = (*(s32 *)(sceneActor + 8) + (cellX << 16)) & (s32)0xfff00000;
-    z = (*(s32 *)(sceneActor + 16) + (cellZ << 16)) & (s32)0xfff00000;
     *(s32 *)(sceneActor + 48) = 0x10000;
+    z = (*(s32 *)(sceneActor + 16) + (cellZ << 16)) & (s32)0xfff00000;
+    x = (*(s32 *)(sceneActor + 8) + (cellX << 16)) & (s32)0xfff00000;
     *(s32 *)(sceneActor + 52) = 0x8000;
     Func_08009150(sceneActor, x + 0x80000,
                   *(s32 *)(sceneActor + 12), z + 0x80000);
     Func_08009080(sceneActor, 27);
 
     x = (*(s32 *)(requestedActor + 8) + (cellX << 16)) & (s32)0xfff00000;
+    *(s32 *)(requestedActor + 52) = 0x8000;
     z = (*(s32 *)(requestedActor + 16) + (cellZ << 16)) & (s32)0xfff00000;
     *(s32 *)(requestedActor + 48) = 0x10000;
-    *(s32 *)(requestedActor + 52) = 0x8000;
     Func_08009150(requestedActor, x + 0x80000,
                   *(s32 *)(requestedActor + 12), z + 0x80000);
     if (cellX < 0 || cellZ < 0) {

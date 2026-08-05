@@ -51,8 +51,8 @@ void Func_020007b0(s32 subject)
     Func_0808a018();
 
     if (Func_080770c0(0x8bd) == 0) {
-        message = 0x2399;
         Func_0808a170(message);
+        message = 0x2399;
         Func_0808a178(subject, 0);
         if (Func_0808a070(0, 0) == 0) {
             Func_0808a010(10);

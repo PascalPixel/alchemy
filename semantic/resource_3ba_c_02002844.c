@@ -24,9 +24,9 @@ void Func_02002844(s32 step)
     s32 magnitude = step < 0 ? -step : step;
 
     Func_080f9010(0xf7);
+    *(s16 *)(0x0200c628 + 26) = (s16)(step * 60);
     Func_0808a360();
     Func_0808a370();
-    *(s16 *)(0x0200c628 + 26) = (s16)(step * 60);
     *(s16 *)(0x0200be76 + 26) = (s16)(magnitude * 60);
 
     if (step < 0) {
@@ -45,9 +45,9 @@ void Func_02002844(s32 step)
         actor = 8;
     }
 
-    Func_0808a1e8(actor, 0x105, 0);
     goto check_transition;
 wait_transition:
+    Func_0808a1e8(actor, 0x105, 0);
     Func_080000c0(1);
 check_transition:
     if (Func_080f9048() != 0)

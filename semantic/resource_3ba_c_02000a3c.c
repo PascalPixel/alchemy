@@ -137,8 +137,8 @@ s32 Func_02000a3c(void)
     record = Func_0808a080(10);
     *(s32 *)(record + 8) = (column << 20) + 0x80000;
     *(record + 0x55) = 0;
-    *(record + 0x23) = 2;
     Func_080091c0(14, 13, 1, 1, column, 12);
+    *(record + 0x23) = 2;
 
     Func_080000d0((void (*)(void))((s32)&Func_0200004c | 1), 0xc80);
 
@@ -180,8 +180,8 @@ s32 Func_02000a3c(void)
         Func_08009080(record, 2);
     }
 
-    record = Func_0808a080(14);
     *(record + 0x23) = 2;
+    record = Func_0808a080(14);
 
     Func_02002ea0(24, 120);
     Func_02002ea0(25, 127);

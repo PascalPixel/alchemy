@@ -34,14 +34,16 @@ void Func_0808a020();
 
 void Func_020024cc(void)
 {
+    s32 permuted_6;
     u8 *obj = Func_0808a080(10);
     s32 x;
     s32 z;
 
     Func_0808a018();
 
-    x = *(s32 *)(obj + 8) >> 20;
+    permuted_6 = *(s32 *)(obj + 8) >> 20;
     z = *(s32 *)(obj + 16) >> 20;
+    x  = permuted_6;
 
     Func_02000528(2, x, z, 1, 1, 255);
 
@@ -54,8 +56,8 @@ void Func_020024cc(void)
             Func_080f9010(0x9f);
 
             obj[0x55] = 0;
-            *(u32 *)(obj + 20) = 0xfffe0000;
             *(u32 *)(obj + 12) = 0xfffe0000;
+            *(u32 *)(obj + 20) = 0xfffe0000;
 
             Func_080770c8(0x204);
         }

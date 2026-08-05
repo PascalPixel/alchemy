@@ -41,11 +41,11 @@ s32 Func_02001074(s32 selector, s32 mode)
     Func_080091e0(actor, 0);
 
     terrain = Func_080091a8(2, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
+    startLevel >>= 20;
     startLevel = terrain;
     if (startLevel < 0) {
         startLevel += 0x000fffff;
     }
-    startLevel >>= 20;
 
     limit = startLevel;
     if (limit < 0) {
@@ -84,8 +84,8 @@ s32 Func_02001074(s32 selector, s32 mode)
 
             spawned = Func_02000048(x, y, z, variant);
             terrain = *(s32 *)(actor + 16) - z + y;
-            found = 1;
             break;
+            found = 1;
         }
     }
 

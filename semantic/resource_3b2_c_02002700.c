@@ -89,11 +89,11 @@ void Func_02002700(void)
             Func_02001774(9, 0, -96);
             transition = 64;
         }
+        transition = ((u32)(companion16Column - 9) <= 2) ? 48 : 112;
     } else if (row == 15) {
         if ((u32)(companion14Column - 9) <= 2) {
             return;
         }
-        transition = ((u32)(companion16Column - 9) <= 2) ? 48 : 112;
     } else if (row == 14) {
         if ((u32)(companion14Column - 9) <= 2) {
             return;

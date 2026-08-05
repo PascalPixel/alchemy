@@ -75,8 +75,8 @@ selector_01_shared:
         Func_0808a1b8(3, 0x8000, arg2);
         break;
 
-    case 2:
         Func_0808a100(0, 3);
+    case 2:
         Func_0808a100(1, 3);
         Func_0808a100(2, 3);
         Func_0808a100(3, 3);

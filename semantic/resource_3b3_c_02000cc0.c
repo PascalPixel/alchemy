@@ -41,23 +41,25 @@ extern u32 Data_06002840[]; /* VRAM destination B, 0x40 bytes after A */
 void Func_02000cc0(s32 srcCol, s32 srcRow, s32 colCount, s32 rowCount,
                     s32 destRowBlock, s32 destColStart, s32 destRowStart)
 {
+    s32 permuted_4;
     u32 *src = Data_02010000 + (srcRow * 128 + srcCol);
     s32 colSkip = 128 - colCount;
     s32 destRow = destRowStart;
     s32 destRowEnd = destRowStart + rowCount;
 
     while (destRow < destRowEnd) {
-        s32 rowByteOff = ((destRow & 0xf) + (destRowBlock << 4)) << 5;
         s32 destCol = destColStart;
         s32 destColEnd = destColStart + colCount;
+        s32 rowByteOff = ((destRow & 0xf) + (destRowBlock << 4)) << 5;
 
         while (destCol < destColEnd) {
-            u32 tileIndex = (*src++) & 0xfff;
             s32 idx = rowByteOff + (destCol & 0xf);
+            u32 tileIndex = (*src++) & 0xfff;
             u32 *entry = Data_02020000 + tileIndex * 2;
 
-            Data_06002800[idx] = entry[0];
+            permuted_4 = entry[0];
             Data_06002840[idx] = entry[1];
+            Data_06002800[idx]  = permuted_4;
 
             destCol++;
         }

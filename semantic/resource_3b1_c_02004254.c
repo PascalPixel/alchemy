@@ -101,11 +101,11 @@ void Func_02004254(s32 kind)
         }
 
         if (Func_080770c0(0x92a) != 0) {
-            use_alt_position = 1;
             Func_0808a0d0(0, 0xd3 << 1, 0x9a);
             Func_0808a1b8(0, 0xc000, 0);
             Func_0808a1b8(27, 0x5000, 0);
             Func_0808a0d0(actor_id, 0xcd << 1, 0xcc);
+            use_alt_position = 1;
             Func_02004880(actor_id, 0xd000);
             goto scene_common;
         }
@@ -127,8 +127,8 @@ shared_position:
         goto scene_common;
 
 alternate_position:
-        use_alt_position = 1;
         Func_0808a0d0(0, 0xd3 << 1, 0x9a);
+        use_alt_position = 1;
         Func_0808a1b8(0, 0xc000, 0);
         Func_0808a1b8(27, 0x5000, 0);
         Func_0808a0d0(actor_id, 0xcd << 1, 0xac);
@@ -149,9 +149,9 @@ scene_common:
         Func_0808a0c8(27, 0x1b8, 0x86);
         Func_0808a010(40);
         Func_020048e8(9, 10, 0);
+        actor_id = 0xa01b;
     } else {
         Func_0808a170(0x1eb7);
-        actor_id = 0xa01b;
         Func_0808a188(actor_id, 0, 40);
         Func_0808a1e8(27, 0x101, 60);
         Func_0200486c(actor_id);

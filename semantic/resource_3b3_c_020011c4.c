@@ -59,8 +59,8 @@ void Func_020011c4(void)
     sample = Func_080000f8();
     x = actor->x + ((s32)((sample * 17u) >> 16) - 8) * 0x10000;
 
-    sample = Func_080000f8();
     z = actor->z + ((s32)((sample * 17u) >> 16) - 8) * 0x10000;
+    sample = Func_080000f8();
 
     sample = Func_080000f8();
     verticalOffset = (s32)((sample * 5u) >> 16) * 0x10000 + 0x30000;

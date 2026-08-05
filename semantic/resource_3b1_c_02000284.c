@@ -54,8 +54,8 @@ void Func_02000284(u8 *object)
 
     if (*stage == 1) {
         /* 208 << 8. */
-        *(u16 *) (object + 6) = 0xd000;
         object[98] = 1;
+        *(u16 *) (object + 6) = 0xd000;
         /* The stored 0 is the pool word at 0x020002d8. */
         *stage = 0;
         return;
@@ -65,8 +65,8 @@ void Func_02000284(u8 *object)
         if (object[98] != 0) {
             Func_08009080(object, 3);
         }
-        object[98] = 0;
         *stage = 0;
+        object[98] = 0;
         return;
     }
 

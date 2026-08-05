@@ -115,11 +115,11 @@ void Func_020029d4(void)
     Func_0808a090(21, 0xcccc, 0x6666);
     Func_0808a098(21, 0x0200c628);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 128 << 1;
     Func_0808a360();
     Func_0808a370();
     Func_0808a010(20);
+    workspace = Data_03001ebc;
 
     Func_0808a090(20, 0x19999, 0xcccc);
     Func_0808a0d0(20, 182, 137 << 2);
@@ -147,8 +147,8 @@ void Func_020029d4(void)
     Func_0808a0d0(20, 216, 145 << 2);
     Func_0808a0f0(20, 0, 0);
 
-    workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 0x209;
+    workspace = Data_03001ebc;
     Func_080770c8(0x92b);
     Func_080770d0(0x302);
     Func_0808a020();

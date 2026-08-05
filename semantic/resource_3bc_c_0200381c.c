@@ -93,12 +93,12 @@ void Func_0200381c(s32 arg0)
     *(u16 *)(record + 6) = (u16)Data_0200dbc8;
 
     *(u32 *)(record + 56) = 0x80000000;
-    *(u32 *)(record + 64) = 0x80000000;
     record[0x55] = 3;
+    *(u32 *)(record + 64) = 0x80000000;
 
+    record[0x22] = 0;
     *(u32 *)(record + 36) = 0;
     *(u32 *)(record + 44) = 0;
-    record[0x22] = 0;
     *(u32 *)(record + 12) = 0;
     *(u32 *)(record + 20) = 0;
 

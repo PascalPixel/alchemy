@@ -71,8 +71,8 @@ void Func_02001474(s32 direction)
     Func_0808a0f0(3, 0x05a80000, 0x00c00000);
     record = Func_0808a080(1);
     *(s16 *)(record + 6) = 0;
-    record = Func_0808a080(2);
     *(s16 *)(record + 6) = 0;
+    record = Func_0808a080(2);
     record = Func_0808a080(3);
     *(s16 *)(record + 6) = 0;
 

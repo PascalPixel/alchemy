@@ -34,7 +34,6 @@ u16 Func_02000ecc(u16 color, s32 adjustment)
         red = 31;
 
     packed = (u32)(s32)red;
-    packed |= (u32)(s32)green << 5;
-    packed |= (u32)(s32)blue << 10;
+    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
     return (u16)packed;
 }

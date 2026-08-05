@@ -2545,13 +2545,8 @@ AlchemyC_02000694:
 	bx	r0
 	.2byte 0x9ca8
 	.2byte 0x0200
-	push	{lr}
-	ldr	r0, [pc, #8]
-	bl	sub_02003282
-	pop	{r0}
-	bx	r0
-	.2byte 0x9245
-	.2byte 0x0200
+AlchemyC_0200184c:
+	.space 0x10
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0
 	ldr	r5, [r6, #68]

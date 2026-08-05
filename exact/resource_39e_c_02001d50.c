@@ -67,7 +67,9 @@ extern s32 Func_0200615e(s32 arg0, s32 arg1);
 extern void Func_0200616c(void);
 extern void Func_0200618c(void);
 extern void Func_020061f6(s32 dialogueId);
-extern void Func_02006206(s32 slot, s32 arg1);
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern s32 Func_02006206(s32 slot, s32 arg1);
 extern void Func_02006232(s32 slot, s32 arg1, s32 arg2);
 extern void Func_02006258(s32 slot, s32 arg1, s32 arg2);
 

@@ -9,7 +9,9 @@
 extern void Func_0200135c(void);
 extern void Func_0200140a(s32 message);
 extern void Func_02001404(s32 actor, s32 target, s32 frames);
-extern void Func_0200143c(s32 actor, s32 mode);
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern s32 Func_0200143c(s32 actor, s32 mode);
 extern void Func_02001380(void);
 void Func_020001bc(void)
 {

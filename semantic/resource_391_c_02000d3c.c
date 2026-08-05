@@ -256,8 +256,8 @@ void Func_02000d3c(void)
     Func_02002780(2, movement_4000, 40);
     Func_0808a1e8(2, 0x101, 0);
     Func_0808a010(60);
-    Func_0808a1b8(1, movement_4000, 0);
     movement_6000 = 0x6000;
+    Func_0808a1b8(1, movement_4000, 0);
     Func_02002780(0, movement_6000, 60);
     Func_02002780(3, movement_2000, 10);
     Func_0808a1b8(1, movement_2000, 0);
@@ -272,8 +272,8 @@ void Func_02000d3c(void)
     Func_0808a170(0x1474);
     Func_02002768(1, 10);
     Func_0808a170(0x147c);
-    movement_c000 = 0xc000;
     Func_02002780(2, movement_c000, 20);
+    movement_c000 = 0xc000;
     Func_0808a110(2, 3);
     Func_02002768(2, 20);
     Func_02002780(1, 0, 20);
@@ -375,8 +375,8 @@ void Func_02000d3c(void)
     }
 
     /* Stop the 0x27c8 spawner, then uninstall it. */
-    Data_0200b398 = 0;
     Func_0808a010(160);
+    Data_0200b398 = 0;
     Func_080000d8((void *)((u32)Func_020027c8 + 1));
 
     Func_0808a010(120);

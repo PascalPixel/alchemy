@@ -36,17 +36,18 @@ void Func_02000098(s32 srcX, s32 srcY, s32 columns, s32 rows,
                    s32 bank, s32 dstX, s32 dstY)
 {
     u32 *cell = (u32 *)(0x02010000 + (((srcY << 7) + srcX) << 2));
-    s32 rowAdvance = (128 - columns) << 2;
     s32 lastRow = dstY + rows;
+    s32 rowAdvance = (128 - columns) << 2;
     s32 y;
     s32 x;
 
     if (dstY >= lastRow) return;
 
     for (y = dstY; y < lastRow; y++) {
-        s32 lastColumn = dstX + columns;
         s32 rowBase = ((y & 15) + (bank << 4)) << 5;
+        s32 lastColumn = dstX + columns;
 
+        cell = (u32 *)((s32)cell + rowAdvance);
         for (x = dstX; x < lastColumn; x++) {
             u32 entry = *cell++ & 0xfff;
             s32 offset = (rowBase + (x & 15)) << 2;
@@ -54,6 +55,5 @@ void Func_02000098(s32 srcX, s32 srcY, s32 columns, s32 rows,
             *(u32 *)(0x06002800 + offset) = *(u32 *)(0x02020000 + (entry << 3));
             *(u32 *)(0x06002840 + offset) = *(u32 *)(0x02020004 + (entry << 3));
         }
-        cell = (u32 *)((s32)cell + rowAdvance);
     }
 }

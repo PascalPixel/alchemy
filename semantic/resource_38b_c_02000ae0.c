@@ -66,6 +66,7 @@ void Func_02000ae0(void)
     u8 *child;
     s32 seen;
 
+    s32 permuted_5;
     actor10 = Func_0808a080(10);
     actor11 = Func_0808a080(11);
 
@@ -112,10 +113,10 @@ void Func_02000ae0(void)
         if (Func_080770c0(0x881) != 0) {
             /* Set bit 4 of the +0x59 flag byte on slots 9, 16 and 11. */
             record = Func_0808a080(9) + 89;
-            *record = (u8)(*record | 16);
             record = Func_0808a080(16) + 89;
-            *record = (u8)(*record | 16);
             record = Func_0808a080(11) + 89;
+            *record = (u8)(*record | 16);
+            *record = (u8)(*record | 16);
             *record = (u8)(*record | 16);
 
             /* 142 << 16 and 156 << 16: 16.16 coordinates. */
@@ -125,8 +126,8 @@ void Func_02000ae0(void)
             Func_0808a0f0(10, 0x008e0000, 0x009c0000);
 
             /* 128 << 7 = 0x4000, into the child record's +0x1e halfword. */
-            child = *(u8 **)(actor10 + 80);
             *(u16 *)(child + 30) = 0x4000;
+            child = *(u8 **)(actor10 + 80);
 
             /* Pool word 0xfff80000 — a signed add of -0x00080000. */
             *(s32 *)(actor10 + 12) += (s32)0xfff80000;
@@ -137,9 +138,10 @@ void Func_02000ae0(void)
             } else {
                 /* 176 << 15 = 0x580000 — note the shift is 15, not 16, so
                  * this is not 176 << 16; and 196 << 16. */
+                permuted_5 = (u8)(*(u8 *)(actor11 + 89) | 4);
                 Func_0808a0f0(11, 0x00580000, 0x00c40000);
                 Func_0808a1e0(11, 3);
-                *(u8 *)(actor11 + 89) = (u8)(*(u8 *)(actor11 + 89) | 4);
+                *(u8 *)(actor11 + 89) = permuted_5;
             }
         } else {
             /* 128 << 14 = 0x200000, 192 << 14 = 0x300000. */

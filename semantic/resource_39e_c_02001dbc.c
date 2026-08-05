@@ -250,9 +250,9 @@ void Func_02001dbc(void)
     Func_0808a138(15, 3);
     Func_0808a0f0(19, 232 << 16, 168 << 16);
     record = Func_0808a080(19);
-    *(s32 *)(record + 12) = 192 << 12;
     record = Func_0808a080(19);
     *(u32 *)(record + 60) = 0x80000000;
+    *(s32 *)(record + 12) = 192 << 12;
     record = Func_0808a080(19);
     *(u16 *)(*(u8 **)(record + 80) + 30) = 128 << 8;
     Func_080f9010(124);

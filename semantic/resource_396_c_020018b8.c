@@ -64,14 +64,14 @@ void Func_020018b8(void)
     Func_0808a010(24);
 
     actor = Func_0808a080(0);
+    params.callback = Func_0200185c;
     params.mode = 7;
     params.color1 = 0xcccc;
     params.color2 = 0xcccc;
-    params.callback = Func_0200185c;
 
     for (step = 0; step <= 16; step++) {
-        radial[0] = Func_08000120(step << 12);
         radial[1] = 0;
+        radial[0] = Func_08000120(step << 12);
         radial[2] = Func_08000118(step << 12);
         radial[0] += radial[0] / 2;
 
@@ -90,9 +90,9 @@ void Func_020018b8(void)
     Func_080091f8();
     Func_0808a1f0(0, 0x100);
 
+    *(s32 *)(actor + 72) = 0x10000;
     actor = Func_0808a080(0);
     actor = Func_0808a080(0);
     *(s32 *)(actor + 68) = 0x4000;
     Func_0808a020();
-    *(s32 *)(actor + 72) = 0x10000;
 }

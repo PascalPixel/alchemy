@@ -37,8 +37,8 @@ void Func_02001db4(s32 variant)
     descriptor[3] = 0x8000;
 
     for (pass = 0; pass <= 1; pass++) {
-        s32 left = 0x032c0000 - (pass << 20);
         s32 right = 0x02c00000 + (pass << 20);
+        s32 left = 0x032c0000 - (pass << 20);
         s32 slot;
 
         for (slot = 0; slot <= 7; slot++) {
@@ -47,9 +47,9 @@ void Func_02001db4(s32 variant)
                     u32 randomX = (u32)(Func_080000f8() << 3) >> 16;
                     u32 randomY = (u32)(Func_080000f8() << 3) >> 16;
                     Func_0200013c(
-                        0x03180000, 0, right,
                         (s32)(randomX * 0x3333) - 0xcccc,
                         variant, (s32)(randomY * 0x3333) - 0xcccc,
+                        0x03180000, 0, right,
                         0x00090000, descriptor);
                 } else if (variant == 1) {
                     u32 randomX = (u32)(Func_080000f8() << 3) >> 16;

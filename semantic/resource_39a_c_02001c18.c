@@ -58,8 +58,10 @@ void Func_02001c18(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, u32 flags,
 
     /* ldmia/stmia copy the three-word table into the frame before anything
      * else runs. */
-    table[0] = Data_0200a418[0];
+    s32 permuted_8;
+    permuted_8 = Data_0200a418[0];
     table[1] = Data_0200a418[1];
+    table[0]  = permuted_8;
     table[2] = Data_0200a418[2];
 
     object = Func_080090c8(222, a, b, c);

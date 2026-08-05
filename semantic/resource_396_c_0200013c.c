@@ -77,19 +77,19 @@ void Func_0200013c(s32 x, s32 y, s32 z,
     else
         id = 222;
 
+    sprite = particle->sprite;
     particle = Func_080090c8(id, x, y, z);
     if (particle == 0)
         return;
-    sprite = particle->sprite;
 
     Func_08009080(particle, (flags + 1) & 15);
     Func_08009098(particle, Data_02009da8[flags & 15]);
-    particle->mode55 = 0;
     sprite->state26 = 0;
+    particle->mode55 = 0;
     particle->callback = Func_02000104;
     particle->velocityX = velocityX;
-    particle->velocityY = velocityY;
     particle->velocityZ = velocityZ;
+    particle->velocityY = velocityY;
     sprite->flags9 = (u8)((sprite->flags9 & ~12)
                           | (template->sprite->flags9 & 12));
     particle->rate30 = 0;

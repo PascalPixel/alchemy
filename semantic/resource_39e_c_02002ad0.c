@@ -543,8 +543,8 @@ void Func_02002ad0(void)
     Func_0808a0d0(0, 224 << 1, 128 << 2);
     Func_0808a010(1);
     record = Func_0808a080(0);
-    *(u8 *)(record + 90) |= 1;
     Func_0808a010(20);
+    *(u8 *)(record + 90) |= 1;
     Func_020041ec();
     Func_0808a010(60);
     Func_0808a078(2, 144);
@@ -621,9 +621,9 @@ void Func_02002ad0(void)
         Func_0808a110(1, 3);
         Func_0808a010(20);
         Func_0808a188(1, 0, 20);
-        workspace = Data_03001ebc;
         *(u16 *)(workspace + 472) += 1;
     } else {
+        workspace = Data_03001ebc;
         Func_0808a010(20);
         workspace = Data_03001ebc;
         *(u16 *)(workspace + 472) += 1;

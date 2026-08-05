@@ -61,12 +61,13 @@ void Func_02003484(u8 *record)
     s32 cx;
     s32 cz;
 
+    s32 permuted_30;
     Func_080f9010(0x120);      /* 144 << 1 */
     Func_080f9010(232);
 
     gx = *(s32 *)(record + 8) & 0xfff00000;
-    gz = *(s32 *)(record + 16) & 0xfff00000;
     cx = gx + 0x80000;                          /* 128 << 12 */
+    gz = *(s32 *)(record + 16) & 0xfff00000;
     cz = gz + 0x80000;
 
     *(s32 *)(record + 0x34) = 0x20000;          /* 128 << 10 */
@@ -74,9 +75,9 @@ void Func_02003484(u8 *record)
     Func_08009158(record);
 
     record[0x22] = 0;
+    *(s32 *)(record + 0x24) = 0;
     *(s32 *)(record + 8) = cx;
     *(s32 *)(record + 16) = cz;
-    *(s32 *)(record + 0x24) = 0;
     *(s32 *)(record + 0x2c) = 0;
 
     Func_08009080(record, 2);
@@ -84,7 +85,8 @@ void Func_02003484(u8 *record)
     Func_08009080(record, 1);
     Func_080000c0(30);
 
-    sprite = *(u8 **)(record + 0x50);
+    permuted_30 = *(u8 **)(record + 0x50);
+    sprite  = permuted_30;
     sprite[0x27] = 1;
     Func_08009060(*(s32 *)(sprite + 0x2c));
     *(s32 *)(sprite + 0x2c) = 0;

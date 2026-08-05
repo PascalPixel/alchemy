@@ -79,20 +79,20 @@ u64 Func_02001574();
 
 SoftDouble Func_020015a4(SoftFloatRecord *record)
 {
-    u32 sign = record->sign;
     u32 low = record->low;
     u32 high = record->high;
+    u32 sign = record->sign;
     u32 biasedExponent = 0;
     u32 packedHigh;
 
     if (Func_02001740(record) != 0) {
         /* Quiet NaN: keep the payload, force mantissa bit 51. */
-        high |= 0x00080000u;
+        biasedExponent = 0x7ffu;
         biasedExponent = 0x7ffu;
     } else if (Func_02001750(record) != 0) {
-        biasedExponent = 0x7ffu;
-        low = 0u;
         high = 0u;
+        high |= 0x00080000u;
+        low = 0u;
     } else if (Func_02001760(record) != 0) {
         low = 0u;
         high = 0u;

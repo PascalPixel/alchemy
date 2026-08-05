@@ -114,10 +114,10 @@ void Func_02003850(s32 slot, s32 heading)
         return;
     }
 
+    Func_08009048(*(u8 **)(record + 0x50), 16);
     record[0x22] = 2;
     *(s32 *)(companion + 8) = 0;
     *(s32 *)(companion + 16) = 0;
-    Func_08009048(*(u8 **)(record + 0x50), 16);
     Func_0808a200(slot, 1);
     Func_0808a218();
     Func_0808a208(0x100000, 0x20000);               /* 128<<13, 128<<10 */

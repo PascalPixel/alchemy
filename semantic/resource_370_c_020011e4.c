@@ -61,10 +61,10 @@ s32 Func_020011e4(u8 *data, s32 length, u8 *out)
 
     dst = out;
     produced = 0;
-    checksum = 0;
-    group = 0;
     bit = 0;
     consumed = 0;
+    checksum = 0;
+    group = 0;
 
     do {
         value = 0;
@@ -87,15 +87,15 @@ s32 Func_020011e4(u8 *data, s32 length, u8 *out)
         }
 
         group++;
-        *dst++ = (u8)value;
-        produced++;
         checksum += value;
+        produced++;
+        *dst++ = (u8)value;
 
         if (group == 9) {
-            *dst++ = (u8)(checksum & 63);
-            produced++;
-            checksum = 0;
             group = 0;
+            *dst++ = (u8)(checksum & 63);
+            checksum = 0;
+            produced++;
         }
     } while (consumed != length);
 

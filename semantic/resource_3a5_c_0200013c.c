@@ -65,8 +65,8 @@ void Func_0200013c(
         Func_0808a160(object, *(s32 *)(extra + 4));
 
     if ((flags & 0x20000) != 0) {
-        object[35] &= ~1;
         owner[9] = (owner[9] & ~12) | ((extra[0] & 3) << 2);
+        object[35] &= ~1;
     }
 
     {

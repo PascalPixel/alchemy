@@ -59,16 +59,16 @@ s32 Func_02000728(void)
     *(s32 *)(workspace + 448) = 32;
 
     Func_0808a0f0(16, 0x1600000, 0x1600000);
+    *(u16 *)(actor + 100) = 1;
     Func_0808a098(16, (void *)0x02008ec0);
     actor = Func_0808a080(16);
-    *(u16 *)(actor + 100) = 1;
     *(void **)(actor + 0x6c) = frame_callback;
 
     Func_0808a0f0(17, 0x1700000, 0x1400000);
     Func_0808a098(17, (void *)0x02008f90);
-    actor = Func_0808a080(17);
     *(u16 *)(actor + 100) = 0;
     *(void **)(actor + 0x6c) = frame_callback;
+    actor = Func_0808a080(17);
 
     actor = Func_0808a080(14);
     *(void **)(actor + 0x6c) = (void *)0x020086e9;  /* Func_020006e8 + Thumb */

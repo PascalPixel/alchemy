@@ -130,10 +130,10 @@ s32 Func_020001d8(void)
         actor = Func_0808a080(25);
         *(s32 *)(actor + 24) = (s32)0xffff0000;
 
+        *(u8 *)(actor + 35) = 2;
         actor = Func_0808a080(24);
         *(u8 *)(actor + 35) = 2;
         actor = Func_0808a080(25);
-        *(u8 *)(actor + 35) = 2;
 
         Func_0808a360();
 
@@ -252,6 +252,6 @@ s32 Func_020001d8(void)
     Func_0808a180(8, 0);
 
 finish:
-    Func_0808a020();
     return 0;
+    Func_0808a020();
 }

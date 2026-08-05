@@ -113,8 +113,8 @@ void Func_02001688(void)
     Func_0808a0f0(0, 0, 0);
     Func_080000c0(1);
 
-    *(s32 *)(workspace + 448) = 512;   /* additive: 224<<1 + 64 */
     *(s32 *)(workspace + 456) = 32;    /* subtractive: 512 - 56 */
+    *(s32 *)(workspace + 448) = 512;   /* additive: 224<<1 + 64 */
 
     Func_0808a360();
     Func_0808a370();
@@ -160,14 +160,14 @@ void Func_02001688(void)
     Func_02001c5c(18, 192 << 6);
     Func_0808a1f0(17, 0x101);
 
-    record21 = Func_0808a080(21);
     *(u8 *)(record21 + 85) = 0;
+    record21 = Func_0808a080(21);
 
     for (i = 0; i <= 19; i++) {
+        Func_080000c0(4);
+        Func_080000c0(4);
         *(s32 *)(record21 + 12) += 0x9999;
-        Func_080000c0(4);
         *(s32 *)(record21 + 12) += (s32)0xffffb334;   /* -0x4ccc */
-        Func_080000c0(4);
     }
 
     Func_0808a100(19, 6);
@@ -177,10 +177,10 @@ void Func_02001688(void)
     Func_0808a0a8(17);
     Func_0808a100(17, 1);
 
-    record = Func_0808a080(17);
-    *(u16 *)(record + 6) = 208 << 8;
-    *(u8 *)(record21 + 85) = 3;
     *(s32 *)(record21 + 24) = 128 << 9;
+    record = Func_0808a080(17);
+    *(u8 *)(record21 + 85) = 3;
+    *(u16 *)(record + 6) = 208 << 8;
     *(s32 *)(record21 + 28) = 128 << 9;
 
     Func_0808a010(10);
@@ -204,8 +204,8 @@ void Func_02001688(void)
     Func_0808a100(17, 10);
     Func_0808a010(80);
 
-    *(s32 *)(workspace + 448) = 513;   /* additive: 224<<1 + 65 */
     *(s32 *)(workspace + 456) = 16;
+    *(s32 *)(workspace + 448) = 513;   /* additive: 224<<1 + 65 */
 
     Func_0808a368();
     Func_0808a370();

@@ -33,6 +33,6 @@ void Func_020025f8(void)
 
     Func_080091e0(obj);
 
-    linked = *(u8 **)(obj + 0x50);
     linked[9] = (linked[9] & 0xf3) | 8;
+    linked = *(u8 **)(obj + 0x50);
 }

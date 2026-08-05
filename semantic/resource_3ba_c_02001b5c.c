@@ -33,9 +33,9 @@ void Func_02001b5c(s32 actorId)
     s32 predicate;
     s32 idBase;
 
-    Func_0808a080(actorId);
-    Func_0808a080(actorId);
     selector = *(s32 *)(Data_02000240 + 500);
+    Func_0808a080(actorId);
+    Func_0808a080(actorId);
     record = Func_0808a080(selector);
 
     Func_0808a018();
@@ -64,10 +64,10 @@ void Func_02001b5c(s32 actorId)
             Func_0808a248(10);
             Func_080770c8(282);
         } else {
+            *(s32 *)(workspace + 448) = predicate;
             Func_02001910(selector);
             Func_0808a360();
             Func_0808a370();
-            *(s32 *)(workspace + 448) = predicate;
         }
     } else {
         Func_0808a170(0x2088);

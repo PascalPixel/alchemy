@@ -203,6 +203,44 @@ function scopeAt(parsed: ParsedFunction, label: string): Unit[] {
 
 const STORE_SPLIT = /^(\s*)(\*\(\s*[a-z0-9_]+\s*\*+\s*\)\s*\([^;]*\)|[A-Za-z_][A-Za-z0-9_[\]>.\s-]*)\s*=\s*(.+);\s*$/;
 
+// What a statement does to plain local NAMES. `writes` is set only for a
+// simple `name = ...` (or compound-assign) form: a store through a pointer,
+// `*(s32 *)(p + 8) = v`, targets memory rather than a local, so it defines no
+// name here. `reads` is every other identifier mentioned, which harmlessly
+// includes callee and type names -- those are never local definitions, so
+// they can never produce a false conflict.
+function statementEffects(line: string): { writes: string | null; reads: Set<string> } {
+  const trimmed = line.trim();
+  const assign = /^([A-Za-z_][A-Za-z0-9_]*)\s*(=(?!=)|\+=|-=|\*=|\/=|\|=|&=|\^=|<<=|>>=)/.exec(trimmed);
+  const writes = assign === null ? null : assign[1];
+  const rest = assign === null ? trimmed : trimmed.slice(assign[0].length);
+  const reads = new Set<string>();
+  for (const match of rest.matchAll(/\b([A-Za-z_][A-Za-z0-9_]*)\b/g)) reads.add(match[1]);
+  if (assign !== null && assign[2] !== "=") reads.add(assign[1]); // `x += 1` reads x too
+  return { writes, reads };
+}
+
+// Reordering is only legal when it preserves data flow. Without this, the
+// generator happily proposed moves that reuse a stale value or read a local
+// before its only write -- three separate instances were found downstream
+// (resource_3c5:28a0, resource_375:be0, resource_375:1760), each one
+// byte-diff-neutral by coincidence (undefined behavior that happened to
+// compile to the same bytes), so the compile gate could never catch them.
+// Classic dependence test: the moved statement's definition must not cross a
+// read or redefinition of that name (true/output dependence), and its own
+// inputs must not cross a redefinition of those names (anti-dependence).
+function preservesDataflow(unit: Unit, crossed: Unit[]): boolean {
+  const moving = statementEffects(unit.lines[0]);
+  for (const other of crossed) {
+    for (const line of other.lines) {
+      const effects = statementEffects(line);
+      if (moving.writes !== null && (effects.reads.has(moving.writes) || effects.writes === moving.writes)) return false;
+      if (effects.writes !== null && moving.reads.has(effects.writes)) return false;
+    }
+  }
+  return true;
+}
+
 export function generateMoves(parsed: ParsedFunction): Move[] {
   const moves: Move[] = [];
   forEachScope(parsed.body, "body", (scope, label) => {
@@ -220,6 +258,7 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
           const span = scope.slice(Math.min(index, target), Math.max(index, target) + 1);
           if (unit.pinned && span.some((other) => other !== unit && other.pinned)) continue;
           if (span.some((other) => other.kind === "declaration")) continue;
+          if (!preservesDataflow(unit, span.filter((other) => other !== unit))) continue;
           moves.push({
             description: `${direction === 1 ? "sink" : "hoist"} [${label}#${index}] "${unit.lines[0].trim().slice(0, 60)}" by ${distance}`,
             apply: (input) => {
@@ -242,7 +281,19 @@ export function generateMoves(parsed: ParsedFunction): Move[] {
         const [, indent, lhs, rhs] = match;
         for (const distance of [1, 2, 3]) {
           if (index + distance >= scope.length) continue;
-          if (scope.slice(index + 1, index + distance + 1).some((other) => other.kind === "declaration")) continue;
+          const crossed = scope.slice(index + 1, index + distance + 1);
+          if (crossed.some((other) => other.kind === "declaration")) continue;
+          // Same dependence rule as sink/hoist above, applied to the halves
+          // this move actually creates: the sunk `lhs = temp;` store must not
+          // cross a read or redefinition of lhs, and the temp's own inputs
+          // (the RHS it captures) must not cross a redefinition.
+          const halves: Unit = {
+            kind: "statement",
+            lines: [`${lhs} = ${rhs};`],
+            pinned: false,
+            scope: null,
+          };
+          if (!preservesDataflow(halves, crossed)) continue;
           moves.push({
             description: `split [${label}#${index}] "${unit.lines[0].trim().slice(0, 60)}": temp at slot, store sunk by ${distance}`,
             apply: (input) => {
@@ -531,6 +582,39 @@ function selfTest(): void {
   const cascadeRendered = renderFunction(cascadeParsed);
   if (cascadeRendered !== cascadeFixture) {
     throw new Error(`cascading else-if chain did not round-trip faithfully:\n${cascadeRendered}`);
+  }
+
+  // Regression: a move must never cross a statement that reads the name it
+  // assigns. Sinking `line = 0xe85;` here would put it below the call that
+  // reads `line`, which then reads the variable before its only write --
+  // undefined behavior that nonetheless byte-matched on three separate real
+  // owners (resource_3c5:28a0, resource_375:be0, resource_375:1760), so the
+  // compile gate cannot catch it and only this dependence rule can.
+  const dataflowFixture = [
+    "void Func_02000300(void)",
+    "{",
+    "    s32 line;",
+    "    s32 other;",
+    "",
+    "    line = 0xe85;",
+    "    Func_0808a170(line);",
+    "    other = 1;",
+    "    Func_0808a188(other);",
+    "}",
+    "",
+  ].join("\n");
+  const dataflowParsed = parseFunction(dataflowFixture, "Func_02000300");
+  if (dataflowParsed === null) throw new Error("failed to parse dataflow fixture");
+  const dataflowMoves = generateMoves(dataflowParsed);
+  const crossesItsOwnRead = dataflowMoves.find((move) =>
+    move.description.includes("sink") && move.description.includes("line = 0xe85"),
+  );
+  if (crossesItsOwnRead !== undefined) {
+    throw new Error(`generated a move sinking an assignment past a read of it: ${crossesItsOwnRead.description}`);
+  }
+  // The rule must not over-refuse: an independent statement pair still moves.
+  if (!dataflowMoves.some((move) => move.description.includes("other = 1"))) {
+    throw new Error("dataflow rule wrongly blocked an independent statement's move");
   }
   console.log("self-test=ok tool=alchemist");
 }

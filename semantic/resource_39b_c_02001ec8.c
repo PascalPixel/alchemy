@@ -35,8 +35,8 @@ void Func_02001ec8(void)
                                *(s32 *)(slot + 16));
         if (object != 0) {
             owner = *(u8 **)(object + 0x50);
-            *(s32 *)(object + 20) = *(s32 *)(slot + 20);
             Func_08009098(object, (void *)0x0200a7e8);
+            *(s32 *)(object + 20) = *(s32 *)(slot + 20);
             object[0x55] = 4;
             *(u8 **)(object + 0x68) = slot;
             *(s32 *)(object + 12) -= 0x8000;

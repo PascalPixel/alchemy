@@ -109,8 +109,8 @@ void Func_02002094(void)
         /* Same import as the probe above, two arguments here. */
         Func_08009080(subject, 2);
         Func_08009088(subject, 48);
-        Func_08009158(subject);
         *(void **)(subject + 108) = (void *)Func_02002014;
+        Func_08009158(subject);
 
         for (;;) {
             Func_080091a8((s32)0x100000, heading, probe);

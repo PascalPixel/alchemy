@@ -112,7 +112,6 @@ void Func_02001410(void) {
     void *temp_r9;
     void *var_r2;
 
-    temp_r9 = *(void **)0x03001EC4;
     temp_sl = Func_0808a080(0xF);
     Func_080000d8(0x0200935D);
     *(s32 *)0x0200BB68 = 3;
@@ -128,6 +127,7 @@ void Func_02001410(void) {
         var_r5 += 1;
     } while ((u32) var_r5 <= 0xFU);
     Func_080000c0(1);
+    temp_r9 = *(void **)0x03001EC4;
     Func_0808a0f0(0xF, 0, 0);
     Func_02002820(0);
     Func_02002820(1);

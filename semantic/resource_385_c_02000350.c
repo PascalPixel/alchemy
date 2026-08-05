@@ -45,19 +45,19 @@ s32 Func_02000350(struct Subject_02000350 *subject,
 
     if (Func_02000314(&candidate->x, &subject->x) < distance_limit ||
         override != 0) {
+        facing = subject->facing & 0xf000;
         direction = Func_08000100(candidate->y - subject->y,
             candidate->x - subject->x);
-        facing = subject->facing & 0xf000;
         if ((direction & 0xf000) == facing ||
-            ((direction + 0x1000) & 0xf000) == facing ||
             ((direction + 0xf9fef001) & 0xf000) == facing ||
+            ((direction + 0x1000) & 0xf000) == facing ||
             override != 0) {
-            subject->accepted = 1;
             Func_08009080(subject, 1);
             return 1;
+            subject->accepted = 1;
         }
-    } else {
         subject->accepted = 0;
+    } else {
         Func_08009080(subject, 2);
     }
 

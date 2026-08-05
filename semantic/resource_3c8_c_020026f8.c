@@ -80,24 +80,39 @@ struct EffectParams_020026f8 {
     u8 unknown_24[4];
 };
 
-/* Used for their return values. */
+/*
+ * CALL SYMBOLS ARE PER-SITE: every one of the 22 `bl`s in the raw assembly
+ * is a direct relocation against an absolute .set symbol (verified via
+ * `arm-none-eabi-objdump -dr -M force-thumb` on the assembled .o) except
+ * Func_02000118, whose call is the one genuine indirect call routed through
+ * this overlay's own `_call_via_rN` bank. This header's own comment already
+ * had the correct per-site address list (0x020075c2, 0x020075be, ...); the
+ * bug was that the C body below called them by their veneer-math resolved
+ * names (Func_0808a080 etc) instead. 0x020075e8 is one physical routine
+ * shared by two call sites (call3, no args, and call8, three args) -- one
+ * declaration, two call sites, matching the raw assembly exactly.
+ */
 void Func_02000118();
-void Func_080000c0();
-s32 Func_080000f8();
-void Func_08009180();
-void Func_080091f0();
-void Func_080091f8();
-s32 Func_080770c0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-struct Actor_020026f8 *Func_0808a080();
-void Func_0808a248();
-void Func_080f9010();
-
-/* Random source; the byte-exact siblings declare this family `(void)`. */
-
-/* Old-style declarations: the imports' real interfaces are not known here. */
+struct Actor_020026f8 *Func_020075c2();
+s32 Func_020075be();
+void Func_020075e8();
+void Func_02007582();
+void Func_02007768();
+void Func_0200759a();
+void Func_02007610();
+void Func_02007796();
+void Func_0200762c();
+s32 Func_02007588();
+s32 Func_020075a2();
+s32 Func_020075bc();
+void Func_0200767a();
+void Func_02007608();
+void Func_02007890();
+void Func_02007896();
+void Func_020076fc();
+void Func_02007708();
+void Func_02007864();
+void Func_02007760();
 
 void Func_020026f8(void)
 {
@@ -114,7 +129,7 @@ void Func_020026f8(void)
 
     workspace = (struct Workspace_020026f8 *)(*(u8 **)0x03001e70 + 356);
 
-    actor = Func_0808a080(0);
+    actor = Func_020075c2(0);
     gridX = actor->gridX;
     gridZ = actor->gridZ;
     actor->y = 0;
@@ -123,21 +138,21 @@ void Func_020026f8(void)
     }
     actor->y = 0xfffe0000;
 
-    if (Func_080770c0(0x306) != 0) {
+    if (Func_020075be(0x306) != 0) {
         return;
     }
 
     /* No argument register is written here; r0 still holds the 0 just
      * returned above, and that dataflow is preserved as written. */
-    Func_0808a018(0);
+    Func_020075e8(0);
 
-    Func_08009180(63, 29, 33, 20, 1, 1);
-    Func_080f9010(161);
-    Func_08009180(44, 83, 44, 80, 3, 3);
-    Func_0808a010(30);
-    Func_080091f0(0x10000, 0x10000, 0x10000);
-    Func_080f9010(239);
-    Func_0808a010(20);
+    Func_02007582(63, 29, 33, 20, 1, 1);
+    Func_02007768(161);
+    Func_0200759a(44, 83, 44, 80, 3, 3);
+    Func_02007610(30);
+    Func_020075e8(0x10000, 0x10000, 0x10000);
+    Func_02007796(239);
+    Func_0200762c(20);
 
     height = 0x02680000;
     countdown = 60;
@@ -150,11 +165,11 @@ void Func_020026f8(void)
             height += 0xffffcccd;       /* -0x3333 */
             params.unk00 = 2;
             params.color1 =
-                (s32)((u32)(Func_080000f8() * 3) >> 16) * 0x3333 + 0xcccc;
+                (s32)((u32)(Func_02007588() * 3) >> 16) * 0x3333 + 0xcccc;
             params.color2 =
-                (s32)((u32)(Func_080000f8() * 3) >> 16) * 0x3333 + 0xcccc;
+                (s32)((u32)(Func_020075a2() * 3) >> 16) * 0x3333 + 0xcccc;
             params.unk22 =
-                (u16)(((u32)(Func_080000f8() * 0x1000) >> 16) + 0xf800);
+                (u16)(((u32)(Func_020075bc() * 0x1000) >> 16) + 0xf800);
 
             Func_02000118(
                 height,
@@ -169,11 +184,11 @@ void Func_020026f8(void)
             if (countdown == 0) {
                 countdown = 40;
                 index += 4;
-                Func_08009180(index, 56, 36, 17, 3, 4);
+                Func_0200767a(index, 56, 36, 17, 3, 4);
             }
         }
 
-        Func_080000c0(1);
+        Func_02007608(1);
         counter++;
         countdown--;
     } while (counter <= 0x13f);
@@ -182,13 +197,13 @@ void Func_020026f8(void)
     workspace->drift = rounded;
     workspace->drift = (rounded / 0x10000) << 16;
 
-    Func_080f9010(288);
-    Func_080f9010(188);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_080091f8();
+    Func_02007890(288);
+    Func_02007896(188);
+    Func_020076fc(-1, -1, 0xe666);
+    Func_02007708();
 
     *(s32 *)(*(u8 **)0x03001ebc + 448) = 514;
 
-    Func_0808a248(18);
-    Func_0808a020();
+    Func_02007864(18);
+    Func_02007760();
 }

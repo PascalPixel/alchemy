@@ -50,15 +50,27 @@ struct Actor_020022c8 {
 /* In-image height table, indexed by an actor's kind halfword. */
 extern s32 Data_0200d148[];
 
-struct Actor_020022c8 *Func_0808a080();
-void Func_0808a090();
-void Func_080f9010();
-void Func_08009150();
-void Func_0808a0e8();
-void Func_080091c0();
-void Func_0808a010();
-
-/* Old-style declarations: the imports' real interfaces are not known here. */
+/*
+ * CALL SYMBOLS ARE PER-SITE: the raw assembly's thirteen `bl`s are direct
+ * relocations against absolute .set symbols (verified via
+ * `arm-none-eabi-objdump -dr -M force-thumb` on the assembled .o) -- lifted
+ * verbatim below by call site, not the veneer-math final target names this
+ * file used before (the same resolved import gets a different sub_ symbol
+ * at each of its call sites).
+ */
+struct Actor_020022c8 *Func_02007186();
+struct Actor_020022c8 *Func_0200718e();
+struct Actor_020022c8 *Func_02007224();
+void Func_020071a6();
+void Func_020071b4();
+void Func_02007308();
+void Func_0200736a();
+void Func_0200712e();
+void Func_02007142();
+void Func_02007230();
+void Func_02007236();
+void Func_020071de();
+void Func_02007242();
 
 void Func_020022c8(s32 announce)
 {
@@ -68,36 +80,36 @@ void Func_020022c8(s32 announce)
     u32 slot;
     s32 height;
 
-    first = Func_0808a080(8);
-    second = Func_0808a080(9);
+    first = Func_02007186(8);
+    second = Func_0200718e(9);
 
-    Func_0808a090(8, 0x8000, 0x4000);
-    Func_0808a090(9, 0x8000, 0x4000);
+    Func_020071a6(8, 0x8000, 0x4000);
+    Func_020071b4(9, 0x8000, 0x4000);
 
     if (announce != 0) {
-        Func_080f9010(180);
+        Func_02007308(180);
     }
 
-    Func_08009150(first, first->x, Data_0200d148[first->kind], first->z);
-    Func_08009150(second, second->x, Data_0200d148[second->kind], second->z);
+    Func_0200712e(first, first->x, Data_0200d148[first->kind], first->z);
+    Func_02007142(second, second->x, Data_0200d148[second->kind], second->z);
 
-    Func_0808a0e8(8);
-    Func_0808a0e8(9);
+    Func_02007230(8);
+    Func_02007236(9);
 
     first->y = Data_0200d148[first->kind];
     second->y = Data_0200d148[second->kind];
 
     if (announce != 0) {
-        Func_080f9010(0x121);
+        Func_0200736a(0x121);
     }
 
     for (slot = 0; slot <= 4; slot++) {
-        member = Func_0808a080(slot + 8);
+        member = Func_02007224(slot + 8);
         height = member->y / 0x10000;
         if (height < 0 && height > -30) {
-            Func_080091c0(4, 19, 1, 1, member->x >> 20, member->z >> 20);
+            Func_020071de(4, 19, 1, 1, member->x >> 20, member->z >> 20);
         }
     }
 
-    Func_0808a010(announce);
+    Func_02007242(announce);
 }

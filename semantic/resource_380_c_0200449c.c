@@ -149,9 +149,9 @@ void Func_0200449c(void)
         s32 swayY = element->swayY;
         s32 swayZ = element->swayZ;
         s32 height = element->height;
-        s32 fall = element->fall;
         s32 burstX = element->burstX;
         s32 burstY = element->burstY;
+        s32 fall = element->fall;
         s32 burstZ = element->burstZ;
         s32 *object = element->object;
         u8 burst = element->burst;

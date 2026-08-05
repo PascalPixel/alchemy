@@ -71,11 +71,11 @@ void Func_02000a24(void)
         Func_0808a2f8();
     }
 
-    scenario = Data_02000240;
-    step = (u32)(scenario[225] - 1);
     if (step > 15) {
         return;
     }
+    scenario = Data_02000240;
+    step = (u32)(scenario[225] - 1);
 
     switch (step) {
     case 0:
@@ -97,12 +97,12 @@ void Func_02000a24(void)
     case 7:
         /* Both stores go through the r1 that was loaded before the dispatch. */
         scenario[288] = 0x10;
+        return;
         scenario[289] = 8;
         if (Func_080770c0(0x802) != 0) {
             return;
         }
         Func_02000d1c();
-        return;
 
     case 10:
     case 11:

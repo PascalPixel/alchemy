@@ -73,8 +73,8 @@ void Func_02000964(void)
     Func_0808a0f0(5, 0x00f80000, 0x01080000);
 
     actor = Func_0808a080(1);
-    *(u16 *)(actor + 6) = 0xc000;
     actor = Func_0808a080(5);
+    *(u16 *)(actor + 6) = 0xc000;
     *(u16 *)(actor + 6) = 0xc000;
 
     Func_08009178((void *)0x0200a0ac, 0x2b, 8);

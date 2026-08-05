@@ -164,8 +164,8 @@ void Func_020034c8(void)
     *(s32 *)(actor + 8) = 0x01840000;
     Func_080091e0(actor, 0);
 
-    actor = Func_0808a080(12);
     actor[0x55] = 0;
+    actor = Func_0808a080(12);
     *(s32 *)(actor + 12) = 0x00a00000;
     *(s32 *)(actor + 16) = 0x034c0000;
     *(s32 *)(actor + 8) = 0x01840000;

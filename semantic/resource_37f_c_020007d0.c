@@ -88,21 +88,21 @@ void Func_020007d0(void)
     Func_080000c0(15);
     Func_080f9010(185);
 
+    Func_08009150(slot, pos[0], pos[1], pos[2]);
     slot[12] = 0x3333;
     slot[13] = 0x3333;
-    Func_08009150(slot, pos[0], pos[1], pos[2]);
 
+    Func_08009150(actor, pos[0], pos[1], pos[2]);
     *(s32 *)(actor + 48) = 0x3333;
     *(s32 *)(actor + 52) = 0x3333;
-    Func_08009150(actor, pos[0], pos[1], pos[2]);
 
     Func_08009158(slot);
 
     slot[2] = pos[0];
+    Func_08009080(actor, 1);
     slot[4] = pos[2];
     slot[9] = 0;
     slot[11] = 0;
-    Func_08009080(actor, 1);
 
     substep = Data_02000240[225];
     if (substep >= 11 && substep <= 13) {

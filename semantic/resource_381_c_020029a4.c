@@ -111,8 +111,6 @@ opened:
     Func_0808a348(60);
     Func_080f9010(214);
 
-    placement = Data_0200b684;
-    i = 0;
     do {
         x = placement[0];
         y = placement[1];
@@ -147,6 +145,8 @@ opened:
         i++;
         placement += 2;
     } while (i <= 9);
+    i = 0;
+    placement = Data_0200b684;
 
     if (variant == 0) {
         Func_0808a1e8(0, 256, 0);

@@ -73,9 +73,9 @@ void Func_02001760(void)
 
     Func_0808a1b8(12, 0x3000, 0);
     Func_0808a110(12, 3);
-    line += 3;
     Func_0808a010(30);
     Func_0808a170(line);
+    line += 3;
     Func_0808a180(12, 0);
 
     Func_0808a110(13, 3);

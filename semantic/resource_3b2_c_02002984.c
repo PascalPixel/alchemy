@@ -67,13 +67,14 @@ void Func_02002984(void)
 
     transition = 0;
     if (column == 13) {
+        transition = 48;
         if (companion9Row == 15) {
             transition = 16;
         } else if (companion18Row == 15) {
             transition = 64;
         } else if (companion17Row == 15) {
-            transition = 112;
         } else {
+            transition = 112;
             /* This arm runs two transitions back to back. */
             Func_02001774(19, -112, 0);
             transition = 48;
@@ -82,7 +83,6 @@ void Func_02002984(void)
         if (companion17Row == 15) {
             return;
         }
-        transition = 48;
     } else if (column == 5) {
         transition = 32;
     } else if (column == 8) {
@@ -94,7 +94,6 @@ void Func_02002984(void)
         if (companion18Row == 15) {
             return;
         }
-        transition = (companion17Row == 15) ? 48 : 96;
     } else if (column == 12) {
         if (companion9Row == 15) {
             return;
@@ -107,6 +106,7 @@ void Func_02002984(void)
             /* Its own call site, not the shared one. */
             Func_02001774(19, -144, 0);
         }
+        transition = (companion17Row == 15) ? 48 : 96;
     }
 
     if (transition != 0) {

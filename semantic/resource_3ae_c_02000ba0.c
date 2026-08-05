@@ -183,11 +183,11 @@ void Func_02000ba0(void)
     }
     *(s16 *)(object + 100) = (s16)(value >> 16);
 
+    *(s16 *)(object + 102) = (s16)(value >> 16);
     value = *(s32 *)(object + 16);
     if (value < 0) {
         value += 0xffff;
     }
-    *(s16 *)(object + 102) = (s16)(value >> 16);
 
     Func_0808a020();
 }

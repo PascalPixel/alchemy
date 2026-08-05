@@ -584,16 +584,10 @@ AlchemyC_02000308:
 	.space 0xc
 AlchemyC_02000314:
 	.space 0xc
-	push	{lr}
-	movs	r0, #3
-	bl	.L_020005e2
-	pop	{r0}
-	bx	r0
-	push	{lr}
-	movs	r0, #4
-	bl	sub_020005ee
-	pop	{r0}
-	bx	r0
+AlchemyC_02000320:
+	.space 0xc
+AlchemyC_0200032c:
+	.space 0xc
 	push	{lr}
 	movs	r0, #5
 	bl	.L_020005fa
@@ -601,11 +595,8 @@ AlchemyC_02000314:
 	bx	r0
 AlchemyC_02000344:
 	.space 0xc
-	push	{lr}
-	movs	r0, #7
-	bl	.L_02000612
-	pop	{r0}
-	bx	r0
+AlchemyC_02000350:
+	.space 0xc
 AlchemyC_0200035c:
 	.space 0xc
 	push	{r5, lr}

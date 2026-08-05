@@ -226,7 +226,7 @@ s32 Func_080be378(struct BattleRequest_080be378 *request,
     u8 element_counts[4];
     s32 action_id = 1;
     s32 message = 0;
-    s32 index;
+    u32 index;
     s32 count;
     s32 value;
     s32 threshold;

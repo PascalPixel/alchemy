@@ -69,7 +69,7 @@ static u32 RecolorPixels_0801f088(
     u32 color_1)
 {
     u32 recolored = 0;
-    s32 pixel;
+    u32 pixel;
 
     for (pixel = 0; pixel < 8; pixel++) {
         u32 shift = (u32)pixel * 4;
@@ -104,7 +104,7 @@ void Func_0801f088(
     s32 tile_x = x + region->x_offset;
     s32 tile_row = (y + region->y_offset) << 5;
     s32 initial_boundary = boundary;
-    s32 column;
+    u32 column;
 
     if (runtime->control.palette_owned == 0) {
         volatile DmaChannel_0801f088 *dma =

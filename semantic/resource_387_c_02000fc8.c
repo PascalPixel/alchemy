@@ -15,7 +15,7 @@ void Func_02000fc8(void)
     for (;;) {
         s32 result;
         s32 selected = -1;
-        s32 i;
+        u32 i;
 
         attempts++;
         if (attempts > 1000)

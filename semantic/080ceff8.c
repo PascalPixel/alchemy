@@ -44,7 +44,7 @@ void Func_080ceff8(struct Scene_080ceff8 *scene, s32 mode)
     Renderer_080ceff8 renderers[2];
     u8 *resource;
     s32 position[2];
-    s32 frame;
+    u32 frame;
 
     *(struct Scene_080ceff8 **)(runtime + 0x7828) = scene;
     Func_080cd594(0);

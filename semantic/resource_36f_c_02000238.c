@@ -67,7 +67,7 @@ void Func_02000238(void)
     u32 *write = Data_020086a0;
     u32 *submit = Data_020086a0;
     s32 tile = *(u16 *)((u8 *)0x03001b10 + (Data_02008650[0] << 2) + 2) >> 5;
-    s32 row;
+    u32 row;
 
     for (row = 0; row <= 17; row++) {
         s32 remaining;

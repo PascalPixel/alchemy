@@ -59,7 +59,7 @@ void Func_080d33c0(void *argument)
     s32 effect = *(s32 *)((u8 *)argument + 24);
     s32 point[3];
     s32 frame;
-    s32 index;
+    u32 index;
     void *palette;
 
     *(void **)(runtime + 0x7828) = argument;

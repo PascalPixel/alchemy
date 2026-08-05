@@ -22,7 +22,7 @@ void Func_02000f64(void)
 {
     ProjectionHelper project = (ProjectionHelper)0x03000118;
     s32 actor;
-    s32 index;
+    u32 index;
 
     for (actor = 16; actor <= 31; actor++) {
         u8 *record = Func_0808a080(actor);

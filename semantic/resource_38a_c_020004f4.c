@@ -36,7 +36,7 @@ void Func_020004f4(s32 slot)
     u8 *object = Func_0808a080(slot);
     u8 *state = *(u8 **)(object + 80);
     struct SpawnDescriptor finalEffect;
-    s32 angle;
+    u32 angle;
 
     object[85] = 0;
     for (angle = 0; angle < 18; angle++) {

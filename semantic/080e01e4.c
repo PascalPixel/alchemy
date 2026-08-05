@@ -83,8 +83,8 @@ void Func_080e01e4(struct Scene_080e01e4 *scene)
     struct Particle_080e01e4 *particles =
         (struct Particle_080e01e4 *)0x02010000;
     s32 angle = 0x8000;
-    s32 frame;
-    s32 index;
+    u32 frame;
+    u32 index;
 
     *(struct Scene_080e01e4 **)(runtime + 0x7828) = scene;
     Func_080cd594(0);
@@ -128,7 +128,7 @@ void Func_080e01e4(struct Scene_080e01e4 *scene)
             struct Emitter_080e01e4 *emitter = &emitters[index];
 
             if (frame >= index * 4 + 8 && emitter->y <= 95) {
-                s32 particle_index;
+                u32 particle_index;
 
                 renderers[0](
                     render_context,

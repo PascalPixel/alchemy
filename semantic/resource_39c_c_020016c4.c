@@ -30,7 +30,7 @@ extern void Func_080091f8(void);
 
 void Func_020016c4(s32 arg0)
 {
-    s32 i;
+    u32 i;
     s32 a = 41;
     s32 b = 40;
     s32 c = 2;

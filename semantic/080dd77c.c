@@ -41,8 +41,8 @@ void Func_080dd77c(void *object)
     s32 point0[3];
     s32 point1[3];
     s32 center;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(void **)(runtime + 0x7828) = object;
     Func_080de2f8(

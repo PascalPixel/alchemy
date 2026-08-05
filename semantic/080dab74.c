@@ -106,7 +106,7 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
     s32 source_position[3];
     s32 projected[3];
     s32 frame;
-    s32 index;
+    u32 index;
 
     work->context = context;
     Func_080cd594(1);

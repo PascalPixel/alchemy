@@ -14,8 +14,8 @@ void Func_02003324(void)
     s32 actors[5];
     s32 count = 0;
     s32 delta = 0x18000;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     for (i = 0; i < 5; i++)
         actors[i] = 66;

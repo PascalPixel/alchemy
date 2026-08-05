@@ -334,7 +334,7 @@ void Func_080e47b8(void *context_argument, s32 mode)
     s32 warmup;                 /* the 0..31 preroll counter, same slot    */
     s32 mode_minus_two;         /* [sp,#20]                                */
     s32 mode_minus_four;        /* [sp,#16]                                */
-    s32 i;
+    u32 i;
     s32 active;
     s32 value;
 

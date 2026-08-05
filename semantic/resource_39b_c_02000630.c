@@ -20,7 +20,7 @@ u8 *Func_02000630(s32 *directionOut, s32 *slotOut, s32 *classOut)
     s32 probeX = ((*(s32 *)(leader + 8) >> 16) + (steps[direction] >> 16)) >> 4;
     s32 probeZ = ((*(s32 *)(leader + 16) >> 16) + (s16)steps[direction]) >> 4;
     s32 slot;
-    s32 kind;
+    u32 kind;
 
     *directionOut = direction;
     for (slot = 8; slot <= 65; slot++) {

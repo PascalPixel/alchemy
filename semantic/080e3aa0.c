@@ -77,8 +77,8 @@ void Func_080e3aa0(struct Scene_080e3aa0 *scene)
     s32 anchor[3];
     s32 position[2];
     s32 camera_offset;
-    s32 frame;
-    s32 i;
+    u32 frame;
+    u32 i;
 
     *(struct Scene_080e3aa0 **)(runtime + 0x7828) = scene;
     battle_state = Func_08077008(scene->focus_id);
@@ -247,7 +247,7 @@ void Func_080e3aa0(struct Scene_080e3aa0 *scene)
         Func_080049ac();
         Func_080051d8(projection, (u8 *)projection + 12);
         if ((u32)(frame - 4) <= 27) {
-            s32 j;
+            u32 j;
 
             for (j = 0; j < 64; j++) {
                 struct Particle_080e3aa0 *particle = &particles[j / 2];

@@ -75,7 +75,7 @@ void Func_080d52c8(struct Scene_080d52c8 *scene, s32 variant)
     s32 frame_count;
     s32 frame;
     s32 object_index;
-    s32 i;
+    u32 i;
     s32 resource;
 
     *(struct Scene_080d52c8 **)(runtime + 0x7828) = scene;

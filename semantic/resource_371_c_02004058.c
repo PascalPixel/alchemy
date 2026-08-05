@@ -59,7 +59,7 @@ void Func_02004058(u8 *parent)
     u8 *pieces[2];
     u8 *piece;
     u8 *record;
-    s32 index;
+    u32 index;
 
     for (index = 0; index <= 1; index++) {
         piece = Func_080090c8(26,

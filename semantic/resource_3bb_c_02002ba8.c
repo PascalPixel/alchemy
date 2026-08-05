@@ -90,7 +90,7 @@ void Func_02002ba8(s32 arg0, s32 arg1, s32 arg2)
     volatile u16 *regIME = (volatile u16 *)0x04000208;
     u16 *counter = (u16 *)0x02002090;
     u16 saved;
-    s32 i;
+    u32 i;
 
     resultObj = Func_0808a080();
     current[6] = 1;

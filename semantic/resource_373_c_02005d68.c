@@ -88,7 +88,7 @@ void Func_02005d68(struct Resource373Spawn *spawn)
     u8 *scene = RESOURCE_373_SCENE;
     struct Resource373Actor *first;
     struct Resource373Actor *second;
-    s32 index;
+    u32 index;
 
     for (index = 0; index <= 1; index++) {
         struct Resource373Actor *actor =

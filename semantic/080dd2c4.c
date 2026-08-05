@@ -86,7 +86,7 @@ s32 Func_080dd2c4(void *scene, s32 variant)
     s32 emitter_count;
     s32 frame_count;
     s32 frame;
-    s32 i;
+    u32 i;
     Renderer_080dd2c4 renderers[2];
 
     PTR_AT(runtime, 0x7828) = scene;
@@ -188,7 +188,7 @@ s32 Func_080dd2c4(void *scene, s32 variant)
                 }
 
                 if (frame == start + 4 || frame == start + 8) {
-                    s32 slot;
+                    u32 slot;
                     for (slot = 0; slot < 0x200; slot++) {
                         if (particles[slot].age == -1) {
                             particles[slot].x =

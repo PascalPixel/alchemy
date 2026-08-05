@@ -85,7 +85,7 @@ s32 Func_080cf2b8(struct Scene_080cf2b8 *scene, s32 variant)
     s32 intro_y = 0;
     s32 base_x;
     s32 frame;
-    s32 particle_index;
+    u32 particle_index;
     void *resource;
 
     *(struct Scene_080cf2b8 **)(runtime + 0x7828) = scene;

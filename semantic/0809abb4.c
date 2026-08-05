@@ -70,8 +70,8 @@ void Func_0809abb4(void)
     struct Vector_0809abb4 start;
     struct Vector_0809abb4 destination;
     struct Vector_0809abb4 position;
-    s32 step;
-    s32 i;
+    u32 step;
+    u32 i;
 
     state->destination.y = anchor->y;
     object = Func_08096c80(0xfa, 0, 0, 0);

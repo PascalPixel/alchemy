@@ -133,7 +133,7 @@ void Func_08094820(void)
     ViewState_08094820 *view = Data_03001e70;
     ParticleManager_08094820 *manager =
         *(ParticleManager_08094820 **)0x03001ec4;
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 32; index++) {
         Particle_08094820 *particle = &manager->particles[index];

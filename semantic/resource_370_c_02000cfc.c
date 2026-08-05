@@ -55,8 +55,8 @@ void Func_02000cfc(struct MapPlacement_02000cfc *placement, void *source)
     u16 *shadow;
     s32 handle;
     s32 entry_offset;
-    s32 row;
-    s32 column;
+    u32 row;
+    u32 column;
 
     /* Read before the first call, so it is not part of that call. */
     shadow = *(u16 **)0x03001e8c;

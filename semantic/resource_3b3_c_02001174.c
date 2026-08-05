@@ -48,7 +48,7 @@ void Func_080000c0();          /* ROM dispatch stub table entry 0 */
 void Func_02001174(s32 index)
 {
     u8 *record = Func_0808a080(index);
-    s32 frames;
+    u32 frames;
 
     record[0x55] = 0;
 

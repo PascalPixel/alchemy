@@ -44,7 +44,7 @@ void Func_08099da4(void)
     void *right;
     struct Position_08099da4 position;
     void *particles[20];
-    s32 i;
+    u32 i;
 
     if (actor == 0)
         return;

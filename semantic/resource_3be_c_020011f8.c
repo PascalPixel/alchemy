@@ -13,7 +13,7 @@ extern void Func_020011d8(u8*,s32); extern void Func_0200013c(s32,s32,s32,s32,s3
  * actor.  All 21 static calls remain in machine order.
  */
 void Func_020011f8(s32 actorId,s32 unused1,s32 unused2){
- u8 *a=Func_0808a080(actorId); u8 *part=*(u8**)(a+80); s32 i;
+ u8 *a=Func_0808a080(actorId); u8 *part=*(u8**)(a+80); u32 i;
  (void)unused1;(void)unused2; a[0x55]=0;
  for(i=0;i<=8;i++){s32 step; Func_080000c0(1); *(u16*)(part+30)-=0x100; step=Func_08000120(*(u16*)(part+30)); *(s32*)(a+8)-=(step+(step<0))/2; *(s32*)(a+56)=0x80000000;}
  *(s32*)(a+108)=0x020091c9; Func_080f9010(136);

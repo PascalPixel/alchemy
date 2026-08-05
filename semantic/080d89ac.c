@@ -91,7 +91,7 @@ void Func_080d89ac(
     s32 particle_count;
     s32 total_frames;
     s32 frame;
-    s32 i;
+    u32 i;
 
     *(struct Scene_080d89ac **)(runtime + 0x7828) = scene;
     Func_080cd594(0);

@@ -56,7 +56,7 @@ struct WorldObject_08093af8 *Func_08093af8(
         *(struct WorldObject_08093af8 **)0x03001e64;
     struct WorldObject_08093af8 *nearest = 0;
     s32 nearest_distance = 40;
-    s32 index;
+    u32 index;
 
     for (index = 0; index < 64; index++) {
         struct WorldObject_08093af8 *candidate = &objects[index];

@@ -125,7 +125,7 @@ void Func_080c2724(void)
     LevelUpResult level_up;
     Character_080c2724 *snapshot;
     s32 party_count;
-    s32 i;
+    u32 i;
 
     if (rewards->experience != 0) {
         Func_08015120(rewards->experience, 5);
@@ -142,7 +142,7 @@ void Func_080c2724(void)
 
         character->experience += rewards->experience;
         for (;;) {
-            s32 ability;
+            u32 ability;
 
             ((WordCopy)0x03001388)(snapshot, character, 0x14c);
             if (Func_080770b8(character_id, &level_up) == 0)
@@ -158,7 +158,7 @@ void Func_080c2724(void)
 
             for (ability = 31; ability >= 0; ability--) {
                 u16 learned = character->abilities[ability].ability;
-                s32 old_index;
+                u32 old_index;
 
                 if ((learned & 0x3fff) == 0 || (learned & 0x8000) == 0)
                     continue;

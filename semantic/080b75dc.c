@@ -38,7 +38,7 @@ void Func_080b75dc(void)
     s32 xs[6];
     s32 ys[6];
     s32 active_count = Func_080b6a60(ids);
-    s32 index;
+    u32 index;
     s32 party_count;
 
     for (index = 13; index >= 0; index--)

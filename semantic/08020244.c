@@ -66,7 +66,7 @@ s32 Func_08020244(s16 initial_selection, s32 mode)
     s32 refresh = 1;
     s32 result;
     s32 attempts;
-    s32 row;
+    u32 row;
     s32 dma_source = 0;
 
     allocation = Func_080048b0(55, 0xa70);

@@ -107,10 +107,10 @@ s32 Func_02001070(void)
     Func_0808a1e0(9, 2);
 
     record10[0x55] = 0;
+    record14[0x55] = 0;
     *(s32 *)(record10 + 0x0c) = 0x01c00000;      /* 224 << 13 */
     record11[0x55] = 0;
     *(s32 *)(record11 + 0x0c) = 0x01c00000;
-    record14[0x55] = 0;
     *(s32 *)(record14 + 0x0c) = 0x01c00000;
 
     Func_0808a100(9, 3);
@@ -120,9 +120,9 @@ s32 Func_02001070(void)
     record = Func_0808a080(8);
     record = Func_0808a080(9);
     record = Func_0808a080(10);
-    record[0x59] |= 8;
-    record[0x59] |= 8;
     record = Func_0808a080(11);
+    record[0x59] |= 8;
+    record[0x59] |= 8;
     record[0x59] |= 8;
     record = Func_0808a080(14);
     record[0x59] |= 8;

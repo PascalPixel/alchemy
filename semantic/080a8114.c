@@ -94,7 +94,7 @@ s32 Func_080a8114(void)
     s8 selection = 0;
     s32 done = 0;
     s32 result = 0;
-    u32 i;
+    s32 i;
 
     Func_080a10d0(&state->selector_window, 0, 0, 30, 5, 2);
     Func_08004278(0x080a19a1);

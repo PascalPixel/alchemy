@@ -58,11 +58,11 @@ s32 Func_080b5368(s32 wanted)
 {
     struct Member_080b5368 *roster = (struct Member_080b5368 *)0x080c3f34;
     s32 slots[4];
-    u32 group;
+    s32 group;
     s32 counter;
     s32 kind;
     s32 overflow;
-    u32 step;
+    s32 step;
     u32 index;
     u8 *record;
 

@@ -44,15 +44,21 @@
 
 extern s16 Data_02000240[];
 
-void Func_0808a460();
-void Func_08015120();
-void Func_0808a170();          /* display message by id */
-void Func_0808a180();
-s32 Func_080770c0();           /* story-flag query, returns nonzero if set */
-void Func_080770c8();          /* set a story flag */
-s32 Func_080153a0();
-void Func_0808a178();
-s32 Func_0808a070();
+/* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at every occurrence, including the repeated Func_080770c0 and
+ * Func_0808a170 calls) -- declared/named as the literal per-site targets,
+ * not the shared ultimate-destination symbol. */
+void Func_0200760c();          /* Func_0808a460 veneer */
+void Func_0200741c();          /* Func_08015120 veneer */
+void Func_0200757a();          /* Func_0808a170 veneer #1 */
+void Func_02007592();          /* Func_0808a180 veneer */
+s32 Func_0200748c();           /* Func_080770c0 veneer #1 */
+s32 Func_0200749c();           /* Func_080770c0 veneer #2 */
+s32 Func_0200747e();           /* Func_080153a0 veneer */
+void Func_020074cc();          /* Func_080770c8 veneer */
+void Func_020075ca();          /* Func_0808a170 veneer #2 */
+void Func_020075da();          /* Func_0808a178 veneer */
+s32 Func_0200753a();           /* Func_0808a070 veneer */
 
 s32 Func_02002a94(s32 arg0, s32 arg1)
 {
@@ -60,8 +66,8 @@ s32 Func_02002a94(s32 arg0, s32 arg1)
     s32 messageId;
     s32 classification;
 
-    Func_0808a460();
-    Func_08015120(arg1, 5);
+    Func_0200760c();
+    Func_0200741c(arg1, 5);
 
     state = Data_02000240[0xe0];
     if (state == 0x8f) {
@@ -71,16 +77,16 @@ s32 Func_02002a94(s32 arg0, s32 arg1)
     } else {
         messageId = 0x207a;
     }
-    Func_0808a170(messageId);
+    Func_0200757a(messageId);
 
-    Func_0808a180(arg0, 0);
+    Func_02007592(arg0, 0);
 
-    if (Func_080770c0(arg1 + 0x200) != 0) {
+    if (Func_0200748c(arg1 + 0x200) != 0) {
         return 2;
     }
 
-    if (Func_080770c0(arg1 + 0x208) != 0) {
-        classification = Func_080153a0(0);
+    if (Func_0200749c(arg1 + 0x208) != 0) {
+        classification = Func_0200747e(0);
         if (classification == 1) {
             return 2;
         }
@@ -93,8 +99,8 @@ s32 Func_02002a94(s32 arg0, s32 arg1)
         return classification;
     }
 
-    Func_080770c8(arg1 + 0x208);
-    Func_0808a170(0x207c);
-    Func_0808a178(arg0, 0);
-    return Func_0808a070(0, 0);
+    Func_020074cc(arg1 + 0x208);
+    Func_020075ca(0x207c);
+    Func_020075da(arg0, 0);
+    return Func_0200753a(0, 0);
 }

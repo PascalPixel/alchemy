@@ -29,7 +29,7 @@ s32 Func_080b9934(struct BattleDecision_080b9934 *decisions)
 {
     u8 *battle = *(u8 **)0x03001e74;
     s32 count;
-    u32 index;
+    s32 index;
 
     for (index = 0; index < 20; index++) {
         struct BattleDecision_080b9934 *entry =

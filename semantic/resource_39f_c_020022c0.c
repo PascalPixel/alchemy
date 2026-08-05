@@ -58,7 +58,7 @@ void Func_020022c0(void)
 {
     u8 *slot;
     s32 shape[3];          /* sp+16, the burst's per-step parameters */
-    s32 step;
+    u32 step;
 
     slot = Func_0808a080(18);
 

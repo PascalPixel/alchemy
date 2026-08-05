@@ -55,8 +55,8 @@ void Func_080ed104(void *object)
     Renderer_080ed104 renderers[2];
     s32 point[3];
     s32 scroll = 0;
-    u32 frame;
-    u32 index;
+    s32 frame;
+    s32 index;
 
     *(void **)(runtime + 0x7828) = object;
     Func_080cd594(0);
@@ -103,7 +103,7 @@ void Func_080ed104(void *object)
 
             if (height > 0) {
                 s32 mode;
-                u32 strip;
+                s32 strip;
 
                 if (height > 80) {
                     height = 80;

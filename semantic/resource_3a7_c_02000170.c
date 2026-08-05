@@ -96,7 +96,7 @@ void Func_02000170(void)
     u8 *target;
     u8 *beyond;
     s32 position[3];
-    s32 index;
+    u32 index;
 
     target = Func_02000134((*(s16 *)(pusher + 10) + (step >> 16)) >> 4,
                            (*(s16 *)(pusher + 18) + (s16)step) >> 4);

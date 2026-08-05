@@ -54,7 +54,7 @@ void Func_02003640(s32 actor, s32 map_x, s32 map_z)
     u8 *workspace = *(u8 **)0x03001e68;
     u8 *record = Func_0808a080(actor);
     u8 *render;
-    s32 phase;
+    u32 phase;
 
     workspace[6] = 1;
     workspace[7] = 4;

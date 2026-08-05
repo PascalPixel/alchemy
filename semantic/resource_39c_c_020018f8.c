@@ -31,7 +31,7 @@ extern void Func_080000d8(const void *script);
 void Func_020018f8(void)
 {
     ParticleOptions options;
-    s32 row;
+    u32 row;
     s32 pattern;
     s32 rowBase = -0x20000;
 

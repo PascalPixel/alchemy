@@ -74,10 +74,10 @@ void Func_020036f8(void) {
     s16 savedSceneCounter;
     s32 resultId;
 
-    shared = Data_03001ebc;
     Func_080770c8(0x855);
     Func_0808a018();
     actor12 = Func_0808a080(0xC);
+    shared = Data_03001ebc;
     *(u8 *)(actor12 + 0x23) = (u8) (1 | *(u8 *)(actor12 + 0x23));
     Func_0808a0c0(0xF, 0x368, 0x1A9);
     Func_0808a0c0(0x10, 0x368, 0x199);
@@ -108,9 +108,9 @@ void Func_020036f8(void) {
     Func_0808a148(0, 0xA, 0);
     Func_0808a148(1, 0xA, 0);
     Func_0808a148(2, 0xA, 0);
+    *(u32 *)(shared + 0x1C0) = 0x201;
     shared = Data_03001ebc;
     *(u32 *)(shared + 0x1C8) = 0x1E;
-    *(u32 *)(shared + 0x1C0) = 0x201;
     Func_0808a360();
     Func_0808a370();
     Func_0808a010(0x28);
@@ -193,9 +193,9 @@ void Func_020036f8(void) {
     Func_0808a010(0x3C);
     Func_08015040(0x1301, 1);
     Func_0808a100(0xF, 2);
-    Func_0808a0f0(0x12, 0, 0);
     shared = Data_03001ebc;
     *(u16 *)(shared + 0x1D8) = (u16) (*(u16 *)(shared + 0x1D8) + 1);
+    Func_0808a0f0(0x12, 0, 0);
     Func_0808a138(0xE, 1);
     Func_020045f4(0xE, 0x14);
     Func_02004624(0, 1, 0x28);

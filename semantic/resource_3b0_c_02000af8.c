@@ -24,6 +24,7 @@ void Func_02000af8(void)
 {
     u8 *actor;
     u32 frame;
+    s32 permuted_34;
     Func_0808a018();
     Func_0808a158(0,15);
     actor=Func_0808a080(0); Func_080091e0(actor,0);
@@ -56,15 +57,16 @@ void Func_02000af8(void)
     Func_0808a1e8(8,0x101,60); Func_0808a138(8,2);
     Func_0808a0d0(8,168,340); Func_0808a0d0(8,200,340);
     Func_0808a1b8(8,0x8000,0);
-    actor=Func_0808a080(17); *(s32 *)(actor+8)=0x00ac0000; *(s32 *)(actor+12)=0x00a00000;
+    permuted_34 = Func_0808a080(17); *(s32 *)(actor+8)=0x00ac0000; *(s32 *)(actor+12)=0x00a00000;
     *(s32 *)(actor+16)=0x01540000; *(s32 *)(actor+24)=0x12666; *(s32 *)(actor+28)=0x12666;
-    *(s32 *)(actor+68)=0x6666; *(s32 *)(actor+72)=0x30000;
+    actor = permuted_34;
     Func_0808a010(20); Func_0808a128(8,6,20); Func_080f9010(147);
+    *(s32 *)(actor+68)=0x6666; *(s32 *)(actor+72)=0x30000;
     Func_0808a010(20); Func_0808a098(8,(void *)0x020093ac); Func_0808a010(80);
     Func_0808a1e0(17,1); Func_0808a090(17,0x10000,0x8000); Func_080f9010(153);
     Func_0808a0b8(17,132,360); Func_0808a0b8(18,132,360); Func_0808a010(40);
     Func_0808a0f0(17,0,0); actor=Func_0808a080(8);
-    *(s32 *)(actor+24)=0x10000; *(s32 *)(actor+28)=0x10000; *(unsigned short *)(actor+6)=0x5000;
     Func_0808a010(40); *(s32 *)(Data_03001ebc+448)=514;
     Func_0808a368(); Func_0808a370(); Func_0808a248(13); Func_0808a020();
+    *(s32 *)(actor+24)=0x10000; *(s32 *)(actor+28)=0x10000; *(unsigned short *)(actor+6)=0x5000;
 }

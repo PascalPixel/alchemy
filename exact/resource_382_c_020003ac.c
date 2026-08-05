@@ -1,8 +1,8 @@
 #include "types.h"
 
 extern u8 *Data_03001e8c[];
-extern u8 *Func_0808a080(s32);
-extern s32 Func_02001674(u8 *, const u8 *, s32, s32);
+extern u8 *Func_02001db2(s32);
+extern s32 Func_02001a72(u8 *, const u8 *, s32, s32);
 
 s32 Func_020003ac(u8 *entity)
 {
@@ -15,11 +15,11 @@ s32 Func_020003ac(u8 *entity)
     if (*(s32 *)(entity + 56) == (s32)0x80000000)
         return 0;
 
-    leader = Func_0808a080(0);
+    leader = Func_02001db2(0);
     if (*(s16 *)(workspace + 376) != 0 || base[0x0ea4] != 0) {
         selector = 26;
         flag = 1;
     }
-    Func_02001674(entity, leader, selector, flag);
+    Func_02001a72(entity, leader, selector, flag);
     return 0;
 }

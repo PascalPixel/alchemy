@@ -33,8 +33,8 @@ s32 Func_020051b0(u8 *object)
         return 0;
     }
 
-    shaped = Func_08000118(phase * 1024);
     *(s32 *)(object + 24) = shaped;
+    shaped = Func_08000118(phase * 1024);
     *(s32 *)(object + 28) = shaped;
     *(s32 *)(object + 8) = *(s32 *)(source + 8);
     *(s32 *)(object + 12) += 0x10000;

@@ -26,8 +26,8 @@ void Func_02001794(void)
         if (effect != 0) {
             Func_02001704(effect);
             *(s32 *)(effect + 104) = 60;
-            *(u32 *)(effect + 108) = 0x0200974d;
             Func_08009080(effect, 5);
+            *(u32 *)(effect + 108) = 0x0200974d;
         }
     }
 
@@ -36,8 +36,8 @@ void Func_02001794(void)
         if (effect != 0) {
             Func_02001704(effect);
             *(s32 *)(effect + 104) = 60;
-            *(u32 *)(effect + 108) = 0x0200974d;
             Func_08009080(effect, 5);
+            *(u32 *)(effect + 108) = 0x0200974d;
         }
     }
 
@@ -46,8 +46,8 @@ void Func_02001794(void)
         if (effect != 0) {
             Func_02001704(effect);
             *(s32 *)(effect + 104) = 60;
-            *(u32 *)(effect + 108) = 0x0200974d;
             Func_08009080(effect, 5);
+            *(u32 *)(effect + 108) = 0x0200974d;
         }
     }
 
@@ -56,8 +56,8 @@ void Func_02001794(void)
         if (effect != 0) {
             Func_02001704(effect);
             *(s32 *)(effect + 104) = 60;
-            *(u32 *)(effect + 108) = 0x0200974d;
             Func_08009080(effect, 5);
+            *(u32 *)(effect + 108) = 0x0200974d;
         }
     }
 
@@ -66,8 +66,8 @@ void Func_02001794(void)
         if (effect != 0) {
             Func_02001704(effect);
             *(s32 *)(effect + 104) = 60;
-            *(u32 *)(effect + 108) = 0x0200974d;
             Func_08009080(effect, 5);
+            *(u32 *)(effect + 108) = 0x0200974d;
         }
     }
 }

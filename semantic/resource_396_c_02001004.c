@@ -94,12 +94,12 @@ s32 Func_02001004(void)
 
     record = Func_0808a080(8);
     *(s32 *)0x0200add0 = 0x02001000;
+    *(s32 *)(record + 12) = 0xfff60000;
     Func_02001224();
+    record[85] = 0;
     record[85] = 0;
     *(s32 *)(record + 12) = 0xfff60000;
     record = Func_0808a080(9);
-    record[85] = 0;
-    *(s32 *)(record + 12) = 0xfff60000;
     Func_0808a158(9, 15);
     Func_02001424(0);
     if (Data_02000240[225] != 19) {
@@ -113,10 +113,10 @@ s32 Func_02001004(void)
         Func_020017ec();
     }
 
+    *(s32 *)(camera + 276) = 0xe666;
     camera = Data_03001e70;
     *(s32 *)(camera + 268) += multiply16_16(*(s32 *)(camera + 236) + 0xa00000, 0x1999);
     *(s32 *)(camera + 272) += multiply16_16(*(s32 *)(camera + 240) + 0x880000, 0x1999);
-    *(s32 *)(camera + 276) = 0xe666;
     *(s32 *)(camera + 280) = 0xe666;
     Func_080770c8(0x201);
     Func_080770c8(0x20d);

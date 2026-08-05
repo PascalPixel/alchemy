@@ -38,6 +38,21 @@
  *
  * The epilogue is `pop {r3, r5} / mov r8,r3 / mov sl,r5 / pop {r5, r6, r7} /
  * pop {r0} / bx r0`, so the owner is void.
+ *
+ * STILL-OPEN residual, 38 differing bytes scattered across ~17 sites
+ * (`overlay_adopt --where`). alchemist.ts refuses (tiers
+ * [model-divergence,priority], no original-order row -- not statement-order
+ * fixable). overlay_mode_cohort.ts's full 76-config single-flag sweep found
+ * no improvement over the routed baseline either. overlay_candidate_show.ts
+ * finds one genuine (non-link-noise) structural difference around the loop:
+ * the reference appears to hold a slot pointer live across a field read
+ * rather than re-materializing it (candidate: `ldr r5,[r0,#8]` then later
+ * `adds r1,r5,#0`; reference: `adds r5,r0,#0` then later `ldr r1,[r5,#8]`),
+ * but this function's C already deliberately spells out call/field-read
+ * order to match the assembly (see the "Three separate lookups" comment
+ * below) and a bounded attempt to locate and restructure the exact
+ * corresponding statement pair did not close it. Deprioritized per the
+ * brief's ~15-20 minute rule.
  */
 
 typedef struct Slot_02001c2c {

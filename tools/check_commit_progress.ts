@@ -20,6 +20,13 @@ const LEGACY_C_BYTES_AND_REGION =
   /\[[0-9]{1,3}(?:,[0-9]{3})* C bytes\]\s+\[[0-9]{1,3}(?:,[0-9]{3})* of [0-9]{1,3}(?:,[0-9]{3})*\]$/;
 const LEGACY_ROM_BYTES = /\[[0-9,]+ of 8,388,608 bytes\]$/;
 const DENOMINATOR_CORRECTION = /^metrics: correct executable denominator\b/;
+// Recognized transition for resuming the counter chain after commits that
+// bypassed this hook (hooks are opt-in per clone, so an unhooked contributor
+// can leave any number of unsuffixed parents). The restore commit itself must
+// carry a correct current suffix; everything after it chains normally. This
+// is deliberately an explicit, greppable subject form rather than silent
+// tolerance: the history should show where and why the chain restarted.
+const COUNTER_RESTORE = /^metrics: restore Full-C counter chain\b/;
 
 function legacySubject(subject: string): boolean {
   return LEGACY_C_BYTES_AND_REGION.test(subject) ||
@@ -88,7 +95,11 @@ export function checkCommitProgress(
     return;
   }
   if (!legacySubject(previousSubject)) {
-    throw new Error("previous commit has neither canonical Full-C nor recognized transition syntax");
+    if (COUNTER_RESTORE.test(subject)) return;
+    throw new Error(
+      "previous commit has neither canonical Full-C nor recognized transition syntax; " +
+      "resume the chain with a 'metrics: restore Full-C counter chain' commit carrying the current suffix",
+    );
   }
 }
 
@@ -243,6 +254,24 @@ function selfTest(): void {
     }
   }
   if (!unsuffixedRejected) throw new Error("self-test: unsuffixed parent subject was accepted");
+  // The explicit restore syntax is the one sanctioned way past such a parent,
+  // and it must still carry a correct current suffix itself.
+  checkCommitProgress(
+    "metrics: restore Full-C counter chain [C 123,456/1,234,567 bytes]",
+    report,
+    "docs",
+  );
+  let staleRestoreRejected = false;
+  try {
+    checkCommitProgress(
+      "metrics: restore Full-C counter chain [C 123,455/1,234,567 bytes]",
+      report,
+      "docs",
+    );
+  } catch {
+    staleRestoreRejected = true;
+  }
+  if (!staleRestoreRejected) throw new Error("self-test: restore commit with a stale suffix was accepted");
   console.log("self-test=ok suffix=full-c-byte-share");
 }
 

@@ -42,10 +42,10 @@ extern void Func_08000178(s32 arg0);
 
 void Func_020023bc(s32 arg0)
 {
-    volatile u16 *cursor = (volatile u16 *)0x0200ca1c;
     volatile u32 *dma3 = (volatile u32 *)0x040000d4;
     u8 *table = (u8 *)0x0200c0c4;
     s32 result = Func_08000170(0x1ca0);
+    volatile u16 *cursor = (volatile u16 *)0x0200ca1c;
     s32 tableByte;
 
     if ((short)*cursor == -1) {
@@ -59,8 +59,8 @@ void Func_020023bc(s32 arg0)
 
     Func_080001a8(Func_08000290(0xe7), result);
 
-    dma3[0] = (u32)(result + tableByte);
     dma3[1] = 0x050003e0;
+    dma3[0] = (u32)(result + tableByte);
     dma3[2] = 0x84000008;
 
     Func_080001c8((short)*cursor, 0x400, arg0 * 1024 + result + 160, 0);

@@ -65,11 +65,11 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
      * act as -0x2000 and -0x0fff.  The -0x0fff is genuinely one less than the
      * -0x1000 the pattern would suggest — it is what the pool holds.
      */
-    behind = (angle + 0xffffe000) & 0xf000;
     ahead  = (angle + 0x00002000) & 0xf000;
-    left   = (angle + 0x00001000) & 0xf000;
     right  = (angle + 0xf8b6f001) & 0xf000;
+    behind = (angle + 0xffffe000) & 0xf000;
     front  = angle & 0xf000;
+    left   = (angle + 0x00001000) & 0xf000;
 
     heading = *(u16 *)(self + 6) & 0xf000;
 
@@ -81,9 +81,9 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
 
     /* The wide cone only applies when the other actor is the player party. */
     if (other == Func_0808a080(0) && (ahead == heading || behind == heading)) {
+        noticed = 1;
         self[91] = 1;
         Func_08009080(self, 1);
-        noticed = 1;
     }
 
     return noticed;

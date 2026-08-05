@@ -91,8 +91,8 @@ void Func_02001df4(s32 arg0)
             Func_0808a248((s32)(idx + 1));
             Func_080770c8();
             Func_02001ba8();
-            *(u32 *)slotWord = lookupResult;
         } else {
+            *(u32 *)slotWord = lookupResult;
             Func_0808a360(10);
             Func_0808a370(282);
         }

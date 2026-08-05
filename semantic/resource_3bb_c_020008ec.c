@@ -48,8 +48,8 @@ extern volatile s32 Data_0200c838;
 
 void Func_020008ec(void)
 {
-    Data_0200c838 = 0;
     Data_0200c834 = 0;
+    Data_0200c838 = 0;
 
     /* The task is published as its entry address plus the Thumb bit. */
     Func_080000d8((s32)Func_02000714 + 1);

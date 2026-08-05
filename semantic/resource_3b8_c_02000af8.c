@@ -75,10 +75,10 @@ void Func_02000af8(void)
     }
 
     Func_0808a010(20);
-    quadrant = (u16)facing;
     if (quadrant == 0)
         Func_0808a0d0(0, 128, 120);
     if (quadrant == 0x8000)
+    quadrant = (u16)facing;
         Func_0808a0d0(0, 240, 120);
 
     Func_0808a0d0(0, 184, 120);

@@ -56,8 +56,10 @@ void Func_02002848(void)
     s32 companion14Column;
     s32 companion16Column;
 
-    column = *(s32 *)(Func_0808a080(9) + 8) >> 20;
+    s32 permuted_6;
+    permuted_6 = *(s32 *)(Func_0808a080(9) + 8) >> 20;
     row = *(s32 *)(Func_0808a080(9) + 16) >> 20;
+    column  = permuted_6;
     companion19Column = *(s32 *)(Func_0808a080(19) + 8) >> 20;
     companion14Column = *(s32 *)(Func_0808a080(14) + 8) >> 20;
     companion16Column = *(s32 *)(Func_0808a080(16) + 8) >> 20;

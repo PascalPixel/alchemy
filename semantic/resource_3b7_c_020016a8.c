@@ -80,8 +80,8 @@ void Func_02000e5c();           /* the installed per-frame task */
 void Func_020016a8(void)
 {
     u8 *state = Data_0200a070;
-    u8 *x_table = Data_0200a05a;
     u8 *z_table = Data_0200a05e;
+    u8 *x_table = Data_0200a05a;
     u16 *heading_table = Data_0200a062;
     u8 *record = Data_0200a0d0;
     s32 index = 0;

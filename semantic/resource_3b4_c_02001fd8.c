@@ -108,8 +108,8 @@ tick12:
     if (Func_080770c0(0xeea) == 0) Func_0808a0f0(11, 0x1680000, 0x3680000);
     return;
 
-tick_even:
     Func_020020c4(slot, 0);
+tick_even:
     return;
 
 tick2:

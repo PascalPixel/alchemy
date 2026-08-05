@@ -58,6 +58,6 @@ void Func_0200141c(void)
     if (x != 10) return;
     if ((u32)(z - 16) > 2) return;
 
-    Func_080770c8(0x220);
     *(s16 *)(workspace + 386) = 92;
+    Func_080770c8(0x220);
 }

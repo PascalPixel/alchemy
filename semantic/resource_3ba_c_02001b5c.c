@@ -50,14 +50,14 @@ void Func_02001b5c(s32 actorId)
         Func_0808a170(0x2087);
         Func_0808a180(actorId, 0);
 
+        Func_0808a368();
         *(s32 *)(workspace + 448) = 512;
         *(s32 *)(workspace + 456) = 15;
-        Func_0808a368();
         Func_0808a370();
 
+        selector++;
         idBase = selector << 4;
         Func_080770e8(idBase + 0x370, *(s32 *)(record + 8) >> 20);
-        selector++;
         Func_080770e8(idBase + 0x378, *(s32 *)(record + 16) >> 20);
 
         if (selector > 3) {

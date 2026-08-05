@@ -25,13 +25,13 @@ s32 Func_02000244(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 value);
 void Func_02000608(s32 row, s32 actorSlot, s32 targetX, s32 elevation,
                    s32 targetY, void (*callback)(void))
 {
-    u8 *world = *(u8 **)0x03001e70;
     u8 *lead = Func_0808a080(0);
+    u8 *world = *(u8 **)0x03001e70;
     s32 direction = *(u16 *)(lead + 6) >> 12;
     u8 *actor = Func_0808a080(actorSlot);
     s32 *delta = (s32 *)0x0200a69c + row * 4;
-    s32 dx0 = delta[0] < 0 ? -delta[0] : delta[0];
     s32 dy0 = delta[1] < 0 ? -delta[1] : delta[1];
+    s32 dx0 = delta[0] < 0 ? -delta[0] : delta[0];
     s32 dx1 = delta[2] < 0 ? -delta[2] : delta[2];
     s32 dy1 = delta[3] < 0 ? -delta[3] : delta[3];
     s32 width = (dx0 + dx1) >> 4;

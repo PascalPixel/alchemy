@@ -220,12 +220,12 @@ void Func_02000dcc(void)
         Func_02001c48(8);
         Func_0808a090(8, 128 << 9, 128 << 8);
 
-        bits = Func_0808a080(8) + 90;
         *bits = (u8)(0xfe & *bits);
+        bits = Func_0808a080(8) + 90;
+        *bits = (u8)(1 | *bits);
         Func_0808a0d0(8, 198 << 2, 72);
         Func_0808a010(1);
         bits = Func_0808a080(8) + 90;
-        *bits = (u8)(1 | *bits);
         Func_02001c5c(8, 0);
 
         Func_0808a0a8(13);
@@ -262,11 +262,11 @@ void Func_02000dcc(void)
 
     goto close;
 
-skipped_scene:
     workspace = Data_03001ebc;
-    *(u16 *)(workspace + 472) += 1;
     Func_0808a180(0x8008, 0);
+    *(u16 *)(workspace + 472) += 1;
+skipped_scene:
 
-close:
     Func_0808a020();
+close:
 }

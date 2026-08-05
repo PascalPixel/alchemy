@@ -120,6 +120,7 @@ void Func_020033a0(void)
     s32 across;
     s32 down;
 
+    s32 permuted_22;
     record = Data_03001f3c;
     entry = (u32 *)record;
 
@@ -152,17 +153,18 @@ void Func_020033a0(void)
         }
     }
 
-    counter = *(s16 *)(record + 218);
+    permuted_22 = *(s16 *)(record + 218);
     if (counter == 0) {
         Func_080001c0(*(s16 *)(record + 216));
         return;
     }
+    counter  = permuted_22;
 
     column = ((u32)(counter * 6) - 8) & 0xff;
 
     /* Head. */
-    entry[0] = 0;
     entry[1] = (u32)((104 - (linkCount << 4)) << 16) | column | 0x8000;
+    entry[0] = 0;
     entry[2] = tile | 0xe400;
     Func_080001e8(entry, 255, 12);
     entry += 3;

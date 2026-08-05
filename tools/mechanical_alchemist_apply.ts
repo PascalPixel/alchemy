@@ -111,6 +111,29 @@ async function main(): Promise<void> {
         console.log(`${id}: REFUSED a saved variant (${startLines} -> ${savedLines} lines, likely a renderer bug, not a real move)`);
         break;
       }
+      // resource_3c5:28a0 found a second real bug: a split-store move can
+      // rename a variable's ASSIGNMENT to a fresh `permuted_N` temp without
+      // correctly threading every later read of the original name back
+      // through it, leaving the original genuinely uninitialized. Byte-diff-
+      // neutral by coincidence (undefined behavior that happened to compile
+      // to the same bytes), so only a source-level check catches it: every
+      // `X = ...;` line the diff removed in favor of `permuted_N = ...;`
+      // must be followed somewhere by `X = permuted_N` reconnecting it.
+      const beforeText = readFileSync(path, "utf8");
+      const afterText = readFileSync(result.saved, "utf8");
+      const removedAssignments = beforeText.split("\n")
+        .filter((line) => !afterText.includes(line))
+        .map((line) => /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=(?!=)/.exec(line)?.[1])
+        .filter((name): name is string => name !== undefined);
+      const newTemps = [...afterText.matchAll(/\bpermuted_\d+\b/g)].map((match) => match[0]);
+      const uniqueTemps = [...new Set(newTemps)];
+      const brokenSplit = removedAssignments.some((name) =>
+        uniqueTemps.some((temp) => afterText.includes(`${temp} = `) && !new RegExp(`\\b${name}\\s*=\\s*${temp}\\b`).test(afterText)),
+      ) && uniqueTemps.length > 0;
+      if (brokenSplit) {
+        console.log(`${id}: REFUSED a saved variant (a split temp was never reconnected to its original variable, likely leaves it uninitialized)`);
+        break;
+      }
       copyFileSync(result.saved, path);
       lastBytes = result.differing_bytes;
       steps++;

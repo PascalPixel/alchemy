@@ -83,11 +83,11 @@ s32 Func_02000f4c(u8 *subject)
 
     /* `lsrs #16` - the reduction is unsigned, so the jitter is 0..6 before the
      * -3 bias regardless of the sign of the helper's result. */
+    y = *(s32 *)(subject + 12) + 0x100000;   /* 128 << 13, one unit up */
     x = *(s32 *)(subject + 8)
         + ((s32)(((Func_080000f8() * 7u) >> 16) - 3u) << 16);
     z = *(s32 *)(subject + 16)
         + ((s32)(((Func_080000f8() * 7u) >> 16) - 3u) << 16);
-    y = *(s32 *)(subject + 12) + 0x100000;   /* 128 << 13, one unit up */
 
     Func_02000ae8(x, y, z, 0, zero, zero, 0x00090001, options);
     return 0;

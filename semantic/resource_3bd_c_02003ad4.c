@@ -40,14 +40,14 @@ void Func_02003ad4(void)
     u8 *effect;
     u32 index;
 
-    Func_0808a550();
     effect = Data_03001f30;
+    Func_0808a550();
     Func_080b0048(0x00202108);
 
+    Func_0808a538(position);
     position[0] = 252 << 17;
     position[1] = 192 << 13;
     position[2] = 144 << 16;
-    Func_0808a538(position);
 
     effect += 0x58;
     for (index = 0; index < 24; index++, effect += 0x48) {

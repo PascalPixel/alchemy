@@ -112,8 +112,8 @@ s32 Func_0200120c(void)
     Func_080091e0(Func_0808a080(25), 0);
 
     record = Func_0808a080(25);
-    record[0x5c] = 1;
     record[0x55] = 0;
+    record[0x5c] = 1;
     sub = *(u8 **)(record + 0x50);
     *(s32 *)(record + 0x0c) = 0x000a0000;
     sub[0x27] = 0;
@@ -141,11 +141,11 @@ s32 Func_0200120c(void)
     }
 
     record = Func_0808a080(8);
+    sub[0x26] = 0;
+    sub = *(u8 **)(record + 0x50);
+    *(u16 *)(*(u8 **)(record + 0x50) + 30) = 0xc000;
     record[0x59] = 0;
     record[0x23] |= 2;
-    sub = *(u8 **)(record + 0x50);
-    sub[0x26] = 0;
-    *(u16 *)(*(u8 **)(record + 0x50) + 30) = 0xc000;
 
     record = Func_0808a080(9);
     record[0x59] = 0;

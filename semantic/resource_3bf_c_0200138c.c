@@ -63,8 +63,8 @@ void Func_0808a228();
 
 void Func_0200138c(void)
 {
-    u8 *object = Func_0808a080(17);
     u8 *base = *(u8 **)0x03001e70;
+    u8 *object = Func_0808a080(17);
     s32 *record = (s32 *)(base + 356);
     u8 *workspace = *(u8 **)(base + 76);
     u32 flags;
@@ -74,9 +74,9 @@ void Func_0200138c(void)
     flags = *(u32 *)0x03001e40;
 
     if ((flags & 1u) != 0u) {
-        record[6] = 1;   /* +24 */
         record[7] = 1;   /* +28 */
     } else {
+        record[6] = 1;   /* +24 */
         record[6] = -1;
         record[7] = -1;
     }

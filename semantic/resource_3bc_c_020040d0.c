@@ -34,9 +34,9 @@ void Func_020040d0(void)
     s32 screen_y;
     s32 screen_x;
 
+    count = *(s16 *)(workspace + 230);
     workspace = *(u8 **)0x03001f3c;
     tile = *(u16 *)(0x03001b10 + (*(s16 *)(workspace + 216) << 2) + 2) >> 5;
-    count = *(s16 *)(workspace + 230);
 
     if (*(s16 *)(workspace + 220) != 0) {
         *(u16 *)(workspace + 218) = 2;
@@ -69,9 +69,9 @@ void Func_020040d0(void)
     column = (state * 6 - 8) & 0xff;
     out = (u32 *)workspace;
 
+    out[2] = tile | 0xe400;
     out[0] = 0;
     out[1] = ((104 - (count << 4)) << 16) | column | 0x8000;
-    out[2] = tile | 0xe400;
     Func_080001e8(out, 255, 12);
     out += 3;
 
@@ -84,15 +84,15 @@ void Func_020040d0(void)
     }
 
     out[0] = 0;
-    out[1] = 0x700000 | column | 0x8000;
     out[2] = (tile + 6) | 0xe400;
     Func_080001e8(out, 255, 12);
     out += 3;
+    out[1] = 0x700000 | column | 0x8000;
 
-    out[0] = 0;
     out[1] = 0x780000 | column | 0x8000 | 0x10000000;
     out[2] = (tile + 6) | 0xe400;
     Func_080001e8(out, 255, 12);
+    out[0] = 0;
     out += 3;
 
     for (index = 0; (u32)index < (u32)count; index++) {

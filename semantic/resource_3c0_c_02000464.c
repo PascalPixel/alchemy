@@ -42,14 +42,14 @@ void Func_02000464(s32 encounterActorId)
     Func_08009150(mapActor,
         *(s32 *)(mapActor + 8), *(s32 *)(mapActor + 12) + 0x200000,
         *(s32 *)(mapActor + 16));
+    mapActor[85] = 4;
     Func_0808a0e8(mapActorId);
     *(s32 *)(mapActor + 40) = 0;
-    mapActor[85] = 4;
     *(volatile u8 *)0x02000432 = 2;
 
     Func_080770c8(0x20f);
+    *(volatile u16 *)(*(u8 *volatile *)0x03001ebc + 0x17c) = 0;
     Func_080770e8(0x218, encounterActorId);
     Func_080770e8(0x210, 180);
     Func_0808a020();
-    *(volatile u16 *)(*(u8 *volatile *)0x03001ebc + 0x17c) = 0;
 }

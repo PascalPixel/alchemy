@@ -277,12 +277,12 @@ void Func_02001b10(void)
         Func_0808a010(0x1e);
         Func_0808a138(0xe, 2);
         Func_0808a010(0x14);
-        DIALOGUE_COUNTER++;
         Func_0808a180(0xe, 0);
     } else {
         Func_0808a010(0x1e);
         Func_0808a138(0xe, 2);
         Func_0808a010(0x14);
+        DIALOGUE_COUNTER++;
         Func_0808a180(0xe, 0);
         DIALOGUE_COUNTER++;
     }
@@ -319,16 +319,16 @@ void Func_02001b10(void)
         Func_0808a010(0x14);
         Func_0808a110(0xa, 4);
         Func_0808a010(0x14);
-        DIALOGUE_COUNTER++;
         Func_0808a180(0xa, 0);
+        DIALOGUE_COUNTER++;
     } else {
         Func_0808a010(0x1e);
         Func_0808a1b8(0xa, 0x2000, 0);
         Func_0808a010(0x14);
+        DIALOGUE_COUNTER++;
         Func_0808a110(0xa, 3);
         Func_0808a010(0x1e);
         Func_0808a180(0xa, 0);
-        DIALOGUE_COUNTER++;
     }
 
     Func_0808a010(0xa);

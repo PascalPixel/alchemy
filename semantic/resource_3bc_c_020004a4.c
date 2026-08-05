@@ -75,18 +75,18 @@ void Func_020004a4(void)
     Func_080091e0(object, 0);
     object->field23 = 2;
     object->field55 = 0;
-    object->field34 = 0x6666;
     object->field30 = 0xCCCC;
     Func_08009150(object, object->x, 0x40000, object->z);
+    object->field34 = 0x6666;
 
+    object->field34 = 0x6666;
     object = Func_0808a080(11);
     object->field23 = 2;
-    object->field34 = 0x6666;
     object->field30 = 0xCCCC;
     Func_08009150(object, object->x, 0x200000, object->z);
 
-    object = Func_0808a080(10);
     object->field34 = 0x6666;
+    object = Func_0808a080(10);
     object->field30 = 0xCCCC;
     Func_08009150(object, object->x, 0x40000, object->z);
 

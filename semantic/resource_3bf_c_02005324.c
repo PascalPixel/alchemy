@@ -56,8 +56,8 @@ void Func_02005324(void)
     Func_0808a018();
 
     record = Func_0808a080(8);
-    if (record != 0)
         record[0x23] = 2;
+    if (record != 0)
 
     record = Func_0808a080(9);
     if (record != 0)

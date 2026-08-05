@@ -72,8 +72,8 @@ void Func_020020f0(s32 actor)
         Func_08009158(record);
 
         Func_0808a100(0, 14);
-        moved_x = x + 0x400000;
         Func_08009150(record, moved_x, moved_z, *(s32 *)(record + 0x10));
+        moved_x = x + 0x400000;
         Func_08009158(record);
 
         Func_0808a100(0, 10);

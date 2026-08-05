@@ -109,12 +109,12 @@ void Func_02000980(void)
     Func_0808a178(29, 0);
     Func_0808a010(25);
 
-    text += 3;
     Func_080150f8(52, 0, 12, 7);
+    text += 3;
     Func_08015038(text, 11, 12, 2);
 
-    workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 500) = 32;
+    workspace = *(u8 **)0x03001ebc;
 
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a010(20);
@@ -156,8 +156,8 @@ void Func_02000980(void)
         Func_0808a010(30);
 
         /* Skip-beat counter: the u16 at workspace + 472. */
-        skipped = (u16 *)(*(u8 **)0x03001ebc + 472);
         *skipped = (u16)(*skipped + 1);
+        skipped = (u16 *)(*(u8 **)0x03001ebc + 472);
 
         Func_0808a180(29, 0);
         Func_0808a010(20);

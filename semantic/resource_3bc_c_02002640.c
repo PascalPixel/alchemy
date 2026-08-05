@@ -84,8 +84,8 @@ void Func_02002640(s32 id)
     record = Func_02007016(id);
 
     *(s16 *)(record + 56) = *(s16 *)(record + 52);
-    *(s16 *)(record + 58) = *(s16 *)(record + 54);
     record[0x131] = 0;
+    *(s16 *)(record + 58) = *(s16 *)(record + 54);
 
     computed = Func_02006ece(*(s16 *)(record + 56) << 14, *(s16 *)(record + 52));
     if (computed > 0x4000) {

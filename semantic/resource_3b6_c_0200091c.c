@@ -60,8 +60,8 @@ void Func_0200091c(s32 subject)
     }
 
     if (Func_080770c0(0x950) != 0) {
-        message = 0x23bf;
     } else if (Func_080770c0(0x962) != 0) {
+        message = 0x23bf;
         message = 0x2231;
     } else {
         Func_0808a170(0x1feb);

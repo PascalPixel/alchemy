@@ -30,8 +30,8 @@ extern void Func_0808a370(void);
 void Func_02000db8(s32 leaderId)
 {
     u8 *leader = Func_0808a080(leaderId);
-    s32 leaderX = *(s16 *)(leader + 10);
     s32 leaderY = *(s16 *)(leader + 18);
+    s32 leaderX = *(s16 *)(leader + 10);
     u8 *actor;
 
     Func_0808a018();
@@ -47,8 +47,8 @@ void Func_02000db8(s32 leaderId)
     Func_0808a0f0(3, leaderX << 16, (leaderY << 16) - 0x200000);
     Func_0808a0f0(leaderId, leaderX << 16, (leaderY << 16) - 0x500000);
 
-    actor = Func_0808a080(0);
     *(u16 *)(actor + 6) = 0xc000;
+    actor = Func_0808a080(0);
     Func_0808a200(0, 0);
     Func_0808a360();
     Func_0808a370();

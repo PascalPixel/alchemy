@@ -130,8 +130,8 @@ void Func_02002614(void)
     probe = Func_0808a080(0);
     if (probe != 0)
         Func_0808a0b8(
-            1,
             *(s16 *)(probe + 0x0a),
+            1,
             *(s16 *)(probe + 0x12));
 
     Func_0808a0e8(1);

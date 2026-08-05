@@ -109,9 +109,9 @@ void Func_02000658(void)
     Func_0808a080(24)->active_55 = 0;
     Func_0808a080(25)->active_55 = 0;
 
+    Data_03001ebc->scene_value = 32;
     Func_080000d0((const void *)0x020090c1, 3200);
     Func_080000c0(1);
-    Data_03001ebc->scene_value = 32;
     Func_0808a360();
     Func_0808a370();
     Func_0808a0e8(0);

@@ -37,8 +37,8 @@ void Func_0200013c(
     s32 a0, s32 a1, s32 a2, s32 a3,
     s32 a4, s32 a5, u32 flags, u8 *params)
 {
-    s32 reference = Func_0808a080(0);
     s32 template_id = 222;
+    s32 reference = Func_0808a080(0);
     s32 object;
     s32 slot = (flags & 15) * 4;
     u8 *record;
@@ -49,18 +49,18 @@ void Func_0200013c(
     if (object == 0)
         return;
 
-    record = *(u8 **)(object + 80);
     Func_08009080(object, (flags + 1) & 15);
-    Func_08009098(object, *(s32 *)(0x0200cbc4 + slot));
     *(u8 *)(object + 85) = 0;
+    Func_08009098(object, *(s32 *)(0x0200cbc4 + slot));
     record[38] = 0;
+    record = *(u8 **)(object + 80);
     *(s32 *)(object + 108) = 0x02008105;
     *(s32 *)(object + 68) = a3;
     *(s32 *)(object + 72) = a4;
-    *(s32 *)(object + 76) = a5;
     record[9] = (record[9] & ~13)
         | (*(u8 *)(*(s32 *)(reference + 80) + 9) & 12);
     *(s32 *)(object + 48) = 0;
+    *(s32 *)(object + 76) = a5;
     *(s32 *)(object + 52) = 0;
     *(u16 *)(object + 100) = 0;
 

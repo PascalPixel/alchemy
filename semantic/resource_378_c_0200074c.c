@@ -61,10 +61,10 @@ void Func_0200074c(void)
 
         halfwords[0xe5a / 2] = 0x7c00;
         halfwords[0xe5c / 2] = 0x7c00;
-        halfwords[(0xe5c + 2) / 2] = 0x7c00;
-        state[0x2a00] = 0;
         state[0x2a01] = 1;
         state[0x2a02] = 1;
+        halfwords[(0xe5c + 2) / 2] = 0x7c00;
+        state[0x2a00] = 0;
         state[0x2a03] = 1;
     }
 

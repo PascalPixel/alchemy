@@ -96,8 +96,8 @@ void Func_020016dc(void)
         other = Func_0808a080(0);
         if ((u32)(other[4] >> 19) <= 17) {
             Func_0808a0d0(0, 0x121, 0x9e);
-            other = Func_0808a080(0);
             *(u16 *)((u8 *)other + 6) = 0xc000;
+            other = Func_0808a080(0);
         }
     }
 
@@ -113,8 +113,8 @@ void Func_020016dc(void)
     Func_0808a210(0x11e0000, -1, 0x920000, 1);
     Func_0808a218();
 
-    other = Func_0808a080(17);
     ((u8 *)other)[90] &= 0xfe;
+    other = Func_0808a080(17);
     Func_0808a090(17, 0x30000, 0x10000);
 
     ((u8 *)actor)[85] = 0;
@@ -168,6 +168,6 @@ void Func_020016dc(void)
     Func_080091c0(0, 1, 2, 1, 17, 8);
     Func_080091c0(17, 9, 2, 1, 17, 7);
 
-done:
     Func_0808a020();
+done:
 }

@@ -34,10 +34,10 @@ u8 *Func_020000ec(void)
     }
 
     if (scenario == 0x10) {
-        step = Data_02000240[225];
         if (step >= 11 && step <= 13) {
             return Data_0200a41c;
         }
+        step = Data_02000240[225];
         if (step >= 14 && step <= 16) {
             return Data_0200a524;
         }

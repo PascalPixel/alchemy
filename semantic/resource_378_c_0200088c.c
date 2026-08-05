@@ -153,13 +153,13 @@ void Func_0200088c(void)
         Func_0808a110(9, 3); /* 0x0b24 */
         Func_0808a010(0x14); /* 0x0b2a */
         Func_0808a180(9, 0); /* 0x0b32 */
-        SKIP_BEATS++;
     } else {
         Func_0808a010(0x14); /* 0x0b62 */
         Func_0808a110(9, 4); /* 0x0b6a */
-        Func_0808a010(0x14); /* 0x0b70 */
-        Func_0808a180(9, 0); /* 0x0b88 */
         SKIP_BEATS++;
+        Func_0808a010(0x14); /* 0x0b70 */
+        SKIP_BEATS++;
+        Func_0808a180(9, 0); /* 0x0b88 */
     }
     Func_0808a010(0x14); /* 0x0b8e */
     Func_0808a100(0, 3); /* 0x0b96 */
@@ -566,10 +566,10 @@ void Func_0200088c(void)
         Func_0808a110(0xc, 4); /* 0x1836 */
         Func_0808a010(0x14); /* 0x183c */
         Func_0808a180(0xc, 0); /* 0x1844 */
+        actor[0x23] &= (u8)~2;
         Func_0808a010(0x14); /* 0x184a */
         actor = Func_0808a080(0xa); /* 0x1850 */
         actor = Func_0808a080(0xa); /* 0x1860 */
-        actor[0x23] &= (u8)~2;
         *(u32 *)(actor + 0x6c) = 0x02008849;
     }
     Func_0808a020(); /* 0x1868 */

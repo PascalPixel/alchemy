@@ -133,12 +133,12 @@ void Func_02001d04(void)
     Func_080091e0(Func_0808a080(14), 0);
     record = Func_0808a080(14);
     phase = record + 0x55;
-    *phase = 0;
     Func_080f9010(0xdc);
     for (tick = 0; tick != 30; tick++) {
         *(s32 *)(record + 12) += 0x10000;
         Func_0808a010(1);
     }
+    *phase = 0;
     *phase = 5;
     Func_0808a130(1, 2);
     Func_02004248(1, 10);
@@ -196,9 +196,10 @@ presentPrompt:
     Func_0808a110(14, 3);
     Func_0808a010(10);
     Func_02004248(14, 30);
-    *phase = 0;
     Func_0808a090(14, 0x26666, 0x13333);
     Func_08009150(record, 0x1cc0000, 0, 0x1680000);
+    *(s32 *)(record + 0x30) = 0x30000;
+    *phase = 0;
     Func_0808a0e8(14);
     Func_0808a158(14, 0);
     Func_080091e0(Func_0808a080(14), 1);
@@ -211,7 +212,6 @@ presentPrompt:
     Func_0808a010(20);
     record = Func_0808a080(1);
     record[90] |= 1;
-    *(s32 *)(record + 0x30) = 0x30000;
     *(s32 *)(record + 0x34) = 0x20000;
     Func_080f9010(0x99);
     *(s32 *)(record + 0x28) = 0x60000;

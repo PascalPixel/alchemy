@@ -74,8 +74,17 @@ typedef int bool;
 """
 PREAMBLE_LINES = PREAMBLE.count("\n")
 
-ANCHOR_NODES = (c_ast.Label, c_ast.Goto, c_ast.Return, c_ast.Break, c_ast.Continue)
+ANCHOR_NODES = (c_ast.Label, c_ast.Goto, c_ast.Return, c_ast.Break, c_ast.Continue,
+                c_ast.Case, c_ast.Default)
 BRACELESS_OWNERS = (c_ast.If, c_ast.For, c_ast.While, c_ast.DoWhile, c_ast.Switch)
+
+# Every attribute under which a node can hang a nested statement list. Missing
+# one silently drops that whole region from the report, and a caller cannot
+# tell "no anchors here" from "never looked" -- which is exactly how a
+# `switch` body went unanalysed and let a global assignment be hoisted above
+# two `if (...) { break; }` blocks on resource_371:6ec, making it run on the
+# break paths where it previously did not.
+BODY_ATTRS = ("stmt", "iftrue", "iffalse", "body")
 
 
 def preprocess(source: str) -> str:
@@ -164,30 +173,42 @@ def last_line(node) -> int:
     return deepest
 
 
+def statements_in(block):
+    """The statement list a node holds, whatever shape it uses to hold it."""
+    if isinstance(block, c_ast.Compound):
+        return block.block_items or []
+    if isinstance(block, (c_ast.Case, c_ast.Default)):
+        return block.stmts or []
+    return [block]
+
+
 def collect(block, governed_by, out):
     """Walk one statement list, recording each statement and its structure."""
-    items = block.block_items if isinstance(block, c_ast.Compound) else [block]
-    for item in items or []:
+    for item in statements_in(block):
         if item is None:
             continue
-        anchor = isinstance(item, ANCHOR_NODES)
         entry = {
             "line": line_of(item),
             "end_line": last_line(item),
             "kind": type(item).__name__,
-            "anchor": anchor,
+            "anchor": isinstance(item, ANCHOR_NODES),
             "governed_by": governed_by,
         }
         writes, reads = effects_of(item)
         entry["writes"], entry["reads"] = writes, reads
         out.append(entry)
 
+        # A `case`/`default` is a jump target holding its own statement list.
+        if isinstance(item, (c_ast.Case, c_ast.Default)):
+            collect(item, None, out)
+            continue
+
         # A control construct whose body is NOT a Compound has a braceless
         # body: the header and that statement are one indivisible construct,
         # which is exactly what the line model could not represent.
         if isinstance(item, BRACELESS_OWNERS):
             entry["anchor"] = True
-            for name in ("stmt", "iftrue", "iffalse"):
+            for name in BODY_ATTRS:
                 body = getattr(item, name, None)
                 if body is None:
                     continue
@@ -249,6 +270,43 @@ void Func_02000500(void)
     assert assign["writes"] == ["a"] and not assign["anchor"], assign
     assert result["declarations"]["p"] == "u8 *", result["declarations"]
     assert result["declarations"]["a"] == "s32", result["declarations"]
+
+    # Regression: statements nested in a `switch` must be reported. Missing a
+    # statement container makes the whole region invisible, and a caller
+    # cannot distinguish "no anchors here" from "never looked" -- which is how
+    # a global assignment came to be hoisted above two `if (...) { break; }`
+    # blocks on resource_371:6ec, running it on the break paths.
+    switch_fixture = """#include "types.h"
+void Func_02000600(s32 mode)
+{
+    s32 a;
+
+    switch (mode) {
+    case 33:
+        a = 1;
+        if (a != 0) {
+            break;
+        }
+        a = 2;
+        break;
+    default:
+        a = 3;
+    }
+}
+"""
+    handle, path = tempfile.mkstemp(suffix=".c")
+    os.write(handle, switch_fixture.encode())
+    os.close(handle)
+    try:
+        switched = analyse(path, "Func_02000600")
+    finally:
+        os.unlink(path)
+    assert "error" not in switched, switched
+    reported = {s["line"] for s in switched["statements"]}
+    for line in (8, 12, 13, 15):  # the case, both assignments inside it, the default arm
+        assert line in reported, f"line {line} missing from switch body: {sorted(reported)}"
+    cases = [s for s in switched["statements"] if s["kind"] in ("Case", "Default")]
+    assert len(cases) == 2 and all(s["anchor"] for s in cases), cases
     print("self-test=ok tool=c_structure")
 
 

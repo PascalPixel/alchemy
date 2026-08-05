@@ -48,13 +48,15 @@ void Func_02000db4(void)
     s32 step;
 
     record = Func_020051c6(19);
+    i = 0;
     step = 8;
-    for (i = 0; i <= 3; i++) {
+    do {
         Func_02005118(step);
         *(s32 *)(record + 16) += 0xffff0000;
         *(u32 *)(record + 64) = 0x80000000;
+        i++;
         step -= 2;
-    }
+    } while (i <= 3);
     *(u16 *)(*(u8 **)(record + 80) + 30) = 0;
     Func_02005370(227);
     Func_02000f4c(*(s32 *)(record + 8), *(s32 *)(record + 12),

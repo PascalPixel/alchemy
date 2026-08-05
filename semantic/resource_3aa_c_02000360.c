@@ -159,9 +159,9 @@ void Func_02000360(void)
     Func_0808a348(1);
     Func_080000c0(1);
 
-    workspace = WORKSPACE;
     SETUP_WORD(workspace) = 24;
     REQUEST_WORD(workspace) = 513;
+    workspace = WORKSPACE;
 
     Func_0808a0f0(8, 0x03580000, 0x01b80000);
     Func_0808a0f0(0, 0x03580000, 0x01e60000);

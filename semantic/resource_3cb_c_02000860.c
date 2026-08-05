@@ -128,7 +128,7 @@ s32 Func_02000860(void)
     s32 gate;
     u8 *payload;
     u16 *tag;
-    s32 i;
+    u32 i;
 
     if (Func_080770c0(0x173) != 0) {
         Func_0808a018();

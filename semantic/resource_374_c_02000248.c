@@ -78,7 +78,7 @@ void Func_02000248(void)
     u8 *workspace;
     s32 *shake;
     s32 scene;
-    s32 frame;
+    u32 frame;
     s32 step;
 
     Func_0808a018();

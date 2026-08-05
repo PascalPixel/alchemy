@@ -3058,43 +3058,8 @@ AlchemyC_02001e2c:
 	.4byte 0x0000022b
 	.2byte 0x094a
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_020076a0
-	movs	r1, #172
-	movs	r2, #176
-	movs	r0, #12
-	lsls	r1, r1, #18
-	lsls	r2, r2, #15
-	bl	sub_0200771e
-	movs	r1, #176
-	movs	r2, #176
-	movs	r0, #13
-	lsls	r1, r1, #18
-	lsls	r2, r2, #15
-	bl	sub_0200772c
-	movs	r1, #180
-	movs	r2, #192
-	lsls	r2, r2, #15
-	movs	r0, #14
-	lsls	r1, r1, #18
-	bl	sub_0200773a
-	movs	r0, #12
-	movs	r1, #5
-	bl	sub_0200774a
-	movs	r0, #13
-	movs	r1, #5
-	bl	sub_02007752
-	movs	r0, #14
-	movs	r1, #5
-	bl	sub_0200775a
-	movs	r0, #0
-	movs	r1, #13
-	movs	r2, #0
-	bl	sub_0200778c
-	bl	sub_020076f8
-	bl	sub_02007834
-	pop	{r0}
-	bx	r0
+AlchemyC_0200206c:
+	.space 0x5e
 	.2byte 0x0000
 AlchemyC_020020cc:
 	.space 0x68

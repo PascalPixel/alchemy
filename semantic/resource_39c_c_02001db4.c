@@ -40,7 +40,7 @@ extern void Func_02007a04(s32, s32, s32, s32, s32, s32);
 void Func_02001db4(s32 variant)
 {
     s32 descriptor[4];
-    s32 pass;
+    u32 pass;
 
     Func_02007a2e(0xd3);
 
@@ -62,7 +62,7 @@ void Func_02001db4(s32 variant)
     for (pass = 0; pass <= 1; pass++) {
         s32 right = 0x02c00000 + (pass << 20);
         s32 left = 0x032c0000 - (pass << 20);
-        s32 slot;
+        u32 slot;
 
         for (slot = 0; slot <= 7; slot++) {
             if ((slot & 1) != 0) {

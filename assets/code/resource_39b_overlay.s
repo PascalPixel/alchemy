@@ -1999,11 +1999,8 @@ AlchemyC_02000ea4:
 	.2byte 0x0000
 AlchemyC_02000fac:
 	.space 0xc
-	push	{lr}
-	movs	r0, #18
-	bl	sub_02001e8e
-	pop	{r0}
-	bx	r0
+AlchemyC_02000fb8:
+	.space 0xc
 AlchemyC_02000fc4:
 	.space 0xc
 AlchemyC_02000fd0:

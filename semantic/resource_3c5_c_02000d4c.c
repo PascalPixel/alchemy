@@ -95,7 +95,7 @@ void Func_02000d4c(void)
     u8 *subject;
     s32 velocity[3];        /* sp+16 */
     u8 options[40];         /* sp+28 */
-    s32 step;
+    u32 step;
 
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);

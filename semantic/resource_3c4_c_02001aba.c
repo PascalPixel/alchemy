@@ -47,7 +47,7 @@ void Func_02001aba(s32 delay)
     s32 x;
     s32 z;
     s32 height;
-    s32 index;
+    u32 index;
 
     Func_0808a090(10, 0x8000, 0x4000);
     Func_0808a090(11, 0x8000, 0x4000);

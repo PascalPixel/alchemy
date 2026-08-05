@@ -68,7 +68,7 @@ void Func_0809b698(void)
     struct FlashState_0809b698 *flash = object->flash;
     struct FlashChild_0809b698 *child = flash->child;
     u16 original_graphic = object->graphic_id;
-    u32 count;
+    s32 count;
 
     sequence->graphic_handle = (s16)Func_08004080();
     Func_08003fa4(sequence->graphic_handle, 0x100,

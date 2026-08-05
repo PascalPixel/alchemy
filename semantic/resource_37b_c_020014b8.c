@@ -65,7 +65,7 @@ void Func_020014b8(void)
     u32 *entry;
     void *work;
     u32 attribute;
-    s32 i;
+    u32 i;
 
     entry = Data_0200aa50;
 

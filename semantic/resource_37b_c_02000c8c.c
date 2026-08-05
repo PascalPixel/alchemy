@@ -67,7 +67,7 @@ void Func_02000c8c(void)
     s32 *saved;
     s32 *state;
     s32 direction;
-    s32 i;
+    u32 i;
 
     anchor = *(s32 ***)0x03001e70;
 

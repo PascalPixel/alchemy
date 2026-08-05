@@ -69,8 +69,8 @@ void Func_080d1350(void *argument)
     void *resource;
     s32 primary_id;
     s32 secondary_id;
-    u32 frame;
-    u32 i;
+    s32 frame;
+    s32 i;
 
     *(void **)(runtime + 0x7828) = argument;
     Func_080cd594(1);
@@ -136,7 +136,7 @@ void Func_080d1350(void *argument)
                 if ((u32)(projected[0] + 8) <= 135 &&
                     projected[1] <= 127 &&
                     projected[1] >= -8) {
-                    u32 j;
+                    s32 j;
 
                     for (j = 0; j < 10; j++) {
                         struct Particle_080d1350 *node =
@@ -171,7 +171,7 @@ void Func_080d1350(void *argument)
                             &nodes[current_index];
                         struct Particle_080d1350 *next =
                             &nodes[next_index];
-                        u32 step;
+                        s32 step;
 
                         for (step = 0; step < 12; step++) {
                             s32 x = current->velocity_x +

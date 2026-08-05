@@ -187,7 +187,7 @@ s32 Func_080ba6ac(
     BattleWork work;
     s32 *global = Data_03001f00;
     Motion *primary_object;
-    u32 i;
+    s32 i;
 
     (void)unused;
     global[0] = input->primary_id <= 4 ? 0x2000 : -0x2000;

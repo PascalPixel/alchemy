@@ -60,9 +60,9 @@ void Func_02000454(void)
     u16 *screen;
     u32 *scroll;
     s32 tile;
-    s32 row;
-    s32 column;
-    s32 i;
+    u32 row;
+    u32 column;
+    u32 i;
 
     Func_080002a8(0);
 

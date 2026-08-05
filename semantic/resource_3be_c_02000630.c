@@ -29,7 +29,7 @@ u8 *Func_02000630(s32 *referenceBucketOut, s32 *slotIndexOut,
         u8 *slot = ((u8 **)(Data_03001ebc + 0x14))[slotIndex];
         u8 *record = *(u8 **)(slot + 0x50);
         s32 key = *(short *)(record + 0x28);
-        s32 keyIndex;
+        u32 keyIndex;
 
         for (keyIndex = 0; keyIndex <= 5; keyIndex++) {
             const s32 *delta = deltaCursor;

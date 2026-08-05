@@ -129,7 +129,7 @@ void Func_080c1798(s32 focus, s32 scene, s32 selector, s32 mode)
     if (selector == 0) {
         s32 *fade = (s32 *)(work + 0x644);
         s32 step = 0;
-        u32 index;
+        s32 index;
 
         Func_0800387c(0x04000052, 0x100e);
         Func_080c1470(scene);
@@ -146,7 +146,7 @@ void Func_080c1798(s32 focus, s32 scene, s32 selector, s32 mode)
 
         Func_080c16d0(scene);
     } else if (selector == 1) {
-        u32 index;
+        s32 index;
 
         Func_080c9038(scene);
         for (index = 39; index >= 0; index--)

@@ -55,7 +55,7 @@ u8 Func_080a68ec(
     s32 mode)
 {
     s32 count;
-    u32 index;
+    s32 index;
 
     index = 31;
     do {

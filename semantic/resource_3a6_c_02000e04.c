@@ -31,7 +31,7 @@ void Func_02000e04(void)
     u8 params[40];
     s32 left;
     s32 right;
-    s32 index;
+    u32 index;
     s32 x;
     s32 z;
 

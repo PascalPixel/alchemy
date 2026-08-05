@@ -54,13 +54,19 @@ extern u32 Data_0200dc44;
 extern u32 Data_0200db9c;
 extern u32 Data_0200dbc8;
 
-u8 *Func_0808a080();           /* scene-record accessor, established */
-void Func_0808a100();          /* established shape (id, flag) */
-void Func_0808a1b8();          /* established shape (id, value, frames) */
-void Func_0808a010();          /* established, wait N frames */
-void Func_080091e0();          /* established (record, phase) */
-void Func_08009080();          /* established (record, mode) */
-void Func_080000c0();          /* established, advance the task scheduler */
+/* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
+ * target at every occurrence, including the repeated Func_0808a100 and
+ * Func_08009080 calls) -- declared/named as the literal per-site targets,
+ * not the shared ultimate-destination symbol. */
+u8 *Func_0200823e();           /* Func_0808a080 veneer */
+void Func_020082b2();          /* Func_0808a100 veneer #1 */
+void Func_0200832a();          /* Func_0808a1b8 veneer */
+void Func_020082d2();          /* Func_0808a100 veneer #2 */
+void Func_02008260();          /* Func_0808a010 veneer */
+void Func_02008202();          /* Func_080091e0 veneer */
+void Func_02008192();          /* Func_08009080 veneer #1 */
+void Func_0200819a();          /* Func_08009080 veneer #2 */
+void Func_02008100();          /* Func_080000c0 veneer */
 
 void Func_0200381c(s32 arg0)
 {
@@ -68,15 +74,15 @@ void Func_0200381c(s32 arg0)
     u8 *record;
 
     runtime = *(u8 **)0x03001e68;
-    record = Func_0808a080(arg0);
+    record = Func_0200823e(arg0);
 
     if (Data_02000240[498] == 1) {
         Data_02000240[498] = 0;
-        Func_0808a100(arg0, 1);
+        Func_020082b2(arg0, 1);
     } else {
-        Func_0808a1b8(arg0, 0x4000, 30);
-        Func_0808a100(arg0, 3);
-        Func_0808a010(30);
+        Func_0200832a(arg0, 0x4000, 30);
+        Func_020082d2(arg0, 3);
+        Func_02008260(30);
     }
 
     runtime[7] = 0;
@@ -96,9 +102,9 @@ void Func_0200381c(s32 arg0)
     *(u32 *)(record + 12) = 0;
     *(u32 *)(record + 20) = 0;
 
-    Func_080091e0(record, 1);
-    Func_08009080(record, 0);
-    Func_08009080(record, 1);
+    Func_02008202(record, 1);
+    Func_02008192(record, 0);
+    Func_0200819a(record, 1);
 
-    Func_080000c0(1);
+    Func_02008100(1);
 }

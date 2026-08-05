@@ -86,8 +86,8 @@ void Func_080e99c0(struct Scene_080e99c0 *scene)
         (struct Particle_080e99c0 *)0x02014ad0;
     s32 half_height;
     s32 center_x;
-    u32 frame;
-    u32 i;
+    s32 frame;
+    s32 i;
 
     *(struct Scene_080e99c0 **)(runtime + 0x7828) = scene;
     Func_080cd594(1);

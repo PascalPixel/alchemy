@@ -94,8 +94,8 @@ void Func_080e40a4(struct Scene_080e40a4 *scene)
     s32 special = scene->mode > 199;
     s32 focus_position[2];
     s32 camera_offset;
-    u32 frame;
-    u32 i;
+    s32 frame;
+    s32 i;
 
     *(struct Scene_080e40a4 **)(runtime + 0x7828) = scene;
     Func_080b5030(scene->focus_id, scene->focus_argument, 130);

@@ -80,8 +80,8 @@ void Func_080e302c(struct Scene_080e302c *scene)
     const u16 *particle_offsets = (const u16 *)0x080eed7e;
     s32 left_x;
     s32 right_x;
-    u32 frame;
-    u32 i;
+    s32 frame;
+    s32 i;
 
     *(struct Scene_080e302c **)(runtime + 0x7828) = scene;
     Func_080cd594(0);
@@ -127,13 +127,13 @@ void Func_080e302c(struct Scene_080e302c *scene)
     {
         const u8 *source = (const u8 *)0x02010000;
         u8 *destination = runtime;
-        u32 group;
+        s32 group;
 
         for (group = 0; group < 9; group++) {
-            u32 repeat;
+            s32 repeat;
 
             for (repeat = 0; repeat < 32; repeat++) {
-                u32 byte;
+                s32 byte;
 
                 for (byte = 0; byte < block_lengths[group]; byte++)
                     *destination++ = source[byte];
@@ -142,10 +142,10 @@ void Func_080e302c(struct Scene_080e302c *scene)
         }
 
         for (group = 0; group < 32; group++) {
-            u32 repeat;
+            s32 repeat;
 
             for (repeat = 0; repeat < 3; repeat++) {
-                u32 byte;
+                s32 byte;
 
                 for (byte = 0; byte < 48; byte++)
                     *destination++ = source[byte];

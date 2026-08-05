@@ -364,9 +364,9 @@ void Func_02000488(void)
 
     /* First burst: position the emitter's origin, then install it. */
     EMITTER_COUNTER = 0;
+    EMITTER_ORIGIN[2] = 0x00cd0000;             /* 205 << 16 */
     EMITTER_ORIGIN[0] = 0x01480000;             /* 164 << 17 */
     EMITTER_ORIGIN[1] = 0x00300000;             /* 192 << 14 */
-    EMITTER_ORIGIN[2] = 0x00cd0000;             /* 205 << 16 */
     /* Func_020015a0 + 1 under the proven 0x02008000 base. */
     Func_080000d0((void *)0x020095a1, 3200);
     Func_0808a010(100);
@@ -401,8 +401,8 @@ void Func_02000488(void)
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a1e8(1, 258, 40);              /* 129 << 1 */
     } else {
-        Func_0808a110(1, 4);
         SKIP_BEAT = (u16)(SKIP_BEAT + 1);
+        Func_0808a110(1, 4);
     }
 
     /* 0x02000ad8: the two arms rejoin here. */
@@ -476,10 +476,10 @@ void Func_02000488(void)
     Func_0808a010(60);
 
     /* Second burst, at a different origin. */
-    EMITTER_COUNTER = 0;
     EMITTER_ORIGIN[0] = 0x00880000;             /* 136 << 16 */
     EMITTER_ORIGIN[1] = 0x00140000;             /* 160 << 13 */
     EMITTER_ORIGIN[2] = 0x01020000;             /* 129 << 17 */
+    EMITTER_COUNTER = 0;
     Func_080000d0((void *)0x020095a1, 3200);
     Func_0808a010(100);
 

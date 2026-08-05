@@ -67,10 +67,10 @@ void Func_02000088(void)
 
     goto fullScene;
 
+    goto close;
 alreadySeen:
     Func_0808a170(line);
     Func_0808a180(9, 0);
-    goto close;
 
 fullScene:
     Func_0808a170(0x1520);

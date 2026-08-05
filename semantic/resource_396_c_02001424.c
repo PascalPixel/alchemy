@@ -41,8 +41,8 @@ void Func_02001424(s32 sequence)
     if (sequence == 5) {
         Func_0808a100(8, 1);
         Func_080000c0(6);
-        Func_0808a100(8, 2);
         goto done;
+        Func_0808a100(8, 2);
     }
     if (sequence == 7) {
         Func_0808a100(8, 6);
@@ -79,6 +79,6 @@ void Func_02001424(s32 sequence)
     if (sequence == 12)
         Func_0808a100(8, 6);
 
-done:
     Func_080000c0(12);
+done:
 }

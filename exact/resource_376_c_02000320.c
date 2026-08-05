@@ -1,6 +1,7 @@
-extern void Func_020002bc(int value);
+
 /* Complete 12-byte wrapper for numbered scene 3. */
+extern void Func_020005e2(int value);
 void Func_02000320(void)
 {
-    Func_020002bc(3);
+    Func_020005e2(3);
 }

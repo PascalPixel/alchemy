@@ -3060,17 +3060,8 @@ AlchemyC_02001a58:
 	.2byte 0x0000
 AlchemyC_020025b0:
 	.space 0x4c
-	push	{r5, lr}
-	adds	r5, r1, #0
-	movs	r1, #0
-	bl	sub_02005068
-	adds	r0, r5, #0
-.L_02002608:
-	bl	sub_02004fd6
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
+AlchemyC_020025fc:
+	.space 0x18
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

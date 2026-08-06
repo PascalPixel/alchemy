@@ -137,7 +137,7 @@ void Func_02001af0(void)
 
     Func_080f9010(161);
     Func_080770c8(768);
-    Func_08009180(26, 33, 19, 33, 1, 1);
+    { s32 f1 = 1; s32 g1 = 1; Func_08009180(26, 33, 19, 33,  f1, g1); }
     Func_0808a010(30);
     Func_080f9010(239);
     Func_080091f0(0x10000, 0x10000, 0x10000);
@@ -177,10 +177,10 @@ void Func_02001af0(void)
             countdown = 40;
             if (counter > 240) {
                 index += 4;
-                Func_08009180(index, 45, 9, 32, 3, 4);
+                { s32 f2 = 3; s32 g2 = 4; Func_08009180(index, 45, 9, 32,  f2, g2); }
             } else {
                 index -= 4;
-                Func_08009180(index, 50, 15, 32, 3, 4);
+                { s32 f3 = 3; s32 g3 = 4; Func_08009180(index, 50, 15, 32,  f3, g3); }
             }
         }
 
@@ -193,8 +193,8 @@ void Func_02001af0(void)
     workspace->drift = rounded;
     workspace->drift = (rounded / 0x10000) << 16;
 
-    Func_080091c0(15, 32, 3, 1, 9, 32);
-    Func_080091c0(12, 32, 3, 1, 15, 32);
+    { s32 f4 = 9; s32 g4 = 32; Func_080091c0(15, 32, 3, 1,  f4, g4); }
+    { s32 f5 = 15; s32 g5 = 32; Func_080091c0(12, 32, 3, 1,  f5, g5); }
     Func_080f9010(288);
     Func_080f9010(188);
     Func_080091f0(-1, -1, 0xe666);

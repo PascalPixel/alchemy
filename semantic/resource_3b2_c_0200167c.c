@@ -58,7 +58,7 @@ extern u8 * Func_020047a6();
 void Func_0200167c(void)
 {
     if (Func_020046dc(0x8c4) != 0) {
-        Func_020046c4(0, 0, 1, 1, 8, 21);
+        { s32 f1 = 8; s32 g1 = 21; Func_020046c4(0, 0, 1, 1,  f1, g1); }
         Func_02004762(15, OFFSTAGE, OFFSTAGE);
     } else {
         *(s32 *)(Func_0200473a(15) + 28) = PARKED;

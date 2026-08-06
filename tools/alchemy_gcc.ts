@@ -951,8 +951,26 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_377_c_020001e0.c",
   "semantic/resource_3a2_c_02000ac0.c",
   "semantic/resource_3ae_c_020002dc.c",
-  "semantic/resource_39f_c_020021b0.c",
   "semantic/resource_399_c_020002b8.c",
+  // NOT resource_39f:21b0: measured 6 halfwords unrouted, 12 routed here.
+  // Tier-2 cohort sweep, 2026-08-06: the same argument-setter ordering tell
+  // reaches well past the near-exact band.  These three were at 12, 13 and 14
+  // differing halfwords and go byte-exact under this mode alone.
+  "exact/resource_38b_c_020009cc.c",
+  "semantic/resource_38b_c_020009cc.c",
+  "exact/resource_38d_c_02000568.c",
+  "semantic/resource_38d_c_02000568.c",
+  "exact/resource_38d_c_020005f4.c",
+  "semantic/resource_38d_c_020005f4.c",
+  // resource_37b:0c8c (548 bytes, was 22 halfwords) goes byte-exact here too.
+  "exact/resource_37b_c_02000c8c.c",
+  "semantic/resource_37b_c_02000c8c.c",
+  // Still open, but strictly better routed here: resource_37f:0154 13 -> 8,
+  // resource_372:150c 23 -> 18 (stacked on -fno-cse-shift-immediate).
+  "exact/resource_372_c_0200150c.c",
+  "semantic/resource_372_c_0200150c.c",
+  "exact/resource_37f_c_02000154.c",
+  "semantic/resource_37f_c_02000154.c",
   // Pair-sweep exacts, 2026-08-05, paired with -fno-cse-two-insn-immediate
   // (see that set's matching entries).
   "exact/resource_3b9_c_02002904.c",
@@ -1293,6 +1311,15 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // 0x10000) rebuilt per-argument in the reference, Func(-1, -1, pool) sharing
 // r6, verified byte-exact under the pair with -fsched-low-dest-first.
 const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3cb:02d8 caches its 0x80<<2 (0x200) in r5 across five calls and
+  // pays a `push {r5}' for it; the reference rebuilds the pair at both use
+  // sites and pushes only lr.  2026-08-06 probe.
+  "exact/resource_3cb_c_020002d8.c",
+  "semantic/resource_3cb_c_020002d8.c",
+  // resource_372:150c shows the identical tell (`movs r5,#131 / lsls r5,#1'
+  // cached and reused via `adds r1, r5, #0'; the reference rebuilds the pair).
+  "exact/resource_372_c_0200150c.c",
+  "semantic/resource_372_c_0200150c.c",
   // resource_3bc: 15 owners re-materialise a shifted immediate at every call
   // site in the reference while the semantic C shares it in a register,
   // overflowing the registered span by 4-36 bytes before this flag; probed

@@ -34,7 +34,7 @@ s32 Func_020008c0(s32 slot)
     s32 baseX;
     s32 baseY;
 
-    for (index = 0; index < 6; index++) {
+    for (index = 0; index != 6; index++) {
         if (kind == ids[index])
             break;
     }

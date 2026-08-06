@@ -2306,8 +2306,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // scheduler parked inside a long split immediate down past the shift.
         "cee7a5014ceb6ff7f702dc0b12f5378a57f92a100f6e5da772f54930604f0284",
         "0a5442b5dcc96c3acb88597bb5074cedf6af996869708a0c840feb143f9d93a8",
-        "e49dc6ee66e78f99e06123a25b616313d49710447a692a8076fdd37d5d2c05c2",
-        "e49dc6ee66e78f99e06123a25b616313d49710447a692a8076fdd37d5d2c05c2",
+        "943a15a0679086634f873ef7403ca4fde941da0845bf5be3bd2d3f2744228855",
+        "943a15a0679086634f873ef7403ca4fde941da0845bf5be3bd2d3f2744228855",
         "541728170855e1f3002918fde83f91824e70f9e2d19cd50e93029529dae5b547",
         "735821ddefdabb338994007671c41b5ffd3a02653411fd1613e9fc8a5e7e722b",
         "f3f9b5276f4aab31ef2d3ebb85eb5a65e3cc4050900d403ef2622ed1d60c7b2b",

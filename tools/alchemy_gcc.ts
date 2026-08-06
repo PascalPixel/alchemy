@@ -1482,6 +1482,18 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_373_c_020032b0.c",
   "exact/resource_3bd_c_02000a54.c",
 ]);
+// NOT a scheduling defect: on the resource_39a menu builders a call with more
+// than four arguments writes the extra two as `movs r3,#12 / str r3,[sp] /
+// movs r3,#8 / str r3,[sp,#4]' where the reference emits `movs r3,#12 /
+// movs r2,#8 / str r3,[sp] / str r2,[sp,#4]'.  Two fork modes were built and
+// measured against it (stack-argument stores ranked last, and the whole
+// stack-argument group ranked first, values before stores); both regressed
+// every witness -- 21 -> 47 and 21 -> 57 halfwords on resource_39a:1154.  No
+// scheduler can produce the reference order here: the fork allocates the SAME
+// register (r3) to both stack arguments, so the second move depends on the
+// first store, while the reference uses two registers.  That is a
+// register-allocation difference, not an ordering one, and the fork changes
+// were reverted rather than routed.
 // The pool-word sibling of the mode above, and a different kind of defect: for a
 // two-instruction constant the cost model is right and only the reference's
 // preference differs, but `arm_rtx_costs` prices a literal-pool constant at

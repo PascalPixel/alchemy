@@ -76,11 +76,14 @@ extern void Func_020026e0();
 extern void Func_0200262c();
 void Func_020010b8(void)
 {
+    u8 zero;
+
+    zero = 0;
     Func_020025ae();
 
     Func_020025cc(14)[35] &= 0xfd;
     Func_020025de(14)[89] &= 0xfd;
-    Func_020025ec(14)[85] = 0;
+    Func_020025ec(14)[85] = zero;
     *(void **)(Func_020025f8(14) + 108) = (void *)0x02009061;
 
     Func_020025c0(55, 16, 1, 1, 56, 18);

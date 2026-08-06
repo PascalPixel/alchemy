@@ -462,19 +462,26 @@ const SCHED_POOL_LOAD_LATE_SOURCES = new Set(["080f377c", "08091174"]);
 // leaf with a branch then saves lr it never needs.  -fthumb-leaf-no-lr
 // suppresses that answer only where the frame is provably empty, so no
 // elimination offset can move.
-const THUMB_LEAF_NO_LR_SOURCES = new Set(["080fa1ac", "080fa264"]);
+const THUMB_LEAF_NO_LR_SOURCES = new Set(["080f9a30", "080fa1ac", "080fa264"]);
 // The reference compiler predates ifcvt.c (gcc 2.95 has no if-conversion pass
 // at all), so a two-armed if/else stays two basic blocks instead of collapsing
 // into a conditional move.  Measured over all 692 main-image owners the flag
 // lowers residue on 47 and closes none by itself; it is a structural
 // precondition, not a finisher.
-const THUMB_NO_IF_CONVERT_SOURCES = new Set(["080fa1ac", "080fa264"]);
+const THUMB_NO_IF_CONVERT_SOURCES = new Set(["080f9a30", "080fa1ac", "080fa264"]);
+// Thumb owners whose reference keeps the source order of two independent loads
+// that the second scheduler swaps.  Only sched2 is disabled; the first pass
+// still runs.  Witness 080f9a30.
+const SCHED2_OFF_THUMB_SOURCES = new Set(["080f9a30"]);
 // Eight digits for -mlow-reg-order=: the first four order r0-r3 in the entry
 // block, the last four in every other block.  The port hands out {3, 2, 1, 0}
 // everywhere, which shows up as a whole-function renaming of the low registers
 // against an otherwise identical instruction sequence.  Sweeping all 576
 // entry/default pairs is how these are found, not guessing.
-const THUMB_LOW_REG_ORDER_SOURCES = new Map([["080fa264", "30120123"]]);
+const THUMB_LOW_REG_ORDER_SOURCES = new Map([
+  ["080f9a30", "01231230"],
+  ["080fa264", "30120123"],
+]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -1946,6 +1953,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_POOL_LOAD_LATE_SOURCES.has(stem)
       ? ["-fthumb-sched-pool-load-late"]
       : []),
+    ...(SCHED2_OFF_THUMB_SOURCES.has(stem) ? ["-fno-schedule-insns2"] : []),
     ...(THUMB_LEAF_NO_LR_SOURCES.has(stem) ? ["-fthumb-leaf-no-lr"] : []),
     ...(THUMB_NO_IF_CONVERT_SOURCES.has(stem) ? ["-fthumb-no-if-convert"] : []),
     ...(THUMB_LOW_REG_ORDER_SOURCES.has(stem)

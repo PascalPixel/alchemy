@@ -54,7 +54,7 @@ extern void Func_02001c92();
 void Func_020000d4(void)
 {
     u8 *entity;
-    int rowA = 21;      /* r6, live for the whole body */
+    int rowA;           /* r6; assigned at its first use, as the reference does */
 
     entity = Func_02001c18(10);
     Func_02001c5a(10, 5);
@@ -64,6 +64,7 @@ void Func_020000d4(void)
         entity[0x23] = 1;
     }
 
+    rowA = 21;
     Func_02001bf2(41, 87, 2, 5, rowA, 59);
     Func_02001be8(4);
 

@@ -77,11 +77,12 @@ extern s32 Func_0200190e();
 extern s32 Func_02001908();
 s32 Func_0200008c(s32 index)
 {
-    s32 slot = -1;
+    s32 slot;
     s32 row;
     u32 expected;
 
     if ((*(u16 *)0x03001f64 & 3) == 3) {
+        slot = -1;
         slot = (s32)((*(u32 *)0x04000128 << 26) >> 30);
         Func_020018c0(0x303);
     } else {

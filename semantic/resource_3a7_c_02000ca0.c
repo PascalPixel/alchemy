@@ -88,33 +88,102 @@
  * call sites in this overlay.  Those used in conditions need a return type. */
 #include "types.h"
 
-s32 Func_080770c0();    /* test a scene completion flag */
-void Func_080770d0();   /* clear a scene completion flag */
-void Func_080091b8();   /* six-argument scene request, last two on the stack */
-void Func_080091c0();   /* six-argument renderer, last two on the stack */
-void Func_080091e0();   /* set presentation mode (record, phase) */
-void Func_080000c0();   /* frame wait */
-void Func_080000d0();   /* install a per-frame task (callback, rank) */
-void Func_08009128();
-u8 *Func_0808a080();    /* scene-entity record by selector */
-void Func_0808a0f0();
-void Func_0808a100();
+    /* test a scene completion flag */
+   /* clear a scene completion flag */
+   /* six-argument scene request, last two on the stack */
+   /* six-argument renderer, last two on the stack */
+   /* set presentation mode (record, phase) */
+   /* frame wait */
+   /* install a per-frame task (callback, rank) */
+
+    /* scene-entity record by selector */
+
+
 
 /* This overlay's own owners, all converted alongside this file. */
-void Func_02000398();
-void Func_02000410();
-void Func_0200050c();
-void Func_02000554();
-void Func_020005a0();
-void Func_020005ec();
-void Func_02000640();
-void Func_02000690();
-void Func_02000c08();
-void Func_02000c50();
+
+
+
+
+
+
+
+
+
+
 
 /* Shared scene-state halfwords: [224] is the scene id, [225] the sub-step. */
 extern s16 Data_02000240[];
 
+extern s32 Func_02001de0();
+extern void Func_02001dc8();
+extern void Func_02001dd6();
+extern void Func_02001d84();
+extern void Func_02001df0();
+extern void Func_02001d9e();
+extern void Func_02001e08();
+extern void Func_02001df4();
+extern void Func_02001dba();
+extern void Func_02001e64();
+extern s32 Func_02001e6e();
+extern u8 * Func_02001ea8();
+extern s32 Func_02001ed8();
+extern void Func_02001eb8();
+extern void Func_02001ed6();
+extern void Func_02001ee8();
+extern void Func_02001a26();
+extern s32 Func_02001f26();
+extern void Func_02001f72();
+extern void Func_02001342();
+extern s32 Func_02001f3c();
+extern void Func_02001f88();
+extern void Func_020013a0();
+extern s32 Func_02001f52();
+extern void Func_02001f9e();
+extern void Func_02001402();
+extern s32 Func_02001f68();
+extern void Func_02001fb4();
+extern void Func_02001464();
+extern s32 Func_02001f80();
+extern void Func_02001fcc();
+extern void Func_020014d0();
+extern s32 Func_02001f96();
+extern void Func_02001fe2();
+extern void Func_02001536();
+extern void Func_02001f28();
+extern s32 Func_02001fe4();
+extern void Func_02001284();
+extern void Func_02002032();
+extern u8 * Func_02002030();
+extern void Func_0200204e();
+extern void Func_02002056();
+extern void Func_0200204c();
+extern u8 * Func_02002002();
+extern void Func_02002058();
+extern u8 * Func_0200200e();
+extern u8 * Func_02002064();
+extern void Func_02002094();
+extern s32 Func_0200205a();
+extern void Func_020020a6();
+extern void Func_0200209c();
+extern u8 * Func_02002052();
+extern void Func_020020a8();
+extern u8 * Func_0200205e();
+extern void Func_020020b4();
+extern u8 * Func_0200206a();
+extern u8 * Func_020020c0();
+extern u8 * Func_020020d0();
+extern void Func_02001c0e();
+extern u8 * Func_020020f4();
+extern u8 * Func_02002100();
+extern u8 * Func_0200210a();
+extern u8 * Func_02002114();
+extern u8 * Func_0200211e();
+extern u8 * Func_0200212a();
+extern u8 * Func_02002134();
+extern s32 Func_0200210e();
+extern void Func_02001426();
+extern void Func_0200215c();
 s32 Func_02000ca0(void)
 {
     s32 permuted_14;
@@ -128,27 +197,27 @@ s32 Func_02000ca0(void)
         sub = Data_02000240[225];
 
         if ((sub >= 5 && sub <= 8) || sub == 13) {
-            if (Func_080770c0(0x9a8) == 0) {
-                Func_080091c0(22, 29, 1, 1, 21, 29);
+            if (Func_02001de0(0x9a8) == 0) {
+                Func_02001dc8(22, 29, 1, 1, 21, 29);
             } else {
-                Func_080091b8(108, 27, 1, 1, 92, 27);
-                Func_080000c0(1);
-                Func_080091b8(19, 83, 15, 8, 19, 91);
-                Func_080000c0(1);
-                Func_080091b8(2, 24, 1, 2, 25, 27);
+                Func_02001dd6(108, 27, 1, 1, 92, 27);
+                Func_02001d84(1);
+                Func_02001df0(19, 83, 15, 8, 19, 91);
+                Func_02001d9e(1);
+                Func_02001e08(2, 24, 1, 2, 25, 27);
             }
 
-            Func_08009128();
-            Func_080000c0(1);
+            Func_02001df4();
+            Func_02001dba(1);
         } else if (sub == 10) {
-            Func_080770d0(0x9a8);
+            Func_02001e64(0x9a8);
         }
     }
 
     /* ---- scene 0x61 ---------------------------------------------------- */
     if (Data_02000240[224] == 0x61) {
-        if (Func_080770c0(0x300) == 0) {
-            *(s32 *)(Func_0808a080(22) + 28) = 0x18000;
+        if (Func_02001e6e(0x300) == 0) {
+            *(s32 *)(Func_02001ea8(22) + 28) = 0x18000;
         }
 
         sub = Data_02000240[225];
@@ -160,11 +229,11 @@ s32 Func_02000ca0(void)
             case 3:
             case 4:
                 /* case A */
-                if (Func_080770c0(0x9a8) == 0) {
-                    Func_080091b8(5, 81, 11, 7, 5, 73);
+                if (Func_02001ed8(0x9a8) == 0) {
+                    Func_02001eb8(5, 81, 11, 7, 5, 73);
                 } else {
-                    Func_080091c0(5, 12, 1, 1, 6, 12);
-                    Func_080091c0(12, 10, 1, 1, 12, 11);
+                    Func_02001ed6(5, 12, 1, 1, 6, 12);
+                    Func_02001ee8(12, 10, 1, 1, 12, 11);
                 }
                 break;
 
@@ -173,47 +242,47 @@ s32 Func_02000ca0(void)
             case 14:
                 /* case B: install the six presentation steps, each behind the
                  * flag that step itself raises. */
-                Func_02000c08();
+                Func_02001a26();
 
-                if (Func_080770c0(0x200) != 0) {
-                    Func_0808a100(16, 5);
-                    Func_0200050c();
+                if (Func_02001f26(0x200) != 0) {
+                    Func_02001f72(16, 5);
+                    Func_02001342();
                 }
-                if (Func_080770c0(0x201) != 0) {
-                    Func_0808a100(17, 5);
-                    Func_02000554();
+                if (Func_02001f3c(0x201) != 0) {
+                    Func_02001f88(17, 5);
+                    Func_020013a0();
                 }
-                if (Func_080770c0(0x202) != 0) {
-                    Func_0808a100(18, 5);
-                    Func_020005a0();
+                if (Func_02001f52(0x202) != 0) {
+                    Func_02001f9e(18, 5);
+                    Func_02001402();
                 }
-                if (Func_080770c0(0x203) != 0) {
-                    Func_0808a100(19, 5);
-                    Func_020005ec();
+                if (Func_02001f68(0x203) != 0) {
+                    Func_02001fb4(19, 5);
+                    Func_02001464();
                 }
-                if (Func_080770c0(0x204) != 0) {
-                    Func_0808a100(20, 5);
-                    Func_02000640();
+                if (Func_02001f80(0x204) != 0) {
+                    Func_02001fcc(20, 5);
+                    Func_020014d0();
                 }
-                if (Func_080770c0(0x205) != 0) {
-                    Func_0808a100(21, 5);
-                    Func_02000690();
+                if (Func_02001f96(0x205) != 0) {
+                    Func_02001fe2(21, 5);
+                    Func_02001536();
                 }
 
                 /* Func_020006e4 + 1 under the proven 0x02008000 base - the
                  * byte-exact assets/code/resource_3a7_c_020006e4.c. */
-                Func_080000d0(0x020086e5, 0xc80);   /* 200 << 4 */
+                Func_02001f28(0x020086e5, 0xc80);   /* 200 << 4 */
                 break;
 
             case 10:
             case 11:
                 /* case C; falls through to the shared tail below. */
                 break;
-                if (Func_080770c0(0x9a9) != 0) {
-                    Func_02000398();
-                    Func_0808a0f0(9, 0x00f80000, 0x036c0000);
+                if (Func_02001fe4(0x9a9) != 0) {
+                    Func_02001284();
+                    Func_02002032(9, 0x00f80000, 0x036c0000);
                 }
-                Func_0808a080(8)[35] = 2;
+                Func_02002030(8)[35] = 2;
 
             default:
                 /* 5, 6, 7, 12, 13: straight to the shared tail. */
@@ -223,49 +292,49 @@ s32 Func_02000ca0(void)
 
         /* Shared tail at 0x02000f08, reached from every arm and from an
          * out-of-range sub-step.  Written once on purpose. */
-        Func_0808a100(8, 2);
-        Func_0808a100(9, 2);
-        Func_080091e0(Func_0808a080(8), 0);
-        Func_080091e0(Func_0808a080(9), 0);
-        Func_0808a080(9)[89] = 1;
+        Func_0200204e(8, 2);
+        Func_02002056(9, 2);
+        Func_0200204c(Func_02002002(8), 0);
+        Func_02002058(Func_0200200e(9), 0);
+        Func_02002064(9)[89] = 1;
     }
 
     /* ---- scene 0x62 ---------------------------------------------------- */
     if (Data_02000240[224] == 0x62) {
         u8 *record;
 
-        Func_0808a100(8, 2);
+        Func_02002094(8, 2);
 
-        if (Func_080770c0(0x207) == 0) {
-            Func_0808a100(10, 2);
+        if (Func_0200205a(0x207) == 0) {
+            Func_020020a6(10, 2);
         }
 
-        Func_080091e0(Func_0808a080(8), 0);
-        Func_080091e0(Func_0808a080(10), 0);
-        Func_080091e0(Func_0808a080(9), 0);
+        Func_0200209c(Func_02002052(8), 0);
+        Func_020020a8(Func_0200205e(10), 0);
+        Func_020020b4(Func_0200206a(9), 0);
 
         record[89] |= 0x80;
-        record = Func_0808a080(10);
+        record = Func_020020c0(10);
 
-        record = Func_0808a080(9);
+        record = Func_020020d0(9);
         permuted_14 = Data_02000240[225];
         record[89] |= 0x80;
         sub  = permuted_14;
 
         if (sub >= 5 && sub <= 6) {
-            Func_02000c50();
+            Func_02001c0e();
 
-            Func_0808a080(11)[89] = 2;
-            Func_0808a080(12)[89] = 2;
-            Func_0808a080(13)[89] = 2;
-            Func_0808a080(14)[89] = 2;
-            Func_0808a080(8)[89] = 1;
-            Func_0808a080(10)[89] = 1;
-            Func_0808a080(9)[89] = 1;
+            Func_020020f4(11)[89] = 2;
+            Func_02002100(12)[89] = 2;
+            Func_0200210a(13)[89] = 2;
+            Func_02002114(14)[89] = 2;
+            Func_0200211e(8)[89] = 1;
+            Func_0200212a(10)[89] = 1;
+            Func_02002134(9)[89] = 1;
 
-            if (Func_080770c0(0x9aa) != 0) {
-                Func_02000410();
-                Func_0808a0f0(10, 0x01080000, 0x00cc0000);
+            if (Func_0200210e(0x9aa) != 0) {
+                Func_02001426();
+                Func_0200215c(10, 0x01080000, 0x00cc0000);
             }
         }
     }

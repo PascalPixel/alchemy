@@ -35,30 +35,40 @@
  * width; their meaning is unread, and 720/112 are transcribed.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern s32 Func_0808a080(s32 id);
-extern void Func_0808a098(s32 id, s32 arg1);
-extern void Func_0808a0a8(s32 id);
-extern void Func_0808a138(s32 id, s32 arg1);
-extern void Func_0808a150(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a180(s32 id, s32 arg1);
-extern void Func_02001c48(s32 arg0);
 
+
+
+
+
+
+
+
+
+
+
+extern s32 Func_0200307a(s32 id);
+extern void Func_02003068(void);
+extern void Func_0200309e(s32 id);
+extern void Func_02003108(s32 id, s32 arg1, s32 arg2);
+extern void Func_0200311e(s32 dialogueId);
+extern void Func_020020d8(s32 arg0);
+extern void Func_02003114(s32 id, s32 arg1);
+extern void Func_02003144(s32 id, s32 arg1);
+extern void Func_020030d4(s32 id, s32 arg1);
+extern void Func_020030b8(void);
 void Func_02000468(void)
 {
-    s32 object = Func_0808a080(13);
+    s32 object = Func_0200307a(13);
 
-    Func_0808a018();
-    Func_0808a0a8(13);
-    Func_0808a150(13, 0, 20);
-    Func_0808a170(0x2114);
-    Func_02001c48(13);
-    Func_0808a138(13, 1);
-    Func_0808a180(13, 0);
+    Func_02003068();
+    Func_0200309e(13);
+    Func_02003108(13, 0, 20);
+    Func_0200311e(0x2114);
+    Func_020020d8(13);
+    Func_02003114(13, 1);
+    Func_02003144(13, 0);
     *(u16 *)(object + 100) = 720;
     *(u16 *)(object + 102) = 112;
-    Func_0808a098(13, 2);
-    Func_0808a020();
+    Func_020030d4(13, 2);
+    Func_020030b8();
 }

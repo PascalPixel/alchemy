@@ -44,14 +44,29 @@
  *   0x2003528 -> Func_0808a400             handle -> record
  */
 
-void Func_080f9010();          /* sound/sting, established */
-void Func_08009150();          /* move to (record, x, y, z) */
-void Func_08009158();          /* (record) */
-void Func_08009080();          /* mark record (record, n), established */
-void Func_080000c0();          /* wait n frames, established */
-void Func_08009060();          /* release handle */
-u8 *Func_0808a400();           /* handle -> record */
+          /* sound/sting, established */
+          /* move to (record, x, y, z) */
+          /* (record) */
+          /* mark record (record, n), established */
+          /* wait n frames, established */
+          /* release handle */
+           /* handle -> record */
 
+extern void Func_020071ba();
+extern void Func_020071c0();
+extern void Func_02006fc2();
+extern void Func_02006fd0();
+extern void Func_02006fbc();
+extern void Func_02006f6a();
+extern void Func_02006fca();
+extern void Func_02006f78();
+extern void Func_02006fdc();
+extern u8 * Func_020071f2();
+extern void Func_02007252();
+extern void Func_0200702a();
+extern void Func_02007064();
+extern void Func_02006ff0();
+extern void Func_020072aa();
 void Func_02003484(u8 *record)
 {
     u8 *sprite;
@@ -62,8 +77,8 @@ void Func_02003484(u8 *record)
     s32 cz;
 
     s32 permuted_30;
-    Func_080f9010(0x120);      /* 144 << 1 */
-    Func_080f9010(232);
+    Func_020071ba(0x120);      /* 144 << 1 */
+    Func_020071c0(232);
 
     gx = *(s32 *)(record + 8) & 0xfff00000;
     cx = gx + 0x80000;                          /* 128 << 12 */
@@ -71,8 +86,8 @@ void Func_02003484(u8 *record)
     cz = gz + 0x80000;
 
     *(s32 *)(record + 0x34) = 0x20000;          /* 128 << 10 */
-    Func_08009150(record, cx, *(s32 *)(record + 12), cz);
-    Func_08009158(record);
+    Func_02006fc2(record, cx, *(s32 *)(record + 12), cz);
+    Func_02006fd0(record);
 
     record[0x22] = 0;
     *(s32 *)(record + 0x24) = 0;
@@ -80,20 +95,20 @@ void Func_02003484(u8 *record)
     *(s32 *)(record + 16) = cz;
     *(s32 *)(record + 0x2c) = 0;
 
-    Func_08009080(record, 2);
-    Func_080000c0(15);
-    Func_08009080(record, 1);
-    Func_080000c0(30);
+    Func_02006fbc(record, 2);
+    Func_02006f6a(15);
+    Func_02006fca(record, 1);
+    Func_02006f78(30);
 
     permuted_30 = *(u8 **)(record + 0x50);
     sprite  = permuted_30;
     sprite[0x27] = 1;
-    Func_08009060(*(s32 *)(sprite + 0x2c));
+    Func_02006fdc(*(s32 *)(sprite + 0x2c));
     *(s32 *)(sprite + 0x2c) = 0;
     sprite[0x25] = 1;
 
-    companion = Func_0808a400(*(s32 *)((u8 *)0x02000240 + 500));
-    Func_080f9010(152);
+    companion = Func_020071f2(*(s32 *)((u8 *)0x02000240 + 500));
+    Func_02007252(152);
 
     *(s32 *)(companion + 8) = cx;
     *(s32 *)(companion + 0x28) = 0x60000;       /* 192 << 11 */
@@ -103,12 +118,12 @@ void Func_02003484(u8 *record)
     sprite = *(u8 **)(companion + 0x50);
     sprite[9] &= 0xf3;
 
-    Func_08009080(companion, 7);
-    Func_08009150(companion, cx, *(s32 *)(companion + 12),
+    Func_0200702a(companion, 7);
+    Func_02007064(companion, cx, *(s32 *)(companion + 12),
                   gz + 0x180000);               /* 192 << 13 */
     *(u16 *)(companion + 6) = 0x4000;           /* 128 << 7 */
-    Func_080000c0(20);
+    Func_02006ff0(20);
 
     sprite[9] = (sprite[9] & 0xf3) | 8;
-    Func_080f9010(159);
+    Func_020072aa(159);
 }

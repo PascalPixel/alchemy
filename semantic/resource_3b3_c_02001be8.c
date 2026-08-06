@@ -1,9 +1,9 @@
 #include "types.h"
 
-extern u8 *Func_0808a080(s32 actorId);
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_080770c8(s32 flagId);
-extern void Func_080770d0(s32 flagId);
+
+
+
+
 
 /*
  * Complete 412-byte actor-ordering owner.  The high-register prologue and
@@ -29,6 +29,16 @@ extern void Func_080770d0(s32 flagId);
         }                                                                 \
     } while (0)
 
+extern u8 * Func_02004726(s32 actorId);
+extern u8 * Func_02004744(s32 actorId);
+extern s32 Func_020047da(s32 flagId);
+extern s32 Func_020047e4(s32 flagId);
+extern void Func_02004800(s32 flagId);
+extern void Func_020047fe(s32 flagId);
+extern s32 Func_02004802(s32 flagId);
+extern s32 Func_0200480c(s32 flagId);
+extern void Func_02004820(s32 flagId);
+extern void Func_0200482e(s32 flagId);
 void Func_02001be8(void)
 {
     u8 actorScratch[112];
@@ -37,11 +47,11 @@ void Func_02001be8(void)
     s32 outer;
 
     for (outer = 0; outer < 3; outer++) {
-        u8 *anchor = Func_0808a080(outer + 8);
+        u8 *anchor = Func_02004726(outer + 8);
         s32 inner;
 
         for (inner = 0; inner < 4; inner++) {
-            u8 *candidate = Func_0808a080(inner + 8);
+            u8 *candidate = Func_02004744(inner + 8);
             u8 *anchorMetadata = metadata + outer * 20;
             u8 *candidateMetadata = metadata + (outer + inner) * 20;
             s32 anchorFlag = *(s32 *)(anchorMetadata + 16);
@@ -60,15 +70,15 @@ void Func_02001be8(void)
             DMA3_COPY(anchorMetadata, candidateMetadata, 0x84000004);
             DMA3_COPY(metadataScratch, anchorMetadata, 0x84000004);
 
-            if (Func_080770c0(anchorFlag) != 0) {
-                if (Func_080770c0(candidateFlag) == 0) {
-                    Func_080770d0(anchorFlag);
-                    Func_080770c8(candidateFlag);
+            if (Func_020047da(anchorFlag) != 0) {
+                if (Func_020047e4(candidateFlag) == 0) {
+                    Func_02004800(anchorFlag);
+                    Func_020047fe(candidateFlag);
                 }
-            } else if (Func_080770c0(anchorFlag) == 0) {
-                if (Func_080770c0(candidateFlag) != 0) {
-                    Func_080770c8(anchorFlag);
-                    Func_080770d0(candidateFlag);
+            } else if (Func_02004802(anchorFlag) == 0) {
+                if (Func_0200480c(candidateFlag) != 0) {
+                    Func_02004820(anchorFlag);
+                    Func_0200482e(candidateFlag);
                 }
             }
         }

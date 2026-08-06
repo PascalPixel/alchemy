@@ -62,7 +62,7 @@ extern void Func_02003ad0();
 extern void Func_02003a7e();
 extern void Func_02003b62();
 extern void Func_02003af8();
-extern void Func_0200187c(void);
+
 extern void Func_02003bbc();
 extern void Func_02003bca();
 extern void Func_02003aa8();
@@ -71,6 +71,7 @@ extern void Func_02003c02();
 extern void Func_02003aaa();
 extern void Func_02003bd8();
 
+extern void Func_02001d28(void);
 void Func_02000360(void)
 {
     u8 *actor;
@@ -137,7 +138,7 @@ fallback:
     Func_02003af8(0);
 
 common:
-    Func_0200187c();
+    Func_02001d28();
     Func_02003bbc(0, 0);
     Func_02003bca(120);
     Func_02003aa8(120);

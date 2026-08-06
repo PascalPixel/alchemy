@@ -86,21 +86,42 @@
 
 extern u8 Data_02000240[];
 
-s32 *Func_0808a080();          /* scene-record accessor */
-void Func_0808a018();          /* no-arg scene bracket, opens with Func_0808a020 */
-void Func_0808a170();          /* display message by id */
-void Func_0808a178();
-s32 Func_0808a070();           /* two-arg predicate, purpose not resolved */
-void Func_0808a180();
-void Func_0808a368();
-void Func_0808a370();
-void Func_080770e8();          /* id-keyed setter, shape parallel to Func_080770c8 */
-void Func_0808a248();          /* scene request keyed by a selector */
-void Func_080770c8();          /* set a story flag */
-void Func_02002640();          /* sibling item-28 owner, same overlay */
-void Func_0808a360();
-void Func_0808a020();          /* no-arg scene bracket, pairs with Func_0808a018 */
+          /* scene-record accessor */
+          /* no-arg scene bracket, opens with Func_0808a020 */
+          /* display message by id */
 
+           /* two-arg predicate, purpose not resolved */
+
+
+
+          /* id-keyed setter, shape parallel to Func_080770c8 */
+          /* scene request keyed by a selector */
+          /* set a story flag */
+          /* sibling item-28 owner, same overlay */
+
+          /* no-arg scene bracket, pairs with Func_0808a018 */
+
+extern s32 * Func_020072be();
+extern s32 * Func_020072c4();
+extern s32 * Func_020072d4();
+extern void Func_020072c2();
+extern void Func_0200737c();
+extern void Func_0200738c();
+extern s32 Func_020072fe();
+extern void Func_020073ac();
+extern void Func_020073c6();
+extern void Func_02007476();
+extern void Func_02007482();
+extern void Func_02007304();
+extern void Func_02007316();
+extern void Func_02007460();
+extern void Func_02007310();
+extern void Func_02004fa0();
+extern void Func_020074b4();
+extern void Func_020074c8();
+extern void Func_02007426();
+extern void Func_0200743e();
+extern void Func_0200738a();
 void Func_0200288c(s32 arg0)
 {
     u8 *workspace;
@@ -109,51 +130,51 @@ void Func_0200288c(s32 arg0)
     s32 predicate;
     s32 idBase;
 
-    Func_0808a080(arg0);
-    Func_0808a080(arg0);
+    Func_020072be(arg0);
+    Func_020072c4(arg0);
 
-    record = Func_0808a080(selector);
+    record = Func_020072d4(selector);
     selector = *(u32 *)&Data_02000240[500];
 
-    Func_0808a018();
+    Func_020072c2();
 
-    Func_0808a170(0x2086);
-    Func_0808a178(arg0, 0);
+    Func_0200737c(0x2086);
+    Func_0200738c(arg0, 0);
 
     workspace = *(u8 **)0x03001ebc;
     *(u16 *)(workspace + 0xcc2) = 0x2089;
     *(u16 *)(workspace + 0xcc4) = 4;
 
-    predicate = Func_0808a070(selector, 0);
+    predicate = Func_020072fe(selector, 0);
     if (predicate == 0) {
-        Func_0808a170(0x2087);
-        Func_0808a180(arg0, 0);
+        Func_020073ac(0x2087);
+        Func_020073c6(arg0, 0);
 
         *(u32 *)(workspace + 448) = 512;
         *(u32 *)(workspace + 456) = 15;
-        Func_0808a368();
-        Func_0808a370();
+        Func_02007476();
+        Func_02007482();
 
-        Func_080770e8(idBase + 0x370, record[2] >> 20);
+        Func_02007304(idBase + 0x370, record[2] >> 20);
         selector++;
-        Func_080770e8(idBase + 0x378, record[4] >> 20);
+        Func_02007316(idBase + 0x378, record[4] >> 20);
         idBase = selector << 4;
 
         if (selector > 3) {
-            Func_0808a248(10);
-            Func_080770c8(0x8d << 1);
+            Func_02007460(10);
+            Func_02007310(0x8d << 1);
         } else {
-            Func_02002640(selector);
-            Func_0808a360();
-            Func_0808a370();
+            Func_02004fa0(selector);
+            Func_020074b4();
+            Func_020074c8();
             *(u32 *)(workspace + 448) = predicate;
         }
         goto close_scene;
     }
 
-    Func_0808a170(0x2088);
-    Func_0808a180(arg0, 0);
+    Func_02007426(0x2088);
+    Func_0200743e(arg0, 0);
 
 close_scene:
-    Func_0808a020();
+    Func_0200738a();
 }

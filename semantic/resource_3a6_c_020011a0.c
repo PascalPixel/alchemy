@@ -42,45 +42,61 @@
  * returns.
  */
 
-s32 Func_080770c0();           /* test event flag */
-void Func_080770c8();          /* set event flag */
-void Func_0808a018();          /* scene open */
-void Func_0808a208();
-void Func_0808a200();
-void Func_0808a218();
-void Func_0808a010();          /* wait this many frames */
-void Func_0808a1b8();
-void Func_0808a1f0();
-void Func_0808a138();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_080f9010();
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_0808a020();          /* scene close */
+           /* test event flag */
+          /* set event flag */
+          /* scene open */
 
+
+
+          /* wait this many frames */
+
+
+
+
+
+
+           /* record fetch, returns the record */
+          /* scene close */
+
+extern s32 Func_02002e34();
+extern void Func_02002e48();
+extern void Func_02002e64();
+extern void Func_02002ef8();
+extern void Func_02002f0c();
+extern void Func_02002e7a();
+extern void Func_02002ef6();
+extern void Func_02002f10();
+extern void Func_02002e9e();
+extern void Func_02002ecc();
+extern void Func_02002ef0();
+extern void Func_02002f76();
+extern u8 * Func_02002edc();
+extern void Func_02002ede();
+extern void Func_02002f5a();
+extern void Func_02002f04();
 void Func_020011a0(void)
 {
-    if (Func_080770c0(0x200) != 0) {
+    if (Func_02002e34(0x200) != 0) {
         return;
     }
-    Func_080770c8(0x200);
+    Func_02002e48(0x200);
 
-    Func_0808a018();
-    Func_0808a208(0x10000, 0x2000);
-    Func_0808a200(8, 1);
-    Func_0808a218();
-    Func_0808a010(60);
-    Func_0808a1b8(8, 0xc000, 20);
-    Func_0808a1f0(8, 258);
-    Func_0808a138(8, 2);
-    Func_0808a010(20);
-    Func_0808a090(8, 0x10000, 0x8000);
-    Func_0808a0d0(8, 792, 248);
-    Func_080f9010(152);
-    *(s32 *)(Func_0808a080(8) + 40) = 0x80000;
-    Func_0808a0d0(8, 792, 280);
-    Func_0808a010(20);
-    Func_0808a1b8(8, 0xc000, 20);
-    Func_0808a010(30);
-    Func_0808a020();
+    Func_02002e64();
+    Func_02002ef8(0x10000, 0x2000);
+    Func_02002ef8(8, 1);
+    Func_02002f0c();
+    Func_02002e7a(60);
+    Func_02002ef6(8, 0xc000, 20);
+    Func_02002f10(8, 258);
+    Func_02002ef8(8, 2);
+    Func_02002e9e(20);
+    Func_02002ecc(8, 0x10000, 0x8000);
+    Func_02002ef0(8, 792, 248);
+    Func_02002f76(152);
+    *(s32 *)(Func_02002edc(8) + 40) = 0x80000;
+    Func_02002f10(8, 792, 280);
+    Func_02002ede(20);
+    Func_02002f5a(8, 0xc000, 20);
+    Func_02002ef0(30);
+    Func_02002f04();
 }

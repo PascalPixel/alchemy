@@ -24,8 +24,9 @@
  */
 
 /* Old-style declaration: overlay import arities are not fixed per name. */
-u8 *Func_0808a080();
 
+
+extern u8 * Func_02001470();
 void Func_020006e8(u8 *self)
 {
     u8 *player;
@@ -37,7 +38,7 @@ void Func_020006e8(u8 *self)
         return;
     }
 
-    player = Func_0808a080(0);
+    player = Func_02001470(0);
     player_sprite = *(u8 **)(player + 0x50);
 
     self[0x23] = 0;

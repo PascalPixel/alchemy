@@ -937,6 +937,22 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // three-argument call site, same low-destination tie-break tell as
   // resource_39e:2484 (probed exact, 2026-08-04).
   "exact/resource_3c8_c_02002f30.c",
+  // Tier-1 probe batch, 2026-08-06.  Same tell as the entries above -- the
+  // reference issues the r0 argument setter before the r1 one at nearly every
+  // multi-argument call site, the fork the other way round -- so these route
+  // here, but each is STILL OPEN at 2-4 differing halfwords.  The whole
+  // residual in every case is one site whose r1 setter is a literal zero,
+  // which the reference issues BEFORE the r0 setter even though sibling sites
+  // in the same function (including other `(10, 0)' calls) keep r0 first.
+  // -fsched-call-arg1-before-arg0 does not fire on it: that mode's structural
+  // recogniser wants a post-reload pair and leaves these untouched, and on
+  // resource_3a2:0ac0 it costs the pool-load site as well (2 -> 4).  Do not
+  // hand-permute; this is the model-divergence tier.
+  "semantic/resource_377_c_020001e0.c",
+  "semantic/resource_3a2_c_02000ac0.c",
+  "semantic/resource_3ae_c_020002dc.c",
+  "semantic/resource_39f_c_020021b0.c",
+  "semantic/resource_399_c_020002b8.c",
   // Pair-sweep exacts, 2026-08-05, paired with -fno-cse-two-insn-immediate
   // (see that set's matching entries).
   "exact/resource_3b9_c_02002904.c",

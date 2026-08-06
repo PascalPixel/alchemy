@@ -315,11 +315,6 @@ const GROUP_CONTROL_LAST_OVERLAY_SOURCES = new Set([
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
   "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "080907b0", "08094730",
-  // First overlay member. §4's pool-load hoist, but the flag that reaches it is
-  // this one, not -fsched-low-dest-first: the reference issues the argument
-  // group's `ldr r0,[pc]` ahead of its `movs r1,#1`, and both -fsched-*-dest-first
-  // leave the pair in our order. No other overlay owns 02001050.
-  "02001050",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([
@@ -416,6 +411,18 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 // fingerprint, with a repeated post-reload exception: an adjacent r1 setter
 // fills the slot before a literal r0 setter. The mode recognizes the call-fed
 // pair structurally and does not depend on this address.
+// NOT extendable to constant pairs: several near-band owners (resource_377
+// 0x020001e0, resource_399 0x020002b8, resource_3a2 0x02000ac0, resource_3ae
+// 0x020002dc) each differ only by a `movs r0,#K / movs r1,#0' pair the
+// reference emits in the opposite order.  A fork mode was built that ran the
+// transform below without the scheduler-inversion gate and restricted to two
+// literal setters (-fthumb-const-arg1-before-arg0).  It regressed every
+// witness: resource_377 went 2 -> 8 halfwords because the SAME function wants
+// r0 first at 0x0200019a, 0x020001a4, 0x020001de and 0x02000208 and r1 first
+// only at 0x02000236.  The order therefore is not a property of the compiler's
+// tie-break at all -- within one function it alternates -- so it must come from
+// the original source's argument expressions, and no whole-function flag can
+// model it.  The fork change was reverted and the digest restored.
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   "exact/resource_38f_c_020008ec.c",
   // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair
@@ -799,6 +806,16 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_371:1888 and its two byte-identical siblings call a four-argument
+  // import as (-1, -1, -1, 0); the fork CSEs the -1 into one register and
+  // copies it out, where the reference materialises `movs rN, #1' into r0-r2
+  // and negates each.  77 -> 31 differing halfwords, 2026-08-06.
+  "exact/resource_371_c_02001888.c",
+  "semantic/resource_371_c_02001888.c",
+  "exact/resource_371_c_02001938.c",
+  "semantic/resource_371_c_02001938.c",
+  "exact/resource_371_c_020019e8.c",
+  "semantic/resource_371_c_020019e8.c",
   // Reconstruction-wave (Sonnet) exacts, 2026-08-06: resource_39c:15e0 (two-
   // local stacked-argument staging law) and resource_3b1:413c (paired with
   // sched-low-dest-first, see that set).
@@ -968,6 +985,11 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_37f:17c0 (748 bytes) — found by a 139-candidate singles cohort over
+  // the whole same-size band; this one flag takes it from 36 differing halfwords
+  // to byte-exact, no source change.
+  "semantic/resource_37f_c_020017c0.c",
+  "exact/resource_37f_c_020017c0.c",
   // resource_394:07e0 needed the argument-feeding-store exclusion refinement
   // to this flag (fork commit 25b15cd) plus cse-pool-immediate-off (see that
   // set) to reach byte-exact; 2026-08-06.
@@ -985,7 +1007,40 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // three-argument call site, same low-destination tie-break tell as
   // resource_39e:2484 (probed exact, 2026-08-04).
   "exact/resource_3c8_c_02002f30.c",
-  "semantic/resource_3c8_c_02002f30.c",
+  // Tier-1 probe batch, 2026-08-06.  Same tell as the entries above -- the
+  // reference issues the r0 argument setter before the r1 one at nearly every
+  // multi-argument call site, the fork the other way round -- so these route
+  // here, but each is STILL OPEN at 2-4 differing halfwords.  The whole
+  // residual in every case is one site whose r1 setter is a literal zero,
+  // which the reference issues BEFORE the r0 setter even though sibling sites
+  // in the same function (including other `(10, 0)' calls) keep r0 first.
+  // -fsched-call-arg1-before-arg0 does not fire on it: that mode's structural
+  // recogniser wants a post-reload pair and leaves these untouched, and on
+  // resource_3a2:0ac0 it costs the pool-load site as well (2 -> 4).  Do not
+  // hand-permute; this is the model-divergence tier.
+  "semantic/resource_377_c_020001e0.c",
+  "semantic/resource_3a2_c_02000ac0.c",
+  "semantic/resource_3ae_c_020002dc.c",
+  "semantic/resource_399_c_020002b8.c",
+  "semantic/resource_39f_c_020021b0.c",
+  // Tier-2 cohort sweep, 2026-08-06: the same argument-setter ordering tell
+  // reaches well past the near-exact band.  These three were at 12, 13 and 14
+  // differing halfwords and go byte-exact under this mode alone.
+  "exact/resource_38b_c_020009cc.c",
+  "semantic/resource_38b_c_020009cc.c",
+  "exact/resource_38d_c_02000568.c",
+  "semantic/resource_38d_c_02000568.c",
+  "exact/resource_38d_c_020005f4.c",
+  "semantic/resource_38d_c_020005f4.c",
+  // resource_37b:0c8c (548 bytes, was 22 halfwords) goes byte-exact here too.
+  "exact/resource_37b_c_02000c8c.c",
+  "semantic/resource_37b_c_02000c8c.c",
+  // Still open, but strictly better routed here: resource_37f:0154 13 -> 8,
+  // resource_372:150c 23 -> 18 (stacked on -fno-cse-shift-immediate).
+  "exact/resource_372_c_0200150c.c",
+  "semantic/resource_372_c_0200150c.c",
+  "exact/resource_37f_c_02000154.c",
+  "semantic/resource_37f_c_02000154.c",
   // Pair-sweep exacts, 2026-08-05, paired with -fno-cse-two-insn-immediate
   // (see that set's matching entries).
   "exact/resource_3b9_c_02002904.c",
@@ -1326,6 +1381,15 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // 0x10000) rebuilt per-argument in the reference, Func(-1, -1, pool) sharing
 // r6, verified byte-exact under the pair with -fsched-low-dest-first.
 const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3cb:02d8 caches its 0x80<<2 (0x200) in r5 across five calls and
+  // pays a `push {r5}' for it; the reference rebuilds the pair at both use
+  // sites and pushes only lr.  2026-08-06 probe.
+  "exact/resource_3cb_c_020002d8.c",
+  "semantic/resource_3cb_c_020002d8.c",
+  // resource_372:150c shows the identical tell (`movs r5,#131 / lsls r5,#1'
+  // cached and reused via `adds r1, r5, #0'; the reference rebuilds the pair).
+  "exact/resource_372_c_0200150c.c",
+  "semantic/resource_372_c_0200150c.c",
   // resource_3bc: 15 owners re-materialise a shifted immediate at every call
   // site in the reference while the semantic C shares it in a register,
   // overflowing the registered span by 4-36 bytes before this flag; probed
@@ -1415,6 +1479,17 @@ const FIXED_R7_OVERLAY_SOURCES = new Set([
 const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_372_c_02000ec4.c",
 ]);
+// -fsched-call-dest-descending is -fsched-low-dest-first's gate with the
+// comparison negated: the same argument setters in front of a call, ordered
+// highest register first.  NEGATIVE RESULT, 2026-08-06: the flag exists in the
+// fork (commit 1e1502b) and works, but no source routes to it and none should.
+// It was built to close resource_3c8:2f30, whose residual is the pair
+// `lsls r2, #18' / `lsls r0, #18' either side of a `movs r1, #0'.  Measured on
+// that owner: routed low-dest-first 2 differing halfwords, descending 14,
+// neither 11 -- because the reference mixes the two directions inside one
+// function (ascending at its first three call sites, descending at the fourth).
+// A global direction therefore cannot be the model; do not re-derive this.
+const SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES = new Set<string>([]);
 // The fork proves a store and a later load at two different constant offsets off
 // one base independent, leaves no edge between them, and lets the load's longer
 // dependence chain outrank the store; the reference keeps source order. The mode
@@ -1437,6 +1512,10 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
   // f08/f10/f26 stores and the f09 mask's ldrb; conservative scheduler alias
   // analysis restores the reference order (mode cohort exact, 2026-08-04).
   "exact/resource_38f_c_020027ac.c",
+  // resource_391:2974 is the same particle-spawn store sheet, shared verbatim
+  // with resource_38f:27ac and transposed onto this overlay's veneer table and
+  // literal pool; it needs the same conservative alias analysis.
+  "exact/resource_391_c_02002974.c",
 ]);
 // gcse's partial-redundancy elimination inserts a load the reference does not
 // have. The mode drops the insert and delete bits of any expression that reads
@@ -1463,6 +1542,18 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_373_c_020032b0.c",
   "exact/resource_3bd_c_02000a54.c",
 ]);
+// NOT a scheduling defect: on the resource_39a menu builders a call with more
+// than four arguments writes the extra two as `movs r3,#12 / str r3,[sp] /
+// movs r3,#8 / str r3,[sp,#4]' where the reference emits `movs r3,#12 /
+// movs r2,#8 / str r3,[sp] / str r2,[sp,#4]'.  Two fork modes were built and
+// measured against it (stack-argument stores ranked last, and the whole
+// stack-argument group ranked first, values before stores); both regressed
+// every witness -- 21 -> 47 and 21 -> 57 halfwords on resource_39a:1154.  No
+// scheduler can produce the reference order here: the fork allocates the SAME
+// register (r3) to both stack arguments, so the second move depends on the
+// first store, while the reference uses two registers.  That is a
+// register-allocation difference, not an ordering one, and the fork changes
+// were reverted rather than routed.
 // The pool-word sibling of the mode above, and a different kind of defect: for a
 // two-instruction constant the cost model is right and only the reference's
 // preference differs, but `arm_rtx_costs` prices a literal-pool constant at
@@ -2011,6 +2102,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fsched-high-dest-first"]
       : []),
+    ...(SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-call-dest-descending"]
+      : []),
     ...(FIXED_R7_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-ffixed-r7"] : []),
     ...(NO_SCHED_ALIAS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-alias"]
@@ -2286,16 +2380,34 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // source-routed, so unrouted codegen is unchanged. Cross-host rule:
         // rebuild+pin linux from the same fork source.
         "f92badaf03dbcfc4a79f0c4da9ee5159186f48dd8328403cbf05734a1aa21f42",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "e79dc274f3293562ecf6c2f00a48ce2278c7819a85f690bda8b9dc3ba9fdcb29",
       ],
       cpp: [
         "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
         "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
         "96ef7e4d9e3932817c023712850e3a15f0eb5b33904215c63c4eda4c17b43b1a",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "51ec935a978ef193742e8218df50ae41b15179ff60495ba2bdb420d852e06d14",
       ],
       tradcpp: [
         "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
         "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
@@ -2370,6 +2482,12 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // -mlow-reg-order= now also accepts eight digits: the first four order
         // the entry block, the last four every other block.
         "43ecbc402bd3e6abff7ea434414c0ef9f3001836cc689a6f1bc06bc896b44881",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "dfe6fd74ceeae8d33695b6ac06285cedab253e06866a3dc569ba3657583ebdf5",
       ],
     },
     gs2: {

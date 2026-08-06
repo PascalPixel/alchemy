@@ -40,15 +40,28 @@
 extern s32 Data_02000240[];    /* subject selector, byte offset 500 */
 extern s32 Data_0200cfc0[];    /* direction table, indexed by facing nibble */
 
-u8 *Func_0808a080();           /* scene-record accessor, established */
-u8 *Func_020045e0();           /* in-overlay probe lookup, sibling item-28 owner */
-s32 Func_080091d8();           /* established, legality check */
-void Func_08009080();          /* established (record, mode) */
-void Func_080000c0();          /* established, advance the task scheduler */
-void Func_08009150();          /* established (record, x, y, z) */
-void Func_080f9010();          /* established, play a sound cue */
-void Func_08009158();          /* unestablished, single argument */
+           /* scene-record accessor, established */
+           /* in-overlay probe lookup, sibling item-28 owner */
+           /* established, legality check */
+          /* established (record, mode) */
+          /* established, advance the task scheduler */
+          /* established (record, x, y, z) */
+          /* established, play a sound cue */
+          /* unestablished, single argument */
 
+extern u8 * Func_0200905c();
+extern u8 * Func_02008c56();
+extern u8 * Func_02008c80();
+extern u8 * Func_02008cac();
+extern s32 Func_0200905e();
+extern void Func_02008ffc();
+extern void Func_02008f62();
+extern void Func_02009042();
+extern void Func_02009052();
+extern void Func_020092e8();
+extern void Func_02009066();
+extern void Func_020092f6();
+extern void Func_0200904c();
 void Func_02004628(void)
 {
     u8 *subject;
@@ -61,7 +74,7 @@ void Func_02004628(void)
     s32 permuted_12;
     s32 permuted_21;
     facing = *(unsigned short *)(subject + 6) >> 12;
-    subject = Func_0808a080(*(s32 *)((u8 *)Data_02000240 + 500));
+    subject = Func_0200905c(*(s32 *)((u8 *)Data_02000240 + 500));
 
     step = Data_0200cfc0[facing];
     position[0] = *(s32 *)(subject + 8) + (step & (s32)0xffff0000);
@@ -69,7 +82,7 @@ void Func_02004628(void)
     position[2] = *(s32 *)(subject + 16) + (step << 16);
     position[1]  = permuted_12;
 
-    occupant = Func_020045e0(position);
+    occupant = Func_02008c56(position);
     if (occupant == 0) {
         return;
     }
@@ -80,7 +93,7 @@ void Func_02004628(void)
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
     position[1]  = permuted_21;
 
-    blocker = Func_020045e0(position);
+    blocker = Func_02008c80(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) {
         return;
     }
@@ -89,7 +102,7 @@ void Func_02004628(void)
     position[1] = *(s32 *)(occupant + 12) + 0x100000;   /* 128 << 13 */
     position[2] = *(s32 *)(occupant + 16);
 
-    blocker = Func_020045e0(position);
+    blocker = Func_02008cac(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) {
         return;
     }
@@ -101,29 +114,29 @@ void Func_02004628(void)
     step = Data_0200cfc0[facing];
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
 
-    if (Func_080091d8(occupant, position) > 0) {
+    if (Func_0200905e(occupant, position) > 0) {
         return;
     }
 
-    Func_08009080(subject, 8);
-    Func_080000c0(15);
+    Func_02008ffc(subject, 8);
+    Func_02008f62(15);
 
     *(s32 *)(occupant + 48) = 0x3333;
     *(s32 *)(occupant + 52) = 0x3333;
-    Func_08009150(occupant, position[0], position[1], position[2]);
+    Func_02009042(occupant, position[0], position[1], position[2]);
 
     *(s32 *)(subject + 52) = 0x3333;
-    Func_08009150(subject, position[0], position[1], position[2]);
+    Func_02009052(subject, position[0], position[1], position[2]);
     *(s32 *)(subject + 48) = 0x3333;
 
-    Func_080f9010(238);
-    Func_08009158(occupant);
-    Func_080f9010(288);
+    Func_020092e8(238);
+    Func_02009066(occupant);
+    Func_020092f6(288);
 
     *(s32 *)(occupant + 8) = position[0];
     *(s32 *)(occupant + 16) = position[2];
     *(s32 *)(occupant + 36) = 0;
     *(s32 *)(occupant + 44) = 0;
 
-    Func_08009080(subject, 1);
+    Func_0200904c(subject, 1);
 }

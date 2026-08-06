@@ -24,8 +24,9 @@
  * Raw callee naming.
  */
 
-s32 Func_080770c0();
 
+
+extern s32 Func_0200b480();
 s32 Func_02004fa8(s32 kind, s32 flag)
 {
     s32 base;
@@ -51,7 +52,7 @@ s32 Func_02004fa8(s32 kind, s32 flag)
     }
 
     for (i = 0; i <= 8; i++) {
-        if (Func_080770c0(base + i) != 0) {
+        if (Func_0200b480(base + i) != 0) {
             return result_base + i;
         }
     }

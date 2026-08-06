@@ -73,16 +73,40 @@
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_080770c8();
-void Func_080770d0();
-void Func_02000128();
-void Func_03000164();
+
+
+
+
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_0200008c();
-s32 *Func_0808a080();
 
+
+
+
+extern s32 * Func_020019ba();
+extern void Func_0200198c();
+extern s32 Func_02000210();
+extern s32 Func_02001996();
+extern void Func_02001ab2();
+extern void Func_020002e4();
+extern s32 Func_0200025e();
+extern s32 Func_02000268();
+extern s32 Func_02000272();
+extern void Func_02001a04();
+extern s32 Func_02001a02();
+extern void Func_02001a2c();
+extern s32 Func_02001a26();
+extern s32 Func_02001a30();
+extern s32 Func_02001a3c();
+extern s32 Func_02001a50();
+extern s32 Func_02001a5a();
+extern s32 Func_02001a64();
+extern s32 Func_020002ee();
+extern void Func_02001a92();
+extern void Func_02001aa0();
+extern void Func_02001aa6();
+extern void Func_020003b8();
+extern s32 Func_02001aa2();
 s32 Func_02000148(void)
 {
     u16 *workspace = *(u16 **)0x03001ebc;
@@ -91,15 +115,15 @@ s32 Func_02000148(void)
     s32 status = 1;
     s32 *resource;
 
-    resource = Func_0808a080(0);
+    resource = Func_020019ba(0);
     if (resource[4] > 0x00e00000) {
-        Func_080770d0(772);
+        Func_0200198c(772);
     }
 
     if (*phase != 2) {
-        Func_0200008c(0);
+        Func_02000210(0);
 
-        if (Func_080770c0(0x303) == 0) {
+        if (Func_02001996(0x303) == 0) {
             *step = *step + 1;
             if ((s32)*step > 25) {
                 unsigned char *record = (unsigned char *)0x02002024;
@@ -107,51 +131,51 @@ s32 Func_02000148(void)
 
                 do {
                     remaining--;
-                    Func_03000164(record, 20);
+                    Func_02001ab2(record, 20);
                     record += 24;
                 } while (remaining >= 0);
 
                 *step = 0;
-                Func_02000128(4);
+                Func_020002e4(4);
             }
         } else {
             *step = 0;
         }
 
         if (*step == 0) {
-            if (Func_0200008c(0) != 0 &&
-                (Func_0200008c(1) != 0 || Func_0200008c(2) != 0)) {
-                Func_080770c8(0x201);
-                if (Func_080770c0(0x202) != 0) {
+            if (Func_0200025e(0) != 0 &&
+                (Func_02000268(1) != 0 || Func_02000272(2) != 0)) {
+                Func_02001a04(0x201);
+                if (Func_02001a02(0x202) != 0) {
                     *phase = 1;
                 }
                 status = 1;
             } else {
-                Func_080770d0(0x201);
+                Func_02001a2c(0x201);
                 status = 0;
             }
         }
 
-        if (Func_080770c0(0x201) != 0 &&
-            Func_080770c0(0x202) != 0 &&
-            Func_080770c0(512) == 0) {
+        if (Func_02001a26(0x201) != 0 &&
+            Func_02001a30(0x202) != 0 &&
+            Func_02001a3c(512) == 0) {
             *phase = 1;
         }
     }
 
-    if (Func_080770c0(0x201) != 0 || Func_080770c0(0x202) != 0) {
-        if (Func_080770c0(0x173) == 0 &&
-            Func_0200008c(0) == 0 &&
+    if (Func_02001a50(0x201) != 0 || Func_02001a5a(0x202) != 0) {
+        if (Func_02001a64(0x173) == 0 &&
+            Func_020002ee(0) == 0 &&
             (s32)*step > 24) {
             *phase = 2;
-            Func_080770c8(0x205);
-            Func_080770d0(0x201);
-            Func_080770d0(0x202);
-            Func_02000128(4);
+            Func_02001a92(0x205);
+            Func_02001aa0(0x201);
+            Func_02001aa6(0x202);
+            Func_020003b8(4);
         }
     }
 
-    if (Func_080770c0(0x205) != 0) {
+    if (Func_02001aa2(0x205) != 0) {
         *phase = 2;
     }
 

@@ -33,19 +33,27 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-u16 *Func_0808a080();  /* fetch a record; called with 0 for the subject's own */
-void Func_080b0010();
-s32 Func_080770c0();   /* query a numeric id; nonzero when selected */
-void Func_0808a170();  /* present message by id */
-void Func_0808a180();  /* act on the subject */
+  /* fetch a record; called with 0 for the subject's own */
 
+   /* query a numeric id; nonzero when selected */
+  /* present message by id */
+  /* act on the subject */
+
+extern u16 * Func_0200131c();
+extern void Func_020013c0();
+extern s32 Func_02001312();
+extern s32 Func_02001328();
+extern void Func_020013a2();
+extern void Func_020013ba();
+extern void Func_020013b2();
+extern void Func_020013ca();
 void Func_0200091c(s32 subject)
 {
     u16 *record;
     s32 facing;
     s32 message;
 
-    record = Func_0808a080(0);
+    record = Func_0200131c(0);
 
     /* Bits 14-15 of the 0x2000-biased halfword at record + 6; see the note in
      * the 0x0200066c sibling. */
@@ -55,20 +63,20 @@ void Func_0200091c(s32 subject)
         /* Only r0 is set here.  The sibling at 0x0200066c calls a different
          * import with two arguments at the same position; this site genuinely
          * passes one. */
-        Func_080b0010(subject);
+        Func_020013c0(subject);
         return;
     }
 
-    if (Func_080770c0(0x950) != 0) {
-    } else if (Func_080770c0(0x962) != 0) {
+    if (Func_02001312(0x950) != 0) {
+    } else if (Func_02001328(0x962) != 0) {
         message = 0x23bf;
         message = 0x2231;
     } else {
-        Func_0808a170(0x1feb);
-        Func_0808a180(subject, 0);
+        Func_020013a2(0x1feb);
+        Func_020013ba(subject, 0);
         return;
     }
 
-    Func_0808a170(message);
-    Func_0808a180(subject, 0);
+    Func_020013b2(message);
+    Func_020013ca(subject, 0);
 }

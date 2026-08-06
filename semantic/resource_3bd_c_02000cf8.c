@@ -13,14 +13,17 @@
  * as loaded.
  */
 
-extern u8 *Func_0808a080(s32 id);
-extern void Func_080091c0(
-    s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern void Func_080770c8(s32 flag_id);
 
+
+
+
+extern u8 * Func_020049c8(s32 id);
+extern void Func_0200497c(
+    s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void Func_020049ca(s32 flag_id);
 void Func_02000cf8(void)
 {
-    u8 *record = Func_0808a080(12);
+    u8 *record = Func_020049c8(12);
     s32 xCell = *(s32 *)(record + 8) >> 20;
     s32 zCell = *(s32 *)(record + 16) >> 20;
 
@@ -30,6 +33,6 @@ void Func_02000cf8(void)
     record[0x55] = 2;
     *(s32 *)(record + 20) = 0;
     record[0x23] = 2;
-    Func_080091c0(30, 20, 1, 1, 32, zCell);
-    Func_080770c8(0x212);
+    Func_0200497c(30, 20, 1, 1, 32, zCell);
+    Func_020049ca(0x212);
 }

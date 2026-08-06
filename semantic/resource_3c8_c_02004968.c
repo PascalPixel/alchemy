@@ -20,8 +20,7 @@ struct ParticleSpec_02004968 {
  */
 
 extern const u8 Data_020052cc[];
-extern void Func_02000118(s32, s32, s32, s32, s32, s32, s32,
-                          struct ParticleSpec_02004968 *);
+
 /*
  * CALL SYMBOLS ARE PER-SITE: the raw assembly's five `bl`s to the
  * random/cue helpers are direct `bl sub_0200XXXX` relocations against
@@ -37,6 +36,8 @@ extern u32 Func_0200978a(void);
 extern u32 Func_020097a0(void);
 extern void Func_020099a0(s32 cue);
 
+extern void Func_02004b2a(s32, s32, s32, s32, s32, s32, s32,
+                          struct ParticleSpec_02004968 *);
 s32 Func_02004968(const s32 *position)
 {
     struct ParticleSpec_02004968 spec;
@@ -64,6 +65,6 @@ s32 Func_02004968(const s32 *position)
         ((s32)(((Func_0200978a() * 49u) >> 16) - 24) << 16);
     scatter = 0x8000 + (s32)(((Func_020097a0() << 2) >> 16) << 15);
 
-    Func_02000118(x, y, z, 0, scatter, 0, 0x00330000, &spec);
+    Func_02004b2a(x, y, z, 0, scatter, 0, 0x00330000, &spec);
     return 0;
 }

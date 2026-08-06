@@ -34,33 +34,49 @@ extern u8 *Data_03001ebc;
 extern u8 *Data_03001ee0;
 
 /* Imports; the queried ones are typed for their return value. */
-void Func_02000ed8();
-void Func_02001948();
-void Func_02001b1c();
-void Func_080000c0();
-void Func_08009180();
-s32 Func_080770c0();
-s32 Func_0808a080();
-void Func_0808a158();
-void Func_0808a1e0();
-void Func_0808a330();
-void Func_0808a338();
-void Func_0808a348();
-void Func_0808a408();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+extern void Func_02003132();
+extern s32 Func_02003b1a();
+extern void Func_02003334();
+extern void Func_02002718();
+extern void Func_02002726();
+extern s32 Func_02003bac();
+extern void Func_02003c0a();
+extern void Func_02003c02();
+extern void Func_02003c88();
+extern void Func_02003c94();
+extern s32 Func_02003be0();
+extern void Func_02003bb6();
+extern void Func_02003bc8();
+extern void Func_02003cc0();
+extern void Func_02003cd6();
+extern void Func_02003b7c();
 void Func_020017e4(void)
 {
     s16 chapter;
     s16 step;
 
-    Func_02001948();
+    Func_02003132();
 
     /* movs r1,#0xe0 / lsls r1,#1 gives the byte offset 448, i.e. entry 224. */
     chapter = Data_02000240[224];
 
     if (chapter == 0x40) {
-        if (Func_080770c0((s32)0xf13) == 0 && Data_02000240[225] == 1) {
-            Func_02001b1c();
+        if (Func_02003b1a((s32)0xf13) == 0 && Data_02000240[225] == 1) {
+            Func_02003334();
         }
         /* Unsigned test on ((entry225 - 2) << 16) against 0xc0 << 10 =
          * 0x30000, which selects steps 2..5. */
@@ -69,8 +85,8 @@ void Func_020017e4(void)
             return;
         }
         /* movs/lsls build 0x9c0000, 0xbc0000 and the shared 0x1c40000. */
-        Func_02000ed8((s32)0x9c0000, 0, (s32)0x1c40000, 223);
-        Func_02000ed8((s32)0xbc0000, 0, (s32)0x1c40000, 223);
+        Func_02002718((s32)0x9c0000, 0, (s32)0x1c40000, 223);
+        Func_02002726((s32)0xbc0000, 0, (s32)0x1c40000, 223);
         return;
     }
 
@@ -79,24 +95,24 @@ void Func_020017e4(void)
     }
 
     {
-        u8 *actor = Func_0808a080(8);
+        u8 *actor = Func_02003bac(8);
 
         actor[85] = 0;
         *(s32 *)(actor + 12) = 0;
         Data_0200b328 = 0;
     }
-    Func_0808a1e0(8, 1);
-    Func_0808a158(8, 15);
+    Func_02003c0a(8, 1);
+    Func_02003c02(8, 15);
 
     step = Data_02000240[225];
     if (step >= 1) {
         if (step <= 2) {
             Data_0200b328 = 1;
-            Func_0808a408(0);
+            Func_02003c88(0);
         } else if (step == 5) {
             *(s32 *)(Data_03001ee0 + 24) = 0;
             Data_0200b328 = 1;
-            Func_0808a408(0);
+            Func_02003c94(0);
         }
     }
 
@@ -105,16 +121,16 @@ void Func_020017e4(void)
     }
 
     /* movs r0,#0x82 / lsls r0,#4 builds 0x820. */
-    if (Func_080770c0((s32)0x820) != 0) {
-        Func_08009180(30, 57, 19, 57, 1, 1);
-        Func_08009180(30, 8, 12, 8, 8, 7);
+    if (Func_02003be0((s32)0x820) != 0) {
+        Func_02003bb6(30, 57, 19, 57, 1, 1);
+        Func_02003bc8(30, 8, 12, 8, 8, 7);
     } else {
         /* The offset register is reused: 448 for the slot, then 448 - 192 =
          * 256 for the value stored into it. */
-        Func_0808a338((s32)0x203108, 1);
+        Func_02003cc0((s32)0x203108, 1);
         *(s32 *)(Data_03001ebc + 448) = 256;
-        Func_0808a330((s32)0x203108, 1);
-        Func_0808a348(1);
-        Func_080000c0(1);
+        Func_02003cc0((s32)0x203108, 1);
+        Func_02003cd6(1);
+        Func_02003b7c(1);
     }
 }

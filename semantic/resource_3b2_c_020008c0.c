@@ -1,12 +1,16 @@
 /* shared family owner 0x020008c0-0x020009db: kind-selected rectangle redraw. */
 #include "types.h"
-u8 *Func_0808a080(s32);
-void Func_080091c0(s32,s32,s32,s32,s32,s32);
-s32 Func_02000244(s32,s32,s32,s32,s32,s32);
+
+
+
+extern u8 * Func_0200395a(s32);
+extern void Func_020039c0(s32,s32,s32,s32,s32,s32);
+extern s32 Func_02000bf0(s32,s32,s32,s32,s32,s32);
+extern s32 Func_02000c02(s32,s32,s32,s32,s32,s32);
 s32 Func_020008c0(s32 slot)
 {
     u8 *runtime = *(u8 **)0x03001e70;
-    u8 *object = Func_0808a080(slot);
+    u8 *object = Func_0200395a(slot);
     s16 kind = **(s16 **)(*(u8 **)(object + 80) + 40);
     s32 *keys = (s32 *)0x0200b19c, *delta;
     s32 index, a0, a1, a2, a3, width, depth, tileX, tileZ, globalX, globalZ;
@@ -22,8 +26,8 @@ s32 Func_020008c0(s32 slot)
     globalX = (*(s32 *)(runtime + 316) >> 20) + tileX;
     tileZ = (*(s32 *)(object + 16) + (delta[1] << 16)) >> 20;
     globalZ = (*(s32 *)(runtime + 320) >> 20) + tileZ;
-    Func_080091c0(tileX, tileZ, width, depth, globalX, globalZ);
-    Func_02000244(0, tileX, tileZ, width, depth, 255);
-    Func_02000244(2, tileX, tileZ, width, depth, 255);
+    Func_020039c0(tileX, tileZ, width, depth, globalX, globalZ);
+    Func_02000bf0(0, tileX, tileZ, width, depth, 255);
+    Func_02000c02(2, tileX, tileZ, width, depth, 255);
     return 1;
 }

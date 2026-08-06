@@ -2,10 +2,10 @@
 
 struct DeferredWrite_02001094 { u32 value; u32 address; u32 mask; };
 
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_080770c8(s32 flagId);
-extern u8 *Func_0808a080(s32 actorId);
-extern void Func_0808a5e0(s32 resourceId);
+
+
+
+
 
 static void QueueDisplayWrite_02001094(u32 value, u32 address)
 {
@@ -27,28 +27,41 @@ static void QueueDisplayWrite_02001094(u32 value, u32 address)
 
 /* Carry the scene-165 completion flags, normalize actors 8..11, and publish
  * the same blend transition used by the scene-164 sibling. */
+extern s32 Func_020022ee(s32 flagId);
+extern void Func_02002300(s32 flagId);
+extern s32 Func_020022fe(s32 flagId);
+extern void Func_02002310(s32 flagId);
+extern s32 Func_0200230e(s32 flagId);
+extern void Func_02002322(s32 flagId);
+extern u8 * Func_02002366(s32 actorId);
+extern s32 Func_02002332(s32 flagId);
+extern u8 * Func_02002390(s32 actorId);
+extern s32 Func_02002378(s32 flagId);
+extern void Func_0200238a(s32 flagId);
+extern s32 Func_020023b8(s32 flagId);
+extern void Func_020024e6(s32 resourceId);
 void Func_02001094(void)
 {
     s32 actorId;
     s32 blend = 0;
     u8 *actor;
 
-    if (Func_080770c0(0x311) != 0) Func_080770c8(0x206);
-    if (Func_080770c0(0x312) != 0) Func_080770c8(0x207);
-    if (Func_080770c0(0x313) != 0) Func_080770c8(0x208);
+    if (Func_020022ee(0x311) != 0) Func_02002300(0x206);
+    if (Func_020022fe(0x312) != 0) Func_02002310(0x207);
+    if (Func_0200230e(0x313) != 0) Func_02002322(0x208);
 
     for (actorId = 8; actorId <= 10; actorId++) {
-        actor = Func_0808a080(actorId);
+        actor = Func_02002366(actorId);
         if (actor != 0) {
             (*(u8 **)(actor + 80))[38] = 0;
-            if (Func_080770c0(0x109) == 0) {
+            if (Func_02002332(0x109) == 0) {
                 *(s32 *)(actor + 24) = 0x800;
                 *(s32 *)(actor + 28) = 0x800;
             }
         }
     }
 
-    actor = Func_0808a080(11);
+    actor = Func_02002390(11);
     if (actor != 0) {
         u8 *presentation = *(u8 **)(actor + 80);
         presentation[38] = 0;
@@ -57,12 +70,12 @@ void Func_02001094(void)
         presentation[37] = 1;
     }
 
-    if (Func_080770c0(0x315) != 0) Func_080770c8(0x9b7);
+    if (Func_02002378(0x315) != 0) Func_0200238a(0x9b7);
 
     QueueDisplayWrite_02001094(0x3f42, 0x04000050);
-    if (Func_080770c0(0x340) != 0) {
+    if (Func_020023b8(0x340) != 0) {
         blend = 16;
-        Func_0808a5e0(244);
+        Func_020024e6(244);
     }
     QueueDisplayWrite_02001094(((16 - blend) << 8) | blend, 0x04000052);
 }

@@ -53,30 +53,44 @@
  * keep every import's interface open.
  */
 
-extern void Func_02001060();     /* installed callback, byte-exact in assets/code */
+     /* installed callback, byte-exact in assets/code */
 
-void Func_0808a018();
-u8 *Func_0808a080();
-void Func_080091c0();
-void Func_080000c0();
-void Func_080770c8();
-void Func_0808a1e0();
-void Func_0808a020();
 
+
+
+
+
+
+
+
+extern void Func_020025ae();
+extern u8 * Func_020025cc();
+extern u8 * Func_020025de();
+extern u8 * Func_020025ec();
+extern u8 * Func_020025f8();
+extern void Func_020025c0();
+extern void Func_020025d2();
+extern void Func_020025b8();
+extern void Func_02002600();
+extern void Func_020026e0();
+extern void Func_0200262c();
 void Func_020010b8(void)
 {
-    Func_0808a018();
+    u8 zero;
 
-    Func_0808a080(14)[35] &= 0xfd;
-    Func_0808a080(14)[89] &= 0xfd;
-    Func_0808a080(14)[85] = 0;
-    *(void **)(Func_0808a080(14) + 108) = (void *)0x02009061;
+    zero = 0;
+    Func_020025ae();
 
-    Func_080091c0(55, 16, 1, 1, 56, 18);
-    Func_080091c0(55, 16, 1, 1, 20, 18);
+    Func_020025cc(14)[35] &= 0xfd;
+    Func_020025de(14)[89] &= 0xfd;
+    Func_020025ec(14)[85] = zero;
+    *(void **)(Func_020025f8(14) + 108) = (void *)0x02009061;
 
-    Func_080000c0(1);
-    Func_080770c8(512);
-    Func_0808a1e0(14, 2);
-    Func_0808a020();
+    Func_020025c0(55, 16, 1, 1, 56, 18);
+    Func_020025d2(55, 16, 1, 1, 20, 18);
+
+    Func_020025b8(1);
+    Func_02002600(512);
+    Func_020026e0(14, 2);
+    Func_0200262c();
 }

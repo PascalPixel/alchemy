@@ -7,11 +7,12 @@
  */
 #include "types.h"
 
-u8 *Func_0808a080(s32 slot);
 
+
+extern u8 * Func_0200146a(s32 slot);
 s32 Func_02000334(void)
 {
-    u8 *actor = Func_0808a080(9);
+    u8 *actor = Func_0200146a(9);
     s32 y = *(s32 *)(actor + 16);
     s32 x = *(s32 *)(actor + 8);
 

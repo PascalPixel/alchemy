@@ -54,12 +54,37 @@
  */
 
 /* Imports.  Old-style declarations: arity varies per site in this overlay. */
-s32 *Func_0808a080();
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_0808a010();
-void Func_08009180();
 
+
+
+
+
+
+extern s32 * Func_02003112();
+extern void Func_02003150();
+extern void Func_020031bc();
+extern void Func_0200311a();
+extern void Func_02003148();
+extern void Func_02003152();
+extern void Func_020031a8();
+extern void Func_02003214();
+extern void Func_02003172();
+extern void Func_0200319e();
+extern void Func_0200317e();
+extern void Func_020031cc();
+extern void Func_02003198();
+extern void Func_020031e6();
+extern void Func_0200320a();
+extern void Func_020031d6();
+extern void Func_02003224();
+extern void Func_020031fa();
+extern void Func_02003248();
+extern void Func_02003262();
+extern void Func_02003232();
+extern void Func_02003244();
+extern void Func_02003292();
+extern void Func_020032ac();
+extern void Func_020032ce();
 void Func_02000c8c(void)
 {
     volatile s32 view[3];
@@ -71,12 +96,12 @@ void Func_02000c8c(void)
 
     anchor = *(s32 ***)0x03001e70;
 
-    state = Func_0808a080(0);
+    state = Func_02003112(0);
 
     if (state[4] < 0xb30000) {
-        Func_0808a0d0(0, 0x23f, 0x84);
-        Func_0808a1b8(0, 0x4000, 0);
-        Func_0808a010(30);
+        Func_02003150(0, 0x23f, 0x84);
+        Func_020031bc(0, 0x4000, 0);
+        Func_0200311a(30);
 
         saved = anchor[0];
         view[0] = state[2];
@@ -84,16 +109,16 @@ void Func_02000c8c(void)
         view[2] = state[4];
         anchor[0] = (s32 *)view;
 
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0x10000;
-            Func_0808a010(1);
+            Func_02003148(1);
         }
-        Func_0808a010(40);
+        Func_02003152(40);
         direction = 1;
     } else {
-        Func_0808a0d0(0, 0x241, 0xde);
-        Func_0808a1b8(0, 0xc000, 0);
-        Func_0808a010(30);
+        Func_020031a8(0, 0x241, 0xde);
+        Func_02003214(0, 0xc000, 0);
+        Func_02003172(30);
 
         view[0] = state[2];
         view[1] = state[3];
@@ -101,48 +126,48 @@ void Func_02000c8c(void)
         saved = anchor[0];
         anchor[0] = (s32 *)view;
 
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0xffff0000;
-            Func_0808a010(1);
+            Func_0200319e(1);
         }
-        Func_0808a010(40);
+        Func_020031a8(40);
         direction = 2;
     }
 
     /* Three paced runs of the same two renderer calls; only the frame wait
      * between them and the repeat count change (6 x 8, 10 x 4, 12 x 2). */
-    for (i = 0; i < 6; i++) {
-        Func_08009180(2, 28, 34, 10, 4, 2);
-        Func_0808a010(8);
-        Func_08009180(2, 30, 34, 10, 4, 2);
-        Func_0808a010(8);
+    for (i = 0; i != 6; i++) {
+        Func_0200317e(2, 28, 34, 10, 4, 2);
+        Func_020031cc(8);
+        Func_02003198(2, 30, 34, 10, 4, 2);
+        Func_020031e6(8);
     }
-    for (i = 0; i < 10; i++) {
-        Func_08009180(2, 28, 34, 10, 4, 2);
-        Func_0808a010(4);
-        Func_08009180(2, 30, 34, 10, 4, 2);
-        Func_0808a010(4);
+    for (i = 0; i != 10; i++) {
+        Func_020031bc(2, 28, 34, 10, 4, 2);
+        Func_0200320a(4);
+        Func_020031d6(2, 30, 34, 10, 4, 2);
+        Func_02003224(4);
     }
-    for (i = 0; i < 12; i++) {
-        Func_08009180(2, 28, 34, 10, 4, 2);
-        Func_0808a010(2);
-        Func_08009180(2, 30, 34, 10, 4, 2);
-        Func_0808a010(2);
+    for (i = 0; i != 12; i++) {
+        Func_020031fa(2, 28, 34, 10, 4, 2);
+        Func_02003248(2);
+        Func_02003214(2, 30, 34, 10, 4, 2);
+        Func_02003262(2);
     }
 
-    Func_08009180(2, 28, 34, 10, 4, 2);
-    Func_08009180(8, 55, 32, 40, 8, 4);
-    Func_0808a010(60);
+    Func_02003232(2, 28, 34, 10, 4, 2);
+    Func_02003244(8, 55, 32, 40, 8, 4);
+    Func_02003292(60);
 
     if (direction == 1) {
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0xffff0000;
-            Func_0808a010(1);
+            Func_020032ac(1);
         }
     } else if (direction == 2) {
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0x10000;
-            Func_0808a010(1);
+            Func_020032ce(1);
         }
     }
 

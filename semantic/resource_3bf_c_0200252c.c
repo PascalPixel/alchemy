@@ -38,53 +38,72 @@ typedef struct ActorRecord {
     s32 field16;
 } ActorRecord;
 
-void Func_0808a010();
-s32 Func_0808a080();
-void Func_0808a090();
-void Func_0808a0c8();
-void Func_0808a0e8();
-void Func_0808a0f0();
-void Func_0808a148();
-void Func_0808a1b8();
 
 
+
+
+
+
+
+
+
+
+extern s32 Func_02007b82();
+extern void Func_02007be0();
+extern s32 Func_02007b96();
+extern void Func_02007bf4();
+extern s32 Func_02007baa();
+extern void Func_02007c08();
+extern void Func_02007c7a();
+extern void Func_02007bd4();
+extern void Func_02007bea();
+extern void Func_02007c1e();
+extern void Func_02007c00();
+extern void Func_02007c34();
+extern void Func_02007c52();
+extern void Func_02007c94();
+extern void Func_02007c62();
+extern void Func_02007c68();
+extern void Func_02007caa();
+extern void Func_02007cb4();
+extern void Func_02007c12();
 void Func_0200252c(void)
 {
     ActorRecord *record;
 
-    record = Func_0808a080(0);
+    record = Func_02007b82(0);
     if (record != 0) {
-        Func_0808a0f0(2, record->field8, record->field16);
+        Func_02007be0(2, record->field8, record->field16);
     }
 
-    record = Func_0808a080(0);
+    record = Func_02007b96(0);
     if (record != 0) {
-        Func_0808a0f0(3, record->field8, record->field16);
+        Func_02007bf4(3, record->field8, record->field16);
     }
 
-    record = Func_0808a080(0);
+    record = Func_02007baa(0);
     if (record != 0) {
-        Func_0808a0f0(1, record->field8, record->field16);
+        Func_02007c08(1, record->field8, record->field16);
     }
 
-    Func_0808a1b8(0, 0, 0);
+    Func_02007c7a(0, 0, 0);
 
-    Func_0808a090(2, 0xb333, 0x5999);
-    Func_0808a0c8(2, 456, 192);
+    Func_02007bd4(2, 0xb333, 0x5999);
+    Func_02007c08(2, 456, 192);
 
-    Func_0808a090(3, 0xb333, 0x5999);
-    Func_0808a0c8(3, 440, 184);
+    Func_02007bea(3, 0xb333, 0x5999);
+    Func_02007c1e(3, 440, 184);
 
-    Func_0808a090(1, 0xb333, 0x5999);
-    Func_0808a0c8(1, 448, 240);
+    Func_02007c00(1, 0xb333, 0x5999);
+    Func_02007c34(1, 448, 240);
 
-    Func_0808a0e8(2);
-    Func_0808a148(2, 12, 0);
+    Func_02007c52(2);
+    Func_02007c94(2, 12, 0);
 
-    Func_0808a0e8(1);
-    Func_0808a0e8(3);
-    Func_0808a148(1, 12, 0);
-    Func_0808a148(3, 12, 0);
+    Func_02007c62(1);
+    Func_02007c68(3);
+    Func_02007caa(1, 12, 0);
+    Func_02007cb4(3, 12, 0);
 
-    Func_0808a010(15);
+    Func_02007c12(15);
 }

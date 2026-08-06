@@ -99,11 +99,11 @@
 #include "types.h"
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-s32 Func_030003f0();            /* relocated IWRAM quotient helper */
-s32 Func_080000f8();            /* random */
-s32 Func_08000118();            /* shaping helper */
-s32 Func_08000120();            /* shaping helper, second curve */
-u8 *Func_08000148();            /* fetch the working block by id and size */
+            /* relocated IWRAM quotient helper */
+            /* random */
+            /* shaping helper */
+            /* shaping helper, second curve */
+            /* fetch the working block by id and size */
 
 /* In-image data, under the 0x02008000 link base. Three bytes per element. */
 extern const u8 Data_020050e4[];        /* 0x0200d0e4: random amplitudes */
@@ -133,13 +133,22 @@ struct ShakenBlock_0200449c {
     u16 live;                                  /* +400 */
 };
 
+extern u8 * Func_02008d50();
+extern s32 Func_02008e04();
+extern s32 Func_02008e12();
+extern s32 Func_02008e1e();
+extern s32 Func_02008e32();
+extern s32 Func_02008e4a();
+extern s32 Func_02008ef2();
+extern s32 Func_02008f02();
+extern s32 Func_02008f1a();
 void Func_0200449c(void)
 {
     struct ShakenBlock_0200449c *block;
     struct Shaken_0200449c *element;
     s32 index;
 
-    block = (struct ShakenBlock_0200449c *)Func_08000148(33, 202 << 1);   /* 404 */
+    block = (struct ShakenBlock_0200449c *)Func_02008d50(33, 202 << 1);   /* 404 */
     index = 0;
     if (block->live == 0) return;
 
@@ -188,13 +197,13 @@ void Func_0200449c(void)
             object[7] = height;                 /* +28 */
         }
 
-        magnitudeX = (Data_020050e4[3 * index] * Func_080000f8()) >> 16;
-        magnitudeY = (Data_020050e4[3 * index + 1] * Func_080000f8()) >> 16;
-        magnitudeZ = (Data_020050e4[3 * index + 2] * Func_080000f8()) >> 16;
+        magnitudeX = (Data_020050e4[3 * index] * Func_02008e04()) >> 16;
+        magnitudeY = (Data_020050e4[3 * index + 1] * Func_02008e12()) >> 16;
+        magnitudeZ = (Data_020050e4[3 * index + 2] * Func_02008e1e()) >> 16;
 
-        magnitudeX = magnitudeX != 0 ? Func_030003f0(magnitudeX << 16, 250 << 2) : 0;
-        magnitudeY = magnitudeY != 0 ? Func_030003f0(magnitudeY << 16, 250 << 2) : 0;
-        magnitudeZ = magnitudeZ != 0 ? Func_030003f0(magnitudeZ << 16, 250 << 2) : 0;
+        magnitudeX = magnitudeX != 0 ? Func_02008e1e(magnitudeX << 16, 250 << 2) : 0;
+        magnitudeY = magnitudeY != 0 ? Func_02008e32(magnitudeY << 16, 250 << 2) : 0;
+        magnitudeZ = magnitudeZ != 0 ? Func_02008e4a(magnitudeZ << 16, 250 << 2) : 0;
 
         sign = Data_02005120[3 * index];
         if (sign == 1) {
@@ -220,9 +229,9 @@ void Func_0200449c(void)
             if (sign != -1) swayZ = 0;
         }
 
-        shapedX = Func_08000118(Data_02005102[3 * index] * swayX) << 1;
-        shapedY = Func_08000118(Data_02005102[3 * index + 1] * swayY) << 1;
-        shapedZ = Func_08000120(Data_02005102[3 * index + 2] * swayZ) << 1;
+        shapedX = Func_02008ef2(Data_02005102[3 * index] * swayX) << 1;
+        shapedY = Func_02008f02(Data_02005102[3 * index + 1] * swayY) << 1;
+        shapedZ = Func_02008f1a(Data_02005102[3 * index + 2] * swayZ) << 1;
 
         if (burst != 0) {
             burstX += shapedX;

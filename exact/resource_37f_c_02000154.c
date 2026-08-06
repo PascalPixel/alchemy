@@ -58,14 +58,17 @@ extern void Func_02001e7e();
 extern void Func_02001da2();
 void Func_02000154(void)
 {
+    s32 scale = 3;
+    s32 style = 2;
+
     Func_02001d06();
     Func_02001e2c(181);
 
-    Func_02001cd0(16, 28, 21, 3, 3, 2);
+    Func_02001cd0(16, 28, 21, 3, scale, style);
     Func_02001c9e(10);
-    Func_02001ce6(16, 30, 21, 3, 3, 2);
+    Func_02001ce6(16, 30, 21, 3, scale, style);
     Func_02001cb4(10);
-    Func_02001cfc(16, 32, 21, 3, 3, 2);
+    Func_02001cfc(16, 32, 21, 3, scale, style);
     Func_02001cca(10);
 
     Func_02001e12(0, 2);

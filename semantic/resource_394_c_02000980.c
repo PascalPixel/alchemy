@@ -51,17 +51,29 @@ extern u8 *Data_03001ebc;
 extern u8 Data_0200911c[];
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-void Func_080091b8();  /* place a fixture, first bank: (x, y, w, h, sx, sy) */
-void Func_080091c0();  /* place a fixture, second bank */
-s32 Func_080770c0();   /* read event flag */
-u8 *Func_0808a080();   /* actor record by slot id */
-void Func_0808a100();  /* set actor visibility/state (slot, state) */
+  /* place a fixture, first bank: (x, y, w, h, sx, sy) */
+  /* place a fixture, second bank */
+   /* read event flag */
+   /* actor record by slot id */
+  /* set actor visibility/state (slot, state) */
 
-void Func_02000194(void);
-void Func_02000a90(s16 *records);
-void Func_02000b3c(s16 *records, s32 value);
-void Func_02000e64(s32 level);
 
+
+
+
+
+extern void Func_02001a20();
+extern void Func_02001a38();
+extern void Func_02001a48();
+extern s32 Func_02001a66();
+extern void Func_0200148e(s16 *records);
+extern void Func_02001542(s16 *records, s32 value);
+extern void Func_02000b9e(void);
+extern void Func_02001aee();
+extern u8 * Func_02001ac4();
+extern u8 * Func_02001ace();
+extern s32 Func_02001af6();
+extern void Func_020018d8(s32 level);
 s32 Func_02000980(void)
 {
     u8 *actor;
@@ -71,11 +83,11 @@ s32 Func_02000980(void)
     *(u8 **)0x020092c0 = (u8 *)0x02001004;
     *(u8 **)0x020092c4 = (u8 *)0x02001000;
 
-    Func_080091b8(32, 0, 64, 32, 0, 64);
-    Func_080091c0(0, 0, 32, 32, 0, 64);
-    Func_080091c0(32, 0, 32, 32, 0, 32);
+    Func_02001a20(32, 0, 64, 32, 0, 64);
+    Func_02001a38(0, 0, 32, 32, 0, 64);
+    Func_02001a48(32, 0, 32, 32, 0, 32);
 
-    if (Func_080770c0(0x109) == 0) {
+    if (Func_02001a66(0x109) == 0) {
         *(u32 *)0x040000d4 = (u32)Data_0200911c;
         *(u32 *)0x040000d8 = *(u32 *)0x020092c0;
         *(u32 *)0x040000dc = 0x84000012;
@@ -84,18 +96,18 @@ s32 Func_02000980(void)
         **(s16 **)0x020092c4 = 0;
     }
 
-    Func_02000a90(*(s16 **)0x020092c0);
-    Func_02000b3c((s16 *)Data_0200911c, 0xff);
-    Func_02000194();
+    Func_0200148e(*(s16 **)0x020092c0);
+    Func_02001542((s16 *)Data_0200911c, 0xff);
+    Func_02000b9e();
 
-    Func_0808a100(9, 0);
+    Func_02001aee(9, 0);
 
-    actor = Func_0808a080(9);
+    actor = Func_02001ac4(9);
     actor[0x55] = 0;
 
     *(u16 *)(actor + 32) = 8;
     shade = 0xc000;
-    actor = Func_0808a080(10);
+    actor = Func_02001ace(10);
     *(s32 *)(actor + 24) = shade;
     /* the literal pool sits here in the row; r0 and r3 carry across it */
     *(s32 *)(actor + 28) = shade;
@@ -103,7 +115,7 @@ s32 Func_02000980(void)
     *(s32 *)(Data_03001ebc + 448) = 516;
 
     return 0;
-    if (Func_080770c0(0x845) == 0) {
-        Func_02000e64(4);
+    if (Func_02001af6(0x845) == 0) {
+        Func_020018d8(4);
     }
 }

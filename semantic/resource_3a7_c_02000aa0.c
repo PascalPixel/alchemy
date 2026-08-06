@@ -61,11 +61,11 @@
  * call sites in this overlay.  The flag test needs a return type. */
 #include "types.h"
 
-u8 *Func_0808a080();    /* scene-entity record by selector */
-s32 Func_080000f8();    /* random source, no arguments */
-s32 Func_030003e0();    /* relocated IWRAM arithmetic helper (see above) */
-s32 Func_080770c0();    /* test a scene completion flag */
-void Func_080f9010();   /* scripted delay, in frames */
+    /* scene-entity record by selector */
+    /* random source, no arguments */
+    /* relocated IWRAM arithmetic helper (see above) */
+    /* test a scene completion flag */
+   /* scripted delay, in frames */
 
 /* In-image data at file offsets 0x222c and 0x2230 (pool words 0x0200a22c and
  * 0x0200a230 under the proven 0x02008000 link base).  The overlay image is
@@ -73,9 +73,17 @@ void Func_080f9010();   /* scripted delay, in frames */
 extern s32 Data_0200a22c;   /* frame counter */
 extern s32 Data_0200a230;   /* last randomly chosen group member, 0..5 */
 
+extern u8 * Func_02001bd6();
+extern s32 Func_02001b48();
+extern s32 Func_02001b36();
+extern u8 * Func_02001c06();
+extern u8 * Func_02001c1a();
+extern s32 Func_02001bf6();
+extern void Func_02001c66();
+extern void Func_02001c82();
 void Func_02000aa0(void)
 {
-    u8 *record = Func_0808a080(10);
+    u8 *record = Func_02001bd6(10);
     s32 counter;
     s32 index;
 
@@ -87,23 +95,23 @@ void Func_02000aa0(void)
     Data_0200a22c = counter;
 
     if ((counter & 63) == 0) {
-        s32 pick = Func_030003e0(Func_080000f8(), 6);
+        s32 pick = Func_02001b48(Func_02001b36(), 6);
 
         Data_0200a230 = pick;
-        *(s32 *)(Func_0808a080(pick + 10) + 72) = 0x0a3d;
+        *(s32 *)(Func_02001c06(pick + 10) + 72) = 0x0a3d;
     }
 
     index = 0;
     do {
-        u8 *entry = Func_0808a080(index + 10);
+        u8 *entry = Func_02001c1a(index + 10);
 
-        if (Func_080770c0(index + 0x200) != 0) {
+        if (Func_02001bf6(index + 0x200) != 0) {
             if (*(s32 *)(entry + 40) > 0
                 || *(s32 *)(entry + 12) <= 0x0020ffff) {
                 *(s32 *)(entry + 72) = 0;
                 *(s32 *)(entry + 12) = 0x00ff0000;
                 *(s32 *)(entry + 40) = 0;
-                Func_080f9010(106);
+                Func_02001c66(106);
             }
         } else {
             /* Same effect as the arm above with a lower threshold; the zero
@@ -114,7 +122,7 @@ void Func_02000aa0(void)
                 *(s32 *)(entry + 72) = 0;
                 *(s32 *)(entry + 40) = 0;
                 *(s32 *)(entry + 12) = 0x00ff0000;
-                Func_080f9010(106);
+                Func_02001c82(106);
             }
         }
 

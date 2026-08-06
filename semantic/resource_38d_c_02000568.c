@@ -43,40 +43,53 @@
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-void Func_0808a010();           /* wait n frames */
-void Func_0808a018();           /* scripted-scene bracket: open */
-void Func_0808a020();           /* scripted-scene bracket: close */
-void Func_0808a090();           /* 16.16 scale pair */
-void Func_0808a0d0();           /* place an entity */
-void Func_0808a138();           /* select an entity presentation */
-void Func_0808a170();           /* show a dialogue line by id */
-void Func_0808a180();           /* wait for the slot's action to finish */
-void Func_0808a1b8();           /* face slot along heading */
-void Func_0808a1e8();           /* play animation id for n frames */
-s32 Func_080770c0();            /* story-flag test; used in a condition */
+           /* wait n frames */
+           /* scripted-scene bracket: open */
+           /* scripted-scene bracket: close */
+           /* 16.16 scale pair */
+           /* place an entity */
+           /* select an entity presentation */
+           /* show a dialogue line by id */
+           /* wait for the slot's action to finish */
+           /* face slot along heading */
+           /* play animation id for n frames */
+            /* story-flag test; used in a condition */
 
+extern s32 Func_020029be();
+extern s32 Func_020029c8();
+extern void Func_020029f0();
+extern void Func_02002af4();
+extern void Func_02002af8();
+extern void Func_02002ac0();
+extern void Func_02002a0e();
+extern void Func_02002ae4();
+extern void Func_02002afc();
+extern void Func_02002a62();
+extern void Func_02002aa6();
+extern void Func_02002b3a();
+extern void Func_02002a56();
 void Func_02000568(void)
 {
-    if (Func_080770c0(0x84e) != 0) {
+    if (Func_020029be(0x84e) != 0) {
         return;
     }
-    if (Func_080770c0(0x322) == 0) {
+    if (Func_020029c8(0x322) == 0) {
         return;
     }
 
-    Func_0808a018();
+    Func_020029f0();
 
-    Func_0808a1e8(19, 256, 0);
-    Func_0808a1b8(19, 0x7000, 10);
-    Func_0808a138(19, 2);
-    Func_0808a010(20);
+    Func_02002af4(19, 256, 0);
+    Func_02002af8(19, 0x7000, 10);
+    Func_02002ac0(19, 2);
+    Func_02002a0e(20);
 
-    Func_0808a170(0x1748);
-    Func_0808a180(19, 0);
+    Func_02002ae4(0x1748);
+    Func_02002afc(19, 0);
 
-    Func_0808a090(0, 0x10000, 0x8000);
-    Func_0808a0d0(0, 616, 762);
-    Func_0808a1b8(19, 0xd000, 10);
+    Func_02002a62(0, 0x10000, 0x8000);
+    Func_02002aa6(0, 616, 762);
+    Func_02002b3a(19, 0xd000, 10);
 
-    Func_0808a020();
+    Func_02002a56();
 }

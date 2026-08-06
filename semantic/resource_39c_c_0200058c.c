@@ -5,7 +5,8 @@
  * filters six accepted keys, and clears four motion fields on an unaccepted or
  * positive collision result. Prologue through the real zero return at
  * 0x0200061a-0x02000622, with three pool words through 0x0200062f. */
-s32 *Func_02000350();
+
+extern s32 * Func_0200090a();
 s32 Func_0200602a();
 
 static void ClearMotion_0200058c(u8 *object)
@@ -31,7 +32,7 @@ s32 Func_0200058c(u8 *object)
     position[0] = *(s32 *)(object + 8) + (delta & (s32)0xffff0000);
     position[1] = *(s32 *)(object + 12);
 
-    found = Func_02000350(position, object);
+    found = Func_0200090a(position, object);
     if (found != 0) {
         u8 *handle = *(u8 **)((u8 *)found + 80);
         s16 *keyPointer = *(s16 **)(handle + 40);

@@ -34,22 +34,27 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
-extern void Func_02001984(void);
 
-extern void Func_080000c0(s32 arg0);
-extern void Func_080770d0(s32 flagId);
-extern void Func_0808a1e0(s32 id, s32 mode);
 
+
+
+
+
+extern void Func_02003332(s32 arg0);
+extern void Func_0200343a(s32 id, s32 mode);
+extern void Func_02003442(s32 id, s32 mode);
+extern void Func_020033c8(s32 flagId);
+extern void Func_020030b4(void);
 s32 Func_020016f0(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 516;
     if (Data_02000240[224] == 93) {
         *(s32 *)(Data_03001ebc + 448) = 256;
-        Func_080000c0(1);
-        Func_0808a1e0(11, 3);
-        Func_0808a1e0(12, 3);
-        Func_080770d0(0x12f);
+        Func_02003332(1);
+        Func_0200343a(11, 3);
+        Func_02003442(12, 3);
+        Func_020033c8(0x12f);
     }
-    Func_02001984();
+    Func_020030b4();
     return 0;
 }

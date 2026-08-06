@@ -5,20 +5,33 @@
  * two-step phase controls DMA initialization, palette-channel modulation,
  * sparse-buffer carry-forward, and the final display-command emission.
  */
-extern s32 Func_080770c0(s32 flag);
-extern void Func_080001c0(s32 slot);
-extern u8 *Func_08000168(s32 bytes);
-extern s32 Func_03000380(s32 value, s32 divisor);
-extern void Func_08000320(void *destination, u32 value);
-extern void Func_080001c8(s32 slot, s32 bytes, void *source);
-extern void Func_080001e8(void *command, s32 opacity);
-extern void Func_08000178(void *buffer);
+
+
+
+
+
+
+
+
 
 static s32 ClampChannel(s32 value)
 {
     return (u32)value <= 31 ? value : 31;
 }
 
+extern s32 Func_02003624(s32 flag);
+extern void Func_02003606(s32 slot);
+extern u8 * Func_0200363e(s32 bytes);
+extern s32 Func_02003660(s32 value, s32 divisor);
+extern s32 Func_02003688(s32 value, s32 divisor);
+extern s32 Func_020036aa(s32 value, s32 divisor);
+extern void Func_02003752(void *destination, u32 value);
+extern void Func_0200375e(void *destination, u32 value);
+extern void Func_02003766(void *destination, u32 value);
+extern s32 Func_02003724(s32 value, s32 divisor);
+extern void Func_0200384a(s32 slot, s32 bytes, void *source);
+extern void Func_020038a4(void *command, s32 opacity);
+extern void Func_02003896(void *buffer);
 void Func_020018a4(void)
 {
     s16 *selected_slot = (s16 *)0x0200a6d0;
@@ -32,7 +45,7 @@ void Func_020018a4(void)
     u32 index;
 
     if (*active != 0) {
-    } else if (Func_080770c0(0x104) != 0) {
+    } else if (Func_02003624(0x104) != 0) {
         *phase = 2;
         if (*phase > 0)
             *phase = (s16)(*phase - 1);
@@ -46,7 +59,7 @@ void Func_020018a4(void)
     }
 
     if (*phase == 0) {
-        Func_080001c0(*selected_slot);
+        Func_02003606(*selected_slot);
         return;
     }
 
@@ -62,7 +75,7 @@ void Func_020018a4(void)
         }
     }
 
-    work = Func_08000168(0x900);
+    work = Func_0200363e(0x900);
     dma3[2] = 0x80000010;
     dma3[0] = 0x02009f80;
     dma3[1] = (u32)work;
@@ -73,10 +86,10 @@ void Func_020018a4(void)
         s32 green = (color >> 5) & 31;
         s32 blue = (color >> 10) & 31;
 
-        red += Func_03000380(*pulse, 3);
-        blue -= Func_03000380(*pulse, 6);
+        red += Func_02003660(*pulse, 3);
+        blue -= Func_02003688(*pulse, 6);
         if (*pulse > 60 && (*(volatile u32 *)0x03001e40 & 1) != 0)
-            green += Func_03000380(*pulse << 6, 120) - 32;
+            green += Func_020036aa(*pulse << 6, 120) - 32;
 
         red = ClampChannel(red);
         green = ClampChannel(green);
@@ -85,11 +98,11 @@ void Func_020018a4(void)
             (u16)((blue << 10) | (green << 5) | red);
     }
 
-    Func_08000320((void *)0x050003cc, *(u32 *)(work + 12));
-    Func_08000320((void *)0x050003d0, *(u32 *)(work + 16));
-    Func_08000320((void *)0x050003d4, *(u32 *)(work + 20));
+    Func_02003752((void *)0x050003cc, *(u32 *)(work + 12));
+    Func_0200375e((void *)0x050003d0, *(u32 *)(work + 16));
+    Func_02003766((void *)0x050003d4, *(u32 *)(work + 20));
 
-    *pulse = (s16)Func_03000380(
+    *pulse = (s16)Func_02003724(
         *(s16 *)(0x02000240 + 0x232) * 120,
         *(s16 *)(0x02000240 + 0x22c));
 
@@ -127,7 +140,7 @@ void Func_020018a4(void)
             work[index] = value;
     }
 
-    Func_080001c8(*selected_slot, 0x480, work);
+    Func_0200384a(*selected_slot, 0x480, work);
 
     for (index = 0; index <= 4; index++) {
         u32 *command = (u32 *)(0x0200a6e0 + index * 12);
@@ -137,9 +150,9 @@ void Func_020018a4(void)
         command[0] = 0;
         command[1] = flags | (angle << 16) | (u32)(index * 32 + 8);
         command[2] = 0xe400 | tile;
-        Func_080001e8(command, 255);
+        Func_020038a4(command, 255);
         tile = (u16)(tile + 8);
     }
 
-    Func_08000178(work);
+    Func_02003896(work);
 }

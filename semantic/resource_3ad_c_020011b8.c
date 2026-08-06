@@ -35,68 +35,93 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-void Func_0808a148();   /* scene request */
-void Func_0808a170();   /* show a dialogue line by id */
-void Func_0808a178();   /* dialogue-line variant with a mode word */
-void Func_0808a180();   /* wait for the slot's action to finish */
-s32 Func_0808a070();    /* dialogue prompt; result selects the branch */
+   /* scene request */
+   /* show a dialogue line by id */
+   /* dialogue-line variant with a mode word */
+   /* wait for the slot's action to finish */
+    /* dialogue prompt; result selects the branch */
 
 /* Steps in this overlay.  All but 0x0200131c/0x02001448/0x02001760 return a
  * boolean in the low byte. */
-s32 Func_020012ac();
-s32 Func_020012c4();
-s32 Func_020012f0();
-s32 Func_0200131c();    /* four-byte leaf, returns 1; result discarded here */
-s32 Func_02001320();
-void Func_0200134c();
-s32 Func_02001368();
-s32 Func_02001394();
-s32 Func_0200141c();
-void Func_02001448();
-void Func_02001760();
 
+
+
+    /* four-byte leaf, returns 1; result discarded here */
+
+
+
+
+
+
+
+
+extern void Func_02002d64();
+extern void Func_02002d7c();
+extern void Func_02002d68();
+extern void Func_02002d7e();
+extern void Func_02002d8e();
+extern void Func_02002d80();
+extern void Func_02002d8a();
+extern void Func_02002d94();
+extern void Func_02002d9e();
+extern s32 Func_020024ba();
+extern s32 Func_02002538();
+extern s32 Func_0200263e();
+extern void Func_0200257c();
+extern s32 Func_02002d6c();
+extern s32 Func_020025d4();
+extern s32 Func_02002514();
+extern s32 Func_0200254a();
+extern s32 Func_020025ce();
+extern void Func_02002e18();
+extern void Func_02002e32();
+extern void Func_02002e28();
+extern void Func_02002e38();
+extern void Func_020029f2();
+extern s32 Func_020025b4();
+extern void Func_020026e4();
 void Func_020011b8(void)
 {
     s32 line;
     s32 retryFromStep134c;
 
     line = 0x2547;
-    Func_0808a170(line);
-    Func_0808a180(12, 0);
+    Func_02002d64(line);
+    Func_02002d7c(12, 0);
     line += 1;
 
-    Func_0808a148(1, 0, 0);
-    Func_0808a170(line);
-    Func_0808a178(1, 0);
+    Func_02002d68(1, 0, 0);
+    Func_02002d7e(line);
+    Func_02002d8e(1, 0);
 
-    Func_0808a148(2, 0, 0);
-    Func_0808a148(3, 0, 0);
-    Func_0808a148(13, 0, 0);
-    Func_0808a148(12, 0, 0);
+    Func_02002d80(2, 0, 0);
+    Func_02002d8a(3, 0, 0);
+    Func_02002d94(13, 0, 0);
+    Func_02002d9e(12, 0, 0);
 
     retryFromStep134c = 0;
 
 top:                                                    /* 0x0200120c */
-    if ((Func_020012ac() & 0xff) == 0) {
+    if ((Func_020024ba() & 0xff) == 0) {
         goto step12c4;
     }
 
 step1320:                                               /* 0x02001216 */
-    if ((Func_02001320() & 0xff) == 0) {
+    if ((Func_02002538() & 0xff) == 0) {
         goto finishNegative;                            /* 0x02001290 */
     }
 
     /* 0x02001220 */
     retryFromStep134c = 0;
-    if ((Func_0200141c() & 0xff) == 0) {
+    if ((Func_0200263e() & 0xff) == 0) {
         retryFromStep134c = 1;
         goto step134c;
     }
     goto step1394;
 
 step134c:                                               /* 0x0200122e */
-    Func_0200134c();
-    if (Func_0808a070(0, 0) == 0) {
+    Func_0200257c();
+    if (Func_02002d6c(0, 0) == 0) {
         goto finishNegative;
     }
 
@@ -105,15 +130,15 @@ step134c:                                               /* 0x0200122e */
      * not the retry path" outcomes fall to the same exit, so there is exactly
      * one call site here despite three predecessors.
      */
-    if ((Func_02001394() & 0xff) == 0 && retryFromStep134c != 0) {
+    if ((Func_020025d4() & 0xff) == 0 && retryFromStep134c != 0) {
         goto step134c;
     }
     goto finishAffirmative;
 step1394:
 
 step12c4:                                               /* 0x0200124e */
-    if ((Func_020012c4() & 0xff) != 0) {
-        if ((Func_020012f0() & 0xff) == 0) {
+    if ((Func_02002514() & 0xff) != 0) {
+        if ((Func_0200254a() & 0xff) == 0) {
             retryFromStep134c = 1;                      /* 0x0200122c */
             goto step134c;
         }
@@ -121,24 +146,24 @@ step12c4:                                               /* 0x0200124e */
     }
 
     /* 0x02001264 */
-    if ((Func_02001368() & 0xff) != 0) {
+    if ((Func_020025ce() & 0xff) != 0) {
         goto step1320;
     }
 
     /* 0x0200126e: repeat the prompt with the second line pair. */
     line = 0x254b;
-    Func_0808a170(line);
+    Func_02002e18(line);
     line += 1;
-    Func_0808a180(2, 0);
-    Func_0808a170(line);
-    Func_0808a178(1, 0);
+    Func_02002e32(2, 0);
+    Func_02002e28(line);
+    Func_02002e38(1, 0);
     goto top;
 
 finishNegative:                                         /* 0x02001290 */
-    Func_02001760();
+    Func_020029f2();
     return;
 
 finishAffirmative:                                      /* 0x02001296 */
-    Func_0200131c();
-    Func_02001448();
+    Func_020025b4();
+    Func_020026e4();
 }

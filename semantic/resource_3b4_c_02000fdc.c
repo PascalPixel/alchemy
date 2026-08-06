@@ -42,23 +42,31 @@
  * void.
  */
 
-void Func_080f9010();
-void Func_080091f0();
-void Func_080091b8();
-void Func_080000c0();
-void Func_080091c0();
 
+
+
+
+
+
+extern void Func_020035ee();
+extern void Func_020034e6();
+extern void Func_020034f4();
+extern void Func_020034f0();
+extern void Func_0200348e();
+extern void Func_0200350a();
+extern void Func_02003526();
+extern void Func_02003538();
 void Func_02000fdc(s32 flags)
 {
     if ((flags & 0x100) != 0) {
-        Func_080f9010(157);
-        Func_080091f0(0x20000, 0x20000, 0x10000);
-        Func_080091f0(-1, -1, 0xe666);
-        Func_080091b8(84, 29, 1, 3, 70, 49);
-        Func_080000c0(60);
+        Func_020035ee(157);
+        Func_020034e6(0x20000, 0x20000, 0x10000);
+        Func_020034f4(-1, -1, 0xe666);
+        Func_020034f0(84, 29, 1, 3, 70, 49);
+        Func_0200348e(60);
     }
 
-    Func_080091b8(85, 29, 1, 3, 70, 49);
-    Func_080091c0(6, 49, 1, 1, 6, 50);
-    Func_080091c0(6, 49, 1, 1, 6, 51);
+    Func_0200350a(85, 29, 1, 3, 70, 49);
+    Func_02003526(6, 49, 1, 1, 6, 50);
+    Func_02003538(6, 49, 1, 1, 6, 51);
 }

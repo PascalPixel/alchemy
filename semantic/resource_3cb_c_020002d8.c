@@ -59,23 +59,32 @@
 extern u32 Data_02009f50[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_080000c0();
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a018();
-s32 Func_0808a020();
-void Func_0808a170();
-void Func_0808a178();
+
+
+
+
+
+
+
+
 
 /* Used for their return values. */
 
+extern s32 Func_02001aea();
+extern void Func_02001b18();
+extern s32 Func_02001b10();
+extern void Func_02001b50();
+extern void Func_02001b96();
+extern void Func_02001ba6();
+extern void Func_02001a34();
+extern void Func_02001b3c();
+extern s32 Func_02001b78();
 s32 Func_020002d8(void)
 {
     s32 gate;
     u32 idle;
 
-    gate = Func_080770c0(0x203);
+    gate = Func_02001aea(0x203);
     if (gate != 0) {
         return gate;
     }
@@ -84,18 +93,18 @@ s32 Func_020002d8(void)
     Data_02009f50[0] = idle;
     if (idle == 300) {
         Data_02009f50[0] = 0;
-        Func_080770d0(512);
+        Func_02001b18(512);
     }
 
-    gate = Func_080770c0(512);
+    gate = Func_02001b10(512);
     if (gate != 0) {
         return gate;
     }
 
-    Func_0808a018();
-    Func_0808a170(0x292e);
-    Func_0808a178(8, 0);
-    Func_080000c0(5);
-    Func_080770c8(512);
-    return Func_0808a020();
+    Func_02001b50();
+    Func_02001b96(0x292e);
+    Func_02001ba6(8, 0);
+    Func_02001a34(5);
+    Func_02001b3c(512);
+    return Func_02001b78();
 }

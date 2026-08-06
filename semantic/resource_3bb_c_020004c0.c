@@ -53,22 +53,44 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_0808a080();
-void Func_0808a018();
-void Func_0808a100();
-void Func_0808a010();
-void Func_08009080();
-void Func_08009150();
-u8 *Func_08000148();
-void Func_080090e0();
-void Func_0808a090();
-void Func_080f9010();
-void Func_08009158();
-void Func_0808a020();
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* In-image pose table at file offset 0x40c0, four entries. */
 extern u8 Data_0200c0c0[];
 
+extern u8 * Func_02004436();
+extern u8 * Func_0200443e();
+extern void Func_0200447c();
+extern void Func_020044e4();
+extern void Func_02004482();
+extern void Func_020043ba();
+extern void Func_020043f6();
+extern void Func_020044b4();
+extern void Func_02004524();
+extern u8 * Func_0200436c();
+extern void Func_02004402();
+extern void Func_0200450e();
+extern void Func_020043fe();
+extern void Func_02004440();
+extern void Func_0200467e();
+extern void Func_02004454();
+extern void Func_02004424();
+extern void Func_02004462();
+extern void Func_0200469a();
+extern void Func_020046a0();
+extern void Func_0200452e();
+extern void Func_02004542();
 void Func_020004c0(s32 participant, s32 x, s32 z)
 {
     u8 *subject;
@@ -82,8 +104,8 @@ void Func_020004c0(s32 participant, s32 x, s32 z)
     s32 step_z;
 
     s32 permuted_0;
-    subject = Func_0808a080(subject_id);
-    record = Func_0808a080(participant);
+    subject = Func_02004436(subject_id);
+    record = Func_0200443e(participant);
     subject_id = *(s32 *)(0x02000240 + 500);
 
     /* (facing + 0x1000) & 0xe000 - the biased octant, kept for the pose. */
@@ -101,36 +123,36 @@ void Func_020004c0(s32 participant, s32 x, s32 z)
         step_z = (target_z - *(s32 *)(record + 16)) / 2;
     }
 
-    Func_0808a018();
-    Func_0808a100(subject_id, 8);
-    Func_0808a010(6);
+    Func_0200447c();
+    Func_020044e4(subject_id, 8);
+    Func_02004482(6);
 
     *(s32 *)(record + 52) = 0x3333;
     *(s32 *)(record + 48) = 0x8000;             /* 128 << 8 */
 
-    Func_08009080(record, Data_0200c0c0[facing >> 14]);
-    Func_08009150(record, target_x, 0, target_z);
+    Func_020043ba(record, Data_0200c0c0[facing >> 14]);
+    Func_020043f6(record, target_x, 0, target_z);
 
-    Func_0808a010(6);
-    Func_0808a100(subject_id, 2);
+    Func_020044b4(6);
+    Func_02004524(subject_id, 2);
 
-    fetched = Func_08000148(27, 0xccc);
-    Func_080090e0(*(s32 *)(fetched + 480), record);     /* 240 << 1 */
+    fetched = Func_0200436c(27, 0xccc);
+    Func_02004402(*(s32 *)(fetched + 480), record);     /* 240 << 1 */
 
-    Func_0808a090(subject_id, 0x8000, 0x3333);
-    Func_08009080(subject, 2);
-    Func_08009150(subject,
+    Func_0200450e(subject_id, 0x8000, 0x3333);
+    Func_020043fe(subject, 2);
+    Func_02004440(subject,
                   0,
                   *(s32 *)(subject + 8) + step_x,
                   *(s32 *)(subject + 16) + step_z);
 
-    Func_080f9010(239);
-    Func_08009158(subject);
-    Func_08009080(subject, 1);
-    Func_08009158(record);
-    Func_080f9010(288);                         /* 144 << 1 */
-    Func_080f9010(213);
-    Func_08009080(record, 1);
-    Func_0808a010(15);
-    Func_0808a020();
+    Func_0200467e(239);
+    Func_02004454(subject);
+    Func_02004424(subject, 1);
+    Func_02004462(record);
+    Func_0200469a(288);                         /* 144 << 1 */
+    Func_020046a0(213);
+    Func_02004440(record, 1);
+    Func_0200452e(15);
+    Func_02004542();
 }

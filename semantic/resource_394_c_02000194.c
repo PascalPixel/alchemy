@@ -35,32 +35,51 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-void Func_080091b8();  /* place a fixture, first bank: (x, y, w, h, sx, sy) */
-void Func_080091c0();  /* place a fixture, second bank */
-void Func_08009080();  /* set object motion state */
+  /* place a fixture, first bank: (x, y, w, h, sx, sy) */
+  /* place a fixture, second bank */
+  /* set object motion state */
 
-void Func_02000b3c(s16 *records, s32 value);
-void Func_02000150(void);
 
+
+
+extern void Func_0200122a();
+extern void Func_0200123e();
+extern void Func_02001254();
+extern void Func_02001272();
+extern void Func_02001284();
+extern void Func_0200129c();
+extern void Func_020012a6();
+extern void Func_020012b8();
+extern void Func_020012d0();
+extern void Func_020012b6();
+extern void Func_02001324();
+extern void Func_02001340();
+extern void Func_02001312();
+extern void Func_02001378();
+extern void Func_0200139e();
+extern void Func_02000e70(s16 *records, s32 value);
+extern void Func_020013bc();
+extern void Func_02000e8e(s16 *records, s32 value);
+extern void Func_020004a6(void);
 void Func_02000194(void)
 {
     s16 *record = *(s16 **)0x020092c0;
 
     if (**(s16 **)0x020092c8 != 0) {
-        Func_080091b8(65, 53, 2, 1, 79, 29);
-        Func_080091b8(65, 40, 2, 4, 15, 28);
+        Func_0200122a(65, 53, 2, 1, 79, 29);
+        Func_0200123e(65, 40, 2, 4, 15, 28);
     } else {
-        Func_080091b8(65, 50, 2, 5, 79, 25);
+        Func_02001254(65, 50, 2, 5, 79, 25);
     }
 
     if (**(s16 **)0x020092c8 != 0) {
-        Func_080091b8(0, 32, 32, 32, 32, 0);
-        Func_080091b8(32, 32, 32, 32, 64, 0);
-        Func_080091c0(0, 32, 32, 32, 0, 0);
+        Func_02001272(0, 32, 32, 32, 32, 0);
+        Func_02001284(32, 32, 32, 32, 64, 0);
+        Func_0200129c(0, 32, 32, 32, 0, 0);
     } else {
-        Func_080091b8(0, 64, 32, 32, 32, 0);
-        Func_080091b8(32, 64, 32, 32, 64, 0);
-        Func_080091c0(0, 64, 32, 32, 0, 0);
+        Func_020012a6(0, 64, 32, 32, 32, 0);
+        Func_020012b8(32, 64, 32, 32, 64, 0);
+        Func_020012d0(0, 64, 32, 32, 0, 0);
     }
 
     if (record[0] != -1) {
@@ -69,18 +88,18 @@ void Func_02000194(void)
 
             record += 6;
             if (**(s16 **)0x020092c8 == 1) {
-                Func_08009080(piece, 4);
+                Func_020012b6(piece, 4);
                 piece[35] = 3;
                 piece[85] = 0;
                 *(s32 *)(piece + 12) = 0x1a0000;
 
                 if (record[3] != 0) {
-                    Func_080091b8(68, 40, 1, 4, record[1] + 32, record[2]);
+                    Func_02001324(68, 40, 1, 4, record[1] + 32, record[2]);
                 } else {
-                    Func_080091b8(70, 40, 4, 1, record[1] + 32, record[2]);
+                    Func_02001340(70, 40, 4, 1, record[1] + 32, record[2]);
                 }
             } else {
-                Func_08009080(piece, 1);
+                Func_02001312(piece, 1);
                 piece[35] = 1;
                 piece[85] = 2;
                 *(s32 *)(piece + 12) = 0;
@@ -88,15 +107,15 @@ void Func_02000194(void)
         } while (record[0] != -1);
     }
 
-    Func_080091b8(70, 42, 1, 1, 10, 50);
+    Func_02001378(70, 42, 1, 1, 10, 50);
 
     if (**(s16 **)0x020092c8 == 1) {
-        Func_080091c0(0, 32, 32, 32, 0, 0);
-        Func_02000b3c(*(s16 **)0x020092c0, 254);
+        Func_0200139e(0, 32, 32, 32, 0, 0);
+        Func_02000e70(*(s16 **)0x020092c0, 254);
     } else {
-        Func_080091c0(0, 64, 32, 32, 0, 0);
-        Func_02000b3c(*(s16 **)0x020092c0, 255);
+        Func_020013bc(0, 64, 32, 32, 0, 0);
+        Func_02000e8e(*(s16 **)0x020092c0, 255);
     }
 
-    Func_02000150();
+    Func_020004a6();
 }

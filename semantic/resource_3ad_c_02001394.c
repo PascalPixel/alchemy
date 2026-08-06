@@ -35,42 +35,55 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-void Func_0808a010();   /* wait n frames */
-s32 Func_0808a070();    /* dialogue prompt; result selects the branch */
-void Func_0808a110();   /* scene-presentation request */
-void Func_0808a148();   /* scene request */
-void Func_0808a170();   /* show a dialogue line by id */
-void Func_0808a178();   /* dialogue-line variant with a mode word */
-void Func_0808a180();   /* wait for the slot's action to finish */
-void Func_0808a1b8();   /* face the slot along a heading */
-void Func_0808a1e8();   /* play animation id for n frames */
+   /* wait n frames */
+    /* dialogue prompt; result selects the branch */
+   /* scene-presentation request */
+   /* scene request */
+   /* show a dialogue line by id */
+   /* dialogue-line variant with a mode word */
+   /* wait for the slot's action to finish */
+   /* face the slot along a heading */
+   /* play animation id for n frames */
 
+extern void Func_02002f32();
+extern void Func_02002f76();
+extern void Func_02002f56();
+extern void Func_02002f6e();
+extern void Func_02002f82();
+extern void Func_02002ee8();
+extern void Func_02002f50();
+extern void Func_02002f7e();
+extern void Func_02002f96();
+extern void Func_02002fbc();
+extern void Func_02002f9a();
+extern void Func_02002faa();
+extern s32 Func_02002f3a();
 s32 Func_02001394(void)
 {
     s32 line = 0x255e;
 
-    Func_0808a148(2, 0, 0);
+    Func_02002f32(2, 0, 0);
     /* 0x102 built as `movs r1,#129 / lsls r1,#1`. */
-    Func_0808a1e8(2, 0x102, 60);
-    Func_0808a170(line);
-    Func_0808a180(2, 0);
+    Func_02002f76(2, 0x102, 60);
+    Func_02002f56(line);
+    Func_02002f6e(2, 0);
 
     /* 0x3000 built as `movs r1,#192 / lsls r1,#6`. */
-    Func_0808a1b8(12, 0x3000, 0);
-    Func_0808a010(30);
-    Func_0808a110(12, 4);
-    Func_0808a170(line + 1);
-    Func_0808a180(12, 0);
+    Func_02002f82(12, 0x3000, 0);
+    Func_02002ee8(30);
+    Func_02002f50(12, 4);
+    Func_02002f7e(line + 1);
+    Func_02002f96(12, 0);
 
     line += 2;
-    Func_0808a1e8(3, 0x102, 60);
-    Func_0808a170(line);
-    Func_0808a178(3, 0);
+    Func_02002fbc(3, 0x102, 60);
+    Func_02002f9a(line);
+    Func_02002faa(3, 0);
 
     /*
      * `negs r3,r0 / orrs r3,r0 / lsrs r3,#31 / movs r0,#1 / subs r0,r0,r3` is
      * the compiler's `== 0` idiom: bit 31 of (-x | x) is set for every non-zero
      * x, so the result is 1 exactly when the prompt returned 0.
      */
-    return Func_0808a070(0, 0) == 0;
+    return Func_02002f3a(0, 0) == 0;
 }

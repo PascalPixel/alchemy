@@ -49,25 +49,16 @@ void Func_0200451a();
 
 void Func_0200062c(void)
 {
-    s32 *record;
+    s32 field;
 
     Func_020044ca(100, 11, 12, 4, 14, 11);
 
-    record = Func_02004598(15);
-    {
-        s32 field = record[2] >> 20;
-        Func_020044e4(13, 28, 1, 4, field, 11);
-    }
+    field = Func_02004598(15)[2] >> 20;
+    Func_020044e4(13, 28, 1, 4, field, 11);
 
-    record = Func_020045b2(16);
-    {
-        s32 field = record[2] >> 20;
-        Func_020044fe(13, 28, 1, 4, field, 11);
-    }
+    field = Func_020045b2(16)[2] >> 20;
+    Func_020044fe(13, 28, 1, 4, field, 11);
 
-    record = Func_020045cc(17);
-    {
-        s32 field = record[4] >> 20;
-        Func_0200451a(13, 28, 4, 1, 18, field);
-    }
+    field = Func_020045cc(17)[4] >> 20;
+    Func_0200451a(13, 28, 4, 1, 18, field);
 }

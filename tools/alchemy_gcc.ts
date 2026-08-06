@@ -751,6 +751,13 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // Reconstruction-wave (Sonnet) exacts, 2026-08-06: resource_39c:15e0 (two-
+  // local stacked-argument staging law) and resource_3b1:413c (paired with
+  // sched-low-dest-first, see that set).
+  "exact/resource_39c_c_020015e0.c",
+  "semantic/resource_39c_c_020015e0.c",
+  "exact/resource_3b1_c_0200413c.c",
+  "semantic/resource_3b1_c_0200413c.c",
   // resource_38f:08ec is a 732-call cutscene script. The reference rebuilds
   // recurring shifted immediates at their individual call sites rather than
   // carrying them through callee-saved registers across the whole owner.
@@ -913,6 +920,18 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_394:07e0 needed the argument-feeding-store exclusion refinement
+  // to this flag (fork commit 25b15cd) plus cse-pool-immediate-off (see that
+  // set) to reach byte-exact; 2026-08-06.
+  "exact/resource_394_c_020007e0.c",
+  "semantic/resource_394_c_020007e0.c",
+  // Reconstruction-wave (Sonnet) exacts, 2026-08-06: resource_3b1:413c
+  // (paired with cse-two-insn-immediate-off) and resource_3b1:0728 (paired
+  // with cse-pool-immediate-off, see that set).
+  "exact/resource_3b1_c_0200413c.c",
+  "semantic/resource_3b1_c_0200413c.c",
+  "exact/resource_3b1_c_02000728.c",
+  "semantic/resource_3b1_c_02000728.c",
   // resource_3c8:2f30 (paired with -fno-cse-shift-immediate above): the
   // reference sets r0,#0 before each shifted r1/r2 immediate build at every
   // three-argument call site, same low-destination tie-break tell as
@@ -1408,6 +1427,15 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_394:07e0, paired with the sched-low-dest-first argument-
+  // feeding-store exclusion (see that set); 2026-08-06.
+  "exact/resource_394_c_020007e0.c",
+  "semantic/resource_394_c_020007e0.c",
+  // Reconstruction-wave (Sonnet) exact, 2026-08-06: resource_3b1:0728 stops
+  // the repeated 0x925 flag-id constant from CSE'ing into a persistent
+  // register across an intervening call (paired with sched-low-dest-first).
+  "exact/resource_3b1_c_02000728.c",
+  "semantic/resource_3b1_c_02000728.c",
   // Reconstruction-wave exact, 2026-08-05: resource_3b4:0ad0 rematerialises
   // its 0x9c8 pool constant (paired with cse-shift-immediate-off and
   // sched-low-dest-first at those sets).
@@ -2200,6 +2228,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // 2026-08-05. Cross-host rule: rebuild+pin linux from the same
         // commit before the next cloud session touches these routes.
         "52a086c84a620d4cc8d9acb7d53ecd5826892065edd7f289447ff44f77162d74",
+        // Fork commit 25b15cd: sched-low-dest-first argument-feeding-store
+        // exclusion (refines the existing flag) plus the unrouted
+        // -fthumb-group-base-in-r3 mode. Witness resource_394:07e0
+        // byte-exact; 5811-source regression zero drift unrouted, run
+        // twice clean after ruling out pristine-compiler nondeterminism.
+        // Admitted from a green `bun run verify`, 2026-08-06.
+        "e68ef21ee84393f9ca196f05731cd1688e811dec61015e164d9b72fcdab62ca7",
       ],
     },
     gs2: {

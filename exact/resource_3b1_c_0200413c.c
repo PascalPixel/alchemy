@@ -16,29 +16,31 @@
  * A flat setter sequence, no branches. Two distinct call sites happen to
  * target the same callee (`Func_0200a752`) with different arities.
  *
- * Raw callee naming.
+ * Per-site call symbols (law 6): every callee below is named at the
+ * bl_site_symbols.ts-decoded address for its own site, not the raw
+ * main-image address the earlier draft used.
  */
 
 extern u8 Value_00001e43;
 
-void Func_0808a018(void);
-void Func_0808a210();
-void Func_080000c0();
-void Func_020048e8();
-void Func_0808a138();
-void Func_0808a170();
-void Func_0200486c();
-void Func_0808a1b8();
+void Func_0200a608(void);
+void Func_0200a752();
+void Func_0200a578();
+void Func_02008a4a();
+void Func_0200a6ea();
+void Func_0200a718();
+void Func_020089e2();
+void Func_02008a74();
 
 void Func_0200413c(void)
 {
-    Func_0808a018();
-    Func_0808a210(-1, -1, -1, 0);
-    Func_080000c0(1);
-    Func_020048e8(15, 1, 1);
-    Func_0808a138(8, 1);
-    Func_0808a170((s32)&Value_00001e43);
-    Func_0200486c(8);
-    Func_0808a1b8(8, 0xd000, 0x28);
-    Func_020048e8(9, 15, 0);
+    Func_0200a608();
+    Func_0200a752(-1, -1, -1, 0);
+    Func_0200a578(1);
+    Func_02008a4a(15, 1, 1);
+    Func_0200a6ea(8, 1);
+    Func_0200a718((s32)&Value_00001e43);
+    Func_020089e2(8);
+    Func_0200a752(8, 0xd000, 0x28);
+    Func_02008a74(9, 15, 0);
 }

@@ -72,6 +72,9 @@ extern void Func_02002624();
 extern void Func_020025a8();
 void Func_020002b8(void)
 {
+    s32 off;
+
+    off = 0;
     Func_020024ec();
 
     if (Func_020024d2(0x881) != 0) {
@@ -82,7 +85,7 @@ void Func_020002b8(void)
         Func_020025a4(10, 1);
         Func_0200251a(20);
         Func_020025dc(10, 0, 20);
-        Func_0200261c(10, 0);
+        Func_0200261c(10, off);
         Func_02002630(10, 0x3000, 10);
         Func_020025d0(10, 9);
     } else {
@@ -93,7 +96,7 @@ void Func_020002b8(void)
         Func_020025f8(10, 1);
         Func_0200256e(20);
         Func_02002630(10, 0, 20);
-        Func_02002660(10, 0);
+        Func_02002660(10, off);
         Func_02002684(10, 0x3000, 10);
         Func_02002624(10, 9);
     }

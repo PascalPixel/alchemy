@@ -56,75 +56,105 @@
 extern u8 Data_0200a6fc[];
 
 /* Scene flag test: zero means not yet set. */
-s32 Func_080770c0();
-/* Scene flag set. */
-void Func_080770c8();
-void Func_0808a018();
-void Func_0808a208();
-void Func_0808a220();
-void Func_0808a218();
-void Func_0808a1b8();
-void Func_0808a1f0();
-void Func_0808a138();
-void Func_0808a010();
-void Func_0808a090();
-void Func_080f9010();
-/* Returns the record for a numbered slot. */
-s32 *Func_0808a080();
-void Func_0808a0d0();
-void Func_080091f0();
-void Func_0808a0f0();
-void Func_08009088();
-void Func_08009098();
-void Func_0808a020();
 
+/* Scene flag set. */
+
+
+
+
+
+
+
+
+
+
+
+/* Returns the record for a numbered slot. */
+
+
+
+
+
+
+
+
+extern s32 Func_02003076();
+extern s32 Func_02003082();
+extern void Func_02003098();
+extern void Func_020030b4();
+extern void Func_02003148();
+extern void Func_02003160();
+extern void Func_0200315c();
+extern void Func_02003162();
+extern void Func_0200314a();
+extern void Func_020030e8();
+extern void Func_0200311e();
+extern void Func_020031dc();
+extern s32 * Func_02003122();
+extern void Func_02003156();
+extern void Func_0200319a();
+extern void Func_020031b4();
+extern void Func_02003132();
+extern void Func_02003168();
+extern void Func_0200318e();
+extern void Func_0200319c();
+extern void Func_020031aa();
+extern void Func_02003170();
+extern void Func_02003256();
+extern void Func_0200314e();
+extern void Func_0200318c();
+extern void Func_020031a0();
+extern void Func_02003206();
+extern s32 * Func_020031d4();
+extern void Func_02003166();
+extern void Func_020031e2();
 void Func_02000b68(void)
 {
     s32 clear;
     s32 *slot;
 
-    if (Func_080770c0(0x9c8) == 0) return;
+    if (Func_02003076(0x9c8) == 0) return;
 
-    clear = Func_080770c0(0x9c9);
+    clear = Func_02003082(0x9c9);
     if (clear != 0) return;
-    Func_080770c8(0x9c9);
+    Func_02003098(0x9c9);
 
-    Func_0808a018();
-    Func_0808a208(0x20000, 0x4000);
-    Func_0808a220(15, 1);
-    Func_0808a218();
-    Func_0808a1b8(15, 0x4000, 20);
-    Func_0808a1f0(15, 258);
-    Func_0808a138(15, 2);
-    Func_0808a010(20);
-    Func_0808a090(15, 0x10000, 0x8000);
-    Func_080f9010(152);
+    Func_020030b4();
+    Func_02003148(0x20000, 0x4000);
+    Func_02003160(15, 1);
+    Func_0200315c();
+    Func_02003148(15, 0x4000, 20);
+    Func_02003162(15, 258);
+    Func_0200314a(15, 2);
+    Func_020030e8(20);
+    Func_0200311e(15, 0x10000, 0x8000);
+    Func_020031dc(152);
 
-    Func_0808a080(15)[10] = 0xa0000;   /* +40 */
+    Func_02003122(15)[10] = 0xa0000;   /* +40 */
 
-    Func_0808a0d0(15, 584, 664);
-    Func_0808a1b8(15, 0x4000, 20);
-    Func_0808a1f0(15, 258);
-    Func_0808a010(30);
-    Func_0808a090(15, 0x80000, 0x4000);
-    Func_0808a0d0(15, 664, 664);
-    Func_0808a0d0(15, 744, 664);
-    Func_0808a0d0(15, 824, 664);
-    Func_0808a010(10);
-    Func_080f9010(208);
+    Func_02003156(15, 584, 664);
+    Func_0200319a(15, 0x4000, 20);
+    Func_020031b4(15, 258);
+    Func_02003132(30);
+    Func_02003168(15, 0x80000, 0x4000);
+    Func_0200318e(15, 664, 664);
+    Func_0200319c(15, 744, 664);
+    Func_020031aa(15, 824, 664);
+    Func_02003170(10);
+    Func_02003256(208);
 
-    Func_080091f0(0x40000, 0x20000, 0x10000);
-    Func_0808a010(20);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_0808a010(30);
+    Func_0200314e(0x40000, 0x20000, 0x10000);
+    Func_0200318c(20);
+    Func_02003162(-1, -1, 0xe666);
+    Func_020031a0(30);
 
-    Func_0808a0f0(15, 0x3780000, 0x2980000);
+    Func_02003206(15, 0x3780000, 0x2980000);
 
-    slot = Func_0808a080(15);
+    slot = Func_020031d4(15);
     *(u16 *)((u8 *)(s32 *)slot[20] + 30) = 0xf800;   /* [+80] -> +30 */
     *(u16 *)((u8 *)slot + 6) = (u16)clear;
 
-    Func_08009088(slot, 0);
-    Func_08009098(slot, Data_0200a6fc);
-    Func_0808a020();
+    Func_02003156(slot, 0);
+    Func_02003166(slot, Data_0200a6fc);
+    Func_020031e2();
 }

@@ -25,34 +25,48 @@
 
 extern u8 Value_00001e3c;
 
-void Func_0808a018(void);
-s32 Func_0808a0f0();
-void Func_02005004();
-void Func_020048ac();
-void Func_020048e8();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_0808a130();
-void Func_0808a170();
-void Func_0808a188();
 
+
+
+
+
+
+
+
+
+
+
+
+extern void Func_0200a3b8(void);
+extern s32 Func_0200a442();
+extern void Func_02008f02();
+extern s32 Func_0200a452();
+extern void Func_020087c8();
+extern void Func_0200880e();
+extern void Func_0200a428();
+extern void Func_0200a46a();
+extern void Func_0200a474();
+extern void Func_0200a520();
+extern void Func_0200a4d0();
+extern void Func_0200a506();
+extern void Func_0200a528();
+extern void Func_0200885a();
 void Func_02003eec(void)
 {
     s32 t;
 
-    Func_0808a018();
-    t = Func_0808a0f0(0, 0, 0);
-    Func_02005004(t);
-    Func_0808a0f0(18, 0x960000, 0x024a0000);
-    Func_020048ac(0x9c0000, -1, 0x2180000, 0x01000001);
-    Func_020048e8(8, 0, 0);
-    Func_0808a090(18, 0xcccc, 0x6666);
-    Func_0808a0d0(18, 0xa8, 0x242);
-    Func_0808a0d0(18, 0xa8, 0x22a);
-    Func_0808a1b8(18, 0x8000, 20);
-    Func_0808a130(18, 2);
-    Func_0808a170((s32)&Value_00001e3c);
-    Func_0808a188(18, 0, 20);
-    Func_020048e8(9, 12, 0);
+    Func_0200a3b8();
+    t = Func_0200a442(0, 0, 0);
+    Func_02008f02(t);
+    Func_0200a452(18, 0x960000, 0x024a0000);
+    Func_020087c8(0x9c0000, -1, 0x2180000, 0x01000001);
+    Func_0200880e(8, 0, 0);
+    Func_0200a428(18, 0xcccc, 0x6666);
+    Func_0200a46a(18, 0xa8, 0x242);
+    Func_0200a474(18, 0xa8, 0x22a);
+    Func_0200a520(18, 0x8000, 20);
+    Func_0200a4d0(18, 2);
+    Func_0200a506((s32)&Value_00001e3c);
+    Func_0200a528(18, 0, 20);
+    Func_0200885a(9, 12, 0);
 }

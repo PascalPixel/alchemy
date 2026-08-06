@@ -55,9 +55,12 @@
 
 extern u16 Data_02009fc0[];     /* in-image, file offset 0x1fc0: 8 BLDALPHA words */
 
-void Func_080f9010();
-void Func_080000c0();
 
+
+
+extern void Func_02002254();
+extern void Func_0200210c();
+extern void Func_02002132();
 void Func_02000880(void)
 {
     s32 *workspace;
@@ -67,18 +70,18 @@ void Func_02000880(void)
     /* The pointer stored at the IWRAM workspace base, then 178 * 2 bytes in. */
     workspace = (s32 *)(*(char **)0x03001e70 + 356);
 
-    Func_080f9010(216);
+    Func_02002254(216);
 
     for (i = 15; i >= 0; i--) {
         /* Adding 0xffff0000 is subtracting 1.0 in 16.16. */
         workspace[3] = workspace[3] + (s32)0xffff0000;
-        Func_080000c0(4);
+        Func_0200210c(4);
     }
 
     ramp = Data_02009fc0;
     for (i = 7; i >= 0; i--) {
         *(volatile u16 *)0x04000050 = 0x3f42;    /* BLDCNT */
         *(volatile u16 *)0x04000052 = *ramp++;   /* BLDALPHA */
-        Func_080000c0(8);
+        Func_02002132(8);
     }
 }

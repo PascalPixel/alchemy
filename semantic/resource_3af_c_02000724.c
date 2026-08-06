@@ -88,13 +88,23 @@
  * is exact.
  */
 
-extern s32 Func_080000f8(void);
-extern void Func_080f9010(s32 sound_id);
-extern void Func_08009150(void *record, s32 arg1, s32 arg2, s32 arg3);
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a1e8(s32 id, s32 arg1, s32 arg2);
 
+
+
+
+
+
+
+extern s32 Func_020049d6(void);
+extern void Func_02004a2e(void *record, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_02004c2c(s32 sound_id);
+extern void Func_02004bba(s32 id, s32 arg1, s32 arg2);
+extern void Func_02004bc6(s32 id, s32 arg1, s32 arg2);
+extern s32 Func_02004a62(void);
+extern u8 * Func_02004b10(s32 id);
+extern void Func_02004c02(s32 id, s32 arg1, s32 arg2);
+extern u8 * Func_02004b28(s32 id);
+extern void Func_02004aee(void *record, s32 arg1, s32 arg2, s32 arg3);
 s32 Func_02000724(u8 *record)
 {
     s16 *state;
@@ -112,7 +122,7 @@ s32 Func_02000724(u8 *record)
     switch (*state) {
     case 0:
         next = *(u16 *)state + 1;
-        draw = ((u32)Func_080000f8() * 40) >> 16;
+        draw = ((u32)Func_020049d6() * 40) >> 16;
         if (draw != 0) {
             return 1;
         }
@@ -126,7 +136,7 @@ s32 Func_02000724(u8 *record)
         *(s32 *)(record + 40) = 128 << 11;
         *(s32 *)(record + 48) = 128 << 11;
         *(s32 *)(record + 52) = 128 << 10;
-        Func_08009150(record, 176 << 16, 0, 174 << 18);
+        Func_02004a2e(record, 176 << 16, 0, 174 << 18);
         next = *(u16 *)state + 1;
         break;
 
@@ -146,19 +156,19 @@ s32 Func_02000724(u8 *record)
             return 1;
         }
         *state = (s16)(*(u16 *)state + 1);
-        Func_080f9010(152);
+        Func_02004c2c(152);
         if (record[99] != 0) {
-            Func_0808a1b8(22, 208 << 8, 0);
+            Func_02004bba(22, 208 << 8, 0);
         } else {
-            Func_0808a1b8(22, 0, 0);
+            Func_02004bc6(22, 0, 0);
         }
-        draw = ((u32)Func_080000f8() * 4) >> 16;
+        draw = ((u32)Func_02004a62() * 4) >> 16;
         if (draw != 0) {
-            other = Func_0808a080(22);
+            other = Func_02004b10(22);
             *(s32 *)(other + 40) = 128 << 10;
         } else {
-            Func_0808a1e8(22, 0x103, 0);
-            other = Func_0808a080(22);
+            Func_02004c02(22, 0x103, 0);
+            other = Func_02004b28(22);
             *(s32 *)(other + 40) = 192 << 11;
         }
         return 1;
@@ -179,7 +189,7 @@ s32 Func_02000724(u8 *record)
             first = 202;
             second = 173;
         }
-        Func_08009150(record, first << 16, 0, second << 18);
+        Func_02004aee(record, first << 16, 0, second << 18);
         return 1;
 
     case 7:

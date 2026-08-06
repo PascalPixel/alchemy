@@ -79,27 +79,37 @@
  * object's copy is zeroed outright and the acting record's bit 0 is cleared.
  */
 
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_0808a018();          /* scripted-section open  */
-void Func_0808a020();          /* scripted-section close */
-void Func_080000c0();          /* advance the task scheduler */
-void Func_080770c8();          /* one-argument story cue */
-s32 Func_020008cc(void);       /* local: builds the scene and returns its handle */
+           /* record fetch, returns the record */
+          /* scripted-section open  */
+          /* scripted-section close */
+          /* advance the task scheduler */
+          /* one-argument story cue */
+       /* local: builds the scene and returns its handle */
 
 extern s32 Data_0200bc50;      /* in-image 0x02003c50 */
 
+extern u8 * Func_020040f2();
+extern void Func_020040e0();
+extern s32 Func_020012d8(void);
+extern void Func_020040d4();
+extern u8 * Func_02004112();
+extern void Func_02004082();
+extern void Func_0200409c();
+extern void Func_020040b8();
+extern void Func_020040d0();
+extern void Func_0200419a();
 void Func_020009fc(void)
 {
-    u8 *actor = Func_0808a080(0);
+    u8 *actor = Func_020040f2(0);
     u8 *object;
     s32 delta;
 
-    Func_0808a018();
-    Data_0200bc50 = Func_020008cc();
+    Func_020040e0();
+    Data_0200bc50 = Func_020012d8();
     if (Data_0200bc50 == 0) goto close;
 
-    Func_080770c8(592);                        /* 148 << 2 */
-    object = Func_0808a080(Data_0200bc50);
+    Func_020040d4(592);                        /* 148 << 2 */
+    object = Func_02004112(Data_0200bc50);
 
     object[0x55] = 0;
     actor[0x55] &= 0xfe;
@@ -108,24 +118,24 @@ void Func_020009fc(void)
     *(s32 *)(object + 12) += delta;
     *(s32 *)(actor + 12) += delta;
     *(s32 *)(actor + 20) += delta;
-    Func_080000c0(2);
+    Func_02004082(2);
 
     delta = -0x20000;                          /* -2.0 */
     *(s32 *)(object + 12) += delta;
     *(s32 *)(actor + 12) += delta;
     *(s32 *)(actor + 20) += delta;
-    Func_080000c0(10);
+    Func_0200409c(10);
 
     delta = 0x20000;                           /* +2.0, held in r5 */
     *(s32 *)(object + 12) += delta;
     *(s32 *)(actor + 12) += delta;
     *(s32 *)(actor + 20) += delta;
-    Func_080000c0(4);
+    Func_020040b8(4);
 
     *(s32 *)(object + 12) += delta;            /* +2.0 again, same register */
     *(s32 *)(actor + 12) += delta;
     *(s32 *)(actor + 20) += delta;
-    Func_080000c0(4);
+    Func_020040d0(4);
 
     delta = 0x10000;                           /* +1.0; the five sum to zero */
     *(s32 *)(object + 12) += delta;
@@ -133,5 +143,5 @@ void Func_020009fc(void)
     *(s32 *)(actor + 20) += delta;
 
 close:
-    Func_0808a020();
+    Func_0200419a();
 }

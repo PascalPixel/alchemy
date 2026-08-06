@@ -34,12 +34,12 @@
  * fallback inputs) are inferred only from this call shape.
  */
 
-extern void Func_08077168(s32 arg0);
-extern void Func_08077150(s32 arg0);
-extern void Func_0808a200(s32 arg0, s32 arg1);
-extern u8 *Func_08077008(s32 arg0);
-extern s32 Func_03000380(s32 arg0, s32 arg1);
-extern void Func_0808a548(void);
+
+
+
+
+
+
 
 static s32 Clamp0to16384(s32 raw)
 {
@@ -52,6 +52,17 @@ static s32 Clamp0to16384(s32 raw)
     return raw;
 }
 
+extern void Func_02005ad0(s32 arg0);
+extern void Func_02005ad6(s32 arg0);
+extern void Func_02005adc(s32 arg0);
+extern void Func_02005ae2(s32 arg0);
+extern void Func_02005ae8(s32 arg0);
+extern void Func_02005ae6(s32 arg0);
+extern void Func_02005bf0(s32 arg0, s32 arg1);
+extern u8 * Func_02005ab6(s32 arg0);
+extern s32 Func_0200599e(s32 arg0, s32 arg1);
+extern s32 Func_020059e0(s32 arg0, s32 arg1);
+extern void Func_02005d00(void);
 void Func_02001ba8(s32 arg0)
 {
     u8 *object;
@@ -60,17 +71,17 @@ void Func_02001ba8(s32 arg0)
     s32 permuted_19;
     s32 permuted_16;
     s32 permuted_27;
-    Func_08077168(0);
-    Func_08077168(1);
-    Func_08077168(2);
-    Func_08077168(3);
-    Func_08077168(5);
-    Func_08077150(arg0);
+    Func_02005ad0(0);
+    Func_02005ad6(1);
+    Func_02005adc(2);
+    Func_02005ae2(3);
+    Func_02005ae8(5);
+    Func_02005ae6(arg0);
 
     *(s32 *)0x02000434 = arg0;
 
-    Func_0808a200(arg0, 0);
-    object = Func_08077008(arg0);
+    Func_02005bf0(arg0, 0);
+    object = Func_02005ab6(arg0);
 
     permuted_16 = *(u16 *)(object + 0x34);
     *(u16 *)(object + 0x3a) = *(u16 *)(object + 0x36);
@@ -80,16 +91,16 @@ void Func_02001ba8(s32 arg0)
     if (clamped == 0 && *(short *)(object + 0x38) != 0) {
         *(u16 *)(object + 20) = 1;
     }
-    permuted_19 = Clamp0to16384(Func_03000380(*(short *)(object + 0x38) << 14, *(short *)(object + 0x34)));
+    permuted_19 = Clamp0to16384(Func_0200599e(*(short *)(object + 0x38) << 14, *(short *)(object + 0x34)));
     clamped  = permuted_19;
     *(u16 *)(object + 20) = (u16)clamped;
 
-    permuted_27 = Clamp0to16384(Func_03000380(*(short *)(object + 0x3a) << 14, *(short *)(object + 0x36)));
+    permuted_27 = Clamp0to16384(Func_020059e0(*(short *)(object + 0x3a) << 14, *(short *)(object + 0x36)));
     *(u16 *)(object + 22) = (u16)clamped;
     clamped  = permuted_27;
     if (clamped == 0 && *(short *)(object + 0x3a) != 0) {
         *(u16 *)(object + 22) = 1;
     }
 
-    Func_0808a548();
+    Func_02005d00();
 }

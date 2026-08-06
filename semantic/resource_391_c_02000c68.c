@@ -53,47 +53,64 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations are mandatory in overlay sources. */
-void Func_020008c0();
-s32 Func_080770c0();
-u8 *Func_0808a080();
-void Func_080091c0();
-s32 Func_02000244();
-void Func_080091e0();
-void Func_02000d3c();
-void Func_0808a0f0();
 
+
+
+
+
+
+
+
+
+extern void Func_02001530();
+extern s32 Func_0200386c();
+extern u8 * Func_020038a6();
+extern void Func_02003878();
+extern s32 Func_02000ef4();
+extern u8 * Func_020038da();
+extern void Func_020038a8();
+extern void Func_02001582();
+extern void Func_02001588();
+extern s32 Func_020038d2();
+extern void Func_02001a22();
+extern s32 Func_020038e0();
+extern void Func_02003976();
+extern void Func_02003980();
+extern void Func_0200398a();
+extern void Func_02003994();
+extern void Func_0200399e();
 s32 Func_02000c68(void)
 {
     u8 *obj;
 
-    Func_020008c0(10);
+    Func_02001530(10);
 
-    if (Func_080770c0(0x200) != 0) {
+    if (Func_0200386c(0x200) != 0) {
         obj[0x23] = 2;
-        obj = Func_0808a080(10);
+        obj = Func_020038a6(10);
 
-        Func_080091c0(0, 17, 2, 4, 19, 17);
-        Func_02000244(2, 20, 17, 1, 4, 0);
+        Func_02003878(0, 17, 2, 4, 19, 17);
+        Func_02000ef4(2, 20, 17, 1, 4, 0);
 
-        obj = Func_0808a080(10);
-        Func_080091e0(obj, 0);
+        obj = Func_020038da(10);
+        Func_020038a8(obj, 0);
     }
 
-    Func_020008c0(8);
-    Func_020008c0(9);
+    Func_02001582(8);
+    Func_02001588(9);
 
     if (*(s16 *)(Data_02000240 + 450) == 4) {
-        if (Func_080770c0(0x843) == 0) {
-            Func_02000d3c();
+        if (Func_020038d2(0x843) == 0) {
+            Func_02001a22();
         }
     }
 
-    if (Func_080770c0(0x845) != 0) {
-        Func_0808a0f0(17, 0, 0);
-        Func_0808a0f0(18, 0, 0);
-        Func_0808a0f0(19, 0, 0);
-        Func_0808a0f0(20, 0, 0);
-        Func_0808a0f0(21, 0, 0);
+    if (Func_020038e0(0x845) != 0) {
+        Func_02003976(17, 0, 0);
+        Func_02003980(18, 0, 0);
+        Func_0200398a(19, 0, 0);
+        Func_02003994(20, 0, 0);
+        Func_0200399e(21, 0, 0);
     }
 
     return 0;

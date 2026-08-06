@@ -53,37 +53,46 @@
  * the fourth arm) is built with `movs`+`lsls` as a VALUE, not a displacement.
  */
 
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_0808a0d0();
-void Func_0808a1b8();
+           /* record fetch, returns the record */
 
+
+
+extern u8 * Func_0200538a();
+extern void Func_020053d4();
+extern void Func_020053de();
+extern void Func_020053fc();
+extern void Func_0200541c();
+extern void Func_02005426();
+extern void Func_020054c2();
+extern void Func_0200543e();
+extern void Func_020054da();
 void Func_02000f80(void)
 {
-    u16 facing = *(u16 *)(Func_0808a080(0) + 6);
+    u16 facing = *(u16 *)(Func_0200538a(0) + 6);
     s32 amount;
 
     if ((u16)(facing - 0x2000) <= 0x3fff) {
-        Func_0808a0d0(15, 216, 168);
-        Func_0808a0d0(15, 224, 168);
+        Func_020053d4(15, 216, 168);
+        Func_020053de(15, 224, 168);
         amount = 0x2000;
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
         goto emitSharedFacing;
-        Func_0808a0d0(15, 232, 160);
+        Func_020053fc(15, 232, 160);
         amount = 0x5000;
         goto emitSharedFacing;
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {
-        Func_0808a0d0(15, 216, 168);
-        Func_0808a0d0(15, 224, 172);
+        Func_0200541c(15, 216, 168);
+        Func_02005426(15, 224, 172);
         amount = 0xe000;
         goto emitSharedFacing;
     }
     goto emitFourthFacing;
 
 emitSharedFacing:
-    Func_0808a1b8(15, amount, 20);
+    Func_020054c2(15, amount, 20);
     return;
 
 emitFourthFacing:
-    Func_0808a0d0(15, 232, 160);
-    Func_0808a1b8(15, 0x2000, 20);
+    Func_0200543e(15, 232, 160);
+    Func_020054da(15, 0x2000, 20);
 }

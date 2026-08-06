@@ -40,31 +40,38 @@
  */
 
 /* Returns the record for a numbered slot. */
-s32 *Func_0808a080();
-/* Scene flag test: zero means not yet set. */
-s32 Func_080770c0();
-/* Scene flag set. */
-void Func_080770c8();
-void Func_02001ca0();
-void Func_02001ccc();
-void Func_02001c6c();
 
+/* Scene flag test: zero means not yet set. */
+
+/* Scene flag set. */
+
+
+
+
+
+extern s32 * Func_0200423e();
+extern s32 Func_02004232();
+extern void Func_020039d6();
+extern void Func_0200424e();
+extern void Func_02003a16();
+extern void Func_020039f2();
+extern void Func_020039c4();
 void Func_02001cf8(void)
 {
-    s32 *slot = Func_0808a080(10);
+    s32 *slot = Func_0200423e(10);
     s32 height = slot[3] / 0x100000;   /* +12 */
     s32 x = slot[2] / 0x100000;        /* +8  */
     s32 z = slot[4] / 0x100000;        /* +16 */
 
-    if (Func_080770c0(0x300) == 0 && height <= 2) {
-        Func_02001ca0();
-        Func_080770c8(0x300);
+    if (Func_02004232(0x300) == 0 && height <= 2) {
+        Func_020039d6();
+        Func_0200424e(0x300);
     }
 
     if (z == 55) {
-        if (x == 42) Func_02001ccc();
-        if (x == 38) Func_02001ca0();
+        if (x == 42) Func_02003a16();
+        if (x == 38) Func_020039f2();
     } else {
-        Func_02001c6c();
+        Func_020039c4();
     }
 }

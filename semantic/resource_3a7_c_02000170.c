@@ -75,23 +75,36 @@
  * call sites in this overlay.  Those used in conditions need a return type. */
 #include "types.h"
 
-u8 *Func_0808a080();    /* scene-entity record by selector */
-u8 *Func_02000134();    /* tile-occupant lookup (cellX, cellZ); byte-exact */
-s32 Func_080091d8();    /* move permitted? (record, position); > 0 refuses */
-void Func_08009080();   /* set a record's mode */
-void Func_080000c0();   /* frame wait */
-void Func_080f9010();   /* scripted delay, in frames */
-void Func_08009150();   /* place a record at (x, y, z) */
-void Func_08009158();   /* landing/settle call for a moved record */
+    /* scene-entity record by selector */
+    /* tile-occupant lookup (cellX, cellZ); byte-exact */
+    /* move permitted? (record, position); > 0 refuses */
+   /* set a record's mode */
+   /* frame wait */
+   /* scripted delay, in frames */
+   /* place a record at (x, y, z) */
+   /* landing/settle call for a moved record */
 
 /* Packed direction steps at file offset 0x1844 (pool word 0x02009844 under the
  * proven 0x02008000 link base): X step in the high half, Z step in the low. */
 extern s32 Data_02009844[16];
 
+extern u8 * Func_020012b0();
+extern u8 * Func_020002de();
+extern u8 * Func_020012f4();
+extern u8 * Func_02000322();
+extern s32 Func_02001308();
+extern void Func_020012d4();
+extern void Func_020012b4();
+extern void Func_0200139a();
+extern void Func_02001312();
+extern void Func_02001322();
+extern void Func_02001330();
+extern void Func_020013c8();
+extern void Func_02001334();
 void Func_02000170(void)
 {
     s32 permuted_46;
-    u8 *pusher = Func_0808a080(0);
+    u8 *pusher = Func_020012b0(0);
     s32 heading = *(u16 *)(pusher + 6) >> 12;
     s32 step = Data_02009844[heading];
     u8 *target;
@@ -99,7 +112,7 @@ void Func_02000170(void)
     s32 position[3];
     u32 index;
 
-    target = Func_02000134((*(s16 *)(pusher + 10) + (step >> 16)) >> 4,
+    target = Func_020002de((*(s16 *)(pusher + 10) + (step >> 16)) >> 4,
                            (*(s16 *)(pusher + 18) + (s16)step) >> 4);
 
     if (target == 0 || target[89] == 0) {
@@ -108,13 +121,13 @@ void Func_02000170(void)
 
     /* Refuse to push any of the four scripted scene entities. */
     for (index = 0; index <= 3; index++) {
-        if (target == Func_0808a080(index + 11)) {
+        if (target == Func_020012f4(index + 11)) {
             return;
         }
     }
 
     step = Data_02009844[heading];
-    beyond = Func_02000134((*(s16 *)(target + 10) + (step >> 16)) >> 4,
+    beyond = Func_02000322((*(s16 *)(target + 10) + (step >> 16)) >> 4,
                            (*(s16 *)(target + 18) + (s16)step) >> 4);
 
     if (beyond != 0 && (beyond[89] & 1) != 0) {
@@ -128,24 +141,24 @@ void Func_02000170(void)
     position[1] = *(s32 *)(target + 12);
     position[2] = *(s32 *)(target + 16) + (step << 16);
 
-    if (Func_080091d8(target, position) > 0) {
+    if (Func_02001308(target, position) > 0) {
         return;
     }
 
-    Func_08009080(pusher, 8);
-    Func_080000c0(15);
-    Func_080f9010(238);
+    Func_020012d4(pusher, 8);
+    Func_020012b4(15);
+    Func_0200139a(238);
 
     *(s32 *)(target + 48) = 0x3333;
     *(s32 *)(target + 52) = 0x3333;
-    Func_08009150(target, position[0], position[1], position[2]);
+    Func_02001312(target, position[0], position[1], position[2]);
 
     *(s32 *)(pusher + 48) = 0x3333;
     *(s32 *)(pusher + 52) = 0x3333;
-    Func_08009150(pusher, position[0], position[1], position[2]);
+    Func_02001322(pusher, position[0], position[1], position[2]);
 
-    Func_08009158(target);
-    Func_080f9010(288);
+    Func_02001330(target);
+    Func_020013c8(288);
 
     permuted_46 = position[0];
     *(s32 *)(target + 16) = position[2];
@@ -158,5 +171,5 @@ void Func_02000170(void)
     *(s32 *)(target + 44) = 0;
     *(s32 *)(pusher + 64) = (s32)0x80000000;
 
-    Func_08009080(pusher, 1);
+    Func_02001334(pusher, 1);
 }

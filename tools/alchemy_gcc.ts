@@ -274,11 +274,30 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // moves the saved zero before the DMA base load after grouped-DMA formation.
 // Keep it on the same control-last route; the backend fingerprint is narrower
 // than the generic grouped-store reorder and leaves existing owners unchanged.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "080907b0", "08090824"]);
+// 080b010c writes its descriptor immediately after an allocator call: the
+// reference copies the live source and destination into r0 and r1 before
+// loading the pooled control word into r2, the same fingerprint as 08005a78.
+const GROUP_CONTROL_LAST_SOURCES = new Set(["080c08a8", "08005a78", "08005c68", "080907b0", "08090824", "080b010c", "0808fe38"]);
 // 080907b0's second descriptor has a strict value1/base scheduling fingerprint:
 // the immediate, source-address add, base literal, shift, and control literal
 // must be restored to the reference order after grouped-DMA formation.
 const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
+// 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
+// grouped descriptor store whose saved-result and zero registers are not the
+// r5/r6 pair the original repair hard-coded, so it needs the widened form.
+const GROUP_ZERO_ANY_REGISTER_SOURCES = new Set(["0808fe38", "080c08a8"]);
+// 0808fe38's two tail calls each take a long split immediate in r1 and a pooled
+// function address in r0.  The scheduler parks the pool load inside the split;
+// the reference keeps the split contiguous and loads r0 after it.
+const ARG0_AFTER_SPLIT_SOURCES = new Set(["0808fe38"]);
+const CALL_ARG0_POOL_LOAD_SOURCES = new Set(["0808fe38"]);
+const RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES = new Set(["0808fecc"]);
+const SINK_GROUP_POOL_LOADS_SOURCES = new Set(["080c08a8"]);
+const SINK_STACK_ADJUST_SOURCES = new Set(["080c08a8"]);
+const SINK_DEPENDENT_LOAD_SOURCES = new Set(["080c08a8"]);
+const COLLAPSE_DEAD_SCRATCH_SOURCES = new Set(["0800fec8"]);
+const SINK_BLOCK_CONSTANT_SOURCES = new Set(["0800430c"]);
+const SINK_PAST_POOL_LOAD_SOURCES = new Set(["0800430c"]);
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -356,6 +375,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // ever reach it. 080b5ad4 now compiles byte-exact with it (64 bytes) once its
 // tail is spelled as a returned call. See GROUP_VALUE2_IN_PLACE_SOURCES below.
 const GROUPED_DMA_STORE_SOURCES = new Set([
+  "0808fe38", "080c08a8",
   "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "08011590", "080170c4", "08019bac",
   "0801d014", "0801d980",
@@ -366,6 +386,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08091174",
   "08002fb0", "08003e10",
   "080a1090",
+  "080b010c",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -434,6 +455,33 @@ const POSTCALL_BYTE_INCREMENT_R2_SOURCES = new Set(["08098b10"]);
 // the sched2 pool-load-late tie-break; 08091174: the tie-break alone.
 const GROUP_CONTROL_REMATERIALIZE_SOURCES = new Set(["080f377c"]);
 const SCHED_POOL_LOAD_LATE_SOURCES = new Set(["080f377c", "08091174"]);
+// Thumb leaf link-register class, 2026-08-06.  THUMB_INITIAL_ELIMINATION_OFFSET
+// asks thumb_far_jump_used_p before branch lengths exist, so any conditional
+// branch reads as a far jump and the pessimistic answer is latched in
+// cfun->machine->far_jump_used for the rest of the compilation.  Every Thumb
+// leaf with a branch then saves lr it never needs.  -fthumb-leaf-no-lr
+// suppresses that answer only where the frame is provably empty, so no
+// elimination offset can move.
+const THUMB_LEAF_NO_LR_SOURCES = new Set(["080f9a30", "080fa1ac", "080fa264"]);
+// The reference compiler predates ifcvt.c (gcc 2.95 has no if-conversion pass
+// at all), so a two-armed if/else stays two basic blocks instead of collapsing
+// into a conditional move.  Measured over all 692 main-image owners the flag
+// lowers residue on 47 and closes none by itself; it is a structural
+// precondition, not a finisher.
+const THUMB_NO_IF_CONVERT_SOURCES = new Set(["080f9a30", "080fa1ac", "080fa264"]);
+// Thumb owners whose reference keeps the source order of two independent loads
+// that the second scheduler swaps.  Only sched2 is disabled; the first pass
+// still runs.  Witness 080f9a30.
+const SCHED2_OFF_THUMB_SOURCES = new Set(["080f9a30"]);
+// Eight digits for -mlow-reg-order=: the first four order r0-r3 in the entry
+// block, the last four in every other block.  The port hands out {3, 2, 1, 0}
+// everywhere, which shows up as a whole-function renaming of the low registers
+// against an otherwise identical instruction sequence.  Sweeping all 576
+// entry/default pairs is how these are found, not guessing.
+const THUMB_LOW_REG_ORDER_SOURCES = new Map([
+  ["080f9a30", "01231230"],
+  ["080fa264", "30120123"],
+]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -1821,6 +1869,32 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
+    ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
+      ? ["-fthumb-group-zero-any-register"]
+      : []),
+    ...(ARG0_AFTER_SPLIT_SOURCES.has(stem) ? ["-fthumb-arg0-after-split"] : []),
+    ...(CALL_ARG0_POOL_LOAD_SOURCES.has(stem)
+      ? ["-fthumb-call-arg0-pool-load"]
+      : []),
+    ...(RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES.has(stem)
+      ? ["-fthumb-return-value-before-stack-adjust"]
+      : []),
+    ...(SINK_GROUP_POOL_LOADS_SOURCES.has(stem)
+      ? ["-fthumb-sink-group-pool-loads"]
+      : []),
+    ...(SINK_STACK_ADJUST_SOURCES.has(stem) ? ["-fthumb-sink-stack-adjust"] : []),
+    ...(SINK_DEPENDENT_LOAD_SOURCES.has(stem)
+      ? ["-fthumb-sink-dependent-load"]
+      : []),
+    ...(COLLAPSE_DEAD_SCRATCH_SOURCES.has(stem)
+      ? ["-fthumb-collapse-dead-scratch"]
+      : []),
+    ...(SINK_BLOCK_CONSTANT_SOURCES.has(stem)
+      ? ["-fthumb-sink-block-constant"]
+      : []),
+    ...(SINK_PAST_POOL_LOAD_SOURCES.has(stem)
+      ? ["-fthumb-sink-past-pool-load"]
+      : []),
     ...(GROUP_VALUE1_BEFORE_BASE_SOURCES.has(stem)
       ? ["-fthumb-group-value1-before-base"]
       : []),
@@ -1878,6 +1952,12 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(SCHED_POOL_LOAD_LATE_SOURCES.has(stem)
       ? ["-fthumb-sched-pool-load-late"]
+      : []),
+    ...(SCHED2_OFF_THUMB_SOURCES.has(stem) ? ["-fno-schedule-insns2"] : []),
+    ...(THUMB_LEAF_NO_LR_SOURCES.has(stem) ? ["-fthumb-leaf-no-lr"] : []),
+    ...(THUMB_NO_IF_CONVERT_SOURCES.has(stem) ? ["-fthumb-no-if-convert"] : []),
+    ...(THUMB_LOW_REG_ORDER_SOURCES.has(stem)
+      ? [`-mlow-reg-order=${THUMB_LOW_REG_ORDER_SOURCES.get(stem)}`]
       : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
@@ -2200,14 +2280,22 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // with the linux -fno-cse-shift-immediate build) -- admitted from a
         // green `bun run verify` on this host, 2026-08-05.
         "df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3",
+        // -fthumb-group-zero-any-register (2026-08-06): widens the existing
+        // stack-zero-before-base repair so it reads the saved-result and zero
+        // registers off the insns instead of requiring r5/r6. Default-off and
+        // source-routed, so unrouted codegen is unchanged. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "f92badaf03dbcfc4a79f0c4da9ee5159186f48dd8328403cbf05734a1aa21f42",
       ],
       cpp: [
         "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
         "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
+        "96ef7e4d9e3932817c023712850e3a15f0eb5b33904215c63c4eda4c17b43b1a",
       ],
       tradcpp: [
         "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
         "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
+        "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
@@ -2235,6 +2323,53 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // twice clean after ruling out pristine-compiler nondeterminism.
         // Admitted from a green `bun run verify`, 2026-08-06.
         "e68ef21ee84393f9ca196f05731cd1688e811dec61015e164d9b72fcdab62ca7",
+        // -fthumb-group-zero-any-register (2026-08-06): the stack-zero
+        // grouped-DMA repair now reads its saved-result and zero registers
+        // off the insns rather than requiring r5/r6, so objects with the
+        // same source shape but a different allocation reach the reference
+        // order. Default-off and source-routed. Cross-host rule: rebuild+pin
+        // linux from the same fork source before a cloud session uses it.
+        "45d3b62f28b91b005df4063493381bf77a28e03850463a68457e5409fd486bc2",
+        // 2026-08-06: adds -fthumb-call-arg0-pool-load, which lets the existing
+        // arg1-before-arg0 call reordering accept a pool-loaded address as the
+        // r0 argument instead of only a plain integer constant.
+        "d2ac7c989cce4c289950cc76cbf269f6057f4eb42b2a999dd9c4e756f866858d",
+        // 2026-08-06: adds -fthumb-arg0-after-split, the inverse of
+        // -fthumb-next-arg-between-split: it pushes an r0 pool load that the
+        // scheduler parked inside a long split immediate down past the shift.
+        "cee7a5014ceb6ff7f702dc0b12f5378a57f92a100f6e5da772f54930604f0284",
+        "0a5442b5dcc96c3acb88597bb5074cedf6af996869708a0c840feb143f9d93a8",
+        "943a15a0679086634f873ef7403ca4fde941da0845bf5be3bd2d3f2744228855",
+        "943a15a0679086634f873ef7403ca4fde941da0845bf5be3bd2d3f2744228855",
+        "541728170855e1f3002918fde83f91824e70f9e2d19cd50e93029529dae5b547",
+        "735821ddefdabb338994007671c41b5ffd3a02653411fd1613e9fc8a5e7e722b",
+        "f3f9b5276f4aab31ef2d3ebb85eb5a65e3cc4050900d403ef2622ed1d60c7b2b",
+        // 2026-08-06: adds -fthumb-leaf-no-lr. THUMB_INITIAL_ELIMINATION_OFFSET
+        // asks whether the function contains a far jump before branch lengths
+        // are known, so every conditional branch reads as far and the answer is
+        // latched permanently -- a Thumb leaf with any if/else then pushes and
+        // pops a link register it never needed. With an empty frame and no
+        // memory arguments the answer cannot move an elimination offset, so the
+        // flag defers it to the prologue. Default-off and source-routed.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "e51f4b67d08661edf2ca533df45025ddb9dd31503f761f07b17b1a9b28289ac0",
+        // 2026-08-06: adds -fthumb-no-if-convert, which disables the
+        // if-conversion pass. It rewrites a two-armed if/else into "set the
+        // fallthrough value, then conditionally overwrite it", dropping one
+        // branch and hoisting the surviving constant above the compare; the
+        // reference build keeps both arms. Default-off and source-routed.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "f4509bfbe10781093b5f16e84854ef7d91729e5972f2136e078b1c77959ab1c4",
+        // Adds -mlow-reg-order=NNNN: overrides the leading four entries of
+        // REG_ALLOC_ORDER with an explicit permutation of r0-r3, so the
+        // register-permutation near-miss class can be swept instead of guessed.
+        "1dc83047ac1e444c2c399ca54c91538ab562c1ff7ced02ec946812148f8bf43c",
+        // Same, with toplev.o rebuilt so the option table actually carries the
+        // new -mlow-reg-order= entry (the 1dc83047 build had a stale toplev.o).
+        "3bae0b4cc3685eaa14c674c4b859f67652bd15751613c48c43dd1e688ea7d584",
+        // -mlow-reg-order= now also accepts eight digits: the first four order
+        // the entry block, the last four every other block.
+        "43ecbc402bd3e6abff7ea434414c0ef9f3001836cc689a6f1bc06bc896b44881",
       ],
     },
     gs2: {

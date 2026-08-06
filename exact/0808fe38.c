@@ -10,6 +10,12 @@ struct State_0808fe38 {
     u8 padding538[8];
 };
 
+struct DmaChannel_0808fe38 {
+    const void *source;
+    void *destination;
+    u32 control;
+};
+
 void *Func_080048f4(s32 kind, s32 size);
 void Func_080041d8(void (*callback)(void), s32 period);
 void Func_0808f52c(void);
@@ -19,21 +25,19 @@ void Func_0808fe38(s32 value)
 {
     struct State_0808fe38 *state;
     u32 zero;
-    volatile u32 *dma;
-    u32 source;
-    u32 destination;
-    u32 control;
+    u32 *zeroPtr;
 
     state = Func_080048f4(31, sizeof(*state));
-    zero = 0;
+    {
+        volatile struct DmaChannel_0808fe38 *dma;
 
-    dma = (volatile u32 *)0x040000d4;
-    source = (u32)&zero;
-    destination = (u32)state;
-    control = 0x85000150;
-    dma[0] = source;
-    dma[1] = destination;
-    dma[2] = control;
+        zeroPtr = &zero;
+        *zeroPtr = 0;
+        dma = (volatile struct DmaChannel_0808fe38 *)0x040000d4;
+        dma->source = zeroPtr;
+        dma->destination = state;
+        dma->control = 0x85000150;
+    }
 
     state->value528 = value;
     state->value52a = 0;

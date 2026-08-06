@@ -2204,14 +2204,22 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // with the linux -fno-cse-shift-immediate build) -- admitted from a
         // green `bun run verify` on this host, 2026-08-05.
         "df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3",
+        // -fthumb-group-zero-any-register (2026-08-06): widens the existing
+        // stack-zero-before-base repair so it reads the saved-result and zero
+        // registers off the insns instead of requiring r5/r6. Default-off and
+        // source-routed, so unrouted codegen is unchanged. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "f92badaf03dbcfc4a79f0c4da9ee5159186f48dd8328403cbf05734a1aa21f42",
       ],
       cpp: [
         "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
         "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
+        "96ef7e4d9e3932817c023712850e3a15f0eb5b33904215c63c4eda4c17b43b1a",
       ],
       tradcpp: [
         "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
         "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
+        "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
@@ -2239,6 +2247,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // twice clean after ruling out pristine-compiler nondeterminism.
         // Admitted from a green `bun run verify`, 2026-08-06.
         "e68ef21ee84393f9ca196f05731cd1688e811dec61015e164d9b72fcdab62ca7",
+        // -fthumb-group-zero-any-register (2026-08-06): the stack-zero
+        // grouped-DMA repair now reads its saved-result and zero registers
+        // off the insns rather than requiring r5/r6, so objects with the
+        // same source shape but a different allocation reach the reference
+        // order. Default-off and source-routed. Cross-host rule: rebuild+pin
+        // linux from the same fork source before a cloud session uses it.
+        "45d3b62f28b91b005df4063493381bf77a28e03850463a68457e5409fd486bc2",
       ],
     },
     gs2: {

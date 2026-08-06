@@ -1379,16 +1379,6 @@
       ]
     },
     {
-      "entry": "0x080f9a30",
-      "evidence": "Single 32-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n that skips the else arm of the head/previous test; the two arms are distinct stores and are kept distinct. One direct caller at 0x080f9a6a, and the address+1 word at 0x080fb828 publishes it as a callback.",
-      "executable_ranges": [
-        {
-          "address": "0x080f9a30",
-          "size": 32
-        }
-      ]
-    },
-    {
       "entry": "0x080f9a80",
       "evidence": "Core-drive census row (kind nonstandard_thumb_call_module, retention keep_structured_asm, manifest evidence tags manual_return_address_preserved_in_ip,direct_bl_clobbers_lr,no_lr_stack_save,approved_compiler_call_prologue_mismatch,byte_exact_reconstruction). The tag is a PROCEDURAL exclusion (this shape does not match the compiler's own prologue-emission pattern, so the automatic c_candidate walk skips it) not a cannot-express contract -- unlike 0800070c's approved_compiler_cannot_express_contract tag, which is a genuine hard exclusion. Admitted under the 2026-07-31 rule that a keep_structured_asm label alone is not disqualifying; body read confirms an ordinary leaf-calling-leaf shape with no register trick that C cannot reproduce behaviourally (the mov ip,lr / bx ip dodge is an optimisation a semantic draft need not match byte-for-byte). Fourteen-plus already-registered sound-command-handler entries elsewhere in this file (0x080f9ac0, 0x080f9ae0, 0x080f9afc, 0x080f9b40, 0x080f9b4c, 0x080f9b60, 0x080f9ba4, 0x080f9bb8, 0x080f9bcc, 0x080f9be0, 0x080f9bf4, 0x080f9c00, 0x080f9c18, 0x080f9c2c) each independently describe calling into 'the retained 0x080f9a80 row' as an un-owned dependency; those descriptions remain accurate about THEIR OWN bytes regardless of whether this row now also has its own C form, and this entry does not contradict or supersede them. asm/080f9a80.s packs four functions sharing tails (its own comment: '080f9a98 and 080f9a9a share a tail, keep as one source unit'): Func_080f9a80 (copies 36 words from the fixed table Data_080fb7a0, each routed through the shared validator with the table element's own address as the candidate), Func_080f9a98 (reads a byte at its pointer argument, then validates), Func_080f9a9a (the validator itself, two arguments), and Func_080f9ab4 (reads-and-advances a byte cursor at object+64, reached by a bare tail branch into Func_080f9a9a). The validator's branch shape is transcribed literally rather than algebraically simplified, even though two of its arms are reachable only in combination (documented in semantic/main/080f9a80.c's own header). Span: 64 bytes, matching the census row exactly, no literal pool.",
       "executable_ranges": [
@@ -1603,16 +1593,6 @@
       ]
     },
     {
-      "entry": "0x080fa1ac",
-      "evidence": "One 26-byte keep_structured_asm row holding a single leaf with no prologue and no call: one epilogue, the bx lr at 0x080fa1c4, and no inbound branch from outside the row. Nothing is excluded from the row itself: 26 bytes of code with no pool word; the 2-byte adjacent_section_alignment filler at 0x080fa1c6 is a separate manifest row and is not claimed here. r0 is never read or written, so the bx lr leaves no result and the function is void. Two byte stores clear track+0x16 and track+0x1a with the same zero register, then ldrb r2,[r1,#24] selects between movs r2,#12 and movs r2,#3; the two arms are distinct constants and are kept distinct, and they join at the shared read-modify-write ldrb r3,[r1,#0]; orrs r3,r2; strb r3,[r1,#0] on the track status byte, which is expressed with a single assignment of the selected mask rather than duplicated per arm. bun tools/main_xref.ts 080fa1ac reports three direct callers, at 0x080fa0ce, 0x080fa1e0 and 0x080fa1f4, and no Thumb pointer; the latter two are the bl inside the 0x080fa1d4 and 0x080fa1e8 handlers, taken when their operand is zero.",
-      "executable_ranges": [
-        {
-          "address": "0x080fa1ac",
-          "size": 26
-        }
-      ]
-    },
-    {
       "entry": "0x080fa1d4",
       "evidence": "One 18-byte keep_structured_asm row holding a single leaf handler: mov ip,lr at 0x080fa1d4 saves the return address across the two calls, one epilogue, the bx ip at 0x080fa1e4, reached by the bne.n non-zero arm at 0x080fa1de and by fall-through from the second call, and no inbound branch from outside the row. Nothing is excluded from the row itself: 18 bytes of code with no pool word and no alignment filler in it. Both bl targets are outside this owner and already reconstructed elsewhere: the bl at 0x080fa1d6 targets Func_080fa1c8, the player's operand reader, whose exact C at src/080fa1c8.c advances the stream pointer at track+0x40 and reads the byte, returning it in r3 \u2014 the byte-exact source does not model that result because it has no use for it, while this handler does, and the reconstruction declares it with the byte result; the bl at 0x080fa1e0 targets Func_080fa1ac, the 26-byte routine reconstructed in this same batch, which clears track+0x16 and track+0x1a and raises 0x0c or 0x03 in the status byte. The stored operand goes to track+0x19, and the cmp r3,#0 that gates the second call tests the byte that was stored, not a reloaded copy. bun tools/main_xref.ts 080fa1d4 reports calls=0 branches=0 word_refs=0 and two Thumb pointers, published at 0x080fa640 and 0x080fb7e4, so both callers are table dispatchers and there is no direct call site.",
       "executable_ranges": [
@@ -1629,16 +1609,6 @@
         {
           "address": "0x080fa1e8",
           "size": 18
-        }
-      ]
-    },
-    {
-      "entry": "0x080fa264",
-      "evidence": "One 28-byte row holding a single leaf in its first 20 bytes: no prologue, one epilogue, the bx lr at 0x080fa276, reached by the bne.n signature-mismatch early-out at 0x080fa26c and by fall-through, no call of any kind and no inbound branch from outside the row. Excluded (8 bytes): the two-word pool at 0x080fa278 (0x68736d53, the 'Smsh' signature literal loaded by ldr r0,[pc,#12], and 0x7fffffff, the mask loaded by ldr r1,[pc,#8]); there is no alignment filler and the row ends flush at 0x080fa280. The opening adds r2,r0,#0 is the register copy that lets r0 be reused for the two pool loads; r0 is written without being saved, the ordinary call-used-r4-style convention of this image, and it is assigned before each use and never read live-in after the copy. r0 holds the pool literal on the mismatch arm and the updated flag word on the matching arm, so it is not a consistent result and the bx lr returns nothing; the function is void. The word at track+0x34 is compared against the signature and only the matching arm does ldr r0,[r2,#4]; ands r0,r1; str r0,[r2,#4], clearing bit 31 of the flag word at track+0x04 \u2014 the same bit the 0x080fa4ec sibling clears. bun tools/main_xref.ts 080fa264 reports four direct callers, at 0x080fa3e8, 0x080fa446, 0x080fa486 and 0x080fa4a2, and no Thumb pointer.",
-      "executable_ranges": [
-        {
-          "address": "0x080fa264",
-          "size": 20
         }
       ]
     },

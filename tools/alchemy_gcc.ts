@@ -937,6 +937,11 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_37f:17c0 (748 bytes) — found by a 139-candidate singles cohort over
+  // the whole same-size band; this one flag takes it from 36 differing halfwords
+  // to byte-exact, no source change.
+  "semantic/resource_37f_c_020017c0.c",
+  "exact/resource_37f_c_020017c0.c",
   // resource_394:07e0 needed the argument-feeding-store exclusion refinement
   // to this flag (fork commit 25b15cd) plus cse-pool-immediate-off (see that
   // set) to reach byte-exact; 2026-08-06.

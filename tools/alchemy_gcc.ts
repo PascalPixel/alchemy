@@ -937,7 +937,6 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // three-argument call site, same low-destination tie-break tell as
   // resource_39e:2484 (probed exact, 2026-08-04).
   "exact/resource_3c8_c_02002f30.c",
-  "semantic/resource_3c8_c_02002f30.c",
   // Pair-sweep exacts, 2026-08-05, paired with -fno-cse-two-insn-immediate
   // (see that set's matching entries).
   "exact/resource_3b9_c_02002904.c",
@@ -1367,6 +1366,17 @@ const FIXED_R7_OVERLAY_SOURCES = new Set([
 const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_372_c_02000ec4.c",
 ]);
+// -fsched-call-dest-descending is -fsched-low-dest-first's gate with the
+// comparison negated: the same argument setters in front of a call, ordered
+// highest register first.  NEGATIVE RESULT, 2026-08-06: the flag exists in the
+// fork (commit 1e1502b) and works, but no source routes to it and none should.
+// It was built to close resource_3c8:2f30, whose residual is the pair
+// `lsls r2, #18' / `lsls r0, #18' either side of a `movs r1, #0'.  Measured on
+// that owner: routed low-dest-first 2 differing halfwords, descending 14,
+// neither 11 -- because the reference mixes the two directions inside one
+// function (ascending at its first three call sites, descending at the fourth).
+// A global direction therefore cannot be the model; do not re-derive this.
+const SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES = new Set<string>([]);
 // The fork proves a store and a later load at two different constant offsets off
 // one base independent, leaves no edge between them, and lets the load's longer
 // dependence chain outrank the store; the reference keeps source order. The mode
@@ -1935,6 +1945,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fsched-high-dest-first"]
       : []),
+    ...(SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-call-dest-descending"]
+      : []),
     ...(FIXED_R7_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-ffixed-r7"] : []),
     ...(NO_SCHED_ALIAS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-sched-alias"]
@@ -2204,14 +2217,32 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // with the linux -fno-cse-shift-immediate build) -- admitted from a
         // green `bun run verify` on this host, 2026-08-05.
         "df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "e79dc274f3293562ecf6c2f00a48ce2278c7819a85f690bda8b9dc3ba9fdcb29",
       ],
       cpp: [
         "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
         "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "51ec935a978ef193742e8218df50ae41b15179ff60495ba2bdb420d852e06d14",
       ],
       tradcpp: [
         "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
         "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
@@ -2239,6 +2270,12 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // twice clean after ruling out pristine-compiler nondeterminism.
         // Admitted from a green `bun run verify`, 2026-08-06.
         "e68ef21ee84393f9ca196f05731cd1688e811dec61015e164d9b72fcdab62ca7",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "dfe6fd74ceeae8d33695b6ac06285cedab253e06866a3dc569ba3657583ebdf5",
       ],
     },
     gs2: {

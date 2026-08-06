@@ -402,6 +402,16 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 // tie-break at all -- within one function it alternates -- so it must come from
 // the original source's argument expressions, and no whole-function flag can
 // model it.  The fork change was reverted and the digest restored.
+// -fthumb-call-literal-arg1-first: the same transposition as
+// -fthumb-call-arg1-before-arg0, but without that mode's "only undo a
+// scheduler inversion" gate, and restricted to a pair of plain literals.  Some
+// references write `movs r1,#b` ahead of `movs r0,#a` for a call the scheduler
+// never touched, which the older mode cannot reach.
+const CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
+  "semantic/resource_3ae_c_020002dc.c",
+  "exact/resource_3ae_c_020002dc.c",
+]);
+
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   "exact/resource_38f_c_020008ec.c",
   // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair
@@ -972,7 +982,11 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // hand-permute; this is the model-divergence tier.
   "semantic/resource_377_c_020001e0.c",
   "semantic/resource_3a2_c_02000ac0.c",
+  // resource_3ae:02dc closed on 2026-08-07: this mode plus
+  // -fthumb-call-literal-arg1-first plus splitting the nested call
+  // `Outer(Inner(0))' into two statements in reference order.
   "semantic/resource_3ae_c_020002dc.c",
+  "exact/resource_3ae_c_020002dc.c",
   "semantic/resource_399_c_020002b8.c",
   "semantic/resource_39f_c_020021b0.c",
   // Tier-2 cohort sweep, 2026-08-06: the same argument-setter ordering tell
@@ -1929,6 +1943,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-orr-dead-input-reuse"]
       : []),
+    ...(CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-literal-arg1-first"]
+      : []),
     ...(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg1-before-arg0"]
       : []),
@@ -2322,6 +2339,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+        // -fthumb-call-literal-arg1-first: the existing
+        // -fthumb-call-arg1-before-arg0 transform without its "only undo a
+        // scheduler inversion" gate, restricted to a pair of plain literals.
+        // Witness resource_3ae:02dc; admitted 2026-08-07. Cross-host rule:
+        // rebuild+pin linux from the same commit before the next cloud
+        // session touches these routes.
+        "fdf336d0b046fbae55fb670ddd0852730b65cd7ebcd173827cd0e0cd9039b768",
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",

@@ -274,7 +274,10 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // moves the saved zero before the DMA base load after grouped-DMA formation.
 // Keep it on the same control-last route; the backend fingerprint is narrower
 // than the generic grouped-store reorder and leaves existing owners unchanged.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "080907b0", "08090824"]);
+// 080b010c writes its descriptor immediately after an allocator call: the
+// reference copies the live source and destination into r0 and r1 before
+// loading the pooled control word into r2, the same fingerprint as 08005a78.
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "080907b0", "08090824", "080b010c"]);
 // 080907b0's second descriptor has a strict value1/base scheduling fingerprint:
 // the immediate, source-address add, base literal, shift, and control literal
 // must be restored to the reference order after grouped-DMA formation.
@@ -366,6 +369,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08091174",
   "08002fb0", "08003e10",
   "080a1090",
+  "080b010c",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the

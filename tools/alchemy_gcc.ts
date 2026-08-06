@@ -296,6 +296,8 @@ const SINK_GROUP_POOL_LOADS_SOURCES = new Set(["080c08a8"]);
 const SINK_STACK_ADJUST_SOURCES = new Set(["080c08a8"]);
 const SINK_DEPENDENT_LOAD_SOURCES = new Set(["080c08a8"]);
 const COLLAPSE_DEAD_SCRATCH_SOURCES = new Set(["0800fec8"]);
+const SINK_BLOCK_CONSTANT_SOURCES = new Set(["0800430c"]);
+const SINK_PAST_POOL_LOAD_SOURCES = new Set(["0800430c"]);
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -1860,6 +1862,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(COLLAPSE_DEAD_SCRATCH_SOURCES.has(stem)
       ? ["-fthumb-collapse-dead-scratch"]
       : []),
+    ...(SINK_BLOCK_CONSTANT_SOURCES.has(stem)
+      ? ["-fthumb-sink-block-constant"]
+      : []),
+    ...(SINK_PAST_POOL_LOAD_SOURCES.has(stem)
+      ? ["-fthumb-sink-past-pool-load"]
+      : []),
     ...(GROUP_VALUE1_BEFORE_BASE_SOURCES.has(stem)
       ? ["-fthumb-group-value1-before-base"]
       : []),
@@ -2298,7 +2306,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // scheduler parked inside a long split immediate down past the shift.
         "cee7a5014ceb6ff7f702dc0b12f5378a57f92a100f6e5da772f54930604f0284",
         "0a5442b5dcc96c3acb88597bb5074cedf6af996869708a0c840feb143f9d93a8",
-        "fb0fbd68679791fe33ea5dbc5b56d4f8044a15fe3b672f1684f9fbfbc5737814",
+        "e49dc6ee66e78f99e06123a25b616313d49710447a692a8076fdd37d5d2c05c2",
+        "e49dc6ee66e78f99e06123a25b616313d49710447a692a8076fdd37d5d2c05c2",
         "541728170855e1f3002918fde83f91824e70f9e2d19cd50e93029529dae5b547",
         "735821ddefdabb338994007671c41b5ffd3a02653411fd1613e9fc8a5e7e722b",
         "f3f9b5276f4aab31ef2d3ebb85eb5a65e3cc4050900d403ef2622ed1d60c7b2b",

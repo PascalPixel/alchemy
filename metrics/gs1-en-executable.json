@@ -9987,24 +9987,6 @@
         },
         {
           "start": 33560512,
-          "end": 33561222,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33561222,
-          "end": 33561224,
-          "kind": "executable_alignment",
-          "evidence": "resource_37f_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33561224,
-          "end": 33561260,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33561260,
           "end": 33561370,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

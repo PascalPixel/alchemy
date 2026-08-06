@@ -113,10 +113,11 @@ void Func_02001264(void)
 {
     u8 **runtime_globals = (u8 **)0x03001ebc;
     u8 *runtime;
-    s32 a = 8;
-    s32 b = 3;
+    s32 a;
+    s32 b;
 
     Func_02003d14(-1, -1, -1, 0);
+    b = 3;
     Func_02003c20(30, 43, 32, 40, a, b);
     Func_02003c32(30, 43, 33, 39, a, 1);
     Func_02003c42(30, 43, 36, 38, b, b);

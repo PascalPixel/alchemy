@@ -99,10 +99,10 @@ s32 Func_02000398(void)
     volatile u16 *transferred = (volatile u16 *)0x02002238;
     volatile u16 *linkState = (volatile u16 *)0x03001f64;
     u16 scratch[24];
-    s32 expected = 340;
+    s32 expected;
     s32 handle;
-    s32 budget = 900;
-    s32 result = 0;
+    s32 budget;
+    s32 result;
     u32 block;
     s32 stalls;
     s32 status;
@@ -115,6 +115,7 @@ s32 Func_02000398(void)
         status = Func_02001b60();
         stalls = 0;
         if (status == -1) {
+            result = 0;
             result = status;
             goto close;
         }
@@ -124,9 +125,11 @@ s32 Func_02000398(void)
             if (status == 0) {
                 break;
             }
+            expected = 340;
             if ((s32)*transferred > expected) {
                 goto fail;
             }
+            budget = 900;
             budget--;
             Func_02001bd4(1);
             if (budget < 0 || (*linkState & 3) != 3) {

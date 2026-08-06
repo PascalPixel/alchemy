@@ -51,7 +51,7 @@ extern void Func_02000c20();
 extern void Func_02000c5c();
 void Func_02000334(void)
 {
-    int mode = 7;
+    int mode;
 
     Func_02000bd6();
 
@@ -66,6 +66,7 @@ void Func_02000334(void)
 
     Func_02000c82(8, 1);
 
+    mode = 7;
     Func_02000c0e(6, 27, 1, 1, mode, 27);
     Func_02000c20(9, 26, 2, 1, mode, 26);
 

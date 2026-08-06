@@ -955,6 +955,30 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_3c4_c_02002040.c",
   "exact/resource_3b9_c_020025f0.c",
   "semantic/resource_3b9_c_020025f0.c",
+  // Reconstruction-wave exacts, 2026-08-05: resource_3b4:2334 (paired with
+  // cse-shift-immediate-off) and resource_3b4:0ad0 (paired with
+  // cse-pool-immediate-off + cse-shift-immediate-off) stop the two-insn-
+  // immediate hoist and restore the movs interleave; resource_3ab:0c10/0b0c
+  // sink a negs/lsls below argument staging; resource_3ab:15bc (paired with
+  // cse-shift-immediate-off) supplies the interleave after the control-word
+  // rematerialisation gate stops the cross-call CSE; resource_3c4:1aba
+  // (paired with cfg-thread-jumps-off + cse-shift-immediate-off) is the
+  // same interleave after jump-threading is disabled; resource_3b2:1214
+  // swaps the two pool ldrs and hence their pool word order.
+  "exact/resource_3b4_c_02002334.c",
+  "semantic/resource_3b4_c_02002334.c",
+  "exact/resource_3b4_c_02000ad0.c",
+  "semantic/resource_3b4_c_02000ad0.c",
+  "exact/resource_3ab_c_02000c10.c",
+  "semantic/resource_3ab_c_02000c10.c",
+  "exact/resource_3ab_c_02000b0c.c",
+  "semantic/resource_3ab_c_02000b0c.c",
+  "exact/resource_3ab_c_020015bc.c",
+  "semantic/resource_3ab_c_020015bc.c",
+  "exact/resource_3c4_c_02001aba.c",
+  "semantic/resource_3c4_c_02001aba.c",
+  "exact/resource_3b2_c_02001214.c",
+  "semantic/resource_3b2_c_02001214.c",
   // resource_3c1:0120 and :0194 (byte-identical twins) negate the shake
   // argument r2 for a three-argument call; the reference sets r0/r1 before
   // the negs, the low-destination tie-break, same tell as resource_38e:045c.
@@ -1298,6 +1322,17 @@ const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "semantic/resource_3b9_c_020004c8.c",
   "exact/resource_3bf_c_0200206c.c",
   "semantic/resource_3bf_c_0200206c.c",
+  // Reconstruction-wave exacts, 2026-08-05, paired with sched-low-dest-first
+  // (and cse-pool-immediate-off / cfg-thread-jumps-off where noted):
+  // resource_3b4:2334/0ad0, resource_3ab:15bc, resource_3c4:1aba.
+  "exact/resource_3b4_c_02002334.c",
+  "semantic/resource_3b4_c_02002334.c",
+  "exact/resource_3b4_c_02000ad0.c",
+  "semantic/resource_3b4_c_02000ad0.c",
+  "exact/resource_3ab_c_020015bc.c",
+  "semantic/resource_3ab_c_020015bc.c",
+  "exact/resource_3c4_c_02001aba.c",
+  "semantic/resource_3c4_c_02001aba.c",
 ]);
 // Lane-C exacts routed through SCHED_LOW_DEST_FIRST above plus the CSE sets:
 // the 382:1238 / 385:09f8 triples and the 3c4 / 3b9 pairs are annotated at
@@ -1373,6 +1408,11 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // Reconstruction-wave exact, 2026-08-05: resource_3b4:0ad0 rematerialises
+  // its 0x9c8 pool constant (paired with cse-shift-immediate-off and
+  // sched-low-dest-first at those sets).
+  "exact/resource_3b4_c_02000ad0.c",
+  "semantic/resource_3b4_c_02000ad0.c",
   // resource_3c8:16a4 reloads its recurring 0x201 pool word at each of its
   // two use sites instead of caching it in a callee-saved register across
   // the intervening calls; this flag takes it from a 4-byte span overflow
@@ -1462,6 +1502,24 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
   // reload. Mode cohort: exact under alias-strict-off alone.
   "exact/resource_397_c_020002a0.c",
 ]);
+// Grouped-DMA control-word class (fork commit cee872a). Path-keyed because
+// this mode's stem-keyed main-image counterpart (SCHED_POOL_LOAD_LATE_SOURCES)
+// would collide across overlays sharing an offset; see that set's comment.
+const SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES = new Set([
+  // resource_3b3:2384 needs the lsls-before-ldr staging at its 0xd0 call
+  // after cse-rerun-loop-off drops the cross-block pool CSE from the push
+  // list (reconstruction wave, 2026-08-05).
+  "exact/resource_3b3_c_02002384.c",
+  "semantic/resource_3b3_c_02002384.c",
+]);
+// resource_3c4:1aba's loop entry is jump-threaded away from the reference's
+// source-order guard; disabling thread-jumps restores it (reconstruction
+// wave, 2026-08-05, paired with cse-shift-immediate-off and
+// sched-low-dest-first at those sets). No prior route used this stock switch.
+const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
+  "exact/resource_3c4_c_02001aba.c",
+  "semantic/resource_3c4_c_02001aba.c",
+]);
 // Measured scope of this flag, so it is not mistaken for a global build
 // setting: swept across all 175 overlay owners whose first divergence is
 // register-allocation:push, it left 110 unchanged, improved 37, and made 26
@@ -1472,6 +1530,13 @@ const NO_STRICT_ALIASING_OVERLAY_SOURCES = new Set([
 // which looked like a global signal and is not one -- the regressions only
 // appear at full scale. Route it per row, on a byte-exact result.
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  // Reconstruction-wave exacts, 2026-08-05: resource_3b3:2384's cross-block
+  // pool CSE and resource_3b4:1308's loop-hoisted 0x220 both drop from the
+  // push list under this flag.
+  "exact/resource_3b3_c_02002384.c",
+  "semantic/resource_3b3_c_02002384.c",
+  "exact/resource_3b4_c_02001308.c",
+  "semantic/resource_3b4_c_02001308.c",
   // resource_3ad:01b0 tests flag 0x202 and then sets it, so the pooled word is
   // read twice and the rerun caches it in r5 across the guarded block where the
   // reference reloads it into r0 at each site. Took the row from 14 groups to 0.
@@ -1804,6 +1869,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-rerun-cse-after-loop"]
       : []),
+    ...(SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sched-pool-load-late"]
+      : []),
+    ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fno-thread-jumps"]
+      : []),
     ...(NO_GCSE_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-fno-gcse"] : []),
     ...(NO_EXPENSIVE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-expensive-optimizations"]
@@ -1903,6 +1974,8 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES,
     ...THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
+    ...SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES,
+    ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
     ...NO_INTERWORK_OVERLAY_SOURCES,

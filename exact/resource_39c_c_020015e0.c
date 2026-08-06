@@ -57,5 +57,9 @@ void Func_020015e0(s32 arg0, s32 arg1, s32 arg2)
         }
     }
 
-    Func_020070c8(42, 52, 4, 5, 42, 33);
+    {
+        s32 tail0 = 42;
+        s32 tail1 = 33;
+        Func_020070c8(42, 52, 4, 5, tail0, tail1);
+    }
 }

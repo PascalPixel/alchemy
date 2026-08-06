@@ -277,11 +277,20 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // 080b010c writes its descriptor immediately after an allocator call: the
 // reference copies the live source and destination into r0 and r1 before
 // loading the pooled control word into r2, the same fingerprint as 08005a78.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "080907b0", "08090824", "080b010c"]);
+const GROUP_CONTROL_LAST_SOURCES = new Set(["08005a78", "08005c68", "080907b0", "08090824", "080b010c", "0808fe38"]);
 // 080907b0's second descriptor has a strict value1/base scheduling fingerprint:
 // the immediate, source-address add, base literal, shift, and control literal
 // must be restored to the reference order after grouped-DMA formation.
 const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
+// 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
+// grouped descriptor store whose saved-result and zero registers are not the
+// r5/r6 pair the original repair hard-coded, so it needs the widened form.
+const GROUP_ZERO_ANY_REGISTER_SOURCES = new Set(["0808fe38"]);
+// 0808fe38's two tail calls each take a long split immediate in r1 and a pooled
+// function address in r0.  The scheduler parks the pool load inside the split;
+// the reference keeps the split contiguous and loads r0 after it.
+const ARG0_AFTER_SPLIT_SOURCES = new Set(["0808fe38"]);
+const CALL_ARG0_POOL_LOAD_SOURCES = new Set(["0808fe38"]);
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -359,6 +368,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // ever reach it. 080b5ad4 now compiles byte-exact with it (64 bytes) once its
 // tail is spelled as a returned call. See GROUP_VALUE2_IN_PLACE_SOURCES below.
 const GROUPED_DMA_STORE_SOURCES = new Set([
+  "0808fe38",
   "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "08011590", "080170c4", "08019bac",
   "0801d014", "0801d980",
@@ -1825,6 +1835,13 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
+    ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
+      ? ["-fthumb-group-zero-any-register"]
+      : []),
+    ...(ARG0_AFTER_SPLIT_SOURCES.has(stem) ? ["-fthumb-arg0-after-split"] : []),
+    ...(CALL_ARG0_POOL_LOAD_SOURCES.has(stem)
+      ? ["-fthumb-call-arg0-pool-load"]
+      : []),
     ...(GROUP_VALUE1_BEFORE_BASE_SOURCES.has(stem)
       ? ["-fthumb-group-value1-before-base"]
       : []),
@@ -2254,6 +2271,17 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // order. Default-off and source-routed. Cross-host rule: rebuild+pin
         // linux from the same fork source before a cloud session uses it.
         "45d3b62f28b91b005df4063493381bf77a28e03850463a68457e5409fd486bc2",
+        // 2026-08-06: adds -fthumb-call-arg0-pool-load, which lets the existing
+        // arg1-before-arg0 call reordering accept a pool-loaded address as the
+        // r0 argument instead of only a plain integer constant.
+        "d2ac7c989cce4c289950cc76cbf269f6057f4eb42b2a999dd9c4e756f866858d",
+        // 2026-08-06: adds -fthumb-arg0-after-split, the inverse of
+        // -fthumb-next-arg-between-split: it pushes an r0 pool load that the
+        // scheduler parked inside a long split immediate down past the shift.
+        "cee7a5014ceb6ff7f702dc0b12f5378a57f92a100f6e5da772f54930604f0284",
+        "541728170855e1f3002918fde83f91824e70f9e2d19cd50e93029529dae5b547",
+        "735821ddefdabb338994007671c41b5ffd3a02653411fd1613e9fc8a5e7e722b",
+        "f3f9b5276f4aab31ef2d3ebb85eb5a65e3cc4050900d403ef2622ed1d60c7b2b",
       ],
     },
     gs2: {

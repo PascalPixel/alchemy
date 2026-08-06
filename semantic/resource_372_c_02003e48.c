@@ -1,64 +1,101 @@
 /* Story-flag-selected actor-8 scene sequence. */
 #include "types.h"
-u8 *Func_0808a080();
-void Func_0808a018(); void Func_0808a020();
-s32 Func_080770c0(); void Func_080770c8();
-void Func_0808a0a8(); void Func_0808a010(); void Func_0808a138();
-void Func_0808a100(); void Func_0808a170(); void Func_0808a180();
-void Func_0808a098(); void Func_0808a1b8(); void Func_0808a188();
-void Func_0808a128();
 
+ 
+ 
+  
+  
+  
+
+
+extern u8 * Func_0200857a();
+extern u8 * Func_02008582();
+extern void Func_02008558();
+extern s32 Func_0200853e();
+extern void Func_020085c0();
+extern void Func_02008566();
+extern void Func_0200862e();
+extern void Func_02008574();
+extern void Func_02008624();
+extern void Func_02008656();
+extern void Func_0200859c();
+extern void Func_02008682();
+extern void Func_0200869a();
+extern void Func_02008602();
+extern void Func_0200865a();
+extern void Func_02008622();
+extern void Func_020086de();
+extern void Func_02008686();
+extern void Func_02008690();
+extern void Func_020085f6();
+extern void Func_020086dc();
+extern void Func_020086fe();
+extern void Func_020086ae();
+extern void Func_020086c8();
+extern void Func_0200861e();
+extern void Func_020086e6();
+extern void Func_0200862c();
+extern void Func_0200864c();
+extern void Func_02008706();
+extern void Func_0200865c();
+extern void Func_02008724();
+extern void Func_0200866a();
+extern void Func_02008762();
+extern void Func_020086ca();
+extern void Func_02008722();
+extern void Func_02008678();
+extern void Func_0200869c();
 void Func_02003e48(void)
 {
-    u8 *lead = Func_0808a080(0);
-    u8 *actor = Func_0808a080(8);
+    u8 *lead = Func_0200857a(0);
+    u8 *actor = Func_02008582(8);
 
-    Func_0808a018();
-    if (Func_080770c0(0x305)) {
-        Func_0808a0a8(8);
-        Func_0808a010(10);
-        Func_0808a138(8, 2);
-        Func_0808a010(40);
+    Func_02008558();
+    if (Func_0200853e(0x305)) {
+        Func_020085c0(8);
+        Func_02008566(10);
+        Func_0200862e(8, 2);
+        Func_02008574(40);
         if (*(s16 *)(lead + 6) >= 0)
-            Func_0808a100(8, 7);
+            Func_02008624(8, 7);
         else
-            Func_0808a100(8, 8);
-        Func_0808a138(8, 2);
-        Func_0808a010(20);
-        Func_0808a170(0xed2);
-        Func_0808a180(8, 0);
-        Func_0808a098(8, (void *)0x0200cec8);
-        Func_0808a100(8, 6);
+            Func_0200862e(8, 8);
+        Func_02008656(8, 2);
+        Func_0200859c(20);
+        Func_02008682(0xed2);
+        Func_0200869a(8, 0);
+        Func_02008602(8, (void *)0x0200cec8);
+        Func_0200865a(8, 6);
     } else {
-        Func_0808a0a8(8);
+        Func_02008622(8);
         *(s32 *)(actor + 24) = 0x10000;
         *(s32 *)(actor + 28) = 0x10000;
-        Func_0808a1b8(8, 0x1000, 0);
+        Func_020086de(8, 0x1000, 0);
         if (*(s16 *)(lead + 6) >= 0)
-            Func_0808a100(8, 7);
+            Func_02008686(8, 7);
         else
-            Func_0808a100(8, 8);
-        Func_0808a010(20);
-        Func_0808a170(0xed1);
-        Func_0808a188(8, 0, 20);
-        Func_0808a100(8, 1);
-        Func_0808a128(8, 4, 0);
-        Func_0808a010(80);
-        Func_0808a138(8, 2);
-        Func_0808a010(40);
+            Func_02008690(8, 8);
+        Func_020085f6(20);
+        Func_020086dc(0xed1);
+        Func_020086fe(8, 0, 20);
+        Func_020086ae(8, 1);
+        Func_020086c8(8, 4, 0);
+        Func_0200861e(80);
+        Func_020086e6(8, 2);
+        Func_0200862c(40);
         if (*(s16 *)(lead + 6) >= 0)
-            Func_0808a100(8, 7);
+            Func_020086dc(8, 7);
         else
-            Func_0808a100(8, 8);
-        Func_0808a010(2);
-        Func_0808a128(8, 2, 0);
-        Func_0808a010(60);
-        Func_0808a138(8, 2);
-        Func_0808a010(20);
-        Func_0808a180(8, 0);
-        Func_0808a098(8, (void *)0x0200cec8);
-        Func_0808a100(8, 6);
-        Func_080770c8(0x305);
+            Func_020086e6(8, 8);
+        Func_0200864c(2);
+        Func_02008706(8, 2, 0);
+        Func_0200865c(60);
+        Func_02008724(8, 2);
+        Func_0200866a(20);
+        Func_02008762(8, 0);
+        Func_020086ca(8, (void *)0x0200cec8);
+        Func_02008722(8, 6);
+        Func_02008678(0x305);
     }
-    Func_0808a020();
+    Func_0200869c();
 }

@@ -41,17 +41,19 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations; both are used for their return values. */
-s32 Func_080770c0();
-s32 Func_08077148();
 
+
+
+extern s32 Func_0200276a();
+extern s32 Func_0200274e();
 s32 Func_02000f30(s32 member)
 {
-    s32 count = Func_08077148();
+    s32 count = Func_0200276a();
     s32 limit = 3;
     s32 i;
     const u8 *roster;
 
-    if (Func_080770c0(370) == 0) {
+    if (Func_0200274e(370) == 0) {
         limit = 4;
     }
     if (count > limit) {

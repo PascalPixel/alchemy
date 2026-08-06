@@ -44,57 +44,75 @@
  *   0x200290a -> Func_0808a210   camera (x, y, z, mode)
  */
 
-s32 Func_080770c0();           /* test story flag, established */
-u8 *Func_0808a080();           /* scene-record accessor, established */
-void Func_0808a0f0();          /* place entity (id, x, z), established */
-void Func_080091e0();          /* (record, n), established */
-void Func_08009180();          /* six-argument window call */
-void Func_080091c0();          /* six-argument panel call */
-void Func_08009128();          /* no-argument commit */
-void Func_080000c0();          /* wait n frames, established */
-void Func_0808a018();          /* open bracket, established */
-void Func_0808a020();          /* close bracket, established */
-void Func_0808a210();          /* camera (x, y, z, mode), established */
+           /* test story flag, established */
+           /* scene-record accessor, established */
+          /* place entity (id, x, z), established */
+          /* (record, n), established */
+          /* six-argument window call */
+          /* six-argument panel call */
+          /* no-argument commit */
+          /* wait n frames, established */
+          /* open bracket, established */
+          /* close bracket, established */
+          /* camera (x, y, z, mode), established */
 
+extern u8 * Func_020063a4();
+extern void Func_02006400();
+extern void Func_0200640a();
+extern void Func_020063c0();
+extern u8 * Func_0200635e();
+extern u8 * Func_020063e4();
+extern u8 * Func_020063f0();
+extern s32 Func_020063b2();
+extern s32 Func_020063f2();
+extern void Func_020063c2();
+extern void Func_020063f6();
+extern void Func_02006350();
+extern s32 Func_0200643e();
+extern void Func_02006466();
+extern u8 * Func_02006494();
+extern void Func_0200658c();
+extern void Func_0200638e();
+extern void Func_02006492();
 void Func_02002804(void)
 {
     u8 *actor10;
     u8 *record;
 
-    actor10 = Func_0808a080(10);
-    Func_0808a0f0(8, 0, 0);
-    Func_0808a0f0(9, 0, 0);
-    Func_080091e0(Func_0808a080(9), 0);
+    actor10 = Func_020063a4(10);
+    Func_02006400(8, 0, 0);
+    Func_0200640a(9, 0, 0);
+    Func_020063c0(Func_0200635e(9), 0);
 
     actor10[0x55] = 0;
     *(s32 *)(actor10 + 0x18) = 0xe666;      /* 0.9 in 16.16 */
     *(s32 *)(actor10 + 0x1c) = 0x9999;      /* 0.6 in 16.16 */
     *(u16 *)(*(u8 **)(actor10 + 0x50) + 30) = 0x8000;
 
-    Func_0808a080(12)[0x55] = 0;
-    *(s32 *)(Func_0808a080(12) + 12) = 0xffe40000;  /* -28.0 */
+    Func_020063e4(12)[0x55] = 0;
+    *(s32 *)(Func_020063f0(12) + 12) = 0xffe40000;  /* -28.0 */
 
-    if (Func_080770c0(0x908) != 0) {
+    if (Func_020063b2(0x908) != 0) {
         *(s32 *)(actor10 + 12) += 0xfff80000;       /* -8.0 */
         *(u16 *)(*(u8 **)(actor10 + 0x50) + 30) = 0xc000;
         *(s32 *)(actor10 + 8) += 0xe0000;           /* +14.0 */
     }
 
-    if (Func_080770c0(0x908) != 0) {
-        Func_08009180(25, 36, 43, 36, 11, 9);
-        Func_080091c0(25, 35, 10, 5, 43, 35);
-        Func_08009128();
-        Func_080000c0(1);
+    if (Func_020063f2(0x908) != 0) {
+        Func_020063c2(25, 36, 43, 36, 11, 9);
+        Func_020063f6(25, 35, 10, 5, 43, 35);
+        Func_020063c2();
+        Func_02006350(1);
     }
 
     if (*(s16 *)((u8 *)0x02000240 + 450) == 6
-        && Func_080770c0(0x109) == 0) {
-        Func_0808a018(0);       /* r0 is the flag test's zero result */
-        record = Func_0808a080(0);
-        Func_0808a210(198 << 18, 0xffa80000, 0x02410000, 0);
+        && Func_0200643e(0x109) == 0) {
+        Func_02006466(0);       /* r0 is the flag test's zero result */
+        record = Func_02006494(0);
+        Func_0200658c(198 << 18, 0xffa80000, 0x02410000, 0);
         *(s32 *)(record + 12) = 0xffa80000;         /* -88.0 */
-        Func_08009128();
-        Func_080000c0(1);
-        Func_0808a020();
+        Func_02006400();
+        Func_0200638e(1);
+        Func_02006492();
     }
 }

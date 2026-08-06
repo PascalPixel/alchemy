@@ -51,15 +51,20 @@
  * call sites in this overlay. */
 #include "types.h"
 
-u8 *Func_080090c8();    /* spawner: (kind, x, y, z) -> record, or NULL */
-s32 Func_080000f8();    /* random source, no arguments */
-void Func_08009098();   /* attach the animation script at its second argument */
-void Func_02000b54();   /* step a record along a heading and place it */
+    /* spawner: (kind, x, y, z) -> record, or NULL */
+    /* random source, no arguments */
+   /* attach the animation script at its second argument */
+   /* step a record along a heading and place it */
 
 /* In-image animation script at file offset 0x1884 (pool word 0x02009884 under
  * the proven 0x02008000 link base). */
 extern u8 Data_02009884[];
 
+extern s32 Func_02001c28();
+extern void Func_02001c3a();
+extern s32 Func_0200171a();
+extern void Func_02001c76();
+extern u8 * Func_02001c90();
 void Func_02000b8c(s32 *source)
 {
     s32 index = 0;
@@ -73,20 +78,20 @@ spawn_body:
         record[85] = 2;
         *(s32 *)(record + 40) = (s32)0xffff0000;
 
-        *(s32 *)(record + 48) = Func_080000f8() + 0x0000cccc;
+        *(s32 *)(record + 48) = Func_02001c28() + 0x0000cccc;
         record[89] = 1;
 
-        Func_02000b54(record, 0x200000, Func_080000f8());
+        Func_02001c3a(record, 0x200000, Func_0200171a());
 
         *(u16 *)(record + 94) = 8;
-        Func_08009098(record, Data_02009884);
+        Func_02001c76(record, Data_02009884);
 
         index++;
 
 spawn_test:
     if (index > 3)
         return;
-    record = Func_080090c8(240, source[2], source[3], source[4]);
+    record = Func_02001c90(240, source[2], source[3], source[4]);
     if (record != 0)
         goto spawn_body;
 }

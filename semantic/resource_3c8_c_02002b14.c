@@ -132,8 +132,8 @@ void Func_02002b14(void)
      * returned above, and that dataflow is preserved as written. */
     Func_0808a018(leader);
 
-    Func_080091c0(69, 48, 4, 2, 5, 48);
-    Func_080091c0(73, 37, 9, 13, 9, 37);
+    { s32 f1 = 5; s32 g1 = 48; Func_080091c0(69, 48, 4, 2,  f1, g1); }
+    { s32 f2 = 9; s32 g2 = 37; Func_080091c0(73, 37, 9, 13,  f2, g2); }
 
     for (slot = 15; slot <= 18; slot++) {
         actor = Func_0808a080(slot);
@@ -256,7 +256,7 @@ void Func_02002b14(void)
             if (progressA->finished != 0 || progressB->finished != 0) {
                 Func_0808a010(30);
                 Func_08009178(Data_0200dd3c, 77, 35);
-                Func_080091c0(13, 35, 1, 1, 13, 36);
+                { s32 f3 = 13; s32 g3 = 36; Func_080091c0(13, 35, 1, 1,  f3, g3); }
                 Func_080770c8(776);
                 break;
             }

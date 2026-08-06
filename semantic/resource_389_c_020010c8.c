@@ -63,12 +63,17 @@ extern u8 *Data_03001ebc;
 extern s32 Data_020098ec;
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-void Func_0808a100();                /* one-argument presentation call */
-void Func_0808a128();                /* three-argument presentation call */
-void Func_0808a130();                /* one-argument presentation call */
-void Func_0808a1b8();                /* three-argument presentation call */
-void Func_0808a1e8();                /* three-argument presentation call */
+                /* one-argument presentation call */
+                /* three-argument presentation call */
+                /* one-argument presentation call */
+                /* three-argument presentation call */
+                /* three-argument presentation call */
 
+extern void Func_020025da();
+extern void Func_020025ec();
+extern void Func_020025be();
+extern void Func_020025c2();
+extern void Func_020025bc();
 void Func_020010c8(void)
 {
     u8 *workspace = Data_03001ebc;
@@ -79,18 +84,18 @@ void Func_020010c8(void)
 
     switch (frame) {
     case 60:
-        Func_0808a1b8(13, 0x00002000, 0);   /* 128 << 6 */
-        Func_0808a1e8(13, 2, 0);
+        Func_020025da(13, 0x00002000, 0);   /* 128 << 6 */
+        Func_020025ec(13, 2, 0);
         break;
     case 180:
-        Func_0808a130(13, 3);
+        Func_020025be(13, 3);
         break;
     case 240:                               /* both reach one body */
     case 270:                               /* 135 << 1 */
-        Func_0808a128(13, 4, 0);
+        Func_020025c2(13, 4, 0);
         break;
     case 480:                               /* 270 + 210 */
-        Func_0808a100(13, 4);
+        Func_020025bc(13, 4);
         break;
     }
 

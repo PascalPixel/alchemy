@@ -1,18 +1,21 @@
 #include "types.h"
 
-u8 *Func_0808a080();
+
 
 /* Complete actor-20 presentation-bit update through interworking return. */
+extern u8 * Func_020016fa();
+extern u8 * Func_02001708();
+extern u8 * Func_02001718();
 void Func_02000324(void)
 {
-    u8 *entity = Func_0808a080(0);
+    u8 *entity = Func_020016fa(0);
     u8 *actor;
 
     if (*(s16 *)(entity + 14) > 31) {
-        actor = Func_0808a080(20);
+        actor = Func_02001708(20);
         actor[35] |= 2;
     } else {
-        actor = Func_0808a080(20);
+        actor = Func_02001718(20);
         actor[35] &= 0xfd;
     }
 }

@@ -40,28 +40,36 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a010();
-void Func_080770c8();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a1b8();
 
+
+
+
+
+
+
+
+extern void Func_020016c8();
+extern void Func_020016a6();
+extern void Func_02001724();
+extern void Func_0200170e();
+extern void Func_0200173c();
+extern void Func_020017c0();
+extern void Func_020016fe();
+extern void Func_02001712();
 void Func_02000144(void)
 {
-    Func_0808a018();
-    Func_080770c8(0x8aa);
+    Func_020016c8();
+    Func_020016a6(0x8aa);
 
     /* movs r1,#196 / lsls r1,r1,#1 == 392; movs r2,#148 / lsls #1 == 296 */
-    Func_0808a0d0(0, 392, 296);
+    Func_02001724(0, 392, 296);
 
-    Func_0808a090(8, 0x13333, 0x9999);
+    Func_0200170e(8, 0x13333, 0x9999);
 
     /* movs r1,#204 / lsls r1,r1,#1 == 408 */
-    Func_0808a0d0(8, 408, 296);
+    Func_0200173c(8, 408, 296);
 
-    Func_0808a1b8(8, 0x8000, 0);
-    Func_0808a010(20);
-    Func_0808a020();
+    Func_020017c0(8, 0x8000, 0);
+    Func_020016fe(20);
+    Func_02001712();
 }

@@ -39,15 +39,20 @@
  * `add sp,#8 / pop {r5} / pop {r0} / bx r0`, so the owner is void.
  */
 
-void Func_02001da0();
-/* Returns the record for a numbered slot. */
-s32 *Func_0808a080();
-void Func_080091c0();
 
+/* Returns the record for a numbered slot. */
+
+
+
+extern void Func_02003b9e();
+extern void Func_02004344();
+extern s32 * Func_020042fa();
+extern void Func_02004368();
+extern s32 * Func_0200431c();
 void Func_02001df8(void)
 {
-    Func_02001da0();
+    Func_02003b9e();
 
-    Func_080091c0(53, 55, 1, 1, Func_0808a080(11)[2] / 0x100000, 55);
-    Func_080091c0(53, 55, 1, 1, Func_0808a080(12)[2] / 0x100000, 55);
+    Func_02004344(53, 55, 1, 1, Func_020042fa(11)[2] / 0x100000, 55);
+    Func_02004368(53, 55, 1, 1, Func_0200431c(12)[2] / 0x100000, 55);
 }

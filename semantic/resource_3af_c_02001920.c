@@ -30,36 +30,50 @@
  * pairs and data pointers transcribed, meanings unknown.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a030(s32 arg0);
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a098(s32 id, s32 arg1);
-extern void Func_0808a0f0(s32 id, s32 arg1, s32 arg2);
-extern void Func_080000c0(s32 arg0);
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_02004218(void);
 
+
+
+
+
+
+
+
+
+
+
+extern void Func_02005c10(void);
+extern void Func_02005c26(s32 arg0);
+extern void Func_02005b8c(s32 arg0);
+extern void Func_02005ca6(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005cb2(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005cbe(s32 id, s32 arg1, s32 arg2);
+extern u8 * Func_02005c64(s32 id);
+extern void Func_02005c88(s32 id, s32 arg1);
+extern u8 * Func_02005c76(s32 id);
+extern void Func_02005c9a(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005caa(s32 id, s32 arg1);
+extern s32 Func_02005c58(s32 flagId);
+extern void Func_02005bac(void);
+extern void Func_02005c8c(void);
 void Func_02001920(void)
 {
     u8 *record;
 
-    Func_0808a018();
-    Func_0808a030(0x0200d160);
-    Func_080000c0(1);
-    Func_0808a0f0(20, 0, 0);
-    Func_0808a0f0(23, 238 << 16, 0x02720000);
-    Func_0808a0f0(22, 134 << 17, 0x02a60000);
-    record = Func_0808a080(22);
-    Func_0808a098(22, 0x0200c980);
-    record = Func_0808a080(21);
+    Func_02005c10();
+    Func_02005c26(0x0200d160);
+    Func_02005b8c(1);
+    Func_02005ca6(20, 0, 0);
+    Func_02005cb2(23, 238 << 16, 0x02720000);
+    Func_02005cbe(22, 134 << 17, 0x02a60000);
+    record = Func_02005c64(22);
+    Func_02005c88(22, 0x0200c980);
+    record = Func_02005c76(21);
     record[89] |= 0x80;
-    Func_0808a090(21, 0xcccc, 0x6666);
-    Func_0808a098(21, 0x0200c628);
+    Func_02005c9a(21, 0xcccc, 0x6666);
+    Func_02005caa(21, 0x0200c628);
     *(u16 *)(record + 6) = 0;
-    if (Func_080770c0(0x109) != 0) {
-        Func_02004218();
+    if (Func_02005c58(0x109) != 0) {
+        Func_02005bac();
     }
-    Func_0808a020();
+    Func_02005c8c();
 }

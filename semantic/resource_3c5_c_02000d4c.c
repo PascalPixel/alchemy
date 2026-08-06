@@ -71,24 +71,52 @@
 
 /* Old-style declarations are mandatory in overlay sources: an import name can
  * be reached with different argument counts at different sites. */
-u8 *Func_0808a080();        /* record by slot index */
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a100();
-void Func_0808a1f0();
-void Func_0808a210();
-void Func_0808a360();
-void Func_0808a370();
-void Func_08009128();
-void Func_080091f0();
-void Func_080091f8();
-void Func_080000c0();       /* frame wait */
-void Func_080f9010();       /* sound cue */
-s32 Func_08000120();        /* ROM dispatch[12] -> Func_0800231c */
-s32 Func_08000118();        /* ROM dispatch[11] -> Func_08002322 */
-void Func_02000ae8();       /* four register arguments plus four stack words */
+        /* record by slot index */
 
+
+
+
+
+
+
+
+
+
+
+       /* frame wait */
+       /* sound cue */
+        /* ROM dispatch[12] -> Func_0800231c */
+        /* ROM dispatch[11] -> Func_08002322 */
+       /* four register arguments plus four stack words */
+
+extern void Func_02003b90();
+extern void Func_02003c8a();
+extern void Func_02003b1e();
+extern void Func_02003af4();
+extern u8 * Func_02003bca();
+extern u8 * Func_02003bd6();
+extern u8 * Func_02003be2();
+extern u8 * Func_02003bec();
+extern void Func_02003cf4();
+extern void Func_02003d08();
+extern void Func_02003bde();
+extern void Func_02003d44();
+extern u8 * Func_02003c0a();
+extern void Func_02003bf6();
+extern u8 * Func_02003c1c();
+extern s32 Func_02003b7c();
+extern s32 Func_02003b80();
+extern void Func_0200190c();
+extern void Func_02003dbe();
+extern void Func_02003d3e();
+extern void Func_02003cce();
+extern void Func_02003c4e();
+extern void Func_02003c5c();
+extern void Func_02003c68();
+extern void Func_02003d72();
+extern u8 * Func_02003cc0();
+extern u8 * Func_02003ccc();
+extern void Func_02003cc6();
 void Func_02000d4c(void)
 {
     u8 *record;
@@ -97,34 +125,34 @@ void Func_02000d4c(void)
     u8 options[40];         /* sp+28 */
     u32 step;
 
-    Func_0808a018();
-    Func_0808a210(-1, -1, -1, 0);
-    Func_08009128();
-    Func_080000c0(1);
+    Func_02003b90();
+    Func_02003c8a(-1, -1, -1, 0);
+    Func_02003b1e();
+    Func_02003af4(1);
 
-    record = Func_0808a080(0);
+    record = Func_02003bca(0);
     *(s32 *)(record + 12) = 0x00820000;         /* 130 << 16 */
 
-    record = Func_0808a080(0);
+    record = Func_02003bd6(0);
     *(s32 *)(record + 72) = 0x00008000;         /* 128 << 8 */
 
-    record = Func_0808a080(0);
+    record = Func_02003be2(0);
     *(s32 *)(record + 68) = 0;
 
-    record = Func_0808a080(0);
+    record = Func_02003bec(0);
     record[85] = 0;
 
-    Func_0808a360();
-    Func_0808a370();
-    Func_0808a010(30);
-    Func_080f9010(204);
+    Func_02003cf4();
+    Func_02003d08();
+    Func_02003bde(30);
+    Func_02003d44(204);
 
-    record = Func_0808a080(0);
+    record = Func_02003c0a(0);
     record[85] = 3;
 
-    Func_0808a010(24);
+    Func_02003bf6(24);
 
-    subject = Func_0808a080(0);
+    subject = Func_02003c1c(0);
 
     /* The four fields the 0x01090001 flag word selects, and only those. */
     *(s32 *)(options + 4) = 7;
@@ -134,17 +162,17 @@ void Func_02000d4c(void)
 
     for (step = 0; step <= 16; step++) {
         s32 key = step << 12;
-        s32 lateral = Func_08000120(key);
+        s32 lateral = Func_02003b7c(key);
 
         velocity[0] = lateral;
         velocity[1] = 0;
-        velocity[2] = Func_08000118(key);
+        velocity[2] = Func_02003b80(key);
 
         /* One and a half times the dispatch value, halved with C's
          * round-toward-zero division (`lsrs #31 / adds / asrs #1`). */
         velocity[0] = lateral + lateral / 2;
 
-        Func_02000ae8(*(s32 *)(subject + 8),
+        Func_0200190c(*(s32 *)(subject + 8),
                       *(s32 *)(subject + 12),
                       *(s32 *)(subject + 16),
                       velocity[0],
@@ -154,19 +182,19 @@ void Func_02000d4c(void)
                       options);
     }
 
-    Func_080f9010(188);
-    Func_0808a1f0(0, 0x00000101);
-    Func_0808a100(0, 22);
-    Func_080091f0(0x00050000, 0x00050000, 0x00010000);
-    Func_080091f0(-1, -1, 0x0000e666);
-    Func_080091f8();
-    Func_0808a1f0(0, 256);
+    Func_02003dbe(188);
+    Func_02003d3e(0, 0x00000101);
+    Func_02003cce(0, 22);
+    Func_02003c4e(0x00050000, 0x00050000, 0x00010000);
+    Func_02003c5c(-1, -1, 0x0000e666);
+    Func_02003c68();
+    Func_02003d72(0, 256);
 
-    record = Func_0808a080(0);
+    record = Func_02003cc0(0);
     *(s32 *)(record + 72) = 0x00010000;         /* 128 << 9 */
 
-    record = Func_0808a080(0);
+    record = Func_02003ccc(0);
     *(s32 *)(record + 68) = 0x00004000;         /* 128 << 7 */
 
-    Func_0808a020();
+    Func_02003cc6();
 }

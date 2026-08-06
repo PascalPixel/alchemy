@@ -34,11 +34,18 @@
 extern u8 *Data_03001ebc;
 extern u32 Data_02000434;
 
-extern u8 *Func_080090c8(s32 kind, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_08009098(u8 *object, void *table);
-extern void Func_08009020(u8 *record, s32 arg1);
-extern void Func_080f9010(s32 arg0);
 
+
+
+
+
+extern u8 * Func_0200ad7c(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200ad86(u8 *object, void *table);
+extern void Func_0200ad90(u8 *record, s32 arg1);
+extern u8 * Func_0200adca(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200add4(u8 *object, void *table);
+extern void Func_0200adf8(u8 *record, s32 arg1);
+extern void Func_0200b0ae(s32 arg0);
 void Func_02005388(void)
 {
     u32 idx = Data_02000434;
@@ -47,26 +54,26 @@ void Func_02005388(void)
     u8 *object;
     u8 *owner;
 
-    object = Func_080090c8(26, slot[2], slot[3], slot[4]);
+    object = Func_0200ad7c(26, slot[2], slot[3], slot[4]);
     if (object != 0) {
         *(s32 *)(object + 20) = slot[5];
         owner = *(u8 **)(object + 0x50);
-        Func_08009098(object, (void *)0x0200de14);
+        Func_0200ad86(object, (void *)0x0200de14);
 
         *(short *)(object + 0x64) = 0;
         object[0x55] = 0;
         *(u8 **)(object + 0x68) = slotBytes;
 
         if (owner != 0) {
-            Func_08009020(owner, 2);
+            Func_0200ad90(owner, 2);
             owner[0x26] = 0;
             owner[9] = (owner[9] & ~0x0C) | 4;
         }
     }
 
-    object = Func_080090c8(26, slot[2], slot[3], slot[4]);
+    object = Func_0200adca(26, slot[2], slot[3], slot[4]);
     if (object != 0) {
-        Func_08009098(object, (void *)0x0200de14);
+        Func_0200add4(object, (void *)0x0200de14);
         *(s32 *)(object + 20) = slot[5];
         owner = *(u8 **)(object + 0x50);
 
@@ -76,10 +83,10 @@ void Func_02005388(void)
         object[0x23] = 2;
 
         if (owner != 0) {
-            Func_08009020(owner, 1);
+            Func_0200adf8(owner, 1);
             owner[0x26] = 0;
         }
     }
 
-    Func_080f9010(130);
+    Func_0200b0ae(130);
 }

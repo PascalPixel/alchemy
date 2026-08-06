@@ -41,23 +41,29 @@
 extern s16 Data_0200d9a4;          /* cached palette slot, sentinel -1 */
 extern u8 Data_0200ccb0[];         /* per-variant scratch offset table */
 
-s32 Func_08000170();               /* reserve N bytes of scratch, return handle */
-void Func_08000178();              /* release a scratch handle */
-void Func_080001a8();              /* decompress an archived asset into scratch */
-s32 Func_080001d0();               /* allocate a palette slot */
-void Func_080001c8();              /* upload decoded tiles for a palette slot */
-u8 *Func_08000290();               /* archived asset by id */
+               /* reserve N bytes of scratch, return handle */
+              /* release a scratch handle */
+              /* decompress an archived asset into scratch */
+               /* allocate a palette slot */
+              /* upload decoded tiles for a palette slot */
+               /* archived asset by id */
 
+extern s32 Func_020076ea();
+extern s32 Func_0200772e();
+extern u8 * Func_0200775a();
+extern void Func_02007728();
+extern void Func_02007760();
+extern void Func_02007754();
 void Func_02002e54(s32 variant)
 {
     s32 handle;
     u8 *source;
     u8 tableOffset;
 
-    handle = Func_08000170(0xe5 << 5);   /* 7328 = 32 palette + 224 * 32 tile */
+    handle = Func_020076ea(0xe5 << 5);   /* 7328 = 32 palette + 224 * 32 tile */
 
     if (Data_0200d9a4 == -1) {
-        Data_0200d9a4 = (s16)Func_080001d0();
+        Data_0200d9a4 = (s16)Func_0200772e();
     }
 
     tableOffset = Data_0200ccb0[variant];
@@ -65,18 +71,18 @@ void Func_02002e54(s32 variant)
         variant = 4;
     }
 
-    source = Func_08000290(0xe7);
-    Func_080001a8(source, handle);
+    source = Func_0200775a(0xe7);
+    Func_02007728(source, handle);
 
     /* DMA3: 8 words of palette, source offset by the variant's table byte. */
     *(volatile u32 *)0x040000d4 = (u32)(handle + tableOffset);
     *(volatile u32 *)0x040000d8 = 0x050003e0;
     *(volatile u32 *)0x040000dc = 0x84000008;
 
-    Func_080001c8(Data_0200d9a4, 0x400, (variant << 10) + handle + 160);
+    Func_02007760(Data_0200d9a4, 0x400, (variant << 10) + handle + 160);
 
     while ((*(volatile u32 *)0x040000dc & 0x80000000) != 0) {
     }
 
-    Func_08000178(handle);
+    Func_02007754(handle);
 }

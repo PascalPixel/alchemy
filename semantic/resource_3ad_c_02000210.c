@@ -33,12 +33,31 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-s32 Func_080770c0();    /* test a story flag (used in a condition) */
-void Func_080000c0();   /* frame wait */
-void Func_080091b8();   /* six-argument tile/strip request, last two on the stack */
-void Func_080091c0();   /* six-argument collision repaint, last two on the stack */
-void Func_0808a1e0();
+    /* test a story flag (used in a condition) */
+   /* frame wait */
+   /* six-argument tile/strip request, last two on the stack */
+   /* six-argument collision repaint, last two on the stack */
 
+
+extern s32 Func_02001d26();
+extern void Func_02001d1e();
+extern void Func_02001d14();
+extern void Func_02001d34();
+extern void Func_02001d2a();
+extern void Func_02001d4c();
+extern void Func_02001d42();
+extern void Func_02001d62();
+extern void Func_02001d58();
+extern void Func_02001d84();
+extern void Func_02001d9a();
+extern void Func_02001dac();
+extern void Func_02001da2();
+extern void Func_02001dc6();
+extern void Func_02001dd8();
+extern void Func_02001de8();
+extern void Func_02001dde();
+extern void Func_02001ed6();
+extern void Func_02001e12();
 void Func_02000210(void)
 {
     int rowA = 21;      /* r5 */
@@ -46,29 +65,29 @@ void Func_02000210(void)
     int colB = 62;      /* r9 */
     int colC = 55;      /* r8 */
 
-    if (Func_080770c0(0x202) != 0) {
-        Func_080091b8(41, 86, 2, 6, rowA, 57);
-        Func_080000c0(4);
-        Func_080091b8(43, 86, 2, 6, rowA, 57);
-        Func_080000c0(4);
+    if (Func_02001d26(0x202) != 0) {
+        Func_02001d1e(41, 86, 2, 6, rowA, 57);
+        Func_02001d14(4);
+        Func_02001d34(43, 86, 2, 6, rowA, 57);
+        Func_02001d2a(4);
 
-        Func_080091b8(41, 86, 2, 6, rowA, 58);
-        Func_080000c0(4);
-        Func_080091b8(43, 86, 2, 6, rowA, 58);
-        Func_080000c0(4);
+        Func_02001d4c(41, 86, 2, 6, rowA, 58);
+        Func_02001d42(4);
+        Func_02001d62(43, 86, 2, 6, rowA, 58);
+        Func_02001d58(4);
     }
 
     /* 0x02000286: run unconditionally, whichever way the gate went. */
-    Func_080091b8(2, 93, 1, 1, rowB, colB);
-    Func_080091b8(2, 94, 1, 1, rowA, colC);
-    Func_080091b8(41, 86, 2, 6, rowA, 59);
-    Func_080000c0(4);
+    Func_02001d84(2, 93, 1, 1, rowB, colB);
+    Func_02001d9a(2, 94, 1, 1, rowA, colC);
+    Func_02001dac(41, 86, 2, 6, rowA, 59);
+    Func_02001da2(4);
 
-    Func_080091b8(1, 93, 1, 1, rowB, colB);
-    Func_080091b8(3, 94, 1, 1, rowA, colC);
-    Func_080091b8(43, 86, 2, 6, rowA, 59);
-    Func_080000c0(4);
+    Func_02001dc6(1, 93, 1, 1, rowB, colB);
+    Func_02001dd8(3, 94, 1, 1, rowA, colC);
+    Func_02001de8(43, 86, 2, 6, rowA, 59);
+    Func_02001dde(4);
 
-    Func_0808a1e0(10, 3);
-    Func_080091c0(19, 17, 1, 1, 22, 15);
+    Func_02001ed6(10, 3);
+    Func_02001e12(19, 17, 1, 1, 22, 15);
 }

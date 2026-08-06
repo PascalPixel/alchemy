@@ -123,7 +123,7 @@ void Func_02001f60(void)
      * returned above, and that dataflow is preserved as written. */
     Func_0808a018(leader);
 
-    Func_080091c0(108, 39, 13, 7, 44, 39);
+    { s32 f1 = 44; s32 g1 = 39; Func_080091c0(108, 39, 13, 7,  f1, g1); }
 
     for (slot = 9; slot <= 11; slot++) {
         actor = Func_0808a080(slot);
@@ -220,7 +220,7 @@ void Func_02001f60(void)
                 Func_0808a010(30);
                 Func_080f9010(158);
                 Func_08009178(Data_0200dd12, 109, 37);
-                Func_080091c0(45, 37, 1, 1, 45, 38);
+                { s32 f2 = 45; s32 g2 = 38; Func_080091c0(45, 37, 1, 1,  f2, g2); }
 
                 if ((Func_0808a080(9)->x >> 20) == Data_0200d128[0]
                     && (Func_0808a080(9)->z >> 20) == Data_0200d128[1]) {

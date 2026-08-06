@@ -43,15 +43,23 @@ extern s32 **Data_03001edc;
 extern u8 *Data_03001ebc;
 extern s32 Data_02000434;
 
-extern void Func_0808a018();
-extern u8 *Func_080090c8(s32 kind, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_08009098(u8 *object, void *table);
-extern void Func_02005388();
-extern void Func_080000c0(s32 arg0);
-extern void Func_08009080(u8 *object, s32 arg1);
-extern void Func_080770c8(s32 arg0);
-extern void Func_0808a020();
 
+
+
+
+
+
+
+
+
+extern void Func_0200af3e();
+extern u8 * Func_0200ae78(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200ae84(u8 *object, void *table);
+extern void Func_0200a896();
+extern void Func_0200ae90(s32 arg0);
+extern void Func_0200aee8(u8 *object, s32 arg1);
+extern void Func_0200afd6(s32 arg0);
+extern void Func_0200b00a();
 void Func_02005458(void)
 {
     s32 permuted_1;
@@ -66,17 +74,17 @@ void Func_02005458(void)
         return;
     }
 
-    Func_0808a018();
+    Func_0200af3e();
 
     object = (u8 *)record[5];
     if (object == 0) {
         u8 *ownerRecord;
 
-        object = Func_080090c8(26, *(s32 *)(slot + 8), *(s32 *)(slot + 12) + 0x180000, *(s32 *)(slot + 16));
+        object = Func_0200ae78(26, *(s32 *)(slot + 8), *(s32 *)(slot + 12) + 0x180000, *(s32 *)(slot + 16));
         if (object != 0) {
             ownerRecord = *(u8 **)(object + 0x50);
             permuted_1 = *(s32 *)(slot + 20);
-            Func_08009098(object, (void *)0x0200de38);
+            Func_0200ae84(object, (void *)0x0200de38);
             *(s32 *)(object + 20) = permuted_1;
 
             *(u8 **)(object + 0x68) = slot;
@@ -99,14 +107,14 @@ void Func_02005458(void)
     if (counter <= 2) {
         object[0x54] = 1;
         for (i = counter; i <= 2; i++) {
-            Func_02005388();
-            Func_080000c0(30);
-            Func_08009080(object, 5 - i);
+            Func_0200a896();
+            Func_0200ae90(30);
+            Func_0200aee8(object, 5 - i);
         }
     }
 
-    Func_080770c8(0x161);
-    Func_0808a020();
+    Func_0200afd6(0x161);
+    Func_0200b00a();
     record[0] = 3;
     *(s32 *)(object + 12) = (*(s32 *)(object + 8) & (s32)0xfff00000) + 0x80000;
     *(s32 *)(object + 16) = (*(s32 *)(object + 16) & (s32)0xfff00000) + 0x80000;

@@ -53,25 +53,31 @@ extern s16 Data_02000240[];
 extern s32 Data_0200a808[];
 
 /* Scene flag test: zero means not yet set. */
-s32 Func_080770c0();
-/* Returns the record for a numbered slot. */
-s32 *Func_0808a080();
-void Func_0808a0c8();
 
+/* Returns the record for a numbered slot. */
+
+
+
+extern s32 Func_02003362();
+extern s32 * Func_020033bc();
+extern s32 * Func_020033c4();
+extern s32 * Func_020033ce();
+extern s32 * Func_020033d6();
+extern void Func_02003404();
 void Func_02000e50(void)
 {
     u8 *workspace = Data_03001ebc;
     s32 stage;
 
-    if (Func_080770c0(0x9ca) == 0) return;
+    if (Func_02003362(0x9ca) == 0) return;
     if (Data_02000240[293] == 15) return;
 
     stage = *(s16 *)(workspace + 364);
 
-    Func_0808a080(15)[12] = Func_0808a080(0)[12];   /* +0x30 */
-    Func_0808a080(15)[13] = Func_0808a080(0)[12];   /* +0x34 from +0x30 */
+    Func_020033bc(15)[12] = Func_020033c4(0)[12];   /* +0x30 */
+    Func_020033ce(15)[13] = Func_020033d6(0)[12];   /* +0x34 from +0x30 */
 
-    Func_0808a0c8(15,
+    Func_02003404(15,
                   Data_0200a808[(stage - 30) * 2],
                   Data_0200a808[(stage - 30) * 2 + 1]);
 }

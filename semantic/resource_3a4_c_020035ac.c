@@ -44,11 +44,17 @@
  *   0x200363c -> Func_080000c0              wait n frames, established
  */
 
-void Func_08000128();          /* displace (scale, heading, position) */
-void Func_08009080();          /* mark record (record, n), established */
-void Func_080f9010();          /* sound/sting, established */
-void Func_080000c0();          /* wait n frames, established */
+          /* displace (scale, heading, position) */
+          /* mark record (record, n), established */
+          /* sound/sting, established */
+          /* wait n frames, established */
 
+extern void Func_02007090();
+extern void Func_020070d4();
+extern void Func_0200732a();
+extern void Func_020070d8();
+extern void Func_020070b6();
+extern void Func_02007370();
 void Func_020035ac(u8 *record)
 {
     s32 probe[3];
@@ -62,25 +68,25 @@ void Func_020035ac(u8 *record)
     probe[0] = *(s32 *)(record + 8);
     probe[1] = *(s32 *)(record + 12);
     probe[2] = *(s32 *)(record + 16);
-    Func_08000128(0x180000, heading, probe);    /* 192 << 13 */
+    Func_02007090(0x180000, heading, probe);    /* 192 << 13 */
 
     pivot_x = (probe[0] + 0x80000) & 0xfff00000;
     pivot_z = (probe[2] + 0x80000) & 0xfff00000;
 
     heading += 0x8000;                          /* 128 << 8 */
-    Func_08009080(record, 5);
-    Func_080f9010(184);
+    Func_020070d4(record, 5);
+    Func_0200732a(184);
 
     for (i = 15; i >= 0; i--) {
         heading += 0x400;                       /* 128 << 3 */
         probe[0] = pivot_x;
         probe[2] = pivot_z;
-        Func_08000128(0x180000, heading, probe);
+        Func_020070d8(0x180000, heading, probe);
         *(s32 *)(record + 8) = probe[0];
         *(s32 *)(record + 16) = probe[2];
         *(u16 *)(record + 6) = heading + 0x4000;    /* 128 << 7 */
-        Func_080000c0(1);
+        Func_020070b6(1);
     }
 
-    Func_080f9010(233);
+    Func_02007370(233);
 }

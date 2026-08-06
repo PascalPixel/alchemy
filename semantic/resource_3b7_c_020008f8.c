@@ -64,58 +64,80 @@
 
 #include "types.h"
 
-s32 Func_080772e0();
-s32 Func_08077308();
-s32 Func_0808a070();
-void Func_0808a5b0();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a260();
-void Func_0808a270();
-void Func_08015120();
 
+
+
+
+
+
+
+
+
+
+
+extern s32 Func_02002204();
+extern void Func_020022ba();
+extern void Func_02002276();
+extern void Func_0200228e();
+extern void Func_02002288();
+extern void Func_020021f0();
+extern void Func_020022a0();
+extern s32 Func_02002270();
+extern s32 Func_02002250();
+extern void Func_020022b4();
+extern void Func_020022c4();
+extern void Func_020022c8();
+extern void Func_020022d8();
+extern s32 Func_020022ac();
+extern void Func_020022f2();
+extern void Func_02002302();
+extern s32 Func_020022d2();
+extern void Func_0200230c();
+extern void Func_02002324();
+extern void Func_0200231c();
+extern void Func_02002334();
+extern void Func_02002356();
 void Func_020008f8(s32 repeat)
 {
     s32 handle;
     s32 count;
     s32 line;
 
-    handle = Func_080772e0(228);
+    handle = Func_02002204(228);
 
     /* r0 still holds the handle here; no argument register is reset. */
-    Func_0808a5b0();
+    Func_020022ba();
 
     if (repeat != 0) {
         goto repeat_path;
     }
 
-    Func_0808a170(0xe23);
-    Func_0808a180(8, 0);
+    Func_02002276(0xe23);
+    Func_0200228e(8, 0);
 
     if (handle == 0) {
         goto close;
     }
 
-    Func_0808a170(0xe25);
-    Func_08015120(handle, 5);
-    Func_0808a178(8, 0);
+    Func_02002288(0xe25);
+    Func_020021f0(handle, 5);
+    Func_020022a0(8, 0);
 
-    if (Func_0808a070(0, 0) != 0) {
+    if (Func_02002270(0, 0) != 0) {
         goto close;
     }
 
-    count = Func_08077308();
+    count = Func_02002250();
 
     if (count == 0) {
-        Func_0808a170(0xe27);
-        Func_0808a178(8, 0);
+        Func_020022b4(0xe27);
+        Func_020022c4(8, 0);
     } else {
         if (count > 6) {
             goto refuse;
         }
-        Func_0808a170(0xe28);
-        Func_0808a178(8, 0);
+        Func_020022c8(0xe28);
+        Func_020022d8(8, 0);
     }
 
     /* Redundant in every reachable state - see the note above. */
@@ -123,7 +145,7 @@ void Func_020008f8(s32 repeat)
         goto refuse;
     }
 
-    if (Func_0808a070(0, 0) == 0) {
+    if (Func_020022ac(0, 0) == 0) {
         goto refuse;
     }
 
@@ -136,22 +158,22 @@ repeat_path:
         line = 0xe32;
         goto say_and_close;
     }
-    Func_0808a170(0xe33);
-    Func_0808a178(8, 0);
-    if (Func_0808a070(0, 0) == 0) {
+    Func_020022f2(0xe33);
+    Func_02002302(8, 0);
+    if (Func_020022d2(0, 0) == 0) {
         goto refuse;
     }
 
 say_and_close:
-    Func_0808a170(line);
+    Func_0200230c(line);
 
 close:
-    Func_0808a180(8, 0);
+    Func_02002324(8, 0);
     return;
 
 refuse:
-    Func_0808a170(0xe2a);
-    Func_0808a180(8, 0);
-    Func_0808a270(0x1fc, 0);        /* 254 << 1 */
-    Func_0808a260(0x89, 12);
+    Func_0200231c(0xe2a);
+    Func_02002334(8, 0);
+    Func_02002356(0x1fc, 0);        /* 254 << 1 */
+    Func_02002356(0x89, 12);
 }

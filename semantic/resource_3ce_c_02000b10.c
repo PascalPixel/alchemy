@@ -74,42 +74,58 @@
  */
 
 /* Old-style declarations: arities vary per call site across this overlay. */
-void Func_08015040();
-void Func_08077010();
-void Func_08077118();
-void Func_08077120();
+
+
+
+
 
 /* Used for its return value. */
-u8 *Func_08077008();
 
+
+extern void Func_02001cc8();
+extern void Func_02001d62();
+extern void Func_02001d6c();
+extern void Func_02001d76();
+extern void Func_02001d80();
+extern void Func_02001d92();
+extern void Func_02001d9c();
+extern void Func_02001da6();
+extern void Func_02001db0();
+extern u8 * Func_02001d86();
+extern u8 * Func_02001d9a();
+extern void Func_02001db4();
+extern void Func_02001dba();
+extern void Func_02001dc0();
+extern void Func_02001dc6();
 void Func_02000b10(void)
 {
     u8 *record;
-    s32 one = 1;                /* r5 */
-    s32 mark = 0x131;           /* r6 */
+    s32 one;
+    s32 mark;
 
-    Func_08015040(0xc1b, 1);
+    Func_02001cc8(0xc1b, 1);
 
-    Func_08077118(0, -100);
-    Func_08077118(1, -100);
-    Func_08077118(2, -33);
-    Func_08077118(3, -100);
+    Func_02001d62(0, -100);
+    Func_02001d6c(1, -100);
+    Func_02001d76(2, -33);
+    Func_02001d80(3, -100);
 
-    Func_08077120(0, -50);
-    Func_08077120(1, -40);
-    Func_08077120(2, -35);
-    Func_08077120(3, -20);
+    Func_02001d92(0, -50);
+    Func_02001d9c(1, -40);
+    Func_02001da6(2, -35);
+    Func_02001db0(3, -20);
 
-    record = Func_08077008(0);
+    record = Func_02001d86(0);
+    mark = 0x131;
     record[mark] = (u8)one;
     record[320] = (u8)one;      /* 160 << 1 */
 
-    record = Func_08077008(1);
+    record = Func_02001d9a(1);
     record[304] = (u8)one;      /* 152 << 1 */
     record[mark] = 2;
 
-    Func_08077010(0);
-    Func_08077010(1);
-    Func_08077010(3);
-    Func_08077010(2);
+    Func_02001db4(0);
+    Func_02001dba(1);
+    Func_02001dc0(3);
+    Func_02001dc6(2);
 }

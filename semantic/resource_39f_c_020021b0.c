@@ -20,64 +20,88 @@
  * `push {r5, lr}`.  It carries the constant 0 into three stack argument slots.
  */
 
-u8 *Func_0808a080();
-void Func_0808a018();
-void Func_0808a0f0();
-void Func_02000ea8();
-void Func_02000d90();
-void Func_0808a010();
-/* Four register arguments plus four stack words. */
-void Func_02000ae8();
-void Func_0808a1b8();
-void Func_0808a1f0();
-void Func_0808a138();
-void Func_0808a200();
-void Func_0808a148();
-void Func_080770c8();
-void Func_0808a020();
 
+
+
+
+
+
+/* Four register arguments plus four stack words. */
+
+
+
+
+
+
+
+
+
+extern u8 * Func_02004f74();
+extern void Func_02004f62();
+extern void Func_02004fc0();
+extern void Func_0200307c();
+extern void Func_02002f74();
+extern void Func_02004f86();
+extern void Func_02002cf0();
+extern void Func_02005048();
+extern void Func_0200506a();
+extern void Func_02005032();
+extern void Func_02005082();
+extern void Func_02002fce();
+extern void Func_0200505c();
+extern void Func_02004fec();
+extern void Func_02002ff0();
+extern void Func_0200507e();
+extern void Func_0200500c();
+extern void Func_0200300e();
+extern void Func_0200509c();
+extern void Func_0200502a();
+extern void Func_020050ea();
+extern void Func_02005094();
+extern void Func_02005042();
+extern void Func_02005040();
 void Func_020021b0(void)
 {
     u8 *slot;
 
-    slot = Func_0808a080(18);
+    slot = Func_02004f74(18);
 
     /* r0 still holds the record returned above. */
-    Func_0808a018();
+    Func_02004f62();
 
     /* 136 << 16 and 180 << 17: the same two numbers the walk uses, in 16.16. */
-    Func_0808a0f0(18, 136 << 16, 360 << 16);
+    Func_02004fc0(18, 136 << 16, 360 << 16);
 
-    Func_02000ea8(18, 1);
-    Func_02000d90(18, 136, 408, 0x80000);       /* 204 << 1, 128 << 12 */
-    Func_0808a010(10);
+    Func_0200307c(18, 1);
+    Func_02002f74(18, 136, 408, 0x80000);       /* 204 << 1, 128 << 12 */
+    Func_02004f86(10);
 
-    Func_02000ae8(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Func_02002cf0(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_0808a1b8(18, 0xc000, 40);              /* 192 << 8 */
-    Func_0808a1f0(18, 258);                     /* 129 << 1 */
-    Func_0808a138(18, 2);
-    Func_0808a200(18, 1);
+    Func_02005048(18, 0xc000, 40);              /* 192 << 8 */
+    Func_0200506a(18, 258);                     /* 129 << 1 */
+    Func_02005032(18, 2);
+    Func_02005082(18, 1);
 
-    Func_02000d90(18, 136, 440, 0x60000);       /* 220 << 1, 192 << 11 */
-    Func_0808a148(0, 18, 0);
-    Func_0808a010(10);
+    Func_02002fce(18, 136, 440, 0x60000);       /* 220 << 1, 192 << 11 */
+    Func_0200505c(0, 18, 0);
+    Func_02004fec(10);
 
-    Func_02000d90(18, 136, 472, 0x30000);       /* 236 << 1, 192 << 10 */
-    Func_0808a148(0, 18, 0);
-    Func_0808a010(6);
+    Func_02002ff0(18, 136, 472, 0x30000);       /* 236 << 1, 192 << 10 */
+    Func_0200507e(0, 18, 0);
+    Func_0200500c(6);
 
-    Func_02000d90(18, 136, 504, 0x30000);       /* 252 << 1 */
-    Func_0808a148(0, 18, 0);
-    Func_0808a010(6);
+    Func_0200300e(18, 136, 504, 0x30000);       /* 252 << 1 */
+    Func_0200509c(0, 18, 0);
+    Func_0200502a(6);
 
-    Func_0808a200(0, 1);
-    Func_0808a0f0(18, 0, 0);
-    Func_0808a010(60);
-    Func_080770c8(0x89d);
+    Func_020050ea(0, 1);
+    Func_02005094(18, 0, 0);
+    Func_02005042(60);
+    Func_02005040(0x89d);
 
     /* Common exit; no argument registers are set. */
-    Func_0808a020();
+    Func_0200505c();
 }

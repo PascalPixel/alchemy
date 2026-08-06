@@ -54,12 +54,12 @@
  * (0, 4, 0x14, 0x18) are inferred only from this call shape.
  */
 
-extern void *Func_08000148(s32 arg0, s32 arg1);
-extern void *Func_080770c0(s32 arg0);
-extern void *Func_0808a400(s32 idx);
-extern u8 *Func_080090c8(s32 kind, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_08009098(u8 *object, void *table);
-extern void Func_08009020(u8 *record, s32 arg1);
+
+
+
+
+
+
 
 static s32 Fixed20(s32 raw)
 {
@@ -69,14 +69,23 @@ static s32 Fixed20(s32 raw)
     return raw >> 20;
 }
 
+extern void * Func_0200a996(s32 arg0, s32 arg1);
+extern void * Func_0200aa70(s32 arg0);
+extern void * Func_0200ac2a(s32 idx);
+extern u8 * Func_0200aa32(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200aa3c(u8 *object, void *table);
+extern void Func_0200aa50(u8 *record, s32 arg1);
+extern u8 * Func_0200aaa4(s32 kind, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200aaae(u8 *object, void *table);
+extern void Func_0200aac4(u8 *record, s32 arg1);
 void Func_02004fcc(s32 arg0, u8 *arg1)
 {
-    void **reserved = (void **)Func_08000148(0x23, 4);
+    void **reserved = (void **)Func_0200a996(0x23, 4);
     void *lookup;
 
     *reserved = arg1;
 
-    lookup = Func_080770c0(0x109);
+    lookup = Func_0200aa70(0x109);
     if (lookup == 0) {
         volatile u32 *dma3 = (volatile u32 *)0x040000d4;
         s32 stackWord = 0;
@@ -90,7 +99,7 @@ void Func_02004fcc(s32 arg0, u8 *arg1)
 
     {
         s32 idx = *(s32 *)((u8 *)0x02000240 + 0x1f4);
-        u8 *slot = (u8 *)Func_0808a400(idx);
+        u8 *slot = (u8 *)Func_0200ac2a(idx);
         s32 field16 = *(s32 *)(slot + 16);
         s32 field8 = *(s32 *)(slot + 8);
         s32 packed = Fixed20(field16) * 128 + Fixed20(field8);
@@ -99,18 +108,18 @@ void Func_02004fcc(s32 arg0, u8 *arg1)
         u8 *ownerRecord;
 
         if (*(s32 *)(arg1 + 0) != 0 && *(s32 *)(arg1 + 0x14) != 0) {
-            object = Func_080090c8(26, field8, *(s32 *)(slot + 12) + 0x180000, field16);
+            object = Func_0200aa32(26, field8, *(s32 *)(slot + 12) + 0x180000, field16);
             if (object != 0) {
                 *(s32 *)(object + 20) = *(s32 *)(slot + 20);
                 ownerRecord = *(u8 **)(object + 0x50);
-                Func_08009098(object, (void *)0x0200de38);
+                Func_0200aa3c(object, (void *)0x0200de38);
 
                 object[0x55] = 4;
                 *(u8 **)(object + 0x68) = slot;
                 *(s32 *)(object + 12) = *(s32 *)(object + 12) - 0x8000;
 
                 if (ownerRecord != 0) {
-                    Func_08009020(ownerRecord, 6 - *(s32 *)(arg1 + 0));
+                    Func_0200aa50(ownerRecord, 6 - *(s32 *)(arg1 + 0));
                     ownerRecord[0x26] = 0;
                     ownerRecord[9] = (ownerRecord[9] & ~0x0c) | 4;
                 }
@@ -124,11 +133,11 @@ void Func_02004fcc(s32 arg0, u8 *arg1)
         }
 
         if (tableEntry[2] == arg0 && *(s32 *)(arg1 + 0x18) != 0) {
-            object = Func_080090c8(26, field8, *(s32 *)(slot + 12), field16);
+            object = Func_0200aaa4(26, field8, *(s32 *)(slot + 12), field16);
             if (object != 0) {
                 *(s32 *)(object + 20) = *(s32 *)(slot + 20);
                 ownerRecord = *(u8 **)(object + 0x50);
-                Func_08009098(object, (void *)0x0200de20);
+                Func_0200aaae(object, (void *)0x0200de20);
 
                 object[0x55] = 0;
                 *(short *)(object + 0x64) = 0;
@@ -136,7 +145,7 @@ void Func_02004fcc(s32 arg0, u8 *arg1)
                 *(s32 *)(object + 0x30) = 0x40000;
 
                 if (ownerRecord != 0) {
-                    Func_08009020(ownerRecord, 6);
+                    Func_0200aac4(ownerRecord, 6);
                     ownerRecord[0x26] = 0;
                 }
 

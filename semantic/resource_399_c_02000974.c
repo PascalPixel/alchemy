@@ -47,48 +47,65 @@
 /* Imports, named by the main-image address in the trailing word of the overlay
  * veneer each call site reaches.  Old-style declarations are mandatory in
  * overlay sources: arities vary between sites. */
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a1b8();
-void Func_080b0008();
-u8 *Func_0808a080();
-s32 Func_080770c0();
 
+
+
+
+
+
+
+
+
+
+extern u8 * Func_02002bc2();
+extern s32 Func_02002b94();
+extern void Func_02002d6c();
+extern void Func_02002bd2();
+extern void Func_02002c8c();
+extern void Func_02002cb2();
+extern void Func_02002cc2();
+extern void Func_02002ce6();
+extern void Func_02002c02();
+extern void Func_02002c0c();
+extern void Func_02002ce2();
+extern void Func_02002cf2();
+extern void Func_02002dc2();
+extern void Func_02002c2e();
+extern void Func_02002d08();
+extern void Func_02002d18();
+extern void Func_02002d3c();
 void Func_02000974(void)
 {
     s16 heading;
     s32 facing_near;
 
-    heading = *(s16 *)(Func_0808a080(0) + 6);
+    heading = *(s16 *)(Func_02002bc2(0) + 6);
     facing_near = ((u32)(((s32)heading << 16) + 0x5fff0000) <= 0x3ffe0000);
 
-    if (Func_080770c0(0x881) != 0) {
+    if (Func_02002b94(0x881) != 0) {
         if (facing_near) {
-            Func_080b0008(12, 15);
+            Func_02002d6c(12, 15);
         } else {
-            Func_0808a018();
-            Func_0808a148(15, 0, 0);
-            Func_0808a170(0x164f);
-            Func_0808a180(15, 0);
-            Func_0808a1b8(15, 0x4000, 0);
-            Func_0808a020();
+            Func_02002bd2();
+            Func_02002c8c(15, 0, 0);
+            Func_02002cb2(0x164f);
+            Func_02002cc2(15, 0);
+            Func_02002ce6(15, 0x4000, 0);
+            Func_02002c02();
         }
     } else {
         if (facing_near) {
-            Func_0808a018();
-            Func_0808a170(0x1546);
-            Func_0808a180(14, 0);
-            Func_080b0008(12, 14);
-            Func_0808a020();
+            Func_02002c0c();
+            Func_02002ce2(0x1546);
+            Func_02002cf2(14, 0);
+            Func_02002dc2(12, 14);
+            Func_02002c2e();
         } else {
             /* No section bracket on this arm; see the note above. */
-            Func_0808a148(14, 0, 10);
-            Func_0808a170(0x1547);
-            Func_0808a180(14, 0);
-            Func_0808a1b8(14, 0x5000, 10);
+            Func_02002ce2(14, 0, 10);
+            Func_02002d08(0x1547);
+            Func_02002d18(14, 0);
+            Func_02002d3c(14, 0x5000, 10);
         }
     }
 }

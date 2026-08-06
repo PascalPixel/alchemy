@@ -24,11 +24,12 @@
  */
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
+extern void Func_02002fc4();
 void Func_02007dc8();
 void Func_02007df6();
 void Func_02007e2c();
 void Func_02007eb8();
-void Func_02000058();
+
 void Func_02007e92();
 void Func_02007e08();
 void Func_02007f26();
@@ -40,7 +41,7 @@ void Func_02002f30(void)
     Func_02007df6(0, 0x8000, 0x4000);
     Func_02007e2c(0, 520, 712);
     Func_02007eb8(0, 0x4000, 10);
-    Func_02000058(0x02080000, 0, 0x03100000, 223);
+    Func_02002fc4(0x02080000, 0, 0x03100000, 223);
     Func_02007e92(0, 6, 0);
     Func_02007e08(60);
     Func_02007f26(20);

@@ -44,7 +44,8 @@ extern void Func_02001928();
 extern void Func_02001954();
 void Func_020002dc(void)
 {
-    Func_02001882(Func_02001866(0));
+    Func_02001882(0);
+    Func_02001866();
 
     if (Func_0200183c(0x8a7) != 0 && Func_02001846(0x8a9) != 0) {
         Func_02001918(0x1d23);

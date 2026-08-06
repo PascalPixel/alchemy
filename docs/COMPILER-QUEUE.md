@@ -443,3 +443,30 @@ So the band is a compiler-lane item, not a reconstruction item. It is worth
 roughly 3,748 bytes if a mode covering the epilogue-ordering and scratch-choice
 tie-breaks lands, and worth nothing until then. It should not be the next
 thing anyone hand-shapes.
+
+### The register-order lane is now swept, not guessed — and it is nearly spent
+
+`-mlow-reg-order=` (fork commit `ac6a2b4`) takes four or eight digits and
+overrides the leading entries of `REG_ALLOC_ORDER`: four digits set every basic
+block, eight give the entry block its own order and the rest the second. All
+576 entry/default pairs were swept against every main-image owner in the
+1–24 halfword band.
+
+The result: `080fa264` closes at `-mlow-reg-order=30120123` (with
+`-fthumb-leaf-no-lr -fthumb-no-if-convert`), and nothing else in the band
+closes. Order lowers residue on many owners — `080b0744` 15 → 9,
+`080c1fa8` 15 → 10, `0801a4fc` 9 at best — but never to zero. Layering each of
+the 33 fork modes on top of each owner's best order moved exactly one owner by
+one halfword (`08011fd8` 10 → 9 under `-mthumb-load-latency-one`).
+
+So the scratch-choice tie-break is real and now reachable, but the surviving
+residues are not a single order: on `080a524c` the reference wants `r2` where
+the port hands out `r3` in two mid-function blocks while still wanting `r3`
+first elsewhere, which no whole-function permutation expresses. That is a
+knock-on of an earlier allocation difference, not an ordering knob. The band is
+worth less than it looked; the 383,652-byte bulk is where the byte share is.
+
+Sweep hygiene, learned the hard way: `candidate_show.ts` keys its intermediates
+by stem in a shared output directory, so two concurrent runs of the *same* stem
+corrupt each other and report false zeros. Parallelise across stems, serially
+within one.

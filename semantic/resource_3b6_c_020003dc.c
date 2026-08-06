@@ -96,7 +96,7 @@ s32 Func_020003dc(void)
     }
 
     /* Arguments five and six go to [sp, #0] and [sp, #4]. */
-    Func_02000dc8(51, 47, 3, 1, 51, 45);
+    { s32 f1 = 51; s32 g1 = 45; Func_02000dc8(51, 47, 3, 1,  f1, g1); }
 
     /*
      * The same two-step edit is applied to slots 31 and 32.  These are two

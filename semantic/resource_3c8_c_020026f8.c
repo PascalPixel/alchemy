@@ -146,9 +146,9 @@ void Func_020026f8(void)
      * returned above, and that dataflow is preserved as written. */
     Func_020075e8(0);
 
-    Func_02007582(63, 29, 33, 20, 1, 1);
+    { s32 f1 = 1; s32 g1 = 1; Func_02007582(63, 29, 33, 20,  f1, g1); }
     Func_02007768(161);
-    Func_0200759a(44, 83, 44, 80, 3, 3);
+    { s32 f2 = 3; s32 g2 = 3; Func_0200759a(44, 83, 44, 80,  f2, g2); }
     Func_02007610(30);
     Func_020075e8(0x10000, 0x10000, 0x10000);
     Func_02007796(239);
@@ -184,7 +184,7 @@ void Func_020026f8(void)
             if (countdown == 0) {
                 countdown = 40;
                 index += 4;
-                Func_0200767a(index, 56, 36, 17, 3, 4);
+                { s32 f3 = 3; s32 g3 = 4; Func_0200767a(index, 56, 36, 17,  f3, g3); }
             }
         }
 

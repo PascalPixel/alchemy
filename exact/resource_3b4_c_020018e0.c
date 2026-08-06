@@ -74,7 +74,7 @@ void Func_020018e0(void)
 
     if (facing == 0xc000) {
         if (Func_02003e00(0x206) != 0) {
-            Func_02003de8(46, 43, 1, 1, 45, 43);
+            { s32 fifth = 45; s32 last = 43; Func_02003de8(46, 43, 1, 1, fifth, last); }
         }
         Func_02003e2e(0x207);
         Func_02003ef2();
@@ -82,7 +82,7 @@ void Func_020018e0(void)
         Func_02003ef8();
     } else if (facing == 0) {
         if (Func_02003e3c(0x206) != 0) {
-            Func_02003e24(58, 36, 1, 1, 45, 43);
+            { s32 fifth = 45; s32 last = 43; Func_02003e24(58, 36, 1, 1, fifth, last); }
         }
         Func_02003e62(0x207);
         Func_02003f1e();

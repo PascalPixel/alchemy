@@ -51,56 +51,82 @@
  * the 0x02001444 driver's tail chain also tests.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a010(s32 frames);
-extern s32 Func_080770c0(s32 flagId);
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0d0(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0f0(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a130(s32 id, s32 arg1);
-extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a1e8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a460(void);
-extern void Func_020012f0(void);
-extern void Func_020039ec(s32 packedId);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+extern s32 Func_0200549a(s32 flagId);
+extern s32 Func_020054a4(s32 flagId);
+extern void Func_020054cc(void);
+extern void Func_02005638(void);
+extern void Func_020024d8(void);
+extern void Func_0200550e(s32 id, s32 arg1, s32 arg2);
+extern u8 * Func_02005504(s32 id);
+extern void Func_0200556c(s32 id, s32 arg1, s32 arg2);
+extern void Func_020054fa(s32 frames);
+extern u8 * Func_02005528(s32 id);
+extern void Func_02005510(s32 frames);
+extern void Func_020055c0(s32 id, s32 arg1);
+extern void Func_02004c26(s32 packedId);
+extern void Func_02005560(s32 id, s32 arg1, s32 arg2);
+extern u8 * Func_02005556(s32 id);
+extern void Func_020055ba(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005548(s32 frames);
+extern u8 * Func_02005576(s32 id);
+extern void Func_0200555c(s32 frames);
+extern void Func_0200559e(s32 id, s32 arg1, s32 arg2);
+extern void Func_020055e8(s32 id, s32 arg1, s32 arg2);
+extern void Func_020055f4(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005612(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005684(s32 id, s32 arg1, s32 arg2);
+extern void Func_020056a6(s32 id, s32 arg1, s32 arg2);
+extern void Func_020055b2(void);
 void Func_020011c8(void)
 {
     u8 *record;
 
-    if (Func_080770c0(0x911) != 0 && Func_080770c0(0x922) == 0) {
-        Func_0808a018();
-        Func_0808a460();
-        Func_020012f0();
+    if (Func_0200549a(0x911) != 0 && Func_020054a4(0x922) == 0) {
+        Func_020054cc();
+        Func_02005638();
+        Func_020024d8();
 
-        Func_0808a090(20, 0x6666, 0x3333);
-        record = Func_0808a080(20);
-        Func_0808a0d0(20, 202, 204 << 2);
-        Func_0808a010(1);
-        record = Func_0808a080(20);
+        Func_0200550e(20, 0x6666, 0x3333);
+        record = Func_02005504(20);
+        Func_0200556c(20, 202, 204 << 2);
+        Func_020054fa(1);
+        record = Func_02005528(20);
         record[90] &= 0xfe;
         record[90] |= 1;
-        Func_0808a010(20);
-        Func_0808a130(20, 2);
-        Func_020039ec(20);
+        Func_02005510(20);
+        Func_020055c0(20, 2);
+        Func_02004c26(20);
 
-        Func_0808a090(20, 0x13333, 0x9999);
-        record = Func_0808a080(20);
+        Func_02005560(20, 0x13333, 0x9999);
+        record = Func_02005556(20);
         record[90] &= 0xfe;
-        Func_0808a0d0(20, 192, 201 << 2);
-        Func_0808a010(1);
-        record = Func_0808a080(20);
+        Func_020055ba(20, 192, 201 << 2);
+        Func_02005548(1);
+        record = Func_02005576(20);
         record[90] |= 1;
-        Func_0808a010(20);
+        Func_0200555c(20);
 
-        Func_0808a090(20, 0x33333, 0x19999);
-        Func_0808a0d0(20, 180, 0x30a);
-        Func_0808a0d0(20, 180, 175 << 2);
-        Func_0808a0f0(20, 246 << 16, 128 << 18);
-        Func_0808a1b8(20, 0, 0);
-        Func_0808a1e8(0, 0x101, 60);
-        Func_0808a020();
+        Func_0200559e(20, 0x33333, 0x19999);
+        Func_020055e8(20, 180, 0x30a);
+        Func_020055f4(20, 180, 175 << 2);
+        Func_02005612(20, 246 << 16, 128 << 18);
+        Func_02005684(20, 0, 0);
+        Func_020056a6(0, 0x101, 60);
+        Func_020055b2();
     }
 }

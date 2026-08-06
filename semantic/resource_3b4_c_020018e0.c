@@ -43,42 +43,54 @@
  */
 
 /* Returns the record for a numbered slot. */
-s32 *Func_0808a080();
-/* Scene flag test: zero means not yet set. */
-s32 Func_080770c0();
-void Func_080091c0();
-/* Scene flag clear and set. */
-void Func_080770d0();
-void Func_080770c8();
-void Func_0808a2b0();
-void Func_0808a2a8();
-void Func_0808a2a0();
-void Func_02001b60();
 
+/* Scene flag test: zero means not yet set. */
+
+
+/* Scene flag clear and set. */
+
+
+
+
+
+
+
+extern s32 * Func_02003e28();
+extern s32 Func_02003e00();
+extern void Func_02003de8();
+extern void Func_02003e2e();
+extern void Func_02003ef2();
+extern void Func_02003ef8();
+extern s32 Func_02003e3c();
+extern void Func_02003e24();
+extern void Func_02003e62();
+extern void Func_02003f1e();
+extern void Func_020034ca();
+extern void Func_02003f38();
 void Func_020018e0(void)
 {
-    s32 *slot = Func_0808a080(0);
+    s32 *slot = Func_02003e28(0);
     u16 facing = *(u16 *)((u8 *)slot + 6);
 
     if (facing == 0xc000) {
-        if (Func_080770c0(0x206) != 0) {
-            Func_080091c0(46, 43, 1, 1, 45, 43);
+        if (Func_02003e00(0x206) != 0) {
+            Func_02003de8(46, 43, 1, 1, 45, 43);
         }
-        Func_080770d0(0x207);
-        Func_0808a2b0();
+        Func_02003e2e(0x207);
+        Func_02003ef2();
     } else if (facing == 0x4000) {
-        Func_0808a2a8();
+        Func_02003ef8();
     } else if (facing == 0) {
-        if (Func_080770c0(0x206) != 0) {
-            Func_080091c0(58, 36, 1, 1, 45, 43);
+        if (Func_02003e3c(0x206) != 0) {
+            Func_02003e24(58, 36, 1, 1, 45, 43);
         }
-        Func_080770c8(0x207);
-        Func_0808a2a0();
+        Func_02003e62(0x207);
+        Func_02003f1e();
     } else if (facing == 0x8000) {
         if (slot[3] == 0) {          /* +12 */
-            Func_02001b60();
+            Func_020034ca();
         } else {
-            Func_0808a2a0();
+            Func_02003f38();
         }
     }
 }

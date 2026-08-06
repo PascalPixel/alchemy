@@ -4,14 +4,19 @@
  * 60 bytes earlier inside the preceding owner's table/pool; only this prologue
  * through the return at 0x02002c02-0x02002c08 is claimed. Five calls across
  * three established trig/random targets match independently. */
-s32 Func_08000118();
-s32 Func_08000120();
-u32 Func_080000f8(void);
 
+
+
+
+extern s32 Func_020058aa();
+extern s32 Func_020058c0();
+extern s32 Func_020058da();
+extern u32 Func_020058d8(void);
+extern u32 Func_020058de(void);
 s32 Func_02002ba4(u8 *object)
 {
     s32 phase = *(s32 *)(object + 48);
-    s32 vertical = Func_08000118(phase) * 2;
+    s32 vertical = Func_020058aa(phase) * 2;
     u8 *handle = *(u8 **)(object + 80);
     s32 angle;
     u32 first;
@@ -22,15 +27,15 @@ s32 Func_02002ba4(u8 *object)
 
     *(s32 *)(object + 12) = *(s32 *)(object + 60) + vertical;
     *(s32 *)(object + 8) = *(s32 *)(object + 56)
-        + Func_08000120(phase) * 2;
+        + Func_020058c0(phase) * 2;
 
-    angle = Func_08000120(phase + 0x10000);
+    angle = Func_020058da(phase + 0x10000);
     if (angle < 0)
         angle += 7;
     *(s16 *)(handle + 30) = (s16)(angle >> 3);
 
-    first = Func_080000f8();
-    second = Func_080000f8();
+    first = Func_020058d8();
+    second = Func_020058de();
     *(s32 *)(object + 48) = phase
         + ((first << 9) >> 16)
         + ((second << 9) >> 16)

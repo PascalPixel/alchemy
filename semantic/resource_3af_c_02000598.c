@@ -77,13 +77,24 @@
  * is exact.
  */
 
-extern s32 Func_080000f8(void);
-extern void Func_080f9010(s32 sound_id);
-extern void Func_08009150(void *record, s32 arg1, s32 arg2, s32 arg3);
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a1e8(s32 id, s32 arg1, s32 arg2);
 
+
+
+
+
+
+
+extern s32 Func_0200484a(void);
+extern void Func_020048a0(void *record, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_02004a9e(s32 sound_id);
+extern void Func_02004a2c(s32 id, s32 arg1, s32 arg2);
+extern void Func_02004a3a(s32 id, s32 arg1, s32 arg2);
+extern s32 Func_020048d6(void);
+extern u8 * Func_02004984(s32 id);
+extern void Func_02004a76(s32 id, s32 arg1, s32 arg2);
+extern u8 * Func_0200499c(s32 id);
+extern void Func_0200495a(void *record, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200496a(void *record, s32 arg1, s32 arg2, s32 arg3);
 s32 Func_02000598(u8 *record)
 {
     s16 *state;
@@ -99,7 +110,7 @@ s32 Func_02000598(u8 *record)
     switch (*state) {
     case 0:
         next = *(u16 *)state + 1;
-        draw = ((u32)Func_080000f8() * 40) >> 16;
+        draw = ((u32)Func_0200484a() * 40) >> 16;
         if (draw != 0) {
             return 1;
         }
@@ -113,7 +124,7 @@ s32 Func_02000598(u8 *record)
         *(s32 *)(record + 40) = 128 << 11;
         *(s32 *)(record + 48) = 128 << 11;
         *(s32 *)(record + 52) = 128 << 10;
-        Func_08009150(record, 132 << 17, 0, 0x02960000);
+        Func_020048a0(record, 132 << 17, 0, 0x02960000);
         next = *(u16 *)state + 1;
         break;
 
@@ -133,19 +144,19 @@ s32 Func_02000598(u8 *record)
             return 1;
         }
         *state = (s16)(*(u16 *)state + 1);
-        Func_080f9010(152);
+        Func_02004a9e(152);
         if (record[99] != 0) {
-            Func_0808a1b8(21, 176 << 8, 0);
+            Func_02004a2c(21, 176 << 8, 0);
         } else {
-            Func_0808a1b8(21, 160 << 7, 0);
+            Func_02004a3a(21, 160 << 7, 0);
         }
-        draw = ((u32)Func_080000f8() * 4) >> 16;
+        draw = ((u32)Func_020048d6() * 4) >> 16;
         if (draw != 0) {
-            other = Func_0808a080(21);
+            other = Func_02004984(21);
             *(s32 *)(other + 40) = 128 << 10;
         } else {
-            Func_0808a1e8(21, 0x103, 0);
-            other = Func_0808a080(21);
+            Func_02004a76(21, 0x103, 0);
+            other = Func_0200499c(21);
             *(s32 *)(other + 40) = 192 << 11;
         }
         return 1;
@@ -160,9 +171,9 @@ s32 Func_02000598(u8 *record)
         *(s32 *)(record + 48) = 128 << 10;
         *(s32 *)(record + 52) = 128 << 9;
         if (record[99] != 0) {
-            Func_08009150(record, 252 << 16, 0, 0x02860000);
+            Func_0200495a(record, 252 << 16, 0, 0x02860000);
         } else {
-            Func_08009150(record, 128 << 17, 0, 0x02ae0000);
+            Func_0200496a(record, 128 << 17, 0, 0x02ae0000);
         }
         return 1;
 

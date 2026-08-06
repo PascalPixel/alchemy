@@ -41,30 +41,34 @@
  */
 
 /* Old-style declaration: overlay imports vary in arity between call sites. */
-void Func_080770c8();
 
-void Func_020008cc(void);
-void Func_02000958(void);
-void Func_02000ad4(void);
+
+
+
+
 
 extern s16 Data_02000240[];
 
+extern void Func_02001ddc();
+extern void Func_02001164(void);
+extern void Func_020011fc(void);
+extern void Func_02001384(void);
 s32 Func_0200086c(void)
 {
     if (Data_02000240[225] == 90) {
         /* movs r0,#149 / lsls r0,r0,#4 == 0x950 */
-        Func_080770c8(0x950);
+        Func_02001ddc(0x950);
     }
 
     switch ((s32)Data_02000240[224]) {
     case 0x6b:
-        Func_020008cc();
+        Func_02001164();
         break;
     case 0x70:
-        Func_02000958();
+        Func_020011fc();
         break;
     case 0x6c:
-        Func_02000ad4();
+        Func_02001384();
         break;
     default:
         break;

@@ -24,35 +24,51 @@
  */
 
 /* Imports; the three queried ones are typed for their return value. */
-void Func_02001004();
-void Func_080091c0();
-s32 Func_080770c0();
 
+
+
+
+extern void Func_02003356();
+extern s32 Func_02003384();
+extern void Func_0200207e();
+extern void Func_0200337c();
+extern void Func_0200209c();
+extern void Func_0200339c();
+extern s32 Func_020033ca();
+extern void Func_020020c4();
+extern void Func_020033c4();
+extern void Func_020020e4();
+extern void Func_020033e4();
+extern s32 Func_02003412();
+extern void Func_0200210c();
+extern void Func_0200340c();
+extern void Func_0200212c();
+extern void Func_0200342c();
 void Func_02001050(void)
 {
-    Func_080091c0(8, 42, 15, 5, 8, 29);
+    Func_02003356(8, 42, 15, 5, 8, 29);
 
-    if (Func_080770c0((s32)0x301) != 0) {
-        Func_02001004(8, 22, 31);
-        Func_080091c0(9, 30, 1, 3, 8, 30);
+    if (Func_02003384((s32)0x301) != 0) {
+        Func_0200207e(8, 22, 31);
+        Func_0200337c(9, 30, 1, 3, 8, 30);
     } else {
-        Func_02001004(8, 8, 31);
-        Func_080091c0(9, 30, 1, 3, 22, 30);
+        Func_0200209c(8, 8, 31);
+        Func_0200339c(9, 30, 1, 3, 22, 30);
     }
 
-    if (Func_080770c0((s32)0x302) != 0) {
-        Func_02001004(9, 12, 29);
-        Func_080091c0(14, 33, 3, 1, 11, 33);
+    if (Func_020033ca((s32)0x302) != 0) {
+        Func_020020c4(9, 12, 29);
+        Func_020033c4(14, 33, 3, 1, 11, 33);
     } else {
-        Func_02001004(9, 12, 33);
-        Func_080091c0(14, 29, 3, 1, 11, 29);
+        Func_020020e4(9, 12, 33);
+        Func_020033e4(14, 29, 3, 1, 11, 29);
     }
 
-    if (Func_080770c0((s32)0x303) != 0) {
-        Func_02001004(10, 18, 29);
-        Func_080091c0(14, 33, 3, 1, 17, 33);
+    if (Func_02003412((s32)0x303) != 0) {
+        Func_0200210c(10, 18, 29);
+        Func_0200340c(14, 33, 3, 1, 17, 33);
     } else {
-        Func_02001004(10, 18, 33);
-        Func_080091c0(14, 29, 3, 1, 17, 29);
+        Func_0200212c(10, 18, 33);
+        Func_0200342c(14, 29, 3, 1, 17, 29);
     }
 }

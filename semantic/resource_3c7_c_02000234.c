@@ -37,23 +37,30 @@
  * overlay can be one import and one name can take different argument counts,
  * so no arity is asserted.  Func_080770c0 is used in a condition and therefore
  * needs a return type. */
-s32 Func_080770c0();
-u16 *Func_0808a080();
-void Func_0808a170();
-void Func_0808a180();
-void Func_080b0010();
 
+
+
+
+
+
+extern u16 * Func_02001450();
+extern void Func_02001554();
+extern s32 Func_0200143c();
+extern void Func_020014e6();
+extern void Func_020014fe();
+extern void Func_02001504();
+extern void Func_0200151c();
 void Func_02000234(s32 actor)
 {
-    u16 *scene = Func_0808a080(0);
+    u16 *scene = Func_02001450(0);
 
     if ((((s32)scene[3] + 0x2000) & 0xc000) == 0xc000) {
-        Func_080b0010(actor);
-    } else if (Func_080770c0(0x9a7) != 0) {
-        Func_0808a170(0x28fc);
-        Func_0808a180(actor, 0);
+        Func_02001554(actor);
+    } else if (Func_0200143c(0x9a7) != 0) {
+        Func_020014e6(0x28fc);
+        Func_020014fe(actor, 0);
     } else {
-        Func_0808a170(0x26f6);
-        Func_0808a180(actor, 0);
+        Func_02001504(0x26f6);
+        Func_0200151c(actor, 0);
     }
 }

@@ -37,12 +37,14 @@
  * establish.
  */
 
-extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
-extern void Func_02001b44();
+   /* scene-record accessor */
 
+
+extern u8 * Func_02003ef8(s32 index);
+extern void Func_020035e6();
 void Func_02001a84(void)
 {
-    u8 *record = Func_0808a080(10);
+    u8 *record = Func_02003ef8(10);
     s32 cell;
 
     if (record == 0) {
@@ -50,5 +52,5 @@ void Func_02001a84(void)
     }
 
     cell = *(s32 *)(record + 16) >> 20;
-    Func_02001b44(10, 13, cell + 1, 13, cell);
+    Func_020035e6(10, 13, cell + 1, 13, cell);
 }

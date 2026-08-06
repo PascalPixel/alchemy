@@ -29,67 +29,105 @@
  * value, which this owner does not exhibit.
  */
 
-extern void Func_0808a018(void);
-extern void Func_0808a360(void);
-extern void Func_0808a370(void);
-extern void Func_0808a010(s32 arg0);
-extern void Func_080f9010(s32 arg0);
-extern void Func_020023bc(s32 arg0);
-extern void Func_02002940(s32 arg0, s32 arg1);
-extern void Func_0808a020(void);
-extern s32 Func_080000c0(void);
-extern void Func_080f9048(s32 arg0);
-extern void Func_0808a4f0(void);
-extern void Func_080770c8(s32 arg0);
 
+
+
+
+
+
+
+
+
+
+
+
+
+extern void Func_02006912(void);
+extern void Func_02006a3e(void);
+extern void Func_02006a52(void);
+extern void Func_02006918(s32 arg0);
+extern void Func_02006a9e(s32 arg0);
+extern void Func_02004db0(s32 arg0);
+extern void Func_0200533c(s32 arg0, s32 arg1);
+extern void Func_02006932(s32 arg0);
+extern void Func_02006946(void);
+extern void Func_02006abe(s32 arg0);
+extern void Func_0200694a(void);
+extern void Func_02006a76(void);
+extern void Func_02006a8a(void);
+extern void Func_0200695a(s32 arg0);
+extern void Func_02006ae2(s32 arg0);
+extern void Func_02004df4(s32 arg0);
+extern void Func_02005380(s32 arg0, s32 arg1);
+extern void Func_02006976(s32 arg0);
+extern s32 Func_020067ee(void);
+extern void Func_02006b0a(s32 arg0);
+extern void Func_02006b0c(s32 arg0);
+extern void Func_02004e1e(s32 arg0);
+extern void Func_020053aa(s32 arg0, s32 arg1);
+extern void Func_02006b20(s32 arg0);
+extern void Func_020069a6(s32 arg0);
+extern void Func_020053be(s32 arg0, s32 arg1);
+extern void Func_02006b34(s32 arg0);
+extern void Func_020069ba(s32 arg0);
+extern void Func_02004e4c(s32 arg0);
+extern void Func_020053d8(s32 arg0, s32 arg1);
+extern void Func_02006b4e(s32 arg0);
+extern void Func_020069d4(s32 arg0);
+extern void Func_02004e66(s32 arg0);
+extern void Func_020053f2(s32 arg0, s32 arg1);
+extern void Func_02006b68(s32 arg0);
+extern void Func_02006b44(void);
+extern void Func_02006a00(void);
+extern void Func_020069b6(s32 arg0);
 void Func_020029d0(s32 arg0)
 {
     if (arg0 == 0) {
-        Func_0808a018();
-        Func_0808a360();
-        Func_0808a370();
-        Func_0808a010(30);
-        Func_080f9010(89);
-        Func_020023bc(0);
-        Func_02002940(1, 0);
-        Func_0808a010(120);
-        Func_0808a020();
+        Func_02006912();
+        Func_02006a3e();
+        Func_02006a52();
+        Func_02006918(30);
+        Func_02006a9e(89);
+        Func_02004db0(0);
+        Func_0200533c(1, 0);
+        Func_02006932(120);
+        Func_02006946();
         return;
     }
 
-    Func_080f9010(247);
-    Func_0808a018();
-    Func_0808a360();
-    Func_0808a370();
+    Func_02006abe(247);
+    Func_0200694a();
+    Func_02006a76();
+    Func_02006a8a();
 
     *(u16 *)0x0200ca3c = (u16)(arg0 * 60);
 
-    Func_0808a010(30);
-    Func_080f9010(arg0 + 0x5a);
-    Func_020023bc(arg0);
-    Func_02002940(1, 0);
-    Func_0808a010(120);
+    Func_0200695a(30);
+    Func_02006ae2(arg0 + 0x5a);
+    Func_02004df4(arg0);
+    Func_02005380(1, 0);
+    Func_02006976(120);
 
-    while (Func_080000c0() != 0) {
-        Func_080f9048(1);
+    while (Func_020067ee() != 0) {
+        Func_02006b0a(1);
     }
 
-    Func_080f9010(0x121);
-    Func_020023bc(5);
-    Func_02002940(2, 0);
-    Func_080f9010(236);
-    Func_0808a010(60);
-    Func_02002940(2, 1);
-    Func_080f9010(236);
-    Func_0808a010(60);
-    Func_020023bc(6);
-    Func_02002940(2, 0);
-    Func_080f9010(236);
-    Func_0808a010(60);
-    Func_020023bc(7);
-    Func_02002940(4, 0);
-    Func_080f9010(237);
-    Func_0808a4f0();
-    Func_0808a020();
-    Func_080770c8(0x123);
+    Func_02006b0c(0x121);
+    Func_02004e1e(5);
+    Func_020053aa(2, 0);
+    Func_02006b20(236);
+    Func_020069a6(60);
+    Func_020053be(2, 1);
+    Func_02006b34(236);
+    Func_020069ba(60);
+    Func_02004e4c(6);
+    Func_020053d8(2, 0);
+    Func_02006b4e(236);
+    Func_020069d4(60);
+    Func_02004e66(7);
+    Func_020053f2(4, 0);
+    Func_02006b68(237);
+    Func_02006b44();
+    Func_02006a00();
+    Func_020069b6(0x123);
 }

@@ -46,8 +46,9 @@ extern u16 Data_020094ac[]; /* colour strip the window is copied from */
  * on a disassembly of the IWRAM copy.  `counter % 6` would also yield 0..5, so
  * the call is preserved verbatim rather than replaced by an operator.
  */
-s32 Func_030003f0();
 
+
+extern s32 Func_020013ce();
 void Func_020000b0(void)
 {
     volatile u32 *dma3;
@@ -55,7 +56,7 @@ void Func_020000b0(void)
     u16 frame;
 
     frame = Data_0200981c;
-    step = Func_030003f0(frame, 6);
+    step = Func_020013ce(frame, 6);
 
     /*
      * lsls #16 / lsrs #15 zero-extends the helper's result to 16 bits and

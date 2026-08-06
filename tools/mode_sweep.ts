@@ -58,6 +58,12 @@ export const FORK_MODES = [
   // 08091174.
   "-fthumb-group-control-rematerialize",
   "-fthumb-sched-pool-load-late",
+  // Thumb leaf link-register and if-conversion classes, 2026-08-06. The first
+  // stops the spurious push {lr} on empty-frame Thumb leaves whose far-jump
+  // answer is latched before branch lengths exist; the second models a
+  // compiler without ifcvt.c, which gcc 2.95 did not have. Witness 080fa1ac.
+  "-fthumb-leaf-no-lr",
+  "-fthumb-no-if-convert",
 ] as const;
 
 export const STOCK_SWITCHES = [

@@ -455,6 +455,20 @@ const POSTCALL_BYTE_INCREMENT_R2_SOURCES = new Set(["08098b10"]);
 // the sched2 pool-load-late tie-break; 08091174: the tie-break alone.
 const GROUP_CONTROL_REMATERIALIZE_SOURCES = new Set(["080f377c"]);
 const SCHED_POOL_LOAD_LATE_SOURCES = new Set(["080f377c", "08091174"]);
+// Thumb leaf link-register class, 2026-08-06.  THUMB_INITIAL_ELIMINATION_OFFSET
+// asks thumb_far_jump_used_p before branch lengths exist, so any conditional
+// branch reads as a far jump and the pessimistic answer is latched in
+// cfun->machine->far_jump_used for the rest of the compilation.  Every Thumb
+// leaf with a branch then saves lr it never needs.  -fthumb-leaf-no-lr
+// suppresses that answer only where the frame is provably empty, so no
+// elimination offset can move.
+const THUMB_LEAF_NO_LR_SOURCES = new Set(["080fa1ac"]);
+// The reference compiler predates ifcvt.c (gcc 2.95 has no if-conversion pass
+// at all), so a two-armed if/else stays two basic blocks instead of collapsing
+// into a conditional move.  Measured over all 692 main-image owners the flag
+// lowers residue on 47 and closes none by itself; it is a structural
+// precondition, not a finisher.
+const THUMB_NO_IF_CONVERT_SOURCES = new Set(["080fa1ac"]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -1926,6 +1940,8 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_POOL_LOAD_LATE_SOURCES.has(stem)
       ? ["-fthumb-sched-pool-load-late"]
       : []),
+    ...(THUMB_LEAF_NO_LR_SOURCES.has(stem) ? ["-fthumb-leaf-no-lr"] : []),
+    ...(THUMB_NO_IF_CONVERT_SOURCES.has(stem) ? ["-fthumb-no-if-convert"] : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
       : []),

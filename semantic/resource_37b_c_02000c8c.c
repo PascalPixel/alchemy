@@ -109,7 +109,7 @@ void Func_02000c8c(void)
         view[2] = state[4];
         anchor[0] = (s32 *)view;
 
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0x10000;
             Func_02003148(1);
         }
@@ -126,7 +126,7 @@ void Func_02000c8c(void)
         saved = anchor[0];
         anchor[0] = (s32 *)view;
 
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0xffff0000;
             Func_0200319e(1);
         }
@@ -136,19 +136,19 @@ void Func_02000c8c(void)
 
     /* Three paced runs of the same two renderer calls; only the frame wait
      * between them and the repeat count change (6 x 8, 10 x 4, 12 x 2). */
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i != 6; i++) {
         Func_0200317e(2, 28, 34, 10, 4, 2);
         Func_020031cc(8);
         Func_02003198(2, 30, 34, 10, 4, 2);
         Func_020031e6(8);
     }
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i != 10; i++) {
         Func_020031bc(2, 28, 34, 10, 4, 2);
         Func_0200320a(4);
         Func_020031d6(2, 30, 34, 10, 4, 2);
         Func_02003224(4);
     }
-    for (i = 0; i < 12; i++) {
+    for (i = 0; i != 12; i++) {
         Func_020031fa(2, 28, 34, 10, 4, 2);
         Func_02003248(2);
         Func_02003214(2, 30, 34, 10, 4, 2);
@@ -160,12 +160,12 @@ void Func_02000c8c(void)
     Func_02003292(60);
 
     if (direction == 1) {
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0xffff0000;
             Func_020032ac(1);
         }
     } else if (direction == 2) {
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i != 30; i++) {
             view[2] = view[2] + 0x10000;
             Func_020032ce(1);
         }

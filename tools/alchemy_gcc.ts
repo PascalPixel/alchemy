@@ -395,6 +395,18 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 // fingerprint, with a repeated post-reload exception: an adjacent r1 setter
 // fills the slot before a literal r0 setter. The mode recognizes the call-fed
 // pair structurally and does not depend on this address.
+// NOT extendable to constant pairs: several near-band owners (resource_377
+// 0x020001e0, resource_399 0x020002b8, resource_3a2 0x02000ac0, resource_3ae
+// 0x020002dc) each differ only by a `movs r0,#K / movs r1,#0' pair the
+// reference emits in the opposite order.  A fork mode was built that ran the
+// transform below without the scheduler-inversion gate and restricted to two
+// literal setters (-fthumb-const-arg1-before-arg0).  It regressed every
+// witness: resource_377 went 2 -> 8 halfwords because the SAME function wants
+// r0 first at 0x0200019a, 0x020001a4, 0x020001de and 0x02000208 and r1 first
+// only at 0x02000236.  The order therefore is not a property of the compiler's
+// tie-break at all -- within one function it alternates -- so it must come from
+// the original source's argument expressions, and no whole-function flag can
+// model it.  The fork change was reverted and the digest restored.
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   "exact/resource_38f_c_020008ec.c",
   // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair

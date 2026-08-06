@@ -2311,6 +2311,22 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "541728170855e1f3002918fde83f91824e70f9e2d19cd50e93029529dae5b547",
         "735821ddefdabb338994007671c41b5ffd3a02653411fd1613e9fc8a5e7e722b",
         "f3f9b5276f4aab31ef2d3ebb85eb5a65e3cc4050900d403ef2622ed1d60c7b2b",
+        // 2026-08-06: adds -fthumb-leaf-no-lr. THUMB_INITIAL_ELIMINATION_OFFSET
+        // asks whether the function contains a far jump before branch lengths
+        // are known, so every conditional branch reads as far and the answer is
+        // latched permanently -- a Thumb leaf with any if/else then pushes and
+        // pops a link register it never needed. With an empty frame and no
+        // memory arguments the answer cannot move an elimination offset, so the
+        // flag defers it to the prologue. Default-off and source-routed.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "e51f4b67d08661edf2ca533df45025ddb9dd31503f761f07b17b1a9b28289ac0",
+        // 2026-08-06: adds -fthumb-no-if-convert, which disables the
+        // if-conversion pass. It rewrites a two-armed if/else into "set the
+        // fallthrough value, then conditionally overwrite it", dropping one
+        // branch and hoisting the surviving constant above the compare; the
+        // reference build keeps both arms. Default-off and source-routed.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "f4509bfbe10781093b5f16e84854ef7d91729e5972f2136e078b1c77959ab1c4",
       ],
     },
     gs2: {

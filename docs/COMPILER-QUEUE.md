@@ -383,3 +383,90 @@ entry.
 **Do not land this as a wider whole-function mode.** Symmetry is not
 evidence (see the rejected hook above), and the whole point of this item is
 that the existing whole-function mode is what fails here.
+
+## Main-image survey: where the open bytes actually are (2026-08-06)
+
+Every one of the 695 open main-image owners was compiled from its unmodified
+semantic source and diffed against its reference region. 581 compared cleanly;
+114 threw `compiled function symbols differ`, which is a tool limit, not a
+source problem — those regions place a static datum ahead of the entry, so the
+`Func_<stem>` symbol does not sit at the region address and
+`linkedFunctionExtent` rejects it. Comparing their linked bytes against the ROM
+directly puts every one of them at roughly half the region differing, so the
+limit is hiding nothing.
+
+One owner was already byte-exact as written and has been promoted:
+`080a7380`, 192 bytes, production routing, no source change.
+
+The rest of the field is bimodal, and the shape matters for planning:
+
+| band                            | owners | bytes   |
+| ------------------------------- | -----: | ------: |
+| exact as written                |      1 |     192 |
+| 1–20 differing halfwords        |     50 |   3,748 |
+| everything else                 |    643 | 383,652 |
+
+The near-miss band is small. Closing all fifty owners to the last halfword
+would add 3,748 bytes, about a tenth of the 37,300 that separates the tree from
+a 25% byte share. The remaining 383,652 bytes sit at half-a-region differing:
+those are behavioural reconstructions, and each needs ordinary per-owner work,
+not a search.
+
+### The near-miss band is one compiler class, not fifty source problems
+
+The four largest near-misses were swept over the full explorer matrix —
+78 single configurations each, and 334 including pairs for `0808fecc`. None
+moved by a single halfword:
+
+| owner      | bytes | floor | classification        |
+| ---------- | ----: | ----: | --------------------- |
+| `080a524c` |   316 |     4 | `register=4`          |
+| `080b5d3c` |   214 |     4 | `order`               |
+| `08092f84` |   188 |     7 | `register=7,literal`  |
+| `0800fec8` |   140 |     2 | `register=3,literal`  |
+| `0808fecc` |    48 |     2 | `order` (pairs too)   |
+| `0800430c` |    76 |     3 | `order`               |
+
+The residues are register-allocation and scheduling tie-breaks, and they are
+invariant to source shape as well as to routing. `0808fecc` differs only in
+whether `add sp, #4` precedes or follows the return-value move; `0800430c`
+only in whether a `movs r0, #1` is scheduled before or after an unrelated
+`ands`; `080a524c` differs in nothing but the choice of `r2` over `r3` for a
+scratch, four times. Source spellings tried and rejected: reordering the
+declarations, reordering independent statements inside the loop body,
+splitting and merging the shift pair, returning through the structure field
+rather than the local, hoisting and sinking the re-read of a volatile, and —
+on `080a524c`, whose semantic source is already parameterised for this — all
+seven spellings of `CHANGED_TYPE` from `u8` through `bool`.
+
+So the band is a compiler-lane item, not a reconstruction item. It is worth
+roughly 3,748 bytes if a mode covering the epilogue-ordering and scratch-choice
+tie-breaks lands, and worth nothing until then. It should not be the next
+thing anyone hand-shapes.
+
+### The register-order lane is now swept, not guessed — and it is nearly spent
+
+`-mlow-reg-order=` (fork commit `ac6a2b4`) takes four or eight digits and
+overrides the leading entries of `REG_ALLOC_ORDER`: four digits set every basic
+block, eight give the entry block its own order and the rest the second. All
+576 entry/default pairs were swept against every main-image owner in the
+1–24 halfword band.
+
+The result: `080fa264` closes at `-mlow-reg-order=30120123` (with
+`-fthumb-leaf-no-lr -fthumb-no-if-convert`), and nothing else in the band
+closes. Order lowers residue on many owners — `080b0744` 15 → 9,
+`080c1fa8` 15 → 10, `0801a4fc` 9 at best — but never to zero. Layering each of
+the 33 fork modes on top of each owner's best order moved exactly one owner by
+one halfword (`08011fd8` 10 → 9 under `-mthumb-load-latency-one`).
+
+So the scratch-choice tie-break is real and now reachable, but the surviving
+residues are not a single order: on `080a524c` the reference wants `r2` where
+the port hands out `r3` in two mid-function blocks while still wanting `r3`
+first elsewhere, which no whole-function permutation expresses. That is a
+knock-on of an earlier allocation difference, not an ordering knob. The band is
+worth less than it looked; the 383,652-byte bulk is where the byte share is.
+
+Sweep hygiene, learned the hard way: `candidate_show.ts` keys its intermediates
+by stem in a shared output directory, so two concurrent runs of the *same* stem
+corrupt each other and report false zeros. Parallelise across stems, serially
+within one.

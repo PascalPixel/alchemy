@@ -41,6 +41,9 @@ export const FORK_MODES = [
   "-fthumb-group-value1-before-base",
   "-fthumb-move-before-alu", "-fthumb-orr-dead-input-reuse",
   "-fthumb-call-arg1-before-arg0",
+  // Same transposition without the "only undo a scheduler inversion" gate,
+  // restricted to a pair of plain literals. Witness resource_3ae:02dc.
+  "-fthumb-call-literal-arg1-first",
   "-fthumb-call-arg0-before-store",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",

@@ -23135,24 +23135,6 @@
         },
         {
           "start": 33555164,
-          "end": 33555226,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555226,
-          "end": 33555228,
-          "kind": "executable_alignment",
-          "evidence": "resource_3ae_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33555228,
-          "end": 33555240,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555240,
           "end": 33555304,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

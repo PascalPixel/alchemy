@@ -41,10 +41,13 @@ void Func_020030e8(s32 arg0, s32 arg1, s32 arg2)
 
     {
         s32 v = 0x14000;
+        u8 *p = object;
+        u8 zero = 0;
         *(s32 *)(object + 0x30) = v;
         *(s32 *)(object + 0x34) = v >> 1;
+        p += 0x5b;
+        *p = zero;
     }
-    object[0x5b] = 0;
 
     Func_02006f74();
     Func_02006f5c(object, 5);

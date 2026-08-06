@@ -16,9 +16,12 @@ void Func_020030a8(s32 selector, s32 x, s32 z)
 
     if (actor != 0) {
         s32 v = 0x20000;
+        u8 *p = (u8 *)actor;
+        u8 zero = 0;
         *(s32 *)((u8 *)actor + 48) = v;
         *(s32 *)((u8 *)actor + 52) = v >> 1;
-        *((u8 *)actor + 91) = 0;
+        p += 91;
+        *p = zero;
 
         Func_02006f34(actor);
         Func_02006f1c(actor, 5);

@@ -751,6 +751,16 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_371:1888 and its two byte-identical siblings call a four-argument
+  // import as (-1, -1, -1, 0); the fork CSEs the -1 into one register and
+  // copies it out, where the reference materialises `movs rN, #1' into r0-r2
+  // and negates each.  77 -> 31 differing halfwords, 2026-08-06.
+  "exact/resource_371_c_02001888.c",
+  "semantic/resource_371_c_02001888.c",
+  "exact/resource_371_c_02001938.c",
+  "semantic/resource_371_c_02001938.c",
+  "exact/resource_371_c_020019e8.c",
+  "semantic/resource_371_c_020019e8.c",
   // Reconstruction-wave (Sonnet) exacts, 2026-08-06: resource_39c:15e0 (two-
   // local stacked-argument staging law) and resource_3b1:413c (paired with
   // sched-low-dest-first, see that set).
@@ -952,7 +962,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_3a2_c_02000ac0.c",
   "semantic/resource_3ae_c_020002dc.c",
   "semantic/resource_399_c_020002b8.c",
-  // NOT resource_39f:21b0: measured 6 halfwords unrouted, 12 routed here.
+  "semantic/resource_39f_c_020021b0.c",
   // Tier-2 cohort sweep, 2026-08-06: the same argument-setter ordering tell
   // reaches well past the near-exact band.  These three were at 12, 13 and 14
   // differing halfwords and go byte-exact under this mode alone.

@@ -291,6 +291,7 @@ const GROUP_ZERO_ANY_REGISTER_SOURCES = new Set(["0808fe38"]);
 // the reference keeps the split contiguous and loads r0 after it.
 const ARG0_AFTER_SPLIT_SOURCES = new Set(["0808fe38"]);
 const CALL_ARG0_POOL_LOAD_SOURCES = new Set(["0808fe38"]);
+const RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES = new Set(["0808fecc"]);
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -1842,6 +1843,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG0_POOL_LOAD_SOURCES.has(stem)
       ? ["-fthumb-call-arg0-pool-load"]
       : []),
+    ...(RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES.has(stem)
+      ? ["-fthumb-return-value-before-stack-adjust"]
+      : []),
     ...(GROUP_VALUE1_BEFORE_BASE_SOURCES.has(stem)
       ? ["-fthumb-group-value1-before-base"]
       : []),
@@ -2279,6 +2283,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // -fthumb-next-arg-between-split: it pushes an r0 pool load that the
         // scheduler parked inside a long split immediate down past the shift.
         "cee7a5014ceb6ff7f702dc0b12f5378a57f92a100f6e5da772f54930604f0284",
+        "0a5442b5dcc96c3acb88597bb5074cedf6af996869708a0c840feb143f9d93a8",
         "541728170855e1f3002918fde83f91824e70f9e2d19cd50e93029529dae5b547",
         "735821ddefdabb338994007671c41b5ffd3a02653411fd1613e9fc8a5e7e722b",
         "f3f9b5276f4aab31ef2d3ebb85eb5a65e3cc4050900d403ef2622ed1d60c7b2b",

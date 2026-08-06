@@ -30,88 +30,130 @@
  * Func_080091c0 calls; the later blocks store their stack words explicitly.
  */
 
-s32 Func_080770c0();
-void Func_080091c0();
-void Func_0808a0f0();
 
+
+
+
+extern void Func_0200333c();
+extern void Func_0200334e();
+extern void Func_02003360();
+extern void Func_02003372();
+extern void Func_02003384();
+extern void Func_02003396();
+extern s32 Func_020033c4();
+extern void Func_020033b0();
+extern void Func_0200345a();
+extern s32 Func_020033f4();
+extern void Func_020033e0();
+extern void Func_0200348a();
+extern s32 Func_02003420();
+extern void Func_02003410();
+extern void Func_020034ba();
+extern s32 Func_02003452();
+extern void Func_02003442();
+extern void Func_020034ec();
+extern s32 Func_02003482();
+extern void Func_02003472();
+extern void Func_0200351c();
+extern s32 Func_020034b6();
+extern void Func_020034a6();
+extern void Func_02003550();
+extern s32 Func_020034e6();
+extern void Func_020034d6();
+extern void Func_02003580();
+extern s32 Func_02003518();
+extern void Func_02003508();
+extern void Func_020035b2();
+extern s32 Func_02003548();
+extern void Func_02003538();
+extern void Func_020035e2();
+extern s32 Func_0200357c();
+extern void Func_0200356c();
+extern void Func_02003616();
+extern s32 Func_020035ac();
+extern void Func_0200359c();
+extern void Func_02003646();
+extern s32 Func_020035de();
+extern void Func_020035ce();
+extern void Func_02003678();
 void Func_020017c0(s32 tint)
 {
-    Func_080091c0(122, 20, 1, 1, 100, 32);
-    Func_080091c0(122, 20, 1, 1, 104, 32);
-    Func_080091c0(122, 20, 1, 1, 108, 32);
-    Func_080091c0(122, 20, 1, 1, 112, 32);
-    Func_080091c0(122, 20, 1, 1, 116, 32);
-    Func_080091c0(122, 20, 1, 1, 120, 32);
+    Func_0200333c(122, 20, 1, 1, 100, 32);
+    Func_0200334e(122, 20, 1, 1, 104, 32);
+    Func_02003360(122, 20, 1, 1, 108, 32);
+    Func_02003372(122, 20, 1, 1, 112, 32);
+    Func_02003384(122, 20, 1, 1, 116, 32);
+    Func_02003396(122, 20, 1, 1, 120, 32);
 
-    if (Func_080770c0(0x311) != 0) {
-        Func_080091c0(121, 20, 1, 1, 100, 32);
+    if (Func_020033c4(0x311) != 0) {
+        Func_020033b0(121, 20, 1, 1, 100, 32);
         if (tint != 0) {
-            Func_0808a0f0(9, 199 << 19, 130 << 18);
+            Func_0200345a(9, 199 << 19, 130 << 18);
         }
-    } else if (Func_080770c0(0x310) != 0) {
-        Func_080091c0(121, 20, 1, 1, 100, 32);
+    } else if (Func_020033f4(0x310) != 0) {
+        Func_020033e0(121, 20, 1, 1, 100, 32);
         if (tint != 0) {
-            Func_0808a0f0(9, 203 << 19, 130 << 18);
+            Func_0200348a(9, 203 << 19, 130 << 18);
         }
     }
 
-    if (Func_080770c0(0x313) != 0) {
-        Func_080091c0(121, 20, 1, 1, 104, 32);
+    if (Func_02003420(0x313) != 0) {
+        Func_02003410(121, 20, 1, 1, 104, 32);
         if (tint != 0) {
-            Func_0808a0f0(10, 207 << 19, 130 << 18);
+            Func_020034ba(10, 207 << 19, 130 << 18);
         }
-    } else if (Func_080770c0(0x312) != 0) {
-        Func_080091c0(121, 20, 1, 1, 104, 32);
+    } else if (Func_02003452(0x312) != 0) {
+        Func_02003442(121, 20, 1, 1, 104, 32);
         if (tint != 0) {
-            Func_0808a0f0(10, 211 << 19, 130 << 18);
-        }
-    }
-
-    if (Func_080770c0(0x315) != 0) {
-        Func_080091c0(121, 20, 1, 1, 108, 32);
-        if (tint != 0) {
-            Func_0808a0f0(11, 215 << 19, 130 << 18);
-        }
-    } else if (Func_080770c0(0x314) != 0) {
-        Func_080091c0(121, 20, 1, 1, 108, 32);
-        if (tint != 0) {
-            Func_0808a0f0(11, 219 << 19, 130 << 18);
+            Func_020034ec(10, 211 << 19, 130 << 18);
         }
     }
 
-    if (Func_080770c0(0x317) != 0) {
-        Func_080091c0(121, 20, 1, 1, 112, 32);
+    if (Func_02003482(0x315) != 0) {
+        Func_02003472(121, 20, 1, 1, 108, 32);
         if (tint != 0) {
-            Func_0808a0f0(12, 223 << 19, 130 << 18);
+            Func_0200351c(11, 215 << 19, 130 << 18);
         }
-    } else if (Func_080770c0(0x316) != 0) {
-        Func_080091c0(121, 20, 1, 1, 112, 32);
+    } else if (Func_020034b6(0x314) != 0) {
+        Func_020034a6(121, 20, 1, 1, 108, 32);
         if (tint != 0) {
-            Func_0808a0f0(12, 227 << 19, 130 << 18);
-        }
-    }
-
-    if (Func_080770c0(0x319) != 0) {
-        Func_080091c0(121, 20, 1, 1, 116, 32);
-        if (tint != 0) {
-            Func_0808a0f0(13, 231 << 19, 130 << 18);
-        }
-    } else if (Func_080770c0(0x318) != 0) {
-        Func_080091c0(121, 20, 1, 1, 116, 32);
-        if (tint != 0) {
-            Func_0808a0f0(13, 235 << 19, 130 << 18);
+            Func_02003550(11, 219 << 19, 130 << 18);
         }
     }
 
-    if (Func_080770c0(0x31b) != 0) {
-        Func_080091c0(121, 20, 1, 1, 120, 32);
+    if (Func_020034e6(0x317) != 0) {
+        Func_020034d6(121, 20, 1, 1, 112, 32);
         if (tint != 0) {
-            Func_0808a0f0(14, 239 << 19, 130 << 18);
+            Func_02003580(12, 223 << 19, 130 << 18);
         }
-    } else if (Func_080770c0(0x31a) != 0) {
-        Func_080091c0(121, 20, 1, 1, 120, 32);
+    } else if (Func_02003518(0x316) != 0) {
+        Func_02003508(121, 20, 1, 1, 112, 32);
         if (tint != 0) {
-            Func_0808a0f0(14, 243 << 19, 130 << 18);
+            Func_020035b2(12, 227 << 19, 130 << 18);
+        }
+    }
+
+    if (Func_02003548(0x319) != 0) {
+        Func_02003538(121, 20, 1, 1, 116, 32);
+        if (tint != 0) {
+            Func_020035e2(13, 231 << 19, 130 << 18);
+        }
+    } else if (Func_0200357c(0x318) != 0) {
+        Func_0200356c(121, 20, 1, 1, 116, 32);
+        if (tint != 0) {
+            Func_02003616(13, 235 << 19, 130 << 18);
+        }
+    }
+
+    if (Func_020035ac(0x31b) != 0) {
+        Func_0200359c(121, 20, 1, 1, 120, 32);
+        if (tint != 0) {
+            Func_02003646(14, 239 << 19, 130 << 18);
+        }
+    } else if (Func_020035de(0x31a) != 0) {
+        Func_020035ce(121, 20, 1, 1, 120, 32);
+        if (tint != 0) {
+            Func_02003678(14, 243 << 19, 130 << 18);
         }
     }
 }

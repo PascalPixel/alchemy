@@ -29,39 +29,54 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-u8 *Func_0808a080();    /* scene entity record by selector */
-void Func_0808a100();
-void Func_080091e0();
-void Func_080000c0();   /* frame wait */
-void Func_080091b8();   /* six-argument tile/strip request, last two on the stack */
-void Func_080091c0();   /* six-argument collision repaint, last two on the stack */
+    /* scene entity record by selector */
 
+
+   /* frame wait */
+   /* six-argument tile/strip request, last two on the stack */
+   /* six-argument collision repaint, last two on the stack */
+
+extern u8 * Func_02001c18();
+extern void Func_02001c5a();
+extern void Func_02001be6();
+extern void Func_02001bf2();
+extern void Func_02001be8();
+extern void Func_02001c0c();
+extern void Func_02001c1e();
+extern void Func_02001c30();
+extern void Func_02001c26();
+extern void Func_02001c46();
+extern void Func_02001c3c();
+extern void Func_02001c42();
+extern void Func_02001c6c();
+extern void Func_02001c80();
+extern void Func_02001c92();
 void Func_020000d4(void)
 {
     u8 *entity;
     int rowA = 21;      /* r6, live for the whole body */
 
-    entity = Func_0808a080(10);
-    Func_0808a100(10, 5);
+    entity = Func_02001c18(10);
+    Func_02001c5a(10, 5);
 
     if (entity != 0) {
-        Func_080091e0(entity, 0);
+        Func_02001be6(entity, 0);
         entity[0x23] = 1;
     }
 
-    Func_080091b8(41, 87, 2, 5, rowA, 59);
-    Func_080000c0(4);
+    Func_02001bf2(41, 87, 2, 5, rowA, 59);
+    Func_02001be8(4);
 
-    Func_080091b8(3, 93, 1, 1, 24, 62);
-    Func_080091b8(1, 94, 1, 1, rowA, 55);
-    Func_080091b8(43, 87, 2, 5, rowA, 58);
-    Func_080000c0(4);
+    Func_02001c0c(3, 93, 1, 1, 24, 62);
+    Func_02001c1e(1, 94, 1, 1, rowA, 55);
+    Func_02001c30(43, 87, 2, 5, rowA, 58);
+    Func_02001c26(4);
 
-    Func_080091b8(41, 87, 2, 5, rowA, 58);
-    Func_080000c0(4);
-    Func_080000c0(4);
+    Func_02001c46(41, 87, 2, 5, rowA, 58);
+    Func_02001c3c(4);
+    Func_02001c42(4);
 
-    Func_080091c0(21, 11, 2, 2, rowA, 13);
-    Func_080091c0(21, 11, 1, 1, 22, 15);
-    Func_080091c0(19, 17, 1, 1, rowA, 14);
+    Func_02001c6c(21, 11, 2, 2, rowA, 13);
+    Func_02001c80(21, 11, 1, 1, 22, 15);
+    Func_02001c92(19, 17, 1, 1, rowA, 14);
 }

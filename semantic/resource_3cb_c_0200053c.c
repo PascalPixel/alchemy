@@ -43,11 +43,12 @@ extern u8 Data_02000240[];
 
 /* Old-style declaration: the import's real interface is not established here,
  * but it is used for its return value so it needs a return type. */
-s32 Func_08077148();
 
+
+extern s32 Func_02001d76();
 s32 Func_0200053c(u16 *dest)
 {
-    s32 count = Func_08077148();
+    s32 count = Func_02001d76();
 
     if (count > 3) {
         count = 3;

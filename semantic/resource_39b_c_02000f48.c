@@ -1,28 +1,38 @@
 #include "types.h"
 
-extern void Func_0808a018();
-extern void Func_080f9010();
-extern void Func_0808a090();
-extern void Func_0808a1e0();
-extern void Func_0808a0e0();
-extern void *Func_0808a080();
-extern void Func_080091e0();
-extern void Func_0808a010();
-extern void Func_0808a0f0();
+
+
+
+
+
+
+
+
+
 
 /* Slide actor 0 to a page-indexed horizontal stop. */
+extern void Func_0200342a();
+extern void Func_02003568();
+extern void Func_02003452();
+extern void Func_020034d2();
+extern void Func_0200348e();
+extern void * Func_02003464();
+extern void Func_0200340a();
+extern void Func_02003458();
+extern void Func_020034c2();
+extern void Func_02003470();
 void Func_02000f48(s32 page)
 {
     void *actor;
 
-    Func_0808a018();
-    Func_080f9010(228);
-    Func_0808a090(0, 0x6666, 0x3333);
-    Func_0808a1e0(0, 2);
-    Func_0808a0e0(0, 0, -8);
-    actor = Func_0808a080(0);
-    Func_080091e0(actor, 0);
-    Func_0808a010(8);
-    Func_0808a0f0(0, 0x40000 + (page << 19), 0);
-    Func_0808a010(30);
+    Func_0200342a();
+    Func_02003568(228);
+    Func_02003452(0, 0x6666, 0x3333);
+    Func_020034d2(0, 2);
+    Func_0200348e(0, 0, -8);
+    actor = Func_02003464(0);
+    Func_0200340a(actor, 0);
+    Func_02003458(8);
+    Func_020034c2(0, 0x40000 + (page << 19), 0);
+    Func_02003470(30);
 }

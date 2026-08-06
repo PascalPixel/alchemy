@@ -35,24 +35,42 @@
 extern u32 Data_0200a65c[];
 extern s16 Data_02000240[];
 
-s32 *Func_0200079c();
-s32 Func_0808a080();
-s32 Func_080091d8();
-void Func_08009080();
-void Func_080000c0();
-void Func_080f9010();
-void Func_08009150();
-void Func_08009158();
 
-void Func_0200056c(void);
-void Func_020005ac(void);
-void Func_020005ec(void);
-void Func_02000634(void);
-void Func_0200067c(void);
-void Func_020006c4(void);
-void Func_0200070c(void);
-void Func_02000754(void);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+extern s32 Func_020023ac();
+extern s32 * Func_02000fa6();
+extern s32 Func_020023aa();
+extern void Func_02002386();
+extern void Func_02002376();
+extern void Func_02002524();
+extern void Func_020023b4();
+extern void Func_020023c6();
+extern void Func_020023d4();
+extern void Func_020023d2();
+extern void Func_02000e20(void);
+extern void Func_02000e64(void);
+extern void Func_02000eaa(void);
+extern void Func_02000ef6(void);
+extern void Func_02000f42(void);
+extern void Func_02000f8e(void);
+extern void Func_02000fda(void);
+extern void Func_02001026(void);
 void Func_020007d0(void)
 {
     u8 *actor;
@@ -61,13 +79,13 @@ void Func_020007d0(void)
     s32 pos[3];
     s16 substep;
 
-    actor = (u8 *)Func_0808a080(0);
+    actor = (u8 *)Func_020023ac(0);
 
     step = Data_0200a65c[*(u16 *)(actor + 6) >> 12];
 
     /* Integer tile coordinates: the s16 views at +10 and +18 are the integer
      * parts of the 16.16 words at +8 and +16. */
-    slot = Func_0200079c(
+    slot = Func_02000fa6(
         (*(s16 *)(actor + 10) + (s32)((s32)step >> 16)) >> 4,
         (*(s16 *)(actor + 18) + (s32)(s16)step) >> 4);
     if (slot == 0) {
@@ -80,40 +98,40 @@ void Func_020007d0(void)
     pos[1] = slot[3];
     pos[2] = slot[4] + (s32)(step << 16);
 
-    if (Func_080091d8(slot, pos) > 0) {
+    if (Func_020023aa(slot, pos) > 0) {
         return;
     }
 
-    Func_08009080(actor, 8);
-    Func_080000c0(15);
-    Func_080f9010(185);
+    Func_02002386(actor, 8);
+    Func_02002376(15);
+    Func_02002524(185);
 
-    Func_08009150(slot, pos[0], pos[1], pos[2]);
+    Func_020023b4(slot, pos[0], pos[1], pos[2]);
     slot[12] = 0x3333;
     slot[13] = 0x3333;
 
-    Func_08009150(actor, pos[0], pos[1], pos[2]);
+    Func_020023c6(actor, pos[0], pos[1], pos[2]);
     *(s32 *)(actor + 48) = 0x3333;
     *(s32 *)(actor + 52) = 0x3333;
 
-    Func_08009158(slot);
+    Func_020023d4(slot);
 
     slot[2] = pos[0];
-    Func_08009080(actor, 1);
+    Func_020023d2(actor, 1);
     slot[4] = pos[2];
     slot[9] = 0;
     slot[11] = 0;
 
     substep = Data_02000240[225];
     if (substep >= 11 && substep <= 13) {
-        Func_0200056c();
-        Func_020005ac();
+        Func_02000e20();
+        Func_02000e64();
     } else if (substep >= 14 && substep <= 16) {
-        Func_020005ec();
-        Func_02000634();
-        Func_0200067c();
-        Func_020006c4();
-        Func_0200070c();
-        Func_02000754();
+        Func_02000eaa();
+        Func_02000ef6();
+        Func_02000f42();
+        Func_02000f8e();
+        Func_02000fda();
+        Func_02001026();
     }
 }

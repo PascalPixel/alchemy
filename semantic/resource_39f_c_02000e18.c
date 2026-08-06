@@ -23,13 +23,19 @@
  */
 
 /* Returns the subject record whose words at +8 and +16 are read in the loop. */
-u8 *Func_0808a080();
-void Func_080f9010();
-s32 Func_08000120();       /* ROM dispatch[12] -> Func_0800231c */
-s32 Func_08000118();       /* ROM dispatch[11] -> Func_08002322 */
-s32 Func_03000380();       /* relocated IWRAM helper */
-void Func_02000ae8();      /* four register arguments plus four stack words */
 
+
+       /* ROM dispatch[12] -> Func_0800231c */
+       /* ROM dispatch[11] -> Func_08002322 */
+       /* relocated IWRAM helper */
+      /* four register arguments plus four stack words */
+
+extern u8 * Func_02003be2();
+extern void Func_02003ce2();
+extern s32 Func_02003b4a();
+extern s32 Func_02003b4e();
+extern s32 Func_02003b44();
+extern void Func_02001970();
 void Func_02000e18(s32 subject)
 {
     u8 *record;
@@ -41,28 +47,28 @@ void Func_02000e18(s32 subject)
 
     /* r0-r3 are untouched by the prologue, so the incoming arguments reach
      * this import unchanged. */
-    record = Func_0808a080(subject);
+    record = Func_02003be2(subject);
 
-    Func_080f9010(188);
+    Func_02003ce2(188);
 
     flag = 1;
 
     for (step = 0; step <= 16; step++) {
         s32 key = step << 12;
 
-        cursor = Func_08000120(key);
+        cursor = Func_02003b4a(key);
         spare = 0;
-        extent = Func_08000118(key);
+        extent = Func_02003b4e(key);
 
         /* The helper's result advances the cursor; its second argument is the
          * literal 3. */
-        cursor = cursor + Func_03000380(cursor, 3);
+        cursor = cursor + Func_02003b44(cursor, 3);
 
         /* Register arguments r0-r3, then the four stack words at sp+0..sp+12.
          * `spare` is written 0 immediately above and reloaded here, so the
          * first stack word is always 0x1999 in this loop; it is kept as a read
          * of the local because that is what the assembly does. */
-        Func_02000ae8(*(s32 *)(record + 8), 0x100000, *(s32 *)(record + 16),
+        Func_02001970(*(s32 *)(record + 8), 0x100000, *(s32 *)(record + 16),
                       cursor, spare + 0x1999, extent, 0x20000, &flag);
     }
 }

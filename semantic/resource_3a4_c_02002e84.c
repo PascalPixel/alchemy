@@ -36,41 +36,52 @@
  * 0x204, same as resource_3a4_c_02002e1c.c.
  */
 
-void Func_0808a018();          /* no-arg scene bracket, established */
-void Func_0808a0f0();          /* place an entity, established */
-void Func_080770c8();          /* set a story flag, established */
-void Func_02000a94();          /* in-overlay, undocumented */
-void Func_08009128();          /* unresolved no-arg primitive */
-void Func_080000c0();          /* advance the task scheduler, established */
-void Func_0808a360();
-void Func_0808a370();
-void Func_020008d4();          /* sibling item-28 owner, same overlay */
-void Func_0808a020();          /* no-arg scene bracket, established */
+          /* no-arg scene bracket, established */
+          /* place an entity, established */
+          /* set a story flag, established */
+          /* in-overlay, undocumented */
+          /* unresolved no-arg primitive */
+          /* advance the task scheduler, established */
 
+
+          /* sibling item-28 owner, same overlay */
+          /* no-arg scene bracket, established */
+
+extern void Func_020069f8();
+extern void Func_02006a7a();
+extern void Func_02006a88();
+extern void Func_020069fe();
+extern void Func_0200393e();
+extern void Func_0200699e();
+extern void Func_0200692c();
+extern void Func_02006b74();
+extern void Func_02006b80();
+extern void Func_020037a0();
+extern void Func_02006a50();
 void Func_02002e84(void)
 {
     u8 *workspace;
 
-    Func_0808a018();
+    Func_020069f8();
 
-    Func_0808a0f0(10, 0, 0);
-    Func_0808a0f0(8, 0x1e80000, 0x8a0000);
+    Func_02006a7a(10, 0, 0);
+    Func_02006a88(8, 0x1e80000, 0x8a0000);
 
-    Func_080770c8(0x325);
+    Func_020069fe(0x325);
 
-    Func_02000a94();
-    Func_08009128();
-    Func_080000c0(1);
+    Func_0200393e();
+    Func_0200699e();
+    Func_0200692c(1);
 
     workspace = *(u8 **)0x03001ebc;
     *(u32 *)(workspace + 448) = 0x201;
 
-    Func_0808a360();
-    Func_0808a370();
-    Func_020008d4();
+    Func_02006b74();
+    Func_02006b80();
+    Func_020037a0();
 
     workspace = *(u8 **)0x03001ebc;
     *(u32 *)(workspace + 448) = 0x204;
 
-    Func_0808a020();
+    Func_02006a50();
 }

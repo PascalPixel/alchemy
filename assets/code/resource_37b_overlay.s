@@ -2865,24 +2865,8 @@ AlchemyC_02001a44:
 AlchemyC_02001a64:
 	.space 0x1e
 	.2byte 0x0000
-	push	{lr}
-	movs	r0, #10
-	sub	sp, #4
-	bl	sub_02003ef8
-	cmp	r0, #0
-	beq.n	.L_02001aa4
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	adds	r2, r3, #1
-	str	r3, [sp, #0]
-	movs	r0, #10
-	movs	r1, #13
-	movs	r3, #13
-	bl	sub_020035e6
-.L_02001aa4:
-	add	sp, #4
-	pop	{r0}
-	bx	r0
+AlchemyC_02001a84:
+	.space 0x26
 	.2byte 0x0000
 AlchemyC_02001aac:
 	.space 0x26

@@ -26,37 +26,47 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-s32 Func_080770c0();        /* tests a flag id; nonzero when set */
-void Func_080770c8();       /* sets a flag id */
+        /* tests a flag id; nonzero when set */
+       /* sets a flag id */
 
 /* Overlay-local scene bodies. */
-void Func_02000904(void);
-void Func_02000b2c(void);
+
+
 
 extern s16 Data_02000240[];
 
+extern s32 Func_02001702();
+extern void Func_02001716();
+extern s32 Func_02001714();
+extern s32 Func_0200171e();
+extern void Func_02001730();
+extern s32 Func_0200172e();
+extern s32 Func_02001738();
+extern void Func_0200174a();
+extern void Func_020011d4(void);
+extern void Func_02001408(void);
 s32 Func_02000874(void)
 {
     s16 scene;
 
-    if (Func_080770c0(0x8fd) != 0) {
+    if (Func_02001702(0x8fd) != 0) {
         /* `movs r0,#144 / lsls r0,#2` = 576 = 0x240. */
-        Func_080770c8(0x240);
+        Func_02001716(0x240);
     }
 
-    if (Func_080770c0(0x8fe) != 0 || Func_080770c0(0x907) != 0) {
-        Func_080770c8(0x241);
+    if (Func_02001714(0x8fe) != 0 || Func_0200171e(0x907) != 0) {
+        Func_02001730(0x241);
     }
 
-    if (Func_080770c0(0x8fe) != 0 && Func_080770c0(0x907) != 0) {
-        Func_080770c8(0x242);
+    if (Func_0200172e(0x8fe) != 0 && Func_02001738(0x907) != 0) {
+        Func_0200174a(0x242);
     }
 
     scene = Data_02000240[224];
     if (scene == 0x4b) {
-        Func_02000904();
+        Func_020011d4();
     } else if (scene == 0x4c) {
-        Func_02000b2c();
+        Func_02001408();
     }
 
     return 0;

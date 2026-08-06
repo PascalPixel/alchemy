@@ -23,20 +23,24 @@
 
 extern u8 *Data_03001e70;
 
-extern u8 *Func_0808a080(s32 arg0);
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
-extern s32 Func_02000528(u32, s32, s32, u32, u32, s32);
+
+
+
 
 static s32 Abs_02000ba4(s32 value)
 {
     return value < 0 ? -value : value;
 }
 
+extern u8 * Func_0200668a(s32 arg0);
+extern void Func_02006698(s32, s32, s32, s32, s32, s32);
+extern s32 Func_020011b8(u32, s32, s32, u32, u32, s32);
+extern s32 Func_020011ca(u32, s32, s32, u32, u32, s32);
 s32 Func_02000ba4(s32 arg0)
 {
     static const s32 *const keys = (const s32 *)0x0200dd90;
     static const s32 *const deltas = (const s32 *)0x0200dda8;
-    u8 *object = Func_0808a080(arg0);
+    u8 *object = Func_0200668a(arg0);
     s32 key = *(short *)(*(u8 **)(object + 0x50) + 0x28);
     u32 index;
     s32 baseX;
@@ -70,8 +74,8 @@ s32 Func_02000ba4(s32 arg0)
     globalX = (*(s32 *)(Data_03001e70 + 0x13c) >> 20) + positionX;
     globalZ = (*(s32 *)(Data_03001e70 + 0x140) >> 20) + positionZ;
 
-    Func_080091c0(positionX, positionZ, extentX, extentZ, globalX, globalZ);
-    Func_02000528(0, positionX, positionZ, (u32)extentX, (u32)extentZ, 255);
-    Func_02000528(2, positionX, positionZ, (u32)extentX, (u32)extentZ, 255);
+    Func_02006698(positionX, positionZ, extentX, extentZ, globalX, globalZ);
+    Func_020011b8(0, positionX, positionZ, (u32)extentX, (u32)extentZ, 255);
+    Func_020011ca(2, positionX, positionZ, (u32)extentX, (u32)extentZ, 255);
     return 1;
 }

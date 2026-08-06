@@ -41,8 +41,11 @@
  * does not have one.
  */
 
-s32 Func_03000380();           /* relocated IWRAM quotient helper */
+           /* relocated IWRAM quotient helper */
 
+extern s32 Func_02003e08();
+extern s32 Func_02003e14();
+extern s32 Func_02003e22();
 void Func_020013b0(u8 *object)
 {
     s32 vx = *(s32 *)(object + 68);
@@ -53,13 +56,13 @@ void Func_020013b0(u8 *object)
     *(s32 *)(object + 12) += vy;
     *(s32 *)(object + 16) += vz;
 
-    vx -= Func_03000380(vx, 10);
+    vx -= Func_02003e08(vx, 10);
     *(s32 *)(object + 68) = vx;
 
-    vy -= Func_03000380(vy, 3);
+    vy -= Func_02003e14(vy, 3);
     *(s32 *)(object + 72) = vy;
 
-    vz -= Func_03000380(vz, 10);
+    vz -= Func_02003e22(vz, 10);
     *(s32 *)(object + 76) = vz;
 
     *(s32 *)(object + 24) += *(s32 *)(object + 48);

@@ -63,21 +63,34 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_0808a080();            /* scene record for a subject handle */
-void Func_08009080();           /* select presentation mode (record, mode) */
-void Func_08009150();           /* place the record at (x, y, z) */
-void Func_08009158();           /* re-attach the camera to a record */
-s32 Func_080091d8();            /* terrain probe; positive result blocks */
-void Func_080000c0();           /* wait n frames */
-void Func_080f9010();           /* play a cue */
+            /* scene record for a subject handle */
+           /* select presentation mode (record, mode) */
+           /* place the record at (x, y, z) */
+           /* re-attach the camera to a record */
+            /* terrain probe; positive result blocks */
+           /* wait n frames */
+           /* play a cue */
 
 /* This overlay's own occupancy lookup; byte-exact source in assets/code. */
-u8 *Func_020038b0(s32 *);
+
 
 /* In-image direction table at file offset 0x4154 (0x0200c154 - 0x8000):
  * sixteen packed steps, high half x, low half z. */
 extern u32 Data_0200c154[];
 
+extern u8 * Func_020075cc();
+extern u8 * Func_020071f6(s32 *);
+extern u8 * Func_02007220(s32 *);
+extern u8 * Func_0200724c(s32 *);
+extern s32 Func_020075e6();
+extern void Func_02007594();
+extern void Func_020074fa();
+extern void Func_020075da();
+extern void Func_020075ea();
+extern void Func_02007810();
+extern void Func_020075fe();
+extern void Func_0200781e();
+extern void Func_020075e4();
 void Func_020038f8(void)
 {
     u8 *subject;
@@ -92,7 +105,7 @@ void Func_020038f8(void)
     u32 permuted_43;
     s32 permuted_25;
     s32 permuted_27;
-    subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
+    subject = Func_020075cc(*(s32 *)(0x02000240 + 500));
 
     direction = *(u16 *)(subject + 6) >> 12;
 
@@ -102,7 +115,7 @@ void Func_020038f8(void)
     position[1]  = permuted_13;
     position[2] = *(s32 *)(subject + 16) + (s32)(step << 16);
 
-    target = Func_020038b0(position);
+    target = Func_020071f6(position);
     if (target == 0) {
         return;
     }
@@ -115,7 +128,7 @@ void Func_020038f8(void)
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
     position[1]  = permuted_27;
 
-    blocker = Func_020038b0(position);
+    blocker = Func_02007220(position);
     if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
         return;
     }
@@ -125,7 +138,7 @@ void Func_020038f8(void)
     position[1] = *(s32 *)(target + 12) + 0x100000;      /* 128 << 13 */
     position[2] = *(s32 *)(target + 16);
 
-    blocker = Func_020038b0(position);
+    blocker = Func_0200724c(position);
     if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
         return;
     }
@@ -139,29 +152,29 @@ void Func_020038f8(void)
     step  = permuted_43;
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
 
-    if (Func_080091d8(target, position) > 0) {
+    if (Func_020075e6(target, position) > 0) {
         return;
     }
 
-    Func_08009080(subject, 8);
-    Func_080000c0(15);
+    Func_02007594(subject, 8);
+    Func_020074fa(15);
 
-    Func_08009150(target, position[0], position[1], position[2]);
+    Func_020075da(target, position[0], position[1], position[2]);
     *(s32 *)(target + 0x30) = 0x3333;
     *(s32 *)(target + 0x34) = 0x3333;
 
     *(s32 *)(subject + 0x30) = 0x3333;
     *(s32 *)(subject + 0x34) = 0x3333;
-    Func_08009150(subject, position[0], position[1], position[2]);
+    Func_020075ea(subject, position[0], position[1], position[2]);
 
-    Func_080f9010(0xee);
-    Func_08009158(target);
-    Func_080f9010(0x120);                                /* 144 << 1 */
+    Func_02007810(0xee);
+    Func_020075fe(target);
+    Func_0200781e(0x120);                                /* 144 << 1 */
 
     *(s32 *)(target + 8) = position[0];
     *(s32 *)(target + 16) = position[2];
     *(s32 *)(target + 0x24) = 0;
     *(s32 *)(target + 0x2c) = 0;
 
-    Func_08009080(subject, 1);
+    Func_020075e4(subject, 1);
 }

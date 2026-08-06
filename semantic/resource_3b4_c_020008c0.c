@@ -6,15 +6,19 @@
  */
 #include "types.h"
 
-u8 *Func_0808a080(s32 slot);
-void Func_080091c0(s32 x, s32 y, s32 width, s32 height,
-                   s32 localX, s32 localY);
-s32 Func_02000244(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 value);
 
+
+
+
+extern u8 * Func_02002e12(s32 slot);
+extern void Func_02002e70(s32 x, s32 y, s32 width, s32 height,
+                   s32 localX, s32 localY);
+extern s32 Func_02000bf0(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 value);
+extern s32 Func_02000c02(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 value);
 s32 Func_020008c0(s32 slot)
 {
     u8 *world = *(u8 **)0x03001e70;
-    u8 *actor = Func_0808a080(slot);
+    u8 *actor = Func_02002e12(slot);
     s16 kind = **(s16 **)(*(u8 **)(actor + 80) + 40);
     s32 *ids = (s32 *)0x0200a684;
     u32 index;
@@ -49,8 +53,8 @@ s32 Func_020008c0(s32 slot)
     baseX = *(s32 *)(world + 316) >> 20;
     baseY = *(s32 *)(world + 320) >> 20;
 
-    Func_080091c0(baseX + tileX, baseY + tileY, width, height, tileX, tileY);
-    Func_02000244(0, tileX, tileY, width, height, 255);
-    Func_02000244(2, tileX, tileY, width, height, 255);
+    Func_02002e70(baseX + tileX, baseY + tileY, width, height, tileX, tileY);
+    Func_02000bf0(0, tileX, tileY, width, height, 255);
+    Func_02000c02(2, tileX, tileY, width, height, 255);
     return 1;
 }

@@ -22,13 +22,14 @@ struct DmaTransfer {
     u32 control;
 };
 
-void Func_0808a338();   /* publish the completed work buffer */
+   /* publish the completed work buffer */
 
 /*
  * Capture the two hardware-palette banks into their non-contiguous work-buffer
  * slots, then publish the completed buffer.
  *
  */
+extern void Func_02001a62();
 void Func_02000bcc(void)
 {
     volatile struct DmaTransfer *const dma3 =
@@ -43,5 +44,5 @@ void Func_02000bcc(void)
     dma3->destination = destination + 0x1c0;
     dma3->control = 0x84000070;
 
-    Func_0808a338(0x10000, 0);
+    Func_02001a62(0x10000, 0);
 }

@@ -89,9 +89,62 @@
  *    argument counts at different sites.
  */
 
-void Func_0808a100();           /* per-slot scene request (slot, request) */
-void Func_080000c0();           /* frame wait */
+           /* per-slot scene request (slot, request) */
+           /* frame wait */
 
+extern void Func_02002d32();
+extern void Func_02002c50();
+extern void Func_02002d48();
+extern void Func_02002c66();
+extern void Func_02002d5a();
+extern void Func_02002c78();
+extern void Func_02002d6c();
+extern void Func_02002c8a();
+extern void Func_02002d7a();
+extern void Func_02002c98();
+extern void Func_02002d88();
+extern void Func_02002ca6();
+extern void Func_02002d96();
+extern void Func_02002cb4();
+extern void Func_02002da8();
+extern void Func_02002cc6();
+extern void Func_02002db6();
+extern void Func_02002dc0();
+extern void Func_02002cde();
+extern void Func_02002dce();
+extern void Func_02002dd8();
+extern void Func_02002cf6();
+extern void Func_02002de6();
+extern void Func_02002df0();
+extern void Func_02002d0e();
+extern void Func_02002dfe();
+extern void Func_02002e08();
+extern void Func_02002d26();
+extern void Func_02002e16();
+extern void Func_02002d34();
+extern void Func_02002e24();
+extern void Func_02002d42();
+extern void Func_02002e32();
+extern void Func_02002d50();
+extern void Func_02002e40();
+extern void Func_02002e6e();
+extern void Func_02002d8c();
+extern void Func_02002e7c();
+extern void Func_02002e86();
+extern void Func_02002da4();
+extern void Func_02002e94();
+extern void Func_02002e9e();
+extern void Func_02002dbc();
+extern void Func_02002eac();
+extern void Func_02002eb6();
+extern void Func_02002dd4();
+extern void Func_02002ec4();
+extern void Func_02002de2();
+extern void Func_02002ed2();
+extern void Func_02002ee0();
+extern void Func_02002eee();
+extern void Func_02002ef8();
+extern void Func_02002f06();
 void Func_020012f4(s32 kind, s32 gesture)
 {
     s32 slot;
@@ -118,72 +171,72 @@ void Func_020012f4(s32 kind, s32 gesture)
     goto table_b_dispatch;
 
 table_a_0:
-    Func_0808a100(8, 1);
-    Func_080000c0(6);
+    Func_02002d32(8, 1);
+    Func_02002c50(6);
     slot = 8;
     goto join_req3;                         /* 0x02001488 */
 
 table_a_2:
-    Func_0808a100(8, 1);
-    Func_080000c0(6);
+    Func_02002d48(8, 1);
+    Func_02002c66(6);
     slot = 8;
     goto join_req5;                         /* 0x020014a0 */
 
 table_a_3:
-    Func_0808a100(8, 1);
-    Func_080000c0(6);
+    Func_02002d5a(8, 1);
+    Func_02002c78(6);
     slot = 8;
     goto join_req4;                         /* 0x020014b8 */
 
 table_a_4:
-    Func_0808a100(8, 1);
-    Func_080000c0(6);
-    Func_0808a100(8, 3);
-    Func_080000c0(6);
-    Func_0808a100(8, 1);
-    Func_080000c0(6);
-    Func_0808a100(8, 3);
+    Func_02002d6c(8, 1);
+    Func_02002c8a(6);
+    Func_02002d7a(8, 3);
+    Func_02002c98(6);
+    Func_02002d88(8, 1);
+    Func_02002ca6(6);
+    Func_02002d96(8, 3);
     slot = 8;
-    Func_080000c0(6);
+    Func_02002cb4(6);
     goto join_req1;
 
 table_a_5:
-    Func_0808a100(8, 1);
-    Func_080000c0(6);
-    Func_0808a100(8, 2);
+    Func_02002da8(8, 1);
+    Func_02002cc6(6);
+    Func_02002db6(8, 2);
     goto settle;
 
 table_a_6:
-    Func_0808a100(8, 6);
-    Func_080000c0(6);
-    Func_0808a100(8, 8);
+    Func_02002dc0(8, 6);
+    Func_02002cde(6);
+    Func_02002dce(8, 8);
     goto settle;
 
 table_a_8:
-    Func_0808a100(8, 6);
-    Func_080000c0(6);
-    Func_0808a100(8, 9);
+    Func_02002dd8(8, 6);
+    Func_02002cf6(6);
+    Func_02002de6(8, 9);
     goto settle;
 
 table_a_9:
-    Func_0808a100(8, 6);
-    Func_080000c0(6);
-    Func_0808a100(8, 10);
+    Func_02002df0(8, 6);
+    Func_02002d0e(6);
+    Func_02002dfe(8, 10);
     goto settle;
 
 table_a_10:
-    Func_0808a100(8, 6);
-    Func_080000c0(6);
-    Func_0808a100(8, 8);
-    Func_080000c0(6);
-    Func_0808a100(8, 6);
-    Func_080000c0(6);
-    Func_0808a100(8, 8);
-    Func_080000c0(6);
+    Func_02002e08(8, 6);
+    Func_02002d26(6);
+    Func_02002e16(8, 8);
+    Func_02002d34(6);
+    Func_02002e24(8, 6);
+    Func_02002d42(6);
+    Func_02002e32(8, 8);
+    Func_02002d50(6);
     goto join_slot6;
 
 join_slot6:                                 /* 0x0200144a */
-    Func_0808a100(8, 6);
+    Func_02002e40(8, 6);
     goto settle;
 
 table_b_dispatch:
@@ -199,50 +252,50 @@ table_b_dispatch:
     goto settle;
 
 table_b_0:
-    Func_0808a100(9, 1);
-    Func_080000c0(6);
+    Func_02002e6e(9, 1);
+    Func_02002d8c(6);
     slot = 9;
 join_req3:                                  /* 0x02001488 */
-    Func_0808a100(slot, 3);
+    Func_02002e7c(slot, 3);
     goto settle;
 
 table_b_2:
-    Func_0808a100(9, 1);
-    Func_080000c0(6);
+    Func_02002e86(9, 1);
+    Func_02002da4(6);
     slot = 9;
 join_req5:                                  /* 0x020014a0 */
-    Func_0808a100(slot, 5);
+    Func_02002e94(slot, 5);
     goto settle;
 
 table_b_3:
-    Func_0808a100(9, 1);
-    Func_080000c0(6);
+    Func_02002e9e(9, 1);
+    Func_02002dbc(6);
     slot = 9;
 join_req4:                                  /* 0x020014b8 */
-    Func_0808a100(slot, 4);
+    Func_02002eac(slot, 4);
     goto settle;
 
 table_b_4:
-    Func_0808a100(9, 1);
-    Func_080000c0(6);
-    Func_0808a100(9, 3);
-    Func_080000c0(6);
-    Func_0808a100(9, 1);
-    Func_080000c0(6);
-    Func_0808a100(9, 3);
-    Func_080000c0(6);
+    Func_02002eb6(9, 1);
+    Func_02002dd4(6);
+    Func_02002ec4(9, 3);
+    Func_02002de2(6);
+    Func_02002ed2(9, 1);
+    Func_02002df0(6);
+    Func_02002ee0(9, 3);
+    Func_02002dfe(6);
     slot = 9;
     goto join_req1;
 
 join_req1:                                  /* 0x020014fa */
-    Func_0808a100(slot, 1);
+    Func_02002eee(slot, 1);
     goto settle;
 
 table_b_5:
-    Func_0808a100(9, 1);
-    Func_080000c0(6);
-    Func_0808a100(9, 2);
+    Func_02002ef8(9, 1);
+    Func_02002e16(6);
+    Func_02002f06(9, 2);
 
 settle:                                     /* 0x02001518 */
-    Func_080000c0(12);
+    Func_02002e24(12);
 }

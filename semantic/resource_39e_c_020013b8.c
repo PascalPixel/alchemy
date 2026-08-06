@@ -83,65 +83,85 @@
  * the C against the assembly's one at 0x0200143c.
  */
 
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_0808a018();          /* scripted-section open  */
-void Func_0808a020();          /* scripted-section close */
-void Func_0808a208();          /* camera distance pair (16.16) */
-void Func_0808a218(void);      /* commit the camera move */
-void Func_0808a220();          /* two-argument camera selector */
-s32 Func_080770c0();           /* read a story flag */
+           /* record fetch, returns the record */
+          /* scripted-section open  */
+          /* scripted-section close */
+          /* camera distance pair (16.16) */
+      /* commit the camera move */
+          /* two-argument camera selector */
+           /* read a story flag */
 
-void Func_02000e94(void);      /* local: sector arm 1 */
-void Func_02000bf4(void);      /* local: sector arm 2 */
-void Func_02000db4(void);      /* local: sector arm 3 */
-void Func_02000cd4(void);      /* local: sector arm 4, retreat-along-arc */
-void Func_0200102c();          /* local: three-variant scripted scene */
-void Func_02001160(void);      /* local */
-void Func_02001494(void);      /* local */
-void Func_02001dbc(void);      /* local */
+      /* local: sector arm 1 */
+      /* local: sector arm 2 */
+      /* local: sector arm 3 */
+      /* local: sector arm 4, retreat-along-arc */
+          /* local: three-variant scripted scene */
+      /* local */
+      /* local */
+      /* local */
 
+extern u8 * Func_020057c2();
+extern void Func_020057a0();
+extern void Func_0200226c(void);
+extern void Func_02001fde(void);
+extern void Func_020021b2(void);
+extern void Func_020020d8(void);
+extern void Func_020058f4();
+extern void Func_02005914();
+extern void Func_02005910(void);
+extern s32 Func_020057e6();
+extern s32 Func_020057f0();
+extern void Func_0200246a();
+extern void Func_020025a4(void);
+extern void Func_0200582c();
+extern s32 Func_0200580c();
+extern void Func_02002486();
+extern s32 Func_0200581e();
+extern void Func_020028fe(void);
+extern void Func_0200322c(void);
+extern void Func_02005858();
 void Func_020013b8(void)
 {
-    u8 *record = Func_0808a080(0);
+    u8 *record = Func_020057c2(0);
     u16 facing;
 
-    Func_0808a018();
+    Func_020057a0();
 
     facing = *(u16 *)(record + 6);
     if ((u16)(facing - 0x2000) <= 0x3fff) {
-        Func_02000e94();
+        Func_0200226c();
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
-        Func_02000bf4();
+        Func_02001fde();
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {   /* 192 << 7 */
-        Func_02000db4();
+        Func_020021b2();
     } else {
-        Func_02000cd4();
+        Func_020020d8();
     }
 
-    Func_0808a208(0x10000, 0x2000);        /* 128 << 9, 128 << 6 */
-    Func_0808a220(20, 1);
-    Func_0808a218();
+    Func_020058f4(0x10000, 0x2000);        /* 128 << 9, 128 << 6 */
+    Func_02005914(20, 1);
+    Func_02005910();
 
     if (*(s16 *)(record + 18) <= 209) {
-        if (Func_080770c0(0x89a) == 0) goto scene0;
-        if (Func_080770c0(0x89b) != 0) goto scene0;
+        if (Func_020057e6(0x89a) == 0) goto scene0;
+        if (Func_020057f0(0x89b) != 0) goto scene0;
         goto scene1;
 scene0:
-        Func_0200102c(0);
+        Func_0200246a(0);
         goto firstSceneComplete;
 scene1:
-        Func_02001160();
+        Func_020025a4();
 firstSceneComplete:
-        Func_0808a020();
+        Func_0200582c();
         return;
     }
 
-    if (Func_080770c0(0x89b) != 0) {
-        Func_0200102c(2);
-    } else if (Func_080770c0(0x89a) == 0) {
-        Func_02001494();
+    if (Func_0200580c(0x89b) != 0) {
+        Func_02002486(2);
+    } else if (Func_0200581e(0x89a) == 0) {
+        Func_020028fe();
     } else {
-        Func_02001dbc();
+        Func_0200322c();
     }
-    Func_0808a020();
+    Func_02005858();
 }

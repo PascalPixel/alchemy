@@ -15,54 +15,68 @@
  * whether or not the guarded body did.
  */
 
-void Func_0808a018();
-/* Fills the caller's six-word record; nonzero means it produced one. */
-s32 Func_02000474();
-/* Four register arguments plus two stack words. */
-void Func_02000608();
-void Func_080770c8();
-void Func_0808a100();
-void Func_0808a090();
-void Func_0808a0e0();
-void Func_0808a010();
-void Func_080f9010();
-void Func_0808a1e0();
-/* Returns the slot record whose byte at +35 is written below. */
-u8 *Func_0808a080();
-/* Four register arguments plus two stack words. */
-void Func_080091c0();
-void Func_0808a020();
 
+/* Fills the caller's six-word record; nonzero means it produced one. */
+
+/* Four register arguments plus two stack words. */
+
+
+
+
+
+
+
+
+/* Returns the slot record whose byte at +35 is written below. */
+
+/* Four register arguments plus two stack words. */
+
+
+
+extern void Func_02003d3e();
+extern s32 Func_02001416();
+extern void Func_020015c2();
+extern void Func_02003d64();
+extern void Func_02003dd4();
+extern void Func_02003daa();
+extern void Func_02003dd6();
+extern void Func_02003d94();
+extern void Func_02003dfc();
+extern void Func_02003eba();
+extern void Func_02003e4a();
+extern u8 * Func_02003dd0();
+extern void Func_02003d7a();
+extern void Func_02003dde();
 void Func_02000f94(void)
 {
     s32 probe[6];
 
     /* No argument register is written before this branch: the caller's r0-r3
      * reach the import unchanged. */
-    Func_0808a018();
+    Func_02003d3e();
 
-    if (Func_02000474(probe) != 0) {
+    if (Func_02001416(probe) != 0) {
         /* The two high words are copied to the outgoing stack slots by an
          * `ldmia/stmia` pair; the four low words go in r0-r3. */
-        Func_02000608(probe[0], probe[1], probe[2], probe[3],
+        Func_020015c2(probe[0], probe[1], probe[2], probe[3],
                       probe[4], probe[5]);
 
         if (probe[1] == 9 && (probe[4] >> 20) == 26) {
-            Func_080770c8(784);            /* 196 << 2 */
-            Func_0808a100(9, 3);
-            Func_0808a090(9, 0x4000, 0x8000);   /* 128 << 7, 128 << 8 */
-            Func_0808a0e0(9, 0, -16);
-            Func_0808a010(45);
-            Func_0808a100(9, 8);
-            Func_080f9010(240);
-            Func_0808a1e0(9, 1);
+            Func_02003d64(784);            /* 196 << 2 */
+            Func_02003dd4(9, 3);
+            Func_02003daa(9, 0x4000, 0x8000);   /* 128 << 7, 128 << 8 */
+            Func_02003dd6(9, 0, -16);
+            Func_02003d94(45);
+            Func_02003dfc(9, 8);
+            Func_02003eba(240);
+            Func_02003e4a(9, 1);
 
-            Func_0808a080(9)[35] = 2;
+            Func_02003dd0(9)[35] = 2;
 
-            Func_080091c0(38, 27, 4, 2, 31, 25);
+            Func_02003d7a(38, 27, 4, 2, 31, 25);
         }
     }
 
     /* Common exit; no argument registers are set. */
-    Func_0808a020();
+    Func_02003dde();
 }

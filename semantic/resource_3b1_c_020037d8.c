@@ -26,46 +26,61 @@ extern u8 Value_00000929;
 extern u8 Value_0000092a;
 extern u8 Value_0000092b;
 
-s32 Func_080770c0();
-s32 Func_02004fa8();
-void Func_02004890();
-void Func_0808a0f0();
 
+
+
+
+
+extern s32 Func_02009c84();
+extern s32 Func_02008798();
+extern void Func_02008092();
+extern void Func_02009d54();
+extern s32 Func_02009cb6();
+extern s32 Func_020087ca();
+extern void Func_020080c4();
+extern void Func_02009d86();
+extern s32 Func_02009ce8();
+extern s32 Func_020087fc();
+extern void Func_020080f6();
+extern void Func_02009db8();
+extern s32 Func_02008824();
+extern void Func_0200811e();
+extern void Func_02009de0();
 void Func_020037d8(u8 *obj)
 {
-    if (obj != 0 && Func_080770c0((s32)&Value_00000929) == 0) {
+    if (obj != 0 && Func_02009c84((s32)&Value_00000929) == 0) {
         return;
     }
 
-    if (Func_02004fa8(0, 0) != 0) {
-        Func_02004890(0x19a, 0xac, 0xd000);
-        Func_0808a0f0(10, 0, 0);
+    if (Func_02008798(0, 0) != 0) {
+        Func_02008092(0x19a, 0xac, 0xd000);
+        Func_02009d54(10, 0, 0);
     }
 
-    if (obj != 0 && Func_080770c0((s32)&Value_0000092a) == 0) {
+    if (obj != 0 && Func_02009cb6((s32)&Value_0000092a) == 0) {
         return;
     }
 
-    if (Func_02004fa8(1, 0) != 0) {
-        Func_02004890(0x1d6, 0xac, 0xb000);
-        Func_0808a0f0(11, 0, 0);
+    if (Func_020087ca(1, 0) != 0) {
+        Func_020080c4(0x1d6, 0xac, 0xb000);
+        Func_02009d86(11, 0, 0);
     }
 
-    if (obj != 0 && Func_080770c0((s32)&Value_0000092b) == 0) {
+    if (obj != 0 && Func_02009ce8((s32)&Value_0000092b) == 0) {
         return;
     }
 
-    if (Func_02004fa8(2, 0) != 0) {
-        Func_02004890(0x19a, 0xcc, 0xd000);
-        Func_0808a0f0(12, 0, 0);
+    if (Func_020087fc(2, 0) != 0) {
+        Func_020080f6(0x19a, 0xcc, 0xd000);
+        Func_02009db8(12, 0, 0);
     }
 
     if (obj != 0) {
         return;
     }
 
-    if (Func_02004fa8(3, 0) != 0) {
-        Func_02004890(0x1d6, 0xcc, 0xb000);
-        Func_0808a0f0(13, 0, 0);
+    if (Func_02008824(3, 0) != 0) {
+        Func_0200811e(0x1d6, 0xcc, 0xb000);
+        Func_02009de0(13, 0, 0);
     }
 }

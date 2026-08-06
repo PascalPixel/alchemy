@@ -25,9 +25,13 @@
  */
 
 /* Old-style declarations: overlay import arities are not fixed per name. */
-u8 *Func_0808a080();
-s32 Func_0200007c();
 
+
+
+extern s32 Func_02000f1e();
+extern u8 * Func_0200022a();
+extern u8 * Func_02000f34();
+extern s32 Func_0200026a();
 s32 Func_02000170(u8 *self)
 {
     u8 **globals = (u8 **)0x03001e8c;
@@ -39,11 +43,11 @@ s32 Func_02000170(u8 *self)
     u8 *player;
 
     /* Bit 0 of the actor's own flag halfword selects which partner to test. */
-    if (Func_0200007c(self, Func_0808a080((*flags & 1) ? 17 : 16), 32, 0) != 0) {
+    if (Func_02000f1e(self, Func_0200022a((*flags & 1) ? 17 : 16), 32, 0) != 0) {
         return 0;
     }
 
-    player = Func_0808a080(0);
+    player = Func_02000f34(0);
 
     /*
      * Widen the test when the scene counter at workspace + 376 is already
@@ -56,6 +60,6 @@ s32 Func_02000170(u8 *self)
         }
     }
 
-    Func_0200007c(self, player, range, force);
+    Func_0200026a(self, player, range, force);
     return 0;
 }

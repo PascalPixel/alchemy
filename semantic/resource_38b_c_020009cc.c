@@ -38,20 +38,36 @@
  */
 
 /* Slot accessor. */
-extern u8 *Func_0808a080();
+
 
 /* Six-argument renderer ABI: four register arguments plus tile x, tile z. */
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
+
 
 /* Imports; old-style, arity open. */
-extern void Func_0808a018();
-extern void Func_0808a020();
-extern void Func_0808a090();
-extern void Func_0808a0c0();
-extern void Func_0808a128();
-extern void Func_0808a1b8();
-extern void Func_0808a1e8();
 
+
+
+
+
+
+
+
+extern u8 * Func_02001aac();
+extern u8 * Func_02001ab4();
+extern void Func_02001a82(s32, s32, s32, s32, s32, s32);
+extern void Func_02001a96(s32, s32, s32, s32, s32, s32);
+extern void Func_02001aa8(s32, s32, s32, s32, s32, s32);
+extern void Func_02001aba(s32, s32, s32, s32, s32, s32);
+extern void Func_02001ad6(s32, s32, s32, s32, s32, s32);
+extern void Func_02001b26();
+extern void Func_02001bda();
+extern void Func_02001b60();
+extern void Func_02001baa();
+extern void Func_02001b82();
+extern void Func_02001bfe();
+extern void Func_02001b9c();
+extern void Func_02001c18();
+extern void Func_02001b8c();
 void Func_020009cc(void)
 {
     u8 *player;
@@ -61,8 +77,8 @@ void Func_020009cc(void)
     s32 mover_x;
     s32 mover_z;
 
-    player = Func_0808a080(0);
-    mover = Func_0808a080(20);
+    player = Func_02001aac(0);
+    mover = Func_02001ab4(20);
 
     mover_z = *(s32 *)(mover + 0x10) >> 20;
     player_x = *(s32 *)(player + 0x08) >> 20;
@@ -70,38 +86,38 @@ void Func_020009cc(void)
     mover_x = *(s32 *)(mover + 0x08) >> 20;
 
     /* Vertical strip of three cells at column 15, rows 12..14. */
-    Func_080091c0(15, 11, 3, 1, 15, 12);
-    Func_080091c0(15, 11, 3, 1, 15, 13);
-    Func_080091c0(15, 11, 3, 1, 15, 14);
+    Func_02001a82(15, 11, 3, 1, 15, 12);
+    Func_02001a96(15, 11, 3, 1, 15, 13);
+    Func_02001aa8(15, 11, 3, 1, 15, 14);
 
     /* Repaint the moving actor's own cell. */
-    Func_080091c0(1, 0, 1, 1, mover_x, mover_z);
+    Func_02001aba(1, 0, 1, 1, mover_x, mover_z);
 
     /* Restore cell (16, 13) unless the mover is standing on it. */
     if (!(mover_x == 16 && mover_z == 13)) {
-        Func_080091c0(0, 0, 1, 1, 16, 13);
+        Func_02001ad6(0, 0, 1, 1, 16, 13);
     }
 
     /* The player reaching (16, 13) triggers the camera/scene change. */
     if (player_x == 16 && player_z == 13) {
-        Func_0808a018();
+        Func_02001b26();
 
         /* 128 << 1 = 256. */
-        Func_0808a1e8(0, 256, 20);
+        Func_02001bda(0, 256, 20);
         /* 128 << 10 = 0x20000, 128 << 9 = 0x10000. */
-        Func_0808a090(0, 0x20000, 0x10000);
-        Func_0808a128(0, 6, 0);
+        Func_02001b60(0, 0x20000, 0x10000);
+        Func_02001baa(0, 6, 0);
 
         if (mover_z == 13) {
             /* 131 << 1 = 262; 128 << 7 = 0x4000. */
-            Func_0808a0c0(0, 262, 196);
-            Func_0808a1b8(0, 0x4000, 20);
+            Func_02001b82(0, 262, 196);
+            Func_02001bfe(0, 0x4000, 20);
         } else {
             /* 143 << 1 = 286; 128 << 8 = 0x8000. */
-            Func_0808a0c0(0, 286, 218);
-            Func_0808a1b8(0, 0x8000, 20);
+            Func_02001b9c(0, 286, 218);
+            Func_02001c18(0, 0x8000, 20);
         }
 
-        Func_0808a020();
+        Func_02001b8c();
     }
 }

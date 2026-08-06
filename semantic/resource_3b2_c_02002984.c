@@ -39,13 +39,25 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-u8 *Func_0808a080();                    /* scene entity by selector */
-void Func_080000c0();                   /* wait N frames */
-void Func_080091c0();                   /* collision repaint, six arguments */
+                    /* scene entity by selector */
+                   /* wait N frames */
+                   /* collision repaint, six arguments */
 
 /* This overlay's transition starter at 0x02001774. */
-void Func_02001774();
 
+
+extern u8 * Func_02005a18();
+extern u8 * Func_02005a22();
+extern u8 * Func_02005a2e();
+extern u8 * Func_02005a38();
+extern u8 * Func_02005a42();
+extern void Func_0200415e();
+extern void Func_020041ba();
+extern void Func_020041c8();
+extern void Func_02005a12();
+extern void Func_02005ae8();
+extern u8 * Func_02005aa0();
+extern void Func_02005ab0();
 void Func_02002984(void)
 {
     s32 column;
@@ -55,11 +67,11 @@ void Func_02002984(void)
     s32 companion9Row;
     s32 transition;
 
-    column = *(s32 *)(Func_0808a080(19) + 8) >> 20;
-    row = *(s32 *)(Func_0808a080(19) + 16) >> 20;
-    companion17Row = *(s32 *)(Func_0808a080(17) + 16) >> 20;
-    companion18Row = *(s32 *)(Func_0808a080(18) + 16) >> 20;
-    companion9Row = *(s32 *)(Func_0808a080(9) + 16) >> 20;
+    column = *(s32 *)(Func_02005a18(19) + 8) >> 20;
+    row = *(s32 *)(Func_02005a22(19) + 16) >> 20;
+    companion17Row = *(s32 *)(Func_02005a2e(17) + 16) >> 20;
+    companion18Row = *(s32 *)(Func_02005a38(18) + 16) >> 20;
+    companion9Row = *(s32 *)(Func_02005a42(9) + 16) >> 20;
 
     if (column == 3) {
         return;
@@ -76,7 +88,7 @@ void Func_02002984(void)
         } else {
             transition = 112;
             /* This arm runs two transitions back to back. */
-            Func_02001774(19, -112, 0);
+            Func_0200415e(19, -112, 0);
             transition = 48;
         }
     } else if (column == 6) {
@@ -104,19 +116,19 @@ void Func_02002984(void)
             transition = 96;
         } else {
             /* Its own call site, not the shared one. */
-            Func_02001774(19, -144, 0);
+            Func_020041ba(19, -144, 0);
         }
         transition = (companion17Row == 15) ? 48 : 96;
     }
 
     if (transition != 0) {
-        Func_02001774(19, -transition, 0);
+        Func_020041c8(19, -transition, 0);
     }
 
-    Func_080000c0(2);
+    Func_02005a12(2);
 
     row -= 1;
-    Func_080091c0(column, row, 1, 3,
-                  *(s32 *)(Func_0808a080(19) + 8) >> 20, row);
-    Func_080091c0(0, 0, 1, 3, column, row);
+    Func_02005ae8(column, row, 1, 3,
+                  *(s32 *)(Func_02005aa0(19) + 8) >> 20, row);
+    Func_02005ab0(0, 0, 1, 3, column, row);
 }

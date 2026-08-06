@@ -28,43 +28,60 @@
 extern u16 Data_02000240[];
 
 /* Imports; the queried ones are typed for their return value. */
-void Func_02001004();
-void Func_080091c0();
-s32 Func_080770c0();
 
+
+
+
+extern void Func_020038f8();
+extern void Func_0200390e();
+extern s32 Func_0200393c();
+extern void Func_02002636();
+extern void Func_02003936();
+extern void Func_02002656();
+extern void Func_02003956();
+extern s32 Func_02003986();
+extern void Func_02002680();
+extern void Func_02003980();
+extern void Func_020026a0();
+extern void Func_020039a0();
+extern s32 Func_020039ce();
+extern void Func_020026c8();
+extern void Func_020039c8();
+extern void Func_020026e8();
+extern void Func_020039e8();
 void Func_020015dc(void)
 {
     /* movs r2,#0xe1 / lsls r2,#1 gives the byte offset 450, i.e. entry 225.
      * The test is (u32)((entry - 1) << 16) <= 0x10000 with an unsigned
      * compare, which selects exactly entries 1 and 2. */
     if ((u32)((u32)(Data_02000240[225] - 1) << 16) <= (u32)0x10000) {
-        Func_080091c0(22, 20, 9, 8, 14, 10);
+        Func_020038f8(22, 20, 9, 8, 14, 10);
     } else {
-        Func_080091c0(20, 45, 11, 4, 7, 45);
+        Func_0200390e(20, 45, 11, 4, 7, 45);
     }
 
-    if (Func_080770c0((s32)0x313) != 0) {
-        Func_02001004(8, 20, 17);
-        Func_080091c0(19, 11, 3, 1, 19, 10);
+    if (Func_0200393c((s32)0x313) != 0) {
+        Func_02002636(8, 20, 17);
+        Func_02003936(19, 11, 3, 1, 19, 10);
     } else {
-        Func_02001004(8, 20, 10);
-        Func_080091c0(19, 11, 3, 1, 19, 17);
+        Func_02002656(8, 20, 10);
+        Func_02003956(19, 11, 3, 1, 19, 17);
     }
 
     /* movs r0,#0xc5 / lsls r0,#2 builds 0x314. */
-    if (Func_080770c0((s32)0x314) != 0) {
-        Func_02001004(9, 14, 16);
-        Func_080091c0(16, 15, 1, 3, 22, 15);
+    if (Func_02003986((s32)0x314) != 0) {
+        Func_02002680(9, 14, 16);
+        Func_02003980(16, 15, 1, 3, 22, 15);
     } else {
-        Func_02001004(9, 22, 16);
-        Func_080091c0(16, 15, 1, 3, 14, 15);
+        Func_020026a0(9, 22, 16);
+        Func_020039a0(16, 15, 1, 3, 14, 15);
     }
 
-    if (Func_080770c0((s32)0x315) != 0) {
-        Func_02001004(10, 17, 46);
-        Func_080091c0(15, 15, 1, 3, 7, 45);
+    if (Func_020039ce((s32)0x315) != 0) {
+        Func_020026c8(10, 17, 46);
+        Func_020039c8(15, 15, 1, 3, 7, 45);
     } else {
-        Func_02001004(10, 7, 46);
-        Func_080091c0(15, 15, 1, 3, 17, 45);
+        Func_020026e8(10, 7, 46);
+        Func_020039e8(15, 15, 1, 3, 17, 45);
     }
 }

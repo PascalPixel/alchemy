@@ -1389,6 +1389,10 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
   // f08/f10/f26 stores and the f09 mask's ldrb; conservative scheduler alias
   // analysis restores the reference order (mode cohort exact, 2026-08-04).
   "exact/resource_38f_c_020027ac.c",
+  // resource_391:2974 is the same particle-spawn store sheet, shared verbatim
+  // with resource_38f:27ac and transposed onto this overlay's veneer table and
+  // literal pool; it needs the same conservative alias analysis.
+  "exact/resource_391_c_02002974.c",
 ]);
 // gcse's partial-redundancy elimination inserts a load the reference does not
 // have. The mode drops the insert and delete bits of any expression that reads

@@ -83,13 +83,14 @@ s32 Func_020007b0(void)
     volatile u16 *interruptMaster = (volatile u16 *)0x04000208;
     u8 *linkBlock = (u8 *)0x02002220;
     u16 savedInterruptMaster;
-    s32 status = 0;
+    s32 status;
     s32 phaseResult;
 
     if (Func_02001fc4(0x302) == 0) {
         *(u8 *)0x020023a0 = 0;
 
         Func_02001eda(5);
+        status = 0;
         status = Func_02000d4a();
         if (status >= 0) {
             Func_02001eea(5);

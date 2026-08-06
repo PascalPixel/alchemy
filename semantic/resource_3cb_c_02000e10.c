@@ -106,8 +106,8 @@ s32 Func_02000e10(s32 speaker)
     volatile u32 *cursorKeys = (volatile u32 *)0x03001b04;
     volatile u32 *buttonKeys = (volatile u32 *)0x03001c94;
     s32 chooser;
-    s32 selection = 0;
-    s32 painted = -1;
+    s32 selection;
+    s32 painted;
     u32 outcomeCue;
 
     Func_0200265c();
@@ -122,12 +122,14 @@ s32 Func_02000e10(s32 speaker)
 
 waitForInput:
     if ((*buttonKeys & 2) != 0) {
+        selection = 0;
         selection = -1;
         goto selectionMade;
     }
     Func_02002576(1);
 
 paintSelection:
+    painted = -1;
     if (selection != painted) {
         Func_02002640(chooser);
         Func_02002656(selection, 3, chooser, 0, 0);

@@ -100,8 +100,8 @@ extern void Func_02001dc6();
 void Func_02000b10(void)
 {
     u8 *record;
-    s32 one = 1;                /* r5 */
-    s32 mark = 0x131;           /* r6 */
+    s32 one;
+    s32 mark;
 
     Func_02001cc8(0xc1b, 1);
 
@@ -116,6 +116,7 @@ void Func_02000b10(void)
     Func_02001db0(3, -20);
 
     record = Func_02001d86(0);
+    mark = 0x131;
     record[mark] = (u8)one;
     record[320] = (u8)one;      /* 160 << 1 */
 

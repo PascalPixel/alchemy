@@ -95,8 +95,8 @@ void Func_02001888(void)
     Func_02005bf2(8, 0x9999, 0x4ccc);
 
     frame = (s16 *)(actor + 0x64);
-    Func_02005c08(8, Data_0200d158);
     *frame = 0;
+    Func_02005c08(8, Data_0200d158);
 
     do {
         Func_02005a7e(1);

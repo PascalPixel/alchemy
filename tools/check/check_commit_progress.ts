@@ -315,6 +315,10 @@ function selfTest(): void {
 
 async function main(argv: string[]): Promise<void> {
   if (argv[0] === "--self-test") return selfTest();
+  if (argv.includes("--help") || argv.includes("-h")) {
+    console.log("usage: check_commit_progress.ts [--target TARGET] COMMIT_MESSAGE");
+    return;
+  }
   let target: DecompTargetId = DEFAULT_TARGET;
   const targetIndex = argv.indexOf("--target");
   if (targetIndex >= 0) {

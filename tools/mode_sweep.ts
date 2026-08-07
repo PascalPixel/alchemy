@@ -72,6 +72,9 @@ export const FORK_MODES = [
   // The plain argument ahead of a mid-sheet split-constant shift.
   // Witness resource_3b1:5ca4.
   "-fthumb-arg-before-shift-in-sheet",
+  // The literal r1-before-r0 pair, only in a sheet opening after a call.
+  // Witnesses resource_3b9:06bc, resource_376:0258, resource_376:0190.
+  "-fthumb-call-literal-arg1-first-after-call",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

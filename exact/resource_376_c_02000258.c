@@ -1,3 +1,11 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with
+ * -fthumb-call-literal-arg1-first-after-call: the last residual was a
+ * two-literal argument sheet that opens right after a call, where the
+ * reference writes r1 before r0 -- the same function writes later pairs in
+ * register order, so the returning call is the discriminator.
+ */
+
 #include "types.h"
 
 

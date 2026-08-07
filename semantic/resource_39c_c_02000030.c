@@ -10,7 +10,10 @@
 void Func_02000030(void *record, s32 value)
 {
     u8 *inner = *(u8 **)((u8 *)record + 80);
-    s32 result = ((value & 3) << 2) | (inner[9] & ~0x0c);
+    u32 masked;
 
-    inner[9] = (u8)result;
+    value &= 3;
+    masked = ~0x0c;
+    masked = masked & inner[9];
+    inner[9] = (u8)((value << 2) | masked);
 }

@@ -11,7 +11,11 @@ import { canonicalJson } from "./canonical_json.ts";
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 
 interface Options { assets: string; output: string; top: number }
-interface FunctionRow {
+// The shape of one row in out/decomp/overlays.json, owned here because this is
+// the tool that writes the file. Eleven other tools each kept a private partial
+// copy; they disagreed about which fields exist, and one of them typechecked
+// only because nothing ever ran tsc.
+export type FunctionRow = {
   id: string;
   overlay: string;
   entry: number;
@@ -31,8 +35,7 @@ interface FunctionRow {
   contained_by: string[];
   structural_veneer: boolean;
   data_walk: boolean;
-}
-
+};
 function optionsOf(argv: string[]): Options {
   const options: Options = {
     assets: join(ROOT, "assets/code"),

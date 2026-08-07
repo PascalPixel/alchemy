@@ -59,7 +59,7 @@ const eventClients = new Set<ReadableStreamDefaultController<Uint8Array>>();
 const mtime = (file: string): number => existsSync(file) ? statSync(file).mtimeMs : 0;
 const pageVersion = (): string => PAGE_FILES.map(mtime).join(":");
 
-function headers(contentType?: string, cacheControl = "no-store"): HeadersInit {
+function headers(contentType?: string, cacheControl = "no-store"): Record<string, string> {
   return {
     ...(contentType ? { "content-type": contentType } : {}),
     "cache-control": cacheControl,
@@ -85,7 +85,6 @@ async function bundledClient(): Promise<string> {
     format: "esm",
     minify: false,
     sourcemap: "none",
-    write: false,
   });
   if (!result.success || result.outputs.length !== 1) {
     throw new Error(result.logs.map(String).join("\n") || "dashboard client build failed");

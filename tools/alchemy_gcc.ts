@@ -2746,7 +2746,7 @@ export function usesAgbccCompiler(target: CompilerTarget, source: string): boole
 // compiles, so the flag-capability lint can probe each binary with exactly
 // the flags routing can hand it.
 export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
-  const baseline = new Set([...CFLAGS, ...GS2_CFLAGS, ...AGBCC_CFLAGS]);
+  const baseline = new Set<string>([...CFLAGS, ...GS2_CFLAGS, ...AGBCC_CFLAGS]);
   const found = new Set<string>();
   const inspect = (source: string): void => {
     if (compiler !== undefined && usesAgbccCompiler("gs1", source) !== (compiler === "agbcc")) return;

@@ -2385,6 +2385,10 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // cc1 built from fork 76a2647 on darwin-arm64, 2026-08-07. Admitted
         // from the green verify recorded with this commit.
         "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
+        // -mcallee-reg-order= (r4-r7 allocation order), built on darwin-arm64
+        // 2026-08-07. Default-off: without the switch reg_alloc_order is
+        // untouched. Cross-host rule: rebuild+pin linux from the same source.
+        "5f95a10d93349d67bad586c52362d0f6ede3e63c02c7bee87cc07203b228613d",
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",

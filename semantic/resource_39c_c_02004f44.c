@@ -29,31 +29,25 @@
 
 extern u8 *Data_03001f30;
 
+extern void Func_0808a0f0(s32 arg0, s32 arg1, s32 arg2, void *arg3);
+extern void Func_0808a428(s32 arg0, s32 arg1);
+extern void Func_0808a430(s32 arg0, s32 arg1);
+extern void Func_0808a448();
+extern void Func_0808a420(s32 arg0);
+extern void Func_0808a438();
 
-
-
-
-
-
-
-extern void Func_0200aa7a(s32 arg0, s32 arg1, s32 arg2, void *arg3);
-extern void Func_0200ab8a(s32 arg0, s32 arg1);
-extern void Func_0200ab9a(s32 arg0, s32 arg1);
-extern void Func_0200abba();
-extern void Func_0200aba0(s32 arg0);
-extern void Func_0200abbc();
 void Func_02004f44(void)
 {
     u8 *target;
 
-    Func_0200aa7a(11, 0x3480000, 0x2580000, &Data_03001f30);
-    Func_0200ab8a(93, 1);
-    Func_0200ab9a(3, 11);
+    Func_0808a0f0(11, 0x3480000, 0x2580000, &Data_03001f30);
+    Func_0808a428(93, 1);
+    Func_0808a430(3, 11);
 
     target = Data_03001f30 + 0x71c;
     *target = *target | 8;
 
-    Func_0200abba();
-    Func_0200aba0(1);
-    Func_0200abbc();
+    Func_0808a448();
+    Func_0808a420(1);
+    Func_0808a438();
 }

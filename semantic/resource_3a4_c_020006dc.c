@@ -54,34 +54,17 @@
 
 extern u8 Data_0200bd48[];     /* image offset 0x3d48: script blob */
 
-           /* scene-record accessor, established */
-          /* sound/sting, established */
-          /* camera zoom triple, established */
-          /* frame wait, established */
-          /* wait n frames, established */
-          /* place entity (id, x, z), established */
-          /* (selector, script), established */
-          /* per-frame callback install/clear */
-          /* six-argument panel call */
-          /* set a story flag, established */
+u8 *Func_0808a080();           /* scene-record accessor, established */
+void Func_080f9010();          /* sound/sting, established */
+void Func_080091f0();          /* camera zoom triple, established */
+void Func_0808a010();          /* frame wait, established */
+void Func_080000c0();          /* wait n frames, established */
+void Func_0808a0f0();          /* place entity (id, x, z), established */
+void Func_0808a098();          /* (selector, script), established */
+void Func_08000130();          /* per-frame callback install/clear */
+void Func_080091c0();          /* six-argument panel call */
+void Func_080770c8();          /* set a story flag, established */
 
-extern void Func_02004408();
-extern void Func_02004230();
-extern void Func_02004266();
-extern void Func_0200418e();
-extern u8 * Func_020042b8();
-extern u8 * Func_020042c0();
-extern void Func_02004320();
-extern void Func_020042e8();
-extern void Func_02004208();
-extern void Func_020041d6();
-extern void Func_020041ec();
-extern void Func_02004236();
-extern void Func_020044a4();
-extern void Func_020042ec();
-extern void Func_02004322();
-extern void Func_020042f6();
-extern void Func_0200432c();
 void Func_020006dc(void)
 {
     u8 *record;
@@ -91,39 +74,39 @@ void Func_020006dc(void)
 
     record = *(u8 **)0x03001e70 + 0x164;
 
-    Func_02004408(230);
-    Func_02004230(0x20000, 0x20000, 0x10000);   /* 128<<10, 128<<9 */
-    Func_02004266(10);
+    Func_080f9010(230);
+    Func_080091f0(0x20000, 0x20000, 0x10000);   /* 128<<10, 128<<9 */
+    Func_0808a010(10);
 
     for (i = 0; i <= 23; i++) {
         *(s32 *)(record + 12) += -0x10000;      /* pool 0xffff0000 */
-        Func_0200418e(4);
+        Func_080000c0(4);
 
         if (i == 8) {
-            actor = Func_020042b8(8);
-            actor = Func_020042c0(8);
+            actor = Func_0808a080(8);
+            actor = Func_0808a080(8);
             *(s32 *)(actor + 0x18) = 0x1999;
             *(s32 *)(actor + 0x1c) = 0x1999;
-            Func_02004320(8, 152 << 16, 216 << 16);
-            Func_020042e8(8, Data_0200bd48);
+            Func_0808a0f0(8, 152 << 16, 216 << 16);
+            Func_0808a098(8, Data_0200bd48);
         }
     }
 
-    Func_02004208(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */
+    Func_08000130(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */
 
     *counter = 0;
     do {
-        Func_020041d6(1);
+        Func_080000c0(1);
         *counter += 1;
     } while ((u32)(*counter << 16) <= (u32)(200 << 15));
     counter = (u16 *)0x0200d238;
 
-    Func_020041ec(1);
-    Func_02004236(1, 0, 0);
-    Func_020044a4(0x121);
+    Func_080000c0(1);
+    Func_08000130(1, 0, 0);
+    Func_080f9010(0x121);
 
-    Func_020042ec(-1, -1, 0xe666);              /* 0.9 in 16.16 */
-    Func_02004322(30);
-    Func_020042f6(0, 0, 1, 2, 3, 14);
-    Func_0200432c(0x8fd);
+    Func_080091f0(-1, -1, 0xe666);              /* 0.9 in 16.16 */
+    Func_0808a010(30);
+    Func_080091c0(0, 0, 1, 2, 3, 14);
+    Func_080770c8(0x8fd);
 }

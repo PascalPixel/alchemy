@@ -36,57 +36,43 @@
  *   0x20029c6 -> image offset 0x3028        local Func_02003028
  */
 
-           /* test story flag, established */
-           /* scene-record accessor, established */
-           /* place entity (id, x, z), established */
-          /* (record, n), established */
-          /* (slot, n), established */
-          /* open bracket, established */
-          /* close bracket, established */
-          /* overlay-local, image offset 0x3028 */
+s32 Func_080770c0();           /* test story flag, established */
+u8 *Func_0808a080();           /* scene-record accessor, established */
+u8 *Func_0808a0f0();           /* place entity (id, x, z), established */
+void Func_080091e0();          /* (record, n), established */
+void Func_0808a1e0();          /* (slot, n), established */
+void Func_0808a018();          /* open bracket, established */
+void Func_0808a020();          /* close bracket, established */
+void Func_02003028();          /* overlay-local, image offset 0x3028 */
 
-extern s32 Func_0200648a();
-extern u8 * Func_02006532();
-extern u8 * Func_0200653c();
-extern void Func_020064f4();
-extern u8 * Func_02006492();
-extern void Func_020065c2();
-extern void Func_02006508();
-extern u8 * Func_020064a6();
-extern u8 * Func_02006514();
-extern s32 Func_020064ea();
-extern void Func_0200651a();
-extern void Func_0200652c();
-extern s32 Func_02006510();
-extern void Func_020059f0();
 void Func_02002934(void)
 {
     s32 flag;
     u8 *entity;
     s16 selector;
 
-    flag = Func_0200648a(0x909);
+    flag = Func_080770c0(0x909);
     if (flag != 0) {
-        Func_02006532(8, 0, 0);
-        Func_0200653c(9, 0, 0);
+        Func_0808a0f0(8, 0, 0);
+        Func_0808a0f0(9, 0, 0);
     } else {
-        Func_020064f4(Func_02006492(8), 0);
-        Func_020065c2(9, 3);
-        Func_02006508(Func_020064a6(9), 0);
-        Func_02006514(9)[0x59] = flag;      /* provably 0 here */
+        Func_080091e0(Func_0808a080(8), 0);
+        Func_0808a1e0(9, 3);
+        Func_080091e0(Func_0808a080(9), 0);
+        Func_0808a080(9)[0x59] = flag;      /* provably 0 here */
     }
 
     selector = *(s16 *)((u8 *)0x02000240 + 450);
     if (selector == 1 || selector == 98) {
-        if (Func_020064ea(0x109) == 0) {
-            entity = Func_0200653c(0);
+        if (Func_080770c0(0x109) == 0) {
+            entity = Func_0808a080(0);
             *(s32 *)(entity + 12) = 0x100000;   /* 128 << 13 */
-            Func_0200651a(entity);
-            Func_0200652c();
+            Func_0808a018(entity);
+            Func_0808a020();
         }
     } else if (selector == 99) {
-        if (Func_02006510(0x109) == 0) {
-            Func_020059f0();
+        if (Func_080770c0(0x109) == 0) {
+            Func_02003028();
         }
     }
 }

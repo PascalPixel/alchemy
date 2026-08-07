@@ -58,42 +58,17 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-
-
-
-
-
+u8 *Func_0808a080();
+s32 Func_080770c0();
+void Func_080091c0();
+void Func_08009150();
+void Func_0808a100();
 
 /* In-image words at file offsets 0x4834 (a toggle) and 0x4838 (a frame
  * counter), shared with Func_020008ec, Func_020009b0 and Func_02000970. */
 extern volatile s32 Data_0200c834;
 extern volatile u32 Data_0200c838;
 
-extern u8 * Func_02004674();
-extern u8 * Func_0200467e();
-extern s32 Func_0200465c();
-extern void Func_02004650();
-extern void Func_02004666();
-extern void Func_02004678();
-extern void Func_0200475c();
-extern u8 * Func_02004692();
-extern void Func_02004770();
-extern u8 * Func_020046a6();
-extern void Func_02004784();
-extern u8 * Func_020046ba();
-extern void Func_02004798();
-extern u8 * Func_020046ce();
-extern void Func_020047f6();
-extern void Func_020047b6();
-extern u8 * Func_020046ec();
-extern void Func_020047ca();
-extern u8 * Func_02004700();
-extern void Func_020047de();
-extern u8 * Func_02004714();
-extern void Func_020047f2();
-extern u8 * Func_02004728();
-extern void Func_02004850();
-extern s32 Func_020047b2();
 void Func_02000714(void)
 {
     u8 *subject;
@@ -104,11 +79,11 @@ void Func_02000714(void)
 
     s32 permuted_3;
     s32 permuted_11;
-    subject = Func_02004674(*(s32 *)(0x02000240 + 500));
+    subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
 
     id = 22;
     do {
-        record = Func_0200467e(id);
+        record = Func_0808a080(id);
         record[91] = 0;
 
         permuted_3 = *(s32 *)(record + 8) - *(s32 *)(subject + 8);
@@ -126,7 +101,7 @@ void Func_02000714(void)
             if ((*(s32 *)(subject + 16) - *(s32 *)(record + 16)) > 0x9ffff) goto next;
         }
 
-        if (Func_0200465c(260) != 0) {          /* 130 << 1 */
+        if (Func_080770c0(260) != 0) {          /* 130 << 1 */
             permuted_11 = *(s32 *)(record + 16);
         } else {
             *(s32 *)(subject + 16) = permuted_11;
@@ -156,32 +131,32 @@ void Func_02000714(void)
             arg2 = 7;
             stacked = 13;
         }
-        Func_02004650(58, arg1, arg2, 1, 58, stacked);
+        Func_080091c0(58, arg1, arg2, 1, 58, stacked);
     } else {
-        Func_02004666(57, 11, 1, 1, 58, 11);
-        Func_02004678(58, 14, 7, 1, 58, 13);
+        Func_080091c0(57, 11, 1, 1, 58, 11);
+        Func_080091c0(58, 14, 7, 1, 58, 13);
     }
 
     if (Data_0200c838 == 0) {
         Data_0200c834 = Data_0200c834 ^ 1;
         if (Data_0200c834 != 0) {
-            Func_0200475c(Func_02004692(22), 0x3a80000, 0, 0xb80000);
-            Func_02004770(Func_020046a6(23), 0x3c80000, 0, 0xf80000);
-            Func_02004784(Func_020046ba(24), 0x3e80000, 0, 0xb80000);
-            Func_02004798(Func_020046ce(25), 0x4080000, 0, 0xf80000);
-            Func_020047f6(31, 11);
+            Func_08009150(Func_0808a080(22), 0x3a80000, 0, 0xb80000);
+            Func_08009150(Func_0808a080(23), 0x3c80000, 0, 0xf80000);
+            Func_08009150(Func_0808a080(24), 0x3e80000, 0, 0xb80000);
+            Func_08009150(Func_0808a080(25), 0x4080000, 0, 0xf80000);
+            Func_0808a100(31, 11);
         } else {
-            Func_020047b6(Func_020046ec(22), 0x3a80000, 0, 0xd80000);
-            Func_020047ca(Func_02004700(23), 0x3c80000, 0, 0xd80000);
-            Func_020047de(Func_02004714(24), 0x3e80000, 0, 0xd80000);
-            Func_020047f2(Func_02004728(25), 0x4080000, 0, 0xd80000);
-            Func_02004850(31, 10);
+            Func_08009150(Func_0808a080(22), 0x3a80000, 0, 0xd80000);
+            Func_08009150(Func_0808a080(23), 0x3c80000, 0, 0xd80000);
+            Func_08009150(Func_0808a080(24), 0x3e80000, 0, 0xd80000);
+            Func_08009150(Func_0808a080(25), 0x4080000, 0, 0xd80000);
+            Func_0808a100(31, 10);
         }
     }
 
     counter = Data_0200c838 + 1;
     Data_0200c838 = counter;
-    if (counter > 119 && Func_020047b2(260) == 0) {
+    if (counter > 119 && Func_080770c0(260) == 0) {
         Data_0200c838 = 0;
     }
 }

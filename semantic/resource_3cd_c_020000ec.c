@@ -64,19 +64,19 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-            /* item/party record by id */
-           /* refresh one display slot */
-            /* open a window, return its handle */
-           /* close a window */
-           /* draw a canned caption line */
-           /* draw an image (image, layer, x, y) */
-           /* draw an image (image, layer, x, y) */
-           /* draw a number (value, digits, layer, x, y) */
-           /* clear a window's contents */
-           /* advance the task scheduler */
-           /* play a sound cue */
+u8 *Func_08077008();            /* item/party record by id */
+void Func_08077010();           /* refresh one display slot */
+s32 Func_08015010();            /* open a window, return its handle */
+void Func_08015018();           /* close a window */
+void Func_08015078();           /* draw a canned caption line */
+void Func_08015090();           /* draw an image (image, layer, x, y) */
+void Func_08015098();           /* draw an image (image, layer, x, y) */
+void Func_080150b0();           /* draw a number (value, digits, layer, x, y) */
+void Func_08015270();           /* clear a window's contents */
+void Func_080000c0();           /* advance the task scheduler */
+void Func_080f9010();           /* play a sound cue */
 
-           /* in-overlay: apply a delta to every member */
+void Func_020000c0();           /* in-overlay: apply a delta to every member */
 
 /* RAM: the shared work area, and the newly-pressed button latch. */
 extern u8 Data_02000240[];
@@ -84,39 +84,18 @@ extern u8 Data_02000240[];
 /* In-image: the icon drawn beside the count. */
 extern u8 Data_020088d0[];
 
-extern u8 * Func_02000950();
-extern s32 Func_02000902();
-extern void Func_02000922();
-extern void Func_02000930();
-extern void Func_0200093e();
-extern void Func_02000978();
-extern void Func_02000964();
-extern void Func_0200099c();
-extern void Func_02000250();
-extern void Func_02000a5e();
-extern void Func_02000268();
-extern void Func_02000a76();
-extern void Func_02000a88();
-extern void Func_020009f6();
-extern void Func_020009b4();
-extern void Func_020009cc();
-extern void Func_02000a32();
-extern void Func_02000a38();
-extern void Func_02000a3e();
-extern void Func_02000a44();
-extern void Func_020009e6();
 void Func_020000ec(void)
 {
     u8 *record;
     s32 window;
     s32 redraw;
 
-    record = Func_02000950(*(s32 *)(Data_02000240 + 500));
-    window = Func_02000902(0, 0, 30, 9, 2);
+    record = Func_08077008(*(s32 *)(Data_02000240 + 500));
+    window = Func_08015010(0, 0, 30, 9, 2);
 
-    Func_02000922(0x0c20, window, 0, 0);
-    Func_02000930(0x0c21, window, 0, 16);
-    Func_0200093e(0x0c22, window, 0, 32);
+    Func_08015078(0x0c20, window, 0, 0);
+    Func_08015078(0x0c21, window, 0, 16);
+    Func_08015078(0x0c22, window, 0, 32);
 
     redraw = 1;
 
@@ -125,24 +104,24 @@ loop:
         u32 pressed;
 
         if (redraw != 0) {
-            Func_02000978(window);
-            Func_02000964(record, window, 0, 48);
-            Func_02000978(Data_020088d0, window, 48, 48);
-            Func_0200099c(record[15], 0, window, 72, 48);
+            Func_08015270(window);
+            Func_08015090(record, window, 0, 48);
+            Func_08015098(Data_020088d0, window, 48, 48);
+            Func_080150b0(record[15], 0, window, 72, 48);
             redraw = 0;
         }
 
         pressed = *(u32 *)0x03001c94;
 
         if ((pressed & 8) != 0 || (pressed & 4) != 0) {
-            Func_02000250(5);
-            Func_02000a5e(93);
+            Func_020000c0(5);
+            Func_080f9010(93);
             redraw = 1;
         }
 
         if ((pressed & 1) != 0) {
-            Func_02000268(1);
-            Func_02000a76(91);
+            Func_020000c0(1);
+            Func_080f9010(91);
             redraw = 1;
         }
 
@@ -151,19 +130,19 @@ loop:
         }
     }
 
-    Func_02000a88(113);
-    Func_020009f6(window);
-    Func_020009b4(1);
-    Func_020009cc(window, 1);
+    Func_080f9010(113);
+    Func_08015270(window);
+    Func_080000c0(1);
+    Func_08015018(window, 1);
 
     /* Deliberate non-sequential refresh order. */
-    Func_02000a32(0);
-    Func_02000a38(1);
-    Func_02000a3e(3);
-    Func_02000a44(2);
+    Func_08077010(0);
+    Func_08077010(1);
+    Func_08077010(3);
+    Func_08077010(2);
     return;
 
 scheduler:
-    Func_020009e6(1);
+    Func_080000c0(1);
     goto loop;
 }

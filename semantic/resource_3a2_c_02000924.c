@@ -68,127 +68,88 @@
  * every import's interface open, as required for overlay sources.
  */
 
-      /* installed callback, byte-exact in assets/code */
+extern void Func_02000054();      /* installed callback, byte-exact in assets/code */
 extern u8 Data_0200962c[];
 extern u8 Data_020096b8[];
 
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+u8 *Func_0808a080();
+void Func_0808a090();
+void Func_0808a098();
+void Func_0808a0a0();
+void Func_0808a0d0();
+void Func_0808a0f0();
+void Func_0808a110();
+void Func_0808a130();
+void Func_0808a138();
+void Func_0808a170();
+void Func_0808a188();
+void Func_0808a1b8();
+void Func_0808a1e0();
+void Func_0808a1e8();
+void Func_0808a1f0();
+void Func_0808a210();
+void Func_0808a218();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern s32 Func_02001dfa();
-extern void Func_02001e24();
-extern void Func_02001e92();
-extern void Func_02001ec8();
-extern void Func_02001eea();
-extern void Func_02001ed2();
-extern void Func_02001e48();
-extern u8 * Func_02001e6e();
-extern u8 * Func_02001e78();
-extern void Func_02001ebc();
-extern void Func_02001ea2();
-extern void Func_02001f4a();
-extern void Func_02001ede();
-extern u8 * Func_02001eb4();
-extern void Func_02001ea4();
-extern void Func_02001f70();
-extern void Func_02001f6a();
-extern void Func_02001fa4();
-extern void Func_02001f8c();
-extern void Func_02001f14();
-extern void Func_02001fd6();
-extern void Func_02001eee();
-extern void Func_02001f3c();
-extern void Func_02001ff0();
-extern void Func_02001f3e();
-extern void Func_02001f4e();
-extern void Func_02001f5c();
-extern void Func_02001f2a();
-extern u8 * Func_02001f50();
-extern void Func_02001f3a();
-extern void Func_02001fd2();
-extern void Func_02001f48();
-extern void Func_02002014();
-extern void Func_0200202e();
-extern void Func_02002038();
-extern void Func_02001fe8();
-extern void Func_02001f76();
-extern void Func_02002030();
-extern void Func_02001f94();
 void Func_02000924(void)
 {
     u8 *record;
 
-    if (Func_02001dfa(0x89a) == 0) return;
+    if (Func_080770c0(0x89a) == 0) return;
 
-    Func_02001e24();
-    Func_02001e92(10, 0x2180000, 0xd80000);
-    Func_02001ec8(0x18b5);
-    Func_02001eea(10, 0, 20);
-    Func_02001ed2(0, 2);
-    Func_02001e48(20);
+    Func_0808a018();
+    Func_0808a0f0(10, 0x2180000, 0xd80000);
+    Func_0808a170(0x18b5);
+    Func_0808a188(10, 0, 20);
+    Func_0808a138(0, 2);
+    Func_0808a010(20);
 
-    *(void **)(Func_02001e6e(0) + 108) = (void *)0x02008055;
+    *(void **)(Func_0808a080(0) + 108) = (void *)0x02008055;
 
-    record = Func_02001e78(0);
+    record = Func_0808a080(0);
     if ((*(s32 *)(record + 16) >> 20) == 13) {
-        Func_02001ebc(0, 440, 200);
+        Func_0808a0d0(0, 440, 200);
     }
 
-    Func_02001ea2(10, 0x20000, 0x10000);
-    Func_02001f4a(10, 2);
-    Func_02001ede(10, 408, 216);
+    Func_0808a090(10, 0x20000, 0x10000);
+    Func_0808a1e0(10, 2);
+    Func_0808a0d0(10, 408, 216);
 
-    Func_02001eb4(10)[35] |= 1;
+    Func_0808a080(10)[35] |= 1;
 
-    Func_02001ea4(10);
-    Func_02001f70(10, 0x8000, 20);
-    Func_02001f6a(10, 0, 20);
-    Func_02001f4a(10, 2);
-    Func_02001fa4(10, 258);
-    Func_02001ed2(60);
-    Func_02001f8c(10, 0, 20);
-    Func_02001f14(10, Data_0200962c);
+    Func_0808a010(10);
+    Func_0808a1b8(10, 0x8000, 20);
+    Func_0808a188(10, 0, 20);
+    Func_0808a130(10, 2);
+    Func_0808a1f0(10, 258);
+    Func_0808a010(60);
+    Func_0808a188(10, 0, 20);
+    Func_0808a098(10, Data_0200962c);
 
-    Func_02001fd6(0x1280000, -1, 0x1580000, 1);
-    Func_02001eee(0x8b0);
-    Func_02001f3c(10);
-    Func_02001ff0();
+    Func_0808a210(0x1280000, -1, 0x1580000, 1);
+    Func_080770c8(0x8b0);
+    Func_0808a0a0(10);
+    Func_0808a218();
 
-    Func_02001f3e(0, 0x10000, 0x8000);
-    Func_02001f4e(0, Data_020096b8);
-    Func_02001f5c(0);
-    Func_02001f2a(10);
+    Func_0808a090(0, 0x10000, 0x8000);
+    Func_0808a098(0, Data_020096b8);
+    Func_0808a0a0(0);
+    Func_0808a010(10);
 
-    *(void **)(Func_02001f50(0) + 108) = 0;
+    *(void **)(Func_0808a080(0) + 108) = 0;
 
-    Func_02001f3a(30);
-    Func_02001fd2(10, 2);
-    Func_02001f48(20);
-    Func_02002014(10, 0x5000, 120);
-    Func_0200202e(10, 0x105, 60);
-    Func_02002038(0, 0x101, 60);
-    Func_02001fe8(10, 4);
-    Func_02001f76(20);
-    Func_02002030(10, 0, 20);
-    Func_02001f94();
+    Func_0808a010(30);
+    Func_0808a138(10, 2);
+    Func_0808a010(20);
+    Func_0808a1b8(10, 0x5000, 120);
+    Func_0808a1e8(10, 0x105, 60);
+    Func_0808a1e8(0, 0x101, 60);
+    Func_0808a110(10, 4);
+    Func_0808a010(20);
+    Func_0808a188(10, 0, 20);
+    Func_0808a020();
 }

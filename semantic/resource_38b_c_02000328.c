@@ -43,34 +43,19 @@ extern s16 Data_02009d0c[];
 
 /* Imports, all through the veneer table at 0x02001018.  Old-style
  * declarations: arities vary per site across this overlay. */
+extern void Func_0808a018();
+extern void Func_0808a020();
+extern void Func_0808a010();
+extern void Func_0808a090();
+extern void Func_0808a100();
+extern void Func_0808a0e0();
+extern void Func_0808a0d8();
+extern void Func_0808a1e0();
+extern void Func_0808a248();
+extern void Func_08009178();
+extern void Func_080f9010();
+extern u8 *Func_0808a080();
 
-
-
-
-
-
-
-
-
-
-
-
-
-extern void Func_020013e8();
-extern u8 * Func_0200140a();
-extern void Func_0200151a();
-extern void Func_02001522();
-extern void Func_020013e4();
-extern void Func_02001462();
-extern u8 * Func_02001460();
-extern void Func_020014b8();
-extern void Func_020014b4();
-extern void Func_020014ba();
-extern void Func_0200152e();
-extern void Func_02001538();
-extern void Func_02001496();
-extern void Func_02001574();
-extern void Func_020014b0();
 void Func_02000328(void)
 {
     u8 *workspace;
@@ -79,13 +64,13 @@ void Func_02000328(void)
     s32 room;
 
     workspace = Data_03001ebc;
-    Func_020013e8();
+    Func_0808a018();
 
     /* Clear the +0x55 byte on every actor slot from 8 to 65 inclusive.  The
      * counter is bumped before the `cmp r5,#65 / bls` test, so the body runs
      * for slot = 8 .. 65 — 58 iterations. */
     for (slot = 8; slot <= 65; slot++) {
-        record = Func_0200140a(slot);
+        record = Func_0808a080(slot);
         if (record != 0) {
             *(u8 *)(record + 0x55) = 0;
         }
@@ -96,38 +81,38 @@ void Func_02000328(void)
 
     /* Two distinct sites of one callee — kept as two calls, not merged. */
     if (room == 6) {
-        Func_0200151a(188);
+        Func_080f9010(188);
     } else {
-        Func_02001522(158);
+        Func_080f9010(158);
     }
 
-    Func_020013e4(Data_02009cf0[room],
+    Func_08009178(Data_02009cf0[room],
                   (s32)Data_02009d0c[room * 2],
                   (s32)Data_02009d0c[room * 2 + 1]);
 
     /* 128 << 8 = 0x8000, 128 << 7 = 0x4000. */
-    Func_02001462(0, 0x8000, 0x4000);
+    Func_0808a090(0, 0x8000, 0x4000);
 
-    record = Func_02001460(0);
+    record = Func_0808a080(0);
     *(u8 *)(record + 0x55) = 0;
 
     *(s32 *)(workspace + 448) = 256;
     workspace = Data_03001ebc;
 
     if (room == 6) {
-        Func_020014b8(0, 2);
-        Func_020014b4(0, 0, -4);
+        Func_0808a100(0, 2);
+        Func_0808a0e0(0, 0, -4);
     } else {
-        Func_020014ba(0, 3, -16);
+        Func_0808a0d8(0, 3, -16);
     }
 
     if (room == 4) {
-        Func_0200152e(0, 3);
+        Func_0808a1e0(0, 3);
     } else {
-        Func_02001538(0, 2);
+        Func_0808a1e0(0, 2);
     }
 
-    Func_02001496(16);
-    Func_02001574(room + 3);
-    Func_020014b0();
+    Func_0808a010(16);
+    Func_0808a248(room + 3);
+    Func_0808a020();
 }

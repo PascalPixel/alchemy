@@ -24,9 +24,8 @@
 
 /* Import veneer at 0x02004ec4 -> main image Func_0808a400.  Returns the
  * entity record for the given handle. */
+s32 *Func_0808a400();
 
-
-extern s32 * Func_0200968a();
 s32 Func_020047bc(s32 x, s32 z, s32 who)
 {
     s32 *entity;
@@ -35,7 +34,7 @@ s32 Func_020047bc(s32 x, s32 z, s32 who)
     s32 dx;
     s32 dz;
 
-    entity = Func_0200968a(who);
+    entity = Func_0808a400(who);
 
     ex = entity[14];                    /* +56 */
     if (ex == (s32)0x80000000) {

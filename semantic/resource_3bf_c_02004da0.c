@@ -66,52 +66,21 @@
 
 /* Old-style declarations are mandatory in overlay sources: one name can be
  * reached with different argument counts from different sites. */
+void Func_02003054();
+void Func_02004f60();
+void Func_020050e4();
+void Func_02005324();
+void Func_02005520();
+s32 Func_080000f8();
+s32 Func_080091e0();
+void Func_08009258();
+s32 Func_080770c0();
+s32 Func_0808a080();
+void Func_0808a0f0();
+void Func_0808a100();
+void Func_0808a1b8();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern s32 Func_0200a346();
-extern void Func_0200a3c2();
-extern void Func_02009d2e();
-extern void Func_02009ec2();
-extern void Func_0200a112();
-extern s32 Func_0200a462();
-extern s32 Func_0200a400();
-extern void Func_0200a52a();
-extern void Func_0200a4d2();
-extern void Func_0200a34e();
-extern s32 Func_0200a484();
-extern s32 Func_0200a428();
-extern s32 Func_0200a49e();
-extern s32 Func_0200a442();
-extern s32 Func_0200a4b6();
-extern s32 Func_0200a45a();
-extern void Func_0200a478();
-extern void Func_0200a490();
-extern void Func_02007ef0();
-extern void Func_0200a4a8();
-extern s32 Func_0200a4c6();
-extern void Func_0200a564();
-extern void Func_0200a572();
-extern void Func_0200a5e6();
-extern void Func_0200a58c();
-extern void Func_0200a600();
-extern void Func_0200a5a6();
-extern s32 Func_0200a55c();
-extern s32 Func_0200a4fa();
-extern s32 Func_0200a568();
-extern s32 Func_0200a50c();
 s32 Func_02004da0(void)
 {
     /* In-image module data at file offset 0x5fa4; writable. */
@@ -119,17 +88,17 @@ s32 Func_02004da0(void)
     const s16 *table = (const s16 *)0x02000240;
     u8 *actor;
 
-    published[0] = (s32)(((u32)(Func_0200a346() * 7)) >> 16);
+    published[0] = (s32)(((u32)(Func_080000f8() * 7)) >> 16);
 
     if (table[224] == 160) {
-        Func_0200a3c2(3584);
-        Func_02009d2e();
+        Func_08009258(3584);
+        Func_02004f60();
     }
     if (table[224] == 161) {
-        Func_02009ec2();
+        Func_020050e4();
     }
     if (table[224] == 162) {
-        Func_0200a112();
+        Func_02005324();
     }
     if (table[224] != 163) {
         return 0;
@@ -141,57 +110,57 @@ s32 Func_02004da0(void)
         *(s32 *)(workspace + 448) = 516;
     }
 
-    actor = Func_0200a462(12);
-    Func_0200a400(actor, 0);
-    Func_0200a52a(12, 0, 0);
-    Func_0200a4d2(12, 0);
+    actor = Func_0808a080(12);
+    Func_080091e0(actor, 0);
+    Func_0808a1b8(12, 0, 0);
+    Func_0808a100(12, 0);
     /* No argument register is set for this call; r0 still holds 12. */
-    Func_0200a34e();
+    Func_02005520();
 
-    actor = Func_0200a484(8);
+    actor = Func_0808a080(8);
     if (actor != 0) {
-        Func_0200a428(actor, 0);
+        Func_080091e0(actor, 0);
     }
     actor[35] = 2;
 
-    actor = Func_0200a49e(9);
+    actor = Func_0808a080(9);
     if (actor != 0) {
-        Func_0200a442(actor, 0);
+        Func_080091e0(actor, 0);
     }
     actor[35] = 2;
 
-    actor = Func_0200a4b6(10);
+    actor = Func_0808a080(10);
     if (actor != 0) {
-        Func_0200a45a(actor, 0);
+        Func_080091e0(actor, 0);
     }
     actor[35] = 2;
 
-    Func_0200a478(3584);
+    Func_08009258(3584);
 
     if (table[225] == 4) {
-        Func_0200a490(3072);
-        Func_02007ef0();
+        Func_08009258(3072);
+        Func_02003054();
     }
 
     if (*(const u16 *)&table[225] == 3) {
-        Func_0200a4a8(3072);
-        if (Func_0200a4c6(0x941) != 0) {
-            Func_0200a564(12, 0, 0);
+        Func_08009258(3072);
+        if (Func_080770c0(0x941) != 0) {
+            Func_0808a0f0(12, 0, 0);
 
-            Func_0200a572(16, 0x01b00000, 0x01580000);
-            Func_0200a5e6(16, 0x5000, 0);
+            Func_0808a0f0(16, 0x01b00000, 0x01580000);
+            Func_0808a1b8(16, 0x5000, 0);
 
-            Func_0200a58c(13, 0x01c80000, 0x01200000);
-            Func_0200a600(13, 0x5000, 0);
+            Func_0808a0f0(13, 0x01c80000, 0x01200000);
+            Func_0808a1b8(13, 0x5000, 0);
 
-            Func_0200a5a6(17, 0x01c80000, 0x01400000);
-            Func_0200a55c(Func_0200a4fa(17), 0);
+            Func_0808a0f0(17, 0x01c80000, 0x01400000);
+            Func_080091e0(Func_0808a080(17), 0);
         }
     }
 
-    actor = Func_0200a568(15);
+    actor = Func_0808a080(15);
     if (actor != 0) {
-        Func_0200a50c(actor, 0);
+        Func_080091e0(actor, 0);
     }
     actor[35] = 2;
     *(s32 *)(actor + 24) = 0xcccc;

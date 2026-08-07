@@ -51,45 +51,39 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-            /* reserve N bytes of scratch, return handle */
-           /* release a scratch handle */
-           /* decompress an archived asset into scratch */
-            /* allocate a palette slot */
-           /* upload decoded tiles for a palette slot */
-            /* archived asset by id */
+s32 Func_08000170();            /* reserve N bytes of scratch, return handle */
+void Func_08000178();           /* release a scratch handle */
+void Func_080001a8();           /* decompress an archived asset into scratch */
+s32 Func_080001d0();            /* allocate a palette slot */
+void Func_080001c8();           /* upload decoded tiles for a palette slot */
+u8 *Func_08000290();            /* archived asset by id */
 
 /* In-image halfword: the cached palette slot for this overlay's portrait. */
 extern s16 Data_02008650[];
 
-extern s32 Func_02000710();
-extern s32 Func_02000744();
-extern u8 * Func_0200075c();
-extern void Func_02000742();
-extern void Func_02000766();
-extern void Func_0200076a();
 void Func_020001c0(void)
 {
     s32 handle;
     u8 *source;
 
-    handle = Func_02000710(1312);       /* 164 << 3 == 32 palette + 1280 tile */
+    handle = Func_08000170(1312);       /* 164 << 3 == 32 palette + 1280 tile */
 
     if (Data_02008650[0] == -1) {
-        Data_02008650[0] = (s16)Func_02000744();
+        Data_02008650[0] = (s16)Func_080001d0();
     }
 
-    source = Func_0200075c(0x1c);
-    Func_02000742(source, handle);
+    source = Func_08000290(0x1c);
+    Func_080001a8(source, handle);
 
     /* DMA3: 8 words of palette from the head of the scratch. */
     *(volatile u32 *)0x040000d4 = (u32)handle;
     *(volatile u32 *)0x040000d8 = 0x050003e0;
     *(volatile u32 *)0x040000dc = 0x84000008;
 
-    Func_02000766(Data_02008650[0], 1280, handle + 32);   /* 160 << 3 */
+    Func_080001c8(Data_02008650[0], 1280, handle + 32);   /* 160 << 3 */
 
     while ((*(volatile u32 *)0x040000dc & 0x80000000) != 0) {
     }
 
-    Func_0200076a(handle);
+    Func_08000178(handle);
 }

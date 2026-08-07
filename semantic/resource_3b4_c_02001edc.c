@@ -45,44 +45,34 @@
  */
 
 /* Returns the record for a numbered slot. */
+s32 *Func_0808a080();
+void Func_0808a1e0();
 
-
-
-extern s32 * Func_02004422();
-extern s32 * Func_02004432();
-extern s32 * Func_0200443e();
-extern s32 * Func_0200444a();
-extern s32 * Func_02004454();
-extern s32 * Func_0200445c();
-extern s32 * Func_02004468();
-extern void Func_020044e0();
-extern void Func_020044ea();
-extern s32 * Func_02004490();
-extern s32 * Func_0200449c();
-extern s32 * Func_020044a8();
 void Func_02001edc(void)
 {
-    s32 *slot0 = Func_02004422(0);
+    s32 *slot0 = Func_0808a080(0);
+    u8 *last;
     u8 marker;
 
     if (slot0[3] > 0x100000) {                 /* +12 */
+        ((u8 *)Func_0808a080(8))[35] = 2;
+        if (Func_0808a080(10)[3] == 0) {
+            ((u8 *)Func_0808a080(10))[35] = 2;
+        }
+        last = (u8 *)Func_0808a080(11);
         marker = 2;
-        ((u8 *)Func_02004432(8))[35] = marker;
-        if (Func_0200443e(10)[3] == 0) {
-            ((u8 *)Func_0200444a(10))[35] = marker;
-        }
-        ((u8 *)Func_02004454(11))[35] = marker;
     } else {
-        if (Func_0200445c(10)[3] == 0 &&
-            Func_02004468(0)[4] / 0x100000 > 56) {   /* +16 */
-            Func_020044e0(10, 3);
+        if (Func_0808a080(10)[3] == 0 &&
+            Func_0808a080(0)[4] / 0x100000 > 56) {   /* +16 */
+            Func_0808a1e0(10, 3);
         } else {
-            Func_020044ea(10, 1);
-            ((u8 *)Func_02004490(10))[35] = 1;
+            Func_0808a1e0(10, 1);
+            ((u8 *)Func_0808a080(10))[35] = 1;
         }
-        marker = 0;
-        ((u8 *)Func_0200449c(11))[35] = marker;
     }
+        last = (u8 *)Func_0808a080(11);
+        marker = 0;
 
-    ((u8 *)Func_020044a8(12))[35] = marker;
+    last[35] = marker;
+    ((u8 *)Func_0808a080(12))[35] = marker;
 }

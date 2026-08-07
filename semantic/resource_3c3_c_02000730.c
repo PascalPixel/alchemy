@@ -35,56 +35,45 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-    /* test a story flag (used in a condition) */
-   /* open a scripted scene */
-   /* close a scripted scene */
-    /* dialogue prompt; result selects the branch */
-   /* scene-presentation request */
-   /* show a dialogue line by id */
-   /* dialogue-line variant with a mode word */
-   /* wait for the slot's action to finish */
+s32 Func_080770c0();    /* test a story flag (used in a condition) */
+void Func_0808a018();   /* open a scripted scene */
+void Func_0808a020();   /* close a scripted scene */
+s32 Func_0808a070();    /* dialogue prompt; result selects the branch */
+void Func_0808a110();   /* scene-presentation request */
+void Func_0808a170();   /* show a dialogue line by id */
+void Func_0808a178();   /* dialogue-line variant with a mode word */
+void Func_0808a180();   /* wait for the slot's action to finish */
 
 extern u8 *Data_03001ebc;
 
-extern void Func_02000fd0();
-extern s32 Func_02000fb6();
-extern void Func_02001060();
-extern void Func_02001068();
-extern void Func_02001078();
-extern s32 Func_02001008();
-extern void Func_02001094();
-extern void Func_0200106c();
-extern void Func_020010a4();
-extern void Func_020010be();
-extern void Func_0200103a();
 void Func_02000730(void)
 {
     u8 *workspace;
 
-    Func_02000fd0();
+    Func_0808a018();
 
-    if (Func_02000fb6(0x89f) != 0) {
-        Func_02001060(0x2668);
+    if (Func_080770c0(0x89f) != 0) {
+        Func_0808a170(0x2668);
         goto close;
     }
 
-    Func_02001068(0x264e);
-    Func_02001078(9, 0);
+    Func_0808a170(0x264e);
+    Func_0808a178(9, 0);
 
-    if (Func_02001008(0, 0) != 0) {
+    if (Func_0808a070(0, 0) != 0) {
         /* Skip-beat counter, two beats' worth. */
         workspace = Data_03001ebc;
         *(u16 *)(workspace + 472) += 2;
-        Func_02001094(9, 0);
+        Func_0808a180(9, 0);
         goto done;
     }
 
-    Func_0200106c(9, 4);
-    Func_020010a4(9, 0);
+    Func_0808a110(9, 4);
+    Func_0808a180(9, 0);
 
 close:
-    Func_020010be(9, 0);
+    Func_0808a180(9, 0);
 
 done:
-    Func_0200103a();
+    Func_0808a020();
 }

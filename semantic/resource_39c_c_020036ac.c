@@ -22,67 +22,51 @@
 extern u8 Data_02000240[];
 extern u8 *Data_03001ebc;
 
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a010();
+u8 *Func_0808a080();
+void Func_0808a0d0();
+void Func_0808a140();
+void Func_0808a1b8();
+void Func_0808a1e0();
+void Func_0808a210();
+void Func_0808a248();
+void Func_08009180();
+void Func_080091e0();
+u8 *Func_02000048();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern void Func_02009166();
-extern void Func_020091de();
-extern void Func_02009272();
-extern void Func_020092a4();
-extern u8 * Func_020091ca();
-extern void Func_02009128();
-extern u8 * Func_020091d6();
-extern u8 * Func_02003756();
-extern void Func_02009126();
-extern u8 * Func_020091fc();
-extern void Func_020092d2();
-extern void Func_02009296();
-extern void Func_02009202();
-extern void Func_02009328();
-extern void Func_020092be();
-extern void Func_0200922a();
 void Func_020036ac(void)
 {
     u8 *actor;
 
-    Func_02009166();
+    Func_0808a018();
 
     if (*(s16 *)&Data_02000240[448] == 0x36) {
-        Func_020091de(0, 472, 600);
-        Func_02009272(0, 0x4000, 10);
-        Func_020092a4(0x01d00000, -1, 0x02900000, 1);
+        Func_0808a0d0(0, 472, 600);
+        Func_0808a1b8(0, 0x4000, 10);
+        Func_0808a210(0x01d00000, -1, 0x02900000, 1);
 
-        actor = Func_020091ca(0);
-        Func_02009128(actor, 0);
+        actor = Func_0808a080(0);
+        Func_080091e0(actor, 0);
 
-        actor = Func_020091d6(0);
-        Func_02003756(*(s32 *)(actor + 8), 0, 0x02be0000, 0xdf);
+        actor = Func_0808a080(0);
+        Func_02000048(*(s32 *)(actor + 8), 0, 0x02be0000, 0xdf);
 
-        Func_02009126(92, 46, 92, 40, 3, 2);
+        Func_08009180(92, 46, 92, 40, 3, 2);
 
-        actor = Func_020091fc(0);
+        actor = Func_0808a080(0);
         *(s32 *)(actor + 72) = 0x8000;
 
-        Func_020092d2(0, 2);
-        Func_02009296(0, 6, -1);
+        Func_0808a1e0(0, 2);
+        Func_0808a140(0, 6, -1);
 
         *(s32 *)(Data_03001ebc + 448) = 515;
-        Func_02009202(60);
-        Func_02009328(8);
+        Func_0808a010(60);
+        Func_0808a248(8);
     } else {
-        Func_020092be(0, 6, -1);
+        Func_0808a140(0, 6, -1);
     }
 
-    Func_0200922a();
+    Func_0808a020();
 }

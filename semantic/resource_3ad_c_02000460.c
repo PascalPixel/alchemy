@@ -28,33 +28,26 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-    /* test a story flag (used in a condition) */
-   /* set a story flag */
-   /* clear a story flag */
+s32 Func_080770c0();    /* test a story flag (used in a condition) */
+void Func_080770c8();   /* set a story flag */
+void Func_080770d0();   /* clear a story flag */
+void Func_08015040();
+void Func_080f9010();
+void Func_02000384();   /* this overlay, the scene body for the 0x202 state */
 
-
-   /* this overlay, the scene body for the 0x202 state */
-
-extern s32 Func_02001f6c();
-extern s32 Func_02001f76();
-extern void Func_02001f7a();
-extern void Func_020020b0();
-extern void Func_0200080c();
-extern void Func_02001f9a();
-extern void Func_02001fa8();
 void Func_02000460(void)
 {
-    if (Func_02001f6c(0x200) != 0) {
+    if (Func_080770c0(0x200) != 0) {
         return;
     }
-    if (Func_02001f76(0x202) != 0) {
+    if (Func_080770c0(0x202) != 0) {
         return;
     }
 
-    Func_02001f7a(0x1528, 1);
-    Func_020020b0(0x9d);
-    Func_0200080c();
+    Func_08015040(0x1528, 1);
+    Func_080f9010(0x9d);
+    Func_02000384();
 
-    Func_02001f9a(0x202);
-    Func_02001fa8(0x201);
+    Func_080770c8(0x202);
+    Func_080770d0(0x201);
 }

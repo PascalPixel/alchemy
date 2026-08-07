@@ -1,7 +1,7 @@
 #include "types.h"
 
-
-
+extern u8 *Func_02000350(s32 *position, u8 *movingActor);
+extern s32 Func_080091d8(u8 *actor, s32 *position);
 
 static void ClearMotion_0200058c(u8 *actor)
 {
@@ -20,8 +20,6 @@ static void ClearMotion_0200058c(u8 *actor)
  * Complete owner: 0x0200058c through the return at 0x02000622, followed by
  * its packed-step, mask, and pass-list pool through 0x0200062f.
  */
-extern u8 * Func_0200090a(s32 *position, u8 *movingActor);
-extern s32 Func_02002a8a(u8 *actor, s32 *position);
 s32 Func_0200058c(u8 *actor)
 {
     const s32 *steps = (const s32 *)0x0200a700;
@@ -32,7 +30,7 @@ s32 Func_0200058c(u8 *actor)
     s16 type;
     u32 i;
 
-    occupant = Func_0200090a(position, actor);
+    occupant = Func_02000350(position, actor);
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);
     position[2] = *(s32 *)(actor + 16) + (s32)((unsigned int)packed << 16);
@@ -48,7 +46,7 @@ s32 Func_0200058c(u8 *actor)
     position[1] = *(s32 *)(actor + 12);
     position[2] = *(s32 *)(actor + 16) + (s32)((unsigned int)packed << 16);
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
-    if (Func_02002a8a(actor, position) > 0)
+    if (Func_080091d8(actor, position) > 0)
         ClearMotion_0200058c(actor);
     return 0;
 }

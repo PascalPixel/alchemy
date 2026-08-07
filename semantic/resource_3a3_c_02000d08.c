@@ -24,18 +24,15 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-        /* allocates/spawns an object, 0 on failure */
-       /* activates the object with a mode */
+u8 *Func_080090c8();        /* allocates/spawns an object, 0 on failure */
+void Func_08009080();       /* activates the object with a mode */
 
 /* Overlay-local: the state initializer at 0x02000c0c. */
 struct Actor02000c0c;
-
+void Func_02000c0c();
 
 extern u32 Data_03001e40;
 
-extern u8 * Func_02001b6c();
-extern void Func_02001948();
-extern void Func_02001b88();
 void Func_02000d08(void)
 {
     u32 phase;
@@ -47,7 +44,7 @@ void Func_02000d08(void)
     }
 
     /* r0=222, r1=0x80<<15, r2=0, r3=0xc8<<17. */
-    object = Func_02001b6c(222, 0x00400000, 0, 0x01900000);
+    object = Func_080090c8(222, 0x00400000, 0, 0x01900000);
     if (object == 0) {
         return;
     }
@@ -58,10 +55,10 @@ void Func_02000d08(void)
     *(s32 *)(object + 104) = 20;
 
     /* r0 still holds the spawned object here. */
-    Func_02001948(object);
+    Func_02000c0c(object);
 
     /* Func_02000c44 + Thumb bit: the object's per-frame callback. */
     *(u32 *)(object + 108) = 0x02008c45;
 
-    Func_02001b88(object, 1);
+    Func_08009080(object, 1);
 }

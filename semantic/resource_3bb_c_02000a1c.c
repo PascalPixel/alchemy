@@ -46,92 +46,67 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Func_0808a018();
+void Func_0808a0a0();
+void Func_0808a090();
+void Func_0808a0c8();
+void Func_0808a0d0();
+void Func_0808a100();
+void Func_0808a150();
+void Func_0808a010();
+void Func_0808a110();
+void Func_0808a250();
+void Func_0808a260();
+void Func_0808a268();
+void Func_080770c8();
 
 /* This overlay's own routines. 0x02003228 is `bx lr` and does nothing. */
+void Func_02003228(void);
+s32 Func_02003344();
+void Func_02003238(void);
 
-
-
-
-extern void Func_02003c48(void);
-extern void Func_0200495c();
-extern s32 Func_02003d70();
-extern void Func_02003c6a(void);
-extern void Func_020049a4();
-extern void Func_020049ae();
-extern void Func_020049d2();
-extern void Func_020049c8();
-extern void Func_020049f4();
-extern void Func_02004a14();
-extern void Func_02004a46();
-extern void Func_020049bc();
-extern void Func_02004a2c();
-extern void Func_02004a3c();
-extern void Func_02004a10();
-extern void Func_02004a1e();
-extern void Func_02004a42();
-extern void Func_02004a56();
-extern void Func_02004a76();
-extern void Func_02004a7e();
-extern void Func_02004a1c();
-extern void Func_02004b30();
-extern void Func_02004b4c();
-extern void Func_02004b5c();
-extern void Func_02004a0c();
 void Func_02000a1c(void)
 {
     s32 choice;
     s32 frames;
 
-    Func_02003c48();
-    Func_0200495c();
+    Func_02003228();
+    Func_0808a018();
 
-    choice = Func_02003d70(77, 89);
-    Func_02003c6a();
+    choice = Func_02003344(77, 89);
+    Func_02003238();
 
     frames = 9;
     do {
         frames = frames - 1;
-        Func_020049a4(8);
+        Func_0808a0a0(8);
     } while (frames >= 0);
 
-    Func_020049ae(8, 0x10000, 0x8000);          /* 128 << 9, 128 << 8 */
-    Func_020049d2(8, 88, 256);                  /* 128 << 1 */
-    Func_020049c8(0, 0x10000, 0x8000);
-    Func_020049f4(0, 120, 256);
-    Func_02004a14(8, 1);
-    Func_02004a46(0, 8, 0);
-    Func_020049bc(10);
-    Func_02004a2c(8, 3);
-    Func_02004a3c(0, 3);
-    Func_020049d2(20);
+    Func_0808a090(8, 0x10000, 0x8000);          /* 128 << 9, 128 << 8 */
+    Func_0808a0c8(8, 88, 256);                  /* 128 << 1 */
+    Func_0808a090(0, 0x10000, 0x8000);
+    Func_0808a0d0(0, 120, 256);
+    Func_0808a100(8, 1);
+    Func_0808a150(0, 8, 0);
+    Func_0808a010(10);
+    Func_0808a100(8, 3);
+    Func_0808a110(0, 3);
+    Func_0808a010(20);
 
-    Func_02004a10(0, 0x20000, 0x10000);         /* 128 << 10, 128 << 9 */
-    Func_02004a1e(8, 0x20000, 0x10000);
-    Func_02004a42(0, 112, 256);
-    Func_02004a56(8, 96, 256);
-    Func_02004a76(0, 16);
-    Func_02004a7e(8, 9);
-    Func_02004a1c(10);
+    Func_0808a090(0, 0x20000, 0x10000);         /* 128 << 10, 128 << 9 */
+    Func_0808a090(8, 0x20000, 0x10000);
+    Func_0808a0c8(0, 112, 256);
+    Func_0808a0d0(8, 96, 256);
+    Func_0808a100(0, 16);
+    Func_0808a100(8, 9);
+    Func_0808a010(10);
 
-    Func_02004b30(72, 3 - choice);
+    Func_0808a250(72, 3 - choice);
 
     *(u8 *)(0x02000240 + 0x22b) = 3;
 
-    Func_02004b4c(0x90, 4);
-    Func_02004b5c(0x90, 5);
+    Func_0808a260(0x90, 4);
+    Func_0808a268(0x90, 5);
 
-    Func_02004a0c(282);                         /* 141 << 1 */
+    Func_080770c8(282);                         /* 141 << 1 */
 }

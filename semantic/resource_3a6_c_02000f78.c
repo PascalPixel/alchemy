@@ -77,43 +77,19 @@
  * the untouched words are zero.
  */
 
-           /* record fetch, returns the record */
-          /* scripted-section open  */
-          /* scripted-section close */
-          /* wait this many frames */
-          /* set a slot's presentation mode */
-          /* six-argument presentation request */
-          /* one-argument story cue */
-          /* one-argument notify */
-          /* tear down the object */
-       /* 0..0xffff random source */
-           /* local: create an object, returns its handle */
-          /* local: spawn, eight arguments */
+u8 *Func_0808a080();           /* record fetch, returns the record */
+void Func_0808a018();          /* scripted-section open  */
+void Func_0808a020();          /* scripted-section close */
+void Func_0808a010();          /* wait this many frames */
+void Func_0808a100();          /* set a slot's presentation mode */
+void Func_080091c0();          /* six-argument presentation request */
+void Func_080770c8();          /* one-argument story cue */
+void Func_080f9010();          /* one-argument notify */
+void Func_080090d0();          /* tear down the object */
+s32 Func_080000f8(void);       /* 0..0xffff random source */
+s32 Func_02000048();           /* local: create an object, returns its handle */
+void Func_0200013c();          /* local: spawn, eight arguments */
 
-extern void Func_02002c30();
-extern u8 * Func_02002c46();
-extern s32 Func_02002c56();
-extern u8 * Func_02002c62();
-extern u8 * Func_02001000();
-extern s32 Func_02002c7c();
-extern u8 * Func_02002c8a();
-extern u8 * Func_02001024();
-extern u8 * Func_02002ca0();
-extern void Func_02002d58();
-extern s32 Func_02002c26(void);
-extern s32 Func_02002c38(void);
-extern void Func_02001178();
-extern u8 * Func_02002cfe();
-extern void Func_02002cf6();
-extern void Func_02002cd6();
-extern u8 * Func_02002d2c();
-extern void Func_02002d14();
-extern u8 * Func_02002d42();
-extern void Func_02002d8e();
-extern void Func_02002ce4();
-extern void Func_02002cea();
-extern void Func_02002d48();
-extern void Func_02002d5c();
 void Func_02000f78(void)
 {
     u8 params[40];
@@ -123,44 +99,44 @@ void Func_02000f78(void)
     s32 x;
     s32 z;
 
-    Func_02002c30();
+    Func_0808a018();
 
-    if ((*(s32 *)(Func_02002c46(10) + 8) >> 20) != 27) goto close;
+    if ((*(s32 *)(Func_0808a080(10) + 8) >> 20) != 27) goto close;
 
                          0,
-    left = Func_02002c56(*(s32 *)(Func_02002c62(10) + 8) - 0x80000,
-                         *(s32 *)(Func_02001000(10) + 16) + 0x340000,
+    left = Func_02000048(*(s32 *)(Func_0808a080(10) + 8) - 0x80000,
+                         *(s32 *)(Func_0808a080(10) + 16) + 0x340000,
                          241);
                           0,
-    right = Func_02002c7c(*(s32 *)(Func_02002c8a(10) + 8) + 0x80000,
-                          *(s32 *)(Func_02001024(10) + 16) + 0x340000,
+    right = Func_02000048(*(s32 *)(Func_0808a080(10) + 8) + 0x80000,
+                          *(s32 *)(Func_0808a080(10) + 16) + 0x340000,
                           241);
 
-    Func_02002ca0(9)[0x55] = 0;
+    Func_0808a080(9)[0x55] = 0;
 
     *(s32 *)(params + 12) = 0x9999;
     *(s32 *)(params + 4) = 7;
     *(s32 *)(params + 8) = 0x9999;
 
-    Func_02002d58(216);
+    Func_080f9010(216);
 
     for (index = 0; index <= 67; index++) {
-        x = ((Func_02002c26() * 17) & ~0xffff) + 0x1b00000;   /* 216 << 17 */
-        z = ((Func_02002c38() * 14) & ~0xffff) + 0x2900000;   /* 164 << 18 */
-        Func_02001178(x, 0, z, 0, 0, 0, 0x90000, params);
-        *(s32 *)(Func_02002cfe(10) + 12) += -0x8000;          /* -0.5 */
-        Func_02002cf6(1);
+        x = ((Func_080000f8() * 17) & ~0xffff) + 0x1b00000;   /* 216 << 17 */
+        z = ((Func_080000f8() * 14) & ~0xffff) + 0x2900000;   /* 164 << 18 */
+        Func_0200013c(x, 0, z, 0, 0, 0, 0x90000, params);
+        *(s32 *)(Func_0808a080(10) + 12) += -0x8000;          /* -0.5 */
+        Func_0808a010(1);
     }
 
-    Func_02002cd6(31, 39, 2, 1, 27, 41);
-    Func_02002d2c(10)[0x23] |= 2;
-    Func_02002d14(0x201);
-    *(s32 *)(Func_02002d42(10) + 12) = -0x80000;              /* -8.0 */
-    Func_02002d8e(10, 2);
-    Func_02002ce4(left);
-    Func_02002cea(right);
-    Func_02002d48(30);
+    Func_080091c0(31, 39, 2, 1, 27, 41);
+    Func_0808a080(10)[0x23] |= 2;
+    Func_080770c8(0x201);
+    *(s32 *)(Func_0808a080(10) + 12) = -0x80000;              /* -8.0 */
+    Func_0808a100(10, 2);
+    Func_080090d0(left);
+    Func_080090d0(right);
+    Func_0808a010(30);
 
 close:
-    Func_02002d5c();
+    Func_0808a020();
 }

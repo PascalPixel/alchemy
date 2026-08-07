@@ -470,3 +470,70 @@ Sweep hygiene, learned the hard way: `candidate_show.ts` keys its intermediates
 by stem in a shared output directory, so two concurrent runs of the *same* stem
 corrupt each other and report false zeros. Parallelise across stems, serially
 within one.
+
+## Negative: `-fglobal-copy-preference-first` (2026-08-07)
+
+Residual dumps for the whole diff <= 15 band show the dominant remaining class
+is register-*number* permutation, not instruction ordering: `08006408` (7),
+`0801965c` (10), `08011fd8` (10), `080f4028` (14), `080c1fa8` (15),
+`080ae9f0` (13). That is a different class from the three shipped fork modes,
+which are all scheduling, so the obvious next lever was preferencing rather
+than allocation order.
+
+Two facts framed the attempt. First, `-mlow-reg-order=` already reaches *both*
+allocators: `local-alloc.c:425` calls `ORDER_REGS_FOR_LOCAL_ALLOC_BLOCK (-1)`
+at the end of local allocation, so the second permutation leaks into
+`global_alloc`. Allocation order is therefore exhausted. Second, in
+`global.c:find_reg` the copy preferences are applied only as a post-hoc
+correction: the two-pass `reg_alloc_order` scan picks `best_reg` first, and only
+then is the choice swapped for a copy-preferred register of the same class.
+Pass 0 additionally refuses to allocate a register for the first time, so a
+pseudo that is only ever copied out of another register tends to land elsewhere
+and leave the copy behind.
+
+The mode consulted `allocno[num].hard_reg_copy_preferences` *before* the scan,
+single-register modes only. It is a no-op. Instrumented cc1 shows why: at
+`find_reg` time the copy-preference set is empty for essentially every allocno
+(one preference across all of `080b5d3c`, and it selected the register the
+stock scan already picks). `regmove` has consumed the copies before
+`global_alloc` runs, and `prune_preferences` clears what is left. The
+preferencing lever does not live here; if it lives anywhere it is in
+`local-alloc.c`'s `qty_phys_copy_sugg`, which already consults copy suggestions
+first — which is itself evidence the class is not reachable this way.
+
+Reverted; the fork is back at `40cdf47` and `dist/cc1` at the pinned
+`41b5d62b...`. Do not re-derive this.
+
+### Other measured negatives from the same pass
+
+* `-fthumb-move-before-immediate-alu` spillover across the close pool: 26 owners
+  improve, zero close, zero regress. Almost every win needs
+  `-fno-schedule-insns2` alongside it (`08021be0` 20 -> 12, `08011568` 23 -> 17,
+  `080049ac` 28 -> 24). Only `080170c4` 24 -> 23 and `080f0614` 31 -> 30 fire
+  from the mode alone.
+* `080a524c` (316 B, diff 4) is four halfwords of pure r2-vs-r3 in one block
+  while a mirrored block wants r3 in both. Four source variants all measure 4.
+* `08005534` and the DMA-veneer family (`080052f4`, `0800543c`, `08005490`,
+  `08005584`, `0800562c`, `0800567c`, `08004144`; ~560 B): `-mgrouped-dma-store`
+  fixes the size (72 -> 80) and halves the diff, but all 24 permutations of the
+  four declarations floor at 18. The residual is the alloca save/restore trio
+  sitting after the DMA stores in ours and before them in the reference; turning
+  off both schedulers does not move it, so it is expand order, not scheduling.
+* `08077394` (68 B, diff 11) is a pure r0<->r2 swap. All 576 `-mlow-reg-order=`
+  combinations and 14 standard `-f` flags leave it at 11-12;
+  `-fno-omit-frame-pointer` breaks the size.
+* `080b5d3c` (214 B, diff 4) is a clean rotation of two independent copy pairs
+  in an inner-loop preheader: ours issues `mov r6,r9; adds r5,r4; mov r7,sl;
+  add r1,r8`, the reference issues the second pair first. `-fno-schedule-insns2`
+  breaks the size, `-fthumb-move-before-alu` makes it worse (6), and no shipped
+  mode goes below 4. Hoisting the totals pointer in source costs 4 bytes and
+  88 halfwords.
+
+Scale check for anyone planning off this file: the close pool (diff <= 40) is
+112 files / 9,698 bytes, and diff <= 15 is 25 files / 1,864 bytes. Grinding the
+entire close pool to zero still leaves ~25k bytes short of 25%. The 408 `asm/`
+stems with no `semantic/` counterpart total 17,577 insns, and the 364 tiny ones
+are linker veneers that cannot be written in C without `asm(...)`, which the
+project forbids. The byte share is in the large semantic owners, which currently
+run ~50% diff (`080bbb0c` 6332 B / 3109, `080ea0d8` 5756 / 2815,
+`080ab5e4` 4888 / 2364, `08027114` 4224 / 1981, `080f6440` 3804 / 1978).

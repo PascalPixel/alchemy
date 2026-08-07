@@ -1,3 +1,9 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07: the residual was a spurious register
+ * copy the reference keeps around the counter test (`adds r2, r3, #0' before
+ * `cmp r2, #0'). Reading the +98 byte directly in both tests and incrementing
+ * it in place, instead of caching it in a `u32 c', reproduces it exactly.
+ */
 #include "types.h"
 
 /*
@@ -42,10 +48,9 @@ void Func_020059f0(u8 *arg0)
         Func_0200b096(arg0);
 
         {
-            u32 c = *(u8 *)(arg0 + 98);
-            if (c != 0) {
-                if (c <= 31) {
-                    *(u8 *)(arg0 + 98) = (u8)(c + 1);
+            if (*(u8 *)(arg0 + 98) != 0) {
+                if (*(u8 *)(arg0 + 98) <= 31) {
+                    ++*(u8 *)(arg0 + 98);
                 }
             }
         }

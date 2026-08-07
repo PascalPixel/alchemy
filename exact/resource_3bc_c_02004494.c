@@ -1,3 +1,12 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-swap-adjacent-shifts.  The
+ * last residual was the pair at 0x02004538, where the reference issues
+ * `lsls r1,r1,#2' before `asrs r0,r0,#16' -- r1's input was materialised
+ * earlier, and the references order two adjacent in-place constant shifts by
+ * the age of the value each one continues, not by the post-reload scheduler's
+ * tie-break.
+ */
+
 #include "types.h"
 
 /*

@@ -311,8 +311,8 @@
         "register_pins_disallowed",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 17,
-      "expected_bytes": 6598,
+      "expected_files": 16,
+      "expected_bytes": 5902,
       "files": [
         "08015fb8",
         "0801a7f4",
@@ -321,7 +321,6 @@
         "080930bc",
         "0809bcf8",
         "080a5788",
-        "080a90bc",
         "080a96d8",
         "080b5368",
         "080b9554",

@@ -1673,6 +1673,10 @@ const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
 // which looked like a global signal and is not one -- the regressions only
 // appear at full scale. Route it per row, on a byte-exact result.
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  // resource_3ad:0460, found by a 60-owner singles cohort over every drafted
+  // owner still within 30 differing halfwords, 2026-08-07.
+  "semantic/resource_3ad_c_02000460.c",
+  "exact/resource_3ad_c_02000460.c",
   // Reconstruction-wave exacts, 2026-08-05: resource_3b3:2384's cross-block
   // pool CSE and resource_3b4:1308's loop-hoisted 0x220 both drop from the
   // push list under this flag.

@@ -2310,6 +2310,9 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+        // cc1 built from fork 76a2647 on darwin-arm64, 2026-08-07. Admitted
+        // from the green verify recorded with this commit.
+        "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",

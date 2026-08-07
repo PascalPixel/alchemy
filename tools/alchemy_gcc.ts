@@ -299,7 +299,18 @@ const MOVE_BEFORE_IMMEDIATE_ALU_SOURCES = new Set(["0801fd34"]);
 // counter come from the source, the totals base and the member offset are
 // hoisted invariants. The reference runs the hoisted pair first; move_movables
 // anchors them at the loop note, which puts them last.
-const LOOP_INVARIANT_BLOCK_HEAD_SOURCES = new Set(["080a3354", "080b5d3c"]);
+const LOOP_INVARIANT_BLOCK_HEAD_SOURCES = new Set([
+  "080a3354",
+  "080b5d3c",
+  "080a90bc",
+]);
+
+// Reconstructed 2026-08-07: Func_080a90bc needs the call-argument inversion
+// widened to a register source, the pre-call constant setup sunk past the call,
+// and a high-register copy issued before an adjacent negs.
+const CALL_ARG0_REG_SOURCE_SOURCES = new Set(["080a90bc"]);
+const SINK_CONSTANT_PAST_CALL_SOURCES = new Set(["080a90bc"]);
+const MOVE_BEFORE_UNARY_ALU_SOURCES = new Set(["080a90bc"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.
@@ -1958,6 +1969,15 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg1-before-arg0"]
       : []),
+    ...(CALL_ARG0_REG_SOURCE_SOURCES.has(stem)
+      ? ["-fthumb-call-arg1-before-arg0", "-fthumb-call-arg0-reg-source"]
+      : []),
+    ...(SINK_CONSTANT_PAST_CALL_SOURCES.has(stem)
+      ? ["-fthumb-sink-constant-past-call"]
+      : []),
+    ...(MOVE_BEFORE_UNARY_ALU_SOURCES.has(stem)
+      ? ["-fthumb-move-before-unary-alu"]
+      : []),
     // -O1 is appended after the baseline -O2 and wins as the later option,
     // matching exactly how the mode sweep scored this configuration.
     ...(OPTIMIZE_O1_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-O1"] : []),
@@ -2451,6 +2471,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // both ways and only the early direction was expressible. An -f flag
         // rather than an -m one because target_flags has no bit left.
         "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
+        // -fthumb-call-arg0-reg-source (2026-08-07): widens the existing
+        // arg1-before-arg0 call reordering so the r0 argument may be a plain
+        // hard-register copy, not just a constant or pool load. The pair's
+        // independence tests are unchanged. Default-off and source-routed, so
+        // unrouted codegen is unchanged. Witness 080a90bc. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "f76bdc9dccde93acc1a2f382d760ec79292591c5b39cc0221368630755068ce8",
       ],
     },
     gs2: {

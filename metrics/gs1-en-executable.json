@@ -24287,18 +24287,6 @@
         },
         {
           "start": 33568028,
-          "end": 33568664,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33568664,
-          "end": 33568692,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33568692,
           "end": 33568726,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -24349,7 +24337,7 @@
           "start": 33570060,
           "end": 33570064,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:5860:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:5727:pc-relative-literal"
         },
         {
           "start": 33570064,
@@ -24415,13 +24403,13 @@
           "start": 33572968,
           "end": 33572972,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6441:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6308:pc-relative-literal"
         },
         {
           "start": 33572972,
           "end": 33572990,
           "kind": "thumb",
-          "evidence": "resource_3b1_overlay.s:6485:verified-C-placeholder"
+          "evidence": "resource_3b1_overlay.s:6352:verified-C-placeholder"
         },
         {
           "start": 33572990,
@@ -24439,7 +24427,7 @@
           "start": 33573092,
           "end": 33573096,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6497:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6364:pc-relative-literal"
         },
         {
           "start": 33573096,
@@ -24451,7 +24439,7 @@
           "start": 33574072,
           "end": 33574076,
           "kind": "literal_pool",
-          "evidence": "resource_3b1_overlay.s:6530:pc-relative-literal"
+          "evidence": "resource_3b1_overlay.s:6397:pc-relative-literal"
         },
         {
           "start": 33574748,

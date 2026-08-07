@@ -27,22 +27,42 @@ void Func_080cd358(void)
     if (*(s32 *)(base + 0x7824) == 1) {
         switch (*(s32 *)(base + 0x7780)) {
         case 0:
-            ((WordCopy)0x03001388)((void *)0x06008000, (const void *)0x02010000, 0x7800);
+        {
+            WordCopy copy = (WordCopy)0x03001388;
+            copy((void *)0x06008000, (const void *)0x02010000, 0x7800);
             break;
+        }
         case 1:
-            ((WordCopy)0x03001388)((void *)0x06008000, (const void *)0x02010000, 0x7800);
+        {
+            WordCopy copy = (WordCopy)0x03001388;
+            copy((void *)0x06008000, (const void *)0x02010000, 0x7800);
             ((ArmFill)0x03000168)((void *)0x02010000, 0x7800, *(u32 *)(base + 0x7784));
             break;
+        }
         case 2:
             if (*(s32 *)(base + 0x7784) == 50) {
-                Func_08005534((void *)0x02010000, (void *)0x06008000, 0x7800);
+                void *destination = (void *)0x06008000;
+
+                u32 size = 0x7800;
+
+                Func_08005534((void *)0x02010000, destination, size);
             } else {
-                Func_080054e4((void *)0x02010000, (void *)0x06008000, 0x7800);
+                void *destination = (void *)0x06008000;
+
+                u32 size = 0x7800;
+
+                Func_080054e4((void *)0x02010000, destination, size);
             }
             break;
         case 3:
-            Func_08005490((void *)0x02010000, *(u32 *)(base + 0x7784), (void *)0x06008000, 0x7800);
+        {
+            u32 value = *(u32 *)(base + 0x7784);
+            void *destination = (void *)0x06008000;
+            u32 size = 0x7800;
+
+            Func_08005490((void *)0x02010000, value, destination, size);
             break;
+        }
         }
         *(s32 *)(base + 0x7824) = 0;
     }

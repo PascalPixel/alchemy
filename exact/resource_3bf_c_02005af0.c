@@ -1,3 +1,15 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07.  Three things closed it.  The significand
+ * has to be a single 64-bit field, not two words: only then does the
+ * normalising loop load and store the pair through the record on every
+ * iteration the way the reference does -- as two words gcc keeps them in
+ * registers and hoists the stores out.  The packer is reached by a direct `bl'
+ * to 0x0200b792, not through the veneer address the draft used.  And this is
+ * another soft-library leaf returning `pop {r4, r5, pc}', so it takes the
+ * stock non-interworking ABI with r4 callee-saved, like its 02005c08 sibling.
+ *
+ * Span is 124 bytes: 112 of code plus the three pool words at 0x02005b60.
+ */
 #include "types.h"
 
 /*
@@ -33,18 +45,18 @@ typedef struct SoftFloatRecord {
     u32 cls;
     u32 sign;
     s32 exponent;
-    u32 low;
-    u32 high;
+    u64 fraction;
 } SoftFloatRecord;
 
-SoftDouble Func_02005c38(SoftFloatRecord *record);
+SoftDouble Func_0200b792(SoftFloatRecord *record);
 
 SoftDouble Func_02005af0(s32 value)
 {
     SoftFloatRecord record;
-    u32 sign = (u32)value >> 31;
+    u32 sign;
 
     record.cls = 3u;
+    sign = (u32)value >> 31;
     record.sign = sign;
 
     if (value == 0) {
@@ -56,27 +68,18 @@ SoftDouble Func_02005af0(s32 value)
 
     if (sign != 0u) {
         if ((u32)value == 0x80000000u) {
-            /* r0 = 0xC1E00000, r1 = 0x00000000 */
             return (SoftDouble)0xC1E00000u;
         }
-        record.low = (u32)(-value);
+        record.fraction = (u64)(s64)(-value);
     } else {
-        record.low = (u32)value;
-        record.high = (u32)(value >> 31);
-        record.high = (u32)((-value) >> 31);
+        record.fraction = (u64)(s64)value;
     }
 
-    if (record.high <= 0x0FFFFFFFu) {
-        do {
-            u32 high = record.high;
-            u32 low = record.low;
-
-            record.high = (high << 1) | (low >> 31);
-            record.exponent -= 1;
-            record.low = low << 1;
-        } while (record.high <= 0x0FFFFFFFu);
+    while (record.fraction <= 0x0FFFFFFFFFFFFFFFu) {
+        record.fraction = record.fraction << 1;
+        record.exponent -= 1;
     }
 
 pack:
-    return Func_02005c38(&record);
+    return Func_0200b792(&record);
 }

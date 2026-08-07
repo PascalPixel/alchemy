@@ -6,7 +6,7 @@ later agent stops rediscovering the same floor.
 
 This is not the same concept as retained assembly. `retained_asm` in
 [metrics/gs1-en-coverage-map.json](metrics/gs1-en-coverage-map.json), guarded by
-[tools/core_retained_audit.ts](tools/core_retained_audit.ts), records regions
+[tools/check/core_retained_audit.ts](tools/check/core_retained_audit.ts), records regions
 that are permanently assembly. Sanctum records owners that *could* have a C form
 but where the bounded search for it has been run out. Sealing is a statement
 about our search, not about the ROM.
@@ -19,14 +19,14 @@ An owner may only be sealed once both have been run and neither reaches exact:
 
 | Axis | Tool | Searches |
 |---|---|---|
-| Compiler | [tools/mode_sweep.ts](tools/mode_sweep.ts) | flags and compiler family, source held fixed |
-| Source shape | [tools/shape_sweep.ts](tools/shape_sweep.ts) | equivalent source forms, compiler held fixed |
+| Compiler | [tools/lib/mode_sweep.ts](tools/lib/mode_sweep.ts) | flags and compiler family, source held fixed |
+| Source shape | [tools/search/shape_sweep.ts](tools/search/shape_sweep.ts) | equivalent source forms, compiler held fixed |
 
 Exhausting one axis is not a seal. A residual that survives every flag is the
 normal starting point for the shape axis, and the reverse holds too.
 
 Both tools are bounded and deterministic, which is what makes a seal meaningful.
-The annealers (`tools/permute_v1.ts`, `tools/permute_overlay.ts`) search wider
+The annealers (`tools/search/permute_v1.ts`, `tools/search/permute_overlay.ts`) search wider
 but stochastically, so a run that finds nothing proves nothing and can never
 justify sealing. A seal may cite an annealer run as further evidence; it may
 never rest on one.
@@ -34,7 +34,7 @@ never rest on one.
 ## Entry format
 
 Each entry is one list item under `## Sealed`, in this shape, enforced by
-[tools/check_sanctum.ts](tools/check_sanctum.ts):
+[tools/check/check_sanctum.ts](tools/check/check_sanctum.ts):
 
 ```
 - `<owner>` floor=<N>hw axes=compiler,shape — <one line naming what the residual is>
@@ -49,7 +49,7 @@ next agent would believe.
 
 ## Sealed
 
-<!-- No owner qualifies yet: the shape axis (tools/shape_sweep.ts) is newer than
+<!-- No owner qualifies yet: the shape axis (tools/search/shape_sweep.ts) is newer than
      every floor record on disk, so nothing has had both axes run against it.
      An empty section here is the honest state, not an oversight. -->
 
@@ -61,7 +61,7 @@ first candidates to become sealed entries if it also fails. Regenerate the list
 with:
 
 ```
-bun tools/check_sanctum.ts --queue
+bun tools/check/check_sanctum.ts --queue
 ```
 
 The lowest floors are the best targets: a 10-halfword residual after a complete

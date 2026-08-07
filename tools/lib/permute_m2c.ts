@@ -9,7 +9,7 @@ import {
 } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { M2C_PREAMBLE } from "./match_m2c.ts";
-import { verify } from "../verify.ts";
+import { verify } from "./verify.ts";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const STATEMENT = /( *)((?:[\w\[\]().*>-]+ = )|(?:return ))M2C_FIELD\(\(\*\(s32 \*\)(0x[0-9A-Fa-f]+) \+ \((\w+) \* (\d+)\)\), (s32 \*|void \*\*|u32 \*|s16 \*|u8 \*|void \*), (0x[0-9A-Fa-f]+)\);/g;

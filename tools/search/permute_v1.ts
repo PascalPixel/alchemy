@@ -7,7 +7,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSyn
 import { basename, dirname, join } from "node:path";
 import { M2C_PREAMBLE } from "../lib/match_m2c.ts";
 import { candidates as seedCandidates, replaceableAssembly, retainedAssemblyStems } from "../lib/permute_m2c.ts";
-import { verify } from "../verify.ts";
+import { verify } from "../lib/verify.ts";
 import {
   directCompilerCommandForSource,
   directPreprocessorCommand,
@@ -15,7 +15,7 @@ import {
   externalSymbol,
   externalSymbolAssembly,
 } from "../lib/alchemy_gcc.ts";
-import { CONSTRAINT_OPERATORS } from "../lib/decomp_constraints.ts";
+import { CONSTRAINT_OPERATORS } from "./decomp_constraints.ts";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const STATE_DIR = join(ROOT, "out/permute1/state");
@@ -38,8 +38,8 @@ function contentSignature(paths: readonly string[]): string {
 const PERMUTER_SIGNATURE = contentSignature([
   join(ROOT, "tools/lib/alchemy_gcc.ts"),
   join(ROOT, "tools/search/permute_v1.ts"),
-  join(ROOT, "tools/verify.ts"),
-  join(ROOT, "tools/lib/decomp_constraints.ts"),
+  join(ROOT, "tools/lib/verify.ts"),
+  join(ROOT, "tools/search/decomp_constraints.ts"),
 ]);
 
 interface Options {

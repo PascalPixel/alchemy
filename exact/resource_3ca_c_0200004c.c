@@ -1,3 +1,9 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-store-value-before-base: the
+ * last residual was at 0x02000060, where the reference materialises the stored
+ * zero before the split constant 0x05000000 that addresses it.
+ */
+
 #include "types.h"
 
 /* Complete shared next-scene dispatch and backdrop-palette clear owner. */

@@ -1834,6 +1834,14 @@ const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
   "exact/resource_3a5_c_02001874.c",
   "semantic/resource_3a5_c_02001874.c",
 ]);
+// The value written by a memory-mapped store is materialised before the split
+// constant that addresses it.
+const STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES = new Set([
+  // resource_3ca:004c -- `movs r2, #0' ahead of `movs r3, #160' at 0x02000060,
+  // the 0x05000000 halfword write, 2026-08-07.
+  "exact/resource_3ca_c_0200004c.c",
+  "semantic/resource_3ca_c_0200004c.c",
+]);
 // The transposed twin of -fthumb-swap-adjacent-shifts: two in-place constant
 // shifts separated by one unrelated insn, issued newest-input first.
 const SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES = new Set([
@@ -2264,6 +2272,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-arg-before-shift-in-sheet"]
       : []),
+    ...(STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-store-value-before-base"]
+      : []),
     ...(SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-shifts-across-insn"]
       : []),
@@ -2392,6 +2403,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
+    ...STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES,
     ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
     ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
@@ -2621,6 +2633,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "5a62f4a9686ac3492956d1d9e2e8da3039ff1d7d74961991d96ac366d7ccfba7",
     // -fthumb-stack-args-before-stores added, 2026-08-07.
     "0b7d6f6bd1490d49017a2438eb1bdbdd6c977b179c79f5f8a41d66299ce7ba53",
     // -fthumb-call-literal-arg1-first-after-call added, 2026-08-07.

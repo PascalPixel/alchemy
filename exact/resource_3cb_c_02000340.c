@@ -86,7 +86,27 @@ s32 Func_02000340(void)
     Func_02001b74(0x203);
     Func_02001ba0();
 
-    *(u16 *)((u32)workspace + 386) = 0;
+    /*
+     * The halfword store goes through a pointer local and then an s32 value
+     * local, in that order.  Storing the literal straight into the halfword
+     * makes gcc build the constant in HImode and fetch it from the literal
+     * pool (`ldrh r3, .L7'), which costs a pool word the reference does not
+     * have; splitting the address out first also fixes which register holds
+     * the address.
+     */
+    {
+        /*
+         * The halfword store goes through a pointer local and then an s32 value local,
+         * in that order.  Storing the literal straight into the halfword makes gcc
+         * build the constant in HImode and fetch it from the literal pool
+         * (`ldrh r3, .L7'), which costs a pool word the reference does not have;
+         * splitting the address out first also fixes which register holds the address.
+         */
+        u16 *frame = (u16 *)((u32)workspace + 386);
+        s32 zero = 0;
+        *frame = (u16)zero;
+
+    }
 
     Func_02001bf0(0x2927);
     Func_02001c00(8, 0);

@@ -142,6 +142,12 @@ const NO_INTERWORK_OVERLAY_SOURCES = new Set([
   // two ABI properties are selected.
   "exact/resource_3bf_c_02005a40.c",
   "exact/resource_3bf_c_02005a78.c",
+  "exact/resource_3bf_c_02005c08.c",
+  "exact/resource_3bf_c_02005af0.c",
+  "semantic/resource_3bf_c_02005b6c.c",
+  "exact/resource_3bf_c_02005b6c.c",
+  "exact/resource_3a7_c_0200145c.c",
+  "exact/resource_3a7_c_02001574.c",
 ]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
@@ -166,6 +172,13 @@ const UNSCHEDULED_OVERLAY_SOURCES = new Set([
   "exact/resource_3b2_c_02000ab0.c",
   "exact/resource_3c4_c_02000ab0.c",
   "exact/resource_3c5_c_02000ab0.c",
+  // Adopted before the second scheduler pass learned to issue a lone argument
+  // immediate ahead of a ready literal-pool load.  The reference writes
+  // `ldr r0, [pc]' first and `movs r1, #1' after it, which is what the
+  // unscheduled order gives; the ROM blob, not the derived inventory, is the
+  // witness (the asset rebuild was the thing that caught the drift).
+  "exact/resource_3cb_c_02001050.c",
+  "semantic/resource_3cb_c_02001050.c",
 ]);
 // This decoder has mutually exclusive switch arms that reuse the same input
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
@@ -370,11 +383,6 @@ const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
   // destination copies on the reference's side of that load.
   "080b0744",
   "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "080907b0", "08094730",
-  // First overlay member. §4's pool-load hoist, but the flag that reaches it is
-  // this one, not -fsched-low-dest-first: the reference issues the argument
-  // group's `ldr r0,[pc]` ahead of its `movs r1,#1`, and both -fsched-*-dest-first
-  // leave the pair in our order. No other overlay owns 02001050.
-  "02001050",
 ]);
 // The reference issues the destination copy ahead of the following ALU work.
 const MOVE_BEFORE_ALU_SOURCES = new Set([
@@ -465,6 +473,7 @@ const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
 // updates where a constant OR input dies at the OR and the reference reuses
 // that register for the result immediately stored to the field.
 const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
+  "exact/resource_3a6_c_02001938.c",
   "exact/resource_39a_c_02001004.c",
   "exact/resource_38f_c_020008ec.c",
   "semantic/resource_38f_c_020008ec.c",
@@ -473,6 +482,34 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 // fingerprint, with a repeated post-reload exception: an adjacent r1 setter
 // fills the slot before a literal r0 setter. The mode recognizes the call-fed
 // pair structurally and does not depend on this address.
+// NOT extendable to constant pairs: several near-band owners (resource_377
+// 0x020001e0, resource_399 0x020002b8, resource_3a2 0x02000ac0, resource_3ae
+// 0x020002dc) each differ only by a `movs r0,#K / movs r1,#0' pair the
+// reference emits in the opposite order.  A fork mode was built that ran the
+// transform below without the scheduler-inversion gate and restricted to two
+// literal setters (-fthumb-const-arg1-before-arg0).  It regressed every
+// witness: resource_377 went 2 -> 8 halfwords because the SAME function wants
+// r0 first at 0x0200019a, 0x020001a4, 0x020001de and 0x02000208 and r1 first
+// only at 0x02000236.  The order therefore is not a property of the compiler's
+// tie-break at all -- within one function it alternates -- so it must come from
+// the original source's argument expressions, and no whole-function flag can
+// model it.  The fork change was reverted and the digest restored.
+// -fthumb-call-literal-arg1-first: the same transposition as
+// -fthumb-call-arg1-before-arg0, but without that mode's "only undo a
+// scheduler inversion" gate, and restricted to a pair of plain literals.  Some
+// references write `movs r1,#b` ahead of `movs r0,#a` for a call the scheduler
+// never touched, which the older mode cannot reach.
+const CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
+  "semantic/resource_3ae_c_020002dc.c",
+  "exact/resource_3ae_c_020002dc.c",
+  "semantic/resource_3ae_c_0200051c.c",
+  "exact/resource_3ae_c_0200051c.c",
+  "semantic/resource_377_c_020001e0.c",
+  "exact/resource_377_c_020001e0.c",
+  "semantic/resource_3a2_c_02000ac0.c",
+  "exact/resource_3a2_c_02000ac0.c",
+]);
+
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
   "exact/resource_38f_c_020008ec.c",
   // resource_3c3 0x02000730: same post-reload r1-before-r0 call-argument pair
@@ -873,6 +910,22 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3a2:0924 writes 128<<9 and 128<<8 at two call sites each; the
+  // fork caches both in callee-saved registers, which costs the owner an extra
+  // `push {r6}' the reference does not have.  92 -> 18 differing halfwords,
+  // 2026-08-07.
+  "exact/resource_3a2_c_02000924.c",
+  "semantic/resource_3a2_c_02000924.c",
+  // resource_371:1888 and its two byte-identical siblings call a four-argument
+  // import as (-1, -1, -1, 0); the fork CSEs the -1 into one register and
+  // copies it out, where the reference materialises `movs rN, #1' into r0-r2
+  // and negates each.  77 -> 31 differing halfwords, 2026-08-06.
+  "exact/resource_371_c_02001888.c",
+  "semantic/resource_371_c_02001888.c",
+  "exact/resource_371_c_02001938.c",
+  "semantic/resource_371_c_02001938.c",
+  "exact/resource_371_c_020019e8.c",
+  "semantic/resource_371_c_020019e8.c",
   // Reconstruction-wave (Sonnet) exacts, 2026-08-06: resource_39c:15e0 (two-
   // local stacked-argument staging law) and resource_3b1:413c (paired with
   // sched-low-dest-first, see that set).
@@ -1042,6 +1095,36 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3a2:0924 — six of its call sites want the `movs r0,#X' setter
+  // emitted before the `lsls r1,...' half of a shifted constant argument.
+  // Pairs cohort put this flag at differing=13; paired with
+  // cse-two-insn-immediate-off (see that set), 2026-08-07.
+  "semantic/resource_3a2_c_02000924.c",
+  "exact/resource_3a2_c_02000924.c",
+  // resource_372:3e48 — the `movs r0,#8' setter before the `lsls r1' half at
+  // 0x02003edc.  Paired with call-pool-arg1-first (see that set), 2026-08-07.
+  "semantic/resource_372_c_02003e48.c",
+  "exact/resource_372_c_02003e48.c",
+  // Exact once the halfword store goes through a pointer local and an s32 value
+  // local (tell #18/#19); the only residue was the four-argument call at 0x12,
+  // whose r0 setter the reference issues between the two split constants.
+  // Singles cohort exact, 2026-08-07.
+  "semantic/resource_3a3_c_02000d08.c",
+  "exact/resource_3a3_c_02000d08.c",
+  // Singles cohort over the low-differing tail, 2026-08-07: this flag is the
+  // single largest improvement for all three of these owners (20->2, 21->10 and
+  // 21->15 differing bytes respectively) with no source change.
+  "semantic/resource_3c8_c_02002f30.c",
+  "exact/resource_3c8_c_02002f30.c",
+  "semantic/resource_3c6_c_02000158.c",
+  "exact/resource_3c6_c_02000158.c",
+  "semantic/resource_39f_c_02000f94.c",
+  "exact/resource_39f_c_02000f94.c",
+  // resource_37f:17c0 (748 bytes) — found by a 139-candidate singles cohort over
+  // the whole same-size band; this one flag takes it from 36 differing halfwords
+  // to byte-exact, no source change.
+  "semantic/resource_37f_c_020017c0.c",
+  "exact/resource_37f_c_020017c0.c",
   // resource_394:07e0 needed the argument-feeding-store exclusion refinement
   // to this flag (fork commit 25b15cd) plus cse-pool-immediate-off (see that
   // set) to reach byte-exact; 2026-08-06.
@@ -1060,6 +1143,54 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // resource_39e:2484 (probed exact, 2026-08-04).
   "exact/resource_3c8_c_02002f30.c",
   "semantic/resource_3c8_c_02002f30.c",
+  // Tier-1 probe batch, 2026-08-06.  Same tell as the entries above -- the
+  // reference issues the r0 argument setter before the r1 one at nearly every
+  // multi-argument call site, the fork the other way round -- so these route
+  // here, but each is STILL OPEN at 2-4 differing halfwords.  The whole
+  // residual in every case is one site whose r1 setter is a literal zero,
+  // which the reference issues BEFORE the r0 setter even though sibling sites
+  // in the same function (including other `(10, 0)' calls) keep r0 first.
+  // -fsched-call-arg1-before-arg0 does not fire on it: that mode's structural
+  // recogniser wants a post-reload pair and leaves these untouched, and on
+  // resource_3a2:0ac0 it costs the pool-load site as well (2 -> 4).  Do not
+  // hand-permute; this is the model-divergence tier.
+  // resource_377:01e0 and resource_3a2:0ac0 closed on 2026-08-07 once
+  // -fthumb-call-literal-arg1-first grew its two discriminators (call uses
+  // exactly r0+r1; the two literals differ), which is precisely what
+  // separates the transposed site from the r0-first siblings described above.
+  "semantic/resource_377_c_020001e0.c",
+  "exact/resource_377_c_020001e0.c",
+  "semantic/resource_3a2_c_02000ac0.c",
+  "exact/resource_3a2_c_02000ac0.c",
+  // resource_3ae:0144 (with -fno-cse-shift-immediate), b3 cohort 2026-08-07.
+  "semantic/resource_3ae_c_02000144.c",
+  "exact/resource_3ae_c_02000144.c",
+  // resource_3ae:02dc closed on 2026-08-07: this mode plus
+  // -fthumb-call-literal-arg1-first plus splitting the nested call
+  // `Outer(Inner(0))' into two statements in reference order.
+  "semantic/resource_3ae_c_020002dc.c",
+  "exact/resource_3ae_c_020002dc.c",
+  "semantic/resource_399_c_020002b8.c",
+  "semantic/resource_39f_c_020021b0.c",
+  "exact/resource_39f_c_020021b0.c",
+  // Tier-2 cohort sweep, 2026-08-06: the same argument-setter ordering tell
+  // reaches well past the near-exact band.  These three were at 12, 13 and 14
+  // differing halfwords and go byte-exact under this mode alone.
+  "exact/resource_38b_c_020009cc.c",
+  "semantic/resource_38b_c_020009cc.c",
+  "exact/resource_38d_c_02000568.c",
+  "semantic/resource_38d_c_02000568.c",
+  "exact/resource_38d_c_020005f4.c",
+  "semantic/resource_38d_c_020005f4.c",
+  // resource_37b:0c8c (548 bytes, was 22 halfwords) goes byte-exact here too.
+  "exact/resource_37b_c_02000c8c.c",
+  "semantic/resource_37b_c_02000c8c.c",
+  // Still open, but strictly better routed here: resource_37f:0154 13 -> 8,
+  // resource_372:150c 23 -> 18 (stacked on -fno-cse-shift-immediate).
+  "exact/resource_372_c_0200150c.c",
+  "semantic/resource_372_c_0200150c.c",
+  "exact/resource_37f_c_02000154.c",
+  "semantic/resource_37f_c_02000154.c",
   // Pair-sweep exacts, 2026-08-05, paired with -fno-cse-two-insn-immediate
   // (see that set's matching entries).
   "exact/resource_3b9_c_02002904.c",
@@ -1400,6 +1531,20 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // 0x10000) rebuilt per-argument in the reference, Func(-1, -1, pool) sharing
 // r6, verified byte-exact under the pair with -fsched-low-dest-first.
 const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3ae:0144, found by the b3 residual cohort on 2026-08-07: shifted
+  // immediate rebuilt at each use in the reference, plus the low-dest-first
+  // schedule.  Needs both modes together.
+  "semantic/resource_3ae_c_02000144.c",
+  "exact/resource_3ae_c_02000144.c",
+  // resource_3cb:02d8 caches its 0x80<<2 (0x200) in r5 across five calls and
+  // pays a `push {r5}' for it; the reference rebuilds the pair at both use
+  // sites and pushes only lr.  2026-08-06 probe.
+  "exact/resource_3cb_c_020002d8.c",
+  "semantic/resource_3cb_c_020002d8.c",
+  // resource_372:150c shows the identical tell (`movs r5,#131 / lsls r5,#1'
+  // cached and reused via `adds r1, r5, #0'; the reference rebuilds the pair).
+  "exact/resource_372_c_0200150c.c",
+  "semantic/resource_372_c_0200150c.c",
   // resource_3bc: 15 owners re-materialise a shifted immediate at every call
   // site in the reference while the semantic C shares it in a register,
   // overflowing the registered span by 4-36 bytes before this flag; probed
@@ -1500,6 +1645,17 @@ const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // a halfword and then reloads a word at a different constant offset off one
 // base; the fork proves them independent and hoists the load, where the
 // reference keeps source order.
+// -fsched-call-dest-descending is -fsched-low-dest-first's gate with the
+// comparison negated: the same argument setters in front of a call, ordered
+// highest register first.  NEGATIVE RESULT, 2026-08-06: the flag exists in the
+// fork (commit 1e1502b) and works, but no source routes to it and none should.
+// It was built to close resource_3c8:2f30, whose residual is the pair
+// `lsls r2, #18' / `lsls r0, #18' either side of a `movs r1, #0'.  Measured on
+// that owner: routed low-dest-first 2 differing halfwords, descending 14,
+// neither 11 -- because the reference mixes the two directions inside one
+// function (ascending at its first three call sites, descending at the fourth).
+// A global direction therefore cannot be the model; do not re-derive this.
+const SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES = new Set<string>([]);
 const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
   "exact/08078144.c",
   "exact/resource_3af_c_02002b7c.c",
@@ -1511,6 +1667,10 @@ const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
   // f08/f10/f26 stores and the f09 mask's ldrb; conservative scheduler alias
   // analysis restores the reference order (mode cohort exact, 2026-08-04).
   "exact/resource_38f_c_020027ac.c",
+  // resource_391:2974 is the same particle-spawn store sheet, shared verbatim
+  // with resource_38f:27ac and transposed onto this overlay's veneer table and
+  // literal pool; it needs the same conservative alias analysis.
+  "exact/resource_391_c_02002974.c",
 ]);
 // gcse's partial-redundancy elimination inserts a load the reference does not
 // have. The mode drops the insert and delete bits of any expression that reads
@@ -1549,6 +1709,10 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3ae:051c uses 0x8a5 at two call sites; without this the fork keeps
+  // it in sl across the body and pays two extra saves.  2026-08-07.
+  "semantic/resource_3ae_c_0200051c.c",
+  "exact/resource_3ae_c_0200051c.c",
   // resource_394:07e0, paired with the sched-low-dest-first argument-
   // feeding-store exclusion (see that set); 2026-08-06.
   "exact/resource_394_c_020007e0.c",
@@ -1666,6 +1830,272 @@ const SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES = new Set([
 // source-order guard; disabling thread-jumps restores it (reconstruction
 // wave, 2026-08-05, paired with cse-shift-immediate-off and
 // sched-low-dest-first at those sets). No prior route used this stock switch.
+// Companion to the pool-load-late class: a lone `movs rN, #K' argument setter
+// also issues before a ready literal-pool load.  Probe set, 2026-08-07.
+const SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES = new Set<string>([]);
+// A small HImode constant reaches its register through the literal pool because
+// *thumb_movhi_insn's "mn" alternative precedes its "I" one -- which is what the
+// reference does for most owners (see the standing note above the pattern in
+// alchemy-gcc: dropping the n regresses 25 byte-exact functions).  A few owners
+// want the plain `movs' instead; -fthumb-hi-immediate is the per-source opt-in.
+const THUMB_HI_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "exact/resource_377_c_020003f8.c",
+  "semantic/resource_377_c_020003f8.c",
+]);
+// A call whose r1 argument is a constant-pool load and whose r0 argument is a
+// plain immediate: the reference issues the pool load first.  Distinct from
+// -fthumb-call-literal-arg1-first, which transposes a pair of immediates and is
+// not self-consistent within an owner; this shape is, because the sibling sites
+// that keep r0 first all pass a third argument register.
+const CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
+  "exact/resource_3a2_c_02000924.c",
+  "semantic/resource_3a2_c_02000924.c",
+  // resource_372:3e48 — exact on this flag together with sched-low-dest-first
+  // (see that set).  One site wants the pool load ahead of `movs r0,#8'; the
+  // sched flag alone fixes the other site and breaks this one, 2026-08-07.
+  "exact/resource_372_c_02003e48.c",
+  "semantic/resource_372_c_02003e48.c",
+]);
+// The last plain immediate call argument goes ahead of a preceding split
+// constant's shift -- the mirror of -fthumb-next-arg-between-split, which
+// fills the same dependency slot from the other side.
+const ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES = new Set([
+  // resource_3b1:366c -- the `movs r0,#8' before `lsls r1,r1,#17' at
+  // 0x020036c0.  The general low-destination scheduler tie-break also fixes
+  // this site but rotates a four-instruction argument group at 0x020036a0,
+  // so the narrow peephole is the right lever here, 2026-08-07.
+  "exact/resource_3b1_c_0200366c.c",
+  "semantic/resource_3b1_c_0200366c.c",
+]);
+// The inverse of -fthumb-call-pool-arg1-first: an immediate r0 argument goes
+// back ahead of a scheduled r1 pool load.  The discriminator the references
+// observe is where the third argument is written -- a sheet whose r2 setter
+// still follows the r0 setter is written in ascending register order, while a
+// sheet whose r2 was already computed before the pool load keeps the pool load
+// first.  The pass encodes exactly that, so both shapes coexist in one row.
+const CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES = new Set([
+  // resource_371:1888, :1938 and :19e8 -- the `movs r0,#8' before the r1 pool
+  // load at 0x020018de, whose sibling call at 0x020018bc in the same row keeps
+  // the pool load first because r2 there is a split constant, 2026-08-07.
+  "exact/resource_371_c_02001888.c",
+  "semantic/resource_371_c_02001888.c",
+  "exact/resource_371_c_02001938.c",
+  "semantic/resource_371_c_02001938.c",
+  "exact/resource_371_c_020019e8.c",
+  "semantic/resource_371_c_020019e8.c",
+]);
+// The register-move twin of the flag above: a two-argument sheet whose r0 is a
+// plain copy of a live register, written by the references before the r1 pool
+// load.  Narrower than -fthumb-call-pool-arg1-first's inverse needs to be: the
+// copy has to be the insn immediately before the call.
+const CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES = new Set([
+  // resource_3a7:0b8c -- `adds r0,r5,#0' before `ldr r1,[pc,#48]' at
+  // 0x02000bd0, 2026-08-07.
+  "exact/resource_3a7_c_02000b8c.c",
+  "semantic/resource_3a7_c_02000b8c.c",
+]);
+// Two adjacent independent in-place constant shifts, transposed so the one
+// whose input was defined earlier goes first.  The post-reload scheduler's
+// tie-break lands the other way on these sheets; the age rule is what keeps
+// the sibling shift pairs in the same rows untouched.
+const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
+  // resource_3bc:4494 -- `lsls r1,r1,#2' before `asrs r0,r0,#16' at
+  // 0x02004538, and resource_3a4:02cc -- `lsls r3,r3,#14' before
+  // `lsls r2,r2,#11' at 0x02000316, whose sibling pair at 0x02000354 keeps the
+  // scheduler's order because there r3 is the younger value, 2026-08-07.
+  "exact/resource_3bc_c_02004494.c",
+  "semantic/resource_3bc_c_02004494.c",
+  "exact/resource_3a4_c_020002cc.c",
+  "semantic/resource_3a4_c_020002cc.c",
+]);
+// `orrs Rd, Rm' ties its result to one of its two inputs.  When both die at the
+// insn the allocator keeps the one written last; the references keep the one
+// written first, so a constant that has been sitting in a register since well
+// above the load becomes the accumulator.
+// Both stacked call arguments materialised before either store.
+const STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES = new Set([
+  // resource_382:0fb4, :1010 and :113c -- `movs r2, #12' hoisted above the
+  // two `str' to sp at 0x02000fd4, plus resource_3b9:1c6c, 2026-08-07.
+  "exact/resource_382_c_02000fb4.c",
+  "semantic/resource_382_c_02000fb4.c",
+  "exact/resource_382_c_02001010.c",
+  "semantic/resource_382_c_02001010.c",
+  "exact/resource_382_c_0200113c.c",
+  "semantic/resource_382_c_0200113c.c",
+  "exact/resource_3b9_c_02001c6c.c",
+  "semantic/resource_3b9_c_02001c6c.c",
+  // resource_382:1090 -- `movs r2, #16' hoisted above the two `str' to sp at
+  // 0x020010fa, 2026-08-07.
+  "exact/resource_382_c_02001090.c",
+  "semantic/resource_382_c_02001090.c",
+]);
+// -fthumb-call-literal-arg1-first restricted to a sheet that opens right
+// after a call, which is the discriminator the references observe in
+// functions that otherwise write the pair in register order.
+const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
+  // resource_3b9:06bc -- `movs r1, #0' before `movs r0, #8' at 0x020006d2,
+  // 2026-08-07.
+  "exact/resource_3b9_c_020006bc.c",
+  "semantic/resource_3b9_c_020006bc.c",
+  // resource_376:0258 and resource_376:0190, same shape, 2026-08-07.
+  "exact/resource_376_c_02000258.c",
+  "semantic/resource_376_c_02000258.c",
+  "exact/resource_376_c_02000190.c",
+  "semantic/resource_376_c_02000190.c",
+  // resource_382:0614 -- `movs r1, #0' before `movs r0, #9' at 0x0200062a,
+  // the call sheet that follows the call at 0x02000626, 2026-08-07.
+  "exact/resource_382_c_02000614.c",
+  "semantic/resource_382_c_02000614.c",
+]);
+// -fthumb-call-literal-arg1-first-chained gates the same transposition on what
+// follows the consuming call rather than on what precedes the pair: the
+// references transpose a two-literal sheet only where the call it feeds is
+// itself followed by another argument setter, and keep register order when the
+// call is followed by a jump or by an insn that writes something else.
+const SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES = new Set([
+  // resource_39f:21b0 -- four argument sheets where a `lsls rN, #1' split
+  // constant is written ahead of the sheet's plain `movs r0/r1' immediates.
+  // 2026-08-07.
+  "exact/resource_39f_c_020021b0.c",
+  "semantic/resource_39f_c_020021b0.c",
+]);
+
+const BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES = new Set([
+  // resource_39f:0f94 -- the 24-byte by-value struct argument at 0x02000fa8,
+  // whose `mov r3, sp' the post-reload scheduler pushed below the matching
+  // `add r2, sp, #24'. 2026-08-07.
+  "exact/resource_39f_c_02000f94.c",
+  "semantic/resource_39f_c_02000f94.c",
+]);
+
+const LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES = new Set([
+  // resource_3ad:11b8 -- `movs r1, #0' before `movs r0, #1' at 0x020011dc,
+  // where the identical literal pair at 0x0200128a keeps register order
+  // because its call is followed by a branch. 2026-08-07.
+  "exact/resource_3ad_c_020011b8.c",
+  "semantic/resource_3ad_c_020011b8.c",
+]);
+// -fthumb-arg-before-final-shift for a shift that is not the sheet's last
+// setup insn.
+// -fthumb-pool-load-before-load and -fthumb-shift-before-store-in-split for
+// the two independent transpositions in resource_371:02f0: the pool word is
+// read before the field load at the entry, and the split constant's shift is
+// finished before the byte store at 0x02000300.
+// -fthumb-high-move-before-store for a `mov rN, r8' the scheduler sank below
+// the byte store that ends the previous statement.
+const HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES = new Set([
+  // resource_382:1090 -- `mov r2, r8' before `strb r3, [r6, #0]' at
+  // 0x02001114, 2026-08-07.
+  "exact/resource_382_c_02001090.c",
+  "semantic/resource_382_c_02001090.c",
+]);
+const POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES = new Set([
+  "exact/resource_371_c_020002f0.c",
+  "semantic/resource_371_c_020002f0.c",
+]);
+const SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES = new Set([
+  "exact/resource_371_c_020002f0.c",
+  "semantic/resource_371_c_020002f0.c",
+]);
+const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
+  // resource_3b1:5ca4 -- `movs r0, #8' ahead of `lsls r1, r1, #8' at
+  // 0x02005ce0, with `movs r2, #80' still between the pair and the call,
+  // 2026-08-07.
+  "exact/resource_3b1_c_02005ca4.c",
+  "semantic/resource_3b1_c_02005ca4.c",
+  // resource_3a5:1874 -- `movs r0, #8' ahead of `lsls r1, r1, #8' at
+  // 0x0200187c, the second of two split constants in the same sheet,
+  // 2026-08-07.
+  "exact/resource_3a5_c_02001874.c",
+  "semantic/resource_3a5_c_02001874.c",
+  // resource_382:0614 -- `movs r0, #9' ahead of `lsls r1, r1, #7' at
+  // 0x02000658, with `movs r2, #0' still between the pair and the call,
+  // 2026-08-07.
+  "exact/resource_382_c_02000614.c",
+  "semantic/resource_382_c_02000614.c",
+]);
+// A register load stays below the accumulate and store it was hoisted over.
+const SINK_LOAD_PAST_STORE_OVERLAY_SOURCES = new Set([
+  // The thirteen copies of the :0104 integrator -- `ldr r1, [r0, #80]' below
+  // the store at 0x0200012a rather than above it, 2026-08-07.
+  "exact/resource_382_c_02000104.c",
+  "semantic/resource_382_c_02000104.c",
+  "exact/resource_385_c_02000104.c",
+  "semantic/resource_385_c_02000104.c",
+  "exact/resource_387_c_02000104.c",
+  "semantic/resource_387_c_02000104.c",
+  "exact/resource_38a_c_02000104.c",
+  "semantic/resource_38a_c_02000104.c",
+  "exact/resource_396_c_02000104.c",
+  "semantic/resource_396_c_02000104.c",
+  "exact/resource_39b_c_02000104.c",
+  "semantic/resource_39b_c_02000104.c",
+  "exact/resource_3a0_c_02000104.c",
+  "semantic/resource_3a0_c_02000104.c",
+  "exact/resource_3a5_c_02000104.c",
+  "semantic/resource_3a5_c_02000104.c",
+  "exact/resource_3a6_c_02000104.c",
+  "semantic/resource_3a6_c_02000104.c",
+  "exact/resource_3ab_c_02000104.c",
+  "semantic/resource_3ab_c_02000104.c",
+  "exact/resource_3b3_c_02000104.c",
+  "semantic/resource_3b3_c_02000104.c",
+  "exact/resource_3be_c_02000104.c",
+  "semantic/resource_3be_c_02000104.c",
+  "exact/resource_3c0_c_02000104.c",
+  "semantic/resource_3c0_c_02000104.c",
+]);
+// A literal r0 argument written between the two pool loads of a sheet.
+const CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES = new Set([
+  // resource_39b:0f48 -- `movs r0, #0' between the r2 and r1 pool loads at
+  // 0x02000f56, 2026-08-07.
+  "exact/resource_39b_c_02000f48.c",
+  "semantic/resource_39b_c_02000f48.c",
+]);
+// The value written by a memory-mapped store is materialised before the split
+// constant that addresses it.
+const STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES = new Set([
+  // resource_3ca:004c -- `movs r2, #0' ahead of `movs r3, #160' at 0x02000060,
+  // the 0x05000000 halfword write, 2026-08-07.
+  "exact/resource_3ca_c_0200004c.c",
+  "semantic/resource_3ca_c_0200004c.c",
+]);
+// The transposed twin of -fthumb-swap-adjacent-shifts: two in-place constant
+// shifts separated by one unrelated insn, issued newest-input first.
+const SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES = new Set([
+  // resource_3c8:2f30 -- `lsls r2' before `lsls r0' across the `movs r1, #0'
+  // at 0x02002f66, 2026-08-07.
+  "exact/resource_3c8_c_02002f30.c",
+  "semantic/resource_3c8_c_02002f30.c",
+]);
+const ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES = new Set([
+  // resource_3b3:1fd4 -- `orrs r5, r3' at 0x02002024, where r5 holds the 1 set
+  // back at 0x02002014 and dies here, 2026-08-07.
+  "exact/resource_3b3_c_02001fd4.c",
+  "semantic/resource_3b3_c_02001fd4.c",
+]);
+// The two-pool-word twin of -fthumb-call-arg0-before-pool: an immediate r0
+// argument put back ahead of the pair of pool loads that set r1 and r2.
+const CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES = new Set([
+  // resource_371:1a98 -- `movs r0,#8' before `ldr r1' / `ldr r2' at
+  // 0x02001aee, 2026-08-07.
+  "exact/resource_371_c_02001a98.c",
+  "semantic/resource_371_c_02001a98.c",
+]);
+// A pc-relative pool load that completes a call's argument list, sunk down to
+// the call itself.  The post-reload scheduler hoists it to cover its latency;
+// the references fetch the word last, after the other argument setters.
+const SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES = new Set([
+  // resource_3c6:0158 -- both `ldr r0, .L' argument loads at 0x02000190 and
+  // 0x020001ac sit after the pair of narrowing shifts, 2026-08-07.
+  "exact/resource_3c6_c_02000158.c",
+  "semantic/resource_3c6_c_02000158.c",
+]);
+const SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES = new Set([
+  // resource_39e:26d8 -- byte-exact, 140 bytes, 2026-08-07.
+  "exact/resource_39e_c_020026d8.c",
+  "semantic/resource_39e_c_020026d8.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -1680,6 +2110,10 @@ const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
 // which looked like a global signal and is not one -- the regressions only
 // appear at full scale. Route it per row, on a byte-exact result.
 const NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES = new Set([
+  // resource_3ad:0460, found by a 60-owner singles cohort over every drafted
+  // owner still within 30 differing halfwords, 2026-08-07.
+  "semantic/resource_3ad_c_02000460.c",
+  "exact/resource_3ad_c_02000460.c",
   // Reconstruction-wave exacts, 2026-08-05: resource_3b3:2384's cross-block
   // pool CSE and resource_3b4:1308's loop-hoisted 0x220 both drop from the
   // push list under this flag.
@@ -1790,6 +2224,12 @@ const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
   // (the resource_3aa pattern) this flag alone is byte-exact.
   "exact/resource_398_c_02000538.c",
   "semantic/resource_398_c_02000538.c",
+  // resource_3a2:0924 carries the same `ldrb / movs #1 / orrs / strb' flag-set
+  // with the same r2/r3 swap; four source spellings (compound |=, split load
+  // local, reversed operand order, pointer local) reach nothing and this is the
+  // only single that closes it.  2026-08-07.
+  "exact/resource_3a2_c_02000924.c",
+  "semantic/resource_3a2_c_02000924.c",
 ]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([
   // The long resource_38f call sheet retains the original local lifetimes
@@ -1819,6 +2259,12 @@ const DEFAULT_ABI_SOURCES = new Set([
 // Overlay-safe counterpart to DEFAULT_ABI_SOURCES.  Addresses are extensively
 // reused between overlays, so new evidence belongs to the full source path.
 const DEFAULT_ABI_OVERLAY_SOURCES = new Set([
+  "exact/resource_3a7_c_0200145c.c",
+  "exact/resource_3a7_c_02001574.c",
+  "semantic/resource_3bf_c_02005b6c.c",
+  "exact/resource_3bf_c_02005b6c.c",
+  "exact/resource_3bf_c_02005af0.c",
+  "exact/resource_3bf_c_02005c08.c",
   "exact/resource_3bf_c_02005a40.c",
   "exact/resource_3bf_c_02005a78.c",
   "exact/resource_3a7_c_020013ac.c",
@@ -1999,6 +2445,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-orr-dead-input-reuse"]
       : []),
+    ...(CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-literal-arg1-first"]
+      : []),
     ...(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg1-before-arg0"]
       : []),
@@ -2116,6 +2565,78 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-sched-pool-load-late"]
       : []),
+    ...(SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sched-immediate-before-pool"]
+      : []),
+    ...(THUMB_HI_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-hi-immediate"]
+      : []),
+    ...(CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-pool-arg1-first"]
+      : []),
+    ...(ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-arg-before-final-shift"]
+      : []),
+    ...(CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-arg0-before-pool"]
+      : []),
+    ...(CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-argreg-before-pool"]
+      : []),
+    ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-swap-adjacent-shifts"]
+      : []),
+    ...(STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-stack-args-before-stores"]
+      : []),
+    ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-literal-arg1-first-after-call"]
+      : []),
+    ...(SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-small-shift-before-immediates"]
+      : []),
+    ...(BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-blockmove-dest-before-source"]
+      : []),
+    ...(LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-literal-arg1-first-chained"]
+      : []),
+    ...(HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-high-move-before-store"]
+      : []),
+    ...(POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-pool-load-before-load"]
+      : []),
+    ...(SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-shift-before-store-in-split"]
+      : []),
+    ...(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-arg-before-shift-in-sheet"]
+      : []),
+    ...(SINK_LOAD_PAST_STORE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sink-load-past-store"]
+      : []),
+    ...(CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-arg0-between-pool-pair"]
+      : []),
+    ...(STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-store-value-before-base"]
+      : []),
+    ...(SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-swap-shifts-across-insn"]
+      : []),
+    ...(ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-orr-into-older-input"]
+      : []),
+    ...(CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-arg0-before-pool-pair"]
+      : []),
+    ...(SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sink-pool-load-to-use"]
+      : []),
+    ...(SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sink-constant-past-call"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2146,6 +2667,9 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fsched-high-dest-first"]
+      : []),
+    ...(SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fsched-call-dest-descending"]
       : []),
     ...(FIXED_R7_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-ffixed-r7"] : []),
     ...(NO_SCHED_ALIAS_OVERLAY_SOURCES.has(sourceKey(source))
@@ -2219,6 +2743,29 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES,
+    ...SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES,
+    ...THUMB_HI_IMMEDIATE_OVERLAY_SOURCES,
+    ...CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES,
+    ...ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES,
+    ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
+    ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
+    ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
+    ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
+    ...LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES,
+    ...SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES,
+    ...BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES,
+    ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
+    ...HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES,
+    ...POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES,
+    ...SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES,
+    ...SINK_LOAD_PAST_STORE_OVERLAY_SOURCES,
+    ...CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES,
+    ...STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES,
+    ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
+    ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
+    ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
+    ...SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2438,6 +2985,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // admitted from this green verify. Compiler binaries are not
         // reproducible here, so each host build gets its own pin.
         "7e66357ce5b69114713705da032c339a6aed02a1f7f90dd8ee330ae112313bed",
+        // cc1 built on darwin-arm64 from fork origin/main ed39725, 2026-08-07,
+        // the unified fork line: venus's modes reconciled per function with the
+        // pre-existing ones. Admitted from the green verify of the venus merge.
+        // Compiler binaries are not reproducible on this host, so each host
+        // build gets its own pin. Cross-host rule: rebuild+pin linux from this
+        // same fork source.
+        "40ede14c48e7383c7b284450cd3c1357eb2d5dc014bf4949b69a2a8bc682b241",
       "45d291c1ee530c2dc6ca5928e3186e4fc55234805a8b4b79c4b7d7977f7188cb",
         // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
         // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
@@ -2473,6 +3027,84 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // 2026-08-07. Default-off: without the switch reg_alloc_order is
         // untouched. Cross-host rule: rebuild+pin linux from the same source.
         "5f95a10d93349d67bad586c52362d0f6ede3e63c02c7bee87cc07203b228613d",
+      "93419a9f5dca85c386efc04dcb26368b058191b73cc3ba808ef497fd458036dc",
+      "fd1bd7c1c8cdbdb224569221c12744386bb0a75c86e1b22ff1e42aa392a9de07",
+      "adc81071ec570ed11eae60e138bac9db3ff11ab63bef7f1a725bd198a4c70575",
+      "3c8e99bb06fe15eaae8f04c83eec291a3b362d56649d79dec57a4884b064d7cf",
+      "fa87afe4493a462fc2dbb11d0967b189ed040eeeb2b860422d3da5e38ab5d69c",
+      "22a827bbcd8295b84148aa2e12270ead8d92fdd6af4582e2341afa21825014b7",
+      "5a62f4a9686ac3492956d1d9e2e8da3039ff1d7d74961991d96ac366d7ccfba7",
+    // -fthumb-stack-args-before-stores added, 2026-08-07.
+    "0b7d6f6bd1490d49017a2438eb1bdbdd6c977b179c79f5f8a41d66299ce7ba53",
+    // -fthumb-call-literal-arg1-first-after-call added, 2026-08-07.
+    "63bab14236d935a3e74910921f576928afe6a2a8f20cbe1c239a637d3cf4e1a6",
+    // -fthumb-call-literal-arg1-first-chained added, 2026-08-07.
+    "42189f1a4abeacc3eb5d07d4fbbd646052dfa38c3079a5b053ae1bc1efcc1142",
+    // -fthumb-small-shift-before-immediates added, 2026-08-07.
+    "63292824103cbfd4405f2d8f1a9fe7780dec4b078e792cd37a7677d4a2c13ad4",
+    // Fork line merged onto fork origin/main (Main's modes plus ours), 2026-08-07.
+    "2e8cc5b36323f7c1e1f3b9e8e975c30de825e7173425b156e6aba6dd0ff40130",
+    // -fthumb-blockmove-dest-before-source added, 2026-08-07.
+    "3f6dc8780dff73c710237741b2f3fc90e20ce000238a72e99833418ae3109ee7",
+    // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
+    "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
+      // -fthumb-swap-shifts-across-insn added, 2026-08-07.
+    "e1bc6d7d905057d59dff47512e52503cf4215422a1e7f283754a2d446f41afa1",
+    "d7f9e8909c2a1fe73b6aa9a2ef06e6689e25e63e6ba72c8fe73996746c02bd75",
+    "a8e8a5d7f7684661d897e98bcccfd163ae91220c38a32d90fc104113c8951879",
+    // -fthumb-orr-into-older-input added, 2026-08-07.
+    "78884ab5d9682fdf2b9f0dc5b4d0060976a1a042c186fbcae848fcd2d0657dbe",
+    "efb56c6c7c16ac99165388f121154f83d90ba8705a76379e686dd3fb1188d055",
+    "42b0383dee924cc75538975717471faed6551d1c4908897845b0dc7d898a17b7",
+    "ebcd3e838d972bbf3fdddfd06dd0ff3b7c17a34179ae131e01738dfb4dad7105",
+    "ebcd3e838d972bbf3fdddfd06dd0ff3b7c17a34179ae131e01738dfb4dad7105",
+    "bd5a3ad4c90eb537d970d5dae5b2df2e79255df65ee2e6e8850197c942bde35f",
+    "8fb7a9c28981701f0210085cfa9d91a6c1e77768741f1dff4842b7e82ec5334c",
+    "804608eb96163abf8fdd6bcf2365dfa6fbfbc160b8a60c41bd25c053a3c72139",
+    "a818520e2026b0a532241ce411c3580af797bc4f6492c718463735292e72c2f9",
+    "e8466545e362128ab94f384c1ab2b7eb6c7ac5475d2ff6f67fe4d044c7ed1e0c",
+    "8463b1c436cd30705500715949c2734bd63165f8877245268cac4ff44c4716f4",
+    "25d6216d27234fa58e19a10952422c12659133e3977c7efe5e7c896ca73d3e33",
+    "529d0e9ed7793955d948ce20e73edd612f23eb90e48aaf55a4ee1d88ad6cced4",
+    "70a49ce7075dc060f63e1984177620ad914613b1c08cedc9c2e9d1d98e24fcac",
+    // -fthumb-sink-pool-load-to-use added, 2026-08-07.
+      "c3447c0cc251c7d2c0185352d108f992d980890a02638ddbbfeba753a39a5a0b",
+      "f6f8e9c1a2bd5bb0bfeb6d75a2847617e6f35bf132de9f070d731cff21d39945",
+      "799c1cfb3aa700a8cc75572cb576d612d7d7ed700420ff48cf09c8ba536662e4",
+      "1dcc9902c957c8504e3bbf2b43d067b8f87a7b25fe16f34ad3bfeb69357b05fa",
+      "b9d32c281a4a74b092aa78568e6c6c6700a2a4aa7012670f62d1fdc8f48a1c54",
+      "ea45be7c7bbcf917946bad0f8f7130b77b89e0d0828292039288c3cccdc85d24",
+      "39618b85563aae1ee776522c14d6de42eb3dceadbf9c7c76cbc501b3533457a1",
+        "fe41ef5881fd46a4ec84ceb4224c5ea00abb8b6cb431b726a174ac99580085c6",
+        // -fthumb-call-arg0-before-pool: undo a scheduler inversion that
+        // hoisted an r1 pool load above an immediate r0 argument on a call
+        // that also passes r2 -- the inverse of -fthumb-call-pool-arg1-first,
+        // whose gate is the two-argument sheet. Witnesses resource_371:1888,
+        // :1938 and :19e8; admitted 2026-08-07. Cross-host rule: rebuild+pin
+        // linux from the same commit before the next cloud session touches
+        // these routes.
+        "ae5cc8a44b848b4dcdab7c3a1b5aab61eefd13af1428107828fc82294423004b",
+        // -fthumb-arg-before-final-shift: emit the last plain immediate call
+        // argument ahead of a preceding split constant's shift, the mirror of
+        // -fthumb-next-arg-between-split. Witness resource_3b1:366c; admitted
+        // 2026-08-07. Cross-host rule: rebuild+pin linux from the same commit
+        // before the next cloud session touches these routes.
+        "cf040aad9108e4595a2e0eea69d4dfc134ee93127213819efd48eb37d2e51859",
+        // -fthumb-call-literal-arg1-first, gated on the two discriminators the
+        // references actually observe: the call passes exactly r0 and r1 (a
+        // third argument register means the reference writes the pair in
+        // register order), and the two literals differ (an equal pair is also
+        // written in register order). Admitted 2026-08-07. Cross-host rule:
+        // rebuild+pin linux from the same commit before the next cloud
+        // session touches these routes.
+        "3db8ea91c88c50a170ac918c4b3475716f70f0d554bf91a5c7e982da7e6d807a",
+        // -fthumb-call-literal-arg1-first: the existing
+        // -fthumb-call-arg1-before-arg0 transform without its "only undo a
+        // scheduler inversion" gate, restricted to a pair of plain literals.
+        // Witness resource_3ae:02dc; admitted 2026-08-07. Cross-host rule:
+        // rebuild+pin linux from the same commit before the next cloud
+        // session touches these routes.
+        "fdf336d0b046fbae55fb670ddd0852730b65cd7ebcd173827cd0e0cd9039b768",
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",
@@ -2572,6 +3204,25 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // copy ahead of an adjacent independent unary ALU insn.
         // Cross-host rule: rebuild+pin linux from the same fork source.
         "f76bdc9dccde93acc1a2f382d760ec79292591c5b39cc0221368630755068ce8",
+        // Fork commit 1e1502b: -fsched-call-dest-descending, the mirror
+        // direction of the existing call-argument tie-break. Witness
+        // resource_3c8:2f30; admitted from a green `bun run verify`,
+        // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
+        // commit before the next cloud session touches these routes.
+        "dfe6fd74ceeae8d33695b6ac06285cedab253e06866a3dc569ba3657583ebdf5",
+        // -fthumb-sched-immediate-before-pool: companion to the pool-load-late
+        // class, where a lone `movs rN, #K' argument setter also issues before
+        // a ready literal-pool load. Default-off and inert unless routed.
+        // Witness resource_371:1a98, 2026-08-07. Cross-host rule: rebuild+pin
+        // linux from the same commit before the next cloud session.
+        "39dd5e4674ae60996d03a4187518eccccd40f1c7317452b3e0db22a20b71fecc",
+        // -fthumb-hi-immediate: a small HImode constant reaches its register
+        // with `movs' instead of the literal-pool load *thumb_movhi_insn's
+        // "mn" alternative forces. Default-off and inert unless routed; the
+        // standing "do not fix the mn" note in arm.md stays true globally.
+        // Witness resource_377:03f8, 2026-08-07. Cross-host rule: rebuild+pin
+        // linux from the same commit before the next cloud session.
+        "4649d7267990a9f91503ade3b2259e15f94b702cddb0f41a6a566c14035d20d3",
       ],
     },
     gs2: {

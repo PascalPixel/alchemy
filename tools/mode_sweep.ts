@@ -51,7 +51,54 @@ export const FORK_MODES = [
   "-fthumb-hoist-add-immediate",
   "-fthumb-pool-load-base-first",
   "-fthumb-move-before-unary-alu",
+  // Same transposition without the "only undo a scheduler inversion" gate,
+  // restricted to a pair of plain literals. Witness resource_3ae:02dc.
+  "-fthumb-call-literal-arg1-first",
   "-fthumb-call-arg0-before-store",
+  // Mirror of -fthumb-next-arg-between-split: the last plain immediate call
+  // argument goes ahead of a preceding split constant's shift. Witness
+  // resource_3b1:366c.
+  "-fthumb-arg-before-final-shift",
+  // Inverse of -fthumb-call-pool-arg1-first, gated on the third argument still
+  // being written after r0. Witness resource_371:1888.
+  "-fthumb-call-arg0-before-pool",
+  // Register-move twin of the above. Witness resource_3a7:0b8c.
+  "-fthumb-call-argreg-before-pool",
+  // Age-ordered transposition of two adjacent in-place constant shifts.
+  // Witnesses resource_3bc:4494 and resource_3a4:02cc.
+  "-fthumb-swap-adjacent-shifts",
+  // A pool load that completes a call's argument list, sunk to the call.
+  // Witness resource_3c6:0158.
+  "-fthumb-sink-pool-load-to-use",
+  // Two-pool-word twin of -fthumb-call-arg0-before-pool. Witness
+  // resource_371:1a98.
+  "-fthumb-call-arg0-before-pool-pair",
+  // The orr destination tie, resolved toward the older input. Witness
+  // resource_3b3:1fd4.
+  "-fthumb-orr-into-older-input",
+  // Two in-place constant shifts transposed across one unrelated insn.
+  // Witness resource_3c8:2f30.
+  // the thirteen :0104 integrators -- the load below the store
+  "-fthumb-sink-load-past-store",
+  "-fthumb-high-move-before-store",
+  "-fthumb-pool-load-before-load", "-fthumb-shift-before-store-in-split",
+  // resource_39b:0f48 -- the immediate between two pool loads
+  "-fthumb-call-arg0-between-pool-pair",
+  // resource_3ca:004c -- the 0x05000000 halfword write
+  "-fthumb-store-value-before-base",
+  "-fthumb-swap-shifts-across-insn",
+  // The plain argument ahead of a mid-sheet split-constant shift.
+  // Witness resource_3b1:5ca4.
+  "-fthumb-arg-before-shift-in-sheet",
+  // The literal r1-before-r0 pair, only in a sheet opening after a call.
+  // Witnesses resource_3b9:06bc, resource_376:0258, resource_376:0190.
+  "-fthumb-call-literal-arg1-first-after-call",
+  "-fthumb-call-literal-arg1-first-chained",
+  "-fthumb-small-shift-before-immediates",
+  "-fthumb-blockmove-dest-before-source",
+  // Both stacked arguments in registers before either store.
+  // Witnesses resource_382:0fb4/:1010/:113c, resource_3b9:1c6c.
+  "-fthumb-stack-args-before-stores",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",
@@ -122,6 +169,11 @@ export const FORK_MODES = [
   // trades a pool word for a two-insn constant build and flips the emitted
   // condition code. This suppresses it in Thumb. Witness 0808ddec's tail.
   "-fthumb-no-canonicalize-comparison",
+  // A small HImode constant reaches its register with `movs' instead of the
+  // literal-pool load *thumb_movhi_insn's "mn" alternative forces. Witness
+  // resource_377:03f8 (2026-08-07).
+  "-fthumb-hi-immediate",
+  "-fthumb-call-pool-arg1-first",
 ] as const;
 
 export const STOCK_SWITCHES = [

@@ -79,6 +79,7 @@ void Func_02001938(void)
 {
     u8 *actor = Func_02005c3a(8);
     s16 *frame;
+    s32 zero;
 
     Func_02005c20(actor);
     Func_02005d4a(-1, -1, -1, 0);
@@ -95,7 +96,18 @@ void Func_02001938(void)
     Func_02005ca2(8, 0x9999, 0x4ccc);
 
     frame = (s16 *)(actor + 0x64);
-    *frame = 0;
+    /*
+     * The frame counter is cleared through an s32 local, not by storing the
+     * literal 0 directly: a direct HImode constant store makes gcc build the
+     * constant in HImode and fetch it from the literal pool (`ldrh r3, .L7'),
+     * which adds a pool word and a branched-to return tail the reference does
+     * not have.  STILL OPEN: two halfwords at +0x56, where the reference sets
+     * r0 before the r1 pool load at `Func_...bf2(8, 0x9999, 0x4ccc)' and this
+     * draft interleaves them the other way; no flag in the 65-candidate
+     * singles cohort moves it and no source phrasing tried does either.
+     */
+    zero = 0;
+    *frame = (s16)zero;
     Func_02005cb8(8, Data_0200d158);
 
     do {

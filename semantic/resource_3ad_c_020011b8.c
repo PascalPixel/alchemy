@@ -64,15 +64,15 @@ extern void Func_02002d80();
 extern void Func_02002d8a();
 extern void Func_02002d94();
 extern void Func_02002d9e();
-extern s32 Func_020024ba();
-extern s32 Func_02002538();
-extern s32 Func_0200263e();
+extern s8 Func_020024ba();
+extern s8 Func_02002538();
+extern s8 Func_0200263e();
 extern void Func_0200257c();
 extern s32 Func_02002d6c();
-extern s32 Func_020025d4();
-extern s32 Func_02002514();
-extern s32 Func_0200254a();
-extern s32 Func_020025ce();
+extern s8 Func_020025d4();
+extern s8 Func_02002514();
+extern s8 Func_0200254a();
+extern s8 Func_020025ce();
 extern void Func_02002e18();
 extern void Func_02002e32();
 extern void Func_02002e28();
@@ -102,51 +102,47 @@ void Func_020011b8(void)
     retryFromStep134c = 0;
 
 top:                                                    /* 0x0200120c */
-    if ((Func_020024ba() & 0xff) == 0) {
+    if (Func_020024ba() == 0) {
         goto step12c4;
     }
 
 step1320:                                               /* 0x02001216 */
-    if ((Func_02002538() & 0xff) == 0) {
+    if (Func_02002538() == 0) {
         goto finishNegative;                            /* 0x02001290 */
     }
 
     /* 0x02001220 */
     retryFromStep134c = 0;
-    if ((Func_0200263e() & 0xff) == 0) {
+    if (Func_0200263e() == 0) {
+setRetry:
         retryFromStep134c = 1;
         goto step134c;
     }
-    goto step1394;
-
-step134c:                                               /* 0x0200122e */
-    Func_0200257c();
-    if (Func_02002d6c(0, 0) == 0) {
-        goto finishNegative;
-    }
 
     /*
-     * 0x0200123e.  Both the "step succeeded" and the "step failed but this was
-     * not the retry path" outcomes fall to the same exit, so there is exactly
-     * one call site here despite three predecessors.
+     * 0x0200123e.  The retry is a while loop whose test is reached directly
+     * when the step above already succeeded; the other two predecessors jump
+     * straight into the body, skipping the first test.
      */
-    if ((Func_020025d4() & 0xff) == 0 && retryFromStep134c != 0) {
-        goto step134c;
+    while (Func_020025d4() == 0 && retryFromStep134c != 0) {
+step134c:                                               /* 0x0200122e */
+        Func_0200257c();
+        if (Func_02002d6c(0, 0) == 0) {
+            goto finishNegative;
+        }
     }
     goto finishAffirmative;
-step1394:
 
 step12c4:                                               /* 0x0200124e */
-    if ((Func_02002514() & 0xff) != 0) {
-        if ((Func_0200254a() & 0xff) == 0) {
-            retryFromStep134c = 1;                      /* 0x0200122c */
-            goto step134c;
+    if (Func_02002514() != 0) {
+        if (Func_0200254a() != 0) {
+            goto finishAffirmative;
         }
-        goto finishAffirmative;
+        goto setRetry;                                  /* 0x0200122c */
     }
 
     /* 0x02001264 */
-    if ((Func_020025ce() & 0xff) != 0) {
+    if (Func_020025ce() != 0) {
         goto step1320;
     }
 

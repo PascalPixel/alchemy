@@ -47,7 +47,20 @@ void Func_02001f58(void)
             u8 *workspace = Data_03001ebc;
 
             /* movs r1,#0xb9 / lsls r1,#1 gives the byte offset 370. */
-            *(u16 *)(workspace + 370) = 1;
+            /*
+             * The halfword store is written through a pointer local and an
+             * s32 value local, in that order.  Storing the literal directly
+             * makes gcc build the constant in HImode and load it from the
+             * literal pool (`ldrh r3, .L7'), which costs a pool word the
+             * reference does not have; splitting the address out first also
+             * fixes which of r2/r3 holds the address.
+             */
+            {
+                u16 *slot = (u16 *)(workspace + 370);
+                s32 one = 1;
+
+                *slot = (u16)one;
+            }
         }
     }
     Func_020042da();

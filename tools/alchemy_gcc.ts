@@ -1835,6 +1835,18 @@ const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
   "exact/resource_382_c_02000614.c",
   "semantic/resource_382_c_02000614.c",
 ]);
+// -fthumb-call-literal-arg1-first-chained gates the same transposition on what
+// follows the consuming call rather than on what precedes the pair: the
+// references transpose a two-literal sheet only where the call it feeds is
+// itself followed by another argument setter, and keep register order when the
+// call is followed by a jump or by an insn that writes something else.
+const LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES = new Set([
+  // resource_3ad:11b8 -- `movs r1, #0' before `movs r0, #1' at 0x020011dc,
+  // where the identical literal pair at 0x0200128a keeps register order
+  // because its call is followed by a branch. 2026-08-07.
+  "exact/resource_3ad_c_020011b8.c",
+  "semantic/resource_3ad_c_020011b8.c",
+]);
 // -fthumb-arg-before-final-shift for a shift that is not the sheet's last
 // setup insn.
 // -fthumb-pool-load-before-load and -fthumb-shift-before-store-in-split for
@@ -2353,6 +2365,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-after-call"]
       : []),
+    ...(LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-literal-arg1-first-chained"]
+      : []),
     ...(HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-high-move-before-store"]
       : []),
@@ -2501,6 +2516,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
     ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
+    ...LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
     ...HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES,
     ...POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES,
@@ -2748,6 +2764,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
     "0b7d6f6bd1490d49017a2438eb1bdbdd6c977b179c79f5f8a41d66299ce7ba53",
     // -fthumb-call-literal-arg1-first-after-call added, 2026-08-07.
     "63bab14236d935a3e74910921f576928afe6a2a8f20cbe1c239a637d3cf4e1a6",
+    // -fthumb-call-literal-arg1-first-chained added, 2026-08-07.
+    "42189f1a4abeacc3eb5d07d4fbbd646052dfa38c3079a5b053ae1bc1efcc1142",
     // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
     "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
       // -fthumb-swap-shifts-across-insn added, 2026-08-07.

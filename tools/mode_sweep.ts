@@ -54,6 +54,9 @@ export const FORK_MODES = [
   "-fthumb-call-arg0-before-pool",
   // Register-move twin of the above. Witness resource_3a7:0b8c.
   "-fthumb-call-argreg-before-pool",
+  // Age-ordered transposition of two adjacent in-place constant shifts.
+  // Witnesses resource_3bc:4494 and resource_3a4:02cc.
+  "-fthumb-swap-adjacent-shifts",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

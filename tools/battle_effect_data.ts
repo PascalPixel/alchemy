@@ -908,6 +908,16 @@ function exportPaletteGraphics(rom: Uint8Array, root: string): CompressedGraphic
   });
 }
 
+// The declared type says the terminator is exactly (-1, 0). Read it and prove
+// it rather than widening the type: a table that ever terminates differently is
+// a decoding error worth failing on, not a looser type.
+function sparseSentinel(raw: Buffer): [-1, 0] {
+  const key = raw.readInt32LE(41 * 8);
+  const value = raw.readInt32LE(41 * 8 + 4);
+  if (key !== -1 || value !== 0) throw new Error(`sparse table sentinel is (${key}, ${value}), expected (-1, 0)`);
+  return [-1, 0];
+}
+
 function exportSparseTable(rom: Uint8Array): SparseTableSource {
   const raw = range(rom, SPARSE_TABLE_ADDRESS, SPARSE_TABLE_END);
   const records: SparseRecord[] = [];
@@ -918,7 +928,7 @@ function exportSparseTable(rom: Uint8Array): SparseTableSource {
   return {
     address: hex(SPARSE_TABLE_ADDRESS), end: hex(SPARSE_TABLE_END), count: 41,
     fields: ["key:s32", "value:s32"], consumers: ["Func_0809bcf8"], records,
-    sentinel: [raw.readInt32LE(41 * 8), raw.readInt32LE(41 * 8 + 4)],
+    sentinel: sparseSentinel(raw),
   };
 }
 

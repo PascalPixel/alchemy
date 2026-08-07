@@ -385,8 +385,11 @@ export function generateMoves(parsed: ParsedFunction, structure: Structure | nul
     return isControlAnchor(unit);
   };
   const flows = (unit: Unit, crossed: Unit[]): boolean => {
-    const moving = structure?.facts.get(unit.line);
-    if (moving === undefined) return preservesDataflow(unit, crossed);
+    // Bind the parse before use: `structure?.` above already means a null parse
+    // falls through to the regex path, but the narrowing does not survive into
+    // the loop below, which read `structure.facts` unguarded.
+    const moving = structure === null ? undefined : structure.facts.get(unit.line);
+    if (moving === undefined || structure === null) return preservesDataflow(unit, crossed);
     for (const other of crossed) {
       const facts = structure.facts.get(other.line);
       if (facts === undefined) return preservesDataflow(unit, crossed);
@@ -484,6 +487,10 @@ export function generateMoves(parsed: ParsedFunction, structure: Structure | nul
                 lines: [`${declIndent}${tempType}${tempType.endsWith("*") ? "" : " "}${temp};`],
                 pinned: true,
                 scope: null,
+                // Synthesized, so it has no original source line. 0 never
+                // matches c_structure.py's 1-based facts, which is what we
+                // want: this unit has no parse facts to look up.
+                line: 0,
               });
               return output;
             },

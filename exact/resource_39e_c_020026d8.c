@@ -1,6 +1,13 @@
 #include "types.h"
 
 /*
+ * BYTE-EXACT 2026-08-07: 140 bytes at resource_39e:0x020026d8, reproduced under
+ * -fthumb-sink-constant-past-call.  That mode had been sitting unwired in the
+ * fork -- present in toplev.c, named by no router and no sweep list -- and was
+ * found by sweeping every -fthumb-* in toplev.c directly against the board.
+ */
+
+/*
  * resource_39e owner at 0x020026d8, 140 bytes: the scene that INSTALLS
  * this overlay's per-frame callback, plays a short beat, and uninstalls
  * it again.

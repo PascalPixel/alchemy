@@ -13,8 +13,16 @@ void Func_02001938(s32 actorId, s32 cellX, s32 cellZ)
     if (actor == 0)
         return;
     Func_02003670(actorId, 3);
-    actor[34] = 2;
-    actor[35] |= 2;
+    {
+        u8 *field = actor + 34;
+        u32 cur;
+
+        *field = 2;
+        field = field + 1;
+        cur = *field;
+        cur |= 2;
+        *field = (u8)cur;
+    }
     *(s32 *)(actor + 8) = (cellX << 20) + 0x80000;
     *(s32 *)(actor + 16) = (cellZ << 20) + 0x80000;
 }

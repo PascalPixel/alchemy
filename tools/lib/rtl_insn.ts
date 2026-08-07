@@ -120,6 +120,10 @@ function extractFromPattern(pattern: SExpr): { code: string | null; set: RtlInsn
     return { code, set: null, callTarget: null };
   }
   if (code === "call") {
+    // Only the list variant carries items; an atom here means the dump was not
+    // the shape this branch assumes, which is worth failing on rather than
+    // reading `undefined` off an atom.
+    if (pattern.kind !== "list") throw new Error(`call pattern is an atom: ${pattern.value}`);
     return { code, set: null, callTarget: parseRtlExpr(pattern.items[1]) };
   }
   return { code, set: null, callTarget: null };

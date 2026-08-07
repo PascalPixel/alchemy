@@ -2198,7 +2198,7 @@ export function renderBoxTree(
     // Permanent assembly is source-owned and byte-exact too; it stays dark gray
     // so readers can distinguish its representation, but DONE is explicitly the
     // sum of exact C and permanent assembly.
-    const completionBytes = boxTreeCategoryBytes(area, completionCategory) +
+    const completionBytes = boxTreeCategoryBytes(area, completionCategory as AssetMaturityCategory | CoverageCategory) +
       (completionCategory === "exact_c" ? boxTreeCategoryBytes(area, "retained_asm") : 0);
     const completion = boxTreePercent(completionBytes, area.bytes);
     lines.push(`<text class="weyard" x="${width - 6}" y="17" text-anchor="end">` +
@@ -2209,7 +2209,7 @@ export function renderBoxTree(
   for (const category of categoryOrder) {
     const legendLabel = BOX_TREE_LEGEND[category];
     if (legendLabel === undefined) continue;
-    const categoryBytes = boxTreeCategoryBytes(area, category);
+    const categoryBytes = boxTreeCategoryBytes(area, category as AssetMaturityCategory | CoverageCategory);
     // A zero-valued category should not survive as a misleading 0.0% legend
     // item (notably the former overlay "Unknown" bucket).
     if (categoryBytes === 0) continue;

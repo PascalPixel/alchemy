@@ -27,7 +27,7 @@ import {
 import { build_table as build_map_load_table } from "../lib/map_load_table.ts";
 import { build_sound_table } from "../lib/music.ts";
 import { build_from_midi_sidecar, type Sidecar } from "../lib/midi_sequence.ts";
-import { buildWaveRecord } from "../lib/audio_wave.ts";
+import { type WaveRecordSource, buildWaveRecord } from "../lib/audio_wave.ts";
 import { build_still, read_still_index } from "../lib/indexed_still.ts";
 import { build_static_sprite_series, static_sprite_frame_name } from "../lib/static_sprite_series.ts";
 import { build_resource_directory } from "../lib/resource_directory.ts";
@@ -975,7 +975,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-pcm-wave") {
     const source = sourcePath(String(entry.source));
-    const [built, report] = buildWaveRecord(entry, readFileSync(source));
+    const [built, report] = buildWaveRecord(entry as unknown as WaveRecordSource, readFileSync(source));
     const sources = [String(entry.source)];
     if (entry.index !== undefined) {
       sourcePath(String(entry.index));

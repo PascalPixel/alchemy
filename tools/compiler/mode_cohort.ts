@@ -358,6 +358,12 @@ function selfTest(): void {
   const reports: ExplorerReport[] = [
     {
       stem: "08000000",
+        format: 4,
+        source_sha256: "",
+        reference_sha256: "",
+        compiler_signature: "",
+        policy: null,
+        planning: { bounded_search_complete: true },
       source: "a.c",
       results: [
         { config: { ids: ["no-gcse"], flags: ["-fno-gcse"], remove_flags: [], compiler_family: "routed" }, compiled: true,
@@ -374,6 +380,12 @@ function selfTest(): void {
     },
     {
       stem: "08000010",
+        format: 4,
+        source_sha256: "",
+        reference_sha256: "",
+        compiler_signature: "",
+        policy: null,
+        planning: { bounded_search_complete: true },
       source: "b.c",
       results: [
         { config: { ids: ["no-gcse"], flags: ["-fno-gcse"], remove_flags: [], compiler_family: "routed" }, compiled: true,

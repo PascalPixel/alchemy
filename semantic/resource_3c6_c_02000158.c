@@ -45,13 +45,13 @@
 
 /* Imports, reached through this overlay's veneer table.  Old-style
  * declarations: their interfaces vary by call site across the overlay. */
-           /* load/queue an in-image scene resource */
-           /* audio/sequence cue by id */
-           /* wait n frames */
-            /* scene record by slot selector */
-           /* entry transition, mode 2 */
-           /* scene-index handoff */
-           /* entry transition, mode 0 */
+void Func_08009178();           /* load/queue an in-image scene resource */
+void Func_080f9010();           /* audio/sequence cue by id */
+void Func_0808a010();           /* wait n frames */
+u8 *Func_0808a080();            /* scene record by slot selector */
+void Func_0808a0d8();           /* entry transition, mode 2 */
+void Func_0808a248();           /* scene-index handoff */
+void Func_0808a578();           /* entry transition, mode 0 */
 
 extern u8 *Data_03001ebc;       /* overlay workspace pointer, IWRAM cell */
 
@@ -59,14 +59,6 @@ extern s16 Data_02009ca8[];     /* s16 (x, z) pairs, file offset 0x1ca8 */
 extern u8 Data_02009cd8[];      /* scene resource, file offset 0x1cd8 */
 extern u8 Data_02009cee[];      /* scene resource, file offset 0x1cee */
 
-extern u8 * Func_020016c6();
-extern void Func_020017b2();
-extern void Func_02001684();
-extern void Func_020017c0();
-extern void Func_020016a0();
-extern void Func_02001734();
-extern void Func_020016ea();
-extern void Func_020017ce();
 void Func_02000158(void)
 {
     u8 *workspace = Data_03001ebc;
@@ -74,18 +66,18 @@ void Func_02000158(void)
     s16 x = Data_02009ca8[scene * 2];
     s16 z = Data_02009ca8[scene * 2 + 1];
 
-    Func_020016c6(0)[0x55] = 2;
-    Func_020017b2(158);
+    Func_0808a080(0)[0x55] = 2;
+    Func_080f9010(158);
 
     if (scene == 6) {
-        Func_02001684(Data_02009cee, (u16)x, (u16)z);
-        Func_020017c0(0, 0, -16);
+        Func_08009178(Data_02009cee, (u16)x, (u16)z);
+        Func_0808a578(0, 0, -16);
     } else {
-        Func_020016a0(Data_02009cd8, (u16)x, (u16)z);
-        Func_02001734(0, 2, -16);
+        Func_08009178(Data_02009cd8, (u16)x, (u16)z);
+        Func_0808a0d8(0, 2, -16);
     }
 
-    Func_020016ea(10);
+    Func_0808a010(10);
     *(s32 *)(Data_03001ebc + 0x1c8) = 16;
-    Func_020017ce(scene);
+    Func_0808a248(scene);
 }

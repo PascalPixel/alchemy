@@ -99,7 +99,7 @@ s32 Func_0808a178();
 
 s32 Func_02000b94(void)
 {
-    u32 cue;
+    u32 cue = 0x2930;
     u32 reply;
 
     Func_0808a018();
@@ -114,7 +114,6 @@ s32 Func_02000b94(void)
         Func_0200003c();
 
         if (Func_080770c0(0x173) != 0) {
-            cue = 0x2930;
             reply = cue + 3;
             goto emit;
         }

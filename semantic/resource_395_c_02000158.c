@@ -44,82 +44,58 @@
  *    0x00010000); what it scales is not established.
  */
 
-           /* scripted-scene bracket: open */
-           /* scripted-scene bracket: close */
-           /* wait n frames */
-            /* story-flag test; used in a condition */
-            /* acquire the subject; -1 when unavailable */
-           /* show a dialogue line by id */
-           /* wait for the action to finish */
-           /* as Func_0808a180, with a duration */
-           /* select an entity presentation */
-           /* scene amount (16.16) with a mode */
-           /* scene-effect request */
-           /* overlay-local channel state (channel, state) */
+void Func_0808a018();           /* scripted-scene bracket: open */
+void Func_0808a020();           /* scripted-scene bracket: close */
+void Func_080000c0();           /* wait n frames */
+s32 Func_080770c0();            /* story-flag test; used in a condition */
+s32 Func_08077040();            /* acquire the subject; -1 when unavailable */
+void Func_0808a170();           /* show a dialogue line by id */
+void Func_0808a180();           /* wait for the action to finish */
+void Func_0808a188();           /* as Func_0808a180, with a duration */
+void Func_0808a138();           /* select an entity presentation */
+void Func_0808a330();           /* scene amount (16.16) with a mode */
+void Func_0808a348();           /* scene-effect request */
+void Func_020012f4();           /* overlay-local channel state (channel, state) */
 
-extern void Func_02001af4();
-extern s32 Func_02001ae2();
-extern void Func_02001462();
-extern void Func_02001b94();
-extern void Func_02001bac();
-extern void Func_02001478();
-extern s32 Func_02001b0c();
-extern void Func_0200148c();
-extern void Func_02001bbe();
-extern void Func_02001bd6();
-extern void Func_020014a2();
-extern s32 Func_02001b2c();
-extern void Func_02001bf2();
-extern void Func_02001c0a();
-extern void Func_02001c5a();
-extern void Func_02001c70();
-extern void Func_02001af6();
-extern void Func_02001c30();
-extern void Func_02001c10();
-extern void Func_02001c38();
-extern void Func_02001c8a();
-extern void Func_02001ca0();
-extern void Func_02001b26();
-extern void Func_02001bc2();
 void Func_02000158(void)
 {
-    Func_02001af4();
+    Func_0808a018();
 
-    if (Func_02001ae2(0x845) != 0) {
-        Func_02001462(10, 1);
-        Func_02001b94(0x151c);
-        Func_02001bac(8, 0);
-        Func_02001478(10, 0);
+    if (Func_080770c0(0x845) != 0) {
+        Func_020012f4(10, 1);
+        Func_0808a170(0x151c);
+        Func_0808a180(8, 0);
+        Func_020012f4(10, 0);
         goto close;
     }
 
-    if (Func_02001b0c(0x844) != 0) {
-        Func_0200148c(10, 1);
-        Func_02001bbe(0x14eb);
-        Func_02001bd6(8, 0);
-        Func_020014a2(10, 0);
+    if (Func_080770c0(0x844) != 0) {
+        Func_020012f4(10, 1);
+        Func_0808a170(0x14eb);
+        Func_0808a180(8, 0);
+        Func_020012f4(10, 0);
 
-        if (Func_02001b2c(184) == -1) goto close;
+        if (Func_08077040(184) == -1) goto close;
 
         *(u16 *)(*(u8 **)0x03001ebc + 370) = 1;
         goto close;
     }
 
-    Func_02001bf2(0x14c9);
-    Func_02001c0a(8, 0);
+    Func_0808a170(0x14c9);
+    Func_0808a180(8, 0);
 
-    Func_02001c5a(0x00406218, 1);
-    Func_02001c70(20);
-    Func_02001af6(40);
+    Func_0808a330(0x00406218, 1);
+    Func_0808a348(20);
+    Func_080000c0(40);
 
-    Func_02001c30(0x200e, 0, 10);
-    Func_02001c10(0, 2);
-    Func_02001c38(0x200e, 0);
+    Func_0808a188(0x200e, 0, 10);
+    Func_0808a138(0, 2);
+    Func_0808a180(0x200e, 0);
 
-    Func_02001c8a(0x00010000, 1);       /* 128 << 9 */
-    Func_02001ca0(20);
-    Func_02001b26(40);
+    Func_0808a330(0x00010000, 1);       /* 128 << 9 */
+    Func_0808a348(20);
+    Func_080000c0(40);
 
 close:
-    Func_02001bc2();
+    Func_0808a020();
 }

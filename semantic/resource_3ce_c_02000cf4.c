@@ -93,55 +93,24 @@
  */
 
 /* Old-style declarations: arities vary per call site across this overlay. */
-
-
-
-
-
-
-
-
-
-
-
+void Func_080000c0();
+void Func_08015018();
+void Func_08015078();
+void Func_08015080();
+void Func_08015098();
+void Func_080150a8();
+void Func_08015270();
+void Func_08015278();
+void Func_08077018();
+void Func_080a1048();
+void Func_080f9010();
 
 /* Used for their return values. */
+s32 Func_030003ac();
+s32 Func_08015010();
+s32 Func_08077030();
+s32 Func_08077250();
 
-
-
-
-
-extern void Func_02001faa();
-extern s32 Func_02001eaa();
-extern s32 Func_02001eba();
-extern void Func_02001ed4();
-extern s32 Func_02001ee4();
-extern void Func_02001f5c();
-extern void Func_02001f6a();
-extern void Func_02001f46();
-extern void Func_02001f5e();
-extern s32 Func_0200200a();
-extern void Func_02001f6e();
-extern void Func_02001fcc();
-extern void Func_02001f7a();
-extern void Func_02001f82();
-extern void Func_02001fc0();
-extern void Func_02002058();
-extern void Func_02001fae();
-extern s32 Func_02002028();
-extern void Func_020020a6();
-extern void Func_020020b6();
-extern void Func_020020d0();
-extern void Func_020020e6();
-extern void Func_020020fc();
-extern void Func_02002112();
-extern void Func_0200212a();
-extern void Func_02002142();
-extern void Func_02002030();
-extern void Func_020020a0();
-extern void Func_0200203e();
-extern void Func_02002056();
-extern void Func_0200205e();
 void Func_02000cf4(void)
 {
     u32 *dma3 = (u32 *)0x040000d4;
@@ -153,10 +122,10 @@ void Func_02000cf4(void)
     s32 redraw;                 /* r8 */
     s32 masked;                 /* r5 */
 
-    Func_02001faa(0x70);
+    Func_080f9010(0x70);
 
-    window = Func_02001eaa(0, 0, 30, 7, 2);
-    preview = Func_02001eba(0, 8, 13, 10, 2);
+    window = Func_08015010(0, 0, 30, 7, 2);
+    preview = Func_08015010(0, 8, 13, 10, 2);
 
     counter = 1;
     redraw = 1;
@@ -169,81 +138,81 @@ void Func_02000cf4(void)
     dma3[1] = 0x050001c0 + 28;
     dma3[2] = 0x80000001;
 
-    Func_02001ed4(1);
+    Func_080000c0(1);
 
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            counter = Func_02001ee4(counter + 270, 270);    /* 135 << 1 */
+            counter = Func_030003ac(counter + 270, 270);    /* 135 << 1 */
 
-            Func_02001f5c(window);
-            Func_02001f6a(window);
-            Func_02001f46(0x02009390, window, 0, 0);
-            Func_02001f5e(counter, 0, window, 0x50, redraw);
+            Func_08015270(window);
+            Func_08015278(window);
+            Func_08015098(0x02009390, window, 0, 0);
+            Func_080150a8(counter, 0, window, 0x50, redraw);
 
-            if (Func_0200200a() != 0) {
+            if (Func_08077250() != 0) {
                 masked = counter & 0x1ff;
-                Func_02001f6e(0x0200939c, window, 0, 32);
-                Func_02001fcc(masked);
-                Func_02001f7a(masked + 0x182, window, 120, 0);
+                Func_08015098(0x0200939c, window, 0, 32);
+                Func_08077018(masked);
+                Func_08015080(masked + 0x182, window, 120, 0);
                 masked += 0x75;
-                Func_02001f82(masked, window, 0, 16);
-                Func_02001fc0(preview);
-                Func_02002058(preview, counter);
+                Func_08015078(masked, window, 0, 16);
+                Func_08015270(preview);
+                Func_080a1048(preview, counter);
             } else {
-                Func_02001fae(0x020093b4, window, 0, 32);
+                Func_08015098(0x020093b4, window, 0, 32);
             }
         }
 
         if ((*held & 1) != 0) {
-            if (Func_02002028(counter) == -1)
+            if (Func_08077030(counter) == -1)
                 goto confirm;
-            Func_020020a6(0xaf);
+            Func_080f9010(0xaf);
         }
         if ((*held & 2) != 0) {
         confirm:
             /* One call site, reached from the A arm and the B arm. */
-            Func_020020b6(0x71);
+            Func_080f9010(0x71);
             goto finish;
         }
 
         if ((*pressed & 0x40) != 0) {
             counter -= 1;
             redraw = 1;
-            Func_020020d0(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x80) != 0) {
             counter += 1;
             redraw = 1;
-            Func_020020e6(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x10) != 0) {
             counter += 10;
             redraw = 1;
-            Func_020020fc(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x20) != 0) {
             counter -= 10;
             redraw = 1;
-            Func_02002112(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x100) != 0) {           /* 128 << 1 */
             counter += 30;
             redraw = 1;
-            Func_0200212a(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x200) != 0) {           /* 128 << 2 */
             counter -= 30;
             redraw = 1;
-            Func_02002142(0x6f);
+            Func_080f9010(0x6f);
         }
 
-        Func_02002030(1);
+        Func_080000c0(1);
     }
 
 finish:
-    Func_020020a0(window);
-    Func_0200203e(1);
-    Func_02002056(window, 1);
-    Func_0200205e(preview, 1);
+    Func_08015270(window);
+    Func_080000c0(1);
+    Func_08015018(window, 1);
+    Func_08015018(preview, 1);
 }

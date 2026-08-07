@@ -57,74 +57,54 @@
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-           /* wait n frames */
-           /* scripted-scene bracket: open */
-           /* scripted-scene bracket: close */
-           /* 16.16 scale pair */
-           /* place an entity */
-           /* place slot at (x, z) */
-           /* scene-presentation request */
-           /* scene request; interface not established */
-           /* show a dialogue line by id */
-           /* wait for the slot's action, with a duration */
-           /* face slot along heading */
-            /* story-flag test; used in a condition */
-           /* set a story flag */
+void Func_0808a010();           /* wait n frames */
+void Func_0808a018();           /* scripted-scene bracket: open */
+void Func_0808a020();           /* scripted-scene bracket: close */
+void Func_0808a090();           /* 16.16 scale pair */
+void Func_0808a0d0();           /* place an entity */
+void Func_0808a0f0();           /* place slot at (x, z) */
+void Func_0808a110();           /* scene-presentation request */
+void Func_0808a148();           /* scene request; interface not established */
+void Func_0808a170();           /* show a dialogue line by id */
+void Func_0808a188();           /* wait for the slot's action, with a duration */
+void Func_0808a1b8();           /* face slot along heading */
+s32 Func_080770c0();            /* story-flag test; used in a condition */
+void Func_080770c8();           /* set a story flag */
 
-extern s32 Func_02002a4a();
-extern void Func_02002a72();
-extern void Func_02002b34();
-extern void Func_02002ab6();
-extern void Func_02002afa();
-extern void Func_02002b8e();
-extern void Func_02002b3e();
-extern void Func_02002b46();
-extern void Func_02002aac();
-extern void Func_02002b76();
-extern void Func_02002abc();
-extern void Func_02002b64();
-extern void Func_02002b9a();
-extern void Func_02002bbc();
-extern void Func_02002b16();
-extern void Func_02002b58();
-extern void Func_02002b82();
-extern void Func_02002af6();
-extern void Func_02002afc();
-extern void Func_02002b20();
 void Func_020005f4(void)
 {
     u8 *workspace;
 
-    if (Func_02002a4a(0x84e) == 0) {
+    if (Func_080770c0(0x84e) == 0) {
         return;
     }
 
-    Func_02002a72();
+    Func_0808a018();
 
-    Func_02002b34(0, 19, 0);
-    Func_02002ab6(19, 0x9999, 0x4ccc);
-    Func_02002afa(19, 0x26e, 764);
-    Func_02002b8e(19, 0xf000, 20);
-    Func_02002b3e(19, 3);
-    Func_02002b46(17, 3);
+    Func_0808a148(0, 19, 0);
+    Func_0808a090(19, 0x9999, 0x4ccc);
+    Func_0808a0d0(19, 0x26e, 764);
+    Func_0808a1b8(19, 0xf000, 20);
+    Func_0808a110(19, 3);
+    Func_0808a110(17, 3);
 
-    Func_02002aac(20);
-    Func_02002b76(19, 0, 0);
-    Func_02002abc(20);
-    Func_02002b64(19, 3);
+    Func_0808a010(20);
+    Func_0808a148(19, 0, 0);
+    Func_0808a010(20);
+    Func_0808a110(19, 3);
 
-    Func_02002b9a(0x1749);
-    Func_02002bbc(19, 0, 10);
+    Func_0808a170(0x1749);
+    Func_0808a188(19, 0, 10);
 
-    Func_02002b16(19, 0xcccc, 0x6666);
-    Func_02002b58(19, 0x23a, 0x2f6);
-    Func_02002b82(19, 0, 0);
+    Func_0808a090(19, 0xcccc, 0x6666);
+    Func_0808a0d0(19, 0x23a, 0x2f6);
+    Func_0808a0f0(19, 0, 0);
 
     workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 448) = 521;
 
-    Func_02002af6(0x85e);
-    Func_02002afc(0x333);
+    Func_080770c8(0x85e);
+    Func_080770c8(0x333);
 
-    Func_02002b20();
+    Func_0808a020();
 }

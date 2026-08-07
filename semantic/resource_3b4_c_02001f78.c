@@ -49,22 +49,19 @@
 extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 
+void Func_02002188();
+void Func_02002290();
+void Func_02002334();
 
-
-
-
-extern void Func_02004122();
-extern void Func_0200423a();
-extern void Func_020042ee();
 s32 Func_02001f78(void)
 {
     s16 *selector = &Data_02000240[224];
 
     *(s32 *)(Data_03001ebc + 448) = 516;
 
-    if (*selector == 0x75) Func_02004122();
-    if (*selector == 0x76) Func_0200423a();
-    if (*selector == 0x78) Func_020042ee();
+    if (*selector == 0x75) Func_02002188();
+    if (*selector == 0x76) Func_02002290();
+    if (*selector == 0x78) Func_02002334();
 
     return 0;
 }

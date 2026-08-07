@@ -56,8 +56,8 @@ s32 Func_02000bf8(void)
         struct Beat393Subject *subject = Func_0808a080(10);
 
         subject->marker = 2;
-        { s32 f1 = 11; s32 g1 = 16; Func_080091c0(32, 20, 2, 4,  f1, g1); }
-        { s32 f2 = 4; s32 g2 = 0; Func_02000244(2, 12, 16, 1,  f2, g2); }
+        Func_080091c0(32, 20, 2, 4, 11, 16);
+        Func_02000244(2, 12, 16, 1, 4, 0);
         Func_080091e0(Func_0808a080(10), 0);
     }
 

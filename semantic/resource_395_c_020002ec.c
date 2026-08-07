@@ -79,139 +79,103 @@
  *    argument counts at different sites.
  */
 
-           /* frame wait */
-           /* install a per-frame task (callback, rank) */
-           /* remove a per-frame task (callback) */
-           /* scene beat / wait */
-            /* scene-record accessor */
-           /* 16.16 pair setter */
-           /* start a scripted action (slot, script, arg) */
-           /* per-slot scene request */
-           /* per-slot pairing request with a duration */
-           /* select an entity presentation */
-           /* show a dialogue line by id */
-           /* wait for the slot's action to finish */
-           /* as Func_0808a180, with a duration */
-           /* face the slot along a heading */
-           /* per-slot presentation select */
-           /* camera target */
-           /* scene amount (16.16) with a mode */
-           /* scene-effect request */
-           /* no-argument scene commit */
-           /* play a sound cue */
+void Func_080000c0();           /* frame wait */
+void Func_080000d0();           /* install a per-frame task (callback, rank) */
+void Func_080000d8();           /* remove a per-frame task (callback) */
+void Func_0808a010();           /* scene beat / wait */
+u8 *Func_0808a080();            /* scene-record accessor */
+void Func_0808a090();           /* 16.16 pair setter */
+void Func_0808a0c0();           /* start a scripted action (slot, script, arg) */
+void Func_0808a100();           /* per-slot scene request */
+void Func_0808a128();           /* per-slot pairing request with a duration */
+void Func_0808a138();           /* select an entity presentation */
+void Func_0808a170();           /* show a dialogue line by id */
+void Func_0808a180();           /* wait for the slot's action to finish */
+void Func_0808a188();           /* as Func_0808a180, with a duration */
+void Func_0808a1b8();           /* face the slot along a heading */
+void Func_0808a1e0();           /* per-slot presentation select */
+void Func_0808a210();           /* camera target */
+void Func_0808a330();           /* scene amount (16.16) with a mode */
+void Func_0808a348();           /* scene-effect request */
+void Func_0808a4f0();           /* no-argument scene commit */
+void Func_080f9010();           /* play a sound cue */
 
-extern u8 * Func_02001ca2();
-extern void Func_02001d40();
-extern void Func_02001d80();
-extern void Func_02001d96();
-extern void Func_02001c1c();
-extern void Func_02001dca();
-extern void Func_02001c3a();
-extern void Func_02001c38();
-extern void Func_02001da6();
-extern u8 * Func_02001d04();
-extern void Func_02001d56();
-extern void Func_02001d2c();
-extern void Func_02001e2a();
-extern void Func_02001d70();
-extern void Func_02001cac();
-extern void Func_02001cb8();
-extern void Func_02001e6c();
-extern void Func_02001db4();
-extern void Func_02001d5a();
-extern void Func_02001cea();
-extern void Func_02001ce2();
-extern u8 * Func_02001d92();
-extern void Func_02001d82();
-extern void Func_02001e18();
-extern void Func_02001e3a();
-extern void Func_02001e1a();
-extern void Func_02001da0();
-extern void Func_02001e48();
-extern void Func_02001ebc();
-extern void Func_02001e9e();
-extern void Func_02001eb4();
-extern void Func_02001d3a();
-extern void Func_02001e58();
-extern void Func_02001dde();
-extern void Func_02001e50();
-extern void Func_02001df6();
 void Func_020002ec(void)
 {
     s32 *spawnerFlag = (s32 *)0x02009dd0;
     u8 *subject;
     u8 *record;
 
-    subject = Func_02001ca2(0);
+    subject = Func_0808a080(0);
 
-    Func_02001d40(0, 0xc000, 0);            /* 192 << 8 */
-    Func_02001d80(0x00406218, 1);
-    Func_02001d96(20);
-    Func_02001c1c(40);
-    Func_02001dca(17);
+    Func_0808a1b8(0, 0xc000, 0);            /* 192 << 8 */
+    Func_0808a330(0x00406218, 1);
+    Func_0808a348(20);
+    Func_080000c0(40);
+    Func_080f9010(17);
 
     *spawnerFlag = 1;
     /* Func_02001218 + 1 under the proven 0x02008000 base. */
-    Func_02001c3a((void *)0x02009219, 3200);        /* 200 << 4 */
-    Func_02001c38(30);
+    Func_080000d0((void *)0x02009219, 3200);        /* 200 << 4 */
+    Func_080000c0(30);
     *spawnerFlag = 0;
 
     /* 164 << 17 = 0x01480000, 235 << 16 = 0x00eb0000. */
-    Func_02001da6(0x01480000, -1, 0x00eb0000, 1);
-    Func_02001d96(0, 1);
+    Func_0808a210(0x01480000, -1, 0x00eb0000, 1);
+    Func_0808a1e0(0, 1);
 
-    record = Func_02001d04(0);
+    record = Func_0808a080(0);
     record[0x5a] &= 0xfe;
 
-    Func_02001d56(0, 16);
-    Func_02001d2c(0, 0x00020000, 0x00020000);       /* 128 << 10, twice */
-    Func_02001e2a(133);
+    Func_0808a100(0, 16);
+    Func_0808a090(0, 0x00020000, 0x00020000);       /* 128 << 10, twice */
+    Func_080f9010(133);
 
     *(s32 *)(subject + 0x28) = 0x00050000;          /* 160 << 11 */
     *(s32 *)(subject + 0x48) = 0x00004000;          /* 128 << 7  */
     *(s32 *)(subject + 0x44) = 0x0000a000;          /* 160 << 8  */
 
-    Func_02001d70(0, 0x14f, 258);                   /* 129 << 1 */
+    Func_0808a0c0(0, 0x14f, 258);                   /* 129 << 1 */
 
     /* The script drives +0x28; poll it down through zero, then back up. */
     while (*(volatile s32 *)(subject + 0x28) >= 0) {
-        Func_02001cac(1);
+        Func_080000c0(1);
     }
     do {
-        Func_02001cb8(1);
+        Func_080000c0(1);
     } while (*(volatile s32 *)(subject + 0x28) <= 0);
 
-    Func_02001e6c(161);
-    Func_02001db4(0, 19);
-    Func_02001d5a(120);
+    Func_080f9010(161);
+    Func_0808a100(0, 19);
+    Func_0808a010(120);
 
-    Func_02001cea((void *)0x02009219);
-    Func_02001ce2(40);
+    Func_080000d8((void *)0x02009219);
+    Func_080000c0(40);
 
     *(s32 *)(subject + 0x44) = 0x00004000;          /* r5, reassigned above */
 
-    record = Func_02001d92(0);
+    record = Func_0808a080(0);
     record[0x5a] |= 1;
 
-    Func_02001d82(80);
-    Func_02001e18(0x14cc);
-    Func_02001e3a(0x200e, 0, 20);
-    Func_02001e1a(0, 2);
-    Func_02001da0(20);
-    Func_02001e48(0x200e, 0);
-    Func_02001ebc();
+    Func_0808a010(80);
+    Func_0808a170(0x14cc);
+    Func_0808a188(0x200e, 0, 20);
+    Func_0808a138(0, 2);
+    Func_0808a010(20);
+    Func_0808a180(0x200e, 0);
+    Func_0808a4f0();
 
-    Func_02001e9e(0x00010000, 1);                   /* 128 << 9 */
-    Func_02001eb4(20);
-    Func_02001d3a(40);
+    Func_0808a330(0x00010000, 1);                   /* 128 << 9 */
+    Func_0808a348(20);
+    Func_080000c0(40);
 
     *(u16 *)(subject + 6) = 0xc000;                 /* 192 << 8 */
     *(s32 *)(subject + 0x48) = 0x00010000;          /* 128 << 9 */
     *(s32 *)(subject + 0x44) = 0x00004000;
 
-    Func_02001e58(0, 2);
-    Func_02001dde(40);
-    Func_02001e58(0, 4, 0);
-    Func_02001e50(0, 1);
-    Func_02001df6(20);
+    Func_0808a138(0, 2);
+    Func_0808a010(40);
+    Func_0808a128(0, 4, 0);
+    Func_0808a100(0, 1);
+    Func_0808a010(20);
 }

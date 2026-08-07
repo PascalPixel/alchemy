@@ -26,48 +26,37 @@
 
 extern u8 Data_02000240[];
 
-          /* established, reset slot */
-          /* established, reset a member by handle */
-          /* established shape (id, flag) */
-           /* item/party record by id, established */
-           /* relocated IWRAM helper, established */
-          /* established no-arg call */
+void Func_08077168();          /* established, reset slot */
+void Func_08077150();          /* established, reset a member by handle */
+void Func_0808a200();          /* established shape (id, flag) */
+u8 *Func_08077008();           /* item/party record by id, established */
+s32 Func_03000380();           /* relocated IWRAM helper, established */
+void Func_0808a548();          /* established no-arg call */
 
-extern void Func_020055a0();
-extern void Func_020055a6();
-extern void Func_020055ac();
-extern void Func_020055b2();
-extern void Func_020055b8();
-extern void Func_020055b6();
-extern void Func_020056b0();
-extern u8 * Func_0200558e();
-extern s32 Func_0200546e();
-extern s32 Func_020054b0();
-extern void Func_020057b8();
 void Func_02001910(s32 id)
 {
     u8 *record;
     s32 computed;
     s32 ratio;
 
-    Func_020055a0(0);
-    Func_020055a6(1);
-    Func_020055ac(2);
-    Func_020055b2(3);
-    Func_020055b8(5);
-    Func_020055b6(id);
+    Func_08077168(0);
+    Func_08077168(1);
+    Func_08077168(2);
+    Func_08077168(3);
+    Func_08077168(5);
+    Func_08077150(id);
 
     *(s32 *)&Data_02000240[500] = id;
 
-    Func_020056b0(id, 0);
+    Func_0808a200(id, 0);
 
-    record = Func_0200558e(id);
+    record = Func_08077008(id);
 
     *(s16 *)(record + 56) = *(s16 *)(record + 52);
     record[0x131] = 0;
     *(s16 *)(record + 58) = *(s16 *)(record + 54);
 
-    computed = Func_0200546e(*(s16 *)(record + 56) << 14, *(s16 *)(record + 52));
+    computed = Func_03000380(*(s16 *)(record + 56) << 14, *(s16 *)(record + 52));
     if (computed > 0x4000) {
         ratio = 0x4000;
     } else if (computed < 0) {
@@ -80,7 +69,7 @@ void Func_02001910(s32 id)
         *(s16 *)(record + 20) = 1;
     }
 
-    computed = Func_020054b0(*(s16 *)(record + 58) << 14, *(s16 *)(record + 54));
+    computed = Func_03000380(*(s16 *)(record + 58) << 14, *(s16 *)(record + 54));
     if (computed > 0x4000) {
         ratio = 0x4000;
     } else if (computed < 0) {
@@ -93,5 +82,5 @@ void Func_02001910(s32 id)
         *(s16 *)(record + 22) = 1;
     }
 
-    Func_020057b8();
+    Func_0808a548();
 }

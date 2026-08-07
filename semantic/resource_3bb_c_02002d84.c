@@ -30,36 +30,27 @@
 
 extern u8 *Data_03001e68;
 
+extern u8 *Func_0808a080(s32 arg0);
+extern void Func_0808a100(s32 arg0, s32 arg1);
+extern void Func_0808a1b8(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_0808a010(s32 arg0);
+extern void Func_080091e0(u8 *object, s32 arg1);
+extern void Func_08009080(u8 *object, s32 arg1);
+extern void Func_080000c0(s32 arg0);
 
-
-
-
-
-
-
-
-extern u8 * Func_02006cde(s32 arg0);
-extern void Func_02006d42(s32 arg0, s32 arg1);
-extern void Func_02006db2(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02006d62(s32 arg0, s32 arg1);
-extern void Func_02006d00(s32 arg0);
-extern void Func_02006cb2(u8 *object, s32 arg1);
-extern void Func_02006c62(u8 *object, s32 arg1);
-extern void Func_02006c6a(u8 *object, s32 arg1);
-extern void Func_02006bc8(s32 arg0);
 void Func_02002d84(s32 arg0)
 {
     u8 *flagCell = (u8 *)0x02000432;
-    u8 *object = Func_02006cde(arg0);
+    u8 *object = Func_0808a080(arg0);
     u8 *current = Data_03001e68;
 
     if (*flagCell == 1) {
         *flagCell = 0;
-        Func_02006d42(arg0, 1);
+        Func_0808a100(arg0, 1);
     } else {
-        Func_02006db2(arg0, 0x4000, 30);
-        Func_02006d62(arg0, 3);
-        Func_02006d00(30);
+        Func_0808a1b8(arg0, 0x4000, 30);
+        Func_0808a100(arg0, 3);
+        Func_0808a010(30);
     }
 
     object[0x55] = 3;
@@ -76,8 +67,8 @@ void Func_02002d84(s32 arg0)
     *(u32 *)(object + 12) = 0;
     *(u32 *)(object + 20) = 0;
 
-    Func_02006cb2(object, 1);
-    Func_02006c62(object, 0);
-    Func_02006c6a(object, 1);
-    Func_02006bc8(1);
+    Func_080091e0(object, 1);
+    Func_08009080(object, 0);
+    Func_08009080(object, 1);
+    Func_080000c0(1);
 }

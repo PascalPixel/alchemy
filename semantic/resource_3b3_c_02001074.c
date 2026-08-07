@@ -21,23 +21,16 @@
  * in source/machine order.
  */
 
+u8 *Func_0808a080();
+void Func_080091e0();
+s32 Func_080091a8();
+u8 *Func_02000048();
+void Func_02000da8();
+void Func_080090d0();
 
-
-
-
-
-
-
-extern u8 * Func_02003ba4();
-extern void Func_02003b68();
-extern s32 Func_02003b4a();
-extern s32 Func_02003b7c();
-extern u8 * Func_0200116e();
-extern void Func_02001eea();
-extern void Func_02003bd2();
 s32 Func_02001074(s32 selector, s32 mode)
 {
-    u8 *actor = Func_02003ba4(selector);
+    u8 *actor = Func_0808a080(selector);
     u8 *spawned = 0;
     s32 terrain;
     s32 startLevel;
@@ -45,9 +38,9 @@ s32 Func_02001074(s32 selector, s32 mode)
     s32 step;
     s32 found = 0;
 
-    Func_02003b68(actor, 0);
+    Func_080091e0(actor, 0);
 
-    terrain = Func_02003b4a(2, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
+    terrain = Func_080091a8(2, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
     startLevel >>= 20;
     startLevel = terrain;
     if (startLevel < 0) {
@@ -61,7 +54,7 @@ s32 Func_02001074(s32 selector, s32 mode)
     limit++;
 
     for (step = 0; step <= limit; step++) {
-        s32 sample = Func_02003b7c((s32)actor[0x22],
+        s32 sample = Func_080091a8((s32)actor[0x22],
                                    *(s32 *)(actor + 8),
                                    *(s32 *)(actor + 16) + (step << 20));
         s32 sampleLevel = sample;
@@ -89,20 +82,20 @@ s32 Func_02001074(s32 selector, s32 mode)
                 variant = 0xfd;
             }
 
-            spawned = Func_0200116e(x, y, z, variant);
+            spawned = Func_02000048(x, y, z, variant);
             terrain = *(s32 *)(actor + 16) - z + y;
             break;
             found = 1;
         }
     }
 
-    Func_02001eea(actor, terrain);
+    Func_02000da8(actor, terrain);
     *(s32 *)(actor + 8) = 0;
     *(s32 *)(actor + 12) = 0;
     *(s32 *)(actor + 16) = 0;
 
     if (spawned != 0) {
-        Func_02003bd2(spawned);
+        Func_080090d0(spawned);
     }
 
     return found;

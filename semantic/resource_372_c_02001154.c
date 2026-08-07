@@ -40,56 +40,23 @@
  */
 
 /* Imports, old-style: interfaces unknown. */
+s32 Func_080770c0();
+void Func_0808a018();
+u8 *Func_0808a080();
+void Func_080091f0();
+void Func_080f9010();
+void Func_080000c0();
+void Func_0808a1e0();
+void Func_0808a0f0();
+void Func_0808a0d0();
+void Func_0808a010();
+void Func_080091f8();
+void Func_0808a5e8();
+void Func_080770c8();
+void Func_020012f0();
+void Func_02001a64();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern s32 Func_0200583c();
-extern void Func_02005866();
-extern s32 Func_0200584c();
-extern u8 * Func_020058a6();
-extern u8 * Func_020058ae();
-extern void Func_0200585e();
-extern void Func_02005a5c();
-extern void Func_020057ea();
-extern void Func_02005a68();
-extern void Func_020059c0();
-extern u8 * Func_020058ee();
-extern void Func_02005962();
-extern void Func_02005976();
-extern void Func_020058f4();
-extern void Func_02005aba();
-extern void Func_020058d2();
-extern void Func_020058e0();
-extern void Func_02005acc();
-extern void Func_0200590a();
-extern void Func_02005a32();
-extern u8 * Func_02005960();
-extern void Func_02002538();
-extern void Func_02005932();
-extern s32 Func_02005930();
-extern s32 Func_0200593a();
-extern s32 Func_02005946();
-extern u8 * Func_020059a0();
-extern void Func_02002ce8();
-extern void Func_02005a0a();
-extern void Func_02002cfc();
-extern void Func_02005a1e();
-extern void Func_0200598e();
-extern void Func_020059b2();
 void Func_02001154(void)
 {
     u8 *p;
@@ -100,29 +67,29 @@ void Func_02001154(void)
     u8 *t;
     u8 *rec;
 
-    if (Func_0200583c(0x312) != 0) {
+    if (Func_080770c0(0x312) != 0) {
         return;
     }
 
-    Func_02005866();
+    Func_0808a018();
 
-    if (Func_0200584c(0x832) == 0) {
-        p = Func_020058a6(13);
+    if (Func_080770c0(0x832) == 0) {
+        p = Func_0808a080(13);
         saved = q + 35;
-        q = Func_020058ae(0);
+        q = Func_0808a080(0);
         bits = (*(u8 **)(q + 80))[9];
         held = *saved;
 
-        Func_0200585e(0x40000, 0x40000, 0x10000);  /* 128<<11, 128<<11, 128<<9 */
-        Func_02005a5c(141);
-        Func_020057ea(40);
-        Func_02005a68(145);
-        Func_020059c0(0, 3);
+        Func_080091f0(0x40000, 0x40000, 0x10000);  /* 128<<11, 128<<11, 128<<9 */
+        Func_080f9010(141);
+        Func_080000c0(40);
+        Func_080f9010(145);
+        Func_0808a1e0(0, 3);
 
-        t = Func_020058ee(0);
+        t = Func_0808a080(0);
         t[35] |= 2;
 
-        Func_02005962(13, 0, 0x2bf0000);
+        Func_0808a0f0(13, 0, 0x2bf0000);
 
         *(s32 *)(p + 12) += 0x500000;              /* 160 << 15 */
         *(s32 *)(p + 60) = *(s32 *)(p + 12);
@@ -130,40 +97,40 @@ void Func_02001154(void)
         *(s32 *)(p + 48) = 0x18000;                /* 192 << 9 */
         *(s32 *)(p + 52) = 0x18000;
 
-        Func_02005976(13, 64, 0x2bf);
-        Func_020058f4(40);
-        Func_02005aba(0x121);
+        Func_0808a0d0(13, 64, 0x2bf);
+        Func_0808a010(40);
+        Func_080f9010(0x121);
 
         /* (bits << 28) >> 30 in the original: bits 2-3 of the byte. */
         bits = (bits >> 2) & 3;
-        Func_020058d2(-1, -1, 0xe666);
+        Func_080091f0(-1, -1, 0xe666);
 
-        Func_020058e0();
-        Func_02005acc();
-        Func_0200590a(0x832);
-        Func_02005a32(0, bits);
+        Func_080091f8();
+        Func_0808a5e8();
+        Func_080770c8(0x832);
+        Func_0808a1e0(0, bits);
 
-        t = Func_02005960(0);
+        t = Func_0808a080(0);
         t[35] |= 1;
 
         *saved = held;
     }
 
-    Func_02002538();
-    Func_02005932(0x312);
+    Func_020012f0();
+    Func_080770c8(0x312);
 
-    if (Func_02005930(0x837) != 0 && Func_0200593a(0x841) == 0 &&
-        Func_02005946(0x30c) == 0) {               /* 195 << 2 */
-        rec = Func_020059a0(0);
+    if (Func_080770c0(0x837) != 0 && Func_080770c0(0x841) == 0 &&
+        Func_080770c0(0x30c) == 0) {               /* 195 << 2 */
+        rec = Func_0808a080(0);
         if (*(s32 *)(rec + 16) > 0x02b4ffff) {     /* signed */
-            Func_02002ce8(75, 0x2cb);
-            Func_02005a0a(0, 67, 0x2f5);
+            Func_02001a64(75, 0x2cb);
+            Func_0808a0d0(0, 67, 0x2f5);
         } else {
-            Func_02002cfc(62, 0x29d);
+            Func_02001a64(62, 0x29d);
         }
-            Func_02005a1e(0, 27, 0x273);
-        Func_0200598e(0x30c);
+            Func_0808a0d0(0, 27, 0x273);
+        Func_080770c8(0x30c);
     }
 
-    Func_020059b2();
+    Func_0808a020();
 }

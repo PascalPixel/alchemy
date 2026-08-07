@@ -39,31 +39,24 @@
  * its role as the skip gate.
  */
 
-
-
-
-
-
-
-
+extern void Func_0808a018(void);
+extern void Func_0808a020(void);
+extern s32 Func_0808a070(s32 arg0, s32 arg1);
+extern void Func_0808a150(s32 id, s32 arg1, s32 arg2);
+extern void Func_0808a170(s32 dialogueId);
+extern void Func_0808a178(s32 id, s32 arg1);
+extern void Func_0808a180(s32 id, s32 arg1);
 
 extern u8 *Data_03001ebc;
 
-extern void Func_020032b4(void);
-extern void Func_0200334e(s32 id, s32 arg1, s32 arg2);
-extern void Func_02003364(s32 dialogueId);
-extern void Func_02003374(s32 id, s32 arg1);
-extern s32 Func_020032e4(s32 arg0, s32 arg1);
-extern void Func_020033a0(s32 id, s32 arg1);
-extern void Func_020032fc(void);
 void Func_020006bc(void)
 {
-    Func_020032b4();
-    Func_0200334e(8, 0, 20);
-    Func_02003364(0x2125);
-    Func_02003374(8, 0);
-    if (Func_020032e4(0, 0))
+    Func_0808a018();
+    Func_0808a150(8, 0, 20);
+    Func_0808a170(0x2125);
+    Func_0808a178(8, 0);
+    if (Func_0808a070(0, 0))
         *(u16 *)(Data_03001ebc + 472) += 1;
-    Func_020033a0(8, 0);
-    Func_020032fc();
+    Func_0808a180(8, 0);
+    Func_0808a020();
 }

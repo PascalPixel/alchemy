@@ -35,80 +35,63 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-    /* test a story flag (used in a condition) */
-   /* set a story flag */
-   /* clear a story flag */
-   /* six-argument presentation request, last two on the stack */
-    /* scene entity record by selector */
-   /* place a slot at a 16.16 position */
-   /* set a slot's presentation mode */
+s32 Func_080770c0();    /* test a story flag (used in a condition) */
+void Func_080770c8();   /* set a story flag */
+void Func_080770d0();   /* clear a story flag */
+void Func_080091c0();   /* six-argument presentation request, last two on the stack */
+u8 *Func_0808a080();    /* scene entity record by selector */
+void Func_0808a0f0();   /* place a slot at a 16.16 position */
+void Func_0808a100();   /* set a slot's presentation mode */
 
 extern s16 Data_02000240[];
 
-extern s32 Func_020009a8();
-extern s32 Func_020009da();
-extern void Func_02000a58();
-extern s32 Func_020009fc();
-extern s32 Func_02000a16();
-extern void Func_02000a40();
-extern void Func_02000a4e();
-extern s32 Func_02000a4c();
-extern void Func_02000a54();
-extern void Func_02000a80();
-extern void Func_02000b00();
-extern void Func_02000b08();
-extern void Func_02000b10();
-extern void Func_02000b18();
-extern void Func_02000b20();
-extern u8 * Func_02000ae6();
-extern void Func_02000ab6();
 s32 Func_02000124(void)
 {
     s16 scene;
     u8 *record;
 
-    if (Func_020009a8(0x89f) != 0) {
+    if (Func_080770c0(0x89f) != 0) {
         Data_02000240[226] = 0x69;
         Data_02000240[227] = 10;
     }
 
     if (scene == 0xa9) {
-        if (Func_020009da(0x897) != 0) {
-            Func_02000a58(10, 0, 0);
+        if (Func_080770c0(0x897) != 0) {
+            Func_0808a0f0(10, 0, 0);
         }
 
         if (Data_02000240[225] == 3) {
-            if (Func_020009fc(0x8fb) != 0) {
+            if (Func_080770c0(0x8fb) != 0) {
                 Data_02000240[288] = scene;
                 Data_02000240[289] = 1;
             }
-            if (Func_02000a16(0x8fc) != 0) {
+            if (Func_080770c0(0x8fc) != 0) {
                 Data_02000240[288] = scene;
                 Data_02000240[289] = 5;
             }
-            Func_02000a40(0x12f);
+            Func_080770d0(0x12f);
         }
 
         if (Data_02000240[225] == 1) {
-            Func_02000a4e(0x8fb);
-            if (Func_02000a4c(0x96f) == 0) {
-                Func_02000a54(6, 0, 2, 1, 8, 27);
+            Func_080770c8(0x8fb);
+            if (Func_080770c0(0x96f) == 0) {
+                Func_080091c0(6, 0, 2, 1, 8, 27);
             }
         }
 
         if (Data_02000240[225] == 5) {
-            Func_02000a80(0x8fc);
+            Func_080770c8(0x8fc);
         }
     } else if (scene == 0xaa) {
-        Func_02000b00(8, 4);
-        Func_02000b08(9, 4);
-        Func_02000b10(10, 3);
-        Func_02000b18(11, 4);
-        Func_02000b20(12, 3);
+        Func_0808a100(8, 4);
+        Func_0808a100(9, 4);
+        Func_0808a100(10, 3);
+        Func_0808a100(11, 4);
+        Func_0808a100(12, 3);
 
-        record = Func_02000ae6(15);
+        record = Func_0808a080(15);
         *(s32 *)(record + 28) = 0x19999;
-        Func_02000ab6(108, 38, 1, 1, 102, 56);
+        Func_080091c0(108, 38, 1, 1, 102, 56);
     }
     scene = Data_02000240[224];
 

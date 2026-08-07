@@ -16,23 +16,14 @@
 
 extern u8 Data_02000240[];
 
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_0808a148();
+void Func_08015118();
+void Func_08015120();
+void Func_0808a170();
+void Func_0808a180();
 
-
-
-
-
-
-
-
-extern u8 * Func_020025d0();
-extern void Func_020025be();
-extern void Func_02002608();
-extern void Func_020025a0();
-extern void Func_020025b0();
-extern void Func_02002650();
-extern void Func_02002668();
-extern void Func_02002660();
-extern void Func_02002678();
 void Func_02000d68(s32 selector)
 {
     u8 *actor;
@@ -41,11 +32,11 @@ void Func_02000d68(s32 selector)
     s32 firstRange;
     s32 message;
 
-    actor = Func_020025d0(0);
+    actor = Func_0808a080(0);
     heading = *(u16 *)(actor + 6);
 
-    Func_020025be();
-    Func_02002608(selector, *(s32 *)&Data_02000240[500], 0);
+    Func_0808a018();
+    Func_0808a148(selector, *(s32 *)&Data_02000240[500], 0);
 
     firstRange = (u32)(heading - 0xa001) <= 0x3ffe;
     if (firstRange) {
@@ -58,17 +49,17 @@ void Func_02000d68(s32 selector)
 
     if (firstRange || *slot != 0) {
         if (*slot != 0) {
-            Func_020025a0();
-            Func_020025b0(*slot, 5);
+            Func_08015118();
+            Func_08015120(*slot, 5);
             message++;
         } else {
             message = 0x2988;
         }
 
-        Func_02002650(message);
-        Func_02002668(selector, 0);
+        Func_0808a170(message);
+        Func_0808a180(selector, 0);
     } else {
-        Func_02002660(0x2989);
-        Func_02002678(selector, 0);
+        Func_0808a170(0x2989);
+        Func_0808a180(selector, 0);
     }
 }

@@ -121,9 +121,9 @@ s32 Func_02000860(void)
 {
     u16 *workspace = *(u16 **)0x03001ebc;
     u16 *phase = (u16 *)((u32)workspace + 386);
-    s32 aborted;
-    s32 cueHandle;
-    s32 idle;
+    s32 aborted = 0;
+    s32 cueHandle = 0;
+    s32 idle = 0;
     s32 stop;
     s32 gate;
     u8 *payload;
@@ -153,7 +153,6 @@ abortTransfer:
     Func_080770d0(0x201);
     Func_080770d0(0x202);
     Func_02000128(4);
-    aborted = 0;
     aborted = 1;
     Func_080770d0(512);
     goto transferWaitComplete;
@@ -164,7 +163,6 @@ beginTransferWait:
     Func_02000128(2);
 
     if (Func_0200008c(2) == 0) {
-        cueHandle = 0;
         cueHandle = Func_08015038(0x2928, 5, 4, 1);
     }
 
@@ -182,7 +180,6 @@ waitForTransfer:
     }
 
     if (Func_0200008c(2) != 0 || Func_0200008c(1) != 0) {
-        idle = 0;
         idle = 0;
     } else {
         idle++;

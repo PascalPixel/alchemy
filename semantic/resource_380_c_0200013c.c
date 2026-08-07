@@ -26,42 +26,32 @@
  * layout (+12 rate divisor) and object layout are named positionally.
  */
 
+extern s32 Func_03000380(s32 delta, s32 rate);
+extern void Func_08009080(s32 object, s32 animation);
+extern void Func_08009098(s32 object, s32 descriptor);
+extern s32 Func_080090c8(s32 template_id, s32 a0, s32 a1, s32 a2);
+extern s32 Func_0808a080(s32 arg0);
+extern s32 Func_0808a160(s32 object, s32 link);
 
-
-
-
-
-
-
-extern s32 Func_02004b1a(s32 arg0);
-extern s32 Func_02004a48(s32 template_id, s32 a0, s32 a1, s32 a2);
-extern void Func_02004a52(s32 object, s32 animation);
-extern void Func_02004a6c(s32 object, s32 descriptor);
-extern s32 Func_02004c66(s32 object, s32 link);
-extern s32 Func_02004ad0(s32 delta, s32 rate);
-extern s32 Func_02004ae8(s32 delta, s32 rate);
-extern s32 Func_02004af6(s32 delta, s32 rate);
-extern void Func_02004b6c(s32 object, s32 animation);
-extern void Func_02004b7c(s32 object, s32 descriptor);
 void Func_0200013c(
     s32 a0, s32 a1, s32 a2, s32 a3,
     s32 a4, s32 a5, u32 flags, u8 *params)
 {
     s32 template_id = 222;
-    s32 reference = Func_02004b1a(0);
+    s32 reference = Func_0808a080(0);
     s32 object;
     s32 slot = (flags & 15) * 4;
     u8 *record;
 
     if ((flags & 0x100000) && params != 0)
         template_id = *(s16 *)(params + 24);
-    object = Func_02004a48(template_id, a0, a1, a2);
+    object = Func_080090c8(template_id, a0, a1, a2);
     if (object == 0)
         return;
 
-    Func_02004a52(object, (flags + 1) & 15);
+    Func_08009080(object, (flags + 1) & 15);
     *(u8 *)(object + 85) = 0;
-    Func_02004a6c(object, *(s32 *)(0x0200cbc4 + slot));
+    Func_08009098(object, *(s32 *)(0x0200cbc4 + slot));
     record[38] = 0;
     *(s32 *)(object + 108) = 0x02008105;
     record = *(u8 **)(object + 80);
@@ -80,7 +70,7 @@ void Func_0200013c(
         return;
 
     if (flags & 0x10000)
-        Func_02004c66(object, *(s32 *)(params + 4));
+        Func_0808a160(object, *(s32 *)(params + 4));
     if (flags & 0x20000) {
         *(u8 *)(object + 35) &= 0xfe;
         record[9] = (record[9] & ~13) | ((params[0] & 3) << 2);
@@ -99,19 +89,19 @@ void Func_0200013c(
          * different callees here, and the earlier draft duplicated the
          * shared tail call once per arm; both are corrected in this pass. */
         if (flags & 0x80000) {
-            *(s32 *)(object + 48) = Func_02004ad0(
+            *(s32 *)(object + 48) = Func_03000380(
                 *(s32 *)(params + 16) - *(s32 *)(object + 24), rate);
             second = *(s32 *)(params + 20) - *(s32 *)(object + 28);
         } else {
-            *(s32 *)(object + 48) = Func_02004ae8(
+            *(s32 *)(object + 48) = Func_03000380(
                 *(s32 *)(params + 16) + 0xffff0000, rate);
             second = *(s32 *)(params + 20) + 0xffff0000;
         }
-        *(s32 *)(object + 52) = Func_02004af6(second, rate);
+        *(s32 *)(object + 52) = Func_03000380(second, rate);
     }
     if (flags & 0x200000) {
-        Func_02004b6c(object, 1);
-        Func_02004b7c(object, *(s32 *)(params + 28));
+        Func_08009080(object, 1);
+        Func_08009098(object, *(s32 *)(params + 28));
     }
     if (flags & 0x400000)
         *(u16 *)(record + 30) = *(u16 *)(params + 32);

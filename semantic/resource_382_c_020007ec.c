@@ -1,30 +1,22 @@
 #include "types.h"
-  
-  
- 
+extern u8 *Func_0808a080(int); extern void Func_0808a018(void); extern void Func_0808a170(int);
+extern void Func_0808a100(int,int); extern void Func_0200173c(int,int,int); extern void Func_02001724(int,int);
+extern void Func_080000c0(int); extern void Func_0808a020(void);
 
-extern u8 * Func_020021d6(int);
-extern void Func_020021c6(void);
-extern void Func_02002264(int);
-extern void Func_0200223c(int,int);
-extern void Func_02001f62(int,int,int);
-extern void Func_02001f52(int,int);
-extern void Func_02002148(int);
-extern void Func_020021fc(void);
 void Func_020007ec(void)
 {
-    u8 *actor = Func_020021d6(14);
+    u8 *actor = Func_0808a080(14);
     s16 facing = *(s16 *)(actor + 6);
     u16 *state = (u16 *)(actor + 100);
 
     *state |= 2;
-    Func_020021c6();
-    Func_02002264(0x122c);
-    Func_0200223c(14, 0);
-    Func_02001f62(14, 0, 2);
-    Func_02001f52(14, 10);
+    Func_0808a018();
+    Func_0808a170(0x122c);
+    Func_0808a100(14, 0);
+    Func_0200173c(14, 0, 2);
+    Func_02001724(14, 10);
     *(s16 *)(actor + 6) = facing;
-    Func_02002148(1);
-    Func_020021fc();
+    Func_080000c0(1);
+    Func_0808a020();
     *state &= 1;
 }

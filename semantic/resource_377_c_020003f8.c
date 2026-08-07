@@ -56,95 +56,63 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+void Func_0808a0f0();
+void Func_020013b4();
+void Func_0808a1e0();
+s32 Func_0808a080();
+void Func_080091e0();
+void Func_08009188();
+void Func_0808a100();
+void Func_02000a0c();
+void Func_02000578();
+void Func_020013e4();
+void Func_0808a2c8();
+void Func_0808a2d8();
+void Func_080000c0();
+void Func_0808a360();
+void Func_0808a370();
+void Func_0808a2e0();
+void Func_08009128();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern void Func_02001d0a();
-extern s32 Func_02001d10();
-extern void Func_02001da6();
-extern void Func_02001db0();
-extern void Func_02001dba();
-extern void Func_02001dc4();
-extern void Func_02001dce();
-extern void Func_02001dd8();
-extern void Func_0200181e();
-extern void Func_02001e6e();
-extern s32 Func_02001d64();
-extern void Func_02001dae();
-extern s32 Func_02001d2c();
-extern s32 Func_02001d90();
-extern s32 Func_02001d9a();
-extern void Func_02001d3c();
-extern void Func_02001d44();
-extern void Func_02001df2();
-extern s32 Func_02001d70();
-extern void Func_02001e50();
-extern void Func_02000ef6();
-extern void Func_02001dea();
-extern void Func_02000a72();
-extern void Func_020018e8();
-extern s32 Func_02001e06();
-extern void Func_02001f5e();
-extern void Func_02001f7c();
-extern void Func_02001d4a();
-extern void Func_02001f96();
-extern void Func_02001faa();
-extern void Func_02001db4();
-extern void Func_02001d62();
 s32 Func_020003f8(void)
 {
     s16 scene;
 
     if (Data_02000240[225] == 19) {
-        Func_02001d0a(0x12F);
+        Func_080770d0(0x12F);
         *(s32 *)(Data_03001ebc + 448) = 521;
         return 0;
     }
 
-    if (Func_02001d10(0x834) != 0) {
-        Func_02001da6(11, 0, 0);
-        Func_02001db0(12, 0, 0);
-        Func_02001dba(13, 0, 0);
-        Func_02001dc4(14, 0, 0);
-        Func_02001dce(15, 0, 0);
-        Func_02001dd8(16, 0, 0);
+    if (Func_080770c0(0x834) != 0) {
+        Func_0808a0f0(11, 0, 0);
+        Func_0808a0f0(12, 0, 0);
+        Func_0808a0f0(13, 0, 0);
+        Func_0808a0f0(14, 0, 0);
+        Func_0808a0f0(15, 0, 0);
+        Func_0808a0f0(16, 0, 0);
     } else {
-        Func_0200181e();
+        Func_020013b4();
     }
 
-    Func_02001e6e(13, 1);
+    Func_0808a1e0(13, 1);
 
-    if (Func_02001d64(0x87A) != 0) {
-        Func_02001dae(Func_02001d2c(17), 0);
+    if (Func_080770c0(0x87A) != 0) {
+        Func_080091e0(Func_0808a080(17), 0);
 
         /* selector 6 or 7 only; see the unsigned compare noted above */
         if ((u16)((u16)Data_02000240[225] - 6) <= 1) {
-            if (Func_02001d90(0x109) != 0) {
-                if (Func_02001d9a(0x203) != 0) {
-                    Func_02001d3c(12);
+            if (Func_080770c0(0x109) != 0) {
+                if (Func_080770c0(0x203) != 0) {
+                    Func_08009188(12);
                 }
             } else {
-                Func_02001d44(11);
-                Func_02001df2(Func_02001d70(8), 0);
-                Func_02001e50(8, 10);
+                Func_08009188(11);
+                Func_080091e0(Func_0808a080(8), 0);
+                Func_0808a100(8, 10);
             }
         }
         return 0;
@@ -152,25 +120,25 @@ s32 Func_020003f8(void)
 
     scene = Data_02000240[225];
     if (scene == 21) {
-        Func_02000ef6();
+        Func_02000a0c();
     } else if (scene == 20) {
-        Func_02001dea(0x834);
-        Func_02000a72();
+        Func_080770c8(0x834);
+        Func_02000578();
     } else if (scene == 22) {
-        Func_020018e8();
+        Func_020013e4();
     } else {
         *(s32 *)(Data_03001ebc + 448) = 521;
-        if (Func_02001e06(0x834) != 0) {
-            Func_02001f5e();
+        if (Func_080770c0(0x834) != 0) {
+            Func_0808a2c8();
             *(u16 *)(((u8 **)&Data_03001ebc)[3] + 0x1F84) = 1;
-            Func_02001f7c();
-            Func_02001d4a(30);
-            Func_02001f96();
-            Func_02001faa();
-            Func_02001f96();
+            Func_0808a2d8();
+            Func_080000c0(30);
+            Func_0808a360();
+            Func_0808a370();
+            Func_0808a2e0();
         } else {
-            Func_02001db4();
-            Func_02001d62(1);
+            Func_08009128();
+            Func_080000c0(1);
         }
     }
 

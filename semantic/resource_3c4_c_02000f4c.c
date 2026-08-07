@@ -48,18 +48,13 @@
 
 extern s32 Data_03001e40;
 
-
-
-
+void Func_02000ae8();
+unsigned int Func_080000f8();
+void Func_08009080();
 
 /* This overlay's effect spawner: four register arguments plus four stack
  * words - (x, y, z, vx, vy, vz, flags, options). */
 
-extern void Func_02003fba();
-extern void Func_02003fc4();
-extern unsigned int Func_02003fc2();
-extern unsigned int Func_02003fd6();
-extern void Func_02001ab4();
 s32 Func_02000f4c(u8 *subject)
 {
     u8 options[40];        /* sp+16 */
@@ -69,9 +64,9 @@ s32 Func_02000f4c(u8 *subject)
     s32 z;
 
     if ((Data_03001e40 & 2) != 0) {
-        Func_02003fba(subject, 1);
+        Func_08009080(subject, 1);
     } else {
-        Func_02003fc4(subject, 2);
+        Func_08009080(subject, 2);
     }
 
     /* Re-read: the state word is loaded a second time through the same pool
@@ -90,10 +85,10 @@ s32 Func_02000f4c(u8 *subject)
      * -3 bias regardless of the sign of the helper's result. */
     y = *(s32 *)(subject + 12) + 0x100000;   /* 128 << 13, one unit up */
     x = *(s32 *)(subject + 8)
-        + ((s32)(((Func_02003fc2() * 7u) >> 16) - 3u) << 16);
+        + ((s32)(((Func_080000f8() * 7u) >> 16) - 3u) << 16);
     z = *(s32 *)(subject + 16)
-        + ((s32)(((Func_02003fd6() * 7u) >> 16) - 3u) << 16);
+        + ((s32)(((Func_080000f8() * 7u) >> 16) - 3u) << 16);
 
-    Func_02001ab4(x, y, z, 0, zero, zero, 0x00090001, options);
+    Func_02000ae8(x, y, z, 0, zero, zero, 0x00090001, options);
     return 0;
 }

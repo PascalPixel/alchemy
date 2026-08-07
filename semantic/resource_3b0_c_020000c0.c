@@ -56,12 +56,8 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-            /* sampled value */
+s32 Func_080000f8();            /* sampled value */
 
-extern s32 Func_020012a0();
-extern s32 Func_020012b8();
-extern s32 Func_020012fa();
-extern s32 Func_02001314();
 s32 Func_020000c0(u8 *object)
 {
     s16 *xState = (s16 *)(object + 100);
@@ -71,14 +67,14 @@ s32 Func_020000c0(u8 *object)
 
     if (*xState == 9) {
     } else if (*xState != 0) {
-        x = *(s32 *)(object + 76) - (s32)((u32)(Func_020012a0() << 11) >> 16);
+        x = *(s32 *)(object + 76) - (s32)((u32)(Func_080000f8() << 11) >> 16);
         *(s32 *)(object + 76) = x;
         *(s32 *)(object + 76) = 0;
         if (x < (s32)0xffff4000) {
             *xState = 0;
         }
     } else {
-        x = *(s32 *)(object + 76) + (s32)((u32)(Func_020012b8() << 11) >> 16);
+        x = *(s32 *)(object + 76) + (s32)((u32)(Func_080000f8() << 11) >> 16);
         *(s32 *)(object + 76) = x;
         if (x > 0xc000) {                       /* 192 << 8 */
             *xState = 1;
@@ -94,14 +90,14 @@ s32 Func_020000c0(u8 *object)
         *(s32 *)(object + 12) = 0;
     } else if (*zState != 0) {
         z = *(s32 *)(object + 12) -
-            (s32)((u32)((Func_020012fa() * 3) << 14) >> 16);
+            (s32)((u32)((Func_080000f8() * 3) << 14) >> 16);
         *(s32 *)(object + 12) = z;
         if (z < 0) {
             *zState = 0;
         }
     } else {
         z = *(s32 *)(object + 12) +
-            (s32)((u32)((Func_02001314() * 3) << 14) >> 16);
+            (s32)((u32)((Func_080000f8() * 3) << 14) >> 16);
         *(s32 *)(object + 12) = z;
         if (z > 0x00100000) {                   /* 128 << 13 */
             *zState = 1;

@@ -47,61 +47,44 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-                 /* read an event flag */
-                /* clear an event flag */
-                /* place/aim the camera at a point */
-                /* three-argument presentation call */
-                /* three-argument presentation call */
+s32 Func_080770c0();                 /* read an event flag */
+void Func_080770d0();                /* clear an event flag */
+void Func_0808a0f0();                /* place/aim the camera at a point */
+void Func_0808a168();                /* three-argument presentation call */
+void Func_0808a1b8();                /* three-argument presentation call */
 
-    /* this overlay, 0x02000974 */
-            /* this overlay, 0x020005dc */
+void Func_02000974(s32 selector);    /* this overlay, 0x02000974 */
+void Func_020005dc(void);            /* this overlay, 0x020005dc */
 
-extern s32 Func_02000fc6();
-extern void Func_02000fe2();
-extern s32 Func_02000fd8();
-extern void Func_02000ea2(s32 selector);
-extern s32 Func_02000fe8();
-extern void Func_02001068();
-extern void Func_02001074();
-extern s32 Func_0200100a();
-extern s32 Func_02001014();
-extern void Func_02001092();
-extern void Func_020010c6();
-extern s32 Func_02001034();
-extern void Func_020010b6();
-extern void Func_0200111a();
-extern void Func_02001124();
-extern s32 Func_02001062();
-extern void Func_02000b92(void);
 void Func_0200050c(void)
 {
-    if (Func_02000fc6(0x109) != 0) {
-        Func_02000fe2(512);                             /* 128 << 2 */
+    if (Func_080770c0(0x109) != 0) {
+        Func_080770d0(512);                             /* 128 << 2 */
     }
 
-    if (Func_02000fd8(0xfd2) == 0) {
-        Func_02000ea2(13);
+    if (Func_080770c0(0xfd2) == 0) {
+        Func_02000974(13);
     }
 
-    if (Func_02000fe8(0x84a) != 0) {
-        Func_02001068(11, 0x01340000, 0x01070000);      /* 154 << 17 */
-        Func_02001074(12, 0x015a0000, 0x01070000);      /* 173 << 17 */
+    if (Func_080770c0(0x84a) != 0) {
+        Func_0808a0f0(11, 0x01340000, 0x01070000);      /* 154 << 17 */
+        Func_0808a0f0(12, 0x015a0000, 0x01070000);      /* 173 << 17 */
 
-        if (Func_0200100a(0x84f) == 0 && Func_02001014(0x845) == 0) {
-            Func_02001092(11, 0, 0);
+        if (Func_080770c0(0x84f) == 0 && Func_080770c0(0x845) == 0) {
+            Func_0808a0f0(11, 0, 0);
             /* 0x02008bf4 = in-image data at file offset 0x0bf4. */
-            Func_020010c6(12, 0x00010000, (void *)0x02008bf4);
+            Func_0808a168(12, 0x00010000, (void *)0x02008bf4);
         }
     }
 
     /* A second, independent query of flag 0x845. */
-    if (Func_02001034(0x845) != 0) {
-        Func_020010b6(10, 0x00e00000, 0x01240000);      /* 224 << 16, 146 << 17 */
-        Func_0200111a(10, 0x00004000, 0);               /* 128 << 7 */
-        Func_02001124(8, 0, 0);
+    if (Func_080770c0(0x845) != 0) {
+        Func_0808a0f0(10, 0x00e00000, 0x01240000);      /* 224 << 16, 146 << 17 */
+        Func_0808a1b8(10, 0x00004000, 0);               /* 128 << 7 */
+        Func_0808a1b8(8, 0, 0);
 
-        if (Func_02001062(0x85e) == 0) {
-            Func_02000b92();
+        if (Func_080770c0(0x85e) == 0) {
+            Func_020005dc();
         }
     }
 }

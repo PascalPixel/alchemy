@@ -62,75 +62,62 @@
 extern s32 Data_03001e40;       /* the free-running frame counter */
 extern s16 Data_0200c01c[];     /* image offset 0x401c, handed to Func_08009098 */
 
+extern s32 Func_030003e0(s32 value, s32 divisor);
+extern s32 Func_080000f8(void);
+extern u8 *Func_080090c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_080f9010(s32 sound_id);
+extern void Func_080091e0(u8 *record, s32 arg1);
+extern void Func_08009080(u8 *record, s32 arg1);
+extern void Func_08009098(u8 *record, s16 *descriptor);
 
-
-
-
-
-
-
-
-extern s32 Func_0200665a(s32 value, s32 divisor);
-extern u8 * Func_02006682(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern s32 Func_020066ec(void);
-extern s32 Func_0200668a(s32 value, s32 divisor);
-extern s32 Func_020066b2(void);
-extern void Func_02006950(s32 sound_id);
-extern void Func_02006958(s32 sound_id);
-extern s32 Func_020066d4(void);
-extern void Func_02006794(u8 *record, s32 arg1);
-extern void Func_02006758(u8 *record, s32 arg1);
-extern void Func_02006768(u8 *record, s16 *descriptor);
-extern s32 Func_02006724(void);
-extern s32 Func_0200673c(void);
 void Func_02002be0(void)
 {
     u8 *record;
     u8 *handle;
     s32 spread;
 
-    if (Func_0200665a(Data_03001e40, 3) != 0) {
+    if (Func_030003e0(Data_03001e40, 3) != 0) {
         return;
     }
 
-    record = Func_02006682(
+    record = Func_080090c8(
         200,
-        (s32)(((u32)(Func_020066ec() * 3 << 4) >> 16) << 16) + 0x02fd0000,
+        (s32)(((u32)(Func_080000f8() * 3 << 4) >> 16) << 16) + 0x02fd0000,
         0xffc00000,
         152 << 18);
     if (record == 0) {
         return;
     }
 
-    if (Func_0200668a(Data_03001e40, 9) == 0) {
-        if (((u32)(Func_020066b2() << 1) >> 16) != 0) {
-            Func_02006950(145);
+    if (Func_030003e0(Data_03001e40, 9) == 0) {
+        if (((u32)(Func_080000f8() << 1) >> 16) != 0) {
+            Func_080f9010(145);
         } else {
-            Func_02006958(144);
+            Func_080f9010(144);
         }
     }
 
     record[85] = 0;
 
-    spread = (s32)((u32)(Func_020066d4() << 15) >> 16) + 0x4ccc;
+    spread = (s32)((u32)(Func_080000f8() << 15) >> 16) + 0x4ccc;
     *(s32 *)(record + 72) = 0x6666;
     *(s32 *)(record + 28) = spread;
     *(s32 *)(record + 24) = spread;
     record[97] = 1;
 
-    Func_02006794(record, 0);
+    Func_080091e0(record, 0);
 
     record[35] = (u8)(record[35] & 0xfe);
 
     handle[9] = (u8)((handle[9] & ~0x0c) | 0x04);
     handle = *(u8 **)(record + 80);
 
-    Func_02006758(record, 1);
-    Func_02006768(record, Data_0200c01c);
+    Func_08009080(record, 1);
+    Func_08009098(record, Data_0200c01c);
 
     *(s32 *)(record + 36) =
-        (s32)(((u32)(Func_02006724() * 3 << 1) >> 16) - 3) << 16;
+        (s32)(((u32)(Func_080000f8() * 3 << 1) >> 16) - 3) << 16;
     *(s32 *)(record + 44) =
-        (s32)((u32)(Func_0200673c() * 3 << 9) >> 16) + (s32)0xfffffd00;
+        (s32)((u32)(Func_080000f8() * 3 << 9) >> 16) + (s32)0xfffffd00;
     *(s32 *)(record + 40) = 128 << 12;
 }

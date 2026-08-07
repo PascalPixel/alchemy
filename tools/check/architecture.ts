@@ -31,7 +31,12 @@ export function modules(read: (path: string) => string, list: (path: string) => 
     // Skip anything that is not a folder: a loose script at the top of tools/
     // is not a tool, and three of them were dead when this check was written.
     if (entry.includes(".")) continue;
-    for (const file of list(entry)) {
+    const files = list(entry);
+    // A folder is a tool only if it has an index.ts. Untracked build output
+    // lands under tools/ in some worktrees, and counting it as an undocumented
+    // tool failed the gate for a directory that is not ours.
+    if (!files.includes("index.ts") && entry !== LIBRARY) continue;
+    for (const file of files) {
       if (file.endsWith(".ts")) {
         found.push({ tool: entry, name: file.slice(0, -3), source: read(`${entry}/${file}`) });
       }
@@ -144,6 +149,14 @@ function selfTest(): void {
     (path) => (path === "" ? ["overlay", "verify.ts"] : ["index.ts"]),
   );
   if (listed.length !== 2) throw new Error(`modules() found ${listed.length}`);
+  // A folder with no index.ts is untracked build output, not a tool.
+  const withStray = modules(
+    () => "",
+    (path) => (path === "" ? ["overlay", "gcc296"] : path === "gcc296" ? ["cc1.ts"] : ["index.ts"]),
+  );
+  if (withStray.some((module) => module.tool === "gcc296")) {
+    throw new Error("a folder without index.ts must not count as a tool");
+  }
   console.log("architecture self-test ok");
 }
 

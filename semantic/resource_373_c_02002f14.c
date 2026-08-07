@@ -47,7 +47,7 @@
  * The byte-exact assets/code/resource_373_c_02000eb4.c reads the same u16 at
  * +0x1d8 through the same pointer. */
 #define RESOURCE_373_SCENE (*(u8 *volatile *)0x03001ebc)
-#define RESOURCE_373_SCENE_COUNTER (*(u16 *)(RESOURCE_373_SCENE + 0x1d8))
+#define RESOURCE_373_SCENE_COUNTER ((u16 *)(RESOURCE_373_SCENE + 0x1d8))
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * legitimately take different argument counts at different sites. */
@@ -184,8 +184,11 @@ void Func_02002f14(void)
      * mirror of the `== 1` test the sibling owner uses. */
     if (Func_020090aa(0, 0) == 0) {
         Func_020091a0(1, 0x105, 60);
-        RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
     } else {
+        /* One volatile read of the scene pointer, not two: the reference keeps
+         * the computed address in r2 and does ldrh/adds/strh through it. */
+        u16 *counter = RESOURCE_373_SCENE_COUNTER;
+        *counter = (u16)(*counter + 1);
     }
 
     Func_02009194(1, 0, 20);

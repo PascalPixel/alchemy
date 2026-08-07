@@ -117,11 +117,11 @@ export function align(insns: readonly RtlInsn[], instructions: readonly Instruct
 
 function selfTest(): void {
   const aluInsn = (uid: number, destReg: number): RtlInsn => ({
-    uid, kind: "insn", code: "set", callTarget: null, raw: "",
+    uid, kind: "insn", code: "set", callTarget: null, raw: "", dependencies: [],
     set: { dest: { kind: "reg", number: destReg, name: `r${destReg}` }, src: { kind: "unknown", raw: "" } },
   });
   const callInsn = (uid: number): RtlInsn =>
-    ({ uid, kind: "call_insn", code: "parallel", set: null, callTarget: { kind: "unknown", raw: "" }, raw: "" });
+    ({ uid, kind: "call_insn", code: "parallel", set: null, callTarget: { kind: "unknown", raw: "", dependencies: [] }, raw: "" });
   const instr = (offset: number, mnemonic: string, destReg: number | null): Instruction => ({
     offset, mnemonic, raw: "",
     operands: destReg === null ? [] : [{ kind: "reg", name: `r${destReg}`, number: destReg, writeback: false }],

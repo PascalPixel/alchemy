@@ -357,7 +357,7 @@ function buildAnimations(index: CharacterCatalogJson): {
     const labelIndexes = new Set<number>();
     for (const label of group.labels) {
       // Tuple schema: [name, command].
-      const [labelName, labelCommand] = label as [string, number];
+      const [labelName, labelCommand] = label as unknown as [string, number];
       const command = bounded(labelCommand, 0, group.commands.length - 1, "animation label command");
       if (labelIndexes.has(command)) throw new Error(`duplicate command label in ${group.name}`);
       labelIndexes.add(command);

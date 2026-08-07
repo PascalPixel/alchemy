@@ -83,6 +83,9 @@ export const FORK_MODES = [
   // stack decrement's scheduling priority so incoming-argument copies issue
   // ahead of `sub sp, #N'. Witness 080b0744.
   "-fthumb-late-frame-allocation",
+  // 2026-08-07: the r0-value twin of -fthumb-group-control-last. Witness
+  // 0801a4fc.
+  "-fthumb-group-pooled-control-last",
 ] as const;
 
 export const STOCK_SWITCHES = [

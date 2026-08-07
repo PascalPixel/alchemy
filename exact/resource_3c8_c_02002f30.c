@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-swap-shifts-across-insn: the
+ * last residual was the pair of shifts at 0x02002f64, which the reference
+ * issues newest-input first -- `lsls r2' before `lsls r0' -- with the
+ * unrelated `movs r1, #0' at 0x02002f66 keeping its place between them.
+ */
+
 #include "types.h"
 
 /*

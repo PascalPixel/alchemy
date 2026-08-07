@@ -20,6 +20,7 @@
 //   bun tools/overlay_twins.ts --unconverted      # only groups with work left
 //   bun tools/overlay_twins.ts --semantic --unconverted
 //                                                # reviewed-C templates too
+//   bun tools/overlay_twins.ts --leads            # families with no member solved
 //   bun tools/overlay_twins.ts --self-test
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -210,6 +211,33 @@ function selfTest(): void {
   console.log("self-test=ok");
 }
 
+/**
+ * Families where nothing is converted yet.
+ *
+ * `--unconverted` answers "what can I transpose today" and therefore requires a
+ * solved member. That deliberately hides the larger prize: a family of N with no
+ * solved member costs one reading and then pays out the other N-1 by
+ * transposition. Ranking by that payout rather than by family size puts the
+ * reading effort where it multiplies most.
+ */
+function reportLeads(groups: Twin[][]): void {
+  const leads = groups
+    .filter((group) => group.every((twin) => !twin.converted))
+    .map((group) => ({ group, unlock: (group.length - 1) * group[0].bytes }))
+    .sort((left, right) => right.unlock - left.unlock);
+  for (const { group, unlock } of leads) {
+    const first = group[0];
+    console.log(
+      `${String(unlock).padStart(6)}B unlocked  ${group.length}x${first.bytes}B  ` +
+        `read ${first.overlay}:${first.offset.toString(16).padStart(4, "0")} ` +
+        `-> transpose ${group.length - 1}`,
+    );
+  }
+  const total = leads.reduce((sum, lead) => sum + lead.unlock, 0);
+  const reading = leads.reduce((sum, lead) => sum + lead.group[0].bytes, 0);
+  console.log(`\nleads=${leads.length} unlock_bytes=${total} reading_bytes=${reading}`);
+}
+
 function main(): void {
   const args = Bun.argv.slice(2);
   if (args.includes("--help") || args.includes("-h")) {
@@ -218,7 +246,8 @@ function main(): void {
   }
   if (args.includes("--self-test")) return selfTest();
   const unknown = args.find((argument) =>
-    !/^resource_[0-9a-f]+$/.test(argument) && !["--unconverted", "--semantic"].includes(argument));
+    !/^resource_[0-9a-f]+$/.test(argument) &&
+    !["--unconverted", "--semantic", "--leads"].includes(argument));
   if (unknown !== undefined) throw new Error(`${USAGE}\nunrecognised argument: ${unknown}`);
   if (args.filter((argument) => /^resource_[0-9a-f]+$/.test(argument)).length > 1) {
     throw new Error(`${USAGE}\nselect at most one overlay`);
@@ -228,6 +257,7 @@ function main(): void {
   const includeSemantic = args.includes("--semantic");
   let groups = twinGroups(includeSemantic);
   if (only !== undefined) groups = groups.filter((g) => g.some((t) => t.overlay === only));
+  if (args.includes("--leads")) return reportLeads(groups);
   if (unconvertedOnly) {
     // A reusable family needs BOTH a source and an unconverted sibling. Groups
     // with no source are discovery leads, not recoverable bytes; excluding

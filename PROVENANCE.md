@@ -82,12 +82,12 @@ obtained, so it stays. This table says where to find the tool.
 
 | Cited tool | Last commit containing it | Recover with |
 |---|---|---|
-| `tools/m2c_guard.ts` | `463c0a39c` | `git show 463c0a39c:tools/m2c_guard.ts` |
-| `tools/main_xref.ts` | `463c0a39c` | `git show 463c0a39c:tools/main_xref.ts` |
-| `tools/overlay_dispatch_sites.ts` | `463c0a39c` | `git show 463c0a39c:tools/overlay_dispatch_sites.ts` |
-| `tools/veneer_resolve.ts` | `463c0a39c` | `git show 463c0a39c:tools/veneer_resolve.ts` |
-| `tools/overlay_driver.ts` | `b3ab4841b` | `git show b3ab4841b:tools/overlay_driver.ts` |
-| `tools/overlay_unindexed.ts` | `b3ab4841b` | `git show b3ab4841b:tools/overlay_unindexed.ts` |
+| `tools/m2c_guard.ts` | `f185d7346` | `git show f185d7346:tools/m2c_guard.ts` |
+| `tools/main_xref.ts` | `f185d7346` | `git show f185d7346:tools/main_xref.ts` |
+| `tools/overlay_dispatch_sites.ts` | `f185d7346` | `git show f185d7346:tools/overlay_dispatch_sites.ts` |
+| `tools/veneer_resolve.ts` | `f185d7346` | `git show f185d7346:tools/veneer_resolve.ts` |
+| `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
+| `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
 
 A citation naming a live tool must name its current path — `tools/check/source_citations.ts`
 enforces that, and this table is the only permitted exception. Do not repoint a

@@ -26,7 +26,7 @@
 // constant applies to the call-via bank, not to ordinary local callees).
 import { readdirSync, readFileSync } from "node:fs";
 import { assembleOverlay, OVERLAY_BASE } from "../lib/overlay_disasm.ts";
-import { resolveSpan } from "../lib/alchemist.ts";
+import { resolveSpan } from "./alchemist.ts";
 import { dirname, join } from "node:path";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));

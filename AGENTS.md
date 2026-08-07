@@ -3,7 +3,7 @@
 Alchemy reconstructs *Golden Sun* (GBA) as byte-exact C. A change counts only
 when the rebuilt bytes are identical to the released ROM.
 
-There are twelve tools. Each is a folder under `tools/` with an `index.ts` that
+There are ten tools. Each is a folder under `tools/` with an `index.ts` that
 takes a subcommand, plus the smaller modules it owns. Shared code lives in
 `tools/lib/` and belongs to no tool.
 
@@ -47,7 +47,7 @@ every narrowing below it.
 
 ## verify
 
-The gate. Rebuilds the ROM, every overlay, and the asset tree from tracked
+`bun run verify` — the gate. Rebuilds the ROM, every overlay, and the asset tree from tracked
 sources and compares the result to the released image byte for byte. Nothing
 else in this repository is authoritative: if `verify` is green the work is real,
 and if it is red nothing you believe about the tree matters. Run it before every
@@ -65,7 +65,7 @@ in parallel.
 
 Builds the ROM and its parts: `build_rom` for the whole image, and `build_asm`,
 `build_assets`, `build_claimed`, `build_full`, `build_semantic` for the stages.
-This is the pipeline `verify` drives, exposed separately so you can rebuild one
+This is the pipeline `tools/lib/verify.ts` drives, exposed separately so you can rebuild one
 stage while iterating instead of paying for the full gate each time. Named
 `make` because `build`, `rom` and `dist` are all publication-blocked directory
 names.
@@ -73,7 +73,7 @@ names.
 ## overlay
 
 Everything about the 96 code overlays, which hold roughly 60% of the executable.
-`overlay_disasm` and `overlay_show` read one owner, `overlay_inventory` builds
+`tools/lib/overlay_disasm.ts` and `overlay_show` read one owner, `overlay_inventory` builds
 the discovery queue, `overlay_adopt` installs a byte-exact reconstruction and is
 the step that moves the counter, and `overlay_twins --leads` finds families where
 reading one owner lets you transpose the rest. Overlays reuse whole routines
@@ -87,39 +87,37 @@ maps, text, audio sequences, and the bespoke Camelot containers. This is our
 standard GBA ones, so it is a module per format instead of one converter with
 flags. Converted assets (PNG, WAV, JSON descriptions) are tracked and
 publishable, as in pret's decomps; what stays out of git is the ROM image itself
-and bulk dumps — see PROVENANCE.md and `check_publication`.
+and bulk dumps — see PROVENANCE.md and `tools/check/check_publication.ts`.
 
 ## compiler
 
-The `alchemy-gcc` fork and its routing. `alchemy_gcc` owns the flag tables, the
-per-source routing sets, and the approved cc1 digests; `mode_sweep` searches
+The `alchemy-gcc` fork and its routing. `tools/lib/alchemy_gcc.ts` owns the flag tables, the
+per-source routing sets, and the approved cc1 digests; `tools/lib/mode_sweep.ts` searches
 compiler configurations for one candidate; `mode_cohort` runs a hypothesis
 across many owners at once. The routing sets are append-only registries of
 independent discoveries — never resolve a merge in them by taking one side.
+
+When a residual survives both search axes it is usually a scheduler tie, which
+`tools/lib/mode_sweep.ts` flags as `escalation: compiler-rtl-scheduler-trace`. The RTL
+readers that answer it (`tools/lib/rtl_sexpr.ts`, `tools/lib/rtl_insn.ts`, `tools/lib/rtl_align.ts`, `tools/lib/rtl_schedule.ts`,
+`tools/lib/thumb_disasm.ts`, `tools/lib/candidate_explain.ts`) live in `tools/lib/` because several tools
+share them; run them directly. They parse the fork's own dumps and reproduce its
+real scheduler tier order rather than modelling it.
 
 ## search
 
 Finds a source form that compiles byte-exact, holding the compiler fixed.
 `shape_sweep` applies transforms seeded from LAWS.md and is bounded and
 deterministic, so "it found nothing" is a real result; the annealers
-(`permute_v1`, `permute_overlay`, `alchemist`) search far wider but
+(`permute_v1`, `permute_overlay`, `tools/assets/alchemist.ts`) search far wider but
 stochastically, and their measured yield is low, so they are a rescue tool under
 the bounded-probe rule in HANDOVER.md. Never promote a near-match.
-
-## rtl
-
-Sees inside the compiler when a residual survives both search axes. A 2-5
-halfword difference at the exact size is usually a scheduler tie, which
-`mode_sweep` flags as `escalation: compiler-rtl-scheduler-trace`; this tool
-parses the fork's own RTL dumps and reproduces its real scheduler tier order
-rather than modelling it. Reach for it when you need the reason instead of
-another guess.
 
 ## decomp
 
 Picks and diagnoses owners. `decomp_queue` ranks candidates by expected value
 and is resumable, `decomp_diagnose` explains why a specific candidate misses,
-and `match_m2c` and `integrate_matches` handle drafting and installation. Start
+and `tools/lib/match_m2c.ts` and `tools/lib/integrate_matches.ts` handle drafting and installation. Start
 here when you do not already know which owner you are working on.
 
 ## semantic
@@ -132,7 +130,7 @@ understood before it gets matched.
 
 ## metrics
 
-Measures and draws progress. `full_c_progress` produces the byte counts every
+Measures and draws progress. `tools/lib/full_c_progress.ts` produces the byte counts every
 commit subject must carry, `coverage_map` renders the README's box trees, and
 `audit_residuals` accounts for what remains. Progress is byte-exact executable
 bytes, never function counts: 69% of our owners are converted but only 23.5% of

@@ -75,9 +75,18 @@ void Func_02005b48(s32 selector)
     struct Resource373Handle *handle = entity->handle;
     u8 *gradient;
 
+    /* 参照実装は両方のマスクを符号付き語幅で組む (`movs #13 / negs' で
+     * 0xfffffff3)。u8 に閉じると gcc が 0xf3 の一命令に畳んでしまうので、
+     * 一度 s32 の一時に受けてから書き戻す。+9 の計算を先に始めつつ
+     * 書き戻しは +5 が先、というのが参照の並び。 */
     handle->field27 = 0;
-    handle->flags05 = (u8)(handle->flags05 & ~0x20);
-    handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
+    {
+        s32 nine = (handle->flags09 & ~0x0c) | 0x04;
+        s32 five = handle->flags05 & ~0x20;
+
+        handle->flags05 = (u8)five;
+        handle->flags09 = (u8)(nine & 0x0f);
+    }
 
     Func_0200bad2(entity, 0);
 

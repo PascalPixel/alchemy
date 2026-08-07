@@ -15,7 +15,7 @@
  * it is a `bl` caller of FOUR already-drafted owners at once, so each of
  * those four drafts is independently corroborated by this one.
  * All 9 `bl` sites resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 12e0 1334`; sites=9
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 12e0 1334`; sites=9
  * and nine bl lines were transcribed.
  *
  * THE ANGLE TEST IS A BAND, NOT A THRESHOLD, and the operands are

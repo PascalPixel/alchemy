@@ -26,7 +26,7 @@
  * workspace + 448, not 448 + 73 anywhere else.
  *
  * Call accounting: 20 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_38d 05f4 --json`: Func_0808a110
+ * `bun tools/lib/overlay_call_targets.ts resource_38d 05f4 --json`: Func_0808a110
  * x3, Func_0808a090 x2, Func_0808a0d0 x2, Func_0808a010 x2, Func_0808a148 x2,
  * Func_080770c8 x2, and one each of Func_080770c0, Func_0808a018,
  * Func_0808a1b8, Func_0808a170, Func_0808a188, Func_0808a0f0, Func_0808a020 -

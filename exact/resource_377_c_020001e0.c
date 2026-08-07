@@ -20,7 +20,7 @@
  * a cue id and 0x03001ebc is the family workspace pointer cell.
  *
  * All seventeen calls resolved with
- * 'bun tools/overlay_call_targets.ts resource_377 01e0 --json' (17 sites,
+ * 'bun tools/lib/overlay_call_targets.ts resource_377 01e0 --json' (17 sites,
  * 11 distinct veneer targets).  Per-target multiset, which the C below matches
  * exactly: Func_0808a010 x4, Func_0808a130 x3, Func_0808a188 x2, and one each of
  * Func_0808a018, Func_0808a170, Func_0808a150, Func_0808a1e8, Func_0808a110,

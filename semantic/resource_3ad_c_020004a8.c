@@ -22,7 +22,7 @@
  * r5 is the dialogue line cursor and is reloaded twice: 0x250d for the first
  * conversation, 0x2512 for the second, then `adds r5, #3` to 0x2515.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; 94 sites are
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; 94 sites are
  * import veneers and one is this overlay's own prologue at 0x02000828.  The
  * per-target multiset is reproduced exactly by the C, target for target:
  *   Func_0808a1b8 x10, Func_0808a170 x9, Func_0808a010 x8, Func_0808a180 x8,

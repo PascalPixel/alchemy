@@ -11,7 +11,7 @@
  *
  * Conventions.  An overlay `bl` stores the target's image offset minus two, not
  * a pc-relative displacement, so the disassembler's printed targets are wrong;
- * all 166 call sites were resolved with `tools/overlay_call_targets.ts` and
+ * all 166 call sites were resolved with `tools/lib/overlay_call_targets.ts` and
  * every one lands in the 8-byte-per-entry import veneer table starting at
  * 0x02001a54, so each is named by that entry's trailing main-image word.  (The
  * inventory advertises calls=152; that field counts distinct targets and is

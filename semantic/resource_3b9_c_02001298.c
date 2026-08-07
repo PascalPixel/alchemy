@@ -4,7 +4,7 @@
  * resource_3b9 owner at 0x02001298, 884 bytes: the largest owner
  * drafted in this overlay so far -- one long scripted-scene bracket, no
  * branches, 92 call sites over 23 distinct veneer targets (per `bun
- * tools/overlay_call_targets.ts resource_3b9 1298 160c`). Same family
+ * tools/lib/overlay_call_targets.ts resource_3b9 1298 160c`). Same family
  * and shape as resource_3b9_c_02002668.c ("largest drafted this
  * overlay" at 440 bytes), just twice the length; drafted rather than
  * parked because it is mechanically simple, not structurally hard --

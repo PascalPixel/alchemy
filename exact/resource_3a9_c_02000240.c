@@ -27,7 +27,7 @@ typedef struct Placement {
  * 0x02000300..0x02000307 and 0x02000308 is the next (tracked byte-exact)
  * prologue.  200 bytes, matching the inventory row.
  *
- * All 13 call sites resolved with `bun tools/overlay_call_targets.ts
+ * All 13 call sites resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_3a9 0240` (an overlay `bl` stores target offset - 2).  Per-target:
  *   Func_0808a018 1   Func_0808a080 2   Func_080f9010 1   Func_08009178 1
  *   Func_0808a090 1   Func_0808a100 1   Func_0808a0d8 1   Func_0808a010 1

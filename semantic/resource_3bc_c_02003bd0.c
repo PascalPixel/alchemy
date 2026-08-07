@@ -19,8 +19,8 @@
  * over six distinct targets, all resolved with the `+2` rule against the
  * raw image (this owner starts outside a recorded row, so
  * overlay_call_targets.ts's own table does not cover it -- resolved with
- * `bun tools/overlay_show.ts resource_3bc 3bd0 | bun
- * tools/overlay_call_targets.ts resource_3bc 3bd0 3c92 --annotate`):
+ * `bun tools/overlay/overlay_show.ts resource_3bc 3bd0 | bun
+ * tools/lib/overlay_call_targets.ts resource_3bc 3bd0 3c92 --annotate`):
  *   0x2003bde -> veneer -> Func_0808a080(selector)   scene-record accessor, established
  *   0x2003bfc -> veneer -> Func_08000140(17, 0x608)  established, "reserve workspace on a channel" (semantic/overlays/resource_3a8_c_02003a3c.c: "reserves 0x608 (0xc1 << 3) bytes on channel 17")
  *   0x2003c1c -> veneer -> Func_08015250(arg1)       established, shared-workspace side effect, same file

@@ -18,8 +18,8 @@
  * calls over nine distinct targets, all resolved with the `+2` rule
  * against the raw image (this owner starts outside a recorded row, so
  * overlay_call_targets.ts's own table does not cover it -- resolved with
- * `bun tools/overlay_show.ts resource_3a4 2e84 | bun
- * tools/overlay_call_targets.ts resource_3a4 2e84 2ede --annotate`):
+ * `bun tools/overlay/overlay_show.ts resource_3a4 2e84 | bun
+ * tools/lib/overlay_call_targets.ts resource_3a4 2e84 2ede --annotate`):
  *   0x2002e86 -> veneer -> Func_0808a018()          established no-arg scene bracket
  *   0x2002e90 -> veneer -> Func_0808a0f0(10, 0, 0)  established, place an entity
  *   0x2002e9e -> veneer -> Func_0808a0f0(8, 0x1e80000, 0x8a0000)   established

@@ -21,7 +21,7 @@
  * address 0x020085f8.  So the pool word 0x02008650 read here is the in-image
  * halfword at file offset 0x650, not a RAM global.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_36f
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_36f
  * 01c0` (an overlay `bl` stores target offset - 2; the disassembler's
  * annotation is wrong).  Six sites, six distinct import veneers:
  *   0x020001c6 -> 0x0548 -> Func_08000170   reserve 1312 bytes of scratch

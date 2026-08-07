@@ -16,7 +16,7 @@
  * on any other value the owner is a no-op.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * `record = *Data_03001edc` and the `slots[idx]` lookup are the same
  * current-object/slot-table pair resource_39c_c_02005900.c and

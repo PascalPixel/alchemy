@@ -34,7 +34,7 @@
  * literal pool is 0x020006bc..0x020006f7, and 584 bytes matches the inventory
  * row exactly.  No pool word decodes as a BL prefix, so no phantom call site.
  *
- * All 28 call sites resolved with `bun tools/overlay_call_targets.ts
+ * All 28 call sites resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_3cd 04b0` (an overlay `bl` stores target offset - 2).  Per-target
  * multiset, 12 distinct targets:
  *   Func_030003ac 3   Func_080000c0 3   Func_08015010 1   Func_08015018 2

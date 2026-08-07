@@ -12,7 +12,7 @@
  * argument (r0), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * The DMA3 register block (0x040000d4 = REG_DMA3SAD, +4 = REG_DMA3DAD,
  * +8 = REG_DMA3CNT) is public GBA hardware, spelled out by address per

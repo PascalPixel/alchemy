@@ -33,7 +33,7 @@
  * stack rather than using lr.
  *
  * CALL ACCOUNTING.  All 247 `bl` sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_3bf 27b0`, never from the
+ * `bun tools/lib/overlay_call_targets.ts resource_3bf 27b0`, never from the
  * disassembler's pc-relative annotations.  They collapse to 36 distinct
  * targets: 31 import veneers (238 sites), four ordinary prologues of this same
  * overlay (0x0200252c, 0x020025f8, 0x0200269c, 0x02002718 — eight sites, each

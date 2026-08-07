@@ -18,7 +18,7 @@
  * fade value 0xe666), so none of them is an address and none is decoded as an
  * instruction here.
  *
- * Call sites resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call sites resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores `target_offset - 2`; the disassembler's own annotations are wrong).
  * 51 sites, 19 distinct import veneers, no in-overlay callees.  The inventory
  * reports calls=47, a lower bound as documented.  Completeness was taken as a

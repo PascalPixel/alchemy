@@ -8,7 +8,7 @@
  * register is r0, so it holds the return address — the owner is `void`.
  * Bytes 0x0200078e-0x020007a3 are alignment plus the five-word literal pool.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_399
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_399
  * 06c0 --annotate` (an overlay `bl` stores `target - 2`).  15 sites, 13
  * distinct imports; per-target multiset, which the C below matches exactly:
  *   Func_0808a018 x1, Func_0808a080 x2, Func_080f9010 x2, Func_08009178 x1,

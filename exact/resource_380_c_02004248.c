@@ -11,7 +11,7 @@
  * 0x02000000 because its bl targets land in a 0x02008xxx resident
  * module" is STRUCK.  There is no such module: the targets were a
  * naive pc-relative misdecode.  Under the +2 rule
- * (tools/overlay_call_targets.ts) every bl here resolves through the
+ * (tools/lib/overlay_call_targets.ts) every bl here resolves through the
  * overlay's own import-veneer table to main-ROM code, and the pool
  * pointers fit the standard 0x02008000 link base.  This wrapper's two
  * calls are Func_02008bea and Func_02008cb4.

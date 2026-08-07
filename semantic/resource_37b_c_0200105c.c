@@ -20,7 +20,7 @@
  *    0x020014b8, which is exactly the next prologue, so both pools are inside
  *    it and neither is decoded as an instruction.
  *
- * Call sites resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call sites resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores `target_offset - 2`).  72 sites, 14 distinct targets: 69 import
  * veneers and 3 real in-overlay prologues — 0x020014b8, 0x02000150 and
  * 0x02000614.  The inventory reports calls=69, a lower bound.  Completeness

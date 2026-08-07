@@ -32,7 +32,7 @@
  * (`push {lr}`) begins at 0x02001160.
  *
  * All 30 call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 102c 1146`, and the
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 102c 1146`, and the
  * per-target histogram is Func_0808a010 x5, Func_0808a080 x4, Func_0808a170
  * x4, Func_0808a188 x4, Func_0808a138 x3, Func_0808a0f0 x2, Func_0808a110 x2,
  * Func_0808a090 x1, Func_0808a0d0 x1, Func_0808a1b8 x1, Func_0808a1e8 x1,

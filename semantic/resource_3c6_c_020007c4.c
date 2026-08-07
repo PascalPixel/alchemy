@@ -38,7 +38,7 @@
  * anyway, because each arm's four `bl` sites are distinct sites.
  *
  * Call accounting: 250 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_3c6 07c4` - 32 distinct targets,
+ * `bun tools/lib/overlay_call_targets.ts resource_3c6 07c4` - 32 distinct targets,
  * 249 import veneers plus one intra-overlay prologue call to Func_02001090;
  * no `call_via` site.  The multiset of `Func_...(` calls below equals that
  * multiset per target.  Every site is written exactly once: no site is reached

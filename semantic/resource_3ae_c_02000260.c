@@ -13,7 +13,7 @@
  * 0x020002c6.  The return address is popped into r0, so r0 does not survive
  * and the owner is void.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong):
  *
  *   0x02000262 -> Func_0808a018   (scene open)

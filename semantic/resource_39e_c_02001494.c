@@ -30,7 +30,7 @@
  * two trailing pool words ending 0x02001d4f; the next owner
  * (0x02001d50, `push {lr}`) follows. Not found by the structural
  * inventory walk (unindexed): reached only by bl
- * (bun tools/overlay_call_targets.ts resource_39e 1494 1d46, +2 rule).
+ * (bun tools/lib/overlay_call_targets.ts resource_39e 1494 1d46, +2 rule).
  *
  * Uncertainty: callees and argument roles by shape; ids, dialogue ids
  * and constants transcribed. 0x0200c77a/0x0200c790/0x0200c638 are

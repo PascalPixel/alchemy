@@ -20,7 +20,7 @@
  * `ldr r4, [pc, #816]`.  That entry is an artefact of decoding a constant as an
  * instruction and is not part of this owner.
  *
- * All 49 call sites were resolved with tools/overlay_call_targets.ts
+ * All 49 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are not the callees.
  * sites=49, distinct_targets=20 (44 veneer, 5 overlay-local prologue), against

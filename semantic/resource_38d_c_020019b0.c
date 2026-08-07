@@ -49,7 +49,7 @@
  * NOT a fourth argument to the following call - it is the load offset.
  *
  * Call accounting: 186 `bl` sites over 37 distinct targets, all resolved with
- * `bun tools/overlay_call_targets.ts resource_38d 19b0 --json`, which reports
+ * `bun tools/lib/overlay_call_targets.ts resource_38d 19b0 --json`, which reports
  * exactly `sites=186 distinct_targets=37 veneer=178 prologue=8`.  The eight
  * prologue sites are four calls each to the byte-exact intra-overlay owners
  * Func_02001958 and Func_02001984 (`assets/code/resource_38d_c_02001958.c` and

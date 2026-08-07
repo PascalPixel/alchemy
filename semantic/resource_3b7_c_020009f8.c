@@ -20,7 +20,7 @@
  * semantic/overlays/resource_3b7_c_020016a8.c for the three witnesses - it just
  * does not bear on this owner.)
  *
- * Call targets were resolved with `tools/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x020009fa -> veneer 0x020018fc -> Func_080772c8
  *   0x02000a04 -> veneer 0x0200191c -> Func_0808a018

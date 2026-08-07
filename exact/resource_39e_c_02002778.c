@@ -12,7 +12,7 @@
  * Func_020027ec. **116 bytes**, measured to the epilogue.
  *
  * Published population (sweep B). All 10 `bl` sites resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 2778 27ec`; sites=10
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 2778 27ec`; sites=10
  * and ten bl lines were transcribed.
  *
  * THE WORKSPACE WRITE IS THE SUBTRACTIVE FORM AND THE VALUE IS 256, NOT

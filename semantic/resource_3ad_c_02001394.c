@@ -8,7 +8,7 @@
  * epilogue and IS the result - this owner returns s32.  One pool word (0x255e,
  * the first dialogue line id) sits at 0x02001418, past the return.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; every one is an
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; every one is an
  * import veneer:
  *   0x0200139c -> 0x02001b94 -> Func_0808a148
  *   0x020013a8 -> 0x02001bcc -> Func_0808a1e8

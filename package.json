@@ -30,7 +30,7 @@
     "test": "bun run lint && bun tools/self_test.ts",
     "build:inventory": "bun tools/overlay/overlay_inventory.ts",
     "sanctum": "bun tools/check/check_sanctum.ts",
-    "lint": "bun run typecheck && bun tools/check/architecture.ts && bun tools/check/no_asm_c.ts && bun tools/lib/decomp_targets.ts && bun tools/check/cache_key_lint.ts && bun tools/lib/alchemy_gcc.ts --lint",
+    "lint": "bun run typecheck && bun tools/check/architecture.ts && bun tools/check/source_citations.ts && bun tools/check/no_asm_c.ts && bun tools/lib/decomp_targets.ts && bun tools/check/cache_key_lint.ts && bun tools/lib/alchemy_gcc.ts --lint",
     "typecheck": "tsc --noEmit && tsc -p tools/metrics/dashboard/tsconfig.json --noEmit"
   },
   "engines": {

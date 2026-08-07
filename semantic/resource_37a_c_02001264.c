@@ -16,7 +16,7 @@
  * Nothing branches over or into them; the `lsls`/`subs` the disassembler prints
  * there are constants, not code.
  *
- * All 24 call sites were resolved with tools/overlay_call_targets.ts
+ * All 24 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are not the callees.
  * sites=24, distinct_targets=13, all veneer, against the inventory's calls=22

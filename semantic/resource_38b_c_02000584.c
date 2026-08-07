@@ -43,7 +43,7 @@
  * control path — the only branch is a symmetric if/else whose arms have five
  * sites each, all distinct — so none of the five inflating shared-call-site
  * shapes applies and no join is needed.  All 71 targets are import veneers,
- * resolved with tools/overlay_call_targets.ts.
+ * resolved with tools/lib/overlay_call_targets.ts.
  *
  * REGISTER NOTES.  r5 holds the slot-0 record only until 0x0200073a, where
  * `movs r5,#254` reuses it as an AND mask (and r5 is then overwritten again

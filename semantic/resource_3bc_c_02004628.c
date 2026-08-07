@@ -19,8 +19,8 @@
  * call sites per overlay_unindexed.ts. Thirteen outgoing calls over seven
  * distinct targets, all resolved with the `+2` rule against the raw image
  * (this owner starts outside a recorded row, so overlay_call_targets.ts's
- * own table does not cover it -- resolved with `bun tools/overlay_show.ts
- * resource_3bc 4628 | bun tools/overlay_call_targets.ts resource_3bc 4628
+ * own table does not cover it -- resolved with `bun tools/overlay/overlay_show.ts
+ * resource_3bc 4628 | bun tools/lib/overlay_call_targets.ts resource_3bc 4628
  * 477e --annotate`):
  *   0x2004642 -> veneer -> Func_0808a080(selector)          scene-record accessor, established
  *   0x2004674, 0x200469e, 0x20046ca -> raw prologue -> Func_20045e0(position)   in-overlay lookup, sibling item-28 owner already drafted in resource_3bc_c_02004790.c as a two-argument probe-rejection call; here (as in resource_3bb's Func_02003b48) all three sites also load r1 with a record pointer that the structurally-identical resource_3bb sibling proves is NOT part of that overlay's own lookup's interface -- inferred by analogy here, not independently proven for this overlay's Func_20045e0

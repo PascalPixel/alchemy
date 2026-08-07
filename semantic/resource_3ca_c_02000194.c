@@ -44,7 +44,7 @@
  * by the byte-exact sibling assets/code/resource_3ca_c_020003c0.c, which
  * writes it.
  *
- * Calls.  Eleven `bl` sites, resolved with tools/overlay_call_targets.ts
+ * Calls.  Eleven `bl` sites, resolved with tools/lib/overlay_call_targets.ts
  * (the disassembler's own annotations are wrong for overlays by
  * construction); the row's `calls=8` is the usual undercount.  Placed calls
  * per target:

@@ -11,7 +11,7 @@
  * it is saved.
  *
  * All 25 `bl` sites are placed and reach 14 distinct callees, matching the
- * inventory row's calls=25.  Targets come from tools/overlay_call_targets.ts
+ * inventory row's calls=25.  Targets come from tools/lib/overlay_call_targets.ts
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations, which print each repeated callee as a different function.
  * 22 sites reach the import veneer table (0x3f38 -> Func_0808a018, 0x3f68 ->
@@ -22,7 +22,7 @@
  * reach this overlay's own code at file offsets 0x3228, 0x3344 and 0x3238.
  *
  * Func_02003228 is a two-byte routine consisting of `bx lr` alone - an empty
- * hook, not a `call_via` slot.  tools/overlay_call_targets.ts classifies it as
+ * hook, not a `call_via` slot.  tools/lib/overlay_call_targets.ts classifies it as
  * `call_via` because the bank is recognised by exactly that `bx rN` shape;
  * here the register is lr and the site sets no target register, so the call
  * genuinely does nothing.  It is kept because the call is real.

@@ -18,7 +18,7 @@
  * selector `Func_0200086c` compares against 90 — a sub-state of the room, not
  * the room id itself (that lives at `[224]`).
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong):
  *
  *   0x020008e0, 0x02000902, 0x02000912, 0x0200091c -> Func_080770c0 (flag test)

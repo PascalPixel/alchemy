@@ -13,7 +13,7 @@
  * SHARED ROUTINE.  Halfword-identical to resource_39f's 0x02000ae8 over all 236
  * halfwords except ten `bl` displacements (different veneer-table offset) and
  * the one pool word naming this overlay's own descriptor table.
- * `tools/overlay_call_targets.ts` reports the same resolved profile for both:
+ * `tools/lib/overlay_call_targets.ts` reports the same resolved profile for both:
  * 10 sites, 6 distinct imports - Func_03000380 x3, Func_08009080 x2,
  * Func_08009098 x2, Func_080090c8, Func_0808a080, Func_0808a160.
  *

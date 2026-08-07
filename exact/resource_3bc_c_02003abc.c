@@ -10,7 +10,7 @@
  * Three-argument (r0-r2), void: the popped word is the return address.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule against
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule against
  * the raw image (the tool's own site table does not cover this owner since
  * it starts outside a recorded row) -- the one call site,
  * 0x02003ae6 -> veneer 0x02004848 -> Func_080000d0, the task installer this

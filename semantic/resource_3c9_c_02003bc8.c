@@ -17,7 +17,7 @@
  * arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts resource_3c9
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9
  * 3bc8 3e9c`'s `+2` rule.
  *
  * `Func_0808a228`'s result is used as a record pointer here (`+85`

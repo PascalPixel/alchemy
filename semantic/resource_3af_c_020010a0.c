@@ -7,7 +7,7 @@
  *
  * PUBLISHED, NOT CALLED. Thumb pointer 0x020090a1 at 0x0200593c in the
  * script-record table. Absent from every inventory and from
- * `tools/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
+ * `tools/overlay/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
  * sweep that finds this class.
  *
  * NEAR-IDENTICAL TWIN of 0x020011c8. The two spans are 296 bytes each

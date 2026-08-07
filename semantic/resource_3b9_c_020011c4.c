@@ -5,7 +5,7 @@
  * ending on actor 17, gated by story flag 0x8a4.
  *
  * PUBLISHED, NOT CALLED. Found by
- * `bun tools/overlay_published.ts resource_3b9`.
+ * `bun tools/lib/overlay_published.ts resource_3b9`.
  *
  * THE FLAG RESULT IS REUSED AS A VALUE, not just as a condition. The
  * return of Func_080770c0(0x8a4) is kept in r5 across the whole

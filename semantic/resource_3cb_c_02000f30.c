@@ -14,7 +14,7 @@
  * That word is data — the `lsls` pair the disassembler prints there is the
  * pool, not code.
  *
- * Both call sites were resolved with tools/overlay_call_targets.ts
+ * Both call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2):
  *   0x02000f34 -> veneer 0x02001834 -> Func_08077148
  *   0x02000f40 -> veneer 0x0200180c -> Func_080770c0

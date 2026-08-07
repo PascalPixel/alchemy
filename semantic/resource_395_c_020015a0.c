@@ -47,7 +47,7 @@ typedef unsigned int u32;
  *   0x02009dc0 — a three-word (x, y, z) 16.16 origin written elsewhere.
  * 0x0000011d and 0x00019999 are plain constants.
  *
- * All six call sites were resolved with tools/overlay_call_targets.ts
+ * All six call sites were resolved with tools/lib/overlay_call_targets.ts
  * (--annotate, and site->target read from --json, never from the summary
  * histogram); overlay_show.ts's own `bl` annotations are wrong on every
  * overlay because an overlay `bl` stores target_offset - 2.  Sites, in address

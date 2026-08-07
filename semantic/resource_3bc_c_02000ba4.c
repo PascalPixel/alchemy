@@ -10,7 +10,7 @@
  * +1 and +2.  The base 0x2073 is a plain pooled constant, not an address —
  * under the 0x02008000 link base it would be far below the image.
  *
- * All 14 call sites resolved with tools/overlay_call_targets.ts, matching the
+ * All 14 call sites resolved with tools/lib/overlay_call_targets.ts, matching the
  * row's calls=14 exactly:
  *   0808a018 x1, 0808a170 x3, 0808a178 x1, 0808a070 x1, 0808a180 x2,
  *   0808a368 x1, 0808a370 x2, 0808a360 x1, 0808a020 x1, and one internal

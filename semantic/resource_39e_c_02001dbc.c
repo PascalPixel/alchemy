@@ -28,7 +28,7 @@
  * function not in the unindexed population, left for its own read.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_39e 1dbc 244e,
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 1dbc 244e,
  * the +2 rule).
  *
  * Uncertainty: callees and argument roles by shape; ids and constants

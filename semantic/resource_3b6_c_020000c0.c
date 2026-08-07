@@ -9,7 +9,7 @@
  * no argument (r0 is written before it is read).  A two-word literal pool
  * occupies 0x02000134-0x0200013b.
  *
- * All seven `bl` sites resolve with tools/overlay_call_targets.ts — an overlay
+ * All seven `bl` sites resolve with tools/lib/overlay_call_targets.ts — an overlay
  * `bl` stores `target_offset - 2` — and are named for the main-image address
  * in each veneer entry's trailing word.  Seven sites, matching the row's
  * advertised call count exactly.

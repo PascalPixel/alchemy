@@ -26,7 +26,7 @@
  *   0x02000efc 0x04000050   BLDCNT
  *   0x02000f2c 0xffa60000   the 16.16 delta -90.0
  *
- * All thirteen call sites resolved with tools/overlay_call_targets.ts; the
+ * All thirteen call sites resolved with tools/lib/overlay_call_targets.ts; the
  * disassembler's own `bl` annotations are wrong for overlays by construction.
  * Placed calls per target:
  *   Func_08077028  x1   (0x02000dc0, veneer 0x020013a4)

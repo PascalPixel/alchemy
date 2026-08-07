@@ -17,7 +17,7 @@
  * is not a span source.
  *
  * Published population (sweep B). All 4 `bl` sites resolved with
- * `bun tools/overlay_call_targets.ts resource_39e bd4 bf4`; sites=4 and
+ * `bun tools/lib/overlay_call_targets.ts resource_39e bd4 bf4`; sites=4 and
  * four bl lines were transcribed.
  *
  * SHARED IDIOMS, cited: the Func_02004fb4/Func_02004fce scripted-scene

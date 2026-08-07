@@ -24,7 +24,7 @@
  *
  * `arg0` is read (the +100 halfword) before being overwritten, so it is
  * a real argument; void return. Call sites resolved with `bun
- * tools/overlay_call_targets.ts resource_3c9 5b90 5c1c`'s `+2` rule:
+ * tools/lib/overlay_call_targets.ts resource_3c9 5b90 5c1c`'s `+2` rule:
  * `sites=2 veneer=2`, and two are transcribed.
  *
  * Published, not called: the address appears as the in-image spelling

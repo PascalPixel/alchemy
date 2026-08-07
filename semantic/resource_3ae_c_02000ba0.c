@@ -14,7 +14,7 @@
  * and the owner is void.  There is no frame: every call's arguments fit in
  * r0-r3, which is what makes the body a flat instruction-per-beat script.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong).  Every
  * site is an import veneer except none — all 68 `bl`s in the span resolve to
  * the Func_0808axxx scene-director bank, which is more than the inventory's

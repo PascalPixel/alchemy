@@ -15,7 +15,7 @@
  * (r0-r2), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * Uncertainty: none of the five resolved callees are identified beyond call
  * shape. `Func_08009180`'s third argument (r2) is only ever set as a copy

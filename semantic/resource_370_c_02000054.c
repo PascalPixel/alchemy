@@ -16,7 +16,7 @@
  * 0x02000134-0x02000153 after the epilogue.
  *
  * Four call sites, matching the inventory's calls=4, all resolved with
- * `bun tools/overlay_call_targets.ts resource_370 --json`:
+ * `bun tools/lib/overlay_call_targets.ts resource_370 --json`:
  *   0x0200005a -> veneer 0x1364 -> Func_080002a8
  *   0x0200006c -> veneer 0x135c -> Func_08000290
  *   0x0200008a -> veneer 0x134c -> Func_080001a8

@@ -23,7 +23,7 @@
  * offset 0x11c4, an ordinary `push` prologue and a strict-queue row of this
  * overlay) and names the per-frame task this entry point installs.
  *
- * All four call sites resolved with tools/overlay_call_targets.ts; the
+ * All four call sites resolved with tools/lib/overlay_call_targets.ts; the
  * disassembler's own `bl` annotations are wrong for overlays by construction:
  *
  *   0x020012b4 -> veneer 0x0200134c -> Func_08000170

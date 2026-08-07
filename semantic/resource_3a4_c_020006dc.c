@@ -36,7 +36,7 @@
  * blob for Func_0808a098, which settles the "phantom 0x02004xxx
  * cluster" question -- every callee below is a veneer into the main
  * ROM, and the old Func_02004xxx names in the park notes were
- * pc-relative misdecodes (see tools/overlay_call_targets.ts).
+ * pc-relative misdecodes (see tools/lib/overlay_call_targets.ts).
  *
  * All 17 bl sites resolve through the veneer table with the `+2`
  * stored-displacement rule:

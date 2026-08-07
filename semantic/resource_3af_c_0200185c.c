@@ -26,7 +26,7 @@
  * (`push {lr}`, the queue's 0x02001920 row) begins at 0x02001920.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_3af 185c 18f2's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3af 185c 18f2's
  * +2 rule; the Func_02004218 site is an intra-overlay bl).
  *
  * Uncertainty: callees and argument roles by shape; the fixed-point

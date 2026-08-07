@@ -47,9 +47,9 @@
  * numeric offset.
  *
  * Call targets resolved with
- *   bun tools/overlay_show.ts resource_3a7 0ca0 -n 960 |
- *   bun tools/overlay_call_targets.ts resource_3a7 --annotate
- * `bun tools/overlay_call_targets.ts resource_3a7 0ca0` reports sites=69 (the
+ *   bun tools/overlay/overlay_show.ts resource_3a7 0ca0 -n 960 |
+ *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
+ * `bun tools/lib/overlay_call_targets.ts resource_3a7 0ca0` reports sites=69 (the
  * inventory's calls=41 is the documented undercount - it does not see the
  * jump-table arms).  Per-target multiset, 69 = 69 against the C below:
  *   Func_080770c0 x12 <- veneer 0x02001100

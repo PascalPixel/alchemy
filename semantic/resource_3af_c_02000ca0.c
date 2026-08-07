@@ -8,7 +8,7 @@
  *
  * PUBLISHED, NOT CALLED. Thumb pointer 0x02008ca1 at 0x02005930 in the
  * script-record table. Absent from every inventory and from
- * `tools/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
+ * `tools/overlay/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
  * sweep that finds this class.
  *
  * It is the LARGEST function in this overlay with essentially no

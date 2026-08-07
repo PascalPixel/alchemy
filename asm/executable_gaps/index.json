@@ -3,8 +3,8 @@
   "kind": "golden-sun-executable-gap-source-package",
   "rom_base": "0x08000000",
   "limit": "0x080fb792",
-  "planned_gaps": 78,
-  "planned_gap_bytes": 5628,
+  "planned_gaps": 76,
+  "planned_gap_bytes": 5552,
   "gaps": [
     {
       "address": "0x080003c0",
@@ -267,21 +267,6 @@
           "source": "080069a4.s",
           "instruction_bytes": 68,
           "literal_words": 6,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x08006f48",
-      "size": 36,
-      "sections": [
-        {
-          "address": "0x08006f48",
-          "size": 36,
-          "kind": "thumb",
-          "source": "08006f48.s",
-          "instruction_bytes": 32,
-          "literal_words": 1,
           "undefined_words": 0
         }
       ]
@@ -1256,21 +1241,6 @@
           "source": "0800fd5c.s",
           "instruction_bytes": 276,
           "literal_words": 11,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x08011568",
-      "size": 40,
-      "sections": [
-        {
-          "address": "0x08011568",
-          "size": 40,
-          "kind": "thumb",
-          "source": "08011568.s",
-          "instruction_bytes": 20,
-          "literal_words": 5,
           "undefined_words": 0
         }
       ]

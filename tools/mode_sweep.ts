@@ -41,6 +41,16 @@ export const FORK_MODES = [
   "-fthumb-group-value1-before-base",
   "-fthumb-move-before-alu", "-fthumb-orr-dead-input-reuse",
   "-fthumb-call-arg1-before-arg0",
+  "-fthumb-call-arg0-reg-source",
+  "-fthumb-sink-constant-past-call",
+  "-fthumb-sink-constant-past-memory",
+  "-fthumb-sink-store-past-store",
+  "-fthumb-earliest-frame-allocation",
+  "-fthumb-copy-before-add-immediate",
+  "-fthumb-sink-add-immediate",
+  "-fthumb-hoist-add-immediate",
+  "-fthumb-pool-load-base-first",
+  "-fthumb-move-before-unary-alu",
   "-fthumb-call-arg0-before-store",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
@@ -64,9 +74,9 @@ export const FORK_MODES = [
   // compiler without ifcvt.c, which gcc 2.95 did not have. Witness 080fa1ac.
   "-fthumb-leaf-no-lr",
   "-fthumb-no-if-convert",
-  // Routed sink/split/scratch classes that the router has been using for a
-  // while without the explorer ever naming them, so no sweep could rediscover
-  // them on a fresh owner. Listed here to close that blind spot.
+  // Routed in alchemy_gcc.ts but never registered here, so no sweep could
+  // reach them. A routed mode absent from this list is a mode no sweep can
+  // rediscover on a fresh owner.
   "-fthumb-arg0-after-split",
   "-fthumb-call-arg0-pool-load",
   "-fthumb-collapse-dead-scratch",
@@ -77,12 +87,41 @@ export const FORK_MODES = [
   "-fthumb-sink-group-pool-loads",
   "-fthumb-sink-past-pool-load",
   "-fthumb-sink-stack-adjust",
+  "-mlow-reg-order=2013",
   "-mlow-reg-order=01231230",
   "-mlow-reg-order=30120123",
+  // 2026-08-07: -mcallee-reg-order= permutes the r4-r7 run of REG_ALLOC_ORDER,
+  // the gap between -mlow-reg-order= (r0-r3) and -mhigh-reg-order= (r8-r11).
+  // Three owners reached instruction-for-instruction agreement with two
+  // call-saved pseudos swapped, which no source form could move. Only the
+  // adjacent transpositions are registered; the full 24 permutations are
+  // reachable by hand when a floor is tagged [register] and nothing else.
+  "-mcallee-reg-order=1023",
+  "-mcallee-reg-order=0213",
+  "-mcallee-reg-order=0132",
   // 2026-08-07: the mirror of -mearly-frame-allocation. It lowers a Thumb
   // stack decrement's scheduling priority so incoming-argument copies issue
   // ahead of `sub sp, #N'. Witness 080b0744.
   "-fthumb-late-frame-allocation",
+  // 2026-08-07: the r0-value twin of -fthumb-group-control-last. Witness
+  // 0801a4fc.
+  "-fthumb-group-pooled-control-last",
+  // 2026-08-07: high-register variant of -fthumb-move-before-alu. Witness
+  // 0808b868.
+  "-fthumb-high-move-before-alu",
+  // 2026-08-07: the immediate-operand widening of -fthumb-move-before-alu,
+  // which also accepts a load as the insn issued early. Witness 0801fd34.
+  "-fthumb-move-before-immediate-alu",
+  // 2026-08-07: anchor hoisted loop invariants at the head of the preheader
+  // block rather than immediately before the loop note, so they lead the
+  // preheader's own insns instead of following them. Witness 080b5d3c.
+  "-floop-invariant-block-head",
+  // 2026-08-07: the ARM back end's CANONICALIZE_COMPARISON rewrites `x > C'
+  // into `x >= C+1' whenever C+1 passes const_ok_for_arm -- an ARM-mode
+  // immediate predicate that says nothing about Thumb, where the rewrite
+  // trades a pool word for a two-insn constant build and flips the emitted
+  // condition code. This suppresses it in Thumb. Witness 0808ddec's tail.
+  "-fthumb-no-canonicalize-comparison",
 ] as const;
 
 export const STOCK_SWITCHES = [

@@ -12,8 +12,8 @@
 //   bun tools/self_test.ts --jobs 4
 //   bun tools/self_test.ts --self-test
 import { readdirSync, readFileSync } from "node:fs";
-import { availableParallelism } from "node:os";
 import { dirname, join } from "node:path";
+import { resolveJobs } from "./lib/jobs.ts";
 
 const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 const TOOLS = join(ROOT, "tools");
@@ -106,7 +106,7 @@ function selfTest(): void {
 async function main(): Promise<void> {
   const args = Bun.argv.slice(2);
   if (args.includes("--self-test")) return selfTest();
-  const jobs = Number(args[args.indexOf("--jobs") + 1]) || Math.max(2, availableParallelism() - 2);
+  const jobs = resolveJobs(Number(args[args.indexOf("--jobs") + 1]) || undefined);
   const tools = discover(walk(""), (name) =>
     readFileSync(join(TOOLS, name), "utf8")).filter((name) => !EXCLUDED.has(name) && !EXCLUDED_FOLDERS.some((f) => name.startsWith(f)));
   if (args.includes("--list")) {

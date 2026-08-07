@@ -61,6 +61,10 @@ export const FORK_MODES = [
   // 08091174.
   "-fthumb-group-control-rematerialize",
   "-fthumb-sched-pool-load-late",
+  // A small HImode constant reaches its register with `movs' instead of the
+  // literal-pool load *thumb_movhi_insn's "mn" alternative forces. Witness
+  // resource_377:03f8 (2026-08-07).
+  "-fthumb-hi-immediate",
 ] as const;
 
 export const STOCK_SWITCHES = [

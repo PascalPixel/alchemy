@@ -1,6 +1,18 @@
 #include "types.h"
 
 /*
+ * BYTE-EXACT 2026-08-07 with the new -fthumb-blockmove-dest-before-source.
+ * The six-argument message is a 24-byte struct passed BY VALUE: the reference's
+ * `mov r3, sp / add r2, sp, #24 / ldmia r2!,{r0,r1} / stmia r3!,{r0,r1}' is
+ * thumb_expand_movstrqi copying the tail of the aggregate to the outgoing
+ * argument area, with the first four words in r0-r3.  Writing the six scalars
+ * as one `struct Probe { s32 w[6]; }' argument reproduces that block move;
+ * indexing `rec.w[N]' directly rather than through an alias pointer keeps the
+ * `add r5, sp, #8' where the reference has it.  The flag only restores the
+ * expander's own destination-before-source order, which sched2 transposes.
+ */
+
+/*
  * resource_39f owner at 0x02000f94, 168 bytes (0x02000f94-0x0200103b).
  *
  * Reads a six-word probe record through the overlay's own Func_02000474,
@@ -47,21 +59,22 @@ extern void Func_02003e4a();
 extern u8 * Func_02003dd0();
 extern void Func_02003d7a();
 extern void Func_02003dde();
+struct Probe { s32 w[6]; };
+
 void Func_02000f94(void)
 {
-    s32 probe[6];
+    struct Probe rec;
 
     /* No argument register is written before this branch: the caller's r0-r3
      * reach the import unchanged. */
     Func_02003d3e();
 
-    if (Func_02001416(probe) != 0) {
+    if (Func_02001416(rec.w) != 0) {
         /* The two high words are copied to the outgoing stack slots by an
          * `ldmia/stmia` pair; the four low words go in r0-r3. */
-        Func_020015c2(probe[0], probe[1], probe[2], probe[3],
-                      probe[4], probe[5]);
+        Func_020015c2(rec);
 
-        if (probe[1] == 9 && (probe[4] >> 20) == 26) {
+        if (rec.w[1] == 9 && (rec.w[4] >> 20) == 26) {
             Func_02003d64(784);            /* 196 << 2 */
             Func_02003dd4(9, 3);
             Func_02003daa(9, 0x4000, 0x8000);   /* 128 << 7, 128 << 8 */

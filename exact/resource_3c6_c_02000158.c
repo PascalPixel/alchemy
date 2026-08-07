@@ -1,6 +1,13 @@
 #include "types.h"
 
 /*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-sink-pool-load-to-use: the
+ * last residuals were the two `ldr r0, .L' argument loads at 0x02000190 and
+ * 0x020001ac, which the reference fetches after the pair of narrowing shifts
+ * that set r1 and r2, while the post-reload scheduler hoists them above.
+ */
+
+/*
  * resource_3c6 scene-entry step at 0x02000158, 152 bytes
  * (0x02000158-0x020001ef).
  *

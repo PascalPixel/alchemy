@@ -43,7 +43,18 @@ void Func_020003bc(void)
     } else if (Func_02001f66(0xf02) != 0) {
         workspace = Data_03001ebc;
         Func_02001f6e(0x1031, 1);
-        *(u16 *)(workspace + 370) = 1;
+        {
+            /*
+             * The halfword store goes through a pointer local and then an s32 value local,
+             * in that order.  Storing the literal straight into the halfword makes gcc
+             * build the constant in HImode and fetch it from the literal pool
+             * (`ldrh r3, .L7'), which costs a pool word the reference does not have;
+             * splitting the address out first also fixes which register holds the address.
+             */
+            u16 *frame = (u16 *)(workspace + 370);
+            s32 one = 1;
+            *frame = (u16)one;
+        }
     } else {
         Func_02001f82(0x1031, 1);
     }

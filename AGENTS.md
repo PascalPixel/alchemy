@@ -16,7 +16,8 @@ because adding one cost nothing and nobody could see the total.
 
 Run any tool with no arguments to list its subcommands.
 
-`tools/scratch/` is exempt from every gate and is git-ignored. Throwaway probes
+`tools/scratch/` is exempt from every gate — `documented`, `architecture`,
+`typecheck` (tsconfig `exclude`) and `self_test` discovery — and is git-ignored. Throwaway probes
 belong there: the best result of the restructure came from a one-off script that
 found 31 fork modes missing from the sweep list, and a rule demanding every tool
 be documented would have refused it. Graduate what survives; delete the rest.
@@ -151,7 +152,8 @@ hatch, in any spelling), `check_publication` keeps ROM bytes and generated
 directories out of anything publishable, `check_commit_progress` enforces the
 `[C exact/total bytes]` commit subject, `check_sanctum` gates the sealed-owner
 ledger, `source_citations` keeps the provenance comments in reconstructed
-sources pointing at tools that exist, and `architecture` enforces the shape of `tools/` itself: every tool
+sources pointing at tools that exist and proves every retirement row in
+PROVENANCE.md actually recovers, and `architecture` enforces the shape of `tools/` itself: every tool
 documented on this page, no tool importing another tool, every module reachable,
 and every import resolving. Each of those rules was an ad-hoc script first —
 a check worth running twice belongs in here, not in a shell one-liner.

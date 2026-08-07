@@ -2,7 +2,7 @@
 // Enforce the canonical Full-C Byte Share suffix against the metric report
 // staged in Git's index. The working tree is deliberately not consulted.
 import { DEFAULT_TARGET, parseDecompTarget, type DecompTargetId } from "../lib/decomp_targets.ts";
-import { currentProgress, formatSubject, parseSubject } from "../lib/full_c_progress.ts";
+import { currentProgress, formatSubject, kilobytes, parseSubject } from "../lib/full_c_progress.ts";
 import { canonicalJson } from "../lib/canonical_json.ts";
 
 interface MetricReport {
@@ -19,6 +19,11 @@ const LEGACY_REGION = /\[[0-9]{1,3}(?:,[0-9]{3})* of [0-9]{1,3}(?:,[0-9]{3})*\]$
 const LEGACY_C_BYTES_AND_REGION =
   /\[[0-9]{1,3}(?:,[0-9]{3})* C bytes\]\s+\[[0-9]{1,3}(?:,[0-9]{3})* of [0-9]{1,3}(?:,[0-9]{3})*\]$/;
 const LEGACY_ROM_BYTES = /\[[0-9,]+ of 8,388,608 bytes\]$/;
+// The byte-exact `[C n/total bytes]` form this suffix carried before the
+// kilobyte `[ ☀️ n / total ]` rendering. Every commit up to the changeover has
+// it, so it must remain a recognized parent or the first new-format commit
+// would look like it followed an unhooked one.
+const LEGACY_FULL_C_BYTES = /\[C [0-9]{1,3}(?:,[0-9]{3})*\/[0-9]{1,3}(?:,[0-9]{3})* bytes\]$/;
 const DENOMINATOR_CORRECTION = /^metrics: correct executable denominator\b/;
 // Recognized transition for resuming the counter chain after commits that
 // bypassed this hook (hooks are opt-in per clone, so an unhooked contributor
@@ -40,7 +45,8 @@ const COUNTER_REVERT = /^metrics: revert reduces Full-C\b/;
 function legacySubject(subject: string): boolean {
   return LEGACY_C_BYTES_AND_REGION.test(subject) ||
     LEGACY_REGION.test(subject) ||
-    LEGACY_ROM_BYTES.test(subject);
+    LEGACY_ROM_BYTES.test(subject) ||
+    LEGACY_FULL_C_BYTES.test(subject);
 }
 
 function validatedReport(value: unknown, target: DecompTargetId): MetricReport {
@@ -76,30 +82,30 @@ export function checkCommitProgress(
     throw new Error("commit subject must end with " +
       formatSubject(report.full_c_bytes, report.executable_bytes));
   }
-  if (parsed.fullCBytes !== report.full_c_bytes ||
-      parsed.executableBytes !== report.executable_bytes) {
+  if (parsed.fullCKilobytes !== kilobytes(report.full_c_bytes) ||
+      parsed.executableKilobytes !== kilobytes(report.executable_bytes)) {
     throw new Error(
       `commit suffix is stale; expected ${formatSubject(report.full_c_bytes, report.executable_bytes)}`,
     );
   }
-  if (expectedDenominator !== undefined && parsed.executableBytes !== expectedDenominator) {
-    throw new Error(`executable denominator changed from ${expectedDenominator} to ${parsed.executableBytes}`);
+  if (expectedDenominator !== undefined && parsed.executableKilobytes !== kilobytes(expectedDenominator)) {
+    throw new Error(`executable denominator changed from ${expectedDenominator} to ${parsed.executableKilobytes}`);
   }
   if (previousSubject === undefined) return;
   const previous = parseSubject(previousSubject);
   if (previous) {
-    if (parsed.executableBytes !== previous.executableBytes) {
+    if (parsed.executableKilobytes !== previous.executableKilobytes) {
       if (!DENOMINATOR_CORRECTION.test(subject)) {
         throw new Error(
-          `executable denominator changed from ${previous.executableBytes} to ${parsed.executableBytes}; ` +
+          `executable denominator changed from ${previous.executableKilobytes} to ${parsed.executableKilobytes}; ` +
           "use an explicit metrics: correct executable denominator commit",
         );
       }
     }
-    if (parsed.fullCBytes < previous.fullCBytes) {
+    if (parsed.fullCKilobytes < previous.fullCKilobytes) {
       if (COUNTER_REVERT.test(subject)) return;
       throw new Error(
-        `Full-C bytes regressed from ${previous.fullCBytes} to ${parsed.fullCBytes}; ` +
+        `Full-C bytes regressed from ${previous.fullCKilobytes} to ${parsed.fullCKilobytes}; ` +
           "if this is a deliberate revert of work that does not verify, say so with a " +
           "'metrics: revert reduces Full-C' commit carrying the true current suffix",
       );
@@ -184,26 +190,33 @@ function selfTest(): void {
     audit: "complete",
   };
   checkCommitProgress(
-    "metrics: transition [C 123,456/1,234,567 bytes]",
+    "metrics: transition [ ☀️ 123 / 1,234 ]",
     report,
     "src: prior [95,358 C bytes] [1,368 of 2,000]",
   );
+  // The byte-exact predecessor form is a recognized parent, so the changeover
+  // commit chains normally instead of needing restore syntax.
   checkCommitProgress(
-    "docs: repeat [C 123,456/1,234,567 bytes]",
+    "metrics: kilobyte suffix [ \u2600\ufe0f 123 / 1,234 ]",
     report,
-    "metrics: prior [C 123,456/1,234,567 bytes]",
+    "src: prior [C 316,342/1,345,860 bytes]",
+  );
+  checkCommitProgress(
+    "docs: repeat [ ☀️ 123 / 1,234 ]",
+    report,
+    "metrics: prior [ ☀️ 123 / 1,234 ]",
   );
   const invalid: Array<[string, MetricReport, string?]> = [
     ["missing suffix", report],
-    ["bad commas [C 123456/1,234,567 bytes]", report],
-    ["missing unit [C 123,456/1,234,567]", report],
-    ["spaces [C 123,456 / 1,234,567 bytes]", report],
-    ["stale [C 123,455/1,234,567 bytes]", report],
-    ["wrong total [C 123,456/1,234,568 bytes]", report],
-    ["regress [C 123,456/1,234,567 bytes]", report,
-      "prior [C 123,457/1,234,567 bytes]"],
+    ["bad commas [ ☀️ 1234 / 1,234 ]", report],
+    ["missing unit [ ☀️ 123 / 1,234 bytes]", report],
+    ["spaces [ ☀️ 123/1,234 ]", report],
+    ["stale [ ☀️ 122 / 1,234 ]", report],
+    ["wrong total [ ☀️ 123 / 1,235 ]", report],
+    ["regress [ ☀️ 123 / 1,234 ]", report,
+      "prior [ ☀️ 124 / 1,234 ]"],
     ["post-transition legacy [123 of 456]", report,
-      "prior [C 123,456/1,234,567 bytes]"],
+      "prior [ ☀️ 123 / 1,234 ]"],
   ];
   for (const [message, metric, previous] of invalid) {
     let rejected = false;
@@ -217,15 +230,15 @@ function selfTest(): void {
   const stale = { ...report, full_c_bytes: 1, remaining_bytes: 1234566 };
   let rejected = false;
   try {
-    checkCommitProgress("stale report [C 123,456/1,234,567 bytes]", stale);
+    checkCommitProgress("stale report [ ☀️ 123 / 1,234 ]", stale);
   } catch {
     rejected = true;
   }
   if (!rejected) throw new Error("staged/report mismatch was accepted");
   checkCommitProgress(
-    "metrics: correct executable denominator after boundary audit [C 123,456/1,234,568 bytes]",
-    { ...report, executable_bytes: 1234568, remaining_bytes: 1111112 },
-    "prior [C 123,456/1,234,567 bytes]",
+    "metrics: correct executable denominator after boundary audit [ ☀️ 123 / 1,235 ]",
+    { ...report, executable_bytes: 1235567, remaining_bytes: 1112111 },
+    "prior [ ☀️ 123 / 1,234 ]",
   );
   // --- the report-currency rule, both branches -------------------------------
   // Intent: the derived report must not be STALE. Not: it must appear in every
@@ -258,7 +271,7 @@ function selfTest(): void {
   }
   let unsuffixedRejected = false;
   try {
-    checkCommitProgress("subject [C 123,456/1,234,567 bytes]", report, "docs");
+    checkCommitProgress("subject [ ☀️ 123 / 1,234 ]", report, "docs");
   } catch (error) {
     unsuffixedRejected = true;
     if (error instanceof TypeError) {
@@ -269,7 +282,7 @@ function selfTest(): void {
   // The explicit restore syntax is the one sanctioned way past such a parent,
   // and it must still carry a correct current suffix itself.
   checkCommitProgress(
-    "metrics: restore Full-C counter chain [C 123,456/1,234,567 bytes]",
+    "metrics: restore Full-C counter chain [ ☀️ 123 / 1,234 ]",
     report,
     "docs",
   );
@@ -277,32 +290,32 @@ function selfTest(): void {
   // with the explicit subject form, and only while still stating the true
   // number: the waiver covers monotonicity, never accuracy.
   checkCommitProgress(
-    "metrics: revert reduces Full-C after backing out unverifiable work [C 123,456/1,234,567 bytes]",
+    "metrics: revert reduces Full-C after backing out unverifiable work [ ☀️ 123 / 1,234 ]",
     report,
-    "src: prior [C 200,000/1,234,567 bytes]",
+    "src: prior [ ☀️ 200 / 1,234 ]",
   );
   let bareRegressionRejected = false;
   try {
     checkCommitProgress(
-      "src: quiet regression [C 123,456/1,234,567 bytes]",
+      "src: quiet regression [ ☀️ 123 / 1,234 ]",
       report,
-      "src: prior [C 200,000/1,234,567 bytes]",
+      "src: prior [ ☀️ 200 / 1,234 ]",
     );
   } catch { bareRegressionRejected = true; }
   if (!bareRegressionRejected) throw new Error("self-test: unannounced Full-C regression was accepted");
   let staleRevertRejected = false;
   try {
     checkCommitProgress(
-      "metrics: revert reduces Full-C [C 123,455/1,234,567 bytes]",
+      "metrics: revert reduces Full-C [ ☀️ 122 / 1,234 ]",
       report,
-      "src: prior [C 200,000/1,234,567 bytes]",
+      "src: prior [ ☀️ 200 / 1,234 ]",
     );
   } catch { staleRevertRejected = true; }
   if (!staleRevertRejected) throw new Error("self-test: revert syntax accepted a wrong suffix");
   let staleRestoreRejected = false;
   try {
     checkCommitProgress(
-      "metrics: restore Full-C counter chain [C 123,455/1,234,567 bytes]",
+      "metrics: restore Full-C counter chain [ ☀️ 122 / 1,234 ]",
       report,
       "docs",
     );
@@ -350,7 +363,7 @@ async function main(argv: string[]): Promise<void> {
   // parseSubject returns undefined for a subject that carries no counter (a
   // commit that bypassed this hook). Guard both empties: one such commit on the
   // branch would otherwise crash the hook for every commit that follows it.
-  if (previousMetric != null && report.executable_bytes !== previousMetric.executableBytes &&
+  if (previousMetric != null && kilobytes(report.executable_bytes) !== previousMetric.executableKilobytes &&
       !paths.includes(`metrics/${target}-executable.json`)) {
     throw new Error(`denominator correction requires staged metrics/${target}-executable.json`);
   }

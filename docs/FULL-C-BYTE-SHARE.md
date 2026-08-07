@@ -57,10 +57,14 @@ yes/no verification properties.
 Every new commit subject ends with:
 
 ```text
-[C X/Y bytes]
+[ ☀️ X / Y ]
 ```
 
-The hook checks the exact fraction against
+X and Y are whole kilobytes, floor of bytes/1000. The byte-exact record stays
+in `metrics/gs1-en-progress.json`; the subject is its legible summary, and the
+hook compares kilobytes to kilobytes on both sides.
+
+The hook checks that fraction against
 `metrics/gs1-en-progress.json` from the Git index, not the unstaged working
 tree. Changes to executable source or inventory require that regenerated
 report to be staged. After the one legacy-to-Full-C transition, denominator

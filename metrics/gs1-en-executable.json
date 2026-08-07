@@ -486,15 +486,15 @@
       },
       {
         "start": 134245480,
-        "end": 134246216,
+        "end": 134246250,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
       },
       {
-        "start": 134246216,
+        "start": 134246250,
         "end": 134246252,
-        "kind": "structural",
-        "evidence": "asm/executable_gaps/08006f48.s:nonstandard_thumb_branch_module"
+        "kind": "executable_alignment",
+        "evidence": "asm/alignment.json:alignment_padding"
       },
       {
         "start": 134246252,
@@ -1248,18 +1248,6 @@
       },
       {
         "start": 134288356,
-        "end": 134288744,
-        "kind": "thumb",
-        "evidence": "adjacent audited thumb spans; see namespace evidence"
-      },
-      {
-        "start": 134288744,
-        "end": 134288784,
-        "kind": "structural",
-        "evidence": "asm/executable_gaps/08011568.s:executable_gap_continuation"
-      },
-      {
-        "start": 134288784,
         "end": 134290666,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -3576,21 +3564,9 @@
       },
       {
         "start": 134908180,
-        "end": 134910140,
-        "kind": "thumb",
-        "evidence": "adjacent audited thumb spans; see namespace evidence"
-      },
-      {
-        "start": 134910140,
-        "end": 134910836,
-        "kind": "structural",
-        "evidence": "asm/080a90bc.s:hidden_register_context_module"
-      },
-      {
-        "start": 134910836,
         "end": 134910878,
         "kind": "thumb",
-        "evidence": "exact/080a9374.c:byte-identical-claimed-C"
+        "evidence": "adjacent audited thumb spans; see namespace evidence"
       },
       {
         "start": 134910884,
@@ -3800,7 +3776,7 @@
         "start": 134962492,
         "end": 134962706,
         "kind": "thumb",
-        "evidence": "asm/080b5d3c.s:compiler_output"
+        "evidence": "exact/080b5d3c.c:byte-identical-claimed-C"
       },
       {
         "start": 134962706,
@@ -4848,15 +4824,9 @@
       },
       {
         "start": 135240240,
-        "end": 135240272,
-        "kind": "structural",
-        "evidence": "asm/080f9a30.s:nonstandard_thumb_branch_module"
-      },
-      {
-        "start": 135240272,
         "end": 135240318,
         "kind": "thumb",
-        "evidence": "exact/080f9a50.c:byte-identical-claimed-C"
+        "evidence": "adjacent audited thumb spans; see namespace evidence"
       },
       {
         "start": 135240318,
@@ -4962,9 +4932,15 @@
       },
       {
         "start": 135242092,
-        "end": 135242182,
+        "end": 135242156,
         "kind": "structural",
-        "evidence": "adjacent audited structural spans; see namespace evidence"
+        "evidence": "asm/080fa16c.s:nonstandard_thumb_branch_module"
+      },
+      {
+        "start": 135242156,
+        "end": 135242182,
+        "kind": "thumb",
+        "evidence": "exact/080fa1ac.c:byte-identical-claimed-C"
       },
       {
         "start": 135242182,
@@ -5022,9 +4998,15 @@
       },
       {
         "start": 135242340,
+        "end": 135242368,
+        "kind": "thumb",
+        "evidence": "exact/080fa264.c:byte-identical-claimed-C"
+      },
+      {
+        "start": 135242368,
         "end": 135242400,
         "kind": "structural",
-        "evidence": "adjacent audited structural spans; see namespace evidence"
+        "evidence": "asm/080fa280.s:nonstandard_thumb_branch_module"
       },
       {
         "start": 135242400,
@@ -19161,18 +19143,6 @@
         },
         {
           "start": 33556556,
-          "end": 33556708,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33556708,
-          "end": 33556740,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33556740,
           "end": 33557262,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -21857,24 +21827,6 @@
         },
         {
           "start": 33568616,
-          "end": 33568834,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33568834,
-          "end": 33568836,
-          "kind": "executable_alignment",
-          "evidence": "resource_3a8_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33568836,
-          "end": 33568868,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33568868,
           "end": 33569028,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -21907,7 +21859,7 @@
           "start": 33569548,
           "end": 33569552,
           "kind": "literal_pool",
-          "evidence": "resource_3a8_overlay.s:6193:pc-relative-literal"
+          "evidence": "resource_3a8_overlay.s:6086:pc-relative-literal"
         },
         {
           "start": 33569552,
@@ -28611,24 +28563,6 @@
         },
         {
           "start": 33569276,
-          "end": 33569466,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33569466,
-          "end": 33569468,
-          "kind": "executable_alignment",
-          "evidence": "resource_3bb_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33569468,
-          "end": 33569492,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33569492,
           "end": 33570024,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -34861,18 +34795,6 @@
         },
         {
           "start": 33555772,
-          "end": 33555832,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33555832,
-          "end": 33555840,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33555840,
           "end": 33556392,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -34989,13 +34911,13 @@
           "start": 33558404,
           "end": 33558408,
           "kind": "literal_pool",
-          "evidence": "resource_3cb_overlay.s:2016:pc-relative-literal"
+          "evidence": "resource_3cb_overlay.s:1981:pc-relative-literal"
         },
         {
           "start": 33558408,
           "end": 33558410,
           "kind": "thumb",
-          "evidence": "resource_3cb_overlay.s:2045:verified-C-placeholder"
+          "evidence": "resource_3cb_overlay.s:2010:verified-C-placeholder"
         },
         {
           "start": 33558410,

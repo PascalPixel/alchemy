@@ -43,9 +43,10 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-void Func_080002a8();
-void *Func_08000290();
-void Func_080001a8();
+void Func_020009e4();
+void *Func_020009e6();
+
+                     
 
 static void Dma3_02000454(const void *source, void *destination, u32 control)
 {
@@ -64,17 +65,17 @@ void Func_02000454(void)
     u32 column;
     u32 i;
 
-    Func_080002a8(0);
+    Func_020009e4(0);
 
     *(volatile u16 *)0x0400000c = 0x0681;   /* BG1CNT */
     *(u16 *)0x03001ada = 0;
 
-    resource = (u8 *)Func_08000290(26);
+    resource = (u8 *)Func_020009e6(26);
 
     /* 112 words of palette straight from the resource block. */
     Dma3_02000454(resource, (void *)0x05000000, 0x84000070);
 
-    Func_080001a8(resource + 448, (void *)0x02010000);
+    Func_020009e4(resource + 448, (void *)0x02010000);
 
     /* 9,600 words of decoded tiles into character memory. */
     Dma3_02000454((const void *)0x02010000, (void *)0x06006800, 0x84002580);

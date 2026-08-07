@@ -58,11 +58,33 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_0808a080();
-s32 Func_080770c0();
-void Func_080091c0();
-void Func_08009150();
-void Func_0808a100();
+u8 *Func_02004674();
+u8 *Func_0200467e();
+s32 Func_0200465c();
+void Func_02004650();
+void Func_02004666();
+void Func_02004678();
+u8 *Func_0200475c();
+void Func_02004692();
+u8 *Func_02004770();
+void Func_020046a6();
+u8 *Func_02004784();
+void Func_020046ba();
+u8 *Func_02004798();
+void Func_020046ce();
+void Func_020047f6();
+u8 *Func_020047b6();
+void Func_020046ec();
+u8 *Func_020047ca();
+void Func_02004700();
+u8 *Func_020047de();
+void Func_02004714();
+u8 *Func_020047f2();
+void Func_02004728();
+void Func_02004850();
+s32 Func_020047b2();
+
+                     
 
 /* In-image words at file offsets 0x4834 (a toggle) and 0x4838 (a frame
  * counter), shared with Func_020008ec, Func_020009b0 and Func_02000970. */
@@ -79,11 +101,11 @@ void Func_02000714(void)
 
     s32 permuted_3;
     s32 permuted_11;
-    subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
+    subject = Func_02004674(*(s32 *)(0x02000240 + 500));
 
     id = 22;
     do {
-        record = Func_0808a080(id);
+        record = Func_0200467e(id);
         record[91] = 0;
 
         permuted_3 = *(s32 *)(record + 8) - *(s32 *)(subject + 8);
@@ -101,7 +123,7 @@ void Func_02000714(void)
             if ((*(s32 *)(subject + 16) - *(s32 *)(record + 16)) > 0x9ffff) goto next;
         }
 
-        if (Func_080770c0(260) != 0) {          /* 130 << 1 */
+        if (Func_0200465c(260) != 0) {          /* 130 << 1 */
             permuted_11 = *(s32 *)(record + 16);
         } else {
             *(s32 *)(subject + 16) = permuted_11;
@@ -131,32 +153,32 @@ void Func_02000714(void)
             arg2 = 7;
             stacked = 13;
         }
-        Func_080091c0(58, arg1, arg2, 1, 58, stacked);
+        Func_02004650(58, arg1, arg2, 1, 58, stacked);
     } else {
-        Func_080091c0(57, 11, 1, 1, 58, 11);
-        Func_080091c0(58, 14, 7, 1, 58, 13);
+        Func_02004666(57, 11, 1, 1, 58, 11);
+        Func_02004678(58, 14, 7, 1, 58, 13);
     }
 
     if (Data_0200c838 == 0) {
         Data_0200c834 = Data_0200c834 ^ 1;
         if (Data_0200c834 != 0) {
-            Func_08009150(Func_0808a080(22), 0x3a80000, 0, 0xb80000);
-            Func_08009150(Func_0808a080(23), 0x3c80000, 0, 0xf80000);
-            Func_08009150(Func_0808a080(24), 0x3e80000, 0, 0xb80000);
-            Func_08009150(Func_0808a080(25), 0x4080000, 0, 0xf80000);
-            Func_0808a100(31, 11);
+            Func_02004692(Func_0200475c(22), 0x3a80000, 0, 0xb80000);
+            Func_020046a6(Func_02004770(23), 0x3c80000, 0, 0xf80000);
+            Func_020046ba(Func_02004784(24), 0x3e80000, 0, 0xb80000);
+            Func_020046ce(Func_02004798(25), 0x4080000, 0, 0xf80000);
+            Func_020047f6(31, 11);
         } else {
-            Func_08009150(Func_0808a080(22), 0x3a80000, 0, 0xd80000);
-            Func_08009150(Func_0808a080(23), 0x3c80000, 0, 0xd80000);
-            Func_08009150(Func_0808a080(24), 0x3e80000, 0, 0xd80000);
-            Func_08009150(Func_0808a080(25), 0x4080000, 0, 0xd80000);
-            Func_0808a100(31, 10);
+            Func_020046ec(Func_020047b6(22), 0x3a80000, 0, 0xd80000);
+            Func_02004700(Func_020047ca(23), 0x3c80000, 0, 0xd80000);
+            Func_02004714(Func_020047de(24), 0x3e80000, 0, 0xd80000);
+            Func_02004728(Func_020047f2(25), 0x4080000, 0, 0xd80000);
+            Func_02004850(31, 10);
         }
     }
 
     counter = Data_0200c838 + 1;
     Data_0200c838 = counter;
-    if (counter > 119 && Func_080770c0(260) == 0) {
+    if (counter > 119 && Func_020047b2(260) == 0) {
         Data_0200c838 = 0;
     }
 }

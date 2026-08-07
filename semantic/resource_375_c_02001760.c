@@ -44,32 +44,78 @@
 
 /* Imports, old-style: arities are established per call site.  The two tested
  * imports need explicit return types. */
-s32 Func_080770c0();
-void Func_0808a018();
-void Func_0808a138();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a020();
-void Func_0808a0a8();
-void Func_0808a188();
-void Func_0808a1e8();
-void Func_0808a210();
-void Func_0808a0d0();
-void Func_0808a1b8();
-u8 *Func_0808a080();
-void Func_0808a0f0();
-void Func_0808a010();
-void Func_0808a178();
-s32 Func_0808a070();
-void Func_080770c8();
-void Func_0808a148();
-void Func_0808a100();
-void Func_0808a128();
-void Func_0808a110();
-void Func_0808a168();
-void Func_0808a0b0();
-void Func_0808a0b8();
-void Func_0808a0e8();
+s32 Func_020031ca();
+s32 Func_020031d6();
+void Func_020031fe();
+void Func_0200328e();
+void Func_020032b4();
+void Func_020032cc();
+void Func_02003220();
+void Func_0200321e();
+void Func_02003254();
+void Func_020032dc();
+void Func_020032fe();
+void Func_02003322();
+void Func_02003352();
+void Func_02003340();
+u8 *Func_0200328e_b();
+void Func_020032e4();
+void Func_020032de();
+void Func_0200336a();
+void Func_0200332a();
+void Func_020032a0();
+void Func_02003360();
+s32 Func_020032c8();
+void Func_0200334c();
+void Func_020032c2();
+void Func_02003378();
+void Func_02003390();
+void Func_020032c6();
+void Func_02003370();
+void Func_020032e6();
+void Func_0200339c();
+void Func_020033be();
+void Func_02003398();
+void Func_02003392();
+void Func_0200338a();
+void Func_02003404();
+void Func_020033f6();
+void Func_020033a6();
+void Func_0200333c();
+void Func_020033bc();
+void Func_02003416();
+void Func_020033ce();
+void Func_0200340a();
+void Func_02003414();
+void Func_020033b4();
+void Func_020033b2();
+void Func_020033b8();
+void Func_02003464();
+void Func_02003470();
+void Func_02003482();
+void Func_0200348c();
+void Func_020033a2();
+void Func_0200342a();
+u8 *Func_020033e0();
+void Func_0200341a();
+void Func_02003438();
+void Func_0200344a();
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02001760(void)
 {
@@ -77,84 +123,84 @@ void Func_02001760(void)
     void *block;
     u8 *slot;
 
-    if (Func_080770c0(0x839) != 0) {
+    if (Func_020031ca(0x839) != 0) {
         return;
     }
 
-    if (Func_080770c0(0x82f) != 0) {
-        Func_0808a018();
-        Func_0808a138(11, 2);
-        Func_0808a170(0xe8b);
-        Func_0808a180(11, 0);
-        Func_0808a020();
+    if (Func_020031d6(0x82f) != 0) {
+        Func_020031fe();
+        Func_0200328e(11, 2);
+        Func_020032b4(0xe8b);
+        Func_020032cc(11, 0);
+        Func_02003220();
         return;
     }
 
-    Func_0808a018();
-    Func_0808a0a8(11);
-    Func_0808a138(11, 1);
+    Func_0200321e();
+    Func_02003254(11);
+    Func_020032b4(11, 1);
 
     line = 0xe85;
-    Func_0808a170(line);
-    Func_0808a188(11, 0, 20);
-    Func_0808a1e8(0, 0x100, 30);
-    Func_0808a210(0x620000, -1, 0x011b0000, 1);
-    Func_0808a0d0(0, 0x5e, 0x125);
-    Func_0808a1b8(0, 0xa000, 0);
+    Func_020032dc(line);
+    Func_020032fe(11, 0, 20);
+    Func_02003322(0, 0x100, 30);
+    Func_02003352(0x620000, -1, 0x011b0000, 1);
+    Func_020032b4(0, 0x5e, 0x125);
+    Func_02003340(0, 0xa000, 0);
 
-    slot = Func_0808a080(0);
+    slot = Func_0200328e_b(0);
     if (slot != 0) {
-        Func_0808a0f0(1, *(s32 *)(slot + 8), *(s32 *)(slot + 16));
+        Func_020032e4(1, *(s32 *)(slot + 8), *(s32 *)(slot + 16));
     }
 
-    Func_0808a0d0(1, 0x6e, 0x117);
-    Func_0808a1b8(1, 0xa000, 40);
-    Func_0808a138(11, 2);
-    Func_0808a010(40);
-    Func_0808a178(11, 0);
+    Func_020032de(1, 0x6e, 0x117);
+    Func_0200336a(1, 0xa000, 40);
+    Func_0200332a(11, 2);
+    Func_020032a0(40);
+    Func_02003360(11, 0);
 
-    if (Func_0808a070(0, 0) == 0) {
-        Func_0808a138(11, 2);
-        Func_0808a010(20);
-        Func_0808a170(line + 2);
-        Func_0808a180(11, 0);
-        Func_080770c8(0x82f);
+    if (Func_020032c8(0, 0) == 0) {
+        Func_0200334c(11, 2);
+        Func_020032c2(20);
+        Func_02003378(line + 2);
+        Func_02003390(11, 0);
+        Func_020032c6(0x82f);
     } else {
-        Func_0808a138(11, 2);
-        Func_0808a010(20);
-        Func_0808a170(line + 3);
-        Func_0808a188(11, 0, 40);
-        Func_0808a148(11, 0, 0);
-        Func_0808a100(11, 1);
-        Func_0808a128(11, 4, 40);
-        Func_0808a100(11, 6);
-        Func_0808a1e8(11, 0x101, 40);
-        Func_0808a188(11, 0, 10);
-        Func_0808a100(11, 1);
-        Func_0808a010(10);
-        Func_0808a110(11, 3);
-        Func_0808a188(11, 0, 10);
-        Func_0808a110(11, 3);
+        Func_02003370(11, 2);
+        Func_020032e6(20);
+        Func_0200339c(line + 3);
+        Func_020033be(11, 0, 40);
+        Func_02003398(11, 0, 0);
+        Func_02003378(11, 1);
+        Func_02003392(11, 4, 40);
+        Func_0200338a(11, 6);
+        Func_02003404(11, 0x101, 40);
+        Func_020033f6(11, 0, 10);
+        Func_020033a6(11, 1);
+        Func_0200333c(10);
+        Func_020033bc(11, 3);
+        Func_02003416(11, 0, 10);
+        Func_020033ce(11, 3);
 
         block = (void *)0x02009ce0;
-        Func_0808a168(0, 0x0001000b, block);
-        Func_0808a168(1, 0x0001000b, block);
-        Func_0808a0b0(11, (void *)0x02009bdc);
-        Func_0808a0a8(0);
-        Func_0808a0a8(1);
-        Func_0808a1b8(0, 0x4000, 0);
-        Func_0808a1b8(1, 0x4000, 60);
-        Func_0808a1e8(0, 0x105, 0);
-        Func_0808a1e8(1, 0x105, 120);
-        Func_080770c8(0x839);
+        Func_0200340a(0, 0x0001000b, block);
+        Func_02003414(1, 0x0001000b, block);
+        Func_020033b4(11, (void *)0x02009bdc);
+        Func_020033b2(0);
+        Func_020033b8(1);
+        Func_02003464(0, 0x4000, 0);
+        Func_02003470(1, 0x4000, 60);
+        Func_02003482(0, 0x105, 0);
+        Func_0200348c(1, 0x105, 120);
+        Func_020033a2(0x839);
     }
 
-    Func_0808a100(1, 2);
-    slot = Func_0808a080(0);
+    Func_0200342a(1, 2);
+    slot = Func_020033e0(0);
     if (slot != 0) {
-        Func_0808a0b8(1, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+        Func_0200341a(1, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
     }
-    Func_0808a0e8(1);
-    Func_0808a0f0(1, 0, 0);
-    Func_0808a020();
+    Func_02003438(1);
+    Func_0200344a(1, 0, 0);
+    Func_020033f6();
 }

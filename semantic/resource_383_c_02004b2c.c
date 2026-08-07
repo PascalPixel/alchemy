@@ -36,23 +36,42 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void Func_080000d0();
-void Func_080770d0();
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a090();
-void Func_0808a0c8();
-void Func_0808a0d0();
-void Func_0808a0e8();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a1b8();
-void Func_0808a210();
-void Func_0808a230();
-void Func_080f9010();
+void Func_02009874();
+void Func_02009996();
+void Func_020098d0();
+void Func_020098da();
+void Func_020098e4();
+void Func_02009920();
+void Func_02009946();
+void Func_02009954();
+void Func_02009940();
+void Func_0200994c();
+void Func_02009960();
+void Func_02009976();
+void Func_020099ea();
+void Func_020099f6();
+void Func_02009994();
+void Func_020099ac();
+void Func_02006a5c(void);
+void Func_02009a54();
+void Func_02009982();
+void Func_02009990();
+void Func_0200999c();
+void Func_020099aa();
+void Func_020098a8();
+void Func_0200995e();
+void Func_0200998a();
+void Func_02009b68();
+
+                     
+
+                     
+
+                     
+
+                     
 
 /* This overlay's actor-staging step (semantic source already in the tree). */
-void Func_02001e80(void);
 
 /* This overlay's per-frame handler, installed below with its Thumb bit set. */
 void Func_020048c8(void);
@@ -63,44 +82,44 @@ extern u16 Data_0200e4f8;
 
 void Func_02004b2c(void)
 {
-    Func_0808a018();
+    Func_02009874();
 
     /* -1 in the second argument; 0xa8 << 16 and 0xa4 << 18. */
-    Func_0808a210(0xa80000, -1, 0x2900000, 1);
+    Func_02009996(0xa80000, -1, 0x2900000, 1);
 
     /* The same 0xcccc / 0x6666 pair for all three layers. */
-    Func_0808a090(0, 0xcccc, 0x6666);
-    Func_0808a090(1, 0xcccc, 0x6666);
-    Func_0808a090(2, 0xcccc, 0x6666);
+    Func_020098d0(0, 0xcccc, 0x6666);
+    Func_020098da(1, 0xcccc, 0x6666);
+    Func_020098e4(2, 0xcccc, 0x6666);
 
-    Func_0808a0d0(0, 248, 696);                 /* 174 << 2 */
-    Func_0808a0f0(1, 0xf80000, 0x2b80000);      /* 248 << 16, 174 << 18 */
-    Func_0808a0f0(2, 0xf80000, 0x2b80000);
+    Func_02009920(0, 248, 696);                 /* 174 << 2 */
+    Func_02009946(1, 0xf80000, 0x2b80000);      /* 248 << 16, 174 << 18 */
+    Func_02009954(2, 0xf80000, 0x2b80000);
 
-    Func_0808a0c8(0, 200, 696);
-    Func_0808a0c8(1, 248, 712);                 /* 178 << 2 */
-    Func_0808a0d0(2, 232, 696);
+    Func_02009940(0, 200, 696);
+    Func_0200994c(1, 248, 712);                 /* 178 << 2 */
+    Func_02009960(2, 232, 696);
 
-    Func_0808a0e8(1);
-    Func_0808a1b8(1, 0xc000, 0);                /* 192 << 8 */
-    Func_0808a1b8(2, 0x8000, 0);                /* 128 << 8 */
-    Func_0808a0e8(0);
-    Func_0808a100(1, 12);
+    Func_02009976(1);
+    Func_020099ea(1, 0xc000, 0);                /* 192 << 8 */
+    Func_020099f6(2, 0x8000, 0);                /* 128 << 8 */
+    Func_02009994(0);
+    Func_020099ac(1, 12);
 
-    Func_02001e80();
+    Func_02006a5c();
 
     /* 192 << 14, 144 << 18, 144 << 17, 184 << 18. */
-    Func_0808a230(0x300000, 0x2400000, 0x1200000, 0x2e00000);
+    Func_02009a54(0x300000, 0x2400000, 0x1200000, 0x2e00000);
 
-    Func_0808a090(1, 0x10000, 0x8000);          /* 128 << 9, 128 << 8 */
-    Func_0808a090(2, 0xc000, 0x6000);           /* 192 << 8, 192 << 7 */
-    Func_0808a090(24, 0x10000, 0x13333);
-    Func_0808a090(25, 0x18000, 0x18000);        /* 192 << 9 twice */
+    Func_02009982(1, 0x10000, 0x8000);          /* 128 << 9, 128 << 8 */
+    Func_02009990(2, 0xc000, 0x6000);           /* 192 << 8, 192 << 7 */
+    Func_0200999c(24, 0x10000, 0x13333);
+    Func_020099aa(25, 0x18000, 0x18000);        /* 192 << 9 twice */
 
-    Func_080000d0((void (*)(void))((s32)&Func_020048c8 | 1), 0x0c94, 0);
+    Func_020098a8((void (*)(void))((s32)&Func_020048c8 | 1), 0x0c94, 0);
     Data_0200e4f8 = 0;
 
-    Func_080770d0(0x1ff);
-    Func_0808a020();
-    Func_080f9010(9);
+    Func_0200995e(0x1ff);
+    Func_0200998a();
+    Func_02009b68(9);
 }

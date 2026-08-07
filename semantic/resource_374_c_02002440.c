@@ -98,10 +98,12 @@ void Func_0200239c(struct Obj *);
 
 /* Main-image imports reached through this overlay's veneer table.
  * Old-style declarations: their interfaces are not established here. */
-void Func_080f9010();
-struct Obj *Func_080090c8();
-void Func_08009020();
-void Func_080001b8();
+void Func_02004ca8();
+struct Obj *Func_02004a94();
+void Func_02004ac6();
+void Func_02004acc();
+
+                     
 
 void Func_02002440(struct Source *source)
 {
@@ -115,10 +117,10 @@ void Func_02002440(struct Source *source)
 
     workspace = Data_03001f30;
 
-    Func_080f9010(0x83);
+    Func_02004ca8(0x83);
 
     for (i = 0; i <= 1; i++) {
-        obj = Func_080090c8(26, source->f08, source->f0c, source->f10);
+        obj = Func_02004a94(26, source->f08, source->f0c, source->f10);
         made[i] = obj;
         if (obj == NULL) continue;
 
@@ -129,8 +131,8 @@ void Func_02002440(struct Source *source)
         obj->f64 = 0;
         if (sprite == NULL) continue;
 
-        Func_08009020(sprite, 0);
-        Func_080001b8(sprite->f1c);
+        Func_02004ac6(sprite, 0);
+        Func_02004acc(sprite->f1c);
         *((u8 *)sprite + 0x26) = 0;
 
         /* Halfword source, byte destination: the truncation is original. */

@@ -49,17 +49,32 @@
 extern u8 *Data_03001ebc;
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-s32 Func_080770c0();   /* query a numeric id; nonzero when selected */
-void Func_080770c8();  /* set that same id */
-void Func_080091c0();  /* six arguments, the last two carried on the stack */
-u8 *Func_0808a080();   /* fetch a record by slot */
-void Func_0808a0f0();
-void Func_0808a1b8();
-void Func_0808a360();
+s32 Func_02000dc0();
+void Func_02000dc8();
+u8 *Func_02000e0e();
+u8 *Func_02000e32();
+s32 Func_02000e1a();
+void Func_02000e74();
+void Func_02000ec0();
+s32 Func_02000e4e();
+void Func_02000e60();
+void Func_02000efc();
+void Func_020005d4(void);
+s32 Func_02000e76();
+void Func_02000e8a();
+void Func_02000f26();
+void Func_020007ea(void);
+s32 Func_02000e90();
+void Func_02000ee6();
+void Func_02000ef0();
+                       /* query a numeric id; nonzero when selected */
+                       /* set that same id */
+                       /* six arguments, the last two carried on the stack */
+                       /* fetch a record by slot */
+
+                     
 
 /* Overlay-internal callees, both real prologues in this image. */
-void Func_0200013c(void);
-void Func_02000328(void);
 
 s32 Func_020003dc(void)
 {
@@ -73,32 +88,32 @@ s32 Func_020003dc(void)
     /* 224 << 1 = 0x1c0; the stored value is that 448 plus 73, i.e. 521. */
     *(s32 *)(workspace + 0x1c0) = 521;
 
-    if (Func_080770c0(0x950) == 0) {
+    if (Func_02000dc0(0x950) == 0) {
         return 0;
     }
 
     /* Arguments five and six go to [sp, #0] and [sp, #4]. */
-    Func_080091c0(51, 47, 3, 1, 51, 45);
+    Func_02000dc8(51, 47, 3, 1, 51, 45);
 
     /*
      * The same two-step edit is applied to slots 31 and 32.  These are two
      * call sites of 0x0808a080 and are kept separate; the mask -13 clears bits
      * 0, 2 and 3 before bit 3 is set.
      */
-    record = Func_0808a080(31);
+    record = Func_02000e0e(31);
     attributes = *(u8 **)(record + 0x50);
     attributes[9] = (u8)((attributes[9] & ~13) | 8);
     record[0x23] = 0;
 
     attributes = *(u8 **)(record + 0x50);
-    record = Func_0808a080(32);
+    record = Func_02000e32(32);
     record[0x23] = 0;
     attributes[9] = (u8)((attributes[9] & ~13) | 8);
 
-    if (Func_080770c0(0x8bc) != 0) {
+    if (Func_02000e1a(0x8bc) != 0) {
         /* 140 << 18 = 0x2300000, 170 << 18 = 0x2a80000, 128 << 8 = 0x8000. */
-        Func_0808a0f0(25, 0x2300000, 0x2a80000);
-        Func_0808a1b8(25, 0x8000, 0);
+        Func_02000e74(25, 0x2300000, 0x2a80000);
+        Func_02000ec0(25, 0x8000, 0);
     }
 
     /* 225 << 1 = 0x1c2, read signed (ldrsh). */
@@ -110,23 +125,23 @@ s32 Func_020003dc(void)
      * the same one tested above, so the earlier branch and this one are two
      * distinct sites of 0x080770c0 on one id and are kept distinct.
      */
-    if (scene[0] == 19 && Func_080770c0(0x8bc) == 0) {
-        Func_080770c8(0x8bc);
-        Func_0808a360();
-        Func_0200013c();
+    if (scene[0] == 19 && Func_02000e4e(0x8bc) == 0) {
+        Func_02000e60(0x8bc);
+        Func_02000efc();
+        Func_020005d4();
     }
 
     /* 192 << 2 = 768. */
-    if (scene[0] == 16 && Func_080770c0(768) == 0) {
-        Func_080770c8(768);
-        Func_0808a360();
-        Func_02000328();
+    if (scene[0] == 16 && Func_02000e76(768) == 0) {
+        Func_02000e8a(768);
+        Func_02000f26();
+        Func_020007ea();
     }
 
-    if (Func_080770c0(0x8ab) != 0) {
+    if (Func_02000e90(0x8ab) != 0) {
         /* Two sites of one import on consecutive slots; not a loop. */
-        Func_0808a0f0(35, 0, 0);
-        Func_0808a0f0(36, 0, 0);
+        Func_02000ee6(35, 0, 0);
+        Func_02000ef0(36, 0, 0);
     }
 
     return 0;

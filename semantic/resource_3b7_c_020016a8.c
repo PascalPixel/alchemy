@@ -72,9 +72,13 @@ extern u16 Data_0200a062[];     /* in-image 0x2062: four headings */
 extern u8 Data_0200a070[];      /* scratch EWRAM above the image */
 extern u8 Data_0200a0d0[];      /* scratch EWRAM above the image: 4 x 24 bytes */
 
-u8 *Func_0808a080();
-void Func_08009080();
-void Func_080000d0();
+u8 *Func_02003036();
+void Func_02002f8c();
+u8 *Func_02003042();
+void Func_02002f98();
+void Func_02002f80();
+
+                     
 void Func_02000e5c();           /* the installed per-frame task */
 
 void Func_020016a8(void)
@@ -112,8 +116,8 @@ void Func_020016a8(void)
     *(s32 *)(state + 76) = 0;
 
     /* r0 carries each lookup's result straight into the retag call. */
-    Func_08009080(Func_0808a080(20), 2);
-    Func_08009080(Func_0808a080(21), 2);
+    Func_02002f8c(Func_02003036(20), 2);
+    Func_02002f98(Func_02003042(21), 2);
 
-    Func_080000d0(Func_02000e5c, 0xc83);
+    Func_02002f80(Func_02000e5c, 0xc83);
 }

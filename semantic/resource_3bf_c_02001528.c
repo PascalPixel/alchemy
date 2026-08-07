@@ -46,12 +46,20 @@
  * and +91, so it is modelled as an opaque byte block rather than given a
  * speculative layout.
  */
-s32 Func_020014cc();
-s32 Func_020018e4();
-s32 Func_02001918();
-s32 Func_080770c0();
-void Func_080770c8();
-u8 *Func_0808a080();  /* result is used and cast; a void declaration hard-errors */
+u8 *Func_02006b82();
+s32 Func_02006b74();
+s32 Func_02006ba6();
+s32 Func_02006bb8();
+s32 Func_02002a96();
+s32 Func_02002eec();
+s32 Func_02002eea();
+void Func_02006c28();
+void Func_02006c30();
+s32 Func_02006c30_b();
+
+                    
+
+                      /* result is used and cast; a void declaration hard-errors */
 s32 Func_02006b82(s32 kind);
 s32 Func_02006b74(s32 state);
 s32 Func_02006ba6(s32 state);
@@ -64,7 +72,7 @@ s32 Func_02006c30(s32 state);
 
 void Func_02001528(void)
 {
-    u8 *object = (u8 *)Func_0808a080(18);
+    u8 *object = (u8 *)Func_02006b82(18);
     u8 *base = *(u8 **)0x03001e70;
     s32 *record = (s32 *)(base + 356);
     u8 *workspace = *(u8 **)(base + 76);
@@ -79,28 +87,28 @@ void Func_02001528(void)
         record[7] = -1;
     }
 
-    if (Func_080770c0(262) != 0
+    if (Func_02006b74(262) != 0
         || *(s16 *)(workspace + 382) != 0
         || *(s16 *)(workspace + 384) == 0) {
         object[91] = 1;
         return;
     }
 
-    if (Func_080770c0(532) != 0) {
+    if (Func_02006ba6(532) != 0) {
         return;
     }
     object[91] = 0;
 
-    if (Func_080770c0(532) == 0 && object[91] == 0) {
+    if (Func_02006bb8(532) == 0 && object[91] == 0) {
         record[8] = 0x02f00000 - *(s32 *)(object + 8);    /* +32 */
         record[9] = 0x01f00000 - *(s32 *)(object + 16);   /* +36 */
     }
 
-    if (Func_020014cc() != 0) {
+    if (Func_02002a96() != 0) {
         return;
     }
 
-    if (Func_02001918(18) != 0) {
+    if (Func_02002eec(18) != 0) {
         if (table[294] != 0) {
             *(s16 *)(workspace + 382) = 0x2092;
             return;
@@ -111,13 +119,13 @@ void Func_02001528(void)
         }
     }
 
-    if (Func_020018e4(18) != 0) {
-        Func_080770c8(0x215);
-        Func_080770c8(532);
+    if (Func_02002eea(18) != 0) {
+        Func_02006c28(0x215);
+        Func_02006c30(532);
     }
 
 lastGate:
-    if (Func_080770c0(532) != 0) {
+    if (Func_02006c30_b(532) != 0) {
         *(s16 *)(workspace + 386) = 93;
     }
 }

@@ -34,9 +34,14 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void Func_080000d8();
-void Func_0808a0f0();
-void Func_0808a100();
+void Func_020046ac();
+void Func_0200489a();
+void Func_020048a8();
+void Func_020048b6();
+void Func_020048c4();
+void Func_020048d4();
+
+                     
 
 /* This overlay's own task routine at file offset 0x0714. */
 void Func_02000714();
@@ -52,12 +57,12 @@ void Func_020008ec(void)
     Data_0200c838 = 0;
 
     /* The task is published as its entry address plus the Thumb bit. */
-    Func_080000d8((s32)Func_02000714 + 1);
+    Func_020046ac((s32)Func_02000714 + 1);
 
-    Func_0808a0f0(22, 0x3a80000, 0xd80000);      /* 234 << 18, 216 << 16 */
-    Func_0808a0f0(23, 0x3c80000, 0xd80000);      /* 242 << 18 */
-    Func_0808a0f0(24, 0x3e80000, 0xd80000);      /* 250 << 18 */
-    Func_0808a0f0(25, 0x4080000, 0xd80000);      /* 129 << 19 */
+    Func_0200489a(22, 0x3a80000, 0xd80000);      /* 234 << 18, 216 << 16 */
+    Func_020048a8(23, 0x3c80000, 0xd80000);      /* 242 << 18 */
+    Func_020048b6(24, 0x3e80000, 0xd80000);      /* 250 << 18 */
+    Func_020048c4(25, 0x4080000, 0xd80000);      /* 129 << 19 */
 
-    Func_0808a100(31, 10);
+    Func_020048d4(31, 10);
 }

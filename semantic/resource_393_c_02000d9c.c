@@ -22,7 +22,8 @@ struct DmaTransfer {
     u32 control;
 };
 
-void Func_0808a338();   /* publish the completed work buffer */
+void Func_02001c82();
+                        /* publish the completed work buffer */
 
 /*
  * Capture the two hardware-palette banks into their non-contiguous work-buffer
@@ -43,5 +44,5 @@ void Func_02000d9c(void)
     dma3->destination = destination + 0x1c0;
     dma3->control = 0x84000070;
 
-    Func_0808a338(0x10000, 0);
+    Func_02001c82(0x10000, 0);
 }

@@ -32,12 +32,16 @@
 extern u8 *Data_03001ebc;
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-u8 *Func_0808a080();   /* fetch a record by slot; 0 when the slot is empty */
-void Func_080f9010();
-void Func_08009178();
-void Func_0808a090();
-void Func_0808a100();
-void Func_0808a248();
+u8 *Func_02000ac6();
+void Func_02000b78();
+void Func_02000ab2();
+void Func_02000b10();
+u8 *Func_02000b0e();
+void Func_02000b3c();
+void Func_02000b8c();
+                       /* fetch a record by slot; 0 when the slot is empty */
+
+                     
 
 /* One eight-byte record of the in-image table at file offset 0x1dcc. */
 struct Placement_020000c0 {
@@ -59,7 +63,7 @@ void Func_020000c0(void)
 
     /* Slots 8..65 inclusive; the compare is `cmp r5,#65 / bls`, so unsigned. */
     for (slot = 8; (u32)slot <= 65; slot++) {
-        record = Func_0808a080(slot);
+        record = Func_02000ac6(slot);
         if (record != 0) {
             record[0x55] = 0;
         }
@@ -69,20 +73,20 @@ void Func_020000c0(void)
     scene = (s16 *)(workspace + 0x16c);
     index = (s32)scene[0] - 14;
 
-    Func_080f9010(158);
+    Func_02000b78(158);
 
     /* Return value of 0x080f9010 is discarded: r0 is reloaded from the pool. */
     table = (struct Placement_020000c0 *)0x02009dcc;
-    Func_08009178(table[index].data, table[index].x, table[index].y);
+    Func_02000ab2(table[index].data, table[index].x, table[index].y);
 
     /* r1 = 128 << 8 = 0x8000, r2 = 128 << 7 = 0x4000. */
-    Func_0808a090(0, 0x8000, 0x4000);
+    Func_02000b10(0, 0x8000, 0x4000);
 
     /* Slot 0's record is used without a null test here, unlike the loop above;
      * that asymmetry is in the assembly, not an omission. */
-    record = Func_0808a080(0);
+    record = Func_02000b0e(0);
     record[0x55] = 0;
 
-    Func_0808a100(0, 2);
-    Func_0808a248((s32)scene[0]);
+    Func_02000b3c(0, 2);
+    Func_02000b8c((s32)scene[0]);
 }

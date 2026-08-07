@@ -75,12 +75,27 @@ struct Ambient3af {
 /* The family's "no motion pending" sentinel. */
 #define AMBIENT3AF_IDLE_MOTION ((s32)0x80000000)
 
-s32 Func_080000f8();                /* pseudo-random draw, a 16.16 fraction */
-void Func_08009150();               /* aim a record at a 16.16 destination */
-struct Ambient3af *Func_0808a080(); /* record by id */
-void Func_0808a1b8();               /* start a cue (id, parameter, delay) */
-void Func_0808a1e8();               /* start a variant cue (id, script, delay) */
-void Func_080f9010();               /* play a sound effect */
+void Func_020043b4();
+void Func_020045ae();
+void Func_0200453c();
+void Func_0200454a();
+s32 Func_020043e6();
+struct Ambient3af *Func_02004494();
+void Func_02004586();
+struct Ambient3af *Func_020044ac();
+void Func_0200444c();
+void Func_0200445e();
+s32 Func_02004494_b();
+s32 Func_020044ae();
+s32 Func_020044e6();
+s32 Func_02004500();
+s32 Func_02004520();
+                                    /* pseudo-random draw, a 16.16 fraction */
+                                    /* aim a record at a 16.16 destination */
+                                    /* record by id */
+                                    /* start a cue (id, parameter, delay) */
+                                    /* start a variant cue (id, script, delay) */
+                                    /* play a sound effect */
 
 s32 Func_020000c4(struct Ambient3af *actor)
 {
@@ -95,7 +110,7 @@ s32 Func_020000c4(struct Ambient3af *actor)
     case 0:
         actor->speedLimitA = 128 << 11;
         actor->speedLimitB = 128 << 10;
-        Func_08009150(actor, 134 << 17, 160 << 13, 173 << 18);
+        Func_020043b4(actor, 134 << 17, 160 << 13, 173 << 18);
         goto advance;
 
     case 2:
@@ -104,28 +119,28 @@ s32 Func_020000c4(struct Ambient3af *actor)
         if (actor->motionC != actor->motionB) goto tail;
 
         actor->phase = (u8)(actor->phase + 1);
-        Func_080f9010(146);
+        Func_020045ae(146);
         if (actor->variant != 0) {
-            Func_0808a1b8(21, 208 << 8, 0);
+            Func_0200453c(21, 208 << 8, 0);
         } else {
-            Func_0808a1b8(21, 176 << 8, 0);
+            Func_0200454a(21, 176 << 8, 0);
         }
 
-        if ((u32)(Func_080000f8() << 2) >> 16 != 0) {
-            other = Func_0808a080(21);
+        if ((u32)(Func_020043e6() << 2) >> 16 != 0) {
+            other = Func_02004494(21);
             other->motionA = 128 << 10;
         } else {
-            Func_0808a1e8(21, 0x103, 0);
-            other = Func_0808a080(21);
+            Func_02004586(21, 0x103, 0);
+            other = Func_020044ac(21);
             other->motionA = 192 << 11;
         }
         goto tail;
 
     case 4:
         if (actor->variant != 0) {
-            Func_08009150(actor, 141 << 17, 0, 0x02920000);
+            Func_0200444c(actor, 141 << 17, 0, 0x02920000);
         } else {
-            Func_08009150(actor, 254 << 16, 0, 167 << 18);
+            Func_0200445e(actor, 254 << 16, 0, 167 << 18);
         }
         goto advance;
 
@@ -162,13 +177,13 @@ advance:
 physics:
     /* Horizontal drift: accelerate one way until it saturates, then reverse. */
     if (actor->xReversed != 0) {
-        draw = (s32)((u32)(Func_080000f8() << 12) >> 16);
+        draw = (s32)((u32)(Func_02004494_b() << 12) >> 16);
         actor->drift -= draw;
         if (actor->drift < (s32)0xffffc000) {
             actor->xReversed = (s16)phase;      /* provably 0 on this path */
         }
     } else {
-        draw = (s32)((u32)(Func_080000f8() << 12) >> 16);
+        draw = (s32)((u32)(Func_020044ae() << 12) >> 16);
         actor->drift += draw;
         if (actor->drift > (128 << 7)) {
             actor->xReversed = 1;
@@ -183,13 +198,13 @@ physics:
 
     /* Vertical bob, the same shape with a fixed bias instead of a stored one. */
     if (actor->yReversed != 0) {
-        draw = (s32)((u32)(Func_080000f8() << 15) >> 16);
+        draw = (s32)((u32)(Func_020044e6() << 15) >> 16);
         value = actor->y - draw + (s32)0xffff8000;
         actor->y = value;
         if (value >= 0) goto tail;
         value = 0;
     } else {
-        draw = (s32)((u32)(Func_080000f8() << 15) >> 16);
+        draw = (s32)((u32)(Func_02004500() << 15) >> 16);
         value = actor->y + draw + (128 << 8);
         actor->y = value;
         if (value <= (128 << 12)) goto tail;
@@ -199,7 +214,7 @@ physics:
 
 tail:
     /* Roughly one idle frame in a hundred starts the scripted routine. */
-    if ((100 * Func_080000f8()) >> 16 == 0) {
+    if ((100 * Func_02004520()) >> 16 == 0) {
         actor->phase = 1;
     }
     return 1;

@@ -71,17 +71,23 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneEntity *Func_0808a080();     /* scene entity by selector */
-struct SceneEntity *Func_080770c0();     /* companion entity by selector, or 0 */
-void Func_080091e0();               /* set presentation mode */
-s32 Func_08000140();                /* reserve workspace on a channel */
-void Func_08000150();               /* commit the channel reservation */
-void Func_080001c8();               /* upload a palette ramp */
-s32 Func_08015250();                /* shared-workspace side effect */
+struct SceneEntity *Func_02007664();
+void Func_0200762e();
+s32 Func_02007604();
+s32 Func_02007694();
+void Func_0200762c();
+void Func_0200762a();
+                                         /* scene entity by selector */
+                                         /* companion entity by selector, or 0 */
+                                    /* set presentation mode */
+                                    /* reserve workspace on a channel */
+                                    /* commit the channel reservation */
+                                    /* upload a palette ramp */
+                                    /* shared-workspace side effect */
 
 void Func_02003a3c(s32 selector)
 {
-    struct SceneEntity *entity = Func_0808a080(selector);
+    struct SceneEntity *entity = Func_02007664(selector);
     struct SceneHandle *handle = entity->handle;
     s32 gradient;
 
@@ -89,13 +95,13 @@ void Func_02003a3c(s32 selector)
     handle->flags05 = (u8)(handle->flags05 & ~0x20);
     handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
 
-    Func_080091e0(entity, 0);
+    Func_0200762e(entity, 0);
 
     entity->field5c = 0;
     entity->field55 = 0;
 
     /* 0x109 selects a companion entity; when absent the sprite drops a row. */
-    if (Func_080770c0(0x109) == 0) {
+    if (Func_02007664(0x109) == 0) {
         entity->y += 0x00200000;    /* 0x80 << 14 */
     }
 
@@ -108,11 +114,11 @@ void Func_02003a3c(s32 selector)
      * 0x400 (0x80 << 3) bytes into it.  Func_08015250's result is discarded,
      * so only its side effect on the shared workspace matters.
      */
-    gradient = Func_08000140(17, 0x608);
+    gradient = Func_02007604(17, 0x608);
     gradient += 0x400;
-    Func_08015250(0xb5);
-    Func_080001c8(handle->paletteIndex, 0x80, gradient);
-    Func_08000150(17);
+    Func_02007694(0xb5);
+    Func_0200762c(handle->paletteIndex, 0x80, gradient);
+    Func_0200762a(17);
 
     entity->field30 = 0;
     entity->behaviour = (void (*)(void))0x0200b9d5;

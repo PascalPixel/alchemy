@@ -41,10 +41,13 @@ extern u16 Data_02009c1a;
 /* Main-image imports reached through this overlay's veneer table.  Old-style
  * declarations are mandatory here: one import name is reached with different
  * argument counts at different sites in this overlay. */
-void *Func_08000170();   /* allocator: returns a buffer of the requested size */
-s32 Func_080001d0();
-void Func_080001c8();
-void Func_080000d0();    /* installs a per-frame task */
+void *Func_02002602();
+s32 Func_0200261a();
+void Func_02002632();
+void Func_02002612();
+                         /* allocator: returns a buffer of the requested size */
+
+                         /* installs a per-frame task */
 
 /* The task this entry point publishes; its body is the 0x020011c4 row. */
 void Func_020011c4(void);
@@ -55,14 +58,14 @@ void Func_020012ac(void)
     u32 *buffer;
     volatile u32 *dma3;
 
-    buffer = (u32 *)Func_08000170(256);
+    buffer = (u32 *)Func_02002602(256);
 
     /*
      * r0 is not reloaded between the two branches, so the buffer pointer is
      * still in r0 when Func_080001d0 is entered.  Whether that callee reads it
      * is unverified; the dataflow is preserved as written.
      */
-    Data_02009c1a = (u16)Func_080001d0(buffer);
+    Data_02009c1a = (u16)Func_0200261a(buffer);
 
     /*
      * Clear the buffer by DMA from a single stack word: control 0x85000040 is
@@ -77,8 +80,8 @@ void Func_020012ac(void)
     /* The `subs r3, #12` after the `stmia r3!` restores the DMA base and is
      * then dead; it has no observable effect. */
 
-    Func_080001c8((s16)Data_02009c1a, 256, buffer);
+    Func_02002632((s16)Data_02009c1a, 256, buffer);
 
     Data_02009c18 = 0x30;
-    Func_080000d0(Func_020011c4, 3200);
+    Func_02002612(Func_020011c4, 3200);
 }

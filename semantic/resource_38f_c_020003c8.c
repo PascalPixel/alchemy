@@ -80,35 +80,78 @@ extern u8 Data_0200ae20[];
 extern u8 Data_0200ae34[];
 
 /* Old-style declarations are mandatory in overlay sources. */
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a010();
-u8 *Func_0808a080();
-void Func_0808a090();
-void Func_0808a0c0();
-void Func_0808a0d0();
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a128();
-void Func_0808a138();
-void Func_0808a168();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a1b8();
-void Func_0808a1e8();
-void Func_0808a208();
-void Func_0808a210();
-void Func_0808a218();
-void Func_080f9010();
-void Func_080770c8();
-void Func_08009080();
-void Func_08009098();
-struct Obj *Func_080090c8();
-void Func_08009180();
-void Func_080091c0();
-void Func_080091e0();
-void Func_080091f0();
-s32 Func_080000f8();
+void Func_02002e06();
+void Func_02002f22();
+void Func_02002f3a();
+void Func_02002f46();
+void Func_02002e24();
+void Func_02002f38();
+void Func_02002ee8();
+void Func_02002f16();
+void Func_02002f2e();
+void Func_02002f66();
+void Func_02002f7e();
+void Func_02002ea0();
+void Func_02002ee4();
+void Func_02002f78();
+void Func_02002f20();
+void Func_02002e8e();
+void Func_02002f26();
+void Func_02002f86();
+void Func_02002fa2();
+void Func_02002f62();
+void Func_02002eb8();
+u8 *Func_02002ee6();
+void Func_02002f0e();
+void Func_02002f80();
+void Func_02002f52();
+void Func_02003090();
+void Func_02002ef6();
+void Func_02002f68();
+void Func_02002f06();
+void Func_020030ac();
+void Func_02002f12();
+void Func_02002f2c();
+void Func_02002f0c();
+void Func_02002f42();
+void Func_02003046();
+void Func_02002f64();
+void Func_02002f7c();
+void Func_02003122();
+struct Obj *Func_02002f44();
+void Func_02002f90();
+s32 Func_02002f4a();
+void Func_02002f8e();
+void Func_02002f9e();
+void Func_02002fee();
+void Func_0200300a();
+void Func_02003028();
+void Func_020030f0();
+void Func_02003056();
+void Func_0200304c();
+void Func_02003140();
+void Func_02003076();
+void Func_0200318a();
+void Func_02003080();
+void Func_0200309c();
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                            
+
+                     
 
 void Func_020003c8(void)
 {
@@ -119,89 +162,89 @@ void Func_020003c8(void)
     s32 x;
     s32 speed;
 
-    Func_0808a018();
+    Func_02002e06();
 
-    Func_0808a208(0x20000, 0x4000);           /* 2.0 and 0.25 in 16.16 */
-    Func_0808a210(0x00a80000, 0, 0x00f60000, 1);
-    Func_0808a218();
-    Func_0808a010(20);
+    Func_02002f22(0x20000, 0x4000);           /* 2.0 and 0.25 in 16.16 */
+    Func_02002f3a(0x00a80000, 0, 0x00f60000, 1);
+    Func_02002f46();
+    Func_02002e24(20);
 
-    Func_0808a1e8(8, 256, 40);
-    Func_0808a138(8, 2);
-    Func_0808a170(0x1786);
-    Func_0808a180(8, 0);
+    Func_02002f38(8, 256, 40);
+    Func_02002ee8(8, 2);
+    Func_02002f16(0x1786);
+    Func_02002f2e(8, 0);
 
-    Func_0808a208(0x6666, 0xccc);             /* 0.4 and 0.05 */
-    Func_0808a210(0x00a80000, 0, 0x00ea0000, 1);
-    Func_0808a090(0, 0x9999, 0x4ccc);         /* 0.6 and 0.3 */
-    Func_0808a0d0(0, 174, 278);
-    Func_0808a1b8(0, 0xe000, 20);             /* 224 << 8 */
-    Func_0808a110(0, 3);
-    Func_0808a010(20);
+    Func_02002f66(0x6666, 0xccc);             /* 0.4 and 0.05 */
+    Func_02002f7e(0x00a80000, 0, 0x00ea0000, 1);
+    Func_02002ea0(0, 0x9999, 0x4ccc);         /* 0.6 and 0.3 */
+    Func_02002ee4(0, 174, 278);
+    Func_02002f78(0, 0xe000, 20);             /* 224 << 8 */
+    Func_02002f20(0, 3);
+    Func_02002e8e(20);
 
-    Func_0808a100(8, 3);
-    Func_0808a180(8, 0);
-    Func_0808a1b8(8, 0x9000, 20);             /* 144 << 8 */
-    Func_0808a138(8, 1);
-    Func_0808a010(20);
+    Func_02002f26(8, 3);
+    Func_02002f86(8, 0);
+    Func_02002fa2(8, 0x9000, 20);             /* 144 << 8 */
+    Func_02002f62(8, 1);
+    Func_02002eb8(20);
 
-    record = Func_0808a080(8);
+    record = Func_02002ee6(8);
     record[0x5a] = record[0x5a] & 0xfe;
 
-    Func_0808a090(8, 0x20000, 0x10000);       /* 2.0 and 1.0 */
-    Func_0808a128(8, 2, 0);
-    Func_0808a0c0(8, 224, 197);
-    Func_080f9010(176);
-    Func_0808a010(10);
-    Func_0808a0c0(8, 234, 200);
-    Func_0808a010(10);
-    Func_080f9010(198);
-    Func_0808a010(30);
+    Func_02002f0e(8, 0x20000, 0x10000);       /* 2.0 and 1.0 */
+    Func_02002f80(8, 2, 0);
+    Func_02002f52(8, 224, 197);
+    Func_02003090(176);
+    Func_02002ef6(10);
+    Func_02002f68(8, 234, 200);
+    Func_02002f06(10);
+    Func_020030ac(198);
+    Func_02002f12(30);
 
-    Func_08009180(91, 0, 72, 9, 5, 4);
-    Func_0808a010(12);
-    Func_08009180(91, 4, 72, 9, 5, 4);
-    Func_0808a010(9);
-    Func_0808a1b8(0, 0xc000, 0);              /* 192 << 8 */
-    Func_08009180(91, 8, 72, 9, 5, 5);
-    Func_0808a010(6);
-    Func_08009180(91, 13, 72, 9, 5, 6);
-    Func_0808a010(3);
-    Func_080f9010(188);
+    Func_02002ef6(91, 0, 72, 9, 5, 4);
+    Func_02002f2c(12);
+    Func_02002f0c(91, 4, 72, 9, 5, 4);
+    Func_02002f42(9);
+    Func_02003046(0, 0xc000, 0);              /* 192 << 8 */
+    Func_02002f2e(91, 8, 72, 9, 5, 5);
+    Func_02002f64(6);
+    Func_02002f46(91, 13, 72, 9, 5, 6);
+    Func_02002f7c(3);
+    Func_02003122(188);
 
     /* Ten objects along a line: x starts at 148.0 and steps by 4.0. */
     x = 0x00940000;
     for (i = 0; i <= 9; i++) {
         x = x + 0x40000;
-        p = Func_080090c8(222, x, 0, 0x01020000);
+        p = Func_02002f44(222, x, 0, 0x01020000);
         if (p != 0) {
             p->f55 = 0;
-            Func_080091e0(p, 0);
+            Func_02002f90(p, 0);
             sub = p->f50;
             p->f24 = speed;
             sub->f09 = sub->f09 & ~13;
-            p->f64 = (u16)((((u32)(Func_080000f8() * 40)) >> 16) + 40);
+            p->f64 = (u16)((((u32)(Func_02002f4a() * 40)) >> 16) + 40);
             p->f2c = 0x10000;
             if ((i & 1) != 0) {
                 p->f24 = -speed;
             }
-            Func_08009080(p, 1);
-            Func_08009098(p, Data_0200ae20);
+            Func_02002f8e(p, 1);
+            Func_02002f9e(p, Data_0200ae20);
             speed = (s32)(((i & 3) << 16) + 0x10000) >> 1;
         }
     }
 
-    Func_08009180(91, 19, 72, 9, 5, 7);
-    Func_080091c0(23, 11, 5, 7, 8, 11);
-    Func_080091f0(0, 0x40000, 0x10000);
-    Func_0808a010(10);
-    Func_0808a128(0, 6, 0);
-    Func_0808a010(20);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_0808a168(8, 0x10000, Data_0200ae34);
-    Func_0808a010(60);
-    Func_0808a1e8(0, 258, 60);
-    Func_080770c8(0x847);
+    Func_02002fee(91, 19, 72, 9, 5, 7);
+    Func_0200300a(23, 11, 5, 7, 8, 11);
+    Func_02003028(0, 0x40000, 0x10000);
+    Func_02003046(10);
+    Func_020030f0(0, 6, 0);
+    Func_02003056(20);
+    Func_0200304c(-1, -1, 0xe666);
+    Func_02003140(8, 0x10000, Data_0200ae34);
+    Func_02003076(60);
+    Func_0200318a(0, 258, 60);
+    Func_02003080(0x847);
 
-    Func_0808a020();
+    Func_0200309c();
 }

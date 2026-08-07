@@ -38,35 +38,84 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void Func_080000d0();
-void Func_080000d8();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-u8 *Func_0808a080();            /* returns the participant record */
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a130();
-void Func_0808a138();
-void Func_0808a148();
-void Func_0808a150();
-void Func_0808a170();
-void Func_0808a1e8();
-void Func_0808a1f0();
-void Func_0808a368();
-void Func_0808a370();
-void Func_0808a480();
+void Func_02006c9e();
+void Func_02006bdc();
+void Func_02006c8a();
+void Func_02006c92();
+void Func_02006d4a();
+void Func_02006d52();
+void Func_02006d5a();
+void Func_02006d62();
+void Func_02006d6a();
+void Func_02006da4();
+void Func_02006db6();
+void Func_02006db8();
+void Func_02006dc2();
+void Func_02006d00();
+void Func_02006df6();
+void Func_02006e30();
+void Func_02006df0();
+void Func_020065f0(s32, s32);
+void Func_02006e20();
+void Func_02006e5a();
+void Func_02006e1a();
+void Func_0200661c(s32, s32);
+void Func_02006e04();
+void Func_02006e3e();
+void Func_02006e48();
+void Func_02006d8e();
+void Func_02006e6c();
+void Func_02006654(s32, s32);
+void Func_02006e64();
+void Func_02006daa();
+void Func_0200666a(s32, s32);
+void Func_020066d6(s32, s32);
+void Func_02006f7e();
+void Func_02006dc4();
+void Func_02006e8c();
+void Func_0200668c(s32, s32);
+void Func_02006e9c();
+void Func_0200669c(s32, s32);
+void Func_02006ef0();
+void Func_0200673c(void);
+void Func_02006eb4();
+void Func_02006ec4();
+void Func_02006e0a();
+void Func_020066ca(s32, s32);
+void Func_02006ee4();
+void Func_02006e22();
+void Func_02006eca();
+u8 *Func_02006e76();
+u8 *Func_02006e8e();
+u8 *Func_02006ea0();
+void Func_02006fec();
+void Func_02006ff8();
+void Func_02004318(void);
+void Func_02006e86();
+u8 *Func_02006eec();
+u8 *Func_02006ef8();
+void Func_02006e00();
+void Func_02006ee2();
+
+                     
+
+                     
+                     
+                                /* returns the participant record */
+
+                     
+
+                     
+
+                     
+
+                     
 /* Four register arguments plus two stack words. */
-void Func_080091c0();
 
 /* This overlay's own routines; byte-exact sources in assets/code for 0x45f4,
  * 0x4658 and 0x4684. */
-void Func_020045f4(s32, s32);
-void Func_02004658(s32, s32);
-void Func_02004684(void);
-void Func_020021c8(void);
+
+                         
 
 /* Handlers installed below, with their Thumb bits set. */
 void Func_020048c8(void);
@@ -83,22 +132,22 @@ void Func_02001f50(void)
     s32 permuted_71;
     workspace = *(u8 **)0x03001ebc;
 
-    Func_0808a018();
-    Func_080000d8((void (*)(void))((s32)&Func_020048c8 | 1));
-    Func_080770d0(0x107);
-    Func_080770d0(592);                 /* 148 << 2 */
+    Func_02006c9e();
+    Func_02006bdc((void (*)(void))((s32)&Func_020048c8 | 1));
+    Func_02006c8a(0x107);
+    Func_02006c92(592);                 /* 148 << 2 */
 
-    Func_0808a100(24, 1);
-    Func_0808a100(25, 1);
-    Func_0808a100(2, 1);
-    Func_0808a100(0, 1);
-    Func_0808a100(1, 1);
+    Func_02006d4a(24, 1);
+    Func_02006d52(25, 1);
+    Func_02006d5a(2, 1);
+    Func_02006d62(0, 1);
+    Func_02006d6a(1, 1);
 
-    Func_0808a148(1, 2, 0);
-    Func_0808a150(0, 2, 0);
-    Func_0808a148(24, 2, 0);
-    Func_0808a148(25, 2, 0);
-    Func_0808a010(10);
+    Func_02006da4(1, 2, 0);
+    Func_02006db6(0, 2, 0);
+    Func_02006db8(24, 2, 0);
+    Func_02006dc2(25, 2, 0);
+    Func_02006d00(10);
 
     /* 193 << 1. */
     beat = (s16 *)(workspace + 386);
@@ -109,63 +158,63 @@ void Func_02001f50(void)
      * The halfword is re-read between the two speeches, as the assembly does. */
     if (*beat >= 201 && *beat <= 203) {
         if (*beat != 201) {
-            Func_0808a170(0x12a4);
-            Func_0808a1f0(25, 258);     /* 129 << 1 */
-            Func_0808a138(25, 2);
-            Func_020045f4(25, 20);
+            Func_02006df6(0x12a4);
+            Func_02006e30(25, 258);     /* 129 << 1 */
+            Func_02006df0(25, 2);
+            Func_020065f0(25, 20);
             speaker = 25;
         }
         if (*beat != 202) {
-            Func_0808a170(0x12a3);
-            Func_0808a1f0(24, 258);
-            Func_0808a138(24, 2);
+            Func_02006e20(0x12a3);
+            Func_02006e5a(24, 258);
+            Func_02006e1a(24, 2);
             speaker = 24;
-            Func_020045f4(24, 20);
+            Func_0200661c(24, 20);
         }
     }
 
-    Func_0808a100(2, 1);
-    Func_0808a148(2, speaker, 0);
-    Func_0808a148(1, 2, 0);
-    Func_0808a138(1, 2);
-    Func_0808a010(20);
-    Func_0808a170(0x12a5);
-    Func_020045f4(1, 20);
-    Func_0808a138(2, 2);
-    Func_0808a010(20);
-    Func_020045f4(2, 20);
-    Func_02004658(2, speaker);
-    Func_0808a480();
+    Func_02006e04(2, 1);
+    Func_02006e3e(2, speaker, 0);
+    Func_02006e48(1, 2, 0);
+    Func_02006e48(1, 2);
+    Func_02006d8e(20);
+    Func_02006e6c(0x12a5);
+    Func_02006654(1, 20);
+    Func_02006e64(2, 2);
+    Func_02006daa(20);
+    Func_0200666a(2, 20);
+    Func_020066d6(2, speaker);
+    Func_02006f7e();
 
-    Func_0808a010(60);
-    Func_0808a138(24, 2);
-    Func_020045f4(24, 20);
-    Func_0808a138(25, 2);
-    Func_020045f4(25, 20);
-    Func_0808a1e8(2, 256, 60);          /* 128 << 1 */
-    Func_02004684();
+    Func_02006dc4(60);
+    Func_02006e8c(24, 2);
+    Func_0200668c(24, 20);
+    Func_02006e9c(25, 2);
+    Func_0200669c(25, 20);
+    Func_02006ef0(2, 256, 60);          /* 128 << 1 */
+    Func_0200673c();
 
-    Func_0808a130(1, 2);
-    Func_0808a138(0, 2);
-    Func_0808a010(20);
-    Func_020045f4(1, 20);
-    Func_0808a148(2, 1, 0);
-    Func_0808a010(20);
-    Func_0808a110(2, 3);
-    Func_0808a010(40);
+    Func_02006eb4(1, 2);
+    Func_02006ec4(0, 2);
+    Func_02006e0a(20);
+    Func_020066ca(1, 20);
+    Func_02006ee4(2, 1, 0);
+    Func_02006e22(20);
+    Func_02006eca(2, 3);
+    Func_02006e30(40);
 
     /* Clear bits 2 and 3 of the +9 flag byte in each participant's +80
      * sub-record and set bit 2. */
-    record = Func_0808a080(0);
+    record = Func_02006e76(0);
     flags[9] = (u8)((flags[9] & ~12) | 4);
     flags = *(u8 **)(record + 80);
 
-    record = Func_0808a080(1);
+    record = Func_02006e8e(1);
     flags = *(u8 **)(record + 80);
     flags[9]  = permuted_71;
     permuted_71 = (u8)((flags[9] & ~12) | 4);
 
-    record = Func_0808a080(2);
+    record = Func_02006ea0(2);
     flags[9] = (u8)((flags[9] & ~12) | 4);
     flags = *(u8 **)(record + 80);
 
@@ -175,23 +224,23 @@ void Func_02001f50(void)
     *(s32 *)(workspace + 456) = 24;
     *(s32 *)(workspace + 448) = 0x201;
 
-    Func_0808a368();
-    Func_0808a370();
-    Func_020021c8();
+    Func_02006fec();
+    Func_02006ff8();
+    Func_02004318();
 
     /* The last two arguments go out on the stack. */
-    Func_080091c0(14, 45, 3, 1, 14, 44);
-    Func_080770c8(0x853);
+    Func_02006e48(14, 45, 3, 1, 14, 44);
+    Func_02006e86(0x853);
 
-    record = Func_0808a080(24);
+    record = Func_02006eec(24);
     *(s16 *)(record + 100) = 5;
     *(s16 *)(record + 100) = 4;
-    record = Func_0808a080(25);
+    record = Func_02006ef8(25);
 
-    Func_080000d0((void (*)(void))((s32)&Func_02002ba0 | 1), 3200);  /* 200 << 4 */
+    Func_02006e00((void (*)(void))((s32)&Func_02002ba0 | 1), 3200);  /* 200 << 4 */
 
     *(s32 *)(workspace + 448) = 0x209;
     workspace = *(u8 **)0x03001ebc;
 
-    Func_0808a020();
+    Func_02006ee2();
 }

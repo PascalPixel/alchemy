@@ -69,9 +69,13 @@
 
 /* Overlay imports (via the veneer table).  Old-style declarations: overlay
  * imports vary their argument count between call sites. */
-s32 Func_080770c0();
-u8 *Func_08077008();
-s32 Func_08077018();
+s32 Func_020022c2();
+u8 *Func_020022da();
+u8 *Func_02002410();
+s32 Func_0200242e();
+u8 *Func_020024a6();
+
+                    
 
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
@@ -150,7 +154,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 
     /* Six event flags, one bit each, low bit first. */
     for (i = 0; i != 6; i++) {
-        if (Func_080770c0(flag_ids[i]) != 0) {
+        if (Func_020022c2(flag_ids[i]) != 0) {
             flag_bits = (flag_bits | (1u << i)) & 0xff;
         }
     }
@@ -160,7 +164,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         u32 word1;
         s32 level;
 
-        actor = Func_08077008(members[member]);
+        actor = Func_020022da(members[member]);
         stats = actor + 16;
 
         /* Clamps, applied to the record itself. */
@@ -231,11 +235,11 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         cursor = out + 39;
         bit = 0;
         for (member = 0; member != 4; member++) {
-            actor = Func_08077008(members[member]);
+            actor = Func_02002410(members[member]);
             for (slot = 0; slot != 15; slot++) {
                 u32 id;
 
-                Func_08077018(*(u16 *)(actor + 216 + slot * 2));
+                Func_0200242e(*(u16 *)(actor + 216 + slot * 2));
                 id = *(u16 *)(actor + 216 + slot * 2) & 0x1ff;
 
                 cursor[0] = (u8)(cursor[0] + (id >> (bit + 1)));
@@ -254,7 +258,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         cursor = out + 107;
         shift = -1;
         for (member = 0; member != 4; member++) {
-            actor = Func_08077008(members[member]);
+            actor = Func_020024a6(members[member]);
             for (i = 0; i != 23; i++) {
                 u32 count = 0;
 

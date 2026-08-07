@@ -53,10 +53,12 @@
 /* Overlay imports (via the veneer table).  Old-style declarations: overlay
  * imports vary their argument count between call sites, and these two are used
  * for their return values. */
-void Func_080002a8();
-void *Func_08000290();
-void Func_080001a8();
-u8 *Func_0808a080();
+void Func_020013c0();
+void *Func_020013ca();
+void Func_020013d8();
+u8 *Func_020015c2();
+
+                     
 
 static void Dma3_02000054(const void *source, void *destination, u32 control)
 {
@@ -78,17 +80,17 @@ void Func_02000054(void)
     u32 column;
     u32 i;
 
-    Func_080002a8(0);
+    Func_020013c0(0);
 
     *(volatile u16 *)0x0400000c = 0x0681;   /* BG1CNT */
     *(u16 *)0x03001ada = 0;
 
-    resource = (u8 *)Func_08000290(26);
+    resource = (u8 *)Func_020013ca(26);
 
     /* 112 words of palette straight from the resource block. */
     Dma3_02000054(resource, (void *)0x05000000, 0x84000070);
 
-    Func_080001a8(resource + 448, (void *)0x02010000);
+    Func_020013d8(resource + 448, (void *)0x02010000);
 
     /* 9,600 words of decoded tiles into character memory. */
     Dma3_02000054((const void *)0x02010000, (void *)0x06006800, 0x84002580);
@@ -116,6 +118,6 @@ void Func_02000054(void)
 
     *(u16 *)((u8 *)*(void **)0x03001e70 + 20) = 0x1400;
 
-    record = Func_0808a080(*(s32 *)((u8 *)0x02000240 + 500));
+    record = Func_020015c2(*(s32 *)((u8 *)0x02000240 + 500));
     record[85] = 0;
 }

@@ -47,7 +47,9 @@
 extern s16 Data_02000240[];
 
 /* Old-style declaration: overlay imports vary in arity between call sites. */
-s32 Func_080770c0();                 /* read an event flag */
+s32 Func_02000b68();
+s32 Func_02000b7a();
+                                     /* read an event flag */
 
 u8 *Func_0200009c(void)
 {
@@ -59,11 +61,11 @@ u8 *Func_0200009c(void)
 
     table = (u8 *)0x02008c7c;
 
-    if (Func_080770c0(0x84f) != 0) {
+    if (Func_02000b68(0x84f) != 0) {
         table[118] = 1;
     }
 
-    if (Func_080770c0(0x845) != 0) {
+    if (Func_02000b7a(0x845) != 0) {
         table[70] = 0;
     }
 

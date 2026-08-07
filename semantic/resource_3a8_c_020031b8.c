@@ -90,18 +90,29 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneEntity *Func_0808a080();    /* scene entity by selector */
-void Func_08009080();                   /* set presentation mode */
-void Func_08009150();                   /* move an entity to (x, y, z) */
-void Func_08009158();                   /* commit an entity's placement */
-s32 Func_080091d8();                    /* terrain probe at a position */
-void Func_080000c0();                   /* wait n frames */
-void Func_080f9010();                   /* play a sound cue */
-void Func_0808a5e8();                   /* refresh the scene after a move */
+struct SceneEntity *Func_02006de4();
+struct SceneEntity *Func_02006376();
+s32 Func_02006dd2();
+void Func_02006d8e();
+void Func_02006d4e();
+void Func_02006fbc();
+void Func_02006dd4();
+void Func_02006de6();
+void Func_02006df4();
+void Func_02006fd8();
+void Func_02006dde();
+void Func_0200652a();
+                                        /* scene entity by selector */
+                                        /* set presentation mode */
+                                        /* move an entity to (x, y, z) */
+                                        /* commit an entity's placement */
+                                        /* terrain probe at a position */
+                                        /* wait n frames */
+                                        /* play a sound cue */
+                                        /* refresh the scene after a move */
 
 /* Intra-overlay callees. */
-struct SceneEntity *Func_02003184();    /* object occupying tile (x, z), or 0 */
-void Func_020032a4();
+                                        /* object occupying tile (x, z), or 0 */
 
 /* In-image direction table at file offset 0x3d84: 16 packed halfword steps,
  * high half = x, low half = z. */
@@ -115,12 +126,12 @@ void Func_020031b8(void)
     s32 facing;
     s32 destination[3];
 
-    hero = Func_0808a080(0);
+    hero = Func_02006de4(0);
 
     facing = hero->facing >> 12;
     step = Data_0200bd84[facing];
 
-    object = Func_02003184(
+    object = Func_02006376(
         (((s16)(hero->x >> 16) + ((s32)step >> 16)) >> 4),
         (((s16)(hero->z >> 16) + (s16)step) >> 4));
     if (object == 0) {
@@ -138,30 +149,30 @@ void Func_020031b8(void)
     destination[0] = object->x + (s32)(step & 0xffff0000);
     destination[2] = object->z + (s32)(step << 16);
 
-    if (Func_080091d8(object, destination) > 0) {
+    if (Func_02006dd2(object, destination) > 0) {
         return;                     /* the target tile is blocked */
     }
 
-    Func_08009080(hero, 8);
-    Func_080000c0(15);
-    Func_080f9010(0xb9);
+    Func_02006d8e(hero, 8);
+    Func_02006d4e(15);
+    Func_02006fbc(0xb9);
 
-    Func_08009150(object, destination[0], destination[1], destination[2]);
+    Func_02006dd4(object, destination[0], destination[1], destination[2]);
     object->field30 = 0x3333;
     object->field34 = 0x3333;
 
     hero->field30 = 0x3333;
     hero->field34 = 0x3333;
-    Func_08009150(hero, destination[0], destination[1], destination[2]);
+    Func_02006de6(hero, destination[0], destination[1], destination[2]);
 
-    Func_08009158(object);
-    Func_0808a5e8();
+    Func_02006df4(object);
+    Func_02006fd8();
 
     object->field24 = 0;
     object->field2c = 0;
     object->x = destination[0];
     object->z = destination[2];
 
-    Func_08009080(hero, 1);
-    Func_020032a4();
+    Func_02006dde(hero, 1);
+    Func_0200652a();
 }

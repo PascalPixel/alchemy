@@ -56,86 +56,126 @@
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-void Func_080000c0();           /* wait n frames */
-void Func_08009188();           /* channel control, entering the cue */
-void Func_08009190();           /* channel control, leaving the cue */
-void Func_0808a010();           /* wait n frames */
-void Func_0808a018();           /* scripted-scene bracket: open */
-void Func_0808a020();           /* scripted-scene bracket: close */
-void Func_0808a090();           /* 16.16 scale pair */
-void Func_0808a0d0();           /* place an entity */
-void Func_0808a0f0();           /* place slot at (x, z) */
-void Func_0808a110();           /* scene-presentation request */
-void Func_0808a138();           /* select an entity presentation */
-void Func_0808a170();           /* show a dialogue line by id */
-void Func_0808a180();           /* wait for the slot's action to finish */
-void Func_0808a188();           /* wait for the slot's action, with a duration */
-void Func_0808a190();           /* scene request; interface not established */
-void Func_0808a1b8();           /* face slot along heading */
-void Func_0808a1e8();           /* play animation id for n frames */
-void Func_0808a1f0();           /* scene request; interface not established */
-void Func_0808a210();           /* scene request; interface not established */
-void Func_0808a360();           /* scene bracket helper; no arguments set */
-void Func_0808a370();           /* scene bracket helper; no arguments set */
-void Func_080770c8();           /* set a story flag */
-void Func_080770d0();           /* clear a story flag */
-void Func_080f9010();           /* play a sound cue */
+void Func_02003c10();
+void Func_02003d3c();
+void Func_02003d50();
+void Func_02003d14();
+void Func_02003c5e();
+void Func_02003ca4();
+void Func_02003c3a();
+void Func_02003d64();
+void Func_02003c44();
+void Func_02003daa();
+void Func_02003c20();
+void Func_02003c26();
+void Func_02003d04();
+void Func_02003c1a();
+void Func_02003cbc();
+void Func_02003d02();
+void Func_02003c60();
+void Func_02003c66();
+void Func_02003d82();
+void Func_02003da4();
+void Func_02003dc8();
+void Func_02003d46();
+void Func_02003dda();
+void Func_02003d5e();
+void Func_02003df2();
+void Func_02003da2();
+void Func_02003dea();
+void Func_02003db2();
+void Func_02003e0a();
+void Func_02003e14();
+void Func_02003e36();
+void Func_02003e48();
+void Func_02003e06();
+void Func_02003e40();
+void Func_02003e00();
+void Func_02003dee();
+void Func_02003e18();
+void Func_02003d86();
+void Func_02003d84();
+void Func_02003da8();
+                                /* wait n frames */
+                                /* channel control, entering the cue */
+                                /* channel control, leaving the cue */
+                                /* wait n frames */
+                                /* scripted-scene bracket: open */
+                                /* scripted-scene bracket: close */
+                                /* 16.16 scale pair */
+                                /* place an entity */
+                                /* place slot at (x, z) */
+                                /* scene-presentation request */
+                                /* select an entity presentation */
+                                /* show a dialogue line by id */
+                                /* wait for the slot's action to finish */
+                                /* wait for the slot's action, with a duration */
+                                /* scene request; interface not established */
+                                /* face slot along heading */
+                                /* play animation id for n frames */
+                                /* scene request; interface not established */
+                                /* scene request; interface not established */
+                                /* scene bracket helper; no arguments set */
+                                /* scene bracket helper; no arguments set */
+                                /* set a story flag */
+                                /* clear a story flag */
+                                /* play a sound cue */
 
 void Func_0200179c(void)
 {
-    Func_0808a018();
-    Func_0808a360();
-    Func_0808a370();
+    Func_02003c10();
+    Func_02003d3c();
+    Func_02003d50();
 
-    Func_0808a1b8(19, 0x3000, 0);
-    Func_0808a090(0, 0x9999, 0x4ccc);
-    Func_0808a0d0(0, 256, 660);
-    Func_0808a010(20);
-    Func_0808a210(-1, -1, -1, 0);
+    Func_02003d14(19, 0x3000, 0);
+    Func_02003c5e(0, 0x9999, 0x4ccc);
+    Func_02003ca4(0, 256, 660);
+    Func_02003c3a(20);
+    Func_02003d64(-1, -1, -1, 0);
 
-    Func_080770c8(512);
-    Func_080f9010(188);
+    Func_02003c44(512);
+    Func_02003daa(188);
 
-    Func_08009188(1);
-    Func_08009188(2);
-    Func_0808a0f0(19, 0x1000000, 158 << 18);
-    Func_080000c0(1);
-    Func_0808a090(19, 0x9999, 0x4ccc);
-    Func_0808a0d0(19, 256, 644);
-    Func_08009190(1);
-    Func_08009190(2);
+    Func_02003c20(1);
+    Func_02003c26(2);
+    Func_02003d04(19, 0x1000000, 158 << 18);
+    Func_02003c1a(1);
+    Func_02003cbc(19, 0x9999, 0x4ccc);
+    Func_02003d02(19, 256, 644);
+    Func_02003c60(1);
+    Func_02003c66(2);
 
-    Func_0808a010(20);
-    Func_0808a138(19, 2);
-    Func_0808a170(0x145e);
-    Func_0808a188(19, 0, 10);
+    Func_02003ca4(20);
+    Func_02003d64(19, 2);
+    Func_02003d82(0x145e);
+    Func_02003da4(19, 0, 10);
 
-    Func_0808a1e8(0, 256, 40);
-    Func_0808a0d0(0, 264, 660);
-    Func_0808a1b8(0, 0x8000, 0);
-    Func_0808a0d0(19, 248, 660);
-    Func_0808a1b8(19, 0x1000, 40);
-    Func_0808a110(19, 4);
-    Func_0808a180(19, 0);
-    Func_0808a110(19, 3);
-    Func_0808a190(19, 0);
-    Func_0808a138(19, 2);
-    Func_0808a188(19, 0, 10);
+    Func_02003dc8(0, 256, 40);
+    Func_02003d46(0, 264, 660);
+    Func_02003dda(0, 0x8000, 0);
+    Func_02003d5e(19, 248, 660);
+    Func_02003df2(19, 0x1000, 40);
+    Func_02003da2(19, 4);
+    Func_02003dea(19, 0);
+    Func_02003db2(19, 3);
+    Func_02003e0a(19, 0);
+    Func_02003dda(19, 2);
+    Func_02003e14(19, 0, 10);
 
-    Func_0808a1e8(0, 0x101, 60);
-    Func_0808a1f0(19, 258);
-    Func_0808a010(60);
-    Func_0808a138(19, 1);
-    Func_0808a188(19, 0, 10);
-    Func_0808a110(19, 3);
-    Func_0808a180(19, 0);
+    Func_02003e36(0, 0x101, 60);
+    Func_02003e48(19, 258);
+    Func_02003d46(60);
+    Func_02003e06(19, 1);
+    Func_02003e40(19, 0, 10);
+    Func_02003e00(19, 3);
+    Func_02003e48(19, 0);
 
-    Func_0808a090(19, 0xcccc, 0x6666);
-    Func_0808a0d0(19, 248, 772);
-    Func_0808a0f0(19, 0, 0);
+    Func_02003daa(19, 0xcccc, 0x6666);
+    Func_02003dee(19, 248, 772);
+    Func_02003e18(19, 0, 0);
 
-    Func_080770d0(0x12f);
-    Func_080770c8(0x84f);
+    Func_02003d86(0x12f);
+    Func_02003d84(0x84f);
 
-    Func_0808a020();
+    Func_02003da8();
 }

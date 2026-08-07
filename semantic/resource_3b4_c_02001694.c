@@ -46,16 +46,36 @@
 
 extern s16 Data_02000240[];
 
-void Func_0808a018();
-void Func_0808a090();
-void Func_080f9010();
+void Func_02003bce();
+void Func_02003bf8();
+void Func_02003c02();
+void Func_02003cc0();
+s32 *Func_02003c06();
+s32 *Func_02003c18();
+void Func_02003c5a();
+s32 *Func_02003c38();
+s32 *Func_02003c4a();
+void Func_02003c8e();
+void Func_02003c9c();
+s32 *Func_02003c72();
+void Func_02003c94();
+void Func_02003cba();
+void Func_02003cbc();
+void Func_02003c7a();
+void Func_02003d60();
+void Func_02003cd2();
+void Func_02003ce0();
+void Func_02003cce();
+void Func_02003cf4();
+void Func_02003caa();
+void Func_02003cbe();
+
+                     
 /* Returns the record for a numbered slot, or 0 when it has none. */
-s32 *Func_0808a080();
-void Func_0808a0e0();
-void Func_0808a0e8();
-void Func_0808a0b8();
-void Func_0808a010();
-void Func_0808a020();
+
+                     
+
+                     
 
 void Func_02001694(void)
 {
@@ -63,33 +83,33 @@ void Func_02001694(void)
 
     if (Data_02000240[293] == 11) return;
 
-    Func_0808a018();
-    Func_0808a090(0, 0x1b333, 0xd999);
-    Func_0808a090(11, 0x1b333, 0xd999);
-    Func_080f9010(188);
+    Func_02003bce();
+    Func_02003bf8(0, 0x1b333, 0xd999);
+    Func_02003c02(11, 0x1b333, 0xd999);
+    Func_02003cc0(188);
 
-    if (Func_0808a080(0)[2] / 0x100000 > Func_0808a080(11)[2] / 0x100000) {
-        Func_0808a0e0(11, 8, 0);
+    if (Func_02003c06(0)[2] / 0x100000 > Func_02003c18(11)[2] / 0x100000) {
+        Func_02003c5a(11, 8, 0);
     }
-    if (Func_0808a080(0)[2] / 0x100000 < Func_0808a080(11)[2] / 0x100000) {
-        Func_0808a0e0(11, -8, 0);
+    if (Func_02003c38(0)[2] / 0x100000 < Func_02003c4a(11)[2] / 0x100000) {
+        Func_02003c8e(11, -8, 0);
     }
 
-    Func_0808a0e8(11);
+    Func_02003c9c(11);
 
-    slot = (u8 *)Func_0808a080(0);
+    slot = (u8 *)Func_02003c72(0);
     if (slot != 0) {
-        Func_0808a0b8(11, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+        Func_02003c94(11, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
     }
 
-    Func_0808a0e8(11);
-    Func_0808a0e0(0, 0, 24);
-    Func_0808a010(4);
-    Func_080f9010(188);
-    Func_0808a0e0(11, 0, 16);
-    Func_0808a0e8(0);
-    Func_0808a0b8(11, 344, 360);
-    Func_0808a0e8(11);
-    Func_0808a010(10);
-    Func_0808a020();
+    Func_02003cba(11);
+    Func_02003cbc(0, 0, 24);
+    Func_02003c7a(4);
+    Func_02003d60(188);
+    Func_02003cd2(11, 0, 16);
+    Func_02003ce0(0);
+    Func_02003cce(11, 344, 360);
+    Func_02003cf4(11);
+    Func_02003caa(10);
+    Func_02003cbe();
 }

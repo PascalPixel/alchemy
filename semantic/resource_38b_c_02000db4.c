@@ -43,26 +43,32 @@
  */
 
 /* Slot accessor. */
-extern u8 *Func_0808a080();
+extern u8 *Func_02001e94();
+extern u8 *Func_02001b6e(s32 tile_x, s32 tile_z);
+extern s32 Func_02001ea2();
+extern void Func_02001e66();
+extern void Func_02001e4e();
+extern void Func_02001ff4();
+extern void Func_02001ea4();
+extern void Func_02001eb6();
+extern void Func_02001ec4();
+extern void Func_02001eb2();
+extern void Func_02001b44(void);
+extern void Func_02001868(void);
+extern void Func_02001e48(void);
 
 /* Byte-exact sibling: returns the record occupying tile (x, z) over slots
  * 8..65, or NULL.  See assets/code/resource_38b_c_02000d80.c. */
-extern u8 *Func_02000d80(s32 tile_x, s32 tile_z);
 
 /* Collision probe; a result > 0 means the destination is blocked. */
-extern s32 Func_080091d8();
 
 /* Imports; old-style, arity open. */
-extern void Func_08009080();
-extern void Func_08009150();
-extern void Func_08009158();
-extern void Func_080000c0();
-extern void Func_080f9010();
+
+                            
 
 /* This overlay's own per-scene follow-ups. */
-extern void Func_02000cb4(void);
-extern void Func_020009cc(void);
-extern void Func_02000fa0(void);
+
+                                
 
 /* 16 packed direction words at file offset 0x1d3c. */
 extern s32 Data_02009d3c[];
@@ -81,7 +87,7 @@ void Func_02000db4(void)
     s32 tile_z;
 
     s32 permuted_27;
-    player = Func_0808a080(0);
+    player = Func_02001e94(0);
 
     /* Heading is the top nibble of the u16 at +0x06: a 16-entry table. */
     heading = *(u16 *)(player + 6) >> 12;
@@ -92,7 +98,7 @@ void Func_02000db4(void)
     tile_x = (*(s16 *)(player + 0x0a) + (step >> 16)) >> 4;
     tile_z = (*(s16 *)(player + 0x12) + (s16)step) >> 4;
 
-    pushed = Func_02000d80(tile_x, tile_z);
+    pushed = Func_02001b6e(tile_x, tile_z);
     if (pushed == 0) {
         return;
     }
@@ -107,39 +113,39 @@ void Func_02000db4(void)
     step  = permuted_27;
     target[2] = *(s32 *)(pushed + 0x10) + (step << 16);
 
-    if (Func_080091d8(pushed, target) > 0) {
+    if (Func_02001ea2(pushed, target) > 0) {
         return;
     }
 
-    Func_08009080(player, 8);
-    Func_080000c0(15);
-    Func_080f9010(185);
+    Func_02001e66(player, 8);
+    Func_02001e4e(15);
+    Func_02001ff4(185);
 
     /* 0x3333 is the move speed written into both records' +0x30 / +0x34. */
     *(s32 *)(pushed + 48) = 0x3333;
     *(s32 *)(pushed + 52) = 0x3333;
-    Func_08009150(pushed, target[0], target[1], target[2]);
+    Func_02001ea4(pushed, target[0], target[1], target[2]);
 
     *(s32 *)(player + 48) = 0x3333;
     *(s32 *)(player + 52) = 0x3333;
-    Func_08009150(player, target[0], target[1], target[2]);
+    Func_02001eb6(player, target[0], target[1], target[2]);
 
-    Func_08009158(pushed);
+    Func_02001ec4(pushed);
 
     *(s32 *)(pushed + 0x08) = target[0];
     *(s32 *)(pushed + 0x10) = target[2];
     *(s32 *)(pushed + 0x24) = 0;
     *(s32 *)(pushed + 0x2c) = 0;
 
-    Func_08009080(player, 1);
+    Func_02001eb2(player, 1);
 
     /* Same three scene ids as the dispatcher at 0x02000890 and the byte-exact
      * sibling 0x02000088, but mapped to different follow-ups here. */
     if (Data_02000240[224] == 0x23) {
-        Func_02000cb4();
+        Func_02001b44();
     } else if (Data_02000240[224] == 0x1e) {
-        Func_020009cc();
+        Func_02001868();
     } else if (Data_02000240[224] == 0x20) {
-        Func_02000fa0();
+        Func_02001e48();
     }
 }

@@ -75,29 +75,72 @@
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 struct SceneActor;
 
-struct SceneActor *Func_0808a080();  /* scene actor by selector */
-void Func_0808a010();                /* wait this many frames */
-void Func_0808a018();                /* scene bracket helper */
-void Func_0808a020();                /* scene bracket close */
-void Func_0808a090();                /* set an x/y scale pair, 16.16 */
-void Func_0808a0b8();                /* two-argument actor call */
-void Func_0808a0e0();                /* select an actor animation */
-void Func_0808a0e8();                /* wait for that animation to finish */
-void Func_0808a0f0();                /* place/aim the camera at a point */
-void Func_0808a158();                /* two-argument actor call */
-void Func_080091c0();                /* six-argument scripted-actor call */
-void Func_080091e0();                /* set presentation mode */
-void Func_080091e8();                /* set presentation flag */
-void Func_080091f0();                /* three-argument fade/tint step */
-void Func_080091f8();                /* commit the fade/tint step */
-void Func_080770c8();                /* set an event flag */
-void Func_080f9010();                /* play a cue by id */
-s32 Func_080000f8();                 /* random source, no arguments */
-void Func_080000d0();                /* install a task by entry and priority */
-void Func_080000d8();                /* remove a task by entry */
+struct SceneActor *Func_02002142();
+void Func_02002142_b();
+struct SceneActor *Func_0200215e();
+struct SceneActor *Func_0200216e();
+void Func_02002124();
+void Func_020021e4();
+struct SceneActor *Func_02002182();
+void Func_02002140();
+void Func_020021ce();
+void Func_02002184();
+void Func_02002108();
+void Func_0200226e();
+void Func_020021e0();
+void Func_020021ee();
+void Func_020021ac();
+void Func_020021f6();
+void Func_02002204();
+struct SceneActor *Func_020021da();
+struct SceneActor *Func_020021e4_b();
+void Func_020021d6();
+void Func_020022c4();
+void Func_02002220();
+struct SceneActor *Func_02002216();
+void Func_020021cc();
+void Func_0200218a();
+void Func_02002210();
+void Func_020022ee();
+struct SceneActor *Func_02002234();
+s32 Func_020021aa();
+struct SceneActor *Func_02002250();
+struct SceneActor *Func_02002258();
+s32 Func_020021d4();
+s32 Func_020021ee_b();
+void Func_020018b0();
+void Func_02002286();
+void Func_02002364();
+void Func_02002274();
+void Func_02002282();
+void Func_0200228e();
+void Func_02002308();
+void Func_02002312();
+void Func_020022ba();
+void Func_02002296();
+void Func_020022f2();
+                                     /* scene actor by selector */
+                                     /* wait this many frames */
+                                     /* scene bracket helper */
+                                     /* scene bracket close */
+                                     /* set an x/y scale pair, 16.16 */
+                                     /* two-argument actor call */
+                                     /* select an actor animation */
+                                     /* wait for that animation to finish */
+                                     /* place/aim the camera at a point */
+                                     /* two-argument actor call */
+                                     /* six-argument scripted-actor call */
+                                     /* set presentation mode */
+                                     /* set presentation flag */
+                                     /* three-argument fade/tint step */
+                                     /* commit the fade/tint step */
+                                     /* set an event flag */
+                                     /* play a cue by id */
+                                     /* random source, no arguments */
+                                     /* install a task by entry and priority */
+                                     /* remove a task by entry */
 
 /* This overlay's own seven-argument placement helper at 0x02000a68. */
-void Func_02000a68();
 
 struct SceneActor {
     u8 unknown_00[8];
@@ -113,13 +156,13 @@ struct SceneActor {
 
 void Func_02000ce0(void)
 {
-    struct SceneActor *actor = Func_0808a080(9);
+    struct SceneActor *actor = Func_02002142(9);
     s32 tile = actor->x;
 
     if (tile < 0) tile += 0x000fffff;
     tile >>= 20;
 
-    Func_0808a018(actor);
+    Func_02002142_b(actor);
 
     if (tile == 25) {
         s32 spawnX;
@@ -129,69 +172,69 @@ void Func_02000ce0(void)
         struct SceneActor *target;
         struct SceneActor *anchor;
 
-        Func_0808a080(11)->state22 = 1;
-        Func_080091e0(Func_0808a080(11), 0);
-        Func_0808a158(11, 14);
-        Func_080091e8(Func_0808a080(11), 1);
-        Func_0808a0f0(11, 0x019e0000, 0x00f00000);  /* 207 << 17, 240 << 16 */
-        Func_0808a010(10);
+        Func_0200215e(11)->state22 = 1;
+        Func_02002124(Func_0200216e(11), 0);
+        Func_020021e4(11, 14);
+        Func_02002140(Func_02002182(11), 1);
+        Func_020021ce(11, 0x019e0000, 0x00f00000);  /* 207 << 17, 240 << 16 */
+        Func_02002184(10);
 
         /* 0x02008bd1 = Func_02000bd0 + Thumb bit, this overlay's own task. */
-        Func_080000d0((void *)0x02008bd1, 3200);    /* 200 << 4 */
-        Func_080f9010(141);
+        Func_02002108((void *)0x02008bd1, 3200);    /* 200 << 4 */
+        Func_0200226e(141);
 
-        Func_0808a0e0(9, 1, 0);
-        Func_0808a0e8(9);
-        Func_0808a010(10);
-        Func_0808a0e0(9, 2, 0);
-        Func_0808a0e8(9);
+        Func_020021e0(9, 1, 0);
+        Func_020021ee(9);
+        Func_020021ac(10);
+        Func_020021f6(9, 2, 0);
+        Func_02002204(9);
 
-        Func_0808a080(9)->field44 = 0;
-        Func_0808a080(9)->field48 = 0x9999;         /* 0.6 in 16.16 */
+        Func_020021da(9)->field44 = 0;
+        Func_020021e4_b(9)->field48 = 0x9999;         /* 0.6 in 16.16 */
 
-        Func_0808a010(3);
-        Func_0808a090(9, 0x00028000, 0x00004000);   /* 160 << 10, 128 << 7 */
-        Func_080f9010(288);                         /* 144 << 1 */
-        Func_0808a0b8(9, 416, 200);                 /* 208 << 1 */
-        Func_080091e0(Func_0808a080(9), 0);
+        Func_020021d6(3);
+        Func_02002204(9, 0x00028000, 0x00004000);   /* 160 << 10, 128 << 7 */
+        Func_020022c4(288);                         /* 144 << 1 */
+        Func_02002220(9, 416, 200);                 /* 208 << 1 */
+        Func_020021cc(Func_02002216(9), 0);
 
         /* The task installed above is removed again here. */
-        Func_080000d8((void *)0x02008bd1);
-        Func_0808a010(12);
-        Func_080f9010(189);
+        Func_0200218a((void *)0x02008bd1);
+        Func_02002210(12);
+        Func_020022ee(189);
 
         /* Whole 16.16 units, 0..11 columns east of the actor. */
-        target = Func_0808a080(9);
-        spawnX = target->x + (((Func_080000f8() * 12) >> 16) << 16);
+        target = Func_02002234(9);
+        spawnX = target->x + (((Func_020021aa() * 12) >> 16) << 16);
 
         /*
          * Two DISTINCT lookups: 0x02000dfe keeps its result in sl for the y
          * argument below, 0x02000e06's is consumed immediately for z.  Folding
          * them into one would drop a call site.
          */
-        anchor = Func_0808a080(9);
-        spawnZ = Func_0808a080(9)->z + 0x00060000;  /* 192 << 11 */
+        anchor = Func_02002250(9);
+        spawnZ = Func_02002258(9)->z + 0x00060000;  /* 192 << 11 */
 
         /* 0..4 tenths of a unit; 6553 = 0x10000 / 10.  Applied downwards. */
-        drift = ((Func_080000f8() * 5) >> 16) * 6553;
+        drift = ((Func_020021d4() * 5) >> 16) * 6553;
 
         /* 0 or 1. */
-        lift = (Func_080000f8() * 2) >> 16;
+        lift = (Func_020021ee_b() * 2) >> 16;
 
-        Func_02000a68(spawnX, anchor->y, spawnZ, 0, -drift, lift, 0);
+        Func_020018b0(spawnX, anchor->y, spawnZ, 0, -drift, lift, 0);
 
-        Func_0808a010(20);
-        Func_080f9010(154);
-        Func_080091f0(0x00050000, 0x00050000, 0x00010000);  /* 5.0, 5.0, 1.0 */
-        Func_080091f0(-1, -1, 0xe666);              /* 0.9 in 16.16 */
-        Func_080091f8();
+        Func_02002286(20);
+        Func_02002364(154);
+        Func_02002274(0x00050000, 0x00050000, 0x00010000);  /* 5.0, 5.0, 1.0 */
+        Func_02002282(-1, -1, 0xe666);              /* 0.9 in 16.16 */
+        Func_0200228e();
 
-        Func_0808a0f0(9, 0, 0);
-        Func_0808a0f0(11, 0, 0);
+        Func_02002308(9, 0, 0);
+        Func_02002312(11, 0, 0);
 
-        Func_080770c8(768);                         /* set event flag 192 << 2 */
-        Func_080091c0(21, 45, 4, 2, 21, 11);
+        Func_020022ba(768);                         /* set event flag 192 << 2 */
+        Func_02002296(21, 45, 4, 2, 21, 11);
     }
 
-    Func_0808a020();
+    Func_020022f2();
 }

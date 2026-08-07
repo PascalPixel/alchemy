@@ -51,9 +51,11 @@ extern s16 Data_020094c4[]; /* in-image script/table handed to Func_08009098 */
 /* Main-image imports reached through this overlay's veneer table.  Old-style
  * declarations: arity varies between call sites of one import elsewhere in
  * this overlay. */
-s32 Func_080000f8();   /* ROM dispatch[7] -> random source, no arguments */
-void Func_08009080();
-void Func_08009098();
+s32 Func_0200144c();
+s32 Func_02001452();
+void Func_020014b2();
+void Func_020014ca();
+                       /* ROM dispatch[7] -> random source, no arguments */
 
 void Func_02000100(Actor_02000100 *actor)
 {
@@ -64,8 +66,8 @@ void Func_02000100(Actor_02000100 *actor)
          * 16.16 accumulators. */
         actor->countdown = (u16)(actor->countdown - 1);
 
-        first = Func_080000f8();
-        actor->drift8 += first - Func_080000f8();
+        first = Func_0200144c();
+        actor->drift8 += first - Func_02001452();
         actor->drift12 += 0xcccc;
         return;
     }
@@ -80,7 +82,7 @@ void Func_02000100(Actor_02000100 *actor)
      * the constant it provably is.
      */
     actor->pending = 0;
-    Func_08009080(actor, 1);
+    Func_020014b2(actor, 1);
     actor->restart_delay = 20;
-    Func_08009098(actor, Data_020094c4);
+    Func_020014ca(actor, Data_020094c4);
 }

@@ -40,11 +40,16 @@
  * `add sp,#8 / pop {r5, r6} / pop {r0} / bx r0`, so the owner is void.
  */
 
-void Func_080f9010();
-void Func_080091f0();
-void Func_080091b8();
-void Func_080000c0();
-void Func_080091c0();
+void Func_02003560();
+void Func_02003458();
+void Func_02003466();
+void Func_02003460();
+void Func_020033fe();
+void Func_02003478();
+void Func_02003492();
+void Func_020034a4();
+
+                     
 
 void Func_02000f40(s32 request)
 {
@@ -52,14 +57,14 @@ void Func_02000f40(s32 request)
     s32 narrow = ((request & 0xff) << 2) + 13;
 
     if ((request & 0x100) != 0) {
-        Func_080f9010(157);
-        Func_080091f0(0x20000, 0x20000, 0x10000);
-        Func_080091f0(-1, -1, 0xe666);
-        Func_080091b8(79, 29, 1, 3, wide, 40);
-        Func_080000c0(40);
+        Func_02003560(157);
+        Func_02003458(0x20000, 0x20000, 0x10000);
+        Func_02003466(-1, -1, 0xe666);
+        Func_02003460(79, 29, 1, 3, wide, 40);
+        Func_020033fe(40);
     }
 
-    Func_080091b8(80, 29, 1, 3, wide, 40);
-    Func_080091c0(narrow, 40, 1, 1, narrow, 41);
-    Func_080091c0(narrow, 40, 1, 1, narrow, 42);
+    Func_02003478(80, 29, 1, 3, wide, 40);
+    Func_02003492(narrow, 40, 1, 1, narrow, 41);
+    Func_020034a4(narrow, 40, 1, 1, narrow, 42);
 }

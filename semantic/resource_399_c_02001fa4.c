@@ -50,17 +50,34 @@ extern void Func_02001f24();
 /* Imports, named by the main-image address their veneer publishes.  Old-style
  * declarations are mandatory: 0x08009080 is reached with two arguments here
  * while its siblings take three or four. */
-u8 *Func_0808a400();     /* subject record by table selector */
-void Func_0808a018();
-s32 Func_080091b0();     /* tile marker at (x, z) */
-void Func_08000128();    /* advance the probe block one step along a heading */
-s32 Func_080091a8();     /* tile height at (x, z) */
-void Func_08009150();    /* place the subject at (x, y, z) */
-void Func_08009080();
-void Func_08009088();
-void Func_08009158();    /* commit the placement */
-void Func_080000c0();
-void Func_0808a020();
+u8 *Func_02004358();
+void Func_02004212();
+s32 Func_0200420c();
+void Func_020041ba();
+s32 Func_02004226();
+s32 Func_02004230();
+void Func_0200423e();
+void Func_02004216();
+void Func_02004226_b();
+void Func_0200425c();
+s32 Func_0200428e();
+void Func_02004298();
+void Func_020042a6();
+void Func_02004278();
+s32 Func_020042e4();
+void Func_020042da();
+void Func_020042e8();
+void Func_02004286();
+void Func_020042a4();
+void Func_02004370();
+                         /* subject record by table selector */
+                     
+                         /* tile marker at (x, z) */
+                         /* advance the probe block one step along a heading */
+                         /* tile height at (x, z) */
+                         /* place the subject at (x, y, z) */
+
+                         /* commit the placement */
 
 void Func_02001fa4(void)
 {
@@ -72,7 +89,7 @@ void Func_02001fa4(void)
     s32 x;
     s32 z;
 
-    subject = Func_0808a400(*(s32 *)((u8 *)Data_02000240 + 500));
+    subject = Func_02004358(*(s32 *)((u8 *)Data_02000240 + 500));
 
     for (;;) {
         heading = Data_0200a430[(Data_03001ae8 >> 4) & 15];
@@ -82,7 +99,7 @@ void Func_02001fa4(void)
             return;
         }
         /* No argument register is written before this branch. */
-        Func_0808a018();
+        Func_02004212();
 
         /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
         probe[1] = *(s32 *)(subject + 12);
@@ -91,17 +108,17 @@ void Func_02001fa4(void)
         z = (*(s32 *)(subject + 16) & (s32)0xfff00000) + 0x80000;
         probe[2] = z;
 
-        goal = Func_080091b0((s32)subject[34], x, z);
+        goal = Func_0200420c((s32)subject[34], x, z);
         /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
          * passed by address and is advanced by the callee. */
-        Func_08000128((s32)0x100000, heading, probe);
+        Func_020041ba((s32)0x100000, heading, probe);
 
-        marker = Func_080091b0((s32)subject[34], probe[0], probe[2]);
+        marker = Func_02004226((s32)subject[34], probe[0], probe[2]);
         if (marker == 255) {
             *(u16 *)(subject + 6) = (u16)heading;
             goto tail;
         }
-        if (Func_080091a8((s32)subject[34], probe[0], probe[2])
+        if (Func_02004230((s32)subject[34], probe[0], probe[2])
                 - *(s32 *)(subject + 12) > 0x80000) {
             *(u16 *)(subject + 6) = (u16)heading;
             goto tail;
@@ -113,16 +130,16 @@ void Func_02001fa4(void)
         probe[2] = z;
         *(s32 *)(subject + 48) = 0x20000;
         *(u16 *)(subject + 100) = 0;
-        Func_08009150(subject, x, *(s32 *)(subject + 12), z);
+        Func_0200423e(subject, x, *(s32 *)(subject + 12), z);
         /* Same import as the probe above, two arguments here. */
-        Func_08009080(subject, 2);
-        Func_08009088(subject, 48);
-        Func_08009158(subject);
+        Func_02004216(subject, 2);
+        Func_02004226_b(subject, 48);
+        Func_0200425c(subject);
         *(void **)(subject + 108) = (void *)Func_02001f24;
 
         goto advanceProbe;
 continueProbe:
-        if (Func_080091a8((s32)subject[34], probe[0], probe[2])
+        if (Func_0200428e((s32)subject[34], probe[0], probe[2])
                 - *(s32 *)(subject + 12) > 0x80000) {
             goto finishProbe;
         }
@@ -130,15 +147,15 @@ continueProbe:
         *(s32 *)(subject + 52) = 0x1999;
         x = probe[0];
         z = probe[2];
-        Func_08009150(subject, probe[0], probe[1], probe[2]);
-        Func_08009158(subject);
+        Func_02004298(subject, probe[0], probe[1], probe[2]);
+        Func_020042a6(subject);
         if (marker != goal) {
             goto blocked;
         }
 
 advanceProbe:
-        Func_08000128((s32)0x100000, heading, probe);
-        marker = Func_080091b0((s32)subject[34], probe[0], probe[2]);
+        Func_02004278((s32)0x100000, heading, probe);
+        marker = Func_020042e4((s32)subject[34], probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;
         }
@@ -146,9 +163,9 @@ advanceProbe:
 finishProbe:
         *(s32 *)(subject + 48) = 0x20000;
         *(s32 *)(subject + 52) = 0x10000;
-        Func_08009150(subject, x, *(s32 *)(subject + 12), z);
-        Func_08009158(subject);
-        Func_080000c0(2);
+        Func_020042da(subject, x, *(s32 *)(subject + 12), z);
+        Func_020042e8(subject);
+        Func_02004286(2);
         /* The back edge re-reads the heading table and starts again. */
     }
 
@@ -159,6 +176,6 @@ blocked:
     *(s32 *)(subject + 52) = 0x4000;
 
 tail:
-    Func_080000c0(10);
-    Func_0808a020();
+    Func_020042a4(10);
+    Func_02004370();
 }

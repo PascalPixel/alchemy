@@ -47,112 +47,157 @@ extern u8 Data_02002b2c[];
 
 /* Main-image imports reached through this overlay's veneer table.
  * Old-style declarations: one name may carry more than one interface. */
-void Func_080000c0();          /* frame wait */
-void Func_08009128();
-void Func_080091e0();
-void Func_080770d0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-u8 *Func_0808a080();           /* fetch the object record for a handle */
-void Func_0808a090();
-void Func_0808a098();
-void Func_0808a0b0();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a1b8();
-void Func_0808a1e0();
-void Func_0808a210();
-void Func_0808a248();
-void Func_0808a2d0();
-void Func_0808a2d8();
-void Func_0808a2e0();
-void Func_0808a360();
-void Func_0808a368();
-void Func_0808a370();
-void Func_080f9010();
+void Func_02003e0a();
+void Func_02003c5e();
+void Func_02003d88();
+void Func_02003bc6();
+void Func_02003da0();
+void Func_02003c24();
+void Func_02003be2();
+void Func_02003d18();
+void Func_02003d26();
+void Func_02003d34();
+void Func_02003d42();
+void Func_02003dc6();
+void Func_02003dd2();
+void Func_02003d6a();
+u8 *Func_02003d18_b();
+u8 *Func_02003d22();
+void Func_02003cb8();
+u8 *Func_02003d36();
+u8 *Func_02003d42_b();
+void Func_02003cd8();
+void Func_02003eac();
+void Func_02003ea8();
+void Func_02003ec4();
+void Func_02003d3a();
+void Func_02003e3e();
+void Func_02003e4a();
+void Func_02003dea();
+void Func_02003d60();
+void Func_02003df8();
+void Func_02003e6c();
+void Func_02003e78();
+void Func_02003e88();
+void Func_02003e90();
+u8 *Func_02003dd0();
+void Func_02003df2();
+void Func_02003db8();
+void Func_02003dfa();
+u8 *Func_02003df8_b();
+void Func_02003e2c();
+void Func_02003dda();
+void Func_02003f46();
+void Func_02003f52();
+void Func_02003d40();
+void Func_02003f5c();
+void Func_02003d4a();
+void Func_02003f66();
+void Func_02003d54();
+void Func_02003f68();
+void Func_02003e06();
+void Func_02003fa0();
+void Func_02003fac();
+void Func_02003e12();
+void Func_02003f60();
+void Func_02003e3c();
+                               /* frame wait */
+
+                     
+
+                     
+                               /* fetch the object record for a handle */
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_020015b4(void)
 {
     u8 *workspace;
     u8 *record;
 
-    Func_080f9010(17);
-    Func_0808a018();
+    Func_02003e0a(17);
+    Func_02003c5e();
 
-    Func_0808a210(-1, -1, -1, 0);
-    Func_080000c0(1);
-    Func_0808a210(0x400000, 0x900000, 0x15e00000, 0);
-    Func_08009128();
-    Func_080000c0(1);
+    Func_02003d88(-1, -1, -1, 0);
+    Func_02003bc6(1);
+    Func_02003da0(0x400000, 0x900000, 0x15e00000, 0);
+    Func_02003c24();
+    Func_02003be2(1);
 
-    Func_0808a0f0(0, 0x300000, 0x15a00000);
-    Func_0808a0f0(25, 0x4e0000, 0x16600000);
-    Func_0808a0f0(23, 0x670000, 0x15600000);
-    Func_0808a0f0(24, 0x700000, 0x16800000);
+    Func_02003d18(0, 0x300000, 0x15a00000);
+    Func_02003d26(25, 0x4e0000, 0x16600000);
+    Func_02003d34(23, 0x670000, 0x15600000);
+    Func_02003d42(24, 0x700000, 0x16800000);
 
-    Func_0808a1b8(23, 0x8000, 0);
-    Func_0808a1b8(24, 0x8000, 0);
+    Func_02003dc6(23, 0x8000, 0);
+    Func_02003dd2(24, 0x8000, 0);
 
-    Func_0808a100(0, 16);
-    record = Func_0808a080(0);
+    Func_02003d6a(0, 16);
+    record = Func_02003d18_b(0);
     *(s32 *)(record + 0x18) = (s32)0xffff0000;
-    Func_080091e0(Func_0808a080(0), 0);
+    Func_02003cb8(Func_02003d22(0), 0);
 
-    Func_0808a100(25, 7);
-    record = Func_0808a080(25);
+    Func_02003d88(25, 7);
+    record = Func_02003d36(25);
     *(u16 *)(*(u8 **)(record + 0x50) + 0x1e) = 0x1555;
-    Func_080091e0(Func_0808a080(25), 0);
+    Func_02003cd8(Func_02003d42_b(25), 0);
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 256;
 
-    Func_0808a360();
-    Func_0808a2e0();
-    Func_0808a370();
-    Func_0808a010(80);
+    Func_02003eac();
+    Func_02003ea8();
+    Func_02003ec4();
+    Func_02003d3a(80);
 
-    Func_0808a1b8(23, 0x3000, 0);
-    Func_0808a1b8(24, 0xc000, 40);
-    Func_0808a110(23, 3);
-    Func_0808a010(20);
-    Func_0808a110(24, 3);
-    Func_0808a1b8(23, 0x8000, 10);
-    Func_0808a1b8(24, 0x8000, 10);
-    Func_0808a1e0(0, 3);
-    Func_0808a1e0(25, 3);
+    Func_02003e3e(23, 0x3000, 0);
+    Func_02003e4a(24, 0xc000, 40);
+    Func_02003dea(23, 3);
+    Func_02003d60(20);
+    Func_02003df8(24, 3);
+    Func_02003e6c(23, 0x8000, 10);
+    Func_02003e78(24, 0x8000, 10);
+    Func_02003e88(0, 3);
+    Func_02003e90(25, 3);
 
-    Func_0808a090(23, 0x00013333, 0x00026666);
-    record = Func_0808a080(23);
+    Func_02003dd2(23, 0x00013333, 0x00026666);
+    record = Func_02003dd0(23);
     *(s32 *)(record + 0x44) = 0x28f;
     *(s32 *)(record + 0x48) = 0x8000;
-    Func_0808a098(23, Data_02002a48);
-    Func_0808a010(24);
+    Func_02003df2(23, Data_02002a48);
+    Func_02003db8(24);
 
-    Func_0808a090(24, 0x00013333, 0x00026666);
-    record = Func_0808a080(24);
+    Func_02003dfa(24, 0x00013333, 0x00026666);
+    record = Func_02003df8_b(24);
     *(s32 *)(record + 0x44) = 0x28f;
     *(s32 *)(record + 0x48) = 0x8000;
-    Func_0808a0b0(24, Data_02002b2c);
-    Func_0808a010(40);
+    Func_02003e2c(24, Data_02002b2c);
+    Func_02003dda(40);
 
-    Func_0808a2d0();
-    Func_0808a2d8();
-    Func_080000c0(20);
-    Func_0808a2d8();
-    Func_080000c0(60);
-    Func_0808a2d8();
-    Func_080000c0(20);
-    Func_0808a2d0();
-    Func_0808a010(40);
+    Func_02003f46();
+    Func_02003f52();
+    Func_02003d40(20);
+    Func_02003f5c();
+    Func_02003d4a(60);
+    Func_02003f66();
+    Func_02003d54(20);
+    Func_02003f68();
+    Func_02003e06(40);
 
     *(s32 *)(workspace + 456) = 120;
     workspace = Data_03001ebc;
 
-    Func_0808a368();
-    Func_0808a370();
-    Func_080770d0(0x834);
-    Func_0808a248(9);
-    Func_0808a020();
+    Func_02003fa0();
+    Func_02003fac();
+    Func_02003e12(0x834);
+    Func_02003f60(9);
+    Func_02003e3c();
 }

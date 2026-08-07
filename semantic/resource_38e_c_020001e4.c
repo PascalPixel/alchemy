@@ -70,62 +70,114 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneEntity *Func_0808a080();  /* scene entity by selector */
-s32 Func_080770c0();                  /* read an event flag */
-void Func_080770c8();                 /* set an event flag */
-s32 Func_0808a070();                  /* text/beat still running? */
-void Func_0808a010();                 /* wait this many frames */
-void Func_0808a018();                 /* scene bracket open */
-void Func_0808a020();                 /* scene bracket close */
-void Func_0808a090();                 /* set an x/y scale pair, 16.16 */
-void Func_0808a0d0();                 /* move an entity to a waypoint */
-void Func_0808a0f0();                 /* place/aim the camera at a point */
-void Func_0808a100();                 /* one-argument presentation call */
-void Func_0808a110();                 /* one-argument presentation call */
-void Func_0808a130();                 /* one-argument presentation call */
-void Func_0808a138();                 /* one-argument presentation call */
-void Func_0808a168();                 /* three-argument presentation call */
-void Func_0808a170();                 /* show a text entry by id */
-void Func_0808a178();                 /* advance the text entry */
-void Func_0808a180();                 /* close the text entry */
-void Func_0808a188();                 /* three-argument presentation call */
-void Func_0808a1b8();                 /* three-argument presentation call */
-void Func_0808a1e8();                 /* three-argument presentation call */
+void Func_02000cbc();
+s32 Func_02000ca2();
+s32 Func_02000cae();
+s32 Func_02000cb8();
+void Func_02000d62();
+void Func_02000d84();
+void Func_02000da6();
+void Func_02000d98();
+void Func_02000d78();
+void Func_02000cf6();
+void Func_02000d94();
+void Func_02000dac();
+void Func_02000da4();
+void Func_02000dbc();
+void Func_02000db4();
+void Func_02000dc4();
+s32 Func_02000d5c();
+void Func_02000dfc();
+struct SceneEntity *Func_02000d8a();
+void Func_02000dc2();
+void Func_02000dd0();
+void Func_02000e4c();
+void Func_02000e58();
+void Func_02000e64();
+void Func_02000e78();
+void Func_02000e38();
+void Func_02000e72();
+void Func_02000e96();
+void Func_02000e56();
+void Func_02000e90();
+void Func_02000e68();
+void Func_02000ebc();
+void Func_02000ec8();
+void Func_02000eca();
+void Func_02000ee6();
+void Func_02000e74();
+struct SceneEntity *Func_02000e72_b();
+void Func_02000ea0();
+void Func_02000e66();
+struct SceneEntity *Func_02000e94();
+void Func_02000eb0();
+void Func_02000ecc();
+void Func_02000ed8();
+void Func_02000f54();
+void Func_02000cc4(void);
+void Func_02000ef4();
+void Func_02000f16();
+void Func_02000eb4();
+void Func_02000f50();
+void Func_02000f72();
+void Func_02000f96();
+void Func_02000efa();
+                                      /* scene entity by selector */
+                                      /* read an event flag */
+                                      /* set an event flag */
+                                      /* text/beat still running? */
+                                      /* wait this many frames */
+                                      /* scene bracket open */
+                                      /* scene bracket close */
+                                      /* set an x/y scale pair, 16.16 */
+                                      /* move an entity to a waypoint */
+                                      /* place/aim the camera at a point */
+                                      /* one-argument presentation call */
+                                      /* one-argument presentation call */
+                                      /* one-argument presentation call */
+                                      /* one-argument presentation call */
+                                      /* three-argument presentation call */
+                                      /* show a text entry by id */
+                                      /* advance the text entry */
+                                      /* close the text entry */
+                                      /* three-argument presentation call */
+                                      /* three-argument presentation call */
+                                      /* three-argument presentation call */
 
-void Func_020008e8(void);             /* this overlay, byte-exact source */
+                                      /* this overlay, byte-exact source */
 
 void Func_020001e4(void)
 {
     u8 *workspace;
     struct SceneEntity *speaker;
 
-    Func_0808a018();
+    Func_02000cbc();
 
-    if (Func_080770c0(0x84a) != 0) {
+    if (Func_02000ca2(0x84a) != 0) {
         /* Already played out once. */
-        if (Func_080770c0(772) != 0) {          /* 193 << 2 */
-            if (Func_080770c0(0x201) == 0) {
-                Func_0808a170(0x1414);
-                Func_0808a188(12, 0, 10);
-                Func_0808a1e8(12, 263, 40);
-                Func_0808a188(12, 0, 10);
-                Func_0808a138(12, 2);
-                Func_080770c8(0x201);
+        if (Func_02000cae(772) != 0) {          /* 193 << 2 */
+            if (Func_02000cb8(0x201) == 0) {
+                Func_02000d62(0x1414);
+                Func_02000d84(12, 0, 10);
+                Func_02000da6(12, 263, 40);
+                Func_02000d98(12, 0, 10);
+                Func_02000d78(12, 2);
+                Func_02000cf6(0x201);
             }
-            Func_0808a170(0x1416);
-            Func_0808a180(12, 0);
+            Func_02000d94(0x1416);
+            Func_02000dac(12, 0);
             goto close;
         }
 
-        Func_0808a170(0x1413);
-        Func_0808a180(12, 0);
+        Func_02000da4(0x1413);
+        Func_02000dbc(12, 0);
         goto handoff;
     }
 
-    Func_0808a170(0x140d);
-    Func_0808a178(12, 0);
+    Func_02000db4(0x140d);
+    Func_02000dc4(12, 0);
 
-    if (Func_0808a070(0, 0) != 0) {
+    if (Func_02000d5c(0, 0) != 0) {
         goto interrupted;
     }
 
@@ -133,64 +185,64 @@ void Func_020001e4(void)
     *(u16 *)(workspace + 472) += 1;             /* 236 << 1 */
     workspace = Data_03001ebc;
 
-    Func_0808a188(12, 0, 10);
+    Func_02000dfc(12, 0, 10);
 
     /* 0x010dffff is 269.99998 in 16.16, a coordinate bound, not a mask. */
-    if (Func_0808a080(0)->z <= 0x010dffff) {
-        Func_0808a090(12, 0xcccc, 0x6666);      /* 0.8, 0.4 */
-        Func_0808a0d0(0, 346, 274);             /* 173 << 1, 137 << 1 */
-        Func_0808a0d0(0, 328, 282);             /* 164 << 1, 141 << 1 */
-        Func_0808a1b8(0, 0xc000, 0);            /* 192 << 8 */
+    if (Func_02000d8a(0)->z <= 0x010dffff) {
+        Func_02000da4(12, 0xcccc, 0x6666);      /* 0.8, 0.4 */
+        Func_02000dc2(0, 346, 274);             /* 173 << 1, 137 << 1 */
+        Func_02000dd0(0, 328, 282);             /* 164 << 1, 141 << 1 */
+        Func_02000e4c(0, 0xc000, 0);            /* 192 << 8 */
     }
 
-    Func_0808a1b8(11, 0x1000, 0);               /* 128 << 5 */
-    Func_0808a1b8(12, 0x7000, 20);              /* 224 << 7 */
-    Func_0808a1e8(11, 258, 20);                 /* 129 << 1 */
-    Func_0808a130(11, 1);
-    Func_0808a188(11, 0, 10);
-    Func_0808a1e8(12, 264, 60);                 /* 132 << 1 */
-    Func_0808a130(12, 1);
-    Func_0808a188(12, 0, 20);
-    Func_0808a100(11, 3);
-    Func_0808a110(12, 3);
-    Func_0808a1b8(11, 0x3000, 0);               /* 192 << 6 */
-    Func_0808a1b8(12, 0x5000, 10);              /* 160 << 7 */
-    Func_0808a130(11, 1);
-    Func_0808a188(11, 0, 20);
-    Func_0808a1b8(11, 0xf000, 0);               /* 240 << 8 */
+    Func_02000e58(11, 0x1000, 0);               /* 128 << 5 */
+    Func_02000e64(12, 0x7000, 20);              /* 224 << 7 */
+    Func_02000e78(11, 258, 20);                 /* 129 << 1 */
+    Func_02000e38(11, 1);
+    Func_02000e72(11, 0, 10);
+    Func_02000e96(12, 264, 60);                 /* 132 << 1 */
+    Func_02000e56(12, 1);
+    Func_02000e90(12, 0, 20);
+    Func_02000e58(11, 3);
+    Func_02000e68(12, 3);
+    Func_02000ebc(11, 0x3000, 0);               /* 192 << 6 */
+    Func_02000ec8(12, 0x5000, 10);              /* 160 << 7 */
+    Func_02000e90(11, 1);
+    Func_02000eca(11, 0, 20);
+    Func_02000ee6(11, 0xf000, 0);               /* 240 << 8 */
 
-    Func_0808a090(12, 0x00010000, 0x00008000);  /* 1.0, 0.5 */
+    Func_02000e74(12, 0x00010000, 0x00008000);  /* 1.0, 0.5 */
 
-    speaker = Func_0808a080(12);
+    speaker = Func_02000e72_b(12);
     speaker->flags5a = (u8)(speaker->flags5a & ~1);
 
-    Func_0808a0d0(12, 346, 263);
-    Func_0808a010(1);
+    Func_02000ea0(12, 346, 263);
+    Func_02000e66(1);
 
     speaker->flags5a = (u8)(speaker->flags5a | 1);
-    speaker = Func_0808a080(12);
+    speaker = Func_02000e94(12);
 
-    Func_0808a090(11, 0x9999, 0x4ccc);          /* 0.6, 0.3 */
-    Func_0808a0d0(11, 328, 263);
-    Func_0808a0d0(11, 328, 252);
-    Func_0808a1b8(11, 0xc000, 10);
+    Func_02000eb0(11, 0x9999, 0x4ccc);          /* 0.6, 0.3 */
+    Func_02000ecc(11, 328, 263);
+    Func_02000ed8(11, 328, 252);
+    Func_02000f54(11, 0xc000, 10);
 
-    Func_020008e8();
+    Func_02000cc4();
 
-    Func_0808a0d0(11, 328, 246);
-    Func_0808a0f0(11, 0, 0);
-    Func_080770c8(0x84a);
+    Func_02000ef4(11, 328, 246);
+    Func_02000f16(11, 0, 0);
+    Func_02000eb4(0x84a);
 
 handoff:
     /* 0x02008bf4 = in-image data at file offset 0x0bf4. */
-    Func_0808a168(12, 0x00010000, (void *)0x02008bf4);
+    Func_02000f50(12, 0x00010000, (void *)0x02008bf4);
     goto close;
 
 interrupted:
     /* The player broke off before the beat completed. */
-    Func_0808a180(12, 0);
-    Func_0808a1b8(12, 0x3000, 10);              /* 192 << 6 */
+    Func_02000f72(12, 0);
+    Func_02000f96(12, 0x3000, 10);              /* 192 << 6 */
 
 close:
-    Func_0808a020();
+    Func_02000efa();
 }

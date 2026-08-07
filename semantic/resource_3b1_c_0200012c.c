@@ -48,12 +48,22 @@
  */
 
 /* Old-style declarations; arity varies by site across this overlay. */
-u8  *Func_0808a080();  /* veneer 0x64e8 — actor record accessor */
-void Func_08009080();  /* veneer 0x6450 */
-void Func_08009150();  /* veneer 0x6470 */
+u8  *Func_0200661c();
+void Func_020065e8();
+void Func_0200661a();
+s32  Func_020002b6();
+void Func_02006616();
+void Func_02006646();
+void Func_0200666e();
+void Func_020066a0();
+s32  Func_02000350();
+void Func_020066b0();
+void Func_0200034c();
+                       /* veneer 0x64e8 — actor record accessor */
+                       /* veneer 0x6450 */
+                       /* veneer 0x6470 */
 
-s32  Func_020000fc();
-void Func_020000d8();
+                     
 
 void Func_0200012c(u8 *object)
 {
@@ -61,7 +71,7 @@ void Func_0200012c(u8 *object)
     u16 *phase;
     s32 next;
 
-    actor = Func_0808a080(8);
+    actor = Func_0200661c(8);
     phase = (u16 *) (object + 102);
 
     switch (*(s16 *) phase) {
@@ -75,18 +85,18 @@ void Func_0200012c(u8 *object)
         goto advance_and_clear;
 
     case 4:
-        Func_08009080(object, 2);
+        Func_020065e8(object, 2);
         /* 234 << 17, 128 << 14, 158 << 18. */
         *(s32 *) (object + 76) = 60;
-        Func_08009150(object, 0x01d40000, 0x00200000, 0x02780000);
+        Func_0200661a(object, 0x01d40000, 0x00200000, 0x02780000);
         next = *phase + 1;
         goto store_phase;
 
     case 5:
-        if (Func_020000fc(object) == 0) {
+        if (Func_020002b6(object) == 0) {
             return;
         }
-        Func_08009080(object, 1);
+        Func_02006616(object, 1);
         object[98] = 0;
         if (actor[91] == 0) {
             object[99] = 1;
@@ -97,14 +107,14 @@ void Func_0200012c(u8 *object)
         goto advance_and_clear;
     case 7:
         if (actor[91] == 0) {
-            Func_08009080(object, 3);
+            Func_02006646(object, 3);
             object[99] = 2;
         }
 
     case 9:
-        Func_08009080(object, 2);
+        Func_0200666e(object, 2);
         /* 240 << 17, 128 << 14, 150 << 18. */
-        Func_08009150(object, 0x01e00000, 0x00200000, 0x02580000);
+        Func_020066a0(object, 0x01e00000, 0x00200000, 0x02580000);
         *phase = (u16) (*phase + 1);
         if (actor[91] != 0) {
             return;
@@ -114,10 +124,10 @@ void Func_0200012c(u8 *object)
         return;
 
     case 10:
-        if (Func_020000fc(object) == 0) {
+        if (Func_02000350(object) == 0) {
             return;
         }
-        Func_08009080(object, 1);
+        Func_020066b0(object, 1);
         object[98] = 0;
         next = *phase + 1;
         goto store_phase;
@@ -127,7 +137,7 @@ void Func_0200012c(u8 *object)
     case 6:
     case 8:
     case 11:
-        Func_020000d8(object);
+        Func_0200034c(object);
         return;
 
     case 12:

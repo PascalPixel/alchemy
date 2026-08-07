@@ -38,148 +38,221 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-void Func_0808a010();   /* wait n frames */
-u8 *Func_0808a080();    /* scene entity record by selector */
-void Func_0808a0b8();   /* move slot to (x, z) */
-void Func_0808a0c8();
-void Func_0808a0e0();
-void Func_0808a0e8();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a110();   /* scene-presentation request */
-void Func_0808a138();
-void Func_0808a148();   /* scene request */
-void Func_0808a170();   /* show a dialogue line by id */
-void Func_0808a180();   /* wait for the slot's action to finish */
-void Func_0808a1b8();   /* face the slot along a heading */
-void Func_0808a1e8();   /* play animation id for n frames */
-void Func_0808a200();
-void Func_0808a218();
-void Func_0808a220();
-void Func_080770c8();   /* set a story flag */
+void Func_0200301e();
+void Func_02002ff0();
+void Func_02003008();
+void Func_02003020();
+void Func_02003000();
+void Func_02003036();
+void Func_02002fae();
+void Func_0200303c();
+void Func_02003054();
+void Func_0200303e();
+void Func_02003080();
+void Func_0200305e();
+void Func_02003076();
+void Func_02003046();
+void Func_02003074();
+void Func_0200308c();
+void Func_020030a0();
+void Func_02003006();
+void Func_0200306e();
+void Func_0200307e();
+void Func_02003086();
+void Func_02003034();
+void Func_0200308e();
+void Func_020030a6();
+void Func_020030bc();
+void Func_02003108();
+void Func_020030ce();
+void Func_020030d6();
+void Func_020030de();
+void Func_020030e6();
+void Func_020030d2();
+void Func_020030e4();
+void Func_020030fa();
+void Func_020030f6();
+void Func_0200310c();
+void Func_0200317c();
+void Func_02003188();
+void Func_02003194();
+void Func_020031a0();
+void Func_02003106();
+void Func_020031b2();
+void Func_020031be();
+void Func_020031ca();
+void Func_020031d6();
+void Func_0200313c();
+void Func_02003196();
+void Func_02003156();
+void Func_020031e4();
+void Func_020031fc();
+void Func_020031cc();
+void Func_02003172();
+void Func_02003200();
+void Func_02003218();
+void Func_020031e8();
+void Func_02003216();
+void Func_0200322e();
+void Func_0200319c();
+void Func_02003220();
+void Func_02003236();
+void Func_0200324e();
+u8 *Func_020031e4_b();
+void Func_02003206();
+void Func_02003224();
+void Func_02003246();
+u8 *Func_02003214();
+void Func_02003254();
+void Func_02003266();
+void Func_02003276();
+u8 *Func_02003244();
+void Func_02003284();
+void Func_02003296();
+void Func_0200324c();
+void Func_02003334();
+void Func_02003330();
+void Func_02003320();
+void Func_02003256();
+                        /* wait n frames */
+                        /* scene entity record by selector */
+                        /* move slot to (x, z) */
+
+                     
+
+                        /* scene-presentation request */
+                     
+                        /* scene request */
+                        /* show a dialogue line by id */
+                        /* wait for the slot's action to finish */
+                        /* face the slot along a heading */
+                        /* play animation id for n frames */
+
+                     
+                        /* set a story flag */
 
 void Func_02001448(void)
 {
     u8 *actor;
     int line = 0x254e;
 
-    Func_0808a1e8(1, 0x105, 60);
-    Func_0808a148(1, 0, 0);
-    Func_0808a170(line);
-    Func_0808a180(1, 0);
+    Func_0200301e(1, 0x105, 60);
+    Func_02002ff0(1, 0, 0);
+    Func_02003008(line);
+    Func_02003020(1, 0);
 
-    Func_0808a138(3, 1);
-    Func_0808a170(line + 1);
-    Func_0808a180(3, 0);
+    Func_02003000(3, 1);
+    Func_0200301e(line + 1);
+    Func_02003036(3, 0);
 
-    Func_0808a148(2, 13, 0);
-    Func_0808a010(60);
-    Func_0808a170(line + 2);
-    Func_0808a180(2, 0);
+    Func_02003020(2, 13, 0);
+    Func_02002fae(60);
+    Func_0200303c(line + 2);
+    Func_02003054(2, 0);
 
-    Func_0808a148(13, 2, 0);
-    Func_0808a1e8(13, 0x105, 70);
-    Func_0808a170(line + 3);
-    Func_0808a180(13, 0);
+    Func_0200303e(13, 2, 0);
+    Func_02003080(13, 0x105, 70);
+    Func_0200305e(line + 3);
+    Func_02003076(13, 0);
 
-    Func_0808a110(12, 4);
-    Func_0808a170(line + 4);
-    Func_0808a180(12, 0);
+    Func_02003046(12, 4);
+    Func_02003074(line + 4);
+    Func_0200308c(12, 0);
 
-    Func_0808a1b8(12, 0x3000, 0);
-    Func_0808a010(20);
-    Func_0808a110(12, 3);
+    Func_020030a0(12, 0x3000, 0);
+    Func_02003006(20);
+    Func_0200306e(12, 3);
 
-    Func_0808a100(0, 3);
-    Func_0808a100(1, 3);
-    Func_0808a100(2, 3);
-    Func_0808a100(3, 3);
-    Func_0808a010(60);
+    Func_0200306e(0, 3);
+    Func_02003076(1, 3);
+    Func_0200307e(2, 3);
+    Func_02003086(3, 3);
+    Func_02003034(60);
 
-    Func_0808a0e0(13, -16, 0);
-    Func_0808a0e8(13);
-    Func_0808a100(13, 1);
-    Func_0808a010(40);
-    Func_0808a110(13, 3);
-    Func_0808a1b8(13, 0x5000, 0);
-    Func_0808a010(30);
+    Func_02003080(13, -16, 0);
+    Func_0200308e(13);
+    Func_020030a6(13, 1);
+    Func_02003054(40);
+    Func_020030bc(13, 3);
+    Func_02003108(13, 0x5000, 0);
+    Func_0200306e(30);
 
-    Func_0808a100(0, 3);
-    Func_0808a100(1, 3);
-    Func_0808a100(2, 3);
-    Func_0808a100(3, 3);
+    Func_020030ce(0, 3);
+    Func_020030d6(1, 3);
+    Func_020030de(2, 3);
+    Func_020030e6(3, 3);
 
-    Func_0808a0c8(12, 156, 528);
-    Func_0808a010(20);
-    Func_0808a0c8(13, 164, 528);
-    Func_0808a0e8(12);
-    Func_0808a0c8(12, 168, 640);
-    Func_0808a0e8(13);
-    Func_0808a0c8(13, 168, 640);
+    Func_020030d2(12, 156, 528);
+    Func_020030a0(20);
+    Func_020030e4(13, 164, 528);
+    Func_020030fa(12);
+    Func_020030f6(12, 168, 640);
+    Func_0200310c(13);
+    Func_02003108(13, 168, 640);
 
-    Func_0808a1b8(0, 0x5000, 0);
-    Func_0808a1b8(2, 0x5000, 0);
-    Func_0808a1b8(3, 0x5000, 0);
-    Func_0808a1b8(1, 0x5000, 0);
-    Func_0808a010(20);
+    Func_0200317c(0, 0x5000, 0);
+    Func_02003188(2, 0x5000, 0);
+    Func_02003194(3, 0x5000, 0);
+    Func_020031a0(1, 0x5000, 0);
+    Func_02003106(20);
 
-    Func_0808a1b8(0, 0x4000, 0);
-    Func_0808a1b8(2, 0x4000, 0);
-    Func_0808a1b8(3, 0x4000, 0);
-    Func_0808a1b8(1, 0x4000, 0);
-    Func_0808a010(60);
+    Func_020031b2(0, 0x4000, 0);
+    Func_020031be(2, 0x4000, 0);
+    Func_020031ca(3, 0x4000, 0);
+    Func_020031d6(1, 0x4000, 0);
+    Func_0200313c(60);
 
-    Func_0808a0f0(13, 0, 0);
-    Func_0808a0f0(12, 0, 0);
-    Func_0808a010(110);
+    Func_02003196(13, 0, 0);
+    Func_020031a0(12, 0, 0);
+    Func_02003156(110);
 
-    Func_0808a170(line + 5);
-    Func_0808a180(1, 0);
-    Func_0808a110(3, 3);
-    Func_0808a010(30);
+    Func_020031e4(line + 5);
+    Func_020031fc(1, 0);
+    Func_020031cc(3, 3);
+    Func_02003172(30);
 
-    Func_0808a170(line + 6);
-    Func_0808a180(3, 0);
-    Func_0808a110(2, 3);
+    Func_02003200(line + 6);
+    Func_02003218(3, 0);
+    Func_020031e8(2, 3);
 
-    Func_0808a170(line + 7);
-    Func_0808a180(2, 0);
-    Func_0808a010(140);
+    Func_02003216(line + 7);
+    Func_0200322e(2, 0);
+    Func_0200319c(140);
 
-    Func_0808a148(1, 0, 0);
-    Func_0808a170(line);
+    Func_02003220(1, 0, 0);
+    Func_02003236(line);
     line += 8;
-    Func_0808a180(1, 0);
+    Func_0200324e(1, 0);
 
     /* Three identical blocks: send slot N to actor 0's current tile. */
-    Func_0808a100(1, 2);
-    actor = Func_0808a080(0);
+    Func_02003216(1, 2);
+    actor = Func_020031e4_b(0);
     if (actor != 0) {
-        Func_0808a0b8(1, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
+        Func_02003206(1, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
     }
-    Func_0808a0e8(1);
-    Func_0808a0f0(1, 0, 0);
+    Func_02003224(1);
+    Func_02003236(1, 0, 0);
 
-    Func_0808a100(2, 2);
-    actor = Func_0808a080(0);
+    Func_02003246(2, 2);
+    actor = Func_02003214(0);
     if (actor != 0) {
-        Func_0808a0b8(2, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
+        Func_02003236(2, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
     }
-    Func_0808a0e8(2);
-    Func_0808a0f0(2, 0, 0);
+    Func_02003254(2);
+    Func_02003266(2, 0, 0);
 
-    Func_0808a100(3, 2);
-    actor = Func_0808a080(0);
+    Func_02003276(3, 2);
+    actor = Func_02003244(0);
     if (actor != 0) {
-        Func_0808a0b8(3, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
+        Func_02003266(3, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
     }
-    Func_0808a0e8(3);
-    Func_0808a0f0(3, 0, 0);
+    Func_02003284(3);
+    Func_02003296(3, 0, 0);
 
-    Func_0808a010(30);
-    Func_0808a220(0, 1);
-    Func_0808a218();
-    Func_0808a200(0, 0);
+    Func_0200324c(30);
+    Func_02003334(0, 1);
+    Func_02003330();
+    Func_02003320(0, 0);
 
-    Func_080770c8(0x94f);
+    Func_02003256(0x94f);
 }

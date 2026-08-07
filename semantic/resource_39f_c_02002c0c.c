@@ -32,17 +32,21 @@
  */
 
 /* Returns the actor record.  +80 holds its presentation block. */
-u8 *Func_0808a080();
-void Func_080091e0();
+u8 *Func_020059d4();
+void Func_020059a6();
+s32 Func_020059ec();
+u8 *Func_0200599c();
+s32 Func_02005a1c();
+void Func_020059c4();
+void Func_020059c2();
+
 /* Returns 0 when the tagged condition does not hold. */
-s32 Func_080770c0();
+                    
 /* ROM dispatch[16] -> Func_080048b0, the allocator. */
-u8 *Func_08000140();
-s32 Func_08015250();
+
 /* ROM dispatch[33] -> Func_08003fa4. */
-void Func_080001c8();
+                     
 /* ROM dispatch[18] -> Func_08002dd8, the matching release. */
-void Func_08000150();
 
 /* The per-frame handler installed at the end; its prologue is at that offset
  * and the pool word carries its Thumb bit. */
@@ -56,7 +60,7 @@ void Func_02002c0c(s32 subject)
 
     /* r0-r3 are untouched by the prologue, so the incoming arguments reach the
      * import unchanged. */
-    actor = Func_0808a080(subject);
+    actor = Func_020059d4(subject);
     block = *(u8 **)(actor + 80);
 
     /* -13 is 0xf3 in the byte domain: bits 2 and 3 are cleared, bit 2 is then
@@ -67,22 +71,22 @@ void Func_02002c0c(s32 subject)
     block[39] = 0;
 
     /* r0 still holds the record returned above. */
-    Func_080091e0(actor, 0);
+    Func_020059a6(actor, 0);
 
     actor[92] = 0;
     actor[85] = 0;
 
-    if (Func_080770c0(0x109) == 0) {
+    if (Func_020059ec(0x109) == 0) {
         *(s32 *)(actor + 12) += 0x200000;   /* 128 << 14, two units up */
     }
 
     actor[35] = (u8)(actor[35] & 0xfe);
     actor[97] = 1;
 
-    area = Func_08000140(17, 1544);         /* 193 << 3 */
-    Func_08015250(181);
-    Func_080001c8(block[28], 128, area + 1024);   /* 128 << 3 */
-    Func_08000150(17);
+    area = Func_0200599c(17, 1544);         /* 193 << 3 */
+    Func_02005a1c(181);
+    Func_020059c4(block[28], 128, area + 1024);   /* 128 << 3 */
+    Func_020059c2(17);
 
     *(s32 *)(actor + 56) = *(s32 *)(actor + 8);
     *(s32 *)(actor + 48) = 0;

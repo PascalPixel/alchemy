@@ -57,12 +57,17 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-s32 Func_080770c0();
-void Func_0808a018();
-s32 Func_0808a020();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a178();
+void Func_020028b8();
+void Func_02002918();
+s32 Func_020028b0();
+s32 Func_020028ba();
+void Func_02002944();
+void Func_02002954();
+s32 Func_02002918_b();
+
+                    
+
+                     
 
 /* Used for their return values. */
 
@@ -71,7 +76,7 @@ s32 Func_0200106c(s32 speaker)
     u32 cueBase;
     s32 variant = 0;
 
-    Func_0808a018();
+    Func_020028b8();
 
     if (speaker == 13) {
         cueBase = 0x297f;
@@ -83,13 +88,13 @@ s32 Func_0200106c(s32 speaker)
         cueBase = 0x2982;
     }
 
-    Func_0808a148(speaker, *(u32 *)&Data_02000240[500], 0);
+    Func_02002918(speaker, *(u32 *)&Data_02000240[500], 0);
 
-    if (Func_080770c0(772) != 0) {
-        variant = (Func_080770c0(0x305) != 0) ? 1 : 2;
+    if (Func_020028b0(772) != 0) {
+        variant = (Func_020028ba(0x305) != 0) ? 1 : 2;
     }
 
-    Func_0808a170(cueBase + (u32)variant);
-    Func_0808a178(speaker, 0);
-    return Func_0808a020();
+    Func_02002944(cueBase + (u32)variant);
+    Func_02002954(speaker, 0);
+    return Func_02002918_b();
 }

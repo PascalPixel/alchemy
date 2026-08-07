@@ -95,16 +95,81 @@ extern u8 Data_0200a0d0[];      /* scratch EWRAM: four 24-byte obstacle records 
 extern s32 Data_0200a134;       /* scratch EWRAM: the completion flag */
 extern s32 Data_0200a138;       /* scratch EWRAM: the result */
 
-u8 *Func_0808a080();
-void Func_08009080();
-void Func_02000dd0();
-void Func_02000e44();
-void Func_080f9010();
-s32 Func_03000380();            /* IWRAM quotient helper */
-s32 Func_030003ac();            /* IWRAM remainder helper */
-s32 Func_030001d8();            /* IWRAM square root, reached via a call_via veneer */
-s32 Func_08000118();
-s32 Func_08000120();
+u8 *Func_0200280e();
+void Func_02002764();
+u8 *Func_0200281c();
+void Func_02002772();
+s32 Func_020028ec();
+s32 Func_02002778();
+s32 Func_0200278a();
+u8 *Func_0200290a();
+void Func_02002860();
+void Func_02001e20();
+void Func_02001e28();
+void Func_02001e30();
+u8 *Func_02002930();
+void Func_02002886();
+void Func_02001e46();
+void Func_02001e4e();
+void Func_02001e56();
+s32 Func_02002922();
+s32 Func_0200295e();
+s32 Func_020029a2();
+s32 Func_020029dc();
+u8 *Func_02002bc8();
+void Func_02002b1e();
+u8 *Func_02002bd6();
+void Func_02002b2c();
+u8 *Func_02002c58();
+void Func_02002bae();
+u8 *Func_02002c66();
+void Func_02002bbc();
+s32 Func_02002bb4();
+s32 Func_02002bd2();
+u8 *Func_02002cec();
+void Func_02002c42();
+s32 Func_02002c42_b();
+s32 Func_02002c5e();
+u8 *Func_02002d30();
+void Func_02002c86();
+u8 *Func_02002d3e();
+void Func_02002c94();
+s32 Func_02002e58();
+s32 Func_02002ce6();
+s32 Func_02002cfa();
+void Func_02002e7a();
+s32 Func_02002d1e();
+void Func_020022e2();
+void Func_02002304();
+void Func_02002324();
+void Func_02002358();
+void Func_02002368();
+void Func_02002378();
+void Func_02002388();
+void Func_02002398();
+u8 *Func_02002f0a();
+void Func_02002e60();
+u8 *Func_02002f16();
+void Func_02002e6c();
+u8 *Func_02002f22();
+void Func_02002e78();
+void Func_020023d0();
+void Func_020023e0();
+void Func_020023f0();
+void Func_02002400();
+void Func_02002410();
+u8 *Func_02002f82();
+void Func_02002ed8();
+u8 *Func_02002f8e();
+void Func_02002ee4();
+u8 *Func_02002f9a();
+void Func_02002ef0();
+
+                     
+
+                                /* IWRAM quotient helper */
+                                /* IWRAM remainder helper */
+                                /* IWRAM square root, reached via a call_via veneer */
 
 void Func_02000e5c(void)
 {
@@ -170,9 +235,9 @@ void Func_02000e5c(void)
         if (vy != 0) {
             *(s32 *)(state + 68) = 0;
             if (Data_0200a0c0 == 1) {
-                Func_08009080(Func_0808a080(17), 1);
+                Func_02002764(Func_0200280e(17), 1);
             } else {
-                Func_08009080(Func_0808a080(12), 1);
+                Func_02002772(Func_0200281c(12), 1);
             }
         }
 
@@ -183,12 +248,12 @@ void Func_02000e5c(void)
             dx = (0x780000 - *(s32 *)(state + 4)) >> 8;
             dz = (0x470000 - *(s32 *)(state + 12)) >> 8;   /* 142 << 15 */
 
-            dist = Func_030001d8(dx * dx + dz * dz);
+            dist = Func_020028ec(dx * dx + dz * dz);
 
-            kick = *(s32 *)(state + 64) + Func_03000380(0x1999 * dx, dist);
+            kick = *(s32 *)(state + 64) + Func_02002778(0x1999 * dx, dist);
             *(s32 *)(state + 64) = kick;
 
-            v = *(s32 *)(state + 72) + Func_03000380(0x1999 * dz, dist);
+            v = *(s32 *)(state + 72) + Func_0200278a(0x1999 * dz, dist);
             *(s32 *)(state + 72) = v;
 
             /* (n * 64 - n) * 4 + n == n * 253, then /256 rounding toward 0. */
@@ -230,15 +295,15 @@ void Func_02000e5c(void)
                 s32 score;
 
                 if (Data_0200a0c0 == 1) {
-                    Func_08009080(Func_0808a080(17), 2);
-                    Func_02000e44(15, 0);
-                    Func_02000e44(14, 0);
-                    Func_02000e44(13, 0);
+                    Func_02002860(Func_0200290a(17), 2);
+                    Func_02001e20(15, 0);
+                    Func_02001e28(14, 0);
+                    Func_02001e30(13, 0);
                 } else {
-                    Func_08009080(Func_0808a080(12), 2);
-                    Func_02000e44(10, 0);
-                    Func_02000e44(9, 0);
-                    Func_02000e44(8, 0);
+                    Func_02002886(Func_02002930(12), 2);
+                    Func_02001e46(10, 0);
+                    Func_02001e4e(9, 0);
+                    Func_02001e56(8, 0);
                 }
 
                 dx = (0x780000 - *(s32 *)(state + 4)) >> 16;
@@ -271,7 +336,7 @@ void Func_02000e5c(void)
         z = *(s32 *)(state + 12);
 
         if (z < 0x2a0000) {                          /* 168 << 14 */
-            quotient = Func_03000380((0x2a0000 - z) * 42, 18);
+            quotient = Func_02002922((0x2a0000 - z) * 42, 18);
             x_lo = quotient + 0x300000;
             if (x_lo > 0x5a0000) {                   /* 180 << 15 */
                 x_lo = 0x5a0000;
@@ -283,7 +348,7 @@ void Func_02000e5c(void)
         }
         if (z > 0x660000) {                          /* 204 << 15 */
             /* z * 42 - 0x660000 * 42, in the assembly's own order. */
-            quotient = Func_03000380(z * 42 + (s32)0xef440000, 18);
+            quotient = Func_0200295e(z * 42 + (s32)0xef440000, 18);
             x_lo = quotient + 0x300000;
             if (x_lo > 0x5a0000) {
                 x_lo = 0x5a0000;
@@ -298,7 +363,7 @@ void Func_02000e5c(void)
 
         if (x < 0x5a0000) {
             t = 0x5a0000 - x;
-            quotient = Func_03000380(((t << 3) + t) << 1, 42);   /* t * 18 */
+            quotient = Func_020029a2(((t << 3) + t) << 1, 42);   /* t * 18 */
             z_lo = quotient + 0x180000;
             if (z_lo > 0x2a0000) {
                 z_lo = 0x2a0000;
@@ -310,7 +375,7 @@ void Func_02000e5c(void)
         }
         if (x > 0x960000) {
             /* x * 18 - 0x960000 * 18, in the assembly's own order. */
-            quotient = Func_03000380((((x << 3) + x) << 1) + (s32)0xf5740000, 42);
+            quotient = Func_020029dc((((x << 3) + x) << 1) + (s32)0xf5740000, 42);
             z_lo = quotient + 0x180000;
             if (z_lo > 0x2a0000) {
                 z_lo = 0x2a0000;
@@ -379,11 +444,11 @@ obstacles:
             slot = (index == 0) ? 18 : 19;
 
             if (*(s16 *)(rec + 18) > 0) {
-                Func_08009080(Func_0808a080(slot), 3);
+                Func_02002b1e(Func_02002bc8(slot), 3);
                 goto collision;
             }
 
-            Func_08009080(Func_0808a080(slot), 1);
+            Func_02002b2c(Func_02002bd6(slot), 1);
 
             if (*(s16 *)(rec + 14) != 0) {
                 *(u16 *)(rec + 14) = (u16)(*(u16 *)(rec + 14) - 1);
@@ -419,15 +484,15 @@ obstacles:
             }
 
             if (*(s16 *)(rec + 18) > 0) {
-                Func_08009080(Func_0808a080(20), 3);
+                Func_02002bae(Func_02002c58(20), 3);
                 goto collision;
             }
 
-            Func_08009080(Func_0808a080(20), 2);
+            Func_02002bbc(Func_02002c66(20), 2);
 
-            *(s32 *)(rec + 0) = ((Func_08000118(*(s16 *)(rec + 12)) * 3) << 4)
+            *(s32 *)(rec + 0) = ((Func_02002bb4(*(s16 *)(rec + 12)) * 3) << 4)
                                 + 0x700000;                  /* 224 << 15 */
-            *(s32 *)(rec + 8) = ((Func_08000120(*(s16 *)(rec + 12)) * 5) << 3)
+            *(s32 *)(rec + 8) = ((Func_02002bd2(*(s16 *)(rec + 12)) * 5) << 3)
                                 + 0x480000;                  /* 144 << 15 */
 
             *(u16 *)(rec + 12) = (u16)(*(u16 *)(rec + 12) + step);
@@ -449,19 +514,19 @@ obstacles:
              * own copy of the call (0x020013b4 and 0x02001406), so the two are
              * written out separately. */
             if (*(s16 *)(rec + 18) > 0) {
-                Func_08009080(Func_0808a080(21), 3);
+                Func_02002c42(Func_02002cec(21), 3);
                 goto fourth_piece_done;
             }
             if (phase <= 0x17f) {
-                *(s32 *)(rec + 0) = Func_08000118(*(s16 *)(rec + 12)) * 52
+                *(s32 *)(rec + 0) = Func_02002c42_b(*(s16 *)(rec + 12)) * 52
                                     + 0x700000;
-                *(s32 *)(rec + 8) = ((Func_08000120(*(s16 *)(rec + 12)) * 3) << 3)
+                *(s32 *)(rec + 8) = ((Func_02002c5e(*(s16 *)(rec + 12)) * 3) << 3)
                                     + 0x480000;
                 *(u16 *)(rec + 12) = (u16)(*(u16 *)(rec + 12) + step);
-                Func_08009080(Func_0808a080(21), 2);
+                Func_02002c86(Func_02002d30(21), 2);
                 goto fourth_piece_done;
             }
-            Func_08009080(Func_0808a080(21), 3);
+            Func_02002c94(Func_02002d3e(21), 3);
 
 fourth_piece_done:
             *(u16 *)(rec + 14) = (u16)(*(u16 *)(rec + 14) + 1);
@@ -492,31 +557,31 @@ collision:
                         }
                     }
                 } else {
-                    dist = Func_030001d8(dx * dx + dz * dz);
-                    *(s32 *)(state + 64) = Func_03000380(-dx * 0x30000, dist);
-                    *(s32 *)(state + 72) = Func_03000380(-dz * 0x30000, dist);
+                    dist = Func_02002e58(dx * dx + dz * dz);
+                    *(s32 *)(state + 64) = Func_02002ce6(-dx * 0x30000, dist);
+                    *(s32 *)(state + 72) = Func_02002cfa(-dz * 0x30000, dist);
                     *(s32 *)(state + 76) = *(s32 *)(state + 76) - 100;
                 }
 
-                Func_080f9010(301);
+                Func_02002e7a(301);
                 *(u16 *)(rec + 18) = 36;
                 *(u16 *)(rec + 16) =
-                    (u16)Func_030003ac(*(s16 *)(rec + 16) + 1, 3);
+                    (u16)Func_02002d1e(*(s16 *)(rec + 16) + 1, 3);
                 *(u16 *)(rec + 20) = 30;
             }
         }
 
         if (index == 0 || index == 1) {
             tag = *(s16 *)(rec + 16);
-            Func_02000dd0(index == 0 ? 18 : 19, rec, 0,
+            Func_020022e2(index == 0 ? 18 : 19, rec, 0,
                           Data_0200a054[tag], (tag << 4) + 16);
         } else if (index == 2) {
             tag = *(s16 *)(rec + 16);
-            Func_02000dd0(20, rec, 0x8000 - *(s16 *)(rec + 12),
+            Func_02002304(20, rec, 0x8000 - *(s16 *)(rec + 12),
                           Data_0200a057[tag], (tag << 4) + 16);
         } else if (index == 3) {
             tag = *(s16 *)(rec + 16);
-            Func_02000dd0(21, rec, 0xffff - *(s16 *)(rec + 12),
+            Func_02002324(21, rec, 0xffff - *(s16 *)(rec + 12),
                           Data_0200a057[tag], (tag << 4) + 16);
         }
     }
@@ -528,23 +593,23 @@ collision:
     *(s32 *)(state + 56) = 0;
 
     if (Data_0200a0c0 == 1) {
-        Func_02000dd0(17, state + 4, 0, 0, 16);
-        Func_02000dd0(16, state + 52, 0, 0, 16);
-        Func_02000dd0(15, state + 16, 0, 0, 16);
-        Func_02000dd0(14, state + 28, 0, 0, 16);
-        Func_02000dd0(13, state + 40, 0, 0, 16);
-        Func_08009080(Func_0808a080(15), 4);
-        Func_08009080(Func_0808a080(14), 4);
-        Func_08009080(Func_0808a080(13), 4);
+        Func_02002358(17, state + 4, 0, 0, 16);
+        Func_02002368(16, state + 52, 0, 0, 16);
+        Func_02002378(15, state + 16, 0, 0, 16);
+        Func_02002388(14, state + 28, 0, 0, 16);
+        Func_02002398(13, state + 40, 0, 0, 16);
+        Func_02002e60(Func_02002f0a(15), 4);
+        Func_02002e6c(Func_02002f16(14), 4);
+        Func_02002e78(Func_02002f22(13), 4);
     } else {
-        Func_02000dd0(12, state + 4, 0, 0, 16);
-        Func_02000dd0(11, state + 52, 0, 0, 16);
-        Func_02000dd0(10, state + 16, 0, 0, 16);
-        Func_02000dd0(9, state + 28, 0, 0, 16);
-        Func_02000dd0(8, state + 40, 0, 0, 16);
-        Func_08009080(Func_0808a080(10), 4);
-        Func_08009080(Func_0808a080(9), 4);
-        Func_08009080(Func_0808a080(8), 4);
+        Func_020023d0(12, state + 4, 0, 0, 16);
+        Func_020023e0(11, state + 52, 0, 0, 16);
+        Func_020023f0(10, state + 16, 0, 0, 16);
+        Func_02002400(9, state + 28, 0, 0, 16);
+        Func_02002410(8, state + 40, 0, 0, 16);
+        Func_02002ed8(Func_02002f82(10), 4);
+        Func_02002ee4(Func_02002f8e(9), 4);
+        Func_02002ef0(Func_02002f9a(8), 4);
     }
 
     /* -1 is the disabled state Func_0200173c writes on entry. */

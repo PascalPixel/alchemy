@@ -30,7 +30,8 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-s32 Func_080000f8(); /* pseudorandom draw */
+s32 Func_02001394();
+                     /* pseudorandom draw */
 
 void Func_0200036c(void)
 {
@@ -38,7 +39,7 @@ void Func_0200036c(void)
     u16 scanline = *(u16 *)0x04000006;
 
     if (scanline == 0xe3 || scanline <= 0x34) {
-        if ((u32)(Func_080000f8() * 100) >> 16 < *(u32 *)0x0200a0dc) {
+        if ((u32)(Func_02001394() * 100) >> 16 < *(u32 *)0x0200a0dc) {
             source = (const s32 *)0x0200a0d0;
         }
     }

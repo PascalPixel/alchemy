@@ -70,17 +70,33 @@ void Func_02001528(void);
 void Func_020019e8(void);
 void Func_0200169c(void);
 
-void Func_02005470(void);
+void Func_0200a3d6(void);
+void Func_0200a572();
+void Func_0200a57c();
+void Func_0200a586();
+void Func_0200a5b2();
+void Func_0200a5bc();
+void Func_0200a5ba();
+void Func_0200a5ee();
+void Func_0200a5c4();
+void Func_0200a620();
+void Func_0200a650();
+void Func_0200a602();
+void Func_0200a682();
+void Func_0200a772();
+void Func_0200a77a();
+void Func_0200a782();
+void Func_0200a78a();
+void Func_0200a792();
+void Func_0200a640();
 
 typedef void (*Task_02004f60)(void);
 
 /* Imports, named by the main-image address in their veneer's trailing word. */
-void Func_080000c0();
-void Func_080000d0();
-void Func_08009128();
-void Func_080091b8();
-void Func_08009258();
-void Func_0808a158();
+
+                     
+
+                     
 
 void Func_02004f60(void)
 {
@@ -88,7 +104,7 @@ void Func_02004f60(void)
     s32 install_id;
     u8 *state;
 
-    Func_02005470();
+    Func_0200a3d6();
 
     mode = Data_02000240[225];
 
@@ -107,10 +123,10 @@ void Func_02004f60(void)
     case 5:
     case 7:
         *(s32 *)(state + 0x1C0) = 0x200;
-        Func_080000d0((Task_02004f60)Func_02001718, 200 << 4);
+        Func_0200a572((Task_02004f60)Func_02001718, 200 << 4);
     case 6:
-        Func_080000d0((Task_02004f60)Func_0200175c, 200 << 4);
-        Func_080000d0((Task_02004f60)Func_020017bc, 200 << 4);
+        Func_0200a57c((Task_02004f60)Func_0200175c, 200 << 4);
+        Func_0200a586((Task_02004f60)Func_020017bc, 200 << 4);
         install_id = 224;
         goto install_mode;
 
@@ -124,36 +140,36 @@ void Func_02004f60(void)
     case 17:
     case 18:
         *(s32 *)(state + 0x1C0) = 0x200;
-        Func_080000d0((Task_02004f60)Func_02001528, 200 << 4);
-        Func_080000d0((Task_02004f60)Func_020019e8, 200 << 4);
-        Func_080000c0(1);
-        Func_08009128();
-        Func_080000c0(1);
-        Func_080091b8(101, 9, 10, 8, 110, 9);
+        Func_0200a5b2((Task_02004f60)Func_02001528, 200 << 4);
+        Func_0200a5bc((Task_02004f60)Func_020019e8, 200 << 4);
+        Func_0200a5ba(1);
+        Func_0200a5ee();
+        Func_0200a5c4(1);
+        Func_0200a620(101, 9, 10, 8, 110, 9);
         install_id = 224;
 
 install_mode:
-        Func_08009258(install_id << 4);
+        Func_0200a650(install_id << 4);
         goto tail;
 
     case 13:
     case 14:
     case 15:
         *(s32 *)(state + 0x1C0) = 0x200;
-        Func_080000d0((Task_02004f60)Func_0200169c, 200 << 4);
+        Func_0200a602((Task_02004f60)Func_0200169c, 200 << 4);
         goto tail;
 
     default:
         *(s32 *)(state + 0x1C0) = 0x200;
-        Func_08009258(224 << 4);
+        Func_0200a682(224 << 4);
         goto tail;
     }
 
-    Func_0808a158(18, 1);
+    Func_0200a772(18, 1);
 tail:
-    Func_0808a158(17, 1);
-    Func_0808a158(21, 1);
-    Func_0808a158(12, 1);
-    Func_0808a158(13, 1);
-    Func_080000c0(1);
+    Func_0200a77a(17, 1);
+    Func_0200a782(21, 1);
+    Func_0200a78a(12, 1);
+    Func_0200a792(13, 1);
+    Func_0200a640(1);
 }

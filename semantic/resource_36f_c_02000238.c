@@ -54,7 +54,8 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-void Func_080001e8();           /* queue a 12-byte sprite request */
+void Func_02000824();
+                                /* queue a 12-byte sprite request */
 
 /* In-image: the cached palette slot, and the frame counter this task bumps. */
 extern s16 Data_02008650[];
@@ -86,7 +87,7 @@ void Func_02000238(void)
         }
 
         if (remaining != 0) {
-            Func_080001e8(submit, 255);
+            Func_02000824(submit, 255);
             submit += 3;
         }
 

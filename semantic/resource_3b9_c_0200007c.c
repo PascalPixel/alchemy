@@ -71,7 +71,9 @@ extern u8 Data_0200ba44[];          /* offset 0x3a44 */
 extern u8 Data_0200bbdc[];          /* offset 0x3bdc */
 extern u8 Data_0200be1c[];          /* offset 0x3e1c */
 
-s32 Func_080770c0();                /* read an event flag */
+s32 Func_02002d94();
+s32 Func_02002da2();
+                                    /* read an event flag */
 
 s32 Func_0200007c(void)
 {
@@ -110,10 +112,10 @@ s32 Func_0200007c(void)
     if (map != 0x8e) {
         return (s32)Data_0200b324;
     }
-    if (Func_080770c0(0x950) != 0) {
+    if (Func_02002d94(0x950) != 0) {
         return (s32)Data_0200be1c;
     }
-    if (Func_080770c0(0x962) != 0) {
+    if (Func_02002da2(0x962) != 0) {
         return (s32)Data_0200bbdc;
     }
     return (s32)Data_0200ba44;

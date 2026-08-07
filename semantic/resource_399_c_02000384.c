@@ -54,88 +54,125 @@ extern u8 Data_0200b1d6[];      /* in-image camera target, file offset 0x31d6 */
 
 /* Imports, named by the main-image address in the trailing word of the overlay
  * veneer each call site reaches.  Old-style declarations are mandatory. */
-void Func_0808a010();           /* frame wait */
-void Func_0808a018();           /* scripted-section open */
-void Func_0808a020();           /* scripted-section close */
-void Func_0808a090();           /* 16.16 pair setter */
-void Func_0808a098();           /* (selector, script) */
-void Func_0808a0a8();
-void Func_0808a0b0();           /* (selector, script) */
-void Func_0808a100();
-void Func_0808a128();
-void Func_0808a130();
-void Func_0808a148();           /* scene request */
-void Func_0808a170();           /* message line */
-void Func_0808a180();
-void Func_0808a188();
-void Func_0808a190();
-void Func_0808a1b8();           /* orientation over frames */
-void Func_0808a1e8();
-void Func_0808a1f0();
-void Func_08009178();           /* camera placement */
-void Func_080770c8();           /* story-flag set */
-u8 *Func_0808a080();            /* scene record for a selector, or 0 */
-s32 Func_080770c0();            /* story-flag query */
+s32 Func_0200259a();
+void Func_020025c2();
+void Func_0200267c();
+void Func_020025ca();
+void Func_020026a8();
+void Func_020026c8();
+void Func_020025ec();
+s32 Func_020025cc();
+void Func_020025f4();
+void Func_02002684();
+void Func_020025b6();
+void Func_020026dc();
+void Func_020026ec();
+void Func_020026a4();
+void Func_020025d6();
+void Func_02002632();
+void Func_02002630();
+u8 *Func_0200264e();
+void Func_0200266c();
+void Func_0200271a();
+void Func_0200272a();
+void Func_02002690();
+void Func_02002764();
+void Func_02002760();
+void Func_02002718();
+void Func_02002762();
+void Func_020026b2();
+void Func_020026b4();
+void Func_0200269a();
+void Func_02002744();
+void Func_02002754();
+void Func_020027c6();
+void Func_020026bc();
+void Func_020027ae();
+void Func_020027ca();
+void Func_02002782();
+void Func_020027c2();
+u8 *Func_02002708();
+void Func_020026e8();
+void Func_0200270c();
+                                /* frame wait */
+                                /* scripted-section open */
+                                /* scripted-section close */
+                                /* 16.16 pair setter */
+                                /* (selector, script) */
+                     
+                                /* (selector, script) */
+
+                     
+                                /* scene request */
+                                /* message line */
+
+                     
+                                /* orientation over frames */
+
+                                /* camera placement */
+                                /* story-flag set */
+                                /* scene record for a selector, or 0 */
+                                /* story-flag query */
 
 void Func_02000384(void)
 {
     u8 *record;
 
-    if (Func_080770c0(0x881) != 0) {
-        Func_0808a018();
-        Func_0808a148(9, 0, 0);
-        Func_0808a010(10);
-        Func_0808a170(0x1644);
-        Func_0808a190(9, 0);
-        Func_0808a020();
+    if (Func_0200259a(0x881) != 0) {
+        Func_020025c2();
+        Func_0200267c(9, 0, 0);
+        Func_020025ca(10);
+        Func_020026a8(0x1644);
+        Func_020026c8(9, 0);
+        Func_020025ec();
         return;
     }
 
-    if (Func_080770c0(0x82b) != 0) {
-        Func_0808a018();
-        Func_0808a100(9, 7);
-        Func_08009178(Data_0200b1c0, 10, 69);
+    if (Func_020025cc(0x82b) != 0) {
+        Func_020025f4();
+        Func_02002684(9, 7);
+        Func_020025b6(Data_0200b1c0, 10, 69);
         return;
-        Func_0808a170(0x156c);
-        Func_0808a180(9, 0);
-        Func_0808a100(9, 8);
-        Func_08009178(Data_0200b1d6, 10, 69);
-        Func_0808a020();
+        Func_020026dc(0x156c);
+        Func_020026ec(9, 0);
+        Func_020026a4(9, 8);
+        Func_020025d6(Data_0200b1d6, 10, 69);
+        Func_02002632();
     }
 
-    Func_0808a018();
+    Func_02002630();
 
     *(u16 *)(record + 100) = 10;
-    record = Func_0808a080(9);
+    record = Func_0200264e(9);
 
-    Func_0808a098(9, Data_0200a4f4);
-    Func_0808a170(0x1534);
-    Func_0808a180(9, 0);
+    Func_0200266c(9, Data_0200a4f4);
+    Func_0200271a(0x1534);
+    Func_0200272a(9, 0);
 
-    Func_0808a0a8(8);
-    Func_0808a1e8(8, 256, 40);
-    Func_0808a1b8(8, 0xd000, 10);
-    Func_0808a130(8, 2);
-    Func_0808a188(8, 0, 20);
+    Func_02002690(8);
+    Func_02002764(8, 256, 40);
+    Func_02002760(8, 0xd000, 10);
+    Func_02002718(8, 2);
+    Func_02002762(8, 0, 20);
 
-    Func_0808a098(0, Data_0200a564);
-    Func_0808a090(8, 0x19999, 0xcccc);
-    Func_0808a0b0(8, Data_0200a508);
-    Func_0808a010(40);
+    Func_020026b2(0, Data_0200a564);
+    Func_020026b4(8, 0x19999, 0xcccc);
+    Func_020026dc(8, Data_0200a508);
+    Func_0200269a(40);
 
-    Func_0808a128(8, 2, 0);
-    Func_0808a130(8, 2);
-    Func_0808a1f0(8, 258);
-    Func_0808a010(60);
+    Func_02002744(8, 2, 0);
+    Func_02002754(8, 2);
+    Func_020027c6(8, 258);
+    Func_020026bc(60);
 
-    Func_0808a188(8, 0, 10);
-    Func_0808a1b8(8, 0x3000, 20);
-    Func_0808a130(8, 2);
-    Func_0808a180(8, 0);
+    Func_020027ae(8, 0, 10);
+    Func_020027ca(8, 0x3000, 20);
+    Func_02002782(8, 2);
+    Func_020027c2(8, 0);
 
-    record = Func_0808a080(8);
+    record = Func_02002708(8);
     record[89] ^= 2;
 
-    Func_080770c8(0x82c);
-    Func_0808a020();
+    Func_020026e8(0x82c);
+    Func_0200270c();
 }

@@ -67,20 +67,57 @@ extern s16 Data_02000240[];     /* external EWRAM globals, not overlay data */
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-void Func_08009190();           /* channel control */
-void Func_080091c0();           /* six-argument renderer, last two on the stack */
-void Func_080091e0();           /* set presentation mode (record, phase) */
-u8 *Func_0808a080();            /* record by slot index */
-void Func_0808a0f0();           /* place slot at (x, z), 16.16 */
-s32 Func_080770c0();            /* story-flag test; used in a condition */
-void Func_080770c8();           /* set a story flag */
-void Func_080770d0();           /* clear a story flag */
+void Func_02002b26();
+void Func_02002b2c();
+void Func_02002b5a();
+s32 Func_02002b58();
+void Func_02002b74();
+s32 Func_02002b6a();
+s32 Func_02002b74_b();
+void Func_02000ffc();
+s32 Func_02002b9a();
+void Func_02001ef0();
+s32 Func_02002bac();
+s32 Func_02002bca();
+s32 Func_02002bd6();
+void Func_0200213e();
+s32 Func_02002bea();
+s32 Func_02002bf4();
+void Func_02002bf4_b();
+void Func_02002c06();
+void Func_02002cd4();
+void Func_02002ce2();
+void Func_02002cf0();
+void Func_02002cfe();
+u8 *Func_02002ca4();
+void Func_02002c52();
+u8 *Func_02002cb0();
+void Func_02002c5e();
+u8 *Func_02002cbc();
+void Func_02002c6a();
+u8 *Func_02002cc8();
+void Func_02002c76();
+u8 *Func_02002cd4_b();
+u8 *Func_02002cde();
+u8 *Func_02002ce8();
+u8 *Func_02002cf2();
+u8 *Func_02002cfc();
+u8 *Func_02002d06();
+u8 *Func_02002d0e();
+u8 *Func_02002d16();
+void Func_02002a42();
+                                /* channel control */
+                                /* six-argument renderer, last two on the stack */
+                                /* set presentation mode (record, phase) */
+                                /* record by slot index */
+                                /* place slot at (x, z), 16.16 */
+                                /* story-flag test; used in a condition */
+                                /* set a story flag */
+                                /* clear a story flag */
 
 /* Intra-overlay scene bodies, resolved as real prologues in this overlay. */
-void Func_020008c0();
-void Func_0200179c();
-void Func_020019b0();
-void Func_020021bc();
+
+                     
 
 s32 Func_020006e0(void)
 {
@@ -91,33 +128,33 @@ s32 Func_020006e0(void)
     workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 448) = 521;
 
-    Func_08009190(1);
-    Func_08009190(2);
-    Func_080770c8(0x84b);
+    Func_02002b26(1);
+    Func_02002b2c(2);
+    Func_02002b5a(0x84b);
 
-    if (Func_080770c0(0x109) != 0) {
-        Func_080770d0(512);             /* 128 << 2 */
+    if (Func_02002b58(0x109) != 0) {
+        Func_02002b74(512);             /* 128 << 2 */
     }
 
-    if (Func_080770c0(0x84f) == 0 && Func_080770c0(0x845) == 0) {
+    if (Func_02002b6a(0x84f) == 0 && Func_02002b74_b(0x845) == 0) {
         selector = Data_02000240[225];
         if (selector == 29) {
-            Func_020008c0();
-        } else if (selector == 9 && Func_080770c0(0x321) != 0) {
-            Func_0200179c();
+            Func_02000ffc();
+        } else if (selector == 9 && Func_02002b9a(0x321) != 0) {
+            Func_02001ef0();
         }
         return 0;
     }
 
-    if (Func_080770c0(0x84e) != 0) {
+    if (Func_02002bac(0x84e) != 0) {
         return 0;
     }
 
     selector = Data_02000240[225];
 
     if (selector == 29) {
-        if (Func_080770c0(0x85e) == 0 && Func_080770c0(0x845) != 0) {
-            Func_020019b0();
+        if (Func_02002bca(0x85e) == 0 && Func_02002bd6(0x845) != 0) {
+            Func_0200213e();
         }
         return 0;
     }
@@ -125,48 +162,48 @@ s32 Func_020006e0(void)
     if (selector != 28) {
         return 0;
     }
-    if (Func_080770c0(0x322) == 0) {
+    if (Func_02002bea(0x322) == 0) {
         return 0;
     }
-    if (Func_080770c0(0x109) == 0) {
+    if (Func_02002bf4(0x109) == 0) {
         goto run_scene;
     }
 
-    Func_080091c0(38, 55, 4, 1, 38, 45);
-    Func_080091c0(42, 55, 4, 1, 38, 46);
+    Func_02002bf4_b(38, 55, 4, 1, 38, 45);
+    Func_02002c06(42, 55, 4, 1, 38, 46);
 
-    Func_0808a0f0(21, 154 << 18, 182 << 18);
-    Func_0808a0f0(22, 158 << 18, 182 << 18);
-    Func_0808a0f0(23, 162 << 18, 182 << 18);
-    Func_0808a0f0(24, 166 << 18, 182 << 18);
+    Func_02002cd4(21, 154 << 18, 182 << 18);
+    Func_02002ce2(22, 158 << 18, 182 << 18);
+    Func_02002cf0(23, 162 << 18, 182 << 18);
+    Func_02002cfe(24, 166 << 18, 182 << 18);
 
-    Func_080091e0(Func_0808a080(21), 0);
-    Func_080091e0(Func_0808a080(22), 0);
-    Func_080091e0(Func_0808a080(23), 0);
-    Func_080091e0(Func_0808a080(24), 0);
+    Func_02002c52(Func_02002ca4(21), 0);
+    Func_02002c5e(Func_02002cb0(22), 0);
+    Func_02002c6a(Func_02002cbc(23), 0);
+    Func_02002c76(Func_02002cc8(24), 0);
 
     /* r6, and r6 is 0 on every path that reaches here - see the note above. */
-    record = Func_0808a080(21);
+    record = Func_02002cd4_b(21);
     record[85] = 0;
-    record = Func_0808a080(22);
+    record = Func_02002cde(22);
     record[85] = 0;
-    record = Func_0808a080(23);
+    record = Func_02002ce8(23);
     record[85] = 0;
-    record = Func_0808a080(24);
+    record = Func_02002cf2(24);
     record[85] = 0;
 
-    record = Func_0808a080(21);
+    record = Func_02002cfc(21);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
-    record = Func_0808a080(22);
+    record = Func_02002d06(22);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
-    record = Func_0808a080(23);
+    record = Func_02002d0e(23);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
     *(s32 *)(record + 12) = (s32)0xfffc0000;
-    record = Func_0808a080(24);
+    record = Func_02002d16(24);
 
     goto done;
 
-    Func_020021bc();
+    Func_02002a42();
 run_scene:
 
 done:

@@ -124,254 +124,403 @@ extern u8 *Data_03001ebc;
 extern u8 Data_02009788[];
 extern u8 Data_0200979e[];
 
-void Func_08009178();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-s32 Func_0808a070();
-void Func_0808a090();
-void Func_0808a0c8();
-void Func_0808a0d0();
-void Func_0808a0e8();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a130();
-void Func_0808a138();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a188();
-void Func_0808a190();
-void Func_0808a1b8();
-void Func_0808a1e8();
-void Func_0808a1f0();
-void Func_0808a360();
-void Func_0808a370();
-void Func_0808a5e8();
-void Func_080f9010();
+void Func_020016e0();
+void Func_0200174e();
+void Func_020017b2();
+void Func_02001768();
+void Func_02001776();
+void Func_02001784();
+void Func_02001792();
+void Func_020017f6();
+void Func_02001802();
+void Func_0200180e();
+void Func_0200181a();
+void Func_0200186c();
+void Func_02001878();
+void Func_02001822();
+void Func_02001844();
+void Func_0200180c();
+void Func_02001814();
+void Func_0200181c();
+void Func_0200182c();
+void Func_020017ba();
+void Func_0200183a();
+void Func_020017c8();
+void Func_02001882();
+void Func_02001852();
+void Func_020017e0();
+void Func_0200189a();
+void Func_020017f8();
+void Func_020018b2();
+void Func_020018d6();
+void Func_020018d0();
+void Func_020018fc();
+void Func_02001832();
+void Func_020018ca();
+void Func_02001840();
+void Func_0200190c();
+void Func_020018f4();
+s32 Func_02001874();
+void Func_02001866();
+void Func_02001930();
+void Func_0200194a();
+void Func_02001934();
+void Func_02001950();
+void Func_0200195c();
+void Func_0200192c();
+void Func_02001986();
+void Func_020018b4();
+void Func_02001980();
+void Func_0200197a();
+void Func_020018fa();
+void Func_020019c4();
+void Func_02001984();
+void Func_02001912();
+void Func_020019cc();
+void Func_020019f8();
+void Func_020019f4();
+void Func_02001a00();
+void Func_020019fa();
+void Func_020019e2();
+void Func_02001958();
+void Func_02001a24();
+void Func_02001a30();
+void Func_02001a3c();
+void Func_02001a48();
+void Func_0200198e();
+void Func_02001a5a();
+void Func_02001a54();
+void Func_020019b2();
+void Func_02001a32();
+void Func_020019c0();
+void Func_02001a40();
+void Func_020019ce();
+void Func_02001a88();
+void Func_02001a70();
+void Func_020019e6();
+void Func_02001aa0();
+void Func_02001a68();
+void Func_02001a78();
+void Func_02001a16();
+void Func_02001a96();
+void Func_02001af0();
+void Func_02001b66();
+void Func_02001a72();
+void Func_02001aa4();
+void Func_02001ac6();
+void Func_02001b94();
+void Func_02001a2e();
+void Func_02001a74();
+void Func_02001b98();
+void Func_02001b10();
+void Func_02001a86();
+void Func_02001b52();
+void Func_02001b4c();
+void Func_02001b68();
+void Func_02001b40();
+void Func_02001ab6();
+void Func_02001b82();
+void Func_02001b7c();
+void Func_02001b64();
+void Func_02001ba0();
+void Func_02001aee();
+void Func_02001b86();
+void Func_02001afc();
+void Func_02001bc8();
+void Func_02001bc2();
+void Func_02001ba2();
+void Func_02001baa();
+void Func_02001bba();
+void Func_02001b30();
+void Func_02001bb0();
+void Func_02001b3e();
+void Func_02001bf8();
+void Func_02001be0();
+void Func_02001b56();
+void Func_02001c10();
+void Func_02001c2c();
+void Func_02001bec();
+void Func_02001b7a();
+void Func_02001bfa();
+void Func_02001b88();
+void Func_02001c42();
+void Func_02001c6e();
+void Func_02001c58();
+void Func_02001c74();
+void Func_02001c34();
+void Func_02001c7c();
+void Func_02001ca8();
+void Func_02001cb4();
+void Func_02001c9e();
+void Func_02001cba();
+void Func_02001c7a();
+void Func_02001c08();
+void Func_02001cc2();
+void Func_02001ca2();
+void Func_02001caa();
+void Func_02001c30();
+void Func_02001c66();
+void Func_02001c98();
+void Func_02001d14();
+void Func_02001d20();
+void Func_02001d2c();
+void Func_02001d38();
+void Func_02001cf8();
+void Func_02001c86();
+void Func_02001d40();
+void Func_02001d08();
+void Func_02001d10();
+void Func_02001cae();
+void Func_02001ce4();
+void Func_02001cf2();
+void Func_02001d1c();
+void Func_02001d26();
+void Func_02001d30();
+void Func_02001d4e();
+void Func_02001d60();
+void Func_02001d5e();
+void Func_02001d70();
+void Func_02001d6e();
+void Func_02001d80();
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_020001ec(void)
 {
     u8 *workspace;
 
-    Func_0808a018();
+    Func_020016e0();
 
-    Func_0808a0f0(8, 136 << 16, 168 << 16);
-    Func_0808a1b8(8, 160 << 7, 0);
-    Func_0808a0f0(0, 144 << 16, 200 << 16);
-    Func_0808a0f0(1, 160 << 16, 192 << 16);
-    Func_0808a0f0(2, 128 << 16, 200 << 16);
-    Func_0808a0f0(3, 224 << 15, 192 << 16);
-    Func_0808a1b8(0, 192 << 8, 0);
-    Func_0808a1b8(1, 160 << 8, 0);
-    Func_0808a1b8(2, 192 << 8, 0);
-    Func_0808a1b8(3, 224 << 8, 0);
+    Func_0200174e(8, 136 << 16, 168 << 16);
+    Func_020017b2(8, 160 << 7, 0);
+    Func_02001768(0, 144 << 16, 200 << 16);
+    Func_02001776(1, 160 << 16, 192 << 16);
+    Func_02001784(2, 128 << 16, 200 << 16);
+    Func_02001792(3, 224 << 15, 192 << 16);
+    Func_020017f6(0, 192 << 8, 0);
+    Func_02001802(1, 160 << 8, 0);
+    Func_0200180e(2, 192 << 8, 0);
+    Func_0200181a(3, 224 << 8, 0);
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 513;
 
-    Func_0808a360();
-    Func_0808a370();
+    Func_0200186c();
+    Func_02001878();
 
-    Func_0808a010(60);
-    Func_0808a110(8, 3);
-    Func_0808a010(20);
-    Func_0808a170(0x19e9);
-    Func_0808a188(8, 0, 20);
+    Func_02001776(60);
+    Func_020017f6(8, 3);
+    Func_02001784(20);
+    Func_02001822(0x19e9);
+    Func_02001844(8, 0, 20);
 
-    Func_0808a100(0, 3);
-    Func_0808a100(1, 3);
-    Func_0808a100(2, 3);
-    Func_0808a110(3, 3);
-    Func_0808a010(20);
+    Func_0200180c(0, 3);
+    Func_02001814(1, 3);
+    Func_0200181c(2, 3);
+    Func_0200182c(3, 3);
+    Func_020017ba(20);
 
-    Func_0808a110(8, 4);
-    Func_0808a010(20);
-    Func_0808a188(8, 0, 20);
+    Func_0200183a(8, 4);
+    Func_020017c8(20);
+    Func_02001882(8, 0, 20);
 
-    Func_0808a110(3, 4);
-    Func_0808a010(20);
-    Func_0808a188(3, 0, 20);
+    Func_02001852(3, 4);
+    Func_020017e0(20);
+    Func_0200189a(3, 0, 20);
 
-    Func_0808a138(2, 2);
-    Func_0808a010(20);
-    Func_0808a188(2, 0, 20);
+    Func_02001882(2, 2);
+    Func_020017f8(20);
+    Func_020018b2(2, 0, 20);
 
-    Func_0808a138(8, 2);
-    Func_0808a1b8(8, 160 << 7, 20);
-    Func_0808a188(8, 0, 20);
+    Func_0200189a(8, 2);
+    Func_020018d6(8, 160 << 7, 20);
+    Func_020018d0(8, 0, 20);
 
-    Func_0808a1e8(2, 258, 60);
-    Func_0808a010(120);
+    Func_020018fc(2, 258, 60);
+    Func_02001832(120);
 
-    Func_0808a138(1, 2);
-    Func_0808a010(20);
-    Func_0808a1b8(1, 192 << 7, 20);
-    Func_0808a178(1, 0);
+    Func_020018ca(1, 2);
+    Func_02001840(20);
+    Func_0200190c(1, 192 << 7, 20);
+    Func_020018f4(1, 0);
 
-    if (Func_0808a070(0, 0) == 0) {
-        Func_0808a010(20);
-        Func_0808a1b8(3, 0, 20);
-        Func_0808a1e8(3, 0x101, 60);
-        Func_0808a188(3, 0, 20);
-        Func_0808a1b8(0, 224 << 8, 0);
-        Func_0808a1b8(2, 224 << 8, 0);
-        Func_0808a130(1, 2);
-        Func_0808a1f0(1, 258);
-        Func_0808a010(60);
-        Func_0808a1b8(1, 128 << 8, 20);
-        Func_0808a188(1, 0, 20);
+    if (Func_02001874(0, 0) == 0) {
+        Func_02001866(20);
+        Func_02001930(3, 0, 20);
+        Func_0200194a(3, 0x101, 60);
+        Func_02001934(3, 0, 20);
+        Func_02001950(0, 224 << 8, 0);
+        Func_0200195c(2, 224 << 8, 0);
+        Func_0200192c(1, 2);
+        Func_02001986(1, 258);
+        Func_020018b4(60);
+        Func_02001980(1, 128 << 8, 20);
+        Func_0200197a(1, 0, 20);
 
     } else {
         *(u16 *)(Data_03001ebc + 472) += 2;
         *(u16 *)(Data_03001ebc + 472) += 2;
 
-        Func_0808a010(20);
-        Func_0808a1b8(3, 0, 20);
-        Func_0808a110(3, 3);
-        Func_0808a010(20);
-        Func_0808a188(3, 0, 20);
-        Func_0808a1e8(1, 258, 60);
-        Func_0808a1b8(0, 224 << 8, 0);
-        Func_0808a1b8(2, 224 << 8, 0);
-        Func_0808a188(1, 0, 20);
+        Func_020018fa(20);
+        Func_020019c4(3, 0, 20);
+        Func_02001984(3, 3);
+        Func_02001912(20);
+        Func_020019cc(3, 0, 20);
+        Func_020019f8(1, 258, 60);
+        Func_020019f4(0, 224 << 8, 0);
+        Func_02001a00(2, 224 << 8, 0);
+        Func_020019fa(1, 0, 20);
     }
 
-    Func_0808a138(8, 2);
-    Func_0808a010(20);
-    Func_0808a1b8(0, 192 << 8, 0);
-    Func_0808a1b8(1, 160 << 8, 0);
-    Func_0808a1b8(2, 192 << 8, 0);
-    Func_0808a1b8(3, 224 << 8, 0);
-    Func_0808a010(20);
+    Func_020019e2(8, 2);
+    Func_02001958(20);
+    Func_02001a24(0, 192 << 8, 0);
+    Func_02001a30(1, 160 << 8, 0);
+    Func_02001a3c(2, 192 << 8, 0);
+    Func_02001a48(3, 224 << 8, 0);
+    Func_0200198e(20);
 
-    Func_0808a1b8(8, 192 << 6, 20);
-    Func_0808a188(8, 0, 20);
+    Func_02001a5a(8, 192 << 6, 20);
+    Func_02001a54(8, 0, 20);
 
-    Func_0808a138(1, 2);
-    Func_0808a010(20);
-    Func_0808a110(1, 3);
-    Func_0808a010(30);
+    Func_02001a3c(1, 2);
+    Func_020019b2(20);
+    Func_02001a32(1, 3);
+    Func_020019c0(30);
 
-    Func_0808a110(8, 3);
-    Func_0808a010(20);
-    Func_0808a188(8, 0, 20);
+    Func_02001a40(8, 3);
+    Func_020019ce(20);
+    Func_02001a88(8, 0, 20);
 
-    Func_0808a138(8, 2);
-    Func_0808a010(20);
-    Func_0808a188(8, 0, 20);
+    Func_02001a70(8, 2);
+    Func_020019e6(20);
+    Func_02001aa0(8, 0, 20);
 
-    Func_0808a100(0, 3);
-    Func_0808a100(1, 3);
-    Func_0808a100(2, 3);
-    Func_0808a110(3, 3);
-    Func_0808a010(20);
+    Func_02001a68(0, 3);
+    Func_02001a70(1, 3);
+    Func_02001a78(2, 3);
+    Func_02001a88(3, 3);
+    Func_02001a16(20);
 
-    Func_0808a110(8, 3);
-    Func_0808a010(20);
-    Func_0808a1b8(8, 192 << 8, 30);
+    Func_02001a96(8, 3);
+    Func_02001a24(20);
+    Func_02001af0(8, 192 << 8, 30);
 
-    Func_080f9010(188);
-    Func_08009178(Data_02009788, 67, 6);
-    Func_0808a090(8, 0xcccc, 0x6666);
-    Func_0808a0d0(8, 136, 136);
-    Func_0808a0f0(8, 0, 0);
-    Func_080f9010(188);
-    Func_08009178(Data_0200979e, 67, 6);
-    Func_0808a010(60);
-    Func_0808a5e8();
+    Func_02001b66(188);
+    Func_02001a00(Data_02009788, 67, 6);
+    Func_02001a72(8, 0xcccc, 0x6666);
+    Func_02001aa4(8, 136, 136);
+    Func_02001ac6(8, 0, 0);
+    Func_02001b94(188);
+    Func_02001a2e(Data_0200979e, 67, 6);
+    Func_02001a74(60);
+    Func_02001b98();
 
-    Func_0808a138(1, 2);
-    Func_0808a010(20);
-    Func_0808a1b8(1, 192 << 7, 20);
-    Func_0808a188(1, 0, 20);
+    Func_02001b10(1, 2);
+    Func_02001a86(20);
+    Func_02001b52(1, 192 << 7, 20);
+    Func_02001b4c(1, 0, 20);
 
-    Func_0808a1b8(0, 128 << 8, 20);
-    Func_0808a138(2, 2);
-    Func_0808a010(20);
-    Func_0808a1b8(3, 128 << 6, 20);
-    Func_0808a188(3, 0, 20);
+    Func_02001b68(0, 128 << 8, 20);
+    Func_02001b40(2, 2);
+    Func_02001ab6(20);
+    Func_02001b82(3, 128 << 6, 20);
+    Func_02001b7c(3, 0, 20);
 
-    Func_0808a138(1, 1);
-    Func_0808a1b8(0, 224 << 8, 20);
-    Func_0808a190(1, 0);
-    Func_0808a010(20);
+    Func_02001b64(1, 1);
+    Func_02001ba0(0, 224 << 8, 20);
+    Func_02001ba0(1, 0);
+    Func_02001aee(20);
 
-    Func_0808a138(2, 2);
-    Func_0808a010(20);
-    Func_0808a1b8(0, 128 << 8, 20);
-    Func_0808a188(2, 0, 20);
+    Func_02001b86(2, 2);
+    Func_02001afc(20);
+    Func_02001bc8(0, 128 << 8, 20);
+    Func_02001bc2(2, 0, 20);
 
-    Func_0808a130(0, 1);
-    Func_0808a130(1, 1);
-    Func_0808a138(3, 1);
-    Func_0808a010(20);
+    Func_02001ba2(0, 1);
+    Func_02001baa(1, 1);
+    Func_02001bba(3, 1);
+    Func_02001b30(20);
 
-    Func_0808a110(2, 4);
-    Func_0808a010(20);
-    Func_0808a188(2, 0, 20);
+    Func_02001bb0(2, 4);
+    Func_02001b3e(20);
+    Func_02001bf8(2, 0, 20);
 
-    Func_0808a138(3, 2);
-    Func_0808a010(20);
-    Func_0808a188(3, 0, 20);
+    Func_02001be0(3, 2);
+    Func_02001b56(20);
+    Func_02001c10(3, 0, 20);
 
-    Func_0808a1b8(2, 176 << 8, 20);
-    Func_0808a110(2, 3);
-    Func_0808a010(20);
-    Func_0808a110(2, 3);
-    Func_0808a010(20);
-    Func_0808a188(2, 0, 20);
+    Func_02001c2c(2, 176 << 8, 20);
+    Func_02001bec(2, 3);
+    Func_02001b7a(20);
+    Func_02001bfa(2, 3);
+    Func_02001b88(20);
+    Func_02001c42(2, 0, 20);
 
-    Func_0808a1e8(1, 258, 60);
-    Func_0808a188(1, 0, 20);
+    Func_02001c6e(1, 258, 60);
+    Func_02001c58(1, 0, 20);
 
-    Func_0808a1b8(2, 224 << 8, 20);
-    Func_0808a110(2, 4);
-    Func_0808a010(20);
-    Func_0808a188(2, 0, 20);
+    Func_02001c74(2, 224 << 8, 20);
+    Func_02001c34(2, 4);
+    Func_02001bc2(20);
+    Func_02001c7c(2, 0, 20);
 
-    Func_0808a1e8(0, 258, 0);
-    Func_0808a1e8(3, 258, 60);
-    Func_0808a188(3, 0, 20);
+    Func_02001ca8(0, 258, 0);
+    Func_02001cb4(3, 258, 60);
+    Func_02001c9e(3, 0, 20);
 
-    Func_0808a1b8(2, 160 << 8, 20);
-    Func_0808a110(2, 3);
-    Func_0808a010(20);
-    Func_0808a188(2, 0, 20);
+    Func_02001cba(2, 160 << 8, 20);
+    Func_02001c7a(2, 3);
+    Func_02001c08(20);
+    Func_02001cc2(2, 0, 20);
 
-    Func_0808a130(0, 1);
-    Func_0808a130(1, 1);
-    Func_0808a138(3, 1);
-    Func_0808a010(20);
+    Func_02001ca2(0, 1);
+    Func_02001caa(1, 1);
+    Func_02001cba(3, 1);
+    Func_02001c30(20);
 
-    Func_0808a090(2, 128 << 8, 128 << 7);
-    Func_0808a0d0(2, 128, 184);
-    Func_0808a1b8(2, 128 << 7, 20);
-    Func_0808a1b8(0, 192 << 8, 0);
-    Func_0808a1b8(1, 160 << 8, 0);
-    Func_0808a1b8(3, 224 << 8, 20);
+    Func_02001c66(2, 128 << 8, 128 << 7);
+    Func_02001c98(2, 128, 184);
+    Func_02001d14(2, 128 << 7, 20);
+    Func_02001d20(0, 192 << 8, 0);
+    Func_02001d2c(1, 160 << 8, 0);
+    Func_02001d38(3, 224 << 8, 20);
 
-    Func_0808a110(2, 3);
-    Func_0808a010(20);
-    Func_0808a188(2, 0, 20);
+    Func_02001cf8(2, 3);
+    Func_02001c86(20);
+    Func_02001d40(2, 0, 20);
 
-    Func_0808a100(0, 3);
-    Func_0808a100(1, 3);
-    Func_0808a110(3, 3);
-    Func_0808a010(20);
+    Func_02001d08(0, 3);
+    Func_02001d10(1, 3);
+    Func_02001d20(3, 3);
+    Func_02001cae(20);
 
-    Func_0808a090(1, 128 << 8, 128 << 7);
-    Func_0808a090(3, 128 << 8, 128 << 7);
-    Func_0808a0c8(1, 144, 200);
-    Func_0808a0c8(2, 144, 200);
-    Func_0808a0c8(3, 144, 200);
+    Func_02001ce4(1, 128 << 8, 128 << 7);
+    Func_02001cf2(3, 128 << 8, 128 << 7);
+    Func_02001d1c(1, 144, 200);
+    Func_02001d26(2, 144, 200);
+    Func_02001d30(3, 144, 200);
 
-    Func_0808a0e8(1);
-    Func_0808a0f0(1, 0, 0);
-    Func_0808a0e8(2);
-    Func_0808a0f0(2, 0, 0);
-    Func_0808a0e8(3);
-    Func_0808a0f0(3, 0, 0);
+    Func_02001d4e(1);
+    Func_02001d60(1, 0, 0);
+    Func_02001d5e(2);
+    Func_02001d70(2, 0, 0);
+    Func_02001d6e(3);
+    Func_02001d80(3, 0, 0);
 
-    Func_0808a020();
+    Func_02001d2c();
 }

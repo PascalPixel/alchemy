@@ -94,34 +94,127 @@ extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;   /* pointer cell holding the scene workspace */
 extern u8 Data_0200cbec[];  /* in-image data at file offset 0x4bec */
 
-void Func_080770c8();
-void Func_080000d0();
-void Func_080091c0();
-Object *Func_0808a080();
-void Func_080091e0();
-s32 Func_080770c0();
-void Func_0808a100();
-s32 Func_080770e0();
-s32 Func_080091a8();
-void Func_08009080();
-void Func_0808a590();
-void Func_08009190();
-void Func_08009098();
-void Func_0808a158();
-void Func_02003bd0();
-void Func_02004494();
-void Func_080091c8();
-void Func_0808a088();
-void Func_080f9010();
-void Func_02002640();
-void Func_020025c8();
-void Func_0808a588();
-void Func_02003468();
-void Func_0200457c();
-void Func_02001a0c();
-void Func_02002a50();
-void Func_02001474();
-void Func_0808a248();
+void Func_0200577c();
+void Func_02005616();
+void Func_02005722();
+Object *Func_02005800();
+void Func_02005746();
+Object *Func_0200580c();
+void Func_02005756();
+Object *Func_02005828();
+void Func_02005770();
+s32 Func_020057da();
+void Func_020058a6();
+Object *Func_02005854();
+Object *Func_0200585e();
+Object *Func_02005876();
+s32 Func_0200581e();
+void Func_020057c6();
+void Func_020057dc();
+s32 Func_02005854_b();
+void Func_020057fc();
+void Func_0200580e();
+Object *Func_020058ec();
+void Func_02005834();
+Object *Func_02005910();
+Object *Func_02005924();
+s32 Func_020058e4();
+Object *Func_02005942();
+void Func_02005898();
+void Func_020058a8();
+Object *Func_02005988();
+s32 Func_020058ac();
+void Func_020058ec_b();
+void Func_02005906();
+s32 Func_02005982();
+Object *Func_02005a04();
+void Func_020058dc();
+Object *Func_02005a1a();
+void Func_020058fe();
+void Func_02005972();
+void Func_02005ab0();
+void Func_02005bd6();
+Object *Func_02005a6e();
+Object *Func_02005a7c();
+void Func_020058d0();
+s32 Func_02005a40();
+void Func_02005b0c();
+void Func_020059f0();
+s32 Func_02005a66();
+void Func_020059e8();
+Object *Func_02005ade();
+void Func_02005a38();
+void Func_020059c8();
+void Func_020059d8();
+void Func_02005a20();
+s32 Func_02005aae();
+Object *Func_02005b20();
+void Func_02005a6c();
+void Func_02005a7e();
+Object *Func_02005b88();
+void Func_02005ac8();
+void Func_02005ade_b();
+Object *Func_02005bbc();
+Object *Func_02005bd2();
+Object *Func_02005be4();
+void Func_02005c50();
+void Func_02004dc2();
+void Func_02004dca();
+void Func_02005caa();
+void Func_020056e2();
+void Func_02005baa();
+void Func_02005c88();
+void Func_02005c8e();
+void Func_02005c94();
+void Func_02005c9a();
+void Func_02005ca0();
+void Func_02005ca6();
+void Func_02005cac();
+s32 Func_02005c42();
+void Func_02005e3c();
+void Func_020038e2();
+void Func_0200386e();
+void Func_02005e36();
+void Func_0200471c();
+void Func_02005e44();
+void Func_02005e4c();
+void Func_02005e54();
+void Func_0200584e();
+void Func_02005b26();
+void Func_02005d04();
+void Func_02005d0a();
+s32 Func_02005ca0_b();
+void Func_020038c0();
+void Func_0200393e();
+void Func_0200476c();
+s32 Func_02005cbc();
+void Func_02002d22();
+void Func_02003d6a();
+void Func_02002796();
+void Func_02005e38();
+void Func_02005ce8();
+void Func_02005cee();
+void Func_020027b4();
+void Func_02005e56();
+void Func_02005d06();
+
+                     
+
+                    
+
+                    
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 s32 Func_02000da4(void)
 {
@@ -139,27 +232,27 @@ s32 Func_02000da4(void)
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 32;
 
-    Func_080770c8(324);
-    Func_080000d0((void *)0x02008659, 0xC80);   /* Func_02000658 + Thumb */
-    Func_080091c0(74, 60, 8, 6, 120, 60);
+    Func_0200577c(324);
+    Func_02005616((void *)0x02008659, 0xC80);   /* Func_02000658 + Thumb */
+    Func_02005722(74, 60, 8, 6, 120, 60);
 
-    Func_080091e0(Func_0808a080(9), 0);
+    Func_02005746(Func_02005800(9), 0);
 
-    object = Func_0808a080(10);
-    Func_080091e0(object, 0);
+    object = Func_0200580c(10);
+    Func_02005756(object, 0);
     object->state = 0;
     object->field0C = 0x200000;
 
-    object = Func_0808a080(11);
-    Func_080091e0(object, 0);
+    object = Func_02005828(11);
+    Func_02005770(object, 0);
     object->field0C = 0x40000;
     object->state = 0;
 
-    if (Func_080770c0(0x362) != 0) {
-        Func_0808a100(9, 5);
-        object = Func_0808a080(10);
+    if (Func_020057da(0x362) != 0) {
+        Func_020058a6(9, 5);
+        object = Func_02005854(10);
         object->field0C = 0x40000;
-        object = Func_0808a080(11);
+        object = Func_0200585e(11);
         object->field0C = 0x200000;
         arg1 = 12;
         arg0 = 15;
@@ -168,9 +261,9 @@ s32 Func_02000da4(void)
         goto sharedPanel;
     }
 
-    object = Func_0808a080(9);
+    object = Func_02005876(9);
     object->field1C = 0x18000;
-    if (Func_080770c0(0x367) != 0) {
+    if (Func_0200581e(0x367) != 0) {
         arg0 = 0;
         arg1 = 24;
         arg4 = 9;
@@ -178,191 +271,191 @@ s32 Func_02000da4(void)
         goto sharedPanel;
     }
     object->field18 = 0x18000;
-    Func_080091c0(0, 25, 1, 1, 9, 12);
+    Func_020057c6(0, 25, 1, 1, 9, 12);
     goto afterPanel;
 
 sharedPanel:
-    Func_080091c0(arg0, arg1, 1, 1, arg4, arg5);
+    Func_020057dc(arg0, arg1, 1, 1, arg4, arg5);
 afterPanel:
 
-    if (Func_080770c0(872) != 0) {
-        Func_080091c0(15, 12, 1, 1, 13, 12);
-        Func_080091c0(1, 25, 1, 1, 9, 12);
+    if (Func_02005854_b(872) != 0) {
+        Func_020057fc(15, 12, 1, 1, 13, 12);
+        Func_0200580e(1, 25, 1, 1, 9, 12);
 
-        object = Func_0808a080(12);
-        Func_080091e0(object, 0);
+        object = Func_020058ec(12);
+        Func_02005834(object, 0);
         object->state = 0;
         object->field0C = 0x20000;
         object->mode = 2;
 
-        object = Func_0808a080(10);
+        object = Func_02005910(10);
         object->field0C = 0x40000;
         object->mode = 2;
 
-        object = Func_0808a080(11);
+        object = Func_02005924(11);
         object->field0C = 0x200000;
     }
 
-    row = Func_080770e0(880);
+    row = Func_020058e4(880);
     if (row == 0) {
         row = 19;
     }
 
-    object = Func_0808a080(13);
+    object = Func_02005942(13);
     object->x = (row << 20) + 0x80000;
     object->state = 0;
     object->mode = 2;
 
-    Func_080091c0(18, 10, 3, 1, 18, 11);
-    Func_080091c0(17, 11, 1, 1, row, 11);
+    Func_02005898(18, 10, 3, 1, 18, 11);
+    Func_020058a8(17, 11, 1, 1, row, 11);
 
     for (slot = 15; slot <= 17; slot++) {
-        object = Func_0808a080(slot);
+        object = Func_02005988(slot);
         if (object->field0C == 0
-         && Func_080091a8(0, object->x, object->z) == 0) {
+         && Func_020058ac(0, object->x, object->z) == 0) {
             object->mode = 2;
             object->state = 0;
-            Func_080091c0(83, 13, 1, 1, object->x >> 20, object->z >> 20);
-            Func_080091c0(83, 13, 1, 1,
+            Func_020058ec_b(83, 13, 1, 1, object->x >> 20, object->z >> 20);
+            Func_02005906(83, 13, 1, 1,
                           object->x >> 20, (object->z >> 20) + 52);
         }
     }
 
-    if (Func_080770c0(0x361) != 0) {
+    if (Func_02005982(0x361) != 0) {
         column = 33;
         for (slot = 18; slot <= 22; slot++) {
-            object = Func_0808a080(slot);
+            object = Func_02005a04(slot);
             object->mode = 2;
-            Func_08009080(object, 2);
+            Func_020058dc(object, 2);
 
-            object = Func_0808a080(slot + 5);
+            object = Func_02005a1a(slot + 5);
             object->mode = 2;
             object->state = 0;
             object->field0C = 0x200000;
-            Func_08009080(object, 10);
+            Func_020058fe(object, 10);
 
-            Func_080091c0(74, 12, 1, 1, column, 11);
+            Func_02005972(74, 12, 1, 1, column, 11);
             column += 2;
         }
-        Func_0808a100(28, 10);
-        Func_0808a590(28);
+        Func_02005ab0(28, 10);
+        Func_02005bd6(28);
     } else {
         for (slot = 18; slot <= 22; slot++) {
-            object = Func_0808a080(slot);
+            object = Func_02005a6e(slot);
             object->mode = 2;
 
-            object = Func_0808a080(slot + 5);
+            object = Func_02005a7c(slot + 5);
             object->mode = 2;
             object->state = 0;
             object->field0C = 0x200000;
         }
-        Func_080000d0((void *)0x0200804D, 0xC80);   /* Func_0200004c + Thumb */
+        Func_020058d0((void *)0x0200804D, 0xC80);   /* Func_0200004c + Thumb */
     }
 
-    if (Func_080770c0(864) != 0) {
-        Func_0808a100(29, 4);
-        Func_080091c0(47, 61, 1, 4, 49, 61);
+    if (Func_02005a40(864) != 0) {
+        Func_02005b0c(29, 4);
+        Func_020059f0(47, 61, 1, 4, 49, 61);
     }
 
-    if (Func_080770c0(0x363) != 0) {
-        Func_08009190(1);
-        object = Func_0808a080(30);
+    if (Func_02005a66(0x363) != 0) {
+        Func_020059e8(1);
+        object = Func_02005ade(30);
         object->state = 0;
         object->x = 0x046A0000;
         object->z = 0xB80000;
-        Func_080091e0(object, 0);
-        Func_08009080(object, 3);
-        Func_08009098(object, Data_0200cbec);
+        Func_02005a38(object, 0);
+        Func_020059c8(object, 3);
+        Func_020059d8(object, Data_0200cbec);
     } else {
-        Func_08009190(2);
+        Func_02005a20(2);
     }
 
-    if (Func_080770c0(0x369) != 0) {
-        object = Func_0808a080(31);
-        Func_08009080(object, 8);
+    if (Func_02005aae(0x369) != 0) {
+        object = Func_02005b20(31);
+        Func_020059f0(object, 8);
         object->mode = 2;
-        Func_080091c0(86, 10, 1, 2, 84, 10);
-        Func_080091c0(86, 9, 1, 1, 84, 12);
+        Func_02005a6c(86, 10, 1, 2, 84, 10);
+        Func_02005a7e(86, 9, 1, 1, 84, 12);
     } else {
-        object = Func_0808a080(31);
-        Func_080091c0(85, 9, 1, 4, object->x >> 20, 9);
-        Func_080091c0(85, 9, 1, 4, object->x >> 20, 61);
+        object = Func_02005b88(31);
+        Func_02005ac8(85, 9, 1, 4, object->x >> 20, 9);
+        Func_02005ade_b(85, 9, 1, 4, object->x >> 20, 61);
     }
 
     object->state = 0;
     object->mode = 2;
-    object = Func_0808a080(9);
-    object = Func_0808a080(10);
+    object = Func_02005bbc(9);
+    object = Func_02005bd2(10);
     object->mode = 2;
     object->state = 0;
-    object = Func_0808a080(11);
+    object = Func_02005be4(11);
     object->mode = 2;
     object->state = 0;
 
-    Func_0808a100(8, 9);
+    Func_02005c50(8, 9);
 
     table = Data_02000240;
     ((u8 *)table)[498] = 0;
 
-    Func_02003bd0(39, 3);
-    Func_02003bd0(40, 17);
-    Func_0808a158(8, 2);
+    Func_02004dc2(39, 3);
+    Func_02004dca(40, 17);
+    Func_02005caa(8, 2);
 
     switch ((u32)(table[225] - 1)) {
     case 0:
-        Func_02004494(0, 8, 6, 0x5E80000, 0xC00000, 39, 40);
-        Func_080091c8(127, 0, 1, 2, 5, 2);
-        Func_0808a088(32);
-        Func_0808a088(33);
-        Func_0808a088(34);
-        Func_0808a088(35);
-        Func_0808a088(36);
-        Func_0808a088(37);
-        Func_0808a088(38);
-        if (Func_080770c0(0x109) == 0) {
-            Func_080f9010(17);
-            Func_02002640(0);
-            Func_020025c8();
-            Func_0808a588(1, 0);
-            Func_02003468(3);
+        Func_020056e2(0, 8, 6, 0x5E80000, 0xC00000, 39, 40);
+        Func_02005baa(127, 0, 1, 2, 5, 2);
+        Func_02005c88(32);
+        Func_02005c8e(33);
+        Func_02005c94(34);
+        Func_02005c9a(35);
+        Func_02005ca0(36);
+        Func_02005ca6(37);
+        Func_02005cac(38);
+        if (Func_02005c42(0x109) == 0) {
+            Func_02005e3c(17);
+            Func_020038e2(0);
+            Func_0200386e();
+            Func_02005e36(1, 0);
+            Func_0200471c(3);
         }
-        Func_0808a588(1, 0);
-        Func_0808a588(2, 0);
-        Func_0808a588(3, 0);
-        Func_0200457c(0xE6);
+        Func_02005e44(1, 0);
+        Func_02005e4c(2, 0);
+        Func_02005e54(3, 0);
+        Func_0200584e(0xE6);
         break;
 
     case 1:
-        Func_080000d0((void *)0x0200A711, 0xC80);   /* Func_02002710 + Thumb */
-        Func_0808a088(39);
-        Func_0808a088(40);
-        if (Func_080770c0(0x109) != 0) {
+        Func_02005b26((void *)0x0200A711, 0xC80);   /* Func_02002710 + Thumb */
+        Func_02005d04(39);
+        Func_02005d0a(40);
+        if (Func_02005ca0_b(0x109) != 0) {
             break;
         }
-        Func_020025c8();
-        Func_02002640(1);
-        Func_02003468(0);
+        Func_020038c0();
+        Func_0200393e(1);
+        Func_0200476c(0);
         break;
 
     case 2:
-        if (Func_080770c0(0x109) != 0) {
+        if (Func_02005cbc(0x109) != 0) {
             break;
         }
-        Func_02001a0c(32);
-        Func_02002a50();
+        Func_02002d22(32);
+        Func_02003d6a();
         break;
 
     case 3:
-        Func_02001474(1);
-        Func_0808a248(4);
-        Func_080770c8(2384);
-        Func_080770c8(0x951);
+        Func_02002796(1);
+        Func_02005e38(4);
+        Func_02005ce8(2384);
+        Func_02005cee(0x951);
         break;
 
     case 4:
-        Func_02001474(-1);
-        Func_0808a248(5);
-        Func_080770c8(2384);
+        Func_020027b4(-1);
+        Func_02005e56(5);
+        Func_02005d06(2384);
         break;
 
     default:

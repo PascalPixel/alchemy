@@ -89,6 +89,9 @@ export const FORK_MODES = [
   // 2026-08-07: high-register variant of -fthumb-move-before-alu. Witness
   // 0808b868.
   "-fthumb-high-move-before-alu",
+  // 2026-08-07: the immediate-operand widening of -fthumb-move-before-alu,
+  // which also accepts a load as the insn issued early. Witness 0801fd34.
+  "-fthumb-move-before-immediate-alu",
 ] as const;
 
 export const STOCK_SWITCHES = [

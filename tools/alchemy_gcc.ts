@@ -291,6 +291,10 @@ const GROUP_POOLED_CONTROL_LAST_SOURCES = new Set(["0801a4fc"]);
 // -fthumb-move-before-alu only covers low-to-low copies against register ALU
 // operands, so this one needs the widened variant.
 const HIGH_MOVE_BEFORE_ALU_SOURCES = new Set(["0808b868"]);
+// 0801fd34 needs the other widening twice in one function: a load issued ahead
+// of an immediate shift, and a low-register copy issued ahead of an immediate
+// add. It also needs the pre-reload scheduler off.
+const MOVE_BEFORE_IMMEDIATE_ALU_SOURCES = new Set(["0801fd34"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.
@@ -1897,6 +1901,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(HIGH_MOVE_BEFORE_ALU_SOURCES.has(stem)
       ? ["-fthumb-high-move-before-alu"]
       : []),
+    ...(MOVE_BEFORE_IMMEDIATE_ALU_SOURCES.has(stem)
+      ? ["-fno-schedule-insns2", "-fthumb-move-before-immediate-alu"]
+      : []),
     ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
       ? ["-fthumb-group-zero-any-register"]
       : []),
@@ -2326,6 +2333,12 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+        // -fthumb-move-before-immediate-alu (2026-08-07): widens
+        // -fthumb-move-before-alu to ALU insns with an immediate second input
+        // and to loads as well as copies. Default-off and source-routed, so
+        // unrouted codegen is unchanged. Witness 0801fd34. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "41b5d62baf165b5119d3bfa569be831d0ebeb1ed1187857c51ced44394549e75",
         // -fthumb-group-pooled-control-last (2026-08-07): the pooled-control
         // twin of -fthumb-group-control-last, for grouped transfers whose
         // control word arrives as a constant-pool load rather than a movs.

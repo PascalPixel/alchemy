@@ -282,6 +282,10 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["080c08a8", "08005a78", "08005c68", 
 // the immediate, source-address add, base literal, shift, and control literal
 // must be restored to the reference order after grouped-DMA formation.
 const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
+// 0801a4fc kicks its palette descriptor with the source pointer already live in
+// a callee-saved register, so the copy that feeds the transfer's first stored
+// word targets r0 rather than r1 and falls out of the control-last walk above.
+const GROUP_POOLED_CONTROL_LAST_SOURCES = new Set(["0801a4fc"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.
@@ -392,6 +396,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002fb0", "08003e10",
   "080a1090",
   "080b010c",
+  "0801a4fc",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -1881,6 +1886,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
+    ...(GROUP_POOLED_CONTROL_LAST_SOURCES.has(stem)
+      ? ["-fthumb-group-pooled-control-last"]
+      : []),
     ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
       ? ["-fthumb-group-zero-any-register"]
       : []),
@@ -2310,6 +2318,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+        // -fthumb-group-pooled-control-last (2026-08-07): the pooled-control
+        // twin of -fthumb-group-control-last, for grouped transfers whose
+        // control word arrives as a constant-pool load rather than a movs.
+        // Default-off and source-routed, so unrouted codegen is unchanged.
+        // Witness 0801a4fc. Cross-host rule: rebuild+pin linux from the same
+        // fork source.
+        "c74a9073698099d112e341db60e4e2ca85c0c189048c4fc5d1277d8d8f58923d",
         // cc1 built from fork 76a2647 on darwin-arm64, 2026-08-07. Admitted
         // from the green verify recorded with this commit.
         "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
@@ -3069,7 +3084,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "08011590", "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fe38", "0808fecc", "080907b0", "08090824", "08091174", "08094730", "08095160", "08095290", "080958a8", "08097540",
+    "08011590", "080170c4", "08019bac", "0801a4fc", "0801d014", "0801d980", "080251d4", "080284dc", "0808fe38", "0808fecc", "080907b0", "08090824", "08091174", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b010c", "080b0744", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");

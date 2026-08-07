@@ -1,3 +1,11 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07.  Two things closed it.  The body had to be
+ * written with the else arm in reference order -- carry, shifted low, high,
+ * then the OR -- with the `>= 32' arm setting the high half to zero before the
+ * low half.  And the epilogue: this is another resource_3bf soft-library leaf
+ * returning through `pop {r4,r5,r6,pc}', so it needs the stock non-interworking
+ * ABI with r4 callee-saved, like its 02005a40 and 02005a78 siblings.
+ */
 #include "types.h"
 
 /*
@@ -27,27 +35,28 @@ typedef union {
         u32 hi;
     } parts;
 } SplitU64;
-
 u64 Func_02005c08(u64 value, u32 count)
 {
-    u32 lo;
-    u32 hi;
-    SplitU64 result;
+    SplitU64 in;
+    SplitU64 out;
+    s32 spare;
+    u32 carry;
+    u32 shifted;
 
     if (count == 0u) {
         return value;
     }
-
-    lo = (u32)value;
-    hi = (u32)(value >> 32);
-
-    if ((int)(32 - count) <= 0) {
-        result.parts.lo = (lo >> count) | (hi << (32u - count));
-        result.parts.lo = hi >> (count - 32u);
-        result.parts.hi = 0u;
+    in.whole = value;
+    spare = 32 - (s32)count;
+    if (spare <= 0) {
+        spare = -spare;
+        out.parts.hi = 0u;
+        out.parts.lo = in.parts.hi >> spare;
     } else {
-        result.parts.hi = hi >> count;
+        carry = in.parts.hi << spare;
+        shifted = in.parts.lo >> count;
+        out.parts.hi = in.parts.hi >> count;
+        out.parts.lo = shifted | carry;
     }
-
-    return result.whole;
+    return out.whole;
 }

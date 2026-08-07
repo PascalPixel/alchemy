@@ -142,6 +142,7 @@ const NO_INTERWORK_OVERLAY_SOURCES = new Set([
   // two ABI properties are selected.
   "exact/resource_3bf_c_02005a40.c",
   "exact/resource_3bf_c_02005a78.c",
+  "exact/resource_3bf_c_02005c08.c",
 ]);
 // Only the second flag does anything. The pre-reload scheduler is inert in this
 // fork: 40 converted sources, including the largest, compile byte-identically
@@ -2107,6 +2108,7 @@ const DEFAULT_ABI_SOURCES = new Set([
 // Overlay-safe counterpart to DEFAULT_ABI_SOURCES.  Addresses are extensively
 // reused between overlays, so new evidence belongs to the full source path.
 const DEFAULT_ABI_OVERLAY_SOURCES = new Set([
+  "exact/resource_3bf_c_02005c08.c",
   "exact/resource_3bf_c_02005a40.c",
   "exact/resource_3bf_c_02005a78.c",
   "exact/resource_3a7_c_020013ac.c",

@@ -1,3 +1,11 @@
+/*
+ * BYTE-EXACT 2026-08-07.  The last two halfwords closed with the new
+ * -fthumb-call-literal-arg1-first-chained: the reference transposes a
+ * two-literal argument sheet exactly where the call it feeds is followed by
+ * another argument setter, which is why 0x020011dc writes `movs r1, #0' first
+ * while the identical pair at 0x0200128a, whose call is followed by a branch,
+ * keeps register order.
+ */
 #include "types.h"
 
 /*

@@ -57,6 +57,9 @@ export const FORK_MODES = [
   // Age-ordered transposition of two adjacent in-place constant shifts.
   // Witnesses resource_3bc:4494 and resource_3a4:02cc.
   "-fthumb-swap-adjacent-shifts",
+  // A pool load that completes a call's argument list, sunk to the call.
+  // Witness resource_3c6:0158.
+  "-fthumb-sink-pool-load-to-use",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

@@ -1793,6 +1793,14 @@ const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
 // insn the allocator keeps the one written last; the references keep the one
 // written first, so a constant that has been sitting in a register since well
 // above the load becomes the accumulator.
+// The transposed twin of -fthumb-swap-adjacent-shifts: two in-place constant
+// shifts separated by one unrelated insn, issued newest-input first.
+const SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES = new Set([
+  // resource_3c8:2f30 -- `lsls r2' before `lsls r0' across the `movs r1, #0'
+  // at 0x02002f66, 2026-08-07.
+  "exact/resource_3c8_c_02002f30.c",
+  "semantic/resource_3c8_c_02002f30.c",
+]);
 const ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES = new Set([
   // resource_3b3:1fd4 -- `orrs r5, r3' at 0x02002024, where r5 holds the 1 set
   // back at 0x02002014 and dies here, 2026-08-07.
@@ -2206,6 +2214,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-adjacent-shifts"]
       : []),
+    ...(SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-swap-shifts-across-insn"]
+      : []),
     ...(ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-orr-into-older-input"]
       : []),
@@ -2328,6 +2339,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
     ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
     ...SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES,
@@ -2556,7 +2568,11 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
-      // -fthumb-orr-into-older-input added, 2026-08-07.
+      // -fthumb-swap-shifts-across-insn added, 2026-08-07.
+    "e1bc6d7d905057d59dff47512e52503cf4215422a1e7f283754a2d446f41afa1",
+    "d7f9e8909c2a1fe73b6aa9a2ef06e6689e25e63e6ba72c8fe73996746c02bd75",
+    "a8e8a5d7f7684661d897e98bcccfd163ae91220c38a32d90fc104113c8951879",
+    // -fthumb-orr-into-older-input added, 2026-08-07.
     "78884ab5d9682fdf2b9f0dc5b4d0060976a1a042c186fbcae848fcd2d0657dbe",
     "efb56c6c7c16ac99165388f121154f83d90ba8705a76379e686dd3fb1188d055",
     "42b0383dee924cc75538975717471faed6551d1c4908897845b0dc7d898a17b7",

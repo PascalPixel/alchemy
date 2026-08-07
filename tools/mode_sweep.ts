@@ -84,6 +84,7 @@ export const FORK_MODES = [
   // Witnesses resource_3b9:06bc, resource_376:0258, resource_376:0190.
   "-fthumb-call-literal-arg1-first-after-call",
   "-fthumb-call-literal-arg1-first-chained",
+  "-fthumb-small-shift-before-immediates",
   // Both stacked arguments in registers before either store.
   // Witnesses resource_382:0fb4/:1010/:113c, resource_3b9:1c6c.
   "-fthumb-stack-args-before-stores",

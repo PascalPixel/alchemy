@@ -1793,6 +1793,20 @@ const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
 // insn the allocator keeps the one written last; the references keep the one
 // written first, so a constant that has been sitting in a register since well
 // above the load becomes the accumulator.
+// -fthumb-call-literal-arg1-first restricted to a sheet that opens right
+// after a call, which is the discriminator the references observe in
+// functions that otherwise write the pair in register order.
+const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
+  // resource_3b9:06bc -- `movs r1, #0' before `movs r0, #8' at 0x020006d2,
+  // 2026-08-07.
+  "exact/resource_3b9_c_020006bc.c",
+  "semantic/resource_3b9_c_020006bc.c",
+  // resource_376:0258 and resource_376:0190, same shape, 2026-08-07.
+  "exact/resource_376_c_02000258.c",
+  "semantic/resource_376_c_02000258.c",
+  "exact/resource_376_c_02000190.c",
+  "semantic/resource_376_c_02000190.c",
+]);
 // -fthumb-arg-before-final-shift for a shift that is not the sheet's last
 // setup insn.
 const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
@@ -2223,6 +2237,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-adjacent-shifts"]
       : []),
+    ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-literal-arg1-first-after-call"]
+      : []),
     ...(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-arg-before-shift-in-sheet"]
       : []),
@@ -2351,6 +2368,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
     ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
     ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
@@ -2581,6 +2599,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+    // -fthumb-call-literal-arg1-first-after-call added, 2026-08-07.
+    "63bab14236d935a3e74910921f576928afe6a2a8f20cbe1c239a637d3cf4e1a6",
     // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
     "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
       // -fthumb-swap-shifts-across-insn added, 2026-08-07.

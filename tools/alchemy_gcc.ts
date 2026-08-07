@@ -277,7 +277,7 @@ const ENTRY_SAVES_DESCENDING_SOURCES = new Set(["08093054"]);
 // 080b010c writes its descriptor immediately after an allocator call: the
 // reference copies the live source and destination into r0 and r1 before
 // loading the pooled control word into r2, the same fingerprint as 08005a78.
-const GROUP_CONTROL_LAST_SOURCES = new Set(["080c08a8", "08005a78", "08005c68", "080907b0", "08090824", "080b010c", "0808fe38"]);
+const GROUP_CONTROL_LAST_SOURCES = new Set(["080c08a8", "08005a78", "08005c68", "080907b0", "08090824", "080b010c", "0808fe38", "080b0744"]);
 // 080907b0's second descriptor has a strict value1/base scheduling fingerprint:
 // the immediate, source-address add, base literal, shift, and control literal
 // must be restored to the reference order after grouped-DMA formation.
@@ -314,6 +314,10 @@ const GROUP_CONTROL_LAST_OVERLAY_SOURCES = new Set([
 // 08094730 has the same scheduler tell immediately before its grouped DMA
 // descriptor; original-order tie breaking closes its last transposition.
 const NO_SCHED_DEPEND_COUNT_SOURCES = new Set([
+  // 080b0744 opens with a grouped DMA descriptor whose control-word load the
+  // reference sinks; original-order tie breaking is what puts the source and
+  // destination copies on the reference's side of that load.
+  "080b0744",
   "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304", "08019bac", "08021d88", "080903bc", "080907b0", "08094730",
   // First overlay member. §4's pool-load hoist, but the flag that reaches it is
   // this one, not -fsched-low-dest-first: the reference issues the argument
@@ -375,6 +379,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // ever reach it. 080b5ad4 now compiles byte-exact with it (64 bytes) once its
 // tail is spelled as a returned call. See GROUP_VALUE2_IN_PLACE_SOURCES below.
 const GROUPED_DMA_STORE_SOURCES = new Set([
+  "080b0744",
   "0808fe38", "080c08a8",
   "08005c68", "080060e8", "08002f10", "08004838", "08004858", "080049e8", "08004a28", "08004a44",
   "08004a5c", "08004a94", "08005340", "08005394", "080053e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304", "08011590", "080170c4", "08019bac",
@@ -488,6 +493,12 @@ const THUMB_LOW_REG_ORDER_SOURCES = new Map([
 // requires the exact hard-register, constant, stack-offset, and death-note
 // fingerprint; keep it source-scoped.
 const ENTRY_FRAME_CLUSTER_SOURCES = new Set(["0801c34c"]);
+// 080b0744 allocates a one-word frame and takes four incoming arguments. The
+// reference issues the argument copies first and only then `sub sp, #4';
+// -mearly-frame-allocation only expresses the opposite direction, so this is
+// its mirror. Owners are routed one at a time: the flag moves the stack
+// decrement in every function that has one.
+const LATE_FRAME_ALLOCATION_SOURCES = new Set(["080b0744"]);
 // This interrupt-mask helper already has the reference's source order once the
 // second scheduler is disabled, except for one independent default-handler
 // literal load.  The strict post-reload mode recognizes the exact r1/r2/r3
@@ -1864,6 +1875,7 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_LOW_DEST_FIRST_SOURCES.has(stem) ? ["-fsched-low-dest-first"] : []),
     ...(NO_CONTIGUOUS_IMMEDIATE_SOURCES.has(stem) ? ["-fno-thumb-contiguous-immediate"] : []),
     ...(NO_SCHED_DEPEND_COUNT_SOURCES.has(stem) ? ["-fno-sched-depend-count"] : []),
+    ...(LATE_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-fthumb-late-frame-allocation"] : []),
     ...(SPLIT_GROUP_BASE_SOURCES.has(stem) ? ["-fthumb-split-group-base"] : []),
     ...(HOIST_PARAMETER_SAVE_SOURCES.has(stem) ? ["-fthumb-hoist-parameter-save"] : []),
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
@@ -2377,6 +2389,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // differ from the reference only in which of r8/sl each pseudo lands
         // in, with an otherwise identical instruction sequence.
         "1d6043ba5cfc56bc6bdbf2396637708e45c5896e671841178e60ba12a8336e0b",
+        // 2026-08-07: adds -fthumb-late-frame-allocation, the mirror of
+        // -mearly-frame-allocation. Where the early mode raises a Thumb stack
+        // decrement's scheduling priority, this one lowers it, so the incoming
+        // argument copies issue ahead of `sub sp, #N'. Reference objects open
+        // both ways and only the early direction was expressible. An -f flag
+        // rather than an -m one because target_flags has no bit left.
+        "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
       ],
     },
     gs2: {

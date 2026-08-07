@@ -52,7 +52,20 @@ void Func_02000d08(void)
         return;
     }
 
-    *(u16 *)(object + 100) = 20;
+    /*
+     * The halfword store goes through a pointer local and then an s32 value
+     * local, in that order.  Storing the literal straight into the halfword
+     * makes gcc build the constant in HImode and fetch it from the literal
+     * pool (`ldrh r3, .L7'), which costs a pool word the reference does not
+     * have; splitting the address out first also fixes which register holds
+     * the address.
+     */
+    {
+        u16 *timer = (u16 *)(object + 100);
+        s32 timerValue = 20;
+
+        *timer = (u16)timerValue;
+    }
     /* r6 is still the masked phase word, which is 0 on this path. */
     *(u16 *)(object + 102) = (u16)phase;
     *(s32 *)(object + 104) = 20;

@@ -78,7 +78,16 @@ void Func_02001a98(void)
     Func_02005f28();
     Func_02005e02(8, 0x9999, 0x4ccc);
 
-    *(s16 *)(actor + 0x64) = 0;
+    {
+
+        s16 *slot1 = (s16 *)(actor + 0x64);
+
+        s32 v1 = 0;
+
+
+        *slot1 = (s16)v1;
+
+    }
 
     if (Func_02004f1c() == 11) {
         Func_02005e20(8, Data_0200d1b8);

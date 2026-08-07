@@ -5,10 +5,10 @@ import { basename, dirname, isAbsolute, join, relative, resolve, normalize } fro
 import { encode_general, encode_general_prefill, encode_palette } from "./extract_resource.ts";
 import { characterBankPath, resourceGraphicsDir } from "./asset_paths.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "./import_asset.ts";
-import { build_archive as build_offset_archive } from "./archive_asset.ts";
+import { build_archive as build_offset_archive } from "./assets/archive_asset.ts";
 import { import_tilemap } from "./tilemap.ts";
-import { import_words } from "./wordstream.ts";
-import { import_pairs } from "./pairtable.ts";
+import { import_words } from "./assets/wordstream.ts";
+import { import_pairs } from "./assets/pairtable.ts";
 import { build_archive as build_f0_archive } from "./f0_archive.ts";
 import { prune_files, unused_tracked_images } from "./generated_files.ts";
 import { build_archive as build_skip_sprite_archive } from "./skip_sprite_archive.ts";
@@ -25,71 +25,71 @@ import {
   build_sparse,
 } from "./map_container_components.ts";
 import { build_table as build_map_load_table } from "./map_load_table.ts";
-import { build_sound_table } from "./music.ts";
+import { build_sound_table } from "./assets/music.ts";
 import { build_from_midi_sidecar, type Sidecar } from "./midi_sequence.ts";
-import { buildWaveRecord } from "./audio_wave.ts";
-import { build_still, read_still_index } from "./indexed_still.ts";
+import { buildWaveRecord } from "./assets/audio_wave.ts";
+import { build_still, read_still_index } from "./assets/indexed_still.ts";
 import { build_static_sprite_series, static_sprite_frame_name } from "./static_sprite_series.ts";
-import { build_resource_directory } from "./resource_directory.ts";
-import { build_title_resource } from "./title_resources.ts";
-import { build_simple_resource } from "./simple_resources.ts";
-import { build_character_catalog } from "./character_catalog.ts";
-import { build_message_archive } from "./message_archive.ts";
-import { build_resource_5 } from "./resource_5.ts";
-import { build_localization_font } from "./localization_font.ts";
-import { build_localization_tables } from "./localization_tables.ts";
-import { build_battle_effect_data } from "./battle_effect_data.ts";
+import { build_resource_directory } from "./assets/resource_directory.ts";
+import { build_title_resource } from "./assets/title_resources.ts";
+import { build_simple_resource } from "./assets/simple_resources.ts";
+import { build_character_catalog } from "./assets/character_catalog.ts";
+import { build_message_archive } from "./assets/message_archive.ts";
+import { build_resource_5 } from "./assets/resource_5.ts";
+import { build_localization_font } from "./assets/localization_font.ts";
+import { build_localization_tables } from "./assets/localization_tables.ts";
+import { build_battle_effect_data } from "./assets/battle_effect_data.ts";
 import {
   build_sentou_gamen_data,
   SENTOU_GAMEN_ADDRESS,
   SENTOU_GAMEN_SIZE,
-} from "./sentou_gamen_data.ts";
-import { build_sentou_hyouji } from "./sentou_hyouji.ts";
+} from "./assets/sentou_gamen_data.ts";
+import { build_sentou_hyouji } from "./assets/sentou_hyouji.ts";
 import { build_sentou_kouka_runtime } from "./sentou_kouka_runtime.ts";
 import {
   build_sentou_menu_data,
   SENTOU_MENU_ADDRESS,
   SENTOU_MENU_SIZE,
-} from "./sentou_menu_data.ts";
-import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
-import { build_kind2_resource, build_kind2_series } from "./kind2_resource_series.ts";
-import { build_encounter_regions } from "./encounter_data.ts";
-import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
-import { build_tokushu_map_series } from "./tokushu_map_resources.ts";
-import { build_resource_3ce } from "./resource_3ce.ts";
-import { build_chiiki_map_series } from "./chiiki_map_resources.ts";
+} from "./assets/sentou_menu_data.ts";
+import { build_sentou_resource, build_sentou_series } from "./assets/sentou_resources.ts";
+import { build_kind2_resource, build_kind2_series } from "./assets/kind2_resource_series.ts";
+import { build_encounter_regions } from "./assets/encounter_data.ts";
+import { build_namae_nyuuryoku } from "./assets/namae_nyuuryoku.ts";
+import { build_tokushu_map_series } from "./assets/tokushu_map_resources.ts";
+import { build_resource_3ce } from "./assets/resource_3ce.ts";
+import { build_chiiki_map_series } from "./assets/chiiki_map_resources.ts";
 import {
   build_resource_01c,
   RESOURCE_ADDRESS as RESOURCE_01C_ADDRESS,
   RESOURCE_SIZE as RESOURCE_01C_SIZE,
-} from "./resource_01c.ts";
-import { build_music_residuals } from "./music_residuals.ts";
-import { build_resource_d1_d3 } from "./resource_d1_d3.ts";
+} from "./assets/resource_01c.ts";
+import { build_music_residuals } from "./assets/music_residuals.ts";
+import { build_resource_d1_d3 } from "./assets/resource_d1_d3.ts";
 import {
   AUDIO_ENGINE_ADDRESS,
   AUDIO_ENGINE_SIZE,
   build_audio_engine_data,
-} from "./audio_engine_data.ts";
+} from "./assets/audio_engine_data.ts";
 import {
   build_runtime_support_component,
   parse_runtime_support_source,
-} from "./runtime_support_data.ts";
+} from "./assets/runtime_support_data.ts";
 import {
   BYTE_HENKAN_ADDRESS,
   BYTE_HENKAN_SIZE,
   build_byte_henkan_tables,
-} from "./byte_henkan.ts";
+} from "./assets/byte_henkan.ts";
 import {
   build_staff_roll,
   STAFF_ROLL_ADDRESS,
   STAFF_ROLL_SIZE,
-} from "./staff_roll.ts";
-import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./gba_header.ts";
-import { build_early_runtime_data } from "./early_runtime_data.ts";
-import { buildLateRuntimeResidual } from "./late_runtime_residual.ts";
-import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
-import { buildByteValueRegions } from "./byte_value_regions.ts";
-import { buildExecutableGapData } from "./executable_gap_sources.ts";
+} from "./assets/staff_roll.ts";
+import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./assets/gba_header.ts";
+import { build_early_runtime_data } from "./assets/early_runtime_data.ts";
+import { buildLateRuntimeResidual } from "./assets/late_runtime_residual.ts";
+import { buildResourceByteCanvases } from "./assets/resource_byte_canvases.ts";
+import { buildByteValueRegions } from "./assets/byte_value_regions.ts";
+import { buildExecutableGapData } from "./assets/executable_gap_sources.ts";
 
 
 // Flat layout: collapse a legacy nested assets-relative name to family_file.

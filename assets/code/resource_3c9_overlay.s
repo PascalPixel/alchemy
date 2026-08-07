@@ -10265,34 +10265,10 @@ AlchemyC_02005688:
 	bx	r0
 	.2byte 0xe764
 	.2byte 0x0200
-	push	{r5, lr}
+AlchemyC_020059f0:
+	.space 0x2
 .L_020059f2:
-	adds	r3, r0, #0
-	adds	r3, #99
-	ldrb	r3, [r3, #0]
-	cmp	r3, #0
-	beq.n	.L_02005a20
-	adds	r5, r0, #0
-	adds	r5, #98
-	ldrb	r2, [r5, #0]
-	ldr	r3, [r0, #76]
-	lsrs	r2, r2, #2
-	lsls	r2, r2, #16
-	adds	r3, r3, r2
-	str	r3, [r0, #12]
-	bl	sub_0200b096
-	ldrb	r3, [r5, #0]
-	adds	r2, r3, #0
-	cmp	r2, #0
-	beq.n	.L_02005a20
-	cmp	r2, #31
-	bhi.n	.L_02005a20
-	adds	r3, #1
-	strb	r3, [r5, #0]
-.L_02005a20:
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+	.space 0x34
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

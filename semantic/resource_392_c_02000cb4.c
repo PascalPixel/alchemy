@@ -1,123 +1,116 @@
 #include "types.h"
 
 /*
- * resource_392 owner at 0x02000cb4, 216 bytes: bring one scene entity into
- * its idle presentation state.
+ * Resource 392 scene-entry setup at 0x02000cb4 (216 bytes, 0x02000cb4 ..
+ * 0x02000d8b, of which 0x02000d84 .. 0x02000d8b is the literal pool).
  *
- * Complete owner: 'push {r5, r6, r7, lr}' plus the r8/r9/sl saves, through a
- * single epilogue, followed by its two-word literal pool.  One linear path with
- * a single 'if'; nothing is live past the return.
+ * Complete owner: `push {r5, r6, r7, lr}` plus the r8/r9/sl spill at
+ * 0x02000cb6 .. 0x02000cbc, and the matching restore and interworking return
+ * `pop {r3, r5, r6} / ... / pop {r0} / bx r0` at 0x02000d76.  r0 is the popped
+ * return address, so the owner returns nothing and takes no arguments -- the
+ * first `bl` is reached with r0 never set.
  *
- * TRANSPOSED from semantic/overlays/resource_373_c_02005b48.c.  The two owners
- * are the same routine shared verbatim: over all 108 halfwords they differ in
- * 15 places, 14 of which are the halves of the seven BL pairs and exactly one of
- * which is the low half of the pool word at +0xd4 holding the behaviour
- * callback pointer.
+ * TWIN.  The same 216 bytes appear in six overlays (tools/overlay_twins.ts):
+ * resource_373:5b48, resource_38e:0974, resource_392:0cb4, resource_39f:2c0c,
+ * resource_3a8:3a3c and resource_3b2:2ed8.  Converting it once settles all six.
  *
- * What was changed:
- *  - the callback 0x0200dae1 becomes 0x02008c4d.  Under the proven 0x02008000
- *    link base that is file offset 0x0c4c plus the Thumb bit, and that offset
- *    really does open with 'push {r5, r6, r7, lr}' (0xb5e0) - the same opening
- *    as resource_373's 0x5ae0, which is an independent check on both the base
- *    and the pointer's meaning.
- *  - all seven calls were re-resolved with 'bun tools/overlay_call_targets.ts
- *    resource_392 0cb4': 7 sites, 7 distinct veneers, publishing exactly the same
- *    main-image imports in the same order as resource_373.  The 373 source
- *    predates the corrected 'bl' rule and named the imports by their encoded
- *    displacements; worse, it gave the first and third calls the SAME name
- *    (Func_0200bb38) when they are different imports - 0x0808a080 fetches the
- *    scene entity and 0x080770c0 is the 0x109 companion lookup.  Both are
- *    corrected here.
+ * Three constants live in callee-saved registers across the body -- r8 = 0,
+ * r9 = 1, and sl = the address of the byte at +92 -- so each is a
+ * function-scope named local here rather than a repeated literal, which is
+ * what puts them in callee-saved registers at all.
  *
- * UNCERTAINTY (inherited): r0 is not set before the return, so the routine is
- * spelled void; the incoming r0 is consumed by the first call and never
- * reloaded.  Func_08015250's result is discarded, so only its side effect on
- * the shared workspace matters.
+ * The pool words are 0x00000109 (an id passed to Func_02001b0c, too large for
+ * a Thumb immediate) and 0x02008c4d.  The latter is ODD, so under the proven
+ * 0x02008000 overlay link base it is `Func_02000c4c + 1` -- an in-image
+ * function pointer stored into the object at +108, this scene's per-frame
+ * callback, the same +108 callback slot resource_3a3_c_02000d08.c documents.
+ *
+ * Per-target multiset over the 7 call sites, matching the row's calls=7:
+ * Func_02001af4 x1 (fetch the current scene object), Func_02001ae6 x1,
+ * Func_02001b0c x1, Func_02001aec x1, Func_02001b3c x1, Func_02001b14 x1 and
+ * Func_02001b12 x1.
+ *
+ * RESIDUE (9 of 108 halfwords, 2026-08-07).  Size and every instruction match
+ * except three one-slot scheduling swaps: the reference issues `ldrb r1,[r6,#5]'
+ * one slot before `movs r3,#33', `movs r2,#1' one slot before the +35 store, and
+ * `movs r1,#128' before `ldrb r0,[r6,#28]'.  Neither the 979-configuration mode
+ * cohort (singles plus 900 pairs) nor any of eleven source orderings of the two
+ * mask chains moves them, so the remaining difference is scheduler placement,
+ * not shape.
+ *
+ * The two masking chains each have to start at their constant or at the loaded
+ * value in exactly the order below: `mode = ~12; mode &= state[9]; mode |= 4;'
+ * keeps -13 as the accumulating register, while writing the second mask as
+ * `lock = state[5]; lock &= ~32;' (value first) is what stops cse deriving -33
+ * from the live 4 as `subs r3, #37' -- 90 differing halfwords with the constant
+ * first, 9 this way.
+ *
+ * Old-style declarations: the overlay imports vary their argument count
+ * between call sites.
  */
 
-struct SceneHandle {
-    u8 unknown_00[5];
-    u8 flags05;
-    u8 unknown_06[3];
-    u8 flags09;
-    u8 unknown_0a[0x12];
-    u8 paletteIndex;                /* 0x1c */
-    u8 unknown_1d[0xa];
-    u8 field27;
-};
+extern u8 *Func_02001af4();
+extern void Func_02001ae6();
+extern s32 Func_02001b0c();
+extern s32 Func_02001aec();
+extern void Func_02001b3c();
+extern void Func_02001b14();
+extern void Func_02001b12();
 
-struct SceneEntity {
-    u8 unknown_00[8];
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c */
-    u8 unknown_10[0x13];
-    u8 flags23;
-    u8 unknown_24[0xc];
-    s32 field30;
-    u8 unknown_34[4];
-    s32 shadowX;                    /* 0x38 */
-    s32 shadowY;                    /* 0x3c */
-    u8 unknown_40[0x10];
-    struct SceneHandle *handle;   /* 0x50 */
-    u8 unknown_54[1];
-    u8 field55;
-    u8 field56;
-    u8 unknown_57[5];
-    u8 field5c;
-    u8 unknown_5d[4];
-    u8 field61;
-    u8 unknown_62[0xa];
-    void (*behaviour)(void);        /* 0x6c */
-};
-
-/* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneEntity *Func_0808a080();     /* scene entity by selector */
-struct SceneEntity *Func_080770c0();     /* companion entity by selector, or 0 */
-void Func_080091e0();               /* set presentation mode */
-s32 Func_08000140();                /* reserve workspace on a channel */
-void Func_08000150();               /* commit the channel reservation */
-void Func_080001c8();               /* upload a palette ramp */
-s32 Func_08015250();                /* shared-workspace side effect */
-
-void Func_02000cb4(s32 selector)
+void Func_02000cb4(void)
 {
-    struct SceneEntity *entity = Func_0808a080(selector);
-    struct SceneHandle *handle = entity->handle;
-    s32 gradient;
+    u8 *object;
+    u8 *state;
+    u8 *flagAt92;
+    s32 zero;
+    s32 one;
+    s32 amount;
+    s32 mode;
+    s32 lock;
 
-    handle->field27 = 0;
-    handle->flags05 = (u8)(handle->flags05 & ~0x20);
-    handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
+    object = Func_02001af4();
+    state = *(u8 **)(object + 80);
 
-    Func_080091e0(entity, 0);
+    mode = ~12;
+    mode &= state[9];
+    mode |= 4;
+    lock = state[5];
+    lock &= ~32;
+    state[5] = (u8)lock;
+    mode &= 15;
+    state[9] = (u8)mode;
 
-    entity->field5c = 0;
-    entity->field55 = 0;
+    zero = 0;
+    state[39] = (u8)zero;
 
-    /* 0x109 selects a companion entity; when absent the sprite drops a row. */
-    if (Func_080770c0(0x109) == 0) {
-        entity->y += 0x00200000;    /* 0x80 << 14 */
+    /* r0 still holds the object returned above. */
+    Func_02001ae6(object, 0);
+
+    flagAt92 = object + 92;
+    *flagAt92 = (u8)zero;
+    object[85] = (u8)zero;
+
+    if (Func_02001b0c(0x109) == 0) {
+        *(s32 *)(object + 12) += 0x00200000;
     }
 
-    entity->flags23 = (u8)(entity->flags23 & ~1);
-    entity->field61 = 1;
+    object[35] = (u8)(object[35] & ~1);
 
-    /*
-     * Func_08000140 reserves 0x608 (0xc1 << 3) bytes on channel 17 and
-     * returns the base of the reservation; the ramp uploaded below starts
-     * 0x400 (0x80 << 3) bytes into it.  Func_08015250's result is discarded,
-     * so only its side effect on the shared workspace matters.
-     */
-    gradient = Func_08000140(17, 0x608);
-    gradient += 0x400;
-    Func_08015250(0xb5);
-    Func_080001c8(handle->paletteIndex, 0x80, gradient);
-    Func_08000150(17);
+    one = 1;
+    object[97] = (u8)one;
 
-    entity->field30 = 0;
-    entity->behaviour = (void (*)(void))0x02008c4d;
-    entity->shadowX = entity->x;
-    entity->shadowY = entity->y;
-    entity->field5c = 1;
-    entity->field56 = 0;
+    amount = Func_02001aec(17, 0x608);
+    Func_02001b3c(181);
+    amount += 0x400;
+
+    Func_02001b14(state[28], 128, amount);
+    Func_02001b12(17);
+
+    *(s32 *)(object + 56) = *(s32 *)(object + 8);
+    *(s32 *)(object + 48) = zero;
+    *(s32 *)(object + 60) = *(s32 *)(object + 12);
+
+    *flagAt92 = (u8)one;
+    *(u32 *)(object + 108) = 0x02008c4d;
+    object[86] = (u8)zero;
 }

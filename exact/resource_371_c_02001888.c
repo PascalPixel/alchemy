@@ -101,10 +101,15 @@ void Func_02001888(void)
      * literal 0 directly: a direct HImode constant store makes gcc build the
      * constant in HImode and fetch it from the literal pool (`ldrh r3, .L7'),
      * which adds a pool word and a branched-to return tail the reference does
-     * not have.  STILL OPEN: two halfwords at +0x56, where the reference sets
-     * r0 before the r1 pool load at `Func_...bf2(8, 0x9999, 0x4ccc)' and this
-     * draft interleaves them the other way; no flag in the 65-candidate
-     * singles cohort moves it and no source phrasing tried does either.
+     * not have.
+     *
+     * BYTE-EXACT as of 2026-08-07.  The last two halfwords, at +0x56, needed a
+     * new fork peephole: the reference sets r0 before the r1 pool load at
+     * `Func_...bf2(8, 0x9999, 0x4ccc)' while the scheduler hoists the pool load.
+     * -fthumb-call-arg0-before-pool restores register order, gated on the third
+     * argument still being written after r0 -- which is what keeps the sibling
+     * call at 0x020018bc, whose r2 is a split constant computed earlier,
+     * correctly pool-load-first.
      */
     zero = 0;
     *frame = (s16)zero;

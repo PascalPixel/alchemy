@@ -1793,6 +1793,15 @@ const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
 // insn the allocator keeps the one written last; the references keep the one
 // written first, so a constant that has been sitting in a register since well
 // above the load becomes the accumulator.
+// -fthumb-arg-before-final-shift for a shift that is not the sheet's last
+// setup insn.
+const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
+  // resource_3b1:5ca4 -- `movs r0, #8' ahead of `lsls r1, r1, #8' at
+  // 0x02005ce0, with `movs r2, #80' still between the pair and the call,
+  // 2026-08-07.
+  "exact/resource_3b1_c_02005ca4.c",
+  "semantic/resource_3b1_c_02005ca4.c",
+]);
 // The transposed twin of -fthumb-swap-adjacent-shifts: two in-place constant
 // shifts separated by one unrelated insn, issued newest-input first.
 const SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES = new Set([
@@ -2214,6 +2223,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-adjacent-shifts"]
       : []),
+    ...(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-arg-before-shift-in-sheet"]
+      : []),
     ...(SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-shifts-across-insn"]
       : []),
@@ -2339,6 +2351,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
     ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
     ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
@@ -2568,6 +2581,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+    // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
+    "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
       // -fthumb-swap-shifts-across-insn added, 2026-08-07.
     "e1bc6d7d905057d59dff47512e52503cf4215422a1e7f283754a2d446f41afa1",
     "d7f9e8909c2a1fe73b6aa9a2ef06e6689e25e63e6ba72c8fe73996746c02bd75",

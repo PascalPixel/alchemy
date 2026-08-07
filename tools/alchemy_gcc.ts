@@ -1765,6 +1765,16 @@ const CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES = new Set([
   "exact/resource_371_c_020019e8.c",
   "semantic/resource_371_c_020019e8.c",
 ]);
+// The register-move twin of the flag above: a two-argument sheet whose r0 is a
+// plain copy of a live register, written by the references before the r1 pool
+// load.  Narrower than -fthumb-call-pool-arg1-first's inverse needs to be: the
+// copy has to be the insn immediately before the call.
+const CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES = new Set([
+  // resource_3a7:0b8c -- `adds r0,r5,#0' before `ldr r1,[pc,#48]' at
+  // 0x02000bd0, 2026-08-07.
+  "exact/resource_3a7_c_02000b8c.c",
+  "semantic/resource_3a7_c_02000b8c.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2149,6 +2159,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg0-before-pool"]
       : []),
+    ...(CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-argreg-before-pool"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2260,6 +2273,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES,
     ...ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
+    ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2485,6 +2499,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "ea45be7c7bbcf917946bad0f8f7130b77b89e0d0828292039288c3cccdc85d24",
       "39618b85563aae1ee776522c14d6de42eb3dceadbf9c7c76cbc501b3533457a1",
         "fe41ef5881fd46a4ec84ceb4224c5ea00abb8b6cb431b726a174ac99580085c6",
         // -fthumb-call-arg0-before-pool: undo a scheduler inversion that

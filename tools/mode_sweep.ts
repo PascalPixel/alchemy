@@ -52,6 +52,8 @@ export const FORK_MODES = [
   // Inverse of -fthumb-call-pool-arg1-first, gated on the third argument still
   // being written after r0. Witness resource_371:1888.
   "-fthumb-call-arg0-before-pool",
+  // Register-move twin of the above. Witness resource_3a7:0b8c.
+  "-fthumb-call-argreg-before-pool",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

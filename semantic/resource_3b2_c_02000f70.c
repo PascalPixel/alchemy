@@ -64,22 +64,62 @@ extern s16 Data_02000240[];             /* the overlay's scene table */
 extern u8 *Data_03001ebc;               /* shared workspace pointer */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-u8 *Func_080770c0();                    /* companion entity by selector, or 0 */
-void Func_080770c8();                   /* companion notification by selector */
-u8 *Func_0808a080();                    /* scene entity by selector */
-void Func_080091c0();                   /* collision repaint, six arguments */
-void Func_080091e0();                   /* set presentation mode */
-void Func_08009080();                   /* select presentation mode */
-void Func_08009278();                   /* place a marker (kind, x, z, level) */
-void Func_0808a3c0();                   /* move the camera to (x, z) */
+void Func_020028b4();
+u8 *Func_02003ffe();
+void Func_02003fe6();
+void Func_02003ff8();
+void Func_020040e6();
+u8 *Func_02004054();
+void Func_02004068();
+void Func_02004044();
+void Func_02004132();
+void Func_020026be();
+u8 *Func_020040d0();
+void Func_02001914();
+void Func_0200191a();
+u8 *Func_020040ba();
+u8 *Func_020040f4();
+void Func_02004078();
+void Func_020040c0();
+void Func_020040e0();
+u8 *Func_020040f6();
+u8 *Func_02004130();
+void Func_020040b4();
+void Func_020040fc();
+void Func_0200411c();
+u8 *Func_02004132_b();
+u8 *Func_0200416c();
+void Func_020040f0();
+void Func_02004138();
+void Func_02004158();
+u8 *Func_0200416e();
+u8 *Func_020041a8();
+void Func_0200412c();
+void Func_02004174();
+void Func_02004194();
+void Func_020041a4();
+u8 *Func_020041ba();
+u8 *Func_020041d2();
+void Func_020041ba_b();
+void Func_020042a8();
+void Func_020023cc();
+void Func_0200265e();
+                                        /* companion entity by selector, or 0 */
+                                        /* companion notification by selector */
+                                        /* scene entity by selector */
+                                        /* collision repaint, six arguments */
+                                        /* set presentation mode */
+                                        /* select presentation mode */
+                                        /* place a marker (kind, x, z, level) */
+                                        /* move the camera to (x, z) */
 
 /* This overlay's own routines. */
-void Func_0200191c();                   /* slot placement table */
-void Func_0200167c();                   /* party placement pass */
-void Func_020008c0();                   /* per-slot scene beat */
-void Func_02002ed8();                   /* idle presentation beat */
-void Func_02001214();                   /* slot-8 beat */
-void Func_02001494();                   /* the 0x7e..0x86 cutscene */
+                                        /* slot placement table */
+                                        /* party placement pass */
+                                        /* per-slot scene beat */
+                                        /* idle presentation beat */
+                                        /* slot-8 beat */
+                                        /* the 0x7e..0x86 cutscene */
 
 s32 Func_02000f70(void)
 {
@@ -91,25 +131,25 @@ s32 Func_02000f70(void)
     scene = Data_02000240[224];
 
     if (scene == 0x7b) {
-        Func_0200191c();
+        Func_020028b4();
         return 0;
     }
 
     if (scene == 0x7d) {
-        if (Func_080770c0(0xef7) == 0) {
-            Func_080091c0(0, 3, 1, 1, 13, 40);
-            Func_080091c0(0, 2, 1, 1, 15, 40);
-            Func_0808a3c0(101, 0x00d80000, 0x02880000);
+        if (Func_02003ffe(0xef7) == 0) {
+            Func_02003fe6(0, 3, 1, 1, 13, 40);
+            Func_02003ff8(0, 2, 1, 1, 15, 40);
+            Func_020040e6(101, 0x00d80000, 0x02880000);
         }
 
         /* Re-read: the calls above can advance the scene. */
         if (Data_02000240[224] == scene) {
-            if (Data_02000240[225] != 5 && Func_080770c0(0x8d1) == 0) {
+            if (Data_02000240[225] != 5 && Func_02004054(0x8d1) == 0) {
                 return 0;
             }
-            Func_080770c8(0x8d1);
-            Func_080091c0(0, 1, 1, 1, 13, 30);
-            Func_0808a3c0(100, 0x00d80000, 0x01e80000);
+            Func_02004068(0x8d1);
+            Func_02004044(0, 1, 1, 1, 13, 30);
+            Func_02004132(100, 0x00d80000, 0x01e80000);
             return 0;
         }
         /* Otherwise fall into the general block, as the assembly branches. */
@@ -118,62 +158,62 @@ s32 Func_02000f70(void)
     current = Data_02000240[224];
 
     if (current == 0x71) {
-        Func_0200167c();
-        *(s32 *)(Func_0808a080(8) + 56) = 0x00810000;   /* y = 129.0 */
+        Func_020026be();
+        *(s32 *)(Func_020040d0(8) + 56) = 0x00810000;   /* y = 129.0 */
 
-        Func_020008c0(9);
-        Func_020008c0(10);
+        Func_02001914(9);
+        Func_0200191a(10);
 
-        if (Func_080770c0(576) != 0) {              /* 144 << 2 == 0x240 */
-            slot = Func_0808a080(11);
+        if (Func_020040ba(576) != 0) {              /* 144 << 2 == 0x240 */
+            slot = Func_020040f4(11);
         }
             if (slot != 0) {
-                Func_08009080(slot, 4);
+                Func_02004078(slot, 4);
                 slot[89] = 0;
-                Func_080091e0(slot, 0);
+                Func_020040c0(slot, 0);
             }
-            Func_08009278(0, 0x01300000, 0x01700000, 253);
+            Func_020040e0(0, 0x01300000, 0x01700000, 253);
 
-        if (Func_080770c0(0x241) != 0) {
-            slot = Func_0808a080(12);
+        if (Func_020040f6(0x241) != 0) {
+            slot = Func_02004130(12);
             if (slot != 0) {
-                Func_08009080(slot, 4);
-                Func_080091e0(slot, 0);
+                Func_020040b4(slot, 4);
+                Func_020040fc(slot, 0);
                 slot[89] = 0;
             }
-            Func_08009278(0, 0x00500000, 0x01700000, 253);
+            Func_0200411c(0, 0x00500000, 0x01700000, 253);
         }
 
-        if (Func_080770c0(0x242) != 0) {
-            slot = Func_0808a080(13);
+        if (Func_02004132_b(0x242) != 0) {
+            slot = Func_0200416c(13);
             if (slot != 0) {
-                Func_08009080(slot, 4);
+                Func_020040f0(slot, 4);
                 slot[89] = 0;
-                Func_080091e0(slot, 0);
+                Func_02004138(slot, 0);
             }
-            Func_08009278(0, 0x00600000, 0x01500000, 253);
+            Func_02004158(0, 0x00600000, 0x01500000, 253);
         }
 
-        if (Func_080770c0(0x243) != 0) {
-            slot = Func_0808a080(14);
+        if (Func_0200416e(0x243) != 0) {
+            slot = Func_020041a8(14);
             if (slot != 0) {
-                Func_08009080(slot, 4);
+                Func_0200412c(slot, 4);
                 slot[89] = 0;
-                Func_080091e0(slot, 0);
+                Func_02004174(slot, 0);
             }
-            Func_08009278(0, 0x00900000, 0x01400000, 253);
-            Func_08009278(0, 0x02f00000, 0x01400000, 253);
+            Func_02004194(0, 0x00900000, 0x01400000, 253);
+            Func_020041a4(0, 0x02f00000, 0x01400000, 253);
         }
 
-        if (Func_080770c0(0xfd7) == 0) {
-            Func_02002ed8(8);
+        if (Func_020041ba(0xfd7) == 0) {
+            Func_02004044(8);
         }
         return 0;
     }
 
-    if (current == 0x7e && Func_080770c0(0xef4) == 0) {
-        Func_080091c0(0, 0, 1, 1, 37, 10);
-        Func_0808a3c0(100, 0x02580000, 0x00a80000);
+    if (current == 0x7e && Func_020041d2(0xef4) == 0) {
+        Func_020041ba_b(0, 0, 1, 1, 37, 10);
+        Func_020042a8(100, 0x02580000, 0x00a80000);
     }
 
     /* Re-read again; the block above can advance the scene. */
@@ -182,9 +222,9 @@ s32 Func_02000f70(void)
         return 0;
     }
 
-    Func_02001214();
+    Func_020023cc();
     if (Data_02000240[225] == 5) {
-        Func_02001494();
+        Func_0200265e();
     }
     return 0;
 }

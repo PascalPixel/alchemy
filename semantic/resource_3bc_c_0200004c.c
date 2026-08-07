@@ -56,9 +56,14 @@ extern s8 Data_0200cc20[];  /* in-image byte table at file offset 0x4c20 */
 extern u32 Data_0200d480;
 extern u32 Data_0200d484;
 
-Object *Func_0808a080();
-void Func_0808a100();
-void Func_080091c0();
+Object *Func_02004a80();
+void Func_02004b18();
+void Func_02004b22();
+void Func_02004a04();
+void Func_02004a1a();
+void Func_02004b68();
+
+                     
 
 void Func_0200004c(void)
 {
@@ -73,7 +78,7 @@ void Func_0200004c(void)
 
     workspace = Data_03001ebc;
     table = Data_02000240;
-    object = Func_0808a080(*(s32 *)&table[250]);
+    object = Func_02004a80(*(s32 *)&table[250]);
     tileRow = object->z >> 20;
 
     if (Data_0200d484 == 0) {
@@ -84,17 +89,17 @@ void Func_0200004c(void)
             slot = Data_0200d480;
             value = Data_0200cc20[slot * 6 + (row - 18)];
 
-            Func_0808a100(row, value);
-            Func_0808a100(row + 5, value + 8);
-            Func_080091c0(32, 11, 1, 2, column, 11);
+            Func_02004b18(row, value);
+            Func_02004b22(row + 5, value + 8);
+            Func_02004a04(32, 11, 1, 2, column, 11);
             if (value != 7) {
-                Func_080091c0(74, 12, 1, 1, column, 11);
+                Func_02004a1a(74, 12, 1, 1, column, 11);
             }
             column += 2;
         }
 
         slot = Data_0200d480;
-        Func_0808a100(28, Data_0200cc20[slot * 6 + 5]);
+        Func_02004b68(28, Data_0200cc20[slot * 6 + 5]);
     } else {
         s16 *target;
         s8 *entry;

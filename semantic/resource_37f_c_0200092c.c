@@ -34,39 +34,49 @@ extern s32 Data_0200a69c;
 
 void Func_02001ac8(void);
 
-void Func_080770c8();
-s32 Func_080770c0();
-void Func_080000d0();
-void Func_080091c0();
-void Func_0808a0f0();
+void Func_020024ca();
+s32 Func_020024d6();
+void Func_0200248a();
+s32 Func_020024f0();
+void Func_020024de();
+void Func_020024f0_b();
+void Func_02002502();
+void Func_02002514();
+s32 Func_02002542();
+void Func_020025c4();
+void Func_02002540();
+void Func_02002552();
+void Func_02002564();
+
+                     
 
 void Func_0200092c(void)
 {
     u8 *workspace;
 
-    Func_080770c8(324);
+    Func_020024ca(324);
 
     *(s32 *)(workspace + 448) = 32;
     workspace = Data_03001ebc;
 
-    if (Func_080770c0(0x814) != 0) {
+    if (Func_020024d6(0x814) != 0) {
         Data_0200a69c = 0;
         /* The pool word is the callback's code address plus the Thumb bit,
          * not a pointer cell. */
-        Func_080000d0((void *)((s32)Func_02001ac8 | 1), 3200);
+        Func_0200248a((void *)((s32)Func_02001ac8 | 1), 3200);
     }
 
-    if (Func_080770c0(0x879) != 0) {
-        Func_080091c0(5, 6, 1, 1, 6, 6);
-        Func_080091c0(5, 6, 1, 1, 7, 6);
-        Func_080091c0(5, 6, 1, 1, 8, 6);
-        Func_080091c0(0, 1, 3, 1, 6, 5);
+    if (Func_020024f0(0x879) != 0) {
+        Func_020024de(5, 6, 1, 1, 6, 6);
+        Func_020024f0_b(5, 6, 1, 1, 7, 6);
+        Func_02002502(5, 6, 1, 1, 8, 6);
+        Func_02002514(0, 1, 3, 1, 6, 5);
     }
 
-    if (Func_080770c0(0x815) != 0) {
-        Func_0808a0f0(8, 0x780000, 0xe80000);
-        Func_080091c0(2, 10, 1, 1, 6, 14);
-        Func_080091c0(2, 10, 1, 1, 7, 14);
-        Func_080091c0(2, 10, 1, 1, 8, 14);
+    if (Func_02002542(0x815) != 0) {
+        Func_020025c4(8, 0x780000, 0xe80000);
+        Func_02002540(2, 10, 1, 1, 6, 14);
+        Func_02002552(2, 10, 1, 1, 7, 14);
+        Func_02002564(2, 10, 1, 1, 8, 14);
     }
 }

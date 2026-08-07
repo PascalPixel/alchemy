@@ -55,15 +55,34 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-int Func_080770c0();
-void Func_080770d0();
-void *Func_0808a080();
-void Func_0808a0f0();
-void Func_0808a158();
-void Func_0808a1b8();
-void Func_080091c0();
+void Func_02001456(void);
+int Func_02001eb6();
+void Func_02001f82();
+void Func_02001eea();
+void Func_02001efc();
+int Func_02001ef2();
+void Func_02001f8c();
+void Func_02002000();
+int Func_02001f16();
+void Func_02001fb0();
+void Func_02002024();
+void Func_02001fca();
+void Func_0200203e();
+void Func_02001fe4();
+void Func_02002058();
+void Func_02001ffe();
+void Func_02002072();
+void *Func_02001fd8();
+void *Func_02002006();
+int Func_02001fee();
+void Func_02001fbe();
+void Func_02001fd0();
 
-void Func_02000af8(void);
+                      
+
+                     
+
+                         
 
 extern s16 Data_02000240[];
 
@@ -72,40 +91,40 @@ void Func_02000958(void)
     u8 *object;
     u8 *sub;
 
-    Func_02000af8();
+    Func_02001456();
 
     /* movs r0,#149 / lsls r0,r0,#4 == 0x950 */
-    if (Func_080770c0(0x950) != 0) {
-        Func_0808a158(12, 2);
+    if (Func_02001eb6(0x950) != 0) {
+        Func_02001f82(12, 2);
     }
 
     if (Data_02000240[225] == 3) {
-        Func_080770d0(0x12f);
+        Func_02001eea(0x12f);
     }
 
     if ((u16)Data_02000240[225] == 1) {
-        Func_080770d0(0x8aa);
+        Func_02001efc(0x8aa);
     }
 
-    if (Func_080770c0(0x8aa) != 0) {
-        Func_0808a0f0(8, 408 << 16, 296 << 16);
-        Func_0808a1b8(8, 0x8000, 0);
+    if (Func_02001ef2(0x8aa) != 0) {
+        Func_02001f8c(8, 408 << 16, 296 << 16);
+        Func_02002000(8, 0x8000, 0);
     }
 
-    if (Func_080770c0(0x8ab) != 0) {
-        Func_0808a0f0(13, 280 << 16, 296 << 16);
-        Func_0808a1b8(13, 0xc000, 0);
+    if (Func_02001f16(0x8ab) != 0) {
+        Func_02001fb0(13, 280 << 16, 296 << 16);
+        Func_02002024(13, 0xc000, 0);
 
-        Func_0808a0f0(16, 288 << 16, 280 << 16);
-        Func_0808a1b8(16, 0xe000, 0);
+        Func_02001fca(16, 288 << 16, 280 << 16);
+        Func_0200203e(16, 0xe000, 0);
 
-        Func_0808a0f0(10, 232 << 16, 304 << 16);
-        Func_0808a1b8(10, 0x4000, 0);
+        Func_02001fe4(10, 232 << 16, 304 << 16);
+        Func_02002058(10, 0x4000, 0);
 
-        Func_0808a0f0(11, 240 << 16, 312 << 16);
-        Func_0808a1b8(11, 0xc000, 0);
+        Func_02001ffe(11, 240 << 16, 312 << 16);
+        Func_02002072(11, 0xc000, 0);
 
-        object = (u8 *)Func_0808a080(10);
+        object = (u8 *)Func_02001fd8(10);
         object[0x23] = 2;
         object[0x59] = 0;
         sub = *(u8 **)(object + 0x50);
@@ -116,15 +135,15 @@ void Func_02000958(void)
         *(u16 *)(sub + 30) = 0xc000;
 
         object[0x23] = 0;
-        object = (u8 *)Func_0808a080(11);
+        object = (u8 *)Func_02002006(11);
         sub = *(u8 **)(object + 0x50);
         sub[9] |= 12;
         sub = *(u8 **)(object + 0x50);
         sub[21] |= 12;
     }
 
-    if (Func_080770c0(0x950) != 0) {
-        Func_080091c0(18, 18, 1, 1, 14, 18);
-        Func_080091c0(18, 18, 1, 1, 15, 18);
+    if (Func_02001fee(0x950) != 0) {
+        Func_02001fbe(18, 18, 1, 1, 14, 18);
+        Func_02001fd0(18, 18, 1, 1, 15, 18);
     }
 }

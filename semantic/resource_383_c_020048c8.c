@@ -51,18 +51,46 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-s32 Func_080000f8();            /* random source; see the note above */
-s32 Func_08000100();            /* vector -> angle, writes through its third argument */
-void Func_08009080();
-void Func_0808a1f0();
-u8 *Func_0808a400();            /* returns the object/actor record */
+u8 *Func_020097a0();
+u8 *Func_020097b2();
+u8 *Func_02008ffe(s32 *position);
+s32 Func_020095ba();
+u8 *Func_020090e6(u8 *cell, s16 *heading);
+s32 Func_020091d8(u8 *exit);
+void Func_02009248(s32 follower, u8 *exit);
+void Func_02009658();
+void Func_02009662();
+u8 *Func_02009880();
+u8 *Func_020090c8(s32 *position);
+s32 Func_0200965c();
+u8 *Func_02009150(u8 *cell, s16 *heading);
+s32 Func_02009242(u8 *exit);
+u8 *Func_0200916c(u8 *cell, s16 *heading);
+s32 Func_0200925e(u8 *exit);
+void Func_0200986e();
+void Func_020096e0();
+void Func_020092e6(s32 follower, u8 *exit);
+void Func_020096f6();
+u8 *Func_02009914();
+u8 *Func_0200915c(s32 *position);
+s32 Func_020096f0();
+u8 *Func_020091e6(u8 *cell, s16 *heading);
+s32 Func_020092d8(u8 *exit);
+u8 *Func_02009202(u8 *cell, s16 *heading);
+s32 Func_020092f4(u8 *exit);
+void Func_02009904();
+void Func_02009776();
+void Func_0200937c(s32 follower, u8 *exit);
+void Func_0200978c();
+                                /* random source; see the note above */
+                                /* vector -> angle, writes through its third argument */
+
+                                /* returns the object/actor record */
 
 /* This overlay's own helpers (byte-exact sources in assets/code for 0x4704,
  * 0x4840 and 0x48a4; semantic source in this tree for 0x4754). */
-u8 *Func_02004704(s32 *position);
-u8 *Func_02004754(u8 *cell, s16 *heading);
-s32 Func_02004840(u8 *exit);
-void Func_020048a4(s32 follower, u8 *exit);
+
+                            
 
 /* In-image halfword at file offset 0x64f8: the stuck-frame counter that
  * Func_02004b2c clears when the scene opens. */
@@ -85,20 +113,20 @@ void Func_020048c8(void)
     s32 spin;
     u16 count;
 
-    leader = Func_0808a400(0);
+    leader = Func_020097a0(0);
     blocked = 0;
     workspace = *(u8 **)0x03001ebc;
 
     /* ---- object 2: steer towards object 0 ---------------------------- */
-    follower = Func_0808a400(2);
-    cell = Func_02004704((s32 *)(follower + 8));
+    follower = Func_020097b2(2);
+    cell = Func_02008ffe((s32 *)(follower + 8));
     if (cell != 0 && *(s32 *)(follower + 56) == (s32)0x80000000) {
         dx = *(s32 *)(follower + 8) - *(s32 *)(leader + 8);
         dy = *(s32 *)(follower + 16) - *(s32 *)(leader + 16);
 
         /* Start from the leader's heading; Func_08000100 may replace it. */
         heading = *(s16 *)(leader + 6);
-        angle = (s16)Func_08000100(dy, dx, &heading);
+        angle = (s16)Func_020095ba(dy, dx, &heading);
 
         dx >>= 16;
         dy >>= 16;
@@ -117,64 +145,64 @@ void Func_020048c8(void)
         }
 
     steer2:
-        exit = Func_02004754(cell, &heading);
-        if (Func_02004840(exit) == 0) {
-            Func_020048a4((s32)follower, exit);
-            Func_08009080(follower, 2);
+        exit = Func_020090e6(cell, &heading);
+        if (Func_020091d8(exit) == 0) {
+            Func_02009248((s32)follower, exit);
+            Func_02009658(follower, 2);
         } else {
-            Func_08009080(follower, 1);
+            Func_02009662(follower, 1);
         }
     }
 
     /* ---- actor 24: random heading, then the reverse ------------------ */
-    follower = Func_0808a400(24);
-    cell = Func_02004704((s32 *)(follower + 8));
+    follower = Func_02009880(24);
+    cell = Func_020090c8((s32 *)(follower + 8));
     if (cell != 0 && *(s32 *)(follower + 56) == (s32)0x80000000) {
         /* (random * 2) truncated to 16 bits, times 3, into the top three bits
          * of a quadrant, biased by 0xd0000000: one of eight headings. */
-        spin = (u16)(Func_080000f8() << 1);
+        spin = (u16)(Func_0200965c() << 1);
         heading = (s16)((u32)((spin * 3) << 29) >> 16);
         heading = (s16)(heading + *(u16 *)(follower + 6));
 
-        exit = Func_02004754(cell, &heading);
-        if (Func_02004840(exit) != 0) {
+        exit = Func_02009150(cell, &heading);
+        if (Func_02009242(exit) != 0) {
             heading = (s16)(*(u16 *)(follower + 6) + 0x8000);
-            exit = Func_02004754(cell, &heading);
-            if (Func_02004840(exit) == 0) {
-                Func_0808a1f0(24, 2);
+            exit = Func_0200916c(cell, &heading);
+            if (Func_0200925e(exit) == 0) {
+                Func_0200986e(24, 2);
             } else {
                 blocked = 1;
-                Func_08009080(follower, 4);
+                Func_020096e0(follower, 4);
                 goto actor25;
             }
         }
-        Func_020048a4((s32)follower, exit);
-        Func_08009080(follower, 2);
+        Func_020092e6((s32)follower, exit);
+        Func_020096f6(follower, 2);
     }
 
 actor25:
     /* ---- actor 25: the same, with a finer heading step --------------- */
-    follower = Func_0808a400(25);
-    cell = Func_02004704((s32 *)(follower + 8));
+    follower = Func_02009914(25);
+    cell = Func_0200915c((s32 *)(follower + 8));
     if (cell != 0 && *(s32 *)(follower + 56) == (s32)0x80000000) {
-        spin = (s32)((u32)(Func_080000f8() * 3) >> 16);
+        spin = (s32)((u32)(Func_020096f0() * 3) >> 16);
         heading = (s16)((u32)((spin * 3) << 28) >> 16);
         heading = (s16)(heading + *(u16 *)(follower + 6));
 
-        exit = Func_02004754(cell, &heading);
-        if (Func_02004840(exit) != 0) {
+        exit = Func_020091e6(cell, &heading);
+        if (Func_020092d8(exit) != 0) {
             heading = (s16)(*(u16 *)(follower + 6) + 0x8000);
-            exit = Func_02004754(cell, &heading);
-            if (Func_02004840(exit) == 0) {
+            exit = Func_02009202(cell, &heading);
+            if (Func_020092f4(exit) == 0) {
                 blocked += 2;
-                Func_0808a1f0(25, 2);
+                Func_02009904(25, 2);
             } else {
-                Func_08009080(follower, 4);
+                Func_02009776(follower, 4);
                 goto tally;
             }
         }
-        Func_020048a4((s32)follower, exit);
-        Func_08009080(follower, 2);
+        Func_0200937c((s32)follower, exit);
+        Func_0200978c(follower, 2);
     }
 
 tally:

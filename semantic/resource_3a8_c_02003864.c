@@ -13,12 +13,18 @@
  * independently resolved machine sequence.
  */
 
-u32 Func_080000f8(void);
-u8 *Func_080090c8();
-void Func_0808a160();
-void Func_080091e0();
-void Func_08009080();
-void Func_08009098();
+u32 Func_0200739e(void);
+u8 *Func_020073fc();
+void Func_02007566();
+void Func_0200746e();
+u32 Func_020073ea(void);
+u32 Func_020073f8(void);
+void Func_0200744c();
+void Func_0200745c();
+
+                     
+
+                     
 
 void Func_02003864(s32 x, s32 y, s32 z)
 {
@@ -27,10 +33,10 @@ void Func_02003864(s32 x, s32 y, s32 z)
     u32 random;
     s32 offset;
 
-    random = Func_080000f8();
+    random = Func_0200739e();
     offset = (s32)(((random << 3) >> 16) << 16);
 
-    object = Func_080090c8(222, x - 0x80000,
+    object = Func_020073fc(222, x - 0x80000,
                            y + offset + 0x100000, z);
     if (object == 0) {
         return;
@@ -40,18 +46,18 @@ void Func_02003864(s32 x, s32 y, s32 z)
     handle = *(u8 **)(object + 0x50);
     handle[9] = (u8)((handle[9] & ~0x0c) | 8);
 
-    Func_0808a160(object, 9);
-    Func_080091e0(object, 0);
+    Func_02007566(object, 9);
+    Func_0200746e(object, 0);
 
-    random = Func_080000f8();
+    random = Func_020073ea();
     *(s32 *)(object + 0x24) = (s32)(((random << 1) >> 16) - 1) * 0x10000;
 
-    random = Func_080000f8();
+    random = Func_020073f8();
     *(s32 *)(object + 0x28) = (s32)(((random * 6) >> 16) - 3) * 0x10000;
 
     *(u16 *)(object + 0x64) = 20;
     object[0x61] = 1;
 
-    Func_08009080(object, 1);
-    Func_08009098(object, (void *)0x0200d120);
+    Func_0200744c(object, 1);
+    Func_0200745c(object, (void *)0x0200d120);
 }

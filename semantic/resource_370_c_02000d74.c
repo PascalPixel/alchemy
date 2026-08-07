@@ -38,8 +38,8 @@
 
 /* Overlay imports (via the veneer table).  Old-style declarations: overlay
  * imports vary their argument count between call sites. */
-s32 Func_08000170();
-void Func_08000178();
+s32 Func_020020be();
+void Func_0200211e();
 
 struct MapPlacement_02000d74 {
     /* Only +12 and +14 are read by this owner. */
@@ -61,7 +61,7 @@ void Func_02000d74(struct MapPlacement_02000d74 *placement)
     /* Loaded before the call, so the pointer read is not part of it. */
     shadow = *(u16 **)0x03001e8c;
 
-    handle = Func_08000170(768);
+    handle = Func_020020be(768);
 
     /* Halfword index into a 32-entry-wide screen block, converted to bytes. */
     entry_offset = (((s32)placement->row << 5) + (s32)placement->column) * 2;
@@ -82,5 +82,5 @@ void Func_02000d74(struct MapPlacement_02000d74 *placement)
         shadow += 32;
     }
 
-    Func_08000178(handle);
+    Func_0200211e(handle);
 }

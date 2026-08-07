@@ -69,17 +69,36 @@
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_080000c0();
-void Func_08000178();
-void Func_03001388();
+s32 Func_02001cd4();
+s32 Func_02000ae2();
+u8 *Func_02001dde();
+void Func_02001ee0();
+s32 Func_02001d6e();
+void Func_02001d34();
+s32 Func_02001db0();
+void Func_02001d5a();
+void Func_02001d6e_b();
+s32 Func_02001df0();
+void Func_02001d9a();
+s32 Func_02001e04();
+void Func_02001dfa();
+s32 Func_02001df8();
+u8 *Func_02001ec0();
+void Func_02001fc8();
+s32 Func_02001ea6();
+void Func_02001e6a();
+s32 Func_02001ef0();
+void Func_02001e9a();
+void Func_02001ea0();
+void Func_02001ed6();
+
+                     
 
 /* Used for their return values. */
-s32 Func_08000170();
-s32 Func_08000380();
-s32 Func_080003a8();
-s32 Func_0200053c();
-u8 *Func_08077008();
-u8 *Func_08077000();
+
+                    
+
+                    
 
 s32 Func_02000580(void)
 {
@@ -97,20 +116,20 @@ s32 Func_02000580(void)
     s32 i;
     u8 *block;
 
-    handle = Func_08000170(340);
-    present = Func_0200053c(ids);
+    handle = Func_02001cd4(340);
+    present = Func_02000ae2(ids);
 
     for (i = 7; i >= 0; i--) {
         scratch[i] = 0;
     }
 
     for (slot = 0; slot < present; slot++) {
-        block = Func_08077008(ids[slot]);
-        Func_03001388(handle, block, 340);
+        block = Func_02001dde(ids[slot]);
+        Func_02001ee0(handle, block, 340);
         *(u8 *)((u32)handle + 298) = 2;
         scratch[ids[slot]] = (u8)(slot - 128);
 
-        rc = Func_08000380(handle, 340);
+        rc = Func_02001d6e(handle, 340);
         stalls = 0;
         if (rc == -1) {
             status = rc;
@@ -121,7 +140,7 @@ s32 Func_02000580(void)
         goto testRosterSend;
 waitRosterSend:
         budget--;
-        Func_080000c0(1);
+        Func_02001d34(1);
         if (budget < 0 || (*linkState & 3) != 3) {
             stalls++;
             if (stalls > 24) {
@@ -129,10 +148,10 @@ waitRosterSend:
             }
         }
 testRosterSend:
-        if (Func_080003a8() != 0) {
+        if (Func_02001db0() != 0) {
             goto waitRosterSend;
         }
-        Func_080000c0(2);
+        Func_02001d5a(2);
     }
 
     sent = present;
@@ -140,7 +159,7 @@ testRosterSend:
     goto sendPadding;
 waitPadding:
     budget--;
-    Func_080000c0(1);
+    Func_02001d6e_b(1);
     if (budget < 0 || (*linkState & 3) != 3) {
         stalls++;
         if (stalls > 24) {
@@ -148,17 +167,17 @@ waitPadding:
         }
     }
 testPadding:
-    if (Func_080003a8() != 0) {
+    if (Func_02001df0() != 0) {
         goto waitPadding;
     }
-    Func_080000c0(2);
+    Func_02001d9a(2);
     sent++;
 
 sendPadding:
     if (sent <= 2) {
         *(u8 *)((u32)handle + 298) = 0;
         stalls = 0;
-        rc = Func_08000380(handle, 340);
+        rc = Func_02001e04(handle, 340);
         if (rc == -1) {
             status = rc;
             goto close;
@@ -166,10 +185,10 @@ sendPadding:
         goto testPadding;
     }
 
-    Func_08000178(handle);
-    handle = Func_08000170(320);
-    block = Func_08077000(0);
-    Func_03001388(handle, block, 320);
+    Func_02001dfa(handle);
+    handle = Func_02001df8(320);
+    block = Func_02001ec0(0);
+    Func_02001fc8(handle, block, 320);
 
     {
         s32 *count = (s32 *)((u32)handle + 264);
@@ -197,7 +216,7 @@ sendPadding:
 
     budget = 600;
     stalls = 0;
-    rc = Func_08000380(handle, 320);
+    rc = Func_02001ea6(handle, 320);
     if (rc == -1) {
         status = rc;
         goto close;
@@ -206,7 +225,7 @@ sendPadding:
     goto testFinalSend;
 waitFinalSend:
     budget--;
-    Func_080000c0(1);
+    Func_02001e6a(1);
     if (budget < 0 || (*linkState & 3) != 3) {
         stalls++;
         if (stalls > 24) {
@@ -214,17 +233,17 @@ waitFinalSend:
         }
     }
 testFinalSend:
-    if (Func_080003a8() != 0) {
+    if (Func_02001ef0() != 0) {
         goto waitFinalSend;
     }
-    Func_080000c0(1);
-    Func_080000c0(2);
+    Func_02001e9a(1);
+    Func_02001ea0(2);
     goto close;
 
 fail:
     status = -1;
 
 close:
-    Func_08000178(handle);
+    Func_02001ed6(handle);
     return status;
 }

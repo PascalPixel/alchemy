@@ -45,9 +45,15 @@ typedef struct Slot_0200252c {
 } Slot_0200252c;
 
 /* Four register arguments plus two stack words. */
-void Func_02000244();
-void Func_080091c0();
-Slot_0200252c *Func_0808a080();
+void Func_020055e2();
+Slot_0200252c *Func_02005658();
+Slot_0200252c *Func_02005660();
+void Func_020027b0();
+Slot_0200252c *Func_0200567e();
+Slot_0200252c *Func_02005686();
+void Func_020027d2();
+
+                               
 
 /* Returns the actor record for the given slot. */
 
@@ -58,13 +64,13 @@ void Func_0200252c(void)
     s32 x;
     s32 z;
 
-    Func_080091c0(108, 19, 4, 1, 44, 19);
+    Func_020055e2(108, 19, 4, 1, 44, 19);
 
-    x = Func_0808a080(17)->x >> 20;
-    z = Func_0808a080(17)->z >> 20;
-    Func_02000244(0, x, z, 1, 1, 255);
+    x = Func_02005658(17)->x >> 20;
+    z = Func_02005660(17)->z >> 20;
+    Func_020027b0(0, x, z, 1, 1, 255);
 
-    x = Func_0808a080(18)->x >> 20;
-    z = Func_0808a080(18)->z >> 20;
-    Func_02000244(0, x, z, 1, 1, 255);
+    x = Func_0200567e(18)->x >> 20;
+    z = Func_02005686(18)->z >> 20;
+    Func_020027d2(0, x, z, 1, 1, 255);
 }

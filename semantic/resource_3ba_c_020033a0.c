@@ -87,15 +87,35 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-s32 Func_080770c0();            /* test a story flag */
-s32 Func_08000170();            /* reserve a graphics handle */
-void Func_08000178();           /* release a graphics handle */
-void Func_080001a8();           /* upload image data to a handle */
-void Func_080001c0();           /* release the graphics slot */
-void Func_080001c8();           /* upload a palette ramp */
-void Func_080001e8();           /* queue a 12-byte sprite request */
-u8 *Func_0808a400();            /* actor record by selector, or 0 */
-s32 Func_03000380();            /* relocated IWRAM divide */
+s32 Func_0200704c();
+s32 Func_02006f8c();
+void Func_02006fa6();
+void Func_02006fcc();
+void Func_02006fb2();
+void Func_02006fde();
+void Func_02007054();
+void Func_02007096();
+void Func_020070d6();
+void Func_02007106();
+void Func_0200714c();
+void Func_020071a2();
+u8 *Func_020073fa();
+s32 Func_0200714c_b();
+s32 Func_02007162();
+void Func_0200723e();
+u8 *Func_02007482();
+s32 Func_020071d4();
+s32 Func_020071ea();
+void Func_020072c0();
+                                /* test a story flag */
+                                /* reserve a graphics handle */
+                                /* release a graphics handle */
+                                /* upload image data to a handle */
+                                /* release the graphics slot */
+                                /* upload a palette ramp */
+                                /* queue a 12-byte sprite request */
+                                /* actor record by selector, or 0 */
+                                /* relocated IWRAM divide */
 
 /* In-image data. */
 extern u8 Data_0200bef4[];      /* file offset 0x3ef4 */
@@ -131,7 +151,7 @@ void Func_020033a0(void)
 
     if (*(s16 *)(record + 220) != 0) {
         *(u16 *)(record + 218) = 2;
-    } else if (Func_080770c0(0x106) != 0) {         /* 131 << 1 */
+    } else if (Func_0200704c(0x106) != 0) {         /* 131 << 1 */
         if (*(s16 *)(record + 218) > 0) {
             *(u16 *)(record + 218) = *(u16 *)(record + 218) - 1;
         }
@@ -146,16 +166,16 @@ void Func_020033a0(void)
             *(volatile u32 *)0x040000d8 = 0x050003c0;
             *(volatile u32 *)0x040000dc = 0x80000010;
 
-            handle = Func_08000170(0x200);
-            Func_080001a8(Data_0200bf14, handle);
-            Func_080001c8(*(s16 *)(record + 216), 0x200, handle);
-            Func_08000178(handle);
+            handle = Func_02006f8c(0x200);
+            Func_02006fa6(Data_0200bf14, handle);
+            Func_02006fcc(*(s16 *)(record + 216), 0x200, handle);
+            Func_02006fb2(handle);
         }
     }
 
     permuted_22 = *(s16 *)(record + 218);
     if (counter == 0) {
-        Func_080001c0(*(s16 *)(record + 216));
+        Func_02006fde(*(s16 *)(record + 216));
         return;
     }
     counter  = permuted_22;
@@ -166,7 +186,7 @@ void Func_020033a0(void)
     entry[1] = (u32)((104 - (linkCount << 4)) << 16) | column | 0x8000;
     entry[0] = 0;
     entry[2] = tile | 0xe400;
-    Func_080001e8(entry, 255, 12);
+    Func_02007054(entry, 255, 12);
     entry += 3;
 
     /* Body, top half. */
@@ -174,7 +194,7 @@ void Func_020033a0(void)
         entry[0] = 0;
         entry[1] = (u32)((96 - (i << 4)) << 16) | column | 0x40000000;
         entry[2] = (tile + 2) | 0xe400;
-        Func_080001e8(entry, 255, 12);
+        Func_02007096(entry, 255, 12);
         entry += 3;
     }
 
@@ -182,13 +202,13 @@ void Func_020033a0(void)
     entry[0] = 0;
     entry[1] = 0x700000 | column | 0x8000;          /* 224 << 15 */
     entry[2] = (tile + 6) | 0xe400;
-    Func_080001e8(entry, 255, 12);
+    Func_020070d6(entry, 255, 12);
     entry += 3;
 
     entry[0] = 0;
     entry[1] = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
     entry[2] = (tile + 6) | 0xe400;
-    Func_080001e8(entry, 255, 12);
+    Func_02007106(entry, 255, 12);
     entry += 3;
 
     /* Body, mirrored half.  The vertical term starts at 0x800000 and steps by
@@ -200,7 +220,7 @@ void Func_020033a0(void)
             entry[0] = 0;
             entry[1] = column | vertical | 0x40000000 | 0x10000000;
             entry[2] = (tile + 2) | 0xe400;
-            Func_080001e8(entry, 255, 12);
+            Func_0200714c(entry, 255, 12);
             entry += 3;
             vertical += 0x100000;
         }
@@ -215,7 +235,7 @@ void Func_020033a0(void)
     entry[0] = 0;
     entry[1] = column;
     entry[2] = tile | 0xe400;
-    Func_080001e8(entry, 255, 12);
+    Func_020071a2(entry, 255, 12);
     entry += 3;
 
     if ((Data_03001e40 & 15) <= 4) {
@@ -223,12 +243,12 @@ void Func_020033a0(void)
     }
 
     /* Endpoint sprite for the second selector. */
-    actor = Func_0808a400(*(s16 *)(record + 224));
+    actor = Func_020073fa(*(s16 *)(record + 224));
     if (actor != 0) {
-        across = Func_03000380(*(s32 *)(actor + 8) - *(s32 *)(record + 232),
+        across = Func_0200714c_b(*(s32 *)(actor + 8) - *(s32 *)(record + 232),
                                0xe0000);            /* 224 << 12 */
         down = across + 112;
-        across = Func_03000380(*(s32 *)(actor + 16) - *(s32 *)(record + 236),
+        across = Func_02007162(*(s32 *)(actor + 16) - *(s32 *)(record + 236),
                                0xe0000);
         across = across + (*(s16 *)(record + 218) * 6);
 
@@ -236,20 +256,20 @@ void Func_020033a0(void)
         entry[1] = (((u32)(across - 4)) & 0xff) | (u32)(down << 16)
                    | 0x40000000;
         entry[2] = (tile + 12) | 0xe400;
-        Func_080001e8(entry, 255, 12);
+        Func_0200723e(entry, 255, 12);
         entry += 3;
     }
 
     /* Endpoint sprite for the first selector. */
-    actor = Func_0808a400(*(s16 *)(record + 222));
+    actor = Func_02007482(*(s16 *)(record + 222));
     if (actor == 0) {
         return;
     }
 
-    across = Func_03000380(*(s32 *)(actor + 8) - *(s32 *)(record + 232),
+    across = Func_020071d4(*(s32 *)(actor + 8) - *(s32 *)(record + 232),
                            0xe0000);
     down = across + 112;
-    across = Func_03000380(*(s32 *)(actor + 16) - *(s32 *)(record + 236),
+    across = Func_020071ea(*(s32 *)(actor + 16) - *(s32 *)(record + 236),
                            0xe0000);
     across = across + (*(s16 *)(record + 218) * 6);
 
@@ -258,5 +278,5 @@ void Func_020033a0(void)
     entry[2] = (tile + 8) | 0xe400;
 
     /* Only r0 and r1 are set at this site; see the note above. */
-    Func_080001e8(entry, 255);
+    Func_020072c0(entry, 255);
 }

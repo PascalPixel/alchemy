@@ -66,34 +66,94 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_0808a080();            /* scene record for an actor selector */
-void Func_0808a088();
-void Func_0808a248();           /* scene request keyed by a selector */
-void Func_0808a588();
-void Func_08009080();           /* select presentation mode (record, mode) */
-s32 Func_080091a8();            /* tile height at (x, z) */
-void Func_080091b8();           /* six-argument renderer, last two on stack */
-void Func_080091c0();           /* six-argument renderer, last two on stack */
-void Func_080091c8();           /* six-argument scene presentation request */
-void Func_080091e0();           /* set presentation phase (record, phase) */
-void Func_080000d0();           /* install a per-frame task (callback, rate) */
-void Func_080770c8();           /* set a story flag */
-s32 Func_080770c0();            /* test a story flag */
-s32 Func_080770e0();            /* read a story value */
-void Func_080f9010();           /* play a cue */
+void Func_020046bc();
+u8 *Func_0200471a();
+s32 Func_02004656();
+void Func_02004696();
+s32 Func_0200470e();
+u8 *Func_0200476c();
+void Func_020046e0();
+void Func_02004602();
+u8 *Func_020047b0();
+s32 Func_02004760();
+void Func_0200472c();
+void Func_02004736();
+u8 *Func_020047fc();
+void Func_02004760_b();
+u8 *Func_02004826();
+void Func_0200478a();
+s32 Func_020047f0();
+void Func_020047a8();
+void Func_020047ba();
+void Func_020047c4();
+u8 *Func_02004892();
+s32 Func_0200483a();
+void Func_020047f2();
+void Func_020047be();
+void Func_020047c8();
+u8 *Func_020048de();
+void Func_02003ad4();
+void Func_02003adc();
+void Func_020043ee();
+void Func_0200489e();
+void Func_02004964();
+void Func_0200496a();
+void Func_02004970();
+void Func_02004976();
+void Func_0200497c();
+s32 Func_0200491a();
+void Func_02004ac4();
+void Func_020025e2();
+void Func_0200256e();
+void Func_020016ec();
+void Func_020016f2();
+void Func_020016f8();
+void Func_02003426();
+void Func_02004ade();
+void Func_02004ae6();
+void Func_02004aee();
+void Func_02004558();
+void Func_02004828();
+void Func_020049de();
+void Func_020049e4();
+s32 Func_02004982();
+void Func_020025ca();
+void Func_02002648();
+void Func_02003476();
+s32 Func_0200499e();
+void Func_02001b08();
+void Func_02002a74();
+void Func_020016d0();
+void Func_02004aea();
+void Func_020016e0();
+void Func_02004afa();
+                                /* scene record for an actor selector */
+                     
+                                /* scene request keyed by a selector */
+                     
+                                /* select presentation mode (record, mode) */
+                                /* tile height at (x, z) */
+                                /* six-argument renderer, last two on stack */
+                                /* six-argument renderer, last two on stack */
+                                /* six-argument scene presentation request */
+                                /* set presentation phase (record, phase) */
+                                /* install a per-frame task (callback, rate) */
+                                /* set a story flag */
+                                /* test a story flag */
+                                /* read a story value */
+                                /* play a cue */
 
 /* This overlay's own routines.  Those marked (bx) have byte-exact sources in
  * assets/code; see the argument-count note above. */
-void Func_02000974();           /* bx */
-void Func_02000a10();           /* bx */
-void Func_02000db8();
-void Func_02001898();           /* bx */
-void Func_02001910();
-void Func_02001d20();           /* bx */
-void Func_02002738();           /* bx */
-void Func_02002ea0();
-void Func_02003764();
-void Func_0200384c();           /* bx */
+                                /* bx */
+                                /* bx */
+                     
+                                /* bx */
+                     
+                                /* bx */
+                                /* bx */
+
+                                /* bx */
 
 /* The per-frame tasks installed here; in-image code, Thumb-tagged in the
  * pool as 0x0200804d and 0x020099e1. */
@@ -116,128 +176,128 @@ s32 Func_02000a3c(void)
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 0;              /* 224 << 1 */
 
-    Func_080770c8(0x144);                       /* 162 << 1 */
+    Func_020046bc(0x144);                       /* 162 << 1 */
 
-    record = Func_0808a080(9);
+    record = Func_0200471a(9);
     if (*(s32 *)(record + 12) == 0
-        && Func_080091a8(0, *(s32 *)(record + 8),
+        && Func_02004656(0, *(s32 *)(record + 8),
                          *(s32 *)(record + 16)) == 0) {
         *(record + 0x23) = 2;
         *(record + 0x55) = 0;
-        Func_080091c0(14, 13, 1, 1,
+        Func_02004696(14, 13, 1, 1,
                       *(s32 *)(record + 8) >> 20,
                       *(s32 *)(record + 16) >> 20);
     }
 
-    column = Func_080770e0(0x310);              /* 196 << 2 */
+    column = Func_0200470e(0x310);              /* 196 << 2 */
     if (column == 0) {
         column = 25;
     }
 
-    record = Func_0808a080(10);
+    record = Func_0200476c(10);
     *(s32 *)(record + 8) = (column << 20) + 0x80000;
     *(record + 0x55) = 0;
-    Func_080091c0(14, 13, 1, 1, column, 12);
+    Func_020046e0(14, 13, 1, 1, column, 12);
     *(record + 0x23) = 2;
 
-    Func_080000d0((void (*)(void))((s32)&Func_0200004c | 1), 0xc80);
+    Func_02004602((void (*)(void))((s32)&Func_0200004c | 1), 0xc80);
 
-    record = Func_0808a080(15);
+    record = Func_020047b0(15);
     *(record + 0x22) = 1;
-    if (Func_080770c0(0x303) != 0) {
-        Func_08009080(record, 4);
-        Func_080091e0(record, 0);
+    if (Func_02004760(0x303) != 0) {
+        Func_020046bc(record, 4);
+        Func_0200472c(record, 0);
         *(record + 0x59) = 0;
         *(record + 0x23) = 3;
-        Func_080091c0(47, 24, 1, 1, 47, 12);
+        Func_02004736(47, 24, 1, 1, 47, 12);
     }
 
-    record = Func_0808a080(17);
+    record = Func_020047fc(17);
     *(record + 0x55) = 0;
     *(record + 0x23) = 2;
-    Func_080091c0(64, 24, 3, 1, 64, *(s32 *)(record + 16) >> 20);
+    Func_02004760_b(64, 24, 3, 1, 64, *(s32 *)(record + 16) >> 20);
 
-    record = Func_0808a080(18);
+    record = Func_02004826(18);
     *(record + 0x55) = 0;
     *(record + 0x23) = 2;
-    Func_080091c0(63, 25, 1, 3, *(s32 *)(record + 8) >> 20, 9);
+    Func_0200478a(63, 25, 1, 3, *(s32 *)(record + 8) >> 20, 9);
 
-    if (Func_080770c0(0x302) != 0) {
-        Func_080091c0(37, 7, 1, 4, 34, 7);
-        Func_080091c0(36, 7, 1, 4, 37, 7);
-        Func_080091b8(100, 29, 1, 3, 34, 38);
+    if (Func_020047f0(0x302) != 0) {
+        Func_020047a8(37, 7, 1, 4, 34, 7);
+        Func_020047ba(36, 7, 1, 4, 37, 7);
+        Func_020047c4(100, 29, 1, 3, 34, 38);
     }
 
-    record = Func_0808a080(13);
-    if (Func_080770c0(0x301) != 0) {
-        Func_080091c0(43, 12, 1, 1, 41, 12);
+    record = Func_02004892(13);
+    if (Func_0200483a(0x301) != 0) {
+        Func_020047f2(43, 12, 1, 1, 41, 12);
         *(record + 0x55) = 0;
         *(s32 *)(record + 0x34) = 0x6666;
         *(s32 *)(record + 0x30) = 0xcccc;
         *(s32 *)(record + 12) = 0x80000;
-        Func_08009080(record, 3);
+        Func_020047be(record, 3);
     } else {
-        Func_08009080(record, 2);
+        Func_020047c8(record, 2);
     }
 
     *(record + 0x23) = 2;
-    record = Func_0808a080(14);
+    record = Func_020048de(14);
 
-    Func_02002ea0(24, 120);
-    Func_02002ea0(25, 127);
+    Func_02003ad4(24, 120);
+    Func_02003adc(25, 127);
 
     scene = Data_02000240[225];
 
     switch (scene) {
     case 1:
-        Func_02003764(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
-        Func_080091c8(127, 0, 1, 2, 19, 2);
-        Func_0808a088(19);
-        Func_0808a088(20);
-        Func_0808a088(21);
-        Func_0808a088(22);
-        Func_0808a088(23);
-        if (Func_080770c0(0x109) == 0) {
-            Func_080f9010(17);
-            Func_02001910(0);
-            Func_02001898();
-            Func_02000a10(1);
-            Func_02000a10(2);
-            Func_02000a10(3);
-            Func_02002738(1);
+        Func_020043ee(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
+        Func_0200489e(127, 0, 1, 2, 19, 2);
+        Func_02004964(19);
+        Func_0200496a(20);
+        Func_02004970(21);
+        Func_02004976(22);
+        Func_0200497c(23);
+        if (Func_0200491a(0x109) == 0) {
+            Func_02004ac4(17);
+            Func_020025e2(0);
+            Func_0200256e();
+            Func_020016ec(1);
+            Func_020016f2(2);
+            Func_020016f8(3);
+            Func_02003426(1);
         }
-        Func_0808a588(1, 0);
-        Func_0808a588(2, 0);
-        Func_0808a588(3, 0);
-        Func_0200384c(0xe4);
+        Func_02004ade(1, 0);
+        Func_02004ae6(2, 0);
+        Func_02004aee(3, 0);
+        Func_02004558(0xe4);
         break;
 
     case 2:
-        Func_080000d0((void (*)(void))((s32)&Func_020019e0 | 1), 0xc80);
-        Func_0808a088(24);
-        Func_0808a088(25);
-        if (Func_080770c0(0x109) == 0) {
-            Func_02001898();
-            Func_02001910(1);
-            Func_02002738(0);
+        Func_02004828((void (*)(void))((s32)&Func_020019e0 | 1), 0xc80);
+        Func_020049de(24);
+        Func_020049e4(25);
+        if (Func_02004982(0x109) == 0) {
+            Func_020025ca();
+            Func_02002648(1);
+            Func_02003476(0);
         }
         break;
 
     case 3:
-        if (Func_080770c0(0x109) == 0) {
-            Func_02000db8(19);
-            Func_02001d20();
+        if (Func_0200499e(0x109) == 0) {
+            Func_02001b08(19);
+            Func_02002a74();
         }
         break;
 
     case 4:
-        Func_02000974(1);
-        Func_0808a248(4);
+        Func_020016d0(1);
+        Func_02004aea(4);
         break;
 
     case 5:
-        Func_02000974(-1);
-        Func_0808a248(5);
+        Func_020016e0(-1);
+        Func_02004afa(5);
         break;
     }
 

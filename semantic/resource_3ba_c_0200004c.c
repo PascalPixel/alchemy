@@ -40,9 +40,20 @@
 
 /* Old-style declarations: these imports' interfaces are not fully known and
  * the same name takes different argument counts elsewhere in the tree. */
-void Func_080091c0();           /* six-argument renderer, last two on stack */
-void Func_080091c8();           /* six-argument scene presentation request */
-void Func_0808a100();           /* two-argument cue */
+void Func_02003c7e();
+void Func_02003c90();
+void Func_02003c9a();
+void Func_02003daa();
+void Func_02003cc0();
+void Func_02003cd2();
+void Func_02003dda();
+void Func_02003cf0();
+void Func_02003d02();
+void Func_02003e0a();
+void Func_02003d14();
+                                /* six-argument renderer, last two on stack */
+                                /* six-argument scene presentation request */
+                                /* two-argument cue */
 
 /* The shared mode/countdown word.  In-image data at file offset 0x441c. */
 extern s32 Data_0200c41c;
@@ -54,20 +65,20 @@ void Func_0200004c(void)
     mode = Data_0200c41c;
 
     if (mode == 60) {
-        Func_080091c8(92, 33, 2, 2, 50, 38);
-        Func_080091c8(92, 33, 2, 2, 54, 38);
-        Func_080091c0(50, 25, 6, 1, 50, 12);
-        Func_0808a100(16, 11);
+        Func_02003c7e(92, 33, 2, 2, 50, 38);
+        Func_02003c90(92, 33, 2, 2, 54, 38);
+        Func_02003c9a(50, 25, 6, 1, 50, 12);
+        Func_02003daa(16, 11);
     } else if (mode == 6 || mode == 66) {
-        Func_080091c8(92, 31, 2, 2, 50, 38);
-        Func_080091c8(92, 31, 2, 2, 54, 38);
-        Func_0808a100(16, 10);
+        Func_02003cc0(92, 31, 2, 2, 50, 38);
+        Func_02003cd2(92, 31, 2, 2, 54, 38);
+        Func_02003dda(16, 10);
     } else if (mode == 0) {
-        Func_080091c8(92, 29, 2, 2, 50, 38);
-        Func_080091c8(92, 29, 2, 2, 54, 38);
-        Func_0808a100(16, 12);
+        Func_02003cf0(92, 29, 2, 2, 50, 38);
+        Func_02003d02(92, 29, 2, 2, 54, 38);
+        Func_02003e0a(16, 12);
         Data_0200c41c = 120;
-        Func_080091c0(50, 24, 6, 1, 50, 12);
+        Func_02003d14(50, 24, 6, 1, 50, 12);
     }
 
     Data_0200c41c = Data_0200c41c - 1;

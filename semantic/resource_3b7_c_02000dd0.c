@@ -50,8 +50,8 @@
 
 #include "types.h"
 
-u8 *Func_0808a080();
-void Func_08009088();
+u8 *Func_0200271a();
+void Func_0200269c();
 
 void Func_02000dd0(s32 slot, s32 *position, s32 heading_word, s32 tag, s32 arg4)
 {
@@ -59,7 +59,7 @@ void Func_02000dd0(s32 slot, s32 *position, s32 heading_word, s32 tag, s32 arg4)
     u8 *list;
     s32 remaining;
 
-    record = Func_0808a080(slot);
+    record = Func_0200271a(slot);
 
     if (record != 0) {
         *(s32 *)(record + 8) = position[0];
@@ -72,7 +72,7 @@ void Func_02000dd0(s32 slot, s32 *position, s32 heading_word, s32 tag, s32 arg4)
         *(u8 *)(*(s32 *)(record + 0x50) + 0x26) = 0;
 
         /* r0 still holds the record returned by the lookup. */
-        Func_08009088(record, arg4);
+        Func_0200269c(record, arg4);
     }
 
     /* Reached whether or not the record existed - see the note above. */

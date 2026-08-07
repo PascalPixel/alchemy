@@ -37,7 +37,8 @@
  * call sites in this overlay. */
 #include "types.h"
 
-u8 *Func_0808a080();    /* scene-entity record by selector */
+u8 *Func_02001848();
+                        /* scene-entity record by selector */
 
 void Func_02000704(void)
 {
@@ -45,7 +46,7 @@ void Func_02000704(void)
     s32 remaining = 5;
 
     do {
-        u8 *entry = Func_0808a080(index);
+        u8 *entry = Func_02001848(index);
 
         remaining--;
         index++;

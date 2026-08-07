@@ -28,27 +28,33 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-s32 Func_080770c0();    /* test a story flag (used in a condition) */
-void Func_080770c8();   /* set a story flag */
-void Func_080770d0();   /* clear a story flag */
-void Func_08015040();
-void Func_080f9010();
-void Func_02000210();   /* this overlay, the scene body for the 0x201 state */
+s32 Func_02001e46();
+s32 Func_02001e52();
+void Func_02001e56();
+void Func_02001f8c();
+void Func_02000574();
+void Func_02001e76();
+void Func_02001e84();
+                        /* test a story flag (used in a condition) */
+                        /* set a story flag */
+                        /* clear a story flag */
+
+                        /* this overlay, the scene body for the 0x201 state */
 
 void Func_0200033c(void)
 {
     /* 0x200 is built as `movs r0,#128 / lsls r0,#2`; 0x201/0x202 are pooled. */
-    if (Func_080770c0(0x201) != 0) {
+    if (Func_02001e46(0x201) != 0) {
         return;
     }
-    if (Func_080770c0(0x200) != 0) {
+    if (Func_02001e52(0x200) != 0) {
         return;
     }
 
-    Func_08015040(0x1528, 1);
-    Func_080f9010(0x9d);
-    Func_02000210();
+    Func_02001e56(0x1528, 1);
+    Func_02001f8c(0x9d);
+    Func_02000574();
 
-    Func_080770c8(0x201);
-    Func_080770d0(0x202);
+    Func_02001e76(0x201);
+    Func_02001e84(0x202);
 }

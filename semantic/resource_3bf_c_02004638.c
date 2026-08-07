@@ -25,10 +25,18 @@
  * The callees are other entry points of this same overlay module; none of them
  * is reconstructed here.
  */
-void Func_0808a010();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a1b8();
+void Func_02009d70();
+void Func_02009d88();
+void Func_02009da6();
+void Func_02009ccc();
+void Func_02009db8();
+void Func_02009cde();
+void Func_02009dca();
+void Func_02009cf0();
+void Func_02009db6();
+void Func_02009dce();
+
+                     
 
 void Func_02004638(void)
 {
@@ -44,21 +52,21 @@ void Func_02004638(void)
     case 6: id = 0x241a; break;
     case 7: id = 0x241b; break;
 
-        Func_0808a170(21, 0xd000, 0);
-        Func_0808a180(50);
-        Func_0808a1b8(21, 0xb000, 0);
-        Func_0808a010(50);
+        Func_02009d70(21, 0xd000, 0);
+        Func_02009d88(50);
+        Func_02009da6(21, 0xb000, 0);
+        Func_02009ccc(50);
     case 5:
-        Func_0808a1b8(21, 0x5000, 0);
-        Func_0808a010(50);
-        Func_0808a1b8(0x2419);
-        Func_0808a010(21, 0);
+        Func_02009db8(21, 0x5000, 0);
+        Func_02009cde(50);
+        Func_02009dca(0x2419);
+        Func_02009cf0(21, 0);
         return;
 
     default:
         return;
     }
 
-    Func_0808a170(id);
-    Func_0808a180(21, 0);
+    Func_02009db6(id);
+    Func_02009dce(21, 0);
 }

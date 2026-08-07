@@ -88,29 +88,66 @@ extern u8 Data_0200d7c8[];
 extern u8 Data_0200dac8[];
 extern u8 Data_0200dd3c[];
 
-struct Actor_02002b14 *Func_0808a080();
-struct Progress_02002b14 *Func_02000c5c();
-s32 Func_02000098();
-s32 Func_080770c0();
+struct Actor_02002b14 *Func_020079d8();
+void Func_020079c6();
+void Func_0200797a();
+void Func_0200798e();
+struct Actor_02002b14 *Func_02007a10();
+void Func_020079be();
+void Func_020079da();
+struct Actor_02002b14 *Func_02007ab8();
+s32 Func_02002cfa();
+void Func_02007bd0();
+struct Actor_02002b14 *Func_02007b20();
+void Func_02007c00();
+struct Actor_02002b14 *Func_02007b54();
+void Func_02007af2();
+void Func_02007b14();
+void Func_02003632();
+void Func_02007ce8();
+void Func_02007c68();
+void Func_02007b54_b();
+void Func_02007c8c();
+struct Actor_02002b14 *Func_02007bda();
+struct Actor_02002b14 *Func_02007bec();
+void Func_02007cce();
+struct Actor_02002b14 *Func_02007c1c();
+void Func_02007b72();
+s32 Func_02007c02();
+void Func_02007c32();
+struct Actor_02002b14 *Func_02007c4a();
+struct Actor_02002b14 *Func_02007c52();
+struct Actor_02002b14 *Func_02007c5a();
+struct Actor_02002b14 *Func_02007c62();
+void Func_02007d60();
+void Func_02007d80();
+void Func_02007d7c();
+struct Progress_02002b14 *Func_02003a58();
+void Func_02007c90();
+void Func_02007d88();
+void Func_02007da2();
+void Func_02007c20();
+void Func_02007c08();
+struct Progress_02002b14 *Func_02003a94();
+void Func_02007c7a();
+void Func_02007cae();
+void Func_02007cfe();
+void Func_02007c2e();
+void Func_02007d42();
 
-void Func_0808a018();
-void Func_080091c0();
-void Func_0808a1e0();
-void Func_080091e0();
-void Func_0200094c();
-void Func_080f9010();
-void Func_080090d0();
-void Func_0808a020();
-void Func_0808a208();
-void Func_0808a220();
-void Func_0808a218();
-void Func_0808a010();
-void Func_0808a210();
-void Func_08009148();
-void Func_08009098();
-void Func_08009178();
-void Func_080770c8();
-void Func_080000c0();
+                    
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02002b14(void)
 {
@@ -126,22 +163,22 @@ void Func_02002b14(void)
     s32 slot;
 
     handle = 0;
-    leader = Func_0808a080(0, 0);
+    leader = Func_020079d8(0, 0);
 
     /* No argument register is written here; r0 still holds the pointer just
      * returned above, and that dataflow is preserved as written. */
-    Func_0808a018(leader);
+    Func_020079c6(leader);
 
-    Func_080091c0(69, 48, 4, 2, 5, 48);
-    Func_080091c0(73, 37, 9, 13, 9, 37);
+    Func_0200797a(69, 48, 4, 2, 5, 48);
+    Func_0200798e(73, 37, 9, 13, 9, 37);
 
     for (slot = 15; slot <= 18; slot++) {
-        actor = Func_0808a080(slot);
+        actor = Func_02007a10(slot);
 
         if (actor->flags23 == 2) {
-            Func_080091c0(73, 48, 1, 1, actor->x >> 20, actor->z >> 20);
+            Func_020079be(73, 48, 1, 1, actor->x >> 20, actor->z >> 20);
         } else {
-            Func_080091c0(72, 48, 1, 1, actor->x >> 20, actor->z >> 20);
+            Func_020079da(72, 48, 1, 1, actor->x >> 20, actor->z >> 20);
         }
 
         match = 8;
@@ -164,7 +201,7 @@ void Func_02002b14(void)
         }
 
         for (other = 15; other <= 18; other++) {
-            neighbour = Func_0808a080(other);
+            neighbour = Func_02007ab8(other);
             if (other != slot
                 && (actor->x >> 20) == (neighbour->x >> 20)
                 && (actor->z >> 20) == (neighbour->z >> 20)) {
@@ -179,90 +216,90 @@ void Func_02002b14(void)
         shade = (leader->sprite->flags9 << 28) >> 30;
 
         if ((u32)(leader->z >> 20) <= (u32)Data_0200d164[match * 2 + 1]) {
-            handle = Func_02000098(actor->x, actor->y,
+            handle = Func_02002cfa(actor->x, actor->y,
                                    actor->z + 0xfffc0000, 20);
-            Func_0808a1e0(0, 3);
+            Func_02007bd0(0, 3);
         }
 
         for (other = 15; other <= 18; other++) {
-            neighbour = Func_0808a080(other);
+            neighbour = Func_02007b20(other);
             if (other != slot
                 && (actor->x >> 20) == (neighbour->x >> 20)
                 && ((actor->z >> 20) - 1) == (neighbour->z >> 20)) {
-                Func_0808a1e0(other, 3);
+                Func_02007c00(other, 3);
             }
         }
 
         /* Only r1 is written at the second site; r0 still carries the record
          * the first call returned. */
-        Func_080091e0(Func_0808a080(slot), 0);
+        Func_02007af2(Func_02007b54(slot), 0);
 
         actor->flags22 = 0;
         actor->mode55 = 3;
         actor->state48 = 0x1999;
         actor->state44 = 0;
-        Func_080091c0(6, 44, 1, 1,
+        Func_02007b14(6, 44, 1, 1,
                       Data_0200d164[match * 2], Data_0200d164[match * 2 + 1]);
-        Func_0200094c(actor);
-        Func_080f9010(188);
+        Func_02003632(actor);
+        Func_02007ce8(188);
         actor->state59 = 0;
         actor->mode55 = 0;
         actor->y = 0xfff00000;
-        Func_0808a1e0(slot, 3);
+        Func_02007c68(slot, 3);
         actor->flags23 = 2;
-        Func_080091c0(73, 48, 1, 1,
+        Func_02007b54_b(73, 48, 1, 1,
                       Data_0200d164[match * 2], Data_0200d164[match * 2 + 1]);
-        Func_0808a1e0(0, shade);
-        Func_0808a080(0)->flags23 |= 1;
+        Func_02007c8c(0, shade);
+        Func_02007bda(0)->flags23 |= 1;
 
         for (other = 15; other <= 18; other++) {
-            neighbour = Func_0808a080(other);
+            neighbour = Func_02007bec(other);
             if (other != slot
                 && (actor->x >> 20) == (neighbour->x >> 20)
                 && ((actor->z >> 20) - 1) == (neighbour->z >> 20)) {
-                Func_0808a1e0(other, 1);
-                Func_0808a080(other)->flags23 |= 1;
+                Func_02007cce(other, 1);
+                Func_02007c1c(other)->flags23 |= 1;
             }
         }
 
-        Func_080090d0(handle);
+        Func_02007b72(handle);
 
-        if (Func_080770c0(776) != 0) {
-            Func_0808a020();
+        if (Func_02007c02(776) != 0) {
+            Func_02007c32();
             return;
         }
 
-        if ((Func_0808a080(15)->flags23
-             & Func_0808a080(16)->flags23
-             & Func_0808a080(17)->flags23
-             & Func_0808a080(18)->flags23
+        if ((Func_02007c4a(15)->flags23
+             & Func_02007c52(16)->flags23
+             & Func_02007c5a(17)->flags23
+             & Func_02007c62(18)->flags23
              & 2) == 0) {
             continue;
         }
 
-        Func_0808a208(0x10000, 0x2000);
-        Func_0808a220(14, 1);
-        Func_0808a218();
+        Func_02007d60(0x10000, 0x2000);
+        Func_02007d80(14, 1);
+        Func_02007d7c();
 
-        progressA = Func_02000c5c(136, 776, Data_0200d77c);
-        Func_0808a010(30);
-        Func_0808a208(0x6666, 0xccc);
-        Func_0808a210(0x00d80000, -1, 0x02780000, 1);
-        Func_08009148(progressA);
-        Func_08009098(progressA, Data_0200d7c8);
-        progressB = Func_02000c5c(216, 760, Data_0200dac8);
+        progressA = Func_02003a58(136, 776, Data_0200d77c);
+        Func_02007c90(30);
+        Func_02007d88(0x6666, 0xccc);
+        Func_02007da2(0x00d80000, -1, 0x02780000, 1);
+        Func_02007c20(progressA);
+        Func_02007c08(progressA, Data_0200d7c8);
+        progressB = Func_02003a94(216, 760, Data_0200dac8);
 
         while (progressA->running != 0 || progressB->running != 0) {
             if (progressA->finished != 0 || progressB->finished != 0) {
-                Func_0808a010(30);
-                Func_08009178(Data_0200dd3c, 77, 35);
-                Func_080091c0(13, 35, 1, 1, 13, 36);
-                Func_080770c8(776);
+                Func_02007ce8(30);
+                Func_02007c7a(Data_0200dd3c, 77, 35);
+                Func_02007cae(13, 35, 1, 1, 13, 36);
+                Func_02007cfe(776);
                 break;
             }
-            Func_080000c0(1);
+            Func_02007c2e(1);
         }
     }
 
-    Func_0808a020();
+    Func_02007d42();
 }

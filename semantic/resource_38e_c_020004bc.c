@@ -67,9 +67,11 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneEntity *Func_0808a080();     /* scene entity by selector */
+struct SceneEntity *Func_02000fc4();
+void Func_02000a00(void);
+                                         /* scene entity by selector */
 
-void Func_0200050c(void);                /* this overlay, 0x0200050c */
+                                         /* this overlay, 0x0200050c */
 
 s32 Func_020004bc(void)
 {
@@ -79,14 +81,14 @@ s32 Func_020004bc(void)
 
     *(s32 *)(workspace + 448) = 256;            /* 128 << 1 */
 
-    entity = Func_0808a080(8);
+    entity = Func_02000fc4(8);
     entity->flags23 = 0;
 
     handle = entity->handle;
     handle->flags09 = (u8)((handle->flags09 & ~0x0c) | 0x04);
 
     if (Data_02000240[224] == 0x22) {
-        Func_0200050c();
+        Func_02000a00();
     }
 
     return 0;

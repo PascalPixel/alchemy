@@ -33,10 +33,10 @@
 extern s16 Data_02000240[];
 
 /* Slot accessor. */
-extern u8 *Func_0808a080();
+extern u8 *Func_02001fb6();
+extern void Func_02001e46(u8 *actor);
 
 /* This overlay's effect spawner. */
-extern void Func_02000f3c(u8 *actor);
 
 /* u16 beat counter in the overlay's own image at file offset 0x1d88. */
 extern u16 Data_02009d88;
@@ -47,7 +47,7 @@ void Func_02000ed8(void)
     u16 count;
 
     /* 250 << 1 = 500. */
-    actor = Func_0808a080(*(s32 *)((u8 *)Data_02000240 + 500));
+    actor = Func_02001fb6(*(s32 *)((u8 *)Data_02000240 + 500));
 
     /* Signed compares on 16.16 coordinates.  142 << 16 = 0x008e0000. */
     if (*(s32 *)(actor + 0x08) >= 0x008e0000) {
@@ -66,7 +66,7 @@ void Func_02000ed8(void)
      * call is deliberate in the original: Func_02000f3c may itself have
      * touched it, so the increment uses the post-call value. */
     if ((s16)Data_02009d88 == 0) {
-        Func_02000f3c(actor);
+        Func_02001e46(actor);
     }
     Data_02009d88 = count;
     count = (u16)(Data_02009d88 + 1);

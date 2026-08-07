@@ -93,16 +93,33 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-s32 Func_080770c0();                    /* read a story flag */
-void Func_080770c8();                   /* set a story flag */
-void Func_0808a0f0();                   /* place an entity at (x, z) */
-void Func_0808a158();                   /* select an entity presentation */
-struct SceneEntity *Func_0808a080();    /* scene entity by selector */
-s32 Func_08000140();                    /* reserve workspace on a channel */
-void Func_08000150();                   /* commit the channel reservation */
-void Func_080001c8();                   /* upload a palette ramp */
-s32 Func_08015250();                    /* shared-workspace side effect */
-void Func_080000d0();                   /* install a per-frame task */
+s32 Func_0200529a();
+void Func_020052ac();
+void Func_020052b2();
+void Func_020052b8();
+void Func_020052be();
+s32 Func_020052be_b();
+void Func_020052d0();
+void Func_02005386();
+void Func_020053c6();
+s32 Func_020052f4();
+void Func_020053a4();
+struct SceneEntity *Func_02005354();
+s32 Func_020052c6();
+s32 Func_02005356();
+void Func_020052ee();
+void Func_020052ec();
+void Func_020052d6();
+                                        /* read a story flag */
+                                        /* set a story flag */
+                                        /* place an entity at (x, z) */
+                                        /* select an entity presentation */
+                                        /* scene entity by selector */
+                                        /* reserve workspace on a channel */
+                                        /* commit the channel reservation */
+                                        /* upload a palette ramp */
+                                        /* shared-workspace side effect */
+                                        /* install a per-frame task */
 
 /* Room state table; the byte-exact sibling for 0x0200164c reads it the same
  * way, as signed halfwords from 0x02000240. */
@@ -115,30 +132,30 @@ void Func_020016bc(void)
     s32 skip;
     s32 gradient;
 
-    if (Func_080770c0(0x941) != 0) {
-        Func_080770c8(0x321);
-        Func_080770c8(0x913);
-        Func_080770c8(0x912);
-        Func_080770c8(0x915);
+    if (Func_0200529a(0x941) != 0) {
+        Func_020052ac(0x321);
+        Func_020052b2(0x913);
+        Func_020052b8(0x912);
+        Func_020052be(0x915);
     }
 
-    if (Func_080770c0(0x940) != 0) {
-        Func_080770c8(0x321);
+    if (Func_020052be_b(0x940) != 0) {
+        Func_020052d0(0x321);
     }
 
     if (Data_02000240[225] == 14) {
-        Func_0808a0f0(25, 0x01a80000, 0x00580000);
+        Func_02005386(25, 0x01a80000, 0x00580000);
     }
 
-    Func_0808a158(21, 2);
+    Func_020053c6(21, 2);
 
-    skip = Func_080770c0(0x916);
+    skip = Func_020052f4(0x916);
     if (skip != 0) {
-        Func_0808a0f0(26, 0, 0);
+        Func_020053a4(26, 0, 0);
         return;
     }
 
-    entity = Func_0808a080(26);
+    entity = Func_02005354(26);
     handle = entity->handle;
 
     handle->flags05 = (u8)(handle->flags05 & ~0x20);
@@ -150,11 +167,11 @@ void Func_020016bc(void)
     entity->field5c = 1;
     entity->y = 0x000a0000;
 
-    gradient = Func_08000140(17, 0x608);
+    gradient = Func_020052c6(17, 0x608);
     gradient += 0x400;
-    Func_08015250(0xb5);
-    Func_080001c8(handle->paletteIndex, 0x80, gradient);
-    Func_08000150(17);
+    Func_02005356(0xb5);
+    Func_020052ee(handle->paletteIndex, 0x80, gradient);
+    Func_020052ec(17);
 
     entity->field40 = entity->z;
     entity->field30 = 0;            /* stored from r8, which is 0 here */
@@ -163,5 +180,5 @@ void Func_020016bc(void)
 
     /* 0x0200b90d = file offset 0x390c + the Thumb bit = Func_0200390c, the
      * byte-exact task in assets/code/resource_3a8_c_0200390c.c. */
-    Func_080000d0((void (*)(void))0x0200b90d, 3200);
+    Func_020052d6((void (*)(void))0x0200b90d, 3200);
 }

@@ -36,29 +36,33 @@
  * step at 0x02001ec0, and set scene flag 0x206.
  */
 
-void Func_080000d8();
-void Func_0808a0f0();
+void Func_02004044();
+void Func_0200414e();
+s32 Func_020040e4();
+void Func_020040cc();
+void Func_020040e2();
+void Func_02003ace();
+void Func_02004124();
+
 /* Scene flag test: zero means not yet set. */
-s32 Func_080770c0();
-void Func_080091c0();
-void Func_02001ec0();
+
+                     
 /* Scene flag set. */
-void Func_080770c8();
 
 /* The callback this owner installs; defined at 0x02001e94 in this overlay. */
 void Func_02001e94(void);
 
 void Func_02001bc4(void)
 {
-    Func_080000d8(Func_02001e94);
-    Func_0808a0f0(14, 0, 0);
+    Func_02004044(Func_02001e94);
+    Func_0200414e(14, 0, 0);
 
-    if (Func_080770c0(0x207) != 0) {
-        Func_080091c0(58, 36, 1, 1, 45, 43);
+    if (Func_020040e4(0x207) != 0) {
+        Func_020040cc(58, 36, 1, 1, 45, 43);
     } else {
-        Func_080091c0(46, 43, 1, 1, 45, 43);
+        Func_020040e2(46, 43, 1, 1, 45, 43);
     }
 
-    Func_02001ec0();
-    Func_080770c8(0x206);
+    Func_02003ace();
+    Func_02004124(0x206);
 }

@@ -45,30 +45,34 @@
 
 /* Overlay imports (through the veneer table).  Old-style declarations:
  * overlay imports vary their argument count between call sites. */
-u8 *Func_0808a080();
-void Func_080b0018();
-s32 Func_080770c0();
-void Func_0808a170();
-void Func_0808a180();
+u8 *Func_02000c6c();
+void Func_02000d52();
+s32 Func_02000c68();
+void Func_02000d02();
+void Func_02000d1a();
+void Func_02000d12();
+void Func_02000d2a();
+
+                    
 
 void Func_02000100(s32 actor)
 {
     u8 *record;
     u32 facing;
 
-    record = Func_0808a080(0);
+    record = Func_02000c6c(0);
     facing = (((u32)*(u16 *)(record + 6) + 0x2000) & 0xffffc000) << 16;
 
     if (facing == 0xc0000000u) {
-        Func_080b0018(10, actor);
+        Func_02000d52(10, actor);
         return;
     }
 
-    if (Func_080770c0(0x96f) != 0) {
-        Func_0808a170(0x2620);
-        Func_0808a180(actor, 0);
+    if (Func_02000c68(0x96f) != 0) {
+        Func_02000d02(0x2620);
+        Func_02000d1a(actor, 0);
     } else {
-        Func_0808a170(0x25d1);
-        Func_0808a180(actor, 0);
+        Func_02000d12(0x25d1);
+        Func_02000d2a(actor, 0);
     }
 }

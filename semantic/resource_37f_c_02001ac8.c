@@ -25,9 +25,12 @@
 
 extern s32 Data_0200a69c;
 
-void Func_080091f0();
-s32 Func_080000f8();
-void Func_080f9010();
+void Func_02003662();
+s32 Func_02003620();
+void Func_020037ca();
+void Func_0200368a();
+
+                     
 
 void Func_02001ac8(void)
 {
@@ -39,17 +42,17 @@ void Func_02001ac8(void)
         timer--;
         Data_0200a69c = timer;
         if (timer == 40) {
-            Func_080091f0(-1, -1, 0xe666);
+            Func_02003662(-1, -1, 0xe666);
         }
         return;
     }
 
-    roll = (u32)Func_080000f8();
+    roll = (u32)Func_02003620();
     if (((roll * 120) >> 16) != 0) {
         return;
     }
 
-    Func_080f9010(0x8a);
-    Func_080091f0(0x10000, 0x20000, 0x10000);
+    Func_020037ca(0x8a);
+    Func_0200368a(0x10000, 0x20000, 0x10000);
     Data_0200a69c = 80;
 }

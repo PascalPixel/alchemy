@@ -47,8 +47,20 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-u8 *Func_0808a080();                /* scene entity by selector */
-void Func_0808a098();               /* start a scripted motion on an entity */
+u8 *Func_02005b5c();
+void Func_02005b82();
+u8 *Func_02005b78();
+u8 *Func_02005b88();
+void Func_02005bae();
+u8 *Func_02005ba4();
+u8 *Func_02005bb4();
+void Func_02005bda();
+u8 *Func_02005bd0();
+u8 *Func_02005be0();
+void Func_02005c06();
+u8 *Func_02005bfc();
+                                    /* scene entity by selector */
+                                    /* start a scripted motion on an entity */
 
 extern s32 Data_0200d144;           /* RAM: this sequence's step counter */
 
@@ -65,41 +77,41 @@ void Func_02001f14(void)
 
     switch (step) {
     case 0:
-        *(s16 *)(Func_0808a080(21) + 100) = 0;
-        Func_0808a098(21, Data_0200bec0);
+        *(s16 *)(Func_02005b5c(21) + 100) = 0;
+        Func_02005b82(21, Data_0200bec0);
         Data_0200d144 = step + 1;
         break;
 
     case 1:
-        if (*(s16 *)(Func_0808a080(21) + 100) == 0) {
+        if (*(s16 *)(Func_02005b78(21) + 100) == 0) {
             return;
         }
-        *(s16 *)(Func_0808a080(20) + 100) = 0;
-        Func_0808a098(20, Data_0200bfb0);
+        *(s16 *)(Func_02005b88(20) + 100) = 0;
+        Func_02005bae(20, Data_0200bfb0);
         Data_0200d144 = step + 1;
         break;
 
     case 2:
-        if (*(s16 *)(Func_0808a080(20) + 100) == 0) {
+        if (*(s16 *)(Func_02005ba4(20) + 100) == 0) {
             return;
         }
-        *(s16 *)(Func_0808a080(20) + 100) = 0;
-        Func_0808a098(20, Data_0200bec0);
+        *(s16 *)(Func_02005bb4(20) + 100) = 0;
+        Func_02005bda(20, Data_0200bec0);
         Data_0200d144 = step + 1;
         break;
 
     case 3:
-        if (*(s16 *)(Func_0808a080(20) + 100) == 0) {
+        if (*(s16 *)(Func_02005bd0(20) + 100) == 0) {
             return;
         }
-        *(s16 *)(Func_0808a080(21) + 100) = 0;
-        Func_0808a098(21, Data_0200bfb0);
+        *(s16 *)(Func_02005be0(21) + 100) = 0;
+        Func_02005c06(21, Data_0200bfb0);
         Data_0200d144 = step + 1;
         break;
 
     case 4:
         Data_0200d144 = 0;
-        if (*(s16 *)(Func_0808a080(21) + 100) == 0) {
+        if (*(s16 *)(Func_02005bfc(21) + 100) == 0) {
             return;
         }
         break;

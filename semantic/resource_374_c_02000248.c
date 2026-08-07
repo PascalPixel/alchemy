@@ -46,32 +46,58 @@ extern u8 *Data_03001ebc;
 extern s32 **Data_03001e70;
 
 /* Overlay-local callees (byte-exact siblings in assets/code). */
-void Func_020022f8(s32);
-void Func_02002564(void);
-void Func_02002574(void);
+void Func_020028e8();
+s32 Func_020028c6();
+void Func_020029c2();
+s32 Func_020028d8();
+s32 Func_020028f2();
+void Func_02002a06();
+s32 Func_0200295e();
+void Func_02002a10();
+void Func_02002a18();
+void Func_02002a30();
+void Func_02002a2e();
+void Func_02002a20();
+void Func_02002a60();
+void Func_02002976();
+void Func_02002a1e();
+void Func_02002984();
+void Func_02002858(void);
+s32 Func_020029c2_b();
+void Func_020025fa(s32);
+void Func_020028f6();
+void Func_0200290c();
+void Func_02002b6a();
+s32 Func_0200290c_b();
+void Func_020029e2();
+void Func_02002ba4();
+void Func_0200295a();
+void Func_02002950();
+void Func_020028dc(void);
+void Func_02002ac4();
+void Func_02002a0a();
+void Func_02002ae0();
+void Func_02002af8();
+void Func_02002a2c();
+
+                         
 void Func_02002590(void);
 
 /* Relocated IWRAM ARM helper: remainder. */
-s32 Func_030003e0();
 
 /* Main-image imports reached through this overlay's veneer table. */
-void Func_080000c0();          /* frame wait                              */
-void Func_080000d0();          /* install per-frame task (callback, rank) */
-void Func_080000d8();          /* remove per-frame task (callback)        */
-s32 Func_080770c0();           /* story-flag query, returns nonzero if set */
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-s32 Func_0808a070();
-s32 Func_0808a080();
-void Func_0808a130();
-void Func_0808a150();
-void Func_0808a158();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a190();
-void Func_080f9010();
+                               /* frame wait                              */
+                               /* install per-frame task (callback, rank) */
+                               /* remove per-frame task (callback)        */
+                               /* story-flag query, returns nonzero if set */
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02000248(void)
 {
@@ -81,47 +107,47 @@ void Func_02000248(void)
     u32 frame;
     s32 step;
 
-    Func_0808a018();
+    Func_020028e8();
 
-    if (Func_080770c0(0x815) != 0) {
+    if (Func_020028c6(0x815) != 0) {
         scene = 0x1197;
-        Func_0808a170(scene);
+        Func_020029c2(scene);
 
         workspace = Data_03001ebc;
-        if (Func_080770c0(2) != 0) {
+        if (Func_020028d8(2) != 0) {
             *(u16 *)(workspace + 472) = (u16)(*(u16 *)(workspace + 472) + 1);
         }
         workspace = Data_03001ebc;
-        if (Func_080770c0(3) != 0) {
+        if (Func_020028f2(3) != 0) {
             *(u16 *)(workspace + 472) = (u16)(*(u16 *)(workspace + 472) + 1);
         }
 
-        Func_0808a178(17, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a170(scene + 3);
+        Func_02002a06(17, 0);
+        if (Func_0200295e(0, 0) == 0) {
+            Func_02002a10(scene + 3);
         } else {
-            Func_0808a170(scene + 4);
+            Func_02002a18(scene + 4);
         }
-        Func_0808a180(17, 0);
+        Func_02002a30(17, 0);
     } else {
         shake = *Data_03001e70;
 
-        Func_0808a170(0x0f48);
-        Func_0808a150(17, 0, 0);
-        Func_0808a190(17, 0);
-        Func_0808a010(20);
-        Func_0808a130(17, 2);
-        Func_0808a010(15);
-        Func_02002564();
+        Func_02002a2e(0x0f48);
+        Func_02002a20(17, 0, 0);
+        Func_02002a60(17, 0);
+        Func_02002976(20);
+        Func_02002a1e(17, 2);
+        Func_02002984(15);
+        Func_02002858();
 
         /* 40 frames of the entry animation. */
         for (frame = 0; frame <= 39; frame++) {
-            Func_020022f8(Func_0808a080(17));
-            Func_080000c0(1);
+            Func_020025fa(Func_020029c2_b(17));
+            Func_020028f6(1);
         }
 
-        Func_080000d0(Func_02002590, 3200);   /* 200 << 4 */
-        Func_080f9010(107);
+        Func_0200290c(Func_02002590, 3200);   /* 200 << 4 */
+        Func_02002b6a(107);
 
         /*
          * 180 frames; every tenth frame the shared shake word alternates
@@ -129,7 +155,7 @@ void Func_02000248(void)
          */
         step = 0;
         for (frame = 0; frame != 180; frame++) {
-            if (Func_030003e0(frame, 10) == 0) {
+            if (Func_0200290c_b(frame, 10) == 0) {
                 if ((step & 1) != 0) {
                 } else {
                     *shake += 0x10000;
@@ -137,18 +163,18 @@ void Func_02000248(void)
                 }
                 step++;
             }
-            Func_0808a010(1);
+            Func_020029e2(1);
         }
 
-        Func_080f9010(0x121);
-        Func_080000d8(Func_02002590);
-        Func_080000c0(1);
-        Func_02002574();
-        Func_0808a158(17, 0);
-        Func_0808a010(40);
-        Func_0808a170(0x0f4b);
-        Func_0808a180(17, 0);
+        Func_02002ba4(0x121);
+        Func_0200295a(Func_02002590);
+        Func_02002950(1);
+        Func_020028dc();
+        Func_02002ac4(17, 0);
+        Func_02002a0a(40);
+        Func_02002ae0(0x0f4b);
+        Func_02002af8(17, 0);
     }
 
-    Func_0808a020();
+    Func_02002a2c();
 }

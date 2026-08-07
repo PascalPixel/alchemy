@@ -35,62 +35,74 @@
 extern s16 Data_02000240[];
 
 /* Progress-flag accessors: c0 tests, c8 sets, d0 clears. */
-extern s32 Func_080770c0();
-extern void Func_080770c8();
-extern void Func_080770d0();
+extern s32 Func_0200198e();
+extern void Func_02001a04();
+extern void Func_02001a60();
+extern void Func_02001a6c();
+extern u8 *Func_020019f4();
+extern void Func_020019b2();
+extern void Func_02001a34();
+extern u8 *Func_02001a0a();
+extern void Func_02001a5a();
+extern void Func_02001a0e();
+extern s32 Func_02001a04_b();
+extern void Func_02001a8e();
+extern void Func_0200135e(void);
+extern s32 Func_02001a30();
+extern s32 Func_02001a3a();
+extern void Func_02001a4e();
+
+                            
 
 /* Imports. */
-extern u8 *Func_0808a080();
-extern void Func_0808a0f0();
-extern void Func_0808a1b8();
-extern void Func_080091e0();
+
+                            
 
 /* This overlay's own follow-on step. */
-extern void Func_020009cc(void);
 
 void Func_020008f0(void)
 {
     u8 *record;
     s16 sub_scene;
 
-    if (Func_080770c0(0x845) != 0) {
-        Func_0808a0f0(9, 0, 0);
+    if (Func_0200198e(0x845) != 0) {
+        Func_02001a04(9, 0, 0);
         /* 192 << 6 = 0x3000, 160 << 7 = 0x5000. */
-        Func_0808a1b8(14, 0x3000, 0);
-        Func_0808a1b8(15, 0x5000, 0);
+        Func_02001a60(14, 0x3000, 0);
+        Func_02001a6c(15, 0x5000, 0);
     } else {
-        record = Func_0808a080(9);
-        Func_080091e0(record, 0);
-        Func_0808a0f0(21, 0, 0);
+        record = Func_020019f4(9);
+        Func_020019b2(record, 0);
+        Func_02001a34(21, 0, 0);
     }
 
     /* 192 << 9 = 0x18000. */
-    record = Func_0808a080(8);
+    record = Func_02001a0a(8);
     *(s32 *)(record + 28) = 0x18000;
 
     sub_scene = *(s16 *)((u8 *)Data_02000240 + 450);
     if (sub_scene == 10) {
-        Func_0808a0f0(8, 0, 0);
+        Func_02001a5a(8, 0, 0);
     } else if (sub_scene == 9) {
-        Func_080770d0(0x12f);
+        Func_02001a0e(0x12f);
     }
 
-    if (Func_080770c0(0x109) == 0) {
+    if (Func_02001a04_b(0x109) == 0) {
         /* Reloaded from memory rather than reused — a side effect of the
          * calls above would be observed here. */
         sub_scene = *(s16 *)((u8 *)Data_02000240 + 450);
         if (sub_scene == 11) {
             /* 248 << 16 and 216 << 16: 16.16 coordinates. */
-            Func_0808a0f0(20, 0x00f80000, 0x00d80000);
+            Func_02001a8e(20, 0x00f80000, 0x00d80000);
         }
     }
 
-    Func_020009cc();
+    Func_0200135e();
 
-    if (Func_080770c0(0x84a) != 0) {
-        if (Func_080770c0(0x84b) == 0) {
+    if (Func_02001a30(0x84a) != 0) {
+        if (Func_02001a3a(0x84b) == 0) {
             /* 193 << 2 = 772. */
-            Func_080770c8(772);
+            Func_02001a4e(772);
         }
     }
 }

@@ -38,39 +38,47 @@
 
 /* Import veneers.  Old-style declarations: arity is deliberately left open,
  * but the two imports used in conditions must declare a return type. */
-s32 Func_080770c0();
-s32 Func_0808a070();
-u16 *Func_0808a080();
-void Func_0808a010();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_080b0008();
+u16 *Func_020012e4();
+void Func_020013e2();
+s32 Func_020012d8();
+void Func_02001382();
+void Func_0200139a();
+void Func_02001394();
+void Func_020013a4();
+s32 Func_02001334();
+void Func_02001326();
+void Func_020013b4();
+void Func_020013bc();
+void Func_020013d4();
+
+                     
+
+                     
 
 void Func_020000c8(s32 actor)
 {
-    u16 *scene = Func_0808a080(0);
+    u16 *scene = Func_020012e4(0);
     s32 message;
 
     if ((((s32)scene[3] + 0x2000) & 0xc000) == 0xc000) {
-        Func_080b0008(0x20, actor);
+        Func_020013e2(0x20, actor);
         return;
     }
 
-    if (Func_080770c0(0x9a7) != 0) {
-        Func_0808a170(0x28f0);
-        Func_0808a180(actor, 0);
+    if (Func_020012d8(0x9a7) != 0) {
+        Func_02001382(0x28f0);
+        Func_0200139a(actor, 0);
         return;
     }
 
     message = 0x26e3;
-    Func_0808a170(message);
-    Func_0808a178(actor, 0);
-    if (Func_0808a070(0, 0) == 0) {
-        Func_0808a010(10);
-        Func_0808a170(message + 1);
+    Func_02001394(message);
+    Func_020013a4(actor, 0);
+    if (Func_02001334(0, 0) == 0) {
+        Func_02001326(10);
+        Func_020013b4(message + 1);
     } else {
-        Func_0808a170(message + 2);
+        Func_020013bc(message + 2);
     }
-    Func_0808a180(actor, 0);
+    Func_020013d4(actor, 0);
 }

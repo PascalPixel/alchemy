@@ -62,19 +62,31 @@
  */
 
 /* Returns the record for the given slot. */
-void Func_02000ae8();
-s32 Func_030003e0();
-void Func_080000c0();
-s32 Func_080000f8();
-void Func_08009080();
-void Func_08009150();
-void Func_080091e0();
-void Func_0808a018();
-void Func_0808a020();
-u8 *Func_0808a080();
-void Func_0808a118();
-void Func_080f9010();
+u8 *Func_020041de();
+void Func_020041cc();
+void Func_02004134();
+void Func_02004232();
+void Func_02004142();
+void Func_020041a2();
+void Func_020042b6();
+void Func_02004196();
+void Func_0200414c();
+void Func_020042ea();
+void Func_02004174();
+s32 Func_02004190();
+s32 Func_0200417e();
+s32 Func_020041a2_b();
+void Func_02001c8c();
+void Func_0200425e();
+void Func_020042b8();
 
+                     
+
+                     
+
+                     
+
+                     
 
 /* This overlay's effect spawner: four register arguments plus four stack
  * words - (x, y, z, vx, vy, vz, flags, options). */
@@ -86,33 +98,33 @@ void Func_020010c4(void)
     u8 options[40];        /* sp+16 */
     u32 tick;
 
-    record = Func_0808a080(0);
+    record = Func_020041de(0);
 
     /* No argument register is set; r0 still holds the record. */
-    Func_0808a018();
+    Func_020041cc();
 
-    Func_08009080(record, 6);
-    Func_0808a118(0);
-    Func_08009080(record, 1);
-    Func_080091e0(record, 0);
+    Func_02004134(record, 6);
+    Func_02004232(0);
+    Func_02004142(record, 1);
+    Func_020041a2(record, 0);
 
     flags = record + 85;
     *flags = (u8)(*flags | 2);
 
-    Func_080f9010(152);
+    Func_020042b6(152);
 
     *(s32 *)(record + 40) = 0x40000;    /* 128 << 11 */
 
     /* 192 << 12 = 0x000c0000 added to z. */
-    Func_08009150(record, *(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_02004196(record, *(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0x000c0000);
 
-    Func_080000c0(6);
+    Func_0200414c(6);
 
     *flags = 0;
     *(u32 *)&options[36] = 0x02009069;   /* Func_02001068 + Thumb bit */
 
-    Func_080f9010(127);
+    Func_020042ea(127);
 
     for (tick = 0; tick <= 7; tick++) {
         s32 y;
@@ -124,19 +136,19 @@ void Func_020010c4(void)
         *(s32 *)(record + 12) = y;
         *(s32 *)(record + 60) = y;
 
-        Func_080000c0(1);
+        Func_02004174(1);
 
         if ((tick & 1) == 0) continue;
 
-        kick = (Func_030003e0(Func_080000f8(), 10) - 5) * 0x3332;
-        lift = (s32)0xffff8003 - Func_030003e0(Func_080000f8(), 10) * 6553;
+        kick = (Func_0200417e(Func_02004190(), 10) - 5) * 0x3332;
+        lift = (s32)0xffff8003 - Func_02004190(Func_020041a2_b(), 10) * 6553;
 
-        Func_02000ae8(*(s32 *)(record + 8), *(s32 *)(record + 12),
+        Func_02001c8c(*(s32 *)(record + 8), *(s32 *)(record + 12),
                       *(s32 *)(record + 16),
                       kick, 0, lift, 0x01000001, options);
     }
 
-    Func_080091e0(record, 1);
+    Func_0200425e(record, 1);
     *flags = 3;
-    Func_0808a020();
+    Func_020042b8();
 }

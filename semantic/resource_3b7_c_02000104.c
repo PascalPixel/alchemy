@@ -50,28 +50,32 @@
 
 extern s16 Data_02000240[];
 
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_02000880();
-void Func_0808a018();
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_02000ac8();
-void Func_0808a020();
+s32 Func_020019fa();
+void Func_02001a0e();
+void Func_020009a6();
+void Func_02001a46();
+void Func_02001a78();
+void Func_02001abc();
+void Func_02000c0c();
+void Func_02001a6c();
+
+                     
+
+                     
 
 void Func_02000104(void)
 {
     /* Loaded before the first call; r5 is preserved across all of them. */
     s32 slot = *(s32 *)((unsigned char *)Data_02000240 + 500);
 
-    if (Func_080770c0(512) == 0) {
-        Func_080770c8(512);
-        Func_02000880();
+    if (Func_020019fa(512) == 0) {
+        Func_02001a0e(512);
+        Func_020009a6();
     }
 
-    Func_0808a018();
-    Func_0808a0d0(slot, 0x78, 0x98);
-    Func_0808a1b8(slot, 0x4000, 0);     /* 128 << 7 */
-    Func_02000ac8();
-    Func_0808a020();
+    Func_02001a46();
+    Func_02001a78(slot, 0x78, 0x98);
+    Func_02001abc(slot, 0x4000, 0);     /* 128 << 7 */
+    Func_02000c0c();
+    Func_02001a6c();
 }

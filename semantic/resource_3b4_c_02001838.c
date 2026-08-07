@@ -32,38 +32,50 @@
  * has no Func_0808a010 step at all; everything else is the same sequence.
  */
 
-void Func_0808a018();
-void Func_0808a090();
-void Func_080f9010();
+void Func_02003d64();
+void Func_02003d8e();
+void Func_02003d98();
+void Func_02003e56();
+u8 *Func_02003d9c();
+void Func_02003dbe();
+void Func_02003de4();
+void Func_02003de6();
+void Func_02003e84();
+void Func_02003df6();
+void Func_02003e04();
+void Func_02003df0();
+void Func_02003e16();
+void Func_02003dda();
+void Func_02003dca();
+
+                     
 /* Returns the record for a numbered slot, or 0 when it has none. */
-u8 *Func_0808a080();
-void Func_0808a0b8();
-void Func_0808a0e8();
-void Func_0808a0e0();
-void Func_0808a020();
-void Func_080770d0();
+
+                     
+
+                     
 
 void Func_02001838(void)
 {
     u8 *slot;
 
-    Func_0808a018();
-    Func_0808a090(0, 0x1b333, 0xd999);
-    Func_0808a090(12, 0x1b333, 0xd999);
-    Func_080f9010(188);
+    Func_02003d64();
+    Func_02003d8e(0, 0x1b333, 0xd999);
+    Func_02003d98(12, 0x1b333, 0xd999);
+    Func_02003e56(188);
 
-    slot = Func_0808a080(0);
+    slot = Func_02003d9c(0);
     if (slot != 0) {
-        Func_0808a0b8(12, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+        Func_02003dbe(12, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
     }
 
-    Func_0808a0e8(12);
-    Func_0808a0e0(0, 0, 24);
-    Func_080f9010(188);
-    Func_0808a0e0(12, 0, 16);
-    Func_0808a0e8(0);
-    Func_0808a0b8(12, 312, 232);
-    Func_0808a0e8(12);
-    Func_0808a020();
-    Func_080770d0(0x220);
+    Func_02003de4(12);
+    Func_02003de6(0, 0, 24);
+    Func_02003e84(188);
+    Func_02003df6(12, 0, 16);
+    Func_02003e04(0);
+    Func_02003df0(12, 312, 232);
+    Func_02003e16(12);
+    Func_02003dda();
+    Func_02003dca(0x220);
 }

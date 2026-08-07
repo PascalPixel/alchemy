@@ -39,26 +39,53 @@
  */
 
 /* Slot accessor. */
-extern u8 *Func_0808a080();
+extern u8 *Func_020014da();
+extern u8 *Func_020014e2();
+extern void Func_020014da_b();
+extern void Func_02001582();
+extern void Func_02001552();
+extern void Func_020014e8();
+extern void Func_0200151a();
+extern void Func_02001524();
+extern u8 *Func_02001522();
+extern void Func_020015da();
+extern void Func_02001584();
+extern void Func_02001568();
+extern void Func_0200157c();
+extern void Func_0200154a();
+extern void Func_0200160e();
+extern void Func_020015b6();
+extern void Func_02001598();
+extern void Func_020015ac();
+extern void Func_0200157a();
+extern void Func_0200163e();
+extern void Func_020015e6();
+extern void Func_020015c8();
+extern u8 *Func_020015c0();
+extern void Func_020015dc();
+extern void Func_020015f6();
+extern void Func_0200166a();
+extern void Func_0200167a();
+extern void Func_020016ca();
+extern void Func_02001548();
+extern void Func_02001666();
+extern void Func_02001676();
+extern void Func_020016ea();
+extern void Func_02001560();
+extern void Func_020015ee();
+extern void Func_02001612();
 
 /* Imports; old-style, arity open. */
-extern void Func_0808a018();
-extern void Func_0808a020();
-extern void Func_0808a010();
-extern void Func_0808a090();
-extern void Func_0808a0c0();
-extern void Func_0808a0d0();
-extern void Func_0808a100();
-extern void Func_0808a138();
-extern void Func_0808a170();
-extern void Func_0808a180();
-extern void Func_0808a1b8();
-extern void Func_0808a1e0();
-extern void Func_0808a1f0();
-extern void Func_0808a468();
-extern void Func_0808a470();
-extern void Func_080000c0();
-extern void Func_080770c8();
+
+                            
+
+                            
+
+                            
+
+                            
+
+                            
 
 void Func_02000404(void)
 {
@@ -66,8 +93,8 @@ void Func_02000404(void)
     u8 *actor;
     u8 *flags;
 
-    player = Func_0808a080(0);
-    actor = Func_0808a080(11);
+    player = Func_020014da(0);
+    actor = Func_020014e2(11);
 
     /* Entry guard on the actor's tile column; the whole cutscene is skipped
      * unless it is standing on column 6. */
@@ -75,64 +102,64 @@ void Func_02000404(void)
         return;
     }
 
-    Func_0808a018();
-    Func_0808a1e0(11, 1);
-    Func_0808a138(0, 2);
-    Func_0808a010(20);
+    Func_020014da_b();
+    Func_02001582(11, 1);
+    Func_02001552(0, 2);
+    Func_020014e8(20);
 
     /* 0x3333 / 0x1999 are the approach speeds. */
-    Func_0808a090(0, 0x3333, 0x1999);
-    Func_0808a090(11, 0x3333, 0x1999);
+    Func_0200151a(0, 0x3333, 0x1999);
+    Func_02001524(11, 0x3333, 0x1999);
 
     /* Clear bit 0 of the player's +0x5a flag byte for the duration. */
-    flags = Func_0808a080(0) + 90;
+    flags = Func_02001522(0) + 90;
     *flags = (u8)(*flags & 0xfe);
 
     *(u8 *)(actor + 0x55) = 0;
 
     /* Beat 1.  The +0x18 field alternates between 0xffff0000 and 0x10000
      * around each portrait/line pair.  129 << 1 = 258. */
-    Func_0808a1f0(0, 258);
-    Func_0808a100(0, 16);
+    Func_020015da(0, 258);
+    Func_02001584(0, 16);
     *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
-    Func_0808a0c0(11, 111, 196);
-    Func_0808a0d0(0, 128, 185);
+    Func_02001568(11, 111, 196);
+    Func_0200157c(0, 128, 185);
 
     /* Beat 2. */
-    Func_0808a010(20);
-    Func_0808a1f0(0, 258);
-    Func_0808a100(0, 16);
-    Func_0808a0c0(11, 121, 190);
+    Func_0200154a(20);
+    Func_0200160e(0, 258);
+    Func_020015b6(0, 16);
+    Func_02001598(11, 121, 190);
     *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
-    Func_0808a0d0(0, 141, 189);
+    Func_020015ac(0, 141, 189);
 
     /* Beat 3. */
-    Func_0808a010(20);
-    Func_0808a1f0(0, 258);
-    Func_0808a100(0, 16);
-    Func_0808a0c0(11, 132, 186);
+    Func_0200157a(20);
+    Func_0200163e(0, 258);
+    Func_020015e6(0, 16);
+    Func_020015c8(11, 132, 186);
     *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
 
     /* Restore bit 0 of the player's flag byte. */
-    flags = Func_0808a080(0) + 90;
+    flags = Func_020015c0(0) + 90;
     *flags = (u8)(*flags | 1);
 
-    Func_0808a090(0, 0x9999, 0x4ccc);
-    Func_0808a0d0(0, 166, 185);
+    Func_020015dc(0, 0x9999, 0x4ccc);
+    Func_020015f6(0, 166, 185);
     /* 128 << 8 = 0x8000. */
-    Func_0808a1b8(0, 0x8000, 20);
-    Func_0808a1e0(11, 2);
-    Func_0808a468(0, 11);
-    Func_080000c0(10);
-    Func_0808a170(0x1774);
-    Func_0808a180(11, 0);
-    Func_0808a470();
-    Func_080000c0(10);
+    Func_0200166a(0, 0x8000, 20);
+    Func_0200167a(11, 2);
+    Func_020016ca(0, 11);
+    Func_02001548(10);
+    Func_02001666(0x1774);
+    Func_02001676(11, 0);
+    Func_020016ea();
+    Func_02001560(10);
 
     /* Mark the cutscene seen. */
-    Func_080770c8(0x848);
-    Func_0808a020();
+    Func_020015ee(0x848);
+    Func_02001612();
 }

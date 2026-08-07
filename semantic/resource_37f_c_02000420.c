@@ -27,72 +27,96 @@
  * shifts (0x80 << 9 = 0x10000 and so on) rather than pooled.
  */
 
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_0808a018();
-void Func_0808a460();
-void Func_080f9010();
-void Func_08009180();
-void Func_08009128();
-void Func_0808a010();
-void Func_08015040();
-void Func_080091c0();
-void Func_080091f0();
-void Func_0808a1e8();
-void Func_0808a1b8();
-void Func_0808a128();
-void Func_0808a020();
+s32 Func_02001fb4();
+s32 Func_02001fc0();
+void Func_02001fea();
+void Func_020020fe();
+void Func_02002114();
+void Func_02001fb6();
+void Func_02001fa2();
+void Func_02002008();
+void Func_02001ff2();
+void Func_02002018();
+void Func_02002146();
+void Func_02001fe8();
+void Func_02002004();
+void Func_02002030();
+void Func_0200205e();
+void Func_02002132();
+void Func_02002052();
+void Func_02002080();
+void Func_02002144();
+void Func_02002150();
+void Func_0200215a();
+void Func_02002166();
+void Func_02002128();
+void Func_020020a8();
+void Func_020020d8();
+void Func_020020c0();
+void Func_020020d6();
+void Func_020020dc();
+void Func_02002100();
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02000420(void)
 {
     s32 scene;
 
-    if (Func_080770c0(0xf02) == 0) {
+    if (Func_02001fb4(0xf02) == 0) {
         return;
     }
-    if (Func_080770c0(0x821) != 0) {
+    if (Func_02001fc0(0x821) != 0) {
         return;
     }
 
-    Func_0808a018();
-    Func_0808a460();
+    Func_02001fea();
+    Func_020020fe();
 
-    Func_080f9010(182);
-    Func_08009180(0, 71, 100, 71, 1, 1);
-    Func_08009128();
-    Func_0808a010(40);
+    Func_02002114(182);
+    Func_02001fb6(0, 71, 100, 71, 1, 1);
+    Func_02001fa2();
+    Func_02002008(40);
 
-    Func_08015040(scene, 1);
+    Func_02001ff2(scene, 1);
     scene = 0x1032;
-    Func_0808a010(20);
+    Func_02002018(20);
 
-    Func_080f9010(183);
-    Func_08009180(122, 20, 120, 30, 1, 2);
-    Func_080091c0(122, 20, 1, 2, 120, 30);
-    Func_08009128();
+    Func_02002146(183);
+    Func_02001fe8(122, 20, 120, 30, 1, 2);
+    Func_02002004(122, 20, 1, 2, 120, 30);
+    Func_02001fe8();
 
-    Func_080091f0(0x10000, 0x10000, 0x10000);
-    Func_0808a010(20);
-    Func_0808a1e8(0, 256, 0);
+    Func_02002030(0x10000, 0x10000, 0x10000);
+    Func_0200205e(20);
+    Func_02002132(0, 256, 0);
 
-    Func_080091f0(0x20000, 0x20000, 0x10000);
-    Func_0808a010(20);
+    Func_02002052(0x20000, 0x20000, 0x10000);
+    Func_02002080(20);
 
-    Func_0808a1b8(0, 0x4000, 40);
-    Func_0808a1b8(0, 0x8000, 20);
-    Func_0808a1b8(0, 0, 20);
-    Func_0808a1b8(0, 0x4000, 10);
+    Func_02002144(0, 0x4000, 40);
+    Func_02002150(0, 0x8000, 20);
+    Func_0200215a(0, 0, 20);
+    Func_02002166(0, 0x4000, 10);
 
-    Func_0808a128(0, 4, 20);
-    Func_0808a128(0, 6, 40);
+    Func_02002128(0, 4, 20);
+    Func_02002132(0, 6, 40);
 
-    Func_080091f0(-1, -1, 0xe666);
+    Func_020020a8(-1, -1, 0xe666);
 
     scene++;
-    Func_0808a010(40);
-    Func_08015040(scene, 1);
+    Func_020020d8(40);
+    Func_020020c0(scene, 1);
 
-    Func_080770c8(0x143);
-    Func_080770c8(0x821);
-    Func_0808a020();
+    Func_020020d6(0x143);
+    Func_020020dc(0x821);
+    Func_02002100();
 }

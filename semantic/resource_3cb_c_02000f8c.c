@@ -69,13 +69,21 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-s32 Func_02000f30();
-s32 Func_080770c0();
-void Func_0808a018();
-s32 Func_0808a020();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a180();
+s32 Func_02001eca();
+s32 Func_02001ed2();
+void Func_020027ec();
+void Func_02002836();
+s32 Func_020027ce();
+s32 Func_020027da();
+s32 Func_020027e4();
+s32 Func_020027ec_b();
+void Func_02002898();
+void Func_020028b0();
+s32 Func_0200286c();
+
+                     
+
+                     
 
 /* Used for their return values. */
 
@@ -86,17 +94,17 @@ s32 Func_02000f8c(s32 speaker)
     s32 speakerPresent;
     s32 speakerFlag;
 
-    leaderPresent = Func_02000f30(0);
-    speakerPresent = Func_02000f30(speaker);
+    leaderPresent = Func_02001eca(0);
+    speakerPresent = Func_02001ed2(speaker);
 
-    Func_0808a018();
-    Func_0808a148(speaker, *(u32 *)&Data_02000240[500], 0);
+    Func_020027ec();
+    Func_02002836(speaker, *(u32 *)&Data_02000240[500], 0);
 
-    if (Func_080770c0(772) != 0) {
-        Func_080770c0(752);
-        speakerFlag = Func_080770c0(752 + speaker);
+    if (Func_020027ce(772) != 0) {
+        Func_020027da(752);
+        speakerFlag = Func_020027e4(752 + speaker);
 
-        if (Func_080770c0(0x305) != 0) {
+        if (Func_020027ec_b(0x305) != 0) {
             cueBase = (speakerFlag != 0) ? 0x2967 : 0x296c;
         } else {
             cueBase = (speakerFlag != 0) ? 0x2971 : 0x2976;
@@ -109,7 +117,7 @@ s32 Func_02000f8c(s32 speaker)
         }
     }
 
-    Func_0808a170(cueBase + (u32)speaker - 1);
-    Func_0808a180(speaker, 0);
-    return Func_0808a020();
+    Func_02002898(cueBase + (u32)speaker - 1);
+    Func_020028b0(speaker, 0);
+    return Func_0200286c();
 }

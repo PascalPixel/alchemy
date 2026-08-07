@@ -29,7 +29,7 @@ extern u8 Data_0200a050[];
 extern u8 Data_0200a1b8[];
 extern u8 Data_0200a2a8[];
 
-void Func_0808a038();
+void Func_02001c70();
 
 u8 *Func_0200007c(void)
 {
@@ -47,7 +47,7 @@ u8 *Func_0200007c(void)
             return Data_0200a1b8;
         }
         return Data_02009fd8;
-        Func_0808a038(Data_02009fd8);
+        Func_02001c70(Data_02009fd8);
     }
 
     if (scenario == 0x13) {

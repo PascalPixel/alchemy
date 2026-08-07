@@ -367,6 +367,17 @@ const HOIST_ADD_IMMEDIATE_SOURCES = new Set(["08011568"]);
 // of holding it in a register, which only this mode reproduces.
 const NO_CONSTANT_REUSE_SOURCES = new Set(["080cd358"]);
 
+// resource_373:2f14 is a flat run of ~90 configuration calls with constant
+// arguments.  Its reference rebuilds every shifted constant and reloads every
+// pooled word at each call site -- 0x200319c is loaded twice within twelve
+// instructions -- so the whole owner runs on `push {lr}' with no callee-saved
+// register at all.  Default codegen instead parks the reused constants in
+// r5/r6/r7 and pushes them, which diverges at the very first halfword.
+const NO_CONSTANT_REUSE_OVERLAY_SOURCES = new Set([
+  "semantic/resource_373_c_02002f14.c",
+  "exact/resource_373_c_02002f14.c",
+]);
+
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -1104,6 +1115,10 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_373:2f14 — every shifted-constant argument site wants the `movs
+  // r0,#X' setter before the `lsls r1' half.  Paired with no-constant-reuse.
+  "semantic/resource_373_c_02002f14.c",
+  "exact/resource_373_c_02002f14.c",
   // resource_3a2:0924 — six of its call sites want the `movs r0,#X' setter
   // emitted before the `lsls r1,...' half of a shifted constant argument.
   // Pairs cohort put this flag at differing=13; paired with
@@ -2698,6 +2713,9 @@ export function cflagsForSource(source: string): readonly string[] {
       : []),
     ...(NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-cse-pool-immediate"]
+      : []),
+    ...(NO_CONSTANT_REUSE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-no-constant-reuse"]
       : []),
     ...(SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fsched-low-dest-first"]

@@ -39,13 +39,20 @@
  * The epilogue is `pop {r3, r5} / mov r8,r3 / mov sl,r5 / pop {r5, r6, r7} /
  * pop {r0} / bx r0`, so the owner is void.
  *
- * The last residual was two halfwords in the tail block: the reference keeps
- * the record POINTER live in r5 and defers the `->x` load to the call setup
- * (`adds r5,r0,#0` ... `ldr r1,[r5,#8]`), where an eager `s32 x = ...->x`
- * local loads it at the lookup instead (`ldr r5,[r0,#8]` ... `adds r1,r5,#0`).
- * Binding the pointer and dereferencing at the argument closes it exactly.
- * The other two lookups still need their own locals: only the ORDER of the
- * three calls is being pinned there, not the position of the field reads.
+ * STILL-OPEN residual, 38 differing bytes scattered across ~17 sites
+ * (`overlay_adopt --where`). alchemist.ts refuses (tiers
+ * [model-divergence,priority], no original-order row -- not statement-order
+ * fixable). overlay_mode_cohort.ts's full 76-config single-flag sweep found
+ * no improvement over the routed baseline either. overlay_candidate_show.ts
+ * finds one genuine (non-link-noise) structural difference around the loop:
+ * the reference appears to hold a slot pointer live across a field read
+ * rather than re-materializing it (candidate: `ldr r5,[r0,#8]` then later
+ * `adds r1,r5,#0`; reference: `adds r5,r0,#0` then later `ldr r1,[r5,#8]`),
+ * but this function's C already deliberately spells out call/field-read
+ * order to match the assembly (see the "Three separate lookups" comment
+ * below) and a bounded attempt to locate and restructure the exact
+ * corresponding statement pair did not close it. Deprioritized per the
+ * brief's ~15-20 minute rule.
  */
 
 typedef struct Slot_02001c2c {

@@ -20,10 +20,18 @@
  * assets/code/resource_394_c_020008b0.c declares the neighbouring cell
  * `extern u16 *Data_020092c4`.
  *
- * The layout selector at `**(s16 **)0x020092c8` is re-read four times rather
+ * The layout selector at `*Data_020092c8` is re-read four times rather
  * than cached, and each read is spelled out: the first two arms test it
  * against zero and the last against one, so folding them into one local would
  * not be faithful to the polarity changes.
+ *
+ * The two cells are declared as extern pointers rather than spelled as
+ * literal addresses: 0x020092c8 is 0x020092c0 + 8, so the literal form lets
+ * CSE derive the second pool word with `adds r3, #8' while the reference keeps
+ * two distinct pool words.  The zero stored into piece[85] and into the else
+ * arm's piece+12 is a function-scope local, which is what buys the reference's
+ * fourth callee-saved register (r7).  The record pointer advances once, in the
+ * loop's common tail, so both arms read the record fields unadvanced.
  *
  * The record list is the same twelve-byte-stride, -1-terminated array that
  * 0x02000a90 fills and 0x02000b3c stamps: id at +0, column at +2, row at +4,
@@ -61,18 +69,21 @@ extern void Func_02000e70(s16 *records, s32 value);
 extern void Func_020013bc();
 extern void Func_02000e8e(s16 *records, s32 value);
 extern void Func_020004a6(void);
+extern s16 *Data_020092c0;
+extern s16 *Data_020092c8;
 void Func_02000194(void)
 {
-    s16 *record = *(s16 **)0x020092c0;
+    s32 zero;
+    s16 *record = Data_020092c0;
 
-    if (**(s16 **)0x020092c8 != 0) {
+    if (*Data_020092c8 != 0) {
         { s32 f1 = 79; s32 g1 = 29; Func_0200122a(65, 53, 2, 1,  f1, g1); }
         { s32 f2 = 15; s32 g2 = 28; Func_0200123e(65, 40, 2, 4,  f2, g2); }
     } else {
         { s32 f3 = 79; s32 g3 = 25; Func_02001254(65, 50, 2, 5,  f3, g3); }
     }
 
-    if (**(s16 **)0x020092c8 != 0) {
+    if (*Data_020092c8 != 0) {
         { s32 f4 = 32; s32 g4 = 0; Func_02001272(0, 32, 32, 32,  f4, g4); }
         { s32 f5 = 64; s32 g5 = 0; Func_02001284(32, 32, 32, 32,  f5, g5); }
         { s32 f6 = 0; s32 g6 = 0; Func_0200129c(0, 32, 32, 32,  f6, g6); }
@@ -83,38 +94,43 @@ void Func_02000194(void)
     }
 
     if (record[0] != -1) {
+        zero = 0;
         do {
             u8 *piece = *(u8 **)(record + 4);
 
-            record += 6;
-            if (**(s16 **)0x020092c8 == 1) {
+            if (*Data_020092c8 == 1) {
                 Func_020012b6(piece, 4);
                 piece[35] = 3;
-                piece[85] = 0;
+                piece[85] = zero;
                 *(s32 *)(piece + 12) = 0x1a0000;
 
                 if (record[3] != 0) {
-                    Func_02001324(68, 40, 1, 4, record[1] + 32, record[2]);
+                    s32 col = record[1];
+                    s32 row = record[2];
+                    Func_02001324(68, 40, 1, 4, col + 32, row);
                 } else {
-                    Func_02001340(70, 40, 4, 1, record[1] + 32, record[2]);
+                    s32 col = record[1];
+                    s32 row = record[2];
+                    Func_02001340(70, 40, 4, 1, col + 32, row);
                 }
             } else {
                 Func_02001312(piece, 1);
                 piece[35] = 1;
                 piece[85] = 2;
-                *(s32 *)(piece + 12) = 0;
+                *(s32 *)(piece + 12) = zero;
             }
+            record += 6;
         } while (record[0] != -1);
     }
 
     { s32 f10 = 10; s32 g10 = 50; Func_02001378(70, 42, 1, 1,  f10, g10); }
 
-    if (**(s16 **)0x020092c8 == 1) {
+    if (*Data_020092c8 == 1) {
         { s32 f11 = 0; s32 g11 = 0; Func_0200139e(0, 32, 32, 32,  f11, g11); }
-        Func_02000e70(*(s16 **)0x020092c0, 254);
+        Func_02000e70(Data_020092c0, 254);
     } else {
         { s32 f12 = 0; s32 g12 = 0; Func_020013bc(0, 64, 32, 32,  f12, g12); }
-        Func_02000e8e(*(s16 **)0x020092c0, 255);
+        Func_02000e8e(Data_020092c0, 255);
     }
 
     Func_020004a6();

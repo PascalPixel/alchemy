@@ -6,6 +6,7 @@
 // the top instead of losing to a large but low-probability owner.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { resolveJobs } from "../lib/jobs.ts";
 import { readingList, type Pairing } from "./exact_reading_list.ts";
 import {
   assembleOverlay,
@@ -128,7 +129,7 @@ async function main(): Promise<void> {
     return index < 0 ? undefined : args[index + 1];
   };
   const onlyOverlay = valueAfter("--overlay");
-  const jobs = Number(valueAfter("--jobs") ?? Math.max(1, Math.min(8, navigator.hardwareConcurrency - 2)));
+  const jobs = resolveJobs(Number(valueAfter("--jobs")) || undefined);
   const top = Number(valueAfter("--top") ?? 40);
   const limit = Number(valueAfter("--max") ?? Number.MAX_SAFE_INTEGER);
   if (!Number.isInteger(jobs) || jobs < 1 || !Number.isInteger(top) || top < 1 || !Number.isInteger(limit) || limit < 1) {

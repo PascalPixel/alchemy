@@ -579,3 +579,34 @@ owners from scratch -- roughly the eight biggest (`080bbb0c`, `080ea0d8`,
 `080ab5e4`, `08027114`, `080f6440`, `080dea70`, `080e7404`, `080d1714`) sum to
 about 35,700 bytes. That is eight full manual matching efforts, not a flag
 search.
+
+## Allocation-order tie-breaks: measured, negative (2026-08-07)
+
+The close band below ratio 0.2 is dominated by a single residual shape: the two
+columns emit the *same* instruction sequence with two low registers exchanged
+(`080a524c` r2/r3, `08092f84` and `0801faa8` r6/r7, `080ae9f0` r2/r4/r5,
+`08077394` r0/r2, `08020198` r6/r7). The direction is not consistent across
+functions, so it is not a global register-order flip; it looked like the
+equal-priority tie-break in the allocators being visited in the opposite order.
+
+Tested directly. Two default-off fork switches were added -- `-fqty-order-reverse`
+(reverses `q1 - q2` in local-alloc's `qty_compare_1` and `qty_sugg_compare_1`)
+and `-fallocno-order-reverse` (reverses `v1 - v2` in global.c's
+`allocno_compare`) -- built, staged, and swept over sixteen close-band main-image
+stems. Result: not one stem moved. Fifteen were bit-identical to stock under
+either switch and under both together; `080b5d3c` regressed 4 -> 60 under
+`-fqty-order-reverse`. The tie-break almost never binds, so it is not the source
+of the divergence. Both switches were reverted and `dist/cc1` restored to the
+pinned `41b5d62b`. Do not re-run this experiment.
+
+Source-form rewrites were tested against the same class and also fail. On
+`0801faa8`, reordering the declarations and the initialisers moves the diff only
+between 11 and 13, and duplicating the shared `negate_result` tail -- the exact
+transform that closed `08003538` -- inflates the function by 12 bytes and the
+diff to 68. On `08077394`, three restructurings of the same control flow give 27,
+25, and 14 against a stock 11. The original transliteration is already the best
+source form; what differs is which pseudo the allocator visits first.
+
+Consequence. The close band is blocked on register allocation, not on flags and
+not on source shape, which reinforces the planning conclusion above: the path to
+25% is from-scratch reconstruction of the large owners, not near-match repair.

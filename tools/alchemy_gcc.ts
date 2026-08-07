@@ -1719,6 +1719,15 @@ const THUMB_HI_IMMEDIATE_OVERLAY_SOURCES = new Set([
   "exact/resource_377_c_020003f8.c",
   "semantic/resource_377_c_020003f8.c",
 ]);
+// A call whose r1 argument is a constant-pool load and whose r0 argument is a
+// plain immediate: the reference issues the pool load first.  Distinct from
+// -fthumb-call-literal-arg1-first, which transposes a pair of immediates and is
+// not self-consistent within an owner; this shape is, because the sibling sites
+// that keep r0 first all pass a third argument register.
+const CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
+  "exact/resource_3a2_c_02000924.c",
+  "semantic/resource_3a2_c_02000924.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2094,6 +2103,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(THUMB_HI_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-hi-immediate"]
       : []),
+    ...(CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-pool-arg1-first"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2202,6 +2214,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES,
     ...SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES,
     ...THUMB_HI_IMMEDIATE_OVERLAY_SOURCES,
+    ...CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2485,7 +2498,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // standing "do not fix the mn" note in arm.md stays true globally.
         // Witness resource_377:03f8, 2026-08-07. Cross-host rule: rebuild+pin
         // linux from the same commit before the next cloud session.
-        "bf11052426aac844c53ee2cef4f9cccd5dc94116973e3df8fa53272fac88d336",
+        "4649d7267990a9f91503ade3b2259e15f94b702cddb0f41a6a566c14035d20d3",
       ],
     },
     gs2: {

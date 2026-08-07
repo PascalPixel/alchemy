@@ -31811,7 +31811,7 @@
           "start": 33556980,
           "end": 33557066,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_3c4_overlay.s:1114:verified-C-placeholder"
         },
         {
           "start": 33557066,
@@ -31835,7 +31835,7 @@
           "start": 33557168,
           "end": 33557222,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1207:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1168:verified-C-placeholder"
         },
         {
           "start": 33557222,
@@ -31859,7 +31859,7 @@
           "start": 33557696,
           "end": 33557710,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1449:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1410:verified-C-placeholder"
         },
         {
           "start": 33557710,
@@ -31877,13 +31877,13 @@
           "start": 33557956,
           "end": 33557960,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:1463:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:1424:pc-relative-literal"
         },
         {
           "start": 33557960,
           "end": 33558002,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1563:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1524:verified-C-placeholder"
         },
         {
           "start": 33558002,
@@ -31895,7 +31895,7 @@
           "start": 33558004,
           "end": 33558048,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1566:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1527:verified-C-placeholder"
         },
         {
           "start": 33558050,
@@ -31925,7 +31925,7 @@
           "start": 33558216,
           "end": 33558286,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1639:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1600:verified-C-placeholder"
         },
         {
           "start": 33558286,
@@ -32009,7 +32009,7 @@
           "start": 33559520,
           "end": 33559586,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1870:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1831:verified-C-placeholder"
         },
         {
           "start": 33559586,
@@ -32021,7 +32021,7 @@
           "start": 33559588,
           "end": 33559638,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:1873:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:1834:verified-C-placeholder"
         },
         {
           "start": 33559638,
@@ -32063,7 +32063,7 @@
           "start": 33560308,
           "end": 33560330,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2066:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2027:verified-C-placeholder"
         },
         {
           "start": 33560330,
@@ -32075,7 +32075,7 @@
           "start": 33560332,
           "end": 33560386,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2069:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2030:verified-C-placeholder"
         },
         {
           "start": 33560386,
@@ -32099,7 +32099,7 @@
           "start": 33560824,
           "end": 33560846,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2258:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2219:verified-C-placeholder"
         },
         {
           "start": 33560846,
@@ -32123,7 +32123,7 @@
           "start": 33561036,
           "end": 33561058,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2272:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2233:verified-C-placeholder"
         },
         {
           "start": 33561058,
@@ -32141,7 +32141,7 @@
           "start": 33561856,
           "end": 33561860,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2289:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2250:pc-relative-literal"
         },
         {
           "start": 33561862,
@@ -32159,13 +32159,13 @@
           "start": 33562456,
           "end": 33562460,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:2608:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:2569:pc-relative-literal"
         },
         {
           "start": 33562460,
           "end": 33562478,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2645:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2606:verified-C-placeholder"
         },
         {
           "start": 33562478,
@@ -32189,7 +32189,7 @@
           "start": 33562588,
           "end": 33562686,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2653:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2614:verified-C-placeholder"
         },
         {
           "start": 33562686,
@@ -32201,7 +32201,7 @@
           "start": 33562688,
           "end": 33562786,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2656:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2617:verified-C-placeholder"
         },
         {
           "start": 33562786,
@@ -32225,7 +32225,7 @@
           "start": 33563392,
           "end": 33563438,
           "kind": "thumb",
-          "evidence": "resource_3c4_overlay.s:2919:verified-C-placeholder"
+          "evidence": "resource_3c4_overlay.s:2880:verified-C-placeholder"
         },
         {
           "start": 33563438,
@@ -32267,7 +32267,7 @@
           "start": 33565588,
           "end": 33565592,
           "kind": "literal_pool",
-          "evidence": "resource_3c4_overlay.s:3388:pc-relative-literal"
+          "evidence": "resource_3c4_overlay.s:3349:pc-relative-literal"
         },
         {
           "start": 33566682,

@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07, with no compiler flags: every residual was
+ * a call target.  The five callees were declared at their veneer addresses in
+ * ROM space, so each `bl' went through a veneer; the reference calls the
+ * in-overlay entry points directly (0x2003a7c, 0x2001d54, 0x2003a5c,
+ * 0x20014d4, 0x2003a18), which is how they are declared now.
+ */
 #include "types.h"
 
 /*
@@ -33,19 +40,19 @@
  * Raw callee naming.
  */
 
-u8 *Func_0808a080();
-s32 Func_02000ddc();
-void Func_080091c0();
-void Func_02000528();
-void Func_08009080();
+u8 *Func_02003a7c();
+s32 Func_02001d54();
+void Func_02003a5c();
+void Func_020014d4();
+void Func_02003a18();
 
 s32 Func_02000f58(u8 *a0)
 {
-    u8 *obj = Func_0808a080(a0);
+    u8 *obj = Func_02003a7c(a0);
     s32 out20, out16, out12, out8;
     s32 record[6];
 
-    if (Func_02000ddc(a0, &out20, &out16, record, &out12, &out8) == 0) {
+    if (Func_02001d54(a0, &out20, &out16, record, &out12, &out8) == 0) {
         return 0;
     }
 
@@ -53,11 +60,11 @@ s32 Func_02000f58(u8 *a0)
         s32 x = out12 + record[2];
         s32 z = out8 + record[4];
 
-        Func_080091c0(x, z, out20, out16, record[2], record[4]);
-        Func_02000528(0, record[2], record[4], out20, out16, 255);
+        Func_02003a5c(x, z, out20, out16, record[2], record[4]);
+        Func_020014d4(0, record[2], record[4], out20, out16, 255);
     }
 
-    Func_08009080(obj, 1);
+    Func_02003a18(obj, 1);
     obj[0x23] &= 0xfd;
 
     return 1;

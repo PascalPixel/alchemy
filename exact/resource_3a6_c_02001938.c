@@ -1,3 +1,11 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-orr-dead-input-reuse: the sole
+ * residual was the direction of the `orrs' that sets bit 1 of the flag byte at
+ * actor+35.  The reference reuses the dying constant register as the
+ * destination (`orrs r2, r3'), we defaulted to the loaded byte (`orrs r3, r2'),
+ * which also dragged the following `movs r2, #128' one slot earlier.
+ */
+
 #include "types.h"
 
 

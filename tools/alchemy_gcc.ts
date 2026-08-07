@@ -395,6 +395,7 @@ const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
 // updates where a constant OR input dies at the OR and the reference reuses
 // that register for the result immediately stored to the field.
 const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
+  "exact/resource_3a6_c_02001938.c",
   "exact/resource_39a_c_02001004.c",
   "exact/resource_38f_c_020008ec.c",
   "semantic/resource_38f_c_020008ec.c",

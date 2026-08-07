@@ -64,6 +64,25 @@ export const FORK_MODES = [
   // compiler without ifcvt.c, which gcc 2.95 did not have. Witness 080fa1ac.
   "-fthumb-leaf-no-lr",
   "-fthumb-no-if-convert",
+  // Routed sink/split/scratch classes that the router has been using for a
+  // while without the explorer ever naming them, so no sweep could rediscover
+  // them on a fresh owner. Listed here to close that blind spot.
+  "-fthumb-arg0-after-split",
+  "-fthumb-call-arg0-pool-load",
+  "-fthumb-collapse-dead-scratch",
+  "-fthumb-group-zero-any-register",
+  "-fthumb-return-value-before-stack-adjust",
+  "-fthumb-sink-block-constant",
+  "-fthumb-sink-dependent-load",
+  "-fthumb-sink-group-pool-loads",
+  "-fthumb-sink-past-pool-load",
+  "-fthumb-sink-stack-adjust",
+  "-mlow-reg-order=01231230",
+  "-mlow-reg-order=30120123",
+  // 2026-08-07: the mirror of -mearly-frame-allocation. It lowers a Thumb
+  // stack decrement's scheduling priority so incoming-argument copies issue
+  // ahead of `sub sp, #N'. Witness 080b0744.
+  "-fthumb-late-frame-allocation",
 ] as const;
 
 export const STOCK_SWITCHES = [

@@ -12,7 +12,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only as
  * a published pointer. All 13 `bl` targets resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 2484 2508` under the
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 2484 2508` under the
  * `+2` rule.
  *
  * THIS ROW IS THE READ END OF resource_39e's FLAG CHAIN. It tests 0x89a

@@ -21,7 +21,7 @@
  * halfword at offset 450 (`[225]`) is a second, independent selector compared
  * against 90.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong):
  *
  *   0x02000882 -> 0x1558 veneer -> Func_080770c8

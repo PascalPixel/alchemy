@@ -58,3 +58,5 @@ roms/
 *.7z
 *.log
 node_modules/
+tools/scratch/*
+!tools/scratch/README.md

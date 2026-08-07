@@ -30,7 +30,7 @@
  * cue ids 0x1c14, 0x1c15, 0x11a9, 0x0f58.
  *
  * All eighteen calls resolved with
- * 'bun tools/overlay_call_targets.ts resource_377 0e34 --json' (18 sites,
+ * 'bun tools/lib/overlay_call_targets.ts resource_377 0e34 --json' (18 sites,
  * 12 distinct veneer targets).  Per-target multiset, matched exactly below:
  * Func_0808a170 x4, Func_080770c0 x3, Func_0808a180 x2, one each of
  * Func_0808a080, Func_080b0018, Func_0808a018, Func_0808a138, Func_0808a148,

@@ -22,7 +22,7 @@
  * own read.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_39e 1160 12c6's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 1160 12c6's
  * +2 rule).
  *
  * Uncertainty: callees and argument roles identified by shape only;

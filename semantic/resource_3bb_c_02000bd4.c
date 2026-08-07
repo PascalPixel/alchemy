@@ -23,7 +23,7 @@
  *
  * All 88 `bl` sites are placed and reach 22 distinct callees.  The inventory
  * row records calls=54; that count predates the corrected branch decoding.
- * Targets come from tools/overlay_call_targets.ts (target offset = stored
+ * Targets come from tools/lib/overlay_call_targets.ts (target offset = stored
  * displacement + 2), never from the disassembler's annotations, which print
  * every repeated callee as a separate function.  The imports reached through
  * the veneer table are Func_080770c8, Func_080091c0, Func_0808a080,

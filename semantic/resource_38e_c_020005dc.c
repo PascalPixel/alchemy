@@ -31,7 +31,7 @@
  * data.
  *
  * Calls: 72 sites against an advertised 66 - a beat of six, the safe direction.
- * Per-target multiset from `bun tools/overlay_call_targets.ts resource_38e
+ * Per-target multiset from `bun tools/lib/overlay_call_targets.ts resource_38e
  * 5dc`, every count reproduced by hand from the listing:
  *   Func_0808a1b8  x10  Func_0808a188  x6
  *   Func_0808a010  x5   Func_0808a090  x5   Func_0808a0d0  x5

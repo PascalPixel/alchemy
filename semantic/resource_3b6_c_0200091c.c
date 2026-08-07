@@ -17,7 +17,7 @@
  * This row ends at 0x02000998, which is exactly where this overlay's
  * eight-byte import veneer table begins; there is no further overlay code.
  *
- * Imports are resolved with tools/overlay_call_targets.ts — an overlay `bl`
+ * Imports are resolved with tools/lib/overlay_call_targets.ts — an overlay `bl`
  * stores `target_offset - 2` — and named for the main-image address in the
  * veneer entry's trailing word.  The message/act pair is the one tracked
  * byte-exact source assets/code/resource_3b6_c_0200073c.c uses under its

@@ -23,7 +23,7 @@
  * larger owner. Two arguments (r0, r1), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2`
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2`
  * rule.
  *
  * The DMA3 register block (0x040000d4 = REG_DMA3SAD, +4 = REG_DMA3DAD,

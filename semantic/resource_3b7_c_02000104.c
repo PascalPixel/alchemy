@@ -15,7 +15,7 @@
  * value; the exact siblings index the same base as `s16`, so the byte offset is
  * spelled explicitly here rather than as an s16 index.
  *
- * Call targets were resolved with `tools/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
  * `bl` stores `target_offset - 2`, so the printed targets are wrong).  In
  * program order:
  *   0x02000114 -> veneer 0x020018e4 -> Func_080770c0

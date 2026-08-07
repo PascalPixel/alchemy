@@ -23,7 +23,7 @@
  * reconstruction — an undercount is the safe direction, since the shortfall
  * cannot hide an unplaced call.
  *
- * All sites resolve with tools/overlay_call_targets.ts (an overlay `bl` stores
+ * All sites resolve with tools/lib/overlay_call_targets.ts (an overlay `bl` stores
  * `target_offset - 2`) and are named for the main-image address in each veneer
  * entry's trailing word.
  *

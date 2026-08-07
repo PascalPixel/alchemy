@@ -24,7 +24,7 @@
  * unconditional forward branches. No incoming arguments read, `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_3c9 4bec 5688's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3c9 4bec 5688's
  * +2 rule). Called from this overlay's own resource_3c9_c_02003924.c.
  *
  * SHARED IDIOMS, cited: dialogue-by-id Func_0808a170 (0x282e here),

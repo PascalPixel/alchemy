@@ -17,7 +17,7 @@
  * 0x02000128 that follows is a separate prologue-less leaf, not part of this
  * owner.
  *
- * All six call sites were resolved with tools/overlay_call_targets.ts
+ * All six call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=6:
  *   0x020000aa -> veneer 0x0200180c -> Func_080770c0   (test flag 0x303)

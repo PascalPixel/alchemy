@@ -40,7 +40,7 @@
  * two-import wrapper; 3a0 and 3c0 are small constant-argument calls).
  *
  * The single call site was resolved with
- * `bun tools/overlay_call_targets.ts resource_39b 0314 034c`: one site,
+ * `bun tools/lib/overlay_call_targets.ts resource_39b 0314 034c`: one site,
  * classified `call_via`, and r3 is loaded from the pool with 0x030001d8
  * immediately before it.  So the callee is the IWRAM square root, the same
  * helper resource_3b7_c_02000e5c.c already names.

@@ -29,7 +29,7 @@
  * callees.
  *
  * All 20 call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 13b8 147c`, and the
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 13b8 147c`, and the
  * per-target histogram is Func_080770c0 x4, Func_0808a020 x2, Func_0808a018
  * x1, Func_0808a080 x1, Func_0808a208 x1, Func_0808a218 x1, Func_0808a220 x1,
  * plus nine intra-overlay calls to eight distinct owners:

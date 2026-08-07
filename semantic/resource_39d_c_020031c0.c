@@ -23,7 +23,7 @@
  * stored there, not the address itself.  The next prologue begins at
  * 0x02003208.
  *
- * There are no `bl`s at all: `bun tools/overlay_call_targets.ts resource_39d
+ * There are no `bl`s at all: `bun tools/lib/overlay_call_targets.ts resource_39d
  * 31c0 3204` reports `sites=0`, so the multiset is empty on both sides.
  *
  * `asrs #20` is the family's quantisation of a 16.16 coordinate to whole

@@ -26,7 +26,7 @@
  * groups those cases rather than duplicating the calls.
  *
  * CALL ACCOUNTING.  Eleven `bl` sites in the row, resolved with
- * `tools/overlay_call_targets.ts`: Func_080091c8 x6, Func_0808a100 x3,
+ * `tools/lib/overlay_call_targets.ts`: Func_080091c8 x6, Func_0808a100 x3,
  * Func_080091c0 x2.  The C below has exactly the same multiset (the shared
  * 6/66 arm is written once, as in the assembly).  The inventory's `calls=11`
  * agrees, though that field is only a lower bound in general.

@@ -25,7 +25,7 @@
  * never a branch target.
  *
  * All 6 `bl` targets resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 25b8 265c` under the
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 25b8 265c` under the
  * `+2` rule. Five are veneers; one is the overlay-internal Func_0200013c,
  * whose eight-argument signature is taken from the already-drafted
  * semantic/overlays/resource_39e_c_0200013c.c rather than guessed.

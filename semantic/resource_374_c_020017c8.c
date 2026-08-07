@@ -28,7 +28,7 @@
  * (animation scripts, the same family 0x02000940, 0x02001274 and 0x02000bbc
  * pass to Func_0808a098 / Func_0808a0b0 / Func_0808a168), not Thumb entries.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`, never from the
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`, never from the
  * disassembler's `bl` annotations: 232 import veneers and 61 prologues in this
  * overlay, the latter all the byte-exact 0x020022c8 (22 sites) and 0x020022e0
  * (39 sites).  39 distinct callees for 293 sites.

@@ -19,7 +19,7 @@
  *
  * Call accounting: 58 `bl` sites, 29 distinct import veneers, no intra-overlay
  * call and no `call_via` slot; all resolved with
- * `bun tools/overlay_call_targets.ts resource_38f 03c8`.  Every site appears
+ * `bun tools/lib/overlay_call_targets.ts resource_38f 03c8`.  Every site appears
  * below exactly once.  (The inventory row advertises `calls=54`; the extra
  * four are the sites inside the ten-iteration spawn loop, which the row counts
  * once.)  The disassembler's own `bl` annotations are wrong in the usual

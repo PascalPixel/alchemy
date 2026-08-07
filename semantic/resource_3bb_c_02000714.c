@@ -21,7 +21,7 @@
  * its word at +500 (250 << 1).
  *
  * All 25 `bl` sites are placed and reach six distinct callees, matching the
- * inventory row's calls=25.  Targets come from tools/overlay_call_targets.ts
+ * inventory row's calls=25.  Targets come from tools/lib/overlay_call_targets.ts
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations, which print each of the ten Func_0808a080 sites, the eight
  * Func_08009150 sites, the three Func_080091c0 sites, the two Func_0808a100

@@ -21,7 +21,7 @@
  *
  * All 17 `bl` sites are placed and every one reaches the same callee, this
  * overlay's own prologue at file offset 0x26e4 - resolved with
- * tools/overlay_call_targets.ts (target offset = stored displacement + 2).
+ * tools/lib/overlay_call_targets.ts (target offset = stored displacement + 2).
  * The inventory row reports `calls=0`, which is an artefact of the old
  * pc-relative decoding, not a property of the code.  Note that the r3 loaded
  * before each `bl` is that callee's fourth argument, not a `call_via` target:

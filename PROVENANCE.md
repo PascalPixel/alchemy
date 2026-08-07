@@ -73,3 +73,23 @@ Before claiming a milestone, run the source-only build, the full ROM build, and
 the aggregate test suite. “Byte closure” means a zero-fallback, byte-identical
 build. “C decompilation” additionally requires the corresponding regions to be
 compiled from C.
+
+## Retired tools cited in source provenance
+
+Reconstructed sources cite the tool that derived a fact. Some of those tools have
+since been deleted; the citation is still the truthful record of how the fact was
+obtained, so it stays. This table says where to find the tool.
+
+| Cited tool | Last commit containing it | Recover with |
+|---|---|---|
+| `tools/m2c_guard.ts` | `463c0a39c` | `git show 463c0a39c:tools/m2c_guard.ts` |
+| `tools/main_xref.ts` | `463c0a39c` | `git show 463c0a39c:tools/main_xref.ts` |
+| `tools/overlay_dispatch_sites.ts` | `463c0a39c` | `git show 463c0a39c:tools/overlay_dispatch_sites.ts` |
+| `tools/veneer_resolve.ts` | `463c0a39c` | `git show 463c0a39c:tools/veneer_resolve.ts` |
+| `tools/overlay_driver.ts` | `b3ab4841b` | `git show b3ab4841b:tools/overlay_driver.ts` |
+| `tools/overlay_unindexed.ts` | `b3ab4841b` | `git show b3ab4841b:tools/overlay_unindexed.ts` |
+
+A citation naming a live tool must name its current path — `tools/check/source_citations.ts`
+enforces that, and this table is the only permitted exception. Do not repoint a
+citation at a different tool that happens to survive: it would claim a derivation
+that never happened.

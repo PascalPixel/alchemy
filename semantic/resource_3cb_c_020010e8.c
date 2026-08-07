@@ -14,7 +14,7 @@
  * at 0x02001146 and never falls into them; the `cmp` pairs the disassembler
  * prints there are cue ids, not code.
  *
- * All nine call sites were resolved with tools/overlay_call_targets.ts
+ * All nine call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=9:
  *   0x020010ec -> veneer 0x02001844 -> Func_0808a018

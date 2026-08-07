@@ -14,7 +14,7 @@
  * reaches `bx r1` at 0x020010d2 and never falls into them; the three `cmp`
  * halfwords the disassembler prints there are cue-base ids, not code.
  *
- * All seven call sites were resolved with tools/overlay_call_targets.ts
+ * All seven call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2).  The inventory reports
  * calls=6, which is the distinct-target count and a lower bound; the placed
  * multiset is:

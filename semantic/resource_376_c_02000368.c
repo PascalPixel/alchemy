@@ -3,7 +3,7 @@
 /*
  * resource_376 owner at 0x02000368, 372 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay_driver.ts resource_376), so the loader enters
+ * (bun tools/overlay/overlay_driver.ts resource_376), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Opens by writing 521 to the workspace's +448 s32 (the recurring

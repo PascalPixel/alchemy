@@ -11,7 +11,7 @@
  * One argument (r0), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * The spawn-then-flag shape and the record[9] mask/set idiom match
  * resource_39c_c_02000048.c's adopted Func_02005a2e/Func_02005aac pair

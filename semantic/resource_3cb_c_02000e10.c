@@ -16,7 +16,7 @@
  * them; the `lsrs`/`subs`/`adds` halfwords the disassembler prints there are
  * data.  Func_02000f18 (byte-exact in assets/code) begins immediately after.
  *
- * All sixteen call sites were resolved with tools/overlay_call_targets.ts
+ * All sixteen call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=16.  Every one is an import veneer:
  *   0x02000e16 -> 0x02001844 -> Func_0808a018

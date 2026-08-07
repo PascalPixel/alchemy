@@ -23,7 +23,7 @@
  * comparison is `(u16)(scene - 3) << 16` against 0x00010000 with `bhi`
  * (unsigned), so it admits exactly scene == 3 and scene == 4.
  *
- * All eight callees resolved with tools/overlay_call_targets.ts: seven import
+ * All eight callees resolved with tools/lib/overlay_call_targets.ts: seven import
  * veneers and this overlay's own prologue at 0x02000fa0.
  */
 

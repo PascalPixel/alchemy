@@ -4,7 +4,7 @@
  * resource_3c9 owner at 0x02001280, 72 bytes: a two-way branch on its
  * second argument, each arm calling the same three imports with
  * different constants -- the highest call count (6x) among this
- * overlay's unindexed candidates, per `bun tools/overlay_unindexed.ts
+ * overlay's unindexed candidates, per `bun tools/overlay/overlay_unindexed.ts
  * resource_3c9`.
  *
  * Complete owner: `push {r5, lr}` at 0x02001280 through `pop {r5} / pop
@@ -16,7 +16,7 @@
  * passed value, never dereferenced.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts resource_3c9
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9
  * 1280 12c8`'s `+2` rule -- all four targets are main-image veneers.
  *
  * Uncertainty: `arg0` is passed straight into `Func_0808a080`, which

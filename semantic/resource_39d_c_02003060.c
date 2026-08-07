@@ -27,7 +27,7 @@
  * sides by known code.
  *
  * All 22 call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_39d 3060 31b4`, and the
+ * `bun tools/lib/overlay_call_targets.ts resource_39d 3060 31b4`, and the
  * per-target histogram is Func_0808a080 x6, Func_080091e0 x4, Func_080000f8
  * x4, Func_0808a158 x4, Func_0200013c x2, Func_080f9010 x1, Func_0808a010 x1:
  *   0x0200306e 0x02003076 0x02003084 0x02003090 0x0200318e 0x0200319a

@@ -21,7 +21,7 @@
  * Func_02000644, Func_02000894, Func_02000980).  Modelled that way rather than
  * as two unrelated globals.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`.
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`.
  */
 
 /* Old-style declarations: overlay import arities are not fixed per name. */

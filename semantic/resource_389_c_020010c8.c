@@ -26,7 +26,7 @@
  * code_bytes and span_bytes.
  *
  * Calls: 5 sites, matching the advertised 5.  Per-target multiset from
- * `bun tools/overlay_call_targets.ts resource_389 10c8`:
+ * `bun tools/lib/overlay_call_targets.ts resource_389 10c8`:
  *   Func_0808a1b8  x1   0x1100
  *   Func_0808a1e8  x1   0x110a
  *   Func_0808a130  x1   0x1114

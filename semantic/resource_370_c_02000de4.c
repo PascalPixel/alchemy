@@ -20,7 +20,7 @@
  * Everything between them is reached as instructions.
  *
  * Five call sites, matching the inventory's calls=5, all resolved with
- * `bun tools/overlay_call_targets.ts resource_370 --json` (per-site mapping;
+ * `bun tools/lib/overlay_call_targets.ts resource_370 --json` (per-site mapping;
  * the tool's textual summary is a histogram, not a mapping):
  *   0x02000e6c -> veneer 0x1454 -> Func_080770c0   (event-flag test)
  *   0x02000e9c -> veneer 0x143c -> Func_08077008   (party-member record)

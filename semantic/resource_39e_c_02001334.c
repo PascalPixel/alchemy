@@ -13,7 +13,7 @@
  * epilogue.
  *
  * Published population (sweep B). All 11 `bl` sites resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 1334 13b8`; sites=11
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 1334 13b8`; sites=11
  * and eleven bl lines were transcribed. Like its neighbour 0x020012e0
  * this row is a `bl` caller of drafted owners -- 0x02000e94, 0x02000bf4,
  * 0x02000db4, 0x02000cd4 -- so it corroborates four drafts at once, and

@@ -19,7 +19,7 @@
  * 0x1418, 0x141c, 0x1420, 0x1424, 0x1428, 0x1432, 0x143c, 0x1446, 0x1450.
  * None carries the Thumb bit, as expected for a `mov pc, rN` table.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_3b2
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_3b2
  * 13ac --json` (12 sites, 8 distinct targets, all import veneers):
  *   0x020013c2 -> 0x02003058 -> Func_080770c0
  *   0x020013ca -> 0x02003070 -> Func_0808a018

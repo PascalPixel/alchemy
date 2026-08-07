@@ -17,7 +17,7 @@
  * +100 is left untouched.  That is what the assembly says; nothing here
  * guards the no-match case.
  *
- * Targets resolved with `tools/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 16 sites, 7 distinct
  * callees.  This owner is a good demonstration of the rule - ten of the
  * sixteen sites are Func_0808a080 and all ten carry bit-identical `bl`

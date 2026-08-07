@@ -27,7 +27,7 @@
  * return address, so the owner is **void**.  r4 is scratch and is not saved,
  * which is what the reference does.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_36f
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_36f
  * 0454` (an overlay `bl` stores target offset - 2):
  *   0x0200045a -> veneer 0x0588 -> Func_080002a8
  *   0x0200046c -> veneer 0x0578 -> Func_08000290

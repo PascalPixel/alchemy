@@ -27,7 +27,7 @@
  * 0xc000 at 0x02001380) or never read again (r6).  The C below spells those as
  * plain `&= 0xfe` / `|= 1`, which is what the stores actually write.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong).  Every
  * site is an import veneer; roughly 179 `bl`s against the inventory's
  * calls=162, and the inventory count is documented as systematically low.

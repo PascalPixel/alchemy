@@ -35,8 +35,8 @@
  * both files.
  *
  * Call targets resolved with
- *   bun tools/overlay_show.ts resource_3a7 09c0 -n 224 |
- *   bun tools/overlay_call_targets.ts resource_3a7 --annotate
+ *   bun tools/overlay/overlay_show.ts resource_3a7 09c0 -n 224 |
+ *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
  * Per-target multiset over the 13 sites, matching the inventory's calls=13:
  *   Func_0808a080 x3 <- veneer 0x02001130
  *   Func_02000b8c x1  (this overlay's effect-burst spawner)

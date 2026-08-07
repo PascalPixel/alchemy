@@ -18,11 +18,28 @@ import { dirname, join } from "node:path";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 
-export function entryPoints(names: readonly string[], isDirectory: (name: string) => boolean): string[] {
+// The single definition of "a tool", imported by architecture.ts rather than
+// restated there. It was stated twice once: architecture.ts learned to skip
+// folders without an index.ts and this did not, so an untracked tools/gcc296/
+// build directory failed the gate in one worktree and passed in another.
+export function entryPoints(
+  names: readonly string[],
+  isDirectory: (name: string) => boolean,
+  hasIndex: (name: string) => boolean = () => true,
+): string[] {
   const tools: string[] = [];
   for (const name of names) {
     if (isDirectory(name)) {
-      if (name !== "lib") tools.push(name);
+      // A folder is a tool only if it has an index.ts. Anything else under
+      // tools/ is untracked output and is not ours to document.
+      // `lib` is shared implementation; `scratch` is deliberately exempt.
+      // The best find of the restructure session came from a throwaway script
+      // sweeping toplev.c against the board -- it closed resource_39e:26d8 and
+      // showed 31 of the fork's 74 -fthumb-* modes were absent from the sweep
+      // list. A gate that fails that script is a gate against the work that
+      // pays. Scratch is untracked and never runs in a gate; graduate anything
+      // that survives into a real tool with a section on the page.
+      if (name !== "lib" && name !== "scratch" && hasIndex(name)) tools.push(name);
     } else if (name.endsWith(".ts")) {
       tools.push(name.slice(0, -3));
     }
@@ -71,8 +88,8 @@ export function violations(tools: readonly string[], docs: Map<string, number>):
 }
 
 function selfTest(): void {
-  const names = ["overlay", "lib", "verify.ts", "notes.md"];
-  const tools = entryPoints(names, (name) => !name.includes("."));
+  const names = ["overlay", "lib", "gcc296", "verify.ts", "notes.md"];
+  const tools = entryPoints(names, (name) => !name.includes("."), (name) => name === "overlay");
   if (tools.join(",") !== "overlay,verify") throw new Error(`entryPoints gave ${tools.join(",")}`);
   const docs = documented("## overlay\n\n" + "word ".repeat(30) + "\n\n## verify\n\ntoo short\n");
   if ((docs.get("overlay") ?? 0) < MINIMUM_WORDS) throw new Error("a real paragraph must count");
@@ -91,6 +108,7 @@ function main(): void {
   const tools = entryPoints(
     readdirSync(join(ROOT, "tools")),
     (name) => !name.includes("."),
+    (name) => existsSync(join(ROOT, "tools", name, "index.ts")),
   );
   const problems = violations(tools, documented(readFileSync(join(ROOT, "AGENTS.md"), "utf8")));
   if (problems.length > 0) {

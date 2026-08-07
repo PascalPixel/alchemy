@@ -6,7 +6,7 @@
  * overlay's script/table block near file offset 0x18xx, and under the proven
  * 0x02008000 link base it is file offset 0xc30 plus the Thumb bit -- odd, so a
  * function entry, per the parity rule.  Nothing in the image `bl`s it, which is
- * consistent: `bun tools/overlay_call_targets.ts resource_3a2` reports the
+ * consistent: `bun tools/lib/overlay_call_targets.ts resource_3a2` reports the
  * overlay's five internal prologue targets as 0x01ec, 0x0870, 0x0b2c, 0x10b8
  * and 0x1144, and 0x0c30 is not among them.
  *
@@ -39,7 +39,7 @@
  * semantic/overlays/resource_3a2_c_02000180.c passes to Func_0808a090, which is
  * independent confirmation of that import's 16.16 argument shape.
  *
- * Call sites resolved with `bun tools/overlay_call_targets.ts resource_3a2 0c30`
+ * Call sites resolved with `bun tools/lib/overlay_call_targets.ts resource_3a2 0c30`
  * -- never from overlay_show's printed annotations, since an overlay `bl` stores
  * target_offset - 2.  104 sites, 23 distinct veneer targets, no internal calls:
  *   0x14d8 -> Func_080770c8   0x1540 -> Func_0808a0e0

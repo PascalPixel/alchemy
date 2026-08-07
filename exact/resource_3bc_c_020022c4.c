@@ -14,8 +14,8 @@
  * sites per overlay_unindexed.ts. This owner makes four outgoing calls,
  * all resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay_show.ts resource_3bc 22c4 |
- * bun tools/overlay_call_targets.ts resource_3bc 22c4 22f0 --annotate`):
+ * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 22c4 |
+ * bun tools/lib/overlay_call_targets.ts resource_3bc 22c4 22f0 --annotate`):
  *   0x20022ca -> veneer -> Func_02006e34(selector)   entity by selector, established (resource_383_c_020047bc.c)
  *   0x20022d4 -> veneer -> Func_02006bd6()           unestablished, same call as resource_3bc_c_020038dc.c
  *   0x20022dc -> veneer -> Func_02006bbe(record, 5)  established (record, mode)

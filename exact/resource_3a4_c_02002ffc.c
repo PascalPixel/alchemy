@@ -4,7 +4,7 @@
  * resource_3a4 owner at 0x02002ffc, 44 bytes: test bit 1 of the runtime
  * word at 0x03001e40 and call Func_0808a158 on record 8 with 7 or 6.
  * A PUBLISHED CALLBACK -- surfaced by sweep B of
- * tools/overlay_published.ts, never the target of a `bl`.
+ * tools/lib/overlay_published.ts, never the target of a `bl`.
  *
  * Complete owner: `push {lr}` at 0x02002ffc through the interworking
  * return `pop {r0} / bx r0` at 0x0200301e-0x02003020, one alignment

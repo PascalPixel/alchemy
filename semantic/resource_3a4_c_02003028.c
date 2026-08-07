@@ -40,7 +40,7 @@
  * contract; resource_3a4 must NOT be certified closed while it stands.
  *
  * Ninety-six call sites, every one resolved with the `+2` rule via
- * `bun tools/overlay_call_targets.ts resource_3a4 0x3028 0x3410` and
+ * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x3028 0x3410` and
  * none read from the listing's arrows. Site count cross-checked: the
  * resolver reports sites=96 and the listing carries 96 `bl` lines. They
  * collapse onto twenty-six targets, all import veneers -- seventeen

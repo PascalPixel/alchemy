@@ -21,7 +21,7 @@
  * the 2-byte zero at 0x020000a2 is the alignment word in front of the next
  * prologue and belongs to nobody.  38 bytes, matching the inventory row.
  *
- * One call site, resolved with `bun tools/overlay_call_targets.ts resource_3b0
+ * One call site, resolved with `bun tools/lib/overlay_call_targets.ts resource_3b0
  * 007c`: 0x02000080 -> veneer 0x11c4 -> Func_080000f8.  The same import the
  * root at 0x02000240 samples twice and Func_020000c0 samples four times.
  *

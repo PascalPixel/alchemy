@@ -25,7 +25,7 @@
  * family beyond the `push {r5, lr}` halfword itself.
  *
  * Both call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_387 0314 032a`, assigning the
+ * `bun tools/lib/overlay_call_targets.ts resource_387 0314 032a`, assigning the
  * i-th occurrence to the i-th site in address order:
  *   0x0200031a -> veneer 0x020011cc -> Func_020014e8
  *   0x02000320 -> veneer 0x02001124 -> Func_02001446

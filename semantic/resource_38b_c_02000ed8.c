@@ -16,7 +16,7 @@
  * cheapest witness for the base and the proof of what this owner is.
  *
  * Two callees: the import veneer Func_0808a080 and this overlay's own
- * prologue at 0x02000f3c, both resolved with tools/overlay_call_targets.ts.
+ * prologue at 0x02000f3c, both resolved with tools/lib/overlay_call_targets.ts.
  * The 0x02000f3c site is an ordinary call: the target is a real `push`
  * prologue, and r0 (the actor record) is live across it as that owner's
  * parameter.

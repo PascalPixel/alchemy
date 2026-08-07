@@ -11,7 +11,7 @@
  *   0x02000c28 = 0x000019cf  text/cue id
  *   0x02000c2c = 0x000008b1  closing cue id
  *
- * All 32 call sites resolved with `bun tools/overlay_call_targets.ts
+ * All 32 call sites resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_3a2 0b2c --json`; they collapse to 17 distinct veneer targets (the
  * inventory's `calls=30` is a known lower bound).  The veneer map used below:
  *   0x14d8 -> Func_080770c8   0x1580 -> Func_0808a170

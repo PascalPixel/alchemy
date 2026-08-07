@@ -22,7 +22,7 @@
  * No incoming arguments read, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_3c9 423c 48d8's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3c9 423c 48d8's
  * +2 rule).
  *
  * SHARED IDIOMS, cited not re-derived: id-record pass-through

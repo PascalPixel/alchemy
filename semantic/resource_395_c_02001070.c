@@ -28,7 +28,7 @@
  * EWRAM base address, not overlay data; the two halfwords it addresses live at
  * 0x02000480 and 0x02000482.
  *
- * All 31 call sites were resolved with tools/overlay_call_targets.ts
+ * All 31 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), never from overlay_show.ts's
  * `bl` annotations, which are off by one veneer entry on this overlay.  Placed
  * multiset, matching the tool's sites=31 exactly: Func_0808a080 x17,

@@ -21,8 +21,8 @@
  * Not found by the structural inventory walk (unindexed); two call sites,
  * both resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay_show.ts resource_3bc 3a58 |
- * bun tools/overlay_call_targets.ts resource_3bc 3a58 3ab8 --annotate`):
+ * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 3a58 |
+ * bun tools/lib/overlay_call_targets.ts resource_3bc 3a58 3ab8 --annotate`):
  *   0x2003a64 -> raw prologue -> Func_020038fc(arg0, arg1, arg2)   sibling item-28 owner, same overlay, undrafted at time of writing
  *   0x2003a8a -> veneer -> Func_080000d0(0x0200b91d, 0xc80)   established task installer (resource_3bc_c_02003abc.c and others); same callback and rate as that sibling, confirming both seed the SAME task under the overlay's proven 0x02008000 link base (0x0200b91d - 1 - 0x02008000 = 0x391c)
  *

@@ -31,7 +31,7 @@
  * cycle).  This owner is therefore the scene's script: it installs each task,
  * runs a timed sequence, and tears the tasks down again.
  *
- * Calls.  34 `bl` sites, all resolved with tools/overlay_call_targets.ts (the
+ * Calls.  34 `bl` sites, all resolved with tools/lib/overlay_call_targets.ts (the
  * row's `calls=31` is the usual undercount).  Placed calls per target, which
  * is the completeness proof — a total alone would not catch a permutation:
  *   Func_0808a010 x11, Func_080f9010 x6, Func_080091f0 x4, Func_080000d0 x3,

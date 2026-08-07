@@ -20,7 +20,7 @@
  * image.
  *
  * The single call site is 0x020001d4 -> veneer at file offset 0x1334 ->
- * Func_080000d8 (`bun tools/overlay_call_targets.ts resource_370`), matching
+ * Func_080000d8 (`bun tools/lib/overlay_call_targets.ts resource_370`), matching
  * the inventory's calls=1.  Func_080000d8 is the main image's per-frame task
  * entry point that takes a Thumb-tagged callback; here it is handed this
  * owner's own address, which reads as the task retiring itself once the fade

@@ -28,7 +28,7 @@
  * its usual place, mid-function rather than at the end.
  *
  * ZERO call sites, and that claim is checked rather than assumed.
- * `bun tools/overlay_call_targets.ts resource_3a4 0x39c8 0x3a44` returns
+ * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x39c8 0x3a44` returns
  * sites=0, which on this overlay is exactly what a silently mis-invoked
  * tool also returns, so it was confirmed independently by scanning every
  * halfword pair in the span for a BL prefix/suffix encoding: none. The row

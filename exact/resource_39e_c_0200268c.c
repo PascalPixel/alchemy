@@ -15,7 +15,7 @@
  * immediately at 0x020026d8.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_39e 268c 26d8's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 268c 26d8's
  * +2 rule -- all eight sites resolve through the overlay veneer table
  * to the main-ROM Func_0808a0xx vocabulary).
  *

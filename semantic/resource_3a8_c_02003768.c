@@ -16,7 +16,7 @@
  * no arguments.
  *
  * Call accounting: 15 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_3a8 3768` (6 distinct targets:
+ * `bun tools/lib/overlay_call_targets.ts resource_3a8 3768` (6 distinct targets:
  * 5 import veneers and 1 intra-overlay prologue).  The disassembler's own
  * annotations are wrong in the usual overlay way - an overlay `bl` stores
  * `target_offset - 2` - and were not used.  In body order:

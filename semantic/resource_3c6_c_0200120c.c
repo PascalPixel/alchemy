@@ -31,7 +31,7 @@
  * resource_3c6_c_020001f0.c), and the rest are small integer ids.
  *
  * Call accounting: 45 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_3c6 120c` - 44 import veneers
+ * `bun tools/lib/overlay_call_targets.ts resource_3c6 120c` - 44 import veneers
  * over 12 distinct imports plus one intra-overlay prologue call to
  * Func_02000218; no `call_via` site.  The multiset of `Func_...(` calls below
  * equals that multiset: Func_0808a080 x16, Func_080091c0 x8, Func_080091e0

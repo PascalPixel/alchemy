@@ -19,7 +19,7 @@
  * the two per-frame callbacks this owner installs and later removes.  That is
  * both the link-base witness and the identity of the two constants.
  *
- * Call targets were resolved with `tools/overlay_call_targets.ts`, never from
+ * Call targets were resolved with `tools/lib/overlay_call_targets.ts`, never from
  * the disassembler's `bl` annotation (an overlay `bl` stores
  * target_offset - 2, not a pc-relative displacement).  All 28 sites resolve:
  * 23 through the import veneer table (named here by the main-image address in

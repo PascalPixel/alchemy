@@ -16,7 +16,7 @@
  * 0x020004f0-0x020004ff.
  *
  * Eighteen `bl` sites, matching the row's advertised call count exactly.  All
- * resolve with tools/overlay_call_targets.ts — an overlay `bl` stores
+ * resolve with tools/lib/overlay_call_targets.ts — an overlay `bl` stores
  * `target_offset - 2`, so the disassembler's labels are artefacts.  Sixteen
  * are import veneers, named for the main-image address in each entry's
  * trailing word.

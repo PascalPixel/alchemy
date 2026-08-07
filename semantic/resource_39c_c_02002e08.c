@@ -14,7 +14,7 @@
  * `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * As with the white twin, the mask and base-address pool words are stored
  * INLINE in the function body (0x02002e34/0x02002e38) and skipped by a

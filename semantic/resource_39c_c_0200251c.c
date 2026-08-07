@@ -15,7 +15,7 @@
  * return.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * `Fixed20()` is the same `if (raw < 0) raw += 0xfffff; raw >> 20`
  * truncate-toward-zero idiom resource_39c_c_020021cc.c already documents.

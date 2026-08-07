@@ -28,7 +28,7 @@
  *
  * CALL TARGETS.  An overlay `bl` stores the target's image offset minus two,
  * so `overlay_show.ts`'s annotations are wrong; every name below comes from
- * `bun tools/overlay_call_targets.ts resource_3bf 4f60`.  Accounting: 19 call
+ * `bun tools/lib/overlay_call_targets.ts resource_3bf 4f60`.  Accounting: 19 call
  * sites, 7 distinct callees (18 sites reach the import veneer table at
  * 0x02005588+, one is the in-image sibling 0x02005470).  The inventory's
  * `calls=8` is the weaker figure documented in HANDOVER section 0 and does not

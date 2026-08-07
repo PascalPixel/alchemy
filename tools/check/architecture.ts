@@ -14,6 +14,8 @@
 //   bun tools/check/architecture.ts --self-test
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { entryPoints } from "./documented.ts";
+import { retiredTools } from "./source_citations.ts";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const TOOLS = join(ROOT, "tools");
@@ -30,7 +32,7 @@ export function modules(read: (path: string) => string, list: (path: string) => 
     }
     // Skip anything that is not a folder: a loose script at the top of tools/
     // is not a tool, and three of them were dead when this check was written.
-    if (entry.includes(".")) continue;
+    if (entry.includes(".") || entry === "scratch") continue;
     const files = list(entry);
     // A folder is a tool only if it has an index.ts. Untracked build output
     // lands under tools/ in some worktrees, and counting it as an undocumented
@@ -127,11 +129,25 @@ export function brokenDocCommands(docs: readonly [string, string][], exists: (pa
   return problems;
 }
 
-export function brokenDocPaths(docs: readonly [string, string][], exists: (path: string) => boolean): string[] {
+export function brokenDocPaths(
+  docs: readonly [string, string][],
+  exists: (path: string) => boolean,
+  retired: ReadonlySet<string> = new Set(),
+): string[] {
   const problems: string[] = [];
   for (const [name, text] of docs) {
-    for (const [, path] of text.matchAll(/(tools\/[a-z0-9_/]+\.ts)/g)) {
-      if (!exists(path)) problems.push(`${name} names ${path}, which does not exist`);
+    for (const line of text.split("\n")) {
+      const paths = line.match(/tools\/[a-z0-9_/]+\.ts/g) ?? [];
+      // A line that names an old path AND a live one is a mapping row -- the
+      // "where the tools went" table and PROVENANCE's retirement table both
+      // exist to name paths that are gone. Only a lone dead path is a defect.
+      const mapping = paths.length > 1 && paths.some((path) => exists(path));
+      if (mapping) continue;
+      for (const path of paths) {
+        if (!exists(path) && !retired.has(path)) {
+          problems.push(`${name} names ${path}, which does not exist`);
+        }
+      }
     }
   }
   return problems;
@@ -189,10 +205,16 @@ function selfTest(): void {
   // cannot silently retarget them -- one did, and it flipped this assertion by
   // rewriting the predicate rather than the data.
   const present = "tools/kept_fixture/present_fixture.ts";
-  const docProblems = brokenDocPaths([["X.md", `see ${present} and tools/absent_fixture.ts`]],
+  // Separate lines: a dead path alone on its line is the defect.
+  const docProblems = brokenDocPaths([["X.md", `see ${present}\nand tools/absent_fixture.ts`]],
     (path) => path === present);
   if (docProblems.length !== 1 || !docProblems[0]!.includes("tools/absent_fixture.ts")) {
     throw new Error("a document naming a missing tool path must be caught");
+  }
+  // A mapping row names an old path beside a live one and must be exempt.
+  if (brokenDocPaths([["X.md", `| \`tools/absent_fixture.ts\` | \`${present}\` |`]],
+    (path) => path === present).length !== 0) {
+    throw new Error("an old->new mapping row must not be reported");
   }
   const cmdProblems = brokenDocCommands([["Y.md", "run bun tools/absent_fixture/index.ts nope_fixture"]], () => false);
   if (cmdProblems.length !== 1) throw new Error("a document promising a missing subcommand must be caught");
@@ -213,7 +235,8 @@ function main(): void {
     ...crossToolImports(found),
     ...unreachable(found, seedNames()),
     ...brokenImports(found),
-    ...brokenDocPaths(docs, (path) => existsSync(join(ROOT, path))),
+    ...brokenDocPaths(docs, (path) => existsSync(join(ROOT, path)),
+      retiredTools(readFileSync(join(ROOT, "PROVENANCE.md"), "utf8"))),
     ...brokenDocCommands(docs, (path) => existsSync(join(ROOT, path))),
   ];
   const documented = Bun.spawnSync(["bun", join(TOOLS, "check", "documented.ts")], { cwd: ROOT });
@@ -225,9 +248,16 @@ function main(): void {
     console.error(new TextDecoder().decode(documented.stderr).trim());
     process.exit(1);
   }
-  const tools = new Set(found.map((module) => module.tool).filter((tool) => tool !== "" && tool !== LIBRARY));
+  // Counted through documented.ts's definition, not a second one here. The two
+  // disagreed -- 9 against 10 -- because this counted folders and that counted
+  // entry points, and AGENTS.md quoted whichever it had been told last.
+  const tools = entryPoints(
+    readdirSync(join(ROOT, "tools")),
+    (name) => !name.includes("."),
+    (name) => existsSync(join(ROOT, "tools", name, "index.ts")),
+  );
   console.log(
-    `architecture ok: ${tools.size} tools, ${found.filter((m) => m.tool === LIBRARY).length} lib modules, ` +
+    `architecture ok: ${tools.length} tools, ${found.filter((m) => m.tool === LIBRARY).length} lib modules, ` +
       `no cross-tool imports, nothing unreachable`,
   );
 }

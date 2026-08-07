@@ -7,8 +7,8 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record, so neither the call-graph
- * sweep nor `tools/overlay_unindexed.ts` lists it. Found by
- * `bun tools/overlay_published.ts resource_39e`.
+ * sweep nor `tools/overlay/overlay_unindexed.ts` lists it. Found by
+ * `bun tools/lib/overlay_published.ts resource_39e`.
  *
  * THIS CLOSES A LOOP ON AN EARLIER DRAFT. The header of
  * resource_39e_c_0200268c.c records "Called 3x within this overlay"

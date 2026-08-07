@@ -7,7 +7,7 @@
  *
  * PUBLISHED, NOT CALLED. Thumb pointer 0x02008a49 at 0x020057ec in the
  * script-record table. Absent from every inventory and from
- * `tools/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
+ * `tools/overlay/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
  * sweep that finds this class.
  *
  * BYTE-IDENTICAL TWIN of 0x02000af0 apart from the actor id and three

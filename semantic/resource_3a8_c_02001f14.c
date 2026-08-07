@@ -27,7 +27,7 @@
  * sequence begins.  It is this state machine's step counter.
  *
  * Call accounting: 12 `bl` sites, resolved with
- * `bun tools/overlay_call_targets.ts resource_3a8 1f14` to exactly two import
+ * `bun tools/lib/overlay_call_targets.ts resource_3a8 1f14` to exactly two import
  * veneers - 0x02003c1c -> Func_0808a080 (8 sites) and 0x02003c34 ->
  * Func_0808a098 (4 sites).  That matches the two distinct BL encodings in the
  * body (`f003 fe0d` x8, `f003 fe19` x4).  The disassembler's own annotations

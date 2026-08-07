@@ -11,7 +11,7 @@
  * spawner Func_02000ae8.  The subject's flag byte at +85 is set to 2 for the
  * duration, cleared to 0 before the loop and left as 3 on the way out.
  *
- * Targets resolved with `tools/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 18 sites, 12 distinct
  * callees.  Note that the inventory row advertises `calls=16`; it counts
  * distinct targets and undercounts here, so the 18 sites below are the

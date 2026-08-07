@@ -26,7 +26,7 @@
  * (0x02000e94, this round's next row) follows immediately.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_39e db4 e74's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e db4 e74's
  * +2 rule; the four spawn sites are intra-overlay bl to Func_0200013c).
  *
  * Uncertainty: callees identified by shape; field meanings and the

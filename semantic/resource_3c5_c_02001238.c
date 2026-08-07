@@ -28,7 +28,7 @@
  * the fall-through arm ends in the `b.n` that hops it.  Nothing is dropped by
  * skipping them and nothing live crosses them unmodelled.
  *
- * CALL ACCOUNTING.  `bun tools/overlay_call_targets.ts resource_3c5 1238`
+ * CALL ACCOUNTING.  `bun tools/lib/overlay_call_targets.ts resource_3c5 1238`
  * reports sites=251 / distinct_targets=29, all 29 import veneers, no prologue
  * and no `call_via`.  The inventory's `calls=230` is the usual lower bound and
  * is not used as a completeness proof.  The multiset comparison is: this file

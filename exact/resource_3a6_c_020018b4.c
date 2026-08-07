@@ -21,7 +21,7 @@
  * arguments rather than dereferenced.  The next prologue begins at 0x020018f4.
  *
  * All seven call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_3a6 18b4 18ec`, assigning the
+ * `bun tools/lib/overlay_call_targets.ts resource_3a6 18b4 18ec`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
  *   0x020018b8 -> veneer 0x02001d5c -> Func_080f9010
  *   0x020018c2 -> prologue 0x020017d8

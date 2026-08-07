@@ -61,8 +61,8 @@
 extern u8 Data_02009884[];
 
 extern s32 Func_02001c28();
-extern void Func_02001c3a();
 extern s32 Func_0200171a();
+extern void Func_02001c3a();
 extern void Func_02001c76();
 extern u8 * Func_02001c90();
 void Func_02000b8c(s32 *source)
@@ -83,7 +83,16 @@ spawn_body:
 
         Func_02001c3a(record, 0x200000, Func_0200171a());
 
-        *(u16 *)(record + 94) = 8;
+        {
+
+            u16 *slot1 = (u16 *)(record + 94);
+
+            s32 v1 = 8;
+
+
+            *slot1 = (u16)v1;
+
+        }
         Func_02001c76(record, Data_02009884);
 
         index++;

@@ -951,6 +951,12 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // Exact once the halfword store goes through a pointer local and an s32 value
+  // local (tell #18/#19); the only residue was the four-argument call at 0x12,
+  // whose r0 setter the reference issues between the two split constants.
+  // Singles cohort exact, 2026-08-07.
+  "semantic/resource_3a3_c_02000d08.c",
+  "exact/resource_3a3_c_02000d08.c",
   // Singles cohort over the low-differing tail, 2026-08-07: this flag is the
   // single largest improvement for all three of these owners (20->2, 21->10 and
   // 21->15 differing bytes respectively) with no source change.
@@ -1676,6 +1682,9 @@ const SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES = new Set([
 // source-order guard; disabling thread-jumps restores it (reconstruction
 // wave, 2026-08-05, paired with cse-shift-immediate-off and
 // sched-low-dest-first at those sets). No prior route used this stock switch.
+// Companion to the pool-load-late class: a lone `movs rN, #K' argument setter
+// also issues before a ready literal-pool load.  Probe set, 2026-08-07.
+const SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES = new Set<string>([]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2039,6 +2048,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-sched-pool-load-late"]
       : []),
+    ...(SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sched-immediate-before-pool"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2145,6 +2157,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES,
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES,
+    ...SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2416,6 +2429,12 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // 2026-08-06. Cross-host rule: rebuild+pin linux from the same
         // commit before the next cloud session touches these routes.
         "dfe6fd74ceeae8d33695b6ac06285cedab253e06866a3dc569ba3657583ebdf5",
+        // -fthumb-sched-immediate-before-pool: companion to the pool-load-late
+        // class, where a lone `movs rN, #K' argument setter also issues before
+        // a ready literal-pool load. Default-off and inert unless routed.
+        // Witness resource_371:1a98, 2026-08-07. Cross-host rule: rebuild+pin
+        // linux from the same commit before the next cloud session.
+        "39dd5e4674ae60996d03a4187518eccccd40f1c7317452b3e0db22a20b71fecc",
       ],
     },
     gs2: {

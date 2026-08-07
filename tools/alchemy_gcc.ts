@@ -349,6 +349,11 @@ const SINK_ADD_IMMEDIATE_SOURCES = new Set(["080c0130"]);
 // it, and it allocates the base out of a rotated low-register order.
 const HOIST_ADD_IMMEDIATE_SOURCES = new Set(["08011568"]);
 
+// 080cd358 calls three block movers with the same pooled addresses and the
+// same 0x7800 size.  The reference rebuilds that size at every call instead
+// of holding it in a register, which only this mode reproduces.
+const NO_CONSTANT_REUSE_SOURCES = new Set(["080cd358"]);
+
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -2030,6 +2035,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(NO_CONSTANT_REUSE_SOURCES.has(stem)
+      ? ["-fthumb-no-constant-reuse"]
+      : []),
     ...(HOIST_ADD_IMMEDIATE_SOURCES.has(stem)
       ? [
           "-mgrouped-dma-store",

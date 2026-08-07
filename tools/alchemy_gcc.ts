@@ -342,6 +342,13 @@ const SINK_STORE_PAST_STORE_SOURCES = new Set(["08006408"]);
 // survive, so the owner carries the whole set as a unit.
 const SINK_ADD_IMMEDIATE_SOURCES = new Set(["080c0130"]);
 
+// 08011568 writes one DMA control halfword and then a three-word descriptor
+// group through the same base pointer.  Its reference finishes adjusting the
+// base before it materializes any of the group's pooled words, which needs the
+// add-immediate lifted above the run of loads the scheduler puts in front of
+// it, and it allocates the base out of a rotated low-register order.
+const HOIST_ADD_IMMEDIATE_SOURCES = new Set(["08011568"]);
+
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -2023,6 +2030,15 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(HOIST_ADD_IMMEDIATE_SOURCES.has(stem)
+      ? [
+          "-mgrouped-dma-store",
+          "-fthumb-group-control-rematerialize",
+          "-mlow-reg-order=2013",
+          "-fthumb-sink-block-constant",
+          "-fthumb-hoist-add-immediate",
+        ]
+      : []),
     ...(SINK_ADD_IMMEDIATE_SOURCES.has(stem)
       ? [
           "-mgrouped-dma-store",
@@ -2418,7 +2434,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
-      "54c5da659b0255a1bb5aef0017e37f2a690638256a428afc0ec918146940abea",
+      "45d291c1ee530c2dc6ca5928e3186e4fc55234805a8b4b79c4b7d7977f7188cb",
         // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
         // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
         // const_ok_for_arm gate says nothing about what Thumb can build.

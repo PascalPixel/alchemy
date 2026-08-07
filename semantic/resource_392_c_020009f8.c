@@ -1,14 +1,15 @@
 /* Run the six-word placement query and forward a successful result. */
 #include "types.h"
-void Func_0808a018(void); void Func_0808a020(void);
-s32 Func_02000474(s32 *result);
-void Func_02000608(s32,s32,s32,s32,s32,void (*)(void));
+typedef struct { s32 lo, hi; } Pair;
+typedef struct { s32 w0, w1, w2, w3; Pair tail; } Query;
+void Func_0200181a(void); void Func_02001846(void);
+s32 Func_02000e7a(Query *result);
+void Func_02001026(s32,s32,s32,s32,Pair);
 void Func_020009f8(void)
 {
-    s32 result[6];
-    Func_0808a018();
-    if (Func_02000474(result))
-        Func_02000608(result[0], result[1], result[2], result[3], result[4],
-                      (void (*)(void))result[5]);
-    Func_0808a020();
+    Query result;
+    Func_0200181a();
+    if (Func_02000e7a(&result))
+        Func_02001026(result.w0, result.w1, result.w2, result.w3, result.tail);
+    Func_02001846();
 }

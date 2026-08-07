@@ -34,6 +34,15 @@
  * Uncertainty: Func_0808a190's interface is not established elsewhere in the
  * semantic tree; only that it is reached here with two arguments, in the
  * position its sibling arm uses Func_0808a180.
+ *
+ * RESIDUE (2 of 102 halfwords, 2026-08-07).  One argument-setter pair is
+ * transposed: at 0x46 the reference writes `movs r1,#0' before `movs r0,#10'.
+ * No operand-shape rule can reach it — 0x16 is the SAME literal pair (10, 0)
+ * for a two-argument call and the reference writes r0 first there.  Routing
+ * -fthumb-call-literal-arg1-first fixes 0x46 and breaks four other sites
+ * (2 halfwords → 10), and neither hoisting the literals into locals,
+ * prototyping the import, nor the 79-configuration mode cohort moves it.  The
+ * order is scheduler position, not source shape.
  */
 
 /* Imports, named by the main-image address in the trailing word of the overlay

@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-stack-args-before-stores and
+ * -fthumb-high-move-before-store: the residuals were `movs r2, #16' sinking
+ * below the two stacked-argument stores at 0x020010fa, and `mov r2, r8'
+ * sinking below the byte store at 0x02001114.
+ */
+
 #include "types.h"
   
   

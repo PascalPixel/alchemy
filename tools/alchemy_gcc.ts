@@ -1805,6 +1805,10 @@ const STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES = new Set([
   "semantic/resource_382_c_0200113c.c",
   "exact/resource_3b9_c_02001c6c.c",
   "semantic/resource_3b9_c_02001c6c.c",
+  // resource_382:1090 -- `movs r2, #16' hoisted above the two `str' to sp at
+  // 0x020010fa, 2026-08-07.
+  "exact/resource_382_c_02001090.c",
+  "semantic/resource_382_c_02001090.c",
 ]);
 // -fthumb-call-literal-arg1-first restricted to a sheet that opens right
 // after a call, which is the discriminator the references observe in
@@ -1830,6 +1834,14 @@ const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
 // the two independent transpositions in resource_371:02f0: the pool word is
 // read before the field load at the entry, and the split constant's shift is
 // finished before the byte store at 0x02000300.
+// -fthumb-high-move-before-store for a `mov rN, r8' the scheduler sank below
+// the byte store that ends the previous statement.
+const HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES = new Set([
+  // resource_382:1090 -- `mov r2, r8' before `strb r3, [r6, #0]' at
+  // 0x02001114, 2026-08-07.
+  "exact/resource_382_c_02001090.c",
+  "semantic/resource_382_c_02001090.c",
+]);
 const POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES = new Set([
   "exact/resource_371_c_020002f0.c",
   "semantic/resource_371_c_020002f0.c",
@@ -2328,6 +2340,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-after-call"]
       : []),
+    ...(HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-high-move-before-store"]
+      : []),
     ...(POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-pool-load-before-load"]
       : []),
@@ -2474,6 +2489,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
+    ...HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES,
     ...POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES,
     ...SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES,
     ...SINK_LOAD_PAST_STORE_OVERLAY_SOURCES,
@@ -2708,6 +2724,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "93419a9f5dca85c386efc04dcb26368b058191b73cc3ba808ef497fd458036dc",
       "fd1bd7c1c8cdbdb224569221c12744386bb0a75c86e1b22ff1e42aa392a9de07",
       "adc81071ec570ed11eae60e138bac9db3ff11ab63bef7f1a725bd198a4c70575",
       "3c8e99bb06fe15eaae8f04c83eec291a3b362d56649d79dec57a4884b064d7cf",

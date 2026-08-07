@@ -86,6 +86,9 @@ export const FORK_MODES = [
   // 2026-08-07: the r0-value twin of -fthumb-group-control-last. Witness
   // 0801a4fc.
   "-fthumb-group-pooled-control-last",
+  // 2026-08-07: high-register variant of -fthumb-move-before-alu. Witness
+  // 0808b868.
+  "-fthumb-high-move-before-alu",
 ] as const;
 
 export const STOCK_SWITCHES = [

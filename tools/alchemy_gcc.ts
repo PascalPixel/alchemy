@@ -286,6 +286,11 @@ const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
 // a callee-saved register, so the copy that feeds the transfer's first stored
 // word targets r0 rather than r1 and falls out of the control-last walk above.
 const GROUP_POOLED_CONTROL_LAST_SOURCES = new Set(["0801a4fc"]);
+// 0808b868 copies a pointer into ip between two independent low-register
+// updates. The reference issues that copy before the adjacent immediate add;
+// -fthumb-move-before-alu only covers low-to-low copies against register ALU
+// operands, so this one needs the widened variant.
+const HIGH_MOVE_BEFORE_ALU_SOURCES = new Set(["0808b868"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.
@@ -1889,6 +1894,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(GROUP_POOLED_CONTROL_LAST_SOURCES.has(stem)
       ? ["-fthumb-group-pooled-control-last"]
       : []),
+    ...(HIGH_MOVE_BEFORE_ALU_SOURCES.has(stem)
+      ? ["-fthumb-high-move-before-alu"]
+      : []),
     ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
       ? ["-fthumb-group-zero-any-register"]
       : []),
@@ -2324,6 +2332,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // Default-off and source-routed, so unrouted codegen is unchanged.
         // Witness 0801a4fc. Cross-host rule: rebuild+pin linux from the same
         // fork source.
+        "47fdf35d6c41ed4b1879ab9ce4ce019d395350b411953bc619e316abad225955",
         "c74a9073698099d112e341db60e4e2ca85c0c189048c4fc5d1277d8d8f58923d",
         // cc1 built from fork 76a2647 on darwin-arm64, 2026-08-07. Admitted
         // from the green verify recorded with this commit.

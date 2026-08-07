@@ -49,6 +49,7 @@ export const FORK_MODES = [
   "-fthumb-copy-before-add-immediate",
   "-fthumb-sink-add-immediate",
   "-fthumb-hoist-add-immediate",
+  "-fthumb-no-constant-reuse",
   "-fthumb-pool-load-base-first",
   "-fthumb-move-before-unary-alu",
   "-fthumb-call-arg0-before-store",

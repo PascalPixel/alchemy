@@ -88,14 +88,14 @@ extern void Func_02001dd8();
 extern void Func_0200181e();
 extern void Func_02001e6e();
 extern s32 Func_02001d64();
-extern void Func_02001dae();
-extern s32 Func_02001d2c();
+extern void Func_02001d2c();
+extern s32 Func_02001dae();
 extern s32 Func_02001d90();
 extern s32 Func_02001d9a();
 extern void Func_02001d3c();
 extern void Func_02001d44();
-extern void Func_02001df2();
-extern s32 Func_02001d70();
+extern void Func_02001d70();
+extern s32 Func_02001df2();
 extern void Func_02001e50();
 extern void Func_02000ef6();
 extern void Func_02001dea();
@@ -112,6 +112,7 @@ extern void Func_02001d62();
 s32 Func_020003f8(void)
 {
     s16 scene;
+    s32 sel;
 
     if (Data_02000240[225] == 19) {
         Func_02001d0a(0x12F);
@@ -133,17 +134,18 @@ s32 Func_020003f8(void)
     Func_02001e6e(13, 1);
 
     if (Func_02001d64(0x87A) != 0) {
-        Func_02001dae(Func_02001d2c(17), 0);
+        Func_02001d2c(Func_02001dae(17), 0);
 
         /* selector 6 or 7 only; see the unsigned compare noted above */
-        if ((u16)((u16)Data_02000240[225] - 6) <= 1) {
+        sel = (u16)Data_02000240[225];
+        if ((u16)(sel - 6) <= 1) {
             if (Func_02001d90(0x109) != 0) {
                 if (Func_02001d9a(0x203) != 0) {
                     Func_02001d3c(12);
                 }
             } else {
                 Func_02001d44(11);
-                Func_02001df2(Func_02001d70(8), 0);
+                Func_02001d70(Func_02001df2(8), 0);
                 Func_02001e50(8, 10);
             }
         }

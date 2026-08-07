@@ -1,3 +1,12 @@
+/*
+ * BYTE-EXACT 2026-08-07 with the new -fthumb-small-shift-before-immediates.
+ * Four argument sheets here write a small split-constant shift (`lsls rN, #1')
+ * ahead of the sheet's plain `movs r0/r1' immediates, and a second split
+ * constant's shift follows its partner directly.  The rule is the mirror of
+ * -fthumb-arg-before-final-shift, which moves an immediate ahead of a shift of
+ * seven or more; the sheet at 0x020021c0 shifts by 16 and 17 and is therefore
+ * left alone, as the reference leaves it.
+ */
 #include "types.h"
 
 /*

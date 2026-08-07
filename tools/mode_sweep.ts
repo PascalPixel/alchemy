@@ -49,6 +49,9 @@ export const FORK_MODES = [
   // argument goes ahead of a preceding split constant's shift. Witness
   // resource_3b1:366c.
   "-fthumb-arg-before-final-shift",
+  // Inverse of -fthumb-call-pool-arg1-first, gated on the third argument still
+  // being written after r0. Witness resource_371:1888.
+  "-fthumb-call-arg0-before-pool",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

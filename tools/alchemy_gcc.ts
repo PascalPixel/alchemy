@@ -1748,6 +1748,23 @@ const ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES = new Set([
   "exact/resource_3b1_c_0200366c.c",
   "semantic/resource_3b1_c_0200366c.c",
 ]);
+// The inverse of -fthumb-call-pool-arg1-first: an immediate r0 argument goes
+// back ahead of a scheduled r1 pool load.  The discriminator the references
+// observe is where the third argument is written -- a sheet whose r2 setter
+// still follows the r0 setter is written in ascending register order, while a
+// sheet whose r2 was already computed before the pool load keeps the pool load
+// first.  The pass encodes exactly that, so both shapes coexist in one row.
+const CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES = new Set([
+  // resource_371:1888, :1938 and :19e8 -- the `movs r0,#8' before the r1 pool
+  // load at 0x020018de, whose sibling call at 0x020018bc in the same row keeps
+  // the pool load first because r2 there is a split constant, 2026-08-07.
+  "exact/resource_371_c_02001888.c",
+  "semantic/resource_371_c_02001888.c",
+  "exact/resource_371_c_02001938.c",
+  "semantic/resource_371_c_02001938.c",
+  "exact/resource_371_c_020019e8.c",
+  "semantic/resource_371_c_020019e8.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2129,6 +2146,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-arg-before-final-shift"]
       : []),
+    ...(CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-arg0-before-pool"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2239,6 +2259,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...THUMB_HI_IMMEDIATE_OVERLAY_SOURCES,
     ...CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES,
     ...ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES,
+    ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2464,6 +2485,16 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "39618b85563aae1ee776522c14d6de42eb3dceadbf9c7c76cbc501b3533457a1",
+        "fe41ef5881fd46a4ec84ceb4224c5ea00abb8b6cb431b726a174ac99580085c6",
+        // -fthumb-call-arg0-before-pool: undo a scheduler inversion that
+        // hoisted an r1 pool load above an immediate r0 argument on a call
+        // that also passes r2 -- the inverse of -fthumb-call-pool-arg1-first,
+        // whose gate is the two-argument sheet. Witnesses resource_371:1888,
+        // :1938 and :19e8; admitted 2026-08-07. Cross-host rule: rebuild+pin
+        // linux from the same commit before the next cloud session touches
+        // these routes.
+        "ae5cc8a44b848b4dcdab7c3a1b5aab61eefd13af1428107828fc82294423004b",
         // -fthumb-arg-before-final-shift: emit the last plain immediate call
         // argument ahead of a preceding split constant's shift, the mirror of
         // -fthumb-next-arg-between-split. Witness resource_3b1:366c; admitted

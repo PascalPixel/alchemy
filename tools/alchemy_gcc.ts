@@ -2443,6 +2443,15 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
       ],
       cc1: [
       "4a19cd86373f0c95f8d5e2f1d6b85867e4afcb2a166e39e1fecc9f7777533906",
+        // cc1 built on darwin-arm64 from fork origin/main 52bbd1c, 2026-08-07,
+        // admitted from this green verify. Compiler binaries are not
+        // reproducible here, so each host build gets its own pin.
+        "7e66357ce5b69114713705da032c339a6aed02a1f7f90dd8ee330ae112313bed",
+      "45d291c1ee530c2dc6ca5928e3186e4fc55234805a8b4b79c4b7d7977f7188cb",
+        // cc1 built on darwin-arm64 from reconciled fork origin/main a853888
+        // (mercury's -fthumb-no-constant-reuse merged with 52bbd1c and
+        // ed39725), 2026-08-07.
+        "6cee4484a765a41b8731e4983e7ae0751d3a21e516d63849f37c82313045f290",
         // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
         // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
         // const_ok_for_arm gate says nothing about what Thumb can build.

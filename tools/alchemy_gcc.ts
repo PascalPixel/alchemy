@@ -2370,6 +2370,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // -mlow-reg-order= now also accepts eight digits: the first four order
         // the entry block, the last four every other block.
         "43ecbc402bd3e6abff7ea434414c0ef9f3001836cc689a6f1bc06bc896b44881",
+        // 2026-08-07: adds -mhigh-reg-order=NNNN, the high-register twin of
+        // -mlow-reg-order=. It overrides the `8, 10, 9, 11' run inside
+        // REG_ALLOC_ORDER with an explicit permutation of r8-r11. Two Thumb
+        // owners (080a8c2c, 08021848) spill two values to high registers and
+        // differ from the reference only in which of r8/sl each pseudo lands
+        // in, with an otherwise identical instruction sequence.
+        "1d6043ba5cfc56bc6bdbf2396637708e45c5896e671841178e60ba12a8336e0b",
       ],
     },
     gs2: {

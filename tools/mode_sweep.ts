@@ -69,6 +69,9 @@ export const FORK_MODES = [
   // Two in-place constant shifts transposed across one unrelated insn.
   // Witness resource_3c8:2f30.
   "-fthumb-swap-shifts-across-insn",
+  // The plain argument ahead of a mid-sheet split-constant shift.
+  // Witness resource_3b1:5ca4.
+  "-fthumb-arg-before-shift-in-sheet",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

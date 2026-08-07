@@ -1,4 +1,13 @@
 /*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-arg-before-shift-in-sheet:
+ * the last residual was the pair at 0x02005ce0, where the reference writes
+ * `movs r0, #8' ahead of the `lsls r1, r1, #8' that finishes the split
+ * constant 0xd000 -- the same rule as -fthumb-arg-before-final-shift, except
+ * the shift is not the sheet's last setup insn (`movs r2, #80' still stands
+ * between the pair and the call).
+ */
+
+/*
  * Resource 3b1 unindexed helper at 0x02005ca4 (108 bytes, 1 call).
  *
  * Derived span: no inventory row (item 28's unindexed population). `push

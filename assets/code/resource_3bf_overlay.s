@@ -7570,33 +7570,8 @@ AlchemyC_02005be8:
 	.space 0x10
 AlchemyC_02005bf8:
 	.space 0x10
-	push	{r4, r5, r6, lr}
-	adds	r6, r2, #0
-	cmp	r6, #0
-	beq.n	.L_02005c36
-	movs	r3, #32
-	subs	r3, r3, r6
-	cmp	r3, #0
-	bgt.n	.L_02005c22
-	negs	r3, r3
-	adds	r4, r1, #0
-	movs	r5, #0
-	lsrs	r4, r3
-	b.n	.L_02005c32
-.L_02005c22:
-	adds	r2, r1, #0
-	lsls	r2, r3
-	adds	r3, r0, #0
-	lsrs	r3, r6
-	adds	r5, r1, #0
-	adds	r4, r3, #0
-	lsrs	r5, r6
-	orrs	r4, r2
-.L_02005c32:
-	adds	r1, r5, #0
-	adds	r0, r4, #0
-.L_02005c36:
-	pop	{r4, r5, r6, pc}
+AlchemyC_02005c08:
+	.space 0x30
 	push	{r4, r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

@@ -295,6 +295,11 @@ const HIGH_MOVE_BEFORE_ALU_SOURCES = new Set(["0808b868"]);
 // of an immediate shift, and a low-register copy issued ahead of an immediate
 // add. It also needs the pre-reload scheduler off.
 const MOVE_BEFORE_IMMEDIATE_ALU_SOURCES = new Set(["0801fd34"]);
+// 080b5d3c's inner loop preheader holds four insns: the object cursor and the
+// counter come from the source, the totals base and the member offset are
+// hoisted invariants. The reference runs the hoisted pair first; move_movables
+// anchors them at the loop note, which puts them last.
+const LOOP_INVARIANT_BLOCK_HEAD_SOURCES = new Set(["080b5d3c"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.
@@ -1904,6 +1909,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MOVE_BEFORE_IMMEDIATE_ALU_SOURCES.has(stem)
       ? ["-fno-schedule-insns2", "-fthumb-move-before-immediate-alu"]
       : []),
+    ...(LOOP_INVARIANT_BLOCK_HEAD_SOURCES.has(stem)
+      ? ["-floop-invariant-block-head"]
+      : []),
     ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
       ? ["-fthumb-group-zero-any-register"]
       : []),
@@ -2333,6 +2341,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+        // -floop-invariant-block-head (2026-08-07): anchors the insns
+        // move_movables hoists at the head of the preheader block instead of
+        // immediately before the loop note, so hoisted invariants lead the
+        // preheader's own insns. Default-off and source-routed, so unrouted
+        // codegen is unchanged. Witness 080b5d3c. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "31441a4d40d157050c7917c53a2567f1d3f9c93d6b2358d7168ba5554fe6ebaf",
         // -fthumb-move-before-immediate-alu (2026-08-07): widens
         // -fthumb-move-before-alu to ALU insns with an immediate second input
         // and to loads as well as copies. Default-off and source-routed, so

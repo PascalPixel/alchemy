@@ -40,8 +40,11 @@ function walk(directory: string, prefix = ""): string[] {
   return names;
 }
 
-// This runner is excluded from its own discovery: it would recurse.
+// This runner is excluded from its own discovery: it would recurse. So is
+// anything under scratch/ -- a probe there must not be able to fail a gate, and
+// a probe that happens to contain the literal "--self-test" was being run.
 const EXCLUDED = new Set(["self_test.ts"]);
+const EXCLUDED_FOLDERS = ["scratch/"];
 
 type Result = { tool: string; ok: boolean; output: string; ms: number };
 
@@ -91,6 +94,9 @@ function selfTest(): void {
   if (found.join(",") !== "a.ts,c.ts") throw new Error(`discover picked ${found.join(",")}`);
   if (discover([], read).length !== 0) throw new Error("empty input must discover nothing");
   if (!EXCLUDED.has("self_test.ts")) throw new Error("the runner must exclude itself");
+  if (!EXCLUDED_FOLDERS.some((f) => "scratch/probe.ts".startsWith(f))) {
+    throw new Error("scratch must be excluded from discovery");
+  }
   if (discover(["assets/music.ts"], () => '"--self-test"').length !== 1) {
     throw new Error("discover must accept nested names");
   }
@@ -102,7 +108,7 @@ async function main(): Promise<void> {
   if (args.includes("--self-test")) return selfTest();
   const jobs = Number(args[args.indexOf("--jobs") + 1]) || Math.max(2, availableParallelism() - 2);
   const tools = discover(walk(""), (name) =>
-    readFileSync(join(TOOLS, name), "utf8")).filter((name) => !EXCLUDED.has(name));
+    readFileSync(join(TOOLS, name), "utf8")).filter((name) => !EXCLUDED.has(name) && !EXCLUDED_FOLDERS.some((f) => name.startsWith(f)));
   if (args.includes("--list")) {
     for (const tool of tools) console.log(`  ${tool}`);
     console.log(`${tools.length} tools expose a self-test`);

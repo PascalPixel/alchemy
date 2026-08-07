@@ -2091,6 +2091,10 @@ const SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES = new Set([
   "exact/resource_3c6_c_02000158.c",
   "semantic/resource_3c6_c_02000158.c",
 ]);
+// A constant materialized before a call that the references materialize after
+// it.  The fork has carried this mode since before the overlay work started but
+// no router or sweep list ever named it, so it was invisible: found by sweeping
+// every -fthumb-* in toplev.c directly against the overlay board, 2026-08-07.
 const SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES = new Set([
   // resource_39e:26d8 -- byte-exact, 140 bytes, 2026-08-07.
   "exact/resource_39e_c_020026d8.c",
@@ -2766,6 +2770,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
     ...SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES,
+    ...SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,

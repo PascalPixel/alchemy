@@ -2375,6 +2375,12 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+        // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
+        // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
+        // const_ok_for_arm gate says nothing about what Thumb can build.
+        // Default-off and source-routed, so unrouted codegen is unchanged.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "802e08a756f582f6c10d467e747143486daa46d13f53c879c9cbd572a693d897",
         // -floop-invariant-block-head (2026-08-07): anchors the insns
         // move_movables hoists at the head of the preheader block instead of
         // immediately before the loop note, so hoisted invariants lead the

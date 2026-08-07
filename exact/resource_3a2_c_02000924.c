@@ -71,14 +71,20 @@
  * callback clear into a `void *callback' assigned before the 0x104 call is
  * what makes the reference's r5 lifetime appear (tell #9).
  *
- * What is left is the closed transposed-argument class: at 0xd2 the reference
- * loads the pool pointer into r1 before `movs r0,#10' for
- * Func_02001f14(10, Data_0200962c), while 0x14c is the SAME shape (a constant
- * r0 of 10 and a pool r1) for Func_0200202e and keeps r0 first.  Both orders
- * appear for one operand shape inside one owner, so no operand-shape flag can
- * discriminate them; -fthumb-call-literal-arg1-first regresses it to 6 and
- * -fthumb-immediate-latency to 77.  Address-of, local-pointer and local-value
- * spellings of the argument all leave it unchanged.
+ * BYTE-EXACT 2026-08-07.  The last two halfwords were at 0xd2, where the
+ * reference loads the pool pointer into r1 before `movs r0,#10' for
+ * Func_02001f14(10, Data_0200962c).  The earlier note here called that the
+ * closed transposed-argument class because 0x14c looked like the same shape and
+ * keeps r0 first -- but 0x14c passes a THIRD argument (r2 = 60), and so does
+ * 0x158.  Every two-argument (immediate r0, pool r1) site in this owner loads
+ * the pool word first, which makes the shape discriminable after all:
+ * -fthumb-call-pool-arg1-first transposes exactly that pair and only when the
+ * call's usage list is r0 and r1 alone.  It is a narrower relative of
+ * -fthumb-call-literal-arg1-first, which transposes a pair of IMMEDIATES and
+ * genuinely is not self-consistent within an owner (it regresses this one to 6).
+ * The r1 source is matched as a CONST_INT no Thumb immediate form can build or
+ * as a MEM of a CONSTANT_POOL_ADDRESS_P symbol -- by arm_reorg the pool load is
+ * already lowered to the MEM, which is why an rtx-constant-only test never fired.
  *
  * Uncertainties: Func_0808a218 at 0x02000a1e is reached with no register set
  * since the preceding call, so it is spelled with no arguments.  The record

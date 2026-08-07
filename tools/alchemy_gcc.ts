@@ -2781,6 +2781,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
     "42189f1a4abeacc3eb5d07d4fbbd646052dfa38c3079a5b053ae1bc1efcc1142",
     // -fthumb-small-shift-before-immediates added, 2026-08-07.
     "63292824103cbfd4405f2d8f1a9fe7780dec4b078e792cd37a7677d4a2c13ad4",
+    // Fork line merged onto fork origin/main (Main's modes plus ours), 2026-08-07.
+    "2e8cc5b36323f7c1e1f3b9e8e975c30de825e7173425b156e6aba6dd0ff40130",
     // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
     "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
       // -fthumb-swap-shifts-across-insn added, 2026-08-07.

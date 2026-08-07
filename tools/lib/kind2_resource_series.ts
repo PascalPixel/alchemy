@@ -423,7 +423,7 @@ export function build_kind2_resource(planFile: string): BuiltKind2Resource {
   const directory = dirname(planFile);
   const sources = [planFile, child(directory, plan.image.source)];
   const decoded = buildDecoded(plan, directory);
-  let prefix = Buffer.alloc(0);
+  let prefix: Buffer<ArrayBufferLike> = Buffer.alloc(0);
   if (plan.prefix_palette !== null) {
     const paletteFile = child(directory, plan.prefix_palette.source);
     const image = readFileSync(paletteFile);
@@ -600,7 +600,7 @@ function exportOne(rom: Buffer, root: string, entry: CatalogEntry): IndexEntry {
     },
     image: {
       encoding: entry.image.encoding,
-      source,
+      source: source as "haikei.8bpp.png" | "koma.4bpp.png" | "naiyou.png",
       canvas_size: hexadecimal(canvas, Math.max(1, canvas.toString(16).length)),
       columns: entry.image.columns,
       status: entry.image.status,

@@ -537,3 +537,45 @@ are linker veneers that cannot be written in C without `asm(...)`, which the
 project forbids. The byte share is in the large semantic owners, which currently
 run ~50% diff (`080bbb0c` 6332 B / 3109, `080ea0d8` 5756 / 2815,
 `080ab5e4` 4888 / 2364, `08027114` 4224 / 1981, `080f6440` 3804 / 1978).
+
+## Main-image unmatched census (2026-08-07)
+
+`docs/main-unmatched-census.txt` is the first full measurement of the whole
+unmatched main-image pool rather than the diff <= 40 slice: every `semantic/08*.c`
+owner as `stem reference_bytes candidate_bytes differing_halfwords`. 570
+measured, 114 build errors, 277,024 reference bytes outstanding. (The other
+1,222 `semantic/` files are overlays and out of scope here.)
+
+The distribution is the finding. Bucketing by `diff / (reference_bytes / 2)`,
+i.e. the fraction of halfwords that differ:
+
+| band | files | bytes |
+| --- | --- | --- |
+| < 0.2 | 7 | 1,342 |
+| 0.2-0.4 | 13 | 2,002 |
+| 0.4-0.6 | 30 | 5,408 |
+| 0.6-0.8 | 53 | 15,108 |
+| 0.8+ | 467 | 253,164 |
+
+91% of the outstanding byte mass has essentially no byte relationship to the
+reference. This corrects an earlier characterisation of the large owners as
+"~50% diff" -- they are ~98%: `080bbb0c` 6,332 B / 3,109 halfwords,
+`080ea0d8` 5,756 / 2,815, `080ab5e4` 4,888 / 2,364, `08027114` 4,224 / 1,981.
+
+Their *sizes*, though, are within a few percent of reference (119 files totalling
+33,014 bytes sit in the 0.8+ band with |size delta| <= 4). That looked like the
+signature of a uniform whole-function register permutation, which
+`-mlow-reg-order=` would express. It is not. All 24 permutations on `080bbb0c`
+land between 3,036 and 3,148 halfwords (stock 3,109), and on `08027114` between
+1,981 and 2,045 (stock 1,981 is already the best). The surface is flat: size
+agreement is just gcc emitting a similar instruction count for functionally
+equivalent C, not a permuted version of the same sequence.
+
+Consequence for planning. There is no near-match path to 25%. The close bands
+below 0.8 total under 24,000 bytes even if every one of them closed, and the
+measured closure rate on that pool has been near zero for three sessions of new
+compiler modes. Reaching 336,431 requires byte-exact reconstruction of large
+owners from scratch -- roughly the eight biggest (`080bbb0c`, `080ea0d8`,
+`080ab5e4`, `08027114`, `080f6440`, `080dea70`, `080e7404`, `080d1714`) sum to
+about 35,700 bytes. That is eight full manual matching efforts, not a flag
+search.

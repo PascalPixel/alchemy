@@ -58,33 +58,20 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-
-
-
-
-
-
-
+u8 *Func_0808a080();
+s32 Func_080091d8();
+void Func_08009080();
+void Func_080000c0();
+void Func_08009150();
+void Func_080f9010();
+void Func_08009158();
 
 /* This overlay's own lookup; byte-exact source in assets/code. */
-
+u8 *Func_02003b48(s32 *);
 
 /* In-image direction table at file offset 0x43d4, sixteen packed steps. */
 extern s32 Data_0200c3d4[];
 
-extern u8 * Func_02007afc();
-extern u8 * Func_02007726(s32 *);
-extern u8 * Func_02007750(s32 *);
-extern u8 * Func_0200777c(s32 *);
-extern s32 Func_02007b0e();
-extern void Func_02007acc();
-extern void Func_02007a2a();
-extern void Func_02007b12();
-extern void Func_02007b22();
-extern void Func_02007d60();
-extern void Func_02007b36();
-extern void Func_02007d6e();
-extern void Func_02007b1c();
 void Func_02003b90(void)
 {
     u8 *subject;
@@ -97,7 +84,7 @@ void Func_02003b90(void)
     s32 permuted_12;
     s32 permuted_21;
     facing = *(u16 *)(subject + 6) >> 12;
-    subject = Func_02007afc(*(s32 *)(0x02000240 + 500));
+    subject = Func_0808a080(*(s32 *)(0x02000240 + 500));
 
     step = Data_0200c3d4[facing];
     position[0] = *(s32 *)(subject + 8) + (step & 0xffff0000);
@@ -105,7 +92,7 @@ void Func_02003b90(void)
     position[2] = *(s32 *)(subject + 16) + (step << 16);
     position[1]  = permuted_12;
 
-    occupant = Func_02007726(position);
+    occupant = Func_02003b48(position);
     if (occupant == 0) return;
 
     step = Data_0200c3d4[facing];
@@ -114,14 +101,14 @@ void Func_02003b90(void)
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
     position[1]  = permuted_21;
 
-    blocker = Func_02007750(position);
+    blocker = Func_02003b48(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) return;
 
     position[0] = *(s32 *)(occupant + 8);
     position[1] = *(s32 *)(occupant + 12) + 0x100000;   /* 128 << 13 */
     position[2] = *(s32 *)(occupant + 16);
 
-    blocker = Func_0200777c(position);
+    blocker = Func_02003b48(position);
     if (blocker != 0 && (blocker[89] & 1) != 0) return;
 
     occupant[34] = 2;
@@ -131,27 +118,27 @@ void Func_02003b90(void)
     step = Data_0200c3d4[facing];
     position[2] = *(s32 *)(occupant + 16) + (step << 16);
 
-    if (Func_02007b0e(occupant, position) > 0) return;
+    if (Func_080091d8(occupant, position) > 0) return;
 
-    Func_02007acc(subject, 8);
-    Func_02007a2a(15);
+    Func_08009080(subject, 8);
+    Func_080000c0(15);
 
     *(s32 *)(occupant + 48) = 0x3333;
     *(s32 *)(occupant + 52) = 0x3333;
-    Func_02007b12(occupant, position[0], position[1], position[2]);
+    Func_08009150(occupant, position[0], position[1], position[2]);
 
     *(s32 *)(subject + 52) = 0x3333;
-    Func_02007b22(subject, position[0], position[1], position[2]);
+    Func_08009150(subject, position[0], position[1], position[2]);
     *(s32 *)(subject + 48) = 0x3333;
 
-    Func_02007d60(238);
-    Func_02007b36(occupant);
-    Func_02007d6e(288);                                 /* 144 << 1 */
+    Func_080f9010(238);
+    Func_08009158(occupant);
+    Func_080f9010(288);                                 /* 144 << 1 */
 
     *(s32 *)(occupant + 8) = position[0];
     *(s32 *)(occupant + 16) = position[2];
     *(s32 *)(occupant + 36) = 0;
     *(s32 *)(occupant + 44) = 0;
 
-    Func_02007b1c(subject, 1);
+    Func_08009080(subject, 1);
 }

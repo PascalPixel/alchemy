@@ -32,28 +32,16 @@
  */
 
 /* Old-style declarations: overlay import arities are not fixed per name. */
+u8 *Func_0808a080();
+void Func_0808a018();
+s32 Func_080770c0();
+void Func_0808a170();
+void Func_0808a100();
+void Func_0808a150();
+void Func_0808a188();
+void Func_080000c0();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-extern u8 * Func_0200107a();
-extern void Func_0200106a();
-extern s32 Func_02001070();
-extern s32 Func_0200108c();
-extern s32 Func_020010a0();
-extern s32 Func_020010ae();
-extern void Func_0200116c();
-extern void Func_0200113c();
-extern void Func_0200116e();
-extern void Func_020011a0();
-extern void Func_0200109a();
-extern void Func_0200110e();
 void Func_020002f0(void)
 {
     u8 *workspace = *(u8 **)0x03001ebc;
@@ -62,43 +50,43 @@ void Func_020002f0(void)
     s16 heading;
     s32 line;
 
-    actor = Func_0200107a(16);
+    actor = Func_0808a080(16);
     heading = *(s16 *)(actor + 6);
     flags = (u16 *)(actor + 100);
 
-    Func_0200106a();
+    Func_0808a018();
 
     *flags |= 2;
 
     if (*(s16 *)(workspace + 382) == 0) {
-        if (Func_02001070(0x950) != 0) {
+        if (Func_080770c0(0x950) != 0) {
             line = 0x2365;
-        } else if (Func_0200108c(0x962) != 0) {
+        } else if (Func_080770c0(0x962) != 0) {
             line = 0x21e2;
         } else {
             line = 0x1f95;
         }
     } else {
-        if (Func_020010a0(0x950) != 0) {
+        if (Func_080770c0(0x950) != 0) {
             line = 0x2371;
-        } else if (Func_020010ae(0x962) != 0) {
+        } else if (Func_080770c0(0x962) != 0) {
             line = 0x21f5;
         } else {
             line = 0x1faa;
         }
     }
 
-    Func_0200116c(line);
+    Func_0808a170(line);
 
-    Func_0200113c(16, 0);
-    Func_0200116e(16, 0, 2);
-    Func_020011a0(16, 0, 10);
+    Func_0808a100(16, 0);
+    Func_0808a150(16, 0, 2);
+    Func_0808a188(16, 0, 10);
 
     *(u16 *)(actor + 6) = (u16)heading;
 
-    Func_0200109a(1);
+    Func_080000c0(1);
 
     *flags &= 1;
 
-    Func_0200110e();
+    Func_0808a020();
 }

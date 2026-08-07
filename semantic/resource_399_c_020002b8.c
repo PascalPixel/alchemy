@@ -38,68 +38,45 @@
 
 /* Imports, named by the main-image address in the trailing word of the overlay
  * veneer each call site reaches.  Old-style declarations are mandatory. */
-           /* frame wait */
-           /* scripted-section open */
-           /* scripted-section close */
+void Func_0808a010();           /* frame wait */
+void Func_0808a018();           /* scripted-section open */
+void Func_0808a020();           /* scripted-section close */
+void Func_0808a100();
+void Func_0808a148();           /* scene request */
+void Func_0808a170();           /* message line */
+void Func_0808a180();
+void Func_0808a190();
+void Func_0808a1b8();           /* orientation over frames */
+void Func_0808a1f0();
+s32 Func_080770c0();            /* story-flag query */
 
-           /* scene request */
-           /* message line */
-
-
-           /* orientation over frames */
-
-            /* story-flag query */
-
-extern void Func_020024ec();
-extern s32 Func_020024d2();
-extern void Func_020025cc();
-extern void Func_020025dc();
-extern void Func_02002616();
-extern void Func_0200250c();
-extern void Func_020025a4();
-extern void Func_0200251a();
-extern void Func_0200261c();
-extern void Func_02002630();
-extern void Func_020025d0();
-extern void Func_02002620();
-extern void Func_0200266a();
-extern void Func_02002560();
-extern void Func_020025f8();
-extern void Func_0200256e();
-extern void Func_02002660();
-extern void Func_02002684();
-extern void Func_02002624();
-extern void Func_020025a8();
 void Func_020002b8(void)
 {
-    s32 off;
+    Func_0808a018();
 
-    off = 0;
-    Func_020024ec();
-
-    if (Func_020024d2(0x881) != 0) {
-        Func_020025cc(0x163c);
-        Func_020025dc(10, 0);
-        Func_02002616(10, 258);
-        Func_0200250c(40);
-        Func_020025a4(10, 1);
-        Func_0200251a(20);
-        Func_020025dc(10, 0, 20);
-        Func_0200261c(10, off);
-        Func_02002630(10, 0x3000, 10);
-        Func_020025d0(10, 9);
+    if (Func_080770c0(0x881) != 0) {
+        Func_0808a170(0x163c);
+        Func_0808a180(10, 0);
+        Func_0808a1f0(10, 258);
+        Func_0808a010(40);
+        Func_0808a100(10, 1);
+        Func_0808a010(20);
+        Func_0808a148(10, 0, 20);
+        Func_0808a190(10, 0);
+        Func_0808a1b8(10, 0x3000, 10);
+        Func_0808a100(10, 9);
     } else {
-        Func_02002620(0x152d);
-        Func_02002630(10, 0);
-        Func_0200266a(10, 258);
-        Func_02002560(40);
-        Func_020025f8(10, 1);
-        Func_0200256e(20);
-        Func_02002630(10, 0, 20);
-        Func_02002660(10, off);
-        Func_02002684(10, 0x3000, 10);
-        Func_02002624(10, 9);
+        Func_0808a170(0x152d);
+        Func_0808a180(10, 0);
+        Func_0808a1f0(10, 258);
+        Func_0808a010(40);
+        Func_0808a100(10, 1);
+        Func_0808a010(20);
+        Func_0808a148(10, 0, 20);
+        Func_0808a180(10, 0);
+        Func_0808a1b8(10, 0x3000, 10);
+        Func_0808a100(10, 9);
     }
 
-    Func_020025a8();
+    Func_0808a020();
 }

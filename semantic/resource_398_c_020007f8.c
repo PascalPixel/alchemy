@@ -46,29 +46,18 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-   /* actor record by slot id */
-  /* overlay-local: actor occupying tile (x, z), or 0 */
-   /* collision probe: >0 means the move is blocked */
-  /* set actor motion state */
-  /* audio cue */
-  /* present message by id */
-  /* start a slide to (x, y, z) */
-  /* commit the slide */
-
+u8 *Func_0808a080();   /* actor record by slot id */
+s32 *Func_020007c4();  /* overlay-local: actor occupying tile (x, z), or 0 */
+s32 Func_080091d8();   /* collision probe: >0 means the move is blocked */
+void Func_08009080();  /* set actor motion state */
+void Func_080000c0();  /* audio cue */
+void Func_080f9010();  /* present message by id */
+void Func_08009150();  /* start a slide to (x, y, z) */
+void Func_08009158();  /* commit the slide */
+void Func_02000304(void);
 
 extern s32 Data_02009064[]; /* packed direction steps, 16 entries */
 
-extern u8 * Func_02001180();
-extern s32 * Func_02000ff6();
-extern s32 * Func_0200101a();
-extern s32 Func_020011c0();
-extern void Func_020011a4();
-extern void Func_0200124a();
-extern void Func_020011ca();
-extern void Func_020011dc();
-extern void Func_020011ea();
-extern void Func_020011f0();
-extern void Func_02000be8(void);
 void Func_020007f8(void)
 {
     u8 *player;
@@ -80,17 +69,17 @@ void Func_020007f8(void)
 
     s32 permuted_24;
     s32 permuted_48;
-    player = Func_02001180(0);
+    player = Func_0808a080(0);
     heading = *(u16 *)(player + 6) >> 12;
     step = Data_02009064[heading];
 
-    target = (u8 *)Func_02000ff6(
+    target = (u8 *)Func_020007c4(
         (*(s16 *)(player + 10) + (step >> 16)) >> 4,
         (*(s16 *)(player + 18) + ((step << 16) >> 16)) >> 4);
     if (target == 0) return;
 
     step = Data_02009064[heading];
-    blocker = (u8 *)Func_0200101a(
+    blocker = (u8 *)Func_020007c4(
         (*(s16 *)(target + 10) + (step >> 16)) >> 4,
         (*(s16 *)(target + 18) + ((step << 16) >> 16)) >> 4);
     if (blocker != 0) return;
@@ -103,21 +92,21 @@ void Func_020007f8(void)
     place[1] = *(s32 *)(target + 12);
     place[2] = *(s32 *)(target + 16) + (step << 16);
 
-    if (Func_020011c0(target, place) > 0) return;
+    if (Func_080091d8(target, place) > 0) return;
 
-    Func_020011a4(player, 8);
-    Func_020011a4(15);
-    Func_0200124a(185);
+    Func_08009080(player, 8);
+    Func_080000c0(15);
+    Func_080f9010(185);
 
     *(s32 *)(target + 48) = 0x3333;
     *(s32 *)(target + 52) = 0x3333;
-    Func_020011ca(target, place[0], place[1], place[2]);
+    Func_08009150(target, place[0], place[1], place[2]);
 
     *(s32 *)(player + 48) = 0x3333;
     *(s32 *)(player + 52) = 0x3333;
-    Func_020011dc(player, place[0], place[1], place[2]);
+    Func_08009150(player, place[0], place[1], place[2]);
 
-    Func_020011ea(target);
+    Func_08009158(target);
 
     *(s32 *)(target + 8) = place[0];
     permuted_48 = place[2];
@@ -125,6 +114,6 @@ void Func_020007f8(void)
     *(s32 *)(target + 16) = permuted_48;
     *(s32 *)(target + 44) = (s32)blocker;
 
-    Func_020011f0(player, 1);
-    Func_02000be8();
+    Func_08009080(player, 1);
+    Func_02000304();
 }

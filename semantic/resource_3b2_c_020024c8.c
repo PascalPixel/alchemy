@@ -42,24 +42,13 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-                    /* scene entity by selector */
-                   /* wait N frames */
-                   /* collision repaint, six arguments */
+u8 *Func_0808a080();                    /* scene entity by selector */
+void Func_080000c0();                   /* wait N frames */
+void Func_080091c0();                   /* collision repaint, six arguments */
 
 /* This overlay's transition starter at 0x02001774. */
+void Func_02001774();
 
-
-extern u8 * Func_0200555c();
-extern u8 * Func_02005568();
-extern u8 * Func_02005572();
-extern u8 * Func_0200557c();
-extern u8 * Func_02005586();
-extern void Func_02003ca4();
-extern void Func_02003d1a();
-extern void Func_0200556a();
-extern void Func_02005640();
-extern u8 * Func_020055f8();
-extern void Func_02005608();
 void Func_020024c8(void)
 {
     s32 column;
@@ -69,11 +58,11 @@ void Func_020024c8(void)
     s32 companion16Column;
     s32 transition;
 
-    column = *(s32 *)(Func_0200555c(18) + 8) >> 20;
-    row = *(s32 *)(Func_02005568(18) + 16) >> 20;
-    companion19Column = *(s32 *)(Func_02005572(19) + 8) >> 20;
-    companion14Column = *(s32 *)(Func_0200557c(14) + 8) >> 20;
-    companion16Column = *(s32 *)(Func_02005586(16) + 8) >> 20;
+    column = *(s32 *)(Func_0808a080(18) + 8) >> 20;
+    row = *(s32 *)(Func_0808a080(18) + 16) >> 20;
+    companion19Column = *(s32 *)(Func_0808a080(19) + 8) >> 20;
+    companion14Column = *(s32 *)(Func_0808a080(14) + 8) >> 20;
+    companion16Column = *(s32 *)(Func_0808a080(16) + 8) >> 20;
 
     transition = 0;
     if (row == 19) {
@@ -85,7 +74,7 @@ void Func_020024c8(void)
             transition = 112;
         } else {
             /* This arm runs two transitions back to back. */
-            Func_02003ca4(18, 0, -64);
+            Func_02001774(18, 0, -64);
             transition = 96;
         }
     } else if (row == 18) {
@@ -124,13 +113,13 @@ void Func_020024c8(void)
     }
 
     if (transition != 0) {
-        Func_02003d1a(18, 0, -transition);
+        Func_02001774(18, 0, -transition);
     }
 
-    Func_0200556a(2);
+    Func_080000c0(2);
 
     column -= 1;
-    Func_02005640(column, row, 3, 1,
-                  column, *(s32 *)(Func_020055f8(18) + 16) >> 20);
-    Func_02005608(0, 0, 3, 1, column, row);
+    Func_080091c0(column, row, 3, 1,
+                  column, *(s32 *)(Func_0808a080(18) + 16) >> 20);
+    Func_080091c0(0, 0, 3, 1, column, row);
 }

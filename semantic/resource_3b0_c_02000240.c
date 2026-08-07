@@ -64,27 +64,27 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-            /* read an event flag */
-           /* set an event flag */
-            /* scheduler/frame query, 16-bit result */
-           /* install a per-frame task */
-           /* advance the task scheduler */
-
-            /* scene entity by selector */
-
-
-
-
-
-
+s32 Func_080770c0();            /* read an event flag */
+void Func_080770c8();           /* set an event flag */
+s32 Func_080000f8();            /* scheduler/frame query, 16-bit result */
+void Func_080000d0();           /* install a per-frame task */
+void Func_080000c0();           /* advance the task scheduler */
+void Func_0808a0f0();
+u8 *Func_0808a080();            /* scene entity by selector */
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a200();
+void Func_0808a210();
+void Func_0808a2b0();
+void Func_08009128();
 
 /* In-overlay sub-scenes. */
-
-
-
-
-
-
+void Func_0200040c();
+void Func_02000468();
+void Func_02000564();
+void Func_020007b0();
+void Func_02000af8();
+void Func_02000e78();
 
 /* RAM: the shared work area. */
 extern u8 Data_02000240[];
@@ -93,54 +93,26 @@ extern u8 Data_02000240[];
 extern s32 Data_02009928[];
 extern s32 Data_02009940[];
 
-extern void Func_0200144c();
-extern s32 Func_02001458();
-extern s32 Func_02001462();
-extern s32 Func_0200146c();
-extern s32 Func_02001478();
-extern s32 Func_0200144a();
-extern s32 Func_02001456();
-extern void Func_0200145e();
-extern s32 Func_020014a4();
-extern s32 Func_020014ae();
-extern void Func_02001528();
-extern s32 Func_02001518();
-extern u8 * Func_0200155a();
-extern void Func_02001540();
-extern void Func_02001614();
-extern void Func_0200160c();
-extern void Func_02001502();
-extern void Func_02001612();
-extern void Func_02001536();
-extern void Func_02001514();
-extern void Func_02001580();
-extern s32 Func_02001568();
-extern void Func_020007dc();
-extern void Func_02000786();
-extern void Func_020008f8();
-extern void Func_02000b5e();
-extern void Func_02000ec0();
-extern void Func_02001246();
 s32 Func_02000240(void)
 {
     u8 *work = Data_02000240;
     s32 mode;
 
-    Func_0200144c(324);                             /* 162 << 1 */
+    Func_080770c8(324);                             /* 162 << 1 */
 
     *(s32 *)(*(u8 **)0x03001ebc + 448) = 0x209;
 
-    if (Func_02001458(0x927) != 0 || Func_02001462(0x928) != 0) {
-        if (Func_0200146c(0x93e) == 0 && Func_02001478(0x8a0) == 0) {
-            Data_02009940[0] = Func_0200144a() & 0xffff;
-            Data_02009928[0] = Func_02001456() & 0xffff;
+    if (Func_080770c0(0x927) != 0 || Func_080770c0(0x928) != 0) {
+        if (Func_080770c0(0x93e) == 0 && Func_080770c0(0x8a0) == 0) {
+            Data_02009940[0] = Func_080000f8() & 0xffff;
+            Data_02009928[0] = Func_080000f8() & 0xffff;
             /* 0x020090a1 == the in-image task at 0x10a0, plus the Thumb bit. */
-            Func_0200145e(0x020090a1, 3200);        /* 200 << 4 */
+            Func_080000d0(0x020090a1, 3200);        /* 200 << 4 */
         }
     }
 
-    if (Func_020014a4(0x925) != 0 && Func_020014ae(0x93e) == 0) {
-        Func_02001528(8, 0x00a40000, 0x01480000);   /* 164 << 16, 164 << 17 */
+    if (Func_080770c0(0x925) != 0 && Func_080770c0(0x93e) == 0) {
+        Func_0808a0f0(8, 0x00a40000, 0x01480000);   /* 164 << 16, 164 << 17 */
     }
 
     mode = *(s16 *)(work + 450) - 1;
@@ -152,53 +124,53 @@ s32 Func_02000240(void)
     case 0: {
         u8 *entity;
 
-        if (Func_02001518(0x109) != 0) {
+        if (Func_080770c0(0x109) != 0) {
             return 0;
         }
 
-        entity = Func_0200155a(0);
-        Func_02001540();
-        Func_02001614();
+        entity = Func_0808a080(0);
+        Func_0808a018();
+        Func_0808a2b0();
 
         *(s32 *)(entity + 12) = 0x00380000;         /* 224 << 14 */
 
-        Func_0200160c(-1, -1, -1, 0);
-        Func_02001502(1);
-        Func_02001612(0, 0);
-        Func_02001536();
-        Func_02001514(1);
-        Func_02001580();
+        Func_0808a210(-1, -1, -1, 0);
+        Func_080000c0(1);
+        Func_0808a200(0, 0);
+        Func_08009128();
+        Func_080000c0(1);
+        Func_0808a020();
         break;
     }
 
     case 9:
-        if (Func_02001568(0x928) != 0) {
-            Func_020007dc();
+        if (Func_080770c0(0x928) != 0) {
+            Func_02000468();
         } else {
-            Func_02000786();
+            Func_0200040c();
         }
         break;
 
         *(u16 *)(work + 452) = 0x6f;
         *(u16 *)(work + 454) = 30;
-        Func_020008f8();
+        Func_02000564();
     case 10:
         break;
 
     case 11:
         *(u16 *)(work + 452) = 0x6f;
         *(u16 *)(work + 454) = 30;
-        Func_02000b5e();
+        Func_020007b0();
         break;
 
     case 12:
         *(u16 *)(work + 452) = 0x6f;
         *(u16 *)(work + 454) = 30;
-        Func_02000ec0();
+        Func_02000af8();
         break;
 
     case 13:
-        Func_02001246();
+        Func_02000e78();
         break;
 
     default:

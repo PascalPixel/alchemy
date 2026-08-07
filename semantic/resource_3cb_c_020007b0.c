@@ -61,40 +61,30 @@
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-
-
+void Func_080000c0();
+void Func_080770e8();
 
 /* Used for their return values. */
+s32 Func_080770c0();
+s32 Func_02000398();
+s32 Func_02000580();
 
-
-
-
-extern s32 Func_02001fc4();
-extern void Func_02001eda();
-extern s32 Func_02000d4a();
-extern void Func_02001eea();
-extern s32 Func_02000b72();
-extern s32 Func_02000b80();
-extern void Func_02001f0a();
-extern s32 Func_02000d7a();
-extern void Func_02002036();
 s32 Func_020007b0(void)
 {
     volatile u16 *interruptMaster = (volatile u16 *)0x04000208;
     u8 *linkBlock = (u8 *)0x02002220;
     u16 savedInterruptMaster;
-    s32 status;
+    s32 status = 0;
     s32 phaseResult;
 
-    if (Func_02001fc4(0x302) == 0) {
+    if (Func_080770c0(0x302) == 0) {
         *(u8 *)0x020023a0 = 0;
 
-        Func_02001eda(5);
-        status = 0;
-        status = Func_02000d4a();
+        Func_080000c0(5);
+        status = Func_02000580();
         if (status >= 0) {
-            Func_02001eea(5);
-            status = Func_02000b72();
+            Func_080000c0(5);
+            status = Func_02000398();
             phaseResult = status;
             if (phaseResult >= 0) {
                 goto publish;
@@ -103,11 +93,11 @@ s32 Func_020007b0(void)
     } else {
         *(u8 *)0x020023a0 = 0;
 
-        status = Func_02000b80();
+        status = Func_02000398();
         phaseResult = status;
         if (phaseResult >= 0) {
-            Func_02001f0a(10);
-            status = Func_02000d7a();
+            Func_080000c0(10);
+            status = Func_02000580();
             if (status >= 0) {
                 goto publish;
             }
@@ -118,7 +108,7 @@ s32 Func_020007b0(void)
 
 publish:
     /* Both role branches converge on this one physical publication site. */
-    Func_02002036(1008, phaseResult);
+    Func_080770e8(1008, phaseResult);
     status = phaseResult;
     return status;
 

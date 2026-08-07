@@ -37,151 +37,101 @@
  */
 
 /* Overlay-local callees (byte-exact siblings in assets/code). */
-
-
+void Func_020022c8(s32, s32);
+void Func_020022e0(s32, s32, s32);
 
 /* Neighbouring owner in this overlay. */
-
+void Func_02001274(void);
 
 /* Main-image imports reached through this overlay's veneer table. */
-          /* frame wait */
+void Func_080000c0();          /* frame wait */
+void Func_08009128();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a048();
+void Func_0808a090();
+void Func_0808a0c8();
+void Func_0808a0d0();
+void Func_0808a0e8();
+void Func_0808a0f0();
+void Func_0808a100();
+void Func_0808a110();
+void Func_0808a138();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a1b8();
+void Func_0808a208();
+void Func_0808a210();
+void Func_0808a218();
+u8 *Func_0808a228();
+void Func_0808a2e0();
+void Func_0808a360();
+void Func_080f9010();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02003850();
-extern void Func_0200372e();
-extern void Func_02003858();
-extern void Func_02003696();
-extern void Func_02003870();
-extern void Func_020036f4();
-extern void Func_020036b2();
-extern void Func_0200377a();
-extern void Func_020038e6();
-extern void Func_02003924();
-extern void Func_020038e8();
-extern void Func_020037fc();
-extern void Func_020036da();
-extern void Func_020037c4();
-extern void Func_02003806();
-extern void Func_0200386c();
-extern void Func_02003884();
-extern void Func_02003962();
-extern void Func_020038d4();
-extern void Func_020038ec();
-extern void Func_020038f8();
-extern void Func_020037d6();
-extern void Func_02003864();
-extern void Func_02003826();
-extern void Func_02003862();
-extern void Func_02003800();
-extern void Func_02003904();
-extern void Func_0200388a();
-extern void Func_020038a2();
-extern void Func_02003472(s32, s32, s32);
-extern void Func_020038be();
-extern void Func_020038c6();
-extern void Func_02003920();
-extern void Func_020038f2();
-extern void Func_02003488(s32, s32);
-extern void Func_020034aa(s32, s32, s32);
-extern void Func_0200349e(s32, s32);
-extern void Func_020034c0(s32, s32, s32);
-extern void Func_0200395c();
-extern void Func_02003914();
-extern void Func_0200396c();
-extern void Func_020034e4(s32, s32, s32);
-extern void Func_02003948();
-extern void Func_02003988();
-extern void Func_02003500(s32, s32, s32);
-extern void Func_0200394c();
-extern void Func_020038c2();
-extern void Func_020034fe(s32, s32);
-extern void Func_020024ae(void);
-extern void Func_020038e2();
 void Func_02001084(void)
 {
     u8 *record;
     s32 captionA;
     s32 captionB;
 
-    record = Func_02003850();
-    Func_0200372e();
+    record = Func_0808a228();
+    Func_0808a018();
 
-    Func_02003858(-1, -1, -1, 0);
-    Func_02003696(1);
-    Func_02003870(0x400000, 0x900000, 0x15e00000, 0);
-    Func_020036f4();
-    Func_020036b2(1);
-    Func_0200377a(1, 0);
-    Func_020038e6();
-    Func_02003924(17);
-    Func_020038e8();
-    Func_020037fc(23, 0x690000, 0x010b0000);
-    Func_020036da(1);
-    Func_020037c4(0, 0x00013333, 0x00009999);
-    Func_02003806(0, 93, 0x157);
-    Func_0200386c(0x0ed6);
-    Func_02003884(23, 0);
-    Func_02003962(61);
+    Func_0808a210(-1, -1, -1, 0);
+    Func_080000c0(1);
+    Func_0808a210(0x400000, 0x900000, 0x15e00000, 0);
+    Func_08009128();
+    Func_080000c0(1);
+    Func_0808a048(1, 0);
+    Func_0808a360();
+    Func_080f9010(17);
+    Func_0808a2e0();
+    Func_0808a0f0(23, 0x690000, 0x010b0000);
+    Func_080000c0(1);
+    Func_0808a090(0, 0x00013333, 0x00009999);
+    Func_0808a0d0(0, 93, 0x157);
+    Func_0808a170(0x0ed6);
+    Func_0808a180(23, 0);
+    Func_080f9010(61);
 
     record[0x55] = 0;
 
-    Func_020038d4(0x30000, 0x6000);
-    Func_020038ec(0x6d0000, 0xb00000, 0x01190000, 1);
-    Func_020038f8();
-    Func_020037d6(40);
-    Func_02003864(24, 0x870000, 0xb10000);
-    Func_02003826(24, 0x0000cccc, 0x00006666);
-    Func_02003862(24, 126, 258);
-    Func_02003800(40);
-    Func_02003904(23, 0xd000, 0);
-    Func_0200388a(24);
-    Func_020038a2(24, 1);
-    Func_02003472(24, 0x7000, 10);
-    Func_020038be(23, 3);
-    Func_020038c6(24, 4);
+    Func_0808a208(0x30000, 0x6000);
+    Func_0808a210(0x6d0000, 0xb00000, 0x01190000, 1);
+    Func_0808a218();
+    Func_0808a010(40);
+    Func_0808a0f0(24, 0x870000, 0xb10000);
+    Func_0808a090(24, 0x0000cccc, 0x00006666);
+    Func_0808a0c8(24, 126, 258);
+    Func_0808a010(40);
+    Func_0808a1b8(23, 0xd000, 0);
+    Func_0808a0e8(24);
+    Func_0808a100(24, 1);
+    Func_020022e0(24, 0x7000, 10);
+    Func_0808a110(23, 3);
+    Func_0808a110(24, 4);
 
     captionA = 0x8017;
     captionB = 0x2018;
 
-    Func_02003920(captionB, 0);
-    Func_020038f2(23, 2);
-    Func_02003488(captionA, 30);
-    Func_020034aa(24, 0xb000, 20);
-    Func_0200349e(captionB, 10);
-    Func_020034c0(23, 0xb000, 40);
-    Func_0200395c(captionA, 0);
-    Func_02003914(24, 4);
-    Func_0200396c(captionB, 0);
-    Func_020034e4(23, 0xf000, 10);
-    Func_02003948(23, 2);
-    Func_02003988(captionA, 0);
-    Func_02003500(24, 0x6000, 20);
-    Func_0200394c(24, 3);
-    Func_020038c2(20);
-    Func_020034fe(captionB, 20);
+    Func_0808a180(captionB, 0);
+    Func_0808a138(23, 2);
+    Func_020022c8(captionA, 30);
+    Func_020022e0(24, 0xb000, 20);
+    Func_020022c8(captionB, 10);
+    Func_020022e0(23, 0xb000, 40);
+    Func_0808a180(captionA, 0);
+    Func_0808a110(24, 4);
+    Func_0808a180(captionB, 0);
+    Func_020022e0(23, 0xf000, 10);
+    Func_0808a138(23, 2);
+    Func_0808a180(captionA, 0);
+    Func_020022e0(24, 0x6000, 20);
+    Func_0808a110(24, 3);
+    Func_0808a010(20);
+    Func_020022c8(captionB, 20);
 
-    Func_020024ae();
-    Func_020038e2();
+    Func_02001274();
+    Func_0808a020();
 }

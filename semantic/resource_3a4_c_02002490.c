@@ -44,68 +44,49 @@
  *   0x2002572, 0x200259c -> Func_08009180  six-arg window call
  */
 
-           /* test story flag, established */
-           /* scene-record accessor, established */
-          /* place entity (id, x, z), established */
-          /* (id, n), established */
-          /* (id, n) */
-          /* six-argument panel call */
-          /* six-argument window call */
-      /* local, resource_3a4_c_02002e84.c */
-          /* local, image offset 0x3a44 */
+s32 Func_080770c0();           /* test story flag, established */
+u8 *Func_0808a080();           /* scene-record accessor, established */
+void Func_0808a0f0();          /* place entity (id, x, z), established */
+void Func_0808a158();          /* (id, n), established */
+void Func_0808a100();          /* (id, n) */
+void Func_080091c0();          /* six-argument panel call */
+void Func_08009180();          /* six-argument window call */
+void Func_02002e84(void);      /* local, resource_3a4_c_02002e84.c */
+void Func_02003a44();          /* local, image offset 0x3a44 */
+void Func_02002bb0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Func_02003460(s32 selector);   /* local, resource_3a4_c_02003460.c */
 
-   /* local, resource_3a4_c_02003460.c */
-
-extern s32 Func_02005fe8();
-extern void Func_0200609a();
-extern s32 Func_0200600a();
-extern void Func_02005356(void);
-extern void Func_02005f1a();
-extern s32 Func_0200602c();
-extern void Func_02006100();
-extern void Func_020060e0();
-extern void Func_020050b4(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_0200596a(s32 selector);
-extern s32 Func_02006062();
-extern void Func_0200610e();
-extern void Func_0200605a();
-extern u8 * Func_020060d0();
-extern s32 Func_02006098();
-extern void Func_02006088();
-extern void Func_0200607c();
-extern void Func_020060b2();
-extern void Func_020060a6();
 void Func_02002490(void)
 {
-    if (Func_02005fe8(0x907) != 0) {
+    if (Func_080770c0(0x907) != 0) {
         *(u16 *)(*(u8 **)0x03001e70 + 20) &= 0xfdff;
-        Func_0200609a(10, 0, 0);
+        Func_0808a0f0(10, 0, 0);
     } else {
-        if (Func_0200600a(0x109) == 0
+        if (Func_080770c0(0x109) == 0
             && *(s16 *)((u8 *)0x02000240 + 450) == 99) {
-            Func_02005356();
+            Func_02002e84();
         }
-        Func_02005f1a();
-        if (Func_0200602c(0x907) == 0) {
-            Func_02006100(10, 2);
-            Func_020060e0(10, 3);
-            Func_020050b4(187 << 18, 128 << 12, 140 << 17, 0x8000);
+        Func_02003a44();
+        if (Func_080770c0(0x907) == 0) {
+            Func_0808a158(10, 2);
+            Func_0808a100(10, 3);
+            Func_02002bb0(187 << 18, 128 << 12, 140 << 17, 0x8000);
         }
     }
 
-    Func_0200596a(9);
+    Func_02003460(9);
 
-    if (Func_02006062(0x200) != 0) {
-        Func_0200610e(9, 5);
-        Func_0200605a(23, 13, 1, 1, 25, 13);
-        Func_020060d0(9)[0x23] |= 2;
+    if (Func_080770c0(0x200) != 0) {
+        Func_0808a100(9, 5);
+        Func_080091c0(23, 13, 1, 1, 25, 13);
+        Func_0808a080(9)[0x23] |= 2;
     }
 
-    if (Func_02006098(0x325) != 0) {
-        Func_02006088(10, 72, 1, 1, 11, 73);
-        Func_0200607c(49, 32, 11, 4, 1, 2);
+    if (Func_080770c0(0x325) != 0) {
+        Func_080091c0(10, 72, 1, 1, 11, 73);
+        Func_08009180(49, 32, 11, 4, 1, 2);
     } else {
-        Func_020060b2(12, 72, 1, 1, 11, 73);
-        Func_020060a6(48, 32, 11, 4, 1, 2);
+        Func_080091c0(12, 72, 1, 1, 11, 73);
+        Func_08009180(48, 32, 11, 4, 1, 2);
     }
 }

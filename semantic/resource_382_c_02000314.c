@@ -57,13 +57,9 @@
 
 extern u8 *Data_03001e8c[];    /* IWRAM pointer table; [12] is the workspace */
 
-           /* record fetch, returns the record */
-           /* in-overlay, four arguments */
+u8 *Func_0808a080();           /* record fetch, returns the record */
+s32 Func_02001674();           /* in-overlay, four arguments */
 
-extern u8 * Func_02001d26();
-extern s32 Func_020019c6();
-extern u8 * Func_02001d3c();
-extern s32 Func_02001a06();
 s32 Func_02000314(u8 *entity)
 {
     u8 *base = Data_03001e8c[0];
@@ -73,12 +69,12 @@ s32 Func_02000314(u8 *entity)
     s32 selector;
     s32 flag;
 
-    record = Func_02001d26((*state & 1) != 0 ? 15 : 14);
-    if (Func_020019c6(entity, record, 32, 0) != 0) {
+    record = Func_0808a080((*state & 1) != 0 ? 15 : 14);
+    if (Func_02001674(entity, record, 32, 0) != 0) {
         return 0;
     }
 
-    record = Func_02001d3c(0);
+    record = Func_0808a080(0);
 
     flag = 0;
     selector = 18;
@@ -89,6 +85,6 @@ s32 Func_02000314(u8 *entity)
         selector = 26;
     }
 
-    Func_02001a06(entity, record, selector, flag);
+    Func_02001674(entity, record, selector, flag);
     return 0;
 }

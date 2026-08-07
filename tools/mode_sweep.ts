@@ -64,6 +64,21 @@ export const FORK_MODES = [
   // compiler without ifcvt.c, which gcc 2.95 did not have. Witness 080fa1ac.
   "-fthumb-leaf-no-lr",
   "-fthumb-no-if-convert",
+  // Merged from the mercury line 2026-08-07: routed in alchemy_gcc.ts but never
+  // registered here, so no sweep could reach them. A routed mode absent from
+  // this list is a mode no sweep can rediscover.
+  "-fthumb-arg0-after-split",
+  "-fthumb-call-arg0-pool-load",
+  "-fthumb-collapse-dead-scratch",
+  "-fthumb-group-zero-any-register",
+  "-fthumb-return-value-before-stack-adjust",
+  "-fthumb-sink-block-constant",
+  "-fthumb-sink-dependent-load",
+  "-fthumb-sink-group-pool-loads",
+  "-fthumb-sink-past-pool-load",
+  "-fthumb-sink-stack-adjust",
+  "-mlow-reg-order=01231230",
+  "-mlow-reg-order=30120123",
 ] as const;
 
 export const STOCK_SWITCHES = [

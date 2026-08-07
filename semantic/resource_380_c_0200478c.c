@@ -32,20 +32,15 @@
  * as raw constants.
  */
 
+extern void Func_080000d0(u32 callback, s32 duration);
+extern s32 Func_08000148(s32 arg0, s32 size);
+extern void Func_080091e8(s32 arg0, s32 arg1);
+extern s32 Func_0808a080(s32 id);
 
-
-
-
-
-extern s32 Func_02009044(s32 arg0, s32 size);
-extern s32 Func_02009196(s32 id);
-extern void Func_020091aa(s32 arg0, s32 arg1);
-extern s32 Func_020090f8(s32 id);
-extern void Func_02009098(u32 callback, s32 duration);
 void Func_0200478c(s32 base, u32 count)
 {
     s32 permuted_6;
-    u8 *array = (u8 *)Func_02009044(33, 404);
+    u8 *array = (u8 *)Func_08000148(33, 404);
     s32 zero = 0;
     u8 *slot = array;
     volatile u32 *dma = (volatile u32 *)0x040000d4;
@@ -58,12 +53,12 @@ void Func_0200478c(s32 base, u32 count)
     if (count > 10)
         count = 10;
     for (index = 0; index < count; index++) {
-        s32 object = Func_02009196(base + index);
+        s32 object = Func_0808a080(base + index);
 
         *(s32 *)slot = object;
         *(u8 *)(*(s32 *)(object + 80) + 38) = 0;
         *(u8 *)(object + 85) = 0;
-        Func_020091aa(Func_020090f8(base + index), 1);
+        Func_080091e8(Func_0808a080(base + index), 1);
         permuted_6 = *(s32 *)(0x0200d140 + index * 4);
         *(s32 *)(slot + 32) = -*(s32 *)(0x0200d168 + index * 4);
         slot[36] = 3;
@@ -71,5 +66,5 @@ void Func_0200478c(s32 base, u32 count)
         slot += 40;
     }
     *(unsigned short *)(array + 400) = count;
-    Func_02009098(0x0200c49d, 3200);
+    Func_080000d0(0x0200c49d, 3200);
 }

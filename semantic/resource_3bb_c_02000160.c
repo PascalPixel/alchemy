@@ -43,29 +43,16 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
+u8 *Func_0808a080();
+void Func_080770c8();
+void Func_080f9010();
+void Func_08009150();
+void Func_080000c0();
+void Func_08009158();
+void Func_0808a010();
+void Func_0808a100();
+void Func_080091c0();
 
-
-
-
-
-
-
-
-
-
-extern u8 * Func_020040bc();
-extern void Func_02004068();
-extern void Func_02004238();
-extern void Func_02004012();
-extern void Func_02003f4c();
-extern void Func_0200403a();
-extern void Func_02003f76();
-extern void Func_02004062();
-extern void Func_02004118();
-extern void Func_020042a0();
-extern void Func_02004192();
-extern void Func_020040ac();
-extern void Func_020040c0();
 void Func_02000160(void)
 {
     u8 *record;
@@ -73,43 +60,43 @@ void Func_02000160(void)
     s32 step;
     s32 frames;
 
-    record = Func_020040bc(30);
+    record = Func_0808a080(30);
     scroll = *(u8 **)(record + 80);
 
-    Func_02004068(816);                         /* 204 << 2 */
+    Func_080770c8(816);                         /* 204 << 2 */
 
     *(s32 *)(record + 52) = 0x1999;
     *(s32 *)(record + 48) = 0x13333;
 
-    Func_02004238(227);
-    Func_02004012(record, 0x2d00000, 0xa0000, 0x2280000);   /* 168<<17, 160<<12, 132<<17 */
+    Func_080f9010(227);
+    Func_08009150(record, 0x2d00000, 0xa0000, 0x2280000);   /* 168<<17, 160<<12, 132<<17 */
 
     step = 0;
     frames = 9;
     do {
         *(u16 *)(scroll + 30) = (u16)(*(u16 *)(scroll + 30) - step);
         frames = frames - 1;
-        Func_02003f4c(1);
+        Func_080000c0(1);
         step = step + 36;
     } while (frames >= 0);
 
-    Func_0200403a(record, 0x2a00000, 0xfff00000, 0x2280000); /* 165 << 17 */
+    Func_08009150(record, 0x2a00000, 0xfff00000, 0x2280000); /* 165 << 17 */
 
     step = 360;                                 /* 180 << 1 */
     frames = 21;
     do {
         *(u16 *)(scroll + 30) = (u16)(*(u16 *)(scroll + 30) - step);
         frames = frames - 1;
-        Func_02003f76(1);
+        Func_080000c0(1);
         step = step + 36;
     } while (frames >= 0);
 
-    Func_02004062(record);
-    Func_02004118(2);
-    Func_020042a0(240);
+    Func_08009158(record);
+    Func_0808a010(2);
+    Func_080f9010(240);
 
     *(u16 *)(scroll + 30) = 0;
-    Func_02004192(30, 4);
+    Func_0808a100(30, 4);
 
     *(s32 *)(record + 8) = 0x2d00000;
     *(s32 *)(record + 12) = 0xfff80000;
@@ -117,6 +104,6 @@ void Func_02000160(void)
     *(s32 *)(record + 40) = 0;
     *(s32 *)(record + 36) = 0;
 
-    Func_020040ac(19, 16, 1, 1, 20, 16);
-    Func_020040c0(20, 80, 1, 1, 21, 80);
+    Func_080091c0(19, 16, 1, 1, 20, 16);
+    Func_080091c0(20, 80, 1, 1, 21, 80);
 }

@@ -51,14 +51,13 @@
  * order a[0], b[0], a[1], b[1], b[2], a[2].
  */
 
-   /* IWRAM square root, reached through the call_via slot */
+s32 Func_030001d8();   /* IWRAM square root, reached through the call_via slot */
 
-extern s32 Func_02002f0c();
 s32 Func_02000314(s32 *a, s32 *b)
 {
     s32 dz = (a[2] - b[2]) >> 16;
     s32 dx = (a[0] - b[0]) >> 16;
     s32 dy = (a[1] - b[1]) >> 16;
 
-    return Func_02002f0c(dx * dx + dy * dy + dz * dz);
+    return Func_030001d8(dx * dx + dy * dy + dz * dz);
 }

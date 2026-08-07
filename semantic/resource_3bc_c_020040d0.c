@@ -6,39 +6,19 @@
  * independently reviewed resource_3bb:3638 and resource_3ba:33a0 owners.
  */
 
-
-
-
-
-
-
-
-
-
+extern s32 Func_080770c0();
+extern s32 Func_08000170();
+extern void Func_08000178();
+extern void Func_080001a8();
+extern void Func_080001c0();
+extern void Func_080001c8();
+extern void Func_080001e8();
+extern u8 *Func_0808a400();
+extern s32 Func_03000380();
 
 extern u8 Data_0200cd60[];
 extern u8 Data_0200cd80[];
 
-extern s32 Func_02008ad4();
-extern s32 Func_020089f4();
-extern void Func_02008a0e();
-extern void Func_02008a34();
-extern void Func_02008a1a();
-extern void Func_02008a46();
-extern void Func_02008abc();
-extern void Func_02008afe();
-extern void Func_02008b3e();
-extern void Func_02008b6e();
-extern void Func_02008bb4();
-extern void Func_02008c0a();
-extern u8 * Func_02008eca();
-extern s32 Func_02008bac();
-extern s32 Func_02008bc2();
-extern void Func_02008ca6();
-extern u8 * Func_02008f52();
-extern s32 Func_02008c34();
-extern s32 Func_02008c4a();
-extern void Func_02008d28();
 void Func_020040d0(void)
 {
     u8 *workspace;
@@ -60,7 +40,7 @@ void Func_020040d0(void)
 
     if (*(s16 *)(workspace + 220) != 0) {
         *(u16 *)(workspace + 218) = 2;
-    } else if (Func_02008ad4(0x106) != 0) {
+    } else if (Func_080770c0(0x106) != 0) {
         if (*(s16 *)(workspace + 218) > 0)
             *(u16 *)(workspace + 218) =
                 (u16)(*(u16 *)(workspace + 218) - 1);
@@ -73,16 +53,16 @@ void Func_020040d0(void)
             *(volatile u32 *)0x040000d8 = 0x050003c0;
             *(volatile u32 *)0x040000dc = 0x80000010;
 
-            handle = Func_020089f4(0x200);
-            Func_02008a0e(Data_0200cd80, handle);
-            Func_02008a34(*(s16 *)(workspace + 216), 0x200, handle);
-            Func_02008a1a(handle);
+            handle = Func_08000170(0x200);
+            Func_080001a8(Data_0200cd80, handle);
+            Func_080001c8(*(s16 *)(workspace + 216), 0x200, handle);
+            Func_08000178(handle);
         }
     }
 
     state = *(s16 *)(workspace + 218);
     if (state == 0) {
-        Func_02008a46(*(s16 *)(workspace + 216));
+        Func_080001c0(*(s16 *)(workspace + 216));
         return;
     }
 
@@ -92,26 +72,26 @@ void Func_020040d0(void)
     out[2] = tile | 0xe400;
     out[0] = 0;
     out[1] = ((104 - (count << 4)) << 16) | column | 0x8000;
-    Func_02008abc(out, 255, 12);
+    Func_080001e8(out, 255, 12);
     out += 3;
 
     for (index = 0; (u32)index < (u32)count; index++) {
         out[0] = 0;
         out[1] = ((96 - (index << 4)) << 16) | column | 0x40000000;
         out[2] = (tile + 2) | 0xe400;
-        Func_02008afe(out, 255, 12);
+        Func_080001e8(out, 255, 12);
         out += 3;
     }
 
     out[0] = 0;
     out[2] = (tile + 6) | 0xe400;
-    Func_02008b3e(out, 255, 12);
+    Func_080001e8(out, 255, 12);
     out += 3;
     out[1] = 0x700000 | column | 0x8000;
 
     out[1] = 0x780000 | column | 0x8000 | 0x10000000;
     out[2] = (tile + 6) | 0xe400;
-    Func_02008b6e(out, 255, 12);
+    Func_080001e8(out, 255, 12);
     out[0] = 0;
     out += 3;
 
@@ -120,7 +100,7 @@ void Func_020040d0(void)
         out[1] = column | (0x800000 + (index << 20)) |
                  0x40000000 | 0x10000000;
         out[2] = (tile + 2) | 0xe400;
-        Func_02008bb4(out, 255, 12);
+        Func_080001e8(out, 255, 12);
         out += 3;
     }
 
@@ -128,39 +108,39 @@ void Func_020040d0(void)
     out[0] = 0;
     out[1] = column | (((count << 4) + 128) << 16) |
              0x8000 | 0x10000000;
-    Func_02008c0a(out, 255, 12);
+    Func_080001e8(out, 255, 12);
     out += 3;
 
     if ((*(s32 *)0x03001e40 & 15) <= 4)
         return;
 
-    marker = Func_02008eca(*(s16 *)(workspace + 224));
+    marker = Func_0808a400(*(s16 *)(workspace + 224));
     if (marker != 0) {
-        screen_y = Func_02008bac(
+        screen_y = Func_03000380(
             *(s32 *)(marker + 8) - *(s32 *)(workspace + 232), 0xe0000) + 112;
-        screen_x = Func_02008bc2(
+        screen_x = Func_03000380(
             *(s32 *)(marker + 16) - *(s32 *)(workspace + 236), 0xe0000);
         screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
         out[0] = 0;
         out[1] = screen_x | (screen_y << 16) | 0x40000000;
         out[2] = (tile + 12) | 0xe400;
-        Func_02008ca6(out, 255, 12);
+        Func_080001e8(out, 255, 12);
         out += 3;
     }
 
-    marker = Func_02008f52(*(s16 *)(workspace + 222));
+    marker = Func_0808a400(*(s16 *)(workspace + 222));
     if (marker == 0)
         return;
 
-    screen_y = Func_02008c34(
+    screen_y = Func_03000380(
         *(s32 *)(marker + 8) - *(s32 *)(workspace + 232), 0xe0000) + 112;
-    screen_x = Func_02008c4a(
+    screen_x = Func_03000380(
         *(s32 *)(marker + 16) - *(s32 *)(workspace + 236), 0xe0000);
     screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
     out[0] = 0;
     out[1] = screen_x | (screen_y << 16) | 0x40000000;
     out[2] = (tile + 8) | 0xe400;
-    Func_02008d28(out, 255);
+    Func_080001e8(out, 255);
 }

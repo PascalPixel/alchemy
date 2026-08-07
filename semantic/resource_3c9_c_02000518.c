@@ -55,34 +55,21 @@
  *     transcribed in the shifted form the row builds them in.
  */
 
-   /* scene-record accessor */
+extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
+extern void Func_08000128(s32 scale, s32 heading, s32 *buffer);
+extern s32 Func_080091d8(u8 *record, s32 *buffer);
+extern void Func_080770d0(s32 id);
+extern void Func_020006c0(void);
+extern void Func_08009080(u8 *record, s32 mode);
+extern void Func_080000c0(s32 id);
+extern void Func_080f9010(s32 id);
+extern void Func_080091e0(u8 *record, s32 mode);
+extern void Func_0808a0c0(s32 index, s32 a, s32 b);
 
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02006270(s32 index);
-extern void Func_0200618e(s32 scale, s32 heading, s32 *buffer);
-extern s32 Func_0200620e(u8 *record, s32 *buffer);
-extern void Func_02006292(s32 id);
-extern void Func_02000c3a(void);
-extern void Func_020061de(u8 *record, s32 mode);
-extern void Func_02006184(s32 id);
-extern void Func_020061ec(u8 *record, s32 mode);
-extern void Func_0200646e(s32 id);
-extern void Func_02006264(u8 *record, s32 mode);
-extern void Func_02006352(s32 index, s32 a, s32 b);
-extern void Func_0200622a(u8 *record, s32 mode);
-extern void Func_02006282(u8 *record, s32 mode);
 void Func_02000518(void)
 {
     s32 probe[3];
-    u8 *record = Func_02006270(0);
+    u8 *record = Func_0808a080(0);
     u8 *flags = record + 85;
     s32 heading = (*(u16 *)(record + 6) + (128 << 5)) & (224 << 8);
     u8 saved = *flags;
@@ -91,30 +78,30 @@ void Func_02000518(void)
     probe[1] = *(s32 *)(record + 12);
     probe[2] = (*(s32 *)(record + 16) & (s32)0xfff00000) + (128 << 12);
 
-    Func_0200618e(128 << 14, heading, probe);
+    Func_08000128(128 << 14, heading, probe);
 
-    if (Func_0200620e(record, probe) != 0) {
+    if (Func_080091d8(record, probe) != 0) {
         return;
     }
 
-    Func_02006292(148 << 2);
-    Func_02000c3a();
-    Func_020061de(record, 6);
-    Func_02006184(6);
-    Func_020061ec(record, 7);
+    Func_080770d0(148 << 2);
+    Func_020006c0();
+    Func_08009080(record, 6);
+    Func_080000c0(6);
+    Func_08009080(record, 7);
 
     *(s32 *)(record + 48) = 192 << 10;
     *(s32 *)(record + 52) = 128 << 10;
 
-    Func_0200646e(152);
+    Func_080f9010(152);
 
     *(s32 *)(record + 40) = 128 << 11;
     *flags = (u8)(*flags & 126);
 
-    Func_02006264(record, 0);
-    Func_02006352(0, *((s16 *)probe + 1), *((s16 *)probe + 5));
-    Func_0200622a(record, 6);
-    Func_02006282(record, 1);
+    Func_080091e0(record, 0);
+    Func_0808a0c0(0, *((s16 *)probe + 1), *((s16 *)probe + 5));
+    Func_08009080(record, 6);
+    Func_080091e0(record, 1);
 
     *flags = saved;
 }

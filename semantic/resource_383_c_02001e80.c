@@ -27,81 +27,61 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-
-            /* returns the actor record written below */
-
-
-
-
-
-
-
-
+void Func_0808a010();
+u8 *Func_0808a080();            /* returns the actor record written below */
+void Func_0808a090();
+void Func_0808a098();
+void Func_0808a0a0();
+void Func_0808a110();
+void Func_0808a138();
+void Func_0808a170();
+void Func_0808a1b8();
+void Func_0808a1f0();
 /* Four register arguments plus two stack words. */
-
+void Func_080091c0();
 
 /* This overlay's own routine at file offset 0x45f4 (byte-exact source in
  * assets/code/resource_383_c_020045f4.c). */
-
+void Func_020045f4(s32, s32);
 
 /* In-image descriptors at file offsets 0x5830 and 0x5560. */
 extern u8 Data_0200d830[];
 extern u8 Data_0200d560[];
 
-extern void Func_02006bc4();
-extern void Func_02006c8c();
-extern void Func_02006bd2();
-extern void Func_02006cb0();
-extern void Func_02006498(s32, s32);
-extern void Func_02006cda();
-extern void Func_02006cfc();
-extern void Func_02006cbc();
-extern void Func_020064bc(s32, s32);
-extern void Func_02006cac();
-extern void Func_02006c12();
-extern void Func_020064d2(s32, s32);
-extern void Func_02006c70();
-extern void Func_02006c7e();
-extern void Func_02006c8e();
-extern void Func_02006c96();
-extern void Func_02006ca4();
-extern u8 * Func_02006c92();
-extern u8 * Func_02006c9e();
-extern void Func_02006c20();
 void Func_02001e80(void)
 {
     u8 *actor;
 
-    Func_02006bc4(30);
-    Func_02006c8c(24, 1);
-    Func_02006bd2(20);
-    Func_02006cb0(0x12a0);
-    Func_02006498(24, 20);
+    Func_0808a010(30);
+    Func_0808a138(24, 1);
+    Func_0808a010(20);
+    Func_0808a170(0x12a0);
+    Func_020045f4(24, 20);
 
-    Func_02006cda(25, 0, 20);
-    Func_02006cfc(25, 258);         /* 129 << 1 */
-    Func_02006cbc(25, 2);
-    Func_020064bc(25, 20);
+    Func_0808a1b8(25, 0, 20);
+    Func_0808a1f0(25, 258);         /* 129 << 1 */
+    Func_0808a138(25, 2);
+    Func_020045f4(25, 20);
 
-    Func_02006cac(24, 4);
-    Func_02006c12(20);
-    Func_020064d2(24, 20);
+    Func_0808a110(24, 4);
+    Func_0808a010(20);
+    Func_020045f4(24, 20);
 
     /* 128 << 11 and 128 << 10; 224 << 10 and 224 << 9.  These are 16.16
      * coordinates (0x40000 = 4.0, 0x20000 = 2.0, and so on), not addresses. */
-    Func_02006c70(24, 0x40000, 0x20000);
-    Func_02006c7e(25, 0x38000, 0x1c000);
+    Func_0808a090(24, 0x40000, 0x20000);
+    Func_0808a090(25, 0x38000, 0x1c000);
 
-    Func_02006c8e(25, Data_0200d830);
-    Func_02006c96(24, Data_0200d560);
-    Func_02006ca4(24);
+    Func_0808a098(25, Data_0200d830);
+    Func_0808a098(24, Data_0200d560);
+    Func_0808a0a0(24);
 
     /* Halfword field at +100 of the actor record. */
-    actor = Func_02006c92(24);
-    actor = Func_02006c9e(25);
+    actor = Func_0808a080(24);
+    actor = Func_0808a080(25);
     *(s16 *)(actor + 100) = 3;
     *(s16 *)(actor + 100) = 1;
 
     /* The last two arguments go out on the stack. */
-    Func_02006c20(14, 48, 4, 1, 14, 44);
+    Func_080091c0(14, 48, 4, 1, 14, 44);
 }

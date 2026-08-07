@@ -20,40 +20,26 @@
  * multiset and source/machine order.
  */
 
+u8 *Func_0808a080();
+s32 Func_080770c0();
+void Func_08000128();
+s32 Func_080091d8();
+void Func_0808a018();
+void Func_0808a020();
+void Func_08009080();
+void Func_080000c0();
+void Func_080f9010();
+void Func_080091e0();
+void Func_0808a0c0();
 
-
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_020020e8();
-extern s32 Func_020020ca();
-extern void Func_020020ba();
-extern s32 Func_020020f2();
-extern void Func_02002132();
-extern void Func_020020da();
-extern void Func_020020b8();
-extern void Func_0200223e();
-extern void Func_020020ee();
-extern void Func_02002140();
-extern void Func_020021b6();
-extern void Func_02002126();
-extern void Func_0200215e();
-extern void Func_0200219e();
 void Func_02000d0c(void)
 {
-    u8 *actor = Func_020020e8(0);
+    u8 *actor = Func_0808a080(0);
     u8 savedStatus = actor[0x55];
     s32 target[3];
     u16 heading;
 
-    if (Func_020020ca(0x200) == 0) {
+    if (Func_080770c0(0x200) == 0) {
         return;
     }
 
@@ -62,29 +48,29 @@ void Func_02000d0c(void)
     target[2] = (*(s32 *)(actor + 16) & (s32)0xfff00000) + 0x80000;
 
     heading = (u16)((*(u16 *)(actor + 6) + 0x2000) & 0xc000);
-    Func_020020ba(0x200000, heading, target);
+    Func_08000128(0x200000, heading, target);
 
-    if (Func_020020f2(actor, target) != 0) {
+    if (Func_080091d8(actor, target) != 0) {
         return;
     }
 
-    Func_02002132();
-    Func_020020da(actor, 6);
-    Func_020020b8(6);
-    Func_0200223e(152);
-    Func_020020ee(actor, 7);
+    Func_0808a018();
+    Func_08009080(actor, 6);
+    Func_080000c0(6);
+    Func_080f9010(152);
+    Func_08009080(actor, 7);
 
     *(s32 *)(actor + 48) = 0x30000;
     actor[0x55] &= 0x7e;
     *(s32 *)(actor + 52) = 0x20000;
     *(s32 *)(actor + 40) = 0x40000;
 
-    Func_02002140(actor, 0);
-    Func_020021b6(0, *(s16 *)((u8 *)target + 2),
+    Func_080091e0(actor, 0);
+    Func_0808a0c0(0, *(s16 *)((u8 *)target + 2),
                        *(s16 *)((u8 *)target + 10));
-    Func_02002126(actor, 6);
-    Func_0200215e(actor, 1);
+    Func_08009080(actor, 6);
+    Func_080091e0(actor, 1);
 
-    Func_0200219e();
+    Func_0808a020();
     actor[0x55] = savedStatus;
 }

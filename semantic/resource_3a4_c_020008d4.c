@@ -36,30 +36,14 @@
  *   0x20009d2 -> Func_080770c8              set a story flag
  */
 
-          /* six-argument window call */
-          /* sound/sting, established */
-          /* camera zoom triple, established */
-          /* frame wait, established */
-          /* wait n frames, established */
-          /* per-frame callback install/clear */
-          /* set a story flag, established */
+void Func_08009180();          /* six-argument window call */
+void Func_080f9010();          /* sound/sting, established */
+void Func_080091f0();          /* camera zoom triple, established */
+void Func_0808a010();          /* frame wait, established */
+void Func_080000c0();          /* wait n frames, established */
+void Func_08000130();          /* per-frame callback install/clear */
+void Func_080770c8();          /* set a story flag, established */
 
-extern void Func_020043fa();
-extern void Func_0200440e();
-extern void Func_0200441e();
-extern void Func_0200463c();
-extern void Func_02004464();
-extern void Func_0200449a();
-extern void Func_020043c2();
-extern void Func_02004410();
-extern void Func_020043de();
-extern void Func_020043f4();
-extern void Func_0200443e();
-extern void Func_020046ac();
-extern void Func_020044ec();
-extern void Func_02004522();
-extern void Func_020044d6();
-extern void Func_0200452c();
 void Func_020008d4(void)
 {
     u8 *record;
@@ -68,34 +52,34 @@ void Func_020008d4(void)
 
     record = *(u8 **)0x03001e70 + 0x164;
 
-    Func_020043fa(113, 31, 103, 17, 1, 1);
-    Func_0200440e(111, 32, 104, 18, 3, 2);
-    Func_0200441e(64, 32, 103, 18, 1, 2);
+    Func_08009180(113, 31, 103, 17, 1, 1);
+    Func_08009180(111, 32, 104, 18, 3, 2);
+    Func_08009180(64, 32, 103, 18, 1, 2);
 
-    Func_0200463c(230);
-    Func_02004464(0x20000, 0x20000, 0x10000);   /* 128<<10, 128<<9 */
-    Func_0200449a(10);
+    Func_080f9010(230);
+    Func_080091f0(0x20000, 0x20000, 0x10000);   /* 128<<10, 128<<9 */
+    Func_0808a010(10);
 
     for (i = 23; i >= 0; i--) {
-        Func_020043c2(4);
+        Func_080000c0(4);
         *(s32 *)(record + 12) += -0x10000;      /* pool 0xffff0000 */
     }
 
-    Func_02004410(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */
+    Func_08000130(1, 0, 0x020086a1);            /* Func_020006a0 | 1 */
 
     counter = (u16 *)0x0200d238;
     *counter = 0;
     do {
-        Func_020043de(1);
+        Func_080000c0(1);
         *counter += 1;
     } while ((u32)(*counter << 16) <= (u32)(200 << 15));
 
-    Func_020043f4(1);
-    Func_0200443e(1, 0, 0);
-    Func_020046ac(0x121);
+    Func_080000c0(1);
+    Func_08000130(1, 0, 0);
+    Func_080f9010(0x121);
 
-    Func_020044ec(-1, -1, 0xe666);              /* 0.9 in 16.16 */
-    Func_02004522(30);
-    Func_020044d6(103, 14, 103, 17, 4, 3);
-    Func_0200452c(0x907);
+    Func_080091f0(-1, -1, 0xe666);              /* 0.9 in 16.16 */
+    Func_0808a010(30);
+    Func_08009180(103, 14, 103, 17, 4, 3);
+    Func_080770c8(0x907);
 }

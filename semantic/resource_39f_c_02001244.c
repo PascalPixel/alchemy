@@ -30,80 +30,62 @@ extern s16 Data_02000240[];
 
 /* Returns a slot record; +8/+12/+16 are its position and +10/+18 are the
  * signed halfwords read from slot 0. */
-
-
-
-
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_02000ea8();
+void Func_02000d90();
 /* Four register arguments plus four stack words. */
+void Func_02000ae8();
+void Func_0808a200();
+void Func_0808a150();
+void Func_0808a010();
+void Func_0808a130();
+void Func_0808a1e8();
+void Func_080f9010();
+void Func_080770c8();
+void Func_0808a0f0();
+void Func_0808a250();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02004008();
-extern void Func_02003ff6();
-extern void Func_02002102();
-extern void Func_02001ffc();
-extern void Func_02001d72();
-extern void Func_020040e6();
-extern void Func_020040b8();
-extern void Func_0200403e();
-extern void Func_020040ae();
-extern void Func_020040f8();
-extern void Func_0200416e();
-extern void Func_0200405c();
-extern void Func_02004082();
-extern u8 * Func_0200408c();
-extern u8 * Func_02002070();
-extern void Func_02004080();
-extern void Func_020040ea();
-extern void Func_02004184();
 void Func_02001244(void)
 {
     u8 *slot;
 
-    slot = Func_02004008(11);
+    slot = Func_0808a080(11);
 
     /* r0 still holds the record returned above. */
-    Func_02003ff6();
+    Func_0808a018();
 
-    Func_02002102(11, 0);
-    Func_02001ffc(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
+    Func_02000ea8(11, 0);
+    Func_02000d90(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
 
-    Func_02001d72(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Func_02000ae8(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
-    Func_020040e6(11, 1);
-    Func_020040b8(11, 0, 0);
-    Func_0200403e(30);
-    Func_020040ae(11, 2);
-    Func_020040f8(11, 0x103, 0);
-    Func_0200416e(147);
-    Func_0200405c(60);
+    Func_0808a200(11, 1);
+    Func_0808a150(11, 0, 0);
+    Func_0808a010(30);
+    Func_0808a130(11, 2);
+    Func_0808a1e8(11, 0x103, 0);
+    Func_080f9010(147);
+    Func_0808a010(60);
 
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
-    Func_02004082(11,
-                  *(s16 *)(Func_0200408c(0) + 10),
-                  *(s16 *)(Func_02002070(0) + 18),
+    Func_02000d90(11,
+                  *(s16 *)(Func_0808a080(0) + 10),
+                  *(s16 *)(Func_0808a080(0) + 18),
                   0x40000);                          /* 128 << 11 */
 
-    Func_02004082(10);
-    Func_02004080(0x301);
-    Func_020040ea(14, 0, 0);
+    Func_0808a010(10);
+    Func_080770c8(0x301);
+    Func_0808a0f0(14, 0, 0);
 
     ((u8 *)Data_02000240)[0x22b] = 3;
 
-    Func_02004184(53, 0);
+    Func_0808a250(53, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_020040b8();
+    Func_0808a020();
 }

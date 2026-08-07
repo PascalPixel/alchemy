@@ -28,28 +28,21 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
+void *Func_0808a080();
+void Func_0808a018();
+s32 Func_080770c0();
+void Func_0808a170();
+void Func_0808a178();
+void Func_0808a1b8();
 
-
-
-
-
-
-
-extern void Func_02001882();
-extern void * Func_02001866();
-extern s32 Func_0200183c();
-extern s32 Func_02001846();
-extern void Func_02001918();
-extern void Func_02001928();
-extern void Func_02001954();
 void Func_020002dc(void)
 {
-    Func_02001882(Func_02001866(0));
+    Func_0808a018(Func_0808a080(0));
 
-    if (Func_0200183c(0x8a7) != 0 && Func_02001846(0x8a9) != 0) {
-        Func_02001918(0x1d23);
-        Func_02001928(12, 0);
+    if (Func_080770c0(0x8a7) != 0 && Func_080770c0(0x8a9) != 0) {
+        Func_0808a170(0x1d23);
+        Func_0808a178(12, 0);
         /* movs r1,#0x80 / lsls r1,r1,#7 == 0x4000 */
-        Func_02001954(12, 0x4000, 0);
+        Func_0808a1b8(12, 0x4000, 0);
     }
 }

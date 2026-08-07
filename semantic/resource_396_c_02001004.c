@@ -57,67 +57,33 @@ extern s16 Data_02000240[];
 extern u8 *Data_03001e70;
 extern u8 *Data_03001ebc;
 
-
-
-
-
-
+extern void Func_02000f58(s32 arg0);
+extern void Func_02001224(void);
+extern void Func_02001424(s32 arg0);
+extern void Func_020017ec(void);
+extern void Func_020018b8(void);
 
 /* IWRAM 16.16 multiply, established; reached at 0x03000118 through the
  * `mov ip, pc / bx r4` idiom rather than by bl. */
 typedef s32 (*Multiply16_16)(s32 value, s32 scale);
 
+extern void Func_080000c0(s32 arg0);
+extern void Func_080000d0(s32 callback, s32 arg1);
+extern void Func_080091e0(void *record, s32 arg1);
+extern s32 Func_080770c0(s32 flagId);
+extern void Func_080770c8(s32 flagId);
+extern void Func_0808a010(s32 frames);
+extern u8 *Func_0808a080(s32 id);
+extern void Func_0808a0f0(s32 id, s32 x, s32 y);
+extern void Func_0808a100(s32 id, s32 arg1);
+extern void Func_0808a158(s32 id, s32 arg1);
+extern void Func_0808a1e0(s32 id, s32 mode);
+extern void Func_0808a1f0(s32 id, s32 arg1);
+extern void Func_0808a210(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0808a238(s32 arg0, s32 arg1);
+extern void Func_0808a360(void);
+extern void Func_080f9010(s32 arg0);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02002b06(s32 id);
-extern void Func_0200223e(void);
-extern u8 * Func_02002b26(s32 id);
-extern void Func_02002b7e(s32 id, s32 arg1);
-extern void Func_02002468(s32 arg0);
-extern void Func_02002a88(s32 callback, s32 arg1);
-extern s32 Func_02002b2e(s32 flagId);
-extern void Func_02002b8c(s32 id, s32 x, s32 y);
-extern void Func_02002b96(s32 id, s32 x, s32 y);
-extern s32 Func_02002b4c(s32 flagId);
-extern void Func_02002878(void);
-extern void Func_02002ba8(s32 flagId);
-extern void Func_02002bae(s32 flagId);
-extern void Func_02002bb4(s32 flagId);
-extern void Func_02002bba(s32 flagId);
-extern void Func_02002b10(s32 arg0);
-extern void Func_0200204e(s32 arg0);
-extern u8 * Func_02002c0e(s32 id);
-extern void Func_02002d0c(void);
-extern void Func_02002c54(s32 id, s32 arg1);
-extern void Func_02002c32(void *record, s32 arg1);
-extern u8 * Func_02002be0(s32 id);
-extern void Func_02002cd0(s32 id, s32 arg1);
-extern void Func_02002cf2(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02002d70(s32 arg0);
-extern void Func_02002d2a(s32 arg0, s32 arg1);
-extern void Func_02002c60(s32 frames);
-extern void Func_02002d0e(s32 id, s32 mode);
-extern void Func_02002c74(s32 frames);
-extern void Func_02002d2e(s32 id, s32 arg1);
-extern void Func_02002c84(s32 frames);
-extern s32 Func_02002c80(s32 flagId);
-extern void Func_02002a78(void);
-extern void Func_02002124(s32 arg0);
 s32 Func_02001004(void)
 {
     u8 *record;
@@ -126,25 +92,25 @@ s32 Func_02001004(void)
     s32 id;
     s16 selector;
 
-    record = Func_02002b06(8);
+    record = Func_0808a080(8);
     *(s32 *)0x0200add0 = 0x02001000;
-    Func_0200223e();
+    Func_02001224();
     *(s32 *)(record + 12) = 0xfff60000;
     record[85] = 0;
     record[85] = 0;
     *(s32 *)(record + 12) = 0xfff60000;
-    record = Func_02002b26(9);
-    Func_02002b7e(9, 15);
-    Func_02002468(0);
+    record = Func_0808a080(9);
+    Func_0808a158(9, 15);
+    Func_02001424(0);
     if (Data_02000240[225] != 19) {
-        Func_02002a88(0x02009245, 3200);
+        Func_080000d0(0x02009245, 3200);
     }
-    if (Func_02002b2e(0x844) != 0) {
-        Func_02002b8c(9, 0, 0);
-        Func_02002b96(8, 0, 0);
+    if (Func_080770c0(0x844) != 0) {
+        Func_0808a0f0(9, 0, 0);
+        Func_0808a0f0(8, 0, 0);
     }
-    if (Func_02002b4c(0x109) != 0) {
-        Func_02002878();
+    if (Func_080770c0(0x109) != 0) {
+        Func_020017ec();
     }
 
     *(s32 *)(camera + 276) = 0xe666;
@@ -152,41 +118,41 @@ s32 Func_02001004(void)
     *(s32 *)(camera + 268) += multiply16_16(*(s32 *)(camera + 236) + 0xa00000, 0x1999);
     *(s32 *)(camera + 280) = 0xe666;
     *(s32 *)(camera + 272) += multiply16_16(*(s32 *)(camera + 240) + 0x880000, 0x1999);
-    Func_02002ba8(0x201);
-    Func_02002bae(0x20d);
-    Func_02002bb4(0x20f);
-    Func_02002bba(0x213);
-    Func_02002b10(1);
-    Func_0200204e(0);
+    Func_080770c8(0x201);
+    Func_080770c8(0x20d);
+    Func_080770c8(0x20f);
+    Func_080770c8(0x213);
+    Func_080000c0(1);
+    Func_02000f58(0);
     *(s32 *)(Data_03001ebc + 448) = 514;
 
     id = *(s32 *)((u8 *)Data_02000240 + 500);
     selector = Data_02000240[225];
-    record = Func_02002c0e(id);
+    record = Func_0808a080(id);
     if (selector == 50 || selector == 40 || selector == 30 || selector == 20) {
-        Func_02002d0c();
-        Func_02002c54(id, 27);
-        Func_02002c32(Func_02002be0(id), 0);
-        Func_02002cd0(id, 0x101);
-        Func_02002cf2(-1, -1, -1, 0);
+        Func_0808a360();
+        Func_0808a100(id, 27);
+        Func_080091e0(Func_0808a080(id), 0);
+        Func_0808a1f0(id, 0x101);
+        Func_0808a210(-1, -1, -1, 0);
         record[85] = 2;
         *(s32 *)(record + 12) = 0x640000;
         *(s32 *)(record + 20) = 0xff600000;
         *(s32 *)(record + 72) = 0x8000;
-        Func_02002d70(204);
-        Func_02002d2a(45, selector - 10);
-        Func_02002c60(20);
+        Func_080f9010(204);
+        Func_0808a238(45, selector - 10);
+        Func_0808a010(20);
         record[34] = 2;
-        Func_02002d0e(id, 3);
-        Func_02002c74(2);
-        Func_02002d2e(id, 256);
-        Func_02002c84(8);
+        Func_0808a1e0(id, 3);
+        Func_0808a010(2);
+        Func_0808a1f0(id, 256);
+        Func_0808a010(8);
     } else if (selector == 10) {
-        if (Func_02002c80(0x109) == 0) {
-            Func_02002a78();
+        if (Func_080770c0(0x109) == 0) {
+            Func_020018b8();
         }
     } else if (selector == 19) {
-        Func_02002124(1);
+        Func_02000f58(1);
     }
     return 0;
 }

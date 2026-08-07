@@ -29,71 +29,58 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-  /* fetch a record; called with 0 for the subject's own */
+u16 *Func_0808a080();  /* fetch a record; called with 0 for the subject's own */
+void Func_080b0008();
+s32 Func_080770c0();   /* query a numeric id; nonzero when selected */
+void Func_0808a170();  /* present message by id */
+void Func_0808a178();  /* act on the subject, variant used before a branch */
+s32 Func_0808a070();   /* branch predicate; nonzero selects the second arm */
+void Func_0808a010();  /* wait / delay by count */
+void Func_0808a180();  /* act on the subject */
 
-   /* query a numeric id; nonzero when selected */
-  /* present message by id */
-  /* act on the subject, variant used before a branch */
-   /* branch predicate; nonzero selects the second arm */
-  /* wait / delay by count */
-  /* act on the subject */
-
-extern u16 * Func_02000f00();
-extern void Func_02000f9e();
-extern s32 Func_02000ef8();
-extern s32 Func_02000f10();
-extern void Func_02000f8a();
-extern void Func_02000fa2();
-extern void Func_02000f9c();
-extern void Func_02000fac();
-extern s32 Func_02000f64();
-extern void Func_02000f56();
-extern void Func_02000fbc();
-extern void Func_02000fc4();
-extern void Func_02000fdc();
 void Func_02000500(s32 subject)
 {
     u16 *record;
     s32 facing;
     s32 message;
 
-    record = Func_02000f00(0);
+    record = Func_0808a080(0);
 
     /* Bits 14-15 of the 0x2000-biased halfword at record + 6, tested in the
      * high halfword after `lsls #16`; here against 0x80000000. */
     facing = ((s32)record[3] + 0x2000) & 0xc000;
 
     if (facing == 0x8000) {
-        Func_02000f9e(28, subject);
+        Func_080b0008(28, subject);
         return;
     }
 
     /* Ids 0x950 and 0x962 are queried in order; the first match wins. */
-    if (Func_02000ef8(0x950) != 0) {
+    if (Func_080770c0(0x950) != 0) {
         message = 0x238d;
         goto matched_message;
     }
-    if (Func_02000f10(0x962) != 0) {
+    if (Func_080770c0(0x962) != 0) {
         message = 0x221b;
         goto matched_message;
     }
     goto fallback_message;
 
 matched_message:
-    Func_02000f8a(message);
-    Func_02000fa2(subject, 0);
+    Func_0808a170(message);
+    Func_0808a180(subject, 0);
     return;
 
 fallback_message:
     /* Fallback arm: the full three-id sequence of the 0x020006ec family. */
-    Func_02000f9c(message);
+    Func_0808a170(message);
     message = 0x1fd5;
-    Func_02000fac(subject, 0);
-    if (Func_02000f64(0, 0) == 0) {
-        Func_02000f56(10);
-        Func_02000fbc(message + 1);
+    Func_0808a178(subject, 0);
+    if (Func_0808a070(0, 0) == 0) {
+        Func_0808a010(10);
+        Func_0808a170(message + 1);
     } else {
-        Func_02000fc4(message + 2);
+        Func_0808a170(message + 2);
     }
-    Func_02000fdc(subject, 0);
+    Func_0808a180(subject, 0);
 }

@@ -63,46 +63,39 @@ extern u8 Data_02009940[];            /* in-image: per-index column selector */
 extern u32 Data_02009928[];           /* in-image: the value being agreed on */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-
-
-
+s32 Func_080770c0();
+void Func_080770c8();
+s32 Func_080770d0();
 
 /* Used for its return value. */
 
-extern void Func_020018c0();
-extern void Func_020018d2();
-extern s32 Func_020018e2();
-extern s32 Func_020018d8();
-extern s32 Func_0200190e();
-extern s32 Func_02001908();
 s32 Func_0200008c(s32 index)
 {
-    s32 slot;
+    s32 slot = -1;
     s32 row;
     u32 expected;
 
     if ((*(u16 *)0x03001f64 & 3) == 3) {
-        slot = -1;
         slot = (s32)((*(u32 *)0x04000128 << 26) >> 30);
-        Func_020018c0(0x303);
+        Func_080770c8(0x303);
     } else {
-        Func_020018d2(0x303);
+        Func_080770c8(0x303);
     }
 
     if (slot < 0) {
         return 0;
     }
-    if (Func_020018e2(0x303) == 0) {
+    if (Func_080770d0(0x303) == 0) {
         return 0;
     }
 
     if (slot != 0) {
-        Func_020018d8(0x302);
+        Func_080770c0(0x302);
     } else {
-        Func_0200190e(0x302);
+        Func_080770d0(0x302);
     }
 
-    row = Func_02001908(0x302) ^ 1;
+    row = Func_080770c0(0x302) ^ 1;
     expected = *(u32 *)((u32)0x02002024 + (u32)(row * 24)
                         + (u32)(Data_02009940[index] << 2));
 

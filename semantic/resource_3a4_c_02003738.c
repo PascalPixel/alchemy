@@ -40,22 +40,13 @@
  *   0x2003816 (2), 0x2003824 (3), 0x200382e (4) -> Func_08009080
  */
 
-          /* displace (scale, heading, position) */
-           /* ground query (2, x, z) */
-          /* mark record (record, n), established */
-          /* sound/sting, established */
+void Func_08000128();          /* displace (scale, heading, position) */
+s32 Func_080091a8();           /* ground query (2, x, z) */
+void Func_08009080();          /* mark record (record, n), established */
+void Func_080f9010();          /* sound/sting, established */
 
 typedef s32 (*Multiply16_16_02003738)(s32 value, s32 scale);
 
-extern void Func_020074be();
-extern void Func_020074ce();
-extern void Func_02007282();
-extern s32 Func_020072f0();
-extern void Func_020072a8();
-extern s32 Func_02007312();
-extern void Func_020072e8();
-extern void Func_020072f6();
-extern void Func_02007300();
 void Func_02003738(u8 *record)
 {
     s32 probe[3];
@@ -82,10 +73,10 @@ void Func_02003738(u8 *record)
     if (*countdown != 0) {
         *countdown -= 1;
         if (*countdown == 20) {
-            Func_020074be(184);
+            Func_080f9010(184);
         }
         if (*countdown == 0) {
-            Func_020074ce(233);
+            Func_080f9010(233);
         }
     }
 
@@ -93,21 +84,21 @@ void Func_02003738(u8 *record)
     probe[1] = *(s32 *)(record + 12);
     probe[2] = *(s32 *)(record + 16);
     *(s32 *)(record + 16) = probe[2];
-    Func_02007282(multiply16_16(distance, 0xc000), heading, probe);
+    Func_08000128(multiply16_16(distance, 0xc000), heading, probe);
     permuted_24 = probe[0];
-    forward = Func_020072f0(2, probe[0], probe[2]);
+    forward = Func_080091a8(2, probe[0], probe[2]);
     *(s32 *)(record + 8) = permuted_24;
 
-    Func_020072a8(-multiply16_16(distance, 0x18000), heading, probe);
-    backward = Func_02007312(2, probe[0], probe[2]);
+    Func_08000128(-multiply16_16(distance, 0x18000), heading, probe);
+    backward = Func_080091a8(2, probe[0], probe[2]);
 
     if (*countdown <= 20) {
         if (forward == backward) {
-            Func_020072e8(record, 2);
+            Func_08009080(record, 2);
         } else if (forward > backward) {
-            Func_020072f6(record, 3);
+            Func_08009080(record, 3);
         } else {
-            Func_02007300(record, 4);
+            Func_08009080(record, 4);
         }
     }
 }

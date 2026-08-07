@@ -1,13 +1,6 @@
 #include "types.h"
 
 /*
- * BYTE-EXACT but NOT adoptable: overlay_adopt refuses the span because the
- * audited thumb interval starts at 0x020016a6, one halfword after this
- * owner's 0x020016a4 start, so 0x020016a4..0x02001780 is not inside a single
- * audited interval.  differing_halfwords=0 as written.
- */
-
-/*
  * Resource 3c8 at 0x020016a4: gate a cutscene on whether the player actor
  * stands inside a small rectangle of the map.
  *
@@ -89,7 +82,7 @@ void Func_020016a4(void)
 
     if ((u32)(across - 676) > 7 || along < 788 || along >= 796) {
         Func_020064fc(53, 50, 42, 49, 1, 1);
-        { s32 fifth = 3; s32 last = 5; Func_02006510(55, 117, 41, 117, fifth, last); }
+        Func_02006510(55, 117, 41, 117, 3, 5);
         Func_0200657e(0x201);
         actor->mode55 |= 1;
         actor->unk14 = 0;
@@ -109,7 +102,7 @@ void Func_020016a4(void)
 
     Func_020065ae(5);
     Func_02006550(52, 50, 42, 49, 1, 1);
-    { s32 fifth = 3; s32 last = 5; Func_02006564(52, 117, 41, 117, fifth, last); }
+    Func_02006564(52, 117, 41, 117, 3, 5);
     Func_020065ca(0x201);
     Func_02006750(161);
     actor->mode55 &= 0xfe;

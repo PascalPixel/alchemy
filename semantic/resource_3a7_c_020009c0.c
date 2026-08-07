@@ -60,13 +60,13 @@
  * call sites in this overlay.  Those used in conditions need a return type. */
 #include "types.h"
 
-    /* scene-entity record by selector */
-   /* spawn an effect burst at a record's position */
-   /* scripted delay, in frames */
-    /* claim the entity standing on the subject's tile */
-
-    /* test a scene completion flag */
-   /* raise a scene completion flag */
+u8 *Func_0808a080();    /* scene-entity record by selector */
+void Func_02000b8c();   /* spawn an effect burst at a record's position */
+void Func_080f9010();   /* scripted delay, in frames */
+s32 Func_02000944();    /* claim the entity standing on the subject's tile */
+void Func_0808a100();
+s32 Func_080770c0();    /* test a scene completion flag */
+void Func_080770c8();   /* raise a scene completion flag */
 
 /* In-image data under the proven 0x02008000 link base.  The overlay image is
  * writable EWRAM, so these are mutable cells, not constants. */
@@ -74,25 +74,12 @@ extern s32 Data_0200a214[4];    /* scheduled frame per cue */
 extern s32 Data_0200a224;       /* frame counter, 0..190 */
 extern s32 Data_0200a228;       /* cue cursor, 0..3 */
 
-extern u8 * Func_02001af6();
-extern u8 * Func_02001b22();
-extern u8 * Func_02001b40();
-extern void Func_020015b0();
-extern void Func_02001b8a();
-extern s32 Func_0200138a();
-extern void Func_02001b92();
-extern s32 Func_02001b58();
-extern void Func_02001b6a();
-extern void Func_02001bb8();
-extern void Func_02001bc0();
-extern s32 Func_020013ba();
-extern void Func_02001bd0();
 void Func_020009c0(void)
 {
     s32 cue;
     s32 index;
 
-    if (Func_02001af6(10)[91] != 0) {
+    if (Func_0808a080(10)[91] != 0) {
         return;
     }
 
@@ -103,7 +90,7 @@ void Func_020009c0(void)
 
     cue = Data_0200a228;
     if (Data_0200a214[cue] == Data_0200a224) {
-        *(s32 *)(Func_02001b22(cue + 11) + 72) = 0x0a3d;
+        *(s32 *)(Func_0808a080(cue + 11) + 72) = 0x0a3d;
 
         Data_0200a228 = Data_0200a228 + 1;
         if (Data_0200a228 > 3) {
@@ -113,32 +100,32 @@ void Func_020009c0(void)
 
     index = 0;
     do {
-        u8 *entry = Func_02001b40(index + 11);
+        u8 *entry = Func_0808a080(index + 11);
 
         if (*(s32 *)(entry + 40) >= 0 && *(s32 *)(entry + 12) <= 0x0000ffff) {
             *(s32 *)(entry + 40) = 0;
-            Func_020015b0(entry);
+            Func_02000b8c(entry);
             *(s32 *)(entry + 12) = 0x00ff0000;
             *(s32 *)(entry + 72) = 0;
             entry[91] = 0;
-            Func_02001b8a(106);
+            Func_080f9010(106);
         }
 
         index++;
     } while (index <= 3);
 
-    if (Func_0200138a(10) != 0) {
-        Func_02001b92(10, 1);
+    if (Func_02000944(10) != 0) {
+        Func_0808a100(10, 1);
 
-        if (Func_02001b58(0x207) == 0) {
-            Func_02001b6a(0x207);
-            Func_02001bb8(204);
+        if (Func_080770c0(0x207) == 0) {
+            Func_080770c8(0x207);
+            Func_080f9010(204);
         } else {
-            Func_02001bc0(106);
+            Func_080f9010(106);
         }
     }
 
-    if (Func_020013ba(9) != 0) {
-        Func_02001bd0(106);
+    if (Func_02000944(9) != 0) {
+        Func_080f9010(106);
     }
 }

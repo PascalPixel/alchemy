@@ -1,22 +1,13 @@
 #include "types.h"
 
 extern u8 *Data_03001e70;
-
-
-
-
-
+extern void Func_020031c0(s32 *out, s32 anchor);
+extern u8 *Func_0808a080(s32 actorId);
+extern void Func_080f9010(s32 sound);
+extern void Func_080000c0(s32 frames);
+extern void Func_08009128(void);
 
 /* Sweep the selected actor band backward while restoring its workspace anchor. */
-extern void Func_02006524(s32 *out, s32 anchor);
-extern u8 * Func_02006a6c(s32 actorId);
-extern void Func_02006bdc(s32 sound);
-extern u8 * Func_02006aa6(s32 actorId);
-extern u8 * Func_02006ab4(s32 actorId);
-extern u8 * Func_02006abc(s32 actorId);
-extern void Func_02006a2a(s32 frames);
-extern void Func_02006a86(void);
-extern void Func_02006a44(s32 frames);
 void Func_02003324(void)
 {
     s32 *motion = (s32 *)(Data_03001e70 + 356);
@@ -27,23 +18,23 @@ void Func_02003324(void)
     u32 i;
 
     for (i = 0; i < 5; i++)
-    Func_02006524(actors, motion[3]);
+    Func_020031c0(actors, motion[3]);
         actors[i] = 66;
 
     while (count < 5 && actors[count] != 66) {
-        Func_02006a6c(actors[count])[85] = 0;
+        Func_0808a080(actors[count])[85] = 0;
         count++;
     }
 
-    Func_02006bdc(223);
+    Func_080f9010(223);
     for (frame = 0; frame <= 85; frame++) {
         for (i = 0; i < count; i++) {
-            u8 *actor = Func_02006aa6(actors[i]);
+            u8 *actor = Func_0808a080(actors[i]);
             u8 *target;
 
             *(s32 *)(actor + 16) -= delta;
-            target = Func_02006ab4(actors[i]);
-            actor = Func_02006abc(actors[i]);
+            target = Func_0808a080(actors[i]);
+            actor = Func_0808a080(actors[i]);
             *(s32 *)(target + 64) = *(s32 *)(actor + 16);
         }
         motion[3] += delta;
@@ -51,10 +42,10 @@ void Func_02003324(void)
             delta += (s32)0xffffcccd;
         if (delta <= 0x0ccb)
             delta = 0x0ccc;
-        Func_02006a2a(1);
+        Func_080000c0(1);
     }
 
     motion[3] = 0x04000000;
-    Func_02006a86();
-    Func_02006a44(2);
+    Func_08009128();
+    Func_080000c0(2);
 }

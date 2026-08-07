@@ -46,43 +46,33 @@
 
 extern u8 *Data_03001ebc;
 
+void Func_0808a018();
+void Func_0808a170();
+void Func_0808a1e8();
+void Func_0808a178();
+s32 Func_0808a070();
+void Func_0808a010();
+void Func_0808a110();
+void Func_0808a188();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-extern void Func_02001fb4();
-extern void Func_0200204a();
-extern void Func_0200208c();
-extern void Func_02002064();
-extern s32 Func_02001fe4();
-extern void Func_02001fe6();
-extern void Func_02002066();
-extern void Func_02001ff4();
-extern void Func_020020ae();
-extern void Func_02002012();
 void Func_02000ac0(void)
 {
     u8 *workspace;
 
-    Func_02001fb4();
-    Func_0200204a(0x18b9);
-    Func_0200208c(10, 0x105, 60);
-    Func_02002064(10, 0);
+    Func_0808a018();
+    Func_0808a170(0x18b9);
+    Func_0808a1e8(10, 0x105, 60);
+    Func_0808a178(10, 0);
 
-    if (Func_02001fe4(0, 0) == 1) {
+    if (Func_0808a070(0, 0) == 1) {
         workspace = Data_03001ebc;
         *(u16 *)(workspace + 472) += 1;
     }
 
-    Func_02001fe6(20);
-    Func_02002066(10, 4);
-    Func_02001ff4(20);
-    Func_020020ae(10, 0, 20);
-    Func_02002012();
+    Func_0808a010(20);
+    Func_0808a110(10, 4);
+    Func_0808a010(20);
+    Func_0808a188(10, 0, 20);
+    Func_0808a020();
 }

@@ -42,19 +42,13 @@
 
 /* Old-style declarations; Func_02000570 is called with three further
  * registers set that it does not read — see that file. */
-
-
-  /* veneer 0x664 — actor record accessor */
-
+void Func_08009180();
+void Func_080000d0();
+u8  *Func_0808a080();  /* veneer 0x664 — actor record accessor */
+void Func_02000570();
 
 #define WORKSPACE (*(u8 **)0x03001ebc)
 
-extern void Func_02000b1a();
-extern u8  * Func_02000b80();
-extern u8  * Func_02000b8c();
-extern u8  * Func_02000b94();
-extern void Func_02000abe();
-extern void Func_02000b34();
 s32 Func_020004e4(void)
 {
     s32 offset = 448;
@@ -66,15 +60,15 @@ s32 Func_020004e4(void)
 
     if (scene == 5) {
         /* Two arguments are passed on the stack: 4 then 3. */
-        Func_02000b1a(0, 120, 8, 67, 4, 3);
-        Func_02000b80(8)[0x55] = 0;
-        *(s32 *)(Func_02000b8c(8) + 12) = 0;
-        *(s32 *)(Func_02000b94(8) + 20) = 0;
+        Func_08009180(0, 120, 8, 67, 4, 3);
+        Func_0808a080(8)[0x55] = 0;
+        *(s32 *)(Func_0808a080(8) + 12) = 0;
+        *(s32 *)(Func_0808a080(8) + 20) = 0;
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
-        Func_02000abe(0xe7, 0x02380000, 0x00100000, 0x02a00000);
+        Func_02000570(0xe7, 0x02380000, 0x00100000, 0x02a00000);
         /* 0x02008031 is Func_02000030 + 1; 200 << 4 is the period. */
-        Func_02000b34(0x02008031, 0xc80);
+        Func_080000d0(0x02008031, 0xc80);
     }
 
     return 0;

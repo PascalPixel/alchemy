@@ -23,23 +23,21 @@
  * constant is the natural mistake.
  */
 
-  /* veneer 0x6480 */
-  /* veneer 0x65a0 */
+void Func_080091e0();  /* veneer 0x6480 */
+void Func_0808a160();  /* veneer 0x65a0 */
 
-extern void Func_02006786();
-extern void Func_020068d6();
 s32 Func_020002f4(u8 *object)
 {
     u8 *record;
 
     record = *(u8 **) (object + 0x50);
     object[89] = 8;
-    Func_02006786(object, 0);
+    Func_080091e0(object, 0);
 
     object[35] = (u8) ((object[35] & 0xfe) | 2);
     record[9] = (u8) ((record[9] & (u8) -13) | 4);
     record[21] = (u8) ((record[21] & (u8) -13) | 4);
 
-    Func_020068d6(object, 15);
+    Func_0808a160(object, 15);
     return 1;
 }

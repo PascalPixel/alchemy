@@ -43,47 +43,35 @@
  * fixed-point convention.
  */
 
+void Func_0808a018();
+s32 Func_080770c0();
+void Func_0808a168();
+void Func_0808a010();
+void Func_0808a170();
+void Func_0808a180();
+void Func_0808a138();
+void Func_0808a188();
+void Func_08015040();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-
-extern void Func_02002c4c();
-extern s32 Func_02002c32();
-extern void Func_02002d12();
-extern void Func_02002c60();
-extern void Func_02002d26();
-extern void Func_02002d3e();
-extern void Func_02002d10();
-extern void Func_02002c7e();
-extern void Func_02002d46();
-extern void Func_02002d6a();
-extern void Func_02002c6a();
-extern void Func_02002cae();
 void Func_0200133c(void)
 {
-    Func_02002c4c();
+    Func_0808a018();
 
-    if (Func_02002c32(0x203) != 0) {
-        Func_02002d12(8, 0x10000, 0x02009E6C);
-        Func_02002c60(20);
-        Func_02002d26(0x1C77);
-        Func_02002d3e(8, 0);
+    if (Func_080770c0(0x203) != 0) {
+        Func_0808a168(8, 0x10000, 0x02009E6C);
+        Func_0808a010(20);
+        Func_0808a170(0x1C77);
+        Func_0808a180(8, 0);
     } else {
         s32 cue = 0x1C79;
 
-        Func_02002d10(8, 2);
-        Func_02002c7e(40);
-        Func_02002d46(cue);
-        Func_02002d6a(8, 0, 40);
-        Func_02002c6a(cue + 1, 1);
+        Func_0808a138(8, 2);
+        Func_0808a010(40);
+        Func_0808a170(cue);
+        Func_0808a188(8, 0, 40);
+        Func_08015040(cue + 1, 1);
     }
 
-    Func_02002cae();
+    Func_0808a020();
 }

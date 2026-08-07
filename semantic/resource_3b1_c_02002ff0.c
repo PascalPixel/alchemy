@@ -73,119 +73,55 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
+extern void Func_080000c0(s32 arg0);
+extern void Func_080000d0(s32 callback, s32 arg1);
+extern s32 Func_080770c0(s32 flagId);
+extern void Func_080770c8(s32 flagId);
+extern void Func_0808a018(void);
+extern void Func_0808a020(void);
+extern void Func_0808a098(s32 id, const void *table);
+extern void Func_0808a100(s32 id, s32 arg1);
+extern void Func_0808a158(s32 id, s32 arg1);
+extern void Func_0808a248(s32 arg0);
 
+extern void Func_02003364(void);
+extern void Func_0200351c(void);
+extern void Func_0200366c(void);
+extern void Func_02003d10(void);
+extern void Func_02003dec(void);
+extern void Func_02003e34(void);
+extern void Func_02003eec(void);
+extern void Func_02003f94(void);
+extern void Func_020040e8(void);
+extern void Func_0200413c(void);
+extern void Func_02004198(void);
+extern void Func_02004218(void);
+extern void Func_020048e8(s32 id, s32 arg1, s32 arg2);
+extern void Func_02005068(void);
+extern void Func_02005684(void);
+extern void Func_020056dc(void);
+extern void Func_02005780(void);
+extern void Func_020057ec(void);
+extern void Func_02005ca4(void);
+extern void Func_02005d10(void);
+extern void Func_02006110(void);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern void Func_02009416(s32 arg0);
-extern void Func_020094a6(s32 flagId);
-extern s32 Func_0200952c(s32 flagId);
-extern s32 Func_02009536(s32 flagId);
-extern s32 Func_02009546(s32 flagId);
-extern s32 Func_0200955c(s32 flagId);
-extern s32 Func_02009566(s32 flagId);
-extern void Func_0200966a(s32 id, s32 arg1);
-extern void Func_02006686(void);
-extern void Func_020067dc(void);
-extern void Func_020064da(void);
-extern s32 Func_0200961e(s32 flagId);
-extern void Func_02006f72(void);
-extern void Func_02006e9c(void);
-extern s32 Func_02009634(s32 flagId);
-extern void Func_02007088(void);
-extern void Func_02006fd6(void);
-extern void Func_0200713c(void);
-extern void Func_02007296(void);
-extern void Func_020072f0(void);
-extern s32 Func_0200965c(s32 flagId);
-extern void Func_0200968c(void);
-extern void Func_02007ab6(s32 id, s32 arg1, s32 arg2);
-extern void Func_02007ac0(s32 id, s32 arg1, s32 arg2);
-extern void Func_020096e2(s32 id, const void *table);
-extern void Func_020096ea(s32 id, const void *table);
-extern void Func_020096f2(s32 id, const void *table);
-extern void Func_02009792(s32 id, s32 arg1);
-extern void Func_0200979a(s32 id, s32 arg1);
-extern void Func_020073a2(void);
-extern void Func_02007428(void);
-extern s32 Func_020096b8(s32 flagId);
-extern void Func_020096e8(void);
-extern void Func_02007b12(s32 id, s32 arg1, s32 arg2);
-extern void Func_02007b1c(s32 id, s32 arg1, s32 arg2);
-extern void Func_0200973e(s32 id, const void *table);
-extern void Func_02009746(s32 id, const void *table);
-extern void Func_0200971a(void);
-extern void Func_020082b8(void);
-extern void Func_020088da(void);
-extern s32 Func_020096fe(s32 flagId);
-extern void Func_0200972e(void);
-extern void Func_02007b58(s32 id, s32 arg1, s32 arg2);
-extern void Func_02007b62(s32 id, s32 arg1, s32 arg2);
-extern void Func_02009784(s32 id, const void *table);
-extern void Func_0200978c(s32 id, const void *table);
-extern void Func_0200982c(s32 id, s32 arg1);
-extern void Func_02009834(s32 id, s32 arg1);
-extern void Func_02009770(void);
-extern void Func_02008982(void);
-extern void Func_02008a2c(void);
-extern s32 Func_02009754(s32 flagId);
-extern s32 Func_0200975e(s32 flagId);
-extern void Func_020096fa(s32 callback, s32 arg1);
-extern void Func_0200982a(s32 id, s32 arg1);
-extern void Func_02008acc(void);
-extern void Func_02008f8a(void);
-extern s32 Func_0200978e(s32 flagId);
-extern void Func_02009006(void);
-extern void Func_0200940c(void);
-extern void Func_02007bf0(s32 id, s32 arg1, s32 arg2);
-extern void Func_02007bfa(s32 id, s32 arg1, s32 arg2);
-extern void Func_020097c0(s32 flagId);
-extern void Func_02009936(s32 arg0);
 s32 Func_02002ff0(void)
 {
     s32 which;
     s32 sharedModeRecord;
 
-    Func_02009416(1);
-    Func_020094a6(324);
+    Func_080000c0(1);
+    Func_080770c8(324);
     *(s32 *)(Data_03001ebc + 448) = 521;
 
     switch (Data_02000240[225]) {
     case 1:
     case 2:
     case 11:
-        if (Func_0200952c(0x93e) == 0 && Func_02009536(0x928) != 0) {
+        if (Func_080770c0(0x93e) == 0 && Func_080770c0(0x928) != 0) {
             which = 9;
-        } else if (Func_02009546(0x911) != 0) {
+        } else if (Func_080770c0(0x911) != 0) {
             which = 12;
         }
         break;
@@ -203,7 +139,7 @@ s32 Func_02002ff0(void)
         which = 19;
         break;
     case 5:
-        if (Func_0200955c(0x93e) == 0 && Func_02009566(0x911) != 0) {
+        if (Func_080770c0(0x93e) == 0 && Func_080770c0(0x911) != 0) {
             which = 13;
         }
         break;
@@ -211,124 +147,124 @@ s32 Func_02002ff0(void)
         break;
     }
     if (which != 0) {
-        Func_0200966a(which, 2);
+        Func_0808a158(which, 2);
     }
     which = 0;
 
     switch (Data_02000240[225]) {
     case 1:
     case 2:
-        Func_02006686();
+        Func_0200351c();
         break;
     case 4:
-        Func_020067dc();
+        Func_0200366c();
         break;
     case 5:
-        Func_020064da();
+        Func_02003364();
         break;
     case 10:
-        if (Func_0200961e(0x928) != 0) {
-            Func_02006f72();
+        if (Func_080770c0(0x928) != 0) {
+            Func_02003dec();
         } else {
-            Func_02006e9c();
+            Func_02003d10();
         }
         break;
     case 11:
-        if (Func_02009634(0x928) != 0) {
-            Func_02007088();
+        if (Func_080770c0(0x928) != 0) {
+            Func_02003eec();
         } else {
-            Func_02006fd6();
+            Func_02003e34();
         }
         break;
     case 12:
-        Func_0200713c();
+        Func_02003f94();
         break;
     case 13:
-        Func_02007296();
+        Func_020040e8();
         break;
     case 14:
-        Func_020072f0();
+        Func_0200413c();
         break;
     case 15:
-        if (Func_0200965c(0x109) != 0) {
-            Func_0200968c();
-            Func_02007ab6(25, 1, 0);
-            Func_02007ac0(22, 0, 0);
-            Func_020096e2(36, (const void *)0x0200e8e4);
-            Func_020096ea(37, (const void *)0x0200e8e4);
-            Func_020096f2(38, (const void *)0x0200e8e4);
-            Func_02009792(36, 3);
-            Func_0200979a(37, 3);
+        if (Func_080770c0(0x109) != 0) {
+            Func_0808a018();
+            Func_020048e8(25, 1, 0);
+            Func_020048e8(22, 0, 0);
+            Func_0808a098(36, (const void *)0x0200e8e4);
+            Func_0808a098(37, (const void *)0x0200e8e4);
+            Func_0808a098(38, (const void *)0x0200e8e4);
+            Func_0808a158(36, 3);
+            Func_0808a158(37, 3);
             sharedModeRecord = 38;
             goto finish_mode3;
         } else {
-            Func_020073a2();
+            Func_02004198();
         }
         break;
     case 16:
-        Func_02007428();
+        Func_02004218();
         break;
     case 17:
-        if (Func_020096b8(0x109) != 0) {
-            Func_020096e8();
-            Func_02007b12(25, 2, 0);
-            Func_02007b1c(22, 0, 0);
-            Func_0200973e(36, (const void *)0x0200e8e4);
-            Func_02009746(37, (const void *)0x0200e8e4);
-            Func_0200971a();
+        if (Func_080770c0(0x109) != 0) {
+            Func_0808a018();
+            Func_020048e8(25, 2, 0);
+            Func_020048e8(22, 0, 0);
+            Func_0808a098(36, (const void *)0x0200e8e4);
+            Func_0808a098(37, (const void *)0x0200e8e4);
+            Func_0808a020();
         } else {
-            Func_020082b8();
+            Func_02005068();
         }
         break;
     case 18:
-        Func_020088da();
+        Func_02005684();
         break;
     case 19:
-        if (Func_020096fe(0x109) != 0) {
-            Func_0200972e();
-            Func_02007b58(25, 3, 0);
-            Func_02007b62(22, 0, 0);
-            Func_02009784(36, (const void *)0x0200e8e4);
-            Func_0200978c(37, (const void *)0x0200e8e4);
-            Func_0200982c(36, 3);
+        if (Func_080770c0(0x109) != 0) {
+            Func_0808a018();
+            Func_020048e8(25, 3, 0);
+            Func_020048e8(22, 0, 0);
+            Func_0808a098(36, (const void *)0x0200e8e4);
+            Func_0808a098(37, (const void *)0x0200e8e4);
+            Func_0808a158(36, 3);
             sharedModeRecord = 37;
 finish_mode3:
-            Func_02009834(sharedModeRecord, 3);
-            Func_02009770();
+            Func_0808a158(sharedModeRecord, 3);
+            Func_0808a020();
         } else {
-            Func_02008982();
+            Func_020056dc();
         }
         break;
     case 20:
-        Func_02008a2c();
+        Func_02005780();
         break;
     case 21:
-        if (Func_02009754(0x109) != 0) {
-            if (Func_0200975e(0x302) != 0) {
+        if (Func_080770c0(0x109) != 0) {
+            if (Func_080770c0(0x302) != 0) {
                 *(s32 *)0x0200ff84 = 0;
-                Func_020096fa(0x0200dc49, 3200);
-                Func_0200982a(9, 5);
+                Func_080000d0(0x0200dc49, 3200);
+                Func_0808a100(9, 5);
             }
         } else {
-            Func_02008acc();
+            Func_020057ec();
         }
         break;
     case 22:
-        Func_02008f8a();
+        Func_02005ca4();
         break;
     case 23:
-        if (Func_0200978e(0x109) == 0) {
-            Func_02009006();
+        if (Func_080770c0(0x109) == 0) {
+            Func_02005d10();
         }
         break;
     case 24:
-        Func_0200940c();
+        Func_02006110();
         break;
     case 30:
-        Func_02007bf0(20, 0x926, 0x92b);
-        Func_02007bfa(21, 0, 0);
-        Func_020097c0(0x902);
-        Func_02009936(1);
+        Func_020048e8(20, 0x926, 0x92b);
+        Func_020048e8(21, 0, 0);
+        Func_080770c8(0x902);
+        Func_0808a248(1);
         break;
     default:
         break;

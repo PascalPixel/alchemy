@@ -42,25 +42,13 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-                    /* scene entity by selector */
-                   /* wait N frames */
-                   /* collision repaint, six arguments */
+u8 *Func_0808a080();                    /* scene entity by selector */
+void Func_080000c0();                   /* wait N frames */
+void Func_080091c0();                   /* collision repaint, six arguments */
 
 /* This overlay's transition starter at 0x02001774. */
+void Func_02001774();
 
-
-extern u8 * Func_02005794();
-extern u8 * Func_020057a0();
-extern u8 * Func_020057aa();
-extern u8 * Func_020057b4();
-extern u8 * Func_020057be();
-extern void Func_02003ee2();
-extern void Func_02003f12();
-extern void Func_02003f72();
-extern void Func_020057c2();
-extern void Func_02005898();
-extern u8 * Func_02005850();
-extern void Func_02005860();
 void Func_02002700(void)
 {
     s32 column;
@@ -70,11 +58,11 @@ void Func_02002700(void)
     s32 companion16Column;
     s32 transition;
 
-    column = *(s32 *)(Func_02005794(9) + 8) >> 20;
-    row = *(s32 *)(Func_020057a0(9) + 16) >> 20;
-    companion19Column = *(s32 *)(Func_020057aa(19) + 8) >> 20;
-    companion14Column = *(s32 *)(Func_020057b4(14) + 8) >> 20;
-    companion16Column = *(s32 *)(Func_020057be(16) + 8) >> 20;
+    column = *(s32 *)(Func_0808a080(9) + 8) >> 20;
+    row = *(s32 *)(Func_0808a080(9) + 16) >> 20;
+    companion19Column = *(s32 *)(Func_0808a080(19) + 8) >> 20;
+    companion14Column = *(s32 *)(Func_0808a080(14) + 8) >> 20;
+    companion16Column = *(s32 *)(Func_0808a080(16) + 8) >> 20;
 
     transition = 0;
     if (row == 19) {
@@ -86,7 +74,7 @@ void Func_02002700(void)
             transition = 112;
         } else {
             /* This arm runs two transitions back to back. */
-            Func_02003ee2(9, 0, -80);
+            Func_02001774(9, 0, -80);
             transition = 96;
         }
     } else if (row == 18) {
@@ -98,7 +86,7 @@ void Func_02002700(void)
         } else if ((u32)(companion16Column - 9) <= 2) {
             transition = 96;
         } else {
-            Func_02003f12(9, 0, -96);
+            Func_02001774(9, 0, -96);
             transition = 64;
         }
         transition = ((u32)(companion16Column - 9) <= 2) ? 48 : 112;
@@ -126,13 +114,13 @@ void Func_02002700(void)
     }
 
     if (transition != 0) {
-        Func_02003f72(9, 0, -transition);
+        Func_02001774(9, 0, -transition);
     }
 
-    Func_020057c2(2);
+    Func_080000c0(2);
 
     column -= 1;
-    Func_02005898(column, row, 3, 1,
-                  column, *(s32 *)(Func_02005850(9) + 16) >> 20);
-    Func_02005860(0, 0, 3, 1, column, row);
+    Func_080091c0(column, row, 3, 1,
+                  column, *(s32 *)(Func_0808a080(9) + 16) >> 20);
+    Func_080091c0(0, 0, 3, 1, column, row);
 }

@@ -33,64 +33,46 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-  /* begin step */
-   /* query a numeric id; nonzero when selected */
-  /* set that same id */
-  /* present message by id */
-  /* act on the subject, variant used before a branch */
-   /* branch predicate; nonzero selects the second arm */
-  /* wait / delay by count */
-  /* act on the subject */
+void Func_0808a018();  /* begin step */
+s32 Func_080770c0();   /* query a numeric id; nonzero when selected */
+void Func_080770c8();  /* set that same id */
+void Func_0808a170();  /* present message by id */
+void Func_0808a178();  /* act on the subject, variant used before a branch */
+s32 Func_0808a070();   /* branch predicate; nonzero selects the second arm */
+void Func_0808a010();  /* wait / delay by count */
+void Func_0808a180();  /* act on the subject */
+void Func_0808a138();
+void Func_0808a020();  /* end step */
 
-  /* end step */
-
-extern void Func_02001196();
-extern s32 Func_02001184();
-extern void Func_02001200();
-extern void Func_02001210();
-extern s32 Func_020011c8();
-extern void Func_020011ba();
-extern void Func_02001220();
-extern void Func_02001228();
-extern void Func_02001240();
-extern void Func_020011da();
-extern void Func_02001248();
-extern void Func_02001260();
-extern void Func_020011f6();
-extern void Func_02001256();
-extern void Func_02001204();
-extern void Func_0200126a();
-extern void Func_02001282();
-extern void Func_02001226();
 void Func_020007b0(s32 subject)
 {
     s32 message;
 
-    Func_02001196();
+    Func_0808a018();
 
-    if (Func_02001184(0x8bd) == 0) {
-        Func_02001200(message);
+    if (Func_080770c0(0x8bd) == 0) {
+        Func_0808a170(message);
         message = 0x2399;
-        Func_02001210(subject, 0);
-        if (Func_020011c8(0, 0) == 0) {
-            Func_020011ba(10);
-            Func_02001220(message + 1);
+        Func_0808a178(subject, 0);
+        if (Func_0808a070(0, 0) == 0) {
+            Func_0808a010(10);
+            Func_0808a170(message + 1);
         } else {
-            Func_02001228(message + 2);
+            Func_0808a170(message + 2);
         }
-        Func_02001240(subject, 0);
+        Func_0808a180(subject, 0);
     } else {
-        if (Func_020011c8(0x8be) == 0) {
-            Func_020011da(0x8be);
-            Func_02001248(0x239c);
-            Func_02001260(subject, 0);
-            Func_020011f6(10);
-            Func_02001256(subject, 2);
-            Func_02001204(20);
+        if (Func_080770c0(0x8be) == 0) {
+            Func_080770c8(0x8be);
+            Func_0808a170(0x239c);
+            Func_0808a180(subject, 0);
+            Func_0808a010(10);
+            Func_0808a138(subject, 2);
+            Func_0808a010(20);
         }
-        Func_0200126a(0x239d);
-        Func_02001282(subject, 0);
+        Func_0808a170(0x239d);
+        Func_0808a180(subject, 0);
     }
 
-    Func_02001226();
+    Func_0808a020();
 }

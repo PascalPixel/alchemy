@@ -1,23 +1,13 @@
 /* resource_3a5 exact 472-byte homolog, independently remapped to its 0x0200a120 table. */
 #include "types.h"
 
+u8 *Func_0808a080(s32 slot);
+u8 *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
+void Func_08009080(u8 *object, s32 mode);
+void Func_08009098(u8 *object, s32 value);
+void Func_0808a160(u8 *object, s32 mode);
+s32 Func_03000380(s32 value, s32 divisor);
 
-
-
-
-
-
-
-extern u8 * Func_02001ed2(s32 slot);
-extern u8 * Func_02001e80(s32 kind, s32 x, s32 y, s32 z);
-extern void Func_02001e8a(u8 *object, s32 mode);
-extern void Func_02001ea4(u8 *object, s32 value);
-extern void Func_02001fee(u8 *object, s32 mode);
-extern s32 Func_02001f00(s32 value, s32 divisor);
-extern s32 Func_02001f18(s32 value, s32 divisor);
-extern s32 Func_02001f26(s32 value, s32 divisor);
-extern void Func_02001fa4(u8 *object, s32 mode);
-extern void Func_02001fb4(u8 *object, s32 value);
 void Func_0200013c(
     s32 x,
     s32 y,
@@ -37,22 +27,22 @@ void Func_0200013c(
     s32 kind;
     u16 *field64;
 
-    source = Func_02001ed2(0);
+    source = Func_0808a080(0);
 
     if ((flags & 0x100000) != 0 && extra != 0)
         kind = *(short *)(extra + 24);
     else
         kind = 222;
 
-    object = Func_02001e80(kind, x, y, z);
+    object = Func_080090c8(kind, x, y, z);
     if (object == 0)
         return;
 
     owner = *(u8 **)(object + 80);
-    Func_02001e8a(object, (index + 1) & 15);
+    Func_08009080(object, (index + 1) & 15);
 
     entry = table[index];
-    Func_02001ea4(object, (s32)entry);
+    Func_08009098(object, (s32)entry);
 
     object[85] = 0;
     *(s32 *)(object + 68) = field44;
@@ -72,7 +62,7 @@ void Func_0200013c(
         return;
 
     if ((flags & 0x10000) != 0)
-        Func_02001fee(object, *(s32 *)(extra + 4));
+        Func_0808a160(object, *(s32 *)(extra + 4));
 
     if ((flags & 0x20000) != 0) {
         owner[9] = (owner[9] & ~12) | ((extra[0] & 3) << 2);
@@ -93,20 +83,20 @@ void Func_0200013c(
 
             if (copiedPosition) {
                 *(s32 *)(object + 48) =
-                    Func_02001f00(*(s32 *)(extra + 16) - *(s32 *)(object + 24), scale);
+                    Func_03000380(*(s32 *)(extra + 16) - *(s32 *)(object + 24), scale);
                 deltaY = *(s32 *)(extra + 20) - *(s32 *)(object + 28);
             } else {
                 *(s32 *)(object + 48) =
-                    Func_02001f18(*(s32 *)(extra + 16) - 0x10000, scale);
+                    Func_03000380(*(s32 *)(extra + 16) - 0x10000, scale);
                 deltaY = *(s32 *)(extra + 20) - 0x10000;
             }
-            *(s32 *)(object + 52) = Func_02001f26(deltaY, scale);
+            *(s32 *)(object + 52) = Func_03000380(deltaY, scale);
         }
     }
 
     if ((flags & 0x200000) != 0) {
-        Func_02001fa4(object, 1);
-        Func_02001fb4(object, *(s32 *)(extra + 28));
+        Func_08009080(object, 1);
+        Func_08009098(object, *(s32 *)(extra + 28));
     }
 
     if ((flags & 0x400000) != 0)

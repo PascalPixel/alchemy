@@ -23,53 +23,9 @@ const ROOT = dirname(Bun.fileURLToPath(import.meta.url).replace(/^file:\/\//, ""
 const OVERLAY_BASE = 0x02000000;
 
 const CALL_SITE = /\bFunc_([0-9a-f]{8})\s*\(/gi;
-// A forward declaration, with or without the `extern` keyword and with the
-// pointer stars attached to either side. Requiring the keyword and a space
-// before the name (the original spelling) missed the very common
-// `s32 *Func_0808a080();` form: those declarations were then counted as call
-// sites, inflating the count past the assembly's `bl` count, and their
-// signatures never reached the clone map -- so even owners that survived the
-// count guard bailed out at "can't safely fabricate a signature".
-const EXTERN_DECL = /(?:extern\s+)?\b((?:const\s+)?(?:void|u8|u16|u32|s8|s16|s32|int|char|short|long|unsigned|bool)[\w\s]*?\**)\s*Func_([0-9a-f]{8})\s*\(([^)]*)\)\s*;/gi;
+const EXTERN_DECL = /extern\s+([\w\s*]+?)\s+Func_([0-9a-f]{8})\s*\(([^)]*)\)\s*;/gi;
 
 interface ExternInfo { returnType: string; params: string }
-
-/**
- * Every comment span in `text`, so call-site scanning skips them.
- *
- * These owners carry long provenance headers that NAME their callees in prose,
- * and the names are frequently written call-shaped: resource_3b4:1edc's header
- * says "the two Func_0808a080(11) calls below", which the raw CALL_SITE scan
- * counted as a 13th call against the assembly's 12 `bl` sites. The 1:1 guard
- * then skipped the owner as ambiguous -- a silent false negative, since the
- * twelve real sites lined up perfectly. Prose must not be able to veto a
- * mechanical rewrite that the assembly fully determines.
- */
-function commentRanges(text: string): { start: number; end: number }[] {
-  const ranges: { start: number; end: number }[] = [];
-  for (let index = 0; index < text.length; index++) {
-    if (text[index] === '"' || text[index] === "'") {
-      const quote = text[index];
-      for (index++; index < text.length && text[index] !== quote; index++) {
-        if (text[index] === "\\") index++;
-      }
-      continue;
-    }
-    if (text[index] !== "/") continue;
-    if (text[index + 1] === "*") {
-      const end = text.indexOf("*/", index + 2);
-      const stop = end < 0 ? text.length : end + 2;
-      ranges.push({ start: index, end: stop });
-      index = stop - 1;
-    } else if (text[index + 1] === "/") {
-      const end = text.indexOf("\n", index + 2);
-      const stop = end < 0 ? text.length : end;
-      ranges.push({ start: index, end: stop });
-      index = stop - 1;
-    }
-  }
-  return ranges;
-}
 
 function rewriteCallSymbols(text: string, correctNames: string[], selfAddress: string): { text: string; changed: boolean } | null {
   // Collect existing extern declarations by name, to clone signatures for renamed sites.
@@ -80,14 +36,13 @@ function rewriteCallSymbols(text: string, correctNames: string[], selfAddress: s
     externs.set(`Func_${externMatch[2].toLowerCase()}`, { returnType: externMatch[1].trim(), params: externMatch[3] });
   }
 
-  // Ranges to exclude from call-site scanning: every comment, every extern
-  // declaration
+  // Ranges to exclude from call-site scanning: every extern declaration
   // (a `Func_X(` inside one is a parameter type/name, not a call) and the
   // function's own definition signature (self-reference, not a call site;
   // matching by this file's own address, not merely "the first Func_ token
   // that looks like a definition", since a definition-shaped occurrence
   // elsewhere would otherwise be silently excluded too).
-  const excluded: { start: number; end: number }[] = [...commentRanges(text)];
+  const excluded: { start: number; end: number }[] = [];
   EXTERN_DECL.lastIndex = 0;
   while ((externMatch = EXTERN_DECL.exec(text)) !== null) {
     excluded.push({ start: externMatch.index, end: externMatch.index + externMatch[0].length });

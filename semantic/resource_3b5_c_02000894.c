@@ -23,64 +23,49 @@
  */
 
 /* Old-style declarations: overlay import arities are not fixed per name. */
+void Func_0808a018();
+void Func_0808a0d0();
+void Func_0808a1b8();
+void Func_0808a010();
+void Func_0808a170();
+void Func_0808a178();
+s32 Func_0808a070();
+void Func_0808a180();
+void Func_0808a090();
+void Func_080770c8();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-
-
-extern void Func_020015f4();
-extern void Func_02001642();
-extern void Func_020016ce();
-extern void Func_020016da();
-extern void Func_02001618();
-extern void Func_020016be();
-extern s32 Func_0200164e();
-extern void Func_020016fa();
-extern void Func_02001688();
-extern void Func_020016ae();
-extern void Func_020016bc();
-extern void Func_02001748();
-extern void Func_0200167e();
-extern void Func_02001740();
-extern void Func_020016a4();
 void Func_02000894(void)
 {
     u8 *workspace;
     u16 *skipped;
 
-    Func_020015f4();
+    Func_0808a018();
 
-    Func_02001642(0, 304, 312);
-    Func_020016ce(0, 0xc000, 0);
-    Func_020016da(28, 0x4000, 0);
+    Func_0808a0d0(0, 304, 312);
+    Func_0808a1b8(0, 0xc000, 0);
+    Func_0808a1b8(28, 0x4000, 0);
 
-    Func_02001618(20);
+    Func_0808a010(20);
 
-    Func_020016be(0x0e3d);
-    Func_020016ce(28, 0);
+    Func_0808a170(0x0e3d);
+    Func_0808a178(28, 0);
 
-    if (Func_0200164e(0, 0) == 0) {
+    if (Func_0808a070(0, 0) == 0) {
         /* Skip-beat counter: the u16 at workspace + 472. */
         workspace = *(u8 **)0x03001ebc;
         skipped = (u16 *)(workspace + 472);
         *skipped = (u16)(*skipped + 1);
 
-        Func_020016fa(28, 0);
-        Func_02001688(28, 0x10000, 0x8000);
-        Func_020016ae(28, 320, 304);
-        Func_020016bc(28, 316, 328);
-        Func_02001748(28, 0xa000, 0);
-        Func_0200167e(0x8c1);
+        Func_0808a180(28, 0);
+        Func_0808a090(28, 0x10000, 0x8000);
+        Func_0808a0d0(28, 320, 304);
+        Func_0808a0d0(28, 316, 328);
+        Func_0808a1b8(28, 0xa000, 0);
+        Func_080770c8(0x8c1);
     } else {
-        Func_02001740(28, 0);
+        Func_0808a180(28, 0);
     }
 
-    Func_020016a4();
+    Func_0808a020();
 }

@@ -85,52 +85,25 @@
  */
 
 /* Old-style declarations: arities vary per call site across this overlay. */
-
-
-
-
-
-
-
-
-
+void Func_080000c0();
+void Func_08015018();
+void Func_08015078();
+void Func_08015080();
+void Func_08015098();
+void Func_080150a8();
+void Func_08015270();
+void Func_08015278();
+void Func_080f9010();
 
 /* Used for their return values. */
-            /* relocated IWRAM modulo helper */
-
-            /* entry record by id */
+s32 Func_030003ac();            /* relocated IWRAM modulo helper */
+s32 Func_08015010();
+u8 *Func_08077080();            /* entry record by id */
 
 /* In-image label bitmaps. */
 extern u8 Data_0200890c[];
 extern u8 Data_02008914[];
 
-extern void Func_02000d8c();
-extern s32 Func_02000cc4();
-extern void Func_02000cde();
-extern s32 Func_02000cee();
-extern void Func_02000d46();
-extern void Func_02000d54();
-extern void Func_02000d40();
-extern void Func_02000d58();
-extern void Func_02000d5e();
-extern void Func_02000d6e();
-extern void Func_02000d72();
-extern void Func_02000e4c();
-extern void Func_02000dba();
-extern void Func_02000d78();
-extern void Func_02000d90();
-extern void Func_02000d98();
-extern void Func_02000e94();
-extern void Func_02000eac();
-extern void Func_02000ec4();
-extern void Func_02000ede();
-extern void Func_02000ef8();
-extern void Func_02000f14();
-extern s32 Func_02000e50();
-extern u8 * Func_02000eea();
-extern s32 Func_02000e7e();
-extern u8 * Func_02000f18();
-extern void Func_02000ea0();
 void Func_020004b0(void)
 {
     u32 *dma3 = (u32 *)0x040000d4;
@@ -144,9 +117,9 @@ void Func_020004b0(void)
     s32 masked;                 /* r5 */
 
     direction = 0;
-    Func_02000d8c(0x70);
+    Func_080f9010(0x70);
 
-    window = Func_02000cc4(0, 0, 30, 12, 2);
+    window = Func_08015010(0, 0, 30, 12, 2);
 
     counter = 1;
     redraw = 1;
@@ -159,25 +132,25 @@ void Func_020004b0(void)
     dma3[1] = 0x050001c0 + 28;
     dma3[2] = 0x80000001;
 
-    Func_02000cde(1);
+    Func_080000c0(1);
 
 loop:
     {
         if (redraw != 0) {
             redraw = 0;
-            counter = Func_02000cee(counter + 270, 270);    /* 135 << 1 */
+            counter = Func_030003ac(counter + 270, 270);    /* 135 << 1 */
 
-            Func_02000d46(window);
-            Func_02000d54(window);
-            Func_02000d40(Data_0200890c, window, 0, 0);
-            Func_02000d58(counter, 0, window, 0x50, redraw);
+            Func_08015270(window);
+            Func_08015278(window);
+            Func_08015098(Data_0200890c, window, 0, 0);
+            Func_080150a8(counter, 0, window, 0x50, redraw);
 
-            Func_02000d5e(Data_02008914, window, 0, 72);
+            Func_08015098(Data_02008914, window, 0, 72);
             masked = counter & 0x3fff;
-            Func_02000d5e(masked + 0x333, window, 120, 0);
+            Func_08015080(masked + 0x333, window, 120, 0);
             masked += 0x53a;
-            Func_02000d6e(masked, window, 0, 24);
-            Func_02000d72(masked, window, 0, 48);
+            Func_08015080(masked, window, 0, 24);
+            Func_08015078(masked, window, 0, 48);
         }
 
         if ((*held & 2) == 0) {
@@ -185,11 +158,11 @@ loop:
         }
 
 close_panel:
-        Func_02000e4c(0x71);
-        Func_02000dba(window);
-        Func_02000d78(1);
-        Func_02000d90(window, 1);
-        Func_02000d98(preview, 1);
+        Func_080f9010(0x71);
+        Func_08015270(window);
+        Func_080000c0(1);
+        Func_08015018(window, 1);
+        Func_08015018(preview, 1);
         return;
 
 interact:
@@ -197,45 +170,45 @@ interact:
             counter -= 1;
             direction = -1;
             redraw = 1;
-            Func_02000e94(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x80) != 0) {
             counter += 1;
             direction = 1;
             redraw = 1;
-            Func_02000eac(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x10) != 0) {
             counter += 10;
             direction = 1;
             redraw = 1;
-            Func_02000ec4(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x20) != 0) {
             counter -= 10;
             direction = -1;
             redraw = 1;
-            Func_02000ede(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x100) != 0) {          /* 128 << 1 */
             counter += 30;
             direction = 1;
             redraw = 1;
-            Func_02000ef8(0x6f);
+            Func_080f9010(0x6f);
         }
         if ((*pressed & 0x200) != 0) {          /* 128 << 2 */
             counter -= 30;
             direction = -1;
             redraw = 1;
-            Func_02000f14(0x6f);
+            Func_080f9010(0x6f);
         }
 
         if ((s32)(s8)direction == -1) {
             s32 value = counter + 270;
 
             for (;;) {
-                counter = Func_02000e50(value, 270);
-                if (Func_02000eea(counter & 0x3fff)[4] != 0) {
+                counter = Func_030003ac(value, 270);
+                if (Func_08077080(counter & 0x3fff)[4] != 0) {
                     break;
                 }
                 value = counter + 269;          /* one step DOWN, modulo 270 */
@@ -246,8 +219,8 @@ interact:
             s32 value = counter + 270;
 
             for (;;) {
-                counter = Func_02000e7e(value, 270);
-                if (Func_02000f18(counter & 0x3fff)[4] != 0) {
+                counter = Func_030003ac(value, 270);
+                if (Func_08077080(counter & 0x3fff)[4] != 0) {
                     break;
                 }
                 value = counter + 271;          /* one step UP, modulo 270 */
@@ -259,6 +232,6 @@ interact:
     }
 
 scheduler:
-    Func_02000ea0(1);
+    Func_080000c0(1);
     goto loop;
 }

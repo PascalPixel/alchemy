@@ -7,17 +7,15 @@
  * The return ends at 0x020008dc; alignment and three pool words extend the
  * owner through 0x020008eb.
  */
-
-
+extern u8 *Func_02000630(s32 *referenceBucketOut, s32 *slotIndexOut,
+                         s32 *keyIndexOut);
+extern s32 Func_080091d8(u8 *slot, s32 *position);
 
 static s32 Abs_02000758(s32 value)
 {
     return value < 0 ? -value : value;
 }
 
-extern u8 * Func_02000da6(s32 *referenceBucketOut, s32 *slotIndexOut,
-                         s32 *keyIndexOut);
-extern s32 Func_02001d14(u8 *slot, s32 *position);
 s32 Func_02000758(s32 *result)
 {
     s32 permuted_22;
@@ -36,7 +34,7 @@ s32 Func_02000758(s32 *result)
     s32 wholeGridSteps = 0;
 
     result[5] = 0;
-    slot = Func_02000da6(&referenceBucket, &result[1], &result[0]);
+    slot = Func_02000630(&referenceBucket, &result[1], &result[0]);
     if (slot == 0)
         return 0;
 
@@ -61,7 +59,7 @@ s32 Func_02000758(s32 *result)
             s32 x;
             result[2] = basePosition[0] + delta[0] * 0x10000;
             for (x = 0; x < width; x++) {
-                if (Func_02001d14(slot, &result[2]) == 2)
+                if (Func_080091d8(slot, &result[2]) == 2)
                     goto found;
                 result[2] += 0x100000;
             }

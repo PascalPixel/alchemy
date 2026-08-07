@@ -1660,7 +1660,17 @@ const SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // neither 11 -- because the reference mixes the two directions inside one
 // function (ascending at its first three call sites, descending at the fourth).
 // A global direction therefore cannot be the model; do not re-derive this.
-const SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES = new Set<string>([]);
+const SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES = new Set<string>([
+  // The negative result above holds for resource_3c8:2f30 and for any owner
+  // whose call sites disagree with each other -- but "none should" was one
+  // owner's evidence generalized. resource_3bb:39fc is a genuine witness: its
+  // staging emits `asrs r0,#16` before `lsls r1,#2` where the reference
+  // completes the r1 shift first, and no source shape reorders it (declaration
+  // order in an inner block was tried both ways and moved nothing). Routed
+  // 2026-08-07 from a green verify; the mode stays default-off and per-source,
+  // so 3c8:2f30 is unaffected.
+  "exact/resource_3bb_c_020039fc.c",
+]);
 const NO_SCHED_ALIAS_OVERLAY_SOURCES = new Set([
   "exact/08078144.c",
   "exact/resource_3af_c_02002b7c.c",

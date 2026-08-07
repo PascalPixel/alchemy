@@ -39,7 +39,7 @@
  * r8 the constant 0 (loaded from the first pool word), fp the 0x03001f30 target.
  *
  * All three calls resolved with
- * 'bun tools/overlay_call_targets.ts resource_377 168c --json' (3 sites,
+ * 'bun tools/lib/overlay_call_targets.ts resource_377 168c --json' (3 sites,
  * 3 distinct veneer targets):
  *   0x16b4 -> 0x185c -> Func_080090c8(26, d->arg0, d->arg1, d->arg2)
  *   0x16ec -> 0x184c -> Func_08009020(sprite, 0)

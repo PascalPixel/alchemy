@@ -15,7 +15,7 @@
  * plausible `bl 0x02002a6c` and is data, not a call.  The owner has exactly
  * three real call sites, matching the inventory's calls=3.
  *
- * Targets resolved with `bun tools/overlay_call_targets.ts resource_370`:
+ * Targets resolved with `bun tools/lib/overlay_call_targets.ts resource_370`:
  * 0x02000d0e -> Func_08000170, 0x02000d18 -> Func_080001a8,
  * 0x02000d66 -> Func_08000178.
  *

@@ -27,7 +27,7 @@
  * literal pool is 0x02000204..0x02000213 and 0x02000214 is past the row.  296
  * bytes, matching the inventory row.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_3cd
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_3cd
  * 00ec` (an overlay `bl` stores target offset - 2).  22 sites, 12 distinct:
  *   0x0850 Func_08077008 x1   0x07f0 Func_08015010 x1   0x0800 Func_08015078 x3
  *   0x0830 Func_08015270 x2   0x0810 Func_08015090 x1   0x0818 Func_08015098 x1

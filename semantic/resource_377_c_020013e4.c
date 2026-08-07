@@ -27,7 +27,7 @@
  * the same kind of value assets/code/resource_380_c_02000390.c writes.
  *
  * All 29 calls resolved with
- * 'bun tools/overlay_call_targets.ts resource_377 13e4 --json' (29 sites,
+ * 'bun tools/lib/overlay_call_targets.ts resource_377 13e4 --json' (29 sites,
  * 22 distinct veneer targets).  The per-target multiset below matches the tool's
  * histogram exactly: Func_0808a0d0 x3; Func_080000c0, Func_0808a0f0,
  * Func_08009098, Func_08009148, Func_0808a1b8 x2 each; the other seventeen once.

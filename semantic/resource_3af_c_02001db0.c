@@ -69,7 +69,7 @@
  * nonzero value including a negative one.
  *
  * Not found by the structural inventory walk: reached only by `bl`
- * (bun tools/overlay_call_targets.ts resource_3af 1db0 1f90, the +2
+ * (bun tools/lib/overlay_call_targets.ts resource_3af 1db0 1f90, the +2
  * rule against the raw image).
  *
  * Uncertainty: actor ids and argument roles by shape; coordinates,

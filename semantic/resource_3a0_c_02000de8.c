@@ -21,7 +21,7 @@
  * The next prologue begins at 0x02000e4c.
  *
  * All six call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_3a0 0de8 0e48`, assigning the
+ * `bun tools/lib/overlay_call_targets.ts resource_3a0 0de8 0e48`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
  *   0x02000dee -> veneer 0x020013d0 -> Func_0808a080
  *   0x02000e02 -> veneer 0x020013d8 -> Func_0808a090

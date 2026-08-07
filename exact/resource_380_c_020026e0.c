@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. Its Thumb pointer is written into a script
  * record; no `bl` reaches it. Found by
- * `bun tools/overlay_published.ts resource_380`. See
+ * `bun tools/lib/overlay_published.ts resource_380`. See
  * resource_380_c_02002674.c for the full seven-callback bank and the
  * way it corroborates the scene wiring at 0x0200227c.
  *
@@ -35,7 +35,7 @@
  * 0x02002738-0x0200274b; the next owner's prologue is at 0x0200274c.
  *
  * All four `bl` targets resolved through the import-veneer table under
- * the +2 rule (tools/overlay_call_targets.ts).
+ * the +2 rule (tools/lib/overlay_call_targets.ts).
  *
  * Uncertainty: as in the twin, the zero arguments to Func_0808a150 and
  * Func_0808a180 have no established meaning.

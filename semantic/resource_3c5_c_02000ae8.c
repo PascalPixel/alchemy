@@ -15,7 +15,7 @@
  * What was changed:
  *  - Data_0200b058 becomes Data_0200b134 (file offset 0x3134 under the
  *    proven 0x02008000 link base);
- *  - the calls were re-resolved with 'bun tools/overlay_call_targets.ts
+ *  - the calls were re-resolved with 'bun tools/lib/overlay_call_targets.ts
  *    resource_3c5 0ae8': the same 10 sites, 6 distinct targets, all veneers
  *    publishing Func_03000380, Func_08009080, Func_08009098, Func_080090c8,
  *    Func_0808a080 and Func_0808a160 with the same multiplicities as in

@@ -13,7 +13,7 @@
  * 0x020004bc. No branches.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts resource_3c9
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9
  * 480 4bc`: one site, classified `call_via` (this overlay's own slot at
  * 0x02005ee0), with r3 loaded from the pool immediately before it --
  * 0x030001d8, the IWRAM square root already named in

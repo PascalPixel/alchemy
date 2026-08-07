@@ -18,7 +18,7 @@
  * survives - the owner returns the constant 0.
  *
  * Calls: 11 sites over 7 targets, from
- * 'bun tools/overlay_call_targets.ts resource_393 0bf8'.  Three of them are
+ * 'bun tools/lib/overlay_call_targets.ts resource_393 0bf8'.  Three of them are
  * intra-overlay prologues (0x020008c0 x3, 0x02000244, 0x02000c8c); the
  * remaining six are veneers.
  *

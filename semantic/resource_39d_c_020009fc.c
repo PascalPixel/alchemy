@@ -38,7 +38,7 @@
  * reconstruction's set but it is a free conversion for whoever takes 3c9.
  *
  * All ten call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_39d 09fc ac2`, and the
+ * `bun tools/lib/overlay_call_targets.ts resource_39d 09fc ac2`, and the
  * per-target histogram is Func_0808a080 x2, Func_0808a018 x1, Func_020008cc
  * x1, Func_080770c8 x1, Func_080000c0 x4, Func_0808a020 x1:
  *   0x02000a00 -> veneer 0x036f0 -> Func_0808a080   record fetch, index 0

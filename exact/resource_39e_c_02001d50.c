@@ -12,7 +12,7 @@
  * Func_02001dbc. **108 bytes**, measured to the epilogue.
  *
  * Published population (sweep B). All 10 `bl` sites resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 1d50 1dbc`; sites=10
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 1d50 1dbc`; sites=10
  * and ten bl lines were transcribed.
  *
  * A FOURTH SHAPE OF THE SKIP-BEAT COUNTER, and it is not the converging

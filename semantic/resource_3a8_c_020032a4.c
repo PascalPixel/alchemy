@@ -20,7 +20,7 @@
  * no arguments.  It is called from Func_020031b8, which passes nothing.
  *
  * Call accounting: 75 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_3a8 32a4` - 11 distinct targets,
+ * `bun tools/lib/overlay_call_targets.ts resource_3a8 32a4` - 11 distinct targets,
  * 73 import veneers plus 2 calls to the intra-overlay prologue 0x020015b4
  * (which has a byte-exact source in assets/code).  Every per-target count
  * below was reproduced by hand from `printed_target - site - 2` and matches

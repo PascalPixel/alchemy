@@ -28,7 +28,7 @@
  * 0x24f4, the same animation script the owner at 0x02000384 hands to
  * Func_0808a098.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_399
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_399
  * 0b70 --annotate` (an overlay `bl` stores `target - 2`).  81 sites, 18
  * distinct targets.  Per-target multiset against the assembly, matched exactly
  * by the C below:

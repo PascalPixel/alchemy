@@ -3,7 +3,7 @@
 /*
  * resource_3ab owner at 0x02001668, 368 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay_driver.ts resource_3ab), so the loader enters
+ * (bun tools/overlay/overlay_driver.ts resource_3ab), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Two scene blocks on the id at 0x02000240+448, both opening by

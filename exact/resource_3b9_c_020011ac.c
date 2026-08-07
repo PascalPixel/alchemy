@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record. Found by
- * `bun tools/overlay_published.ts resource_3b9`. It is the smallest
+ * `bun tools/lib/overlay_published.ts resource_3b9`. It is the smallest
  * published owner in this overlay and does nothing else -- no scene
  * bracket, no dialogue.
  *
@@ -25,7 +25,7 @@
  * owner's prologue is at 0x020011c4.
  *
  * Both `bl` targets resolved through the overlay's import-veneer table
- * under the +2 rule (tools/overlay_call_targets.ts).
+ * under the +2 rule (tools/lib/overlay_call_targets.ts).
  *
  * Uncertainty: what the two flags gate is not established. The
  * clear-then-set-the-neighbour shape suggests a two-state selector

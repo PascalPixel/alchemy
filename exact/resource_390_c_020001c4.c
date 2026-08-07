@@ -20,7 +20,7 @@
  * survives - the owner returns the constant 0.
  *
  * Calls: 12 sites over 5 targets, from
- * 'bun tools/overlay_call_targets.ts resource_390 01c4'.  Note that the two
+ * 'bun tools/lib/overlay_call_targets.ts resource_390 01c4'.  Note that the two
  * calls inside the record loop are ONE site each; the multiset counts sites,
  * not executions.
  *

@@ -35,7 +35,7 @@
  * is the result.  r0 is set to 0 on the only path, so the owner returns 0.
  *
  * All five call sites resolved with
- * `bun tools/overlay_call_targets.ts resource_3c2 0a78 --json`:
+ * `bun tools/lib/overlay_call_targets.ts resource_3c2 0a78 --json`:
  *   0x02000a92 -> veneer 0x0b3c -> Func_080770c8
  *   0x02000aae -> veneer 0x0b64 -> Func_0808a080
  *   0x02000ac2 -> veneer 0x0b64 -> Func_0808a080

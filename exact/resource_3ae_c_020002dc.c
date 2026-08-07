@@ -8,7 +8,7 @@
  * The three words at 0x0200031c/0x02000320/0x02000324 are the owner's literal
  * pool (0x8a7, 0x8a9, 0x1d23), reached only by `ldr rN, [pc, ...]`.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong):
  *
  *   0x020002e0 -> 0x15a0 veneer -> Func_0808a080

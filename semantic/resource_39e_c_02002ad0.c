@@ -60,7 +60,7 @@
  * not hand-translated.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_39e 2ad0 3e58,
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 2ad0 3e58,
  * the +2 rule). Drafting it takes resource_39e's residue to zero.
  *
  * Method note, because the size made it necessary: the argument text

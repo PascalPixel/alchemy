@@ -27,7 +27,7 @@
  * per-target multiset, so the line id is hoisted into a local and the import
  * is called exactly once.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; twelve sites,
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; twelve sites,
  * matching the inventory's `calls=12`.
  */
 

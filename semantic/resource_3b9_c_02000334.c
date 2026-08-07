@@ -5,7 +5,7 @@
  * handler in the bank at 0x020002a0-0x020006bc, for actor 14.
  *
  * PUBLISHED, NOT CALLED. Found by
- * `bun tools/overlay_published.ts resource_3b9`. The bank is described
+ * `bun tools/lib/overlay_published.ts resource_3b9`. The bank is described
  * in resource_3b9_c_020002a0.c.
  *
  * FIRST MEMBER TO USE THE OVERLAY'S OWN TRAMPOLINES. It calls

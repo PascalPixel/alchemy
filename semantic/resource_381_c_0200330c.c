@@ -39,7 +39,7 @@
  * The requested count is clamped to ten by `cmp r2,#10 / bls` — the array is
  * fixed-size, so a caller asking for more silently gets ten.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; all 5 sites are
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 5 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_0808a080 x2, Func_080000d0 x1, Func_08000148 x1, Func_080091e8 x1.
  * The two Func_0808a080 sites are genuinely distinct — the first stores the

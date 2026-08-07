@@ -35,8 +35,8 @@
  * task callbacks.)
  *
  * Call targets resolved with
- *   bun tools/overlay_show.ts resource_3a7 0b8c -n 124 |
- *   bun tools/overlay_call_targets.ts resource_3a7 --annotate
+ *   bun tools/overlay/overlay_show.ts resource_3a7 0b8c -n 124 |
+ *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
  * Per-target multiset over the 5 sites, matching the inventory's calls=5:
  *   Func_080090c8 x1 <- veneer 0x020010a8  (spawner; returns NULL on failure)
  *   Func_080000f8 x2 <- veneer 0x02001090  (random source, no arguments)

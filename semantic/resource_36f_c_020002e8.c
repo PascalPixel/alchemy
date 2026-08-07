@@ -23,7 +23,7 @@
  * prologue.  364 bytes, matching the inventory row.  Two interior pools, both
  * found by a control-flow walk from the prologue, not by reading through.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_36f
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_36f
  * 02e8` (an overlay `bl` stores target offset - 2):
  *   0x020002ea -> 0x0454 prologue -> Func_02000454   background setup
  *   0x020002f0 -> veneer 0x05a8   -> Func_0808a010(30)

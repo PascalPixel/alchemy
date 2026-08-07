@@ -20,7 +20,7 @@
  * three constants to a different import instead of two.
  *
  * The one call site was resolved with
- * `bun tools/overlay_call_targets.ts resource_3a0 0314 0324`:
+ * `bun tools/lib/overlay_call_targets.ts resource_3a0 0314 0324`:
  * 0x0200031c -> veneer 0x020014a0 -> Func_020017be.  `overlay_show`'s printed
  * 0x20017be is the pc-relative misreading and is not used.  All three
  * arguments are immediates, so this is a named shorthand for one fixed

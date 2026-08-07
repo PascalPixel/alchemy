@@ -3,7 +3,7 @@
 /*
  * resource_382 owner at 0x0200136c, 716 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay_driver.ts resource_382), so the loader enters
+ * (bun tools/overlay/overlay_driver.ts resource_382), so the loader enters
  * here and no bl inside the image reaches it, which is why it sat in
  * no structural inventory row.
  *

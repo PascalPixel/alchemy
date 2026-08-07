@@ -24,7 +24,7 @@
  * below.
  *
  * All ten `bl` sites are placed and reach ten distinct callees, matching the
- * inventory row's calls=10.  Targets come from tools/overlay_call_targets.ts
+ * inventory row's calls=10.  Targets come from tools/lib/overlay_call_targets.ts
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations: 0x3dd8 -> Func_08000148, 0x3de8 -> Func_08000170, 0x3f50 ->
  * Func_0808a080 (twice), 0x3ee8 -> Func_080770c0, 0x3df8 -> Func_080001a8,

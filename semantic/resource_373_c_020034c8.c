@@ -21,7 +21,7 @@
  * takes no arguments.
  *
  * Call accounting: 264 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_373 34c8` - 53 distinct targets,
+ * `bun tools/lib/overlay_call_targets.ts resource_373 34c8` - 53 distinct targets,
  * 260 import veneers and 4 intra-overlay prologues (Func_02005594,
  * Func_020055a4, Func_020057fc, Func_02005c20).  No `call_via rN` site: r3 is
  * only ever loaded with a small immediate or a 16.16 constant.  Each of the

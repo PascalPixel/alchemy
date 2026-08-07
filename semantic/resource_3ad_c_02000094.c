@@ -8,7 +8,7 @@
  * The popped register is r0, so r0 holds the return address and nothing is
  * returned - the owner is `void`.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target_offset - 2, so the disassembler's own annotations are wrong):
  *   0x0200009a -> veneer 0x02001b3c -> Func_0808a080
  *   0x020000c2 -> veneer 0x02001aec -> Func_080091c0

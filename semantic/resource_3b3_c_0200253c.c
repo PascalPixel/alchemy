@@ -19,7 +19,7 @@
  * the next prologue at 0x02002580.
  *
  * All seven call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_3b3 253c 257e`, assigning the
+ * `bun tools/lib/overlay_call_targets.ts resource_3b3 253c 257e`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
  *   0x02002540 -> veneer 0x02002b0c -> Func_0808a018
  *   0x02002548 -> prologue 0x02000758

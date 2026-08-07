@@ -20,7 +20,7 @@
  * 0x02000bf0.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_3af bb8 c28's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3af bb8 c28's
  * +2 rule).
  *
  * Uncertainty: callees identified by shape; the six argument roles of

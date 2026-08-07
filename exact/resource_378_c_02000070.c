@@ -28,7 +28,7 @@
  * for this overlay, and the five 0x0200bxxx pool words below are in-image
  * data, not RAM globals.
  *
- * Zero call sites (`bun tools/overlay_call_targets.ts resource_378 0070`
+ * Zero call sites (`bun tools/lib/overlay_call_targets.ts resource_378 0070`
  * reports sites=0), which is correct rather than a decoding failure: the only
  * non-linear instruction in the owner is the `mov pc, r3` dispatch.
  *

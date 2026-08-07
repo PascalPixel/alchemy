@@ -14,8 +14,8 @@
  * are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2`
- * rule (`bun tools/overlay_call_targets.ts resource_3b9 24d8 25f0`).
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2`
+ * rule (`bun tools/lib/overlay_call_targets.ts resource_3b9 24d8 25f0`).
  *
  * SHARED IDIOMS cited from resource_3b9_c_0200160c.c's header and
  * resource_3b9_c_02002668.c's: scripted-scene bracket open/close, and

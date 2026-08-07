@@ -21,7 +21,7 @@
  * live 140 bytes later as the story-flag id at 0x02001a9e.  Reading it as dead
  * scratch there would drop an argument.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`.  Per-target
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`.  Per-target
  * multiset over the 19 sites: Func_0808a080 x5, Func_080770c0 x5,
  * Func_080091e0 x4, Func_0808a100 x2, and one each of Func_02000210,
  * Func_02000384, Func_020000d4 - 19 C call expressions below, matching the

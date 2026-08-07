@@ -27,7 +27,7 @@
  * The first of these is the plain case the guard exists for: an unconditional
  * branch over a pool in the middle of the script, with nothing else to mark it.
  *
- * CALL ACCOUNTING.  `bun tools/overlay_call_targets.ts resource_3c5 1b10`
+ * CALL ACCOUNTING.  `bun tools/lib/overlay_call_targets.ts resource_3c5 1b10`
  * reports sites=263 / distinct_targets=30 (29 import veneers plus one real
  * prologue, this overlay's own 0x02002548).  The inventory's `calls=249` is
  * the usual lower bound and is not used as a completeness proof.  The multiset

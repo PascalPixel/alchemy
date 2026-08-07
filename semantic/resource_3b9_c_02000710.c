@@ -17,7 +17,7 @@
  * jumped over by `b.n 0x02000c90` at 0x02000ab4; the body resumes at
  * 0x02000aec.
  *
- * When this row was drafted, `tools/overlay_show.ts` SILENTLY DROPPED a
+ * When this row was drafted, `tools/overlay/overlay_show.ts` SILENTLY DROPPED a
  * second positional bound and fell back to its own extent scan, which
  * stops at the first return-shaped halfword. Given the true bounds
  * `710 dcc` it returned 101 of this row's 177 call sites -- losing BOTH
@@ -30,7 +30,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only by
  * `bl`. All 177 targets resolved with
- * `bun tools/overlay_call_targets.ts resource_3b9 710 dcc` under the `+2`
+ * `bun tools/lib/overlay_call_targets.ts resource_3b9 710 dcc` under the `+2`
  * rule -- 151 veneer sites, 26 to this overlay's own trampolines
  * Func_02001c48/Func_02001c5c, ZERO intra-body. The bl-as-long-branch
  * shape does not appear here; the `bne.n`-over-`b.n` pair at 0x0200071a

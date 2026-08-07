@@ -25,7 +25,7 @@
  * on).  This is the documented long-lived-alias trap; the register is tracked
  * per use below, not as one variable.
  *
- * Call sites resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call sites resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores `target_offset - 2`).  127 sites, 27 distinct targets: 116 import
  * veneers and 11 sites of one real in-overlay routine, 0x020023a4 — a
  * two-argument helper (`push {r5, lr}` at 0x020023a4, `pop {r5} / pop {r0} /

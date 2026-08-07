@@ -14,7 +14,7 @@
  * 0xfffe0000, 0x00006666, 0xffff999a, 0xffff8000, 0x00000301).  420 code +
  * 24 pool = 444, exactly the inventory row's code_bytes and span_bytes.
  *
- * Calls: 31 sites, resolved with `bun tools/overlay_call_targets.ts
+ * Calls: 31 sites, resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_389 ecc`.  Per-target multiset:
  *   Func_0808a080  x23  0xede 0xef0 0xf0e 0xf18 0xf20 0xf30 0xf38 0xf40 0xf64
  *                       0xf6c 0xf74 0xf96 0xf9e 0xfa6 0xfca 0xfd2 0xfda 0xff8

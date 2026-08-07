@@ -20,7 +20,7 @@
  *    really does open with 'push {r5, r6, r7, lr}' (0xb5e0) - the same opening
  *    as resource_373's 0x5ae0, which is an independent check on both the base
  *    and the pointer's meaning.
- *  - all seven calls were re-resolved with 'bun tools/overlay_call_targets.ts
+ *  - all seven calls were re-resolved with 'bun tools/lib/overlay_call_targets.ts
  *    resource_3a8 3a3c': 7 sites, 7 distinct veneers, publishing exactly the same
  *    main-image imports in the same order as resource_373.  The 373 source
  *    predates the corrected 'bl' rule and named the imports by their encoded

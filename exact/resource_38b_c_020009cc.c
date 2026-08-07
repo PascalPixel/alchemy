@@ -24,7 +24,7 @@
  * deliberately NOT merged.
  *
  * All 16 targets are import veneers resolved with
- * tools/overlay_call_targets.ts.
+ * tools/lib/overlay_call_targets.ts.
  *
  * `asrs #20` on the +0x08 and +0x10 record words is the tile-grid idiom
  * (>> 16 to pixels, >> 4 to the 16-pixel grid), signed.

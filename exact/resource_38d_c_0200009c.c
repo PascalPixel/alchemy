@@ -39,7 +39,7 @@ struct SceneRecord {
  * byte-exact sibling declares it.
  *
  * Call accounting: 2 `bl` sites, both resolved with
- * `bun tools/overlay_call_targets.ts resource_38d 009c --json`; both are
+ * `bun tools/lib/overlay_call_targets.ts resource_38d 009c --json`; both are
  * import veneers and both appear below exactly once.  No intra-overlay call,
  * no `call_via` slot (neither r3 nor r4 is loaded before any branch).
  *

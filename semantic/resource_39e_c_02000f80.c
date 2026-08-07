@@ -24,7 +24,7 @@
  * are used as arithmetic operands.  The next prologue begins at 0x0200102c.
  *
  * All nine call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 0f80 101c`, and the
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 0f80 101c`, and the
  * per-target histogram is Func_0808a080 x1, Func_0808a0d0 x6, Func_0808a1b8
  * x2:
  *   0x02000f84 -> Func_0808a080     0x02000fe6 -> Func_0808a0d0

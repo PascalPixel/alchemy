@@ -34,7 +34,7 @@
  * survives and is the result - an in-image block address.
  *
  * Calls: 2 sites, one target, from
- * 'bun tools/overlay_call_targets.ts resource_3b9 007c'.
+ * 'bun tools/lib/overlay_call_targets.ts resource_3b9 007c'.
  *
  * STYLE AND LAYOUT CONFIRMED AGAINST tracked byte-exact SIBLINGS.
  * assets/code/resource_3b9_c_02000030.c and _02000238.c are the same family in

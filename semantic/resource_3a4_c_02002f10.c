@@ -27,7 +27,7 @@
  * 0x02002a48, a second instance of it inside one overlay.
  *
  * Nineteen call sites, every one resolved with the `+2` rule via
- * `bun tools/overlay_call_targets.ts resource_3a4 0x2f10 0x2ffc` and none
+ * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x2f10 0x2ffc` and none
  * read from the listing's arrows, which print nineteen nonexistent
  * 0x02006xxx addresses. They collapse onto sixteen veneers, in body order:
  *   0x2002f12 -> Func_0808a018()                       no arguments materialised

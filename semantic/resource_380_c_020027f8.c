@@ -33,7 +33,7 @@
  * The 0xffffe667 pool word masquerades as `b.n` twice more here
  * (0x2002c24, 0x2003078); neither is control flow.
  *
- * Callee names from bun tools/overlay_call_targets.ts resource_380
+ * Callee names from bun tools/lib/overlay_call_targets.ts resource_380
  * 27f8 3f24 (the +2 rule): 516 import-veneer sites, 40 to local
  * drafted functions (Func_02004248, Func_02004328).
  *

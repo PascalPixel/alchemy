@@ -11,7 +11,7 @@
  * incoming arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * `record = *Data_03001edc` is this overlay's "current object" global (a
  * pointer read once at 0x03001edc, dereferenced once more to reach the live

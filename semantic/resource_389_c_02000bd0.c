@@ -21,7 +21,7 @@
  * documented small-pool case, not the customary 8-12.  266 code + 6 pool =
  * 272, exactly the inventory row's code_bytes and span_bytes.
  *
- * Calls: 14 sites, resolved with `bun tools/overlay_call_targets.ts
+ * Calls: 14 sites, resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_389 bd0`, matching the advertised 14 exactly.  Per-target multiset:
  *   Func_0808a080  x6   0xbec 0xc08 0xc10 0xc62 0xc7e 0xc86
  *   Func_080000f8  x6   0xbf2 0xc1c 0xc36 0xc68 0xc92 0xcac

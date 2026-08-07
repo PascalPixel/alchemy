@@ -20,7 +20,7 @@
  * Uncertainty: r4 is used as scratch at 0x02000704 although `push {r5, lr}`
  * never saves it.  Recognised idiom in this codebase, reproduced as-is.
  *
- * Call target resolved with `tools/overlay_call_targets.ts`.
+ * Call target resolved with `tools/lib/overlay_call_targets.ts`.
  */
 
 /* Old-style declaration: overlay import arities are not fixed per name. */

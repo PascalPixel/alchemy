@@ -17,7 +17,7 @@
  * 0x0000085e).  176 code + 32 pool = 208, exactly the inventory row's figures.
  *
  * Calls: 17 sites, matching the advertised 17.  Per-target multiset from
- * `bun tools/overlay_call_targets.ts resource_38e 50c`:
+ * `bun tools/lib/overlay_call_targets.ts resource_38e 50c`:
  *   Func_080770c0  x7   0x510 0x522 0x532 0x554 0x55e 0x57e 0x5ac
  *   Func_0808a0f0  x4   0x542 0x54e 0x56c 0x590
  *   Func_0808a1b8  x2   0x59c 0x5a6

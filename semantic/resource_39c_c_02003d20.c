@@ -3,7 +3,7 @@
 /*
  * resource_39c owner at 0x02003d20, 3304 bytes: THE OVERLAY'S ENTRY
  * DRIVER, and the last of the ninety-six.  Identified from the header
- * veneer at image offset 4 (bun tools/overlay_driver.ts resource_39c),
+ * veneer at image offset 4 (bun tools/overlay/overlay_driver.ts resource_39c),
  * so the loader enters here and no bl inside the image reaches it,
  * which is why it sat in no structural inventory row.
  *
@@ -55,7 +55,7 @@
  *
  * Cross-checked per the 2026-08-01 ruling, hand-drafted from the bytes
  * first: every bl resolved as an ABSOLUTE image offset (stored
- * displacement + 2) with tools/overlay_call_targets.ts, never read off
+ * displacement + 2) with tools/lib/overlay_call_targets.ts, never read off
  * the listing, and every jump-table word as `word - 0x8000` in the same
  * space, both tables re-dumped from the assembled image rather than
  * carried over from the earlier map.  tools/m2c_guard.ts finds no

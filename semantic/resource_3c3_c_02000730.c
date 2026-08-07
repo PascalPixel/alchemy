@@ -27,7 +27,7 @@
  * prompt idiom appears with both polarities, so the comparison is read per
  * call site rather than assumed.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; all 11 sites are
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 11 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_0808a180 x3, Func_0808a170 x2, and one each of Func_080770c0,
  *   Func_0808a018, Func_0808a020, Func_0808a070, Func_0808a110,

@@ -33,7 +33,7 @@
  * balance snapshot that this overlay's Func_020009f8 writes - reading it here
  * is what makes the win/loss delta meaningful.
  *
- * Call targets were resolved with `tools/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
  * `bl` stores `target_offset - 2`).  Completeness, as a multiset:
  *   Func_0808a010 x6, Func_0808a170 x6, Func_0808a180 x5, Func_080770c0 x4,
  *   Func_0808a080 x4, Func_0808a158 x4, Func_08015120 x3, Func_0808a360 x3,

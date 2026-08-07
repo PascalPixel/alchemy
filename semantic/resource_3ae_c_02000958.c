@@ -15,7 +15,7 @@
  * into r0, so r0 does not survive and the owner is void.  The 8-byte frame
  * exists only to carry the fifth and sixth arguments of Func_080091c0.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong):
  *
  *   0x0200095c -> Func_02000af8 (prologue, this overlay)

@@ -22,7 +22,7 @@
  * either, which passes three constants to a different import.
  *
  * The one call site was resolved with
- * `bun tools/overlay_call_targets.ts resource_3c0 0314 0322`:
+ * `bun tools/lib/overlay_call_targets.ts resource_3c0 0314 0322`:
  * 0x0200031a -> veneer 0x02001344 -> Func_02001660.  `overlay_show`'s printed
  * 0x2001660 is the pc-relative misreading and is not used.  Both arguments are
  * immediates, so there is no dataflow to recover: this is a named shorthand

@@ -11,7 +11,7 @@
  * before being written, so it takes none.
  *
  * CALL ACCOUNTING.  Twenty-six `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_3ba --annotate`:
+ * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`:
  *   Func_0808a100 x4, Func_0808a090 x4, Func_0808a010 x3,
  *   Func_0808a0c8 x2, Func_0808a0d0 x2,
  *   and one each of Func_02002f90, Func_0808a018, Func_020030ac,

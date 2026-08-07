@@ -19,7 +19,7 @@
  * story flag 0x12f and setting 0x84f.
  *
  * Call accounting: 46 `bl` sites over 24 distinct targets, all resolved with
- * `bun tools/overlay_call_targets.ts resource_38d 179c --json`, which reports
+ * `bun tools/lib/overlay_call_targets.ts resource_38d 179c --json`, which reports
  * exactly `sites=46 distinct_targets=24 veneer=46` - every target is an import
  * veneer, there is no intra-overlay call and no `call_via` slot (r3 is written
  * once, as Func_0808a210's fourth argument, never with an IWRAM code address).

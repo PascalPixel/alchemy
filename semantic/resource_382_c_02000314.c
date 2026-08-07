@@ -34,7 +34,7 @@
  * one of the nine that saves high registers at all.
  *
  * All four call sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_382 0314 03a4`, assigning the
+ * `bun tools/lib/overlay_call_targets.ts resource_382 0314 03a4`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
  *   0x02000344 -> veneer 0x020019e0 -> Func_0808a080
  *   0x02000350 -> prologue 0x02001674 -> Func_02001674

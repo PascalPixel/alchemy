@@ -15,7 +15,7 @@
  * workspace pointer the byte-exact assets/code/resource_395_c_02000050.c
  * dereferences.
  *
- * All 24 call sites were resolved with tools/overlay_call_targets.ts
+ * All 24 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), never from overlay_show.ts's
  * `bl` annotations, which are off by one veneer entry on this overlay.  Placed
  * multiset, matching the 24 sites exactly: Func_020012f4 x4, Func_0808a170 x3,

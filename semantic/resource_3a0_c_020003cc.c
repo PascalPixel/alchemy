@@ -41,7 +41,7 @@
  * cannot be told apart by address family alone.
  *
  * The single call site was resolved with
- * `bun tools/overlay_call_targets.ts resource_3a0 03cc 0404`: one site,
+ * `bun tools/lib/overlay_call_targets.ts resource_3a0 03cc 0404`: one site,
  * classified `call_via`, and r3 is loaded from the pool with 0x030001d8
  * immediately before it.  So the callee is the IWRAM square root, the same
  * helper resource_3b7_c_02000e5c.c already names.

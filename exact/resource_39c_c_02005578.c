@@ -12,7 +12,7 @@
  * overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * `record = *Data_03001edc` is the same current-object global
  * resource_39c_c_02005900.c already documents (a pointer read once at

@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record. Found by
- * `bun tools/overlay_published.ts resource_380`.
+ * `bun tools/lib/overlay_published.ts resource_380`.
  *
  * IT WAS BLOCKED UNTIL THE TOOL COULD MEASURE AN EXACT ROW. The sweep
  * used to report this address UNRULED: it sits immediately behind the
@@ -70,7 +70,7 @@
  * written here as the literal 0x1074.
  *
  * All 84 `bl` targets resolved through the overlay's import-veneer
- * table under the +2 rule (tools/overlay_call_targets.ts). Two are
+ * table under the +2 rule (tools/lib/overlay_call_targets.ts). Two are
  * direct intra-image branches (Func_02004260, Func_02004248), visible
  * only in the resolved target.
  *

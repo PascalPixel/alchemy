@@ -19,7 +19,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only as
  * a published pointer. All 5 `bl` targets resolved with
- * `bun tools/overlay_call_targets.ts resource_39e 254c 2574` under the
+ * `bun tools/lib/overlay_call_targets.ts resource_39e 254c 2574` under the
  * `+2` rule. No branches.
  *
  * SHARED IDIOM: the Func_0200692c/Func_0200694e scripted-scene bracket,

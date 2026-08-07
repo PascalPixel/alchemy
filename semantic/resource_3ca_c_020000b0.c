@@ -23,7 +23,7 @@
  * the same way.  The overlay image is writable EWRAM, so the counter below is
  * genuinely mutable overlay data, not ROM.
  *
- * The single call site was resolved with tools/overlay_call_targets.ts:
+ * The single call site was resolved with tools/lib/overlay_call_targets.ts:
  * 0x020000b8 -> veneer 0x02001314 -> Func_030003f0.  That word has no Thumb
  * bit, so it is one of the ARM-mode helpers relocated into IWRAM (the same
  * family as the 0x030001d8 square root and the 0x03000380 divide), reached

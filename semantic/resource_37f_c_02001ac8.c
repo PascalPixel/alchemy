@@ -6,7 +6,7 @@
  * return `pop {r5} / pop {r0} / bx r0` at 0x02001b14 — r0 is the popped return
  * address, so the owner is `void`.
  *
- * All four call sites were resolved with `tools/overlay_call_targets.ts`; all
+ * All four call sites were resolved with `tools/lib/overlay_call_targets.ts`; all
  * four are import veneers.
  *
  * Link base: this overlay is linked at 0x02008000 (witness — the byte-exact

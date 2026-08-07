@@ -17,7 +17,7 @@
  * prints there are cue-base ids, not code.  Func_02001050 (byte-exact in
  * assets/code) begins immediately after.
  *
- * All eleven call sites were resolved with tools/overlay_call_targets.ts
+ * All eleven call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2).  The inventory reports
  * calls=10, which is a lower bound counting distinct targets; the placed
  * multiset is:

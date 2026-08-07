@@ -6,7 +6,7 @@
  * values, forward its own incoming r0 to Func_0808a160 with a different
  * second argument.  A PUBLISHED CALLBACK -- reached only through an
  * address stored as a plain word, never by a `bl`, so sweep B of
- * tools/overlay_published.ts is what surfaced it.
+ * tools/lib/overlay_published.ts is what surfaced it.
  *
  * Complete owner: `push {lr}` at 0x02002ce0 through the interworking
  * return `pop {r0} / bx r0` at 0x02002d00-0x02002d02, one alignment

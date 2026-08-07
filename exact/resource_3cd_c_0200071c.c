@@ -3,7 +3,7 @@
 /*
  * resource_3cd owner at 0x0200071c, 76 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay_driver.ts resource_3cd), so the loader enters
+ * (bun tools/overlay/overlay_driver.ts resource_3cd), so the loader enters
  * here and no bl inside the image reaches it.  The smallest of the
  * twenty-one unowned drivers the audit turned up.
  *

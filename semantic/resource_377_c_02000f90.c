@@ -37,7 +37,7 @@
  * uncertainty rather than baked into the source.
  *
  * All 91 call sites resolved with
- * 'bun tools/overlay_call_targets.ts resource_377 0f90 --json' (the inventory's
+ * 'bun tools/lib/overlay_call_targets.ts resource_377 0f90 --json' (the inventory's
  * calls=87 is the documented undercount).  Per-target site counts, which the C
  * below reproduces exactly:
  *   Func_0808a010 x13  Func_0808a018 x1   Func_0808a020 x1

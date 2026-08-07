@@ -8,7 +8,7 @@
  * `void`.  A three-word literal pool sits at 0x0200049c-0x020004a7, past the
  * return and never reached as code (0x202, 0x1528, 0x201).
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`:
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`:
  *   0x02000466 -> veneer 0x02001b04 -> Func_080770c0
  *   0x02000470 -> veneer 0x02001b04 -> Func_080770c0
  *   0x0200047c -> veneer 0x02001afc -> Func_08015040

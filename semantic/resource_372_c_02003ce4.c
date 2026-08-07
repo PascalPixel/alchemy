@@ -23,7 +23,7 @@
  *
  * The bodies at 0x3dd0/0x3dd6/0x3ddc are disassembled by hand from the
  * `.4byte` halfwords the reconstruction records for 0x02003dd0-0x02003de9;
- * `bun tools/overlay_show.ts resource_372 3dc8 -n 80` decodes them as code.
+ * `bun tools/overlay/overlay_show.ts resource_372 3dc8 -n 80` decodes them as code.
  * All three select a delta and fall into the shared tail at 0x3de0.
  *
  * Uncertainties: the two handles (19 and 27) and the meaning of the deltas

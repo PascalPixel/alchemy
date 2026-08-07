@@ -7,8 +7,8 @@
  *
  * PUBLISHED, NOT CALLED. Its Thumb pointer is written into a script
  * record; no `bl` in the image reaches it, so neither the call-graph
- * sweep nor `tools/overlay_unindexed.ts` lists it. Found by
- * `bun tools/overlay_published.ts resource_380`.
+ * sweep nor `tools/overlay/overlay_unindexed.ts` lists it. Found by
+ * `bun tools/lib/overlay_published.ts resource_380`.
  *
  * DIFFED, NOT ASSUMED. The four stubs at 0x0200274c, 0x0200276c,
  * 0x0200278c and 0x020027ac differ in exactly two places: the actor id
@@ -37,7 +37,7 @@
  * next owner's prologue begins at 0x0200276c.
  *
  * All three `bl` targets resolved through the overlay's import-veneer
- * table under the +2 rule (tools/overlay_call_targets.ts).
+ * table under the +2 rule (tools/lib/overlay_call_targets.ts).
  *
  * Uncertainty: Func_020071c2's second argument is zero at every site in
  * this bank and its role is not established.

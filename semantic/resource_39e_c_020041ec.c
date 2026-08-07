@@ -32,7 +32,7 @@
  * the span closes at the veneer.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_39e 41ec 4324's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 41ec 4324's
  * +2 rule; the spawn site is an intra-overlay bl to Func_0200013c).
  *
  * Uncertainty: callees by shape; 0x0200c1c5 is transcribed as a thumb

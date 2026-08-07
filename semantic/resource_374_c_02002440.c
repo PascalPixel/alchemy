@@ -26,7 +26,7 @@
  * `f64` is the step counter they increment and `f68` the source record they
  * read `f08`/`f10` from — and this owner is the writer of both fields.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; all four sites
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all four sites
  * are import veneers (Func_080f9010, Func_080090c8, Func_08009020,
  * Func_080001b8).  The disassembler's `bl` annotations are not used.
  *

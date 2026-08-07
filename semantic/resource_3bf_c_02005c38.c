@@ -22,7 +22,7 @@
  * decodes 0x02005dca/0x02005dcc as one 32-bit instruction, but 0x02005dca is
  * the top half of the pool word 0xffff800f and 0x02005dcc is `pop {r3,r4}`.
  *
- * Call targets came from `bun tools/overlay_call_targets.ts resource_3bf 5c38`
+ * Call targets came from `bun tools/lib/overlay_call_targets.ts resource_3bf 5c38`
  * (4 sites, 4 distinct targets, all ordinary prologues of this overlay), never
  * from the disassembler's pc-relative `bl` annotations:
  *   0x02005dd4  class predicate -> quiet-NaN result

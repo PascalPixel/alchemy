@@ -76,7 +76,7 @@
  * branch into the body; it is data.
  *
  * Not found by the structural inventory walk: reached only by `bl`
- * (bun tools/overlay_call_targets.ts resource_3af 3f30 4218, the +2
+ * (bun tools/lib/overlay_call_targets.ts resource_3af 3f30 4218, the +2
  * rule against the raw image).
  *
  * Uncertainty: actor ids and argument roles by shape; coordinates,

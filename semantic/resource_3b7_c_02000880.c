@@ -27,7 +27,7 @@
  * base whose +76 is the 0x03001ebc pointer other overlays load directly); this
  * owner loads the pointer stored there and works 356 bytes into it.
  *
- * Call targets were resolved with `tools/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x0200088e -> veneer 0x020019c4 -> Func_080f9010
  *   0x020008a6 -> veneer 0x02001864 -> Func_080000c0   (in the 16-frame loop)

@@ -809,12 +809,17 @@ async function main(): Promise<void> {
       console.log(`unusable ${stem} score=${best?.score ?? "none"} scorer=${scorer !== null}`);
       return;
     }
-    const preamble = best.preamble;
+      const preamble = best.preamble;
+      // The preamble is fixed for the rest of this target, so the evolving best
+      // is a plain Individual. The old type claimed a `preamble` field that both
+      // assignments below already dropped, and the reassignment also defeated the
+      // null-narrowing from the guard above.
+      let current: Individual = { body: best.body, score: best.score };
 
     // 成功手順の再演を最初に試す。
     let done = false;
     for (const recipe of recipes) {
-      let body = best.body;
+      let body = current.body;
       const random = makeRandom(Number.parseInt(stem, 16) ^ 0x5f3759df);
       for (const operatorName of recipe.operators) {
         const operator = OPERATORS.find(([name]) => name === operatorName)?.[1];
@@ -827,7 +832,7 @@ async function main(): Promise<void> {
         console.log(`matched ${stem} (recipe)`);
         matchedCount++; done = true; break;
       }
-      if (value < best.score) best = { body, score: value };
+      if (value < current.score) current = { body, score: value };
     }
 
     const stepsBudget = budget(state, options.steps);
@@ -839,7 +844,7 @@ async function main(): Promise<void> {
         steps: stepsBudget,
         restarts: options.restarts,
         state,
-        best,
+        best: current,
         score: (body) => scorer!.score(preamble + body),
         registerFraction: diagnosis.register_fraction,
         semanticFraction: diagnosis.semantic_fraction,
@@ -853,16 +858,16 @@ async function main(): Promise<void> {
           return true;
         },
       });
-      best = outcome.best;
+      current = outcome.best;
       done = outcome.done;
     }
     if (!done) {
       const before = state.best?.score ?? Number.MAX_SAFE_INTEGER;
-      state.rounds.push({ seed: options.seed, before, after: best.score });
+      state.rounds.push({ seed: options.seed, before, after: current.score });
       state.rounds = state.rounds.slice(-8);
-      state.best = best;
+      state.best = current;
       saveState(stem, state);
-      console.log(`floor ${stem}: ${best.score}`);
+      console.log(`floor ${stem}: ${current.score}`);
     } else {
       rmSync(join(STATE_DIR, `${stem}.json`), { force: true });
     }

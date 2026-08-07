@@ -685,6 +685,13 @@ function sourceName(addressValue: number): string {
   return `${addressValue.toString(16).padStart(8, "0")}.s`;
 }
 
+// A named predicate rather than an inline `!==` pair: the inline form did not
+// narrow the union at either call site, and both then read fields off the wrong
+// member of it.
+function isTypedSection(section: CodeSection | TypedSection): section is TypedSection {
+  return section.kind !== "arm" && section.kind !== "thumb";
+}
+
 function typedPackageSection(rom: Buffer, section: TypedSection): FixedRecordPackageSection | U32PackageSection | U16PackageSection {
   const data = romSlice(rom, section.address, section.address + section.size);
   if (section.kind === "u32-records") {
@@ -751,7 +758,7 @@ function generatePackage(plan: ExecutableGapPlan, rom: Buffer): GeneratedPackage
       return { address: gap.address, size: gap.size, sections };
     }
     for (const section of gap.sections) {
-      if (section.kind !== "arm" && section.kind !== "thumb") {
+      if (isTypedSection(section)) {
         sections.push(typedPackageSection(rom, section));
         continue;
       }
@@ -835,6 +842,10 @@ function packageSectionDocument(section: PackageSection): Json {
       classification: section.classification, target: hexadecimal(section.target), source: section.source,
     };
   }
+    // Discriminate rather than fall through: the union still holds
+    // CodePackageSection here, which carries neither `classification` nor
+    // `value`, so the fall-through read them off whichever member arrived.
+    if (section.kind !== "fill") throw new Error(`unexpected package section kind: ${section.kind}`);
   return {
     address: hexadecimal(section.address), size: section.size, kind: section.kind,
     classification: section.classification, value: section.value === 0 ? "0x00" : "0xff", source: section.source,

@@ -423,7 +423,7 @@ export function build_sentou_resource(planFile: string): [Buffer, string[]] {
   const flatPrefix = basename(planFile).replace(/stream\.json$/, "");
   const decoded = buildDecoded(plan, spec, directory, flatPrefix);
   const sources = [planFile, child(directory, flatPrefix + plan.image.source)];
-  let prefix = Buffer.alloc(0);
+  let prefix: Buffer<ArrayBufferLike> = Buffer.alloc(0);
   if (plan.prefix_palette !== null) {
     const paletteFile = child(directory, flatPrefix + plan.prefix_palette.source);
     const image = readFileSync(paletteFile);

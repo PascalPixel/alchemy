@@ -1789,6 +1789,16 @@ const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
   "exact/resource_3a4_c_020002cc.c",
   "semantic/resource_3a4_c_020002cc.c",
 ]);
+// `orrs Rd, Rm' ties its result to one of its two inputs.  When both die at the
+// insn the allocator keeps the one written last; the references keep the one
+// written first, so a constant that has been sitting in a register since well
+// above the load becomes the accumulator.
+const ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES = new Set([
+  // resource_3b3:1fd4 -- `orrs r5, r3' at 0x02002024, where r5 holds the 1 set
+  // back at 0x02002014 and dies here, 2026-08-07.
+  "exact/resource_3b3_c_02001fd4.c",
+  "semantic/resource_3b3_c_02001fd4.c",
+]);
 // The two-pool-word twin of -fthumb-call-arg0-before-pool: an immediate r0
 // argument put back ahead of the pair of pool loads that set r1 and r2.
 const CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES = new Set([
@@ -2196,6 +2206,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-adjacent-shifts"]
       : []),
+    ...(ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-orr-into-older-input"]
+      : []),
     ...(CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg0-before-pool-pair"]
       : []),
@@ -2315,6 +2328,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
     ...SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
@@ -2542,7 +2556,22 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
-      // -fthumb-sink-pool-load-to-use added, 2026-08-07.
+      // -fthumb-orr-into-older-input added, 2026-08-07.
+    "78884ab5d9682fdf2b9f0dc5b4d0060976a1a042c186fbcae848fcd2d0657dbe",
+    "efb56c6c7c16ac99165388f121154f83d90ba8705a76379e686dd3fb1188d055",
+    "42b0383dee924cc75538975717471faed6551d1c4908897845b0dc7d898a17b7",
+    "ebcd3e838d972bbf3fdddfd06dd0ff3b7c17a34179ae131e01738dfb4dad7105",
+    "ebcd3e838d972bbf3fdddfd06dd0ff3b7c17a34179ae131e01738dfb4dad7105",
+    "bd5a3ad4c90eb537d970d5dae5b2df2e79255df65ee2e6e8850197c942bde35f",
+    "8fb7a9c28981701f0210085cfa9d91a6c1e77768741f1dff4842b7e82ec5334c",
+    "804608eb96163abf8fdd6bcf2365dfa6fbfbc160b8a60c41bd25c053a3c72139",
+    "a818520e2026b0a532241ce411c3580af797bc4f6492c718463735292e72c2f9",
+    "e8466545e362128ab94f384c1ab2b7eb6c7ac5475d2ff6f67fe4d044c7ed1e0c",
+    "8463b1c436cd30705500715949c2734bd63165f8877245268cac4ff44c4716f4",
+    "25d6216d27234fa58e19a10952422c12659133e3977c7efe5e7c896ca73d3e33",
+    "529d0e9ed7793955d948ce20e73edd612f23eb90e48aaf55a4ee1d88ad6cced4",
+    "70a49ce7075dc060f63e1984177620ad914613b1c08cedc9c2e9d1d98e24fcac",
+    // -fthumb-sink-pool-load-to-use added, 2026-08-07.
       "c3447c0cc251c7d2c0185352d108f992d980890a02638ddbbfeba753a39a5a0b",
       "f6f8e9c1a2bd5bb0bfeb6d75a2847617e6f35bf132de9f070d731cff21d39945",
       "799c1cfb3aa700a8cc75572cb576d612d7d7ed700420ff48cf09c8ba536662e4",

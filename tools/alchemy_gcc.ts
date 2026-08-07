@@ -1789,6 +1789,14 @@ const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
   "exact/resource_3a4_c_020002cc.c",
   "semantic/resource_3a4_c_020002cc.c",
 ]);
+// The two-pool-word twin of -fthumb-call-arg0-before-pool: an immediate r0
+// argument put back ahead of the pair of pool loads that set r1 and r2.
+const CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES = new Set([
+  // resource_371:1a98 -- `movs r0,#8' before `ldr r1' / `ldr r2' at
+  // 0x02001aee, 2026-08-07.
+  "exact/resource_371_c_02001a98.c",
+  "semantic/resource_371_c_02001a98.c",
+]);
 // A pc-relative pool load that completes a call's argument list, sunk down to
 // the call itself.  The post-reload scheduler hoists it to cover its latency;
 // the references fetch the word last, after the other argument setters.
@@ -2188,6 +2196,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-adjacent-shifts"]
       : []),
+    ...(CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-call-arg0-before-pool-pair"]
+      : []),
     ...(SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-sink-pool-load-to-use"]
       : []),
@@ -2304,6 +2315,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES,
     ...SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
@@ -2531,6 +2543,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
       ],
       cc1: [
       // -fthumb-sink-pool-load-to-use added, 2026-08-07.
+      "c3447c0cc251c7d2c0185352d108f992d980890a02638ddbbfeba753a39a5a0b",
       "f6f8e9c1a2bd5bb0bfeb6d75a2847617e6f35bf132de9f070d731cff21d39945",
       "799c1cfb3aa700a8cc75572cb576d612d7d7ed700420ff48cf09c8ba536662e4",
       "1dcc9902c957c8504e3bbf2b43d067b8f87a7b25fe16f34ad3bfeb69357b05fa",

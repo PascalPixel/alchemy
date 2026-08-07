@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-call-arg0-before-pool-pair:
+ * the last residual was the argument order at 0x02001aee, where the reference
+ * writes `movs r0, #8' before the two pool loads that set r1 and r2 and the
+ * post-reload scheduler hoists both loads above the immediate.
+ */
+
 #include "types.h"
 
 /*

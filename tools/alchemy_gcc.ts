@@ -1049,6 +1049,7 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_3ae_c_020002dc.c",
   "semantic/resource_399_c_020002b8.c",
   "semantic/resource_39f_c_020021b0.c",
+  "exact/resource_39f_c_020021b0.c",
   // Tier-2 cohort sweep, 2026-08-06: the same argument-setter ordering tell
   // reaches well past the near-exact band.  These three were at 12, 13 and 14
   // differing halfwords and go byte-exact under this mode alone.
@@ -1840,6 +1841,14 @@ const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
 // references transpose a two-literal sheet only where the call it feeds is
 // itself followed by another argument setter, and keep register order when the
 // call is followed by a jump or by an insn that writes something else.
+const SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES = new Set([
+  // resource_39f:21b0 -- four argument sheets where a `lsls rN, #1' split
+  // constant is written ahead of the sheet's plain `movs r0/r1' immediates.
+  // 2026-08-07.
+  "exact/resource_39f_c_020021b0.c",
+  "semantic/resource_39f_c_020021b0.c",
+]);
+
 const LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES = new Set([
   // resource_3ad:11b8 -- `movs r1, #0' before `movs r0, #1' at 0x020011dc,
   // where the identical literal pair at 0x0200128a keeps register order
@@ -2365,6 +2374,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-after-call"]
       : []),
+    ...(SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-small-shift-before-immediates"]
+      : []),
     ...(LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-chained"]
       : []),
@@ -2517,6 +2529,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES,
+    ...SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
     ...HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES,
     ...POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES,
@@ -2766,6 +2779,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
     "63bab14236d935a3e74910921f576928afe6a2a8f20cbe1c239a637d3cf4e1a6",
     // -fthumb-call-literal-arg1-first-chained added, 2026-08-07.
     "42189f1a4abeacc3eb5d07d4fbbd646052dfa38c3079a5b053ae1bc1efcc1142",
+    // -fthumb-small-shift-before-immediates added, 2026-08-07.
+    "63292824103cbfd4405f2d8f1a9fe7780dec4b078e792cd37a7677d4a2c13ad4",
     // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
     "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
       // -fthumb-swap-shifts-across-insn added, 2026-08-07.

@@ -6,7 +6,7 @@
 // the top instead of losing to a large but low-probability owner.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { readingList, type Pairing } from "../lib/exact_reading_list.ts";
+import { readingList, type Pairing } from "./exact_reading_list.ts";
 import {
   assembleOverlay,
   compileOverlayCandidate,

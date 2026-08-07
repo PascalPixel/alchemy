@@ -49,7 +49,7 @@ const SIGNATURE = contentSignature([
   join(ROOT, "tools/lib/alchemy_gcc.ts"),
   join(ROOT, "tools/search/permute_v1.ts"),
   join(ROOT, "tools/search/permute_overlay.ts"),
-  join(ROOT, "tools/lib/decomp_constraints.ts"),
+  join(ROOT, "tools/search/decomp_constraints.ts"),
 ]);
 
 interface Options {

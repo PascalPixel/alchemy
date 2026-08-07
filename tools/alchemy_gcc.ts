@@ -2310,6 +2310,11 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+        // cc1 from the three-way fork merge 0bca89c (main + mercury + venus
+        // lines), darwin-arm64, 2026-08-07, admitted from this green verify.
+        // Carries every flag all three lines have shipped, so a branch routed
+        // to any of them now compiles against main.
+        "e09b6cf9ef59f80390112d70b22b2194a02131344e69256f2d39192541ebc6eb",
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",

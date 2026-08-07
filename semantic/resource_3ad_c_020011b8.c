@@ -32,6 +32,15 @@
  * 0x020012f0's literal pool and 0x02001320's prologue.  Its result is discarded
  * here, so it is called for its side effect only (which is none) - kept because
  * the call site is real.
+ *
+ * RESIDUE (2 of 122 halfwords, 2026-08-07).  Same class as
+ * resource_399_c_020002b8.c: at 0x24 the reference writes `movs r1,#0' before
+ * `movs r0,#1' for Func_02002d8e(1, 0), while 0xce is the identical literal
+ * pair for Func_02002e38(1, 0) and keeps r0 first.  Identical operands with
+ * opposite orders means no operand-shape flag can discriminate them, and
+ * -fthumb-early-literal-pool ICEs on this owner (create_fix_barrier,
+ * config/arm/arm.c:5411).  Neither the singles nor the compiler cohort, nor
+ * hoisting either literal into a local, nor prototyping the import moves it.
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */

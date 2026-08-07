@@ -60,6 +60,9 @@ export const FORK_MODES = [
   // A pool load that completes a call's argument list, sunk to the call.
   // Witness resource_3c6:0158.
   "-fthumb-sink-pool-load-to-use",
+  // Two-pool-word twin of -fthumb-call-arg0-before-pool. Witness
+  // resource_371:1a98.
+  "-fthumb-call-arg0-before-pool-pair",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

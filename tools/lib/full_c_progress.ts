@@ -468,12 +468,35 @@ function overlayInventory(source: string, auditedCallers: readonly Interval[]): 
   const dataAddresses = new Set<number>();
   let inCPlaceholder = false;
 
+  /*
+   * Labels that a Thumb branch in this same listing actually jumps to. A
+   * halfword the listing emitted as a bare `.2byte` is data unless something
+   * branches to it: `resource_373` has `b.n .L_020022bc` over a literal pool
+   * whose last word decodes as a 32-bit undefined instruction, so the
+   * disassembler swallowed the following halfword and printed it as a
+   * directive. It is `cmp r5, #4', reached only by that branch.
+   */
+  const branchedLabels = new Set<string>();
+  for (const line of lines) {
+    const branch = /^\s*b(?:l?x?|[a-z]{2})?(?:\.[nw])?\s+(\.L_[0-9a-z_.$]+)\s*$/i.exec(line);
+    if (branch) branchedLabels.add(branch[1]);
+  }
+  const branchedTargets = new Set<number>();
+
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index];
     const row = listing.rows.get(index + 1);
     if (/^\s*AlchemyC_[0-9a-f]{8}:\s*$/i.test(line)) {
       inCPlaceholder = true;
       continue;
+    }
+    const label = /^\s*(\.L_[0-9a-z_.$]+):\s*$/i.exec(line);
+    if (label && branchedLabels.has(label[1])) {
+      /* A label emits no bytes, so its address is the next row that does. */
+      for (let ahead = index + 1; ahead < lines.length; ahead++) {
+        const next = listing.rows.get(ahead + 1);
+        if (next) { branchedTargets.add(next.address); break; }
+      }
     }
     if (inCPlaceholder && (/^\s*$/.test(line) || /^\s*\.L_[0-9a-z_.$]+:\s*$/i.test(line))) continue;
     const space = /^\s*\.space\s+(0x[0-9a-f]+|\d+)\s*$/i.exec(line);
@@ -572,6 +595,15 @@ function overlayInventory(source: string, auditedCallers: readonly Interval[]): 
     const current = union[index];
     if (current.start - previous.end !== 2) continue;
     const offset = previous.end - OVERLAY_BASE;
+    if (branchedTargets.has(previous.end)) {
+      alignment.push({
+        start: previous.end,
+        end: current.start,
+        kind: "thumb",
+        evidence: `${basename(source)}:branch-target-halfword-between-executable-spans`,
+      });
+      continue;
+    }
     if (offset >= 0 && listing.binary.readUInt16LE(offset) === 0) {
       alignment.push({
         start: previous.end,

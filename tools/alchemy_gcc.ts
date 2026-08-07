@@ -327,6 +327,13 @@ const SINK_DEPENDENT_LOAD_SOURCES = new Set(["080c08a8"]);
 const COLLAPSE_DEAD_SCRATCH_SOURCES = new Set(["0800fec8"]);
 const SINK_BLOCK_CONSTANT_SOURCES = new Set(["0800430c"]);
 const SINK_PAST_POOL_LOAD_SOURCES = new Set(["0800430c"]);
+// 08006408 arms an interrupt-guarded request slot.  Its reference issues the
+// slot store after the flag byte it shares no register with, and loads the two
+// pooled addresses base-first, so the address is live before the byte store
+// that uses it.  The whole sequence only lines up under one flag set, which
+// this owner carries as a unit.
+const SINK_STORE_PAST_STORE_SOURCES = new Set(["08006408"]);
+
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -2008,6 +2015,19 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(SINK_STORE_PAST_STORE_SOURCES.has(stem)
+      ? [
+          "-mgrouped-dma-store",
+          "-fthumb-sink-group-pool-loads",
+          "-mthumb-load-latency-one",
+          "-mearly-frame-allocation",
+          "-fthumb-move-before-immediate-alu",
+          "-fthumb-sink-block-constant",
+          "-fthumb-sink-constant-past-memory",
+          "-fthumb-sink-store-past-store",
+          "-fthumb-pool-load-base-first",
+        ]
+      : []),
     ...(GROUP_VALUE2_IN_PLACE_SOURCES.has(stem) ? ["-fthumb-group-value2-in-place"] : []),
     ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
       ? ["-mthumb-immediate-latency"]
@@ -2375,6 +2395,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+      "df9f53fff086f1f7e124bb42b166f97619eae31abf22ee0e3314384da9d24e81",
         // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
         // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
         // const_ok_for_arm gate says nothing about what Thumb can build.

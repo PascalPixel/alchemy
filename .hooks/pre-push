@@ -1,3 +1,3 @@
 #!/bin/sh
 # 送信される全コミットを調べ、途中で削除済みの非公開物も拒否する。
-exec bun tools/check_publication.ts --pre-push
+exec bun tools/check/check_publication.ts --pre-push

@@ -1,3 +1,3 @@
 #!/bin/sh
 # Validate the terminal Full-C Byte Share suffix against the staged report.
-exec bun tools/check_commit_progress.ts "$1"
+exec bun tools/check/check_commit_progress.ts "$1"

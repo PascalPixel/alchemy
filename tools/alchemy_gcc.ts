@@ -992,6 +992,9 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_377_c_020001e0.c",
   "semantic/resource_3a2_c_02000ac0.c",
   "exact/resource_3a2_c_02000ac0.c",
+  // resource_3ae:0144 (with -fno-cse-shift-immediate), b3 cohort 2026-08-07.
+  "semantic/resource_3ae_c_02000144.c",
+  "exact/resource_3ae_c_02000144.c",
   // resource_3ae:02dc closed on 2026-08-07: this mode plus
   // -fthumb-call-literal-arg1-first plus splitting the nested call
   // `Outer(Inner(0))' into two statements in reference order.
@@ -1357,6 +1360,11 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
 // 0x10000) rebuilt per-argument in the reference, Func(-1, -1, pool) sharing
 // r6, verified byte-exact under the pair with -fsched-low-dest-first.
 const NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3ae:0144, found by the b3 residual cohort on 2026-08-07: shifted
+  // immediate rebuilt at each use in the reference, plus the low-dest-first
+  // schedule.  Needs both modes together.
+  "semantic/resource_3ae_c_02000144.c",
+  "exact/resource_3ae_c_02000144.c",
   // resource_3cb:02d8 caches its 0x80<<2 (0x200) in r5 across five calls and
   // pays a `push {r5}' for it; the reference rebuilds the pair at both use
   // sites and pushes only lr.  2026-08-06 probe.

@@ -45,6 +45,36 @@
  * and the three Func_0808a010(10) waits are DISTINCT sites on distinct paths
  * and are not merged.
  *
+ * RESIDUE (18 of 182 halfwords, 2026-08-07).  Routing takes this owner from 51
+ * differing halfwords (and 4 bytes too long) to 18 at the exact reference size:
+ * -fthumb-call-literal-arg1-first and -fno-cse-pool-immediate (without the
+ * latter the fork keeps the 0x8a5 pool word in sl across the whole body and
+ * pays two extra register saves).  Three source facts carried the rest:
+ *   - `price' must be a plain `s32' assigned at the top, not a `const', so the
+ *     charge site emits `mov r3,r8 / negs r0,r3' instead of materialising -600
+ *     from a seventh pool word.
+ *   - COINS must be spelled as `Data_02000240[4]' over an `extern u32' array,
+ *     not as a byte-offset cast, or the +16 folds into the pool word and the
+ *     reference's `ldr r0,[r6,#16]' becomes `ldr r0,[r6,#0]'.
+ *   - The global counter must go through a local `u8 **counter' ASSIGNED AT ITS
+ *     FIRST USE, not at the top.  That gives it the short live range that wins
+ *     r7, which in turn pushes `price' into r8 exactly as the reference does;
+ *     assigning it at the top inverts the pair and costs 38 halfwords.
+ *   - The insufficient-funds arm joins the cancel arm at Func_02001c42(8,0) and
+ *     then jumps to the closing Func_02001bea(); the success block is reached by
+ *     an explicit `goto complete_purchase' out of a trailing `else', which is
+ *     what puts the shared tail BEFORE the success block in the layout.
+ *
+ * What is left is the closed transposed-argument class plus its register-naming
+ * shadow.  Six of the eighteen are (8, 0) literal pairs -- Func_02001b6c,
+ * Func_02001c42 and Func_02001c70 -- where the reference writes r0 first, while
+ * four other (8, 0) sites in the same owner want r1 first; dropping
+ * -fthumb-call-literal-arg1-first flips the count to 22, so both orders exist
+ * for one operand shape and no operand-shape flag can discriminate them.  The
+ * remainder is register naming: r3-for-r2 on the price materialisation and a
+ * r2/r3 inversion in the `+= 3' counter block whose `+= 1' twins both match.
+ * All 34 routing sets were swept one at a time; none reaches below 18.
+ *
  * Uncertainties: 0x8a5 is read as an event-flag id and 0x1d0b / 0x1d04 as cue
  * ids from their argument positions.  0x0c8a is passed to Func_08015080 in the
  * position a string/format id would occupy.  113 passed to Func_080f9010 and
@@ -76,8 +106,8 @@
 
 
 extern u8 *Data_03001ebc;
-extern u8 Data_02000240[];
-#define COINS (*(u32 *)(Data_02000240 + 16))
+extern u32 Data_02000240[];
+#define COINS (Data_02000240[4])
 
 extern void Func_02001aac();
 extern s32 Func_02001a82();
@@ -110,9 +140,11 @@ extern void Func_02001bc6();
 extern void Func_02001bea();
 void Func_0200051c(void)
 {
-    const s32 price = 600;      /* movs r2,#150 / lsls r2,r2,#2 */
+    s32 price;
     s32 window;
+    u8 **counter;
 
+    price = 600;               /* movs r2,#150 / lsls r2,r2,#2 */
     Func_02001aac();
 
     if (Func_02001a82(0x8a5) != 0) {
@@ -126,10 +158,11 @@ void Func_0200051c(void)
 
     if (Func_02001af4(0, 0) == 1) {
         Func_02001b9a(8, 0, 10);
-        goto close;
+        goto finish;
     }
 
-    *(u16 *)(Data_03001ebc + 472) += 1;
+    counter = &Data_03001ebc;
+    *(u16 *)(*counter + 472) += 1;
 
     Func_02001abc(price, 5);
     Func_02001bac(8, 0);
@@ -143,32 +176,30 @@ void Func_0200051c(void)
         Func_02001af2(window, 2);
         Func_02001bc2(0, 4);
         Func_02001b58(10);
-        goto failed_purchase;
     } else if ((u32)price > COINS) {
         /* Not enough coins.  The comparison is unsigned in the original. */
         Func_02001b10(window, 2);
         Func_02001be0(0, 3);
         Func_02001b76(10);
-        *(u16 *)(Data_03001ebc + 472) += 1;
+        *(u16 *)(*counter + 472) += 1;
         Func_02001cc2(113);
-        goto failed_purchase;
+    } else {
+        goto complete_purchase;
     }
-    goto complete_purchase;
 
-    goto close;
-failed_purchase:
     Func_02001c42(8, 0);
+    goto finish;
 
+complete_purchase:
     Func_02001b44(window, 2);
     Func_02001c14(0, 3);
-complete_purchase:
     Func_02001baa(10);
-    *(u16 *)(Data_03001ebc + 472) += 3;
+    *(u16 *)(*counter + 472) += 3;
     Func_02001c70(8, 0);
     Func_02001be0(235, 0);
     Func_02001bae(0x8a5);
     Func_02001bc6(-price);
 
+finish:
     Func_02001bea();
-close:
 }

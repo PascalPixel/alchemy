@@ -1826,6 +1826,18 @@ const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
 ]);
 // -fthumb-arg-before-final-shift for a shift that is not the sheet's last
 // setup insn.
+// -fthumb-pool-load-before-load and -fthumb-shift-before-store-in-split for
+// the two independent transpositions in resource_371:02f0: the pool word is
+// read before the field load at the entry, and the split constant's shift is
+// finished before the byte store at 0x02000300.
+const POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES = new Set([
+  "exact/resource_371_c_020002f0.c",
+  "semantic/resource_371_c_020002f0.c",
+]);
+const SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES = new Set([
+  "exact/resource_371_c_020002f0.c",
+  "semantic/resource_371_c_020002f0.c",
+]);
 const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
   // resource_3b1:5ca4 -- `movs r0, #8' ahead of `lsls r1, r1, #8' at
   // 0x02005ce0, with `movs r2, #80' still between the pair and the call,
@@ -2316,6 +2328,12 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-after-call"]
       : []),
+    ...(POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-pool-load-before-load"]
+      : []),
+    ...(SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-shift-before-store-in-split"]
+      : []),
     ...(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-arg-before-shift-in-sheet"]
       : []),
@@ -2456,6 +2474,8 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
+    ...POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES,
+    ...SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES,
     ...SINK_LOAD_PAST_STORE_OVERLAY_SOURCES,
     ...CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES,
     ...STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES,
@@ -2688,6 +2708,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "fd1bd7c1c8cdbdb224569221c12744386bb0a75c86e1b22ff1e42aa392a9de07",
+      "adc81071ec570ed11eae60e138bac9db3ff11ab63bef7f1a725bd198a4c70575",
       "3c8e99bb06fe15eaae8f04c83eec291a3b362d56649d79dec57a4884b064d7cf",
       "fa87afe4493a462fc2dbb11d0967b189ed040eeeb2b860422d3da5e38ab5d69c",
       "22a827bbcd8295b84148aa2e12270ead8d92fdd6af4582e2341afa21825014b7",

@@ -75,6 +75,9 @@ export const FORK_MODES = [
   // The literal r1-before-r0 pair, only in a sheet opening after a call.
   // Witnesses resource_3b9:06bc, resource_376:0258, resource_376:0190.
   "-fthumb-call-literal-arg1-first-after-call",
+  // Both stacked arguments in registers before either store.
+  // Witnesses resource_382:0fb4/:1010/:113c, resource_3b9:1c6c.
+  "-fthumb-stack-args-before-stores",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

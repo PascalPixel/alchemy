@@ -1793,6 +1793,19 @@ const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
 // insn the allocator keeps the one written last; the references keep the one
 // written first, so a constant that has been sitting in a register since well
 // above the load becomes the accumulator.
+// Both stacked call arguments materialised before either store.
+const STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES = new Set([
+  // resource_382:0fb4, :1010 and :113c -- `movs r2, #12' hoisted above the
+  // two `str' to sp at 0x02000fd4, plus resource_3b9:1c6c, 2026-08-07.
+  "exact/resource_382_c_02000fb4.c",
+  "semantic/resource_382_c_02000fb4.c",
+  "exact/resource_382_c_02001010.c",
+  "semantic/resource_382_c_02001010.c",
+  "exact/resource_382_c_0200113c.c",
+  "semantic/resource_382_c_0200113c.c",
+  "exact/resource_3b9_c_02001c6c.c",
+  "semantic/resource_3b9_c_02001c6c.c",
+]);
 // -fthumb-call-literal-arg1-first restricted to a sheet that opens right
 // after a call, which is the discriminator the references observe in
 // functions that otherwise write the pair in register order.
@@ -2237,6 +2250,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-swap-adjacent-shifts"]
       : []),
+    ...(STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-stack-args-before-stores"]
+      : []),
     ...(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-after-call"]
       : []),
@@ -2368,6 +2384,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
     ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
+    ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
     ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
@@ -2599,6 +2616,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+    // -fthumb-stack-args-before-stores added, 2026-08-07.
+    "0b7d6f6bd1490d49017a2438eb1bdbdd6c977b179c79f5f8a41d66299ce7ba53",
     // -fthumb-call-literal-arg1-first-after-call added, 2026-08-07.
     "63bab14236d935a3e74910921f576928afe6a2a8f20cbe1c239a637d3cf4e1a6",
     // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.

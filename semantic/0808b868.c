@@ -46,10 +46,10 @@ void Func_0808b868(struct Entry_0808b868 *entry) {
                             entry->event = inactive;
                         } else {
                             s32 maxY = *(s32 *)(state + 248);
-                            if (y > maxY)
-                                entry->event = inactive;
-                            else
+                            if (y <= maxY)
                                 entry->event = 0x164;
+                            else
+                                entry->event = inactive;
                         }
                     }
                 }

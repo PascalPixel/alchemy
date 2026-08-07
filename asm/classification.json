@@ -29,8 +29,8 @@
       "evidence": [
         "two_byte_zero_alignment"
       ],
-      "expected_files": 330,
-      "expected_bytes": 660
+      "expected_files": 331,
+      "expected_bytes": 662
     }
   ],
   "groups": [
@@ -424,11 +424,10 @@
         "approved_compiler_prologue_mismatch",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 8,
-      "expected_bytes": 318,
+      "expected_files": 7,
+      "expected_bytes": 282,
       "files": [
         "080006fc",
-        "08006f48",
         "080f9afc",
         "080f9f3c",
         "080fa16c",

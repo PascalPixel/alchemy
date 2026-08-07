@@ -45,6 +45,10 @@ export const FORK_MODES = [
   // restricted to a pair of plain literals. Witness resource_3ae:02dc.
   "-fthumb-call-literal-arg1-first",
   "-fthumb-call-arg0-before-store",
+  // Mirror of -fthumb-next-arg-between-split: the last plain immediate call
+  // argument goes ahead of a preceding split constant's shift. Witness
+  // resource_3b1:366c.
+  "-fthumb-arg-before-final-shift",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

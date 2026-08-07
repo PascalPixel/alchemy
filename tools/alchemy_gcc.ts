@@ -1737,6 +1737,17 @@ const CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_372_c_02003e48.c",
   "semantic/resource_372_c_02003e48.c",
 ]);
+// The last plain immediate call argument goes ahead of a preceding split
+// constant's shift -- the mirror of -fthumb-next-arg-between-split, which
+// fills the same dependency slot from the other side.
+const ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES = new Set([
+  // resource_3b1:366c -- the `movs r0,#8' before `lsls r1,r1,#17' at
+  // 0x020036c0.  The general low-destination scheduler tie-break also fixes
+  // this site but rotates a four-instruction argument group at 0x020036a0,
+  // so the narrow peephole is the right lever here, 2026-08-07.
+  "exact/resource_3b1_c_0200366c.c",
+  "semantic/resource_3b1_c_0200366c.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2115,6 +2126,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-pool-arg1-first"]
       : []),
+    ...(ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-arg-before-final-shift"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2224,6 +2238,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES,
     ...THUMB_HI_IMMEDIATE_OVERLAY_SOURCES,
     ...CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES,
+    ...ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2449,6 +2464,12 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+        // -fthumb-arg-before-final-shift: emit the last plain immediate call
+        // argument ahead of a preceding split constant's shift, the mirror of
+        // -fthumb-next-arg-between-split. Witness resource_3b1:366c; admitted
+        // 2026-08-07. Cross-host rule: rebuild+pin linux from the same commit
+        // before the next cloud session touches these routes.
+        "cf040aad9108e4595a2e0eea69d4dfc134ee93127213819efd48eb37d2e51859",
         // -fthumb-call-literal-arg1-first, gated on the two discriminators the
         // references actually observe: the call passes exactly r0 and r1 (a
         // third argument register means the reference writes the pair in

@@ -362,6 +362,11 @@ const SINK_ADD_IMMEDIATE_SOURCES = new Set(["080c0130"]);
 // it, and it allocates the base out of a rotated low-register order.
 const HOIST_ADD_IMMEDIATE_SOURCES = new Set(["08011568"]);
 
+// 080cd358 calls three block movers with the same pooled addresses and the
+// same 0x7800 size.  The reference rebuilds that size at every call instead
+// of holding it in a register, which only this mode reproduces.
+const NO_CONSTANT_REUSE_SOURCES = new Set(["080cd358"]);
+
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -2483,6 +2488,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(NO_CONSTANT_REUSE_SOURCES.has(stem)
+      ? ["-fthumb-no-constant-reuse"]
+      : []),
     ...(HOIST_ADD_IMMEDIATE_SOURCES.has(stem)
       ? [
           "-mgrouped-dma-store",
@@ -2986,6 +2994,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
+      "4a19cd86373f0c95f8d5e2f1d6b85867e4afcb2a166e39e1fecc9f7777533906",
         // cc1 built on darwin-arm64 from fork origin/main 52bbd1c, 2026-08-07,
         // admitted from this green verify. Compiler binaries are not
         // reproducible here, so each host build gets its own pin.
@@ -2997,7 +3006,18 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // build gets its own pin. Cross-host rule: rebuild+pin linux from this
         // same fork source.
         "40ede14c48e7383c7b284450cd3c1357eb2d5dc014bf4949b69a2a8bc682b241",
+        // cc1 built on darwin-arm64 from fork a853888, 2026-08-07: mercury's
+        // own merge of origin/main (ed39725) with their -fthumb-no-constant-reuse
+        // branch (a0a47e0), so this binary carries every mode all three lines
+        // discovered. Admitted from the green verify of the mercury merge, which
+        // is the first build that can route -fthumb-no-constant-reuse at all.
+        // Cross-host rule: rebuild+pin linux from this same fork source.
+        "c69829903ed05d68d46bc134de6cc554729fd59e1abca11715828db2a9a38365",
       "45d291c1ee530c2dc6ca5928e3186e4fc55234805a8b4b79c4b7d7977f7188cb",
+        // cc1 built on darwin-arm64 from reconciled fork origin/main a853888
+        // (mercury's -fthumb-no-constant-reuse merged with 52bbd1c and
+        // ed39725), 2026-08-07.
+        "6cee4484a765a41b8731e4983e7ae0751d3a21e516d63849f37c82313045f290",
         // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
         // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
         // const_ok_for_arm gate says nothing about what Thumb can build.

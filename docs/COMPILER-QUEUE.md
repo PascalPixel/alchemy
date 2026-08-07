@@ -470,3 +470,192 @@ Sweep hygiene, learned the hard way: `candidate_show.ts` keys its intermediates
 by stem in a shared output directory, so two concurrent runs of the *same* stem
 corrupt each other and report false zeros. Parallelise across stems, serially
 within one.
+
+## Negative: `-fglobal-copy-preference-first` (2026-08-07)
+
+Residual dumps for the whole diff <= 15 band show the dominant remaining class
+is register-*number* permutation, not instruction ordering: `08006408` (7),
+`0801965c` (10), `08011fd8` (10), `080f4028` (14), `080c1fa8` (15),
+`080ae9f0` (13). That is a different class from the three shipped fork modes,
+which are all scheduling, so the obvious next lever was preferencing rather
+than allocation order.
+
+Two facts framed the attempt. First, `-mlow-reg-order=` already reaches *both*
+allocators: `local-alloc.c:425` calls `ORDER_REGS_FOR_LOCAL_ALLOC_BLOCK (-1)`
+at the end of local allocation, so the second permutation leaks into
+`global_alloc`. Allocation order is therefore exhausted. Second, in
+`global.c:find_reg` the copy preferences are applied only as a post-hoc
+correction: the two-pass `reg_alloc_order` scan picks `best_reg` first, and only
+then is the choice swapped for a copy-preferred register of the same class.
+Pass 0 additionally refuses to allocate a register for the first time, so a
+pseudo that is only ever copied out of another register tends to land elsewhere
+and leave the copy behind.
+
+The mode consulted `allocno[num].hard_reg_copy_preferences` *before* the scan,
+single-register modes only. It is a no-op. Instrumented cc1 shows why: at
+`find_reg` time the copy-preference set is empty for essentially every allocno
+(one preference across all of `080b5d3c`, and it selected the register the
+stock scan already picks). `regmove` has consumed the copies before
+`global_alloc` runs, and `prune_preferences` clears what is left. The
+preferencing lever does not live here; if it lives anywhere it is in
+`local-alloc.c`'s `qty_phys_copy_sugg`, which already consults copy suggestions
+first — which is itself evidence the class is not reachable this way.
+
+Reverted; the fork is back at `40cdf47` and `dist/cc1` at the pinned
+`41b5d62b...`. Do not re-derive this.
+
+### Other measured negatives from the same pass
+
+* `-fthumb-move-before-immediate-alu` spillover across the close pool: 26 owners
+  improve, zero close, zero regress. Almost every win needs
+  `-fno-schedule-insns2` alongside it (`08021be0` 20 -> 12, `08011568` 23 -> 17,
+  `080049ac` 28 -> 24). Only `080170c4` 24 -> 23 and `080f0614` 31 -> 30 fire
+  from the mode alone.
+* `080a524c` (316 B, diff 4) is four halfwords of pure r2-vs-r3 in one block
+  while a mirrored block wants r3 in both. Four source variants all measure 4.
+* `08005534` and the DMA-veneer family (`080052f4`, `0800543c`, `08005490`,
+  `08005584`, `0800562c`, `0800567c`, `08004144`; ~560 B): `-mgrouped-dma-store`
+  fixes the size (72 -> 80) and halves the diff, but all 24 permutations of the
+  four declarations floor at 18. The residual is the alloca save/restore trio
+  sitting after the DMA stores in ours and before them in the reference; turning
+  off both schedulers does not move it, so it is expand order, not scheduling.
+* `08077394` (68 B, diff 11) is a pure r0<->r2 swap. All 576 `-mlow-reg-order=`
+  combinations and 14 standard `-f` flags leave it at 11-12;
+  `-fno-omit-frame-pointer` breaks the size.
+* `080b5d3c` (214 B, diff 4) is a clean rotation of two independent copy pairs
+  in an inner-loop preheader: ours issues `mov r6,r9; adds r5,r4; mov r7,sl;
+  add r1,r8`, the reference issues the second pair first. `-fno-schedule-insns2`
+  breaks the size, `-fthumb-move-before-alu` makes it worse (6), and no shipped
+  mode goes below 4. Hoisting the totals pointer in source costs 4 bytes and
+  88 halfwords.
+
+Scale check for anyone planning off this file: the close pool (diff <= 40) is
+112 files / 9,698 bytes, and diff <= 15 is 25 files / 1,864 bytes. Grinding the
+entire close pool to zero still leaves ~25k bytes short of 25%. The 408 `asm/`
+stems with no `semantic/` counterpart total 17,577 insns, and the 364 tiny ones
+are linker veneers that cannot be written in C without `asm(...)`, which the
+project forbids. The byte share is in the large semantic owners, which currently
+run ~50% diff (`080bbb0c` 6332 B / 3109, `080ea0d8` 5756 / 2815,
+`080ab5e4` 4888 / 2364, `08027114` 4224 / 1981, `080f6440` 3804 / 1978).
+
+## Main-image unmatched census (2026-08-07)
+
+`docs/main-unmatched-census.txt` is the first full measurement of the whole
+unmatched main-image pool rather than the diff <= 40 slice: every `semantic/08*.c`
+owner as `stem reference_bytes candidate_bytes differing_halfwords`. 570
+measured, 114 build errors, 277,024 reference bytes outstanding. (The other
+1,222 `semantic/` files are overlays and out of scope here.)
+
+The distribution is the finding. Bucketing by `diff / (reference_bytes / 2)`,
+i.e. the fraction of halfwords that differ:
+
+| band | files | bytes |
+| --- | --- | --- |
+| < 0.2 | 7 | 1,342 |
+| 0.2-0.4 | 13 | 2,002 |
+| 0.4-0.6 | 30 | 5,408 |
+| 0.6-0.8 | 53 | 15,108 |
+| 0.8+ | 467 | 253,164 |
+
+91% of the outstanding byte mass has essentially no byte relationship to the
+reference. This corrects an earlier characterisation of the large owners as
+"~50% diff" -- they are ~98%: `080bbb0c` 6,332 B / 3,109 halfwords,
+`080ea0d8` 5,756 / 2,815, `080ab5e4` 4,888 / 2,364, `08027114` 4,224 / 1,981.
+
+Their *sizes*, though, are within a few percent of reference (119 files totalling
+33,014 bytes sit in the 0.8+ band with |size delta| <= 4). That looked like the
+signature of a uniform whole-function register permutation, which
+`-mlow-reg-order=` would express. It is not. All 24 permutations on `080bbb0c`
+land between 3,036 and 3,148 halfwords (stock 3,109), and on `08027114` between
+1,981 and 2,045 (stock 1,981 is already the best). The surface is flat: size
+agreement is just gcc emitting a similar instruction count for functionally
+equivalent C, not a permuted version of the same sequence.
+
+Consequence for planning. There is no near-match path to 25%. The close bands
+below 0.8 total under 24,000 bytes even if every one of them closed, and the
+measured closure rate on that pool has been near zero for three sessions of new
+compiler modes. Reaching 336,431 requires byte-exact reconstruction of large
+owners from scratch -- roughly the eight biggest (`080bbb0c`, `080ea0d8`,
+`080ab5e4`, `08027114`, `080f6440`, `080dea70`, `080e7404`, `080d1714`) sum to
+about 35,700 bytes. That is eight full manual matching efforts, not a flag
+search.
+
+## Allocation-order tie-breaks: measured, negative (2026-08-07)
+
+The close band below ratio 0.2 is dominated by a single residual shape: the two
+columns emit the *same* instruction sequence with two low registers exchanged
+(`080a524c` r2/r3, `08092f84` and `0801faa8` r6/r7, `080ae9f0` r2/r4/r5,
+`08077394` r0/r2, `08020198` r6/r7). The direction is not consistent across
+functions, so it is not a global register-order flip; it looked like the
+equal-priority tie-break in the allocators being visited in the opposite order.
+
+Tested directly. Two default-off fork switches were added -- `-fqty-order-reverse`
+(reverses `q1 - q2` in local-alloc's `qty_compare_1` and `qty_sugg_compare_1`)
+and `-fallocno-order-reverse` (reverses `v1 - v2` in global.c's
+`allocno_compare`) -- built, staged, and swept over sixteen close-band main-image
+stems. Result: not one stem moved. Fifteen were bit-identical to stock under
+either switch and under both together; `080b5d3c` regressed 4 -> 60 under
+`-fqty-order-reverse`. The tie-break almost never binds, so it is not the source
+of the divergence. Both switches were reverted and `dist/cc1` restored to the
+pinned `41b5d62b`. Do not re-run this experiment.
+
+Source-form rewrites were tested against the same class and also fail. On
+`0801faa8`, reordering the declarations and the initialisers moves the diff only
+between 11 and 13, and duplicating the shared `negate_result` tail -- the exact
+transform that closed `08003538` -- inflates the function by 12 bytes and the
+diff to 68. On `08077394`, three restructurings of the same control flow give 27,
+25, and 14 against a stock 11. The original transliteration is already the best
+source form; what differs is which pseudo the allocator visits first.
+
+Consequence. The close band is blocked on register allocation, not on flags and
+not on source shape, which reinforces the planning conclusion above: the path to
+25% is from-scratch reconstruction of the large owners, not near-match repair.
+
+## Hoisted loop invariants lead the preheader: shipped (2026-08-07)
+
+`move_movables` emits every insn it hoists out of a loop immediately before the
+loop's `NOTE_INSN_LOOP_BEG`. That anchor places the hoisted invariants *after*
+whatever the preheader already computes, which in practice is the source-level
+initialisation of the loop's own variables. Several reference preheaders run the
+other way round: the compiler-created invariants come first.
+
+`080b5d3c` is the clean witness. Its inner-loop preheader holds exactly four
+insns -- object cursor, counter, totals base, member offset -- and its only
+divergence from the reference was that our two source initialisations led and
+the two hoists followed, where the reference has it reversed. Same four insns,
+permuted, 4 differing halfwords over 214 bytes. Flag search bottomed out at 4hw
+across 352 mode combinations, all tagged `[order]`, and three separate source
+reshapes (hoisting the totals element to a pointer, splitting declaration from
+initialisation, moving the initialisations ahead of the count guard) made it
+worse by 71 to 91 halfwords. The ordering is the compiler's, not the source's.
+
+`-floop-invariant-block-head` walks the anchor back to the first insn of the
+preheader block, stopping at anything that ends a block. Default-off and
+source-routed. `080b5d3c` compiles byte-exact under it.
+
+Payoff, measured by re-running every one of the 570 unmatched main-image stems
+under the flag: two exact matches (`080b5d3c` 214 B, `080a3354` 128 B, both
+adopted) and 42 further stems improved without closing. The largest single
+improvement is `08096140`, 260 -> 119 halfwords over 732 bytes; its floor with
+pairs is 100hw, so it still does not close. Re-sweeping the eight closest
+main-image stems with the flag in the space flipped none of them.
+
+## The `080f9xxx` / `080faxxx` family is out of scope
+
+These handlers use a non-standard register convention -- `080f9b40` is
+`mov ip, lr; bl ...; strb r3, [r1, #29]; bx ip`, returning in r3 with r1
+preserved and lr stashed in ip -- which no C calling sequence produces. The
+family is the GBA MusicPlayer2000 (m4a) sound driver, hand-written assembly in
+the shipping titles. Roughly 32 census rows sit in it. Do not spend flag or
+source effort there; the six that show up in the close band (`080f9a18`,
+`080f9b40`, `080f9b60`, `080f9ba4`, `080f9be0`, `080f9bf4`) are unreachable.
+
+## Globals the reference re-reads
+
+`08096140` cached `Data_02000240.current_object` in a local. The reference keeps
+the *address* in r7 across the whole prologue and reloads through it at each of
+the three uses, which only a plain `Data_02000240.current_object` at each site
+produces. Making that change turned the prologue byte-exact through offset
+0x00D8. When a reference holds an address register live across calls and reloads
+from it, the original source did not cache the value -- check this before
+reaching for flags.

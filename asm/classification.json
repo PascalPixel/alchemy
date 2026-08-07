@@ -29,8 +29,8 @@
       "evidence": [
         "two_byte_zero_alignment"
       ],
-      "expected_files": 330,
-      "expected_bytes": 660
+      "expected_files": 331,
+      "expected_bytes": 662
     }
   ],
   "groups": [
@@ -311,8 +311,8 @@
         "register_pins_disallowed",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 17,
-      "expected_bytes": 6598,
+      "expected_files": 16,
+      "expected_bytes": 5902,
       "files": [
         "08015fb8",
         "0801a7f4",
@@ -321,7 +321,6 @@
         "080930bc",
         "0809bcf8",
         "080a5788",
-        "080a90bc",
         "080a96d8",
         "080b5368",
         "080b9554",
@@ -425,11 +424,10 @@
         "approved_compiler_prologue_mismatch",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 8,
-      "expected_bytes": 318,
+      "expected_files": 7,
+      "expected_bytes": 282,
       "files": [
         "080006fc",
-        "08006f48",
         "080f9afc",
         "080f9f3c",
         "080fa16c",
@@ -779,12 +777,11 @@
         "tracked_owner_edge",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 37,
-      "expected_bytes": 2574,
+      "expected_files": 36,
+      "expected_bytes": 2534,
       "files": [
         "0800f1bc",
         "0800fd5c",
-        "08011568",
         "0801c9be",
         "08021dfa",
         "080268da",

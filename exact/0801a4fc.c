@@ -1,5 +1,11 @@
 #include "types.h"
 
+struct DmaChannel {
+    const void *source;
+    void *destination;
+    u32 control;
+};
+
 struct GraphicsWork {
     u8 pixels[0x600];
     u16 width;
@@ -49,14 +55,11 @@ void Func_0801a4fc(
     Func_08002dd8(17);
 
     {
-        u32 *dma = (u32 *)0x040000d4;
-        u32 dma_source = (u32)palette;
-        u32 dma_destination = 0x05000200 + palette_slot * 32;
-        u32 dma_control = 0x80000010;
+        void *destination = (void *)(0x05000200 + palette_slot * 32);
 
-        dma[0] = dma_source;
-        dma[1] = dma_destination;
-        dma[2] = dma_control;
+        *(volatile struct DmaChannel *)0x040000d4 = (struct DmaChannel){
+            palette, destination, 0x80000010,
+        };
     }
 }
 

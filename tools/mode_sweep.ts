@@ -63,6 +63,9 @@ export const FORK_MODES = [
   // Two-pool-word twin of -fthumb-call-arg0-before-pool. Witness
   // resource_371:1a98.
   "-fthumb-call-arg0-before-pool-pair",
+  // The orr destination tie, resolved toward the older input. Witness
+  // resource_3b3:1fd4.
+  "-fthumb-orr-into-older-input",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

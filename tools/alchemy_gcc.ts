@@ -299,7 +299,7 @@ const MOVE_BEFORE_IMMEDIATE_ALU_SOURCES = new Set(["0801fd34"]);
 // counter come from the source, the totals base and the member offset are
 // hoisted invariants. The reference runs the hoisted pair first; move_movables
 // anchors them at the loop note, which puts them last.
-const LOOP_INVARIANT_BLOCK_HEAD_SOURCES = new Set(["080b5d3c"]);
+const LOOP_INVARIANT_BLOCK_HEAD_SOURCES = new Set(["080a3354", "080b5d3c"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.

@@ -478,6 +478,10 @@ const ORR_DEAD_INPUT_REUSE_SOURCES = new Set(["08003adc"]);
 // updates where a constant OR input dies at the OR and the reference reuses
 // that register for the result immediately stored to the field.
 const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
+  // resource_3a8:3768 closes the final `orrs' operand order, 2 -> 0 halfwords,
+  // after per-call-site veneers and the (s8) mask cast do the bulk.  2026-08-07.
+  "exact/resource_3a8_c_02003768.c",
+  "semantic/resource_3a8_c_02003768.c",
   "exact/resource_3a6_c_02001938.c",
   "exact/resource_39a_c_02001004.c",
   "exact/resource_38f_c_020008ec.c",
@@ -1724,6 +1728,11 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3a8:3768 was caching story-flag pool constants in r5/r6 and
+  // copying them to r0, which also forced `push {r5,r6,r7}' over `{r5,r6}'.
+  // 2026-08-07.
+  "exact/resource_3a8_c_02003768.c",
+  "semantic/resource_3a8_c_02003768.c",
   // resource_3ae:051c uses 0x8a5 at two call sites; without this the fork keeps
   // it in sl across the body and pays two extra saves.  2026-08-07.
   "semantic/resource_3ae_c_0200051c.c",

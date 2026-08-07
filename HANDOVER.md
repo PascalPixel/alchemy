@@ -1019,3 +1019,42 @@ Historical evidence indexes:
 - `docs/full-c-history.md` — first-parent exact-C ledger index.
 - `LAWS.md` — source/compiler reconstruction laws.
 - `PROVENANCE.md` — clean-room and publication boundary.
+
+---
+
+## Addendum 2026-08-07 — the rate is a throughput problem, not a difficulty problem
+
+Claims that 50% is out of reach were made from the calendar, not the ledger.
+The ledger says otherwise.
+
+Byte progress reconstructed from the `[C n/total bytes]` commit markers:
+
+| Period | Commits/day | Bytes/commit |
+| --- | ---: | ---: |
+| Jul 29 – Aug 1 | 372 | 97 |
+| Aug 2 – Aug 6 | 65 | **132** |
+
+Yield per commit **rose** while daily bytes fell fourfold. The residual is not
+getting harder per unit of work. What changed is where the work went: Jul 31
+was 134 `merge`, 86 `convert`, 82 `semantic:`, while Aug 2–6 was `docs:`,
+`dashboard:`, `Metrics`, `Fix`. The throughput was reallocated to meta-work.
+
+The engine that produced the peak was four lanes — mercury, venus, jupiter,
+mars — each on a disjoint code overlay, merged into `main` continuously:
+290 lane commits and 144,630 bytes in four days.
+
+Arithmetic to 50%: 356,588 bytes remain. At the current, improved 132
+bytes/commit that is 2,701 commits, or **113 commits/day** across 24 days.
+The fleet sustained 372/day and peaked at 584. The required rate is under a
+third of demonstrated capacity, and 256,828 bytes of the gap sit in the
+semantic-backed code-overlay reading list (434 owners, 62 overlays) where the
+C is already written and only exactification remains.
+
+Operational note: `alchemy-gcc/dist/cc1` is untracked, so lanes must share one
+working tree. Separate worktrees would each need their own non-reproducible
+gcc build, and cross-lane results would stop being comparable. Give lanes
+disjoint overlays (disjoint `exact/` files), and let the orchestrator own git.
+
+The standing falsified hypothesis still binds: more subagents do not help when
+they collide on the same compiler floor or lack independently owned targets.
+Disjointness is the whole mechanism.

@@ -128,11 +128,20 @@ void Func_080b0048(s32);
 void Func_080b0050(void);
 void Func_080f9010(s32);
 
-/* Run the scripted radial effect and its two object-spawn waves. */
+/*
+ * Run the scripted radial effect and its two object-spawn waves.
+ *
+ * The current-object id is deliberately *not* cached in a local.  The
+ * reference keeps r7 pointing at Data_02000240+0x1f4 for the whole prologue
+ * and re-reads `[r7]` at each of the three uses, which is what a plain
+ * `Data_02000240.current_object` in the source produces; a cached local
+ * instead makes the compiler hold the loaded value and copy it, and shifts
+ * everything up to the first spawn loop by one instruction.  Reading the
+ * global at each site reproduces the reference's prologue exactly.
+ */
 void Func_08096140(s32 target_id)
 {
-    u32 current_id = Data_02000240.current_object;
-    EffectObject_08096140 *current = Func_08092054(current_id);
+    EffectObject_08096140 *current = Func_08092054(Data_02000240.current_object);
     EffectObject_08096140 *target = Func_08092054((u32)target_id);
     EffectRuntime_08096140 *runtime;
     Position_08096140 position;
@@ -161,9 +170,9 @@ void Func_08096140(s32 target_id)
     target->callback = (const void *)0x08095f9d;
     Func_08009080(target, 3);
     Func_080030f8(0x5a);
-    Func_08092adc(current_id, 0x4000, 0);
+    Func_08092adc(Data_02000240.current_object, 0x4000, 0);
     Func_080030f8(0x14);
-    Func_08009080(Func_08092054(current_id), 0x1c);
+    Func_08009080(Func_08092054(Data_02000240.current_object), 0x1c);
     Func_080030f8(0x1e);
     Func_080091f0(0x19999, 0x19999, 0x10000);
 

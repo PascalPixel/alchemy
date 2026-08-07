@@ -11,7 +11,7 @@
  * incoming arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * Func_0808a0f0's fourth argument is the address of `Data_03001f30` itself
  * (the same cell this owner later dereferences for the byte-flag store),

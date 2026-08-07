@@ -26,7 +26,7 @@
  * masquerade, not a branch; the only real control flow is the two
  * counted loops, the skip-counter beq, and the b.n over that pool.
  *
- * Callee names from bun tools/overlay_call_targets.ts resource_380
+ * Callee names from bun tools/lib/overlay_call_targets.ts resource_380
  * f8c 1450 (the +2 rule): 118 sites, 30 distinct targets, 102 through
  * the import-veneer table, 16 to the local wrapper Func_02004248.
  *

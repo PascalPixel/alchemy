@@ -14,7 +14,7 @@
  * are written once and read at several later call sites, so each is spelled as
  * a named local below rather than repeated as a literal.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; all are import
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all are import
  * veneers:
  *   0x020003a2, 0x020003c4, 0x020003d8, 0x020003ea, 0x02000404, 0x02000416,
  *   0x02000426  -> veneer 0x02001ae4 -> Func_080091b8   (x7)

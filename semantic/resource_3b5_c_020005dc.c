@@ -15,7 +15,7 @@
  * arm's own Func_080770c8 call, so a replay takes the short arm and only
  * re-shows the alternate line 0x236a.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; twelve sites,
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; twelve sites,
  * against the inventory's `calls=11`, which is a documented lower bound.
  */
 

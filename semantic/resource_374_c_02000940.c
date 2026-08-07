@@ -19,7 +19,7 @@
  * Func_080091c0 (`str r3, [sp, #0]` / `str r2, [sp, #4]` immediately before
  * each call), which is why they are spelled with six arguments here.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`, never from the
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`, never from the
  * disassembler's `bl` annotations: 49 import veneers and 4 prologues in this
  * overlay.  The four prologues are the scene bodies this dispatcher selects —
  * 0x020017c8, 0x020015b4, 0x02001084 (all in this reconstruction) and the byte-exact

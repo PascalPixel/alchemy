@@ -23,7 +23,7 @@
  * flag id at 0x020036d6 as the first data instruction), so `void` in,
  * void out.
  *
- * Call sites resolved with `bun tools/overlay_call_targets.ts
+ * Call sites resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_3c9 36d0 37c4`'s `+2` rule: `sites=12 distinct_targets=8
  * veneer=12`. Twelve are transcribed here and twelve is the tool's own
  * count -- the invariant is asserted on the output, not on the reading.

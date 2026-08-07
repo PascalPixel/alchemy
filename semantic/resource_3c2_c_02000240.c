@@ -33,7 +33,7 @@
  * per-target multiset by two Func_0808a010 and two Func_0808a180 sites.
  *
  * Completeness proof, PER TARGET rather than by total.  Every site was taken
- * from `bun tools/overlay_call_targets.ts resource_3c2 0240 --json` (site ->
+ * from `bun tools/lib/overlay_call_targets.ts resource_3c2 0240 --json` (site ->
  * target), never from the summary histogram, and the C below was then counted
  * per callee.  Both sides agree on all 29 targets:
  *   Func_0808a010 104, Func_0808a180 38, Func_0808a138 22, Func_0808a1b8 17,

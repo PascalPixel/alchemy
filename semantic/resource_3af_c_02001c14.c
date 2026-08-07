@@ -63,7 +63,7 @@
  * boundary-gap read.
  *
  * Not found by the structural inventory walk: reached only by `bl`
- * (bun tools/overlay_call_targets.ts resource_3af 1c14 1d0c, the +2
+ * (bun tools/lib/overlay_call_targets.ts resource_3af 1c14 1d0c, the +2
  * rule against the raw image -- every import name below comes from that
  * resolution, never from overlay_show's pc-relative annotation).
  *

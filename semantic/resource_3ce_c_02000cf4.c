@@ -50,7 +50,7 @@
  *   0x03001c94 0x03001b04
  * No pool word decodes as a BL prefix, so no phantom call site is introduced.
  *
- * All 31 call sites were resolved with tools/overlay_call_targets.ts
+ * All 31 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are NOT the callees.  This
  * overlay resolves to veneers only, so every call here is a main-image import.

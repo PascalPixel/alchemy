@@ -30,7 +30,7 @@
  * many times below.  The inventory reports `calls=35`; 37 >= 35 is the
  * expected direction, since that field predates the corrected `bl` decoding.
  * Thirty-six targets are import veneers and one is this overlay's own
- * prologue, all resolved with tools/overlay_call_targets.ts.
+ * prologue, all resolved with tools/lib/overlay_call_targets.ts.
  *
  * The two Func_0808a0f0(11, ...) sites and the two Func_080770c0(0x848)
  * sites sit on opposite arms of tests and are deliberately NOT merged.

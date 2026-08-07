@@ -24,7 +24,7 @@
  * inverse trap — the listing is not authoritative, and the pool map here comes
  * from the owner's own control flow.
  *
- * Call sites resolved with `tools/overlay_call_targets.ts` (an overlay `bl`
+ * Call sites resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
  * stores `target_offset - 2`).  167 sites, 28 distinct targets: 149 import
  * veneers and 18 sites of the real in-overlay two-argument helper at
  * 0x020023a4 (the same one 0x02000150 calls eleven times).  The inventory

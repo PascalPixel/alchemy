@@ -9,7 +9,7 @@
  * the literal pool (three pointer words), branched past and not code.
  *
  * All 15 call sites resolve to import veneers via
- * tools/overlay_call_targets.ts; 13 distinct callees, with Func_080f9010 and
+ * tools/lib/overlay_call_targets.ts; 13 distinct callees, with Func_080f9010 and
  * Func_0808a1e0 each reached from two arms of a test.  Site count 15 matches
  * the inventory's `calls` field exactly.
  *

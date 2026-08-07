@@ -8,7 +8,7 @@
  * Named before it was opened: the odd in-image pool word 0x020081e5 appears in
  * `assets/code/resource_38e_overlay.s`, and under the proven 0x02008000 link
  * base that is file offset 0x01e4 plus the Thumb bit.
- * `bun tools/overlay_call_targets.ts resource_38e` finds no `bl` inside the
+ * `bun tools/lib/overlay_call_targets.ts resource_38e` finds no `bl` inside the
  * overlay targeting 0x01e4, so, like 0x0200045c, the scene-script table is the
  * only way in.
  *
@@ -23,7 +23,7 @@
  * 0x02000454, so it is data - 0.3 in 16.16, paired with 0x00009999 = 0.6.
  *
  * Calls: 55 sites against an advertised 51 - a beat of four, the safe
- * direction.  Per-target multiset from `bun tools/overlay_call_targets.ts
+ * direction.  Per-target multiset from `bun tools/lib/overlay_call_targets.ts
  * resource_38e 1e4`, each count reproduced by hand from the listing:
  *   Func_0808a1b8  x8   Func_0808a0d0  x6   Func_0808a188  x6
  *   Func_0808a170  x4

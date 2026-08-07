@@ -19,7 +19,7 @@
  * actor, against Func_080b0018(10, actor)) and in the two message ids.
  *
  * All seven call sites resolved with
- * `bun tools/overlay_call_targets.ts resource_3c2 016c --json`:
+ * `bun tools/lib/overlay_call_targets.ts resource_3c2 016c --json`:
  *   0x02000172 -> veneer 0x0b64 -> Func_0808a080
  *   0x0200018e -> veneer 0x0c24 -> Func_080b0010
  *   0x02000196 -> veneer 0x0b34 -> Func_080770c0

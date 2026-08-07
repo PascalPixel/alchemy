@@ -6,7 +6,7 @@
  * interworking return at 0x0200039c, plus a five-word literal pool at
  * 0x020003a8-0x020003bb).  r0 is the popped return address, so `void`.
  *
- * All 32 call sites were resolved with `tools/overlay_call_targets.ts`; all 32
+ * All 32 call sites were resolved with `tools/lib/overlay_call_targets.ts`; all 32
  * are import veneers (the inventory's `calls=31` is the documented undercount).
  *
  * Near-identical sibling of 0x02000420 — same gate, same tail, same constants

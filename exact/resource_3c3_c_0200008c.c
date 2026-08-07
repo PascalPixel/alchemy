@@ -28,7 +28,7 @@ extern u8 Value_000000aa;
  * that is the exact reconstruction's pooling device for a small integer, not a symbol,
  * so they are written here as the integers 0xaa and 0xa9.
  *
- * The single call site resolves through `tools/overlay_call_targets.ts` to the
+ * The single call site resolves through `tools/lib/overlay_call_targets.ts` to the
  * import veneer at 0x0200087c -> Func_080770c0.  Per-target multiset:
  *   Func_080770c0 x1.
  */

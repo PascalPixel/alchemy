@@ -16,7 +16,7 @@
  * 11 kept live across the calls because it is stored at both slots.
  *
  * All seven `bl` sites are placed and reach two distinct callees, matching the
- * inventory row's calls=7.  Targets come from tools/overlay_call_targets.ts
+ * inventory row's calls=7.  Targets come from tools/lib/overlay_call_targets.ts
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations: 0x3e88 -> Func_080091c0 (four sites), 0x3f50 -> Func_0808a080
  * (three sites).  The same pair, with the same six-argument spelling of

@@ -86,7 +86,7 @@
  * separate 4-byte entries, five of which point at the same default arm.
  *
  * Not found by the structural inventory walk: reached only by `bl`
- * (bun tools/overlay_call_targets.ts resource_3af 1444 1684, the +2
+ * (bun tools/lib/overlay_call_targets.ts resource_3af 1444 1684, the +2
  * rule against the raw image; every dispatch target below was resolved
  * that way, and the table words by subtracting the 0x8000 link base).
  *

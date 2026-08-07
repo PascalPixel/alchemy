@@ -12,7 +12,7 @@
  *
  * Both `bl` sites reach the same import veneer at file offset 0x3da0, whose
  * trailing word names Func_080000c0 (targets resolved with
- * tools/overlay_call_targets.ts: target offset = stored displacement + 2,
+ * tools/lib/overlay_call_targets.ts: target offset = stored displacement + 2,
  * never the disassembler's annotation - it reports the two identical
  * halfwords as different callees).  That accounts for the row's calls=2.
  *

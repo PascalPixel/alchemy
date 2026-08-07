@@ -18,7 +18,7 @@
  * being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts resource_3c9
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9
  * 3924 3bc8`'s `+2` rule.
  *
  * SHARED IDIOMS cited from resource_3c9_c_020048d8.c's header: the two

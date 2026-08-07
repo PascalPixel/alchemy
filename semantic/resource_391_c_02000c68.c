@@ -5,7 +5,7 @@
  * two alignment bytes at 0x02000d2e, and the three-word literal pool at
  * 0x02000d30-0x02000d3b.  A scene-entry setup routine.
  *
- * Calls resolved with 'bun tools/overlay_call_targets.ts resource_391 0c68'
+ * Calls resolved with 'bun tools/lib/overlay_call_targets.ts resource_391 0c68'
  * (an overlay bl stores target_offset - 2, so overlay_show's annotations are
  * wrong for every site).  17 sites over 8 distinct targets:
  *   0x0c6e -> 0x08c0  prologue  Func_020008c0(10)

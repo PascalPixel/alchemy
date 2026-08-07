@@ -11,7 +11,7 @@
  * byte-identical.
  *
  * What was changed: the entry symbol, and the one call, re-resolved with
- * 'bun tools/overlay_call_targets.ts resource_392 0bcc' to the veneer publishing
+ * 'bun tools/lib/overlay_call_targets.ts resource_392 0bcc' to the veneer publishing
  * Func_0808a338 (the 394 source predates the corrected 'bl' rule and named it
  * Func_020020aa; resource_394's own site resolves to the same import).
  */

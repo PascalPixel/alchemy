@@ -34,7 +34,7 @@
  * 0x2b28, 0x2b54, every one of them a case body inside this owner, and none of
  * them carrying the Thumb bit (correct: `mov pc,rN` does not interwork).
  *
- * CALL ACCOUNTING.  `bun tools/overlay_call_targets.ts resource_3c5 28a0`
+ * CALL ACCOUNTING.  `bun tools/lib/overlay_call_targets.ts resource_3c5 28a0`
  * reports sites=69 / distinct_targets=18 (60 veneer, 9 prologue).  The
  * inventory's `calls=56` is the usual lower bound and is not used.  Every one
  * of the 69 sites is placed below; the multiset of `Func_...(` occurrences in

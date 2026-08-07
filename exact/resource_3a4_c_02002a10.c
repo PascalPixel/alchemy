@@ -17,8 +17,8 @@ extern unsigned char Value_00004ccc;
  * call site per overlay_unindexed.ts. This owner makes two outgoing
  * calls, both resolved with the `+2` rule against the raw image (this
  * owner starts outside a recorded row, so overlay_call_targets.ts's own
- * table does not cover it -- resolved with `bun tools/overlay_show.ts
- * resource_3a4 2a10 | bun tools/overlay_call_targets.ts resource_3a4
+ * table does not cover it -- resolved with `bun tools/overlay/overlay_show.ts
+ * resource_3a4 2a10 | bun tools/lib/overlay_call_targets.ts resource_3a4
  * 2a10 2a42 --annotate`):
  *   0x2002a2c -> veneer -> Func_0200664e(record, 3)   old-style shape (object, mode), established elsewhere (resource_39a_c_02001c18.c, resource_3c8_c_02000118.c)
  *   0x2002a34 -> veneer -> Func_02006566(record, 0)   established, set presentation phase

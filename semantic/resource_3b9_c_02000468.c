@@ -6,7 +6,7 @@
  * only member that writes to the actor's object directly.
  *
  * PUBLISHED, NOT CALLED. Found by
- * `bun tools/overlay_published.ts resource_3b9`. The bank is described
+ * `bun tools/lib/overlay_published.ts resource_3b9`. The bank is described
  * in resource_3b9_c_020002a0.c.
  *
  * NO FLAG TEST. Every member before this one branches on the bank's
@@ -28,7 +28,7 @@
  * 0x020004c8. The r5 spill exists for the object pointer.
  *
  * All `bl` targets resolved through the overlay's import-veneer table
- * under the +2 rule (tools/overlay_call_targets.ts); the call to this
+ * under the +2 rule (tools/lib/overlay_call_targets.ts); the call to this
  * overlay's own Func_02001c48 is a direct intra-image branch.
  *
  * Uncertainty: object offsets +100 and +102 are u16 by the `strh`

@@ -25,7 +25,7 @@
  * entry rather than a data address.  It both proves the base and names
  * 0x02000ed8 as the task this branch installs.
  *
- * Call targets resolved with tools/overlay_call_targets.ts.  Three of the
+ * Call targets resolved with tools/lib/overlay_call_targets.ts.  Three of the
  * four are the overlay's own prologues (0x020008f0, 0x02000ae0, 0x02000d10),
  * reached as ordinary calls — they are real function starts, not the
  * hidden-context shape.  Only Func_080000d0 goes through a veneer.

@@ -8,7 +8,7 @@
  * pair and no pool word differs.
  *
  * What was changed: the entry symbol, and the four calls, re-resolved with
- * 'bun tools/overlay_call_targets.ts resource_3a7 13ac'.  All four target this
+ * 'bun tools/lib/overlay_call_targets.ts resource_3a7 13ac'.  All four target this
  * overlay's own prologues, and the corrected 'bl' rule collapses them the way
  * the code shape demands: the two operand unpacks are ONE routine, 0x02001770
  * (transposed alongside this file as resource_3a7_c_02001770.c), the arithmetic

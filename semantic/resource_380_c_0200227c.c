@@ -19,7 +19,7 @@
  * CORRECTION (name sweep): this file's callee names came from a naive
  * pc-relative decode and were wrong; they are resolved here through the
  * overlay's import-veneer table under the +2 rule
- * (tools/overlay_call_targets.ts) to their main-ROM identities.  Two
+ * (tools/lib/overlay_call_targets.ts) to their main-ROM identities.  Two
  * earlier readings fall with those names.  The claim that "each actor
  * id has its own dedicated enable/fetch/bind entry points at
  * 6-to-20-byte strides" was pure decode artifact: the strides were the

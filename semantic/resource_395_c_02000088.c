@@ -12,7 +12,7 @@
  * flags 0x845/0x84c and three dialogue ids 0x151d/0x1525/0x1520), not
  * addresses.
  *
- * All 23 call sites were resolved with tools/overlay_call_targets.ts
+ * All 23 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), never from overlay_show.ts's
  * `bl` annotations, which are off by one veneer entry on this overlay.  Placed
  * multiset, matching the 23 sites exactly: Func_020012f4 x6, Func_0808a188 x4,

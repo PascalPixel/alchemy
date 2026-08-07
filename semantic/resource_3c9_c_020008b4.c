@@ -18,7 +18,7 @@
  * branches. No incoming arguments read, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/overlay_call_targets.ts resource_3c9 8b4 1280's
+ * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3c9 8b4 1280's
  * +2 rule). The queue's ~600-byte estimate was wrong; the real span is
  * 0x8b4-0x1280.
  *

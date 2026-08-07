@@ -23,7 +23,7 @@
  * 92 code + 8 pool = 100, exactly the inventory row's figures.
  *
  * Calls: 7 sites against an advertised 6 - a beat, the safe direction.
- * Per-target multiset from `bun tools/overlay_call_targets.ts resource_389
+ * Per-target multiset from `bun tools/lib/overlay_call_targets.ts resource_389
  * b6c`:
  *   Func_080091c0  x2   0xb98 0xbb2
  *   Func_0808a080  x1   0xb72

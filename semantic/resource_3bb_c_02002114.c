@@ -22,7 +22,7 @@
  * mode, r1 handle, r2 an out-pointer stashed on the stack), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2`
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2`
  * rule.
  *
  * `Close(id)` below collects the shared two-call close sequence

@@ -52,7 +52,7 @@
  *
  * Call accounting: 36 `bl` sites over 16 distinct targets, all import veneers -
  * no intra-overlay call and no `call_via` slot.  Resolved with
- * `bun tools/overlay_call_targets.ts resource_371 39fc 3f0c`, never from
+ * `bun tools/lib/overlay_call_targets.ts resource_371 39fc 3f0c`, never from
  * `overlay_show.ts`'s printed annotations.  Per-target multiset:
  * Func_0808a010 x17, Func_080000d0 x2, Func_080001a8 x2, Func_0808a370 x2,
  * Func_080f9010 x2, and one each of Func_080000c0, Func_08000170,

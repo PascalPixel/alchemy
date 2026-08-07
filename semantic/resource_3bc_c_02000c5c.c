@@ -4,7 +4,7 @@
  * Resource 3bc, owner at 0x02000c5c.  276 strict bytes: 264 bytes of code
  * (0x0c5c-0x0d63) and a three-word literal pool at 0x0d64-0x0d6f.
  *
- * 26 call sites resolved with tools/overlay_call_targets.ts (23 veneers, two
+ * 26 call sites resolved with tools/lib/overlay_call_targets.ts (23 veneers, two
  * internal prologues, one classified `call_via`).  The inventory row says
  * calls=25 — the documented lower bound.  Per-target multiset, which the C
  * below reproduces exactly:

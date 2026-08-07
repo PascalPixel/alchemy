@@ -19,7 +19,7 @@
  * Return type from the epilogue rule: 'pop {r0} ; bx r0', so the owner is void.
  *
  * Calls: 4 sites over 4 targets, from
- * 'bun tools/overlay_call_targets.ts resource_3c1 0120'.
+ * 'bun tools/lib/overlay_call_targets.ts resource_3c1 0120'.
  *
  * Link base: both 0x020085d0 and 0x020085e8 are EVEN, which under the proven
  * 0x02008000 base makes them in-image DATA at file offsets 0x05d0 and 0x05e8 -

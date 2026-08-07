@@ -3,7 +3,7 @@
 /*
  * resource_387 owner at 0x020004f4, 392 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay_driver.ts resource_387), so the loader enters
+ * (bun tools/overlay/overlay_driver.ts resource_387), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Unconditional head: raise flag 324, hold ten ticks, Func_0808a5e0(170),

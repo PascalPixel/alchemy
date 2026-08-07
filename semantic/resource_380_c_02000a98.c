@@ -20,7 +20,7 @@
  * CORRECTION (name sweep): this file's callee names came from a naive
  * pc-relative decode and were wrong; they are resolved here through
  * the overlay's import-veneer table under the +2 rule
- * (tools/overlay_call_targets.ts) to their main-ROM identities.  The
+ * (tools/lib/overlay_call_targets.ts) to their main-ROM identities.  The
  * earlier note that three callees were "called at two arities inside
  * this one owner" was an artifact of that decode -- each of those
  * phantom names covered two genuinely different functions, which is

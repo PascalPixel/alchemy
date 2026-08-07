@@ -23,7 +23,7 @@
  * and Func_080000d8 (remove task) at 0x02000dd0.  That named 0x02000bd0 as a
  * per-frame task before it was disassembled.
  *
- * Calls: 45 sites, resolved with `bun tools/overlay_call_targets.ts
+ * Calls: 45 sites, resolved with `bun tools/lib/overlay_call_targets.ts
  * resource_389 ce0`.  Per-target multiset, every site placed in program order:
  *   Func_0808a080  x10  0xcf0 0xd0c 0xd1c 0xd30 0xd88 0xd92 0xdc4 0xde2 0xdfe
  *                       0xe06

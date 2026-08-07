@@ -16,7 +16,7 @@
  * placement rows (45/14 for 49/8), and selector 0x972 for 0x971.  The control
  * flow is otherwise identical.
  *
- * Targets resolved with `tools/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 32 sites, 18 distinct
  * callees, all 32 accounted for below.  The four Func_0808a080 sites, the four
  * Func_0808a010 sites and the four Func_080091f0 sites each carry

@@ -17,7 +17,7 @@
  * (r0, r1), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * The DMA3 register block (0x040000d4 = REG_DMA3SAD, control word
  * 0x85000020: enable + 32 words) is the same block

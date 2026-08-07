@@ -23,7 +23,7 @@
  * None is an address; all three are arithmetic operands well below the
  * 0x02008000 link base.  The next prologue begins at 0x02001aa8.
  *
- * There are no `bl`s at all: `bun tools/overlay_call_targets.ts resource_3b3
+ * There are no `bl`s at all: `bun tools/lib/overlay_call_targets.ts resource_3b3
  * 19f0 1a9c` reports `sites=0`, so the multiset is empty on both sides.
  *
  * The owner takes two objects and asks whether the second should inherit the

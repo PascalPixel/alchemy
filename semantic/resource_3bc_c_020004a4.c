@@ -4,7 +4,7 @@
  * Resource 3bc, owner at 0x020004a4.  216 strict bytes: 208 bytes of code
  * (0x04a4-0x0573) and a two-word literal pool at 0x0574-0x057b.
  *
- * All 11 call sites resolved with tools/overlay_call_targets.ts (every one an
+ * All 11 call sites resolved with tools/lib/overlay_call_targets.ts (every one an
  * import veneer), matching the row's calls=11 exactly:
  *   0808a080 x4, 080091e0 x1, 08009150 x3, 080770c8 x1, 080091c0 x2.
  * Note the four Func_0808a080 sites are four *separate* fetches in the

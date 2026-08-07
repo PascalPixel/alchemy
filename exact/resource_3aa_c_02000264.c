@@ -22,7 +22,7 @@
  * the first branch, so the owner takes no arguments either.
  *
  * Call accounting: 18 `bl` sites, all resolved with
- * `bun tools/overlay_call_targets.ts resource_3aa 0264` - 16 to import
+ * `bun tools/lib/overlay_call_targets.ts resource_3aa 0264` - 16 to import
  * veneers (10 distinct) and 2 to in-overlay prologues, at file offsets 0x1494
  * and 0x0360.  Every site appears below exactly once.  The disassembler's own
  * annotations are wrong in the usual overlay way and were not used.

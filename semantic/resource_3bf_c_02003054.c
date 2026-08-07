@@ -26,7 +26,7 @@
  * and three are null checks on the pointer Func_0808a080(0) has just returned.
  *
  * CALL ACCOUNTING.  All 636 `bl` sites were resolved with
- * `bun tools/overlay_call_targets.ts resource_3bf 3054`, never from the
+ * `bun tools/lib/overlay_call_targets.ts resource_3bf 3054`, never from the
  * disassembler's pc-relative annotations.  They collapse to 34 distinct
  * targets: 33 import veneers (635 sites) and one ordinary prologue of this
  * overlay, 0x02000c90, which already has a byte-exact source under

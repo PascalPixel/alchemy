@@ -15,7 +15,7 @@
  * them.  The `ldr r0,[pc,#0] / bx lr / .word 0x02009e14` at 0x020011b4 that
  * follows is a separate constant-loader leaf, not part of this owner.
  *
- * All seven call sites were resolved with tools/overlay_call_targets.ts
+ * All seven call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2); the inventory reports
  * calls=7, which matches:
  *   0x0200115c -> veneer 0x02001844 -> Func_0808a018

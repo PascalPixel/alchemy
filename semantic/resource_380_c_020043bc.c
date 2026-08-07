@@ -19,7 +19,7 @@
  * CORRECTION (name sweep): this file's callee names came from a naive
  * pc-relative decode and were wrong; they are resolved here through the
  * overlay's import-veneer table under the +2 rule
- * (tools/overlay_call_targets.ts) to their main-ROM identities.  Two
+ * (tools/lib/overlay_call_targets.ts) to their main-ROM identities.  Two
  * phantom names collapsed onto Func_080091e0 and two onto
  * Func_080000f8 -- the "two different functions" reading was the
  * decode, not the code.  Both Func_080091e0 sites do genuinely take the

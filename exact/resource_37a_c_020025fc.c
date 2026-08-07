@@ -14,7 +14,7 @@
  * untouched -- so the row reads both incoming registers before writing
  * either. That save is the only reason r5 is pushed at all.
  *
- * Call sites resolved with `bun tools/overlay_call_targets.ts resource_37a
+ * Call sites resolved with `bun tools/lib/overlay_call_targets.ts resource_37a
  * 25fc 2614`'s `+2` rule: `sites=2 veneer=2`, and two are transcribed.
  *
  * NOT PUBLISHED -- it is the one owner in this overlay's residue that is

@@ -24,7 +24,7 @@
  * argument of a Func_0808a098 call, which is exactly the shape that test was
  * derived from.
  *
- * Calls.  188 `bl` sites, all resolved with tools/overlay_call_targets.ts;
+ * Calls.  188 `bl` sites, all resolved with tools/lib/overlay_call_targets.ts;
  * the row's `calls=174` is the usual undercount.  The completeness proof is
  * per target, not a total — a matching total can hide a permutation:
  *

@@ -15,7 +15,7 @@
  *
  * Both call sites -- 0x02000254 and 0x020002cc -- resolve through the SAME
  * veneer at file offset 0x14cc to Func_080f9010
- * (`bun tools/overlay_call_targets.ts resource_370 --json`), even though the
+ * (`bun tools/lib/overlay_call_targets.ts resource_370 --json`), even though the
  * two `bl` encodings differ.  That is the overlay `bl` rule in action: the
  * printed targets 0x02001722 and 0x0200179a are meaningless.  Two sites, two C
  * call expressions, matching the inventory's calls=2.

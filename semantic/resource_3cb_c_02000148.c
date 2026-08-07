@@ -17,7 +17,7 @@
  * 0x020002b2 and never falls into them; the `lsls`/`subs`/`ldr` halfwords the
  * disassembler prints there are data.  Func_020002d8 begins immediately after.
  *
- * All 24 call sites were resolved with tools/overlay_call_targets.ts
+ * All 24 call sites were resolved with tools/lib/overlay_call_targets.ts
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=24.  Placed multiset: Func_080770c0 x9, Func_080770d0 x4,
  * Func_080770c8 x2, Func_0808a080 x1, Func_0200008c x5, Func_02000128 x2, and

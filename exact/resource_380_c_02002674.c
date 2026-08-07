@@ -6,8 +6,8 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record, so neither the call-graph
- * sweep nor `tools/overlay_unindexed.ts` lists it. Found by
- * `bun tools/overlay_published.ts resource_380`.
+ * sweep nor `tools/overlay/overlay_unindexed.ts` lists it. Found by
+ * `bun tools/lib/overlay_published.ts resource_380`.
  *
  * IT CORROBORATES resource_380_c_0200227c.c. That owner enables and
  * places exactly six actors -- 5, 9, 11, 10, 14, 13 -- and this
@@ -49,7 +49,7 @@
  * next owner's prologue -- its twin -- begins at 0x020026e0.
  *
  * All four `bl` targets resolved through the overlay's import-veneer
- * table under the +2 rule (tools/overlay_call_targets.ts); the naive
+ * table under the +2 rule (tools/lib/overlay_call_targets.ts); the naive
  * pc-relative decode is wrong here as everywhere in this overlay.
  *
  * Uncertainty: the roles of Func_0808a150's second and third arguments

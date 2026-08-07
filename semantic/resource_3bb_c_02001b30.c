@@ -12,7 +12,7 @@
  * arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
  *
  * Uncertainty: none of the nine callees are identified beyond call
  * shape; the six looked-up ids (896, 904, 912, 920, 928, 936, each 8

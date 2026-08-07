@@ -24,7 +24,7 @@
  * scripts and the table also used by 0x02000940 and 0x02001274), not Thumb
  * entry points.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`, never from the
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`, never from the
  * disassembler's `bl` annotations: 98 import veneers and 16 prologues in this
  * overlay, the latter all the byte-exact 0x020022c8 and 0x020022e0.
  *

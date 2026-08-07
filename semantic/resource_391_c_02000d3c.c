@@ -22,7 +22,7 @@
  * the actor set, installs three per-frame effect tasks, and then plays out a
  * long fixed sequence of actor moves, waits, camera pushes and sound cues.
  *
- * CALLS.  Resolved with 'bun tools/overlay_call_targets.ts resource_391 0d3c'.
+ * CALLS.  Resolved with 'bun tools/lib/overlay_call_targets.ts resource_391 0d3c'.
  * An overlay bl stores target_offset - 2, so overlay_show's annotations are
  * wrong at every site and were not used.  672 sites collapse to 43 distinct
  * targets: 41 import veneers resolving to main-image Func_08xxxxxx addresses,

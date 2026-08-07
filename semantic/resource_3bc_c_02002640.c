@@ -17,8 +17,8 @@
  * Not found by the structural inventory walk (unindexed); five call sites,
  * all resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay_show.ts resource_3bc 2640 |
- * bun tools/overlay_call_targets.ts resource_3bc 2640 270e --annotate`):
+ * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 2640 |
+ * bun tools/lib/overlay_call_targets.ts resource_3bc 2640 270e --annotate`):
  *   0x2002646, 0x200264c, 0x2002652, 0x2002658, 0x200265e
  *     -> veneer -> Func_08077168(slot)   established (semantic/main/080b5368.c), slots 0,1,2,3,5 -- 4 skipped, same set as the main-image sibling
  *   0x2002664 -> veneer -> Func_08077150(id)     established, same file

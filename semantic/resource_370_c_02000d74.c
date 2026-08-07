@@ -15,7 +15,7 @@
  * `bl 0x02002b4c`; it is data, not a call.  Only two real call sites exist,
  * matching the inventory's calls=2.
  *
- * Call targets resolved with `bun tools/overlay_call_targets.ts resource_370`:
+ * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_370`:
  * 0x02000d80 -> veneer at file offset 0x133c -> Func_08000170, and
  * 0x02000dd8 -> veneer at 0x1344 -> Func_08000178.  They bracket the writes,
  * with the first one's return value carried in r7 into the second, so they

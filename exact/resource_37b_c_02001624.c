@@ -8,7 +8,7 @@
  * r0, so r0 holds the return address and nothing is returned: the owner is
  * `void`.  No literal pool sits inside the span.
  *
- * Call sites resolved with `tools/overlay_call_targets.ts`, which applies the
+ * Call sites resolved with `tools/lib/overlay_call_targets.ts`, which applies the
  * overlay rule `target_offset = stored_displacement + 2`; the disassembler's
  * own `bl` annotations are wrong for every overlay:
  *

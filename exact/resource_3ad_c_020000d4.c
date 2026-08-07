@@ -18,7 +18,7 @@
  * tracked per-use rather than as one variable.  r6 is a plain constant holder
  * (21) for the whole body.
  *
- * Call targets resolved with `tools/overlay_call_targets.ts`; all are import
+ * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all are import
  * veneers.  Per-target multiset over the 15 sites: Func_080091b8 x5,
  * Func_080000c0 x4, Func_080091c0 x3, and one each of Func_0808a080,
  * Func_0808a100, Func_080091e0 - 15 C call expressions below, matching the

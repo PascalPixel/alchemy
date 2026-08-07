@@ -20,8 +20,8 @@
  * next owner's prologue byte, don't trust the first `bx r0`" lesson.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/overlay_call_targets.ts`'s `+2`
- * rule (`bun tools/overlay_call_targets.ts resource_3b9 23e0 24d8`).
+ * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2`
+ * rule (`bun tools/lib/overlay_call_targets.ts resource_3b9 23e0 24d8`).
  *
  * SHARED IDIOMS: Func_0808a018 is the scripted-scene bracket open (no
  * matching close in this owner -- it is left open, as

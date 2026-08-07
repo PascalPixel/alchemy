@@ -1,3 +1,11 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-arg-before-shift-in-sheet
+ * and -fthumb-call-literal-arg1-first-after-call: the two residuals were both
+ * argument-setup transpositions -- `movs r1, #0' ahead of `movs r0, #9' in
+ * the sheet that follows the call at 0x02000626, and `movs r0, #9' ahead of
+ * `lsls r1, r1, #7' at 0x02000658.
+ */
+
 #include "types.h"
   
   

@@ -1,4 +1,11 @@
 /*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-call-argreg-before-pool: the
+ * last residual was the pair at 0x02000bd0, where the reference copies r0 from
+ * r5 before loading r1 from the pool and the post-reload scheduler hoists the
+ * pool load instead.
+ */
+
+/*
  * resource_3a7 effect-burst spawner at 0x02000b8c, 124 bytes.
  *
  * Complete owner: `push {r5, r6, r7, lr}` at 0x02000b8c through `pop {r5, r6,

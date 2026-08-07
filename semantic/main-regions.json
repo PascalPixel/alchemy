@@ -1653,16 +1653,6 @@
       ]
     },
     {
-      "entry": "0x08011568",
-      "evidence": "Executable-gap continuation row 08011568, 40 bytes incl. its 20-byte trailing literal pool. Push-free ten-instruction Thumb leaf ending bx lr, no independent frame: writes pool constant 0x682 to the register halfword at 0x0400000A, advances the same pool base by 202 to reach 0x040000D4 (DMA3SAD), and installs source 0x02010000 / destination 0x06006A00 / control 0x84002580 with one stmia r3!, then rewinds r3 by 12. Reviewed semantic C at semantic/08011568.c reproduces exactly this grouped descriptor write; the owner is also the documented 40-byte grouped-DMA compiler probe (11-halfword floor under -mgrouped-dma-store plus -mentry-low-register-order), so its boundary and behaviour have been independently reviewed twice.",
-      "executable_ranges": [
-        {
-          "address": "0x08011568",
-          "size": 20
-        }
-      ]
-    },
-    {
       "entry": "0x0808f498",
       "evidence": "Executable-gap continuation row 0808f498, 148 bytes. Not a continuation in fact: the preceding row 0808f32c never branches or falls into it, the body is push-free with no stack frame, and it returns with bx lr. Its entry is published as the Thumb pointer 0x0808f499 by five pool words (0x0808f7bc, 0x0808feac, 0x0808fec8, 0x08090114, 0x08090274), so it is an independently callable leaf reached only indirectly. Behaviour, reviewed in semantic/0808f498.c: index the 644-byte window record out of the workspace at 0x03001ECC slot byte 0x539, stop DMA0 in two masked control writes (0xC5FF then 0x7FFF), enable both display windows (DISPCNT |= 0x6000), install WININ/WINOUT/WIN0H/WIN1H from the record and set both vertical windows to 160, then start the per-scanline HBlank refresh: DMA0 from the following table into 0x04000040 with control 0xA6600001. Executable ranges 0x0808f498+96 and 0x0808f51c+10; the 36-byte interior pool at 0x0808f4f8 is jumped by the b.n at 0x0808f4f6 and the trailing 6 bytes are alignment plus the final pool word, all excluded.",
       "executable_ranges": [

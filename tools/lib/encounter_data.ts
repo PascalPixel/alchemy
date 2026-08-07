@@ -60,7 +60,12 @@ function checkedExtent(source: Json, address: number, size: number, name: string
   }
 }
 
-function flagByte(source: Json, name: string): number {
+// `unknown` because this IS the validation boundary: it is handed a decoded
+// JSON value of no proven shape and proves the shape itself. Declaring a shape
+// it has not checked yet would move the lie one line earlier.
+function flagByte(value: unknown, name: string): number {
+  if (typeof value !== "object" || value === null) throw new Error(`${name} is not an object`);
+  const source = value as Json;
   exactKeys(source, ["bit0", "bits_1_4", "bits_5_7"], name);
   const bit0 = source.bit0;
   if (typeof bit0 !== "boolean") throw new Error(`${name} bit0 is not boolean`);

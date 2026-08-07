@@ -29,7 +29,9 @@ async function main(): Promise<void> {
     return;
   }
   if (subcommand === "--self-test") {
-    if (SUBCOMMANDS.length === 0) throw new Error("rtl has no subcommands");
+    // Widened: SUBCOMMANDS is a const tuple, so its length is a literal type and
+    // a direct `=== 0` compares two literals that can never be equal.
+    if ((SUBCOMMANDS as readonly string[]).length === 0) throw new Error("rtl has no subcommands");
     console.log(`rtl self-test ok (${SUBCOMMANDS.length} subcommands)`);
     return;
   }

@@ -6,9 +6,9 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
-import { tile_png, type Rgb } from "./export_asset.ts";
+import { tile_png, } from "./export_asset.ts";
 import { decode_general_trace, encode_general, type GeneralToken } from "./extract_resource.ts";
-import { gba_graphics } from "./import_asset.ts";
+import { gba_graphics, type Rgb } from "./import_asset.ts";
 
 const ROM_BASE = 0x08000000;
 const ROM_SIZE = 0x00800000;

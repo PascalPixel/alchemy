@@ -2471,12 +2471,18 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // both ways and only the early direction was expressible. An -f flag
         // rather than an -m one because target_flags has no bit left.
         "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
-        // -fthumb-call-arg0-reg-source (2026-08-07): widens the existing
-        // arg1-before-arg0 call reordering so the r0 argument may be a plain
-        // hard-register copy, not just a constant or pool load. The pair's
-        // independence tests are unchanged. Default-off and source-routed, so
-        // unrouted codegen is unchanged. Witness 080a90bc. Cross-host rule:
-        // rebuild+pin linux from the same fork source.
+        // Three modes (2026-08-07), all default-off and source-routed, so
+        // unrouted codegen is unchanged. Witness 080a90bc.
+        // -fthumb-call-arg0-reg-source widens the existing arg1-before-arg0
+        // call reordering so the r0 argument may be a plain hard-register
+        // copy, not just a constant or pool load; admitted only opposite an
+        // immediate r1 setter, since that is the shape the reference inverts.
+        // -fthumb-sink-constant-past-call moves a callee-saved register's
+        // constant or pool-load setup from before a call to just after it,
+        // iterated to fixpoint so a whole pre-call run relocates.
+        // -fthumb-move-before-unary-alu issues a flag-preserving high-register
+        // copy ahead of an adjacent independent unary ALU insn.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
         "f76bdc9dccde93acc1a2f382d760ec79292591c5b39cc0221368630755068ce8",
       ],
     },

@@ -71,7 +71,7 @@ executable inventory and use an explicit
 `metrics: correct executable denominator` commit subject. Ordinary
 decompilation commits cannot change the denominator.
 
-Historical commits are not rewritten. `tools/full_c_history.ts` measures every
+Historical commits are not rewritten. `tools/metrics/full_c_history.ts` measures every
 first-parent tree against the fixed audited denominator and writes
 [`full-c-history.json`](full-c-history.json) and
 [`full-c-history.csv`](full-c-history.csv). It derives ownership from each
@@ -79,7 +79,7 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 
 ## Coverage map
 
-`tools/coverage_map.ts` publishes the same measurement as four pictures:
+`tools/metrics/coverage_map.ts` publishes the same measurement as four pictures:
 [`gs1-en-core.svg`](../assets/readme/gs1-en-core.svg),
 [`gs1-en-overlays.svg`](../assets/readme/gs1-en-overlays.svg),
 [`gs1-en-images.svg`](../assets/readme/gs1-en-images.svg), and
@@ -112,7 +112,7 @@ is read from the selected exact source tree, so the check also holds when an
 explicit ref is used. Semantic C is not part of Full-C Byte Share and is drawn
 as a separate colour, never folded into the headline fraction.
 
-`bun tools/dashboard_server.ts` serves a separate live worktree view. It
+`bun tools/metrics/dashboard_server.ts` serves a separate live worktree view. It
 derives the same ownership map directly in memory, watches `asm/`, `assets/`,
 `metrics/`, `semantic/`, `src/`, and the verified assembly manifest, and pushes
 a new draw to the browser after relevant changes. It deliberately tolerates a

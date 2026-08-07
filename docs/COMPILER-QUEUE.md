@@ -324,7 +324,7 @@ the reference does.
 Reproducer: `resource_3c4:0cd0` with a 216-byte draft.
 
 ```
-bun tools/overlay_adopt.ts resource_3c4:0cd0 --source <src> --where
+bun tools/overlay/overlay_adopt.ts resource_3c4:0cd0 --source <src> --where
   -> adopt=rejected differing_bytes=4
 ```
 
@@ -338,7 +338,7 @@ fixes 0x02000d92 and breaks the other two — 4 bytes becomes worse.
 Reproducer: `resource_396:1424`, using `--span 392`.
 
 ```
-bun tools/overlay_adopt.ts resource_396:1424 --source <src> --span 392 --where
+bun tools/overlay/overlay_adopt.ts resource_396:1424 --source <src> --span 392 --where
   -> adopt=rejected differing_bytes=6
   -> differing_at 0x20014da+4 0x200157d+1 0x200157f+1
 ```
@@ -377,7 +377,7 @@ Both rows byte-exact: `3c4:0cd0` at 248 bytes and `396:1424` at 392 bytes,
 each with no source change from the reproducer above. Per §7, a fork change
 needs the rebuild, the re-pin, and the source-only build reproducing
 gs1-en.gba at SHA-1 `5c4695205413df7db52b9a184815a07783999971` before the
-re-pin is admissible — and then a routed set **and** a `tools/mode_sweep.ts`
+re-pin is admissible — and then a routed set **and** a `tools/lib/mode_sweep.ts`
 entry.
 
 **Do not land this as a wider whole-function mode.** Symmetry is not

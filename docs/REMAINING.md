@@ -5,7 +5,7 @@
 > Historical snapshot from early 2026-07-26. Its measurements and conclusions
 > are preserved as a dated diagnosis, not current status. Use
 > [PATH-TO-COMPLETION.md](PATH-TO-COMPLETION.md) and
-> `tools/remaining_survey.ts` for the live counts.
+> `tools/decomp/remaining_survey.ts` for the live counts.
 
 813 `c_candidate` regions remain at `[1,245 of 2,058]`. Breaking that down
 changes what the next move should be.

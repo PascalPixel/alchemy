@@ -74,7 +74,7 @@ Additional ROM-image facts:
 The semantic compiler reviews 976,622 bytes of owner spans, but 26,844 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
 code-overlay owner spans. The coverage numerator therefore uses 949,778, not
-976,622. `tools/build_semantic.ts` now reports both figures instead of silently
+976,622. `tools/make/build_semantic.ts` now reports both figures instead of silently
 adding out-of-scope bytes.
 
 The continuous semantic-overlay campaign has reduced the ranked
@@ -184,12 +184,12 @@ veneers, 928 ordinary discoveries, and 477 ordinary prologue/return rows.
 These filters overlap; their counts must never be added as distinct functions.
 
 The exact-twin report now shows only **116 theoretical recoverable bytes** in
-two families; `bun tools/overlay_twins.ts --semantic --unconverted` reports
+two families; `bun tools/overlay/overlay_twins.ts --semantic --unconverted` reports
 zero, proving there is no remaining known twin-template shortcut for semantic
 closure. The new semantic mode prevents the exact-C queue from being mistaken
 for unowned code and makes that negative result immediate rather than manual.
 
-`bun tools/overlay_call_order_check.ts` is the other current speedup. It compares
+`bun tools/overlay/overlay_call_order_check.ts` is the other current speedup. It compares
 each semantic owner's source-level postorder call sequence with its reachable,
 veneer-resolved BL sequence, including conservative IWRAM call-through recovery.
 Use it on every new owner alongside the multiset check. The latest ranked
@@ -204,7 +204,7 @@ four add four passes to the prior 914-pass/214-mismatch audit, so `--all` remain
 an audit queue rather
 than a green gate; the self-test is wired into `bun test`.
 
-`bun tools/overlay_show.ts <overlay> <start> <end> --annotate` now performs the
+`bun tools/overlay/overlay_show.ts <overlay> <start> <end> --annotate` now performs the
 disassembly, overlay-specific BL resolution, and completeness check in one
 command. Both offsets and full `0x02000000` RAM addresses are accepted. This
 removes the repeated two-command pipe and prevents an absolute address from
@@ -692,7 +692,7 @@ Compiler policy going forward:
    on arm64/x86_64 are all first-class hosts. A compiler mode or routing change
    lands only with every supported host family rebuilt from the committed fork
    source, verified byte-identically, and digest-pinned. The
-   `flagCapabilityLint()` gate in `tools/alchemy_gcc.ts --lint` (part of
+   `flagCapabilityLint()` gate in `tools/lib/alchemy_gcc.ts --lint` (part of
    `bun test`) probes each staged binary with every flag live routing can emit,
    so a host left behind fails immediately with the rebuild procedure named
    instead of failing mid-build inside an unrelated overlay rebuild. Hosts

@@ -49,7 +49,7 @@ compiled exactly with public `old_agbcc`, disproving its earlier
 `nonstandard_thumb_branch_module` classification.** This file exists because a
 remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
-measured by `tools/remaining_survey.ts`, which decodes each region and resolves
+measured by `tools/decomp/remaining_survey.ts`, which decodes each region and resolves
 pc-relative loads against the constant pool before classifying anything.
 
 ## Observed rate
@@ -959,7 +959,7 @@ is **114,526 / 1,338,242 executable bytes (8.56%)**.
 
 ## Bounded compiler-configuration explorer
 
-`tools/mode_sweep.ts` now treats compiler search as evidence collection rather
+`tools/lib/mode_sweep.ts` now treats compiler search as evidence collection rather
 than source promotion. It runs the routed GCC 2.96/Thumb configuration and
 historically meaningful single changes first, then compatible pairs on request.
 Triples are considered only when a pair improves every single-mode result and
@@ -986,7 +986,7 @@ selects the shift first. Reversing that tie break globally would damage five
 measured inverse-order functions, so this is recorded as a compiler floor
 rather than routed through a one-function backend flag.
 
-`tools/mode_cohort.ts` now applies the same cached phased explorer to a group of
+`tools/compiler/mode_cohort.ts` now applies the same cached phased explorer to a group of
 semantically verified candidates and reports only configurations that make
 more than one member exact. Its first bounded cohort contained six strong
 near-matches; it found zero shared exact configurations, so compiler work

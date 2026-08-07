@@ -25,6 +25,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { ROM_BASE, verifyCandidate } from "../lib/match_m2c.ts";
+import { assembleOverlay, compileOverlayCandidate } from "../lib/overlay_disasm.ts";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const USAGE = "usage: shape_sweep.ts <candidate.c> [--pairs] [--top N] [--self-test]";
@@ -259,6 +260,9 @@ async function main(): Promise<void> {
     process.exit(2);
   }
   const top = Number(argv[argv.indexOf("--top") + 1]) || 12;
+  const stem = basename(candidate, ".c");
+  const overlayMatch = /^(resource_[0-9a-f]+)_c_[0-9a-f]{8}$/.exec(stem);
+  const overlay = overlayMatch === null ? null : overlayMatch[1]!;
   const source = readFileSync(join(ROOT, candidate), "utf8");
   const attempts = plan(source, argv.includes("--pairs"));
   if (attempts.length === 0) {
@@ -273,12 +277,29 @@ async function main(): Promise<void> {
       const path = join(work, basename(candidate));
       writeFileSync(path, attempt.source);
       try {
-        const verification = await verifyCandidate(path, rom, work, [], ROM_BASE);
-        rows.push({
-          ids: attempt.ids,
-          differing: differingHalfwords(verification.actual, verification.expected),
-          size: verification.size,
-        });
+        // Overlay owners cannot go through verifyCandidate: it derives the
+        // function address by parsing the stem as hex, and an overlay stem is
+        // `resource_39c_c_0200xxxx`. Before this split the tool reported
+        // `compiled=0` for every overlay -- indistinguishable from "no transform
+        // helped", for 60% of the executable.
+        if (overlay !== null) {
+          const built = compileOverlayCandidate(path, work, overlay, candidate);
+          const reference = assembleOverlay(join(ROOT, "assets", "code", `${overlay}_overlay.s`));
+          const at = built.address - 0x02000000;
+          const expected = reference.subarray(at, at + built.data.length);
+          rows.push({
+            ids: attempt.ids,
+            differing: differingHalfwords(built.data, Buffer.from(expected)),
+            size: built.data.length,
+          });
+        } else {
+          const verification = await verifyCandidate(path, rom, work, [], ROM_BASE);
+          rows.push({
+            ids: attempt.ids,
+            differing: differingHalfwords(verification.actual, verification.expected),
+            size: verification.size,
+          });
+        }
       } catch {
         // A transform that produces uncompilable C is a miss, not a failure:
         // these rewrites are textual and the sweep is expected to overreach.

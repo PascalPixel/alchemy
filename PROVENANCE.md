@@ -58,12 +58,12 @@ git config core.hooksPath .hooks
 ```
 
 The hooks run the staged and outgoing-history checks implemented by
-`tools/check_publication.ts`, including commits where a forbidden artifact was
+`tools/check/check_publication.ts`, including commits where a forbidden artifact was
 added and later deleted. The same checks can be run directly:
 
 ```sh
-bun tools/check_publication.ts --staged
-bun tools/check_publication.ts --self-test
+bun tools/check/check_publication.ts --staged
+bun tools/check/check_publication.ts --self-test
 ```
 
 The file-shape gate is defense in depth; it cannot determine where knowledge

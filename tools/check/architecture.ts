@@ -109,6 +109,34 @@ export function unreachable(found: readonly Module[], seeds: ReadonlySet<string>
     .map((module) => `tools/${module.tool}/${module.name}.ts is reachable from nothing -- wire it up or delete it`);
 }
 
+// A document naming tools/<path>.ts must name a path that exists. The
+// reachability check above extracts module NAMES, so a stale path still
+// resolved by name and 24 of them survived a restructure unnoticed.
+// Any `bun tools/...` command a document gives must be runnable. Docs promised
+// 15 subcommands that had moved into lib/, and every gate stayed green because
+// they check tool NAMES, not the commands a reader would actually type.
+export function brokenDocCommands(docs: readonly [string, string][], exists: (path: string) => boolean): string[] {
+  const problems: string[] = [];
+  for (const [name, text] of docs) {
+    for (const [, tool, sub] of text.matchAll(/bun tools\/([a-z0-9_]+)\/index\.ts ([a-z0-9_]+)/g)) {
+      if (!exists(`tools/${tool}/${sub}.ts`)) {
+        problems.push(`${name}: "bun tools/${tool}/index.ts ${sub}" names a subcommand that does not exist`);
+      }
+    }
+  }
+  return problems;
+}
+
+export function brokenDocPaths(docs: readonly [string, string][], exists: (path: string) => boolean): string[] {
+  const problems: string[] = [];
+  for (const [name, text] of docs) {
+    for (const [, path] of text.matchAll(/(tools\/[a-z0-9_/]+\.ts)/g)) {
+      if (!exists(path)) problems.push(`${name} names ${path}, which does not exist`);
+    }
+  }
+  return problems;
+}
+
 function seedNames(): Set<string> {
   const text = [
     readFileSync(join(ROOT, "package.json"), "utf8"),
@@ -157,6 +185,17 @@ function selfTest(): void {
   if (withStray.some((module) => module.tool === "gcc296")) {
     throw new Error("a folder without index.ts must not count as a tool");
   }
+  // Fixture paths are deliberately unresolvable names, so a bulk path-rewriter
+  // cannot silently retarget them -- one did, and it flipped this assertion by
+  // rewriting the predicate rather than the data.
+  const present = "tools/kept_fixture/present_fixture.ts";
+  const docProblems = brokenDocPaths([["X.md", `see ${present} and tools/absent_fixture.ts`]],
+    (path) => path === present);
+  if (docProblems.length !== 1 || !docProblems[0]!.includes("tools/absent_fixture.ts")) {
+    throw new Error("a document naming a missing tool path must be caught");
+  }
+  const cmdProblems = brokenDocCommands([["Y.md", "run bun tools/absent_fixture/index.ts nope_fixture"]], () => false);
+  if (cmdProblems.length !== 1) throw new Error("a document promising a missing subcommand must be caught");
   console.log("architecture self-test ok");
 }
 
@@ -166,7 +205,17 @@ function main(): void {
     (path) => readFileSync(join(TOOLS, path), "utf8"),
     (path) => readdirSync(join(TOOLS, path)),
   );
-  const problems = [...crossToolImports(found), ...unreachable(found, seedNames()), ...brokenImports(found)];
+  const docs = readdirSync(ROOT).filter((name) => name.endsWith(".md"))
+    .map((name) => [name, readFileSync(join(ROOT, name), "utf8")] as [string, string])
+    .concat(readdirSync(join(ROOT, "docs")).filter((name) => name.endsWith(".md"))
+      .map((name) => [`docs/${name}`, readFileSync(join(ROOT, "docs", name), "utf8")] as [string, string]));
+  const problems = [
+    ...crossToolImports(found),
+    ...unreachable(found, seedNames()),
+    ...brokenImports(found),
+    ...brokenDocPaths(docs, (path) => existsSync(join(ROOT, path))),
+    ...brokenDocCommands(docs, (path) => existsSync(join(ROOT, path))),
+  ];
   const documented = Bun.spawnSync(["bun", join(TOOLS, "check", "documented.ts")], { cwd: ROOT });
   if (problems.length > 0) {
     for (const problem of problems) console.error(`error: ${problem}`);

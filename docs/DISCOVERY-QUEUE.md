@@ -20,23 +20,23 @@ function granularity**. 727 regions, one function body per file, every boundary
 proven by ROM byte-equality. Nothing needs to be discovered before it can be
 drafted. This file is that queue.
 
-Measured from `out/full/asm/manifest.json` (written by `tools/build_asm.ts`,
-`verification=rom`), the classifier in `tools/remaining_survey.ts`, and
-`tools/overlay_inventory.ts`. Region counts are scheduling diagnostics, not
+Measured from `out/full/asm/manifest.json` (written by `tools/make/build_asm.ts`,
+`verification=rom`), the classifier in `tools/decomp/remaining_survey.ts`, and
+`tools/overlay/overlay_inventory.ts`. Region counts are scheduling diagnostics, not
 project progress; the headline metric remains Full-C Byte Share.
 
 ## 1. Where the 395,816 bytes live
 
-`asm_c_debt_bytes` is not a separate measurement. `tools/build_full.ts`
+`asm_c_debt_bytes` is not a separate measurement. `tools/make/build_full.ts`
 partitions every assembly region by its `retention` field:
 `assemblySourceAccounting()` sums the five debt retentions (`c_candidate`,
 `split_first`, `merge_with_owner`, `merge_with_function_owner`,
 `merge_with_continuations`) into `cDebtBytes`, and the three keep retentions
 (`keep_asm`, `keep_structured_asm`, `adjacent_section_alignment`) into
-`retainedStructuralBytes`. `tools/audit_residuals.ts` asserts the two sum to
+`retainedStructuralBytes`. `tools/metrics/audit_residuals.ts` asserts the two sum to
 `asm_bytes`.
 
-So the per-kind census printed by `bun tools/build_asm.ts` reconciles exactly,
+So the per-kind census printed by `bun tools/make/build_asm.ts` reconciles exactly,
 with every kind falling on one side or the other:
 
 | kind | retention | regions | bytes | debt? |
@@ -87,7 +87,7 @@ is why the 43 "not emittable" regions in the 2026-07-26 survey have shrunk to
 
 ### 2b. The code-overlay inventory does not walk the main image — the whole 380 KB
 
-`discoverOverlay()` in `tools/overlay_inventory.ts` constructs
+`discoverOverlay()` in `tools/overlay/overlay_inventory.ts` constructs
 `new Discovery(data, OVERLAY_BASE)` where `data` comes from
 `assembleOverlay(overlay.source, OVERLAY_BASE)` and `OVERLAY_BASE` is
 `0x02000000`. Its input set is the 96 files matching `assets/code/*_overlay.s`.
@@ -103,9 +103,9 @@ is a separate problem: 540 rows, of which 220 are `contained_by`, 43 are
 
 ### 2c. Regions walked but not emitted as function rows — 0 bytes, main image
 
-There is no unwalked main-image region. `tools/audit_residuals.ts` proves
+There is no unwalked main-image region. `tools/metrics/audit_residuals.ts` proves
 `unowned_bytes=0`: the claimed, assembly, and asset manifests together span all
-8 MiB with no gap, and `tools/build_asm.ts` rejects any overlap. Each debt
+8 MiB with no gap, and `tools/make/build_asm.ts` rejects any overlap. Each debt
 region's span is verified against the ROM (`verification=rom`), and each abuts
 either a claimed C region or another assembly region.
 
@@ -117,7 +117,7 @@ Boundary quality is measured, not assumed:
 - **632 rows / 357,388 bytes** carry a `Func_XXXXXXXX` global at the region
   start: a known function entry with a ROM-proven span.
 
-`bun tools/build_asm.ts --source asm/080bbb0c.s` returns
+`bun tools/make/build_asm.ts --source asm/080bbb0c.s` returns
 `regions=1 bytes=6332` against the ROM, which is a stronger boundary proof than
 the `overlay_adopt` dry-run oracle used on the overlay side — it is byte
 equality over the whole span, not just non-straddling ends.
@@ -143,7 +143,7 @@ adoption:
 The nine `FunctionHead_` and seven `Continuation_` rows are about nine functions
 between them, so merging is a 16-region, ~9-function job worth 6,748 bytes.
 
-One further gap worth naming: `tools/remaining_survey.ts` filters
+One further gap worth naming: `tools/decomp/remaining_survey.ts` filters
 `retention === "c_candidate"`, so it reports 631 regions and is blind to the
 other 96 debt rows (38,456 bytes). Widening that filter to the five debt
 retentions is a one-line change and makes the survey agree with
@@ -159,7 +159,7 @@ high registers, then register the complete owner in
 `semantic/main-regions.json`, excluding pools and data gaps. `08026080`
 demonstrates the rule: its 2,138-byte ranked row is one 3,442-byte function
 across the `08026080`, `0802691c`, and `08026b44` executable ranges. Blocker
-classes are `tools/remaining_survey.ts`'s, extended to every debt retention.
+classes are `tools/decomp/remaining_survey.ts`'s, extended to every debt retention.
 
 <!--TOP40-->
 | # | address | size | insns | kind | boundary | blocker |
@@ -282,7 +282,7 @@ Discovery is **not** the constraint on the main image: the queue above is
 complete and needs no walking. Discovery *is* the constraint on code overlays, and
 one measured change dominates.
 
-**File `tools/overlay_inventory.ts`, function `discoverOverlay()` — the
+**File `tools/overlay/overlay_inventory.ts`, function `discoverOverlay()` — the
 after-return adjacency recovery block.** Today that block walks forward from a
 verified return and gives up at the first halfword that is neither `0x0000` nor
 `0x46c0` (`nop`), within 8 bytes:
@@ -296,7 +296,7 @@ words are arbitrary data, so this loop breaks immediately on essentially every
 real function boundary. The walker refuses to step over a literal pool, and
 therefore almost never finds the next function by adjacency.
 
-The data needed to fix it already exists: `Discovery` in `tools/discover.ts`
+The data needed to fix it already exists: `Discovery` in `tools/lib/discover.ts`
 records every pc-relative load target in `literal_slots`. Advancing `candidate`
 over the contiguous 4-aligned run of `literal_slots` entries before testing for
 a `0xb5xx` prologue is a few lines inside that same block.
@@ -326,7 +326,7 @@ Two smaller levers behind it:
 
 - The `first-prologue` seed loop `break`s after **one** seed. Seeding every
   `0xb5xx` in the header window costs nothing and is independent of the above.
-- `tools/remaining_survey.ts` filters `retention === "c_candidate"`. Widening it
+- `tools/decomp/remaining_survey.ts` filters `retention === "c_candidate"`. Widening it
   to the five debt retentions makes it report 727 rows / 395,816 bytes and
   agree with `asm_c_debt_bytes`.
 

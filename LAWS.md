@@ -8,7 +8,7 @@ from rediscovering the same source-shape constraints.
 
 The clean-room evidence boundary in [PROVENANCE.md](PROVENANCE.md) and the
 source-only publication gate in
-[tools/check_publication.ts](tools/check_publication.ts) apply here.
+[tools/check/check_publication.ts](tools/check/check_publication.ts) apply here.
 Externally suggested compiler behavior remains a hypothesis until reproduced
 locally. A confirmed law must name its in-repository evidence, scope, and
 confirmation date. An exact match proves the cited source shape; broader claims
@@ -87,7 +87,7 @@ must be tested on more than one function before being generalized.
 - **Producing configuration:** an evidenced translation-unit flag, never an
   inline register pin or arbitrary per-function matching knob.
 - **Evidence:** the `FIXED_R3_SOURCES` bundle and rationale in
-  [tools/alchemy_gcc.ts](tools/alchemy_gcc.ts).
+  [tools/lib/alchemy_gcc.ts](tools/lib/alchemy_gcc.ts).
 - **Confirmed:** 2026-07-21.
 
 ### Fourth stratum: default-ABI library units
@@ -123,7 +123,7 @@ must be tested on more than one function before being generalized.
   and with `pret/pokeruby` compiling its m4a unit with `old_agbcc`.
 - **Governance:** `old_agbcc` is admitted only for the source-scoped regions
   whose compiler provenance and pinned bundle digests are recorded in
-  [tools/alchemy_gcc.ts](tools/alchemy_gcc.ts). Other functions stay
+  [tools/lib/alchemy_gcc.ts](tools/lib/alchemy_gcc.ts). Other functions stay
   reconstruction assembly until they have their own exact-byte evidence.
 - **Recorded:** 2026-07-22.
 - **The stratum is wider than the audio bank (2026-07-24).** `08006c24` — a
@@ -371,7 +371,7 @@ must be tested on more than one function before being generalized.
 
 ### Inline helpers can be load-bearing, and the integrator's guard is a heuristic
 
-- **Fingerprint:** `tools/integrate_matches.ts` rejects any candidate matching
+- **Fingerprint:** `tools/lib/integrate_matches.ts` rejects any candidate matching
   `/inline_fn|^(static|inline)\b/m` as "carries an m2c helper". That guard
   exists to keep raw m2c output out of `src/`, but it is a text test, not a
   judgement about whether the helper is doing work.
@@ -1504,7 +1504,7 @@ against the approved bundle; full sourced notes in
   dropped and every data reference links to the plain even address. Branches were
   unaffected, which is why 1,236 regions matched with the bug present. `.thumb_set`
   is the alias form that keeps the branch type: the branch offset stays correct
-  *and* the data word gets its tag. Fixed in `tools/alchemy_gcc.ts`.
+  *and* the data word gets its tag. Fixed in `tools/lib/alchemy_gcc.ts`.
 - **Fallout, and the rule it produced:** the fix broke exactly one installed
   region, `0801a32c`, which had spelled a pointer *table* at `0x08031864` as
   `Func_08031864`. That spelling had been byte-neutral only because the stub was

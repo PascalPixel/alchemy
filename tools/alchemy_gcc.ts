@@ -410,6 +410,10 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 const CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_3ae_c_020002dc.c",
   "exact/resource_3ae_c_020002dc.c",
+  "semantic/resource_377_c_020001e0.c",
+  "exact/resource_377_c_020001e0.c",
+  "semantic/resource_3a2_c_02000ac0.c",
+  "exact/resource_3a2_c_02000ac0.c",
 ]);
 
 const CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES = new Set([
@@ -980,8 +984,14 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // recogniser wants a post-reload pair and leaves these untouched, and on
   // resource_3a2:0ac0 it costs the pool-load site as well (2 -> 4).  Do not
   // hand-permute; this is the model-divergence tier.
+  // resource_377:01e0 and resource_3a2:0ac0 closed on 2026-08-07 once
+  // -fthumb-call-literal-arg1-first grew its two discriminators (call uses
+  // exactly r0+r1; the two literals differ), which is precisely what
+  // separates the transposed site from the r0-first siblings described above.
   "semantic/resource_377_c_020001e0.c",
+  "exact/resource_377_c_020001e0.c",
   "semantic/resource_3a2_c_02000ac0.c",
+  "exact/resource_3a2_c_02000ac0.c",
   // resource_3ae:02dc closed on 2026-08-07: this mode plus
   // -fthumb-call-literal-arg1-first plus splitting the nested call
   // `Outer(Inner(0))' into two statements in reference order.
@@ -2339,6 +2349,14 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+        // -fthumb-call-literal-arg1-first, gated on the two discriminators the
+        // references actually observe: the call passes exactly r0 and r1 (a
+        // third argument register means the reference writes the pair in
+        // register order), and the two literals differ (an equal pair is also
+        // written in register order). Admitted 2026-08-07. Cross-host rule:
+        // rebuild+pin linux from the same commit before the next cloud
+        // session touches these routes.
+        "3db8ea91c88c50a170ac918c4b3475716f70f0d554bf91a5c7e982da7e6d807a",
         // -fthumb-call-literal-arg1-first: the existing
         // -fthumb-call-arg1-before-arg0 transform without its "only undo a
         // scheduler inversion" gate, restricted to a pair of plain literals.

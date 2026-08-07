@@ -43,6 +43,7 @@ export const FORK_MODES = [
   "-fthumb-call-arg1-before-arg0",
   "-fthumb-call-arg0-reg-source",
   "-fthumb-sink-constant-past-call",
+  "-fthumb-sink-constant-past-memory",
   "-fthumb-move-before-unary-alu",
   "-fthumb-call-arg0-before-store",
   "-fthumb-postcall-byte-increment-r2",

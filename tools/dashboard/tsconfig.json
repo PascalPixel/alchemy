@@ -1,0 +1,12 @@
+{
+  // The browser edge. client.ts runs in a page, so it needs DOM globals that
+  // must not leak into the Bun-side tools -- checking both under one config
+  // would let server code reference `document` and still pass.
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "types": []
+  },
+  "include": ["client.ts"],
+  "exclude": []
+}

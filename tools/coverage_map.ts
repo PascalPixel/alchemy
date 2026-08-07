@@ -938,10 +938,14 @@ export function retainedMainSpans(): Span[] {
       };
       for (const region of document.non_c_ranges ?? []) {
         const start = typeof region.address === "string" ? Number.parseInt(region.address, 16) : region.address;
-        if (!Number.isSafeInteger(start) || !Number.isSafeInteger(region.size) || region.size <= 0 ||
+        const size = region.size;
+        // Bound to locals first: `Number.isSafeInteger` does not narrow an
+        // optional away, so the arithmetic below was reading possibly-undefined.
+        if (start === undefined || size === undefined) continue;
+        if (!Number.isSafeInteger(start) || !Number.isSafeInteger(size) || size <= 0 ||
             !["literal_pool", "alignment_padding", "lookup_table"].includes(region.kind ?? "") ||
             !region.evidence?.trim()) continue;
-        explicitNonC.push({ start, end: start + region.size });
+        explicitNonC.push({ start, end: start + size });
       }
     } catch {
       // An unavailable/invalid registry never becomes orange evidence.
@@ -2052,7 +2056,12 @@ function preciseRect(rectangle: Rect, attributes: string): string {
     `height="${precise(bottom - y)}" ${attributes}/>`;
 }
 
-function boxTreeCategoryBytes(area: Area, category: string): number {
+// Keyed by the same union the tile map uses, not by bare `string`: a typo'd
+// category silently returned 0 bytes and drew an empty band.
+function boxTreeCategoryBytes(
+  area: Area,
+  category: AssetMaturityCategory | CoverageCategory,
+): number {
   return area.tiles.reduce((sum, tile) => sum + (tile.categories[category] ?? 0), 0);
 }
 
@@ -2587,10 +2596,10 @@ export function selfTest(): void {
     () => resolveSemanticTree(semanticBearing, undefined, "refs/heads/no-such-source"),
     "an unresolvable recorded semantic source",
   );
-  if (resolveSemanticTree(semanticBearing, undefined, undefined).id !== "exact-with-semantic") {
+  if (resolveSemanticTree(semanticBearing, undefined, undefined)?.id !== "exact-with-semantic") {
     throw new Error("the describes-itself heuristic stopped applying with no recorded source");
   }
-  if (resolveSemanticTree(semanticBearing, undefined, "worktree").id !== "exact-with-semantic") {
+  if (resolveSemanticTree(semanticBearing, undefined, "worktree")?.id !== "exact-with-semantic") {
     throw new Error("a recorded worktree source did not fall through to the heuristic");
   }
   if (resolveSemanticTree(semanticBearing, "none", "refs/heads/example") !== undefined) {

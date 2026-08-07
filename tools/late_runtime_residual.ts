@@ -10,13 +10,16 @@ const DEFAULT_CATALOG = join(ROOT, "assets/data/late_runtime_catalog.json");
 type Json = Record<string, unknown>;
 type Values = { representation: "uniform_fill"; value: 0 | 255 } | { representation: "byte_values"; values: number[] };
 
-interface ComponentSource extends Values {
+// An intersection, not `interface extends`: `Values` is a union, which an
+// interface cannot extend, and the failed extend erased the discriminant so
+// every `representation` narrowing below silently lost its type.
+type ComponentSource = Values & {
   name: string;
   address: string;
   end: string;
   role: string;
   type: "u8" | "s16" | "u16";
-}
+};
 
 interface RegionSource {
   name: string;

@@ -66,6 +66,9 @@ export const FORK_MODES = [
   // The orr destination tie, resolved toward the older input. Witness
   // resource_3b3:1fd4.
   "-fthumb-orr-into-older-input",
+  // Two in-place constant shifts transposed across one unrelated insn.
+  // Witness resource_3c8:2f30.
+  "-fthumb-swap-shifts-across-insn",
   "-fthumb-postcall-byte-increment-r2",
   "-fthumb-entry-frame-cluster", "-fthumb-literal-before-index-shift",
   "-fthumb-low-constant-before-high-move", "-fthumb-high-move-before-stack-store",

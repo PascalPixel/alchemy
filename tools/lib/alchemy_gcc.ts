@@ -1120,6 +1120,12 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // Singles cohort exact, 2026-08-07.
   "semantic/resource_3a3_c_02000d08.c",
   "exact/resource_3a3_c_02000d08.c",
+  // resource_373:10d8 — singles cohort exact, 2026-08-07.  The residue was ten
+  // bytes from 0x020010fc: the reference issues the `movs r0,#X' setter ahead
+  // of the shifted half of the argument pair, which is exactly this tie-break.
+  // No source change.
+  "semantic/resource_373_c_020010d8.c",
+  "exact/resource_373_c_020010d8.c",
   // Singles cohort over the low-differing tail, 2026-08-07: this flag is the
   // single largest improvement for all three of these owners (20->2, 21->10 and
   // 21->15 differing bytes respectively) with no source change.

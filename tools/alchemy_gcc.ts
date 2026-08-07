@@ -1834,6 +1834,37 @@ const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
   "exact/resource_3a5_c_02001874.c",
   "semantic/resource_3a5_c_02001874.c",
 ]);
+// A register load stays below the accumulate and store it was hoisted over.
+const SINK_LOAD_PAST_STORE_OVERLAY_SOURCES = new Set([
+  // The thirteen copies of the :0104 integrator -- `ldr r1, [r0, #80]' below
+  // the store at 0x0200012a rather than above it, 2026-08-07.
+  "exact/resource_382_c_02000104.c",
+  "semantic/resource_382_c_02000104.c",
+  "exact/resource_385_c_02000104.c",
+  "semantic/resource_385_c_02000104.c",
+  "exact/resource_387_c_02000104.c",
+  "semantic/resource_387_c_02000104.c",
+  "exact/resource_38a_c_02000104.c",
+  "semantic/resource_38a_c_02000104.c",
+  "exact/resource_396_c_02000104.c",
+  "semantic/resource_396_c_02000104.c",
+  "exact/resource_39b_c_02000104.c",
+  "semantic/resource_39b_c_02000104.c",
+  "exact/resource_3a0_c_02000104.c",
+  "semantic/resource_3a0_c_02000104.c",
+  "exact/resource_3a5_c_02000104.c",
+  "semantic/resource_3a5_c_02000104.c",
+  "exact/resource_3a6_c_02000104.c",
+  "semantic/resource_3a6_c_02000104.c",
+  "exact/resource_3ab_c_02000104.c",
+  "semantic/resource_3ab_c_02000104.c",
+  "exact/resource_3b3_c_02000104.c",
+  "semantic/resource_3b3_c_02000104.c",
+  "exact/resource_3be_c_02000104.c",
+  "semantic/resource_3be_c_02000104.c",
+  "exact/resource_3c0_c_02000104.c",
+  "semantic/resource_3c0_c_02000104.c",
+]);
 // A literal r0 argument written between the two pool loads of a sheet.
 const CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES = new Set([
   // resource_39b:0f48 -- `movs r0, #0' between the r2 and r1 pool loads at
@@ -2279,6 +2310,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-arg-before-shift-in-sheet"]
       : []),
+    ...(SINK_LOAD_PAST_STORE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-sink-load-past-store"]
+      : []),
     ...(CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg0-between-pool-pair"]
       : []),
@@ -2413,6 +2447,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
+    ...SINK_LOAD_PAST_STORE_OVERLAY_SOURCES,
     ...CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES,
     ...STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES,
     ...SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES,
@@ -2644,6 +2679,7 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "3c8e99bb06fe15eaae8f04c83eec291a3b362d56649d79dec57a4884b064d7cf",
       "fa87afe4493a462fc2dbb11d0967b189ed040eeeb2b860422d3da5e38ab5d69c",
       "22a827bbcd8295b84148aa2e12270ead8d92fdd6af4582e2341afa21825014b7",
       "5a62f4a9686ac3492956d1d9e2e8da3039ff1d7d74961991d96ac366d7ccfba7",

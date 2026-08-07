@@ -68,6 +68,8 @@ export const FORK_MODES = [
   "-fthumb-orr-into-older-input",
   // Two in-place constant shifts transposed across one unrelated insn.
   // Witness resource_3c8:2f30.
+  // the thirteen :0104 integrators -- the load below the store
+  "-fthumb-sink-load-past-store",
   // resource_39b:0f48 -- the immediate between two pool loads
   "-fthumb-call-arg0-between-pool-pair",
   // resource_3ca:004c -- the 0x05000000 halfword write

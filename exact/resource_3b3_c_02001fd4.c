@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-orr-into-older-input: the last
+ * residual was the second `orrs' at 0x02002024, where both inputs die and the
+ * reference accumulates into r5 -- the register holding the 1 set back at
+ * 0x02002014 -- while the allocator accumulates into the freshly loaded r3.
+ */
+
 #include "types.h"
 
 /*

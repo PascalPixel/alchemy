@@ -65,6 +65,7 @@ export const FORK_MODES = [
   // literal-pool load *thumb_movhi_insn's "mn" alternative forces. Witness
   // resource_377:03f8 (2026-08-07).
   "-fthumb-hi-immediate",
+  "-fthumb-call-pool-arg1-first",
 ] as const;
 
 export const STOCK_SWITCHES = [

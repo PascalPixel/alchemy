@@ -27,14 +27,20 @@
     "test:compiler-batch": "bun tools/search_compiler_modes.ts --self-test",
     "test:overlay-candidate-rank": "bun tools/overlay_candidate_rank.ts --self-test",
     "test:statement-order": "bun tools/statement_order_sweep_main.ts --self-test",
-    "test": "bun tools/self_test.ts",
+    "test": "bun run lint && bun tools/self_test.ts",
     "build:inventory": "bun tools/overlay_inventory.ts",
-    "sanctum": "bun tools/check_sanctum.ts"
+    "sanctum": "bun tools/check_sanctum.ts",
+    "lint": "bun tools/no_asm_c.ts && bun tools/decomp_targets.ts && bun tools/cache_key_lint.ts && bun tools/alchemy_gcc.ts --lint",
+    "typecheck": "tsc --noEmit && tsc -p tools/dashboard/tsconfig.json --noEmit"
   },
   "engines": {
     "bun": "1.3.14"
   },
   "dependencies": {
     "opentype.js": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14",
+    "typescript": "^7.0.2"
   }
 }

@@ -188,7 +188,7 @@ const CONTROL_NAMES = new Set<ControlName>([
   "modulation_depth", "modulation_type", "tuning",
 ]);
 
-// トーンバンクアドレス → SF2 バンク番号 (build_soundfont.ts と一致)。
+// トーンバンクアドレス → SF2 バンク番号。
 const TONE_BANK_TO_SF2: Record<string, number> = {
   "0x080fba78": 0, // bank_0 (144 レコード)
   "0x080fc138": 1, // bank_1 (81 レコード)

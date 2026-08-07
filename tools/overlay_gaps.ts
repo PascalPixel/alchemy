@@ -767,7 +767,7 @@ function main(): void {
   // not, and the gap was found by the liveness control of resource_380's
   // certification rather than by reading this file. Same blind spot as sweep
   // B's push requirement, sweep D's tail counting, `ownerOf` accepting an
-  // inventory row, and `veneer_resolve`'s 0x1000 cap: the fault lives in what
+  // inventory row, and the veneer resolver's 0x1000 cap: the fault lives in what
   // the tool ACCEPTS, not in what it scans.
   if (Object.keys(report).length === 0) {
     console.log(

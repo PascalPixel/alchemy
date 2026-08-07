@@ -53,6 +53,23 @@ tool, not the engine: never run them unbounded and never promote a near-match.
 If both bounded axes are spent and the owner is still not exact, seal it in
 [SANCTUM.md](SANCTUM.md) so nobody re-derives the same floor.
 
+### When you need to see inside the compiler
+
+A residual of 2-5 halfwords at the exact size is usually a scheduler tie, and
+`mode_sweep.ts` marks those `escalation: compiler-rtl-scheduler-trace`. That
+escalation is these tools:
+
+```bash
+bun tools/candidate_explain.ts <candidate.c>   # compile under -fsched-verbose=9
+bun tools/rtl_schedule.ts <dump>               # the fork's real tier order, not a model of it
+bun tools/rtl_align.ts <a> <b>                 # align two instruction sequences by content
+bun tools/bl_site_symbols.ts <overlay:offset>  # the symbol each `bl` must name
+bun tools/alchemist.ts <candidate.c>           # diagnosis-driven source permuter
+```
+
+Reach for these when a residual has survived both sweeps and you need the reason
+rather than another guess.
+
 ## Adopting
 
 Adoption is what moves the counter. The source must be **outside** `exact/`

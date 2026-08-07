@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-stack-args-before-stores: the
+ * last residual was the stacked argument pair, which the reference
+ * materialises into two registers -- the second one down -- before issuing
+ * either `str' to sp, where one scratch register interleaves them.
+ */
+
 #include "types.h"
 
 /*

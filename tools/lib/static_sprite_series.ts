@@ -409,7 +409,7 @@ function writeAtlases(
   return paths;
 }
 
-export function build_static_sprite_series(indexPath: string, palettePath: string): [Buffer, Json] {
+export function build_static_sprite_series(indexPath: string, palettePath: string): [Buffer<ArrayBufferLike>, Json] {
   const index = JSON.parse(readFileSync(indexPath, "utf8"));
   if (index.format !== 1 || index.codec !== "golden-sun-static-sprite-series") {
     throw new Error("unsupported static-sprite series index");
@@ -429,7 +429,7 @@ export function build_static_sprite_series(indexPath: string, palettePath: strin
     throw new Error("invalid static-sprite series index");
   }
   const palette = selectedPalette(palettePath, paletteOffset, paletteEntries);
-  let result = Buffer.alloc(prefix);
+  let result: Buffer<ArrayBufferLike> = Buffer.alloc(prefix);
   let framesBuilt = 0, directoryEntries = 0;
   const root = dirname(indexPath);
   for (const item of index.packages) {

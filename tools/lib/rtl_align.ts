@@ -121,7 +121,7 @@ function selfTest(): void {
     set: { dest: { kind: "reg", number: destReg, name: `r${destReg}` }, src: { kind: "unknown", raw: "" } },
   });
   const callInsn = (uid: number): RtlInsn =>
-    ({ uid, kind: "call_insn", code: "parallel", set: null, callTarget: { kind: "unknown", raw: "", dependencies: [] }, raw: "" });
+    ({ uid, kind: "call_insn", code: "parallel", set: null, callTarget: { kind: "unknown", raw: "" }, raw: "", dependencies: [] });
   const instr = (offset: number, mnemonic: string, destReg: number | null): Instruction => ({
     offset, mnemonic, raw: "",
     operands: destReg === null ? [] : [{ kind: "reg", name: `r${destReg}`, number: destReg, writeback: false }],

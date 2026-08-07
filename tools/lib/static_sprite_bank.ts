@@ -463,7 +463,7 @@ export function self_test(): void {
     "noncanonical mode-0 frame was accepted",
   );
 
-  const mode1Kind0Pixels = Buffer.from({ length: 53 }, (_, index) => index + 1);
+  const mode1Kind0Pixels = Buffer.from(Array.from({ length: 53 }, (_, index) => index + 1));
   const mode1Kind0Frame = encode_general(mode1Kind0Pixels, [["l", mode1Kind0Pixels.length]]);
   const mode1Kind0Arena = Buffer.concat([mode1Kind0Frame, Buffer.from([1])]);
   const [, prefetched] = decode_general_trace(

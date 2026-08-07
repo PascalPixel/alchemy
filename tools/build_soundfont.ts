@@ -7,14 +7,14 @@
 //   一切参照しない。SF2 形式そのものは公開仕様であり、その仕様に従って実装する。
 //
 // ── 入力 (すべてリポジトリ内・追跡対象) ─────────────────────────────────
-//   ・assets/audio/waves/index.json + wave_NN.pcm8.wav
+//   ・assets/audio/waves_index.json + waves_wave_NN.pcm8.wav
 //       32 個の署名付き PCM 波形。各波形の周波数 (frequency = サンプルレート×1024)
 //       とループ開始位置を保持する。コーデックは tools/audio_wave.ts。
-//   ・assets/audio/engine/onshoku.json  … トーンバンク (225 トーンレコード)。
+//   ・assets/audio/engine_onshoku.json  … トーンバンク (225 トーンレコード)。
 //       mp2k 系の 12 バイトトーン形式。各レコードは種別 (pcm / pulse_1 / pulse_2 /
 //       wave(CGB ch3) / noise / rhythm)、ルートキー、パン、ADSR エンベロープ、
 //       および PCM サンプルアドレスまたは PSG パラメータを持つ。
-//   ・assets/audio/engine/hakei.json    … 18 個の CGB プログラマブル波形 (32 nibble)。
+//   ・assets/audio/engine_hakei.json    … 18 個の CGB プログラマブル波形 (32 nibble)。
 //
 // ── プログラム番号の対応 (最重要) ───────────────────────────────────────
 //   エクスポートされた MIDI (tools/midi_roundtrip.ts) は音色選択を標準 MIDI の
@@ -102,8 +102,11 @@ import { signedPcmFromWav } from "./audio_wave.ts";
 // ── リポジトリ内パス ────────────────────────────────────────────────────
 const REPO = resolve(dirname(new URL(import.meta.url).pathname), "..");
 const AUDIO = join(REPO, "assets", "audio");
-const WAVES_DIR = join(AUDIO, "waves");
-const ENGINE_DIR = join(AUDIO, "engine");
+// Extracted audio assets are flat and prefixed -- `waves_index.json`,
+// `engine_onshoku.json`, `waves_wave_00.pcm8.wav` -- not the subdirectories
+// these paths once named. `source` fields inside the indexes stay unprefixed.
+const wavesFile = (name: string): string => join(AUDIO, `waves_${name}`);
+const engineFile = (name: string): string => join(AUDIO, `engine_${name}`);
 const MIDI_DIR = join(AUDIO, "midi");
 const OUT_DIR = join(REPO, "out", "audio_midi");
 const OUT_SF2 = join(OUT_DIR, "golden-sun.sf2");
@@ -582,9 +585,9 @@ interface BuildResult {
 }
 
 function buildSoundFont(): BuildResult {
-  const waveIndex = readJson(join(WAVES_DIR, "index.json"));
-  const onshoku = readJson(join(ENGINE_DIR, "onshoku.json"));
-  const hakei = readJson(join(ENGINE_DIR, "hakei.json"));
+  const waveIndex = readJson(wavesFile("index.json"));
+  const onshoku = readJson(engineFile("onshoku.json"));
+  const hakei = readJson(engineFile("hakei.json"));
 
   // 1) PCM サンプル (32 波形)。
   const samples: SampleDef[] = [];
@@ -592,7 +595,7 @@ function buildSoundFont(): BuildResult {
   sampleLoopedByName = new Map();
   for (const wave of waveIndex.waves) {
     const rate = Math.round(Number(wave.frequency) / 1024);
-    const wav = readFileSync(join(WAVES_DIR, wave.source));
+    const wav = readFileSync(wavesFile(wave.source));
     const data = pcm16FromWav(wav, rate);
     const looped = wave.loop_start !== null;
     const def: SampleDef = {

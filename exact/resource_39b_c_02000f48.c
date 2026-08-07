@@ -1,3 +1,10 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-call-arg0-between-pool-pair.
+ * Two residuals closed: the horizontal stop is 0x80000 + (page << 19), not
+ * 0x40000; and at 0x02000f56 the reference writes `movs r0, #0' between the r2
+ * and r1 pool loads instead of after both.
+ */
+
 #include "types.h"
 
 
@@ -33,6 +40,6 @@ void Func_02000f48(s32 page)
     actor = Func_02003464(0);
     Func_0200340a(actor, 0);
     Func_02003458(8);
-    Func_020034c2(0, 0x40000 + (page << 19), 0);
+    Func_020034c2(0, 0x80000 + (page << 19), 0);
     Func_02003470(30);
 }

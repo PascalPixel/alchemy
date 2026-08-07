@@ -150,7 +150,7 @@ The gates, run by `bun run lint` and by the git hooks. `no_asm_c` enforces the
 hardest rule in the repository (C and headers may never use an assembly escape
 hatch, in any spelling), `check_publication` keeps ROM bytes and generated
 directories out of anything publishable, `check_commit_progress` enforces the
-`[C exact/total bytes]` commit subject, `check_sanctum` gates the sealed-owner
+`[ ☀️ exact / total ]` commit subject, `check_sanctum` gates the sealed-owner
 ledger, `source_citations` keeps the provenance comments in reconstructed
 sources pointing at tools that exist and proves every retirement row in
 PROVENANCE.md actually recovers, and `architecture` enforces the shape of `tools/` itself: every tool
@@ -174,7 +174,7 @@ a check worth running twice belongs in here, not in a shell one-liner.
 - **Never copy game-specific code** from another decompilation project. Tooling
   and methodology are reusable; function bodies, names, types and comments are
   not. See [PROVENANCE.md](PROVENANCE.md).
-- **Commit subjects end with `[C exact/total bytes]`** matching the regenerated
+- **Commit subjects end with `[ ☀️ exact / total ]`** matching the regenerated
   metrics. A deliberate regression needs `metrics: revert reduces Full-C`; a
   changed denominator needs `metrics: correct executable denominator`.
 - **Never resolve a merge in the compiler routing tables or the fork's `arm.c`

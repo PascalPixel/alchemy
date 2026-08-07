@@ -31,7 +31,7 @@ import { assembleOverlay, overlayCSources } from "./overlay_disasm.ts";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const OVERLAY_BASE = 0x02000000;
-const SUBJECT = /\[C ([0-9]{1,3}(?:,[0-9]{3})*)\/([0-9]{1,3}(?:,[0-9]{3})*) bytes\]$/;
+const SUBJECT = /\[ ☀️ ([0-9]{1,3}(?:,[0-9]{3})*) \/ ([0-9]{1,3}(?:,[0-9]{3})*) \]$/;
 
 export type IntervalKind =
   | "thumb"
@@ -165,18 +165,31 @@ function canonicalCount(value: string, label: string): number {
   return parsed;
 }
 
-export function formatSubject(fullCBytes: number, executableBytes: number): string {
-  if (fullCBytes > executableBytes) throw new Error("Full-C numerator exceeds executable denominator");
-  return `[C ${commas(fullCBytes)}/${commas(executableBytes)} bytes]`;
+/**
+ * The commit marker is rendered in whole kilobytes (floor of bytes/1000), so
+ * the subject reads `[ ☀️ 316 / 1,345 ]`. The report in
+ * `metrics/<target>-progress.json` remains the byte-exact record; the subject
+ * is the human-legible summary of it. Both sides of every comparison run
+ * through this function, so the checker compares kilobytes to kilobytes.
+ */
+export function kilobytes(value: number): number {
+  return Math.floor(integer(value, "byte count") / 1000);
 }
 
-export function parseSubject(subject: string): { fullCBytes: number; executableBytes: number } | undefined {
+export function formatSubject(fullCBytes: number, executableBytes: number): string {
+  if (fullCBytes > executableBytes) throw new Error("Full-C numerator exceeds executable denominator");
+  return `[ ☀️ ${commas(kilobytes(fullCBytes))} / ${commas(kilobytes(executableBytes))} ]`;
+}
+
+export function parseSubject(subject: string): { fullCKilobytes: number; executableKilobytes: number } | undefined {
   const match = subject.match(SUBJECT);
   if (!match) return undefined;
-  const fullCBytes = canonicalCount(match[1], "Full-C numerator");
-  const executableBytes = canonicalCount(match[2], "executable denominator");
-  if (fullCBytes > executableBytes) throw new Error("Full-C numerator exceeds executable denominator");
-  return { fullCBytes, executableBytes };
+  const fullCKilobytes = canonicalCount(match[1], "Full-C numerator");
+  const executableKilobytes = canonicalCount(match[2], "executable denominator");
+  if (fullCKilobytes > executableKilobytes) {
+    throw new Error("Full-C numerator exceeds executable denominator");
+  }
+  return { fullCKilobytes, executableKilobytes };
 }
 
 export function roundHalfUpPercent(numerator: number, denominator: number): number {
@@ -851,16 +864,18 @@ function selfTest(): void {
   if (intervalBytes([item(0, 4), item(2, 6)]) !== 6) throw new Error("partial interval union failed");
   if (overlapDiagnostics([item(0, 4), item(2, 6)]).length !== 1) throw new Error("overlap diagnostics failed");
   if (overlapDiagnostics([item(0, 4), item(0, 4)]).length !== 0) throw new Error("identical alias failed");
-  if (formatSubject(123456, 1234567) !== "[C 123,456/1,234,567 bytes]") throw new Error("subject format failed");
-  const parsed = parseSubject("decomp: x [C 123,456/1,234,567 bytes]");
-  if (!parsed || parsed.fullCBytes !== 123456 || parsed.executableBytes !== 1234567) {
+  if (kilobytes(1999) !== 1 || kilobytes(999) !== 0) throw new Error("kilobyte floor failed");
+  if (formatSubject(123456, 1234567) !== "[ ☀️ 123 / 1,234 ]") throw new Error("subject format failed");
+  const parsed = parseSubject("decomp: x [ ☀️ 123 / 1,234 ]");
+  if (!parsed || parsed.fullCKilobytes !== 123 || parsed.executableKilobytes !== 1234) {
     throw new Error("subject parse failed");
   }
   for (const invalid of [
-    "x [C 123456/1,234,567 bytes]",
-    "x [C 123,456 /1,234,567 bytes]",
-    "x [C 123,456/1,234,567]",
-    "x [C 2/1 bytes]",
+    "x [ ☀️ 1234 / 1,234 ]",
+    "x [ ☀️ 123/1,234 ]",
+    "x [ ☀️ 123 / 1,234 bytes]",
+    "x [C 123,456/1,234,567 bytes]",
+    "x [ ☀️ 2 / 1 ]",
     "x [123 of 456]",
   ]) expectReject(() => {
     if (!parseSubject(invalid)) throw new Error("rejected");

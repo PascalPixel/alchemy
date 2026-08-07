@@ -772,6 +772,12 @@ const NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES = new Set([
 // deliberately excluded, since a pool load is one instruction and sharing it is
 // not a size change.
 const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3a2:0924 writes 128<<9 and 128<<8 at two call sites each; the
+  // fork caches both in callee-saved registers, which costs the owner an extra
+  // `push {r6}' the reference does not have.  92 -> 18 differing halfwords,
+  // 2026-08-07.
+  "exact/resource_3a2_c_02000924.c",
+  "semantic/resource_3a2_c_02000924.c",
   // resource_371:1888 and its two byte-identical siblings call a four-argument
   // import as (-1, -1, -1, 0); the fork CSEs the -1 into one register and
   // copies it out, where the reference materialises `movs rN, #1' into r0-r2
@@ -951,6 +957,12 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // resource_3a2:0924 — six of its call sites want the `movs r0,#X' setter
+  // emitted before the `lsls r1,...' half of a shifted constant argument.
+  // Pairs cohort put this flag at differing=13; paired with
+  // cse-two-insn-immediate-off (see that set), 2026-08-07.
+  "semantic/resource_3a2_c_02000924.c",
+  "exact/resource_3a2_c_02000924.c",
   // Exact once the halfword store goes through a pointer local and an s32 value
   // local (tell #18/#19); the only residue was the four-argument call at 0x12,
   // whose r0 setter the reference issues between the two split constants.
@@ -1813,6 +1825,12 @@ const NO_EXPENSIVE_OVERLAY_SOURCES = new Set([
   // (the resource_3aa pattern) this flag alone is byte-exact.
   "exact/resource_398_c_02000538.c",
   "semantic/resource_398_c_02000538.c",
+  // resource_3a2:0924 carries the same `ldrb / movs #1 / orrs / strb' flag-set
+  // with the same r2/r3 swap; four source spellings (compound |=, split load
+  // local, reversed operand order, pointer local) reach nothing and this is the
+  // only single that closes it.  2026-08-07.
+  "exact/resource_3a2_c_02000924.c",
+  "semantic/resource_3a2_c_02000924.c",
 ]);
 const NO_GCSE_OVERLAY_SOURCES = new Set([
   // The long resource_38f call sheet retains the original local lifetimes

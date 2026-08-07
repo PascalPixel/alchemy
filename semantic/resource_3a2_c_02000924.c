@@ -61,6 +61,25 @@
  * 160<<7 = 0x5000, 148<<17 = 0x1280000, 172<<17 = 0x1580000, 139<<4 = 0x8b0,
  * 220<<1 = 440, 204<<1 = 408, 129<<1 = 258.
  *
+ * RESIDUE (2 of 206 halfwords, 2026-08-07).  Routing takes this owner from 92
+ * differing halfwords to 2: -fno-cse-two-insn-immediate (the fork otherwise
+ * caches 128<<9 and 128<<8 in callee-saved registers and pays an extra push),
+ * -fsched-low-dest-first (six call sites want the `movs r0,#X' setter before
+ * the `lsls r1' half of a shifted constant), and -fno-expensive-optimizations
+ * (the `ldrb / movs #1 / orrs / strb' flag-set at 0x8c allocates r2/r3 the
+ * other way round -- the resource_3b2:12b4 class).  Splitting the trailing
+ * callback clear into a `void *callback' assigned before the 0x104 call is
+ * what makes the reference's r5 lifetime appear (tell #9).
+ *
+ * What is left is the closed transposed-argument class: at 0xd2 the reference
+ * loads the pool pointer into r1 before `movs r0,#10' for
+ * Func_02001f14(10, Data_0200962c), while 0x14c is the SAME shape (a constant
+ * r0 of 10 and a pool r1) for Func_0200202e and keeps r0 first.  Both orders
+ * appear for one operand shape inside one owner, so no operand-shape flag can
+ * discriminate them; -fthumb-call-literal-arg1-first regresses it to 6 and
+ * -fthumb-immediate-latency to 77.  Address-of, local-pointer and local-value
+ * spellings of the argument all leave it unchanged.
+ *
  * Uncertainties: Func_0808a218 at 0x02000a1e is reached with no register set
  * since the preceding call, so it is spelled with no arguments.  The record
  * flag byte at +35 has bit 0 SET here, where Func_020010b8 clears bit 1 of the
@@ -137,6 +156,7 @@ extern void Func_02001f94();
 void Func_02000924(void)
 {
     u8 *record;
+    void *callback;
 
     if (Func_02001dfa(0x89a) == 0) return;
 
@@ -174,12 +194,13 @@ void Func_02000924(void)
     Func_02001f3c(10);
     Func_02001ff0();
 
+    callback = 0;
     Func_02001f3e(0, 0x10000, 0x8000);
     Func_02001f4e(0, Data_020096b8);
     Func_02001f5c(0);
     Func_02001f2a(10);
 
-    *(void **)(Func_02001f50(0) + 108) = 0;
+    *(void **)(Func_02001f50(0) + 108) = callback;
 
     Func_02001f3a(30);
     Func_02001fd2(10, 2);

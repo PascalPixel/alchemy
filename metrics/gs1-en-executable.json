@@ -18133,18 +18133,6 @@
         },
         {
           "start": 33563748,
-          "end": 33564500,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33564500,
-          "end": 33564516,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33564516,
           "end": 33565364,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

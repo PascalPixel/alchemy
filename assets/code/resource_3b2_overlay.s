@@ -1155,12 +1155,8 @@ AlchemyC_02000474:
 	.4byte 0x03001e70
 	.4byte 0x0200b19c
 	.4byte 0x0200b1b4
-	.4byte 0x23036d00
-	.4byte 0x40197a42
-	.4byte 0x425b230d
-	.4byte 0x40130089
-	.4byte 0x7243430b
-	.2byte 0x4770
+AlchemyC_020009dc:
+	.space 0x16
 	.2byte 0x0000
 AlchemyC_020009f4:
 	.space 0x56

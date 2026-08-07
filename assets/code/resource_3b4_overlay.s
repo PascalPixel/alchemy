@@ -2155,11 +2155,8 @@ AlchemyC_020015e4:
 	.4byte 0x801a0112
 	.4byte 0x00004770
 	.4byte 0x04000052
-	.4byte 0x4b024a01
-	.4byte 0x4770801a
-	.4byte 0x00000607
-	.2byte 0x0052
-	.2byte 0x0400
+AlchemyC_020018d0:
+	.space 0x10
 AlchemyC_020018e0:
 	.space 0xa0
 AlchemyC_02001980:

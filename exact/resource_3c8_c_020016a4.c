@@ -1,10 +1,14 @@
 #include "types.h"
 
 /*
- * BYTE-EXACT but NOT adoptable: overlay_adopt refuses the span because the
- * audited thumb interval starts at 0x020016a6, one halfword after this
- * owner's 0x020016a4 start, so 0x020016a4..0x02001780 is not inside a single
- * audited interval.  differing_halfwords=0 as written.
+ * BYTE-EXACT and adopted 2026-08-07.  The earlier note here said the span was
+ * unadoptable because the audited thumb interval began at 0x020016a6, one
+ * halfword after this owner's start.  The cause was in the assembly, not the
+ * C: the `push {r5, lr}' at 0x020016a4 was still spelled as a raw
+ * `.2byte 0xb520' directive, so the audit classified it as data and left a
+ * two-byte hole between the neighbouring thumb runs.  Canonicalising that one
+ * halfword back into its instruction closes the hole (identical bytes; the ROM
+ * decode confirms it) and the span adopts.
  */
 
 /*

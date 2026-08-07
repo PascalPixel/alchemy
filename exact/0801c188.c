@@ -51,9 +51,12 @@ void Func_0801c188(void)
     transfer = (struct TransferState_0801c188 *)(state + 0x30C);
     resource_index = selection->resource_index;
     resource_table = Func_08002f40((s32)&Value_000000f1);
-    resource = resource_table
-        + *(u16 *)(resource_table + selection->resource_index * 2);
-    buffer->resource = resource;
+    {
+        void **destination = &buffer->resource;
+        resource = resource_table
+            + *(u16 *)(resource_table + selection->resource_index * 2);
+        *destination = resource;
+    }
     Func_080053e8(resource, buffer);
 
     if (transfer->active == 0)

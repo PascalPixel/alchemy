@@ -38,28 +38,28 @@ void Func_08003538(void)
         *active = flags;
         switch (count) {
         default:
-            REG32(0x03001cf4) = 0x30;
+            REG32(0x03001d04) = 0x30;
             mask = 0xff0f;
-            goto apply_mask;
+            *active &= mask;
+            break;
         case 0:
-            REG32(0x03001cf4) = 0x30;
+            REG32(0x03001d04) = 0x30;
             break;
         case 1:
-            REG32(0x03001cf4) = flags & 0xf0;
+            REG32(0x03001d04) = flags & 0xf0;
             break;
         case 2:
-            if ((REG32(0x03001cf4) & *active) == 0)
-                REG32(0x03001cf4) = 0x30;
-            *active &= REG32(0x03001cf4) ^ 0xffff;
+            if ((REG32(0x03001d04) & *active) == 0)
+                REG32(0x03001d04) = 0x30;
+            *active &= REG32(0x03001d04) ^ 0xffff;
             break;
         case 3:
-            if ((REG32(0x03001cf4) & 0x30) != 0)
+            if ((REG32(0x03001d04) & 0x30) != 0)
                 selected = 0x30;
-            if ((REG32(0x03001cf4) & 0xc0) != 0)
+            if ((REG32(0x03001d04) & 0xc0) != 0)
                 selected = 0xc0;
-            mask = 0xff0f ^ selected;
-            REG32(0x03001cf4) = flags & mask;
-apply_mask:
+            mask = 0xffff ^ selected;
+            REG32(0x03001d04) = flags & mask;
             *active &= mask;
             break;
         }
@@ -67,7 +67,7 @@ apply_mask:
         REG32(0x03001afc) = flags;
     }
 
-    REG32(0x03001afc) =
-        (REG32(0x03001d04) ^ REG32(0x03001c94)) & REG32(0x03001d04);
-    REG32(0x03001c94) = REG32(0x03001d04);
+    REG32(0x03001c94) =
+        (REG32(0x03001ae8) ^ REG32(0x03001cf4)) & REG32(0x03001ae8);
+    REG32(0x03001cf4) = REG32(0x03001ae8);
 }

@@ -282,6 +282,35 @@ const GROUP_CONTROL_LAST_SOURCES = new Set(["080c08a8", "08005a78", "08005c68", 
 // the immediate, source-address add, base literal, shift, and control literal
 // must be restored to the reference order after grouped-DMA formation.
 const GROUP_VALUE1_BEFORE_BASE_SOURCES = new Set(["080907b0"]);
+// 0801a4fc kicks its palette descriptor with the source pointer already live in
+// a callee-saved register, so the copy that feeds the transfer's first stored
+// word targets r0 rather than r1 and falls out of the control-last walk above.
+const GROUP_POOLED_CONTROL_LAST_SOURCES = new Set(["0801a4fc"]);
+// 0808b868 copies a pointer into ip between two independent low-register
+// updates. The reference issues that copy before the adjacent immediate add;
+// -fthumb-move-before-alu only covers low-to-low copies against register ALU
+// operands, so this one needs the widened variant.
+const HIGH_MOVE_BEFORE_ALU_SOURCES = new Set(["0808b868"]);
+// 0801fd34 needs the other widening twice in one function: a load issued ahead
+// of an immediate shift, and a low-register copy issued ahead of an immediate
+// add. It also needs the pre-reload scheduler off.
+const MOVE_BEFORE_IMMEDIATE_ALU_SOURCES = new Set(["0801fd34"]);
+// 080b5d3c's inner loop preheader holds four insns: the object cursor and the
+// counter come from the source, the totals base and the member offset are
+// hoisted invariants. The reference runs the hoisted pair first; move_movables
+// anchors them at the loop note, which puts them last.
+const LOOP_INVARIANT_BLOCK_HEAD_SOURCES = new Set([
+  "080a3354",
+  "080b5d3c",
+  "080a90bc",
+]);
+
+// Reconstructed 2026-08-07: Func_080a90bc needs the call-argument inversion
+// widened to a register source, the pre-call constant setup sunk past the call,
+// and a high-register copy issued before an adjacent negs.
+const CALL_ARG0_REG_SOURCE_SOURCES = new Set(["080a90bc"]);
+const SINK_CONSTANT_PAST_CALL_SOURCES = new Set(["080a90bc"]);
+const MOVE_BEFORE_UNARY_ALU_SOURCES = new Set(["080a90bc"]);
 // 0808fe38 allocates, zeroes a stack word through its own pointer, and kicks a
 // grouped descriptor store whose saved-result and zero registers are not the
 // r5/r6 pair the original repair hard-coded, so it needs the widened form.
@@ -298,6 +327,28 @@ const SINK_DEPENDENT_LOAD_SOURCES = new Set(["080c08a8"]);
 const COLLAPSE_DEAD_SCRATCH_SOURCES = new Set(["0800fec8"]);
 const SINK_BLOCK_CONSTANT_SOURCES = new Set(["0800430c"]);
 const SINK_PAST_POOL_LOAD_SOURCES = new Set(["0800430c"]);
+// 08006408 arms an interrupt-guarded request slot.  Its reference issues the
+// slot store after the flag byte it shares no register with, and loads the two
+// pooled addresses base-first, so the address is live before the byte store
+// that uses it.  The whole sequence only lines up under one flag set, which
+// this owner carries as a unit.
+const SINK_STORE_PAST_STORE_SOURCES = new Set(["08006408"]);
+
+// 080c0130 builds two DMA descriptor groups back to back.  Its reference forms
+// the second group's source pointer as a copy followed by an add rather than an
+// add in place, clusters the first group's two pooled constants ahead of the
+// add caught between them, and otherwise materializes each group's operands in
+// register order.  Post-reload scheduling has to be off for those orders to
+// survive, so the owner carries the whole set as a unit.
+const SINK_ADD_IMMEDIATE_SOURCES = new Set(["080c0130"]);
+
+// 08011568 writes one DMA control halfword and then a three-word descriptor
+// group through the same base pointer.  Its reference finishes adjusting the
+// base before it materializes any of the group's pooled words, which needs the
+// add-immediate lifted above the run of loads the scheduler puts in front of
+// it, and it allocates the base out of a rotated low-register order.
+const HOIST_ADD_IMMEDIATE_SOURCES = new Set(["08011568"]);
+
 // resource_3bd:0c98 writes the same three-word DMA descriptor after an object
 // factory call.  Its reference copies the live source and destination into r0
 // and r1 before loading the pooled control word into r2; the path-scoped mode
@@ -392,6 +443,7 @@ const GROUPED_DMA_STORE_SOURCES = new Set([
   "08002fb0", "08003e10",
   "080a1090",
   "080b010c",
+  "0801a4fc",
 ]);
 
 // Nine sound-request entry wrappers: the entry pool load precedes the
@@ -486,6 +538,17 @@ const SCHED2_OFF_THUMB_SOURCES = new Set(["080f9a30"]);
 const THUMB_LOW_REG_ORDER_SOURCES = new Map([
   ["080f9a30", "01231230"],
   ["080fa264", "30120123"],
+]);
+// Four digits for -mcallee-reg-order=: the order in which r4-r7 are handed
+// out, replacing the `4, 5, 6, 7' run inside REG_ALLOC_ORDER.  The residual it
+// answers is an owner that already matches the reference instruction for
+// instruction with two call-saved pseudos sitting in each other's register,
+// which no source form can move because the allocator's preference order picks
+// it.  Witness 08092f84: r6 and r7 transposed in seven halfwords, exact under
+// 0132 and no other permutation.
+const THUMB_CALLEE_REG_ORDER_SOURCES = new Map([
+  ["08092f84", "0132"],
+  ["0801faa8", "0132"],
 ]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
@@ -1781,7 +1844,7 @@ const DEFAULT_ABI_OVERLAY_SOURCES = new Set([
 const AGBCC_SOURCES = new Set([
   "080069a4",
   "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
-  "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
+  "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
   "080f9a50",
   "080fada0", "080fadf0",
   "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
@@ -1881,6 +1944,18 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(MINIPOOL_TAIL_FIRST_SOURCES.has(stem) ? ["-fthumb-minipool-tail-first"] : []),
     ...(ENTRY_SAVES_DESCENDING_SOURCES.has(stem) ? ["-fthumb-entry-saves-descending"] : []),
     ...(GROUP_CONTROL_LAST_SOURCES.has(stem) ? ["-fthumb-group-control-last"] : []),
+    ...(GROUP_POOLED_CONTROL_LAST_SOURCES.has(stem)
+      ? ["-fthumb-group-pooled-control-last"]
+      : []),
+    ...(HIGH_MOVE_BEFORE_ALU_SOURCES.has(stem)
+      ? ["-fthumb-high-move-before-alu"]
+      : []),
+    ...(MOVE_BEFORE_IMMEDIATE_ALU_SOURCES.has(stem)
+      ? ["-fno-schedule-insns2", "-fthumb-move-before-immediate-alu"]
+      : []),
+    ...(LOOP_INVARIANT_BLOCK_HEAD_SOURCES.has(stem)
+      ? ["-floop-invariant-block-head"]
+      : []),
     ...(GROUP_ZERO_ANY_REGISTER_SOURCES.has(stem)
       ? ["-fthumb-group-zero-any-register"]
       : []),
@@ -1927,6 +2002,15 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-arg1-before-arg0"]
       : []),
+    ...(CALL_ARG0_REG_SOURCE_SOURCES.has(stem)
+      ? ["-fthumb-call-arg1-before-arg0", "-fthumb-call-arg0-reg-source"]
+      : []),
+    ...(SINK_CONSTANT_PAST_CALL_SOURCES.has(stem)
+      ? ["-fthumb-sink-constant-past-call"]
+      : []),
+    ...(MOVE_BEFORE_UNARY_ALU_SOURCES.has(stem)
+      ? ["-fthumb-move-before-unary-alu"]
+      : []),
     // -O1 is appended after the baseline -O2 and wins as the later option,
     // matching exactly how the mode sweep scored this configuration.
     ...(OPTIMIZE_O1_OVERLAY_SOURCES.has(sourceKey(source)) ? ["-O1"] : []),
@@ -1946,6 +2030,43 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(EARLY_FRAME_ALLOCATION_SOURCES.has(stem) ? ["-mearly-frame-allocation"] : []),
     ...(NO_OPTIMIZE_SIBLING_CALLS_SOURCES.has(stem) ? ["-fno-optimize-sibling-calls"] : []),
     ...(GROUPED_DMA_STORE_SOURCES.has(stem) ? ["-mgrouped-dma-store"] : []),
+    ...(HOIST_ADD_IMMEDIATE_SOURCES.has(stem)
+      ? [
+          "-mgrouped-dma-store",
+          "-fthumb-group-control-rematerialize",
+          "-mlow-reg-order=2013",
+          "-fthumb-sink-block-constant",
+          "-fthumb-hoist-add-immediate",
+        ]
+      : []),
+    ...(SINK_ADD_IMMEDIATE_SOURCES.has(stem)
+      ? [
+          "-mgrouped-dma-store",
+          "-fthumb-sink-group-pool-loads",
+          "-mthumb-load-latency-one",
+          "-mearly-frame-allocation",
+          "-fthumb-move-before-immediate-alu",
+          "-fthumb-sink-block-constant",
+          "-fthumb-sink-constant-past-memory",
+          "-fthumb-earliest-frame-allocation",
+          "-fthumb-copy-before-add-immediate",
+          "-fno-schedule-insns2",
+          "-fthumb-sink-add-immediate",
+        ]
+      : []),
+    ...(SINK_STORE_PAST_STORE_SOURCES.has(stem)
+      ? [
+          "-mgrouped-dma-store",
+          "-fthumb-sink-group-pool-loads",
+          "-mthumb-load-latency-one",
+          "-mearly-frame-allocation",
+          "-fthumb-move-before-immediate-alu",
+          "-fthumb-sink-block-constant",
+          "-fthumb-sink-constant-past-memory",
+          "-fthumb-sink-store-past-store",
+          "-fthumb-pool-load-base-first",
+        ]
+      : []),
     ...(GROUP_VALUE2_IN_PLACE_SOURCES.has(stem) ? ["-fthumb-group-value2-in-place"] : []),
     ...(THUMB_IMMEDIATE_LATENCY_SOURCES.has(stem)
       ? ["-mthumb-immediate-latency"]
@@ -1970,6 +2091,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(THUMB_NO_IF_CONVERT_SOURCES.has(stem) ? ["-fthumb-no-if-convert"] : []),
     ...(THUMB_LOW_REG_ORDER_SOURCES.has(stem)
       ? [`-mlow-reg-order=${THUMB_LOW_REG_ORDER_SOURCES.get(stem)}`]
+      : []),
+    ...(THUMB_CALLEE_REG_ORDER_SOURCES.has(stem)
+      ? [`-mcallee-reg-order=${THUMB_CALLEE_REG_ORDER_SOURCES.get(stem)}`]
       : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]
@@ -2310,11 +2434,45 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
       ],
       cc1: [
-        // cc1 from the three-way fork merge 0bca89c (main + mercury + venus
-        // lines), darwin-arm64, 2026-08-07, admitted from this green verify.
-        // Carries every flag all three lines have shipped, so a branch routed
-        // to any of them now compiles against main.
-        "e09b6cf9ef59f80390112d70b22b2194a02131344e69256f2d39192541ebc6eb",
+        // cc1 built on darwin-arm64 from fork origin/main 52bbd1c, 2026-08-07,
+        // admitted from this green verify. Compiler binaries are not
+        // reproducible here, so each host build gets its own pin.
+        "7e66357ce5b69114713705da032c339a6aed02a1f7f90dd8ee330ae112313bed",
+      "45d291c1ee530c2dc6ca5928e3186e4fc55234805a8b4b79c4b7d7977f7188cb",
+        // -fthumb-no-canonicalize-comparison (2026-08-07): suppresses the ARM
+        // back end's CANONICALIZE_COMPARISON rewrite in Thumb, where its
+        // const_ok_for_arm gate says nothing about what Thumb can build.
+        // Default-off and source-routed, so unrouted codegen is unchanged.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "802e08a756f582f6c10d467e747143486daa46d13f53c879c9cbd572a693d897",
+        // -floop-invariant-block-head (2026-08-07): anchors the insns
+        // move_movables hoists at the head of the preheader block instead of
+        // immediately before the loop note, so hoisted invariants lead the
+        // preheader's own insns. Default-off and source-routed, so unrouted
+        // codegen is unchanged. Witness 080b5d3c. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "31441a4d40d157050c7917c53a2567f1d3f9c93d6b2358d7168ba5554fe6ebaf",
+        // -fthumb-move-before-immediate-alu (2026-08-07): widens
+        // -fthumb-move-before-alu to ALU insns with an immediate second input
+        // and to loads as well as copies. Default-off and source-routed, so
+        // unrouted codegen is unchanged. Witness 0801fd34. Cross-host rule:
+        // rebuild+pin linux from the same fork source.
+        "41b5d62baf165b5119d3bfa569be831d0ebeb1ed1187857c51ced44394549e75",
+        // -fthumb-group-pooled-control-last (2026-08-07): the pooled-control
+        // twin of -fthumb-group-control-last, for grouped transfers whose
+        // control word arrives as a constant-pool load rather than a movs.
+        // Default-off and source-routed, so unrouted codegen is unchanged.
+        // Witness 0801a4fc. Cross-host rule: rebuild+pin linux from the same
+        // fork source.
+        "47fdf35d6c41ed4b1879ab9ce4ce019d395350b411953bc619e316abad225955",
+        "c74a9073698099d112e341db60e4e2ca85c0c189048c4fc5d1277d8d8f58923d",
+        // cc1 built from fork 76a2647 on darwin-arm64, 2026-08-07. Admitted
+        // from the green verify recorded with this commit.
+        "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
+        // -mcallee-reg-order= (r4-r7 allocation order), built on darwin-arm64
+        // 2026-08-07. Default-off: without the switch reg_alloc_order is
+        // untouched. Cross-host rule: rebuild+pin linux from the same source.
+        "5f95a10d93349d67bad586c52362d0f6ede3e63c02c7bee87cc07203b228613d",
         "df015cd830e04f26ce2ae1d3cc83205182f98cea1e41a29d586a79fb72d193a4",
         "792d4cd9b47acafaf93f6873f58b8701918db5a39af62852e3796037473387c4",
         "cce7c26cfda8ee1844256ac9226d0420d74c476fb24823c46bcce26db89a4983",
@@ -2401,6 +2559,19 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // both ways and only the early direction was expressible. An -f flag
         // rather than an -m one because target_flags has no bit left.
         "610bedba4d9b133d0ff37fbd37c43e7ad1c0b066e6325a4677d9fd80d75f965e",
+        // Three modes (2026-08-07), all default-off and source-routed, so
+        // unrouted codegen is unchanged. Witness 080a90bc.
+        // -fthumb-call-arg0-reg-source widens the existing arg1-before-arg0
+        // call reordering so the r0 argument may be a plain hard-register
+        // copy, not just a constant or pool load; admitted only opposite an
+        // immediate r1 setter, since that is the shape the reference inverts.
+        // -fthumb-sink-constant-past-call moves a callee-saved register's
+        // constant or pool-load setup from before a call to just after it,
+        // iterated to fixpoint so a whole pre-call run relocates.
+        // -fthumb-move-before-unary-alu issues a flag-preserving high-register
+        // copy ahead of an adjacent independent unary ALU insn.
+        // Cross-host rule: rebuild+pin linux from the same fork source.
+        "f76bdc9dccde93acc1a2f382d760ec79292591c5b39cc0221368630755068ce8",
       ],
     },
     gs2: {
@@ -3019,7 +3190,7 @@ function selfTest(): void {
   const expected = [
     "080069a4",
     "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
-    "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
+    "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50",
     "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
     "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
@@ -3071,7 +3242,7 @@ function selfTest(): void {
     "08002f10", "08002fb0", "0800300c", "080037d4", "08003e10", "08004760",
     "08004838", "08004858", "080049e8", "08004a28", "08004a44", "08004a5c",
     "08004a94", "08005340", "08005394", "080053e8", "08005a78", "08005c68", "080060e8", "0800bc48", "0800bdd4", "0800c0f4", "0800d304",
-    "08011590", "080170c4", "08019bac", "0801d014", "0801d980", "080251d4", "080284dc", "0808fe38", "0808fecc", "080907b0", "08090824", "08091174", "08094730", "08095160", "08095290", "080958a8", "08097540",
+    "08011590", "080170c4", "08019bac", "0801a4fc", "0801d014", "0801d980", "080251d4", "080284dc", "0808fe38", "0808fecc", "080907b0", "08090824", "08091174", "08094730", "08095160", "08095290", "080958a8", "08097540",
     "0809bb34", "080a1090", "080b010c", "080b0744", "080b5ad4", "080c0184", "080c08a8", "080f377c",
   ])) {
     throw new Error("grouped DMA source allowlist self-test failed");

@@ -18,6 +18,7 @@ s32 Func_08011fd8(s32 index, s32 x, s32 y)
     }
     column = x / 16;
     row = y / 16;
-    entry = map[(((row << 7) + column) * 4) + 3];
+    map += (column + (row << 7)) * 4;
+    entry = map[3];
     return *(u8 *)(0x0202c000 + entry * 4) & 15;
 }

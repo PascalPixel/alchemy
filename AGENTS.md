@@ -27,23 +27,23 @@ Run any tool with no arguments to list its subcommands.
 bun run verify   # rebuilds the ROM and every overlay (slow, authoritative)
 bun run test     # lint + every tool's self-test (~7s)
 bun run lint     # the gates alone, including this page's rule
-bun run typecheck  # strict tsc; 20 known errors, NOT yet gating
+bun run typecheck  # strict tsc, zero errors, gating via lint
 ```
 
-`typecheck` is the one unfinished invariant. `tsconfig.json` has been strict all
-along but nothing ever ran it, so the errors are latent rather than new: the
-first run found 2,200, of which 2,114 came from `noUncheckedIndexedAccess`
-alone. That rule is off for the whole tree — this code indexes ROM byte arrays
-constantly with bounds proven by the surrounding loop, so it would buy thousands
-of non-null assertions and hide the few real cases. The remaining 20 are genuine
-and are listed by `bun run typecheck`; 8 are in `search/permute_v1.ts`. Fix them
-to zero and add `typecheck` to `verify` — a gate that fails on the day it lands
-is not a gate, which is why it is not wired in yet.
+`tsconfig.json` had been strict since it was written and nothing ever ran it, so
+the first run reported 2,200 real errors. 2,114 of those came from
+`noUncheckedIndexedAccess` alone, which is off for the whole tree rather than
+waived per file: this code indexes ROM byte arrays constantly with bounds proven
+by the surrounding loop, so the rule buys thousands of non-null assertions and
+buries the few genuine cases. Turning it on is its own wave. The other 86 are
+fixed and `typecheck` gates through `lint`.
 
-Running it already paid: it found four scheduler modes tagged `family: "schedule"`
-against a union whose member is `"scheduler"`, so the rule that excludes
-scheduler modes from `old-agbcc` never excluded them and the search generated
-configurations that compiler cannot honour.
+It paid for itself immediately: it found four scheduler modes tagged
+`family: "schedule"` against a union whose member is `"scheduler"`, so the rule
+excluding scheduler modes from `old-agbcc` never excluded them and the search
+generated configurations that compiler cannot honour. It also found an
+`interface extends` a union, which erased a discriminant and silently untyped
+every narrowing below it.
 
 ## verify
 

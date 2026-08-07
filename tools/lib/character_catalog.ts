@@ -417,7 +417,7 @@ export function build_character_catalog(index: CharacterCatalogJson): Buffer {
   const frames = new Map<string, number>();
   for (const item of index.frame_directories) {
     // Tuple schema: [name, address, ids].
-    const [itemName, itemAddress] = item as [string, number | string, unknown];
+    const [itemName, itemAddress] = item as unknown as [string, number | string, unknown];
     const name = text(itemName, "frame directory name");
     if (frames.has(name)) throw new Error(`duplicate frame directory ${name}`);
     frames.set(name, bounded(itemAddress, ROM_BASE, 0xffffffff, "frame directory address"));

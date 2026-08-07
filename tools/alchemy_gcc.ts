@@ -410,6 +410,8 @@ const ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES = new Set([
 const CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
   "semantic/resource_3ae_c_020002dc.c",
   "exact/resource_3ae_c_020002dc.c",
+  "semantic/resource_3ae_c_0200051c.c",
+  "exact/resource_3ae_c_0200051c.c",
   "semantic/resource_377_c_020001e0.c",
   "exact/resource_377_c_020001e0.c",
   "semantic/resource_3a2_c_02000ac0.c",
@@ -1577,6 +1579,10 @@ const SCHED_STORE_FIRST_OVERLAY_SOURCES = new Set([
 // (measured on resource_373:2cb0 — do not re-attack it with a whole-function
 // flag). docs/compiler-evidence/cse-pool-immediate.diff.
 const NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  // resource_3ae:051c uses 0x8a5 at two call sites; without this the fork keeps
+  // it in sl across the body and pays two extra saves.  2026-08-07.
+  "semantic/resource_3ae_c_0200051c.c",
+  "exact/resource_3ae_c_0200051c.c",
   // resource_394:07e0, paired with the sched-low-dest-first argument-
   // feeding-store exclusion (see that set); 2026-08-06.
   "exact/resource_394_c_020007e0.c",

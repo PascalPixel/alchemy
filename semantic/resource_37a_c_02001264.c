@@ -73,19 +73,36 @@
  */
 
 /* Old-style declarations: arities vary per call site across this overlay. */
-void Func_080000c0();
-void Func_08009128();
-void Func_08009180();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a010();
-void Func_0808a0f0();
-void Func_0808a210();
-void Func_0808a330();
-void Func_0808a348();
-void Func_0808a360();
-void Func_0808a370();
-void Func_080f9010();
+void Func_02003d14();
+void Func_02003c20();
+void Func_02003c32();
+void Func_02003c42();
+void Func_02003c54();
+void Func_02003d6c();
+void Func_02003c60();
+void Func_02003cfc();
+void Func_02003d06();
+void Func_02003c5c();
+void Func_02003db4();
+void Func_02003dca();
+void Func_02003cc0();
+void Func_02003cd0();
+void Func_02003cd6();
+void Func_02003e00();
+void Func_02003e14();
+void Func_02003d02();
+void Func_02003e30();
+void Func_02003e16();
+void Func_02003d1c();
+void Func_02003e2a();
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02001264(void)
 {
@@ -94,33 +111,33 @@ void Func_02001264(void)
     s32 a = 8;
     s32 b = 3;
 
-    Func_0808a210(-1, -1, -1, 0);
-    Func_08009180(30, 43, 32, 40, a, b);
-    Func_08009180(30, 43, 33, 39, a, 1);
-    Func_08009180(30, 43, 36, 38, b, b);
-    Func_08009180(14, 41, 32, 41, a, 4);
-    Func_0808a210(0x023e0000, -1, 0x9e0000, 0);     /* 158 << 16 */
-    Func_08009128();
-    Func_0808a0f0(16, 0x023e0000, 0x780000);        /* 240 << 15 */
-    Func_0808a0f0(0, 0, 0);
-    Func_080000c0(1);
-    Func_0808a330(0x2051cc, 1);
-    Func_0808a348(20);
-    Func_080770c8(0x201);
-    Func_080770d0(0x200);
-    Func_080770d0(0x202);
+    Func_02003d14(-1, -1, -1, 0);
+    Func_02003c20(30, 43, 32, 40, a, b);
+    Func_02003c32(30, 43, 33, 39, a, 1);
+    Func_02003c42(30, 43, 36, 38, b, b);
+    Func_02003c54(14, 41, 32, 41, a, 4);
+    Func_02003d6c(0x023e0000, -1, 0x9e0000, 0);     /* 158 << 16 */
+    Func_02003c60();
+    Func_02003cfc(16, 0x023e0000, 0x780000);        /* 240 << 15 */
+    Func_02003d06(0, 0, 0);
+    Func_02003c5c(1);
+    Func_02003db4(0x2051cc, 1);
+    Func_02003dca(20);
+    Func_02003cc0(0x201);
+    Func_02003cd0(0x200);
+    Func_02003cd6(0x202);
 
     *(s32 *)(runtime + 0x1c0) = 0x100;
     *(s32 *)(runtime + 0x1c8) = 32;
     runtime = runtime_globals[0];
 
-    Func_0808a360();
-    Func_0808a370();
-    Func_0808a010(40);
-    Func_080f9010(171);
-    Func_0808a330(0x10005, 1);
-    Func_0808a348(8);
-    Func_0808a010(32);
-    Func_0808a330(0x2051cc, 1);
-    Func_0808a348(24);
+    Func_02003e00();
+    Func_02003e14();
+    Func_02003d02(40);
+    Func_02003e30(171);
+    Func_02003e00(0x10005, 1);
+    Func_02003e16(8);
+    Func_02003d1c(32);
+    Func_02003e14(0x2051cc, 1);
+    Func_02003e2a(24);
 }

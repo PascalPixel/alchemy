@@ -50,34 +50,40 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-int Func_080770c0();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a0f0();
-void Func_0808a1b8();
+int Func_02001e32();
+void Func_02001e44();
+void Func_02001490(void);
+int Func_02001e54();
+void Func_02001e6e();
+int Func_02001e64();
+int Func_02001e6e_b();
+void Func_02001f08();
+void Func_02001f7a();
 
-void Func_02000ba0(void);
+                     
+
+                         
 
 extern s16 Data_02000240[];
 
 void Func_020008cc(void)
 {
     if (Data_02000240[225] == 1) {
-        if (Func_080770c0(0x8ac) == 0) {
-            Func_080770c8(0x8ac);
-            Func_02000ba0();
+        if (Func_02001e32(0x8ac) == 0) {
+            Func_02001e44(0x8ac);
+            Func_02001490();
         }
     }
 
     if (Data_02000240[225] == 2) {
-        if (Func_080770c0(0x109) == 0) {
-            Func_080770d0(0x8a9);
+        if (Func_02001e54(0x109) == 0) {
+            Func_02001e6e(0x8a9);
         }
     }
 
-    if (Func_080770c0(0x911) != 0 && Func_080770c0(0x8a9) == 0) {
+    if (Func_02001e64(0x911) != 0 && Func_02001e6e_b(0x8a9) == 0) {
         /* 88.0 and 1304.0 in 16.16 fixed point */
-        Func_0808a0f0(12, 88 << 16, 1304 << 16);
-        Func_0808a1b8(12, 0, 0);
+        Func_02001f08(12, 88 << 16, 1304 << 16);
+        Func_02001f7a(12, 0, 0);
     }
 }

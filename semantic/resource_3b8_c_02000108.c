@@ -26,23 +26,48 @@
 
 /* Imports. Old-style declarations: their real interfaces are not yet known,
  * and 0x02004612 is called with different argument counts from this owner. */
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a010();
-s32 Func_0808a018();
-void Func_0808a020();
-s32 Func_0808a070();
-s32 Func_0808a080();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a110();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a1b8();
-s32 Func_0808a460();
-void Func_0808a580();
+s32 Func_02004510();
+s32 Func_02004504();
+s32 Func_02004630();
+s32 Func_020044d0();
+void Func_020044e4();
+void Func_020044f2();
+void Func_020045e0();
+void Func_020045f8();
+void Func_0200453c();
+void Func_020045b4();
+void Func_02004636();
+void Func_0200459c();
+void Func_020046d0();
+void Func_020046da();
+void Func_02004664();
+void Func_0200456e();
+void Func_0200456c();
+void Func_02004680();
+void Func_02004612();
+void Func_02004696();
+void Func_020045c4();
+void Func_0200468c();
+void Func_0200469c();
+s32 Func_020045fc();
+void Func_020046a6();
+void Func_020046be();
+void Func_020046b6();
+void Func_020046ce();
+void Func_02004604();
+void Func_02004776();
+void Func_02004780();
+void Func_0200463c();
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 /* These are used for their return values. */
 
@@ -52,7 +77,7 @@ void Func_02000108(s32 actor)
     s32 facing;
     s32 handle;
 
-    context = Func_0808a080(0);
+    context = Func_02004510(0);
 
     /*
      * ldrh [context, #6] + 0x2000, masked with 0xffffc000, then sign extended
@@ -67,49 +92,49 @@ void Func_02000108(s32 actor)
      * Whether either import consumes that inherited register is unverified;
      * the dataflow is preserved as written.
      */
-    Func_0808a460(Func_0808a018(context));
+    Func_02004630(Func_02004504(context));
 
-    if (Func_080770c0(0x200) == 0) {
-        Func_080770c8(0x200);
-        Func_080770d0(0x969);
-        Func_0808a170(0x1ff7);
-        Func_0808a180(actor, 0);
+    if (Func_020044d0(0x200) == 0) {
+        Func_020044e4(0x200);
+        Func_020044f2(0x969);
+        Func_020045e0(0x1ff7);
+        Func_020045f8(actor, 0);
 
-        Func_0808a010(10);
+        Func_0200453c(10);
         if (facing == 0x4000) {
-            Func_0808a0d0(0, 40, 104);
-            Func_0808a1b8(0, 0, 0);
+            Func_020045b4(0, 40, 104);
+            Func_02004636(0, 0, 0);
         }
-        Func_0808a090(actor, 0x10000, 0x8000);
-        Func_0808a580(actor, 0, -48);
-        Func_0808a580(actor, 64, 0);
-        Func_0808a1b8(actor, 0x4000, 0);
+        Func_0200459c(actor, 0x10000, 0x8000);
+        Func_020046d0(actor, 0, -48);
+        Func_020046da(actor, 64, 0);
+        Func_02004664(actor, 0x4000, 0);
     } else {
-        Func_080770d0(0x200);
-        Func_080770c8(0x969);
-        Func_0808a1b8(actor, 0x4000, 0);
-        Func_0808a0d0(0, 0x78, 0x60);
-        Func_0808a1b8(0, 0xc000, 0);
-        Func_0808a010(20);
+        Func_0200456e(0x200);
+        Func_0200456c(0x969);
+        Func_02004680(actor, 0x4000, 0);
+        Func_02004612(0, 0x78, 0x60);
+        Func_02004696(0, 0xc000, 0);
+        Func_020045c4(20);
 
-        Func_0808a170(handle);
-        Func_0808a178(actor, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a170(handle + 1);
-            Func_0808a180(actor, 0);
+        Func_0200468c(handle);
+        Func_0200469c(actor, 0);
+        if (Func_020045fc(0, 0) == 0) {
+            Func_020046a6(handle + 1);
+            Func_020046be(actor, 0);
         } else {
-            Func_0808a170(handle + 2);
-            Func_0808a180(actor, 0);
+            Func_020046b6(handle + 2);
+            Func_020046ce(actor, 0);
         }
         handle = 0x1ff8;
-        Func_0808a010(10);
-        Func_0808a110(actor, 3);
+        Func_02004604(10);
+        Func_0200469c(actor, 3);
         /* Only r0 is set here; r1 and r2 hold call-clobbered values from the
          * preceding branch, so no further arguments are asserted. */
-        Func_0808a010(20);
-        Func_0808a580(actor, -64, 0);
-        Func_0808a580(actor, 0, 48);
+        Func_02004612(20);
+        Func_02004776(actor, -64, 0);
+        Func_02004780(actor, 0, 48);
     }
 
-    Func_0808a020();
+    Func_0200463c();
 }

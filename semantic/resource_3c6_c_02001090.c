@@ -31,60 +31,97 @@
 
 /* Imports, reached through this overlay's veneer table.  Old-style
  * declarations: their interfaces vary by call site across the overlay. */
-void Func_0808a010();           /* wait n frames */
-void Func_0808a110();           /* scene-presentation request */
-void Func_0808a138();           /* select an entity presentation */
-void Func_0808a170();           /* show a dialogue line by id */
-void Func_0808a180();           /* wait for the slot's action to finish */
-void Func_0808a1b8();           /* face the slot along a heading */
-void Func_0808a1e8();           /* play animation id for n frames */
+void Func_0200265e();
+void Func_020025c4();
+void Func_02002654();
+void Func_020025d2();
+void Func_0200268a();
+void Func_020025e0();
+void Func_02002660();
+void Func_020025ee();
+void Func_020026a6();
+void Func_020025fc();
+void Func_020026d0();
+void Func_020026dc();
+void Func_020026e8();
+void Func_020026f4();
+void Func_02002632();
+void Func_020026c2();
+void Func_02002640();
+void Func_020026f8();
+void Func_0200264e();
+void Func_020026ce();
+void Func_0200265c();
+void Func_02002714();
+void Func_0200266a();
+void Func_0200273e();
+void Func_0200272e();
+void Func_02002684();
+void Func_02002704();
+void Func_02002692();
+void Func_0200274a();
+void Func_020026a0();
+void Func_02002764();
+void Func_020026b2();
+void Func_02002776();
+void Func_020026c4();
+void Func_02002744();
+void Func_020026d2();
+void Func_0200278a();
+                                /* wait n frames */
+                                /* scene-presentation request */
+                                /* select an entity presentation */
+                                /* show a dialogue line by id */
+                                /* wait for the slot's action to finish */
+                                /* face the slot along a heading */
+                                /* play animation id for n frames */
 
 void Func_02001090(void)
 {
-    Func_0808a170(0x28b0);
-    Func_0808a010(20);
+    Func_0200265e(0x28b0);
+    Func_020025c4(20);
 
-    Func_0808a138(22, 2);
-    Func_0808a010(20);
-    Func_0808a180(22, 0);
-    Func_0808a010(10);
+    Func_02002654(22, 2);
+    Func_020025d2(20);
+    Func_0200268a(22, 0);
+    Func_020025e0(10);
 
-    Func_0808a110(22, 4);
-    Func_0808a010(20);
-    Func_0808a180(22, 0);
-    Func_0808a010(10);
+    Func_02002660(22, 4);
+    Func_020025ee(20);
+    Func_020026a6(22, 0);
+    Func_020025fc(10);
 
-    Func_0808a1e8(0, 256, 0);
-    Func_0808a1e8(1, 256, 0);
-    Func_0808a1e8(3, 256, 0);
-    Func_0808a1e8(2, 256, 55);
-    Func_0808a010(10);
+    Func_020026d0(0, 256, 0);
+    Func_020026dc(1, 256, 0);
+    Func_020026e8(3, 256, 0);
+    Func_020026f4(2, 256, 55);
+    Func_02002632(10);
 
-    Func_0808a138(1, 2);
-    Func_0808a010(20);
-    Func_0808a180(1, 0);
-    Func_0808a010(10);
+    Func_020026c2(1, 2);
+    Func_02002640(20);
+    Func_020026f8(1, 0);
+    Func_0200264e(10);
 
-    Func_0808a110(22, 4);
-    Func_0808a010(20);
-    Func_0808a180(22, 0);
-    Func_0808a010(10);
+    Func_020026ce(22, 4);
+    Func_0200265c(20);
+    Func_02002714(22, 0);
+    Func_0200266a(10);
 
-    Func_0808a1e8(3, 258, 40);
-    Func_0808a180(3, 0);
-    Func_0808a010(10);
+    Func_0200273e(3, 258, 40);
+    Func_0200272e(3, 0);
+    Func_02002684(10);
 
-    Func_0808a110(1, 3);
-    Func_0808a010(30);
-    Func_0808a180(1, 0);
-    Func_0808a010(10);
+    Func_02002704(1, 3);
+    Func_02002692(30);
+    Func_0200274a(1, 0);
+    Func_020026a0(10);
 
-    Func_0808a1b8(2, 0x8000, 0);
-    Func_0808a010(65);
-    Func_0808a1b8(2, 0xc000, 0);
-    Func_0808a010(40);
+    Func_02002764(2, 0x8000, 0);
+    Func_020026b2(65);
+    Func_02002776(2, 0xc000, 0);
+    Func_020026c4(40);
 
-    Func_0808a110(2, 3);
-    Func_0808a010(30);
-    Func_0808a180(2, 0);
+    Func_02002744(2, 3);
+    Func_020026d2(30);
+    Func_0200278a(2, 0);
 }

@@ -64,15 +64,25 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_08000148();            /* allocate/fetch a record by (id, size) */
-s32 Func_08000170();            /* reserve a graphics handle */
-void Func_08000178();           /* release a graphics handle */
-void Func_080001a8();           /* upload image data to a handle */
-void Func_080001c8();           /* upload a palette ramp */
-s32 Func_080001d0();            /* next palette slot index */
-void Func_080000d0();           /* install a per-frame task (callback, rate) */
-s32 Func_080770c0();            /* test a story flag */
-u8 *Func_0808a080();            /* scene record for an actor selector */
+u8 *Func_020072c6();
+s32 Func_020072e0();
+u8 *Func_02007478();
+u8 *Func_02007480();
+s32 Func_02007428();
+void Func_02007356();
+s32 Func_0200737a();
+void Func_02007386();
+void Func_02007326();
+void Func_02007374();
+                                /* allocate/fetch a record by (id, size) */
+                                /* reserve a graphics handle */
+                                /* release a graphics handle */
+                                /* upload image data to a handle */
+                                /* upload a palette ramp */
+                                /* next palette slot index */
+                                /* install a per-frame task (callback, rate) */
+                                /* test a story flag */
+                                /* scene record for an actor selector */
 
 /* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
 extern u8 Data_0200bf14[];
@@ -90,8 +100,8 @@ void Func_02003764(s32 actorA, s32 actorB, s32 param3, s32 param4,
     u8 *recordB;
     s32 paletteIndex;
 
-    scene = Func_08000148(59, 0x7170);
-    handle = Func_08000170(0x200);
+    scene = Func_020072c6(59, 0x7170);
+    handle = Func_020072e0(0x200);
 
     *(u16 *)(scene + 222) = (u16)actorA;
     *(u16 *)(scene + 224) = (u16)actorB;
@@ -101,10 +111,10 @@ void Func_02003764(s32 actorA, s32 actorB, s32 param3, s32 param4,
     *(s32 *)(scene + 232) = param4;
     *(s32 *)(scene + 236) = param5;
 
-    recordA = Func_0808a080(actorA);
-    recordB = Func_0808a080(actorB);
+    recordA = Func_02007478(actorA);
+    recordB = Func_02007480(actorB);
 
-    if (Func_080770c0(0x109) == 0) {
+    if (Func_02007428(0x109) == 0) {
         *(s32 *)(recordB + 8) = (param4 * 2) - *(s32 *)(recordA + 8);
         *(s32 *)(recordB + 16) = *(s32 *)(recordA + 16);
     }
@@ -112,13 +122,13 @@ void Func_02003764(s32 actorA, s32 actorB, s32 param3, s32 param4,
     *(u16 *)(scene + 218) = 0;
     *(u16 *)(scene + 220) = 0;
 
-    Func_080001a8(Data_0200bf14, handle);
+    Func_02007356(Data_0200bf14, handle);
 
-    paletteIndex = Func_080001d0();
+    paletteIndex = Func_0200737a();
     *(u16 *)(scene + 216) = (u16)paletteIndex;
-    Func_080001c8((s16)paletteIndex, 0x200, handle);
+    Func_02007386((s16)paletteIndex, 0x200, handle);
 
-    Func_080000d0((void (*)(void))((s32)&Func_020033a0 | 1), 0xc76);
+    Func_02007326((void (*)(void))((s32)&Func_020033a0 | 1), 0xc76);
 
-    Func_08000178(handle);
+    Func_02007374(handle);
 }

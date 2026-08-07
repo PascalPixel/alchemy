@@ -71,19 +71,30 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_0808a018();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a180();
-void Func_08015060();
-void Func_080150a0();
-void Func_08015018();
-void Func_080000c0();
+void Func_0200265c();
+void Func_020026a6();
+void Func_020026b4();
+void Func_020026cc();
+s32 Func_020025f4();
+void Func_02002576();
+void Func_02002640();
+void Func_02002656();
+void Func_02002664();
+s32 Func_02002796();
+void Func_02002754();
+void Func_0200276c();
+void Func_02002764();
+void Func_0200277c();
+void Func_02002602();
+s32 Func_0200273e();
+
+                     
+
+                     
 
 /* Used for their return values. */
-s32 Func_08015010();
-s32 Func_080b5110();
-s32 Func_0808a020();
+
+                    
 
 s32 Func_02000e10(s32 speaker)
 {
@@ -94,12 +105,12 @@ s32 Func_02000e10(s32 speaker)
     s32 painted = -1;
     u32 outcomeCue;
 
-    Func_0808a018();
-    Func_0808a148(speaker, *(u32 *)&Data_02000240[500], 0);
-    Func_0808a170(0x989);
-    Func_0808a180(speaker, 0);
+    Func_0200265c();
+    Func_020026a6(speaker, *(u32 *)&Data_02000240[500], 0);
+    Func_020026b4(0x989);
+    Func_020026cc(speaker, 0);
 
-    chooser = Func_08015010(0, 0, 6, 4, 2);
+    chooser = Func_020025f4(0, 0, 6, 4, 2);
 
     /* The frame wait is the body of a bottom-tested input loop. */
     goto paintSelection;
@@ -109,12 +120,12 @@ waitForInput:
         selection = -1;
         goto selectionMade;
     }
-    Func_080000c0(1);
+    Func_02002576(1);
 
 paintSelection:
     if (selection != painted) {
-        Func_08015060(chooser);
-        Func_080150a0(selection, 3, chooser, 0, 0);
+        Func_02002640(chooser);
+        Func_02002656(selection, 3, chooser, 0, 0);
         painted = selection;
     }
 
@@ -134,12 +145,12 @@ paintSelection:
     goto waitForInput;
 
 selectionMade:
-    Func_08015018(chooser, 1);
+    Func_02002664(chooser, 1);
 
     if (selection < 0) {
         outcomeCue = 0x98a;
         goto emitChosenOutcome;
-    } else if (Func_080b5110(selection) != 0) {
+    } else if (Func_02002796(selection) != 0) {
         outcomeCue = 0x98b;
         goto emitChosenOutcome;
     }
@@ -147,15 +158,15 @@ selectionMade:
 
 emitChosenOutcome:
     /* Cancel and nonzero choices share this physical cue/portrait pair. */
-    Func_0808a170(outcomeCue);
-    Func_0808a180(9, 0);
+    Func_02002754(outcomeCue);
+    Func_0200276c(9, 0);
     goto outcomeComplete;
 
 emitZeroOutcome:
-    Func_0808a170(0x98c);
-    Func_0808a180(9, 0);
+    Func_02002764(0x98c);
+    Func_0200277c(9, 0);
 
 outcomeComplete:
-    Func_080000c0(10);
-    return Func_0808a020();
+    Func_02002602(10);
+    return Func_0200273e();
 }

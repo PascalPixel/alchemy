@@ -51,10 +51,14 @@ struct Prop3c1Placement {
 /* In-image, at file offset 0x05fe: this owner's placement script. */
 #define PROP3C1_SCRIPT ((const void *)0x020085fe)
 
-void Func_080f9010();               /* play a sound effect */
-void Func_08009178();               /* place a scripted prop (script, x, z) */
-void Func_0808a578();               /* shake the view (x, y, amount) */
-void Func_0808a248();               /* hand the map slot on */
+void Func_020004ac();
+void Func_02000456();
+void Func_020004ba();
+void Func_020004c6();
+                                    /* play a sound effect */
+                                    /* place a scripted prop (script, x, z) */
+                                    /* shake the view (x, y, amount) */
+                                    /* hand the map slot on */
 
 void Func_02000194(void)
 {
@@ -63,9 +67,9 @@ void Func_02000194(void)
     u16 x = (u16)PROP3C1_PLACEMENTS[slot].x;
     u16 z = (u16)PROP3C1_PLACEMENTS[slot].z;
 
-    Func_080f9010(158);
-    Func_08009178(PROP3C1_SCRIPT, x, z);
-    Func_0808a578(0, 0, -16);
+    Func_020004ac(158);
+    Func_02000456(PROP3C1_SCRIPT, x, z);
+    Func_020004ba(0, 0, -16);
     *(s32 *)(*PROP3C1_WORKSPACE_CELL + 456) = 16;
-    Func_0808a248(slot);
+    Func_020004c6(slot);
 }

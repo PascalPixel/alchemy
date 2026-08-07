@@ -37,9 +37,11 @@
 
 /* Overlay imports (via the veneer table).  Old-style declarations: overlay
  * imports vary their argument count between call sites. */
-s32 Func_08000170();
-void Func_080001a8();
-void Func_08000178();
+s32 Func_0200204c();
+void Func_02002066();
+void Func_020020ac();
+
+                     
 
 struct MapPlacement_02000cfc {
     u16 unknown_00[4];
@@ -61,8 +63,8 @@ void Func_02000cfc(struct MapPlacement_02000cfc *placement, void *source)
     /* Read before the first call, so it is not part of that call. */
     shadow = *(u16 **)0x03001e8c;
 
-    handle = Func_08000170(768);
-    Func_080001a8(source, handle);
+    handle = Func_0200204c(768);
+    Func_02002066(source, handle);
 
     entry_offset = (((s32)placement->row << 5) + (s32)placement->column) * 2;
 
@@ -82,5 +84,5 @@ void Func_02000cfc(struct MapPlacement_02000cfc *placement, void *source)
         screen += 32;
     }
 
-    Func_08000178(handle);
+    Func_020020ac(handle);
 }

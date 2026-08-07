@@ -39,25 +39,27 @@ extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 
 /* Returns the record for a numbered slot. */
-s32 *Func_0808a080();
+s32 *Func_02003962();
+s32 Func_0200394e();
+void Func_0200398a();
+                     
 /* Scene flag test: zero means not yet set. */
-s32 Func_080770c0();
+                    
 /* Scene flag set. */
-void Func_080770c8();
 
 void Func_0200141c(void)
 {
-    s32 *slot = Func_0808a080(0);
+    s32 *slot = Func_02003962(0);
     s32 x = slot[2] / 0x100000;   /* +8  */
     s32 z = slot[4] / 0x100000;   /* +16 */
     u8 *workspace = Data_03001ebc;
 
-    if (Func_080770c0(0x220) != 0) return;
+    if (Func_0200394e(0x220) != 0) return;
     if (Data_02000240[294] != 0) return;
     if (Data_02000240[293] == 9) return;
     if (x != 10) return;
     if ((u32)(z - 16) > 2) return;
 
     *(s16 *)(workspace + 386) = 92;
-    Func_080770c8(0x220);
+    Func_0200398a(0x220);
 }

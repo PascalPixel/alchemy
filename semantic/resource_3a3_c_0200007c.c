@@ -32,8 +32,12 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-s32 Func_080770c0();        /* tests a flag id; nonzero when set */
-void Func_0808a038();
+s32 Func_02000f1c();
+s32 Func_02000f3e();
+s32 Func_02000f50();
+s32 Func_02000f5a();
+void Func_02000f9e();
+                            /* tests a flag id; nonzero when set */
 
 extern s16 Data_02000240[];
 extern u8 Data_0200940c[];
@@ -47,7 +51,7 @@ s32 Func_0200007c(void)
     scene = Data_02000240[224];
 
     if (scene == 0x4b) {
-        if (Func_080770c0(0x909) != 0) {
+        if (Func_02000f1c(0x909) != 0) {
             Data_0200940c[166] = 0;
             Data_0200940c[142] = 0;
         }
@@ -55,13 +59,13 @@ s32 Func_0200007c(void)
     }
 
     if (scene == 0x4c) {
-        if (Func_080770c0(0x8fd) != 0) {
+        if (Func_02000f3e(0x8fd) != 0) {
             Data_020095bc[46] = 1;
         }
-        if (Func_080770c0(0x8fe) != 0 || Func_080770c0(0x907) != 0) {
+        if (Func_02000f50(0x8fe) != 0 || Func_02000f5a(0x907) != 0) {
             Data_020095bc[94] = 1;
         }
-        Func_0808a038(Data_020095bc);
+        Func_02000f9e(Data_020095bc);
         return (s32)Data_020095bc;
     }
 

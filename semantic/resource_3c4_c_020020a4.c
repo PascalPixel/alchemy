@@ -36,24 +36,65 @@ typedef struct Slot_020020a4 {
 extern u8 Data_0200b3ec[];
 extern u8 Data_0200b40c[];
 
-void Func_08009178();
-void Func_080091c0();
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_080770d0();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-Slot_020020a4 *Func_0808a080();
-void Func_0808a208();
-void Func_0808a210();
-void Func_0808a218();
-void Func_080f9010();
+void Func_0200519e();
+void Func_0200515a();
+Slot_020020a4 *Func_020051d0();
+Slot_020020a4 *Func_020051d8();
+void Func_0200517e();
+Slot_020020a4 *Func_020051f4();
+Slot_020020a4 *Func_020051fc();
+void Func_020051a2();
+Slot_020020a4 *Func_02005218();
+Slot_020020a4 *Func_02005220();
+void Func_020051c6();
+Slot_020020a4 *Func_0200523c();
+Slot_020020a4 *Func_02005244();
+void Func_020051ea();
+Slot_020020a4 *Func_02005260();
+Slot_020020a4 *Func_02005268();
+void Func_0200520e();
+Slot_020020a4 *Func_02005284();
+Slot_020020a4 *Func_02005294();
+Slot_020020a4 *Func_020052a4();
+Slot_020020a4 *Func_020052b2();
+Slot_020020a4 *Func_020052c2();
+Slot_020020a4 *Func_020052d0();
+Slot_020020a4 *Func_020052e0();
+Slot_020020a4 *Func_020052ee();
+Slot_020020a4 *Func_020052fe();
+Slot_020020a4 *Func_0200530c();
+s32 Func_020052e8();
+void Func_02005318();
+void Func_02005310();
+void Func_020053a0();
+void Func_020053ba();
+void Func_020053c6();
+void Func_02005334();
+void Func_0200532a();
+void Func_02005400();
+void Func_020052e2();
+void Func_0200530e();
+void Func_02005364();
+s32 Func_02005354();
+void Func_02005376();
+void Func_02005406();
+void Func_02005420();
+void Func_0200542c();
+void Func_0200539a();
+void Func_02005398();
+void Func_02005466();
+void Func_02005348();
+void Func_02005374();
+void Func_020053ca();
+void Func_020053de();
 
+                    
 
+                     
 
+                               
 
-
+                     
 
 void Func_020020a4(void)
 {
@@ -61,79 +102,79 @@ void Func_020020a4(void)
     s32 row;
     s32 matched;
 
-    Func_0808a018();
-    Func_080091c0(83, 45, 11, 8, 19, 45);
+    Func_0200519e();
+    Func_0200515a(83, 45, 11, 8, 19, 45);
 
-    column = Func_0808a080(19)->column;
-    row = Func_0808a080(19)->row >> 20;
-    Func_080091c0(20, 56, 1, 1, column >> 20, row);
+    column = Func_020051d0(19)->column;
+    row = Func_020051d8(19)->row >> 20;
+    Func_0200517e(20, 56, 1, 1, column >> 20, row);
 
-    column = Func_0808a080(20)->column;
-    row = Func_0808a080(20)->row >> 20;
-    Func_080091c0(20, 56, 1, 1, column >> 20, row);
+    column = Func_020051f4(20)->column;
+    row = Func_020051fc(20)->row >> 20;
+    Func_020051a2(20, 56, 1, 1, column >> 20, row);
 
-    column = Func_0808a080(21)->column;
-    row = Func_0808a080(21)->row >> 20;
-    Func_080091c0(20, 56, 1, 1, column >> 20, row);
+    column = Func_02005218(21)->column;
+    row = Func_02005220(21)->row >> 20;
+    Func_020051c6(20, 56, 1, 1, column >> 20, row);
 
-    column = Func_0808a080(22)->column;
-    row = Func_0808a080(22)->row >> 20;
-    Func_080091c0(20, 56, 1, 1, column >> 20, row);
+    column = Func_0200523c(22)->column;
+    row = Func_02005244(22)->row >> 20;
+    Func_020051ea(20, 56, 1, 1, column >> 20, row);
 
-    column = Func_0808a080(23)->column;
-    row = Func_0808a080(23)->row >> 20;
-    Func_080091c0(20, 56, 1, 1, column >> 20, row);
+    column = Func_02005260(23)->column;
+    row = Func_02005268(23)->row >> 20;
+    Func_0200520e(20, 56, 1, 1, column >> 20, row);
 
     matched = 0;
-    if ((Func_0808a080(19)->column >> 20) == 25
-        && (Func_0808a080(19)->row >> 20) == 49) {
+    if ((Func_02005284(19)->column >> 20) == 25
+        && (Func_02005294(19)->row >> 20) == 49) {
         matched = 1;
     }
-    if ((Func_0808a080(20)->column >> 20) == 23
-        && (Func_0808a080(20)->row >> 20) == 49) {
+    if ((Func_020052a4(20)->column >> 20) == 23
+        && (Func_020052b2(20)->row >> 20) == 49) {
         matched++;
     }
-    if ((Func_0808a080(21)->column >> 20) == 25
-        && (Func_0808a080(21)->row >> 20) == 47) {
+    if ((Func_020052c2(21)->column >> 20) == 25
+        && (Func_020052d0(21)->row >> 20) == 47) {
         matched++;
     }
-    if ((Func_0808a080(22)->column >> 20) == 23
-        && (Func_0808a080(22)->row >> 20) == 47) {
+    if ((Func_020052e0(22)->column >> 20) == 23
+        && (Func_020052ee(22)->row >> 20) == 47) {
         matched++;
     }
-    if ((Func_0808a080(23)->column >> 20) == 24
-        && (Func_0808a080(23)->row >> 20) == 48) {
+    if ((Func_020052fe(23)->column >> 20) == 24
+        && (Func_0200530c(23)->row >> 20) == 48) {
         matched++;
     }
 
     if (matched == 5) {
-        if (Func_080770c0(0x984) != 0) {
+        if (Func_020052e8(0x984) != 0) {
             /* The only path that does not run Func_020053de. */
             return;
-            Func_0808a020();
+            Func_02005318();
         }
-        Func_0808a010(20);
-        Func_0808a208(0xcccc, 0x1999);
-        Func_0808a210(0x01d80000, -1, 0x030c0000, 1);
-        Func_0808a218();
-        Func_0808a010(30);
-        Func_080770c8(0x984);
-        Func_080f9010(158);
-        Func_08009178(Data_0200b3ec, 32, 46);
-        Func_080091c0(24, 60, 1, 1, 32, 47);
-        Func_0808a010(40);
-    } else if (Func_080770c0(0x984) != 0) {
-        Func_0808a010(20);
-        Func_0808a208(0xcccc, 0x1999);
-        Func_0808a210(0x01d80000, -1, 0x030c0000, 1);
-        Func_0808a218();
-        Func_0808a010(30);
-        Func_080770d0(0x984);
-        Func_080f9010(159);
-        Func_08009178(Data_0200b40c, 32, 46);
-        Func_080091c0(31, 47, 1, 1, 32, 47);
-        Func_0808a010(40);
+        Func_02005310(20);
+        Func_020053a0(0xcccc, 0x1999);
+        Func_020053ba(0x01d80000, -1, 0x030c0000, 1);
+        Func_020053c6();
+        Func_02005334(30);
+        Func_0200532a(0x984);
+        Func_02005400(158);
+        Func_020052e2(Data_0200b3ec, 32, 46);
+        Func_0200530e(24, 60, 1, 1, 32, 47);
+        Func_02005364(40);
+    } else if (Func_02005354(0x984) != 0) {
+        Func_02005376(20);
+        Func_02005406(0xcccc, 0x1999);
+        Func_02005420(0x01d80000, -1, 0x030c0000, 1);
+        Func_0200542c();
+        Func_0200539a(30);
+        Func_02005398(0x984);
+        Func_02005466(159);
+        Func_02005348(Data_0200b40c, 32, 46);
+        Func_02005374(31, 47, 1, 1, 32, 47);
+        Func_020053ca(40);
     }
 
-    Func_0808a020();
+    Func_020053de();
 }

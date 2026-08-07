@@ -73,120 +73,173 @@
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-void Func_080000c0();           /* wait n frames */
-void Func_08009128();           /* scene request; no arguments set */
-void Func_080091c0();           /* six-argument renderer, last two on the stack */
-void Func_080091e0();           /* set presentation mode (record, phase) */
-void Func_0808a010();           /* wait n frames */
-void Func_0808a018();           /* scripted-scene bracket: open */
-void Func_0808a020();           /* scripted-scene bracket: close */
-u8 *Func_0808a080();            /* record by slot index */
-void Func_0808a090();           /* 16.16 scale pair */
-void Func_0808a0c8();           /* place an entity */
-void Func_0808a0d0();           /* place an entity */
-void Func_0808a0f0();           /* place slot at (x, z), 16.16 */
-void Func_0808a100();           /* per-record scene request */
-void Func_0808a110();           /* scene-presentation request */
-void Func_0808a138();           /* select an entity presentation */
-void Func_0808a170();           /* show a dialogue line by id */
-void Func_0808a188();           /* wait for the slot's action, with a duration */
-void Func_0808a1b8();           /* face slot along heading */
-void Func_0808a210();           /* scene request; interface not established */
-u8 *Func_0808a228();            /* returns a record; its byte at +85 is cleared */
-void Func_0808a360();           /* scene bracket helper; no arguments set */
-void Func_0808a370();           /* scene bracket helper; no arguments set */
-void Func_080770c8();           /* set a story flag */
-void Func_080770d0();           /* clear a story flag */
+void Func_02004632();
+void Func_02004754();
+u8 *Func_02004760();
+void Func_02004770();
+void Func_0200463c();
+void Func_0200464e();
+u8 *Func_020046b4();
+void Func_02004722();
+u8 *Func_020046c8();
+void Func_02004738();
+u8 *Func_020046de();
+void Func_02004750();
+void Func_0200475e();
+void Func_0200476c();
+void Func_0200477a();
+void Func_02004788();
+u8 *Func_0200472e();
+void Func_020046dc();
+u8 *Func_0200473a();
+void Func_020046e8();
+u8 *Func_02004746();
+void Func_020046f4();
+u8 *Func_02004752();
+void Func_02004700();
+u8 *Func_0200475e_b();
+u8 *Func_0200476a();
+u8 *Func_02004774();
+u8 *Func_0200477e();
+u8 *Func_02004788_b();
+u8 *Func_02004792();
+u8 *Func_0200479a();
+u8 *Func_020047b6();
+void Func_02004744();
+void Func_02004732();
+void Func_020048dc();
+void Func_020048f0();
+void Func_020047f2();
+void Func_020047fc();
+void Func_0200483a();
+void Func_02004850();
+void Func_02004880();
+void Func_020047ee();
+void Func_020048ae();
+void Func_020048cc();
+void Func_020048ee();
+void Func_02004882();
+void Func_02004916();
+void Func_020048de();
+void Func_02004918();
+void Func_020048d8();
+void Func_02004836();
+void Func_02004834();
+void Func_02004858();
+                                /* wait n frames */
+                                /* scene request; no arguments set */
+                                /* six-argument renderer, last two on the stack */
+                                /* set presentation mode (record, phase) */
+                                /* wait n frames */
+                                /* scripted-scene bracket: open */
+                                /* scripted-scene bracket: close */
+                                /* record by slot index */
+                                /* 16.16 scale pair */
+                                /* place an entity */
+                                /* place an entity */
+                                /* place slot at (x, z), 16.16 */
+                                /* per-record scene request */
+                                /* scene-presentation request */
+                                /* select an entity presentation */
+                                /* show a dialogue line by id */
+                                /* wait for the slot's action, with a duration */
+                                /* face slot along heading */
+                                /* scene request; interface not established */
+                                /* returns a record; its byte at +85 is cleared */
+                                /* scene bracket helper; no arguments set */
+                                /* scene bracket helper; no arguments set */
+                                /* set a story flag */
+                                /* clear a story flag */
 
 void Func_020021bc(void)
 {
     u8 *workspace;
     u8 *record;
 
-    Func_0808a018();
-    Func_0808a210(-1, -1, -1, 0);
+    Func_02004632();
+    Func_02004754(-1, -1, -1, 0);
 
-    record = Func_0808a228();
+    record = Func_02004760();
     record[85] = 0;
 
-    Func_0808a210(157 << 18, -1, 187 << 18, 0);
+    Func_02004770(157 << 18, -1, 187 << 18, 0);
 
-    Func_080091c0(38, 55, 4, 1, 38, 45);
-    Func_080091c0(42, 55, 4, 1, 38, 46);
+    Func_0200463c(38, 55, 4, 1, 38, 45);
+    Func_0200464e(42, 55, 4, 1, 38, 46);
 
-    record = Func_0808a080(0);
+    record = Func_020046b4(0);
     *(u16 *)(record + 6) = 0;
-    Func_0808a0f0(0, 0x02410000, 190 << 18);
+    Func_02004722(0, 0x02410000, 190 << 18);
 
-    record = Func_0808a080(19);
+    record = Func_020046c8(19);
     *(u16 *)(record + 6) = 0;
-    Func_0808a0f0(19, 148 << 18, 190 << 18);
+    Func_02004738(19, 148 << 18, 190 << 18);
 
-    record = Func_0808a080(17);
+    record = Func_020046de(17);
     *(u16 *)(record + 6) = 144 << 8;
-    Func_0808a0f0(17, 0x02960000, 191 << 18);
+    Func_02004750(17, 0x02960000, 191 << 18);
 
-    Func_0808a0f0(21, 154 << 18, 182 << 18);
-    Func_0808a0f0(22, 158 << 18, 182 << 18);
-    Func_0808a0f0(23, 162 << 18, 182 << 18);
-    Func_0808a0f0(24, 166 << 18, 182 << 18);
+    Func_0200475e(21, 154 << 18, 182 << 18);
+    Func_0200476c(22, 158 << 18, 182 << 18);
+    Func_0200477a(23, 162 << 18, 182 << 18);
+    Func_02004788(24, 166 << 18, 182 << 18);
 
-    Func_080091e0(Func_0808a080(21), 0);
-    Func_080091e0(Func_0808a080(22), 0);
-    Func_080091e0(Func_0808a080(23), 0);
-    Func_080091e0(Func_0808a080(24), 0);
+    Func_020046dc(Func_0200472e(21), 0);
+    Func_020046e8(Func_0200473a(22), 0);
+    Func_020046f4(Func_02004746(23), 0);
+    Func_02004700(Func_02004752(24), 0);
 
-    record = Func_0808a080(21);
+    record = Func_0200475e_b(21);
     record[85] = 0;
-    record = Func_0808a080(22);
+    record = Func_0200476a(22);
     record[85] = 0;
-    record = Func_0808a080(23);
+    record = Func_02004774(23);
     record[85] = 0;
-    record = Func_0808a080(24);
+    record = Func_0200477e(24);
     record[85] = 0;
 
     /* The interior literal pool is hopped in the middle of this group; r5 is
      * live across it and holds 0xfffc0000 for all four stores. */
-    record = Func_0808a080(21);
-    record = Func_0808a080(22);
+    record = Func_02004788_b(21);
+    record = Func_02004792(22);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
     *(s32 *)(record + 12) = (s32)0xfffc0000;
-    record = Func_0808a080(23);
+    record = Func_0200479a(23);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
-    record = Func_0808a080(24);
+    record = Func_020047b6(24);
     *(s32 *)(record + 12) = (s32)0xfffc0000;
 
-    Func_08009128();
-    Func_080000c0(1);
+    Func_02004744();
+    Func_02004732(1);
 
     workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 448) = 513;
     *(s32 *)(workspace + 456) = 16;
 
-    Func_0808a360();
-    Func_0808a370();
+    Func_020048dc();
+    Func_020048f0();
 
-    Func_0808a090(19, 0x9999, 0x4ccc);
-    Func_0808a090(0, 0x9999, 0x4ccc);
-    Func_0808a0c8(19, 628, 764);
-    Func_0808a0d0(0, 612, 764);
+    Func_020047f2(19, 0x9999, 0x4ccc);
+    Func_020047fc(0, 0x9999, 0x4ccc);
+    Func_0200483a(19, 628, 764);
+    Func_02004850(0, 612, 764);
 
-    Func_0808a100(19, 1);
-    Func_0808a010(20);
-    Func_0808a138(19, 1);
+    Func_02004880(19, 1);
+    Func_020047ee(20);
+    Func_020048ae(19, 1);
 
-    Func_0808a170(0x1746);
-    Func_0808a188(19, 0, 10);
+    Func_020048cc(0x1746);
+    Func_020048ee(19, 0, 10);
 
-    Func_0808a0d0(19, 0x26e, 780);
-    Func_0808a1b8(19, 0xc000, 10);
+    Func_02004882(19, 0x26e, 780);
+    Func_02004916(19, 0xc000, 10);
 
-    Func_0808a138(17, 2);
-    Func_0808a188(17, 0, 10);
-    Func_0808a110(0, 3);
+    Func_020048de(17, 2);
+    Func_02004918(17, 0, 10);
+    Func_020048d8(0, 3);
 
-    Func_080770d0(0x12f);
-    Func_080770c8(0x202);
+    Func_02004836(0x12f);
+    Func_02004834(0x202);
 
-    Func_0808a020();
+    Func_02004858();
 }

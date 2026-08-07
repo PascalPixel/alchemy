@@ -44,21 +44,41 @@
 /* Import veneers.  Old-style declarations: arity is left open throughout,
  * because one import name can take different argument counts at different
  * sites in this overlay. */
-s32 Func_080770c8();
-s32 Func_0808a018();
-s32 Func_0808a460();
-u16 *Func_0808a080();
-void Func_0808a010();
-void Func_0808a020();
-void Func_0808a098();
-void Func_0808a110();
-void Func_0808a138();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a1b8();
-void Func_0808a1e8();
-void Func_0808a580();
+u16 *Func_02001522();
+s32 Func_02001506();
+s32 Func_02001522_b();
+s32 Func_020015fe();
+void Func_020015ac();
+void Func_0200152a();
+void Func_020015de();
+void Func_020015b8();
+void Func_020015e0();
+void Func_02001558();
+void Func_020015c0();
+void Func_02001566();
+void Func_02001606();
+void Func_02001574();
+void Func_020015ec();
+void Func_02001582();
+void Func_02001622();
+void Func_02001590();
+void Func_020015f8();
+void Func_0200159e();
+void Func_02001640();
+void Func_020016ae();
+void Func_0200166a();
+void Func_020015d0();
+void Func_02001608();
+
+                    
+
+                     
+
+                     
+
+                     
+
+                     
 
 /* In-image data at file offset 0x1314 (0x02009314 under the 0x02008000 link
  * base).  The overlay image is writable EWRAM, so this is not const. */
@@ -70,7 +90,7 @@ void Func_02000308(void)
     s32 quadrant;
     s32 chained;
 
-    scene = Func_0808a080(0);
+    scene = Func_02001522(0);
 
     /*
      * Heading at record offset 6, biased by 0x2000 and reduced to bits 14-15.
@@ -80,37 +100,37 @@ void Func_02000308(void)
      */
     quadrant = ((s32)scene[3] + 0x2000) & 0xffffc000;
 
-    chained = Func_080770c8(0x300);
-    chained = Func_0808a018(chained);
-    Func_0808a460(chained);
+    chained = Func_02001506(0x300);
+    chained = Func_02001522_b(chained);
+    Func_020015fe(chained);
 
-    Func_0808a170(0x26ec);
-    Func_0808a010(50);
-    Func_0808a1e8(14, 258, 50);
-    Func_0808a148(14, 0, 20);
-    Func_0808a180(14, 0);
+    Func_020015ac(0x26ec);
+    Func_0200152a(50);
+    Func_020015de(14, 258, 50);
+    Func_020015b8(14, 0, 20);
+    Func_020015e0(14, 0);
 
-    Func_0808a010(10);
-    Func_0808a110(14, 4);
-    Func_0808a010(30);
-    Func_0808a180(14, 0);
+    Func_02001558(10);
+    Func_020015c0(14, 4);
+    Func_02001566(30);
+    Func_02001606(14, 0);
 
-    Func_0808a010(10);
-    Func_0808a138(14, 2);
-    Func_0808a010(30);
-    Func_0808a180(14, 0);
+    Func_02001574(10);
+    Func_020015ec(14, 2);
+    Func_02001582(30);
+    Func_02001622(14, 0);
 
-    Func_0808a010(10);
-    Func_0808a110(14, 3);
-    Func_0808a010(20);
-    Func_0808a180(14, 0);
+    Func_02001590(10);
+    Func_020015f8(14, 3);
+    Func_0200159e(20);
+    Func_02001640(14, 0);
 
     if ((quadrant & 0xffff) == 0x8000) {
-        Func_0808a580(0, 0, 16);
-        Func_0808a1b8(0, 0xc000, 0);
-        Func_0808a010(20);
+        Func_020016ae(0, 0, 16);
+        Func_0200166a(0, 0xc000, 0);
+        Func_020015d0(20);
     }
 
-    Func_0808a098(14, Data_02009314);
-    Func_0808a020();
+    Func_02001608(14, Data_02009314);
+    Func_020015ec();
 }

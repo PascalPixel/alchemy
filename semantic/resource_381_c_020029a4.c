@@ -58,16 +58,43 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-void Func_080000c0();   /* wait n frames */
-void Func_080000d0();   /* install a per-frame task (callback, period) */
-void Func_080000d8();   /* remove a per-frame task */
-void Func_08009080();   /* commit an entity's presentation */
-u8 *Func_080090c8();    /* spawn an entity at a 16.16 position */
-void Func_0808a088();   /* clear a scene slot */
-void Func_0808a1e8();   /* play animation id for n frames */
-void Func_0808a330();   /* screen transition request */
-void Func_0808a348();   /* wait for a screen transition */
-void Func_080f9010();   /* play a cue by id */
+void Func_02005eae();
+void Func_02005fcc();
+void Func_02005fd6();
+void Func_02005fe4();
+void Func_0200601a();
+u8 *Func_02005ea6();
+void Func_02005ec0();
+void Func_02005e66();
+void Func_02006048();
+void Func_02006054();
+void Func_02005e92();
+void Func_02005ea4();
+void Func_020060e4();
+void Func_02005eb8();
+void Func_02005ec2();
+void Func_02005ecc();
+void Func_02005ed6();
+void Func_02005ee0();
+void Func_02005eea();
+void Func_02005ef4();
+void Func_02005efe();
+void Func_02005f08();
+void Func_02005f30();
+void Func_02005f38();
+void Func_02005f4e();
+void Func_02006150();
+void Func_0200615e();
+                        /* wait n frames */
+                        /* install a per-frame task (callback, period) */
+                        /* remove a per-frame task */
+                        /* commit an entity's presentation */
+                        /* spawn an entity at a 16.16 position */
+                        /* clear a scene slot */
+                        /* play animation id for n frames */
+                        /* screen transition request */
+                        /* wait for a screen transition */
+                        /* play a cue by id */
 
 void Func_02002ba0(void);   /* this overlay, byte-exact in assets/code */
 
@@ -89,7 +116,7 @@ void Func_020029a4(u32 variant)
 
     i = 0;
     do {
-        Func_0808a088(i + 16);
+        Func_02005eae(i + 16);
         i++;
     } while (i <= 15);
 
@@ -100,16 +127,16 @@ void Func_020029a4(u32 variant)
     } else if (variant == 2) {
         transition = 0x00404a4e;
     } else if (variant == 3) {
-        Func_0808a330(0x00403a52, 1);
+        Func_02005fcc(0x00403a52, 1);
         goto opened;
     } else {
         goto opened;
     }
-    Func_0808a330(transition, 1);
+    Func_02005fd6(transition, 1);
 
 opened:
-    Func_0808a348(60);
-    Func_080f9010(214);
+    Func_02005fe4(60);
+    Func_0200601a(214);
 
     do {
         x = placement[0];
@@ -131,7 +158,7 @@ opened:
 
         Data_0200bb40[i] = 0;
 
-        entity = Func_080090c8(284, x, y, z);
+        entity = Func_02005ea6(284, x, y, z);
         Data_0200bb10[i] = entity;
         entity[85] = 0;
 
@@ -139,8 +166,8 @@ opened:
         sub[38] = 0;
         sub[9] = (u8)((sub[9] & ~13) | 4);
 
-        Func_08009080(entity, 6);
-        Func_080000c0(6);
+        Func_02005ec0(entity, 6);
+        Func_02005e66(6);
 
         i++;
         placement += 2;
@@ -149,36 +176,36 @@ opened:
     placement = Data_0200b684;
 
     if (variant == 0) {
-        Func_0808a1e8(0, 256, 0);
-        Func_0808a1e8(1, 256, 0);
+        Func_02006048(0, 256, 0);
+        Func_02006054(1, 256, 0);
     }
 
-    Func_080000c0(20);
+    Func_02005e92(20);
 
-    Func_080000d0(Func_02002ba0, 3200);
-    Func_080f9010(246);
+    Func_02005ea4(Func_02002ba0, 3200);
+    Func_020060e4(246);
 
     /* Ten separate release beats, six frames apart. */
     Data_0200bb40[0] = 1;
-    Func_080000c0(6);
+    Func_02005eae(6);
     Data_0200bb40[1] = 1;
-    Func_080000c0(6);
+    Func_02005eb8(6);
     Data_0200bb40[2] = 1;
-    Func_080000c0(6);
+    Func_02005ec2(6);
     Data_0200bb40[3] = 1;
-    Func_080000c0(6);
+    Func_02005ecc(6);
     Data_0200bb40[4] = 1;
-    Func_080000c0(6);
+    Func_02005ed6(6);
     Data_0200bb40[5] = 1;
-    Func_080000c0(6);
+    Func_02005ee0(6);
     Data_0200bb40[6] = 1;
-    Func_080000c0(6);
+    Func_02005eea(6);
     Data_0200bb40[7] = 1;
-    Func_080000c0(6);
+    Func_02005ef4(6);
     Data_0200bb40[8] = 1;
-    Func_080000c0(6);
+    Func_02005efe(6);
     Data_0200bb40[9] = 1;
-    Func_080000c0(6);
+    Func_02005f08(6);
 
     /* Wait for every counter to run down; 0x02002ba0 clears them. */
     for (;;) {
@@ -192,12 +219,12 @@ opened:
         if (busy == 0) {
             break;
         }
-        Func_080000c0(1);
+        Func_02005f30(1);
     }
 
-    Func_080000c0(40);
-    Func_080000d8(Func_02002ba0);
+    Func_02005f38(40);
+    Func_02005f4e(Func_02002ba0);
 
-    Func_0808a330(0x10000, 1);
-    Func_0808a348(40);
+    Func_02006150(0x10000, 1);
+    Func_0200615e(40);
 }

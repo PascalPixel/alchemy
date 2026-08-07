@@ -51,12 +51,17 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_08015120();
-void Func_0808a018();
-s32 Func_0808a020();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a178();
+void Func_020029a2();
+void Func_020029ec();
+void Func_02002970();
+void Func_02002a0e();
+void Func_02002a16();
+void Func_02002a26();
+s32 Func_020029ea();
+
+                    
+
+                     
 
 /* Used for its return value. */
 
@@ -65,19 +70,19 @@ s32 Func_02001158(s32 handle)
     u32 word;
     u16 cueHandle;
 
-    Func_0808a018();
+    Func_020029a2();
 
     word = *(u32 *)&Data_02000240[500];
-    Func_0808a148(handle, word, 0);
+    Func_020029ec(handle, word, 0);
 
     cueHandle = *(u16 *)&Data_02000240[680];
     if (cueHandle != 0) {
-        Func_08015120((s32)cueHandle, 5);
-        Func_0808a170(0x298a);
+        Func_02002970((s32)cueHandle, 5);
+        Func_02002a0e(0x298a);
     } else {
-        Func_0808a170(0x298b);
+        Func_02002a16(0x298b);
     }
 
-    Func_0808a178(handle, 0);
-    return Func_0808a020();
+    Func_02002a26(handle, 0);
+    return Func_020029ea();
 }

@@ -34,40 +34,52 @@
  * Func_080f9010 wait rather than before it -- the assembly order is preserved.
  */
 
-void Func_0808a018();
-void Func_0808a090();
-void Func_080f9010();
+void Func_020039c8();
+void Func_020039f2();
+void Func_020039fc();
+void Func_02003aba();
+u8 *Func_02003a00();
+void Func_02003a22();
+void Func_02003a48();
+void Func_02003a4a();
+void Func_02003ae8();
+void Func_02003a0e();
+void Func_02003a60();
+void Func_02003a6e();
+void Func_02003a5a();
+void Func_02003a80();
+void Func_02003a44();
+void Func_02003a34();
+
+                     
 /* Returns the record for a numbered slot, or 0 when it has none. */
-u8 *Func_0808a080();
-void Func_0808a0b8();
-void Func_0808a0e8();
-void Func_0808a0e0();
-void Func_0808a010();
-void Func_0808a020();
-void Func_080770d0();
+
+                     
+
+                     
 
 void Func_0200149c(void)
 {
     u8 *slot;
 
-    Func_0808a018();
-    Func_0808a090(0, 0x1b333, 0xd999);
-    Func_0808a090(9, 0x1b333, 0xd999);
-    Func_080f9010(188);
+    Func_020039c8();
+    Func_020039f2(0, 0x1b333, 0xd999);
+    Func_020039fc(9, 0x1b333, 0xd999);
+    Func_02003aba(188);
 
-    slot = Func_0808a080(0);
+    slot = Func_02003a00(0);
     if (slot != 0) {
-        Func_0808a0b8(9, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+        Func_02003a22(9, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
     }
 
-    Func_0808a0e8(9);
-    Func_0808a0e0(0, 0, 24);
-    Func_080f9010(188);
-    Func_0808a010(4);
-    Func_0808a0e0(9, 0, 16);
-    Func_0808a0e8(0);
-    Func_0808a0b8(9, 168, 264);
-    Func_0808a0e8(9);
-    Func_0808a020();
-    Func_080770d0(0x220);
+    Func_02003a48(9);
+    Func_02003a4a(0, 0, 24);
+    Func_02003ae8(188);
+    Func_02003a0e(4);
+    Func_02003a60(9, 0, 16);
+    Func_02003a6e(0);
+    Func_02003a5a(9, 168, 264);
+    Func_02003a80(9);
+    Func_02003a44();
+    Func_02003a34(0x220);
 }

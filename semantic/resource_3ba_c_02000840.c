@@ -54,66 +54,86 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void Func_0808a018();           /* enter cutscene presentation mode */
-void Func_0808a010();           /* wait n frames */
-void Func_0808a090();
-void Func_0808a0a0();
-void Func_0808a0c8();
-void Func_0808a0d0();
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a150();
-void Func_0808a250();
-void Func_0808a260();
-void Func_0808a268();
-void Func_080770c8();           /* set a story flag */
+void Func_020037d4(void);
+void Func_020044e8();
+s32 Func_020038fc();
+void Func_020037f6(void);
+void Func_02004530();
+void Func_0200453a();
+void Func_0200455e();
+void Func_02004554();
+void Func_02004580();
+void Func_020045a0();
+void Func_020045d2();
+void Func_02004548();
+void Func_020045b8();
+void Func_020045c8();
+void Func_0200459c();
+void Func_020045aa();
+void Func_020045ce();
+void Func_020045e2();
+void Func_02004602();
+void Func_0200460a();
+void Func_020045a8();
+void Func_020046ac();
+void Func_020046c8();
+void Func_020046d8();
+                                /* enter cutscene presentation mode */
+                                /* wait n frames */
+
+                     
+
+                     
+
+                     
+                     
+                                /* set a story flag */
 
 /* This overlay's own routines. */
-void Func_02002f90(void);       /* byte-exact: an empty hook */
-void Func_02002fa0(void);       /* byte-exact: spin until the control word is 9 */
-s32 Func_020030ac();
+                                /* byte-exact: an empty hook */
+                                /* byte-exact: spin until the control word is 9 */
 
 void Func_02000840(void)
 {
     s32 setup;
     s32 i;
 
-    Func_02002f90();
-    Func_0808a018();
+    Func_020037d4();
+    Func_020044e8();
 
-    setup = Func_020030ac(120, 127);
+    setup = Func_020038fc(120, 127);
 
-    Func_02002fa0();
+    Func_020037f6();
 
     for (i = 9; i >= 0; i--) {
-        Func_0808a0a0(8);
+        Func_02004530(8);
     }
 
-    Func_0808a090(8, 0x10000, 0x8000);          /* 128 << 9, 128 << 8 */
-    Func_0808a0c8(8, 0x528, 192);               /* 165 << 3 */
-    Func_0808a090(0, 0x10000, 0x8000);
-    Func_0808a0d0(0, 0x508, 192);               /* 161 << 3 */
-    Func_0808a100(8, 1);
-    Func_0808a150(0, 8, 0);
-    Func_0808a010(10);
-    Func_0808a100(8, 3);
-    Func_0808a110(0, 3);
-    Func_0808a010(20);
+    Func_0200453a(8, 0x10000, 0x8000);          /* 128 << 9, 128 << 8 */
+    Func_0200455e(8, 0x528, 192);               /* 165 << 3 */
+    Func_02004554(0, 0x10000, 0x8000);
+    Func_02004580(0, 0x508, 192);               /* 161 << 3 */
+    Func_020045a0(8, 1);
+    Func_020045d2(0, 8, 0);
+    Func_02004548(10);
+    Func_020045b8(8, 3);
+    Func_020045c8(0, 3);
+    Func_0200455e(20);
 
-    Func_0808a090(0, 0x20000, 0x10000);         /* 128 << 10, 128 << 9 */
-    Func_0808a090(8, 0x20000, 0x10000);
-    Func_0808a0c8(0, 0x510, 192);               /* 162 << 3 */
-    Func_0808a0d0(8, 0x520, 192);               /* 164 << 3 */
-    Func_0808a100(0, 16);
-    Func_0808a100(8, 9);
-    Func_0808a010(10);
+    Func_0200459c(0, 0x20000, 0x10000);         /* 128 << 10, 128 << 9 */
+    Func_020045aa(8, 0x20000, 0x10000);
+    Func_020045ce(0, 0x510, 192);               /* 162 << 3 */
+    Func_020045e2(8, 0x520, 192);               /* 164 << 3 */
+    Func_02004602(0, 16);
+    Func_0200460a(8, 9);
+    Func_020045a8(10);
 
-    Func_0808a250(72, 1 - setup);
+    Func_020046ac(72, 1 - setup);
 
     *(u8 *)(0x02000240 + 0x22b) = 3;
 
-    Func_0808a260(0x8f, 4);
-    Func_0808a268(0x8f, 5);
+    Func_020046c8(0x8f, 4);
+    Func_020046d8(0x8f, 5);
 
-    Func_080770c8(0x11a);                       /* 141 << 1 */
+    Func_020045a0(0x11a);                       /* 141 << 1 */
 }

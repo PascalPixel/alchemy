@@ -38,22 +38,79 @@
 extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_0808a5e0();
-void Func_080091f0();
-void Func_0808a2f8();
-void Func_08009180();
-void Func_080091c0();
-void Func_08009128();
-s32 Func_0808a080();
-void Func_080091e0();
-void Func_0808a0f0();
+s32 Func_020025c8();
+void Func_0200270a();
+void Func_020025d2();
+void Func_020026f6();
+s32 Func_02002648();
+void Func_02002630();
+void Func_02002640();
+void Func_02002654();
+void Func_0200266c();
+void Func_02002650();
+s32 Func_020026e0();
+void Func_0200268e();
+s32 Func_020026c0();
+void Func_0200185a();
+s32 Func_02002712();
+void Func_020026c0_b();
+s32 Func_0200271e();
+void Func_020026cc();
+s32 Func_0200272a();
+void Func_020026d8();
+s32 Func_02002736();
+void Func_020026e4();
+s32 Func_02002742();
+void Func_020026f0();
+s32 Func_0200274e();
+void Func_020026fc();
+s32 Func_0200275a();
+void Func_02002708();
+s32 Func_02002766();
+void Func_02002714();
+s32 Func_02002772();
+void Func_02002720();
+s32 Func_0200277e();
+void Func_0200272c();
+s32 Func_0200278a();
+void Func_02002738();
+s32 Func_02002756();
+void Func_02001b5e();
+s32 Func_02002764();
+void Func_020027e6();
+void Func_02002800();
+s32 Func_02002796();
+s32 Func_020027a6();
+void Func_02002828();
+s32 Func_02002800_b();
+void Func_020027ae();
+s32 Func_0200280c();
+void Func_020027ba();
+s32 Func_02002818();
+void Func_020027c6();
+s32 Func_02002824();
+void Func_020027d2();
+s32 Func_02002830();
+void Func_020027de();
+s32 Func_0200283c();
+void Func_020027ea();
+s32 Func_02002808();
+void Func_020022a0(void);
+void Func_0200244a();
+void Func_02002826();
+void Func_0200280a();
+void Func_0200281c();
+void Func_02002838();
 
-void Func_02000d1c();
-void Func_02000f8c();
-void Func_0200161c(void);
-void Func_020017c0();
+                     
+
+                     
+
+                    
+
+                     
+
+                     
 
 void Func_02000a24(void)
 {
@@ -65,10 +122,10 @@ void Func_02000a24(void)
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 516;
 
-    if (Func_080770c0(0x814) != 0) {
-        Func_0808a5e0(141);
-        Func_080091f0(0x10000, 0x10000, 0x10000);
-        Func_0808a2f8();
+    if (Func_020025c8(0x814) != 0) {
+        Func_0200270a(141);
+        Func_020025d2(0x10000, 0x10000, 0x10000);
+        Func_020026f6();
     }
 
     if (step > 15) {
@@ -80,18 +137,18 @@ void Func_02000a24(void)
     switch (step) {
     case 0:
     case 1:
-        if (Func_080770c0(0x81a) == 0) {
+        if (Func_02002648(0x81a) == 0) {
             return;
         }
-        Func_08009180(1, 109, 4, 81, 1, 1);
-        Func_08009180(0, 70, 30, 42, 1, 1);
-        Func_08009180(0, 29, 3, 1, 3, 2);
-        Func_080091c0(0, 29, 3, 2, 3, 1);
-        Func_08009128();
+        Func_02002630(1, 109, 4, 81, 1, 1);
+        Func_02002640(0, 70, 30, 42, 1, 1);
+        Func_02002654(0, 29, 3, 1, 3, 2);
+        Func_0200266c(0, 29, 3, 2, 3, 1);
+        Func_02002650();
         return;
 
     case 2:
-        Func_080091e0(Func_0808a080(9), 0);
+        Func_0200268e(Func_020026e0(9), 0);
         return;
 
     case 7:
@@ -99,46 +156,46 @@ void Func_02000a24(void)
         scenario[288] = 0x10;
         return;
         scenario[289] = 8;
-        if (Func_080770c0(0x802) != 0) {
+        if (Func_020026c0(0x802) != 0) {
             return;
         }
-        Func_02000d1c();
+        Func_0200185a();
 
     case 10:
     case 11:
     case 12:
         /* Fully UNROLLED in the assembly: 11 separate
          * Func_0808a080/Func_080091e0 pairs at 0x02000b44-0x02000bc2, not a loop. */
-        Func_080091e0(Func_0808a080(9), 0);
-        Func_080091e0(Func_0808a080(10), 0);
-        Func_080091e0(Func_0808a080(11), 0);
-        Func_080091e0(Func_0808a080(12), 0);
-        Func_080091e0(Func_0808a080(13), 0);
-        Func_080091e0(Func_0808a080(14), 0);
-        Func_080091e0(Func_0808a080(15), 0);
-        Func_080091e0(Func_0808a080(16), 0);
-        Func_080091e0(Func_0808a080(17), 0);
-        Func_080091e0(Func_0808a080(18), 0);
-        Func_080091e0(Func_0808a080(19), 0);
-        if (Func_080770c0(0x804) == 0) {
-            Func_02000f8c();
+        Func_020026c0_b(Func_02002712(9), 0);
+        Func_020026cc(Func_0200271e(10), 0);
+        Func_020026d8(Func_0200272a(11), 0);
+        Func_020026e4(Func_02002736(12), 0);
+        Func_020026f0(Func_02002742(13), 0);
+        Func_020026fc(Func_0200274e(14), 0);
+        Func_02002708(Func_0200275a(15), 0);
+        Func_02002714(Func_02002766(16), 0);
+        Func_02002720(Func_02002772(17), 0);
+        Func_0200272c(Func_0200277e(18), 0);
+        Func_02002738(Func_0200278a(19), 0);
+        if (Func_02002756(0x804) == 0) {
+            Func_02001b5e();
         }
 
-        if (Func_080770c0(0x303) != 0) {
-            Func_0808a0f0(9, 0x5d80000, 0x880000);
-        } else if (Func_080770c0(0x302) != 0) {
-            Func_0808a0f0(9, 0x5f80000, 0x880000);
+        if (Func_02002764(0x303) != 0) {
+            Func_020027e6(9, 0x5d80000, 0x880000);
+        } else if (Func_0200277e(0x302) != 0) {
+            Func_02002800(9, 0x5f80000, 0x880000);
         }
 
-        if (Func_080770c0(0x301) != 0) {
+        if (Func_02002796(0x301) != 0) {
             tint = 227;
         } else {
-            if (Func_080770c0(0x300) == 0) {
+            if (Func_020027a6(0x300) == 0) {
                 return;
             }
             tint = 231;
         }
-        Func_0808a0f0(10, tint << 19, 0x880000);
+        Func_02002828(10, tint << 19, 0x880000);
         return;
 
     case 13:
@@ -146,25 +203,25 @@ void Func_02000a24(void)
     case 15:
         /* Fully UNROLLED in the assembly: 6 separate
          * Func_0808a080/Func_080091e0 pairs at 0x02000c32-0x02000c74, not a loop. */
-        Func_080091e0(Func_0808a080(9), 0);
-        Func_080091e0(Func_0808a080(10), 0);
-        Func_080091e0(Func_0808a080(11), 0);
-        Func_080091e0(Func_0808a080(12), 0);
-        Func_080091e0(Func_0808a080(13), 0);
-        Func_080091e0(Func_0808a080(14), 0);
-        if (Func_080770c0(0x825) == 0) {
-            Func_0200161c();
+        Func_020027ae(Func_02002800_b(9), 0);
+        Func_020027ba(Func_0200280c(10), 0);
+        Func_020027c6(Func_02002818(11), 0);
+        Func_020027d2(Func_02002824(12), 0);
+        Func_020027de(Func_02002830(13), 0);
+        Func_020027ea(Func_0200283c(14), 0);
+        if (Func_02002808(0x825) == 0) {
+            Func_020022a0();
         }
-        Func_020017c0(1);
-        Func_080770c8(564);
+        Func_0200244a(1);
+        Func_02002826(564);
 
-        if (Func_080770c0(0x821) == 0) {
+        if (Func_02002824(0x821) == 0) {
             return;
         }
-        Func_08009180(0, 71, 100, 71, 1, 1);
-        Func_08009180(122, 20, 120, 30, 1, 2);
-        Func_080091c0(122, 20, 1, 2, 120, 30);
-        Func_08009128();
+        Func_0200280a(0, 71, 100, 71, 1, 1);
+        Func_0200281c(122, 20, 120, 30, 1, 2);
+        Func_02002838(122, 20, 1, 2, 120, 30);
+        Func_0200281c();
         return;
 
     default:

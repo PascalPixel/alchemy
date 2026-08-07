@@ -48,14 +48,22 @@
 
 /* Overlay imports (through the veneer table).  Old-style declarations:
  * overlay imports vary their argument count between call sites. */
-u8 *Func_0808a080();
-void Func_080b0008();
-s32 Func_080770c0();
-void Func_0808a170();
-void Func_0808a178();
-s32 Func_0808a070();
-void Func_0808a010();
-void Func_0808a180();
+u8 *Func_02000bd8();
+void Func_02000cae();
+s32 Func_02000bd4();
+void Func_02000c70();
+void Func_02000c80();
+s32 Func_02000c18();
+void Func_02000c0a();
+void Func_02000c90();
+void Func_02000c98();
+void Func_02000cb0();
+void Func_02000ca8();
+void Func_02000cc0();
+
+                    
+
+                    
 
 void Func_0200006c(s32 actor)
 {
@@ -63,27 +71,27 @@ void Func_0200006c(s32 actor)
     u32 facing;
     s32 message;
 
-    record = Func_0808a080(0);
+    record = Func_02000bd8(0);
     facing = (((u32)*(u16 *)(record + 6) + 0x2000) & 0xffffc000) << 16;
 
     if (facing == 0xc0000000u) {
-        Func_080b0008(31, actor);
+        Func_02000cae(31, actor);
         return;
     }
 
-    if (Func_080770c0(0x96f) != 0) {
+    if (Func_02000bd4(0x96f) != 0) {
         message = 0x261c;
-        Func_0808a170(message);
-        Func_0808a178(actor, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a010(10);
-            Func_0808a170(message + 1);
+        Func_02000c70(message);
+        Func_02000c80(actor, 0);
+        if (Func_02000c18(0, 0) == 0) {
+            Func_02000c0a(10);
+            Func_02000c90(message + 1);
         } else {
-            Func_0808a170(message + 2);
+            Func_02000c98(message + 2);
         }
-        Func_0808a180(actor, 0);
+        Func_02000cb0(actor, 0);
     } else {
-        Func_0808a170(0x25cf);
-        Func_0808a180(actor, 0);
+        Func_02000ca8(0x25cf);
+        Func_02000cc0(actor, 0);
     }
 }

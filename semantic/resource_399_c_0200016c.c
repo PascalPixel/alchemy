@@ -48,8 +48,9 @@ extern u8 Data_0200a9e0[];      /* in-image script, file offset 0x29e0 */
 extern u8 Data_0200aa58[];      /* in-image script, file offset 0x2a58 */
 extern u8 Data_0200aad0[];      /* in-image script, file offset 0x2ad0 */
 
-void Func_0808a038();
-s32 Func_080770c0();
+void Func_020023c6();
+s32 Func_0200239c();
+s32 Func_020023c4();
 
 u8 *Func_0200016c(void)
 {
@@ -57,8 +58,8 @@ u8 *Func_0200016c(void)
 
     if (Data_02000240[224] == 0x33) {
         script = Data_0200aad0;
-        Func_0808a038(script);
-        if (Func_080770c0(0x881) != 0) {
+        Func_020023c6(script);
+        if (Func_0200239c(0x881) != 0) {
             *(s32 *)(script + 0x50) = 182 << 16;
             *(s32 *)(script + 0x58) = 564 << 16;
             script[262] = 0;
@@ -67,7 +68,7 @@ u8 *Func_0200016c(void)
         return script;
     }
 
-    if (Func_080770c0(0x881) != 0) {
+    if (Func_020023c4(0x881) != 0) {
         return Data_0200aa58;
     }
     return Data_0200a9e0;

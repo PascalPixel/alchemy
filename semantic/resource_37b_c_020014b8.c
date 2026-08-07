@@ -46,12 +46,19 @@
  */
 
 /* Imports.  Old-style declarations: arity varies per site in this overlay. */
-s32 Func_08000148();
-void Func_080001a0();
-u32 Func_080001d0();
-u32 Func_080001c8();
-void Func_08000150();
-void Func_080000d0();
+s32 Func_02003890();
+void Func_020038aa();
+u32 Func_020038be();
+u32 Func_020038e6();
+u32 Func_020038e8();
+u32 Func_02003910();
+u32 Func_02003914();
+void Func_02003926();
+void Func_02003920();
+
+                    
+
+                     
 
 /* In-image overlay data (writable EWRAM), addressed by its pool value. */
 extern u32 Data_0200aa50[];
@@ -69,12 +76,12 @@ void Func_020014b8(void)
 
     entry = Data_0200aa50;
 
-    work = (void *)Func_08000148(14, 0x400);
-    Func_080001a0(Data_0200a56c, work);
+    work = (void *)Func_02003890(14, 0x400);
+    Func_020038aa(Data_0200a56c, work);
 
     /* Three 9-entry runs of 12-byte records, each describing one 0x80-byte
      * slice of the unpacked buffer under a different attribute flag. */
-    attribute = Func_080001c8(Func_080001d0(), 0x80, work) | 0xac00;
+    attribute = Func_020038be(Func_020038be(), 0x80, work) | 0xac00;
     for (i = 0; i <= 8; i++) {
         entry[1] = 0x40004000;
         entry[0] = 0;
@@ -82,7 +89,7 @@ void Func_020014b8(void)
         entry += 3;
     }
 
-    attribute = Func_080001c8(Func_080001d0(), 0x80, (u8 *)work + 0x80) | 0xdc00;
+    attribute = Func_020038e8(Func_020038e6(), 0x80, (u8 *)work + 0x80) | 0xdc00;
     for (i = 0; i <= 8; i++) {
         entry[1] = 0x40004000;
         entry[0] = 0;
@@ -90,7 +97,7 @@ void Func_020014b8(void)
         entry += 3;
     }
 
-    attribute = Func_080001c8(Func_080001d0(), 0x80, (u8 *)work + 0x100) | 0xc00;
+    attribute = Func_02003914(Func_02003910(), 0x80, (u8 *)work + 0x100) | 0xc00;
     for (i = 0; i <= 8; i++) {
         entry[0] = 0;
         entry[1] = 0x40004000;
@@ -98,6 +105,6 @@ void Func_020014b8(void)
         entry += 3;
     }
 
-    Func_08000150(14);
-    Func_080000d0((void *)((u32)&Func_02000eb0 | 1), 0xc80);
+    Func_02003926(14);
+    Func_02003920((void *)((u32)&Func_02000eb0 | 1), 0xc80);
 }

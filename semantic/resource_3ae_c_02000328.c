@@ -55,22 +55,48 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-u8 *Func_0808a080();
-void Func_0808a018();
-void Func_0808a020();
-s32 Func_080770c0();
-void Func_080770c8();
-s32 Func_0808a070();
-void Func_0808a010();
-void Func_0808a0d0();
-void Func_0808a110();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a1b8();
-s32 Func_08077040();
-s32 Func_08077038();
-void Func_080772b0();
+u8 *Func_020018ce();
+void Func_020018c2();
+s32 Func_02001898();
+s32 Func_020018a2();
+void Func_02001974();
+void Func_02001984();
+void Func_02001996();
+void Func_020019a6();
+s32 Func_02001926();
+void Func_02001910();
+void Func_020019b6();
+void Func_020019ce();
+void Func_0200197a();
+void Func_020019fe();
+void Func_0200193c();
+void Func_02001922();
+void Func_020019ea();
+void Func_02001a02();
+void Func_02001a04();
+void Func_02001a1c();
+s32 Func_0200194a();
+s32 Func_0200194c();
+void Func_02001a6e();
+void Func_020019be();
+void Func_020019ac();
+u8 *Func_020019fa();
+void Func_02001a30();
+void Func_02001a3c();
+void Func_02001a48();
+void Func_02001aca();
+void Func_02001abc();
+void Func_02001a20();
+
+                     
+
+                    
+
+                     
+
+                     
+
+                    
 
 extern u8 *Data_03001ebc;
 
@@ -81,32 +107,32 @@ void Func_02000328(void)
     s32 a;
     s32 b;
 
-    player = Func_0808a080(0);
+    player = Func_020018ce(0);
     facing = (s16)((*(u16 *)(player + 6) + 0x2000) & 0xc000);
 
-    Func_0808a018();
+    Func_020018c2();
 
-    if (Func_080770c0(0x8a7) != 0) {
-        if (Func_080770c0(0x8a9) != 0) {
-            Func_0808a170(0x1d23);
-            Func_0808a178(12, 0);
+    if (Func_02001898(0x8a7) != 0) {
+        if (Func_020018a2(0x8a9) != 0) {
+            Func_02001974(0x1d23);
+            Func_02001984(12, 0);
         } else {
-            Func_0808a170(0x1d20);
-            Func_0808a178(12, 0);
+            Func_02001996(0x1d20);
+            Func_020019a6(12, 0);
 
-            if (Func_0808a070(0, 0) == 0) {
-                Func_0808a010(10);
-                Func_0808a170(0x1d21);
-                Func_0808a180(12, 0);
+            if (Func_02001926(0, 0) == 0) {
+                Func_02001910(10);
+                Func_020019b6(0x1d21);
+                Func_020019ce(12, 0);
                 /* movs r2,#161 / lsls r2,r2,#3 == 1288 */
-                Func_0808a0d0(12, 88, 1288);
+                Func_0200197a(12, 88, 1288);
                 /* movs r1,#128 / lsls r1,r1,#7 == 0x4000 */
-                Func_0808a1b8(12, 0x4000, 0);
-                Func_0808a010(20);
-                Func_080770c8(0x8a9);
+                Func_020019fe(12, 0x4000, 0);
+                Func_0200193c(20);
+                Func_02001922(0x8a9);
             } else {
-                Func_0808a170(0x1d22);
-                Func_0808a180(12, 0);
+                Func_020019ea(0x1d22);
+                Func_02001a02(12, 0);
             }
         }
     } else {
@@ -115,33 +141,33 @@ void Func_02000328(void)
             return;
         }
 
-        Func_0808a170(0x1d16);
-        Func_0808a180(12, 0);
+        Func_02001a04(0x1d16);
+        Func_02001a1c(12, 0);
 
-        if (Func_080770c0(0x8a5) != 0) {
-            a = Func_08077040(235);
-            b = Func_08077038(235);
+        if (Func_0200194a(0x8a5) != 0) {
+            a = Func_0200194c(235);
+            b = Func_0200194c(235);
 
-            Func_0808a110(12, 3);
-            Func_0808a0d0(12, 88, 1288);
-            Func_0808a1b8(12, 0x4000, 0);
+            Func_020019fe(12, 3);
+            Func_020019ea(12, 88, 1288);
+            Func_02001a6e(12, 0x4000, 0);
 
             *(u16 *)(Data_03001ebc + 472) += 1;
 
-            Func_0808a180(12, 0);
-            Func_080772b0(a, b);
-            Func_080770c8(0x8a7);
+            Func_02001a6e(12, 0);
+            Func_020019be(a, b);
+            Func_020019ac(0x8a7);
 
-            player = Func_0808a080(0);
+            player = Func_020019fa(0);
             /* movs r2,#163 / lsls r2,r2,#3 == 1304 */
-            Func_0808a0d0(0, *(s16 *)(player + 10), 1304);
-            Func_0808a0d0(0, 72, 1304);
-            Func_0808a0d0(12, 88, 1304);
-            Func_0808a1b8(12, 0, 0);
+            Func_02001a30(0, *(s16 *)(player + 10), 1304);
+            Func_02001a3c(0, 72, 1304);
+            Func_02001a48(12, 88, 1304);
+            Func_02001aca(12, 0, 0);
         } else {
-            Func_0808a180(12, 0);
+            Func_02001abc(12, 0);
         }
     }
 
-    Func_0808a020();
+    Func_02001a20();
 }

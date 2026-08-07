@@ -102,10 +102,12 @@ extern s32 *Data_0200f77c[];
 extern s32 *Data_0200f7ec[];
 
 /* Used for its return value. */
-struct Actor_02004bd8 *Func_0200032c();
+struct Actor_02004bd8 *Func_02004f20();
+void Func_02009a56();
+void Func_02009b24();
+void Func_02009b2e();
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_08009098();
 
 s32 Func_02004bd8(struct Actor_02004bd8 *object)
 {
@@ -129,7 +131,7 @@ s32 Func_02004bd8(struct Actor_02004bd8 *object)
     probe.x = object->x;
     probe.y = object->y + 0xfff00000;
     probe.z = object->z;
-    partner = Func_0200032c(&probe, 0);
+    partner = Func_02004f20(&probe, 0);
 
     sprite = partner->sprite;
     if (*sprite->tag != 256) {
@@ -157,7 +159,7 @@ s32 Func_02004bd8(struct Actor_02004bd8 *object)
     goto afterFallback;
 
 fallback:
-    Func_08009098(object, Data_0200d564);
+    Func_02009a56(object, Data_0200d564);
     return 0;
 
 afterFallback:
@@ -203,10 +205,10 @@ afterFallback:
         step++;
     }
 
-    Func_08009098(object, lines[slot][step]);
+    Func_02009b24(object, lines[slot][step]);
     return 0;
 
 tagFallback:
-    Func_08009098(object, Data_0200d564);
+    Func_02009b2e(object, Data_0200d564);
     return 0;
 }

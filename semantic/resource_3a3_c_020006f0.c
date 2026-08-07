@@ -27,9 +27,14 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-void Func_080091f0();
-void Func_08009080();       /* sets the record's activity mode */
-void Func_080f9010();
+void Func_0200159c();
+void Func_0200156a();
+void Func_02001704();
+void Func_020015d8();
+void Func_02001740();
+void Func_020015cc();
+                     
+                            /* sets the record's activity mode */
 
 void Func_020006f0(u8 *object)
 {
@@ -45,13 +50,13 @@ void Func_020006f0(u8 *object)
     if (*beat != 0) {
         *(u16 *)beat = (u16)(*(u16 *)beat - 1);
         if ((u16)*beat == 1) {
-            Func_080091f0(-1, -1, 0xe666);
+            Func_0200159c(-1, -1, 0xe666);
         }
     }
 
     pending = *(s32 *)(object + 40);
     if (pending == 0) {
-        Func_08009080(object, 1);
+        Func_0200156a(object, 1);
 
         limit = *(s32 *)(object + 20);
         position = *(s32 *)(object + 12) + (s32)0xfffe8000;   /* -0x18000 */
@@ -59,10 +64,10 @@ void Func_020006f0(u8 *object)
 
         if (position < limit) {
             if (*(s32 *)(object + 104) != 0) {
-                Func_080f9010(229);
+                Func_02001704(229);
                 /* r7 is still the zero read from +0x28. */
                 *(u16 *)beat = 4;
-                Func_080091f0(0, 0x10000, 0x10000);
+                Func_020015d8(0, 0x10000, 0x10000);
                 *(s32 *)(object + 104) = 0;
                 limit = *(s32 *)(object + 20);
             }
@@ -76,9 +81,9 @@ void Func_020006f0(u8 *object)
 
     frame = (s16 *)(object + 100);
     if (*frame == 0) {
-        Func_080f9010(152);
+        Func_02001740(152);
         *(s32 *)(object + 104) = 1;
-        Func_08009080(object, 2);
+        Func_020015cc(object, 2);
         *(s32 *)(object + 40) = 0x00030000;     /* `movs r3,#192 / lsls #10` */
     }
 

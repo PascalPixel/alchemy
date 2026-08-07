@@ -39,18 +39,23 @@
 extern u32 Data_0200b36c[];   /* first three words are descriptor pointers */
 
 /* Returns the party record; only its presentation block at +80 is read. */
-u8 *Func_0808a080();
+u8 *Func_02003c16();
+u8 *Func_02003b94();
+void Func_02003b9e();
+void Func_02003bb8();
+void Func_02003d2a();
+s32 Func_02003c3c();
+s32 Func_02003c54();
+s32 Func_02003c62();
+void Func_02003cb8();
+void Func_02003cc8();
 
 /* Creates the effect record and returns it, or 0 on failure. */
-u8 *Func_080090c8();
 
-void Func_08009080();
-void Func_08009098();
-void Func_0808a160();
+                     
 
 /* Relocated IWRAM helper: turns a distance and a descriptor duration into a
  * per-frame step. */
-s32 Func_03000380();
 
 void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                    u32 flags, const u8 *options)
@@ -62,20 +67,20 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     s32 kind;
     s32 distance;
 
-    party = Func_0808a080(0);
+    party = Func_02003c16(0);
 
     /* 128 << 13.  With that bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
     if ((flags & 0x100000) != 0 && options != 0) kind = *(s16 *)(options + 24);
     else kind = 222;
 
-    effect = Func_080090c8(kind, x, y, z);
+    effect = Func_02003b94(kind, x, y, z);
     if (effect == 0) return;
 
     block = *(u8 **)(effect + 80);
 
-    Func_08009080(effect, (flags + 1) & 15);
-    Func_08009098(effect, Data_0200b36c[flags & 15]);
+    Func_02003b9e(effect, (flags + 1) & 15);
+    Func_02003bb8(effect, Data_0200b36c[flags & 15]);
 
     effect[85] = 0;
     block[38] = 0;
@@ -102,7 +107,7 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
-        Func_0808a160(effect, *(s32 *)(options + 4));
+        Func_02003d2a(effect, *(s32 *)(options + 4));
     }
 
     if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
@@ -123,21 +128,21 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
          * the target is biased by -1.0 in 16.16. */
         if ((flags & 0x80000) != 0) {
             *(s32 *)(effect + 48) =
-                Func_03000380(*(s32 *)(options + 16) - *(s32 *)(effect + 24),
+                Func_02003c3c(*(s32 *)(options + 16) - *(s32 *)(effect + 24),
                               descriptor[3]);
             distance = *(s32 *)(options + 20) - *(s32 *)(effect + 28);
         } else {
             *(s32 *)(effect + 48) =
-                Func_03000380(*(s32 *)(options + 16) + (s32)0xffff0000,
+                Func_02003c54(*(s32 *)(options + 16) + (s32)0xffff0000,
                               descriptor[3]);
             distance = *(s32 *)(options + 20) + (s32)0xffff0000;
         }
-        *(s32 *)(effect + 52) = Func_03000380(distance, descriptor[3]);
+        *(s32 *)(effect + 52) = Func_02003c62(distance, descriptor[3]);
     }
 
     if ((flags & 0x200000) != 0) {                  /* 128 << 14 */
-        Func_08009080(effect, 1);
-        Func_08009098(effect, *(s32 *)(options + 28));
+        Func_02003cb8(effect, 1);
+        Func_02003cc8(effect, *(s32 *)(options + 28));
     }
 
     if ((flags & 0x400000) != 0) {                  /* 128 << 15 */

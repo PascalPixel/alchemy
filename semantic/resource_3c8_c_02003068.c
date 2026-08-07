@@ -119,42 +119,252 @@ struct Sprite {
 extern s16 Data_02000240[];
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-void Func_02000058();
-void Func_02000558();
-struct Sprite *Func_020007d8();
-struct Sprite *Func_0200094c();
-struct Sprite *Func_020009c8();
-void Func_020018f8();
-struct Sprite *Func_020019c0();
-struct Sprite *Func_02001a14();
-void Func_02001d48();
-void Func_02001f60();
-void Func_020022c8();
-void Func_02002b14();
-void Func_0200300c();
-void Func_020042bc();
-void Func_02004610();
-void Func_020047c0();
-void Func_02004a2c();
-void Func_080000c0();
-struct Sprite *Func_080000d0();
-s32 Func_08009180();
-void Func_080091a0();
-void Func_080091b8();
-s32 Func_080091c0();
-void Func_080091e0();
-s32 Func_080770c0();
-void Func_080770c8();
-s32 Func_080770d0();
-void Func_0808a010();
-struct Sprite *Func_0808a080();
-struct Sprite *Func_0808a0f0();
-void Func_0808a100();
-struct Sprite *Func_0808a1e0();
-void Func_0808a360();
-void Func_0808a370();
-void Func_0808a408();
-struct Sprite *Func_0808a5e0();
+void Func_02007f08();
+s32 Func_02007ef6();
+void Func_020035e2();
+void Func_02007f0e();
+s32 Func_02007f2c();
+void Func_020060ce();
+s32 Func_02007f0c();
+void Func_020060ea();
+void Func_020060f0();
+void Func_020060f6();
+struct Sprite *Func_02008056();
+void Func_02006104();
+struct Sprite *Func_02008064();
+void Func_02006112();
+void Func_02006118();
+void Func_020061b0();
+s32 Func_02008034();
+void Func_020061c2();
+s32 Func_02007ff4();
+s32 Func_02008008();
+s32 Func_02008018();
+s32 Func_02008028();
+s32 Func_02008038();
+s32 Func_02008048();
+s32 Func_02008058();
+s32 Func_02008068();
+s32 Func_02008078();
+s32 Func_020080e0();
+s32 Func_020080a4();
+s32 Func_020080b8();
+s32 Func_020080c8();
+s32 Func_020080d8();
+s32 Func_020080e8();
+s32 Func_020080f8();
+s32 Func_02008108();
+s32 Func_02008118();
+s32 Func_02008128();
+s32 Func_02008138();
+s32 Func_02008148();
+s32 Func_02008158();
+s32 Func_020081ca();
+s32 Func_020081d0();
+s32 Func_020081c8();
+s32 Func_0200818c();
+s32 Func_020081ee();
+struct Sprite *Func_02008284();
+struct Sprite *Func_02008242();
+s32 Func_020082a8();
+void Func_020076e8();
+struct Sprite *Func_02008422();
+s32 Func_020082b0();
+struct Sprite *Func_02003e10();
+struct Sprite *Func_0200833c();
+struct Sprite *Func_02004e56();
+struct Sprite *Func_02004eb8();
+struct Sprite *Func_02008356();
+struct Sprite *Func_02004ecc();
+void Func_02003520();
+void Func_0200352e();
+void Func_020084bc();
+void Func_0200828a();
+struct Sprite *Func_02008398();
+struct Sprite *Func_020083ac();
+struct Sprite *Func_020083bc();
+void Func_02004e16();
+struct Sprite *Func_02008514();
+void Func_0200850a();
+void Func_020082d8();
+s32 Func_020083b0();
+s32 Func_02008374();
+s32 Func_02008384();
+s32 Func_02008394();
+s32 Func_020083a4();
+void Func_020083c8();
+void Func_020083da();
+struct Sprite *Func_02003dde();
+void Func_020085ea();
+struct Sprite *Func_020084c4();
+struct Sprite *Func_020084da();
+s32 Func_020084ba();
+void Func_020083f4();
+s32 Func_02008480();
+s32 Func_020084ac();
+struct Sprite *Func_0200857a();
+struct Sprite *Func_020085fc();
+s32 Func_020084e4();
+void Func_020085b4();
+struct Sprite *Func_02008624();
+struct Sprite *Func_02008572();
+struct Sprite *Func_020085d4();
+void Func_02005430();
+struct Sprite *Func_020085ac();
+struct Sprite *Func_020086f6();
+void Func_02008532();
+s32 Func_02008590();
+s32 Func_0200854e();
+s32 Func_0200855e();
+s32 Func_02008570();
+s32 Func_02008580();
+s32 Func_020085ac_b();
+s32 Func_020085be();
+void Func_02008766();
+void Func_0200877a();
+void Func_02007e36();
+struct Sprite *Func_02008854();
+s32 Func_020086e2();
+void Func_020086b2();
+s32 Func_020086b6();
+void Func_02008644();
+struct Sprite *Func_02008656();
+s32 Func_02008724();
+void Func_020086f4();
+s32 Func_020086f8();
+void Func_02008686();
+struct Sprite *Func_02008698();
+struct Sprite *Func_020040d8();
+void Func_020080cc();
+struct Sprite *Func_020040ea();
+struct Sprite *Func_020087c6();
+struct Sprite *Func_020087d8();
+struct Sprite *Func_020087e2();
+struct Sprite *Func_020087ec();
+s32 Func_020087c0();
+void Func_020086fc();
+s32 Func_02008788();
+s32 Func_020087b4();
+s32 Func_020087fa();
+struct Sprite *Func_0200888c();
+struct Sprite *Func_0200889a();
+struct Sprite *Func_020088a8();
+struct Sprite *Func_020088b8();
+struct Sprite *Func_020088c6();
+struct Sprite *Func_020088d4();
+struct Sprite *Func_0200894c();
+struct Sprite *Func_0200896c();
+struct Sprite *Func_020088ba();
+struct Sprite *Func_02008984();
+struct Sprite *Func_020088d2();
+void Func_02008934();
+struct Sprite *Func_020088ea();
+void Func_02008888();
+struct Sprite *Func_020089b0();
+struct Sprite *Func_020088fe();
+struct Sprite *Func_02008960();
+void Func_020059d4();
+s32 Func_02008964();
+void Func_02005dc2();
+struct Sprite *Func_020089ac();
+struct Sprite *Func_02004450();
+struct Sprite *Func_020089ba();
+s32 Func_020089a0();
+struct Sprite *Func_02008a20();
+struct Sprite *Func_02008b1e();
+struct Sprite *Func_02008a6c();
+struct Sprite *Func_02008b5e();
+struct Sprite *Func_02008aac();
+struct Sprite *Func_02008ac2();
+void Func_02008a60();
+struct Sprite *Func_02008ace();
+struct Sprite *Func_02008ae4();
+void Func_02008a82();
+struct Sprite *Func_02008af0();
+struct Sprite *Func_02008b06();
+void Func_02008aa4();
+struct Sprite *Func_02008b12();
+struct Sprite *Func_02008b28();
+void Func_02008ac6();
+struct Sprite *Func_02008c76();
+struct Sprite *Func_02008b4c();
+struct Sprite *Func_02008b56();
+struct Sprite *Func_02008b62();
+struct Sprite *Func_02008b72();
+void Func_02008af2();
+s32 Func_02008b4e();
+struct Sprite *Func_02008cd0();
+s32 Func_02008b14();
+s32 Func_02008b24();
+s32 Func_02008b50();
+s32 Func_02008b62_b();
+s32 Func_02008b5c();
+s32 Func_02008b6c();
+s32 Func_02008bca();
+s32 Func_02008b8a();
+s32 Func_02008b9a();
+s32 Func_02008bc6();
+s32 Func_02008bd8();
+s32 Func_02008bd2();
+s32 Func_02008be2();
+void Func_02008da6();
+void Func_02008dba();
+void Func_02008832();
+s32 Func_02008c64();
+void Func_02008bdc();
+struct Sprite *Func_02008bee();
+struct Sprite *Func_02008cf4();
+struct Sprite *Func_02008d0a();
+struct Sprite *Func_02008d16();
+struct Sprite *Func_02008d22();
+struct Sprite *Func_02008d2e();
+s32 Func_02008d04();
+void Func_02008c40();
+s32 Func_02008ccc();
+s32 Func_02008cf8();
+struct Sprite *Func_02008dc6();
+struct Sprite *Func_02008d84();
+struct Sprite *Func_02008e50();
+struct Sprite *Func_02008dee();
+struct Sprite *Func_02008dac();
+struct Sprite *Func_02008e76();
+struct Sprite *Func_02008e14();
+struct Sprite *Func_02008dd2();
+struct Sprite *Func_02008e9c();
+struct Sprite *Func_02008e3a();
+struct Sprite *Func_02008df8();
+struct Sprite *Func_02008ec2();
+void Func_02008e62();
+struct Sprite *Func_02008e18();
+void Func_02008db6();
+struct Sprite *Func_02008ede();
+struct Sprite *Func_02008e2c();
+struct Sprite *Func_02008e90();
+void Func_02006ab8();
+
+                               
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                    
+
+                               
+
+                     
+
+                               
 
 /* In-image callees of this overlay. */
 
@@ -176,11 +386,11 @@ s32 Func_02003068(void)
     s32 step;
     u32 i;
 
-    Func_0808a010(1);
-    if (Func_080770c0(0x109) != 0) {
-        Func_02000558();
+    Func_02007f08(1);
+    if (Func_02007ef6(0x109) != 0) {
+        Func_020035e2();
     }
-    Func_080770c8(272);
+    Func_02007f0e(272);
 
     REQUEST = 516;
     scene = Data_02000240[224];
@@ -188,19 +398,19 @@ s32 Func_02003068(void)
     /* ------------------------------------------------------------ 0xb5 */
     if (scene == 0xb5) {
         REQUEST = 256;
-        if (Func_080770c0(0x981) == 0) {
-            Func_0200300c(8);
+        if (Func_02007f2c(0x981) == 0) {
+            Func_020060ce(8);
         } else {
-            Func_080091c0(7, 17, 2, 1, 7, 16);
+            Func_02007f0c(7, 17, 2, 1, 7, 16);
         }
-        Func_0200300c(9);
-        Func_0200300c(10);
-        Func_0200300c(11);
-        Func_0808a1e0(11, 2);
-        Func_0200300c(12);
-        Func_0808a1e0(12, 2);
-        Func_0200300c(13);
-        Func_0200300c(14);
+        Func_020060ea(9);
+        Func_020060f0(10);
+        Func_020060f6(11);
+        Func_02008056(11, 2);
+        Func_02006104(12);
+        Func_02008064(12, 2);
+        Func_02006112(13);
+        Func_02006118(14);
         return 0;
     }
 
@@ -210,52 +420,52 @@ s32 Func_02003068(void)
         switch (step) {
         case 1:
         case 2:
-            Func_0200300c(8);
+            Func_020061b0(8);
             return 0;
 
         case 5:
-            Func_080770d0(288);
+            Func_02008034(288);
             /* fall through */
         case 3:
         case 4:
         case 6:
-            Func_0200300c(9);
+            Func_020061c2(9);
             return 0;
 
         case 20:
         case 21: {
             s32 a0, a1, a2, a3;
 
-            if (Func_080770c0(0x982) != 0) {
-                Func_08009180(103, 27, 89, 27, 7, 8);
-                Func_08009180(41, 90, 27, 92, 3, 2);
-                Func_08009180(41, 90, 29, 93, 3, 2);
-                Func_08009180(41, 90, 27, 94, 3, 2);
-                Func_08009180(41, 90, 27, 96, 3, 2);
-                Func_08009180(41, 90, 29, 97, 3, 2);
-                Func_08009180(41, 96, 25, 91, 3, 2);
-                Func_08009180(41, 92, 25, 93, 3, 2);
-                Func_08009180(41, 96, 25, 95, 3, 2);
+            if (Func_02008034(0x982) != 0) {
+                Func_02007ff4(103, 27, 89, 27, 7, 8);
+                Func_02008008(41, 90, 27, 92, 3, 2);
+                Func_02008018(41, 90, 29, 93, 3, 2);
+                Func_02008028(41, 90, 27, 94, 3, 2);
+                Func_02008038(41, 90, 27, 96, 3, 2);
+                Func_02008048(41, 90, 29, 97, 3, 2);
+                Func_02008058(41, 96, 25, 91, 3, 2);
+                Func_02008068(41, 92, 25, 93, 3, 2);
+                Func_02008078(41, 96, 25, 95, 3, 2);
                 a0 = 41; a1 = 96; a2 = 25; a3 = 97;
             } else {
-                if (Func_080770c0(0x983) == 0) {
+                if (Func_020080e0(0x983) == 0) {
                     return 0;
                 }
-                Func_08009180(111, 27, 89, 27, 7, 8);
-                Func_08009180(41, 90, 25, 91, 3, 2);
-                Func_08009180(41, 90, 25, 93, 3, 2);
-                Func_08009180(41, 90, 25, 95, 3, 2);
-                Func_08009180(41, 90, 25, 97, 3, 2);
-                Func_08009180(41, 90, 27, 96, 3, 2);
-                Func_08009180(41, 90, 29, 97, 3, 2);
-                Func_08009180(41, 94, 27, 92, 3, 2);
-                Func_08009180(41, 96, 29, 93, 3, 2);
+                Func_020080a4(111, 27, 89, 27, 7, 8);
+                Func_020080b8(41, 90, 25, 91, 3, 2);
+                Func_020080c8(41, 90, 25, 93, 3, 2);
+                Func_020080d8(41, 90, 25, 95, 3, 2);
+                Func_020080e8(41, 90, 25, 97, 3, 2);
+                Func_020080f8(41, 90, 27, 96, 3, 2);
+                Func_02008108(41, 90, 29, 97, 3, 2);
+                Func_02008118(41, 94, 27, 92, 3, 2);
+                Func_02008128(41, 96, 29, 93, 3, 2);
                 a0 = 41; a1 = 94; a2 = 27; a3 = 94;
             }
             /* 0x0200331a: one site, reached from both arms above. */
-            Func_08009180(a0, a1, a2, a3, 3, 2);
-            Func_08009180(41, 96, 27, 96, 3, 2);
-            Func_08009180(41, 96, 29, 97, 3, 2);
+            Func_02008138(a0, a1, a2, a3, 3, 2);
+            Func_02008148(41, 96, 27, 96, 3, 2);
+            Func_02008158(41, 96, 29, 97, 3, 2);
             return 0;
         }
 
@@ -264,25 +474,25 @@ s32 Func_02003068(void)
         case 9:
         case 10:
         case 11:
-            if (Func_080770d0(0x987) == 0) {
+            if (Func_020081ca(0x987) == 0) {
                 return 0;
             }
-            Func_080770d0(12, 218 << 18, 176 << 15);
-            sprite = Func_080770c0(12);
+            Func_020081d0(12, 218 << 18, 176 << 15);
+            sprite = Func_020081c8(12);
             sprite->z = (s32)0xffe80000;
             sprite->field3c = (s32)0x80000000;
             return 0;
 
         case 26:
-            Func_08009180(0x121);
+            Func_0200818c(0x121);
             /* fall through */
         case 22:
         case 23:
-            Func_080770c0(0x12f);
-            if (Func_0808a0f0(512) == 0) {
+            Func_020081ee(0x12f);
+            if (Func_02008284(512) == 0) {
                 return 0;
             }
-            Func_0808a080(44, 117, 41, 117, 3, 5);
+            Func_02008242(44, 117, 41, 117, 3, 5);
             return 0;
 
         default:
@@ -303,33 +513,33 @@ s32 Func_02003068(void)
 
         case 7:
         case 8:
-            Func_080770d0(0);
-            Func_020042bc(2);
-            sprite = Func_0808a5e0(8);
+            Func_020082a8(0);
+            Func_020076e8(2);
+            sprite = Func_02008422(8);
             sprite->state55 = 0;
             sprite->handler = Func_020008c8;
-            sprite = Func_080770c0(9);
+            sprite = Func_020082b0(9);
             sprite->state55 = 0;
             sprite->handler = Func_020008c8;
-            sprite = Func_020009c8(10);
+            sprite = Func_02003e10(10);
             sprite->state55 = 0;
             sprite->handler = Func_020008c8;
-            Func_0808a080();
+            Func_0200833c();
             return 0;
 
         case 9:
         case 10:
-            sprite = Func_020019c0(11);
-            Func_02001a14();
+            sprite = Func_02004e56(11);
+            Func_02004eb8();
             if ((sprite->x >> 20) == 8) {
-                Func_0808a080(sprite);
+                Func_02008356(sprite);
             }
-            sprite = Func_02001a14(12);
+            sprite = Func_02004ecc(12);
             if ((sprite->x >> 20) == 7) {
-                Func_02000058(sprite);
+                Func_02003520(sprite);
             }
-            Func_02000058(206 << 16, 0, 0x01c10000, 223);
-            Func_0808a408(210 << 16, 0, 0x01c10000, 223);
+            Func_0200352e(206 << 16, 0, 0x01c10000, 223);
+            Func_020084bc(210 << 16, 0, 0x01c10000, 223);
             return 0;
 
         case 11:
@@ -337,34 +547,34 @@ s32 Func_02003068(void)
         case 13:
         case 14:
         case 15:
-            Func_080000c0(170);
-            Func_0808a080(0);
-            Func_0808a080(2);
-            if (Func_0808a080(768) == 0) {
+            Func_0200828a(170);
+            Func_02008398(0);
+            Func_020083ac(2);
+            if (Func_020083bc(768) == 0) {
                 return 0;
             }
-            Func_020018f8(111, 5, 117, 5, 5, 2);
-            Func_0808a5e0(111, 10, 117, 10, 5, 2);
-            Func_0808a408(111, 7, 111, 5, 5, 2);
-            Func_080000c0(111, 7, 111, 10, 5, 2);
-            Func_080770c0(48, 3, 3, 10, 54, 3);
-            Func_08009180(55, 26, 3, 10, 48, 3);
+            Func_02004e16(111, 5, 117, 5, 5, 2);
+            Func_02008514(111, 10, 117, 10, 5, 2);
+            Func_0200850a(111, 7, 111, 5, 5, 2);
+            Func_020082d8(111, 7, 111, 10, 5, 2);
+            Func_020083b0(48, 3, 3, 10, 54, 3);
+            Func_02008374(55, 26, 3, 10, 48, 3);
             return 0;
 
         case 16:
-            Func_08009180(0x12f);
+            Func_02008384(0x12f);
             return 0;
 
         case 20:
-            Func_08009180(170);
-            if (Func_08009180(0x109) != 0) {
+            Func_02008394(170);
+            if (Func_020083a4(0x109) != 0) {
                 return 0;
             }
-            Func_080091b8();
+            Func_020083c8();
             return 0;
 
         case 21:
-            Func_080091b8();
+            Func_020083da();
             return 0;
 
         default:
@@ -377,70 +587,70 @@ s32 Func_02003068(void)
         step = Data_02000240[225];
         switch (step) {
         case 2:
-            Func_020007d8();
+            Func_02003dde();
             goto scene_fade;
         case 1:
             goto scene_fade;
 
         case 4:
         case 6:
-            Func_0808a408(0);
+            Func_020085ea(0);
             return 0;
 
         case 9:
         case 10:
-            sprite = Func_0808a080(8);
+            sprite = Func_020084c4(8);
             sprite->state55 = 0;
             sprite->z = 0;
-            sprite = Func_0808a080(9);
+            sprite = Func_020084da(9);
             sprite->state55 = 0;
             sprite->state59 = 0;
-            if (Func_080770c0(0x301) != 0) {
+            if (Func_020084ba(0x301) != 0) {
                 struct Sprite *extra;
 
-                Func_080000c0(1);
-                Func_08009180(124, 41, 110, 41, 1, 2);
-                Func_080091c0(46, 41, 1, 1, 46, 42);
-                Func_0808a0f0(9, 186 << 18, 182 << 18);
+                Func_020083f4(1);
+                Func_02008480(124, 41, 110, 41, 1, 2);
+                Func_020084ac(46, 41, 1, 1, 46, 42);
+                Func_0200857a(9, 186 << 18, 182 << 18);
                 sprite->state55 = 0;
                 sprite->z = (s32)0xfff00000;
-                Func_0808a1e0(9, 3);
+                Func_020085fc(9, 3);
                 sprite->flags = 2;
-                Func_080091c0(45, 45, 1, 1, 46, 45);
-                Func_0808a100(10, 7);
-                Func_0808a1e0(10, 1);
-                extra = Func_0808a080(10);
+                Func_020084e4(45, 45, 1, 1, 46, 45);
+                Func_020085b4(10, 7);
+                Func_02008624(10, 1);
+                extra = Func_02008572(10);
                 extra->state59 = 0;
                 extra->flags = 2;
-                Func_0808a0f0(10, 0x02e70000, 174 << 18);
+                Func_020085d4(10, 0x02e70000, 174 << 18);
                 extra->handler = Func_02000b98;
             }
-            Func_02001d48();
+            Func_02005430();
             return 0;
 
         case 11:
             REQUEST = 514;
-            sprite = Func_0808a080(0);
+            sprite = Func_020085ac(0);
             sprite->z = (s32)0xfffe0000;
             /* fall through to the shared 0x02003706 tail */
         case 7:
         case 8:
-            Func_0808a5e0(170);
-            Func_080091a0();
+            Func_020086f6(170);
+            Func_02008532();
             BLEND_CTRL = 0;
-            if (Func_080770c0(768) != 0) {
-                Func_08009180(15, 96, 9, 96, 3, 3);
-                Func_08009180(12, 96, 15, 96, 3, 3);
-                Func_08009180(5, 50, 15, 32, 3, 4);
-                Func_08009180(25, 45, 9, 32, 3, 4);
-                Func_080091c0(15, 32, 3, 1, 9, 32);
-                Func_080091c0(12, 32, 3, 1, 15, 32);
+            if (Func_02008590(768) != 0) {
+                Func_0200854e(15, 96, 9, 96, 3, 3);
+                Func_0200855e(12, 96, 15, 96, 3, 3);
+                Func_02008570(5, 50, 15, 32, 3, 4);
+                Func_02008580(25, 45, 9, 32, 3, 4);
+                Func_020085ac_b(15, 32, 3, 1, 9, 32);
+                Func_020085be(12, 32, 3, 1, 15, 32);
             }
             if (Data_02000240[225] != 11) {
                 return 0;
             }
-            Func_0808a360();
-            Func_0808a370();
+            Func_02008766();
+            Func_0200877a();
             REQUEST = 516;
             return 0;
 
@@ -455,7 +665,7 @@ s32 Func_02003068(void)
         switch (step) {
         case 4:
         case 5:
-            Func_02004610();
+            Func_02007e36();
             goto scene_fade;
         case 6:
             goto scene_fade;
@@ -467,78 +677,78 @@ s32 Func_02003068(void)
         case 13:
         case 14:
         case 20:
-            Func_0808a5e0(170);
-            if (Func_080770c0(0x306) != 0) {
-                Func_080091b8(53, 12, 3, 13, 26, 12);
-                Func_08009180(81, 41, 89, 14, 9, 2);
-                Func_080000c0(1);
-                Func_080000d0(Func_020045f0, 3200);
+            Func_02008854(170);
+            if (Func_020086e2(0x306) != 0) {
+                Func_020086b2(53, 12, 3, 13, 26, 12);
+                Func_020086b6(81, 41, 89, 14, 9, 2);
+                Func_02008644(1);
+                Func_02008656(Func_020045f0, 3200);
             }
-            if (Func_080770c0(0x307) != 0) {
-                Func_080091b8(58, 12, 3, 13, 34, 12);
-                Func_08009180(81, 41, 97, 14, 5, 2);
-                Func_080000c0(1);
-                Func_080000d0(Func_02004600, 3200);
+            if (Func_02008724(0x307) != 0) {
+                Func_020086f4(58, 12, 3, 13, 34, 12);
+                Func_020086f8(81, 41, 97, 14, 5, 2);
+                Func_02008686(1);
+                Func_02008698(Func_02004600, 3200);
             }
             step = Data_02000240[225];
             if (step == 11) {
-                Func_020007d8();
+                Func_020040d8();
                 return 0;
             }
             if (step != 20) {
                 return 0;
             }
-            Func_020047c0();
+            Func_020080cc();
             return 0;
 
         case 15:
         case 16:
-            sprite = Func_020007d8(8);
+            sprite = Func_020040ea(8);
             sprite->state55 = 0;
             sprite->z = 0;
-            Func_0808a080(9)->state55 = 0;
-            Func_0808a080(10)->state55 = 0;
-            Func_0808a080(11)->state55 = 0;
-            if (Func_0808a080(772) != 0) {
-                Func_080770c0(1);
-                Func_080000c0(111, 59, 109, 37, 1, 2);
-                Func_08009180(45, 37, 1, 1, 45, 38);
-                if (Func_080091c0(0x302) != 0) {
-                    Func_080770c0(9, 194 << 18, 166 << 18);
-                    Func_0808a0f0(10, 210 << 18, 166 << 18);
-                    Func_0808a0f0(11, 194 << 18, 174 << 18);
+            Func_020087c6(9)->state55 = 0;
+            Func_020087d8(10)->state55 = 0;
+            Func_020087e2(11)->state55 = 0;
+            if (Func_020087ec(772) != 0) {
+                Func_020087c0(1);
+                Func_020086fc(111, 59, 109, 37, 1, 2);
+                Func_02008788(45, 37, 1, 1, 45, 38);
+                if (Func_020087b4(0x302) != 0) {
+                    Func_020087fa(9, 194 << 18, 166 << 18);
+                    Func_0200888c(10, 210 << 18, 166 << 18);
+                    Func_0200889a(11, 194 << 18, 174 << 18);
                 } else {
-                    Func_0808a0f0(9, 210 << 18, 166 << 18);
-                    Func_0808a0f0(10, 194 << 18, 174 << 18);
-                    Func_0808a0f0(11, 210 << 18, 174 << 18);
+                    Func_020088a8(9, 210 << 18, 166 << 18);
+                    Func_020088b8(10, 194 << 18, 174 << 18);
+                    Func_020088c6(11, 210 << 18, 174 << 18);
                 }
-                Func_0808a0f0(9, 3);
-                sprite = Func_0808a1e0(9);
+                Func_020088d4(9, 3);
+                sprite = Func_0200894c(9);
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
-                Func_0808a080(10, 3);
-                sprite = Func_0808a1e0(10);
+                Func_0200889a(10, 3);
+                sprite = Func_0200896c(10);
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
-                Func_0808a080(11, 3);
-                sprite = Func_0808a1e0(11);
+                Func_020088ba(11, 3);
+                sprite = Func_02008984(11);
                 sprite->z = (s32)0xfff00000;
                 sprite->flags = 2;
-                Func_0808a080(12, 7);
-                Func_0808a100(12, 7);
-                sprite = Func_0808a080(12);
-                Func_080091e0(sprite, 0);
-                sprite = Func_0808a1e0(12);
+                Func_020088d2(12, 7);
+                Func_02008934(12, 7);
+                sprite = Func_020088ea(12);
+                Func_02008888(sprite, 0);
+                sprite = Func_020089b0(12);
                 sprite->state59 = 0;
                 sprite->flags = 2;
-                Func_0808a080(12, 0x02d70000, 158 << 18);
+                Func_020088fe(12, 0x02d70000, 158 << 18);
                 sprite->handler = Func_02000b98;
             }
-            Func_0808a0f0();
+            Func_02008960();
             return 0;
 
         case 19:
-            Func_02001f60();
+            Func_020059d4();
             return 0;
 
         default:
@@ -554,52 +764,52 @@ s32 Func_02003068(void)
     switch (step) {
     case 1:
     case 2:
-        if (Func_080770c0(0x109) != 0) {
-            Func_020022c8(0);
-            Func_0200094c(Func_0808a080(0));
+        if (Func_02008964(0x109) != 0) {
+            Func_02005dc2(0);
+            Func_02004450(Func_020089ac(0));
             for (i = 0; i <= 3; i++) {
-                sprite = Func_0808a080(i + 10);
+                sprite = Func_020089ba(i + 10);
                 if ((sprite->x >> 20) == 13 && (sprite->y >> 20) == 7 &&
-                    Func_080770c0(512 + i) != 0) {
+                    Func_020089a0(512 + i) != 0) {
                     sprite->flags |= 2;
                     sprite->state59 = 0;
                     sprite->state55 = 0;
-                    Func_0808a080(4, 19, 1, 1, 13, 7);
+                    Func_02008a20(4, 19, 1, 1, 13, 7);
                     return 0;
                 }
             }
             return 0;
         }
-        sprite = Func_0808a1e0(8);
+        sprite = Func_02008b1e(8);
         sprite->state55 = 0;
         sprite->z = (s32)0xffd00000;
         sprite->flags |= 2;
         sprite->state59 &= 0xfe;
         sprite->counter64 = 3;
-        Func_0808a080(8, 1);
-        sprite = Func_0808a1e0(9);
+        Func_02008a6c(8, 1);
+        sprite = Func_02008b5e(9);
         sprite->state55 = 0;
         sprite->z = (s32)0xffd00000;
         sprite->flags |= 2;
         sprite->state59 &= 0xfe;
         sprite->counter64 = 3;
-        Func_0808a080(9, 1);
-        sprite = Func_0808a080(10);
+        Func_02008aac(9, 1);
+        sprite = Func_02008ac2(10);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(sprite, 0);
-        sprite = Func_0808a080(11);
+        Func_02008a60(sprite, 0);
+        sprite = Func_02008ace(11);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(Func_0808a080(11), 0);
-        sprite = Func_0808a080(12);
+        Func_02008a82(Func_02008ae4(11), 0);
+        sprite = Func_02008af0(12);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(Func_0808a080(12), 0);
-        sprite = Func_0808a080(13);
+        Func_02008aa4(Func_02008b06(12), 0);
+        sprite = Func_02008b12(13);
         sprite->state55 = 0;
         sprite->counter64 = 0;
-        Func_080091e0(Func_0808a080(13), 0);
+        Func_02008ac6(Func_02008b28(13), 0);
         return 0;
 
     case 13:
@@ -609,13 +819,13 @@ s32 Func_02003068(void)
     /* Four jump tables enter this one physical fade tail.  Its placement
      * here mirrors the machine's address order between switch arms. */
     scene_fade:
-        Func_0808a5e0(170);
+        Func_02008c76(170);
         return 0;
 
     case 18:
     case 19:
         REQUEST = 514;
-        sprite = Func_0808a080(0);
+        sprite = Func_02008b4c(0);
         sprite->z = (s32)0xfffe0000;
         /* fall through to the shared 0x02003ca6 tail */
     case 3:
@@ -629,88 +839,88 @@ s32 Func_02003068(void)
     case 11:
     case 12:
     case 20:
-        Func_0808a080(20)->state55 = 4;
-        Func_0808a080(20)->flags |= 2;
-        Func_0808a080(20)->z = (s32)0xffef8000;
-        Func_080091a0();
+        Func_02008b56(20)->state55 = 4;
+        Func_02008b62(20)->flags |= 2;
+        Func_02008b72(20)->z = (s32)0xffef8000;
+        Func_02008af2();
         BLEND_CTRL = 0;
-        if (Func_080770c0(0x306) != 0) {
-            Func_0808a5e0(170);
-            Func_08009180(36, 81, 32, 81, 3, 2);
-            Func_08009180(36, 83, 36, 81, 3, 2);
-            Func_080091c0(36, 17, 3, 1, 32, 17);
-            Func_080091c0(36, 18, 3, 1, 36, 17);
-            Func_08009180(63, 29, 33, 20, 1, 1);
-            Func_08009180(20, 56, 36, 17, 3, 4);
+        if (Func_02008b4e(0x306) != 0) {
+            Func_02008cd0(170);
+            Func_02008b14(36, 81, 32, 81, 3, 2);
+            Func_02008b24(36, 83, 36, 81, 3, 2);
+            Func_02008b50(36, 17, 3, 1, 32, 17);
+            Func_02008b62_b(36, 18, 3, 1, 36, 17);
+            Func_02008b5c(63, 29, 33, 20, 1, 1);
+            Func_02008b6c(20, 56, 36, 17, 3, 4);
         }
-        if (Func_080770c0(0x307) != 0) {
-            Func_08009180(44, 81, 48, 81, 3, 2);
-            Func_08009180(44, 83, 44, 81, 3, 2);
-            Func_080091c0(44, 17, 3, 1, 48, 17);
-            Func_080091c0(44, 18, 3, 1, 44, 17);
-            Func_08009180(63, 29, 49, 20, 1, 1);
-            Func_08009180(41, 56, 44, 17, 3, 4);
+        if (Func_02008bca(0x307) != 0) {
+            Func_02008b8a(44, 81, 48, 81, 3, 2);
+            Func_02008b9a(44, 83, 44, 81, 3, 2);
+            Func_02008bc6(44, 17, 3, 1, 48, 17);
+            Func_02008bd8(44, 18, 3, 1, 44, 17);
+            Func_02008bd2(63, 29, 49, 20, 1, 1);
+            Func_02008be2(41, 56, 44, 17, 3, 4);
         }
         step = (u16)Data_02000240[225];
         if ((u16)(step - 18) <= 1) {
-            Func_0808a360();
-            Func_0808a370();
+            Func_02008da6();
+            Func_02008dba();
             REQUEST = 516;
             step = (u16)Data_02000240[225];
         }
         if (step != 20) {
             return 0;
         }
-        Func_02004a2c();
+        Func_02008832();
         return 0;
 
     case 15:
     case 16:
-        Func_080091c0(1);
-        Func_080000c0(Func_02003050, 3200);
-        sprite = Func_080000d0(14);
+        Func_02008c64(1);
+        Func_02008bdc(Func_02003050, 3200);
+        sprite = Func_02008bee(14);
         sprite->state55 = 0;
         sprite->z = 0;
-        Func_0808a080(15)->state55 = 0;
-        Func_0808a080(16)->state55 = 0;
-        Func_0808a080(17)->state55 = 0;
-        Func_0808a080(18)->state55 = 0;
-        if (Func_0808a080(776) != 0) {
-            Func_080770c0(1);
-            Func_080000c0(95, 56, 77, 35, 1, 2);
-            Func_08009180(13, 35, 1, 1, 13, 36);
-            Func_080091c0(15, 132 << 17, 186 << 18);
-            sprite = Func_0808a0f0(15);
+        Func_02008cf4(15)->state55 = 0;
+        Func_02008d0a(16)->state55 = 0;
+        Func_02008d16(17)->state55 = 0;
+        Func_02008d22(18)->state55 = 0;
+        if (Func_02008d2e(776) != 0) {
+            Func_02008d04(1);
+            Func_02008c40(95, 56, 77, 35, 1, 2);
+            Func_02008ccc(13, 35, 1, 1, 13, 36);
+            Func_02008cf8(15, 132 << 17, 186 << 18);
+            sprite = Func_02008dc6(15);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a080(15, 3);
-            Func_0808a1e0(16, 184 << 16, 158 << 18);
-            sprite = Func_0808a0f0(16);
+            Func_02008d84(15, 3);
+            Func_02008e50(16, 184 << 16, 158 << 18);
+            sprite = Func_02008dee(16);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a080(16, 3);
-            Func_0808a1e0(17, 232 << 16, 174 << 18);
-            sprite = Func_0808a0f0(17);
+            Func_02008dac(16, 3);
+            Func_02008e76(17, 232 << 16, 174 << 18);
+            sprite = Func_02008e14(17);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a080(17, 3);
-            Func_0808a1e0(18, 184 << 16, 166 << 18);
-            sprite = Func_0808a0f0(18);
+            Func_02008dd2(17, 3);
+            Func_02008e9c(18, 184 << 16, 166 << 18);
+            sprite = Func_02008e3a(18);
             sprite->z = (s32)0xfff00000;
             sprite->flags = 2;
-            Func_0808a080(18, 3);
-            Func_0808a1e0(19, 7);
-            Func_0808a100(19, 7);
-            sprite = Func_0808a080(19);
-            Func_080091e0(sprite, 0);
-            sprite = Func_0808a1e0(19);
+            Func_02008df8(18, 3);
+            Func_02008ec2(19, 7);
+            Func_02008e62(19, 7);
+            sprite = Func_02008e18(19);
+            Func_02008db6(sprite, 0);
+            sprite = Func_02008ede(19);
             sprite->state59 = 0;
             sprite->flags = 2;
-            Func_0808a080(19, 215 << 16, 150 << 18);
+            Func_02008e2c(19, 215 << 16, 150 << 18);
             sprite->handler = Func_02000b98;
         }
-        Func_0808a0f0();
-        Func_02002b14();
+        Func_02008e90();
+        Func_02006ab8();
         return 0;
 
     default:

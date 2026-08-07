@@ -56,30 +56,37 @@ struct SceneActor {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneActor *Func_0808a080();  /* scene actor by selector */
-void Func_0808a018();                /* scene bracket helper */
-void Func_0808a020();                /* scene bracket close */
-void Func_080091c0();                /* six-argument scripted-actor call */
-void Func_080770c8();                /* set an event flag */
-void Func_080770d0();                /* clear an event flag */
+struct SceneActor *Func_02001fc4();
+void Func_02001fc4_b();
+void Func_02001f8a();
+void Func_02001fd0();
+void Func_02001fa4();
+void Func_02001fe2();
+void Func_02002006();
+                                     /* scene actor by selector */
+                                     /* scene bracket helper */
+                                     /* scene bracket close */
+                                     /* six-argument scripted-actor call */
+                                     /* set an event flag */
+                                     /* clear an event flag */
 
 void Func_02000b6c(void)
 {
-    struct SceneActor *actor = Func_0808a080(8);
+    struct SceneActor *actor = Func_02001fc4(8);
     s32 tile = actor->x;
 
     if (tile < 0) tile += 0x000fffff;
     tile >>= 20;
 
-    Func_0808a018(actor);
+    Func_02001fc4_b(actor);
 
     if (tile == 20) {
-        Func_080091c0(18, 40, 6, 3, 18, 6);
-        Func_080770d0(0x302);
+        Func_02001f8a(18, 40, 6, 3, 18, 6);
+        Func_02001fd0(0x302);
     } else {
-        Func_080091c0(24, 40, 6, 3, 18, 6);
-        Func_080770c8(0x302);
+        Func_02001fa4(24, 40, 6, 3, 18, 6);
+        Func_02001fe2(0x302);
     }
 
-    Func_0808a020();
+    Func_02002006();
 }

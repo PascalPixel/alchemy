@@ -61,24 +61,51 @@ extern s32 Data_02009808;
 
 /* Main-image imports reached through this overlay's veneer table.  Old-style
  * declarations are mandatory: import arity varies between call sites. */
-void Func_0808a010();   /* wait n frames */
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_0808a460();
-void Func_080f9010();
-void Func_080091f0();
-void Func_080000c0();   /* wait one frame */
-void Func_080000d0();   /* install a per-frame task */
-void Func_080000d8();   /* remove a per-frame task */
-void Func_080b0060();
+void Func_02001f02();
+void Func_02001fc6();
+void Func_02001f4a();
+void Func_02001f96();
+void Func_02001f1c();
+void Func_0200200a();
+void Func_02001f38();
+void Func_02002040();
+void Func_02001f62();
+void Func_02001f6c();
+void Func_02001ef8();
+void Func_02001f92();
+void Func_02002080();
+void Func_02001f90();
+void Func_02001fae();
+void Func_02001fa8();
+void Func_02001fbe();
+void Func_02001f60();
+void Func_02001f74();
+void Func_0200218a();
+void Func_02002010();
+void Func_02002196();
+void Func_020020c2();
+void Func_020020cc();
+void Func_02002106();
+void Func_02002084();
+void Func_02002202();
+void Func_020021fe();
+void Func_02002124();
+void Func_02002138();
+void Func_020011a8(void);
+                        /* wait n frames */
+
+                     
+
+                     
+                     
+                        /* wait one frame */
+                        /* install a per-frame task */
+                        /* remove a per-frame task */
 
 /* In-image callees. */
 void Func_020000b0(void);
 void Func_02000168(void);
 void Func_02000194(void);
-void Func_02000430(void);
 
 void Func_02000b34(void)
 {
@@ -88,49 +115,49 @@ void Func_02000b34(void)
 
     records = *(u8 **)0x03001E70;
 
-    Func_0808a018();
-    Func_0808a460();
-    Func_0808a0d0(0, 312, 232);           /* 156 << 1 = 312 */
-    Func_0808a1b8(0, 0xc000, 0);          /* 192 << 8       */
-    Func_0808a010(40);
-    Func_080f9010(140);
+    Func_02001f02();
+    Func_02001fc6();
+    Func_02001f4a(0, 312, 232);           /* 156 << 1 = 312 */
+    Func_02001f96(0, 0xc000, 0);          /* 192 << 8       */
+    Func_02001f1c(40);
+    Func_0200200a(140);
 
     /* Ramp the backdrop colour up over 16 frames.  The packed value is
      * (i << 11) | (i << 5): the blue and green channels together, red left at
      * zero. */
     for (i = 0; i <= 15; i++) {
         *(volatile u16 *)0x05000000 = (u16)((i << 11) | (i << 5));
-        Func_0808a010(10);
+        Func_02001f38(10);
     }
     *(volatile u16 *)0x05000000 = 0x7e00;  /* 252 << 7 */
 
     /* Three alpha flashes: hold 0x1010 for three frames, 0x0810 for 65. */
     for (i = 2; i >= 0; i--) {
-        Func_080f9010(212);
+        Func_02002040(212);
         *(volatile u16 *)0x04000052 = 0x1010;
-        Func_0808a010(3);
+        Func_02001f62(3);
         *(volatile u16 *)0x04000052 = 0x0810;
-        Func_0808a010(65);
+        Func_02001f6c(65);
     }
 
     /* Enable the blend fade in the scene driver, then install it. */
     Data_020097e8 = 1;
     Data_020097ec = 0;
-    Func_080000d0(Func_02000194, 3200);
+    Func_02001ef8(Func_02000194, 3200);
 
     Data_020097f8 = 1;                    /* let the driver spawn objects */
-    Func_0808a010(20);
-    Func_080f9010(163);
+    Func_02001f92(20);
+    Func_02002080(163);
 
-    Func_080091f0(0x10000, 0x10000, 0x10000);
-    Func_0808a010(60);
+    Func_02001f90(0x10000, 0x10000, 0x10000);
+    Func_02001fae(60);
     Data_020097f8 = 1;
-    Func_080091f0(0x20000, 0x20000, 0x10000);
-    Func_0808a010(60);
-    Func_080091f0(0x30000, 0x30000, 0x10000);
+    Func_02001fa8(0x20000, 0x20000, 0x10000);
+    Func_02001fc6(60);
+    Func_02001fbe(0x30000, 0x30000, 0x10000);
 
     Data_020097f4 = 0;
-    Func_080000d0(Func_02000168, 3200);
+    Func_02001f60(Func_02000168, 3200);
 
     /*
      * Sweep both coordinates by 0x3333 per frame until the accumulated shift
@@ -143,10 +170,10 @@ void Func_02000b34(void)
         *(s32 *)(records + 320) += 0x3333;
         *(s32 *)(records + 368) += 0x3333;
         swept += 0x3333;
-        Func_080000c0(1);
+        Func_02001f74(1);
     } while (swept <= 0x0059ffff);
 
-    Func_080000d8(Func_02000168);
+    Func_02001f92(Func_02000168);
 
     /* Backgrounds back to priority 3, 3, 2 and both driver gates off. */
     Data_020097f8 = 0;
@@ -156,18 +183,18 @@ void Func_02000b34(void)
     *(volatile u16 *)0x0400000A = (u16)((*(volatile u16 *)0x0400000A & 0xfffc) | 2);
 
     /* r0 = 288 was set before the pool hop; this is its call site. */
-    Func_080f9010(288);
-    Func_080000c0(1);
-    Func_080f9010(145);
+    Func_0200218a(288);
+    Func_02002010(1);
+    Func_02002196(145);
 
     /* Fade to white over 17 frames, hold, then fade back over 17. */
     *(volatile u16 *)0x04000050 = 0xbf;
     for (i = 0; i <= 16; i++) {
         *(volatile u16 *)0x04000054 = (u16)i;
-        Func_0808a010(1);
+        Func_020020c2(1);
     }
-    Func_0808a010(40);
-    Func_080091f0(-1, -1, 0xe666);
+    Func_020020cc(40);
+    Func_020020c2(-1, -1, 0xe666);
 
     Data_02009804 = *(s32 *)(records + 320);
     Data_02009808 = *(s32 *)(records + 368);
@@ -175,13 +202,13 @@ void Func_02000b34(void)
 
     for (i = 16; i >= 0; i--) {
         *(volatile u16 *)0x04000054 = (u16)i;
-        Func_0808a010(8);
+        Func_02002106(8);
     }
 
-    Func_080000d0(Func_020000b0, 3200);
-    Func_080f9010(80);
-    Func_080b0060();
-    Func_0808a010(20);
-    Func_0808a020();
-    Func_02000430();
+    Func_02002084(Func_020000b0, 3200);
+    Func_02002202(80);
+    Func_020021fe();
+    Func_02002124(20);
+    Func_02002138();
+    Func_020011a8();
 }

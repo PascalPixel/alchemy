@@ -55,28 +55,54 @@ typedef struct Slot_02001550 {
     s32 z;                 /* +16, 12.20 fixed point */
 } Slot_02001550;
 
-void Func_0808a018();      /* scripted-action bracket: open */
-Slot_02001550 *Func_0808a080();
-void Func_0808a010();
-void Func_080f9010();
-void Func_080000c0();      /* ROM dispatch[0] -> Func_080030f8 */
-u32 Func_080000f8();       /* ROM dispatch[7] -> Func_08004458 */
-void Func_080091c0();      /* four register arguments plus two stack words */
-void Func_0808a100();
-void Func_080090d0();
-void Func_0808a0f0();
-void Func_08009180();      /* four register arguments plus two stack words */
-void Func_080091f0();
-void Func_080091f8();
-void Func_080770c8();
-void Func_0808a020();      /* scripted-action bracket: close */
+void Func_0200464e();
+Slot_02001550 *Func_0200466c();
+void Func_0200465c();
+s32 Func_02001f74();
+Slot_02001550 *Func_020046a0();
+void Func_0200474c();
+void Func_020045cc();
+Slot_02001550 *Func_020046ba();
+u32 Func_020045ee();
+u32 Func_02004600();
+void Func_020020de();
+void Func_020046aa();
+void Func_02004700();
+Slot_02001550 *Func_02004726();
+void Func_02004770();
+void Func_0200469e();
+void Func_020046e0();
+void Func_0200478e();
+void Func_02004804();
+void Func_020046f8();
+void Func_02004736();
+void Func_02004744();
+void Func_0200477a();
+void Func_02004840();
+void Func_02004730();
+void Func_0200476e();
+void Func_0200477c();
+void Func_02004788();
+void Func_020047b6();
+void Func_020047ac();
+void Func_020047d0();
+                           /* scripted-action bracket: open */
+
+                     
+                           /* ROM dispatch[0] -> Func_080030f8 */
+                           /* ROM dispatch[7] -> Func_08004458 */
+                           /* four register arguments plus two stack words */
+
+                     
+                           /* four register arguments plus two stack words */
+
+                     
+                           /* scripted-action bracket: close */
 
 /* This overlay's routine at 0x020009f4; returns a handle. */
-s32 Func_020009f4();
 
 /* This overlay's effect spawner: four register arguments plus four stack
  * words - (x, y, z, vx, vy, vz, flags, options). */
-void Func_02000ae8();
 
 void Func_02001550(void)
 {
@@ -85,77 +111,77 @@ void Func_02001550(void)
     u32 step;
 
     /* No argument register is set. */
-    Func_0808a018();
+    Func_0200464e();
 
-    if ((Func_0808a080(18)->x >> 20) != 46) {
+    if ((Func_0200466c(18)->x >> 20) != 46) {
         goto close_sequence;
     }
 
-    Func_0808a010(30);
+    Func_0200465c(30);
 
     /* 186 << 18 and 184 << 16. */
-    handle = Func_020009f4(0x02e80000, 0, 0x00b80000, 253);
+    handle = Func_02001f74(0x02e80000, 0, 0x00b80000, 253);
 
     *(s32 *)&options[12] = 0x9999;
     *(s32 *)&options[4] = 7;
     *(s32 *)&options[8] = 0x9999;
 
-    ((u8 *)Func_0808a080(18))[85] = 0;
+    ((u8 *)Func_020046a0(18))[85] = 0;
 
-    Func_080f9010(185);
+    Func_0200474c(185);
 
     for (step = 0; step <= 15; step++) {
         Slot_02001550 *slot;
         s32 x;
         s32 z;
 
-        Func_080000c0(3);
+        Func_020045cc(3);
 
         /* 0xffff0000 is -0x00010000: the slot sinks by one sixteenth of a
          * unit per tick. */
-        slot = Func_0808a080(18);
+        slot = Func_020046ba(18);
         slot->y = slot->y + (s32)0xffff0000;
 
         /* Both reductions use `lsrs`, so they are unsigned.  184 << 18 and
          * 128 << 16 are the band's origins. */
-        x = (s32)(((Func_080000f8() << 4) >> 16) << 16) + 0x02e00000;
-        z = (s32)(((Func_080000f8() * 18u) >> 16) << 16) + 0x00800000;
+        x = (s32)(((Func_020045ee() << 4) >> 16) << 16) + 0x02e00000;
+        z = (s32)(((Func_02004600() * 18u) >> 16) << 16) + 0x00800000;
 
-        Func_02000ae8(x, 0, z, 0, 0, 0, 0x00090000, options);
+        Func_020020de(x, 0, z, 0, 0, 0, 0x00090000, options);
     }
 
-    Func_080091c0(51, 8, 1, 1, 49, 8);
-    Func_0808a010(30);
+    Func_020046aa(51, 8, 1, 1, 49, 8);
+    Func_02004700(30);
 
-    ((u8 *)Func_0808a080(18))[35] |= 2;
+    ((u8 *)Func_02004726(18))[35] |= 2;
 
-    Func_0808a100(18, 3);
-    Func_080090d0(handle);
+    Func_02004770(18, 3);
+    Func_0200469e(handle);
 
-    Func_080091c0(45, 4, 1, 1, 46, 8);
+    Func_020046e0(45, 4, 1, 1, 46, 8);
 
     /* 186 << 18, 136 << 16. */
-    Func_0808a0f0(20, 0x02e80000, 0x00880000);
-    Func_080f9010(188);
+    Func_0200478e(20, 0x02e80000, 0x00880000);
+    Func_02004804(188);
 
     /* 160 << 11 = 0x00050000, 128 << 9 = 0x00010000. */
-    Func_08009180(58, 8, 49, 8, 1, 3);
-    Func_080091f0(0, 0x00050000, 0x00010000);
-    Func_080091f0(-1, -1, 0xe666);
+    Func_020046f8(58, 8, 49, 8, 1, 3);
+    Func_02004736(0, 0x00050000, 0x00010000);
+    Func_02004744(-1, -1, 0xe666);
 
-    Func_0808a010(20);
-    Func_080f9010(188);
+    Func_0200477a(20);
+    Func_02004840(188);
 
-    Func_08009180(59, 8, 49, 8, 1, 3);
-    Func_080091f0(0, 0x00050000, 0x00010000);
-    Func_080091f0(-1, -1, 0xe666);
+    Func_02004730(59, 8, 49, 8, 1, 3);
+    Func_0200476e(0, 0x00050000, 0x00010000);
+    Func_0200477c(-1, -1, 0xe666);
 
     /* No argument register is set. */
-    Func_080091f8();
+    Func_02004788();
 
-    Func_0808a010(10);
-    Func_080770c8(0x971);
+    Func_020047b6(10);
+    Func_020047ac(0x971);
 
 close_sequence:
-    Func_0808a020();
+    Func_020047d0();
 }

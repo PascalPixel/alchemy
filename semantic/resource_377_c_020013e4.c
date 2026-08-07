@@ -95,28 +95,49 @@ struct Object_020013e4 {
 
 extern u8 *Data_03001ebc;
 
-void Func_0808a018();
-void Func_0808a210();
-void Func_080000c0();
-void Func_0808a0f0();
-void Func_0808a200();
-struct Object_020013e4 *Func_080090c8();
-void Func_08000140();
-u8 *Func_08015250();
-void Func_080001c8();
-void Func_08000150();
-void Func_0808a360();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_08009098();
-void Func_08009148();
-void Func_0808a010();
-void Func_080090d0();
-void Func_0808a128();
-void Func_0808a368();
-void Func_0808a370();
-void Func_0808a248();
+void Func_02002cf8();
+void Func_02002e22();
+void Func_02002c18();
+void Func_02002d82();
+void Func_02002d90();
+void Func_02002c36();
+void Func_02002e3e();
+struct Object_020013e4 *Func_02002c98();
+void Func_02002c9e();
+u8 *Func_02002d5e();
+void Func_02002cce();
+void Func_02002cc4();
+void Func_02002efe();
+void Func_02002de4();
+void Func_02002e28();
+void Func_02002e34();
+void Func_02002e40();
+void Func_02002ecc();
+void Func_02002d3c();
+void Func_02002d62();
+void Func_02002d4a();
+void Func_02002d70();
+void Func_02002e06();
+void Func_02002d6c();
+void Func_02002e9e();
+void Func_02002f08();
+void Func_02002f84();
+void Func_02002f90();
+void Func_02002f5e();
+
+                     
+
+                                        
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_020013e4(void)
 {
@@ -124,47 +145,47 @@ void Func_020013e4(void)
     struct Sprite_020013e4 *sprite;
     u8 *palette;
 
-    Func_0808a018();
-    Func_0808a210(-1, -1, -1, 0);
-    Func_080000c0(1);
-    Func_0808a0f0(0, 0, 0);
-    Func_0808a0f0(18, 0x1E00000, 0xCA0000);
-    Func_080000c0(1);
-    Func_0808a200(18, 1);
+    Func_02002cf8();
+    Func_02002e22(-1, -1, -1, 0);
+    Func_02002c18(1);
+    Func_02002d82(0, 0, 0);
+    Func_02002d90(18, 0x1E00000, 0xCA0000);
+    Func_02002c36(1);
+    Func_02002e3e(18, 1);
 
     object->field55 = 0;
-    object = Func_080090c8(22, 0x1480000, 0x20000, 0xC30000);
+    object = Func_02002c98(22, 0x1480000, 0x20000, 0xC30000);
     sprite->flags27 = 0;
     sprite = object->sprite;
     object->field0c = 0x50000;
     sprite->flags05 &= ~0x20;
     sprite->mode09 &= 0x0F;
 
-    Func_08000140(17, 0x608);
-    palette = Func_08015250(224) + 0x400;
-    Func_080001c8(sprite->index1c, 128, palette);
-    Func_08000150(17);
+    Func_02002c9e(17, 0x608);
+    palette = Func_02002d5e(224) + 0x400;
+    Func_02002cce(sprite->index1c, 128, palette);
+    Func_02002cc4(17);
 
     *(s32 *)(Data_03001ebc + 448) = 514;
 
-    Func_0808a360();
-    Func_0808a090(18, 0x10000, 0x8000);
-    Func_0808a0d0(18, 480, 176);
-    Func_0808a0d0(18, 420, 164);
-    Func_0808a0d0(18, 326, 185);
-    Func_0808a1b8(18, 0x4000, 10);
+    Func_02002efe();
+    Func_02002de4(18, 0x10000, 0x8000);
+    Func_02002e28(18, 480, 176);
+    Func_02002e34(18, 420, 164);
+    Func_02002e40(18, 326, 185);
+    Func_02002ecc(18, 0x4000, 10);
 
-    Func_08009098(object, 0x02009EAC);
-    Func_08009148(object);
-    Func_08009098(object, 0x02009ECC);
-    Func_08009148(object);
+    Func_02002d3c(object, 0x02009EAC);
+    Func_02002d62(object);
+    Func_02002d4a(object, 0x02009ECC);
+    Func_02002d70(object);
 
-    Func_0808a010(20);
-    Func_080090d0(object);
-    Func_0808a128(18, 2, 20);
-    Func_0808a1b8(18, 0, 40);
+    Func_02002e06(20);
+    Func_02002d6c(object);
+    Func_02002e9e(18, 2, 20);
+    Func_02002f08(18, 0, 40);
 
-    Func_0808a368();
-    Func_0808a370();
-    Func_0808a248(22);
+    Func_02002f84();
+    Func_02002f90();
+    Func_02002f5e(22);
 }

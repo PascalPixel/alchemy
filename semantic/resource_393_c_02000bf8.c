@@ -36,13 +36,24 @@ struct Beat393Subject {
     u8 marker;                      /* 0x23 */
 };
 
-void Func_020008c0();               /* run a numbered beat of this scene */
-s32 Func_080770c0();                /* read an event flag */
-struct Beat393Subject *Func_0808a080();   /* subject record by id */
-void Func_080091c0();               /* six-argument renderer, last two on the stack */
-void Func_080091e0();               /* set presentation mode (record, phase) */
-s32 Func_02000244();                /* fill a tile rectangle's attribute byte */
-void Func_02000c8c();               /* the follow-up sequence */
+void Func_020014ce();
+s32 Func_02001a70();
+struct Beat393Subject *Func_02001aa2();
+void Func_02001a7c();
+s32 Func_02000e90();
+struct Beat393Subject *Func_02001ad6();
+void Func_02001aac();
+void Func_0200151e();
+void Func_02001524();
+s32 Func_02001ac6();
+void Func_02001900();
+                                    /* run a numbered beat of this scene */
+                                    /* read an event flag */
+                                          /* subject record by id */
+                                    /* six-argument renderer, last two on the stack */
+                                    /* set presentation mode (record, phase) */
+                                    /* fill a tile rectangle's attribute byte */
+                                    /* the follow-up sequence */
 
 s32 Func_02000bf8(void)
 {
@@ -50,22 +61,22 @@ s32 Func_02000bf8(void)
 
     *(s32 *)(workspace + 448) = 516;
 
-    Func_020008c0(10);
+    Func_020014ce(10);
 
-    if (Func_080770c0(0x201) != 0) {
-        struct Beat393Subject *subject = Func_0808a080(10);
+    if (Func_02001a70(0x201) != 0) {
+        struct Beat393Subject *subject = Func_02001aa2(10);
 
         subject->marker = 2;
-        Func_080091c0(32, 20, 2, 4, 11, 16);
-        Func_02000244(2, 12, 16, 1, 4, 0);
-        Func_080091e0(Func_0808a080(10), 0);
+        Func_02001a7c(32, 20, 2, 4, 11, 16);
+        Func_02000e90(2, 12, 16, 1, 4, 0);
+        Func_02001aac(Func_02001ad6(10), 0);
     }
 
-    Func_020008c0(8);
-    Func_020008c0(9);
+    Func_0200151e(8);
+    Func_02001524(9);
 
-    if (Func_080770c0(0x845) == 0) {
-        Func_02000c8c(6);
+    if (Func_02001ac6(0x845) == 0) {
+        Func_02001900(6);
     }
     return 0;
 }

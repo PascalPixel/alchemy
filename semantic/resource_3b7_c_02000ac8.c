@@ -108,30 +108,62 @@ extern s8 Data_02000240[];      /* RAM workspace; also indexed as s16 elsewhere 
 extern s32 Data_02009fd0[];     /* in-image 0x1fd0: fifteen draw ids */
 extern u16 Data_0200a00c[];     /* in-image 0x200c: four coin payouts */
 
-s32 Func_080772e0();
-s32 Func_08077308();
-s32 Func_08015010();
-s32 Func_08015398();
-s32 Func_0808a070();
-s32 Func_080000f8();
-s32 Func_0200173c();
-void Func_020004bc();
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a010();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a460();
-void Func_08015018();
-void Func_08015080();
-void Func_080150b0();
-void Func_08015120();
-void Func_08015140();
-void Func_080f9010();
-void Func_080000c0();
-void Func_08077230();
-void Func_08077048();
+void Func_020023fa();
+void Func_0200248e();
+s32 Func_020023fa_b();
+void Func_02002462();
+void Func_02002474();
+s32 Func_020023bc();
+void Func_020023dc();
+void Func_020023f4();
+void Func_020023f8();
+void Func_02002410();
+s32 Func_0200242e();
+void Func_02002434();
+void Func_020024fa();
+void Func_02002514();
+void Func_0200240a();
+void Func_02002572();
+s32 Func_020024c2();
+void Func_02002526();
+void Func_02002538();
+s32 Func_02002508();
+s32 Func_0200248e_b();
+void Func_020024ae();
+void Func_020024ba();
+void Func_02002470();
+void Func_020025d6();
+void Func_02002482();
+void Func_020025fa();
+void Func_020024ee();
+void Func_0200254c();
+void Func_02002542();
+s32 Func_020023a8();
+void Func_02002576();
+void Func_0200264c();
+void Func_02002554();
+void Func_02002614();
+void Func_0200266c();
+void Func_020025c2();
+s32 Func_0200254c_b();
+void Func_020011d2();
+void Func_0200265a();
+
+                    
+
+                    
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 s32 Func_02000ac8(void)
 {
@@ -148,29 +180,29 @@ s32 Func_02000ac8(void)
     s32 pick;
     s32 weight;
 
-    Func_0808a018();
+    Func_020023fa();
 
     /* r0 still holds whatever the call above left; no argument is set. */
-    Func_0808a460();
+    Func_0200248e();
 
     coins = *(s32 *)&Data_02000240[16];
-    tickets = Func_080772e0(229);
+    tickets = Func_020023fa_b(229);
 menu:
 
-    Func_0808a170(0xe43);
-    Func_0808a178(-1, 0);
+    Func_02002462(0xe43);
+    Func_02002474(-1, 0);
 
-    window = Func_08015010(0, 0, 17, 4, 2);
-    Func_08015080(0xe49, window, 0, 0);
-    Func_080150b0(coins, 6, window, 0x48, 0);
-    Func_08015080(0xe4a, window, 0, 8);
-    Func_080150b0(tickets, 6, window, 0x48, 8);
+    window = Func_020023bc(0, 0, 17, 4, 2);
+    Func_020023dc(0xe49, window, 0, 0);
+    Func_020023f4(coins, 6, window, 0x48, 0);
+    Func_020023f8(0xe4a, window, 0, 8);
+    Func_02002410(tickets, 6, window, 0x48, 8);
 
     /* The previous selection is passed back in as the initial cursor. */
-    choice = Func_08015398(choice);
+    choice = Func_0200242e(choice);
 
-    Func_08015018(window, 2);
-    Func_08015140();
+    Func_02002410(window, 2);
+    Func_02002434();
 
     if (choice == -1) {
         goto done;
@@ -194,35 +226,35 @@ menu:
     goto play;
 
 say_and_retry:
-    Func_0808a170(line);
-    Func_0808a180(-1, 0);
-    Func_080000c0(1);
+    Func_020024fa(line);
+    Func_02002514(-1, 0);
+    Func_0200240a(1);
     goto menu;
 
 input_accepted:
-    Func_080f9010(0x70);
+    Func_02002572(0x70);
     aborted = 0;
     goto input_finished;
 
 confirm_ticket:
-    if (Func_08077308() == 0) {
-        Func_0808a170(0xe47);
-        Func_0808a178(-1, 0);
-        if (Func_0808a070(0, 0) != 0) {
+    if (Func_020024c2() == 0) {
+        Func_02002526(0xe47);
+        Func_02002538(-1, 0);
+        if (Func_02002508(0, 0) != 0) {
             goto done;
         }
     }
 
-    window = Func_08015010(20, 15, 9, 4, 2);
-    Func_08015080(0xe4c, window, 0, 0);
+    window = Func_0200248e_b(20, 15, 9, 4, 2);
+    Func_020024ae(0xe4c, window, 0, 0);
 play:
-    Func_08015080(0xe4d, window, 0, 8);
-    Func_080000c0(5);
-    Func_080f9010(0x74);
+    Func_020024ba(0xe4d, window, 0, 8);
+    Func_02002470(5);
+    Func_020025d6(0x74);
     goto input_check;
 
 input_wait:
-    Func_080000c0(1);
+    Func_02002482(1);
 
 input_check:
     if ((*(volatile s32 *)0x03001c94 & 1) != 0) {       /* A */
@@ -232,38 +264,38 @@ input_check:
         goto input_wait;
     }
 
-    Func_080f9010(0x71);
+    Func_020025fa(0x71);
     aborted = -1;
 
 input_finished:
-    Func_08015018(window, 2);
+    Func_020024ee(window, 2);
 
     if (aborted == -1) {
         goto done;
     }
 
     if (choice == 0) {
-        Func_08077230(-1);
+        Func_0200254c(-1);
     } else if (choice == 1) {
-        Func_08077048(229);
+        Func_02002542(229);
     }
 
-    round = Func_0200173c(choice);
+    round = Func_020023a8(choice);
 
     if (choice != 0) {
         goto weighted_draw;
     }
     if (round != 4) {
-        Func_08077230(Data_0200a00c[round]);
-        Func_080f9010(0x5b);
-        Func_08015120(Data_0200a00c[round], 5);
-        Func_0808a170(0xe46);
-        Func_0808a180(-1, 0);
+        Func_02002576(Data_0200a00c[round]);
+        Func_0200264c(0x5b);
+        Func_02002554(Data_0200a00c[round], 5);
+        Func_020025fa(0xe46);
+        Func_02002614(-1, 0);
         goto done;
     }
 
-    Func_080f9010(0x71);
-    Func_0808a010(10);
+    Func_0200266c(0x71);
+    Func_020025c2(10);
     goto done;
 
 weighted_draw:
@@ -273,7 +305,7 @@ weighted_draw:
         total += weights[index];
     }
 
-    pick = (s32)((u32)(total * Func_080000f8()) >> 16);
+    pick = (s32)((u32)(total * Func_0200254c_b()) >> 16);
     pick -= weights[0];
 
     index = 0;
@@ -293,7 +325,7 @@ weighted_draw:
         index = 14;
     }
 
-    Func_020004bc(Data_02009fd0[index]);
+    Func_020011d2(Data_02009fd0[index]);
 
     weight = weights[index];
     if (weight > 1) {
@@ -301,6 +333,6 @@ weighted_draw:
     }
 
 done:
-    Func_0808a020();
+    Func_0200265a();
     return 0;
 }

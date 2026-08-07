@@ -40,40 +40,52 @@
  * at +8 and +16; both are read with `ldrsh`, so they are signed.
  */
 
-void Func_0808a018();
-void Func_0808a090();
-void Func_080f9010();
+void Func_020038b8();
+void Func_020038e2();
+void Func_020038ec();
+void Func_020039aa();
+u8 *Func_020038f0();
+void Func_02003912();
+void Func_02003938();
+void Func_0200393a();
+void Func_020038f8();
+void Func_020039de();
+void Func_02003950();
+void Func_0200395e();
+void Func_0200394a();
+void Func_02003970();
+void Func_02003934();
+void Func_02003924();
+
+                     
 /* Returns the record for a numbered slot, or 0 when it has none. */
-u8 *Func_0808a080();
-void Func_0808a0b8();
-void Func_0808a0e8();
-void Func_0808a0e0();
-void Func_0808a010();
-void Func_0808a020();
-void Func_080770d0();
+
+                     
+
+                     
 
 void Func_0200138c(void)
 {
     u8 *slot;
 
-    Func_0808a018();
-    Func_0808a090(0, 0x1e666, 0xf333);
-    Func_0808a090(8, 0x1e666, 0xf333);
-    Func_080f9010(188);
+    Func_020038b8();
+    Func_020038e2(0, 0x1e666, 0xf333);
+    Func_020038ec(8, 0x1e666, 0xf333);
+    Func_020039aa(188);
 
-    slot = Func_0808a080(0);
+    slot = Func_020038f0(0);
     if (slot != 0) {
-        Func_0808a0b8(8, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+        Func_02003912(8, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
     }
 
-    Func_0808a0e8(8);
-    Func_0808a0e0(0, 0, 24);
-    Func_0808a010(4);
-    Func_080f9010(188);
-    Func_0808a0e0(8, 0, 16);
-    Func_0808a0e8(0);
-    Func_0808a0b8(8, 360, 152);
-    Func_0808a0e8(8);
-    Func_0808a020();
-    Func_080770d0(0x220);
+    Func_02003938(8);
+    Func_0200393a(0, 0, 24);
+    Func_020038f8(4);
+    Func_020039de(188);
+    Func_02003950(8, 0, 16);
+    Func_0200395e(0);
+    Func_0200394a(8, 360, 152);
+    Func_02003970(8);
+    Func_02003934();
+    Func_02003924(0x220);
 }

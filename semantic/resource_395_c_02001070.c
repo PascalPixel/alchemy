@@ -54,14 +54,45 @@
  *    +0x55 byte (0) and bit 3 of the +0x59 byte is not established.
  */
 
-u8 *Func_0808a080();            /* record by slot index */
-void Func_080000c0();           /* wait n frames */
-void Func_0808a158();           /* select an entity presentation */
-s32 Func_080770c0();            /* story-flag test; used in a condition */
-void Func_080091e0();           /* set presentation mode (record, phase) */
-void Func_0808a1e0();           /* per-record scene mode */
-void Func_0808a100();           /* per-record scene request */
-void Func_02001768();           /* overlay-local scene step */
+u8 *Func_02002a2c();
+u8 *Func_02002a34();
+u8 *Func_02002a3c();
+void Func_0200299c();
+void Func_02002ab4();
+s32 Func_02002a46();
+void Func_02002838();
+u8 *Func_02002aa0();
+u8 *Func_02002aaa();
+u8 *Func_02002ab2();
+u8 *Func_02002aba();
+u8 *Func_02002ac2();
+void Func_02002a70();
+u8 *Func_02002ace();
+void Func_02002a7c();
+u8 *Func_02002ada();
+void Func_02002a88();
+u8 *Func_02002ae6();
+void Func_02002a94();
+u8 *Func_02002af2();
+void Func_02002aa0_b();
+void Func_02002b98();
+void Func_02002ba0();
+void Func_02002ba8();
+void Func_02002b78();
+void Func_02002b80();
+u8 *Func_02002b46();
+u8 *Func_02002b56();
+u8 *Func_02002b64();
+u8 *Func_02002b72();
+u8 *Func_02002b80_b();
+                                /* record by slot index */
+                                /* wait n frames */
+                                /* select an entity presentation */
+                                /* story-flag test; used in a condition */
+                                /* set presentation mode (record, phase) */
+                                /* per-record scene mode */
+                                /* per-record scene request */
+                                /* overlay-local scene step */
 
 s32 Func_02001070(void)
 {
@@ -70,12 +101,12 @@ s32 Func_02001070(void)
     u8 *record11;
     u8 *record;
 
-    record10 = Func_0808a080(10);
-    record14 = Func_0808a080(14);
-    record11 = Func_0808a080(11);
+    record10 = Func_02002a2c(10);
+    record14 = Func_02002a34(14);
+    record11 = Func_02002a3c(11);
 
-    Func_080000c0(1);
-    Func_0808a158(14, 15);
+    Func_0200299c(1);
+    Func_02002ab4(14, 15);
 
     /* 129 << 2 = 516, stored at workspace + 448 (224 << 1). */
     *(u32 *)(*(u8 **)0x03001ebc + 448) = 516;
@@ -84,27 +115,27 @@ s32 Func_02001070(void)
     *(u16 *)((u8 *)0x02000240 + 576) = 0x28;
     *(u16 *)((u8 *)0x02000240 + 578) = 4;
 
-    if (Func_080770c0(0x845) == 0) {
-        Func_02001768(3);
+    if (Func_02002a46(0x845) == 0) {
+        Func_02002838(3);
     }
 
     /* --- the literal pool at 0x020010d4-0x020010eb is skipped here; r6 (0)
      * was loaded from it before the branch and is used below. --- */
 
-    *(u16 *)(Func_0808a080(8) + 0x20) = 6;
-    *(u16 *)(Func_0808a080(9) + 0x20) = 6;
-    *(u16 *)(Func_0808a080(12) + 0x20) = 6;
-    *(u16 *)(Func_0808a080(13) + 0x20) = 6;
+    *(u16 *)(Func_02002aa0(8) + 0x20) = 6;
+    *(u16 *)(Func_02002aaa(9) + 0x20) = 6;
+    *(u16 *)(Func_02002ab2(12) + 0x20) = 6;
+    *(u16 *)(Func_02002aba(13) + 0x20) = 6;
 
-    Func_080091e0(Func_0808a080(14), 0);
-    Func_080091e0(Func_0808a080(10), 0);
-    Func_080091e0(Func_0808a080(11), 0);
-    Func_080091e0(Func_0808a080(8), 0);
-    Func_080091e0(Func_0808a080(9), 0);
+    Func_02002a70(Func_02002ac2(14), 0);
+    Func_02002a7c(Func_02002ace(10), 0);
+    Func_02002a88(Func_02002ada(11), 0);
+    Func_02002a94(Func_02002ae6(8), 0);
+    Func_02002aa0_b(Func_02002af2(9), 0);
 
-    Func_0808a1e0(8, 2);
-    Func_0808a1e0(14, 2);
-    Func_0808a1e0(9, 2);
+    Func_02002b98(8, 2);
+    Func_02002ba0(14, 2);
+    Func_02002ba8(9, 2);
 
     record10[0x55] = 0;
     record14[0x55] = 0;
@@ -113,18 +144,18 @@ s32 Func_02001070(void)
     *(s32 *)(record11 + 0x0c) = 0x01c00000;
     *(s32 *)(record14 + 0x0c) = 0x01c00000;
 
-    Func_0808a100(9, 3);
-    Func_0808a100(8, 3);
+    Func_02002b78(9, 3);
+    Func_02002b80(8, 3);
 
     record[0x59] |= 8;
-    record = Func_0808a080(8);
-    record = Func_0808a080(9);
-    record = Func_0808a080(10);
-    record = Func_0808a080(11);
+    record = Func_02002b46(8);
+    record = Func_02002b56(9);
+    record = Func_02002b64(10);
+    record = Func_02002b72(11);
     record[0x59] |= 8;
     record[0x59] |= 8;
     record[0x59] |= 8;
-    record = Func_0808a080(14);
+    record = Func_02002b80_b(14);
     record[0x59] |= 8;
 
     return 0;

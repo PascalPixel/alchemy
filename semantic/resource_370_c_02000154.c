@@ -54,7 +54,7 @@ struct RegWriteQueue_02000154 {
 
 /* Overlay import (via the veneer table).  Old-style declaration: overlay
  * imports vary their argument count between call sites. */
-void Func_080000d8();
+void Func_0200150a();
 
 void Func_02000154(void)
 {
@@ -104,6 +104,6 @@ void Func_02000154(void)
      */
     if ((level << 16) > 0x000f0000u) {
         /* Func_02000154 + 1: this owner's own entry, Thumb-tagged. */
-        Func_080000d8(0x02008155);
+        Func_0200150a(0x02008155);
     }
 }

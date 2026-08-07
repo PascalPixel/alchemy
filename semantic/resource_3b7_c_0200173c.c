@@ -94,12 +94,27 @@ extern s32 Data_0200a134;               /* scratch EWRAM: the completion flag */
 extern s32 Data_0200a138;               /* scratch EWRAM: the result word */
 extern s32 Data_02000434;               /* RAM: Data_02000240 + 500, a slot handle */
 
-void Func_080f9010();
-void Func_0808a100();
-s32 Func_0808a080();
-void Func_08009080();
-void Func_02000e44();
-void Func_080000c0();
+void Func_02003136();
+void Func_020030d4();
+s32 Func_020030f4();
+void Func_0200304a();
+s32 Func_02003100();
+void Func_02003056();
+void Func_02002616();
+void Func_0200261e();
+void Func_02002626();
+s32 Func_02003126();
+void Func_0200307c();
+s32 Func_02003132();
+void Func_02003088();
+void Func_02002648();
+void Func_02002650();
+void Func_02002658();
+void Func_0200307e();
+
+                    
+
+                     
 
 s32 Func_0200173c(s32 mode)
 {
@@ -122,12 +137,12 @@ s32 Func_0200173c(s32 mode)
         frame = Data_0200a130;
 
         if (frame == 50) {
-            Func_080f9010(300);         /* 150 << 1 */
+            Func_02003136(300);         /* 150 << 1 */
             frame = Data_0200a130;
         }
 
         if (frame == 16) {
-            Func_0808a100(Data_02000434, 29);
+            Func_020030d4(Data_02000434, 29);
 
             *(s32 *)(state + 64) = 0x14ccc;
             *(s32 *)(state + 72) = (s32)0xfffe0000; /* -2.0 in 16.16 */
@@ -140,21 +155,21 @@ s32 Func_0200173c(s32 mode)
 
             if (Data_0200a0c0 == 1) {
                 /* r0 carries each lookup's record straight into the retag. */
-                Func_08009080(Func_0808a080(16), 3);
-                Func_08009080(Func_0808a080(17), 0);
-                Func_02000e44(15, 1);
-                Func_02000e44(14, 1);
-                Func_02000e44(13, 1);
+                Func_0200304a(Func_020030f4(16), 3);
+                Func_02003056(Func_02003100(17), 0);
+                Func_02002616(15, 1);
+                Func_0200261e(14, 1);
+                Func_02002626(13, 1);
             } else {
-                Func_08009080(Func_0808a080(11), 3);
-                Func_08009080(Func_0808a080(12), 0);
-                Func_02000e44(10, 1);
-                Func_02000e44(9, 1);
-                Func_02000e44(8, 1);
+                Func_0200307c(Func_02003126(11), 3);
+                Func_02003088(Func_02003132(12), 0);
+                Func_02002648(10, 1);
+                Func_02002650(9, 1);
+                Func_02002658(8, 1);
             }
         }
 
-        Func_080000c0(1);
+        Func_0200307e(1);
 
         if (Data_0200a134 == 1) {
             break;

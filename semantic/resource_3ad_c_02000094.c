@@ -22,15 +22,18 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-u8 *Func_0808a080();    /* scene entity record by selector */
-void Func_080091c0();   /* six-argument renderer; last two arguments on the stack */
-void Func_080770c8();   /* set a story flag */
+u8 *Func_02001bd8();
+void Func_02001bb0();
+void Func_02001bd8_b();
+                        /* scene entity record by selector */
+                        /* six-argument renderer; last two arguments on the stack */
+                        /* set a story flag */
 
 void Func_02000094(void)
 {
     u8 *entity;
 
-    entity = Func_0808a080(9);
+    entity = Func_02001bd8(9);
     if (entity != 0) {
         /*
          * Two byte fields of the entity record.  The disassembly forms each
@@ -41,8 +44,8 @@ void Func_02000094(void)
         entity[0x55] = 0;
     }
 
-    Func_080091c0(7, 32, 1, 1, 8, 32);
+    Func_02001bb0(7, 32, 1, 1, 8, 32);
 
     /* 0x81 << 2 = 0x204, built as `movs r0,#129 / lsls r0,#2`. */
-    Func_080770c8(0x204);
+    Func_02001bd8_b(0x204);
 }

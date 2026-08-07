@@ -57,52 +57,72 @@ extern u8 Data_0200a5ec[];      /* in-image animation script, file offset 0x25ec
 
 /* Imports, named by the main-image address in the trailing word of the overlay
  * veneer each call site reaches.  Old-style declarations are mandatory. */
-void Func_0808a010();           /* frame wait */
-void Func_0808a018();           /* scripted-section open */
-void Func_0808a020();           /* scripted-section close */
-void Func_0808a0b0();           /* (selector, script) */
-void Func_0808a148();           /* scene request */
-void Func_0808a170();           /* message line */
-void Func_0808a180();
-void Func_0808a1b8();           /* orientation over frames */
-void Func_0808a208();
-void Func_0808a210();           /* camera target */
-void Func_0808a218();
-void Func_080b0008();
-u8 *Func_0808a080();            /* scene record for a selector, or 0 */
-s32 Func_080770c0();            /* story-flag query */
+u8 *Func_02002ada();
+s32 Func_02002aac();
+void Func_02002c84();
+void Func_02002aea();
+void Func_02002ba4();
+void Func_02002af2();
+void Func_02002bd0();
+void Func_02002be0();
+void Func_02002c04();
+void Func_02002b20();
+void Func_02002b2a();
+void Func_02002c46();
+void Func_02002c60();
+void Func_02002c6c();
+void Func_02002b4a();
+void Func_02002b9a();
+void Func_02002c30();
+void Func_02002c40();
+void Func_02002c92();
+void Func_02002c9e();
+void Func_02002b8a();
+                                /* frame wait */
+                                /* scripted-section open */
+                                /* scripted-section close */
+                                /* (selector, script) */
+                                /* scene request */
+                                /* message line */
+                     
+                                /* orientation over frames */
+                     
+                                /* camera target */
+
+                                /* scene record for a selector, or 0 */
+                                /* story-flag query */
 
 void Func_0200088c(void)
 {
     s16 heading;
     s32 facing_near;
 
-    heading = *(s16 *)(Func_0808a080(0) + 6);
+    heading = *(s16 *)(Func_02002ada(0) + 6);
     facing_near = ((u32)(((s32)heading << 16) + 0x5fff0000) <= 0x3ffe0000);
 
-    if (Func_080770c0(0x881) != 0) {
+    if (Func_02002aac(0x881) != 0) {
         if (facing_near) {
-            Func_080b0008(11, 13);
+            Func_02002c84(11, 13);
         } else {
-            Func_0808a018();
-            Func_0808a148(13, 0, 0);
-            Func_0808a010(10);
-            Func_0808a170(0x164d);
-            Func_0808a180(13, 0);
-            Func_0808a1b8(13, 0x4000, 10);
-            Func_0808a020();
+            Func_02002aea();
+            Func_02002ba4(13, 0, 0);
+            Func_02002af2(10);
+            Func_02002bd0(0x164d);
+            Func_02002be0(13, 0);
+            Func_02002c04(13, 0x4000, 10);
+            Func_02002b20();
         }
     } else if (facing_near) {
-        Func_0808a018();
-        Func_0808a208(0x60000, 0xc000);
-        Func_0808a210(0x1aa0000, -1, 0x1ec0000, 1);
-        Func_0808a218();
-        Func_0808a010(20);
-        Func_0808a0b0(13, Data_0200a5ec);
-        Func_0808a170(0x1543);
-        Func_0808a180(13, 0);
-        Func_0808a210(0x1aa0000, -1, 0x2680000, 1);
-        Func_0808a218();
-        Func_0808a020();
+        Func_02002b2a();
+        Func_02002c46(0x60000, 0xc000);
+        Func_02002c60(0x1aa0000, -1, 0x1ec0000, 1);
+        Func_02002c6c();
+        Func_02002b4a(20);
+        Func_02002b9a(13, Data_0200a5ec);
+        Func_02002c30(0x1543);
+        Func_02002c40(13, 0);
+        Func_02002c92(0x1aa0000, -1, 0x2680000, 1);
+        Func_02002c9e();
+        Func_02002b8a();
     }
 }

@@ -951,6 +951,15 @@ const NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES = new Set([
 // -mthumb-immediate-latency, which subsumes and then breaks these
 // (docs/compiler-evidence/sched-and-pre-modes.diff).
 const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
+  // Singles cohort over the low-differing tail, 2026-08-07: this flag is the
+  // single largest improvement for all three of these owners (20->2, 21->10 and
+  // 21->15 differing bytes respectively) with no source change.
+  "semantic/resource_3c8_c_02002f30.c",
+  "exact/resource_3c8_c_02002f30.c",
+  "semantic/resource_3c6_c_02000158.c",
+  "exact/resource_3c6_c_02000158.c",
+  "semantic/resource_39f_c_02000f94.c",
+  "exact/resource_39f_c_02000f94.c",
   // resource_37f:17c0 (748 bytes) — found by a 139-candidate singles cohort over
   // the whole same-size band; this one flag takes it from 36 differing halfwords
   // to byte-exact, no source change.

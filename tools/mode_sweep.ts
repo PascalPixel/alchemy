@@ -92,6 +92,10 @@ export const FORK_MODES = [
   // 2026-08-07: the immediate-operand widening of -fthumb-move-before-alu,
   // which also accepts a load as the insn issued early. Witness 0801fd34.
   "-fthumb-move-before-immediate-alu",
+  // 2026-08-07: anchor hoisted loop invariants at the head of the preheader
+  // block rather than immediately before the loop note, so they lead the
+  // preheader's own insns instead of following them. Witness 080b5d3c.
+  "-floop-invariant-block-head",
 ] as const;
 
 export const STOCK_SWITCHES = [

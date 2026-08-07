@@ -108,6 +108,12 @@ export const FORK_MODES = [
   // block rather than immediately before the loop note, so they lead the
   // preheader's own insns instead of following them. Witness 080b5d3c.
   "-floop-invariant-block-head",
+  // 2026-08-07: the ARM back end's CANONICALIZE_COMPARISON rewrites `x > C'
+  // into `x >= C+1' whenever C+1 passes const_ok_for_arm -- an ARM-mode
+  // immediate predicate that says nothing about Thumb, where the rewrite
+  // trades a pool word for a two-insn constant build and flips the emitted
+  // condition code. This suppresses it in Thumb. Witness 0808ddec's tail.
+  "-fthumb-no-canonicalize-comparison",
 ] as const;
 
 export const STOCK_SWITCHES = [

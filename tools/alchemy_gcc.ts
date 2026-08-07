@@ -1849,6 +1849,14 @@ const SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES = new Set([
   "semantic/resource_39f_c_020021b0.c",
 ]);
 
+const BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES = new Set([
+  // resource_39f:0f94 -- the 24-byte by-value struct argument at 0x02000fa8,
+  // whose `mov r3, sp' the post-reload scheduler pushed below the matching
+  // `add r2, sp, #24'. 2026-08-07.
+  "exact/resource_39f_c_02000f94.c",
+  "semantic/resource_39f_c_02000f94.c",
+]);
+
 const LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES = new Set([
   // resource_3ad:11b8 -- `movs r1, #0' before `movs r0, #1' at 0x020011dc,
   // where the identical literal pair at 0x0200128a keeps register order
@@ -2377,6 +2385,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-small-shift-before-immediates"]
       : []),
+    ...(BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-blockmove-dest-before-source"]
+      : []),
     ...(LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-literal-arg1-first-chained"]
       : []),
@@ -2530,6 +2541,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES,
     ...LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES,
     ...SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES,
+    ...BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES,
     ...ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES,
     ...HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES,
     ...POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES,
@@ -2783,6 +2795,8 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
     "63292824103cbfd4405f2d8f1a9fe7780dec4b078e792cd37a7677d4a2c13ad4",
     // Fork line merged onto fork origin/main (Main's modes plus ours), 2026-08-07.
     "2e8cc5b36323f7c1e1f3b9e8e975c30de825e7173425b156e6aba6dd0ff40130",
+    // -fthumb-blockmove-dest-before-source added, 2026-08-07.
+    "3f6dc8780dff73c710237741b2f3fc90e20ce000238a72e99833418ae3109ee7",
     // -fthumb-arg-before-shift-in-sheet added, 2026-08-07.
     "afe85b0001a5c6abced6f76adf9a02991ae5da0957ad4360755ca2db082f92cf",
       // -fthumb-swap-shifts-across-insn added, 2026-08-07.

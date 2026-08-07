@@ -517,6 +517,17 @@ const THUMB_LOW_REG_ORDER_SOURCES = new Map([
   ["080f9a30", "01231230"],
   ["080fa264", "30120123"],
 ]);
+// Four digits for -mcallee-reg-order=: the order in which r4-r7 are handed
+// out, replacing the `4, 5, 6, 7' run inside REG_ALLOC_ORDER.  The residual it
+// answers is an owner that already matches the reference instruction for
+// instruction with two call-saved pseudos sitting in each other's register,
+// which no source form can move because the allocator's preference order picks
+// it.  Witness 08092f84: r6 and r7 transposed in seven halfwords, exact under
+// 0132 and no other permutation.
+const THUMB_CALLEE_REG_ORDER_SOURCES = new Map([
+  ["08092f84", "0132"],
+  ["0801faa8", "0132"],
+]);
 // This no-argument initializer's reference fills the first global literal
 // load's latency with the frame allocation and dependent load, then fills the
 // table-index shift's latency with two stack initializers.  The compiler mode
@@ -2021,6 +2032,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(THUMB_NO_IF_CONVERT_SOURCES.has(stem) ? ["-fthumb-no-if-convert"] : []),
     ...(THUMB_LOW_REG_ORDER_SOURCES.has(stem)
       ? [`-mlow-reg-order=${THUMB_LOW_REG_ORDER_SOURCES.get(stem)}`]
+      : []),
+    ...(THUMB_CALLEE_REG_ORDER_SOURCES.has(stem)
+      ? [`-mcallee-reg-order=${THUMB_CALLEE_REG_ORDER_SOURCES.get(stem)}`]
       : []),
     ...(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-mthumb-immediate-latency"]

@@ -1,3 +1,12 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07 with -fthumb-swap-adjacent-shifts.  The
+ * last residual was `lsls r3,r3,#14' before `lsls r2,r2,#11' at 0x02000316,
+ * where r3 continues the older chain (its `asrs r3,r3,#14' at 0x02000312)
+ * while r2 was only just materialised.  The sibling shift pair at 0x02000354
+ * keeps the scheduler's order under the same age rule, which is what makes the
+ * rule usable on this row.
+ */
+
 #include "types.h"
 
 /*

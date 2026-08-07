@@ -1775,6 +1775,20 @@ const CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES = new Set([
   "exact/resource_3a7_c_02000b8c.c",
   "semantic/resource_3a7_c_02000b8c.c",
 ]);
+// Two adjacent independent in-place constant shifts, transposed so the one
+// whose input was defined earlier goes first.  The post-reload scheduler's
+// tie-break lands the other way on these sheets; the age rule is what keeps
+// the sibling shift pairs in the same rows untouched.
+const SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES = new Set([
+  // resource_3bc:4494 -- `lsls r1,r1,#2' before `asrs r0,r0,#16' at
+  // 0x02004538, and resource_3a4:02cc -- `lsls r3,r3,#14' before
+  // `lsls r2,r2,#11' at 0x02000316, whose sibling pair at 0x02000354 keeps the
+  // scheduler's order because there r3 is the younger value, 2026-08-07.
+  "exact/resource_3bc_c_02004494.c",
+  "semantic/resource_3bc_c_02004494.c",
+  "exact/resource_3a4_c_020002cc.c",
+  "semantic/resource_3a4_c_020002cc.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2162,6 +2176,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-call-argreg-before-pool"]
       : []),
+    ...(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-swap-adjacent-shifts"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2274,6 +2291,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES,
     ...CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES,
     ...CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES,
+    ...SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2499,6 +2517,9 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         "dd9ffea6572eb2b6f3e2c6228aa39ea0209c4baa289e3802f5799be20d309e8b",
       ],
       cc1: [
+      "799c1cfb3aa700a8cc75572cb576d612d7d7ed700420ff48cf09c8ba536662e4",
+      "1dcc9902c957c8504e3bbf2b43d067b8f87a7b25fe16f34ad3bfeb69357b05fa",
+      "b9d32c281a4a74b092aa78568e6c6c6700a2a4aa7012670f62d1fdc8f48a1c54",
       "ea45be7c7bbcf917946bad0f8f7130b77b89e0d0828292039288c3cccdc85d24",
       "39618b85563aae1ee776522c14d6de42eb3dceadbf9c7c76cbc501b3533457a1",
         "fe41ef5881fd46a4ec84ceb4224c5ea00abb8b6cb431b726a174ac99580085c6",

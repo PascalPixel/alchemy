@@ -60,6 +60,8 @@ export const FORK_MODES = [
   // A pool load that completes a call's argument list, sunk to the call.
   // Witness resource_3c6:0158.
   "-fthumb-sink-pool-load-to-use",
+  // Unwired fork mode found by sweeping toplev.c directly; witness resource_39e:26d8.
+  "-fthumb-sink-constant-past-call",
   // Two-pool-word twin of -fthumb-call-arg0-before-pool. Witness
   // resource_371:1a98.
   "-fthumb-call-arg0-before-pool-pair",

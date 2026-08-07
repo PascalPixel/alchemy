@@ -972,6 +972,10 @@ const SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES = new Set([
   // cse-two-insn-immediate-off (see that set), 2026-08-07.
   "semantic/resource_3a2_c_02000924.c",
   "exact/resource_3a2_c_02000924.c",
+  // resource_372:3e48 — the `movs r0,#8' setter before the `lsls r1' half at
+  // 0x02003edc.  Paired with call-pool-arg1-first (see that set), 2026-08-07.
+  "semantic/resource_372_c_02003e48.c",
+  "exact/resource_372_c_02003e48.c",
   // Exact once the halfword store goes through a pointer local and an s32 value
   // local (tell #18/#19); the only residue was the four-argument call at 0x12,
   // whose r0 setter the reference issues between the two split constants.
@@ -1727,6 +1731,11 @@ const THUMB_HI_IMMEDIATE_OVERLAY_SOURCES = new Set([
 const CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES = new Set([
   "exact/resource_3a2_c_02000924.c",
   "semantic/resource_3a2_c_02000924.c",
+  // resource_372:3e48 — exact on this flag together with sched-low-dest-first
+  // (see that set).  One site wants the pool load ahead of `movs r0,#8'; the
+  // sched flag alone fixes the other site and breaks this one, 2026-08-07.
+  "exact/resource_372_c_02003e48.c",
+  "semantic/resource_372_c_02003e48.c",
 ]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",

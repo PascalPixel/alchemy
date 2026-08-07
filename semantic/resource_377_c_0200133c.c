@@ -76,10 +76,11 @@ void Func_0200133c(void)
         Func_02002d26(0x1C77);
         Func_02002d3e(8, 0);
     } else {
-        s32 cue = 0x1C79;
+        s32 cue;
 
         Func_02002d10(8, 2);
         Func_02002c7e(40);
+        cue = 0x1C79;
         Func_02002d46(cue);
         Func_02002d6a(8, 0, 40);
         Func_02002c6a(cue + 1, 1);

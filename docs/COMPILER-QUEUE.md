@@ -610,3 +610,52 @@ source form; what differs is which pseudo the allocator visits first.
 Consequence. The close band is blocked on register allocation, not on flags and
 not on source shape, which reinforces the planning conclusion above: the path to
 25% is from-scratch reconstruction of the large owners, not near-match repair.
+
+## Hoisted loop invariants lead the preheader: shipped (2026-08-07)
+
+`move_movables` emits every insn it hoists out of a loop immediately before the
+loop's `NOTE_INSN_LOOP_BEG`. That anchor places the hoisted invariants *after*
+whatever the preheader already computes, which in practice is the source-level
+initialisation of the loop's own variables. Several reference preheaders run the
+other way round: the compiler-created invariants come first.
+
+`080b5d3c` is the clean witness. Its inner-loop preheader holds exactly four
+insns -- object cursor, counter, totals base, member offset -- and its only
+divergence from the reference was that our two source initialisations led and
+the two hoists followed, where the reference has it reversed. Same four insns,
+permuted, 4 differing halfwords over 214 bytes. Flag search bottomed out at 4hw
+across 352 mode combinations, all tagged `[order]`, and three separate source
+reshapes (hoisting the totals element to a pointer, splitting declaration from
+initialisation, moving the initialisations ahead of the count guard) made it
+worse by 71 to 91 halfwords. The ordering is the compiler's, not the source's.
+
+`-floop-invariant-block-head` walks the anchor back to the first insn of the
+preheader block, stopping at anything that ends a block. Default-off and
+source-routed. `080b5d3c` compiles byte-exact under it.
+
+Payoff, measured by re-running every one of the 570 unmatched main-image stems
+under the flag: two exact matches (`080b5d3c` 214 B, `080a3354` 128 B, both
+adopted) and 42 further stems improved without closing. The largest single
+improvement is `08096140`, 260 -> 119 halfwords over 732 bytes; its floor with
+pairs is 100hw, so it still does not close. Re-sweeping the eight closest
+main-image stems with the flag in the space flipped none of them.
+
+## The `080f9xxx` / `080faxxx` family is out of scope
+
+These handlers use a non-standard register convention -- `080f9b40` is
+`mov ip, lr; bl ...; strb r3, [r1, #29]; bx ip`, returning in r3 with r1
+preserved and lr stashed in ip -- which no C calling sequence produces. The
+family is the GBA MusicPlayer2000 (m4a) sound driver, hand-written assembly in
+the shipping titles. Roughly 32 census rows sit in it. Do not spend flag or
+source effort there; the six that show up in the close band (`080f9a18`,
+`080f9b40`, `080f9b60`, `080f9ba4`, `080f9be0`, `080f9bf4`) are unreachable.
+
+## Globals the reference re-reads
+
+`08096140` cached `Data_02000240.current_object` in a local. The reference keeps
+the *address* in r7 across the whole prologue and reloads through it at each of
+the three uses, which only a plain `Data_02000240.current_object` at each site
+produces. Making that change turned the prologue byte-exact through offset
+0x00D8. When a reference holds an address register live across calls and reloads
+from it, the original source did not cache the value -- check this before
+reaching for flags.

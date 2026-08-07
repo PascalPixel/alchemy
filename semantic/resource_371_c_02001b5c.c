@@ -31,60 +31,44 @@
  * reached with different argument counts.
  */
 
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_0808a210();
+void Func_080000c0();
+void Func_0808a0f0();
+void Func_0808a200();
+void Func_0808a360();
+void Func_0808a090();
+void Func_0808a020();
+void Func_0808a0d0();
+void Func_0808a368();
+void Func_0808a370();
+void Func_080770c8();
+void Func_080770d0();
+void Func_0808a248();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02005e5e();
-extern void Func_02005e44();
-extern void Func_02005f6e();
-extern void Func_02005d04();
-extern void Func_02005ee6();
-extern void Func_02005ef0();
-extern void Func_02005d26();
-extern void Func_02005f8e();
-extern void Func_02005fea();
-extern void Func_02005ec4();
-extern void Func_02005f06();
-extern void Func_0200600a();
-extern void Func_02006016();
-extern void Func_02005e64();
-extern void Func_02005e72();
-extern void Func_02005fe8();
 void Func_02001b5c(void)
 {
-    u8 *actor = Func_02005e5e(8);
+    u8 *actor = Func_0808a080(8);
 
-    Func_02005e44(actor);
-    Func_02005f6e(-1, -1, -1, 0);
-    Func_02005d04(1);
-    Func_02005ee6(0, 0, 0);
-    Func_02005ef0(8, 0x13e80000, 0x09180000);
+    Func_0808a018(actor);
+    Func_0808a210(-1, -1, -1, 0);
+    Func_080000c0(1);
+    Func_0808a0f0(0, 0, 0);
+    Func_0808a0f0(8, 0x13e80000, 0x09180000);
 
     *(s32 *)(actor + 0x1c) = 0x14000;
     *(s32 *)(actor + 0x18) = 0x14000;
 
-    Func_02005d26(1);
-    Func_02005f8e(8, 1);
-    Func_02005fea();
-    Func_02005ec4(8, 0x6666, 0x3333);
-    Func_02005f06(8, 0x13c8, 0x918);
-    Func_0200600a();
-    Func_02006016();
-    Func_02005e64(0x93e);
-    Func_02005e72(0x927);
-    Func_02005fe8(107);
-    Func_02005ec4();
+    Func_080000c0(1);
+    Func_0808a200(8, 1);
+    Func_0808a360();
+    Func_0808a090(8, 0x6666, 0x3333);
+    Func_0808a0d0(8, 0x13c8, 0x918);
+    Func_0808a368();
+    Func_0808a370();
+    Func_080770c8(0x93e);
+    Func_080770d0(0x927);
+    Func_0808a248(107);
+    Func_0808a020();
 }

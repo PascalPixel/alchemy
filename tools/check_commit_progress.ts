@@ -27,6 +27,15 @@ const DENOMINATOR_CORRECTION = /^metrics: correct executable denominator\b/;
 // is deliberately an explicit, greppable subject form rather than silent
 // tolerance: the history should show where and why the chain restarted.
 const COUNTER_RESTORE = /^metrics: restore Full-C counter chain\b/;
+// Recognized form for a DELIBERATE decrease. Reverting work that does not
+// verify legitimately removes exact bytes, and until now the chain had no way
+// to say so: the only escapes were a denominator correction (wrong meaning) or
+// a chain restore (only valid after an unsuffixed parent). Silent tolerance is
+// not acceptable here either, so this is an explicit, greppable subject form
+// carrying the true post-revert suffix, exactly like COUNTER_RESTORE. The
+// subject must still state the real number; this waives the monotonicity rule,
+// not the accuracy rule.
+const COUNTER_REVERT = /^metrics: revert reduces Full-C\b/;
 
 function legacySubject(subject: string): boolean {
   return LEGACY_C_BYTES_AND_REGION.test(subject) ||
@@ -88,8 +97,11 @@ export function checkCommitProgress(
       }
     }
     if (parsed.fullCBytes < previous.fullCBytes) {
+      if (COUNTER_REVERT.test(subject)) return;
       throw new Error(
-        `Full-C bytes regressed from ${previous.fullCBytes} to ${parsed.fullCBytes}`,
+        `Full-C bytes regressed from ${previous.fullCBytes} to ${parsed.fullCBytes}; ` +
+          "if this is a deliberate revert of work that does not verify, say so with a " +
+          "'metrics: revert reduces Full-C' commit carrying the true current suffix",
       );
     }
     return;
@@ -261,6 +273,32 @@ function selfTest(): void {
     report,
     "docs",
   );
+  // A deliberate revert may legitimately lower the counter. It is accepted only
+  // with the explicit subject form, and only while still stating the true
+  // number: the waiver covers monotonicity, never accuracy.
+  checkCommitProgress(
+    "metrics: revert reduces Full-C after backing out unverifiable work [C 123,456/1,234,567 bytes]",
+    report,
+    "src: prior [C 200,000/1,234,567 bytes]",
+  );
+  let bareRegressionRejected = false;
+  try {
+    checkCommitProgress(
+      "src: quiet regression [C 123,456/1,234,567 bytes]",
+      report,
+      "src: prior [C 200,000/1,234,567 bytes]",
+    );
+  } catch { bareRegressionRejected = true; }
+  if (!bareRegressionRejected) throw new Error("self-test: unannounced Full-C regression was accepted");
+  let staleRevertRejected = false;
+  try {
+    checkCommitProgress(
+      "metrics: revert reduces Full-C [C 123,455/1,234,567 bytes]",
+      report,
+      "src: prior [C 200,000/1,234,567 bytes]",
+    );
+  } catch { staleRevertRejected = true; }
+  if (!staleRevertRejected) throw new Error("self-test: revert syntax accepted a wrong suffix");
   let staleRestoreRejected = false;
   try {
     checkCommitProgress(

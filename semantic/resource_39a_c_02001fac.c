@@ -33,14 +33,11 @@ extern u8 *Data_03001f30;
 extern u8 *Data_03001ecc;
 
 /* Imports. */
+void Func_080000c0();
+void Func_0808a330();
+void Func_0808a338();
+void Func_0808a348();
 
-
-
-
-
-extern void Func_0200439e();
-extern void Func_020043b4();
-extern void Func_0200425a();
 void Func_02001fac(void)
 {
     u8 *state;
@@ -59,8 +56,8 @@ void Func_02001fac(void)
     table[0x53c] = 1;
     table[0x53d] = 1;
 
-    Func_0200439e(0, 1);
-    Func_0200439e((s32)0x203108, 1);
-    Func_020043b4(16);
-    Func_0200425a(16);
+    Func_0808a338(0, 1);
+    Func_0808a330((s32)0x203108, 1);
+    Func_0808a348(16);
+    Func_080000c0(16);
 }

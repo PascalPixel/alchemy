@@ -67,38 +67,12 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
+extern void Func_080000d0(s32 callback, s32 arg1);
+extern void Func_080091b8();     /* six-argument scene request, last two on the stack */
+extern void Func_0808a5e0(s32 arg0);
+extern void Func_02001c1c(void);
+extern void Func_020004e4(void);
 
-     /* six-argument scene request, last two on the stack */
-
-
-
-
-extern void Func_02003298(void);
-extern void Func_0200331a(s32 callback, s32 arg1);
-extern void Func_020033b8();
-extern void Func_020033ca();
-extern void Func_020033dc();
-extern void Func_020033ee();
-extern void Func_02003400();
-extern void Func_02003424();
-extern void Func_02003436();
-extern void Func_02003448();
-extern void Func_0200345a();
-extern void Func_0200346c();
-extern void Func_0200347e();
-extern void Func_02003490();
-extern void Func_020034a2();
-extern void Func_020034b4();
-extern void Func_020034c6();
-extern void Func_020034d8();
-extern void Func_020034ea();
-extern void Func_020034fc();
-extern void Func_0200350e();
-extern void Func_02003644(s32 arg0);
-extern void Func_02003530();
-extern void Func_02003542();
-extern void Func_02003554();
-extern void Func_02001d28(void);
 s32 Func_02001638(void)
 {
     s32 scene;
@@ -116,33 +90,33 @@ s32 Func_02001638(void)
     scene = Data_02000240[224];
 
     *(s32 *)(Data_03001ebc + 448) = 256;
-    Func_02003298();
-    Func_0200331a(0x02008cd1, 3200);
+    Func_02001c1c();
+    Func_080000d0(0x02008cd1, 3200);
 
     if (scene == 0x59) {
-        Func_020033b8(22, 7, 4, 2, 0x40, 126);
-        Func_020033ca(8, 10, 4, 2, 0x44, 126);
-        Func_020033dc(23, 21, 4, 2, 0x48, 126);
-        Func_020033ee(16, 42, 4, 2, 0x4c, 126);
-        Func_02003400(36, 44, 4, 2, 0x50, 126);
+        Func_080091b8(22, 7, 4, 2, 0x40, 126);
+        Func_080091b8(8, 10, 4, 2, 0x44, 126);
+        Func_080091b8(23, 21, 4, 2, 0x48, 126);
+        Func_080091b8(16, 42, 4, 2, 0x4c, 126);
+        Func_080091b8(36, 44, 4, 2, 0x50, 126);
         finalSlot = 0x54;
         finalA = 14;
         finalB = 55;
         goto kind2_tail;
     } else if (scene == 0x5a) {
-        Func_02003424(42, 5, 4, 2, 0x40, 126);
-        Func_02003436(20, 11, 4, 2, 0x44, 126);
-        Func_02003448(14, 12, 4, 2, 0x48, 126);
-        Func_0200345a(56, 18, 4, 2, 0x4c, 126);
-        Func_0200346c(7, 22, 4, 2, 0x50, 126);
-        Func_0200347e(44, 23, 4, 2, 0x54, 126);
-        Func_02003490(38, 24, 4, 2, 0x58, 126);
-        Func_020034a2(26, 28, 4, 2, 0x5c, 126);
-        Func_020034b4(17, 35, 4, 2, 0x60, 126);
-        Func_020034c6(50, 36, 4, 2, 0x64, 126);
-        Func_020034d8(34, 43, 4, 2, 0x68, 126);
-        Func_020034ea(6, 46, 4, 2, 0x6c, 126);
-        Func_020034fc(27, 55, 4, 2, 0x70, 126);
+        Func_080091b8(42, 5, 4, 2, 0x40, 126);
+        Func_080091b8(20, 11, 4, 2, 0x44, 126);
+        Func_080091b8(14, 12, 4, 2, 0x48, 126);
+        Func_080091b8(56, 18, 4, 2, 0x4c, 126);
+        Func_080091b8(7, 22, 4, 2, 0x50, 126);
+        Func_080091b8(44, 23, 4, 2, 0x54, 126);
+        Func_080091b8(38, 24, 4, 2, 0x58, 126);
+        Func_080091b8(26, 28, 4, 2, 0x5c, 126);
+        Func_080091b8(17, 35, 4, 2, 0x60, 126);
+        Func_080091b8(50, 36, 4, 2, 0x64, 126);
+        Func_080091b8(34, 43, 4, 2, 0x68, 126);
+        Func_080091b8(6, 46, 4, 2, 0x6c, 126);
+        Func_080091b8(27, 55, 4, 2, 0x70, 126);
         finalSlot = 0x74;
         finalB = 56;
         finalA = 43;
@@ -151,18 +125,18 @@ s32 Func_02001638(void)
     goto maybe_scene_5b;
 
 kind2_tail:
-    Func_0200350e(finalA, finalB, 4, 2, finalSlot, 126);
+    Func_080091b8(finalA, finalB, 4, 2, finalSlot, 126);
     goto scenes_done;
 
 maybe_scene_5b:
     if (scene == 0x5b) {
-        Func_02003644(169);
-        Func_02003530(8, 14, 4, 4, 0x40, 124);
-        Func_02003542(6, 18, 4, 4, 0x44, 124);
-        Func_02003554(10, 21, 4, 4, 0x48, 124);
+        Func_0808a5e0(169);
+        Func_080091b8(8, 14, 4, 4, 0x40, 124);
+        Func_080091b8(6, 18, 4, 4, 0x44, 124);
+        Func_080091b8(10, 21, 4, 4, 0x48, 124);
     }
 
 scenes_done:
-    Func_02001d28();
+    Func_020004e4();
     return 0;
 }

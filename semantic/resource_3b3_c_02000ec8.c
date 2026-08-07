@@ -31,37 +31,31 @@
  * Raw callee naming.
  */
 
+u8 *Func_0808a080();
+s32 Func_02000ddc();
+void Func_080091c0();
+void Func_08009080();
+void Func_08009180();
 
-
-
-
-
-
-extern u8 * Func_020039ec();
-extern s32 Func_02001cc4();
-extern void Func_020039c8();
-extern void Func_02003970();
-extern void Func_020039d8();
-extern void Func_020039ee();
 s32 Func_02000ec8(u8 *a0)
 {
-    u8 *obj = Func_020039ec(a0);
+    u8 *obj = Func_0808a080(a0);
     s32 out20, out16, out12, out8;
     s32 record[6];
 
-    if (Func_02001cc4(a0, &out20, &out16, record, &out12, &out8) == 0) {
+    if (Func_02000ddc(a0, &out20, &out16, record, &out12, &out8) == 0) {
         return 0;
     }
 
-    Func_020039c8(2, 2, out20, out16, record[2], record[4]);
+    Func_080091c0(2, 2, out20, out16, record[2], record[4]);
 
-    Func_02003970(obj, 4);
+    Func_08009080(obj, 4);
     obj[0x23] |= 2;
 
     if (out20 > out16) {
-        Func_020039d8(70, 40, record[2] + 32, record[4] + 2, out20, out16);
+        Func_08009180(70, 40, record[2] + 32, record[4] + 2, out20, out16);
     } else {
-        Func_020039ee(68, 40, record[2] + 32, record[4] + 2, out20, out16);
+        Func_08009180(68, 40, record[2] + 32, record[4] + 2, out20, out16);
     }
 
     return 1;

@@ -53,34 +53,19 @@
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-           /* channel control, entering the scene */
-           /* channel control, leaving the scene */
-           /* wait n frames */
-           /* scripted-scene bracket: open */
-           /* scripted-scene bracket: close */
-           /* 16.16 scale pair */
-           /* start a move; interface not established */
-           /* start a move; interface not established */
-           /* per-record scene request */
-           /* scene request keyed by the selector */
-            /* story-flag test; used in a condition */
-           /* play a sound cue */
+void Func_08009188();           /* channel control, entering the scene */
+void Func_08009190();           /* channel control, leaving the scene */
+void Func_0808a010();           /* wait n frames */
+void Func_0808a018();           /* scripted-scene bracket: open */
+void Func_0808a020();           /* scripted-scene bracket: close */
+void Func_0808a090();           /* 16.16 scale pair */
+void Func_0808a0d8();           /* start a move; interface not established */
+void Func_0808a0e0();           /* start a move; interface not established */
+void Func_0808a100();           /* per-record scene request */
+void Func_0808a248();           /* scene request keyed by the selector */
+s32 Func_080770c0();            /* story-flag test; used in a condition */
+void Func_080f9010();           /* play a sound cue */
 
-extern s32 Func_020027a4();
-extern void Func_0200291a();
-extern void Func_02002796();
-extern void Func_0200279c();
-extern void Func_020027e8();
-extern void Func_020027e6();
-extern void Func_0200282c();
-extern void Func_02002894();
-extern void Func_02002896();
-extern void Func_0200289c();
-extern void Func_0200282a();
-extern void Func_02002960();
-extern void Func_0200284c();
-extern void Func_0200280a();
-extern void Func_02002810();
 void Func_02000338(void)
 {
     u8 *workspace;
@@ -94,36 +79,36 @@ void Func_02000338(void)
         goto play;
         cue = 158;
     }
-    if (Func_020027a4(512) == 0) {
+    if (Func_080770c0(512) == 0) {
         cue = 188;
 play:
         /* One call site, reached from both arms above. */
-        Func_0200291a(cue);
+        Func_080f9010(cue);
         played = 1;
     }
 
     if (played != 0) {
-        Func_02002796(1);
-        Func_0200279c(2);
+        Func_08009188(1);
+        Func_08009188(2);
     }
 
-    Func_020027e8();
+    Func_0808a018();
 
-    Func_020027e6(10);
-    Func_0200282c(0, 0x8000, 0x4000);
-    Func_02002894(0, 2);
+    Func_0808a010(10);
+    Func_0808a090(0, 0x8000, 0x4000);
+    Func_0808a100(0, 2);
 
     if (*(s16 *)(workspace + 364) == 9) {
-        Func_02002896(0, 0, -16);
+        Func_0808a0e0(0, 0, -16);
     } else {
-        Func_0200289c(0, 3, -16);
+        Func_0808a0d8(0, 3, -16);
     }
 
-    Func_0200282a(16);
-    Func_02002960(*(s16 *)(workspace + 364));
+    Func_0808a010(16);
+    Func_0808a248(*(s16 *)(workspace + 364));
 
-    Func_0200284c();
+    Func_0808a020();
 
-    Func_0200280a(1);
-    Func_02002810(2);
+    Func_08009190(1);
+    Func_08009190(2);
 }

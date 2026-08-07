@@ -48,53 +48,39 @@
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 
+extern void Func_0200088c(void);
+extern void Func_02003270(void);
 
+extern s32 Func_080770c0(s32 flagId);
+extern void Func_080770c8(s32 flagId);
+extern void Func_080770d0(s32 flagId);
+extern void Func_0808a010(s32 frames);
+extern void Func_0808a0f0(s32 id, s32 x, s32 y);
+extern void Func_0808a330(s32 arg0, s32 arg1);
+extern void Func_0808a348(s32 arg0);
 
-
-
-
-
-
-
-
-
-
-extern void Func_02003cec(s32 arg0, s32 arg1);
-extern void Func_02003cfa(s32 arg0);
-extern void Func_02003bd8(s32 frames);
-extern s32 Func_02003c48(s32 flagId);
-extern void Func_02003ce2(s32 id, s32 x, s32 y);
-extern void Func_02003900(void);
-extern s32 Func_02003c66(s32 flagId);
-extern void Func_02000f2a(void);
-extern void Func_02003c84(s32 flagId);
-extern void Func_0200391a(void);
-extern void Func_02003c88(s32 flagId);
-extern s32 Func_02003c86(s32 flagId);
-extern void Func_02000f4a(void);
-extern void Func_02003ca4(s32 flagId);
 s32 Func_020005cc(void)
 {
     s16 selector = Data_02000240[225];
     s32 raiseSharedFlag = 0;
 
-    Func_02003cec(0x10000, 0);
-    Func_02003cfa(1);
-    Func_02003bd8(1);
+    Func_0808a330(0x10000, 0);
+    Func_0808a348(1);
+    Func_0808a010(1);
     *(s32 *)(Data_03001ebc + 448) = 521;
     switch (selector) {
     case 10:
     case 11:
     case 12:
-        if (Func_02003c48(0x855) != 0) {
-            Func_02003ce2(10, 0xc80000, 0x500000);
+        if (Func_080770c0(0x855) != 0) {
+            Func_0808a0f0(10, 0xc80000, 0x500000);
         }
         raiseSharedFlag = 1;
     case 20:
-        Func_02003900();
+        Func_02003270();
         break;
-        if (Func_02003c66(0x109) == 0) {
-            Func_02000f2a();
+        if (Func_080770c0(0x109) == 0) {
+            Func_0200088c();
         }
         raiseSharedFlag = 1;
         break;
@@ -107,15 +93,15 @@ s32 Func_020005cc(void)
         break;
     }
     if (raiseSharedFlag != 0) {
-        Func_02003c84(0x12f);
+        Func_080770d0(0x12f);
     }
     if (selector == 21) {
-        Func_0200391a();
-        Func_02003c88(513);
-        if (Func_02003c86(0x109) == 0) {
-            Func_02000f4a();
+        Func_02003270();
+        Func_080770c8(513);
+        if (Func_080770c0(0x109) == 0) {
+            Func_0200088c();
         }
-        Func_02003ca4(0x12f);
+        Func_080770d0(0x12f);
     }
     return 0;
 }

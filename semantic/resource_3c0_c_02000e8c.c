@@ -49,41 +49,35 @@ extern s16 Data_02000240[];
 extern u8 *Data_03001e70;
 extern u8 *Data_03001ebc;
 
+extern void Func_02000d24(void);
+extern void Func_02000f50(void);
+extern void Func_02001094(void);
 
+extern void Func_080000d0(s32 callback, s32 arg1);
+extern s32 Func_080770e0(s32 flagId);
+extern void Func_080f9010(s32 arg0);
 
-
-
-
-
-
-
-extern s32 Func_02002108(s32 flagId);
-extern void Func_020020ba(s32 callback, s32 arg1);
-extern void Func_02001c06(void);
-extern void Func_02001e44(void);
-extern void Func_02001f94(void);
-extern void Func_0200227e(s32 arg0);
 s32 Func_02000e8c(void)
 {
     u8 *camera;
 
     camera = Data_03001e70;
     *(s32 *)(Data_03001ebc + 448) = 513;
-    if (Func_02002108(0x210) != 0) {
+    if (Func_080770e0(0x210) != 0) {
         ((s8 *)Data_02000240)[498] = 2;
-        Func_020020ba(0x02008401, 3200);
+        Func_080000d0(0x02008401, 3200);
     }
     if (Data_02000240[224] == 164
         || Data_02000240[224] == 165) {
         *(u16 *)0x02009a00 = *(u16 *)0x0500019e;
-        Func_02001c06();
+        Func_02000d24();
     }
     if (Data_02000240[224] == 164) {
-        Func_02001e44();
+        Func_02000f50();
     } else if (Data_02000240[224] == 165) {
-        Func_02001f94();
+        Func_02001094();
     } else {
-        Func_0200227e(0x120);
+        Func_080f9010(0x120);
     }
     if (Data_02000240[225] == 0) {
         *(u16 *)(camera + 20) &= 0xfdff;

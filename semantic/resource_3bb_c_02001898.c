@@ -30,39 +30,20 @@
  * only from this call shape.
  */
 
+extern u8 *Func_0808a080(s32 arg0);
+extern void Func_0808a100(s32 arg0, s32 arg1);
+extern void Func_0808a010(s32 arg0);
+extern void Func_080f9010(s32 arg0);
+extern void Func_08009080(u8 *object, s32 arg1);
+extern void Func_08009150(u8 *object, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0808a090(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_08009158(u8 *object);
 
-
-
-
-
-
-
-
-
-extern u8 * Func_0200580e(s32 arg0);
-extern u8 * Func_02005816(s32 arg0);
-extern void Func_020058a8(s32 arg0, s32 arg1);
-extern void Func_02005846(s32 arg0);
-extern void Func_020059d6(s32 arg0);
-extern void Func_02005776(u8 *object, s32 arg1);
-extern void Func_020057b2(u8 *object, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02005870(s32 arg0);
-extern void Func_020058e0(s32 arg0, s32 arg1);
-extern void Func_020058b4(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_020057a4(u8 *object, s32 arg1);
-extern void Func_020057e8(u8 *object, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_020057f6(u8 *object);
-extern void Func_020057c6(u8 *object, s32 arg1);
-extern void Func_02005804(u8 *object);
-extern void Func_020057d4(u8 *object, s32 arg1);
-extern void Func_02005a44(s32 arg0);
-extern void Func_02005a4a(s32 arg0);
-extern void Func_020058d0(s32 arg0);
 void Func_02001898(s32 arg0, s32 arg1, s32 arg2)
 {
     u32 idx = *(u32 *)0x02000434;
-    u8 *objectA = Func_0200580e(idx);
-    u8 *objectB = Func_02005816(arg0);
+    u8 *objectA = Func_0808a080(idx);
+    u8 *objectB = Func_0808a080(arg0);
     s32 half;
     s32 stackHalf = 0;
     s32 shiftedArg1 = arg1 << 16;
@@ -75,28 +56,28 @@ void Func_02001898(s32 arg0, s32 arg1, s32 arg2)
         half = 0;
     }
 
-    Func_020058a8((s32)idx, 8);
-    Func_02005846(6);
+    Func_0808a100((s32)idx, 8);
+    Func_0808a010(6);
 
     *(s32 *)(objectB + 0x30) = 0x8000;
     *(s32 *)(objectB + 0x34) = 0x3333;
 
-    Func_020059d6(239);
-    Func_02005776(objectB, 3);
-    Func_020057b2(objectB, shiftedArg1, 0, shiftedArg2);
-    Func_02005870(6);
-    Func_020058e0((s32)idx, 2);
-    Func_020058b4((s32)idx, 0x8000, half);
-    Func_020057a4(objectA, 2);
+    Func_080f9010(239);
+    Func_08009080(objectB, 3);
+    Func_08009150(objectB, shiftedArg1, 0, shiftedArg2);
+    Func_0808a010(6);
+    Func_0808a100((s32)idx, 2);
+    Func_0808a090((s32)idx, 0x8000, half);
+    Func_08009080(objectA, 2);
 
-    Func_020057e8(objectA, *(s32 *)(objectA + 8) + half, 0, *(s32 *)(objectA + 16) + stackHalf);
-    Func_020057f6(objectA);
-    Func_020057c6(objectA, 1);
+    Func_08009150(objectA, *(s32 *)(objectA + 8) + half, 0, *(s32 *)(objectA + 16) + stackHalf);
+    Func_08009158(objectA);
+    Func_08009080(objectA, 1);
 
-    Func_02005804(objectB);
-    Func_020057d4(objectB, 1);
+    Func_08009158(objectB);
+    Func_08009080(objectB, 1);
 
-    Func_02005a44(288);
-    Func_02005a4a(213);
-    Func_020058d0(15);
+    Func_080f9010(288);
+    Func_080f9010(213);
+    Func_0808a010(15);
 }

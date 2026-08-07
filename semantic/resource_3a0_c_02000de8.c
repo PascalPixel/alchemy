@@ -45,31 +45,25 @@
 
 extern u8 *Data_03001ebc;      /* workspace pointer */
 
-           /* record fetch, returns the record */
+u8 *Func_0808a080();           /* record fetch, returns the record */
+void Func_0808a090();
+void Func_0808a100();
+void Func_0808a0e0();
+void Func_0808a0d8();
+void Func_0808a248();
 
-
-
-
-
-
-extern u8 * Func_020021c0();
-extern void Func_020021dc();
-extern void Func_02002240();
-extern void Func_02002234();
-extern void Func_0200223a();
-extern void Func_020022d6();
 void Func_02000de8(s32 mode)
 {
-    Func_020021c0(0)[0x55] = 0;
-    Func_020021dc(0, 0x8000, 0x4000);
+    Func_0808a080(0)[0x55] = 0;
+    Func_0808a090(0, 0x8000, 0x4000);
 
     if (mode == 6) {
-        Func_02002240(0, 2);
-        Func_02002234(0, 0, -16);
+        Func_0808a100(0, 2);
+        Func_0808a0e0(0, 0, -16);
     } else {
-        Func_0200223a(0, 2, -16);
+        Func_0808a0d8(0, 2, -16);
     }
 
     *(s32 *)(Data_03001ebc + 456) = 16;
-    Func_020022d6(mode);
+    Func_0808a248(mode);
 }

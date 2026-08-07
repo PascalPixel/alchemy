@@ -25,77 +25,59 @@
 
 extern s16 Data_02000240[];
 
-
-
-
-
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_02000ea8();
+void Func_02000d90();
 /* Four register arguments plus four stack words. */
+void Func_02000ae8();
+void Func_0808a200();
+void Func_0808a150();
+void Func_0808a010();
+void Func_0808a130();
+void Func_0808a1e8();
+void Func_080f9010();
+void Func_080770c8();
+void Func_0808a250();
+void Func_0808a020();
 
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02004ac8();
-extern void Func_02004ab8();
-extern void Func_02002bc4();
-extern void Func_02002abc();
-extern void Func_02004ace();
-extern void Func_02002834();
-extern void Func_02004ba8();
-extern void Func_02004b7a();
-extern void Func_02004b00();
-extern void Func_02004b70();
-extern void Func_02004bba();
-extern void Func_02004c30();
-extern void Func_02004b1e();
-extern void Func_02004b44();
-extern u8 * Func_02004b4e();
-extern u8 * Func_02002b32();
-extern void Func_02004b42();
-extern void Func_02004c3c();
 void Func_02001d04(void)
 {
     u8 *slot;
 
-    slot = Func_02004ac8(15);
+    slot = Func_0808a080(15);
 
     /* r0 still holds the record returned above. */
-    Func_02004ab8();
+    Func_0808a018();
 
-    Func_02002bc4(15, 0);
-    Func_02002abc(15, 472, 104, 0x80000);   /* 236 << 1, 128 << 12 */
-    Func_02004ace(10);
+    Func_02000ea8(15, 0);
+    Func_02000d90(15, 472, 104, 0x80000);   /* 236 << 1, 128 << 12 */
+    Func_0808a010(10);
 
-    Func_02002834(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
+    Func_02000ae8(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x80000,
                   0, 0, 0, 1, 0);
 
-    Func_02004ba8(15, 1);
-    Func_02004b7a(15, 0, 0);
-    Func_02004b00(30);
-    Func_02004b70(15, 2);
-    Func_02004bba(15, 0x103, 0);
-    Func_02004c30(147);
-    Func_02004b1e(60);
+    Func_0808a200(15, 1);
+    Func_0808a150(15, 0, 0);
+    Func_0808a010(30);
+    Func_0808a130(15, 2);
+    Func_0808a1e8(15, 0x103, 0);
+    Func_080f9010(147);
+    Func_0808a010(60);
 
-    Func_02004b44(15,
-                  *(s16 *)(Func_02004b4e(0) + 10),
-                  *(s16 *)(Func_02002b32(0) + 18),
+    Func_02000d90(15,
+                  *(s16 *)(Func_0808a080(0) + 10),
+                  *(s16 *)(Func_0808a080(0) + 18),
                   0x60000);                          /* 192 << 11 */
 
-    Func_02004b44(10);
-    Func_02004b42(0x307);
+    Func_0808a010(10);
+    Func_080770c8(0x307);
 
     ((u8 *)Data_02000240)[0x22b] = 3;
 
-    Func_02004c3c(53, 0);
+    Func_0808a250(53, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_02004b70();
+    Func_0808a020();
 }

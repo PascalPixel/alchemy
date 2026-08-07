@@ -29,35 +29,16 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-    /* scene entity record by selector */
-
-
-    /* test a story flag (used in a condition) */
-   /* this overlay */
-   /* this overlay */
-   /* this overlay */
+u8 *Func_0808a080();    /* scene entity record by selector */
+void Func_080091e0();
+void Func_0808a100();
+s32 Func_080770c0();    /* test a story flag (used in a condition) */
+void Func_020000d4();   /* this overlay */
+void Func_02000210();   /* this overlay */
+void Func_02000384();   /* this overlay */
 
 extern s16 Data_02000240[];
 
-extern void Func_02003566();
-extern u8 * Func_02003524();
-extern void Func_02003572();
-extern u8 * Func_02003530();
-extern void Func_0200357e();
-extern u8 * Func_0200353c();
-extern void Func_0200358a();
-extern u8 * Func_02003548();
-extern u8 * Func_02003596();
-extern s32 Func_02003568();
-extern void Func_02001c7c();
-extern s32 Func_02003576();
-extern void Func_02001dfe();
-extern s32 Func_02003586();
-extern void Func_02001b5e();
-extern s32 Func_02003594();
-extern void Func_02003610();
-extern s32 Func_020035a6();
-extern void Func_02003622();
 s32 Func_02001a0c(void)
 {
     u8 *workspace;
@@ -71,29 +52,29 @@ s32 Func_02001a0c(void)
         return 0;
     }
 
-    Func_02003566(Func_02003524(8), 0);
-    Func_02003572(Func_02003530(9), 0);
-    Func_0200357e(Func_0200353c(10), 0);
-    Func_0200358a(Func_02003548(11), 0);
+    Func_080091e0(Func_0808a080(8), 0);
+    Func_080091e0(Func_0808a080(9), 0);
+    Func_080091e0(Func_0808a080(10), 0);
+    Func_080091e0(Func_0808a080(11), 0);
 
     /* Word field at +28 of entity 11; 0xf333 is pooled, not computed. */
-    *(s32 *)(Func_02003596(11) + 28) = 0xf333;
+    *(s32 *)(Func_0808a080(11) + 28) = 0xf333;
 
-    if (Func_02003568(0x201) != 0) {
-        Func_02001c7c();
+    if (Func_080770c0(0x201) != 0) {
+        Func_02000210();
     }
-    if (Func_02003576(0x202) != 0) {
-        Func_02001dfe();
+    if (Func_080770c0(0x202) != 0) {
+        Func_02000384();
     }
     /* 0x200 built as `movs r0,#128 / lsls r0,#2`. */
-    if (Func_02003586(0x200) != 0) {
-        Func_02001b5e();
+    if (Func_080770c0(0x200) != 0) {
+        Func_020000d4();
     }
-    if (Func_02003594(0x203) != 0) {
-        Func_02003610(11, 5);
+    if (Func_080770c0(0x203) != 0) {
+        Func_0808a100(11, 5);
     }
-    if (Func_020035a6(flagId) != 0) {
-        Func_02003622(9, 5);
+    if (Func_080770c0(flagId) != 0) {
+        Func_0808a100(9, 5);
     }
 
     return 0;

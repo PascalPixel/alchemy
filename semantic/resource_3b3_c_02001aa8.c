@@ -77,19 +77,13 @@
  * bit 0 of +0x23 set.
  */
 
-           /* record fetch, returns the record */
-           /* local: score two objects */
-           /* local: proximity/priority merge */
+u8 *Func_0808a080();           /* record fetch, returns the record */
+s32 Func_02001938();           /* local: score two objects */
+s32 Func_020019f0();           /* local: proximity/priority merge */
 
-extern u8 * Func_020045d0();
-extern s32 Func_0200342c();
-extern s32 Func_0200461a();
-extern u8 * Func_0200343e();
-extern s32 Func_02004636();
-extern u8 * Func_02003514();
 s32 Func_02001aa8(u8 *object)
 {
-    u8 *reference = Func_020045d0(0);
+    u8 *reference = Func_0808a080(0);
     u8 *flags;
     s32 index;
     s32 scored;
@@ -102,13 +96,13 @@ s32 Func_02001aa8(u8 *object)
         return 0;
     }
 
-    scored = Func_0200342c(object, reference);
+    scored = Func_02001938(object, reference);
     for (index = 8; index <= 11; index++)
-        scored += Func_0200461a(object, Func_0200343e(index));
+        scored += Func_02001938(object, Func_0808a080(index));
 
     if (scored != 0) {
         for (index = 8; index <= 11; index++)
-            Func_02004636(object, Func_02003514(index));
+            Func_020019f0(object, Func_0808a080(index));
     }
 
     flags = object + 0x23;

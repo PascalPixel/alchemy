@@ -42,44 +42,34 @@
  */
 
 /* Returns the record for a numbered slot. */
+s32 *Func_0808a080();
+void Func_020019e8();
+void Func_02001a9c();
+void Func_02001a48();
+void Func_02001a70();
+void Func_080091c0();
 
-
-
-
-
-
-
-extern s32 * Func_02004010();
-extern s32 * Func_02004028();
-extern void Func_020034da();
-extern s32 * Func_02004038();
-extern void Func_020035a4();
-extern void Func_0200355a();
-extern void Func_0200358c();
-extern void Func_02004014();
-extern s32 * Func_02004082();
-extern s32 * Func_0200408c();
 void Func_02001ac8(void)
 {
-    s32 *slot = Func_02004010(8);
+    s32 *slot = Func_0808a080(8);
     s32 x = slot[2] / 0x100000;   /* +8  */
 
     if (slot[3] == 0) {           /* +12 */
-        ((u8 *)Func_02004028(8))[35] = 2;
+        ((u8 *)Func_0808a080(8))[35] = 2;
     }
 
-    Func_020034da();
-    ((u8 *)Func_02004038(8))[85] = 3;
+    Func_020019e8();
+    ((u8 *)Func_0808a080(8))[85] = 3;
 
     if (x == 40) {
-        Func_020035a4();
+        Func_02001a9c();
     } else if (x == 42) {
-        Func_0200355a();
+        Func_02001a48();
     } else if (x == 41) {
-        Func_0200358c();
+        Func_02001a70();
     } else if (x == 39 || x == 38 || x == 37) {
-        Func_02004014(61, 36, 1, 1, x, 42);
-        ((u8 *)Func_02004082(8))[85] = 0;
-        Func_0200408c(8)[3] = 0x200000;   /* +12 */
+        Func_080091c0(61, 36, 1, 1, x, 42);
+        ((u8 *)Func_0808a080(8))[85] = 0;
+        Func_0808a080(8)[3] = 0x200000;   /* +12 */
     }
 }

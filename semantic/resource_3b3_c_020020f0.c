@@ -24,29 +24,23 @@
  * Raw callee naming.
  */
 
+u8 *Func_0808a080();
+void Func_0808a018();
+void Func_080091c0();
+void Func_080770c8();
+void Func_0808a098();
+void Func_0808a020();
 
-
-
-
-
-
-
-extern u8 * Func_02004c14();
-extern void Func_02004c0a();
-extern void Func_02004bde();
-extern void Func_02004c16();
-extern void Func_02004c56();
-extern void Func_02004c42();
 void Func_020020f0(u8 *a0)
 {
-    u8 *obj = Func_02004c14(a0);
+    u8 *obj = Func_0808a080(a0);
 
-    Func_02004c0a();
+    Func_0808a018();
 
     *(u32 *)(obj + 0x6c) = 0x0200a0b9;
 
-    Func_02004bde(20, 14, 1, 1, *(s32 *)(obj + 8) >> 20, *(s32 *)(obj + 16) >> 20);
-    Func_02004c16(a0 + 0x1f5);
-    Func_02004c56(a0, 0x0200ad64);
-    Func_02004c42();
+    Func_080091c0(20, 14, 1, 1, *(s32 *)(obj + 8) >> 20, *(s32 *)(obj + 16) >> 20);
+    Func_080770c8(a0 + 0x1f5);
+    Func_0808a098(a0, 0x0200ad64);
+    Func_0808a020();
 }

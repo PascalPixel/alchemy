@@ -29,46 +29,34 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-   /* six-argument presentation request, last two on the stack */
-   /* open a scripted scene */
-   /* close a scripted scene */
-   /* set a slot's x/y scale in 16.16 */
-   /* place an entity */
-   /* place an entity */
-   /* set a slot's presentation mode */
-   /* face the slot along a heading */
+void Func_080091c0();   /* six-argument presentation request, last two on the stack */
+void Func_0808a018();   /* open a scripted scene */
+void Func_0808a020();   /* close a scripted scene */
+void Func_0808a090();   /* set a slot's x/y scale in 16.16 */
+void Func_0808a0c8();   /* place an entity */
+void Func_0808a0d0();   /* place an entity */
+void Func_0808a100();   /* set a slot's presentation mode */
+void Func_0808a1b8();   /* face the slot along a heading */
 
-extern void Func_02000bd6();
-extern void Func_02000c04();
-extern void Func_02000c12();
-extern void Func_02000c2e();
-extern void Func_02000c42();
-extern void Func_02000cbe();
-extern void Func_02000cca();
-extern void Func_02000c82();
-extern void Func_02000c0e();
-extern void Func_02000c20();
-extern void Func_02000c5c();
 void Func_02000334(void)
 {
-    int mode;
+    int mode = 7;
 
-    Func_02000bd6();
+    Func_0808a018();
 
-    Func_02000c04(8, 0x10000, 0x8000);
-    Func_02000c12(9, 0x10000, 0x8000);
+    Func_0808a090(8, 0x10000, 0x8000);
+    Func_0808a090(9, 0x10000, 0x8000);
 
-    Func_02000c2e(8, 136, 384);
-    Func_02000c42(9, 152, 384);
+    Func_0808a0c8(8, 136, 384);
+    Func_0808a0d0(9, 152, 384);
 
-    Func_02000cbe(8, 0x4000, 0);
-    Func_02000cca(9, 0x4000, 0);
+    Func_0808a1b8(8, 0x4000, 0);
+    Func_0808a1b8(9, 0x4000, 0);
 
-    Func_02000c82(8, 1);
+    Func_0808a100(8, 1);
 
-    mode = 7;
-    Func_02000c0e(6, 27, 1, 1, mode, 27);
-    Func_02000c20(9, 26, 2, 1, mode, 26);
+    Func_080091c0(6, 27, 1, 1, mode, 27);
+    Func_080091c0(9, 26, 2, 1, mode, 26);
 
-    Func_02000c5c();
+    Func_0808a020();
 }

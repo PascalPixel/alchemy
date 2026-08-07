@@ -6,23 +6,13 @@
  * the caller's extra record.  This owner is the resource_39d member of the
  * same machine-code family already present in resources 39c, 3c9, and 39e.
  */
+extern u8 *Func_0808a080(s32 id);
+extern u8 *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
+extern void Func_08009080(u8 *object, s32 variant);
+extern void Func_08009098(u8 *object, s32 entry_value);
+extern void Func_0808a160(u8 *object, s32 value);
+extern s32 Func_03000380(s32 value, s32 scale);
 
-
-
-
-
-
-
-extern u8 * Func_0200384e(s32 id);
-extern u8 * Func_020037f4(s32 kind, s32 x, s32 y, s32 z);
-extern void Func_020037fe(u8 *object, s32 variant);
-extern void Func_02003818(u8 *object, s32 entry_value);
-extern void Func_0200397a(u8 *object, s32 value);
-extern s32 Func_020038a4(s32 value, s32 scale);
-extern s32 Func_020038bc(s32 value, s32 scale);
-extern s32 Func_020038ca(s32 value, s32 scale);
-extern void Func_02003918(u8 *object, s32 variant);
-extern void Func_02003928(u8 *object, s32 entry_value);
 void Func_0200013c(s32 x, s32 y, s32 z, s32 field44,
                    s32 field48, s32 field4c, u32 flags, u8 *extra)
 {
@@ -35,22 +25,22 @@ void Func_0200013c(s32 x, s32 y, s32 z, s32 field44,
     s32 kind;
     u16 *field64;
 
-    service = Func_0200384e(0);
+    service = Func_0808a080(0);
 
     if ((flags & 0x100000) != 0 && extra != 0)
         kind = *(short *)(extra + 0x18);
     else
         kind = 0xde;
 
-    object = Func_020037f4(kind, x, y, z);
+    object = Func_080090c8(kind, x, y, z);
     if (object == 0)
         return;
 
     owner = *(u8 **)(object + 0x50);
-    Func_020037fe(object, (variant + 1) & 0xf);
+    Func_08009080(object, (variant + 1) & 0xf);
 
     entry = table[variant];
-    Func_02003818(object, (s32)entry);
+    Func_08009098(object, (s32)entry);
 
     object[0x55] = 0;
     *(s32 *)(object + 0x44) = field44;
@@ -71,7 +61,7 @@ void Func_0200013c(s32 x, s32 y, s32 z, s32 field44,
         return;
 
     if ((flags & 0x10000) != 0)
-        Func_0200397a(object, *(s32 *)(extra + 4));
+        Func_0808a160(object, *(s32 *)(extra + 4));
 
     if ((flags & 0x20000) != 0) {
         object[0x23] &= ~1;
@@ -90,22 +80,22 @@ void Func_0200013c(s32 x, s32 y, s32 z, s32 field44,
 
         if ((flags & 0x40000) != 0) {
             if (copied_position) {
-                *(s32 *)(object + 0x30) = Func_020038a4(
+                *(s32 *)(object + 0x30) = Func_03000380(
                     *(s32 *)(extra + 0x10) - *(s32 *)(object + 0x18),
                     divisor);
                 y_delta = *(s32 *)(extra + 0x14) - *(s32 *)(object + 0x1c);
             } else {
-                *(s32 *)(object + 0x30) = Func_020038bc(
+                *(s32 *)(object + 0x30) = Func_03000380(
                     *(s32 *)(extra + 0x10) - 0x10000, divisor);
                 y_delta = *(s32 *)(extra + 0x14) - 0x10000;
             }
-            *(s32 *)(object + 0x34) = Func_020038ca(y_delta, divisor);
+            *(s32 *)(object + 0x34) = Func_03000380(y_delta, divisor);
         }
     }
 
     if ((flags & 0x200000) != 0) {
-        Func_02003918(object, 1);
-        Func_02003928(object, *(s32 *)(extra + 0x1c));
+        Func_08009080(object, 1);
+        Func_08009098(object, *(s32 *)(extra + 0x1c));
     }
 
     if ((flags & 0x400000) != 0)

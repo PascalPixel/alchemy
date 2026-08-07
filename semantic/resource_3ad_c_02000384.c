@@ -30,21 +30,10 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-   /* frame wait */
-   /* six-argument tile/strip request, last two on the stack */
-   /* six-argument collision repaint, last two on the stack */
+void Func_080000c0();   /* frame wait */
+void Func_080091b8();   /* six-argument tile/strip request, last two on the stack */
+void Func_080091c0();   /* six-argument collision repaint, last two on the stack */
 
-extern void Func_02001e88();
-extern void Func_02001e7e();
-extern void Func_02001eaa();
-extern void Func_02001ebe();
-extern void Func_02001ed0();
-extern void Func_02001ec6();
-extern void Func_02001eea();
-extern void Func_02001efc();
-extern void Func_02001f0c();
-extern void Func_02001f26();
-extern void Func_02001f38();
 void Func_02000384(void)
 {
     /* The five constants held in callee-saved registers for the whole body. */
@@ -54,18 +43,18 @@ void Func_02000384(void)
     int colC = 55;      /* r8 */
     int colD = 58;      /* r6 */
 
-    Func_02001e88(41, 87, 2, 5, rowA, 59);
-    Func_02001e7e(4);
+    Func_080091b8(41, 87, 2, 5, rowA, 59);
+    Func_080000c0(4);
 
-    Func_02001eaa(2, 93, 1, 1, rowB, colB);
-    Func_02001ebe(2, 94, 1, 1, rowA, colC);
-    Func_02001ed0(43, 87, 2, 5, rowA, colD);
-    Func_02001ec6(4);
+    Func_080091b8(2, 93, 1, 1, rowB, colB);
+    Func_080091b8(2, 94, 1, 1, rowA, colC);
+    Func_080091b8(43, 87, 2, 5, rowA, colD);
+    Func_080000c0(4);
 
-    Func_02001eea(3, 93, 1, 1, rowB, colB);
-    Func_02001efc(1, 94, 1, 1, rowA, colC);
-    Func_02001f0c(41, 87, 2, 5, rowA, colD);
+    Func_080091b8(3, 93, 1, 1, rowB, colB);
+    Func_080091b8(1, 94, 1, 1, rowA, colC);
+    Func_080091b8(41, 87, 2, 5, rowA, colD);
 
-    Func_02001f26(21, 11, 2, 2, rowA, 13);
-    Func_02001f38(19, 17, 1, 1, rowA, 14);
+    Func_080091c0(21, 11, 2, 2, rowA, 13);
+    Func_080091c0(19, 17, 1, 1, rowA, 14);
 }

@@ -54,38 +54,26 @@ extern s16 Data_02000240[];             /* the overlay's scene table */
 extern u8 Data_0200b2bc[];              /* in-image message data, offset 0x32bc */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-                    /* companion entity by selector, or 0 */
-                   /* entity hook, r0 residue */
-                   /* common exit hook, no arguments */
-                   /* scene teardown */
-                   /* run cutscene (group, variant) */
-                   /* arm scene (id, mode) */
-                   /* show a message block */
-                   /* play a sound cue */
+u8 *Func_080770c0();                    /* companion entity by selector, or 0 */
+void Func_0808a018();                   /* entity hook, r0 residue */
+void Func_0808a020();                   /* common exit hook, no arguments */
+void Func_0808a248();                   /* scene teardown */
+void Func_0808a250();                   /* run cutscene (group, variant) */
+void Func_0808a260();                   /* arm scene (id, mode) */
+void Func_08009178();                   /* show a message block */
+void Func_080f9010();                   /* play a sound cue */
 
-extern u8 * Func_0200441c();
-extern void Func_0200443c();
-extern void Func_020044be();
-extern void Func_0200450e();
-extern void Func_02004518();
-extern void Func_02004522();
-extern void Func_0200452c();
-extern void Func_02004536();
-extern void Func_020044d2();
-extern void Func_02004486();
-extern void Func_02004584();
-extern void Func_0200454a();
 void Func_020013ac(void)
 {
     s32 scene;
     s32 group;
 
-    if (Func_0200441c(Data_02000240[224] + (0x8c8 - 0x7e)) != 0) {
+    if (Func_080770c0(Data_02000240[224] + (0x8c8 - 0x7e)) != 0) {
         goto already_recruited;
     }
 
-    Func_0200443c();
-    Func_020044be(Data_02000240[224], 5);
+    Func_0808a018();
+    Func_0808a260(Data_02000240[224], 5);
 
     ((u8 *)Data_02000240)[555] = 3;
 
@@ -97,32 +85,32 @@ void Func_020013ac(void)
         switch (scene) {
         case 0:
         case 4:
-            Func_0200450e(group, 0);
+            Func_0808a250(group, 0);
             break;
         case 1:
         case 5:
-            Func_02004518(group, 1);
+            Func_0808a250(group, 1);
             break;
         case 2:
         case 6:
-            Func_02004522(group, 2);
+            Func_0808a250(group, 2);
             break;
         case 3:
         case 7:
-            Func_0200452c(group, 3);
+            Func_0808a250(group, 3);
             break;
         default:
-            Func_02004536(group, 4);
+            Func_0808a250(group, 4);
             break;
         }
     }
 
-    Func_020044d2();
+    Func_0808a020();
     return;
 
 already_recruited:
     /* Already recruited: show the canned line and leave. */
-    Func_02004486(Data_0200b2bc, 44, 7);
-    Func_02004584(183);
-    Func_0200454a(3);
+    Func_08009178(Data_0200b2bc, 44, 7);
+    Func_080f9010(183);
+    Func_0808a248(3);
 }

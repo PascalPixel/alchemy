@@ -45,71 +45,53 @@
 
 extern u8 Data_0200cd6c[];     /* image offset 0x4d6c: script blob */
 
-           /* scene-record accessor, established */
-          /* open bracket, established */
-          /* place entity (id, x, z), established */
+u8 *Func_0808a080();           /* scene-record accessor, established */
+void Func_0808a018();          /* open bracket, established */
+void Func_0808a0f0();          /* place entity (id, x, z), established */
+void Func_0808a360();
+void Func_0808a370();
+void Func_0808a010();          /* frame wait, established */
+void Func_0808a398();          /* (id, n), established */
+void Func_0808a060();          /* (id, 0), established */
+u8 *Func_0808a228();
+void Func_0808a208();          /* pair of 16.16 rates, established */
+void Func_0808a210();          /* camera (x, y, z, mode), established */
+void Func_0808a218();
+void Func_020006dc(void);
+void Func_0808a040();          /* play script blob, established */
+void Func_0808a020();          /* close bracket, established */
 
-
-          /* frame wait, established */
-          /* (id, n), established */
-          /* (id, 0), established */
-
-          /* pair of 16.16 rates, established */
-          /* camera (x, y, z, mode), established */
-
-
-          /* play script blob, established */
-          /* close bracket, established */
-
-extern u8 * Func_020068fa();
-extern void Func_020068d8();
-extern void Func_0200695a();
-extern void Func_02006964();
-extern void Func_02006a3e();
-extern void Func_02006a4a();
-extern void Func_02006900();
-extern void Func_02006a60();
-extern void Func_02006930();
-extern u8 * Func_02006a3c();
-extern void Func_02006a32();
-extern void Func_02006a56();
-extern void Func_0200693c();
-extern void Func_020034b4(void);
-extern void Func_02006a64();
-extern void Func_02006a70();
-extern void Func_0200696e();
-extern void Func_02006974();
 void Func_02002d58(void)
 {
     u8 *record;
 
-    record = Func_020068fa(0);
-    Func_020068d8(record);
-    Func_0200695a(10, 0, 0);
-    Func_02006964(8, 0, 0);
+    record = Func_0808a080(0);
+    Func_0808a018(record);
+    Func_0808a0f0(10, 0, 0);
+    Func_0808a0f0(8, 0, 0);
 
     *(s32 *)(*(u8 **)0x03001ebc + 0x1c0) = 0x201;
 
-    Func_02006a3e();
-    Func_02006a4a();
-    Func_02006900(20);
-    Func_02006a60(202, 3);
-    Func_02006930(202, 0);
-    Func_02006a3c()[0x55] = 0;
+    Func_0808a360();
+    Func_0808a370();
+    Func_0808a010(20);
+    Func_0808a398(202, 3);
+    Func_0808a060(202, 0);
+    Func_0808a228()[0x55] = 0;
 
-    Func_02006a32(0x19999, 0x3333);
-    Func_02006a4a(200 << 15, 0, 249 << 16, 1);
-    Func_02006a56();
-    Func_0200693c(20);
+    Func_0808a208(0x19999, 0x3333);
+    Func_0808a210(200 << 15, 0, 249 << 16, 1);
+    Func_0808a218();
+    Func_0808a010(20);
 
-    Func_020034b4();
+    Func_020006dc();
 
-    Func_02006a64(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    Func_0808a210(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16), 1);
-    Func_02006a70();
-    Func_0200696e(Data_0200cd6c);
+    Func_0808a218();
+    Func_0808a040(Data_0200cd6c);
 
     *(s32 *)(*(u8 **)0x03001ebc + 0x1c0) = 0x204;
 
-    Func_02006974();
+    Func_0808a020();
 }

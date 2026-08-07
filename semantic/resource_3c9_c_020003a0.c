@@ -45,10 +45,8 @@
  * its wrap, not two unrelated halfwords.
  */
 
-           /* relocated IWRAM quotient helper */
+s32 Func_03000380();           /* relocated IWRAM quotient helper */
 
-extern s32 Func_02005fb2();
-extern s32 Func_02005fc0();
 void Func_020003a0(u8 *object)
 {
     s32 vx = *(s32 *)(object + 68);
@@ -63,11 +61,11 @@ void Func_020003a0(u8 *object)
     vz = *(s32 *)(object + 76);
     *(s32 *)(object + 16) += vz;
 
-    vx -= Func_02005fb2(vx, 22);
+    vx -= Func_03000380(vx, 22);
     *(s32 *)(object + 68) = vx;
 
     {
-        s32 damped = Func_02005fc0(vz, 20);
+        s32 damped = Func_03000380(vz, 20);
         s32 t;
         s32 u;
 

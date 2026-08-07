@@ -30,27 +30,19 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-  /* fetch a record; called with 0 for the subject's own */
+u16 *Func_0808a080();  /* fetch a record; called with 0 for the subject's own */
+void Func_080b0008();
+s32 Func_080770c0();   /* query a numeric id; nonzero when selected */
+void Func_0808a170();  /* present message by id */
+void Func_0808a180();  /* act on the subject */
 
-   /* query a numeric id; nonzero when selected */
-  /* present message by id */
-  /* act on the subject */
-
-extern u16 * Func_0200106c();
-extern void Func_0200110a();
-extern s32 Func_02001064();
-extern s32 Func_0200107c();
-extern void Func_020010f6();
-extern void Func_0200110e();
-extern void Func_02001106();
-extern void Func_0200111e();
 void Func_0200066c(s32 subject)
 {
     u16 *record;
     s32 facing;
     s32 message;
 
-    record = Func_0200106c(0);
+    record = Func_0808a080(0);
 
     /*
      * ldrh [record, #6] biased by 0x2000 and masked with 0xffffc000, then
@@ -63,21 +55,21 @@ void Func_0200066c(s32 subject)
 
     if (facing == 0xc000) {
         return;
-        Func_0200110a(27, subject);
+        Func_080b0008(27, subject);
     }
 
     /* Ids 0x950 and 0x962 are queried in order; the first match wins.  Both
      * are plain integers, below this overlay's 0x02008000 link base. */
-    if (Func_02001064(0x950) != 0) {
+    if (Func_080770c0(0x950) != 0) {
         message = 0x238f;
-    } else if (Func_0200107c(0x962) != 0) {
+    } else if (Func_080770c0(0x962) != 0) {
         message = 0x221d;
     } else {
-        Func_020010f6(0x1fd9);
-        Func_0200110e(subject, 0);
+        Func_0808a170(0x1fd9);
+        Func_0808a180(subject, 0);
         return;
     }
 
-    Func_02001106(message);
-    Func_0200111e(subject, 0);
+    Func_0808a170(message);
+    Func_0808a180(subject, 0);
 }

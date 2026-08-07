@@ -58,24 +58,16 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-
-
+u8 *Func_0808a080();
+void Func_080091c0();
 
 /* This overlay's own routine at file offset 0x0310. */
-
+void Func_02000310();
 
 /* RAM global read via symbol + runtime index, matching sibling owners
  * (resource_3bb_c_020012f0.c etc.) that read this same word. */
 extern s32 Data_02000240[];
 
-extern u8 * Func_02004360();
-extern u8 * Func_02004378();
-extern void Func_02000772();
-extern void Func_020042fe();
-extern u8 * Func_020043cc();
-extern void Func_02004318();
-extern u8 * Func_020043e6();
-extern void Func_02004334();
 void Func_02000400(void)
 {
     u8 *record;
@@ -83,7 +75,7 @@ void Func_02000400(void)
     s32 step;
     s32 x;
 
-    record = Func_02004360(Data_02000240[125]);
+    record = Func_0808a080(Data_02000240[125]);
     x = *(s32 *)(record + 8) >> 20;
 
     step = 0;
@@ -92,7 +84,7 @@ void Func_02000400(void)
         partner = 33;
     }
 
-    record = Func_02004378(partner);
+    record = Func_0808a080(partner);
     if ((*(s32 *)(record + 8) >> 20) != x) return;
 
     if (x > 51) {
@@ -102,13 +94,13 @@ void Func_02000400(void)
     }
     if (step == 0) return;
 
-    Func_02000772(partner, step, 0);
+    Func_02000310(partner, step, 0);
 
-    Func_020042fe(120, 10, 5, 6, 48, 10);
+    Func_080091c0(120, 10, 5, 6, 48, 10);
 
-    record = Func_020043cc(32);
-    Func_02004318(52, 28, 1, 3, *(s32 *)(record + 8) >> 20, 10);
+    record = Func_0808a080(32);
+    Func_080091c0(52, 28, 1, 3, *(s32 *)(record + 8) >> 20, 10);
 
-    record = Func_020043e6(33);
-    Func_02004334(52, 28, 1, 3, *(s32 *)(record + 8) >> 20, 13);
+    record = Func_0808a080(33);
+    Func_080091c0(52, 28, 1, 3, *(s32 *)(record + 8) >> 20, 13);
 }

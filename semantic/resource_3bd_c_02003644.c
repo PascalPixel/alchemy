@@ -74,79 +74,22 @@ extern s16 Data_02000240[];
 extern u8 Data_02001000[];
 extern u8 *Data_03001ebc;
 
+extern s32 Func_080770c0(s32 flagId);
+extern void Func_080770c8(s32 flagId);
+extern void Func_080770d0(s32 flagId);
+extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void Func_080091c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+extern void Func_080091e0(void *record, s32 arg1);
+extern u8 *Func_0808a080(s32 id);
+extern void Func_0808a0f0(s32 id, s32 x, s32 z);
+extern void Func_0808a100(s32 id, s32 arg1);
+extern void Func_0808a158(s32 id, s32 arg1);
+extern s32 Func_03000380(s32 arg0, s32 arg1);
 
+extern void Func_020008c0(s32 id);
+extern void Func_02000b30(void);
+extern void Func_02000f6c(s32 arg0);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern void Func_02007352(s32 flagId);
-extern void Func_02007360(s32 flagId);
-extern s32 Func_02007376(s32 flagId);
-extern void Func_0200738c(s32 flagId);
-extern s32 Func_02007398(s32 flagId);
-extern void Func_020073b0(s32 flagId);
-extern s32 Func_020073be(s32 flagId);
-extern void Func_0200745c(s32 id, s32 x, s32 z);
-extern u8 * Func_02007414(s32 id);
-extern void Func_0200741c(s32 flagId);
-extern void Func_0200404a(s32 id);
-extern void Func_02004050(s32 id);
-extern void Func_02004056(s32 id);
-extern s32 Func_02007424(s32 flagId);
-extern void Func_020074c8(s32 id, s32 arg1);
-extern void Func_02007404(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern u8 * Func_0200748c(s32 id);
-extern void Func_0200749c(void *record, s32 arg1);
-extern u8 * Func_0200743a(s32 id);
-extern s32 Func_02007468(s32 flagId);
-extern void Func_02007440(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern void Func_020074ac(s32 flagId);
-extern void Func_020040da(s32 id);
-extern void Func_020040e0(s32 id);
-extern void Func_020040e6(s32 id);
-extern u8 * Func_020074f4(s32 id);
-extern u8 * Func_020074fe(s32 id);
-extern u8 * Func_02007506(s32 id);
-extern s32 Func_020074ee(s32 flagId);
-extern void Func_020074e4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern void Func_020074f0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern void Func_020074a8(s32 arg0);
-extern s32 Func_02004836(s32 arg0, s32 arg1);
-extern u8 * Func_020075a4(s32 id);
-extern void Func_020075ba(void *record, s32 arg1);
-extern u8 * Func_0200755a(s32 id);
-extern void Func_02007622(s32 id, s32 arg1);
-extern void Func_02007666(s32 id, s32 arg1);
-extern void Func_0200766e(s32 id, s32 arg1);
-extern void Func_02007676(s32 id, s32 arg1);
-extern void Func_0200767e(s32 id, s32 arg1);
-extern void Func_02007686(s32 id, s32 arg1);
-extern void Func_0200768e(s32 id, s32 arg1);
-extern void Func_02007696(s32 id, s32 arg1);
-extern void Func_0200769e(s32 id, s32 arg1);
-extern void Func_020076a6(s32 id, s32 arg1);
-extern void Func_020076ae(s32 id, s32 arg1);
-extern u8 * Func_02007624(s32 id);
-extern u8 * Func_02007634(s32 id);
-extern u8 * Func_02007642(s32 id);
-extern u8 * Func_0200764e(s32 id);
-extern void Func_02007658(void *record, s32 arg1);
-extern u8 * Func_020075f6(s32 id);
-extern void Func_02007664(void *record, s32 arg1);
-extern u8 * Func_02007602(s32 id);
-extern s32 Func_02007632(s32 flagId);
-extern void Func_020044e2(void);
 s32 Func_02003644(void)
 {
     s32 permuted_4;
@@ -175,29 +118,29 @@ s32 Func_02003644(void)
         }
     }
 
-    Func_02007352(512);
-    Func_02007360(0x201);
+    Func_080770c8(512);
+    Func_080770d0(0x201);
 
     if (Data_02000240[224] == 0x92) {
         if (Data_02000240[225] == 1) {
-            if (Func_02007376(0x109) == 0) {
+            if (Func_080770c0(0x109) == 0) {
                 Data_02001000[4] = 0;
             }
-            Func_0200738c(0x201);
+            Func_080770c8(0x201);
         }
         if (Data_02000240[225] == 2) {
-            if (Func_02007398(0x109) == 0) {
+            if (Func_080770c0(0x109) == 0) {
                 Data_02001000[4] = 5;
             }
-            Func_020073b0(0x201);
+            Func_080770c8(0x201);
         }
     }
 
     if (Data_02000240[224] == 0x93) {
-        if (Func_020073be(0x962) != 0) {
-            Func_0200745c(8, 0, 0);
+        if (Func_080770c0(0x962) != 0) {
+            Func_0808a0f0(8, 0, 0);
         } else {
-            record = Func_02007414(8);
+            record = Func_0808a080(8);
             permuted_3 = *(u8 **)(record + 80);
             (*(u8 **)(record + 80))[38] = 2;
             inner  = permuted_3;
@@ -208,37 +151,37 @@ s32 Func_02003644(void)
     }
 
     if (Data_02000240[224] == 0x95) {
-        Func_0200741c(512);
-        Func_0200404a(8);
-        Func_02004050(9);
-        Func_02004056(10);
-        if (Func_02007424(0x211) != 0) {
-            Func_020074c8(11, 5);
-            Func_02007404(76, 16, 1, 1, 73, 17);
+        Func_080770d0(512);
+        Func_020008c0(8);
+        Func_020008c0(9);
+        Func_020008c0(10);
+        if (Func_080770c0(0x211) != 0) {
+            Func_0808a100(11, 5);
+            Func_080091c0(76, 16, 1, 1, 73, 17);
         } else {
-            Func_0200748c(11)[35] |= 2;
+            Func_0808a080(11)[35] |= 2;
         }
-        Func_0200749c(Func_0200743a(11), 0);
-        if (Func_02007468(0x212) != 0) {
-            Func_02007440(30, 20, 1, 1, 32, 20);
+        Func_080091e0(Func_0808a080(11), 0);
+        if (Func_080770c0(0x212) != 0) {
+            Func_080091c0(30, 20, 1, 1, 32, 20);
         }
     }
 
     if (Data_02000240[224] == 0x97) {
-        Func_020074ac(512);
-        Func_020040da(8);
-        Func_020040e0(9);
-        Func_020040e6(10);
-        *(s32 *)(Func_020074f4(8) + 108) = 0x0200b611;
-        *(s32 *)(Func_020074fe(9) + 108) = 0x0200b611;
-        *(s32 *)(Func_02007506(10) + 108) = 0x0200b611;
+        Func_080770d0(512);
+        Func_020008c0(8);
+        Func_020008c0(9);
+        Func_020008c0(10);
+        *(s32 *)(Func_0808a080(8) + 108) = 0x0200b611;
+        *(s32 *)(Func_0808a080(9) + 108) = 0x0200b611;
+        *(s32 *)(Func_0808a080(10) + 108) = 0x0200b611;
 
         if (Data_02000240[225] == 52) {
             dma3[0] = (u32)&stackWord;
             stackWord = 0;
             dma3[1] = *(u32 *)0x0200bf6c;
             dma3[2] = 0x85000003;
-            if (Func_020074ee(0x109) == 0) {
+            if (Func_080770c0(0x109) == 0) {
                 Data_02001000[0] = 0;
                 Data_02001000[1] = 0;
                 Data_02001000[2] = 4;
@@ -246,46 +189,46 @@ s32 Func_02003644(void)
         }
 
         if (*(s8 *)&Data_02001000[1] == 99) {
-            Func_020074e4(41, 55, 3, 2, 30, 55);
-            Func_020074f0(42, 8, 1, 1, 31, 8);
+            Func_080091c8(41, 55, 3, 2, 30, 55);
+            Func_080091c0(42, 8, 1, 1, 31, 8);
         }
         if (Data_02001000[1] == 2) {
-            Func_020074a8(Func_02004836(*(s8 *)&Data_02001000[2] << 16, 5) + 0x4000);
+            Func_02000f6c(Func_03000380(*(s8 *)&Data_02001000[2] << 16, 5) + 0x4000);
         }
 
         for (index = 0; index <= 4; index++) {
-            record = Func_020075a4(11 + index);
+            record = Func_0808a080(11 + index);
             record[85] = 0;
             record[89] = 0;
             *(s32 *)(record + 24) = 0x10000;
             *(s32 *)(record + 28) = 0x10000;
-            Func_020075ba(Func_0200755a(11 + index), 0);
-            Func_02007622(11 + index, index + 1);
+            Func_080091e0(Func_0808a080(11 + index), 0);
+            Func_0808a100(11 + index, index + 1);
         }
 
-        Func_02007666(11, 1);
-        Func_0200766e(12, 4);
-        Func_02007676(13, 11);
-        Func_0200767e(14, 2);
-        Func_02007686(15, 3);
-        Func_0200768e(16, 6);
-        Func_02007696(17, 6);
-        Func_0200769e(18, 6);
-        Func_020076a6(19, 6);
-        Func_020076ae(20, 6);
+        Func_0808a158(11, 1);
+        Func_0808a158(12, 4);
+        Func_0808a158(13, 11);
+        Func_0808a158(14, 2);
+        Func_0808a158(15, 3);
+        Func_0808a158(16, 6);
+        Func_0808a158(17, 6);
+        Func_0808a158(18, 6);
+        Func_0808a158(19, 6);
+        Func_0808a158(20, 6);
 
-        inner = *(u8 **)(Func_02007624(16) + 80);
+        inner = *(u8 **)(Func_0808a080(16) + 80);
         inner[9] |= 12;
         inner[9] |= 12;
-        inner = *(u8 **)(Func_02007634(20) + 80);
-        Func_02007642(16)[35] = 2;
-        Func_0200764e(20)[35] = 2;
-        Func_02007658(Func_020075f6(16), 0);
-        Func_02007664(Func_02007602(20), 0);
+        inner = *(u8 **)(Func_0808a080(20) + 80);
+        Func_0808a080(16)[35] = 2;
+        Func_0808a080(20)[35] = 2;
+        Func_080091e0(Func_0808a080(16), 0);
+        Func_080091e0(Func_0808a080(20), 0);
     }
 
-    if (Func_02007632(512) != 0) {
-        Func_020044e2();
+    if (Func_080770c0(512) != 0) {
+        Func_02000b30();
     } else {
         *(s32 *)(Data_03001ebc + 448) = 516;
         *(s32 *)(Data_03001ebc + 456) = 24;

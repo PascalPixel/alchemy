@@ -63,27 +63,15 @@
  *     established base + 0x8000 spelling; its contents are unread.
  */
 
-            /* scene/event flag test */
-            /* remainder helper (frame throttle) */
-   /* scene-record accessor */
-            /* pseudo-random source (see above) */
-   /* spawner */
+extern s32 Func_080770c0();            /* scene/event flag test */
+extern s32 Func_030003e0();            /* remainder helper (frame throttle) */
+extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
+extern s32 Func_080000f8();            /* pseudo-random source (see above) */
+extern u8 *Func_080090c8(s32 kind, s32 a, s32 b, s32 c);   /* spawner */
+extern void Func_08009098(u8 *record, const void *blob);
+extern void Func_0808a160(u8 *record, s32 mode);
+extern s32 Func_08000118(s32 angle);   /* sine of a binary angle */
 
-
-   /* sine of a binary angle */
-
-extern s32 Func_020093e6();
-extern s32 Func_020092dc();
-extern u8 * Func_0200943e(s32 index);
-extern s32 Func_02009406();
-extern s32 Func_02009316();
-extern s32 Func_0200932a();
-extern u8 * Func_0200939e(s32 kind, s32 a, s32 b, s32 c);
-extern void Func_020093a6(u8 *record, const void *blob);
-extern void Func_02009536(u8 *record, s32 mode);
-extern s32 Func_0200936a();
-extern s32 Func_02009386();
-extern s32 Func_0200939a(s32 angle);
 void Func_020036d0(void)
 {
     u8 *anchor;
@@ -92,20 +80,20 @@ void Func_020036d0(void)
     u32 seed;
     s32 placed;
 
-    if (Func_020093e6(0x236) == 0
-        && Func_020092dc(*(s32 *)0x03001e40, 3) != 0) {
+    if (Func_080770c0(0x236) == 0
+        && Func_030003e0(*(s32 *)0x03001e40, 3) != 0) {
         return;
     }
 
-    anchor = Func_0200943e(24);
+    anchor = Func_0808a080(24);
 
-    if (Func_02009406(0x236) != 0) {
-        seed = (u32)Func_02009316() << 8;
+    if (Func_080770c0(0x236) != 0) {
+        seed = (u32)Func_080000f8() << 8;
     } else {
-        seed = (u32)Func_0200932a() << 6;
+        seed = (u32)Func_080000f8() << 6;
     }
 
-    record = Func_0200939e(142 << 1,
+    record = Func_080090c8(142 << 1,
                            *(s32 *)(anchor + 8),
                            (s32)((seed >> 16) << 16)
                                + *(s32 *)(anchor + 12)
@@ -117,17 +105,17 @@ void Func_020036d0(void)
 
     attached = *(u8 **)(record + 80);
 
-    Func_020093a6(record, (const void *)0x0200e16c);
-    Func_02009536(record, 1);
+    Func_08009098(record, (const void *)0x0200e16c);
+    Func_0808a160(record, 1);
     *(u8 *)(record + 85) = 0;
 
-    *(u16 *)(record + 100) = (u16)(Func_0200936a() & 0x0ffff000);
+    *(u16 *)(record + 100) = (u16)(Func_080000f8() & 0x0ffff000);
     *(u16 *)(record + 102) = 0;
 
     *(s32 *)(record + 108) = 0x0200b601;   /* -> Func_02003600 */
 
-    placed = Func_02009386();
-    placed = Func_0200939a((s32)((u32)((placed << 16) - placed) >> 20));
+    placed = Func_080000f8();
+    placed = Func_08000118((s32)((u32)((placed << 16) - placed) >> 20));
     *(s32 *)(record + 48) = (placed * 24) >> 16;
 
     *(u8 *)(attached + 38) = 0;

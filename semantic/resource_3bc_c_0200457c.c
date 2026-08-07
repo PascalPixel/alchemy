@@ -38,15 +38,11 @@
 
 extern u8 Data_02001000[];
 
-           /* archived asset by id, established */
-          /* decompress into scratch, established */
-           /* story-flag query, established */
-          /* install a per-frame task, established */
+u8 *Func_08000290();           /* archived asset by id, established */
+void Func_080001a8();          /* decompress into scratch, established */
+s32 Func_080770c0();           /* story-flag query, established */
+void Func_080000d0();          /* install a per-frame task, established */
 
-extern u8 * Func_02008e56();
-extern void Func_02008e26();
-extern s32 Func_02008f44();
-extern void Func_02008dfa();
 void Func_0200457c(s32 assetId)
 {
     u8 *workspace;
@@ -55,10 +51,10 @@ void Func_0200457c(s32 assetId)
 
     workspace = *(u8 **)0x03001f3c;
 
-    source = Func_02008e56(assetId);
-    Func_02008e26(source, workspace + 240);
+    source = Func_08000290(assetId);
+    Func_080001a8(source, workspace + 240);
 
-    companion = Func_02008f44(0x109);
+    companion = Func_080770c0(0x109);
     if (companion == 0) {
         *(u16 *)(Data_02001000 + 0) = 1;
         *(u16 *)(Data_02001000 + 2) = 1;
@@ -67,5 +63,5 @@ void Func_0200457c(s32 assetId)
         *(u16 *)(Data_02001000 + 6) = (u16)companion;
     }
 
-    Func_02008dfa(0x0200bef1, 0xc85);
+    Func_080000d0(0x0200bef1, 0xc85);
 }

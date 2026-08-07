@@ -60,36 +60,28 @@
 
 /* Old-style declarations: two Func_ names in this overlay can be one import
  * and arities vary per site, so interfaces are left open. */
-
-
-
-
-
-
+void Func_02000128();
+void Func_080770d0();
+void Func_0808a018();
+s32 Func_0808a020();
+void Func_0808a170();
+void Func_0808a178();
 
 /* Used for its return value. */
 
-extern void Func_02000472();
-extern void Func_02001b6e();
-extern void Func_02001b74();
-extern void Func_02001ba0();
-extern void Func_02001bf0();
-extern void Func_02001c00();
-extern void Func_02001b96();
-extern s32 Func_02001bca();
 s32 Func_02000340(void)
 {
     u16 *workspace = *(u16 **)0x03001ebc;
 
-    Func_02000472(4);
-    Func_02001b6e(512);
-    Func_02001b74(0x203);
-    Func_02001ba0();
+    Func_02000128(4);
+    Func_080770d0(512);
+    Func_080770d0(0x203);
+    Func_0808a018();
 
     *(u16 *)((u32)workspace + 386) = 0;
 
-    Func_02001bf0(0x2927);
-    Func_02001c00(8, 0);
-    Func_02001b96(0x205);
-    return Func_02001bca();
+    Func_0808a170(0x2927);
+    Func_0808a178(8, 0);
+    Func_080770d0(0x205);
+    return Func_0808a020();
 }

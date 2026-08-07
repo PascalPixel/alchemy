@@ -1,20 +1,16 @@
 #include "types.h"
 
 extern u8 *Data_03001e70;
-
-
-
+extern u8 *Func_0808a080(s32 id);
+extern void Func_080091c0();
+extern void Func_02000528(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 tile);
 
 /* Paint both map layers beneath a recognised footprint-class actor. */
-extern u8 * Func_020030a2(s32 id);
-extern void Func_020030f8();
-extern void Func_020011b8(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 tile);
-extern void Func_020011ca(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 tile);
 s32 Func_02000ba4(s32 actorId)
 {
     const s32 *classIds = (const s32 *)0x0200a740;
     const s32 (*bounds)[4] = (const s32 (*)[4])0x0200a758;
-    u8 *actor = Func_020030a2(actorId);
+    u8 *actor = Func_0808a080(actorId);
     s16 type = *(s16 *)(*(u8 **)(actor + 80) + 40);
     s32 kind;
     s32 x;
@@ -33,10 +29,10 @@ s32 Func_02000ba4(s32 actorId)
              (bounds[kind][2] < 0 ? -bounds[kind][2] : bounds[kind][2])) >> 4;
     height = ((bounds[kind][1] < 0 ? -bounds[kind][1] : bounds[kind][1]) +
               (bounds[kind][3] < 0 ? -bounds[kind][3] : bounds[kind][3])) >> 4;
-    Func_020030f8(x, z, width, height,
+    Func_080091c0(x, z, width, height,
                    x + (*(s32 *)(Data_03001e70 + 316) >> 20),
                    z + (*(s32 *)(Data_03001e70 + 320) >> 20));
-    Func_020011b8(0, x, z, width, height, 255);
-    Func_020011ca(2, x, z, width, height, 255);
+    Func_02000528(0, x, z, width, height, 255);
+    Func_02000528(2, x, z, width, height, 255);
     return 1;
 }

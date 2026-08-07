@@ -71,32 +71,18 @@
  *     not established.
  */
 
-   /* scene-record accessor */
-            /* pseudo-random source (see above) */
+extern u8 *Func_0808a080(s32 index);   /* scene-record accessor */
+extern s32 Func_080000f8();            /* pseudo-random source (see above) */
+extern void Func_0808a0f0(s32 index, s32 a, s32 b);
+extern u8 *Func_080090c8(s32 kind, s32 a, s32 b, s32 c);   /* spawner */
+extern s32 Func_03000380();            /* IWRAM-relocated, unestablished */
+extern void Func_08009098(u8 *record, const void *blob);
+extern void Func_0808a160(u8 *record, s32 mode);
+extern s32 Func_08000118(s32 angle);   /* sine of a binary angle */
 
-   /* spawner */
-            /* IWRAM-relocated, unestablished */
-
-
-   /* sine of a binary angle */
-
-extern u8 * Func_0200b782(s32 index);
-extern s32 Func_0200b654();
-extern void Func_0200b81c(s32 index, s32 a, s32 b);
-extern u8 * Func_0200b7c2(s32 index);
-extern void Func_0200b836(s32 index, s32 a, s32 b);
-extern u8 * Func_0200b7dc(s32 index);
-extern u8 * Func_0200b7e6(s32 index);
-extern void Func_0200b860(s32 index, s32 a, s32 b);
-extern u8 * Func_0200b74c(s32 kind, s32 a, s32 b, s32 c);
-extern s32 Func_0200b6d8();
-extern void Func_0200b766(u8 *record, const void *blob);
-extern void Func_0200b8f6(u8 *record, s32 mode);
-extern s32 Func_0200b728();
-extern s32 Func_0200b758(s32 angle);
 void Func_02005a28(void)
 {
-    u8 *anchor = Func_0200b782(23);
+    u8 *anchor = Func_0808a080(23);
     u8 *state = *(u8 **)0x03001e70;
     u32 spread;
     s32 reach;
@@ -106,27 +92,27 @@ void Func_02005a28(void)
     s32 gate;
     s32 placed;
 
-    spread = ((u32)(Func_0200b654() * 48) >> 16) << 16;
+    spread = ((u32)(Func_080000f8() * 48) >> 16) << 16;
     state += 232;
 
     if (*(short *)(state + 2) > 129) {
         goto reset_position;
     }
     if ((*(s32 *)0x03001e40 & 1) != 0) {
-        Func_0200b81c(23, 152 << 17, 164 << 16);
+        Func_0808a0f0(23, 152 << 17, 164 << 16);
         reach = 128 << 9;
-        positioned = Func_0200b7c2(23);
+        positioned = Func_0808a080(23);
     } else {
-        Func_0200b836(23, 152 << 17, 171 << 16);
+        Func_0808a0f0(23, 152 << 17, 171 << 16);
         reach = 0x00014ccc;
-        positioned = Func_0200b7dc(23);
+        positioned = Func_0808a080(23);
     }
     *(s32 *)(positioned + 24) = reach;
-    *(s32 *)(Func_0200b7e6(23) + 28) = reach;
+    *(s32 *)(Func_0808a080(23) + 28) = reach;
     goto position_done;
 
 reset_position:
-    Func_0200b860(23, 0, 0);
+    Func_0808a0f0(23, 0, 0);
 
 position_done:
 
@@ -139,12 +125,12 @@ position_done:
         return;
     }
 
-    record = Func_0200b74c(142 << 1,
+    record = Func_080090c8(142 << 1,
                            *(s32 *)(anchor + 8) + (128 << 12),
                            *(s32 *)(anchor + 12) + (s32)spread + (128 << 12),
                            *(s32 *)(anchor + 16));
 
-    spread = (u32)Func_0200b6d8((s32)spread, 192 << 11) << 16;
+    spread = (u32)Func_03000380((s32)spread, 192 << 11) << 16;
 
     if (record == 0) {
         return;
@@ -152,17 +138,17 @@ position_done:
 
     attached = *(u8 **)(record + 80);
 
-    Func_0200b766(record, (const void *)0x0200e734);
-    Func_0200b8f6(record, 5);
+    Func_08009098(record, (const void *)0x0200e734);
+    Func_0808a160(record, 5);
     *(u8 *)(record + 85) = (u8)gate;   /* gate is 0 on this path */
 
-    *(u16 *)(record + 100) = (u16)(Func_0200b728() & 0x0ffff000);
+    *(u16 *)(record + 100) = (u16)(Func_080000f8() & 0x0ffff000);
     *(u16 *)(record + 102) = (u16)gate;
 
     *(s32 *)(record + 104) = (s32)anchor;
     *(s32 *)(record + 108) = 0x0200db91;   /* -> Func_02005b90 */
 
-    placed = Func_0200b758((s32)(spread & 0x000fffff) >> 4);
+    placed = Func_08000118((s32)(spread & 0x000fffff) >> 4);
     *(s32 *)(record + 48) = (placed * 24) >> 16;
 
     *(u8 *)(attached + 38) = 0;

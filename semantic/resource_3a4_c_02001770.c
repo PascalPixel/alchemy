@@ -51,16 +51,10 @@
  * because the enclosing branch tested it so. It is written as 0.
  */
 
+extern void Func_080091f0(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_08009080(u8 *record, s32 arg1);
+extern void Func_080f9010(s32 sound_id);
 
-
-
-
-extern void Func_020052d4(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0200527a(u8 *record, s32 arg1);
-extern void Func_020054e4(s32 sound_id);
-extern void Func_02005310(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02005520(s32 sound_id);
-extern void Func_020052dc(u8 *record, s32 arg1);
 void Func_02001770(u8 *record)
 {
     u16 counter;
@@ -68,20 +62,20 @@ void Func_02001770(u8 *record)
     if (*(s16 *)(record + 102) != 0) {
         counter = (u16)(*(u16 *)(record + 102) - 1);
         if (counter == 1) {
-            Func_020052d4(-1, -1, 0xe666);
+            Func_080091f0(-1, -1, 0xe666);
         }
         *(u16 *)(record + 102) = counter;
     }
 
     if (*(s32 *)(record + 40) == 0) {
-        Func_0200527a(record, 1);
+        Func_08009080(record, 1);
         *(s32 *)(record + 12) += (s32)0xfffe8000;
         if (*(s32 *)(record + 12) < *(s32 *)(record + 20)) {
             if (*(s32 *)(record + 104) != 0) {
-                Func_020054e4(229);
+                Func_080f9010(229);
                 *(s32 *)(record + 104) = 0;
                 *(u16 *)(record + 102) = 4;
-                Func_02005310(128 << 9, 0, 128 << 9);
+                Func_080091f0(128 << 9, 0, 128 << 9);
             }
             *(s32 *)(record + 12) = *(s32 *)(record + 20);
         }
@@ -91,9 +85,9 @@ void Func_02001770(u8 *record)
     }
 
     if (*(s16 *)(record + 100) == 0) {
-        Func_02005520(152);
+        Func_080f9010(152);
         *(s32 *)(record + 104) = 1;
-        Func_020052dc(record, 2);
+        Func_08009080(record, 2);
         *(s32 *)(record + 40) = 192 << 10;
     }
 

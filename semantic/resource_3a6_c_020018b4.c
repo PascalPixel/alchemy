@@ -40,26 +40,19 @@
  * Func_080770c8 is the event-flag import, so 0x0301 is this scene's flag id.
  */
 
+void Func_080f9010();
+void Func_020017d8();          /* in-overlay, three arguments */
+void Func_080770c8();          /* event flag */
+void Func_080000c0();          /* ROM dispatch stub table entry 0 */
+void Func_02001770();          /* in-overlay, no arguments */
 
-          /* in-overlay, three arguments */
-          /* event flag */
-          /* ROM dispatch stub table entry 0 */
-          /* in-overlay, no arguments */
-
-extern void Func_02003616();
-extern void Func_0200309c();
-extern void Func_020030a6();
-extern void Func_02003568();
-extern void Func_020034f6();
-extern void Func_0200304e();
-extern void Func_02003640();
 void Func_020018b4(void)
 {
-    Func_02003616(241);
-    Func_0200309c(11, 112, 0);
-    Func_020030a6(11, 80, 0);
-    Func_02003568(0x301);
-    Func_020034f6(2);
-    Func_0200304e();
-    Func_02003640(0x121);
+    Func_080f9010(241);
+    Func_020017d8(11, 112, 0);
+    Func_020017d8(11, 80, 0);
+    Func_080770c8(0x301);
+    Func_080000c0(2);
+    Func_02001770();
+    Func_080f9010(0x121);
 }

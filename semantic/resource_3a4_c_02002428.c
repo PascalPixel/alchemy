@@ -32,27 +32,24 @@
 
 extern u8 Data_02000240[];
 
-           /* story-flag query, established */
-          /* six-argument renderer, established */
-          /* single-argument, established */
+s32 Func_080770c0();           /* story-flag query, established */
+void Func_080091c0();          /* six-argument renderer, established */
+void Func_080770d0();          /* single-argument, established */
 
-extern s32 Func_02005f80();
-extern void Func_02005f7e();
-extern void Func_02005fd2();
 void Func_02002428(void)
 {
     u8 *workspace;
     u32 cue;
 
-    if (Func_02005f80(0x8fe) != 0) {
+    if (Func_080770c0(0x8fe) != 0) {
         workspace = *(u8 **)0x03001e70;
         *(u16 *)(workspace + 20) &= 0xfdff;
     } else {
-        Func_02005f7e(52, 42, 1, 1, 53, 42);
+        Func_080091c0(52, 42, 1, 1, 53, 42);
     }
 
     cue = *(u16 *)&Data_02000240[450];
     if (((cue - 6) << 16) <= (u32)(128 << 9)) {
-        Func_02005fd2(0x12f);
+        Func_080770d0(0x12f);
     }
 }

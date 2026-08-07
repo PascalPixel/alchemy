@@ -32,15 +32,15 @@
 
 extern u32 Data_0200e668[];
 
-
-
-
-
-
-
-
-
-
+u8 *Func_0808a080();
+void Func_0808a1e0();
+s32 Func_02001280();
+void Func_0808a0f0();
+void Func_0808a090();
+void Func_0808a100();
+void Func_0808a0e0();
+void Func_0808a0e8();
+void Func_02004880();
 
 static s32 Bucket_02001190(u16 heading)
 {
@@ -50,57 +50,44 @@ static s32 Bucket_02001190(u16 heading)
     return (heading & 0xF000) >> 12;
 }
 
-extern u8 * Func_02007686();
-extern void Func_0200778c();
-extern u8 * Func_0200769a();
-extern s32 Func_02002454();
-extern s32 Func_02002474();
-extern u8 * Func_020076fe();
-extern void Func_0200776c();
-extern void Func_02007726();
-extern void Func_02007786();
-extern void Func_02007780();
-extern void Func_0200778e();
-extern void Func_020077a6();
-extern void Func_02005ae0();
 void Func_02001190(u8 *obj)
 {
     s32 permuted_11;
-    u8 *subject = Func_02007686(0);
+    u8 *subject = Func_0808a080(0);
     u8 *p;
     u16 heading;
     s32 bucket;
     u32 packed;
 
-    Func_0200778c(obj, 2, 1);
+    Func_0808a1e0(obj, 2, 1);
 
     p[0x23] |= 1;
-    p = Func_0200769a(obj);
+    p = Func_0808a080(obj);
 
     permuted_11 = *(u16 *)(subject + 6);
     bucket = Bucket_02001190(heading + 0x4000);
     heading  = permuted_11;
-    if (Func_02002454(bucket) == 0) {
+    if (Func_02001280(bucket) == 0) {
         bucket = Bucket_02001190(heading - 0x4000);
-        if (Func_02002474(bucket) == 0) {
+        if (Func_02001280(bucket) == 0) {
             bucket = Bucket_02001190(heading + 0x8000);
         }
     }
 
     {
-        u8 *hit = Func_020076fe(0);
+        u8 *hit = Func_0808a080(0);
         if (hit != 0) {
-            Func_0200776c(obj, *(u32 *)(hit + 8), *(u32 *)(hit + 16));
+            Func_0808a0f0(obj, *(u32 *)(hit + 8), *(u32 *)(hit + 16));
         }
     }
 
-    Func_02007726(obj, 0x19999, 0xcccc);
-    Func_02007786(obj, 2);
+    Func_0808a090(obj, 0x19999, 0xcccc);
+    Func_0808a100(obj, 2);
 
     packed = Data_0200e668[bucket];
-    Func_02007780(obj, (s16)(packed >> 16), (s16)packed);
+    Func_0808a0e0(obj, (s16)(packed >> 16), (s16)packed);
 
-    Func_0200778e(obj);
-    Func_020077a6(obj, 1);
-    Func_02005ae0(obj, heading);
+    Func_0808a0e8(obj);
+    Func_0808a100(obj, 1);
+    Func_02004880(obj, heading);
 }

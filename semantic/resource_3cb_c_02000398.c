@@ -68,70 +68,52 @@
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-
-
-
-
-
-
-
-
+s32 Func_080000c0();
+s32 Func_08000170();
+s32 Func_08000178();
+void Func_08000388();
+s32 Func_080003a8();
+void Func_08015020();
+void Func_08077000();
+void Func_08077008();
 
 /* Used for their return values. */
 
-extern s32 Func_02001aee();
-extern s32 Func_02001ae6();
-extern s32 Func_02001b60();
-extern s32 Func_02001b24();
-extern void Func_02001bd4();
-extern void Func_02001c84();
-extern void Func_02001bf2();
-extern s32 Func_02001bc2();
-extern s32 Func_02001c3c();
-extern s32 Func_02001bfc();
-extern s32 Func_02001c34();
-extern s32 Func_02001c38();
-extern void Func_02001d00();
-extern void Func_02001c74();
-extern s32 Func_02001c5e();
 s32 Func_02000398(void)
 {
     volatile u16 *transferred = (volatile u16 *)0x02002238;
     volatile u16 *linkState = (volatile u16 *)0x03001f64;
     u16 scratch[24];
-    s32 expected;
+    s32 expected = 340;
     s32 handle;
-    s32 budget;
-    s32 result;
+    s32 budget = 900;
+    s32 result = 0;
     u32 block;
     s32 stalls;
     s32 status;
     u8 *payload;
 
-    handle = Func_02001aee(340);
+    handle = Func_08000170(340);
 
     for (block = 0; block <= 2; block++) {
-        payload = Func_02001ae6(block + 128);
-        status = Func_02001b60();
+        payload = Func_080000c0(block + 128);
+        status = Func_080003a8();
         stalls = 0;
         if (status == -1) {
-            result = 0;
             result = status;
             goto close;
         }
 
         for (;;) {
-            status = Func_02001b24();
+            status = Func_080000c0();
             if (status == 0) {
                 break;
             }
-            expected = 340;
             if ((s32)*transferred > expected) {
                 goto fail;
             }
-            budget = 900;
             budget--;
-            Func_02001bd4(1);
+            Func_08015020(1);
             if (budget < 0 || (*linkState & 3) != 3) {
                 stalls++;
                 if (stalls > 24) {
@@ -148,8 +130,8 @@ s32 Func_02000398(void)
             result++;
         }
 
-        Func_02001c84(2);
-        Func_02001bf2(0x080c, scratch);
+        Func_08077008(2);
+        Func_08000388(0x080c, scratch);
 
         {
             s32 inserted = 0;
@@ -174,11 +156,11 @@ s32 Func_02000398(void)
         }
     }
 
-    Func_02001bc2(handle);
+    Func_080000c0(handle);
     expected = 320;
-    handle = Func_02001c3c(320);
-    Func_02001bfc(1);
-    status = Func_02001c34();
+    handle = Func_080003a8(320);
+    Func_080000c0(1);
+    status = Func_08000178();
     stalls = 0;
     if (status == -1) {
         result = status;
@@ -186,7 +168,7 @@ s32 Func_02000398(void)
     }
 
     for (;;) {
-        status = Func_02001c38();
+        status = Func_08000170();
         if (status == 0) {
             break;
         }
@@ -194,7 +176,7 @@ s32 Func_02000398(void)
             goto fail;
         }
         budget--;
-        Func_02001d00(1);
+        Func_08077000(1);
         if (budget < 0 || (*linkState & 3) != 3) {
             stalls++;
             if (stalls > 24) {
@@ -206,13 +188,13 @@ s32 Func_02000398(void)
     if ((s32)*transferred != expected) {
         goto fail;
     }
-    Func_02001c74(2);
+    Func_08000388(2);
     goto close;
 
 fail:
     result = -1;
 
 close:
-    Func_02001c5e(handle);
+    Func_08000178(handle);
     return result;
 }

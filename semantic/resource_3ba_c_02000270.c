@@ -47,65 +47,51 @@
 
 /* Old-style declarations: these imports' interfaces are not fully known, and
  * several of the names take different argument counts elsewhere. */
-           /* set a story flag */
-           /* enter cutscene presentation mode */
-           /* leave cutscene presentation mode */
-
-
-
-           /* wait n frames */
-           /* select presentation mode (record, mode) */
-           /* place the record at (x, y, z) */
-           /* re-attach the camera to a record */
-           /* six-argument renderer, last two on stack */
+void Func_080770c8();           /* set a story flag */
+void Func_0808a018();           /* enter cutscene presentation mode */
+void Func_0808a020();           /* leave cutscene presentation mode */
+void Func_0808a208();
+void Func_0808a210();
+void Func_0808a218();
+void Func_0808a010();           /* wait n frames */
+void Func_08009080();           /* select presentation mode (record, mode) */
+void Func_08009150();           /* place the record at (x, y, z) */
+void Func_08009158();           /* re-attach the camera to a record */
+void Func_080091c0();           /* six-argument renderer, last two on stack */
 
 /* Used for its return value: the scene record for an actor selector. */
+u8 *Func_0808a080();
 
-
-extern void Func_02003ede();
-extern u8 * Func_02003f3c();
-extern void Func_02003f2a();
-extern void Func_02004006();
-extern void Func_02004020();
-extern void Func_02003e58();
-extern void Func_02004034();
-extern void Func_02003eb0();
-extern u8 * Func_02003f96();
-extern void Func_02003ed2();
-extern void Func_02003ee0();
-extern void Func_02003f9e();
-extern void Func_02003f12();
-extern void Func_02003fc6();
 void Func_02000270(void)
 {
     u8 *record;
 
-    Func_02003ede(0x301);
+    Func_080770c8(0x301);
 
-    record = Func_02003f3c(13);
+    record = Func_0808a080(13);
 
-    Func_02003f2a();
-    Func_02004006(0x20000, 0x4000);
-    Func_02004020(0x02580000, -1, 0x00c80000, 1);
-    Func_02003e58(record, 3);
-    Func_02004034();
+    Func_0808a018();
+    Func_0808a208(0x20000, 0x4000);
+    Func_0808a210(0x02580000, -1, 0x00c80000, 1);
+    Func_08009080(record, 3);
+    Func_0808a218();
 
     *(s32 *)(record + 0x34) = 0x6666;
     *(record + 0x55) = 0;
-    Func_02003eb0(record, *(s32 *)(record + 8), 0x80000,
+    Func_08009150(record, *(s32 *)(record + 8), 0x80000,
                   *(s32 *)(record + 16));
     *(s32 *)(record + 0x30) = 0xcccc;
 
-    record = Func_02003f96(14);
+    record = Func_0808a080(14);
 
     *(record + 0x55) = 0;
     *(s32 *)(record + 0x34) = 0x6666;
-    Func_02003ed2(record, *(s32 *)(record + 8), 0x200000,
+    Func_08009150(record, *(s32 *)(record + 8), 0x200000,
                   *(s32 *)(record + 16));
     *(s32 *)(record + 0x30) = 0xcccc;
 
-    Func_02003ee0(record);
-    Func_02003f9e(45);
-    Func_02003f12(43, 12, 1, 1, 41, 12);
-    Func_02003fc6();
+    Func_08009158(record);
+    Func_0808a010(45);
+    Func_080091c0(43, 12, 1, 1, 41, 12);
+    Func_0808a020();
 }

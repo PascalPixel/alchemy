@@ -124,7 +124,7 @@ void Func_02000430(void)
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);
     /* Six arguments; the last two, 18 and 12, travel in the frame. */
-    { s32 f1 = 18; s32 g1 = 12; Func_080091c0(18, 0, 3, 1,  f1, g1); }
+    Func_080091c0(18, 0, 3, 1, 18, 12);
     Func_0808a170(0x28fe);
 
     Func_0808a570(1, -10, 16, 0xc000);

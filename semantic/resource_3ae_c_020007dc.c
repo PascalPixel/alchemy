@@ -52,55 +52,44 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-
-
-
-
-
-
-
-
-
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a010();
+void Func_080f9010();
+void Func_0808a090();
+void Func_0808a0c8();
+void Func_0808a1e0();
+void Func_0808a248();
+void Func_08009178();
 
 extern s16 Data_02000240[];
 
 extern u8 Data_020096b8[];
 extern u8 Data_020096ce[];
 
-extern void Func_02001d60();
-extern void Func_02001e96();
-extern void Func_02001d9c();
-extern void Func_02001e44();
-extern void Func_02001ddc();
-extern void Func_02001d26();
-extern void Func_02001df8();
-extern void Func_02001d42();
-extern void Func_02001dc0();
-extern void Func_02001ebe();
-extern void Func_02001dda();
 void Func_020007dc(void)
 {
     s32 room;
 
-    Func_02001d60();
-    Func_02001e96(158);
+    Func_0808a018();
+    Func_080f9010(158);
 
     /* movs r1,#128 / lsls r1,r1,#8 == 0x8000; movs r2,#128 / lsls #7 == 0x4000 */
-    Func_02001d9c(0, 0x8000, 0x4000);
-    Func_02001e44(0, 3);
+    Func_0808a090(0, 0x8000, 0x4000);
+    Func_0808a1e0(0, 3);
 
     room = Data_02000240[224];
 
     if (room == 0x6b) {
         /* movs r1,#152 / lsls #1 == 304; movs r2,#174 / lsls #3 == 1392 */
-        Func_02001ddc(0, 304, 1392);
-        Func_02001d26(Data_020096b8, 78, 86);
+        Func_0808a0c8(0, 304, 1392);
+        Func_08009178(Data_020096b8, 78, 86);
     } else if (room == 0x70) {
-        Func_02001df8(0, 248, 192);
-        Func_02001d42(Data_020096ce, 74, 9);
+        Func_0808a0c8(0, 248, 192);
+        Func_08009178(Data_020096ce, 74, 9);
     }
 
-    Func_02001dc0(16);
-    Func_02001ebe(3);
-    Func_02001dda();
+    Func_0808a010(16);
+    Func_0808a248(3);
+    Func_0808a020();
 }

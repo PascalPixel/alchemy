@@ -55,75 +55,34 @@
  */
 
 /* Imports.  Old-style declarations: arity varies per site in this overlay. */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+s32 Func_080770c0();
+void Func_080770c8();
+void Func_080770d0();
+u8 *Func_0808a080();
+void Func_08009180();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+void Func_0808a090();
+void Func_0808a0b8();
+void Func_0808a0c0();
+void Func_0808a128();
+void Func_0808a200();
+void Func_0808a208();
+void Func_0808a210();
+void Func_0808a218();
+void Func_0808a248();
+void Func_0808a368();
+void Func_0808a370();
+void Func_080f9010();
 
 /* In-overlay callees. */
-
-
+s32 Func_02000054(void);
+void Func_02000c8c(void);
 
 /* In-image overlay data at file offset 0x2980 (writable EWRAM). */
 extern s32 Data_0200a980[];
 
-extern void Func_02004456();
-extern s32 Func_0200443c();
-extern void Func_0200452e();
-extern void Func_02004548();
-extern void Func_02004554();
-extern void Func_0200459a();
-extern void Func_02004450();
-extern void Func_020045ba();
-extern void Func_0200446e();
-extern void Func_020044bc();
-extern void Func_020045da();
-extern void Func_02004490();
-extern void Func_020044de();
-extern void Func_020044b0();
-extern void Func_020044ee();
-extern s32 Func_0200210a(void);
-extern s32 Func_020044fa();
-extern void Func_020045e0();
-extern u8 * Func_02004546();
-extern void Func_02004560();
-extern u8 * Func_0200455e();
-extern void Func_020045c4();
-extern void Func_0200458e();
-extern void Func_02004530();
-extern void Func_0200457c();
-extern u8 * Func_020045ea();
-extern void Func_0200461a();
-extern u8 * Func_02004608();
-extern void Func_020045f0();
-extern s32 Func_020045ee();
-extern s32 Func_020045f8();
-extern s32 Func_02004602();
-extern s32 Func_0200460c();
-extern s32 Func_02004616();
-extern void Func_02004628();
-extern void Func_02002e7c(void);
-extern s32 Func_0200462c();
-extern void Func_0200472e();
-extern void Func_0200475c();
-extern void Func_02004768();
-extern void Func_02004674();
 void Func_02001ff4(void)
 {
     s32 *table;
@@ -133,96 +92,96 @@ void Func_02001ff4(void)
 
     outcome = 0;
 
-    Func_02004456();
-    if (Func_0200443c(0x80f) != 0) {
+    Func_0808a018();
+    if (Func_080770c0(0x80f) != 0) {
         goto finish;
     }
 
-    Func_0200452e(0x20000, 0x4000);
-    Func_02004548(0x2400000, -1, 0xac0000, 1);
-    Func_02004554();
+    Func_0808a208(0x20000, 0x4000);
+    Func_0808a210(0x2400000, -1, 0xac0000, 1);
+    Func_0808a218();
 
     table = Data_0200a980;
 
-    Func_0200459a(186);
-    Func_02004450(table[0], table[1], table[2], table[3], table[4], table[5]);
+    Func_080f9010(186);
+    Func_08009180(table[0], table[1], table[2], table[3], table[4], table[5]);
 
     for (i = 0; i < 20; i++) {
-        Func_020045ba(246);
-        Func_0200446e(table[6], table[7], table[8],
+        Func_080f9010(246);
+        Func_08009180(table[6], table[7], table[8],
                       table[9], table[10], table[11]);
-        Func_020044bc(4);
-        Func_020045da(246);
-        Func_02004490(table[12], table[13], table[14],
+        Func_0808a010(4);
+        Func_080f9010(246);
+        Func_08009180(table[12], table[13], table[14],
                       table[15], table[16], table[17]);
-        Func_020044de(4);
+        Func_0808a010(4);
     }
 
-    Func_020044b0(table[18], table[19], table[20],
+    Func_08009180(table[18], table[19], table[20],
                   table[21], table[22], table[23]);
-    Func_020044ee(table[24]);
+    Func_080770c8(table[24]);
 
-    outcome = Func_0200210a();
+    outcome = Func_02000054();
 
     if (outcome == -1) {
-        if (Func_020044fa(0x818) != 0) {
+        if (Func_080770c0(0x818) != 0) {
             goto finish;
         }
 
-        Func_020045e0(0, 1);
+        Func_0808a200(0, 1);
 
-        record = Func_02004546(0);
+        record = Func_0808a080(0);
         *(u16 *)(record + 6) = (u16)table[25];
 
-        Func_02004560(0, 0x20000, 0x20000);
+        Func_0808a090(0, 0x20000, 0x20000);
 
-        record = Func_0200455e(0);
+        record = Func_0808a080(0);
         record[90] &= 0xfe;
 
-        Func_020045c4(0, 4, 0);
-        Func_0200458e(0, table[26], table[27]);
+        Func_0808a128(0, 4, 0);
+        Func_0808a0b8(0, table[26], table[27]);
 
-        Func_02004530(table[28], table[29], table[30],
+        Func_08009180(table[28], table[29], table[30],
                       table[31], table[32], table[33]);
-        Func_02004554(table[34], table[35], table[36],
+        Func_08009180(table[34], table[35], table[36],
                       table[37], table[38], table[39]);
-        Func_0200457c(table[40], table[41], table[42],
+        Func_08009180(table[40], table[41], table[42],
                       table[43], table[44], table[45]);
 
-        record = Func_020045ea(table[46]);
+        record = Func_0808a080(table[46]);
         record[90] &= 0xfe;
-        Func_0200461a(table[46], table[47], table[48]);
+        Func_0808a0c0(table[46], table[47], table[48]);
 
-        record = Func_02004608(0);
+        record = Func_0808a080(0);
         record[90] |= 1;
 
         goto finish;
-        Func_020045f0(table[24]);
+        Func_080770d0(table[24]);
     }
 
     if (outcome != 0) {
         goto finish;
     }
 
-    if (Func_020045ee(0x818) != 0 && Func_020045f8(0x80b) != 0 &&
-        Func_02004602(0x80d) != 0 && Func_0200460c(0x80e) != 0) {
-        if (Func_02004616(0x80f) != 0) {
+    if (Func_080770c0(0x818) != 0 && Func_080770c0(0x80b) != 0 &&
+        Func_080770c0(0x80d) != 0 && Func_080770c0(0x80e) != 0) {
+        if (Func_080770c0(0x80f) != 0) {
             goto finish;
         }
-        Func_02004628(0x80f);
-        Func_02002e7c();
+        Func_080770c8(0x80f);
+        Func_02000c8c();
         goto finish;
     }
 
-    if (Func_0200462c(0x812) != 0) {
-        Func_0200472e(5);
+    if (Func_080770c0(0x812) != 0) {
+        Func_0808a248(5);
         outcome = 1;
     }
 
 finish:
     if (outcome == 1) {
-        Func_0200475c();
-        Func_02004768();
+        Func_0808a368();
+        Func_0808a370();
     }
-    Func_02004674();
+    Func_0808a020();
 }

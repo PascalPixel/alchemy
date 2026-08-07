@@ -39,24 +39,17 @@
  */
 
 /* Returns the record for a numbered slot. */
+u8 *Func_0808a080();
+void Func_0808a2b0();
+void Func_0808a2a8();
+void Func_020019e8();
+void Func_020000c4();
+void Func_02001ac8();
 
-
-
-
-
-
-
-extern u8 * Func_020040a6();
-extern u8 * Func_020040ae();
-extern void Func_02004174();
-extern void Func_0200417a();
-extern void Func_02003598();
-extern void Func_02001c78();
-extern void Func_02003680();
 void Func_02001b60(void)
 {
-    u8 *first = Func_020040a6(0);
-    u8 *other = Func_020040ae(8);
+    u8 *first = Func_0808a080(0);
+    u8 *other = Func_0808a080(8);
 
     if (*(s32 *)(first + 8) / 0x100000 == 38 &&
         *(s32 *)(other + 8) / 0x100000 != 38) {
@@ -65,16 +58,16 @@ void Func_02001b60(void)
         /* r0 holds `facing` at both branches; whether either callee reads it
          * is unverified, so no argument is asserted. */
         if (facing == 0xc000) {
-            Func_02004174();
+            Func_0808a2b0();
             return;
         }
         if (facing == 0x4000) {
-            Func_0200417a();
+            Func_0808a2a8();
             return;
         }
     }
 
-    Func_02003598();
-    Func_02001c78();
-    Func_02003680();
+    Func_020019e8();
+    Func_020000c4();
+    Func_02001ac8();
 }

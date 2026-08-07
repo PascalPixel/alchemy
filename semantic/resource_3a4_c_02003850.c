@@ -61,48 +61,27 @@
  *   0x20039a6 -> Func_080000c0   one frame
  */
 
-           /* scene-record accessor, established */
-           /* handle -> record, established */
-          /* open bracket, established */
-          /* close bracket, established */
-          /* displace (scale, heading, position) */
-           /* ground query (2, x, z) */
-          /* (sprite, n) */
-          /* (slot, n), established */
+u8 *Func_0808a080();           /* scene-record accessor, established */
+u8 *Func_0808a400();           /* handle -> record, established */
+void Func_0808a018();          /* open bracket, established */
+void Func_0808a020();          /* close bracket, established */
+void Func_08000128();          /* displace (scale, heading, position) */
+s32 Func_080091a8();           /* ground query (2, x, z) */
+void Func_08009048();          /* (sprite, n) */
+void Func_0808a200();          /* (slot, n), established */
+void Func_0808a218();
+void Func_0808a208();          /* pair of 16.16 rates, established */
+void Func_08009150();          /* move to (record, x, y, z) */
+void Func_08009158();          /* (record) */
+void Func_080f9010();          /* sound/sting, established */
+s32 Func_080091b0();           /* marker code query, established */
+void Func_080000c0();          /* wait n frames, established */
+void Func_020035ac(u8 *record);     /* clockwise quarter-turn */
+void Func_02003668(u8 *record);     /* counter-clockwise quarter-turn */
+void Func_02003724();               /* re-arm countdown, exact */
+void Func_02003738(u8 *record);     /* per-frame slope step */
+void Func_02003484(u8 *record);     /* tile-snap settle */
 
-          /* pair of 16.16 rates, established */
-          /* move to (record, x, y, z) */
-          /* (record) */
-          /* sound/sting, established */
-           /* marker code query, established */
-          /* wait n frames, established */
-     /* clockwise quarter-turn */
-     /* counter-clockwise quarter-turn */
-               /* re-arm countdown, exact */
-     /* per-frame slope step */
-     /* tile-snap settle */
-
-extern u8 * Func_020073fa();
-extern u8 * Func_0200753a();
-extern void Func_020073e8();
-extern void Func_02007362();
-extern s32 Func_020073cc();
-extern void Func_0200739e();
-extern void Func_02007556();
-extern void Func_02007572();
-extern void Func_0200756e();
-extern void Func_020073fc();
-extern void Func_02007450();
-extern void Func_0200745e();
-extern void Func_02007684();
-extern s32 Func_02007486();
-extern void Func_02006f38(u8 *record);
-extern void Func_02006ffc(u8 *record);
-extern void Func_020070c0();
-extern void Func_020070da(u8 *record);
-extern void Func_02007420();
-extern void Func_02006e34(u8 *record);
-extern void Func_0200752c();
 void Func_02003850(s32 slot, s32 heading)
 {
     s32 probe[3];
@@ -112,9 +91,9 @@ void Func_02003850(s32 slot, s32 heading)
     s32 y;
     s32 code;
 
-    record = Func_020073fa(slot);
-    companion = Func_0200753a(*(s32 *)((u8 *)0x02000240 + 500));
-    Func_020073e8(companion);
+    record = Func_0808a080(slot);
+    companion = Func_0808a400(*(s32 *)((u8 *)0x02000240 + 500));
+    Func_0808a018(companion);
 
     if (heading == -1) {
         heading = *(u16 *)(record + 6);
@@ -124,8 +103,8 @@ void Func_02003850(s32 slot, s32 heading)
         probe[1] = *(s32 *)(record + 12);
         probe[2] = *(s32 *)(record + 16);
         probe[0] = *(s32 *)(record + 8);
-        Func_02007362(0x100000, heading, probe);    /* 128 << 13 */
-        if (Func_020073cc(2, probe[0], probe[2])
+        Func_08000128(0x100000, heading, probe);    /* 128 << 13 */
+        if (Func_080091a8(2, probe[0], probe[2])
             == *(s32 *)(record + 12)) {
             break;
         }
@@ -135,13 +114,13 @@ void Func_02003850(s32 slot, s32 heading)
         return;
     }
 
-    Func_0200739e(*(u8 **)(record + 0x50), 16);
+    Func_08009048(*(u8 **)(record + 0x50), 16);
     record[0x22] = 2;
     *(s32 *)(companion + 16) = 0;
     *(s32 *)(companion + 8) = 0;
-    Func_02007556(slot, 1);
-    Func_02007572();
-    Func_0200756e(0x100000, 0x20000);               /* 128<<13, 128<<10 */
+    Func_0808a200(slot, 1);
+    Func_0808a218();
+    Func_0808a208(0x100000, 0x20000);               /* 128<<13, 128<<10 */
 
     record[0x5b] = 0;
     *(u16 *)(record + 6) = heading;
@@ -156,30 +135,30 @@ void Func_02003850(s32 slot, s32 heading)
     *(s16 *)(record + 102) = 0;
 
     probe[0] = *(s32 *)(record + 8);
-    Func_020073fc(0x180000, heading, probe);        /* 192 << 13 */
-    Func_02007450(record, probe[0], *(s32 *)(record + 12), probe[2]);
-    Func_0200745e(record);
-    Func_02007684(233);
+    Func_08000128(0x180000, heading, probe);        /* 192 << 13 */
+    Func_08009150(record, probe[0], *(s32 *)(record + 12), probe[2]);
+    Func_08009158(record);
+    Func_080f9010(233);
     probe[1] = *(s32 *)(record + 12);
     probe[2] = *(s32 *)(record + 16);
 
     for (;;) {
-        code = Func_02007486(2, *(s32 *)(record + 8),
+        code = Func_080091b0(2, *(s32 *)(record + 8),
                              *(s32 *)(record + 16));
         if (code == 99) {
             break;
         }
         if (code == 98) {
-            Func_02006f38(record);
+            Func_020035ac(record);
         } else if (code == 97) {
-            Func_02006ffc(record);
+            Func_02003668(record);
         } else if (code == 96) {
-            Func_020070c0(record);
+            Func_02003724(record);
         }
-        Func_020070da(record);
-        Func_02007420(1);
+        Func_02003738(record);
+        Func_080000c0(1);
     }
 
-    Func_02006e34(record);
-    Func_0200752c();
+    Func_02003484(record);
+    Func_0808a020();
 }

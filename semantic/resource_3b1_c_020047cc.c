@@ -24,45 +24,35 @@
  * Raw callee naming.
  */
 
+void Func_0808a100(s32 arg0, s32 arg1);
+void Func_0808a108(s32 arg0, s32 arg1);
 
-
-
-extern void Func_0200ad60(s32 arg0, s32 arg1);
-extern void Func_0200ad70(s32 arg0, s32 arg1);
-extern void Func_0200ad72(s32 arg0, s32 arg1);
-extern void Func_0200ad82(s32 arg0, s32 arg1);
-extern void Func_0200ad84(s32 arg0, s32 arg1);
-extern void Func_0200ad94(s32 arg0, s32 arg1);
-extern void Func_0200ad96(s32 arg0, s32 arg1);
-extern void Func_0200ada6(s32 arg0, s32 arg1);
-extern void Func_0200ada8(s32 arg0, s32 arg1);
-extern void Func_0200adb8(s32 arg0, s32 arg1);
 void Func_020047cc(s32 a0)
 {
     switch (a0) {
     case 18:
     case 20:
-        Func_0200ad60(a0, 5);
-        Func_0200ad70(a0, 16);
-        Func_0200ad72(a0, a0 == 19 ? 6 : 10);
+        Func_0808a100(a0, 5);
+        Func_0808a108(a0, 16);
+        Func_0808a100(a0, a0 == 19 ? 6 : 10);
         break;
     case 19:
     case 24:
-        Func_0200ad82(a0, 8);
+        Func_0808a108(a0, 8);
         break;
     case 21:
     case 25:
-        Func_0200ad84(a0, 5);
-        Func_0200ad94(a0, 4);
+        Func_0808a100(a0, 5);
+        Func_0808a108(a0, 4);
         break;
     case 22:
     case 23:
-        Func_0200ad96(a0, 5);
-        Func_0200ada6(a0, 20);
+        Func_0808a100(a0, 5);
+        Func_0808a108(a0, 20);
         break;
     case 26:
-        Func_0200ada8(a0, 9);
-        Func_0200adb8(a0, 4);
+        Func_0808a100(a0, 9);
+        Func_0808a108(a0, 4);
         break;
     default:
         break;

@@ -21,35 +21,22 @@
  * the other seven targets.  There is no call_via or m2c truncation hazard.
  */
 
+s32 *Func_02000350();
+void Func_080000c0();
+void Func_08009080();
+void Func_08009150();
+void Func_08009158();
+s32 Func_080091d8();
+u8 *Func_0808a080();
+void Func_0808a5e8();
+void Func_080f9010();
 
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02002ed4();
-extern s32 * Func_0200073e();
-extern s32 * Func_0200076a();
-extern s32 * Func_02000796();
-extern s32 Func_02002f50();
-extern void Func_02002f00();
-extern void Func_02002ed8();
-extern void Func_0200305e();
-extern void Func_02002f46();
-extern void Func_02002f56();
-extern void Func_02002f64();
-extern void Func_02003080();
-extern void Func_02002f6c();
 void Func_020003a8(void)
 {
     s32 permuted_17;
     s32 permuted_9;
     s32 permuted_11;
-    u8 *leader = Func_02002ed4(0);
+    u8 *leader = Func_0808a080(0);
     const s32 *steps = (const s32 *)0x0200aca0;
     s32 packed = steps[*(u16 *)(leader + 6) >> 12];
     s32 position[3];
@@ -62,20 +49,20 @@ void Func_020003a8(void)
     position[0]  = permuted_9;
     position[2]  = permuted_11;
 
-    actor = (u8 *)Func_0200073e(position, leader);
+    actor = (u8 *)Func_02000350(position, leader);
     if (actor == 0)
         return;
 
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);
     permuted_17 = *(s32 *)(actor + 16) + (s32)((u32)packed << 16);
-    blocked = (u8 *)Func_0200076a(position, actor);
+    blocked = (u8 *)Func_02000350(position, actor);
     if (blocked != 0 && (blocked[0x59] & 1) != 0)
         return;
     position[2]  = permuted_17;
 
     position[2] = *(s32 *)(actor + 16);
-    blocked = (u8 *)Func_02000796(position, actor);
+    blocked = (u8 *)Func_02000350(position, actor);
     position[0] = *(s32 *)(actor + 8);
     position[1] = *(s32 *)(actor + 12) + 0x00100000;
     if (blocked != 0 && (blocked[0x59] & 1) != 0)
@@ -85,24 +72,24 @@ void Func_020003a8(void)
     position[0] = *(s32 *)(actor + 8) + (packed & (s32)0xffff0000);
     position[1] = *(s32 *)(actor + 12);
     position[2] = *(s32 *)(actor + 16) + (s32)((u32)packed << 16);
-    if (Func_02002f50(actor, position) > 0)
+    if (Func_080091d8(actor, position) > 0)
         return;
     if (actor[0x62] != 0)
         return;
 
-    Func_02002f00(leader, 8);
-    Func_02002ed8(15);
-    Func_0200305e(185);
+    Func_08009080(leader, 8);
+    Func_080000c0(15);
+    Func_080f9010(185);
 
     *(s32 *)(actor + 0x30) = 0x3333;
     *(s32 *)(actor + 0x34) = 0x3333;
-    Func_02002f46(actor, position[0], position[1], position[2]);
+    Func_08009150(actor, position[0], position[1], position[2]);
 
     *(s32 *)(leader + 0x30) = 0x3333;
     *(s32 *)(leader + 0x34) = 0x3333;
-    Func_02002f56(leader, position[0], position[1], position[2]);
-    Func_02002f64(actor);
-    Func_02003080();
+    Func_08009150(leader, position[0], position[1], position[2]);
+    Func_08009158(actor);
+    Func_0808a5e8();
 
     *(s32 *)(actor + 8) = position[0];
     *(s32 *)(actor + 16) = position[2];
@@ -115,5 +102,5 @@ void Func_020003a8(void)
     *(s32 *)(leader + 0x2c) = 0;
     *(s32 *)(leader + 8) = (s32)*(s16 *)(leader + 0x0a) << 16;
     *(s32 *)(leader + 16) = (s32)*(s16 *)(leader + 0x12) << 16;
-    Func_02002f6c(leader, 1);
+    Func_08009080(leader, 1);
 }

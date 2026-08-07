@@ -44,39 +44,21 @@
  * 152, 159, 7, 20 and the 128<<11 bias are transcribed as materialised.
  */
 
+extern u8 *Func_0808a080(s32 id);
+extern void Func_0808a010(s32 arg0);
+extern void Func_0808a018(void);
+extern void Func_0808a020(void);
+extern void Func_0808a090(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_0808a0e8(s32 arg0);
+extern void Func_0808a100(s32 arg0, s32 arg1);
+extern void Func_0808a460(void);
+extern void Func_0808a5e8(void);
+extern void Func_080000c0(s32 arg0);
+extern void Func_08009150(u8 *record, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_080f9010(s32 arg0);
 
+extern void Func_02003850(s32 slot, s32 heading);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern u8 * Func_02003e6c(s32 id);
-extern u8 * Func_02003e74(s32 id);
-extern void Func_02003fe2(void);
-extern void Func_02003e56(void);
-extern void Func_02003ede(s32 arg0, s32 arg1);
-extern void Func_02003e5c(s32 arg0);
-extern void Func_0200401a(s32 arg0);
-extern void Func_02003ea4(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_02003f14(s32 arg0, s32 arg1);
-extern void Func_02003e28(u8 *record, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_02003dae(s32 arg0);
-extern void Func_02003f26(s32 arg0);
-extern void Func_02003dc6(s32 arg0);
-extern void Func_02003ed6(void);
-extern void Func_02004084(s32 arg0);
-extern void Func_02003bbc(s32 slot, s32 heading);
-extern void Func_02003dea(s32 arg0);
-extern void Func_0200408e(void);
 void Func_020002cc(s32 slot)
 {
     u8 *mover;
@@ -84,14 +66,14 @@ void Func_020002cc(s32 slot)
     u8 *handle;
     s32 distance;
 
-    mover = Func_02003e6c(0);
-    goal = Func_02003e74(8);
-    Func_02003fe2();
-    Func_02003e56();
-    Func_02003ede(0, 22);
-    Func_02003e5c(10);
-    Func_0200401a(152);
-    Func_02003ea4(0, 0x00033333, 0x00019999);
+    mover = Func_0808a080(0);
+    goal = Func_0808a080(8);
+    Func_0808a460();
+    Func_0808a018();
+    Func_0808a100(0, 22);
+    Func_0808a010(10);
+    Func_080f9010(152);
+    Func_0808a090(0, 0x00033333, 0x00019999);
 
     distance = *(s32 *)(goal + 12) - *(s32 *)(mover + 12);
     if (distance < 0) {
@@ -99,22 +81,22 @@ void Func_020002cc(s32 slot)
     }
     *(s32 *)(mover + 40) = ((distance >> 14) << 14) + (128 << 11);
 
-    Func_02003f14(0, 7);
-    Func_02003e28(mover, *(s32 *)(goal + 8), *(s32 *)(goal + 12),
+    Func_0808a100(0, 7);
+    Func_08009150(mover, *(s32 *)(goal + 8), *(s32 *)(goal + 12),
         *(s32 *)(goal + 16));
-    Func_02003dae(10);
+    Func_080000c0(10);
 
     handle = *(u8 **)(mover + 80);
     handle[9] |= 12;
 
-    Func_02003f26(0);
+    Func_0808a0e8(0);
     while ((*(s32 *)(goal + 12) >> 14) < (*(s32 *)(mover + 12) >> 14)) {
-        Func_02003dc6(1);
+        Func_080000c0(1);
     }
 
-    Func_02003ed6();
-    Func_02004084(159);
-    Func_02003bbc(slot, 0);
-    Func_02003dea(20);
-    Func_0200408e();
+    Func_0808a020();
+    Func_080f9010(159);
+    Func_02003850(slot, 0);
+    Func_080000c0(20);
+    Func_0808a5e8();
 }

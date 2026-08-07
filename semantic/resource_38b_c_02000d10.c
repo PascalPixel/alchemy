@@ -35,28 +35,20 @@ extern s16 Data_02000240[];
 
 /* Imports.  Func_080770c0 is used in a condition, so it needs a return type;
  * the rest are old-style, arity open. */
-
-
-
-
-
-
-
+extern s32 Func_080770c0();
+extern u8 *Func_0808a080();
+extern void Func_0808a018();
+extern void Func_0808a020();
+extern void Func_0808a210();
+extern void Func_08009128();
+extern void Func_080000c0();
 
 /* This overlay's collision-rectangle repaint. */
-
+extern void Func_02000fa0(void);
 
 /* Progress flag guarding the one-shot warp below. */
 #define FLAG_WARP_DONE 0x109
 
-extern void Func_02001cc2(void);
-extern s32 Func_02001dd6();
-extern u8 * Func_02001e18();
-extern void Func_02001e06();
-extern void Func_02001ed6();
-extern void Func_02001db2();
-extern void Func_02001e26();
-extern void Func_02001d84();
 void Func_02000d10(void)
 {
     u8 *workspace = Data_03001ebc;
@@ -65,25 +57,25 @@ void Func_02000d10(void)
 
     *(s32 *)(workspace + 448) = 516;
 
-    Func_02001cc2();
+    Func_02000fa0();
 
     sub_scene = *(u16 *)((u8 *)Data_02000240 + 450);
     if ((u16)(sub_scene - 3) > 1) {
         return;
     }
-    if (Func_02001dd6(FLAG_WARP_DONE) != 0) {
+    if (Func_080770c0(FLAG_WARP_DONE) != 0) {
         return;
     }
 
     /* Slot 0 is the player.  Not null-checked here, unlike 0x02000fa0. */
-    actor = Func_02001e18(0);
-    Func_02001e06();
+    actor = Func_0808a080(0);
+    Func_0808a018();
 
     /* 128 << 13 = 0x00100000.  The height is both written into the record's
      * +0x0c field and passed as the second argument of the reposition call,
      * whose x and z come from the record's existing +0x08 / +0x10 words. */
     *(s32 *)(actor + 0x0c) = 0x00100000;
-    Func_02001ed6(*(s32 *)(actor + 0x08), 0x00100000,
+    Func_0808a210(*(s32 *)(actor + 0x08), 0x00100000,
                   *(s32 *)(actor + 0x10), 0);
 
     /* Neither of the next two calls sets any argument register.  r0 happens
@@ -91,8 +83,8 @@ void Func_02000d10(void)
      * shape appears for the Func_0808a018 / Func_0808a020 begin-end pair in
      * 0x02000240 and 0x02000328, where the pair is plainly argument-less, so
      * both are read as no-argument calls here.  Recorded as an uncertainty. */
-    Func_02001db2();
-    Func_02001e26();
+    Func_08009128();
+    Func_0808a020();
 
-    Func_02001d84(1);
+    Func_080000c0(1);
 }

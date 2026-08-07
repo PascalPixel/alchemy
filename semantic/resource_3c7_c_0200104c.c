@@ -53,13 +53,13 @@
 
 /* Imports.  Old-style declarations: arity is left open, and the two used in
  * conditions or for their results declare a return type. */
-
-
-
-
-
-
-
+s32 Func_080770c0();
+void Func_080770c8();
+u8 *Func_0808a080();
+void Func_0808a098();
+void Func_0808a100();
+void Func_0808a5d8();
+void Func_02000508(void);
 
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
@@ -83,35 +83,22 @@ static void ResetActor_0200104c(u8 *actor)
     sub[9] = (u8)((sub[9] & ~0x0c) | 0x08);
 }
 
-extern void Func_02002254();
-extern u8 * Func_020022a0();
-extern u8 * Func_020022d4();
-extern u8 * Func_020022fa();
-extern void Func_02002358();
-extern u8 * Func_02002354();
-extern s32 Func_0200234c();
-extern void Func_020023a0();
-extern void Func_02001696(void);
-extern void Func_020023a8();
-extern u8 * Func_02002486();
-extern void Func_020023b4();
-extern u8 * Func_02002492();
 s32 Func_0200104c(void)
 {
     s16 progress;
 
     if (Data_02000240[225] == 90) {
-        Func_02002254(0x9a7);
+        Func_080770c8(0x9a7);
     }
 
     *(u32 *)(Data_03001ebc + 448) = 0x209;
 
     progress = Data_02000240[224];
     if (progress == 0xb3) {
-        ResetActor_0200104c(Func_020022a0(20));
-        ResetActor_0200104c(Func_020022d4(18));
-        ResetActor_0200104c(Func_020022fa(19));
-        Func_02002358(15, 6);
+        ResetActor_0200104c(Func_0808a080(20));
+        ResetActor_0200104c(Func_0808a080(18));
+        ResetActor_0200104c(Func_0808a080(19));
+        Func_0808a100(15, 6);
 
         if (Data_02000240[225] == 12) {
             Data_02000240[226] = progress;
@@ -123,19 +110,19 @@ s32 Func_0200104c(void)
         return 0;
     }
 
-    ResetActor_0200104c(Func_02002354(13));
+    ResetActor_0200104c(Func_0808a080(13));
 
-    if (Func_0200234c(0x300) != 0) {
-        Func_020023a0(14, Data_02009314);
+    if (Func_080770c0(0x300) != 0) {
+        Func_0808a098(14, Data_02009314);
     }
 
     if (Data_02000240[225] != 99) {
         return 0;
     }
 
-    Func_02001696();
-    Func_020023a8(Func_02002486(12), 6);
-    Func_020023b4(Func_02002492(11), 6);
+    Func_02000508();
+    Func_0808a5d8(Func_0808a080(12), 6);
+    Func_0808a5d8(Func_0808a080(11), 6);
     Data_02000240[225] = 21;
     return 0;
 }

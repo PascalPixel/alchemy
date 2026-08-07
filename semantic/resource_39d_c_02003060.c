@@ -78,51 +78,29 @@
  * owner brackets its own effect: disable, emit for 32 frames, re-enable.
  */
 
-           /* record fetch, returns the record */
-          /* record enable/disable */
-       /* 0..0xffff random source */
-          /* two-argument actor call */
-          /* wait this many frames */
-          /* one-argument notify */
-          /* local: spawn, eight arguments */
+u8 *Func_0808a080();           /* record fetch, returns the record */
+void Func_080091e0();          /* record enable/disable */
+s32 Func_080000f8(void);       /* 0..0xffff random source */
+void Func_0808a158();          /* two-argument actor call */
+void Func_0808a010();          /* wait this many frames */
+void Func_080f9010();          /* one-argument notify */
+void Func_0200013c();          /* local: spawn, eight arguments */
 
-extern u8 * Func_02006760();
-extern u8 * Func_02006768();
-extern void Func_020068c0();
-extern void Func_02006776();
-extern u8 * Func_0200671c();
-extern void Func_02006782();
-extern u8 * Func_02006728();
-extern void Func_0200678c();
-extern s32 Func_0200670a(void);
-extern s32 Func_02006722(void);
-extern void Func_0200324a();
-extern s32 Func_02006754(void);
-extern s32 Func_0200676c(void);
-extern void Func_02003292();
-extern void Func_020068be();
-extern void Func_020068c8();
-extern void Func_020068da();
-extern void Func_020068e2();
-extern void Func_02006880();
-extern u8 * Func_02006826();
-extern void Func_0200688c();
-extern u8 * Func_02006832();
 void Func_02003060(void)
 {
     s32 permuted_1;
     s32 permuted_0;
-    u8 *first = Func_02006760(22);
-    u8 *second = Func_02006768(24);
+    u8 *first = Func_0808a080(22);
+    u8 *second = Func_0808a080(24);
     u8 params[40];
     s32 index;
     s32 odd;
     s32 x;
     s32 y;
 
-    Func_020068c0(190);
-    Func_02006776(Func_0200671c(22), 0);
-    Func_02006782(Func_02006728(24), 0);
+    Func_080f9010(190);
+    Func_080091e0(Func_0808a080(22), 0);
+    Func_080091e0(Func_0808a080(24), 0);
 
     *(s32 *)(params + 0) = 1;
     *(u16 *)(params + 24) = 284;               /* 142 << 1 */
@@ -131,29 +109,29 @@ void Func_02003060(void)
     *(s32 *)(params + 4) = 5;
 
     for (index = 0; index <= 31; index++) {
-        Func_0200678c(1);
+        Func_0808a010(1);
         if (odd != 0) {
-            permuted_0 = *(s32 *)(first + 8) + ((Func_0200670a() * 24) & ~0xffff) - 0xc0000;
-            permuted_1 = *(s32 *)(first + 12) + ((Func_02006722() * 32) & ~0xffff) + 0x200000;
-            Func_0200324a(x, y, *(s32 *)(first + 16), 0,
+            permuted_0 = *(s32 *)(first + 8) + ((Func_080000f8() * 24) & ~0xffff) - 0xc0000;
+            permuted_1 = *(s32 *)(first + 12) + ((Func_080000f8() * 32) & ~0xffff) + 0x200000;
+            Func_0200013c(x, y, *(s32 *)(first + 16), 0,
                           -0x40000, 0, 0x1b0000, params);
         } else {
             x  = permuted_0;
             y  = permuted_1;
-            x = *(s32 *)(second + 8) + ((Func_02006754() * 24) & ~0xffff) - 0xc0000;
-            y = *(s32 *)(second + 12) + ((Func_0200676c() * 32) & ~0xffff) + 0x200000;
-            Func_02003292(x, y, *(s32 *)(second + 16), 0,
+            x = *(s32 *)(second + 8) + ((Func_080000f8() * 24) & ~0xffff) - 0xc0000;
+            y = *(s32 *)(second + 12) + ((Func_080000f8() * 32) & ~0xffff) + 0x200000;
+            Func_0200013c(x, y, *(s32 *)(second + 16), 0,
                           -0x40000, odd, 0x1b0000, params);
         }
         if (index == 20) {
-            Func_020068be(22, 256);            /* 128 << 1 */
-            Func_020068c8(24, 256);
+            Func_0808a158(22, 256);            /* 128 << 1 */
+            Func_0808a158(24, 256);
         }
         odd = index & 1;
     }
 
-    Func_020068da(22, 0);
-    Func_020068e2(24, 0);
-    Func_02006880(Func_02006826(22), 1);
-    Func_0200688c(Func_02006832(24), 1);
+    Func_0808a158(22, 0);
+    Func_0808a158(24, 0);
+    Func_080091e0(Func_0808a080(22), 1);
+    Func_080091e0(Func_0808a080(24), 1);
 }

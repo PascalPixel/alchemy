@@ -34,17 +34,15 @@
  * than as names that would suggest they could be anything else.
  */
 
-  /* veneer 0x64e8 — actor record accessor */
-  /* veneer 0x6450 */
+u8  *Func_0808a080();  /* veneer 0x64e8 — actor record accessor */
+void Func_08009080();  /* veneer 0x6450 */
 
-extern u8  * Func_02006778();
-extern void Func_0200671c();
 void Func_02000284(u8 *object)
 {
     u8 *actor;
     u8 *stage;
 
-    actor = Func_02006778(9);
+    actor = Func_0808a080(9);
 
     /* Reached only when this byte is 0; the zero stores below are this
      * register, not fresh constants. */
@@ -65,7 +63,7 @@ void Func_02000284(u8 *object)
 
     if (*stage == 2) {
         if (object[98] != 0) {
-            Func_0200671c(object, 3);
+            Func_08009080(object, 3);
         }
         *stage = 0;
         object[98] = 0;

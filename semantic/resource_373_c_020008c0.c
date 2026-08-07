@@ -33,7 +33,6 @@ s32 Func_020008c0(void)
 {
     s32 *camera = Data_03001e70;
     struct Work work;
-    struct Work *w = &work;
     s32 *obj;
     s32 i;
     s32 slot;
@@ -42,18 +41,18 @@ s32 Func_020008c0(void)
     obj = Func_020068b6();
     i = 0;
     while (*(s16 *)((s32 *)obj[20])[10] != Data_0200e1d0[i]) {
-        w->slot = 7;
+        work.slot = 7;
         i = i + 1;
-        if (i > 5) goto searched;
+        if ((u32)i > 5) goto searched;
     }
-    w->slot = i;
+    work.slot = i;
 searched:
-    slot = w->slot;
+    slot = work.slot;
     if ((u32)slot > 6) return 0;
 
-    w->x = obj[2];
-    w->y = obj[3];
-    w->z = obj[4];
+    work.x = obj[2];
+    work.y = obj[3];
+    work.z = obj[4];
 
     k = slot * 4;
 
@@ -68,15 +67,15 @@ searched:
     t = Data_0200e1e8[k + 2];
     if (t < 0) t = -t;
 
-    w->x = w->x + (Data_0200e1e8[k] << 16);
-    w->z = w->z + (Data_0200e1e8[k + 1] << 16);
-    w->x = w->x >> 20;
-    w->z = w->z >> 20;
+    work.x = work.x + (Data_0200e1e8[k] << 16);
+    work.z = work.z + (Data_0200e1e8[k + 1] << 16);
+    work.x = work.x >> 20;
+    work.z = work.z >> 20;
     ex = (ex + t) >> 4;
 
-    Func_020068d4(w->x, w->z, ex, ez,
-                  (camera[79] >> 20) + w->x, (camera[80] >> 20) + w->z);
-    Func_02000bf0(0, w->x, w->z, ex, ez, 255);
-    Func_02000c02(2, w->x, w->z, ex, ez, 255);
+    Func_020068d4(work.x, work.z, ex, ez,
+                  (camera[79] >> 20) + work.x, (camera[80] >> 20) + work.z);
+    Func_02000bf0(0, work.x, work.z, ex, ez, 255);
+    Func_02000c02(2, work.x, work.z, ex, ez, 255);
     return 1;
 }

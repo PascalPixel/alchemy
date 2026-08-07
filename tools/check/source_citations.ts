@@ -44,6 +44,20 @@ export function brokenCitations(
       `repoint it to the tool's current path, or record its retirement in PROVENANCE.md`);
 }
 
+// The retirement table silences a broken citation, so each row must actually
+// recover. Without this it is an unbounded permission slip: add a row and any
+// citation passes, whether or not the commit it names still holds the file.
+export function unrecoverableRetirements(provenance: string): string[] {
+  const problems: string[] = [];
+  for (const [, path, sha] of provenance.matchAll(/\|\s*`(tools\/[a-z0-9_/]+\.ts)`\s*\|\s*`([0-9a-f]{7,40})`/g)) {
+    const found = Bun.spawnSync(["git", "cat-file", "-e", `${sha}:${path}`], { cwd: ROOT });
+    if (found.exitCode !== 0) {
+      problems.push(`PROVENANCE.md claims ${path} is recoverable at ${sha}, but it is not there`);
+    }
+  }
+  return problems;
+}
+
 function selfTest(): void {
   const retired = retiredTools("| `tools/gone_fixture.ts` | `abc1234` | recover |");
   if (!retired.has("tools/gone_fixture.ts")) throw new Error("retirement table not parsed");
@@ -60,23 +74,38 @@ function selfTest(): void {
   if (brokenCitations(sources, () => true, new Set()).length !== 0) {
     throw new Error("resolvable citations must pass");
   }
+  if (unrecoverableRetirements("| `tools/x.ts` | `0000000` | recover |").length !== 1) {
+    throw new Error("a retirement row naming an unreachable commit must fail");
+  }
   console.log("source_citations self-test ok");
 }
 
 function main(): void {
   if (Bun.argv.includes("--self-test")) return selfTest();
+  // Recursive, and asm/ and include/ too. The first version read only the top
+  // level of exact/ and semantic/ -- which is where the citations happen to be
+  // today, and this gate exists precisely because "where nobody thought to
+  // check" is the failure mode.
   const sources: [string, string][] = [];
-  for (const directory of ["exact", "semantic"]) {
-    const path = join(ROOT, directory);
-    if (!existsSync(path)) continue;
-    for (const name of readdirSync(path)) {
-      if (name.endsWith(".c") || name.endsWith(".h")) {
-        sources.push([`${directory}/${name}`, readFileSync(join(path, name), "utf8")]);
+  const walk = (directory: string, prefix: string): void => {
+    if (!existsSync(directory)) return;
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const relative = `${prefix}/${entry.name}`;
+      if (entry.isDirectory()) walk(join(directory, entry.name), relative);
+      else if (/\.(c|h|s|inc)$/.test(entry.name)) {
+        sources.push([relative, readFileSync(join(directory, entry.name), "utf8")]);
       }
     }
+  };
+  for (const directory of ["exact", "semantic", "asm", "include", "assets/code"]) {
+    walk(join(ROOT, directory), directory);
   }
-  const retired = retiredTools(readFileSync(join(ROOT, "PROVENANCE.md"), "utf8"));
-  const problems = brokenCitations(sources, (path) => existsSync(join(ROOT, path)), retired);
+  const provenance = readFileSync(join(ROOT, "PROVENANCE.md"), "utf8");
+  const retired = retiredTools(provenance);
+  const problems = [
+    ...brokenCitations(sources, (path) => existsSync(join(ROOT, path)), retired),
+    ...unrecoverableRetirements(provenance),
+  ];
   if (problems.length > 0) {
     for (const problem of problems) console.error(`error: ${problem}`);
     process.exit(1);

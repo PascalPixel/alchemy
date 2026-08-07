@@ -1,3 +1,12 @@
+/*
+ * BYTE-EXACT and adopted 2026-08-07, with no compiler flags: three source-level
+ * facts were needed.  The size test is unsigned (`bls', not `ble'), so the two
+ * outputs are u32.  The two `record' words that travel on the stack are read
+ * into their own locals, which makes both loads precede both `str [sp]'s
+ * instead of interleaving load/store.  And the +0x23 flag set takes its mask
+ * from a local assigned first, which is what puts the mask in r3 and the
+ * loaded byte in r2.
+ */
 #include "types.h"
 
 /*
@@ -46,17 +55,23 @@ extern void Func_020039ee();
 s32 Func_02000ec8(u8 *a0)
 {
     u8 *obj = Func_020039ec(a0);
-    s32 out20, out16, out12, out8;
+    u32 out20, out16;
+    s32 out12, out8;
     s32 record[6];
+    s32 r2, r4;
+    u8 mask;
 
     if (Func_02001cc4(a0, &out20, &out16, record, &out12, &out8) == 0) {
         return 0;
     }
 
-    Func_020039c8(2, 2, out20, out16, record[2], record[4]);
+    r2 = record[2];
+    r4 = record[4];
+    Func_020039c8(2, 2, out20, out16, r2, r4);
 
     Func_02003970(obj, 4);
-    obj[0x23] |= 2;
+    mask = 2;
+    obj[0x23] = obj[0x23] | mask;
 
     if (out20 > out16) {
         Func_020039d8(70, 40, record[2] + 32, record[4] + 2, out20, out16);

@@ -82,6 +82,15 @@ export const FORK_MODES = [
   "-fthumb-sink-stack-adjust",
   "-mlow-reg-order=01231230",
   "-mlow-reg-order=30120123",
+  // 2026-08-07: -mcallee-reg-order= permutes the r4-r7 run of REG_ALLOC_ORDER,
+  // the gap between -mlow-reg-order= (r0-r3) and -mhigh-reg-order= (r8-r11).
+  // Three owners reached instruction-for-instruction agreement with two
+  // call-saved pseudos swapped, which no source form could move. Only the
+  // adjacent transpositions are registered; the full 24 permutations are
+  // reachable by hand when a floor is tagged [register] and nothing else.
+  "-mcallee-reg-order=1023",
+  "-mcallee-reg-order=0213",
+  "-mcallee-reg-order=0132",
   // 2026-08-07: the mirror of -mearly-frame-allocation. It lowers a Thumb
   // stack decrement's scheduling priority so incoming-argument copies issue
   // ahead of `sub sp, #N'. Witness 080b0744.

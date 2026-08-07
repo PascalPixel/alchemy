@@ -61,8 +61,8 @@
 extern u8 Data_02009884[];
 
 extern s32 Func_02001c28();
-extern s32 Func_0200171a();
-extern void Func_02001c3a();
+extern void Func_0200171a();
+extern s32 Func_02001c3a();
 extern void Func_02001c76();
 extern u8 * Func_02001c90();
 void Func_02000b8c(s32 *source)
@@ -81,7 +81,7 @@ spawn_body:
         *(s32 *)(record + 48) = Func_02001c28() + 0x0000cccc;
         record[89] = 1;
 
-        Func_02001c3a(record, 0x200000, Func_0200171a());
+        Func_0200171a(record, 0x200000, Func_02001c3a());
 
         {
 

@@ -1828,6 +1828,11 @@ const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
   // 2026-08-07.
   "exact/resource_3b1_c_02005ca4.c",
   "semantic/resource_3b1_c_02005ca4.c",
+  // resource_3a5:1874 -- `movs r0, #8' ahead of `lsls r1, r1, #8' at
+  // 0x0200187c, the second of two split constants in the same sheet,
+  // 2026-08-07.
+  "exact/resource_3a5_c_02001874.c",
+  "semantic/resource_3a5_c_02001874.c",
 ]);
 // The transposed twin of -fthumb-swap-adjacent-shifts: two in-place constant
 // shifts separated by one unrelated insn, issued newest-input first.

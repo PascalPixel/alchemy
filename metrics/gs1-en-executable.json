@@ -20305,7 +20305,7 @@
           "start": 33560692,
           "end": 33560738,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_3a5_overlay.s:2885:verified-C-placeholder"
         },
         {
           "start": 33560738,
@@ -20419,7 +20419,7 @@
           "start": 33561720,
           "end": 33561732,
           "kind": "thumb",
-          "evidence": "resource_3a5_overlay.s:3358:verified-C-placeholder"
+          "evidence": "resource_3a5_overlay.s:3341:verified-C-placeholder"
         },
         {
           "start": 33561744,

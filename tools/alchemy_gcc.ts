@@ -1819,6 +1819,10 @@ const LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES = new Set([
   "semantic/resource_376_c_02000258.c",
   "exact/resource_376_c_02000190.c",
   "semantic/resource_376_c_02000190.c",
+  // resource_382:0614 -- `movs r1, #0' before `movs r0, #9' at 0x0200062a,
+  // the call sheet that follows the call at 0x02000626, 2026-08-07.
+  "exact/resource_382_c_02000614.c",
+  "semantic/resource_382_c_02000614.c",
 ]);
 // -fthumb-arg-before-final-shift for a shift that is not the sheet's last
 // setup insn.
@@ -1833,6 +1837,11 @@ const ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES = new Set([
   // 2026-08-07.
   "exact/resource_3a5_c_02001874.c",
   "semantic/resource_3a5_c_02001874.c",
+  // resource_382:0614 -- `movs r0, #9' ahead of `lsls r1, r1, #7' at
+  // 0x02000658, with `movs r2, #0' still between the pair and the call,
+  // 2026-08-07.
+  "exact/resource_382_c_02000614.c",
+  "semantic/resource_382_c_02000614.c",
 ]);
 // A register load stays below the accumulate and store it was hoisted over.
 const SINK_LOAD_PAST_STORE_OVERLAY_SOURCES = new Set([

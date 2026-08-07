@@ -89,12 +89,21 @@ typedef s32 (*Helper_02000194)(s32, s32);
 
 /* Main-image imports reached through this overlay's veneer table.  Old-style
  * declarations are mandatory: import arity varies between call sites. */
-s32 Func_08000118();
-u8 *Func_0808a080();    /* scene-record accessor: slot id -> record */
-s32 Func_080000f8();    /* ROM dispatch[7] -> random source, no arguments */
-u8 *Func_080090c8();    /* spawns an object, or returns 0 */
-void Func_080091e0();
-void Func_08009080();
+s32 Func_020014f6();
+s32 Func_0200152e();
+u8 *Func_02001600();
+u8 *Func_02001622();
+u8 *Func_02001648();
+u8 *Func_0200166e();
+s32 Func_02001616();
+s32 Func_0200162c();
+u8 *Func_02001692();
+void Func_020016e2();
+void Func_020016c2();
+                    
+                        /* scene-record accessor: slot id -> record */
+                        /* ROM dispatch[7] -> random source, no arguments */
+                        /* spawns an object, or returns 0 */
 
 /* The callback published into the spawned object's +108 field. */
 void Func_02000100();
@@ -113,7 +122,7 @@ void Func_02000194(void)
     /* --- blend fade ------------------------------------------------------ */
     if (Data_020097e8 != 0) {
         blend = ((Helper_02000194)0x03000118)(
-                    Func_08000118(Data_020097ec << 9), 3);
+                    Func_020014f6(Data_020097ec << 9), 3);
         /* The result is biased by 8, scaled into the upper blend field and
          * added to the base; the store/reload through sp+18 truncates it to a
          * halfword before it reaches BLDALPHA. */
@@ -129,7 +138,7 @@ void Func_02000194(void)
          * value and then added to every coordinate this block touches.
          */
         shift = ((Helper_02000194)0x03000118)(
-                    Func_08000118(Data_02009800 << 9), 2) << 16;
+                    Func_0200152e(Data_02009800 << 9), 2) << 16;
 
         *(s32 *)(records + 320) = Data_02009804 + shift;
         *(s32 *)(records + 368) = Data_02009808 + shift;
@@ -140,25 +149,25 @@ void Func_02000194(void)
          * 3 and 2 take their own for +12 and the shared one for +20.
          */
         if (Data_0200980c != (s32)0xffff0000) {
-            record = Func_0808a080(0);
+            record = Func_02001600(0);
             *(s32 *)(record + 12) = Data_0200980c + shift;
             *(s32 *)(record + 20) = Data_0200980c + shift;
             record[85] = 0;
         }
         if (Data_02009810 != (s32)0xffff0000) {
-            record = Func_0808a080(1);
+            record = Func_02001622(1);
             *(s32 *)(record + 12) = Data_02009810 + shift;
             *(s32 *)(record + 20) = Data_0200980c + shift;
             record[85] = 0;
         }
         if (Data_02009814 != (s32)0xffff0000) {
-            record = Func_0808a080(3);
+            record = Func_02001648(3);
             *(s32 *)(record + 12) = Data_02009814 + shift;
             *(s32 *)(record + 20) = Data_0200980c + shift;
             record[85] = 0;
         }
         if (Data_02009818 != (s32)0xffff0000) {
-            record = Func_0808a080(2);
+            record = Func_0200166e(2);
             *(s32 *)(record + 12) = Data_02009818 + shift;
             *(s32 *)(record + 20) = Data_0200980c + shift;
             record[85] = 0;
@@ -176,14 +185,14 @@ void Func_02000194(void)
      * result 30 tiles down the z axis (0xf0 << 13 = 0x001e0000).
      */
     x = (*(s32 *)(records + 228) & (s32)0xffff0000)
-        + Func_080000f8() * 240;
+        + Func_02001616() * 240;
     z = (*(s32 *)(records + 232) & (s32)0xffff0000)
-        + Func_080000f8() * 160
+        + Func_0200162c() * 160
         + 0x001e0000;
 
     /* The three arguments below are staged through the frame first; only the
      * x and the zero are read back, and the z copy at sp+12 is dead. */
-    record = Func_080090c8(0x1f7, x, 0, z);
+    record = Func_02001692(0x1f7, x, 0, z);
     if (record == 0) return;
 
     *(void **)(record + 108) = (void *)Func_02000100;
@@ -199,6 +208,6 @@ void Func_02000194(void)
         display[9] = (u8)((display[9] & 0xf3) | 8);
     }
 
-    Func_080091e0(record, 0);
-    Func_08009080(record, 0);
+    Func_020016e2(record, 0);
+    Func_020016c2(record, 0);
 }

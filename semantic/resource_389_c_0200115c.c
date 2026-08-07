@@ -61,53 +61,70 @@ struct SceneActor {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneActor *Func_0808a080();  /* scene actor by selector */
-void Func_080000d8();                /* remove a task by entry */
-void Func_0808a010();                /* wait this many frames */
-void Func_0808a018();                /* scene bracket helper */
-void Func_0808a020();                /* scene bracket close */
-void Func_0808a090();                /* set an x/y scale pair, 16.16 */
-void Func_0808a0d0();                /* move an actor to a waypoint */
-void Func_0808a0f0();                /* place/aim the camera at a point */
-void Func_0808a110();                /* one-argument actor call */
-void Func_0808a138();                /* one-argument actor call */
-void Func_0808a170();                /* show a text entry by id */
-void Func_0808a180();                /* close the text entry */
-void Func_0808a1b8();                /* three-argument presentation call */
-void Func_0808a1e8();                /* three-argument presentation call */
-void Func_080770c8();                /* set an event flag */
+void Func_0200251a();
+void Func_020025a6();
+void Func_02002652();
+void Func_0200262a();
+void Func_0200265e();
+void Func_02002654();
+void Func_02002664();
+void Func_02002634();
+void Func_020025da();
+struct SceneActor *Func_020025f8();
+void Func_02002618();
+void Func_0200263c();
+void Func_02002648();
+void Func_02002656();
+void Func_02002678();
+struct SceneActor *Func_02002646();
+void Func_0200262e();
+                                     /* scene actor by selector */
+                                     /* remove a task by entry */
+                                     /* wait this many frames */
+                                     /* scene bracket helper */
+                                     /* scene bracket close */
+                                     /* set an x/y scale pair, 16.16 */
+                                     /* move an actor to a waypoint */
+                                     /* place/aim the camera at a point */
+                                     /* one-argument actor call */
+                                     /* one-argument actor call */
+                                     /* show a text entry by id */
+                                     /* close the text entry */
+                                     /* three-argument presentation call */
+                                     /* three-argument presentation call */
+                                     /* set an event flag */
 
 void Func_0200115c(void)
 {
     struct SceneActor *actor;
 
     /* 0x020090c9 = Func_020010c8 + Thumb bit, this overlay's own task. */
-    Func_080000d8((void *)0x020090c9);
+    Func_0200251a((void *)0x020090c9);
 
-    Func_0808a018();
+    Func_020025a6();
 
-    Func_0808a1e8(13, 256, 30);                 /* 128 << 1 */
-    Func_0808a138(13, 2);
-    Func_0808a1b8(0, 0x0000a000, 0);            /* 160 << 8 */
-    Func_0808a170(0x132f);
-    Func_0808a180(13, 0);
-    Func_0808a110(13, 3);
-    Func_0808a010(30);
+    Func_02002652(13, 256, 30);                 /* 128 << 1 */
+    Func_0200262a(13, 2);
+    Func_0200265e(0, 0x0000a000, 0);            /* 160 << 8 */
+    Func_02002654(0x132f);
+    Func_02002664(13, 0);
+    Func_02002634(13, 3);
+    Func_020025da(30);
 
-    actor = Func_0808a080(10);
+    actor = Func_020025f8(10);
     actor->flags23 = (u8)(actor->flags23 & ~2);
 
-    Func_0808a090(13, 0x00020000, 0x00010000);  /* 128 << 10, 128 << 9 */
+    Func_02002618(13, 0x00020000, 0x00010000);  /* 128 << 10, 128 << 9 */
 
-    Func_0808a0d0(13, 600, 216);                /* 150 << 2 */
-    Func_0808a0d0(13, 600, 248);
-    Func_0808a0d0(13, 568, 296);                /* 142 << 2, 148 << 1 */
+    Func_0200263c(13, 600, 216);                /* 150 << 2 */
+    Func_02002648(13, 600, 248);
+    Func_02002656(13, 568, 296);                /* 142 << 2, 148 << 1 */
 
-    Func_0808a0f0(13, 0, 0);
+    Func_02002678(13, 0, 0);
 
     actor->flags23 = (u8)(actor->flags23 | 2);
-    actor = Func_0808a080(10);
+    actor = Func_02002646(10);
 
-    Func_080770c8(0x869);
-    Func_0808a020();
+    Func_0200262e(0x869);
+    Func_02002652();
 }

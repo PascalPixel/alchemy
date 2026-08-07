@@ -25,44 +25,58 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-s32 Func_080770c0();        /* tests a flag id; nonzero when set */
-void Func_0808a0f0();       /* places actor <id> at (x, z) */
-u8 *Func_0808a080();        /* scene/actor record accessor */
+s32 Func_020019bc();
+void Func_02001a3c();
+u8 *Func_02001a12();
+void Func_02001a52();
+s32 Func_020019e8();
+void Func_02001a68();
+u8 *Func_02001a3e();
+void Func_02001a80();
+s32 Func_02001a16();
+void Func_02001a96();
+u8 *Func_02001a6c();
+u8 *Func_02001a7a();
+u8 *Func_02001a8c();
+u8 *Func_02001aa2();
+                            /* tests a flag id; nonzero when set */
+                            /* places actor <id> at (x, z) */
+                            /* scene/actor record accessor */
 
 void Func_02000b2c(void)
 {
     u8 *record;
 
     /* `movs r0,#144 / lsls r0,#2` = 576 = 0x240. */
-    if (Func_080770c0(0x240) == 0) {
-        Func_0808a0f0(8, 0x03280000, 0x02d70000);       /* 202<<18 */
-        record = Func_0808a080(8);
+    if (Func_020019bc(0x240) == 0) {
+        Func_02001a3c(8, 0x03280000, 0x02d70000);       /* 202<<18 */
+        record = Func_02001a12(8);
         *(u16 *)(record + 6) = 0x3000;                  /* 192<<6 */
-        Func_0808a0f0(9, 0x031a0000, 0x03390000);
+        Func_02001a52(9, 0x031a0000, 0x03390000);
     }
 
-    if (Func_080770c0(0x241) == 0) {
-        Func_0808a0f0(10, 0x02300000, 0x02c60000);      /* 140<<18 */
-        record = Func_0808a080(10);
+    if (Func_020019e8(0x241) == 0) {
+        Func_02001a68(10, 0x02300000, 0x02c60000);      /* 140<<18 */
+        record = Func_02001a3e(10);
         *(u16 *)(record + 6) = 0x1000;                  /* 128<<5 */
-        Func_0808a0f0(11, 0x02400000, 0x02c60000);      /* 144<<18 */
+        Func_02001a80(11, 0x02400000, 0x02c60000);      /* 144<<18 */
     }
 
-    if (Func_080770c0(0x242) == 0) {
-        Func_0808a0f0(15, 0x01270000, 0x02e80000);      /* 186<<18 */
-        record = Func_0808a080(15);
+    if (Func_02001a16(0x242) == 0) {
+        Func_02001a96(15, 0x01270000, 0x02e80000);      /* 186<<18 */
+        record = Func_02001a6c(15);
         *(u16 *)(record + 6) = 0xb000;                  /* 176<<8 */
         record[0x59] |= 4;
     } else {
-        record = Func_0808a080(15);
+        record = Func_02001a7a(15);
     }
 
-    record = Func_0808a080(17);
+    record = Func_02001a8c(17);
     if (record != 0) {
         record[0x59] |= 4;
     }
 
-    record = Func_0808a080(16);
+    record = Func_02001aa2(16);
     if (record != 0) {
         record[0x59] |= 4;
     }

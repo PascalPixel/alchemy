@@ -63,12 +63,23 @@ extern s16 Data_02000240[];  /* cross-overlay scene-flag block */
 
 /* Main-image imports reached through this overlay's veneer table.  Old-style
  * declarations are mandatory: import arity varies between call sites. */
-void Func_08077028();
-u8 *Func_0808a080();   /* scene-record accessor: slot id -> record */
-void Func_08009128();
+void Func_02002166();
+u8 *Func_020021a8();
+u8 *Func_020021b4();
+u8 *Func_020021c0();
+u8 *Func_020021ca();
+u8 *Func_020021d4();
+u8 *Func_020021ea();
+u8 *Func_020021fc();
+u8 *Func_0200221a();
+u8 *Func_02002238();
+u8 *Func_02002256();
+void Func_020022a0();
+void Func_02000f9c(void);
+                     
+                       /* scene-record accessor: slot id -> record */
 
 /* In-image callee, already byte-exact as resource_3ca_c_0200007c.c. */
-void Func_0200007c(void);
 
 /*
  * record + 80 points at a display sub-record; +9 and +21 are flag bytes whose
@@ -90,37 +101,37 @@ s32 Func_02000da4(void)
      * cross-overlay idiom documented for this block is the halfword at 448;
      * this is its neighbour, read the same way.
      */
-    if (Data_02000240[225] == 99) Func_08077028(0, 242);
+    if (Data_02000240[225] == 99) Func_02002166(0, 242);
 
     /* 0x03001e70 + 76 is the scene-workspace pointer cell. */
     workspace = *(u8 **)0x03001EBC;
     *(s32 *)(workspace + 448) = 256;
 
     /* Slots 8 and 9 get two byte fields set directly. */
-    Func_0808a080(8)[89] = 0;
-    Func_0808a080(8)[35] = 2;
-    Func_0808a080(9)[89] = 0;
-    Func_0808a080(9)[35] = 2;
+    Func_020021a8(8)[89] = 0;
+    Func_020021b4(8)[35] = 2;
+    Func_020021c0(9)[89] = 0;
+    Func_020021ca(9)[35] = 2;
 
     /* The two overlay slots have only their +9 field rewritten... */
-    display = *(u8 **)(Func_0808a080(8) + 80);
+    display = *(u8 **)(Func_020021d4(8) + 80);
     SET_MODE_FIELD(display, 9);
-    display = *(u8 **)(Func_0808a080(9) + 80);
+    display = *(u8 **)(Func_020021ea(9) + 80);
     SET_MODE_FIELD(display, 9);
 
     /* ...while party slots 0-3 get both +9 and +21.  Each pair is one accessor
      * call whose record is re-dereferenced for the second field, exactly as
      * the assembly does (`ldr r1, [r0, #80]` twice off one call). */
-    record = Func_0808a080(0);
+    record = Func_020021fc(0);
     SET_MODE_FIELD(*(u8 **)(record + 80), 9);
     SET_MODE_FIELD(*(u8 **)(record + 80), 21);
-    record = Func_0808a080(1);
+    record = Func_0200221a(1);
     SET_MODE_FIELD(*(u8 **)(record + 80), 9);
     SET_MODE_FIELD(*(u8 **)(record + 80), 21);
-    record = Func_0808a080(2);
+    record = Func_02002238(2);
     SET_MODE_FIELD(*(u8 **)(record + 80), 9);
     SET_MODE_FIELD(*(u8 **)(record + 80), 21);
-    record = Func_0808a080(3);
+    record = Func_02002256(3);
     SET_MODE_FIELD(*(u8 **)(record + 80), 9);
     SET_MODE_FIELD(*(u8 **)(record + 80), 21);
 
@@ -142,7 +153,7 @@ s32 Func_02000da4(void)
     *(s32 *)(record + 308 + 12) += (s32)0xffa60000;
     *(s32 *)(record + 356 + 12) += (s32)0xffa60000;
 
-    Func_08009128();
-    Func_0200007c();
+    Func_020022a0();
+    Func_02000f9c();
     return 0;
 }

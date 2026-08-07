@@ -57,7 +57,7 @@ extern u16 Data_02009c1a;               /* handle stored by 0x020012ac */
 
 /* Main-image import reached through this overlay's veneer table.  Old-style
  * declaration: import arity varies between sites elsewhere in this overlay. */
-void Func_080001e8();
+void Func_020025ec();
 
 void Func_020011c4(void)
 {
@@ -120,5 +120,5 @@ void Func_020011c4(void)
     }
 
     /* Publish all 24 records. */
-    for (i = 0; i <= 23; i++) Func_080001e8(&Data_02009af8[i], 255);
+    for (i = 0; i <= 23; i++) Func_020025ec(&Data_02009af8[i], 255);
 }

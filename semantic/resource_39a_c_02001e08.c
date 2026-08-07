@@ -29,19 +29,40 @@
  */
 
 /* The callback, named by its in-image address. */
-void Func_080000c0();
-void Func_080000d0();
-void Func_080000d8();
-void Func_08009180();
-void Func_080770c8();
-void Func_080772e8();
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a330();
-void Func_0808a348();
-void Func_0808a460();
-void Func_0808a4f0();
-void Func_080f9010();
+void Func_02004224();
+void Func_0200422a();
+void Func_02004156();
+void Func_0200421a();
+void Func_020041e4();
+void Func_020041fa();
+void Func_020040a0();
+void Func_0200412e();
+void Func_0200413e();
+void Func_0200421e();
+void Func_02004234();
+void Func_020040dc();
+void Func_020040e6();
+void Func_020040fa();
+void Func_020040f8();
+void Func_02004250();
+void Func_02004266();
+void Func_0200410c();
+void Func_02004122();
+void Func_02004118();
+void Func_02004272();
+void Func_02004288();
+void Func_020041f6();
+void Func_0200420c();
+void Func_020042e0();
+
+                     
+
+                     
+
+                     
+
+                     
+                     
 extern void Func_02001d78();
 
 /* Imports. */
@@ -50,47 +71,47 @@ void Func_02001e08(void)
 {
     s32 pass;
 
-    Func_080f9010(19);
-    Func_080f9010(182);
-    Func_0808a018();
-    Func_0808a460();
+    Func_02004224(19);
+    Func_0200422a(182);
+    Func_02004156();
+    Func_0200421a();
 
     /* r8, r7 and r6 hold the constants 8, 7 and 1 across the loop. */
     pass = 0;
     do {
-        Func_0808a330((s32)0x204318, 1);
-        Func_0808a348(1);
-        Func_080000c0(2);
+        Func_020041e4((s32)0x204318, 1);
+        Func_020041fa(1);
+        Func_020040a0(2);
         if (pass == 0) {
-            Func_08009180(30, 8, 12, 8, 8, 7);
-            Func_08009180(30, 57, 19, 57, 1, 1);
+            Func_0200412e(30, 8, 12, 8, 8, 7);
+            Func_0200413e(30, 57, 19, 57, 1, 1);
         }
-        Func_0808a330((s32)0x203108, 1);
+        Func_0200421e((s32)0x203108, 1);
         pass++;
-        Func_0808a348(1);
-        Func_080000c0(2);
+        Func_02004234(1);
+        Func_020040dc(2);
         /* The back edge is an unsigned compare against 3, so the body runs
          * for pass 0..3. */
     } while ((unsigned int)pass <= 3);
 
-    Func_080000c0(30);
+    Func_020040e6(30);
     /* movs r1,#0xc8 / lsls r1,#4 builds 0xc80. */
-    Func_080000d0((void *)Func_02001d78, (s32)0xc80);
-    Func_080000c0(40);
-    Func_0808a330((s32)0x201090, 1);
-    Func_0808a348(40);
-    Func_080000c0(80);
-    Func_080000d8((void *)Func_02001d78);
-    Func_080000c0(20);
+    Func_020040fa((void *)Func_02001d78, (s32)0xc80);
+    Func_020040f8(40);
+    Func_02004250((s32)0x201090, 1);
+    Func_02004266(40);
+    Func_0200410c(80);
+    Func_02004122((void *)Func_02001d78);
+    Func_02004118(20);
     /* movs r0,#0x80 / lsls r0,#9 builds 0x10000. */
-    Func_0808a330((s32)0x10000, 1);
-    Func_0808a348(80);
+    Func_02004272((s32)0x10000, 1);
+    Func_02004288(80);
     /* Same import as in the loop, one argument here. */
-    Func_080000c0(80);
+    Func_0200412e(80);
     /* movs r0,#0x82 / lsls r0,#4 builds 0x820. */
-    Func_080770c8((s32)0x820);
-    Func_080772e8(230);
-    Func_0808a4f0();
+    Func_020041f6((s32)0x820);
+    Func_0200420c(230);
+    Func_020042e0();
     /* Same import as the first call, no argument register written here. */
-    Func_0808a020();
+    Func_02004224();
 }

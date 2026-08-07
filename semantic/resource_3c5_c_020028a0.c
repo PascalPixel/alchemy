@@ -80,25 +80,90 @@ extern u8 *Data_03001ebc;       /* workspace pointer variable */
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * be reached with different argument counts at different sites. */
-void Func_080000c0();           /* frame wait */
-void Func_08009180();           /* six-argument renderer */
-void Func_080091c0();           /* six-argument renderer */
-s32 Func_080770c0();            /* progress-flag test */
-void Func_080770c8();           /* set progress flag */
-void Func_080770d0();           /* clear progress flag */
-void Func_0808a010();
-u8 *Func_0808a080();            /* record by slot index */
-void Func_0808a090();
-void Func_0808a0f0();           /* place slot at (x, z) */
-void Func_0808a100();
-void Func_0808a158();
-void Func_0808a1b8();           /* face slot along (heading, 0) */
-void Func_020009f4();           /* four register arguments */
-void Func_02000d4c();           /* the seventeen-step effect ring */
-void Func_02000eac();
-void Func_020027f4();
-void Func_02002820();
+void Func_0200562c();
+u8 *Func_02005730();
+void Func_020057e8();
+void Func_020057f0();
+s32 Func_02005754();
+void Func_020057d6();
+void Func_02005172();
+u8 *Func_020057a8();
+u8 *Func_020057b0();
+s32 Func_02005784();
+void Func_02005808();
+u8 *Func_020057ce();
+void Func_0200517c();
+u8 *Func_020057de();
+void Func_02005852();
+u8 *Func_02005818();
+void Func_02005894();
+u8 *Func_0200585a();
+void Func_020058d0();
+u8 *Func_02005896();
+void Func_02005906();
+void Func_020058e2();
+s32 Func_020058e2_b();
+void Func_020058ac();
+void Func_020034fe();
+void Func_020058f6();
+void Func_020039d0();
+void Func_0200352a();
+void Func_02005922();
+void Func_020039fc();
+void Func_02003554();
+void Func_0200594c();
+void Func_02003a26();
+u8 *Func_020059da();
+u8 *Func_020059ec();
+void Func_02005a0a();
+void Func_02005a18();
+s32 Func_020059de();
+void Func_020059fe();
+void Func_02005a0e();
+s32 Func_02005a04();
+void Func_02005a82();
+void Func_02005a90();
+void Func_02005a9e();
+void Func_02005aac();
+void Func_02005aba();
+void Func_02005b2c();
+void Func_02005b38();
+void Func_02005b44();
+void Func_02005b50();
+void Func_02005a96();
+s32 Func_02005a86();
+void Func_02005b08();
+void Func_02005b7c();
+void Func_02005b88();
+void Func_02005b94();
+void Func_02005ba0();
+void Func_02005bac();
+void Func_02005af2();
+s32 Func_02005ae0();
+void Func_02005b62();
+void Func_02005b70();
+void Func_02005be4();
+void Func_02005bee();
+void Func_02005aea();
+s32 Func_02005b40();
+void Func_02003a7c();
+void Func_02005bca();
+                                /* frame wait */
+                                /* six-argument renderer */
+                                /* six-argument renderer */
+                                /* progress-flag test */
+                                /* set progress flag */
+                                /* clear progress flag */
+                     
+                                /* record by slot index */
+                     
+                                /* place slot at (x, z) */
 
+                                /* face slot along (heading, 0) */
+                                /* four register arguments */
+                                /* the seventeen-step effect ring */
+
+                     
 
 s32 Func_020028a0(void)
 {
@@ -108,13 +173,13 @@ s32 Func_020028a0(void)
     s32 first, second;      /* r0/r1 of the shared renderer call */
     s32 stack5, stack6;     /* its two stack words, sp+0 and sp+4 */
 
-    Func_080000c0(1);
+    Func_0200562c(1);
 
     *(s32 *)(Data_03001ebc + 448) = 516;     /* 129 << 2 */
 
     scene = Data_02000240[224];
     if (scene == 177) {
-        record = Func_0808a080(12);
+        record = Func_02005730(12);
         if ((*(s32 *)(record + 8) >> 20) != 20) {
             return 0;
         }
@@ -132,22 +197,22 @@ s32 Func_020028a0(void)
     Data_02000240[288] = 176;
 
     if (scene == 176) {
-        Func_0808a158(8, 6);
-        Func_0808a158(9, 6);
+        Func_020057e8(8, 6);
+        Func_020057f0(9, 6);
 
-        if (Data_02000240[225] == 5 && Func_080770c0(265) == 0) {
-            Func_0808a0f0(9, 0x01380000, 0x01480000);   /* 156 << 17, 164 << 17 */
+        if (Data_02000240[225] == 5 && Func_02005754(265) == 0) {
+            Func_020057d6(9, 0x01380000, 0x01480000);   /* 156 << 17, 164 << 17 */
         }
 
-        Func_02002820();
+        Func_02005172();
 
-        record = Func_0808a080(9);
-        *(s32 *)(record + 12) = *(s32 *)(Func_0808a080(9) + 20);
+        record = Func_020057a8(9);
+        *(s32 *)(record + 12) = *(s32 *)(Func_020057b0(9) + 20);
 
-        if (Func_080770c0(768) != 0) {
-            Func_0808a100(10, 4);
-            Func_0808a080(10)[89] = 0xfe;
-            Func_020027f4();
+        if (Func_02005784(768) != 0) {
+            Func_02005808(10, 4);
+            Func_020057ce(10)[89] = 0xfe;
+            Func_0200517c();
         }
 
         /* Four poses, written out: these are four SEPARATE call sites each of
@@ -155,7 +220,7 @@ s32 Func_020028a0(void)
          * block, so they are not folded into a macro or a helper. */
         {
             /* Pose background actor 11 (192 << 8). */
-            u8 *rec = Func_0808a080(11);
+            u8 *rec = Func_020057de(11);
             u8 *block;
 
             rec[89] = 0;
@@ -167,12 +232,12 @@ s32 Func_020028a0(void)
             block[38] = 0;
             block = *(u8 **)(rec + 80);
             *(u16 *)(block + 30) = 0xc000;
-            Func_0808a100(11, 0);
+            Func_02005852(11, 0);
         }
 
         {
             /* Pose background actor 12 (128 << 7). */
-            u8 *rec = Func_0808a080(12);
+            u8 *rec = Func_02005818(12);
             u8 *block;
 
             rec[89] = 0;
@@ -184,12 +249,12 @@ s32 Func_020028a0(void)
             block[38] = 0;
             block = *(u8 **)(rec + 80);
             *(u16 *)(block + 30) = 0x4000;
-            Func_0808a100(12, 0);
+            Func_02005894(12, 0);
         }
 
         {
             /* Pose background actor 13 (128 << 8). */
-            u8 *rec = Func_0808a080(13);
+            u8 *rec = Func_0200585a(13);
             u8 *block;
 
             rec[89] = 0;
@@ -201,12 +266,12 @@ s32 Func_020028a0(void)
             block[38] = 0;
             block = *(u8 **)(rec + 80);
             *(u16 *)(block + 30) = 0x8000;
-            Func_0808a100(13, 0);
+            Func_020058d0(13, 0);
         }
 
         {
             /* Pose background actor 14 (the same r8-held 0x8000). */
-            u8 *rec = Func_0808a080(14);
+            u8 *rec = Func_02005896(14);
             u8 *block;
 
             rec[89] = 0;
@@ -218,7 +283,7 @@ s32 Func_020028a0(void)
             block[38] = 0;
             block = *(u8 **)(rec + 80);
             *(u16 *)(block + 30) = 0x8000;
-            Func_0808a100(14, 0);
+            Func_02005906(14, 0);
         }
         return 0;
     }
@@ -231,15 +296,15 @@ s32 Func_020028a0(void)
 
         if (index == 0) {
             /* Case 0 falls through into case 1's body. */
-            Func_080770c8(2432);                /* 152 << 4 */
+            Func_020058e2(2432);                /* 152 << 4 */
         }
         if (index <= 1) {
-            if (Func_080770c0(2432) == 0) {
+            if (Func_020058e2_b(2432) == 0) {
                 return 0;
             }
             stack5 = 1;
             stack6 = 3;
-            Func_08009180(120, 7, 109, 7, stack5, stack6);
+            Func_020058ac(120, 7, 109, 7, stack5, stack6);
             stack5 = 45;
             stack6 = 9;
             first = 45;
@@ -250,32 +315,32 @@ s32 Func_020028a0(void)
         goto special_cases;
 
 place:
-        Func_080091c0(first, second, 1, 1, stack5, stack6);
+        Func_020058d0(first, second, 1, 1, stack5, stack6);
         return 0;
 
 special_cases:
         if (index == 4) {
-            Func_020009f4(0x01b80000, 0, 0x01220000, 223);  /* 220<<17, 145<<17 */
+            Func_020034fe(0x01b80000, 0, 0x01220000, 223);  /* 220<<17, 145<<17 */
             stack5 = 27;
             stack6 = 13;
-            Func_080091c0(22, 13, 1, 1, stack5, stack6);
-            Func_02000eac(14);
+            Func_020058f6(22, 13, 1, 1, stack5, stack6);
+            Func_020039d0(14);
             return 0;
         }
         if (index == 6) {
-            Func_020009f4(0x01c00000, 0, 0x01220000, 223);  /* 224<<17, 145<<17 */
+            Func_0200352a(0x01c00000, 0, 0x01220000, 223);  /* 224<<17, 145<<17 */
             stack5 = 28;
             stack6 = 10;
-            Func_080091c0(22, 12, 1, 1, stack5, stack6);
-            Func_02000eac(16);
+            Func_02005922(22, 12, 1, 1, stack5, stack6);
+            Func_020039fc(16);
             return 0;
         }
         if (index == 7) {
-            Func_020009f4(0x00e80000, 0, 0x02520000, 223);  /* 232<<16, pool */
+            Func_02003554(0x00e80000, 0, 0x02520000, 223);  /* 232<<16, pool */
             stack5 = 14;
             stack6 = 33;
-            Func_080091c0(22, 12, 1, 1, stack5, stack6);
-            Func_02000eac(17);
+            Func_0200594c(22, 12, 1, 1, stack5, stack6);
+            Func_02003a26(17);
             return 0;
         }
         /* Indices 2, 3 and 5 jump straight to the gate at 0x02002d24. */
@@ -286,51 +351,51 @@ special_cases:
         goto unsupported_scene;
     }
 
-    record = Func_0808a080(8);
+    record = Func_020059da(8);
     record[90] = (u8)(record[90] & 0xfe);
-    record = Func_0808a080(9);
+    record = Func_020059ec(9);
     record[90] = (u8)(record[90] & 0xfe);
 
-    Func_0808a090(8, 0x00010000, 0x00008000);   /* 128 << 9, 128 << 8 */
-    Func_0808a090(9, 0x00010000, 0x00008000);
+    Func_02005a0a(8, 0x00010000, 0x00008000);   /* 128 << 9, 128 << 8 */
+    Func_02005a18(9, 0x00010000, 0x00008000);
 
-    if (Func_080770c0(265) == 0) {
+    if (Func_020059de(265) == 0) {
         if (Data_02000240[225] == 1) {
-            Func_080770c8(769);
+            Func_020059fe(769);
         } else {
-            Func_080770d0(769);
+            Func_02005a0e(769);
         }
     }
 
-    if (Func_080770c0(2440) == 0) {
-        Func_0808a0f0(10, 0xffc00000, 0xffc00000);
-        Func_0808a0f0(11, 0x01180000, 0x01280000);  /* 140<<17, 148<<17 */
-        Func_0808a0f0(12, 0x01380000, 0x00f80000);  /* 156<<17, 248<<16 */
-        Func_0808a0f0(13, 0x01280000, 0x00f80000);
-        Func_0808a0f0(14, 0x01400000, 0x01280000);  /* 160<<17, 148<<17 */
-        Func_0808a1b8(11, 0, 0);
-        Func_0808a1b8(12, 0xc000, 0);               /* 192 << 8 */
-        Func_0808a1b8(13, 0xc000, 0);
-        Func_0808a1b8(14, 0x8000, 0);               /* 128 << 8 */
-        Func_0808a010(5);
-    } else if (Func_080770c0(2441) != 0) {
-        Func_0808a0f0(10, 0x01380000, 0x01380000);
-        Func_0808a1b8(10, 0xb000, 0);               /* 176 << 8 */
-        Func_0808a1b8(11, 0xb000, 0);
-        Func_0808a1b8(12, 0xb000, 0);
-        Func_0808a1b8(13, 0xb000, 0);
-        Func_0808a1b8(14, 0xb000, 0);
-        Func_0808a010(5);
+    if (Func_02005a04(2440) == 0) {
+        Func_02005a82(10, 0xffc00000, 0xffc00000);
+        Func_02005a90(11, 0x01180000, 0x01280000);  /* 140<<17, 148<<17 */
+        Func_02005a9e(12, 0x01380000, 0x00f80000);  /* 156<<17, 248<<16 */
+        Func_02005aac(13, 0x01280000, 0x00f80000);
+        Func_02005aba(14, 0x01400000, 0x01280000);  /* 160<<17, 148<<17 */
+        Func_02005b2c(11, 0, 0);
+        Func_02005b38(12, 0xc000, 0);               /* 192 << 8 */
+        Func_02005b44(13, 0xc000, 0);
+        Func_02005b50(14, 0x8000, 0);               /* 128 << 8 */
+        Func_02005a96(5);
+    } else if (Func_02005a86(2441) != 0) {
+        Func_02005b08(10, 0x01380000, 0x01380000);
+        Func_02005b7c(10, 0xb000, 0);               /* 176 << 8 */
+        Func_02005b88(11, 0xb000, 0);
+        Func_02005b94(12, 0xb000, 0);
+        Func_02005ba0(13, 0xb000, 0);
+        Func_02005bac(14, 0xb000, 0);
+        Func_02005af2(5);
     }
 
-    if (Func_080770c0(2437) != 0) {
-        Func_0808a0f0(8, 0x01180000, 0x00f00000);   /* 140<<17, 240<<16 */
-        Func_0808a0f0(9, 0x01480000, 0x00f00000);   /* 164<<17 */
-        Func_0808a1b8(8, 0x8000, 0);
-        Func_0808a1b8(9, 0, 0);
+    if (Func_02005ae0(2437) != 0) {
+        Func_02005b62(8, 0x01180000, 0x00f00000);   /* 140<<17, 240<<16 */
+        Func_02005b70(9, 0x01480000, 0x00f00000);   /* 164<<17 */
+        Func_02005be4(8, 0x8000, 0);
+        Func_02005bee(9, 0, 0);
         stack5 = 17;
         stack6 = 14;
-        Func_080091c0(81, 14, 4, 1, stack5, stack6);
+        Func_02005aea(81, 14, 4, 1, stack5, stack6);
     }
 
     if (Data_02000240[225] != 3) {
@@ -338,12 +403,12 @@ special_cases:
     }
 
 gate:
-    if (Func_080770c0(265) == 0) {
-        Func_02000d4c();
+    if (Func_02005b40(265) == 0) {
+        Func_02003a7c();
     }
     return 0;
 
 unsupported_scene:
-    Func_0808a100(12, 2);
+    Func_02005bca(12, 2);
     return 0;
 }

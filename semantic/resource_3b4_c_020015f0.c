@@ -41,16 +41,29 @@
 
 extern s16 Data_02000240[];
 
-void Func_0808a018();
-void Func_0808a090();
-void Func_080f9010();
+void Func_02003b2a();
+void Func_02003b54();
+void Func_02003b5e();
+void Func_02003c1c();
+u8 *Func_02003b62();
+void Func_02003b84();
+void Func_02003baa();
+void Func_02003bac();
+void Func_02003b6a();
+void Func_02003c50();
+void Func_02003bc2();
+void Func_02003bd0();
+void Func_02003bbe();
+void Func_02003be4();
+void Func_02003b9a();
+void Func_02003bae();
+
+                     
 /* Returns the record for a numbered slot, or 0 when it has none. */
-u8 *Func_0808a080();
-void Func_0808a0b8();
-void Func_0808a0e8();
-void Func_0808a0e0();
-void Func_0808a010();
-void Func_0808a020();
+
+                     
+
+                     
 
 void Func_020015f0(void)
 {
@@ -58,24 +71,24 @@ void Func_020015f0(void)
 
     if (Data_02000240[293] == 10) return;
 
-    Func_0808a018();
-    Func_0808a090(0, 0x1b333, 0xd999);
-    Func_0808a090(10, 0x1b333, 0xd999);
-    Func_080f9010(188);
+    Func_02003b2a();
+    Func_02003b54(0, 0x1b333, 0xd999);
+    Func_02003b5e(10, 0x1b333, 0xd999);
+    Func_02003c1c(188);
 
-    slot = Func_0808a080(0);
+    slot = Func_02003b62(0);
     if (slot != 0) {
-        Func_0808a0b8(10, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+        Func_02003b84(10, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
     }
 
-    Func_0808a0e8(10);
-    Func_0808a0e0(0, 0, 24);
-    Func_0808a010(4);
-    Func_080f9010(188);
-    Func_0808a0e0(10, 0, 16);
-    Func_0808a0e8(0);
-    Func_0808a0b8(10, 264, 360);
-    Func_0808a0e8(10);
-    Func_0808a010(10);
-    Func_0808a020();
+    Func_02003baa(10);
+    Func_02003bac(0, 0, 24);
+    Func_02003b6a(4);
+    Func_02003c50(188);
+    Func_02003bc2(10, 0, 16);
+    Func_02003bd0(0);
+    Func_02003bbe(10, 264, 360);
+    Func_02003be4(10);
+    Func_02003b9a(10);
+    Func_02003bae();
 }

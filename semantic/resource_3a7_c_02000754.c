@@ -87,21 +87,38 @@
  * r0 word, which the overlay's packer leaves holding the double's HIGH word. */
 typedef u64 SoftDouble;
 
-void Func_0808a018();
-void Func_080091f0();
-void Func_080f9010();       /* scripted delay, in frames */
-s32 Func_080000f8();        /* random source, no arguments */
-SoftDouble Func_0200145c(); /* s32 -> soft double */
-SoftDouble Func_020013ac(); /* soft-double addition */
-SoftDouble Func_020013e4(); /* soft-double subtraction */
-s32 Func_020014d8();        /* soft double -> s32 */
-void Func_0808a010();
-void Func_08000318();
-s32 Func_030003ac();        /* relocated IWRAM modulo helper */
-void Func_080091b8();       /* six-argument scene request, last two on stack */
-void Func_08009128();
-void Func_080091f8();
-void Func_0808a020();
+void Func_0200188c();
+void Func_02001882();
+void Func_02001890();
+void Func_020018fe();
+s32 Func_02001836();
+SoftDouble Func_02001c1c();
+SoftDouble Func_02001c2a();
+SoftDouble Func_02001b8a();
+SoftDouble Func_02001bd2();
+SoftDouble Func_02001bde();
+s32 Func_02001cd6();
+void Func_02001920();
+void Func_020018ba();
+void Func_02001948();
+s32 Func_02001898();
+void Func_02001926();
+void Func_020019b6();
+void Func_0200191a();
+void Func_0200195e();
+void Func_0200199a();
+
+                            /* scripted delay, in frames */
+                            /* random source, no arguments */
+                            /* s32 -> soft double */
+                            /* soft-double addition */
+                            /* soft-double subtraction */
+                            /* soft double -> s32 */
+
+                            /* relocated IWRAM modulo helper */
+                            /* six-argument scene request, last two on stack */
+
+                     
 
 void Func_02000754(void)
 {
@@ -112,7 +129,7 @@ void Func_02000754(void)
     s32 level;
     s32 trailing;
 
-    Func_0808a018();
+    Func_0200188c();
 
     if ((*(s32 *)0x03001e40 & 1) != 0) {
         *(s32 *)(workspace + 24) = 1;
@@ -122,34 +139,34 @@ void Func_02000754(void)
         *(s32 *)(workspace + 24) = -1;
     }
 
-    Func_080091f0(0x30000, 0x30000, 0x10000);
-    Func_080091f0(-1, -1, 0xe666);
-    Func_080f9010(0xa3);
+    Func_02001882(0x30000, 0x30000, 0x10000);
+    Func_02001890(-1, -1, 0xe666);
+    Func_020018fe(0xa3);
 
     remaining = 0x1df;
     do {
-        s32 raw = Func_080000f8();
-        SoftDouble accumulator = Func_0200145c(*(s32 *)(workspace + 36));
+        s32 raw = Func_02001836();
+        SoftDouble accumulator = Func_02001c1c(*(s32 *)(workspace + 36));
         s32 sample = (s32)(((u32)raw << 11) >> 16);
-        SoftDouble sampleValue = Func_0200145c(sample);
+        SoftDouble sampleValue = Func_02001c2a(sample);
         SoftDouble term;
 
         /* Unsigned-to-double fixup; unreachable because `sample` is a 16-bit
          * logical shift result and therefore never negative.  Kept. */
         if (sample < 0) {
-            sampleValue = Func_020013ac(sampleValue,
+            sampleValue = Func_02001b8a(sampleValue,
                                         ((SoftDouble)0x00000000u << 32)
                                             | (SoftDouble)0x41f00000u);
         }
 
-        term = Func_020013e4(((SoftDouble)0x8d4fdf3bu << 32)
+        term = Func_02001bd2(((SoftDouble)0x8d4fdf3bu << 32)
                                  | (SoftDouble)0x40b26e97u,
                              sampleValue);
 
         *(s32 *)(workspace + 36) =
-            Func_020014d8(Func_020013e4(accumulator, term));
+            Func_02001cd6(Func_02001bde(accumulator, term));
 
-        Func_0808a010(1);
+        Func_02001920(1);
 
         remaining--;
     } while (remaining >= 0);
@@ -158,11 +175,11 @@ void Func_02000754(void)
     trailing = 6;
     level = 6;
     do {
-        Func_08000318(0x04000052,
+        Func_020018ba(0x04000052,
                       (level << 10) | (level << 5) | trailing);
-        Func_0808a010(1);
+        Func_02001948(1);
 
-        if (Func_030003ac(index, 20) == 0) {
+        if (Func_02001898(index, 20) == 0) {
             trailing--;
             level--;
         }
@@ -170,10 +187,10 @@ void Func_02000754(void)
         index++;
     } while (index <= 69);
 
-    Func_080091b8(19, 83, 15, 8, 19, 91);
-    Func_080f9010(288);
+    Func_02001926(19, 83, 15, 8, 19, 91);
+    Func_020019b6(288);
 
-    Func_08009128();
-    Func_080091f8();
-    Func_0808a020();
+    Func_0200191a();
+    Func_0200195e();
+    Func_0200199a();
 }

@@ -42,24 +42,68 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-u8 *Func_0808a080();        /* scene/actor record accessor */
-s32 Func_080770c0();        /* tests a flag id; nonzero when set */
-void Func_08009180();       /* six-argument renderer entry */
-void Func_080091c0();       /* six-argument renderer entry */
-void Func_0808a088();
-void Func_0808a5e0();
-void Func_0808a158();
-void Func_0808a100();
-void Func_080000d0();       /* installs a task callback with a period */
-void Func_080770d0();
-void Func_0808a0f0();       /* places actor <id> at (x, z) */
-void Func_080091e0();
-void Func_0808a1e0();
-void Func_080000c0();
-void Func_0808a018();       /* opens a scripted sequence */
-void Func_0808a210();
-void Func_08009128();
-void Func_0808a020();       /* closes the scripted sequence */
+u8 *Func_020017d4();
+s32 Func_0200179c();
+void Func_02001792();
+void Func_020017ac();
+s32 Func_020017ce();
+void Func_020017c4();
+void Func_020017dc();
+void Func_02001842();
+s32 Func_02001806();
+void Func_020017fa();
+void Func_02001812();
+void Func_02001878();
+void Func_0200187e();
+void Func_02001884();
+void Func_02001836();
+void Func_0200189c();
+void Func_020018a2();
+void Func_020018a8();
+s32 Func_02001866();
+void Func_020018b8();
+void Func_02001998();
+void Func_02001918();
+void Func_02001900();
+void Func_02001832();
+void Func_020018a4();
+s32 Func_020018c2();
+void Func_02001944();
+u8 *Func_0200191a();
+void Func_020018d0();
+void Func_02001980();
+void Func_02001988();
+void Func_02001990();
+u8 *Func_0200193e();
+u8 *Func_0200194e();
+u8 *Func_0200195c();
+u8 *Func_0200196a();
+u8 *Func_0200197a();
+u8 *Func_02001988_b();
+void Func_02001a30();
+void Func_02001a38();
+void Func_02001a40();
+void Func_02001906();
+void Func_02001992();
+void Func_02001a6e();
+void Func_02001952();
+void Func_020019ae();
+void Func_02001924();
+                            /* scene/actor record accessor */
+                            /* tests a flag id; nonzero when set */
+                            /* six-argument renderer entry */
+                            /* six-argument renderer entry */
+
+                     
+                     
+                            /* installs a task callback with a period */
+                     
+                            /* places actor <id> at (x, z) */
+
+                     
+                            /* opens a scripted sequence */
+
+                            /* closes the scripted sequence */
 
 extern s16 Data_02000240[];
 
@@ -69,96 +113,96 @@ void Func_02000904(void)
     u8 *record;
     s32 hidden;
 
-    origin = Func_0808a080(0);
+    origin = Func_020017d4(0);
 
     hidden = 0;
 
-    if (Func_080770c0(0x242) != 0) {
-        Func_08009180(64, 32, 0, 32, 32, 32);
+    if (Func_0200179c(0x242) != 0) {
+        Func_02001792(64, 32, 0, 32, 32, 32);
         hidden = 20;
-        Func_080091c0(64, 32, 32, 32, 0, 0);
+        Func_020017ac(64, 32, 32, 32, 0, 0);
         goto joined_actors;
-    } else if (Func_080770c0(0x241) != 0) {
-        Func_08009180(64, 0, 0, 32, 32, 32);
-        Func_080091c0(64, 0, 32, 32, 0, 0);
-        Func_0808a088(17);
+    } else if (Func_020017ce(0x241) != 0) {
+        Func_020017c4(64, 0, 0, 32, 32, 32);
+        Func_020017dc(64, 0, 32, 32, 0, 0);
+        Func_02001842(17);
         goto joined_actors;
-    } else if (Func_080770c0(0x240) != 0) {
+    } else if (Func_02001806(0x240) != 0) {
         hidden = 20;
         /* `movs r0,#144 / lsls r0,#2` = 576 = 0x240. */
-        Func_08009180(0, 64, 0, 32, 32, 32);
-        Func_080091c0(0, 64, 32, 32, 0, 0);
+        Func_020017fa(0, 64, 0, 32, 32, 32);
+        Func_02001812(0, 64, 32, 32, 0, 0);
         hidden = 17;
-        Func_0808a088(16);
+        Func_02001878(16);
         goto joined_actors;
     }
 
     goto unjoined_actors;
 
 joined_actors:
-    Func_0808a088(hidden);
-    Func_0808a088(21);
+    Func_0200187e(hidden);
+    Func_02001884(21);
     goto actors_ready;
 
 unjoined_actors:
-    Func_080091c0(0, 32, 32, 32, 0, 0);
-    Func_0808a088(15);
-    Func_0808a088(16);
-    Func_0808a088(17);
+    Func_02001836(0, 32, 32, 32, 0, 0);
+    Func_0200189c(15);
+    Func_020018a2(16);
+    Func_020018a8(17);
 
 actors_ready:
-    if (Func_080770c0(0x8ff) != 0) {
-        Func_0808a088(18);
+    if (Func_02001866(0x8ff) != 0) {
+        Func_020018b8(18);
     } else {
-        Func_0808a5e0(170);
-        Func_0808a158(18, 2);
-        Func_0808a100(18, 3);
+        Func_02001998(170);
+        Func_02001918(18, 2);
+        Func_02001900(18, 3);
         /* Func_02000d08 + Thumb bit. */
-        Func_080000d0(0x02008d09, 3200);
+        Func_02001832(0x02008d09, 3200);
     }
 
     if (Data_02000240[225] == 3) {
-        Func_080770d0(0x12f);
+        Func_020018b8(0x12f);
     }
 
-    Func_080091c0(0, 33, 4, 3, 20, 41);
+    Func_020018a4(0, 33, 4, 3, 20, 41);
 
-    if (Func_080770c0(0x906) != 0) {
-        Func_0808a0f0(19, 0x01680000, 0x00a80000);  /* 180<<17, 168<<16 */
+    if (Func_020018c2(0x906) != 0) {
+        Func_02001944(19, 0x01680000, 0x00a80000);  /* 180<<17, 168<<16 */
     }
 
-    record = Func_0808a080(19);
-    Func_080091e0(record, 0);
+    record = Func_0200191a(19);
+    Func_020018d0(record, 0);
 
-    Func_0808a158(22, 15);
-    Func_0808a158(23, 15);
-    Func_0808a158(24, 15);
+    Func_02001980(22, 15);
+    Func_02001988(23, 15);
+    Func_02001990(24, 15);
 
-    record = Func_0808a080(22);
-    record = Func_0808a080(23);
+    record = Func_0200193e(22);
+    record = Func_0200194e(23);
     record[0x59] |= 8;
     record[0x59] |= 8;
-    record = Func_0808a080(24);
+    record = Func_0200195c(24);
     record[0x59] |= 8;
 
     record[0x23] |= 2;
-    record = Func_0808a080(22);
-    record = Func_0808a080(23);
+    record = Func_0200196a(22);
+    record = Func_0200197a(23);
     record[0x23] |= 2;
-    record = Func_0808a080(24);
+    record = Func_02001988_b(24);
     record[0x23] |= 2;
 
-    Func_0808a1e0(22, 1);
-    Func_0808a1e0(23, 1);
-    Func_0808a1e0(24, 1);
+    Func_02001a30(22, 1);
+    Func_02001a38(23, 1);
+    Func_02001a40(24, 1);
 
-    Func_080000c0(1);
+    Func_02001906(1);
 
-    Func_0808a018();
-    Func_0808a210(*(s32 *)(origin + 8), *(s32 *)(origin + 12),
+    Func_02001992();
+    Func_02001a6e(*(s32 *)(origin + 8), *(s32 *)(origin + 12),
                   *(s32 *)(origin + 16), 0);
-    Func_08009128();
-    Func_0808a020();
+    Func_02001952();
+    Func_020019ae();
 
-    Func_080000c0(1);
+    Func_02001924(1);
 }

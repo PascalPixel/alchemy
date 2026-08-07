@@ -63,14 +63,26 @@ typedef struct Slot_02001c2c {
 } Slot_02001c2c;
 
 /* Returns the record for the given slot. */
-void Func_020011e0();
-void Func_08009150();
-void Func_0808a010();
-Slot_02001c2c *Func_0808a080();
-void Func_0808a090();
-void Func_0808a0e8();
-void Func_080f9010();
+Slot_02001c2c *Func_02004d56();
+Slot_02001c2c *Func_02004d5e();
+Slot_02001c2c *Func_02004d6e();
+Slot_02001c2c *Func_02004d76();
+Slot_02001c2c *Func_02004d86();
+Slot_02001c2c *Func_02004d98();
+Slot_02001c2c *Func_02004da8();
+void Func_02004dcc();
+Slot_02001c2c *Func_02004dca();
+Slot_02001c2c *Func_02004dd2();
+Slot_02001c2c *Func_02004dda();
+void Func_02004d4e();
+void Func_02004e14();
+void Func_02004e92();
+void Func_02002ecc();
+void Func_02004dde();
 
+                     
+
+                     
 
 void Func_02001c2c(s32 subject)
 {
@@ -82,32 +94,32 @@ void Func_02001c2c(s32 subject)
 
         if (slot == subject) continue;
 
-        if ((Func_0808a080(slot)->x >> 20) != (Func_0808a080(subject)->x >> 20)) continue;
-        if ((Func_0808a080(slot)->z >> 20) != (Func_0808a080(subject)->z >> 20)) continue;
+        if ((Func_02004d56(slot)->x >> 20) != (Func_02004d5e(subject)->x >> 20)) continue;
+        if ((Func_02004d6e(slot)->z >> 20) != (Func_02004d76(subject)->z >> 20)) continue;
 
         /* 128 << 13 = 0x00100000, one whole unit up from the candidate's own
          * height.  The test is signed (`cmp` / `bgt`), and a tie updates. */
-        if (best > Func_0808a080(slot)->y + 0x100000) continue;
+        if (best > Func_02004d86(slot)->y + 0x100000) continue;
 
-        best = Func_0808a080(slot)->y + 0x100000;
-        *(u16 *)((u8 *)Func_0808a080(subject) + 100) = (u16)slot;
+        best = Func_02004d98(slot)->y + 0x100000;
+        *(u16 *)((u8 *)Func_02004da8(subject) + 100) = (u16)slot;
     }
 
-    Func_0808a090(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
+    Func_02004dcc(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
 
     /* Three separate lookups of the same record, in this order, exactly as the
      * assembly does them; the sequencing is spelled out with locals because C
      * does not fix argument evaluation order. */
     {
-        Slot_02001c2c *target = Func_0808a080(subject);
-        s32 x = Func_0808a080(subject)->x;
-        s32 z = Func_0808a080(subject)->z;
+        Slot_02001c2c *target = Func_02004dca(subject);
+        s32 x = Func_02004dd2(subject)->x;
+        s32 z = Func_02004dda(subject)->z;
 
-        Func_08009150(target, x, best, z);
+        Func_02004d4e(target, x, best, z);
     }
 
-    Func_0808a0e8(subject);
-    Func_080f9010(188);
-    Func_020011e0(subject);
-    Func_0808a010(30);
+    Func_02004e14(subject);
+    Func_02004e92(188);
+    Func_02002ecc(subject);
+    Func_02004dde(30);
 }

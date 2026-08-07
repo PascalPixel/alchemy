@@ -61,13 +61,19 @@
  */
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_080000c0();
-void Func_080770e8();
+s32 Func_02001fc4();
+void Func_02001eda();
+s32 Func_02000d4a();
+void Func_02001eea();
+s32 Func_02000b72();
+s32 Func_02000b80();
+void Func_02001f0a();
+s32 Func_02000d7a();
+void Func_02002036();
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_02000398();
-s32 Func_02000580();
+
+                    
 
 s32 Func_020007b0(void)
 {
@@ -77,14 +83,14 @@ s32 Func_020007b0(void)
     s32 status = 0;
     s32 phaseResult;
 
-    if (Func_080770c0(0x302) == 0) {
+    if (Func_02001fc4(0x302) == 0) {
         *(u8 *)0x020023a0 = 0;
 
-        Func_080000c0(5);
-        status = Func_02000580();
+        Func_02001eda(5);
+        status = Func_02000d4a();
         if (status >= 0) {
-            Func_080000c0(5);
-            status = Func_02000398();
+            Func_02001eea(5);
+            status = Func_02000b72();
             phaseResult = status;
             if (phaseResult >= 0) {
                 goto publish;
@@ -93,11 +99,11 @@ s32 Func_020007b0(void)
     } else {
         *(u8 *)0x020023a0 = 0;
 
-        status = Func_02000398();
+        status = Func_02000b80();
         phaseResult = status;
         if (phaseResult >= 0) {
-            Func_080000c0(10);
-            status = Func_02000580();
+            Func_02001f0a(10);
+            status = Func_02000d7a();
             if (status >= 0) {
                 goto publish;
             }
@@ -108,7 +114,7 @@ s32 Func_020007b0(void)
 
 publish:
     /* Both role branches converge on this one physical publication site. */
-    Func_080770e8(1008, phaseResult);
+    Func_02002036(1008, phaseResult);
     status = phaseResult;
     return status;
 

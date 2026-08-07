@@ -60,18 +60,31 @@ extern s16 Data_0200b1a8[];     /* in-image, file offset 0x31a8: (x, z) pair per
 
 /* Imports, named by the main-image address in the trailing word of the overlay
  * veneer each call site reaches.  Old-style declarations are mandatory. */
-void Func_0808a010();           /* frame wait */
-void Func_0808a018();           /* scripted-section open */
-void Func_0808a020();           /* scripted-section close */
-void Func_0808a090();           /* 16.16 pair setter */
-void Func_0808a0d8();
-void Func_0808a0e0();           /* (selector, dx, dz) nudge */
-void Func_0808a100();
-void Func_0808a1e0();
-void Func_0808a248();
-void Func_08009178();           /* camera placement */
-void Func_080f9010();
-u8 *Func_0808a080();            /* scene record for a selector, or 0 */
+void Func_020028f8();
+u8 *Func_0200291a();
+void Func_02002ae2();
+void Func_02002aea();
+void Func_020028f6();
+void Func_02002974();
+void Func_02002990();
+void Func_02002a00();
+void Func_02002a78();
+void Func_020029fc();
+u8 *Func_020029ac();
+void Func_02002a0e();
+void Func_020029a4();
+void Func_020029be();
+                                /* frame wait */
+                                /* scripted-section open */
+                                /* scripted-section close */
+                                /* 16.16 pair setter */
+                     
+                                /* (selector, dx, dz) nudge */
+
+                     
+                                /* camera placement */
+                     
+                                /* scene record for a selector, or 0 */
 
 void Func_020006c0(void)
 {
@@ -82,10 +95,10 @@ void Func_020006c0(void)
 
     workspace = *Data_03001ebc;
 
-    Func_0808a018();
+    Func_020028f8();
 
     for (selector = 8; selector <= 65; selector++) {
-        record = Func_0808a080(selector);
+        record = Func_0200291a(selector);
         if (record != 0) {
             record[85] = 0;
         }
@@ -94,31 +107,31 @@ void Func_020006c0(void)
     variant = (s16)(*(u16 *)(workspace + 364) - 50);
 
     if (variant == 6) {
-        Func_080f9010(188);
+        Func_02002ae2(188);
     } else {
-        Func_080f9010(158);
+        Func_02002aea(158);
     }
 
                   Data_0200b1a8[(variant - 1) * 2],
-    Func_08009178(Data_0200b190[variant - 1],
+    Func_020028f6(Data_0200b190[variant - 1],
                   Data_0200b1a8[(variant - 1) * 2 + 1]);
 
-    Func_0808a090(0, 0x8000, 0x4000);
+    Func_02002974(0, 0x8000, 0x4000);
 
     *(s32 *)(*Data_03001ebc + 448) = 32;
 
     if (variant == 6) {
-        Func_0808a090(0, 0x3333, 0x1999);
-        Func_0808a100(0, 2);
-        Func_0808a1e0(0, 3);
-        Func_0808a0e0(0, 0, -8);
+        Func_02002990(0, 0x3333, 0x1999);
+        Func_02002a00(0, 2);
+        Func_02002a78(0, 3);
+        Func_020029fc(0, 0, -8);
     } else {
-        record = Func_0808a080(0);
+        record = Func_020029ac(0);
         record[85] = 0;
-        Func_0808a0d8(0, 3, -16);
+        Func_02002a0e(0, 3, -16);
     }
 
-    Func_0808a010(16);
-    Func_0808a248(variant);
-    Func_0808a020();
+    Func_020029a4(16);
+    Func_02002ae2(variant);
+    Func_020029be();
 }

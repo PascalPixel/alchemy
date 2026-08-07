@@ -43,96 +43,142 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-void Func_0808a018();  /* begin step */
-void Func_0808a170();  /* present message by id */
-void Func_0808a010();  /* wait / delay by count */
-s32 Func_080090c8();   /* creates the object this sequence drives */
-void Func_080091e0();
-void Func_08009080();
-void Func_080090d0();
-void Func_0808a1e8();
-void Func_0808a090();  /* x/y scale, 0x10000 = one */
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_0808a180();  /* act on the subject */
-void Func_0808a138();
-void Func_0808a580();
-void Func_0808a110();
-void Func_0808a0f0();
-void Func_0808a020();  /* end step */
+void Func_02000b20();
+void Func_02000b7e();
+void Func_02000b24();
+s32 Func_02000afe();
+void Func_02000b26();
+void Func_02000b06();
+void Func_02000b4c();
+void Func_02000b14();
+void Func_02000b5a();
+void Func_02000b30();
+void Func_02000b66();
+void Func_02000bf2();
+void Func_02000ba8();
+void Func_02000bbe();
+void Func_02000c12();
+void Func_02000ba0();
+void Func_02000c18();
+void Func_02000c08();
+void Func_02000bb6();
+void Func_02000bf4();
+void Func_02000c48();
+void Func_02000bd6();
+void Func_02000c62();
+void Func_02000be8();
+void Func_02000c8c();
+void Func_02000bfa();
+void Func_02000c7e();
+void Func_02000c0c();
+void Func_02000c6c();
+void Func_02000c1a();
+void Func_02000c92();
+void Func_02000c28();
+void Func_02000cb2();
+void Func_02000c38();
+void Func_02000c88();
+void Func_02000c46();
+void Func_02000cbe();
+void Func_02000c54();
+void Func_02000ce0();
+void Func_02000cd8();
+void Func_02000c9a();
+void Func_02000d14();
+void Func_02000d1e();
+void Func_02000cdc();
+void Func_02000d12();
+void Func_02000d44();
+void Func_02000d30();
+void Func_02000cf0();
+void Func_02000d6a();
+                       /* begin step */
+                       /* present message by id */
+                       /* wait / delay by count */
+                       /* creates the object this sequence drives */
+
+                     
+                     
+                       /* x/y scale, 0x10000 = one */
+
+                       /* act on the subject */
+
+                     
+                     
+                       /* end step */
 
 void Func_0200013c(void)
 {
     s32 handle;
 
-    Func_0808a018();
-    Func_0808a170(0x2394);
-    Func_0808a010(40);
+    Func_02000b20();
+    Func_02000b7e(0x2394);
+    Func_02000b24(40);
 
     /* r0 = 142 << 1, r1 = 150 << 18, r3 = 206 << 18; r2 is set to 0. */
-    handle = Func_080090c8(284, 0x2580000, 0, 0x3380000);
+    handle = Func_02000afe(284, 0x2580000, 0, 0x3380000);
 
     /* r0 is not reloaded: the handle just returned is this call's argument. */
-    Func_080091e0(handle, 0);
+    Func_02000b26(handle, 0);
 
-    Func_08009080(handle, 6);
-    Func_0808a010(10);
-    Func_08009080(handle, 1);
-    Func_0808a010(40);
-    Func_080090d0(handle);
-    Func_0808a010(2);
+    Func_02000b06(handle, 6);
+    Func_02000b4c(10);
+    Func_02000b14(handle, 1);
+    Func_02000b5a(40);
+    Func_02000b30(handle);
+    Func_02000b66(2);
 
-    Func_0808a1e8(25, 256, 50);
-    Func_0808a090(25, 0x10000, 0x8000);
-    Func_0808a0d0(25, 600, 848);
-    Func_0808a1b8(25, 0xc000, 0);
-    Func_0808a010(40);
-    Func_0808a180(25, 0);
-    Func_0808a138(25, 2);
-    Func_0808a010(30);
+    Func_02000bf2(25, 256, 50);
+    Func_02000ba8(25, 0x10000, 0x8000);
+    Func_02000bbe(25, 600, 848);
+    Func_02000c12(25, 0xc000, 0);
+    Func_02000ba0(40);
+    Func_02000c18(25, 0);
+    Func_02000c08(25, 2);
+    Func_02000bb6(30);
 
-    Func_0808a0d0(25, 568, 848);
-    Func_0808a1b8(25, 0xc000, 0);
-    Func_0808a010(30);
-    Func_0808a1e8(25, 264, 50);
-    Func_0808a010(20);
+    Func_02000bf4(25, 568, 848);
+    Func_02000c48(25, 0xc000, 0);
+    Func_02000bd6(30);
+    Func_02000c62(25, 264, 50);
+    Func_02000be8(20);
 
     /* r2 is built as `movs #16 / negs`, so the third argument is -16. */
-    Func_0808a580(0, 0, -16);
+    Func_02000c8c(0, 0, -16);
 
-    Func_0808a010(20);
-    Func_0808a1b8(25, 0x3000, 0);
-    Func_0808a010(30);
-    Func_0808a138(25, 2);
-    Func_0808a010(20);
-    Func_0808a180(25, 0);
-    Func_0808a010(20);
+    Func_02000bfa(20);
+    Func_02000c7e(25, 0x3000, 0);
+    Func_02000c0c(30);
+    Func_02000c6c(25, 2);
+    Func_02000c1a(20);
+    Func_02000c92(25, 0);
+    Func_02000c28(20);
 
-    Func_0808a1e8(0, 0x101, 50);
-    Func_0808a010(20);
-    Func_0808a110(25, 4);
-    Func_0808a010(20);
-    Func_0808a180(25, 0);
-    Func_0808a010(30);
+    Func_02000cb2(0, 0x101, 50);
+    Func_02000c38(20);
+    Func_02000c88(25, 4);
+    Func_02000c46(20);
+    Func_02000cbe(25, 0);
+    Func_02000c54(30);
 
-    Func_0808a1e8(25, 258, 50);
-    Func_0808a180(25, 0);
+    Func_02000ce0(25, 258, 50);
+    Func_02000cd8(25, 0);
 
-    Func_0808a090(25, 0x16666, 0xb333);
-    Func_0808a580(25, 16, 0);
-    Func_0808a580(25, 0, 32);
-    Func_0808a010(20);
-    Func_0808a110(25, 3);
-    Func_0808a010(20);
-    Func_0808a180(25, 0);
+    Func_02000c9a(25, 0x16666, 0xb333);
+    Func_02000d14(25, 16, 0);
+    Func_02000d1e(25, 0, 32);
+    Func_02000c8c(20);
+    Func_02000cdc(25, 3);
+    Func_02000c9a(20);
+    Func_02000d12(25, 0);
 
-    Func_0808a580(0, 16, 0);
-    Func_0808a1b8(0, 0x8000, 0);
-    Func_0808a010(20);
+    Func_02000d44(0, 16, 0);
+    Func_02000d30(0, 0x8000, 0);
+    Func_02000cbe(20);
 
-    Func_0808a090(25, 0x1cccc, 0xe666);
-    Func_0808a580(25, 0, 48);
-    Func_0808a0f0(25, 0, 0);
+    Func_02000cf0(25, 0x1cccc, 0xe666);
+    Func_02000d6a(25, 0, 48);
+    Func_02000d14(25, 0, 0);
 
-    Func_0808a020();
+    Func_02000cf0();
 }

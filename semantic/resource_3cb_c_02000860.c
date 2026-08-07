@@ -87,35 +87,94 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-void Func_0808a018();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a090();
-void Func_0808a0c8();
-void Func_0808a0e8();
-void Func_0808a250();
-void Func_0808a260();
-void Func_0808a268();
-void Func_080770c8();
-void Func_080770d0();
-void Func_080000c0();
-void Func_080000d0();
-void Func_080000d8();
-void Func_080003b8();
-void Func_08000150();
-void Func_08009188();
-void Func_08009190();
-void Func_08015018();
-void Func_02000128();
+s32 Func_02002086();
+void Func_020020c6();
+s32 Func_02002098();
+s32 Func_020020a4();
+void Func_020020c2();
+void Func_020020d0();
+void Func_020020d6();
+void Func_020009e8();
+void Func_020020e8();
+void Func_02002116();
+void Func_020020ec();
+void Func_02000a06();
+s32 Func_02000970();
+s32 Func_020020b8();
+void Func_02002012();
+s32 Func_02002112();
+s32 Func_0200211e();
+s32 Func_020009aa();
+s32 Func_020009b4();
+s32 Func_020009ce();
+void Func_02002106();
+void Func_0200206c();
+u8 *Func_02002096();
+void Func_02002098_b();
+void Func_0200210e();
+void Func_02002094();
+void Func_02002122();
+s32 Func_02002198();
+void Func_0200221e();
+void Func_0200222c();
+void Func_0200223c();
+void Func_020020ca();
+void Func_02002228();
+void Func_0200223a();
+void Func_02002248();
+void Func_0200224a();
+void Func_02002258();
+void Func_0200226a();
+void Func_02002278();
+void Func_02002272();
+void Func_02002284();
+s32 Func_020011cc();
+void Func_02002292();
+void Func_020022a4();
+void Func_020021d2();
+void Func_02002158();
+void Func_020021e6();
+void Func_020022c4();
+void Func_0200218a();
+void Func_02000b84();
+void Func_02000b8a();
+void Func_02002188();
+void Func_020021f0();
+void Func_02002296();
+void Func_0200229c();
+void Func_020022a2();
+void Func_020022a8();
+void Func_020022b0();
+void Func_02002312();
+void Func_02002328();
+s32 Func_020022c6();
+void Func_02002374();
+void Func_02002384();
+void Func_020023c0();
+void Func_020023d0();
+void Func_020023d2();
+void Func_0200228e();
+s32 Func_020023aa();
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
+
+                     
 
 /* Used for their return values. */
-s32 Func_080770c0();
-s32 Func_0200008c();
-s32 Func_08015038();
-s32 Func_0808a020();
-s32 Func_020007b0();
-u8 *Func_08000148();
+
+                    
+
+                    
 
 s32 Func_02000860(void)
 {
@@ -130,16 +189,16 @@ s32 Func_02000860(void)
     u16 *tag;
     u32 i;
 
-    if (Func_080770c0(0x173) != 0) {
-        Func_0808a018();
+    if (Func_02002086(0x173) != 0) {
+        Func_020020c6();
         goto transfer;
     }
 
-    gate = Func_080770c0(512);
+    gate = Func_02002098(512);
     if (gate == 0) {
         return gate;
     }
-    gate = Func_080770c0(0x205);
+    gate = Func_020020a4(0x205);
     if (gate != 0) {
         return gate;
     }
@@ -149,37 +208,37 @@ s32 Func_02000860(void)
 
 abortTransfer:
     *phase = 2;
-    Func_080770c8(0x205);
-    Func_080770d0(0x201);
-    Func_080770d0(0x202);
-    Func_02000128(4);
+    Func_020020c2(0x205);
+    Func_020020d0(0x201);
+    Func_020020d6(0x202);
+    Func_020009e8(4);
     aborted = 1;
-    Func_080770d0(512);
+    Func_020020e8(512);
     goto transferWaitComplete;
 
 beginTransferWait:
-    Func_0808a018();
-    Func_080770c8(0x203);
-    Func_02000128(2);
+    Func_02002116();
+    Func_020020ec(0x203);
+    Func_02000a06(2);
 
-    if (Func_0200008c(2) == 0) {
-        cueHandle = Func_08015038(0x2928, 5, 4, 1);
+    if (Func_02000970(2) == 0) {
+        cueHandle = Func_020020b8(0x2928, 5, 4, 1);
     }
 
     goto testTransferWait;
 
 waitForTransfer:
-    Func_080000c0(1);
+    Func_02002012(1);
 
     stop = 0;
-    if (Func_080770c0(0x201) == 0) {
+    if (Func_02002112(0x201) == 0) {
         stop = 1;
     }
-    if (Func_080770c0(0x205) != 0) {
+    if (Func_0200211e(0x205) != 0) {
         stop = 1;
     }
 
-    if (Func_0200008c(2) != 0 || Func_0200008c(1) != 0) {
+    if (Func_020009aa(2) != 0 || Func_020009b4(1) != 0) {
         idle = 0;
     } else {
         idle++;
@@ -193,82 +252,82 @@ waitForTransfer:
     }
 
 testTransferWait:
-    if (Func_0200008c(2) == 0) {
+    if (Func_020009ce(2) == 0) {
         goto waitForTransfer;
     }
 
 transferWaitComplete:
     if (cueHandle != 0) {
-        Func_08015018(cueHandle, 1);
+        Func_02002106(cueHandle, 1);
     }
-    Func_080000c0(5);
+    Func_0200206c(5);
 
     if (aborted != 0) {
         goto close;
     }
 
 transfer:
-    payload = Func_08000148(54, 1992);
+    payload = Func_02002096(54, 1992);
 
-    Func_080000d8((void *)0x02008149);
-    Func_08009188(5);
-    Func_080000c0(8);
-    Func_08009190(5);
+    Func_02002098_b((void *)0x02008149);
+    Func_0200210e(5);
+    Func_02002094(8);
+    Func_02002122(5);
 
-    if (Func_080770c0(0x173) != 0) {
-        Func_0808a148(8, *(u32 *)&Data_02000240[500], 0);
-        Func_0808a170(0x293b);
-        Func_0808a178(8, 0);
-        Func_080000c0(45);
+    if (Func_02002198(0x173) != 0) {
+        Func_0200221e(8, *(u32 *)&Data_02000240[500], 0);
+        Func_0200222c(0x293b);
+        Func_0200223c(8, 0);
+        Func_020020ca(45);
 
-        Func_0808a090(0, 0x10000, 0x8000);
-        Func_0808a0c8(0, 216, 184);
-        Func_0808a0e8(0);
-        Func_0808a0c8(0, 216, 168);
-        Func_0808a0e8(0);
+        Func_02002228(0, 0x10000, 0x8000);
+        Func_0200223a(0, 216, 184);
+        Func_02002248(0);
+        Func_0200224a(0, 216, 168);
+        Func_02002258(0);
     } else {
-        Func_0808a090(0, 0x10000, 0x8000);
-        Func_0808a0c8(0, 216, 200);
-        Func_0808a0e8(0);
+        Func_02002258(0, 0x10000, 0x8000);
+        Func_0200226a(0, 216, 200);
+        Func_02002278(0);
 
-        Func_0808a090(0, 0x1999, 0xccc);
-        Func_0808a0c8(0, 216, 168);
+        Func_02002272(0, 0x1999, 0xccc);
+        Func_02002284(0, 216, 168);
 
-        if (Func_020007b0() < 0) {
-            Func_0808a090(0, 0x10000, 0x8000);
-            Func_0808a0c8(0, 216, 200);
-            Func_08009188(5);
-            Func_080000c0(8);
-            Func_08009190(5);
-            Func_0808a0e8(0);
-            Func_08000150(54);
-            Func_02000128(0);
-            Func_02000128(4);
-            Func_080000d0((void *)0x02008149, 3200);
-            Func_080003b8((void *)0x02008149, 1);
-            Func_080770d0(0x201);
-            Func_080770d0(0x202);
-            Func_080770d0(0x303);
-            Func_080770d0(0x203);
-            Func_080770d0(512);
+        if (Func_020011cc() < 0) {
+            Func_02002292(0, 0x10000, 0x8000);
+            Func_020022a4(0, 216, 200);
+            Func_020021d2(5);
+            Func_02002158(8);
+            Func_020021e6(5);
+            Func_020022c4(0);
+            Func_0200218a(54);
+            Func_02000b84(0);
+            Func_02000b8a(4);
+            Func_02002188((void *)0x02008149, 3200);
+            Func_020021f0((void *)0x02008149, 1);
+            Func_02002296(0x201);
+            Func_0200229c(0x202);
+            Func_020022a2(0x303);
+            Func_020022a8(0x203);
+            Func_020022b0(512);
             *phase = 2;
             goto close;
         }
 
-        Func_0808a090(0, 0x8000, 0x4000);
-        Func_0808a0e8(0);
+        Func_02002312(0, 0x8000, 0x4000);
+        Func_02002328(0);
     }
 
-    if (Func_080770c0(0x173) != 0) {
-        Func_0808a260(0xbe, 8);
-        Func_0808a268(0xbe, 9);
+    if (Func_020022c6(0x173) != 0) {
+        Func_02002374(0xbe, 8);
+        Func_02002384(0xbe, 9);
     } else {
-        Func_0808a260(0xbe, 10);
-        Func_0808a268(0xbe, 11);
+        Func_020023c0(0xbe, 10);
+        Func_020023d0(0xbe, 11);
     }
 
     Data_02000240[0x22b] = 4;
-    Func_0808a250(1, 1);
+    Func_020023d2(1, 1);
 
     tag = (u16 *)0x02002224;
     tag[1] = 0x58;
@@ -285,8 +344,8 @@ transfer:
         }
     }
 
-    Func_08000150(54);
+    Func_0200228e(54);
 close:
     /* Early aborts and the normal path share the overlay's one close site. */
-    return Func_0808a020();
+    return Func_020023aa();
 }

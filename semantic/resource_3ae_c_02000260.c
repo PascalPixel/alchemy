@@ -50,36 +50,43 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-void Func_0808a018();
-void Func_0808a020();
-s32 Func_080770c0();
-void Func_080770c8();
-s32 Func_0808a070();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
+void Func_020017e4();
+s32 Func_020017ba();
+void Func_0200188c();
+void Func_0200189c();
+s32 Func_0200181c();
+void Func_020018b8();
+void Func_020017ee();
+void Func_020018d8();
+void Func_020018d0();
+void Func_020018e8();
+void Func_0200184c();
+
+                    
+
+                     
 
 extern u8 *Data_03001ebc;
 
 void Func_02000260(void)
 {
-    Func_0808a018();
+    Func_020017e4();
 
-    if (Func_080770c0(0x8a6) == 0) {
-        Func_0808a170(0x1cfd);
-        Func_0808a178(11, 0);
+    if (Func_020017ba(0x8a6) == 0) {
+        Func_0200188c(0x1cfd);
+        Func_0200189c(11, 0);
 
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a180(11, 0);
-            Func_080770c8(0x8a6);
+        if (Func_0200181c(0, 0) == 0) {
+            Func_020018b8(11, 0);
+            Func_020017ee(0x8a6);
             *(u16 *)(Data_03001ebc + 472) += 1;
         } else {
-            Func_0808a180(11, 0);
+            Func_020018d8(11, 0);
         }
     } else {
-        Func_0808a170(0x1cfe);
-        Func_0808a180(11, 0);
+        Func_020018d0(0x1cfe);
+        Func_020018e8(11, 0);
     }
 
-    Func_0808a020();
+    Func_0200184c();
 }

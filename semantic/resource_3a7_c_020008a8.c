@@ -41,35 +41,47 @@
  * The flag test must still declare a return type because it is tested. */
 #include "types.h"
 
-s32 Func_080770c0();    /* test a scene completion flag */
-void Func_08015040();
-void Func_080770c8();   /* raise a scene completion flag */
-void Func_080f9010();   /* scripted delay, in frames */
-void Func_080091b8();   /* six-argument scene request, last two on the stack */
-void Func_0808a010();
-void Func_02000754();
+s32 Func_020019b0();
+void Func_020019b4();
+void Func_020019ca();
+void Func_02001a18();
+void Func_020019a4();
+void Func_020019fa();
+void Func_020019ba();
+void Func_02001a10();
+void Func_02001a4e();
+void Func_020019d8();
+void Func_02001a2e();
+void Func_020019ee();
+void Func_02001a44();
+void Func_02001084();
+                        /* test a scene completion flag */
+                     
+                        /* raise a scene completion flag */
+                        /* scripted delay, in frames */
+                        /* six-argument scene request, last two on the stack */
 
 void Func_020008a8(void)
 {
-    if (Func_080770c0(0x9a8) != 0) {
+    if (Func_020019b0(0x9a8) != 0) {
         return;
     }
 
-    Func_08015040(0x1528, 1);
-    Func_080770c8(0x9a8);
-    Func_080f9010(0x9b);
+    Func_020019b4(0x1528, 1);
+    Func_020019ca(0x9a8);
+    Func_02001a18(0x9b);
 
-    Func_080091b8(107, 27, 1, 1, 92, 27);
-    Func_0808a010(39);
-    Func_080091b8(108, 27, 1, 1, 92, 27);
-    Func_0808a010(50);
+    Func_020019a4(107, 27, 1, 1, 92, 27);
+    Func_020019fa(39);
+    Func_020019ba(108, 27, 1, 1, 92, 27);
+    Func_02001a10(50);
 
-    Func_080f9010(0x9c);
+    Func_02001a4e(0x9c);
 
-    Func_080091b8(1, 24, 1, 2, 25, 27);
-    Func_0808a010(40);
-    Func_080091b8(2, 24, 1, 2, 25, 27);
-    Func_0808a010(40);
+    Func_020019d8(1, 24, 1, 2, 25, 27);
+    Func_02001a2e(40);
+    Func_020019ee(2, 24, 1, 2, 25, 27);
+    Func_02001a44(40);
 
-    Func_02000754();
+    Func_02001084();
 }

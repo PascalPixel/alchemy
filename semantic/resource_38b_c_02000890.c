@@ -39,12 +39,14 @@ extern s16 Data_02000240[];
 
 /* Task installer, main image, reached through the veneer at 0x02001020.
  * The first argument is the Thumb entry of the callback to install. */
-extern void Func_080000d0();
+extern void Func_0200119c(void);
+extern void Func_02001398(void);
+extern void Func_020018e2();
+extern void Func_020015de(void);
 
 /* This overlay's own scene bodies. */
-extern void Func_020008f0(void);
-extern void Func_02000ae0(void);
-extern void Func_02000d10(void);
+
+                                
 
 /* The callback installed for the 0x23 variant, at file offset 0x0ed8. */
 extern void Func_02000ed8(void);
@@ -62,13 +64,13 @@ s32 Func_02000890(void)
     scene = Data_02000240[224];
 
     if (scene == 0x1e) {
-        Func_020008f0();
+        Func_0200119c();
     } else if (scene == 0x23) {
-        Func_02000ae0();
+        Func_02001398();
         /* 200 << 4 = 3200. */
-        Func_080000d0((void *)Func_02000ed8, 3200);
+        Func_020018e2((void *)Func_02000ed8, 3200);
     } else if (scene == 0x20) {
-        Func_02000d10();
+        Func_020015de();
     }
 
     /* Unrecognised scene ids fall through with no effect. */

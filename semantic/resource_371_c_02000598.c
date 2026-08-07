@@ -46,9 +46,12 @@ extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 extern u8 Data_03001f54;
 
-u8 *Func_0808a080();
-u8 *Func_0808a400();
-s32 Func_080770c0();
+u8 *Func_020048b0();
+u8 *Func_02004a64();
+s32 Func_020048c0();
+s32 Func_020048fe();
+
+                    
 
 static s32 RadiusProduct_02000598(u8 *object)
 {
@@ -59,7 +62,7 @@ static s32 RadiusProduct_02000598(u8 *object)
 void Func_02000598(void)
 {
     s16 *table = Data_02000240;
-    u8 *subject = Func_0808a080(*(s32 *)&table[250]);
+    u8 *subject = Func_020048b0(*(s32 *)&table[250]);
     u8 *workspace = Data_03001ebc;
     s32 subject_radius = RadiusProduct_02000598(subject);
     u8 *reference = *(u8 **)(workspace + 480);
@@ -70,7 +73,7 @@ void Func_02000598(void)
     u32 index;
 
     for (index = 8; index <= 65; index++) {
-        u8 *actor = Func_0808a400(index);
+        u8 *actor = Func_02004a64(index);
         s32 x;
         s32 z;
         s32 dx;
@@ -88,7 +91,7 @@ void Func_02000598(void)
             continue;
         }
 
-        if (Data_03001f54 != 0 && Func_080770c0(0x163) != 0) {
+        if (Data_03001f54 != 0 && Func_020048c0(0x163) != 0) {
             continue;
         }
 
@@ -104,7 +107,7 @@ void Func_02000598(void)
             continue;
         }
 
-        if (Func_080770c0(260) != 0) {
+        if (Func_020048fe(260) != 0) {
             continue;
         }
         *(u16 *)(workspace + 364) = (u16)(index + 100);

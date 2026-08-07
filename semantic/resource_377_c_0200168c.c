@@ -97,9 +97,11 @@ struct Descriptor_0200168c {
     s32 arg3;                   /* 0x14 */
 };
 
-struct Object_0200168c *Func_080090c8();
-void Func_08009020();
-void Func_080001b8();
+struct Object_0200168c *Func_02002f12();
+void Func_02002f3a();
+void Func_02002f38();
+
+                     
 
 /* The two installed per-frame callbacks, identified from their pool words. */
 void Func_02001638();
@@ -118,7 +120,7 @@ void Func_0200168c(struct Descriptor_0200168c *descriptor)
         struct Sprite_0200168c *sprite;
         u16 packed;
 
-        object = Func_080090c8(26, descriptor->arg0, descriptor->arg1,
+        object = Func_02002f12(26, descriptor->arg0, descriptor->arg1,
                                descriptor->arg2);
         if (object == 0) continue;
         slots[i] = object;
@@ -130,9 +132,9 @@ void Func_0200168c(struct Descriptor_0200168c *descriptor)
         object->owner = descriptor;
         if (sprite == 0) continue;
 
-        Func_08009020(sprite, 0);
+        Func_02002f3a(sprite, 0);
         sprite->flags26 = 0;
-        Func_080001b8(sprite->index1c);
+        Func_02002f38(sprite->index1c);
 
         sprite->index1c = (u8)*(u16 *)(base + 70);
         sprite->flags1d |= 1;

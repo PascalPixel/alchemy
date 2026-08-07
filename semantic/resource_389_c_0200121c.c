@@ -81,17 +81,40 @@ struct SceneActor {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneActor *Func_0808a080();  /* scene actor by selector */
-s32 Func_080770c0();                 /* read an event flag */
-void Func_0808a0f0();                /* place/aim the camera at a point */
-void Func_080091c0();                /* six-argument scripted-actor call */
-void Func_0808a010();                /* wait this many frames */
-void Func_0808a360();                /* scene bookkeeping, no arguments */
-void Func_0808a370();                /* scene bookkeeping, no arguments */
-void Func_0808a0c0();                /* three-argument scripted-actor call */
-void Func_080000d0();                /* install a task by entry and priority */
+struct SceneActor *Func_0200268a();
+s32 Func_0200266a();
+void Func_020026e4();
+void Func_0200265e();
+void Func_02002672();
+s32 Func_020026aa();
+void Func_02002720();
+void Func_0200269c();
+s32 Func_020026d2();
+void Func_0200274c();
+struct SceneActor *Func_02002730();
+struct SceneActor *Func_0200273c();
+struct SceneActor *Func_02002748();
+void Func_02002706();
+void Func_02002824();
+void Func_02002830();
+void Func_020027c6();
+void Func_0200277c();
+struct SceneActor *Func_0200279a();
+void Func_020027c4();
+void Func_0200279a_b();
+void Func_02002046();
+void Func_02002734();
+                                     /* scene actor by selector */
+                                     /* read an event flag */
+                                     /* place/aim the camera at a point */
+                                     /* six-argument scripted-actor call */
+                                     /* wait this many frames */
+                                     /* scene bookkeeping, no arguments */
+                                     /* scene bookkeeping, no arguments */
+                                     /* three-argument scripted-actor call */
+                                     /* install a task by entry and priority */
 
-void Func_02000ce0();                /* this overlay, 0x02000ce0 */
+                                     /* this overlay, 0x02000ce0 */
 
 s32 Func_0200121c(void)
 {
@@ -106,23 +129,23 @@ s32 Func_0200121c(void)
     *(s32 *)(workspace + 448) = 516;
     *(s32 *)(workspace + 456) = 24;
 
-    actor = Func_0808a080(9);
+    actor = Func_0200268a(9);
     actor->flags59 = (u8)(actor->flags59 | 0x10);
 
-    if (Func_080770c0(0x302) != 0) {
-        Func_0808a0f0(8, 0x01580000, 0x00680000);   /* 172 << 17, 208 << 15 */
-        Func_080091c0(24, 40, 6, 3, 18, 6);
+    if (Func_0200266a(0x302) != 0) {
+        Func_020026e4(8, 0x01580000, 0x00680000);   /* 172 << 17, 208 << 15 */
+        Func_0200265e(24, 40, 6, 3, 18, 6);
     } else {
-        Func_080091c0(18, 40, 6, 3, 18, 6);
+        Func_02002672(18, 40, 6, 3, 18, 6);
     }
 
-    if (Func_080770c0(768) != 0) {                  /* 192 << 2 */
-        Func_0808a0f0(9, 0, 0);
-        Func_080091c0(21, 45, 4, 2, 21, 11);
+    if (Func_020026aa(768) != 0) {                  /* 192 << 2 */
+        Func_02002720(9, 0, 0);
+        Func_0200269c(21, 45, 4, 2, 21, 11);
     }
 
-    if (Func_080770c0(0x301) != 0) {
-        Func_0808a0f0(10, 0x02680000, 0x00e80000);  /* 154 << 18, 232 << 16 */
+    if (Func_020026d2(0x301) != 0) {
+        Func_0200274c(10, 0x02680000, 0x00e80000);  /* 154 << 18, 232 << 16 */
 
         /*
          * `ldrh` then `subs #2` then `<< 16` compared against 0x80 << 9 is a
@@ -132,36 +155,36 @@ s32 Func_0200121c(void)
          * signed comparison against 0x10000.
          */
         if ((u16)((u16)Data_02000240[225] - 2) <= 1) {
-            Func_0808a080(10)->state22 = 2;
-            Func_0808a080(10)->field0c -= 1;
+            Func_02002730(10)->state22 = 2;
+            Func_0200273c(10)->field0c -= 1;
 
-            actor = Func_0808a080(10);
+            actor = Func_02002748(10);
             actor->flags23 = (u8)(actor->flags23 | 2);
 
-            Func_080091c0(36, 48, 5, 1, 36, 14);
+            Func_02002706(36, 48, 5, 1, 36, 14);
         }
     }
 
     scene = &Data_02000240[225];
 
     if (*scene == 99) {
-        Func_0808a360();
-        Func_0808a370();
-        Func_0808a0f0(9, 0x01800000, 0x00c00000);   /* 192 << 17, 192 << 16 */
-        Func_0808a010(60);
+        Func_02002824();
+        Func_02002830();
+        Func_020027c6(9, 0x01800000, 0x00c00000);   /* 192 << 17, 192 << 16 */
+        Func_0200277c(60);
 
-        Func_0808a080(9)->state22 = 2;
-        Func_0808a0c0(9, 408, 192);                 /* 204 << 1 */
+        Func_0200279a(9)->state22 = 2;
+        Func_020027c4(9, 408, 192);                 /* 204 << 1 */
 
-        Func_0808a010(60);
-        Func_02000ce0();
+        Func_0200279a_b(60);
+        Func_02002046();
     }
 
     /* Byte offset 141 << 2 = 564, i.e. halfword index 282. */
     if (Data_02000240[282] != 0) {
         Data_020098ec = 0;
         /* 0x020090c9 = Func_020010c8 + Thumb bit, this overlay's own task. */
-        Func_080000d0((void *)0x020090c9, 3200);    /* 200 << 4 */
+        Func_02002734((void *)0x020090c9, 3200);    /* 200 << 4 */
     }
 
     return 0;

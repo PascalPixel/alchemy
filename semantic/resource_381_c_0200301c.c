@@ -56,11 +56,21 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-u8 *Func_08000148();    /* fetch or allocate a workspace by id and size */
-s32 Func_080000f8();    /* pseudo-random draw, used as a 16.16 fraction */
-s32 Func_08000118();    /* sine of a binary angle */
-s32 Func_08000120();    /* cosine of a binary angle */
-s32 Func_030003f0();    /* relocated IWRAM divide */
+u8 *Func_02006450();
+s32 Func_0200650c();
+s32 Func_0200651a();
+s32 Func_02006526();
+s32 Func_02006516();
+s32 Func_0200652a();
+s32 Func_02006542();
+s32 Func_020065f2();
+s32 Func_02006602();
+s32 Func_0200661a();
+                        /* fetch or allocate a workspace by id and size */
+                        /* pseudo-random draw, used as a 16.16 fraction */
+                        /* sine of a binary angle */
+                        /* cosine of a binary angle */
+                        /* relocated IWRAM divide */
 
 extern u8 Data_0200ba0c[];      /* jitter amplitude, x/y/z per particle */
 extern u8 Data_0200ba2a[];      /* angular step, x/y/z per particle */
@@ -100,7 +110,7 @@ void Func_0200301c(void)
     s32 dx, dy, dz;
     s32 dir;
 
-    field = (Field *)Func_08000148(33, 404);
+    field = (Field *)Func_02006450(33, 404);
     if (field->count == 0) {
         return;
     }
@@ -151,13 +161,13 @@ void Func_0200301c(void)
             *(s32 *)(record + 28) = height;
         }
 
-        jx = (Data_0200ba0c[tri] * Func_080000f8()) >> 16;
-        jy = (Data_0200ba0c[tri + 1] * Func_080000f8()) >> 16;
-        jz = (Data_0200ba0c[tri + 2] * Func_080000f8()) >> 16;
+        jx = (Data_0200ba0c[tri] * Func_0200650c()) >> 16;
+        jy = (Data_0200ba0c[tri + 1] * Func_0200651a()) >> 16;
+        jz = (Data_0200ba0c[tri + 2] * Func_02006526()) >> 16;
 
-        jx = jx != 0 ? Func_030003f0(jx << 16, 1000) : 0;
-        jy = jy != 0 ? Func_030003f0(jy << 16, 1000) : 0;
-        jz = jz != 0 ? Func_030003f0(jz << 16, 1000) : 0;
+        jx = jx != 0 ? Func_02006516(jx << 16, 1000) : 0;
+        jy = jy != 0 ? Func_0200652a(jy << 16, 1000) : 0;
+        jz = jz != 0 ? Func_02006542(jz << 16, 1000) : 0;
 
         dir = Data_0200ba48[tri];
         if (dir == 1) {
@@ -189,9 +199,9 @@ void Func_0200301c(void)
             }
         }
 
-        dx = Func_08000118(Data_0200ba2a[tri] * px) << 1;
-        dy = Func_08000118(Data_0200ba2a[tri + 1] * py) << 1;
-        dz = Func_08000120(Data_0200ba2a[tri + 2] * pz) << 1;
+        dx = Func_020065f2(Data_0200ba2a[tri] * px) << 1;
+        dy = Func_02006602(Data_0200ba2a[tri + 1] * py) << 1;
+        dz = Func_0200661a(Data_0200ba2a[tri + 2] * pz) << 1;
 
         if (blend != 0) {
             /* Settling: the offsets accumulate off-record and are pushed back

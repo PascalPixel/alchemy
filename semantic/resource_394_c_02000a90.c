@@ -30,10 +30,14 @@
  */
 
 /* Old-style declarations: interfaces vary by call site across this overlay. */
-u8 *Func_080090c8();   /* spawn an object: (id, x, unused, z) */
-void Func_08009080();  /* set object motion state */
-void Func_080091e0();  /* attach the object to its display slot */
-s32 Func_080091a8();   /* height of the board at (x, z) */
+u8 *Func_02001b24();
+void Func_02001b2a();
+void Func_02001b7a();
+s32 Func_02001b7c();
+                       /* spawn an object: (id, x, unused, z) */
+                       /* set object motion state */
+                       /* attach the object to its display slot */
+                       /* height of the board at (x, z) */
 
 void Func_02000a90(s16 *records)
 {
@@ -56,17 +60,17 @@ void Func_02000a90(s16 *records)
             z = (record[2] << 20) + 0x200000;
         }
 
-        piece = Func_080090c8((s32)(s16)id, x, 0, z);
+        piece = Func_02001b24((s32)(s16)id, x, 0, z);
         if (piece == 0) return;
 
         *(u8 **)(record + 4) = piece;   /* the pointer field at +8 */
-        Func_08009080(piece, 1);
-        Func_080091e0(piece, 0);
+        Func_02001b2a(piece, 1);
+        Func_02001b7a(piece, 0);
 
         piece[89] = 0;
         *(u16 *)(piece + 32) = 32;
 
-        lift = Func_080091a8(0, *(s16 *)(piece + 10), *(s16 *)(piece + 18));
+        lift = Func_02001b7c(0, *(s16 *)(piece + 10), *(s16 *)(piece + 18));
 
         *(s32 *)(piece + 12) += lift << 16;
         record += 6;

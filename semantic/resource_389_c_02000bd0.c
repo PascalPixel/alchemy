@@ -57,11 +57,24 @@ struct SceneActor {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneActor *Func_0808a080();  /* scene actor by selector */
-s32 Func_080000f8();                 /* random source, no arguments */
+struct SceneActor *Func_0200203e();
+s32 Func_02001fb4();
+struct SceneActor *Func_0200205a();
+struct SceneActor *Func_02002062();
+s32 Func_02001fde();
+s32 Func_02001ff8();
+void Func_020016ba();
+struct SceneActor *Func_020020b4();
+s32 Func_0200202a();
+struct SceneActor *Func_020020d0();
+struct SceneActor *Func_020020d8();
+s32 Func_02002054();
+s32 Func_0200206e();
+void Func_02001730();
+                                     /* scene actor by selector */
+                                     /* random source, no arguments */
 
 /* This overlay's own seven-argument placement helper at 0x02000a68. */
-void Func_02000a68();
 
 void Func_02000bd0(void)
 {
@@ -75,29 +88,29 @@ void Func_02000bd0(void)
     /* One frame in eight. */
     if ((Data_03001e40 & 7) != 0) return;
 
-    origin = Func_0808a080(9);
-    spawnX = origin->x + (((Func_080000f8() * 12) >> 16) << 16);
+    origin = Func_0200203e(9);
+    spawnX = origin->x + (((Func_02001fb4() * 12) >> 16) << 16);
 
-    anchor = Func_0808a080(9);
-    spawnZ = Func_0808a080(9)->z + 0x00060000;  /* 192 << 11 */
+    anchor = Func_0200205a(9);
+    spawnZ = Func_02002062(9)->z + 0x00060000;  /* 192 << 11 */
 
-    drift = ((Func_080000f8() * 5) >> 16) * 6553;
-    lift = (Func_080000f8() * 2) >> 16;
+    drift = ((Func_02001fde() * 5) >> 16) * 6553;
+    lift = (Func_02001ff8() * 2) >> 16;
 
     /* The last argument is the gate value, proven 0 on this path. */
-    Func_02000a68(spawnX, anchor->y, spawnZ, 0, -drift, lift, 0);
+    Func_020016ba(spawnX, anchor->y, spawnZ, 0, -drift, lift, 0);
 
     /* One frame in sixteen, i.e. every other run of the block above. */
     if ((Data_03001e40 & 15) != 0) return;
 
-    origin = Func_0808a080(9);
-    spawnX = origin->x + (((Func_080000f8() * 12) >> 16) << 16);
+    origin = Func_020020b4(9);
+    spawnX = origin->x + (((Func_0200202a() * 12) >> 16) << 16);
 
-    anchor = Func_0808a080(9);
-    spawnZ = Func_0808a080(9)->z + 0x00060000;
+    anchor = Func_020020d0(9);
+    spawnZ = Func_020020d8(9)->z + 0x00060000;
 
-    drift = ((Func_080000f8() * 5) >> 16) * 6553;
-    lift = (Func_080000f8() * 2) >> 16;
+    drift = ((Func_02002054() * 5) >> 16) * 6553;
+    lift = (Func_0200206e() * 2) >> 16;
 
-    Func_02000a68(spawnX, anchor->y, spawnZ, 0, -drift, lift, 0);
+    Func_02001730(spawnX, anchor->y, spawnZ, 0, -drift, lift, 0);
 }

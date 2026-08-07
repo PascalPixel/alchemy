@@ -56,53 +56,67 @@
  * The disassembler's own 'bl' annotations are wrong, as on every overlay.
  */
 
-u8 *Func_0808a080();
-void Func_080b0018();
-void Func_0808a018();
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_0808a138();
-void Func_0808a148();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a190();
-void Func_0808a1b8();
-void Func_0808a020();
+u8 *Func_02002766();
+void Func_020028f4();
+void Func_02002762();
+s32 Func_02002748();
+void Func_02002804();
+void Func_02002816();
+s32 Func_02002766_b();
+void Func_02002848();
+void Func_02002860();
+void Func_02002788();
+void Func_0200285e();
+void Func_02002886();
+void Func_02002898();
+s32 Func_020027a0();
+void Func_02002882();
+void Func_0200288a();
+void Func_020028a2();
+void Func_020027e6();
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02000e34(void)
 {
     u8 *record;
     u32 limit = 0x9000;
 
-    record = Func_0808a080(0);
+    record = Func_02002766(0);
     if ((u32)(*(u16 *)(record + 6) - 0x2000) > limit) {
-        Func_080b0018(0, 13);
+        Func_020028f4(0, 13);
         return;
     }
 
-    Func_0808a018();
+    Func_02002762();
 
-    if (Func_080770c0(0x87A) != 0) {
-        Func_0808a138(13, 2);
-        Func_0808a148(13, 0, 10);
+    if (Func_02002748(0x87A) != 0) {
+        Func_02002804(13, 2);
+        Func_02002816(13, 0, 10);
 
-        if (Func_080770c0(0x300) == 0) {
-            Func_0808a170(0x1C14);
-            Func_0808a180(13, 0);
-            Func_080770c8(0x300);
+        if (Func_02002766_b(0x300) == 0) {
+            Func_02002848(0x1C14);
+            Func_02002860(13, 0);
+            Func_02002788(0x300);
         }
 
-        Func_0808a170(0x1C15);
-        Func_0808a190(13, 0);
-        Func_0808a1b8(13, limit, 10);
+        Func_0200285e(0x1C15);
+        Func_02002886(13, 0);
+        Func_02002898(13, limit, 10);
     } else {
-        if (Func_080770c0(0x815) != 0) {
-            Func_0808a170(0x11A9);
+        if (Func_020027a0(0x815) != 0) {
+            Func_02002882(0x11A9);
         } else {
-            Func_0808a170(0xF58);
+            Func_0200288a(0xF58);
         }
-        Func_0808a180(13, 0);
+        Func_020028a2(13, 0);
     }
 
-    Func_0808a020();
+    Func_020027e6();
 }

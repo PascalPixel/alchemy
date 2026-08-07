@@ -56,8 +56,11 @@
 
 /* Overlay imports (through the veneer table).  Old-style declarations:
  * overlay imports vary their argument count between call sites. */
-void Func_080770c8();
-u8 *Func_0808a080();
+void Func_020015d0();
+u8 *Func_02001614();
+u8 *Func_02001628();
+u8 *Func_02001636();
+u8 *Func_0200165e();
 
 /* Pointer CELL, not the workspace itself: the original does
  * `ldr r3,[pc] / ldr r1,[r3]`. */
@@ -81,26 +84,26 @@ s32 Func_02000a78(void)
     u8 *sub;
 
     if (*(s16 *)((u8 *)0x02000240 + 450) == 90) {
-        Func_080770c8(0x96f);
+        Func_020015d0(0x96f);
     }
 
     workspace = Data_03001ebc;
     *(s32 *)(workspace + 448) = 521;
     *(s32 *)(workspace + 456) = 24;
 
-    record = Func_0808a080(12);
+    record = Func_02001614(12);
     record[89] |= 4;
 
-    record = Func_0808a080(13);
+    record = Func_02001628(13);
     record[89] |= 4;
 
-    record = Func_0808a080(20);
+    record = Func_02001636(20);
     Configure_02000a78(record);
     /* The +0x50 sub-record is reloaded a third time for the field-9 update. */
     sub = (u8 *)*(void **)(record + 0x50);
     sub[9] = (u8)((sub[9] & ~0x0c) | 4);
 
-    record = Func_0808a080(21);
+    record = Func_0200165e(21);
     Configure_02000a78(record);
     record[85] = 2;
     *(s32 *)(record + 12) = 0;

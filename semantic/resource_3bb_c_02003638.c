@@ -64,17 +64,32 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-s32 Func_080770c0();
-s32 Func_08000170();
-void Func_080001a8();
-void Func_080001c8();
-void Func_08000178();
-void Func_080001c0();
-void Func_080001e8();
-u8 *Func_0808a400();
+s32 Func_02007574();
+s32 Func_020074bc();
+void Func_020074d6();
+void Func_020074fc();
+void Func_020074e2();
+void Func_0200750e();
+void Func_02007584();
+void Func_020075c6();
+void Func_02007606();
+void Func_02007636();
+void Func_0200767c();
+void Func_020076d2();
+u8 *Func_02007942();
+s32 Func_0200767c_b();
+s32 Func_02007692();
+void Func_0200776e();
+u8 *Func_020079ca();
+s32 Func_02007704();
+s32 Func_0200771a();
+void Func_020077f0();
+
+                     
+
+                     
 
 /* Relocated IWRAM helper reached through this overlay's veneer at 0x3d98. */
-s32 Func_03000380();
 
 /* In-image palette block at file offset 0x4174 and descriptor at 0x4194. */
 extern u8 Data_0200c174[];
@@ -106,7 +121,7 @@ void Func_02003638(void)
 
     if (*(s16 *)(workspace + 220) != 0) {
         *(u16 *)(workspace + 218) = 2;
-    } else if (Func_080770c0(262) != 0) {           /* 131 << 1 */
+    } else if (Func_02007574(262) != 0) {           /* 131 << 1 */
         if (*(s16 *)(workspace + 218) > 0) {
             *(u16 *)(workspace + 218) = (u16)(*(u16 *)(workspace + 218) - 1);
         }
@@ -120,16 +135,16 @@ void Func_02003638(void)
             *(volatile u32 *)0x040000d8 = 0x050003c0;
             *(volatile u32 *)0x040000dc = 0x80000010;
 
-            handle = Func_08000170(512);            /* 128 << 2 */
-            Func_080001a8(Data_0200c194, handle);
-            Func_080001c8(*(s16 *)(workspace + 216), 512, handle);
-            Func_08000178(handle);
+            handle = Func_020074bc(512);            /* 128 << 2 */
+            Func_020074d6(Data_0200c194, handle);
+            Func_020074fc(*(s16 *)(workspace + 216), 512, handle);
+            Func_020074e2(handle);
         }
     }
 
     state = *(s16 *)(workspace + 218);
     if (state == 0) {
-        Func_080001c0(*(s16 *)(workspace + 216));
+        Func_0200750e(*(s16 *)(workspace + 216));
         return;
     }
 
@@ -140,7 +155,7 @@ void Func_02003638(void)
     out[2] = tile | 0xe400;
     out[0] = 0;
     out[1] = ((104 - (count << 4)) << 16) | column | 0x8000;
-    Func_080001e8(out, 255, 12);
+    Func_02007584(out, 255, 12);
     out += 3;
 
     /* Left column. */
@@ -148,20 +163,20 @@ void Func_02003638(void)
         out[0] = 0;
         out[1] = ((96 - (index << 4)) << 16) | column | 0x40000000;
         out[2] = (tile + 2) | 0xe400;
-        Func_080001e8(out, 255, 12);
+        Func_020075c6(out, 255, 12);
         out += 3;
     }
 
     /* The two middle pieces. */
     out[0] = 0;
     out[2] = (tile + 6) | 0xe400;
-    Func_080001e8(out, 255, 12);
+    Func_02007606(out, 255, 12);
     out += 3;
     out[1] = 0x700000 | column | 0x8000;            /* 224 << 15 */
 
     out[1] = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
     out[2] = (tile + 6) | 0xe400;
-    Func_080001e8(out, 255, 12);
+    Func_02007636(out, 255, 12);
     out += 3;
     out[0] = 0;
 
@@ -171,41 +186,41 @@ void Func_02003638(void)
         out[0] = 0;
         out[1] = column | (0x800000 + (index << 20)) | 0x40000000 | 0x10000000;
         out[2] = (tile + 2) | 0xe400;
-        Func_080001e8(out, 255, 12);
+        Func_0200767c(out, 255, 12);
         out += 3;
     }
 
     /* Bottom piece.  `column` is folded into the packed word in place here,
      * which is why it is not reused afterwards. */
     out[0] = 0;
-    Func_080001e8(out, 255, 12);
+    Func_020076d2(out, 255, 12);
     out[1] = column | (((count << 4) + 128) << 16) | 0x8000 | 0x10000000;
     out[2] = tile | 0xe400;
     out += 3;
 
     if ((*(s32 *)0x03001e40 & 15) <= 4) return;
 
-    marker = Func_0808a400(*(s16 *)(workspace + 224));
+    marker = Func_02007942(*(s16 *)(workspace + 224));
     if (marker != 0) {
-        screen_y = Func_03000380(*(s32 *)(marker + 8) - *(s32 *)(workspace + 232),
+        screen_y = Func_0200767c_b(*(s32 *)(marker + 8) - *(s32 *)(workspace + 232),
                                  0xe0000) + 112;    /* 224 << 12 */
-        screen_x = Func_03000380(*(s32 *)(marker + 16) - *(s32 *)(workspace + 236),
+        screen_x = Func_02007692(*(s32 *)(marker + 16) - *(s32 *)(workspace + 236),
                                  0xe0000);
         screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
         out[0] = 0;
         out[1] = screen_x | (screen_y << 16) | 0x40000000;
         out[2] = (tile + 12) | 0xe400;
-        Func_080001e8(out, 255, 12);
+        Func_0200776e(out, 255, 12);
         out += 3;
     }
 
-    marker = Func_0808a400(*(s16 *)(workspace + 222));
+    marker = Func_020079ca(*(s16 *)(workspace + 222));
     if (marker == 0) return;
 
-    screen_y = Func_03000380(*(s32 *)(marker + 8) - *(s32 *)(workspace + 232),
+    screen_y = Func_02007704(*(s32 *)(marker + 8) - *(s32 *)(workspace + 232),
                              0xe0000) + 112;
-    screen_x = Func_03000380(*(s32 *)(marker + 16) - *(s32 *)(workspace + 236),
+    screen_x = Func_0200771a(*(s32 *)(marker + 16) - *(s32 *)(workspace + 236),
                              0xe0000);
     screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
@@ -215,5 +230,5 @@ void Func_02003638(void)
 
     /* This site leaves r2 holding the cursor rather than the 12 every other
      * submission passes, so only two arguments are asserted. */
-    Func_080001e8(out, 255);
+    Func_020077f0(out, 255);
 }

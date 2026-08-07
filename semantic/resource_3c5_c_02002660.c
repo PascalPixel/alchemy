@@ -68,8 +68,10 @@ struct ProbeSquare {
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * be reached with different argument counts at different sites. */
-s32 Func_080091a8();                    /* terrain height at (layer, x, z) */
-struct ProbeMover *Func_0200006c();     /* occupant of a square, or 0 */
+s32 Func_0200545c();
+struct ProbeMover *Func_02002702();
+                                        /* terrain height at (layer, x, z) */
+                                        /* occupant of a square, or 0 */
 
 struct ProbeMover *Func_02002660(struct ProbeMover *mover)
 {
@@ -78,7 +80,7 @@ struct ProbeMover *Func_02002660(struct ProbeMover *mover)
 
     probe.x = mover->x + (step & (s32)0xffff0000);
     probe.z = mover->z + (step << 16);
-    probe.y = Func_080091a8((s32)mover->layer22, probe.x, probe.z);
+    probe.y = Func_0200545c((s32)mover->layer22, probe.x, probe.z);
 
-    return Func_0200006c(&probe, mover);
+    return Func_02002702(&probe, mover);
 }

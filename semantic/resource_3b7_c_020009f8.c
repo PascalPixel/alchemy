@@ -80,20 +80,30 @@
 extern s32 Data_02000240[];     /* RAM workspace; also indexed as s16 elsewhere */
 extern s32 Data_02001000;
 
-s32 Func_080772c8();
-s32 Func_0808a070();
-void Func_0808a018();
-void Func_0808a020();
-void Func_0808a010();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a0d0();
-void Func_0808a1b8();
-void Func_0808a260();
-void Func_0808a270();
-void Func_0808a5b0();
-void Func_08015120();
+s32 Func_020022f8();
+void Func_02002322();
+void Func_02002378();
+void Func_02002388();
+void Func_020023da();
+void Func_02002390();
+void Func_020022f8_b();
+void Func_020023a8();
+s32 Func_02002378_b();
+void Func_020023c4();
+void Func_0200239e();
+void Func_020023ec();
+void Func_0200238a();
+void Func_0200240a();
+void Func_02002414();
+void Func_020023c8();
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_020009f8(void)
 {
@@ -101,40 +111,40 @@ void Func_020009f8(void)
     u32 balance;
 
     /* (n << 2) + n, then << 1 - ten times the returned count. */
-    price = (u32)(Func_080772c8() * 10);
+    price = (u32)(Func_020022f8() * 10);
 
-    Func_0808a018();
+    Func_02002322();
 
     balance = (u32)Data_02000240[4];        /* the word at byte offset 16 */
 
     if (balance < price) {
-        Func_0808a170(0xe12);
-        Func_0808a178(9, 0);
+        Func_02002378(0xe12);
+        Func_02002388(9, 0);
         /* Straight to the epilogue: Func_0808a020 is deliberately skipped. */
         return;
     }
 
     Data_02001000 = (s32)balance;
 
-    Func_0808a5b0();
-    Func_0808a170(0xe0e);
-    Func_08015120(price, 5);
-    Func_0808a178(9, 0);
+    Func_020023da();
+    Func_02002390(0xe0e);
+    Func_020022f8_b(price, 5);
+    Func_020023a8(9, 0);
 
-    if (Func_0808a070(0, 0) == 0) {
-        Func_0808a180(9, 0);
-        Func_0808a0d0(0, 0x78, 0x80);
-        Func_0808a0d0(0, 0x78, 0x98);
-        Func_0808a1b8(0, 0x8000, 0);        /* 128 << 8 */
-        Func_0808a010(20);
-        Func_0808a270(0x1fd, 0);
-        Func_0808a260(0x89, 13);
+    if (Func_02002378_b(0, 0) == 0) {
+        Func_020023c4(9, 0);
+        Func_0200239e(0, 0x78, 0x80);
+        Func_020023a8(0, 0x78, 0x98);
+        Func_020023ec(0, 0x8000, 0);        /* 128 << 8 */
+        Func_0200238a(20);
+        Func_0200240a(0x1fd, 0);
+        Func_0200240a(0x89, 13);
     } else {
         u16 *counter = (u16 *)(*(char **)0x03001ebc + 472);   /* 236 * 2 */
 
         *counter = (u16)(*counter + 1);
-        Func_0808a180(9, 0);
+        Func_02002414(9, 0);
     }
 
-    Func_0808a020();
+    Func_020023c8();
 }

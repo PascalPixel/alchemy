@@ -35,10 +35,14 @@
  */
 
 /* Old-style declarations: overlay import arities are not fixed per name. */
-s32 Func_02000040();   /* overlay-local, 0x02000040: separation of two points */
-s32 Func_08000100();   /* BIOS-style arc tangent, returns a 16-bit angle */
-void Func_08009080();
-u8 *Func_0808a080();
+s32 Func_020000e6();
+s32 Func_02000dc8();
+void Func_02000e24();
+u8 *Func_02000e9e();
+void Func_02000e4a();
+void Func_02000e60();
+                       /* overlay-local, 0x02000040: separation of two points */
+                       /* BIOS-style arc tangent, returns a 16-bit angle */
 
 s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
 {
@@ -49,12 +53,12 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
     s32 heading;
     s32 behind, ahead, left, right, front;
 
-    if (Func_02000040(other_pos, self_pos, 0) >= range && force == 0) {
+    if (Func_020000e6(other_pos, self_pos, 0) >= range && force == 0) {
         goto missed;
     }
 
     /* arc tangent of (dz, dx) between the two actors, as a 16-bit angle. */
-    angle = Func_08000100(*(s32 *)(other + 0x10) - *(s32 *)(self + 0x10),
+    angle = Func_02000dc8(*(s32 *)(other + 0x10) - *(s32 *)(self + 0x10),
                           other_pos[0] - self_pos[0]);
     angle = (u16)angle;
 
@@ -75,15 +79,15 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
 
     if (front == heading || left == heading || right == heading || force != 0) {
         self[91] = 1;
-        Func_08009080(self, 1);
+        Func_02000e24(self, 1);
         noticed = 1;
     }
 
     /* The wide cone only applies when the other actor is the player party. */
-    if (other == Func_0808a080(0) && (ahead == heading || behind == heading)) {
+    if (other == Func_02000e9e(0) && (ahead == heading || behind == heading)) {
         noticed = 1;
         self[91] = 1;
-        Func_08009080(self, 1);
+        Func_02000e4a(self, 1);
     }
 
     return noticed;
@@ -91,6 +95,6 @@ s32 Func_0200007c(u8 *self, u8 *other, s32 range, s32 force)
 missed:
     /* Out of range and not forced: clear the flag and report the miss. */
     self[91] = (u8)noticed;
-    Func_08009080(self, 2);
+    Func_02000e60(self, 2);
     return noticed;
 }

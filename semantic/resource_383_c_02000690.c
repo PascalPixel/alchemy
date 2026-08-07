@@ -37,15 +37,24 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void Func_0808a018();
-void Func_0808a020();
-u8 *Func_0808a080();            /* returns the actor record read below */
-void Func_0808a090();
-void Func_0808a098();
-void Func_0808a0a0();
-void Func_0808a138();
-void Func_0808a170();
-void Func_0808a180();
+u8 *Func_02005412();
+void Func_020053f0();
+void Func_020054b0();
+void Func_020054ce();
+void Func_020054e6();
+void Func_02005454();
+void Func_02005494();
+void Func_020054a0();
+void Func_020054c2();
+void Func_020054ea();
+void Func_0200550c();
+void Func_0200552e();
+
+                                /* returns the actor record read below */
+
+                     
+
+                     
 
 /* In-image animation descriptors at file offsets 0x58bc and 0x5858, and the
  * descriptor pointer table at file offset 0x64d8. */
@@ -63,24 +72,24 @@ void Func_02000690(void)
 
     s32 permuted_7;
     permuted_7 = (u16)(*(u16 *)(actor + 6) & 0xf000);
-    actor = Func_0808a080(25);
+    actor = Func_02005412(25);
     state = (s16 *)(actor + 100);
     half = *state >> 1;
     orientation  = permuted_7;
 
     /* Re-establish the actor's appearance for this beat. */
-    Func_0808a018(actor);
-    Func_0808a138(25, 2);
-    Func_0808a170(0x12ad);
-    Func_0808a180(25, 0);
+    Func_020053f0(actor);
+    Func_020054b0(25, 2);
+    Func_020054ce(0x12ad);
+    Func_020054e6(25, 0);
     /* 224 << 10 and 224 << 9: 16.16 coordinates, not addresses. */
-    Func_0808a090(25, 0x38000, 0x1c000);
+    Func_02005454(25, 0x38000, 0x1c000);
 
     next = *state;
     switch ((s32)*state) {
     case 2:
         if ((u32)(orientation - 0x2001) <= 0x7ffe) {
-            Func_0808a098(25, Data_0200e4d8[(half << 2) + *state]);
+            Func_02005494(25, Data_0200e4d8[(half << 2) + *state]);
             next = (u16)*state - (half << 1) + 1;
             break;
         }
@@ -90,7 +99,7 @@ void Func_02000690(void)
     case 1:
     case 3:
         if ((u32)(orientation - 0x6001) <= 0x7ffe) {
-            Func_0808a098(25, Data_0200e4d8[(half << 2) + *state]);
+            Func_020054a0(25, Data_0200e4d8[(half << 2) + *state]);
             next = (u16)*state - (half << 1) + 1;
             break;
         }
@@ -98,10 +107,10 @@ void Func_02000690(void)
 
     case 4:
         if ((u32)(orientation - 0x2001) <= 0x7ffe) {
-            Func_0808a098(25, Data_0200d8bc);
+            Func_020054c2(25, Data_0200d8bc);
             next = 2;
         } else {
-            Func_0808a098(25, Data_0200d858);
+            Func_020054ea(25, Data_0200d858);
             next = 3;
         }
         break;
@@ -114,7 +123,7 @@ void Func_02000690(void)
     mirrored:
         /* Orientation outside the window: take the descriptor from the other
          * half of the table and step the state backwards instead. */
-        Func_0808a098(25, Data_0200e4d8[((1 ^ half) << 2) + *state]);
+        Func_0200550c(25, Data_0200e4d8[((1 ^ half) << 2) + *state]);
         next = (u16)*state - (half << 1) + 0xffff;
         break;
     }
@@ -123,6 +132,6 @@ void Func_02000690(void)
 
     *state = (s16)(*(u16 *)state & 3);
 done:
-    Func_0808a0a0(25);
-    Func_0808a020();
+    Func_0200552e(25);
+    Func_020054ea();
 }

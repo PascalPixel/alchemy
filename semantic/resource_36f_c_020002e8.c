@@ -71,14 +71,21 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-void Func_0808a010();           /* wait this many frames */
-void Func_080000c0();           /* advance the task scheduler */
-void Func_080000d0();           /* install a per-frame task */
-void Func_0808a360();           /* scene bookkeeping, no arguments */
-void Func_0808a370();           /* scene bookkeeping, no arguments */
+void Func_02000740(void);
+void Func_0200089a();
+void Func_020004be(void);
+void Func_02000848();
+void Func_0200097c();
+void Func_02000942();
+void Func_020009e8();
+void Func_020009f4();
+                                /* wait this many frames */
+                                /* advance the task scheduler */
+                                /* install a per-frame task */
+                                /* scene bookkeeping, no arguments */
+                                /* scene bookkeeping, no arguments */
 
-void Func_020001c0(void);
-void Func_02000454(void);
+                         
 void Func_02000238(void);
 
 /* In-image: the sprite task's frame counter. */
@@ -124,33 +131,33 @@ void Func_020002e8(void)
     u8 *workspace;
     s32 step;
 
-    Func_02000454();
-    Func_0808a010(30);
+    Func_02000740();
+    Func_0200089a(30);
 
     Data_0200868c[0] = 0;
-    Func_020001c0();
+    Func_020004be();
 
     /* 0x02008239 == Func_02000238 + the Thumb bit. */
-    Func_080000d0((s32)Func_02000238 + 1, 3200);   /* 200 << 4 */
+    Func_02000848((s32)Func_02000238 + 1, 3200);   /* 200 << 4 */
 
     Queue_020002e8(0x1540, 0x04000000);            /* DISPCNT   */
     Queue_020002e8(0x2fce, 0x04000050);            /* BLDCNT    */
     Queue_020002e8(0x0010, 0x04000054);            /* BLDY      */
     Queue_020002e8(0x1010, 0x04000052);            /* BLDALPHA  */
 
-    Func_0808a010(120);
+    Func_0200097c(120);
 
     for (step = 0; step <= 16; step++) {
         Queue_020002e8((u32)(16 - step), 0x04000054);
-        Func_080000c0(3);
+        Func_02000942(3);
     }
 
     workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 448) = 0;
     *(s32 *)(workspace + 456) = 1;
 
-    Func_0808a360();
-    Func_0808a370();
+    Func_020009e8();
+    Func_020009f4();
 
     workspace = *(u8 **)0x03001ebc;
     *(s32 *)(workspace + 456) = 60;

@@ -26,59 +26,77 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-void Func_0808a018();       /* opens a scripted sequence */
-void Func_0808a208();
-void Func_0808a210();
-void Func_0808a218();
-void Func_0808a010();       /* waits the given number of frames */
-void Func_0808a100();
-void Func_0808a5e0();
-void Func_080000d8();       /* installs a task callback */
-void Func_0808a148();
-void Func_0808a1b8();
-void Func_080f9010();
-void Func_0808a138();
-void Func_0808a200();
-void Func_0808a110();
-void Func_080770c8();       /* sets a flag id */
-void Func_0808a020();       /* closes the scripted sequence */
+void Func_02001c04();
+void Func_02001cd4();
+void Func_02001cee();
+void Func_02001cfa();
+void Func_02001c20();
+void Func_02001c88();
+void Func_02001d38();
+void Func_02001bc6();
+void Func_02001c3c();
+void Func_02001cbe();
+void Func_02001d0a();
+void Func_02001d14();
+void Func_02001d20();
+void Func_02001d8e();
+void Func_02001ce6();
+void Func_02001c7c();
+void Func_02001d40();
+void Func_020015a4(void);
+void Func_02001d5c();
+void Func_02001d78();
+void Func_02001d08();
+void Func_02001c96();
+void Func_02001cba();
+                            /* opens a scripted sequence */
+
+                     
+                            /* waits the given number of frames */
+
+                            /* installs a task callback */
+
+                     
+
+                     
+                            /* sets a flag id */
+                            /* closes the scripted sequence */
 
 /* Overlay-local: the actor-18 setup sequence at 0x020007b8. */
-void Func_020007b8(void);
 
 void Func_02000d58(void)
 {
-    Func_0808a018();
+    Func_02001c04();
 
-    Func_0808a208(0x6666, 0x0ccc);
-    Func_0808a210(0x003f0000, -1, 0x01c20000, 1);   /* 252<<14, 225<<17 */
-    Func_0808a218();
-    Func_0808a010(30);
+    Func_02001cd4(0x6666, 0x0ccc);
+    Func_02001cee(0x003f0000, -1, 0x01c20000, 1);   /* 252<<14, 225<<17 */
+    Func_02001cfa();
+    Func_02001c20(30);
 
-    Func_0808a100(18, 1);
-    Func_0808a5e0(-1);
+    Func_02001c88(18, 1);
+    Func_02001d38(-1);
 
     /* Func_02000d08 + Thumb bit: installs the object spawner as a task. */
-    Func_080000d8(0x02008d09);
-    Func_0808a010(20);
+    Func_02001bc6(0x02008d09);
+    Func_02001c3c(20);
 
-    Func_0808a148(0, 18, 0);
-    Func_0808a1b8(0, 0x4000, 0);                    /* 128<<7 */
-    Func_0808a1b8(18, 0, 20);
-    Func_0808a1b8(18, 0xd000, 40);                  /* 208<<8 */
+    Func_02001cbe(0, 18, 0);
+    Func_02001d0a(0, 0x4000, 0);                    /* 128<<7 */
+    Func_02001d14(18, 0, 20);
+    Func_02001d20(18, 0xd000, 40);                  /* 208<<8 */
 
-    Func_080f9010(147);
-    Func_0808a138(18, 2);
-    Func_0808a010(20);
+    Func_02001d8e(147);
+    Func_02001ce6(18, 2);
+    Func_02001c7c(20);
 
-    Func_0808a1b8(18, 0xb000, 40);                  /* 176<<8 */
+    Func_02001d40(18, 0xb000, 40);                  /* 176<<8 */
 
-    Func_020007b8();
+    Func_020015a4();
 
-    Func_0808a200(0, 1);
-    Func_0808a218();
-    Func_0808a110(14, 4);
+    Func_02001d5c(0, 1);
+    Func_02001d78();
+    Func_02001d08(14, 4);
 
-    Func_080770c8(0x8ff);
-    Func_0808a020();
+    Func_02001c96(0x8ff);
+    Func_02001cba();
 }

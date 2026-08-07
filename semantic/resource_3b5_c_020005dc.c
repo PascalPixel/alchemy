@@ -20,35 +20,43 @@
  */
 
 /* Old-style declarations: overlay import arities are not fixed per name. */
-void Func_0808a018();
-s32 Func_080770c0();
-void Func_080770c8();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a398();
-void Func_0808a100();
-void Func_0808a060();
-void Func_0808a020();
+void Func_0200133c();
+s32 Func_0200132a();
+void Func_020013ea();
+void Func_02001402();
+void Func_02001452();
+void Func_02001412();
+void Func_020013d2();
+void Func_0200138a();
+void Func_0200141a();
+void Func_02001432();
+void Func_02001396();
+
+                     
+
+                     
+
+                     
 
 void Func_020005dc(void)
 {
-    Func_0808a018();
+    Func_0200133c();
 
-    if (Func_080770c0(0x8bf) == 0) {
-        Func_080770c8(0x8bf);
+    if (Func_0200132a(0x8bf) == 0) {
+        Func_0200133c(0x8bf);
 
-        Func_0808a170(0x2368);
-        Func_0808a180(19, 0);
+        Func_020013ea(0x2368);
+        Func_02001402(19, 0);
 
-        Func_0808a398(0xe9, 3);
-        Func_0808a180(19, 0);
+        Func_02001452(0xe9, 3);
+        Func_02001412(19, 0);
 
-        Func_0808a100(0, 1);
-        Func_0808a060(0xe9, 0);
+        Func_020013d2(0, 1);
+        Func_0200138a(0xe9, 0);
     } else {
-        Func_0808a170(0x236a);
-        Func_0808a180(19, 0);
+        Func_0200141a(0x236a);
+        Func_02001432(19, 0);
     }
 
-    Func_0808a020();
+    Func_02001396();
 }

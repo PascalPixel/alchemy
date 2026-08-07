@@ -50,11 +50,17 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-void Func_080001b8();   /* release a graphic slot by id */
-void Func_08009020();   /* reset a sub-record */
-u8 *Func_080090c8();    /* spawn an entity at a 16.16 position */
-u8 *Func_0808a080();    /* scene entity record by selector */
-void Func_080f9010();   /* play a cue by id */
+void Func_020064f2();
+u8 *Func_02006336();
+void Func_02006356();
+void Func_02006354();
+u8 *Func_02006480();
+u8 *Func_020064a0();
+                        /* release a graphic slot by id */
+                        /* reset a sub-record */
+                        /* spawn an entity at a 16.16 position */
+                        /* scene entity record by selector */
+                        /* play a cue by id */
 
 void Func_02002e5c(void);   /* this overlay, byte-exact in assets/code */
 void Func_02002e0c(void);   /* this overlay, byte-exact in assets/code */
@@ -72,11 +78,11 @@ void Func_02002eb0(u8 *descriptor)
     unsigned int i;
     unsigned int id;
 
-    Func_080f9010(292);
+    Func_020064f2(292);
 
     for (i = 0; i <= 1; i++) {
                                *(s32 *)(descriptor + 8),
-        entity = Func_080090c8(26,
+        entity = Func_02006336(26,
                                *(s32 *)(descriptor + 12),
                                *(s32 *)(descriptor + 16));
         made[i] = entity;
@@ -93,10 +99,10 @@ void Func_02002eb0(u8 *descriptor)
             continue;
         }
 
-        Func_08009020(sub, 0);
+        Func_02006356(sub, 0);
         sub[38] = 0;
 
-        Func_080001b8(sub[28]);
+        Func_02006354(sub[28]);
         sub[28] = (u8)*(u16 *)(workspace + 70);
         sub[29] |= 1;
 
@@ -115,9 +121,9 @@ void Func_02002eb0(u8 *descriptor)
 
     sub = *(u8 **)(made[0] + 0x50);
     sub[9] = (u8)(((*(u8 **)(entity + 0x50))[9] & 12) | (sub[9] & ~13));
-    entity = Func_0808a080(15);
+    entity = Func_02006480(15);
 
-    entity = Func_0808a080(15);
+    entity = Func_020064a0(15);
     peer = made[1];
     sub = *(u8 **)(peer + 0x50);
     id = ((*(u8 **)(entity + 0x50))[9] & 12) | (sub[9] & ~13);

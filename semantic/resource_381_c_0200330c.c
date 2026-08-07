@@ -48,10 +48,15 @@
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */
-u8 *Func_08000148();    /* fetch or allocate a workspace by id and size */
-void Func_080000d0();   /* install a per-frame task (callback, period) */
-void Func_080091e8();   /* per-record presentation reset */
-u8 *Func_0808a080();    /* scene entity record by selector */
+u8 *Func_02006744();
+u8 *Func_02006846();
+u8 *Func_0200685a();
+void Func_02006800();
+void Func_02006798();
+                        /* fetch or allocate a workspace by id and size */
+                        /* install a per-frame task (callback, period) */
+                        /* per-record presentation reset */
+                        /* scene entity record by selector */
 
 void Func_0200301c(void);   /* this overlay: the per-frame task installed below */
 
@@ -84,7 +89,7 @@ void Func_0200330c(s32 slot, u32 requested)
     u32 index;
     u8 *record;
 
-    field = (Field *)Func_08000148(33, 404);
+    field = (Field *)Func_02006744(33, 404);
 
     /* DMA3: fixed-source 32-bit fill of the whole 404-byte workspace. */
     zero = 0;
@@ -102,12 +107,12 @@ void Func_0200330c(s32 slot, u32 requested)
     index = 0;
     if (count != 0) {
         do {
-            record = Func_0808a080(slot);
+            record = Func_02006846(slot);
             *(u8 *)(*(u8 **)(record + 0x50) + 38) = 0;
             particle->record = record;
             record[85] = 0;
 
-            Func_080091e8(Func_0808a080(slot), 1);
+            Func_02006800(Func_0200685a(slot), 1);
 
             particle->height = Data_0200ba68[index];
             particle->fall = -Data_0200ba90[index];
@@ -121,5 +126,5 @@ void Func_0200330c(s32 slot, u32 requested)
 
     field->count = (u16)count;
 
-    Func_080000d0(Func_0200301c, 3200);
+    Func_02006798(Func_0200301c, 3200);
 }

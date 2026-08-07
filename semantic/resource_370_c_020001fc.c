@@ -51,7 +51,8 @@
 
 /* Overlay import (via the veneer table at file offset 0x14cc).  Old-style
  * declaration: overlay imports vary their argument count between sites. */
-void Func_080f9010();
+void Func_02001722();
+void Func_0200179a();
 
 /*
  * One channel's frame step.  Returns nonzero exactly when the channel's
@@ -101,12 +102,12 @@ void Func_020001fc(void)
     if (Step_020001fc((const s16 *)0x020096b2, (s16 *)0x020096ba,
                       (s16 *)0x020096b6, (const u16 *)0x020094d4) != 0) {
         *(s16 *)0x020096b2 = 1;
-        Func_080f9010(110);
+        Func_02001722(110);
     }
 
     if (Step_020001fc((const s16 *)0x020096b4, (s16 *)0x020096bc,
                       (s16 *)0x020096b8, (const u16 *)0x020094dc) != 0) {
         *(s16 *)0x020096b4 = 1;
-        Func_080f9010(110);
+        Func_0200179a(110);
     }
 }

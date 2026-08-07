@@ -52,7 +52,18 @@
  * inflate the per-target multiset.
  */
 
-s32 Func_080770c0();  /* veneer 0x64a0 — event-flag test */
+s32 Func_020068a0();
+s32 Func_020068ae();
+s32 Func_020068ba();
+s32 Func_020068f2();
+s32 Func_020068fc();
+s32 Func_02006956();
+s32 Func_02006964();
+s32 Func_0200696e();
+s32 Func_0200697a();
+s32 Func_0200698c();
+s32 Func_02006998();
+                      /* veneer 0x64a0 — event-flag test */
 
 /* In-image script tables, at file offsets 0x6be0-0x6fe8 under the proven
  * 0x02008000 link base. */
@@ -81,12 +92,12 @@ s32 Func_0200037c(void)
     case 0:
     case 1:
     case 10:
-        if (Func_080770c0(0x93e) != 0) {
+        if (Func_020068a0(0x93e) != 0) {
             goto table_6da8;
         }
-        if (Func_080770c0(0x928) != 0) {
+        if (Func_020068ae(0x928) != 0) {
             /* 138 << 4. */
-            if (Func_080770c0(0x8a0) != 0) {
+            if (Func_020068ba(0x8a0) != 0) {
                 table = TABLE_6EB0;
                 table[22] = 2;
                 table[70] = 2;
@@ -99,8 +110,8 @@ s32 Func_0200037c(void)
             }
             return (s32) TABLE_6EB0;
         }
-        if (Func_080770c0(0x911) != 0) {
-            if (Func_080770c0(0x925) == 0) {
+        if (Func_020068f2(0x911) != 0) {
+            if (Func_020068fc(0x925) == 0) {
                 goto table_6da8;
             }
             table = TABLE_6DA8;
@@ -138,20 +149,20 @@ s32 Func_0200037c(void)
         return (s32) TABLE_6FE8;
 
     case 4:
-        if (Func_080770c0(0x93e) != 0) {
+        if (Func_02006956(0x93e) != 0) {
             return (s32) TABLE_6D48;
         }
-        if (Func_080770c0(0x911) == 0) {
+        if (Func_02006964(0x911) == 0) {
             goto table_6bf8;
         }
-        if (Func_080770c0(0x922) == 0) {
+        if (Func_0200696e(0x922) == 0) {
             goto table_6be0;
         }
-        if (Func_080770c0(0x8a0) != 0) {
+        if (Func_0200697a(0x8a0) != 0) {
             TABLE_6C58[46] = 1;
         }
-        if (Func_080770c0(0x925) != 0) {
-            if (Func_080770c0(0x8a0) == 0) {
+        if (Func_0200698c(0x925) != 0) {
+            if (Func_02006998(0x8a0) == 0) {
                 /* The stored value is the call's own r0, which is 0 here. */
                 TABLE_6C58[22] = 0;
             }

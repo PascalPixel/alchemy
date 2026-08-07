@@ -61,39 +61,52 @@
  */
 
 /* Old-style declarations: arities vary per call site across this overlay. */
-void Func_080f9010();
-void Func_0808a010();
-void Func_0808a090();
-void Func_0808a0d0();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a128();
-void Func_0808a138();
-void Func_0808a170();
-void Func_0808a1b8();
-void Func_080770c8();
-void Func_020025fc();
+void Func_020046e2();
+void Func_02004606();
+void Func_02004626();
+void Func_0200462c();
+void Func_02004612();
+void Func_02004636();
+void Func_020046aa();
+void Func_02004662();
+void Func_02004698();
+void Func_02004682();
+void Func_02004252();
+void Func_0200469a();
+void Func_02004630();
+void Func_02004270();
+void Func_0200468c();
+void Func_020046a8();
+void Func_0200465e();
+void Func_02004654();
+
+                     
+
+                     
+
+                     
+
+                     
 
 void Func_02001be8(void)
 {
-    Func_080f9010(21);
-    Func_0808a0d0(0, 376, 184);                 /* 188 << 1 */
-    Func_0808a100(0, 0);
-    Func_0808a0f0(16, 0x1780000, 0xb80000);     /* 188 << 17, 184 << 16 */
-    Func_0808a090(16, 0x10000, 0x8000);         /* 128 << 9, 128 << 8 */
-    Func_0808a0d0(16, 392, 168);                /* 196 << 1 */
-    Func_0808a1b8(16, 0x8000, 30);              /* 128 << 8 */
-    Func_0808a100(16, 1);
-    Func_0808a170(0x102b);
-    Func_0808a128(16, 4, 30);
-    Func_020025fc(16, 6);
-    Func_0808a138(0, 2);
-    Func_0808a010(6);
-    Func_0808a110(16, 3);
-    Func_020025fc(16, 6);
-    Func_0808a0d0(16, 376, 184);                /* 188 << 1 */
-    Func_0808a0f0(16, 0x6480000, 0x6480000);    /* 201 << 19, copied to r2 */
-    Func_0808a010(4);
-    Func_080770c8(0x811);
+    Func_020046e2(21);
+    Func_02004606(0, 376, 184);                 /* 188 << 1 */
+    Func_02004626(0, 0);
+    Func_0200462c(16, 0x1780000, 0xb80000);     /* 188 << 17, 184 << 16 */
+    Func_02004612(16, 0x10000, 0x8000);         /* 128 << 9, 128 << 8 */
+    Func_02004636(16, 392, 168);                /* 196 << 1 */
+    Func_020046aa(16, 0x8000, 30);              /* 128 << 8 */
+    Func_02004662(16, 1);
+    Func_02004698(0x102b);
+    Func_02004682(16, 4, 30);
+    Func_02004252(16, 6);
+    Func_0200469a(0, 2);
+    Func_02004630(6);
+    Func_02004698(16, 3);
+    Func_02004270(16, 6);
+    Func_0200468c(16, 376, 184);                /* 188 << 1 */
+    Func_020046a8(16, 0x6480000, 0x6480000);    /* 201 << 19, copied to r2 */
+    Func_0200465e(4);
+    Func_02004654(0x811);
 }

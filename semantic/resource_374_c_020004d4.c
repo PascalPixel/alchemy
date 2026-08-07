@@ -34,32 +34,52 @@
  */
 
 /* Overlay-local callees (byte-exact siblings in assets/code). */
-void Func_020022c8(s32, s32);
-void Func_020022e0(s32, s32, s32);
-void Func_020022f8(s32);
-void Func_02002564(void);
-void Func_02002574(void);
+void Func_02002b78();
+void Func_02002bec();
+void Func_02002c3e();
+void Func_02002c5c();
+void Func_020027c8(s32, s32);
+void Func_020027ec(s32, s32, s32);
+void Func_02002cba();
+void Func_02002bb0();
+void Func_02002a84(void);
+s32 Func_02002bec_b();
+void Func_02002824(s32);
+void Func_02002b20();
+void Func_02002b36();
+void Func_02002b40();
+void Func_02002ce4();
+s32 Func_02002c22();
+void Func_02002b6c();
+void Func_02002b8a();
+void Func_02002b90();
+void Func_02002b86();
+void Func_02002dec();
+void Func_02002cfc();
+void Func_02002d04();
+void Func_02002c4a();
+void Func_02002b2e(void);
+void Func_02002d10();
+void Func_02002d40();
+void Func_02002c74();
+
+                        
 
 /* Per-frame callbacks installed by this owner. */
 void Func_02002580(void);
 void Func_020025a0(void);
 
 /* Main-image imports reached through this overlay's veneer table. */
-void Func_080000c0();          /* frame wait, argument = frame count      */
-void Func_080000d0();          /* install per-frame task (callback, rank) */
-void Func_080000d8();          /* remove per-frame task (callback)        */
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-s32 Func_0808a080();           /* returns the actor/effect record pointer */
-void Func_0808a0d0();
-void Func_0808a150();
-void Func_0808a158();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a1b8();
-void Func_0808a1f0();
-void Func_080f9010();
+                               /* frame wait, argument = frame count      */
+                               /* install per-frame task (callback, rank) */
+                               /* remove per-frame task (callback)        */
+
+                     
+                               /* returns the actor/effect record pointer */
+
+                     
+
+                     
 
 void Func_020004d4(void)
 {
@@ -68,15 +88,15 @@ void Func_020004d4(void)
     u8 *flag;
     u8 saved;
 
-    Func_0808a018();
-    Func_0808a0d0(0, 82, 760);          /* 190 << 2 */
-    Func_0808a150(15, 0, 30);
-    Func_0808a170(0x0eae);              /* literal pool word */
-    Func_020022c8(15, 20);
-    Func_020022e0(15, 0xa000, 20);      /* 160 << 8 */
-    Func_0808a1f0(15, 258);             /* 129 << 1 */
-    Func_0808a010(20);
-    Func_02002564();
+    Func_02002b78();
+    Func_02002bec(0, 82, 760);          /* 190 << 2 */
+    Func_02002c3e(15, 0, 30);
+    Func_02002c5c(0x0eae);              /* literal pool word */
+    Func_020027c8(15, 20);
+    Func_020027ec(15, 0xa000, 20);      /* 160 << 8 */
+    Func_02002cba(15, 258);             /* 129 << 1 */
+    Func_02002bb0(20);
+    Func_02002a84();
 
     /*
      * 40 frames.  r0 is not reloaded between the two branches: the value
@@ -85,15 +105,15 @@ void Func_020004d4(void)
      * dataflow is preserved as written.
      */
     for (i = 0; i <= 39; i++) {
-        Func_020022f8(Func_0808a080(15));
-        Func_080000c0(1);
+        Func_02002824(Func_02002bec_b(15));
+        Func_02002b20(1);
     }
 
-    Func_080000d0(Func_02002580, 3200); /* 200 << 4 */
-    Func_080000d0(Func_020025a0, 3200);
-    Func_0808a1b8(0, 0xa000, 10);
+    Func_02002b36(Func_02002580, 3200); /* 200 << 4 */
+    Func_02002b40(Func_020025a0, 3200);
+    Func_02002ce4(0, 0xa000, 10);
 
-    record = (u8 *)Func_0808a080(20);
+    record = (u8 *)Func_02002c22(20);
     flag = record + 0x55;
     saved = *flag;
     *flag = 0;
@@ -104,20 +124,20 @@ void Func_020004d4(void)
      */
     for (i = 0; i <= 39; i++) {
         *(s32 *)(record + 12) += 0x1800;
-        Func_080000c0(1);
+        Func_02002b6c(1);
     }
 
     *flag = saved;
 
-    Func_080000d8(Func_02002580);
-    Func_080000d8(Func_020025a0);
-    Func_080000c0(1);
-    Func_080f9010(0xa1);
-    Func_0808a158(15, 0);
-    Func_0808a158(20, 0);
-    Func_0808a010(40);
-    Func_02002574();
-    Func_0808a150(0, 15, 30);
-    Func_0808a180(15, 0);
-    Func_0808a020();
+    Func_02002b8a(Func_02002580);
+    Func_02002b90(Func_020025a0);
+    Func_02002b86(1);
+    Func_02002dec(0xa1);
+    Func_02002cfc(15, 0);
+    Func_02002d04(20, 0);
+    Func_02002c4a(40);
+    Func_02002b2e();
+    Func_02002d10(0, 15, 30);
+    Func_02002d40(15, 0);
+    Func_02002c74();
 }

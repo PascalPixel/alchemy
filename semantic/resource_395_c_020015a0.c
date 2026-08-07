@@ -86,12 +86,18 @@ typedef unsigned int u32;
  *    compiler holds at zero (sl); written as literal 0.
  */
 
-void Func_080f9010();           /* play a sound cue */
-u8 *Func_080090c8();            /* create an effect record, or 0 */
-s32 Func_0808a498();            /* register the record with the emitter chain */
-void Func_080091e0();           /* set presentation phase (record, phase) */
-void Func_08009080();           /* select presentation mode (record, mode) */
-s32 Func_030003f0();            /* relocated IWRAM quotient helper */
+void Func_02003118();
+u8 *Func_02002fbe();
+s32 Func_02003124();
+void Func_02003008();
+void Func_02002fe8();
+s32 Func_02002fca();
+                                /* play a sound cue */
+                                /* create an effect record, or 0 */
+                                /* register the record with the emitter chain */
+                                /* set presentation phase (record, phase) */
+                                /* select presentation mode (record, mode) */
+                                /* relocated IWRAM quotient helper */
 
 void Func_020015a0(void)
 {
@@ -107,28 +113,28 @@ void Func_020015a0(void)
 
     /* 41-entry jump table: every tenth frame selects the spawn block. */
     if ((u32)frame <= 40 && (frame % 10) == 0) {
-        Func_080f9010(220);
+        Func_02003118(220);
 
         degrees = 0;
         for (i = 0; i <= 5; i++) {
             u8 *record;
 
-            record = Func_080090c8(0x11d, origin[0], origin[1], origin[2]);
+            record = Func_02002fbe(0x11d, origin[0], origin[1], origin[2]);
             if (record != 0) {
                 u8 *linked = *(u8 **)(record + 0x50);
 
-                chained = Func_0808a498(linked, chained);
+                chained = Func_02003124(linked, chained);
 
                 record[0x55] = 0;
 
                 linked = *(u8 **)(record + 0x50);
                 linked[9] = (u8)((linked[9] & ~0x0c) | 0x04);
 
-                Func_080091e0(record, 0);
-                Func_08009080(record, 1);
+                Func_02003008(record, 0);
+                Func_02002fe8(record, 1);
 
                 *(u16 *)(record + 0x64) = 0;
-                *(u16 *)(record + 0x66) = (u16)Func_030003f0(degrees, 360);
+                *(u16 *)(record + 0x66) = (u16)Func_02002fca(degrees, 360);
 
                 *(s32 *)(record + 0x38) = origin[0];
                 *(s32 *)(record + 0x3c) = origin[1];

@@ -49,11 +49,19 @@ typedef struct Object {
     u8 field55;
 } Object;
 
-Object *Func_0808a080();
-void Func_080091e0();
-void Func_08009150();
-void Func_080770c8();
-void Func_080091c0();
+Object *Func_02004ecc();
+Object *Func_02004ee4();
+void Func_02004e2c();
+void Func_02004e0e();
+Object *Func_02004f1c();
+void Func_02004e2e();
+Object *Func_02004f3c();
+void Func_02004e46();
+void Func_02004ef6();
+void Func_02004e90();
+void Func_02004ea2();
+
+                     
 
 void Func_020004a4(void)
 {
@@ -61,7 +69,7 @@ void Func_020004a4(void)
     s32 column;
     s32 row;
 
-    object = Func_0808a080(12);
+    object = Func_02004ecc(12);
     column = object->x >> 20;
     if (column != 9) {
         return;
@@ -71,26 +79,26 @@ void Func_020004a4(void)
         return;
     }
 
-    object = Func_0808a080(12);
-    Func_080091e0(object, 0);
+    object = Func_02004ee4(12);
+    Func_02004e2c(object, 0);
     object->field23 = 2;
     object->field55 = 0;
     object->field30 = 0xCCCC;
-    Func_08009150(object, object->x, 0x40000, object->z);
+    Func_02004e0e(object, object->x, 0x40000, object->z);
     object->field34 = 0x6666;
 
     object->field34 = 0x6666;
-    object = Func_0808a080(11);
+    object = Func_02004f1c(11);
     object->field23 = 2;
     object->field30 = 0xCCCC;
-    Func_08009150(object, object->x, 0x200000, object->z);
+    Func_02004e2e(object, object->x, 0x200000, object->z);
 
     object->field34 = 0x6666;
-    object = Func_0808a080(10);
+    object = Func_02004f3c(10);
     object->field30 = 0xCCCC;
-    Func_08009150(object, object->x, 0x40000, object->z);
+    Func_02004e46(object, object->x, 0x40000, object->z);
 
-    Func_080770c8(0x368);
-    Func_080091c0(15, 12, 1, 1, 13, row);
-    Func_080091c0(1, 25, 1, 1, column, row);
+    Func_02004ef6(0x368);
+    Func_02004e90(15, 12, 1, 1, 13, row);
+    Func_02004ea2(1, 25, 1, 1, column, row);
 }

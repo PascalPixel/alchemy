@@ -26,9 +26,15 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-u32 Func_080000f8();        /* random source */
-void Func_0808a160();
-void Func_080090d0();       /* releases / deactivates the object */
+u32 Func_02001a82();
+u32 Func_02001aaa();
+u32 Func_02001ae4();
+void Func_02001bea();
+u32 Func_02001b0a();
+void Func_02001b40();
+                            /* random source */
+                     
+                            /* releases / deactivates the object */
 
 void Func_02000c44(u8 *object)
 {
@@ -44,7 +50,7 @@ void Func_02000c44(u8 *object)
      * halfword; `subs #1 / lsls #16 / asrs #1` then sign-extends that halfword
      * and scales it by 0x8000.
      */
-    roll = (Func_080000f8() << 1) >> 16;
+    roll = (Func_02001a82() << 1) >> 16;
     step = (s32)(s16)(roll - 1) << 15;
     *(s32 *)(object + 8) += ((s32)*phase << 12) + step;
 
@@ -54,7 +60,7 @@ void Func_02000c44(u8 *object)
         *(s32 *)(object + 24) += 0x000007ae;
     } else {
         /* `lsls r0,#15 / lsrs r0,#16` keeps bits 16..1 of the roll. */
-        roll = (Func_080000f8() << 15) >> 16;
+        roll = (Func_02001aaa() << 15) >> 16;
         *(s32 *)(object + 16) = (s32)(*(s32 *)(object + 16) - (s32)roll)
                                 + (s32)0xffff0000;
         *(s32 *)(object + 24) += 0x00002666;
@@ -63,8 +69,8 @@ void Func_02000c44(u8 *object)
 
     /* A 1-in-N test scaled by the current phase; when it comes up zero the
      * object is retargeted. */
-    if ((u32)((s32)*phase * (s32)Func_080000f8()) >> 16 == 0) {
-        Func_0808a160(object, 7);
+    if ((u32)((s32)*phase * (s32)Func_02001ae4()) >> 16 == 0) {
+        Func_02001bea(object, 7);
     }
 
     /*
@@ -77,13 +83,13 @@ void Func_02000c44(u8 *object)
         next = (s32)((((roll << 2) + roll) >> 16) << 1) + 2;
         next = (s32)(u16)*phase - 1;
     } else {
-        roll = Func_080000f8();
+        roll = Func_02001b0a();
     }
     *(u16 *)(object + 100) = (u16)next;
 
     *(s32 *)(object + 104) -= 1;
     if (*(s32 *)(object + 104) == 0) {
         *(s32 *)(object + 108) = 0;
-        Func_080090d0(object);
+        Func_02001b40(object);
     }
 }

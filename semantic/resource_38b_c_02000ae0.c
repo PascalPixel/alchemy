@@ -42,21 +42,53 @@
  */
 
 /* Slot accessor. */
-extern u8 *Func_0808a080();
+extern u8 *Func_02001bb8();
+extern u8 *Func_02001bc0();
+extern u8 *Func_02001bc8();
+extern void Func_02001b86();
+extern s32 Func_02001b9c();
+extern void Func_02001c14();
+extern void Func_02001c1e();
+extern void Func_02001c28();
+extern void Func_02001bac(s32, s32, s32, s32, s32, s32);
+extern void Func_02001bc8_b(s32, s32, s32, s32, s32, s32);
+extern s32 Func_02001bee();
+extern s32 Func_02001bf8();
+extern void Func_02001c70();
+extern void Func_02001ccc();
+extern void Func_02001cd8();
+extern void Func_02001c94();
+extern void Func_02001c9e();
+extern void Func_02001ca8();
+extern u8 *Func_02001c7e();
+extern void Func_02001c3c();
+extern u8 *Func_02001c8a();
+extern void Func_02001c48();
+extern u8 *Func_02001c96();
+extern void Func_02001c54();
+extern s32 Func_02001c70_b();
+extern u8 *Func_02001cb2();
+extern u8 *Func_02001cc2();
+extern u8 *Func_02001cd0();
+extern void Func_02001d16();
+extern u8 *Func_02001cec();
+extern void Func_02001caa();
+extern void Func_02001d30();
+extern s32 Func_02001cde();
+extern void Func_02001d58();
+extern void Func_02001d68();
+extern void Func_02001dc8();
+extern void Func_02001948(void);
 
 /* Progress-flag test. */
-extern s32 Func_080770c0();
 
 /* Imports; old-style, arity open. */
-extern void Func_080091e0();
-extern void Func_0808a0f0();
-extern void Func_0808a1b8();
-extern void Func_0808a1e0();
-extern void Func_08009180(s32, s32, s32, s32, s32, s32);
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
+
+                            
+
+                                                        
 
 /* This overlay's collision-map repaint. */
-extern void Func_02000cb4(void);
 
 void Func_02000ae0(void)
 {
@@ -67,63 +99,63 @@ void Func_02000ae0(void)
     s32 seen;
 
     s32 permuted_5;
-    actor10 = Func_0808a080(10);
-    actor11 = Func_0808a080(11);
+    actor10 = Func_02001bb8(10);
+    actor11 = Func_02001bc0(11);
 
-    record = Func_0808a080(8);
-    Func_080091e0(record, 0);
+    record = Func_02001bc8(8);
+    Func_02001b86(record, 0);
 
-    seen = Func_080770c0(0x845);
+    seen = Func_02001b9c(0x845);
     if (seen != 0) {
         /* Already-seen layout. */
-        Func_0808a0f0(9, 0, 0);
-        Func_0808a0f0(10, 0, 0);
-        Func_0808a0f0(11, 0, 0);
+        Func_02001c14(9, 0, 0);
+        Func_02001c1e(10, 0, 0);
+        Func_02001c28(11, 0, 0);
 
-        Func_08009180(56, 15, 40, 15, 1, 2);
-        Func_080091c0(26, 15, 1, 3, 10, 15);
+        Func_02001bac(56, 15, 40, 15, 1, 2);
+        Func_02001bc8_b(26, 15, 1, 3, 10, 15);
 
-        if (Func_080770c0(0x849) == 0) {
-            if (Func_080770c0(0x848) != 0) {
+        if (Func_02001bee(0x849) == 0) {
+            if (Func_02001bf8(0x848) != 0) {
                 goto join;
             }
-            Func_0808a0f0(14, 0, 0);
+            Func_02001c70(14, 0, 0);
         }
 
         /* 208 << 8 = 0xd000, 176 << 8 = 0xb000. */
-        Func_0808a1b8(12, 0xd000, 0);
-        Func_0808a1b8(13, 0xb000, 0);
+        Func_02001ccc(12, 0xd000, 0);
+        Func_02001cd8(13, 0xb000, 0);
     } else {
         /* First-visit layout. */
-        Func_0808a0f0(12, 0, 0);
-        Func_0808a0f0(13, 0, 0);
-        Func_0808a0f0(14, 0, 0);
+        Func_02001c94(12, 0, 0);
+        Func_02001c9e(13, 0, 0);
+        Func_02001ca8(14, 0, 0);
 
-        record = Func_0808a080(9);
-        Func_080091e0(record, 0);
-        record = Func_0808a080(10);
-        Func_080091e0(record, 0);
-        record = Func_0808a080(11);
-        Func_080091e0(record, 0);
+        record = Func_02001c7e(9);
+        Func_02001c3c(record, 0);
+        record = Func_02001c8a(10);
+        Func_02001c48(record, 0);
+        record = Func_02001c96(11);
+        Func_02001c54(record, 0);
 
         /* `seen` is provably 0 on this arm; the original stores that
          * register rather than an immediate. */
         *(u8 *)(actor10 + 0x55) = (u8)seen;
 
-        if (Func_080770c0(0x881) != 0) {
+        if (Func_02001c70_b(0x881) != 0) {
             /* Set bit 4 of the +0x59 flag byte on slots 9, 16 and 11. */
-            record = Func_0808a080(9) + 89;
-            record = Func_0808a080(16) + 89;
-            record = Func_0808a080(11) + 89;
+            record = Func_02001cb2(9) + 89;
+            record = Func_02001cc2(16) + 89;
+            record = Func_02001cd0(11) + 89;
             *record = (u8)(*record | 16);
             *record = (u8)(*record | 16);
             *record = (u8)(*record | 16);
 
             /* 142 << 16 and 156 << 16: 16.16 coordinates. */
-            Func_0808a0f0(16, 0x008e0000, 0x009c0000);
-            record = Func_0808a080(16);
-            Func_080091e0(record, 0);
-            Func_0808a0f0(10, 0x008e0000, 0x009c0000);
+            Func_02001d16(16, 0x008e0000, 0x009c0000);
+            record = Func_02001cec(16);
+            Func_02001caa(record, 0);
+            Func_02001d30(10, 0x008e0000, 0x009c0000);
 
             /* 128 << 7 = 0x4000, into the child record's +0x1e halfword. */
             *(u16 *)(child + 30) = 0x4000;
@@ -132,15 +164,15 @@ void Func_02000ae0(void)
             /* Pool word 0xfff80000 — a signed add of -0x00080000. */
             *(s32 *)(actor10 + 12) += (s32)0xfff80000;
 
-            if (Func_080770c0(0x848) != 0) {
+            if (Func_02001cde(0x848) != 0) {
                 /* 132 << 16, 186 << 16. */
-                Func_0808a0f0(11, 0x00840000, 0x00ba0000);
+                Func_02001d58(11, 0x00840000, 0x00ba0000);
             } else {
                 /* 176 << 15 = 0x580000 — note the shift is 15, not 16, so
                  * this is not 176 << 16; and 196 << 16. */
                 permuted_5 = (u8)(*(u8 *)(actor11 + 89) | 4);
-                Func_0808a0f0(11, 0x00580000, 0x00c40000);
-                Func_0808a1e0(11, 3);
+                Func_02001d68(11, 0x00580000, 0x00c40000);
+                Func_02001dc8(11, 3);
                 *(u8 *)(actor11 + 89) = permuted_5;
             }
         } else {
@@ -153,5 +185,5 @@ void Func_02000ae0(void)
     }
 
 join:
-    Func_02000cb4();
+    Func_02001948();
 }

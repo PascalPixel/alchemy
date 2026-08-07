@@ -33,44 +33,55 @@
 /* Imports, old-style: arities are established per call site, not globally, and
  * the same name can take different argument counts elsewhere in this overlay.
  * Func_080770c0 and Func_0808a070 are tested, so they need return types. */
-void Func_0808a018();
-s32 Func_080770c0();
-void Func_0808a170();
-void Func_0808a180();
-void Func_0808a148();
-void Func_0808a138();
-void Func_0808a010();
-void Func_0808a178();
-s32 Func_0808a070();
-void Func_0808a130();
-void Func_0808a1b8();
-void Func_0808a020();
+void Func_02001b64();
+s32 Func_02001b4a();
+void Func_02001c1c();
+void Func_02001c34();
+void Func_02001c2e();
+void Func_02001c20();
+void Func_02001b96();
+void Func_02001c56();
+s32 Func_02001bbe();
+void Func_02001c60();
+void Func_02001c68();
+void Func_02001c48();
+void Func_02001c88();
+void Func_02001cac();
+void Func_02001be8();
+
+                     
+
+                     
+
+                    
+
+                     
 
 void Func_020000dc(void)
 {
     s32 line;
 
-    Func_0808a018();
+    Func_02001b64();
 
-    if (Func_080770c0(0x815) != 0) {
-        Func_0808a170(0x11c4);
-        Func_0808a180(12, 0);
+    if (Func_02001b4a(0x815) != 0) {
+        Func_02001c1c(0x11c4);
+        Func_02001c34(12, 0);
         line = 0xf76;
     } else {
-        Func_0808a170(line);
-        Func_0808a148(12, 0, 10);
-        Func_0808a138(12, 2);
-        Func_0808a010(6);
-        Func_0808a178(12, 0);
-        if (Func_0808a070(0, 0) == 0) {
-            Func_0808a170(line + 1);
+        Func_02001c2e(line);
+        Func_02001c20(12, 0, 10);
+        Func_02001c20(12, 2);
+        Func_02001b96(6);
+        Func_02001c56(12, 0);
+        if (Func_02001bbe(0, 0) == 0) {
+            Func_02001c60(line + 1);
         } else {
-            Func_0808a170(line + 2);
+            Func_02001c68(line + 2);
         }
-        Func_0808a130(12, 3);
-        Func_0808a180(12, 0);
-        Func_0808a1b8(12, 0xc000, 10);
+        Func_02001c48(12, 3);
+        Func_02001c88(12, 0);
+        Func_02001cac(12, 0xc000, 10);
     }
 
-    Func_0808a020();
+    Func_02001be8();
 }

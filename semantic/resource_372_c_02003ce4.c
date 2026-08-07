@@ -37,8 +37,12 @@
 
 /* Imports, old-style: interfaces unknown.  Named by the address each call site
  * computes, per this overlay's established convention. */
-u8 *Func_0808a080();
-void Func_080091f0();
+u8 *Func_0200841a();
+u8 *Func_02008422();
+void Func_020083da();
+void Func_020083f6();
+void Func_02008412();
+void Func_0200842c();
 
 void Func_02003ce4(void)
 {
@@ -50,8 +54,8 @@ void Func_02003ce4(void)
     s32 sel;
     s32 delta;
 
-    a = Func_0808a080(19);
-    b = Func_0808a080(27);
+    a = Func_0200841a(19);
+    b = Func_02008422(27);
     c = *(u8 **)(b + 80);
 
     t = *(s16 *)(a + 100);
@@ -62,20 +66,20 @@ void Func_02003ce4(void)
          * the rest use the unsigned halfword, re-read after every call because
          * each callee may write it. */
         if (t == 60) {
-            Func_080091f0(0x30000, 0x30000, 0x10000);   /* 192<<10, 128<<9 */
+            Func_020083da(0x30000, 0x30000, 0x10000);   /* 192<<10, 128<<9 */
             h = *(u16 *)(a + 100);
         }
         if (h == 40) {
-            Func_080091f0(0x40000, 0x40000, 0x10000);   /* 128<<11 */
+            Func_020083f6(0x40000, 0x40000, 0x10000);   /* 128<<11 */
             h = *(u16 *)(a + 100);
         }
         if (h == 30) {
-            Func_080091f0(0x20000, 0x20000, 0x10000);   /* 128<<10 */
+            Func_02008412(0x20000, 0x20000, 0x10000);   /* 128<<10 */
             h = *(u16 *)(a + 100);
         }
         *(u16 *)(a + 100) = (u16)(h - 1);
         if (h == 20) {
-            Func_080091f0(-1, -1, 0xe666);
+            Func_0200842c(-1, -1, 0xe666);
             h = *(u16 *)(a + 100);
         }
     }

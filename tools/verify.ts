@@ -6,8 +6,8 @@ import {
   externalSymbolAssembly,
   sourceToAssemblyPlan,
   type CompilerTarget,
-} from "./alchemy_gcc.ts";
-import { DEFAULT_TARGET, decompTarget, parseDecompTarget } from "./decomp_targets.ts";
+} from "./lib/alchemy_gcc.ts";
+import { DEFAULT_TARGET, decompTarget, parseDecompTarget } from "./lib/decomp_targets.ts";
 
 export const ROOT = dirname(dirname(Bun.fileURLToPath(import.meta.url)));
 export const ROM_BASE = 0x08000000;

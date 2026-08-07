@@ -166,6 +166,13 @@ const UNSCHEDULED_OVERLAY_SOURCES = new Set([
   "exact/resource_3b2_c_02000ab0.c",
   "exact/resource_3c4_c_02000ab0.c",
   "exact/resource_3c5_c_02000ab0.c",
+  // Adopted before the second scheduler pass learned to issue a lone argument
+  // immediate ahead of a ready literal-pool load.  The reference writes
+  // `ldr r0, [pc]' first and `movs r1, #1' after it, which is what the
+  // unscheduled order gives; the ROM blob, not the derived inventory, is the
+  // witness (the asset rebuild was the thing that caught the drift).
+  "exact/resource_3cb_c_02001050.c",
+  "semantic/resource_3cb_c_02001050.c",
 ]);
 // This decoder has mutually exclusive switch arms that reuse the same input
 // base.  Following jumps during CSE rematerializes one arm's base in r3;
@@ -1703,6 +1710,15 @@ const SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES = new Set([
 // Companion to the pool-load-late class: a lone `movs rN, #K' argument setter
 // also issues before a ready literal-pool load.  Probe set, 2026-08-07.
 const SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES = new Set<string>([]);
+// A small HImode constant reaches its register through the literal pool because
+// *thumb_movhi_insn's "mn" alternative precedes its "I" one -- which is what the
+// reference does for most owners (see the standing note above the pattern in
+// alchemy-gcc: dropping the n regresses 25 byte-exact functions).  A few owners
+// want the plain `movs' instead; -fthumb-hi-immediate is the per-source opt-in.
+const THUMB_HI_IMMEDIATE_OVERLAY_SOURCES = new Set([
+  "exact/resource_377_c_020003f8.c",
+  "semantic/resource_377_c_020003f8.c",
+]);
 const NO_THREAD_JUMPS_OVERLAY_SOURCES = new Set([
   "exact/resource_3c4_c_02001aba.c",
   "semantic/resource_3c4_c_02001aba.c",
@@ -2075,6 +2091,9 @@ export function cflagsForSource(source: string): readonly string[] {
     ...(SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fthumb-sched-immediate-before-pool"]
       : []),
+    ...(THUMB_HI_IMMEDIATE_OVERLAY_SOURCES.has(sourceKey(source))
+      ? ["-fthumb-hi-immediate"]
+      : []),
     ...(NO_THREAD_JUMPS_OVERLAY_SOURCES.has(sourceKey(source))
       ? ["-fno-thread-jumps"]
       : []),
@@ -2182,6 +2201,7 @@ export function evidencedRoutingFlags(compiler?: "gcc296" | "agbcc"): string[] {
     ...NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES,
     ...SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES,
     ...SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES,
+    ...THUMB_HI_IMMEDIATE_OVERLAY_SOURCES,
     ...NO_THREAD_JUMPS_OVERLAY_SOURCES,
     ...NO_GCSE_OVERLAY_SOURCES,
     ...NO_EXPENSIVE_OVERLAY_SOURCES,
@@ -2459,6 +2479,13 @@ const EXPECTED: Record<HostKey, Record<CompilerTarget, Record<string, readonly s
         // Witness resource_371:1a98, 2026-08-07. Cross-host rule: rebuild+pin
         // linux from the same commit before the next cloud session.
         "39dd5e4674ae60996d03a4187518eccccd40f1c7317452b3e0db22a20b71fecc",
+        // -fthumb-hi-immediate: a small HImode constant reaches its register
+        // with `movs' instead of the literal-pool load *thumb_movhi_insn's
+        // "mn" alternative forces. Default-off and inert unless routed; the
+        // standing "do not fix the mn" note in arm.md stays true globally.
+        // Witness resource_377:03f8, 2026-08-07. Cross-host rule: rebuild+pin
+        // linux from the same commit before the next cloud session.
+        "bf11052426aac844c53ee2cef4f9cccd5dc94116973e3df8fa53272fac88d336",
       ],
     },
     gs2: {

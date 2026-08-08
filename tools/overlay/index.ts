@@ -23,6 +23,7 @@ const ROOT = dirname(dirname(HERE));
 // hand-list subcommands" -- it points a still-valid subcommand name at the
 // native binary that replaced its .ts file, not at a stale path.
 const RUST_SUBCOMMANDS: Record<string, string> = {
+  overlay_candidate_rank: "tools-rs/overlay-candidate-rank/target/release/overlay-candidate-rank",
   overlay_driver: "tools-rs/overlay-driver/target/release/overlay-driver",
   overlay_entry: "tools-rs/overlay-entry/target/release/overlay-entry",
   overlay_mode_cohort: "tools-rs/overlay-mode-cohort/target/release/overlay-mode-cohort",

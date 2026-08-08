@@ -423,7 +423,8 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
             _ => return Err(format!("formation {index} has invalid slots")),
         };
         let offset = index * 16;
-        formations[offset] = integer(&items[0], 0, 0xff, &format!("formation {index} layout"))? as u8;
+        formations[offset] =
+            integer(&items[0], 0, 0xff, &format!("formation {index} layout"))? as u8;
         for (slot_index, slot) in items[1..].iter().enumerate() {
             let (member, minimum, maximum) = slot_triple(slot, &format!("formation {index}"))?;
             formations[offset + 1 + slot_index] = member as u8;
@@ -587,7 +588,10 @@ pub fn export_encounter_data(rom: &[u8], directory: &str) -> Result<Vec<Encounte
         "brightness_curve.json",
         &object(vec![
             ("format", Value::from(1)),
-            ("address", Value::from(hexadecimal(BRIGHTNESS_CURVE_ADDRESS))),
+            (
+                "address",
+                Value::from(hexadecimal(BRIGHTNESS_CURVE_ADDRESS)),
+            ),
             ("size", Value::from(BRIGHTNESS_CURVE_SIZE)),
             ("phases", Value::Array(phases)),
         ]),
@@ -878,7 +882,15 @@ mod tests {
         let dir = scratch("slots");
         let prefix = dir.join("p");
         let mut source = table_source();
-        source["formations"][1] = json!([0, [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]]);
+        source["formations"][1] = json!([
+            0,
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1]
+        ]);
         let path = write_source(&prefix, "encounter_tables.json", &source);
         assert_eq!(
             build_encounter_tables(&path).unwrap_err(),
@@ -910,7 +922,10 @@ mod tests {
     fn addresses_are_read_with_ecmascript_number_semantics() {
         // The tracked sources store addresses as hex strings; f64::from_str
         // would reject every one of them.
-        assert_eq!(js_number(&json!("0x080c5c38")), ENCOUNTER_TABLE_ADDRESS as f64);
+        assert_eq!(
+            js_number(&json!("0x080c5c38")),
+            ENCOUNTER_TABLE_ADDRESS as f64
+        );
         assert_eq!(js_number(&json!("0x080c5c38")), 135_027_768.0);
         assert_eq!(js_number(&json!("  0x20  ")), 32.0);
         assert_eq!(js_number(&json!("")), 0.0);
@@ -930,7 +945,10 @@ mod tests {
         assert_eq!(integer(&json!(1.0), 0, 1, "v").unwrap(), 1);
         assert_eq!(integer(&json!("1"), 0, 1, "v").unwrap_err(), "invalid v");
         assert_eq!(integer(&json!(1.5), 0, 2, "v").unwrap_err(), "invalid v");
-        assert_eq!(integer(&json!(9.007199254740993e15), 0, i64::MAX, "v").unwrap_err(), "invalid v");
+        assert_eq!(
+            integer(&json!(9.007199254740993e15), 0, i64::MAX, "v").unwrap_err(),
+            "invalid v"
+        );
     }
 
     #[test]
@@ -944,7 +962,10 @@ mod tests {
             flag_byte(Some(&json!({"bit0": false, "bits_1_4": 1})), "f").unwrap_err(),
             "f has unknown fields"
         );
-        assert_eq!(flag_byte(Some(&json!(null)), "f").unwrap_err(), "f is not an object");
+        assert_eq!(
+            flag_byte(Some(&json!(null)), "f").unwrap_err(),
+            "f is not an object"
+        );
     }
 
     #[test]

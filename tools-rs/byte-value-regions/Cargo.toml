@@ -7,6 +7,10 @@ edition.workspace = true
 name = "byte_value_regions"
 path = "src/lib.rs"
 
+[[bin]]
+name = "byte-value-regions"
+path = "src/main.rs"
+
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 serde_json = { version = "1", features = ["preserve_order"] }

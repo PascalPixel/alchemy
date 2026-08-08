@@ -480,8 +480,9 @@ pub fn main_pipeline(options: &Options, cwd: &Path) -> Result<String, String> {
     run(
         &root,
         &[
-            bun.clone(),
-            "tools/make/build_claimed.ts".into(),
+            root.join("tools-rs/build-claimed/target/release/build-claimed")
+                .to_string_lossy()
+                .into_owned(),
             rom_path_string.clone(),
             "--jobs".into(),
             js_number_to_string(options.jobs),
@@ -1071,6 +1072,6 @@ mod tests {
     #[test]
     fn repo_root_is_the_alchemy_checkout() {
         let root = repo_root();
-        assert!(root.join("tools/make/build_rom.ts").exists(), "{root:?}");
+        assert!(root.join("tools-rs/build-rom/Cargo.toml").exists(), "{root:?}");
     }
 }

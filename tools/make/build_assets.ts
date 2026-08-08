@@ -28,14 +28,11 @@ import { build_from_midi_sidecar, type Sidecar } from "../lib/midi_sequence.ts";
 import { type WaveRecordSource, buildWaveRecord } from "./audio_wave.ts";
 import { build_still, read_still_index } from "./indexed_still.ts";
 import { build_static_sprite_series, static_sprite_frame_name } from "./static_sprite_series.ts";
-import { build_resource_directory } from "./resource_directory.ts";
 import { build_title_resource } from "./title_resources.ts";
 import { build_simple_resource } from "./simple_resources.ts";
 import { build_character_catalog } from "./character_catalog.ts";
-import { build_message_archive } from "./message_archive.ts";
 import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
-import { build_localization_tables } from "./localization_tables.ts";
 import { build_battle_effect_data } from "./battle_effect_data.ts";
 import {
   build_sentou_gamen_data,
@@ -72,11 +69,6 @@ import {
   build_runtime_support_component,
   parse_runtime_support_source,
 } from "./runtime_support_data.ts";
-import {
-  BYTE_HENKAN_ADDRESS,
-  BYTE_HENKAN_SIZE,
-  build_byte_henkan_tables,
-} from "./byte_henkan.ts";
 import {
   build_staff_roll,
   STAFF_ROLL_ADDRESS,
@@ -115,9 +107,12 @@ function flatAssetPath(path: string): string {
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const ROM_BASE = 0x08000000;
 const ROM_SIZE = 0x00800000;
+const BYTE_HENKAN_ADDRESS = 0x080092b8;
+const BYTE_HENKAN_SIZE = 0x900;
 
 function nativeBytes(tool: string, source: string): Buffer {
-  const binary = join(ROOT, "tools-rs", "target", "release", tool);
+  const standalone = join(ROOT, "tools-rs", tool.replaceAll("_", "-"), "target", "release", tool);
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", tool);
   const child = Bun.spawnSync([binary, "build-stdout", source], {
     cwd: ROOT,
     stdout: "pipe",
@@ -1034,7 +1029,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (number(document.address) !== number(entry.address)) {
       throw new Error("resource-directory address differs from manifest");
     }
-    const built = build_resource_directory(document);
+    const built = nativeBytes("resource-directory", source);
     return [built, [String(entry.source)], { slots: built.length / 4 }];
   }
   if (kind === "golden-sun-runtime-support-data") {
@@ -1045,7 +1040,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-byte-henkan-tables") {
     const sourceName = String(entry.source);
-    const built = build_byte_henkan_tables(sourcePath(sourceName));
+    const built = nativeBytes("byte-henkan", sourcePath(sourceName));
     if (number(entry.address) !== BYTE_HENKAN_ADDRESS || number(entry.size) !== BYTE_HENKAN_SIZE ||
         built.length !== BYTE_HENKAN_SIZE) {
       throw new Error("byte-conversion tables differ from canonical manifest extent");
@@ -1075,7 +1070,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size)) {
       throw new Error("message-archive extent differs from manifest");
     }
-    const built = build_message_archive(document);
+    const built = nativeBytes("message_archive", source);
     return [built, [String(entry.source)], {
       banks: document.banks.length,
       messages: document.banks.reduce((sum: number, bank: Json[]) => sum + bank.length, 0),
@@ -1108,7 +1103,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     if (number(document.address) !== number(entry.address) || number(document.size) !== number(entry.size)) {
       throw new Error("localization-table extent differs from manifest");
     }
-    const built = build_localization_tables(document);
+    const built = nativeBytes("localization-tables", source);
     return [built, [String(entry.source)], { segments: document.segments.length }];
   }
   if (kind === "golden-sun-battle-effect-data") {

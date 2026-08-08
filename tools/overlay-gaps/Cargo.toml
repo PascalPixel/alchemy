@@ -1,0 +1,18 @@
+[workspace]
+
+[package]
+name = "overlay-gaps"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+overlay-call-targets = { path = "../overlay-call-targets" }
+overlay-published = { path = "../overlay-published" }
+
+[[bin]]
+name = "overlay-gaps"
+path = "src/main.rs"
+
+[lib]
+name = "overlay_gaps"
+path = "src/lib.rs"

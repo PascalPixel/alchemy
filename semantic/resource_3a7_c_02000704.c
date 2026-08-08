@@ -24,7 +24,7 @@
  * 0x0200050c..0x02000690 addresses one at a time, and byte 35 is the field each
  * of those owners sets to 1 - so this is the batch form of the same field.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_3a7
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7
  * 0704`.  One site, matching the inventory's calls=1:
  *   Func_0808a080 x1 <- veneer 0x02001130
  *

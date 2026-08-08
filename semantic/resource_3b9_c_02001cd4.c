@@ -21,7 +21,7 @@
  * (0x03001ebc, 0x00010002, 0x20f8, 0x105, 0x103, 0x101), and the body
  * resumes at 0x02002154 with the gate's compare.
  *
- * When this row was drafted, `tools-rs/overlay-show` SILENTLY DROPPED a
+ * When this row was drafted, `tools/overlay-show` SILENTLY DROPPED a
  * second positional bound and fell back to its own extent scan, which
  * stops at the first return-shaped halfword -- and a pool word routinely
  * looks like `bx rN`. So `overlay_show resource_3b9 1cd4 23e0` returned
@@ -34,7 +34,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only
  * by `bl`. All 180 call sites resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3b9 1cd4 23e0` under the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b9 1cd4 23e0` under the
  * `+2` rule; the census (36 x Func_0808a1b8, 25 x Func_02001c48,
  * 24 x Func_0808a1e8, 17 x Func_02001c5c, ...) is reproduced exactly by
  * the calls below. 138 veneer sites and 42 to this overlay's own two

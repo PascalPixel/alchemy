@@ -21,7 +21,7 @@
  * no arguments.
  *
  * Call accounting: 82 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3a8 1930`; 12 distinct import
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a8 1930`; 12 distinct import
  * veneers, no intra-overlay call.  Every per-target count was reproduced by
  * hand from `printed_target - site - 2` and matches the tool exactly:
  *   0x02003b9c -> Func_08009180 x49    0x02003ba4 -> Func_080091c0  x7

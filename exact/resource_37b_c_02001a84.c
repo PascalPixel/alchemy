@@ -12,7 +12,7 @@
  * not to this one -- which is why sweep D reports the gap as starting
  * two bytes early. Measured to the epilogue. Takes no argument.
  *
- * Call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_37b 1a84 1aac`'s `+2` rule: `sites=2 veneer=1 prologue=1`,
  * and two are transcribed. The second is in-overlay, to Func_02001b44.
  *

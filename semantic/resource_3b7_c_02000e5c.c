@@ -33,7 +33,7 @@
  * completion flag) and 0x0200a138 (the result) - all of which Func_0200173c
  * and Func_020016a8 use identically, plus the IWRAM helper 0x030001d8.
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  Completeness, as a multiset:
  * Func_0808a080 x17, Func_08009080 x17, Func_02000dd0 x13, Func_03000380 x8,
  * Func_02000e44 x6, Func_030001d8 x2 (through the overlay's own `call_via`

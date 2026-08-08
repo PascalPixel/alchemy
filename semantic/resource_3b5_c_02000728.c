@@ -24,7 +24,7 @@
  *
  * It also calls two overlay-local rows directly, Func_02000ca8 and
  * Func_02000224, both resolved as `prologue` by
- * `tools/lib/overlay_call_targets.ts`.
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.
  *
  * The store at 0x02000736 is the documented displacement/value trap: r2 is
  * built as 224 << 1 = 448, used as the workspace displacement, then reduced by
@@ -35,7 +35,7 @@
  * sites, spelled out in the assembly for ids 20, 21, 22, 24, 25, 26 and 27 —
  * note that 23 is skipped, so this is not a loop and is not folded into one.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; twenty-six
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; twenty-six
  * sites, against the inventory's `calls=24`, which is a documented lower
  * bound.
  */

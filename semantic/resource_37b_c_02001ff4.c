@@ -20,7 +20,7 @@
  * semantic/overlays/resource_37b_c_020014b8.c).  The overlay image is
  * writable EWRAM, so the table is not declared `const`.
  *
- * Call sites resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores `target_offset - 2`; the disassembler's own annotations are wrong).
  * 42 sites, 22 distinct targets: 40 import veneers and 2 real in-overlay
  * prologues, 0x02000054 (byte-exact in assets/code) at 0x020020b4 and

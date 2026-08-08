@@ -9,7 +9,7 @@
  * Bytes 0x02000a24-0x02000a3b are the six-word literal pool, reached only by
  * `ldr rN, [pc, #imm]`.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_399
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_399
  * 0974 --annotate` (an overlay `bl` stores `target - 2`, so the disassembler's
  * own annotations are wrong on every overlay).  18 sites, 9 distinct imports:
  *   Func_0808a080(0)        scene-record accessor; +6 is the heading halfword

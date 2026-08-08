@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. Its Thumb pointer is written into a script
  * record; no `bl` in the image reaches it. Found by
- * `bun tools/lib/overlay_published.ts resource_380`. It is the last member
+ * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_380`. It is the last member
  * of the contiguous published run 0x02002400-0x020027f8 and the only
  * one that is not a talk handler -- it carries no scene bracket and no
  * dialogue.
@@ -22,7 +22,7 @@
  * 0x020027f8 (drafted, resource_380_c_020027f8.c). No literal pool.
  *
  * The `bl` target resolved through the overlay's import-veneer table
- * under the +2 rule (tools/lib/overlay_call_targets.ts): the veneer at
+ * under the +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --): the veneer at
  * image 0x4ac4 loads 0x0808a2a1 and branches, so the callee is
  * Func_020072b4.
  *

@@ -13,8 +13,8 @@
  * call sites per overlay_unindexed.ts. This owner makes one outgoing
  * call, resolved with the `+2` rule against the raw image (this owner
  * starts outside a recorded row, so overlay_call_targets.ts's own table
- * does not cover it -- resolved with `bun tools-rs/overlay-show
- * resource_3a4 3a44 | bun tools/lib/overlay_call_targets.ts resource_3a4 3a44
+ * does not cover it -- resolved with `bun tools/overlay-show
+ * resource_3a4 3a44 | cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 3a44
  * 3a6e --annotate`):
  *   0x2003a56 -> veneer -> Func_080000d0(0x0200b9c9, 0xc80)   install a per-frame task, established, the standard 200-frame rate
  *

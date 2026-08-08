@@ -6,13 +6,13 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record. Found by
- * `bun tools/lib/overlay_published.ts resource_39e`.
+ * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_39e`.
  *
  * Argument order is worth stating because the two calls set r0 twice
  * and a histogram of callees cannot tell them apart: the sound id 123
  * is loaded first and consumed by Func_02006ce6 at 0x02002768, then r0
  * is reloaded with 1 for Func_02006c74 at 0x0200276e. Resolved
- * per-site with `bun tools/lib/overlay_call_targets.ts resource_39e 0x2764
+ * per-site with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 0x2764
  * 0x2778 --annotate`, not by pairing the summary histogram against call
  * shapes.
  *

@@ -29,7 +29,7 @@
  * times below.  The three dialogue beats are three separate runs of `bl`s,
  * not one shared site reached three times, so writing them out does not
  * inflate the multiset.  All 35 targets are import veneers, resolved with
- * tools/lib/overlay_call_targets.ts.
+ * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --.
  *
  * REGISTER NOTE.  r5 holds the slot-11 record only up to 0x02000474, where
  * `movs r5, #128 / lsls r5, #9` reuses it as the constant 0x10000.  The

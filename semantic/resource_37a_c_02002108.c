@@ -47,7 +47,7 @@
  * No pool word decodes as a BL prefix, so neither pool injects a phantom call
  * site.
  *
- * All 82 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 82 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are NOT the callees.
  * sites=82, distinct_targets=19 (77 veneer, 5 overlay-local prologue), against

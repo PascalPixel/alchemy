@@ -5,7 +5,7 @@
  * the room-0x58 cutscene, called from exactly one place: the overlay root
  * Func_020011b0 (see semantic/overlays/resource_3a2_c_020011b0.c) reaches it
  * when the sub-state Data_02000240[225] is 3 and progress flag 0x109 is clear.
- * `bun tools/lib/overlay_call_targets.ts resource_3a2` lists 0x020001ec as one of
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2` lists 0x020001ec as one of
  * the overlay's five internal `prologue` targets, and 0x11b0's own breakdown
  * accounts for that single site.
  *
@@ -44,7 +44,7 @@
  * Executable extent is therefore 1632 - 12 - 16 = 1604 bytes in two ranges,
  * 0x020001ec-0x020003f3 and 0x02000400-0x0200083b.
  *
- * Call sites resolved with `bun tools/lib/overlay_call_targets.ts resource_3a2 01ec`
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2 01ec`
  * -- never from overlay_show's printed annotations, since an overlay `bl` stores
  * target_offset - 2.  173 sites, 25 distinct veneer targets, no internal calls:
  *   0x14a8 -> Func_08009178   0x1558 -> Func_0808a100

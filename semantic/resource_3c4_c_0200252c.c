@@ -5,7 +5,7 @@
  * A cutscene beat that places one actor and then stamps a single collision
  * cell under each of slots 17 and 18.
  *
- * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 7 sites, 3 distinct
  * callees.  The disassembler's annotations (0x020055e2, 0x02005658,
  * 0x02005660, 0x020027b0, 0x0200567e, 0x02005686, 0x020027d2) are all

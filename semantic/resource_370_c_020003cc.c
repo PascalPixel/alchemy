@@ -23,7 +23,7 @@
  * state is carried ACROSS each pool: for example r0 is built at 0x02000af2 and
  * consumed at 0x02000b4e on the far side of the third pool.
  *
- * CALL ACCOUNTING.  `bun tools/lib/overlay_call_targets.ts resource_370 --json`
+ * CALL ACCOUNTING.  `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_370 --json`
  * reports 139 sites in this span (the inventory's calls=127 counts distinct
  * targets and is a lower bound, as HANDOVER section 0 records).  Of those:
  *   - 137 are real calls, and this file contains one C call expression for

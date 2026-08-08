@@ -10,7 +10,7 @@
  * byte-identical.
  *
  * What was changed: the entry symbol, and the four calls, re-resolved with
- * 'bun tools/lib/overlay_call_targets.ts resource_3a7 15a4' - four sites, four
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 15a4' - four sites, four
  * distinct targets, all ordinary prologues of this overlay, in the same site
  * order as resource_3bf:
  *   0x02001740  class predicate -> quiet-NaN result   (3bf: 0x02005dd4)

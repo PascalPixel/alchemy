@@ -6,7 +6,7 @@
  * one-word literal pool at 0x020047b8 (0x0200cf2c).
  *
  * There are no calls at all in this owner (the inventory's calls=0 is
- * confirmed by tools/lib/overlay_call_targets.ts reporting zero sites).
+ * confirmed by cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- reporting zero sites).
  *
  * LINK BASE.  The pool word 0x0200cf2c is an in-image address under this
  * overlay's 0x02008000 link base: file offset 0x4f2c is the first byte after

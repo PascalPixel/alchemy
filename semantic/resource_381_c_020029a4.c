@@ -44,7 +44,7 @@
  * that cannot collide with the index range 0..9; there is ONE Func_080000c0
  * site inside it.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 28 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 28 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_080000c0 x14, Func_0808a330 x3, Func_0808a348 x2, Func_0808a1e8 x2,
  *   Func_080f9010 x2, and one each of Func_080000d0, Func_080000d8,

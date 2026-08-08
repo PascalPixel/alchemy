@@ -4,7 +4,7 @@
  * Resource 3bc, owner at 0x020002f8.  268 strict bytes: 248 bytes of code
  * (0x02f8-0x03ef) and a five-word literal pool at 0x03f0-0x0403.
  *
- * 16 call sites resolved with tools/lib/overlay_call_targets.ts, all import
+ * 16 call sites resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --, all import
  * veneers.  The inventory row says calls=15, which is the documented
  * lower-bound behaviour of that field; the per-target multiset is the proof:
  *   080770c0 x1, 0808a080 x4, 0808a0b8 x1, 0808a0e8 x2, 08009150 x3,

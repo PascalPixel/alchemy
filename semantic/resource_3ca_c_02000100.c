@@ -13,7 +13,7 @@
  *   0x02000160  0x0000cccc   the per-frame drift added to +12
  *   0x02000164  0x020094c4   in-image address, file offset 0x14c4
  *
- * All four call sites resolved with tools/lib/overlay_call_targets.ts (the
+ * All four call sites resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (the
  * disassembler's own `bl` annotations are wrong for overlays by construction):
  *
  *   0x02000116 -> veneer 0x02001334 -> Func_080000f8

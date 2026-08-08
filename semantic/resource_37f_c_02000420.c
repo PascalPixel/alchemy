@@ -7,7 +7,7 @@
  * five-word literal pool at 0x02000558-0x0200056b).  r0 is the popped return
  * address, so the owner is `void`.
  *
- * All 31 call sites were resolved with `tools/lib/overlay_call_targets.ts`; all 31
+ * All 31 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 31
  * are import veneers.  The inventory's `calls=29` is the documented undercount
  * of that field (it counts distinct targets under the old decoding), and the
  * tool's `sites=31` is used here instead.

@@ -14,7 +14,7 @@
  *
  * 0x020047fc is the same routine with the threshold 256 instead of 64.
  *
- * `bl` target resolved with tools/lib/overlay_call_targets.ts (target offset =
+ * `bl` target resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset =
  * stored displacement + 2): the single site reaches the import veneer at
  * 0x02004ec4.  The disassembler's annotation for it is wrong.
  *

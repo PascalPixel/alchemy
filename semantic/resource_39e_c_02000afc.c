@@ -16,7 +16,7 @@
  * epilogue.
  *
  * Published population (sweep B). All 19 `bl` sites resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39e afc bd4`; the tool
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e afc bd4`; the tool
  * reports sites=19 and 19 bl lines were transcribed.
  *
  * THE DRAIN LOOP is the one real loop: entry jumps straight to its bottom

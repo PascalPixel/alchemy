@@ -36,7 +36,7 @@
  *                amount and three ids).  Small pooled constants are spelled
  *                inline below rather than as `&Value_...` symbols.
  *
- * All 38 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 38 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (--annotate for the listing, site->target from --json, never from the
  * summary histogram); overlay_show.ts's own `bl` annotations are wrong on
  * every overlay because an overlay `bl` stores target_offset - 2.  The tool

@@ -27,7 +27,7 @@
  * already-drafted cd4 twin itself.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e bf4 cb4's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e bf4 cb4's
  * +2 rule; the three spawn sites are intra-overlay bl to Func_0200013c).
  *
  * The loop is a decrementing do-while closed by `cmp r6, #3 / bhi` --

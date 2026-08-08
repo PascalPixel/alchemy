@@ -37,7 +37,7 @@
  * copies — duplicating them would inject a phantom call.
  * Table B (r1 = 0..5): 0x1478 0x14f8 0x1490 0x14a8 0x14c0 0x1502.
  *
- * All 57 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 57 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (--annotate for the listing, site->target from --json, never from the
  * summary histogram); overlay_show.ts's own `bl` annotations are wrong on
  * every overlay because an overlay `bl` stores target_offset - 2.  The tool

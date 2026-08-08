@@ -21,7 +21,7 @@
  * CORRECTION (name sweep): this file's callee names came from a naive
  * pc-relative decode and were wrong.  Resolved through the overlay's
  * import-veneer table under the +2 rule
- * (tools/lib/overlay_call_targets.ts), every callee is main-ROM -- the
+ * (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --), every callee is main-ROM -- the
  * Func_0808a0xx scene vocabulary shared with the other item-28 drafts,
  * plus the local wrapper Func_02004248.  The earlier claim that six
  * callees were "called at two arities inside this one owner" was an

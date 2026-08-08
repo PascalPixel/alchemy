@@ -15,7 +15,7 @@
  * 0x02000854.  The return address is popped into r0, so r0 does not survive
  * and the owner is void.  No frame.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong):
  *
  *   0x020007de -> Func_0808a018   (scene open)

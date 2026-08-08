@@ -20,7 +20,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only as
  * a published pointer. All 15 `bl` targets resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39e 26d8 2764` under the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 26d8 2764` under the
  * `+2` rule. No branches.
  *
  * THIS ROW IS THE PUBLISHER OF ITS OWN NEIGHBOUR, AND THAT IS THE FIND.

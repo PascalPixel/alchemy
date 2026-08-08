@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+name = "sentou-resources"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "sentou_resources"
+path = "src/lib.rs"
+
+[[bin]]
+name = "sentou-resources"
+path = "src/main.rs"
+
+[dependencies]
+alignment-tail = { path = "../alignment-tail" }
+extract-resource = { path = "../extract-resource" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

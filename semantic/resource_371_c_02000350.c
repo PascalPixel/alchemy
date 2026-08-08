@@ -27,7 +27,7 @@
  * alchemist.ts refused (tier: unaligned only, no original-order row).
  * overlay_mode_cohort.ts singles found -fno-regmove closes the mirrored
  * `eors` pair at the end (matches the documented NO_REGMOVE_SOURCES
- * fingerprint in tools/lib/alchemy_gcc.ts) but leaves this first `ands` pair
+ * fingerprint in tools/alchemy-bundle) but leaves this first `ands` pair
  * at differing=2, not exact, so no route entry was added.
  */
 

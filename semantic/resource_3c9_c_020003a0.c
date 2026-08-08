@@ -18,7 +18,7 @@
  * never reaches it as an instruction.
  *
  * Both call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c9 03a0 03fe`: 0x020003c4 and
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9 03a0 03fe`: 0x020003c4 and
  * 0x020003d2 both reach veneer 0x02005bec -> Func_03000380, the ARM-mode
  * helper relocated into IWRAM.  They are two sites with DIFFERENT printed
  * targets in `overlay_show` (0x2005fb2 and 0x2005fc0) and the same real

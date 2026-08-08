@@ -7,7 +7,7 @@
  * two-word literal pool at 0x020001f8-0x020001ff).  r0 is the popped return
  * address, so the owner is `void`.  Straight-line: no branches at all.
  *
- * All 18 call sites were resolved with `tools/lib/overlay_call_targets.ts` (an
+ * All 18 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an
  * overlay `bl` stores target_offset - 2, so the disassembler's annotations are
  * wrong); all 18 are import veneers, and 18 matches the inventory's `calls`
  * field for this row.

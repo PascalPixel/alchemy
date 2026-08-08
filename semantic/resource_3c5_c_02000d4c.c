@@ -19,7 +19,7 @@
  * popped return address and the owner is **void**.  It also takes no
  * arguments: every incoming register is overwritten before any use.
  *
- * All 28 call sites were resolved with `bun tools/lib/overlay_call_targets.ts
+ * All 28 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3c5 0d4c`, which reports sites=28 / distinct_targets=17 (27 veneer,
  * 1 prologue).  Site-by-site, in program order, so the accounting is complete:
  *

@@ -61,7 +61,7 @@
  * everywhere else in this overlay.
  *
  * Not found by the structural inventory walk: reached only by `bl`
- * (bun tools/lib/overlay_call_targets.ts resource_3af 29d4 2b7c, the +2
+ * (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3af 29d4 2b7c, the +2
  * rule against the raw image).
  *
  * Uncertainty: actor ids and argument roles by shape; the coordinates,

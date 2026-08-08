@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "f0-archive"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "f0_archive"
+path = "src/lib.rs"
+
+[[bin]]
+name = "f0-archive"
+path = "src/main.rs"
+
+[dependencies]
+alchemy-zlib = { path = "../zlib" }
+export-asset = { path = "../export-asset" }
+generated-files = { path = "../generated-files" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

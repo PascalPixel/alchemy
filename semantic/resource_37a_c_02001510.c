@@ -34,7 +34,7 @@
  * 0x2dec (parity test: odd = Thumb entry, even = data).  The overlay image is
  * writable EWRAM, so these cells are written, not const.
  *
- * All 61 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 61 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are not the callees.
  * sites=61, distinct_targets=22 (47 veneer, 14 overlay-local prologue), against

@@ -12,7 +12,7 @@
  * call, so it is a forwarded pass-through parameter; void return.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2`
+ * by `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2`
  * rule -- the second-highest call count in this mandate's sweep so far
  * (46 sites).
  *

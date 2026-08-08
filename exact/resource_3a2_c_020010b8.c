@@ -26,7 +26,7 @@
  * the same slot-record accessor this owner reaches as Func_0808a080.  So the
  * bit-1 clears below (`& 0xfd`) are the same flag that callback later drives.
  *
- * Calls resolved with `bun tools/lib/overlay_call_targets.ts resource_3a2 10b8
+ * Calls resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2 10b8
  * --json` (eleven sites, seven distinct veneer targets; the inventory's
  * `calls=11` counts sites here):
  *   0x10bc -> veneer 0x14f0 -> Func_0808a018

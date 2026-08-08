@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+name = "indexed-still"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "indexed_still"
+path = "src/lib.rs"
+
+[[bin]]
+name = "indexed-still"
+path = "src/main.rs"
+
+[dependencies]
+export-asset = { path = "../export-asset" }
+generated-files = { path = "../generated-files" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

@@ -35,7 +35,7 @@
  * per project rule the multiset is over call SITES, not over distinct
  * behaviour, and folding them would deflate it by roughly twenty.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; the inventory's
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; the inventory's
  * `calls=80` is a documented lower bound on distinct targets.
  */
 

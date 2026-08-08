@@ -36,7 +36,7 @@
  * appears exactly that many times below.  Four targets are this overlay's own
  * prologues (0x02000d80, 0x02000cb4, 0x020009cc, 0x02000fa0), all real
  * function starts reached as ordinary calls; the rest are import veneers.
- * Resolved with tools/lib/overlay_call_targets.ts.
+ * Resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --.
  *
  * The two Func_08009150 sites and the two Func_08009080 sites are distinct
  * `bl`s with different arguments and are deliberately not merged.

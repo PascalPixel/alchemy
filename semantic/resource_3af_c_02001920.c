@@ -23,7 +23,7 @@
  * (`push {r5, lr}`) begins at 0x020019c0.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3af 1920 199a's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3af 1920 199a's
  * +2 rule; the Func_02004218 site is an intra-overlay bl).
  *
  * Uncertainty: callees and argument roles by shape; the fixed-point

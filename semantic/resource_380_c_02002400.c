@@ -6,8 +6,8 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record, so both the whole-image
- * call-graph sweep and `tools-rs/overlay-unindexed` are blind to it.
- * Found by `bun tools/lib/overlay_published.ts resource_380`, which also
+ * call-graph sweep and `tools/overlay-unindexed` are blind to it.
+ * Found by `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_380`, which also
  * flags it under sweep class C at "nearest owner 0x0200227c +388".
  *
  * SPAN MEASURED, NOT INFERRED. The queue's 628 bytes was a
@@ -70,7 +70,7 @@
  * took 256, 513, 514, 521 and 0x202 in different owners.
  *
  * All 57 `bl` targets resolved through the overlay's import-veneer
- * table under the +2 rule (tools/lib/overlay_call_targets.ts). Two are
+ * table under the +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --). Two are
  * direct intra-image branches rather than veneer calls
  * (Func_02004260), and that distinction is only visible in the
  * resolved target.

@@ -1,0 +1,29 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "overlay-candidate-rank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies: the already-landed Rust
+# halves of the exact TypeScript modules `overlay_candidate_rank.ts` imports.
+#   ./exact_reading_list.ts -> readingList, Pairing
+exact-reading-list = { path = "../exact-reading-list" }
+#   ../lib/overlay_disasm.ts -> assembleOverlay, compileOverlayCandidate, OVERLAY_BASE
+overlay-disasm = { path = "../overlay-disasm" }
+
+[lib]
+name = "overlay_candidate_rank"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-candidate-rank"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

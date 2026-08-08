@@ -17,7 +17,7 @@
  * (r0), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * `slotsBase = Data_03001ebc` is dereferenced here exactly the same way
  * resource_39c_c_02000350.c's adopted `Func_02000350` and this

@@ -21,7 +21,7 @@
  * halfword between the pool and the next owner.
  *
  * All four call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3a0 0cec 0d08`, assigning the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a0 0cec 0d08`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
  *   0x02000cee -> veneer 0x020013c0 -> Func_0808a018
  *   0x02000cf4 -> veneer 0x02001460 -> Func_0808a170

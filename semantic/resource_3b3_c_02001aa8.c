@@ -31,7 +31,7 @@
  * The next prologue begins at 0x02001be8.
  *
  * All six call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3b3 1aa8 1bde`, and the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b3 1aa8 1bde`, and the
  * per-target histogram is Func_0808a080 x3, Func_02001938 x2, Func_020019f0
  * x1:
  *   0x02001ab2 -> veneer 0x02b1c -> Func_0808a080   record fetch, index 0

@@ -4,7 +4,7 @@
  * Resource 3bc, owner at 0x0200076c.  692 strict bytes: 660 bytes of code
  * (0x076c-0x0a03) and a seven-word literal pool at 0x0a04-0x0a1f.
  *
- * 42 call sites resolved with tools/lib/overlay_call_targets.ts (38 veneers, four
+ * 42 call sites resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (38 veneers, four
  * internal prologues) — exactly the row's calls=42.  Per-target multiset,
  * reproduced verbatim by the C below:
  *   0808a080 x2, 08000128 x1, 02000714 x2, 080091c0 x6, 0808a018 x1,

@@ -15,7 +15,7 @@
  * the boundary cannot be taken from an interval start here.
  *
  * The one call site was resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c8 45f0 4600`: 0x020045f8
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c8 45f0 4600`: 0x020045f8
  * classifies as a prologue at image offset 0x4520, i.e. the in-overlay
  * Func_02004520.  `overlay_show`'s printed 0x2008b1a is the pc-relative
  * misreading and is not used.

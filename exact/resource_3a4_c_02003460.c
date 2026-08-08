@@ -14,8 +14,8 @@
  * call sites per overlay_unindexed.ts. This owner makes two outgoing
  * calls, both resolved with the `+2` rule against the raw image (this
  * owner starts outside a recorded row, so overlay_call_targets.ts's own
- * table does not cover it -- resolved with `bun tools-rs/overlay-show
- * resource_3a4 3460 | bun tools/lib/overlay_call_targets.ts resource_3a4 3460
+ * table does not cover it -- resolved with `bun tools/overlay-show
+ * resource_3a4 3460 | cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 3460
  * 3480 --annotate`):
  *   0x2003462 -> veneer -> Func_02006ffc(selector)          scene-record accessor, established
  *   0x200347a -> veneer -> Func_02006fbc(0, x, z, 255)      established, "place a marker (kind, x, z, level)" (resource_37b_c_020016dc.c, resource_3b2_c_02000f70.c)

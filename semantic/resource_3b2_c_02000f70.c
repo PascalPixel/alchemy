@@ -14,7 +14,7 @@
  * `movs r0, #0` immediately precedes it, so the owner returns the constant 0
  * on every path.  Signature: `s32 Func_02000f70(void)`.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_3b2
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b2
  * 0f70 --json` (41 sites, 14 distinct targets: 7 prologue, 34 veneer).  The
  * seven in-overlay callees are Func_0200191c (0x02000f96), Func_0200167c
  * (0x02001040), Func_020008c0 (0x02001052 and 0x02001058), Func_02002ed8

@@ -7,7 +7,7 @@
  * register is r1, so r0 survives and IS the result — the owner returns the
  * selected in-image data pointer.
  *
- * The single call site was resolved with `tools/lib/overlay_call_targets.ts` and
+ * The single call site was resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` and
  * is the import veneer for Func_0808a038.
  *
  * Selector: the same `Data_02000240` scenario array the byte-exact

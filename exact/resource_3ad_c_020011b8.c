@@ -28,7 +28,7 @@
  * so the C below uses labels and `goto` rather than duplicating call sites.
  * Duplicating them would inject phantom calls into the per-target multiset.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`.  Per-target
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.  Per-target
  * multiset over the 25 sites: Func_0808a148 x5, Func_0808a170 x4,
  * Func_0808a180 x2, Func_0808a178 x2, Func_0808a070 x1, and one site each for
  * the eleven in-overlay steps 0x020012ac, 0x020012c4, 0x020012f0, 0x0200131c,

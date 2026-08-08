@@ -7,7 +7,7 @@
  * 0x0200037e.  The return address is popped into r0, so the owner is `void`
  * (HANDOVER section 0, epilogue rule).  It contains no literal pool, no
  * branch out of the span, and no call sites at all, matching the inventory's
- * calls=0; `bun tools/lib/overlay_call_targets.ts resource_370` reports none in
+ * calls=0; `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_370` reports none in
  * this range either.
  *
  * The body is a straight-line chain of range and equality tests on the id in

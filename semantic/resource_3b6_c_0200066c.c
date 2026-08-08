@@ -14,7 +14,7 @@
  * the reason the row's advertised call count (8) is one under the site count
  * the resolver reports when the pool words are decoded as instructions.
  *
- * Imports are resolved with tools/lib/overlay_call_targets.ts — an overlay `bl`
+ * Imports are resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- — an overlay `bl`
  * stores `target_offset - 2`, so the disassembler's labels are artefacts — and
  * named for the main-image address in the veneer entry's trailing word.  All
  * eight real sites resolve.  The message/act pair is the one tracked byte-exact

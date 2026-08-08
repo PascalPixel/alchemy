@@ -14,7 +14,7 @@
  * except r0 (loaded from the pool), so the owner takes no arguments.
  *
  * CALL ACCOUNTING.  Fourteen `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`: Func_0808a080
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3ba --annotate`: Func_0808a080
  * x2 and Func_08009150 x2, plus one each of Func_080770c8, Func_0808a018,
  * Func_0808a208, Func_0808a210, Func_08009080, Func_0808a218, Func_08009158,
  * Func_0808a010, Func_080091c0 and Func_0808a020.  The C below reproduces that

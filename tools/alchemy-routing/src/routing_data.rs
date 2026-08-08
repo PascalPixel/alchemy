@@ -720,7 +720,10 @@ pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_37
 pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] =
     &[
         "exact/resource_3bb_c_020039fc.c",
+        "exact/resource_373_c_02005b48.c",
+        "exact/resource_392_c_02000cb4.c",
         "semantic/resource_373_c_02005b48.c",
+        "semantic/resource_392_c_02000cb4.c",
     ];
 pub static NO_SCHED_ALIAS_OVERLAY_SOURCES: &[&str] = &[
     "exact/08078144.c",
@@ -941,6 +944,12 @@ pub static SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES: &[&str] = &[
 pub static ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b3_c_02001fd4.c",
     "semantic/resource_3b3_c_02001fd4.c",
+];
+pub static ROTATE_ORR_MASK_LOAD_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_373_c_02005b48.c",
+    "exact/resource_392_c_02000cb4.c",
+    "semantic/resource_373_c_02005b48.c",
+    "semantic/resource_392_c_02000cb4.c",
 ];
 pub static CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_371_c_02001a98.c",

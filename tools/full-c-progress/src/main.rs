@@ -35,7 +35,11 @@ const DEFAULT_TARGET: &str = "gs1-en";
 /// -> repository root.
 fn root() -> PathBuf {
     let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
-    manifest.parent().and_then(Path::parent).expect("crate lives two levels below ROOT").to_path_buf()
+    manifest
+        .parent()
+        .and_then(Path::parent)
+        .expect("crate lives two levels below ROOT")
+        .to_path_buf()
 }
 
 // ---------------------------------------------------------------------------
@@ -134,7 +138,11 @@ fn optional_number(value: &Value, key: &str) -> Option<f64> {
 }
 
 fn string_field(value: &Value, key: &str) -> String {
-    value.get(key).and_then(Value::as_str).unwrap_or_default().to_string()
+    value
+        .get(key)
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_string()
 }
 
 fn namespace_from_json(value: &Value) -> Result<Namespace, String> {
@@ -142,7 +150,10 @@ fn namespace_from_json(value: &Value) -> Result<Namespace, String> {
     if let Some(items) = value.get("intervals").and_then(Value::as_array) {
         for item in items {
             parsed.push(Interval {
-                start: item.get("start").and_then(Value::as_f64).unwrap_or(f64::NAN),
+                start: item
+                    .get("start")
+                    .and_then(Value::as_f64)
+                    .unwrap_or(f64::NAN),
                 end: item.get("end").and_then(Value::as_f64).unwrap_or(f64::NAN),
                 kind: string_field(item, "kind"),
                 evidence: string_field(item, "evidence"),
@@ -163,7 +174,10 @@ fn namespace_from_json(value: &Value) -> Result<Namespace, String> {
             .get("evidence")
             .and_then(Value::as_array)
             .map(|items| {
-                items.iter().map(|item| item.as_str().unwrap_or_default().to_string()).collect()
+                items
+                    .iter()
+                    .map(|item| item.as_str().unwrap_or_default().to_string())
+                    .collect()
             })
             .unwrap_or_default(),
     })
@@ -198,7 +212,10 @@ fn inventory_from_json(value: &Value) -> Result<Inventory, String> {
         main,
         overlays,
         caveats: value.get("caveats").and_then(Value::as_array).map(|items| {
-            items.iter().map(|item| item.as_str().unwrap_or_default().to_string()).collect()
+            items
+                .iter()
+                .map(|item| item.as_str().unwrap_or_default().to_string())
+                .collect()
         }),
     })
 }
@@ -230,7 +247,13 @@ fn namespace_json(namespace: &Namespace) -> Value {
     ));
     members.push((
         "evidence",
-        Value::Arr(namespace.evidence.iter().map(|text| json::string(text)).collect()),
+        Value::Arr(
+            namespace
+                .evidence
+                .iter()
+                .map(|text| json::string(text))
+                .collect(),
+        ),
     ));
     json::obj(members)
 }
@@ -278,7 +301,10 @@ fn report_json(report: &ProgressReport) -> Value {
             "overlays",
             json::obj(vec![
                 ("full_c_bytes", Value::Num(report.overlays_full_c_bytes)),
-                ("executable_bytes", Value::Num(report.overlays_executable_bytes)),
+                (
+                    "executable_bytes",
+                    Value::Num(report.overlays_executable_bytes),
+                ),
             ]),
         ),
         ("audit", json::string("complete")),
@@ -321,7 +347,10 @@ fn js_string(value: Option<&Value>) -> String {
 }
 
 fn regions_of(manifest: &Value) -> &[Value] {
-    manifest.get("regions").and_then(Value::as_array).unwrap_or(&[])
+    manifest
+        .get("regions")
+        .and_then(Value::as_array)
+        .unwrap_or(&[])
 }
 
 fn main_inventory(root: &Path, target: &str) -> Result<Namespace, String> {
@@ -364,12 +393,18 @@ fn main_inventory(root: &Path, target: &str) -> Result<Namespace, String> {
             start: address,
             end: address + size,
             kind: "thumb".to_string(),
-            evidence: format!("{}:byte-identical-claimed-C", js_string(region.get("source"))),
+            evidence: format!(
+                "{}:byte-identical-claimed-C",
+                js_string(region.get("source"))
+            ),
         });
     }
     let diagnostics = overlap_diagnostics(&intervals)?;
     if !diagnostics.is_empty() {
-        return Err(format!("main executable ownership overlaps:\n{}", diagnostics.join("\n")));
+        return Err(format!(
+            "main executable ownership overlaps:\n{}",
+            diagnostics.join("\n")
+        ));
     }
     let merged = merge_classified(&intervals)?;
     let directory = output_dir(target);
@@ -407,7 +442,9 @@ fn overlay_images(sources: &[String]) -> Result<Vec<Vec<u8>>, String> {
 
 /// `max(1, floor(cores * 0.8))` — the repository-wide parallelism cap.
 fn resolve_jobs() -> usize {
-    let cores = std::thread::available_parallelism().map(|count| count.get()).unwrap_or(1);
+    let cores = std::thread::available_parallelism()
+        .map(|count| count.get())
+        .unwrap_or(1);
     ((cores as f64 * 0.8).floor() as usize).max(1)
 }
 
@@ -418,8 +455,10 @@ fn overlay_inventories(root: &Path, sources: &[String]) -> Result<Vec<Namespace>
             compiled.push(index);
         }
     }
-    let compiled_sources: Vec<String> =
-        compiled.iter().map(|index| sources[*index].clone()).collect();
+    let compiled_sources: Vec<String> = compiled
+        .iter()
+        .map(|index| sources[*index].clone())
+        .collect();
     let images = overlay_images(&compiled_sources)?;
     let mut per_source: Vec<Option<Vec<u8>>> = vec![None; sources.len()];
     for (slot, image) in compiled.iter().zip(images) {
@@ -427,8 +466,9 @@ fn overlay_inventories(root: &Path, sources: &[String]) -> Result<Vec<Namespace>
     }
 
     let next = std::sync::atomic::AtomicUsize::new(0);
-    let results: Vec<std::sync::Mutex<Option<Result<Namespace, String>>>> =
-        (0..sources.len()).map(|_| std::sync::Mutex::new(None)).collect();
+    let results: Vec<std::sync::Mutex<Option<Result<Namespace, String>>>> = (0..sources.len())
+        .map(|_| std::sync::Mutex::new(None))
+        .collect();
     let jobs = resolve_jobs().min(sources.len().max(1));
     std::thread::scope(|scope| {
         for _ in 0..jobs {
@@ -450,7 +490,10 @@ fn overlay_inventories(root: &Path, sources: &[String]) -> Result<Vec<Namespace>
 
     let mut inventories = Vec::with_capacity(sources.len());
     for slot in results {
-        let outcome = slot.into_inner().expect("inventory slot").expect("every index is claimed");
+        let outcome = slot
+            .into_inner()
+            .expect("inventory slot")
+            .expect("every index is claimed");
         inventories.push(outcome?);
     }
     Ok(inventories)
@@ -482,7 +525,10 @@ fn derive_inventory(root: &Path, target: &str) -> Result<Inventory, String> {
     let sources = overlay::overlay_sources(root, target)?;
     let overlays = overlay_inventories(root, &sources)?;
     let total = main.executable_bytes
-        + overlays.iter().map(|overlay| overlay.executable_bytes).sum::<f64>();
+        + overlays
+            .iter()
+            .map(|overlay| overlay.executable_bytes)
+            .sum::<f64>();
     Ok(Inventory {
         target: target.to_string(),
         derivation: "full-c-progress-v1".to_string(),
@@ -495,7 +541,8 @@ fn derive_inventory(root: &Path, target: &str) -> Result<Inventory, String> {
 }
 
 fn inventory_path(root: &Path, target: &str) -> PathBuf {
-    root.join("metrics").join(format!("{target}-executable.json"))
+    root.join("metrics")
+        .join(format!("{target}-executable.json"))
 }
 
 fn report_path(root: &Path, target: &str) -> PathBuf {
@@ -506,7 +553,11 @@ fn validate_inventory(inventory: &Inventory) -> Result<(), String> {
     for namespace in std::iter::once(&inventory.main).chain(inventory.overlays.iter()) {
         let diagnostics = overlap_diagnostics(&namespace.intervals)?;
         if !diagnostics.is_empty() {
-            return Err(format!("{} overlaps:\n{}", namespace.id, diagnostics.join("\n")));
+            return Err(format!(
+                "{} overlaps:\n{}",
+                namespace.id,
+                diagnostics.join("\n")
+            ));
         }
         let measured = interval_bytes(&namespace.intervals)?;
         if measured != namespace.executable_bytes {
@@ -521,13 +572,20 @@ fn validate_inventory(inventory: &Inventory) -> Result<(), String> {
             match namespace.excluded_bytes {
                 Some(excluded) if namespace.executable_bytes + excluded == decoded => {}
                 _ => {
-                    return Err(format!("{} decoded byte classification is incomplete", namespace.id))
+                    return Err(format!(
+                        "{} decoded byte classification is incomplete",
+                        namespace.id
+                    ))
                 }
             }
         }
     }
     let total = inventory.main.executable_bytes
-        + inventory.overlays.iter().map(|overlay| overlay.executable_bytes).sum::<f64>();
+        + inventory
+            .overlays
+            .iter()
+            .map(|overlay| overlay.executable_bytes)
+            .sum::<f64>();
     if total != inventory.total_union_bytes {
         return Err("inventory total is stale".to_string());
     }
@@ -561,7 +619,10 @@ fn spans_contained(spans: &[OwnedSpan], inventory: &Namespace) -> Result<f64, St
             .iter()
             .any(|interval| interval.start <= span.start && span.end <= interval.end)
         {
-            return Err(format!("{}: C span is outside audited executable intervals", span.owner));
+            return Err(format!(
+                "{}: C span is outside audited executable intervals",
+                span.owner
+            ));
         }
     }
     let owned: Vec<Interval> = ordered
@@ -573,13 +634,24 @@ fn spans_contained(spans: &[OwnedSpan], inventory: &Namespace) -> Result<f64, St
             evidence: span.owner.clone(),
         })
         .collect();
-    Ok(union_intervals(&owned)?.iter().map(|span| span.end - span.start).sum())
+    Ok(union_intervals(&owned)?
+        .iter()
+        .map(|span| span.end - span.start)
+        .sum())
 }
 
 fn main_c_spans(root: &Path, target: &str) -> Result<Vec<OwnedSpan>, String> {
-    let manifest =
-        read_json(&root.join(output_dir(target)).join("full").join("claimed").join("manifest.json"))?;
-    let verification = manifest.get("verification").and_then(Value::as_str).unwrap_or("");
+    let manifest = read_json(
+        &root
+            .join(output_dir(target))
+            .join("full")
+            .join("claimed")
+            .join("manifest.json"),
+    )?;
+    let verification = manifest
+        .get("verification")
+        .and_then(Value::as_str)
+        .unwrap_or("");
     let claimed = manifest.get("claimed_bytes").and_then(Value::as_f64);
     if !matches!(verification, "exact" | "source_only" | "rom")
         || !claimed.map(intervals::is_safe_integer).unwrap_or(false)
@@ -613,7 +685,10 @@ fn calculate_progress(
     validate_inventory(inventory)?;
     if inventory.audit != "complete"
         || inventory.main.audit != "complete"
-        || inventory.overlays.iter().any(|overlay| overlay.audit != "complete")
+        || inventory
+            .overlays
+            .iter()
+            .any(|overlay| overlay.audit != "complete")
     {
         return Err(format!(
             "Full-C Byte Share withheld: {} executable audit is incomplete",
@@ -622,8 +697,11 @@ fn calculate_progress(
     }
     let main_bytes = spans_contained(main_spans, &inventory.main)?;
     let mut overlay_bytes = 0.0;
-    let expected: HashSet<&str> =
-        inventory.overlays.iter().map(|overlay| overlay.id.as_str()).collect();
+    let expected: HashSet<&str> = inventory
+        .overlays
+        .iter()
+        .map(|overlay| overlay.id.as_str())
+        .collect();
     for overlay in &inventory.overlays {
         let spans = overlay_spans
             .iter()
@@ -634,7 +712,9 @@ fn calculate_progress(
     }
     for (id, _) in overlay_spans {
         if !expected.contains(id.as_str()) {
-            return Err(format!("C spans belong to un-inventoried code overlay {id}"));
+            return Err(format!(
+                "C spans belong to un-inventoried code overlay {id}"
+            ));
         }
     }
     let full_c_bytes = main_bytes + overlay_bytes;
@@ -708,10 +788,12 @@ fn format_report(report: &ProgressReport) -> Result<String, String> {
 /// those numbers, so comparing the pairs directly is equivalent and avoids
 /// serialising twice per namespace.
 fn equal_union(left: &Namespace, right: &Namespace) -> Result<bool, String> {
-    Ok(union_intervals(&left.intervals)? == union_intervals(&right.intervals)?
-        && left.executable_bytes == right.executable_bytes
-        && left.decoded_bytes == right.decoded_bytes
-        && left.excluded_bytes == right.excluded_bytes)
+    Ok(
+        union_intervals(&left.intervals)? == union_intervals(&right.intervals)?
+            && left.executable_bytes == right.executable_bytes
+            && left.decoded_bytes == right.decoded_bytes
+            && left.excluded_bytes == right.excluded_bytes,
+    )
 }
 
 fn check_current_inventory(root: &Path, target: &str, tracked: &Inventory) -> Result<(), String> {
@@ -848,7 +930,10 @@ fn run(argv: &[String]) -> Result<(), String> {
         }
     }
     if options.subject {
-        println!("{}", format_subject(report.full_c_bytes, report.executable_bytes)?);
+        println!(
+            "{}",
+            format_subject(report.full_c_bytes, report.executable_bytes)?
+        );
     } else if options.json {
         println!("{}", canonical_json(&report_json(&report)));
     } else {
@@ -1003,7 +1088,10 @@ fn self_test() -> Result<(), String> {
     )?;
     let mut incomplete = inventory.clone();
     incomplete.audit = "incomplete".to_string();
-    expect_reject(calculate_progress(&incomplete, &[], &[]), "incomplete audit")?;
+    expect_reject(
+        calculate_progress(&incomplete, &[], &[]),
+        "incomplete audit",
+    )?;
     let mut target_isolation = inventory.clone();
     target_isolation.target = "gs2-en".to_string();
     if target_isolation.target == inventory.target {
@@ -1080,7 +1168,10 @@ mod tests {
     fn a_stale_total_is_a_hard_failure() {
         let mut inventory = self_test_inventory();
         inventory.total_union_bytes = 19.0;
-        assert_eq!(validate_inventory(&inventory).unwrap_err(), "inventory total is stale");
+        assert_eq!(
+            validate_inventory(&inventory).unwrap_err(),
+            "inventory total is stale"
+        );
 
         let mut stale = self_test_inventory();
         stale.main.executable_bytes = 11.0;
@@ -1133,8 +1224,14 @@ mod tests {
             end: 4.0,
             owner: "a.c".to_string(),
         };
-        let twin = OwnedSpan { owner: "b.c".to_string(), ..alias.clone() };
-        assert_eq!(spans_contained(&[alias, twin], &inventory.main).unwrap(), 4.0);
+        let twin = OwnedSpan {
+            owner: "b.c".to_string(),
+            ..alias.clone()
+        };
+        assert_eq!(
+            spans_contained(&[alias, twin], &inventory.main).unwrap(),
+            4.0
+        );
     }
 
     #[test]
@@ -1188,20 +1285,24 @@ mod tests {
             .filter_map(|line| line.trim().strip_prefix('"'))
             .filter_map(|line| line.split('"').next())
             .collect();
-        assert_eq!(&keys[0..8], &[
-            "format",
-            "metric",
-            "target",
-            "derivation",
-            "audit",
-            "total_union_bytes",
-            "main",
-            "id",
-        ]);
+        assert_eq!(
+            &keys[0..8],
+            &[
+                "format",
+                "metric",
+                "target",
+                "derivation",
+                "audit",
+                "total_union_bytes",
+                "main",
+                "id",
+            ]
+        );
         // Overlays carry decoded/excluded bytes; the main image does not.
         assert!(text.contains("\"decoded_bytes\""));
-        assert!(!canonical_json(&namespace_json(&self_test_inventory().main))
-            .contains("decoded_bytes"));
+        assert!(
+            !canonical_json(&namespace_json(&self_test_inventory().main)).contains("decoded_bytes")
+        );
     }
 
     #[test]

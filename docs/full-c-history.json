@@ -2,10 +2,10 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "denominator_commit": "3f120442d3cb70dfdec3fa0590ce5ee67e0e10a9",
+  "denominator_commit": "d4a62ac81ec3469537155eea1d5d2a27079319f2",
   "executable_bytes": 1347252,
   "history_scope": "first-parent",
-  "generated_from": "0f51d48deab7ea813e94880ad07cace4267fd712",
+  "generated_from": "8ee6332d8afb134374ee85e9638c8055c2970626",
   "entries": [
     {
       "commit": "3d2f1cc283f82a16532175e52820da58ef1cda88",
@@ -25796,10 +25796,10 @@
       "evidence": ["commit tree src/<address>.c ownership mapped to audited main executable regions", "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans", "noncanonical register-pinned/inline-assembly/fakematch C excluded"]
     },
     {
-      "commit": "3f120442d3cb70dfdec3fa0590ce5ee67e0e10a9",
+      "commit": "d4a62ac81ec3469537155eea1d5d2a27079319f2",
       "first_parent_position": 1720,
       "author_time": "2026-08-08T23:21:15+01:00",
-      "committer_time": "2026-08-08T23:21:15+01:00",
+      "committer_time": "2026-08-08T23:26:28+01:00",
       "full_c_bytes": 317498,
       "executable_bytes": 1347252,
       "remaining_bytes": 1029754,

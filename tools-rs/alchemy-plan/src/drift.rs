@@ -208,7 +208,9 @@ fn interface_fields(source: &str, name: &str) -> Option<Subject> {
         if line.is_empty() || line.starts_with("//") || line.starts_with('*') {
             continue;
         }
-        let Some(colon) = line.find(':') else { continue };
+        let Some(colon) = line.find(':') else {
+            continue;
+        };
         let field = line[..colon].trim();
         if field.is_empty() || field.contains(' ') {
             continue;

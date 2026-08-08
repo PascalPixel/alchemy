@@ -47,6 +47,5 @@ pub mod drift;
 pub mod symbols;
 
 pub use symbols::{
-    external_symbol, external_symbol_assembly, overlay_call_via_base, ExternalSymbol,
-    CALL_VIA_BASE,
+    external_symbol, external_symbol_assembly, overlay_call_via_base, ExternalSymbol, CALL_VIA_BASE,
 };

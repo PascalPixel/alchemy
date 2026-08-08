@@ -1,0 +1,19 @@
+[workspace]
+
+[package]
+name = "audit-residuals"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "audit_residuals"
+path = "src/lib.rs"
+
+[[bin]]
+name = "audit-residuals"
+path = "src/main.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }

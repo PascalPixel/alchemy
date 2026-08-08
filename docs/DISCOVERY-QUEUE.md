@@ -33,7 +33,7 @@ its assembly accounting sums the five debt retentions (`c_candidate`,
 `split_first`, `merge_with_owner`, `merge_with_function_owner`,
 `merge_with_continuations`) into `cDebtBytes`, and the three keep retentions
 (`keep_asm`, `keep_structured_asm`, `adjacent_section_alignment`) into
-`retainedStructuralBytes`. `tools/metrics/audit_residuals.ts` asserts the two sum to
+`retainedStructuralBytes`. `tools-rs/audit-residuals` asserts the two sum to
 `asm_bytes`.
 
 So the per-kind census printed by `bun run build:asm` reconciles exactly,
@@ -103,7 +103,7 @@ is a separate problem: 540 rows, of which 220 are `contained_by`, 43 are
 
 ### 2c. Regions walked but not emitted as function rows — 0 bytes, main image
 
-There is no unwalked main-image region. `tools/metrics/audit_residuals.ts` proves
+There is no unwalked main-image region. `tools-rs/audit-residuals` proves
 `unowned_bytes=0`: the claimed, assembly, and asset manifests together span all
 8 MiB with no gap, and `tools-rs/build-asm` rejects any overlap. Each debt
 region's span is verified against the ROM (`verification=rom`), and each abuts

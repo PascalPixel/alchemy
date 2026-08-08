@@ -5,7 +5,6 @@ import { basename, dirname, isAbsolute, join, relative, resolve, normalize } fro
 import { encode_general, encode_general_prefill, encode_palette } from "../lib/extract_resource.ts";
 import { characterBankPath, resourceGraphicsDir } from "../lib/asset_paths.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "../lib/import_asset.ts";
-import { build_archive as build_offset_archive } from "./archive_asset.ts";
 import { import_tilemap } from "../lib/tilemap.ts";
 import { build_archive as build_f0_archive } from "./f0_archive.ts";
 import { prune_files, unused_tracked_images } from "../lib/generated_files.ts";
@@ -56,11 +55,8 @@ import {
 } from "./resource_01c.ts";
 import { build_music_residuals } from "./music_residuals.ts";
 import { build_resource_d1_d3 } from "./resource_d1_d3.ts";
-import {
-  AUDIO_ENGINE_ADDRESS,
-  AUDIO_ENGINE_SIZE,
-  build_audio_engine_data,
-} from "./audio_engine_data.ts";
+const AUDIO_ENGINE_ADDRESS = 0x080fb792;
+const AUDIO_ENGINE_SIZE = 0xef2;
 import {
   build_runtime_support_component,
   parse_runtime_support_source,
@@ -70,7 +66,6 @@ import {
   STAFF_ROLL_ADDRESS,
   STAFF_ROLL_SIZE,
 } from "./staff_roll.ts";
-import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./gba_header.ts";
 import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
 import { buildExecutableGapData } from "./executable_gap_sources.ts";
 
@@ -143,6 +138,51 @@ function nativeJson(tool: string, args: string[]): Json[] {
   const detail = Buffer.from(child.stderr).toString("utf8").trim();
   if (child.exitCode !== 0) throw new Error(`${tool} failed${detail ? `: ${detail}` : ""}`);
   return JSON.parse(Buffer.from(child.stdout).toString("utf8"));
+}
+
+function nativeOffsetArchive(plan: string, atlas: string): Buffer {
+  const standalone = join(ROOT, "tools-rs", "build-assets", "target", "release", "build-assets");
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", "build-assets");
+  const child = Bun.spawnSync([binary, "--build-offset-archive", plan, atlas], {
+    cwd: ROOT,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  if (child.exitCode !== 0) {
+    const detail = Buffer.from(child.stderr).toString("utf8").trim();
+    throw new Error(`build-assets archive failed${detail ? `: ${detail}` : ""}`);
+  }
+  return Buffer.from(child.stdout);
+}
+
+function nativeAudioEngine(source: string): Buffer {
+  const standalone = join(ROOT, "tools-rs", "build-assets", "target", "release", "build-assets");
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", "build-assets");
+  const child = Bun.spawnSync([binary, "--build-audio-engine", source], {
+    cwd: ROOT,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  if (child.exitCode !== 0) {
+    const detail = Buffer.from(child.stderr).toString("utf8").trim();
+    throw new Error(`build-assets audio-engine failed${detail ? `: ${detail}` : ""}`);
+  }
+  return Buffer.from(child.stdout);
+}
+
+function nativeGbaHeader(source: string, address: number, size: number): Buffer {
+  const standalone = join(ROOT, "tools-rs", "build-assets", "target", "release", "build-assets");
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", "build-assets");
+  const child = Bun.spawnSync([binary, "--build-gba-header", source, `0x${address.toString(16)}`, String(size)], {
+    cwd: ROOT,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  if (child.exitCode !== 0) {
+    const detail = Buffer.from(child.stderr).toString("utf8").trim();
+    throw new Error(`build-assets GBA header failed${detail ? `: ${detail}` : ""}`);
+  }
+  return Buffer.from(child.stdout);
 }
 
 type Json = Record<string, any>;
@@ -789,11 +829,10 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   const kind = String(entry.kind);
   if (kind === "gba-cartridge-header-standard-fields") {
     const sourceName = String(entry.source);
-    const document = parseGbaHeaderSource(JSON.parse(readFileSync(sourcePath(sourceName), "utf8")));
+    const source = sourcePath(sourceName);
+    const document = JSON.parse(readFileSync(source, "utf8"));
     const logoName = document.standard.logo.source;
-    const built = buildGbaHeaderComponent(
-      document, readFileSync(sourcePath(logoName)), number(entry.address), number(entry.size),
-    );
+    const built = nativeGbaHeader(source, number(entry.address), number(entry.size));
     return [built, [sourceName, logoName], { standard_header_bytes: built.length }];
   }
   if (kind === "golden-sun-early-runtime-data") {
@@ -1306,15 +1345,18 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-audio-engine-data") {
     const sourceName = String(entry.source);
-    const built = build_audio_engine_data(sourcePath(sourceName));
+    const source = sourcePath(sourceName);
+    const data = nativeAudioEngine(source);
     if (number(entry.address) !== AUDIO_ENGINE_ADDRESS || number(entry.size) !== AUDIO_ENGINE_SIZE ||
-        built.address !== AUDIO_ENGINE_ADDRESS || built.data.length !== AUDIO_ENGINE_SIZE) {
+        data.length !== AUDIO_ENGINE_SIZE) {
       throw new Error("audio-engine data differs from canonical manifest extent");
     }
-    const nested = built.sources.map((name) => relative(ROOT, resolve(name)));
+    const document = JSON.parse(readFileSync(source, "utf8"));
+    const directory = dirname(sourceName);
+    const nested = Object.values(document.sources).map((name) => join(directory, String(name)));
     nested.forEach(sourcePath);
-    return [built.data, [...new Set(nested)], {
-      source_bytes: built.data.length,
+    return [data, [...new Set([sourceName, ...nested])], {
+      source_bytes: data.length,
       tone_records: 225,
       waveforms: 18,
       players: 8,
@@ -1433,7 +1475,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
     const atlasPath = sourcePath(String(entry.source));
     const plan = JSON.parse(readFileSync(planPath, "utf8"));
     if (plan.format !== 1 || plan.codec !== kind) throw new Error("unsupported archive plan");
-    const built = build_offset_archive(readFileSync(atlasPath), plan);
+    const built = nativeOffsetArchive(planPath, atlasPath);
     return [built, [String(entry.source), String(entry.plan)], {
       streams: plan.streams.length,
       chunk_width: plan.chunk_width,
@@ -1566,12 +1608,12 @@ function stageStamp(manifestPath: string, sourceOnly: boolean): string {
   return digest.digest("hex");
 }
 
-function main(): void {
-  if (Bun.argv.length === 3 && Bun.argv[2] === "--self-test") {
+function legacyMain(argv: string[] = Bun.argv.slice(2)): void {
+  if (argv.length === 1 && argv[0] === "--self-test") {
     closurePackageSelfTest();
     return;
   }
-  const args = parseArgs(Bun.argv.slice(2));
+  const args = parseArgs(argv);
   const rom = args.sourceOnly ? null : readFileSync(resolve(process.cwd(), args.rom));
   const romSize = rom?.length ?? ROM_SIZE;
   const manifestPath = isAbsolute(args.manifest) ? args.manifest : resolve(process.cwd(), args.manifest);
@@ -1675,6 +1717,27 @@ function main(): void {
   }) + "\n");
   writeFileSync(stampPath, `${stamp}\n`);
   console.log(`assets=${regions.length} bytes=${assetBytes}`);
+}
+
+function main(): void {
+  const argv = Bun.argv.slice(2);
+  if (argv.includes("--legacy")) {
+    legacyMain(argv.filter((argument) => argument !== "--legacy"));
+    return;
+  }
+  const standalone = join(ROOT, "tools-rs", "build-assets", "target", "release", "build-assets");
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", "build-assets");
+  if (!existsSync(binary)) {
+    // Keep a useful source checkout usable before the native binary is built.
+    legacyMain(argv);
+    return;
+  }
+  const child = Bun.spawnSync([binary, ...argv], {
+    cwd: ROOT,
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+  process.exit(child.exitCode ?? 1);
 }
 
 if (import.meta.main) main();

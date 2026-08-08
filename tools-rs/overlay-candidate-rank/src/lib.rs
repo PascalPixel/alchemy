@@ -18,7 +18,7 @@ use exact_reading_list::json::{parse as parse_json, Value};
 use exact_reading_list::{reading_list, Pairing};
 use overlay_disasm::{assemble_overlay, compile_overlay_candidate, OverlaySource, OVERLAY_BASE};
 
-/// 80% of the cores, never all of them. Ported from `tools/lib/jobs.ts`; kept
+/// 80% of the cores, never all of them. Kept
 /// local rather than a dependency on the `jobs` crate, which ships only a
 /// binary target, not a library one.
 const SHARE: f64 = 0.8;

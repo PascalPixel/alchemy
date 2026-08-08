@@ -37,7 +37,10 @@ impl Report {
     }
 
     pub fn get(&self, key: &str) -> Option<f64> {
-        self.0.iter().find(|(name, _)| name == key).map(|(_, value)| *value)
+        self.0
+            .iter()
+            .find(|(name, _)| name == key)
+            .map(|(_, value)| *value)
     }
 }
 
@@ -97,7 +100,12 @@ pub fn subarray(data: &[u8], start: usize, end: usize) -> &[u8] {
 }
 
 fn read_u32_be(data: &[u8], offset: usize) -> u32 {
-    u32::from_be_bytes([data[offset], data[offset + 1], data[offset + 2], data[offset + 3]])
+    u32::from_be_bytes([
+        data[offset],
+        data[offset + 1],
+        data[offset + 2],
+        data[offset + 3],
+    ])
 }
 
 fn read_u16_be(data: &[u8], offset: usize) -> u16 {
@@ -156,7 +164,10 @@ where
         // PORT NOTE: `cursor + 12 + size` is exact f64 arithmetic in JS. A
         // 32-bit size cannot overflow usize on any host we build for, but the
         // checked add keeps a hostile file from wrapping.
-        let end = match cursor.checked_add(12).and_then(|value| value.checked_add(size)) {
+        let end = match cursor
+            .checked_add(12)
+            .and_then(|value| value.checked_add(size))
+        {
             Some(end) => end,
             None => return err("truncated chunk payload"),
         };
@@ -218,10 +229,17 @@ fn unfilter(
         }
         let mut row = vec![0u8; row_size];
         for index in 0..row_size {
-            let left = if index >= stride { i32::from(row[index - stride]) } else { 0 };
+            let left = if index >= stride {
+                i32::from(row[index - stride])
+            } else {
+                0
+            };
             let above = i32::from(previous[index]);
-            let upper_left =
-                if index >= stride { i32::from(previous[index - stride]) } else { 0 };
+            let upper_left = if index >= stride {
+                i32::from(previous[index - stride])
+            } else {
+                0
+            };
             let predictor = match method {
                 0 => 0,
                 1 => left,
@@ -282,7 +300,10 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
                     return err("invalid PLTE");
                 }
                 palette = Some(
-                    payload.chunks_exact(3).map(|rgb| [rgb[0], rgb[1], rgb[2]]).collect(),
+                    payload
+                        .chunks_exact(3)
+                        .map(|rgb| [rgb[0], rgb[1], rgb[2]])
+                        .collect(),
                 );
             }
             "tRNS" => transparency = Some(payload.to_vec()),
@@ -294,9 +315,7 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     })?;
 
     let (width, height, depth, palette) = match (width, height, depth, palette) {
-        (Some(width), Some(height), Some(depth), Some(palette)) => {
-            (width, height, depth, palette)
-        }
+        (Some(width), Some(height), Some(depth), Some(palette)) => (width, height, depth, palette),
         _ => return err("PNG lacks IHDR or PLTE"),
     };
     if width == 0 || height == 0 || !width.is_multiple_of(8) || !height.is_multiple_of(8) {
@@ -328,7 +347,12 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
             pixels.push(index);
         }
     }
-    Ok(IndexedImage { width, height, pixels, palette })
+    Ok(IndexedImage {
+        width,
+        height,
+        pixels,
+        palette,
+    })
 }
 
 #[derive(Debug)]
@@ -375,7 +399,11 @@ pub fn rgba_png(data: &[u8]) -> Result<RgbaImage, AssetError> {
     };
     let inflated = inflate_sync(&compressed).map_err(|error| AssetError(error.0.to_string()))?;
     let rows = unfilter(&inflated, height as usize, row_size, 4)?;
-    Ok(RgbaImage { width, height, pixels: rows.concat() })
+    Ok(RgbaImage {
+        width,
+        height,
+        pixels: rows.concat(),
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -417,7 +445,10 @@ pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report),
     if image.palette.len() as u64 > u64::from(limit)
         || image.pixels.iter().any(|pixel| *pixel >= limit)
     {
-        return Err(AssetError(format!("image does not fit {}bpp", js_number_json(bpp))));
+        return Err(AssetError(format!(
+            "image does not fit {}bpp",
+            js_number_json(bpp)
+        )));
     }
     let mut colors = vec![0u8; image.palette.len() * 2];
     for (index, [red, green, blue]) in image.palette.iter().copied().enumerate() {
@@ -533,8 +564,11 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     if !matches!(form, 0 | 1) || tracks == 0 || division & 0x8000 != 0 {
         return err("only format 0/1 PPQN MIDI is supported");
     }
-    let track_chunks: Vec<&[u8]> =
-        parsed[1..].iter().filter(|(kind, _)| kind == "MTrk").map(|(_, body)| *body).collect();
+    let track_chunks: Vec<&[u8]> = parsed[1..]
+        .iter()
+        .filter(|(kind, _)| kind == "MTrk")
+        .map(|(_, body)| *body)
+        .collect();
     if track_chunks.len() != usize::from(tracks) {
         return err("MIDI track count mismatch");
     }
@@ -575,7 +609,10 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                     return err("truncated meta payload");
                 }
                 running = None;
-                EventBody::Meta { meta, data: hex(value) }
+                EventBody::Meta {
+                    meta,
+                    data: hex(value),
+                }
             } else if status == 0xf0 || status == 0xf7 {
                 let (size, next) = vlq(payload, cursor)?;
                 cursor = next;
@@ -586,20 +623,35 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                     return err("truncated system-exclusive payload");
                 }
                 running = None;
-                EventBody::Sysex { status, data: hex(value) }
+                EventBody::Sysex {
+                    status,
+                    data: hex(value),
+                }
             } else if (0x80..=0xef).contains(&status) {
                 running = Some(status);
-                let size = if matches!(status & 0xf0, 0xc0 | 0xd0) { 1 } else { 2 };
+                let size = if matches!(status & 0xf0, 0xc0 | 0xd0) {
+                    1
+                } else {
+                    2
+                };
                 let value = subarray(payload, cursor, cursor + size);
                 cursor += size;
                 if value.len() != size || value.iter().any(|byte| byte & 0x80 != 0) {
                     return err("invalid channel event");
                 }
-                EventBody::Channel { status, data: value.to_vec() }
+                EventBody::Channel {
+                    status,
+                    data: value.to_vec(),
+                }
             } else {
                 return err("unsupported MIDI system event");
             };
-            result.push(MidiEvent { tick, track, order, body });
+            result.push(MidiEvent {
+                tick,
+                track,
+                order,
+                body,
+            });
             order += 1;
         }
     }
@@ -608,7 +660,12 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     result.sort_by(|left, right| {
         (left.tick, left.track, left.order).cmp(&(right.tick, right.track, right.order))
     });
-    Ok(MidiReport { format: form, tracks, ticks_per_quarter: division, events: result })
+    Ok(MidiReport {
+        format: form,
+        tracks,
+        ticks_per_quarter: division,
+        events: result,
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -649,7 +706,10 @@ pub fn canonical_midi_json(report: &MidiReport) -> String {
     out.push_str("{\n");
     out.push_str(&format!("  \"format\": {}", report.format));
     out.push_str(&format!(",\n  \"tracks\": {}", report.tracks));
-    out.push_str(&format!(",\n  \"ticks_per_quarter\": {}", report.ticks_per_quarter));
+    out.push_str(&format!(
+        ",\n  \"ticks_per_quarter\": {}",
+        report.ticks_per_quarter
+    ));
     out.push_str(",\n  \"events\": ");
     if report.events.is_empty() {
         out.push_str("[]");
@@ -683,8 +743,10 @@ pub fn canonical_midi_json(report: &MidiReport) -> String {
                         fields.push(format!("\"data\": [{}]", inline.join(", ")));
                     }
                 }
-                let joined: Vec<String> =
-                    fields.into_iter().map(|field| format!("      {field}")).collect();
+                let joined: Vec<String> = fields
+                    .into_iter()
+                    .map(|field| format!("      {field}"))
+                    .collect();
                 format!("    {{\n{}\n    }}", joined.join(",\n"))
             })
             .collect();
@@ -762,7 +824,10 @@ pub fn rgba_image(raw: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
 }
 
 pub fn palette_rgba_image(raw: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
-    if raw.is_empty() || !raw.len().is_multiple_of(2) || width == 0 || !(raw.len() / 2).is_multiple_of(width)
+    if raw.is_empty()
+        || !raw.len().is_multiple_of(2)
+        || width == 0
+        || !(raw.len() / 2).is_multiple_of(width)
     {
         return err("palette RGBA dimensions must divide whole colors");
     }
@@ -795,7 +860,9 @@ pub fn self_test() -> Result<String, AssetError> {
     ));
     png.extend_from_slice(&make_chunk(b"IEND", &[]));
     let (tiles, colors, report) = gba_graphics(&png, 4.0)?;
-    if tiles != vec![0x10u8; 32] || colors != vec![0, 0, 0x1f, 0] || report.get("tiles") != Some(1.0)
+    if tiles != vec![0x10u8; 32]
+        || colors != vec![0, 0, 0x1f, 0]
+        || report.get("tiles") != Some(1.0)
     {
         return err("graphics self-test failed");
     }
@@ -804,13 +871,18 @@ pub fn self_test() -> Result<String, AssetError> {
     let mut midi = make_midi_chunk(b"MThd", &decode_hex("000000010060"));
     midi.extend_from_slice(&make_midi_chunk(b"MTrk", &track));
     let midi_report = midi_events(&midi)?;
-    let ticks: Vec<String> =
-        midi_report.events.iter().map(|event| event.tick.to_string()).collect();
+    let ticks: Vec<String> = midi_report
+        .events
+        .iter()
+        .map(|event| event.tick.to_string())
+        .collect();
     if midi_report.ticks_per_quarter != 96 || ticks.join(",") != "0,0,96,96" {
         return err("MIDI self-test failed");
     }
 
-    let rgba: Vec<u8> = (0..7 * 5 * 4).map(|index: u32| ((index * 29 + 3) & 255) as u8).collect();
+    let rgba: Vec<u8> = (0..7 * 5 * 4)
+        .map(|index: u32| ((index * 29 + 3) & 255) as u8)
+        .collect();
     let image = rgba_image(&rgba, 7)?;
     let unpacked = rgba_png(&image)?;
     if unpacked.width != 7 || unpacked.height != 5 || unpacked.pixels != rgba {
@@ -884,7 +956,10 @@ mod tests {
 
     #[test]
     fn signature_mismatch_is_reported_before_anything_else() {
-        assert_eq!(indexed_png(b"nope").unwrap_err().0, "invalid file signature");
+        assert_eq!(
+            indexed_png(b"nope").unwrap_err().0,
+            "invalid file signature"
+        );
         assert_eq!(rgba_png(&[]).unwrap_err().0, "invalid file signature");
     }
 
@@ -917,18 +992,27 @@ mod tests {
         let (tiles, colors, report) = gba_graphics(&png, 4.0).unwrap();
         assert_eq!(tiles, vec![0x10u8; 32]);
         assert_eq!(colors, vec![0, 0, 0x1f, 0]);
-        assert_eq!(sorted_json(&report), "{\"bpp\": 4, \"height\": 8, \"palette_entries\": 2, \"tiles\": 1, \"width\": 8}");
+        assert_eq!(
+            sorted_json(&report),
+            "{\"bpp\": 4, \"height\": 8, \"palette_entries\": 2, \"tiles\": 1, \"width\": 8}"
+        );
     }
 
     #[test]
     fn eight_bpp_emits_one_byte_per_pixel() {
-        let png = indexed_fixture(8, 8, 8, &[0, 0, 0, 248, 0, 0], &[0u8]
-            .iter()
-            .copied()
-            .chain((0..8u8).map(|x| x % 2))
-            .cycle()
-            .take(8 * 9)
-            .collect::<Vec<u8>>());
+        let png = indexed_fixture(
+            8,
+            8,
+            8,
+            &[0, 0, 0, 248, 0, 0],
+            &[0u8]
+                .iter()
+                .copied()
+                .chain((0..8u8).map(|x| x % 2))
+                .cycle()
+                .take(8 * 9)
+                .collect::<Vec<u8>>(),
+        );
         let (tiles, _, report) = gba_graphics(&png, 8.0).unwrap();
         assert_eq!(tiles.len(), 64);
         assert_eq!(report.get("bpp"), Some(8.0));
@@ -955,25 +1039,34 @@ mod tests {
         let palette: Vec<u8> = (0..17).flat_map(|index: u8| [index * 8, 0, 0]).collect();
         // 32 pixels wide keeps the 8-aligned rule; 5bpp does not exist, so use
         // 8bpp rows referencing index 16.
-        let rows: Vec<u8> = (0..8).flat_map(|_| {
-            let mut row = vec![0u8];
-            row.extend((0..8u8).map(|_| 16));
-            row
-        }).collect();
+        let rows: Vec<u8> = (0..8)
+            .flat_map(|_| {
+                let mut row = vec![0u8];
+                row.extend((0..8u8).map(|_| 16));
+                row
+            })
+            .collect();
         let png = indexed_fixture(8, 8, 8, &palette, &rows);
-        assert_eq!(gba_graphics(&png, 4.0).unwrap_err().0, "image does not fit 4bpp");
+        assert_eq!(
+            gba_graphics(&png, 4.0).unwrap_err().0,
+            "image does not fit 4bpp"
+        );
     }
 
     #[test]
     fn dimension_and_palette_rules_are_enforced() {
         let rows: Vec<u8> = (0..8).flat_map(|_| [0u8, 0x55]).collect();
         assert_eq!(
-            indexed_png(&indexed_fixture(9, 8, 1, &[0, 0, 0, 248, 0, 0], &rows)).unwrap_err().0,
+            indexed_png(&indexed_fixture(9, 8, 1, &[0, 0, 0, 248, 0, 0], &rows))
+                .unwrap_err()
+                .0,
             "PNG dimensions must be nonzero multiples of eight"
         );
         let big: Vec<u8> = (0..3).flat_map(|index: u8| [index * 8, 0, 0]).collect();
         assert_eq!(
-            indexed_png(&indexed_fixture(8, 8, 1, &big, &rows)).unwrap_err().0,
+            indexed_png(&indexed_fixture(8, 8, 1, &big, &rows))
+                .unwrap_err()
+                .0,
             "palette exceeds indexed bit depth"
         );
     }
@@ -1082,7 +1175,9 @@ mod tests {
     #[test]
     fn a_meta_event_clears_running_status() {
         assert_eq!(
-            midi_events(&simple_midi("00903c4000ff0100003e40")).unwrap_err().0,
+            midi_events(&simple_midi("00903c4000ff0100003e40"))
+                .unwrap_err()
+                .0,
             "running status without channel status"
         );
     }
@@ -1092,7 +1187,10 @@ mod tests {
         let report = midi_events(&simple_midi("00c00500ff2f00")).unwrap();
         assert_eq!(
             report.events[0].body,
-            EventBody::Channel { status: 0xc0, data: vec![5] }
+            EventBody::Channel {
+                status: 0xc0,
+                data: vec![5]
+            }
         );
     }
 
@@ -1103,8 +1201,11 @@ mod tests {
         midi.extend_from_slice(&make_midi_chunk(b"MTrk", &decode_hex("6090304000ff2f00")));
         midi.extend_from_slice(&make_midi_chunk(b"MTrk", &decode_hex("0090314060ff2f00")));
         let report = midi_events(&midi).unwrap();
-        let keys: Vec<(i64, usize)> =
-            report.events.iter().map(|event| (event.tick, event.track)).collect();
+        let keys: Vec<(i64, usize)> = report
+            .events
+            .iter()
+            .map(|event| (event.tick, event.track))
+            .collect();
         assert_eq!(keys, vec![(0, 1), (96, 0), (96, 0), (96, 1)]);
     }
 
@@ -1126,12 +1227,18 @@ mod tests {
         let mut track = make_midi_chunk(b"MTrk", &decode_hex("00ff2f00"));
         track.truncate(track.len() - 2);
         midi.extend_from_slice(&track);
-        assert_eq!(midi_events(&midi).unwrap_err().0, "truncated MIDI chunk payload");
+        assert_eq!(
+            midi_events(&midi).unwrap_err().0,
+            "truncated MIDI chunk payload"
+        );
     }
 
     #[test]
     fn vlq_rejects_an_overlong_encoding() {
-        assert_eq!(vlq(&[0x80, 0x80, 0x80, 0x80], 0).unwrap_err().0, "overlong variable-length quantity");
+        assert_eq!(
+            vlq(&[0x80, 0x80, 0x80, 0x80], 0).unwrap_err().0,
+            "overlong variable-length quantity"
+        );
         assert_eq!(vlq(&[0x81, 0x00], 0).unwrap(), (128, 2));
         assert_eq!(vlq(&[0x7f], 0).unwrap(), (127, 1));
     }
@@ -1153,7 +1260,10 @@ mod tests {
         report.set("width", 8.0);
         report.set("height", 16.0);
         report.set("bpp", 4.0);
-        assert_eq!(sorted_json(&report), "{\"bpp\": 4, \"height\": 16, \"width\": 8}");
+        assert_eq!(
+            sorted_json(&report),
+            "{\"bpp\": 4, \"height\": 16, \"width\": 8}"
+        );
     }
 
     #[test]

@@ -17,7 +17,7 @@
  * target the same callee (`Func_0200a752`) with different arities.
  *
  * Per-site call symbols (law 6): every callee below is named at the
- * bl_site_symbols.ts-decoded address for its own site, not the raw
+ * bl-site-symbols-decoded address for its own site, not the raw
  * main-image address the earlier draft used.
  */
 

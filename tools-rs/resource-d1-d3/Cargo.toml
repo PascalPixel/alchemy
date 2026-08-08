@@ -1,0 +1,22 @@
+[workspace]
+
+[package]
+name = "resource-d1-d3"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "resource_d1_d3"
+path = "src/lib.rs"
+
+[[bin]]
+name = "resource-d1-d3"
+path = "src/main.rs"
+
+[dependencies]
+alignment-tail = { path = "../alignment-tail" }
+canonical-json = { path = "../canonical-json" }
+export-asset = { path = "../export-asset" }
+extract-resource = { path = "../extract-resource" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

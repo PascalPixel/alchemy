@@ -4,7 +4,12 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_path_buf()
 }
 
 fn scan(root: &Path, directory: &str) -> Result<(usize, Vec<Finding>), String> {

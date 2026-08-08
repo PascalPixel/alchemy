@@ -57,4 +57,5 @@ pub static OVERLAY_CALL_VIA_BASE: &[(&str, u64)] = &[
 /// `SOURCE_CALL_VIA_BASE` -- per-source overrides, which win over the overlay's
 /// entry. One address per overlay serves every site in a narrow address range,
 /// so a row far from the rest gets its own.
-pub static SOURCE_CALL_VIA_BASE: &[(&str, u64)] = &[("exact/resource_373_c_02005610.c", 0x0200_b794)];
+pub static SOURCE_CALL_VIA_BASE: &[(&str, u64)] =
+    &[("exact/resource_373_c_02005610.c", 0x0200_b794)];

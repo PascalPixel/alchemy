@@ -7,7 +7,7 @@
  * return is at 0x020007d2, and all 19 calls appear in machine order.
  *
  * Per-site call symbols (law 6): each callee below is named at the
- * bl_site_symbols.ts-decoded address for its own call site, not the
+ * bl-site-symbols-decoded address for its own call site, not the
  * generic main-image address the earlier draft used. Two sites (the
  * Func_0808a1b8(8,0xd000,60) call and the Func_0808a170(0x1e06) call)
  * decode to the same local trampoline, Func_02006d1e -- an old-style

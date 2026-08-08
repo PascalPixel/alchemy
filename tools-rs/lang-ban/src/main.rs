@@ -10,7 +10,7 @@
 //   cargo run -p lang-ban -- --stat  # how far the port has to go
 //
 // Deleting ahead of the port is the failure mode this ordering exists to
-// prevent: every parallel runner imports tools/lib/jobs.ts, so removing it
+// prevent: every parallel runner shares one native cap, so removing it
 // before its callers are Rust breaks the whole tree at once.
 //
 // Judgement calls, recorded because they are not derivable from the rule:

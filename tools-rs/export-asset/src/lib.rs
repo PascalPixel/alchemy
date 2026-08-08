@@ -86,7 +86,10 @@ fn ihdr(width: u32, height: u32, depth: f64, color: u8) -> Vec<u8> {
 }
 
 fn idat(scanlines: &[u8]) -> Vec<u8> {
-    chunk(b"IDAT", &deflate_sync(scanlines, DeflateOptions { level: Some(9) }))
+    chunk(
+        b"IDAT",
+        &deflate_sync(scanlines, DeflateOptions { level: Some(9) }),
+    )
 }
 
 /// JavaScript's `x <= 0`, which is *false* for NaN -- so a NaN dimension falls
@@ -96,7 +99,10 @@ fn idat(scanlines: &[u8]) -> Vec<u8> {
 /// rejects negated comparisons on partially ordered types, and the NaN
 /// behaviour is exactly the subtlety it is warning about.
 fn js_not_positive(value: f64) -> bool {
-    matches!(value.partial_cmp(&0.0), Some(std::cmp::Ordering::Less | std::cmp::Ordering::Equal))
+    matches!(
+        value.partial_cmp(&0.0),
+        Some(std::cmp::Ordering::Less | std::cmp::Ordering::Equal)
+    )
 }
 
 /// JavaScript's `%` on numbers is a truncated remainder over f64, not integer
@@ -143,7 +149,10 @@ pub fn tile_png(
     for tile in 0..count as usize {
         let source = &raw[tile * unit..(tile + 1) * unit];
         let indices: Vec<u8> = if four {
-            source.iter().flat_map(|byte| [byte & 15, byte >> 4]).collect()
+            source
+                .iter()
+                .flat_map(|byte| [byte & 15, byte >> 4])
+                .collect()
         } else {
             source.to_vec()
         };
@@ -155,7 +164,8 @@ pub fn tile_png(
         }
     }
 
-    let mut scanlines: Vec<u8> = Vec::with_capacity(height * (width / if four { 2 } else { 1 } + 1));
+    let mut scanlines: Vec<u8> =
+        Vec::with_capacity(height * (width / if four { 2 } else { 1 } + 1));
     for y in 0..height {
         scanlines.push(0);
         let row = &pixels[y * width..(y + 1) * width];
@@ -170,9 +180,13 @@ pub fn tile_png(
 
     let colors = if four { 16usize } else { 256 };
     let generated: Vec<Rgb> = if four {
-        (0..16u8).map(|index| [index * 16, index * 16, index * 16]).collect()
+        (0..16u8)
+            .map(|index| [index * 16, index * 16, index * 16])
+            .collect()
     } else {
-        (0..256u32).map(|index| [((index & 31) * 8) as u8, ((index >> 5) * 8) as u8, 0]).collect()
+        (0..256u32)
+            .map(|index| [((index & 31) * 8) as u8, ((index >> 5) * 8) as u8, 0])
+            .collect()
     };
     let palette: &[Rgb] = palette_colors.unwrap_or(&generated);
     if palette.is_empty() || palette.len() > colors {
@@ -391,7 +405,9 @@ pub fn self_test() -> Result<String, ExportError> {
     let decode = |error: import_asset::AssetError| ExportError(error.0);
 
     for (bpp, size, columns) in [(4.0f64, 32 * 7usize, 7.0f64), (8.0, 64 * 4, 4.0)] {
-        let raw: Vec<u8> = (0..size).map(|index| ((index * 37 + 11) & 255) as u8).collect();
+        let raw: Vec<u8> = (0..size)
+            .map(|index| ((index * 37 + 11) & 255) as u8)
+            .collect();
         let (image, _) = tile_png(&raw, bpp, columns, None)?;
         if import_asset::gba_graphics(&image, bpp).map_err(decode)?.0 != raw {
             return Err(ExportError(format!(
@@ -410,7 +426,9 @@ pub fn self_test() -> Result<String, ExportError> {
             ]
         })
         .collect();
-    let raw: Vec<u8> = (0..64 * 4usize).map(|index| ((index * 53 + 7) & 255) as u8).collect();
+    let raw: Vec<u8> = (0..64 * 4usize)
+        .map(|index| ((index * 53 + 7) & 255) as u8)
+        .collect();
     let (image, _) = tile_png(&raw, 8.0, 4.0, Some(&colors))?;
     let (tiles, palette, _) = import_asset::gba_graphics(&image, 8.0).map_err(decode)?;
     let mut expected_palette = vec![0u8; 512];
@@ -433,14 +451,24 @@ pub fn self_test() -> Result<String, ExportError> {
         return err("palette round-trip failed");
     }
 
-    let raw: Vec<u8> = (0..128 * 64usize).map(|index| ((index * 53 + 7) & 255) as u8).collect();
+    let raw: Vec<u8> = (0..128 * 64usize)
+        .map(|index| ((index * 53 + 7) & 255) as u8)
+        .collect();
     let (image, _) = byte_png(&raw, 128.0)?;
     let decoded = import_asset::indexed_png(&image).map_err(decode)?;
-    if decoded.pixels.iter().map(|value| *value as u8).collect::<Vec<u8>>() != raw {
+    if decoded
+        .pixels
+        .iter()
+        .map(|value| *value as u8)
+        .collect::<Vec<u8>>()
+        != raw
+    {
         return err("indexed byte-image round-trip failed");
     }
 
-    let raw: Vec<u8> = (0..11 * 7 * 4usize).map(|index| ((index * 29 + 3) & 255) as u8).collect();
+    let raw: Vec<u8> = (0..11 * 7 * 4usize)
+        .map(|index| ((index * 29 + 3) & 255) as u8)
+        .collect();
     let (image, _) = rgba_image(&raw, 11.0)?;
     let rgba = import_asset::rgba_png(&image).map_err(decode)?;
     if rgba.width != 11 || rgba.height != 7 || rgba.pixels != raw {
@@ -465,7 +493,9 @@ mod tests {
     use super::*;
 
     fn ramp(length: usize, step: usize, offset: usize) -> Vec<u8> {
-        (0..length).map(|index| ((index * step + offset) & 255) as u8).collect()
+        (0..length)
+            .map(|index| ((index * step + offset) & 255) as u8)
+            .collect()
     }
 
     #[test]
@@ -476,7 +506,10 @@ mod tests {
     #[test]
     fn a_chunk_carries_a_crc_over_kind_and_payload_but_not_the_length() {
         let encoded = chunk(b"IEND", &[]);
-        assert_eq!(encoded, vec![0, 0, 0, 0, b'I', b'E', b'N', b'D', 0xae, 0x42, 0x60, 0x82]);
+        assert_eq!(
+            encoded,
+            vec![0, 0, 0, 0, b'I', b'E', b'N', b'D', 0xae, 0x42, 0x60, 0x82]
+        );
         let sized = chunk(b"IDAT", &[1, 2, 3]);
         assert_eq!(&sized[..4], &[0, 0, 0, 3]);
         assert_eq!(&sized[4..11], b"IDAT\x01\x02\x03");
@@ -578,8 +611,14 @@ mod tests {
 
     #[test]
     fn palette_png_rejects_the_gba_high_bit_and_oversized_palettes() {
-        assert_eq!(palette_png(&[]), err("palette must contain 1..256 BGR555 entries"));
-        assert_eq!(palette_png(&[0]), err("palette must contain 1..256 BGR555 entries"));
+        assert_eq!(
+            palette_png(&[]),
+            err("palette must contain 1..256 BGR555 entries")
+        );
+        assert_eq!(
+            palette_png(&[0]),
+            err("palette must contain 1..256 BGR555 entries")
+        );
         assert_eq!(
             palette_png(&vec![0u8; 514]),
             err("palette must contain 1..256 BGR555 entries")

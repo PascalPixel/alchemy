@@ -21,7 +21,7 @@
  */
 
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools/assets/bl_site_symbols.ts to derive
+   (see resource_382:3ac for the rule, tools-rs/bl-site-symbols to derive
    them). All three reach the same ARM-mode IWRAM helper that scales a
    channel by the adjustment, and each still needs its own name. */
 s32 Func_020018d2();   /* 0x02000b44 */

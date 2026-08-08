@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+name = "map-container-components"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "map_container_components"
+path = "src/lib.rs"
+
+[[bin]]
+name = "map-container-components"
+path = "src/main.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+extract-resource = { path = "../extract-resource" }
+tilemap = { path = "../tilemap" }
+serde_json = { version = "1", features = ["preserve_order"] }

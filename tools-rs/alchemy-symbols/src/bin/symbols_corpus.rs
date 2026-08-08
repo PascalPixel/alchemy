@@ -29,7 +29,9 @@ fn unescape_field(text: &str) -> String {
 }
 
 fn escape(text: &str) -> String {
-    text.replace('\\', "\\\\").replace('\n', "\\n").replace('\t', "\\t")
+    text.replace('\\', "\\\\")
+        .replace('\n', "\\n")
+        .replace('\t', "\\t")
 }
 
 fn main() {

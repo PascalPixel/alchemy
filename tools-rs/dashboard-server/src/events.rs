@@ -77,8 +77,14 @@ pub fn keepalive() {
 mod tests {
     use super::*;
 
+    // Both tests exercise the process-global registry used by the live
+    // server. Serialise them so Rust's parallel test runner cannot make one
+    // test observe the other's temporary subscriber.
+    static TEST_LOCK: Mutex<()> = Mutex::new(());
+
     #[test]
     fn a_registered_client_receives_events_in_order_and_unregisters_cleanly() {
+        let _guard = TEST_LOCK.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
         let before = count();
         let (id, receiver) = register();
         assert_eq!(count(), before + 1);
@@ -92,6 +98,7 @@ mod tests {
 
     #[test]
     fn a_dropped_receiver_removes_its_client_rather_than_wedging_the_broadcast() {
+        let _guard = TEST_LOCK.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
         let before = count();
         let (_id, receiver) = register();
         drop(receiver);

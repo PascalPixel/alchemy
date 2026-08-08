@@ -86,13 +86,13 @@ pub fn self_test() -> Result<String, String> {
     }
     for id in visual_cohort.iter().filter(|item| **item != "3bd") {
         let header = overlay_tiles(id).into_iter().find(|tile| {
-            tile.bytes == 40
+            tile.bytes == 48
                 && tile
                     .categories
                     .iter()
                     .find(|(k, _)| k == "retained_asm")
-                    .is_some_and(|(_, value)| *value == 40)
-                && tile.label.contains("0x02000004\u{2013}0x0200002c")
+                    .is_some_and(|(_, value)| *value == 48)
+                && tile.label.contains("0x02000000\u{2013}0x02000030")
         });
         if header.is_none() {
             return Err(format!("{id} fixed overlay header is not retained exact assembly"));

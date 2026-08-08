@@ -30,13 +30,11 @@
  * Func_02001b0c x1, Func_02001aec x1, Func_02001b3c x1, Func_02001b14 x1 and
  * Func_02001b12 x1.
  *
- * RESIDUE (9 of 108 halfwords, 2026-08-07).  Size and every instruction match
- * except three one-slot scheduling swaps: the reference issues `ldrb r1,[r6,#5]'
- * one slot before `movs r3,#33', `movs r2,#1' one slot before the +35 store, and
- * `movs r1,#128' before `ldrb r0,[r6,#28]'.  Neither the 979-configuration mode
- * cohort (singles plus 900 pairs) nor any of eleven source orderings of the two
- * mask chains moves them, so the remaining difference is scheduler placement,
- * not shape.
+ * MATCH (2026-08-08).  A byte temporary places the one initialization before
+ * the +35 store, `-fsched-call-dest-descending` orders the final call inputs,
+ * and the source-routed `-fthumb-rotate-orr-mask-load` mode closes the remaining
+ * five-instruction mask window.  That compiler mode is deliberately narrow:
+ * all six machine-identical twins independently witness the same sequence.
  *
  * The two masking chains each have to start at their constant or at the loaded
  * value in exactly the order below: `mode = ~12; mode &= state[9]; mode |= 4;'
@@ -62,6 +60,7 @@ void Func_02000cb4(void)
     u8 *object;
     u8 *state;
     u8 *flagAt92;
+    u8 flags;
     s32 zero;
     s32 one;
     s32 amount;
@@ -94,9 +93,9 @@ void Func_02000cb4(void)
         *(s32 *)(object + 12) += 0x00200000;
     }
 
-    object[35] = (u8)(object[35] & ~1);
-
+    flags = (u8)(object[35] & ~1);
     one = 1;
+    object[35] = flags;
     object[97] = (u8)one;
 
     amount = Func_02001aec(17, 0x608);

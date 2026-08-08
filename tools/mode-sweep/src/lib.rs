@@ -110,6 +110,10 @@ pub const FORK_MODES: &[&str] = &[
     // The orr destination tie, resolved toward the older input. Witness
     // resource_3b3:1fd4.
     "-fthumb-orr-into-older-input",
+    // Rotate a byte-mask load around an OR whose dead input register is
+    // immediately reused. Six identical overlay witnesses, led by
+    // resource_392:0cb4 and resource_373:5b48.
+    "-fthumb-rotate-orr-mask-load",
     // Two in-place constant shifts transposed across one unrelated insn.
     // Witness resource_3c8:2f30.
     // the thirteen :0104 integrators -- the load below the store
@@ -1768,11 +1772,11 @@ mod tests {
     #[test]
     fn mode_table_has_the_expected_shape() {
         // Counts measured from the migrated native table:
-        //   FORK_MODES.length === 89, STOCK_SWITCHES.length === 21,
-        //   MODES.length === 136.
-        assert_eq!(FORK_MODES.len(), 89);
+        //   FORK_MODES.length === 90, STOCK_SWITCHES.length === 21,
+        //   MODES.length === 137.
+        assert_eq!(FORK_MODES.len(), 90);
         assert_eq!(STOCK_SWITCHES.len(), 21);
-        assert_eq!(modes().len(), 136);
+        assert_eq!(modes().len(), 137);
         assert_eq!(
             modes().len(),
             DECLARED.len() + FORK_MODES.len() + AGBCC_FLAGS.len()

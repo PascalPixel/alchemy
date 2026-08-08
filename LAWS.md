@@ -8,7 +8,7 @@ from rediscovering the same source-shape constraints.
 
 The clean-room evidence boundary in [PROVENANCE.md](PROVENANCE.md) and the
 source-only publication gate in
-[tools/check/check_publication.ts](tools/check/check_publication.ts) apply here.
+`tools-rs/check-publication` apply here.
 Externally suggested compiler behavior remains a hypothesis until reproduced
 locally. A confirmed law must name its in-repository evidence, scope, and
 confirmation date. An exact match proves the cited source shape; broader claims

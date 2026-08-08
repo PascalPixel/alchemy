@@ -6,7 +6,7 @@
 // PORT NOTE — what was inlined, and from where.
 //
 //   * `canonical_c_source` is `canonicalCSource` from
-//     tools/lib/full_c_progress.ts (four rejection patterns, hand-rolled here
+//     full-c-progress (four rejection patterns, hand-rolled here
 //     because the crate takes no regex dependency). JavaScript `\b` is the
 //     ASCII word boundary over [0-9A-Za-z_], which `is_word_byte` reproduces.
 //

@@ -22,8 +22,8 @@
 //
 // PORT NOTE (module wiring): `tools/metrics/coverage_map.ts` imports
 // `canonicalCSource`, `roundHalfUpPercent` and `unionIntervals` from
-// `tools/lib/full_c_progress.ts`. The Rust port of that file lives in
-// `tools-rs/full-c-progress`, but that crate publishes no `[lib]` target, so a
+// the Full-C progress implementation in `tools-rs/full-c-progress`. That crate
+// publishes no `[lib]` target, so a
 // Cargo `path` dependency is impossible without editing another crate's
 // manifest. The available form of "depend on it, do not reimplement it" is to
 // include its sources directly with `#[path]`, which is what the three

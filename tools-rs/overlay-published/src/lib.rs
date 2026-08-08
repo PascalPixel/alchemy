@@ -7,10 +7,8 @@
 //! there in full, not duplicated here. This port preserves every invariant
 //! from that comment and from `selfTest()` bit for bit.
 //!
-//! The TypeScript original is retained: `tools/lib/full_c_progress.ts` still
-//! imports `publishedOffset` from it, and `tools/overlay/overlay_gaps.ts`
-//! still imports `manualRegions`, `exactSpans`, `isPrologueShape`, and
-//! `savesLinkRegister` from it.
+//! The remaining overlay gap analysis still consumes the corresponding legacy
+//! helpers until that command is migrated.
 
 use std::collections::HashSet;
 use std::fs;

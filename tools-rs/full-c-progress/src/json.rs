@@ -1,6 +1,6 @@
 // Minimal JSON reader plus the repository's `canonical_json` writer.
 //
-// WHY: this crate is dependency-free by policy, and `full_c_progress.ts` only
+// WHY: this crate is dependency-free by policy, and the original metric only
 // has to read three manifest shapes and emit two documents in the layout
 // `tools/lib/canonical_json.ts` defines. A general JSON library would add a
 // dependency, and every off-the-shelf one sorts or rehashes object keys.

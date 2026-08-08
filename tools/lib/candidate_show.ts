@@ -30,7 +30,7 @@ import { linkedFunctionExtent } from "./integrate_matches.ts";
 
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 
-// build_asm.ts already fixed each region's extent; the entry symbol's own size
+// The assembly builder already fixed each region's extent; the entry symbol's own size
 // is only the head of it when a trailing function shares the region.
 export function regionSize(stem: string): number | null {
   const path = [join(ROOT, "out/full/asm/manifest.json"), join(ROOT, "out/asm/manifest.json")].find(existsSync);

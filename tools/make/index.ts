@@ -19,6 +19,7 @@ const HERE = dirname(Bun.fileURLToPath(import.meta.url));
 const ROOT = dirname(dirname(HERE));
 
 const RUST_SUBCOMMANDS: Record<string, string> = {
+  build_asm: "tools-rs/build-asm/target/release/build-asm",
   build_claimed: "tools-rs/build-claimed/target/release/build-claimed",
   build_rom: "tools-rs/build-rom/target/release/build-rom",
   build_semantic: "tools-rs/build-semantic/target/release/build-semantic",

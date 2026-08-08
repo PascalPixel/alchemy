@@ -1,7 +1,6 @@
-//! Rust port of `tools/make/build_rom.ts`.
+//! Build the complete ROM from source-owned regions.
 //!
-//! The TypeScript original drives three sub-builders (`build_claimed.ts`,
-//! `build_asm.ts`, `build_assets.ts`), lays every produced region out in
+//! The pipeline drives the claimed-C, assembly, and asset builders, lays every produced region out in
 //! address order, fills the gaps with `.incbin` slices of the base ROM,
 //! assembles one object, links it with a generated linker script and finally
 //! proves the result is byte-identical to the base ROM.
@@ -493,8 +492,9 @@ pub fn main_pipeline(options: &Options, cwd: &Path) -> Result<String, String> {
     run(
         &root,
         &[
-            bun.clone(),
-            "tools/make/build_asm.ts".into(),
+            root.join("tools-rs/build-asm/target/release/build-asm")
+                .to_string_lossy()
+                .into_owned(),
             rom_path_string.clone(),
             "--output".into(),
             "out/asm".into(),

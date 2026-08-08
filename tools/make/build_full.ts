@@ -498,7 +498,7 @@ async function main(): Promise<void> {
   const asmDirectory = rooted(target.asmDir);
   if (existsSync(asmDirectory) && hasAssemblySources(asmDirectory)) {
     const asmOutput = rooted(args.asmOutput);
-    const asmCommand = [process.execPath, "tools/make/build_asm.ts"];
+    const asmCommand = [join(ROOT, "tools-rs/build-asm/target/release/build-asm")];
     if (args.sourceOnly) asmCommand.push("--source-only");
     else asmCommand.push(romPath);
     asmCommand.push("--output", asmOutput);

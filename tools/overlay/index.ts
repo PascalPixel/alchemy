@@ -27,6 +27,7 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   overlay_driver: "tools-rs/overlay-driver/target/release/overlay-driver",
   overlay_entry: "tools-rs/overlay-entry/target/release/overlay-entry",
   overlay_mode_cohort: "tools-rs/overlay-mode-cohort/target/release/overlay-mode-cohort",
+  overlay_show: "tools-rs/overlay-show/target/release/overlay-show",
   overlay_showcase: "tools-rs/overlay-showcase/target/release/overlay-showcase",
 };
 

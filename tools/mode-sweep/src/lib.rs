@@ -514,6 +514,14 @@ const DECLARED: &[Spec] = &[
         &["-fsched-high-dest-first"],
         PROVEN,
     ),
+    // Descending call-register tie-break. Witness resource_3bb:39fc; the
+    // resource_373:5b48 semantic candidate independently improves by 4 bytes.
+    spec(
+        "sched-call-dest-descending",
+        Family::Scheduler,
+        &["-fsched-call-dest-descending"],
+        PROVEN,
+    ),
     spec(
         "sched-alias-off",
         Family::Scheduler,
@@ -1759,12 +1767,12 @@ mod tests {
 
     #[test]
     fn mode_table_has_the_expected_shape() {
-        // Counts measured against Bun:
+        // Counts measured from the migrated native table:
         //   FORK_MODES.length === 89, STOCK_SWITCHES.length === 21,
-        //   MODES.length === 135.
+        //   MODES.length === 136.
         assert_eq!(FORK_MODES.len(), 89);
         assert_eq!(STOCK_SWITCHES.len(), 21);
-        assert_eq!(modes().len(), 135);
+        assert_eq!(modes().len(), 136);
         assert_eq!(
             modes().len(),
             DECLARED.len() + FORK_MODES.len() + AGBCC_FLAGS.len()

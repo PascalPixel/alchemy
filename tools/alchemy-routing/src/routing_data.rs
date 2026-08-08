@@ -718,7 +718,10 @@ pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
 pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] =
-    &["exact/resource_3bb_c_020039fc.c"];
+    &[
+        "exact/resource_3bb_c_020039fc.c",
+        "semantic/resource_373_c_02005b48.c",
+    ];
 pub static NO_SCHED_ALIAS_OVERLAY_SOURCES: &[&str] = &[
     "exact/08078144.c",
     "exact/resource_3af_c_02002b7c.c",

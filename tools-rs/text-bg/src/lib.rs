@@ -100,7 +100,12 @@ mod tests {
 
     #[test]
     fn entry_round_trips() {
-        let entry = TextBgEntry { tile: 0x2a5, palette: 13, hflip: true, vflip: true };
+        let entry = TextBgEntry {
+            tile: 0x2a5,
+            palette: 13,
+            hflip: true,
+            vflip: true,
+        };
         let encoded = encode_entry(entry).unwrap();
         assert_eq!(decode_entry(encoded), entry);
     }
@@ -116,10 +121,26 @@ mod tests {
 
     #[test]
     fn out_of_range_inputs_are_rejected() {
-        let bad_tile = TextBgEntry { tile: 0x400, palette: 0, hflip: false, vflip: false };
-        assert_eq!(encode_entry(bad_tile), Err(TextBgError::TileOutOfRange(0x400)));
-        let bad_palette = TextBgEntry { tile: 0, palette: 16, hflip: false, vflip: false };
-        assert_eq!(encode_entry(bad_palette), Err(TextBgError::PaletteOutOfRange(16)));
+        let bad_tile = TextBgEntry {
+            tile: 0x400,
+            palette: 0,
+            hflip: false,
+            vflip: false,
+        };
+        assert_eq!(
+            encode_entry(bad_tile),
+            Err(TextBgError::TileOutOfRange(0x400))
+        );
+        let bad_palette = TextBgEntry {
+            tile: 0,
+            palette: 16,
+            hflip: false,
+            vflip: false,
+        };
+        assert_eq!(
+            encode_entry(bad_palette),
+            Err(TextBgError::PaletteOutOfRange(16))
+        );
         assert!(flip_tile(&[0u8; 63], false, false, 8).is_err());
     }
 }

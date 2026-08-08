@@ -87,7 +87,8 @@ pub fn code_only(text: &str) -> String {
                     index += 2;
                     continue;
                 }
-                let closes = (state == State::Str && char == b'"') || (state == State::Char && char == b'\'');
+                let closes = (state == State::Str && char == b'"')
+                    || (state == State::Char && char == b'\'');
                 if closes {
                     output.push(' ');
                     state = State::Code;
@@ -153,14 +154,19 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     if !directory.is_dir() {
         return Ok(Vec::new());
     }
-    let mut names: Vec<PathBuf> =
-        fs::read_dir(directory)?.filter_map(Result::ok).map(|entry| entry.path()).collect();
+    let mut names: Vec<PathBuf> = fs::read_dir(directory)?
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .collect();
     names.sort();
     let mut files = Vec::new();
     for path in names {
         if path.is_dir() {
             files.extend(source_files(&path)?);
-        } else if matches!(path.extension().and_then(|e| e.to_str()), Some("c") | Some("h")) {
+        } else if matches!(
+            path.extension().and_then(|e| e.to_str()),
+            Some("c") | Some("h")
+        ) {
             files.push(path);
         }
     }
@@ -173,7 +179,12 @@ mod tests {
 
     #[test]
     fn every_escape_spelling_is_caught() {
-        for source in ["asm(\"\")", "__asm(\"\")", "__asm__(\"r5\")", "__asm_(\"\")"] {
+        for source in [
+            "asm(\"\")",
+            "__asm(\"\")",
+            "__asm__(\"r5\")",
+            "__asm_(\"\")",
+        ] {
             assert_eq!(find_forbidden("bad.c", source).len(), 1, "missed {source}");
         }
     }
@@ -200,7 +211,10 @@ mod tests {
     fn an_escaped_quote_does_not_end_a_literal() {
         // If the `\"` were treated as a close, the `asm` after it would be read
         // as code and wrongly reported.
-        assert_eq!(find_forbidden("x.c", "const char *s = \"a\\\" asm(\\\"\\\") b\";\n"), Vec::new());
+        assert_eq!(
+            find_forbidden("x.c", "const char *s = \"a\\\" asm(\\\"\\\") b\";\n"),
+            Vec::new()
+        );
     }
 
     #[test]
@@ -220,8 +234,10 @@ mod tests {
         fs::write(dir.join("sub").join("c.c"), b"").unwrap();
 
         let files = source_files(&dir).unwrap();
-        let names: Vec<String> =
-            files.iter().map(|p| p.strip_prefix(&dir).unwrap().to_string_lossy().into()).collect();
+        let names: Vec<String> = files
+            .iter()
+            .map(|p| p.strip_prefix(&dir).unwrap().to_string_lossy().into())
+            .collect();
         assert_eq!(names, vec!["a.h", "b.c", "sub/c.c"]);
         fs::remove_dir_all(&dir).unwrap();
     }

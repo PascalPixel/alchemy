@@ -1,0 +1,22 @@
+[workspace]
+
+[package]
+name = "shape-sweep"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Native candidate compilation and the overlay linker are shared Rust APIs.
+# Keeping this crate on those APIs means the shape axis observes the same
+# compiler routing and linking rules as the other candidate tools.
+candidate-compiler = { path = "../candidate-compiler" }
+alchemy-routing = { path = "../alchemy-routing" }
+overlay-disasm = { path = "../overlay-disasm" }
+
+[lib]
+name = "shape_sweep"
+path = "src/lib.rs"
+
+[[bin]]
+name = "shape-sweep"
+path = "src/main.rs"

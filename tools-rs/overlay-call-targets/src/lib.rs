@@ -14,7 +14,7 @@
 //! The TypeScript original is retained: eight other TS tools still import
 //! from it (`overlay_published.ts`, `overlay_twins.ts`, `overlay_unindexed.ts`,
 //! overlay certification, Full-C progress, overlay gap analysis,
-//! `overlay_call_order_check.ts`, `bl_site_symbols.ts`). Only `overlay_show.ts`
+//! `overlay_call_order_check.ts`, and bl-site-symbols). Only `overlay_show.ts`
 //! was ported off it so far, onto this crate.
 
 use std::collections::HashSet;

@@ -28,6 +28,7 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   check_commit_progress: "tools-rs/check-commit-progress/target/release/check-commit-progress",
   check_publication: "tools-rs/check-publication/target/release/check-publication",
   check_sanctum: "tools-rs/check-sanctum/target/release/check-sanctum",
+  commands: "tools-rs/commands/target/release/commands",
   core_retained_audit: "tools-rs/core-retained-audit/target/release/core-retained-audit",
   documented: "tools-rs/documented/target/release/documented",
   no_asm_c: "tools-rs/target/release/no-asm-c",

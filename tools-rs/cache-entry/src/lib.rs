@@ -39,7 +39,10 @@ fn temporary_path(final_path: &Path) -> std::path::PathBuf {
         .unwrap_or(0);
     let unique = COUNTER.fetch_add(1, Ordering::Relaxed);
     let mut name = final_path.as_os_str().to_os_string();
-    name.push(format!(".{}-{nanos:x}{unique:x}.partial", std::process::id()));
+    name.push(format!(
+        ".{}-{nanos:x}{unique:x}.partial",
+        std::process::id()
+    ));
     name.into()
 }
 
@@ -61,7 +64,8 @@ mod tests {
     use super::*;
 
     fn work_dir(name: &str) -> std::path::PathBuf {
-        let dir = std::env::temp_dir().join(format!("alchemy-cache-entry-{name}-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("alchemy-cache-entry-{name}-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
         dir
@@ -71,7 +75,12 @@ mod tests {
         fs::read_dir(dir)
             .unwrap()
             .filter(|entry| {
-                entry.as_ref().unwrap().file_name().to_string_lossy().ends_with(".partial")
+                entry
+                    .as_ref()
+                    .unwrap()
+                    .file_name()
+                    .to_string_lossy()
+                    .ends_with(".partial")
             })
             .count()
     }
@@ -83,7 +92,11 @@ mod tests {
         let payload = [1u8, 2, 3, 4, 5];
         write_cache_entry_atomically(&target, &payload).unwrap();
         assert_eq!(fs::read(&target).unwrap(), payload);
-        assert_eq!(partials(&dir), 0, "a successful write must leave no .partial behind");
+        assert_eq!(
+            partials(&dir),
+            0,
+            "a successful write must leave no .partial behind"
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 
@@ -106,7 +119,11 @@ mod tests {
         // Writing to a path inside a file (not a directory) cannot succeed.
         let impossible = target.join("nested").join("entry.bin");
         assert!(write_cache_entry_atomically(&impossible, &[1, 2, 3]).is_err());
-        assert_eq!(partials(&dir), 0, "a failed write must clean up its .partial");
+        assert_eq!(
+            partials(&dir),
+            0,
+            "a failed write must clean up its .partial"
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 
@@ -115,7 +132,10 @@ mod tests {
         let name = temporary_path(Path::new("/cache/entry.bin"));
         let name = name.to_string_lossy();
         assert!(!name.ends_with(".bin"), "a temporary must not end in .bin");
-        assert!(name.ends_with(".partial"), "a temporary must be identifiable");
+        assert!(
+            name.ends_with(".partial"),
+            "a temporary must be identifiable"
+        );
         assert_ne!(
             temporary_path(Path::new("/cache/entry.bin")),
             temporary_path(Path::new("/cache/entry.bin")),

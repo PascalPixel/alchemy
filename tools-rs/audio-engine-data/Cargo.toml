@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "audio-engine-data"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "audio_engine_data"
+path = "src/lib.rs"
+
+[[bin]]
+name = "audio-engine-data"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }

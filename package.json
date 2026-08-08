@@ -5,7 +5,7 @@
   "scripts": {
     "build:claimed": "tools-rs/build-claimed/target/release/build-claimed",
     "build:asm": "tools-rs/build-asm/target/release/build-asm",
-    "build:assets": "bun tools/make/build_assets.ts",
+    "build:assets": "tools-rs/build-assets/target/release/build-assets",
     "build:semantic": "tools-rs/build-semantic/target/release/build-semantic",
     "semantic:queue": "tools-rs/semantic-queue/target/release/semantic-queue",
     "semantic:check": "tools-rs/semantic-owner-scope/target/release/semantic-owner-scope --check",

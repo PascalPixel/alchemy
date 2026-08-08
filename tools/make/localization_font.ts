@@ -103,11 +103,13 @@ function exactKeys(value: object, keys: string[], label: string): void {
 }
 
 function imagePath(root: string, source: string): string {
-  if (!/^graphics\/fonts\/localization_font\/[a-z0-9_.-]+\.png$/.test(source)) {
+  const nested = /^graphics\/fonts\/localization_font\/[a-z0-9_.-]+\.png$/.test(source);
+  const flat = /^graphics\/fonts_localization_font_[a-z0-9_.-]+\.png$/.test(source);
+  if (!nested && !flat) {
     throw new Error("localization-font image path differs");
   }
   // Flat layout: path segments collapse into an underscore-joined file name.
-  return join(root, source.replace(/^graphics\/fonts\/localization_font\//, "graphics/fonts_localization_font_"));
+  return join(root, nested ? source.replace(/^graphics\/fonts\/localization_font\//, "graphics/fonts_localization_font_") : source);
 }
 
 function view(source: Uint8Array): DataView {
@@ -415,7 +417,7 @@ export function export_localization_font(rom: Uint8Array, outputRoot: string): L
   });
   const packedTail = range(rom, packedUsed, PACKED_END);
   if (packedTail.some((value) => value !== 0)) throw new Error("packed images have a nonzero tail");
-  const packedPath = join(imageRoot, "packed_32x32.indexed.png");
+  const packedPath = join(root, "graphics", "fonts_localization_font_packed_32x32.indexed.png");
   writeFileSync(packedPath, atlas(packedFrames, 32, 32, 4));
   const fontRaw = range(rom, FONT_ADDRESS, FONT_END);
   const fontView = view(fontRaw);
@@ -438,7 +440,7 @@ export function export_localization_font(rom: Uint8Array, outputRoot: string): L
     const top = Math.floor(index / fontColumns) * 16;
     for (let y = 0; y < 16; y++) fontPixels.set(frame.subarray(y * 16, y * 16 + 16), (top + y) * fontWidth + left);
   });
-  const fontPath = join(imageRoot, "glyphs_0020_00ff.1bpp.png");
+  const fontPath = join(root, "graphics", "fonts_localization_font_glyphs_0020_00ff.1bpp.png");
   writeFileSync(fontPath, indexedImage(fontPixels, fontWidth, Math.ceil(fontFrames.length / fontColumns) * 16, 1));
   const articleOffsets: number[] = [];
   for (let index = 0; index < 8; index++) articleOffsets.push(pointer(rom, ARTICLE_TABLE_ADDRESS + index * 4));

@@ -17,7 +17,9 @@ fn self_test() {
     if count_unset_registers(&draft) != 1 {
         panic!("unset-register count is wrong");
     }
-    let assembly: Vec<char> = "  bl Func_08001234\n  b.n Func_08005678\n".chars().collect();
+    let assembly: Vec<char> = "  bl Func_08001234\n  b.n Func_08005678\n"
+        .chars()
+        .collect();
     if count_calls(&assembly) != 1 {
         panic!("call count is wrong");
     }

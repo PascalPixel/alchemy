@@ -28,9 +28,8 @@ use import_asset::{
 /// like `inf` and `nan`, and yields `NaN` for anything else — and `NaN` is a
 /// *valid* bpp as far as `gba_graphics` is concerned, so this must not error.
 fn js_number(text: &str) -> f64 {
-    let trimmed = text.trim_matches(|character: char| {
-        character.is_whitespace() || character == '\u{feff}'
-    });
+    let trimmed =
+        text.trim_matches(|character: char| character.is_whitespace() || character == '\u{feff}');
     if trimmed.is_empty() {
         return 0.0;
     }
@@ -63,7 +62,9 @@ fn js_number(text: &str) -> f64 {
     {
         return f64::NAN;
     }
-    body.parse::<f64>().map(|value| sign * value).unwrap_or(f64::NAN)
+    body.parse::<f64>()
+        .map(|value| sign * value)
+        .unwrap_or(f64::NAN)
 }
 
 fn option(args: &[String], name: &str) -> Result<String, AssetError> {
@@ -89,11 +90,14 @@ fn write_file(path: &str, bytes: &[u8]) -> Result<(), AssetError> {
     // `dirname("out.bin")` is `"."`, which `mkdirSync(..., {recursive:true})`
     // accepts as a no-op; `create_dir_all(".")` does too.
     let parent = Path::new(path).parent().unwrap_or(Path::new("."));
-    let parent = if parent.as_os_str().is_empty() { Path::new(".") } else { parent };
+    let parent = if parent.as_os_str().is_empty() {
+        Path::new(".")
+    } else {
+        parent
+    };
     std::fs::create_dir_all(parent)
         .map_err(|error| AssetError(format!("{error}, mkdir '{}'", parent.display())))?;
-    std::fs::write(path, bytes)
-        .map_err(|error| AssetError(format!("{error}, open '{path}'")))
+    std::fs::write(path, bytes).map_err(|error| AssetError(format!("{error}, open '{path}'")))
 }
 
 fn run(mut args: Vec<String>) -> Result<(), AssetError> {
@@ -130,7 +134,11 @@ fn run(mut args: Vec<String>) -> Result<(), AssetError> {
             println!("{}", sorted_json(&report));
         }
         "indexed" => {
-            let flag = if args.iter().any(|arg| arg == "-o") { "-o" } else { "--output" };
+            let flag = if args.iter().any(|arg| arg == "-o") {
+                "-o"
+            } else {
+                "--output"
+            };
             let output = option(&args, flag)?;
             let image = indexed_png(&read_file(&input)?)?;
             let bytes: Vec<u8> = image.pixels.iter().map(|pixel| *pixel as u8).collect();
@@ -143,10 +151,17 @@ fn run(mut args: Vec<String>) -> Result<(), AssetError> {
             println!("{}", sorted_json(&report));
         }
         "midi" => {
-            let flag = if args.iter().any(|arg| arg == "-o") { "-o" } else { "--output" };
+            let flag = if args.iter().any(|arg| arg == "-o") {
+                "-o"
+            } else {
+                "--output"
+            };
             let output = option(&args, flag)?;
             let report = midi_events(&read_file(&input)?)?;
-            write_file(&output, format!("{}\n", canonical_midi_json(&report)).as_bytes())?;
+            write_file(
+                &output,
+                format!("{}\n", canonical_midi_json(&report)).as_bytes(),
+            )?;
             println!("tracks={} events={}", report.tracks, report.events.len());
         }
         _ => return Err(AssetError("an asset command is required".to_string())),
@@ -186,9 +201,15 @@ mod tests {
 
     #[test]
     fn option_requires_a_following_value() {
-        let args: Vec<String> = ["png", "in.png", "--bpp"].iter().map(|s| s.to_string()).collect();
+        let args: Vec<String> = ["png", "in.png", "--bpp"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         assert_eq!(option(&args, "--bpp").unwrap_err().0, "--bpp is required");
-        assert_eq!(option(&args, "--tiles").unwrap_err().0, "--tiles is required");
+        assert_eq!(
+            option(&args, "--tiles").unwrap_err().0,
+            "--tiles is required"
+        );
     }
 
     #[test]
@@ -202,7 +223,9 @@ mod tests {
             "an asset command is required"
         );
         assert_eq!(
-            run(vec!["bogus".to_string(), "x".to_string()]).unwrap_err().0,
+            run(vec!["bogus".to_string(), "x".to_string()])
+                .unwrap_err()
+                .0,
             "an asset command is required"
         );
     }
@@ -219,8 +242,10 @@ mod tests {
     fn png_decodes_before_output_flags_are_checked() {
         // A nonexistent input surfaces ENOENT even though --bpp is also absent,
         // because the read happens first.
-        let args: Vec<String> =
-            ["png", "missing.png"].iter().map(|s| s.to_string()).collect();
+        let args: Vec<String> = ["png", "missing.png"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         assert!(run(args).unwrap_err().0.starts_with("ENOENT"));
     }
 }

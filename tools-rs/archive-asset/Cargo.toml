@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "archive-asset"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "archive_asset"
+path = "src/lib.rs"
+
+[[bin]]
+name = "archive-asset"
+path = "src/main.rs"
+
+[dependencies]
+alignment-tail = { path = "../alignment-tail" }
+export-asset = { path = "../export-asset" }
+extract-resource = { path = "../extract-resource" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

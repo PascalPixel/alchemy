@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "gba-header"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "gba_header"
+path = "src/lib.rs"
+
+[[bin]]
+name = "gba-header"
+path = "src/main.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+export-asset = { path = "../export-asset" }
+import-asset = { path = "../import-asset" }
+alchemy-zlib = { path = "../zlib" }
+serde_json = { version = "1", features = ["preserve_order"] }

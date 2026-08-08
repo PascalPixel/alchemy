@@ -89,13 +89,14 @@ pub mod matchers {
                 | '\u{20}'
                 | '\u{a0}'
                 | '\u{1680}'
-                | '\u{2000}'..='\u{200a}'
-                | '\u{2028}'
-                | '\u{2029}'
-                | '\u{202f}'
-                | '\u{205f}'
-                | '\u{3000}'
-                | '\u{feff}'
+                | '\u{2000}'
+                ..='\u{200a}'
+                    | '\u{2028}'
+                    | '\u{2029}'
+                    | '\u{202f}'
+                    | '\u{205f}'
+                    | '\u{3000}'
+                    | '\u{feff}'
         )
     }
 
@@ -512,8 +513,14 @@ fn parse_regions(manifest: &Value) -> Vec<Region> {
 }
 
 pub fn semantic_queue(root: &Path) -> Vec<Candidate> {
-    let manifest_text = read_text(&root.join("out").join("full").join("asm").join("manifest.json"))
-        .expect("cannot read out/full/asm/manifest.json");
+    let manifest_text = read_text(
+        &root
+            .join("out")
+            .join("full")
+            .join("asm")
+            .join("manifest.json"),
+    )
+    .expect("cannot read out/full/asm/manifest.json");
     let manifest: Value = serde_json::from_str(&manifest_text).expect("manifest.json is not JSON");
     let regions = parse_regions(&manifest);
 
@@ -525,7 +532,8 @@ pub fn semantic_queue(root: &Path) -> Vec<Candidate> {
     let mut blockers: HashMap<String, (String, String)> = HashMap::new();
     if blockers_path.exists() {
         let text = read_text(&blockers_path).expect("cannot read ordinary-blockers.json");
-        let parsed: Value = serde_json::from_str(&text).expect("ordinary-blockers.json is not JSON");
+        let parsed: Value =
+            serde_json::from_str(&text).expect("ordinary-blockers.json is not JSON");
         if let Some(owners) = parsed.get("owners").and_then(Value::as_object) {
             for (stem, entry) in owners {
                 blockers.insert(
@@ -558,7 +566,9 @@ pub fn semantic_queue(root: &Path) -> Vec<Candidate> {
         }
         let paths = [
             root.join("semantic").join(format!("{stem}.c")),
-            root.join("work").join("candidates").join(format!("{stem}.c")),
+            root.join("work")
+                .join("candidates")
+                .join(format!("{stem}.c")),
             root.join("work").join(format!("{stem}.c")),
         ];
         let Some(draft) = paths.into_iter().find(|path| path.exists()) else {
@@ -608,7 +618,10 @@ pub fn to_json(queue: &[Candidate]) -> String {
             if let Some(family) = &item.established_thunk_family {
                 object.insert("establishedThunkFamily".into(), Value::from(family.clone()));
             }
-            object.insert("boundaryShape".into(), Value::from(item.boundary_shape.clone()));
+            object.insert(
+                "boundaryShape".into(),
+                Value::from(item.boundary_shape.clone()),
+            );
             object.insert(
                 "scopeAuditRequired".into(),
                 Value::from(item.scope_audit_required),
@@ -790,15 +803,25 @@ mod tests {
 
     #[test]
     fn established_publisher_detection() {
-        assert!(has_established_thunk_publisher(&chars("  bl Func_080cef64\n")));
-        assert!(has_established_thunk_publisher(&chars("  BL FUNC_080ED408\n")));
+        assert!(has_established_thunk_publisher(&chars(
+            "  bl Func_080cef64\n"
+        )));
+        assert!(has_established_thunk_publisher(&chars(
+            "  BL FUNC_080ED408\n"
+        )));
         // Indentation is irrelevant: the pattern is unanchored.
-        assert!(has_established_thunk_publisher(&chars("x bl Func_080cef64")));
+        assert!(has_established_thunk_publisher(&chars(
+            "x bl Func_080cef64"
+        )));
         assert!(!has_established_thunk_publisher(&chars(
             "  bl Func_080cef640\n"
         )));
-        assert!(!has_established_thunk_publisher(&chars("  bl Func_080cef6\n")));
-        assert!(!has_established_thunk_publisher(&chars("  xbl Func_080cef64")));
+        assert!(!has_established_thunk_publisher(&chars(
+            "  bl Func_080cef6\n"
+        )));
+        assert!(!has_established_thunk_publisher(&chars(
+            "  xbl Func_080cef64"
+        )));
     }
 
     #[test]
@@ -845,10 +868,30 @@ mod tests {
             score: 0,
         };
         let mut queue = [
-            Candidate { stem: "08000003".into(), score: 5, bytes: 10, ..base.clone() },
-            Candidate { stem: "08000001".into(), score: 5, bytes: 20, ..base.clone() },
-            Candidate { stem: "08000002".into(), score: 5, bytes: 20, ..base.clone() },
-            Candidate { stem: "08000000".into(), score: 1, bytes: 1, ..base.clone() },
+            Candidate {
+                stem: "08000003".into(),
+                score: 5,
+                bytes: 10,
+                ..base.clone()
+            },
+            Candidate {
+                stem: "08000001".into(),
+                score: 5,
+                bytes: 20,
+                ..base.clone()
+            },
+            Candidate {
+                stem: "08000002".into(),
+                score: 5,
+                bytes: 20,
+                ..base.clone()
+            },
+            Candidate {
+                stem: "08000000".into(),
+                score: 1,
+                bytes: 1,
+                ..base.clone()
+            },
         ];
         queue.sort_by(|left, right| {
             left.score
@@ -997,7 +1040,11 @@ thunks=1 unk= 2 shape=c_candidate work/candidates/08001234.c"
         )
         .unwrap();
         let draft_path = root.join("draft.c");
-        fs::write(&draft_path, "M2C_UNK f(void) {\n  M2C_ERROR(/* r0 */);\n}\n").unwrap();
+        fs::write(
+            &draft_path,
+            "M2C_UNK f(void) {\n  M2C_ERROR(/* r0 */);\n}\n",
+        )
+        .unwrap();
         let region = Region {
             address: 0x0800_1234,
             size: 64,
@@ -1014,7 +1061,10 @@ thunks=1 unk= 2 shape=c_candidate work/candidates/08001234.c"
         assert_eq!(candidate.unset_registers, 1);
         assert_eq!(candidate.unknown_types, 1);
         assert_eq!(candidate.high_register_call_setups, 2);
-        assert_eq!(candidate.established_thunk_family.as_deref(), Some("renderer"));
+        assert_eq!(
+            candidate.established_thunk_family.as_deref(),
+            Some("renderer")
+        );
         assert_eq!(candidate.source_lines, 4);
         assert!(!candidate.scope_audit_required);
         assert_eq!(candidate.draft, "draft.c");

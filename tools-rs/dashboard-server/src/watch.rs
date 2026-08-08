@@ -188,10 +188,11 @@ mod tests {
             .join(format!("{name}-{}", std::process::id()));
         std::fs::create_dir_all(dir.join("asm")).unwrap();
         std::fs::create_dir_all(dir.join("tools").join("metrics").join("dashboard")).unwrap();
+        std::fs::create_dir_all(dir.join("tools-rs").join("dashboard-server").join("src")).unwrap();
         std::fs::write(dir.join("asm").join("main.s"), "one\n").unwrap();
-        std::fs::write(dir.join("tools/metrics/dashboard_server.ts"), "// oracle\n").unwrap();
+        std::fs::write(dir.join("tools-rs/dashboard-server/src/main.rs"), "// server\n").unwrap();
         std::fs::write(dir.join("tools/metrics/coverage_map.ts"), "// map\n").unwrap();
-        std::fs::write(dir.join("tools/metrics/dashboard/client.ts"), "// client\n").unwrap();
+        std::fs::write(dir.join("tools-rs/dashboard-server/src/client_bundle.js"), "// client\n").unwrap();
         std::fs::write(dir.join("tools/metrics/dashboard/styles.css"), "body{}\n").unwrap();
         std::fs::write(dir.join("unwatched.txt"), "nothing\n").unwrap();
         dir
@@ -243,9 +244,9 @@ mod tests {
                 "coverage_map.ts is in RESTART_FILES and must restart"
             );
             settle();
-            touch(&root.join("tools/metrics/dashboard_server.ts")).unwrap();
+            touch(&root.join("tools-rs/dashboard-server/src/main.rs")).unwrap();
             settle();
-            assert!(matches!(watcher.tick(), Tick::Restart), "the server source restarts too");
+            assert!(matches!(watcher.tick(), Tick::Restart), "the Rust server source restarts too");
         });
     }
 

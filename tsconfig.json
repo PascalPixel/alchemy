@@ -22,5 +22,5 @@
     "skipLibCheck": true
   },
   "include": ["tools/**/*.ts"],
-  "exclude": ["tools/metrics/dashboard/client.ts", "tools/scratch"]
+  "exclude": ["tools/scratch"]
 }

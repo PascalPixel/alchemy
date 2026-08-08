@@ -118,7 +118,6 @@ tools/make/wordstream.ts
 tools/metrics/audit_residuals.ts
 tools/metrics/compare_roms.ts
 tools/metrics/coverage_map.ts
-tools/metrics/dashboard/client.ts
 tools/metrics/dashboard/styles.css
 tools/metrics/dashboard_server.ts
 tools/metrics/full_c_history.ts

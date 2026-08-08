@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "build-asm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alchemy-bundle = { path = "../alchemy-bundle" }
+cache-entry = { path = "../cache-entry" }
+canonical-json = { path = "../canonical-json" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[lib]
+name = "build_asm"
+path = "src/lib.rs"
+
+[[bin]]
+name = "build-asm"
+path = "src/main.rs"

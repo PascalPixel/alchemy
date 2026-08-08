@@ -20,7 +20,7 @@ function granularity**. 727 regions, one function body per file, every boundary
 proven by ROM byte-equality. Nothing needs to be discovered before it can be
 drafted. This file is that queue.
 
-Measured from `out/full/asm/manifest.json` (written by `tools/make/build_asm.ts`,
+Measured from `out/full/asm/manifest.json` (written by `tools-rs/build-asm`,
 `verification=rom`), the classifier in `tools-rs/remaining-survey/target/release/remaining-survey`, and
 `tools-rs/overlay-inventory/target/release/overlay-inventory`. Region counts are scheduling diagnostics, not
 project progress; the headline metric remains Full-C Byte Share.
@@ -36,7 +36,7 @@ partitions every assembly region by its `retention` field:
 `retainedStructuralBytes`. `tools/metrics/audit_residuals.ts` asserts the two sum to
 `asm_bytes`.
 
-So the per-kind census printed by `bun tools/make/build_asm.ts` reconciles exactly,
+So the per-kind census printed by `bun run build:asm` reconciles exactly,
 with every kind falling on one side or the other:
 
 | kind | retention | regions | bytes | debt? |
@@ -105,7 +105,7 @@ is a separate problem: 540 rows, of which 220 are `contained_by`, 43 are
 
 There is no unwalked main-image region. `tools/metrics/audit_residuals.ts` proves
 `unowned_bytes=0`: the claimed, assembly, and asset manifests together span all
-8 MiB with no gap, and `tools/make/build_asm.ts` rejects any overlap. Each debt
+8 MiB with no gap, and `tools-rs/build-asm` rejects any overlap. Each debt
 region's span is verified against the ROM (`verification=rom`), and each abuts
 either a claimed C region or another assembly region.
 
@@ -117,7 +117,7 @@ Boundary quality is measured, not assumed:
 - **632 rows / 357,388 bytes** carry a `Func_XXXXXXXX` global at the region
   start: a known function entry with a ROM-proven span.
 
-`bun tools/make/build_asm.ts --source asm/080bbb0c.s` returns
+`bun run build:asm --source asm/080bbb0c.s` returns
 `regions=1 bytes=6332` against the ROM, which is a stronger boundary proof than
 the `overlay_adopt` dry-run oracle used on the overlay side — it is byte
 equality over the whole span, not just non-straddling ends.

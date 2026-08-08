@@ -55,7 +55,6 @@ tools/lib/rtl_align.ts
 tools/lib/rtl_insn.ts
 tools/lib/rtl_schedule.ts
 tools/lib/rtl_sexpr.ts
-tools/lib/semantic_regions_sync.ts
 tools/lib/static_sprite_bank.ts
 tools/lib/text_bg.ts
 tools/lib/thumb_disasm.ts
@@ -69,9 +68,7 @@ tools/make/audio_wave.ts
 tools/make/battle_effect_data.ts
 tools/make/build_asm.ts
 tools/make/build_assets.ts
-tools/make/build_claimed.ts
 tools/make/build_full.ts
-tools/make/build_rom.ts
 tools/make/build_semantic.ts
 tools/make/byte_henkan.ts
 tools/make/byte_value_regions.ts
@@ -122,7 +119,6 @@ tools/metrics/dashboard/styles.css
 tools/metrics/dashboard_server.ts
 tools/metrics/full_c_history.ts
 tools/metrics/index.ts
-tools/overlay/exact_reading_list.ts
 tools/overlay/index.ts
 tools/overlay/overlay_adopt.ts
 tools/overlay/overlay_call_order_check.ts

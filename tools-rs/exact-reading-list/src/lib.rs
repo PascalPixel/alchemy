@@ -47,11 +47,8 @@ const OVERLAY_BASE: i64 = 0x0200_0000;
 
 /// Strict-queue rows only: the same filter semantic reconstruction uses.
 ///
-/// PORT NOTE: the TypeScript delegates to `isConvertibleRow` in
-/// `tools/lib/semantic_regions_sync.ts`. That file is not ported yet, so the
-/// four-line rule is inlined here. It is the ONE definition on the TS side and
-/// this must not be allowed to drift from it: `returns > 0`, not a structural
-/// veneer, not a data walk, not contained by anything.
+/// This is the canonical four-part rule: `returns > 0`, not a structural
+/// veneer, not a data walk, and not contained by anything.
 ///
 /// PORT NOTE: the TS reads untyped `JSON.parse` output, so a row missing
 /// `returns` evaluates `undefined <= 0` — which is `false` in JS, i.e. the row

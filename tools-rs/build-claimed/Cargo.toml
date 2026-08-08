@@ -17,17 +17,6 @@ path = "src/lib.rs"
 name = "build-claimed"
 path = "src/main.rs"
 
-# Differential parity harness: runs the live TypeScript and this port over the
-# real `exact/` corpus and compares the artifacts both mirrors emit.
-[[bin]]
-name = "build-claimed-parity"
-path = "src/bin/parity.rs"
-
-# Decomposed benchmark: separates process spawn, compile, link and verify.
-[[bin]]
-name = "build-claimed-bench"
-path = "src/bin/bench.rs"
-
 [dependencies]
 # Sibling crates, not third-party dependencies. Each already owns a proved port
 # of the layer this tool calls; a second copy of any of them is exactly the

@@ -465,8 +465,7 @@ async function main(): Promise<void> {
   const romSize = target.romSize;
   const claimed = rooted(args.claimedOutput);
   const claimedCommand = [
-    process.execPath,
-    "tools/make/build_claimed.ts",
+    join(ROOT, "tools-rs/build-claimed/target/release/build-claimed"),
     "--target",
     target.id,
   ];

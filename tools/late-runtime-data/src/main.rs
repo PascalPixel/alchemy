@@ -13,7 +13,7 @@ use late_runtime_data::{
     export_late_runtime_package, self_test, verify_late_runtime_package, write_late_runtime_build,
 };
 
-const USAGE: &str = "usage: late_runtime_data.ts export ROM --catalog CATALOG --directory DIR | build INDEX --directory DIR | verify ROM --index INDEX | --self-test";
+const USAGE: &str = "usage: late-runtime-data export ROM --catalog CATALOG --directory DIR | build INDEX --directory DIR | verify ROM --index INDEX | --self-test";
 
 fn run(args: &[String]) -> Result<String, String> {
     if args.len() == 1 && args[0] == "--self-test" {

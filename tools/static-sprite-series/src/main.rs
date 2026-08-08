@@ -9,7 +9,7 @@ use static_sprite_series::{
     STATIC_PALETTE_OFFSET, STATIC_SERIES_ADDRESS, STATIC_SERIES_END,
 };
 
-const USAGE: &str = "usage: static_sprite_series.ts export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N] [--suffix-zeros N] | build INDEX --palette PNG --output FILE | verify ROM INDEX --palette PNG | --self-test";
+const USAGE: &str = "usage: static-sprite-series export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N] [--suffix-zeros N] | build INDEX --palette PNG --output FILE | verify ROM INDEX --palette PNG | --self-test";
 
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let index = args.iter().position(|arg| arg == name)

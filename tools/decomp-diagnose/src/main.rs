@@ -44,7 +44,7 @@ fn run() -> Result<Option<String>, String> {
     let source = arguments
         .iter()
         .find(|item| item.ends_with(".c"))
-        .ok_or("usage: decomp_diagnose.ts --self-test | CANDIDATE.c [ROM]")?;
+        .ok_or("usage: decomp-diagnose --self-test | CANDIDATE.c [ROM]")?;
     let rom_path: PathBuf = arguments
         .iter()
         .find(|item| item.ends_with(".gba"))

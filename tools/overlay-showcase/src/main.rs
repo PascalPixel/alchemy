@@ -52,7 +52,7 @@ fn manifest(root: &Path) -> Result<Vec<Showcase>, Failure> {
 
 fn main_for(root: &Path, id: &str) -> Result<(), Failure> {
     if !is_showcase_id(id) {
-        return fail("usage: overlay_showcase.ts resource_NNN");
+        return fail("usage: overlay-showcase resource_NNN");
     }
     let overlays = manifest(root)?;
     let showcase = match overlays.iter().find(|row| row.id == id) {

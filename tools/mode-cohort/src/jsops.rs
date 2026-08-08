@@ -15,7 +15,7 @@ use std::cmp::Ordering;
 ///  * A comparator that returns `NaN` is treated by the sort spec as `0`, which
 ///    is the same fall-through.
 ///
-/// `mode_cohort.ts` chains four of these per comparator. Returning `Equal` for
+/// `mode-cohort` chains four of these per comparator. Returning `Equal` for
 /// both `0` and `NaN` is exactly the falsy set.
 pub fn js_diff(left: f64, right: f64) -> Ordering {
     let difference = left - right;
@@ -32,7 +32,7 @@ pub fn js_diff(left: f64, right: f64) -> Ordering {
 ///
 /// PORT NOTE -- THIS IS NOT `f64::min` AND NOT `fold(f64::min)`. `Math.min`
 /// propagates `NaN`; `f64::min` deliberately *discards* it and returns the
-/// other operand. `mode_cohort.ts` feeds this the scores of every compiled
+/// other operand. `mode-cohort` feeds this the scores of every compiled
 /// proper subset, so one non-numeric score has to poison the bound rather than
 /// vanish from it.
 pub fn js_min(seed: f64, rest: &[f64]) -> f64 {
@@ -50,7 +50,7 @@ pub fn js_min(seed: f64, rest: &[f64]) -> f64 {
 
 /// An insertion-ordered string-keyed map.
 ///
-/// PORT NOTE -- NEVER `HashMap`. `mode_cohort.ts` iterates `configs.values()`
+/// PORT NOTE -- NEVER `HashMap`. `mode-cohort` iterates `configs.values()`
 /// and `grouped.values()` directly into the report, and a JavaScript `Map`
 /// iterates in insertion order. A `HashMap` would emit a different report on
 /// every run, and even `BTreeMap` would emit the wrong one.

@@ -1,6 +1,6 @@
-//! Rust port of `tools/compiler/mode_cohort.ts`.
+//! Rust port of `tools/compiler/mode-cohort`.
 //!
-//! The TypeScript header states the tool's remit: run `mode_sweep` over several
+//! The legacy implementation header states the tool's remit: run `mode_sweep` over several
 //! candidates and report the compiler configurations that behave the same way
 //! across all of them. It never compiles, never routes and never promotes; the
 //! aggregation layer here is pure and total.
@@ -110,7 +110,7 @@ pub fn cohort_summary(reports: &[Report], exhaustive_pair_count: f64) -> Result<
     ]))
 }
 
-/// The repository root, matching `ROOT` in the TypeScript.
+/// The repository root, matching `ROOT` in the legacy implementation.
 pub fn root() -> std::path::PathBuf {
     mode_sweep::root()
 }
@@ -139,7 +139,7 @@ mod tests {
     }
 
     #[test]
-    fn summary_key_order_is_the_typescript_key_order() {
+    fn summary_key_order_is_the_native_format_order() {
         let reports = self_test_reports().unwrap();
         let summary = cohort_summary(&reports, 10.0).unwrap();
         let Json::Object(entries) = &summary else {

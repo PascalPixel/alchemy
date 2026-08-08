@@ -540,11 +540,11 @@ fn parse_rejects_a_document_with_the_wrong_shape() {
 fn the_cli_reports_its_usage_the_way_the_typescript_does() {
     assert_eq!(
         run(vec![]).unwrap_err(),
-        "usage: battle_effect_data.ts {export ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS}"
+        "usage: battle-effect-data {export ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS}"
     );
     assert_eq!(
         run(vec!["export".into(), "rom.gba".into()]).unwrap_err(),
-        "usage: battle_effect_data.ts export ROM --root ASSETS --output SOURCE"
+        "usage: battle-effect-data export ROM --root ASSETS --output SOURCE"
     );
     assert_eq!(
         run(vec![
@@ -553,7 +553,7 @@ fn the_cli_reports_its_usage_the_way_the_typescript_does() {
             "source.json".into()
         ])
         .unwrap_err(),
-        "usage: battle_effect_data.ts verify ROM SOURCE --root ASSETS"
+        "usage: battle-effect-data verify ROM SOURCE --root ASSETS"
     );
     // `--self-test` wins wherever it appears, exactly as `args.includes` does.
     run(vec!["verify".into(), "--self-test".into()]).expect("self-test wins");
@@ -569,7 +569,7 @@ fn the_cli_reports_its_usage_the_way_the_typescript_does() {
             "b".into()
         ])
         .unwrap_err(),
-        "usage: battle_effect_data.ts export ROM --root ASSETS --output SOURCE"
+        "usage: battle-effect-data export ROM --root ASSETS --output SOURCE"
     );
     // `option` returns the following argument verbatim, even another flag.
     let args: Vec<String> = vec!["export".into(), "--root".into(), "--output".into()];

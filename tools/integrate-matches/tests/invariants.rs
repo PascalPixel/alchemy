@@ -4,7 +4,7 @@
 //! later "simplified" back to the obvious Rust spelling: `from_str_radix` for
 //! `parseInt`, `f64::max` for `Math.max`, `strip_suffix` for `basename`,
 //! `str::cmp` for the default `Array#sort`, a case-insensitive regex where the
-//! TypeScript has no `i` flag, and so on.
+//! legacy implementation has no `i` flag, and so on.
 
 use integrate_matches::cleanup::{civil_date, cleanup_installed_scratch};
 use integrate_matches::extent::{linked_function_extent, mismatch};
@@ -75,7 +75,7 @@ fn math_max_propagates_nan_where_f64_max_swallows_it() {
 #[test]
 fn infinity_minus_infinity_is_nan_not_zero() {
     // `Math.max(...[]) - address` when `address` is also -Infinity. The
-    // TypeScript reaches this only through a corrupt `nm` dump, but the value
+    // legacy implementation reaches this only through a corrupt `nm` dump, but the value
     // it produces is NaN, and NaN is falsy, which is how a missing field turns
     // into a silently disabled check elsewhere in this codebase.
     assert!((f64::NEG_INFINITY - f64::NEG_INFINITY).is_nan());
@@ -86,7 +86,7 @@ fn infinity_minus_infinity_is_nan_not_zero() {
 #[test]
 fn the_address_guard_is_case_sensitive() {
     // `/^08[0-9a-f]{6}$/` -- NO `i`. Uppercase hex is rejected by the
-    // TypeScript, so it must be rejected here. A `(?i)` port would accept
+    // legacy implementation, so it must be rejected here. A `(?i)` port would accept
     // addresses the real tool refuses, and this repository has confirmed the
     // missing-`i` defect class FOUR separate times.
     assert!(is_source_address("08021360"));
@@ -217,7 +217,7 @@ fn the_heading_insert_has_no_multiline_flag() {
 
 #[test]
 fn identical_odd_length_buffers_report_no_difference() {
-    // `candidate_show.ts` carries a live off-by-one here: it masks the shared
+    // `candidate-show` carries a live off-by-one here: it masks the shared
     // length with `& ~1`, which for an odd length falls BELOW the real bound
     // and reports a PHANTOM difference on identical buffers. This function
     // does not have that shape, and this test exists so nobody adds it.
@@ -230,7 +230,7 @@ fn identical_odd_length_buffers_report_no_difference() {
 #[test]
 fn a_length_difference_reports_undefined_on_the_short_side() {
     // `left[shared]` past the end is `undefined` in JavaScript, and the
-    // TypeScript reports it as such. Rust's `left[shared]` PANICS, so the port
+    // legacy implementation reports it as such. Rust's `left[shared]` PANICS, so the port
     // must model the absence rather than index.
     let short = mismatch(&[1], &[1, 2]).expect("lengths differ");
     assert_eq!(short.offset, 1);

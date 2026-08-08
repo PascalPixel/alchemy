@@ -84,7 +84,7 @@ fn math_abs_and_greater_than_model_nan_the_way_javascript_does() {
 
 #[test]
 fn byte_difference_reports_zero_for_identical_odd_length_buffers() {
-    // The `candidate_show.ts` phantom: `shared & ~1` would drop the last byte
+    // The `candidate-show` phantom: `shared & ~1` would drop the last byte
     // of a 3-byte buffer below the extent and report a difference at offset 2.
     let buffer = [1u8, 2, 3];
     assert_eq!(byte_difference(&buffer, &buffer).count, 0);
@@ -186,7 +186,7 @@ fn deterministic_sample_is_input_order_independent_and_matches_the_naive_compara
     assert_eq!(forward.len(), 16);
 
     // The decorate-sort-undecorate must produce EXACTLY the sequence the
-    // TypeScript's naive comparator does, hash recomputed inside and all.
+    // legacy implementation's naive comparator does, hash recomputed inside and all.
     let mut naive = members.clone();
     naive.sort_by(|left, right| {
         let a = hash(&[b"seed", left.stem.as_bytes()]);
@@ -382,7 +382,7 @@ fn cached_result_validates_only_four_fields() {
 fn cached_result_accepts_a_row_that_makes_the_reporter_crash() {
     // BUG PINNED: `compiled: true, exact: false` with NO `first_difference` is
     // ACCEPTED here and is exactly what makes `result.first_difference!` a
-    // TypeError in the TypeScript reporter.
+    // TypeError in the legacy implementation reporter.
     let row = parse(
         r#"{"stem":"08000000","cache_key":"key","compiled":true,"exact":false}"#,
     )

@@ -5,7 +5,7 @@
 //! Every tracked art and music asset in the repo enters the build through this
 //! module: indexed PNGs become GBA 4bpp/8bpp tile banks, RGBA PNGs become
 //! 15-bit BGR palettes, and Standard MIDI Files become a flat, sorted event
-//! report. Roughly twenty `tools/make/*.ts` builders import it, so it is the
+//! report. The native asset builders import it, so it is the
 //! single widest chokepoint in the asset pipeline and the piece whose byte
 //! output the ROM equality proof depends on most directly.
 //!
@@ -786,14 +786,9 @@ pub fn sorted_json(report: &Report) -> String {
 // self-test
 // ---------------------------------------------------------------------------
 
-/// The two encoders below are the `export_asset.ts` functions that the
-/// TypeScript `self_test` reaches through a dynamic `import()`.
-///
-/// PORT NOTE: `tools/lib/export_asset.ts` has not been ported yet, so rather
-/// than block this crate on it the two functions the self-test needs are
-/// inlined here. They are byte-for-byte the same construction and are covered
-/// by round-trip assertions; when `export-asset` lands they should be deleted
-/// in favour of a path dependency.
+/// The two small encoders below are retained for this crate's self-test. The
+/// standalone `export-asset` crate owns the full native image-export API; these
+/// helpers use the narrower integer-width API expected by this crate.
 pub fn rgba_image(raw: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
     if raw.is_empty() || !raw.len().is_multiple_of(4) || width == 0 {
         return err("RGBA input must contain whole nonempty pixels");

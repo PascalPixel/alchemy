@@ -617,7 +617,7 @@ fn run() -> Result<(), String> {
     match arguments.first().map(String::as_str) {
         Some("--self-test") => self_test(),
         None | Some("--write") => write_ledger(&root),
-        _ => Err("usage: full_c_history.ts [--write|--self-test]".to_string()),
+        _ => Err("usage: full-c-history [--write|--self-test]".to_string()),
     }
 }
 

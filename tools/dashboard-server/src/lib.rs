@@ -3,6 +3,7 @@
 // The library root keeps the server pieces testable while the binary provides
 // the local HTTP service.
 
+pub mod assets;
 pub mod client;
 pub mod clock;
 pub mod events;

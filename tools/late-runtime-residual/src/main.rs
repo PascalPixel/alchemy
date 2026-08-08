@@ -23,7 +23,7 @@ use late_runtime_residual::{
 };
 
 const USAGE: &str =
-    "usage: late_runtime_residual.ts export ROM --directory DIR | verify ROM INDEX | --self-test";
+    "usage: late-runtime-residual export ROM --directory DIR | verify ROM INDEX | --self-test";
 
 fn repository_root() -> PathBuf {
     match std::env::var("ALCHEMY_ROOT") {

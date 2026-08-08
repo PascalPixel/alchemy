@@ -757,7 +757,7 @@ pub fn self_test() -> Result<(), String> {
 }
 
 fn usage() -> &'static str {
-    "usage: audit_residuals.ts [--full-report FILE] [--fallback-manifest FILE] [--claimed-manifest FILE] [--asm-manifest FILE] [--asset-manifest FILE] [--resource-directory FILE] [--json] | --self-test"
+    "usage: audit-residuals [--full-report FILE] [--fallback-manifest FILE] [--claimed-manifest FILE] [--asm-manifest FILE] [--asset-manifest FILE] [--resource-directory FILE] [--json] | --self-test"
 }
 
 fn parse_args(arguments: &[String]) -> Result<Options, String> {

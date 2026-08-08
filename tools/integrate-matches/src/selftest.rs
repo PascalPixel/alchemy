@@ -2,7 +2,7 @@
 //!
 //! This is not the crate's test suite; it is a port of a function that the
 //! repository's tooling gate invokes. The assertions, their order and their
-//! failure messages are the TypeScript's.
+//! failure messages are the legacy implementation's.
 
 use std::fs;
 use std::path::{Path, PathBuf};

@@ -13,7 +13,7 @@ use extract_resource::{decode, self_test, ResourceKind, ROM_BASE, TABLE};
 const VALUE_OPTIONS: [&str; 7] =
     ["--id", "--address", "--format", "--input-end", "--max-output", "-o", "--output"];
 
-const USAGE: &str = "usage: extract_resource.ts [ROM] [--id ID | --address ADDRESS] [--format {auto,general,palette}] [-o OUTPUT | --verify-only]";
+const USAGE: &str = "usage: extract-resource [ROM] [--id ID | --address ADDRESS] [--format {auto,general,palette}] [-o OUTPUT | --verify-only]";
 
 /// `Number(text)` from JavaScript, returning NaN for anything JS rejects.
 ///

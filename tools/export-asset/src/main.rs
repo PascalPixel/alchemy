@@ -18,7 +18,7 @@ use export_asset::{
 };
 use import_asset::{sorted_json, Report, Rgb};
 
-const USAGE: &str = "usage: export_asset.ts [--self-test] {tiles,tiles-file,palette-file,bytes-file,rgba-file,palette-rgba-file,palette-rgba} ...";
+const USAGE: &str = "usage: export-asset [--self-test] {tiles,tiles-file,palette-file,bytes-file,rgba-file,palette-rgba-file,palette-rgba} ...";
 
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();

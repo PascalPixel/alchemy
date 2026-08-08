@@ -6,7 +6,7 @@ use std::path::Path;
 use std::io::{self, Write};
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: resource_byte_canvases.ts export ROM --directory DIR | verify ROM --directory DIR | --self-test";
+const USAGE: &str = "usage: resource-byte-canvases export ROM --directory DIR | verify ROM --directory DIR | --self-test";
 
 fn run(args: &[String]) -> Result<(), Error> {
     if args.len() == 1 && args[0] == "--self-test" {

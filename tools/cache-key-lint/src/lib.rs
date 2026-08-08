@@ -18,10 +18,8 @@
 // them. Never a literal describing the logic. `-vN` is a promise about memory;
 // a source digest is a measurement.
 //
-// PORT NOTE. The scan now covers `.rs` as well as `.ts`, and the key-context
-// vocabulary gained the Rust spellings (`Hasher`, `Sha256`, `update`). A lint
-// that only understood the language being ported away from would go quietly
-// blind exactly as the tooling moved.
+// The scan covers native Rust sources and the key-context vocabulary includes
+// the Rust spellings (`Hasher`, `Sha256`, `update`).
 
 use std::fs;
 use std::io;
@@ -118,7 +116,7 @@ pub fn find_violations(file: &str, text: &str) -> Vec<Finding> {
     found
 }
 
-/// Every `.ts` and `.rs` under `directory`, relative-pathed and sorted.
+/// Every Rust source under `directory`, relative-pathed and sorted.
 /// Recursive: tools live in domain folders, and a flat read would lint only the
 /// dispatchers while reporting success. `target/` is skipped — it holds build
 /// output, not tooling.
@@ -143,7 +141,7 @@ pub fn scannable_files(directory: &Path) -> io::Result<Vec<String>> {
                     continue;
                 }
                 walk(&path, &relative, into)?;
-            } else if name.ends_with(".ts") || name.ends_with(".rs") {
+            } else if name.ends_with(".rs") {
                 into.push(relative);
             }
         }
@@ -169,35 +167,35 @@ mod tests {
     #[test]
     fn a_versioned_key_literal_is_caught() {
         let offending = format!("digest.update(`overlay-c-{}:${{hex(address)}}`);", "v3");
-        assert_eq!(find_violations("t.ts", &offending).len(), 1);
+        assert_eq!(find_violations("t.rs", &offending).len(), 1);
     }
 
     #[test]
     fn a_source_keyed_digest_passes() {
         let fixed = "digest.update(`overlay-c:${selfDigest()}:${hex(address)}\\0`);";
-        assert_eq!(find_violations("t.ts", fixed), Vec::new());
+        assert_eq!(find_violations("t.rs", fixed), Vec::new());
     }
 
     #[test]
     fn a_comment_naming_the_old_spelling_is_not_flagged() {
         // Or the history could never be written down next to the fix.
         let comment = format!("// it was `overlay-c-{}:` before, bumped by hand", "v3");
-        assert_eq!(find_violations("t.ts", &comment), Vec::new());
+        assert_eq!(find_violations("t.rs", &comment), Vec::new());
     }
 
     #[test]
     fn a_version_literal_outside_a_key_context_is_not_flagged() {
         let url = format!("const url = \"https://example.invalid/api-{}:x\";", "v2");
-        assert_eq!(find_violations("t.ts", &url), Vec::new());
+        assert_eq!(find_violations("t.rs", &url), Vec::new());
     }
 
     #[test]
     fn both_quote_styles_are_caught() {
         // Both directions, so the rule cannot rot into always-passing.
         let double = format!("key.update(\"asm-{}:\" + address);", "v1");
-        assert_eq!(find_violations("t.ts", &double).len(), 1);
+        assert_eq!(find_violations("t.rs", &double).len(), 1);
         let single = format!("key.update('asm-{}:' + address);", "v1");
-        assert_eq!(find_violations("t.ts", &single).len(), 1);
+        assert_eq!(find_violations("t.rs", &single).len(), 1);
     }
 
     #[test]
@@ -217,22 +215,19 @@ mod tests {
     }
 
     #[test]
-    fn rust_and_typescript_are_both_scanned_and_target_is_skipped() {
+    fn only_rust_is_scanned_and_target_is_skipped() {
         let dir =
             std::env::temp_dir().join(format!("alchemy-cache-key-lint-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(dir.join("sub")).unwrap();
         fs::create_dir_all(dir.join("target")).unwrap();
-        for name in ["b.ts", "a.rs", "notes.md"] {
+        for name in ["legacy.ts", "a.rs", "notes.md"] {
             fs::write(dir.join(name), b"").unwrap();
         }
         fs::write(dir.join("sub").join("c.rs"), b"").unwrap();
         fs::write(dir.join("target").join("build.rs"), b"").unwrap();
 
-        assert_eq!(
-            scannable_files(&dir).unwrap(),
-            vec!["a.rs", "b.ts", "sub/c.rs"]
-        );
+        assert_eq!(scannable_files(&dir).unwrap(), vec!["a.rs", "sub/c.rs"]);
         fs::remove_dir_all(&dir).unwrap();
     }
 }

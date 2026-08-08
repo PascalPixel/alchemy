@@ -1,8 +1,8 @@
 //! Native export/verify tooling for the audited D1-D3 resource package.
 //!
-//! The TypeScript module remains in place because the legacy asset builder
-//! imports its build function. This crate owns the standalone CLI and keeps
-//! the package's source, compression, image, and ROM-boundary checks in Rust.
+//! The native asset pipeline imports this crate's build function. This crate
+//! owns the standalone CLI and keeps the package's source, compression, image,
+//! and ROM-boundary checks in Rust.
 
 use std::fs;
 use std::io::{self, Write};
@@ -1162,7 +1162,7 @@ pub fn run(mut args: Vec<String>) -> Result<(), Error> {
     }
     if args.iter().any(|arg| arg == "-h" || arg == "--help") {
         println!(
-            "usage: resource_d1_d3.ts export ROM --directory DIR | verify ROM --index INDEX | --self-test"
+            "usage: resource-d1-d3 export ROM --directory DIR | verify ROM --index INDEX | --self-test"
         );
         return Ok(());
     }
@@ -1202,7 +1202,7 @@ pub fn run(mut args: Vec<String>) -> Result<(), Error> {
         }
         _ => {
             println!(
-                "usage: resource_d1_d3.ts export ROM --directory DIR | verify ROM --index INDEX | --self-test"
+                "usage: resource-d1-d3 export ROM --directory DIR | verify ROM --index INDEX | --self-test"
             );
             Err(err("unsupported D1-D3 command"))
         }

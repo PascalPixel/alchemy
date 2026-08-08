@@ -42,7 +42,7 @@ fn run(argv: &[String]) -> Result<ExitCode, String> {
     if argv.iter().any(|argument| argument != "--check" && argument != "--json")
         || !argv.iter().any(|argument| argument == "--check")
     {
-        return Err("usage: core_retained_audit.ts --check [--json] | --self-test".into());
+        return Err("usage: core-retained-audit --check [--json] | --self-test".into());
     }
     let root = repository_root();
     let display = |relative: &str| root.join(relative).to_string_lossy().into_owned();

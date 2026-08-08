@@ -2252,7 +2252,7 @@ pub fn run(args: Vec<String>) -> Res<()> {
         let output = option(&args, "--output").unwrap_or_default();
         let root = root.unwrap_or_default();
         if rom_path.is_empty() || root.is_empty() || output.is_empty() {
-            return err("usage: battle_effect_data.ts export ROM --root ASSETS --output SOURCE");
+            return err("usage: battle-effect-data export ROM --root ASSETS --output SOURCE");
         }
         let rom = read_file(Path::new(&rom_path))?;
         let source = export_battle_effect_data(&rom, Path::new(&root))?;
@@ -2272,7 +2272,7 @@ pub fn run(args: Vec<String>) -> Res<()> {
         let input = args.get(2).cloned().unwrap_or_default();
         let root = root.unwrap_or_default();
         if rom_path.is_empty() || input.is_empty() || root.is_empty() {
-            return err("usage: battle_effect_data.ts verify ROM SOURCE --root ASSETS");
+            return err("usage: battle-effect-data verify ROM SOURCE --root ASSETS");
         }
         // PORT NOTE: `readFileSync(path, "utf8")` is lossy, hence from_utf8_lossy.
         let text = String::from_utf8_lossy(&read_file(Path::new(&input))?).into_owned();
@@ -2285,7 +2285,7 @@ pub fn run(args: Vec<String>) -> Res<()> {
         println!("identical=true bytes={} records=104", built.len());
         return Ok(());
     }
-    err("usage: battle_effect_data.ts {export ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS}")
+    err("usage: battle-effect-data {export ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS}")
 }
 
 #[cfg(test)]

@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: f0_archive.ts export ROM --address N --input-end N --plan FILE --images BASE [--preview FILE] | verify ROM --address N --input-end N --plan FILE --images BASE | --self-test";
+const USAGE: &str = "usage: f0-archive export ROM --address N --input-end N --plan FILE --images BASE [--preview FILE] | verify ROM --address N --input-end N --plan FILE --images BASE | --self-test";
 
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let index = args

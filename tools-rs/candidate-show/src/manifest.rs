@@ -7,7 +7,7 @@ use match_m2c::json::{parse, Json};
 /// `regionSize(stem)` -- the first `regions[]` row whose `basename(source,
 /// ".s")` equals `stem`.
 ///
-/// `build_asm.ts` already fixed each region's extent; the entry symbol's own
+/// The assembly builder already fixed each region's extent; the entry symbol's own
 /// size is only the head of it when a trailing function shares the region.
 ///
 /// PORT NOTE -- the two manifest paths are probed with `.find(existsSync)`, so

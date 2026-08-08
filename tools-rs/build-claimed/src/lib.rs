@@ -394,7 +394,7 @@ pub enum ParsedArgs {
 
 /// `usage()`.
 pub fn usage_text() -> &'static str {
-    "usage: build_claimed.ts [-h] [--target gs1-en|gs2-en] [--source-only] \
+    "usage: build-claimed [-h] [--target gs1-en|gs2-en] [--source-only] \
 [--jobs JOBS] [--output OUTPUT] [rom]"
 }
 
@@ -1432,7 +1432,6 @@ mod tests {
     #[test]
     fn root_is_the_repository_root() {
         let root = root();
-        assert!(exists(&join(&root, "tools/make/build_claimed.ts")));
         assert!(exists(&join(&root, "tools-rs/build-claimed/Cargo.toml")));
     }
 

@@ -870,7 +870,7 @@ function packageDocument(plan: ExecutableGapPlan, gaps: PackageGap[]): Json {
 }
 
 // The package deliberately separates executable reconstruction assembly from
-// typed mixed-region data.  The `.s` files are consumed by build_asm; this
+// typed mixed-region data. The `.s` files are consumed by the assembly builder; this
 // canonical index is consumed by build_assets for the table sections.
 export function exportExecutableGapSources(plan: ExecutableGapPlan, rom: Buffer, directory: string): OutputRecord[] {
   const generated = generatePackage(plan, rom);

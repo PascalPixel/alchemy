@@ -24,7 +24,3 @@ path = "src/lib.rs"
 [[bin]]
 name = "plan-drift"
 path = "src/bin/plan_drift.rs"
-
-[[bin]]
-name = "plan-corpus"
-path = "src/bin/plan_corpus.rs"

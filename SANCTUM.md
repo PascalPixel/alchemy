@@ -26,10 +26,8 @@ Exhausting one axis is not a seal. A residual that survives every flag is the
 normal starting point for the shape axis, and the reverse holds too.
 
 Both tools are bounded and deterministic, which is what makes a seal meaningful.
-The annealers (`tools/search/permute_v1.ts`, `tools/search/permute_overlay.ts`) search wider
-but stochastically, so a run that finds nothing proves nothing and can never
-justify sealing. A seal may cite an annealer run as further evidence; it may
-never rest on one.
+Retired stochastic experiments can be historical evidence, but a run that
+finds nothing proves nothing and can never justify sealing.
 
 ## Entry format
 

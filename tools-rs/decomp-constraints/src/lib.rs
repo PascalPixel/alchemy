@@ -1,17 +1,16 @@
-// Compiler-aware source constraints used by permute_v1. Each mutation preserves
+// Compiler-aware source constraints. Each mutation preserves
 // the likely intent or ABI search space while changing type inference, live ranges,
 // pointer scheduling, or expression lowering.
 //
-// Ported from tools/search/decomp_constraints.ts. Two halves live here:
+// Two halves live here:
 //   - inferAssemblyConstraints, which reads a `Func_<stem>:` body out of an
 //     asm/<stem>.s file and reports the shape facts (argument count, memory
 //     widths, condition signedness, register live spans) that decide WHICH
 //     mutation operators are worth trying on that function. This is the half
 //     the CLI drives.
-//   - CONSTRAINT_OPERATORS, the mutations themselves. permute_v1 imports them
-//     and drives them with its own seeded RNG, so they take the random source
+//   - CONSTRAINT_OPERATORS, the reusable mutations. They take the random source
 //     as a parameter and must consume it in exactly the same order as the
-//     TypeScript did -- a port that skipped a `pick` call on a one-element
+//     established order -- skipping a `pick` call on a one-element
 //     list would desynchronise every seeded search after that point.
 //
 // PORT NOTE: the regex patterns are transcribed verbatim into the small
@@ -661,8 +660,8 @@ fn field_type_constraint(body: &str, random: Random) -> Option<String> {
         _ => &[],
     };
     // PORT NOTE: `pick` is called even on these one-element lists, so it draws
-    // from the RNG. permute_v1 seeds that RNG; skipping the draw would shift
-    // every later decision in a seeded run.
+    // from the RNG; skipping the draw would shift every later decision in a
+    // seeded run.
     let kind = flip[pick_index(flip.len(), random)?];
     let replacement = format!(
         "M2C_FIELD({}, {kind}{}, {})",
@@ -746,8 +745,8 @@ fn rounding_constraint(body: &str, _random: Random) -> Option<String> {
 
 pub type ConstraintOperator = fn(&str, Random) -> Option<String>;
 
-/// Same names, same order as the TypeScript `CONSTRAINT_OPERATORS` array;
-/// permute_v1 indexes into it, so the order is part of the contract.
+/// Stable names and order; seeded consumers treat the order as part of the
+/// contract.
 pub const CONSTRAINT_OPERATORS: &[(&str, ConstraintOperator)] = &[
     ("signature", signature_type),
     ("argshift", unused_leading_argument),
@@ -765,7 +764,7 @@ pub const CONSTRAINT_OPERATORS: &[(&str, ConstraintOperator)] = &[
 mod tests {
     use super::*;
 
-    /// A deterministic stand-in for permute_v1's seeded RNG: draws are
+    /// A deterministic seeded RNG stand-in: draws are
     /// scripted so a test can pin both the choice AND the number of draws.
     fn scripted(values: &[f64]) -> impl FnMut() -> f64 + '_ {
         let mut at = 0usize;

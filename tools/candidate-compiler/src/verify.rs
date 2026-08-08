@@ -146,6 +146,33 @@ pub fn verify_candidate(
     compiler: CompilerTarget,
     configuration: &CandidateCompilerConfiguration,
 ) -> Result<Verification, String> {
+    verify_candidate_routed(
+        source,
+        source,
+        rom,
+        output_directory,
+        extra_compiler_flags,
+        image_base,
+        compiler,
+        configuration,
+    )
+}
+
+/// Compile a temporary candidate using the compiler family and flags owned by
+/// `routing_source`. Keeping the physical input separate from its eventual
+/// repository path is required by parallel search tools; otherwise every
+/// temporary file silently falls back to the default compiler route.
+#[allow(clippy::too_many_arguments)]
+pub fn verify_candidate_routed(
+    source: &str,
+    routing_source: &str,
+    rom: &[u8],
+    output_directory: &str,
+    extra_compiler_flags: &[String],
+    image_base: f64,
+    compiler: CompilerTarget,
+    configuration: &CandidateCompilerConfiguration,
+) -> Result<Verification, String> {
     let stem = source_stem(source);
     let address = parse_hex(&stem)?;
     let symbol = format!("Func_{}", hex8(address));
@@ -163,7 +190,8 @@ pub fn verify_candidate(
     let elf = path(".elf");
     let binary = path(".bin");
 
-    let mut options = SourceToAssemblyPlanOptions::new(compiler, source, source, assembly.clone());
+    let mut options =
+        SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
     options.family = configuration.family;
     // ORDER IS BEHAVIOUR: `[...extraCompilerFlags, ...(configuration.addFlags ?? [])]`,
     // and gcc is later-flag-wins. Swapping these two changes the machine code.

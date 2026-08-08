@@ -62,7 +62,12 @@ fn catalog(frequency: Scalar, loop_start: Option<f64>, size: Scalar) -> WaveReco
     }
 }
 
-fn header(control: Scalar, frequency: Scalar, loop_start: f64, sample_count: f64) -> ExactWaveHeaderSource {
+fn header(
+    control: Scalar,
+    frequency: Scalar,
+    loop_start: f64,
+    sample_count: f64,
+) -> ExactWaveHeaderSource {
     ExactWaveHeaderSource {
         control,
         frequency,
@@ -106,8 +111,14 @@ fn error_messages_match_the_typescript_original() {
     let cases: Vec<(&str, WaveRecordSource)> = vec![
         ("neg-size", catalog(freq.clone(), None, Scalar::Num(-1.0))),
         ("frac-size", catalog(freq.clone(), None, Scalar::Num(1.5))),
-        ("nan-size", catalog(freq.clone(), None, Scalar::str("banana"))),
-        ("inf-size", catalog(freq.clone(), None, Scalar::str("Infinity"))),
+        (
+            "nan-size",
+            catalog(freq.clone(), None, Scalar::str("banana")),
+        ),
+        (
+            "inf-size",
+            catalog(freq.clone(), None, Scalar::str("Infinity")),
+        ),
         (
             "big-freq",
             catalog(Scalar::Num(4294967296.0), None, Scalar::Num(20.0)),
@@ -116,7 +127,10 @@ fn error_messages_match_the_typescript_original() {
         ("empty-size", catalog(freq.clone(), None, Scalar::str(""))),
         ("short-size", catalog(freq.clone(), None, Scalar::Num(19.0))),
         ("align", catalog(freq.clone(), None, Scalar::Num(24.0))),
-        ("loop-past", catalog(freq.clone(), Some(4.0), Scalar::Num(20.0))),
+        (
+            "loop-past",
+            catalog(freq.clone(), Some(4.0), Scalar::Num(20.0)),
+        ),
     ];
     for (label, source) in cases {
         log.run(label, build_wave_record(&source, &wav));
@@ -138,14 +152,22 @@ fn error_messages_match_the_typescript_original() {
     log.run(
         "odd-freq-round",
         build_wave_record(
-            &catalog(Scalar::Num(8000.0 * 1024.0 + 511.0), None, Scalar::Num(20.0)),
+            &catalog(
+                Scalar::Num(8000.0 * 1024.0 + 511.0),
+                None,
+                Scalar::Num(20.0),
+            ),
             &wav,
         ),
     );
     log.run(
         "odd-freq-round-up",
         build_wave_record(
-            &catalog(Scalar::Num(8000.0 * 1024.0 - 512.0), None, Scalar::Num(20.0)),
+            &catalog(
+                Scalar::Num(8000.0 * 1024.0 - 512.0),
+                None,
+                Scalar::Num(20.0),
+            ),
             &wav,
         ),
     );
@@ -178,7 +200,13 @@ fn error_messages_match_the_typescript_original() {
     log.run(
         "exact-loop",
         build_wave_record(
-            &exact(freq.clone(), Some(2.0), 24.0, ok_header(), Some(padding(4.0, 0.0))),
+            &exact(
+                freq.clone(),
+                Some(2.0),
+                24.0,
+                ok_header(),
+                Some(padding(4.0, 0.0)),
+            ),
             &wav,
         ),
     );
@@ -198,20 +226,35 @@ fn error_messages_match_the_typescript_original() {
     log.run(
         "exact-pad-size",
         build_wave_record(
-            &exact(freq.clone(), Some(1.0), 24.0, ok_header(), Some(padding(3.0, 0.0))),
+            &exact(
+                freq.clone(),
+                Some(1.0),
+                24.0,
+                ok_header(),
+                Some(padding(3.0, 0.0)),
+            ),
             &wav,
         ),
     );
     log.run(
         "exact-pad-fill",
         build_wave_record(
-            &exact(freq.clone(), Some(1.0), 24.0, ok_header(), Some(padding(4.0, 256.0))),
+            &exact(
+                freq.clone(),
+                Some(1.0),
+                24.0,
+                ok_header(),
+                Some(padding(4.0, 256.0)),
+            ),
             &wav,
         ),
     );
     log.run(
         "exact-no-pad",
-        build_wave_record(&exact(freq.clone(), Some(1.0), 24.0, ok_header(), None), &wav),
+        build_wave_record(
+            &exact(freq.clone(), Some(1.0), 24.0, ok_header(), None),
+            &wav,
+        ),
     );
 
     let max_control = exact(

@@ -113,13 +113,14 @@ fn is_js_trimmable(c: char) -> bool {
             | '\u{20}'
             | '\u{A0}'
             | '\u{1680}'
-            | '\u{2000}'..='\u{200A}'
-            | '\u{2028}'
-            | '\u{2029}'
-            | '\u{202F}'
-            | '\u{205F}'
-            | '\u{3000}'
-            | '\u{FEFF}'
+            | '\u{2000}'
+            ..='\u{200A}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202F}'
+                | '\u{205F}'
+                | '\u{3000}'
+                | '\u{FEFF}'
     )
 }
 
@@ -357,7 +358,10 @@ pub fn signed_pcm_from_wav(data: &[u8], expected_rate: f64) -> Result<Vec<u8>, S
     {
         return Err("WAV is not canonical mono 8-bit PCM".to_string());
     }
-    Ok(data[44..].iter().map(|byte| byte.wrapping_sub(128)).collect())
+    Ok(data[44..]
+        .iter()
+        .map(|byte| byte.wrapping_sub(128))
+        .collect())
 }
 
 /// `buildWaveRecord`: assemble the 16-byte header plus samples plus padding.
@@ -966,7 +970,8 @@ mod tests {
     fn probe_detects_nonuniform_padding_and_overrun() {
         let samples = vec![7u8, 8, 9, 10];
         let wav = wav_from_signed_pcm(&samples, 8000.0).unwrap();
-        let (mut built, _) = build_wave_record(&catalog(8000.0 * 1024.0, None, 23.0), &wav).unwrap();
+        let (mut built, _) =
+            build_wave_record(&catalog(8000.0 * 1024.0, None, 23.0), &wav).unwrap();
         assert!(probe_wave_record(&built, 0.0, 23.0).is_ok());
         built[22] = 1;
         assert_eq!(
@@ -992,7 +997,8 @@ mod tests {
     fn probe_control_is_lowercase_zero_padded_hex() {
         let samples = vec![1u8, 2];
         let wav = wav_from_signed_pcm(&samples, 8000.0).unwrap();
-        let (built, _) = build_wave_record(&catalog(8000.0 * 1024.0, Some(1.0), 18.0), &wav).unwrap();
+        let (built, _) =
+            build_wave_record(&catalog(8000.0 * 1024.0, Some(1.0), 18.0), &wav).unwrap();
         let probed = probe_wave_record(&built, 0.0, 18.0).unwrap();
         assert_eq!(probed.header.control, Scalar::str("0x40000000"));
         assert_eq!(probed.padding.size, Scalar::Num(0.0));

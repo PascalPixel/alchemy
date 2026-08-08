@@ -12,3 +12,6 @@ path = "src/lib.rs"
 [[bin]]
 name = "audio-wave"
 path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }

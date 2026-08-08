@@ -25,6 +25,7 @@ const ROOT = dirname(dirname(HERE));
 const RUST_SUBCOMMANDS: Record<string, string> = {
   architecture: "tools-rs/architecture/target/release/architecture",
   cache_key_lint: "tools-rs/target/release/cache-key-lint",
+  check_commit_progress: "tools-rs/check-commit-progress/target/release/check-commit-progress",
   check_publication: "tools-rs/check-publication/target/release/check-publication",
   check_sanctum: "tools-rs/check-sanctum/target/release/check-sanctum",
   core_retained_audit: "tools-rs/core-retained-audit/target/release/core-retained-audit",

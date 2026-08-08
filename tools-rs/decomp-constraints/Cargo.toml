@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "decomp-constraints"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "decomp_constraints"
+path = "src/lib.rs"
+
+[[bin]]
+name = "decomp-constraints"
+path = "src/main.rs"

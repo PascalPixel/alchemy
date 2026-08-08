@@ -1,0 +1,16 @@
+[workspace]
+
+[package]
+name = "coverage-map"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "coverage_map"
+path = "src/lib.rs"
+
+[[bin]]
+name = "coverage-map"
+path = "src/main.rs"
+
+[dependencies]

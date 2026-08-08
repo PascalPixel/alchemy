@@ -1,0 +1,12 @@
+[package]
+name = "cache-entry"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "cache_entry"
+path = "src/lib.rs"
+
+[[bin]]
+name = "cache-entry"
+path = "src/main.rs"

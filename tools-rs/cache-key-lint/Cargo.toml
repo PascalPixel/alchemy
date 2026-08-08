@@ -1,0 +1,12 @@
+[package]
+name = "cache-key-lint"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "cache_key_lint"
+path = "src/lib.rs"
+
+[[bin]]
+name = "cache-key-lint"
+path = "src/main.rs"

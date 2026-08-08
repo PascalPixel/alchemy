@@ -1,0 +1,12 @@
+[workspace]
+
+[package]
+name = "executable-gap-sources"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "executable-gap-sources"
+path = "src/main.rs"
+
+[dependencies]

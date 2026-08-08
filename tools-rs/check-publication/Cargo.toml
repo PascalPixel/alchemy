@@ -1,0 +1,16 @@
+[workspace]
+
+[package]
+name = "check-publication"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "check_publication"
+path = "src/lib.rs"
+
+[[bin]]
+name = "check-publication"
+path = "src/main.rs"
+
+[dependencies]

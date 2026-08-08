@@ -1,0 +1,26 @@
+[workspace]
+
+[package]
+name = "decomp-queue"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "decomp_queue"
+path = "src/lib.rs"
+
+[[bin]]
+name = "decomp-queue"
+path = "src/main.rs"
+
+[[bin]]
+name = "decomp-queue-parity"
+path = "src/bin/parity.rs"
+
+[[bin]]
+name = "decomp-queue-bench"
+path = "src/bin/bench.rs"
+
+[dependencies]
+decomp-diagnose = { path = "../decomp-diagnose" }
+permute-m2c = { path = "../permute-m2c" }

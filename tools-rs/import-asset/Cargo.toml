@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "import-asset"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "import_asset"
+path = "src/lib.rs"
+
+[[bin]]
+name = "import-asset"
+path = "src/main.rs"
+
+[dependencies]
+alchemy-zlib = { path = "../zlib" }

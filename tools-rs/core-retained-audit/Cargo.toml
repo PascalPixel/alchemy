@@ -1,0 +1,10 @@
+[workspace]
+
+[package]
+name = "core-retained-audit"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "core-retained-audit"
+path = "src/main.rs"

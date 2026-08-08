@@ -1,0 +1,16 @@
+[workspace]
+
+[package]
+name = "thumb-disasm"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "thumb_disasm"
+path = "src/lib.rs"
+
+[[bin]]
+name = "thumb-disasm"
+path = "src/main.rs"
+
+[dependencies]

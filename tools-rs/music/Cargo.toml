@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "music"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "music"
+path = "src/lib.rs"
+
+[[bin]]
+name = "music"
+path = "src/main.rs"

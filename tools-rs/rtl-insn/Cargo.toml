@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "rtl-insn"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rtl_insn"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rtl-insn"
+path = "src/main.rs"
+
+[dependencies]
+rtl-sexpr = { path = "../rtl-sexpr" }

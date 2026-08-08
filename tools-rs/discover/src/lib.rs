@@ -223,8 +223,26 @@ impl Discovery {
         self.external_calls.len()
     }
 
+    /// Every seeded function entry, in first-seen (insertion) order — the same
+    /// order `[...discovery.functions.keys()]` walks in the TypeScript.
+    /// Callers that need a different order (sorted, filtered) do that
+    /// themselves, same as the TypeScript call sites do.
+    pub fn function_entries(&self) -> Vec<i64> {
+        self.functions.keys().collect()
+    }
+
     pub fn function(&self, address: i64) -> Option<&FunctionInfo> {
         self.functions.get(address)
+    }
+
+    /// Mutable counterpart to [`Discovery::function`]. `overlay_inventory.ts`'s
+    /// `discoverOverlay` prunes `fn.unresolved` for every function once jump
+    /// tables are known (`for (const fn of discovery.functions.values()) { ...
+    /// fn.unresolved.delete(site) }`), which needs a mutable handle per entry
+    /// rather than a full iterator, so this mirrors `function()` rather than
+    /// adding a `functions_mut()` that duplicates `function_entries()`.
+    pub fn function_mut(&mut self, address: i64) -> Option<&mut FunctionInfo> {
+        self.functions.get_mut(address)
     }
 
     pub fn inside(&self, address: i64, size: i64) -> bool {

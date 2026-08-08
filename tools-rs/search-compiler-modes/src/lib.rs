@@ -214,8 +214,7 @@ fn parse_string(chars: &[char], cursor: &mut usize) -> Result<String, String> {
                 // malformed input.
                 if let Some(high) = pending_high.take() {
                     if (0xdc00..0xe000).contains(&code) {
-                        let combined =
-                            0x10000 + ((high - 0xd800) << 10) + (code - 0xdc00);
+                        let combined = 0x10000 + ((high - 0xd800) << 10) + (code - 0xdc00);
                         out.push(char::from_u32(combined).unwrap_or('\u{fffd}'));
                         continue;
                     }
@@ -435,10 +434,17 @@ pub fn canonical_json(value: &Json) -> String {
 fn is_js_whitespace(character: char) -> bool {
     matches!(
         character,
-        '\u{9}' | '\u{a}' | '\u{b}' | '\u{c}' | '\u{d}'
-            | '\u{20}' | '\u{a0}' | '\u{feff}'
-            | '\u{1680}' | '\u{2000}'..='\u{200a}'
-            | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}'
+        '\u{9}'
+            | '\u{a}'
+            | '\u{b}'
+            | '\u{c}'
+            | '\u{d}'
+            | '\u{20}'
+            | '\u{a0}'
+            | '\u{feff}'
+            | '\u{1680}'
+            | '\u{2000}'
+            ..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}'
     )
 }
 
@@ -508,7 +514,7 @@ pub fn is_js_integer(value: f64) -> bool {
 // Options
 // ---------------------------------------------------------------------------
 
-pub const USAGE: &str = "usage: search_compiler_modes.ts [options]\n  --limit N --jobs N --queue FILE --rom FILE\n  --pairs [--max-pairs N]\n  --triples [--max-triples N]";
+pub const USAGE: &str = "usage: search-compiler-modes [options]\n  --limit N --jobs N [--queue FILE] --rom FILE\n  --pairs [--max-pairs N]\n  --triples [--max-triples N]";
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Options {
@@ -534,7 +540,9 @@ pub fn default_options(root: &Path, jobs: f64) -> Options {
     Options {
         limit: 250.0,
         jobs,
-        queue: join_path(root, "out/decomp/queue.json"),
+        // Empty means derive the current semantic-C queue in process. An
+        // explicit file remains useful for replaying an archived experiment.
+        queue: String::new(),
         rom: join_path(root, "roms/gs1-en.gba"),
         pairs: false,
         triples: false,
@@ -627,7 +635,9 @@ fn normalize(path: &Path) -> String {
                 }
             }
             Component::Normal(part) => parts.push(part.to_string_lossy().into_owned()),
-            Component::Prefix(prefix) => parts.push(prefix.as_os_str().to_string_lossy().into_owned()),
+            Component::Prefix(prefix) => {
+                parts.push(prefix.as_os_str().to_string_lossy().into_owned())
+            }
         }
     }
     let joined = parts.join("/");
@@ -821,7 +831,10 @@ pub fn summarize(reports: &[Json], options: &Options) -> Json {
         .collect();
     Json::Object(vec![
         ("format".into(), Json::Number(2.0)),
-        ("engine".into(), Json::String("tools/lib/mode_sweep.ts".into())),
+        (
+            "engine".into(),
+            Json::String("tools/lib/mode_sweep.ts".into()),
+        ),
         (
             "search".into(),
             Json::Object(vec![
@@ -882,7 +895,7 @@ mod tests {
     #[test]
     fn defaults_come_from_the_repository_root() {
         let options = parsed(&[]);
-        assert_eq!(options.queue, "/repo/out/decomp/queue.json");
+        assert_eq!(options.queue, "");
         assert_eq!(options.rom, "/repo/roms/gs1-en.gba");
         assert_eq!(options.limit, 250.0);
         assert_eq!(options.max_triples, 64.0);
@@ -957,10 +970,13 @@ mod tests {
     fn canonical_json_matches_the_typescript_layout() {
         let value = Json::Object(vec![
             ("format".into(), Json::Number(2.0)),
-            ("flags".into(), Json::Array(vec![
-                Json::String("-O2".into()),
-                Json::String("-fno-inline".into()),
-            ])),
+            (
+                "flags".into(),
+                Json::Array(vec![
+                    Json::String("-O2".into()),
+                    Json::String("-fno-inline".into()),
+                ]),
+            ),
             ("empty_list".into(), Json::Array(vec![])),
             ("empty_map".into(), Json::Object(vec![])),
             (
@@ -1025,8 +1041,11 @@ mod tests {
     #[test]
     fn mode_sweep_directory_hashes_relative_path_and_bytes() {
         let root = Path::new("/repo");
-        let directory =
-            mode_sweep_output_directory(root, "/repo/out/decomp/candidates/08021950.c", b"int f;\n");
+        let directory = mode_sweep_output_directory(
+            root,
+            "/repo/out/decomp/candidates/08021950.c",
+            b"int f;\n",
+        );
         // Recompute the contract by hand: "<relative>\0<bytes>\0".
         let mut expected = Vec::new();
         expected.extend_from_slice(b"out/decomp/candidates/08021950.c\0int f;\n\0");
@@ -1073,10 +1092,7 @@ mod tests {
             ("compiler_signature".into(), Json::String("cc".into())),
             (
                 "planning".into(),
-                Json::Object(vec![(
-                    "bounded_search_complete".into(),
-                    Json::Bool(true),
-                )]),
+                Json::Object(vec![("bounded_search_complete".into(), Json::Bool(true))]),
             ),
             ("results".into(), Json::Array(results)),
         ])
@@ -1123,7 +1139,10 @@ mod tests {
         let summary = summarize(&reports, &options);
         let matches = summary.get("matches").and_then(Json::as_array).unwrap();
         assert_eq!(matches.len(), 2);
-        assert_eq!(matches[0].get("stem").and_then(Json::as_str), Some("08021950"));
+        assert_eq!(
+            matches[0].get("stem").and_then(Json::as_str),
+            Some("08021950")
+        );
         assert_eq!(
             matches[0]
                 .get("config")
@@ -1132,7 +1151,10 @@ mod tests {
                 .map(<[Json]>::len),
             Some(1)
         );
-        assert_eq!(matches[1].get("stem").and_then(Json::as_str), Some("08002e00"));
+        assert_eq!(
+            matches[1].get("stem").and_then(Json::as_str),
+            Some("08002e00")
+        );
 
         let search = summary.get("search").unwrap();
         assert_eq!(search.get("pairs"), Some(&Json::Bool(true)));
@@ -1156,7 +1178,14 @@ mod tests {
         };
         assert_eq!(
             keys,
-            ["format", "engine", "search", "members", "matches", "auto_promote"]
+            [
+                "format",
+                "engine",
+                "search",
+                "members",
+                "matches",
+                "auto_promote"
+            ]
         );
         assert_eq!(
             canonical_json(&summary),

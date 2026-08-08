@@ -22,6 +22,7 @@ use search_compiler_modes::{
     canonical_json, default_options, mode_sweep_output_directory, options_of, parse_json,
     resolve_path, summarize, Json, Options, ParseOutcome, MISSING_PATH, USAGE,
 };
+use semantic_queue::semantic_queue;
 
 // The TypeScript derives ROOT from import.meta.url, three directories up from
 // tools/search/. CARGO_MANIFEST_DIR is tools-rs/search-compiler-modes at
@@ -139,37 +140,38 @@ fn run(root: &Path, arguments: &[String]) -> Result<String, Failure> {
         }
     }
 
-    let queue_text = read_text(Path::new(&options.queue)).map_err(Failure::Error)?;
-    let queue = parse_json(&queue_text).map_err(Failure::Error)?;
-    let entries = queue
-        .get("items")
-        .and_then(Json::as_array)
-        .ok_or_else(|| Failure::Error("queue.items is not iterable".to_string()))?;
-
-    let limit = if options.limit >= entries.len() as f64 {
-        entries.len()
-    } else {
-        options.limit as usize
-    };
-    let items: Vec<Item> = entries
-        .iter()
-        .filter_map(|entry| {
-            let candidate = entry.get("candidate")?.as_str()?;
-            let source = resolve_path(root, candidate);
-            if !Path::new(&source).exists() {
-                return None;
-            }
-            Some(Item {
-                stem: entry
-                    .get("stem")
-                    .and_then(Json::as_str)
-                    .unwrap_or_default()
-                    .to_string(),
-                source,
+    let mut items: Vec<Item> = if options.queue.is_empty() {
+        semantic_queue(root)
+            .into_iter()
+            .map(|entry| Item {
+                stem: entry.stem,
+                source: resolve_path(root, &entry.draft),
             })
-        })
-        .take(limit)
-        .collect();
+            .collect()
+    } else {
+        let queue_text = read_text(Path::new(&options.queue)).map_err(Failure::Error)?;
+        let queue = parse_json(&queue_text).map_err(Failure::Error)?;
+        let entries = queue
+            .get("items")
+            .and_then(Json::as_array)
+            .ok_or_else(|| Failure::Error("queue.items is not iterable".to_string()))?;
+        entries
+            .iter()
+            .filter_map(|entry| {
+                let candidate = entry.get("candidate")?.as_str()?;
+                let source = resolve_path(root, candidate);
+                Path::new(&source).exists().then(|| Item {
+                    stem: entry
+                        .get("stem")
+                        .and_then(Json::as_str)
+                        .unwrap_or_default()
+                        .to_string(),
+                    source,
+                })
+            })
+            .collect()
+    };
+    items.truncate((options.limit as usize).min(items.len()));
     if items.is_empty() {
         return Err(Failure::Error(
             "no queued candidates have source files".to_string(),
@@ -301,9 +303,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn repo_root_holds_the_typescript_original() {
+    fn repo_root_holds_the_native_queue_inputs() {
         assert!(repo_root()
-            .join("tools/search/search_compiler_modes.ts")
+            .join("tools-rs/semantic-queue/Cargo.toml")
             .exists());
         assert!(repo_root().join("tools/lib/mode_sweep.ts").exists());
     }
@@ -323,6 +325,9 @@ mod tests {
     #[test]
     fn missing_queue_reports_the_node_style_error() {
         let error = read_text(Path::new("/nonexistent/queue.json")).expect_err("must fail");
-        assert!(error.starts_with("ENOENT: no such file or directory"), "{error}");
+        assert!(
+            error.starts_with("ENOENT: no such file or directory"),
+            "{error}"
+        );
     }
 }

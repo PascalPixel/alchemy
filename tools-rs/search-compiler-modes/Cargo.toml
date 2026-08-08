@@ -5,6 +5,9 @@ name = "search-compiler-modes"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+semantic-queue = { path = "../semantic-queue" }
+
 [lib]
 name = "search_compiler_modes"
 path = "src/lib.rs"

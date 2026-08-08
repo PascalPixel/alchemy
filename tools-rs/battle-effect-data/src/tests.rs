@@ -29,7 +29,10 @@ fn the_tracked_document_rebuilds_the_whole_rom_span() {
     let built = build_battle_effect_data(&source, &assets_root()).expect("tracked layout builds");
     assert_eq!(built.len() as u32, BATTLE_DATA_END - BATTLE_DATA_ADDRESS);
     // A guard against a builder that silently produces a zero span.
-    assert!(built.iter().any(|byte| *byte != 0), "built span is all zeroes");
+    assert!(
+        built.iter().any(|byte| *byte != 0),
+        "built span is all zeroes"
+    );
 }
 
 #[test]
@@ -47,15 +50,27 @@ fn hex_pads_to_eight_digits_and_stays_lowercase() {
 #[test]
 fn range_clamps_nothing_and_refuses_what_the_typescript_refuses() {
     let rom = vec![7u8; 16];
-    assert_eq!(range(&rom, ROM_BASE, ROM_BASE + 4).unwrap(), vec![7, 7, 7, 7]);
+    assert_eq!(
+        range(&rom, ROM_BASE, ROM_BASE + 4).unwrap(),
+        vec![7, 7, 7, 7]
+    );
     // Below the base: `start - ROM_BASE` goes negative in JS instead of
     // wrapping, so this is an error rather than a huge offset.
-    assert_eq!(range(&rom, ROM_BASE - 1, ROM_BASE + 4).unwrap_err(), "ROM range differs");
+    assert_eq!(
+        range(&rom, ROM_BASE - 1, ROM_BASE + 4).unwrap_err(),
+        "ROM range differs"
+    );
     // Past the end: JS `subarray` would clamp, but the explicit check fires
     // first in both implementations.
-    assert_eq!(range(&rom, ROM_BASE, ROM_BASE + 17).unwrap_err(), "ROM range differs");
+    assert_eq!(
+        range(&rom, ROM_BASE, ROM_BASE + 17).unwrap_err(),
+        "ROM range differs"
+    );
     // Reversed.
-    assert_eq!(range(&rom, ROM_BASE + 4, ROM_BASE).unwrap_err(), "ROM range differs");
+    assert_eq!(
+        range(&rom, ROM_BASE + 4, ROM_BASE).unwrap_err(),
+        "ROM range differs"
+    );
     // An empty range is legal.
     assert!(range(&rom, ROM_BASE + 4, ROM_BASE + 4).unwrap().is_empty());
 }
@@ -63,16 +78,28 @@ fn range_clamps_nothing_and_refuses_what_the_typescript_refuses() {
 #[test]
 fn integer_uses_is_integer_not_is_safe_integer() {
     // 1.0 is an integer in JS: there is only one number type.
-    assert_eq!(integer(Some(&Value::Num(1.0)), 0.0, 10.0, "x").unwrap(), 1.0);
+    assert_eq!(
+        integer(Some(&Value::Num(1.0)), 0.0, 10.0, "x").unwrap(),
+        1.0
+    );
     assert!(integer(Some(&Value::Num(1.5)), 0.0, 10.0, "x").is_err());
     assert!(integer(Some(&Value::Num(f64::NAN)), 0.0, 10.0, "x").is_err());
     assert!(integer(Some(&Value::Num(f64::INFINITY)), 0.0, f64::INFINITY, "x").is_err());
     // Non-numbers are rejected, and the label is carried into the message.
     assert_eq!(
-        integer(Some(&Value::Str("3".to_string())), 0.0, 10.0, "sparse-table key").unwrap_err(),
+        integer(
+            Some(&Value::Str("3".to_string())),
+            0.0,
+            10.0,
+            "sparse-table key"
+        )
+        .unwrap_err(),
         "sparse-table key is out of range"
     );
-    assert_eq!(integer(None, 0.0, 10.0, "x").unwrap_err(), "x is out of range");
+    assert_eq!(
+        integer(None, 0.0, 10.0, "x").unwrap_err(),
+        "x is out of range"
+    );
     // Unbounded integrality: 2^60 passes Number.isInteger and is caught only by
     // the range, which is what `Number.isSafeInteger` would NOT have done.
     assert!(is_integer(2f64.powi(60)));
@@ -85,15 +112,18 @@ fn field_kinds_follow_the_anchored_regex() {
     assert_eq!(field_kind("script:ptr").unwrap(), FieldKind::Ptr);
     assert_eq!(field_kind("word_0:u32").unwrap(), FieldKind::U32);
     for rejected in [
-        "Selector:s16",   // leading capital
-        "0abc:s16",       // leading digit
-        ":s16",           // empty name
-        "value:s64",      // unknown kind
-        "value",          // no colon
-        "value:s16 ",     // trailing space; the regex is anchored
-        "a:b:s16",        // the name may not contain a colon
+        "Selector:s16", // leading capital
+        "0abc:s16",     // leading digit
+        ":s16",         // empty name
+        "value:s64",    // unknown kind
+        "value",        // no colon
+        "value:s16 ",   // trailing space; the regex is anchored
+        "a:b:s16",      // the name may not contain a colon
     ] {
-        assert!(field_kind(rejected).is_err(), "{rejected} should be rejected");
+        assert!(
+            field_kind(rejected).is_err(),
+            "{rejected} should be rejected"
+        );
     }
     // JS `$` without the `m` flag does not match before a newline in the middle
     // of the string, and `\n` is not in the character class either.
@@ -105,15 +135,39 @@ fn field_round_trips_reproduce_signedness() {
     let mut output = vec![0u8; 4];
     write_field(&mut output, 0, FieldKind::S16, Some(&Value::Num(-1.0))).unwrap();
     assert_eq!(&output[..2], &[0xff, 0xff]);
-    assert_eq!(read_field(&output, 0, FieldKind::S16).unwrap(), Value::Num(-1.0));
-    assert_eq!(read_field(&output, 0, FieldKind::U16).unwrap(), Value::Num(65535.0));
+    assert_eq!(
+        read_field(&output, 0, FieldKind::S16).unwrap(),
+        Value::Num(-1.0)
+    );
+    assert_eq!(
+        read_field(&output, 0, FieldKind::U16).unwrap(),
+        Value::Num(65535.0)
+    );
 
-    write_field(&mut output, 0, FieldKind::S32, Some(&Value::Num(-2147483648.0))).unwrap();
-    assert_eq!(read_field(&output, 0, FieldKind::S32).unwrap(), Value::Num(-2147483648.0));
-    assert_eq!(read_field(&output, 0, FieldKind::U32).unwrap(), Value::Num(2147483648.0));
+    write_field(
+        &mut output,
+        0,
+        FieldKind::S32,
+        Some(&Value::Num(-2147483648.0)),
+    )
+    .unwrap();
+    assert_eq!(
+        read_field(&output, 0, FieldKind::S32).unwrap(),
+        Value::Num(-2147483648.0)
+    );
+    assert_eq!(
+        read_field(&output, 0, FieldKind::U32).unwrap(),
+        Value::Num(2147483648.0)
+    );
 
     // A u32 field takes the full unsigned range and rejects a negative.
-    assert!(write_field(&mut output, 0, FieldKind::U32, Some(&Value::Num(4294967295.0))).is_ok());
+    assert!(write_field(
+        &mut output,
+        0,
+        FieldKind::U32,
+        Some(&Value::Num(4294967295.0))
+    )
+    .is_ok());
     assert_eq!(
         write_field(&mut output, 0, FieldKind::U32, Some(&Value::Num(-1.0))).unwrap_err(),
         "word table value is out of range"
@@ -129,13 +183,27 @@ fn a_pointer_field_only_accepts_a_known_script_symbol() {
 
     let name = script_name(0x0809_f13c);
     assert_eq!(name, "ObjectScript_0809f13c");
-    write_field(&mut output, 0, FieldKind::Ptr, Some(&Value::Str(name.clone()))).unwrap();
+    write_field(
+        &mut output,
+        0,
+        FieldKind::Ptr,
+        Some(&Value::Str(name.clone())),
+    )
+    .unwrap();
     assert_eq!(read_u32(&output, 0), 0x0809_f13c);
-    assert_eq!(read_field(&output, 0, FieldKind::Ptr).unwrap(), Value::Str(name));
+    assert_eq!(
+        read_field(&output, 0, FieldKind::Ptr).unwrap(),
+        Value::Str(name)
+    );
 
     assert_eq!(
-        write_field(&mut output, 0, FieldKind::Ptr, Some(&Value::Str("ObjectScript_deadbeef".into())))
-            .unwrap_err(),
+        write_field(
+            &mut output,
+            0,
+            FieldKind::Ptr,
+            Some(&Value::Str("ObjectScript_deadbeef".into()))
+        )
+        .unwrap_err(),
         "symbolic table pointer differs"
     );
     // A non-zero word with no matching script symbol fails on the way out too.
@@ -152,8 +220,13 @@ fn opcode_names_parse_the_way_the_regex_does() {
     assert_eq!(opcode_number("op_39").unwrap(), 39);
     // `Number("007")` is 7, and the regex allows the leading zeroes.
     assert_eq!(opcode_number("op_007").unwrap(), 7);
-    for rejected in ["op_", "op_40", "op_-1", "op_1.0", "op_0x10", "OP_1", "op_1 ", " op_1"] {
-        assert!(opcode_number(rejected).is_err(), "{rejected} should be rejected");
+    for rejected in [
+        "op_", "op_40", "op_-1", "op_1.0", "op_0x10", "OP_1", "op_1 ", " op_1",
+    ] {
+        assert!(
+            opcode_number(rejected).is_err(),
+            "{rejected} should be rejected"
+        );
     }
 }
 
@@ -164,7 +237,10 @@ fn number_coercion_in_palette_tokens_keeps_the_javascript_grammar() {
     assert_eq!(to_number("0x00000098"), 152.0);
     assert!("0x00000098".parse::<f64>().is_err());
     assert_eq!(palette_number(Some(&Value::Str("0x10".to_string()))), 16.0);
-    assert_eq!(palette_number(Some(&Value::Str("  12  ".to_string()))), 12.0);
+    assert_eq!(
+        palette_number(Some(&Value::Str("  12  ".to_string()))),
+        12.0
+    );
     assert_eq!(palette_number(Some(&Value::Str("".to_string()))), 0.0);
     assert!(palette_number(Some(&Value::Str("12px".to_string()))).is_nan());
 }
@@ -178,7 +254,10 @@ fn source_word_reads_the_high_half_as_signed() {
     // And `scriptWord` puts it back, `>>> 0`, without saturating the way a
     // Rust `as i32` cast on an out-of-range float would.
     assert_eq!(script_word(Some(&Value::Num(-1.0))).unwrap(), 0xffff_ffff);
-    assert_eq!(script_word(Some(&Value::Num(4294967295.0))).unwrap(), 0xffff_ffff);
+    assert_eq!(
+        script_word(Some(&Value::Num(4294967295.0))).unwrap(),
+        0xffff_ffff
+    );
     assert!(script_word(Some(&Value::Num(4294967296.0))).is_err());
     assert_eq!(
         script_word(Some(&Value::Str("Func_08098c08".into()))).unwrap(),
@@ -194,7 +273,10 @@ fn source_word_reads_the_high_half_as_signed() {
 fn the_halfword_codec_round_trips_a_hand_written_plan() {
     let pixels: Vec<u8> = (0..64u8).collect();
     let mut plan = vec![HalfwordToken::Literal(8)];
-    plan.push(HalfwordToken::Copy { length: 8, distance: 8 });
+    plan.push(HalfwordToken::Copy {
+        length: 8,
+        distance: 8,
+    });
     plan.push(HalfwordToken::Literal(16));
     plan.push(HalfwordToken::End);
     // The plan above describes 8 + 8 + 16 = 32 halfwords = 64 bytes, but the
@@ -225,7 +307,11 @@ fn a_halfword_plan_that_does_not_reconstruct_the_pixels_is_refused() {
     assert_eq!(
         encode_halfword(
             &decoded,
-            &[HalfwordToken::Literal(2), HalfwordToken::End, HalfwordToken::Literal(1)]
+            &[
+                HalfwordToken::Literal(2),
+                HalfwordToken::End,
+                HalfwordToken::Literal(1)
+            ]
         )
         .unwrap_err(),
         "halfword terminator is not final"
@@ -238,7 +324,13 @@ fn a_halfword_plan_that_does_not_reconstruct_the_pixels_is_refused() {
     assert_eq!(
         encode_halfword(
             &decoded,
-            &[HalfwordToken::Copy { length: 2, distance: 1 }, HalfwordToken::End]
+            &[
+                HalfwordToken::Copy {
+                    length: 2,
+                    distance: 1
+                },
+                HalfwordToken::End
+            ]
         )
         .unwrap_err(),
         "halfword copy crossed replay prefix"
@@ -247,8 +339,14 @@ fn a_halfword_plan_that_does_not_reconstruct_the_pixels_is_refused() {
 
 #[test]
 fn a_truncated_halfword_stream_is_refused() {
-    assert_eq!(decode_halfword_trace(&[0u8]).unwrap_err(), "halfword flags are truncated");
-    assert_eq!(decode_halfword_trace(&[0u8, 0]).unwrap_err(), "halfword token is truncated");
+    assert_eq!(
+        decode_halfword_trace(&[0u8]).unwrap_err(),
+        "halfword flags are truncated"
+    );
+    assert_eq!(
+        decode_halfword_trace(&[0u8, 0]).unwrap_err(),
+        "halfword token is truncated"
+    );
     // A terminator mid-group leaves the rest of the group unread, and the
     // trailing-byte check catches it.
     let mut stream = vec![0x00, 0x80, 0x00, 0x00];
@@ -263,32 +361,60 @@ fn a_truncated_halfword_stream_is_refused() {
 fn halfword_tokens_survive_the_json_shape() {
     for token in [
         HalfwordToken::Literal(3),
-        HalfwordToken::Copy { length: 33, distance: 2047 },
+        HalfwordToken::Copy {
+            length: 33,
+            distance: 2047,
+        },
         HalfwordToken::End,
     ] {
         let value = halfword_token_value(&token);
         assert_eq!(halfword_token_from(&value).unwrap(), token);
     }
     assert_eq!(
-        minified(&halfword_token_value(&HalfwordToken::Copy { length: 4, distance: 9 })),
+        minified(&halfword_token_value(&HalfwordToken::Copy {
+            length: 4,
+            distance: 9
+        })),
         "[\"c\",4,9]"
     );
-    for rejected in ["[]", "[\"l\"]", "[\"l\",0]", "[\"c\",1,1]", "[\"c\",2,2048]", "[\"e\",1]", "[\"x\"]"] {
+    for rejected in [
+        "[]",
+        "[\"l\"]",
+        "[\"l\",0]",
+        "[\"c\",1,1]",
+        "[\"c\",2,2048]",
+        "[\"e\",1]",
+        "[\"x\"]",
+    ] {
         let value = json::parse(rejected).unwrap();
-        assert!(halfword_token_from(&value).is_err(), "{rejected} should be rejected");
+        assert!(
+            halfword_token_from(&value).is_err(),
+            "{rejected} should be rejected"
+        );
     }
 }
 
 #[test]
 fn assemble_tail_reports_holes_and_inconsistent_overlaps() {
-    let full = vec![(RULE_TABLES_END, BATTLE_DATA_END, vec![0u8; (BATTLE_DATA_END - RULE_TABLES_END) as usize])];
+    let full = vec![(
+        RULE_TABLES_END,
+        BATTLE_DATA_END,
+        vec![0u8; (BATTLE_DATA_END - RULE_TABLES_END) as usize],
+    )];
     assert!(assemble_tail(&full).is_ok());
 
     let mut with_hole = full.clone();
-    with_hole[0] = (RULE_TABLES_END, BATTLE_DATA_END - 1, vec![0u8; (BATTLE_DATA_END - RULE_TABLES_END - 1) as usize]);
+    with_hole[0] = (
+        RULE_TABLES_END,
+        BATTLE_DATA_END - 1,
+        vec![0u8; (BATTLE_DATA_END - RULE_TABLES_END - 1) as usize],
+    );
     assert_eq!(
         assemble_tail(&with_hole).unwrap_err(),
-        format!("battle-effect tail has a hole at {}", hex(BATTLE_DATA_END - 1))
+        format!(
+            "battle-effect tail has a hole at {}",
+            hex(BATTLE_DATA_END - 1)
+        )
     );
 
     let mut overlapping = full.clone();
@@ -332,7 +458,10 @@ fn graphic_paths_flatten_and_refuse_an_escape() {
         "graphics/battle/effects/sub/dir.png",
         "graphics/battle/effects/",
     ] {
-        assert!(graphic_path(root, rejected).is_err(), "{rejected} should be rejected");
+        assert!(
+            graphic_path(root, rejected).is_err(),
+            "{rejected} should be rejected"
+        );
     }
     // ".." alone is spelled out of the character class only by the `/`, so the
     // one-dot name that IS accepted still cannot leave the directory.
@@ -348,7 +477,10 @@ fn the_sine_table_matches_the_documented_formula() {
             ("end", Value::Str(hex(SINE_TABLE_END))),
             ("count", Value::Num(256.0)),
             ("type", Value::Str("s16".to_string())),
-            ("formula", Value::Str("trunc(sin(index*pi/128)*0x1000)".to_string())),
+            (
+                "formula",
+                Value::Str("trunc(sin(index*pi/128)*0x1000)".to_string()),
+            ),
         ]),
     )]))
     .unwrap();
@@ -364,7 +496,10 @@ fn the_sine_table_matches_the_documented_formula() {
 fn exact_keys_names_the_offending_label() {
     let value = Value::obj(vec![("a", Value::Num(1.0)), ("b", Value::Num(2.0))]);
     assert!(exact_keys(&value, &["b", "a"], "thing").is_ok());
-    assert_eq!(exact_keys(&value, &["a"], "thing").unwrap_err(), "thing has unknown fields");
+    assert_eq!(
+        exact_keys(&value, &["a"], "thing").unwrap_err(),
+        "thing has unknown fields"
+    );
     assert_eq!(
         exact_keys(&value, &["a", "b", "c"], "thing").unwrap_err(),
         "thing has unknown fields"
@@ -373,7 +508,10 @@ fn exact_keys_names_the_offending_label() {
 
 #[test]
 fn parse_rejects_a_document_with_the_wrong_shape() {
-    assert_eq!(parse(&Value::Num(1.0)).unwrap_err(), "battle-effect source must be an object");
+    assert_eq!(
+        parse(&Value::Num(1.0)).unwrap_err(),
+        "battle-effect source must be an object"
+    );
     assert_eq!(
         parse(&Value::obj(vec![("format", Value::Num(2.0))])).unwrap_err(),
         "battle-effect source has unknown fields"
@@ -392,7 +530,10 @@ fn parse_rejects_a_document_with_the_wrong_shape() {
             pair.1 = Value::Num(3.0);
         }
     }
-    assert_eq!(parse(&Value::Obj(wrong)).unwrap_err(), "battle-effect source layout differs");
+    assert_eq!(
+        parse(&Value::Obj(wrong)).unwrap_err(),
+        "battle-effect source layout differs"
+    );
 }
 
 #[test]
@@ -406,7 +547,12 @@ fn the_cli_reports_its_usage_the_way_the_typescript_does() {
         "usage: battle_effect_data.ts export ROM --root ASSETS --output SOURCE"
     );
     assert_eq!(
-        run(vec!["verify".into(), "rom.gba".into(), "source.json".into()]).unwrap_err(),
+        run(vec![
+            "verify".into(),
+            "rom.gba".into(),
+            "source.json".into()
+        ])
+        .unwrap_err(),
         "usage: battle_effect_data.ts verify ROM SOURCE --root ASSETS"
     );
     // `--self-test` wins wherever it appears, exactly as `args.includes` does.
@@ -414,8 +560,15 @@ fn the_cli_reports_its_usage_the_way_the_typescript_does() {
     // An empty string is falsy in JS, so it fails the usage check rather than
     // being treated as a path.
     assert_eq!(
-        run(vec!["export".into(), "".into(), "--root".into(), "a".into(), "--output".into(), "b".into()])
-            .unwrap_err(),
+        run(vec![
+            "export".into(),
+            "".into(),
+            "--root".into(),
+            "a".into(),
+            "--output".into(),
+            "b".into()
+        ])
+        .unwrap_err(),
         "usage: battle_effect_data.ts export ROM --root ASSETS --output SOURCE"
     );
     // `option` returns the following argument verbatim, even another flag.
@@ -462,7 +615,10 @@ fn a_duplicate_sparse_index_is_refused() {
                     ]),
                 ]),
             ),
-            ("sentinel", Value::Arr(vec![Value::Num(-1.0), Value::Num(0.0)])),
+            (
+                "sentinel",
+                Value::Arr(vec![Value::Num(-1.0), Value::Num(0.0)]),
+            ),
         ]),
     )]);
     assert_eq!(

@@ -311,7 +311,8 @@ impl Parser<'_> {
             match byte {
                 b'"' => {
                     self.at += 1;
-                    return String::from_utf16(&units).map_err(|_| "Bad Unicode escape".to_string());
+                    return String::from_utf16(&units)
+                        .map_err(|_| "Bad Unicode escape".to_string());
                 }
                 b'\\' => {
                     self.at += 1;
@@ -348,11 +349,7 @@ impl Parser<'_> {
                     // Copy one whole UTF-8 scalar and re-encode it as UTF-16.
                     let start = self.at;
                     self.at += 1;
-                    while self
-                        .bytes
-                        .get(self.at)
-                        .is_some_and(|b| (b & 0xc0) == 0x80)
-                    {
+                    while self.bytes.get(self.at).is_some_and(|b| (b & 0xc0) == 0x80) {
                         self.at += 1;
                     }
                     let text = std::str::from_utf8(&self.bytes[start..self.at])

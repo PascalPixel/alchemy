@@ -20,7 +20,7 @@
  * against the raw image (this owner starts outside a recorded row, so
  * overlay_call_targets.ts's own table does not cover it -- resolved with
  * the tool's --annotate mode against an explicit owner/end pair, `bun
- * tools/overlay/overlay_show.ts resource_3bc 288c | bun tools/lib/overlay_call_targets.ts
+ * tools-rs/overlay-show resource_3bc 288c | bun tools/lib/overlay_call_targets.ts
  * resource_3bc 288c 2a3c --annotate`):
  *   0x20028a4, 0x20028aa, 0x20028ba -> veneer -> Func_0808a080(sel)   scene-record accessor (established, resource_37a/395/37b/3ba)
  *   0x20028c0                       -> veneer -> Func_0808a018()     established no-arg scene bracket (resource_37b/3c8/39a/3cb)

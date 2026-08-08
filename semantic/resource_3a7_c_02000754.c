@@ -47,7 +47,7 @@
  * because deleting it would drop a real call site from the per-target multiset.
  *
  * Call targets resolved with
- *   bun tools/overlay/overlay_show.ts resource_3a7 0754 -n 340 |
+ *   bun tools-rs/overlay-show resource_3a7 0754 -n 340 |
  *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
  * Per-target multiset over the 20 sites, matching the inventory's calls=20:
  *   Func_0808a018 x1 <- veneer 0x02001120

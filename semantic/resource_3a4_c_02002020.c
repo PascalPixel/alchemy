@@ -7,7 +7,7 @@
  * function that chooses between them was owned by nobody.
  *
  * It is the target of this overlay's header veneer (the word at image
- * offset 4; bun tools/overlay/overlay_driver.ts resource_3a4), so the loader
+ * offset 4; bun tools-rs/overlay-driver resource_3a4), so the loader
  * enters here and nothing inside the image calls it.
  *
  * Body: write 516 to the workspace's +448 s32, then read the s16 at

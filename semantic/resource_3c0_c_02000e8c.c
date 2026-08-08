@@ -3,7 +3,7 @@
 /*
  * resource_3c0 owner at 0x02000e8c, 160 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay/overlay_driver.ts resource_3c0), so the loader enters
+ * (bun tools-rs/overlay-driver resource_3c0), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Body: take the camera/scene pointer at 0x03001e70 and write 513 to

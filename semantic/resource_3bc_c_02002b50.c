@@ -16,7 +16,7 @@
  * Not found by the structural inventory walk (unindexed); six call sites,
  * all resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 2b50 |
+ * cover it -- resolved with `bun tools-rs/overlay-show resource_3bc 2b50 |
  * bun tools/lib/overlay_call_targets.ts resource_3bc 2b50 2bac --annotate`):
  *   0x02002b58 -> veneer 0x02004978 -> Func_08015120(arg1, 5)   established (resource_3bc_c_02002a94.c)
  *   0x02002b80 -> veneer 0x02004ab0 -> Func_0808a170(msg)       display message by id (established)

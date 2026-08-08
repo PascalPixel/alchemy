@@ -1,5 +1,5 @@
 /*
- * resource_373 @ 0x0200060a (696 bytes through the pool at 0x020008bc).
+ * resource_373 @ 0x02000608 (696 bytes through the pool at 0x020008bc).
  *
  * Six-argument staged actor movement/effect owner.  It derives a footprint
  * from the selected four-word displacement row, temporarily moves actor and
@@ -26,7 +26,7 @@ void Func_080091c0(s32 x, s32 y, s32 width, s32 height,
 void Func_0808a5e8(void);
 s32 Func_02000244(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 value);
 
-void Func_0200060a(s32 row, s32 actorSlot, s32 targetX, s32 elevation,
+void Func_02000608(s32 row, s32 actorSlot, s32 targetX, s32 elevation,
                    s32 targetY, void (*callback)(void))
 {
     u8 *lead = Func_0808a080(0);

@@ -4,7 +4,7 @@
  * resource_3c9 owner at 0x02001280, 72 bytes: a two-way branch on its
  * second argument, each arm calling the same three imports with
  * different constants -- the highest call count (6x) among this
- * overlay's unindexed candidates, per `bun tools/overlay/overlay_unindexed.ts
+ * overlay's unindexed candidates, per `bun tools-rs/overlay-unindexed
  * resource_3c9`.
  *
  * Complete owner: `push {r5, lr}` at 0x02001280 through `pop {r5} / pop

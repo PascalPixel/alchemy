@@ -37,3 +37,4 @@ alchemy-routing = { path = "../alchemy-routing" }
 alchemy-symbols = { path = "../alchemy-symbols" }
 decomp-targets = { path = "../decomp-targets" }
 canonical-json = { path = "../canonical-json" }
+serde_json = { version = "1", features = ["preserve_order"] }

@@ -2,7 +2,7 @@
 // asm/<stem>.s, work out which permutation operators are worth trying on that
 // function, and write the record to out/decomp/constraints/<stem>.json.
 //
-// Ported from the main() of tools/search/decomp_constraints.ts.
+// Native compiler-aware source-constraint analyzer.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -29,7 +29,7 @@ fn main() -> ExitCode {
 
     // PORT NOTE: cargo test is the real suite, but --self-test survives so the
     // repository's own gate can invoke the Rust binary exactly where it used
-    // to invoke `bun tools/search/decomp_constraints.ts --self-test`.
+    // to invoke the deployed binary's self-test.
     if arguments.iter().any(|argument| argument == "--self-test") {
         let result = infer_assembly_constraints("08000000", SAMPLE);
         if result.inferred_arguments != 2
@@ -59,7 +59,7 @@ fn main() -> ExitCode {
         // PORT NOTE: the TypeScript throws, so bun prints an Error stack trace
         // and exits 1. Only the message text and the exit code are contractual;
         // the stack frames are not reproduced.
-        eprintln!("usage: decomp_constraints.ts STEM [STEM ...]");
+        eprintln!("usage: decomp-constraints STEM [STEM ...]");
         return ExitCode::FAILURE;
     }
 

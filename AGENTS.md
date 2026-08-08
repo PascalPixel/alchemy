@@ -115,10 +115,9 @@ real scheduler tier order rather than modelling it.
 
 Finds a source form that compiles byte-exact, holding the compiler fixed.
 `shape_sweep` applies transforms seeded from LAWS.md and is bounded and
-deterministic, so "it found nothing" is a real result; the annealers
-(`permute_v1`, `permute_overlay`, `tools/assets/alchemist.ts`) search far wider but
-stochastically, and their measured yield is low, so they are a rescue tool under
-the bounded-probe rule in HANDOVER.md. Never promote a near-match.
+deterministic, so "it found nothing" is a real result. The asset alchemist is a
+specialized rescue tool under the bounded-probe rule in HANDOVER.md. Never
+promote a near-match.
 
 ## decomp
 

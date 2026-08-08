@@ -45,7 +45,6 @@ tools/lib/music_sequence.ts
 tools/lib/overlay_call_targets.ts
 tools/lib/overlay_disasm.ts
 tools/lib/overlay_published.ts
-tools/lib/permute_m2c.ts
 tools/lib/rtl_align.ts
 tools/lib/rtl_insn.ts
 tools/lib/rtl_schedule.ts
@@ -112,10 +111,7 @@ tools/overlay/overlay_show.ts
 tools/overlay/overlay_showcase.ts
 tools/overlay/overlay_twins.ts
 tools/overlay/overlay_unindexed.ts
-tools/search/decomp_constraints.ts
 tools/search/index.ts
-tools/search/permute_overlay.ts
-tools/search/permute_v1.ts
 tools/search/search_compiler_modes.ts
 tools/search/shape_sweep.ts
 tools/semantic/index.ts

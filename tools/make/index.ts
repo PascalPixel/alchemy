@@ -24,6 +24,8 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   build_full: "tools-rs/build-full/target/release/build-full",
   build_rom: "tools-rs/build-rom/target/release/build-rom",
   build_semantic: "tools-rs/build-semantic/target/release/build-semantic",
+  pairtable: "tools-rs/target/release/pairtable",
+  wordstream: "tools-rs/target/release/wordstream",
 };
 
 export function subcommands(): string[] {

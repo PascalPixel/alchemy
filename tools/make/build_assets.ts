@@ -7,8 +7,6 @@ import { characterBankPath, resourceGraphicsDir } from "../lib/asset_paths.ts";
 import { gba_graphics, gba_palette_rgba, indexed_png, rgba_png } from "../lib/import_asset.ts";
 import { build_archive as build_offset_archive } from "./archive_asset.ts";
 import { import_tilemap } from "../lib/tilemap.ts";
-import { import_words } from "./wordstream.ts";
-import { import_pairs } from "./pairtable.ts";
 import { build_archive as build_f0_archive } from "./f0_archive.ts";
 import { prune_files, unused_tracked_images } from "../lib/generated_files.ts";
 import { build_archive as build_skip_sprite_archive } from "./skip_sprite_archive.ts";
@@ -117,6 +115,20 @@ function flatAssetPath(path: string): string {
 const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url))));
 const ROM_BASE = 0x08000000;
 const ROM_SIZE = 0x00800000;
+
+function nativeBytes(tool: string, source: string): Buffer {
+  const binary = join(ROOT, "tools-rs", "target", "release", tool);
+  const child = Bun.spawnSync([binary, "build-stdout", source], {
+    cwd: ROOT,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  if (child.exitCode !== 0) {
+    const detail = Buffer.from(child.stderr).toString("utf8").trim();
+    throw new Error(`${tool} failed${detail ? `: ${detail}` : ""}`);
+  }
+  return Buffer.from(child.stdout);
+}
 
 type Json = Record<string, any>;
 
@@ -386,10 +398,10 @@ function buildComponent(entry: Json): [Buffer, Json] {
     data = built;
     details = { width, height, pixels: data.length / 4 };
   } else if (kind === "little-u16-text") {
-    data = import_words(readFileSync(source, "utf8"));
+    data = nativeBytes("wordstream", source);
     details = { words: data.length / 2 };
   } else if (kind === "little-u16-pairs") {
-    data = import_pairs(readFileSync(source, "utf8"));
+    data = nativeBytes("pairtable", source);
     details = { pairs: data.length / 4 };
   } else if (kind === "zero-skip-sprite-archive") {
     const planPath = sourcePath(String(entry.plan));

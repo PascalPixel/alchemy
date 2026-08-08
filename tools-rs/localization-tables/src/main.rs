@@ -13,13 +13,14 @@
 // against the TypeScript in the parity run and against the tracked files by the
 // rest of the toolchain.
 
-mod json;
 mod jsnum;
+mod json;
 
+use std::io::Write;
 use std::path::{Path, PathBuf};
 
-use json::{canonical_json, minified, Value};
 use jsnum::{is_safe_integer, to_number};
+use json::{canonical_json, minified, Value};
 
 pub const ROM_BASE: u32 = 0x0800_0000;
 
@@ -242,7 +243,10 @@ fn exact_keys(value: &Value, keys: &[&str], label: &str) -> Result<(), String> {
 
 fn numeric(source: &Value, element: ElementKind, size: usize) -> Result<Vec<u8>, String> {
     let width = element.width();
-    let stride = source.get("stride").and_then(Value::as_num).unwrap_or(f64::NAN);
+    let stride = source
+        .get("stride")
+        .and_then(Value::as_num)
+        .unwrap_or(f64::NAN);
     let values = match source.get("values") {
         Some(Value::Arr(items)) => items.clone(),
         _ => Vec::new(),
@@ -409,10 +413,7 @@ fn export_segment(rom: &[u8], layout: &SegmentLayout) -> Result<Value, String> {
     let mut fields: Vec<(String, Value)> = vec![
         ("address".to_string(), Value::Str(hex(layout.start))),
         ("end".to_string(), Value::Str(hex(layout.end))),
-        (
-            "stride".to_string(),
-            Value::Num(f64::from(layout.stride)),
-        ),
+        ("stride".to_string(), Value::Num(f64::from(layout.stride))),
         (
             "consumers".to_string(),
             Value::Arr(
@@ -445,10 +446,7 @@ fn export_segment(rom: &[u8], layout: &SegmentLayout) -> Result<Value, String> {
         }
         // `stride: 1` is respelled after `element` in the TypeScript, but the
         // key already exists, so it keeps its original position.
-        fields.push((
-            "element".to_string(),
-            Value::Str("ascii-fixed".to_string()),
-        ));
+        fields.push(("element".to_string(), Value::Str("ascii-fixed".to_string())));
         fields.push(("text".to_string(), Value::Str(value)));
         return Ok(Value::Obj(fields));
     }
@@ -460,7 +458,9 @@ fn export_segment(rom: &[u8], layout: &SegmentLayout) -> Result<Value, String> {
         }
         ElementKind::U16 => {
             for pair in source.chunks_exact(2) {
-                values.push(Value::Num(f64::from(u16::from_le_bytes([pair[0], pair[1]]))));
+                values.push(Value::Num(f64::from(u16::from_le_bytes([
+                    pair[0], pair[1],
+                ]))));
             }
         }
         ElementKind::U32 => {
@@ -619,15 +619,23 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
             return Ok(());
         }
     }
+    if let [command, source] = args.as_slice() {
+        if command == "build-stdout" {
+            let text = String::from_utf8_lossy(&read(source)?).into_owned();
+            let built = build_localization_tables(&json::parse(&text)?)?;
+            std::io::stdout()
+                .write_all(&built)
+                .map_err(|error| error.to_string())?;
+            return Ok(());
+        }
+    }
     let command = args.first().map(String::as_str).unwrap_or("");
     if command == "export" {
         let rom_path = truthy(args.get(1)).cloned();
         let directory = option(&args, "--directory").filter(|text| !text.is_empty());
         let (rom_path, directory) = match (rom_path, directory) {
             (Some(rom), Some(dir)) => (rom, dir),
-            _ => {
-                return Err("usage: localization_tables.ts export ROM --directory DIR".to_string())
-            }
+            _ => return Err("usage: localization_tables.ts export ROM --directory DIR".to_string()),
         };
         let sources = export_localization_tables(&read(&rom_path)?)?;
         std::fs::create_dir_all(&directory).map_err(|error| format!("{directory}: {error}"))?;
@@ -650,9 +658,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         let output = option(&args, "--output").filter(|text| !text.is_empty());
         let (input, output) = match (input, output) {
             (Some(input), Some(output)) => (input, output),
-            _ => {
-                return Err("usage: localization_tables.ts build SOURCE --output FILE".to_string())
-            }
+            _ => return Err("usage: localization_tables.ts build SOURCE --output FILE".to_string()),
         };
         let text = String::from_utf8_lossy(&read(&input)?).into_owned();
         // PORT NOTE: which inputs `json::parse` accepts matches `JSON.parse`
@@ -1002,7 +1008,9 @@ mod tests {
                 let Value::Arr(segments) = slot else { panic!() };
                 for segment in segments.iter_mut() {
                     if segment.get("element").and_then(Value::as_str) == Some("ascii-fixed") {
-                        let Value::Obj(fields) = segment else { panic!() };
+                        let Value::Obj(fields) = segment else {
+                            panic!()
+                        };
                         for (name, field) in fields.iter_mut() {
                             if name == "text" {
                                 *field = Value::Str("0123456789".to_string());

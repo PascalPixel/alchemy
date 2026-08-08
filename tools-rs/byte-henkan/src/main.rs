@@ -1,4 +1,5 @@
 use std::env;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
@@ -11,6 +12,15 @@ fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|arg| arg == "--help" || arg == "-h") {
         println!("usage: byte_henkan.ts [TABLE.json]  (default assets/data/byte_henkan_hyou.json)");
         return Ok(());
+    }
+    if let [command, source] = args {
+        if command == "build-stdout" {
+            let bytes = build_byte_henkan_tables(Path::new(source))?;
+            std::io::stdout()
+                .write_all(&bytes)
+                .map_err(|error| error.to_string())?;
+            return Ok(());
+        }
     }
     // PORT NOTE: the TypeScript resolves the default source relative to the
     // current directory. A compiled binary is not run from the repository root,

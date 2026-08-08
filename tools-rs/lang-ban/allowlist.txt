@@ -67,7 +67,6 @@ tools/make/audio_engine_data.ts
 tools/make/audio_wave.ts
 tools/make/battle_effect_data.ts
 tools/make/build_assets.ts
-tools/make/byte_henkan.ts
 tools/make/byte_value_regions.ts
 tools/make/character_catalog.ts
 tools/make/chiiki_map_resources.ts
@@ -83,9 +82,7 @@ tools/make/kind2_resource.ts
 tools/make/kind2_resource_series.ts
 tools/make/late_runtime_residual.ts
 tools/make/localization_font.ts
-tools/make/localization_tables.ts
 tools/make/map_container_components.ts
-tools/make/message_archive.ts
 tools/make/music.ts
 tools/make/music_residuals.ts
 tools/make/namae_nyuuryoku.ts
@@ -94,7 +91,6 @@ tools/make/resource_3ce.ts
 tools/make/resource_5.ts
 tools/make/resource_byte_canvases.ts
 tools/make/resource_d1_d3.ts
-tools/make/resource_directory.ts
 tools/make/runtime_support_data.ts
 tools/make/sentou_gamen_data.ts
 tools/make/sentou_hyouji.ts

@@ -18,11 +18,21 @@ import { dirname, join } from "node:path";
 const HERE = dirname(Bun.fileURLToPath(import.meta.url));
 const ROOT = dirname(dirname(HERE));
 
+// Tools migrated to Rust: the .ts file is gone, so it can no longer be found
+// by scanning HERE. This map is the one unavoidable exception to "never
+// hand-list subcommands" -- it points a still-valid subcommand name at the
+// native binary that replaced its .ts file, not at a stale path.
+const RUST_SUBCOMMANDS: Record<string, string> = {
+  search_compiler_modes: "tools-rs/search-compiler-modes/target/release/search-compiler-modes",
+};
+
 export function subcommands(): string[] {
-  return readdirSync(HERE)
-    .filter((name) => name.endsWith(".ts") && name !== "index.ts")
-    .map((name) => name.slice(0, -3))
-    .sort();
+  return [
+    ...readdirSync(HERE)
+      .filter((name) => name.endsWith(".ts") && name !== "index.ts")
+      .map((name) => name.slice(0, -3)),
+    ...Object.keys(RUST_SUBCOMMANDS),
+  ].sort();
 }
 
 async function main(): Promise<void> {
@@ -45,9 +55,10 @@ async function main(): Promise<void> {
   }
   // Spawn rather than import: each module owns its own argv handling and exit
   // code, and re-implementing that here would be the ceremony this replaces.
-  const child = Bun.spawn(["bun", join(HERE, `${subcommand}.ts`), ...rest], {
-    cwd: ROOT, stdout: "inherit", stderr: "inherit", stdin: "inherit",
-  });
+  const rustBinary = RUST_SUBCOMMANDS[subcommand];
+  const child = rustBinary
+    ? Bun.spawn([join(ROOT, rustBinary), ...rest], { cwd: ROOT, stdout: "inherit", stderr: "inherit", stdin: "inherit" })
+    : Bun.spawn(["bun", join(HERE, `${subcommand}.ts`), ...rest], { cwd: ROOT, stdout: "inherit", stderr: "inherit", stdin: "inherit" });
   process.exit(await child.exited);
 }
 

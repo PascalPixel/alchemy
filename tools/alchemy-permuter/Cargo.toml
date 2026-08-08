@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "alchemy-permuter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alchemy-bundle = { path = "../alchemy-bundle" }
+alchemy-routing = { path = "../alchemy-routing" }
+candidate-compiler = { path = "../candidate-compiler" }
+overlay-disasm = { path = "../overlay-disasm" }
+shape-sweep = { path = "../shape-sweep" }
+
+[lib]
+name = "alchemy_permuter"
+path = "src/lib.rs"
+
+[[bin]]
+name = "alchemy-permuter"
+path = "src/main.rs"

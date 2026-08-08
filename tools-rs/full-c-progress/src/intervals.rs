@@ -1,7 +1,7 @@
 // Interval algebra and the commit-subject grammar of the Full-C Byte Share
 // metric.
 //
-// WHY: this is the arithmetic core of `tools/lib/full_c_progress.ts` -- the
+// WHY: this is the arithmetic core of the Full-C progress metric -- the
 // audited union that forms the denominator, the byte-identical C union that
 // forms the numerator, and the kilobyte subject marker both are rendered
 // into. It is separated from the overlay decoding so the traps can be pinned

@@ -2,8 +2,8 @@
 //!
 //! Resource 5 is the large gameplay-database block.  The JSON document is
 //! deliberately kept as the public interchange format; this crate owns the
-//! standalone export, build, verify, and self-test commands while the legacy
-//! TypeScript builder remains available to the asset-build compatibility path.
+//! standalone export, build, verify, and self-test commands for the native
+//! asset pipeline.
 
 use canonical_json::canonical_json;
 use serde_json::{json, Map, Value};
@@ -1102,7 +1102,7 @@ pub fn run(mut args: Vec<String>) -> Result<()> {
             .iter()
             .any(|value| matches!(value.as_str(), "-h" | "--help"))
     {
-        println!("usage: resource_5.ts {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}");
+        println!("usage: resource-5 {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}");
         return Ok(());
     }
     let target = output(&args);
@@ -1130,7 +1130,7 @@ pub fn run(mut args: Vec<String>) -> Result<()> {
             let bytes = verify_resource_5(Path::new(rom), Path::new(source))?;
             println!("identical=true bytes={bytes} address=0x{ADDRESS:x}");
         }
-        _ => println!("usage: resource_5.ts {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}"),
+        _ => println!("usage: resource-5 {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}"),
     }
     Ok(())
 }

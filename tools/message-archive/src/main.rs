@@ -1096,7 +1096,7 @@ fn run(args: &[String]) -> Res<()> {
             println!("identical=true bytes={}", built.len());
             Ok(())
         }
-        _ => Err("usage: message_archive.ts {export ROM --output SOURCE|build SOURCE --output FILE|verify ROM SOURCE|--self-test}".into()),
+        _ => Err("usage: message-archive {export ROM --output SOURCE|build SOURCE --output FILE|verify ROM SOURCE|--self-test}".into()),
     }
 }
 

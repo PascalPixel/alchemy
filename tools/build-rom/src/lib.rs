@@ -189,7 +189,7 @@ impl Default for Options {
     }
 }
 
-pub const USAGE: &str = "usage: build_rom.ts [-h] [-o OUTPUT] [--jobs JOBS] [rom]";
+pub const USAGE: &str = "usage: build-rom [-h] [-o OUTPUT] [--jobs JOBS] [rom]";
 
 /// The outcome of `parseArgs`: either options, or the `-h` early exit.
 #[derive(Debug, Clone, PartialEq)]

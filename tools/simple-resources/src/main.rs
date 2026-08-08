@@ -4,7 +4,7 @@ use std::path::Path;
 use std::process::ExitCode;
 
 const USAGE: &str =
-    "usage: simple_resources.ts [--self-test] {export|verify} ROM --directory ASSETS";
+    "usage: simple-resources [--self-test] {export|verify} ROM --directory ASSETS";
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let i = args
         .iter()

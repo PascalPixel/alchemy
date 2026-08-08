@@ -4,9 +4,9 @@ use std::path::Path;
 
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 
-pub const USAGE: &str = "usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]";
 
-pub const SHORT_USAGE: &str = "usage: candidate_show.ts <candidate.c> [--rom FILE]";
+pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 
 /// `interface Options`.
 ///

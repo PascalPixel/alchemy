@@ -11,11 +11,11 @@ edition = "2021"
 
 [dependencies]
 # Sibling crates, not third-party dependencies. Each is a landed slice of the
-# TypeScript this tool imports:
+# legacy implementation this tool imports:
 #   candidate-compiler       -> verifyCandidate, ROM_BASE, CandidateCompilerConfiguration,
 #                      js_subarray, and the jsnum/jsstring/json JavaScript
 #                      semantics layer (canonicalJson lives in candidate_compiler::json)
-#   alchemy-bundle  -> compilerBundleSignature, sha256
+#   alchemy-bundle  -> compiler_bundle_signature, sha256
 #   alchemy-plan    -> CompilerFamily
 #   alchemy-routing -> CompilerTarget, root()
 # `tools/canonical-json` is NOT used: it inherits `version.workspace` from
@@ -24,7 +24,7 @@ edition = "2021"
 # dependency. `candidate_compiler::json` is the same writer over an insertion-ordered
 # value type with zero dependencies.
 #
-# `tools/lib/integrate_matches.ts`'s `linkedFunctionExtent` is ported HERE, in
+# `tools/lib/integrate-matches`'s `linkedFunctionExtent` is ported HERE, in
 # `src/extent.rs`, rather than taken from `tools/integrate-matches`: that
 # crate is under concurrent construction by a sibling agent and is off limits
 # for this task. See the module header there for the duplication note.

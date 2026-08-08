@@ -1,4 +1,4 @@
-//! `tools/lib/integrate_matches.ts`, ported.
+//! `tools/lib/integrate-matches`, ported.
 //!
 //! The installation gate. Given a directory of m2c drafts named `src_<addr>.c`,
 //! it compiles and links each one at its real ROM address, links the
@@ -22,7 +22,7 @@
 //! * [`cli`] is `parseArguments`; [`pipeline`] is `main`; [`selftest`] is
 //!   `--self-test`.
 //!
-//! NOTHING IS CACHED. `integrate_matches.ts` has no cache of any kind: it
+//! NOTHING IS CACHED. `integrate-matches` has no cache of any kind: it
 //! spawns the toolchain on every candidate, every run. There is therefore no
 //! cache key in this crate to get wrong, and none was invented for the port.
 //! `tools/cache-key-lint` is still run against it, and reports nothing.
@@ -39,8 +39,8 @@ pub mod selftest;
 pub use cleanup::{cleanup_installed_scratch, Cleanup};
 pub use cli::{parse_arguments, Options, ParseOutcome, USAGE};
 /// `linkedFunctionExtent`, exported for every other port that imports it from
-/// the TypeScript: `candidate_show.ts`, `mode_sweep.ts` and
-/// `compiler_corpus_regression.ts` all do. In particular
+/// the legacy implementation: `candidate-show`, `mode-sweep` and
+/// `compiler-corpus-regression` all do. In particular
 /// `tools/candidate-show/src/extent.rs` carries an inlined copy with a note
 /// to delete it once this crate exists; it exists, and the copy can go.
 pub use extent::{linked_function_extent, mismatch, Mismatch};

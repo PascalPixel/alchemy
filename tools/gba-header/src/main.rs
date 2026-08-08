@@ -25,7 +25,7 @@ fn option(args: &[String], names: &[&str]) -> Result<String, String> {
 
 fn usage() -> ExitCode {
     println!(
-        "usage: gba_header.ts export ROM (--output FILE | --directory DIR) [--template FILE] | \
+        "usage: gba-header export ROM (--output FILE | --directory DIR) [--template FILE] | \
 build SOURCE --output FILE | verify ROM SOURCE | --self-test"
     );
     ExitCode::SUCCESS

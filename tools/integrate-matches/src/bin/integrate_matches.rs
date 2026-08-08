@@ -1,9 +1,9 @@
-//! `integrate_matches.ts`'s `main()`.
+//! `integrate-matches`'s `main()`.
 //!
-//! PORT NOTE -- the TypeScript lets an `Error` escape `main`, so Bun prints its
-//! own uncaught-exception report and exits 1. Bun's report has no `error: `
+//! PORT NOTE -- the legacy implementation lets an `Error` escape `main`, so native process prints its
+//! own uncaught-exception report and exits 1. native process's report has no `error: `
 //! prefix and includes a stack trace; matching that prose is neither possible
-//! nor useful, so this prints the message to stderr and exits 1. The parity
+//! nor useful, so this prints the message to stderr and exits 1. The differential comparison
 //! harness compares exit status and the stdout payload, which is the artifact.
 
 use std::process::ExitCode;

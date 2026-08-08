@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use std::process::ExitCode;
 
 const USAGE: &str =
-    "usage: indexed_still.ts [--self-test] export-series ROM [--index FILE] [--directory DIR]";
+    "usage: indexed-still [--self-test] export-series ROM [--index FILE] [--directory DIR]";
 
 fn optional_option(args: &[String], names: &[&str]) -> Result<Option<String>, Error> {
     match args

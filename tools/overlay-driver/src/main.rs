@@ -222,7 +222,7 @@ fn run(root: &Path, argv: &[String], out: &mut dyn FnMut(&str)) -> i32 {
             .collect()
     };
     if names.is_empty() {
-        out("usage: overlay_driver.ts <resource_NNN> | --all [--unowned]");
+        out("usage: overlay-driver <resource_NNN> | --all [--unowned]");
         return 1;
     }
 
@@ -449,7 +449,7 @@ mod tests {
         assert_eq!(code, 1);
         assert_eq!(
             lines,
-            ["usage: overlay_driver.ts <resource_NNN> | --all [--unowned]"]
+            ["usage: overlay-driver <resource_NNN> | --all [--unowned]"]
         );
     }
 

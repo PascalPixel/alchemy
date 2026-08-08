@@ -1,6 +1,6 @@
 //! THE ONE NUMERIC PARSE.
 //!
-//! `integrate_matches.ts` calls `Number.parseInt(value, 16)` in three places:
+//! `integrate-matches` calls `Number.parseInt(value, 16)` in three places:
 //! on the stem in `linkedBytes`, and on `fields[0]` and `fields[1]` in
 //! `linkedFunctionExtent`. Two of those three read arbitrary
 //! `arm-none-eabi-nm` output, so the parse cannot assume clean input.
@@ -13,7 +13,7 @@
 //! site routes through it. `candidate-compiler`'s `parse_hex` is deliberately NOT used
 //! here: it is `/^[0-9a-f]+$/i`-guarded and errors on anything else, which is
 //! the RIGHT contract for a stem and the WRONG one for an `nm` field, where the
-//! TypeScript wants a silent `NaN` that the later filters swallow.
+//! legacy implementation wants a silent `NaN` that the later filters swallow.
 
 /// `Number.parseInt(value, 16)`, exactly.
 ///

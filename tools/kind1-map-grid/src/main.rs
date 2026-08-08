@@ -3,7 +3,7 @@ use std::io::{self, Write};
 
 use kind1_map_grid::{export_grid, self_test, verify_grid, Result, ROM_BASE};
 
-const USAGE: &str = "usage: kind1_map_grid.ts [export|verify] ROM --address N --size N --directory DIR | --self-test";
+const USAGE: &str = "usage: kind1-map-grid [export|verify] ROM --address N --size N --directory DIR | --self-test";
 
 fn option(args: &[String], name: &str) -> Result<String> {
     let index = args

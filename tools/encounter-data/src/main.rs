@@ -60,7 +60,7 @@ fn run(args: &[String]) -> Result<()> {
     }
     if args.iter().any(|arg| arg == "-h" || arg == "--help") {
         println!(
-            "usage: encounter_data.ts export ROM --directory DIR | verify ROM --directory DIR"
+            "usage: encounter-data export ROM --directory DIR | verify ROM --directory DIR"
         );
         return Ok(());
     }

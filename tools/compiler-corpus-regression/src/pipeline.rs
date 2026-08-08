@@ -19,7 +19,7 @@ use std::sync::Mutex;
 /// The four native sources whose bytes go into `compilerSignature`.
 ///
 /// The signature deliberately names the native source files directly. This
-/// avoids the stale path assumptions that the former TypeScript implementation
+/// avoids the stale path assumptions that the former legacy implementation
 /// had after the compiler tables moved between `tools/` subfolders.
 pub const SIGNATURE_SOURCES: [&str; 4] = [
     "tools/alchemy-routing/src/routing.rs",
@@ -28,7 +28,7 @@ pub const SIGNATURE_SOURCES: [&str; 4] = [
     "tools/compiler-corpus-regression/src/pipeline.rs",
 ];
 
-/// `hash(compilerBundleSignature(), ...four source files)`.
+/// `hash(compiler_bundle_signature(), ...four source files)`.
 ///
 /// PORT NOTE -- CACHE KEY PROVENANCE. The key is a pure function of its inputs:
 /// the bundle signature (a digest of the compiler binaries themselves), the
@@ -40,14 +40,14 @@ pub const SIGNATURE_SOURCES: [&str; 4] = [
 ///
 /// PORT NOTE -- the signature root is `alchemy_routing::routing::root()` and
 /// can be overridden with `ALCHEMY_CCR_SIGNATURE_ROOT`. That override exists
-/// for the differential parity harness, which runs a CORRECTED copy of the
-/// TypeScript out of a symlink farm: without it the two sides would digest
-/// different bytes for `compiler_corpus_regression.ts` and every `cache_key`
+/// for the differential differential comparison harness, which runs a CORRECTED copy of the
+/// legacy implementation out of a symlink farm: without it the two sides would digest
+/// different bytes for `compiler-corpus-regression` and every `cache_key`
 /// in the report would differ for a reason that has nothing to do with the
 /// port. It is not read by any production path.
 ///
-/// PORT NOTE -- MEASURED PERFORMANCE TRAP. `compilerBundleSignature()` digests
-/// roughly 20 MB of compiler binaries and NEITHER side memoizes it. Bun's
+/// PORT NOTE -- MEASURED PERFORMANCE TRAP. `compiler_bundle_signature()` digests
+/// roughly 20 MB of compiler binaries and NEITHER side memoizes it. native process's
 /// `CryptoHasher` is native; `alchemy_bundle`'s portable sha256 is about 7x
 /// slower and that alone made the `overlay_disasm` port 5.9x slower overall.
 /// It is called ONCE per process here, so the cost is a constant, and it is
@@ -103,7 +103,7 @@ pub fn rom_slice(rom: &[u8], address: f64, size: f64) -> Vec<u8> {
 
 /// `member.source.slice(ROOT.length + 1)`.
 ///
-/// PORT NOTE -- this is an UNCHECKED prefix strip: the TypeScript does not
+/// PORT NOTE -- this is an UNCHECKED prefix strip: the legacy implementation does not
 /// verify that `member.source` actually starts with `ROOT`, it just cuts
 /// `ROOT.length + 1` UTF-16 units off the front. For a source outside the
 /// repository that produces a mangled relative path rather than an error.
@@ -141,7 +141,7 @@ fn evaluate(
     let cache_path = join(Path::new(&options.cache), &format!("cache/{key}.json"));
 
     // PORT NOTE -- BUG REPRODUCED. This read is OUTSIDE the `try` in the
-    // TypeScript, so a corrupt cache file aborts the whole run instead of
+    // legacy implementation, so a corrupt cache file aborts the whole run instead of
     // falling back to a recompile. The `?` below propagates identically.
     if let Some(accepted) = read_cache(&cache_path, &key)? {
         return Ok(Outcome { cached: true, ..accepted });
@@ -150,7 +150,7 @@ fn evaluate(
     let scratch = join(Path::new(&options.cache), &format!("scratch/{key}"));
     std::fs::create_dir_all(&scratch).map_err(|error| format!("{scratch}: {error}"))?;
 
-    // Everything from here to the end of `attempt` is inside the TypeScript's
+    // Everything from here to the end of `attempt` is inside the legacy implementation's
     // `try`, and every failure becomes `compiled: false` with the message.
     let attempt = || -> Result<(usize, usize, crate::diff::ByteDifference), String> {
         let verification = verify_candidate(
@@ -234,7 +234,7 @@ fn evaluate(
 
 /// `CandidateCompilerConfiguration` as the canonical JSON the cache key sees.
 ///
-/// PORT NOTE -- KEY ORDER IS THE CACHE KEY. The TypeScript object is built by
+/// PORT NOTE -- KEY ORDER IS THE CACHE KEY. The legacy implementation object is built by
 /// `compilerConfigurationOf` in the order `family`, `addFlags`, `removeFlags`,
 /// and `canonicalJson` preserves insertion order. Any other order silently
 /// invalidates every cached entry. `addFlags`/`removeFlags` are OMITTED when
@@ -251,7 +251,7 @@ pub fn compiler_config_json(config: &candidate_compiler::verify::CandidateCompil
 
 /// `parallelMap(items, jobs, operation)`.
 ///
-/// PORT NOTE -- the TypeScript spawns `Math.min(jobs, items.length)` workers
+/// PORT NOTE -- the legacy implementation spawns `Math.min(jobs, items.length)` workers
 /// pulling from a shared cursor, and writes results BY INDEX, so the output
 /// order is the input order regardless of completion order. The scoped threads
 /// below do the same. Results must never be collected in completion order: the
@@ -284,7 +284,7 @@ where
 
 /// The whole run. Returns the process exit code and the printed lines.
 ///
-/// PORT NOTE -- the TypeScript prints with `console.log` and sets
+/// PORT NOTE -- the legacy implementation prints with `console.log` and sets
 /// `process.exitCode = 1` when there are regressions, which does NOT abort;
 /// the process still exits normally after `main` resolves. Modelled by
 /// returning the code rather than calling `exit`.
@@ -395,7 +395,7 @@ pub fn run(options: &Options) -> Result<Run, String> {
             // cache row can leave absent, and `undefined.toString(16)` is a
             // TypeError that kills the run at the very last step, after every
             // compile has been paid for. Surfaced as an error rather than
-            // silently printing "undefined", because the TypeScript throws.
+            // silently printing "undefined", because the legacy implementation throws.
             let Some(first) = result.first_difference else {
                 return Err(format!(
                     "cached result for {} claims a difference but omits first_difference",

@@ -1,7 +1,7 @@
 //! The single numeric-parsing helper, plus the string and collation semantics
 //! this port needs.
 //!
-//! ONE HELPER, EVERY CALL SITE. `compiler_corpus_regression.ts` parses numbers
+//! ONE HELPER, EVERY CALL SITE. `compiler-corpus-regression` parses numbers
 //! in six places and at three different radices:
 //!
 //! * `--sample` and `--jobs`   -> `Number.parseInt(text, 10)`
@@ -152,7 +152,7 @@ pub fn js_greater_than(left: f64, right: f64) -> bool {
 /// would. A cut that lands between the halves of a surrogate pair produces a
 /// lone surrogate in JavaScript; that cannot exist in a Rust `String`, so the
 /// truncation backs off to the start of the pair, and the divergence is
-/// recorded in `tests/js_traps.rs`.
+/// recorded in `tests/invariants.rs`.
 pub fn utf16_slice_to(text: &str, limit: usize) -> String {
     let mut units = 0usize;
     let mut end = 0usize;

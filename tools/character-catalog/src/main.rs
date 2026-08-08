@@ -8,7 +8,7 @@ use character_catalog::{
     self_test, verify_character_catalog, Error, ROM_BASE,
 };
 
-const USAGE: &str = "usage: character_catalog.ts export ROM --output INDEX | verify ROM INDEX | verify-unit ROM --catalog INDEX --series INDEX --palette PNG | --self-test";
+const USAGE: &str = "usage: character-catalog export ROM --output INDEX | verify ROM INDEX | verify-unit ROM --catalog INDEX --series INDEX --palette PNG | --self-test";
 
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let index = args
@@ -63,10 +63,10 @@ fn run(args: &[String]) -> Result<(), Error> {
         Some("verify") => {
             let rom_path = args
                 .get(1)
-                .ok_or_else(|| Error("usage: character_catalog.ts verify ROM INDEX".into()))?;
+                .ok_or_else(|| Error("usage: character-catalog verify ROM INDEX".into()))?;
             let index_path = args
                 .get(2)
-                .ok_or_else(|| Error("usage: character_catalog.ts verify ROM INDEX".into()))?;
+                .ok_or_else(|| Error("usage: character-catalog verify ROM INDEX".into()))?;
             let catalog = read_json(index_path)?;
             let rom = fs::read(rom_path).map_err(|error| Error(format!("{rom_path}: {error}")))?;
             verify_character_catalog(&rom, &catalog)?;
@@ -76,7 +76,7 @@ fn run(args: &[String]) -> Result<(), Error> {
         Some("build-stdout") => {
             let index_path = args
                 .get(1)
-                .ok_or_else(|| Error("usage: character_catalog.ts build-stdout SOURCE".into()))?;
+                .ok_or_else(|| Error("usage: character-catalog build-stdout SOURCE".into()))?;
             let catalog = read_json(index_path)?;
             let bytes = character_catalog::build_character_catalog(&catalog)?;
             io::stdout()

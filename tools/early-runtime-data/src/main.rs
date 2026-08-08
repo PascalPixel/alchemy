@@ -16,7 +16,7 @@ use early_runtime_data::{
     system_error, verify_early_runtime_data, write_build, Error, EARLY_RUNTIME_SOURCE_BYTES,
 };
 
-const USAGE: &str = "usage: early_runtime_data.ts export ROM --directory DIR | build INDEX --directory DIR | verify ROM INDEX | --self-test";
+const USAGE: &str = "usage: early-runtime-data export ROM --directory DIR | build INDEX --directory DIR | verify ROM INDEX | --self-test";
 
 /// Bun prints these two throw shapes without its `error: ` prefix.
 fn is_bare_throw(message: &str) -> bool {

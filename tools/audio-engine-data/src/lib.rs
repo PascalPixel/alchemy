@@ -1335,7 +1335,7 @@ pub fn run(args: Vec<String>) -> Result<Option<String>> {
             Path::new(&args[3]),
         )?));
     }
-    error("usage: audio_engine_data.ts export ROM --directory DIR | verify ROM --index INDEX | --self-test")
+    error("usage: audio-engine-data export ROM --directory DIR | verify ROM --index INDEX | --self-test")
 }
 
 #[cfg(test)]

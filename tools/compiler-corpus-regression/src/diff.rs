@@ -1,6 +1,6 @@
 //! `byteDifference(actual, expected)`.
 
-/// The result of `byteDifference`. `first` is `null` in the TypeScript.
+/// The result of `byteDifference`. `first` is `null` in the legacy implementation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ByteDifference {
     pub count: usize,
@@ -11,7 +11,7 @@ pub struct ByteDifference {
 ///
 /// PORT NOTE -- THIS ONE IS CORRECT, and the note exists so that a later
 /// "simplification" cannot quietly make it wrong. A sibling tool
-/// (`candidate_show.ts`) reports a PHANTOM difference on two identical
+/// (`candidate-show`) reports a PHANTOM difference on two identical
 /// odd-length buffers because it walks `shared & ~1`, which falls BELOW
 /// `Math.max(actual.length, expected.length)` and so counts the final odd byte
 /// as differing. The shape here is different: `extent` is the plain

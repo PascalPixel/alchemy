@@ -1,6 +1,6 @@
 //! `parseArguments` and `usage`.
 
-pub const USAGE: &str = "usage: integrate_matches.ts [-h] [--apply] directory | --self-test";
+pub const USAGE: &str = "usage: integrate-matches [-h] [--apply] directory | --self-test";
 
 /// `interface Options`.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -13,7 +13,7 @@ pub struct Options {
 /// What `parseArguments` did.
 ///
 /// PORT NOTE -- `-h` prints usage and calls `process.exit(0)` from INSIDE the
-/// loop, so `integrate_matches.ts --apply -h --bogus` exits 0 and never reports
+/// loop, so `integrate-matches --apply -h --bogus` exits 0 and never reports
 /// the unrecognized `--bogus`. `Help` reproduces that early exit; a port that
 /// finished the loop first would turn a success into a failure.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -22,7 +22,7 @@ pub enum ParseOutcome {
     Parsed(Options),
 }
 
-/// `parseArguments(Bun.argv.slice(2))`.
+/// `parseArguments(native process.argv.slice(2))`.
 pub fn parse_arguments(arguments: &[String]) -> Result<ParseOutcome, String> {
     let mut directory: Option<String> = None;
     let mut apply = false;

@@ -1,13 +1,13 @@
 //! Decomposed benchmark: the two costs the task named, measured separately
 //! from the whole-process time so a win or a loss can be attributed.
 //!
-//! Cost 1: `compilerBundleSignature()`, which digests roughly 20 MB of
-//! compiler binaries. Bun's `CryptoHasher` is native C++; `alchemy_bundle`'s
+//! Cost 1: `compiler_bundle_signature()`, which digests roughly 20 MB of
+//! compiler binaries. native process's `CryptoHasher` is native C++; `alchemy_bundle`'s
 //! portable sha256 is roughly 7x slower and that single fact made the
 //! `overlay_disasm` port 5.9x SLOWER end to end. It is called once per process
 //! here, so it is a constant, and it is reported as one.
 //!
-//! Cost 2: manifest parse. Bun's `JSON.parse` is native and has beaten a Rust
+//! Cost 2: manifest parse. native process's `JSON.parse` is native and has beaten a Rust
 //! port before. The manifest is the only JSON of any size this tool reads.
 //!
 //! Neither is memoized to make the number look better; memoizing the bundle

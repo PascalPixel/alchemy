@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use music_residuals::{build_region, self_test, verify_music_residuals, Result};
 
 const USAGE: &str =
-    "usage: music_residuals.ts build-stdout INDEX ADDRESS | verify ROM --index INDEX | --self-test";
+    "usage: music-residuals build-stdout INDEX ADDRESS | verify ROM --index INDEX | --self-test";
 
 fn run(args: &[String]) -> Result<()> {
     if args == ["--self-test"] {

@@ -15,7 +15,7 @@ use std::path::{Path, PathBuf};
 use exact_reading_list::json::{parse as parse_json, Value};
 use overlay_disasm::{assemble_overlay, overlay_c_spans, OverlaySource, OVERLAY_BASE};
 
-const USAGE: &str = "usage: overlay_twins.ts [resource_NNN] [--unconverted] [--semantic] [--self-test]";
+const USAGE: &str = "usage: overlay-twins [resource_NNN] [--unconverted] [--semantic] [--self-test]";
 
 /// `skeletonDigest(image, offset, size)`.
 ///

@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use archive_asset::{extract_archive, plan_json, self_test, PixelFormat, ROM_BASE};
 use export_asset::js_number;
 
-const USAGE: &str = "usage: archive_asset.ts [--self-test] ROM --address ADDRESS --input-end END --chunk-width WIDTH --chunk-height HEIGHT --columns COLUMNS --plan PLAN --atlas ATLAS [--source-end END] [options]";
+const USAGE: &str = "usage: archive-asset [--self-test] ROM --address ADDRESS --input-end END --chunk-width WIDTH --chunk-height HEIGHT --columns COLUMNS --plan PLAN --atlas ATLAS [--source-end END] [options]";
 
 fn option(args: &[String], name: &str) -> Result<String, String> {
     match args.iter().position(|argument| argument == name) {

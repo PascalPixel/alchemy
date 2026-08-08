@@ -21,7 +21,7 @@ pub struct Member {
 /// what makes the digest unambiguous, and dropping it would change every cache
 /// key in `out/`. `alchemy_bundle::sha256::hex` is the portable implementation;
 /// see the benchmark note in `README`-less `src/bin/` about how much slower it
-/// is than Bun's native `CryptoHasher`.
+/// is than native process's native `CryptoHasher`.
 pub fn hash(parts: &[&[u8]]) -> String {
     let mut message: Vec<u8> = Vec::new();
     for part in parts {
@@ -39,7 +39,7 @@ pub fn hash(parts: &[&[u8]]) -> String {
 /// The test regex has NO `i` flag, but `toLowerCase()` runs FIRST, so an
 /// uppercase stem is accepted in practice. That ordering is the whole
 /// behaviour and it is easy to invert by accident: checking before lowering
-/// rejects `08ABCDEF.c`, which the TypeScript accepts. Pinned in
+/// rejects `08ABCDEF.c`, which the legacy implementation accepts. Pinned in
 /// `tests/corpus.rs`.
 ///
 /// PORT NOTE -- `$` without the `m` flag matches ONLY at the very end of the
@@ -58,7 +58,7 @@ pub fn hash(parts: &[&[u8]]) -> String {
 /// PORT NOTE -- `toLowerCase()` is full Unicode, not ASCII: `'İ'` (U+0130)
 /// lowercases to TWO code points. `str::to_lowercase` agrees with JavaScript
 /// here; `to_ascii_lowercase` would not, and would then fail the stem test on
-/// input the TypeScript also fails, so the divergence is invisible in the
+/// input the legacy implementation also fails, so the divergence is invisible in the
 /// artifact. `to_lowercase` is used anyway, because "invisible today" is how
 /// these get shipped.
 pub fn hexadecimal_stem(value: &str) -> Result<String, String> {
@@ -110,7 +110,7 @@ fn strip_last_extension(name: &str) -> &str {
 /// agree; `locale_compare_hex` asserts that domain and `tests/collation.rs`
 /// proves the agreement exhaustively over the alphabet.
 ///
-/// PORT NOTE -- the TypeScript recomputes `hash(seed, stem)` INSIDE the
+/// PORT NOTE -- the legacy implementation recomputes `hash(seed, stem)` INSIDE the
 /// comparator, so it performs O(n log n) sha256 calls: roughly 32,000 of them
 /// for the 1,456-member corpus. This port decorates once and sorts the pairs.
 /// That is NOT a benchmark trick and it is not the memoisation the brief
@@ -118,7 +118,7 @@ fn strip_last_extension(name: &str) -> &str {
 /// stable on both sides, so the OUTPUT SEQUENCE IS IDENTITICAL, and
 /// `tests/sample.rs` proves it by running the naive recompute-per-comparison
 /// form against this one over the whole corpus manifest. The forbidden
-/// memoisation is of `compilerBundleSignature`, which is left uncached here
+/// memoisation is of `compiler_bundle_signature`, which is left uncached here
 /// and measured separately.
 ///
 /// PORT NOTE -- `Array.prototype.sort` has been REQUIRED to be stable since
@@ -205,7 +205,7 @@ pub fn corpus(options: &Options) -> Result<Vec<Member>, String> {
     let mut found: Vec<(String, Member)> = Vec::new();
     for region in &regions {
         let Some(Json::String(source_field)) = region.get("source") else {
-            // The TypeScript types `region.source` as `string` and would throw
+            // The legacy implementation types `region.source` as `string` and would throw
             // a TypeError on `undefined.startsWith`. Preserved as an error
             // rather than a skip.
             return Err("region.source is not a string".to_string());
@@ -241,7 +241,7 @@ pub fn corpus(options: &Options) -> Result<Vec<Member>, String> {
         }
         let size = match region.get("size") {
             Some(Json::Number(value)) => *value,
-            // PORT NOTE -- a missing `size` is `undefined` in the TypeScript
+            // PORT NOTE -- a missing `size` is `undefined` in the legacy implementation
             // and flows into `member.size` untouched. `Number(undefined)` is
             // NaN and NaN poisoning is a confirmed live defect class here, but
             // `member.size` is never arithmetic'd in this file -- it is only

@@ -6,7 +6,7 @@ use compiler_corpus_regression::selftest::self_test;
 
 fn main() {
     let argv: Vec<String> = std::env::args().skip(1).collect();
-    // `Bun.argv.includes("--self-test")` scans the WHOLE argv, including
+    // `native process.argv.includes("--self-test")` scans the WHOLE argv, including
     // argv[0] and argv[1], and wins over every other argument no matter where
     // it appears -- `--flags --self-test` runs the self-test.
     if argv.iter().any(|argument| argument == "--self-test") {
@@ -35,8 +35,8 @@ fn main() {
     }
 }
 
-/// PORT NOTE -- an uncaught throw in Bun prints the message to stderr with NO
-/// `error: ` prefix and exits 1. Parity is asserted on the exit code and the
+/// PORT NOTE -- an uncaught throw in native process prints the message to stderr with NO
+/// `error: ` prefix and exits 1. differential comparison is asserted on the exit code and the
 /// offending path in the message, never on the surrounding prose, because the
 /// two runtimes format the frame differently.
 fn fail(message: &str) -> ! {

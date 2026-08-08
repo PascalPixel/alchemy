@@ -21,7 +21,7 @@ use check_publication::{
     REJECTED_PATHS,
 };
 
-const USAGE: &str = "usage: check_publication.ts {--staged|--pre-push|--self-test}";
+const USAGE: &str = "usage: check-publication {--staged|--pre-push|--self-test}";
 
 fn root() -> &'static Path {
     Path::new(env!("CARGO_MANIFEST_DIR"))

@@ -102,7 +102,7 @@ fn write_file(path: &str, bytes: &[u8]) -> Result<(), AssetError> {
 
 fn run(mut args: Vec<String>) -> Result<(), AssetError> {
     if args.iter().any(|arg| arg == "-h" || arg == "--help") {
-        println!("usage: import_asset.ts [--self-test] {{png,indexed,midi}} ...");
+        println!("usage: import-asset [--self-test] {{png,indexed,midi}} ...");
         return Ok(());
     }
     if args.iter().any(|arg| arg == "--self-test") {

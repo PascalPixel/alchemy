@@ -1,10 +1,10 @@
-// Repository polling for live coverage, page assets, and native source files.
+// Repository polling for live coverage and native source files.
 //
 // A dependency-free server cannot use the platform's recursive filesystem
 // notifications portably, so polling is the deliberate mechanism here. A
-// change under a coverage path schedules a rebuild, a page asset change sends
-// an update, and a native Rust source change exits so the service supervisor
-// can restart the binary. Unwatched files do none of these things.
+// change under a coverage path schedules a rebuild, and a native Rust source
+// change exits so the service supervisor can restart the binary. Unwatched
+// files do none of these things.
 //
 // The 250ms interval is also the dashboard's debounce window, so a change is
 // observed within one window rather than instantly.
@@ -78,15 +78,12 @@ pub fn js_max(left: f64, right: f64) -> f64 {
 pub struct Watcher {
     coverage: Vec<(PathBuf, Fingerprint)>,
     restart: Vec<(PathBuf, Fingerprint)>,
-    page: Vec<(PathBuf, f64)>,
 }
 
 pub enum Tick {
     Idle,
     /// A watched coverage directory or build-evidence file changed.
     Coverage,
-    /// A page asset changed: drop the client cache and notify, no rebuild.
-    Page,
     /// A native Rust source changed: exit so the service supervisor restarts.
     Restart,
 }
@@ -119,13 +116,6 @@ impl Watcher {
                     (f, seen)
                 })
                 .collect(),
-            page: paths::page_files_at(root)
-                .into_iter()
-                .map(|f| {
-                    let seen = mtime(&f);
-                    (f, seen)
-                })
-                .collect(),
         }
     }
 
@@ -138,17 +128,6 @@ impl Watcher {
                 *seen = now;
                 return Tick::Restart;
             }
-        }
-        let mut page_changed = false;
-        for (file, seen) in &mut self.page {
-            let now = mtime(file);
-            if now != *seen {
-                *seen = now;
-                page_changed = true;
-            }
-        }
-        if page_changed {
-            return Tick::Page;
         }
         let mut coverage_changed = false;
         for (path, seen) in &mut self.coverage {
@@ -192,7 +171,6 @@ mod tests {
             .join("fixtures")
             .join(format!("{name}-{}", std::process::id()));
         std::fs::create_dir_all(dir.join("asm")).unwrap();
-        std::fs::create_dir_all(dir.join("tools").join("metrics").join("dashboard")).unwrap();
         std::fs::create_dir_all(dir.join("tools").join("dashboard-server").join("src")).unwrap();
         std::fs::create_dir_all(dir.join("tools").join("coverage-map").join("src")).unwrap();
         std::fs::write(dir.join("asm").join("main.s"), "one\n").unwrap();
@@ -206,7 +184,6 @@ mod tests {
             "// coverage\n",
         )
         .unwrap();
-        std::fs::write(dir.join("tools/metrics/dashboard/styles.css"), "body{}\n").unwrap();
         std::fs::write(dir.join("unwatched.txt"), "nothing\n").unwrap();
         dir
     }
@@ -285,19 +262,6 @@ mod tests {
                 matches!(watcher.tick(), Tick::Idle),
                 "a change is reported once"
             );
-        });
-    }
-
-    #[test]
-    fn a_page_asset_change_is_a_page_tick_and_not_a_coverage_rebuild() {
-        let root = scratch("watch-page");
-        with_root(&root, || {
-            let mut watcher = Watcher::new(&root);
-            assert!(matches!(watcher.tick(), Tick::Idle));
-            settle();
-            touch(&root.join("tools/metrics/dashboard/styles.css")).unwrap();
-            settle();
-            assert!(matches!(watcher.tick(), Tick::Page));
         });
     }
 

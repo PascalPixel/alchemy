@@ -1,4 +1,4 @@
-//! The six regular expressions in `tools/lib/integrate_matches.ts`, written by
+//! The six regular expressions in `tools/lib/integrate-matches`, written by
 //! hand.
 //!
 //! WHY BY HAND. Every pattern here is anchored, tiny, and carries at least one
@@ -11,7 +11,7 @@
 //! THE FLAG IS PART OF THE PATTERN. Two of these patterns are lowercase-only
 //! `[0-9a-f]` classes with no `i` flag, which is a four-times-confirmed live
 //! defect class in this repository. They are reproduced lowercase-only, on
-//! purpose, and `tests/js_traps.rs` pins that uppercase input does NOT match.
+//! purpose, and `tests/invariants.rs` pins that uppercase input does NOT match.
 
 /// ECMAScript `LineTerminator`. This is the set that `.` excludes, that
 /// multiline `^` starts a line after, and that multiline `$` matches before.
@@ -25,7 +25,7 @@ pub fn is_line_terminator(c: char) -> bool {
 
 /// `/^08[0-9a-f]{6}$/` -- the guard on a scratch stem and on a source address.
 ///
-/// PORT NOTE -- NO `i` flag in the TypeScript, so `08ABCDEF` is rejected there
+/// PORT NOTE -- NO `i` flag in the legacy implementation, so `08ABCDEF` is rejected there
 /// and is rejected here. This is not an oversight being carried forward
 /// blindly: `cleanupInstalledScratch` deletes files, and a stem that fails this
 /// test throws before anything is removed. Widening it would widen a deletion
@@ -75,7 +75,7 @@ pub fn is_text_type(field: &str) -> bool {
 /// PORT NOTE -- `.` excludes the four line terminators, so a filename
 /// containing a newline between `src_` and `.c` does NOT match. A filename may
 /// legally contain `\n` on both macOS and Linux, so this is reachable, and a
-/// `(?s)`-equivalent port would accept a file the TypeScript skips.
+/// `(?s)`-equivalent port would accept a file the legacy implementation skips.
 pub fn is_candidate_name(name: &str) -> bool {
     if !name.starts_with("src_") || !name.ends_with(".c") || name.len() < 6 {
         return false;
@@ -184,10 +184,10 @@ pub fn has_state_line(text: &str) -> bool {
 /// replaces the FIRST match only. A dossier carrying two `State:` lines keeps
 /// the second.
 ///
-/// PORT NOTE -- `state` is used as a literal. The TypeScript passes a template
+/// PORT NOTE -- `state` is used as a literal. The legacy implementation passes a template
 /// string that contains no `$`, so the `$&`/`$1`/`$$` substitution rules never
 /// fire; if a `$` ever appeared in it, this call would have to grow those
-/// rules. `tests/js_traps.rs` asserts the replacement text is `$`-free.
+/// rules. `tests/invariants.rs` asserts the replacement text is `$`-free.
 pub fn replace_state_line(source: &str, state: &str) -> String {
     match state_line_range(source) {
         Some((start, end)) => {
@@ -206,7 +206,7 @@ pub fn replace_state_line(source: &str, state: &str) -> String {
 /// PORT NOTE -- NO `m` flag on this one, so `^` is the start of the STRING
 /// only. A dossier that does not begin with `#` is returned unchanged and gains
 /// no `State:` line at all, while `dossierClosed` is still reported as `true`.
-/// That is the TypeScript's behaviour; see the bug list in the port report.
+/// That is the legacy implementation's behaviour; see the bug list in the port report.
 ///
 /// PORT NOTE -- `[^\n]*` excludes only `\n`. A `\r` is a perfectly good member
 /// of the class, so on CRLF input the `\r` is part of `$1` and the inserted

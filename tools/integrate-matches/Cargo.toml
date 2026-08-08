@@ -9,15 +9,8 @@ name = "integrate-matches"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-# HARNESS ONLY. Flips exactly one emitted byte sequence so the parity script can
-# prove, before the real comparison, that it is capable of SEEING a difference.
-# A harness that reports "0 differences" is worthless until it has been shown to
-# report 1 when there is 1. Never enable this outside `target/fixtures/parity.sh`.
-negative-control = []
-
 [dependencies]
-# Sibling crates, not third-party dependencies. `integrate_matches.ts` imports
+# Sibling crates, not third-party dependencies. `integrate-matches` imports
 # exactly three names from the compiler surface, and they live in two native
 # crates:
 #   alchemy-plan    -> sourceToAssemblyPlan (+ nodepath basename/extname)

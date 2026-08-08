@@ -1,0 +1,12 @@
+[package]
+name = "tilemap"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "tilemap"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tilemap"
+path = "src/main.rs"

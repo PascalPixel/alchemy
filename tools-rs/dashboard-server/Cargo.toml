@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "dashboard-server"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "dashboard_server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dashboard-server"
+path = "src/main.rs"
+
+[dependencies]
+coverage-map = { path = "../coverage-map" }

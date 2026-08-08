@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "alchemy-routing"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "alchemy_routing"
+path = "src/lib.rs"
+
+[[bin]]
+name = "routing-drift"
+path = "src/bin/routing_drift.rs"

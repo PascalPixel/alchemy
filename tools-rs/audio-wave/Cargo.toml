@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "audio-wave"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "audio_wave"
+path = "src/lib.rs"
+
+[[bin]]
+name = "audio-wave"
+path = "src/main.rs"

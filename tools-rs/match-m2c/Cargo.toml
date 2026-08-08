@@ -1,0 +1,44 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools-rs/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "match-m2c"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies. These are the landed slices of
+# `tools/lib/alchemy_gcc.ts` that `match_m2c.ts` imports:
+#   alchemy-plan    -> sourceToAssemblyPlan, CompilerTarget
+#   alchemy-symbols -> externalSymbol, externalSymbolAssembly, CALL_VIA_BASE
+# A second copy of either is exactly the hand-sync problem this port exists to
+# end.
+#   alchemy-routing -> `CompilerTarget`, `root()` (the repository root)
+# `canonical_json.ts` is 27 lines and is reimplemented in `src/json.rs` over
+# this crate's own insertion-ordered value type rather than pulled in through
+# `tools-rs/canonical-json`, which would drag `serde_json` in as this crate's
+# only third-party dependency for no gain.
+alchemy-plan = { path = "../alchemy-plan" }
+alchemy-symbols = { path = "../alchemy-symbols" }
+alchemy-routing = { path = "../alchemy-routing" }
+# `./decomp_targets.ts`, already ported.
+decomp-targets = { path = "../decomp-targets" }
+
+[lib]
+name = "match_m2c"
+path = "src/lib.rs"
+
+[[bin]]
+name = "match-m2c"
+path = "src/bin/match_m2c.rs"
+
+[[bin]]
+name = "match-m2c-drift"
+path = "src/bin/match_m2c_drift.rs"
+
+[[bin]]
+name = "match-m2c-bench"
+path = "src/bin/match_m2c_bench.rs"

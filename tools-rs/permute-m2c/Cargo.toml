@@ -1,0 +1,36 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools-rs/Cargo.toml` and without racing a sibling agent editing it.
+# That also means `version.workspace` / `edition.workspace` cannot resolve, so
+# both keys are literal.
+[workspace]
+
+[package]
+name = "permute-m2c"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# `tools/lib/verify.ts`, already ported. `permute_m2c.ts` imports exactly one
+# symbol from it, `verify()`, and this crate uses that port rather than a
+# second copy. The crate also re-exports `alchemy-routing`'s `root()` and
+# `CompilerTarget`, which is where this port gets the repository root.
+verify = { path = "../verify" }
+# `M2C_PREAMBLE`, the only symbol `permute_m2c.ts` imports from
+# `tools/lib/match_m2c.ts`.
+match-m2c = { path = "../match-m2c" }
+
+[lib]
+name = "permute_m2c"
+path = "src/lib.rs"
+
+[[bin]]
+name = "permute-m2c"
+path = "src/bin/permute_m2c.rs"
+
+[[bin]]
+name = "permute-m2c-parity"
+path = "src/bin/permute_m2c_parity.rs"
+
+[[bin]]
+name = "permute-m2c-bench"
+path = "src/bin/permute_m2c_bench.rs"

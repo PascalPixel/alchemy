@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "decomp-targets"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "decomp_targets"
+path = "src/lib.rs"
+
+[[bin]]
+name = "decomp-targets"
+path = "src/main.rs"

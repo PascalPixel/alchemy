@@ -1,10 +1,10 @@
 // A miniature backtracking regex engine with ECMAScript semantics.
 //
 // WHY this exists instead of pulling in the `regex` crate: the TypeScript
-// original (tools/search/decomp_constraints.ts) leans on two features the
+// constraint grammar leans on two features the
 // `regex` crate deliberately does not have -- negative lookahead
 // (`(?!volatile )`) and backreferences (`\b(\w+) = \1 \+ 1;`). A port that
-// dropped them would silently change which source mutations permute_v1 can
+// dropped them would silently change which source mutations the analyzer can
 // generate. Rather than hand-unrolling twenty bespoke scanners (each its own
 // chance to diverge), the patterns are transcribed character-for-character
 // from the .ts file and interpreted here.

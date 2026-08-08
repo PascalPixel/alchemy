@@ -11,12 +11,8 @@
 // is a producing idiom some confirmed law already names, so a hit both closes
 // the owner and re-witnesses the law.
 //
-// This does not replace `permute_v1.ts` / `permute_overlay.ts`, which anneal
-// over a statement model and search far wider.  It is the bounded pass those
-// cannot be: annealing is stochastic and unbounded, so a run that finds nothing
-// proves nothing, and SANCTUM.md's shape axis needs a search whose exhaustion is
-// reproducible.  Run this first and cheaply; escalate to the annealer under the
-// bounded-probe rule in HANDOVER.md when it misses.
+// This is deliberately bounded: stochastic searches cannot prove exhaustion,
+// while SANCTUM.md's shape axis needs a reproducible result.
 //
 //   bun tools/search/shape_sweep.ts semantic/resource_3ba_c_02002738.c
 //   bun tools/search/shape_sweep.ts exact/08011568.c --pairs

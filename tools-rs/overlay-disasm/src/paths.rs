@@ -76,8 +76,17 @@ pub enum OverlaySource {
 }
 
 impl OverlaySource {
+    /// A plain filesystem path -- the shape every production caller of the
+    /// TS original actually uses (`assembleOverlay(join(ROOT, ...))`), never
+    /// a `URL` object. This is the TS `string` branch, not the `URL` branch:
+    /// it must still go through the newline/existence check so
+    /// `c_source_anchor` and `read_text` behave like `sourceText`/
+    /// `overlayCSources` do for a string path. Was wrongly wired to
+    /// `OverlaySource::Url` (which skips C-source lookup entirely, per the
+    /// TS `source instanceof URL` short-circuit), silently dropping every
+    /// exact/*.c patch for every overlay built this way.
     pub fn path(path: impl Into<PathBuf>) -> Self {
-        OverlaySource::Url(path.into())
+        OverlaySource::Str(path.into().to_string_lossy().to_string())
     }
 
     pub fn text(text: impl Into<String>) -> Self {

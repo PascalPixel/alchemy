@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use match_m2c::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
+use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 
 pub const USAGE: &str = "usage: candidate_show.ts <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]";
 
@@ -81,13 +81,15 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             // the allowlists in alchemy_gcc.ts are shared, so probing one here
             // keeps a trial flag out of every other region's build.
             "--flags" => {
-                let value = take(&mut index)
-                    .ok_or_else(|| "undefined is not an object (evaluating 'argv[++index].split')".to_string())?;
+                let value = take(&mut index).ok_or_else(|| {
+                    "undefined is not an object (evaluating 'argv[++index].split')".to_string()
+                })?;
                 options.flags = split_filter_boolean(value);
             }
             "--remove-flags" => {
-                let value = take(&mut index)
-                    .ok_or_else(|| "undefined is not an object (evaluating 'argv[++index].split')".to_string())?;
+                let value = take(&mut index).ok_or_else(|| {
+                    "undefined is not an object (evaluating 'argv[++index].split')".to_string()
+                })?;
                 options.configuration.remove_flags = split_filter_boolean(value);
             }
             "--family" => {
@@ -166,7 +168,10 @@ mod tests {
         assert_eq!(options.source, "a.c");
         assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs1-en.gba"));
         assert_eq!(options.work.as_deref(), Some("/repo/work/candidate-show"));
-        assert_eq!(options.configuration.family, Some(CandidateCompilerFamily::Routed));
+        assert_eq!(
+            options.configuration.family,
+            Some(CandidateCompilerFamily::Routed)
+        );
     }
 
     #[test]

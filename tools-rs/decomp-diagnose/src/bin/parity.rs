@@ -445,8 +445,8 @@ mod tests {
     #[test]
     fn the_normalizer_removes_only_the_root_and_temp_suffixes() {
         assert_eq!(
-            normalize("at /Users/someone/repo/tools/lib/match_m2c.ts:86:11", ROOT),
-            "at <ROOT>/tools/lib/match_m2c.ts:86:11"
+            normalize("at /Users/someone/repo/tools-rs/candidate-compiler/src/verify.rs:86:11", ROOT),
+            "at <ROOT>/tools-rs/candidate-compiler/src/verify.rs:86:11"
         );
         assert_eq!(normalize("scratch.0a1b2c3d4e/x", ROOT), "scratch.<tmp>/x");
         // Seven hex digits is below the threshold, and an extension is not a
@@ -460,7 +460,7 @@ mod tests {
         let stderr = concat!(
             "85 |     const detail = (error || output).trim();\n",
             "error: xgcc failed: nope\n",
-            "      at run (/x/tools/lib/match_m2c.ts:86:11)\n",
+            "      at run (/x/tools-rs/candidate-compiler/src/verify.rs:86:11)\n",
             "\nBun v1.3.14 (macOS arm64)\n",
         );
         assert_eq!(first_error_line(stderr), "error: xgcc failed: nope");

@@ -4,8 +4,10 @@ use std::path::Path;
 use std::process::Command;
 
 use alchemy_routing::routing::CompilerTarget;
-use match_m2c::jsnum::to_js_number_string;
-use match_m2c::verify::{js_subarray, verify_candidate, CandidateCompilerFamily, ROM_BASE};
+use candidate_compiler::jsnum::to_js_number_string;
+use candidate_compiler::verify::{
+    js_subarray, verify_candidate, CandidateCompilerFamily, ROM_BASE,
+};
 
 use crate::cli::Options;
 use crate::diff::differing_offsets;
@@ -29,14 +31,12 @@ pub struct RenderOutput {
 
 /// `main()` minus the argument parsing.
 pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
-    let rom_path = options
-        .rom
-        .as_deref()
-        .ok_or_else(|| "The \"path\" argument must be of type string. Received undefined".to_string())?;
-    let work = options
-        .work
-        .as_deref()
-        .ok_or_else(|| "The \"path\" argument must be of type string. Received undefined".to_string())?;
+    let rom_path = options.rom.as_deref().ok_or_else(|| {
+        "The \"path\" argument must be of type string. Received undefined".to_string()
+    })?;
+    let work = options.work.as_deref().ok_or_else(|| {
+        "The \"path\" argument must be of type string. Received undefined".to_string()
+    })?;
     let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
     std::fs::create_dir_all(work).map_err(|error| format!("{work}: {error}"))?;
 
@@ -50,12 +50,12 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         &options.configuration,
     )?;
 
-    // PORT NOTE -- `basename(source, ".c")`, NOT `match_m2c`'s `sourceStem`,
+    // PORT NOTE -- `basename(source, ".c")`, NOT `candidate_compiler`'s `sourceStem`,
     // which strips `extname(path)` whatever it is. For `x.cpp` the two
     // disagree and this file uses the literal `.c` form.
     let stem = basename_without(&options.source, ".c").to_string();
     // PORT NOTE -- `Number.parseInt(stem, 16)` with NO validating guard, unlike
-    // `match_m2c`'s `parseHex`. It tolerates a `0x` prefix and stops at the
+    // `candidate_compiler`'s `parseHex`. It tolerates a `0x` prefix and stops at the
     // first non-hex character. Routed through the one helper.
     let address = js_parse_int_radix(&stem, 16);
 
@@ -110,7 +110,10 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     // dedupe keeping FIRST occurrence, then a numeric sort.
     let mut offsets: Vec<f64> = Vec::new();
     for key in left.keys().chain(right.keys()) {
-        if !offsets.iter().any(|existing| same_value_zero(*existing, key)) {
+        if !offsets
+            .iter()
+            .any(|existing| same_value_zero(*existing, key))
+        {
             offsets.push(key);
         }
     }

@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use match_m2c::json::{parse, Json};
+use candidate_compiler::json::{parse, Json};
 
 /// `regionSize(stem)` -- the first `regions[]` row whose `basename(source,
 /// ".s")` equals `stem`.

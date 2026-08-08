@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 
 use alchemy_plan::nodepath::basename;
 use alchemy_routing::routing::root;
-use match_m2c::jsstring::utf16_cmp;
+use candidate_compiler::jsstring::utf16_cmp;
 
 use crate::cleanup::{cleanup_installed_scratch, today_utc};
 use crate::extent::mismatch;
@@ -84,14 +84,19 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
         };
         let stem = stripped.replacen("src_", "", 1);
 
-        if root_directory.join("exact").join(format!("{stem}.c")).exists() {
+        if root_directory
+            .join("exact")
+            .join(format!("{stem}.c"))
+            .exists()
+        {
             continue;
         }
         // `readFileSync(candidate, "utf8")`. Node REPLACES invalid UTF-8 with
         // U+FFFD rather than throwing, so this is a lossy decode, not
         // `read_to_string`, which would turn a mis-encoded candidate into a
         // hard error where the TypeScript keeps going.
-        let raw = fs::read(&candidate).map_err(|error| format!("{}: {error}", candidate.display()))?;
+        let raw =
+            fs::read(&candidate).map_err(|error| format!("{}: {error}", candidate.display()))?;
         let text = String::from_utf8_lossy(&raw);
         if carries_helper(&text) {
             rejected.push((stem, "carries an m2c helper".to_string()));
@@ -143,16 +148,17 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
             if asm.exists() {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;
             }
-            let cleaned = cleanup_installed_scratch(
-                stem,
-                &root_directory.join("work"),
-                &today_utc(),
-            )?;
+            let cleaned =
+                cleanup_installed_scratch(stem, &root_directory.join("work"), &today_utc())?;
             if !cleaned.removed.is_empty() || cleaned.dossier_closed {
                 lines.push(format!(
                     "clean {stem} scratch={} wall={}",
                     cleaned.removed.len(),
-                    if cleaned.dossier_closed { "closed" } else { "absent" }
+                    if cleaned.dossier_closed {
+                        "closed"
+                    } else {
+                        "absent"
+                    }
                 ));
             }
         }
@@ -166,5 +172,9 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
         rejected.len(),
         if apply { " (applied)" } else { " (dry run)" }
     ));
-    Ok(Report { lines, accepted: accepted.len(), rejected: rejected.len() })
+    Ok(Report {
+        lines,
+        accepted: accepted.len(),
+        rejected: rejected.len(),
+    })
 }

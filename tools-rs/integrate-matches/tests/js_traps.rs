@@ -131,7 +131,10 @@ fn the_candidate_filter_dot_excludes_line_terminators() {
     assert!(!is_candidate_name("gate"));
     assert!(!is_candidate_name("src_a\nb.c"));
     assert!(!is_candidate_name("src_a\u{2028}b.c"));
-    assert!(is_candidate_name("src_a\u{0085}b.c"), "U+0085 is NOT a JS line terminator");
+    assert!(
+        is_candidate_name("src_a\u{0085}b.c"),
+        "U+0085 is NOT a JS line terminator"
+    );
 }
 
 #[test]
@@ -151,7 +154,9 @@ fn js_line_terminators_are_exactly_four_and_u0085_is_not_one() {
 fn the_helper_guard_anchors_only_static_and_inline() {
     // `/inline_fn|^(static|inline)\b/m`. The alternation is ASYMMETRIC:
     // `inline_fn` matches anywhere, the two keywords only at a line start.
-    assert!(carries_helper("int x;\nstatic int helper(void) { return 1; }\n"));
+    assert!(carries_helper(
+        "int x;\nstatic int helper(void) { return 1; }\n"
+    ));
     assert!(carries_helper("void f(void) { inline_fn(); }\n"));
     assert!(carries_helper("inline void f(void);\n"));
     // Not at a line start, so the keyword alternative does not fire.
@@ -181,7 +186,10 @@ fn the_state_line_rewrite_replaces_only_the_first_match() {
     // dossier that the real tool leaves alone.
     let source = "# 08021360\n\nState: OPEN\n\nnotes\n\nState: OPEN\n";
     let rewritten = replace_state_line(source, "State: CLOSED");
-    assert_eq!(rewritten, "# 08021360\n\nState: CLOSED\n\nnotes\n\nState: OPEN\n");
+    assert_eq!(
+        rewritten,
+        "# 08021360\n\nState: CLOSED\n\nnotes\n\nState: OPEN\n"
+    );
 }
 
 #[test]
@@ -250,13 +258,19 @@ fn an_absolute_symbol_row_cannot_widen_the_extent() {
     // before its type column is ever read. This is the tool's own self-test
     // fixture, and it pins the filter ORDER, not just the outcome.
     let symbols = "08021360 00000030 T Func_08021360\n080770c1 A Func_080770c0";
-    assert_eq!(linked_function_extent(symbols, "Func_08021360", 0x0802_1360 as f64, 48), Ok(48));
+    assert_eq!(
+        linked_function_extent(symbols, "Func_08021360", 0x0802_1360 as f64, 48),
+        Ok(48)
+    );
 }
 
 #[test]
 fn extent_parsing_tolerates_crlf_and_blank_rows() {
     let symbols = "\r\n08021360 00000030 T Func_08021360\r\n\r\n";
-    assert_eq!(linked_function_extent(symbols, "Func_08021360", 0x0802_1360 as f64, 48), Ok(48));
+    assert_eq!(
+        linked_function_extent(symbols, "Func_08021360", 0x0802_1360 as f64, 48),
+        Ok(48)
+    );
 }
 
 #[test]
@@ -286,7 +300,7 @@ fn removed_entries_sort_in_utf16_code_unit_order() {
     // orders disagree for astral characters, where UTF-16 surrogates sort
     // BELOW U+E000..U+FFFF.
     let mut names = vec!["\u{10000}".to_string(), "\u{ffff}".to_string()];
-    names.sort_by(|left, right| match_m2c::jsstring::utf16_cmp(left, right));
+    names.sort_by(|left, right| candidate_compiler::jsstring::utf16_cmp(left, right));
     assert_eq!(names, vec!["\u{10000}".to_string(), "\u{ffff}".to_string()]);
     let mut plain = vec!["\u{10000}".to_string(), "\u{ffff}".to_string()];
     plain.sort();
@@ -321,13 +335,22 @@ fn cleanup_removes_the_prefixed_scratch_and_leaves_everything_else() {
     // must survive.
     std::fs::write(base.join("080213600.c"), "other\n").expect("other");
     std::fs::write(base.join("unrelated.c"), "keep\n").expect("unrelated");
-    std::fs::write(base.join("walls").join("08021360.md"), "# 08021360\n\nState: OPEN\n")
-        .expect("dossier");
+    std::fs::write(
+        base.join("walls").join("08021360.md"),
+        "# 08021360\n\nState: OPEN\n",
+    )
+    .expect("dossier");
 
     let cleaned = cleanup_installed_scratch("08021360", &base, "2026-07-22").expect("cleanup");
-    assert_eq!(cleaned.removed.join(","), "08021360.c,08021360.txt,hand/08021360/");
+    assert_eq!(
+        cleaned.removed.join(","),
+        "08021360.c,08021360.txt,hand/08021360/"
+    );
     assert!(cleaned.dossier_closed);
-    assert!(base.join("080213600.c").exists(), "a longer address must not be swept up");
+    assert!(
+        base.join("080213600.c").exists(),
+        "a longer address must not be swept up"
+    );
     assert!(base.join("unrelated.c").exists());
     let dossier = std::fs::read_to_string(base.join("walls").join("08021360.md")).expect("read");
     assert!(dossier.contains("State: CLOSED — 2026-07-22"));
@@ -350,5 +373,8 @@ fn cleanup_refuses_an_address_that_fails_the_guard() {
 
 #[test]
 fn the_ported_self_test_passes() {
-    assert_eq!(integrate_matches::selftest::self_test().as_deref(), Ok("self-test=ok"));
+    assert_eq!(
+        integrate_matches::selftest::self_test().as_deref(),
+        Ok("self-test=ok")
+    );
 }

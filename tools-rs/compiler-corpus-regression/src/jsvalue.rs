@@ -1,6 +1,6 @@
 //! The insertion-ordered JSON value, re-exported.
 //!
-//! This is `match_m2c::json` and NOT a second copy. That module already holds
+//! This is `candidate_compiler::json` and NOT a second copy. That module already holds
 //! the strict parser, the `canonicalJson` writer and the ECMAScript
 //! `ToString(Number)` this port needs, all over a `Vec<(String, Json)>` whose
 //! ordering guarantee is the file format. A duplicate here is exactly the
@@ -10,7 +10,7 @@
 //! `preserve_order` is enabled, and its float writer does not match
 //! JavaScript's.
 
-pub use match_m2c::json::{canonical_json, parse, Json};
+pub use candidate_compiler::json::{canonical_json, parse, Json};
 
 /// Build an object literal, preserving the order the keys are written in.
 pub fn object(entries: Vec<(&str, Json)>) -> Json {

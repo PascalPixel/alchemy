@@ -20,3 +20,4 @@ name = "decomp-diagnose-parity"
 path = "src/bin/parity.rs"
 
 [dependencies]
+candidate-compiler = { path = "../candidate-compiler" }

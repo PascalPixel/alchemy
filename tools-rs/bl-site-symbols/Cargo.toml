@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "bl-site-symbols"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "bl_site_symbols"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bl-site-symbols"
+path = "src/main.rs"
+
+[dependencies]
+overlay-disasm = { path = "../overlay-disasm" }
+serde_json = "1"
+
+[profile.release]
+opt-level = 3

@@ -5,7 +5,7 @@ use crate::corpus::{hexadecimal_stem, join};
 use crate::jsparse::{is_js_integer, parse_int};
 use crate::jsvalue::parse;
 use alchemy_plan::plan::CompilerFamily;
-use match_m2c::verify::CandidateCompilerConfiguration;
+use candidate_compiler::verify::CandidateCompilerConfiguration;
 
 /// `interface Options`.
 ///

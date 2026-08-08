@@ -72,10 +72,15 @@ in parallel.
 
 Builds the ROM and its parts: `build_rom` for the whole image, and `build_asm`,
 `build_assets`, `build_claimed`, `build_full`, `build_semantic` for the stages.
-This is the pipeline `tools/lib/verify.ts` drives, exposed separately so you can rebuild one
+This is the pipeline `tools-rs/verify` drives, exposed separately so you can rebuild one
 stage while iterating instead of paying for the full gate each time. Named
 `make` because `build`, `rom` and `dist` are all publication-blocked directory
 names.
+
+`localization_font` exports, builds, and verifies the 42,320-byte localization
+font package, including its F0 move-to-front banks, palette streams, glyph atlas,
+and article tables. Its native implementation lives in `tools-rs/localization-font`;
+the TypeScript module remains as the library imported by `build_assets`.
 
 ## overlay
 
@@ -99,15 +104,15 @@ and bulk dumps — see PROVENANCE.md and `tools-rs/check-publication`.
 ## compiler
 
 The `alchemy-gcc` fork and its routing. `tools/lib/alchemy_gcc.ts` owns the flag tables, the
-per-source routing sets, and the approved cc1 digests; `tools/lib/mode_sweep.ts` searches
+per-source routing sets, and the approved cc1 digests; `tools-rs/mode-sweep` searches
 compiler configurations for one candidate; `mode_cohort` runs a hypothesis
 across many owners at once. The routing sets are append-only registries of
 independent discoveries — never resolve a merge in them by taking one side.
 
 When a residual survives both search axes it is usually a scheduler tie, which
-`tools/lib/mode_sweep.ts` flags as `escalation: compiler-rtl-scheduler-trace`. The RTL
+`tools-rs/mode-sweep` flags as `escalation: compiler-rtl-scheduler-trace`. The RTL
 readers that answer it (`tools/lib/rtl_sexpr.ts`, `tools/lib/rtl_insn.ts`, `tools/lib/rtl_align.ts`, `tools/lib/rtl_schedule.ts`,
-`tools/lib/thumb_disasm.ts`, `tools/lib/candidate_explain.ts`) live in `tools/lib/` because several tools
+`tools/lib/thumb_disasm.ts`, `tools-rs/candidate-explain`) are shared by several tools
 share them; run them directly. They parse the fork's own dumps and reproduce its
 real scheduler tier order rather than modelling it.
 
@@ -123,7 +128,7 @@ promote a near-match.
 
 Picks and diagnoses owners. The semantic queue ranks current C drafts,
 `decomp_diagnose` explains why a specific candidate misses, and
-`tools/lib/integrate_matches.ts` handles installation. Start here when you do
+`tools-rs/integrate-matches` handles installation. Start here when you do
 not already know which owner you are working on.
 
 ## semantic

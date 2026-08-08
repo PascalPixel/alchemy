@@ -29,11 +29,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "decomp-targets"
-version = "0.1.0"
-
-[[package]]
-name = "match-m2c"
+name = "candidate-compiler"
 version = "0.1.0"
 dependencies = [
  "alchemy-plan",
@@ -41,3 +37,7 @@ dependencies = [
  "alchemy-symbols",
  "decomp-targets",
 ]
+
+[[package]]
+name = "decomp-targets"
+version = "0.1.0"

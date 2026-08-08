@@ -384,7 +384,8 @@ mod tests {
 
     #[test]
     fn skips_comments_including_ones_holding_quotes() {
-        let source = "const T = [\n  // \"ghost\",\n  \"real\", /* \"also ghost\" */ \"second\",\n];";
+        let source =
+            "const T = [\n  // \"ghost\",\n  \"real\", /* \"also ghost\" */ \"second\",\n];";
         let value = declaration(source, "T").expect("parses");
         assert_eq!(value.flatten(), vec!["real", "second"]);
     }
@@ -426,6 +427,9 @@ mod tests {
 
     #[test]
     fn collapse_normalises_reflow_only() {
-        assert_eq!(collapse("  join(BUNDLE,\n    \"cc1\")  "), "join(BUNDLE, \"cc1\")");
+        assert_eq!(
+            collapse("  join(BUNDLE,\n    \"cc1\")  "),
+            "join(BUNDLE, \"cc1\")"
+        );
     }
 }

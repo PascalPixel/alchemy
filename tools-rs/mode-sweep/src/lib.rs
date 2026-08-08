@@ -1,4 +1,4 @@
-//! Port of the deterministic half of `tools/lib/mode_sweep.ts`.
+//! Native mode-sweep planning, scoring, and reporting.
 //!
 //! mode_sweep explores historically plausible compiler configurations for one C
 //! candidate. It is a diagnostic tool, not a promotion tool: it searches the
@@ -13,14 +13,9 @@
 //! `mode_cohort.ts`, `overlay_mode_cohort.ts` and `search-compiler-modes`
 //! actually import.
 //!
-//! WHAT IS NOT PORTED, AND WHY: the scoring loop calls `verifyCandidate` from
-//! `tools/lib/match_m2c.ts`, which calls `sourceToAssemblyPlan`,
-//! `externalSymbol` and `externalSymbolAssembly` from
-//! `tools/lib/alchemy_gcc.ts` -- 4,404 lines of routing tables that are out of
-//! bounds for this port and that have no CLI entry point to shell out to. The
-//! `tools-rs/search-compiler-modes` crate hit the same wall and resolved it the
-//! same way: it shells out to `bun tools/lib/mode_sweep.ts` and documents why.
-//! Re-porting the driver means re-porting alchemy_gcc.ts first.
+//! The compiler boundary is the native `candidate-compiler` crate. This crate
+//! deliberately owns no second compiler implementation: routing and command
+//! construction remain in the Rust layers below it.
 
 use std::path::{Path, PathBuf};
 
@@ -30,12 +25,7 @@ use search_compiler_modes::{canonical_json, sha256_hex, Json};
 // Repository root
 // ---------------------------------------------------------------------------
 
-/// The repository root.
-///
-/// PORT NOTE: the TypeScript computes this as three `dirname` hops off
-/// `import.meta.url`, because the module sits at `tools/lib/mode_sweep.ts`.
-/// This crate sits at `tools-rs/mode-sweep/src/lib.rs`, so the hop count is
-/// different; both land on the same directory.
+/// The repository root for the native mode-sweep crate.
 pub fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -52,7 +42,7 @@ pub const FORMAT: u32 = 4;
 // Fork modes
 // ---------------------------------------------------------------------------
 
-/// `FORK_MODES` from mode_sweep.ts, in source order.
+/// The fork modes, in source order.
 ///
 /// The comments are the incident record: each one names the witness address
 /// that forced the flag into the fork. They are load-bearing documentation, not
@@ -223,7 +213,7 @@ pub const FORK_MODES: &[&str] = &[
     "-fthumb-call-pool-arg1-first",
 ];
 
-/// `STOCK_SWITCHES` from mode_sweep.ts: the stock GCC pass switches that the
+/// The stock GCC pass switches that the
 /// historical-family factorial phase crosses against each alternative compiler.
 pub const STOCK_SWITCHES: &[&str] = &[
     "-fno-defer-pop",
@@ -264,7 +254,7 @@ pub enum Family {
     Backend,
 }
 
-/// `CandidateCompilerFamily` from match_m2c.ts. Kept as strings because the
+/// Candidate compiler family names. Kept as strings because the
 /// value is written verbatim into `config.compiler_family` in every report.
 pub const ROUTED: &str = "routed";
 
@@ -296,55 +286,330 @@ struct Spec {
 const HISTORICAL: &str = "historical";
 const PROVEN: &str = "proven-routing";
 
-const fn spec(id: &'static str, family: Family, add: &'static [&'static str], evidence: &'static str) -> Spec {
-    Spec { id, family, add, remove: &[], compiler_family: None, supported: None, exclusive: false, evidence }
+const fn spec(
+    id: &'static str,
+    family: Family,
+    add: &'static [&'static str],
+    evidence: &'static str,
+) -> Spec {
+    Spec {
+        id,
+        family,
+        add,
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: false,
+        evidence,
+    }
 }
 
 /// The declared prefix of `MODES`, before the generated `FORK_MODES` and
 /// old-agbcc tails are appended.
 const DECLARED: &[Spec] = &[
-    Spec { id: "compiler-gcc296", family: Family::Compiler, add: &[], remove: &[], compiler_family: Some("gcc296"), supported: None, exclusive: true, evidence: HISTORICAL },
-    Spec { id: "compiler-old-agbcc", family: Family::Compiler, add: &[], remove: &[], compiler_family: Some("old-agbcc"), supported: None, exclusive: true, evidence: PROVEN },
-    Spec { id: "compiler-pret-early-thumb", family: Family::Compiler, add: &[], remove: &[], compiler_family: Some("pret-early-thumb"), supported: None, exclusive: true, evidence: HISTORICAL },
-    Spec { id: "compiler-gcc2951", family: Family::Compiler, add: &[], remove: &[], compiler_family: Some("gcc2951"), supported: None, exclusive: true, evidence: HISTORICAL },
-    Spec { id: "opt-o1", family: Family::Optimization, add: &["-O1"], remove: &[], compiler_family: None, supported: None, exclusive: true, evidence: PROVEN },
-    Spec { id: "opt-o2", family: Family::Optimization, add: &["-O2"], remove: &[], compiler_family: None, supported: None, exclusive: true, evidence: HISTORICAL },
-    Spec { id: "opt-o3", family: Family::Optimization, add: &["-O3"], remove: &[], compiler_family: None, supported: None, exclusive: true, evidence: HISTORICAL },
-    Spec { id: "opt-os", family: Family::Optimization, add: &["-Os"], remove: &[], compiler_family: None, supported: None, exclusive: true, evidence: HISTORICAL },
-    Spec { id: "abi-standard-r4", family: Family::Abi, add: &[], remove: &["-fcall-used-r4"], compiler_family: None, supported: None, exclusive: true, evidence: PROVEN },
-    Spec { id: "abi-fixed-r3", family: Family::Abi, add: &["-ffixed-r3"], remove: &[], compiler_family: None, supported: None, exclusive: true, evidence: PROVEN },
-    Spec { id: "abi-fixed-lr", family: Family::Abi, add: &["-ffixed-r14"], remove: &[], compiler_family: None, supported: None, exclusive: true, evidence: HISTORICAL },
-    spec("call-defer-pop-off", Family::Backend, &["-fno-defer-pop"], HISTORICAL),
-    spec("cfg-thread-jumps-off", Family::Cse, &["-fno-thread-jumps"], HISTORICAL),
-    spec("frame-pointer-kept", Family::Backend, &["-fno-omit-frame-pointer"], HISTORICAL),
-    spec("sched-prereload-off", Family::Scheduler, &["-fno-schedule-insns"], PROVEN),
-    spec("sched-postreload-off", Family::Scheduler, &["-fno-schedule-insns2"], PROVEN),
-    spec("sched-depend-count-off", Family::Scheduler, &["-fno-sched-depend-count"], PROVEN),
+    Spec {
+        id: "compiler-gcc296",
+        family: Family::Compiler,
+        add: &[],
+        remove: &[],
+        compiler_family: Some("gcc296"),
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "compiler-old-agbcc",
+        family: Family::Compiler,
+        add: &[],
+        remove: &[],
+        compiler_family: Some("old-agbcc"),
+        supported: None,
+        exclusive: true,
+        evidence: PROVEN,
+    },
+    Spec {
+        id: "compiler-pret-early-thumb",
+        family: Family::Compiler,
+        add: &[],
+        remove: &[],
+        compiler_family: Some("pret-early-thumb"),
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "compiler-gcc2951",
+        family: Family::Compiler,
+        add: &[],
+        remove: &[],
+        compiler_family: Some("gcc2951"),
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "opt-o1",
+        family: Family::Optimization,
+        add: &["-O1"],
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: PROVEN,
+    },
+    Spec {
+        id: "opt-o2",
+        family: Family::Optimization,
+        add: &["-O2"],
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "opt-o3",
+        family: Family::Optimization,
+        add: &["-O3"],
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "opt-os",
+        family: Family::Optimization,
+        add: &["-Os"],
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "abi-standard-r4",
+        family: Family::Abi,
+        add: &[],
+        remove: &["-fcall-used-r4"],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: PROVEN,
+    },
+    Spec {
+        id: "abi-fixed-r3",
+        family: Family::Abi,
+        add: &["-ffixed-r3"],
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: PROVEN,
+    },
+    Spec {
+        id: "abi-fixed-lr",
+        family: Family::Abi,
+        add: &["-ffixed-r14"],
+        remove: &[],
+        compiler_family: None,
+        supported: None,
+        exclusive: true,
+        evidence: HISTORICAL,
+    },
+    spec(
+        "call-defer-pop-off",
+        Family::Backend,
+        &["-fno-defer-pop"],
+        HISTORICAL,
+    ),
+    spec(
+        "cfg-thread-jumps-off",
+        Family::Cse,
+        &["-fno-thread-jumps"],
+        HISTORICAL,
+    ),
+    spec(
+        "frame-pointer-kept",
+        Family::Backend,
+        &["-fno-omit-frame-pointer"],
+        HISTORICAL,
+    ),
+    spec(
+        "sched-prereload-off",
+        Family::Scheduler,
+        &["-fno-schedule-insns"],
+        PROVEN,
+    ),
+    spec(
+        "sched-postreload-off",
+        Family::Scheduler,
+        &["-fno-schedule-insns2"],
+        PROVEN,
+    ),
+    spec(
+        "sched-depend-count-off",
+        Family::Scheduler,
+        &["-fno-sched-depend-count"],
+        PROVEN,
+    ),
     spec("cse-gcse-off", Family::Cse, &["-fno-gcse"], PROVEN),
-    spec("cse-follow-off", Family::Cse, &["-fno-cse-follow-jumps"], PROVEN),
-    spec("cse-skip-blocks-off", Family::Cse, &["-fno-cse-skip-blocks"], HISTORICAL),
-    spec("cse-rerun-loop-off", Family::Cse, &["-fno-rerun-cse-after-loop"], PROVEN),
-    spec("alias-strict-off", Family::Cse, &["-fno-strict-aliasing"], PROVEN),
-    spec("cse-two-insn-immediate-off", Family::Cse, &["-fno-cse-two-insn-immediate"], PROVEN),
-    spec("cse-shift-immediate-off", Family::Cse, &["-fno-cse-shift-immediate"], PROVEN),
-    spec("cse-pool-immediate-off", Family::Cse, &["-fno-cse-pool-immediate"], PROVEN),
-    spec("gcse-insert-load-off", Family::Cse, &["-fno-gcse-insert-load"], PROVEN),
-    spec("sched-low-dest-first", Family::Scheduler, &["-fsched-low-dest-first"], PROVEN),
-    spec("sched-high-dest-first", Family::Scheduler, &["-fsched-high-dest-first"], PROVEN),
-    spec("sched-alias-off", Family::Scheduler, &["-fno-sched-alias"], PROVEN),
-    spec("sched-store-first", Family::Scheduler, &["-fsched-store-first"], PROVEN),
-    spec("loop-rerun-off", Family::Cse, &["-fno-rerun-loop-opt"], HISTORICAL),
-    spec("cse-expensive-off", Family::Cse, &["-fno-expensive-optimizations"], PROVEN),
-    spec("reg-peephole-off", Family::RegisterAllocation, &["-fno-peephole"], HISTORICAL),
-    spec("reg-strength-reduce-off", Family::RegisterAllocation, &["-fno-strength-reduce"], PROVEN),
-    spec("reg-regmove-off", Family::RegisterAllocation, &["-fno-regmove"], PROVEN),
-    spec("reg-caller-saves-off", Family::RegisterAllocation, &["-fno-caller-saves"], HISTORICAL),
-    spec("reg-force-mem-off", Family::RegisterAllocation, &["-fno-force-mem"], HISTORICAL),
-    Spec { id: "reg-peephole2-off", family: Family::RegisterAllocation, add: &["-fno-peephole2"], remove: &[], compiler_family: None, supported: Some(&[ROUTED, "gcc296"]), exclusive: false, evidence: HISTORICAL },
-    spec("inline-functions-off", Family::Backend, &["-fno-inline-functions"], HISTORICAL),
-    Spec { id: "delete-null-checks-off", family: Family::Backend, add: &["-fno-delete-null-pointer-checks"], remove: &[], compiler_family: None, supported: Some(&[ROUTED, "gcc296"]), exclusive: false, evidence: HISTORICAL },
-    Spec { id: "sibling-calls-off", family: Family::Backend, add: &["-fno-optimize-sibling-calls"], remove: &[], compiler_family: None, supported: Some(&[ROUTED, "gcc296"]), exclusive: false, evidence: PROVEN },
-    spec("comparison-canonicalization-off", Family::Backend, &["-fno-canonicalize-comparison"], PROVEN),
+    spec(
+        "cse-follow-off",
+        Family::Cse,
+        &["-fno-cse-follow-jumps"],
+        PROVEN,
+    ),
+    spec(
+        "cse-skip-blocks-off",
+        Family::Cse,
+        &["-fno-cse-skip-blocks"],
+        HISTORICAL,
+    ),
+    spec(
+        "cse-rerun-loop-off",
+        Family::Cse,
+        &["-fno-rerun-cse-after-loop"],
+        PROVEN,
+    ),
+    spec(
+        "alias-strict-off",
+        Family::Cse,
+        &["-fno-strict-aliasing"],
+        PROVEN,
+    ),
+    spec(
+        "cse-two-insn-immediate-off",
+        Family::Cse,
+        &["-fno-cse-two-insn-immediate"],
+        PROVEN,
+    ),
+    spec(
+        "cse-shift-immediate-off",
+        Family::Cse,
+        &["-fno-cse-shift-immediate"],
+        PROVEN,
+    ),
+    spec(
+        "cse-pool-immediate-off",
+        Family::Cse,
+        &["-fno-cse-pool-immediate"],
+        PROVEN,
+    ),
+    spec(
+        "gcse-insert-load-off",
+        Family::Cse,
+        &["-fno-gcse-insert-load"],
+        PROVEN,
+    ),
+    spec(
+        "sched-low-dest-first",
+        Family::Scheduler,
+        &["-fsched-low-dest-first"],
+        PROVEN,
+    ),
+    spec(
+        "sched-high-dest-first",
+        Family::Scheduler,
+        &["-fsched-high-dest-first"],
+        PROVEN,
+    ),
+    spec(
+        "sched-alias-off",
+        Family::Scheduler,
+        &["-fno-sched-alias"],
+        PROVEN,
+    ),
+    spec(
+        "sched-store-first",
+        Family::Scheduler,
+        &["-fsched-store-first"],
+        PROVEN,
+    ),
+    spec(
+        "loop-rerun-off",
+        Family::Cse,
+        &["-fno-rerun-loop-opt"],
+        HISTORICAL,
+    ),
+    spec(
+        "cse-expensive-off",
+        Family::Cse,
+        &["-fno-expensive-optimizations"],
+        PROVEN,
+    ),
+    spec(
+        "reg-peephole-off",
+        Family::RegisterAllocation,
+        &["-fno-peephole"],
+        HISTORICAL,
+    ),
+    spec(
+        "reg-strength-reduce-off",
+        Family::RegisterAllocation,
+        &["-fno-strength-reduce"],
+        PROVEN,
+    ),
+    spec(
+        "reg-regmove-off",
+        Family::RegisterAllocation,
+        &["-fno-regmove"],
+        PROVEN,
+    ),
+    spec(
+        "reg-caller-saves-off",
+        Family::RegisterAllocation,
+        &["-fno-caller-saves"],
+        HISTORICAL,
+    ),
+    spec(
+        "reg-force-mem-off",
+        Family::RegisterAllocation,
+        &["-fno-force-mem"],
+        HISTORICAL,
+    ),
+    Spec {
+        id: "reg-peephole2-off",
+        family: Family::RegisterAllocation,
+        add: &["-fno-peephole2"],
+        remove: &[],
+        compiler_family: None,
+        supported: Some(&[ROUTED, "gcc296"]),
+        exclusive: false,
+        evidence: HISTORICAL,
+    },
+    spec(
+        "inline-functions-off",
+        Family::Backend,
+        &["-fno-inline-functions"],
+        HISTORICAL,
+    ),
+    Spec {
+        id: "delete-null-checks-off",
+        family: Family::Backend,
+        add: &["-fno-delete-null-pointer-checks"],
+        remove: &[],
+        compiler_family: None,
+        supported: Some(&[ROUTED, "gcc296"]),
+        exclusive: false,
+        evidence: HISTORICAL,
+    },
+    Spec {
+        id: "sibling-calls-off",
+        family: Family::Backend,
+        add: &["-fno-optimize-sibling-calls"],
+        remove: &[],
+        compiler_family: None,
+        supported: Some(&[ROUTED, "gcc296"]),
+        exclusive: false,
+        evidence: PROVEN,
+    },
+    spec(
+        "comparison-canonicalization-off",
+        Family::Backend,
+        &["-fno-canonicalize-comparison"],
+        PROVEN,
+    ),
 ];
 
 /// The old-agbcc backend flags appended after `FORK_MODES`.
@@ -355,7 +620,7 @@ const AGBCC_FLAGS: &[&str] = &[
     "-mcompare-only-and-tst",
 ];
 
-/// `MODES` from mode_sweep.ts, in exact source order.
+/// The complete mode table, in exact source order.
 pub fn modes() -> Vec<Mode> {
     let mut list: Vec<Mode> = DECLARED
         .iter()
@@ -422,10 +687,27 @@ impl Config {
     /// load-bearing: it is hashed into the cache key through `canonicalJson`.
     pub fn to_json(&self) -> Json {
         Json::Object(vec![
-            ("ids".into(), Json::Array(self.ids.iter().map(|s| Json::String(s.clone())).collect())),
-            ("flags".into(), Json::Array(self.flags.iter().map(|s| Json::String(s.clone())).collect())),
-            ("remove_flags".into(), Json::Array(self.remove_flags.iter().map(|s| Json::String(s.clone())).collect())),
-            ("compiler_family".into(), Json::String(self.compiler_family.clone())),
+            (
+                "ids".into(),
+                Json::Array(self.ids.iter().map(|s| Json::String(s.clone())).collect()),
+            ),
+            (
+                "flags".into(),
+                Json::Array(self.flags.iter().map(|s| Json::String(s.clone())).collect()),
+            ),
+            (
+                "remove_flags".into(),
+                Json::Array(
+                    self.remove_flags
+                        .iter()
+                        .map(|s| Json::String(s.clone()))
+                        .collect(),
+                ),
+            ),
+            (
+                "compiler_family".into(),
+                Json::String(self.compiler_family.clone()),
+            ),
         ])
     }
 }
@@ -559,8 +841,14 @@ pub fn config_of(selection: &[&Mode]) -> Config {
     sort_code_unit(&mut ids);
     Config {
         ids,
-        flags: selection.iter().flat_map(|mode| mode.add_flags.clone()).collect(),
-        remove_flags: selection.iter().flat_map(|mode| mode.remove_flags.clone()).collect(),
+        flags: selection
+            .iter()
+            .flat_map(|mode| mode.add_flags.clone())
+            .collect(),
+        remove_flags: selection
+            .iter()
+            .flat_map(|mode| mode.remove_flags.clone())
+            .collect(),
         compiler_family: selection
             .iter()
             .find_map(|mode| mode.compiler_family)
@@ -699,7 +987,9 @@ pub fn historical_family_factorial_configs() -> Vec<Config> {
         .collect();
     let stock_modes: Vec<&Mode> = table
         .iter()
-        .filter(|mode| mode.add_flags.len() == 1 && STOCK_SWITCHES.contains(&mode.add_flags[0].as_str()))
+        .filter(|mode| {
+            mode.add_flags.len() == 1 && STOCK_SWITCHES.contains(&mode.add_flags[0].as_str())
+        })
         .collect();
     let mut configs: Vec<Config> = Vec::new();
     for compiler in &compiler_modes {
@@ -740,59 +1030,33 @@ pub fn hash(parts: &[&[u8]]) -> String {
     sha256_hex(&buffer)
 }
 
-/// Port of `modeSweepOutputDirectory`, delegating to the existing
+/// Native mode-sweep output directory, delegating to the existing
 /// implementation in `search-compiler-modes` rather than keeping a second copy.
 pub fn mode_sweep_output_directory(root: &Path, source: &str, contents: &[u8]) -> String {
     search_compiler_modes::mode_sweep_output_directory(root, source, contents)
 }
 
-/// The five sibling modules whose bytes go into the compiler signature.
-pub const SIGNATURE_SOURCES: [&str; 5] = [
-    "alchemy_gcc.ts",
-    "match_m2c.ts",
-    "integrate_matches.ts",
-    "candidate_show.ts",
-    "mode_sweep.ts",
+/// Native source modules whose bytes go into the compiler signature.
+pub const SIGNATURE_SOURCES: [&str; 3] = [
+    "tools-rs/mode-sweep/src/lib.rs",
+    "tools-rs/mode-sweep/src/main.rs",
+    "tools-rs/candidate-compiler/src/verify.rs",
 ];
 
-/// Port of `compilerSignature`, **bug included**.
-///
-/// BUG REPRODUCED, NOT FIXED (mode_sweep.ts:466-467). The TypeScript builds
-/// `join(ROOT, "tools", name)` for all five modules, but every one of them
-/// lives in `tools/lib/`. `readFileSync` therefore throws ENOENT and every
-/// mode-sweep run that is not `--self-test` dies before it compiles anything.
-///
-/// Provenance: commit b3ab4841b (2026-08-07) moved `tools/mode_sweep.ts` to
-/// `tools/lib/mode_sweep.ts` and added a third `dirname` hop to `ROOT` to
-/// compensate, but left the `"tools"` path segment alone -- so the four
-/// siblings that moved with it are now looked for one directory too high. The
-/// path was correct before that commit.
-///
-/// It is reproduced here on purpose: a port that quietly fixes a bug stops
-/// being a port, and the fix belongs in the TypeScript where the regression
-/// lives. `signature_paths_reproduce_the_enoent_bug` pins the broken paths, and
-/// will fail loudly the moment somebody fixes the TypeScript, which is exactly
-/// when this needs revisiting.
+/// Native compiler signature inputs.
 pub fn signature_source_paths(root: &Path) -> Vec<PathBuf> {
     SIGNATURE_SOURCES
         .iter()
-        .map(|name| root.join("tools").join(name))
-        .collect()
-}
-
-/// The paths the TypeScript *meant*. Used only by the parity harness, which
-/// corrects the path identically on both sides so it compares real behaviour
-/// rather than two identical exceptions.
-pub fn corrected_signature_source_paths(root: &Path) -> Vec<PathBuf> {
-    SIGNATURE_SOURCES
-        .iter()
-        .map(|name| root.join("tools").join("lib").join(name))
+        .map(|name| root.join(name))
         .collect()
 }
 
 /// Port of `compilerSignature` over an explicit path list, so the bug-for-bug
 /// and corrected variants share one implementation.
-pub fn compiler_signature_from(bundle_signature: &str, paths: &[PathBuf]) -> std::io::Result<String> {
+pub fn compiler_signature_from(
+    bundle_signature: &str,
+    paths: &[PathBuf],
+) -> std::io::Result<String> {
     let mut parts: Vec<Vec<u8>> = vec![bundle_signature.as_bytes().to_vec()];
     for path in paths {
         parts.push(std::fs::read(path)?);
@@ -801,8 +1065,6 @@ pub fn compiler_signature_from(bundle_signature: &str, paths: &[PathBuf]) -> std
     Ok(hash(&borrowed))
 }
 
-/// Port of `compilerSignature`. Fails with ENOENT, exactly as the TypeScript
-/// does today; see `signature_source_paths`.
 pub fn compiler_signature(root: &Path) -> std::io::Result<String> {
     compiler_signature_from(
         &alchemy_bundle::bundle::compiler_bundle_signature(),
@@ -825,7 +1087,11 @@ pub fn evidenced_routing_flags() -> Vec<String> {
         agbcc_cflags, cflags, cflags_for_target_source, gs2_cflags, CompilerTarget,
     };
     let mut baseline: Vec<String> = Vec::new();
-    for flag in cflags().into_iter().chain(gs2_cflags()).chain(agbcc_cflags()) {
+    for flag in cflags()
+        .into_iter()
+        .chain(gs2_cflags())
+        .chain(agbcc_cflags())
+    {
         if !baseline.contains(&flag) {
             baseline.push(flag);
         }
@@ -863,14 +1129,29 @@ pub struct Evidence {
 impl Evidence {
     pub fn to_json(&self) -> Json {
         Json::Object(vec![
-            ("differing_halfwords".into(), Json::Number(self.differing_halfwords as f64)),
+            (
+                "differing_halfwords".into(),
+                Json::Number(self.differing_halfwords as f64),
+            ),
             ("size_delta".into(), Json::Number(self.size_delta as f64)),
             ("exact".into(), Json::Bool(self.exact)),
             ("exact_size".into(), Json::Bool(self.exact_size)),
-            ("instruction_order_proxy".into(), Json::Bool(self.instruction_order_proxy)),
-            ("register_allocation_proxy".into(), Json::Number(self.register_allocation_proxy as f64)),
-            ("literal_placement_proxy".into(), Json::Bool(self.literal_placement_proxy)),
-            ("control_flow_proxy".into(), Json::Bool(self.control_flow_proxy)),
+            (
+                "instruction_order_proxy".into(),
+                Json::Bool(self.instruction_order_proxy),
+            ),
+            (
+                "register_allocation_proxy".into(),
+                Json::Number(self.register_allocation_proxy as f64),
+            ),
+            (
+                "literal_placement_proxy".into(),
+                Json::Bool(self.literal_placement_proxy),
+            ),
+            (
+                "control_flow_proxy".into(),
+                Json::Bool(self.control_flow_proxy),
+            ),
         ])
     }
 }
@@ -913,9 +1194,15 @@ pub fn normalized_registers(instruction: &str) -> String {
     let mut index = 0;
     while index < bytes.len() {
         let boundary_before = index == 0 || !is_word_byte(bytes[index - 1]);
-        let matched = if boundary_before { register_match(bytes, index) } else { None };
+        let matched = if boundary_before {
+            register_match(bytes, index)
+        } else {
+            None
+        };
         match matched {
-            Some(length) if index + length == bytes.len() || !is_word_byte(bytes[index + length]) => {
+            Some(length)
+                if index + length == bytes.len() || !is_word_byte(bytes[index + length]) =>
+            {
                 out.push_str("REG");
                 index += length;
             }
@@ -983,7 +1270,12 @@ fn joined<'a>(items: impl Iterator<Item = &'a str>) -> String {
 }
 
 /// Port of `classify`.
-pub fn classify(actual: &[u8], reference: &[u8], actual_asm: &[String], reference_asm: &[String]) -> Evidence {
+pub fn classify(
+    actual: &[u8],
+    reference: &[u8],
+    actual_asm: &[String],
+    reference_asm: &[String],
+) -> Evidence {
     // `Math.ceil(len / 2)` on each side: a trailing odd byte still counts as a
     // whole halfword of difference.
     let halfwords = |length: usize| length.div_ceil(2);
@@ -1012,7 +1304,8 @@ pub fn classify(actual: &[u8], reference: &[u8], actual_asm: &[String], referenc
     let mut register_proxy = 0u64;
     for index in 0..actual_asm.len().min(reference_asm.len()) {
         if actual_asm[index] != reference_asm[index]
-            && normalized_registers(&actual_asm[index]) == normalized_registers(&reference_asm[index])
+            && normalized_registers(&actual_asm[index])
+                == normalized_registers(&reference_asm[index])
         {
             register_proxy += 1;
         }
@@ -1027,12 +1320,27 @@ pub fn classify(actual: &[u8], reference: &[u8], actual_asm: &[String], referenc
             && actual_mnemonics.join("\n") != reference_mnemonics.join("\n"),
         register_allocation_proxy: register_proxy,
         literal_placement_proxy: joined(
-            actual_asm.iter().map(String::as_str).filter(|i| is_literal_load(i)),
+            actual_asm
+                .iter()
+                .map(String::as_str)
+                .filter(|i| is_literal_load(i)),
         ) != joined(
-            reference_asm.iter().map(String::as_str).filter(|i| is_literal_load(i)),
+            reference_asm
+                .iter()
+                .map(String::as_str)
+                .filter(|i| is_literal_load(i)),
         ),
-        control_flow_proxy: joined(actual_asm.iter().map(String::as_str).filter(|i| is_branch(i)))
-            != joined(reference_asm.iter().map(String::as_str).filter(|i| is_branch(i))),
+        control_flow_proxy: joined(
+            actual_asm
+                .iter()
+                .map(String::as_str)
+                .filter(|i| is_branch(i)),
+        ) != joined(
+            reference_asm
+                .iter()
+                .map(String::as_str)
+                .filter(|i| is_branch(i)),
+        ),
     }
 }
 
@@ -1055,7 +1363,10 @@ pub fn disassembly_line(line: &str) -> Option<String> {
         return None; // `\s+` needs at least one space.
     }
     let start = index;
-    while index < bytes.len() && bytes[index].is_ascii_hexdigit() && !bytes[index].is_ascii_uppercase() {
+    while index < bytes.len()
+        && bytes[index].is_ascii_hexdigit()
+        && !bytes[index].is_ascii_uppercase()
+    {
         index += 1;
     }
     if index == start || bytes.get(index) != Some(&b':') {
@@ -1067,7 +1378,10 @@ pub fn disassembly_line(line: &str) -> Option<String> {
     }
     index += 1;
     let start = index;
-    while index < bytes.len() && (bytes[index] == b' ' || (bytes[index].is_ascii_hexdigit() && !bytes[index].is_ascii_uppercase())) {
+    while index < bytes.len()
+        && (bytes[index] == b' '
+            || (bytes[index].is_ascii_hexdigit() && !bytes[index].is_ascii_uppercase()))
+    {
         index += 1;
     }
     if index == start || bytes.get(index) != Some(&b'\t') {
@@ -1077,7 +1391,10 @@ pub fn disassembly_line(line: &str) -> Option<String> {
     let tail = &line[index..];
     // `.` excludes CR/LF/LS/PS, and `$` demands end of input, so any of them in
     // the tail makes the whole match fail.
-    if tail.chars().any(|c| matches!(c, '\n' | '\r' | '\u{2028}' | '\u{2029}')) {
+    if tail
+        .chars()
+        .any(|c| matches!(c, '\n' | '\r' | '\u{2028}' | '\u{2029}'))
+    {
         return None;
     }
     Some(tail.trim().to_string())
@@ -1107,7 +1424,7 @@ pub struct Options {
 }
 
 pub const USAGE: &str =
-    "usage: mode_sweep.ts <candidate.c> [--pairs] [--triples] [--family-factorial] [--jobs N] [--top N] [--max-pairs N] [--max-triples N] [--rom FILE]";
+    "usage: mode-sweep <candidate.c> [--pairs] [--triples] [--family-factorial] [--jobs N] [--top N] [--max-pairs N] [--max-triples N] [--rom FILE]";
 
 /// `-h`/`--help` was requested: the TypeScript prints usage and exits zero.
 #[derive(Debug)]
@@ -1126,8 +1443,13 @@ fn js_number(text: &str) -> f64 {
     if trimmed.is_empty() {
         return 0.0;
     }
-    if let Some(hex) = trimmed.strip_prefix("0x").or_else(|| trimmed.strip_prefix("0X")) {
-        return u64::from_str_radix(hex, 16).map(|v| v as f64).unwrap_or(f64::NAN);
+    if let Some(hex) = trimmed
+        .strip_prefix("0x")
+        .or_else(|| trimmed.strip_prefix("0X"))
+    {
+        return u64::from_str_radix(hex, 16)
+            .map(|v| v as f64)
+            .unwrap_or(f64::NAN);
     }
     trimmed.parse::<f64>().unwrap_or(f64::NAN)
 }
@@ -1143,7 +1465,11 @@ fn is_positive_integer(value: f64) -> bool {
 /// Port of `optionsOf`. `hardware_concurrency` is the caller's
 /// `navigator.hardwareConcurrency`; pass `None` for JavaScript's falsy default
 /// of 8.
-pub fn options_of(argv: &[String], root: &Path, hardware_concurrency: Option<u32>) -> Result<OptionsOutcome, String> {
+pub fn options_of(
+    argv: &[String],
+    root: &Path,
+    hardware_concurrency: Option<u32>,
+) -> Result<OptionsOutcome, String> {
     let concurrency = match hardware_concurrency {
         // `(navigator.hardwareConcurrency || 8)`: zero is falsy in JavaScript.
         Some(0) | None => 8i64,
@@ -1181,15 +1507,19 @@ pub fn options_of(argv: &[String], root: &Path, hardware_concurrency: Option<u32
             "--family-factorial" => options.family_factorial = true,
             "--jobs" => options.jobs = next(&mut index).map_or(f64::NAN, |v| js_number(&v)),
             "--top" => options.top = next(&mut index).map_or(f64::NAN, |v| js_number(&v)),
-            "--max-pairs" => options.max_pairs = next(&mut index).map_or(f64::NAN, |v| js_number(&v)),
-            "--max-triples" => options.max_triples = next(&mut index).map_or(f64::NAN, |v| js_number(&v)),
+            "--max-pairs" => {
+                options.max_pairs = next(&mut index).map_or(f64::NAN, |v| js_number(&v))
+            }
+            "--max-triples" => {
+                options.max_triples = next(&mut index).map_or(f64::NAN, |v| js_number(&v))
+            }
             "-h" | "--help" => return Ok(OptionsOutcome::Help),
             other => rest.push(other.to_string()),
         }
         index += 1;
     }
     if rest.len() != 1 {
-        return Err("usage: mode_sweep.ts <candidate.c> [--pairs] [--triples]".to_string());
+        return Err("usage: mode-sweep <candidate.c> [--pairs] [--triples]".to_string());
     }
     for (name, value) in [
         ("jobs", options.jobs),
@@ -1220,7 +1550,8 @@ pub fn accepted_cache(document: &Json, cache_key: &str) -> bool {
     let compiled_is_boolean = matches!(document.get("compiled"), Some(Json::Bool(_)));
     let config = document.get("config");
     let config_shaped = config.is_some_and(|config| {
-        matches!(config.get("ids"), Some(Json::Array(_))) && matches!(config.get("flags"), Some(Json::Array(_)))
+        matches!(config.get("ids"), Some(Json::Array(_)))
+            && matches!(config.get("flags"), Some(Json::Array(_)))
     });
     key_matches && compiled_is_boolean && config_shaped
 }
@@ -1254,7 +1585,10 @@ pub fn self_test() -> Result<usize, String> {
         keys.dedup();
         keys.len()
     };
-    check(unique == singles.len(), "single configuration planning is not unique")?;
+    check(
+        unique == singles.len(),
+        "single configuration planning is not unique",
+    )?;
 
     let mut explored: Vec<String> = Vec::new();
     for mode in modes() {
@@ -1270,7 +1604,10 @@ pub fn self_test() -> Result<usize, String> {
         .collect();
     check(
         missing.is_empty(),
-        &format!("routed compiler modes missing from explorer: {}", missing.join(", ")),
+        &format!(
+            "routed compiler modes missing from explorer: {}",
+            missing.join(", ")
+        ),
     )?;
 
     let pairs = pair_configs(None);
@@ -1280,19 +1617,24 @@ pub fn self_test() -> Result<usize, String> {
         }),
         "incompatible optimization levels were paired",
     )?;
-    let json = |configs: &[Config]| canonical_json(&Json::Array(configs.iter().map(Config::to_json).collect()));
+    let json = |configs: &[Config]| {
+        canonical_json(&Json::Array(configs.iter().map(Config::to_json).collect()))
+    };
     check(
         json(&pair_configs(Some(17))) == json(&pair_configs(Some(17))),
         "pair planning is nondeterministic",
     )?;
 
-    let seeds = vec!["sched-postreload-off".to_string(), "cse-gcse-off".to_string()];
+    let seeds = vec![
+        "sched-postreload-off".to_string(),
+        "cse-gcse-off".to_string(),
+    ];
     let triples = triple_configs(&seeds, Some(8));
     check(
         !triples.is_empty()
-            && !triples.iter().any(|config| {
-                config.ids.iter().filter(|id| seeds.contains(id)).count() < 2
-            }),
+            && !triples
+                .iter()
+                .any(|config| config.ids.iter().filter(|id| seeds.contains(id)).count() < 2),
         "triple planning escaped its evidence seed",
     )?;
 
@@ -1313,18 +1655,36 @@ pub fn self_test() -> Result<usize, String> {
     )?;
 
     let reference = [0x01u8, 0x20, 0x02, 0x21];
-    let exact = classify(&reference, &reference, &[s("movs r0, #1")], &[s("movs r0, #1")]);
+    let exact = classify(
+        &reference,
+        &reference,
+        &[s("movs r0, #1")],
+        &[s("movs r0, #1")],
+    );
     check(
         exact.exact && exact.differing_halfwords == 0,
         "exact classification differs",
     )?;
-    let registers = classify(&[0x01, 0x20], &[0x01, 0x21], &[s("movs r0, #1")], &[s("movs r1, #1")]);
+    let registers = classify(
+        &[0x01, 0x20],
+        &[0x01, 0x21],
+        &[s("movs r0, #1")],
+        &[s("movs r1, #1")],
+    );
     check(
         registers.register_allocation_proxy == 1 && registers.differing_halfwords == 1,
         "register classification differs",
     )?;
-    let control_flow = classify(&[0x00, 0xe0], &[0x01, 0xe0], &[s("b.n 0x4")], &[s("b.n 0x6")]);
-    check(control_flow.control_flow_proxy, "control-flow classification differs")?;
+    let control_flow = classify(
+        &[0x00, 0xe0],
+        &[0x01, 0xe0],
+        &[s("b.n 0x4")],
+        &[s("b.n 0x6")],
+    );
+    check(
+        control_flow.control_flow_proxy,
+        "control-flow classification differs",
+    )?;
 
     let flags_json = canonical_json(&Json::Array(vec![Json::String("-O1".into())]));
     let key1 = hash(&[b"source", b"reference", flags_json.as_bytes()]);
@@ -1367,7 +1727,9 @@ pub fn self_test() -> Result<usize, String> {
         "collation no longer differs from byte order, which means it is wrong",
     )?;
     check(
-        modes().iter().all(|mode| mode.id.chars().all(|c| COLLATED_ALPHABET.contains(c))),
+        modes()
+            .iter()
+            .all(|mode| mode.id.chars().all(|c| COLLATED_ALPHABET.contains(c))),
         "a mode id uses a character the collation rank table was not calibrated for",
     )?;
 
@@ -1403,7 +1765,10 @@ mod tests {
         assert_eq!(FORK_MODES.len(), 89);
         assert_eq!(STOCK_SWITCHES.len(), 21);
         assert_eq!(modes().len(), 135);
-        assert_eq!(modes().len(), DECLARED.len() + FORK_MODES.len() + AGBCC_FLAGS.len());
+        assert_eq!(
+            modes().len(),
+            DECLARED.len() + FORK_MODES.len() + AGBCC_FLAGS.len()
+        );
     }
 
     #[test]
@@ -1428,7 +1793,8 @@ mod tests {
     #[test]
     fn collation_matches_measured_bun_order() {
         // Measured: [...set].sort((a,b)=>a.localeCompare(b)).join("")
-        let mut characters: Vec<String> = COLLATED_ALPHABET.chars().map(|c| c.to_string()).collect();
+        let mut characters: Vec<String> =
+            COLLATED_ALPHABET.chars().map(|c| c.to_string()).collect();
         characters.reverse();
         characters.sort_by(|a, b| collate(a, b));
         assert_eq!(characters.concat(), COLLATED_ALPHABET);
@@ -1436,7 +1802,10 @@ mod tests {
         // Measured: ["a-b","ab","a+b","a=b","a0b"].sort(localeCompare)
         let mut strings = vec![s("a-b"), s("ab"), s("a+b"), s("a=b"), s("a0b")];
         strings.sort_by(|a, b| collate(a, b));
-        assert_eq!(strings, vec![s("a-b"), s("a+b"), s("a=b"), s("a0b"), s("ab")]);
+        assert_eq!(
+            strings,
+            vec![s("a-b"), s("a+b"), s("a=b"), s("a0b"), s("ab")]
+        );
 
         // Measured: ["ab","a"].sort(localeCompare) === ["a","ab"]
         assert_eq!(collate("a", "ab"), std::cmp::Ordering::Less);
@@ -1470,37 +1839,16 @@ mod tests {
     }
 
     #[test]
-    fn signature_paths_reproduce_the_enoent_bug() {
-        // BUG REPRODUCED, NOT FIXED. mode_sweep.ts:466 joins ROOT/tools/<name>
-        // for five modules that all live in tools/lib/. Verified 2026-08-07:
-        //   $ bun tools/lib/mode_sweep.ts work/hand/08002e00/08002e00.c
-        //   ENOENT: no such file or directory, open
-        //     '.../alchemy/tools/alchemy_gcc.ts'   (exit 1)
-        // Regression introduced by b3ab4841b (2026-08-07), which moved the
-        // module into tools/lib/ and deepened ROOT by one but left the "tools"
-        // segment alone.
-        let root = Path::new("/repo");
-        let broken = signature_source_paths(root);
-        assert_eq!(broken[0], Path::new("/repo/tools/alchemy_gcc.ts"));
-        assert_eq!(broken.len(), 5);
-        for path in &broken {
-            assert!(!path.starts_with("/repo/tools/lib"), "the bug was fixed here but not in the TypeScript");
+    fn signature_paths_are_native_and_complete() {
+        let fake_root = Path::new("/repo");
+        let paths = signature_source_paths(fake_root);
+        assert_eq!(paths.len(), 3);
+        assert!(paths
+            .iter()
+            .all(|path| path.extension().and_then(|e| e.to_str()) == Some("rs")));
+        for path in signature_source_paths(&root()) {
+            assert!(path.exists(), "{} is missing", path.display());
         }
-        // And the real tree confirms the files are not there.
-        let real = root_or_skip();
-        if let Some(real) = real {
-            for path in signature_source_paths(&real) {
-                assert!(!path.exists(), "{} exists; re-verify the bug", path.display());
-            }
-            for path in corrected_signature_source_paths(&real) {
-                assert!(path.exists(), "{} is missing", path.display());
-            }
-        }
-    }
-
-    fn root_or_skip() -> Option<PathBuf> {
-        let candidate = root();
-        candidate.join("tools/lib/mode_sweep.ts").exists().then_some(candidate)
     }
 
     #[test]
@@ -1596,7 +1944,10 @@ mod tests {
             parse(&["a.c", "--jobs"]).unwrap_err(),
             "jobs must be a positive integer"
         );
-        assert_eq!(parse(&["a.c", "--top", "0"]).unwrap_err(), "top must be a positive integer");
+        assert_eq!(
+            parse(&["a.c", "--top", "0"]).unwrap_err(),
+            "top must be a positive integer"
+        );
         assert!(parse(&[]).is_err());
         assert!(parse(&["a.c", "b.c"]).is_err());
         assert!(matches!(parse(&["--help"]).unwrap(), OptionsOutcome::Help));
@@ -1610,9 +1961,14 @@ mod tests {
     #[test]
     fn low_concurrency_still_yields_one_job() {
         let root = Path::new("/repo");
-        for (reported, expected) in [(Some(1u32), 1.0), (Some(2), 1.0), (Some(4), 2.0), (None, 6.0), (Some(0), 6.0)] {
-            let OptionsOutcome::Parsed(options) =
-                options_of(&[s("a.c")], root, reported).unwrap()
+        for (reported, expected) in [
+            (Some(1u32), 1.0),
+            (Some(2), 1.0),
+            (Some(4), 2.0),
+            (None, 6.0),
+            (Some(0), 6.0),
+        ] {
+            let OptionsOutcome::Parsed(options) = options_of(&[s("a.c")], root, reported).unwrap()
             else {
                 panic!("expected options");
             };
@@ -1623,18 +1979,38 @@ mod tests {
     #[test]
     fn compatibility_rejects_the_documented_conflicts() {
         let table = modes();
-        let by_id = |id: &str| table.iter().find(|m| m.id == id).unwrap_or_else(|| panic!("{id}"));
+        let by_id = |id: &str| {
+            table
+                .iter()
+                .find(|m| m.id == id)
+                .unwrap_or_else(|| panic!("{id}"))
+        };
         // Two exclusive modes in one family.
         assert!(!compatible(&[by_id("opt-o1"), by_id("opt-o2")]));
         // old-agbcc excludes scheduler modes.
-        assert!(!compatible(&[by_id("compiler-old-agbcc"), by_id("sched-postreload-off")]));
+        assert!(!compatible(&[
+            by_id("compiler-old-agbcc"),
+            by_id("sched-postreload-off")
+        ]));
         // old-agbcc excludes backend modes that are not its own.
-        assert!(!compatible(&[by_id("compiler-old-agbcc"), by_id("thumb-leaf-no-lr")]));
+        assert!(!compatible(&[
+            by_id("compiler-old-agbcc"),
+            by_id("thumb-leaf-no-lr")
+        ]));
         // ... but accepts its own.
-        assert!(compatible(&[by_id("compiler-old-agbcc"), by_id("agbcc-literal-before-shift")]));
+        assert!(compatible(&[
+            by_id("compiler-old-agbcc"),
+            by_id("agbcc-literal-before-shift")
+        ]));
         // supportedCompilerFamilies gates on the selected compiler.
-        assert!(!compatible(&[by_id("compiler-gcc2951"), by_id("reg-peephole2-off")]));
-        assert!(compatible(&[by_id("compiler-gcc296"), by_id("reg-peephole2-off")]));
+        assert!(!compatible(&[
+            by_id("compiler-gcc2951"),
+            by_id("reg-peephole2-off")
+        ]));
+        assert!(compatible(&[
+            by_id("compiler-gcc296"),
+            by_id("reg-peephole2-off")
+        ]));
     }
 
     #[test]
@@ -1645,11 +2021,22 @@ mod tests {
         // leave the input order instead.
         let ranks: Vec<(String, Rank)> = modes()
             .iter()
-            .map(|mode| (mode.id.clone(), Rank { exact: false, floor: f64::INFINITY }))
+            .map(|mode| {
+                (
+                    mode.id.clone(),
+                    Rank {
+                        exact: false,
+                        floor: f64::INFINITY,
+                    },
+                )
+            })
             .collect();
         let ranked = ranked_pair_configs(&ranks, 32);
         let plain = pair_configs(Some(32));
-        assert_eq!(ranked, plain, "NaN quality must fall through to collation order");
+        assert_eq!(
+            ranked, plain,
+            "NaN quality must fall through to collation order"
+        );
         assert!(!ranked.is_empty());
     }
 
@@ -1661,13 +2048,19 @@ mod tests {
             .map(|mode| {
                 (
                     mode.id.clone(),
-                    Rank { exact: mode.id == "cse-gcse-off", floor: 100.0 },
+                    Rank {
+                        exact: mode.id == "cse-gcse-off",
+                        floor: 100.0,
+                    },
                 )
             })
             .collect();
         let ranked = ranked_pair_configs(&ranks, 8);
         assert!(
-            ranked.iter().take(4).all(|c| c.ids.iter().any(|id| id == "cse-gcse-off")),
+            ranked
+                .iter()
+                .take(4)
+                .all(|c| c.ids.iter().any(|id| id == "cse-gcse-off")),
             "an exact single must dominate the pair ranking"
         );
     }
@@ -1684,7 +2077,11 @@ mod tests {
         assert_eq!(pairs, pair_configs(None));
 
         let factorial = historical_family_factorial_configs();
-        assert!(factorial.len() > 100, "factorial plan collapsed to {}", factorial.len());
+        assert!(
+            factorial.len() > 100,
+            "factorial plan collapsed to {}",
+            factorial.len()
+        );
     }
 
     #[test]
@@ -1697,7 +2094,10 @@ mod tests {
         );
         let explored: Vec<String> = modes().into_iter().flat_map(|m| m.add_flags).collect();
         for flag in &flags {
-            assert!(explored.contains(flag), "routed flag {flag} is unreachable by any sweep");
+            assert!(
+                explored.contains(flag),
+                "routed flag {flag} is unreachable by any sweep"
+            );
         }
     }
 

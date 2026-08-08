@@ -1,7 +1,7 @@
 //! JavaScript number semantics.
 //!
 //! There is one numeric type in JavaScript and it is `f64`. Every count, size
-//! and score in `match_m2c.ts` is that type, and three places in this port
+//! and score historically use that type, and three places in this crate
 //! depend on behaviour that `usize`/`i64` do not have: `Number(undefined)` is
 //! `NaN` and poisons the score, `Math.max`/`Math.abs` propagate that `NaN`, and
 //! the comparator built on top treats a `NaN` result as "not less than", which
@@ -32,9 +32,9 @@ pub fn hex8(value: f64) -> String {
 /// Fullwidth digits and Arabic-Indic digits are rejected here as they are there.
 pub fn parse_hex(value: &str) -> Result<f64, String> {
     let ok = !value.is_empty()
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b) || (b'A'..=b'F').contains(&b));
+        && value.bytes().all(|b| {
+            b.is_ascii_digit() || (b'a'..=b'f').contains(&b) || (b'A'..=b'F').contains(&b)
+        });
     if !ok {
         return Err(format!("invalid hexadecimal value: {value}"));
     }
@@ -137,7 +137,9 @@ pub fn to_js_number_string(value: f64) -> Result<String, String> {
         return Err(format!("non-integral number in report: {value}"));
     }
     if value.abs() >= 9.007_199_254_740_992e15 {
-        return Err(format!("number outside the exactly-representable integer range: {value}"));
+        return Err(format!(
+            "number outside the exactly-representable integer range: {value}"
+        ));
     }
     let integral = value as i64;
     // `-0` stringifies as `0`.

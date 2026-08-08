@@ -73,7 +73,10 @@ mod tests {
     use super::*;
 
     fn sample() -> Vec<u8> {
-        [0u16, 1, 0x1234, 0xabcd, 0xffff, 2].iter().flat_map(|w| w.to_le_bytes()).collect()
+        [0u16, 1, 0x1234, 0xabcd, 0xffff, 2]
+            .iter()
+            .flat_map(|w| w.to_le_bytes())
+            .collect()
     }
 
     #[test]
@@ -91,10 +94,22 @@ mod tests {
     fn bad_input_is_rejected_with_its_line() {
         assert_eq!(export_pairs(&[]), Err(PairError::NotWholePairs));
         assert_eq!(export_pairs(&[0; 6]), Err(PairError::NotWholePairs));
-        assert_eq!(import_pairs("0x1\n"), Err(PairError::ExpectedTwoValues { line: 1 }));
-        assert_eq!(import_pairs("0x1 0x2 0x3\n"), Err(PairError::ExpectedTwoValues { line: 1 }));
-        assert_eq!(import_pairs("0x1 nope\n"), Err(PairError::InvalidValue { line: 1 }));
-        assert_eq!(import_pairs("0x1 0x10000\n"), Err(PairError::OutOfRange { line: 1 }));
+        assert_eq!(
+            import_pairs("0x1\n"),
+            Err(PairError::ExpectedTwoValues { line: 1 })
+        );
+        assert_eq!(
+            import_pairs("0x1 0x2 0x3\n"),
+            Err(PairError::ExpectedTwoValues { line: 1 })
+        );
+        assert_eq!(
+            import_pairs("0x1 nope\n"),
+            Err(PairError::InvalidValue { line: 1 })
+        );
+        assert_eq!(
+            import_pairs("0x1 0x10000\n"),
+            Err(PairError::OutOfRange { line: 1 })
+        );
         assert_eq!(import_pairs("# only a comment\n"), Err(PairError::Empty));
     }
 }

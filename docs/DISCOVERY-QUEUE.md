@@ -27,9 +27,9 @@ project progress; the headline metric remains Full-C Byte Share.
 
 ## 1. Where the 395,816 bytes live
 
-`asm_c_debt_bytes` is not a separate measurement. `tools/make/build_full.ts`
+`asm_c_debt_bytes` is not a separate measurement. The Rust `build-full` tool
 partitions every assembly region by its `retention` field:
-`assemblySourceAccounting()` sums the five debt retentions (`c_candidate`,
+its assembly accounting sums the five debt retentions (`c_candidate`,
 `split_first`, `merge_with_owner`, `merge_with_function_owner`,
 `merge_with_continuations`) into `cDebtBytes`, and the three keep retentions
 (`keep_asm`, `keep_structured_asm`, `adjacent_section_alignment`) into

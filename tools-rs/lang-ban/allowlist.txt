@@ -67,7 +67,6 @@ tools/make/audio_engine_data.ts
 tools/make/audio_wave.ts
 tools/make/battle_effect_data.ts
 tools/make/build_assets.ts
-tools/make/build_full.ts
 tools/make/byte_henkan.ts
 tools/make/byte_value_regions.ts
 tools/make/character_catalog.ts

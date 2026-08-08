@@ -1,0 +1,18 @@
+[workspace]
+
+[package]
+name = "build-assets"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alignment-tail = { path = "../alignment-tail" }
+audio-engine-data = { path = "../audio-engine-data" }
+archive-asset = { path = "../archive-asset" }
+extract-resource = { path = "../extract-resource" }
+gba-header = { path = "../gba-header" }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[[bin]]
+name = "build-assets"
+path = "src/main.rs"

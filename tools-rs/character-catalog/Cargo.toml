@@ -1,0 +1,18 @@
+[workspace]
+
+[package]
+name = "character-catalog"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "character_catalog"
+path = "src/lib.rs"
+
+[[bin]]
+name = "character-catalog"
+path = "src/main.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+serde_json = { version = "1", features = ["preserve_order"] }

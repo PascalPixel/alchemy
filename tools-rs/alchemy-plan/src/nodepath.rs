@@ -155,7 +155,10 @@ mod tests {
         // slice removes it. `Path::extension` reports an empty extension, which
         // would remove nothing and produce a different intermediate filename.
         assert_eq!(extname("a."), ".");
-        assert_eq!(Path::new("a.").extension().and_then(|e| e.to_str()), Some(""));
+        assert_eq!(
+            Path::new("a.").extension().and_then(|e| e.to_str()),
+            Some("")
+        );
 
         // A dotfile is all stem to Node and all stem to Rust, but a leading-dot
         // *directory* is where the two part company on basename.

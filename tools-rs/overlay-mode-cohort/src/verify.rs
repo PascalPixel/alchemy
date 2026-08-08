@@ -1,11 +1,11 @@
 //! `run` and `verifyOverlayCandidate`: the binutils boundary.
 //!
-//! `match_m2c`'s verifier intentionally makes the candidate filename double as
+//! `candidate_compiler`'s verifier intentionally makes the candidate filename double as
 //! its routing identity. Overlay candidates cannot do that: their established
 //! source name contains both overlay and address. This local adapter keeps the
 //! address-stemmed scratch input for linking while asking the compiler policy
 //! to route from the original candidate path. It is otherwise the same public
-//! compile/link boundary used by `match_m2c`.
+//! compile/link boundary used by `candidate_compiler`.
 
 use crate::jsops::{js_parse_int, js_slice_to, js_split_lines, js_split_whitespace, js_subarray_to, js_trim};
 use crate::paths::root;

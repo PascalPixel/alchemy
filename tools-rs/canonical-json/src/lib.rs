@@ -118,7 +118,10 @@ mod tests {
     #[test]
     fn all_three_migration_spellings_are_accepted() {
         let value = json!({"a": [1, 2]});
-        assert!(is_canonical_json_text(&format!("{}\n", canonical_json(&value)), &value));
+        assert!(is_canonical_json_text(
+            &format!("{}\n", canonical_json(&value)),
+            &value
+        ));
         assert!(is_canonical_json_text(
             &format!("{}\n", serde_json::to_string(&value).unwrap()),
             &value

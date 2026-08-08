@@ -36,8 +36,15 @@ pub struct Finding {
 
 /// Lines that construct a digest. A version literal only matters in a key.
 fn is_key_context(line: &str) -> bool {
-    const MARKERS: [&str; 7] =
-        ["update(", "cryptohasher", "cachekey", "cache_key", "digest", "hasher", "sha256"];
+    const MARKERS: [&str; 7] = [
+        "update(",
+        "cryptohasher",
+        "cachekey",
+        "cache_key",
+        "digest",
+        "hasher",
+        "sha256",
+    ];
     let lowered = line.to_ascii_lowercase();
     MARKERS.iter().any(|marker| lowered.contains(marker))
 }
@@ -65,7 +72,9 @@ fn has_version_literal(line: &str) -> bool {
         }
         // Walk back to the last `-v` inside the run and require digits after it.
         let run = &line[run_start..at];
-        let Some(marker) = run.to_ascii_lowercase().rfind("-v") else { continue };
+        let Some(marker) = run.to_ascii_lowercase().rfind("-v") else {
+            continue;
+        };
         let mut digits = run_start + marker + 2;
         let digit_start = digits;
         while digits < bytes.len() && bytes[digits].is_ascii_digit() {
@@ -99,7 +108,11 @@ pub fn find_violations(file: &str, text: &str) -> Vec<Finding> {
             continue;
         }
         if is_key_context(line) && has_version_literal(line) {
-            found.push(Finding { file: file.to_string(), line: index + 1, text: line.to_string() });
+            found.push(Finding {
+                file: file.to_string(),
+                line: index + 1,
+                text: line.to_string(),
+            });
         }
     }
     found
@@ -111,13 +124,20 @@ pub fn find_violations(file: &str, text: &str) -> Vec<Finding> {
 /// output, not tooling.
 pub fn scannable_files(directory: &Path) -> io::Result<Vec<String>> {
     fn walk(at: &Path, prefix: &str, into: &mut Vec<String>) -> io::Result<()> {
-        let mut entries: Vec<PathBuf> =
-            fs::read_dir(at)?.filter_map(Result::ok).map(|entry| entry.path()).collect();
+        let mut entries: Vec<PathBuf> = fs::read_dir(at)?
+            .filter_map(Result::ok)
+            .map(|entry| entry.path())
+            .collect();
         entries.sort();
         for path in entries {
-            let Some(name) = path.file_name().and_then(|name| name.to_str()) else { continue };
-            let relative =
-                if prefix.is_empty() { name.to_string() } else { format!("{prefix}/{name}") };
+            let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+                continue;
+            };
+            let relative = if prefix.is_empty() {
+                name.to_string()
+            } else {
+                format!("{prefix}/{name}")
+            };
             if path.is_dir() {
                 if name == "target" || name == "node_modules" {
                     continue;
@@ -182,15 +202,24 @@ mod tests {
 
     #[test]
     fn the_rust_spellings_are_understood() {
-        let rust = format!("hasher.update(format!(\"overlay-c-{}:{{address:x}}\").as_bytes());", "v3");
-        assert_eq!(find_violations("t.rs", &rust).len(), 1, "a Rust cache key must be caught too");
-        let fixed = "hasher.update(format!(\"overlay-c:{}:{address:x}\", self_digest()).as_bytes());";
+        let rust = format!(
+            "hasher.update(format!(\"overlay-c-{}:{{address:x}}\").as_bytes());",
+            "v3"
+        );
+        assert_eq!(
+            find_violations("t.rs", &rust).len(),
+            1,
+            "a Rust cache key must be caught too"
+        );
+        let fixed =
+            "hasher.update(format!(\"overlay-c:{}:{address:x}\", self_digest()).as_bytes());";
         assert_eq!(find_violations("t.rs", fixed), Vec::new());
     }
 
     #[test]
     fn rust_and_typescript_are_both_scanned_and_target_is_skipped() {
-        let dir = std::env::temp_dir().join(format!("alchemy-cache-key-lint-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("alchemy-cache-key-lint-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(dir.join("sub")).unwrap();
         fs::create_dir_all(dir.join("target")).unwrap();
@@ -200,7 +229,10 @@ mod tests {
         fs::write(dir.join("sub").join("c.rs"), b"").unwrap();
         fs::write(dir.join("target").join("build.rs"), b"").unwrap();
 
-        assert_eq!(scannable_files(&dir).unwrap(), vec!["a.rs", "b.ts", "sub/c.rs"]);
+        assert_eq!(
+            scannable_files(&dir).unwrap(),
+            vec!["a.rs", "b.ts", "sub/c.rs"]
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 }

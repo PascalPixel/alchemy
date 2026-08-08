@@ -354,11 +354,9 @@ pub fn source_to_assembly_plan(
         };
         match family {
             ResolvedFamily::OldAgbcc => validate_agbcc_bundle()?,
-            ResolvedFamily::PretEarlyThumb => validate_experimental_compiler(
-                family.as_str(),
-                &driver,
-                PRET_EARLY_THUMB_EXPECTED,
-            )?,
+            ResolvedFamily::PretEarlyThumb => {
+                validate_experimental_compiler(family.as_str(), &driver, PRET_EARLY_THUMB_EXPECTED)?
+            }
             ResolvedFamily::Gcc3 => {
                 validate_experimental_compiler(family.as_str(), &driver, GCC3_EXPECTED)?
             }
@@ -624,11 +622,8 @@ pub const MUTATED_COMPILER_FLAGS_LITERALS: [&str; 1] =
 /// entry is the trailing-slash defect documented on
 /// [`inferred_preprocessed_output`], quoted here exactly as written so the gate
 /// notices if someone quietly repairs it upstream.
-pub const INFERRED_PREPROCESSED_OUTPUT_LITERALS: [&str; 3] = [
-    "",
-    "${output}.i",
-    "${output.slice(0, -extension.length)}.i",
-];
+pub const INFERRED_PREPROCESSED_OUTPUT_LITERALS: [&str; 3] =
+    ["", "${output}.i", "${output.slice(0, -extension.length)}.i"];
 
 /// String literals of `directPreprocessorCommand`, in source order -- which for
 /// this function is very nearly the emitted argv.
@@ -706,10 +701,7 @@ mod tests {
             remove_flags: strings(&["-O1"]),
         };
         let error = mutated_compiler_flags(&[], Some(&mutations)).expect_err("must reject");
-        assert_eq!(
-            error,
-            "compiler flag cannot be both added and removed: -O1"
-        );
+        assert_eq!(error, "compiler flag cannot be both added and removed: -O1");
     }
 
     #[test]

@@ -232,7 +232,10 @@ mod tests {
 
     #[test]
     fn self_test_passes_and_reports() {
-        assert_eq!(self_test().unwrap(), "self-test=ok targets=2 default=gs1-en");
+        assert_eq!(
+            self_test().unwrap(),
+            "self-test=ok targets=2 default=gs1-en"
+        );
     }
 
     #[test]
@@ -284,7 +287,9 @@ mod tests {
 
     #[test]
     fn near_miss_ids_are_rejected() {
-        for invalid in ["", "gs1", "GS1-en", "gs1-en ", " gs1-en", "gs2-ja", "gs2-EN"] {
+        for invalid in [
+            "", "gs1", "GS1-en", "gs1-en ", " gs1-en", "gs2-ja", "gs2-EN",
+        ] {
             assert!(
                 parse_decomp_target(invalid).is_err(),
                 "{invalid:?} was accepted"

@@ -74,9 +74,14 @@ pub fn inspect_alignment_tail(
         return fail("alignment tail is outside its bounded extent");
     }
     if data.iter().all(|byte| *byte == data[0]) {
-        return Ok(AlignmentTail::Fill { size: data.len(), value: data[0] });
+        return Ok(AlignmentTail::Fill {
+            size: data.len(),
+            value: data[0],
+        });
     }
-    Ok(AlignmentTail::Bytes { values: data.to_vec() })
+    Ok(AlignmentTail::Bytes {
+        values: data.to_vec(),
+    })
 }
 
 fn exact_keys(
@@ -158,7 +163,13 @@ mod tests {
     fn round_trips_both_encodings() {
         let fill = inspect_alignment_tail(&[0xa5, 0xa5, 0xa5], DEFAULT_MAXIMUM).unwrap();
         let bytes = inspect_alignment_tail(&[0x12, 0x34], DEFAULT_MAXIMUM).unwrap();
-        assert_eq!(fill, AlignmentTail::Fill { size: 3, value: 0xa5 });
+        assert_eq!(
+            fill,
+            AlignmentTail::Fill {
+                size: 3,
+                value: 0xa5
+            }
+        );
         assert_eq!(build_alignment_tail(&fill), vec![0xa5, 0xa5, 0xa5]);
         assert_eq!(build_alignment_tail(&bytes), vec![0x12, 0x34]);
     }
@@ -179,22 +190,33 @@ mod tests {
             json!([2, "fill", 0]),
         ];
         for case in &cases {
-            assert!(parse_alignment_tail(case, 2, DEFAULT_MAXIMUM, "tail").is_err(), "{case}");
+            assert!(
+                parse_alignment_tail(case, 2, DEFAULT_MAXIMUM, "tail").is_err(),
+                "{case}"
+            );
         }
         let over = json!({"size": 1, "encoding": "fill", "value": 256});
         assert!(parse_alignment_tail(&over, 1, DEFAULT_MAXIMUM, "tail").is_err());
         let valid = json!({"size": 2, "encoding": "bytes", "values": [1, 2]});
-        assert!(parse_alignment_tail(&valid, 2, 1, "tail").is_err(), "size must respect maximum");
+        assert!(
+            parse_alignment_tail(&valid, 2, 1, "tail").is_err(),
+            "size must respect maximum"
+        );
     }
 
     #[test]
     fn serialized_key_order_matches_the_tracked_files() {
-        let fill = AlignmentTail::Fill { size: 3, value: 0xa5 };
+        let fill = AlignmentTail::Fill {
+            size: 3,
+            value: 0xa5,
+        };
         assert_eq!(
             serde_json::to_string(&fill).unwrap(),
             r#"{"size":3,"encoding":"fill","value":165}"#
         );
-        let bytes = AlignmentTail::Bytes { values: vec![0x12, 0x34] };
+        let bytes = AlignmentTail::Bytes {
+            values: vec![0x12, 0x34],
+        };
         assert_eq!(
             serde_json::to_string(&bytes).unwrap(),
             r#"{"size":2,"encoding":"bytes","values":[18,52]}"#
@@ -205,6 +227,9 @@ mod tests {
     fn parsed_values_survive_a_round_trip_through_json() {
         let tail = inspect_alignment_tail(&[0x12, 0x34], DEFAULT_MAXIMUM).unwrap();
         let text = serde_json::to_value(&tail).unwrap();
-        assert_eq!(parse_alignment_tail(&text, 2, DEFAULT_MAXIMUM, "tail").unwrap(), tail);
+        assert_eq!(
+            parse_alignment_tail(&text, 2, DEFAULT_MAXIMUM, "tail").unwrap(),
+            tail
+        );
     }
 }

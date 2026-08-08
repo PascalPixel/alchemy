@@ -19,30 +19,45 @@ const HERE = dirname(Bun.fileURLToPath(import.meta.url));
 const ROOT = dirname(dirname(HERE));
 
 const RUST_SUBCOMMANDS: Record<string, string> = {
+  audio_engine_data: "tools-rs/audio-engine-data/target/release/audio-engine-data",
   audio_wave: "tools-rs/audio-wave/target/release/audio-wave",
+  archive_asset: "tools-rs/archive-asset/target/release/archive-asset",
   battle_effect_data: "tools-rs/battle-effect-data/target/release/battle-effect-data",
   build_asm: "tools-rs/build-asm/target/release/build-asm",
+  build_assets: "tools-rs/build-assets/target/release/build-assets",
   build_claimed: "tools-rs/build-claimed/target/release/build-claimed",
   build_full: "tools-rs/build-full/target/release/build-full",
   build_rom: "tools-rs/build-rom/target/release/build-rom",
   build_semantic: "tools-rs/build-semantic/target/release/build-semantic",
   byte_value_regions: "tools-rs/target/release/byte-value-regions",
+  character_catalog: "tools-rs/character-catalog/target/release/character-catalog",
   encounter_data: "tools-rs/encounter-data/target/release/encounter-data",
   early_runtime_data: "tools-rs/early-runtime-data/target/release/early-runtime-data",
+  gba_header: "tools-rs/gba-header/target/release/gba-header",
   byte_henkan: "tools-rs/byte-henkan/target/release/byte-henkan",
   localization_tables: "tools-rs/localization-tables/target/release/localization-tables",
   late_runtime_residual: "tools-rs/late-runtime-residual/target/release/late-runtime-residual",
+  localization_font: "tools-rs/localization-font/target/release/localization-font",
+  kind1_map_grid: "tools-rs/kind1-map-grid/target/release/kind1-map-grid",
+  map_container_components: "tools-rs/map-container-components/target/release/map-container-components",
   message_archive: "tools-rs/message-archive/target/release/message_archive",
   music: "tools-rs/music/target/release/music",
   pairtable: "tools-rs/target/release/pairtable",
   resource_directory: "tools-rs/resource-directory/target/release/resource-directory",
+  resource_01c: "tools-rs/resource-01c/target/release/resource-01c",
+  resource_3ce: "tools-rs/resource-3ce/target/release/resource-3ce",
+  resource_d1_d3: "tools-rs/resource-d1-d3/target/release/resource-d1-d3",
+  resource_byte_canvases: "tools-rs/resource-byte-canvases/target/release/resource-byte-canvases",
+  resource_5: "tools-rs/resource-5/target/release/resource-5",
+  runtime_support_data: "tools-rs/runtime-support-data/target/release/runtime-support-data",
+  simple_resources: "tools-rs/simple-resources/target/release/simple-resources",
   wordstream: "tools-rs/target/release/wordstream",
 };
 
 export function subcommands(): string[] {
   return [
-    ...readdirSync(HERE)
-      .filter((name) => name.endsWith(".ts") && name !== "index.ts")
+      ...readdirSync(HERE)
+      .filter((name) => name.endsWith(".ts") && name !== "index.ts" && name !== "character_catalog.ts" && name !== "simple_resources.ts" && name !== "localization_font.ts" && name !== "resource_3ce.ts" && name !== "resource_d1_d3.ts" && name !== "resource_byte_canvases.ts" && name !== "resource_5.ts" && name !== "kind1_map_grid.ts" && name !== "map_container_components.ts" && name !== "runtime_support_data.ts")
       .map((name) => name.slice(0, -3)),
     ...Object.keys(RUST_SUBCOMMANDS),
   ].sort();

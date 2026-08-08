@@ -26,14 +26,21 @@ impl AssetPaths {
                     .collect()
             })
             .unwrap_or_default();
-        Self { root, graphics_listing }
+        Self {
+            root,
+            graphics_listing,
+        }
     }
 
     /// map/ へ移設済みの資源を優先し、未移設の資源は従来位置へ退避する。
     /// 返り値はROOT基準の相対パス。
     pub fn resource_graphics_dir(&self, name: &str) -> String {
         let relocated = format!("map_resource_{name}_");
-        if self.graphics_listing.iter().any(|file| file.starts_with(&relocated)) {
+        if self
+            .graphics_listing
+            .iter()
+            .any(|file| file.starts_with(&relocated))
+        {
             return format!("assets/graphics/map_resource_{name}");
         }
         format!("assets/graphics/resource_{name}")
@@ -45,8 +52,10 @@ impl AssetPaths {
     pub fn character_bank_path(&self, family_root: impl AsRef<Path>, plan: &str) -> PathBuf {
         let flat = plan.replace('/', "_");
         for semantic in ["battle", "field"] {
-            let relocated =
-                self.root.join("assets/graphics").join(format!("{semantic}_characters_{flat}"));
+            let relocated = self
+                .root
+                .join("assets/graphics")
+                .join(format!("{semantic}_characters_{flat}"));
             if relocated.exists() {
                 return relocated;
             }
@@ -65,7 +74,8 @@ mod tests {
     use super::*;
 
     fn scratch(name: &str) -> PathBuf {
-        let dir = std::env::temp_dir().join(format!("alchemy-asset-paths-{name}-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("alchemy-asset-paths-{name}-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(dir.join("assets/graphics")).unwrap();
         dir
@@ -76,15 +86,24 @@ mod tests {
         let root = scratch("relocated");
         fs::write(root.join("assets/graphics/map_resource_37b_0.png"), b"").unwrap();
         let paths = AssetPaths::new(&root);
-        assert_eq!(paths.resource_graphics_dir("37b"), "assets/graphics/map_resource_37b");
-        assert_eq!(paths.resource_graphics_dir("37c"), "assets/graphics/resource_37c");
+        assert_eq!(
+            paths.resource_graphics_dir("37b"),
+            "assets/graphics/map_resource_37b"
+        );
+        assert_eq!(
+            paths.resource_graphics_dir("37c"),
+            "assets/graphics/resource_37c"
+        );
         fs::remove_dir_all(&root).unwrap();
     }
 
     #[test]
     fn a_missing_graphics_directory_resolves_to_the_old_layout() {
         let paths = AssetPaths::new("/nonexistent-alchemy-root");
-        assert_eq!(paths.resource_graphics_dir("001"), "assets/graphics/resource_001");
+        assert_eq!(
+            paths.resource_graphics_dir("001"),
+            "assets/graphics/resource_001"
+        );
     }
 
     #[test]
@@ -95,11 +114,17 @@ mod tests {
         let paths = AssetPaths::new(&root);
 
         // Nothing relocated: fall through to the plan under the family root.
-        assert_eq!(paths.character_bank_path(&family, "chr_001/bank.json"), family.join("chr_001/bank.json"));
+        assert_eq!(
+            paths.character_bank_path(&family, "chr_001/bank.json"),
+            family.join("chr_001/bank.json")
+        );
 
         // A flattened copy under the family root is preferred over the plan.
         fs::write(family.join("chr_001_bank.json"), b"").unwrap();
-        assert_eq!(paths.character_bank_path(&family, "chr_001/bank.json"), family.join("chr_001_bank.json"));
+        assert_eq!(
+            paths.character_bank_path(&family, "chr_001/bank.json"),
+            family.join("chr_001_bank.json")
+        );
 
         // field beats local, battle beats field.
         let graphics = root.join("assets/graphics");

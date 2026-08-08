@@ -28,7 +28,3 @@ path = "src/lib.rs"
 [[bin]]
 name = "alchemy-selftest"
 path = "src/main.rs"
-
-[[bin]]
-name = "selftest-corpus"
-path = "src/bin/selftest_corpus.rs"

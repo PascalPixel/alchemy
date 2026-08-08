@@ -1,6 +1,5 @@
 # Grandfathered banned-language files under tools/ and tools-rs/.
 # This list may shrink and must never grow. See AGENTS.md, Hard rules.
-tools-rs/zlib/differential.ts
 tools/assets/alchemist.ts
 tools/assets/bl_site_symbols.ts
 tools/assets/index.ts

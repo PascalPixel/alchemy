@@ -28,7 +28,7 @@
  * The owner at 0x020005f4 performs the identical store.
  *
  * Call accounting: 39 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_38d 06e0 --json`: Func_0808a080
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_38d 06e0 --json`: Func_0808a080
  * x12, Func_080770c0 x9, Func_080091e0 x4, Func_0808a0f0 x4, Func_08009190
  * x2, Func_080091c0 x2, and one each of Func_080770c8, Func_080770d0,
  * Func_020008c0, Func_0200179c, Func_020019b0, Func_020021bc - 12 distinct

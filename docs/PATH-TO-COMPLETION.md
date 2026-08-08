@@ -11,7 +11,7 @@ figure is reviewed semantic coverage, not the Full-C headline or a completion
 forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
 
 The primary integration point is `main`. The main-executable reviewed semantic-C
-census is closed and enforced by `bun run semantic:check`; exact-C replacement
+census is closed and enforced by `make semantic-check`; exact-C replacement
 remains the principal completion task.
 
 The latest exact promotion is main-image owner `0807a664`: a clean 316-byte C
@@ -28,7 +28,7 @@ escape hatch.
 Everything below this paragraph is a historical planning study from 2026-07-28.
 It is retained for the measured compiler and queue evidence, not as a live
 counter or scheduling order. Use [`../HANDOVER.md`](../HANDOVER.md) for current
-work and `bun run progress` plus `bun run coverage:check` for current numbers.
+work and `make progress` plus `make coverage-check` for current numbers.
 
 The main-image diagnostic ledger contains 1,369 exact-C regions and 631
 `c_candidate` regions. These region counts are useful scheduling diagnostics,
@@ -49,7 +49,7 @@ compiled exactly with public `old_agbcc`, disproving its earlier
 `nonstandard_thumb_branch_module` classification.** This file exists because a
 remaining-region headline is a count, not a plan, and because two family sizes published
 earlier today were both wrong from lazy fingerprints. Everything below is
-measured by `tools-rs/remaining-survey/target/release/remaining-survey`, which decodes each region and resolves
+measured by `tools/remaining-survey/target/release/remaining-survey`, which decodes each region and resolves
 pc-relative loads against the constant pool before classifying anything.
 
 ## Observed rate
@@ -959,7 +959,7 @@ is **114,526 / 1,338,242 executable bytes (8.56%)**.
 
 ## Bounded compiler-configuration explorer
 
-`tools-rs/mode-sweep` now treats compiler search as evidence collection rather
+`tools/mode-sweep` now treats compiler search as evidence collection rather
 than source promotion. It runs the routed GCC 2.96/Thumb configuration and
 historically meaningful single changes first, then compatible pairs on request.
 Triples are considered only when a pair improves every single-mode result and
@@ -986,7 +986,7 @@ selects the shift first. Reversing that tie break globally would damage five
 measured inverse-order functions, so this is recorded as a compiler floor
 rather than routed through a one-function backend flag.
 
-`tools-rs/mode-cohort/target/release/mode-cohort` now applies the same cached phased explorer to a group of
+`tools/mode-cohort/target/release/mode-cohort` now applies the same cached phased explorer to a group of
 semantically verified candidates and reports only configurations that make
 more than one member exact. Its first bounded cohort contained six strong
 near-matches; it found zero shared exact configurations, so compiler work
@@ -1059,7 +1059,7 @@ higher-throughput semantic-C route:
    live 184-byte frame reaches the sole epilogue at `080e660a`. The complete
    span is 7,762 bytes including embedded data and contains 231 static calls,
    more than ten times the work implied by the queue.
-5. Verify each coherent cohort with `bun run verify`. Semantic C does not weaken
+5. Verify each coherent cohort with `make verify`. Semantic C does not weaken
    the exact standard: exact builds must remain byte-identical and source-only
    ownership must remain complete.
 

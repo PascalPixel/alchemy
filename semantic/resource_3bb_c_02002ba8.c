@@ -18,7 +18,7 @@
  * (r0, r1, r2), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * `current = *Data_03001e68` is the same single-dereference global
  * resource_3bb_c_02002d84.c documents. The owner-record[5]/[0x11]

@@ -22,7 +22,7 @@
  * units, or 0.  The cross-check is free and it is what settles the interface.
  *
  * CALL ACCOUNTING.  Five `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`: Func_0808a080
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3ba --annotate`: Func_0808a080
  * once, Func_08000128 twice, Func_020038b0 twice.  The inventory's `calls=5`
  * agrees.  The disassembler's own `bl` annotations are unusable, as always on
  * an overlay, because an overlay `bl` stores `target_offset - 2`.

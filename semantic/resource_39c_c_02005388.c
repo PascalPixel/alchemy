@@ -14,7 +14,7 @@
  * arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * The two spawns are NOT the same shape: the first spawn's tail also
  * updates the owner record's field-9 flag byte (`(field9 & ~0xC) | 4`) and

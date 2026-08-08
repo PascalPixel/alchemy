@@ -1,0 +1,16 @@
+[workspace]
+
+[package]
+name = "alchemy-symbols"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "alchemy_symbols"
+path = "src/lib.rs"
+
+[dependencies]
+# Sibling crate, not a third-party dependency: `sourceKey` was already ported
+# there and a third copy of it is exactly the hand-sync problem this effort is
+# trying to end.
+alchemy-routing = { path = "../alchemy-routing" }

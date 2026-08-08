@@ -6,7 +6,7 @@
  * through the interworking return at 0x020008d4, plus a four-word literal pool
  * at 0x020008e4-0x020008f3).  r0 is the popped return address, so `void`.
  *
- * All 18 call sites were resolved with `tools/lib/overlay_call_targets.ts`
+ * All 18 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`
  * (18 = the inventory's `calls` field): 8 import veneers, 1 call to the
  * byte-exact Func_0200079c, and 9 calls to this overlay's own scene routines.
  * The last nine are the two-arm scene selection at the tail, and they are

@@ -12,7 +12,7 @@
  * overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * The owner-record[9] update (`(field9 & ~0xc) | 4`) is the same idiom
  * resource_39c_c_02005388.c/02005458.c use elsewhere in this overlay.

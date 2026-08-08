@@ -14,7 +14,7 @@
  *
  * Published population (sweep B): no `bl` anywhere in the image targets
  * it. All 23 `bl` sites resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39e 518 658`; the tool
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 518 658`; the tool
  * reports sites=23 and 23 bl lines were transcribed, so the site
  * arithmetic agrees.
  *

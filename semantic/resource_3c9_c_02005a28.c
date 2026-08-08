@@ -20,7 +20,7 @@
  *
  * `arg0` is never read before being overwritten (r0 takes the constant
  * 23 as the first data instruction), so void in, void out. Call sites
- * resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9 5a28
+ * resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9 5a28
  * 5b90`'s `+2` rule: `sites=14 veneer=14`, and fourteen are
  * transcribed -- the tool's count and the transcription agree, which is
  * the invariant asserted on the output.

@@ -32,7 +32,7 @@
  *   0x0200a070, 0x0200a0d0 -> past the image end, i.e. the overlay's scratch
  *      EWRAM immediately above it.  These are written, never read here.
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x020016f8 -> veneer 0x0200193c -> Func_0808a080
  *   0x020016fe -> veneer 0x0200188c -> Func_08009080

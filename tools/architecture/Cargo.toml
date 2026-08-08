@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "architecture"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+documented = { path = "../documented" }
+dispatch = { path = "../dispatch" }
+
+[[bin]]
+name = "architecture"
+path = "src/main.rs"

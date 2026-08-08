@@ -32,7 +32,7 @@
  * table) is written once above the branch, exactly as the assembly does.
  *
  * Call accounting: 8 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c6 0158` - 7 distinct targets,
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c6 0158` - 7 distinct targets,
  * all import veneers, no prologue and no `call_via` site.  The multiset of
  * `Func_...(` calls below equals that multiset: Func_08009178 x2 (one per
  * arm) and one each of Func_080f9010, Func_0808a010, Func_0808a080,

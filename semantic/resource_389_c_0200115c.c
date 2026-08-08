@@ -26,7 +26,7 @@
  * 0x00000869).  180 code + 12 pool = 192, exactly the inventory row's figures.
  *
  * Calls: 18 sites against an advertised 17 - a beat, the safe direction.
- * Per-target multiset from `bun tools/lib/overlay_call_targets.ts resource_389
+ * Per-target multiset from `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_389
  * 115c`:
  *   Func_0808a0d0  x3   0x11ca 0x11d6 0x11e4
  *   Func_0808a080  x2   0x11a6 0x11f4

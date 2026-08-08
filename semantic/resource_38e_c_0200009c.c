@@ -9,7 +9,7 @@
  * (`ldr r4,[pc,#0] / bx r4 / .word <target>`); its fourth word is 0x0200809d,
  * which under the proven 0x02008000 link base is file offset 0x009c plus the
  * Thumb bit.  So this owner is a root, reached from outside the overlay, and
- * `bun tools/lib/overlay_call_targets.ts resource_38e` confirms no `bl` inside the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_38e` confirms no `bl` inside the
  * overlay targets it.
  *
  * Complete owner: `push {lr}` at 0x0200009c through the single epilogue at

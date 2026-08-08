@@ -23,7 +23,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only by
  * `bl`. All 101 targets resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3b9 dcc 11ac` under the `+2`
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b9 dcc 11ac` under the `+2`
  * rule -- 86 veneer sites, 15 to this overlay's own trampolines
  * Func_02001c48/Func_02001c5c, zero intra-body.
  *

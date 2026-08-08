@@ -14,7 +14,7 @@
  * 0x020030cc.
  *
  * Call accounting: 64 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_373 2f14` (21 distinct import
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_373 2f14` (21 distinct import
  * veneers, no intra-overlay call, no `call_via` slot).  Each site appears
  * below exactly once.  The disassembler's `bl` annotations are unusable here
  * for the usual reason - an overlay `bl` stores `target_offset - 2` - and this

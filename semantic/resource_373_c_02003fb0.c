@@ -25,7 +25,7 @@
  * register is read, so the owner takes no arguments.
  *
  * Call accounting: 513 `bl` sites in the decoded instruction stream, all
- * resolved with `bun tools/lib/overlay_call_targets.ts resource_373 3fb0` - 52
+ * resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_373 3fb0` - 52
  * distinct targets, 5 of them intra-overlay prologues (Func_020032b0 x3,
  * Func_02003380 x2, Func_02005594 x1, Func_020055a4 x1, Func_02005c20 x4).
  * No `call_via rN` site.  Each of the 513 sites appears exactly once below;

@@ -21,7 +21,7 @@
  * `mov pc, rN` does not interwork, so the entries carry no Thumb bit.
  *
  * All 13 `bl` sites are placed and reach 9 distinct import veneers; targets
- * come from tools/lib/overlay_call_targets.ts (target offset = stored
+ * come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored
  * displacement + 2), never from the disassembler's `bl` annotations, which
  * are wrong for every overlay branch.
  *

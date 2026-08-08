@@ -20,7 +20,7 @@
  * `arg0` is never read before being overwritten (r0 takes the constant
  * 23 at 0x020056a8), so void in, void out.
  *
- * Call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3c9 56a0 59f0`'s `+2` rule: `sites=44 distinct_targets=15
  * veneer=37 unknown=1 prologue=6`. Forty-four `bl` lines are
  * transcribed and forty-four is the tool's count, with the single

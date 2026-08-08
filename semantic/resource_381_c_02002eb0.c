@@ -40,7 +40,7 @@
  * applied to the sub-record's flag bytes at +5 and +7; -33 is a
  * `movs r1,#33 / negs` pair, i.e. `~0x20`.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 6 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 6 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_0808a080 x2, and one each of Func_080001b8, Func_08009020,
  *   Func_080090c8, Func_080f9010.

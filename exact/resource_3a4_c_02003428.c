@@ -4,7 +4,7 @@
  * resource_3a4 owner at 0x02003428, 56 bytes: compare record 0's +12
  * field against a fixed threshold and take one of two branches, the
  * taller of which also sets bit 1 of record 11's byte at +35.  A
- * PUBLISHED CALLBACK -- sweep B of tools/lib/overlay_published.ts, never
+ * PUBLISHED CALLBACK -- sweep B of cargo run --release --manifest-path tools/overlay-published/Cargo.toml --, never
  * the target of a `bl`.
  *
  * Complete owner: `push {lr}` at 0x02003428 through the interworking

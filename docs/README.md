@@ -24,16 +24,16 @@ document.
 | [COMPILER-QUEUE.md](COMPILER-QUEUE.md) | compiler-mode candidates |
 | [REMAINING.md](REMAINING.md) | the residual categories |
 | [SOURCE-STYLE.md](SOURCE-STYLE.md) | how canonical C is written here |
-| [TWIN-384-DRAFT.md](TWIN-384-DRAFT.md) | resolved twin-template evidence and transposition method |
+| `LAWS.md` and `HANDOVER.md` | resolved twin-template evidence and transposition method |
 | [compiler-evidence/](compiler-evidence/) | collateral for each admitted compiler lever |
 | [full-c-history.json](full-c-history.json) / [.csv](full-c-history.csv) | first-parent measurement history |
 
 ## Archive
 
-[`archive/`](archive/) holds finished 2026-07-28 humanization records and the
-compiler-family experiment. They are kept for their measurements, not because
-they are current. If you are looking for what to do next, they are the wrong
-place.
+Finished humanization records and compiler-family experiments remain in Git
+history and in the dated documents above. They are kept for their measurements,
+not because they are current. If you are looking for what to do next, use
+`HANDOVER.md`.
 
 ## The rule that keeps this list short
 

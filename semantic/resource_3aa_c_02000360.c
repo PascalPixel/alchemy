@@ -57,7 +57,7 @@
  *
  * CALL ACCOUNTING.  426 static `bl` sites, every one resolved with the
  * overlay displacement rule (`true_target = stored_displacement + 2`), applied
- * per site with the decoder behind `tools/lib/overlay_call_targets.ts`:
+ * per site with the decoder behind `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`:
  * 412 import veneers over 27 distinct imports, and 14 calls into this
  * overlay's own owners - 10 to Func_02001450 and 4 to Func_0200140c, both
  * already converted in this reconstruction.  No `call_via` site and no unresolved site.

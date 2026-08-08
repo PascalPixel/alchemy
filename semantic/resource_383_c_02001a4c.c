@@ -14,7 +14,7 @@
  * halfword at +100 is seeded (24 -> 1, 25 -> 3).
  *
  * All 32 `bl` sites are placed and reach 17 distinct callees.  Targets come
- * from tools/lib/overlay_call_targets.ts (target offset = stored displacement + 2),
+ * from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored displacement + 2),
  * never from the disassembler's `bl` annotations, which are wrong for every
  * overlay branch.  Twenty-eight reach the import veneer table at 0x02004cxx-
  * 0x02004f2b and are named by the main-image address in the veneer's trailing

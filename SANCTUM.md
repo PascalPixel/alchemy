@@ -6,7 +6,7 @@ later agent stops rediscovering the same floor.
 
 This is not the same concept as retained assembly. `retained_asm` in
 [metrics/gs1-en-coverage-map.json](metrics/gs1-en-coverage-map.json), guarded by
-`tools-rs/core-retained-audit`, records regions
+`tools/core-retained-audit`, records regions
 that are permanently assembly. Sanctum records owners that *could* have a C form
 but where the bounded search for it has been run out. Sealing is a statement
 about our search, not about the ROM.
@@ -19,8 +19,8 @@ An owner may only be sealed once both have been run and neither reaches exact:
 
 | Axis | Tool | Searches |
 |---|---|---|
-| Compiler | `tools-rs/mode-sweep` | flags and compiler family, source held fixed |
-| Source shape | `tools-rs/shape-sweep/target/release/shape-sweep` | equivalent source forms, compiler held fixed |
+| Compiler | `tools/mode-sweep` | flags and compiler family, source held fixed |
+| Source shape | `tools/shape-sweep/target/release/shape-sweep` | equivalent source forms, compiler held fixed |
 
 Exhausting one axis is not a seal. A residual that survives every flag is the
 normal starting point for the shape axis, and the reverse holds too.
@@ -32,7 +32,7 @@ finds nothing proves nothing and can never justify sealing.
 ## Entry format
 
 Each entry is one list item under `## Sealed`, in this shape, enforced by
-`tools-rs/check-sanctum`:
+`tools/check-sanctum`:
 
 ```
 - `<owner>` floor=<N>hw axes=compiler,shape — <one line naming what the residual is>
@@ -59,7 +59,7 @@ first candidates to become sealed entries if it also fails. Regenerate the list
 with:
 
 ```
-tools-rs/check-sanctum/target/release/check-sanctum --queue
+tools/check-sanctum/target/release/check-sanctum --queue
 ```
 
 The lowest floors are the best targets: a 10-halfword residual after a complete

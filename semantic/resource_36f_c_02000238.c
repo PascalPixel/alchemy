@@ -20,7 +20,7 @@
  * matching the inventory row.  r4 is used as scratch without being saved, which
  * is what the reference does.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_36f
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_36f
  * 0238`: exactly ONE site, 0x020002b2 -> veneer 0x0570 -> Func_080001e8, the
  * 12-byte sprite-request submitter whose role is established by the tracked
  * `semantic/overlays/resource_3ba_c_020033a0.c`.  Note the arity: that source

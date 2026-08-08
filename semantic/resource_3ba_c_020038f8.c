@@ -15,7 +15,7 @@
  * being written, so the owner takes no arguments.
  *
  * CALL ACCOUNTING.  Thirteen `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`: Func_020038b0
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3ba --annotate`: Func_020038b0
  * x3, Func_08009080 x2, Func_08009150 x2, Func_080f9010 x2, and one each of
  * Func_0808a080, Func_080091d8, Func_080000c0 and Func_08009158.  The C below
  * reproduces that multiset exactly; the inventory's `calls=13` agrees.

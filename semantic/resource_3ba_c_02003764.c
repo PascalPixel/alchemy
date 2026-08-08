@@ -22,7 +22,7 @@
  * spilled to the local slot at [sp,#0] immediately and re-read twice.
  *
  * CALL ACCOUNTING.  Ten `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`: Func_0808a080
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3ba --annotate`: Func_0808a080
  * twice, and one each of Func_08000148, Func_08000170, Func_080770c0,
  * Func_080001a8, Func_080001d0, Func_080001c8, Func_080000d0 and
  * Func_08000178.  The C below reproduces that multiset exactly; the

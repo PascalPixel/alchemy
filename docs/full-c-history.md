@@ -27,13 +27,13 @@ tree publication metric, not a promise that the final history row has already
 been committed.  Regenerate the ledger after a commit with:
 
 ```sh
-bun run progress:history
+tools/full-c-history/target/release/full-c-history --write
 ```
 
 Then verify the current metric independently with:
 
 ```sh
-bun run progress:check
+make progress-check
 ```
 
 The ledger intentionally reports exact C only.  Reviewed semantic coverage is

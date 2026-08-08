@@ -19,7 +19,7 @@
  * 0x2a50 and 0x256c, not RAM globals; the overlay image is writable EWRAM, so
  * 0x0200aa50 is written here and is not `const`.
  *
- * Call sites resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl`
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (overlay `bl`
  * stores `target_offset - 2`, so the disassembler's annotations are wrong):
  *
  *   0x020014c2 -> veneer 0x020023cc -> Func_08000148   (allocate)

@@ -36,7 +36,7 @@
  * survives - the owner always returns 1.
  *
  * Calls: 15 sites over 6 targets, from
- * 'bun tools/lib/overlay_call_targets.ts resource_3af 00c4'.  All six are import
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3af 00c4'.  All six are import
  * veneers; the overlay has no intra-image calls here.
  *
  * Func_080000f8 is the established pseudo-random draw returning a 16.16

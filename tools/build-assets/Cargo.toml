@@ -1,0 +1,27 @@
+[workspace]
+
+[package]
+name = "build-assets"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alignment-tail = { path = "../alignment-tail" }
+asset-paths = { path = "../asset-paths" }
+audio-engine-data = { path = "../audio-engine-data" }
+archive-asset = { path = "../archive-asset" }
+canonical-json = { path = "../canonical-json" }
+extract-resource = { path = "../extract-resource" }
+generated-files = { path = "../generated-files" }
+import-asset = { path = "../import-asset" }
+map-load-table = { path = "../map-load-table" }
+overlay-disasm = { path = "../overlay-disasm" }
+pairtable = { path = "../pairtable" }
+tilemap = { path = "../tilemap" }
+wordstream = { path = "../wordstream" }
+gba-header = { path = "../gba-header" }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[[bin]]
+name = "build-assets"
+path = "src/main.rs"

@@ -20,7 +20,7 @@
  * two-byte code-suspect gap.
  *
  * All twenty call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3a6 11a0 1256`; the per-target
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a6 11a0 1256`; the per-target
  * histogram is Func_0808a010 x4, Func_0808a0d0 x2, Func_0808a1b8 x2 and one
  * each of Func_080770c0, Func_080770c8, Func_0808a018, Func_0808a020,
  * Func_0808a080, Func_0808a090, Func_0808a138, Func_0808a1f0, Func_0808a200,

@@ -25,7 +25,7 @@
  * The queue's ~1090-byte estimate was short by 310 bytes -- span
  * measured against the next owner's prologue, per the 1450 lesson.
  *
- * Callee names come from bun tools/lib/overlay_call_targets.ts
+ * Callee names come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_380 178c 1d04 (the +2 rule): 146 sites, 32 distinct
  * targets, 127 through the overlay's import-veneer table into the
  * familiar main-ROM scene vocabulary (Func_0808a0xx), 19 to the local

@@ -7,7 +7,7 @@
  *
  * Conventions.  An overlay `bl` stores the target's image offset minus two, not
  * a pc-relative displacement, so the disassembler's printed targets are wrong;
- * all sixteen calls below were resolved with `tools/lib/overlay_call_targets.ts`
+ * all sixteen calls below were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`
  * and every one lands in the 8-byte-per-entry import veneer table that starts
  * at 0x02001a54, so each is named by that entry's trailing main-image word.
  * resource_375 is linked at 0x02008000 (witness: 0x02008171 in the table at

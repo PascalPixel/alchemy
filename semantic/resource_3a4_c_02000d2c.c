@@ -29,7 +29,7 @@
  * image-wide BL walk starting from reachable code finds neither.
  *
  * Twenty-three call sites, every one resolved with the `+2` rule via
- * `bun tools/lib/overlay_call_targets.ts resource_3a4 0xd2c 0xec0` and none
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0xd2c 0xec0` and none
  * read from the listing's arrows, which print twenty-three nonexistent
  * 0x02004xxx addresses. They collapse onto ten targets -- nine veneers and
  * the one in-image prologue -- with four sites sharing Func_080000c0, four

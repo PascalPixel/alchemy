@@ -17,7 +17,7 @@
  *
  * All 23 `bl` sites are placed and reach 11 distinct callees.  The inventory
  * row records calls=22; that count predates the corrected branch decoding.
- * Targets come from tools/lib/overlay_call_targets.ts (target offset = stored
+ * Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored
  * displacement + 2), never from the disassembler's annotations, which print
  * each repeated callee as a different function.  0x3f50 -> Func_0808a080
  * (twice), 0x3f38 -> Func_0808a018, 0x3f98 -> Func_0808a100 (twice), 0x3f30

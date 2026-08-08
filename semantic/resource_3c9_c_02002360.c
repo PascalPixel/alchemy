@@ -21,7 +21,7 @@
  * overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9
+ * by `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9
  * 2360 35c4`'s `+2` rule, which reports sites=433 distinct_targets=56
  * veneer=356 prologue=76 unknown=1 over exactly these bounds. The one
  * `unknown` is NOT a defect: it is the real `bl` at 0x02002af8 to

@@ -16,7 +16,7 @@
  * popped return address, so this owner is VOID (HANDOVER section 0's
  * interworking-epilogue rule).
  *
- * Call targets were resolved with `bun tools/lib/overlay_call_targets.ts
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3bf 1150` (18 sites, 9 distinct targets), never from the
  * disassembler's pc-relative annotations, which are wrong for every overlay
  * `bl`.  The three import veneers resolve through their trailing word to real

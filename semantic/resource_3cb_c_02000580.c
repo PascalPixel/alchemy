@@ -15,7 +15,7 @@
  * falls into them; the `asrs`/`subs`/`lsls` halfwords the disassembler prints
  * there are data.  Func_020007b0 begins immediately after.
  *
- * All 22 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 22 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2).  The inventory reports
  * calls=21, a lower bound.  Placed multiset: Func_080000c0 x7,
  * Func_08000380 x3, Func_080003a8 x3, Func_08000170 x2, Func_08000178 x2,

@@ -26,7 +26,7 @@
  * pop {r0} / bx r0` at 0x02002aae-0x02002ab2, seven pool words ending
  * 0x02002acf; the next owner prologue at 0x02002ad0 is the overlay's
  * remaining monster row. Not found by the structural inventory walk
- * (unindexed): reached only by bl (bun tools/lib/overlay_call_targets.ts
+ * (unindexed): reached only by bl (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_39e 27ec 2ab2, the +2 rule).
  *
  * Uncertainty: callees and argument roles by shape; dialogue ids and

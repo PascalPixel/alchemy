@@ -28,7 +28,7 @@
  * (`push {r5, r6, r7, lr}`) begins at 0x02000db4.
  *
  * All eight call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39e 0cd4 d9a`, and the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 0cd4 d9a`, and the
  * per-target histogram is Func_0200013c x3, Func_0808a080 x1, Func_080000c0
  * x1, Func_08000118 x1, Func_08000120 x1, Func_080f9010 x1:
  *   0x02000cde -> veneer 0x04404 -> Func_0808a080   record fetch, index 19

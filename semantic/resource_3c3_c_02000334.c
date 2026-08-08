@@ -22,7 +22,7 @@
  * their first stack argument; the second stack argument differs (27 then 26)
  * and is spelled per call.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 11 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 11 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_080091c0 x2, Func_0808a090 x2, Func_0808a1b8 x2, Func_0808a018 x1,
  *   Func_0808a020 x1, Func_0808a0c8 x1, Func_0808a0d0 x1, Func_0808a100 x1.

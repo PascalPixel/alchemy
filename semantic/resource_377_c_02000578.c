@@ -49,7 +49,7 @@
  * overlay establishes.
  *
  * All 111 call sites resolved with
- * 'bun tools/lib/overlay_call_targets.ts resource_377 0578 --json' (the inventory's
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_377 0578 --json' (the inventory's
  * calls=106 is the documented undercount).  Per-target counts, verified target
  * by target against
  * 'overlay_show.ts | overlay_call_targets.ts --annotate | sort | uniq -c',

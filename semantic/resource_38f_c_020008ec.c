@@ -18,7 +18,7 @@
  * three arguments anywhere.
  *
  * Call accounting: 732 `bl` sites, 47 distinct targets, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_38f 08ec` - 43 import veneers
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_38f 08ec` - 43 import veneers
  * and four intra-overlay prologues (Func_020008ac, Func_020008d8,
  * Func_020025a8, Func_020025c0), each of which has a byte-exact source in
  * assets/code whose signature is used here.  Every site appears below exactly

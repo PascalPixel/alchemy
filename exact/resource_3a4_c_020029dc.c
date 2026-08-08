@@ -14,8 +14,8 @@
  * call site per overlay_unindexed.ts. This owner makes three outgoing
  * calls, all resolved with the `+2` rule against the raw image (this
  * owner starts outside a recorded row, so overlay_call_targets.ts's own
- * table does not cover it -- resolved with `bun tools-rs/overlay-show
- * resource_3a4 29dc | bun tools/lib/overlay_call_targets.ts resource_3a4
+ * table does not cover it -- resolved with `bun tools/overlay-show
+ * resource_3a4 29dc | cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4
  * 29dc 2a0a --annotate`):
  *   0x20029e0 -> veneer -> Func_0200657a(9)        scene-record accessor, established
  *   0x20029e6 -> veneer -> Func_02006518(record, 0)   established, set presentation phase

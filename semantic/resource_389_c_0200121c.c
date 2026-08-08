@@ -29,7 +29,7 @@
  * 0x020098ec, 0x020090c9) is never reached.  372 code + 24 pool = 396, which
  * is exactly the inventory row's code_bytes and span_bytes.
  *
- * Calls: 23 sites, resolved with `bun tools/lib/overlay_call_targets.ts
+ * Calls: 23 sites, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_389 121c` (the disassembler's own `bl` annotations are wrong by
  * construction - an overlay `bl` stores target_offset - 2).  Per-target
  * multiset, each site placed below in program order:

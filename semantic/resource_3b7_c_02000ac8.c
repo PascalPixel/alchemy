@@ -33,7 +33,7 @@
  * 0x03001c94 is the IWRAM key-state word (bit 0 and bit 1 are tested, i.e. A
  * and B).
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x02000adc Func_0808a018    0x02000bd2 Func_0808a070
  *   0x02000ae0 Func_0808a460    0x02000be8 Func_08015010

@@ -21,7 +21,7 @@
  * `arg0` is never read before being overwritten (r0 takes the constant
  * 0 at 0x0200051e), so void in, void out.
  *
- * Call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3c9 518 5ec`'s `+2` rule: `sites=13 distinct_targets=10
  * veneer=12 prologue=1`, and thirteen are transcribed. The one
  * non-veneer site is an in-overlay call to this overlay's own exact-C

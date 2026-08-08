@@ -14,7 +14,7 @@
  * not yet drafted). One argument (r0), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * The `while (Func_080000c0() != 0) Func_080f9048(1);` loop is the
  * compiled "jump to test first" shape (`b.n` straight to the test before

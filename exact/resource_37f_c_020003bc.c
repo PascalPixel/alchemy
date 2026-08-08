@@ -6,7 +6,7 @@
  * return `pop {r5} / pop {r0} / bx r0` at 0x02000404 — r0 is the popped return
  * address, so the owner is `void`.
  *
- * All seven call sites were resolved with `tools/lib/overlay_call_targets.ts`; all
+ * All seven call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all
  * seven are import veneers.  Func_080770c0(flag) is used only as a predicate.
  *
  * Near-identical sibling of 0x02000200: the same Func_0808a018 /

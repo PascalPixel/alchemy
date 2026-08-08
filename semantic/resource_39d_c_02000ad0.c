@@ -19,7 +19,7 @@
  * lr}`), and the walk never reaches it as an instruction.
  *
  * All seven call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39d 0ad0 0b22`: every one of
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39d 0ad0 0b22`: every one of
  * them is veneer 0x020036f0 -> Func_0808a080, the established record fetch
  * that returns the record for the index in r0.  `overlay_show`'s printed
  * targets (0x20041c6, 0x20041d2, ...) are the pc-relative misreading and all

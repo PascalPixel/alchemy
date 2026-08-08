@@ -24,7 +24,7 @@
  * One mid-function pool cluster 0x02002016-0x02002046 hopped by
  * `b.n`.  The queue's ~670-byte estimate was short by 730.
  *
- * Callee names from bun tools/lib/overlay_call_targets.ts resource_380
+ * Callee names from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_380
  * 1d04 227c (the +2 rule): 144 sites, 13 to drafted locals
  * (Func_02004248, Func_020043bc).
  *

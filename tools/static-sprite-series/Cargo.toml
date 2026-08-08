@@ -1,0 +1,23 @@
+[workspace]
+
+[package]
+name = "static-sprite-series"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "static_sprite_series"
+path = "src/lib.rs"
+
+[[bin]]
+name = "static-sprite-series"
+path = "src/main.rs"
+
+[dependencies]
+alchemy-zlib = { path = "../zlib" }
+canonical-json = { path = "../canonical-json" }
+extract-resource = { path = "../extract-resource" }
+export-asset = { path = "../export-asset" }
+generated-files = { path = "../generated-files" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

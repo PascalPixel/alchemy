@@ -1,0 +1,52 @@
+# Bare `[workspace]`: this crate is its own workspace so it builds without
+# touching `tools/Cargo.toml`, which several agents share concurrently. A
+# bare-workspace crate cannot resolve `version.workspace`, so both keys are
+# literal.
+[workspace]
+
+[package]
+name = "overlay-mode-cohort"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies. Between them they already own
+# every symbol `tools/overlay/overlay_mode_cohort.ts` imports:
+#
+#   ../lib/mode_sweep.ts      -> mode-sweep            (singleConfigs, pairConfigs,
+#                                                       tripleConfigs, Config)
+#   ../lib/canonical_json.ts  -> search-compiler-modes (order-preserving Json,
+#                                                       canonicalJson)
+#   compiler bundle tables    -> alchemy-bundle        (compilerBundleSignature, SHA-256)
+#                                alchemy-symbols       (externalSymbol,
+#                                                       externalSymbolAssembly,
+#                                                       overlayCallViaBase)
+#                                alchemy-plan          (sourceToAssemblyPlan,
+#                                                       CompilerFamily)
+#   ../lib/overlay_disasm.ts  -> overlay-disasm        (assembleOverlay,
+#                                                       biasInImageLabelWords,
+#                                                       OVERLAY_BASE)
+#
+# Re-porting any of them would recreate exactly the hand-sync problem this
+# effort exists to end. All are read-only from here.
+mode-sweep = { path = "../mode-sweep" }
+search-compiler-modes = { path = "../search-compiler-modes" }
+alchemy-bundle = { path = "../alchemy-bundle" }
+alchemy-symbols = { path = "../alchemy-symbols" }
+alchemy-plan = { path = "../alchemy-plan" }
+# `CompilerTarget` lives in `alchemy-routing` and `alchemy-plan` imports it
+# privately, so it is named directly here rather than reached through a
+# re-export that does not exist.
+alchemy-routing = { path = "../alchemy-routing" }
+overlay-disasm = { path = "../overlay-disasm" }
+
+[lib]
+name = "overlay_mode_cohort"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-mode-cohort"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

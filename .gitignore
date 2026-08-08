@@ -57,11 +57,10 @@ roms/
 *.gz
 *.7z
 *.log
-node_modules/
 tools/scratch/*
 !tools/scratch/README.md
 
-# Rust tooling (tools-rs/)
+# Rust tooling
 target/
 *.rlib
 *.rmeta

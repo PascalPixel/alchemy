@@ -33,7 +33,7 @@
  * resource_380_c_02004248.c) exactly at 0x02004248.  Returns a literal
  * 0.
  *
- * Callee names from bun tools/lib/overlay_call_targets.ts resource_380
+ * Callee names from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_380
  * 3f24 4248 (the +2 rule): 44 sites, 11 distinct targets, 41 through
  * the import-veneer table and 3 to this overlay's own drafted owners.
  *

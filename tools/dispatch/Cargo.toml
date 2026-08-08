@@ -1,0 +1,12 @@
+[package]
+name = "dispatch"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "dispatch"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dispatch"
+path = "src/main.rs"

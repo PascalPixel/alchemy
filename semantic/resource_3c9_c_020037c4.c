@@ -22,7 +22,7 @@
  * which is therefore its installer.
  *
  * COUNT DISCIPLINE, and this row is the worked example. `bun
- * tools/lib/overlay_call_targets.ts resource_3c9 37c4 38c0` reports
+ * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9 37c4 38c0` reports
  * `sites=11 distinct_targets=4 veneer=10 unknown=1`. Ten `bl`
  * instructions are transcribed here, and ten is right: the eleventh
  * "site" is the literal pool word at 0x020038bc, 0xfc5ef004, which

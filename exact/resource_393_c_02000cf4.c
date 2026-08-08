@@ -10,7 +10,7 @@
  *
  * What was changed:
  *  - the entry symbol;
- *  - the calls, re-resolved with 'bun tools/lib/overlay_call_targets.ts
+ *  - the calls, re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  *    resource_393 0cf4': three sites, ONE distinct target, the veneer publishing
  *    the ARM-mode IWRAM helper Func_03000380.  The 394 source predates the
  *    corrected 'bl' rule and spelled the three sites as three different callees
@@ -21,7 +21,7 @@
  */
 
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools-rs/bl-site-symbols to derive
+   (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
    them). All three reach the same ARM-mode IWRAM helper that scales a
    channel by the adjustment, and each still needs its own name. */
 s32 Func_02001b32();   /* 0x02000d14 */

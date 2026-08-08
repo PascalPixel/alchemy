@@ -48,7 +48,7 @@
  * by any byte-exact sibling in this overlay.
  *
  * All 86 call sites resolved with
- * 'bun tools/lib/overlay_call_targets.ts resource_377 0a0c --json' (the inventory's
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_377 0a0c --json' (the inventory's
  * calls=81 is the documented undercount).  Per-target counts, verified against
  * 'overlay_show.ts | overlay_call_targets.ts --annotate | sort | uniq -c' --
  * per target, not by total:

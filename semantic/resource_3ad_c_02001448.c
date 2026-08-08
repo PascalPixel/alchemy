@@ -18,7 +18,7 @@
  * tile" blocks), differing in dialogue ids, a few position constants and the
  * story flag written at the end.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 90 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 90 sites are
  * import veneers and the per-target multiset below is reproduced exactly by the
  * C, target for target:
  *   Func_0808a010 x12, Func_0808a100 x12, Func_0808a1b8 x10, Func_0808a170 x9,

@@ -12,7 +12,7 @@
  * (alignment halfword plus the 0xffffc000 mask, branched over by the `b.n` at
  * 0x02000538) and the trailing pool at 0x0200059c-0x020005a7.  Both are data.
  *
- * All thirteen `bl` sites resolve with tools/lib/overlay_call_targets.ts — an
+ * All thirteen `bl` sites resolve with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- — an
  * overlay `bl` stores `target_offset - 2`, so the disassembler's labels are
  * artefacts — and are named for the main-image address in each veneer entry's
  * trailing word.  Thirteen sites, matching the row's advertised call count

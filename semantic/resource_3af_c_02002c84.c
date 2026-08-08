@@ -104,7 +104,7 @@
  * the second `cmp r3,#20` at 0x02002ecc.
  *
  * Not found by the structural inventory walk: reached only by `bl`
- * (bun tools/lib/overlay_call_targets.ts resource_3af 0x2c84 0x3150, the
+ * (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3af 0x2c84 0x3150, the
  * +2 rule against the raw image), and it is the ONLY unowned
  * prologue any BL in this image resolves to. The 0x02001444 driver
  * confirms it independently as dispatch case 18.

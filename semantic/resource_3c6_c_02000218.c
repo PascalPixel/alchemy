@@ -30,7 +30,7 @@
  * straight-line script over slots 0, 8, 9 and 22.
  *
  * Call accounting: 177 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c6 0218` - 23 distinct
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c6 0218` - 23 distinct
  * targets, all import veneers, no prologue and no `call_via` site.  The
  * multiset of `Func_...(` calls below equals that multiset, site for site;
  * each site is written exactly once and no site is reached from two paths.

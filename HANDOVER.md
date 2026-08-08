@@ -6,11 +6,16 @@ Audit checkpoint: 2026-08-02, `main`. This is the single authoritative current
 handover. Historical studies remain useful evidence, but their counters and
 queues are not live project status.
 
-Verification status: `bun run test`, `bun run build:semantic`, and
-`bun run coverage:check` pass at this checkpoint. The normal build remains
+Verification status: `make test`, `make build-semantic`, and
+`make coverage-check` pass at this checkpoint. The normal build remains
 byte-identical, source ownership is complete, and ROM fallback is zero. The
-complete `bun run verify` gate last passed before this semantic-only tranche
+complete `make verify` gate last passed before this semantic-only tranche
 and should be rerun before the next checkpoint commit.
+
+Operational tooling is now native Rust under `tools`, with the Makefile as
+the supported command surface. TypeScript and Python names retained below
+identify the implementation that produced a dated result; they are historical
+evidence, not live commands or current paths.
 
 ## Executive verdict
 
@@ -74,7 +79,7 @@ Additional ROM-image facts:
 The semantic compiler reviews 976,622 bytes of owner spans, but 26,844 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
 code-overlay owner spans. The coverage numerator therefore uses 949,778, not
-976,622. `bun run build:semantic` now reports both figures instead of silently
+976,622. `make build-semantic` now reports both figures instead of silently
 adding out-of-scope bytes.
 
 The continuous semantic-overlay campaign has reduced the ranked
@@ -144,7 +149,7 @@ mixer at `0x080f9674`; its permanent disposition is defensible under the
 current explicit `keep_asm` policy, although its manifest confidence remains
 `strong`, not a claim that every possible compiler has been disproved.
 
-`bun run core:retained:check` is now part of the full verification gate. The
+`make core-retained-check` is now part of the full verification gate. The
 dashboard uses natural source/owner boundaries instead of artificial roughly
 equal blocks and reserves dark gray for evidence-backed retained assembly or
 explicit non-code data.
@@ -184,12 +189,12 @@ veneers, 928 ordinary discoveries, and 477 ordinary prologue/return rows.
 These filters overlap; their counts must never be added as distinct functions.
 
 The exact-twin report now shows only **116 theoretical recoverable bytes** in
-two families; `tools-rs/overlay-twins/target/release/overlay-twins --semantic --unconverted` reports
+two families; `tools/overlay-twins/target/release/overlay-twins --semantic --unconverted` reports
 zero, proving there is no remaining known twin-template shortcut for semantic
 closure. The new semantic mode prevents the exact-C queue from being mistaken
 for unowned code and makes that negative result immediate rather than manual.
 
-`tools-rs/overlay-call-order-check/target/release/overlay-call-order-check` is the other current speedup. It compares
+`tools/overlay-call-order-check/target/release/overlay-call-order-check` is the other current speedup. It compares
 each semantic owner's source-level postorder call sequence with its reachable,
 veneer-resolved BL sequence, including conservative IWRAM call-through recovery.
 Use it on every new owner alongside the multiset check. The latest ranked
@@ -202,9 +207,9 @@ targeted multiset, ordered-call, and m2c coverage checks. The first four add
 another 3,396. The project-wide diagnostic now covers 1,150 owners; the latest
 four add four passes to the prior 914-pass/214-mismatch audit, so `--all` remains
 an audit queue rather
-than a green gate; the self-test is wired into `bun test`.
+than a green gate; the self-test is wired into `make test`.
 
-`tools-rs/overlay-show/target/release/overlay-show <overlay> <start> <end> --annotate` now performs the
+`tools/overlay-show/target/release/overlay-show <overlay> <start> <end> --annotate` now performs the
 disassembly, overlay-specific BL resolution, and completeness check in one
 command. Both offsets and full `0x02000000` RAM addresses are accepted. This
 removes the repeated two-command pipe and prevents an absolute address from
@@ -218,7 +223,7 @@ The next family pass closes another **5,936 executable semantic-C bytes** in
 and the 296-byte actor-rectangle scan in ten overlays. Shared control flow was
 used to amortize reading, but every receiving overlay resolved its own table or
 script addresses and passed its own multiset, ordered-call and m2c coverage
-checks. `m2c_guard.ts` now ignores unresolvable BL-shaped words in skipped
+checks. The retired `m2c_guard.ts` ignored unresolvable BL-shaped words in skipped
 literal data, matching the existing multiset rule instead of demanding a
 fictional C call.
 
@@ -384,7 +389,7 @@ passes a **249/249** veneer-resolved multiset and ordered-call reconciliation,
 including its three pools, three nullable actor-position copies, four randomized
 counters, answer branch, DMA/scene writes and final teardown. Together the two
 large owners account for 4,476 executable semantic bytes and 409 independently
-checked calls; `overlay_gaps.ts resource_3a8` now reports zero code-suspect
+checked calls; `tools/overlay-gaps resource_3a8` now reports zero code-suspect
 gaps.
 
 The same boundary-first pass then closes 43 smaller owners and reduces the
@@ -415,7 +420,7 @@ answer branch, camera choreography and teardown while reconciling all
 **174/174** calls across 30 veneers. Both pass syntax, multiset, strict ordered-
 call, m2c coverage and no-assembly checks. They add **2,304 executable semantic
 bytes**, reduce the ranked multi-return queue to **69**, and leave
-`overlay_gaps.ts resource_37f` at zero code-suspect gaps.
+`tools/overlay-gaps resource_37f` at zero code-suspect gaps.
 
 A four-gap shape cohort then closes seven more owners across resources 399,
 3a6, 3bb and 3bc. The paired 148/84-byte resource_3bb owners have exact
@@ -427,7 +432,7 @@ bytes, 716 of them inside the audited executable census, and reduce the ranked
 queue from 69 to **65** gaps.
 
 That resource_399 owner exposed and fixed another throughput hazard in
-`overlay_call_order_check.ts`: Discovery treated an inline `mov ip,pc / bx rN`
+`tools/overlay-call-order-check`: Discovery treated an inline `mov ip,pc / bx rN`
 IWRAM call as a return and silently discarded every later BL. The checker now
 detects the reachable call-through idiom and switches to the complete bounded
 resolver listing, with a regression test. The formerly truncated owner now
@@ -462,7 +467,7 @@ adds 1,116- and 92-byte owners with 112/112 and 4/4 ordered calls; the
 four six-call selectors close `1324-1804` as sixteen independently admitted
 owners. Explicit per-owner C keeps every branch and constant visible while the
 shared boundary/constant-table pass avoids repeating the analysis. This final
-tranche adds **2,840 executable semantic bytes**; `overlay_gaps.ts resource_3b1`
+tranche adds **2,840 executable semantic bytes**; `tools/overlay-gaps resource_3b1`
 now reports zero gaps and the global ranked queue is **59**.
 
 The next boundary-first pass closes five of the six owners in
@@ -497,7 +502,7 @@ measured path through that pair. Finally, the 1,432-byte scripted-scene owner
 at `1474` preserves its branch-skipped eleven-word interior pool, final message
 word, five task phases and all **157/157** calls across 33 resolved callees.
 All six pass compilation, multiset, strict-order, m2c coverage and no-assembly
-gates. `overlay_gaps.ts resource_3bc` now reports zero code-suspect gaps and the
+gates. `tools/overlay-gaps resource_3bc` now reports zero code-suspect gaps and the
 global ranked queue is **55**. The certifier still reports the two previously
 recorded tail findings at `405c` and `4d88`; neither intersects a newly admitted
 owner.
@@ -544,7 +549,7 @@ the repository-wide no-assembly scan. The current checkpoint is **1,184,480 /
 A structural-queue audit then proves that `resource_3bf:5588-57ec` is exactly
 69 fixed eight-byte import veneers followed by all fifteen four-byte
 `call_via` entries (552 + 60 = 612 bytes), with no ordinary return outside
-those banks. `overlay_gaps.ts` now masks the same exact structures in interior
+those banks. `tools/overlay-gaps` now masks the same exact structures in interior
 gaps as it already did in heads and tails; a mixed `resource_3a7` gap retains
 its one ordinary return, and synthetic getter/veneer tests pin both directions.
 That evidence-only correction removes one false code-suspect row without
@@ -692,8 +697,8 @@ Compiler policy going forward:
    on arm64/x86_64 are all first-class hosts. A compiler mode or routing change
    lands only with every supported host family rebuilt from the committed fork
    source, verified byte-identically, and digest-pinned. The
-   `flagCapabilityLint()` gate in `tools/lib/alchemy_gcc.ts --lint` (part of
-   `bun test`) probes each staged binary with every flag live routing can emit,
+   native `alchemy-lints` `flag-capability` gate (part of
+   `make test`) probes each staged binary with every flag live routing can emit,
    so a host left behind fails immediately with the rebuild procedure named
    instead of failing mid-build inside an unrelated overlay rebuild. Hosts
    without approved digests yet are admissible, not unsupported: build, stage,
@@ -800,7 +805,8 @@ Latest bounded probes (2026-08-02) reinforce that rule:
 
 ## Tooling audit
 
-The repository has 161 top-level TypeScript tools. Its strongest guarantees are:
+The repository's operational tooling is native Rust under `tools`, exposed
+through the Makefile and native dispatch groups. Its strongest guarantees are:
 
 - complete source-only build and zero fallback;
 - byte-identical ROM verification;
@@ -820,7 +826,7 @@ Corrections made in this audit:
 - the data-maturity graph uses all 7,298,755 data bytes;
 - a same-address code-overlay compiler-route collision found by the existing
   lint was moved to explicit path-scoped routes.
-- `overlay_gaps.ts --ranked` now puts one-return owner-shaped gaps in byte-yield
+- `tools/overlay-gaps --ranked` now puts one-return owner-shaped gaps in byte-yield
   order before multi-return residue. The first ranked cohort closed **16,816
   executable bytes across 16 new source owners** rather than spending a pass
   manually scanning every module report.
@@ -845,7 +851,7 @@ Corrections made in this audit:
 
 Remaining tool debt:
 
-- `remaining_survey.ts` reports only the 596 `c_candidate` rows and omits the 96
+- `tools/remaining-survey` reports only the 596 `c_candidate` rows and omits the 96
   split/merge rows / 38,440 bytes of structural exactness debt.
 - Code-overlay discovery's 12,046-row output needs a non-overlapping, confidence-
   tiered queue instead of headline discovery counts.
@@ -943,7 +949,7 @@ Falsified or bounded hypotheses:
 
 ### Phase 0 — seal this checkpoint
 
-1. Run `bun run verify` and `bun run coverage:check`.
+1. Run `make verify` and `make coverage-check`.
 2. Commit and push each coherent exact-C tranche and its generated metrics.
 3. Regenerate and commit the first-parent history after the checkpoint commit.
 
@@ -967,7 +973,7 @@ function:
 
 ### Phase 2 — make exact delivery cheaper
 
-1. Extend `remaining_survey.ts` to include all five C-debt retentions and emit a
+1. Extend `tools/remaining-survey` to include all five C-debt retentions and emit a
    non-overlapping owner queue.
 2. Turn code-overlay discovery into ordinary / contained / data-walk / veneer
    confidence tiers with byte totals that reconcile to the inventory.
@@ -999,12 +1005,12 @@ function:
 ## Operational gates
 
 ```sh
-bun run progress:check
-bun run build:semantic
-bun run semantic:check
-bun run core:retained:check
-bun run coverage:check
-bun run verify
+make progress-check
+make build-semantic
+make semantic-check
+make core-retained-check
+make coverage-check
+make verify
 ```
 
 The complete gate must finish with a byte-identical ROM image, zero fallback,

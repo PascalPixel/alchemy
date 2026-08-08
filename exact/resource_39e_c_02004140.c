@@ -20,7 +20,7 @@
  * resource_39e_c_020041c4.c in the same round) begins at 0x020041c4.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 4140 41ac's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 4140 41ac's
  * +2 rule; the loop's spawn site is an intra-overlay bl to
  * Func_0200013c).
  *

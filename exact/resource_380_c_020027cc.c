@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. Its Thumb pointer is written into a script
  * record; no `bl` reaches it. Found by
- * `bun tools/lib/overlay_published.ts resource_380`. The bank as a whole is
+ * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_380`. The bank as a whole is
  * written up in resource_380_c_02002674.c.
  *
  * NOT A COPY OF ITS NEIGHBOURS, which is why it was disassembled rather
@@ -38,7 +38,7 @@
  * observation rather than a finding.
  *
  * The two imported `bl` targets resolved through the import-veneer
- * table under the +2 rule (tools/lib/overlay_call_targets.ts).
+ * table under the +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --).
  *
  * Uncertainty: Func_02006a26's arguments carry no established meaning,
  * so 9 and 10 are transcribed, not interpreted -- 9 matching the actor

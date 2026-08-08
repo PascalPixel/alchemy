@@ -1,0 +1,3 @@
+# Grandfathered banned-language files under tools/.
+# This list may shrink and must never grow. See AGENTS.md, Hard rules.
+tools/metrics/dashboard/styles.css

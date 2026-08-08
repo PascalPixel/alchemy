@@ -9,7 +9,7 @@
  * is an immediate or a shifted immediate, and the span ends on the `bx r0` of
  * the interworking return.  Nothing here depends on the overlay's link base.
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  Completeness, as a multiset:
  * Func_0808a010 x33, Func_080f9010 x30, Func_08009180 x29, and one each of
  * Func_0808a018, Func_0808a020, Func_0808a060, Func_0808a1b8, Func_0808a398 -

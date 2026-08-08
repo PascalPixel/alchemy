@@ -13,8 +13,8 @@
  * site per overlay_unindexed.ts. This owner makes calls in a loop to a
  * single target, resolved with the `+2` rule against the raw image (this
  * owner starts outside a recorded row, so overlay_call_targets.ts's own
- * table does not cover it -- resolved with `bun tools-rs/overlay-show
- * resource_3bc 3cd0 | bun tools/lib/overlay_call_targets.ts resource_3bc 3cd0
+ * table does not cover it -- resolved with `bun tools/overlay-show
+ * resource_3bc 3cd0 | cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc 3cd0
  * 3cee --annotate`):
  *   0x2003cde -> veneer -> Func_080000c0(1)   established, advance the task scheduler (resource_3cd_c_020000ec.c)
  *

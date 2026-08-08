@@ -24,7 +24,7 @@
  *   0,1 -> 0xab8   2 -> 0xb10   7 -> 0xb1e   10,11,12 -> 0xb42
  *   13,14,15 -> 0xc30   3,4,5,6,8,9 -> 0xcda (the shared exit)
  *
- * All 66 call sites were resolved with `tools/lib/overlay_call_targets.ts` (the
+ * All 66 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (the
  * inventory's `calls=4` is badly low here precisely because the jump table
  * disassembles as plausible code — the documented undercount).  62 are import
  * veneers and 4 are calls to this overlay's own routines: Func_02000d1c,

@@ -1,0 +1,19 @@
+[package]
+name = "music-residuals"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[lib]
+name = "music_residuals"
+path = "src/lib.rs"
+
+[[bin]]
+name = "music-residuals"
+path = "src/main.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+music = { path = "../music" }
+serde_json = { version = "1", features = ["preserve_order"] }

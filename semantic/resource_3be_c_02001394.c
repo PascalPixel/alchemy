@@ -3,7 +3,7 @@
 /*
  * resource_3be owner at 0x02001394, 240 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools-rs/overlay-driver resource_3be), so the loader enters
+ * (bun tools/overlay-driver resource_3be), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Two independent scene gates on the id at 0x02000240+448, and

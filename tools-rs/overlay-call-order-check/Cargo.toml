@@ -1,0 +1,33 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools-rs/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "overlay-call-order-check"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies: the already-landed Rust
+# halves of the exact TypeScript modules `overlay_call_order_check.ts` imports.
+#   ../lib/discover.ts -> Discovery
+discover = { path = "../discover" }
+#   ../lib/overlay_call_targets.ts -> OVERLAY_BASE, classify, overlayImage,
+#   resolveOverlay, targetOffset
+overlay-call-targets = { path = "../overlay-call-targets" }
+# `node:fs` JSON.parse over `semantic/regions.json` and
+# `out/decomp/overlays.json` -> this crate's insertion-order JSON reader.
+exact-reading-list = { path = "../exact-reading-list" }
+
+[lib]
+name = "overlay_call_order_check"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-call-order-check"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

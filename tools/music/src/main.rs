@@ -113,7 +113,7 @@ fn run(args: &[String]) -> Result<()> {
         || args.get(1).is_none_or(String::is_empty)
     {
         println!(
-            "usage: music.ts extract-sound-table ROM --address ADDRESS --count COUNT -o OUTPUT"
+            "usage: music extract-sound-table ROM --address ADDRESS --count COUNT -o OUTPUT"
         );
         println!("       music.ts --self-test");
         return Ok(());

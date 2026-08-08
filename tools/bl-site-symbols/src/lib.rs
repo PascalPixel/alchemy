@@ -312,16 +312,16 @@ pub fn run(args: &[String]) -> Result<String> {
 
     let id = args.first().cloned().unwrap_or_default();
     let Some((overlay, offset_text)) = id.split_once(':') else {
-        return Err("usage: bl_site_symbols.ts <overlay:offsetHex> [--span BYTES]".into());
+        return Err("usage: bl-site-symbols <overlay:offsetHex> [--span BYTES]".into());
     };
     if !overlay
         .strip_prefix("resource_")
         .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|byte| byte.is_ascii_hexdigit()))
     {
-        return Err("usage: bl_site_symbols.ts <overlay:offsetHex> [--span BYTES]".into());
+        return Err("usage: bl-site-symbols <overlay:offsetHex> [--span BYTES]".into());
     }
     let offset = parse_hex(offset_text).ok_or_else(|| {
-        "usage: bl_site_symbols.ts <overlay:offsetHex> [--span BYTES]".to_string()
+        "usage: bl-site-symbols <overlay:offsetHex> [--span BYTES]".to_string()
     })?;
     let span_argument = args.iter().position(|arg| arg == "--span");
     let span = match span_argument {

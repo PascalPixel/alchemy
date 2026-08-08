@@ -38,7 +38,7 @@ pub fn compiler_family_of(value: &Json) -> Result<CompilerFamily, String> {
         Json::String(text) => text.as_str(),
         _ => "",
     };
-    // PORT NOTE -- the TypeScript compares against six exact lowercase
+    // PORT NOTE -- the legacy implementation compares against six exact lowercase
     // literals with `===`. No case folding, no trimming. `"GCC296"` is
     // rejected there and is rejected here.
     match text {
@@ -89,7 +89,7 @@ pub fn compiler_configuration_of(value: &Json) -> Result<CandidateCompilerConfig
     // RECURSES INTO IT AND RETURNS, so every sibling key is silently ignored:
     // the unknown-field check below never runs, and
     // `{"config":{...},"nonsense":1}` is accepted. That is `:105` in the
-    // TypeScript and it is reproduced, not fixed. `undefined` and an explicit
+    // legacy implementation and it is reproduced, not fixed. `undefined` and an explicit
     // `null` differ: `document.config !== undefined` is TRUE for `null`, so
     // `{"config": null}` recurses into `null` and fails with "compiler config
     // must be a JSON object". Pinned in `tests/config.rs`.
@@ -99,7 +99,7 @@ pub fn compiler_configuration_of(value: &Json) -> Result<CandidateCompilerConfig
 
     // PORT NOTE -- `Object.keys(document)` is insertion order and the error
     // message JOINS the unexpected keys in that order. Sorting them, or using
-    // a `HashMap`, changes the message text and breaks parity.
+    // a `HashMap`, changes the message text and breaks differential comparison.
     let unexpected: Vec<&str> = entries
         .iter()
         .map(|(k, _)| k.as_str())

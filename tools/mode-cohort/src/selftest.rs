@@ -1,4 +1,4 @@
-//! Port of `selfTest()` in `tools/compiler/mode_cohort.ts`, including its two
+//! Port of `selfTest()` in `tools/compiler/mode-cohort`, including its two
 //! hand-written reports and all five assertions.
 
 use crate::aggregate::{

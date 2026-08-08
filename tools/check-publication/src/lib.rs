@@ -699,7 +699,7 @@ pub const ACCEPTED_PATHS: &[&str] = &[
         "assets/audio/theme.mid",
         "assets/audio/wave.wav",
         "assets/data/layout.json",
-        "tools/metrics/compare_roms.ts",
+        "tools/compare-roms/src/main.rs",
         "tools/build-full/src/main.rs",
         "assets/data/resource_2_build_stamp.txt",
         "assets/maps/town/metatiles.bin",

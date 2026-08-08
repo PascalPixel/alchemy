@@ -6,7 +6,7 @@ use discover::{json::canonical_json, Discovery, ROM_BASE};
 use std::process::ExitCode;
 
 fn usage() -> ! {
-    println!("usage: discover.ts [-h] -o OUTPUT [--details] rom");
+    println!("usage: discover [-h] -o OUTPUT [--details] rom");
     println!("\npositional arguments:\n  rom");
     println!("\noptions:\n  -h, --help            show this help message and exit\n  -o OUTPUT, --output OUTPUT\n  --details");
     std::process::exit(0);

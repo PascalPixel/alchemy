@@ -59,7 +59,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 const USAGE: &str =
-    "usage: statement_order_sweep_main.ts <draft.c> [--flags -fa,-fb] [--out FILE] [--max-run N] [--jobs N]";
+    "usage: statement-order-sweep-main <draft.c> [--flags -fa,-fb] [--out FILE] [--max-run N] [--jobs N]";
 
 fn die(message: &str) -> ! {
     eprintln!("error: {message}");
@@ -133,7 +133,7 @@ fn parse_arguments(argv: &[String]) -> Options {
         index += 1;
     }
     if rest.len() != 1 {
-        die("usage: statement_order_sweep_main.ts <draft.c>");
+        die("usage: statement-order-sweep-main <draft.c>");
     }
     options.draft = rest[0].clone();
     if options.out.is_empty() {

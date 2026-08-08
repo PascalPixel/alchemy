@@ -1,4 +1,10 @@
-@font-face {
+//! Static dashboard assets owned by the Rust server.
+//!
+//! Keeping the stylesheet here makes the dashboard reproducible from the Rust
+//! crate alone. The HTTP route still uses `/styles.css` for browser semantics,
+//! but no standalone web source file is needed at runtime or in the repository.
+
+pub const STYLES: &str = r###"@font-face {
   font-family: Weyard;
   src: url("/weyard.otf") format("opentype");
   font-weight: 400;
@@ -126,3 +132,4 @@ body {
     grid-template-rows: repeat(4, minmax(0, 1fr));
   }
 }
+"###;

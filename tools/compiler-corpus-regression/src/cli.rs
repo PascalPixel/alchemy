@@ -35,7 +35,7 @@ pub struct Options {
 }
 
 pub const USAGE: &str = concat!(
-    "usage: compiler_corpus_regression.ts (--flags FLAG[,FLAG...] | --config FILE) [options]\n",
+    "usage: compiler-corpus-regression (--flags FLAG[,FLAG...] | --config FILE) [options]\n",
     "  --config FILE       CandidateCompilerConfiguration JSON:\n",
     "                      {\"family\":\"routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3\",\n",
     "                       \"addFlags\":[...],\"removeFlags\":[...]}\n",
@@ -87,7 +87,7 @@ fn defaults() -> Options {
 /// PORT NOTE -- `sample`, `jobs` and `radius` are `Number.parseInt` results and
 /// are validated with `Number.isInteger`, which is FALSE for NaN. Every one of
 /// those parses is kept as `Option<f64>` until after its guard, so a
-/// non-numeric `--sample x` produces the TypeScript's "--sample must be >= 0"
+/// non-numeric `--sample x` produces the legacy implementation's "--sample must be >= 0"
 /// and not a Rust parse error with different prose.
 ///
 /// PORT NOTE -- `--radius` uses `Number.parseInt(text, 0)`, the AUTO radix:
@@ -99,7 +99,7 @@ pub fn parse_arguments(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut index = 0usize;
     while index < argv.len() {
         let argument = argv[index].clone();
-        // PORT NOTE -- the TypeScript writes `argv[++index]`, which is
+        // PORT NOTE -- the legacy implementation writes `argv[++index]`, which is
         // `undefined` past the end and would flow into `String(undefined)`.
         // A missing value is reported here instead of silently parsing the
         // string "undefined"; see the hard-fail note in the report.

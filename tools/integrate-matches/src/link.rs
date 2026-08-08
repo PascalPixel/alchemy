@@ -35,18 +35,18 @@ pub struct Run {
 
 /// `run(command, cwd = ROOT)`.
 ///
-/// PORT NOTE -- `Bun.spawnSync` THROWS on a missing binary rather than
+/// PORT NOTE -- `native process.spawnSync` THROWS on a missing binary rather than
 /// returning a non-zero code, and that throw escapes `linkedBytes` uncaught by
 /// any of the `if (code !== 0)` tests, landing in `main`'s `catch` as a
-/// rejection whose message is Bun's ENOENT text. The Rust spawn failure is
+/// rejection whose message is native process's ENOENT text. The Rust spawn failure is
 /// surfaced the same way, as an `Err` from `linked_bytes`, with different
-/// prose. Bun's ENOENT output carries NO `error: ` prefix, so neither side is
-/// matchable on text; the parity harness asserts same-failure, and preflights
+/// prose. native process's ENOENT output carries NO `error: ` prefix, so neither side is
+/// matchable on text; the differential comparison harness asserts same-failure, and preflights
 /// the four `arm-none-eabi-*` binaries so this path is never the reason a run
 /// looks equal.
 ///
 /// PORT NOTE -- `process.exitCode` is `null` when a child dies on a signal, and
-/// `null !== 0` is true, so the TypeScript treats a signalled child as a
+/// `null !== 0` is true, so the legacy implementation treats a signalled child as a
 /// failure. `-1` here does the same.
 pub fn run(command: &[String], cwd: &Path) -> Result<Run, String> {
     let program = command
@@ -72,7 +72,7 @@ pub fn run(command: &[String], cwd: &Path) -> Result<Run, String> {
 /// stderr of only whitespace does NOT, because a whitespace string is truthy,
 /// so it wins and then trims away to nothing. The message becomes
 /// `"assembler failed: "` with a trailing space, not the compiler's stdout.
-/// Both halves are reproduced; `tests/js_traps.rs` pins the whitespace case.
+/// Both halves are reproduced; `tests/invariants.rs` pins the whitespace case.
 pub fn command_error(result: &Run) -> &str {
     let source = if result.stderr.is_empty() {
         &result.stdout
@@ -84,9 +84,9 @@ pub fn command_error(result: &Run) -> &str {
 
 /// `linkedBytes(stem, source, scratch, kind)`.
 ///
-/// `root_directory` is the repository root the TypeScript spells `ROOT`, passed
+/// `root_directory` is the repository root the legacy implementation spells `ROOT`, passed
 /// in so that the routed-name construction can be pointed at a fixture tree by
-/// the parity harness without ever touching the tracked `exact/`.
+/// the differential comparison harness without ever touching the tracked `exact/`.
 pub fn linked_bytes(
     stem: &str,
     source: &str,
@@ -114,7 +114,7 @@ pub fn linked_bytes(
 
     let cwd = root();
     if kind == Kind::C {
-        // The comment in the TypeScript is load-bearing and is repeated here:
+        // The comment in the legacy implementation is load-bearing and is repeated here:
         // candidates arrive as `src_<stem>.c`, but the per-source
         // compiler-mode allowlists key off the bare stem, so the ROUTING name
         // is `exact/<stem>.c` -- the name the file will carry once installed --
@@ -153,7 +153,7 @@ pub fn linked_bytes(
         return Err(format!("nm failed: {}", command_error(&undefined_result)));
     }
     // A `Vec`, never a `Set`. `nm -u` can name the same symbol twice and the
-    // TypeScript emits a stub for each occurrence; deduplicating would change
+    // legacy implementation emits a stub for each occurrence; deduplicating would change
     // the generated assembly, and a `HashSet` would also lose the order the
     // stubs are written in.
     let mut names: Vec<String> = Vec::new();
@@ -166,9 +166,6 @@ pub fn linked_bytes(
     }
     for name in &names {
         if external_symbol(name, CALL_VIA_BASE).is_none() {
-            #[cfg(feature = "negative-control")]
-            return Err(format!("unsupported external symbol <{name}>"));
-            #[cfg(not(feature = "negative-control"))]
             return Err(format!("unsupported external symbol {name}"));
         }
     }

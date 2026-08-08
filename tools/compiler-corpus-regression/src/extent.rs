@@ -1,4 +1,4 @@
-//! `linkedFunctionExtent` from `tools/lib/integrate_matches.ts:150`.
+//! `linkedFunctionExtent` from `tools/lib/integrate-matches:150`.
 //!
 //! DUPLICATION, DELIBERATE AND TEMPORARY. `tools/integrate-matches` is
 //! under concurrent construction by another agent and is off limits for this

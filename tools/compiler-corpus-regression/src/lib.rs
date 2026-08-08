@@ -1,14 +1,14 @@
-//! Port of `tools/compiler/compiler_corpus_regression.ts`.
+//! Port of `tools/compiler/compiler-corpus-regression`.
 //!
 //! The tool recompiles a deterministic slice of the exact-C corpus under a
 //! proposed compiler configuration and reports every byte that changes against
 //! the ROM. It is the instrument for the pending gcc-2.96 codegen-identity
-//! check, so fidelity to the TypeScript outranks speed everywhere in this
-//! crate. Where the two would disagree, the TypeScript wins and the divergence
+//! check, so fidelity to the legacy implementation outranks speed everywhere in this
+//! crate. Where the two would disagree, the legacy implementation wins and the divergence
 //! is written down as a `PORT NOTE`.
 //!
 //! TWO DEFECTS ARE CORRECTED HERE, both documented at their site and both
-//! confirmed by running the TypeScript:
+//! confirmed by running the legacy implementation:
 //!
 //! 1. `corpus()` filters `region.source.startsWith("src/")` while every region
 //!    in `out/full/claimed/manifest.json` is under `exact/`, and there is no
@@ -19,7 +19,7 @@
 //!    `b3ab4841b` moved into `tools/lib/` and `tools/compiler/`. That is the
 //!    confirmed `b3ab4841b` breakage and the corrected paths are used here.
 //!
-//! Because of (1) the TypeScript has never once processed a corpus member, and
+//! Because of (1) the legacy implementation has never once processed a corpus member, and
 //! because of (2) it could not have reached the compile path even if it had.
 
 pub mod cli;

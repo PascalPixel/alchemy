@@ -16,7 +16,7 @@ const PC_LOAD: u16 = 0x4800;
 const RETURN_MASK: u16 = 0xff87;
 const RETURN: u16 = 0x4700;
 
-const USAGE: &str = "usage: overlay_show.ts <overlay> <offsetHex> [endHex | -n BYTES] [--annotate]";
+const USAGE: &str = "usage: overlay-show <overlay> <offsetHex> [endHex | -n BYTES] [--annotate]";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Options {

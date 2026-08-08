@@ -11,7 +11,7 @@ function append(parent, child) {
   if (Array.isArray(child)) {
     for (const item of child)
       append(parent, item);
-  } else if (child instanceof Node) {
+  } else if (child && typeof child === "object" && child.nodeType) {
     parent.appendChild(child);
   } else if (child !== undefined && child !== null && child !== false) {
     parent.appendChild(document.createTextNode(String(child)));

@@ -22,7 +22,7 @@
 //
 //   * A failure is written to stderr as the bare message and exits 1, rather
 //     than as bun's uncaught-exception stack. The message text itself is
-//     identical, including "usage: overlay_showcase.ts resource_NNN", which
+//     identical, including "usage: overlay-showcase resource_NNN", which
 //     keeps naming the TypeScript entry point on purpose: both spellings of the
 //     tool must tell a reader the same thing.
 //

@@ -1,9 +1,9 @@
 //! Port of the five exported aggregation functions in
-//! `tools/compiler/mode_cohort.ts`.
+//! `tools/compiler/mode-cohort`.
 //!
 //! This layer is pure: it takes already-parsed `mode_sweep` reports and emits
 //! report rows. It never compiles, never routes and never promotes, exactly as
-//! the TypeScript header promises.
+//! the legacy implementation header promises.
 
 use crate::collate::{collate, sort_default};
 use crate::jsops::{js_diff, js_min, OrderedMap};
@@ -153,7 +153,7 @@ fn scan(reports: &[Report], singles_only: bool) -> Result<Scan, String> {
             let differing = match result.evidence {
                 Evidence::Missing => continue,
                 // `result.evidence === undefined` is false for `null`, so the
-                // TypeScript proceeds and throws on `null.differing_halfwords`.
+                // legacy implementation proceeds and throws on `null.differing_halfwords`.
                 Evidence::Null => {
                     return Err("evidence is null: TypeError reading differing_halfwords".into())
                 }
@@ -565,8 +565,7 @@ pub fn single_mode_effects(reports: &[Report]) -> Result<Json, String> {
     ))
 }
 
-/// Every aggregation at once, in the order `main` computes them. This is the
-/// unit the differential parity harness compares.
+/// Every aggregation at once, in the order `main` computes them.
 pub fn all_aggregations(reports: &[Report]) -> Result<Json, String> {
     Ok(Json::Object(vec![
         ("shared_exact".into(), shared_exact_configurations(reports)?),
@@ -583,8 +582,8 @@ pub fn all_aggregations(reports: &[Report]) -> Result<Json, String> {
     ]))
 }
 
-/// Counts per category, so a parity gate cannot go green because a whole
-/// aggregation silently stopped producing rows.
+/// Counts per category, so a missing aggregation cannot silently produce an
+/// apparently valid empty report.
 pub fn category_counts(value: &Json) -> Vec<(String, usize)> {
     match value {
         Json::Object(entries) => entries
@@ -593,41 +592,4 @@ pub fn category_counts(value: &Json) -> Vec<(String, usize)> {
             .collect(),
         _ => Vec::new(),
     }
-}
-
-/// A DELIBERATELY WRONG variant used only by the parity harness's negative
-/// control: it breaks the tie with `str::cmp` instead of the measured
-/// collator. Nothing else may call this.
-#[doc(hidden)]
-pub fn shared_exact_configurations_ascii_tiebreak(reports: &[Report]) -> Result<Json, String> {
-    let value = shared_exact_configurations(reports)?;
-    let Json::Array(mut rows) = value else {
-        return Ok(value);
-    };
-    rows.sort_by(|left, right| {
-        let key = |row: &Json| -> (usize, String) {
-            let stems = row
-                .get("exact_stems")
-                .and_then(Json::as_array)
-                .map_or(0, <[Json]>::len);
-            let ids = row
-                .get("ids")
-                .and_then(Json::as_array)
-                .map(|items| {
-                    items
-                        .iter()
-                        .filter_map(Json::as_str)
-                        .collect::<Vec<_>>()
-                        .join("+")
-                })
-                .unwrap_or_default();
-            (stems, ids)
-        };
-        let (left_stems, left_ids) = key(left);
-        let (right_stems, right_ids) = key(right);
-        right_stems
-            .cmp(&left_stems)
-            .then_with(|| left_ids.cmp(&right_ids))
-    });
-    Ok(Json::Array(rows))
 }

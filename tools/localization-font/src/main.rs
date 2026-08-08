@@ -9,7 +9,7 @@ use localization_font::{
 };
 use serde_json::Value;
 
-const USAGE: &str = "usage: localization_font.ts {export ROM --root ASSETS --output SOURCE|build SOURCE --root ASSETS --output FILE|verify ROM SOURCE --root ASSETS|--self-test}";
+const USAGE: &str = "usage: localization-font {export ROM --root ASSETS --output SOURCE|build SOURCE --root ASSETS --output FILE|verify ROM SOURCE --root ASSETS|--self-test}";
 
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let index = args

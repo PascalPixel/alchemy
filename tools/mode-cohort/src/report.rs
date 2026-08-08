@@ -1,16 +1,16 @@
-//! The slice of a `mode_sweep` `report.json` that `mode_cohort.ts` reads.
+//! The slice of a `mode_sweep` `report.json` that `mode-cohort` reads.
 
 use search_compiler_modes::{canonical_json, Json};
 
 /// `result.evidence` as JavaScript actually sees it.
 ///
 /// PORT NOTE: `Missing` and `Null` are genuinely different states here.
-/// `mode_cohort.ts` tests `result.evidence?.exact` in one function and
+/// `mode-cohort` tests `result.evidence?.exact` in one function and
 /// `result.evidence === undefined` in three others. Optional chaining short
 /// circuits on `null`, but `=== undefined` does not, so an explicit
 /// `"evidence": null` passes the guard and then throws a `TypeError` on the
 /// property read. Collapsing both into one `Option` would silently invent a
-/// clean skip where the TypeScript aborts the whole run.
+/// clean skip where the legacy implementation aborts the whole run.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Evidence {
     Missing,
@@ -72,7 +72,7 @@ impl ResultRow {
     }
 
     /// The routed baseline predicate, spelled out in four places in the
-    /// TypeScript and identical in all four.
+    /// legacy implementation and identical in all four.
     pub fn is_routed_baseline(&self) -> Result<bool, String> {
         let empty = |key: &str| -> bool {
             matches!(self.config.get(key), Some(Json::Array(items)) if items.is_empty())
@@ -169,7 +169,7 @@ mod tests {
         let a = row(r#"{"config":{"ids":[],"flags":[]},"compiled":true}"#);
         let b = row(r#"{"config":{"flags":[],"ids":[]},"compiled":true}"#);
         // canonicalJson does not sort keys, so these are genuinely different
-        // grouping keys in the TypeScript. A struct-shaped port would merge
+        // grouping keys in the legacy implementation. A struct-shaped port would merge
         // them.
         assert_ne!(a.key(), b.key());
     }

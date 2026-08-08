@@ -1130,7 +1130,7 @@ pub fn self_test() -> Result<usize, String> {
 // CLI argument handling
 // ---------------------------------------------------------------------------
 
-pub const USAGE: &str = "usage: compare_roms.ts REFERENCE CANDIDATE -o OUT [--min-run N] \
+pub const USAGE: &str = "usage: compare-roms REFERENCE CANDIDATE -o OUT [--min-run N] \
 [--block-size N] [--step N] [--limit N] [--thumb-relocations] \
 [--thumb-reference-range START:END] [--thumb-candidate-range START:END]";
 
@@ -1556,7 +1556,7 @@ mod tests {
             _ => panic!("expected printed output"),
         }
         match run(&argv(&["only.gba"])).unwrap() {
-            Run::Printed(text) => assert!(text.starts_with("usage: compare_roms.ts")),
+            Run::Printed(text) => assert!(text.starts_with("usage: compare-roms")),
             _ => panic!("expected usage"),
         }
         assert_eq!(

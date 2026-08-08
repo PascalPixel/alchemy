@@ -20,7 +20,7 @@ use resource_directory::{
 };
 use serde_json::Value;
 
-const USAGE: &str = "usage: resource_directory.ts {export ROM|verify ROM SOURCE|build SOURCE} [-o FILE] [--address ADDRESS] [--slots COUNT]";
+const USAGE: &str = "usage: resource-directory {export ROM|verify ROM SOURCE|build SOURCE} [-o FILE] [--address ADDRESS] [--slots COUNT]";
 
 fn option(args: &[String], name: &str, fallback: Option<String>) -> Option<String> {
     match args.iter().position(|item| item == name) {

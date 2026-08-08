@@ -1,11 +1,11 @@
-//! Port of `main()` in `tools/compiler/mode_cohort.ts`.
+//! Port of `main()` in `tools/compiler/mode-cohort`.
 
 use mode_cohort::{cohort_digest, cohort_summary, member_report_path, root, self_test, Report};
 use search_compiler_modes::{canonical_json, is_js_integer, js_number, parse_json, Json};
 use std::path::Path;
 use std::process::Command;
 
-const USAGE: &str = "usage: mode_cohort.ts [--jobs N] [--max-pairs N] [--max-triples N] CANDIDATE.c [CANDIDATE.c ...]";
+const USAGE: &str = "usage: mode-cohort [--jobs N] [--max-pairs N] [--max-triples N] CANDIDATE.c [CANDIDATE.c ...]";
 
 fn main() {
     match run() {
@@ -15,9 +15,8 @@ fn main() {
             }
         }
         Err(message) => {
-            // PORT NOTE: Bun prints uncaught errors without an `error: ` prefix
-            // for ENOENT, but `new Error(...)` thrown out of `main` does carry
-            // it. Parity here is on exit code and message text, not on prose.
+            // Child-process failures are reported with the native command's
+            // exit code and message text, not a wrapper-specific stack trace.
             eprintln!("error: {message}");
             std::process::exit(1);
         }
@@ -111,7 +110,7 @@ fn run() -> Result<Vec<String>, String> {
 /// One worker iteration: run the native mode-sweep binary over one candidate
 /// and read back its report.
 ///
-/// PORT NOTE ON CONCURRENCY: the TypeScript starts `min(jobs, sources.length)`
+/// PORT NOTE ON CONCURRENCY: the legacy implementation starts `min(jobs, sources.length)`
 /// workers off a shared cursor and stores each result at its *source* index, so
 /// `reports` is in source order regardless of completion order. Running the
 /// members sequentially produces the identical `reports` array; only wall clock
@@ -280,7 +279,7 @@ mod tests {
     }
 
     #[test]
-    fn console_block_matches_the_typescript_shape() {
+    fn console_block_matches_the_native_shape() {
         let reports = mode_cohort::self_test_reports().unwrap();
         let summary = cohort_summary(&reports, 10.0).unwrap();
         let lines = console_lines(&summary, reports.len(), "/tmp/report.json");

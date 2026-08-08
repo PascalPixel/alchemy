@@ -13,7 +13,7 @@ use crate::names::main_source;
 use crate::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use crate::tree::{ref_tree, root, work_tree, SourceTree};
 
-const USAGE: &str = "usage: coverage_map.ts [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] \
+const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] \
 [--semantic-ref <ref>|worktree|none] [--write|--check|--self-test]";
 
 #[derive(Debug, Default, PartialEq)]

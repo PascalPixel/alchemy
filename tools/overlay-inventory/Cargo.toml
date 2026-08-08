@@ -1,0 +1,32 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "overlay-inventory"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies: the already-landed Rust
+# halves of the exact TypeScript modules `overlay_inventory.ts` imports.
+#   ../lib/discover.ts -> Discovery, sx
+discover = { path = "../discover" }
+#   ../lib/overlay_disasm.ts -> assembleOverlay, overlayCAddresses, OVERLAY_BASE
+overlay-disasm = { path = "../overlay-disasm" }
+#   ../lib/canonical_json.ts -> canonicalJson
+canonical-json = { path = "../canonical-json" }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[lib]
+name = "overlay_inventory"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-inventory"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

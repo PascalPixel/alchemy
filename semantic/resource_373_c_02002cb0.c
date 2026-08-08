@@ -12,7 +12,7 @@
  * scene counter once when a query reports state 1.
  *
  * Call accounting: 60 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_373 2cb0` (25 distinct import
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_373 2cb0` (25 distinct import
  * veneers, no intra-overlay call, no `call_via` slot).  Every site appears
  * below exactly once.  The disassembler's own `bl` annotations are wrong here
  * in the usual way - an overlay `bl` stores `target_offset - 2`, not a

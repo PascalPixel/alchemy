@@ -20,7 +20,7 @@
  * read is `ldrsh` through a zero index register, i.e. a signed halfword.
  *
  * Call accounting: 15 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_38d 0338 --json`: Func_08009188
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_38d 0338 --json`: Func_08009188
  * x2, Func_08009190 x2, Func_0808a010 x2, and one each of Func_080770c0,
  * Func_080f9010, Func_0808a018, Func_0808a090, Func_0808a100, Func_0808a0e0,
  * Func_0808a0d8, Func_0808a248, Func_0808a020 - 11 distinct targets.  Every

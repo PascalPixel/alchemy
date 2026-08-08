@@ -17,7 +17,7 @@
  * one for one in source order.  The inventory advertises `calls=49`, so the
  * manifest undercounts by five; since the body has no branches and no interior
  * pool, every one of the fifty-four is on the single reachable path.  All
- * fifty-four resolve with tools/lib/overlay_call_targets.ts — an overlay `bl`
+ * fifty-four resolve with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- — an overlay `bl`
  * stores `target_offset - 2`, so the disassembler's labels are artefacts — to
  * seventeen distinct import veneers, each named for the main-image address in
  * its trailing word.

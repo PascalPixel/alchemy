@@ -26,7 +26,7 @@
  * One argument (r0, held in r5 for the whole body), void.
  *
  * Six call sites, every one resolved with the `+2` rule via
- * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x2a48 0x2b58` and NONE
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0x2a48 0x2b58` and NONE
  * read from the listing's arrows, which print six different addresses in
  * 0x02006xxx that do not exist as functions:
  *   0x2002a62, 0x2002a82, 0x2002af4, 0x2002b1a  -> veneer 0x2003a90 -> Func_080000f8()   the established argument-less RNG

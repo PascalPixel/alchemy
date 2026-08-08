@@ -18,7 +18,7 @@
  * own resource_39e_c_02004128.c, already drafted.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 40dc 4128's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 40dc 4128's
  * +2 rule).
  *
  * Uncertainty: the callees and both forwarded arguments are identified

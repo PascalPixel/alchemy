@@ -25,7 +25,7 @@
  * the literal pool is 0x020003e0..0x020003e7, and 0x020003e8 is the first
  * import veneer.  172 bytes, matching the inventory row.
  *
- * All 15 call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * All 15 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3a9 033c` (an overlay `bl` stores target offset - 2).  Per-target:
  *   Func_0808a088 11   Func_080770c0 2   Func_08009180 1   Func_0808a158 1
  *

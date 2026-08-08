@@ -24,7 +24,7 @@
  * 0x02000f80 is the already-drafted resource_39e_c_02000f80.c.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e e94 f68's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e e94 f68's
  * +2 rule; the four spawn sites are intra-overlay bl to Func_0200013c).
  *
  * Uncertainty: callees identified by shape; field meanings and the

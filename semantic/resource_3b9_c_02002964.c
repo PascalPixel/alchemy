@@ -15,8 +15,8 @@
  * overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2`
- * rule (`bun tools/lib/overlay_call_targets.ts resource_3b9 2964 2b1c`).
+ * by `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2`
+ * rule (`cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b9 2964 2b1c`).
  *
  * SHARED IDIOMS: scripted-scene bracket open/close and the id-8/9/10/11
  * trampoline pair (Func_02001c48/Func_02001c5c) cited from

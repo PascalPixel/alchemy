@@ -27,7 +27,7 @@
  * 0x02000174..0x0200017f (three words: 0xffff4000, 0xffd7ffff, 0x0117fffe) and
  * 0x02000180 is the next prologue.  192 bytes, matching the inventory row.
  *
- * Four call sites, resolved with `bun tools/lib/overlay_call_targets.ts
+ * Four call sites, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3b0 00c0`: 0x020000da, 0x020000f2, 0x02000134 and 0x0200014e, all
  * to veneer 0x11c4 -> Func_080000f8.  They are four DISTINCT sites on four
  * distinct arms and are not merged; the two arms of each axis are near-twins

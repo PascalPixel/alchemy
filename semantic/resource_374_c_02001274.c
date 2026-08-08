@@ -23,7 +23,7 @@
  * Func_0808a168).  0x02000240 is below the base: it is the EWRAM progress
  * table, and this owner writes the single byte at its offset 0x22b.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`, never from the
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`, never from the
  * disassembler's `bl` annotations: 67 import veneers and 12 prologues in this
  * overlay, the latter all reaching the byte-exact 0x020022c8 and 0x020022e0.
  *

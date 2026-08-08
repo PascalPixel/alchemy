@@ -1,0 +1,24 @@
+[workspace]
+
+[package]
+name = "map-resources"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "map_resources"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tokushu-map-resources"
+path = "src/tokushu.rs"
+
+[[bin]]
+name = "chiiki-map-resources"
+path = "src/chiiki.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+kind1-map-grid = { path = "../kind1-map-grid" }
+map-container-components = { path = "../map-container-components" }
+serde_json = { version = "1", features = ["preserve_order"] }

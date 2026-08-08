@@ -10,7 +10,7 @@ measurement a routed mode needs.
 The applied entries below are admitted from this ledger. Remaining entries are
 still experimental: landing one requires the fork change
 to be committed to the `alchemy-gcc` repository and the pinned commit updated,
-then the digests re-pinned in `tools/lib/alchemy_gcc.ts` — and per `PROVENANCE.md`
+then the digests re-pinned in the native bundle tables — and per `PROVENANCE.md`
 that re-pin is admissible only after the source-only build reproduces gs1-en.gba
 (SHA-1 `5c4695205413df7db52b9a184815a07783999971`) byte-identically.
 
@@ -25,7 +25,7 @@ existing `-fthumb-group-control-last` route, so it cannot affect unrelated
 sources. The previously exact grouped-DMA owners `08005a78`, `08005c68`, and
 `resource_3bd_c_02000c98` remained byte-identical in the compiler regression.
 
-The darwin-arm64 `cc1` digest is pinned in `tools/lib/alchemy_gcc.ts` as
+The darwin-arm64 `cc1` digest is pinned in the native bundle tables as
 `0767fccd6046d0b4dcaae1150a82e505a29e59ca9f4f979e2535e7970f3de449`. The
 source-only and full builds both reproduce the ROM byte-for-byte, with no
 fallback bytes and no forbidden inline assembly.

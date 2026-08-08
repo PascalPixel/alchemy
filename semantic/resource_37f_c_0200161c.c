@@ -6,7 +6,7 @@
  * 0x02001790, plus an eleven-word literal pool at 0x02001794-0x020017bf).
  * r0 is the popped return address, so the owner is `void`.
  *
- * All 41 call sites were resolved with `tools/lib/overlay_call_targets.ts`; all 41
+ * All 41 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 41
  * are import veneers.  The inventory's `calls=39` is the documented undercount
  * of that field.  Control flow is straight-line apart from two identical null
  * guards on the Func_0808a080(0) record, so every call below appears once.

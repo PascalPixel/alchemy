@@ -22,7 +22,7 @@
  * word, at overlay offset 0x5984 -- inside the span of the still
  * undrafted owner 0x020056a0, which is therefore its installer.
  *
- * Call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3c9 3660 36d0`'s `+2` rule: sites=3, all three veneers, and
  * the three transcribed here are those three. Never read a `bl` target
  * off the raw listing in this overlay (see the note in the 0x020037c4

@@ -13,7 +13,7 @@
  * sites at 0x02000c9a, 0x02000cb6, 0x02000d0e, 0x02000d46 and 0x02000e54.
  * They are data, not code, and register state is unaffected by them.
  *
- * Call sites resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores `target_offset - 2`, so the disassembler's annotations are wrong):
  *
  *   0x02000ca4                      -> veneer 0x0200246c -> Func_0808a080

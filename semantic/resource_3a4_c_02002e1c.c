@@ -17,8 +17,8 @@
  * calls over nine distinct targets, all resolved with the `+2` rule
  * against the raw image (this owner starts outside a recorded row, so
  * overlay_call_targets.ts's own table does not cover it -- resolved with
- * `bun tools-rs/overlay-show resource_3a4 2e1c | bun
- * tools/lib/overlay_call_targets.ts resource_3a4 2e1c 2e76 --annotate`):
+ * `bun tools/overlay-show resource_3a4 2e1c | bun
+ * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 2e1c 2e76 --annotate`):
  *   0x2002e1e -> veneer -> Func_0808a018()          established no-arg scene bracket
  *   0x2002e28, 0x2002e36 -> veneer -> Func_0808a0f0(slot, x, z)   established, place an entity
  *   0x2002e3c -> veneer -> Func_080770c8(0x323)     established, set a story flag

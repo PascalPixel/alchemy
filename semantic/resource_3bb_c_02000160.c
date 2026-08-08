@@ -13,7 +13,7 @@
  * fifth and sixth arguments of the two Func_080091c0 calls.
  *
  * All 13 `bl` sites are placed and reach eight distinct callees, matching the
- * inventory row's calls=13.  Targets come from tools/lib/overlay_call_targets.ts
+ * inventory row's calls=13.  Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations - it prints the two identical Func_080000c0 halfwords, and the
  * two identical Func_08009150 halfwords, as different callees.  0x3f50 ->

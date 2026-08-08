@@ -37,7 +37,7 @@
  * this overlay, which cross-checks the workspace layout the byte-exact siblings
  * `assets/code/resource_3b7_c_02000044.c` and `..._020001a8.c` establish.
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x02001770 -> veneer 0x020019c4 -> Func_080f9010
  *   0x0200177e -> veneer 0x02001954 -> Func_0808a100

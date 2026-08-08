@@ -47,7 +47,7 @@
  *   0x02001490 = 0xffff0000  record field value
  *   0x02001494 = 0x000008b1  progress-flag id
  *
- * Call sites resolved with `bun tools/lib/overlay_call_targets.ts resource_3a2 11b0`
+ * Call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2 11b0`
  * (the printed annotations of overlay_show are NOT used: an overlay `bl` stores
  * target_offset - 2).  56 sites, 17 distinct targets, of which 5 are this
  * overlay's own prologues and 12 are import veneers:

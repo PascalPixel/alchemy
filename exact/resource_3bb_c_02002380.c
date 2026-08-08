@@ -11,7 +11,7 @@
  * is immediately at 0x020023bc. Two arguments (r0, r1), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * Uncertainty: none of the three callees are identified beyond call
  * shape; the 15-entry table's role is inferred only from this scan.

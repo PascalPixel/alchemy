@@ -14,8 +14,8 @@
  * 0x0200048c/0x020004d0 pair - consecutive one-shot ids for consecutive beats.
  *
  * Call targets resolved with
- *   bun tools-rs/overlay-show resource_3a7 08a8 -n 156 |
- *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
+ *   bun tools/overlay-show resource_3a7 08a8 -n 156 |
+ *   cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 --annotate
  * Per-target multiset over the 14 sites, matching the inventory's calls=14:
  *   Func_080770c0 x1 <- veneer 0x02001100  (test flag 0x9a8)
  *   Func_08015040 x1 <- veneer 0x020010f8

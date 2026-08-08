@@ -8,11 +8,16 @@ from rediscovering the same source-shape constraints.
 
 The clean-room evidence boundary in [PROVENANCE.md](PROVENANCE.md) and the
 source-only publication gate in
-`tools-rs/check-publication` apply here.
+`tools/check-publication` apply here.
 Externally suggested compiler behavior remains a hypothesis until reproduced
 locally. A confirmed law must name its in-repository evidence, scope, and
 confirmation date. An exact match proves the cited source shape; broader claims
 must be tested on more than one function before being generalized.
+
+Operational compiler/build commands in this ledger use the native `tools`
+paths. A `.ts` or `.py` name retained in a dated measurement, experiment, or
+retirement table identifies the historical implementation that produced that
+evidence; it is not a current command.
 
 ## Confirmed laws
 
@@ -27,8 +32,8 @@ must be tested on more than one function before being generalized.
 - **Scope:** confirmed for the `0807933x` counter cohort. This is a normalization
   priority, not a universal promise that removing temporaries fixes every
   register-only mismatch.
-- **Evidence:** exact installed matches [src/08079338.c](src/08079338.c) and
-  [src/08079358.c](src/08079358.c), with the bounded counter-family experiment
+- **Evidence:** exact installed matches [exact/08079338.c](exact/08079338.c) and
+  [exact/08079358.c](exact/08079358.c), with the bounded counter-family experiment
   recorded in the former local wall ledger.
 - **Confirmed:** 2026-07-21.
 
@@ -42,7 +47,7 @@ must be tested on more than one function before being generalized.
 - **Scope:** confirmed for the `0807933x` counter cohort. Treat other occurrences
   as hypotheses until their second use is independently found.
 - **Evidence:** exact installed counter shapes in
-  [src/08079338.c](src/08079338.c), [src/08079358.c](src/08079358.c), and their
+  [exact/08079338.c](exact/08079338.c), [exact/08079358.c](exact/08079358.c), and their
   neighboring installed cohort members.
 - **Confirmed:** 2026-07-21.
 
@@ -74,7 +79,7 @@ must be tested on more than one function before being generalized.
   read). The same qualifier did not resolve the `0809802c` prologue
   `sub sp` placement, so this law governs load-versus-store order only, not
   stack-allocation scheduling.
-- **Evidence:** exact installed match [src/0809a65c.c](src/0809a65c.c);
+- **Evidence:** exact installed match [exact/0809a65c.c](exact/0809a65c.c);
   bounded flag experiments (`-fno-schedule-insns{,2}`, `-mtune` sweep,
   sched-spec flags) reproduced the hoist under every non-volatile shape.
 - **Confirmed:** 2026-07-22.
@@ -86,8 +91,8 @@ must be tested on more than one function before being generalized.
   translation unit.
 - **Producing configuration:** an evidenced translation-unit flag, never an
   inline register pin or arbitrary per-function matching knob.
-- **Evidence:** the `FIXED_R3_SOURCES` bundle and rationale in
-  [tools/lib/alchemy_gcc.ts](tools/lib/alchemy_gcc.ts).
+- **Evidence:** the `FIXED_R3_SOURCES` bundle and rationale in the native
+  compiler routing tables.
 - **Confirmed:** 2026-07-21.
 
 ### Fourth stratum: default-ABI library units
@@ -122,8 +127,8 @@ must be tested on more than one function before being generalized.
   that the `rom_f9000` audio bank links the prebuilt stock m4a library,
   and with `pret/pokeruby` compiling its m4a unit with `old_agbcc`.
 - **Governance:** `old_agbcc` is admitted only for the source-scoped regions
-  whose compiler provenance and pinned bundle digests are recorded in
-  [tools/lib/alchemy_gcc.ts](tools/lib/alchemy_gcc.ts). Other functions stay
+  whose compiler provenance and pinned bundle digests are recorded in the
+  native compiler bundle tables. Other functions stay
   reconstruction assembly until they have their own exact-byte evidence.
 - **Recorded:** 2026-07-22.
 - **The stratum is wider than the audio bank (2026-07-24).** `08006c24` — a
@@ -272,8 +277,8 @@ must be tested on more than one function before being generalized.
 - **Scope:** confirmed for the shared `Data_02000240[237]` state test. This is
   not permission to recast arbitrary integer constants as addresses; the pool
   word and its use must independently support the address-valued reading.
-- **Evidence:** exact installed matches [src/0809b5dc.c](src/0809b5dc.c) and
-  [src/0809b364.c](src/0809b364.c). In the latter, preserving the pool load and
+- **Evidence:** exact installed matches [exact/0809b5dc.c](exact/0809b5dc.c) and
+  [exact/0809b364.c](exact/0809b364.c). In the latter, preserving the pool load and
   delaying the position read also removes an unnecessary r7 live range.
 - **Confirmed:** 2026-07-22.
 
@@ -291,7 +296,7 @@ must be tested on more than one function before being generalized.
   `-fstrength-reduce` invent both the pointer and the countdown. The derived
   induction variables are created *after* the other preheader values, so they
   are emitted last, which is exactly where the reference puts them.
-- **Why it is worth a law:** for [src/080a9d84.c](src/080a9d84.c) the
+- **Why it is worth a law:** for [exact/080a9d84.c](exact/080a9d84.c) the
   hand-written countdown form was already correct in every instruction of the
   loop body and off only in the six-instruction preheader. A 579-variant
   exhaustive sweep over every legal declaration permutation and every
@@ -305,7 +310,7 @@ must be tested on more than one function before being generalized.
   preheader ordering, suspect a hand-derived induction variable before
   suspecting a compiler flag.
 - **Caution about siblings:** the structural sibling that produced this
-  candidate, [src/080a9cbc.c](src/080a9cbc.c), *is* installed in the
+  candidate, [exact/080a9cbc.c](exact/080a9cbc.c), *is* installed in the
   hand-written countdown form. A sibling's shape being byte-exact for its own
   region does not make that shape canonical; two different sources can converge
   on the same code when the preheader has fewer values to order.
@@ -319,7 +324,7 @@ must be tested on more than one function before being generalized.
   obvious C — the index expression written inline inside the subscript or the
   cast — instead folds the base into the address and reassociates, emitting an
   extra add of the base plus a zero index register. On
-  [src/080a6a00.c](src/080a6a00.c) that cost four bytes and 108 mismatches.
+  [exact/080a6a00.c](exact/080a6a00.c) that cost four bytes and 108 mismatches.
 - **Producing idiom:** assign the index expression to its own local first, then
   subscript with that local:
 
@@ -336,7 +341,7 @@ must be tested on more than one function before being generalized.
   index to exist as a value; the local reproduces that without the helper,
   which `src/` does not allow. When a verified candidate carries such a helper,
   reach for a named local before assuming the helper itself was load-bearing.
-- **Relation to temp count:** consistent with the [src/08077cb8.c](src/08077cb8.c)
+- **Relation to temp count:** consistent with the [exact/08077cb8.c](exact/08077cb8.c)
   finding that the *number* of distinct temporaries matters and their names do
   not. Here too the lever is whether a value gets a temporary at all.
 - **Confirmed:** 2026-07-24.
@@ -360,9 +365,9 @@ must be tested on more than one function before being generalized.
   `asm/alignment.json`, and raise `alignment_padding` in
   `asm/classification.json` by one file and two bytes. Then the C installs
   normally.
-- **Evidence:** [src/0809a3c4.c](src/0809a3c4.c), 134 bytes, whose region was
+- **Evidence:** [exact/0809a3c4.c](exact/0809a3c4.c), 134 bytes, whose region was
   136. `65c2100a` had already made the same split at `0x080a9a56` for
-  [src/080a99b0.c](src/080a99b0.c), from the other direction — padding
+  [exact/080a99b0.c](exact/080a99b0.c), from the other direction — padding
   *between* two functions of one region rather than at its end.
 - **Scope:** applies only when the trailing bytes are zero. A region ending in
   a stray `bx lr` (`0x4770`) — `asm/08093054.s` is one — is a different
@@ -371,15 +376,15 @@ must be tested on more than one function before being generalized.
 
 ### Inline helpers can be load-bearing, and the integrator's guard is a heuristic
 
-- **Fingerprint:** `tools-rs/integrate-matches` rejects any candidate matching
+- **Fingerprint:** `tools/integrate-matches` rejects any candidate matching
   `/inline_fn|^(static|inline)\b/m` as "carries an m2c helper". That guard
   exists to keep raw m2c output out of `src/`, but it is a text test, not a
   judgement about whether the helper is doing work.
-- **Evidence:** [src/08011164.c](src/08011164.c) keeps a `static __inline__`
+- **Evidence:** [exact/08011164.c](exact/08011164.c) keeps a `static __inline__`
   two-halfword copy helper and matches exactly at 80 bytes. Expanding the
   helper by hand into the loop body — the remedy the register-offset law
   recommends trying first — gives 76 bytes and 48 mismatches. Its adjacent
-  sibling [src/080110e0.c](src/080110e0.c) carries the identical helper and
+  sibling [exact/080110e0.c](exact/080110e0.c) carries the identical helper and
   was installed the same way; nine `src/` files use the idiom.
 - **Producing action:** try the named-local expansion first, because when it
   works the result is cleaner and installs automatically. When it does not,
@@ -442,7 +447,7 @@ must be tested on more than one function before being generalized.
   Do not assume `goto` is always the right exit; it is the right exit when the
   reference did not roll.
 - **Evidence:** exact installed match
-  [assets/code/resource_36f_c_02000054.c](assets/code/resource_36f_c_02000054.c),
+  [exact/resource_36f_c_02000054.c](exact/resource_36f_c_02000054.c),
   364 bytes, the largest overlay region converted so far. Its three loops
   exercise all three consequences: the outer dispatch loop needs the `goto`
   exit, both waits need the bottom test, and both need written guards at
@@ -680,10 +685,10 @@ against the approved bundle; full sourced notes in
 - **Corollary, and the reason two of these installed:** when the descriptor
   block is the *only* thing in the function with anything to schedule, killing
   sched2 outright is indistinguishable from pinning the group, so the region
-  matches exactly. [src/08002f10.c](src/08002f10.c) is that case — 4 mismatches
+  matches exactly. [exact/08002f10.c](exact/08002f10.c) is that case — 4 mismatches
   under the mode alone, **0** at 44 bytes with `UNSCHEDULED_SOURCES` added, and
   its whole residual was the control-word pool load sitting one slot early.
-  [src/0800bc48.c](src/0800bc48.c) needed no second mode at all: **0** at 40
+  [exact/0800bc48.c](exact/0800bc48.c) needed no second mode at all: **0** at 40
   bytes on the routing alone. So the gap only bites where the function has
   other schedulable work — which is exactly why it went unnoticed until three
   larger regions hit it at once.
@@ -1252,8 +1257,8 @@ against the approved bundle; full sourced notes in
   conclusion rather than opening a new lever. `diagnostic-tables` carries
   no adoptable result and was not merged.
 - **Witness scan (2026-07-22, late):** eleven installed matches begin
-  push, pool load, arg copy (e.g. [src/08019908.c](src/08019908.c),
-  [src/08006384.c](src/08006384.c)). In every witness the pool load
+  push, pool load, arg copy (e.g. [exact/08019908.c](exact/08019908.c),
+  [exact/08006384.c](exact/08006384.c)). In every witness the pool load
   feeds a dependent dereference two slots later: the scheduler hoists
   the load for latency and fills the stall with the arg copy. The
   queue-push family's `ldr r4, =queue` has no nearby dependent use
@@ -1344,7 +1349,7 @@ against the approved bundle; full sourced notes in
   under `-mpreserve-single-bit-test -mentry-low-register-order
   -mthumb-and-sets-cc` on the default ABI. The one surviving difference is
   the call site: the compiler emits `bl _call_via_r3`, which
-  `alchemy_gcc.ts` resolves to the fixed runtime thunk bundle at
+  the native symbol resolver resolves to the fixed runtime thunk bundle at
   `0x080072f0`, while the reference branches to `0x080f9ee8` — the
   `pop {r3} / bx r3` tail of `asm/080f9c90.s`, the function immediately
   preceding it. The original translation unit satisfied its `_call_via_r3`
@@ -1356,7 +1361,7 @@ against the approved bundle; full sourced notes in
   `SINGLE_BIT_TEST_ENTRY_ORDER_SOURCES` routing. The lesson for the
   reviewer: a candidate can be instruction-for-instruction perfect and
   still not be a match, because `bl` target resolution is a link-model
-  property, not a codegen one — always read `build_claimed.ts`'s
+  property, not a codegen one — always read the native `tools/build-claimed`
   `failures=` count, never just the instruction diff. The three compiler
   modes above are recorded here so the routing can be restored verbatim if
   the veneer-placement model is ever solved.
@@ -1504,7 +1509,7 @@ against the approved bundle; full sourced notes in
   dropped and every data reference links to the plain even address. Branches were
   unaffected, which is why 1,236 regions matched with the bug present. `.thumb_set`
   is the alias form that keeps the branch type: the branch offset stays correct
-  *and* the data word gets its tag. Fixed in `tools/lib/alchemy_gcc.ts`.
+  *and* the data word gets its tag. Fixed in the native symbol resolver.
 - **Fallout, and the rule it produced:** the fix broke exactly one installed
   region, `0801a32c`, which had spelled a pointer *table* at `0x08031864` as
   `Func_08031864`. That spelling had been byte-neutral only because the stub was
@@ -1565,7 +1570,8 @@ against the approved bundle; full sourced notes in
   the measurement below.**
 - **(B) is a per-site lever, not a global law — measured.** An earlier version of
   this entry claimed the reference behaves as if the depend-count rule is absent,
-  full stop. That is false. With the rule gated off globally, `build_claimed.ts`
+  full stop. That is false. With the rule gated off globally, the native
+  `tools/build-claimed`
   reports `linked=1239 failures=260`: the rule is *present* in the reference for
   the large majority of code. Worse, it is not even source-scoped. Inside the
   single function `resource_3a0_c_02000048.c` the reference needs the rule ON at
@@ -1681,7 +1687,7 @@ against the approved bundle; full sourced notes in
   (const_int))` returns `cost + 1`. It is only observable into a non-call insn,
   since edges into a call already return 1 earlier in that function. (B) is
   `-fno-sched-depend-count`, a gate on `haifa-sched.c:4097-4110`. With both off,
-  `build_claimed.ts` gives `linked=1239 failures=0` — adding them changed nothing
+  `tools/build-claimed` gives `linked=1239 failures=0` — adding them changed nothing
   that already matched.
 - **What they close.** `resource_3c7:0030` goes 4 → 0 mismatched bytes on
   `-mthumb-immediate-latency` alone (and `-fno-sched-depend-count` alone is a
@@ -2115,7 +2121,8 @@ singletons. Each is an installed byte-exact match.
 
 ### Overlay discovery misses externally-called functions (2026-07-25)
 
-- **Measurement.** Of those 22 selector instances, `overlay_inventory.ts` had
+- **Measurement.** Of those 22 selector instances, the native
+  `tools/overlay-inventory` had
   inventoried only 5. The other 17 are not contained in a larger discovery and
   are not misclassified — they are simply absent. Discovery seeds from the
   first prologue, from overlay-internal tagged pointers, from the control-flow
@@ -2128,7 +2135,7 @@ singletons. Each is an installed byte-exact match.
   walks). A post-walk quality gate on the seeds themselves does not contain it,
   because the inflation comes from functions discovered transitively. Do not
   re-attempt without a containment strategy for the cascade.
-- **What shipped instead.** `overlay_adopt.ts --span BYTES` adopts an entry the
+- **What shipped instead.** `tools/overlay-adopt --span BYTES` adopts an entry the
   inventory does not list. The inventory was never the safety gate: the region
   boundary check, the straddling-label check and the rehearse-and-compare
   against the current overlay bytes all read the assembly. Their strength is
@@ -2148,7 +2155,7 @@ singletons. Each is an installed byte-exact match.
   while callers continue to branch to the original address.
 - **Safety gate.** Only labels referenced as complete symbol tokens outside the
   adopted region are retained. Their address-derived offsets must lie inside
-  the region, and `overlay_adopt.ts` still rebuilds and compares the complete
+  the region, and `tools/overlay-adopt` still rebuilds and compares the complete
   overlay before accepting any change. Alias preservation therefore weakens
   neither the region-boundary check nor byte identity.
 - **Evidence.** The four selector routines previously parked by the
@@ -2247,7 +2254,7 @@ singletons. Each is an installed byte-exact match.
   and SImode both emit `mov` and only HImode pools — exactly the shape of a
   transposition typo. Dropping the `n` does make HImode behave like the other
   two, and large HImode constants still reach the pool through `"m"`. It also
-  regresses `build_claimed.ts` from `failures=0` to `failures=25`. Witness:
+  regresses `tools/build-claimed` from `failures=0` to `failures=25`. Witness:
   `080b6a60`, whose `*output = 0xff` the reference pools. **Do not "fix" this.**
 - **Corollary for candidate C.** A near-miss whose only defect is an unwanted
   pool word at an `strh` is telling you the *candidate* is wrong, not the
@@ -2390,7 +2397,7 @@ singletons. Each is an installed byte-exact match.
 - **Implemented as `-mthumb-load-latency-one`** (`ARM_FLAG_THUMB_LOAD_LATENCY_ONE`,
   bit 30): in `arm_adjust_cost`, a true data dependence whose producer is a
   `(set (reg) (mem))` returns `cost - 1` when `cost > 1`. Default off, and
-  `build_claimed.ts` is unchanged with it off.
+  `tools/build-claimed` is unchanged with it off.
 - **It reproduces the reference's schedule and closes nothing.** On
   `resource_3b0:0030` the head becomes exact — the three chained loads go
   back-to-back and the unrelated `ldr r4,[pc,#56]` lands in the reference's
@@ -3037,7 +3044,7 @@ combinations all stuck at the same 2.
 
 **Two cautions from the sweep itself.** `timeout` is not a macOS command — a loop
 using it fails silently and reports nothing, which looked exactly like "no
-candidate is close". And `candidate_show` applies each source's *routed* flags on
+  candidate is close". And `tools/candidate-show` applies each source's *routed* flags on
 top of `--flags`, while `work/fresh_check.ts` applies only what you pass; on
 `0800430c` that is the difference between 3 halfwords and 14. Compare like with
 like before concluding anything about a region.

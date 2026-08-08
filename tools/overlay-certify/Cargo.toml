@@ -1,0 +1,22 @@
+[workspace]
+
+[package]
+name = "overlay-certify"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+overlay-call-targets = { path = "../overlay-call-targets" }
+overlay-gaps = { path = "../overlay-gaps" }
+overlay-published = { path = "../overlay-published" }
+
+[lib]
+name = "overlay_certify"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-certify"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

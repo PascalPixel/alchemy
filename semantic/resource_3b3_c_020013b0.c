@@ -20,7 +20,7 @@
  * instruction.
  *
  * All three call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3b3 13b0 1426`: 0x020013da,
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b3 13b0 1426`: 0x020013da,
  * 0x020013e6 and 0x020013f4 all reach veneer 0x02002a2c -> Func_03000380, the
  * relocated IWRAM quotient helper.  `overlay_show` prints three DIFFERENT
  * targets for them (0x2003e08, 0x2003e14, 0x2003e22), which is the

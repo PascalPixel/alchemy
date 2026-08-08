@@ -32,7 +32,7 @@
  * whole body: sl = first operand, r9 = second operand, r8 = destination, and
  * lr/ip are used as ordinary scratch for the two exponents.
  *
- * Call targets came from `bun tools/lib/overlay_call_targets.ts resource_3a7 1158`
+ * Call targets came from `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 1158`
  * (9 sites, 4 distinct targets), never from the disassembler's pc-relative
  * `bl` annotations. Eight are the three class predicates. The ninth call, at
  * 0x020011a2, targets a prologue-less constant loader and is worth spelling

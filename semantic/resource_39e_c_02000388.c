@@ -15,7 +15,7 @@
  * Not found by the structural inventory walk: this row is in the
  * published population (sweep B), reached as a stored pointer rather than
  * by any `bl` in the image. Both `bl` sites resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39e 388 414` under the `+2`
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 388 414` under the `+2`
  * rule; sites=2 and two bl lines were transcribed, so the arithmetic
  * agrees.
  *

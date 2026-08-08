@@ -26,7 +26,7 @@
  * 0x020023e4; that is the usual artefact of the constant 0x00004ccc decoding as
  * `ldr r4, [pc, #816]`, not a word of this owner.
  *
- * All 91 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 91 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are not the callees.
  * sites=91, distinct_targets=32 (89 veneer, 2 overlay-local prologue, both to

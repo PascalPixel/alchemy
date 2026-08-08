@@ -15,8 +15,8 @@
  * call site per overlay_unindexed.ts. This owner makes three outgoing
  * calls, all resolved with the `+2` rule against the raw image (this
  * owner starts outside a recorded row, so overlay_call_targets.ts's own
- * table does not cover it -- resolved with `bun tools-rs/overlay-show
- * resource_3a4 2428 | bun tools/lib/overlay_call_targets.ts resource_3a4
+ * table does not cover it -- resolved with `bun tools/overlay-show
+ * resource_3a4 2428 | cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4
  * 2428 2478 --annotate`):
  *   0x200242e -> veneer -> Func_080770c0(0x8fe)     story-flag query, established
  *   0x2002454 -> veneer -> Func_080091c0(52, 42, 1, 1, 53, 42)   established, "six-argument renderer, last two on stack" (resource_3ba_c_02000a3c.c)

@@ -28,7 +28,7 @@
  *
  * All eight `bl` sites are placed and reach three distinct callees, matching
  * the inventory row's calls=8.  Targets come from
- * tools/lib/overlay_call_targets.ts (target offset = stored displacement + 2),
+ * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored displacement + 2),
  * never from the disassembler's annotations: 0x3f50 -> Func_0808a080 (four
  * sites), 0x3e88 -> Func_080091c0 (three), and this overlay's own prologue at
  * file offset 0x0310 (one).

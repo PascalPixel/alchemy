@@ -10,7 +10,7 @@
  * return address, so the owner returns nothing and takes no arguments -- the
  * first `bl` is reached with r0 never set.
  *
- * TWIN.  The same 216 bytes appear in six overlays (tools-rs/overlay-twins):
+ * TWIN.  The same 216 bytes appear in six overlays (tools/overlay-twins):
  * resource_373:5b48, resource_38e:0974, resource_392:0cb4, resource_39f:2c0c,
  * resource_3a8:3a3c and resource_3b2:2ed8.  Converting it once settles all six.
  *

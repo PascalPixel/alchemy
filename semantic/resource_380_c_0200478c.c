@@ -23,7 +23,7 @@
  * executes at 0x02000000 and the resident module sits at 0x02008000+"
  * is STRUCK -- there is no resident module; that reading came from a
  * naive pc-relative misdecode of the bl targets, which resolve under
- * the +2 rule (tools/lib/overlay_call_targets.ts) through this overlay's
+ * the +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --) through this overlay's
  * own import-veneer table into main-ROM code.  The pool pointers fit
  * the standard 0x02008000 link base.
  *

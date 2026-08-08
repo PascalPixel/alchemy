@@ -1,0 +1,30 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "overlay-adopt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies: the already-landed Rust
+# halves of the exact TypeScript modules `overlay_adopt.ts` imports.
+#   ../lib/overlay_disasm.ts -> assembleOverlay, OVERLAY_BASE
+overlay-disasm = { path = "../overlay-disasm" }
+# A minimal zero-dependency JSON reader, reused rather than reimplemented:
+#   out/decomp/overlays.json, metrics/gs1-en-executable.json
+exact-reading-list = { path = "../exact-reading-list" }
+
+[lib]
+name = "overlay_adopt"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-adopt"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

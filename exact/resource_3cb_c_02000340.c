@@ -14,7 +14,7 @@
  * at 0x02000386.  Execution reaches `bx r1` at 0x02000384 and never falls into
  * them; the `subs`/`lsls`/`cmp` the disassembler prints there is data.
  *
- * All eight call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All eight call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=8:
  *   0x02000348 -> 0x02000128  (this overlay's own leaf, see below)

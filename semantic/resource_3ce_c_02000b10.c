@@ -42,7 +42,7 @@
  *   0x00000c1b 0x00000131
  * Neither word decodes as a BL prefix, so no phantom call site is introduced.
  *
- * All 15 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 15 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are NOT the callees.  This
  * overlay resolves to veneers only (sites=243, prologue=0 across the whole

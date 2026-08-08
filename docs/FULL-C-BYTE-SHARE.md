@@ -10,7 +10,7 @@ union(byte-identical executable spans emitted from canonical C)
 union(all audited executable spans in the main image and code overlays)
 ```
 
-The current exact fraction is generated with `bun run progress`. The
+The current exact fraction is generated with `make progress`. The
 percentage is a round-half-up, two-decimal presentation of that fraction; it
 is not stored independently in commit subjects.
 
@@ -32,7 +32,7 @@ byte accounting.
 
 The tracked inventory is
 [`metrics/gs1-en-executable.json`](../metrics/gs1-en-executable.json).
-`bun run progress:check` regenerates the interval union and rejects a stale
+`make progress-check` regenerates the interval union and rejects a stale
 inventory.
 
 GS2-English currently has only a compiler/bootstrap source and no complete
@@ -75,7 +75,7 @@ executable inventory and use an explicit
 `metrics: correct executable denominator` commit subject. Ordinary
 decompilation commits cannot change the denominator.
 
-Historical commits are not rewritten. `tools-rs/full-c-history/target/release/full-c-history` measures every
+Historical commits are not rewritten. `tools/full-c-history/target/release/full-c-history` measures every
 first-parent tree against the fixed audited denominator and writes
 [`full-c-history.json`](full-c-history.json) and
 [`full-c-history.csv`](full-c-history.csv). It derives ownership from each
@@ -83,7 +83,7 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 
 ## Coverage map
 
-`tools-rs/coverage-map/target/release/coverage-map` publishes the same measurement as four pictures:
+`tools/coverage-map/target/release/coverage-map` publishes the same measurement as four pictures:
 [`gs1-en-core.svg`](../assets/readme/gs1-en-core.svg),
 [`gs1-en-overlays.svg`](../assets/readme/gs1-en-overlays.svg),
 [`gs1-en-images.svg`](../assets/readme/gs1-en-images.svg), and
@@ -92,7 +92,7 @@ commit tree rather than trusting incompatible legacy subject suffixes.
 
 It derives exact and semantic ownership the way the history ledger does—from
 tracked trees. Dark-gray retained ownership additionally reads the latest verified
-full-build assembly manifest; run the publication redraw after `bun run verify`.
+full-build assembly manifest; run the publication redraw after `make verify`.
 If that manifest is absent, only explicit tracked non-code spans are dark gray and
 the unresolved complement remains gray:
 
@@ -116,7 +116,7 @@ is read from the selected exact source tree, so the check also holds when an
 explicit ref is used. Semantic C is not part of Full-C Byte Share and is drawn
 as a separate colour, never folded into the headline fraction.
 
-`tools-rs/dashboard-server/target/release/dashboard-server` serves a separate live worktree view. It
+`tools/dashboard-server/target/release/dashboard-server` serves a separate live worktree view. It
 derives the same ownership map directly in memory, watches `asm/`, `assets/`,
 `metrics/`, `semantic/`, `src/`, and the verified assembly manifest, and pushes
 a new draw to the browser after relevant changes. It deliberately tolerates a
@@ -134,5 +134,6 @@ the working tree: falling back could quietly republish an older measurement.
 Likewise a redraw that cannot see the recorded semantic source refuses rather
 than publishing that portion as zero.
 
-The map is regenerated on `main`, so `bun run coverage:check` is not part of
-`bun run verify`; regenerate the pictures explicitly when coverage changes.
+The map is regenerated on `main`, so `make coverage-check` is not part of
+`make verify`; regenerate the pictures explicitly with `make coverage` when
+coverage changes.

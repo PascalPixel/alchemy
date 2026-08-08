@@ -10,7 +10,7 @@
  * 18 sinks, then plays out a fixed sequence of placements, camera moves and
  * two identical shake pairs, and finally publishes selector 0x971.
  *
- * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 31 sites, 17 distinct
  * callees, all 31 accounted for below.  The disassembler's annotations are
  * uniformly wrong here - the four Func_0808a080 sites, the four Func_0808a010

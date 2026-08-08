@@ -17,7 +17,7 @@
  * address plus the Thumb bit under the proven 0x02008000 link base.
  *
  * CALL ACCOUNTING.  Twenty `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`:
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3ba --annotate`:
  * Func_080001e8 x8, Func_03000380 x4, Func_0808a400 x2, and one each of
  * Func_080770c0, Func_08000170, Func_080001a8, Func_080001c8, Func_08000178
  * and Func_080001c0.  The C below reproduces that multiset exactly: each of

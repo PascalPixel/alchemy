@@ -12,7 +12,7 @@
  * row's 448 bytes and is data.
  *
  * All 31 `bl` sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3bf 4da0`, never from the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bf 4da0`, never from the
  * disassembler's pc-relative annotations.  They collapse to 13 distinct
  * targets, which is the row's `calls` field exactly:
  *   0x020055a0 -> Func_080000f8   x1   (a value source; see below)

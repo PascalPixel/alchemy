@@ -29,7 +29,7 @@
  * `bl Func_0808a170` at 0x02000456.  The line id is hoisted into a local so
  * the import is called exactly once and the per-target multiset stays honest.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; twelve sites,
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; twelve sites,
  * matching the inventory's `calls=12`.
  */
 

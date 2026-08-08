@@ -13,7 +13,7 @@
  *   0x02000b24 = 0x00000105  actor/portrait id
  *   0x02000b28 = 0x03001ebc  workspace-pointer cell in IWRAM
  *
- * Calls resolved with `bun tools/lib/overlay_call_targets.ts resource_3a2 0ac0
+ * Calls resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2 0ac0
  * --json` (ten sites, nine distinct veneer targets -- Func_0808a010 is reached
  * twice; the inventory's `calls=10` counts sites here):
  *   0x0ac2 -> veneer 0x14f0 -> Func_0808a018

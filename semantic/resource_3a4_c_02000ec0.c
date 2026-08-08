@@ -46,7 +46,7 @@
  * and land inside its own literal pool.
  *
  * Ninety-three call sites, every one resolved with the `+2` rule via
- * `bun tools/lib/overlay_call_targets.ts resource_3a4 0xec0 0x1398` and none
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0xec0 0x1398` and none
  * read from the listing's arrows. Site count cross-checked: the resolver
  * reports sites=93 and the listing carries 93 `bl` lines. They collapse
  * onto twenty-eight targets, all import veneers, with no in-image

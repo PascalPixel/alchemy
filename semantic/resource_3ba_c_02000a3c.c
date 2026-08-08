@@ -28,7 +28,7 @@
  * reach the workspace, and 0x02000240 is the shared RAM `s16[]` table.
  *
  * CALL ACCOUNTING.  Sixty-two `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3ba --annotate`:
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3ba --annotate`:
  *   Func_080091c0 x8, Func_0808a088 x7, Func_0808a080 x7, Func_080770c0 x6,
  *   Func_02000a10 x3, Func_0808a588 x3, Func_08009080 x3,
  *   Func_02002ea0 x2, Func_02002738 x2, Func_02001910 x2, Func_02001898 x2,

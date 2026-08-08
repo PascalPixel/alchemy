@@ -16,7 +16,7 @@
  * reaches `bx r1` at 0x02000d44 and never falls into them; the `cmp`/`lsls`
  * halfwords the disassembler prints there are data.
  *
- * All 51 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 51 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2).  The inventory reports
  * calls=49, which is a lower bound; the placed multiset is Func_0808a170 x9,
  * Func_080770c8 x9, Func_080770c0 x7, Func_0808a178 x6, Func_080770d0 x5,

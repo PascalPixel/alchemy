@@ -14,7 +14,7 @@
  * placed below; the inventory advertises `calls=18`, an undercount of one.
  * None of the nineteen falls inside the literal pool.
  *
- * All sites resolve with tools/lib/overlay_call_targets.ts — an overlay `bl`
+ * All sites resolve with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- — an overlay `bl`
  * stores `target_offset - 2`, so the disassembler's labels are artefacts — and
  * are named for the main-image address in each veneer entry's trailing word.
  * The begin/message/act/end quartet is the one tracked byte-exact source

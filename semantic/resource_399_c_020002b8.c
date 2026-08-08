@@ -8,7 +8,7 @@
  * the return address and nothing is returned — the owner is `void`.  Bytes
  * 0x02000376-0x02000383 are alignment plus the three-word literal pool.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_399
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_399
  * 02b8 --annotate`; an overlay `bl` stores `target - 2`, so the disassembler's
  * own annotations are wrong.  23 sites, 11 distinct imports.  Per-target
  * multiset against the assembly, which is what the C below spells:

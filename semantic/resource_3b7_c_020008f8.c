@@ -12,7 +12,7 @@
  * only by `ldr r0, [pc, ...]`, so they are data.  All seven are small line ids,
  * none is an address, so the overlay's link base does not bear on this owner.
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x020008fe -> Func_080772e0    0x0200095a is a branch, not a call
  *   0x02000904 -> Func_0808a5b0    0x02000962 -> Func_0808a170

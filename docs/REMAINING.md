@@ -5,7 +5,7 @@
 > Historical snapshot from early 2026-07-26. Its measurements and conclusions
 > are preserved as a dated diagnosis, not current status. Use
 > [PATH-TO-COMPLETION.md](PATH-TO-COMPLETION.md) and
-> `tools-rs/remaining-survey/target/release/remaining-survey` for the live counts.
+> `tools/remaining-survey/target/release/remaining-survey` for the live counts.
 
 813 `c_candidate` regions remain at `[1,245 of 2,058]`. Breaking that down
 changes what the next move should be.
@@ -33,7 +33,7 @@ to match. **There are 14 small regions left**, and the ones at the head of that
 list are already spoken for:
 
 - `0800d304`, `080c08a8`, `080170c4` are the pinned grouped-DMA near-misses,
-  scheduler-internal residuals, documented in `alchemy_gcc.ts`;
+  scheduler-internal residuals, documented in the native compiler evidence;
 - `08004c6c`, `08004c1c` are the twelve-store matrix family, blocked on the
   recognizer breaking at `index != 12` before its guards
   (`work/hand/08004bd4/NOTES.md`);

@@ -20,7 +20,7 @@
  * and the walk never reaches it as an instruction.
  *
  * Both call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_378 26f0 274e`, assigning the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_378 26f0 274e`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
  *   0x02002708 -> veneer 0x02003548 -> Func_08000120
  *   0x0200271c -> veneer 0x02003540 -> Func_08000118

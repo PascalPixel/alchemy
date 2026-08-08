@@ -1,7 +1,7 @@
 {
   "format": 1,
   "kind": "golden-sun-graphics-index",
-  "note": "Derived from the flat listing of assets/graphics. Regenerate with `bun tools/graphics_index.ts --write`; do not hand-edit.",
+  "note": "Derived from the flat listing of assets/graphics. Native tools discover this listing at runtime; verify and rebuild assets with `make build-assets`. Do not hand-edit.",
   "files": 8056,
   "families": [
     {

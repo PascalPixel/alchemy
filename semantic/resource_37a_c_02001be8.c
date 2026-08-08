@@ -11,7 +11,7 @@
  * halfword, and the eight bytes at 0x02001ca0-0x02001ca7 are the literal pool
  * (0x0000102b, 0x00000811).  Nothing branches over or into them.
  *
- * All nineteen call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All nineteen call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2); the disassembler's printed
  * `bl` targets are the usual overlay artefact and are not the callees.
  * sites=19, distinct_targets=13 (17 veneer, 2 prologue), against the

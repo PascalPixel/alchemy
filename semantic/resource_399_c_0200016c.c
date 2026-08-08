@@ -22,7 +22,7 @@
  * Thumb entry point.)  This owner is itself a witness for the base: the same
  * band holds this overlay's other script blocks.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_399
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_399
  * 016c` (an overlay `bl` stores `target - 2`, so the disassembler's own
  * annotations are wrong).  Three sites, two distinct imports:
  *   0x02000184 -> Func_0808a038(script)     announce the chosen script

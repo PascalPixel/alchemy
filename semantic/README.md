@@ -35,7 +35,7 @@ Each file must define `Func_0200aaaa`, compile as freestanding ARM7TDMI C, and
 contain no inline assembly. Validate the complete semantic tree with:
 
 ```sh
-bun run build:semantic
+make build-semantic
 ```
 
 Admission means:
@@ -60,7 +60,7 @@ Reconstruct one complete owner at a time and account for every assembly call.
 Use m2c output as a drafting hint, not as authority: missing stack arguments,
 fake thunk arguments, unset call-clobbered values, and conflated high-register
 lifetimes must be recovered from assembly dataflow and typed call-site evidence.
-Run `bun run build:semantic` during drafting and `bun run verify` before
+Run `make build-semantic` during drafting and `make verify` before
 committing a settled group.
 
 Before selecting a candidate labelled `split_first` or

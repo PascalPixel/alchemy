@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "decomp-diagnose"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "decomp_diagnose"
+path = "src/lib.rs"
+
+[[bin]]
+name = "decomp-diagnose"
+path = "src/main.rs"
+
+[dependencies]
+candidate-compiler = { path = "../candidate-compiler" }

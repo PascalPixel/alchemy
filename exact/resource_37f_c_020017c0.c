@@ -13,7 +13,7 @@
  * pooled (0x0310, 0x0314, 0x0318) are built as 196/197/198 << 2 instead, which
  * is why the pool holds nine words rather than twelve.
  *
- * All 42 call sites were resolved with `tools/lib/overlay_call_targets.ts`, which
+ * All 42 call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`, which
  * matches the inventory's `calls=42` exactly.  All are import veneers:
  * 12 x Func_080770c0, 18 x Func_080091c0, 12 x Func_0808a0f0.
  *

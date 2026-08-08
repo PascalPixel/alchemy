@@ -25,7 +25,7 @@
  * at 0x02000040 spells the identical band as `Data_020098xx`/`Data_02009xxx`
  * symbols, which is the base witness.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong).  All four
  * sites go through the veneer at 0x02001550 to `Func_080770c0`, the event-flag
  * test also used by `semantic/overlays/resource_3ae_c_020002dc.c`.  sites=4

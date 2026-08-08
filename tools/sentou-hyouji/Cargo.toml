@@ -1,0 +1,19 @@
+[package]
+name = "sentou-hyouji"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "sentou_hyouji"
+path = "src/lib.rs"
+
+[[bin]]
+name = "sentou-hyouji"
+path = "src/main.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[workspace]

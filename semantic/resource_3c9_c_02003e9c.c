@@ -29,7 +29,7 @@
  * arguments read, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3c9 3e9c 423c's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9 3e9c 423c's
  * +2 rule).
  *
  * Local callees are the same pre-owner helper pair as

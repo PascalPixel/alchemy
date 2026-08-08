@@ -23,7 +23,7 @@
  *  - The epilogue is `pop {r1} ; bx r1` (N != 0), so r0 survives the return
  *    and IS the result: the value returned is whatever 0x0200006c returned,
  *    i.e. the occupying record or 0.
- *  - Both calls were resolved with `bun tools/lib/overlay_call_targets.ts
+ *  - Both calls were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  *    resource_3c5 2660`, which reports sites=2: the site at 0x0200268a is an
  *    import veneer publishing Func_080091a8, and the site at 0x02002694
  *    resolves to the in-image prologue at 0x0200006c.  The printed `bl`

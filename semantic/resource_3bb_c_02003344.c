@@ -19,7 +19,7 @@
  * 0x02003458. Two arguments (r0, r1), `s32` return.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * `current = *Data_03001f3c` is a single-dereference global, the same
  * shape resource_3bb_c_02002d84.c's `Data_03001e68` documents at a

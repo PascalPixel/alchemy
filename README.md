@@ -29,7 +29,7 @@ spirit, this project is releasing *Golden Sun* from its finished ROM image into
 code and assets that people can study and learn from. We hope that, in doing so,
 Alchemy inspires new developers to create wonderful RPGs of their own.
 
-## DONE: Currently 29%
+## DONE: Currently 27%
 
 29% of the game's audited executable bytes now build from exact, byte-matching
 C, or belong to the small pieces of low-level code intentionally kept as
@@ -43,7 +43,7 @@ Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
 readable C that still needs to be matched. Dark gray marks the small pieces of
 low-level runtime structure kept as permanent assembly.
 
-![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=94de7637)
+![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=5d6113d4)
 
 ### Code overlays
 
@@ -53,7 +53,7 @@ Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 Eleven of those modules are already completely exact, byte-matching C.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=66b0ce2b)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=59dfd0c9)
 
 ### Images and data
 

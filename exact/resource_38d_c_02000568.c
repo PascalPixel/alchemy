@@ -21,7 +21,7 @@
  * in the overlay's own tables; nothing in the body depends on the base.
  *
  * Call accounting: 13 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_38d 0568 --json`: Func_080770c0
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_38d 0568 --json`: Func_080770c0
  * x2, Func_0808a1b8 x2, and one each of Func_0808a018, Func_0808a1e8,
  * Func_0808a138, Func_0808a010, Func_0808a170, Func_0808a180, Func_0808a090,
  * Func_0808a0d0, Func_0808a020 - 11 distinct targets, matching the tool's

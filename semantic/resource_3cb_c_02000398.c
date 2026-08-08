@@ -15,7 +15,7 @@
  * 0x0200052e and never falls into them; the `movs`/`subs`/`lsrs` halfwords the
  * disassembler prints there are data.  Func_0200053c begins immediately after.
  *
- * All fifteen call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All fifteen call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=15.  Every one is an import veneer:
  *   0x020003b0 -> 0x0200173c -> Func_08000170   (open, 340)

@@ -15,7 +15,7 @@
  * address, so the owner is void.
  *
  * All twelve call sites resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c2 006c --json`:
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c2 006c --json`:
  *   0x02000072 -> veneer 0x0b64 -> Func_0808a080
  *   0x02000090 -> veneer 0x0c1c -> Func_080b0008
  *   0x0200009e -> veneer 0x0b34 -> Func_080770c0

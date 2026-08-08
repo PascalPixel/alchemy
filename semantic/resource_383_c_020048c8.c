@@ -28,7 +28,7 @@
  *
  * All 31 `bl` sites are placed and reach 9 distinct callees; 16 sites are
  * calls to this overlay's own four helpers and 15 reach the import veneer
- * table.  Targets come from tools/lib/overlay_call_targets.ts (target offset =
+ * table.  Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset =
  * stored displacement + 2).  The tool also reports one `unknown` site at
  * 0x02004b24: that is the literal pool word 0xfd92f005, which merely happens
  * to decode as a BL pair, not a call.

@@ -35,7 +35,7 @@
  * popped register is r1, not r0, so r0 survives and IS the result.  The owner
  * returns s32 0 on every path.
  *
- * CALL ACCOUNTING.  104 sites resolved with tools/lib/overlay_call_targets.ts
+ * CALL ACCOUNTING.  104 sites resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (90 veneers, 14 internal prologues).  The inventory row says calls=64,
  * which is the documented lower bound — the jump table inside the span is
  * exactly the case it undercounts.  Per-target multiset, reproduced by the C

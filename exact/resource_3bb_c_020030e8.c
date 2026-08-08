@@ -15,7 +15,7 @@
  * the first call, so it is the forwarded first argument.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * Uncertainty: none of the six callees are identified beyond call shape;
  * `object`'s fields (0x30/0x34, set to a fixed 0x14000/0xa000 pair, 0x5b

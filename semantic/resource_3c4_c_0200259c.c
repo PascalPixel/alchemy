@@ -37,7 +37,7 @@
  * CALLS: 211 `bl` sites on the walk, of which five (0x020025f6, 0x0200269e,
  * 0x0200270a, 0x02002776, 0x0200278e) resolve to this owner's own epilogue at
  * 0x02002fda and are long unconditional branches, not calls.  206 real calls
- * remain, resolved with `tools/lib/overlay_call_targets.ts` (`bl` stores
+ * remain, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (`bl` stores
  * target_offset - 2); the printed annotations in any disassembly of this
  * region are artefacts.
  *

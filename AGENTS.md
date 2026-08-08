@@ -1,174 +1,182 @@
 # Working on Alchemy
 
 Alchemy reconstructs *Golden Sun* (GBA) as byte-exact C. A change counts only
-when the rebuilt bytes are identical to the released ROM.
+when the rebuilt bytes are identical to the released ROM. The native Rust
+toolchain under `tools/` is the repository's operational tooling layer;
+shared functionality belongs in workspace libraries or in the owning crate's
+library module, not in an unregistered helper.
 
-There are ten tools. Nine are folders under `tools/` with an `index.ts` that
-takes a subcommand, plus the smaller modules each owns. The Rust `self-test`
-runner discovers their checks. Shared code lives in
-`tools/lib/` and belongs to no tool.
+Every top-level native command group must have a section on this page, or it
+must not exist. `tools/documented` checks the dispatcher registry against
+these headings, and `tools/architecture` checks that every crate, path,
+dispatch entry, and documented group is valid and reachable. The registry is
+the only list of command groups. A new group must be documented before it can
+pass the gates.
 
-**Every tool must have a section on this page, or it must not exist.**
-`tools-rs/architecture` enforces that, and `bun run lint` runs it. There is
-no second list of tools anywhere: adding one without documenting it fails the
-build, which is how the count stays honest. This repository reached 184 tools
-because adding one cost nothing and nobody could see the total.
-
-Run any tool with no arguments to list its subcommands.
-
-`tools/scratch/` is exempt from every gate — `documented`, `architecture`,
-`typecheck` (tsconfig `exclude`) and `self-test` discovery — and is git-ignored. Throwaway probes
-belong there: the best result of the restructure came from a one-off script that
-found 31 fork modes missing from the sweep list, and a rule demanding every tool
-be documented would have refused it. Graduate what survives; delete the rest.
+Throwaway probes belong in the ignored `tools/scratch/` area while they are
+being explored. Graduate a useful probe into the appropriate native crate,
+then remove the scratch copy. Do not use scratch code as a repository tool or
+as a source of game-specific implementation.
 
 ## The loop
 
-1. **Pick an owner** — `tools-rs/semantic-queue/target/release/semantic-queue`, or `overlay twins --leads`.
+1. **Pick an owner** — `tools/semantic-queue` or
+   `tools/overlay-twins --leads`.
 2. **Write C** into `semantic/<owner>.c` until it compiles and reads correctly.
-3. **Close the residual** — the two search axes below.
-4. **Adopt it** — `tools-rs/overlay-adopt/target/release/overlay-adopt`. This is what counts.
-5. **Verify, then commit** — `bun run verify` is the only authority.
+3. **Close the residual** using the bounded source and compiler searches.
+4. **Adopt it** with `tools/overlay-adopt`; adoption is what moves the
+   byte-exact counter.
+5. **Verify, then commit** with the repository gate and regenerated metrics.
+
+Run the common workflow through the root `Makefile`:
 
 ```bash
-bun run verify   # rebuilds the ROM and every overlay (slow, authoritative)
-bun run test     # lint + every tool's self-test (~7s)
-bun run lint     # the gates alone, including this page's rule
-bun run typecheck  # strict tsc, zero errors, gating via lint
+make verify          # authoritative byte-exact gate
+make test            # repository gates and every native self-test
+make lint            # architecture and policy gates
+make build-rom       # rebuild the ROM
+make build-assets    # rebuild the asset tree
+make progress        # print byte-exact progress
+make coverage        # refresh dashboard maps
 ```
 
-`tsconfig.json` had been strict since it was written and nothing ever ran it, so
-the first run reported 2,200 real errors. 2,114 of those came from
-`noUncheckedIndexedAccess` alone, which is off for the whole tree rather than
-waived per file: this code indexes ROM byte arrays constantly with bounds proven
-by the surrounding loop, so the rule buys thousands of non-null assertions and
-buries the few genuine cases. Turning it on is its own wave. The other 86 are
-fixed and `typecheck` gates through `lint`.
+For a single native command, use its Cargo manifest directly, for example:
 
-It paid for itself immediately: it found four scheduler modes tagged
-`family: "schedule"` against a union whose member is `"scheduler"`, so the rule
-excluding scheduler modes from `old-agbcc` never excluded them and the search
-generated configurations that compiler cannot honour. It also found an
-`interface extends` a union, which erased a discriminant and silently untyped
-every narrowing below it.
+```bash
+cargo run --release --manifest-path tools/semantic-queue/Cargo.toml -- --help
+cargo run --release --manifest-path tools/self-test/Cargo.toml
+```
 
 ## verify
 
-`bun run verify` — the gate. Rebuilds the ROM, every overlay, and the asset tree from tracked
-sources and compares the result to the released image byte for byte. Nothing
-else in this repository is authoritative: if `verify` is green the work is real,
-and if it is red nothing you believe about the tree matters. Run it before every
-commit. It is slow because it is complete.
+`make verify` is the authority. It rebuilds the tracked ROM stages and asset
+outputs, runs the native checks and self-tests, verifies semantic ownership and
+sealed-owner state, and checks the regenerated byte-exact progress. A green
+gate is the evidence that the work is real; a failed gate means the result is
+not ready to commit. Run it before every commit. It is deliberately complete
+and may take longer than the focused commands used during iteration.
 
 ## self-test
 
-Runs every tool's `--self-test`, discovered by walking `tools/` rather than from
-a list. The chain it replaced named 107 tools by hand and silently missed 31
-that had tests nobody ran; discovery removes the drift, because forgetting to
-register a tool is no longer possible. Takes about seven seconds for all of them
-in parallel.
+`tools/self-test` discovers native Cargo binaries from the workspace and
+runs their `--self-test` checks with bounded parallelism. It is also included
+in `make test`. A native command owns its own self-test; do not maintain a
+second hand-written list of tests. A newly added command must be discoverable,
+reachable from the workspace, documented here, and covered by its own check.
 
 ## make
 
-Builds the ROM and its parts: `build_rom` for the whole image, and `build_asm`,
-`build_assets`, `build_claimed`, `build_full`, `build_semantic` for the stages.
-This is the pipeline `tools-rs/verify` drives, exposed separately so you can rebuild one
-stage while iterating instead of paying for the full gate each time. Named
-`make` because `build`, `rom` and `dist` are all publication-blocked directory
-names.
+The root `Makefile` is the fast operational entry point. It delegates to the
+native crates for inventory, build stages, semantic checks, coverage, compiler
+checks, and verification. The build stages are `build-claimed`, `build-asm`,
+`build-assets`, `build-semantic`, `build-full`, and `build-rom`; use a focused
+stage while iterating and `make verify` before claiming completion.
 
-`localization_font` exports, builds, and verifies the 42,320-byte localization
-font package, including its F0 move-to-front banks, palette streams, glyph atlas,
-and article tables. Its native implementation lives in `tools-rs/localization-font`;
-the TypeScript module remains as the library imported by `build_assets`.
+`tools/build-assets` owns the native asset pipeline, including resource
+plans, stream encoders, localization data, maps, graphics, text, audio, and
+the bespoke Camelot containers. Asset descriptions that are intended to be
+published remain tracked; ROM images, bulk dumps, build outputs, and caches do
+not. See `PROVENANCE.md` and `tools/check-publication` for the boundary.
 
 ## overlay
 
-Everything about the 96 code overlays, which hold roughly 60% of the executable.
-`tools/lib/overlay_disasm.ts` and `overlay_show` read one owner, `overlay_inventory` builds
-the discovery queue, `overlay_adopt` installs a byte-exact reconstruction and is
-the step that moves the counter, and `overlay_twins --leads` finds families where
-reading one owner lets you transpose the rest. Overlays reuse whole routines
-across maps, so those families are the cheapest bytes on the board.
+The overlay crates own the 96 code overlays, which contain roughly 60% of the
+executable. `tools/overlay-disasm` and `tools/overlay-show` inspect an
+owner, `tools/overlay-inventory` builds the discovery queue,
+`tools/overlay-adopt` installs a byte-exact reconstruction, and
+`tools/overlay-twins` finds families where one owner informs another.
+Overlays reuse whole routines across maps, so related families are often the
+cheapest byte-exact work. Adopt only from outside `exact/`; adoption performs
+its own pre-flight assembly check.
 
 ## assets
 
-Extracts and rebuilds every ROM asset format: graphics, tilemaps, sprite banks,
-maps, text, audio sequences, and the bespoke Camelot containers. This is our
-`gbagfx` equivalent, except Golden Sun's formats are per-resource rather than
-standard GBA ones, so it is a module per format instead of one converter with
-flags. Converted assets (PNG, WAV, JSON descriptions) are tracked and
-publishable, as in pret's decomps; what stays out of git is the ROM image itself
-and bulk dumps — see PROVENANCE.md and `tools-rs/check-publication`.
+The asset crates extract, rebuild, and verify Golden Sun's resource formats:
+graphics, tilemaps, sprite banks, maps, text, audio sequences, localization
+data, and bespoke Camelot containers. These are resource-specific converters,
+not a generic format layer. Keep clean-room source descriptions and converted
+publishable assets in the repository when they are needed to reproduce the
+result. Keep generated ROM images, bulk extraction directories, and temporary
+outputs out of git.
 
 ## compiler
 
-The `alchemy-gcc` fork and its routing. `tools/lib/alchemy_gcc.ts` owns the flag tables, the
-per-source routing sets, and the approved cc1 digests; `tools-rs/mode-sweep` searches
-compiler configurations for one candidate; `mode_cohort` runs a hypothesis
-across many owners at once. The routing sets are append-only registries of
-independent discoveries — never resolve a merge in them by taking one side.
+The native compiler stack owns flag tables, per-source routing sets, approved
+cc1 digests, bundle admission, compiler plans, symbols, and compiler lints.
+`tools/mode-sweep` searches compiler configurations for a candidate and
+`tools/mode-cohort` tests a hypothesis across owners. Routing sets are
+append-only registries of independent discoveries: never resolve a merge by
+taking one side or by deleting an entry that appears inconvenient.
 
-When a residual survives both search axes it is usually a scheduler tie, which
-`tools-rs/mode-sweep` flags as `escalation: compiler-rtl-scheduler-trace`. The RTL
-readers that answer it (`tools/lib/rtl_sexpr.ts`, `tools/lib/rtl_insn.ts`, `tools/lib/rtl_align.ts`, `tools/lib/rtl_schedule.ts`,
-`tools/lib/thumb_disasm.ts`, `tools-rs/candidate-explain`) are shared by several tools
-share them; run them directly. They parse the fork's own dumps and reproduce its
-real scheduler tier order rather than modelling it.
+When a residual survives both search axes it is often a scheduler tie.
+`tools/mode-sweep` records the escalation, while the shared native readers
+`tools/rtl-sexpr`, `tools/rtl-insn`, `tools/rtl-align`,
+`tools/rtl-schedule`, `tools/thumb-disasm`, and
+`tools/candidate-explain` inspect the compiler fork's own dumps and preserve
+its real scheduler tier order. Keep the approved compiler inputs reproducible
+and re-pin a cc1 digest only after a green verification.
 
 ## search
 
-Finds a source form that compiles byte-exact, holding the compiler fixed.
-`shape_sweep` applies transforms seeded from LAWS.md and is bounded and
-deterministic, so "it found nothing" is a real result. The asset alchemist is a
-specialized rescue tool under the bounded-probe rule in HANDOVER.md. Never
-promote a near-match.
+Search finds a source form that compiles byte-exact while holding the compiler
+fixed. `tools/shape-sweep` applies bounded deterministic transforms seeded
+from `LAWS.md`; compiler mode search handles the other axis. The asset
+alchemist and other native rescue searches are stochastic and must remain
+bounded probes with measured results. Never promote a near-match, and never
+let a search silently alter the compiler routing evidence it is testing.
 
 ## decomp
 
-Picks and diagnoses owners. The semantic queue ranks current C drafts,
-`decomp_diagnose` explains why a specific candidate misses, and
-`tools-rs/integrate-matches` handles installation. Start here when you do
-not already know which owner you are working on.
+The decomp crates pick and diagnose owners. `tools/semantic-queue` ranks
+current C drafts, `tools/decomp-diagnose` explains why a candidate misses,
+and `tools/integrate-matches` handles installation of reviewed matches.
+Start here when the owner is not already known. Keep semantic drafts readable
+and separate from adopted exact sources so the adoption boundary remains
+auditable.
 
 ## semantic
 
-Owns the semantic-C tree — readable reconstructions that are not yet byte-exact.
-`semantic_queue` lists what is ready to attempt, `semantic_owner_scope` checks an
-owner covers exactly its region, and `semantic_superseded` retires sources that
-adoption has replaced. Semantic C is the staging ground: it is how an owner gets
-understood before it gets matched.
+The semantic-C tree contains readable reconstructions that are not yet
+byte-exact. `tools/semantic-queue` lists work ready to attempt,
+`tools/semantic-owner-scope` checks that an owner covers exactly its region,
+and `tools/semantic-superseded` retires sources replaced by adoption.
+Semantic C is the staging ground for understanding an owner; it is not proof
+of byte equality until the native build and verification gates accept it.
 
 ## metrics
 
-Measures and draws progress. `tools-rs/full-c-progress` produces the byte counts every
-commit subject must carry, `coverage_map` renders the README's box trees, and
-`audit_residuals` accounts for what remains. Progress is byte-exact executable
-bytes, never function counts: 69% of our owners are converted but only 23.5% of
-the bytes, because the remaining owners are far larger than the ones already
-closed.
+The metrics crates measure and draw progress. `tools/full-c-progress`
+produces the byte counts carried by commit subjects, `tools/coverage-map`
+renders the README box trees, and `tools/audit-residuals` accounts for the
+remaining work. Progress is executable byte coverage, never function count:
+owner conversion percentages can look high while large owners still account
+for most of the unmatched bytes.
+
+The native dashboard server is `tools/dashboard-server`; it serves live
+coverage on `http://localhost:4649/` by default and watches the relevant
+worktree inputs. Its client and SVG output must remain reproducible and must
+preserve hover labels, readable rectangle labels, and the dashboard's exact
+progress terminology.
 
 ## check
 
-The gates, run by `bun run lint` and by the git hooks. `no_asm_c` enforces the
-hardest rule in the repository (C and headers may never use an assembly escape
-hatch, in any spelling), `check_publication` keeps ROM bytes and generated
-directories out of anything publishable, `check_commit_progress` enforces the
-`[ ☀️ exact / total ]` commit subject, `check_sanctum` gates the sealed-owner
-ledger, `source_citations` keeps the provenance comments in reconstructed
-sources pointing at tools that exist and proves every retirement row in
-PROVENANCE.md actually recovers, and `architecture` enforces the shape of `tools/` itself: every tool
-documented on this page, no tool importing another tool, every module reachable,
-and every import resolving. Each of those rules was an ad-hoc script first —
-a check worth running twice belongs in here, not in a shell one-liner.
+The check crates are run by `make lint` and the repository hooks. They include
+`tools/no-asm-c`, which forbids assembly escape hatches in C and headers in
+every spelling; `tools/check-publication`, which keeps ROM bytes and
+generated directories out of publishable content; `tools/check-commit-progress`,
+which enforces the progress-bearing commit subject; `tools/check-sanctum`,
+which gates the sealed-owner ledger; `tools/source-citations`, which checks
+clean-room provenance and retirement recovery; and
+`tools/architecture`, which enforces the native workspace shape. A check
+worth running twice belongs in these gates, not in an undocumented one-off.
 
 ## Ledgers
 
 | File | Owns |
 |---|---|
-| [LAWS.md](LAWS.md) | compiler behaviour we proved, with its evidence |
-| [SANCTUM.md](SANCTUM.md) | owners withdrawn from routine attack, both axes spent |
-| [PROVENANCE.md](PROVENANCE.md) | the clean-room boundary |
+| [LAWS.md](LAWS.md) | compiler behaviour proved with evidence |
+| [SANCTUM.md](SANCTUM.md) | owners withdrawn from routine attack after both axes are spent |
+| [PROVENANCE.md](PROVENANCE.md) | the clean-room boundary and recoverable retirements |
 | `metrics/gs1-en-progress.json` | the headline byte counts |
 
 ## Hard rules
@@ -176,26 +184,28 @@ a check worth running twice belongs in here, not in a shell one-liner.
 - **Never `asm(...)`** in C or headers, in any spelling, including fixed-register
   bindings and empty barriers. Byte equality never overrides this.
 - **Never copy game-specific code** from another decompilation project. Tooling
-  and methodology are reusable; function bodies, names, types and comments are
-  not. See [PROVENANCE.md](PROVENANCE.md).
-- **Commit subjects end with `[ ☀️ exact / total ]`** matching the regenerated
+  and methodology are reusable; function bodies, names, types, and comments
+  are not. See [PROVENANCE.md](PROVENANCE.md).
+- **Commit subjects end with `[ ☀️ exact / total ]`** matching regenerated
   metrics. A deliberate regression needs `metrics: revert reduces Full-C`; a
   changed denominator needs `metrics: correct executable denominator`.
-- **Never resolve a merge in the compiler routing tables or the fork's `arm.c`
-  by taking one side.** They are append-only registries of independent
-  discoveries. Three-way merge against the merge-base, then resolve per entry —
-  a deletion carries intent too.
-- **Adopt from outside `exact/`.** `overlay_adopt` assembles the overlay as a
-  pre-flight check, so a source already sitting in `exact/` fails on its own
-  baseline. Always rebuild the inventory before regenerating progress.
+- **Never resolve a merge in compiler routing tables or the fork's `arm.c` by
+  taking one side.** Three-way merge against the merge-base, then resolve per
+  entry; a deletion carries intent too.
+- **Adopt from outside `exact/`.** Always rebuild the inventory before
+  regenerating progress.
+- **Keep the clean-room boundary.** Do not import game-specific code, names,
+  types, comments, or generated implementation from another decompilation.
+  Record tool and evidence provenance where reconstructed sources require it.
 
 ## The compiler fork
 
 `alchemy-gcc/` is ours to edit, not a third-party dependency. `dist/` holds the
-built toolchain and every worktree symlinks to one canonical copy, so all lanes
-compile with the same binary — three different `cc1` builds across three
-worktrees is how "witnessed byte-exact" quietly stops meaning the same thing.
-Rebuilding means re-pinning the cc1 digest from a green verify.
+canonical built toolchain and worktrees must use the same compiler binary; two
+different cc1 builds make a witnessed byte-exact result ambiguous. Rebuilding
+the fork requires re-pinning its approved digest after a green verification.
+Keep compiler licensing and provenance files with the fork as required by its
+distribution terms.
 
-Do not run `git submodule` commands from inside a worktree: it rewrites the
-shared `core.worktree` and breaks git in the main checkout.
+Do not run `git submodule` commands from inside a worktree: that rewrites the
+shared `core.worktree` configuration and can break git in the main checkout.

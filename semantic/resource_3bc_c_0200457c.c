@@ -15,8 +15,8 @@
  * site per overlay_unindexed.ts. This owner makes four outgoing calls, all
  * resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools-rs/overlay-show resource_3bc 457c |
- * bun tools/lib/overlay_call_targets.ts resource_3bc 457c 45b8 --annotate`):
+ * cover it -- resolved with `bun tools/overlay-show resource_3bc 457c |
+ * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc 457c 45b8 --annotate`):
  *   0x2004584 -> veneer -> Func_08000290(assetId)          archived asset by id, established (resource_3bc_c_02002e54.c)
  *   0x200458c -> veneer -> Func_080001a8(source, dest)     decompress into scratch, established, same file
  *   0x2004592 -> veneer -> Func_080770c0(0x109)             story-flag query, established; 0x109 is the exact "selects a companion entity" flag documented in semantic/overlays/resource_3a8_c_02003a3c.c

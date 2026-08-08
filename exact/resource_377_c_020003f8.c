@@ -30,7 +30,7 @@
  * record whose u16 at +0x1f84 is set to 1" is not established here.
  *
  * All 33 call sites resolved with
- * 'bun tools/lib/overlay_call_targets.ts resource_377 03f8 --json' (the inventory's
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_377 03f8 --json' (the inventory's
  * calls=32 is the documented undercount).  Per-target multiset, site -> callee:
  *   0x040c Func_080770d0                       x1
  *   0x0422 0x0476 0x04a2 0x04ac 0x0518 Func_080770c0   x5

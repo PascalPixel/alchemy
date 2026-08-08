@@ -58,12 +58,12 @@ git config core.hooksPath .hooks
 ```
 
 The hooks run the staged and outgoing-history checks implemented by
-`tools-rs/check-publication`, including commits where a forbidden artifact was
+`tools/check-publication`, including commits where a forbidden artifact was
 added and later deleted. The same checks can be run directly:
 
 ```sh
-tools-rs/check-publication/target/release/check-publication --staged
-tools-rs/check-publication/target/release/check-publication --self-test
+tools/check-publication/target/release/check-publication --staged
+tools/check-publication/target/release/check-publication --self-test
 ```
 
 The file-shape gate is defense in depth; it cannot determine where knowledge
@@ -89,7 +89,7 @@ obtained, so it stays. This table says where to find the tool.
 | `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
 | `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
 
-A citation naming a live tool must name its current path — `tools-rs/source-citations`
+A citation naming a live tool must name its current path — `tools/source-citations`
 enforces that, and this table is the only permitted exception. Do not repoint a
 citation at a different tool that happens to survive: it would claim a derivation
 that never happened.

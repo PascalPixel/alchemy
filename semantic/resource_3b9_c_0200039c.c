@@ -6,7 +6,7 @@
  * the first in the bank with real state.
  *
  * PUBLISHED, NOT CALLED. Found by
- * `bun tools/lib/overlay_published.ts resource_3b9`. The bank is described
+ * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_3b9`. The bank is described
  * in resource_3b9_c_020002a0.c.
  *
  * IT IS A ONCE-ONLY GRANT, and that is what makes it the longest member
@@ -51,7 +51,7 @@
  * the next owner's prologue is at 0x02000468.
  *
  * All `bl` targets resolved through the import-veneer table under the
- * +2 rule (tools/lib/overlay_call_targets.ts).
+ * +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --).
  *
  * Uncertainty: what Func_0808a070(0, 0) actually reports is not
  * established beyond its use as the skip gate; the roles of

@@ -19,7 +19,7 @@
  * argument of the two script/table setters Func_0808a098 and Func_0808a0b0.
  * They are named Data_02002a48 / Data_02002b2c accordingly.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target_offset - 2, so the disassembler's annotations are unusable).
  * All 56 sites are import veneers; 25 distinct main-image imports.
  *

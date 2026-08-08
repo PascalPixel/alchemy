@@ -11,7 +11,7 @@
  *
  * This is a straight-line script — no branches at all between the prologue and
  * the epilogue.  Every one of its 50 `bl` sites was resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3bf 1e94`, never from the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bf 1e94`, never from the
  * disassembler's pc-relative annotations, and every one of them is an import
  * veneer; there are no local callees.  The 17 distinct imports are:
  *   0x02005618 -> Func_080770c8  x1    0x020056d0 -> Func_0808a148  x7

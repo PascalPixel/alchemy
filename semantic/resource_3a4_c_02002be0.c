@@ -20,7 +20,7 @@
  * measureSpan reports 226, undersizing by the pool's 30 bytes.
  *
  * Thirteen call sites, every one resolved with the `+2` rule via
- * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x2be0 0x2ce0` and none
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0x2be0 0x2ce0` and none
  * read from the listing, which prints thirteen nonexistent 0x02006xxx
  * addresses. They collapse onto seven veneers:
  *   0x2002be8, 0x2002c18                                     -> Func_030003e0   the established IWRAM helper

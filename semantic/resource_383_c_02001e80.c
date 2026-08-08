@@ -9,7 +9,7 @@
  * and given their scripts, then a six-argument message is posted.
  *
  * All 20 `bl` sites are placed; they reach 12 distinct callees.  Targets are
- * resolved with tools/lib/overlay_call_targets.ts (target offset = stored
+ * resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored
  * displacement + 2), not from the disassembler's annotations, which are wrong
  * for every overlay `bl`.  Seventeen sites reach the import veneer table at
  * 0x02004cxx-0x02004f2b and are named by the main-image address in the

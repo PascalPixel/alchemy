@@ -36,7 +36,7 @@
  * is 448 +/- anything.
  *
  * Call accounting: 53 `bl` sites over 24 distinct targets, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_38d 21bc --json`, which reports
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_38d 21bc --json`, which reports
  * exactly `sites=53 distinct_targets=24 veneer=53` - no intra-overlay call and
  * no `call_via` slot (r3 is written only as Func_0808a210's fourth argument
  * and as workspace scratch).  Per-target multiset: Func_0808a080 x15,

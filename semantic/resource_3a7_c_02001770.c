@@ -6,7 +6,7 @@
  * TRANSPOSED from semantic/overlays/resource_3bf_c_02005e04.c.  The two owners
  * are not merely twins, they are BYTE-IDENTICAL: all 106 halfwords match, zero
  * differences of any kind.  The routine has no calls and no pool word naming an
- * overlay address ('bun tools/lib/overlay_call_targets.ts resource_3a7 1770' reports
+ * overlay address ('cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 1770' reports
  * sites=0), which is why nothing needed substituting.  Only the entry symbol was
  * renamed.
  *

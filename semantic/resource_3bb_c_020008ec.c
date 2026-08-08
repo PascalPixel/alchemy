@@ -22,7 +22,7 @@
  * are in-image words and not RAM globals.
  *
  * All six `bl` sites are placed and reach three distinct callees, matching the
- * inventory row's calls=6.  Targets come from tools/lib/overlay_call_targets.ts
+ * inventory row's calls=6.  Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations: 0x3db0 -> Func_080000d8, 0x3f90 -> Func_0808a0f0 (four sites),
  * 0x3f98 -> Func_0808a100.

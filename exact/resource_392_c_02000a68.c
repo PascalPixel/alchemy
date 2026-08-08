@@ -3,7 +3,7 @@
 /*
  * resource_392 owner at 0x02000a68, 84 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools-rs/overlay-driver resource_392), so the loader enters
+ * (bun tools/overlay-driver resource_392), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Body: write 516 to the workspace's +448 s32; unless story flag

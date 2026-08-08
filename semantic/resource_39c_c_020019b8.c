@@ -16,7 +16,7 @@
  * static call site and the source-order audit must be able to see all of them.
  *
  * Call symbols are per-site, lifted in program order from the reference
- * disassembly (bun tools-rs/overlay-show resource_39c 19b8 1bd8), not from
+ * disassembly (bun tools/overlay-show resource_39c 19b8 1bd8), not from
  * the imported function identity -- the same main-image import gets a
  * different veneer symbol at each call site.
  */

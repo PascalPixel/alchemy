@@ -18,7 +18,7 @@
  * it takes no arguments.
  *
  * Call accounting: 17 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3a8 16bc` - 10 distinct import
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a8 16bc` - 10 distinct import
  * veneers, no intra-overlay call.  The disassembler's own annotations are
  * wrong in the usual overlay way (an overlay `bl` stores `target_offset - 2`)
  * and were not used.  In body order:

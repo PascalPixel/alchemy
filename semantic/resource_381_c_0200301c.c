@@ -46,7 +46,7 @@
  * a `call_via` site — the documented shape.  It divides the 16.16-shifted
  * jitter by 1000.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 10 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 10 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_030003f0 x3, Func_080000f8 x3, Func_08000118 x2, Func_08000120 x1,
  *   Func_08000148 x1.

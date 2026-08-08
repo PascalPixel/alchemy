@@ -13,7 +13,7 @@
  * arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl`, resolved with `bun tools/lib/overlay_call_targets.ts resource_3c9
+ * by `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c9
  * 38dc 3924`'s `+2` rule. Calls this overlay's own Func_020048d8 and
  * Func_02004b28 (the latter already drafted,
  * resource_3c9_c_02004b28.c, void/no-argument).

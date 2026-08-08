@@ -17,7 +17,7 @@
  * CORRECTION (name sweep): this file's callee names came from a naive
  * pc-relative decode and were wrong; they are resolved here through the
  * overlay's import-veneer table under the +2 rule
- * (tools/lib/overlay_call_targets.ts) to their main-ROM identities.  The
+ * (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --) to their main-ROM identities.  The
  * earlier cross-file claim -- that this row's one-argument callee was
  * called with two arguments by the 0x020043bc sibling, forcing an
  * old-style declaration there -- is STRUCK: the two rows were never
@@ -47,7 +47,7 @@ extern void Func_02008cea(s32 arg0);                        /* 0x0200439c -> 080
 
 /* STILL-OPEN residual (36/148 differing bytes): confined entirely to the
  * bl-instruction displacement halfwords at every one of the 12 call sites
- * below (verified with tools/lib/overlay_call_targets.ts's +2 rule -- see
+ * below (verified with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --'s +2 rule -- see
  * scratch diff at semantic history). The reference's stored displacement is
  * consistently 0x4000 larger than what this candidate links to. Renaming the
  * callees three different ways -- main-ROM Func_08xxxxxx names (this file),

@@ -22,7 +22,7 @@
  *    overlay's own routine at file offset 0x1f24 plus the Thumb bit.  That
  *    offset does open a function ('push {r5, lr}', 0xb520), which is an
  *    independent check on the base and on the pointer's meaning;
- *  - all 20 calls were re-resolved with 'bun tools/lib/overlay_call_targets.ts
+ *  - all 20 calls were re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  *    resource_399 1fa4': 20 sites over 11 distinct veneers, the same targets
  *    with the same multiplicities and in the same site order as resource_39a.
  *    The 39a source predates the corrected 'bl' rule and named the imports by

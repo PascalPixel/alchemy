@@ -47,8 +47,8 @@
  * because deleting it would drop a real call site from the per-target multiset.
  *
  * Call targets resolved with
- *   bun tools-rs/overlay-show resource_3a7 0754 -n 340 |
- *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
+ *   bun tools/overlay-show resource_3a7 0754 -n 340 |
+ *   cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 --annotate
  * Per-target multiset over the 20 sites, matching the inventory's calls=20:
  *   Func_0808a018 x1 <- veneer 0x02001120
  *   Func_080091f0 x2 <- veneer 0x020010e8

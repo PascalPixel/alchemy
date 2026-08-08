@@ -22,7 +22,7 @@
  * 17, and Func_02000170 is this owner's only caller.  This is the "has the
  * follower noticed the leader" proximity/facing test.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target_offset - 2, so the disassembler's own annotations are wrong).
  * The three sites the byte-exact assembly spells `sub_02000e24`,
  * `sub_02000e4a` and `sub_02000e60` are all the SAME import veneer at file

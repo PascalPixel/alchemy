@@ -5,7 +5,7 @@
  * handler in the bank at 0x020002a0-0x020006bc, for actor 14.
  *
  * PUBLISHED, NOT CALLED. Found by
- * `bun tools/lib/overlay_published.ts resource_3b9`. The bank is described
+ * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_3b9`. The bank is described
  * in resource_3b9_c_020002a0.c. Straight-line, no flag test.
  *
  * The constant 258 appears twice here, both times built as

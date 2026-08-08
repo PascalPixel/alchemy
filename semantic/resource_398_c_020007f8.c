@@ -34,7 +34,7 @@
  * slot, ask Func_080091d8 whether the move collides, and if it does not,
  * commit it and hand off to the paired-actor gate scene at 0x02000304.
  *
- * Imports resolved with tools/lib/overlay_call_targets.ts (an overlay `bl` stores
+ * Imports resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (an overlay `bl` stores
  * `target_offset - 2`).  Twelve call sites against the row's advertised 11;
  * the manifest's `calls` field is a floor.  Per-target: Func_0808a080 1,
  * Func_020007c4 2, Func_080091d8 1, Func_08009080 2, Func_080000c0 1,

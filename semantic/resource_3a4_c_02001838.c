@@ -34,7 +34,7 @@
  * its publisher was found.
  *
  * A hundred and seven call sites, every one resolved with the `+2` rule
- * via `bun tools/lib/overlay_call_targets.ts resource_3a4 0x1838 0x1d0c` and
+ * via `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0x1838 0x1d0c` and
  * none read from the listing's arrows, which print a hundred and seven
  * nonexistent 0x02004xxx-0x02005xxx addresses. They collapse onto
  * nineteen targets: eighteen import veneers and ONE in-image prologue.

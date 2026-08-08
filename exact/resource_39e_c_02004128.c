@@ -11,7 +11,7 @@
  * immediately. No incoming arguments read, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_39e 4128 4140's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 4128 4140's
  * +2 rule).
  *
  * Uncertainty: the three callees are identified by call shape only.

@@ -8,7 +8,7 @@
  * outgoing-argument frame, and the single epilogue at 0x0200283a ending
  * `pop {r0} / bx r0` — so the owner is **void**.  Seven arms `b.n` to it.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_3b2
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b2
  * 2700 --json` (12 sites, 4 distinct targets):
  *   0x0200270a, 0x02002716, 0x02002720, 0x0200272a, 0x02002734, 0x0200280e
  *                              -> veneer 0x02003088 -> Func_0808a080

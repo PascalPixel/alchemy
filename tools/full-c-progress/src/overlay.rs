@@ -46,7 +46,9 @@ fn audited_published_raw_leaves(overlay: &str) -> Vec<PublishedLeafEvidence> {
         "resource_3a7" => &[(0x0200_21f8, 0x0200_04cc)],
         _ => &[],
     };
-    rows.iter().map(|&(pointer, target)| PublishedLeafEvidence { pointer, target }).collect()
+    rows.iter()
+        .map(|&(pointer, target)| PublishedLeafEvidence { pointer, target })
+        .collect()
 }
 
 // ---------------------------------------------------------------------------
@@ -60,7 +62,11 @@ fn target_offset(high: i32, low: i32) -> Option<i32> {
     }
     let upper = high & 0x07ff;
     let lower = low & 0x07ff;
-    let signed = if upper >= 0x0400 { upper - 0x0800 } else { upper };
+    let signed = if upper >= 0x0400 {
+        upper - 0x0800
+    } else {
+        upper
+    };
     Some(((signed << 12) | (lower << 1)).wrapping_add(2))
 }
 
@@ -171,7 +177,9 @@ fn directive_leaves_at_starts(
         let mut pools: Vec<i64> = Vec::new();
         let mut pooled: HashSet<i64> = HashSet::new();
         while cursor < limit {
-            let Some(span) = by_start.get(&cursor) else { break };
+            let Some(span) = by_start.get(&cursor) else {
+                break;
+            };
             if span.end != cursor + 2 {
                 break;
             }
@@ -314,7 +322,9 @@ fn assembler_listing_in(
     let mut rows: HashMap<i64, ListingRow> = HashMap::new();
     let text = read_lossy(&listing)?;
     for line in js::split_lines(&text) {
-        let Some(row) = js::listing_row(line) else { continue };
+        let Some(row) = js::listing_row(line) else {
+            continue;
+        };
         if rows.contains_key(&row.source_line) {
             continue;
         }
@@ -337,7 +347,11 @@ fn assembler_listing_in(
             "{source}: compiled code-overlay length differs from its canonical placeholder image"
         ));
     }
-    Ok(Listing { rows, decoded_bytes: data.len(), binary: data })
+    Ok(Listing {
+        rows,
+        decoded_bytes: data.len(),
+        binary: data,
+    })
 }
 
 /// `readFileSync(path, "utf8")`, which is lossy on invalid UTF-8.
@@ -361,7 +375,9 @@ pub fn overlay_c_sources(root: &Path, source: &str) -> Vec<String> {
     }
     let directory = root.join("exact");
     let prefix = js::replace_overlay_suffix(basename(source), "c_");
-    let Ok(entries) = std::fs::read_dir(&directory) else { return Vec::new() };
+    let Ok(entries) = std::fs::read_dir(&directory) else {
+        return Vec::new();
+    };
     let mut names: Vec<String> = entries
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.file_name().to_string_lossy().into_owned())
@@ -370,7 +386,35 @@ pub fn overlay_c_sources(root: &Path, source: &str) -> Vec<String> {
     // JS `Array.prototype.sort` orders by UTF-16 code unit; these names are
     // ASCII, where that coincides with byte order.
     names.sort();
-    names.iter().map(|name| directory.join(name).to_string_lossy().into_owned()).collect()
+    names
+        .iter()
+        .map(|name| directory.join(name).to_string_lossy().into_owned())
+        .collect()
+}
+
+fn fixed_ldr_bx_veneer_at(
+    binary: &[u8],
+    data_addresses: &HashSet<i64>,
+    address: i64,
+    value: i64,
+) -> bool {
+    if value != 0x4720_4c00 {
+        return false;
+    }
+    if !(address + 4..address + 8).all(|byte| data_addresses.contains(&byte)) {
+        return false;
+    }
+    let offset = address - OVERLAY_BASE + 4;
+    if offset < 0 || offset + 4 > binary.len() as i64 {
+        return false;
+    }
+    let offset = offset as usize;
+    let target_u32 = u32::from(binary[offset])
+        | (u32::from(binary[offset + 1]) << 8)
+        | (u32::from(binary[offset + 2]) << 16)
+        | (u32::from(binary[offset + 3]) << 24);
+    let bank = target_u32 >> 24;
+    target_u32 & 1 != 0 && matches!(bank, 0x02 | 0x08 | 0x09)
 }
 
 pub fn overlay_inventory(
@@ -452,8 +496,10 @@ pub fn overlay_inventory(
             continue;
         }
         if js::halfword_directive(line) && row.width == 2.0 {
-            halfword_directives
-                .push(DirectiveSpan { start: row.address, end: row.address + 2 });
+            halfword_directives.push(DirectiveSpan {
+                start: row.address,
+                end: row.address + 2,
+            });
         }
         if js::data_directive(line) {
             let mut byte = 0.0f64;
@@ -485,16 +531,13 @@ pub fn overlay_inventory(
         }
     }
 
-    // `new Map(...)` keeps the LAST value for a repeated address.
-    let directives: HashMap<i64, i64> = directive_rows.iter().copied().collect();
     for &(address, value) in &directive_rows {
-        let code = directives.get(&(address + 4)).copied();
-        // `value >>> 24` is ToUint32 then a logical shift.
-        let bank = ((value.rem_euclid(1 << 32)) as u32) >> 24;
-        if value & 1 != 0
-            && matches!(bank, 0x02 | 0x08 | 0x09)
-            && code == Some(0x4720_4c00)
-        {
+        // A veneer is emitted in execution order: `ldr r4, [pc]; bx r4`, then
+        // its odd Thumb target.  Looking for target-then-code accidentally
+        // joins a function-pointer literal to the first word of the following
+        // veneer table, making the executable denominator depend on whether
+        // the preceding function has already been adopted as C.
+        if fixed_ldr_bx_veneer_at(&listing.binary, &data_addresses, address, value) {
             intervals.push(Interval::new(
                 address,
                 address + 8,
@@ -544,8 +587,11 @@ pub fn overlay_inventory(
     }
     intervals.extend(raw_leaves);
 
-    let veneers: Vec<Interval> =
-        intervals.iter().filter(|interval| interval.kind == "veneer").cloned().collect();
+    let veneers: Vec<Interval> = intervals
+        .iter()
+        .filter(|interval| interval.kind == "veneer")
+        .cloned()
+        .collect();
     let classified: Vec<Interval> = intervals
         .iter()
         .filter(|interval| {
@@ -565,9 +611,9 @@ pub fn overlay_inventory(
                 all
             };
             covered
-                && !veneers.iter().any(|veneer| {
-                    veneer.start <= interval.start && interval.end <= veneer.end
-                })
+                && !veneers
+                    .iter()
+                    .any(|veneer| veneer.start <= interval.start && interval.end <= veneer.end)
         })
         .cloned()
         .collect();
@@ -649,7 +695,10 @@ pub fn overlay_sources(root: &Path, target: &str) -> Result<Vec<String>, String>
         .filter(|name| js::overlay_source_name(name))
         .collect();
     names.sort();
-    Ok(names.iter().map(|name| directory.join(name).to_string_lossy().into_owned()).collect())
+    Ok(names
+        .iter()
+        .map(|name| directory.join(name).to_string_lossy().into_owned())
+        .collect())
 }
 
 /// `overlayCSpans(source)`.
@@ -674,7 +723,11 @@ pub fn overlay_c_spans(root: &Path, source: &str) -> Result<Vec<crate::OwnedSpan
         if let (true, Some(size)) = (in_placeholder, js::space_directive(line)) {
             // `owner.slice(-8)` — the last 8 UTF-16 units, which for this
             // ASCII label is the hex address the label carried.
-            let suffix: String = owner.chars().rev().take(8).collect::<Vec<_>>()
+            let suffix: String = owner
+                .chars()
+                .rev()
+                .take(8)
+                .collect::<Vec<_>>()
                 .into_iter()
                 .rev()
                 .collect();
@@ -725,7 +778,12 @@ mod tests {
     }
 
     fn caller() -> Vec<Interval> {
-        vec![Interval::new(OVERLAY_BASE, OVERLAY_BASE + 4, "thumb", "test")]
+        vec![Interval::new(
+            OVERLAY_BASE,
+            OVERLAY_BASE + 4,
+            "thumb",
+            "test",
+        )]
     }
 
     #[test]
@@ -758,10 +816,14 @@ mod tests {
     #[test]
     fn a_reached_getter_carries_its_literal_pool() {
         let mut getter_image = leaf_image();
-        getter_image[0x10..0x18]
-            .copy_from_slice(&[0x00, 0x48, 0x70, 0x47, 0x88, 0x98, 0x00, 0x02]);
+        getter_image[0x10..0x18].copy_from_slice(&[0x00, 0x48, 0x70, 0x47, 0x88, 0x98, 0x00, 0x02]);
         let raw_getter: Vec<DirectiveSpan> = (0..4)
-            .map(|index| span(OVERLAY_BASE + 0x10 + index * 2, OVERLAY_BASE + 0x12 + index * 2))
+            .map(|index| {
+                span(
+                    OVERLAY_BASE + 0x10 + index * 2,
+                    OVERLAY_BASE + 0x12 + index * 2,
+                )
+            })
             .collect();
         let getter = reached_directive_leaves(&getter_image, &caller(), &raw_getter);
         assert_eq!(getter.len(), 2);
@@ -782,8 +844,10 @@ mod tests {
             span(OVERLAY_BASE + 2, OVERLAY_BASE + 4),
         ];
         directives.extend(raw_leaf());
-        let publications =
-            vec![PublishedLeafEvidence { pointer: OVERLAY_BASE, target: OVERLAY_BASE + 0x10 }];
+        let publications = vec![PublishedLeafEvidence {
+            pointer: OVERLAY_BASE,
+            target: OVERLAY_BASE + 0x10,
+        }];
         (image, directives, publications)
     }
 
@@ -815,15 +879,48 @@ mod tests {
         // The pointer word must itself be directive-classified.
         assert!(published_directive_leaves(&image, &raw_leaf(), &publications).is_empty());
 
-        let stale =
-            vec![PublishedLeafEvidence { pointer: OVERLAY_BASE, target: OVERLAY_BASE + 0x14 }];
+        let stale = vec![PublishedLeafEvidence {
+            pointer: OVERLAY_BASE,
+            target: OVERLAY_BASE + 0x14,
+        }];
         assert!(published_directive_leaves(&image, &directives, &stale).is_empty());
     }
 
     #[test]
     fn the_audited_publication_table_is_verbatim() {
         assert_eq!(audited_published_raw_leaves("resource_398").len(), 2);
-        assert_eq!(audited_published_raw_leaves("resource_3a7")[0].pointer, 0x0200_21f8);
+        assert_eq!(
+            audited_published_raw_leaves("resource_3a7")[0].pointer,
+            0x0200_21f8
+        );
         assert!(audited_published_raw_leaves("resource_371").is_empty());
+    }
+
+    #[test]
+    fn fixed_veneer_is_code_then_thumb_target() {
+        let address = OVERLAY_BASE + 0x10;
+        let mut binary = vec![0; 0x20];
+        binary[0x10..0x18].copy_from_slice(&[0x00, 0x4c, 0x20, 0x47, 0x01, 0x01, 0x00, 0x08]);
+        let data_addresses: HashSet<i64> = (address..address + 8).collect();
+        assert!(fixed_ldr_bx_veneer_at(
+            &binary,
+            &data_addresses,
+            address,
+            0x4720_4c00
+        ));
+        assert!(!fixed_ldr_bx_veneer_at(
+            &binary,
+            &data_addresses,
+            address + 4,
+            0x0800_0101
+        ));
+
+        let incomplete: HashSet<i64> = (address..address + 7).collect();
+        assert!(!fixed_ldr_bx_veneer_at(
+            &binary,
+            &incomplete,
+            address,
+            0x4720_4c00
+        ));
     }
 }

@@ -31,7 +31,7 @@ Alchemy inspires new developers to create wonderful RPGs of their own.
 
 ## DONE: Currently 27%
 
-29% of the game's audited executable bytes now build from exact, byte-matching
+27% of the game's audited executable bytes now build from exact, byte-matching
 C, or belong to the small pieces of low-level code intentionally kept as
 permanent assembly. These four maps show where the code and assets of the
 English release stand today.
@@ -48,12 +48,12 @@ low-level runtime structure kept as permanent assembly.
 ### Code overlays
 
 *Golden Sun* also loads 96 additional code modules into memory when it needs
-them. This panel tracks all 797,496 executable bytes across those modules.
+them. This panel tracks all 798,888 executable bytes across those modules.
 Bright cyan is exact C, the softer cyan is readable C still being matched, gray
 is code still to reconstruct, and dark gray is permanent low-level assembly.
 Eleven of those modules are already completely exact, byte-matching C.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=59dfd0c9)
+![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=bdd1921c)
 
 ### Images and data
 
@@ -76,6 +76,8 @@ reconstruction.
 Progress is measured by executable bytes rather than function counts, so every
 claimed byte must compile to the original game before it contributes to the
 headline.
+
+Contributors can follow the evidence-driven matching loop in [PRET.md](PRET.md).
 
 ## Preservation and copyright
 

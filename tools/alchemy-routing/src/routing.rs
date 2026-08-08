@@ -605,6 +605,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-orr-into-older-input"]);
     }
+    if has(ROTATE_ORR_MASK_LOAD_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-rotate-orr-mask-load"]);
+    }
     if has(CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-call-arg0-before-pool-pair"]);
     }

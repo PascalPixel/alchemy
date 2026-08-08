@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1345890,
+  "total_union_bytes": 1347252,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -5195,13 +5195,13 @@
     {
       "id": "resource_36f",
       "decoded_bytes": 1618,
-      "executable_bytes": 1512,
-      "excluded_bytes": 106,
+      "executable_bytes": 1528,
+      "excluded_bytes": 90,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_36f_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -5290,8 +5290,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33555772,
-          "end": 33555956,
+          "start": 33555768,
+          "end": 33555960,
           "kind": "veneer",
           "evidence": "resource_36f_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -5301,13 +5301,13 @@
     {
       "id": "resource_370",
       "decoded_bytes": 5914,
-      "executable_bytes": 5300,
-      "excluded_bytes": 614,
+      "executable_bytes": 5316,
+      "excluded_bytes": 598,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_370_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -5552,8 +5552,8 @@
           "evidence": "resource_370_overlay.s:2405:verified-C-placeholder"
         },
         {
-          "start": 33559336,
-          "end": 33559760,
+          "start": 33559332,
+          "end": 33559764,
           "kind": "veneer",
           "evidence": "resource_370_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -5563,13 +5563,13 @@
     {
       "id": "resource_371",
       "decoded_bytes": 26524,
-      "executable_bytes": 17012,
-      "excluded_bytes": 9512,
+      "executable_bytes": 17024,
+      "excluded_bytes": 9500,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_371_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -6259,19 +6259,13 @@
         },
         {
           "start": 33571180,
-          "end": 33571184,
+          "end": 33571188,
           "kind": "literal_pool",
-          "evidence": "resource_371_overlay.s:6610:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33571184,
-          "end": 33571192,
-          "kind": "veneer",
-          "evidence": "resource_371_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33571208,
-          "end": 33572008,
+          "start": 33571204,
+          "end": 33572012,
           "kind": "veneer",
           "evidence": "resource_371_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -6419,13 +6413,13 @@
     {
       "id": "resource_372",
       "decoded_bytes": 22520,
-      "executable_bytes": 18522,
-      "excluded_bytes": 3998,
+      "executable_bytes": 18538,
+      "excluded_bytes": 3982,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_372_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -6910,8 +6904,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33572416,
-          "end": 33573048,
+          "start": 33572412,
+          "end": 33573052,
           "kind": "veneer",
           "evidence": "resource_372_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -6921,13 +6915,13 @@
     {
       "id": "resource_373",
       "decoded_bytes": 30764,
-      "executable_bytes": 24944,
-      "excluded_bytes": 5820,
+      "executable_bytes": 24952,
+      "excluded_bytes": 5812,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_373_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -7419,18 +7413,6 @@
         },
         {
           "start": 33577800,
-          "end": 33578008,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33578008,
-          "end": 33578016,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33578016,
           "end": 33578342,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -7479,27 +7461,15 @@
         },
         {
           "start": 33578620,
-          "end": 33578624,
+          "end": 33578628,
           "kind": "literal_pool",
-          "evidence": "resource_373_overlay.s:9145:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33578624,
-          "end": 33578632,
-          "kind": "veneer",
-          "evidence": "resource_373_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33578640,
-          "end": 33579344,
-          "kind": "veneer",
-          "evidence": "resource_373_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33579344,
+          "start": 33578636,
           "end": 33579348,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+          "kind": "veneer",
+          "evidence": "resource_373_overlay.s:fixed-ldr-bx-veneer"
         },
         {
           "start": 33579360,
@@ -7513,13 +7483,13 @@
     {
       "id": "resource_374",
       "decoded_bytes": 16084,
-      "executable_bytes": 10300,
-      "excluded_bytes": 5784,
+      "executable_bytes": 10316,
+      "excluded_bytes": 5768,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_374_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -7824,8 +7794,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33564144,
-          "end": 33564752,
+          "start": 33564140,
+          "end": 33564756,
           "kind": "veneer",
           "evidence": "resource_374_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -7835,13 +7805,13 @@
     {
       "id": "resource_375",
       "decoded_bytes": 8386,
-      "executable_bytes": 7116,
-      "excluded_bytes": 1270,
+      "executable_bytes": 7132,
+      "excluded_bytes": 1254,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_375_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -8014,8 +7984,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33561168,
-          "end": 33561560,
+          "start": 33561164,
+          "end": 33561564,
           "kind": "veneer",
           "evidence": "resource_375_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -8025,13 +7995,13 @@
     {
       "id": "resource_376",
       "decoded_bytes": 8800,
-      "executable_bytes": 4768,
-      "excluded_bytes": 4032,
+      "executable_bytes": 4784,
+      "excluded_bytes": 4016,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_376_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -8192,8 +8162,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558864,
-          "end": 33559288,
+          "start": 33558860,
+          "end": 33559292,
           "kind": "veneer",
           "evidence": "resource_376_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -8203,13 +8173,13 @@
     {
       "id": "resource_377",
       "decoded_bytes": 11548,
-      "executable_bytes": 6812,
-      "excluded_bytes": 4736,
+      "executable_bytes": 6828,
+      "excluded_bytes": 4720,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_377_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -8550,8 +8520,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33560600,
-          "end": 33561264,
+          "start": 33560596,
+          "end": 33561268,
           "kind": "veneer",
           "evidence": "resource_377_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -8561,13 +8531,13 @@
     {
       "id": "resource_378",
       "decoded_bytes": 16784,
-      "executable_bytes": 13918,
-      "excluded_bytes": 2866,
+      "executable_bytes": 13934,
+      "excluded_bytes": 2850,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_378_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -8938,8 +8908,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33568044,
-          "end": 33568572,
+          "start": 33568040,
+          "end": 33568576,
           "kind": "veneer",
           "evidence": "resource_378_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -8949,13 +8919,13 @@
     {
       "id": "resource_379",
       "decoded_bytes": 3766,
-      "executable_bytes": 3056,
-      "excluded_bytes": 710,
+      "executable_bytes": 3072,
+      "excluded_bytes": 694,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_379_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9008,8 +8978,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33557180,
-          "end": 33557500,
+          "start": 33557176,
+          "end": 33557504,
           "kind": "veneer",
           "evidence": "resource_379_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9019,13 +8989,13 @@
     {
       "id": "resource_37a",
       "decoded_bytes": 11740,
-      "executable_bytes": 10988,
-      "excluded_bytes": 752,
+      "executable_bytes": 11004,
+      "excluded_bytes": 736,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_37a_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9216,8 +9186,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33565040,
-          "end": 33565432,
+          "start": 33565036,
+          "end": 33565436,
           "kind": "veneer",
           "evidence": "resource_37a_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9227,13 +9197,13 @@
     {
       "id": "resource_37b",
       "decoded_bytes": 10616,
-      "executable_bytes": 9562,
-      "excluded_bytes": 1054,
+      "executable_bytes": 9580,
+      "excluded_bytes": 1036,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_37b_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9514,8 +9484,14 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33563584,
-          "end": 33564008,
+          "start": 33563578,
+          "end": 33563580,
+          "kind": "executable_alignment",
+          "evidence": "resource_37b_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33563580,
+          "end": 33564012,
           "kind": "veneer",
           "evidence": "resource_37b_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9525,13 +9501,13 @@
     {
       "id": "resource_37c",
       "decoded_bytes": 344,
-      "executable_bytes": 184,
-      "excluded_bytes": 160,
+      "executable_bytes": 200,
+      "excluded_bytes": 144,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_37c_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9542,8 +9518,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33554596,
-          "end": 33554628,
+          "start": 33554592,
+          "end": 33554632,
           "kind": "veneer",
           "evidence": "resource_37c_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9553,13 +9529,13 @@
     {
       "id": "resource_37d",
       "decoded_bytes": 376,
-      "executable_bytes": 176,
-      "excluded_bytes": 200,
+      "executable_bytes": 192,
+      "excluded_bytes": 184,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_37d_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9570,8 +9546,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33554596,
-          "end": 33554620,
+          "start": 33554592,
+          "end": 33554624,
           "kind": "veneer",
           "evidence": "resource_37d_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9581,13 +9557,13 @@
     {
       "id": "resource_37e",
       "decoded_bytes": 364,
-      "executable_bytes": 176,
-      "excluded_bytes": 188,
+      "executable_bytes": 192,
+      "excluded_bytes": 172,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_37e_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9598,8 +9574,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33554596,
-          "end": 33554620,
+          "start": 33554592,
+          "end": 33554624,
           "kind": "veneer",
           "evidence": "resource_37e_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9609,13 +9585,13 @@
     {
       "id": "resource_37f",
       "decoded_bytes": 9884,
-      "executable_bytes": 6714,
-      "excluded_bytes": 3170,
+      "executable_bytes": 6730,
+      "excluded_bytes": 3154,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_37f_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -9818,8 +9794,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33561384,
-          "end": 33561808,
+          "start": 33561380,
+          "end": 33561812,
           "kind": "veneer",
           "evidence": "resource_37f_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -9829,13 +9805,13 @@
     {
       "id": "resource_380",
       "decoded_bytes": 20880,
-      "executable_bytes": 19198,
-      "excluded_bytes": 1682,
+      "executable_bytes": 19210,
+      "excluded_bytes": 1670,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_380_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -10237,19 +10213,13 @@
         },
         {
           "start": 33572928,
-          "end": 33572944,
+          "end": 33572948,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33572944,
-          "end": 33572952,
-          "kind": "veneer",
-          "evidence": "resource_380_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33572968,
-          "end": 33573656,
+          "start": 33572964,
+          "end": 33573660,
           "kind": "veneer",
           "evidence": "resource_380_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -10259,13 +10229,13 @@
     {
       "id": "resource_381",
       "decoded_bytes": 15032,
-      "executable_bytes": 13556,
-      "excluded_bytes": 1476,
+      "executable_bytes": 13568,
+      "excluded_bytes": 1464,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_381_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -10637,19 +10607,13 @@
         },
         {
           "start": 33567680,
-          "end": 33567696,
+          "end": 33567700,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33567696,
-          "end": 33567704,
-          "kind": "veneer",
-          "evidence": "resource_381_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33567720,
-          "end": 33568296,
+          "start": 33567716,
+          "end": 33568300,
           "kind": "veneer",
           "evidence": "resource_381_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -10659,13 +10623,13 @@
     {
       "id": "resource_382",
       "decoded_bytes": 10484,
-      "executable_bytes": 6802,
-      "excluded_bytes": 3682,
+      "executable_bytes": 6810,
+      "excluded_bytes": 3674,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_382_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -10989,27 +10953,15 @@
         },
         {
           "start": 33560808,
-          "end": 33560828,
+          "end": 33560832,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33560828,
-          "end": 33560836,
-          "kind": "veneer",
-          "evidence": "resource_382_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33560852,
-          "end": 33561292,
-          "kind": "veneer",
-          "evidence": "resource_382_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33561292,
+          "start": 33560848,
           "end": 33561296,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+          "kind": "veneer",
+          "evidence": "resource_382_overlay.s:fixed-ldr-bx-veneer"
         },
         {
           "start": 33561308,
@@ -11023,13 +10975,13 @@
     {
       "id": "resource_383",
       "decoded_bytes": 25848,
-      "executable_bytes": 18682,
-      "excluded_bytes": 7166,
+      "executable_bytes": 18698,
+      "excluded_bytes": 7150,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_383_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -11502,8 +11454,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33574000,
-          "end": 33574696,
+          "start": 33573996,
+          "end": 33574700,
           "kind": "veneer",
           "evidence": "resource_383_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -11513,13 +11465,13 @@
     {
       "id": "resource_384",
       "decoded_bytes": 1232,
-      "executable_bytes": 704,
-      "excluded_bytes": 528,
+      "executable_bytes": 720,
+      "excluded_bytes": 512,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_384_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -11542,8 +11494,8 @@
           "evidence": "resource_384_overlay.s:86:verified-C-placeholder"
         },
         {
-          "start": 33555044,
-          "end": 33555148,
+          "start": 33555040,
+          "end": 33555152,
           "kind": "veneer",
           "evidence": "resource_384_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -11553,13 +11505,13 @@
     {
       "id": "resource_385",
       "decoded_bytes": 6720,
-      "executable_bytes": 4478,
-      "excluded_bytes": 2242,
+      "executable_bytes": 4490,
+      "excluded_bytes": 2230,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_385_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -11834,16 +11786,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558628,
-          "end": 33558964,
+          "start": 33558624,
+          "end": 33558968,
           "kind": "veneer",
           "evidence": "resource_385_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33558964,
-          "end": 33558968,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33558980,
@@ -11857,13 +11803,13 @@
     {
       "id": "resource_386",
       "decoded_bytes": 3056,
-      "executable_bytes": 1738,
-      "excluded_bytes": 1318,
+      "executable_bytes": 1756,
+      "excluded_bytes": 1300,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_386_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -11898,8 +11844,14 @@
           "evidence": "resource_386_overlay.s:238:verified-C-placeholder"
         },
         {
-          "start": 33555936,
-          "end": 33556184,
+          "start": 33555930,
+          "end": 33555932,
+          "kind": "executable_alignment",
+          "evidence": "resource_386_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33555932,
+          "end": 33556188,
           "kind": "veneer",
           "evidence": "resource_386_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -11909,13 +11861,13 @@
     {
       "id": "resource_387",
       "decoded_bytes": 5376,
-      "executable_bytes": 4554,
-      "excluded_bytes": 822,
+      "executable_bytes": 4570,
+      "excluded_bytes": 806,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_387_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12148,8 +12100,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33558672,
-          "end": 33559088,
+          "start": 33558668,
+          "end": 33559092,
           "kind": "veneer",
           "evidence": "resource_387_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -12159,13 +12111,13 @@
     {
       "id": "resource_388",
       "decoded_bytes": 500,
-      "executable_bytes": 248,
-      "excluded_bytes": 252,
+      "executable_bytes": 264,
+      "excluded_bytes": 236,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_388_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12176,8 +12128,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33554652,
-          "end": 33554692,
+          "start": 33554648,
+          "end": 33554696,
           "kind": "veneer",
           "evidence": "resource_388_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -12187,13 +12139,13 @@
     {
       "id": "resource_389",
       "decoded_bytes": 6380,
-      "executable_bytes": 5436,
-      "excluded_bytes": 944,
+      "executable_bytes": 5444,
+      "excluded_bytes": 936,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_389_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12403,21 +12355,15 @@
         },
         {
           "start": 33559440,
-          "end": 33559460,
+          "end": 33559464,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559460,
-          "end": 33559828,
+          "start": 33559464,
+          "end": 33559832,
           "kind": "veneer",
           "evidence": "resource_389_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33559828,
-          "end": 33559832,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33559844,
@@ -12431,13 +12377,13 @@
     {
       "id": "resource_38a",
       "decoded_bytes": 2580,
-      "executable_bytes": 1770,
-      "excluded_bytes": 810,
+      "executable_bytes": 1786,
+      "excluded_bytes": 794,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_38a_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12520,8 +12466,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33556152,
-          "end": 33556320,
+          "start": 33556148,
+          "end": 33556324,
           "kind": "veneer",
           "evidence": "resource_38a_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -12531,13 +12477,13 @@
     {
       "id": "resource_38b",
       "decoded_bytes": 7560,
-      "executable_bytes": 4528,
-      "excluded_bytes": 3032,
+      "executable_bytes": 4544,
+      "excluded_bytes": 3016,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_38b_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12716,8 +12662,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33558556,
-          "end": 33558972,
+          "start": 33558552,
+          "end": 33558976,
           "kind": "veneer",
           "evidence": "resource_38b_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -12727,13 +12673,13 @@
     {
       "id": "resource_38c",
       "decoded_bytes": 3572,
-      "executable_bytes": 1416,
-      "excluded_bytes": 2156,
+      "executable_bytes": 1432,
+      "excluded_bytes": 2140,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_38c_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12744,8 +12690,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33555716,
-          "end": 33555860,
+          "start": 33555712,
+          "end": 33555864,
           "kind": "veneer",
           "evidence": "resource_38c_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -12755,13 +12701,13 @@
     {
       "id": "resource_38d",
       "decoded_bytes": 12464,
-      "executable_bytes": 9646,
-      "excluded_bytes": 2818,
+      "executable_bytes": 9662,
+      "excluded_bytes": 2802,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_38d_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -12994,8 +12940,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33563660,
-          "end": 33564092,
+          "start": 33563656,
+          "end": 33564096,
           "kind": "veneer",
           "evidence": "resource_38d_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -13005,13 +12951,13 @@
     {
       "id": "resource_38e",
       "decoded_bytes": 3736,
-      "executable_bytes": 3016,
-      "excluded_bytes": 720,
+      "executable_bytes": 3028,
+      "excluded_bytes": 708,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_38e_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -13113,13 +13059,13 @@
         },
         {
           "start": 33557060,
-          "end": 33557064,
+          "end": 33557068,
           "kind": "literal_pool",
-          "evidence": "resource_38e_overlay.s:996:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33557064,
-          "end": 33557456,
+          "start": 33557068,
+          "end": 33557460,
           "kind": "veneer",
           "evidence": "resource_38e_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -13129,13 +13075,13 @@
     {
       "id": "resource_38f",
       "decoded_bytes": 13964,
-      "executable_bytes": 11204,
-      "excluded_bytes": 2760,
+      "executable_bytes": 11220,
+      "excluded_bytes": 2744,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_38f_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -13356,8 +13302,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33565088,
-          "end": 33565648,
+          "start": 33565084,
+          "end": 33565652,
           "kind": "veneer",
           "evidence": "resource_38f_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -13367,13 +13313,13 @@
     {
       "id": "resource_390",
       "decoded_bytes": 2404,
-      "executable_bytes": 776,
-      "excluded_bytes": 1628,
+      "executable_bytes": 792,
+      "excluded_bytes": 1612,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_390_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -13396,8 +13342,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33555132,
-          "end": 33555220,
+          "start": 33555128,
+          "end": 33555224,
           "kind": "veneer",
           "evidence": "resource_390_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -13407,13 +13353,13 @@
     {
       "id": "resource_391",
       "decoded_bytes": 13188,
-      "executable_bytes": 11596,
-      "excluded_bytes": 1592,
+      "executable_bytes": 11608,
+      "excluded_bytes": 1580,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_391_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -13676,16 +13622,10 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33565576,
-          "end": 33565992,
+          "start": 33565572,
+          "end": 33565996,
           "kind": "veneer",
           "evidence": "resource_391_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33565992,
-          "end": 33565996,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33566008,
@@ -13699,13 +13639,13 @@
     {
       "id": "resource_392",
       "decoded_bytes": 4260,
-      "executable_bytes": 3752,
-      "excluded_bytes": 508,
+      "executable_bytes": 3760,
+      "excluded_bytes": 500,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_392_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -13813,33 +13753,15 @@
         },
         {
           "start": 33557684,
-          "end": 33557892,
+          "end": 33557900,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_392_overlay.s:877:verified-C-placeholder"
         },
         {
-          "start": 33557892,
-          "end": 33557896,
-          "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:914:pc-relative-literal"
-        },
-        {
-          "start": 33557896,
-          "end": 33557904,
-          "kind": "veneer",
-          "evidence": "resource_392_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33557912,
-          "end": 33558152,
-          "kind": "veneer",
-          "evidence": "resource_392_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33558152,
+          "start": 33557908,
           "end": 33558156,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+          "kind": "veneer",
+          "evidence": "resource_392_overlay.s:fixed-ldr-bx-veneer"
         },
         {
           "start": 33558168,
@@ -13853,13 +13775,13 @@
     {
       "id": "resource_393",
       "decoded_bytes": 4308,
-      "executable_bytes": 3820,
-      "excluded_bytes": 488,
+      "executable_bytes": 3832,
+      "excluded_bytes": 476,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_393_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -13954,16 +13876,10 @@
           "evidence": "resource_393_overlay.s:936:verified-C-placeholder"
         },
         {
-          "start": 33558056,
-          "end": 33558224,
+          "start": 33558052,
+          "end": 33558228,
           "kind": "veneer",
           "evidence": "resource_393_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33558224,
-          "end": 33558228,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33558240,
@@ -13977,13 +13893,13 @@
     {
       "id": "resource_394",
       "decoded_bytes": 4792,
-      "executable_bytes": 4356,
-      "excluded_bytes": 436,
+      "executable_bytes": 4372,
+      "excluded_bytes": 420,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_394_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -14132,8 +14048,8 @@
           "evidence": "resource_394_overlay.s:1304:verified-C-placeholder"
         },
         {
-          "start": 33558528,
-          "end": 33558808,
+          "start": 33558524,
+          "end": 33558812,
           "kind": "veneer",
           "evidence": "resource_394_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -14143,13 +14059,13 @@
     {
       "id": "resource_395",
       "decoded_bytes": 7612,
-      "executable_bytes": 5966,
-      "excluded_bytes": 1646,
+      "executable_bytes": 5982,
+      "excluded_bytes": 1630,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_395_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -14358,8 +14274,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33560844,
-          "end": 33561268,
+          "start": 33560840,
+          "end": 33561272,
           "kind": "veneer",
           "evidence": "resource_395_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -14369,13 +14285,13 @@
     {
       "id": "resource_396",
       "decoded_bytes": 11708,
-      "executable_bytes": 5998,
-      "excluded_bytes": 5710,
+      "executable_bytes": 6014,
+      "excluded_bytes": 5694,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_396_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -14644,8 +14560,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33561124,
-          "end": 33561596,
+          "start": 33561120,
+          "end": 33561600,
           "kind": "veneer",
           "evidence": "resource_396_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -14655,13 +14571,13 @@
     {
       "id": "resource_397",
       "decoded_bytes": 1414,
-      "executable_bytes": 838,
-      "excluded_bytes": 576,
+      "executable_bytes": 854,
+      "excluded_bytes": 560,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_397_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -14750,8 +14666,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33555208,
-          "end": 33555288,
+          "start": 33555204,
+          "end": 33555292,
           "kind": "veneer",
           "evidence": "resource_397_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -14761,13 +14677,13 @@
     {
       "id": "resource_398",
       "decoded_bytes": 4260,
-      "executable_bytes": 2462,
-      "excluded_bytes": 1798,
+      "executable_bytes": 2480,
+      "excluded_bytes": 1780,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_398_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -14892,8 +14808,14 @@
           "evidence": "resource_398_overlay.s:344:verified-C-placeholder"
         },
         {
-          "start": 33556748,
-          "end": 33556908,
+          "start": 33556742,
+          "end": 33556744,
+          "kind": "executable_alignment",
+          "evidence": "resource_398_overlay.s:two-byte-zero-between-executable-spans"
+        },
+        {
+          "start": 33556744,
+          "end": 33556912,
           "kind": "veneer",
           "evidence": "resource_398_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -14903,13 +14825,13 @@
     {
       "id": "resource_399",
       "decoded_bytes": 12780,
-      "executable_bytes": 8968,
-      "excluded_bytes": 3812,
+      "executable_bytes": 8980,
+      "excluded_bytes": 3800,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_399_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -15215,19 +15137,13 @@
         },
         {
           "start": 33562956,
-          "end": 33562980,
+          "end": 33562984,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33562980,
-          "end": 33562988,
-          "kind": "veneer",
-          "evidence": "resource_399_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33562996,
-          "end": 33563628,
+          "start": 33562992,
+          "end": 33563632,
           "kind": "veneer",
           "evidence": "resource_399_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -15237,13 +15153,13 @@
     {
       "id": "resource_39a",
       "decoded_bytes": 13096,
-      "executable_bytes": 9218,
-      "excluded_bytes": 3878,
+      "executable_bytes": 9230,
+      "excluded_bytes": 3866,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_39a_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -15513,19 +15429,13 @@
         },
         {
           "start": 33563196,
-          "end": 33563220,
+          "end": 33563224,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33563220,
-          "end": 33563228,
-          "kind": "veneer",
-          "evidence": "resource_39a_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33563236,
-          "end": 33563668,
+          "start": 33563232,
+          "end": 33563672,
           "kind": "veneer",
           "evidence": "resource_39a_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -15535,13 +15445,13 @@
     {
       "id": "resource_39b",
       "decoded_bytes": 12284,
-      "executable_bytes": 8722,
-      "excluded_bytes": 3562,
+      "executable_bytes": 8734,
+      "excluded_bytes": 3550,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_39b_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -16086,16 +15996,10 @@
           "evidence": "resource_39b_overlay.s:3914:verified-C-placeholder"
         },
         {
-          "start": 33563632,
-          "end": 33564184,
+          "start": 33563628,
+          "end": 33564188,
           "kind": "veneer",
           "evidence": "resource_39b_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33564184,
-          "end": 33564188,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33564200,
@@ -16109,13 +16013,13 @@
     {
       "id": "resource_39c",
       "decoded_bytes": 28696,
-      "executable_bytes": 22186,
-      "excluded_bytes": 6510,
+      "executable_bytes": 22198,
+      "excluded_bytes": 6498,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_39c_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -16960,16 +16864,10 @@
           "evidence": "resource_39c_overlay.s:8602:verified-C-placeholder"
         },
         {
-          "start": 33577344,
-          "end": 33578088,
+          "start": 33577340,
+          "end": 33578092,
           "kind": "veneer",
           "evidence": "resource_39c_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33578088,
-          "end": 33578092,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33578104,
@@ -17265,13 +17163,13 @@
     {
       "id": "resource_39d",
       "decoded_bytes": 15488,
-      "executable_bytes": 14422,
-      "excluded_bytes": 1066,
+      "executable_bytes": 14434,
+      "excluded_bytes": 1054,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_39d_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -17726,16 +17624,10 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33568308,
-          "end": 33568836,
+          "start": 33568304,
+          "end": 33568840,
           "kind": "veneer",
           "evidence": "resource_39d_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33568836,
-          "end": 33568840,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33568852,
@@ -17749,13 +17641,13 @@
     {
       "id": "resource_39e",
       "decoded_bytes": 21008,
-      "executable_bytes": 17766,
-      "excluded_bytes": 3242,
+      "executable_bytes": 17782,
+      "excluded_bytes": 3226,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_39e_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -18204,8 +18096,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33571656,
-          "end": 33572224,
+          "start": 33571652,
+          "end": 33572228,
           "kind": "veneer",
           "evidence": "resource_39e_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -18215,13 +18107,13 @@
     {
       "id": "resource_39f",
       "decoded_bytes": 15916,
-      "executable_bytes": 11258,
-      "excluded_bytes": 4658,
+      "executable_bytes": 11266,
+      "excluded_bytes": 4650,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_39f_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -18545,27 +18437,15 @@
         },
         {
           "start": 33565916,
-          "end": 33565920,
+          "end": 33565924,
           "kind": "literal_pool",
-          "evidence": "resource_39f_overlay.s:3051:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33565920,
-          "end": 33565928,
-          "kind": "veneer",
-          "evidence": "resource_39f_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33565936,
-          "end": 33566392,
-          "kind": "veneer",
-          "evidence": "resource_39f_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33566392,
+          "start": 33565932,
           "end": 33566396,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+          "kind": "veneer",
+          "evidence": "resource_39f_overlay.s:fixed-ldr-bx-veneer"
         },
         {
           "start": 33566408,
@@ -18579,13 +18459,13 @@
     {
       "id": "resource_3a0",
       "decoded_bytes": 7576,
-      "executable_bytes": 5250,
-      "excluded_bytes": 2326,
+      "executable_bytes": 5262,
+      "excluded_bytes": 2314,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a0_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -18806,16 +18686,10 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33559356,
-          "end": 33559740,
+          "start": 33559352,
+          "end": 33559744,
           "kind": "veneer",
           "evidence": "resource_3a0_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33559740,
-          "end": 33559744,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33559756,
@@ -18829,13 +18703,13 @@
     {
       "id": "resource_3a1",
       "decoded_bytes": 3572,
-      "executable_bytes": 1708,
-      "excluded_bytes": 1864,
+      "executable_bytes": 1724,
+      "excluded_bytes": 1848,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a1_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -18906,8 +18780,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33556000,
-          "end": 33556160,
+          "start": 33555996,
+          "end": 33556164,
           "kind": "veneer",
           "evidence": "resource_3a1_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -18917,13 +18791,13 @@
     {
       "id": "resource_3a2",
       "decoded_bytes": 7648,
-      "executable_bytes": 5612,
-      "excluded_bytes": 2036,
+      "executable_bytes": 5628,
+      "excluded_bytes": 2020,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a2_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -19036,8 +18910,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559708,
-          "end": 33560092,
+          "start": 33559704,
+          "end": 33560096,
           "kind": "veneer",
           "evidence": "resource_3a2_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -19047,13 +18921,13 @@
     {
       "id": "resource_3a3",
       "decoded_bytes": 7856,
-      "executable_bytes": 4022,
-      "excluded_bytes": 3834,
+      "executable_bytes": 4038,
+      "excluded_bytes": 3818,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a3_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -19184,8 +19058,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558052,
-          "end": 33558468,
+          "start": 33558048,
+          "end": 33558472,
           "kind": "veneer",
           "evidence": "resource_3a3_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -19195,13 +19069,13 @@
     {
       "id": "resource_3a4",
       "decoded_bytes": 21048,
-      "executable_bytes": 15798,
-      "excluded_bytes": 5250,
+      "executable_bytes": 15814,
+      "excluded_bytes": 5234,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a4_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -19866,8 +19740,8 @@
           "evidence": "resource_3a4_overlay.s:5895:verified-C-placeholder"
         },
         {
-          "start": 33569404,
-          "end": 33570084,
+          "start": 33569400,
+          "end": 33570088,
           "kind": "veneer",
           "evidence": "resource_3a4_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -19973,13 +19847,13 @@
     {
       "id": "resource_3a5",
       "decoded_bytes": 9922,
-      "executable_bytes": 9018,
-      "excluded_bytes": 904,
+      "executable_bytes": 9030,
+      "excluded_bytes": 892,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a5_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -20320,16 +20194,10 @@
           "evidence": "resource_3a5_overlay.s:3326:verified-C-placeholder"
         },
         {
-          "start": 33561744,
-          "end": 33562184,
+          "start": 33561740,
+          "end": 33562188,
           "kind": "veneer",
           "evidence": "resource_3a5_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33562184,
-          "end": 33562188,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33562200,
@@ -20781,13 +20649,13 @@
     {
       "id": "resource_3a6",
       "decoded_bytes": 9872,
-      "executable_bytes": 7160,
-      "excluded_bytes": 2712,
+      "executable_bytes": 7172,
+      "excluded_bytes": 2700,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a6_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -21170,16 +21038,10 @@
           "evidence": "resource_3a6_overlay.s:3050:verified-C-placeholder"
         },
         {
-          "start": 33561632,
-          "end": 33561952,
+          "start": 33561628,
+          "end": 33561956,
           "kind": "veneer",
           "evidence": "resource_3a6_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33561952,
-          "end": 33561956,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33561968,
@@ -21193,13 +21055,13 @@
     {
       "id": "resource_3a7",
       "decoded_bytes": 8756,
-      "executable_bytes": 5832,
-      "excluded_bytes": 2924,
+      "executable_bytes": 5848,
+      "excluded_bytes": 2908,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a7_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -21390,8 +21252,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33558644,
-          "end": 33558868,
+          "start": 33558640,
+          "end": 33558872,
           "kind": "veneer",
           "evidence": "resource_3a7_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -21491,13 +21353,13 @@
     {
       "id": "resource_3a8",
       "decoded_bytes": 20788,
-      "executable_bytes": 15496,
-      "excluded_bytes": 5292,
+      "executable_bytes": 15508,
+      "excluded_bytes": 5280,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a8_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -21845,13 +21707,13 @@
         },
         {
           "start": 33569548,
-          "end": 33569552,
+          "end": 33569556,
           "kind": "literal_pool",
-          "evidence": "resource_3a8_overlay.s:6086:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33569552,
-          "end": 33570176,
+          "start": 33569556,
+          "end": 33570180,
           "kind": "veneer",
           "evidence": "resource_3a8_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -21861,13 +21723,13 @@
     {
       "id": "resource_3a9",
       "decoded_bytes": 3864,
-      "executable_bytes": 1168,
-      "excluded_bytes": 2696,
+      "executable_bytes": 1184,
+      "excluded_bytes": 2680,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3a9_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -21878,8 +21740,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33555436,
-          "end": 33555612,
+          "start": 33555432,
+          "end": 33555616,
           "kind": "veneer",
           "evidence": "resource_3a9_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -21889,13 +21751,13 @@
     {
       "id": "resource_3aa",
       "decoded_bytes": 8580,
-      "executable_bytes": 7044,
-      "excluded_bytes": 1536,
+      "executable_bytes": 7060,
+      "excluded_bytes": 1520,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3aa_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -22008,8 +21870,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33561144,
-          "end": 33561488,
+          "start": 33561140,
+          "end": 33561492,
           "kind": "veneer",
           "evidence": "resource_3aa_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -22019,13 +21881,13 @@
     {
       "id": "resource_3ab",
       "decoded_bytes": 9552,
-      "executable_bytes": 6866,
-      "excluded_bytes": 2686,
+      "executable_bytes": 6878,
+      "excluded_bytes": 2674,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ab_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -22373,19 +22235,13 @@
         },
         {
           "start": 33560848,
-          "end": 33560852,
+          "end": 33560856,
           "kind": "literal_pool",
-          "evidence": "resource_3ab_overlay.s:2429:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33560852,
-          "end": 33560860,
-          "kind": "veneer",
-          "evidence": "resource_3ab_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33560868,
-          "end": 33561396,
+          "start": 33560864,
+          "end": 33561400,
           "kind": "veneer",
           "evidence": "resource_3ab_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -22395,13 +22251,13 @@
     {
       "id": "resource_3ac",
       "decoded_bytes": 3272,
-      "executable_bytes": 1256,
-      "excluded_bytes": 2016,
+      "executable_bytes": 1272,
+      "excluded_bytes": 2000,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ac_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -22412,8 +22268,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33555604,
-          "end": 33555700,
+          "start": 33555600,
+          "end": 33555704,
           "kind": "veneer",
           "evidence": "resource_3ac_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -22423,13 +22279,13 @@
     {
       "id": "resource_3ad",
       "decoded_bytes": 7756,
-      "executable_bytes": 7204,
-      "excluded_bytes": 552,
+      "executable_bytes": 7220,
+      "excluded_bytes": 536,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ad_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -22608,8 +22464,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33561304,
-          "end": 33561648,
+          "start": 33561300,
+          "end": 33561652,
           "kind": "veneer",
           "evidence": "resource_3ad_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -22619,13 +22475,13 @@
     {
       "id": "resource_3ae",
       "decoded_bytes": 9236,
-      "executable_bytes": 5800,
-      "excluded_bytes": 3436,
+      "executable_bytes": 5816,
+      "excluded_bytes": 3420,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ae_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -22834,8 +22690,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559812,
-          "end": 33560244,
+          "start": 33559808,
+          "end": 33560248,
           "kind": "veneer",
           "evidence": "resource_3ae_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -22845,13 +22701,13 @@
     {
       "id": "resource_3af",
       "decoded_bytes": 23340,
-      "executable_bytes": 15722,
-      "excluded_bytes": 7618,
+      "executable_bytes": 15738,
+      "excluded_bytes": 7602,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3af_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -23402,8 +23258,8 @@
           "evidence": "resource_3af_overlay.s:5733:verified-C-placeholder"
         },
         {
-          "start": 33571424,
-          "end": 33571936,
+          "start": 33571420,
+          "end": 33571940,
           "kind": "veneer",
           "evidence": "resource_3af_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -23413,13 +23269,13 @@
     {
       "id": "resource_3b0",
       "decoded_bytes": 6428,
-      "executable_bytes": 4620,
-      "excluded_bytes": 1808,
+      "executable_bytes": 4636,
+      "excluded_bytes": 1792,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b0_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -23586,8 +23442,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33558968,
-          "end": 33559312,
+          "start": 33558964,
+          "end": 33559316,
           "kind": "veneer",
           "evidence": "resource_3b0_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -23597,13 +23453,13 @@
     {
       "id": "resource_3b1",
       "decoded_bytes": 32644,
-      "executable_bytes": 22894,
-      "excluded_bytes": 9750,
+      "executable_bytes": 22910,
+      "excluded_bytes": 9734,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b1_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -24232,8 +24088,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33580068,
-          "end": 33580644,
+          "start": 33580064,
+          "end": 33580648,
           "kind": "veneer",
           "evidence": "resource_3b1_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -24243,13 +24099,13 @@
     {
       "id": "resource_3b2",
       "decoded_bytes": 15796,
-      "executable_bytes": 12502,
-      "excluded_bytes": 3294,
+      "executable_bytes": 12510,
+      "excluded_bytes": 3286,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b2_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -24657,27 +24513,15 @@
         },
         {
           "start": 33566632,
-          "end": 33566636,
+          "end": 33566640,
           "kind": "literal_pool",
-          "evidence": "resource_3b2_overlay.s:2659:pc-relative-literal"
+          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33566636,
-          "end": 33566644,
-          "kind": "veneer",
-          "evidence": "resource_3b2_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33566652,
-          "end": 33567004,
-          "kind": "veneer",
-          "evidence": "resource_3b2_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33567004,
+          "start": 33566648,
           "end": 33567008,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+          "kind": "veneer",
+          "evidence": "resource_3b2_overlay.s:fixed-ldr-bx-veneer"
         },
         {
           "start": 33567020,
@@ -24691,13 +24535,13 @@
     {
       "id": "resource_3b3",
       "decoded_bytes": 14028,
-      "executable_bytes": 11078,
-      "excluded_bytes": 2950,
+      "executable_bytes": 11090,
+      "excluded_bytes": 2938,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b3_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -25224,16 +25068,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33565240,
-          "end": 33565624,
+          "start": 33565236,
+          "end": 33565628,
           "kind": "veneer",
           "evidence": "resource_3b3_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33565624,
-          "end": 33565628,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33565640,
@@ -25247,13 +25085,13 @@
     {
       "id": "resource_3b4",
       "decoded_bytes": 12164,
-      "executable_bytes": 9562,
-      "excluded_bytes": 2602,
+      "executable_bytes": 9574,
+      "excluded_bytes": 2590,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b4_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -25876,16 +25714,10 @@
           "evidence": "resource_3b4_overlay.s:2872:verified-C-placeholder"
         },
         {
-          "start": 33563756,
-          "end": 33564164,
+          "start": 33563752,
+          "end": 33564168,
           "kind": "veneer",
           "evidence": "resource_3b4_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33564164,
-          "end": 33564168,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33564180,
@@ -25899,13 +25731,13 @@
     {
       "id": "resource_3b5",
       "decoded_bytes": 7496,
-      "executable_bytes": 3724,
-      "excluded_bytes": 3772,
+      "executable_bytes": 3736,
+      "excluded_bytes": 3760,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b5_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -26090,16 +25922,10 @@
           "evidence": "resource_3b5_overlay.s:1306:verified-C-placeholder"
         },
         {
-          "start": 33557760,
-          "end": 33558120,
+          "start": 33557756,
+          "end": 33558124,
           "kind": "veneer",
           "evidence": "resource_3b5_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33558120,
-          "end": 33558124,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33558136,
@@ -26113,13 +25939,13 @@
     {
       "id": "resource_3b6",
       "decoded_bytes": 7660,
-      "executable_bytes": 2688,
-      "excluded_bytes": 4972,
+      "executable_bytes": 2704,
+      "excluded_bytes": 4956,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b6_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -26310,8 +26136,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33556892,
-          "end": 33557132,
+          "start": 33556888,
+          "end": 33557136,
           "kind": "veneer",
           "evidence": "resource_3b6_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -26321,13 +26147,13 @@
     {
       "id": "resource_3b7",
       "decoded_bytes": 8298,
-      "executable_bytes": 6622,
-      "excluded_bytes": 1676,
+      "executable_bytes": 6634,
+      "excluded_bytes": 1664,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b7_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -26530,16 +26356,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33560680,
-          "end": 33561032,
+          "start": 33560676,
+          "end": 33561036,
           "kind": "veneer",
           "evidence": "resource_3b7_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33561032,
-          "end": 33561036,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33561048,
@@ -26553,13 +26373,13 @@
     {
       "id": "resource_3b8",
       "decoded_bytes": 23352,
-      "executable_bytes": 17728,
-      "excluded_bytes": 5624,
+      "executable_bytes": 17744,
+      "excluded_bytes": 5608,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b8_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -26750,8 +26570,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33571652,
-          "end": 33572172,
+          "start": 33571648,
+          "end": 33572176,
           "kind": "veneer",
           "evidence": "resource_3b8_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -26761,13 +26581,13 @@
     {
       "id": "resource_3b9",
       "decoded_bytes": 16824,
-      "executable_bytes": 11260,
-      "excluded_bytes": 5564,
+      "executable_bytes": 11276,
+      "excluded_bytes": 5548,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3b9_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -27102,8 +26922,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33565584,
-          "end": 33566008,
+          "start": 33565580,
+          "end": 33566012,
           "kind": "veneer",
           "evidence": "resource_3b9_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -27113,13 +26933,13 @@
     {
       "id": "resource_3ba",
       "decoded_bytes": 18256,
-      "executable_bytes": 15604,
-      "excluded_bytes": 2652,
+      "executable_bytes": 15616,
+      "excluded_bytes": 2640,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ba_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -27724,16 +27544,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33569548,
-          "end": 33570308,
+          "start": 33569544,
+          "end": 33570312,
           "kind": "veneer",
           "evidence": "resource_3ba_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33570308,
-          "end": 33570312,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33570332,
@@ -27747,13 +27561,13 @@
     {
       "id": "resource_3bb",
       "decoded_bytes": 19440,
-      "executable_bytes": 16268,
-      "excluded_bytes": 3172,
+      "executable_bytes": 16284,
+      "excluded_bytes": 3156,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3bb_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -28580,8 +28394,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33570212,
-          "end": 33571004,
+          "start": 33570208,
+          "end": 33571008,
           "kind": "veneer",
           "evidence": "resource_3bb_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -28591,13 +28405,13 @@
     {
       "id": "resource_3bc",
       "decoded_bytes": 23416,
-      "executable_bytes": 19062,
-      "excluded_bytes": 4354,
+      "executable_bytes": 19074,
+      "excluded_bytes": 4342,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3bc_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -29412,16 +29226,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33572932,
-          "end": 33573804,
+          "start": 33572928,
+          "end": 33573808,
           "kind": "veneer",
           "evidence": "resource_3bc_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33573804,
-          "end": 33573808,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33573828,
@@ -29435,13 +29243,13 @@
     {
       "id": "resource_3bd",
       "decoded_bytes": 18692,
-      "executable_bytes": 16382,
-      "excluded_bytes": 2310,
+      "executable_bytes": 16394,
+      "excluded_bytes": 2298,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554460,
+          "start": 33554432,
+          "end": 33554464,
           "kind": "veneer",
           "evidence": "resource_3bd_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -29800,16 +29608,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33569796,
-          "end": 33570420,
+          "start": 33569792,
+          "end": 33570424,
           "kind": "veneer",
           "evidence": "resource_3bd_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33570420,
-          "end": 33570424,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33570436,
@@ -30033,13 +29835,13 @@
     {
       "id": "resource_3be",
       "decoded_bytes": 7572,
-      "executable_bytes": 5528,
-      "excluded_bytes": 2044,
+      "executable_bytes": 5540,
+      "excluded_bytes": 2032,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3be_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -30380,16 +30182,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559696,
-          "end": 33560024,
+          "start": 33559692,
+          "end": 33560028,
           "kind": "veneer",
           "evidence": "resource_3be_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33560024,
-          "end": 33560028,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33560040,
@@ -30403,13 +30199,13 @@
     {
       "id": "resource_3bf",
       "decoded_bytes": 30580,
-      "executable_bytes": 23464,
-      "excluded_bytes": 7116,
+      "executable_bytes": 23476,
+      "excluded_bytes": 7104,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3bf_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -30930,16 +30726,10 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33576332,
-          "end": 33576876,
+          "start": 33576328,
+          "end": 33576880,
           "kind": "veneer",
           "evidence": "resource_3bf_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33576876,
-          "end": 33576880,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33576892,
@@ -31043,13 +30833,13 @@
     {
       "id": "resource_3c0",
       "decoded_bytes": 6656,
-      "executable_bytes": 4882,
-      "excluded_bytes": 1774,
+      "executable_bytes": 4898,
+      "excluded_bytes": 1758,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c0_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -31276,8 +31066,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559032,
-          "end": 33559416,
+          "start": 33559028,
+          "end": 33559420,
           "kind": "veneer",
           "evidence": "resource_3c0_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -31287,13 +31077,13 @@
     {
       "id": "resource_3c1",
       "decoded_bytes": 2228,
-      "executable_bytes": 736,
-      "excluded_bytes": 1492,
+      "executable_bytes": 752,
+      "excluded_bytes": 1476,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c1_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -31328,8 +31118,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33555084,
-          "end": 33555180,
+          "start": 33555080,
+          "end": 33555184,
           "kind": "veneer",
           "evidence": "resource_3c1_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -31339,13 +31129,13 @@
     {
       "id": "resource_3c2",
       "decoded_bytes": 5068,
-      "executable_bytes": 3106,
-      "excluded_bytes": 1962,
+      "executable_bytes": 3122,
+      "excluded_bytes": 1946,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c2_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -31482,8 +31272,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33557304,
-          "end": 33557560,
+          "start": 33557300,
+          "end": 33557564,
           "kind": "veneer",
           "evidence": "resource_3c2_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -31493,13 +31283,13 @@
     {
       "id": "resource_3c3",
       "decoded_bytes": 3740,
-      "executable_bytes": 2404,
-      "excluded_bytes": 1336,
+      "executable_bytes": 2420,
+      "excluded_bytes": 1320,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c3_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -31582,8 +31372,8 @@
           "evidence": "resource_3c3_overlay.s:809:verified-C-placeholder"
         },
         {
-          "start": 33556576,
-          "end": 33556848,
+          "start": 33556572,
+          "end": 33556852,
           "kind": "veneer",
           "evidence": "resource_3c3_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -31593,13 +31383,13 @@
     {
       "id": "resource_3c4",
       "decoded_bytes": 16764,
-      "executable_bytes": 10168,
-      "excluded_bytes": 6596,
+      "executable_bytes": 10180,
+      "excluded_bytes": 6584,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c4_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -32126,16 +31916,10 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33566760,
-          "end": 33567152,
+          "start": 33566756,
+          "end": 33567156,
           "kind": "veneer",
           "evidence": "resource_3c4_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33567152,
-          "end": 33567156,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33567168,
@@ -32149,13 +31933,13 @@
     {
       "id": "resource_3c5",
       "decoded_bytes": 15604,
-      "executable_bytes": 11986,
-      "excluded_bytes": 3618,
+      "executable_bytes": 11998,
+      "excluded_bytes": 3606,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c5_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -32544,16 +32328,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33566084,
-          "end": 33566612,
+          "start": 33566080,
+          "end": 33566616,
           "kind": "veneer",
           "evidence": "resource_3c5_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33566612,
-          "end": 33566616,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33566628,
@@ -32567,13 +32345,13 @@
     {
       "id": "resource_3c6",
       "decoded_bytes": 8424,
-      "executable_bytes": 5672,
-      "excluded_bytes": 2752,
+      "executable_bytes": 5688,
+      "excluded_bytes": 2736,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c6_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -32716,8 +32494,8 @@
           "evidence": "resource_3c6_overlay.s:2351:pc-relative-literal"
         },
         {
-          "start": 33559772,
-          "end": 33560116,
+          "start": 33559768,
+          "end": 33560120,
           "kind": "veneer",
           "evidence": "resource_3c6_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -32727,13 +32505,13 @@
     {
       "id": "resource_3c7",
       "decoded_bytes": 8616,
-      "executable_bytes": 4846,
-      "excluded_bytes": 3770,
+      "executable_bytes": 4862,
+      "excluded_bytes": 3754,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c7_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -33014,8 +32792,8 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559008,
-          "end": 33559312,
+          "start": 33559004,
+          "end": 33559316,
           "kind": "veneer",
           "evidence": "resource_3c7_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -33025,13 +32803,13 @@
     {
       "id": "resource_3c8",
       "decoded_bytes": 30732,
-      "executable_bytes": 17572,
-      "excluded_bytes": 13160,
+      "executable_bytes": 17584,
+      "excluded_bytes": 13148,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c8_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -33630,16 +33408,10 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33574312,
-          "end": 33574912,
+          "start": 33574308,
+          "end": 33574916,
           "kind": "veneer",
           "evidence": "resource_3c8_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33574912,
-          "end": 33574916,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33574928,
@@ -33653,13 +33425,13 @@
     {
       "id": "resource_3c9",
       "decoded_bytes": 26464,
-      "executable_bytes": 23754,
-      "excluded_bytes": 2710,
+      "executable_bytes": 23766,
+      "excluded_bytes": 2698,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3c9_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -34438,16 +34210,10 @@
           "evidence": "resource_3c9_overlay.s:10469:pc-relative-literal"
         },
         {
-          "start": 33577984,
-          "end": 33578704,
+          "start": 33577980,
+          "end": 33578708,
           "kind": "veneer",
           "evidence": "resource_3c9_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33578704,
-          "end": 33578708,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
           "start": 33578720,
@@ -34461,13 +34227,13 @@
     {
       "id": "resource_3ca",
       "decoded_bytes": 6904,
-      "executable_bytes": 4744,
-      "excluded_bytes": 2160,
+      "executable_bytes": 4756,
+      "excluded_bytes": 2148,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ca_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -34701,19 +34467,13 @@
         },
         {
           "start": 33559288,
-          "end": 33559312,
+          "end": 33559316,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33559312,
-          "end": 33559320,
-          "kind": "veneer",
-          "evidence": "resource_3ca_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33559328,
-          "end": 33559720,
+          "start": 33559324,
+          "end": 33559724,
           "kind": "veneer",
           "evidence": "resource_3ca_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -34723,13 +34483,13 @@
     {
       "id": "resource_3cb",
       "decoded_bytes": 8012,
-      "executable_bytes": 6402,
-      "excluded_bytes": 1610,
+      "executable_bytes": 6410,
+      "excluded_bytes": 1602,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3cb_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -34987,27 +34747,15 @@
         },
         {
           "start": 33560260,
-          "end": 33560320,
+          "end": 33560324,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
-          "start": 33560320,
-          "end": 33560328,
-          "kind": "veneer",
-          "evidence": "resource_3cb_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33560344,
-          "end": 33560808,
-          "kind": "veneer",
-          "evidence": "resource_3cb_overlay.s:fixed-ldr-bx-veneer"
-        },
-        {
-          "start": 33560808,
+          "start": 33560340,
           "end": 33560812,
-          "kind": "literal_pool",
-          "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
+          "kind": "veneer",
+          "evidence": "resource_3cb_overlay.s:fixed-ldr-bx-veneer"
         },
         {
           "start": 33560824,
@@ -35021,13 +34769,13 @@
     {
       "id": "resource_3cc",
       "decoded_bytes": 672,
-      "executable_bytes": 184,
-      "excluded_bytes": 488,
+      "executable_bytes": 200,
+      "excluded_bytes": 472,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3cc_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -35086,8 +34834,8 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
-          "start": 33554620,
-          "end": 33554628,
+          "start": 33554616,
+          "end": 33554632,
           "kind": "veneer",
           "evidence": "resource_3cc_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -35097,13 +34845,13 @@
     {
       "id": "resource_3cd",
       "decoded_bytes": 2768,
-      "executable_bytes": 2230,
-      "excluded_bytes": 538,
+      "executable_bytes": 2246,
+      "excluded_bytes": 522,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3cd_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -35174,8 +34922,8 @@
           "evidence": "resource_3cd_overlay.s:845:verified-C-placeholder"
         },
         {
-          "start": 33556460,
-          "end": 33556684,
+          "start": 33556456,
+          "end": 33556688,
           "kind": "veneer",
           "evidence": "resource_3cd_overlay.s:fixed-ldr-bx-veneer"
         }
@@ -35185,13 +34933,13 @@
     {
       "id": "resource_3ce",
       "decoded_bytes": 5772,
-      "executable_bytes": 4758,
-      "excluded_bytes": 1014,
+      "executable_bytes": 4774,
+      "excluded_bytes": 998,
       "audit": "complete",
       "intervals": [
         {
-          "start": 33554436,
-          "end": 33554476,
+          "start": 33554432,
+          "end": 33554480,
           "kind": "veneer",
           "evidence": "resource_3ce_overlay.s:fixed-ldr-bx-veneer"
         },
@@ -35316,8 +35064,8 @@
           "evidence": "resource_3ce_overlay.s:1415:verified-C-placeholder"
         },
         {
-          "start": 33558932,
-          "end": 33559212,
+          "start": 33558928,
+          "end": 33559216,
           "kind": "veneer",
           "evidence": "resource_3ce_overlay.s:fixed-ldr-bx-veneer"
         }

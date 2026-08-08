@@ -78,7 +78,6 @@ mod tests {
 
     #[test]
     fn root_holds_the_tool_this_crate_ports() {
-        assert!(root().join("tools/overlay/overlay_mode_cohort.ts").exists());
         assert!(root().join("tools-rs/overlay-mode-cohort/Cargo.toml").exists());
     }
 

@@ -31,7 +31,7 @@ server ported or re-pointed first.
 ## Closure: fully native, no `bun` sidecar
 
 `coverage_map.ts` reaches only `canonicalCSource`, `roundHalfUpPercent` and
-`unionIntervals` out of `full_c_progress.ts`, plus `canonicalJson` and
+`unionIntervals` out of the Full-C progress implementation, plus `canonicalJson` and
 `decomp_targets`. It never reaches `assembleOverlay`, `overlay_disasm.ts` or
 `alchemy_gcc.ts`, so this crate has no sidecar and shells out to nothing at
 runtime. (`bun` is invoked from one *test*, to regenerate the parity golden.)

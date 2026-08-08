@@ -6,8 +6,8 @@
 // verified code-overlay placeholders. Every address space is unioned
 // independently.
 //
-// This is a port of `tools/lib/full_c_progress.ts`. The TypeScript remains the
-// reference implementation; every deliberate divergence carries a PORT NOTE.
+// Native implementation; every deliberate compatibility choice carries a
+// PORT NOTE.
 
 mod intervals;
 mod js;
@@ -842,7 +842,7 @@ fn run(argv: &[String]) -> Result<(), String> {
     let options = match options_of(argv)? {
         Parsed::Help => {
             println!(
-                "usage: full_c_progress.ts [--target gs1-en|gs2-en] \
+                "usage: full-c-progress [--target gs1-en|gs2-en] \
                  [--check|--subject|--json|--write-inventory|--write-report|--self-test]"
             );
             std::process::exit(0);

@@ -1,5 +1,5 @@
 // Hand-written equivalents of the JavaScript regular expressions and string
-// helpers `tools/lib/full_c_progress.ts` relies on.
+// helpers retained for exact compatibility with the metric's historical output.
 //
 // WHY: the original is a `bun` script whose behaviour is defined by JS regex
 // and JS string semantics, and those differ from anything Rust gives by

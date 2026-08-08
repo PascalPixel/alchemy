@@ -137,7 +137,7 @@ understood before it gets matched.
 
 ## metrics
 
-Measures and draws progress. `tools/lib/full_c_progress.ts` produces the byte counts every
+Measures and draws progress. `tools-rs/full-c-progress` produces the byte counts every
 commit subject must carry, `coverage_map` renders the README's box trees, and
 `audit_residuals` accounts for what remains. Progress is byte-exact executable
 bytes, never function counts: 69% of our owners are converted but only 23.5% of

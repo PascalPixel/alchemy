@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Sidecar for the one thing the Rust port of `tools/lib/full_c_progress.ts`
+// Sidecar for the one thing the native Full-C progress implementation
 // cannot do natively: `assembleOverlay`.
 //
 // WHY: `assembleOverlay` is not an assembler wrapper. It runs the whole

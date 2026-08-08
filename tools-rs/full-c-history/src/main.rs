@@ -118,7 +118,7 @@ fn read_json(path: &Path) -> Result<json::Value, String> {
 }
 
 // ---------------------------------------------------------------------------
-// metric helpers, mirrored from tools/lib/full_c_progress.ts
+// Metric helpers shared in behavior with the native Full-C progress tool.
 
 fn integer(value: f64, label: &str) -> Result<i64, String> {
     // Number.isSafeInteger: one number type, so 1.0 is an integer here too.

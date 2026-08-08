@@ -2,8 +2,8 @@
 //!
 //! Port of `tools/semantic/semantic_superseded.ts`.
 //!
-//! PORT NOTE: the TypeScript imports `canonicalCSource` from
-//! `tools/lib/full_c_progress.ts`. Only that one function is needed, so it is
+//! PORT NOTE: only the progress pipeline's `canonicalCSource` behavior is
+//! needed, so it is
 //! inlined here as [`canonical_c_source`] with its four rejection patterns
 //! hand-rolled (no regex crate):
 //!   * `/\bregister\b[^;\n]*\basm\s*\(/`
@@ -185,7 +185,7 @@ fn incbin(text: &[u8]) -> bool {
     })
 }
 
-/// Inlined from `tools/lib/full_c_progress.ts`.
+/// Kept equivalent to the Full-C progress pipeline's owner scan.
 pub fn canonical_c_source(source: &str) -> bool {
     let text = source.as_bytes();
     !(register_asm_call(text)

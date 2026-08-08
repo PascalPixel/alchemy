@@ -33,7 +33,6 @@ tools/lib/decomp_targets.ts
 tools/lib/discover.ts
 tools/lib/export_asset.ts
 tools/lib/extract_resource.ts
-tools/lib/full_c_progress.ts
 tools/lib/generated_files.ts
 tools/lib/import_asset.ts
 tools/lib/integrate_matches.ts

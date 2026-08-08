@@ -24,6 +24,7 @@ const ROOT = dirname(dirname(HERE));
 // native binary that replaced its .ts file, not at a stale path.
 const RUST_SUBCOMMANDS: Record<string, string> = {
   overlay_adopt: "tools-rs/overlay-adopt/target/release/overlay-adopt",
+  overlay_call_order_check: "tools-rs/overlay-call-order-check/target/release/overlay-call-order-check",
   overlay_candidate_rank: "tools-rs/overlay-candidate-rank/target/release/overlay-candidate-rank",
   overlay_driver: "tools-rs/overlay-driver/target/release/overlay-driver",
   overlay_entry: "tools-rs/overlay-entry/target/release/overlay-entry",

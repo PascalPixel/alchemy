@@ -2,7 +2,7 @@
 
 use crate::jsvalue::Json;
 use alchemy_plan::plan::CompilerFamily;
-use match_m2c::verify::CandidateCompilerConfiguration;
+use candidate_compiler::verify::CandidateCompilerConfiguration;
 
 /// `flagsOf(value)`.
 ///

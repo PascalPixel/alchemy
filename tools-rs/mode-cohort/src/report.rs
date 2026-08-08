@@ -15,7 +15,10 @@ use search_compiler_modes::{canonical_json, Json};
 pub enum Evidence {
     Missing,
     Null,
-    Present { exact: bool, differing_halfwords: f64 },
+    Present {
+        exact: bool,
+        differing_halfwords: f64,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -113,7 +116,11 @@ impl Report {
                         },
                     },
                 };
-                Ok(ResultRow { config, compiled, evidence })
+                Ok(ResultRow {
+                    config,
+                    compiled,
+                    evidence,
+                })
             })
             .collect::<Result<Vec<_>, String>>()?;
         Ok(Report { stem, results, raw })
@@ -132,7 +139,10 @@ mod tests {
             canonical_json(&json)
         ))
         .expect("wrapper parses");
-        Report::from_json(report).expect("report parses").results.remove(0)
+        Report::from_json(report)
+            .expect("report parses")
+            .results
+            .remove(0)
     }
 
     #[test]

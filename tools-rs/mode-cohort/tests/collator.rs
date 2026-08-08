@@ -60,7 +60,10 @@ fn matches_every_measured_locale_compare() {
 
     // Floors per outcome, so the corpus cannot go degenerate in one direction.
     assert!(checked >= 20_000, "only {checked} pairs checked");
-    assert!(less >= 5_000 && greater >= 5_000, "{less} less, {greater} greater");
+    assert!(
+        less >= 5_000 && greater >= 5_000,
+        "{less} less, {greater} greater"
+    );
     assert!(equal >= 100, "only {equal} equal pairs");
     // The whole point of the exercise: raw ASCII order gets a large number of
     // these wrong. If this ever drops to zero the fixture has lost its teeth.

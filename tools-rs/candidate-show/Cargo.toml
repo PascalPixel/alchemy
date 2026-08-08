@@ -11,15 +11,15 @@ edition = "2021"
 
 [dependencies]
 # Sibling crates, not third-party dependencies.
-#   match-m2c       -> verifyCandidate, ROM_BASE, CandidateCompilerConfiguration,
+#   candidate-compiler       -> verifyCandidate, ROM_BASE, CandidateCompilerConfiguration,
 #                      CandidateCompilerFamily, and the JavaScript-semantics
 #                      modules (`jsnum`, `jsstring`, `json`) the port leans on.
 #                      `candidate_show.ts` imports the first four from
-#                      `./match_m2c.ts` directly.
+#                      the shared candidate compiler directly.
 #   alchemy-routing -> `root()` (the repository root) and `CompilerTarget`.
 # Everything `alchemy_gcc.ts` supplies is reached transitively through
-# `match-m2c`; `candidate_show.ts` never imports it by name.
-match-m2c = { path = "../match-m2c" }
+# `candidate-compiler`; `candidate_show.ts` never imports it by name.
+candidate-compiler = { path = "../candidate-compiler" }
 alchemy-routing = { path = "../alchemy-routing" }
 
 [lib]
@@ -29,8 +29,3 @@ path = "src/lib.rs"
 [[bin]]
 name = "candidate-show"
 path = "src/bin/candidate_show.rs"
-
-# The differential parity harness against the live TypeScript.
-[[bin]]
-name = "candidate-show-drift"
-path = "src/bin/candidate_show_drift.rs"

@@ -371,7 +371,7 @@ must be tested on more than one function before being generalized.
 
 ### Inline helpers can be load-bearing, and the integrator's guard is a heuristic
 
-- **Fingerprint:** `tools/lib/integrate_matches.ts` rejects any candidate matching
+- **Fingerprint:** `tools-rs/integrate-matches` rejects any candidate matching
   `/inline_fn|^(static|inline)\b/m` as "carries an m2c helper". That guard
   exists to keep raw m2c output out of `src/`, but it is a text test, not a
   judgement about whether the helper is doing work.

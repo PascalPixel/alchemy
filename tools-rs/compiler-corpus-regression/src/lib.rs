@@ -42,5 +42,5 @@ pub mod selftest;
 /// Do not add a second `-vN` literal anywhere; see `pipeline::compiler_signature`.
 pub const FORMAT: f64 = 3.0;
 
-/// `ROM_BASE` from `tools/lib/match_m2c.ts`.
+/// Shared candidate compiler image base.
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;

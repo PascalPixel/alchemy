@@ -5,12 +5,14 @@
 //! to `char::is_whitespace`, `f64::max`, `str::lines`, `&data[a..b]`, or a plain
 //! string comparison, exactly one of these tests goes red.
 
-use match_m2c::json::{canonical_json, parse, Json};
-use match_m2c::jsnum::{
+use candidate_compiler::jsnum::{
     compare_tuple, is_strictly_better, math_max, parse_hex, to_js_number_string,
 };
-use match_m2c::jsstring::{is_js_space, js_split_lines, js_split_whitespace_runs, js_trim, utf16_cmp};
-use match_m2c::verify::js_subarray;
+use candidate_compiler::json::{canonical_json, parse, Json};
+use candidate_compiler::jsstring::{
+    is_js_space, js_split_lines, js_split_whitespace_runs, js_trim, utf16_cmp,
+};
+use candidate_compiler::verify::js_subarray;
 
 #[test]
 fn js_whitespace_differs_from_rust_in_both_directions() {
@@ -21,7 +23,9 @@ fn js_whitespace_differs_from_rust_in_both_directions() {
     assert!(!'\u{feff}'.is_whitespace());
     assert!(is_js_space('\u{feff}'));
     // The exotic spaces JavaScript does share.
-    for c in ['\u{a0}', '\u{1680}', '\u{2000}', '\u{200a}', '\u{202f}', '\u{205f}', '\u{3000}'] {
+    for c in [
+        '\u{a0}', '\u{1680}', '\u{2000}', '\u{200a}', '\u{202f}', '\u{205f}', '\u{3000}',
+    ] {
         assert!(is_js_space(c), "{c:?}");
     }
     // U+200B ZERO WIDTH SPACE is in neither set, despite the name.

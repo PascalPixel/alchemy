@@ -29,7 +29,7 @@ use std::path::{Path, PathBuf};
 
 use crate::bundle::{gcc3_cflags, HOST_KEYS, SIGNATURE_PATH_EXPRESSIONS, UNSUPPORTED_HOST_MESSAGE};
 use crate::bundle_data::{
-    AGBCC_EXPECTED, EXPECTED, GCC2951_EXPECTED, GCC3_EXPECTED, HostDigests,
+    HostDigests, AGBCC_EXPECTED, EXPECTED, GCC2951_EXPECTED, GCC3_EXPECTED,
     PRET_EARLY_THUMB_EXPECTED,
 };
 use crate::jsvalue;
@@ -238,7 +238,11 @@ pub fn compare() -> Result<Report, String> {
     let mut seen: Vec<String> = Vec::new();
 
     let subjects: Vec<(&str, Option<Subject>, Subject)> = vec![
-        ("EXPECTED", ts_declaration(&source, "EXPECTED"), rust_expected()),
+        (
+            "EXPECTED",
+            ts_declaration(&source, "EXPECTED"),
+            rust_expected(),
+        ),
         (
             "AGBCC_EXPECTED",
             ts_declaration(&source, "AGBCC_EXPECTED"),
@@ -412,8 +416,8 @@ mod tests {
     fn signature_subject_notices_a_hypothetical_gcc3_addition() {
         // The gcc3 omission is a real bug reproduced deliberately. This proves
         // the gate would catch a one-sided "fix".
-        let ts = ts_signature_paths(&read_typescript().expect("mirror readable"))
-            .expect("paths parse");
+        let ts =
+            ts_signature_paths(&read_typescript().expect("mirror readable")).expect("paths parse");
         assert!(!ts.iter().any(|entry| entry.contains("GCC3_DRIVER")));
         let mut with_gcc3 = ts.clone();
         with_gcc3.push("GCC3_DRIVER".to_string());

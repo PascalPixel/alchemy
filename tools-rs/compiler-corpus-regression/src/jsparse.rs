@@ -28,8 +28,8 @@ use std::cmp::Ordering;
 pub fn parse_int(text: &str, radix: u32) -> Option<f64> {
     // `StringToNumber` trims leading `StrWhiteSpace`, which is JavaScript's
     // whitespace set and not Rust's `char::is_whitespace`. Reused from
-    // `match_m2c::jsstring` so there is one definition of `\s` in the port.
-    let trimmed = text.trim_start_matches(match_m2c::jsstring::is_js_space);
+    // `candidate_compiler::jsstring` so there is one definition of `\s` in the port.
+    let trimmed = text.trim_start_matches(candidate_compiler::jsstring::is_js_space);
 
     let mut chars = trimmed.chars();
     let mut rest = trimmed;
@@ -200,5 +200,5 @@ pub fn is_hex_alphabet(text: &str) -> bool {
 /// JavaScript's default `Array.prototype.sort()` comparator: UTF-16 code-unit
 /// order over the string forms. Used for `[...options.sources].sort()`.
 pub fn default_sort_cmp(left: &str, right: &str) -> Ordering {
-    match_m2c::jsstring::utf16_cmp(left, right)
+    candidate_compiler::jsstring::utf16_cmp(left, right)
 }

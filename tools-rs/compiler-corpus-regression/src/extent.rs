@@ -42,7 +42,7 @@ struct Entry {
 /// PORT NOTE -- `line.trim().split(/\s+/)`. JavaScript's `\s` includes
 /// U+00A0, U+FEFF, U+2028, U+2029 and U+3000, and EXCLUDES U+0085; Rust's
 /// `char::is_whitespace` is very nearly the reverse. `nm` output is ASCII, but
-/// the split routes through `match_m2c::jsstring` so that the port has ONE
+/// the split routes through `candidate_compiler::jsstring` so that the port has ONE
 /// definition of `\s` and a stray NBSP in a mangled symbol splits the same way
 /// on both sides.
 pub fn linked_function_extent(
@@ -56,7 +56,7 @@ pub fn linked_function_extent(
         if line.is_empty() {
             continue; // `.filter(Boolean)`
         }
-        let fields = match_m2c::jsstring::js_split_whitespace_runs(match_m2c::jsstring::js_trim(
+        let fields = candidate_compiler::jsstring::js_split_whitespace_runs(candidate_compiler::jsstring::js_trim(
             line,
         ));
         if fields.len() < 4 {

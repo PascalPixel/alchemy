@@ -10,9 +10,11 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use match_m2c::jsstring::utf16_cmp;
+use candidate_compiler::jsstring::utf16_cmp;
 
-use crate::jsregex::{has_state_line, insert_state_after_heading, is_source_address, replace_state_line};
+use crate::jsregex::{
+    has_state_line, insert_state_after_heading, is_source_address, replace_state_line,
+};
 
 /// The return of `cleanupInstalledScratch`.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -80,8 +82,8 @@ pub fn cleanup_installed_scratch(
         // `readdirSync(..., { withFileTypes: true })` -- Node returns entries in
         // the order the platform's `readdir` yields them, which is why the
         // TypeScript sorts afterwards rather than relying on it.
-        let entries = fs::read_dir(work_root)
-            .map_err(|error| format!("{}: {error}", work_root.display()))?;
+        let entries =
+            fs::read_dir(work_root).map_err(|error| format!("{}: {error}", work_root.display()))?;
         for entry in entries {
             let entry = entry.map_err(|error| format!("{}: {error}", work_root.display()))?;
             let file_type = entry
@@ -112,17 +114,22 @@ pub fn cleanup_installed_scratch(
 
     let dossier: PathBuf = work_root.join("walls").join(format!("{stem}.md"));
     if !dossier.exists() {
-        return Ok(Cleanup { removed, dossier_closed: false });
+        return Ok(Cleanup {
+            removed,
+            dossier_closed: false,
+        });
     }
-    let source = fs::read_to_string(&dossier)
-        .map_err(|error| format!("{}: {error}", dossier.display()))?;
-    let state =
-        format!("State: CLOSED — {date}. Installed by `tools/lib/integrate_matches.ts`.");
+    let source =
+        fs::read_to_string(&dossier).map_err(|error| format!("{}: {error}", dossier.display()))?;
+    let state = format!("State: CLOSED — {date}. Installed by `tools/lib/integrate_matches.ts`.");
     let updated = if has_state_line(&source) {
         replace_state_line(&source, &state)
     } else {
         insert_state_after_heading(&source, &state)
     };
     fs::write(&dossier, updated).map_err(|error| format!("{}: {error}", dossier.display()))?;
-    Ok(Cleanup { removed, dossier_closed: true })
+    Ok(Cleanup {
+        removed,
+        dossier_closed: true,
+    })
 }

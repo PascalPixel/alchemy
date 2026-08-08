@@ -10,8 +10,8 @@
 //! token a rendered document can contain and pins that neither shape can ever
 //! produce a fractional or exponential form.
 
+use candidate_compiler::jsnum::to_js_number_string;
 use candidate_show::jsparse::{pad_start_zero, utf16_len};
-use match_m2c::jsnum::to_js_number_string;
 
 /// Every token in the header line and the offset column, for the whole range of
 /// values a real document can hold.
@@ -76,7 +76,9 @@ fn the_offset_column_is_integral_lowercase_hex_at_every_width() {
     for offset in (0..0x2_0000u64).step_by(2) {
         let rendered = pad_start_zero(&format!("{offset:x}"), 4);
         assert!(
-            rendered.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            rendered
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
             "offset column {rendered:?} left the hex alphabet"
         );
         assert!(utf16_len(&rendered) >= 4, "padStart shrank {rendered:?}");

@@ -959,7 +959,7 @@ is **114,526 / 1,338,242 executable bytes (8.56%)**.
 
 ## Bounded compiler-configuration explorer
 
-`tools/lib/mode_sweep.ts` now treats compiler search as evidence collection rather
+`tools-rs/mode-sweep` now treats compiler search as evidence collection rather
 than source promotion. It runs the routed GCC 2.96/Thumb configuration and
 historically meaningful single changes first, then compatible pairs on request.
 Triples are considered only when a pair improves every single-mode result and

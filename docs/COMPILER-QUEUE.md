@@ -377,7 +377,7 @@ Both rows byte-exact: `3c4:0cd0` at 248 bytes and `396:1424` at 392 bytes,
 each with no source change from the reproducer above. Per §7, a fork change
 needs the rebuild, the re-pin, and the source-only build reproducing
 gs1-en.gba at SHA-1 `5c4695205413df7db52b9a184815a07783999971` before the
-re-pin is admissible — and then a routed set **and** a `tools/lib/mode_sweep.ts`
+re-pin is admissible — and then a routed set **and** a `tools-rs/mode-sweep`
 entry.
 
 **Do not land this as a wider whole-function mode.** Symmetry is not

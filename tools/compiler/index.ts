@@ -25,6 +25,7 @@ const ROOT = dirname(dirname(HERE));
 const RUST_SUBCOMMANDS: Record<string, string> = {
   compiler_corpus_regression: "tools-rs/compiler-corpus-regression/target/release/compiler-corpus-regression",
   mode_cohort: "tools-rs/mode-cohort/target/release/mode-cohort",
+  mode_sweep: "tools-rs/mode-sweep/target/release/mode-sweep",
   statement_order_sweep_main: "tools-rs/statement-order-sweep-main/target/release/statement-order-sweep-main",
 };
 

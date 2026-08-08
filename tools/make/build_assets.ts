@@ -46,7 +46,6 @@ import {
 } from "./sentou_menu_data.ts";
 import { build_sentou_resource, build_sentou_series } from "./sentou_resources.ts";
 import { build_kind2_resource, build_kind2_series } from "./kind2_resource_series.ts";
-import { build_encounter_regions } from "./encounter_data.ts";
 import { build_namae_nyuuryoku } from "./namae_nyuuryoku.ts";
 import { build_tokushu_map_series } from "./tokushu_map_resources.ts";
 import { build_resource_3ce } from "./resource_3ce.ts";
@@ -75,7 +74,6 @@ import {
 import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./gba_header.ts";
 import { build_early_runtime_data } from "./early_runtime_data.ts";
 import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
-import { buildByteValueRegions } from "./byte_value_regions.ts";
 import { buildExecutableGapData } from "./executable_gap_sources.ts";
 
 
@@ -138,6 +136,15 @@ function nativeCommandWithReport(tool: string, args: string[]): [Buffer, Json] {
   if (child.exitCode !== 0) throw new Error(`${tool} failed${detail ? `: ${detail}` : ""}`);
   if (!detail) throw new Error(`${tool} returned no build report`);
   return [Buffer.from(child.stdout), JSON.parse(detail)];
+}
+
+function nativeJson(tool: string, args: string[]): Json[] {
+  const standalone = join(ROOT, "tools-rs", tool.replaceAll("_", "-"), "target", "release", tool);
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", tool);
+  const child = Bun.spawnSync([binary, ...args], { cwd: ROOT, stdout: "pipe", stderr: "pipe" });
+  const detail = Buffer.from(child.stderr).toString("utf8").trim();
+  if (child.exitCode !== 0) throw new Error(`${tool} failed${detail ? `: ${detail}` : ""}`);
+  return JSON.parse(Buffer.from(child.stdout).toString("utf8"));
 }
 
 type Json = Record<string, any>;
@@ -719,7 +726,7 @@ function expandSeries(manifest: Json, entries: Json[]): void {
     } else if (series.kind === "golden-sun-encounter-data-series") {
       const directoryName = String(series.directory);
       const directory = sourcePath(directoryName);
-      for (const region of build_encounter_regions(directory)) {
+      for (const region of nativeJson("encounter-data", ["list-regions", directory])) {
         entries.push({
           address: region.address,
           size: region.size,
@@ -818,9 +825,10 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-byte-value-regions") {
     const sourceName = String(entry.source), address = number(entry.address);
-    const region = buildByteValueRegions(sourcePath(sourceName)).find((item) => item.address === address);
-    if (region === undefined || region.data.length !== number(entry.size)) throw new Error("byte-value region differs from manifest");
-    return [region.data, [sourceName], { representation: "structured byte values", region_address: `0x${address.toString(16).padStart(8, "0")}` }];
+    const [region, report] = nativeCommandWithReport("byte-value-regions", [
+      "build-region-stdout", sourcePath(sourceName), `0x${address.toString(16)}`, String(number(entry.size)),
+    ]);
+    return [region, [sourceName], report];
   }
   if (kind === "golden-sun-executable-gap-data") {
     const sourceName = String(entry.source), address = number(entry.address);
@@ -1355,11 +1363,10 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   if (kind === "golden-sun-encounter-data") {
     const source = sourcePath(String(entry.source));
     const address = number(entry.address);
-    const region = build_encounter_regions(dirname(source)).find((item) =>
-      item.address === address && item.source === basename(source));
-    if (region === undefined || region.size !== number(entry.size))
-      throw new Error("encounter-data region differs from manifest");
-    return [region.data, [String(entry.source)], { source_bytes: region.data.length }];
+    const [region, report] = nativeCommandWithReport("encounter-data", [
+      "build-region-stdout", dirname(source), `0x${address.toString(16)}`, basename(source), String(number(entry.size)),
+    ]);
+    return [region, [String(entry.source)], report];
   }
   if (kind === "golden-sun-namae-nyuuryoku") {
     const source = sourcePath(String(entry.source));

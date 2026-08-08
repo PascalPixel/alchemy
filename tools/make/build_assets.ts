@@ -1476,7 +1476,7 @@ function parseArgs(argv: string[]): Options {
 // compares it to the reference ROM, and compares the composed image as a whole,
 // so a stale skip cannot produce a wrong image — it can only defer the proof
 // that the sources still re-encode, which is exactly what the stamp tracks.
-/** A digest of this file's own source. No fallback: see tools/check/cache_key_lint.ts. */
+/** A digest of this file's own source. No fallback: see tools-rs/cache-key-lint. */
 let selfDigestCache: string | undefined;
 function selfDigest(): string {
   if (selfDigestCache !== undefined) return selfDigestCache;

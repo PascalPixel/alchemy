@@ -6,7 +6,7 @@ later agent stops rediscovering the same floor.
 
 This is not the same concept as retained assembly. `retained_asm` in
 [metrics/gs1-en-coverage-map.json](metrics/gs1-en-coverage-map.json), guarded by
-[tools/check/core_retained_audit.ts](tools/check/core_retained_audit.ts), records regions
+`tools-rs/core-retained-audit`, records regions
 that are permanently assembly. Sanctum records owners that *could* have a C form
 but where the bounded search for it has been run out. Sealing is a statement
 about our search, not about the ROM.
@@ -34,7 +34,7 @@ never rest on one.
 ## Entry format
 
 Each entry is one list item under `## Sealed`, in this shape, enforced by
-[tools/check/check_sanctum.ts](tools/check/check_sanctum.ts):
+`tools-rs/check-sanctum`:
 
 ```
 - `<owner>` floor=<N>hw axes=compiler,shape — <one line naming what the residual is>
@@ -61,7 +61,7 @@ first candidates to become sealed entries if it also fails. Regenerate the list
 with:
 
 ```
-bun tools/check/check_sanctum.ts --queue
+tools-rs/check-sanctum/target/release/check-sanctum --queue
 ```
 
 The lowest floors are the best targets: a 10-halfword residual after a complete

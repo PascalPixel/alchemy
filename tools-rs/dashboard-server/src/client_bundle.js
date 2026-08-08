@@ -1,4 +1,4 @@
-// tools/metrics/dashboard/client.ts
+// Browser client for the Rust dashboard server.
 function append(parent, child) {
   if (Array.isArray(child)) {
     for (const item of child)

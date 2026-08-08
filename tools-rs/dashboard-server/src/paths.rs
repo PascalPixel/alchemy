@@ -1,13 +1,4 @@
-// The constant block at the head of `dashboard_server.ts`.
-//
-// BROKEN-TOOL CHECK (commit b3ab4841b): that commit moved this tool from
-// `tools/` to `tools/metrics/` and moved `dashboard/` in beside it. The tool
-// is NOT one of the five victims: every path here is derived from
-// `dirname(import.meta.url)`, so `ROOT = dirname/../..` followed the move by
-// construction, and `DASHBOARD = dirname/dashboard` did too. There is no
-// literal `join(ROOT, "tools", ...)` segment anywhere in the file. Verified by
-// running it both ways: `--self-test` exits 0 and a real run serves all ten
-// routes. No corrected behaviour to port.
+// Repository paths used by the dashboard server.
 
 use std::path::{Path, PathBuf};
 
@@ -31,15 +22,13 @@ pub fn root() -> PathBuf {
         .to_path_buf()
 }
 
-/// `DASHBOARD = join(dirname(SOURCE), "dashboard")`. The served assets still
-/// live beside the TypeScript, because they are the same two files both
-/// mirrors serve.
+/// The directory containing the dashboard stylesheet.
 pub fn dashboard() -> PathBuf {
     root().join("tools").join("metrics").join("dashboard")
 }
 
 pub fn client() -> PathBuf {
-    dashboard().join("client.ts")
+    root().join("tools-rs").join("dashboard-server").join("src").join("client_bundle.js")
 }
 
 pub fn styles() -> PathBuf {
@@ -50,9 +39,9 @@ pub fn font() -> PathBuf {
     root().join("assets").join("fonts").join("weyard.otf")
 }
 
-/// The TypeScript source, watched for restart.
+/// The Rust server entry point, watched for restart.
 pub fn source() -> PathBuf {
-    root().join("tools").join("metrics").join("dashboard_server.ts")
+    root().join("tools-rs").join("dashboard-server").join("src").join("main.rs")
 }
 
 /// `RESTART_FILES = [SOURCE, join(dirname(SOURCE), "coverage_map.ts")]`.
@@ -132,8 +121,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn root_reaches_the_repository_and_finds_the_typescript_oracle() {
-        assert!(source().exists(), "the ported TypeScript must be reachable from root()");
+    fn root_reaches_the_repository_and_finds_the_rust_server() {
+        assert!(source().exists(), "the Rust server must be reachable from root()");
         assert!(styles().exists(), "dashboard/styles.css must be reachable from root()");
     }
 

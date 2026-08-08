@@ -31,7 +31,7 @@
     "build:inventory": "tools-rs/overlay-inventory/target/release/overlay-inventory",
     "sanctum": "tools-rs/check-sanctum/target/release/check-sanctum",
     "lint": "bun run typecheck && tools-rs/architecture/target/release/architecture && tools-rs/source-citations/target/release/source-citations && tools-rs/target/release/no-asm-c && tools-rs/decomp-targets/target/release/decomp-targets --self-test && tools-rs/target/release/cache-key-lint && bun tools/lib/alchemy_gcc.ts --lint",
-    "typecheck": "tsc --noEmit && tsc -p tools/metrics/dashboard/tsconfig.json --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "engines": {
     "bun": "1.3.14"

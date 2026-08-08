@@ -3,13 +3,56 @@
 // ROM, so a silent drift in the JSON cannot pass. Ported from
 // tools/make/encounter_data.ts.
 
+use std::io::Write;
 use std::process::ExitCode;
+
+use serde_json::json;
 
 use encounter_data::{
     build_encounter_regions, export_encounter_data, matches_rom, option, self_test, Result,
 };
 
 fn run(args: &[String]) -> Result<()> {
+    if let [command, directory] = args {
+        if command == "list-regions" {
+            let regions = build_encounter_regions(directory)?;
+            println!(
+                "{}",
+                serde_json::to_string(
+                    &regions
+                        .iter()
+                        .map(|region| json!({
+                            "address": region.address,
+                            "size": region.size,
+                            "source": region.source,
+                        }))
+                        .collect::<Vec<_>>()
+                )
+                .map_err(|error| error.to_string())?
+            );
+            return Ok(());
+        }
+    }
+    if let [command, directory, address, source, size] = args {
+        if command == "build-region-stdout" {
+            let digits = address.strip_prefix("0x").unwrap_or(address);
+            let address = usize::from_str_radix(digits, 16)
+                .map_err(|_| format!("invalid address: {address}"))?;
+            let size: usize = size.parse().map_err(|_| format!("invalid size: {size}"))?;
+            let regions = build_encounter_regions(directory)?;
+            let region = regions
+                .iter()
+                .find(|region| {
+                    region.address == address && region.source == source && region.size == size
+                })
+                .ok_or_else(|| "encounter-data region differs from manifest".to_string())?;
+            eprintln!("{}", json!({ "source_bytes": region.data.len() }));
+            std::io::stdout()
+                .write_all(&region.data)
+                .map_err(|error| error.to_string())?;
+            return Ok(());
+        }
+    }
     if args.iter().any(|arg| arg == "--self-test") {
         self_test()?;
         println!("self-test=ok");

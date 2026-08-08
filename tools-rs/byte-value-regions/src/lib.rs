@@ -74,7 +74,10 @@ fn parse_address(value: &Value) -> Option<u32> {
     if !matches!(digits.as_bytes()[2], b'0'..=b'7') {
         return None;
     }
-    if !digits[3..].bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte)) {
+    if !digits[3..]
+        .bytes()
+        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    {
         return None;
     }
     u32::from_str_radix(digits, 16).ok()
@@ -82,7 +85,9 @@ fn parse_address(value: &Value) -> Option<u32> {
 
 fn is_region_name(name: &str) -> bool {
     !name.is_empty()
-        && name.bytes().all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
 }
 
 fn hex(value: u32) -> String {
@@ -115,23 +120,29 @@ pub fn build_byte_value_regions(path: &Path) -> Result<Vec<ByteValueRegion>, Reg
         if fields != ["address", "name", "representation", "values"] {
             return Err(RegionError::RegionFieldsDiffer(index));
         }
-        let named = item.get("name").and_then(Value::as_str).is_some_and(is_region_name);
-        let representation = item.get("representation").and_then(Value::as_str) == Some("byte_values");
+        let named = item
+            .get("name")
+            .and_then(Value::as_str)
+            .is_some_and(is_region_name);
+        let representation =
+            item.get("representation").and_then(Value::as_str) == Some("byte_values");
         let values = item.get("values").and_then(Value::as_array);
         let (true, true, Some(values)) = (named, representation, values) else {
             return Err(RegionError::RegionDiffers(index));
         };
-        let address = parse_address(&item["address"])
-            .ok_or(RegionError::RegionAddressDiffers(index))?;
+        let address =
+            parse_address(&item["address"]).ok_or(RegionError::RegionAddressDiffers(index))?;
         if address <= previous || values.is_empty() {
             return Err(RegionError::RegionOrderingDiffers(index));
         }
         let mut data = Vec::with_capacity(values.len());
         for (offset, entry) in values.iter().enumerate() {
-            let byte = entry
-                .as_u64()
-                .filter(|value| *value <= 0xff)
-                .ok_or(RegionError::RegionByteDiffers { region: index, offset })?;
+            let byte = entry.as_u64().filter(|value| *value <= 0xff).ok_or(
+                RegionError::RegionByteDiffers {
+                    region: index,
+                    offset,
+                },
+            )?;
             data.push(byte as u8);
         }
         previous = address + data.len() as u32 - 1;
@@ -192,21 +203,33 @@ mod tests {
     use super::*;
 
     fn scratch(name: &str) -> std::path::PathBuf {
-        let dir = std::env::temp_dir()
-            .join(format!("alchemy-byte-value-regions-{name}-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!(
+            "alchemy-byte-value-regions-{name}-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
         dir
     }
 
     fn rom() -> Vec<u8> {
-        (0..0x1000u32).map(|index| (index.wrapping_mul(31) & 0xff) as u8).collect()
+        (0..0x1000u32)
+            .map(|index| (index.wrapping_mul(31) & 0xff) as u8)
+            .collect()
     }
 
     fn specs() -> Vec<RegionSpec> {
         vec![
-            RegionSpec { name: "residual_000".into(), address: ROM_BASE + 0x10, size: 8 },
-            RegionSpec { name: "residual_001".into(), address: ROM_BASE + 0x40, size: 16 },
+            RegionSpec {
+                name: "residual_000".into(),
+                address: ROM_BASE + 0x10,
+                size: 8,
+            },
+            RegionSpec {
+                name: "residual_001".into(),
+                address: ROM_BASE + 0x40,
+                size: 16,
+            },
         ]
     }
 
@@ -225,7 +248,11 @@ mod tests {
     #[test]
     fn a_region_outside_the_rom_is_refused() {
         let dir = scratch("outside");
-        let specs = vec![RegionSpec { name: "far".into(), address: ROM_BASE + 0xffff, size: 4 }];
+        let specs = vec![RegionSpec {
+            name: "far".into(),
+            address: ROM_BASE + 0xffff,
+            size: 4,
+        }];
         assert!(matches!(
             export_byte_value_regions(&rom(), &dir, &specs),
             Err(RegionError::OutsideRom(name)) if name == "far"
@@ -240,7 +267,11 @@ mod tests {
         assert_eq!(parse_address(&json!("0x08000010 ")), None, "trailing space");
         assert_eq!(parse_address(&json!("0x0800001A")), None, "uppercase");
         assert_eq!(parse_address(&json!("0x09000010")), None, "wrong region");
-        assert_eq!(parse_address(&json!("0x08800010")), None, "past the 8 MiB window");
+        assert_eq!(
+            parse_address(&json!("0x08800010")),
+            None,
+            "past the 8 MiB window"
+        );
         assert_eq!(parse_address(&json!(134217744)), None, "not a string");
     }
 
@@ -265,7 +296,8 @@ mod tests {
     fn overlapping_and_malformed_regions_are_refused() {
         let dir = scratch("tamper");
         let path = dir.join("index.json");
-        let write = |value: &Value| fs::write(&path, format!("{}\n", canonical_json(value))).unwrap();
+        let write =
+            |value: &Value| fs::write(&path, format!("{}\n", canonical_json(value))).unwrap();
         let base = || {
             json!({
                 "format": 1,
@@ -301,18 +333,27 @@ mod tests {
         write(&wide);
         assert!(matches!(
             build_byte_value_regions(&path),
-            Err(RegionError::RegionByteDiffers { region: 0, offset: 1 })
+            Err(RegionError::RegionByteDiffers {
+                region: 0,
+                offset: 1
+            })
         ));
 
         let mut extra = base();
         extra["regions"][0]["note"] = json!("hello");
         write(&extra);
-        assert!(matches!(build_byte_value_regions(&path), Err(RegionError::RegionFieldsDiffer(0))));
+        assert!(matches!(
+            build_byte_value_regions(&path),
+            Err(RegionError::RegionFieldsDiffer(0))
+        ));
 
         let mut renamed = base();
         renamed["regions"][0]["name"] = json!("Not A Name");
         write(&renamed);
-        assert!(matches!(build_byte_value_regions(&path), Err(RegionError::RegionDiffers(0))));
+        assert!(matches!(
+            build_byte_value_regions(&path),
+            Err(RegionError::RegionDiffers(0))
+        ));
 
         fs::remove_dir_all(&dir).unwrap();
     }

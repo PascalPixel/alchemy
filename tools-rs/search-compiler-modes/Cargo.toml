@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "search-compiler-modes"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "search_compiler_modes"
+path = "src/lib.rs"
+
+[[bin]]
+name = "search-compiler-modes"
+path = "src/main.rs"

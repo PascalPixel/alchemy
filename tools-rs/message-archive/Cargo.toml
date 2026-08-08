@@ -1,0 +1,13 @@
+[workspace]
+
+[package]
+name = "message-archive"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "message_archive"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }

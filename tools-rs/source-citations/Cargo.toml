@@ -1,0 +1,10 @@
+[workspace]
+
+[package]
+name = "source-citations"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "source-citations"
+path = "src/main.rs"

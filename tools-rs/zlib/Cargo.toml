@@ -1,0 +1,16 @@
+[workspace]
+
+[package]
+name = "alchemy-zlib"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "alchemy_zlib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "alchemy-zlib"
+path = "src/main.rs"
+
+[dependencies]

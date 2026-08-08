@@ -1,0 +1,15 @@
+[package]
+name = "pairtable"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "pairtable"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pairtable"
+path = "src/main.rs"
+
+[dependencies]
+wordstream = { path = "../wordstream" }

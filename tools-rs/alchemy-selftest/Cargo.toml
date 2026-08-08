@@ -1,0 +1,34 @@
+# Bare `[workspace]`: this crate is its own workspace so it builds concurrently
+# with its siblings and does not touch `tools-rs/Cargo.toml`. That also means
+# `version.workspace` cannot resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "alchemy-selftest"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies. `selfTest` is an assertion suite
+# over primitives that already live elsewhere in this effort: routing tables and
+# `cflagsForTargetSource` in `alchemy-routing`, `externalSymbolAssembly` in
+# `alchemy-symbols`, and `sourceToAssemblyPlan` / `directCompilerCommand` in
+# `alchemy-plan`. A second copy of any of them is exactly the hand-sync problem
+# this effort exists to end, so nothing is re-derived here.
+alchemy-routing = { path = "../alchemy-routing" }
+alchemy-symbols = { path = "../alchemy-symbols" }
+alchemy-plan = { path = "../alchemy-plan" }
+alchemy-bundle = { path = "../alchemy-bundle" }
+alchemy-lints = { path = "../alchemy-lints" }
+
+[lib]
+name = "alchemy_selftest"
+path = "src/lib.rs"
+
+[[bin]]
+name = "alchemy-selftest"
+path = "src/main.rs"
+
+[[bin]]
+name = "selftest-corpus"
+path = "src/bin/selftest_corpus.rs"

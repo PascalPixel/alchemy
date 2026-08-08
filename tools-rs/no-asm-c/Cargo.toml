@@ -1,0 +1,12 @@
+[package]
+name = "no-asm-c"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "no_asm_c"
+path = "src/lib.rs"
+
+[[bin]]
+name = "no-asm-c"
+path = "src/main.rs"

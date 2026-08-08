@@ -1,0 +1,28 @@
+# Bare `[workspace]`: this crate is its own workspace so it builds without
+# touching `tools-rs/Cargo.toml`, which several agents share concurrently. A
+# bare-workspace crate cannot resolve `version.workspace`, so both keys are
+# literal.
+[workspace]
+
+[package]
+name = "mode-cohort"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies. `mode-sweep` already owns
+# `pairConfigs` (whose length is the exhaustive pair count this tool refuses to
+# run below) and the measured `localeCompare` collator. `search-compiler-modes`
+# owns the insertion-ordered `Json`, `canonicalJson`, `Number()` coercion and
+# SHA-256. Re-porting either would recreate the hand-sync problem this effort
+# exists to end.
+mode-sweep = { path = "../mode-sweep" }
+search-compiler-modes = { path = "../search-compiler-modes" }
+
+[lib]
+name = "mode_cohort"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mode-cohort"
+path = "src/main.rs"

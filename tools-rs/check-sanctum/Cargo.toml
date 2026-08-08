@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "check-sanctum"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "check_sanctum"
+path = "src/lib.rs"
+
+[[bin]]
+name = "check-sanctum"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }

@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "early-runtime-data"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "early_runtime_data"
+path = "src/lib.rs"
+
+[[bin]]
+name = "early-runtime-data"
+path = "src/main.rs"
+
+[dependencies]
+alchemy-zlib = { path = "../zlib" }
+canonical-json = { path = "../canonical-json" }
+export-asset = { path = "../export-asset" }
+import-asset = { path = "../import-asset" }
+serde_json = { version = "1", features = ["preserve_order"] }

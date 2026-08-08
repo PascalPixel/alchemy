@@ -1,0 +1,12 @@
+[package]
+name = "text-bg"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "text_bg"
+path = "src/lib.rs"
+
+[[bin]]
+name = "text-bg"
+path = "src/main.rs"

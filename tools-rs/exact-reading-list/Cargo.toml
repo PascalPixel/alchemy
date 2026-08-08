@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "exact-reading-list"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "exact_reading_list"
+path = "src/lib.rs"
+
+[[bin]]
+name = "exact-reading-list"
+path = "src/main.rs"

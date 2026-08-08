@@ -18,7 +18,6 @@ tools/compiler/index.ts
 tools/compiler/mode_cohort.ts
 tools/compiler/statement_order_sweep_main.ts
 tools/decomp/decomp_diagnose.ts
-tools/decomp/decomp_queue.ts
 tools/decomp/index.ts
 tools/decomp/remaining_survey.ts
 tools/lib/alchemy_gcc.ts

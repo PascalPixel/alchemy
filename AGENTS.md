@@ -24,7 +24,7 @@ be documented would have refused it. Graduate what survives; delete the rest.
 
 ## The loop
 
-1. **Pick an owner** — `tools-rs/decomp-queue/target/release/decomp-queue`, or `overlay twins --leads`.
+1. **Pick an owner** — `tools-rs/semantic-queue/target/release/semantic-queue`, or `overlay twins --leads`.
 2. **Write C** into `semantic/<owner>.c` until it compiles and reads correctly.
 3. **Close the residual** — the two search axes below.
 4. **Adopt it** — `tools-rs/overlay-adopt/target/release/overlay-adopt`. This is what counts.
@@ -122,10 +122,10 @@ the bounded-probe rule in HANDOVER.md. Never promote a near-match.
 
 ## decomp
 
-Picks and diagnoses owners. `decomp_queue` ranks candidates by expected value
-and is resumable, `decomp_diagnose` explains why a specific candidate misses,
-and `tools/lib/match_m2c.ts` and `tools/lib/integrate_matches.ts` handle drafting and installation. Start
-here when you do not already know which owner you are working on.
+Picks and diagnoses owners. The semantic queue ranks current C drafts,
+`decomp_diagnose` explains why a specific candidate misses, and
+`tools/lib/integrate_matches.ts` handles installation. Start here when you do
+not already know which owner you are working on.
 
 ## semantic
 

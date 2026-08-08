@@ -517,8 +517,9 @@ pub fn semantic_queue(root: &Path) -> Vec<Candidate> {
     let manifest: Value = serde_json::from_str(&manifest_text).expect("manifest.json is not JSON");
     let regions = parse_regions(&manifest);
 
-    let mut admitted = source_stems(&root.join("exact"));
-    admitted.extend(source_stems(&root.join("semantic")));
+    // Exact owners are finished. Semantic owners are the primary queue input:
+    // they are readable C awaiting byte-exact closure, not owners to exclude.
+    let admitted = source_stems(&root.join("exact"));
 
     let blockers_path = root.join("semantic").join("ordinary-blockers.json");
     let mut blockers: HashMap<String, (String, String)> = HashMap::new();
@@ -556,8 +557,8 @@ pub fn semantic_queue(root: &Path) -> Vec<Candidate> {
             continue;
         }
         let paths = [
+            root.join("semantic").join(format!("{stem}.c")),
             root.join("work").join("candidates").join(format!("{stem}.c")),
-            root.join("work").join("m2c-ctx").join(format!("{stem}.c")),
             root.join("work").join(format!("{stem}.c")),
         ];
         let Some(draft) = paths.into_iter().find(|path| path.exists()) else {

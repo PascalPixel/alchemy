@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "byte-henkan"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "byte_henkan"
+path = "src/lib.rs"
+
+[[bin]]
+name = "byte-henkan"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }

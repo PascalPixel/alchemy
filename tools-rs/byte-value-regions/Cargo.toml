@@ -1,0 +1,12 @@
+[package]
+name = "byte-value-regions"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "byte_value_regions"
+path = "src/lib.rs"
+
+[dependencies]
+canonical-json = { path = "../canonical-json" }
+serde_json = { version = "1", features = ["preserve_order"] }

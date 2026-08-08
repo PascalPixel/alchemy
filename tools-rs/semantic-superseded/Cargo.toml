@@ -1,0 +1,16 @@
+[workspace]
+
+[package]
+name = "semantic-superseded"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "semantic_superseded"
+path = "src/lib.rs"
+
+[[bin]]
+name = "semantic-superseded"
+path = "src/main.rs"
+
+[dependencies]

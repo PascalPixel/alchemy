@@ -1,0 +1,49 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools-rs/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "integrate-matches"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+# HARNESS ONLY. Flips exactly one emitted byte sequence so the parity script can
+# prove, before the real comparison, that it is capable of SEEING a difference.
+# A harness that reports "0 differences" is worthless until it has been shown to
+# report 1 when there is 1. Never enable this outside `target/fixtures/parity.sh`.
+negative-control = []
+
+[dependencies]
+# Sibling crates, not third-party dependencies. `integrate_matches.ts` imports
+# exactly three names from `tools/lib/alchemy_gcc.ts`, and they live in two
+# landed slices of it:
+#   alchemy-plan    -> sourceToAssemblyPlan (+ nodepath basename/extname)
+#   alchemy-symbols -> externalSymbol, externalSymbolAssembly, CALL_VIA_BASE
+alchemy-plan = { path = "../alchemy-plan" }
+alchemy-symbols = { path = "../alchemy-symbols" }
+# `root()`, the repository root, and `CompilerTarget::Gs1` for the fixed
+# `target: "gs1"` this tool passes.
+alchemy-routing = { path = "../alchemy-routing" }
+# The JavaScript-semantics layer already proved in the `match_m2c.ts` port:
+# `parse_hex`/`hex8` (the ONE numeric-parse helper this crate routes through),
+# and `js_trim`/`js_split_lines`/`js_split_whitespace_runs`/`utf16_cmp`.
+# Re-deriving any of them here is the hand-sync problem the ports exist to end.
+match-m2c = { path = "../match-m2c" }
+
+# No third-party dependencies. This tool writes plain text lines and reads `nm`
+# output; there is no JSON in it, so `serde_json` never comes up.
+
+[lib]
+name = "integrate_matches"
+path = "src/lib.rs"
+
+[[bin]]
+name = "integrate-matches"
+path = "src/bin/integrate_matches.rs"
+
+[[bin]]
+name = "integrate-matches-bench"
+path = "src/bin/integrate_matches_bench.rs"

@@ -1,0 +1,27 @@
+# Bare `[workspace]`: this crate is its own workspace so it builds concurrently
+# with its siblings and does not touch `tools-rs/Cargo.toml`. That also means
+# `version.workspace` cannot resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "alchemy-bundle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crate, not a third-party dependency: the bundle paths, the
+# `CompilerTarget` enum and `usesAgbccCompiler` were already ported there and a
+# second copy is exactly the hand-sync problem this effort exists to end.
+alchemy-routing = { path = "../alchemy-routing" }
+
+[lib]
+name = "alchemy_bundle"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bundle-drift"
+path = "src/bin/bundle_drift.rs"
+
+[[bin]]
+name = "bundle-corpus"
+path = "src/bin/bundle_corpus.rs"

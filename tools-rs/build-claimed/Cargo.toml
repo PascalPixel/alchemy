@@ -1,0 +1,39 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools-rs/Cargo.toml` and without competing with sibling agents for
+# that manifest. `version`/`edition` are literal because `.workspace`
+# inheritance cannot resolve from a bare workspace.
+[workspace]
+
+[package]
+name = "build-claimed"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "build_claimed"
+path = "src/lib.rs"
+
+[[bin]]
+name = "build-claimed"
+path = "src/main.rs"
+
+# Differential parity harness: runs the live TypeScript and this port over the
+# real `exact/` corpus and compares the artifacts both mirrors emit.
+[[bin]]
+name = "build-claimed-parity"
+path = "src/bin/parity.rs"
+
+# Decomposed benchmark: separates process spawn, compile, link and verify.
+[[bin]]
+name = "build-claimed-bench"
+path = "src/bin/bench.rs"
+
+[dependencies]
+# Sibling crates, not third-party dependencies. Each already owns a proved port
+# of the layer this tool calls; a second copy of any of them is exactly the
+# hand-sync problem the Rust effort exists to end.
+alchemy-plan = { path = "../alchemy-plan" }
+alchemy-routing = { path = "../alchemy-routing" }
+alchemy-symbols = { path = "../alchemy-symbols" }
+decomp-targets = { path = "../decomp-targets" }
+canonical-json = { path = "../canonical-json" }

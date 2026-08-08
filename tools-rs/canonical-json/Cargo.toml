@@ -1,0 +1,11 @@
+[package]
+name = "canonical-json"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "canonical_json"
+path = "src/lib.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }

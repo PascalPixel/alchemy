@@ -1,0 +1,19 @@
+[workspace]
+
+[package]
+name = "discover"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "discover"
+path = "src/lib.rs"
+
+[[bin]]
+name = "discover"
+path = "src/main.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3

@@ -1,0 +1,8 @@
+[package]
+name = "generated-files"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "generated_files"
+path = "src/lib.rs"

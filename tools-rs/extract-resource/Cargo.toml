@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "extract-resource"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "extract_resource"
+path = "src/lib.rs"
+
+[[bin]]
+name = "extract-resource"
+path = "src/main.rs"

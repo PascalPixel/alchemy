@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "rtl-schedule"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rtl_schedule"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rtl-schedule"
+path = "src/main.rs"
+
+[dependencies]
+rtl-insn = { path = "../rtl-insn" }

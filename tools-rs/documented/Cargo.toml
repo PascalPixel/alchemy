@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "documented"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "documented"
+path = "src/lib.rs"
+
+[[bin]]
+name = "documented"
+path = "src/main.rs"

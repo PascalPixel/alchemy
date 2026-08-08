@@ -1,0 +1,19 @@
+[workspace]
+
+[package]
+name = "battle-effect-data"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "battle_effect_data"
+path = "src/lib.rs"
+
+[[bin]]
+name = "battle-effect-data"
+path = "src/main.rs"
+
+[dependencies]
+alchemy-zlib = { path = "../zlib" }
+import-asset = { path = "../import-asset" }
+extract-resource = { path = "../extract-resource" }

@@ -1,0 +1,36 @@
+# Bare `[workspace]`: this crate is its own workspace so it builds without
+# touching `tools-rs/Cargo.toml`, which several agents share concurrently. That
+# also means `version.workspace` cannot resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "mode-sweep"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies.
+#
+# `alchemy-routing` already owns `cflagsForTargetSource` / `usesAgbccCompiler`,
+# which is what `evidencedRoutingFlags` walks. `alchemy-bundle` already owns
+# `compilerBundleSignature` and matches the TypeScript byte for byte. Copying
+# either here would recreate exactly the hand-sync problem this port exists to
+# end -- and re-porting them means re-porting tools/lib/alchemy_gcc.ts, which is
+# out of bounds.
+#
+# `search-compiler-modes` already owns the order-preserving `Json`,
+# `canonicalJson`, SHA-256 and `modeSweepOutputDirectory`. The dependency edge
+# points from this crate to its own consumer, which reads backwards, but the
+# alternative is a fourth copy of SHA-256 in the tree. There is no cycle:
+# search-compiler-modes has no dependencies at all.
+alchemy-routing = { path = "../alchemy-routing" }
+alchemy-bundle = { path = "../alchemy-bundle" }
+search-compiler-modes = { path = "../search-compiler-modes" }
+
+[lib]
+name = "mode_sweep"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mode-sweep"
+path = "src/main.rs"

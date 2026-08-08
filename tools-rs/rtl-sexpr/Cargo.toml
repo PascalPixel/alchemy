@@ -1,0 +1,14 @@
+[workspace]
+
+[package]
+name = "rtl-sexpr"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rtl_sexpr"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rtl-sexpr"
+path = "src/main.rs"

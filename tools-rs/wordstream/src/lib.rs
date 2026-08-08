@@ -34,15 +34,16 @@ pub fn parse_literal(token: &str) -> Option<i64> {
     if rest.is_empty() {
         return None;
     }
-    let (radix, digits) = if let Some(d) = rest.strip_prefix("0x").or_else(|| rest.strip_prefix("0X")) {
-        (16, d)
-    } else if let Some(d) = rest.strip_prefix("0b").or_else(|| rest.strip_prefix("0B")) {
-        (2, d)
-    } else if let Some(d) = rest.strip_prefix("0o").or_else(|| rest.strip_prefix("0O")) {
-        (8, d)
-    } else {
-        (10, rest)
-    };
+    let (radix, digits) =
+        if let Some(d) = rest.strip_prefix("0x").or_else(|| rest.strip_prefix("0X")) {
+            (16, d)
+        } else if let Some(d) = rest.strip_prefix("0b").or_else(|| rest.strip_prefix("0B")) {
+            (2, d)
+        } else if let Some(d) = rest.strip_prefix("0o").or_else(|| rest.strip_prefix("0O")) {
+            (8, d)
+        } else {
+            (10, rest)
+        };
     if digits.is_empty() {
         return None;
     }
@@ -62,7 +63,10 @@ pub fn export_words(data: &[u8]) -> Result<String, WordError> {
     }
     let mut result = String::new();
     for chunk in data.chunks_exact(2) {
-        result.push_str(&format!("0x{:04x}\n", u16::from_le_bytes([chunk[0], chunk[1]])));
+        result.push_str(&format!(
+            "0x{:04x}\n",
+            u16::from_le_bytes([chunk[0], chunk[1]])
+        ));
     }
     Ok(result)
 }
@@ -89,14 +93,19 @@ mod tests {
 
     #[test]
     fn round_trips() {
-        let raw: Vec<u8> =
-            [0u16, 1, 0x1234, 0xabcd, 0xffff].iter().flat_map(|w| w.to_le_bytes()).collect();
+        let raw: Vec<u8> = [0u16, 1, 0x1234, 0xabcd, 0xffff]
+            .iter()
+            .flat_map(|w| w.to_le_bytes())
+            .collect();
         assert_eq!(import_words(&export_words(&raw).unwrap()).unwrap(), raw);
     }
 
     #[test]
     fn comments_and_blank_lines_are_skipped() {
-        assert_eq!(import_words("# header\n\n0x0001 # one\n").unwrap(), vec![1, 0]);
+        assert_eq!(
+            import_words("# header\n\n0x0001 # one\n").unwrap(),
+            vec![1, 0]
+        );
     }
 
     #[test]
@@ -114,8 +123,14 @@ mod tests {
     #[test]
     fn bad_input_is_rejected_with_its_line() {
         assert_eq!(export_words(&[0, 1, 2]), Err(WordError::OddByteCount));
-        assert_eq!(import_words("0x1\nnope\n"), Err(WordError::InvalidWord { line: 2 }));
-        assert_eq!(import_words("0x10000\n"), Err(WordError::OutOfRange { line: 1 }));
+        assert_eq!(
+            import_words("0x1\nnope\n"),
+            Err(WordError::InvalidWord { line: 2 })
+        );
+        assert_eq!(
+            import_words("0x10000\n"),
+            Err(WordError::OutOfRange { line: 1 })
+        );
         assert_eq!(import_words("-1\n"), Err(WordError::OutOfRange { line: 1 }));
     }
 }

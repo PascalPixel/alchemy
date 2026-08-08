@@ -17,7 +17,7 @@
  * jumped over by `b.n 0x02000c90` at 0x02000ab4; the body resumes at
  * 0x02000aec.
  *
- * When this row was drafted, `tools/overlay/overlay_show.ts` SILENTLY DROPPED a
+ * When this row was drafted, `tools-rs/overlay-show` SILENTLY DROPPED a
  * second positional bound and fell back to its own extent scan, which
  * stops at the first return-shaped halfword. Given the true bounds
  * `710 dcc` it returned 101 of this row's 177 call sites -- losing BOTH

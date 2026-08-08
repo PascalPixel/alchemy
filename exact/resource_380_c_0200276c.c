@@ -7,7 +7,7 @@
  *
  * PUBLISHED, NOT CALLED. Its Thumb pointer is written into a script
  * record; no `bl` in the image reaches it, so neither the call-graph
- * sweep nor `tools/overlay/overlay_unindexed.ts` lists it. Found by
+ * sweep nor `tools-rs/overlay-unindexed` lists it. Found by
  * `bun tools/lib/overlay_published.ts resource_380`.
  *
  * DIFFED, NOT ASSUMED. The four stubs at 0x0200274c, 0x0200276c,

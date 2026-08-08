@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record, so neither the call-graph
- * sweep nor `tools/overlay/overlay_unindexed.ts` lists it. Found by
+ * sweep nor `tools-rs/overlay-unindexed` lists it. Found by
  * `bun tools/lib/overlay_published.ts resource_380`.
  *
  * IT CORROBORATES resource_380_c_0200227c.c. That owner enables and

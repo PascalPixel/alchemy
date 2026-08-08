@@ -3,7 +3,7 @@
 /*
  * resource_385 owner at 0x02000f30, 296 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay/overlay_driver.ts resource_385), so the loader enters
+ * (bun tools-rs/overlay-driver resource_385), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Shape, all of it flag- and selector-gated:

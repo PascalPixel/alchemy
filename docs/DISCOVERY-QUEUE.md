@@ -21,8 +21,8 @@ proven by ROM byte-equality. Nothing needs to be discovered before it can be
 drafted. This file is that queue.
 
 Measured from `out/full/asm/manifest.json` (written by `tools/make/build_asm.ts`,
-`verification=rom`), the classifier in `tools/decomp/remaining_survey.ts`, and
-`tools/overlay/overlay_inventory.ts`. Region counts are scheduling diagnostics, not
+`verification=rom`), the classifier in `tools-rs/remaining-survey/target/release/remaining-survey`, and
+`tools-rs/overlay-inventory/target/release/overlay-inventory`. Region counts are scheduling diagnostics, not
 project progress; the headline metric remains Full-C Byte Share.
 
 ## 1. Where the 395,816 bytes live
@@ -87,7 +87,7 @@ is why the 43 "not emittable" regions in the 2026-07-26 survey have shrunk to
 
 ### 2b. The code-overlay inventory does not walk the main image — the whole 380 KB
 
-`discoverOverlay()` in `tools/overlay/overlay_inventory.ts` constructs
+`discoverOverlay()` in `tools-rs/overlay-inventory/target/release/overlay-inventory` constructs
 `new Discovery(data, OVERLAY_BASE)` where `data` comes from
 `assembleOverlay(overlay.source, OVERLAY_BASE)` and `OVERLAY_BASE` is
 `0x02000000`. Its input set is the 96 files matching `assets/code/*_overlay.s`.
@@ -143,7 +143,7 @@ adoption:
 The nine `FunctionHead_` and seven `Continuation_` rows are about nine functions
 between them, so merging is a 16-region, ~9-function job worth 6,748 bytes.
 
-One further gap worth naming: `tools/decomp/remaining_survey.ts` filters
+One further gap worth naming: `tools-rs/remaining-survey/target/release/remaining-survey` filters
 `retention === "c_candidate"`, so it reports 631 regions and is blind to the
 other 96 debt rows (38,456 bytes). Widening that filter to the five debt
 retentions is a one-line change and makes the survey agree with
@@ -159,7 +159,7 @@ high registers, then register the complete owner in
 `semantic/main-regions.json`, excluding pools and data gaps. `08026080`
 demonstrates the rule: its 2,138-byte ranked row is one 3,442-byte function
 across the `08026080`, `0802691c`, and `08026b44` executable ranges. Blocker
-classes are `tools/decomp/remaining_survey.ts`'s, extended to every debt retention.
+classes are `tools-rs/remaining-survey/target/release/remaining-survey`'s, extended to every debt retention.
 
 <!--TOP40-->
 | # | address | size | insns | kind | boundary | blocker |
@@ -282,7 +282,7 @@ Discovery is **not** the constraint on the main image: the queue above is
 complete and needs no walking. Discovery *is* the constraint on code overlays, and
 one measured change dominates.
 
-**File `tools/overlay/overlay_inventory.ts`, function `discoverOverlay()` — the
+**File `tools-rs/overlay-inventory/target/release/overlay-inventory`, function `discoverOverlay()` — the
 after-return adjacency recovery block.** Today that block walks forward from a
 verified return and gives up at the first halfword that is neither `0x0000` nor
 `0x46c0` (`nop`), within 8 bytes:
@@ -326,7 +326,7 @@ Two smaller levers behind it:
 
 - The `first-prologue` seed loop `break`s after **one** seed. Seeding every
   `0xb5xx` in the header window costs nothing and is independent of the above.
-- `tools/decomp/remaining_survey.ts` filters `retention === "c_candidate"`. Widening it
+- `tools-rs/remaining-survey/target/release/remaining-survey` filters `retention === "c_candidate"`. Widening it
   to the five debt retentions makes it report 727 rows / 395,816 bytes and
   agree with `asm_c_debt_bytes`.
 

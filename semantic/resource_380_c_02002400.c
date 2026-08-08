@@ -6,7 +6,7 @@
  *
  * PUBLISHED, NOT CALLED. No `bl` in the image reaches it; its Thumb
  * pointer is written into a script record, so both the whole-image
- * call-graph sweep and `tools/overlay/overlay_unindexed.ts` are blind to it.
+ * call-graph sweep and `tools-rs/overlay-unindexed` are blind to it.
  * Found by `bun tools/lib/overlay_published.ts resource_380`, which also
  * flags it under sweep class C at "nearest owner 0x0200227c +388".
  *

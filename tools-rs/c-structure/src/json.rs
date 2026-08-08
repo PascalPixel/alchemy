@@ -1,5 +1,5 @@
 // Python `json.dumps` with default settings, for exactly the value shapes
-// c_structure.py emits.
+// the retired c_structure.py emitted.
 //
 // WHY this is here instead of a path dependency on tools-rs/canonical-json:
 // that crate declares `version.workspace` / `edition.workspace`, so it only

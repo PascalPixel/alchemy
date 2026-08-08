@@ -135,7 +135,7 @@ fn main() -> ExitCode {
             }
         }
     } else {
-        println!("usage: audio_wave.ts --self-test");
+        println!("usage: audio-wave --self-test");
         ExitCode::SUCCESS
     }
 }

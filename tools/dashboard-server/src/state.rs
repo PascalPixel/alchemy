@@ -4,10 +4,10 @@ use std::path::Path;
 use std::sync::Mutex;
 
 use coverage_map::boxtree::{render_box_trees, svg_cache_version, BOX_TREES};
-use coverage_map::jsnum::js_number_string;
 use coverage_map::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use coverage_map::tree::work_tree_at;
 
+use crate::assets::STYLES;
 use crate::jsonout::Json;
 use crate::paths;
 
@@ -50,7 +50,7 @@ pub fn with_state<R>(body: impl FnOnce(&mut State) -> R) -> R {
 
 /// `existsSync(file) ? statSync(file).mtimeMs : 0`.
 ///
-/// PORT NOTE: Node's `mtimeMs` is `seconds * 1000 + nanoseconds / 1e6` in
+/// PORT NOTE: the file timestamp is `seconds * 1000 + nanoseconds / 1e6` in
 /// f64, not `as_secs_f64() * 1000.0`, which rounds differently in the low
 /// digits and would change the `?v=` cache buster the document shell emits.
 pub fn mtime(file: &Path) -> f64 {
@@ -66,16 +66,9 @@ pub fn mtime(file: &Path) -> f64 {
     (since.as_secs() as f64) * 1000.0 + f64::from(since.subsec_nanos()) / 1e6
 }
 
-/// `PAGE_FILES.map(mtime).join(":")` for the external stylesheet.
-///
-/// PORT NOTE: `Array#join` stringifies with `ToString(Number)`, not with
-/// Rust's `Display`. `js_number_string` is the only formatter used.
+/// A stable cache version for the stylesheet embedded in the Rust binary.
 pub fn page_version() -> String {
-    paths::page_files()
-        .iter()
-        .map(|file| js_number_string(mtime(file)))
-        .collect::<Vec<_>>()
-        .join(":")
+    coverage_map::sha1::sha1_hex(STYLES.as_bytes())[..16].to_string()
 }
 
 fn map_number(map: &CoverageMap, path: &[&str]) -> Option<f64> {
@@ -237,7 +230,7 @@ mod tests {
     fn coverage_paths_accept_native_inputs_and_reject_page_assets() {
         assert!(affects_coverage("assets/code/resource_373_overlay.s"));
         assert!(affects_coverage("semantic/example.c"));
-        assert!(!affects_coverage("tools/metrics/dashboard/styles.css"));
+        assert!(!affects_coverage("tools/dashboard-server/src/assets.rs"));
         assert!(!affects_coverage("tools/dashboard-server/src/main.rs"));
         assert!(!affects_coverage("tools/coverage-map/src/lib.rs"));
     }
@@ -275,30 +268,16 @@ mod tests {
     }
 
     #[test]
-    fn a_missing_file_has_mtime_zero_and_stringifies_as_zero() {
+    fn a_missing_file_has_mtime_zero() {
         assert_eq!(mtime(Path::new("/nonexistent/dashboard/file")), 0.0);
-        assert_eq!(js_number_string(0.0), "0");
     }
 
     #[test]
-    fn page_version_is_one_colon_separated_javascript_number() {
+    fn page_version_is_a_stable_hash_of_embedded_styles() {
         let version = page_version();
-        let parts: Vec<&str> = version.split(':').collect();
-        assert_eq!(
-            parts.len(),
-            1,
-            "PAGE_FILES has exactly one entry: {version}"
-        );
-        for part in parts {
-            assert!(
-                !part.contains("e"),
-                "an mtime must not reach exponential form: {part}"
-            );
-            assert!(
-                !part.ends_with(".0"),
-                "Rust's `1.0` would leak here: {part}"
-            );
-        }
+        assert_eq!(version.len(), 16);
+        assert!(version.chars().all(|character| character.is_ascii_hexdigit()));
+        assert_eq!(version, coverage_map::sha1::sha1_hex(STYLES.as_bytes())[..16]);
     }
 
     #[test]

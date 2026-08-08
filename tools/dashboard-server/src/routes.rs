@@ -1,6 +1,7 @@
 // The `fetch` handler: seven routes, in the source's order.
 
 use crate::http::{header_block, Response};
+use crate::assets::STYLES;
 use crate::jsonout::quote;
 use crate::paths;
 use crate::state;
@@ -79,7 +80,7 @@ pub fn respond(path: &str, method: &str) -> RouteOutcome {
             200,
             "OK",
             header_block(Some("text/css; charset=utf-8"), "no-store"),
-            file_body(&paths::styles()),
+            STYLES.as_bytes().to_vec(),
         )),
         "/client.js" => match crate::client::bundled_client() {
             Ok(source) => RouteOutcome::Buffered(Response::new(

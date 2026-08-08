@@ -1439,7 +1439,7 @@ pub fn self_test() -> Result<()> {
 }
 
 pub fn run(args: Vec<String>) -> Result<()> {
-    const USAGE: &str = "usage: runtime_support_data.ts {export ROM -o SOURCE|verify ROM SOURCE|build SOURCE --address ADDRESS --size SIZE -o FILE|--self-test}";
+    const USAGE: &str = "usage: runtime-support-data {export ROM -o SOURCE|verify ROM SOURCE|build SOURCE --address ADDRESS --size SIZE -o FILE|--self-test}";
     if args.is_empty() || args == ["-h"] || args == ["--help"] {
         println!("{USAGE}");
         return Ok(());

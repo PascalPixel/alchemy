@@ -2,6 +2,7 @@
 
 use coverage_map::boxtree::BOX_TREES;
 
+use crate::assets::STYLES;
 use crate::client::bundled_client;
 use crate::routes::shell_has_authored_markup;
 use crate::state::{affects_coverage, compute};
@@ -25,7 +26,7 @@ fn sum_of(values: impl Iterator<Item = i64>) -> i64 {
 pub fn self_test() -> Result<String, String> {
     if !affects_coverage("assets/code/resource_373_overlay.s")
         || !affects_coverage("semantic/example.c")
-        || affects_coverage("tools/metrics/dashboard/styles.css")
+        || affects_coverage("tools/dashboard-server/src/assets.rs")
     {
         return Err("dashboard coverage-path filter failed".to_string());
     }
@@ -127,20 +128,14 @@ pub fn self_test() -> Result<String, String> {
         return Err("dashboard title or legend escaped the reproducible SVG boundary".to_string());
     }
 
-    let styles = std::fs::read_to_string(paths::styles())
-        .map_err(|error| format!("{}: {error}", paths::styles().display()))?;
-    // `styles.split(/\r?\n/)` -- a CRLF file must split the same way, which is
-    // why this is not `lines()` alone (that would also strip a lone \r on some
-    // paths) and not `split('\n')` (that would leave a trailing \r inside the
-    // trimmed line, harmless here but a different string).
-    let font_shorthands: Vec<String> = styles
+    let font_shorthands: Vec<String> = STYLES
         .split('\n')
         .map(|line| line.strip_suffix('\r').unwrap_or(line).trim().to_string())
         .filter(|line| line.starts_with("font:"))
         .collect();
-    if !styles.contains("--weyard-font: italic 400 16px/15px Weyard")
-        || !styles.contains(".hover-tooltip")
-        || styles.contains("font-size:")
+    if !STYLES.contains("--weyard-font: italic 400 16px/15px Weyard")
+        || !STYLES.contains(".hover-tooltip")
+        || STYLES.contains("font-size:")
         || font_shorthands.iter().any(|line| line != "font: var(--weyard-font);")
     {
         return Err("dashboard UI typography drifted from the one 16px Weyard size".to_string());

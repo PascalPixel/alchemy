@@ -10,7 +10,7 @@ use crate::jsnum::{pad_start, parse_int_16, to_string_16};
 use crate::matchers::overlay_id;
 
 pub const USAGE: &str =
-    "usage: candidate_explain.ts OVERLAY:OFFSET --source FILE [--routing-source FILE] [--span BYTES] [--work DIR]\n\
+    "usage: candidate-explain OVERLAY:OFFSET --source FILE [--routing-source FILE] [--span BYTES] [--work DIR]\n\
      \x20      candidate_explain.ts semantic/main/08xxxxxx.c [--work DIR]";
 
 #[derive(Debug, Clone, PartialEq)]
@@ -124,7 +124,7 @@ pub fn parse_arguments(argv: &[String], cwd: &Path) -> ParseOutcome {
 
     if id.is_empty() {
         return ParseOutcome::Error(
-            "usage: candidate_explain.ts OVERLAY:OFFSET --source FILE | candidate_explain.ts FILE.c"
+            "usage: candidate-explain OVERLAY:OFFSET --source FILE | candidate-explain FILE.c"
                 .to_string(),
         );
     }

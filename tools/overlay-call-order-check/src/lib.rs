@@ -22,7 +22,7 @@ use overlay_call_targets::{
 };
 
 const CALL_VIA: &str = "(call_via)";
-const USAGE: &str = "usage: overlay_call_order_check.ts <resource_NNN> [startHex [endHex]] [--json] | --all [--json] | --self-test";
+const USAGE: &str = "usage: overlay-call-order-check <resource_NNN> [startHex [endHex]] [--json] | --all [--json] | --self-test";
 
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))

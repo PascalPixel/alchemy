@@ -1,13 +1,13 @@
 //! Port of `tools/lib/extract_resource.ts`.
 //!
-//! PORT NOTE: this crate has no dependency on `tools/lib/zlib.ts`; the two
+//! PORT NOTE: this crate has no dependency on the shared zlib crate; the two
 //! codecs here (the "general" LZ bitstream and the "palette" flag-byte codec)
 //! are self-contained, so no decompression seam had to be left open.
 //!
-//! PORT NOTE: the TypeScript uses `throw new DecodeError(...)` for stream
-//! problems and plain `Error` for CLI/usage problems. Rust mirrors that with
+//! PORT NOTE: the former implementation used `throw new DecodeError(...)` for
+//! stream problems and plain `Error` for CLI/usage problems. Rust mirrors that with
 //! [`DecodeError`] and, in `main.rs`, a separate usage-error path. Every
-//! message string is character-for-character identical to the TypeScript.
+//! message string is character-for-character identical to the former behavior.
 
 use std::fmt;
 

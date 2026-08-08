@@ -1,7 +1,7 @@
 //! `mismatch` and `linkedFunctionExtent`, the two exported pure functions.
 //!
-//! `linkedFunctionExtent` is imported by `tools/lib/candidate_show.ts`,
-//! `tools/lib/mode_sweep.ts` and `tools/compiler/compiler_corpus_regression.ts`
+//! `linkedFunctionExtent` is imported by `tools/lib/candidate-show`,
+//! `tools/lib/mode-sweep` and `tools/compiler/compiler-corpus-regression`
 //! as well as by this file's own `linkedBytes`. It is re-exported from the
 //! crate root as [`crate::linked_function_extent`] so the Rust `candidate-show`
 //! port can delete the eighteen inlined lines in its `src/extent.rs`.
@@ -29,9 +29,9 @@ pub struct Mismatch {
 /// `mismatch(left, right)`.
 ///
 /// PORT NOTE -- checked against the `shared & ~1` off-by-one confirmed in
-/// `candidate_show.ts`, which reports a phantom difference on identical
+/// `candidate-show`, which reports a phantom difference on identical
 /// odd-length buffers. That defect is NOT present here: the loop bound is a
-/// plain `Math.min` and every index below it is compared. `tests/js_traps.rs`
+/// plain `Math.min` and every index below it is compared. `tests/invariants.rs`
 /// pins identical odd-length buffers as equal so a later "unification" with the
 /// `candidate_show` helper cannot import the bug.
 pub fn mismatch(left: &[u8], right: &[u8]) -> Option<Mismatch> {
@@ -51,7 +51,7 @@ pub fn mismatch(left: &[u8], right: &[u8]) -> Option<Mismatch> {
     Some(Mismatch {
         offset: shared,
         // `.get`, not indexing: exactly one of these is out of range and the
-        // TypeScript reads `undefined` there rather than throwing.
+        // legacy implementation reads `undefined` there rather than throwing.
         left: left.get(shared).copied(),
         right: right.get(shared).copied(),
     })

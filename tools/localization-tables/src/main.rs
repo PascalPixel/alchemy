@@ -609,7 +609,7 @@ fn truthy(value: Option<&String>) -> Option<&String> {
     value.filter(|text| !text.is_empty())
 }
 
-const USAGE: &str = "usage: localization_tables.ts {export ROM --directory DIR|build SOURCE --output FILE|verify ROM SOURCE}";
+const USAGE: &str = "usage: localization-tables {export ROM --directory DIR|build SOURCE --output FILE|verify ROM SOURCE}";
 
 fn run(mut args: Vec<String>) -> Result<(), String> {
     if args.iter().any(|item| item == "--self-test") {
@@ -635,7 +635,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         let directory = option(&args, "--directory").filter(|text| !text.is_empty());
         let (rom_path, directory) = match (rom_path, directory) {
             (Some(rom), Some(dir)) => (rom, dir),
-            _ => return Err("usage: localization_tables.ts export ROM --directory DIR".to_string()),
+            _ => return Err("usage: localization-tables export ROM --directory DIR".to_string()),
         };
         let sources = export_localization_tables(&read(&rom_path)?)?;
         std::fs::create_dir_all(&directory).map_err(|error| format!("{directory}: {error}"))?;
@@ -658,7 +658,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         let output = option(&args, "--output").filter(|text| !text.is_empty());
         let (input, output) = match (input, output) {
             (Some(input), Some(output)) => (input, output),
-            _ => return Err("usage: localization_tables.ts build SOURCE --output FILE".to_string()),
+            _ => return Err("usage: localization-tables build SOURCE --output FILE".to_string()),
         };
         let text = String::from_utf8_lossy(&read(&input)?).into_owned();
         // PORT NOTE: which inputs `json::parse` accepts matches `JSON.parse`
@@ -682,7 +682,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         let input = truthy(args.get(2)).cloned();
         let (rom_path, input) = match (rom_path, input) {
             (Some(rom), Some(input)) => (rom, input),
-            _ => return Err("usage: localization_tables.ts verify ROM SOURCE".to_string()),
+            _ => return Err("usage: localization-tables verify ROM SOURCE".to_string()),
         };
         let text = String::from_utf8_lossy(&read(&input)?).into_owned();
         let source = json::parse(&text)?;

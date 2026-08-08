@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: skip_sprite_archive.ts [--self-test] [--decoded FILE --images DIR --plan FILE --palette FILE] [--preview FILE] [--width N] [--height N]";
+const USAGE: &str = "usage: skip-sprite-archive [--self-test] [--decoded FILE --images DIR --plan FILE --palette FILE] [--preview FILE] [--width N] [--height N]";
 
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let index = args

@@ -35,7 +35,6 @@ pub fn run() -> std::io::Result<()> {
             std::thread::sleep(watch::POLL);
             match watcher.tick() {
                 watch::Tick::Idle => {}
-                watch::Tick::Page => events::notify(),
                 watch::Tick::Coverage => state::rebuild_coverage(),
                 // `watch(file, () => process.exit(0))`.
                 watch::Tick::Restart => std::process::exit(0),

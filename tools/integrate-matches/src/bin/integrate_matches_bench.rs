@@ -2,7 +2,7 @@
 //! startup subtracted.
 //!
 //! Usage: `integrate-matches-bench <directory> <repeats>`. It times the Rust
-//! pipeline in-process; the TypeScript side and the startup floor are measured
+//! pipeline in-process; the legacy implementation side and the startup floor are measured
 //! by the harness script, which owns the comparison.
 
 use std::time::Instant;

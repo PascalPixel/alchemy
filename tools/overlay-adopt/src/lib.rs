@@ -446,7 +446,7 @@ fn audited_interval(root: &Path, fn_row: &FunctionRow) -> Result<(), String> {
 // CLI
 // ---------------------------------------------------------------------------
 
-const USAGE: &str = "usage: overlay_adopt.ts <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
+const USAGE: &str = "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
 
 fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut span: Option<i64> = None;

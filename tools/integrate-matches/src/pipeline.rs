@@ -15,12 +15,12 @@ use crate::link::{linked_bytes, Kind};
 
 /// The repository root this run treats as `ROOT`.
 ///
-/// PORT NOTE -- ADDED BY THE PORT, not present in the TypeScript. `--apply`
+/// PORT NOTE -- ADDED BY THE PORT, not present in the legacy implementation. `--apply`
 /// copies into the tracked `exact/` and deletes from the tracked `asm/`, and
-/// the TypeScript hard-codes both. The override defaults to the production
+/// the legacy implementation hard-codes both. The override defaults to the production
 /// root, so an unset environment behaves identically; it exists so the apply
 /// path can be exercised against a fixture tree instead of the working copy.
-/// The DRY-RUN path, which is what the parity harness compares, never reads it
+/// The DRY-RUN path, which is what the differential comparison harness compares, never reads it
 /// differently from `root()`.
 pub const ROOT_OVERRIDE: &str = "ALCHEMY_INTEGRATE_ROOT";
 
@@ -73,9 +73,9 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
         // a `replace_all` port would silently accept that name.
         //
         // PORT NOTE -- `basename(path, ext)` strips `ext` only when it is a
-        // PROPER suffix: Node's `basename(".c", ".c")` is `".c"`, not `""`. The
+        // PROPER suffix: native filesystem's `basename(".c", ".c")` is `".c"`, not `""`. The
         // filter above guarantees a `src_` prefix so the equal-length case is
-        // unreachable, but the helper must not disagree with Node about it.
+        // unreachable, but the helper must not disagree with native filesystem about it.
         let base = basename(name);
         let stripped = if base.len() > 2 && base.ends_with(".c") {
             &base[..base.len() - 2]
@@ -91,10 +91,10 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
         {
             continue;
         }
-        // `readFileSync(candidate, "utf8")`. Node REPLACES invalid UTF-8 with
+        // `readFileSync(candidate, "utf8")`. native filesystem REPLACES invalid UTF-8 with
         // U+FFFD rather than throwing, so this is a lossy decode, not
         // `read_to_string`, which would turn a mis-encoded candidate into a
-        // hard error where the TypeScript keeps going.
+        // hard error where the legacy implementation keeps going.
         let raw =
             fs::read(&candidate).map_err(|error| format!("{}: {error}", candidate.display()))?;
         let text = String::from_utf8_lossy(&raw);
@@ -118,7 +118,7 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
                 Some(difference) => rejected.push((
                     stem.clone(),
                     // `.toString(16)` -- lowercase, UNPADDED. `{:x}` agrees;
-                    // `{:#x}` would add a `0x` the TypeScript writes by hand.
+                    // `{:#x}` would add a `0x` the legacy implementation writes by hand.
                     format!(
                         "bytes differ at +0x{:x} (asm={}B c={}B)",
                         difference.offset,

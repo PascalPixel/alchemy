@@ -489,7 +489,7 @@ pub fn run(mut args: Vec<String>) -> Result<()> {
     let words = positional(&args);
     let command = words.first().map(String::as_str);
     if command.is_none() || args.iter().any(|a| a == "-h" || a == "--help") {
-        println!("usage: resource_3ce.ts {{export ROM DIRECTORY|verify ROM LAYOUT|build-stream LAYOUT|build-fill LAYOUT}} [-o FILE] | --self-test");
+        println!("usage: resource-3ce {{export ROM DIRECTORY|verify ROM LAYOUT|build-stream LAYOUT|build-fill LAYOUT}} [-o FILE] | --self-test");
         return Ok(());
     }
     match (command, words.get(1), words.get(2)) {

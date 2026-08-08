@@ -20,15 +20,6 @@ pub fn root() -> PathBuf {
         .to_path_buf()
 }
 
-/// The directory containing the dashboard stylesheet.
-pub fn dashboard() -> PathBuf {
-    root().join("tools").join("metrics").join("dashboard")
-}
-
-pub fn styles() -> PathBuf {
-    dashboard().join("styles.css")
-}
-
 pub fn font() -> PathBuf {
     root().join("assets").join("fonts").join("weyard.otf")
 }
@@ -105,15 +96,14 @@ pub fn coverage_build_files_at(repository_root: &Path) -> Vec<PathBuf> {
     ]
 }
 
-/// `PAGE_FILES = [STYLES]`: the stylesheet is the only external page asset;
-/// the browser program is embedded in the native server.
+/// There are no external page assets; both browser sources are embedded in the
+/// native server.
 pub fn page_files() -> Vec<PathBuf> {
     page_files_at(&root())
 }
 
-/// The only external live page asset: the dashboard stylesheet.
-pub fn page_files_at(repository_root: &Path) -> Vec<PathBuf> {
-    vec![repository_root.join("tools").join("metrics").join("dashboard").join("styles.css")]
+pub fn page_files_at(_repository_root: &Path) -> Vec<PathBuf> {
+    Vec::new()
 }
 
 /// Parse `ALCHEMY_DASHBOARD_PORT`, defaulting to 4649 when it is unset.
@@ -175,22 +165,14 @@ mod tests {
             source().exists(),
             "the Rust server must be reachable from root()"
         );
-        assert!(
-            styles().exists(),
-            "dashboard/styles.css must be reachable from root()"
-        );
-        assert!(
-            restart_files()
+        assert!(restart_files()
                 .iter()
                 .all(|path| path.extension().and_then(|e| e.to_str()) == Some("rs")),
             "restart paths must contain native Rust sources only"
         );
         assert!(
-            page_files().iter().all(|path| matches!(
-                path.extension().and_then(|e| e.to_str()),
-                Some("css") | Some("js")
-            )),
-            "page paths must contain the external CSS asset only"
+            page_files().is_empty(),
+            "browser assets must be embedded in Rust"
         );
     }
 

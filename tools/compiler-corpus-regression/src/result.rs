@@ -6,7 +6,7 @@ use std::path::Path;
 /// `interface Result`.
 ///
 /// PORT NOTE -- the optional fields are OMITTED, not written as `null`. The
-/// TypeScript builds the object with a spread,
+/// legacy implementation builds the object with a spread,
 /// `...(difference.first === null ? {} : { first_difference: difference.first })`,
 /// so the key is absent when there is no difference. An `Option` serialised as
 /// `null` would change the report bytes and every cache key that reads it back.
@@ -60,14 +60,14 @@ impl Outcome {
 /// `cache_key`, `stem`, `compiled` and `exact`. A cache row that claims
 /// `compiled: true, exact: false` but omits `first_difference` is ACCEPTED, and
 /// `main()` then evaluates `result.first_difference!.toString(16)` on it, which
-/// is a TypeError at runtime. The non-null assertion is the TypeScript's own,
+/// is a TypeError at runtime. The non-null assertion is the legacy implementation's own,
 /// and the crash is reachable from any hand-edited or truncated cache file.
 /// Reproduced: the reader below accepts the row, and the reporter surfaces the
 /// same failure. Pinned in `tests/cache.rs`.
 ///
 /// PORT NOTE -- `typeof result.stem !== "string"` and friends are the ONLY
 /// type tests. `expected_size` is read back untyped and could be a string; the
-/// TypeScript would then print it as one. Modelled by reading it through the
+/// legacy implementation would then print it as one. Modelled by reading it through the
 /// same permissive path.
 pub fn cached_result(document: &Json, key: &str) -> Option<Outcome> {
     // `document === null || typeof document !== "object"` -- note that
@@ -113,7 +113,7 @@ pub fn cached_result(document: &Json, key: &str) -> Option<Outcome> {
 
 /// Read and validate a cache file.
 ///
-/// PORT NOTE -- BUG REPRODUCED. In the TypeScript this read sits OUTSIDE the
+/// PORT NOTE -- BUG REPRODUCED. In the legacy implementation this read sits OUTSIDE the
 /// `try` block that guards the compile, so a TRUNCATED OR CORRUPT cache JSON
 /// does not fall back to recompiling: `JSON.parse` throws and takes the whole
 /// run down with an unhandled rejection. That is a real hazard for a cache
@@ -132,7 +132,7 @@ pub fn read_cache(path: &str, key: &str) -> Result<Option<Outcome>, String> {
 ///
 /// PORT NOTE -- the temporary name is `${path}.${process.pid}.tmp`, which is
 /// NONDETERMINISTIC by construction. It never survives the `rename`, so it
-/// does not reach any artifact; the parity harness does not have to normalise
+/// does not reach any artifact; the differential comparison harness does not have to normalise
 /// it, and it is named here only so nobody adds it to a manifest later.
 pub fn atomic_json(path: &str, value: &Json) -> Result<(), String> {
     let target = Path::new(path);

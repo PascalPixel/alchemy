@@ -27,7 +27,7 @@ pub struct Options {
 }
 
 pub const HELP: &str = concat!(
-    "usage: overlay_mode_cohort.ts --candidate OVERLAY:OFFSET=PATH [--candidate ...] [options]\n",
+    "usage: overlay-mode-cohort --candidate OVERLAY:OFFSET=PATH [--candidate ...] [options]\n",
     "  --candidate, -c SPEC  target and existing C path, e.g. resource_394:07e0=semantic/overlays/resource_394_c_020007e0.c\n",
     "  --inventory FILE      overlay inventory containing measured owner spans (default out/decomp/overlays.json)\n",
     "  --scope families|singles  compiler families only (default) or every exposed one-mode configuration\n",

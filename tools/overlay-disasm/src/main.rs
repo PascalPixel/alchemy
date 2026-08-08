@@ -84,6 +84,6 @@ fn main() -> ExitCode {
         }
         return ExitCode::SUCCESS;
     }
-    eprintln!("usage: overlay_disasm.ts --self-test");
+    eprintln!("usage: overlay-disasm --self-test");
     ExitCode::FAILURE
 }

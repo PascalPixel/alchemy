@@ -27,7 +27,7 @@ pub struct Cleanup {
 ///
 /// PORT NOTE -- UTC, not local. A run at 23:30 in Amsterdam writes tomorrow's
 /// date into the dossier on both sides, and a port using a local-time clock
-/// would disagree with the TypeScript for half an hour every day and pass every
+/// would disagree with the legacy implementation for half an hour every day and pass every
 /// test run outside that window. The civil-from-days conversion is written out
 /// rather than pulled from a date crate to keep the dependency count at zero.
 pub fn today_utc() -> String {
@@ -79,9 +79,9 @@ pub fn cleanup_installed_scratch(
     let mut removed: Vec<String> = Vec::new();
     if work_root.exists() {
         let prefix = format!("{stem}.");
-        // `readdirSync(..., { withFileTypes: true })` -- Node returns entries in
+        // `readdirSync(..., { withFileTypes: true })` -- native filesystem returns entries in
         // the order the platform's `readdir` yields them, which is why the
-        // TypeScript sorts afterwards rather than relying on it.
+        // legacy implementation sorts afterwards rather than relying on it.
         let entries =
             fs::read_dir(work_root).map_err(|error| format!("{}: {error}", work_root.display()))?;
         for entry in entries {
@@ -90,7 +90,7 @@ pub fn cleanup_installed_scratch(
                 .file_type()
                 .map_err(|error| format!("{}: {error}", entry.path().display()))?;
             // `entry.isFile()` is false for a symlink, a directory and a
-            // socket alike; Node reports the type of the entry itself, not of
+            // socket alike; native filesystem reports the type of the entry itself, not of
             // its target, so this is `file_type()`, never `metadata()`.
             if !file_type.is_file() {
                 continue;
@@ -121,7 +121,7 @@ pub fn cleanup_installed_scratch(
     }
     let source =
         fs::read_to_string(&dossier).map_err(|error| format!("{}: {error}", dossier.display()))?;
-    let state = format!("State: CLOSED — {date}. Installed by `tools/lib/integrate_matches.ts`.");
+    let state = format!("State: CLOSED — {date}. Installed by `tools/lib/integrate-matches`.");
     let updated = if has_state_line(&source) {
         replace_state_line(&source, &state)
     } else {

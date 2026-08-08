@@ -28,19 +28,14 @@ fn main() -> ExitCode {
     let root = repository_root();
     let mut scanned = 0;
     let mut findings = Vec::new();
-    // Both trees, for as long as both exist: the TypeScript is grandfathered
-    // and being ported out, and dropping it from the scan early would leave the
-    // half still in service unlinted.
-    for directory in ["tools", "tools"] {
-        match scan(&root, directory) {
-            Ok((count, found)) => {
-                scanned += count;
-                findings.extend(found);
-            }
-            Err(message) => {
-                eprintln!("{message}");
-                return ExitCode::FAILURE;
-            }
+    match scan(&root, "tools") {
+        Ok((count, found)) => {
+            scanned += count;
+            findings.extend(found);
+        }
+        Err(message) => {
+            eprintln!("{message}");
+            return ExitCode::FAILURE;
         }
     }
 
@@ -54,7 +49,7 @@ fn main() -> ExitCode {
     // is the defect it polices.
     if scanned == 0 {
         println!(
-            "NOTHING SCANNED — this is a FAILURE, not a pass.\n  No .ts or .rs files under {}.",
+            "NOTHING SCANNED — this is a FAILURE, not a pass.\n  No Rust sources under {}.",
             root.display()
         );
         return ExitCode::FAILURE;
@@ -65,7 +60,7 @@ fn main() -> ExitCode {
              \x20 A cache key must derive from its inputs, not from a literal describing\n\
              \x20 the logic. Mix in a digest of the tool's own source instead:\n\
              \x20     hasher.update(format!(\"name:{{}}:...\", self_digest()).as_bytes());\n\
-             \x20 See tools/lib/overlay_disasm.ts for the pattern, and HANDOVER §5h for why."
+             \x20 See the native overlay-disasm crate and HANDOVER §5h for why."
         );
         return ExitCode::FAILURE;
     }

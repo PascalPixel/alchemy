@@ -175,7 +175,7 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
         let offset_text = positional.get(1).copied();
         let (overlay, offset_text) = match (overlay, offset_text) {
             (Some(o), Some(t)) => (o, t),
-            _ => return Err("usage: overlay_entry.ts <overlay> <offsetHex> | --all".to_string()),
+            _ => return Err("usage: overlay-entry <overlay> <offsetHex> | --all".to_string()),
         };
         let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16)
             .map_err(|_| format!("invalid offset: {offset_text}"))?;

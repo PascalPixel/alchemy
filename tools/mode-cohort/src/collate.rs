@@ -1,12 +1,12 @@
 //! String ordering primitives copied out of JavaScript, not out of Rust.
 //!
-//! `mode_cohort.ts` uses two different string orders and they are not the same
+//! `mode-cohort` uses two different string orders and they are not the same
 //! order. Getting either wrong silently reshuffles the report.
 
 use std::cmp::Ordering;
 
 /// The full printable-ASCII order of the default `en-US` collator, MEASURED in
-/// Bun rather than assumed:
+/// native process rather than assumed:
 ///
 /// ```text
 /// const chars = []; for (let i = 32; i < 127; i++) chars.push(String.fromCharCode(i));
@@ -18,7 +18,7 @@ use std::cmp::Ordering;
 /// lowercase form of each letter ahead of its uppercase form. In raw ASCII
 /// `'+'` (0x2B) precedes `'-'` (0x2D) and `'='` (0x3D) follows the digits;
 /// under the collator both are the other way round, and every uppercase letter
-/// precedes every lowercase one. `mode_cohort.ts` breaks four of its five sort
+/// precedes every lowercase one. `mode-cohort` breaks four of its five sort
 /// ties with `localeCompare`, so `str::cmp` here reorders real output.
 pub const COLLATED_ASCII: &str =
     " _-,;:!?.'\"()[]{}@*/\\&#%`^+<=>|~$0123456789aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
@@ -89,7 +89,7 @@ fn compare_by(left: &str, right: &str, weight: fn(char) -> u32) -> Ordering {
 /// order.
 ///
 /// PORT NOTE -- THIS IS NOT `Vec<String>::sort` AND NOT `localeCompare`.
-/// `mode_cohort.ts` writes both `stems.sort()` (default) and
+/// `mode-cohort` writes both `stems.sort()` (default) and
 /// `sort((l, r) => l.stem.localeCompare(r.stem))` within ten lines of each
 /// other, and they disagree the moment a stem contains punctuation or an
 /// uppercase letter. The default comparator is also not `str::cmp`: Rust
@@ -142,7 +142,7 @@ mod tests {
 
     #[test]
     fn punctuation_is_not_variable() {
-        // Measured in Bun: "a-c".localeCompare("ab") === -1. If ICU shifted
+        // Measured in native process: "a-c".localeCompare("ab") === -1. If ICU shifted
         // punctuation to a variable weight this would be +1 and the whole
         // per-character form would be wrong.
         assert_eq!(collate("a-c", "ab"), Ordering::Less);
@@ -212,7 +212,7 @@ mod tests {
             "a".to_string(),
         ];
         located.sort_by(|l, r| collate(l, r));
-        // Measured in Bun: sort((l, r) => l.localeCompare(r)).
+        // Measured in native process: sort((l, r) => l.localeCompare(r)).
         assert_eq!(located, vec!["a", "A", "a-b", "a+b"]);
     }
 

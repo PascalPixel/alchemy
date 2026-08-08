@@ -24,7 +24,6 @@ const ROOT = dirname(dirname(HERE));
 // native binary that replaced its .ts file, not at a stale path.
 const RUST_SUBCOMMANDS: Record<string, string> = {
   decomp_diagnose: "tools-rs/decomp-diagnose/target/release/decomp-diagnose",
-  decomp_queue: "tools-rs/decomp-queue/target/release/decomp-queue",
   remaining_survey: "tools-rs/remaining-survey/target/release/remaining-survey",
 };
 

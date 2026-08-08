@@ -4,10 +4,8 @@
 //! sources and groups relocation-normalized duplicates. Sibling crates supply
 //! everything the TypeScript imported: `discover` for `Discovery`/`sx`,
 //! `overlay-disasm` for `assemble_overlay`/`overlay_c_addresses`/`OVERLAY_BASE`,
-//! `canonical-json` for the report writer. `wyhash` here is a copy of
-//! `tools-rs/decomp-queue/src/wyhash.rs` (that crate is not a sibling of this
-//! tool's TS imports, so depending on it would pull in unrelated transitive
-//! crates for one small, self-contained, already-vetted hash function).
+//! `canonical-json` for the report writer. `wyhash` is kept local because it is
+//! one small, self-contained, already-vetted Bun-compatible hash function.
 
 mod wyhash;
 

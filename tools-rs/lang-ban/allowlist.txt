@@ -40,7 +40,6 @@ tools/lib/generated_files.ts
 tools/lib/import_asset.ts
 tools/lib/integrate_matches.ts
 tools/lib/jobs.ts
-tools/lib/late_runtime_data.ts
 tools/lib/map_load_table.ts
 tools/lib/match_m2c.ts
 tools/lib/midi_roundtrip.ts
@@ -64,7 +63,6 @@ tools/lib/verify.ts
 tools/lib/zlib.ts
 tools/make/archive_asset.ts
 tools/make/audio_engine_data.ts
-tools/make/audio_wave.ts
 tools/make/battle_effect_data.ts
 tools/make/build_assets.ts
 tools/make/byte_value_regions.ts
@@ -80,10 +78,8 @@ tools/make/indexed_still.ts
 tools/make/kind1_map_grid.ts
 tools/make/kind2_resource.ts
 tools/make/kind2_resource_series.ts
-tools/make/late_runtime_residual.ts
 tools/make/localization_font.ts
 tools/make/map_container_components.ts
-tools/make/music.ts
 tools/make/music_residuals.ts
 tools/make/namae_nyuuryoku.ts
 tools/make/resource_01c.ts

@@ -19,6 +19,7 @@ const HERE = dirname(Bun.fileURLToPath(import.meta.url));
 const ROOT = dirname(dirname(HERE));
 
 const RUST_SUBCOMMANDS: Record<string, string> = {
+  audio_wave: "tools-rs/audio-wave/target/release/audio-wave",
   build_asm: "tools-rs/build-asm/target/release/build-asm",
   build_claimed: "tools-rs/build-claimed/target/release/build-claimed",
   build_full: "tools-rs/build-full/target/release/build-full",
@@ -26,7 +27,9 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   build_semantic: "tools-rs/build-semantic/target/release/build-semantic",
   byte_henkan: "tools-rs/byte-henkan/target/release/byte-henkan",
   localization_tables: "tools-rs/localization-tables/target/release/localization-tables",
+  late_runtime_residual: "tools-rs/late-runtime-residual/target/release/late-runtime-residual",
   message_archive: "tools-rs/message-archive/target/release/message_archive",
+  music: "tools-rs/music/target/release/music",
   pairtable: "tools-rs/target/release/pairtable",
   resource_directory: "tools-rs/resource-directory/target/release/resource-directory",
   wordstream: "tools-rs/target/release/wordstream",

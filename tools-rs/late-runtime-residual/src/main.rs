@@ -13,11 +13,13 @@
 // `CARGO_MANIFEST_DIR` at build time and can be overridden with `ALCHEMY_ROOT`
 // for a relocated checkout. The argv surface is unchanged.
 
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use late_runtime_residual::{
-    export_late_runtime_residual, self_test, verify_late_runtime_residual,
+    build_late_runtime_residual, export_late_runtime_residual, self_test,
+    verify_late_runtime_residual,
 };
 
 const USAGE: &str =
@@ -46,6 +48,24 @@ enum Outcome {
 
 fn run(args: &[String]) -> Result<Outcome, String> {
     let catalog = default_catalog();
+    if let [command, source, address] = args {
+        if command == "build-region-stdout" {
+            let digits = address.strip_prefix("0x").unwrap_or(address);
+            let address = u32::from_str_radix(digits, 16)
+                .map_err(|_| "invalid late residual address".to_string())?;
+            let built = build_late_runtime_residual(Path::new(source), &catalog)?;
+            let region = built
+                .regions
+                .iter()
+                .find(|(start, _)| *start == address)
+                .ok_or_else(|| "late-runtime asset address is not a produced region".to_string())?;
+            eprintln!("{{\"source_bytes\":{}}}", built.source_bytes);
+            std::io::stdout()
+                .write_all(&region.1)
+                .map_err(|error| error.to_string())?;
+            return Ok(Outcome::Line(String::new()));
+        }
+    }
     if args.len() == 1 && args[0] == "--self-test" {
         return Ok(Outcome::Line(self_test(&catalog)?));
     }

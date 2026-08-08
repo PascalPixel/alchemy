@@ -932,7 +932,7 @@ export async function main(): Promise<void> {
   const overlayPath = join(ROOT, "assets/code", `${options.overlay}_overlay.s`);
   const image = assembleOverlay(overlayPath, OVERLAY_BASE);
   const expected = image.subarray(options.offset, options.offset + span);
-  const adoptCommand = `bun tools/overlay/overlay_adopt.ts ${options.id} --source ${options.source} --span ${span}`;
+  const adoptCommand = `bun tools/overlay/index.ts overlay_adopt ${options.id} --source ${options.source} --span ${span}`;
 
   const gate = gateDiagnosis(options.source, options.work, options.overlay, options.routingSource, expected);
   const tiers = [...gate.tiersSeen].sort();

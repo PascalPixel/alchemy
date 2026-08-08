@@ -37,7 +37,7 @@
  *
  * Call accounting: 64 `bl` sites over 19 distinct targets - 37 intra-overlay
  * prologues and 27 import veneers, with no `call_via` slot.  Resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3b3 274c 2a04`, never from
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b3 274c 2a04`, never from
  * `overlay_show.ts`'s printed annotations.  Per-target multiset:
  * Func_02000ba4 x15, Func_0808a080 x11, Func_02000ec8 x7, Func_080770c0 x5,
  * Func_020025f8 x4, Func_02002694 x4, Func_08009180 x3, Func_0200263c x3,

@@ -44,7 +44,7 @@
  * `bl .L_02003390`.)
  *
  * Call accounting: 406 `bl` sites, resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3a8 0590` - 41 distinct targets,
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a8 0590` - 41 distinct targets,
  * 396 import veneers, 8 calls to three intra-overlay prologues that all have
  * byte-exact sources in assets/code (Func_02001e6c x1, Func_02001ea4 x6,
  * Func_02001ed8 x1), and the 2 goto-`bl`s above.  Every site is reproduced

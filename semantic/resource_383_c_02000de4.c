@@ -18,7 +18,7 @@
  *
  * All 151 `bl` sites are placed and reach 25 distinct callees - the inventory
  * row's `calls=143` predates the corrected decoding.  Targets come from
- * tools/lib/overlay_call_targets.ts (target offset = stored displacement + 2),
+ * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (target offset = stored displacement + 2),
  * never from the disassembler's `bl` annotations, which are wrong for every
  * overlay branch.  111 reach the import veneer table at 0x02004cxx-0x02004f2b
  * and are named by the main-image address in the veneer's trailing word; 40

@@ -11,7 +11,7 @@
  * Register state is carried straight across it: r4 = 255, r0 and r1 are set at
  * 0x02000e16-0x02000e1a and are live in the loop that begins at 0x02000e24.
  *
- * Call targets were resolved with `tools/lib/overlay_call_targets.ts` (an overlay
+ * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x02000ddc -> veneer 0x0200193c -> Func_0808a080
  *   0x02000e06 -> veneer 0x02001894 -> Func_08009088

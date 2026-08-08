@@ -9,7 +9,7 @@
  * PUBLISHED, NOT CALLED -- its Thumb pointer 0x020090e1 (image offset
  * plus the 0x8000 link base) sits at 0x02004990 in a script-record
  * table. No `bl` in the image reaches it, so neither the call-graph
- * sweep nor `tools-rs/overlay-unindexed` lists it. See
+ * sweep nor `tools/overlay-unindexed` lists it. See
  * resource_3af_c_02000b98.c for the sweep that does find this class.
  *
  * Two things in the body are worth naming rather than transcribing

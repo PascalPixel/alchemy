@@ -13,7 +13,7 @@
  * r5 is the dialogue line cursor: 0x2558, then +1, +2, then `adds r5, #3` to
  * 0x255b.  It is the only saved register.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 76 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 76 sites are
  * import veneers and the per-target multiset below is reproduced exactly by the
  * C, target for target:
  *   Func_0808a100 x12, Func_0808a010 x11, Func_0808a1b8 x11, Func_0808a0e8 x7,

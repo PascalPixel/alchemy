@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "statement-order-sweep-main"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "statement_order_sweep_main"
+path = "src/lib.rs"
+
+[[bin]]
+name = "statement-order-sweep-main"
+path = "src/main.rs"
+
+[dependencies]
+candidate-show = { path = "../candidate-show" }

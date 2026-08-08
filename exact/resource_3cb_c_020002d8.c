@@ -13,7 +13,7 @@
  * (0x00000203, 0x02009f50, 0x0000292e), with two alignment bytes at
  * 0x02000332.  Execution never falls into them.
  *
- * All nine call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All nine call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=9:
  *   0x020002dc -> veneer 0x0200180c -> Func_080770c0

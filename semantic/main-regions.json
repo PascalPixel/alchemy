@@ -2,7 +2,7 @@
   "format": 1,
   "ordinary_census": {
     "status": "closed",
-    "check": "bun run semantic:check",
+    "check": "make semantic-check",
     "evidence": "The 2026-07-31 complete main-image census found zero ordinary executable owners without exact or reviewed semantic C. The executable complement consists only of retained runtime/veneer/assembly structure and the pools/alignment excluded by the registered owners below."
   },
   "non_c_ranges": [

@@ -17,7 +17,7 @@
  * The single pool word here is a small integer, not an address.
  *
  * Call accounting: 37 `bl` sites, all resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c6 1090` - 7 distinct targets,
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c6 1090` - 7 distinct targets,
  * all import veneers, no prologue and no `call_via` site.  The multiset of
  * `Func_...(` calls below equals that multiset exactly: Func_0808a010 x16,
  * Func_0808a180 x7, Func_0808a1e8 x5, Func_0808a110 x4, Func_0808a138 x2,

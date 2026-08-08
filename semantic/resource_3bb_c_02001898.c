@@ -17,7 +17,7 @@
  * (r0, r1, r2), void.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * `idx = *(u32*)0x02000434` is the same shared "current slot" index cell
  * resource_3bb_c_02001df4.c and this overlay's other siblings use. The

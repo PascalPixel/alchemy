@@ -27,7 +27,7 @@
  * arguments.
  *
  * Call accounting: 496 `bl` sites in the decoded instruction stream, all
- * resolved with `bun tools/lib/overlay_call_targets.ts resource_373 15dc` - 46
+ * resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_373 15dc` - 46
  * distinct targets, 490 import veneers and 6 intra-overlay prologues
  * (Func_0200345c x1, Func_020032b0 x3, Func_02003380 x2).  No `call_via rN`
  * site.  Each of the 496 sites appears exactly once below; the multiset of

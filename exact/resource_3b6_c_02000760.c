@@ -18,13 +18,13 @@ extern u8 Value_00001fbb;
  * PROVEN TRIPLET.  0x02000760, 0x02000760 and 0x020008cc are 80-byte rows that
  * are byte-identical except for their single pool word — 0x239e, 0x1fbb and
  * 0x23ac respectively.  Every `bl` halfword is bit-identical across the three,
- * and tools/lib/overlay_call_targets.ts reports the same seven callees over nine
+ * and cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- reports the same seven callees over nine
  * sites for each.  That diff is the correctness proof for this file: the three
  * differ only in which message-id triple they present.  (It is also the
  * cheapest available witness that an overlay `bl`'s printed label is a
  * per-call-site artefact rather than a distinct callee.)
  *
- * Imports are resolved with tools/lib/overlay_call_targets.ts — an overlay `bl`
+ * Imports are resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- — an overlay `bl`
  * stores `target_offset - 2` — and named for the main-image address in the
  * veneer entry's trailing word.  Nine sites, matching the row's advertised
  * call count.  The begin/message/act/end quartet is the same one that tracked

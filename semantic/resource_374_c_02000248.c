@@ -18,7 +18,7 @@
  * `assets/code/resource_374_c_02002590.c`, which this owner installs through
  * Func_080000d0 and removes through Func_080000d8.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target_offset - 2, so the disassembler's annotations are unusable):
  * 30 import veneers and 3 prologues in this overlay, all three of the latter
  * already byte-exact (0x020022f8, 0x02002564, 0x02002574).

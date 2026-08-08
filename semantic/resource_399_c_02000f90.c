@@ -17,7 +17,7 @@
  *                          ends six bytes before the obvious place.
  *   0x0200152c-0x0200154b  past the return.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_399
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_399
  * 0f90 --annotate` (an overlay `bl` stores `target - 2`).  142 sites over 35
  * distinct targets; the inventory's calls=130 predates the corrected decoding
  * and is a lower bound.  The per-target multiset the assembly gives, which the

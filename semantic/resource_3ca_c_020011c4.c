@@ -22,7 +22,7 @@
  * array is 24 entries of 12 bytes at file offset 0x1af8, and 0x1af8 + 288 =
  * 0x1c18, exactly where the counter halfword this owner drives begins.
  *
- * There is one call site, resolved with tools/lib/overlay_call_targets.ts:
+ * There is one call site, resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --:
  * 0x02001286 -> veneer 0x02001364 -> Func_080001e8.  It is inside the final
  * loop, so it is one C call expression covering 24 executions; placed calls
  * per target are Func_080001e8 x1 site, matching the row's `calls=1`.

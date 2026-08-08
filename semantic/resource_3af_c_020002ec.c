@@ -41,7 +41,7 @@
  * The next prologue (`push {r5, lr}`) begins at 0x02000514.
  *
  * All 15 call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3af 02ec 4fa`, and the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3af 02ec 4fa`, and the
  * per-target histogram is Func_080000f8 x6, Func_08009150 x3, Func_0808a080
  * x2, Func_0808a1b8 x2, Func_0808a1e8 x1, Func_080f9010 x1:
  *   0x0200034e -> 0x0428c Func_08009150   0x020003e8 -> 0x0428c Func_08009150

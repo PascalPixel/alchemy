@@ -12,7 +12,7 @@
  *
  * Not found by the structural inventory walk (unindexed): reached only as
  * a published pointer. All 6 `bl` targets resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_39e 2508 254c` under the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 2508 254c` under the
  * `+2` rule.
  *
  * THE TEST IS A RANGE CHECK BUILT AS AN ADD AND AN UNSIGNED COMPARE, and

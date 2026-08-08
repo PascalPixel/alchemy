@@ -43,7 +43,7 @@
  * is spelled separately below.
  *
  * CALL ACCOUNTING.  133 static `bl` sites, every one resolved with the
- * displacement rule (`bun tools/lib/overlay_call_targets.ts resource_3aa 1494`
+ * displacement rule (`cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3aa 1494`
  * plus a per-site pass over the same decoder): 131 import veneers over 29
  * distinct imports, and 2 calls to the in-overlay owner at file offset 0x1450
  * (semantic/overlays/resource_3aa_c_02001450.c).  There is no `call_via` site

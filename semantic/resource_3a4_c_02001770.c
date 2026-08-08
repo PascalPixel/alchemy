@@ -19,7 +19,7 @@
  * itself still residue. measureSpan reports 190, undersizing by the pool.
  *
  * Six call sites, all resolved with the `+2` rule via
- * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x1770 0x1838` and none
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0x1770 0x1838` and none
  * read from the listing's arrows, which print six 0x02005xxx addresses
  * that are not functions:
  *   0x200179a -> Func_080091f0(-1, -1, 0xe666)

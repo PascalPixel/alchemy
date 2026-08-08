@@ -2,7 +2,7 @@
 
 /* Resolved whole-owner call targets. */
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
-   (see resource_382:3ac for the rule, tools-rs/bl-site-symbols to derive
+   (see resource_382:3ac for the rule, tools/bl-site-symbols to derive
    them). All three reach the same ARM-mode IWRAM helper that scales a
    channel by the adjustment, and each still needs its own name. */
 s32 Func_02001ee2();   /* 0x02000eec */

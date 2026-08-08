@@ -14,7 +14,7 @@
  * `ldr rN, [pc, #imm]`.  The next prologue at 0x02001274 is a separate owner,
  * and it is this owner's own last real call.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`, not from the
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`, not from the
  * disassembler's `bl` annotations (an overlay `bl` stores target_offset - 2):
  * 41 import veneers plus 9 prologues in this overlay.  Of the prologues,
  * 0x020022c8 and 0x020022e0 are already byte-exact in `assets/code`, and

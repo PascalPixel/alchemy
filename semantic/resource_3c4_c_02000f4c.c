@@ -11,7 +11,7 @@
  * at a randomly jittered position through this overlay's eight-argument
  * spawner Func_02000ae8.
  *
- * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 5 sites, 3 distinct
  * callees.  The disassembler's 0x02003fba, 0x02003fc4, 0x02003fc2,
  * 0x02003fd6 and 0x02001ab4 are artefacts; the two Func_08009080 sites and

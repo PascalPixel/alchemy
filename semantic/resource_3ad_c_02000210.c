@@ -23,7 +23,7 @@
  * twice), sl = 24, r9 = 62, r8 = 55.  r6's reassignments sit between call sites
  * rather than at the top, so it is tracked per-use below.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all are import
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all are import
  * veneers.  Per-target multiset over the 19 sites: Func_080091b8 x10,
  * Func_080000c0 x6, and one each of Func_080770c0, Func_0808a1e0,
  * Func_080091c0 - 19 C call expressions below, matching the row's calls=19.

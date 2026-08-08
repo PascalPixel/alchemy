@@ -37,7 +37,7 @@
  * r0, so **r0 survives and IS the result** (HANDOVER's interworking-epilogue
  * rule) — the owner returns s32, and every path returns 0.
  *
- * All 28 call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * All 28 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3b0 0240` (an overlay `bl` stores target offset - 2).  Per-target:
  *   Func_080770c0 8   Func_080770c8 1   Func_080000f8 2   Func_080000d0 1
  *   Func_080000c0 2   Func_0808a0f0 1   Func_0808a080 1   Func_0808a018 1

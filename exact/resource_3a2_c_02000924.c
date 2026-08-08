@@ -25,7 +25,7 @@
  * The two even words are data blocks, spelled with their raw pool values as
  * symbol names per the project convention.
  *
- * All 41 call sites resolved with `bun tools/lib/overlay_call_targets.ts
+ * All 41 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3a2 0924 --json` (the inventory's `calls=39` is a known lower
  * bound).  Veneer map used below:
  *   0x14d0 -> Func_080770c0   0x1538 -> Func_0808a0d0   0x15a8 -> Func_0808a1b8

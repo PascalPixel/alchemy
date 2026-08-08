@@ -18,7 +18,7 @@
  * sits on only one arm of the Func_0808a070 test, which is the usual shape:
  * the two arms are the played and the skipped variants of one beat.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; sixteen sites,
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; sixteen sites,
  * against the inventory's `calls=15`, which is a documented lower bound.
  */
 

@@ -22,7 +22,7 @@
  * disassembler prints at 0x02001368-0x02001388 are the four tag halfwords and
  * the four pool addresses.
  *
- * All 87 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 87 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2).  The inventory reports
  * calls=84, a lower bound.  Placed multiset: Func_02000128 x12,
  * Func_080770d0 x7, Func_080770e8 x6, Func_0808a170 x6, Func_0808a018 x5,

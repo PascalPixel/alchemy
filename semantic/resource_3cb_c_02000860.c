@@ -19,7 +19,7 @@
  * that follows and used at 0x02000ac4, and the whole 0x02000b1e block reads
  * pool words on both sides of the `b.n`.
  *
- * All 69 call sites were resolved with tools/lib/overlay_call_targets.ts
+ * All 69 call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2).  The inventory reports
  * calls=67, a lower bound.  Placed multiset: Func_080770d0 x8,
  * Func_080770c0 x7, Func_080000c0 x5, Func_0808a090 x5, Func_0808a0c8 x5,

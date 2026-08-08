@@ -6,7 +6,7 @@
  * A PUBLISHED CALLBACK -- its address is written into a record as a
  * plain word rather than reached by any `bl`, which is why the whole-
  * image call-graph walk could not see it and why it survived the old
- * closure standard.  Sweep B of tools/lib/overlay_published.ts finds it.
+ * closure standard.  Sweep B of cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- finds it.
  *
  * Complete owner: `push {r5, lr}` at 0x02002eec through the matching
  * interworking return `pop {r5} / pop {r0} / bx r0` at 0x02002f04-

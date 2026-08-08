@@ -26,7 +26,7 @@
  * the pooled byte offset 0x242, which is 289*2 — the displacement/value trap
  * documented in HANDOVER: 0x242 is a byte displacement, not a value.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts`; all 17 sites are
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 17 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
  *   Func_080770c0 x5, Func_0808a100 x5, Func_080091c0 x2, Func_080770c8 x2,
  *   Func_080770d0 x1, Func_0808a080 x1, Func_0808a0f0 x1.

@@ -22,7 +22,7 @@
  *               0x1c7a for the final call, which is why it is loaded early
  *
  * All twelve calls resolved with
- * 'bun tools/lib/overlay_call_targets.ts resource_377 133c --json' (12 sites,
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_377 133c --json' (12 sites,
  * 10 distinct veneer targets; Func_0808a010 and Func_0808a170 twice each, which
  * is exactly the multiset written below):
  *   0x133e -> 0x190c -> Func_0808a018()

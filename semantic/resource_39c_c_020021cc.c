@@ -15,7 +15,7 @@
  * owner's prologue is at 0x020022c4.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * `Fixed20()` below is the repeated `if (raw < 0) raw += 0xfffff; raw >> 20`
  * idiom read twice (0x020021d4-0x020021e2 and 0x020021e6-0x020021f8) -- the

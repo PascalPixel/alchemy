@@ -24,7 +24,7 @@
  * resource_38b_overlay.s around line 1332) spells the three calls as
  * `bl sub_02001d90`, `bl sub_02001d5c`, `bl sub_02001d74` -- three distinct
  * local veneers, even though the latter two both eventually reach the same
- * main-image renderer.  tools/lib/overlay_call_targets.ts's main-image
+ * main-image renderer.  cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --'s main-image
  * resolution (0x0808a080 / 0x080091c0) is correct for what the veneers
  * *jump to*, but calling those main-image addresses directly from C bypasses
  * the veneers and produces a different (wrong) pc-relative displacement at

@@ -32,7 +32,7 @@
  * is advanced by 1 when the offer is accepted, by 1 again if the purchase then
  * fails for want of coins, and by 3 when it succeeds.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong).  30 call
  * sites against the inventory's calls=29; every `bl` in the span is
  * transcribed below in order, so the set is complete.  Distinct callees:

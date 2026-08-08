@@ -17,7 +17,7 @@
  * on, gets 0x02009a99 installed as its per-frame handler, and finally has its
  * flag published.
  *
- * Targets resolved with `tools/lib/overlay_call_targets.ts` (overlay `bl` rule
+ * Targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 47 sites, 13 distinct
  * callees, all 47 accounted for below.  Thirty-two of the sites are
  * Func_0808a080 and every one of them carries the same `bl` halfwords, so the

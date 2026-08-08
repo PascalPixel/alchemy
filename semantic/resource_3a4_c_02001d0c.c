@@ -32,7 +32,7 @@
  * makes 0x02001770 a row with TWO publishers and no callers at all.
  *
  * Sixty-eight call sites, every one resolved with the `+2` rule via
- * `bun tools/lib/overlay_call_targets.ts resource_3a4 0x1d0c 0x2020` and
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 0x1d0c 0x2020` and
  * none read from the listing's arrows. Site count cross-checked: the
  * resolver reports sites=68 for these bounds and the listing carries 68
  * `bl` lines. They collapse onto eighteen targets: seventeen import

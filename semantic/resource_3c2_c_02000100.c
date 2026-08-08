@@ -20,7 +20,7 @@
  * richer raised-flag branch.
  *
  * All seven call sites resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3c2 0100 --json`:
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c2 0100 --json`:
  *   0x02000106 -> veneer 0x0b64 -> Func_0808a080
  *   0x02000124 -> veneer 0x0c2c -> Func_080b0018
  *   0x02000132 -> veneer 0x0b34 -> Func_080770c0

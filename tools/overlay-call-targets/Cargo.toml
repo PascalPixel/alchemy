@@ -1,0 +1,28 @@
+# Bare `[workspace]`: this crate is its own workspace so it builds without
+# touching `tools/Cargo.toml`, which several agents share concurrently. A
+# bare-workspace crate cannot resolve `version.workspace`, so both keys are
+# literal.
+[workspace]
+
+[package]
+name = "overlay-call-targets"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crate, not a third-party dependency: the already-landed Rust half of
+# `../lib/overlay_disasm.ts`, which `tools/lib/overlay_call_targets.ts` imports
+# for `assembleOverlay`.
+overlay-disasm = { path = "../overlay-disasm" }
+# `exact_reading_list`'s already-landed `src/json.rs` insertion-order JSON
+# reader, reused here for `out/decomp/overlays.json` rather than reinventing
+# it a third time (see `overlay-entry`, which took the same dependency for the
+# same reason).
+exact-reading-list = { path = "../exact-reading-list" }
+
+[lib]
+name = "overlay_call_targets"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3

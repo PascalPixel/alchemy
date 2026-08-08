@@ -22,7 +22,7 @@
  * CORRECTION (name sweep): this file's callee names came from a naive
  * pc-relative decode and were wrong; they are resolved here through the
  * overlay's import-veneer table under the +2 rule
- * (tools/lib/overlay_call_targets.ts) to their main-ROM identities.  The
+ * (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --) to their main-ROM identities.  The
  * earlier note that one callee took "four arguments and later three"
  * was an artifact of that decode -- the phantom name covered two
  * different functions (Func_0808a210 and Func_0808a1b8).  Nothing here

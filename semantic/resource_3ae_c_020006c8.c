@@ -14,7 +14,7 @@
  * 0x020007c2.  The return address is popped into r0, so r0 does not survive
  * and the owner is void.  No frame.
  *
- * Call targets resolved with `tools/lib/overlay_call_targets.ts` (an overlay `bl`
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong).  29 call
  * sites against the inventory's calls=27; the inventory count is documented as
  * systematically low and every `bl` in the span is transcribed below in order,

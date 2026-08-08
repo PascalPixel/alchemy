@@ -14,7 +14,7 @@
  * prologue (`push {r5, r6, lr}`) begins at 0x02000c28.
  *
  * Not found by the structural inventory walk (unindexed): reached only
- * by `bl` (bun tools/lib/overlay_call_targets.ts resource_3af bb8 c28's
+ * by `bl` (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3af bb8 c28's
  * +2 rule).
  *
  * Uncertainty: as for the twin -- callees by shape, Func_08009180's

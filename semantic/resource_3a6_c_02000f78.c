@@ -25,7 +25,7 @@
  * begins at 0x020010c8.
  *
  * All 24 call sites were resolved with
- * `bun tools/lib/overlay_call_targets.ts resource_3a6 0f78 10b8`, and the
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a6 0f78 10b8`, and the
  * per-target histogram is Func_0808a080 x9, Func_02000048 x2, Func_080000f8
  * x2, Func_080090d0 x2, Func_0808a010 x2, Func_0200013c x1, Func_0808a018 x1,
  * Func_0808a020 x1, Func_0808a100 x1, Func_080091c0 x1, Func_080770c8 x1,

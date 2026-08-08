@@ -12,7 +12,7 @@
  * clears before installing it and Func_020001c8 spins on afterwards, so all
  * four owners are one handshake.
  *
- * Six call sites resolved with tools/lib/overlay_call_targets.ts, all import
+ * Six call sites resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --, all import
  * veneers, matching the row's calls=6 exactly:
  *   0808a080 x1, 0808a100 x3, 080091c0 x2.
  * The C below contains those six call expressions and no others; the two

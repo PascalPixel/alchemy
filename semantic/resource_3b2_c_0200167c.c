@@ -9,7 +9,7 @@
  * the single epilogue at 0x02001724 ending `pop {r0} / bx r0` — so the owner is
  * **void**.
  *
- * Call targets resolved with `bun tools/lib/overlay_call_targets.ts resource_3b2
+ * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b2
  * 167c --json` (13 sites, 4 distinct targets, all import veneers):
  *   0x02001682, 0x020016ba, 0x020016de, 0x02001702 -> 0x02003058 Func_080770c0
  *   0x0200169a                                     -> 0x02003028 Func_080091c0

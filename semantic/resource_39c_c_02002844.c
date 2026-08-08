@@ -12,7 +12,7 @@
  * arguments are read before being overwritten, so `void`.
  *
  * Not found by the structural inventory walk (unindexed): reached only by
- * `bl`, resolved with `bun tools/lib/overlay_call_targets.ts`'s `+2` rule.
+ * `bl`, resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`'s `+2` rule.
  *
  * The two pool words this owner needs (the 0x1f channel mask and the
  * 0x05000050 base pointer) are stored INLINE in the function body at

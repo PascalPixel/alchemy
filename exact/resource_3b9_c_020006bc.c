@@ -13,7 +13,7 @@
  * published handler in the bank at 0x020002a0-0x020006bc, for actor 8.
  *
  * PUBLISHED, NOT CALLED. Found by
- * `bun tools/lib/overlay_published.ts resource_3b9`. The bank is described
+ * `cargo run --release --manifest-path tools/overlay-published/Cargo.toml -- resource_3b9`. The bank is described
  * in resource_3b9_c_020002a0.c.
  *
  * THE SKIP-BEAT GATE RUNS THE OPPOSITE WAY ROUND FROM 0x0200039c, and
@@ -41,7 +41,7 @@
  * the 1724-byte published owner that ends this bank's run.
  *
  * All `bl` targets resolved through the import-veneer table under the
- * +2 rule (tools/lib/overlay_call_targets.ts).
+ * +2 rule (cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --).
  *
  * Uncertainty: what Func_0808a070(0, 0) reports is unestablished beyond
  * its role as the skip gate.

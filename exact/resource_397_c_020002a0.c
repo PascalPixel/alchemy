@@ -13,7 +13,7 @@
  * 0x02008610, 0x02008614, 0x03001e40, 0x02008616).  The next owner's
  * prologue is at 0x020002e0, already tracked as
  * assets/code/resource_397_c_020002e0.c.  No calls -- matches
- * `bun tools/lib/overlay_call_targets.ts resource_397 02a0` reporting none.
+ * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_397 02a0` reporting none.
  *
  * The three destinations -- Data_02008610 (s32), Data_02008614 (u16),
  * Data_02008616 (u16) -- are the exact symbols and types already declared in

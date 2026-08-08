@@ -11,7 +11,7 @@
  *
  * The span contains no literal pool -- every instruction from the prologue is
  * reached by the control-flow walk -- and no call sites at all, matching the
- * inventory's calls=0 and `bun tools/lib/overlay_call_targets.ts resource_370`,
+ * inventory's calls=0 and `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_370`,
  * which reports no site in this range.
  *
  * Three phases:

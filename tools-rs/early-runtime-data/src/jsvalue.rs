@@ -99,12 +99,17 @@ pub fn number_to_js_string(value: f64) -> String {
     // against: `s` is the digit string, `k` its length, `n` the decimal
     // exponent plus one.
     let scientific = format!("{value:e}");
-    let (mantissa, exponent) = scientific.split_once('e').expect("`{:e}` always emits an exponent");
+    let (mantissa, exponent) = scientific
+        .split_once('e')
+        .expect("`{:e}` always emits an exponent");
     let digits: String = mantissa.chars().filter(|c| *c != '.').collect();
     let digits = digits.trim_end_matches('0');
     let digits = if digits.is_empty() { "0" } else { digits };
     let k = digits.len() as i32;
-    let n = exponent.parse::<i32>().expect("`{:e}` always emits an integer exponent") + 1;
+    let n = exponent
+        .parse::<i32>()
+        .expect("`{:e}` always emits an integer exponent")
+        + 1;
 
     if k <= n && n <= 21 {
         return format!("{}{}", digits, "0".repeat((n - k) as usize));
@@ -128,7 +133,11 @@ pub fn number_to_js_string(value: f64) -> String {
 pub fn normalize_numbers(value: Value) -> Value {
     match value {
         Value::Number(number) => match number.as_f64() {
-            Some(raw) if number.is_f64() && raw.fract() == 0.0 && raw.abs() <= 9.007_199_254_740_992e15 => {
+            Some(raw)
+                if number.is_f64()
+                    && raw.fract() == 0.0
+                    && raw.abs() <= 9.007_199_254_740_992e15 =>
+            {
                 Value::from(raw as i64)
             }
             _ => Value::Number(number),
@@ -156,7 +165,10 @@ mod tests {
         assert_eq!(to_js_string(get(&object, "present")), "ok");
         assert_eq!(to_js_string(Some(&Value::Null)), "null");
         assert_eq!(to_js_string(Some(&serde_json::json!([1, 2]))), "1,2");
-        assert_eq!(to_js_string(Some(&serde_json::json!({}))), "[object Object]");
+        assert_eq!(
+            to_js_string(Some(&serde_json::json!({}))),
+            "[object Object]"
+        );
     }
 
     #[test]
@@ -176,8 +188,12 @@ mod tests {
 
     #[test]
     fn integral_floats_fold_to_integers() {
-        let parsed: Value = serde_json::from_str("{\"a\": 128.0, \"b\": [1.0, 2.5]}").expect("valid JSON");
+        let parsed: Value =
+            serde_json::from_str("{\"a\": 128.0, \"b\": [1.0, 2.5]}").expect("valid JSON");
         let folded = normalize_numbers(parsed);
-        assert_eq!(serde_json::to_string(&folded).expect("serialises"), "{\"a\":128,\"b\":[1,2.5]}");
+        assert_eq!(
+            serde_json::to_string(&folded).expect("serialises"),
+            "{\"a\":128,\"b\":[1,2.5]}"
+        );
     }
 }

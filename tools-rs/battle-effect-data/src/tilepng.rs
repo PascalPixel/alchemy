@@ -48,7 +48,10 @@ pub fn tile_png(
     for tile in 0..count {
         let source = &raw[tile * unit..(tile + 1) * unit];
         let indices: Vec<u8> = if four {
-            source.iter().flat_map(|byte| [byte & 15, byte >> 4]).collect()
+            source
+                .iter()
+                .flat_map(|byte| [byte & 15, byte >> 4])
+                .collect()
         } else {
             source.to_vec()
         };
@@ -73,7 +76,9 @@ pub fn tile_png(
     }
     let colors = if four { 16usize } else { 256 };
     let default_palette: Vec<Rgb> = if four {
-        (0..16u8).map(|index| [index * 16, index * 16, index * 16]).collect()
+        (0..16u8)
+            .map(|index| [index * 16, index * 16, index * 16])
+            .collect()
     } else {
         (0..256u32)
             .map(|index| [((index & 31) * 8) as u8, ((index >> 5) * 8) as u8, 0])
@@ -116,9 +121,15 @@ mod tests {
     #[test]
     fn tiles_round_trip_through_the_png_reader() {
         for (bpp, size, columns) in [(4.0f64, 32 * 7usize, 7usize), (8.0, 64 * 4, 4)] {
-            let raw: Vec<u8> = (0..size).map(|index| ((index * 37 + 11) & 255) as u8).collect();
+            let raw: Vec<u8> = (0..size)
+                .map(|index| ((index * 37 + 11) & 255) as u8)
+                .collect();
             let (image, report) = tile_png(&raw, bpp, columns, None).unwrap();
-            assert_eq!(gba_graphics(&image, bpp).unwrap().0, raw, "{bpp}bpp round trip");
+            assert_eq!(
+                gba_graphics(&image, bpp).unwrap().0,
+                raw,
+                "{bpp}bpp round trip"
+            );
             assert_eq!(report.get("columns"), Some(columns as f64));
         }
     }

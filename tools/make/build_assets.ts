@@ -31,7 +31,6 @@ import { build_simple_resource } from "./simple_resources.ts";
 import { build_character_catalog } from "./character_catalog.ts";
 import { build_resource_5 } from "./resource_5.ts";
 import { build_localization_font } from "./localization_font.ts";
-import { build_battle_effect_data } from "./battle_effect_data.ts";
 import {
   build_sentou_gamen_data,
   SENTOU_GAMEN_ADDRESS,
@@ -72,7 +71,6 @@ import {
   STAFF_ROLL_SIZE,
 } from "./staff_roll.ts";
 import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./gba_header.ts";
-import { build_early_runtime_data } from "./early_runtime_data.ts";
 import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
 import { buildExecutableGapData } from "./executable_gap_sources.ts";
 
@@ -800,14 +798,11 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-early-runtime-data") {
     const sourceName = String(entry.source);
-    const built = build_early_runtime_data(sourcePath(sourceName));
     const address = number(entry.address);
-    const region = built.regions.get(address);
-    if (region === undefined) throw new Error("early-runtime asset address is not a produced region");
-    return [region, [sourceName, `${sourceName.replace(/index\.json$/, "")}display.4bpp.png`], {
-      source_bytes: built.source_bytes,
-      region_address: `0x${address.toString(16).padStart(8, "0")}`,
-    }];
+    const [region, report] = nativeCommandWithReport("early-runtime-data", [
+      "build-region-stdout", sourcePath(sourceName), `0x${address.toString(16)}`,
+    ]);
+    return [region, [sourceName, `${sourceName.replace(/index\.json$/, "")}display.4bpp.png`], report];
   }
   if (kind === "golden-sun-late-runtime-residual") {
     const sourceName = String(entry.source);
@@ -1141,7 +1136,9 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
       ...document.palette_graphics.map((item: Json) => `assets/${flatAssetName(String(item.source))}`),
     ];
     nested.forEach(sourcePath);
-    const built = build_battle_effect_data(document, join(ROOT, "assets"));
+    const [built] = nativeCommandWithReport("battle-effect-data", [
+      "build-stdout", source, "--root", join(ROOT, "assets"),
+    ]);
     return [built, [String(entry.source), ...nested], {
       graphics: document.direct_graphics.length + 1 + document.palette_graphics.length,
       weighted_records: document.weighted_records.records.length,

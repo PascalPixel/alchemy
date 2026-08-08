@@ -13,7 +13,13 @@ struct Scratch(String);
 
 impl Scratch {
     fn new(label: &str) -> Scratch {
-        Scratch(mkdtemp(&nodepath::join(&[&tmpdir(), &format!("early-runtime-test-{label}-")])).expect("temp dir"))
+        Scratch(
+            mkdtemp(&nodepath::join(&[
+                &tmpdir(),
+                &format!("early-runtime-test-{label}-"),
+            ]))
+            .expect("temp dir"),
+        )
     }
     fn at(&self, name: &str) -> String {
         nodepath::join(&[&self.0, name])
@@ -31,7 +37,10 @@ fn tracked_catalog_is_canonical_and_covers_both_regions() {
     let catalog = catalog();
     assert_eq!(EARLY_RUNTIME_SOURCE_BYTES, 6184);
     let (early, residual) = canonical_layout(&catalog).expect("canonical layout");
-    assert_eq!(as_str(get(early, "claim")), Some("pending_private_verification"));
+    assert_eq!(
+        as_str(get(early, "claim")),
+        Some("pending_private_verification")
+    );
     assert_eq!(as_str(get(residual, "claim")), Some("unresolved"));
 }
 
@@ -85,7 +94,10 @@ fn display_tiles_survive_the_png_round_trip() {
 fn writes_stay_inside_private_output_roots() {
     assert!(private_output(&nodepath::join(&[&repo_root(), "out/x"])));
     assert!(private_output(&nodepath::join(&[&tmpdir(), "x"])));
-    assert!(!private_output(&nodepath::join(&[&repo_root(), "assets/data"])));
+    assert!(!private_output(&nodepath::join(&[
+        &repo_root(),
+        "assets/data"
+    ])));
     assert!(!private_output("/"));
 }
 
@@ -127,7 +139,10 @@ fn typed_values_are_range_checked_and_little_endian() {
     assert!(encode_typed(&[serde_json::json!(1.0)], "u8").is_ok());
     assert!(encode_typed(&[serde_json::json!(1.5)], "u8").is_err());
     assert!(encode_typed(&[Value::from("1")], "u8").is_err());
-    assert_eq!(decode_typed(&[0xfe, 0xff], "s16le").expect("decode"), vec![-2]);
+    assert_eq!(
+        decode_typed(&[0xfe, 0xff], "s16le").expect("decode"),
+        vec![-2]
+    );
     assert!(decode_typed(&[0x00], "s16le").is_err());
 }
 
@@ -162,10 +177,16 @@ fn missing_identifier_fields_are_tested_as_the_string_undefined() {
 fn residual_spans_prefer_a_uniform_fill_and_round_trip() {
     let filled = residual_source(&[0xff; 8], "span").expect("uniform");
     assert_eq!(as_str(get(&filled, "kind")), Some("uniform_fill"));
-    assert_eq!(build_residual(Some(&filled), 8, "span").expect("build"), vec![0xff; 8]);
+    assert_eq!(
+        build_residual(Some(&filled), 8, "span").expect("build"),
+        vec![0xff; 8]
+    );
     let mixed = residual_source(&[1, 2, 3], "span").expect("bytes");
     assert_eq!(as_str(get(&mixed, "kind")), Some("byte_values"));
-    assert_eq!(build_residual(Some(&mixed), 3, "span").expect("build"), vec![1, 2, 3]);
+    assert_eq!(
+        build_residual(Some(&mixed), 3, "span").expect("build"),
+        vec![1, 2, 3]
+    );
     // 0x7f is not one of the two supported fills.
     let unsupported = serde_json::json!({ "kind": "uniform_fill", "value": "0x7f" });
     assert!(build_residual(Some(&unsupported), 8, "span").is_err());
@@ -194,7 +215,10 @@ fn export_refuses_a_destination_containing_its_own_rom() {
     write_file(&rom_path, &rom).expect("write ROM");
     let error = export_early_runtime_data(&rom, &package, Some(&rom_path), &catalog_path)
         .expect_err("must refuse");
-    assert_eq!(error.0, "early-runtime export directory must not contain its input ROM");
+    assert_eq!(
+        error.0,
+        "early-runtime export directory must not contain its input ROM"
+    );
 }
 
 #[test]

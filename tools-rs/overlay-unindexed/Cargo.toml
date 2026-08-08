@@ -1,0 +1,29 @@
+# Bare `[workspace]`: this crate is its own workspace, so it builds without
+# touching `tools-rs/Cargo.toml` and without racing a sibling agent's edits
+# there. That also means `version.workspace` / `edition.workspace` cannot
+# resolve, so both keys are literal.
+[workspace]
+
+[package]
+name = "overlay-unindexed"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Sibling crates, not third-party dependencies: the already-landed Rust
+# halves of the TypeScript modules `overlay_unindexed.ts` imports.
+#   ../lib/overlay_call_targets.ts -> overlayImage, targetOffset
+overlay-call-targets = { path = "../overlay-call-targets" }
+#   out/decomp/overlays.json reader, reused rather than reinvented
+exact-reading-list = { path = "../exact-reading-list" }
+
+[lib]
+name = "overlay_unindexed"
+path = "src/lib.rs"
+
+[[bin]]
+name = "overlay-unindexed"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3

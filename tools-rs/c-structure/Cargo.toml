@@ -8,3 +8,7 @@ edition = "2021"
 [[bin]]
 name = "c-structure"
 path = "src/main.rs"
+
+[dependencies]
+tree-sitter = "0.25"
+tree-sitter-c = "0.23"

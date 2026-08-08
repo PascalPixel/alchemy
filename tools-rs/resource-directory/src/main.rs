@@ -11,6 +11,7 @@
 // exit codes are identical.
 
 use std::fs;
+use std::io::Write;
 use std::process::ExitCode;
 
 use resource_directory::{
@@ -33,8 +34,7 @@ fn positional(args: &[String]) -> Vec<String> {
     args.iter()
         .enumerate()
         .filter(|(index, item)| {
-            !item.starts_with('-')
-                && !(*index > 0 && VALUED.contains(&args[index - 1].as_str()))
+            !item.starts_with('-') && !(*index > 0 && VALUED.contains(&args[index - 1].as_str()))
         })
         .map(|(_, item)| item.clone())
         .collect()
@@ -59,6 +59,15 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
             return Ok(());
         }
         args.retain(|item| item != "--self-test");
+    }
+    if let [command, source] = args.as_slice() {
+        if command == "build-stdout" {
+            let result = build_resource_directory(&read_json(source)?)?;
+            std::io::stdout()
+                .write_all(&result)
+                .map_err(|error| error.to_string())?;
+            return Ok(());
+        }
     }
     let words = positional(&args);
     let command = words.first().cloned();
@@ -189,7 +198,10 @@ mod tests {
             integer_option(Some(hex(DIRECTORY_ADDRESS)), "x").expect("ok"),
             DIRECTORY_ADDRESS
         );
-        assert_eq!(integer_option(Some("1000".to_string()), "x").expect("ok"), 1000.0);
+        assert_eq!(
+            integer_option(Some("1000".to_string()), "x").expect("ok"),
+            1000.0
+        );
         assert_eq!(
             integer_option(None, "resource directory address").unwrap_err(),
             "resource directory address must be an integer"

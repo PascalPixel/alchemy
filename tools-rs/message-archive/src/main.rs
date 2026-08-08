@@ -22,6 +22,7 @@
 //! astral character is one out-of-range token in both implementations.
 
 use std::collections::HashMap;
+use std::io::Write;
 use std::path::Path;
 
 use serde_json::{Map, Number, Value};
@@ -95,7 +96,11 @@ struct BitReader<'a> {
 
 impl<'a> BitReader<'a> {
     fn new(source: &'a [u8], byte: usize, limit: usize) -> Self {
-        BitReader { source, position: byte * 8, limit }
+        BitReader {
+            source,
+            position: byte * 8,
+            limit,
+        }
     }
 
     fn whole(source: &'a [u8], byte: usize) -> Self {
@@ -137,13 +142,22 @@ fn js_number_from_string(text: &str) -> Option<f64> {
     if trimmed.is_empty() {
         return Some(0.0);
     }
-    if let Some(rest) = trimmed.strip_prefix("0x").or_else(|| trimmed.strip_prefix("0X")) {
+    if let Some(rest) = trimmed
+        .strip_prefix("0x")
+        .or_else(|| trimmed.strip_prefix("0X"))
+    {
         return u128::from_str_radix(rest, 16).ok().map(|v| v as f64);
     }
-    if let Some(rest) = trimmed.strip_prefix("0o").or_else(|| trimmed.strip_prefix("0O")) {
+    if let Some(rest) = trimmed
+        .strip_prefix("0o")
+        .or_else(|| trimmed.strip_prefix("0O"))
+    {
         return u128::from_str_radix(rest, 8).ok().map(|v| v as f64);
     }
-    if let Some(rest) = trimmed.strip_prefix("0b").or_else(|| trimmed.strip_prefix("0B")) {
+    if let Some(rest) = trimmed
+        .strip_prefix("0b")
+        .or_else(|| trimmed.strip_prefix("0B"))
+    {
         return u128::from_str_radix(rest, 2).ok().map(|v| v as f64);
     }
     match trimmed {
@@ -152,7 +166,10 @@ fn js_number_from_string(text: &str) -> Option<f64> {
         _ => {}
     }
     // Rust accepts "inf"/"nan"/"NaN" spellings that JS does not.
-    if trimmed.chars().any(|c| c.is_ascii_alphabetic() && c != 'e' && c != 'E') {
+    if trimmed
+        .chars()
+        .any(|c| c.is_ascii_alphabetic() && c != 'e' && c != 'E')
+    {
         return None;
     }
     trimmed.parse::<f64>().ok()
@@ -357,7 +374,10 @@ fn compile_context(source: &ContextSource) -> Res<CompiledContext> {
     if state.position != bits.len() || state.leaf != source.leaves.len() {
         return Err(format!("context {} tree and leaves differ", source.id));
     }
-    Ok(CompiledContext { root, paths: state.paths })
+    Ok(CompiledContext {
+        root,
+        paths: state.paths,
+    })
 }
 
 fn compile_contexts(source: &[ContextSource]) -> Res<HashMap<usize, CompiledContext>> {
@@ -416,7 +436,11 @@ fn parse_document(value: &Value) -> Res<&Vec<Value>> {
         _ => return Err("message archive collections differ".into()),
     };
     for (index, bank) in banks.iter().enumerate() {
-        let expected = if index + 1 == BANK_COUNT { LAST_BANK_SIZE } else { BANK_SIZE };
+        let expected = if index + 1 == BANK_COUNT {
+            LAST_BANK_SIZE
+        } else {
+            BANK_SIZE
+        };
         match bank {
             Value::Array(items) if items.len() == expected => {}
             _ => return Err(format!("message bank {index} has the wrong size")),
@@ -493,8 +517,9 @@ fn tokens_from_message(source: &Value) -> Res<Option<Vec<u32>>> {
             Value::Object(map) => Some(map),
             _ => None,
         };
-        let is_control =
-            object.map(|map| map.len() == 1 && map.contains_key("control")).unwrap_or(false);
+        let is_control = object
+            .map(|map| map.len() == 1 && map.contains_key("control"))
+            .unwrap_or(false);
         if !is_control {
             let map = match object {
                 Some(map) => map,
@@ -518,9 +543,8 @@ fn tokens_from_message(source: &Value) -> Res<Option<Vec<u32>>> {
                     return Err(format!("message command {name} requires an argument"));
                 }
                 tokens.push(opcode);
-                tokens.push(
-                    bounded(map.get("argument"), 0, 122, "message command argument")? as u32
-                );
+                tokens
+                    .push(bounded(map.get("argument"), 0, 122, "message command argument")? as u32);
             }
             continue;
         }
@@ -540,7 +564,9 @@ fn message_from_tokens(tokens: &[u32]) -> Res<Value> {
             text.push(char::from_u32(token).expect("ASCII token"));
         } else {
             if token == 0 || token > 31 {
-                return Err(format!("message symbol {token} has no source representation"));
+                return Err(format!(
+                    "message symbol {token} has no source representation"
+                ));
             }
             if !text.is_empty() {
                 atoms.push(Value::String(std::mem::take(&mut text)));
@@ -563,7 +589,10 @@ fn message_from_tokens(tokens: &[u32]) -> Res<Value> {
                     index += 1;
                     let mut map = Map::new();
                     map.insert("command".into(), Value::String(name.into()));
-                    map.insert("argument".into(), Value::Number(Number::from(tokens[index])));
+                    map.insert(
+                        "argument".into(),
+                        Value::Number(Number::from(tokens[index])),
+                    );
                     atoms.push(Value::Object(map));
                 }
             }
@@ -589,13 +618,16 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
         count: u64,
         order: usize,
     }
-    let mut transitions: Vec<(Vec<Transition>, HashMap<u32, usize>)> =
-        (0..CONTEXT_COUNT).map(|_| (Vec::new(), HashMap::new())).collect();
+    let mut transitions: Vec<(Vec<Transition>, HashMap<u32, usize>)> = (0..CONTEXT_COUNT)
+        .map(|_| (Vec::new(), HashMap::new()))
+        .collect();
 
     for bank in banks {
         let messages = bank.as_array().expect("bank is an array");
         for message in messages {
-            let Some(tokens) = tokens_from_message(message)? else { continue };
+            let Some(tokens) = tokens_from_message(message)? else {
+                continue;
+            };
             let mut previous: u32 = 0;
             for symbol in tokens.iter().copied().chain(std::iter::once(0u32)) {
                 let Some(context) = transitions.get_mut(previous as usize) else {
@@ -606,7 +638,11 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
                     None => {
                         let order = context.0.len();
                         context.1.insert(symbol, order);
-                        context.0.push(Transition { symbol, count: 1, order });
+                        context.0.push(Transition {
+                            symbol,
+                            count: 1,
+                            order,
+                        });
                     }
                 }
                 previous = symbol;
@@ -637,7 +673,9 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
             // The comparator is a total order (orders are unique), so the sort's
             // stability does not matter.
             nodes.sort_by(|left, right| {
-                left.count.cmp(&right.count).then(left.order.cmp(&right.order))
+                left.count
+                    .cmp(&right.count)
+                    .then(left.order.cmp(&right.order))
             });
             let left = nodes.remove(0);
             let right = nodes.remove(0);
@@ -716,9 +754,8 @@ pub fn build_message_archive(value: &Value) -> Res<Vec<u8>> {
                 None => Vec::new(),
                 Some(tokens) => encode_message(tokens, &contexts)?,
             };
-            let allowed = bank + 1 == BANK_COUNT
-                && index + 1 == messages.len()
-                && message.is_null();
+            let allowed =
+                bank + 1 == BANK_COUNT && index + 1 == messages.len() && message.is_null();
             if encoded.is_empty() && !allowed {
                 return Err(format!(
                     "message {} is unexpectedly null",
@@ -761,11 +798,7 @@ fn read_tree(source: &[u8], boundary: usize) -> Res<ReadTree> {
     let mut bits = BitReader::whole(source, boundary);
     let mut tree = String::new();
     let mut leaf_count = 0usize;
-    fn parse(
-        bits: &mut BitReader,
-        tree: &mut String,
-        leaf_count: &mut usize,
-    ) -> Res<()> {
+    fn parse(bits: &mut BitReader, tree: &mut String, leaf_count: &mut usize) -> Res<()> {
         let bit = bits.read()?;
         tree.push(if bit == 0 { '0' } else { '1' });
         if bit != 0 {
@@ -814,7 +847,11 @@ fn export_model(source: &[u8]) -> Res<Vec<ContextSource>> {
         if packed != source[cursor..boundary] {
             return Err(format!("context {id} alphabet differs"));
         }
-        contexts.push(ContextSource { id, tree: decoded.tree, leaves: decoded.leaves });
+        contexts.push(ContextSource {
+            id,
+            tree: decoded.tree,
+            leaves: decoded.leaves,
+        });
         cursor = decoded.end;
     }
     if halfword(source, offsets + CONTEXT_COUNT * 2)? != 0 || cursor != offsets {
@@ -840,7 +877,9 @@ fn decode_message(
         while let TreeNode::Branch(left, right) = node {
             node = if bits.read()? == 0 { left } else { right };
         }
-        let TreeNode::Leaf(symbol) = node else { unreachable!() };
+        let TreeNode::Leaf(symbol) = node else {
+            unreachable!()
+        };
         if *symbol == 0 {
             while bits.position < bits.limit {
                 if bits.read()? != 0 {
@@ -863,7 +902,11 @@ pub fn export_message_archive(source: &[u8]) -> Res<Value> {
     for bank in 0..BANK_COUNT {
         let payload = rom_offset(pointer(source, directory + bank * 8)?, source, false)?;
         let lengths = rom_offset(pointer(source, directory + bank * 8 + 4)?, source, false)?;
-        let count = if bank + 1 == BANK_COUNT { LAST_BANK_SIZE } else { BANK_SIZE };
+        let count = if bank + 1 == BANK_COUNT {
+            LAST_BANK_SIZE
+        } else {
+            BANK_SIZE
+        };
         let mut messages: Vec<Value> = Vec::new();
         let mut byte = payload;
         let mut length = lengths;
@@ -902,10 +945,19 @@ pub fn export_message_archive(source: &[u8]) -> Res<Value> {
 
     let mut skeleton = Map::new();
     skeleton.insert("format".into(), Value::Number(Number::from(1u32)));
-    skeleton.insert("kind".into(), Value::String("golden-sun-message-archive".into()));
+    skeleton.insert(
+        "kind".into(),
+        Value::String("golden-sun-message-archive".into()),
+    );
     skeleton.insert("address".into(), Value::String(hex8(ARCHIVE_ADDRESS)));
-    skeleton.insert("size".into(), Value::String(hex8(ARCHIVE_END - ARCHIVE_ADDRESS)));
-    skeleton.insert("bank_size".into(), Value::Number(Number::from(BANK_SIZE as u64)));
+    skeleton.insert(
+        "size".into(),
+        Value::String(hex8(ARCHIVE_END - ARCHIVE_ADDRESS)),
+    );
+    skeleton.insert(
+        "bank_size".into(),
+        Value::Number(Number::from(BANK_SIZE as u64)),
+    );
     skeleton.insert("banks".into(), Value::Array(banks));
     let skeleton = Value::Object(skeleton);
 
@@ -923,26 +975,44 @@ pub fn format_message_archive(source: &Value) -> String {
         "{".into(),
         "  \"format\": 1,".into(),
         "  \"kind\": \"golden-sun-message-archive\",".into(),
-        format!("  \"address\": {},", serde_json::to_string(&get("address")).expect("json")),
-        format!("  \"size\": {},", serde_json::to_string(&get("size")).expect("json")),
+        format!(
+            "  \"address\": {},",
+            serde_json::to_string(&get("address")).expect("json")
+        ),
+        format!(
+            "  \"size\": {},",
+            serde_json::to_string(&get("size")).expect("json")
+        ),
         format!(
             "  \"bank_size\": {},",
             serde_json::to_string(&get("bank_size")).expect("json")
         ),
         "  \"banks\": [".into(),
     ];
-    let banks = source.get("banks").and_then(Value::as_array).cloned().unwrap_or_default();
+    let banks = source
+        .get("banks")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
     for (bank_index, bank) in banks.iter().enumerate() {
         lines.push("    [".into());
         let messages = bank.as_array().cloned().unwrap_or_default();
         for (message_index, message) in messages.iter().enumerate() {
-            let comma = if message_index + 1 == messages.len() { "" } else { "," };
+            let comma = if message_index + 1 == messages.len() {
+                ""
+            } else {
+                ","
+            };
             lines.push(format!(
                 "      {}{comma}",
                 serde_json::to_string(message).expect("json")
             ));
         }
-        let comma = if bank_index + 1 == banks.len() { "" } else { "," };
+        let comma = if bank_index + 1 == banks.len() {
+            ""
+        } else {
+            ","
+        };
         lines.push(format!("    ]{comma}"));
     }
     lines.push("  ]".into());
@@ -969,6 +1039,15 @@ fn run(args: &[String]) -> Res<()> {
         self_test()?;
         println!("self-test=ok");
         return Ok(());
+    }
+    if let [command, source] = args {
+        if command == "build-stdout" {
+            let built = build_message_archive(&read_json(source)?)?;
+            std::io::stdout()
+                .write_all(&built)
+                .map_err(|error| error.to_string())?;
+            return Ok(());
+        }
     }
     let command = args.first().map(String::as_str);
     let input = args.get(1).cloned();
@@ -1072,7 +1151,11 @@ fn main() {
 /// Repository root, for tests that read the real tree.
 #[allow(dead_code)]
 fn repository_root() -> &'static Path {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -1134,7 +1217,12 @@ mod tests {
     #[test]
     fn tree_errors() {
         let bad = |tree: &str, leaves: Vec<u32>| {
-            compile_context(&ContextSource { id: 7, tree: tree.into(), leaves }).unwrap_err()
+            compile_context(&ContextSource {
+                id: 7,
+                tree: tree.into(),
+                leaves,
+            })
+            .unwrap_err()
         };
         assert_eq!(bad("", vec![1]), "context 7 has an invalid tree");
         assert_eq!(bad("0x1", vec![1]), "context 7 has an invalid tree");
@@ -1183,7 +1271,10 @@ mod tests {
             serde_json::to_string(&message).unwrap(),
             r#"["A",{"command":"line_break"},{"command":"text_color","argument":4},"B"]"#
         );
-        assert_eq!(tokens_from_message(&message).unwrap(), Some(vec![65, 3, 8, 4, 66]));
+        assert_eq!(
+            tokens_from_message(&message).unwrap(),
+            Some(vec![65, 3, 8, 4, 66])
+        );
     }
 
     #[test]
@@ -1195,7 +1286,10 @@ mod tests {
 
     #[test]
     fn empty_token_list_is_the_empty_string() {
-        assert_eq!(message_from_tokens(&[]).unwrap(), Value::String(String::new()));
+        assert_eq!(
+            message_from_tokens(&[]).unwrap(),
+            Value::String(String::new())
+        );
         assert_eq!(
             tokens_from_message(&Value::String(String::new())).unwrap(),
             Some(Vec::new())
@@ -1240,18 +1334,23 @@ mod tests {
 
     #[test]
     fn tokens_reject_bad_atoms() {
-        let bad = |json: &str| {
-            tokens_from_message(&serde_json::from_str(json).unwrap()).unwrap_err()
-        };
+        let bad =
+            |json: &str| tokens_from_message(&serde_json::from_str(json).unwrap()).unwrap_err();
         assert_eq!(bad("5"), "message must be text, atoms, or null");
         assert_eq!(bad("true"), "message must be text, atoms, or null");
         assert_eq!(bad("{}"), "message must be text, atoms, or null");
         assert_eq!(bad("[5]"), "message command atom is invalid");
         assert_eq!(bad("[[1]]"), "message command atom is invalid");
-        assert_eq!(bad(r#"[{"control":3,"extra":1}]"#), "message command atom is invalid");
+        assert_eq!(
+            bad(r#"[{"control":3,"extra":1}]"#),
+            "message command atom is invalid"
+        );
         assert_eq!(bad(r#"[{"nope":1}]"#), "message command atom is invalid");
         assert_eq!(bad(r#"[{"command":7}]"#), "message command atom is invalid");
-        assert_eq!(bad(r#"[{"command":"nope"}]"#), "unknown message command nope");
+        assert_eq!(
+            bad(r#"[{"command":"nope"}]"#),
+            "unknown message command nope"
+        );
         assert_eq!(
             bad(r#"[{"command":"line_break","argument":1}]"#),
             "message command line_break takes no argument"
@@ -1268,13 +1367,34 @@ mod tests {
             bad(r#"[{"command":"text_color","argument":123}]"#),
             "message command argument is outside its range"
         );
-        assert_eq!(bad(r#"[{"control":0}]"#), "message control is outside its range");
-        assert_eq!(bad(r#"[{"control":32}]"#), "message control is outside its range");
-        assert_eq!(bad(r#"[{"control":1.5}]"#), "message control must be an integer");
-        assert_eq!(bad(r#"["\u00e9"]"#), "message text is outside the recovered ASCII range");
-        assert_eq!(bad(r#"["\u0007"]"#), "message text is outside the recovered ASCII range");
-        assert_eq!(bad(r#"["{"]"#), "message text is outside the recovered ASCII range");
-        assert_eq!(bad(r#"["\ud83d\ude00"]"#), "message text is outside the recovered ASCII range");
+        assert_eq!(
+            bad(r#"[{"control":0}]"#),
+            "message control is outside its range"
+        );
+        assert_eq!(
+            bad(r#"[{"control":32}]"#),
+            "message control is outside its range"
+        );
+        assert_eq!(
+            bad(r#"[{"control":1.5}]"#),
+            "message control must be an integer"
+        );
+        assert_eq!(
+            bad(r#"["\u00e9"]"#),
+            "message text is outside the recovered ASCII range"
+        );
+        assert_eq!(
+            bad(r#"["\u0007"]"#),
+            "message text is outside the recovered ASCII range"
+        );
+        assert_eq!(
+            bad(r#"["{"]"#),
+            "message text is outside the recovered ASCII range"
+        );
+        assert_eq!(
+            bad(r#"["\ud83d\ude00"]"#),
+            "message text is outside the recovered ASCII range"
+        );
     }
 
     /// `Number.isSafeInteger` accepts integral floats, and `integer()` runs
@@ -1282,7 +1402,9 @@ mod tests {
     #[test]
     fn integer_coercion_matches_javascript() {
         let ok = |json: &str| {
-            tokens_from_message(&serde_json::from_str(json).unwrap()).unwrap().unwrap()
+            tokens_from_message(&serde_json::from_str(json).unwrap())
+                .unwrap()
+                .unwrap()
         };
         assert_eq!(ok(r#"[{"control":3.0}]"#), vec![3]);
         assert_eq!(ok(r#"[{"control":"3"}]"#), vec![3]);
@@ -1290,10 +1412,22 @@ mod tests {
         assert_eq!(ok(r#"[{"control":"0x1f"}]"#), vec![31]);
         assert_eq!(ok(r#"[{"control":"3e0"}]"#), vec![3]);
         assert_eq!(integer(Some(&Value::String("".into())), "x").unwrap(), 0);
-        assert_eq!(integer(Some(&Value::String("nope".into())), "x").unwrap_err(), "x must be an integer");
-        assert_eq!(integer(Some(&Value::String("Infinity".into())), "x").unwrap_err(), "x must be an integer");
-        assert_eq!(integer(Some(&Value::String("NaN".into())), "x").unwrap_err(), "x must be an integer");
-        assert_eq!(integer(Some(&Value::Bool(true)), "x").unwrap_err(), "x must be an integer");
+        assert_eq!(
+            integer(Some(&Value::String("nope".into())), "x").unwrap_err(),
+            "x must be an integer"
+        );
+        assert_eq!(
+            integer(Some(&Value::String("Infinity".into())), "x").unwrap_err(),
+            "x must be an integer"
+        );
+        assert_eq!(
+            integer(Some(&Value::String("NaN".into())), "x").unwrap_err(),
+            "x must be an integer"
+        );
+        assert_eq!(
+            integer(Some(&Value::Bool(true)), "x").unwrap_err(),
+            "x must be an integer"
+        );
         assert_eq!(integer(None, "x").unwrap_err(), "x must be an integer");
         assert_eq!(
             integer(Some(&serde_json::json!(9007199254740992u64)), "x").unwrap_err(),
@@ -1329,14 +1463,20 @@ mod tests {
         );
         let mut wrong = base.clone();
         wrong["size"] = Value::String("0x3c3a4".into());
-        assert_eq!(parse_document(&wrong).unwrap_err(), "message archive layout differs");
+        assert_eq!(
+            parse_document(&wrong).unwrap_err(),
+            "message archive layout differs"
+        );
         assert_eq!(
             parse_document(&base).unwrap_err(),
             "message archive collections differ"
         );
         let mut sized = base.clone();
         sized["banks"] = Value::Array(vec![Value::Array(Vec::new()); BANK_COUNT]);
-        assert_eq!(parse_document(&sized).unwrap_err(), "message bank 0 has the wrong size");
+        assert_eq!(
+            parse_document(&sized).unwrap_err(),
+            "message bank 0 has the wrong size"
+        );
         // `1.0` is `1` in JSON's number model, and must be accepted.
         let mut floaty = base.clone();
         floaty["format"] = serde_json::json!(1.0);
@@ -1391,7 +1531,9 @@ mod tests {
     fn real_source_matches_the_rom() {
         let Some(rom) = rom() else { return };
         let path = repository_root().join("assets/text/message_archive.json");
-        let Ok(text) = std::fs::read(&path) else { return };
+        let Ok(text) = std::fs::read(&path) else {
+            return;
+        };
         let value: Value = serde_json::from_slice(&text).expect("json");
         let built = build_message_archive(&value).expect("build");
         let start = (ARCHIVE_ADDRESS - ROM_BASE) as usize;

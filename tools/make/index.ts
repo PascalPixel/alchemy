@@ -24,7 +24,11 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   build_full: "tools-rs/build-full/target/release/build-full",
   build_rom: "tools-rs/build-rom/target/release/build-rom",
   build_semantic: "tools-rs/build-semantic/target/release/build-semantic",
+  byte_henkan: "tools-rs/byte-henkan/target/release/byte-henkan",
+  localization_tables: "tools-rs/localization-tables/target/release/localization-tables",
+  message_archive: "tools-rs/message-archive/target/release/message_archive",
   pairtable: "tools-rs/target/release/pairtable",
+  resource_directory: "tools-rs/resource-directory/target/release/resource-directory",
   wordstream: "tools-rs/target/release/wordstream",
 };
 

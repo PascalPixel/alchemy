@@ -56,20 +56,14 @@ pub type Res<T> = Result<T, String>;
 fn is_js_whitespace(c: char) -> bool {
     matches!(
         c,
-        '\t' | '\n'
-            | '\u{0b}'
-            | '\u{0c}'
-            | '\r'
-            | ' '
-            | '\u{a0}'
-            | '\u{1680}'
-            | '\u{2000}'..='\u{200a}'
-            | '\u{2028}'
-            | '\u{2029}'
-            | '\u{202f}'
-            | '\u{205f}'
-            | '\u{3000}'
-            | '\u{feff}'
+        '\t' | '\n' | '\u{0b}' | '\u{0c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'
+            ..='\u{200a}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202f}'
+                | '\u{205f}'
+                | '\u{3000}'
+                | '\u{feff}'
     )
 }
 
@@ -315,7 +309,8 @@ pub fn document(value: &Value) -> Res<(f64, f64)> {
     let Some(source) = value.as_object() else {
         return Err("resource directory source must be an object".to_string());
     };
-    let format_ok = matches!(source.get("format"), Some(Value::Number(n)) if n.as_f64() == Some(1.0));
+    let format_ok =
+        matches!(source.get("format"), Some(Value::Number(n)) if n.as_f64() == Some(1.0));
     let kind_ok = matches!(source.get("kind"), Some(Value::String(k)) if k == "golden-sun-resource-directory");
     if !format_ok || !kind_ok {
         return Err("unsupported resource directory source".to_string());
@@ -673,7 +668,10 @@ mod tests {
             "resource directory source must be an object"
         );
         assert_eq!(
-            document(&parse(r#"{"format":2,"kind":"golden-sun-resource-directory"}"#)).unwrap_err(),
+            document(&parse(
+                r#"{"format":2,"kind":"golden-sun-resource-directory"}"#
+            ))
+            .unwrap_err(),
             "unsupported resource directory source"
         );
         assert_eq!(

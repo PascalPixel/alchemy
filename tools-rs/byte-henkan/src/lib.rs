@@ -48,7 +48,11 @@ pub struct SourceDocument {
 
 /// Mirrors the TypeScript `exactKeys`: the value must be a plain object whose
 /// key set is exactly `keys` (no extras, no omissions).
-fn exact_keys<'a>(value: &'a Value, keys: &[&str], label: &str) -> Result<&'a serde_json::Map<String, Value>, String> {
+fn exact_keys<'a>(
+    value: &'a Value,
+    keys: &[&str],
+    label: &str,
+) -> Result<&'a serde_json::Map<String, Value>, String> {
     let object = match value {
         Value::Object(map) => map,
         _ => return Err(format!("{label} must be an object")),
@@ -68,7 +72,8 @@ fn exact_keys<'a>(value: &'a Value, keys: &[&str], label: &str) -> Result<&'a se
 fn as_js_safe_integer(value: &Value) -> Option<i64> {
     const MAX_SAFE: f64 = 9_007_199_254_740_991.0;
     let number = value.as_f64()?;
-    if !value.is_number() || !number.is_finite() || number.fract() != 0.0 || number.abs() > MAX_SAFE {
+    if !value.is_number() || !number.is_finite() || number.fract() != 0.0 || number.abs() > MAX_SAFE
+    {
         return None;
     }
     Some(number as i64)
@@ -92,7 +97,16 @@ fn string_is(value: Option<&Value>, expected: &str) -> bool {
 pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
     let object = exact_keys(
         value,
-        &["format", "kind", "address", "end", "table_width", "source_rows", "reserved_rows", "tables"],
+        &[
+            "format",
+            "kind",
+            "address",
+            "end",
+            "table_width",
+            "source_rows",
+            "reserved_rows",
+            "tables",
+        ],
         "byte conversion source",
     )?;
     let tables_value = object.get("tables").and_then(Value::as_array);
@@ -111,10 +125,17 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
 
     let mut tables = Vec::with_capacity(TABLE_COUNT);
     for (table_index, item) in tables_value.iter().enumerate() {
-        let table = exact_keys(item, &["name", "kind", "rows"], &format!("byte conversion table {table_index}"))?;
+        let table = exact_keys(
+            item,
+            &["name", "kind", "rows"],
+            &format!("byte conversion table {table_index}"),
+        )?;
         let expected_name = format!("hyou_{table_index:02}");
-        let expected_kind =
-            if table_index < PERMUTATION_TABLES { TableKind::Permutation } else { TableKind::Mapping };
+        let expected_kind = if table_index < PERMUTATION_TABLES {
+            TableKind::Permutation
+        } else {
+            TableKind::Mapping
+        };
         let rows_value = table.get("rows").and_then(Value::as_array);
         if !string_is(table.get("name"), &expected_name)
             || !string_is(table.get("kind"), expected_kind.as_str())
@@ -128,7 +149,11 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
         for (row_index, row) in rows_value.iter().enumerate() {
             let entries = match row.as_array() {
                 Some(entries) if entries.len() == 16 => entries,
-                _ => return Err(format!("byte conversion table {table_index} row {row_index} differs")),
+                _ => {
+                    return Err(format!(
+                        "byte conversion table {table_index} row {row_index} differs"
+                    ))
+                }
             };
             let mut parsed = Vec::with_capacity(16);
             for (column_index, entry) in entries.iter().enumerate() {
@@ -143,15 +168,30 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
         if expected_kind == TableKind::Permutation {
             let mut ordered: Vec<u8> = rows.iter().flatten().copied().collect();
             ordered.sort_unstable();
-            if ordered.iter().enumerate().any(|(index, entry)| usize::from(*entry) != index) {
-                return Err(format!("byte conversion table {table_index} is not a permutation"));
+            if ordered
+                .iter()
+                .enumerate()
+                .any(|(index, entry)| usize::from(*entry) != index)
+            {
+                return Err(format!(
+                    "byte conversion table {table_index} is not a permutation"
+                ));
             }
         }
 
-        tables.push(TableSource { name: expected_name, kind: expected_kind, rows });
+        tables.push(TableSource {
+            name: expected_name,
+            kind: expected_kind,
+            rows,
+        });
     }
 
-    Ok(SourceDocument { table_width: 16, source_rows: 14, reserved_rows: 2, tables })
+    Ok(SourceDocument {
+        table_width: 16,
+        source_rows: 14,
+        reserved_rows: 2,
+        tables,
+    })
 }
 
 pub fn build_from_text(text: &str) -> Result<Vec<u8>, String> {
@@ -180,14 +220,29 @@ pub fn build_byte_henkan_tables(path: &Path) -> Result<Vec<u8>, String> {
 
 fn test_document() -> Value {
     let permutation: Vec<Value> = (0..14)
-        .map(|row| Value::Array((0..16).map(|column| Value::from(row * 16 + column)).collect()))
+        .map(|row| {
+            Value::Array(
+                (0..16)
+                    .map(|column| Value::from(row * 16 + column))
+                    .collect(),
+            )
+        })
         .collect();
-    let mapping: Vec<Value> =
-        (0..14).map(|_| Value::Array((0..16).map(|_| Value::from(7)).collect())).collect();
+    let mapping: Vec<Value> = (0..14)
+        .map(|_| Value::Array((0..16).map(|_| Value::from(7)).collect()))
+        .collect();
     let tables: Vec<Value> = (0..TABLE_COUNT)
         .map(|index| {
-            let kind = if index < PERMUTATION_TABLES { "permutation" } else { "mapping" };
-            let rows = if index < PERMUTATION_TABLES { &permutation } else { &mapping };
+            let kind = if index < PERMUTATION_TABLES {
+                "permutation"
+            } else {
+                "mapping"
+            };
+            let rows = if index < PERMUTATION_TABLES {
+                &permutation
+            } else {
+                &mapping
+            };
             serde_json::json!({
                 "name": format!("hyou_{index:02}"),
                 "kind": kind,
@@ -241,7 +296,10 @@ mod tests {
     use super::*;
 
     fn canonical(value: &Value) -> String {
-        format!("{}\n", serde_json::to_string_pretty(value).expect("serializable"))
+        format!(
+            "{}\n",
+            serde_json::to_string_pretty(value).expect("serializable")
+        )
     }
 
     #[test]
@@ -261,14 +319,26 @@ mod tests {
             } else {
                 vec![7u8; 224]
             };
-            assert_eq!(&bytes[base..base + 224], expected.as_slice(), "table {table} body");
-            assert_eq!(&bytes[base + 224..base + 256], &[0u8; 32], "table {table} reserved rows");
+            assert_eq!(
+                &bytes[base..base + 224],
+                expected.as_slice(),
+                "table {table} body"
+            );
+            assert_eq!(
+                &bytes[base + 224..base + 256],
+                &[0u8; 32],
+                "table {table} reserved rows"
+            );
         }
     }
 
     #[test]
     fn real_source_round_trips_through_the_tree() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap();
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap();
         let path = root.join("assets/data/byte_henkan_hyou.json");
         if !path.exists() {
             return;
@@ -341,26 +411,47 @@ mod tests {
         }
         let mut short = test_document();
         short["tables"].as_array_mut().unwrap().pop();
-        assert_eq!(parse_document(&short).unwrap_err(), "byte conversion layout differs");
+        assert_eq!(
+            parse_document(&short).unwrap_err(),
+            "byte conversion layout differs"
+        );
     }
 
     #[test]
     fn rejects_table_shape_changes() {
         let mut renamed = test_document();
         renamed["tables"][3]["name"] = Value::from("hyou_99");
-        assert_eq!(parse_document(&renamed).unwrap_err(), "byte conversion table 3 differs");
+        assert_eq!(
+            parse_document(&renamed).unwrap_err(),
+            "byte conversion table 3 differs"
+        );
 
         let mut rekinded = test_document();
         rekinded["tables"][6]["kind"] = Value::from("permutation");
-        assert_eq!(parse_document(&rekinded).unwrap_err(), "byte conversion table 6 differs");
+        assert_eq!(
+            parse_document(&rekinded).unwrap_err(),
+            "byte conversion table 6 differs"
+        );
 
         let mut short_rows = test_document();
-        short_rows["tables"][0]["rows"].as_array_mut().unwrap().pop();
-        assert_eq!(parse_document(&short_rows).unwrap_err(), "byte conversion table 0 differs");
+        short_rows["tables"][0]["rows"]
+            .as_array_mut()
+            .unwrap()
+            .pop();
+        assert_eq!(
+            parse_document(&short_rows).unwrap_err(),
+            "byte conversion table 0 differs"
+        );
 
         let mut short_row = test_document();
-        short_row["tables"][1]["rows"][2].as_array_mut().unwrap().pop();
-        assert_eq!(parse_document(&short_row).unwrap_err(), "byte conversion table 1 row 2 differs");
+        short_row["tables"][1]["rows"][2]
+            .as_array_mut()
+            .unwrap()
+            .pop();
+        assert_eq!(
+            parse_document(&short_row).unwrap_err(),
+            "byte conversion table 1 row 2 differs"
+        );
 
         let mut extra_field = test_document();
         extra_field["tables"][2]["extra"] = Value::from(0);
@@ -372,8 +463,13 @@ mod tests {
 
     #[test]
     fn rejects_out_of_range_entries() {
-        for bad in [Value::from(-1), Value::from(224), Value::from(1.5), Value::from("3"), Value::Null]
-        {
+        for bad in [
+            Value::from(-1),
+            Value::from(224),
+            Value::from(1.5),
+            Value::from("3"),
+            Value::Null,
+        ] {
             let mut document = test_document();
             document["tables"][7]["rows"][1][4] = bad.clone();
             assert_eq!(

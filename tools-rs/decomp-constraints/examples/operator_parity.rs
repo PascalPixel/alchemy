@@ -1,10 +1,8 @@
 // Parity harness for the mutation operators.
 //
-// The CLI only exercises inferAssemblyConstraints; CONSTRAINT_OPERATORS is
-// consumed by permute_v1, which drives it with a seeded RNG. This example runs
-// every operator over real semantic/*.c bodies with a fixed LCG and prints one
-// checksum line per (fixture, operator, seed), so the TypeScript original and
-// this port can be diffed line for line. It is a test harness, not a tool.
+// The CLI only exercises inferAssemblyConstraints. This example runs every
+// operator over real semantic/*.c bodies with a fixed LCG and prints one
+// checksum line per (fixture, operator, seed). It is a test harness, not a tool.
 
 use std::fs;
 

@@ -23,6 +23,7 @@ const ROOT = dirname(dirname(HERE));
 // hand-list subcommands" -- it points a still-valid subcommand name at the
 // native binary that replaced its .ts file, not at a stale path.
 const RUST_SUBCOMMANDS: Record<string, string> = {
+  decomp_constraints: "tools-rs/decomp-constraints/target/release/decomp-constraints",
   search_compiler_modes: "tools-rs/search-compiler-modes/target/release/search-compiler-modes",
 };
 

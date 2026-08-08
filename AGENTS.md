@@ -9,7 +9,7 @@ file at the top. Shared code lives in
 `tools/lib/` and belongs to no tool.
 
 **Every tool must have a section on this page, or it must not exist.**
-`tools/check/architecture.ts` enforces that, and `bun run lint` runs it. There is
+`tools-rs/architecture` enforces that, and `bun run lint` runs it. There is
 no second list of tools anywhere: adding one without documenting it fails the
 build, which is how the count stays honest. This repository reached 184 tools
 because adding one cost nothing and nobody could see the total.
@@ -94,7 +94,7 @@ maps, text, audio sequences, and the bespoke Camelot containers. This is our
 standard GBA ones, so it is a module per format instead of one converter with
 flags. Converted assets (PNG, WAV, JSON descriptions) are tracked and
 publishable, as in pret's decomps; what stays out of git is the ROM image itself
-and bulk dumps — see PROVENANCE.md and `tools/check/check_publication.ts`.
+and bulk dumps — see PROVENANCE.md and `tools-rs/check-publication`.
 
 ## compiler
 

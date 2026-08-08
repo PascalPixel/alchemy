@@ -411,7 +411,7 @@ const NO_OPTIMIZE_SIBLING_CALLS_SOURCES = new Set(["080b110c"]);
 // These functions construct a three-word DMA descriptor whose historical
 // Thumb lowering uses one writeback STMIA and restores the descriptor base.
 // This is a routing table, not a build manifest: cflagsForTargetSource feeds
-// tools/decomp/decomp_diagnose.ts as well as the build, so a stem stays listed once
+// tools-rs/decomp-diagnose as well as the build, so a stem stays listed once
 // the mode is evidenced even while its region is still assembly. 080170c4,
 // 0800d304, 080c08a8 and 0808fecc are four such -- all pinned near-misses whose
 // residual is scheduler-internal, and delisting them would make diagnose lie to

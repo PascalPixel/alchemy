@@ -37,6 +37,28 @@ fn checked(root: &Path, arguments: &[&str]) -> Result<(), Failure> {
     ))
 }
 
+/// Run one native sub-check binary directly, failing with its combined output.
+/// `overlay-driver` has no TypeScript file left to spawn through `bun`; its
+/// `.ts` source was deleted once tools-rs/overlay-driver was verified
+/// byte-for-byte and wired into the overlay dispatcher.
+fn checked_native(root: &Path, binary: &str, arguments: &[&str]) -> Result<(), Failure> {
+    let path = root.join(binary);
+    let result = Command::new(&path).args(arguments).current_dir(root).output();
+    let output = match result {
+        Ok(output) => output,
+        Err(error) => return fail(format!("{binary} {} failed:\n{error}", arguments.join(" "))),
+    };
+    if output.status.success() {
+        return Ok(());
+    }
+    fail(format!(
+        "{binary} {} failed:\n{}{}",
+        arguments.join(" "),
+        String::from_utf8_lossy(&output.stderr),
+        String::from_utf8_lossy(&output.stdout),
+    ))
+}
+
 fn escape(text: &str) -> String {
     text.replace('\\', "\\\\").replace('"', "\\\"")
 }
@@ -152,7 +174,7 @@ fn main_for(root: &Path, id: &str) -> Result<(), Failure> {
     checked(root, &["tools/lib/overlay_published.ts", id])?;
     checked(root, &["tools/overlay/overlay_gaps.ts", id])?;
     checked(root, &["tools/overlay/overlay_certify.ts", id])?;
-    checked(root, &["tools/overlay/overlay_driver.ts", id])?;
+    checked_native(root, "tools-rs/overlay-driver/target/release/overlay-driver", &[id])?;
 
     println!(
         "{}",

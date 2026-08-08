@@ -488,8 +488,10 @@ void Func_0808a370();
                                     /* play a sound cue */
 
 /* Intra-overlay callees, all byte-exact in assets/code. */
-
-                         
+void Func_080f9010();
+void Func_0808a248();
+void Func_0808a368();
+void Func_0808a370();
 
 /* IWRAM scene pointer, named by the byte-exact sibling for 0x02003184. */
 extern u8 *Data_03001ebc;

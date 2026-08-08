@@ -16,7 +16,7 @@
  * (resource_3bc_c_02003a58.c). It makes one outgoing call, resolved with
  * the `+2` rule against the raw image (this owner starts outside a
  * recorded row, so overlay_call_targets.ts's own table does not cover it
- * -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 38fc | bun
+ * -- resolved with `bun tools-rs/overlay-show resource_3bc 38fc | bun
  * tools/lib/overlay_call_targets.ts resource_3bc 38fc 3916 --annotate`):
  *   0x200390c -> veneer -> Func_080153b8()   established, no-arg, u16 return (semantic/main/0809bb64.c)
  */

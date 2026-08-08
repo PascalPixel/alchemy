@@ -3,7 +3,7 @@
 /*
  * resource_396 owner at 0x02001004, 544 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay/overlay_driver.ts resource_396), so the loader enters
+ * (bun tools-rs/overlay-driver resource_396), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * This is the row that proved m2c unsafe as a seed, and it is drafted

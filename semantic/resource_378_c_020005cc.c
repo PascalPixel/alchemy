@@ -3,7 +3,7 @@
 /*
  * resource_378 owner at 0x020005cc, 284 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay/overlay_driver.ts resource_378), so the loader enters
+ * (bun tools-rs/overlay-driver resource_378), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Opening is the usual driver preamble: write 521 to the workspace's

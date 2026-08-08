@@ -16,7 +16,7 @@
  * two distinct targets, both resolved with the `+2` rule against the raw
  * image (this owner starts outside a recorded row, so
  * overlay_call_targets.ts's own table does not cover it -- resolved with
- * `bun tools/overlay/overlay_show.ts resource_3bc 25c8 | bun
+ * `bun tools-rs/overlay-show resource_3bc 25c8 | bun
  * tools/lib/overlay_call_targets.ts resource_3bc 25c8 263e --annotate`):
  *   0x20025ce, 0x20025d8, 0x20025f6, 0x2002600, 0x200261a, 0x2002624
  *     -> veneer -> Func_080770e0(id)         "read a story value", established (resource_3ba_c_02000a3c.c), ids 896/904/912/920/928/936 (224/226/228/230/232/234 << 2, the same id<<2 addressing that file documents)

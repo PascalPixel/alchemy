@@ -15,7 +15,7 @@
  * site per overlay_unindexed.ts. This owner makes four outgoing calls, all
  * resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 457c |
+ * cover it -- resolved with `bun tools-rs/overlay-show resource_3bc 457c |
  * bun tools/lib/overlay_call_targets.ts resource_3bc 457c 45b8 --annotate`):
  *   0x2004584 -> veneer -> Func_08000290(assetId)          archived asset by id, established (resource_3bc_c_02002e54.c)
  *   0x200458c -> veneer -> Func_080001a8(source, dest)     decompress into scratch, established, same file

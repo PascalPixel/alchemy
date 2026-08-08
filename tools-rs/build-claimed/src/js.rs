@@ -400,9 +400,9 @@ mod tests {
         assert_eq!(js_parse_int("-4", 10), Some(-4.0));
         assert_eq!(js_parse_int("abc", 10), None);
         assert_eq!(js_parse_int("", 16), None);
-        assert_eq!(js_parse_int("0801c0c8", 16), Some(134_397_640.0));
+        assert_eq!(js_parse_int("0801c0c8", 16), Some(134_332_616.0));
         // Uppercase hex parses; the `i`-less symbol regex still rejects it.
-        assert_eq!(js_parse_int("0801C0C8", 16), Some(134_397_640.0));
+        assert_eq!(js_parse_int("0801C0C8", 16), Some(134_332_616.0));
     }
 
     #[test]

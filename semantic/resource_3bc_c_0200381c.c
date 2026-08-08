@@ -17,7 +17,7 @@
  * over seven distinct targets, all resolved with the `+2` rule against the
  * raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 381c |
+ * cover it -- resolved with `bun tools-rs/overlay-show resource_3bc 381c |
  * bun tools/lib/overlay_call_targets.ts resource_3bc 381c 38d8 --annotate`):
  *   0x2003824 -> veneer -> Func_0808a080(arg0)         scene-record accessor, established
  *   0x2003840 -> veneer -> Func_0808a100(arg0, 1)       established shape (resource_37a/3c8/37b)

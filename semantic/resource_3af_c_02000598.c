@@ -7,7 +7,7 @@
  *
  * PUBLISHED, NOT CALLED. Thumb pointer 0x02008599 at 0x020048c0 in the
  * script-record table. Absent from every inventory and from
- * `tools/overlay/overlay_unindexed.ts`; see resource_3af_c_02000b98.c for the
+ * `tools-rs/overlay-unindexed`; see resource_3af_c_02000b98.c for the
  * sweep that finds this class.
  *
  * THE OVERLAY'S THIRD JUMP TABLE. Ten words at 0x020005b4-0x020005db,

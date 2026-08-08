@@ -7,7 +7,7 @@
  * rows it leads to were drafted.
  *
  * It is the target of this overlay's header veneer (the word at image
- * offset 4; bun tools/overlay/overlay_driver.ts resource_39e), so nothing
+ * offset 4; bun tools-rs/overlay-driver resource_39e), so nothing
  * inside the image calls it.
  *
  * Top split is on the s16 scene id at 0x02000240+448:

@@ -58,7 +58,7 @@ use serde_json::{Map, Value};
 use js::{
     is_lowercase_func_symbol, is_main_image_source_name, js_default_sort, js_hex_pad8,
     js_is_integer, js_max, js_min, js_number, js_numeric_compare, js_or_string, js_parse_int,
-    js_split_lines, js_string_compare, js_subarray, js_trim, js_trim_split_whitespace,
+    js_split_lines, js_subarray, js_trim, js_trim_split_whitespace,
 };
 use nodepath::{basename, basename_with_ext, extname, is_absolute, join, relative, resolve};
 
@@ -1233,9 +1233,13 @@ mod tests {
             .expect("own source is readable");
         // A hand-maintained `-vN` key is the failure that poisoned
         // `out/cache/overlay-c`. Assert the shape can never appear here.
+        let implementation = source
+            .split("#[cfg(test)]")
+            .next()
+            .expect("the implementation precedes its tests");
         for marker in ["-v1\"", "-v2\"", "-v3\"", "-v4\"", "\"claimed-v"] {
             assert!(
-                !source.contains(marker),
+                !implementation.contains(marker),
                 "cache key must digest inputs, never a version literal: {marker}"
             );
         }
@@ -1279,11 +1283,12 @@ mod tests {
         };
         assert_eq!(options.jobs, 8.0);
         // A `0x` prefix is accepted by parseInt at radix 10 only up to the `x`.
-        let ParsedArgs::Run(options) = parse_args(&["--jobs=0x10".into()]).unwrap() else {
-            panic!("expected a run");
-        };
-        assert_eq!(options.jobs, 0.0 + 0.0, "parseInt stops at the x");
-        // ...which then fails the positivity check on a real parse.
+        // `parseInt("0x10", 10)` stops at the x, producing zero, which the
+        // positivity check rejects.
+        assert_eq!(
+            parse_args(&["--jobs=0x10".into()]).unwrap_err(),
+            "jobs must be positive"
+        );
         assert_eq!(
             parse_args(&["--jobs=x".into()]).unwrap_err(),
             "jobs must be positive"
@@ -1404,7 +1409,10 @@ mod tests {
     #[test]
     fn map_limit_handles_an_empty_list() {
         let items: Vec<usize> = Vec::new();
-        assert_eq!(map_limit(&items, 8, |item| Ok(*item)).unwrap(), Vec::new());
+        assert_eq!(
+            map_limit(&items, 8, |item| Ok(*item)).unwrap(),
+            Vec::<usize>::new()
+        );
     }
 
     #[test]

@@ -20,6 +20,7 @@ const ROOT = dirname(dirname(HERE));
 
 const RUST_SUBCOMMANDS: Record<string, string> = {
   audio_wave: "tools-rs/audio-wave/target/release/audio-wave",
+  battle_effect_data: "tools-rs/battle-effect-data/target/release/battle-effect-data",
   build_asm: "tools-rs/build-asm/target/release/build-asm",
   build_claimed: "tools-rs/build-claimed/target/release/build-claimed",
   build_full: "tools-rs/build-full/target/release/build-full",
@@ -27,6 +28,7 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   build_semantic: "tools-rs/build-semantic/target/release/build-semantic",
   byte_value_regions: "tools-rs/target/release/byte-value-regions",
   encounter_data: "tools-rs/encounter-data/target/release/encounter-data",
+  early_runtime_data: "tools-rs/early-runtime-data/target/release/early-runtime-data",
   byte_henkan: "tools-rs/byte-henkan/target/release/byte-henkan",
   localization_tables: "tools-rs/localization-tables/target/release/localization-tables",
   late_runtime_residual: "tools-rs/late-runtime-residual/target/release/late-runtime-residual",

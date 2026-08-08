@@ -150,10 +150,14 @@ pub fn relative_from(cwd: &str, from: &str, to: &str) -> String {
     let from_parts: Vec<&str> = from.split('/').filter(|s| !s.is_empty()).collect();
     let to_parts: Vec<&str> = to.split('/').filter(|s| !s.is_empty()).collect();
     let mut shared = 0usize;
-    while shared < from_parts.len() && shared < to_parts.len() && from_parts[shared] == to_parts[shared] {
+    while shared < from_parts.len()
+        && shared < to_parts.len()
+        && from_parts[shared] == to_parts[shared]
+    {
         shared += 1;
     }
-    let mut out: Vec<String> = std::iter::repeat_n("..".to_string(), from_parts.len() - shared).collect();
+    let mut out: Vec<String> =
+        std::iter::repeat_n("..".to_string(), from_parts.len() - shared).collect();
     out.extend(to_parts[shared..].iter().map(|piece| (*piece).to_string()));
     out.join("/")
 }

@@ -63,11 +63,9 @@ tools/lib/verify.ts
 tools/lib/zlib.ts
 tools/make/archive_asset.ts
 tools/make/audio_engine_data.ts
-tools/make/battle_effect_data.ts
 tools/make/build_assets.ts
 tools/make/character_catalog.ts
 tools/make/chiiki_map_resources.ts
-tools/make/early_runtime_data.ts
 tools/make/executable_gap_sources.ts
 tools/make/f0_archive.ts
 tools/make/gba_header.ts

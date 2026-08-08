@@ -23,9 +23,7 @@ import {
   build_sparse,
 } from "./map_container_components.ts";
 import { build_table as build_map_load_table } from "../lib/map_load_table.ts";
-import { build_sound_table } from "./music.ts";
 import { build_from_midi_sidecar, type Sidecar } from "../lib/midi_sequence.ts";
-import { type WaveRecordSource, buildWaveRecord } from "./audio_wave.ts";
 import { build_still, read_still_index } from "./indexed_still.ts";
 import { build_static_sprite_series, static_sprite_frame_name } from "./static_sprite_series.ts";
 import { build_title_resource } from "./title_resources.ts";
@@ -76,7 +74,6 @@ import {
 } from "./staff_roll.ts";
 import { buildGbaHeaderComponent, parseGbaHeaderSource } from "./gba_header.ts";
 import { build_early_runtime_data } from "./early_runtime_data.ts";
-import { buildLateRuntimeResidual } from "./late_runtime_residual.ts";
 import { buildResourceByteCanvases } from "./resource_byte_canvases.ts";
 import { buildByteValueRegions } from "./byte_value_regions.ts";
 import { buildExecutableGapData } from "./executable_gap_sources.ts";
@@ -123,6 +120,24 @@ function nativeBytes(tool: string, source: string): Buffer {
     throw new Error(`${tool} failed${detail ? `: ${detail}` : ""}`);
   }
   return Buffer.from(child.stdout);
+}
+
+function nativeBytesWithReport(tool: string, source: string): [Buffer, Json] {
+  return nativeCommandWithReport(tool, ["build-stdout", source]);
+}
+
+function nativeCommandWithReport(tool: string, args: string[]): [Buffer, Json] {
+  const standalone = join(ROOT, "tools-rs", tool.replaceAll("_", "-"), "target", "release", tool);
+  const binary = existsSync(standalone) ? standalone : join(ROOT, "tools-rs", "target", "release", tool);
+  const child = Bun.spawnSync([binary, ...args], {
+    cwd: ROOT,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  const detail = Buffer.from(child.stderr).toString("utf8").trim();
+  if (child.exitCode !== 0) throw new Error(`${tool} failed${detail ? `: ${detail}` : ""}`);
+  if (!detail) throw new Error(`${tool} returned no build report`);
+  return [Buffer.from(child.stdout), JSON.parse(detail)];
 }
 
 type Json = Record<string, any>;
@@ -789,10 +804,11 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-late-runtime-residual") {
     const sourceName = String(entry.source);
-    const built = buildLateRuntimeResidual(sourcePath(sourceName));
-    const address = number(entry.address), region = built.regions.get(address);
-    if (region === undefined) throw new Error("late-runtime asset address is not a produced region");
-    return [region, [sourceName], { source_bytes: built.sourceBytes, region_address: `0x${address.toString(16).padStart(8, "0")}` }];
+    const address = number(entry.address);
+    const [region, report] = nativeCommandWithReport("late-runtime-residual", [
+      "build-region-stdout", sourcePath(sourceName), `0x${address.toString(16)}`,
+    ]);
+    return [region, [sourceName], { source_bytes: report.source_bytes, region_address: `0x${address.toString(16).padStart(8, "0")}` }];
   }
   if (kind === "golden-sun-resource-byte-canvas") {
     const sourceName = String(entry.source), resource = String(entry.resource_id).toLowerCase();
@@ -962,8 +978,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-sound-table") {
     const source = sourcePath(String(entry.source));
-    const document = JSON.parse(readFileSync(source, "utf8"));
-    const [built, report] = build_sound_table(document);
+    const [built, report] = nativeBytesWithReport("music", source);
     return [built, [String(entry.source)], report];
   }
   if (kind === "golden-sun-sound-sequence") {
@@ -982,7 +997,7 @@ function buildEntry(entry: Json): [Buffer, string[], Json] {
   }
   if (kind === "golden-sun-pcm-wave") {
     const source = sourcePath(String(entry.source));
-    const [built, report] = buildWaveRecord(entry as unknown as WaveRecordSource, readFileSync(source));
+    const [built, report] = nativeCommandWithReport("audio-wave", ["build-record-stdout", JSON.stringify(entry), source]);
     const sources = [String(entry.source)];
     if (entry.index !== undefined) {
       sourcePath(String(entry.index));

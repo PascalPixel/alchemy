@@ -272,9 +272,13 @@ pub fn js_number(text: &str) -> f64 {
     match body.parse::<f64>() {
         // Rust's f64 parser accepts "inf"/"nan"/"1e5"; JS's Number() does not
         // accept the first two spellings.
-        Ok(v) if !body.eq_ignore_ascii_case("inf")
-            && !body.eq_ignore_ascii_case("infinity")
-            && !body.eq_ignore_ascii_case("nan") => sign * v,
+        Ok(v)
+            if !body.eq_ignore_ascii_case("inf")
+                && !body.eq_ignore_ascii_case("infinity")
+                && !body.eq_ignore_ascii_case("nan") =>
+        {
+            sign * v
+        }
         _ => f64::NAN,
     }
 }
@@ -326,7 +330,9 @@ fn valid_symbol(name: &str) -> bool {
 }
 
 pub fn build_sound_table(source: &SoundTableSource) -> Result<(Vec<u8>, SoundTableReport)> {
-    if source.format != 1 || source.fields != ["header", "player"] || source.auxiliary != "copy-player"
+    if source.format != 1
+        || source.fields != ["header", "player"]
+        || source.auxiliary != "copy-player"
     {
         return Err("unsupported sound-table source".to_string());
     }
@@ -404,8 +410,7 @@ pub fn extract_sound_table(rom: &[u8], start: i64, count: i64) -> Result<SoundTa
     for index in 0..count as usize {
         let entry_offset = offset + index * 8;
         let raw = read_u32_le(rom, entry_offset);
-        let header_address =
-            address_from_i64(i64::from(raw), &format!("entry {index} header"))?;
+        let header_address = address_from_i64(i64::from(raw), &format!("entry {index} header"))?;
         let name = match by_address.get(&header_address) {
             Some(name) => name.clone(),
             None => {
@@ -430,9 +435,7 @@ pub fn extract_sound_table(rom: &[u8], start: i64, count: i64) -> Result<SoundTa
         let player = read_u16_le(rom, entry_offset + 4);
         let auxiliary = read_u16_le(rom, entry_offset + 6);
         if auxiliary != player {
-            return Err(format!(
-                "entry {index} does not mirror its player selector"
-            ));
+            return Err(format!("entry {index} does not mirror its player selector"));
         }
         entries.push(SoundTableEntry {
             header: name,
@@ -459,9 +462,18 @@ pub fn self_test() -> Result<()> {
             ("sound_001".into(), SymbolValue::Text("0x08000200".into())),
         ],
         entries: vec![
-            SoundTableEntry { header: "sound_000".into(), player: 1 },
-            SoundTableEntry { header: "sound_001".into(), player: 7 },
-            SoundTableEntry { header: "sound_000".into(), player: 1 },
+            SoundTableEntry {
+                header: "sound_000".into(),
+                player: 1,
+            },
+            SoundTableEntry {
+                header: "sound_001".into(),
+                player: 7,
+            },
+            SoundTableEntry {
+                header: "sound_000".into(),
+                player: 1,
+            },
         ],
     };
     let (built, report) = build_sound_table(&source)?;
@@ -512,7 +524,10 @@ mod tests {
     }
 
     fn entry(header: &str, player: i64) -> SoundTableEntry {
-        SoundTableEntry { header: header.to_string(), player }
+        SoundTableEntry {
+            header: header.to_string(),
+            player,
+        }
     }
 
     fn demo() -> SoundTableSource {
@@ -520,8 +535,15 @@ mod tests {
             format: 1,
             fields: vec!["header".into(), "player".into()],
             auxiliary: "copy-player".into(),
-            symbols: vec![text("sound_000", "0x08000100"), text("sound_001", "0x08000200")],
-            entries: vec![entry("sound_000", 1), entry("sound_001", 7), entry("sound_000", 1)],
+            symbols: vec![
+                text("sound_000", "0x08000100"),
+                text("sound_001", "0x08000200"),
+            ],
+            entries: vec![
+                entry("sound_000", 1),
+                entry("sound_001", 7),
+                entry("sound_000", 1),
+            ],
         }
     }
 
@@ -543,7 +565,10 @@ mod tests {
         );
         assert_eq!(report.entries, 3);
         assert_eq!(report.unique_headers, 2);
-        assert_eq!(report.players, vec![("1".to_string(), 2), ("7".to_string(), 1)]);
+        assert_eq!(
+            report.players,
+            vec![("1".to_string(), 2), ("7".to_string(), 1)]
+        );
         assert!(report.mirrored_auxiliary);
     }
 
@@ -559,19 +584,31 @@ mod tests {
     fn build_rejects_bad_sources() {
         let mut bad = demo();
         bad.format = 2;
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "unsupported sound-table source");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "unsupported sound-table source"
+        );
 
         let mut bad = demo();
         bad.fields = vec!["player".into(), "header".into()];
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "unsupported sound-table source");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "unsupported sound-table source"
+        );
 
         let mut bad = demo();
         bad.auxiliary = "mirror".into();
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "unsupported sound-table source");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "unsupported sound-table source"
+        );
 
         let mut bad = demo();
         bad.symbols[0].0 = "Sound_000".into();
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "invalid sound symbol: Sound_000");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "invalid sound symbol: Sound_000"
+        );
 
         let mut bad = demo();
         bad.symbols[1].1 = SymbolValue::Text("0x08000100".into());
@@ -596,7 +633,10 @@ mod tests {
 
         let mut bad = demo();
         bad.symbols[0].1 = SymbolValue::Text("1.5".into());
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "symbol sound_000 must be an integer");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "symbol sound_000 must be an integer"
+        );
 
         let mut bad = demo();
         bad.entries[0].header = "sound_009".into();
@@ -607,19 +647,23 @@ mod tests {
 
         let mut bad = demo();
         bad.entries[0].player = 0x10000;
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "entry 0 player does not fit u16");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "entry 0 player does not fit u16"
+        );
 
         let mut bad = demo();
         bad.entries[0].player = -1;
-        assert_eq!(build_sound_table(&bad).unwrap_err(), "entry 0 player does not fit u16");
+        assert_eq!(
+            build_sound_table(&bad).unwrap_err(),
+            "entry 0 player does not fit u16"
+        );
     }
 
     #[test]
     fn build_reports_unused_symbols_in_insertion_order() {
         let mut source = demo();
-        source
-            .symbols
-            .push(text("sound_zzz", "0x08000300"));
+        source.symbols.push(text("sound_zzz", "0x08000300"));
         source.symbols.push(text("sound_aaa", "0x08000400"));
         assert_eq!(
             build_sound_table(&source).unwrap_err(),
@@ -652,7 +696,11 @@ mod tests {
         );
         assert_eq!(
             extracted.entries,
-            vec![entry("sound_000", 1), entry("sound_001", 7), entry("sound_000", 1)]
+            vec![
+                entry("sound_000", 1),
+                entry("sound_001", 7),
+                entry("sound_000", 1)
+            ]
         );
     }
 
@@ -783,15 +831,27 @@ mod tests {
         assert!(js_number("12abc").is_nan());
         assert_eq!(js_number("Infinity"), f64::INFINITY);
         assert_eq!(cli_integer("0x08000100", "--address").unwrap(), 0x0800_0100);
-        assert_eq!(cli_integer("Infinity", "--count").unwrap_err(), "--count must be an integer");
-        assert_eq!(cli_integer("1.5", "--count").unwrap_err(), "--count must be an integer");
+        assert_eq!(
+            cli_integer("Infinity", "--count").unwrap_err(),
+            "--count must be an integer"
+        );
+        assert_eq!(
+            cli_integer("1.5", "--count").unwrap_err(),
+            "--count must be an integer"
+        );
     }
 
     #[test]
     fn option_lookup_matches_ts() {
-        let args: Vec<String> = ["a", "-o", "out.json"].iter().map(|s| s.to_string()).collect();
+        let args: Vec<String> = ["a", "-o", "out.json"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         assert_eq!(option(&args, "-o").unwrap(), "out.json");
-        assert_eq!(option(&args, "--address").unwrap_err(), "--address is required");
+        assert_eq!(
+            option(&args, "--address").unwrap_err(),
+            "--address is required"
+        );
         let trailing: Vec<String> = vec!["-o".to_string()];
         assert_eq!(option(&trailing, "-o").unwrap_err(), "-o is required");
     }

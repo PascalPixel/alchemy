@@ -6,7 +6,12 @@ use super::*;
 use serde_json::json;
 
 fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_path_buf()
 }
 
 fn catalog_path() -> PathBuf {
@@ -32,7 +37,11 @@ fn synthetic_image() -> Vec<u8> {
         for component in &range.components {
             let start = (component.address - ROM_BASE) as usize;
             let end = (component.end - ROM_BASE) as usize;
-            image[start..end].fill(if component.name.starts_with("aki_") { 255 } else { 0 });
+            image[start..end].fill(if component.name.starts_with("aki_") {
+                255
+            } else {
+                0
+            });
         }
     }
     image
@@ -61,8 +70,11 @@ fn write_json(path: &Path, value: &Value) {
 
 #[test]
 fn the_tracked_catalog_covers_exactly_the_residual_byte_total() {
-    let total: i64 =
-        catalog().ranges.iter().map(|range| i64::from(range.end - range.address)).sum();
+    let total: i64 = catalog()
+        .ranges
+        .iter()
+        .map(|range| i64::from(range.end - range.address))
+        .sum();
     assert_eq!(total, SOURCE_BYTES);
     assert_eq!(catalog().ranges.len(), 3);
 }
@@ -95,16 +107,32 @@ fn region_addresses_keep_catalog_order() {
 
 #[test]
 fn representation_picks_uniform_fill_only_for_zero_and_ff() {
-    assert_eq!(representation(&[0, 0, 0]).unwrap(), Values::UniformFill { value: 0 });
-    assert_eq!(representation(&[255, 255]).unwrap(), Values::UniformFill { value: 255 });
+    assert_eq!(
+        representation(&[0, 0, 0]).unwrap(),
+        Values::UniformFill { value: 0 }
+    );
+    assert_eq!(
+        representation(&[255, 255]).unwrap(),
+        Values::UniformFill { value: 255 }
+    );
     // A uniform run of any other byte stays explicit: the TypeScript gates on
     // `data[0] === 0 || data[0] === 255` before testing uniformity.
     assert_eq!(
         representation(&[7, 7, 7]).unwrap(),
-        Values::ByteValues { values: vec![7, 7, 7] }
+        Values::ByteValues {
+            values: vec![7, 7, 7]
+        }
     );
-    assert_eq!(representation(&[0, 0, 1]).unwrap(), Values::ByteValues { values: vec![0, 0, 1] });
-    assert_eq!(representation(&[]).unwrap_err(), "late residual component is empty");
+    assert_eq!(
+        representation(&[0, 0, 1]).unwrap(),
+        Values::ByteValues {
+            values: vec![0, 0, 1]
+        }
+    );
+    assert_eq!(
+        representation(&[]).unwrap_err(),
+        "late residual component is empty"
+    );
 }
 
 #[test]
@@ -143,9 +171,18 @@ fn malformed_sources_are_rejected_with_the_typescript_messages() {
         rejected += 1;
     };
 
-    check(&|value| value["format"] = json!(2), "late residual source identity differs");
-    check(&|value| value["kind"] = json!("other"), "late residual source identity differs");
-    check(&|value| value["regions"] = json!({}), "late residual source identity differs");
+    check(
+        &|value| value["format"] = json!(2),
+        "late residual source identity differs",
+    );
+    check(
+        &|value| value["kind"] = json!("other"),
+        "late residual source identity differs",
+    );
+    check(
+        &|value| value["regions"] = json!({}),
+        "late residual source identity differs",
+    );
     check(
         &|value| {
             value.as_object_mut().unwrap().remove("source_bytes");
@@ -158,20 +195,47 @@ fn malformed_sources_are_rejected_with_the_typescript_messages() {
         },
         "late residual region count differs",
     );
-    check(&|value| value["regions"][0]["name"] = json!("nope"), "range_080f38bc layout differs");
-    check(&|value| value["regions"][0]["address"] = json!("0x00000000"), "range_080f38bc layout differs");
+    check(
+        &|value| value["regions"][0]["name"] = json!("nope"),
+        "range_080f38bc layout differs",
+    );
+    check(
+        &|value| value["regions"][0]["address"] = json!("0x00000000"),
+        "range_080f38bc layout differs",
+    );
     check(
         &|value| {
-            value["regions"][0]["components"].as_array_mut().unwrap().pop();
+            value["regions"][0]["components"]
+                .as_array_mut()
+                .unwrap()
+                .pop();
         },
         "range_080f38bc layout differs",
     );
-    check(&|value| value["regions"][0]["components"][0]["role"] = json!("x"), "haikei_stream metadata differs");
-    check(&|value| value["regions"][0]["components"][0]["type"] = json!("u16"), "haikei_stream metadata differs");
-    check(&|value| value["regions"][0]["components"][0]["value"] = json!(3), "haikei_stream fill differs");
-    check(&|value| value["regions"][0]["components"][0]["values"] = json!([]), "haikei_stream fields differ");
-    check(&|value| value["regions"][0]["components"][0] = json!(Value::Null), "haikei_stream is null");
-    check(&|value| value["source_bytes"] = json!(7295), "late residual source-byte total differs");
+    check(
+        &|value| value["regions"][0]["components"][0]["role"] = json!("x"),
+        "haikei_stream metadata differs",
+    );
+    check(
+        &|value| value["regions"][0]["components"][0]["type"] = json!("u16"),
+        "haikei_stream metadata differs",
+    );
+    check(
+        &|value| value["regions"][0]["components"][0]["value"] = json!(3),
+        "haikei_stream fill differs",
+    );
+    check(
+        &|value| value["regions"][0]["components"][0]["values"] = json!([]),
+        "haikei_stream fields differ",
+    );
+    check(
+        &|value| value["regions"][0]["components"][0] = json!(Value::Null),
+        "haikei_stream is null",
+    );
+    check(
+        &|value| value["source_bytes"] = json!(7295),
+        "late residual source-byte total differs",
+    );
 
     assert_eq!(rejected, 14, "every guard above must have fired");
     write_json(&index, &original);
@@ -265,7 +329,10 @@ fn walk_numbers(value: &Value, count: &mut usize) {
         Value::Number(number) => {
             *count += 1;
             let raw = number.as_f64().expect("finite JSON number");
-            assert!(raw.fract() == 0.0, "non-integral number {raw} reached the output");
+            assert!(
+                raw.fract() == 0.0,
+                "non-integral number {raw} reached the output"
+            );
         }
         Value::Array(items) => items.iter().for_each(|item| walk_numbers(item, count)),
         Value::Object(map) => map.values().for_each(|item| walk_numbers(item, count)),
@@ -280,7 +347,10 @@ fn emitted_json_is_integers_only() {
     let index = export_to(&image, "integers");
     let mut count = 0usize;
     walk_numbers(&read_json(&index), &mut count);
-    assert!(count > 100, "the walk must actually have seen numbers, saw {count}");
+    assert!(
+        count > 100,
+        "the walk must actually have seen numbers, saw {count}"
+    );
 }
 
 #[test]
@@ -293,8 +363,24 @@ fn component_keys_are_emitted_in_source_order() {
         .keys()
         .map(String::as_str)
         .collect();
-    assert_eq!(keys, ["name", "address", "end", "role", "type", "representation", "value"]);
-    let top: Vec<&str> = document.as_object().unwrap().keys().map(String::as_str).collect();
+    assert_eq!(
+        keys,
+        [
+            "name",
+            "address",
+            "end",
+            "role",
+            "type",
+            "representation",
+            "value"
+        ]
+    );
+    let top: Vec<&str> = document
+        .as_object()
+        .unwrap()
+        .keys()
+        .map(String::as_str)
+        .collect();
     assert_eq!(top, ["format", "kind", "source_bytes", "regions"]);
 }
 
@@ -328,7 +414,9 @@ fn typed_kind_maps_the_catalog_kinds() {
 fn the_self_test_passes_and_cleans_up() {
     let line = self_test(&catalog_path()).expect("self-test passes");
     assert_eq!(line, "self-test=ok source_bytes=7294");
-    let temporary =
-        temporary_root().join(format!("alchemy-late-residual-{}", std::process::id()));
-    assert!(!temporary.exists(), "the self-test directory must be removed");
+    let temporary = temporary_root().join(format!("alchemy-late-residual-{}", std::process::id()));
+    assert!(
+        !temporary.exists(),
+        "the self-test directory must be removed"
+    );
 }

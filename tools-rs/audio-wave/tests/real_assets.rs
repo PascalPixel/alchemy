@@ -44,7 +44,10 @@ fn real_wave_catalog_builds_and_round_trips() {
     let index_text = std::fs::read_to_string(root.join(index_name)).unwrap();
     let index = json::parse(&index_text);
     assert_eq!(index.get("format").unwrap().number(), 1.0);
-    assert_eq!(index.get("engine").unwrap().string(), "smsh-pcm-wave-series");
+    assert_eq!(
+        index.get("engine").unwrap().string(),
+        "smsh-pcm-wave-series"
+    );
     let waves = index.get("waves").unwrap().array();
     assert_eq!(waves.len(), 32);
 
@@ -53,7 +56,10 @@ fn real_wave_catalog_builds_and_round_trips() {
 
     for wave in waves {
         let name = wave.get("name").unwrap().string();
-        let source = format!("assets/audio/waves_{}", wave.get("source").unwrap().string());
+        let source = format!(
+            "assets/audio/waves_{}",
+            wave.get("source").unwrap().string()
+        );
         let wav = std::fs::read(root.join(&source)).unwrap();
         let catalog = WaveRecordSource {
             frequency: wave.get("frequency").unwrap().scalar(),
@@ -66,7 +72,10 @@ fn real_wave_catalog_builds_and_round_trips() {
             padding: None,
         };
         let (built, report) = build_wave_record(&catalog, &wav).unwrap();
-        assert_eq!(built.len() as f64, report.samples + 16.0 + report.padding_bytes);
+        assert_eq!(
+            built.len() as f64,
+            report.samples + 16.0 + report.padding_bytes
+        );
         dump.extend_from_slice(&built);
         lines.push(format!("{name} {source} {}", report_text(&report)));
 

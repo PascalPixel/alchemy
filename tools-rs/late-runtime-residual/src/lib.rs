@@ -66,7 +66,11 @@ pub struct Regions {
 
 impl Regions {
     fn set(&mut self, key: u32, value: Vec<u8>) {
-        match self.entries.iter_mut().find(|(existing, _)| *existing == key) {
+        match self
+            .entries
+            .iter_mut()
+            .find(|(existing, _)| *existing == key)
+        {
             Some(slot) => slot.1 = value,
             None => self.entries.push((key, value)),
         }
@@ -133,7 +137,9 @@ fn exact_keys(value: &Map<String, Value>, keys: &[&str], label: &str) -> Result<
 /// and passes `Number.isSafeInteger`. `serde_json` may parse it as `f64`, so the
 /// check goes through `as_f64` rather than `as_i64`, which would reject it.
 fn safe_integer(value: &Value) -> Option<i64> {
-    let Value::Number(number) = value else { return None };
+    let Value::Number(number) = value else {
+        return None;
+    };
     let raw = number.as_f64()?;
     if !raw.is_finite() || raw.fract() != 0.0 || raw.abs() > 9_007_199_254_740_991.0 {
         return None;
@@ -196,7 +202,9 @@ pub fn representation(data: &[u8]) -> Result<Values> {
     if (first == 0 || first == 255) && data.iter().all(|byte| *byte == first) {
         return Ok(Values::UniformFill { value: first });
     }
-    Ok(Values::ByteValues { values: data.to_vec() })
+    Ok(Values::ByteValues {
+        values: data.to_vec(),
+    })
 }
 
 fn values_pairs(values: &Values) -> Vec<(&'static str, Value)> {
@@ -207,7 +215,10 @@ fn values_pairs(values: &Values) -> Vec<(&'static str, Value)> {
         ],
         Values::ByteValues { values } => vec![
             ("representation", Value::from("byte_values")),
-            ("values", Value::Array(values.iter().map(|byte| Value::from(*byte)).collect())),
+            (
+                "values",
+                Value::Array(values.iter().map(|byte| Value::from(*byte)).collect()),
+            ),
         ],
     }
 }
@@ -281,15 +292,19 @@ fn residual_document(catalog: &LateRuntimeCatalog, image: &[u8]) -> Result<Value
 /// prints without an `error:` line at all. The port turns both into ordinary
 /// error strings; the harness asserts same-failure for those, not same prose.
 fn parse_source(index_path: &Path) -> Result<Value> {
-    let bytes = std::fs::read(index_path)
-        .map_err(|error| format!("{}: {error}", index_path.display()))?;
+    let bytes =
+        std::fs::read(index_path).map_err(|error| format!("{}: {error}", index_path.display()))?;
     let text = String::from_utf8_lossy(&bytes).into_owned();
     let value: Value = serde_json::from_str(&text).map_err(|error| format!("{error}"))?;
     let map = object(&value, "late residual source")?;
     if !is_canonical_json_text(&text, &value) {
         return err("late residual source is not canonical JSON");
     }
-    exact_keys(map, &["format", "kind", "source_bytes", "regions"], "late residual source")?;
+    exact_keys(
+        map,
+        &["format", "kind", "source_bytes", "regions"],
+        "late residual source",
+    )?;
     let format_is_one = safe_integer(field(&value, "format")) == Some(1);
     if !format_is_one
         || !string_is(field(&value, "kind"), "golden-sun-late-runtime-residual")
@@ -316,7 +331,15 @@ fn component_data(source: &Value, component: &LateRuntimeComponent) -> Result<Ve
     if string_is(field(source, "representation"), "uniform_fill") {
         exact_keys(
             raw,
-            &["name", "address", "end", "role", "type", "representation", "value"],
+            &[
+                "name",
+                "address",
+                "end",
+                "role",
+                "type",
+                "representation",
+                "value",
+            ],
             &component.name,
         )?;
         let value = field(source, "value");
@@ -328,7 +351,15 @@ fn component_data(source: &Value, component: &LateRuntimeComponent) -> Result<Ve
     }
     exact_keys(
         raw,
-        &["name", "address", "end", "role", "type", "representation", "values"],
+        &[
+            "name",
+            "address",
+            "end",
+            "role",
+            "type",
+            "representation",
+            "values",
+        ],
         &component.name,
     )?;
     let values = field(source, "values");
@@ -354,7 +385,10 @@ pub fn build_late_runtime_residual(
 ) -> Result<LateRuntimeResidualBuild> {
     let catalog = read_late_runtime_catalog(catalog_path)?;
     let source = parse_source(index_path)?;
-    let source_regions = field(&source, "regions").as_array().cloned().unwrap_or_default();
+    let source_regions = field(&source, "regions")
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
     if source_regions.len() != catalog.ranges.len() {
         return err("late residual region count differs");
     }
@@ -381,13 +415,15 @@ pub fn build_late_runtime_residual(
         }
         regions.set(range.address, data);
     }
-    let source_bytes: i64 =
-        regions.iter().map(|(_, data)| data.len() as i64).sum();
+    let source_bytes: i64 = regions.iter().map(|(_, data)| data.len() as i64).sum();
     let declared = safe_integer(field(&source, "source_bytes"));
     if declared != Some(source_bytes) || source_bytes != SOURCE_BYTES {
         return err("late residual source-byte total differs");
     }
-    Ok(LateRuntimeResidualBuild { regions, source_bytes })
+    Ok(LateRuntimeResidualBuild {
+        regions,
+        source_bytes,
+    })
 }
 
 /// `image.subarray(start, start + length)` -- clamping, as JS does.
@@ -444,14 +480,15 @@ pub fn verify_late_runtime_residual(
 
 /// `Bun.env.TMPDIR ?? "/private/tmp"`, then `resolve`d.
 fn temporary_root() -> PathBuf {
-    let base = std::env::var("TMPDIR").ok().filter(|value| !value.is_empty());
+    let base = std::env::var("TMPDIR")
+        .ok()
+        .filter(|value| !value.is_empty());
     PathBuf::from(base.unwrap_or_else(|| "/private/tmp".to_string()))
 }
 
 /// `selfTest()`. Returns the stdout line.
 pub fn self_test(catalog_path: &Path) -> Result<String> {
-    let temporary =
-        temporary_root().join(format!("alchemy-late-residual-{}", std::process::id()));
+    let temporary = temporary_root().join(format!("alchemy-late-residual-{}", std::process::id()));
     if temporary.exists() {
         return err("late residual self-test directory exists");
     }
@@ -475,7 +512,11 @@ fn self_test_body(catalog_path: &Path, temporary: &Path) -> Result<()> {
         for component in &range.components {
             let start = (component.address - ROM_BASE) as usize;
             let end = (component.end - ROM_BASE) as usize;
-            let fill = if component.name.starts_with("aki_") { 255 } else { 0 };
+            let fill = if component.name.starts_with("aki_") {
+                255
+            } else {
+                0
+            };
             image[start..end].fill(fill);
         }
     }

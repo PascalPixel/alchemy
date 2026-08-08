@@ -16,7 +16,10 @@ impl std::fmt::Display for TilemapError {
         match self {
             Self::NotWholeEntries => write!(f, "tilemap must contain whole 16-bit entries"),
             Self::WidthDoesNotDivide { count, width } => {
-                write!(f, "width {width} must divide the tilemap entry count {count}")
+                write!(
+                    f,
+                    "width {width} must divide the tilemap entry count {count}"
+                )
             }
             Self::EmptyText => write!(f, "tilemap text must contain four-digit hex words"),
             Self::NotAHexWord(token) => {
@@ -30,7 +33,10 @@ impl std::error::Error for TilemapError {}
 
 pub fn export_tilemap(data: &[u8], width: usize) -> Result<String, TilemapError> {
     if width == 0 {
-        return Err(TilemapError::WidthDoesNotDivide { count: data.len() / 2, width });
+        return Err(TilemapError::WidthDoesNotDivide {
+            count: data.len() / 2,
+            width,
+        });
     }
     if !data.len().is_multiple_of(2) {
         return Err(TilemapError::NotWholeEntries);
@@ -78,7 +84,9 @@ mod tests {
     use super::*;
 
     fn sample() -> Vec<u8> {
-        (0..64u16).flat_map(|index| (index.wrapping_mul(257)).to_le_bytes()).collect()
+        (0..64u16)
+            .flat_map(|index| (index.wrapping_mul(257)).to_le_bytes())
+            .collect()
     }
 
     #[test]
@@ -97,7 +105,10 @@ mod tests {
 
     #[test]
     fn bad_inputs_are_rejected() {
-        assert_eq!(export_tilemap(&[0u8; 3], 1), Err(TilemapError::NotWholeEntries));
+        assert_eq!(
+            export_tilemap(&[0u8; 3], 1),
+            Err(TilemapError::NotWholeEntries)
+        );
         assert!(export_tilemap(&[0u8; 8], 3).is_err());
         assert!(export_tilemap(&[], 1).is_err());
         assert!(import_tilemap("   ").is_err());

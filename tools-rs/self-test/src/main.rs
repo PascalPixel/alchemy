@@ -24,11 +24,11 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 // ---------------------------------------------------------------------------
-// jobs cap (tools/lib/jobs.ts)
+// Shared jobs cap.
 // ---------------------------------------------------------------------------
 // PORT NOTE: tools-rs/jobs is a bin-only crate with no library target, and this
 // crate takes no dependencies, so the two functions are restated here. They are
-// copied verbatim in behaviour and pinned by the same assertions jobs.ts uses.
+// pinned by the native jobs helper's assertions.
 
 const SHARE: f64 = 0.8;
 

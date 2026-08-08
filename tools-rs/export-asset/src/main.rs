@@ -105,8 +105,7 @@ fn palette_option(args: &[String]) -> Result<Option<Vec<Rgb>>, ExportError> {
         return Ok(None);
     }
     let path = option(args, &["--palette"])?;
-    let decoded =
-        import_asset::indexed_png(&read(&path)?).map_err(|error| ExportError(error.0))?;
+    let decoded = import_asset::indexed_png(&read(&path)?).map_err(|error| ExportError(error.0))?;
     Ok(Some(decoded.palette))
 }
 
@@ -153,12 +152,18 @@ fn run(args: &[String]) -> Result<Vec<String>, ExportError> {
         if start < 0.0 || end > rom.len() as f64 || start >= end {
             return Err(ExportError(format!(
                 "{} range is outside the ROM or empty",
-                if command == "tiles" { "tile" } else { "palette" }
+                if command == "tiles" {
+                    "tile"
+                } else {
+                    "palette"
+                }
             )));
         }
         let slice = &rom[start as usize..end as usize];
         if same(&output, &input) {
-            return Err(ExportError("refusing to overwrite the input ROM".to_string()));
+            return Err(ExportError(
+                "refusing to overwrite the input ROM".to_string(),
+            ));
         }
         if command == "tiles" {
             let palette = palette_option(&args)?;
@@ -217,13 +222,19 @@ mod tests {
 
     #[test]
     fn help_wins_over_every_other_argument() {
-        assert_eq!(run(&owned(&["tiles", "rom.gba", "--help"])).expect("help"), vec![USAGE]);
+        assert_eq!(
+            run(&owned(&["tiles", "rom.gba", "--help"])).expect("help"),
+            vec![USAGE]
+        );
         assert_eq!(run(&owned(&["-h"])).expect("help"), vec![USAGE]);
     }
 
     #[test]
     fn a_bare_self_test_runs_and_stops_but_a_trailing_command_still_runs() {
-        assert_eq!(run(&owned(&["--self-test"])).expect("self-test"), vec!["self-test=ok"]);
+        assert_eq!(
+            run(&owned(&["--self-test"])).expect("self-test"),
+            vec!["self-test=ok"]
+        );
         let dir = scratch("selftest-then-command");
         let input = dir.join("bytes.bin");
         std::fs::write(&input, vec![7u8; 64]).expect("input");
@@ -258,7 +269,14 @@ mod tests {
         // A different spelling of the same file is still the same file.
         let indirect = format!("{}/./bytes.bin", dir.to_str().expect("utf8"));
         assert_eq!(
-            run(&owned(&["bytes-file", path, "-o", &indirect, "--width", "8"])),
+            run(&owned(&[
+                "bytes-file",
+                path,
+                "-o",
+                &indirect,
+                "--width",
+                "8"
+            ])),
             Err(ExportError("refusing to overwrite the input".to_string()))
         );
         assert_eq!(std::fs::read(&input).expect("input intact"), vec![7u8; 64]);
@@ -275,15 +293,31 @@ mod tests {
         let output = output.to_str().expect("utf8");
         let args = |address: &str, size: &str| {
             owned(&[
-                "tiles", path, "-o", output, "--address", address, "--size", size, "--bpp", "4",
-                "--columns", "1",
+                "tiles",
+                path,
+                "-o",
+                output,
+                "--address",
+                address,
+                "--size",
+                size,
+                "--bpp",
+                "4",
+                "--columns",
+                "1",
             ])
         };
         // Below ROM_BASE, past the end, and empty all report the same way.
-        for (address, size) in [("0x07ffffff", "32"), ("0x08000000", "512"), ("0x08000000", "0")] {
+        for (address, size) in [
+            ("0x07ffffff", "32"),
+            ("0x08000000", "512"),
+            ("0x08000000", "0"),
+        ] {
             assert_eq!(
                 run(&args(address, size)),
-                Err(ExportError("tile range is outside the ROM or empty".to_string())),
+                Err(ExportError(
+                    "tile range is outside the ROM or empty".to_string()
+                )),
                 "{address} {size}"
             );
         }
@@ -291,9 +325,18 @@ mod tests {
         // The message names the palette, not the tiles, for the other command.
         assert_eq!(
             run(&owned(&[
-                "palette-rgba", path, "-o", output, "--address", "0x09000000", "--size", "32"
+                "palette-rgba",
+                path,
+                "-o",
+                output,
+                "--address",
+                "0x09000000",
+                "--size",
+                "32"
             ])),
-            Err(ExportError("palette range is outside the ROM or empty".to_string()))
+            Err(ExportError(
+                "palette range is outside the ROM or empty".to_string()
+            ))
         );
         std::fs::remove_dir_all(&dir).expect("cleanup");
     }
@@ -336,7 +379,12 @@ mod tests {
         let input = dir.join("bytes.bin");
         std::fs::write(&input, vec![7u8; 64]).expect("input");
         assert_eq!(
-            run(&owned(&["wobble", input.to_str().expect("utf8"), "-o", "out.png"])),
+            run(&owned(&[
+                "wobble",
+                input.to_str().expect("utf8"),
+                "-o",
+                "out.png"
+            ])),
             Err(ExportError("an asset command is required".to_string()))
         );
         std::fs::remove_dir_all(&dir).expect("cleanup");
@@ -355,8 +403,15 @@ mod tests {
             lines[0],
             "{\"height\": 2, \"palette_entries\": 32, \"pixels\": 32, \"width\": 16}"
         );
-        let lines = run(&owned(&["palette-rgba-file", path, "-o", output, "--width", "8"]))
-            .expect("explicit");
+        let lines = run(&owned(&[
+            "palette-rgba-file",
+            path,
+            "-o",
+            output,
+            "--width",
+            "8",
+        ]))
+        .expect("explicit");
         assert_eq!(
             lines[0],
             "{\"height\": 4, \"palette_entries\": 32, \"pixels\": 32, \"width\": 8}"

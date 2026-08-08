@@ -9,7 +9,7 @@
 //   cargo run -p jobs                 # print the cap
 //   cargo run -p jobs -- --self-test
 //
-// Ported from tools/lib/jobs.ts. The self-test expectations below are copied
+// Native shared job-cap helper. The self-test expectations below are
 // verbatim from that file so the two agree by construction while both exist.
 
 use std::thread;
@@ -32,16 +32,34 @@ pub fn resolve_jobs(requested: Option<i64>, cores: usize) -> usize {
 }
 
 pub fn available_parallelism() -> usize {
-    thread::available_parallelism().map(|n| n.get()).unwrap_or(1)
+    thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1)
 }
 
 fn self_test() {
     assert_eq!(jobs_for(18, SHARE), 14, "18 cores must give 14");
-    assert_eq!(jobs_for(1, SHARE), 1, "a single core must still run one job");
+    assert_eq!(
+        jobs_for(1, SHARE),
+        1,
+        "a single core must still run one job"
+    );
     assert_eq!(jobs_for(2, SHARE), 1, "two cores must give one job");
-    assert_eq!(resolve_jobs(Some(4), 18), 4, "a request under the cap must be honoured");
-    assert_eq!(resolve_jobs(Some(64), 18), 14, "a request over the cap must be clamped");
-    assert_eq!(resolve_jobs(Some(0), 18), 14, "a nonsense request must fall back to the cap");
+    assert_eq!(
+        resolve_jobs(Some(4), 18),
+        4,
+        "a request under the cap must be honoured"
+    );
+    assert_eq!(
+        resolve_jobs(Some(64), 18),
+        14,
+        "a request over the cap must be clamped"
+    );
+    assert_eq!(
+        resolve_jobs(Some(0), 18),
+        14,
+        "a nonsense request must fall back to the cap"
+    );
     assert_eq!(resolve_jobs(None, 18), 14, "no request must give the cap");
     println!("jobs self-test ok");
 }

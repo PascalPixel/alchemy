@@ -340,7 +340,11 @@ mod tests {
     #[test]
     fn every_emitted_address_is_an_integer_in_hex() {
         let mut names: Vec<String> = (0..=13).map(|r| format!("_call_via_r{r}")).collect();
-        names.extend(CALL_VIA_REGISTERS.iter().map(|(a, _)| format!("_call_via_{a}")));
+        names.extend(
+            CALL_VIA_REGISTERS
+                .iter()
+                .map(|(a, _)| format!("_call_via_{a}")),
+        );
         names.push("Func_ffffffff".to_string());
         names.push("Data_00000000".to_string());
         let mut bases: Vec<u64> = vec![CALL_VIA_BASE, 0x0200_b794];

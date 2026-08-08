@@ -46,7 +46,11 @@ const fn crc32_table() -> [u32; 256] {
         let mut c = n as u32;
         let mut k = 0;
         while k < 8 {
-            c = if c & 1 != 0 { 0xedb8_8320 ^ (c >> 1) } else { c >> 1 };
+            c = if c & 1 != 0 {
+                0xedb8_8320 ^ (c >> 1)
+            } else {
+                c >> 1
+            };
             k += 1;
         }
         table[n] = c;
@@ -96,7 +100,11 @@ struct BitWriter {
 
 impl BitWriter {
     fn new() -> Self {
-        BitWriter { bytes: Vec::new(), bit_buffer: 0, bit_count: 0 }
+        BitWriter {
+            bytes: Vec::new(),
+            bit_buffer: 0,
+            bit_count: 0,
+        }
     }
 
     /// Append `count` bits whose LSB is the first bit of the element.
@@ -171,14 +179,20 @@ fn emit_match(writer: &mut BitWriter, length: u32, distance: u32) {
     }
     let (code, bits) = fixed_literal_code(257 + length_symbol as u32);
     writer.write_code(code, bits);
-    writer.write_bits(length - LENGTH_BASE[length_symbol], LENGTH_EXTRA[length_symbol]);
+    writer.write_bits(
+        length - LENGTH_BASE[length_symbol],
+        LENGTH_EXTRA[length_symbol],
+    );
 
     let mut distance_symbol = DISTANCE_BASE.len() - 1;
     while DISTANCE_BASE[distance_symbol] > distance {
         distance_symbol -= 1;
     }
     writer.write_code(distance_symbol as u32, 5);
-    writer.write_bits(distance - DISTANCE_BASE[distance_symbol], DISTANCE_EXTRA[distance_symbol]);
+    writer.write_bits(
+        distance - DISTANCE_BASE[distance_symbol],
+        DISTANCE_EXTRA[distance_symbol],
+    );
 }
 
 /// Compress `data` into a zlib (RFC 1950) stream. Deterministic: the same
@@ -202,7 +216,9 @@ pub fn deflate_sync(data: &[u8], _options: DeflateOptions) -> Vec<u8> {
     // two implementations are structurally identical.
     let mut previous = vec![0i32; data.len()];
     let hash_at = |index: usize| -> usize {
-        (((data[index] as usize) << 10) ^ ((data[index + 1] as usize) << 5) ^ (data[index + 2] as usize))
+        (((data[index] as usize) << 10)
+            ^ ((data[index + 1] as usize) << 5)
+            ^ (data[index + 2] as usize))
             & ((1usize << HASH_BITS) - 1)
     };
 
@@ -294,7 +310,12 @@ struct BitReader<'a> {
 
 impl<'a> BitReader<'a> {
     fn new(data: &'a [u8]) -> Self {
-        BitReader { data, byte_position: 0, bit_buffer: 0, bit_count: 0 }
+        BitReader {
+            data,
+            byte_position: 0,
+            bit_buffer: 0,
+            bit_count: 0,
+        }
     }
 
     fn need(&mut self, count: u32) -> Result<(), InflateError> {
@@ -351,7 +372,10 @@ impl Huffman {
         if counts[0] as usize == lengths.len() {
             // No codes at all: legal only for an unused distance table, which
             // the caller handles by never asking this table to decode.
-            return Ok(Huffman { counts, symbols: Vec::new() });
+            return Ok(Huffman {
+                counts,
+                symbols: Vec::new(),
+            });
         }
         // Check for an over- or under-subscribed set (incomplete sets with a
         // single code are legal, as zlib allows).
@@ -412,8 +436,9 @@ fn fixed_tables() -> (Huffman, Huffman) {
     )
 }
 
-const CODE_LENGTH_ORDER: [usize; 19] =
-    [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+const CODE_LENGTH_ORDER: [usize; 19] = [
+    16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15,
+];
 
 fn inflate_block_data(
     reader: &mut BitReader<'_>,
@@ -428,8 +453,7 @@ fn inflate_block_data(
             256 => return Ok(()),
             257..=285 => {
                 let index = (symbol - 257) as usize;
-                let length =
-                    LENGTH_BASE[index] + reader.bits(LENGTH_EXTRA[index])?;
+                let length = LENGTH_BASE[index] + reader.bits(LENGTH_EXTRA[index])?;
                 let distance_symbol = distances.decode(reader)? as usize;
                 if distance_symbol >= DISTANCE_BASE.len() {
                     return Err(InflateError("invalid distance code"));
@@ -613,9 +637,19 @@ mod tests {
         let compressed = deflate_sync(data, DeflateOptions::default());
         let restored = inflate_sync(&compressed)
             .unwrap_or_else(|error| panic!("inflate failed on {} bytes: {error}", data.len()));
-        assert_eq!(restored.as_slice(), data, "round-trip mismatch at {} bytes", data.len());
+        assert_eq!(
+            restored.as_slice(),
+            data,
+            "round-trip mismatch at {} bytes",
+            data.len()
+        );
         let again = deflate_sync(data, DeflateOptions::default());
-        assert_eq!(again, compressed, "deflate is not deterministic at {} bytes", data.len());
+        assert_eq!(
+            again,
+            compressed,
+            "deflate is not deterministic at {} bytes",
+            data.len()
+        );
     }
 
     /// The cases from the TypeScript `selfTest`.
@@ -642,7 +676,10 @@ mod tests {
     fn empty_input_is_a_bare_wrapper() {
         let compressed = deflate_sync(&[], DeflateOptions::default());
         // 78 01, then BFINAL/BTYPE + the 7-bit end-of-block code, then adler.
-        assert_eq!(compressed, vec![0x78, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01]);
+        assert_eq!(
+            compressed,
+            vec![0x78, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01]
+        );
         assert_eq!(inflate_sync(&compressed).unwrap(), Vec::<u8>::new());
     }
 
@@ -667,14 +704,21 @@ mod tests {
         round_trip(&data);
         // Random data must not shrink below its own size by any real margin.
         let compressed = deflate_sync(&data, DeflateOptions::default());
-        assert!(compressed.len() > data.len(), "random data should not compress");
+        assert!(
+            compressed.len() > data.len(),
+            "random data should not compress"
+        );
     }
 
     #[test]
     fn compressible_data_actually_shrinks() {
         let data: Vec<u8> = (0..100_000u32).map(|value| (value % 11) as u8).collect();
         let compressed = deflate_sync(&data, DeflateOptions::default());
-        assert!(compressed.len() * 20 < data.len(), "expected a big win, got {}", compressed.len());
+        assert!(
+            compressed.len() * 20 < data.len(),
+            "expected a big win, got {}",
+            compressed.len()
+        );
         assert_eq!(inflate_sync(&compressed).unwrap(), data);
     }
 
@@ -712,7 +756,10 @@ mod tests {
         assert_eq!(crc32(b""), 0);
         assert_eq!(crc32(b"a"), 0xe8b7_be43);
         assert_eq!(crc32(b"123456789"), 0xcbf4_3926);
-        assert_eq!(crc32(b"The quick brown fox jumps over the lazy dog"), 0x414f_a339);
+        assert_eq!(
+            crc32(b"The quick brown fox jumps over the lazy dog"),
+            0x414f_a339
+        );
     }
 
     #[test]
@@ -734,7 +781,10 @@ mod tests {
         // Preset dictionary flag set (0x78 0x20 has FCHECK 0 but is % 31 != 0,
         // so use 0x78 0xbb which is divisible by 31 and has FDICT set).
         assert_eq!(((0x78u16 << 8) | 0xbb) % 31, 0);
-        assert_eq!(inflate_sync(&[0x78, 0xbb, 0x03, 0x00]), Err(InflateError("need dictionary")));
+        assert_eq!(
+            inflate_sync(&[0x78, 0xbb, 0x03, 0x00]),
+            Err(InflateError("need dictionary"))
+        );
     }
 
     #[test]
@@ -755,7 +805,10 @@ mod tests {
         let mut compressed = deflate_sync(&data, DeflateOptions::default());
         let last = compressed.len() - 1;
         compressed[last] ^= 0xff;
-        assert_eq!(inflate_sync(&compressed), Err(InflateError("incorrect data check")));
+        assert_eq!(
+            inflate_sync(&compressed),
+            Err(InflateError("incorrect data check"))
+        );
     }
 
     #[test]
@@ -799,7 +852,10 @@ mod tests {
         // A bad length complement must be rejected.
         let mut bad = stream.clone();
         bad[5] ^= 0xff;
-        assert_eq!(inflate_sync(&bad), Err(InflateError("invalid stored block lengths")));
+        assert_eq!(
+            inflate_sync(&bad),
+            Err(InflateError("invalid stored block lengths"))
+        );
     }
 
     #[test]

@@ -20,7 +20,7 @@
  * sites resolve independently across thirteen targets.
  *
  * Per-site call symbols (law 6): each callee below is named at the
- * bl_site_symbols.ts-decoded address for its own call site (the raw .s
+ * bl-site-symbols-decoded address for its own call site (the raw .s
  * gives every bl its own local trampoline, even for same-overlay siblings
  * and even for the same logical callee reused from more than one site), not
  * the generic main-image/local-owner address the earlier draft used.

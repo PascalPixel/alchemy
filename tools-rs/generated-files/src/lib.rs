@@ -22,13 +22,9 @@ pub fn glob_matches(pattern: &str, name: &str) -> bool {
     fn walk(pattern: &[char], name: &[char]) -> bool {
         match pattern.first() {
             None => name.is_empty(),
-            Some('*') => {
-                (0..=name.len()).any(|split| walk(&pattern[1..], &name[split..]))
-            }
+            Some('*') => (0..=name.len()).any(|split| walk(&pattern[1..], &name[split..])),
             Some('?') => !name.is_empty() && walk(&pattern[1..], &name[1..]),
-            Some(literal) => {
-                name.first() == Some(literal) && walk(&pattern[1..], &name[1..])
-            }
+            Some(literal) => name.first() == Some(literal) && walk(&pattern[1..], &name[1..]),
         }
     }
     let pattern: Vec<char> = pattern.chars().collect();
@@ -47,7 +43,9 @@ pub fn prune_files(
     let expected: BTreeSet<String> = keep
         .into_iter()
         .filter_map(|name| {
-            name.as_ref().file_name().map(|name| name.to_string_lossy().into_owned())
+            name.as_ref()
+                .file_name()
+                .map(|name| name.to_string_lossy().into_owned())
         })
         .collect();
     if !directory.exists() {
@@ -72,7 +70,9 @@ pub fn prune_files(
 
 fn is_image(name: &str) -> bool {
     let lowered = name.to_ascii_lowercase();
-    IMAGE_SUFFIXES.iter().any(|suffix| lowered.ends_with(suffix))
+    IMAGE_SUFFIXES
+        .iter()
+        .any(|suffix| lowered.ends_with(suffix))
 }
 
 fn normalize(name: &str) -> String {
@@ -91,13 +91,19 @@ pub fn unused_tracked_images(
         return Ok(Vec::new());
     }
     let mut command = Command::new("git");
-    command.arg("ls-files").arg("-z").arg("--").current_dir(root);
+    command
+        .arg("ls-files")
+        .arg("-z")
+        .arg("--")
+        .current_dir(root);
     for suffix in IMAGE_SUFFIXES {
         command.arg(format!("*{suffix}"));
     }
     let output = command.output()?;
     if !output.status.success() {
-        return Err(io::Error::other(String::from_utf8_lossy(&output.stderr).into_owned()));
+        return Err(io::Error::other(
+            String::from_utf8_lossy(&output.stderr).into_owned(),
+        ));
     }
     let tracked: BTreeSet<String> = String::from_utf8_lossy(&output.stdout)
         .split('\0')
@@ -122,8 +128,10 @@ pub fn unused_tracked_images(
         })
         .collect();
 
-    let ignored: Vec<String> =
-        ignored_prefixes.into_iter().map(|prefix| normalize(prefix.as_ref())).collect();
+    let ignored: Vec<String> = ignored_prefixes
+        .into_iter()
+        .map(|prefix| normalize(prefix.as_ref()))
+        .collect();
 
     Ok(tracked
         .into_iter()
@@ -140,8 +148,10 @@ mod tests {
     use super::*;
 
     fn scratch(name: &str) -> PathBuf {
-        let dir =
-            std::env::temp_dir().join(format!("alchemy-generated-files-{name}-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!(
+            "alchemy-generated-files-{name}-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
         dir
@@ -170,24 +180,36 @@ mod tests {
         let removed = prune_files(&dir, "*.png", ["some/path/keep.png"]).unwrap();
         assert_eq!(removed, vec![dir.join("drop.png")]);
         assert!(dir.join("keep.png").exists());
-        assert!(dir.join("other.txt").exists(), "a non-matching file is untouched");
-        assert!(dir.join("sub.png").is_dir(), "a matching directory is never removed");
+        assert!(
+            dir.join("other.txt").exists(),
+            "a non-matching file is untouched"
+        );
+        assert!(
+            dir.join("sub.png").is_dir(),
+            "a matching directory is never removed"
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]
     fn pruning_a_missing_directory_is_not_an_error() {
-        assert!(prune_files(Path::new("/nonexistent-alchemy-dir"), "*", Vec::<String>::new())
-            .unwrap()
-            .is_empty());
+        assert!(prune_files(
+            Path::new("/nonexistent-alchemy-dir"),
+            "*",
+            Vec::<String>::new()
+        )
+        .unwrap()
+        .is_empty());
     }
 
     #[test]
     fn a_tree_without_git_yields_nothing() {
         let dir = scratch("nogit");
-        assert!(unused_tracked_images(&dir, Vec::<String>::new(), Vec::<String>::new())
-            .unwrap()
-            .is_empty());
+        assert!(
+            unused_tracked_images(&dir, Vec::<String>::new(), Vec::<String>::new())
+                .unwrap()
+                .is_empty()
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 
@@ -195,13 +217,22 @@ mod tests {
     fn unclaimed_tracked_images_are_reported() {
         let dir = scratch("git");
         let git = |args: &[&str]| {
-            Command::new("git").args(args).current_dir(&dir).output().unwrap();
+            Command::new("git")
+                .args(args)
+                .current_dir(&dir)
+                .output()
+                .unwrap();
         };
         git(&["init", "-q"]);
         git(&["config", "user.email", "t@example.com"]);
         git(&["config", "user.name", "t"]);
         fs::create_dir_all(dir.join("vendor")).unwrap();
-        for name in ["claimed.png", "orphan.png", "vendor/ignored.png", "notes.txt"] {
+        for name in [
+            "claimed.png",
+            "orphan.png",
+            "vendor/ignored.png",
+            "notes.txt",
+        ] {
             fs::write(dir.join(name), b"").unwrap();
         }
         git(&["add", "-A"]);

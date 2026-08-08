@@ -27,6 +27,7 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   coverage_map: "tools-rs/coverage-map/target/release/coverage-map",
   dashboard_server: "tools-rs/dashboard-server/target/release/dashboard-server",
   full_c_history: "tools-rs/full-c-history/target/release/full-c-history",
+  audit_residuals: "tools-rs/audit-residuals/target/release/audit-residuals",
 };
 
 export function subcommands(): string[] {

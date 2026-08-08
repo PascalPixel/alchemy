@@ -25,6 +25,7 @@ const ROOT = dirname(dirname(HERE));
 const RUST_SUBCOMMANDS: Record<string, string> = {
   decomp_constraints: "tools-rs/decomp-constraints/target/release/decomp-constraints",
   search_compiler_modes: "tools-rs/search-compiler-modes/target/release/search-compiler-modes",
+  shape_sweep: "tools-rs/shape-sweep/target/release/shape-sweep",
 };
 
 export function subcommands(): string[] {

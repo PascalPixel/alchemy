@@ -11,7 +11,9 @@ use alchemy_zlib::{crc32, deflate_sync, inflate_sync, DeflateOptions};
 
 fn read_stdin() -> Vec<u8> {
     let mut buffer = Vec::new();
-    std::io::stdin().read_to_end(&mut buffer).expect("read stdin");
+    std::io::stdin()
+        .read_to_end(&mut buffer)
+        .expect("read stdin");
     buffer
 }
 
@@ -45,7 +47,10 @@ fn self_test() {
             data.len()
         );
         let again = deflate_sync(data, DeflateOptions::default());
-        assert!(again == compressed, "deflate is not deterministic for case {case_index}");
+        assert!(
+            again == compressed,
+            "deflate is not deterministic for case {case_index}"
+        );
     }
     println!("self-test=ok tool=zlib cases={}", cases.len());
 }

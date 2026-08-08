@@ -7,7 +7,12 @@ fn repository_root() -> PathBuf {
     // The binary lives in tools-rs/target/<profile>/, so the root is the
     // workspace's parent. CARGO_MANIFEST_DIR is tools-rs/no-asm-c at compile
     // time, which is stable regardless of where the binary is invoked from.
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_path_buf()
 }
 
 fn main() -> ExitCode {
@@ -38,11 +43,18 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             }
         };
-        let name = path.strip_prefix(&root).unwrap_or(path).to_string_lossy().into_owned();
+        let name = path
+            .strip_prefix(&root)
+            .unwrap_or(path)
+            .to_string_lossy()
+            .into_owned();
         findings.extend(find_forbidden(&name, &text));
     }
     for finding in &findings {
-        eprintln!("{}:{}: forbidden {} construct", finding.file, finding.line, finding.token);
+        eprintln!(
+            "{}:{}: forbidden {} construct",
+            finding.file, finding.line, finding.token
+        );
     }
     println!("scanned={} forbidden={}", files.len(), findings.len());
     if findings.is_empty() {

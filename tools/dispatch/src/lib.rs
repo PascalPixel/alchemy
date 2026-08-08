@@ -400,6 +400,10 @@ const OVERLAY: &[Entry] = &[
 
 const SEARCH: &[Entry] = &[
     Entry {
+        name: "alchemy_permuter",
+        target: Target::Binary("tools/alchemy-permuter/target/release/alchemy-permuter"),
+    },
+    Entry {
         name: "decomp_constraints",
         target: Target::Binary("tools/decomp-constraints/target/release/decomp-constraints"),
     },
@@ -646,7 +650,7 @@ mod tests {
         assert_eq!(usage(Group::Make).lines().count(), 50);
         assert_eq!(usage(Group::Metrics).lines().count(), 6);
         assert_eq!(usage(Group::Overlay).lines().count(), 15);
-        assert_eq!(usage(Group::Search).lines().count(), 4);
+        assert_eq!(usage(Group::Search).lines().count(), 5);
         assert_eq!(usage(Group::Semantic).lines().count(), 4);
         assert!(usage(Group::Check).contains("  architecture"));
     }
@@ -664,6 +668,7 @@ mod tests {
         assert!(find_entry(Group::Overlay, "overlay_gaps").is_some());
         assert!(find_entry(Group::Overlay, "overlay_certify").is_some());
         assert!(find_entry(Group::Search, "shape_sweep").is_some());
+        assert!(find_entry(Group::Search, "alchemy_permuter").is_some());
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         assert_eq!(
             top_level_usage(),

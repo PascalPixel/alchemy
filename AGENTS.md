@@ -120,10 +120,14 @@ and re-pin a cc1 digest only after a green verification.
 
 Search finds a source form that compiles byte-exact while holding the compiler
 fixed. `tools/shape-sweep` applies bounded deterministic transforms seeded
-from `LAWS.md`; compiler mode search handles the other axis. The asset
-alchemist and other native rescue searches are stochastic and must remain
-bounded probes with measured results. Never promote a near-match, and never
-let a search silently alter the compiler routing evidence it is testing.
+from `LAWS.md`; compiler mode search handles the other axis.
+`tools/alchemy-permuter` owns larger bounded permutation jobs: it preserves
+the portable `PERM_*`, compiler-backend, and instruction-scoring boundaries
+of decomp-permuter while using Alchemy's linked-byte scorer directly for game
+candidates. The asset alchemist and other native rescue searches are
+stochastic and must remain bounded probes with measured results. Never
+promote a near-match, and never let a search silently alter the compiler
+routing evidence it is testing.
 
 ## decomp
 

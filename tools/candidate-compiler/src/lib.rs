@@ -16,6 +16,6 @@ pub mod verify;
 
 pub use alchemy_routing::routing::CompilerTarget;
 pub use verify::{
-    verify_candidate, CandidateCompilerConfiguration, CandidateCompilerFamily, Verification,
-    ROM_BASE,
+    verify_candidate, verify_candidate_routed, CandidateCompilerConfiguration,
+    CandidateCompilerFamily, Verification, ROM_BASE,
 };

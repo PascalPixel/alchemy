@@ -700,7 +700,7 @@ pub const ACCEPTED_PATHS: &[&str] = &[
         "assets/audio/wave.wav",
         "assets/data/layout.json",
         "tools/metrics/compare_roms.ts",
-        "tools/make/build_full.ts",
+        "tools-rs/build-full/src/main.rs",
         "assets/data/resource_2_build_stamp.txt",
         "assets/maps/town/metatiles.bin",
         "assets/maps/town/metatile_attributes.bin",

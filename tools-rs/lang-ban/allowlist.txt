@@ -26,7 +26,6 @@ tools/decomp/remaining_survey.ts
 tools/lib/alchemy_gcc.ts
 tools/lib/alignment_tail.ts
 tools/lib/asset_paths.ts
-tools/lib/c_structure.py
 tools/lib/cache_entry.ts
 tools/lib/candidate_explain.ts
 tools/lib/candidate_show.ts

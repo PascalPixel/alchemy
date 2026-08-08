@@ -48,7 +48,7 @@ export interface Unit {
   lines: string[];       // verbatim source lines
   pinned: boolean;       // contains a call -- never reordered across another pinned unit
   scope: Unit[] | null;  // for blocks: the units inside (excluding the brace lines)
-  line: number;          // 1-based source line, to match c_structure.py's facts
+  line: number;          // 1-based source line, matching c-structure's facts
 }
 
 const DECLARATION = /^\s*(?:extern\s+)?(?:u8|u16|u32|s8|s16|s32|int|char|void|short|long|unsigned|signed)\b[^=()]*;\s*$/;
@@ -79,9 +79,9 @@ const LABEL = /^\s*[A-Za-z_][A-Za-z0-9_]*\s*:\s*$/;
 const JUMP = /\b(?:return|goto|break|continue)\b/;
 
 // ---------------------------------------------------------------------------
-// Structural facts from a real parse (tools/lib/c_structure.py). The regex rules
+// Structural facts from a real parse (tools-rs/c-structure). The regex rules
 // above are conservative -- they over-refuse rather than let a bad move
-// through -- so they remain the fallback when pycparser is unavailable. When
+// through -- so they remain the fallback when the structural parser rejects a source. When
 // the oracle DOES answer, it is authoritative: it knows which statement a
 // braceless header actually governs and which names a statement truly
 // defines, where the line model can only pattern-match.
@@ -108,7 +108,7 @@ export interface Structure {
 
 export function loadStructure(source: string, functionName: string): Structure | null {
   try {
-    const run = Bun.spawnSync(["python3", join(ROOT, "tools/lib/c_structure.py"), source, functionName], {
+    const run = Bun.spawnSync([join(ROOT, "tools-rs/c-structure/target/release/c-structure"), source, functionName], {
       cwd: ROOT, stdout: "pipe", stderr: "pipe",
     });
     if (run.exitCode !== 0) return null;
@@ -488,7 +488,7 @@ export function generateMoves(parsed: ParsedFunction, structure: Structure | nul
                 pinned: true,
                 scope: null,
                 // Synthesized, so it has no original source line. 0 never
-                // matches c_structure.py's 1-based facts, which is what we
+                // matches c-structure's 1-based facts, which is what we
                 // want: this unit has no parse facts to look up.
                 line: 0,
               });

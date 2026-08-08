@@ -74,7 +74,7 @@ Additional ROM-image facts:
 The semantic compiler reviews 976,622 bytes of owner spans, but 26,844 of those
 bytes lie outside the audited executable extents, chiefly pool/tail portions of
 code-overlay owner spans. The coverage numerator therefore uses 949,778, not
-976,622. `tools/make/build_semantic.ts` now reports both figures instead of silently
+976,622. `bun run build:semantic` now reports both figures instead of silently
 adding out-of-scope bytes.
 
 The continuous semantic-overlay campaign has reduced the ranked

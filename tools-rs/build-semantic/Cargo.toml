@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+name = "build-semantic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alchemy-plan = { path = "../alchemy-plan" }
+alchemy-routing = { path = "../alchemy-routing" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[lib]
+name = "build_semantic"
+path = "src/lib.rs"
+
+[[bin]]
+name = "build-semantic"
+path = "src/main.rs"

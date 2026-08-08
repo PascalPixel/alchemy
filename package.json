@@ -6,7 +6,7 @@
     "build:claimed": "tools-rs/build-claimed/target/release/build-claimed",
     "build:asm": "bun tools/make/build_asm.ts",
     "build:assets": "bun tools/make/build_assets.ts",
-    "build:semantic": "bun tools/make/build_semantic.ts",
+    "build:semantic": "tools-rs/build-semantic/target/release/build-semantic",
     "semantic:queue": "tools-rs/semantic-queue/target/release/semantic-queue",
     "semantic:check": "tools-rs/semantic-owner-scope/target/release/semantic-owner-scope --check",
     "core:retained:check": "tools-rs/core-retained-audit/target/release/core-retained-audit --check",

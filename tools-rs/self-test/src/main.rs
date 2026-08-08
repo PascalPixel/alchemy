@@ -228,10 +228,95 @@ struct Outcome {
     output: String,
 }
 
-fn run_one(root: &Path, tools: &Path, tool: &str) -> Outcome {
-    let spawned = Command::new("bun")
-        .arg(tools.join(tool))
-        .arg("--self-test")
+#[derive(Debug, Clone)]
+struct Invocation {
+    name: String,
+    program: PathBuf,
+    arguments: Vec<String>,
+}
+
+fn native_tools(root: &Path) -> Vec<Invocation> {
+    let tools_rs = root.join("tools-rs");
+    let Ok(entries) = fs::read_dir(&tools_rs) else {
+        return Vec::new();
+    };
+    let mut found = Vec::new();
+    for entry in entries.filter_map(Result::ok) {
+        let Ok(kind) = entry.file_type() else { continue };
+        if !kind.is_dir() {
+            continue;
+        }
+        let crate_name = entry.file_name().to_string_lossy().into_owned();
+        if crate_name == "self-test" || crate_name == "target" {
+            continue;
+        }
+        let main = entry.path().join("src/main.rs");
+        let source = fs::read(&main)
+            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+            .unwrap_or_default();
+        if !source.contains("\"--self-test\"") {
+            continue;
+        }
+        let manifest = entry.path().join("Cargo.toml");
+        let manifest_text = fs::read_to_string(&manifest).unwrap_or_default();
+        let binary_name = main_binary_name(&manifest_text).unwrap_or_else(|| crate_name.clone());
+        let standalone = entry.path().join("target/release").join(&binary_name);
+        let shared = tools_rs.join("target/release").join(&binary_name);
+        let existing = [standalone, shared].into_iter().find(|path| path.exists());
+        let (program, arguments) = match existing {
+            Some(program) => (program, vec!["--self-test".to_string()]),
+            None => (
+                PathBuf::from("cargo"),
+                vec![
+                    "run".to_string(),
+                    "--quiet".to_string(),
+                    "--release".to_string(),
+                    "--manifest-path".to_string(),
+                    manifest.to_string_lossy().into_owned(),
+                    "--bin".to_string(),
+                    binary_name,
+                    "--".to_string(),
+                    "--self-test".to_string(),
+                ],
+            ),
+        };
+        found.push(Invocation { name: format!("rust/{crate_name}"), program, arguments });
+    }
+    found.sort_by(|left, right| left.name.as_bytes().cmp(right.name.as_bytes()));
+    found
+}
+
+fn main_binary_name(manifest: &str) -> Option<String> {
+    let mut in_binary = false;
+    let mut name = None;
+    for raw in manifest.lines() {
+        let line = raw.trim();
+        if line == "[[bin]]" {
+            in_binary = true;
+            name = None;
+            continue;
+        }
+        if line.starts_with('[') {
+            in_binary = false;
+            name = None;
+            continue;
+        }
+        if !in_binary {
+            continue;
+        }
+        if let Some(value) = line.strip_prefix("name = ") {
+            name = Some(value.trim_matches('"').to_string());
+        }
+        if line == "path = \"src/main.rs\"" {
+            return name;
+        }
+    }
+    None
+}
+
+fn run_one(root: &Path, tool: &Invocation) -> Outcome {
+    let spawned = Command::new(&tool.program)
+        .args(&tool.arguments)
         .current_dir(root)
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -245,22 +330,22 @@ fn run_one(root: &Path, tools: &Path, tool: &str) -> Outcome {
             // JS `stderr || stdout`: the empty string is falsy.
             let chosen = if stderr.is_empty() { stdout } else { stderr };
             Outcome {
-                tool: tool.to_string(),
+                tool: tool.name.clone(),
                 ok: out.status.success(),
                 output: js_trim(&chosen).to_string(),
             }
         }
         Err(error) => Outcome {
-            tool: tool.to_string(),
+            tool: tool.name.clone(),
             ok: false,
-            output: format!("could not spawn bun: {error}"),
+            output: format!("could not spawn {}: {error}", tool.program.display()),
         },
     }
 }
 
 /// Bounded concurrency: the self-tests compile C and assemble overlays, so an
 /// unbounded fan-out over 138 tools thrashes rather than finishing sooner.
-fn run_all(root: &Path, tools_dir: &Path, tools: &[String], jobs: usize) -> Vec<Outcome> {
+fn run_all(root: &Path, tools: &[Invocation], jobs: usize) -> Vec<Outcome> {
     let next = Arc::new(AtomicUsize::new(0));
     let results = Arc::new(Mutex::new(Vec::new()));
     let workers = jobs.min(tools.len());
@@ -273,7 +358,7 @@ fn run_all(root: &Path, tools_dir: &Path, tools: &[String], jobs: usize) -> Vec<
                 if index >= tools.len() {
                     break;
                 }
-                let outcome = run_one(root, tools_dir, &tools[index]);
+                let outcome = run_one(root, &tools[index]);
                 results.lock().expect("results mutex").push(outcome);
             });
         }
@@ -321,7 +406,7 @@ fn main() {
     let jobs = resolve_jobs(requested_jobs(&args), available_parallelism());
 
     let names = walk(&tools_dir, Path::new(""), "");
-    let tools: Vec<String> = discover(&names, &|name| {
+    let typescript: Vec<String> = discover(&names, &|name| {
         fs::read(tools_dir.join(name))
             .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
             .unwrap_or_default()
@@ -329,6 +414,19 @@ fn main() {
     .into_iter()
     .filter(|name| !is_excluded(name))
     .collect();
+    let mut tools: Vec<Invocation> = typescript
+        .into_iter()
+        .map(|name| Invocation {
+            program: PathBuf::from("bun"),
+            arguments: vec![
+                tools_dir.join(&name).to_string_lossy().into_owned(),
+                "--self-test".to_string(),
+            ],
+            name,
+        })
+        .collect();
+    tools.extend(native_tools(&root));
+    tools.sort_by(|left, right| left.name.as_bytes().cmp(right.name.as_bytes()));
 
     // PORT NOTE (deliberate divergence, mirrored back into tools/self_test.ts):
     // discovering nothing used to print "0/0 passed" and exit 0, so a gate that
@@ -347,14 +445,14 @@ fn main() {
 
     if args.iter().any(|a| a == "--list") {
         for tool in &tools {
-            println!("  {tool}");
+            println!("  {}", tool.name);
         }
         println!("{} tools expose a self-test", tools.len());
         return;
     }
 
     let started = Instant::now();
-    let results = run_all(&root, &tools_dir, &tools, jobs);
+    let results = run_all(&root, &tools, jobs);
     let mut failed: Vec<&Outcome> = results.iter().filter(|r| !r.ok).collect();
     failed.sort_by(|a, b| locale_compare(&a.tool, &b.tool));
     for result in &failed {
@@ -438,6 +536,23 @@ mod tests {
         let names = owned(&["z/b.ts", "a.ts", "m/n/c.ts"]);
         let found = discover(&names, &|_| "\"--self-test\"".to_string());
         assert_eq!(found, owned(&["a.ts", "m/n/c.ts", "z/b.ts"]));
+    }
+
+    #[test]
+    fn native_binary_name_comes_from_the_main_bin_entry() {
+        let manifest = r#"
+[package]
+name = "crate-name"
+
+[[bin]]
+name = "helper"
+path = "src/bin/helper.rs"
+
+[[bin]]
+name = "actual-tool"
+path = "src/main.rs"
+"#;
+        assert_eq!(main_binary_name(manifest).as_deref(), Some("actual-tool"));
     }
 
     #[test]

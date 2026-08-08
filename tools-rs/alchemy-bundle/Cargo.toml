@@ -21,7 +21,3 @@ path = "src/lib.rs"
 [[bin]]
 name = "bundle-drift"
 path = "src/bin/bundle_drift.rs"
-
-[[bin]]
-name = "bundle-corpus"
-path = "src/bin/bundle_corpus.rs"

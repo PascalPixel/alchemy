@@ -74,12 +74,12 @@ void Func_02005b48(s32 selector)
     struct Resource373Entity *entity = Func_0200bb38(selector);
     struct Resource373Handle *handle = entity->handle;
     u8 *gradient;
+    s32 zero = 0;
 
     /* 参照実装は両方のマスクを符号付き語幅で組む (`movs #13 / negs' で
      * 0xfffffff3)。u8 に閉じると gcc が 0xf3 の一命令に畳んでしまうので、
      * 一度 s32 の一時に受けてから書き戻す。+9 の計算を先に始めつつ
      * 書き戻しは +5 が先、というのが参照の並び。 */
-    handle->field27 = 0;
     {
         s32 nine = (handle->flags09 & ~0x0c) | 0x04;
         s32 five = handle->flags05 & ~0x20;
@@ -87,11 +87,11 @@ void Func_02005b48(s32 selector)
         handle->flags05 = (u8)five;
         handle->flags09 = (u8)(nine & 0x0f);
     }
+    handle->field27 = (u8)zero;
+    Func_0200bad2(entity, zero);
 
-    Func_0200bad2(entity, 0);
-
-    entity->field5c = 0;
-    entity->field55 = 0;
+    entity->field5c = (u8)zero;
+    entity->field55 = (u8)zero;
 
     /* 0x109 selects a companion entity; when absent the sprite drops a row. */
     if (Func_0200bb38_b(0x109) == 0) {
@@ -108,15 +108,15 @@ void Func_02005b48(s32 selector)
      * before the ramp transfer, and Func_08000150 releases the bank.
      */
     gradient = Func_0200ba98(17, 0x608);
-    gradient += 0x400;
     Func_0200bb60(0xb5);
+    gradient += 0x400;
     Func_0200bac8(handle->paletteIndex, 0x80, gradient);
     Func_0200babe(17);
 
-    entity->field30 = 0;
-    entity->behaviour = (void (*)(void))0x0200dae1;
     entity->shadowX = entity->x;
+    entity->field30 = zero;
     entity->shadowY = entity->y;
     entity->field5c = 1;
-    entity->field56 = 0;
+    entity->behaviour = (void (*)(void))0x0200dae1;
+    entity->field56 = (u8)zero;
 }

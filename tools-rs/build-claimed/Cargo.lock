@@ -37,6 +37,7 @@ dependencies = [
  "alchemy-symbols",
  "canonical-json",
  "decomp-targets",
+ "serde_json",
 ]
 
 [[package]]

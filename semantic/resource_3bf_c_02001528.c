@@ -46,20 +46,7 @@
  * and +91, so it is modelled as an opaque byte block rather than given a
  * speculative layout.
  */
-u8 *Func_02006b82();
-s32 Func_02006b74();
-s32 Func_02006ba6();
-s32 Func_02006bb8();
-s32 Func_02002a96();
-s32 Func_02002eec();
-s32 Func_02002eea();
-void Func_02006c28();
-void Func_02006c30();
-s32 Func_02006c30_b();
-
-                    
-
-                      /* result is used and cast; a void declaration hard-errors */
+/* Results used as values must not be declared void; old agbcc rejects that. */
 s32 Func_02006b82(s32 kind);
 s32 Func_02006b74(s32 state);
 s32 Func_02006ba6(s32 state);
@@ -69,6 +56,7 @@ s32 Func_02002eec(s32 kind);
 s32 Func_02002eea(s32 kind);
 void Func_02006c28(s32 id);
 s32 Func_02006c30(s32 state);
+s32 Func_02006c30_b(s32 state);
 
 void Func_02001528(void)
 {

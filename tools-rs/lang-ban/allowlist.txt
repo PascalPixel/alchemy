@@ -145,7 +145,6 @@ tools/search/permute_overlay.ts
 tools/search/permute_v1.ts
 tools/search/search_compiler_modes.ts
 tools/search/shape_sweep.ts
-tools/self_test.ts
 tools/semantic/index.ts
 tools/semantic/semantic_owner_scope.ts
 tools/semantic/semantic_queue.ts

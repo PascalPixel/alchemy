@@ -184,12 +184,12 @@ veneers, 928 ordinary discoveries, and 477 ordinary prologue/return rows.
 These filters overlap; their counts must never be added as distinct functions.
 
 The exact-twin report now shows only **116 theoretical recoverable bytes** in
-two families; `bun tools/overlay/overlay_twins.ts --semantic --unconverted` reports
+two families; `tools-rs/overlay-twins/target/release/overlay-twins --semantic --unconverted` reports
 zero, proving there is no remaining known twin-template shortcut for semantic
 closure. The new semantic mode prevents the exact-C queue from being mistaken
 for unowned code and makes that negative result immediate rather than manual.
 
-`bun tools/overlay/overlay_call_order_check.ts` is the other current speedup. It compares
+`tools-rs/overlay-call-order-check/target/release/overlay-call-order-check` is the other current speedup. It compares
 each semantic owner's source-level postorder call sequence with its reachable,
 veneer-resolved BL sequence, including conservative IWRAM call-through recovery.
 Use it on every new owner alongside the multiset check. The latest ranked
@@ -204,7 +204,7 @@ four add four passes to the prior 914-pass/214-mismatch audit, so `--all` remain
 an audit queue rather
 than a green gate; the self-test is wired into `bun test`.
 
-`bun tools/overlay/overlay_show.ts <overlay> <start> <end> --annotate` now performs the
+`tools-rs/overlay-show/target/release/overlay-show <overlay> <start> <end> --annotate` now performs the
 disassembly, overlay-specific BL resolution, and completeness check in one
 command. Both offsets and full `0x02000000` RAM addresses are accepted. This
 removes the repeated two-command pipe and prevents an absolute address from

@@ -3,7 +3,7 @@
 /*
  * resource_39c owner at 0x02003d20, 3304 bytes: THE OVERLAY'S ENTRY
  * DRIVER, and the last of the ninety-six.  Identified from the header
- * veneer at image offset 4 (bun tools/overlay/overlay_driver.ts resource_39c),
+ * veneer at image offset 4 (bun tools-rs/overlay-driver resource_39c),
  * so the loader enters here and no bl inside the image reaches it,
  * which is why it sat in no structural inventory row.
  *

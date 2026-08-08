@@ -89,7 +89,7 @@ obtained, so it stays. This table says where to find the tool.
 | `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
 | `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
 
-A citation naming a live tool must name its current path — `tools/check/source_citations.ts`
+A citation naming a live tool must name its current path — `tools-rs/source-citations`
 enforces that, and this table is the only permitted exception. Do not repoint a
 citation at a different tool that happens to survive: it would claim a derivation
 that never happened.

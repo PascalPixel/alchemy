@@ -13,7 +13,7 @@
  * site per overlay_unindexed.ts. This owner makes two outgoing calls, both
  * resolved with the `+2` rule against the raw image (this owner starts
  * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay/overlay_show.ts resource_3bc 38dc |
+ * cover it -- resolved with `bun tools-rs/overlay-show resource_3bc 38dc |
  * bun tools/lib/overlay_call_targets.ts resource_3bc 38dc 38fa --annotate`):
  *   0x20038de -> veneer -> Func_020082f8(selector)   scene-record accessor, established
  *   0x20038e4 -> veneer -> Func_08009140()           unestablished, reached with the leftover record pointer in r0 but no evidence it is read

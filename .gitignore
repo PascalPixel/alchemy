@@ -60,3 +60,9 @@ roms/
 node_modules/
 tools/scratch/*
 !tools/scratch/README.md
+
+# Rust tooling (tools-rs/)
+target/
+*.rlib
+*.rmeta
+*.pdb

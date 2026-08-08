@@ -13,7 +13,7 @@
  * selector of the subject entity.
  *
  * Call targets resolved with
- *   bun tools/overlay/overlay_show.ts resource_3a7 0944 -n 124 |
+ *   bun tools-rs/overlay-show resource_3a7 0944 -n 124 |
  *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
  * Per-target multiset over the 2 sites, matching the inventory's calls=2:
  *   Func_0808a080 x2 <- veneer 0x02001130  (once for the subject, once per

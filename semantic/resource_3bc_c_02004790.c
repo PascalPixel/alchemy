@@ -19,7 +19,7 @@
  * over three distinct targets, all resolved with the `+2` rule against the
  * raw image (this owner starts outside a recorded row, so
  * overlay_call_targets.ts's own table does not cover it -- resolved with
- * `bun tools/overlay/overlay_show.ts resource_3bc 4790 | bun
+ * `bun tools-rs/overlay-show resource_3bc 4790 | bun
  * tools/lib/overlay_call_targets.ts resource_3bc 4790 4824 --annotate`):
  *   0x20047a2 -> veneer -> Func_0808a080(id)   scene-record accessor, established
  *   0x20047dc, 0x200480e -> veneer -> Func_08000128(distance, heading, probe)   established, "advance the position block one step along a heading" (semantic/overlays/resource_395_c_0200152c.c); called with 0x100000 then 0x200000, the same two-step walk resource_3bb_c_02003cf8.c documents

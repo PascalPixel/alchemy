@@ -3,7 +3,7 @@
 /*
  * resource_39d owner at 0x0200035c, 528 bytes: THE OVERLAY'S ENTRY
  * DRIVER -- the target of the header veneer at image offset 4
- * (bun tools/overlay/overlay_driver.ts resource_39d), so the loader enters
+ * (bun tools-rs/overlay-driver resource_39d), so the loader enters
  * here and no bl inside the image reaches it.
  *
  * Raises flag 0x111 and writes 516 to the workspace's +448 s32

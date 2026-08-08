@@ -324,7 +324,7 @@ the reference does.
 Reproducer: `resource_3c4:0cd0` with a 216-byte draft.
 
 ```
-bun tools/overlay/overlay_adopt.ts resource_3c4:0cd0 --source <src> --where
+tools-rs/overlay-adopt/target/release/overlay-adopt resource_3c4:0cd0 --source <src> --where
   -> adopt=rejected differing_bytes=4
 ```
 
@@ -338,7 +338,7 @@ fixes 0x02000d92 and breaks the other two — 4 bytes becomes worse.
 Reproducer: `resource_396:1424`, using `--span 392`.
 
 ```
-bun tools/overlay/overlay_adopt.ts resource_396:1424 --source <src> --span 392 --where
+tools-rs/overlay-adopt/target/release/overlay-adopt resource_396:1424 --source <src> --span 392 --where
   -> adopt=rejected differing_bytes=6
   -> differing_at 0x20014da+4 0x200157d+1 0x200157f+1
 ```

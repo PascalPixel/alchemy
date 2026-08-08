@@ -35,7 +35,7 @@
  * behaviourally identical arms deflates the per-target multiset.
  *
  * Call targets resolved with
- *   bun tools/overlay/overlay_show.ts resource_3a7 0aa0 -n 180 |
+ *   bun tools-rs/overlay-show resource_3a7 0aa0 -n 180 |
  *   bun tools/lib/overlay_call_targets.ts resource_3a7 --annotate
  * Per-target multiset over the 8 sites, matching the inventory's calls=8:
  *   Func_0808a080 x3 <- veneer 0x02001130

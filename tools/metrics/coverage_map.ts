@@ -926,7 +926,7 @@ const PERMANENT_KINDS = new Set([
 ]);
 export function retainedMainSpans(): Span[] {
   // This is the same full-build assembly evidence checked by
-  // core_retained_audit.ts. If it is unavailable, render no orange rather than
+  // tools-rs/core-retained-audit. If it is unavailable, render no orange rather than
   // guessing from a census complement or from a partial build manifest.
   const path = join(dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url)))), "..", "out", "full", "asm", "manifest.json");
   const explicitNonC: Span[] = [];

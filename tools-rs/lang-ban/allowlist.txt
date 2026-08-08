@@ -5,7 +5,6 @@ tools/assets/bl_site_symbols.ts
 tools/assets/index.ts
 tools/check/architecture.ts
 tools/check/cache_key_lint.ts
-tools/check/check_commit_progress.ts
 tools/check/check_publication.ts
 tools/check/check_sanctum.ts
 tools/check/commands.ts

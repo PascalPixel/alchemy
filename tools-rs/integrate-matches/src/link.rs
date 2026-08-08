@@ -13,7 +13,7 @@ use std::process::Command;
 use alchemy_plan::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use alchemy_routing::routing::{root, CompilerTarget};
 use alchemy_symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
-use match_m2c::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
+use candidate_compiler::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
 
 use crate::extent::linked_function_extent;
 use crate::jsint::{hexadecimal, is_safe_integer, parse_int_hex};
@@ -49,7 +49,9 @@ pub struct Run {
 /// `null !== 0` is true, so the TypeScript treats a signalled child as a
 /// failure. `-1` here does the same.
 pub fn run(command: &[String], cwd: &Path) -> Result<Run, String> {
-    let program = command.first().ok_or_else(|| "run: empty command".to_string())?;
+    let program = command
+        .first()
+        .ok_or_else(|| "run: empty command".to_string())?;
     let output = Command::new(program)
         .args(&command[1..])
         .current_dir(cwd)
@@ -72,7 +74,11 @@ pub fn run(command: &[String], cwd: &Path) -> Result<Run, String> {
 /// `"assembler failed: "` with a trailing space, not the compiler's stdout.
 /// Both halves are reproduced; `tests/js_traps.rs` pins the whitespace case.
 pub fn command_error(result: &Run) -> &str {
-    let source = if result.stderr.is_empty() { &result.stdout } else { &result.stderr };
+    let source = if result.stderr.is_empty() {
+        &result.stdout
+    } else {
+        &result.stderr
+    };
     js_trim(source)
 }
 
@@ -95,10 +101,13 @@ pub fn linked_bytes(
     if !is_safe_integer(address) || !is_source_address(stem) {
         return Err("invalid source address".to_string());
     }
-    let prefix = scratch.join(format!("{stem}.{}probe", match kind {
-        Kind::Asm => "asm",
-        Kind::C => "c",
-    }));
+    let prefix = scratch.join(format!(
+        "{stem}.{}probe",
+        match kind {
+            Kind::Asm => "asm",
+            Kind::C => "c",
+        }
+    ));
     let prefix = prefix.to_string_lossy().into_owned();
     let listing = format!("{prefix}.s");
     let object = format!("{prefix}.o");
@@ -124,12 +133,15 @@ pub fn linked_bytes(
         for step in &plan.steps {
             let compiled = run(&step.command, cwd)?;
             if compiled.code != 0 {
-                return Err(format!("{} failed: {}", step.kind.as_str(), command_error(&compiled)));
+                return Err(format!(
+                    "{} failed: {}",
+                    step.kind.as_str(),
+                    command_error(&compiled)
+                ));
             }
         }
     } else {
-        std::fs::copy(source, &listing)
-            .map_err(|error| format!("{source}: {error}"))?;
+        std::fs::copy(source, &listing).map_err(|error| format!("{source}: {error}"))?;
     }
 
     let assembled = run(&assemble(&object, &listing), cwd)?;
@@ -171,7 +183,10 @@ pub fn linked_bytes(
         .map_err(|error| format!("{symbols_source}: {error}"))?;
     let symbols_assembled = run(&assemble(&symbols_object, &symbols_source), cwd)?;
     if symbols_assembled.code != 0 {
-        return Err(format!("symbol assembler failed: {}", command_error(&symbols_assembled)));
+        return Err(format!(
+            "symbol assembler failed: {}",
+            command_error(&symbols_assembled)
+        ));
     }
 
     let elf = format!("{prefix}.elf");
@@ -194,7 +209,15 @@ pub fn linked_bytes(
         return Err(format!("linker failed: {}", command_error(&linked)));
     }
     let copied = run(
-        &argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]),
+        &argv(&[
+            "arm-none-eabi-objcopy",
+            "-O",
+            "binary",
+            "-j",
+            ".text",
+            &elf,
+            &binary,
+        ]),
         cwd,
     )?;
     if copied.code != 0 {
@@ -204,7 +227,10 @@ pub fn linked_bytes(
     if kind == Kind::Asm {
         return Ok(bytes);
     }
-    let symbol_result = run(&argv(&["arm-none-eabi-nm", "-S", "--defined-only", &elf]), cwd)?;
+    let symbol_result = run(
+        &argv(&["arm-none-eabi-nm", "-S", "--defined-only", &elf]),
+        cwd,
+    )?;
     if symbol_result.code != 0 {
         return Err(format!("nm failed: {}", command_error(&symbol_result)));
     }
@@ -221,7 +247,14 @@ pub fn linked_bytes(
 }
 
 fn assemble(object: &str, listing: &str) -> Vec<String> {
-    argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, listing])
+    argv(&[
+        "arm-none-eabi-as",
+        "-mcpu=arm7tdmi",
+        "-mthumb-interwork",
+        "-o",
+        object,
+        listing,
+    ])
 }
 
 fn argv(parts: &[&str]) -> Vec<String> {

@@ -27,11 +27,11 @@ alchemy-symbols = { path = "../alchemy-symbols" }
 # `root()`, the repository root, and `CompilerTarget::Gs1` for the fixed
 # `target: "gs1"` this tool passes.
 alchemy-routing = { path = "../alchemy-routing" }
-# The JavaScript-semantics layer already proved in the `match_m2c.ts` port:
+# The JavaScript-semantics layer provided by `candidate-compiler`:
 # `parse_hex`/`hex8` (the ONE numeric-parse helper this crate routes through),
 # and `js_trim`/`js_split_lines`/`js_split_whitespace_runs`/`utf16_cmp`.
 # Re-deriving any of them here is the hand-sync problem the ports exist to end.
-match-m2c = { path = "../match-m2c" }
+candidate-compiler = { path = "../candidate-compiler" }
 
 # No third-party dependencies. This tool writes plain text lines and reads `nm`
 # output; there is no JSON in it, so `serde_json` never comes up.

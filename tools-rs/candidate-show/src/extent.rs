@@ -6,8 +6,8 @@
 //! lands, this module should be deleted in favour of it; the tests below are
 //! the contract to check the replacement against.
 
-use match_m2c::jsnum::math_max;
-use match_m2c::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
+use candidate_compiler::jsnum::math_max;
+use candidate_compiler::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
 
 use crate::jsparse::js_parse_int_radix;
 
@@ -123,8 +123,7 @@ mod tests {
 
     #[test]
     fn trailing_function_widens_the_extent() {
-        let symbols =
-            "08021360 00000030 T Func_08021360\n08021390 00000010 t Func_08021390\n";
+        let symbols = "08021360 00000030 T Func_08021360\n08021390 00000010 t Func_08021390\n";
         assert_eq!(
             linked_function_extent(symbols, "Func_08021360", BASE, 64.0),
             Ok(64.0)

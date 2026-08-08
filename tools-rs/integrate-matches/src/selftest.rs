@@ -77,11 +77,17 @@ fn scratch_cleanup_case(temporary: &Path) -> Result<(), String> {
     };
     mkdir(temporary.join("walls"))?;
     mkdir(temporary.join("hand").join("08021360"))?;
-    write(temporary.join("hand").join("08021360").join("shape.c"), "champion\n")?;
+    write(
+        temporary.join("hand").join("08021360").join("shape.c"),
+        "champion\n",
+    )?;
     write(temporary.join("08021360.c"), "candidate\n")?;
     write(temporary.join("08021360.txt"), "notes\n")?;
     write(temporary.join("unrelated.c"), "keep\n")?;
-    write(temporary.join("walls").join("08021360.md"), "# 08021360\n\nState: OPEN — test.\n")?;
+    write(
+        temporary.join("walls").join("08021360.md"),
+        "# 08021360\n\nState: OPEN — test.\n",
+    )?;
 
     let cleaned = cleanup_installed_scratch("08021360", temporary, "2026-07-22")?;
     let dossier = fs::read_to_string(temporary.join("walls").join("08021360.md"))

@@ -2,8 +2,8 @@
 //! hand-written reports and all five assertions.
 
 use crate::aggregate::{
-    irreducible_configuration_improvements, multi_region_improvements,
-    shared_exact_configurations, shared_non_regressing_improvements, single_mode_effects,
+    irreducible_configuration_improvements, multi_region_improvements, shared_exact_configurations,
+    shared_non_regressing_improvements, single_mode_effects,
 };
 use crate::report::Report;
 use search_compiler_modes::{parse_json, Json};
@@ -125,14 +125,19 @@ pub fn self_test() -> Result<String, String> {
 
     let multi = rows(&multi_region_improvements(&reports)?);
     if !multi.iter().any(|row| {
-        joined(row, "ids", ",") == "shared" && joined(row, "improved_stems", ",") == "08000000,08000010"
-    }) || multi.iter().any(|row| joined(row, "ids", ",") == "left,right")
+        joined(row, "ids", ",") == "shared"
+            && joined(row, "improved_stems", ",") == "08000000,08000010"
+    }) || multi
+        .iter()
+        .any(|row| joined(row, "ids", ",") == "left,right")
     {
         return Err("mode cohort self-test: multi-region improvement aggregation differs".into());
     }
 
     let irreducible = rows(&irreducible_configuration_improvements(&reports)?);
-    if !irreducible.iter().any(|row| joined(row, "ids", ",") == "left")
+    if !irreducible
+        .iter()
+        .any(|row| joined(row, "ids", ",") == "left")
         || irreducible
             .iter()
             .any(|row| joined(row, "ids", ",") == "left,right")
@@ -142,7 +147,8 @@ pub fn self_test() -> Result<String, String> {
 
     let singles = rows(&single_mode_effects(&reports)?);
     if !singles.iter().any(|row| {
-        joined(row, "ids", ",") == "shared" && joined(row, "improved_stems", ",") == "08000000,08000010"
+        joined(row, "ids", ",") == "shared"
+            && joined(row, "improved_stems", ",") == "08000000,08000010"
     }) {
         return Err("mode cohort self-test: single-mode effect aggregation differs".into());
     }
@@ -175,7 +181,9 @@ mod tests {
     #[test]
     fn a_missing_routed_baseline_throws() {
         let mut reports = self_test_reports().unwrap();
-        reports[0].results.retain(|row| !row.is_routed_baseline().unwrap());
+        reports[0]
+            .results
+            .retain(|row| !row.is_routed_baseline().unwrap());
         let error = shared_non_regressing_improvements(&reports).unwrap_err();
         assert_eq!(
             error,

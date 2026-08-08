@@ -6,7 +6,7 @@
 //! crate root as [`crate::linked_function_extent`] so the Rust `candidate-show`
 //! port can delete the eighteen inlined lines in its `src/extent.rs`.
 
-use match_m2c::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
+use candidate_compiler::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
 
 use crate::jsint::{is_safe_integer, math_max_all, parse_int_hex};
 use crate::jsregex::{is_function_symbol, is_text_type};
@@ -134,7 +134,10 @@ pub fn linked_function_extent(
         return Err("compiled function symbols differ".to_string());
     }
 
-    let ends: Vec<f64> = functions.iter().map(|entry| entry.address + entry.size).collect();
+    let ends: Vec<f64> = functions
+        .iter()
+        .map(|entry| entry.address + entry.size)
+        .collect();
     let end = math_max_all(&ends);
     if end <= address || end - address > byte_length as f64 {
         return Err("compiled function extent differs".to_string());

@@ -14,8 +14,8 @@ edition = "2021"
 # Rust halves of the exact TypeScript modules `candidate_explain.ts` imports.
 #   ./overlay_disasm.ts -> assembleOverlay, compileOverlayCandidate, OVERLAY_BASE
 overlay-disasm = { path = "../overlay-disasm" }
-#   ./match_m2c.ts      -> verifyCandidate, ROM_BASE
-match-m2c = { path = "../match-m2c" }
+#   candidate-compiler -> candidate verification and ROM_BASE
+candidate-compiler = { path = "../candidate-compiler" }
 #   ./rtl_insn.ts       -> RtlInsn, calleeSymbol, parseInsns
 rtl-insn = { path = "../rtl-insn" }
 #   ./thumb_disasm.ts   -> Instruction, parseInstruction
@@ -41,11 +41,3 @@ path = "src/lib.rs"
 [[bin]]
 name = "candidate-explain"
 path = "src/bin/candidate_explain.rs"
-
-[[bin]]
-name = "candidate-explain-parity"
-path = "src/bin/candidate_explain_parity.rs"
-
-[[bin]]
-name = "candidate-explain-bench"
-path = "src/bin/candidate_explain_bench.rs"

@@ -19,8 +19,8 @@ An owner may only be sealed once both have been run and neither reaches exact:
 
 | Axis | Tool | Searches |
 |---|---|---|
-| Compiler | [tools/lib/mode_sweep.ts](tools/lib/mode_sweep.ts) | flags and compiler family, source held fixed |
-| Source shape | [tools/search/shape_sweep.ts](tools/search/shape_sweep.ts) | equivalent source forms, compiler held fixed |
+| Compiler | `tools-rs/mode-sweep` | flags and compiler family, source held fixed |
+| Source shape | `tools-rs/shape-sweep/target/release/shape-sweep` | equivalent source forms, compiler held fixed |
 
 Exhausting one axis is not a seal. A residual that survives every flag is the
 normal starting point for the shape axis, and the reverse holds too.
@@ -47,14 +47,14 @@ next agent would believe.
 
 ## Sealed
 
-<!-- No owner qualifies yet: the shape axis (tools/search/shape_sweep.ts) is newer than
+<!-- No owner qualifies yet: the shape axis (shape-sweep) is newer than
      every floor record on disk, so nothing has had both axes run against it.
      An empty section here is the honest state, not an oversight. -->
 
 ## Immediate shape-axis queue
 
 36 owners have an exhausted **compiler** axis on record and have never had the
-shape axis run. They are the first candidates for `shape_sweep.ts`, and the
+shape axis run. They are the first candidates for `shape-sweep`, and the
 first candidates to become sealed entries if it also fails. Regenerate the list
 with:
 

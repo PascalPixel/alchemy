@@ -3,8 +3,8 @@
 use std::path::Path;
 
 use alchemy_routing::routing::{root, CompilerTarget};
-use match_m2c::verify::js_subarray;
-use match_m2c::{verify_candidate, CandidateCompilerConfiguration, CandidateCompilerFamily};
+use candidate_compiler::verify::js_subarray;
+use candidate_compiler::{verify_candidate, CandidateCompilerConfiguration, CandidateCompilerFamily};
 use overlay_disasm::{assemble_overlay, compile_overlay_candidate, OverlaySource, OVERLAY_BASE};
 
 use crate::cli::basename_without_c;
@@ -130,7 +130,7 @@ pub fn run_main_image(source: &Path, work: &Path) -> Result<String, String> {
         &rom,
         &work.to_string_lossy(),
         &explain_flags(),
-        match_m2c::ROM_BASE,
+        candidate_compiler::ROM_BASE,
         CompilerTarget::Gs1,
         &CandidateCompilerConfiguration {
             family: Some(CandidateCompilerFamily::Routed),

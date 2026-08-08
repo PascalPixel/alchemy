@@ -1,10 +1,8 @@
 //! `verifyCandidate` -- compile one candidate C file, link it at its ROM
 //! address, and hand back the produced bytes beside the ROM's bytes.
 //!
-//! This is the half of `match_m2c.ts` that reaches the toolchain. Every step
-//! spawns a real process, so this module is where the port's runtime cost
-//! lives and where it cannot beat the TypeScript by much: both are waiting on
-//! the same five binaries.
+//! Every step spawns a real process, so runtime is dominated by the same five
+//! toolchain binaries regardless of the caller.
 
 use std::path::Path;
 use std::process::Command;
@@ -21,24 +19,6 @@ use crate::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
 
 /// `ROM_BASE`.
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
-
-/// The typedef and macro block prepended to every candidate. Byte-identical to
-/// `M2C_PREAMBLE`, trailing blank line included: the candidate files in
-/// `work/matches/m2c` were written with it and re-emitting them must not
-/// produce a diff.
-pub const M2C_PREAMBLE: &str = "typedef signed char s8;\n\
-typedef unsigned char u8;\n\
-typedef signed short s16;\n\
-typedef unsigned short u16;\n\
-typedef signed int s32;\n\
-typedef unsigned int u32;\n\
-typedef signed long long s64;\n\
-typedef unsigned long long u64;\n\
-typedef int bool;\n\
-#define NULL ((void *)0)\n\
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))\n\
-\n\
-";
 
 /// `CandidateCompilerFamily` is `alchemy_plan`'s `CompilerFamily`; the
 /// TypeScript declares the same six-member union a second time rather than
@@ -118,7 +98,7 @@ pub fn run(command: &[String], cwd: &Path) -> Result<String, String> {
 ///
 /// PORT NOTE -- this is the trap that Rust slicing cannot express. `arr[a..b]`
 /// PANICS on an out-of-range index; `subarray` CLAMPS, and a NEGATIVE index is
-/// measured from the end rather than being an error. `match_m2c.ts` computes
+/// measured from the end rather than being an error. The historical verifier computes
 /// `address - imageBase`, which is hugely negative for an overlay address such
 /// as `0x02000000` against `ROM_BASE`; JavaScript clamps that to 0 and returns
 /// a slice from the start of the ROM. That is almost certainly not what anyone
@@ -128,7 +108,11 @@ pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
     let len = data.len() as f64;
     let resolve = |relative: f64| -> usize {
         // `ToIntegerOrInfinity`: NaN becomes 0.
-        let value = if relative.is_nan() { 0.0 } else { relative.trunc() };
+        let value = if relative.is_nan() {
+            0.0
+        } else {
+            relative.trunc()
+        };
         let resolved = if value < 0.0 {
             let from_end = len + value;
             if from_end > 0.0 {
@@ -167,7 +151,11 @@ pub fn verify_candidate(
     let symbol = format!("Func_{}", hex8(address));
 
     let out = Path::new(output_directory);
-    let path = |suffix: &str| out.join(format!("{stem}{suffix}")).to_string_lossy().into_owned();
+    let path = |suffix: &str| {
+        out.join(format!("{stem}{suffix}"))
+            .to_string_lossy()
+            .into_owned()
+    };
     let assembly = path(".s");
     let object = path(".o");
     let symbols_source = path(".symbols.s");
@@ -175,8 +163,7 @@ pub fn verify_candidate(
     let elf = path(".elf");
     let binary = path(".bin");
 
-    let mut options =
-        SourceToAssemblyPlanOptions::new(compiler, source, source, assembly.clone());
+    let mut options = SourceToAssemblyPlanOptions::new(compiler, source, source, assembly.clone());
     options.family = configuration.family;
     // ORDER IS BEHAVIOUR: `[...extraCompilerFlags, ...(configuration.addFlags ?? [])]`,
     // and gcc is later-flag-wins. Swapping these two changes the machine code.
@@ -255,7 +242,15 @@ pub fn verify_candidate(
         cwd,
     )?;
     run(
-        &argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]),
+        &argv(&[
+            "arm-none-eabi-objcopy",
+            "-O",
+            "binary",
+            "-j",
+            ".text",
+            &elf,
+            &binary,
+        ]),
         cwd,
     )?;
 
@@ -280,7 +275,11 @@ pub fn verify_candidate(
     let actual = js_subarray(&binary_bytes, 0.0, size);
     let offset = address - image_base;
     let expected = js_subarray(rom, offset, offset + size);
-    Ok(Verification { actual, expected, size })
+    Ok(Verification {
+        actual,
+        expected,
+        size,
+    })
 }
 
 fn argv(parts: &[&str]) -> Vec<String> {

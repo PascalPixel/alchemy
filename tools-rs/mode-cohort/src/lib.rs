@@ -5,11 +5,8 @@
 //! across all of them. It never compiles, never routes and never promotes; the
 //! aggregation layer here is pure and total.
 //!
-//! WHAT COULD NOT BE PORTED: `main`'s worker spawns `bun tools/lib/mode_sweep.ts`
-//! as a child process, because `mode_sweep`'s own scoring loop reaches
-//! `verifyCandidate` -> `sourceToAssemblyPlan` in `tools/lib/alchemy_gcc.ts`,
-//! which has not been ported. `run_cohort` therefore shells out exactly as the
-//! TypeScript does rather than pretending to own the search.
+//! The worker invokes the native `tools-rs/mode-sweep` binary. This crate owns
+//! only cohort aggregation and report shaping.
 
 pub mod aggregate;
 pub mod collate;

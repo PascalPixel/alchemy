@@ -66,5 +66,9 @@ pub fn parse_arguments(arguments: &[String]) -> Result<ParseOutcome, String> {
     let Some(directory) = directory else {
         return Err("the following arguments are required: directory".to_string());
     };
-    Ok(ParseOutcome::Parsed(Options { directory, apply, self_test: false }))
+    Ok(ParseOutcome::Parsed(Options {
+        directory,
+        apply,
+        self_test: false,
+    }))
 }

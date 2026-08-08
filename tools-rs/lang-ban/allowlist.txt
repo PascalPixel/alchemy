@@ -1,13 +1,10 @@
 # Grandfathered banned-language files under tools/ and tools-rs/.
 # This list may shrink and must never grow. See AGENTS.md, Hard rules.
-tools/assets/alchemist.ts
-tools/assets/bl_site_symbols.ts
 tools/assets/index.ts
 tools/check/architecture.ts
 tools/check/cache_key_lint.ts
 tools/check/check_publication.ts
 tools/check/check_sanctum.ts
-tools/check/commands.ts
 tools/check/core_retained_audit.ts
 tools/check/documented.ts
 tools/check/index.ts
@@ -24,23 +21,16 @@ tools/lib/alchemy_gcc.ts
 tools/lib/alignment_tail.ts
 tools/lib/asset_paths.ts
 tools/lib/cache_entry.ts
-tools/lib/candidate_explain.ts
-tools/lib/candidate_show.ts
 tools/lib/canonical_json.ts
 tools/lib/compose_scene.ts
-tools/lib/decomp_targets.ts
 tools/lib/discover.ts
 tools/lib/export_asset.ts
 tools/lib/extract_resource.ts
 tools/lib/generated_files.ts
 tools/lib/import_asset.ts
-tools/lib/integrate_matches.ts
-tools/lib/jobs.ts
 tools/lib/map_load_table.ts
-tools/lib/match_m2c.ts
 tools/lib/midi_roundtrip.ts
 tools/lib/midi_sequence.ts
-tools/lib/mode_sweep.ts
 tools/lib/music_sequence.ts
 tools/lib/overlay_call_targets.ts
 tools/lib/overlay_disasm.ts
@@ -54,16 +44,13 @@ tools/lib/text_bg.ts
 tools/lib/thumb_disasm.ts
 tools/lib/tile_objects.ts
 tools/lib/tilemap.ts
-tools/lib/verify.ts
 tools/lib/zlib.ts
 tools/make/archive_asset.ts
-tools/make/audio_engine_data.ts
 tools/make/build_assets.ts
 tools/make/character_catalog.ts
 tools/make/chiiki_map_resources.ts
 tools/make/executable_gap_sources.ts
 tools/make/f0_archive.ts
-tools/make/gba_header.ts
 tools/make/index.ts
 tools/make/indexed_still.ts
 tools/make/kind1_map_grid.ts
@@ -90,7 +77,6 @@ tools/make/staff_roll.ts
 tools/make/static_sprite_series.ts
 tools/make/title_resources.ts
 tools/make/tokushu_map_resources.ts
-tools/metrics/audit_residuals.ts
 tools/metrics/compare_roms.ts
 tools/metrics/coverage_map.ts
 tools/metrics/dashboard/styles.css
@@ -113,7 +99,6 @@ tools/overlay/overlay_twins.ts
 tools/overlay/overlay_unindexed.ts
 tools/search/index.ts
 tools/search/search_compiler_modes.ts
-tools/search/shape_sweep.ts
 tools/semantic/index.ts
 tools/semantic/semantic_owner_scope.ts
 tools/semantic/semantic_queue.ts

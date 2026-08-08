@@ -5,7 +5,7 @@
 //!
 //! Ported here, from `alchemy_gcc.ts` lines 5-57 and 2987-3592:
 //!
-//! * `M2C`, `PRET_EARLY_THUMB_BUNDLE`/`_DRIVER`, `GCC2951_BUNDLE`/`_DRIVER`,
+//! * `PRET_EARLY_THUMB_BUNDLE`/`_DRIVER`, `GCC2951_BUNDLE`/`_DRIVER`,
 //!   `GCC3_BUNDLE`/`_DRIVER`, `GCC3_CFLAGS`
 //! * `HostKey`, `hostKey`, `UNSUPPORTED_HOST_MESSAGE`, `hostAdmissionMessage`
 //! * `validateBundle`, `validateAgbccBundle`, `validateExperimentalCompiler`
@@ -29,7 +29,7 @@ use alchemy_routing::routing::{
 };
 
 use crate::bundle_data::{
-    AGBCC_EXPECTED, EXPECTED, GCC2951_EXPECTED, GCC3_EXPECTED, HostDigests,
+    HostDigests, AGBCC_EXPECTED, EXPECTED, GCC2951_EXPECTED, GCC3_EXPECTED,
     PRET_EARLY_THUMB_EXPECTED,
 };
 use crate::sha256;
@@ -41,13 +41,6 @@ pub type Result<T> = std::result::Result<T, String>;
 // ---------------------------------------------------------------------------
 // Paths
 // ---------------------------------------------------------------------------
-
-pub fn m2c() -> PathBuf {
-    // PORT NOTE: the TypeScript is `join(BUNDLE, "m2c-venv/bin/m2c")` -- one
-    // component containing separators. `join` normalises it to the same path
-    // `PathBuf::join` three times produces, so the split is not a divergence.
-    bundle().join("m2c-venv").join("bin").join("m2c")
-}
 
 pub fn pret_early_thumb_bundle() -> PathBuf {
     bundle().join("pret-early-thumb")
@@ -290,7 +283,12 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
         "/dev/null".into(),
         "/dev/null".into(),
     ])
-    .map_err(|detail| format!("alchemy-gcc {} smoke compile failed: {detail}", target.as_str()))?;
+    .map_err(|detail| {
+        format!(
+            "alchemy-gcc {} smoke compile failed: {detail}",
+            target.as_str()
+        )
+    })?;
     validated()
         .lock()
         .expect("validation memo is not poisoned")
@@ -357,7 +355,10 @@ pub fn validate_experimental_compiler(
     let actual = sha256::hex(&bytes);
     let approved = lookup(expected, host).unwrap_or(&[]);
     if approved.is_empty() {
-        return Err(host_admission_message(host, &format!("experimental {name}/cc1")));
+        return Err(host_admission_message(
+            host,
+            &format!("experimental {name}/cc1"),
+        ));
     }
     if !approved.contains(&actual.as_str()) {
         return Err(format!(
@@ -598,7 +599,9 @@ mod tests {
                     for digest in *digests {
                         assert_eq!(digest.len(), 64, "not a sha256 digest: {digest}");
                         assert!(
-                            digest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+                            digest
+                                .bytes()
+                                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
                             "not lowercase hex: {digest}"
                         );
                         count += 1;
@@ -635,7 +638,9 @@ mod tests {
     #[test]
     fn admission_message_names_the_procedure() {
         let message = host_admission_message("darwin-x64", "gs1");
-        assert!(message.starts_with("alchemy-gcc has no approved gs1 digests for host darwin-x64 yet. Admit this host:"));
+        assert!(message.starts_with(
+            "alchemy-gcc has no approved gs1 digests for host darwin-x64 yet. Admit this host:"
+        ));
         assert!(message.ends_with("digest already passed."));
     }
 

@@ -33,12 +33,22 @@ name = "cache-entry"
 version = "0.1.0"
 
 [[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "decomp-targets",
+]
+
+[[package]]
 name = "candidate-explain"
 version = "0.1.0"
 dependencies = [
  "alchemy-plan",
  "alchemy-routing",
- "match-m2c",
+ "candidate-compiler",
  "overlay-disasm",
  "rtl-align",
  "rtl-insn",
@@ -53,16 +63,6 @@ version = "0.1.0"
 [[package]]
 name = "discover"
 version = "0.1.0"
-
-[[package]]
-name = "match-m2c"
-version = "0.1.0"
-dependencies = [
- "alchemy-plan",
- "alchemy-routing",
- "alchemy-symbols",
- "decomp-targets",
-]
 
 [[package]]
 name = "overlay-disasm"

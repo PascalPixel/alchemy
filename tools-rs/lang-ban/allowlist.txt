@@ -69,7 +69,6 @@ tools/make/battle_effect_data.ts
 tools/make/build_asm.ts
 tools/make/build_assets.ts
 tools/make/build_full.ts
-tools/make/build_semantic.ts
 tools/make/byte_henkan.ts
 tools/make/byte_value_regions.ts
 tools/make/character_catalog.ts

@@ -26,6 +26,9 @@ edition = "2021"
 alchemy-routing = { path = "../alchemy-routing" }
 alchemy-bundle = { path = "../alchemy-bundle" }
 search-compiler-modes = { path = "../search-compiler-modes" }
+candidate-compiler = { path = "../candidate-compiler" }
+candidate-show = { path = "../candidate-show" }
+integrate-matches = { path = "../integrate-matches" }
 
 [lib]
 name = "mode_sweep"

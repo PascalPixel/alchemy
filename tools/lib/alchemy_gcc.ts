@@ -7,7 +7,6 @@ export const ROOT = dirname(dirname(dirname(Bun.fileURLToPath(import.meta.url)))
 // ソースからの再構築手順は同リポジトリの build.sh、検証は下の validateBundle。
 export const BUNDLE = join(ROOT, "alchemy-gcc", "dist");
 export const DRIVER = join(BUNDLE, "xgcc");
-export const M2C = join(BUNDLE, "m2c-venv/bin/m2c");
 export type CompilerTarget = "gs1" | "gs2";
 export const GS2_BUNDLE = join(BUNDLE, "gs2");
 export const GS2_DRIVER = join(GS2_BUNDLE, "xgcc");

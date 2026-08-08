@@ -196,11 +196,21 @@ mod tests {
 
     #[test]
     fn default_sort_is_code_unit_not_locale() {
-        let mut items = vec!["a-b".to_string(), "a+b".to_string(), "A".to_string(), "a".to_string()];
+        let mut items = vec![
+            "a-b".to_string(),
+            "a+b".to_string(),
+            "A".to_string(),
+            "a".to_string(),
+        ];
         sort_default(&mut items);
         // JS: ["a+b","a-b","A","a"].sort() === ["A","a","a+b","a-b"]
         assert_eq!(items, vec!["A", "a", "a+b", "a-b"]);
-        let mut located = vec!["a-b".to_string(), "a+b".to_string(), "A".to_string(), "a".to_string()];
+        let mut located = vec![
+            "a-b".to_string(),
+            "a+b".to_string(),
+            "A".to_string(),
+            "a".to_string(),
+        ];
         located.sort_by(|l, r| collate(l, r));
         // Measured in Bun: sort((l, r) => l.localeCompare(r)).
         assert_eq!(located, vec!["a", "A", "a-b", "a+b"]);

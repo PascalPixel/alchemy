@@ -157,7 +157,10 @@ fn scan(reports: &[Report], singles_only: bool) -> Result<Scan, String> {
                 Evidence::Null => {
                     return Err("evidence is null: TypeError reading differing_halfwords".into())
                 }
-                Evidence::Present { differing_halfwords, .. } => differing_halfwords,
+                Evidence::Present {
+                    differing_halfwords,
+                    ..
+                } => differing_halfwords,
             };
             let baseline = result.is_routed_baseline()?;
             if baseline {
@@ -236,9 +239,18 @@ fn score_changes_json(changes: &mut [ScoreChange]) -> Json {
             .map(|change| {
                 Json::Object(vec![
                     ("stem".into(), Json::String(change.stem.clone())),
-                    ("baseline_halfwords".into(), Json::Number(change.baseline_halfwords)),
-                    ("result_halfwords".into(), Json::Number(change.result_halfwords)),
-                    ("removed_halfwords".into(), Json::Number(change.removed_halfwords)),
+                    (
+                        "baseline_halfwords".into(),
+                        Json::Number(change.baseline_halfwords),
+                    ),
+                    (
+                        "result_halfwords".into(),
+                        Json::Number(change.result_halfwords),
+                    ),
+                    (
+                        "removed_halfwords".into(),
+                        Json::Number(change.removed_halfwords),
+                    ),
                 ])
             })
             .collect(),
@@ -594,7 +606,10 @@ pub fn shared_exact_configurations_ascii_tiebreak(reports: &[Report]) -> Result<
     };
     rows.sort_by(|left, right| {
         let key = |row: &Json| -> (usize, String) {
-            let stems = row.get("exact_stems").and_then(Json::as_array).map_or(0, <[Json]>::len);
+            let stems = row
+                .get("exact_stems")
+                .and_then(Json::as_array)
+                .map_or(0, <[Json]>::len);
             let ids = row
                 .get("ids")
                 .and_then(Json::as_array)

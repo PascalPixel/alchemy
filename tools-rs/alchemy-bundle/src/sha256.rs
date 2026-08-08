@@ -129,6 +129,9 @@ mod tests {
 
     #[test]
     fn hashes_utf8_bytes_not_code_points() {
-        assert_eq!(hex("☀️".as_bytes()), hex(&[0xe2, 0x98, 0x80, 0xef, 0xb8, 0x8f]));
+        assert_eq!(
+            hex("☀️".as_bytes()),
+            hex(&[0xe2, 0x98, 0x80, 0xef, 0xb8, 0x8f])
+        );
     }
 }

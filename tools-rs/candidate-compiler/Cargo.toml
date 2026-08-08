@@ -5,13 +5,13 @@
 [workspace]
 
 [package]
-name = "match-m2c"
+name = "candidate-compiler"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 # Sibling crates, not third-party dependencies. These are the landed slices of
-# `tools/lib/alchemy_gcc.ts` that `match_m2c.ts` imports:
+# Native compiler planning and symbol dependencies:
 #   alchemy-plan    -> sourceToAssemblyPlan, CompilerTarget
 #   alchemy-symbols -> externalSymbol, externalSymbolAssembly, CALL_VIA_BASE
 # A second copy of either is exactly the hand-sync problem this port exists to
@@ -28,17 +28,5 @@ alchemy-routing = { path = "../alchemy-routing" }
 decomp-targets = { path = "../decomp-targets" }
 
 [lib]
-name = "match_m2c"
+name = "candidate_compiler"
 path = "src/lib.rs"
-
-[[bin]]
-name = "match-m2c"
-path = "src/bin/match_m2c.rs"
-
-[[bin]]
-name = "match-m2c-drift"
-path = "src/bin/match_m2c_drift.rs"
-
-[[bin]]
-name = "match-m2c-bench"
-path = "src/bin/match_m2c_bench.rs"

@@ -28,11 +28,11 @@ fn main() {
     match std::fs::read_to_string(&manifest) {
         Ok(text) => {
             let start = Instant::now();
-            let parsed = match_m2c::json::parse(&text);
+            let parsed = candidate_compiler::json::parse(&text);
             let parse_ms = start.elapsed().as_secs_f64() * 1000.0;
             let regions = match &parsed {
                 Ok(value) => match value.get("regions") {
-                    Some(match_m2c::json::Json::Array(items)) => items.len(),
+                    Some(candidate_compiler::json::Json::Array(items)) => items.len(),
                     _ => 0,
                 },
                 Err(_) => 0,

@@ -10,7 +10,7 @@
 //! difference cost 980 bytes at one call site AFTER already costing 526 at
 //! another, because a correct helper existed and one call site did not use it.
 //! There is therefore exactly one parse function in this crate and every call
-//! site routes through it. `match-m2c`'s `parse_hex` is deliberately NOT used
+//! site routes through it. `candidate-compiler`'s `parse_hex` is deliberately NOT used
 //! here: it is `/^[0-9a-f]+$/i`-guarded and errors on anything else, which is
 //! the RIGHT contract for a stem and the WRONG one for an `nm` field, where the
 //! TypeScript wants a silent `NaN` that the later filters swallow.
@@ -37,7 +37,7 @@
 pub fn parse_int_hex(value: &str) -> f64 {
     let mut chars = value.chars().peekable();
     while let Some(c) = chars.peek() {
-        if match_m2c::jsstring::is_js_space(*c) {
+        if candidate_compiler::jsstring::is_js_space(*c) {
             chars.next();
         } else {
             break;

@@ -2,14 +2,12 @@
 //
 // Ported from tools/search/search_compiler_modes.ts. Candidate compilation,
 // family selection, flag replacement, cache identity, compatibility rules and
-// scoring all live in tools/lib/mode_sweep.ts; this binary only selects queue
+// scoring all live in the native tools-rs/mode-sweep binary; this binary only selects queue
 // members, invokes that engine once per member, and aggregates the exact
 // results into out/decomp/compiler-modes/report.json.
 //
-// WHY it stays a shell-out: mode_sweep.ts is the authority on what a
-// "configuration" is, and duplicating its ~800 lines of compiler knowledge in
-// Rust would create a second source of truth for the one thing this
-// repository cannot afford to fork. The port covers the driver only.
+// The native mode-sweep binary is the authority on configuration execution;
+// this crate remains the queue/batch aggregation layer.
 
 use std::fs;
 use std::io::Write;
@@ -199,7 +197,7 @@ fn run(root: &Path, arguments: &[String]) -> Result<String, Failure> {
     ))
 }
 
-/// Run mode_sweep.ts once per item across `jobs` workers.
+/// Run the native mode-sweep binary once per item across `jobs` workers.
 ///
 /// PORT NOTE: `Promise.all` rejects with whichever worker happened to fail
 /// first, which is a race when more than one job is in flight. The port is
@@ -246,9 +244,8 @@ fn sweep(root: &Path, options: &Options, items: &[Item]) -> Result<Vec<Json>, Fa
 }
 
 fn sweep_one(root: &Path, options: &Options, item: &Item) -> Result<Json, String> {
-    let mut command = Command::new("bun");
+    let mut command = Command::new(root.join("tools-rs/mode-sweep/target/release/mode-sweep"));
     command
-        .arg(root.join("tools/lib/mode_sweep.ts"))
         .arg(&item.source)
         .arg("--rom")
         .arg(&options.rom)
@@ -271,7 +268,7 @@ fn sweep_one(root: &Path, options: &Options, item: &Item) -> Result<Json, String
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .output()
-        .map_err(|error| format!("{}: cannot spawn bun: {error}", item.stem))?;
+        .map_err(|error| format!("{}: cannot spawn mode-sweep: {error}", item.stem))?;
 
     if !output.status.success() {
         // PORT NOTE: `String(number)` for the child's message, and the same
@@ -307,7 +304,7 @@ mod tests {
         assert!(repo_root()
             .join("tools-rs/semantic-queue/Cargo.toml")
             .exists());
-        assert!(repo_root().join("tools/lib/mode_sweep.ts").exists());
+        assert!(repo_root().join("tools-rs/mode-sweep/Cargo.toml").exists());
     }
 
     #[test]

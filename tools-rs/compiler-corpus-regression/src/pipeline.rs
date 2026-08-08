@@ -11,7 +11,7 @@ use crate::result::{atomic_json, read_cache, Outcome};
 use crate::{FORMAT, ROM_BASE};
 use alchemy_plan::plan::CompilerFamily;
 use alchemy_routing::routing::CompilerTarget;
-use match_m2c::verify::verify_candidate;
+use candidate_compiler::verify::verify_candidate;
 use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
 use std::sync::Mutex;
@@ -28,10 +28,10 @@ use std::sync::Mutex;
 /// only cache-key consequence is that keys computed by the corrected tool
 /// differ from keys the broken tool could never have computed.
 pub const SIGNATURE_SOURCES: [&str; 4] = [
-    "tools/lib/alchemy_gcc.ts",
-    "tools/lib/match_m2c.ts",
-    "tools/lib/integrate_matches.ts",
-    "tools/compiler/compiler_corpus_regression.ts",
+    "tools-rs/alchemy-routing/src/routing.rs",
+    "tools-rs/candidate-compiler/src/verify.rs",
+    "tools-rs/integrate-matches/src/pipeline.rs",
+    "tools-rs/compiler-corpus-regression/src/pipeline.rs",
 ];
 
 /// `hash(compilerBundleSignature(), ...four source files)`.
@@ -138,7 +138,7 @@ fn evaluate(
     ]);
     let key = hash(&[
         // `String(FORMAT)` -- ECMAScript number-to-string, so `3` and not `3.0`.
-        match_m2c::jsnum::to_js_number_string(FORMAT)?.as_bytes(),
+        candidate_compiler::jsnum::to_js_number_string(FORMAT)?.as_bytes(),
         &source_bytes,
         &expected,
         signature.as_bytes(),
@@ -179,7 +179,7 @@ fn evaluate(
             // `symbols.stderr.toString().trim() || "nm failed"` -- `||` on the
             // EMPTY STRING, which is falsy, so empty stderr becomes the
             // fallback. `??` would keep the empty string; this is `||`.
-            let text = match_m2c::jsstring::js_trim(&String::from_utf8_lossy(&symbols.stderr))
+            let text = candidate_compiler::jsstring::js_trim(&String::from_utf8_lossy(&symbols.stderr))
                 .to_string();
             return Err(if text.is_empty() { "nm failed".to_string() } else { text });
         }
@@ -245,7 +245,7 @@ fn evaluate(
 /// and `canonicalJson` preserves insertion order. Any other order silently
 /// invalidates every cached entry. `addFlags`/`removeFlags` are OMITTED when
 /// absent, not written as `null`.
-pub fn compiler_config_json(config: &match_m2c::verify::CandidateCompilerConfiguration) -> Json {
+pub fn compiler_config_json(config: &candidate_compiler::verify::CandidateCompilerConfiguration) -> Json {
     let mut entries: Vec<(&str, Json)> = Vec::new();
     if let Some(family) = config.family {
         entries.push(("family", string(family_name(family))));

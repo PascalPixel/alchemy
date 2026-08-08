@@ -33,7 +33,10 @@ impl Json {
     }
 
     fn is_primitive(&self) -> bool {
-        matches!(self, Json::Null | Json::Bool(_) | Json::Number(_) | Json::String(_))
+        matches!(
+            self,
+            Json::Null | Json::Bool(_) | Json::Number(_) | Json::String(_)
+        )
     }
 
     /// ECMAScript `ToNumber`, as applied by `Number(row.entry)`.
@@ -78,13 +81,22 @@ fn string_to_number(text: &str) -> f64 {
     if trimmed.is_empty() {
         return 0.0;
     }
-    if let Some(rest) = trimmed.strip_prefix("0x").or_else(|| trimmed.strip_prefix("0X")) {
+    if let Some(rest) = trimmed
+        .strip_prefix("0x")
+        .or_else(|| trimmed.strip_prefix("0X"))
+    {
         return radix_literal(rest, 16);
     }
-    if let Some(rest) = trimmed.strip_prefix("0o").or_else(|| trimmed.strip_prefix("0O")) {
+    if let Some(rest) = trimmed
+        .strip_prefix("0o")
+        .or_else(|| trimmed.strip_prefix("0O"))
+    {
         return radix_literal(rest, 8);
     }
-    if let Some(rest) = trimmed.strip_prefix("0b").or_else(|| trimmed.strip_prefix("0B")) {
+    if let Some(rest) = trimmed
+        .strip_prefix("0b")
+        .or_else(|| trimmed.strip_prefix("0B"))
+    {
         return radix_literal(rest, 2);
     }
     if trimmed == "Infinity" || trimmed == "+Infinity" {
@@ -97,8 +109,10 @@ fn string_to_number(text: &str) -> f64 {
     // recent toolchains, nothing else that the decimal grammar rejects. The
     // three words are the only over-acceptance, and they are screened here.
     let lower = trimmed.to_ascii_lowercase();
-    if matches!(lower.as_str(), "inf" | "+inf" | "-inf" | "infinity" | "+infinity" | "-infinity" | "nan" | "+nan" | "-nan")
-    {
+    if matches!(
+        lower.as_str(),
+        "inf" | "+inf" | "-inf" | "infinity" | "+infinity" | "-infinity" | "nan" | "+nan" | "-nan"
+    ) {
         return f64::NAN;
     }
     if trimmed.contains('_') {
@@ -162,11 +176,7 @@ fn reflow(value: &Json, indent: &str) -> Result<String, String> {
             let inner = format!("{indent}  ");
             let mut parts = Vec::with_capacity(entries.len());
             for (key, item) in entries {
-                parts.push(format!(
-                    "{inner}{}: {}",
-                    quote(key),
-                    reflow(item, &inner)?
-                ));
+                parts.push(format!("{inner}{}: {}", quote(key), reflow(item, &inner)?));
             }
             Ok(format!("{{\n{}\n{indent}}}", parts.join(",\n")))
         }
@@ -222,7 +232,10 @@ fn quote(text: &str) -> String {
 /// JavaScriptCore property-order semantics).
 pub fn parse(text: &str) -> Result<Json, String> {
     let bytes: Vec<char> = text.chars().collect();
-    let mut parser = Parser { chars: &bytes, index: 0 };
+    let mut parser = Parser {
+        chars: &bytes,
+        index: 0,
+    };
     parser.skip_ws();
     let value = parser.value()?;
     parser.skip_ws();
@@ -377,7 +390,10 @@ impl Parser<'_> {
                     }
                 }
                 c if (c as u32) < 0x20 => {
-                    return Err(format!("Bad control character in string at position {}", self.index))
+                    return Err(format!(
+                        "Bad control character in string at position {}",
+                        self.index
+                    ))
                 }
                 c => out.push(c),
             }

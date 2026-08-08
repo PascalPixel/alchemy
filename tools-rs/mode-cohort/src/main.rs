@@ -1,8 +1,6 @@
 //! Port of `main()` in `tools/compiler/mode_cohort.ts`.
 
-use mode_cohort::{
-    cohort_digest, cohort_summary, member_report_path, root, self_test, Report,
-};
+use mode_cohort::{cohort_digest, cohort_summary, member_report_path, root, self_test, Report};
 use search_compiler_modes::{canonical_json, is_js_integer, js_number, parse_json, Json};
 use std::path::Path;
 use std::process::Command;
@@ -103,20 +101,15 @@ fn run() -> Result<Vec<String>, String> {
     std::fs::write(&report_path, canonical_json(&summary) + "\n")
         .map_err(|error| error.to_string())?;
 
-    Ok(console_lines(&summary, reports.len(), &report_path.to_string_lossy()))
+    Ok(console_lines(
+        &summary,
+        reports.len(),
+        &report_path.to_string_lossy(),
+    ))
 }
 
-/// One worker iteration: run `mode_sweep` over one candidate and read back its
-/// report.
-///
-/// PORT NOTE: this is where the port stops being self-contained. `mode_sweep`'s
-/// scoring loop needs `sourceToAssemblyPlan` from `tools/lib/alchemy_gcc.ts`,
-/// which is not ported, so the Rust `mode-sweep` crate has no runnable search
-/// either. Shelling out to `bun` is exactly what the TypeScript does, and it
-/// fails in exactly the same place: `compilerSignature()` in
-/// `tools/lib/mode_sweep.ts` reads `tools/alchemy_gcc.ts`, a path that has not
-/// existed since commit b3ab4841b, so every non-`--self-test` run of both the
-/// TypeScript and this binary dies with the same ENOENT.
+/// One worker iteration: run the native mode-sweep binary over one candidate
+/// and read back its report.
 ///
 /// PORT NOTE ON CONCURRENCY: the TypeScript starts `min(jobs, sources.length)`
 /// workers off a shared cursor and stores each result at its *source* index, so
@@ -130,8 +123,7 @@ fn sweep_member(
     max_pairs: f64,
     max_triples: f64,
 ) -> Result<Report, String> {
-    let output = Command::new("bun")
-        .arg(root.join("tools/lib/mode_sweep.ts"))
+    let output = Command::new(root.join("tools-rs/mode-sweep/target/release/mode-sweep"))
         .arg(source)
         .args([
             "--pairs",
@@ -190,7 +182,9 @@ fn joined(row: &Json, key: &str, separator: &str) -> String {
 }
 
 fn count(row: &Json, key: &str) -> usize {
-    row.get(key).and_then(Json::as_array).map_or(0, <[Json]>::len)
+    row.get(key)
+        .and_then(Json::as_array)
+        .map_or(0, <[Json]>::len)
 }
 
 fn number_text(row: &Json, key: &str) -> String {
@@ -215,7 +209,11 @@ fn console_lines(summary: &Json, cohort: usize, report_path: &str) -> Vec<String
     for row in shared {
         // `row.flags.join(" ") || "(routed default)"`: the empty join is falsy.
         let flags = joined(row, "flags", " ");
-        let label = if flags.is_empty() { "(routed default)".to_string() } else { flags };
+        let label = if flags.is_empty() {
+            "(routed default)".to_string()
+        } else {
+            flags
+        };
         lines.push(format!(
             "{}  {label}  {}",
             count(row, "exact_stems"),
@@ -241,7 +239,11 @@ fn console_lines(summary: &Json, cohort: usize, report_path: &str) -> Vec<String
     }
     for row in multi_region {
         let flags = joined(row, "flags", " ");
-        let label = if flags.is_empty() { joined(row, "ids", "+") } else { flags };
+        let label = if flags.is_empty() {
+            joined(row, "ids", "+")
+        } else {
+            flags
+        };
         lines.push(format!(
             "multi={} regressed={} removed={}hw added={}hw  {label}  {}",
             count(row, "improved_stems"),
@@ -251,7 +253,10 @@ fn console_lines(summary: &Json, cohort: usize, report_path: &str) -> Vec<String
             joined(row, "improved_stems", ",")
         ));
     }
-    for row in singles.iter().filter(|row| count(row, "improved_stems") > 0) {
+    for row in singles
+        .iter()
+        .filter(|row| count(row, "improved_stems") > 0)
+    {
         lines.push(format!(
             "single={} improved={} regressed={} removed={}hw added={}hw",
             joined(row, "ids", "+"),

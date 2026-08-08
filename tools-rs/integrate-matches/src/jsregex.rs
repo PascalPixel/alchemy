@@ -39,7 +39,9 @@ pub fn is_source_address(stem: &str) -> bool {
     bytes.len() == 8
         && bytes[0] == b'0'
         && bytes[1] == b'8'
-        && bytes[2..].iter().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
+        && bytes[2..]
+            .iter()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
 }
 
 /// `/^Func_[0-9a-f]{8}$/` -- the linked-symbol name filter in
@@ -57,7 +59,10 @@ pub fn is_function_symbol(name: &str) -> bool {
         return false;
     };
     let bytes = rest.as_bytes();
-    bytes.len() == 8 && bytes.iter().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
+    bytes.len() == 8
+        && bytes
+            .iter()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
 }
 
 /// `/^[Tt]$/` -- the `nm` type column, text section, global or local.
@@ -77,7 +82,9 @@ pub fn is_candidate_name(name: &str) -> bool {
     }
     // The span the `.*` has to cover: everything between the literal prefix and
     // the literal `.c` suffix.
-    name[4..name.len() - 2].chars().all(|c| !is_line_terminator(c))
+    name[4..name.len() - 2]
+        .chars()
+        .all(|c| !is_line_terminator(c))
 }
 
 /// Every offset at which a multiline `^` matches.

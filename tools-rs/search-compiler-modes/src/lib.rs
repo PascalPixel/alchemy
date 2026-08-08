@@ -6,7 +6,7 @@
 //   * argument parsing that uses JavaScript `Number()` coercion, not
 //     `f64::from_str`, so `--limit 0x10` is 16 and `--limit 12abc` is NaN;
 //   * the `out/modesweep/<basename>-<sha256[..16]>` directory identity, which
-//     is a repository-wide contract shared with mode_sweep.ts and must be
+//     is a repository-wide contract shared with the native mode-sweep binary and must be
 //     byte-identical or the driver reads the wrong report;
 //   * order-preserving JSON, because the summary embeds each match's `config`
 //     object verbatim and the canonical writer emits one key per line in
@@ -752,7 +752,7 @@ pub fn sha256_hex(input: &[u8]) -> String {
     state.iter().map(|word| format!("{word:08x}")).collect()
 }
 
-/// Port of `modeSweepOutputDirectory` from tools/lib/mode_sweep.ts: the
+/// Native mode-sweep output-directory contract: the
 /// repository-relative POSIX path and the file bytes, each followed by a NUL,
 /// hashed with SHA-256 and truncated to sixteen hex characters.
 pub fn mode_sweep_output_directory(root: &Path, source: &str, contents: &[u8]) -> String {
@@ -831,10 +831,7 @@ pub fn summarize(reports: &[Json], options: &Options) -> Json {
         .collect();
     Json::Object(vec![
         ("format".into(), Json::Number(2.0)),
-        (
-            "engine".into(),
-            Json::String("tools/lib/mode_sweep.ts".into()),
-        ),
+        ("engine".into(), Json::String("tools-rs/mode-sweep".into())),
         (
             "search".into(),
             Json::Object(vec![
@@ -851,8 +848,8 @@ pub fn summarize(reports: &[Json], options: &Options) -> Json {
 }
 
 /// PORT NOTE: a missing key is `undefined` in JavaScript, and
-/// `JSON.stringify` drops such a key entirely. Reports written by
-/// mode_sweep.ts always carry these keys; when one is absent the port emits
+/// `JSON.stringify` drops such a key entirely. Native reports always carry
+/// these keys; when one is absent the port emits
 /// `null` rather than silently dropping the field, which keeps the record
 /// shape stable and is flagged here instead of hiding a malformed report.
 fn pick(value: &Json, key: &str) -> Json {
@@ -1192,7 +1189,7 @@ mod tests {
             concat!(
                 "{\n",
                 "  \"format\": 2,\n",
-                "  \"engine\": \"tools/lib/mode_sweep.ts\",\n",
+                "  \"engine\": \"tools-rs/mode-sweep\",\n",
                 "  \"search\": {\n",
                 "    \"pairs\": false,\n",
                 "    \"triples\": false,\n",

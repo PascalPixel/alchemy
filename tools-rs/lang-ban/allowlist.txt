@@ -89,7 +89,6 @@ tools/make/message_archive.ts
 tools/make/music.ts
 tools/make/music_residuals.ts
 tools/make/namae_nyuuryoku.ts
-tools/make/pairtable.ts
 tools/make/resource_01c.ts
 tools/make/resource_3ce.ts
 tools/make/resource_5.ts
@@ -108,7 +107,6 @@ tools/make/staff_roll.ts
 tools/make/static_sprite_series.ts
 tools/make/title_resources.ts
 tools/make/tokushu_map_resources.ts
-tools/make/wordstream.ts
 tools/metrics/audit_residuals.ts
 tools/metrics/compare_roms.ts
 tools/metrics/coverage_map.ts

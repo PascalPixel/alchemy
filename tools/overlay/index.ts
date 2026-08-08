@@ -30,6 +30,7 @@ const RUST_SUBCOMMANDS: Record<string, string> = {
   overlay_mode_cohort: "tools-rs/overlay-mode-cohort/target/release/overlay-mode-cohort",
   overlay_show: "tools-rs/overlay-show/target/release/overlay-show",
   overlay_showcase: "tools-rs/overlay-showcase/target/release/overlay-showcase",
+  overlay_twins: "tools-rs/overlay-twins/target/release/overlay-twins",
   overlay_unindexed: "tools-rs/overlay-unindexed/target/release/overlay-unindexed",
 };
 

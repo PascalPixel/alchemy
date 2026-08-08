@@ -18,11 +18,18 @@ import { dirname, join } from "node:path";
 const HERE = dirname(Bun.fileURLToPath(import.meta.url));
 const ROOT = dirname(dirname(HERE));
 
+const RUST_SUBCOMMANDS: Record<string, string> = {
+  build_claimed: "tools-rs/build-claimed/target/release/build-claimed",
+  build_rom: "tools-rs/build-rom/target/release/build-rom",
+};
+
 export function subcommands(): string[] {
-  return readdirSync(HERE)
-    .filter((name) => name.endsWith(".ts") && name !== "index.ts")
-    .map((name) => name.slice(0, -3))
-    .sort();
+  return [
+    ...readdirSync(HERE)
+      .filter((name) => name.endsWith(".ts") && name !== "index.ts")
+      .map((name) => name.slice(0, -3)),
+    ...Object.keys(RUST_SUBCOMMANDS),
+  ].sort();
 }
 
 async function main(): Promise<void> {
@@ -45,7 +52,12 @@ async function main(): Promise<void> {
   }
   // Spawn rather than import: each module owns its own argv handling and exit
   // code, and re-implementing that here would be the ceremony this replaces.
-  const child = Bun.spawn(["bun", join(HERE, `${subcommand}.ts`), ...rest], {
+  const rustBinary = RUST_SUBCOMMANDS[subcommand];
+  const child = rustBinary
+    ? Bun.spawn([join(ROOT, rustBinary), ...rest], {
+        cwd: ROOT, stdout: "inherit", stderr: "inherit", stdin: "inherit",
+      })
+    : Bun.spawn(["bun", join(HERE, `${subcommand}.ts`), ...rest], {
     cwd: ROOT, stdout: "inherit", stderr: "inherit", stdin: "inherit",
   });
   process.exit(await child.exited);

@@ -125,7 +125,7 @@ function reachable(input: Uint8Array, base: number): Map<number, number> {
     // that DO find leaves come from outside this file -- published pointer
     // words and resolved `bl` targets, which sweeps A and B scan -- so the
     // sanctioned path for a leaf is a hand-written `manual_regions` entry with
-    // a ROM-measured span, and `semantic_regions_sync` now says so by name when
+    // a ROM-measured span, and the strict semantic inventory says so by name when
     // it declines one.
     if ((data.readUInt16LE(offset) & 0xff00) === 0xb500) discovery.add_seed(base + offset, "thumb", "prologue");
   }

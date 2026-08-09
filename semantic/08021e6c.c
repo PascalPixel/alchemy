@@ -30,62 +30,32 @@ void Func_08003f3c(u32);
 void Func_08002df0(void *);
 void Func_08004278(const void *);
 
-static void FirstFrame_08021e6c(void *tilemap, s32 count, s32 alternate)
-{
-    s32 item;
-    s32 row;
-    s32 column;
-    u16 blank = 0xf07f;
-    u32 characterBase = alternate ? 0x0600fd6c : 0x0600fd68;
-    s32 mapBase = alternate ? 0x46c : 0x468;
-    s32 blankBase = alternate ? 0x448 : 0x444;
-
-    for (item = 0; item < 6 - count; item++) {
-        u8 *block = (u8 *)tilemap + item * 6;
-        for (row = 0; row < 3; row++)
-            for (column = 0; column < 3; column++)
-                *(u16 *)(block + row * 64 + blankBase +
-                    (column & 3) * 2) = blank;
-    }
-
-    for (item = 0; item < count; item++) {
-        for (row = 0; row < 3; row++) {
-            for (column = 0; column < 3; column++) {
-                s32 sourceIndex = item * 3 + row * 32 + (column & 3);
-                s32 destinationIndex = sourceIndex - count * 3;
-                *(volatile u16 *)(characterBase + destinationIndex * 2) =
-                    (u16)(0x100 + item * 16 + row * 4 + column);
-                *(u16 *)((u8 *)tilemap + sourceIndex * 2 -
-                    count * 6 + mapBase) = 0;
-            }
-        }
-    }
-}
-
 u32 Func_08021e6c(s32 alternate)
 {
-    void *tilemap = Func_080040b4(0x400);
-    void *state = Func_08004970(0x1e0);
     void *world = PTR32(0x03001e8c);
-    void *session = PTR32(0x03001f34);
-    void *window;
-    void *message;
+    void *tilemap = Func_080040b4(0x400);
     s32 firstFrame = 1;
     s32 byteSum = 0;
+    void *state = Func_08004970(0x1e0);
     s32 count;
     s32 index;
     s32 result;
+    void *window;
+    s32 coordinate;
+    s32 pressed;
+    s32 repeated;
+    s32 *selectedPointer;
+    void *message;
+    s32 *countPointer;
 
     for (index = 0; index < 0x100; index++)
         U8_AT(state, index) = 0xff;
     U32_AT(state, 0x100) = 1;
 
-    window = Func_080162d4(
-        alternate == 0 ? 20 : 22,
-        17,
-        alternate == 0 ? 10 : 8,
-        3,
-        6);
+    if (alternate == 0)
+        window = Func_080162d4(20, 17, 10, 3, 6);
+    else
+        window = Func_080162d4(22, 17, 8, 3, 6);
     U32_AT(state, 0x1ac) = (u32)window;
     S32_AT(state, 0x1c4) = -1;
 
@@ -94,17 +64,18 @@ u32 Func_08021e6c(s32 alternate)
         S32_AT(state, 0x1cc) = 4;
         S32_AT(state, 0x1d0) = 7;
         U32_AT(state, 0x1d4) = (u32)window;
-        S32_AT(state, 0x1c0) = S32_AT(session, 60);
+        S32_AT(state, 0x1c0) = S32_AT(PTR32(0x03001f34), 60);
     } else {
         u8 bytes[4];
         s32 next = 2;
 
-        S32_AT(state, 0x1c0) = S32_AT(session, 64);
+        S32_AT(state, 0x1c0) = S32_AT(PTR32(0x03001f34), 64);
         S32_AT(state, 0x1c8) = 0;
         S32_AT(state, 0x1cc) = 1;
         if (S32_AT(Func_08077000(0), 0) != 0) {
             Func_080b5130(0, bytes);
-            byteSum = bytes[0] + bytes[1] + bytes[2] + bytes[3];
+            for (index = 0; index < 4; index++)
+                byteSum += bytes[index];
             S32_AT(state, 0x1c8 + next++ * 4) = 15;
             if (byteSum != 0)
                 S32_AT(state, 0x1c8 + next++ * 4) = 16;
@@ -124,7 +95,7 @@ u32 Func_08021e6c(s32 alternate)
     S32_AT(state, 0x1b0) = count;
     U16_AT(state, 0x1b4) = 320;
     U16_AT(state, 0x1b6) = 304;
-    U16_AT(state, 0x1c0) = 0;
+    U16_AT(state, 0x1b8) = 0;
 
     for (index = 0; index < count; index++) {
         S32_AT(state, 0x114 + index * 28) =
@@ -135,13 +106,14 @@ u32 Func_08021e6c(s32 alternate)
     Func_080041d8((void (*)(void))0x08021dfd, 0x480);
     Func_0800307c(2, 136, (const void *)0x08021dfd);
 
+    {
+    countPointer = (s32 *)((u8 *)state + 0x1b0);
+    selectedPointer = (s32 *)((u8 *)state + 0x1c0);
+
     for (;;) {
-        s32 wave = ((const u16 *)0x080366f8)
+        coordinate = ((const u16 *)0x080366f8)
             [(*(s32 *)0x03001e40 * 2) & 31];
-        s32 coordinate = (wave - 256) / 4 + 304;
-        s32 selected = S32_AT(state, 0x1c0);
-        s32 pressed;
-        s32 repeated;
+        coordinate = (coordinate - 256) / 4 + 304;
 
         U16_AT(state, 0x1b4) = (u16)coordinate;
         U16_AT(state, 0x1b6) = (u16)coordinate;
@@ -151,24 +123,103 @@ u32 Func_08021e6c(s32 alternate)
         if (firstFrame != 0) {
             firstFrame = 0;
             U8_AT(world, 0x0ea6) = 1;
-            FirstFrame_08021e6c(world, count, alternate != 0);
+            if (alternate != 0) {
+                s32 visibleCount = *countPointer;
+
+                for (index = 0; index < 6 - visibleCount; index++) {
+                    s32 row;
+                    s32 column;
+
+                    for (row = 0; row < 3; row++)
+                        for (column = 0; column < 3; column++)
+                            *(u16 *)((u8 *)world +
+                                (index * 3 + row * 32 +
+                                (column & 3)) * 2 + 0x448) = 0xf07f;
+                }
+
+                visibleCount = *countPointer;
+                for (index = 0; index < visibleCount; index++) {
+                    s32 row;
+                    s32 column;
+                    s32 sourceRow = index * 3;
+                    s32 character = index * 16;
+                    u8 *mapRow = (u8 *)world + sourceRow * 2;
+
+                    for (row = 0; row < 3; row++) {
+                        for (column = 0; column < 3; column++) {
+                            s32 sourceIndex = sourceRow + (column & 3);
+                            s32 destinationIndex =
+                                sourceIndex - visibleCount * 3;
+
+                            *(volatile u16 *)(0x0600fd6c +
+                                destinationIndex * 2) =
+                                (u16)(0x100 + character + column);
+                            *(u16 *)(mapRow + (column & 3) * 2 -
+                                visibleCount * 6 + 0x46c) = 0;
+                        }
+                        sourceRow += 32;
+                        character += 4;
+                        mapRow += 64;
+                    }
+                }
+            } else {
+                s32 visibleCount = *countPointer;
+
+                for (index = 0; index < 6 - visibleCount; index++) {
+                    s32 row;
+                    s32 column;
+
+                    for (row = 0; row < 3; row++)
+                        for (column = 0; column < 3; column++)
+                            *(u16 *)((u8 *)world +
+                                (index * 3 + row * 32 +
+                                (column & 3)) * 2 + 0x444) = 0xf07f;
+                }
+
+                visibleCount = *countPointer;
+                for (index = 0; index < visibleCount; index++) {
+                    s32 row;
+                    s32 column;
+                    s32 sourceRow = index * 3;
+                    s32 character = index * 16;
+                    u8 *mapRow = (u8 *)world + sourceRow * 2;
+
+                    for (row = 0; row < 3; row++) {
+                        for (column = 0; column < 3; column++) {
+                            s32 sourceIndex = sourceRow + (column & 3);
+                            s32 destinationIndex =
+                                sourceIndex - visibleCount * 3;
+
+                            *(volatile u16 *)(0x0600fd68 +
+                                destinationIndex * 2) =
+                                (u16)(0x100 + character + column);
+                            *(u16 *)(mapRow + (column & 3) * 2 -
+                                visibleCount * 6 + 0x468) = 0;
+                        }
+                        sourceRow += 32;
+                        character += 4;
+                        mapRow += 64;
+                    }
+                }
+            }
         }
 
-        if (S32_AT(state, 0x1c4) != selected) {
-            Func_08016478(window);
+        if (S32_AT(state, 0x1c4) != *selectedPointer) {
+            Func_08016478((void *)U32_AT(state, 0x1ac));
             Func_0801e7c0(
-                S32_AT(state, 0x11c + selected * 28) - 0x200,
-                window, 0, 0);
-            S32_AT(state, 0x1c4) = selected;
-            Func_08021d88(state, S32_AT(state, 0x1c8 + selected * 4));
+                S32_AT(state, 0x11c + *selectedPointer * 28) - 0x200,
+                (void *)U32_AT(state, 0x1ac), 0, 0);
+            S32_AT(state, 0x1c4) = *selectedPointer;
+            Func_08021d88(
+                state, S32_AT(state, 0x1c8 + *selectedPointer * 4));
         }
 
         S32_AT(state, 0x1bc) = Func_08003d28((u8 *)state + 0x1b4);
-        for (index = 0; index < count; index++) {
+        for (index = 0; index < *countPointer; index++) {
             u8 *object = (u8 *)state + 0x104 + index * 28;
-            if (index == selected) {
+            if (index == *selectedPointer) {
                 U8_AT(object, 7) =
-                    (U8_AT(object, 7) & 0xc0) |
+                    (U8_AT(object, 7) & ~0x3e) |
                     ((U8_AT(state, 0x1bc) & 31) << 1);
                 U8_AT(object, 5) |= 3;
                 U16_AT(object, 6) =
@@ -183,13 +234,13 @@ u32 Func_08021e6c(s32 alternate)
                     (U16_AT(object, 6) & 0xfe00) |
                     (S32_AT(object, 16) & 0x1ff);
                 U8_AT(object, 4) = (u8)S32_AT(object, 20);
-                U8_AT(object, 7) &= 0xc0;
-                U8_AT(object, 5) &= 0xfc;
+                U8_AT(object, 7) &= ~0x3e;
+                U8_AT(object, 5) &= ~3;
             }
         }
 
         {
-            u8 *control = session;
+            u8 *control = PTR32(0x03001f34);
             s32 *phase = (s32 *)(control + 216);
             s32 *timer = (s32 *)(control + 220);
             s32 mode = S32_AT(control, 224);
@@ -199,21 +250,23 @@ u32 Func_08021e6c(s32 alternate)
             if (*phase != 0) {
                 if (*timer == 0) {
                     if (mode == 1) {
-                        if (S32_AT(state, 0x1c8 + selected * 4) == 3) {
+                        if (S32_AT(state,
+                            0x1c8 + *selectedPointer * 4) == 3) {
                             pressed = repeated = 1;
                         } else {
                             pressed = repeated = 32;
                         }
                         *timer = 30;
                     } else if (mode == 0) {
-                        s32 choice = S32_AT(state, 0x1c8 + selected * 4);
+                        s32 choice = S32_AT(
+                            state, 0x1c8 + *selectedPointer * 4);
                         if (choice == 16 ||
                             (byteSum == 0 && choice == 15)) {
                             if (*phase == 1) {
-                                message = Func_08021e48(
-                                    choice == 15 ? 0x0c4a : 0x0c49,
-                                    15,
-                                    8);
+                                if (choice == 15)
+                                    message = Func_08021e48(0x0c4a, 15, 8);
+                                else if (choice == 16)
+                                    message = Func_08021e48(0x0c49, 15, 8);
                                 Func_080b5128(102, 155);
                                 Func_08016418(message, 1);
                                 (*phase)++;
@@ -241,7 +294,7 @@ u32 Func_08021e6c(s32 alternate)
             break;
         }
         if ((pressed & 1) != 0) {
-            result = S32_AT(state, 0x1c8 + selected * 4);
+            result = S32_AT(state, 0x1c8 + *selectedPointer * 4);
             break;
         }
         if (alternate != 0 && (pressed & 2) != 0) {
@@ -251,13 +304,14 @@ u32 Func_08021e6c(s32 alternate)
         }
         if ((repeated & 0x90) != 0) {
             Func_080f9010(111);
-            S32_AT(state, 0x1c0) = Func_080022fc(selected + 1, count);
+            *selectedPointer =
+                Func_080022fc(*selectedPointer + 1, *countPointer);
         } else if ((repeated & 0x60) != 0) {
             Func_080f9010(111);
-            S32_AT(state, 0x1c0) =
-                Func_080022fc(selected + count - 1, count);
-        } else if (S32_AT(session, 76) == 0) {
-            result = selected;
+            *selectedPointer = Func_080022fc(
+                *selectedPointer + *countPointer - 1, *countPointer);
+        } else if (S32_AT(PTR32(0x03001f34), 76) == 0) {
+            result = *selectedPointer;
             break;
         } else {
             continue;
@@ -267,16 +321,17 @@ u32 Func_08021e6c(s32 alternate)
         U8_AT(world, 0x0ea6) = 0;
         Func_080030f8(1);
     }
+    }
 
     if (alternate != 0)
-        S32_AT(session, 64) = S32_AT(state, 0x1c0);
+        S32_AT(PTR32(0x03001f34), 64) = S32_AT(state, 0x1c0);
     else
-        S32_AT(session, 60) = S32_AT(state, 0x1c0);
+        S32_AT(PTR32(0x03001f34), 60) = S32_AT(state, 0x1c0);
 
     for (index = 0; index < count; index++)
         Func_08003f3c(U16_AT(state, 0x110 + index * 28));
     U8_AT(world, 0x0ea6) = 1;
-    Func_08016418(window, 1);
+    Func_08016418((void *)U32_AT(state, 0x1ac), 1);
 
     for (index = 0; index < 7; index++) {
         s32 row;
@@ -293,11 +348,16 @@ u32 Func_08021e6c(s32 alternate)
 
     {
         volatile u16 *dmaControl = (volatile u16 *)0x04000208;
+        u16 *queueCount = (u16 *)0x02002090;
         u16 saved = *dmaControl;
+        s32 slot;
+
         *dmaControl = (u16)(u32)dmaControl;
-        if (REG16(0x02002090) <= 31) {
-            s32 slot = REG16(0x02002090)++;
-            u32 *entry = (u32 *)(0x02002094 + slot * 12);
+        slot = *queueCount;
+        if (slot <= 31) {
+            u32 *entry = (u32 *)((u8 *)queueCount + slot * 12 + 4);
+
+            (*queueCount)++;
             entry[0] = 0x00001541;
             entry[1] = 0x04000000;
             entry[2] = 0x00020000;

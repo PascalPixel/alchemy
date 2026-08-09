@@ -21,25 +21,16 @@ const u16 *Func_0807a0cc(u32 group, u32 index);
 s32 Func_08077428(s32 owner)
 {
     u8 *values;
-    u8 *var_r1_4;
-    u8 *var_r2;
-    u8 *var_r2_4;
-    u8 *var_r2_5;
     s16 temp_r1;
-    s16 temp_r1_2;
     s16 temp_r2_6;
     s16 temp_r2_7;
-    u8 *var_r8_2;
     s32 temp_r0_2;
-    s32 temp_r0_3;
     s32 temp_r1_3;
     s32 temp_r1_6;
     s32 temp_r2;
-    s32 temp_r2_2;
     s32 temp_r3;
     s32 temp_r3_2;
     s32 temp_r3_3;
-    s32 temp_r3_4;
     s32 temp_sl;
     s32 var_r0_2;
     s32 var_r0_3;
@@ -65,26 +56,14 @@ s32 Func_08077428(s32 owner)
     s32 var_r3_7;
     s32 var_r3_8;
     s32 var_r3_9;
-    s32 var_r4_2;
-    s32 var_r4_3;
     s32 var_r5;
-    s32 var_r5_2;
-    s32 var_r5_4;
-    s32 var_r5_5;
-    s32 var_r5_6;
-    s32 var_r5_7;
-    s32 var_r5_8;
-    s32 var_r8;
-    s32 var_r8_3;
+    u32 var_r8;
     u8 *var_r1_2;
     s8 temp_r3_5;
     u32 temp_r1_8;
-    u32 var_r4;
-    u32 var_r5_3;
+    s32 var_r4;
     u8 *var_r0;
-    u8 temp_r0_4;
     u8 temp_r1_5;
-    u8 temp_r1_7;
     u8 temp_r2_4;
     u8 temp_r3_6;
     u8 var_r3;
@@ -94,8 +73,6 @@ s32 Func_08077428(s32 owner)
     u8 *temp_r0_7;
     u8 *temp_r1_4;
     u8 *temp_r2_3;
-    u8 *temp_r2_5;
-    u8 *var_r1;
     u8 *var_r1_5;
 
     values = (u8 *)Func_08004970(0x60);
@@ -109,20 +86,25 @@ s32 Func_08077428(s32 owner)
     M2C_FIELD(values, s32 *, 0x1C) = (s32) (0xF & M2C_FIELD(state, u8 *, 0x1F));
     M2C_FIELD(values, s32 *, 0x20) = (s32) M2C_FIELD(state, u8 *, 0x20);
     M2C_FIELD(values, s32 *, 0x24) = (s32) M2C_FIELD(state, u8 *, 0x21);
-    var_r1 = state + 0x24;
-    var_r2 = values + 0x28;
-    var_r5 = 3;
-    do {
-        M2C_FIELD(var_r2, s32 *, 0) = (s32) M2C_FIELD(var_r1, s16 *, 0);
-        var_r5 -= 1;
-        M2C_FIELD(var_r2, s32 *, 4) = (s32) M2C_FIELD(var_r1, s16 *, 2);
-        var_r1 += 4;
-        var_r2 += 8;
-    } while (var_r5 >= 0);
-    temp_r3 = M2C_FIELD(state, s16 *, 0x14) * M2C_FIELD(state, s16 *, 0x34);
+    {
+        s16 *source = (s16 *)(state + 0x24);
+        s32 *destination = (s32 *)(values + 0x28);
+        var_r5 = 3;
+
+        do {
+            destination[0] = source[0];
+            var_r5--;
+            destination[1] = source[1];
+            source += 2;
+            destination += 2;
+        } while (var_r5 >= 0);
+    }
+    temp_r2 = M2C_FIELD(state, s16 *, 0x34);
+    temp_r3 = M2C_FIELD(state, s16 *, 0x14);
+    temp_r3 *= temp_r2;
     var_r2_2 = temp_r3;
     if (temp_r3 < 0) {
-        var_r2_2 = temp_r3 + 0x3FFF;
+        var_r2_2 += 0x3FFF;
     }
     temp_r0_2 = var_r2_2 >> 0xE;
     temp_r1 = M2C_FIELD(state, s16 *, 0x38);
@@ -135,46 +117,57 @@ s32 Func_08077428(s32 owner)
     }
     if ((s32) (temp_r1 - temp_r0_2) <= 1) {
 block_8:
-        temp_r3_2 = M2C_FIELD(state, s16 *, 0x16) * M2C_FIELD(state, s16 *, 0x36);
+        temp_r2 = M2C_FIELD(state, s16 *, 0x36);
+        temp_r3_2 = M2C_FIELD(state, s16 *, 0x16);
+        temp_r3_2 *= temp_r2;
         var_r2_3 = temp_r3_2;
         if (temp_r3_2 < 0) {
-            var_r2_3 = temp_r3_2 + 0x3FFF;
+            var_r2_3 += 0x3FFF;
         }
-        temp_r0_3 = var_r2_3 >> 0xE;
-        temp_r1_2 = M2C_FIELD(state, s16 *, 0x3A);
-        temp_r2_2 = temp_r0_3 - temp_r1_2;
-        if (temp_r2_2 >= 0) {
-            if (temp_r2_2 <= 1) {
+        temp_r0_2 = var_r2_3 >> 0xE;
+        temp_r1 = M2C_FIELD(state, s16 *, 0x3A);
+        temp_r2 = temp_r0_2 - temp_r1;
+        if (temp_r2 >= 0) {
+            if (temp_r2 <= 1) {
 
             } else {
                 goto block_14;
             }
-        } else if ((s32) (temp_r1_2 - temp_r0_3) > 1) {
+        } else if ((s32) (temp_r1 - temp_r0_2) > 1) {
             goto block_14;
         }
     } else {
 block_14:
-        M2C_FIELD(state, s16 *, 0x14) = 0x4000;
-        M2C_FIELD(state, s16 *, 0x16) = 0x4000;
+        temp_r3 = 0x80;
+        temp_r3 <<= 7;
+        M2C_FIELD(state, s16 *, 0x14) = (s16)temp_r3;
+        M2C_FIELD(state, s16 *, 0x16) = (s16)temp_r3;
         M2C_FIELD(state, s16 *, 0x38) = (s16) (u16) M2C_FIELD(state, s16 *, 0x34);
         M2C_FIELD(state, s16 *, 0x3A) = (s16) (u16) M2C_FIELD(state, s16 *, 0x36);
     }
-    temp_r0_4 = -4 & M2C_FIELD(state, u8 *, 0x130);
-    M2C_FIELD(state, u8 *, 0x130) = temp_r0_4;
-    if (4 & temp_r0_4) {
-        M2C_FIELD(state, u8 *, 0x130) = (u8) (temp_r0_4 | 1);
+    var_r1_2 = state + 0x130;
+    temp_r3 = *var_r1_2;
+    var_r0_2 = -4;
+    var_r0_2 &= temp_r3;
+    var_r4 = 0;
+    *var_r1_2 = var_r0_2;
+    if (4 & var_r0_2) {
+        temp_r3 = var_r0_2;
+        temp_r2 = 1;
+        temp_r3 |= temp_r2;
+        *var_r1_2 = (u8)temp_r3;
     }
     if (M2C_FIELD(state, u8 *, 0x144) != 0) {
         M2C_FIELD(values, s32 *, 0x1C) = (s32) (M2C_FIELD(values, s32 *, 0x1C) + 1);
     }
-    M2C_FIELD(state, u8 *, 0x142) = 0U;
-    M2C_FIELD(state, u8 *, 0x143) = 0U;
+    M2C_FIELD(state, u8 *, 0x142) = (u8)var_r4;
+    M2C_FIELD(state, u8 *, 0x143) = (u8)var_r4;
     if (M2C_FIELD(state, u8 *, 0x129) == 0) {
 
     } else {
-        var_r5_2 = 0;
+        var_r5 = 0;
 loop_22:
-        temp_r1_3 = (var_r5_2 * 2) + 0xD8;
+        temp_r1_3 = (var_r5 * 2) + 0xD8;
         if (!(0x200 & *(u16 *)(state + temp_r1_3))) {
 
         } else {
@@ -185,7 +178,8 @@ loop_22:
             }
             temp_r1_4 = M2C_FIELD(values, void **, 0x58);
             M2C_FIELD(values, s32 *, 8) = (s32) (M2C_FIELD(values, s32 *, 8) + M2C_FIELD(temp_r1_4, s16 *, 8));
-            M2C_FIELD(values, s32 *, 0xC) = (s32) (M2C_FIELD(values, s32 *, 0xC) + M2C_FIELD(temp_r1_4, s8 *, 0xA));
+            temp_r2 = M2C_FIELD(temp_r1_4, s8 *, 0xA);
+            M2C_FIELD(values, s32 *, 0xC) = (s32) (M2C_FIELD(values, s32 *, 0xC) + temp_r2);
             var_r8 = 0;
 loop_27:
             temp_r2_3 = M2C_FIELD(values, void **, 0x58);
@@ -194,6 +188,8 @@ loop_27:
             M2C_FIELD(values, s32 *, 0x48) = (s32) temp_r1_5;
             M2C_FIELD(values, s32 *, 0x54) = (s32) M2C_FIELD((temp_r2_3 + temp_r3_3), s8 *, 1);
             switch ((u32) temp_r1_5) {
+            case 0:
+                break;
             case 1:
                 M2C_FIELD(values, s32 *, 0) = (s32) (M2C_FIELD(values, s32 *, 0) + M2C_FIELD(values, s32 *, 0x54));
                 break;
@@ -258,22 +254,28 @@ block_46:
                 goto loop_27;
             }
         }
-        var_r5_2 += 1;
-        if (var_r5_2 <= 0xE) {
+        var_r5 += 1;
+        if (var_r5 <= 0xE) {
             goto loop_22;
         }
-        temp_r2_4 = M2C_FIELD(state, u8 *, 0x130);
-        if (8 & temp_r2_4) {
-            M2C_FIELD(state, u8 *, 0x130) = (u8) (-0xA & temp_r2_4);
+        var_r1_2 = state + 0x130;
+        temp_r2 = *var_r1_2;
+        temp_r3 = 8;
+        temp_r3 &= temp_r2;
+        if (temp_r3 != 0) {
+            temp_r3 = 10;
+            temp_r3 = -temp_r3;
+            temp_r3 &= temp_r2;
+            *var_r1_2 = (u8)temp_r3;
         }
         var_r4 = 0;
-        var_r8_2 = state + 0x108;
+        var_r8 = (u32)(unsigned long)(state + 0x108);
         do {
-            var_r5_3 = 0;
-            temp_sl = *(s32 *)var_r8_2;
+            var_r5 = 0;
+            temp_sl = *(s32 *)(unsigned long)var_r8;
 loop_57:
-            if ((1 << var_r5_3) & temp_sl) {
-                temp_r0_6 = (u8 *)Func_0807a0cc(var_r4, var_r5_3);
+            if ((1 << var_r5) & temp_sl) {
+                temp_r0_6 = (u8 *)Func_0807a0cc(var_r4, var_r5);
                 M2C_FIELD(values, s32 *, 0) = (s32) (M2C_FIELD(values, s32 *, 0) + M2C_FIELD(temp_r0_6, s8 *, 4));
                 M2C_FIELD(values, s32 *, 4) = (s32) (M2C_FIELD(values, s32 *, 4) + M2C_FIELD(temp_r0_6, s8 *, 5));
                 M2C_FIELD(values, s32 *, 8) = (s32) (M2C_FIELD(values, s32 *, 8) + M2C_FIELD(temp_r0_6, s8 *, 6));
@@ -281,12 +283,12 @@ loop_57:
                 M2C_FIELD(values, s32 *, 0x10) = (s32) (M2C_FIELD(values, s32 *, 0x10) + M2C_FIELD(temp_r0_6, s8 *, 8));
                 M2C_FIELD(values, s32 *, 0x18) = (s32) (M2C_FIELD(values, s32 *, 0x18) + M2C_FIELD(temp_r0_6, s8 *, 9));
             }
-            var_r5_3 += 1;
-            if ((s32) var_r5_3 <= 0x13) {
+            var_r5 += 1;
+            if (var_r5 <= 0x13) {
                 goto loop_57;
             }
             var_r4 += 1;
-            var_r8_2 += 4;
+            var_r8 += 4;
         } while ((s32) var_r4 <= 3);
         temp_r0_7 = (u8 *)(unsigned long)Func_08079ad8(M2C_FIELD(state, u8 *, 0x129));
         M2C_FIELD(values, s32 *, 0) = Func_080022ec(M2C_FIELD(temp_r0_7, u8 *, 8) * M2C_FIELD(values, s32 *, 0), 0xA);
@@ -295,19 +297,19 @@ loop_57:
         M2C_FIELD(values, s32 *, 0xC) = Func_080022ec(M2C_FIELD(temp_r0_7, u8 *, 0xB) * M2C_FIELD(values, s32 *, 0xC), 0xA);
         M2C_FIELD(values, s32 *, 0x10) = Func_080022ec(M2C_FIELD(temp_r0_7, u8 *, 0xC) * M2C_FIELD(values, s32 *, 0x10), 0xA);
         M2C_FIELD(values, s32 *, 0x18) = Func_080022ec(M2C_FIELD(temp_r0_7, u8 *, 0xD) * M2C_FIELD(values, s32 *, 0x18), 0xA);
-        var_r5_4 = 0;
+        var_r5 = 0;
 loop_62:
-        temp_r1_6 = (var_r5_4 * 2) + 0xD8;
+        temp_r1_6 = (var_r5 * 2) + 0xD8;
         if (0x200 & *(u16 *)(state + temp_r1_6)) {
             M2C_FIELD(values, void **, 0x58) = Func_08078414(*(u16 *)(state + temp_r1_6));
-            var_r8_3 = 0;
+            var_r8 = 0;
             do {
-                temp_r2_5 = M2C_FIELD(values, void **, 0x58);
-                temp_r3_4 = (var_r8_3 * 4) + 0x18;
-                temp_r1_7 = *(temp_r2_5 + temp_r3_4);
-                M2C_FIELD(values, s32 *, 0x48) = (s32) temp_r1_7;
-                temp_r1_8 = temp_r1_7 - 7;
-                M2C_FIELD(values, s32 *, 0x54) = (s32) M2C_FIELD((temp_r2_5 + temp_r3_4), s8 *, 1);
+                temp_r2_3 = M2C_FIELD(values, void **, 0x58);
+                temp_r3_3 = (var_r8 * 4) + 0x18;
+                temp_r1_5 = *(temp_r2_3 + temp_r3_3);
+                M2C_FIELD(values, s32 *, 0x48) = (s32) temp_r1_5;
+                temp_r1_8 = temp_r1_5 - 7;
+                M2C_FIELD(values, s32 *, 0x54) = (s32) M2C_FIELD((temp_r2_3 + temp_r3_3), s8 *, 1);
                 switch (temp_r1_8) {
                 case 0:
                     M2C_FIELD(values, s32 *, 0) = Func_080022ec(M2C_FIELD(values, s32 *, 0x54) * M2C_FIELD(values, s32 *, 0), 0xA);
@@ -334,11 +336,11 @@ loop_62:
                     M2C_FIELD(values, s32 *, 0x18) = Func_080022ec(M2C_FIELD(values, s32 *, 0x54) * M2C_FIELD(values, s32 *, 0x18), 0xA);
                     break;
                 }
-                var_r8_3 += 1;
-            } while (var_r8_3 <= 3);
+                var_r8 += 1;
+            } while (var_r8 <= 3);
         }
-        var_r5_4 += 1;
-        if (var_r5_4 <= 0xE) {
+        var_r5 += 1;
+        if (var_r5 <= 0xE) {
             goto loop_62;
         }
     }
@@ -357,23 +359,23 @@ loop_62:
         var_r3_4 += 7;
     }
     M2C_FIELD(values, s32 *, 0x10) = (s32) (var_r3_4 >> 3);
-    var_r4_2 = 0x28;
-    var_r5_5 = 3;
+    var_r4 = 0x28;
+    var_r5 = 3;
     var_r0 = state + 0x12C;
     do {
         temp_r3_5 = (s8) *var_r0;
-        var_r5_5 -= 1;
-        *(s32 *)(values + var_r4_2) += ((temp_r3_5 * temp_r3_5) + temp_r3_5) * 5;
+        var_r5 -= 1;
+        *(s32 *)(values + var_r4) += ((temp_r3_5 * temp_r3_5) + temp_r3_5) * 5;
         var_r0 += 1;
-        var_r4_2 += 8;
-    } while (var_r5_5 >= 0);
-    var_r5_6 = 3;
+        var_r4 += 8;
+    } while (var_r5 >= 0);
+    var_r5 = 3;
     var_r1_3 = 0x2C;
     do {
-        var_r5_6 -= 1;
+        var_r5 -= 1;
         *(s32 *)(values + var_r1_3) += M2C_FIELD(state, s8 *, 0x137) * 0x14;
         var_r1_3 += 8;
-    } while (var_r5_6 >= 0);
+    } while (var_r5 >= 0);
     if (M2C_FIELD(state, u8 *, 0x129) != 0) {
         temp_r3_6 = M2C_FIELD(state, u8 *, 0x128);
         var_r0_2 = 0;
@@ -456,32 +458,28 @@ block_92:
     if (var_r3_11 > 0xC8) {
         M2C_FIELD(values, s32 *, 0x24) = 0xC8;
     }
-    var_r5_7 = 0;
-    var_r4_3 = 0x2C;
-    var_r2_4 = values + 0x28;
-    var_r1_4 = values + 0x2C;
+    var_r5 = 0;
+    var_r4 = 0x28;
     do {
-        var_r3_12 = *(s32 *)var_r2_4;
+        var_r3_12 = *(s32 *)(values + var_r4);
         if (var_r3_12 < 0) {
-            *(s32 *)var_r2_4 = 0;
+            *(s32 *)(values + var_r4) = 0;
             var_r3_12 = 0;
         }
         if (var_r3_12 > 0xC8) {
-            *(s32 *)var_r2_4 = 0xC8;
+            *(s32 *)(values + var_r4) = 0xC8;
         }
-        var_r3_13 = *(s32 *)var_r1_4;
+        var_r3_13 = *(s32 *)(values + var_r4 + 4);
         if (var_r3_13 < 0) {
-            *(s32 *)var_r1_4 = 0;
+            *(s32 *)(values + var_r4 + 4) = 0;
             var_r3_13 = 0;
         }
         if (var_r3_13 > 0xC8) {
-            *(s32 *)(values + var_r4_3) = 0xC8;
+            *(s32 *)(values + var_r4 + 4) = 0xC8;
         }
-        var_r5_7 += 1;
-        var_r1_4 += 8;
-        var_r4_3 += 8;
-        var_r2_4 += 8;
-    } while (var_r5_7 <= 3);
+        var_r5 += 1;
+        var_r4 += 8;
+    } while (var_r5 <= 3);
     M2C_FIELD(state, s16 *, 0x3C) = (s16) M2C_FIELD(values, s32 *, 8);
     M2C_FIELD(state, s16 *, 0x3E) = (s16) M2C_FIELD(values, s32 *, 0xC);
     M2C_FIELD(state, s16 *, 0x40) = (s16) M2C_FIELD(values, s32 *, 0x10);
@@ -490,15 +488,17 @@ block_92:
     M2C_FIELD(state, s8 *, 0x44) = (s8) M2C_FIELD(values, s32 *, 0x20);
     M2C_FIELD(state, s8 *, 0x45) = (s8) M2C_FIELD(values, s32 *, 0x24);
     var_r1_5 = state + 0x48;
-    var_r2_5 = values + 0x28;
-    var_r5_8 = 3;
+    var_r4 = 0x28;
+    var_r5 = 3;
     do {
-        M2C_FIELD(var_r1_5, s16 *, 0) = (s16) M2C_FIELD(var_r2_5, s32 *, 0);
-        var_r5_8 -= 1;
-        M2C_FIELD(var_r1_5, s16 *, 2) = (s16) M2C_FIELD(var_r2_5, s32 *, 4);
-        var_r2_5 += 8;
+        M2C_FIELD(var_r1_5, s16 *, 0) =
+            (s16) M2C_FIELD(values, s32 *, var_r4);
+        var_r5 -= 1;
+        M2C_FIELD(var_r1_5, s16 *, 2) =
+            (s16) M2C_FIELD(values, s32 *, var_r4 + 4);
+        var_r4 += 8;
         var_r1_5 += 4;
-    } while (var_r5_8 >= 0);
+    } while (var_r5 >= 0);
     var_r1_6 = 0x270F;
     if (M2C_FIELD(state, u8 *, 0x129) != 0) {
         var_r1_6 = 0x7CF;

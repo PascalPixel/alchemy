@@ -64,9 +64,9 @@
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
 u8 *Func_020075cc();
-u8 *Func_020071f6(s32 *);
-u8 *Func_02007220(s32 *);
-u8 *Func_0200724c(s32 *);
+u8 *Func_020071f6(s32 *, u8 *);
+u8 *Func_02007220(s32 *, u8 *);
+u8 *Func_0200724c(s32 *, u8 *);
 s32 Func_020075e6();
 void Func_02007594();
 void Func_020074fa();
@@ -89,6 +89,7 @@ void Func_020075e4();
 /* In-image direction table at file offset 0x4154 (0x0200c154 - 0x8000):
  * sixteen packed steps, high half x, low half z. */
 extern u32 Data_0200c154[];
+extern s16 Data_02000240[];
 
 void Func_020038f8(void)
 {
@@ -98,36 +99,31 @@ void Func_020038f8(void)
     u32 step;
     s32 direction;
     s32 position[3];
+    s32 data_index;
+    s32 zero;
 
-    s32 permuted_13;
-    s32 permuted_40;
-    u32 permuted_43;
-    s32 permuted_25;
-    s32 permuted_27;
-    subject = Func_020075cc(*(s32 *)(0x02000240 + 500));
+    data_index = 250;
+    subject = Func_020075cc(*(s32 *)((u8 *)Data_02000240 + (data_index << 1)));
 
     direction = *(u16 *)(subject + 6) >> 12;
 
     step = Data_0200c154[direction];
     position[0] = *(s32 *)(subject + 8) + (s32)(step & 0xffff0000);
-    permuted_13 = *(s32 *)(subject + 12);
-    position[1]  = permuted_13;
+    position[1] = *(s32 *)(subject + 12);
     position[2] = *(s32 *)(subject + 16) + (s32)(step << 16);
 
-    target = Func_020071f6(position);
+    target = Func_020071f6(position, subject);
     if (target == 0) {
         return;
     }
 
     /* Is the cell one step beyond the target already taken? */
     step = Data_0200c154[direction];
-    permuted_25 = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
-    permuted_27 = *(s32 *)(target + 12);
-    position[0]  = permuted_25;
+    position[0] = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
+    position[1] = *(s32 *)(target + 12);
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
-    position[1]  = permuted_27;
 
-    blocker = Func_02007220(position);
+    blocker = Func_02007220(position, target);
     if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
         return;
     }
@@ -137,18 +133,17 @@ void Func_020038f8(void)
     position[1] = *(s32 *)(target + 12) + 0x100000;      /* 128 << 13 */
     position[2] = *(s32 *)(target + 16);
 
-    blocker = Func_0200724c(position);
+    blocker = Func_0200724c(position, target);
     if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
         return;
     }
 
+    zero = 0;
     *(target + 0x22) = 2;
 
-    permuted_40 = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
+    step = Data_0200c154[direction];
+    position[0] = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
     position[1] = *(s32 *)(target + 12);
-    permuted_43 = Data_0200c154[direction];
-    position[0]  = permuted_40;
-    step  = permuted_43;
     position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
 
     if (Func_020075e6(target, position) > 0) {
@@ -158,9 +153,9 @@ void Func_020038f8(void)
     Func_02007594(subject, 8);
     Func_020074fa(15);
 
-    Func_020075da(target, position[0], position[1], position[2]);
     *(s32 *)(target + 0x30) = 0x3333;
     *(s32 *)(target + 0x34) = 0x3333;
+    Func_020075da(target, position[0], position[1], position[2]);
 
     *(s32 *)(subject + 0x30) = 0x3333;
     *(s32 *)(subject + 0x34) = 0x3333;
@@ -172,8 +167,8 @@ void Func_020038f8(void)
 
     *(s32 *)(target + 8) = position[0];
     *(s32 *)(target + 16) = position[2];
-    *(s32 *)(target + 0x24) = 0;
-    *(s32 *)(target + 0x2c) = 0;
+    *(s32 *)(target + 0x24) = zero;
+    *(s32 *)(target + 0x2c) = zero;
 
     Func_020075e4(subject, 1);
 }

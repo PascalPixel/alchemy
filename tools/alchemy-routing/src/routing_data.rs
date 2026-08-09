@@ -894,6 +894,8 @@ pub static SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3a4_c_020002cc.c",
 ];
 pub static STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_3b4_c_02001bc4.c",
+    "semantic/resource_3b4_c_02001bc4.c",
     "exact/resource_382_c_02000fb4.c",
     "semantic/resource_382_c_02000fb4.c",
     "exact/resource_382_c_02001010.c",

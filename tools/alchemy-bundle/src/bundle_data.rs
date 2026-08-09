@@ -298,6 +298,7 @@ pub static AGBCC_EXPECTED: &[(&str, &[&str])] = &[
         &[
             "4f7664872d10a737184fb2e0502c407c9d74505f0cff7313ba4e9083736c2207",
             "d30283d448ba637b6bc02814e3c8c02246d57cad927a01e65601137832aa5064",
+            "a4b2fb0f642589cf40f1482c2da629038270499612c711e65cd11a129aca84c7",
         ],
     ),
     ("darwin-x64", &[]),

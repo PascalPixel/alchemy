@@ -14,7 +14,7 @@ void Func_080fb2a4(struct Object *object, u32 value)
     value = (u16)value;
     if (object->tag == 0x68736d53) {
         u16 scale;
-        u32 scaled;
+        s32 scaled;
 
         object->value = value;
         scale = object->scale;

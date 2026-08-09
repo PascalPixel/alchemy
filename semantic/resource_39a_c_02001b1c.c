@@ -20,42 +20,41 @@
  * That is the convention the byte-exact sources in this overlay already use
  * (`assets/code/resource_39a_c_02000030.c` declares `Func_02002442`), so
  * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
+ * interfaces are left open except where this owner's complete call shape is
+ * proven.  Old-style declarations remain where one name is reached with
+ * different argument counts.
  */
 
 extern void *Data_0200a488;
 
 /* Imports.  Two are used for their return value. */
-s32 Func_02003de6();
+u8 *Func_02003de6();
 s32 Func_02003df4();
 void Func_02003e7c();
-void Func_02003e1c();
+void Func_02003e1c(s32 sprite, s32 size, s32 destination);
 void Func_02003e1a();
-
-                     
 
 void Func_02001b1c(void)
 {
     u8 *object;
     u8 *record;
     s32 buffer;
+    s32 zero = 0;
+    s32 masked;
 
-    /* movs/lsls build 0xf80000, 0x80000 and 0x980000. */
-    s32 permuted_8;
     object = Func_02003de6(22, (s32)0xf80000, (s32)0x80000, (s32)0x980000);
     if (object == NULL) {
         return;
     }
 
-    record[38] = 0;
-    record  = permuted_8;
-    permuted_8 = *(u8 **)(object + 80);
-    record[39] = 0;
-    /* movs r3,#33 / negs r3,r3 gives the mask ~0x20. */
-    record[5] &= (u8)~0x20;
+    record = *(u8 **)(object + 80);
+    record[38] = zero;
+    record[39] = zero;
+    masked = -33;
+    masked &= record[5];
+    record[5] = masked;
     record[9] &= 0x0f;
-    object[85] = 0;
+    object[85] = zero;
     object[92] = 1;
 
     /* movs r1,#0xc1 / lsls r1,#3 builds 0x608. */
@@ -64,7 +63,7 @@ void Func_02001b1c(void)
     Func_02003e7c((s32)0xe6);
     /* movs r3,#0x80 / lsls r3,#3 builds the 0x400 advance. */
     buffer += 0x400;
-    Func_02003e1c((s32)record[28], (s32)0x80, buffer);
+    Func_02003e1c(record[28], 0x80, buffer);
     Func_02003e1a(17);
     Data_0200a488 = object;
 }

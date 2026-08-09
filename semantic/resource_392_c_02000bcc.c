@@ -16,12 +16,6 @@
  * Func_020020aa; resource_394's own site resolves to the same import).
  */
 
-struct DmaTransfer {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
-
 void Func_02001a62();
                         /* publish the completed work buffer */
 
@@ -32,17 +26,21 @@ void Func_02001a62();
  */
 void Func_02000bcc(void)
 {
-    volatile struct DmaTransfer *const dma3 =
-        (volatile struct DmaTransfer *)0x040000d4;
-    u32 destination = *(volatile u32 *)0x03001ed0;
+    u32 *destination_cell = (u32 *)0x03001ed0;
+    volatile u32 *dma3 = (volatile u32 *)0x040000d4;
+    u32 destination = *destination_cell;
+    u32 source = 0x05000000;
+    u32 control = 0x84000070;
 
-    dma3->source = 0x05000000;
-    dma3->destination = destination;
-    dma3->control = 0x84000070;
+    dma3[0] = source;
+    dma3[1] = destination;
+    dma3[2] = control;
 
-    dma3->source = 0x05000200;
-    dma3->destination = destination + 0x1c0;
-    dma3->control = 0x84000070;
+    source = 0x05000200;
+    destination += 0x1c0;
+    dma3[0] = source;
+    dma3[1] = destination;
+    dma3[2] = control;
 
     Func_02001a62(0x10000, 0);
 }

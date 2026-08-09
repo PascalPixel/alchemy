@@ -45,7 +45,6 @@ void Func_080cdd58(u32 arg0)
     void *target = Data_03001e74.target;
     void (*transfer)();
     void *offset;
-    s32 tile;
     s32 y;
 
     Func_080cd508(arg0);
@@ -57,21 +56,17 @@ void Func_080cdd58(u32 arg0)
 
     offset = 0;
     y = 0;
-    tile = 0;
     do {
         s32 x = 0;
-        s32 value = tile + 0x100;
         do {
             if (x > 15)
                 *(volatile u16 *)((u8 *)offset + 0x0600fb00) = 0xff;
             else
-                *(volatile u16 *)((u8 *)offset + 0x0600fb00) = value;
+                *(volatile u16 *)((u8 *)offset + 0x0600fb00) = (y << 4) + x + 0x100;
             x++;
-            value++;
             offset = (u8 *)offset + 2;
         } while (x != 32);
         y++;
-        tile += 16;
     } while (y != 16);
 
     *(volatile u16 *)0x04000000 = 0x7741;

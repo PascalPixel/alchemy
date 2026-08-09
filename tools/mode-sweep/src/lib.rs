@@ -173,6 +173,7 @@ pub const FORK_MODES: &[&str] = &[
     // 08091174.
     "-fthumb-group-control-rematerialize",
     "-fthumb-sched-pool-load-late",
+    "-fthumb-single-arg-immediate-before-halfword-store",
     // Thumb leaf link-register and if-conversion classes, 2026-08-06. The first
     // stops the spurious push {lr} on empty-frame Thumb leaves whose far-jump
     // answer is latched before branch lengths exist; the second models a
@@ -2004,12 +2005,12 @@ mod tests {
     #[test]
     fn mode_table_has_the_expected_shape() {
         // Counts measured from the migrated native table:
-        //   FORK_MODES.length === 96, STOCK_SWITCHES.length === 21,
+        //   FORK_MODES.length === 98, STOCK_SWITCHES.length === 21,
         //   AGBCC_EXPERIMENTAL_COMBINATIONS.length === 4,
-        //   MODES.length === 152.
-        assert_eq!(FORK_MODES.len(), 96);
+        //   MODES.length === 154.
+        assert_eq!(FORK_MODES.len(), 98);
         assert_eq!(STOCK_SWITCHES.len(), 21);
-        assert_eq!(modes().len(), 152);
+        assert_eq!(modes().len(), 154);
         assert_eq!(
             modes().len(),
             DECLARED.len()

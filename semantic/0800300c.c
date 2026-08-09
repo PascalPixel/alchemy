@@ -2,38 +2,62 @@
 
 extern u16 Value_0000c3ff;
 extern u16 Value_00001001;
+extern u32 Data_03000000;
+extern u32 Data_03007ffc;
+
+struct DmaTransfer_0800300c {
+    u32 source;
+    u32 destination;
+    u32 control;
+};
 
 void Func_0800300c(void)
 {
     volatile u16 *interruptMaster = (volatile u16 *)0x04000208;
-    volatile u32 *dma;
-    u32 source;
     u32 destination;
-    u32 control;
     u16 disabled;
+    u16 enabled;
 
     disabled = 0;
     *interruptMaster = disabled;
 
-    destination = 0x03000000;
-    dma = (volatile u32 *)0x040000d4;
-    source = 0x08000770;
-    control = 0x84000500;
-    dma[0] = source;
-    dma[1] = destination;
-    dma[2] = control;
-    *(u32 *)0x03007ffc = destination;
+    destination = (u32)&Data_03000000;
+    {
+        volatile struct DmaTransfer_0800300c *dma =
+            (volatile struct DmaTransfer_0800300c *)0x040000d4;
+        u32 source = 0x08000770;
+        u32 control = 0x84000500;
 
-    source = 0x08007320;
-    destination = 0x030000e0;
-    control = 0x8400000e;
-    dma = (volatile u32 *)0x040000d4;
-    dma[0] = source;
-    dma[1] = destination;
-    dma[2] = control;
+        *dma = (struct DmaTransfer_0800300c) {
+            source,
+            destination,
+            control,
+        };
+    }
 
-    *(u16 *)0x03000000 = disabled;
-    *(u16 *)0x04000130 = (u16)(u32)&Value_0000c3ff;
-    *(u16 *)0x04000132 = (u16)(u32)&Value_00001001;
-    *interruptMaster = 1;
+    {
+        volatile struct DmaTransfer_0800300c *dma =
+            (volatile struct DmaTransfer_0800300c *)0x040000d4;
+        u32 source = 0x08007320;
+        u32 secondDestination = 0x030000e0;
+        u32 control = 0x8400000e;
+
+        Data_03007ffc = destination;
+        *dma = (struct DmaTransfer_0800300c) {
+            source,
+            secondDestination,
+            control,
+        };
+
+        *(volatile u16 *)((u8 *)dma - 208) = disabled;
+    }
+    {
+        volatile u16 *interruptEnable = (volatile u16 *)0x04000132;
+
+        *interruptEnable = (u16)(u32)&Value_0000c3ff;
+        interruptEnable += 103;
+        *interruptEnable = (u16)(u32)&Value_00001001;
+    }
+    enabled = 1;
+    *interruptMaster = enabled;
 }

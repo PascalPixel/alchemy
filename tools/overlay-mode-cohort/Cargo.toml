@@ -29,6 +29,7 @@ edition = "2021"
 #
 # Re-porting any of them would recreate exactly the hand-sync problem this
 # effort exists to end. All are read-only from here.
+cache-entry = { path = "../cache-entry" }
 mode-sweep = { path = "../mode-sweep" }
 search-compiler-modes = { path = "../search-compiler-modes" }
 alchemy-bundle = { path = "../alchemy-bundle" }

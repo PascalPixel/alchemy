@@ -23,6 +23,7 @@ edition = "2021"
 # points from this crate to its own consumer, which reads backwards, but the
 # alternative is a fourth copy of SHA-256 in the tree. There is no cycle:
 # search-compiler-modes has no dependencies at all.
+cache-entry = { path = "../cache-entry" }
 alchemy-routing = { path = "../alchemy-routing" }
 alchemy-bundle = { path = "../alchemy-bundle" }
 search-compiler-modes = { path = "../search-compiler-modes" }

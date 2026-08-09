@@ -15,18 +15,12 @@ pub struct Member {
     pub size: f64,
 }
 
-/// `hash(...parts)`: sha256 over each part followed by a NUL separator.
-///
-/// PORT NOTE -- the trailing `"\0"` after EVERY part, including the last, is
-/// what makes the digest unambiguous, and dropping it would change every cache
-/// key in `out/`. `alchemy_bundle::sha256::hex` is the portable implementation;
-/// see the benchmark note in `README`-less `src/bin/` about how much slower it
-/// is than native process's native `CryptoHasher`.
+/// SHA-256 over a length-prefixed sequence of arbitrary byte parts.
 pub fn hash(parts: &[&[u8]]) -> String {
     let mut message: Vec<u8> = Vec::new();
     for part in parts {
+        message.extend_from_slice(&(part.len() as u64).to_le_bytes());
         message.extend_from_slice(part);
-        message.push(0);
     }
     alchemy_bundle::sha256::hex(&message)
 }

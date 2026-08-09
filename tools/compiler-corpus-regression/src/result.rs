@@ -54,28 +54,14 @@ impl Outcome {
     }
 }
 
-/// `cachedResult(document, key)`.
-///
-/// PORT NOTE -- BUG REPRODUCED. This validates only FOUR fields:
-/// `cache_key`, `stem`, `compiled` and `exact`. A cache row that claims
-/// `compiled: true, exact: false` but omits `first_difference` is ACCEPTED, and
-/// `main()` then evaluates `result.first_difference!.toString(16)` on it, which
-/// is a TypeError at runtime. The non-null assertion is the legacy implementation's own,
-/// and the crash is reachable from any hand-edited or truncated cache file.
-/// Reproduced: the reader below accepts the row, and the reporter surfaces the
-/// same failure. Pinned in `tests/cache.rs`.
-///
-/// PORT NOTE -- `typeof result.stem !== "string"` and friends are the ONLY
-/// type tests. `expected_size` is read back untyped and could be a string; the
-/// legacy implementation would then print it as one. Modelled by reading it through the
-/// same permissive path.
+/// `cachedResult(document, key)`, with branch-specific cache schemas.
 pub fn cached_result(document: &Json, key: &str) -> Option<Outcome> {
     // `document === null || typeof document !== "object"` -- note that
     // `typeof null` is `"object"`, which is why `null` is tested separately.
     // An ARRAY passes `typeof === "object"` and would fall through to the
     // field tests, which it then fails. Reproduced by matching on `Object`
     // only after the array has had its chance to fail.
-    if !matches!(document, Json::Object(_) | Json::Array(_)) {
+    if !matches!(document, Json::Object(_)) {
         return None;
     }
     let text = |field: &str| match document.get(field) {
@@ -90,20 +76,49 @@ pub fn cached_result(document: &Json, key: &str) -> Option<Outcome> {
         return None;
     }
     let stem = text("stem")?;
+    let source = text("source")?;
+    let cached = flag("cached")?;
     let compiled = flag("compiled")?;
     let exact = flag("exact")?;
-    let count = |field: &str| match document.get(field) {
-        Some(Json::Number(value)) => Some(*value as usize),
-        _ => None,
-    };
+    let count = |field: &str| nonnegative_integer(document.get(field));
+    let expected_size = count("expected_size")?;
+    if !compiled {
+        if exact
+            || text("error").is_none()
+            || document.get("actual_size").is_some()
+            || document.get("differing_bytes").is_some()
+            || document.get("first_difference").is_some()
+        {
+            return None;
+        }
+    } else {
+        if text("error").is_some() {
+            return None;
+        }
+        let actual_size = count("actual_size")?;
+        let differing_bytes = count("differing_bytes")?;
+        if exact {
+            if actual_size != expected_size
+                || differing_bytes != 0
+                || document.get("first_difference").is_some()
+            {
+                return None;
+            }
+        } else {
+            let first_difference = count("first_difference")?;
+            if differing_bytes == 0 || first_difference >= actual_size.max(expected_size) {
+                return None;
+            }
+        }
+    }
     Some(Outcome {
         stem,
-        source: text("source").unwrap_or_default(),
+        source,
         cache_key: key.to_string(),
-        cached: flag("cached").unwrap_or(false),
+        cached,
         compiled,
         exact,
-        expected_size: count("expected_size").unwrap_or(0),
+        expected_size,
         actual_size: count("actual_size"),
         differing_bytes: count("differing_bytes"),
         first_difference: count("first_difference"),
@@ -111,20 +126,29 @@ pub fn cached_result(document: &Json, key: &str) -> Option<Outcome> {
     })
 }
 
-/// Read and validate a cache file.
-///
-/// PORT NOTE -- BUG REPRODUCED. In the legacy implementation this read sits OUTSIDE the
-/// `try` block that guards the compile, so a TRUNCATED OR CORRUPT cache JSON
-/// does not fall back to recompiling: `JSON.parse` throws and takes the whole
-/// run down with an unhandled rejection. That is a real hazard for a cache
-/// directory written by a killed process. The `Err` returned here is
-/// propagated the same way rather than being swallowed into a recompile.
+fn nonnegative_integer(value: Option<&Json>) -> Option<usize> {
+    let Json::Number(number) = value? else {
+        return None;
+    };
+    (number.is_finite() && *number >= 0.0 && number.fract() == 0.0).then_some(*number as usize)
+}
+
+/// Read and validate a cache file. Missing, corrupt, truncated, and semantically
+/// invalid entries are cache misses; filesystem failures remain errors.
 pub fn read_cache(path: &str, key: &str) -> Result<Option<Outcome>, String> {
-    if !Path::new(path).exists() {
-        return Ok(None);
-    }
-    let text = std::fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?;
-    let document = parse(&text)?;
+    let bytes = match std::fs::read(path) {
+        Ok(bytes) => bytes,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(format!("{path}: {error}")),
+    };
+    let text = match String::from_utf8(bytes) {
+        Ok(text) => text,
+        Err(_) => return Ok(None),
+    };
+    let document = match parse(&text) {
+        Ok(document) => document,
+        Err(_) => return Ok(None),
+    };
     Ok(cached_result(&document, key))
 }
 
@@ -137,7 +161,8 @@ pub fn read_cache(path: &str, key: &str) -> Result<Option<Outcome>, String> {
 pub fn atomic_json(path: &str, value: &Json) -> Result<(), String> {
     let target = Path::new(path);
     if let Some(parent) = target.parent() {
-        std::fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+        std::fs::create_dir_all(parent)
+            .map_err(|error| format!("{}: {error}", parent.display()))?;
     }
     let temporary = format!("{path}.{}.tmp", std::process::id());
     let body = canonical_json(value)? + "\n";

@@ -11,8 +11,13 @@ use compiler_corpus_regression::jsparse::{
     utf16_slice_to,
 };
 use compiler_corpus_regression::jsvalue::{canonical_json, object, parse, string, strings, Json};
-use compiler_corpus_regression::pipeline::{compiler_config_json, relative_source, rom_slice};
-use compiler_corpus_regression::result::{cached_result, Outcome};
+use compiler_corpus_regression::pipeline::{
+    cache_key, compiler_config_json, compiler_signature_with_inputs, implementation_digest,
+    relative_source, rom_slice,
+};
+use compiler_corpus_regression::result::{atomic_json, cached_result, read_cache, Outcome};
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 // ---------------------------------------------------------------- parseInt
 
@@ -169,7 +174,12 @@ fn hexadecimal_stem_lowercases_before_matching_and_rejects_non_hex() {
 // ---------------------------------------------------------------- sampling
 
 fn member(stem: &str, address: u32) -> Member {
-    Member { stem: stem.into(), source: stem.into(), address: address as f64, size: 4.0 }
+    Member {
+        stem: stem.into(),
+        source: stem.into(),
+        address: address as f64,
+        size: 4.0,
+    }
 }
 
 #[test]
@@ -223,18 +233,14 @@ fn deterministic_sample_of_zero_selects_everything_and_slice_clamps() {
 fn hash_separates_its_parts_so_concatenation_cannot_collide() {
     assert_ne!(hash(&[b"ab", b"c"]), hash(&[b"a", b"bc"]));
     assert_ne!(hash(&[b"a"]), hash(&[b"a", b""]));
+    assert_ne!(hash(&[b"a\0", b"b"]), hash(&[b"a", b"\0b"]));
 }
 
 // ------------------------------------------------------------------ config
 
 #[test]
 fn flags_of_dedupes_in_insertion_order_and_rejects_non_arrays() {
-    let flags = flags_of(&strings(&[
-        "-O2".into(),
-        "-fno-gcse".into(),
-        "-O2".into(),
-    ]))
-    .unwrap();
+    let flags = flags_of(&strings(&["-O2".into(), "-fno-gcse".into(), "-O2".into()])).unwrap();
     // A `HashSet` would lose the order; gcc is later-flag-wins so order is
     // machine code.
     assert_eq!(flags, vec!["-O2".to_string(), "-fno-gcse".to_string()]);
@@ -289,15 +295,26 @@ fn cli_numeric_guards_use_javascript_semantics() {
         "--jobs must be between 1 and 32"
     );
     // `--radius` is radix 0, so `0x10000` is 65,536.
-    assert_eq!(options(&["--flags", "-O2", "--radius", "0x10000"]).radius, 65536.0);
-    assert_eq!(options(&["--flags", "-O2", "--radius", "10000"]).radius, 10000.0);
+    assert_eq!(
+        options(&["--flags", "-O2", "--radius", "0x10000"]).radius,
+        65536.0
+    );
+    assert_eq!(
+        options(&["--flags", "-O2", "--radius", "10000"]).radius,
+        10000.0
+    );
     // `--sample`/`--jobs` are radix 10, so `0x8` is 0 and fails the jobs guard.
     assert!(parse_arguments(&args(&["--flags", "-O2", "--jobs", "0x8"])).is_err());
 }
 
 #[test]
 fn cli_flags_dedupe_across_occurrences_keeping_the_first_position() {
-    let parsed = options(&["--flags", "-O2,-fno-gcse", "--flags", "-O2,-fomit-frame-pointer"]);
+    let parsed = options(&[
+        "--flags",
+        "-O2,-fno-gcse",
+        "--flags",
+        "-O2,-fomit-frame-pointer",
+    ]);
     assert_eq!(
         parsed.flags,
         vec![
@@ -307,7 +324,10 @@ fn cli_flags_dedupe_across_occurrences_keeping_the_first_position() {
         ]
     );
     // `filter(Boolean)` drops the empties.
-    assert_eq!(options(&["--flags", ",,-O2,"]).flags, vec!["-O2".to_string()]);
+    assert_eq!(
+        options(&["--flags", ",,-O2,"]).flags,
+        vec!["-O2".to_string()]
+    );
 }
 
 #[test]
@@ -362,16 +382,26 @@ fn relative_source_strips_root_length_plus_one_without_checking_the_prefix() {
 
 // ------------------------------------------------------------------- cache
 
+fn temporary_cache_path(label: &str) -> PathBuf {
+    static NEXT: AtomicUsize = AtomicUsize::new(0);
+    let serial = NEXT.fetch_add(1, Ordering::Relaxed);
+    std::env::temp_dir().join(format!(
+        "alchemy-compiler-corpus-regression-{}-{serial}-{label}.json",
+        std::process::id()
+    ))
+}
+
 fn example() -> Json {
     parse(
         r#"{"stem":"08000000","source":"exact/08000000.c","cache_key":"key",
-            "cached":false,"compiled":true,"exact":true,"expected_size":4}"#,
+            "cached":false,"compiled":true,"exact":true,"expected_size":4,
+            "actual_size":4,"differing_bytes":0}"#,
     )
     .unwrap()
 }
 
 #[test]
-fn cached_result_validates_only_four_fields() {
+fn cached_result_requires_the_common_schema() {
     assert!(cached_result(&example(), "key").is_some());
     assert!(cached_result(&example(), "stale").is_none());
     assert!(cached_result(&object(vec![("cache_key", string("key"))]), "key").is_none());
@@ -379,16 +409,94 @@ fn cached_result_validates_only_four_fields() {
 }
 
 #[test]
-fn cached_result_accepts_a_row_that_makes_the_reporter_crash() {
-    // BUG PINNED: `compiled: true, exact: false` with NO `first_difference` is
-    // ACCEPTED here and is exactly what makes `result.first_difference!` a
-    // TypeError in the legacy implementation reporter.
-    let row = parse(
-        r#"{"stem":"08000000","cache_key":"key","compiled":true,"exact":false}"#,
+fn cached_result_rejects_incomplete_compiled_branches() {
+    let row =
+        parse(r#"{"stem":"08000000","source":"x.c","cache_key":"key","cached":false,"compiled":true,"exact":false,"expected_size":4,"actual_size":4,"differing_bytes":1}"#).unwrap();
+    assert!(cached_result(&row, "key").is_none());
+    let exact = parse(r#"{"stem":"08000000","source":"x.c","cache_key":"key","cached":false,"compiled":true,"exact":true,"expected_size":4,"actual_size":4}"#).unwrap();
+    assert!(cached_result(&exact, "key").is_none());
+    let failure = parse(r#"{"stem":"08000000","source":"x.c","cache_key":"key","cached":false,"compiled":false,"exact":false,"expected_size":4}"#).unwrap();
+    assert!(cached_result(&failure, "key").is_none());
+}
+
+#[test]
+fn compiler_signature_changes_when_the_implementation_digest_changes() {
+    let first_path = temporary_cache_path("implementation-one");
+    let second_path = temporary_cache_path("implementation-two");
+    std::fs::write(&first_path, b"compiled implementation one").unwrap();
+    std::fs::write(&second_path, b"compiled implementation two").unwrap();
+    let first_digest = implementation_digest(&first_path).unwrap();
+    let second_digest = implementation_digest(&second_path).unwrap();
+    let first_signature = compiler_signature_with_inputs(
+        || Ok(first_digest.clone()),
+        || Ok("host-tools".to_string()),
     )
     .unwrap();
-    let accepted = cached_result(&row, "key").expect("row must be accepted, defect and all");
-    assert!(accepted.first_difference.is_none());
+    let second_signature = compiler_signature_with_inputs(
+        || Ok(second_digest.clone()),
+        || Ok("host-tools".to_string()),
+    )
+    .unwrap();
+
+    assert_ne!(first_digest, second_digest);
+    assert_ne!(first_signature, second_signature);
+    let _ = std::fs::remove_file(first_path);
+    let _ = std::fs::remove_file(second_path);
+}
+
+#[test]
+fn compiler_signature_changes_when_a_host_tool_signature_changes_without_path_mutation() {
+    let first_signature = compiler_signature_with_inputs(
+        || Ok("implementation".to_string()),
+        || Ok("host-tools-before".to_string()),
+    )
+    .unwrap();
+    let second_signature = compiler_signature_with_inputs(
+        || Ok("implementation".to_string()),
+        || Ok("host-tools-after".to_string()),
+    )
+    .unwrap();
+
+    assert_ne!(first_signature, second_signature);
+}
+
+#[test]
+fn cache_key_includes_the_repository_relative_source_path() {
+    let first = cache_key(
+        "src/exact/08000000.c",
+        b"same source",
+        b"same expected",
+        "same compiler",
+        "same configuration",
+    )
+    .unwrap();
+    let second = cache_key(
+        "src/alternate/08000000.c",
+        b"same source",
+        b"same expected",
+        "same compiler",
+        "same configuration",
+    )
+    .unwrap();
+
+    assert_ne!(first, second);
+}
+
+#[test]
+fn corrupt_truncated_and_semantically_invalid_cache_json_are_misses_and_recover() {
+    let path = temporary_cache_path("recovery");
+    for contents in ["{\"stem\":\"08000000\"", "{not-json", "{\"cache_key\":7}"] {
+        std::fs::write(&path, contents).unwrap();
+        assert!(read_cache(path.to_str().unwrap(), "key").unwrap().is_none());
+    }
+
+    atomic_json(path.to_str().unwrap(), &example()).unwrap();
+    let recovered = read_cache(path.to_str().unwrap(), "key").unwrap();
+    assert_eq!(
+        recovered.map(|outcome| outcome.cache_key),
+        Some("key".to_string())
+    );
+    let _ = std::fs::remove_file(path);
 }
 
 // -------------------------------------------------------------- report JSON
@@ -418,7 +526,10 @@ fn every_number_the_report_can_emit_round_trips_through_the_js_writer() {
     assert!(text.contains(r#""first_difference": 0"#), "{text}");
     // ryu would write `20.0`; ECMAScript writes `20`. Walk every number.
     for number in ["20", "24", "3", "0"] {
-        assert!(!text.contains(&format!("{number}.0")), "float spelling: {text}");
+        assert!(
+            !text.contains(&format!("{number}.0")),
+            "float spelling: {text}"
+        );
     }
     // Key order is the file format.
     let json = outcome.to_json();
@@ -483,5 +594,8 @@ fn source_sort_is_utf16_code_unit_order_not_str_cmp_and_not_locale_compare() {
     list.sort_by(|left, right| default_sort_cmp(left, right));
     // Default `sort()` is code-unit order, so uppercase sorts FIRST.
     // `localeCompare` would put "a" before "A".
-    assert_eq!(list, vec!["A".to_string(), "a".to_string(), "b".to_string()]);
+    assert_eq!(
+        list,
+        vec!["A".to_string(), "a".to_string(), "b".to_string()]
+    );
 }

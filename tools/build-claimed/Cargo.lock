@@ -32,13 +32,19 @@ dependencies = [
 name = "build-claimed"
 version = "0.1.0"
 dependencies = [
+ "alchemy-bundle",
  "alchemy-plan",
  "alchemy-routing",
  "alchemy-symbols",
+ "cache-entry",
  "canonical-json",
  "decomp-targets",
  "serde_json",
 ]
+
+[[package]]
+name = "cache-entry"
+version = "0.1.0"
 
 [[package]]
 name = "canonical-json"

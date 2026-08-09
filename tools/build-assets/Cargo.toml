@@ -6,11 +6,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+alchemy-bundle = { path = "../alchemy-bundle" }
 alignment-tail = { path = "../alignment-tail" }
 asset-paths = { path = "../asset-paths" }
 audio-engine-data = { path = "../audio-engine-data" }
 archive-asset = { path = "../archive-asset" }
 canonical-json = { path = "../canonical-json" }
+cache-entry = { path = "../cache-entry" }
 extract-resource = { path = "../extract-resource" }
 generated-files = { path = "../generated-files" }
 import-asset = { path = "../import-asset" }

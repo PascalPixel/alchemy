@@ -7,8 +7,8 @@
 //!
 //! PORT NOTEs (deliberate, documented differences):
 //!
-//! * PORT NOTE: every sub-builder is now native and is invoked by its release
-//!   binary under `tools`.
+//! * PORT NOTE: every sub-builder is now native and is invoked through Cargo's
+//!   offline release runner under `tools`.
 //! * PORT NOTE: an uncaught `throw` in Bun prints a source-annotated stack
 //!   trace and exits 1. The port prints `error: <message>` to stderr and also
 //!   exits 1. Every message the tool itself composes is reproduced verbatim,
@@ -82,13 +82,14 @@ fn is_js_whitespace(c: char) -> bool {
             | '\u{20}'
             | '\u{a0}'
             | '\u{1680}'
-            | '\u{2000}'..='\u{200a}'
-            | '\u{2028}'
-            | '\u{2029}'
-            | '\u{202f}'
-            | '\u{205f}'
-            | '\u{3000}'
-            | '\u{feff}'
+            | '\u{2000}'
+            ..='\u{200a}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202f}'
+                | '\u{205f}'
+                | '\u{3000}'
+                | '\u{feff}'
     )
 }
 
@@ -286,10 +287,7 @@ pub fn fill_gaps(pieces: &[Piece], rom_len: u64) -> Result<Vec<Piece>, String> {
     let mut cursor = ROM_BASE;
     for piece in pieces {
         if piece.address < cursor {
-            return Err(format!(
-                "overlapping piece at 0x{}",
-                hex8(piece.address)
-            ));
+            return Err(format!("overlapping piece at 0x{}", hex8(piece.address)));
         }
         if piece.address > cursor {
             filled.push(Piece {
@@ -451,6 +449,21 @@ pub fn run(root: &Path, command: &[String]) -> Result<String, String> {
     Ok(stdout)
 }
 
+fn cargo_child(root: &Path, manifest: &str, arguments: &[String]) -> Vec<String> {
+    let mut command = vec![
+        "cargo".into(),
+        "run".into(),
+        "--quiet".into(),
+        "--release".into(),
+        "--offline".into(),
+        "--manifest-path".into(),
+        root.join(manifest).to_string_lossy().into_owned(),
+        "--".into(),
+    ];
+    command.extend(arguments.iter().cloned());
+    command
+}
+
 // ---------------------------------------------------------------------------
 // Main pipeline
 // ---------------------------------------------------------------------------
@@ -458,7 +471,8 @@ pub fn run(root: &Path, command: &[String]) -> Result<String, String> {
 pub fn main_pipeline(options: &Options, cwd: &Path) -> Result<String, String> {
     let root = repo_root();
     let rom_path = resolve(cwd, &options.rom);
-    let rom = std::fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
+    let rom =
+        std::fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
     let out = if is_absolute(&options.output) {
         PathBuf::from(&options.output)
     } else {
@@ -469,38 +483,37 @@ pub fn main_pipeline(options: &Options, cwd: &Path) -> Result<String, String> {
     let rom_path_string = rom_path.to_string_lossy().into_owned();
     run(
         &root,
-        &[
-            root.join("tools/build-claimed/target/release/build-claimed")
-                .to_string_lossy()
-                .into_owned(),
-            rom_path_string.clone(),
-            "--jobs".into(),
-            js_number_to_string(options.jobs),
-            "--output".into(),
-            "out/claimed".into(),
-        ],
+        &cargo_child(
+            &root,
+            "tools/build-claimed/Cargo.toml",
+            &[
+                rom_path_string.clone(),
+                "--jobs".into(),
+                js_number_to_string(options.jobs),
+                "--output".into(),
+                "out/claimed".into(),
+            ],
+        ),
     )?;
     run(
         &root,
-        &[
-            root.join("tools/build-asm/target/release/build-asm")
-                .to_string_lossy()
-                .into_owned(),
-            rom_path_string.clone(),
-            "--output".into(),
-            "out/asm".into(),
-        ],
+        &cargo_child(
+            &root,
+            "tools/build-asm/Cargo.toml",
+            &[rom_path_string.clone(), "--output".into(), "out/asm".into()],
+        ),
     )?;
     run(
         &root,
-        &[
-            root.join("tools/build-assets/target/release/build-assets")
-                .to_string_lossy()
-                .into_owned(),
-            rom_path_string.clone(),
-            "--output".into(),
-            "out/assets".into(),
-        ],
+        &cargo_child(
+            &root,
+            "tools/build-assets/Cargo.toml",
+            &[
+                rom_path_string.clone(),
+                "--output".into(),
+                "out/assets".into(),
+            ],
+        ),
     )?;
 
     let bytes_dir = out.join("regions");
@@ -552,11 +565,8 @@ pub fn main_pipeline(options: &Options, cwd: &Path) -> Result<String, String> {
     let filled = fill_gaps(&pieces, rom.len() as u64)?;
 
     let fill_object = out.join("rom_fill.o");
-    let (fill_lines, placements) = render_fill(
-        &filled,
-        &rom_path_string,
-        &relative(&root, &fill_object),
-    );
+    let (fill_lines, placements) =
+        render_fill(&filled, &rom_path_string, &relative(&root, &fill_object));
     let fill_source = out.join("rom_fill.s");
     std::fs::write(&fill_source, fill_lines.join("\n") + "\n")
         .map_err(|error| format!("{}: {error}", fill_source.display()))?;
@@ -598,8 +608,8 @@ pub fn main_pipeline(options: &Options, cwd: &Path) -> Result<String, String> {
             built_path.to_string_lossy().into_owned(),
         ],
     )?;
-    let built = std::fs::read(&built_path)
-        .map_err(|error| format!("{}: {error}", built_path.display()))?;
+    let built =
+        std::fs::read(&built_path).map_err(|error| format!("{}: {error}", built_path.display()))?;
     if built != rom {
         return Err(mismatch_error(&built, &rom));
     }
@@ -901,7 +911,10 @@ mod tests {
         let pieces = vec![incbin(0x0800_0000, 16, "x")];
         let filled = fill_gaps(&pieces, 16).unwrap();
         assert_eq!(filled.len(), 1);
-        assert_eq!(summary_line(&filled, 16), "identical=True pieces=1 regions=1 source_bytes=16 skeleton_bytes=0");
+        assert_eq!(
+            summary_line(&filled, 16),
+            "identical=True pieces=1 regions=1 source_bytes=16 skeleton_bytes=0"
+        );
     }
 
     #[test]
@@ -926,8 +939,11 @@ mod tests {
 
     #[test]
     fn fill_source_and_placements_render_exactly() {
-        let filled = fill_gaps(&[incbin(0x0800_0004, 4, "out/rom/regions/08000004.bin")], 12)
-            .unwrap();
+        let filled = fill_gaps(
+            &[incbin(0x0800_0004, 4, "out/rom/regions/08000004.bin")],
+            12,
+        )
+        .unwrap();
         let (lines, placements) = render_fill(&filled, "/roms/gs1-en.gba", "out/rom/rom_fill.o");
         assert_eq!(
             lines,
@@ -1000,7 +1016,10 @@ mod tests {
 
     #[test]
     fn json_numbers_accept_strings_like_the_number_cast() {
-        assert_eq!(json_number(&serde_json::json!(134217728)), Some(134217728.0));
+        assert_eq!(
+            json_number(&serde_json::json!(134217728)),
+            Some(134217728.0)
+        );
         assert_eq!(
             json_number(&serde_json::json!("134217728")),
             Some(134217728.0)
@@ -1040,7 +1059,11 @@ mod tests {
         assert_eq!(
             run(
                 &root,
-                &["/bin/sh".into(), "-c".into(), "echo '  boom  ' >&2; exit 3".into()]
+                &[
+                    "/bin/sh".into(),
+                    "-c".into(),
+                    "echo '  boom  ' >&2; exit 3".into()
+                ]
             )
             .unwrap_err(),
             "boom"
@@ -1049,7 +1072,11 @@ mod tests {
         assert_eq!(
             run(
                 &root,
-                &["/bin/sh".into(), "-c".into(), "echo out-only; exit 4".into()]
+                &[
+                    "/bin/sh".into(),
+                    "-c".into(),
+                    "echo out-only; exit 4".into()
+                ]
             )
             .unwrap_err(),
             "out-only"
@@ -1059,6 +1086,52 @@ mod tests {
             run(&root, &["/bin/sh".into(), "-c".into(), "exit 5".into()]).unwrap_err(),
             "sh failed"
         );
+    }
+
+    #[test]
+    fn child_command_plans_use_offline_release_cargo_and_preserve_arguments() {
+        let root = Path::new("/repo");
+        for (manifest, arguments) in [
+            (
+                "tools/build-claimed/Cargo.toml",
+                vec![
+                    "roms/gs1-en.gba".to_string(),
+                    "--jobs".to_string(),
+                    "8".to_string(),
+                    "--output".to_string(),
+                    "out/claimed".to_string(),
+                ],
+            ),
+            (
+                "tools/build-asm/Cargo.toml",
+                vec![
+                    "roms/gs1-en.gba".to_string(),
+                    "--output".to_string(),
+                    "out/asm".to_string(),
+                ],
+            ),
+            (
+                "tools/build-assets/Cargo.toml",
+                vec![
+                    "roms/gs1-en.gba".to_string(),
+                    "--output".to_string(),
+                    "out/assets".to_string(),
+                ],
+            ),
+        ] {
+            let mut expected = vec![
+                "cargo".to_string(),
+                "run".to_string(),
+                "--quiet".to_string(),
+                "--release".to_string(),
+                "--offline".to_string(),
+                "--manifest-path".to_string(),
+                root.join(manifest).to_string_lossy().into_owned(),
+                "--".to_string(),
+            ];
+            expected.extend(arguments.iter().cloned());
+            assert_eq!(cargo_child(root, manifest, &arguments), expected);
+        }
     }
 
     #[test]

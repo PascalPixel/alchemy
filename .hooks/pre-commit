@@ -1,3 +1,4 @@
 #!/bin/sh
 # 登録予定の内容を公開可能な正準ソースに限定する。
-exec tools/check-publication/target/release/check-publication --staged
+exec cargo run --offline --quiet --release \
+  --manifest-path tools/check-publication/Cargo.toml -- --staged

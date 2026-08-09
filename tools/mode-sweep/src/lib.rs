@@ -36,7 +36,7 @@ pub fn root() -> PathBuf {
 
 /// `FORMAT` in the TypeScript: the report/cache schema version. A bump
 /// invalidates every cached score because it is hashed into the cache key.
-pub const FORMAT: u32 = 4;
+pub const FORMAT: u32 = 5;
 
 // ---------------------------------------------------------------------------
 // Fork modes
@@ -1031,15 +1031,57 @@ pub fn combinations(pairs: bool) -> Vec<Vec<String>> {
 // Hashing and content addressing
 // ---------------------------------------------------------------------------
 
-/// Port of `hash`: SHA-256 over each part followed by a NUL separator. The
-/// separator is what stops `hash("ab","c")` colliding with `hash("a","bc")`.
+/// SHA-256 over a length-prefixed sequence of parts.
+///
+/// The length prefix is deliberately binary and fixed-width: cache inputs may
+/// contain arbitrary bytes, including NULs. This is a cache namespace change.
 pub fn hash(parts: &[&[u8]]) -> String {
     let mut buffer: Vec<u8> = Vec::new();
     for part in parts {
+        buffer.extend_from_slice(&(part.len() as u64).to_le_bytes());
         buffer.extend_from_slice(part);
-        buffer.push(0);
     }
     sha256_hex(&buffer)
+}
+
+/// SHA-256 of the currently executing Cargo-built binary.
+///
+/// The binary contains this crate and every compiled path dependency, so the
+/// digest closes the cache identity over implementation changes without a
+/// hand-maintained source list. `binary_digest_from` remains injectable for
+/// tests and callers that already have an executable path.
+pub fn binary_digest_from(path: &Path) -> std::io::Result<String> {
+    Ok(sha256_hex(&std::fs::read(path)?))
+}
+
+pub fn current_binary_digest() -> std::io::Result<String> {
+    binary_digest_from(&std::env::current_exe()?)
+}
+
+/// Cache identity for one mode-sweep score.
+///
+/// The existing format, source, reference, compiler, and canonical config
+/// inputs stay in their established order; the implementation digest is an
+/// additional final input.
+pub fn score_cache_key(
+    source_bytes: &[u8],
+    reference: &[u8],
+    compiler_digest: &str,
+    config: &Config,
+    implementation_digest: &str,
+    host_tool_signature: &str,
+) -> String {
+    let format = FORMAT.to_string();
+    let config_json = canonical_json(&config.to_json());
+    hash(&[
+        format.as_bytes(),
+        source_bytes,
+        reference,
+        compiler_digest.as_bytes(),
+        config_json.as_bytes(),
+        implementation_digest.as_bytes(),
+        host_tool_signature.as_bytes(),
+    ])
 }
 
 /// Native mode-sweep output directory, delegating to the existing
@@ -1555,17 +1597,91 @@ pub fn options_of(
 /// and its shape is intact. `compiled` must be a boolean specifically -- a
 /// truthy string would be accepted by a looser check and then mis-tallied.
 pub fn accepted_cache(document: &Json, cache_key: &str) -> bool {
-    let Json::Object(_) = document else {
+    if !matches!(document, Json::Object(_)) {
+        return false;
+    }
+    if document.get("cache_key").and_then(Json::as_str) != Some(cache_key)
+        || !matches!(document.get("cached"), Some(Json::Bool(_)))
+        || !matches!(document.get("compiled"), Some(Json::Bool(_)))
+        || !valid_config(document.get("config"))
+    {
+        return false;
+    }
+    let compiled = matches!(document.get("compiled"), Some(Json::Bool(true)));
+    if !compiled {
+        return document.get("error").and_then(Json::as_str).is_some()
+            && document.get("size").is_none()
+            && document.get("evidence").is_none();
+    }
+    if !is_nonnegative_integer(document.get("size")) || document.get("error").is_some() {
+        return false;
+    }
+    let Some(evidence) = document.get("evidence") else {
         return false;
     };
-    let key_matches = document.get("cache_key").and_then(Json::as_str) == Some(cache_key);
-    let compiled_is_boolean = matches!(document.get("compiled"), Some(Json::Bool(_)));
-    let config = document.get("config");
-    let config_shaped = config.is_some_and(|config| {
-        matches!(config.get("ids"), Some(Json::Array(_)))
-            && matches!(config.get("flags"), Some(Json::Array(_)))
-    });
-    key_matches && compiled_is_boolean && config_shaped
+    let Some(exact) = json_bool(evidence.get("exact")) else {
+        return false;
+    };
+    let Some(differing_halfwords) = nonnegative_integer(evidence.get("differing_halfwords")) else {
+        return false;
+    };
+    let Some(size_delta) = signed_integer(evidence.get("size_delta")) else {
+        return false;
+    };
+    let Some(exact_size) = json_bool(evidence.get("exact_size")) else {
+        return false;
+    };
+    if json_bool(evidence.get("instruction_order_proxy")).is_none()
+        || json_bool(evidence.get("literal_placement_proxy")).is_none()
+        || json_bool(evidence.get("control_flow_proxy")).is_none()
+        || nonnegative_integer(evidence.get("register_allocation_proxy")).is_none()
+    {
+        return false;
+    }
+    if exact {
+        differing_halfwords == 0 && size_delta == 0 && exact_size
+    } else {
+        differing_halfwords != 0 || size_delta != 0 || !exact_size
+    }
+}
+
+fn valid_config(value: Option<&Json>) -> bool {
+    let Some(config) = value else { return false };
+    let strings = |value: Option<&Json>| {
+        matches!(value, Some(Json::Array(items)) if items.iter().all(|item| item.as_str().is_some()))
+    };
+    strings(config.get("ids"))
+        && strings(config.get("flags"))
+        && strings(config.get("remove_flags"))
+        && config.get("compiler_family").and_then(Json::as_str).is_some()
+}
+
+fn is_nonnegative_integer(value: Option<&Json>) -> bool {
+    nonnegative_integer(value).is_some()
+}
+
+fn nonnegative_integer(value: Option<&Json>) -> Option<u64> {
+    let number = json_number(value)?;
+    (number.is_finite() && number >= 0.0 && number.fract() == 0.0).then_some(number as u64)
+}
+
+fn signed_integer(value: Option<&Json>) -> Option<i64> {
+    let number = json_number(value)?;
+    (number.is_finite() && number.fract() == 0.0).then_some(number as i64)
+}
+
+fn json_bool(value: Option<&Json>) -> Option<bool> {
+    match value {
+        Some(Json::Bool(value)) => Some(*value),
+        _ => None,
+    }
+}
+
+fn json_number(value: Option<&Json>) -> Option<f64> {
+    match value {
+        Some(Json::Number(value)) => Some(*value),
+        _ => None,
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -1721,6 +1837,7 @@ pub fn self_test() -> Result<usize, String> {
         ("cache_key".into(), Json::String(key1.clone())),
         ("cached".into(), Json::Bool(false)),
         ("compiled".into(), Json::Bool(false)),
+        ("error".into(), Json::String("failed".into())),
     ]);
     let malformed = Json::Object(vec![("cache_key".into(), Json::String(key1.clone()))]);
     check(
@@ -1728,6 +1845,53 @@ pub fn self_test() -> Result<usize, String> {
             && !accepted_cache(&cached, &format!("{key1}stale"))
             && !accepted_cache(&malformed, &key1),
         "cache acceptance does not reject stale/malformed entries",
+    )?;
+
+    let cache_config = Config {
+        ids: vec!["opt-o1".into()],
+        flags: vec!["-O1".into()],
+        remove_flags: Vec::new(),
+        compiler_family: ROUTED.into(),
+    };
+    let implementation_a = score_cache_key(
+        b"source",
+        b"reference",
+        "compiler",
+        &cache_config,
+        "implementation-a",
+        "host-tools",
+    );
+    let implementation_b = score_cache_key(
+        b"source",
+        b"reference",
+        "compiler",
+        &cache_config,
+        "implementation-b",
+        "host-tools",
+    );
+    check(
+        implementation_a != implementation_b,
+        "implementation digest does not invalidate cache keys",
+    )?;
+    let host_a = score_cache_key(
+        b"source",
+        b"reference",
+        "compiler",
+        &cache_config,
+        "implementation",
+        "host-a",
+    );
+    let host_b = score_cache_key(
+        b"source",
+        b"reference",
+        "compiler",
+        &cache_config,
+        "implementation",
+        "host-b",
+    );
+    check(
+        host_a != host_b,
+        "host-tool signature does not invalidate cache keys",
     )?;
 
     // Port-specific invariants. The collator is the one place where a plausible
@@ -1754,7 +1918,7 @@ fn s(text: &str) -> String {
 
 /// The number of checks `self_test` must execute. A future edit that drops one
 /// fails instead of quietly passing a smaller suite.
-pub const SELF_TEST_CHECK_FLOOR: usize = 14;
+pub const SELF_TEST_CHECK_FLOOR: usize = 16;
 
 #[cfg(test)]
 mod tests {
@@ -2116,6 +2280,32 @@ mod tests {
     #[test]
     fn hash_separates_its_parts() {
         assert_ne!(hash(&[b"ab", b"c"]), hash(&[b"a", b"bc"]));
-        assert_eq!(hash(&[b"a"]), hash(&[b"a"]));
+        assert_ne!(hash(&[b"a\0", b"b"]), hash(&[b"a", b"\0b"]));
+        assert_ne!(hash(&[b"a"]), hash(&[b"a", b""]));
+    }
+
+    #[test]
+    fn incomplete_compiled_and_failure_rows_are_misses() {
+        let config = Config {
+            ids: vec![],
+            flags: vec![],
+            remove_flags: vec![],
+            compiler_family: ROUTED.into(),
+        };
+        let incomplete = Json::Object(vec![
+            ("config".into(), config.to_json()),
+            ("cache_key".into(), Json::String("key".into())),
+            ("cached".into(), Json::Bool(false)),
+            ("compiled".into(), Json::Bool(true)),
+            ("size".into(), Json::Number(2.0)),
+        ]);
+        assert!(!accepted_cache(&incomplete, "key"));
+        let failure = Json::Object(vec![
+            ("config".into(), config.to_json()),
+            ("cache_key".into(), Json::String("key".into())),
+            ("cached".into(), Json::Bool(false)),
+            ("compiled".into(), Json::Bool(false)),
+        ]);
+        assert!(!accepted_cache(&failure, "key"));
     }
 }

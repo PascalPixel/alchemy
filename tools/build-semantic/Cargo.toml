@@ -6,8 +6,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+alchemy-bundle = { path = "../alchemy-bundle" }
 alchemy-plan = { path = "../alchemy-plan" }
 alchemy-routing = { path = "../alchemy-routing" }
+cache-entry = { path = "../cache-entry" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 

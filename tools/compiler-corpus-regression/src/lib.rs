@@ -16,8 +16,9 @@
 //!    literal in the tool's FIRST commit `c7b7f3736`, so it is NOT a
 //!    `b3ab4841b` breakage. See `corpus::corpus`.
 //! 2. `main()` digests `join(ROOT, "tools", name)` for four files that
-//!    `b3ab4841b` moved into `tools/lib/` and `tools/compiler/`. That is the
-//!    confirmed `b3ab4841b` breakage and the corrected paths are used here.
+//!    `b3ab4841b` moved into `tools/lib/` and `tools/compiler/`, plus the
+//!    currently executing compiled binary. That is the confirmed `b3ab4841b`
+//!    breakage and the corrected paths are used here.
 //!
 //! Because of (1) the legacy implementation has never once processed a corpus member, and
 //! because of (2) it could not have reached the compile path even if it had.
@@ -40,7 +41,7 @@ pub mod selftest;
 /// `compilerSignature` also digests the tool's own source, so a change to the
 /// logic invalidates every key whether or not anyone remembers to bump this.
 /// Do not add a second `-vN` literal anywhere; see `pipeline::compiler_signature`.
-pub const FORMAT: f64 = 3.0;
+pub const FORMAT: f64 = 4.0;
 
 /// Shared candidate compiler image base.
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;

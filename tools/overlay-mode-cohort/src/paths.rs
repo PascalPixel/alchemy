@@ -23,17 +23,12 @@ pub fn root() -> PathBuf {
         .to_path_buf()
 }
 
-/// `hash(...parts)`: SHA-256 over each part followed by a NUL separator.
-///
-/// PORT NOTE: the separator is what makes this injective. Without it
-/// `hash("ab", "c")` and `hash("a", "bc")` would collide, and the parts here
-/// include arbitrary source bytes. The trailing NUL after the LAST part is also
-/// reproduced: the loop emits one per part, including the final one.
+/// SHA-256 over a length-prefixed sequence of arbitrary byte parts.
 pub fn hash(parts: &[&[u8]]) -> String {
     let mut message: Vec<u8> = Vec::new();
     for part in parts {
+        message.extend_from_slice(&(part.len() as u64).to_le_bytes());
         message.extend_from_slice(part);
-        message.push(0);
     }
     sha256::hex(&message)
 }
@@ -82,11 +77,10 @@ mod tests {
     }
 
     #[test]
-    fn the_nul_separator_keeps_the_hash_injective() {
+    fn length_framing_keeps_arbitrary_parts_injective() {
         assert_ne!(hash(&[b"ab", b"c"]), hash(&[b"a", b"bc"]));
-        // One part is not the same as that part concatenated with nothing.
-        assert_ne!(hash(&[b"a"]), sha256::hex(b"a"));
-        assert_eq!(hash(&[b"a"]), sha256::hex(b"a\0"));
+        assert_ne!(hash(&[b"a\0", b"b"]), hash(&[b"a", b"\0b"]));
+        assert_ne!(hash(&[b"a"]), hash(&[b"a", b""]));
     }
 
     #[test]

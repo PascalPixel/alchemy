@@ -1,3 +1,4 @@
 #!/bin/sh
 # 送信される全コミットを調べ、途中で削除済みの非公開物も拒否する。
-exec tools/check-publication/target/release/check-publication --pre-push
+exec cargo run --offline --quiet --release \
+  --manifest-path tools/check-publication/Cargo.toml -- --pre-push

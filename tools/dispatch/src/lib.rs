@@ -36,9 +36,7 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "check_commit_progress",
-        target: Target::Binary(
-            "tools/check-commit-progress/target/release/check-commit-progress",
-        ),
+        target: Target::Binary("tools/check-commit-progress/target/release/check-commit-progress"),
     },
     Entry {
         name: "check_publication",
@@ -194,9 +192,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "late_runtime_residual",
-        target: Target::Binary(
-            "tools/late-runtime-residual/target/release/late-runtime-residual",
-        ),
+        target: Target::Binary("tools/late-runtime-residual/target/release/late-runtime-residual"),
     },
     Entry {
         name: "localization_font",
@@ -409,9 +405,7 @@ const SEARCH: &[Entry] = &[
     },
     Entry {
         name: "search_compiler_modes",
-        target: Target::Binary(
-            "tools/search-compiler-modes/target/release/search-compiler-modes",
-        ),
+        target: Target::Binary("tools/search-compiler-modes/target/release/search-compiler-modes"),
     },
     Entry {
         name: "shape_sweep",
@@ -534,15 +528,90 @@ fn root() -> PathBuf {
         .to_path_buf()
 }
 
+#[derive(Debug, Eq, PartialEq)]
+struct ResolvedTarget {
+    manifest: PathBuf,
+    binary: String,
+}
+
+fn resolve_target(repository: &Path, target: Target) -> Result<ResolvedTarget, String> {
+    let Target::Binary(path) = target;
+    let components: Vec<_> = Path::new(path).components().collect();
+    let (manifest, binary) = match components.as_slice() {
+        [std::path::Component::Normal(tools), std::path::Component::Normal(target), std::path::Component::Normal(release), std::path::Component::Normal(binary)]
+            if *tools == std::ffi::OsStr::new("tools")
+                && *target == std::ffi::OsStr::new("target")
+                && *release == std::ffi::OsStr::new("release") =>
+        {
+            (repository.join("tools/Cargo.toml"), binary)
+        }
+        [std::path::Component::Normal(tools), std::path::Component::Normal(crate_name), std::path::Component::Normal(target), std::path::Component::Normal(release), std::path::Component::Normal(binary)]
+            if *tools == std::ffi::OsStr::new("tools")
+                && *target == std::ffi::OsStr::new("target")
+                && *release == std::ffi::OsStr::new("release") =>
+        {
+            (
+                repository.join("tools").join(crate_name).join("Cargo.toml"),
+                binary,
+            )
+        }
+        _ => return Err(format!("{path} is not a native release binary path")),
+    };
+    let binary = binary
+        .to_str()
+        .ok_or_else(|| format!("{path} has a non-UTF-8 binary name"))?;
+    Ok(ResolvedTarget {
+        manifest,
+        binary: binary.to_string(),
+    })
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct CommandPlan {
+    target: ResolvedTarget,
+    arguments: Vec<String>,
+}
+
+impl CommandPlan {
+    fn cargo_arguments(&self) -> Vec<String> {
+        let mut arguments = vec![
+            "run".to_string(),
+            "--offline".to_string(),
+            "--quiet".to_string(),
+            "--release".to_string(),
+            "--manifest-path".to_string(),
+            self.target.manifest.to_string_lossy().into_owned(),
+            "--bin".to_string(),
+            self.target.binary.clone(),
+            "--".to_string(),
+        ];
+        arguments.extend(self.arguments.iter().cloned());
+        arguments
+    }
+}
+
+fn command_plan(
+    entry: Entry,
+    arguments: &[String],
+    repository: &Path,
+) -> Result<CommandPlan, String> {
+    Ok(CommandPlan {
+        target: resolve_target(repository, entry.target)?,
+        arguments: arguments.to_vec(),
+    })
+}
+
 fn run_child(entry: Entry, arguments: &[String], repository: &Path) -> ExitCode {
-    let mut command = match entry.target {
-        Target::Binary(binary) => {
-            let mut command = Command::new(repository.join(binary));
-            command.args(arguments);
-            command
+    let plan = match command_plan(entry, arguments, repository) {
+        Ok(plan) => plan,
+        Err(error) => {
+            let Target::Binary(binary) = entry.target;
+            eprintln!("dispatch: could not plan {binary}: {error}");
+            return ExitCode::FAILURE;
         }
     };
-    let child = command
+    let child = Command::new("cargo")
+        .args(plan.cargo_arguments())
         .current_dir(repository)
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
@@ -674,5 +743,76 @@ mod tests {
             top_level_usage(),
             "usage: dispatch <assets|check|compiler|decomp|make|metrics|overlay|search|semantic> <subcommand> [args...]"
         );
+    }
+
+    #[test]
+    fn resolves_standalone_target_to_its_crate_manifest() {
+        assert_eq!(
+            resolve_target(
+                Path::new("/repo"),
+                Target::Binary("tools/message-archive/target/release/message_archive")
+            ),
+            Ok(ResolvedTarget {
+                manifest: PathBuf::from("/repo/tools/message-archive/Cargo.toml"),
+                binary: "message_archive".to_string(),
+            })
+        );
+    }
+
+    #[test]
+    fn resolves_shared_target_to_the_tools_workspace_manifest() {
+        assert_eq!(
+            resolve_target(
+                Path::new("/repo"),
+                Target::Binary("tools/target/release/cache-key-lint")
+            ),
+            Ok(ResolvedTarget {
+                manifest: PathBuf::from("/repo/tools/Cargo.toml"),
+                binary: "cache-key-lint".to_string(),
+            })
+        );
+    }
+
+    #[test]
+    fn rejects_non_release_binary_paths() {
+        let error = resolve_target(
+            Path::new("/repo"),
+            Target::Binary("tools/message-archive/debug/message_archive"),
+        )
+        .expect_err("debug targets must not be dispatched");
+        assert_eq!(
+            error,
+            "tools/message-archive/debug/message_archive is not a native release binary path"
+        );
+    }
+
+    #[test]
+    fn command_plan_is_cargo_authoritative_and_preserves_arguments() {
+        let plan = command_plan(
+            Entry {
+                name: "message_archive",
+                target: Target::Binary("tools/message-archive/target/release/message_archive"),
+            },
+            &["--self-test".to_string(), "extra value".to_string()],
+            Path::new("/repo"),
+        )
+        .expect("command plan should resolve");
+        let expected: Vec<_> = [
+            "run",
+            "--offline",
+            "--quiet",
+            "--release",
+            "--manifest-path",
+            "/repo/tools/message-archive/Cargo.toml",
+            "--bin",
+            "message_archive",
+            "--",
+            "--self-test",
+            "extra value",
+        ]
+        .into_iter()
+        .map(String::from)
+        .collect();
+        assert_eq!(plan.cargo_arguments(), expected);
     }
 }

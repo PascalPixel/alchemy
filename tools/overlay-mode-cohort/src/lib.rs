@@ -30,6 +30,7 @@ pub mod spec;
 pub mod verify;
 
 use aggregate::{best_by_region, by_config};
+use cache_entry::write_cache_entry_atomically;
 use json::{array_len, set};
 use options::{options_of, Options, Parsed};
 use overlay_disasm::compile::assemble_overlay;
@@ -44,13 +45,20 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
 use std::sync::Mutex;
 
-/// `const FORMAT = 1`.
+/// `const FORMAT = 2`.
 ///
 /// PORT NOTE: this is hashed into every cache key as `String(FORMAT)`, so it is
 /// the sanctioned way to invalidate the cache wholesale. It is a NUMBER, not a
 /// `-vN` string literal glued to a key prefix, which is why
 /// `tools/cache-key-lint` has nothing to say about either mirror.
-pub const FORMAT: u32 = 1;
+pub const FORMAT: u32 = 2;
+
+const OVERLAY_BINUTILS: [&str; 4] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+];
 
 /// `Buffer#subarray(start, end)`.
 ///
@@ -103,6 +111,8 @@ fn score_task(
     task: &Task<'_>,
     overlays: &[(String, Vec<u8>)],
     compiler_signature: &str,
+    implementation_digest: &str,
+    host_tool_signature: &str,
     options: &Options,
 ) -> Result<Score, String> {
     let candidate = task.candidate;
@@ -119,29 +129,18 @@ fn score_task(
         clamped_subarray(image, candidate.offset, candidate.offset + candidate.span_bytes).to_vec();
     let source_bytes = std::fs::read(&candidate.source)
         .map_err(|error| format!("{}: {error}", candidate.source))?;
-    let identity = Json::Object(vec![
-        ("id".into(), Json::String(candidate.id.clone())),
-        ("config".into(), task.config.to_json()),
-    ]);
-    let key = hash(&[
-        FORMAT.to_string().as_bytes(),
+    let key = cache_key(
+        candidate,
+        task.config,
         &source_bytes,
         &reference,
-        compiler_signature.as_bytes(),
-        canonical_json(&identity).as_bytes(),
-    ]);
+        compiler_signature,
+        implementation_digest,
+        host_tool_signature,
+    );
     let cache_path = Path::new(&options.output).join("cache").join(format!("{key}.json"));
-    if cache_path.exists() {
-        let text = std::fs::read(&cache_path).map_err(|error| format!("{}: {error}", cache_path.display()))?;
-        // PORT NOTE: a corrupt cache file makes `JSON.parse` THROW, and that
-        // throw is outside the tool's own try/catch, so the whole run dies. The
-        // port keeps that: a poisoned cache must be loud, not silently treated
-        // as a miss. This is the same failure mode a stale `overlay-c-v3` entry
-        // once produced across checkouts, and hiding it is how it went unnoticed.
-        let parsed = parse_json(&String::from_utf8_lossy(&text))?;
-        if let Some(cached) = accepted_score(&parsed, &key) {
-            return Ok(mark_cached(cached));
-        }
+    if let Some(cached) = read_cached_score(&cache_path, &key) {
+        return Ok(mark_cached(cached));
     }
     let scratch = Path::new(&options.output).join("scratch").join(&key);
     std::fs::create_dir_all(&scratch).map_err(|error| format!("{}: {error}", scratch.display()))?;
@@ -216,8 +215,47 @@ fn score_task(
             ]),
         },
     };
-    write_json(&cache_path, &score.json).map_err(|error| format!("{}: {error}", cache_path.display()))?;
+    if let Some(parent) = cache_path.parent() {
+        std::fs::create_dir_all(parent)
+            .map_err(|error| format!("{}: {error}", parent.display()))?;
+    }
+    let cache_json = canonical_json(&score.json) + "\n";
+    write_cache_entry_atomically(&cache_path, cache_json.as_bytes())
+        .map_err(|error| format!("{}: {error}", cache_path.display()))?;
     Ok(score)
+}
+
+fn cache_key(
+    candidate: &Candidate,
+    config: &mode_sweep::Config,
+    source_bytes: &[u8],
+    reference: &[u8],
+    compiler_signature: &str,
+    implementation_digest: &str,
+    host_tool_signature: &str,
+) -> String {
+    let identity = Json::Object(vec![
+        ("id".into(), Json::String(candidate.id.clone())),
+        ("source".into(), Json::String(candidate.source.clone())),
+        ("overlay".into(), Json::String(candidate.overlay.clone())),
+        ("config".into(), config.to_json()),
+    ]);
+    hash(&[
+        FORMAT.to_string().as_bytes(),
+        source_bytes,
+        reference,
+        compiler_signature.as_bytes(),
+        canonical_json(&identity).as_bytes(),
+        implementation_digest.as_bytes(),
+        host_tool_signature.as_bytes(),
+    ])
+}
+
+fn read_cached_score(path: &Path, key: &str) -> Option<Score> {
+    let bytes = std::fs::read(path).ok()?;
+    let text = String::from_utf8(bytes).ok()?;
+    let document = parse_json(&text).ok()?;
+    accepted_score(&document, key)
 }
 
 /// `parallelMap(items, jobs, operation)`.
@@ -294,7 +332,9 @@ pub fn self_test() -> Result<String, String> {
         ("compiled".into(), Json::Bool(true)),
         ("exact".into(), Json::Bool(false)),
         ("expected_size".into(), Json::Number(2.0)),
+        ("actual_size".into(), Json::Number(2.0)),
         ("differing_bytes".into(), Json::Number(1.0)),
+        ("first_difference".into(), Json::Number(0.0)),
     ]);
     if accepted_score(&row, &key).is_none() || accepted_score(&row, &format!("{key}x")).is_some() {
         return Err("cache validation failed".into());
@@ -363,6 +403,11 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
         alchemy_bundle::bundle::compiler_bundle_signature().as_bytes(),
         self_digest().as_bytes(),
     ]);
+    let implementation_digest = mode_sweep::current_binary_digest()
+        .map_err(|error| format!("implementation digest: {error}"))?;
+    let host_tool_signature =
+        alchemy_bundle::bundle::host_executable_signature(&OVERLAY_BINUTILS)
+            .map_err(|error| format!("host tool signature: {error}"))?;
     // `new Set(candidates.map(c => c.overlay))`: insertion-ordered unique. A
     // `Vec` of pairs keeps that order; assembling an overlay twice would be
     // wasteful but not wrong, and assembling them in hash order would change
@@ -379,7 +424,14 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
         .flat_map(|candidate| configs.iter().map(move |config| Task { candidate, config }))
         .collect();
     let scores = parallel_map(&tasks, options.jobs as usize, &|task| {
-        score_task(task, &overlays, &compiler_signature, &options)
+        score_task(
+            task,
+            &overlays,
+            &compiler_signature,
+            &implementation_digest,
+            &host_tool_signature,
+            &options,
+        )
     })?;
 
     let shared = by_config(&configs, &scores);
@@ -574,5 +626,136 @@ mod tests {
         // `target/fixtures/` instead. This test exists so that a change to the
         // default is deliberate.
         assert!(default_output().ends_with("out/overlay-mode-cohort"));
+    }
+
+    #[test]
+    fn an_implementation_digest_change_invalidates_the_cache_key() {
+        let candidate = Candidate {
+            id: "resource_394:07e0".into(),
+            overlay: "resource_394".into(),
+            entry: 0x020007e0 as f64,
+            offset: 0.0,
+            span_bytes: 2.0,
+            source: "semantic/overlays/resource_394_c_020007e0.c".into(),
+        };
+        let config = mode_sweep::Config {
+            ids: vec!["mode".into()],
+            flags: vec!["-O1".into()],
+            remove_flags: Vec::new(),
+            compiler_family: "routed".into(),
+        };
+        let first = cache_key(
+            &candidate,
+            &config,
+            b"source",
+            b"reference",
+            "compiler",
+            "implementation-a",
+            "host-tools",
+        );
+        let second = cache_key(
+            &candidate,
+            &config,
+            b"source",
+            b"reference",
+            "compiler",
+            "implementation-b",
+            "host-tools",
+        );
+        assert_ne!(first, second);
+
+        let host_first = cache_key(
+            &candidate,
+            &config,
+            b"source",
+            b"reference",
+            "compiler",
+            "implementation",
+            "host-a",
+        );
+        let host_second = cache_key(
+            &candidate,
+            &config,
+            b"source",
+            b"reference",
+            "compiler",
+            "implementation",
+            "host-b",
+        );
+        assert_ne!(host_first, host_second);
+
+        let mut different_source = candidate.clone();
+        different_source.source = "semantic/overlays/other.c".into();
+        assert_ne!(
+            cache_key(
+                &candidate,
+                &config,
+                b"source",
+                b"reference",
+                "compiler",
+                "implementation",
+                "host-tools",
+            ),
+            cache_key(
+                &different_source,
+                &config,
+                b"source",
+                b"reference",
+                "compiler",
+                "implementation",
+                "host-tools",
+            )
+        );
+        let mut different_overlay = candidate.clone();
+        different_overlay.overlay = "resource_other".into();
+        assert_ne!(
+            cache_key(
+                &candidate,
+                &config,
+                b"source",
+                b"reference",
+                "compiler",
+                "implementation",
+                "host-tools",
+            ),
+            cache_key(
+                &different_overlay,
+                &config,
+                b"source",
+                b"reference",
+                "compiler",
+                "implementation",
+                "host-tools",
+            )
+        );
+    }
+
+    #[test]
+    fn malformed_and_partial_entries_are_cache_misses() {
+        let malformed = Json::Object(vec![
+            ("cache_key".into(), Json::String("key".into())),
+            ("id".into(), Json::String("x:0000".into())),
+            ("compiled".into(), Json::String("yes".into())),
+        ]);
+        let partial = Json::Object(vec![
+            ("cache_key".into(), Json::String("key".into())),
+            ("id".into(), Json::String("x:0000".into())),
+        ]);
+        assert!(accepted_score(&malformed, "key").is_none());
+        assert!(accepted_score(&partial, "key").is_none());
+    }
+
+    #[test]
+    fn corrupt_cache_bytes_are_misses() {
+        let path = std::env::temp_dir().join(format!(
+            "alchemy-overlay-mode-cohort-cache-{}.json",
+            std::process::id()
+        ));
+        assert!(read_cached_score(&path, "key").is_none());
+        std::fs::write(&path, [0xff, 0xfe]).unwrap();
+        assert!(read_cached_score(&path, "key").is_none());
+        std::fs::write(&path, b"{not-json").unwrap();
+        assert!(read_cached_score(&path, "key").is_none());
+        let _ = std::fs::remove_file(path);
     }
 }

@@ -9,22 +9,47 @@ use std::process::{Command, ExitCode};
 fn repository_root() -> PathBuf {
     // The crate lives at tools/overlay-showcase, so the repository root is
     // two levels up from CARGO_MANIFEST_DIR regardless of the invocation cwd.
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_path_buf()
 }
 
-/// Run one native sub-check binary directly, failing with its combined output.
-fn checked_native(root: &Path, binary: &str, arguments: &[&str]) -> Result<(), Failure> {
-    let path = root.join(binary);
-    let result = Command::new(&path).args(arguments).current_dir(root).output();
+fn cargo_command(root: &Path, crate_name: &str) -> Command {
+    let mut command = Command::new("cargo");
+    command
+        .args([
+            "run",
+            "--offline",
+            "--quiet",
+            "--release",
+            "--manifest-path",
+        ])
+        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg("--")
+        .current_dir(root);
+    command
+}
+
+/// Run one native sub-check through its Cargo manifest, failing with its combined output.
+fn checked_native(root: &Path, crate_name: &str, arguments: &[&str]) -> Result<(), Failure> {
+    let result = cargo_command(root, crate_name).args(arguments).output();
     let output = match result {
         Ok(output) => output,
-        Err(error) => return fail(format!("{binary} {} failed:\n{error}", arguments.join(" "))),
+        Err(error) => {
+            return fail(format!(
+                "tools/{crate_name} {} failed:\n{error}",
+                arguments.join(" ")
+            ))
+        }
     };
     if output.status.success() {
         return Ok(());
     }
     fail(format!(
-        "{binary} {} failed:\n{}{}",
+        "tools/{crate_name} {} failed:\n{}{}",
         arguments.join(" "),
         String::from_utf8_lossy(&output.stderr),
         String::from_utf8_lossy(&output.stdout),
@@ -70,7 +95,10 @@ fn main_for(root: &Path, id: &str) -> Result<(), Failure> {
         Vec::new()
     };
     if !semantic_owners.is_empty() {
-        return fail(format!("{id} still has semantic owners: {}", semantic_owners.join(", ")));
+        return fail(format!(
+            "{id} still has semantic owners: {}",
+            semantic_owners.join(", ")
+        ));
     }
 
     let code = root.join("exact");
@@ -97,7 +125,9 @@ fn main_for(root: &Path, id: &str) -> Result<(), Failure> {
             ));
         }
         if !uses_named_interface(&source, id) {
-            return fail(format!("{name} does not use the showcase overlay's named interface"));
+            return fail(format!(
+                "{name} does not use the showcase overlay's named interface"
+            ));
         }
     }
 
@@ -109,18 +139,20 @@ fn main_for(root: &Path, id: &str) -> Result<(), Failure> {
         ));
     }
 
-    checked_native(
-        root,
-        "tools/overlay-published/target/release/overlay-published",
-        &[id],
-    )?;
-    checked_native(root, "tools/overlay-gaps/target/release/overlay-gaps", &[id])?;
-    checked_native(root, "tools/overlay-certify/target/release/overlay-certify", &[id])?;
-    checked_native(root, "tools/overlay-driver/target/release/overlay-driver", &[id])?;
+    checked_native(root, "overlay-published", &[id])?;
+    checked_native(root, "overlay-gaps", &[id])?;
+    checked_native(root, "overlay-certify", &[id])?;
+    checked_native(root, "overlay-driver", &[id])?;
 
     println!(
         "{}",
-        report(id, exact_owners.len(), length, &digest, &showcase.retained_assembly)
+        report(
+            id,
+            exact_owners.len(),
+            length,
+            &digest,
+            &showcase.retained_assembly
+        )
     );
     Ok(())
 }
@@ -144,5 +176,32 @@ fn main() -> ExitCode {
             eprintln!("{failure}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn child_checks_are_cargo_authoritative() {
+        let command = cargo_command(Path::new("/repo"), "overlay-driver");
+        assert_eq!(command.get_program(), "cargo");
+        let args: Vec<_> = command
+            .get_args()
+            .map(|arg| arg.to_string_lossy().into_owned())
+            .collect();
+        assert_eq!(
+            args[0..6],
+            [
+                "run",
+                "--offline",
+                "--quiet",
+                "--release",
+                "--manifest-path",
+                "/repo/tools/overlay-driver/Cargo.toml",
+            ]
+        );
+        assert_eq!(args[6], "--");
     }
 }

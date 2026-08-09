@@ -88,4 +88,3 @@ Func_0800c004:
 	.4byte 0x0800c62d
 	.4byte 0x03001d1c
 	.4byte 0x03001cc0
-	bx	lr

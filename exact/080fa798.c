@@ -1,32 +1,34 @@
 #include "types.h"
 
 struct State_080fa798 {
-    u8 padding_00[8];
+    u8 padding00[8];
     u8 mode;
-    u8 padding_09[2];
+    u8 padding09[2];
     u8 scale;
-    u8 padding_0c[4];
+    u8 padding0c[4];
     u32 frequency;
     s32 period;
     s32 half_period;
 };
 
 extern u16 Data_080fb914[];
-s32 Func_080022ec(s32, s32);
+
+s32 Func_080022ec(s32 numerator, s32 denominator);
 void Func_080fa9a4(void);
 
 void Func_080fa798(u32 value)
 {
     struct State_080fa798 *state =
         *(struct State_080fa798 **)0x03007ff0;
-    u32 mode = (value & 0x000f0000) >> 16;
     u16 frequency;
     s32 period;
-    s32 zero = 0;
+    s32 zero;
     volatile u16 *timer;
 
-    state->mode = mode;
-    frequency = Data_080fb914[mode - 1];
+    value = (value & 0x000f0000) >> 16;
+    zero = 0;
+    state->mode = value;
+    frequency = Data_080fb914[value - 1];
     state->frequency = frequency;
     state->scale = Func_080022ec(0x630, frequency);
     period = Func_080022ec(0x91d1b * frequency + 0x1388, 0x2710);

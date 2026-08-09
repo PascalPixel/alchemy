@@ -677,7 +677,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES, key) {
         push!(&["-fsched-high-dest-first"]);
     }
-    if has(SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES, key) {
+    if has(SCHED_CALL_DEST_DESCENDING_SOURCES, stem)
+        || has(SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES, key)
+    {
         push!(&["-fsched-call-dest-descending"]);
     }
     if has(FIXED_R7_OVERLAY_SOURCES, key) {
@@ -695,7 +697,10 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(GROUPED_DMA_STORE_OVERLAY_SOURCES, key) {
         push!(&["-mgrouped-dma-store"]);
     }
-    if has(EARLY_LITERAL_POOL_OVERLAY_SOURCES, stem) || has(EARLY_LITERAL_POOL_OVERLAY_PATHS, key) {
+    if has(EARLY_LITERAL_POOL_SOURCES, stem)
+        || has(EARLY_LITERAL_POOL_OVERLAY_SOURCES, stem)
+        || has(EARLY_LITERAL_POOL_OVERLAY_PATHS, key)
+    {
         push!(&["-mthumb-early-literal-pool"]);
     }
 
@@ -714,6 +719,15 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
         let mut out = agbcc_cflags();
         if has(AGBCC_OPTIMIZE_O1_SOURCES, &stem) {
             out.push("-O1".to_string());
+        }
+        if has(AGBCC_NO_EXPENSIVE_SOURCES, &stem) {
+            out.push("-fno-expensive-optimizations".to_string());
+        }
+        if has(AGBCC_NO_GCSE_SOURCES, &stem) {
+            out.push("-fno-gcse".to_string());
+        }
+        if has(AGBCC_NO_REGMOVE_SOURCES, &stem) {
+            out.push("-fno-regmove".to_string());
         }
         if has(AGBCC_LITERAL_BEFORE_SHIFT_SOURCES, &stem) {
             out.push("-mliteral-before-shift".to_string());

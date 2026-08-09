@@ -45,6 +45,10 @@ pub static NO_INTERWORK_SOURCES: &[&str] = &[
     "02005bd8", "02005be8", "02005bf8", "02005dd4", "02005de4", "02005df4",
 ];
 pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3a7_c_020015a4.c",
+    "exact/resource_3a7_c_020015a4.c",
+    "semantic/resource_3bf_c_02005c38.c",
+    "exact/resource_3bf_c_02005c38.c",
     "exact/resource_3a7_c_020013ac.c",
     "exact/resource_3a7_c_020013e4.c",
     "exact/resource_3a7_c_02001554.c",
@@ -231,6 +235,7 @@ pub static OPTIMIZE_O1_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static CALL_ARG0_BEFORE_STORE_SOURCES: &[&str] = &["08077f70"];
 pub static POSTCALL_BYTE_INCREMENT_R2_SOURCES: &[&str] = &["08098b10"];
+pub static BOOLEAN_R8_SCRATCH_R2_SOURCES: &[&str] = &["080a524c"];
 pub static GROUP_CONTROL_REMATERIALIZE_SOURCES: &[&str] = &["080f377c"];
 pub static SCHED_POOL_LOAD_LATE_SOURCES: &[&str] = &["080f377c", "08091174"];
 pub static THUMB_LEAF_NO_LR_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
@@ -239,7 +244,7 @@ pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["080f9a30"];
 pub static THUMB_LOW_REG_ORDER_SOURCES: &[(&str, &str)] =
     &[("080f9a30", "01231230"), ("080fa264", "30120123")];
 pub static THUMB_CALLEE_REG_ORDER_SOURCES: &[(&str, &str)] =
-    &[("08092f84", "0132"), ("0801faa8", "0132")];
+    &[("08092f84", "0132"), ("0801faa8", "0132"), ("08020198", "0132")];
 pub static ENTRY_FRAME_CLUSTER_SOURCES: &[&str] = &["0801c34c"];
 pub static LATE_FRAME_ALLOCATION_SOURCES: &[&str] = &["080b0744"];
 pub static LITERAL_BEFORE_INDEX_SHIFT_SOURCES: &[&str] = &["0800307c"];
@@ -1149,6 +1154,10 @@ pub static DEFAULT_ABI_SOURCES: &[&str] = &[
     "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098", "080fada0", "080fadf0",
 ];
 pub static DEFAULT_ABI_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3a7_c_020015a4.c",
+    "exact/resource_3a7_c_020015a4.c",
+    "semantic/resource_3bf_c_02005c38.c",
+    "exact/resource_3bf_c_02005c38.c",
     "exact/resource_3a7_c_0200145c.c",
     "exact/resource_3a7_c_02001574.c",
     "semantic/resource_3bf_c_02005b6c.c",
@@ -1163,7 +1172,7 @@ pub static DEFAULT_ABI_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_020013e4.c",
 ];
 pub static AGBCC_SOURCES: &[&str] = &[
-    "080069a4", "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+    "08006878", "080069a4", "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
     "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50", "080fada0", "080fadf0", "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c",
     "080fa3f0", "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c",
@@ -1173,7 +1182,7 @@ pub static AGBCC_SOURCES: &[&str] = &[
 ];
 pub static AGBCC_LITERAL_BEFORE_SHIFT_SOURCES: &[&str] = &["080fb670"];
 pub static AGBCC_OPTIMIZE_O1_SOURCES: &[&str] = &[
-    "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84", "08007028",
+    "08006878", "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84", "08007028",
     "08007098", "0800711c", "080071a8", "08007220", "080fa514",
 ];
 pub static AGBCC_NO_EXPENSIVE_SOURCES: &[&str] = &["08006910", "08006a78"];

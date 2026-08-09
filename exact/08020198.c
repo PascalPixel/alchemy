@@ -46,24 +46,31 @@ void Func_0801ea08(s32 value, s32 digits, struct Window_08020198 *window,
                    s32 offset_x, s32 offset_y);
 
 extern char Value_00000009;
+extern char Value_00000741;
 
 void Func_08020198(struct Window_08020198 *window,
                    struct SaveSummary_08020198 *summary)
 {
     u8 time_text[16];
+    s32 fifth_argument;
+    u32 glyph;
 
     if (window == 0)
         return;
 
+    fifth_argument = 0;
     Func_08016478(window);
     Func_0801e41c(window, 0, 4, 13, 4);
     Func_0801e8b0(summary->name, window, 0, 0);
     Func_0801e940((u8 *)0x080371e0, window, 72, 0);
-    Func_0801e9d4(summary->level_or_present, 2, window, 80, 0);
-    Func_0801e7c0(summary->glyph_index + 0x741, window, 0, 16);
+    Func_0801e9d4(summary->level_or_present, 2, window, 80,
+                  fifth_argument);
+    glyph = (u32)&Value_00000741 + summary->glyph_index;
+    Func_0801e7c0(glyph, window, 0, 16);
     Func_0801e7c0((s32)&Value_00000009, window, 0, 32);
     Func_0801e940(Func_0801f680(summary->play_time_ticks, time_text),
                   window, 48, 40);
-    Func_0801ea08(summary->amount, 6, window, 0, 48);
+    fifth_argument += 48;
+    Func_0801ea08(summary->amount, 6, window, 0, fifth_argument);
     Func_0801e7c0(0xc88, window, 48, 48);
 }

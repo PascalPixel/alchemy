@@ -35,62 +35,77 @@
  * Uncertainty (inherited): the constant 0 loaded into r1 in the normal-number
  * path is never used before the routine returns, so it is left unmodelled.
  */
-typedef u64 SoftDouble;
+typedef float DoubleType __attribute__((mode(DF)));
+typedef unsigned int HalfFractionType __attribute__((mode(SI)));
+typedef unsigned int FractionType __attribute__((mode(DI)));
+
+typedef enum FloatClass {
+    CLASS_SNAN,
+    CLASS_QNAN,
+    CLASS_ZERO,
+    CLASS_NUMBER,
+    CLASS_INFINITY
+} FloatClass;
 
 typedef struct SoftFloatRecord {
-    u32 cls;
-    u32 sign;
-    s32 exponent;
-    u32 low;
-    u32 high;
+    FloatClass cls;
+    unsigned int sign;
+    int exponent;
+    union {
+        FractionType whole;
+        HalfFractionType halves[2];
+    } fraction;
 } SoftFloatRecord;
 
-void Func_02001770(const SoftDouble *packed, SoftFloatRecord *record)
+typedef union PackedDouble {
+    DoubleType value;
+    FractionType raw;
+    HalfFractionType words[2];
+} PackedDouble;
+
+void Func_02001770(PackedDouble *source, SoftFloatRecord *record)
 {
-    SoftDouble copy = *packed;
-    u32 highWord = (u32)copy;              /* first word: sign/exponent/mantissa */
-    u32 lowWord = (u32)(copy >> 32);       /* second word: mantissa low          */
-    u32 mantissaHigh = highWord & 0x000fffffu;
-    u32 exponent = (highWord >> 20) & 0x7ffu;
+    FractionType fraction;
+    int exponent;
+    int sign;
+    PackedDouble swapped;
 
-    record->sign = highWord >> 31;
+    swapped.words[0] = source->words[1];
+    swapped.words[1] = source->words[0];
+    source = &swapped;
 
-    if (exponent == 0u) {
-        if ((lowWord | mantissaHigh) == 0u) {
-            record->cls = 2u;
-            return;
+    fraction = source->raw & ((((FractionType)1) << 52) - (FractionType)1);
+    exponent = ((int)(source->raw >> 52)) & ((1 << 11) - 1);
+    sign = ((int)(source->raw >> (52 + 11))) & 1;
+
+    record->sign = sign;
+    if (exponent == 0) {
+        if (fraction == 0) {
+            record->cls = CLASS_ZERO;
+        } else {
+            record->exponent = exponent - 1023 + 1;
+            fraction <<= 8;
+            record->cls = CLASS_NUMBER;
+            while (fraction < (((FractionType)1) << (52 + 8))) {
+                fraction <<= 1;
+                record->exponent--;
+            }
+            record->fraction.whole = fraction;
         }
-
-        mantissaHigh = (lowWord >> 24) | (mantissaHigh << 8);
-        lowWord <<= 8;
-        record->exponent = -1022;
-        record->cls = 3u;
-
-        while (mantissaHigh <= 0x0fffffffu) {
-            mantissaHigh = (mantissaHigh << 1) | (lowWord >> 31);
-            lowWord <<= 1;
-            record->exponent -= 1;
+    } else if (exponent == 0x7ff) {
+        if (fraction == 0) {
+            record->cls = CLASS_INFINITY;
+        } else {
+            if (fraction & 0x8000000000000LL) {
+                record->cls = CLASS_QNAN;
+            } else {
+                record->cls = CLASS_SNAN;
+            }
+            record->fraction.whole = fraction;
         }
-
-        record->high = mantissaHigh;
-        return;
-        record->low = lowWord;
+    } else {
+        record->exponent = exponent - 1023;
+        record->cls = CLASS_NUMBER;
+        record->fraction.whole = (fraction << 8) | (((FractionType)1) << (52 + 8));
     }
-
-    if (exponent == 0x7ffu) {
-        if ((lowWord | mantissaHigh) == 0u) {
-            record->cls = 4u;
-            return;
-        }
-
-        record->low = lowWord;
-        record->high = mantissaHigh;
-        return;
-        record->cls = (mantissaHigh & 0x00080000u) != 0u ? 1u : 0u;
-    }
-
-    record->exponent = (s32)exponent - 1023;
-    record->cls = 3u;
-    record->low = lowWord << 8;
-    record->high = ((lowWord >> 24) | (mantissaHigh << 8)) | 0x10000000u;
 }

@@ -33,51 +33,37 @@ s32 Func_08006878(void)
         u8 buffer[64];
         u16 delay;
     } locals;
-    s32 value;
+    FlashByteRead readByte;
     s32 result;
 
     Func_08006ac0(locals.buffer);
-    {
-        volatile u8 *first = (volatile u8 *)0x0e005555;
-        volatile u8 *second = (volatile u8 *)0x0e002aaa;
-        *first = 0xaa;
-        *second = 0x55;
-        *first = 0x90;
-    }
+    readByte = (FlashByteRead)(locals.buffer + 1);
 
-    value = 20000;
-    goto first_write;
-first_decrement:
-    value = *(volatile u16 *)&locals.delay;
-    value--;
-first_write:
-    *(volatile u16 *)&locals.delay = value;
-    if (*(volatile u16 *)&locals.delay != 0)
-        goto first_decrement;
+    *(volatile u8 *)0x0e005555 = 0xaa;
+    *(volatile u8 *)0x0e002aaa = 0x55;
+    *(volatile u8 *)0x0e005555 = 0x90;
 
     {
-        FlashByteRead readByte = (FlashByteRead)((u32)locals.buffer | 1);
+        volatile u16 *delay = &locals.delay;
 
-        result = (u16)readByte(0x0e000001) << 8;
-        result |= readByte(0x0e000000);
+        *delay = 20000;
+        while (*delay != 0)
+            *delay = *delay - 1;
     }
+
+    result = (u16)readByte(0x0e000001) << 8;
+    result |= readByte(0x0e000000);
+
+    *(volatile u8 *)0x0e005555 = 0xaa;
+    *(volatile u8 *)0x0e002aaa = 0x55;
+    *(volatile u8 *)0x0e005555 = 0xf0;
 
     {
-        volatile u8 *first = (volatile u8 *)0x0e005555;
-        volatile u8 *second = (volatile u8 *)0x0e002aaa;
-        *first = 0xaa;
-        *second = 0x55;
-        *first = 0xf0;
-    }
+        volatile u16 *delay = &locals.delay;
 
-    value = 20000;
-    goto second_write;
-second_decrement:
-    value = *(volatile u16 *)&locals.delay;
-    value--;
-second_write:
-    *(volatile u16 *)&locals.delay = value;
-    if (*(volatile u16 *)&locals.delay != 0)
-        goto second_decrement;
+        *delay = 20000;
+        while (*delay != 0)
+            *delay = *delay - 1;
+    }
     return result;
 }

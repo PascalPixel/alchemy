@@ -41,16 +41,39 @@
 /* In-image table at 0x02008000 + 0x2430; 0x02000240 is below the link base
  * and is a resident table whose word at byte offset 500 selects the subject. */
 extern s16 Data_0200a430[];
-extern s16 Data_02000240[];
+struct SharedData_02000240 {
+    u8 pad_000[500];
+    s32 selected_subject;
+};
+extern struct SharedData_02000240 Data_02000240;
 extern u32 Data_03001ae8;
 
+struct Subject_02001fa4 {
+    u8 pad_000[6];
+    u16 heading;
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 pad_020[14];
+    u8 id;
+    u8 pad_035[13];
+    s32 state_048;
+    s32 state_052;
+    u8 pad_056[34];
+    u8 flags_090;
+    u8 pad_091[9];
+    u16 state_100;
+    u8 pad_102[6];
+    void *callback;
+};
+
 /* The installed callback, named by its in-image address. */
-extern void Func_02001f24();
+extern void Func_02009f24();
 
 /* Imports, named by the main-image address their veneer publishes.  Old-style
  * declarations are mandatory: 0x08009080 is reached with two arguments here
  * while its siblings take three or four. */
-u8 *Func_02004358();
+struct Subject_02001fa4 *Func_02004358();
 void Func_02004212();
 s32 Func_0200420c();
 void Func_020041ba();
@@ -81,15 +104,16 @@ void Func_02004370();
 
 void Func_02001fa4(void)
 {
-    u8 *subject;
+    struct Subject_02001fa4 *subject;
     s32 probe[3];
     s32 heading;
     s32 goal;
     s32 marker;
-    s32 x;
     s32 z;
+    s32 x;
+    u8 *subject_id;
 
-    subject = Func_02004358(*(s32 *)((u8 *)Data_02000240 + 500));
+    subject = Func_02004358(Data_02000240.selected_subject);
 
     for (;;) {
         heading = Data_0200a430[(Data_03001ae8 >> 4) & 15];
@@ -102,51 +126,49 @@ void Func_02001fa4(void)
         Func_02004212();
 
         /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
-        probe[1] = *(s32 *)(subject + 12);
-        x = (*(s32 *)(subject + 8) & (s32)0xfff00000) + 0x80000;
-        probe[0] = x;
-        z = (*(s32 *)(subject + 16) & (s32)0xfff00000) + 0x80000;
-        probe[2] = z;
-
-        goal = Func_0200420c((s32)subject[34], x, z);
+        probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
+        probe[1] = subject->y;
+        probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
+        x = probe[0];
+        subject_id = (u8 *)subject;
+        subject_id += 34;
+        z = probe[2];
+        goal = Func_0200420c((s32)*subject_id, x, z);
         /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
          * passed by address and is advanced by the callee. */
         Func_020041ba((s32)0x100000, heading, probe);
 
-        marker = Func_02004226((s32)subject[34], probe[0], probe[2]);
-        if (marker == 255) {
-            *(u16 *)(subject + 6) = (u16)heading;
-            goto tail;
-        }
-        if (Func_02004230((s32)subject[34], probe[0], probe[2])
-                - *(s32 *)(subject + 12) > 0x80000) {
-            *(u16 *)(subject + 6) = (u16)heading;
+        marker = Func_02004226((s32)*subject_id, probe[0], probe[2]);
+        if (marker == 255
+                || Func_02004230((s32)*subject_id, probe[0], probe[2])
+                    - subject->y > 0x80000) {
+            subject->heading = (u16)heading;
             goto tail;
         }
 
         /* Rewind the probe to the position it held before 0x02004392. */
         probe[0] = x;
-        *(s32 *)(subject + 52) = 0x1999;
         probe[2] = z;
-        *(s32 *)(subject + 48) = 0x20000;
-        *(u16 *)(subject + 100) = 0;
-        Func_0200423e(subject, x, *(s32 *)(subject + 12), z);
+        subject->state_048 = 0x20000;
+        subject->state_052 = 0x1999;
+        subject->state_100 = 0;
+        Func_0200423e(subject, x, subject->y, z);
         /* Same import as the probe above, two arguments here. */
         Func_02004216(subject, 2);
         Func_02004226_b(subject, 48);
         Func_0200425c(subject);
-        *(void **)(subject + 108) = (void *)Func_02001f24;
+        subject->callback = (void *)Func_02009f24;
 
         goto advanceProbe;
 continueProbe:
-        if (Func_0200428e((s32)subject[34], probe[0], probe[2])
-                - *(s32 *)(subject + 12) > 0x80000) {
+        if (Func_0200428e((s32)*subject_id, probe[0], probe[2])
+                - subject->y > 0x80000) {
             goto finishProbe;
         }
-        *(s32 *)(subject + 48) = 0x20000;
-        *(s32 *)(subject + 52) = 0x1999;
-        x = probe[0];
         z = probe[2];
+        x = probe[0];
+        subject->state_048 = 0x20000;
+        subject->state_052 = 0x1999;
         Func_02004298(subject, probe[0], probe[1], probe[2]);
         Func_020042a6(subject);
         if (marker != goal) {
@@ -155,25 +177,25 @@ continueProbe:
 
 advanceProbe:
         Func_02004278((s32)0x100000, heading, probe);
-        marker = Func_020042e4((s32)subject[34], probe[0], probe[2]);
+        marker = Func_020042e4((s32)*subject_id, probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;
         }
 
 finishProbe:
-        *(s32 *)(subject + 48) = 0x20000;
-        *(s32 *)(subject + 52) = 0x10000;
-        Func_020042da(subject, x, *(s32 *)(subject + 12), z);
+        subject->state_048 = 0x20000;
+        subject->state_052 = 0x10000;
+        Func_020042da(subject, x, subject->y, z);
         Func_020042e8(subject);
         Func_02004286(2);
         /* The back edge re-reads the heading table and starts again. */
     }
 
 blocked:
-    *(void **)(subject + 108) = NULL;
-    subject[90] |= 1;
+    subject->callback = NULL;
+    subject->flags_090 |= 1;
     /* movs r3,#0x80 / lsls r3,#7 builds 0x4000. */
-    *(s32 *)(subject + 52) = 0x4000;
+    subject->state_052 = 0x4000;
 
 tail:
     Func_020042a4(10);

@@ -129,9 +129,13 @@ extern u32 Data_03001e40;
 
 void Func_020033a0(void)
 {
-    u32 tile;
     u8 *record;
     u32 *entry;
+    struct {
+        u32 tile;
+        u32 *write;
+        u8 *record;
+    } cursors;
     u32 column;
     s32 counter;
     s32 linkCount;
@@ -140,14 +144,14 @@ void Func_020033a0(void)
     u8 *actor;
     s32 across;
     s32 down;
-    u32 *write;
 
     record = Data_03001f3c;
-    entry = (u32 *)record;
-    write = entry;
+    cursors.write = (u32 *)record;
+    entry = cursors.write;
+    cursors.record = record;
 
     /* Metrics halfword at +2 of the slot's four-byte entry, scaled down. */
-    tile = Data_03001b10[*(s16 *)(record + 216) * 2 + 1] >> 5;
+    cursors.tile = Data_03001b10[*(s16 *)(record + 216) * 2 + 1] >> 5;
 
     linkCount = *(s16 *)(record + 230);
 
@@ -177,40 +181,44 @@ void Func_020033a0(void)
 
     counter = *(s16 *)(record + 218);
     if (counter == 0) {
-        Func_02006fde(*(s16 *)((u8 *)write + 216));
+        Func_02006fde(*(s16 *)((u8 *)cursors.write + 216));
         return;
     }
 
     column = ((u32)(counter * 6) - 8) & 0xff;
 
     /* Head. */
-    *write++ = 0;
-    *write++ = (u32)((104 - (linkCount << 4)) << 16) | column | 0x8000;
-    *write++ = tile | 0xe400;
+    cursors.write[0] = 0;
+    cursors.write[1] = (u32)((104 - (linkCount << 4)) << 16) | column | 0x8000;
+    cursors.write[2] = cursors.tile | 0xe400;
     Func_02007054(entry, 255, 12);
     entry += 3;
+    cursors.write += 3;
 
     /* Body, top half. */
     for (i = 0; (u32)i < (u32)linkCount; i++) {
-        *write++ = 0;
-        *write++ = (u32)((96 - (i << 4)) << 16) | column | 0x40000000;
-        *write++ = (tile + 2) | 0xe400;
+        cursors.write[0] = 0;
+        cursors.write[1] = (u32)((96 - (i << 4)) << 16) | column | 0x40000000;
+        cursors.write[2] = (cursors.tile + 2) | 0xe400;
         Func_02007096(entry, 255, 12);
         entry += 3;
+        cursors.write += 3;
     }
 
     /* Two joint sprites. */
-    *write++ = 0;
-    *write++ = 0x700000 | column | 0x8000;          /* 224 << 15 */
-    *write++ = (tile + 6) | 0xe400;
+    cursors.write[0] = 0;
+    cursors.write[1] = 0x700000 | column | 0x8000;          /* 224 << 15 */
+    cursors.write[2] = (cursors.tile + 6) | 0xe400;
     Func_020070d6(entry, 255, 12);
     entry += 3;
+    cursors.write += 3;
 
-    *write++ = 0;
-    *write++ = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
-    *write++ = (tile + 6) | 0xe400;
+    cursors.write[0] = 0;
+    cursors.write[1] = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
+    cursors.write[2] = (cursors.tile + 6) | 0xe400;
     Func_02007106(entry, 255, 12);
     entry += 3;
+    cursors.write += 3;
 
     /* Body, mirrored half.  The vertical term starts at 0x800000 and steps by
      * 0x100000 per link (128 << 16 and 128 << 13). */
@@ -218,11 +226,12 @@ void Func_020033a0(void)
         u32 vertical = 0x800000;
 
         for (i = 0; (u32)i < (u32)linkCount; i++) {
-            *write++ = 0;
-            *write++ = column | vertical | 0x40000000 | 0x10000000;
-            *write++ = (tile + 2) | 0xe400;
+            cursors.write[0] = 0;
+            cursors.write[1] = column | vertical | 0x40000000 | 0x10000000;
+            cursors.write[2] = (cursors.tile + 2) | 0xe400;
             Func_0200714c(entry, 255, 12);
             entry += 3;
+            cursors.write += 3;
             vertical += 0x100000;
         }
     }
@@ -233,50 +242,52 @@ void Func_020033a0(void)
     column |= 0x8000;
     column |= 0x10000000;
 
-    *write++ = 0;
-    *write++ = column;
-    *write++ = tile | 0xe400;
+    cursors.write[0] = 0;
+    cursors.write[1] = column;
+    cursors.write[2] = cursors.tile | 0xe400;
     Func_020071a2(entry, 255, 12);
     entry += 3;
+    cursors.write += 3;
 
     if ((Data_03001e40 & 15) <= 4) {
         return;
     }
 
     /* Endpoint sprite for the second selector. */
-    actor = Func_020073fa(*(s16 *)(record + 224));
+    actor = Func_020073fa(*(s16 *)(cursors.record + 224));
     if (actor != 0) {
-        across = Func_0200714c_b(*(s32 *)(actor + 8) - *(s32 *)(record + 232),
+        across = Func_0200714c_b(*(s32 *)(actor + 8) - *(s32 *)(cursors.record + 232),
                                0xe0000);            /* 224 << 12 */
         down = across + 112;
-        across = Func_02007162(*(s32 *)(actor + 16) - *(s32 *)(record + 236),
+        across = Func_02007162(*(s32 *)(actor + 16) - *(s32 *)(cursors.record + 236),
                                0xe0000);
-        across = across + (*(s16 *)(record + 218) * 6);
+        across = across + (*(s16 *)(cursors.record + 218) * 6);
 
-        *write++ = 0;
-        *write++ = (((u32)(across - 4)) & 0xff) | (u32)(down << 16)
+        cursors.write[0] = 0;
+        cursors.write[1] = (((u32)(across - 4)) & 0xff) | (u32)(down << 16)
                    | 0x40000000;
-        *write++ = (tile + 12) | 0xe400;
+        cursors.write[2] = (cursors.tile + 12) | 0xe400;
         Func_0200723e(entry, 255, 12);
         entry += 3;
+        cursors.write += 3;
     }
 
     /* Endpoint sprite for the first selector. */
-    actor = Func_02007482(*(s16 *)(record + 222));
+    actor = Func_02007482(*(s16 *)(cursors.record + 222));
     if (actor == 0) {
         return;
     }
 
-    across = Func_020071d4(*(s32 *)(actor + 8) - *(s32 *)(record + 232),
+    across = Func_020071d4(*(s32 *)(actor + 8) - *(s32 *)(cursors.record + 232),
                            0xe0000);
     down = across + 112;
-    across = Func_020071ea(*(s32 *)(actor + 16) - *(s32 *)(record + 236),
+    across = Func_020071ea(*(s32 *)(actor + 16) - *(s32 *)(cursors.record + 236),
                            0xe0000);
-    across = across + (*(s16 *)(record + 218) * 6);
+    across = across + (*(s16 *)(cursors.record + 218) * 6);
 
-    *write++ = 0;
-    *write++ = (((u32)(across - 4)) & 0xff) | (u32)(down << 16) | 0x40000000;
-    *write++ = (tile + 8) | 0xe400;
+    cursors.write[0] = 0;
+    cursors.write[1] = (((u32)(across - 4)) & 0xff) | (u32)(down << 16) | 0x40000000;
+    cursors.write[2] = (cursors.tile + 8) | 0xe400;
 
     /* Only r0 and r1 are set at this site; see the note above. */
     Func_020072c0(entry, 255);

@@ -32,11 +32,63 @@
  * so the owner is void.
  */
 
-extern u32 Data_0200b058[];   /* first three words are descriptor pointers */
+struct Sprite {
+    u8 pad00[9];
+    u8 flags9;
+    u8 pad0a[20];
+    u16 angle;
+    u8 pad20[6];
+    u8 state26;
+};
+
+struct Effect {
+    u8 pad00[24];
+    s32 accum18;
+    s32 accum1c;
+    u8 pad20[3];
+    u8 flags23;
+    u8 pad24[12];
+    s32 rate30;
+    s32 rate34;
+    u8 pad38[12];
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    struct Sprite *sprite;
+    u8 pad54;
+    u8 mode55;
+    u8 pad56[14];
+    u16 step64;
+    u8 pad66[6];
+    u32 callback;
+};
+
+struct Options {
+    u8 mode_bits;
+    u8 pad01[3];
+    s32 mode;
+    s32 accum18;
+    s32 accum1c;
+    s32 target30;
+    s32 target34;
+    s16 kind;
+    u16 pad1a;
+    s32 callback_arg;
+    u16 angle;
+    u16 step;
+    u32 callback;
+};
+
+struct Descriptor {
+    s32 pad00[3];
+    s32 duration;
+};
+
+extern struct Descriptor *Data_0200b058[];
 
 /* Returns the party record; only its presentation block at +80 is read. */
-u8 *Func_020038c6();
-u8 *Func_02003864();
+struct Effect *Func_020038c6();
+struct Effect *Func_02003864();
 void Func_0200386e();
 void Func_02003888();
 void Func_020039f2();
@@ -55,120 +107,130 @@ void Func_02003998();
 
 void Func_02000ae8(s32 x, s32 y,
                    s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
-                   const u8 *options)
+                   const struct Options *options)
 {
     u32 table_offset;
-    u8 *party;
+    struct Effect *party;
     u32 copied_bits;
     s32 flag_mask;
     u32 block_bits;
-    u8 *effect;
-    u8 *block;
-    u8 *cursor;
+    struct Effect *effect;
+    struct Sprite *block;
+    struct Sprite *mode_block;
+    u32 option_bits;
     u16 *tag;
+    s32 duration;
+    s32 first_delta;
+    s32 accumulated;
     party = Func_020038c6(0);
 
     /* 128 << 13.  With that bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
     if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Func_02003864(*(s16 *)(options + 24), x, y, z);
+        effect = Func_02003864(options->kind, x, y, z);
     } else {
         effect = Func_02003864(222, x, y, z);
     }
     if (effect == 0) return;
 
-    block = *(u8 **)(effect + 80);
+    block = effect->sprite;
+    mode_block = block;
 
     Func_0200386e(effect, (flags + 1) & 15);
     table_offset = (flags & 15) << 2;
-    Func_02003888(effect,
-                   *(u32 *)((u8 *)Data_0200b058 + table_offset));
+    Func_02003888(effect, Data_0200b058[table_offset >> 2]);
 
-    cursor = effect + 85;
-    *cursor = 0;
-    cursor = block + 38;
-    *cursor = 0;
+    effect->mode55 = 0;
+    block->state26 = 0;
 
     /* 0x02008ab1 is Func_02000ab0 with the Thumb bit: the per-frame
      * integrator. */
-    *(u32 *)(effect + 108) = 0x02008ab1;
+    effect->callback = 0x02008ab1;
 
-    *(s32 *)(effect + 68) = vx;
+    effect->velocity_x = vx;
     x = 3;
-    *(s32 *)(effect + 72) = vy;
-    *(s32 *)(effect + 76) = vz;
+    effect->velocity_y = vy;
+    effect->velocity_z = vz;
 
     /* Bits 2 and 3 of the effect's mode byte are copied from the party's. */
-    copied_bits = (*(u8 **)(party + 80))[9] & 12;
-    block_bits = *(volatile u8 *)(block + 9);
+    copied_bits = party->sprite->flags9 & 12;
+    block_bits = *(volatile u8 *)&block->flags9;
     flag_mask = ~12;
-    block[9] = (u8)((block_bits & flag_mask) | copied_bits);
+    block->flags9 = (u8)((block_bits & flag_mask) | copied_bits);
 
-    tag = (u16 *)(effect + 100);
-    *(s32 *)(effect + 48) = 0;
-    *(s32 *)(effect + 52) = 0;
-    *tag = 0;
+    effect->rate30 = 0;
+    effect->rate34 = 0;
+    effect->step64 = 0;
+    tag = &effect->step64;
 
     /* Everything below is optional detail: the whole block is skipped unless
      * some high flag bit is set and an options record was supplied. */
     if ((flags & 0xffff0000) == 0 || options == 0) return;
 
     if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
-        Func_020039f2(effect, *(s32 *)(options + 4));
+        Func_020039f2(effect, options->mode);
     }
 
     if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
-        effect[35] = (u8)(effect[35] & 0xfe);
-        block[9] = (u8)((block[9] & flag_mask)
-                        | ((options[0] & x) << 2));
+        effect->flags23 &= 0xfe;
+        option_bits = *(const u8 *)options & x;
+        block->flags9 = (u8)((*((const u8 *)mode_block + 9) & flag_mask)
+                             | (option_bits << 2));
     }
 
     if ((flags & 0x80000) != 0) {                   /* 128 << 12 */
-        *(s32 *)(effect + 24) = *(s32 *)(options + 8);
-        *(s32 *)(effect + 28) = *(s32 *)(options + 12);
+        effect->accum18 = options->accum18;
+        effect->accum1c = options->accum1c;
     }
 
     if ((flags & 0x40000) != 0) {                   /* 128 << 11 */
-        const s32 *descriptor =
-            (const s32 *)Data_0200b058[table_offset >> 2];
+        const struct Descriptor *descriptor =
+            Data_0200b058[table_offset >> 2];
         s32 delta;
 
         /* The 0x80000 test is the same register the previous block left live:
          * with a destination supplied the step is measured from it, otherwise
          * the target is biased by -1.0 in 16.16. */
         if ((flags & 0x80000) != 0) {
-            *(s32 *)(effect + 48) =
-                Func_0200390c(*(s32 *)(options + 16) - *(s32 *)(effect + 24),
-                              descriptor[3]);
-            delta = *(s32 *)(options + 20) - *(s32 *)(effect + 28);
+            first_delta = *(volatile const s32 *)&options->target30;
+            accumulated = *(volatile const s32 *)&effect->accum18;
+            first_delta -= accumulated;
+            effect->rate30 = Func_0200390c(first_delta,
+                                           descriptor->duration);
+            delta = options->target34;
+            duration = descriptor->duration;
+            delta -= effect->accum1c;
         } else {
-            *(s32 *)(effect + 48) =
-                Func_02003924(*(s32 *)(options + 16) + (s32)0xffff0000,
-                              descriptor[3]);
-            delta = *(s32 *)(options + 20) + (s32)0xffff0000;
+            first_delta = options->target30;
+            first_delta += (s32)0xffff0000;
+            effect->rate30 = Func_02003924(first_delta,
+                                           descriptor->duration);
+            delta = options->target34;
+            duration = descriptor->duration;
+            delta += (s32)0xffff0000;
         }
 
         /* Only the FIRST call is per-arm.  The `b.n 0x02000c4c` at the end of
          * the first arm joins both arms onto the single second call site, so
          * the second delta is computed in each arm and the call is spelled
          * once. */
-        *(s32 *)(effect + 52) = Func_02003932(delta, descriptor[3]);
+        effect->rate34 = Func_02003932(delta, duration);
     }
 
     if ((flags & 0x200000) != 0) {                  /* 128 << 14 */
         Func_02003988(effect, 1);
-        Func_02003998(effect, *(s32 *)(options + 28));
+        Func_02003998(effect, options->callback_arg);
     }
 
     if ((flags & 0x400000) != 0) {                  /* 128 << 15 */
-        *(u16 *)(block + 30) = *(u16 *)(options + 32);
+        block->angle = options->angle;
     }
 
     if ((flags & 0x800000) != 0) {                  /* 128 << 16 */
-        *tag = *(u16 *)(options + 34);
+        *tag = options->step;
     }
 
     if ((flags & 0x1000000) != 0) {                 /* 128 << 17 */
-        *(u32 *)(effect + 108) = *(u32 *)(options + 36);
+        effect->callback = options->callback;
     }
 }

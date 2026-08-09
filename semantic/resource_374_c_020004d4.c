@@ -35,7 +35,7 @@
 
 /* Overlay-local callees (byte-exact siblings in assets/code). */
 void Func_02002b78();
-void Func_02002bec();
+void Func_02002bec(s32, s32, s32);
 void Func_02002c3e();
 void Func_02002c5c();
 void Func_020027c8(s32, s32);
@@ -46,9 +46,9 @@ void Func_02002a84(void);
 s32 Func_02002bec_b();
 void Func_02002824(s32);
 void Func_02002b20();
-void Func_02002b36();
-void Func_02002b40();
-void Func_02002ce4();
+void Func_02002b36(void (*)(void), s32);
+void Func_02002b40(void (*)(void), s32);
+void Func_02002ce4(s32, s32, s32);
 s32 Func_02002c22();
 void Func_02002b6c();
 void Func_02002b8a();

@@ -563,6 +563,12 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sched-pool-load-late"]);
     }
+    if has(
+        SINGLE_ARG_IMMEDIATE_BEFORE_HALFWORD_STORE_OVERLAY_SOURCES,
+        key,
+    ) {
+        push!(&["-fthumb-single-arg-immediate-before-halfword-store"]);
+    }
     if has(SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sched-immediate-before-pool"]);
     }

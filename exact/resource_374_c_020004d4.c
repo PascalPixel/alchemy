@@ -39,7 +39,12 @@ void Func_02002bec(s32, s32, s32);
 void Func_02002c3e();
 void Func_02002c5c();
 void Func_020027c8(s32, s32);
-void Func_020027ec(s32, s32, s32);
+/*
+ * Caller-side implicit-int witness.  The veneer ultimately reaches a routine
+ * whose result is ignored here, but treating this old-style import as
+ * value-returning is what reproduces the reference call-sheet schedule.
+ */
+s32 Func_020027ec();
 void Func_02002cba();
 void Func_02002bb0();
 void Func_02002a84(void);
@@ -65,9 +70,9 @@ void Func_02002c74();
 
                         
 
-/* Per-frame callbacks installed by this owner. */
-void Func_02002580(void);
-void Func_020025a0(void);
+/* Per-frame callbacks installed by this owner, named at their loaded address. */
+void Func_0200a580(void);
+void Func_0200a5a0(void);
 
 /* Main-image imports reached through this overlay's veneer table. */
                                /* frame wait, argument = frame count      */
@@ -87,6 +92,8 @@ void Func_020004d4(void)
     u8 *record;
     u8 *flag;
     u8 saved;
+    u32 period_a;
+    u32 period_b;
 
     Func_02002b78();
     Func_02002bec(0, 82, 760);          /* 190 << 2 */
@@ -109,8 +116,10 @@ void Func_020004d4(void)
         Func_02002b20(1);
     }
 
-    Func_02002b36(Func_02002580, 3200); /* 200 << 4 */
-    Func_02002b40(Func_020025a0, 3200);
+    period_a = 200 << 4;
+    Func_02002b36(Func_0200a580, period_a);
+    period_b = 200 << 4;
+    Func_02002b40(Func_0200a5a0, period_b);
     Func_02002ce4(0, 0xa000, 10);
 
     record = (u8 *)Func_02002c22(20);
@@ -129,8 +138,8 @@ void Func_020004d4(void)
 
     *flag = saved;
 
-    Func_02002b8a(Func_02002580);
-    Func_02002b90(Func_020025a0);
+    Func_02002b8a(Func_0200a580);
+    Func_02002b90(Func_0200a5a0);
     Func_02002b86(1);
     Func_02002dec(0xa1);
     Func_02002cfc(15, 0);

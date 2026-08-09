@@ -69,7 +69,6 @@ void Func_02005d68(struct Resource373Spawn *spawn)
     s32 zero;
 
     index = 0;
-    mask = 63;
     for (; index <= 1; index++) {
         struct Resource373Actor *actor =
             Func_0200bc96(26, spawn->x, spawn->y, spawn->z);
@@ -77,6 +76,7 @@ void Func_02005d68(struct Resource373Spawn *spawn)
         struct Resource373ActorState *state;
         u32 packed;
 
+        mask = 63;
         halves[index] = actor;
         if (actor == 0) {
             continue;

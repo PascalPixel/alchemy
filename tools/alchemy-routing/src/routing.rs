@@ -395,6 +395,12 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-orr-dead-input-reuse"]);
     }
+    if has(BYTE_ORR_R5_ONLY_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-byte-orr-r5-only"]);
+    }
+    if has(SCENE_CALL_SHEETS_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-scene-call-sheets"]);
+    }
     if has(CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-call-literal-arg1-first"]);
     }
@@ -425,6 +431,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(LITERAL_BEFORE_INDEX_SHIFT_SOURCES, stem) {
         push!(&["-fthumb-literal-before-index-shift"]);
+    }
+    if has(CALL_TARGET_BEFORE_FINAL_SHIFT_SOURCES, stem) {
+        push!(&["-fthumb-call-target-before-final-shift"]);
     }
     if has(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES, stem) {
         push!(&["-fthumb-low-constant-before-high-move"]);

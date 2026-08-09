@@ -294,4 +294,3 @@ Func_0801be80:
 	movs	r0, r0
 	.4byte 0x000003ff
 	.4byte 0xfffffc00
-	bx	lr

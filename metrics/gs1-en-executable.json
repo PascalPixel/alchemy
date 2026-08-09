@@ -450,18 +450,6 @@
       },
       {
         "start": 134244624,
-        "end": 134244984,
-        "kind": "thumb",
-        "evidence": "adjacent audited thumb spans; see namespace evidence"
-      },
-      {
-        "start": 134244984,
-        "end": 134245112,
-        "kind": "structural",
-        "evidence": "asm/08006a78.s:runtime_relocation_helper_module"
-      },
-      {
-        "start": 134245112,
         "end": 134245286,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -1632,9 +1620,15 @@
       },
       {
         "start": 134326260,
-        "end": 134326542,
+        "end": 134326540,
         "kind": "structural",
         "evidence": "asm/0801a7f4.s:hidden_register_context_module"
+      },
+      {
+        "start": 134326540,
+        "end": 134326542,
+        "kind": "thumb",
+        "evidence": "exact/0801a90c.c:byte-identical-claimed-C"
       },
       {
         "start": 134326542,
@@ -1740,9 +1734,33 @@
       },
       {
         "start": 134334910,
-        "end": 134335004,
+        "end": 134334912,
         "kind": "structural",
         "evidence": "asm/executable_gaps/0801c9be.s:executable_gap_continuation"
+      },
+      {
+        "start": 134334912,
+        "end": 134334914,
+        "kind": "thumb",
+        "evidence": "exact/0801c9c0.c:byte-identical-claimed-C"
+      },
+      {
+        "start": 134334914,
+        "end": 134334916,
+        "kind": "structural",
+        "evidence": "asm/executable_gaps/0801c9c2.s:executable_gap_continuation"
+      },
+      {
+        "start": 134334916,
+        "end": 134334918,
+        "kind": "thumb",
+        "evidence": "exact/0801c9c4.c:byte-identical-claimed-C"
+      },
+      {
+        "start": 134334918,
+        "end": 134335004,
+        "kind": "structural",
+        "evidence": "asm/executable_gaps/0801c9c6.s:executable_gap_continuation"
       },
       {
         "start": 134335004,
@@ -1962,12 +1980,12 @@
       },
       {
         "start": 134356474,
-        "end": 134356520,
+        "end": 134356476,
         "kind": "structural",
         "evidence": "asm/executable_gaps/08021dfa.s:executable_gap_continuation"
       },
       {
-        "start": 134356520,
+        "start": 134356476,
         "end": 134356586,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -3368,7 +3386,7 @@
         "start": 134879936,
         "end": 134880202,
         "kind": "thumb",
-        "evidence": "asm/080a1ac0.s:compiler_output"
+        "evidence": "adjacent audited thumb spans; see namespace evidence"
       },
       {
         "start": 134880202,
@@ -5070,15 +5088,9 @@
       },
       {
         "start": 135246500,
-        "end": 135246864,
+        "end": 135246894,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
-      },
-      {
-        "start": 135246864,
-        "end": 135246894,
-        "kind": "structural",
-        "evidence": "asm/080fb410.s:nonstandard_thumb_branch_module"
       },
       {
         "start": 135246894,

@@ -19,10 +19,10 @@
 //                                             It also SUBTRACTS `-mthumb-interwork`
 //                                             rather than adding a flag, so it
 //                                             could never be evidenced anyway.
-//   SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES  keyed by sourceKey; its one path
-//                                             is not enumerated, and
-//                                             `-fsched-call-dest-descending` is
-//                                             absent from the probe's output.
+//   SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES  keyed by sourceKey; its overlay
+//                                             paths are not enumerated. Main
+//                                             image stems use the separate,
+//                                             reachable table below.
 //
 // The other five the audit named ARE reachable, and the audit was wrong about
 // them: NO_CONSTANT_REUSE_OVERLAY_SOURCES, GROUP_CONTROL_LAST_OVERLAY_SOURCES,
@@ -257,6 +257,7 @@ pub static CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c0_c_020000a0.c",
     "exact/resource_3c9_c_020000a0.c",
 ];
+pub static EARLY_LITERAL_POOL_SOURCES: &[&str] = &["080f9438"];
 pub static EARLY_LITERAL_POOL_OVERLAY_SOURCES: &[&str] = &["02000e3c", "02000dfc", "02003a44"];
 pub static EARLY_LITERAL_POOL_OVERLAY_PATHS: &[&str] = &[
     "exact/resource_394_c_02000ee0.c",
@@ -756,6 +757,7 @@ pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
+pub static SCHED_CALL_DEST_DESCENDING_SOURCES: &[&str] = &["08091f14"];
 pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3bb_c_020039fc.c",
     "exact/resource_373_c_02005b48.c",
@@ -1090,18 +1092,22 @@ pub static DEFAULT_ABI_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_020013e4.c",
 ];
 pub static AGBCC_SOURCES: &[&str] = &[
-    "080069a4", "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+    "080069a4", "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
     "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
     "080f9a50", "080fada0", "080fadf0", "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c",
     "080fa3f0", "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c",
     "080fa8d4", "080fa928", "080fa9a4", "080fa9e0", "080fab3c", "080fab7c", "080fac44", "080facf8",
-    "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670", "080fb6a4",
+    "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670", "080fb6a4", "08006910",
+    "080fa280", "080fa4cc", "080fa798", "080faa58", "080fae58", "080fb2a4", "080fb410", "080fb518",
 ];
 pub static AGBCC_LITERAL_BEFORE_SHIFT_SOURCES: &[&str] = &["080fb670"];
 pub static AGBCC_OPTIMIZE_O1_SOURCES: &[&str] = &[
     "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84", "08007028",
     "08007098", "0800711c", "080071a8", "08007220", "080fa514",
 ];
+pub static AGBCC_NO_EXPENSIVE_SOURCES: &[&str] = &["08006910", "08006a78"];
+pub static AGBCC_NO_GCSE_SOURCES: &[&str] = &["080faa58"];
+pub static AGBCC_NO_REGMOVE_SOURCES: &[&str] = &["08006910"];
 pub static AGBCC_COMPARE_ONLY_AND_TST_SOURCES: &[&str] = &["080f9a50"];
 pub static AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES: &[&str] = &["080fa514"];
 pub static AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES: &[&str] = &["080fb2cc", "080fb334", "080fb3a8"];

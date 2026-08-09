@@ -177,4 +177,3 @@ Func_0802938c:
 	bx	r1
 	.4byte 0x03001b04
 	.4byte 0x03001c94
-	bx	lr

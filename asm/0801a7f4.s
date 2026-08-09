@@ -147,4 +147,3 @@ Func_0801a7f4:
 	pop	{r0}
 	bx	r0
 	movs	r0, r0
-	bx	lr

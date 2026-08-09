@@ -73,4 +73,3 @@ Func_08094154:
 	.4byte 0x03001e70
 	.4byte 0xffff0000
 	.4byte 0x0000ffff
-	bx	lr

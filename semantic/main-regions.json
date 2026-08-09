@@ -25,6 +25,42 @@
       "evidence": "Directive-only trailing pool of the registered 0x08016018 module, represented by the fourteen .4byte words in asm/08016018.s."
     },
     {
+      "address": "0x0801c9be",
+      "size": 2,
+      "kind": "alignment_padding",
+      "evidence": "Two-byte alignment immediately before the independently adopted empty callback at 0x0801c9c0."
+    },
+    {
+      "address": "0x0801c9c2",
+      "size": 2,
+      "kind": "alignment_padding",
+      "evidence": "Two-byte alignment between the independently adopted empty callbacks at 0x0801c9c0 and 0x0801c9c4."
+    },
+    {
+      "address": "0x0801c9c6",
+      "size": 2,
+      "kind": "alignment_padding",
+      "evidence": "Two-byte alignment before the remaining semantic leaf at 0x0801c9c8."
+    },
+    {
+      "address": "0x0801ca16",
+      "size": 2,
+      "kind": "alignment_padding",
+      "evidence": "Two-byte trailing alignment after the semantic leaf at 0x0801c9c8."
+    },
+    {
+      "address": "0x0801ca18",
+      "size": 4,
+      "kind": "literal_pool",
+      "evidence": "Single trailing pool word 0x0000057c after the semantic leaf at 0x0801c9c8."
+    },
+    {
+      "address": "0x08021dfa",
+      "size": 2,
+      "kind": "alignment_padding",
+      "evidence": "Two-byte alignment before the independently adopted exact-C owner at 0x08021dfc."
+    },
+    {
       "address": "0x08026e72",
       "size": 14,
       "kind": "literal_pool",
@@ -221,16 +257,6 @@
         {
           "address": "0x08005268",
           "size": 116
-        }
-      ]
-    },
-    {
-      "entry": "0x08006a78",
-      "evidence": "Single 46-byte leaf at the head of a three-function row. The function runs 0x08006a78..0x08006aa4 and ends on the bx lr at 0x08006aa4; the two later entries in the same asm row (the relocated helper at 0x08006abc and Func_08006ac0 at 0x08006ac0) are outside the claimed range and stay in reconstruction assembly. Excluded (22 bytes): the 2-byte .balign filler at 0x08006aa6 and the five-word pool at 0x08006aa8 holding 0x02004c28, 0x04000208, 0x04000200, 0x02004c20 and 0x02004c2c, all reached by ldr rN,[pc,#imm] from inside the range. No stack frame and no call, so the plain bx lr epilogue leaves no result convention and the owner is void. bun tools/main_xref.ts 08006a78 reports FUNCTION (called directly) with a single caller at 0x08006b70.",
-      "executable_ranges": [
-        {
-          "address": "0x08006a78",
-          "size": 46
         }
       ]
     },
@@ -447,17 +473,9 @@
       ]
     },
     {
-      "entry": "0x0801c9c0",
-      "evidence": "Three independent leaf functions inside manifest row 0801c9be, which begins with a two-byte alignment halfword so no owner can start at the row address. None of the three has a prologue and each ends in bx lr; the nearest preceding non-continuation row 0801c8a0 closes on its own return at 0x0801c912 and a gap separates it from this row, so this is not its continuation, and no branch or pool word in the image names any of the three entries. The alignment halfwords at 0x0801c9be, 0x0801c9c2 and 0x0801c9c6, the 2-byte alignment at 0x0801ca16 and the 4-byte pool at 0x0801ca18 are excluded.",
+      "entry": "0x0801c9c8",
+      "evidence": "The two empty callbacks at 0x0801c9c0 and 0x0801c9c4 are now independently adopted exact C. This remaining 78-byte leaf clears halfwords in seven 52-byte-stride records and the five halfwords following the last record; it has no prologue and ends in bx lr. The alignment halfwords at 0x0801c9be, 0x0801c9c2 and 0x0801c9c6, the 2-byte alignment at 0x0801ca16, and the 4-byte pool at 0x0801ca18 remain excluded.",
       "executable_ranges": [
-        {
-          "address": "0x0801c9c0",
-          "size": 2
-        },
-        {
-          "address": "0x0801c9c4",
-          "size": 2
-        },
         {
           "address": "0x0801c9c8",
           "size": 78
@@ -481,20 +499,6 @@
         {
           "address": "0x0801cc50",
           "size": 108
-        }
-      ]
-    },
-    {
-      "entry": "0x08021dfc",
-      "evidence": "Two independent leaf functions inside manifest row 08021dfa, which begins with a two-byte alignment halfword. Neither has a prologue and both end in bx lr. The nearest preceding non-continuation row 08021cb8 is reached only as far as 0x08021d70, where it returns, and the 138 bytes between that and this row are its literal pool, so this row is not its continuation. The alignment halfwords at 0x08021dfa, 0x08021e0e and 0x08021e22 and the pool words at 0x08021e10 and 0x08021e24 are excluded.",
-      "executable_ranges": [
-        {
-          "address": "0x08021dfc",
-          "size": 18
-        },
-        {
-          "address": "0x08021e14",
-          "size": 14
         }
       ]
     },
@@ -1629,16 +1633,6 @@
         {
           "address": "0x080fae58",
           "size": 1098
-        }
-      ]
-    },
-    {
-      "entry": "0x080fb410",
-      "evidence": "Single 30-byte leaf, no pool, ends on bx lr. The manifest kind nonstandard_thumb_branch_module records the b.n over an else arm that the approved compiler spells as a conditional move; that is a codegen difference, not a control-flow one, and the arm structure converts directly. Two direct callers, 0x080fb47e and 0x080fb4f2.",
-      "executable_ranges": [
-        {
-          "address": "0x080fb410",
-          "size": 30
         }
       ]
     },

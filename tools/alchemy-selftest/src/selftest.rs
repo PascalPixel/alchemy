@@ -129,16 +129,15 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
     let mut probe = Probe { trace: Trace::new() };
     callback_arity_lint()?;
 
-    let expected: [&str; 47] = [
-        "080069a4",
-        "08006a00", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+    let expected: [&str; 58] = [
+        "08006910", "080069a4",
+        "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
         "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
         "080f9a50",
-        "080fa1fc", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
-        "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
-        "080fa9e0", "080fab3c", "080fab7c", "080fac44", "080facf8", "080fada0", "080fadf0", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4",
-        "080fb670",
-        "080fb6a4",
+        "080fa1fc", "080fa280", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0",
+        "080fa424", "080fa458", "080fa490", "080fa4cc", "080fa514", "080fa55c", "080fa6a0", "080fa798", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
+        "080fa9e0", "080faa58", "080fab3c", "080fab7c", "080fac44", "080facf8", "080fada0", "080fadf0", "080fae58",
+        "080fb2a4", "080fb2cc", "080fb334", "080fb3a8", "080fb410", "080fb430", "080fb4a4", "080fb518", "080fb670", "080fb6a4",
     ];
     if sorted_set(AGBCC_SOURCES) != expected {
         return fail("old_agbcc source allowlist self-test failed");
@@ -153,6 +152,9 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         "08006f84", "08007028", "08007098", "0800711c", "080071a8",
         "08007220",
     ];
+    let agbcc_no_expensive = ["08006910", "08006a78"];
+    let agbcc_no_gcse = ["080faa58"];
+    let agbcc_no_regmove = ["08006910"];
     let agbcc_prologue = ["080fb2cc", "080fb334", "080fb3a8"];
     for stem in expected {
         let source = format!("/tmp/{stem}.c");
@@ -162,6 +164,15 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         let mut expected_flags = agbcc_cflags();
         if agbcc_o1.contains(&stem) {
             expected_flags.push("-O1".to_string());
+        }
+        if agbcc_no_expensive.contains(&stem) {
+            expected_flags.push("-fno-expensive-optimizations".to_string());
+        }
+        if agbcc_no_gcse.contains(&stem) {
+            expected_flags.push("-fno-gcse".to_string());
+        }
+        if agbcc_no_regmove.contains(&stem) {
+            expected_flags.push("-fno-regmove".to_string());
         }
         if stem == "080fa514" {
             expected_flags.push("-O1".to_string());

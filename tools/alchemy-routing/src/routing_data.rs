@@ -195,6 +195,14 @@ pub static ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
 ];
+pub static BYTE_ORR_R5_ONLY_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_38f_c_020008ec.c",
+    "semantic/resource_38f_c_020008ec.c",
+];
+pub static SCENE_CALL_SHEETS_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_38f_c_020008ec.c",
+    "semantic/resource_38f_c_020008ec.c",
+];
 pub static CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ae_c_020002dc.c",
     "exact/resource_3ae_c_020002dc.c",
@@ -235,6 +243,7 @@ pub static THUMB_CALLEE_REG_ORDER_SOURCES: &[(&str, &str)] =
 pub static ENTRY_FRAME_CLUSTER_SOURCES: &[&str] = &["0801c34c"];
 pub static LATE_FRAME_ALLOCATION_SOURCES: &[&str] = &["080b0744"];
 pub static LITERAL_BEFORE_INDEX_SHIFT_SOURCES: &[&str] = &["0800307c"];
+pub static CALL_TARGET_BEFORE_FINAL_SHIFT_SOURCES: &[&str] = &["080cd358"];
 pub static LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES: &[&str] = &["080a5614", "080ba918"];
 pub static HIGH_MOVE_BEFORE_STACK_STORE_SOURCES: &[&str] = &["08095290"];
 pub static EARLY_FRAME_ALLOCATION_SOURCES: &[&str] = &["0809802c", "08004760"];

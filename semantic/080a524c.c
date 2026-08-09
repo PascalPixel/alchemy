@@ -85,8 +85,8 @@ FUNCTION_RETURN_TYPE Func_080a524c(FUNCTION_ARG_TYPE arg0)
     Func_08015080(value, handle, 24, 56);
 
     {
-    register CHANGED_TYPE changed;
     register SELECTION_TYPE selection;
+    register CHANGED_TYPE changed;
     register volatile KEY_TYPE *keys;
     register volatile KEY_TYPE *confirm;
     selection = 1;
@@ -96,11 +96,9 @@ FUNCTION_RETURN_TYPE Func_080a524c(FUNCTION_ARG_TYPE arg0)
 
 update:
     {
-    KEY_TYPE key_value;
     Func_080a1a40(104, selection * 16 + 70);
     keys = &Data_03001b04;
-    key_value = *keys;
-    if (key_value & 0x40) {
+    if (*keys & 0x40) {
         selection--;
         changed = 1;
         Func_080f9010(111);
@@ -115,8 +113,7 @@ update:
 
 poll:
     if (Func_080770c0(0x150) == 0) {
-        CHANGED_TYPE current_changed = changed;
-        if (current_changed != 0) {
+        if (changed != 0) {
             changed = 0;
             selection = Func_080022fc(selection + 2, 2);
         }

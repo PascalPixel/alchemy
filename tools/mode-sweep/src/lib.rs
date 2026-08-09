@@ -72,7 +72,15 @@ pub const FORK_MODES: &[&str] = &[
     "-fthumb-group-value1-before-base",
     "-fthumb-move-before-alu",
     "-fthumb-orr-dead-input-reuse",
+    // Restrict ordinary byte-store OR reuse to the r5-result witness in the
+    // large resource_38f:08ec scene sheet.  The volatile-halfword rule remains
+    // independent.
+    "-fthumb-byte-orr-r5-only",
     "-fthumb-call-arg1-before-arg0",
+    // Selected split-immediate call sheets and one equal-literal pair in
+    // resource_38f:08ec.  Complete tuples plus local context keep the inverse
+    // order used elsewhere in the same function untouched.
+    "-fthumb-scene-call-sheets",
     "-fthumb-call-arg0-reg-source",
     "-fthumb-sink-constant-past-memory",
     "-fthumb-sink-store-past-store",
@@ -148,6 +156,7 @@ pub const FORK_MODES: &[&str] = &[
     "-fthumb-postcall-byte-increment-r2",
     "-fthumb-entry-frame-cluster",
     "-fthumb-literal-before-index-shift",
+    "-fthumb-call-target-before-final-shift",
     "-fthumb-low-constant-before-high-move",
     "-fthumb-high-move-before-stack-store",
     // Source-routed 0807a664 backend fingerprint; explored explicitly so the
@@ -1994,14 +2003,18 @@ mod tests {
     #[test]
     fn mode_table_has_the_expected_shape() {
         // Counts measured from the migrated native table:
-        //   FORK_MODES.length === 93, STOCK_SWITCHES.length === 21,
-        //   MODES.length === 137.
-        assert_eq!(FORK_MODES.len(), 93);
+        //   FORK_MODES.length === 96, STOCK_SWITCHES.length === 21,
+        //   AGBCC_EXPERIMENTAL_COMBINATIONS.length === 4,
+        //   MODES.length === 152.
+        assert_eq!(FORK_MODES.len(), 96);
         assert_eq!(STOCK_SWITCHES.len(), 21);
-        assert_eq!(modes().len(), 137);
+        assert_eq!(modes().len(), 152);
         assert_eq!(
             modes().len(),
-            DECLARED.len() + FORK_MODES.len() + AGBCC_FLAGS.len()
+            DECLARED.len()
+                + FORK_MODES.len()
+                + AGBCC_FLAGS.len()
+                + AGBCC_EXPERIMENTAL_COMBINATIONS.len()
         );
     }
 

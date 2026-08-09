@@ -3,10 +3,17 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use architecture::{
-    authoritative_sources, dispatch_targets, native_command_roots, native_paths, scan_crates,
-    scanned_nothing, unreachable_crates, valid_dispatch_targets, valid_paths, workspace_members,
+    authoritative_sources, cargo_binary_targets, classification_problems, dispatch_targets,
+    native_command_roots, native_paths, scan_crates, scanned_nothing, unreachable_crates,
+    valid_dispatch_targets, valid_paths, workspace_members,
 };
-use documented::{documented, entry_points, scanned_nothing as documented_scan, violations};
+use dispatch::non_public_targets;
+use documented::{
+    catalog_violations, cataloged, command_names, documented, entry_points,
+    scanned_nothing as documented_scan, violations,
+};
+
+const USAGE: &str = "Usage: architecture [--help|-h] [--self-test]\n\nValidate the native tooling architecture and public command catalog.\n";
 
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -41,8 +48,17 @@ fn markdown(root: &Path) -> Vec<(String, String)> {
     files
 }
 
+fn wants_help(arguments: &[String]) -> bool {
+    arguments.len() == 1 && matches!(arguments[0].as_str(), "-h" | "--help")
+}
+
 fn main() -> ExitCode {
-    if std::env::args().any(|argument| argument == "--self-test") {
+    let arguments: Vec<String> = std::env::args().skip(1).collect();
+    if wants_help(&arguments) {
+        print!("{USAGE}");
+        return ExitCode::SUCCESS;
+    }
+    if arguments.iter().any(|argument| argument == "--self-test") {
         return match architecture::self_test() {
             Ok(()) => {
                 println!("architecture self-test ok");
@@ -66,6 +82,13 @@ fn main() -> ExitCode {
     let markdown = markdown(&root);
     let tools = entry_points();
     let targets = dispatch_targets();
+    let cargo_targets = match cargo_binary_targets(&root) {
+        Ok(targets) => targets,
+        Err(error) => {
+            eprintln!("error: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
     if let Some(why) = scanned_nothing(crates.len(), targets.len(), markdown.len()) {
         eprintln!("error: {why}");
         return ExitCode::FAILURE;
@@ -84,7 +107,16 @@ fn main() -> ExitCode {
     }));
     let (mut roots, target_problems) = valid_dispatch_targets(&targets, &crates);
     problems.extend(target_problems);
+    problems.extend(classification_problems(&cargo_targets, &targets, &crates));
     problems.extend(violations(&tools, &documented(&read_agents(&root))));
+    let catalog = match fs::read_to_string(root.join("docs/TOOLS.md")) {
+        Ok(text) => cataloged(&text),
+        Err(error) => {
+            problems.push(format!("docs/TOOLS.md could not be read: {error}"));
+            Default::default()
+        }
+    };
+    problems.extend(catalog_violations(&command_names(), &catalog));
 
     let sources = authoritative_sources(&root, &markdown);
     problems.extend(valid_paths(&root, &sources, &crates));
@@ -106,6 +138,11 @@ fn main() -> ExitCode {
     let workspace_manifest = fs::read_to_string(root.join("tools/Cargo.toml")).unwrap_or_default();
     roots.extend(workspace_members(&workspace_manifest));
     roots.extend(native_command_roots(&root, &crates));
+    roots.extend(
+        non_public_targets()
+            .iter()
+            .map(|target| target.crate_name.to_string()),
+    );
     problems.extend(unreachable_crates(&crates, &roots));
 
     if !problems.is_empty() {
@@ -115,9 +152,11 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE;
     }
     println!(
-        "architecture ok: {} native tools, {} dispatch entries, {} crates, all paths valid and reachable",
+        "architecture ok: {} command groups, {} public commands, {} Cargo binaries ({} non-public), {} crates; paths, catalog, and classifications valid",
         tools.len(),
         targets.len(),
+        cargo_targets.len(),
+        cargo_targets.len().saturating_sub(targets.len()),
         crates.len()
     );
     ExitCode::SUCCESS
@@ -125,4 +164,17 @@ fn main() -> ExitCode {
 
 fn read_agents(root: &Path) -> String {
     fs::read_to_string(root.join("AGENTS.md")).unwrap_or_default()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn help_is_recognized_before_the_audit() {
+        assert!(wants_help(&["--help".into()]));
+        assert!(wants_help(&["-h".into()]));
+        assert!(!wants_help(&[]));
+        assert!(!wants_help(&["--help".into(), "--self-test".into()]));
+    }
 }

@@ -59,14 +59,15 @@ pub fn scan_image(
         let high = read_u16le(image, at);
         let low = read_u16le(image, at + 2);
         if let Some(target) = target_offset(high, low) {
-            if target >= 0 && (target as usize) + 1 < image.len() {
-                if is_prologue(read_u16le(image, target as usize)) {
-                    let entry = calls.entry(target).or_insert(0);
-                    if *entry == 0 {
-                        order.push(target);
-                    }
-                    *entry += 1;
+            if target >= 0
+                && (target as usize) + 1 < image.len()
+                && is_prologue(read_u16le(image, target as usize))
+            {
+                let entry = calls.entry(target).or_insert(0);
+                if *entry == 0 {
+                    order.push(target);
                 }
+                *entry += 1;
             }
         }
         at += 2;
@@ -77,10 +78,17 @@ pub fn scan_image(
             continue;
         }
         let count = calls[&offset];
-        let interior = spans.iter().any(|(low, high)| offset > *low && offset < *high);
-        found.push(Found { overlay: overlay.to_string(), offset, calls: count, interior });
+        let interior = spans
+            .iter()
+            .any(|(low, high)| offset > *low && offset < *high);
+        found.push(Found {
+            overlay: overlay.to_string(),
+            offset,
+            calls: count,
+            interior,
+        });
     }
-    found.sort_by(|left, right| right.calls.cmp(&left.calls));
+    found.sort_by_key(|right| std::cmp::Reverse(right.calls));
     found
 }
 
@@ -95,8 +103,12 @@ fn root() -> PathBuf {
 
 fn inventory(root: &Path) -> Result<Vec<Row>, String> {
     let path = root.join("out/decomp/overlays.json");
-    let text = fs::read_to_string(&path)
-        .map_err(|_| format!("missing {}; run the overlay inventory first", path.display()))?;
+    let text = fs::read_to_string(&path).map_err(|_| {
+        format!(
+            "missing {}; run the overlay inventory first",
+            path.display()
+        )
+    })?;
     let value = parse_json(&text)?;
     let functions = value
         .get("functions")
@@ -105,9 +117,19 @@ fn inventory(root: &Path) -> Result<Vec<Row>, String> {
     let mut rows = Vec::with_capacity(functions.len());
     for function in functions {
         rows.push(Row {
-            overlay: function.get("overlay").and_then(Value::as_str).unwrap_or("").to_string(),
-            offset: function.get("offset").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            span_bytes: function.get("span_bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
+            overlay: function
+                .get("overlay")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
+            offset: function
+                .get("offset")
+                .and_then(Value::as_f64)
+                .unwrap_or(0.0) as i64,
+            span_bytes: function
+                .get("span_bytes")
+                .and_then(Value::as_f64)
+                .unwrap_or(0.0) as i64,
         });
     }
     Ok(rows)
@@ -134,7 +156,8 @@ pub fn scan_all(root: &Path, only: Option<&str>) -> Result<Vec<Found>, String> {
     let exact = dir_names(&root.join("exact"))?;
 
     let mut overlay_order: Vec<String> = Vec::new();
-    let mut by_overlay: std::collections::HashMap<String, Vec<&Row>> = std::collections::HashMap::new();
+    let mut by_overlay: std::collections::HashMap<String, Vec<&Row>> =
+        std::collections::HashMap::new();
     for row in &rows {
         if !by_overlay.contains_key(&row.overlay) {
             overlay_order.push(row.overlay.clone());
@@ -165,8 +188,10 @@ pub fn scan_all(root: &Path, only: Option<&str>) -> Result<Vec<Found>, String> {
             offset += 2;
         }
         let known: HashSet<i64> = overlay_rows.iter().map(|row| row.offset).collect();
-        let spans: Vec<(i64, i64)> =
-            overlay_rows.iter().map(|row| (row.offset, row.offset + row.span_bytes)).collect();
+        let spans: Vec<(i64, i64)> = overlay_rows
+            .iter()
+            .map(|row| (row.offset, row.offset + row.span_bytes))
+            .collect();
         found.extend(scan_image(&image, &known, &spans, &converted, overlay));
     }
     Ok(found)
@@ -196,7 +221,10 @@ pub fn render_json(missing: &[Found]) -> String {
     let mut out = String::from("[\n");
     for (index, entry) in missing.iter().enumerate() {
         out.push_str("  {\n");
-        out.push_str(&format!("    \"overlay\": \"{}\",\n", json_escape(&entry.overlay)));
+        out.push_str(&format!(
+            "    \"overlay\": \"{}\",\n",
+            json_escape(&entry.overlay)
+        ));
         out.push_str(&format!("    \"offset\": {},\n", entry.offset));
         out.push_str(&format!("    \"calls\": {},\n", entry.calls));
         out.push_str(&format!("    \"interior\": {}\n", entry.interior));
@@ -266,11 +294,23 @@ pub fn self_test() -> Result<(), String> {
         return Err("an already-converted address must be dropped".to_string());
     }
 
-    let inside = scan_image(&image, &HashSet::new(), &[(0x08, 0x20)], &HashSet::new(), "");
+    let inside = scan_image(
+        &image,
+        &HashSet::new(),
+        &[(0x08, 0x20)],
+        &HashSet::new(),
+        "",
+    );
     if !inside[0].interior {
         return Err("a target inside a span is interior".to_string());
     }
-    let at_start = scan_image(&image, &HashSet::new(), &[(0x10, 0x20)], &HashSet::new(), "");
+    let at_start = scan_image(
+        &image,
+        &HashSet::new(),
+        &[(0x10, 0x20)],
+        &HashSet::new(),
+        "",
+    );
     if at_start[0].interior {
         return Err("a target AT a span start is that row, not interior".to_string());
     }
@@ -278,12 +318,45 @@ pub fn self_test() -> Result<(), String> {
     Ok(())
 }
 
+const USAGE: &str =
+    "usage: overlay-unindexed [resource_NNN] [--json]\n       overlay-unindexed --self-test";
+
 pub fn run(args: &[String]) -> Result<(), String> {
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        println!("{USAGE}");
+        return Ok(());
+    }
     if args.iter().any(|arg| arg == "--self-test") {
+        if args.len() != 1 {
+            return Err(format!(
+                "--self-test cannot be combined with other options\n{USAGE}"
+            ));
+        }
         return self_test();
     }
+    if args.iter().filter(|arg| arg.as_str() == "--json").count() > 1 {
+        return Err(format!("--json may be supplied only once\n{USAGE}"));
+    }
+    let requested: Vec<&String> = args.iter().filter(|arg| !arg.starts_with('-')).collect();
+    if args
+        .iter()
+        .any(|arg| arg.starts_with('-') && arg != "--json")
+        || requested.len() > 1
+    {
+        return Err(format!("unknown or misplaced option\n{USAGE}"));
+    }
     let root = root();
-    let only = args.iter().find(|argument| is_resource_name(argument)).map(String::as_str);
+    let only = requested
+        .first()
+        .copied()
+        .filter(|argument| is_resource_name(argument))
+        .map(String::as_str);
+    if requested
+        .first()
+        .is_some_and(|argument| !is_resource_name(argument))
+    {
+        return Err(format!("invalid overlay name\n{USAGE}"));
+    }
     let found = scan_all(&root, only)?;
     let missing: Vec<&Found> = found.iter().filter(|entry| !entry.interior).collect();
     let interior: Vec<&Found> = found.iter().filter(|entry| entry.interior).collect();
@@ -293,27 +366,38 @@ pub fn run(args: &[String]) -> Result<(), String> {
         println!("{}", render_json(&owned));
         return Ok(());
     }
-    if let Some(_) = only {
+    if only.is_some() {
         for entry in &missing {
-            println!("  0x{:08x}  called {}x", 0x02000000i64 + entry.offset, entry.calls);
+            println!(
+                "  0x{:08x}  called {}x",
+                0x02000000i64 + entry.offset,
+                entry.calls
+            );
         }
     } else {
         let mut order: Vec<String> = Vec::new();
-        let mut by_overlay: std::collections::HashMap<String, i64> = std::collections::HashMap::new();
+        let mut by_overlay: std::collections::HashMap<String, i64> =
+            std::collections::HashMap::new();
         for entry in &missing {
             if !by_overlay.contains_key(&entry.overlay) {
                 order.push(entry.overlay.clone());
             }
             *by_overlay.entry(entry.overlay.clone()).or_insert(0) += 1;
         }
-        let mut pairs: Vec<(String, i64)> =
-            order.into_iter().map(|overlay| (overlay.clone(), by_overlay[&overlay])).collect();
-        pairs.sort_by(|left, right| right.1.cmp(&left.1));
+        let mut pairs: Vec<(String, i64)> = order
+            .into_iter()
+            .map(|overlay| (overlay.clone(), by_overlay[&overlay]))
+            .collect();
+        pairs.sort_by_key(|right| std::cmp::Reverse(right.1));
         for (overlay, count) in pairs {
             println!("{overlay}  {count}");
         }
     }
-    println!("\nunindexed_called_functions={} interior_already_covered={}", missing.len(), interior.len());
+    println!(
+        "\nunindexed_called_functions={} interior_already_covered={}",
+        missing.len(),
+        interior.len()
+    );
     Ok(())
 }
 
@@ -367,15 +451,32 @@ mod tests {
     #[test]
     fn interior_only_when_strictly_inside_a_span() {
         let image = sample_image();
-        let inside = scan_image(&image, &HashSet::new(), &[(0x08, 0x20)], &HashSet::new(), "");
+        let inside = scan_image(
+            &image,
+            &HashSet::new(),
+            &[(0x08, 0x20)],
+            &HashSet::new(),
+            "",
+        );
         assert!(inside[0].interior);
-        let at_start = scan_image(&image, &HashSet::new(), &[(0x10, 0x20)], &HashSet::new(), "");
+        let at_start = scan_image(
+            &image,
+            &HashSet::new(),
+            &[(0x10, 0x20)],
+            &HashSet::new(),
+            "",
+        );
         assert!(!at_start[0].interior);
     }
 
     #[test]
     fn render_json_matches_stringify_pretty() {
-        let entries = vec![Found { overlay: "resource_0".to_string(), offset: 16, calls: 2, interior: false }];
+        let entries = vec![Found {
+            overlay: "resource_0".to_string(),
+            offset: 16,
+            calls: 2,
+            interior: false,
+        }];
         let expected = "[\n  {\n    \"overlay\": \"resource_0\",\n    \"offset\": 16,\n    \"calls\": 2,\n    \"interior\": false\n  }\n]";
         assert_eq!(render_json(&entries), expected);
         assert_eq!(render_json(&[]), "[]");
@@ -384,5 +485,12 @@ mod tests {
     #[test]
     fn self_test_passes() {
         assert!(self_test().is_ok());
+    }
+
+    #[test]
+    fn help_is_successful_and_unknown_options_are_rejected() {
+        assert!(run(&["--help".into()]).is_ok());
+        assert!(run(&["--unknown".into()]).is_err());
+        assert!(run(&["resource_37c".into(), "resource_380".into()]).is_err());
     }
 }

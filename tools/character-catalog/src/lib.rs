@@ -594,9 +594,9 @@ fn pair(value: &Value, minimum: i64, maximum: i64, name: &str) -> Result<[i64; 2
     ])
 }
 
-fn build_animations(
-    index: &Value,
-) -> Result<(Vec<u8>, BTreeMap<String, u32>, BTreeMap<String, usize>)> {
+type AnimationBuild = (Vec<u8>, BTreeMap<String, u32>, BTreeMap<String, usize>);
+
+fn build_animations(index: &Value) -> Result<AnimationBuild> {
     let start = integer_value(field(index, "animation_address")?, "animation address")?;
     let groups = array(field(index, "animation_groups")?, "animation groups")?;
     let mut data = Vec::new();

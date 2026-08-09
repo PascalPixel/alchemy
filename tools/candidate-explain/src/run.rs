@@ -12,7 +12,14 @@ use crate::explain::{report, EXPLAIN_FLAGS};
 use crate::jsnum::to_string_16;
 
 fn explain_flags() -> Vec<String> {
-    EXPLAIN_FLAGS.iter().map(|flag| (*flag).to_string()).collect()
+    let mut flags: Vec<String> = EXPLAIN_FLAGS
+        .iter()
+        .map(|flag| (*flag).to_string())
+        .collect();
+    if let Some(extra) = std::env::var_os("ALCHEMY_CANDIDATE_EXPLAIN_EXTRA_FLAGS") {
+        flags.extend(extra.to_string_lossy().split_whitespace().map(str::to_string));
+    }
+    flags
 }
 
 /// The `options.mode === "overlay"` branch.

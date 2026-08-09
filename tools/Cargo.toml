@@ -14,7 +14,6 @@ members = [
   "map-load-table",
   "no-asm-c",
   "pairtable",
-  "text-bg",
   "tilemap",
   "wordstream",
 ]

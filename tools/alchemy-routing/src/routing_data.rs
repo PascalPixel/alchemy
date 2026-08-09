@@ -120,6 +120,26 @@ pub static NO_CONSTANT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002f14.c",
     "exact/resource_373_c_02002f14.c",
 ];
+pub static POOL_LONG_CALL_ARG0_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002f14.c",
+    "exact/resource_373_c_02002f14.c",
+];
+pub static ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002f14.c",
+    "exact/resource_373_c_02002f14.c",
+];
+pub static STORE_BEFORE_POOL_LOAD_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002a54.c",
+    "exact/resource_373_c_02002a54.c",
+];
+pub static ORDER_8_0_20_ARGS_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002cb0.c",
+    "exact/resource_373_c_02002cb0.c",
+];
+pub static ZERO_R1_BEFORE_R0_LOAD_AFTER_8_2_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002cb0.c",
+    "exact/resource_373_c_02002cb0.c",
+];
 pub static GROUP_CONTROL_LAST_OVERLAY_SOURCES: &[&str] = &["exact/resource_3bd_c_02000c98.c"];
 pub static NO_SCHED_DEPEND_COUNT_SOURCES: &[&str] = &[
     "080b0744", "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304",
@@ -272,7 +292,16 @@ pub static THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b9_c_02002668.c",
     "exact/resource_3b9_c_02002964.c",
 ];
+pub static CALLEE_REG_ORDER_0132_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_020008c0.c",
+    "semantic/resource_373_c_0200564c.c",
+];
+pub static STACK_SLOT_BEFORE_TABLE_OVERLAY_SOURCES: &[&str] =
+    &["semantic/resource_373_c_020008c0.c"];
+pub static HIGH_REG_ORDER_OVERLAY_SOURCES: &[(&str, &str)] =
+    &[("semantic/resource_373_c_0200564c.c", "1203")];
 pub static NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_0200564c.c",
     "exact/resource_3cb_c_02000128.c",
     "exact/resource_38f_c_020026cc.c",
     "exact/resource_398_c_020004b4.c",
@@ -329,6 +358,8 @@ pub static NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES: &[&str] = &[
 // TypeScript `Set`, inert here. Reproduced deliberately -- see the note on
 // GROUPED_DMA_STORE_SOURCES.
 pub static NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002a54.c",
+    "exact/resource_373_c_02002a54.c",
     "exact/resource_3a2_c_02000924.c",
     "semantic/resource_3a2_c_02000924.c",
     "exact/resource_371_c_02001888.c",
@@ -426,6 +457,10 @@ pub static NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
 // collapsed by the TypeScript `Set` and inert here. Reproduced deliberately;
 // see the note on GROUPED_DMA_STORE_SOURCES.
 pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02003fb0.c",
+    "exact/resource_373_c_02003fb0.c",
+    "semantic/resource_373_c_02002a54.c",
+    "exact/resource_373_c_02002a54.c",
     "semantic/resource_373_c_02002f14.c",
     "exact/resource_373_c_02002f14.c",
     "semantic/resource_3a2_c_02000924.c",
@@ -652,6 +687,8 @@ pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3bf_c_02000f30.c",
     "exact/resource_382_c_02000ef4.c",
     "exact/resource_3c9_c_02001280.c",
+    "semantic/resource_373_c_02002cb0.c",
+    "exact/resource_373_c_02002cb0.c",
 ];
 pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ae_c_02000144.c",
@@ -714,17 +751,18 @@ pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ab_c_020015bc.c",
     "exact/resource_3c4_c_02001aba.c",
     "semantic/resource_3c4_c_02001aba.c",
+    "semantic/resource_373_c_02002cb0.c",
+    "exact/resource_373_c_02002cb0.c",
 ];
 pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
-pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] =
-    &[
-        "exact/resource_3bb_c_020039fc.c",
-        "exact/resource_373_c_02005b48.c",
-        "exact/resource_392_c_02000cb4.c",
-        "semantic/resource_373_c_02005b48.c",
-        "semantic/resource_392_c_02000cb4.c",
-    ];
+pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_3bb_c_020039fc.c",
+    "exact/resource_373_c_02005b48.c",
+    "exact/resource_392_c_02000cb4.c",
+    "semantic/resource_373_c_02005b48.c",
+    "semantic/resource_392_c_02000cb4.c",
+];
 pub static NO_SCHED_ALIAS_OVERLAY_SOURCES: &[&str] = &[
     "exact/08078144.c",
     "exact/resource_3af_c_02002b7c.c",
@@ -744,6 +782,8 @@ pub static SCHED_STORE_FIRST_OVERLAY_SOURCES: &[&str] = &[
 // TypeScript `Set`, inert here. Reproduced deliberately -- see the note on
 // GROUPED_DMA_STORE_SOURCES.
 pub static NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02002a54.c",
+    "exact/resource_373_c_02002a54.c",
     "exact/resource_3a8_c_02003768.c",
     "semantic/resource_3a8_c_02003768.c",
     "semantic/resource_3ae_c_0200051c.c",
@@ -796,8 +836,12 @@ pub static NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b9_c_0200055c.c",
     "exact/resource_3b9_c_02002668.c",
     "exact/resource_3b9_c_02002964.c",
+    "semantic/resource_373_c_02002cb0.c",
+    "exact/resource_373_c_02002cb0.c",
 ];
 pub static NO_STRICT_ALIASING_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02000608.c",
+    "exact/resource_373_c_02000608.c",
     "exact/resource_380_c_02000104.c",
     "exact/resource_39c_c_02000104.c",
     "exact/resource_39e_c_02000104.c",
@@ -952,6 +996,8 @@ pub static ROTATE_ORR_MASK_LOAD_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_392_c_02000cb4.c",
 ];
 pub static CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_373_c_02000608.c",
+    "exact/resource_373_c_02000608.c",
     "exact/resource_371_c_02001a98.c",
     "semantic/resource_371_c_02001a98.c",
 ];
@@ -1025,6 +1071,8 @@ pub static NO_GCSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
     "exact/resource_3cd_c_020000c0.c",
+    "semantic/resource_373_c_02002a54.c",
+    "exact/resource_373_c_02002a54.c",
 ];
 pub static DEFAULT_ABI_SOURCES: &[&str] = &[
     "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098", "080fada0", "080fadf0",

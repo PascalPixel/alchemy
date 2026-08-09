@@ -1024,6 +1024,8 @@ pub fn format_message_archive(source: &Value) -> String {
 // CLI
 // ---------------------------------------------------------------------------
 
+const USAGE: &str = "Usage: message-archive {export ROM --output SOURCE|build SOURCE --output FILE|verify ROM SOURCE|--self-test}\n\nExport, build, and verify the message archive.\n";
+
 fn option(args: &[String], name: &str) -> Option<String> {
     let index = args.iter().position(|item| item == name)?;
     args.get(index + 1).cloned()
@@ -1035,6 +1037,10 @@ fn read_json(path: &str) -> Res<Value> {
 }
 
 fn run(args: &[String]) -> Res<()> {
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        print!("{USAGE}");
+        return Ok(());
+    }
     if args.first().map(String::as_str) == Some("--self-test") {
         self_test()?;
         println!("self-test=ok");
@@ -1061,9 +1067,14 @@ fn run(args: &[String]) -> Res<()> {
             let source = export_message_archive(&rom)?;
             std::fs::write(&output, format_message_archive(&source))
                 .map_err(|error| format!("{output}: {error}"))?;
-            let banks = source.get("banks").and_then(Value::as_array).expect("banks");
-            let messages: usize =
-                banks.iter().map(|bank| bank.as_array().expect("bank").len()).sum();
+            let banks = source
+                .get("banks")
+                .and_then(Value::as_array)
+                .expect("banks");
+            let messages: usize = banks
+                .iter()
+                .map(|bank| bank.as_array().expect("bank").len())
+                .sum();
             println!(
                 "identical=true contexts={} messages={} bytes={}",
                 derived_contexts(banks)?.len(),
@@ -1096,7 +1107,7 @@ fn run(args: &[String]) -> Res<()> {
             println!("identical=true bytes={}", built.len());
             Ok(())
         }
-        _ => Err("usage: message-archive {export ROM --output SOURCE|build SOURCE --output FILE|verify ROM SOURCE|--self-test}".into()),
+        _ => Err(USAGE.trim_end().into()),
     }
 }
 
@@ -1163,6 +1174,12 @@ mod tests {
     use super::*;
 
     // --- ported self-test ---------------------------------------------------
+
+    #[test]
+    fn help_is_handled_without_reading_inputs() {
+        run(&["--help".into()]).expect("help should succeed");
+        run(&["-h".into()]).expect("short help should succeed");
+    }
 
     #[test]
     fn self_test_passes() {

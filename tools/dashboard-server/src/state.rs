@@ -89,37 +89,49 @@ fn nullish_or_zero(value: Option<f64>) -> f64 {
 }
 
 pub fn rebuild_coverage() {
-    let already = with_state(|state| {
-        if state.scanning {
-            state.scan_queued = true;
-            return true;
-        }
-        state.scanning = true;
-        false
-    });
+    let already = with_state(begin_rebuild);
     if already {
         return;
     }
     crate::events::notify();
 
-    let outcome = compute();
-    let queued = with_state(|state| {
-        match outcome {
-            Ok(coverage) => {
-                state.coverage = Some(coverage);
-                state.scan_error = None;
-            }
-            Err(message) => state.scan_error = Some(message),
+    loop {
+        let outcome = compute();
+        let queued = with_state(|state| finish_rebuild(state, outcome));
+        crate::events::notify();
+        if !queued {
+            break;
         }
-        state.scanning = false;
-        let queued = state.scan_queued;
-        state.scan_queued = false;
-        queued
-    });
-    crate::events::notify();
-    if queued {
-        rebuild_coverage();
     }
+}
+
+/// Admit a rebuild request to the single scanning worker. An active worker
+/// keeps ownership and records only one pending iteration regardless of how
+/// many coverage changes arrive before it finishes.
+fn begin_rebuild(state: &mut State) -> bool {
+    if state.scanning {
+        state.scan_queued = true;
+        return true;
+    }
+    state.scanning = true;
+    false
+}
+
+/// Install one scan result and decide whether the worker should immediately
+/// run once more. Changes arriving during a scan collapse into one queued
+/// rebuild. Keeping `scanning` true between iterations means another caller
+/// can only set the queue bit; it cannot start a second worker.
+fn finish_rebuild(state: &mut State, outcome: Result<LiveCoverage, String>) -> bool {
+    match outcome {
+        Ok(coverage) => {
+            state.coverage = Some(coverage);
+            state.scan_error = None;
+        }
+        Err(message) => state.scan_error = Some(message),
+    }
+    let queued = std::mem::take(&mut state.scan_queued);
+    state.scanning = queued;
+    queued
 }
 
 pub fn compute() -> Result<LiveCoverage, String> {
@@ -276,8 +288,13 @@ mod tests {
     fn page_version_is_a_stable_hash_of_embedded_styles() {
         let version = page_version();
         assert_eq!(version.len(), 16);
-        assert!(version.chars().all(|character| character.is_ascii_hexdigit()));
-        assert_eq!(version, coverage_map::sha1::sha1_hex(STYLES.as_bytes())[..16]);
+        assert!(version
+            .chars()
+            .all(|character| character.is_ascii_hexdigit()));
+        assert_eq!(
+            version,
+            coverage_map::sha1::sha1_hex(STYLES.as_bytes())[..16]
+        );
     }
 
     #[test]
@@ -303,5 +320,44 @@ mod tests {
         };
         let text = snapshot_of(&state).stringify();
         assert!(text.contains(r#""error":"boom","trees":"#), "{text}");
+    }
+
+    #[test]
+    fn queued_rebuilds_are_coalesced_without_releasing_the_worker() {
+        let mut state = State {
+            scanning: true,
+            scan_queued: true,
+            ..State::default()
+        };
+
+        assert!(finish_rebuild(&mut state, Err("first".to_string())));
+        assert!(state.scanning, "the same worker owns the queued rebuild");
+        assert!(
+            !state.scan_queued,
+            "one or more writes collapse into one run"
+        );
+        assert_eq!(state.scan_error.as_deref(), Some("first"));
+
+        assert!(!finish_rebuild(&mut state, Err("second".to_string())));
+        assert!(
+            !state.scanning,
+            "the worker releases ownership when drained"
+        );
+        assert!(!state.scan_queued);
+        assert_eq!(state.scan_error.as_deref(), Some("second"));
+    }
+
+    #[test]
+    fn the_worker_admits_one_request_and_queues_later_requests() {
+        let mut state = State::default();
+
+        assert!(!begin_rebuild(&mut state));
+        assert!(state.scanning);
+        assert!(!state.scan_queued);
+
+        assert!(begin_rebuild(&mut state));
+        assert!(begin_rebuild(&mut state));
+        assert!(state.scanning);
+        assert!(state.scan_queued);
     }
 }

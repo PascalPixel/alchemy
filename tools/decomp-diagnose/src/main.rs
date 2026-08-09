@@ -22,6 +22,37 @@ use decomp_diagnose::{
     CandidateDiagnosis, DecodedInstruction, ROM_BASE,
 };
 
+const USAGE: &str = "Usage: decomp-diagnose CANDIDATE.c [ROM.gba]\n       decomp-diagnose --self-test\n\nThe ROM argument defaults to roms/gs1-en.gba.\n  --self-test    Run the instruction diagnosis checks.\n  -h, --help     Show this help.";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Command {
+    Help,
+    SelfTest,
+    Diagnose { source: String, rom: Option<PathBuf> },
+}
+
+fn parse_args(arguments: &[String]) -> Result<Command, &'static str> {
+    if arguments.len() == 1 && arguments[0] == "--self-test" {
+        return Ok(Command::SelfTest);
+    }
+    if arguments.len() == 1 && (arguments[0] == "-h" || arguments[0] == "--help") {
+        return Ok(Command::Help);
+    }
+    if arguments.iter().any(|argument| argument.starts_with('-')) {
+        return Err(USAGE);
+    }
+    let source = arguments
+        .iter()
+        .find(|item| item.ends_with(".c"))
+        .cloned()
+        .ok_or(USAGE)?;
+    let rom = arguments
+        .iter()
+        .find(|item| item.ends_with(".gba"))
+        .map(PathBuf::from);
+    Ok(Command::Diagnose { source, rom })
+}
+
 fn main() {
     match run() {
         Ok(Some(text)) => println!("{text}"),
@@ -35,30 +66,59 @@ fn main() {
 
 fn run() -> Result<Option<String>, String> {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    if arguments.len() == 1 && arguments[0] == "--self-test" {
+    let command = parse_args(&arguments).map_err(str::to_string)?;
+    if command == Command::Help {
+        println!("{USAGE}");
+        return Ok(None);
+    }
+    if command == Command::SelfTest {
         self_test()?;
         println!("decomp diagnosis self-test passed");
         return Ok(None);
     }
+    let Command::Diagnose { source, rom } = command else { unreachable!() };
     let root = repo_root();
-    let source = arguments
-        .iter()
-        .find(|item| item.ends_with(".c"))
-        .ok_or("usage: decomp-diagnose --self-test | CANDIDATE.c [ROM]")?;
-    let rom_path: PathBuf = arguments
-        .iter()
-        .find(|item| item.ends_with(".gba"))
-        .map(PathBuf::from)
-        .unwrap_or_else(|| root.join("roms").join("gs1-en.gba"));
+    let rom_path = rom.unwrap_or_else(|| root.join("roms").join("gs1-en.gba"));
     let scratch = root
         .join("out")
         .join("decomp")
         .join("diagnose")
-        .join(basename(source, ".c"));
+        .join(basename(&source, ".c"));
     let rom = std::fs::read(&rom_path)
         .map_err(|error| format!("ENOENT: {}: {error}", rom_path.display()))?;
-    let diagnosis = diagnose_candidate(source, &rom, &scratch, &root)?;
+    let diagnosis = diagnose_candidate(&source, &rom, &scratch, &root)?;
     Ok(Some(diagnosis.to_json()))
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::{parse_args, Command};
+
+    fn args(items: &[&str]) -> Vec<String> {
+        items.iter().map(|item| (*item).to_string()).collect()
+    }
+
+    #[test]
+    fn preserves_candidate_and_self_test_modes() {
+        assert_eq!(
+            parse_args(&args(&["candidate.c"])),
+            Ok(Command::Diagnose { source: "candidate.c".into(), rom: None })
+        );
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Command::SelfTest));
+        assert_eq!(parse_args(&args(&["-h"])), Ok(Command::Help));
+    }
+
+    #[test]
+    fn accepts_an_explicit_rom_and_rejects_unknown_options() {
+        assert_eq!(
+            parse_args(&args(&["candidate.c", "reference.gba"])),
+            Ok(Command::Diagnose {
+                source: "candidate.c".into(),
+                rom: Some("reference.gba".into()),
+            })
+        );
+        assert!(parse_args(&args(&["candidate.c", "--bogus"])).is_err());
+    }
 }
 
 /// `expectedSize(stem, fallback)` — lazily loaded manifest lookup.

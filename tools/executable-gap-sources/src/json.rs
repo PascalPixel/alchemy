@@ -74,7 +74,8 @@ impl Value {
 }
 
 /// Convenience constructors so the report builders read like the TS literals.
-pub fn obj(members: Vec<(&str, Value)>) -> Value {
+#[cfg(test)]
+fn obj(members: Vec<(&str, Value)>) -> Value {
     Value::Obj(
         members
             .into_iter()
@@ -83,11 +84,13 @@ pub fn obj(members: Vec<(&str, Value)>) -> Value {
     )
 }
 
-pub fn num(value: i64) -> Value {
+#[cfg(test)]
+fn num(value: i64) -> Value {
     Value::Num(value as f64)
 }
 
-pub fn string(value: &str) -> Value {
+#[cfg(test)]
+fn string(value: &str) -> Value {
     Value::Str(value.to_string())
 }
 

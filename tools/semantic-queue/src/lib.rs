@@ -536,6 +536,9 @@ pub fn semantic_queue(root: &Path) -> Vec<Candidate> {
             serde_json::from_str(&text).expect("ordinary-blockers.json is not JSON");
         if let Some(owners) = parsed.get("owners").and_then(Value::as_object) {
             for (stem, entry) in owners {
+                if entry.get("resolved").and_then(Value::as_bool) == Some(true) {
+                    continue;
+                }
                 blockers.insert(
                     stem.clone(),
                     (
@@ -1023,6 +1026,47 @@ thunks=1 unk= 2 shape=c_candidate work/candidates/08001234.c"
         let score_at = json.find("\"score\"").unwrap();
         let draft_at = json.find("\"draft\"").unwrap();
         assert!(stem_at < bytes_at && draft_at < score_at);
+    }
+
+    #[test]
+    fn resolved_blockers_are_not_marked_active() {
+        let root = std::env::temp_dir().join(format!(
+            "semantic-queue-blockers-{}-{}",
+            std::process::id(),
+            line!()
+        ));
+        fs::create_dir_all(root.join("out/full/asm")).unwrap();
+        fs::create_dir_all(root.join("semantic")).unwrap();
+        fs::write(
+            root.join("out/full/asm/manifest.json"),
+            r#"{"regions":[
+                {"address":134222388,"size":4,"source":"asm/08001234.s","retention":"c_candidate"},
+                {"address":134222392,"size":4,"source":"asm/08001238.s","retention":"c_candidate"}
+            ]}"#,
+        )
+        .unwrap();
+        fs::create_dir_all(root.join("asm")).unwrap();
+        fs::write(root.join("asm/08001234.s"), "\tbl Func_08000000\n").unwrap();
+        fs::write(root.join("asm/08001238.s"), "\tbl Func_08000000\n").unwrap();
+        fs::write(root.join("semantic/08001234.c"), "void f(void) {}\n").unwrap();
+        fs::write(root.join("semantic/08001238.c"), "void f(void) {}\n").unwrap();
+        fs::write(
+            root.join("semantic/ordinary-blockers.json"),
+            r#"{"owners":{
+                "08001234":{"class":"resolved","reason":"old","resolved":true},
+                "08001238":{"class":"active","reason":"current"}
+            }}"#,
+        )
+        .unwrap();
+
+        let queue = semantic_queue(&root);
+        fs::remove_dir_all(&root).unwrap();
+
+        let resolved = queue.iter().find(|item| item.stem == "08001234").unwrap();
+        let active = queue.iter().find(|item| item.stem == "08001238").unwrap();
+        assert_eq!(resolved.blocker_class, None);
+        assert_eq!(active.blocker_class.as_deref(), Some("active"));
+        assert_eq!(active.score - resolved.score, 10_000);
     }
 
     #[test]

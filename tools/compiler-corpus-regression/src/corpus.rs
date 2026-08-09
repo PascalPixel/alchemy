@@ -166,19 +166,9 @@ pub fn deterministic_sample(members: &[Member], count: usize, seed: &str) -> Vec
 
 /// `corpus(options)`.
 ///
-/// PORT NOTE -- BUG REPRODUCED, AND IT IS THE REASON THIS TOOL HAS NEVER RUN.
-/// The filter is `region.source.startsWith("src/")`. The manifest at
-/// `out/full/claimed/manifest.json` has used the `exact/` prefix since long
-/// before this tool was written, and there is NO `src/` directory in the
-/// repository at all. The filter therefore matches ZERO regions on the real
-/// manifest and `main()` dies at "no exact-C sources matched the selection
-/// filters" every single time. This is NOT the `b3ab4841b` path break; `git
-/// log -S` puts the `src/` literal in the tool's FIRST commit (`c7b7f3736`).
-/// It is reproduced here rather than fixed, per the brief, and reported.
-///
-/// PORT NOTE -- `isAbsolute(region.source)` on the next line is DEAD CODE for
-/// the same reason: a path that starts with `src/` is never absolute, so the
-/// true branch is unreachable. Reproduced.
+/// The manifest's canonical exact-C owners use the flat `exact/*.c` layout.
+/// Keep the prefix and extension checks here so legacy, non-C, and unrelated
+/// manifest entries never enter stem or filesystem handling.
 ///
 /// PORT NOTE -- `found` is a `Map` keyed by stem, so a manifest with two
 /// regions sharing a stem keeps the LAST one, and the map preserves INSERTION
@@ -186,6 +176,10 @@ pub fn deterministic_sample(members: &[Member], count: usize, seed: &str) -> Vec
 /// only by accident but would change the pre-sort order always. Insertion-
 /// ordered `Vec` here.
 pub fn corpus(options: &Options) -> Result<Vec<Member>, String> {
+    corpus_at_root(options, alchemy_routing::routing::root())
+}
+
+fn corpus_at_root(options: &Options, root: &Path) -> Result<Vec<Member>, String> {
     let text = std::fs::read_to_string(&options.manifest)
         .map_err(|error| format!("{}: {error}", options.manifest))?;
     let document = parse(&text)?;
@@ -194,8 +188,6 @@ pub fn corpus(options: &Options) -> Result<Vec<Member>, String> {
         // `document.regions ?? []`
         _ => Vec::new(),
     };
-
-    let root = alchemy_routing::routing::root();
     let mut found: Vec<(String, Member)> = Vec::new();
     for region in &regions {
         let Some(Json::String(source_field)) = region.get("source") else {
@@ -204,19 +196,14 @@ pub fn corpus(options: &Options) -> Result<Vec<Member>, String> {
             // rather than a skip.
             return Err("region.source is not a string".to_string());
         };
-        if !source_field.starts_with("src/") || !source_field.ends_with(".c") {
+        if !source_field.starts_with("exact/") || !source_field.ends_with(".c") {
             continue;
         }
         let stem = hexadecimal_stem(source_field)?;
         let address = parse_int(&stem, 16).unwrap_or(f64::NAN);
-        let source = if Path::new(source_field).is_absolute() {
-            source_field.clone()
-        } else {
-            join(root, source_field)
-        };
-        if !Path::new(&source).exists() {
+        let Some(source) = resolve_exact_source(root, source_field)? else {
             continue;
-        }
+        };
         if let Some(prefix) = &options.family {
             if !stem.starts_with(prefix) {
                 continue;
@@ -269,14 +256,109 @@ pub fn corpus(options: &Options) -> Result<Vec<Member>, String> {
     Ok(members)
 }
 
+/// Resolve a manifest source without allowing a manifest entry to choose files
+/// outside the repository's canonical exact-C tree. Manifest paths are data,
+/// not filesystem paths supplied by the caller, so they are always rooted at
+/// the repository root and must remain relative to `exact/`.
+fn resolve_exact_source(root: &Path, source_field: &str) -> Result<Option<String>, String> {
+    let relative = Path::new(source_field);
+    if relative.is_absolute() {
+        return Err(format!("exact source must be relative: {source_field}"));
+    }
+
+    let components: Vec<_> = relative.components().collect();
+    let flat_exact = components.len() == 2
+        && matches!(
+            components.first(),
+            Some(std::path::Component::Normal(part))
+                if *part == std::ffi::OsStr::new("exact")
+        )
+        && matches!(components.get(1), Some(std::path::Component::Normal(_)));
+    if !flat_exact {
+        return Err(format!(
+            "exact source must be a flat exact/<owner>.c path: {source_field}"
+        ));
+    }
+
+    let canonical_root = std::fs::canonicalize(root).map_err(|error| {
+        format!(
+            "cannot canonicalize repository root {}: {error}",
+            root.display()
+        )
+    })?;
+    let exact_path = canonical_root.join("exact");
+    let exact_root = std::fs::canonicalize(&exact_path).map_err(|error| {
+        format!(
+            "cannot canonicalize exact-C root {}: {error}",
+            exact_path.display()
+        )
+    })?;
+    let source_path = canonical_root.join(relative);
+
+    // Inspect links themselves before canonicalization. This catches both a
+    // source symlink and a symlinked directory named `exact`, including one
+    // which points back into the repository and would otherwise look harmless.
+    if let Some(component) = first_symlink_component(&canonical_root, relative)? {
+        return Err(format!(
+            "exact source uses symlink component {}: {source_field}",
+            component.display()
+        ));
+    }
+
+    let canonical_source = match std::fs::canonicalize(&source_path) {
+        Ok(path) => path,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => {
+            return Err(format!(
+                "cannot resolve exact source {source_field}: {error}"
+            ))
+        }
+    };
+    if !canonical_source.starts_with(&exact_root) {
+        return Err(format!(
+            "exact source escapes {}: {source_field}",
+            exact_root.display()
+        ));
+    }
+    if !canonical_source.is_file() {
+        return Ok(None);
+    }
+    Ok(Some(canonical_source.to_string_lossy().into_owned()))
+}
+
+/// Return the first symlink on `base/relative`, if any. `symlink_metadata`
+/// deliberately inspects links themselves instead of following them.
+fn first_symlink_component(base: &Path, relative: &Path) -> Result<Option<PathBuf>, String> {
+    let mut current = base.to_path_buf();
+    for component in relative.components() {
+        let std::path::Component::Normal(part) = component else {
+            continue;
+        };
+        current.push(part);
+        let metadata = match std::fs::symlink_metadata(&current) {
+            Ok(metadata) => metadata,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+            Err(error) => {
+                return Err(format!(
+                    "cannot inspect exact source component {}: {error}",
+                    current.display()
+                ));
+            }
+        };
+        if metadata.file_type().is_symlink() {
+            return Ok(Some(current));
+        }
+    }
+    Ok(None)
+}
+
 /// `path.join(a, b)` for the two-argument case this file uses.
 pub fn join(base: &Path, tail: &str) -> String {
     let mut path = PathBuf::from(base);
     path.push(tail);
     // `path.join` NORMALISES: `join(root, "src/../exact/x.c")` collapses to
     // `root/exact/x.c`. `PathBuf::push` does NOT, so the `..` is resolved by
-    // hand. This matters: it is the only way any input reaches the compile
-    // path at all, given the `src/` filter above.
+    // hand.
     normalise(&path)
 }
 
@@ -320,5 +402,66 @@ fn normalise(path: &Path) -> String {
         ".".to_string()
     } else {
         joined
+    }
+}
+
+#[cfg(all(test, any(unix, windows)))]
+mod tests {
+    use super::resolve_exact_source;
+    use std::path::Path;
+
+    #[cfg(unix)]
+    fn symlink_file(target: &Path, link: &Path) {
+        std::os::unix::fs::symlink(target, link).unwrap();
+    }
+
+    #[cfg(windows)]
+    fn symlink_file(target: &Path, link: &Path) {
+        std::os::windows::fs::symlink_file(target, link).unwrap();
+    }
+
+    #[test]
+    fn resolve_exact_source_rejects_a_symlink_outside_exact() {
+        let root = std::env::temp_dir().join(format!(
+            "alchemy-corpus-containment-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let exact = root.join("exact");
+        let outside = root.join("outside");
+        std::fs::create_dir_all(&exact).unwrap();
+        std::fs::create_dir_all(&outside).unwrap();
+        let target = outside.join("08091780.c");
+        std::fs::write(&target, "int outside;\n").unwrap();
+        symlink_file(&target, &exact.join("08091780.c"));
+
+        let result = resolve_exact_source(&root, "exact/08091780.c");
+        assert!(result.unwrap_err().contains("symlink"));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn resolve_exact_source_uses_the_supplied_root_not_the_process_directory() {
+        let root = std::env::temp_dir().join(format!(
+            "alchemy-corpus-root-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let exact = root.join("exact");
+        std::fs::create_dir_all(&exact).unwrap();
+        let source = exact.join("08091780.c");
+        std::fs::write(&source, "int rooted;\n").unwrap();
+
+        let resolved = resolve_exact_source(&root, "exact/08091780.c")
+            .unwrap()
+            .expect("source exists below the supplied root");
+        assert_eq!(Path::new(&resolved), source.canonicalize().unwrap());
+        std::fs::remove_dir_all(root).unwrap();
     }
 }

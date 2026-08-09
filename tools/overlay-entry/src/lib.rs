@@ -34,6 +34,8 @@ pub struct Recovered {
     pub starts_with_prologue: bool,
 }
 
+const USAGE: &str = "usage: overlay-entry <overlay> <offsetHex>\n       overlay-entry --all\n       overlay-entry --self-test";
+
 fn read_u16le(data: &[u8], at: i64) -> u16 {
     if at < 0 {
         return 0;
@@ -147,7 +149,9 @@ fn root() -> PathBuf {
 }
 
 fn load_overlay(overlay: &str) -> Result<Vec<u8>, String> {
-    let path = root().join("assets/code").join(format!("{overlay}_overlay.s"));
+    let path = root()
+        .join("assets/code")
+        .join(format!("{overlay}_overlay.s"));
     assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE)
 }
 
@@ -157,25 +161,40 @@ fn exact_stem(name: &str) -> Option<i64> {
     let suffix = name.strip_suffix(".c")?;
     let (before, digits) = suffix.rsplit_once("_c_")?;
     let _ = before;
-    if digits.len() != 8 || !digits.bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()) {
+    if digits.len() != 8
+        || !digits
+            .bytes()
+            .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+    {
         return None;
     }
     i64::from_str_radix(digits, 16).ok()
 }
 
 pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
+    if argv.len() == 1 && matches!(argv[0].as_str(), "-h" | "--help") {
+        return Ok(vec![USAGE.to_string()]);
+    }
     if argv.iter().any(|a| a == "--self-test") {
+        if argv.len() != 1 {
+            return Err(format!(
+                "--self-test cannot be combined with other options\n{USAGE}"
+            ));
+        }
         return Ok(vec![self_test()?]);
     }
-    let all = argv.iter().any(|a| a == "--all");
-    let positional: Vec<&String> = argv.iter().filter(|a| !a.starts_with("--")).collect();
+    let all = argv == ["--all"];
+    if !all && argv.iter().any(|a| a.starts_with('-')) {
+        return Err(format!("unknown or misplaced option\n{USAGE}"));
+    }
+    let positional: Vec<&String> = argv.iter().collect();
 
     if !all {
         let overlay = positional.first().copied();
         let offset_text = positional.get(1).copied();
         let (overlay, offset_text) = match (overlay, offset_text) {
             (Some(o), Some(t)) => (o, t),
-            _ => return Err("usage: overlay-entry <overlay> <offsetHex> | --all".to_string()),
+            _ => return Err(USAGE.to_string()),
         };
         let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16)
             .map_err(|_| format!("invalid offset: {offset_text}"))?;
@@ -214,13 +233,25 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
     let mut examined = 0i64;
     let mut moved = 0i64;
     for function in functions {
-        let structural_veneer = function.get("structural_veneer").map(Value::truthy).unwrap_or(false);
-        let data_walk = function.get("data_walk").map(Value::truthy).unwrap_or(false);
-        let code_bytes = function.get("code_bytes").and_then(Value::as_f64).unwrap_or(0.0);
+        let structural_veneer = function
+            .get("structural_veneer")
+            .map(Value::truthy)
+            .unwrap_or(false);
+        let data_walk = function
+            .get("data_walk")
+            .map(Value::truthy)
+            .unwrap_or(false);
+        let code_bytes = function
+            .get("code_bytes")
+            .and_then(Value::as_f64)
+            .unwrap_or(0.0);
         if structural_veneer || data_walk || code_bytes < 8.0 {
             continue;
         }
-        let entry_addr = function.get("entry").and_then(Value::as_f64).unwrap_or(f64::NAN) as i64;
+        let entry_addr = function
+            .get("entry")
+            .and_then(Value::as_f64)
+            .unwrap_or(f64::NAN) as i64;
         let contained_by_len = function
             .get("contained_by")
             .and_then(Value::as_array)
@@ -229,8 +260,14 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
         if converted.contains(&entry_addr) || contained_by_len > 0 {
             continue;
         }
-        let overlay = function.get("overlay").and_then(Value::as_str).unwrap_or("");
-        let offset = function.get("offset").and_then(Value::as_f64).unwrap_or(f64::NAN) as i64;
+        let overlay = function
+            .get("overlay")
+            .and_then(Value::as_str)
+            .unwrap_or("");
+        let offset = function
+            .get("offset")
+            .and_then(Value::as_f64)
+            .unwrap_or(f64::NAN) as i64;
         let id = function.get("id").and_then(Value::as_str).unwrap_or("");
         if !cache.contains_key(overlay) {
             cache.insert(overlay.to_string(), load_overlay(overlay)?);
@@ -270,5 +307,12 @@ mod tests {
         assert_eq!(exact_stem("src_c_0809A44C.c"), None);
         assert_eq!(exact_stem("src_0809a44c.c"), None);
         assert_eq!(exact_stem("src_c_0809a44c.h"), None);
+    }
+
+    #[test]
+    fn help_and_unknown_options_follow_the_cli_contract() {
+        assert_eq!(run(&["--help".into()]).unwrap(), vec![USAGE.to_string()]);
+        assert!(run(&["--unknown".into()]).is_err());
+        assert!(run(&["--all".into(), "resource_37c".into()]).is_err());
     }
 }

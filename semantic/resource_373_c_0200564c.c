@@ -48,40 +48,59 @@ s32 Func_0200564c(struct Resource373Follower *follower,
                   s32 noticeRange,
                   s32 force)
 {
-    s32 result = 0;
     s32 distance;
+    s32 result = 0;
+    u8 *alerted = &follower->alerted;
+    u8 *alertLatch;
+    const s32 *followerPosition = &follower->x;
+    const s32 *targetPosition;
 
-    if (follower->alerted == 1 && follower->alertLatch == 0) {
-        Func_0200b578(follower, 1);
-        return 1;
+    if (*alerted == 1) {
+        alertLatch = &follower->alertLatch;
+        if (*alertLatch == 0) {
+            Func_0200b578(follower, 1);
+            return 1;
+        }
     }
 
-    distance = Func_0200acb0(&target->x, &follower->x);
-    if (distance < noticeRange || force != 0) {
+    alertLatch = &follower->alertLatch;
+    targetPosition = &target->x;
+    distance = Func_0200acb0(targetPosition, followerPosition);
+    if (distance >= noticeRange && force == 0) {
+        goto clear_alert;
+    }
+
+    {
         s32 bearing = Func_0200b56a(target->z - follower->z,
-                                    target->x - follower->x);
+                                    *targetPosition - *followerPosition);
         s32 sector = (s32)(u16)bearing;   /* lsls #16 ; lsrs #16 */
         s32 previous;
         s32 next;
         s32 facing;
 
-        sector = sector & 0xf000;
         previous = (sector + (s32)0xfb94f006) & 0xf000;
         next = (sector + 0x1000) & 0xf000;
+        sector = sector & 0xf000;
         facing = follower->facing & 0xf000;
 
-        if (sector == facing || next == facing || previous == facing ||
-            force != 0) {
-            follower->alerted = 1;
-            Func_0200b5ec(follower, 1);
-            result = 1;
-            follower->alertLatch = 1;
-            return result;
+        if (sector != facing && next != facing && previous != facing &&
+            force == 0) {
+            goto clear_alert;
         }
     }
 
-    follower->alerted = (u8)force;
+    *alerted = 1;
+    Func_0200b5ec(follower, 1);
+    result = 1;
+    *alertLatch = 1;
+    goto done;
+
+clear_alert:
+    *alerted = (u8)force;
     Func_0200b602(follower, 2);
-    follower->alertLatch = (u8)force;
+
+    *alertLatch = (u8)force;
+
+done:
     return result;
 }

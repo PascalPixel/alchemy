@@ -1,8 +1,8 @@
 //! Discover and run the native Rust self-tests.
 //!
-//! Each native tool owns the `--self-test` switch in its Rust source.  This
-//! runner discovers those binaries from their Cargo manifests, runs them with
-//! bounded parallelism, and refuses to pass when discovery finds nothing.
+//! Each runnable command is classified by the dispatch registry and Cargo
+//! metadata. This runner executes those classifications with bounded
+//! parallelism and refuses to pass when discovery finds nothing.
 //!
 //! ```text
 //! cargo run --manifest-path tools/self-test/Cargo.toml
@@ -70,147 +70,103 @@ fn parse_jobs(args: &[String], cores: usize) -> Result<usize, String> {
 }
 
 #[derive(Debug, Clone)]
-struct BinaryTarget {
-    name: String,
-    path: PathBuf,
+struct CargoBinary {
+    crate_name: String,
+    binary: String,
+    manifest: PathBuf,
 }
 
-#[derive(Debug, Default)]
-struct PartialBinary {
-    name: Option<String>,
-    path: Option<PathBuf>,
-}
+fn cargo_binary_targets(root: &Path) -> Result<Vec<CargoBinary>, String> {
+    let tools = root.join("tools");
+    let mut manifests = fs::read_dir(&tools)
+        .map_err(|error| format!("could not scan {}: {error}", tools.display()))?
+        .flatten()
+        .map(|entry| entry.path().join("Cargo.toml"))
+        .filter(|path| path.is_file())
+        .collect::<Vec<_>>();
+    manifests.sort_by(|left, right| left.as_os_str().cmp(right.as_os_str()));
 
-fn append_binary(
-    targets: &mut Vec<BinaryTarget>,
-    binary: Option<PartialBinary>,
-    package_name: Option<&str>,
-) {
-    let Some(binary) = binary else {
-        return;
-    };
-    let Some(name) = binary.name else {
-        return;
-    };
-    let path = binary.path.unwrap_or_else(|| {
-        if package_name == Some(name.as_str()) {
-            PathBuf::from("src/main.rs")
-        } else {
-            PathBuf::from("src/bin").join(format!("{name}.rs"))
-        }
-    });
-    targets.push(BinaryTarget { name, path });
-}
-
-fn quoted_value(line: &str, key: &str) -> Option<String> {
-    let value = line.strip_prefix(key)?.trim();
-    let value = value.strip_prefix('"')?;
-    let end = value.find('"')?;
-    Some(value[..end].to_string())
-}
-
-fn binary_targets(manifest: &str, crate_dir: &Path) -> Vec<BinaryTarget> {
-    let mut package_name = None;
-    let mut in_package = false;
-    let mut in_binary = false;
-    let mut current: Option<PartialBinary> = None;
     let mut targets = Vec::new();
-
-    for raw_line in manifest.lines() {
-        let line = raw_line.trim();
-        if line == "[package]" {
-            append_binary(&mut targets, current.take(), package_name.as_deref());
-            in_package = true;
-            in_binary = false;
-            continue;
+    for manifest in manifests {
+        let manifest = fs::canonicalize(&manifest)
+            .map_err(|error| format!("{}: {error}", manifest.display()))?;
+        let output = Command::new("cargo")
+            .args([
+                "metadata",
+                "--offline",
+                "--no-deps",
+                "--format-version",
+                "1",
+                "--manifest-path",
+            ])
+            .arg(&manifest)
+            .current_dir(root)
+            .output()
+            .map_err(|error| format!("cargo metadata {}: {error}", manifest.display()))?;
+        if !output.status.success() {
+            return Err(format!(
+                "cargo metadata {} failed: {}",
+                manifest.display(),
+                String::from_utf8_lossy(&output.stderr).trim()
+            ));
         }
-        if line == "[[bin]]" {
-            append_binary(&mut targets, current.take(), package_name.as_deref());
-            in_package = false;
-            in_binary = true;
-            current = Some(PartialBinary::default());
-            continue;
-        }
-        if line.starts_with('[') {
-            append_binary(&mut targets, current.take(), package_name.as_deref());
-            in_package = false;
-            in_binary = false;
-            continue;
-        }
-
-        if in_package {
-            if let Some(value) = quoted_value(line, "name =") {
-                package_name = Some(value);
+        let metadata: serde_json::Value =
+            serde_json::from_slice(&output.stdout).map_err(|error| {
+                format!(
+                    "cargo metadata {} was invalid JSON: {error}",
+                    manifest.display()
+                )
+            })?;
+        let package = metadata
+            .get("packages")
+            .and_then(serde_json::Value::as_array)
+            .and_then(|packages| {
+                packages.iter().find(|package| {
+                    package
+                        .get("manifest_path")
+                        .and_then(serde_json::Value::as_str)
+                        == Some(manifest.to_string_lossy().as_ref())
+                })
+            })
+            .ok_or_else(|| format!("cargo metadata omitted {}", manifest.display()))?;
+        let crate_name = manifest
+            .parent()
+            .and_then(Path::file_name)
+            .and_then(|name| name.to_str())
+            .ok_or_else(|| format!("{} has no native crate directory", manifest.display()))?;
+        for target in package
+            .get("targets")
+            .and_then(serde_json::Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let is_binary = target
+                .get("kind")
+                .and_then(serde_json::Value::as_array)
+                .is_some_and(|kinds| kinds.iter().any(|kind| kind.as_str() == Some("bin")));
+            if !is_binary {
+                continue;
             }
-        } else if in_binary {
-            let binary = current.as_mut().expect("binary section has a value");
-            if binary.name.is_none() {
-                binary.name = quoted_value(line, "name =");
-            }
-            if binary.path.is_none() {
-                binary.path = quoted_value(line, "path =").map(PathBuf::from);
-            }
+            let binary = target
+                .get("name")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_else(|| {
+                    format!(
+                        "cargo metadata gave {} an unnamed binary",
+                        manifest.display()
+                    )
+                })?;
+            targets.push(CargoBinary {
+                crate_name: crate_name.to_string(),
+                binary: binary.to_string(),
+                manifest: manifest.clone(),
+            });
         }
     }
-    append_binary(&mut targets, current, package_name.as_deref());
-
-    if targets.is_empty() {
-        if let Some(name) = package_name {
-            let main = crate_dir.join("src/main.rs");
-            if main.is_file() {
-                targets.push(BinaryTarget {
-                    name,
-                    path: PathBuf::from("src/main.rs"),
-                });
-            }
-        }
-    }
-
-    // Cargo supplies the conventional path when a bin target omits `path`.
-    // The manifests in this tree spell it out, but keeping the fallback here
-    // makes discovery work for a newly added native crate too.
-    targets
-}
-
-fn rust_source_files(source_root: &Path) -> std::io::Result<Vec<PathBuf>> {
-    fn visit(directory: &Path, files: &mut Vec<PathBuf>) -> std::io::Result<()> {
-        let mut entries = fs::read_dir(directory)?.collect::<Result<Vec<_>, _>>()?;
-        entries.sort_by_key(|entry| entry.file_name());
-        for entry in entries {
-            let path = entry.path();
-            let kind = entry.file_type()?;
-            if kind.is_dir() {
-                visit(&path, files)?;
-            } else if kind.is_file() && path.extension().is_some_and(|ext| ext == "rs") {
-                files.push(path);
-            }
-        }
-        Ok(())
-    }
-
-    let mut files = Vec::new();
-    visit(source_root, &mut files)?;
-    Ok(files)
-}
-
-fn contains_self_test_switch(path: &Path) -> bool {
-    fs::read_to_string(path)
-        .map(|source| source.contains("--self-test"))
-        .unwrap_or(false)
-}
-
-fn forwards_native_arguments(path: &Path) -> bool {
-    let Ok(source) = fs::read_to_string(path) else {
-        return false;
-    };
-    // Some binaries keep their CLI in the crate library.  They are still
-    // discoverable when the entry point forwards the process arguments.  A
-    // dispatcher is deliberately not included: it consumes a group name
-    // before it calls its library and therefore does not expose a top-level
-    // self-test switch.
-    (source.contains("std::env::args") || source.contains("env::args"))
-        && !source.contains("Group::parse")
-        && !source.contains("top_level_usage")
+    targets.sort_by(|left, right| {
+        (&left.crate_name, &left.binary).cmp(&(&right.crate_name, &right.binary))
+    });
+    Ok(targets)
 }
 
 fn native_root(root: &Path) -> Result<PathBuf, String> {
@@ -219,12 +175,7 @@ fn native_root(root: &Path) -> Result<PathBuf, String> {
         .join("self-test/Cargo.toml")
         .is_file()
         .then_some(directory)
-        .ok_or_else(|| {
-            format!(
-                "could not find the native tools root under {}",
-                root.display()
-            )
-        })
+        .ok_or_else(|| format!("could not find the commands root under {}", root.display()))
 }
 
 #[derive(Debug, Clone)]
@@ -261,70 +212,21 @@ fn cargo_run_arguments(manifest: &Path, binary_name: &str) -> Vec<String> {
 }
 
 fn native_tools(root: &Path) -> Result<Vec<Invocation>, String> {
-    let native_root = native_root(root)?;
-    let entries = fs::read_dir(&native_root).map_err(|error| {
-        format!(
-            "could not scan native tools root {}: {error}",
-            native_root.display()
-        )
-    })?;
+    native_root(root)?;
     let mut by_crate: BTreeMap<String, Vec<(String, PathBuf, Vec<String>)>> = BTreeMap::new();
 
-    for entry in entries {
-        let entry = entry.map_err(|error| format!("could not read native tools entry: {error}"))?;
-        let crate_dir = entry.path();
-        if !entry.file_type().map(|kind| kind.is_dir()).unwrap_or(false) {
+    for target in cargo_binary_targets(root)? {
+        if !dispatch::should_self_test(&target.crate_name, &target.binary) {
             continue;
         }
-        let crate_name = entry.file_name().to_string_lossy().into_owned();
-        if crate_name == "self-test" || crate_name == "target" {
-            continue;
-        }
-
-        let manifest_path = crate_dir.join("Cargo.toml");
-        let source_root = crate_dir.join("src");
-        if !manifest_path.is_file() || !source_root.is_dir() {
-            continue;
-        }
-        let manifest = fs::read_to_string(&manifest_path).map_err(|error| {
-            format!(
-                "could not read native manifest {}: {error}",
-                manifest_path.display()
-            )
-        })?;
-        let source_files = rust_source_files(&source_root).map_err(|error| {
-            format!(
-                "could not scan native sources {}: {error}",
-                source_root.display()
-            )
-        })?;
-        if !source_files
-            .iter()
-            .any(|path| contains_self_test_switch(path))
-        {
-            continue;
-        }
-        let library_has_self_test = contains_self_test_switch(&source_root.join("lib.rs"));
-        let targets = binary_targets(&manifest, &crate_dir);
-        let selected: Vec<BinaryTarget> = targets
-            .into_iter()
-            .filter(|target| {
-                let source_path = crate_dir.join(&target.path);
-                contains_self_test_switch(&source_path)
-                    || (library_has_self_test && forwards_native_arguments(&source_path))
-            })
-            .collect();
-        if selected.is_empty() {
-            continue;
-        }
-
-        for target in selected {
-            by_crate.entry(crate_name.clone()).or_default().push((
-                target.name.clone(),
+        by_crate
+            .entry(target.crate_name.clone())
+            .or_default()
+            .push((
+                target.binary.clone(),
                 PathBuf::from("cargo"),
-                cargo_run_arguments(&manifest_path, &target.name),
+                cargo_run_arguments(&target.manifest, &target.binary),
             ));
-        }
     }
 
     if by_crate.is_empty() {
@@ -361,6 +263,87 @@ struct Outcome {
     elapsed_ms: u128,
 }
 
+/// Classified commands use one of the established self-test success signals.
+///
+/// The machine-readable form is the `self-test=ok` token.  Older commands use
+/// a human-readable `self-test ok` or `self-test passed` token pair, and the
+/// staff-roll command reports its validated positive output size as
+/// `self-test bytes=<positive integer>`.  Requiring one of these explicit
+/// signals makes a zero exit status necessary but insufficient; arbitrary
+/// prose, including an empty or failure-only report, cannot pass.
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+enum SuccessSignal {
+    KeyValue,
+    HumanReadable,
+    PositiveByteCount(usize),
+}
+
+fn positive_byte_count(token: &str) -> Option<usize> {
+    token
+        .strip_prefix("bytes=")
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|value| *value > 0)
+}
+
+fn self_test_success_signal(output: &str) -> Option<SuccessSignal> {
+    let mut signal = None;
+    for line in output.lines() {
+        let tokens: Vec<_> = line.split_whitespace().collect();
+        if tokens
+            .iter()
+            .any(|token| matches!(*token, "self-test=failed" | "self-test=failure"))
+            || tokens
+                .windows(2)
+                .any(|window| matches!(window, ["self-test", "failed" | "failure"]))
+        {
+            return None;
+        }
+
+        if tokens.contains(&"self-test=ok") {
+            signal = Some(SuccessSignal::KeyValue);
+        }
+        for window in tokens.windows(2) {
+            match window {
+                ["self-test", "ok" | "passed"] => {
+                    signal = Some(SuccessSignal::HumanReadable);
+                }
+                ["self-test", bytes] => {
+                    if let Some(count) = positive_byte_count(bytes) {
+                        signal = Some(SuccessSignal::PositiveByteCount(count));
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    signal
+}
+
+fn validate_self_test(exit_success: bool, output: &str) -> Result<(), String> {
+    if !exit_success {
+        return Err("process exited unsuccessfully".to_string());
+    }
+    if self_test_success_signal(output).is_none() {
+        return Err(
+            "process exited 0 without a recognized self-test success signal "
+                .to_string()
+                + "(`self-test=ok`, `self-test ok|passed`, or `self-test bytes=<positive integer>`)",
+        );
+    }
+    Ok(())
+}
+
+fn combined_output(stdout: &[u8], stderr: &[u8]) -> String {
+    let stdout = String::from_utf8_lossy(stdout);
+    let stderr = String::from_utf8_lossy(stderr);
+    match (stdout.is_empty(), stderr.is_empty()) {
+        (true, true) => String::new(),
+        (false, true) => stdout.into_owned(),
+        (true, false) => stderr.into_owned(),
+        (false, false) => format!("{stdout}\n{stderr}"),
+    }
+}
+
 fn run_one(root: &Path, tool: &Invocation) -> Outcome {
     let started = Instant::now();
     let spawned = Command::new(&tool.program)
@@ -372,20 +355,23 @@ fn run_one(root: &Path, tool: &Invocation) -> Outcome {
     let elapsed_ms = started.elapsed().as_millis();
     match spawned {
         Ok(output) => {
-            let stdout = String::from_utf8_lossy(&output.stdout);
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            let mut report = if stderr.is_empty() {
-                stdout.into_owned()
-            } else {
-                stderr.into_owned()
-            };
-            if !output.status.success() && report.trim().is_empty() {
-                report = format!("process exited with {status}", status = output.status);
+            let report = combined_output(&output.stdout, &output.stderr);
+            let validation = validate_self_test(output.status.success(), &report);
+            let ok = validation.is_ok();
+            let mut detail = report.trim().to_string();
+            if let Err(reason) = validation {
+                detail = if detail.is_empty() && !output.status.success() {
+                    format!("{reason}: process exited with {}", output.status)
+                } else if detail.is_empty() {
+                    reason
+                } else {
+                    format!("{reason}\n{detail}")
+                };
             }
             Outcome {
                 tool: tool.name.clone(),
-                ok: output.status.success(),
-                output: report.trim().to_string(),
+                ok,
+                output: detail,
                 elapsed_ms,
             }
         }
@@ -457,36 +443,23 @@ fn repo_root() -> PathBuf {
 }
 
 fn self_test() {
-    let manifest = r#"
-[package]
-name = "example-tool"
-version = "0.1.0"
-
-[[bin]]
-name = "example-tool"
-path = "src/main.rs"
-
-[[bin]]
-name = "example-tool-bench"
-path = "src/bin/bench.rs"
-"#;
-    let targets = binary_targets(manifest, Path::new("/fixture"));
-    assert_eq!(targets.len(), 2, "Cargo binary discovery lost a target");
-    assert_eq!(targets[0].name, "example-tool");
-    assert_eq!(targets[1].path, PathBuf::from("src/bin/bench.rs"));
-
     assert_eq!(jobs_for(18), 4);
     assert_eq!(jobs_for(1), 1);
     assert_eq!(parse_jobs(&["--jobs".into(), "4".into()], 18), Ok(4));
     assert_eq!(parse_jobs(&["--jobs=64".into()], 18), Ok(4));
     assert!(parse_jobs(&["--jobs".into()], 18).is_err());
     assert!(parse_jobs(&["--jobs".into(), "0".into()], 18).is_err());
-
-    let wrapper = Path::new("/fixture/src/main.rs");
-    assert!(
-        !forwards_native_arguments(wrapper),
-        "fixture paths must not read the repository"
-    );
+    assert!(dispatch::should_self_test("build-rom", "build-rom"));
+    assert!(dispatch::should_self_test("discover", "discover"));
+    assert!(dispatch::should_self_test(
+        "candidate-explain",
+        "candidate-explain"
+    ));
+    assert!(!dispatch::should_self_test(
+        "compiler-corpus-regression",
+        "compiler-corpus-regression-bench"
+    ));
+    assert!(!dispatch::should_self_test("text-bg", "text-bg"));
     assert_eq!(
         tail_lines("1\n2\n3\n4\n5\n6\n7", 6).collect::<Vec<_>>(),
         vec!["2", "3", "4", "5", "6", "7"]
@@ -522,7 +495,7 @@ fn main() {
     // root or an accidentally unregistered native crate.
     if tools.is_empty() {
         eprintln!(
-            "no native crate exposes a self-test under {} -- refusing to pass without scanning anything",
+            "no classified command exposes a self-test under {} -- refusing to pass without scanning anything",
             native_root(&root)
                 .map(|path| path.display().to_string())
                 .unwrap_or_else(|_| "the repository".to_string())
@@ -534,7 +507,7 @@ fn main() {
         for tool in &tools {
             println!("  {}", tool.name);
         }
-        println!("{} native tools expose a self-test", tools.len());
+        println!("{} commands expose a self-test", tools.len());
         return;
     }
 
@@ -564,29 +537,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn binary_targets_use_explicit_main_bin_and_package_fallback() {
-        let manifest = r#"
-[package]
-name = "package-name"
-
-[[bin]]
-name = "helper"
-path = "src/bin/helper.rs"
-
-[[bin]]
-name = "actual-tool"
-path = "src/main.rs"
-"#;
-        let targets = binary_targets(manifest, Path::new("/missing"));
-        assert_eq!(targets[1].name, "actual-tool");
-        assert_eq!(targets[1].path, PathBuf::from("src/main.rs"));
-
-        let fallback = binary_targets(
-            "[package]\nname = \"fallback\"\n",
-            Path::new(env!("CARGO_MANIFEST_DIR")),
+    fn policy_exposes_public_and_non_public_self_tests() {
+        assert!(dispatch::public_target("build-rom", "build-rom"));
+        assert!(dispatch::should_self_test("build-rom", "build-rom"));
+        assert!(dispatch::public_target("discover", "discover"));
+        assert!(dispatch::should_self_test("discover", "discover"));
+        assert_eq!(
+            dispatch::non_public_target("rtl-insn", "rtl-insn").map(|target| target.kind),
+            Some(dispatch::NonPublicKind::InternalDiagnostic)
         );
-        assert_eq!(fallback.len(), 1);
-        assert_eq!(fallback[0].name, "fallback");
+        assert!(!dispatch::should_self_test(
+            "integrate-matches",
+            "integrate-matches-bench"
+        ));
     }
 
     #[test]
@@ -615,6 +578,82 @@ path = "src/main.rs"
         );
         assert_eq!(arguments[arguments.len() - 2], "--");
         assert_eq!(arguments[arguments.len() - 1], "--self-test");
+    }
+
+    #[test]
+    fn success_signal_contract_accepts_all_inventory_variants() {
+        assert_eq!(
+            self_test_success_signal("self-test=ok resources=8"),
+            Some(SuccessSignal::KeyValue)
+        );
+        assert_eq!(
+            self_test_success_signal("mode sweep self-test passed (16 checks)"),
+            Some(SuccessSignal::HumanReadable)
+        );
+        assert_eq!(
+            self_test_success_signal("staff_roll: self-test bytes=5540"),
+            Some(SuccessSignal::PositiveByteCount(5540))
+        );
+    }
+
+    #[test]
+    fn success_signal_contract_rejects_arbitrary_and_contradictory_output() {
+        for output in [
+            "",
+            "all checks completed",
+            "self-test=okay",
+            "not-self-test=ok",
+            "self-test bytes=0",
+            "self-test bytes=not-a-number",
+            "self-test failed",
+            "self-test=ok\nself-test=failed",
+        ] {
+            assert_eq!(
+                self_test_success_signal(output),
+                None,
+                "unexpected success signal in {output:?}"
+            );
+        }
+        assert!(validate_self_test(true, "all checks completed").is_err());
+        assert!(validate_self_test(false, "self-test=ok").is_err());
+    }
+
+    #[test]
+    fn success_signal_may_be_emitted_on_either_output_stream() {
+        let output = combined_output(b"diagnostic output", b"self-test=ok\n");
+        assert_eq!(output, "diagnostic output\nself-test=ok\n");
+        assert!(validate_self_test(true, &output).is_ok());
+    }
+
+    #[test]
+    fn zero_exit_without_a_signal_cannot_pass() {
+        let invocation = Invocation {
+            name: "fixture/empty".to_string(),
+            program: PathBuf::from("sh"),
+            arguments: vec!["-c".to_string(), "exit 0".to_string()],
+            resource_group: None,
+        };
+        let outcome = run_one(Path::new("."), &invocation);
+        assert!(!outcome.ok);
+        assert!(outcome
+            .output
+            .contains("without a recognized self-test success signal"));
+    }
+
+    #[test]
+    fn nonempty_non_signal_output_cannot_pass() {
+        let invocation = Invocation {
+            name: "fixture/prose".to_string(),
+            program: PathBuf::from("sh"),
+            arguments: vec![
+                "-c".to_string(),
+                "printf 'all checks completed\\n'".to_string(),
+            ],
+            resource_group: None,
+        };
+        let outcome = run_one(Path::new("."), &invocation);
+        assert!(!outcome.ok);
+        assert!(outcome.output.contains("all checks completed"));
     }
 
     #[test]

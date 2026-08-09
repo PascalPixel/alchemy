@@ -157,16 +157,54 @@ fn main_for(root: &Path, id: &str) -> Result<(), Failure> {
     Ok(())
 }
 
+const USAGE: &str = "usage: overlay-showcase <resource_NNN>\n       overlay-showcase --all\n       overlay-showcase --self-test";
+
+#[derive(Debug, PartialEq, Eq)]
+enum CommandLine {
+    Help,
+    SelfTest,
+    All,
+    One(String),
+}
+
+fn parse_arguments(arguments: &[String]) -> Result<CommandLine, Failure> {
+    match arguments {
+        [argument] if argument == "-h" || argument == "--help" => Ok(CommandLine::Help),
+        [argument] if argument == "--self-test" => Ok(CommandLine::SelfTest),
+        [argument] if argument == "--all" => Ok(CommandLine::All),
+        [argument] if !argument.starts_with('-') && is_showcase_id(argument) => {
+            Ok(CommandLine::One(argument.clone()))
+        }
+        [] => fail(USAGE.to_string()),
+        _ => fail(format!("unknown or misplaced option\n{USAGE}")),
+    }
+}
+
 fn run() -> Result<(), Failure> {
     let root = repository_root();
-    let requested = std::env::args().nth(1).unwrap_or_default();
-    if requested == "--all" {
-        for overlay in manifest(&root)? {
-            main_for(&root, &overlay.id)?;
+    let arguments: Vec<String> = std::env::args().skip(1).collect();
+    match parse_arguments(&arguments)? {
+        CommandLine::Help => {
+            println!("{USAGE}");
+            Ok(())
         }
-        return Ok(());
+        CommandLine::SelfTest => {
+            let overlays = manifest(&root)?;
+            let showcase = overlays
+                .first()
+                .ok_or_else(|| Failure("overlay-showcase self-test found no showcase".into()))?;
+            main_for(&root, &showcase.id)?;
+            println!("self-test=ok overlay={}", showcase.id);
+            Ok(())
+        }
+        CommandLine::All => {
+            for overlay in manifest(&root)? {
+                main_for(&root, &overlay.id)?;
+            }
+            Ok(())
+        }
+        CommandLine::One(requested) => main_for(&root, &requested),
     }
-    main_for(&root, &requested)
 }
 
 fn main() -> ExitCode {
@@ -182,6 +220,24 @@ fn main() -> ExitCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cli_contract_is_strict_and_help_is_side_effect_free() {
+        assert_eq!(
+            parse_arguments(&["--help".into()]).unwrap(),
+            CommandLine::Help
+        );
+        assert_eq!(
+            parse_arguments(&["--all".into()]).unwrap(),
+            CommandLine::All
+        );
+        assert_eq!(
+            parse_arguments(&["resource_37c".into()]).unwrap(),
+            CommandLine::One("resource_37c".into())
+        );
+        assert!(parse_arguments(&["--unknown".into()]).is_err());
+        assert!(parse_arguments(&["--all".into(), "resource_37c".into()]).is_err());
+    }
 
     #[test]
     fn child_checks_are_cargo_authoritative() {

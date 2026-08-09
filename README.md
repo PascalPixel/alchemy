@@ -9,86 +9,68 @@
 
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-Twenty-five years after *Golden Sun* was first released, Alchemy is an
-automated, clean-room attempt to reconstruct the Game Boy Advance classic as
-readable C code, data, artwork, maps, and music.
+Alchemy is an unofficial clean-room reconstruction of the English release of
+*Golden Sun* for the Game Boy Advance. It documents and rebuilds the program,
+assets, and data needed to study the original game and its construction.
 
-Decompilation works backwards from a finished game to human-readable source
-code that can be understood, preserved, and built again. A faithful source tree
-can make native ports possible, keep a game working on modern hardware, add
-widescreen and high-frame-rate support, improve controls and accessibility, fix
-long-standing bugs, and provide a foundation for mods and entirely new
-adventures.
+Game-specific facts are reconstructed from the approved local ROM evidence.
+External projects may inform generic tooling or repository methods only; they
+are not source, naming, or game-knowledge evidence.
 
-Alchemy is not a remake, ROM hack, emulator, or game download. Its immediate
-goal is a byte-perfect reconstruction of the English release of *Golden Sun*,
-followed by *The Lost Age* and the games' other languages.
+The project is a decompilation and preservation effort, not a remake, ROM hack,
+emulator, or game distribution. The target is the released English ROM; no ROM
+is distributed by this repository. *Golden Sun* and its original material are
+copyright Nintendo and Camelot Software Planning. Alchemy is not affiliated
+with or endorsed by either company.
 
-The name comes from the moment alchemy is released upon Weyard. In much the same
-spirit, this project is releasing *Golden Sun* from its finished ROM image into
-code and assets that people can study and learn from. We hope that, in doing so,
-Alchemy inspires new developers to create wonderful RPGs of their own.
+## DONE: Currently 28%
 
-## DONE: Currently 27%
+DONE measures executable bytes that rebuild identically to the target: exact C
+plus the small amount of code intentionally retained as permanent assembly.
+Semantic C is tracked separately as readable reconstruction work; it does not
+count toward DONE until its rebuilt bytes are exact.
 
-27% of the game's audited executable bytes now build from exact, byte-matching
-C, or belong to the small pieces of low-level code intentionally kept as
-permanent assembly. These four maps show where the code and assets of the
-English release stand today.
+The four maps below show the current byte metrics for the English release.
+Progress is measured by bytes, not function counts.
+
+For the two code charts, the bright band color marks Exact C, the pale band
+color marks permanent assembly, and the near-white ground covers Semantic C and
+ordinary assembly still to reconstruct. The footer reports separate byte
+shares for Semantic, Permanent ASM, and Exact C; ordinary assembly is not a
+separate footer item.
 
 ### Main game
 
-The main game is the 548,364 bytes of code that remain available while *Golden
-Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
-readable C that still needs to be matched. Dark gray marks the small pieces of
-low-level runtime structure kept as permanent assembly.
+The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=5d6113d4)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=3a3326cd)
 
 ### Code overlays
 
-*Golden Sun* also loads 96 additional code modules into memory when it needs
-them. This panel tracks all 798,888 executable bytes across those modules.
-Bright cyan is exact C, the softer cyan is readable C still being matched, gray
-is code still to reconstruct, and dark gray is permanent low-level assembly.
-Eleven of those modules are already completely exact, byte-matching C.
+The game loads 96 additional code overlays containing 798,890 executable bytes
+in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=bdd1921c)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=10afc5b8)
 
 ### Images and data
 
-The non-code part of the ROM is split across two panels. This one follows
-6,735,557 bytes of graphics, maps, text, and other data as they move from
-encoded ROM data to individually understood and reusable assets. Brighter
-magenta means a more complete reconstruction.
+This map covers 6,735,557 bytes of graphics, maps, text, and other data as they
+are converted into understood and reusable assets.
 
 ![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
 
 ### Music and sound
 
-The remaining 563,198 bytes of music, samples, sequences, and soundfonts have
-their own maturity panel so audio progress remains legible instead of being
-compressed into the image chart. Brighter orange means a more complete
-reconstruction.
+This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
 
 ![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
 
-Progress is measured by executable bytes rather than function counts, so every
-claimed byte must compile to the original game before it contributes to the
-headline.
+## Contributing and project status
 
-Contributors can follow the evidence-driven matching loop in [PRET.md](PRET.md).
+The evidence-driven reconstruction and matching workflow is described in
+[CONTRIBUTING.md](CONTRIBUTING.md). Current work, known blockers, and recent
+progress are summarized in [STATUS.md](STATUS.md). The native tools and their
+architecture are indexed in [docs/README.md](docs/README.md).
 
-## Preservation and copyright
-
-Alchemy is an unofficial, noncommercial decompilation and preservation project.
-*Golden Sun* and all associated names, characters, graphics, music, text, and
-other original material are copyright Nintendo and Camelot Software Planning.
-Alchemy is not affiliated with or endorsed by either company, and no ownership
-of *Golden Sun* is claimed.
-
-This repository does not distribute a game or ROM. Its reconstructed code is
-written from scratch from the released game. No original source code, leaked
-material, or other proprietary development material is used. The goal of this
-zero-provenance, clean-room approach is to keep Alchemy safe to study, share,
-and preserve online for many years to come.
+The clean-room boundary, source provenance, and publication rules are recorded
+in [PROVENANCE.md](PROVENANCE.md).

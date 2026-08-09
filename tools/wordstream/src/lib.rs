@@ -87,6 +87,24 @@ pub fn import_words(text: &str) -> Result<Vec<u8>, WordError> {
     Ok(result)
 }
 
+/// Exercise the binary's actual word-stream format in both directions and
+/// retain a negative case so a parser that accepts everything cannot pass.
+pub fn self_test() -> Result<String, String> {
+    let raw: Vec<u8> = [0u16, 1, 0x1234, 0xabcd, 0xffff]
+        .iter()
+        .flat_map(|word| word.to_le_bytes())
+        .collect();
+    let text = export_words(&raw).map_err(|error| error.to_string())?;
+    let rebuilt = import_words(&text).map_err(|error| error.to_string())?;
+    if rebuilt != raw {
+        return Err("wordstream self-test round trip changed".into());
+    }
+    if import_words("0x10000\n").is_ok() || import_words("0x1\ninvalid\n").is_ok() {
+        return Err("wordstream self-test accepted invalid input".into());
+    }
+    Ok(format!("self-test=ok words={}", raw.len() / 2))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

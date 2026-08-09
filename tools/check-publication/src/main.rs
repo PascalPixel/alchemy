@@ -21,7 +21,12 @@ use check_publication::{
     REJECTED_PATHS,
 };
 
-const USAGE: &str = "usage: check-publication {--staged|--pre-push|--self-test}";
+const USAGE: &str = "Usage: check-publication [--staged | --pre-push | --self-test]\n\nModes:\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history using update lines on stdin.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
+
+fn help() -> ExitCode {
+    println!("{USAGE}");
+    ExitCode::SUCCESS
+}
 
 fn root() -> &'static Path {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -139,15 +144,13 @@ fn self_test() -> ExitCode {
 
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.len() != 1 {
-        return fail(USAGE);
-    }
-    match args[0].as_str() {
-        "--staged" => match check_staged(root()) {
+    match args.as_slice() {
+        [argument] if argument == "-h" || argument == "--help" => help(),
+        [argument] if argument == "--staged" => match check_staged(root()) {
             Ok(()) => ExitCode::SUCCESS,
             Err(error) => fail(&error),
         },
-        "--pre-push" => {
+        [argument] if argument == "--pre-push" => {
             let mut updates = String::new();
             if let Err(error) = std::io::stdin().read_to_string(&mut updates) {
                 return fail(&format!("pre-push stdin failed: {error}"));
@@ -162,7 +165,7 @@ fn main() -> ExitCode {
                 }
             }
         }
-        "--self-test" => self_test(),
+        [argument] if argument == "--self-test" => self_test(),
         _ => fail(USAGE),
     }
 }

@@ -64,10 +64,28 @@ const CHECK: &[Entry] = &[
     },
 ];
 
-const ASSETS: &[Entry] = &[Entry {
-    name: "bl_site_symbols",
-    target: Target::Binary("tools/bl-site-symbols/target/release/bl-site-symbols"),
-}];
+const ASSETS: &[Entry] = &[
+    Entry {
+        name: "bl_site_symbols",
+        target: Target::Binary("tools/bl-site-symbols/target/release/bl-site-symbols"),
+    },
+    Entry {
+        name: "export_asset",
+        target: Target::Binary("tools/export-asset/target/release/export-asset"),
+    },
+    Entry {
+        name: "extract_resource",
+        target: Target::Binary("tools/extract-resource/target/release/extract-resource"),
+    },
+    Entry {
+        name: "import_asset",
+        target: Target::Binary("tools/import-asset/target/release/import-asset"),
+    },
+    Entry {
+        name: "tilemap",
+        target: Target::Binary("tools/tilemap/target/release/tilemap"),
+    },
+];
 
 const COMPILER: &[Entry] = &[
     Entry {
@@ -92,10 +110,173 @@ const COMPILER: &[Entry] = &[
     },
 ];
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NonPublicKind {
+    InternalDiagnostic,
+    SelfTestSupport,
+    BenchAuxiliary,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct NonPublicTarget {
+    /// The immediate directory under `tools/`, not the Cargo package name.
+    pub crate_name: &'static str,
+    pub binary: &'static str,
+    pub kind: NonPublicKind,
+    pub self_test: bool,
+}
+
+/// Every Cargo binary that is intentionally outside the public dispatcher.
+/// Public binaries are the entries above; this table is the complete and
+/// enforced remainder.  Keep auxiliary binaries here rather than allowing
+/// them to become accidental commands when a manifest gains a new target.
+const NON_PUBLIC: &[NonPublicTarget] = &[
+    NonPublicTarget {
+        crate_name: "alchemy-lints",
+        binary: "alchemy-lints",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "zlib",
+        binary: "alchemy-zlib",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "candidate-explain",
+        binary: "candidate-explain",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "candidate-show",
+        binary: "candidate-show",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "jobs",
+        binary: "jobs",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "lang-ban",
+        binary: "lang-ban",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "overlay-disasm",
+        binary: "parity_dump",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "rtl-align",
+        binary: "rtl-align",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "rtl-insn",
+        binary: "rtl-insn",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "rtl-schedule",
+        binary: "rtl-schedule",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "rtl-sexpr",
+        binary: "rtl-sexpr",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "thumb-disasm",
+        binary: "thumb-disasm",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "kind2-resources",
+        binary: "kind2-resources",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "late-runtime-data",
+        binary: "late-runtime-data",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "overlay-published",
+        binary: "overlay-published",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "dispatch",
+        binary: "dispatch",
+        kind: NonPublicKind::SelfTestSupport,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "alchemy-selftest",
+        binary: "alchemy-selftest",
+        kind: NonPublicKind::SelfTestSupport,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "cache-entry",
+        binary: "cache-entry",
+        kind: NonPublicKind::SelfTestSupport,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "decomp-targets",
+        binary: "decomp-targets",
+        kind: NonPublicKind::SelfTestSupport,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "self-test",
+        binary: "self-test",
+        kind: NonPublicKind::SelfTestSupport,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "compiler-corpus-regression",
+        binary: "compiler-corpus-regression-bench",
+        kind: NonPublicKind::BenchAuxiliary,
+        self_test: false,
+    },
+    NonPublicTarget {
+        crate_name: "integrate-matches",
+        binary: "integrate-matches-bench",
+        kind: NonPublicKind::BenchAuxiliary,
+        self_test: false,
+    },
+];
+
 const DECOMP: &[Entry] = &[
     Entry {
         name: "decomp_diagnose",
         target: Target::Binary("tools/decomp-diagnose/target/release/decomp-diagnose"),
+    },
+    Entry {
+        name: "discover",
+        target: Target::Binary("tools/discover/target/release/discover"),
+    },
+    Entry {
+        name: "integrate_matches",
+        target: Target::Binary("tools/integrate-matches/target/release/integrate-matches"),
     },
     Entry {
         name: "remaining_survey",
@@ -329,6 +510,10 @@ const METRICS: &[Entry] = &[
         name: "full_c_history",
         target: Target::Binary("tools/full-c-history/target/release/full-c-history"),
     },
+    Entry {
+        name: "full_c_progress",
+        target: Target::Binary("tools/full-c-progress/target/release/full-c-progress"),
+    },
 ];
 
 const OVERLAY: &[Entry] = &[
@@ -355,6 +540,10 @@ const OVERLAY: &[Entry] = &[
     Entry {
         name: "overlay_certify",
         target: Target::Binary("tools/overlay-certify/target/release/overlay-certify"),
+    },
+    Entry {
+        name: "overlay_disasm",
+        target: Target::Binary("tools/overlay-disasm/target/release/overlay-disasm"),
     },
     Entry {
         name: "overlay_driver",
@@ -501,6 +690,40 @@ pub fn all_entries() -> impl Iterator<Item = (Group, Entry)> {
     })
 }
 
+pub fn non_public_targets() -> &'static [NonPublicTarget] {
+    NON_PUBLIC
+}
+
+pub fn non_public_target(crate_name: &str, binary: &str) -> Option<NonPublicTarget> {
+    NON_PUBLIC
+        .iter()
+        .copied()
+        .find(|target| target.crate_name == crate_name && target.binary == binary)
+}
+
+fn target_identity(path: &str) -> Option<(&str, &str)> {
+    let parts: Vec<_> = path.split('/').collect();
+    match parts.as_slice() {
+        ["tools", crate_name, "target", "release", binary] => Some((crate_name, binary)),
+        ["tools", "target", "release", binary] => Some((binary, binary)),
+        _ => None,
+    }
+}
+
+pub fn public_target(crate_name: &str, binary: &str) -> bool {
+    all_entries().any(|(_, entry)| {
+        let Target::Binary(path) = entry.target;
+        target_identity(path) == Some((crate_name, binary))
+    })
+}
+
+pub fn should_self_test(crate_name: &str, binary: &str) -> bool {
+    if public_target(crate_name, binary) {
+        return true;
+    }
+    non_public_target(crate_name, binary).is_some_and(|target| target.self_test)
+}
+
 fn usage(group: Group) -> String {
     let mut output = format!("usage: {} <subcommand> [args...]\n", group.name());
     for entry in group.entries() {
@@ -637,7 +860,7 @@ pub fn run(group: Group, arguments: &[String]) -> ExitCode {
             (Some(first.as_str()), rest)
         });
 
-    if subcommand.is_none() || matches!(subcommand, Some("--list" | "--help")) {
+    if subcommand.is_none() || matches!(subcommand, Some("-h" | "--list" | "--help")) {
         print!("{}", usage(group));
         return ExitCode::SUCCESS;
     }
@@ -709,16 +932,16 @@ mod tests {
 
     #[test]
     fn usage_preserves_the_native_dispatcher_shape() {
-        assert_eq!(usage(Group::Assets).lines().count(), 2);
+        assert_eq!(usage(Group::Assets).lines().count(), 6);
         assert_eq!(
             usage(Group::Check).lines().next(),
             Some("usage: check <subcommand> [args...]")
         );
         assert_eq!(usage(Group::Compiler).lines().count(), 5);
-        assert_eq!(usage(Group::Decomp).lines().count(), 3);
+        assert_eq!(usage(Group::Decomp).lines().count(), 5);
         assert_eq!(usage(Group::Make).lines().count(), 50);
-        assert_eq!(usage(Group::Metrics).lines().count(), 6);
-        assert_eq!(usage(Group::Overlay).lines().count(), 15);
+        assert_eq!(usage(Group::Metrics).lines().count(), 7);
+        assert_eq!(usage(Group::Overlay).lines().count(), 16);
         assert_eq!(usage(Group::Search).lines().count(), 5);
         assert_eq!(usage(Group::Semantic).lines().count(), 4);
         assert!(usage(Group::Check).contains("  architecture"));
@@ -729,16 +952,44 @@ mod tests {
         assert!(find_entry(Group::Check, "compiler_corpus_regression").is_none());
         assert!(find_entry(Group::Check, "commands").is_none());
         assert!(find_entry(Group::Compiler, "mode_sweep").is_some());
+        for diagnostic in [
+            "candidate_explain",
+            "candidate_show",
+            "rtl_align",
+            "rtl_insn",
+            "rtl_schedule",
+            "rtl_sexpr",
+            "thumb_disasm",
+        ] {
+            assert!(find_entry(Group::Compiler, diagnostic).is_none());
+        }
         assert!(find_entry(Group::Assets, "bl_site_symbols").is_some());
+        assert!(find_entry(Group::Assets, "extract_resource").is_some());
         assert!(find_entry(Group::Decomp, "decomp_diagnose").is_some());
+        assert!(find_entry(Group::Decomp, "discover").is_some());
         assert!(find_entry(Group::Make, "build_assets").is_some());
         assert!(find_entry(Group::Make, "tokushu_map_resources").is_some());
         assert!(find_entry(Group::Metrics, "coverage_map").is_some());
+        assert!(find_entry(Group::Metrics, "full_c_progress").is_some());
         assert!(find_entry(Group::Overlay, "overlay_gaps").is_some());
+        assert!(find_entry(Group::Overlay, "overlay_disasm").is_some());
         assert!(find_entry(Group::Overlay, "overlay_certify").is_some());
         assert!(find_entry(Group::Search, "shape_sweep").is_some());
         assert!(find_entry(Group::Search, "alchemy_permuter").is_some());
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
+        assert_eq!(non_public_targets().len(), 22);
+        assert_eq!(
+            non_public_target("candidate-explain", "candidate-explain").map(|target| target.kind),
+            Some(NonPublicKind::InternalDiagnostic)
+        );
+        assert!(!public_target("candidate-explain", "candidate-explain"));
+        assert!(should_self_test("candidate-explain", "candidate-explain"));
+        assert!(!should_self_test(
+            "compiler-corpus-regression",
+            "compiler-corpus-regression-bench"
+        ));
+        assert!(should_self_test("build-rom", "build-rom"));
+        assert!(should_self_test("discover", "discover"));
         assert_eq!(
             top_level_usage(),
             "usage: dispatch <assets|check|compiler|decomp|make|metrics|overlay|search|semantic> <subcommand> [args...]"

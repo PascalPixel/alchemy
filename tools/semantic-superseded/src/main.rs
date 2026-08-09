@@ -10,6 +10,26 @@ use std::process::ExitCode;
 
 use semantic_superseded::{canonical_c_source, superseded_sources};
 
+const USAGE: &str = "Usage: semantic-superseded [--check | --self-test]\n\nModes:\n  (default)      Print semantic sources superseded by exact sources.\n  --check        Print matches and exit 1 when any are found.\n  --self-test    Run the superseded-source check's internal checks.\n  -h, --help     Show this help.";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Command {
+    Help,
+    List,
+    Check,
+    SelfTest,
+}
+
+fn parse_args(args: &[String]) -> Result<Command, &'static str> {
+    match args {
+        [] => Ok(Command::List),
+        [argument] if argument == "--check" => Ok(Command::Check),
+        [argument] if argument == "--self-test" => Ok(Command::SelfTest),
+        [argument] if argument == "-h" || argument == "--help" => Ok(Command::Help),
+        _ => Err(USAGE),
+    }
+}
+
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -103,7 +123,18 @@ fn self_test() {
 
 fn main() -> ExitCode {
     let argv: Vec<String> = std::env::args().skip(1).collect();
-    if argv.iter().any(|arg| arg == "--self-test") {
+    let command = match parse_args(&argv) {
+        Ok(command) => command,
+        Err(message) => {
+            eprintln!("error: {message}");
+            return ExitCode::FAILURE;
+        }
+    };
+    if command == Command::Help {
+        println!("{USAGE}");
+        return ExitCode::SUCCESS;
+    }
+    if command == Command::SelfTest {
         self_test();
         return ExitCode::SUCCESS;
     }
@@ -111,11 +142,34 @@ fn main() -> ExitCode {
     for path in &found {
         println!("{path}");
     }
-    if argv.iter().any(|arg| arg == "--check") {
+    if command == Command::Check {
         println!("superseded={}", found.len());
         if !found.is_empty() {
             return ExitCode::from(1);
         }
     }
     ExitCode::SUCCESS
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::{parse_args, Command};
+
+    fn args(items: &[&str]) -> Vec<String> {
+        items.iter().map(|item| (*item).to_string()).collect()
+    }
+
+    #[test]
+    fn preserves_default_and_check_modes() {
+        assert_eq!(parse_args(&args(&[])), Ok(Command::List));
+        assert_eq!(parse_args(&args(&["--check"])), Ok(Command::Check));
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Command::SelfTest));
+        assert_eq!(parse_args(&args(&["-h"])), Ok(Command::Help));
+    }
+
+    #[test]
+    fn rejects_unknown_options() {
+        assert!(parse_args(&args(&["--bogus"])).is_err());
+        assert!(parse_args(&args(&["--check", "--bogus"])).is_err());
+    }
 }

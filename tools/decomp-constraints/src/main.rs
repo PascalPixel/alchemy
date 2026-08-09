@@ -24,13 +24,55 @@ fn repo_root() -> PathBuf {
 
 const SAMPLE: &str = "Func_08000000:\n\tmov r3, r1\n\tldrsh r2, [r0, r3]\n\tcmp r2, #0\n\tblt .L0\n\tbl Func_08000100\n.L0:\n\tbx lr\n";
 
+const USAGE: &str = "Usage: decomp-constraints STEM [STEM ...]\n       decomp-constraints --self-test\n\nSTEM is an eight-digit hexadecimal function address.\n  --self-test    Run the constraint analyzer's internal checks.\n  -h, --help     Show this help.";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Command {
+    Help,
+    SelfTest,
+    Stems(Vec<String>),
+}
+
+fn parse_args(arguments: &[String]) -> Result<Command, &'static str> {
+    if arguments.len() == 1 && arguments[0] == "--self-test" {
+        return Ok(Command::SelfTest);
+    }
+    if arguments.len() == 1 && (arguments[0] == "-h" || arguments[0] == "--help") {
+        return Ok(Command::Help);
+    }
+    if arguments.iter().any(|argument| argument.starts_with('-')) {
+        return Err(USAGE);
+    }
+    let stem_pattern = Regex::new(r"^[0-9a-f]{8}$", "");
+    let stems: Vec<String> = arguments
+        .iter()
+        .filter(|argument| stem_pattern.is_match(argument))
+        .cloned()
+        .collect();
+    if stems.is_empty() {
+        return Err(USAGE);
+    }
+    Ok(Command::Stems(stems))
+}
+
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
 
     // PORT NOTE: cargo test is the real suite, but --self-test survives so the
     // repository's own gate can invoke the Rust binary exactly where it used
     // to invoke the deployed binary's self-test.
-    if arguments.iter().any(|argument| argument == "--self-test") {
+    let command = match parse_args(&arguments) {
+        Ok(command) => command,
+        Err(message) => {
+            eprintln!("{message}");
+            return ExitCode::FAILURE;
+        }
+    };
+    if command == Command::Help {
+        println!("{USAGE}");
+        return ExitCode::SUCCESS;
+    }
+    if command == Command::SelfTest {
         let result = infer_assembly_constraints("08000000", SAMPLE);
         if result.inferred_arguments != 2
             || result.memory.signed != 1
@@ -47,21 +89,7 @@ fn main() -> ExitCode {
         return ExitCode::SUCCESS;
     }
 
-    let stem_pattern = Regex::new(r"^[0-9a-f]{8}$", "");
-    let stems: Vec<&String> = arguments
-        .iter()
-        .filter(|argument| stem_pattern.is_match(argument))
-        .collect();
-
-    // A run that inspected nothing is a failure, not a silent success: this is
-    // the guard that stops the gate passing when every argument was junk.
-    if stems.is_empty() {
-        // PORT NOTE: the TypeScript throws, so bun prints an Error stack trace
-        // and exits 1. Only the message text and the exit code are contractual;
-        // the stack frames are not reproduced.
-        eprintln!("usage: decomp-constraints STEM [STEM ...]");
-        return ExitCode::FAILURE;
-    }
+    let Command::Stems(stems) = command else { unreachable!() };
 
     let root = repo_root();
     let output = root.join("out").join("decomp").join("constraints");
@@ -70,7 +98,7 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE;
     }
 
-    for stem in stems {
+    for stem in &stems {
         let path = root.join("asm").join(format!("{stem}.s"));
         // PORT NOTE: readFileSync(path, "utf8") replaces invalid sequences with
         // U+FFFD rather than failing, which from_utf8_lossy matches.
@@ -97,4 +125,26 @@ fn main() -> ExitCode {
         );
     }
     ExitCode::SUCCESS
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::{parse_args, Command};
+
+    fn args(items: &[&str]) -> Vec<String> {
+        items.iter().map(|item| (*item).to_string()).collect()
+    }
+
+    #[test]
+    fn preserves_stem_and_self_test_modes() {
+        assert_eq!(parse_args(&args(&["08000000"])), Ok(Command::Stems(vec!["08000000".into()])));
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Command::SelfTest));
+        assert_eq!(parse_args(&args(&["--help"])), Ok(Command::Help));
+    }
+
+    #[test]
+    fn rejects_unknown_options() {
+        assert!(parse_args(&args(&["--bogus"])).is_err());
+        assert!(parse_args(&args(&["08000000", "--bogus"])).is_err());
+    }
 }

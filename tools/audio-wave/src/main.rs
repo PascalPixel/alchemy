@@ -11,6 +11,9 @@ use std::process::ExitCode;
 
 use audio_wave::{ExactWaveHeaderSource, ExactWavePaddingSource, Scalar, WaveRecordSource};
 
+const USAGE: &str =
+    "usage: audio-wave build-record-stdout SOURCE WAV | --self-test\n       audio-wave [-h|--help]";
+
 fn scalar(value: &serde_json::Value, label: &str) -> Result<Scalar, String> {
     if let Some(text) = value.as_str() {
         Ok(Scalar::Str(text.to_string()))
@@ -93,9 +96,25 @@ fn source(text: &str) -> Result<WaveRecordSource, String> {
     })
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    if let [command, catalog, wav] = args.as_slice() {
+fn validate_options(args: &[String]) -> Result<(), String> {
+    for argument in args {
+        if matches!(argument.as_str(), "-h" | "--help" | "--self-test") {
+            continue;
+        }
+        if argument.starts_with('-') {
+            return Err(format!("unknown option: {argument}"));
+        }
+    }
+    Ok(())
+}
+
+fn run(args: &[String]) -> Result<ExitCode, String> {
+    validate_options(args)?;
+    if args.iter().any(|arg| arg == "-h" || arg == "--help") {
+        println!("{USAGE}");
+        return Ok(ExitCode::SUCCESS);
+    }
+    if let [command, catalog, wav] = args {
         if command == "build-record-stdout" {
             let outcome = (|| {
                 let wav = std::fs::read(wav).map_err(|error| error.to_string())?;
@@ -117,25 +136,55 @@ fn main() -> ExitCode {
                     .write_all(&built)
                     .map_err(|error| error.to_string())
             })();
-            return match outcome {
-                Ok(()) => ExitCode::SUCCESS,
-                Err(message) => {
-                    eprintln!("error: {message}");
-                    ExitCode::FAILURE
-                }
-            };
+            return outcome
+                .map(|()| ExitCode::SUCCESS)
+                .map_err(|message| message.to_string());
         }
     }
     if args.iter().any(|arg| arg == "--self-test") {
-        match audio_wave::self_test() {
-            Ok(()) => ExitCode::SUCCESS,
-            Err(message) => {
-                eprintln!("error: {message}");
-                ExitCode::FAILURE
-            }
-        }
+        audio_wave::self_test().map_err(|message| message.to_string())?;
+        Ok(ExitCode::SUCCESS)
     } else {
-        println!("usage: audio-wave --self-test");
-        ExitCode::SUCCESS
+        println!("{USAGE}");
+        Ok(ExitCode::SUCCESS)
+    }
+}
+
+fn main() -> ExitCode {
+    match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
+        Ok(code) => code,
+        Err(message) => {
+            eprintln!("error: {message}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn help_is_successful_without_reading_inputs() {
+        assert_eq!(run(&args(&["-h"])).unwrap(), ExitCode::SUCCESS);
+        assert_eq!(run(&args(&["--help"])).unwrap(), ExitCode::SUCCESS);
+    }
+
+    #[test]
+    fn unknown_options_are_rejected_before_work() {
+        assert_eq!(
+            run(&args(&[
+                "build-record-stdout",
+                "missing.json",
+                "missing.wav",
+                "--bogus"
+            ]))
+            .unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

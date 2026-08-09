@@ -11,6 +11,31 @@ use static_sprite_series::{
 
 const USAGE: &str = "usage: static-sprite-series export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N] [--suffix-zeros N] | build INDEX --palette PNG --output FILE | verify ROM INDEX --palette PNG | --self-test";
 
+const OPTIONS: &[&str] = &[
+    "--directory",
+    "--palette",
+    "--address",
+    "--end",
+    "--descriptor-table",
+    "--descriptor-count",
+    "--palette-offset",
+    "--palette-entries",
+    "--suffix-zeros",
+    "--output",
+];
+
+fn reject_unknown_options(args: &[String]) -> Result<(), Error> {
+    for arg in args {
+        if arg.starts_with('-')
+            && !matches!(arg.as_str(), "-h" | "--help" | "--self-test")
+            && !OPTIONS.contains(&arg.as_str())
+        {
+            return Err(Error(format!("unknown option {arg}\n{USAGE}")));
+        }
+    }
+    Ok(())
+}
+
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let index = args.iter().position(|arg| arg == name)
         .ok_or_else(|| Error(format!("{name} is required")))?;
@@ -39,10 +64,18 @@ fn number(text: Option<String>, default: i64) -> Result<i64, Error> {
 }
 
 fn run(args: &[String]) -> Result<(), Error> {
-    if args.iter().any(|arg| arg == "--self-test") {
-        self_test()?;
-        if args.len() == 1 { return Ok(()); }
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        println!("{USAGE}");
+        return Ok(());
     }
+    if args.iter().any(|arg| arg == "--self-test") {
+        if args.len() != 1 {
+            return Err(Error("--self-test cannot be combined with another command".into()));
+        }
+        self_test()?;
+        return Ok(());
+    }
+    reject_unknown_options(args)?;
     match args.first().map(String::as_str) {
         Some("export-series") => {
             let rom_path = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
@@ -95,7 +128,6 @@ fn run(args: &[String]) -> Result<(), Error> {
             println!("identical=true bytes={}", number_field(&index, "size")?);
             Ok(())
         }
-        Some("--help") | Some("-h") => { println!("{USAGE}"); Ok(()) }
         _ => Err(Error(USAGE.into())),
     }
 }
@@ -112,5 +144,15 @@ fn main() -> ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => { eprintln!("error: {message}"); ExitCode::FAILURE }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn rejects_unknown_options_before_dispatch() {
+        assert!(run(&["export-series".into(), "rom.gba".into(), "--bogus".into()]).is_err());
     }
 }

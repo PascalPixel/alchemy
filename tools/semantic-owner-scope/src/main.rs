@@ -10,9 +10,11 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use semantic_owner_scope::{
-    census_declared_closed, group_owners, has_epilogue, is_stem_argument, open_owners,
-    overlaps, owners_to_json, render_report, row_facts_from_assembly, AddressRange, Region,
+    census_declared_closed, group_owners, has_epilogue, is_stem_argument, open_owners, overlaps,
+    owners_to_json, render_report, row_facts_from_assembly, AddressRange, Region,
 };
+
+const USAGE: &str = "Usage: semantic-owner-scope [--help|-h] [--self-test] [--check|--json|STEM]\n\nInspect open semantic owners or check the closed main-image census.\n";
 
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -123,7 +125,24 @@ fn self_test() -> Result<(), String> {
     Ok(())
 }
 
+fn validate_arguments(args: &[String]) -> Result<(), String> {
+    if let Some(argument) = args.iter().find(|argument| {
+        !matches!(
+            argument.as_str(),
+            "-h" | "--help" | "--self-test" | "--check" | "--json"
+        ) && !is_stem_argument(argument)
+    }) {
+        return Err(format!("unknown option or owner: {argument}\n{USAGE}"));
+    }
+    Ok(())
+}
+
 fn run(args: &[String]) -> Result<(), String> {
+    validate_arguments(args)?;
+    if args.iter().any(|a| matches!(a.as_str(), "-h" | "--help")) {
+        print!("{USAGE}");
+        return Ok(());
+    }
     if args.iter().any(|a| a == "--self-test") {
         return self_test();
     }
@@ -160,5 +179,22 @@ fn main() -> ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unknown_options_are_rejected_before_the_scan() {
+        let error = validate_arguments(&["--not-an-option".into()]).unwrap_err();
+        assert!(error.contains("unknown option or owner: --not-an-option"));
+    }
+
+    #[test]
+    fn documented_arguments_remain_valid() {
+        validate_arguments(&["--check".into()]).unwrap();
+        validate_arguments(&["--json".into(), "080d77b4".into()]).unwrap();
     }
 }

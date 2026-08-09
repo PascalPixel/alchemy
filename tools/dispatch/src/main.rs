@@ -6,6 +6,10 @@ fn main() -> ExitCode {
         eprintln!("{}", dispatch::top_level_usage());
         return ExitCode::from(2);
     };
+    if matches!(group_name.as_str(), "-h" | "--help" | "--list") {
+        println!("{}", dispatch::top_level_usage());
+        return ExitCode::SUCCESS;
+    }
     let Some(group) = dispatch::Group::parse(&group_name) else {
         eprintln!("unknown dispatch group: {group_name}");
         eprintln!(

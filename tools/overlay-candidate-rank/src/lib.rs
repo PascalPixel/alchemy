@@ -152,8 +152,16 @@ fn parse_worker_input(text: &str) -> Result<(PathBuf, Vec<Pairing>), String> {
     let mut pairings = Vec::with_capacity(rows.len());
     for row in rows {
         pairings.push(Pairing {
-            overlay: row.get("overlay").and_then(Value::as_str).unwrap_or("").to_string(),
-            address: row.get("address").and_then(Value::as_str).unwrap_or("").to_string(),
+            overlay: row
+                .get("overlay")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
+            address: row
+                .get("address")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
             bytes: row.get("bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
             semantic_source: row
                 .get("semanticSource")
@@ -189,7 +197,10 @@ fn render_measurements(measurements: &[Measurement]) -> String {
         if let Some(diff) = row.differing_halfwords {
             out.push_str(&format!(",\"differingHalfwords\":{diff}"));
         }
-        out.push_str(&format!(",\"semanticSource\":\"{}\"", json_escape(&row.semantic_source)));
+        out.push_str(&format!(
+            ",\"semanticSource\":\"{}\"",
+            json_escape(&row.semantic_source)
+        ));
         if let Some(error) = &row.error {
             out.push_str(&format!(",\"error\":\"{}\"", json_escape(error)));
         }
@@ -208,20 +219,38 @@ fn render_report(measurements: &[Measurement]) -> String {
     for (index, row) in measurements.iter().enumerate() {
         out.push_str("    {\n");
         out.push_str(&format!("      \"id\": \"{}\",\n", json_escape(&row.id)));
-        out.push_str(&format!("      \"overlay\": \"{}\",\n", json_escape(&row.overlay)));
-        out.push_str(&format!("      \"address\": \"{}\",\n", json_escape(&row.address)));
+        out.push_str(&format!(
+            "      \"overlay\": \"{}\",\n",
+            json_escape(&row.overlay)
+        ));
+        out.push_str(&format!(
+            "      \"address\": \"{}\",\n",
+            json_escape(&row.address)
+        ));
         let has_more = row.candidate_bytes.is_some()
             || row.size_delta.is_some()
             || row.differing_halfwords.is_some()
             || row.error.is_some();
-        out.push_str(&format!("      \"span\": {}{}\n", row.span, if has_more { "," } else { "" }));
+        out.push_str(&format!(
+            "      \"span\": {}{}\n",
+            row.span,
+            if has_more { "," } else { "" }
+        ));
         if let Some(bytes) = row.candidate_bytes {
-            let more = row.size_delta.is_some() || row.differing_halfwords.is_some() || row.error.is_some();
-            out.push_str(&format!("      \"candidateBytes\": {bytes}{}\n", if more { "," } else { "" }));
+            let more = row.size_delta.is_some()
+                || row.differing_halfwords.is_some()
+                || row.error.is_some();
+            out.push_str(&format!(
+                "      \"candidateBytes\": {bytes}{}\n",
+                if more { "," } else { "" }
+            ));
         }
         if let Some(delta) = row.size_delta {
             let more = row.differing_halfwords.is_some() || row.error.is_some();
-            out.push_str(&format!("      \"sizeDelta\": {delta}{}\n", if more { "," } else { "" }));
+            out.push_str(&format!(
+                "      \"sizeDelta\": {delta}{}\n",
+                if more { "," } else { "" }
+            ));
         }
         if let Some(diff) = row.differing_halfwords {
             out.push_str(&format!("      \"differingHalfwords\": {diff},\n"));
@@ -250,12 +279,30 @@ fn parse_measurements(text: &str) -> Result<Vec<Measurement>, String> {
     let mut measurements = Vec::with_capacity(items.len());
     for item in items {
         measurements.push(Measurement {
-            id: item.get("id").and_then(Value::as_str).unwrap_or("").to_string(),
-            overlay: item.get("overlay").and_then(Value::as_str).unwrap_or("").to_string(),
-            address: item.get("address").and_then(Value::as_str).unwrap_or("").to_string(),
+            id: item
+                .get("id")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
+            overlay: item
+                .get("overlay")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
+            address: item
+                .get("address")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
             span: item.get("span").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            candidate_bytes: item.get("candidateBytes").and_then(Value::as_f64).map(|n| n as i64),
-            size_delta: item.get("sizeDelta").and_then(Value::as_f64).map(|n| n as i64),
+            candidate_bytes: item
+                .get("candidateBytes")
+                .and_then(Value::as_f64)
+                .map(|n| n as i64),
+            size_delta: item
+                .get("sizeDelta")
+                .and_then(Value::as_f64)
+                .map(|n| n as i64),
             differing_halfwords: item
                 .get("differingHalfwords")
                 .and_then(Value::as_f64)
@@ -265,7 +312,10 @@ fn parse_measurements(text: &str) -> Result<Vec<Measurement>, String> {
                 .and_then(Value::as_str)
                 .unwrap_or("")
                 .to_string(),
-            error: item.get("error").and_then(Value::as_str).map(str::to_string),
+            error: item
+                .get("error")
+                .and_then(Value::as_str)
+                .map(str::to_string),
         });
     }
     Ok(measurements)
@@ -284,7 +334,9 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
             let image = match images.iter().find(|(name, _)| name == &row.overlay) {
                 Some((_, data)) => data.clone(),
                 None => {
-                    let source_path = root.join("assets/code").join(format!("{}_overlay.s", row.overlay));
+                    let source_path = root
+                        .join("assets/code")
+                        .join(format!("{}_overlay.s", row.overlay));
                     let data = assemble_overlay(&OverlaySource::path(&source_path), OVERLAY_BASE)?;
                     images.push((row.overlay.clone(), data.clone()));
                     data
@@ -294,14 +346,24 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                 .map_err(|error| error.to_string())?;
             let start = (address - OVERLAY_BASE).max(0) as usize;
             let end = (start + row.bytes as usize).min(image.len());
-            let expected = if start < image.len() { &image[start..end] } else { &[] };
+            let expected = if start < image.len() {
+                &image[start..end]
+            } else {
+                &[]
+            };
             let source = root.join(&row.semantic_source);
-            let routing_source = root
-                .join("exact")
-                .join(format!("{}_c_{}.c", row.overlay, &row.address[2..]));
+            let routing_source =
+                root.join("exact")
+                    .join(format!("{}_c_{}.c", row.overlay, &row.address[2..]));
             let owner_work = work.join(format!("{}-{}", row.overlay, &row.address[2..]));
             fs::create_dir_all(&owner_work).map_err(|error| error.to_string())?;
-            let compiled = compile_overlay_candidate(&source, &owner_work, &row.overlay, Some(&routing_source), &[])?;
+            let compiled = compile_overlay_candidate(
+                &source,
+                &owner_work,
+                &row.overlay,
+                Some(&routing_source),
+                &[],
+            )?;
             Ok(Measurement {
                 id: id.clone(),
                 overlay: row.overlay.clone(),
@@ -367,12 +429,61 @@ pub fn self_test() -> Result<(), String> {
 }
 
 fn value_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
-    args.iter().position(|arg| arg == flag).and_then(|index| args.get(index + 1)).map(String::as_str)
+    args.iter()
+        .position(|arg| arg == flag)
+        .and_then(|index| args.get(index + 1))
+        .map(String::as_str)
+}
+
+const USAGE: &str = "usage: overlay-candidate-rank [--overlay resource_NNN] [--jobs N] [--top N] [--max N] [--work PATH]\n       overlay-candidate-rank --self-test\n       overlay-candidate-rank --worker INPUT OUTPUT";
+
+fn validate_args(args: &[String]) -> Result<bool, String> {
+    if args.first().map(String::as_str) == Some("--worker") {
+        return if args.len() == 3 {
+            Ok(false)
+        } else {
+            Err("usage: overlay-candidate-rank --worker INPUT OUTPUT".to_string())
+        };
+    }
+    if args.len() == 1 && args[0] == "--self-test" {
+        return Ok(false);
+    }
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        println!("{USAGE}");
+        return Ok(true);
+    }
+    let value_flags = ["--overlay", "--jobs", "--top", "--max", "--work"];
+    let mut index = 0;
+    while index < args.len() {
+        let argument = args[index].as_str();
+        if !value_flags.contains(&argument) {
+            return Err(format!("unknown or misplaced option: {argument}\n{USAGE}"));
+        }
+        let value = args
+            .get(index + 1)
+            .ok_or_else(|| format!("{argument} requires a value\n{USAGE}"))?;
+        if value.starts_with('-') && argument != "--work" {
+            return Err(format!("{argument} requires a value\n{USAGE}"));
+        }
+        if matches!(argument, "--jobs" | "--top" | "--max") {
+            let number = value
+                .parse::<i64>()
+                .map_err(|_| format!("{argument} must be a positive integer\n{USAGE}"))?;
+            if number < 1 {
+                return Err(format!("{argument} must be a positive integer\n{USAGE}"));
+            }
+        }
+        index += 2;
+    }
+    Ok(false)
 }
 
 /// `main()`. `root` is `overlay_candidate_rank.ts`'s `ROOT`; `self_exe` is the
 /// path this process was invoked as, reused to spawn worker children.
 pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> {
+    if validate_args(args)? {
+        return Ok(());
+    }
     if args.first().map(String::as_str) == Some("--worker") {
         let input_path = args.get(1).ok_or("--worker requires an input path")?;
         let output_path = args.get(2).ok_or("--worker requires an output path")?;
@@ -385,19 +496,28 @@ pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> 
     let requested_jobs = value_after(args, "--jobs").and_then(|text| text.parse::<i64>().ok());
     let cores = available_parallelism().map(|n| n.get()).unwrap_or(1);
     let jobs = resolve_jobs(requested_jobs, cores) as i64;
-    let top = value_after(args, "--top").and_then(|text| text.parse::<i64>().ok()).unwrap_or(40);
-    let limit = value_after(args, "--max").and_then(|text| text.parse::<i64>().ok()).unwrap_or(i64::MAX);
+    let top = value_after(args, "--top")
+        .and_then(|text| text.parse::<i64>().ok())
+        .unwrap_or(40);
+    let limit = value_after(args, "--max")
+        .and_then(|text| text.parse::<i64>().ok())
+        .unwrap_or(i64::MAX);
     if jobs < 1 || top < 1 || limit < 1 {
         return Err("--jobs, --top and --max must be positive integers".to_string());
     }
-    let mut rows: Vec<Pairing> = reading_list(root)?.into_iter().filter(|row| !row.blocked).collect();
+    let mut rows: Vec<Pairing> = reading_list(root)?
+        .into_iter()
+        .filter(|row| !row.blocked)
+        .collect();
     if let Some(overlay) = only_overlay {
         rows.retain(|row| row.overlay == overlay);
     }
     if limit < rows.len() as i64 {
         rows.truncate(limit.max(0) as usize);
     }
-    let work = value_after(args, "--work").map(PathBuf::from).unwrap_or_else(|| root.join("out/overlay-candidate-rank"));
+    let work = value_after(args, "--work")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| root.join("out/overlay-candidate-rank"));
     fs::create_dir_all(&work).map_err(|error| error.to_string())?;
 
     let bucket_count = (jobs as usize).min(rows.len().max(1));
@@ -411,7 +531,8 @@ pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> 
         let input_path = work.join(format!("worker-{index}.input.json"));
         let output_path = work.join(format!("worker-{index}.output.json"));
         let owner_work = work.join(format!("worker-{index}"));
-        fs::write(&input_path, render_worker_input(&owner_work, bucket)).map_err(|error| error.to_string())?;
+        fs::write(&input_path, render_worker_input(&owner_work, bucket))
+            .map_err(|error| error.to_string())?;
         let child = Command::new(self_exe)
             .arg("--worker")
             .arg(&input_path)
@@ -449,7 +570,8 @@ pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> 
     }
     measured.sort_by(compare_measurements);
 
-    fs::write(work.join("report.json"), render_report(&measured)).map_err(|error| error.to_string())?;
+    fs::write(work.join("report.json"), render_report(&measured))
+        .map_err(|error| error.to_string())?;
 
     println!("tier  owner                 span  bytes  delta  diff_hw  semantic source");
     for row in measured.iter().take(top.max(0) as usize) {
@@ -458,8 +580,14 @@ pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> 
             Some(delta) if delta >= 0 => format!("+{delta}"),
             Some(delta) => format!("{delta}"),
         };
-        let candidate_bytes = row.candidate_bytes.map(|n| n.to_string()).unwrap_or_else(|| "-".to_string());
-        let differing = row.differing_halfwords.map(|n| n.to_string()).unwrap_or_else(|| "-".to_string());
+        let candidate_bytes = row
+            .candidate_bytes
+            .map(|n| n.to_string())
+            .unwrap_or_else(|| "-".to_string());
+        let differing = row
+            .differing_halfwords
+            .map(|n| n.to_string())
+            .unwrap_or_else(|| "-".to_string());
         println!(
             "{:>4}  {:<20}  {:>4}  {:>5}  {:>5}  {:>7}  {}",
             effort_tier(row),
@@ -471,7 +599,14 @@ pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> 
             row.semantic_source,
         );
     }
-    let counts: Vec<usize> = (0..6).map(|tier| measured.iter().filter(|row| effort_tier(row) == tier).count()).collect();
+    let counts: Vec<usize> = (0..6)
+        .map(|tier| {
+            measured
+                .iter()
+                .filter(|row| effort_tier(row) == tier)
+                .count()
+        })
+        .collect();
     println!(
         "measured={} exact={} near8={} near20={} same_size_far={} size_mismatch={} errors={}",
         measured.len(),
@@ -531,15 +666,24 @@ mod tests {
     fn compare_orders_by_tier_then_diff_then_span_desc() {
         let low_tier = measurement(4, Some(0), Some(0), None);
         let high_tier = measurement(4, Some(2), Some(0), None);
-        assert_eq!(compare_measurements(&low_tier, &high_tier), std::cmp::Ordering::Less);
+        assert_eq!(
+            compare_measurements(&low_tier, &high_tier),
+            std::cmp::Ordering::Less
+        );
 
         let fewer_diff = measurement(4, Some(0), Some(1), None);
         let more_diff = measurement(4, Some(0), Some(9), None);
-        assert_eq!(compare_measurements(&fewer_diff, &more_diff), std::cmp::Ordering::Less);
+        assert_eq!(
+            compare_measurements(&fewer_diff, &more_diff),
+            std::cmp::Ordering::Less
+        );
 
         let bigger_span = measurement(8, Some(0), Some(1), None);
         let smaller_span = measurement(4, Some(0), Some(1), None);
-        assert_eq!(compare_measurements(&bigger_span, &smaller_span), std::cmp::Ordering::Less);
+        assert_eq!(
+            compare_measurements(&bigger_span, &smaller_span),
+            std::cmp::Ordering::Less
+        );
     }
 
     #[test]
@@ -548,5 +692,13 @@ mod tests {
         let expected = "{\n  \"measured\": [\n    {\n      \"id\": \"resource_0:0\",\n      \"overlay\": \"resource_0\",\n      \"address\": \"0x0\",\n      \"span\": 4,\n      \"sizeDelta\": 0,\n      \"differingHalfwords\": 2,\n      \"semanticSource\": \"semantic\"\n    }\n  ]\n}\n";
         assert_eq!(render_report(&rows), expected);
         assert_eq!(render_report(&[]), "{\n  \"measured\": []\n}\n");
+    }
+
+    #[test]
+    fn help_and_unknown_options_are_rejected_before_work() {
+        assert!(validate_args(&["--unknown".into()]).is_err());
+        assert!(validate_args(&["--jobs".into()]).is_err());
+        assert!(validate_args(&["--jobs".into(), "0".into()]).is_err());
+        assert!(validate_args(&["--help".into()]).unwrap());
     }
 }

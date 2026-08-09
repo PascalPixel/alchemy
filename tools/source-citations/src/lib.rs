@@ -430,11 +430,10 @@ mod tests {
 
     #[test]
     fn citation_pattern_is_not_widened_to_rust_paths() {
-        // The de-widening PORT NOTE, asserted. `tools/a/b.rs` contains no
-        // `tools/` substring, so nothing matches; `tools/a/b.ts` likewise,
-        // because the hyphen is outside the body class.
+        // The de-widening PORT NOTE, asserted. Nested TypeScript paths are
+        // part of the original pattern; Rust paths are not.
         assert!(citations("tools/a/b.rs").is_empty());
-        assert!(citations("tools/a/b.ts").is_empty());
+        assert_eq!(citations("tools/a/b.ts"), vec!["tools/a/b.ts"]);
     }
 
     #[test]
@@ -607,15 +606,13 @@ mod tests {
                 // Nested, and a non-source extension that must be ignored.
                 ("asm/deep/b.inc", b".byte 0 // tools/check/source_citations.ts\n"),
                 ("exact/notes.md", b"tools/absent.ts\n"),
+                ("tools/check/source_citations.ts", b"// fixture tool\n"),
             ],
         );
         let sources = collect_sources(&root);
         assert_eq!(sources.len(), 2, "only .c/.h/.s/.inc are sources");
-        // The fixture root has no tools/ tree, so existence is judged against
-        // the real repository to keep this about the walk, not the filesystem.
-        let real = repo_root();
         let retired = retired_tools("| `tools/gone.ts` | `abc1234` |");
-        assert!(broken_citations(&sources, &|p| real.join(p).exists(), &retired).is_empty());
+        assert!(broken_citations(&sources, &|p| root.join(p).exists(), &retired).is_empty());
     }
 
     #[test]

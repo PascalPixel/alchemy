@@ -1,215 +1,213 @@
 # Working on Alchemy
 
-Alchemy reconstructs *Golden Sun* (GBA) as byte-exact C. A change counts only
-when the rebuilt bytes are identical to the released ROM. The native Rust
-toolchain under `tools/` is the repository's operational tooling layer;
-shared functionality belongs in workspace libraries or in the owning crate's
-library module, not in an unregistered helper.
+Alchemy reconstructs *Golden Sun* (GBA) as byte-exact C and independently
+described assets. A code change counts as Exact C only when the rebuilt bytes
+equal the released ROM. `DONE` in the public charts is Exact C plus the small,
+audited permanent-assembly category; semantic C is useful work but is not done.
 
-Every top-level native command group must have a section on this page, or it
-must not exist. `tools/documented` checks the dispatcher registry against
-these headings, and `tools/architecture` checks that every crate, path,
-dispatch entry, and documented group is valid and reachable. The registry is
-the only list of command groups. A new group must be documented before it can
-pass the gates.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow,
+[docs/TOOLS.md](docs/TOOLS.md) for commands, [STATUS.md](STATUS.md) for the live
+frontier, and [PROVENANCE.md](PROVENANCE.md) before handling evidence or build
+artifacts.
 
-Throwaway probes belong in the ignored `tools/scratch/` area while they are
-being explored. Graduate a useful probe into the appropriate native crate,
-then remove the scratch copy. Do not use scratch code as a repository tool or
-as a source of game-specific implementation.
+## Repository shape
 
-## The loop
+The native Rust crates under `tools/` are one operational tooling layer, not a
+hundred independent products. Public commands live in the dispatcher registry;
+the root Makefile is the workflow facade and its `dispatch-*` targets invoke
+that registry. Support libraries, internal diagnostics, self-test helpers, and
+benches have an explicit non-public classification. `architecture` rejects
+unregistered, unclassified, unreachable, or stale targets, and `documented`
+keeps the public catalog synchronized.
 
-1. **Pick an owner** — `tools/semantic-queue` or
-   `tools/overlay-twins --leads`.
-2. **Write C** into `semantic/<owner>.c` until it compiles and reads correctly.
-3. **Close the residual** using the bounded source and compiler searches.
-4. **Adopt it** with `tools/overlay-adopt`; adoption is what moves the
-   byte-exact counter.
-5. **Verify, then commit** with the repository gate and regenerated metrics.
+Shared behavior belongs in the owning crate's library module or a consumed
+support crate. A throwaway probe belongs in ignored `tools/scratch/`; graduate
+it after a second real use or delete it. Never create a parallel helper merely
+to avoid understanding the native path.
 
-Run the common workflow through the root `Makefile`:
+Preserve unrelated working-tree changes. The compiler fork may also be dirty
+with active experiments. Do not run `git submodule` commands inside a worktree:
+they can rewrite the shared `core.worktree` configuration and break the main
+checkout.
 
-```bash
-make verify          # authoritative byte-exact gate
-make test            # repository gates and every native self-test
-make lint            # architecture and policy gates
-make build-rom       # rebuild the ROM
-make build-assets    # rebuild the asset tree
-make progress        # print byte-exact progress
-make coverage        # refresh dashboard maps
+## The contributor loop
+
+1. Pick a small owner with `semantic semantic_queue`, or an overlay family with
+   `overlay overlay_twins --leads`.
+2. Recover the real boundary, entries, types, signedness, aliases, calls, stack
+   arguments, control flow, and side effects in `semantic/`.
+3. Compile and diagnose functions or residual clusters independently. A wrong
+   size or large diffuse residual means the source model is not ready.
+4. Try an exact sibling's witnessed shape, then bounded deterministic source
+   forms, then compiler modes. Use stochastic permutation only for a localized,
+   semantically reviewed residual.
+5. Review every automatic candidate for C dependency and behavior preservation.
+   A lower score is not proof of valid source.
+6. Prove the candidate at its eventual path and use the owner-specific adoption
+   gate: `integrate_matches` for main-image drafts and `overlay_adopt` for code
+   overlays. Adopt from outside `exact/`; copying a file is not proof.
+7. Record reusable evidence, run the focused checks, then run `make verify` once
+   before committing with regenerated metrics.
+
+## Common entry points
+
+Use the root Makefile for normal work:
+
+```sh
+make build-semantic  # compile semantic C while reconstructing
+make build-claimed   # link current exact owners
+make inventory       # provide the diagnostic overlay inventory when needed
+make progress        # calculate live Exact C
+make coverage-check  # report stale dashboard artifacts
+make test            # policy gates and native self-tests
+make lint            # architecture and publication policy
+make verify          # authoritative pre-commit gate
 ```
 
-For a single native command, use its Cargo manifest directly, for example:
+Run one public command through the dispatcher:
 
-```bash
-cargo run --release --manifest-path tools/semantic-queue/Cargo.toml -- --help
-cargo run --release --manifest-path tools/self-test/Cargo.toml
+```sh
+cargo run --release --manifest-path tools/dispatch/Cargo.toml -- \
+  semantic semantic_queue --help
 ```
+
+Focused commands and their caches are the iteration loop. `make verify` is the
+final proof, not a five-minute tax after every edit. Cache identity must include
+the source, route, compiler bundle, linker/scorer inputs, and relevant tool
+version; never reuse a result whose evidence changed.
 
 ## verify
 
-`make verify` is the authority. It rebuilds the tracked ROM stages and asset
-outputs, runs the native checks and self-tests, verifies semantic ownership and
-sealed-owner state, and checks the regenerated byte-exact progress. A green
-gate is the evidence that the work is real; a failed gate means the result is
-not ready to commit. Run it before every commit. It is deliberately complete
-and may take longer than the focused commands used during iteration.
+`make verify` rebuilds tracked ROM stages and asset outputs, runs policy checks
+and native self-tests, verifies semantic and exact ownership, and checks the
+regenerated metric. A failure is evidence to fix or explain, not a green result
+with a footnote. Run focused tests first and the complete gate before each
+commit that changes deliverable behavior or progress.
 
 ## self-test
 
-`tools/self-test` discovers native Cargo binaries from the workspace and
-runs their `--self-test` checks with bounded parallelism. It is also included
-in `make test`. A native command owns its own self-test; do not maintain a
-second hand-written list of tests. A newly added command must be discoverable,
-reachable from the workspace, documented here, and covered by its own check.
+Each public binary owns a meaningful `--self-test` or an explicit policy saying
+why it is not independently exercised. The native runner derives targets from
+the canonical binary classification rather than scanning source text. A new
+binary must be classified, reachable, documented when public, and covered by
+tests before architecture accepts it.
 
 ## make
 
-The root `Makefile` is the fast operational entry point. It delegates to the
-native crates for inventory, build stages, semantic checks, coverage, compiler
-checks, and verification. The build stages are `build-claimed`, `build-asm`,
-`build-assets`, `build-semantic`, `build-full`, and `build-rom`; use a focused
-stage while iterating and `make verify` before claiming completion.
-
-`tools/build-assets` owns the native asset pipeline, including resource
-plans, stream encoders, localization data, maps, graphics, text, audio, and
-the bespoke Camelot containers. Asset descriptions that are intended to be
-published remain tracked; ROM images, bulk dumps, build outputs, and caches do
-not. See `PROVENANCE.md` and `tools/check-publication` for the boundary.
+The Makefile is the stable façade for builds, assets, metrics, lint, and
+verification. Build stages are `build-claimed`, `build-asm`, `build-assets`,
+`build-semantic`, `build-full`, and `build-rom`. Use the smallest stage that
+answers the current question; avoid rebuilding the whole repository merely to
+score one source candidate.
 
 ## overlay
 
-The overlay crates own the 96 code overlays, which contain roughly 60% of the
-executable. `tools/overlay-disasm` and `tools/overlay-show` inspect an
-owner, `tools/overlay-inventory` builds the discovery queue,
-`tools/overlay-adopt` installs a byte-exact reconstruction, and
-`tools/overlay-twins` finds families where one owner informs another.
-Overlays reuse whole routines across maps, so related families are often the
-cheapest byte-exact work. Adopt only from outside `exact/`; adoption performs
-its own pre-flight assembly check.
+The overlay commands inspect, rank, compare, certify, and adopt the 96 loaded
+code modules. Use `overlay_disasm` and `overlay_show` for evidence,
+`exact_reading_list` and `overlay_twins` for witnessed relatives, and
+`overlay_adopt` only after exact-path preflight. Overlay commands and
+`build-semantic` require the diagnostic inventory file
+`out/decomp/overlays.json`; create it with `make inventory` when needed. The
+inventory is discovery input, not the byte-exact acceptance gate: an explicit
+`--span` may select an entry absent from its rows. Invalid owner IDs must fail
+clearly; advisory reports expose a separate `--check` mode when findings should
+gate automation.
 
 ## assets
 
-The asset crates extract, rebuild, and verify Golden Sun's resource formats:
-graphics, tilemaps, sprite banks, maps, text, audio sequences, localization
-data, and bespoke Camelot containers. These are resource-specific converters,
-not a generic format layer. Keep clean-room source descriptions and converted
-publishable assets in the repository when they are needed to reproduce the
-result. Keep generated ROM images, bulk extraction directories, and temporary
-outputs out of git.
+Asset commands extract, import, export, rebuild, and verify graphics, tilemaps,
+maps, text, audio, and Camelot containers. Source descriptions needed for a
+reproducible build may be tracked. ROMs, raw extraction dumps, built images,
+object files, and caches may not. A scanner must report failed or unclassified
+owners rather than silently dropping them.
 
 ## compiler
 
-The native compiler stack owns flag tables, per-source routing sets, approved
-cc1 digests, bundle admission, compiler plans, symbols, and compiler lints.
-`tools/mode-sweep` searches compiler configurations for a candidate and
-`tools/mode-cohort` tests a hypothesis across owners. Routing sets are
-append-only registries of independent discoveries: never resolve a merge by
-taking one side or by deleting an entry that appears inconvenient.
-
-When a residual survives both search axes it is often a scheduler tie.
-`tools/mode-sweep` records the escalation, while the shared native readers
-`tools/rtl-sexpr`, `tools/rtl-insn`, `tools/rtl-align`,
-`tools/rtl-schedule`, `tools/thumb-disasm`, and
-`tools/candidate-explain` inspect the compiler fork's own dumps and preserve
-its real scheduler tier order. Keep the approved compiler inputs reproducible
-and re-pin a cc1 digest only after a green verification.
+Compiler commands search fixed flag sets, compare cohorts, and verify routed
+owners. Routing tables and approved digest lists are append-only evidence:
+resolve merges per entry, never by taking one side or deleting an inconvenient
+route. Internal RTL readers diagnose the fork's real dumps; they do not justify
+a compiler change without narrow positive and negative regressions plus a
+zero-regression exact corpus.
 
 ## search
 
-Search finds a source form that compiles byte-exact while holding the compiler
-fixed. `tools/shape-sweep` applies bounded deterministic transforms seeded
-from `LAWS.md`; compiler mode search handles the other axis.
-`tools/alchemy-permuter` owns larger bounded permutation jobs: it preserves
-the portable `PERM_*`, compiler-backend, and instruction-scoring boundaries
-of decomp-permuter while using Alchemy's linked-byte scorer directly for game
-candidates. The asset alchemist and other native rescue searches are
-stochastic and must remain bounded probes with measured results. Never
-promote a near-match, and never let a search silently alter the compiler
-routing evidence it is testing.
+Search holds one axis fixed. `shape_sweep` applies bounded deterministic source
+transforms; compiler search holds source fixed; `alchemy_permuter` is a bounded
+rescue search with dependency-safe reordering, a hard iteration ceiling, and
+protected output cleanup. Never promote a near-match or use search to conceal
+wrong boundaries, missing side effects, guessed types, or diffuse residuals.
 
 ## decomp
 
-The decomp crates pick and diagnose owners. `tools/semantic-queue` ranks
-current C drafts, `tools/decomp-diagnose` explains why a candidate misses,
-and `tools/integrate-matches` handles installation of reviewed matches.
-Start here when the owner is not already known. Keep semantic drafts readable
-and separate from adopted exact sources so the adoption boundary remains
-auditable.
+Decomp commands discover owners, survey remaining executable regions, diagnose
+candidates, and integrate reviewed matches. `integrate_matches` is the
+main-image draft gate; `overlay_adopt` owns code-overlay adoption. Surveys must
+resolve paths from the repository root rather than the caller's current
+directory, and resolved blocker records must not remain in the active queue.
+Diagnose one independently provable function or cluster at a time even when
+adoption is owner-atomic.
 
 ## semantic
 
-The semantic-C tree contains readable reconstructions that are not yet
-byte-exact. `tools/semantic-queue` lists work ready to attempt,
-`tools/semantic-owner-scope` checks that an owner covers exactly its region,
-and `tools/semantic-superseded` retires sources replaced by adoption.
-Semantic C is the staging ground for understanding an owner; it is not proof
-of byte equality until the native build and verification gates accept it.
+`semantic/` contains readable, behaviorally reviewed C that is not yet
+byte-exact. Its flat filename conventions cover both main-image and overlay
+owners. Scope checks must account for complete noncontiguous ranges and shared
+entries. Semantic admission is not matching readiness, and matching readiness
+is not exact ownership; keep all three boundaries explicit.
 
 ## metrics
 
-The metrics crates measure and draw progress. `tools/full-c-progress`
-produces the byte counts carried by commit subjects, `tools/coverage-map`
-renders the README box trees, and `tools/audit-residuals` accounts for the
-remaining work. Progress is executable byte coverage, never function count:
-owner conversion percentages can look high while large owners still account
-for most of the unmatched bytes.
-
-The native dashboard server is `tools/dashboard-server`; it serves live
-coverage on `http://localhost:4649/` by default and watches the relevant
-worktree inputs. Its client and SVG output must remain reproducible and must
-preserve hover labels, readable rectangle labels, and the dashboard's exact
-progress terminology.
+Metrics measure executable bytes, derive history, and render coverage. Exact C
+and DONE have distinct numerators documented in
+[docs/FULL-C-BYTE-SHARE.md](docs/FULL-C-BYTE-SHARE.md). The dashboard watches
+the worktree and serves localhost by default; an explicit LAN bind must retain
+localhost access and share one state/watcher rather than duplicating work.
 
 ## check
 
-The check crates are run by `make lint` and the repository hooks. They include
-`tools/no-asm-c`, which forbids assembly escape hatches in C and headers in
-every spelling; `tools/check-publication`, which keeps ROM bytes and
-generated directories out of publishable content; `tools/check-commit-progress`,
-which enforces the progress-bearing commit subject; `tools/check-sanctum`,
-which gates the sealed-owner ledger; `tools/source-citations`, which checks
-clean-room provenance and retirement recovery; and
-`tools/architecture`, which enforces the native workspace shape. A check
-worth running twice belongs in these gates, not in an undocumented one-off.
+Check commands enforce architecture, publication boundaries, source citations,
+no-inline-assembly policy, exact progress, retained assembly, documentation,
+and the exhausted-search ledger. A check that scans nothing must fail. A check
+worth running twice belongs in these gates with a self-test, not in a private
+script or a warning remembered by one contributor.
 
-## Ledgers
+## Evidence ledgers
 
-| File | Owns |
+| File | Purpose |
 |---|---|
-| [LAWS.md](LAWS.md) | compiler behaviour proved with evidence |
-| [SANCTUM.md](SANCTUM.md) | owners withdrawn from routine attack after both axes are spent |
-| [PROVENANCE.md](PROVENANCE.md) | the clean-room boundary and recoverable retirements |
-| `metrics/gs1-en-progress.json` | the headline byte counts |
+| [LAWS.md](LAWS.md) | reproduced compiler/source behavior and negative stop rules |
+| [SANCTUM.md](SANCTUM.md) | owners with both bounded search axes exhausted, plus the live one-axis queue |
+| [PROVENANCE.md](PROVENANCE.md) | clean-room evidence, publication boundary, and retired-tool recovery |
+| [STATUS.md](STATUS.md) | current measured frontier and next decisions |
+
+Keep dated experiments in the history archive rather than in current guidance.
+Do not erase negative evidence simply to make documentation shorter.
 
 ## Hard rules
 
-- **Never `asm(...)`** in C or headers, in any spelling, including fixed-register
-  bindings and empty barriers. Byte equality never overrides this.
-- **Never copy game-specific code** from another decompilation project. Tooling
-  and methodology are reusable; function bodies, names, types, and comments
-  are not. See [PROVENANCE.md](PROVENANCE.md).
-- **Commit subjects end with `[ ☀️ exact / total ]`** matching regenerated
-  metrics. A deliberate regression needs `metrics: revert reduces Full-C`; a
-  changed denominator needs `metrics: correct executable denominator`.
-- **Never resolve a merge in compiler routing tables or the fork's `arm.c` by
-  taking one side.** Three-way merge against the merge-base, then resolve per
-  entry; a deletion carries intent too.
-- **Adopt from outside `exact/`.** Always rebuild the inventory before
-  regenerating progress.
-- **Keep the clean-room boundary.** Do not import game-specific code, names,
-  types, comments, or generated implementation from another decompilation.
-  Record tool and evidence provenance where reconstructed sources require it.
+- Never use `asm(...)`, `__asm(...)`, fixed-register bindings, empty assembly
+  barriers, copied ROM bytes, or equivalent escape hatches in C or headers.
+- Never import game-specific source, names, types, comments, pseudocode, or
+  generated implementation from another decompilation. Game-specific facts
+  come from the approved ROM set and local reconstruction evidence; generic
+  methodology is reusable, but game knowledge is not.
+- Adopt from outside `exact/` through the owner-specific gate, ensure the
+  diagnostic inventory file exists for overlay tools, and regenerate progress.
+- Commit subjects end with `[ ☀️ exact / total ]` matching staged metrics. A
+  proved denominator correction and a deliberate regression use their explicit
+  repository subject forms.
+- Never resolve compiler routing tables or the fork's GS1 source file
+  [`alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c`](alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c)
+  by taking one side wholesale. Three-way merge and review every independent
+  entry.
 
 ## The compiler fork
 
-`alchemy-gcc/` is ours to edit, not a third-party dependency. `dist/` holds the
-canonical built toolchain and worktrees must use the same compiler binary; two
-different cc1 builds make a witnessed byte-exact result ambiguous. Rebuilding
-the fork requires re-pinning its approved digest after a green verification.
-Keep compiler licensing and provenance files with the fork as required by its
-distribution terms.
-
-Do not run `git submodule` commands from inside a worktree: that rewrites the
-shared `core.worktree` configuration and can break git in the main checkout.
+`alchemy-gcc/` is an editable compiler repository with its own source,
+licensing, provenance, and build instructions. The main repository pins and
+verifies approved compiler bundles; it does not absorb distributed compiler
+binaries or licences. Worktrees use the canonical staged compiler so an exact
+witness is not ambiguous. Rebuild and append an approved digest only after the
+focused regressions, full routed corpus, `build-claimed`, and authoritative
+verification all pass.

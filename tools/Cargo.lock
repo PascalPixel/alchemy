@@ -180,10 +180,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "text-bg"
-version = "0.1.0"
-
-[[package]]
 name = "tilemap"
 version = "0.1.0"
 

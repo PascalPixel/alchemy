@@ -4,11 +4,15 @@
 //! Assembly export is owned by the overlay/discovery tools; this crate keeps
 //! the deterministic build and ROM verification API.
 
+// These ports are retained as test-only assembly-rendering fixtures. The
+// production package builder does not own assembly discovery or rendering.
+#[cfg(test)]
 mod armsrc;
-mod discover;
+#[cfg(test)]
 mod js;
-mod json;
+#[cfg(test)]
 mod toolchain;
+mod json;
 
 use json::Value;
 use std::path::Path;

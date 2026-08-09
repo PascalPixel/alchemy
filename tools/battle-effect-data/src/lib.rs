@@ -2188,6 +2188,10 @@ pub fn export_battle_effect_data(rom: &[u8], root: &Path) -> Res<Value> {
 // CLI
 // ---------------------------------------------------------------------------
 
+const USAGE: &str = "usage: battle-effect-data {build-stdout SOURCE --root ASSETS|export ROM --root ASSETS --output SOURCE|export-prefix ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS|verify-prefix ROM SOURCE --root ASSETS}";
+const EXPORT_USAGE: &str = "usage: battle-effect-data export ROM --root ASSETS --output SOURCE";
+const VERIFY_USAGE: &str = "usage: battle-effect-data verify ROM SOURCE --root ASSETS";
+
 fn option(args: &[String], name: &str) -> Option<String> {
     let index = args.iter().position(|arg| arg == name)?;
     args.get(index + 1).cloned()
@@ -2226,13 +2230,54 @@ pub fn self_test() -> Res<()> {
     Ok(())
 }
 
+fn validate_options(args: &[String], start: usize, allowed: &[&str]) -> Res<()> {
+    let mut index = start;
+    let mut seen = Vec::new();
+    while index < args.len() {
+        let option = args[index].as_str();
+        if !allowed.contains(&option) {
+            return err(USAGE);
+        }
+        if seen.contains(&option) {
+            return err(USAGE);
+        }
+        seen.push(option);
+        if args
+            .get(index + 1)
+            .is_none_or(|value| value.starts_with('-'))
+        {
+            return err(USAGE);
+        }
+        index += 2;
+    }
+    Ok(())
+}
+
 pub fn run(args: Vec<String>) -> Res<()> {
     if args.iter().any(|arg| arg == "--self-test") {
+        if args
+            .iter()
+            .any(|arg| arg.starts_with('-') && arg != "--self-test")
+        {
+            return err(USAGE);
+        }
         return self_test();
+    }
+    if args.iter().any(|arg| matches!(arg.as_str(), "-h" | "--help")) {
+        if args.iter().any(|arg| arg.starts_with('-'))
+            && args.iter().any(|arg| {
+                arg.starts_with('-') && !matches!(arg.as_str(), "-h" | "--help")
+            })
+        {
+            return err(USAGE);
+        }
+        println!("{USAGE}");
+        return Ok(());
     }
     let command = args.first().cloned().unwrap_or_default();
     let root = option(&args, "--root");
     if command == "build-stdout" {
+        validate_options(&args, 2, &["--root"])?;
         let input = args.get(1).cloned().unwrap_or_default();
         let root = root.unwrap_or_default();
         if input.is_empty() || root.is_empty() {
@@ -2248,11 +2293,12 @@ pub fn run(args: Vec<String>) -> Res<()> {
         return Ok(());
     }
     if command == "export" || command == "export-prefix" {
+        validate_options(&args, 2, &["--root", "--output"])?;
         let rom_path = args.get(1).cloned().unwrap_or_default();
         let output = option(&args, "--output").unwrap_or_default();
         let root = root.unwrap_or_default();
         if rom_path.is_empty() || root.is_empty() || output.is_empty() {
-            return err("usage: battle-effect-data export ROM --root ASSETS --output SOURCE");
+            return err(EXPORT_USAGE);
         }
         let rom = read_file(Path::new(&rom_path))?;
         let source = export_battle_effect_data(&rom, Path::new(&root))?;
@@ -2268,11 +2314,12 @@ pub fn run(args: Vec<String>) -> Res<()> {
         return Ok(());
     }
     if command == "verify" || command == "verify-prefix" {
+        validate_options(&args, 3, &["--root"])?;
         let rom_path = args.get(1).cloned().unwrap_or_default();
         let input = args.get(2).cloned().unwrap_or_default();
         let root = root.unwrap_or_default();
         if rom_path.is_empty() || input.is_empty() || root.is_empty() {
-            return err("usage: battle-effect-data verify ROM SOURCE --root ASSETS");
+            return err(VERIFY_USAGE);
         }
         // PORT NOTE: `readFileSync(path, "utf8")` is lossy, hence from_utf8_lossy.
         let text = String::from_utf8_lossy(&read_file(Path::new(&input))?).into_owned();
@@ -2285,7 +2332,7 @@ pub fn run(args: Vec<String>) -> Res<()> {
         println!("identical=true bytes={} records=104", built.len());
         return Ok(());
     }
-    err("usage: battle-effect-data {export ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS}")
+    err(USAGE)
 }
 
 #[cfg(test)]

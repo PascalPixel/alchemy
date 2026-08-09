@@ -65,11 +65,11 @@ void Func_02004058(u8 *parent)
     u32 index;
 
     for (index = 0; index <= 1; index++) {
-                              *(s32 *)(parent + 0x08),
-        pieces[index] = piece;
         piece = Func_0200828e(26,
+                              *(s32 *)(parent + 0x08),
                               *(s32 *)(parent + 0x0c),
                               *(s32 *)(parent + 0x10));
+        pieces[index] = piece;
         if (piece == 0) {
             continue;
         }

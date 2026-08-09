@@ -1,39 +1,23 @@
 #include "types.h"
 
 /*
- * resource_3a7 soft-float double unpack at 0x02001770, 212 bytes.
+ * resource_3bf soft-float double unpack at 0x02005e04, 212 bytes.
  *
- * TRANSPOSED from semantic/overlays/resource_3bf_c_02005e04.c.  The two owners
- * are not merely twins, they are BYTE-IDENTICAL: all 106 halfwords match, zero
- * differences of any kind.  The routine has no calls and no pool word naming an
- * overlay address ('cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 1770' reports
- * sites=0), which is why nothing needed substituting.  Only the entry symbol was
- * renamed.
+ * `overlay_twins resource_3bf --semantic` proves that this owner and
+ * resource_3a7:1770 are byte-identical across all 106 halfwords.  The source
+ * shape follows the generic GCC 2.96 `fp-bit.c` unpack routine in the local
+ * compiler source, including its word-order swap and packed-bitfield reads.
  *
- * r0 addresses the packed pair, r1 the 20-byte record to fill.  The packed pair
- * is copied to the local sp+0/sp+4 slots purely so the exponent and sign can be
- * read back with narrower loads ('ldrh [sp,#6]', 'ldrb [sp,#7]'); those reads
- * confirm the library's word order, in which the FIRST word of the pair is the
- * IEEE high word carrying the sign and exponent.  That is why the packed value
- * is carried as SoftDouble (a u64 whose low half is the first word) rather than
- * as a native double.
+ * The packed pair is copied to a local union so the exponent and sign can be
+ * read with the witnessed halfword and byte loads.  The first input word is
+ * the IEEE high word carrying the sign and exponent.
  *
- * Record layout, which this routine defines for the whole family:
+ * Record layout:
  *   +0  class (0 signalling NaN, 1 quiet NaN, 2 zero, 3 finite, 4 infinity)
- *   +4  sign (bit 31 of the high word)
+ *   +4  sign
  *   +8  unbiased exponent
  *   +12 significand low word
  *   +16 significand high word, normalised so bit 28 is set
- *
- * Four cases, in the assembly's order: biased exponent 0 with a zero
- * significand (class 2); biased exponent 0 with a non-zero significand, a
- * denormal seeded to -1022 and normalised with an UNSIGNED compare against
- * 0x0FFFFFFF; biased exponent 0x7ff (class 4 for infinity, else class 1 or 0 on
- * the quiet bit, both storing the significand UNSHIFTED); and anything else,
- * exponent minus 1023 with the implicit leading bit re-inserted.
- *
- * Uncertainty (inherited): the constant 0 loaded into r1 in the normal-number
- * path is never used before the routine returns, so it is left unmodelled.
  */
 typedef float DoubleType __attribute__((mode(DF)));
 typedef unsigned int HalfFractionType __attribute__((mode(SI)));
@@ -61,9 +45,14 @@ typedef union PackedDouble {
     DoubleType value;
     FractionType raw;
     HalfFractionType words[2];
+    struct {
+        FractionType fraction : 52 __attribute__((packed));
+        unsigned int exponent : 11 __attribute__((packed));
+        unsigned int sign : 1 __attribute__((packed));
+    } bits;
 } PackedDouble;
 
-void Func_02001770(PackedDouble *source, SoftFloatRecord *record)
+void Func_02005e04(PackedDouble *source, SoftFloatRecord *record)
 {
     FractionType fraction;
     int exponent;
@@ -74,9 +63,9 @@ void Func_02001770(PackedDouble *source, SoftFloatRecord *record)
     swapped.words[1] = source->words[0];
     source = &swapped;
 
-    fraction = source->raw & ((((FractionType)1) << 52) - (FractionType)1);
-    exponent = ((int)(source->raw >> 52)) & ((1 << 11) - 1);
-    sign = ((int)(source->raw >> (52 + 11))) & 1;
+    fraction = source->bits.fraction;
+    exponent = source->bits.exponent;
+    sign = source->bits.sign;
 
     record->sign = sign;
     if (exponent == 0) {

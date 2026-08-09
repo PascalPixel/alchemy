@@ -509,6 +509,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(POSTCALL_BYTE_INCREMENT_R2_SOURCES, stem) {
         push!(&["-fthumb-postcall-byte-increment-r2"]);
     }
+    if has(BOOLEAN_R8_SCRATCH_R2_SOURCES, stem) {
+        push!(&["-fthumb-boolean-r8-scratch-r2"]);
+    }
     if has(GROUP_CONTROL_REMATERIALIZE_SOURCES, stem) {
         push!(&["-fthumb-group-control-rematerialize"]);
     }

@@ -125,18 +125,16 @@ s32 Func_02000940(void)
     s16 state;
     u8 *record;
 
-    s32 permuted_7;
     if (Func_02002fbc(0x90b) != 0) Func_0200306a(8, 0, 0);
     if (Func_02002fd0(0x90c) != 0) Func_0200307e(9, 0, 0);
     if (Func_02002fe4(0x90d) != 0) Func_02003092(10, 0, 0);
 
-    permuted_7 = Data_02000240[225];
+    state = Data_02000240[225];
     if (state == 98) {
         Func_02003022(32);
         Func_02003178(50);
         return 0;
     }
-    state  = permuted_7;
     if (state == 99) {
         Func_02002f62();
         return 0;

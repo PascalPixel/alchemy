@@ -74,7 +74,6 @@ void Func_080cdd58(u32 arg0)
         tile += 16;
     } while (y != 16);
 
-    transfer = (void (*)())0x03000164;
     *(volatile u16 *)0x04000000 = 0x7741;
     *(volatile u16 *)0x0400000a = 0x1f81;
     *(volatile u16 *)0x04000050 = 0x3f42;
@@ -85,6 +84,7 @@ void Func_080cdd58(u32 arg0)
     *(volatile u16 *)0x04000048 = 0x3537;
     *(volatile u16 *)0x0400004a = 0x3f21;
     *(volatile u16 *)0x04000052 = 0x100e;
+    transfer = (void (*)())0x03000164;
     transfer(buffer, 0x4000);
     transfer((void *)0x06004000, 0x4000);
     Func_080030f8(1);

@@ -31,22 +31,18 @@
  * `movs r1,#192 ; lsls #6` is 0x3000 — three sixteenths of a turn in the
  * 16-bit angle unit Func_0808a1b8 takes.
  *
- * Uncertainty: Func_0808a190's interface is not established elsewhere in the
- * semantic tree; only that it is reached here with two arguments, in the
- * position its sibling arm uses Func_0808a180.
+ * Func_0808a190 returns a status value: other independently reconstructed call
+ * sites test that value.  It is ignored here, but retaining the truthful s32
+ * declaration is load-bearing because the return-register dataflow determines
+ * the reference's r1-before-r0 argument order at this call.
  *
- * RESIDUE (2 of 102 halfwords, 2026-08-07).  One argument-setter pair is
- * transposed: at 0x46 the reference writes `movs r1,#0' before `movs r0,#10'.
- * No operand-shape rule can reach it — 0x16 is the SAME literal pair (10, 0)
- * for a two-argument call and the reference writes r0 first there.  Routing
- * -fthumb-call-literal-arg1-first fixes 0x46 and breaks four other sites
- * (2 halfwords → 10), and neither hoisting the literals into locals,
- * prototyping the import, nor the 79-configuration mode cohort moves it.  The
- * order is scheduler position, not source shape.
+ * The typed inline wrappers around the two angle calls are also load-bearing.
+ * Their parameters preserve the reference's `movs r1,#192 / movs r0,#10 /
+ * lsls r1,#6' materialisation without changing either call's behavior.
  */
 
 /* Imports, named by the main-image address in the trailing word of the overlay
- * veneer each call site reaches.  Old-style declarations are mandatory. */
+ * veneer each call site reaches.  Most remain old-style because arity varies. */
 void Func_020024ec();
 s32 Func_020024d2();
 void Func_020025cc();
@@ -55,7 +51,7 @@ void Func_02002616();
 void Func_0200250c();
 void Func_020025a4();
 void Func_0200251a();
-void Func_0200261c();
+s32 Func_0200261c();
 void Func_02002630();
 void Func_020025d0();
 void Func_02002620();
@@ -78,6 +74,16 @@ void Func_020025a8();
                      
                                 /* story-flag query */
 
+static __inline__ void Call_02002630(s32 channel, s32 angle, s32 frames)
+{
+    Func_02002630(channel, angle, frames);
+}
+
+static __inline__ void Call_02002684(s32 channel, s32 angle, s32 frames)
+{
+    Func_02002684(channel, angle, frames);
+}
+
 void Func_020002b8(void)
 {
     Func_020024ec();
@@ -91,7 +97,7 @@ void Func_020002b8(void)
         Func_0200251a(20);
         Func_020025dc(10, 0, 20);
         Func_0200261c(10, 0);
-        Func_02002630(10, 0x3000, 10);
+        Call_02002630(10, 0x3000, 10);
         Func_020025d0(10, 9);
     } else {
         Func_02002620(0x152d);
@@ -102,7 +108,7 @@ void Func_020002b8(void)
         Func_0200256e(20);
         Func_02002630(10, 0, 20);
         Func_02002660(10, 0);
-        Func_02002684(10, 0x3000, 10);
+        Call_02002684(10, 0x3000, 10);
         Func_02002624(10, 9);
     }
 

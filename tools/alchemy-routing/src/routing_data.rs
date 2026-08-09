@@ -45,6 +45,10 @@ pub static NO_INTERWORK_SOURCES: &[&str] = &[
     "02005bd8", "02005be8", "02005bf8", "02005dd4", "02005de4", "02005df4",
 ];
 pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3a7_c_02001770.c",
+    "exact/resource_3a7_c_02001770.c",
+    "semantic/resource_3bf_c_02005e04.c",
+    "exact/resource_3bf_c_02005e04.c",
     "semantic/resource_3a7_c_020015a4.c",
     "exact/resource_3a7_c_020015a4.c",
     "semantic/resource_3bf_c_02005c38.c",
@@ -165,6 +169,10 @@ pub static GROUP_CONTROL_LAST_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3bd_c_02000c98.c",
     "exact/resource_392_c_02000bcc.c",
     "semantic/resource_392_c_02000bcc.c",
+    "exact/resource_393_c_02000d9c.c",
+    "semantic/resource_393_c_02000d9c.c",
+    "exact/resource_394_c_02000f74.c",
+    "semantic/resource_394_c_02000f74.c",
 ];
 pub static NO_SCHED_DEPEND_COUNT_SOURCES: &[&str] = &[
     "080b0744", "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304",
@@ -246,6 +254,12 @@ pub static CALL_ARG0_BEFORE_STORE_SOURCES: &[&str] = &["08077f70"];
 pub static POSTCALL_BYTE_INCREMENT_R2_SOURCES: &[&str] = &["08098b10"];
 pub static BOOLEAN_R8_SCRATCH_R2_SOURCES: &[&str] = &["080a524c"];
 pub static GROUP_CONTROL_REMATERIALIZE_SOURCES: &[&str] = &["080f377c", "02000bcc"];
+pub static GROUP_CONTROL_REMATERIALIZE_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_393_c_02000d9c.c",
+    "semantic/resource_393_c_02000d9c.c",
+    "exact/resource_394_c_02000f74.c",
+    "semantic/resource_394_c_02000f74.c",
+];
 pub static SCHED_POOL_LOAD_LATE_SOURCES: &[&str] = &["080f377c", "08091174"];
 pub static THUMB_LEAF_NO_LR_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
 pub static THUMB_NO_IF_CONVERT_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
@@ -358,6 +372,12 @@ pub static NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c4_c_02001068.c",
 ];
 pub static THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_392_c_02000bcc.c",
+    "semantic/resource_392_c_02000bcc.c",
+    "exact/resource_393_c_02000d9c.c",
+    "semantic/resource_393_c_02000d9c.c",
+    "exact/resource_394_c_02000f74.c",
+    "semantic/resource_394_c_02000f74.c",
     "exact/resource_3aa_c_02001494.c",
     "semantic/resource_3aa_c_02001494.c",
     "exact/resource_38f_c_020026cc.c",
@@ -366,6 +386,10 @@ pub static THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES: &[&str] = &[
 pub static GROUPED_DMA_STORE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_392_c_02000bcc.c",
     "semantic/resource_392_c_02000bcc.c",
+    "exact/resource_393_c_02000d9c.c",
+    "semantic/resource_393_c_02000d9c.c",
+    "exact/resource_394_c_02000f74.c",
+    "semantic/resource_394_c_02000f74.c",
     "exact/resource_3bd_c_02000c98.c",
     "exact/resource_3ca_c_020010d4.c",
     "exact/resource_395_c_02001838.c",
@@ -497,6 +521,10 @@ pub static NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
 // collapsed by the TypeScript `Set` and inert here. Reproduced deliberately;
 // see the note on GROUPED_DMA_STORE_SOURCES.
 pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3c1_c_02000120.c",
+    "exact/resource_3c1_c_02000120.c",
+    "semantic/resource_3c1_c_02000194.c",
+    "exact/resource_3c1_c_02000194.c",
     "semantic/resource_374_c_020004d4.c",
     "exact/resource_374_c_020004d4.c",
     "semantic/resource_39a_c_02001b1c.c",
@@ -1177,6 +1205,10 @@ pub static DEFAULT_ABI_SOURCES: &[&str] = &[
     "08006a00", "08006b84", "08006ba8", "08006c24", "08006dec", "08007098", "080fada0", "080fadf0",
 ];
 pub static DEFAULT_ABI_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3a7_c_02001770.c",
+    "exact/resource_3a7_c_02001770.c",
+    "semantic/resource_3bf_c_02005e04.c",
+    "exact/resource_3bf_c_02005e04.c",
     "semantic/resource_3a7_c_020015a4.c",
     "exact/resource_3a7_c_020015a4.c",
     "semantic/resource_3bf_c_02005c38.c",

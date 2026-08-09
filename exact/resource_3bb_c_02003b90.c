@@ -1,5 +1,29 @@
 #include "types.h"
 
+typedef struct SceneRecord {
+    u8 pad_00[6];
+    u16 facing;
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 pad_14[14];
+    u8 state;
+    u8 pad_23;
+    s32 motion_24;
+    u8 pad_28[4];
+    s32 motion_2c;
+    s32 rate_x;
+    s32 rate_z;
+    u8 pad_38[33];
+    u8 flags;
+} SceneRecord;
+
+typedef struct Position3 {
+    s32 x;
+    s32 y;
+    s32 z;
+} Position3;
+
 /*
  * resource_3bb owner at 0x02003b90, 360 bytes (0x02003b90-0x02003cf7):
  * 344 bytes of code plus the four-word literal pool at 0x02003ce8.
@@ -58,19 +82,19 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_02007afc();
-u8 *Func_02007726(s32 *);
-u8 *Func_02007750(s32 *);
-u8 *Func_0200777c(s32 *);
-s32 Func_02007b0e();
-void Func_02007acc();
-void Func_02007a2a();
-void Func_02007b12();
-void Func_02007b22();
-void Func_02007d60();
-void Func_02007b36();
-void Func_02007d6e();
-void Func_02007b1c();
+SceneRecord *Func_02007afc();
+SceneRecord *Func_02007726(Position3 *, SceneRecord *);
+SceneRecord *Func_02007750(Position3 *, SceneRecord *);
+SceneRecord *Func_0200777c(Position3 *, SceneRecord *);
+s32 Func_02007b0e(SceneRecord *, Position3 *);
+void Func_02007acc(SceneRecord *, s32);
+void Func_02007a2a(s32);
+void Func_02007b12(SceneRecord *, s32, s32, s32);
+void Func_02007b22(SceneRecord *, s32, s32, s32);
+void Func_02007d60(s32);
+void Func_02007b36(SceneRecord *);
+void Func_02007d6e(s32);
+void Func_02007b1c(SceneRecord *, s32);
 
                      
 
@@ -79,75 +103,89 @@ void Func_02007b1c();
 /* This overlay's own lookup; byte-exact source in assets/code. */
 
 /* In-image direction table at file offset 0x43d4, sixteen packed steps. */
-extern s32 Data_0200c3d4[];
+extern u32 Data_0200c3d4[];
+extern s16 Data_02000240[];
 
 void Func_02003b90(void)
 {
-    u8 *subject;
-    u8 *occupant;
-    u8 *blocker;
-    s32 facing;
-    s32 step;
-    s32 position[3];
+    SceneRecord *subject;
+    SceneRecord *target;
+    SceneRecord *blocker;
+    u32 step;
+    u32 direction;
+    Position3 position;
+    u32 data_index = 250;
+    s32 zero;
+    s32 subject_handle;
 
-    s32 permuted_12;
-    s32 permuted_21;
-    facing = *(u16 *)(subject + 6) >> 12;
-    subject = Func_02007afc(*(s32 *)(0x02000240 + 500));
+    subject_handle = *(s32 *)((u8 *)Data_02000240 + (data_index << 1));
+    subject = Func_02007afc(subject_handle);
 
-    step = Data_0200c3d4[facing];
-    position[0] = *(s32 *)(subject + 8) + (step & 0xffff0000);
-    permuted_12 = *(s32 *)(subject + 12);
-    position[2] = *(s32 *)(subject + 16) + (step << 16);
-    position[1]  = permuted_12;
+    direction = subject->facing >> 12;
 
-    occupant = Func_02007726(position);
-    if (occupant == 0) return;
+    step = Data_0200c3d4[direction];
+    position.x = subject->x + (s32)(step & 0xffff0000);
+    position.y = subject->y;
+    step <<= 16;
+    position.z = subject->z + (s32)step;
 
-    step = Data_0200c3d4[facing];
-    permuted_21 = *(s32 *)(occupant + 12);
-    position[0] = *(s32 *)(occupant + 8) + (step & 0xffff0000);
-    position[2] = *(s32 *)(occupant + 16) + (step << 16);
-    position[1]  = permuted_21;
+    target = Func_02007726(&position, subject);
+    if (target == 0) {
+        return;
+    }
 
-    blocker = Func_02007750(position);
-    if (blocker != 0 && (blocker[89] & 1) != 0) return;
+    step = Data_0200c3d4[direction];
+    position.x = target->x + (s32)(step & 0xffff0000);
+    position.y = target->y;
+    step <<= 16;
+    position.z = target->z + (s32)step;
 
-    position[0] = *(s32 *)(occupant + 8);
-    position[1] = *(s32 *)(occupant + 12) + 0x100000;   /* 128 << 13 */
-    position[2] = *(s32 *)(occupant + 16);
+    blocker = Func_02007750(&position, target);
+    if (blocker != 0 && (blocker->flags & 1) != 0) {
+        return;
+    }
 
-    blocker = Func_0200777c(position);
-    if (blocker != 0 && (blocker[89] & 1) != 0) return;
+    position.x = target->x;
+    position.y = target->y + 0x100000;
+    position.z = target->z;
 
-    occupant[34] = 2;
+    blocker = Func_0200777c(&position, target);
+    if (blocker != 0 && (blocker->flags & 1) != 0) {
+        return;
+    }
 
-    position[0] = *(s32 *)(occupant + 8) + (step & 0xffff0000);
-    position[1] = *(s32 *)(occupant + 12);
-    step = Data_0200c3d4[facing];
-    position[2] = *(s32 *)(occupant + 16) + (step << 16);
+    target->state = 2;
+    zero = 0;
 
-    if (Func_02007b0e(occupant, position) > 0) return;
+    step = Data_0200c3d4[direction];
+    position.x = target->x + (s32)(step & 0xffff0000);
+    position.y = target->y;
+    step <<= 16;
+    position.z = target->z + (s32)step;
+
+    if (Func_02007b0e(target, &position) > 0) {
+        return;
+    }
 
     Func_02007acc(subject, 8);
     Func_02007a2a(15);
 
-    *(s32 *)(occupant + 48) = 0x3333;
-    *(s32 *)(occupant + 52) = 0x3333;
-    Func_02007b12(occupant, position[0], position[1], position[2]);
+    target->rate_x = 0x3333;
+    target->rate_z = 0x3333;
+    Func_02007b12(target, position.x, position.y, position.z);
 
-    *(s32 *)(subject + 52) = 0x3333;
-    Func_02007b22(subject, position[0], position[1], position[2]);
-    *(s32 *)(subject + 48) = 0x3333;
+    subject->rate_x = 0x3333;
+    subject->rate_z = 0x3333;
+    Func_02007b22(subject, position.x, position.y, position.z);
 
-    Func_02007d60(238);
-    Func_02007b36(occupant);
-    Func_02007d6e(288);                                 /* 144 << 1 */
+    Func_02007d60(0xee);
+    Func_02007b36(target);
+    Func_02007d6e(0x120);
 
-    *(s32 *)(occupant + 8) = position[0];
-    *(s32 *)(occupant + 16) = position[2];
-    *(s32 *)(occupant + 36) = 0;
-    *(s32 *)(occupant + 44) = 0;
+    target->x = position.x;
+    target->z = position.z;
+    target->motion_24 = zero;
+    target->motion_2c = zero;
 
     Func_02007b1c(subject, 1);
 }

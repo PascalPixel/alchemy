@@ -121,7 +121,6 @@ void Func_020038f8(void)
     SceneRecord *target;
     SceneRecord *blocker;
     u32 step;
-    s32 x_step;
     u32 direction;
     Position3 position;
     u32 data_index = 250;
@@ -134,11 +133,10 @@ void Func_020038f8(void)
     direction = subject->facing >> 12;
 
     step = Data_0200c154[direction];
-    x_step = (s32)step;
-    x_step &= (s32)0xffff0000;
+    position.x = subject->x + (s32)(step & 0xffff0000);
     position.y = subject->y;
-    position.z = subject->z + (s32)(step << 16);
-    position.x = subject->x + x_step;
+    step <<= 16;
+    position.z = subject->z + (s32)step;
 
     target = Func_020071f6(&position, subject);
     if (target == 0) {
@@ -147,11 +145,10 @@ void Func_020038f8(void)
 
     /* Is the cell one step beyond the target already taken? */
     step = Data_0200c154[direction];
-    x_step = (s32)step;
-    x_step &= (s32)0xffff0000;
-    position.x = target->x + x_step;
+    position.x = target->x + (s32)(step & 0xffff0000);
     position.y = target->y;
-    position.z = target->z + (s32)(step << 16);
+    step <<= 16;
+    position.z = target->z + (s32)step;
 
     blocker = Func_02007220(&position, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
@@ -172,11 +169,10 @@ void Func_020038f8(void)
     zero = 0;
 
     step = Data_0200c154[direction];
-    x_step = (s32)step;
-    x_step &= (s32)0xffff0000;
+    position.x = target->x + (s32)(step & 0xffff0000);
     position.y = target->y;
-    position.z = target->z + (s32)(step << 16);
-    position.x = target->x + x_step;
+    step <<= 16;
+    position.z = target->z + (s32)step;
 
     if (Func_020075e6(target, &position) > 0) {
         return;

@@ -1,31 +1,31 @@
 #include "types.h"
 
 /*
- * resource_3c1 owner at 0x02000194, 116 bytes: place a scripted prop at the
+ * resource_3c1 owner at 0x02000120, 116 bytes: place a scripted prop at the
  * coordinates the current map slot names, sound the placement, shake the view,
  * arm the workspace counter and hand the slot on.
  *
- * TRANSPOSED from semantic/overlays/resource_3c1_c_02000120.c.  The two owners
- * are byte-identical over all 52 halfwords except the single pool word naming
- * the script (0x020085e8 there against 0x020085fe here).  Their BL halfwords are
+ * Reference member of a two-owner pair: 0x02000120 and 0x02000194 are
+ * byte-identical over all 52 halfwords except the single pool word naming the
+ * script (0x020085e8 against 0x020085fe).  Their BL halfwords are
  * bit-identical, so under the +2 rule the four call sites are provably the
  * same.  Found by the sort-by-span scan.
  *
  * Complete owner: 'push {r5, r6, lr}' plus the 'push {r5, r6}' banking r8/sl,
- * and the single interworking epilogue at 0x020001f0.  Control-flow walk: pure
- * straight line, so the three-word pool at 0x020001fc is everything after the
+ * and the single interworking epilogue at 0x0200017c.  Control-flow walk: pure
+ * straight line, so the three-word pool at 0x02000188 is everything after the
  * 'bx r0'.  104 code + 12 pool = 116, the advertised span.
  *
  * Return type from the epilogue rule: 'pop {r0} ; bx r0', so the owner is void.
  *
  * Calls: 4 sites over 4 targets, from
- * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c1 0194'.
+ * 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3c1 0120'.
  *
- * Link base: both 0x020085d0 and 0x020085fe are EVEN, which under the proven
- * 0x02008000 base makes them in-image DATA at file offsets 0x05d0 and 0x05fe -
+ * Link base: both 0x020085d0 and 0x020085e8 are EVEN, which under the proven
+ * 0x02008000 base makes them in-image DATA at file offsets 0x05d0 and 0x05e8 -
  * not RAM globals and not callbacks.  The parity test settles that in one bit.
- * The placement table it shares with 0x02000120 is the same six four-byte
- * entries at 0x020085d0.
+ * The 24 bytes between them are exactly the six four-byte coordinate entries
+ * the slot index selects from.
  *
  * The coordinate read is 'ldrsh' followed by 'lsls #16 / lsrs #16', which is a
  * sign-extending load immediately truncated back to 16 bits - i.e. the entries
@@ -41,35 +41,30 @@
 #define PROP3C1_WORKSPACE_CELL ((u8 **)0x03001ebc)
 
 /* In-image, at file offset 0x05d0: six {x, z} pairs indexed by the map slot. */
-struct Prop3c1Placement {
-    s16 x;
-    s16 z;
-};
+extern s16 Data_020085d0[];
 
-#define PROP3C1_PLACEMENTS ((const struct Prop3c1Placement *)0x020085d0)
+/* In-image, at file offset 0x05e8: this owner's placement script. */
+#define PROP3C1_SCRIPT ((const void *)0x020085e8)
 
-/* In-image, at file offset 0x05fe: this owner's placement script. */
-#define PROP3C1_SCRIPT ((const void *)0x020085fe)
-
-void Func_020004ac();
-void Func_02000456();
-void Func_020004ba();
-void Func_020004c6();
+void Func_02000438();
+void Func_020003e2();
+void Func_02000446();
+void Func_02000452();
                                     /* play a sound effect */
                                     /* place a scripted prop (script, x, z) */
                                     /* shake the view (x, y, amount) */
                                     /* hand the map slot on */
 
-void Func_02000194(void)
+void Func_02000120(void)
 {
     u8 *workspace = *PROP3C1_WORKSPACE_CELL;
     s32 slot = *(s16 *)(workspace + 364);
-    u16 x = (u16)PROP3C1_PLACEMENTS[slot].x;
-    u16 z = (u16)PROP3C1_PLACEMENTS[slot].z;
+    s16 x = Data_020085d0[slot * 2];
+    s16 z = Data_020085d0[slot * 2 + 1];
 
-    Func_020004ac(158);
-    Func_02000456(PROP3C1_SCRIPT, x, z);
-    Func_020004ba(0, 0, -16);
+    Func_02000438(158);
+    Func_020003e2(PROP3C1_SCRIPT, (u16)x, (u16)z);
+    Func_02000446(0, 0, -16);
     *(s32 *)(*PROP3C1_WORKSPACE_CELL + 456) = 16;
-    Func_020004c6(slot);
+    Func_02000452(slot);
 }

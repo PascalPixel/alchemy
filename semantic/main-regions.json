@@ -1607,26 +1607,6 @@
       ]
     },
     {
-      "entry": "0x080fa280",
-      "evidence": "One 32-byte row holding a single leaf in its first 26 bytes: no prologue, one epilogue, the bx lr at 0x080fa298, reached by the bne.n signature-mismatch early-out at 0x080fa28c and by fall-through, no call of any kind and no inbound branch from outside the row. Excluded (6 bytes): the 2-byte movs r0,r0 alignment filler at 0x080fa29a and the one-word pool at 0x080fa29c holding 0x68736d53, the 'Smsh' signature literal loaded by ldr r0,[pc,#16]. The narrowing of the second argument, lsls r1,r1,#16 then lsrs r1,r1,#16, happens before the signature test and is a plain zero-extension of the low halfword, not a halfword compare. The opening adds r2,r0,#0 copies the track pointer so r0 can carry the pool literal; r0 holds that literal at the bx lr and no result is computed, so the function is void. The matching arm stores the narrowed value to track+0x26 and then track+0x24 in that order and writes 0x0100 to track+0x28, built as movs r0,#128; lsls r0,r0,#1. That is the same current/target pair the 0x080fa4cc and 0x080fa4ec entries write, with a third distinct state constant. bun tools/main_xref.ts 080fa280 reports one direct caller, at 0x080fa4c2, and no Thumb pointer.",
-      "executable_ranges": [
-        {
-          "address": "0x080fa280",
-          "size": 26
-        }
-      ]
-    },
-    {
-      "entry": "0x080fa4cc",
-      "evidence": "Two independent leaves in one 72-byte row, each with its own 8-byte trailing pool (0x080fa4e4 and 0x080fa50c), both ending on bx lr and neither reachable from the other. Neither entry has any inbound reference in the image, so the row is admitted whole rather than split. The manifest kind nonstandard_thumb_branch_module records the early-out branch over the body, which converts as a guard clause; both 0x68736d53 pool words are the same 'Smsh' signature literal, kept as one constant.",
-      "executable_ranges": [
-        {
-          "address": "0x080fa4cc",
-          "size": 72
-        }
-      ]
-    },
-    {
       "entry": "0x080fae58",
       "evidence": "Clean-room redraft of the quarantined row, under the 2026-07-31 clean-room procedure, without opening the quarantined body. Written solely from asm/080fae58.s plus in-repo vocabulary (struct CgbChannel from src/080fadf0.c, SoundInfo offsets shared with semantic/main/080f9f6c.c); no external reference consulted. The CGB sound-channel tick: a 15-step frame counter at SoundInfo+10 (14..0, the 0 tick advancing every envelope one extra step via the preserved replay loop); four 64-byte channels from SoundInfo+28 mapped to their register banks (0x04000060..65, 0x68/69/6c/6d, 0x70..75, 0x78/79/7c/7d, with unused sweep slots parked on 0x61/0x71 exactly as the reference does); per channel a start path (status 3, Func_080fadf0 pan refresh, duty/length/sweep programming, channel 3 reloading wave RAM at 0x04000090 on a changed wave pointer with current_wave caching), kill via Func_080fada0, pseudo-echo fade (status bit 4, pseudo_echo_length countdown), key release (release rate reload), and the attack/decay/sustain envelope state machine in status low bits with sustain_goal hold at counter 7 and the ((pseudo_echo_volume * envelope_goal + 255) >> 8) echo tail; output stage gated by the modify bits at +29 (pitch: SOUNDBIAS-amplitude frequency nudge at 0x04000089 for channels 1-3 with type bit 8, NRx3 low byte with channel 4 preserving NR43 bit 3, NRx4 from (control cache & 0xc0) + frequency>>8; volume: stereo-enable byte 0x04000081 masked through pan/pan_mask, channel 3 through the Data_080fba04 level table with the NR30=0x80 retrigger, others (envelope_volume << 4) + rate nibble with the NRx4|0x80 retrigger, channel 1 double-writing when NR10 bit 3 reads clear). Complete owner: asm/080fae58.s in full including interleaved pools. Span: 1098 bytes, matching the census row.",
       "executable_ranges": [

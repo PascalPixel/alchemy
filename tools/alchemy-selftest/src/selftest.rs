@@ -156,6 +156,7 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
     let agbcc_no_gcse = ["080faa58"];
     let agbcc_no_regmove = ["08006910"];
     let agbcc_prologue = ["080fb2cc", "080fb334", "080fb3a8"];
+    let agbcc_track_narrow = ["080fa280", "080fa4cc"];
     for stem in expected {
         let source = format!("/tmp/{stem}.c");
         if !probe.uses_agbcc(GS1, &source) || probe.uses_agbcc(GS2, &source) {
@@ -183,6 +184,9 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         }
         if agbcc_prologue.contains(&stem) {
             expected_flags.push("-mprologue-next-high-reg".to_string());
+        }
+        if agbcc_track_narrow.contains(&stem) {
+            expected_flags.push("-mtrack-narrow-value-r1".to_string());
         }
         if stem == "080f9a50" {
             expected_flags.push("-mcompare-only-and-tst".to_string());

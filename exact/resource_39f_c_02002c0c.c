@@ -56,43 +56,56 @@ void Func_02002c0c(s32 subject)
 {
     u8 *actor;
     u8 *block;
-    u8 *area;
+    u8 *flagAt92;
+    u8 flags;
+    s32 zero;
+    s32 one;
+    s32 area;
+    s32 mode;
+    s32 lock;
 
     /* r0-r3 are untouched by the prologue, so the incoming arguments reach the
      * import unchanged. */
     actor = Func_020059d4(subject);
     block = *(u8 **)(actor + 80);
 
-    /* -13 is 0xf3 in the byte domain: bits 2 and 3 are cleared, bit 2 is then
-     * set again, and the result is finally reduced to its low nibble. */
-    block[5] = (u8)(block[5] & 0xdf);
-    block[9] = (u8)((((block[9] & 0xf3) | 4)) & 0x0f);
+    mode = ~12;
+    mode &= block[9];
+    mode |= 4;
+    lock = block[5];
+    lock &= ~32;
+    block[5] = (u8)lock;
+    mode &= 15;
+    block[9] = (u8)mode;
 
-    block[39] = 0;
+    zero = 0;
+    block[39] = (u8)zero;
 
-    /* r0 still holds the record returned above. */
-    Func_020059a6(actor, 0);
+    Func_020059a6(actor, zero);
 
-    actor[92] = 0;
-    actor[85] = 0;
+    flagAt92 = actor + 92;
+    *flagAt92 = (u8)zero;
+    actor[85] = (u8)zero;
 
     if (Func_020059ec(0x109) == 0) {
         *(s32 *)(actor + 12) += 0x200000;   /* 128 << 14, two units up */
     }
 
-    actor[35] = (u8)(actor[35] & 0xfe);
-    actor[97] = 1;
+    flags = (u8)(actor[35] & ~1);
+    one = 1;
+    actor[35] = flags;
+    actor[97] = (u8)one;
 
-    area = Func_0200599c(17, 1544);         /* 193 << 3 */
-    Func_02005a1c(181);
-    Func_020059c4(block[28], 128, area + 1024);   /* 128 << 3 */
+    area = (s32)Func_0200599c(17, 0x608);
+    Func_02005a1c(0xb5);
+    area += 0x400;
+    Func_020059c4(block[28], 0x80, area);
     Func_020059c2(17);
 
     *(s32 *)(actor + 56) = *(s32 *)(actor + 8);
-    *(s32 *)(actor + 48) = 0;
+    *(s32 *)(actor + 48) = zero;
     *(s32 *)(actor + 60) = *(s32 *)(actor + 12);
-
-    actor[86] = 0;
-    actor[92] = 1;
-    *(void **)(actor + 108) = (void *)0x0200aba5;   /* Func_02002ba4 | Thumb */
+    *flagAt92 = (u8)one;
+    *(u32 *)(actor + 108) = 0x0200aba5;
+    actor[86] = (u8)zero;
 }

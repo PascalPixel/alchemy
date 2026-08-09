@@ -45,11 +45,12 @@
  * and the three Func_0808a010(10) waits are DISTINCT sites on distinct paths
  * and are not merged.
  *
- * RESIDUE (18 of 182 halfwords, 2026-08-07).  Routing takes this owner from 51
- * differing halfwords (and 4 bytes too long) to 18 at the exact reference size:
+ * RESIDUE (2 of 182 halfwords, 2026-08-09).  Routing and the source shapes below
+ * take this owner from 51 differing halfwords (and 4 bytes too long) to 2 at
+ * the exact reference size:
  * -fthumb-call-literal-arg1-first and -fno-cse-pool-immediate (without the
  * latter the fork keeps the 0x8a5 pool word in sl across the whole body and
- * pays two extra register saves).  Three source facts carried the rest:
+ * pays two extra register saves).  The source facts carrying the rest are:
  *   - `price' must be a plain `s32' assigned at the top, not a `const', so the
  *     charge site emits `mov r3,r8 / negs r0,r3' instead of materialising -600
  *     from a seventh pool word.
@@ -64,16 +65,28 @@
  *     then jumps to the closing Func_02001bea(); the success block is reached by
  *     an explicit `goto complete_purchase' out of a trailing `else', which is
  *     what puts the shared tail BEFORE the success block in the layout.
+ *   - The two reference-order (8, 0) calls are one `u64' machine argument.  On
+ *     this little-endian ARM ABI its low and high words still occupy r0 and r1
+ *     as 8 and 0, but the broad two-literal reordering mode no longer mistakes
+ *     them for the four sites in this owner that genuinely want r1 first.
+ *   - At the success call the reference already carries the incremented counter
+ *     in r2.  Passing that witnessed live value as the third old-style argument
+ *     preserves the exact machine state and gives the counter block its observed
+ *     r3-address/r2-value allocation.  It also gives the opening price setup its
+ *     observed r2 scratch register.
  *
- * What is left is the closed transposed-argument class plus its register-naming
- * shadow.  Six of the eighteen are (8, 0) literal pairs -- Func_02001b6c,
- * Func_02001c42 and Func_02001c70 -- where the reference writes r0 first, while
- * four other (8, 0) sites in the same owner want r1 first; dropping
- * -fthumb-call-literal-arg1-first flips the count to 22, so both orders exist
- * for one operand shape and no operand-shape flag can discriminate them.  The
- * remainder is register naming: r3-for-r2 on the price materialisation and a
- * r2/r3 inversion in the `+= 3' counter block whose `+= 1' twins both match.
- * All 34 routing sets were swept one at a time; none reaches below 18.
+ * The last residual is the instruction pair at offsets 0xf0/0xf2.  The
+ * reference materialises cue 113 in r0 before storing the incremented counter;
+ * the candidate stores first and then materialises r0.  `candidate-explain'
+ * shows equal scheduler priority 2 for both ready instructions, after which
+ * GCC 2.96 chooses the two-cycle halfword store over the one-cycle immediate.
+ * The current 154 single-mode sweep had zero improvements; the earlier
+ * 18-halfword source's complete 10,134 compatible-pair sweep likewise had zero
+ * routed-baseline improvements.  The deterministic shape sweep found no
+ * alternate, and 20,000 bounded permutations from this two-halfword floor
+ * found no improvement.  The existing
+ * -fthumb-call-arg0-before-store mode is deliberately inapplicable because it
+ * accepts a register copy into r0, not this immediate materialisation.
  *
  * Uncertainties: 0x8a5 is read as an event-flag id and 0x1d0b / 0x1d04 as cue
  * ids from their argument positions.  0x0c8a is passed to Func_08015080 in the
@@ -150,7 +163,7 @@ void Func_0200051c(void)
 
     if (Func_02001a82(0x8a5) != 0) {
         Func_02001b54(0x1d0b);
-        Func_02001b6c(8, 0);
+        Func_02001b6c((u64)8);
         return;                 /* branches past Func_0808a020 to the epilogue */
     }
 
@@ -188,18 +201,25 @@ void Func_0200051c(void)
         goto complete_purchase;
     }
 
-    Func_02001c42(8, 0);
+    Func_02001c42((u64)8);
     goto finish;
 
 complete_purchase:
-    Func_02001b44(window, 2);
-    Func_02001c14(0, 3);
-    Func_02001baa(10);
-    *(u16 *)(*counter + 472) += 3;
-    Func_02001c70(8, 0);
-    Func_02001be0(235, 0);
-    Func_02001bae(0x8a5);
-    Func_02001bc6(-price);
+    {
+        u8 *success_base;
+        s32 success_value;
+
+        Func_02001b44(window, 2);
+        Func_02001c14(0, 3);
+        Func_02001baa(10);
+        success_base = *counter + 472;
+        success_value = *(u16 *)success_base + 3;
+        *(u16 *)success_base = success_value;
+        Func_02001c70(8, 0, success_value);
+        Func_02001be0(235, 0);
+        Func_02001bae(0x8a5);
+        Func_02001bc6(-price);
+    }
 
 finish:
     Func_02001bea();

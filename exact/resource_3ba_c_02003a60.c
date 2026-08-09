@@ -59,6 +59,11 @@ s32 *Func_02007398();
 
 extern s16 Data_02000240[];
 
+typedef struct ActiveSubjectSlot {
+    u8 pad[500];
+    void *handle;
+} ActiveSubjectSlot;
+
 /* This overlay's own lookup; byte-exact source in assets/code. */
 
 s32 *Func_02003a60(void)
@@ -67,11 +72,8 @@ s32 *Func_02003a60(void)
     s32 facing;
     s32 position[3];
     s32 *occupant;
-    s32 index;
 
-    index = 250;
-    index <<= 1;
-    record = Func_0200772c(*(void **)((u8 *)Data_02000240 + index), index);
+    record = Func_0200772c(((ActiveSubjectSlot *)Data_02000240)->handle);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;

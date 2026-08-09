@@ -47,9 +47,16 @@
  * Old-style declarations: arities vary between call sites in this overlay. */
 u8 *Func_02007c5c();
 void Func_02007b0e();
-s32 *Func_02007896(s32 *);
+s32 *Func_02007896();
 void Func_02007b40();
-s32 *Func_020078c8(s32 *);
+s32 *Func_020078c8();
+
+extern s16 Data_02000240[];
+
+typedef struct ActiveSubjectSlot {
+    u8 pad[500];
+    void *handle;
+} ActiveSubjectSlot;
 
 /* This overlay's own lookup; byte-exact source in assets/code. */
 
@@ -60,28 +67,24 @@ s32 *Func_02003cf8(void)
     s32 position[3];
     s32 *occupant;
 
-    s32 permuted_0;
-    s32 permuted_12;
-    record = Func_02007c5c(*(s32 *)(0x02000240 + 500));
+    record = Func_02007c5c(((ActiveSubjectSlot *)Data_02000240)->handle);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;
 
     position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
-    permuted_12 = *(s32 *)(record + 12);
+    position[1] = *(s32 *)(record + 12);
     position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
     Func_02007b0e(0x100000, facing, position);          /* 128 << 13 */
-    position[1]  = permuted_12;
 
-    occupant = Func_02007896(position);
+    occupant = Func_02007896(position, record);
     if (occupant == 0) {
-        permuted_0 = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
+        position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
         position[1] = *(s32 *)(record + 12);
-        position[0]  = permuted_0;
         position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
         Func_02007b40(0x200000, facing, position);      /* 128 << 14 */
 
-        occupant = Func_020078c8(position);
+        occupant = Func_020078c8(position, record);
     }
 
     return occupant;

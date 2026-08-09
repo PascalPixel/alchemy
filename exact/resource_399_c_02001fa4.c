@@ -36,6 +36,9 @@
  *
  * Frame map: sp+0 holds the goal marker, sp+4 the heading, and sp+8..sp+19 the
  * three-word probe position handed to the stepping imports by address.
+ * The witnessed x/z assignment order plus the inline stepping wrapper leave
+ * only one independent high-register-copy/ALU pair; the already-supported
+ * -fthumb-high-move-before-alu mode closes that pair byte-exactly.
  */
 
 /* In-image table at 0x02008000 + 0x2430; 0x02000240 is below the link base
@@ -93,6 +96,13 @@ void Func_020042e8();
 void Func_02004286();
 void Func_020042a4();
 void Func_02004370();
+
+static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
+{
+    /* Keep this call as an inline boundary: GCC then rematerializes sp+8 for
+     * argument 2 before completing the split 0x100000 constant, as in ROM. */
+    Func_02004278((s32)0x100000, heading, probe);
+}
                          /* subject record by table selector */
                      
                          /* tile marker at (x, z) */
@@ -129,10 +139,10 @@ void Func_02001fa4(void)
         probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
         probe[1] = subject->y;
         probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
-        x = probe[0];
+        z = probe[2];
         subject_id = (u8 *)subject;
         subject_id += 34;
-        z = probe[2];
+        x = probe[0];
         goal = Func_0200420c((s32)*subject_id, x, z);
         /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
          * passed by address and is advanced by the callee. */
@@ -165,8 +175,8 @@ continueProbe:
                 - subject->y > 0x80000) {
             goto finishProbe;
         }
-        z = probe[2];
         x = probe[0];
+        z = probe[2];
         subject->state_048 = 0x20000;
         subject->state_052 = 0x1999;
         Func_02004298(subject, probe[0], probe[1], probe[2]);
@@ -176,7 +186,7 @@ continueProbe:
         }
 
 advanceProbe:
-        Func_02004278((s32)0x100000, heading, probe);
+        AdvanceProbe_02001fa4(heading, probe);
         marker = Func_020042e4((s32)*subject_id, probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;

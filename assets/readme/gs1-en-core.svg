@@ -7738,7 +7738,7 @@
 <rect x="440.28586" y="251.951675" width="4.407073" height="4.104633" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x080fa4cc–0x080fa514: 72 bytes">
-<rect x="440.28586" y="256.056308" width="4.407073" height="4.104633" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="440.28586" y="256.056308" width="4.407073" height="4.104633" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x080fa514–0x080fa55c: 72 bytes">
 <rect x="440.28586" y="260.160941" width="4.407073" height="4.104633" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
@@ -7843,7 +7843,7 @@
 <rect x="459.797192" y="259.773247" width="2.931418" height="2.74261" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
 </g>
 <g aria-label="0x080fa280–0x080fa2a0: 32 bytes">
-<rect x="462.72861" y="259.773247" width="2.931419" height="2.74261" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="462.72861" y="259.773247" width="2.931419" height="2.74261" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x080fb670–0x080fb690: 32 bytes">
 <rect x="465.660029" y="259.773247" width="2.931419" height="2.74261" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
@@ -9816,7 +9816,7 @@
 <rect x="536.829121" y="227.069514" width="0.170879" height="52.930486" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 </g>
 <text class="weyard" x="6" y="17">MAIN IMAGE</text>
-<text class="weyard" x="534" y="17" text-anchor="end">DONE 20.3%</text>
+<text class="weyard" x="534" y="17" text-anchor="end">DONE 20.4%</text>
 <rect x="6" y="288" width="10" height="10" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
 <text class="weyard" x="20" y="293" dominant-baseline="middle">Semantic 74.4%</text>
 <rect x="134" y="288" width="10" height="10" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>

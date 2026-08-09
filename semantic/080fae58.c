@@ -95,8 +95,8 @@ struct CgbChannel_080fae58 {
     u8 length;              /* 30 */
     u8 sweep;               /* 31 */
     u32 frequency;          /* 32 */
-    const u32 *wave;        /* 36 */
-    const u32 *current_wave;/* 40 */
+    const u8 *wave;         /* 36 */
+    const u8 *current_wave; /* 40 */
     u8 unknown_2c[20];      /* 44 */
 };
 
@@ -115,6 +115,7 @@ void Func_080fada0(u8 channel);
 
 void Func_080fae58(void)
 {
+    s32 frame;
     struct SoundInfo_080fae58 *info = Data_03007ff0;
     struct CgbChannel_080fae58 *channel;
     s32 number;
@@ -135,9 +136,9 @@ void Func_080fae58(void)
         volatile u8 *reg_envelope;
         volatile u8 *reg_freq_low;
         volatile u8 *reg_freq_high;
-        volatile s32 frame;
         u32 envelope_rate;
-        u8 status = channel->status;
+        register u8 status = channel->status;
+        u8 initial_status;
 
         if ((status & 0xc7) == 0) {
             continue;
@@ -176,9 +177,10 @@ void Func_080fae58(void)
 
         frame = info->cgb_frame_counter;
         envelope_rate = *reg_envelope;
+        initial_status = status;
 
-        if ((status & 0x80) != 0) {
-            u32 restarted = status & 0x40;
+        if (((u8)initial_status & 0x80) != 0) {
+            u32 restarted = (u8)initial_status & 0x40;
 
             if (restarted == 0) {
                 channel->status = 3;
@@ -197,15 +199,16 @@ void Func_080fae58(void)
                     goto seed_envelope_rate;
                 case 3:
                     if (channel->wave != channel->current_wave) {
+                        const u8 *wave =
+                            *(const u8 *volatile *)&channel->wave;
                         volatile u32 *wave_ram =
                             (volatile u32 *)0x04000090;
-                        const u32 *wave = channel->wave;
 
                         *reg_sweep = 0x40;
-                        wave_ram[0] = wave[0];
-                        wave_ram[1] = wave[1];
-                        wave_ram[2] = wave[2];
-                        wave_ram[3] = wave[3];
+                        *wave_ram++ = ((const u32 *)wave)[0];
+                        *wave_ram++ = ((const u32 *)wave)[1];
+                        *wave_ram++ = ((const u32 *)wave)[2];
+                        *wave_ram = ((const u32 *)wave)[3];
                         channel->current_wave = wave;
                     }
                     *reg_sweep = (u8)restarted;
@@ -220,7 +223,7 @@ void Func_080fae58(void)
                          * stack slot in the exact reconstruction). */
                         s32 wave_disabled = -128;
 
-                        channel->n4_control = wave_disabled;
+                        *(volatile u8 *)&channel->n4_control = wave_disabled;
                         goto seed_envelope;
                     }
                     goto seed_envelope;
@@ -232,12 +235,14 @@ void Func_080fae58(void)
 
             seed_envelope_rate:
                 envelope_rate = channel->attack + 8;
-                channel->n4_control =
-                    channel->length != 0 ? 64 : 0;
+                if (channel->length != 0) {
+                    channel->n4_control = 64;
+                } else {
+                    channel->n4_control = 0;
+                }
 
             seed_envelope:
-                channel->envelope_counter = channel->attack;
-                if (channel->attack == 0) {
+                if ((channel->envelope_counter = channel->attack) == 0) {
                     goto attack_done;
                 }
                 channel->envelope_volume = 0;
@@ -248,9 +253,8 @@ void Func_080fae58(void)
             goto kill;
         }
 
-        if ((status & 0x04) != 0) {
-            channel->pseudo_echo_length -= 1;
-            if ((s8)channel->pseudo_echo_length <= 0) {
+        if (((u8)initial_status & 0x04) != 0) {
+            if ((s8)(channel->pseudo_echo_length -= 1) <= 0) {
                 goto kill;
             }
             goto output;
@@ -265,9 +269,11 @@ void Func_080fae58(void)
     not_killed:
 
         if ((status & 0x40) != 0 && (status & 0x03) != 0) {
-            channel->status = status & 0xfc;
-            channel->envelope_counter = channel->release;
-            if (channel->release != 0) {
+            s32 inactive_status = 0xfc;
+
+            inactive_status &= status;
+            channel->status = inactive_status;
+            if ((channel->envelope_counter = channel->release) != 0) {
                 channel->modify |= 1;
                 if (number != 3) {
                     envelope_rate = channel->release;
@@ -285,47 +291,66 @@ void Func_080fae58(void)
             channel->modify |= 1;
         }
         Func_080fadf0(channel);
-        switch (channel->status & 3) {
-        case 0:
-            channel->envelope_volume -= 1;
-            if ((s8)channel->envelope_volume > 0) {
-                channel->envelope_counter = channel->release;
-                goto tick;
+        {
+            u32 envelope_state = channel->status & 3;
+            u32 next_counter;
+
+            if (envelope_state == 0) {
+                if ((s8)(channel->envelope_volume -= 1) > 0) {
+                    goto release_counter;
+                }
+
+            pseudo_echo:
+                channel->envelope_volume =
+                    (channel->envelope_goal * channel->pseudo_echo_volume
+                     + 255) >> 8;
+                if (channel->envelope_volume == 0) {
+                    goto kill;
+                }
+                channel->status |= 4;
+                channel->modify |= 1;
+                if (number != 3) {
+                    envelope_rate = 8;
+                }
+                goto output;
+
+            release_counter:
+                next_counter = channel->release;
+                goto set_counter;
             }
-            goto pseudo_echo;
-        case 1:
+            if (envelope_state == 1) {
         sustain:
-            channel->envelope_volume = channel->sustain_goal;
-            channel->envelope_counter = 7;
-            goto tick;
-        case 2:
-            channel->envelope_volume -= 1;
-            if ((s8)channel->envelope_volume >
-                (s8)channel->sustain_goal) {
-                channel->envelope_counter = channel->decay;
-                goto tick;
+                channel->envelope_volume = channel->sustain_goal;
+                next_counter = 7;
+                goto set_counter;
             }
+            if (envelope_state == 2) {
+                if ((s8)(channel->envelope_volume -= 1) >
+                    (s8)channel->sustain_goal) {
+                    goto decay_counter;
+                }
         decay_done:
-            if (channel->sustain == 0) {
-                channel->status &= 0xfc;
-                goto pseudo_echo;
+                if (channel->sustain == 0) {
+                    channel->status &= 0xfc;
+                    goto pseudo_echo;
+                }
+                channel->status -= 1;
+                channel->modify |= 1;
+                if (number != 3) {
+                    envelope_rate = 8;
+                }
+                goto sustain;
+
+            decay_counter:
+                next_counter = channel->decay;
+                goto set_counter;
             }
-            channel->status -= 1;
-            channel->modify |= 1;
-            if (number != 3) {
-                envelope_rate = 8;
-            }
-            goto sustain;
-        default:
-            channel->envelope_volume += 1;
-            if (channel->envelope_volume < channel->envelope_goal) {
-                channel->envelope_counter = channel->attack;
-                goto tick;
+            if ((channel->envelope_volume += 1) < channel->envelope_goal) {
+                goto attack_counter;
             }
         attack_done:
             channel->status -= 1;
-            channel->envelope_counter = channel->decay;
-            if (channel->decay == 0) {
+            if ((channel->envelope_counter = channel->decay) == 0) {
                 goto decay_done;
             }
             channel->modify |= 1;
@@ -334,33 +359,24 @@ void Func_080fae58(void)
                 envelope_rate = channel->decay;
             }
             goto tick;
-        }
 
-    pseudo_echo:
-        channel->envelope_volume =
-            (channel->pseudo_echo_volume * channel->envelope_goal
-             + 255) >> 8;
-        if (channel->envelope_volume == 0) {
-            goto kill;
+        attack_counter:
+            next_counter = channel->attack;
+        set_counter:
+            channel->envelope_counter = next_counter;
         }
-        channel->status |= 4;
-        channel->modify |= 1;
-        if (number != 3) {
-            envelope_rate = 8;
-        }
-        goto output;
 
     tick:
         channel->envelope_counter -= 1;
         if (frame == 0) {
-            frame = -1;
+            frame -= 1;
             goto envelope_step;
         }
 
     output:
         if ((channel->modify & 2) != 0) {
             if (number <= 3 && (channel->type & 8) != 0) {
-                u8 bias = *(volatile u8 *)0x04000089;
+                s32 bias = *(volatile u8 *)0x04000089;
 
                 if (bias <= 63) {
                     channel->frequency =
@@ -373,12 +389,17 @@ void Func_080fae58(void)
             if (number != 4) {
                 *reg_freq_low = (u8)channel->frequency;
             } else {
-                *reg_freq_low =
-                    (u8)channel->frequency | (*reg_freq_low & 8);
+                s32 current_low = *reg_freq_low;
+                current_low &= 8;
+                *reg_freq_low = channel->frequency | current_low;
             }
-            channel->n4_control = (channel->n4_control & 0xc0)
-                + (u8)(channel->frequency >> 8);
-            *reg_freq_high = channel->n4_control;
+            {
+                u32 n4_control = (channel->n4_control & 0xc0)
+                    + ((u8 *)&channel->frequency)[1];
+                channel->n4_control = n4_control;
+                n4_control &= 0xff;
+                *reg_freq_high = n4_control;
+            }
         }
 
         if ((channel->modify & 1) != 0) {

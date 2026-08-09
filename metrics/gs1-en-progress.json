@@ -2,16 +2,16 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "gs1-en",
-  "full_c_bytes": 321934,
+  "full_c_bytes": 335680,
   "executable_bytes": 1347254,
-  "remaining_bytes": 1025320,
-  "percent": 23.9,
+  "remaining_bytes": 1011574,
+  "percent": 24.92,
   "main": {
-    "full_c_bytes": 110528,
+    "full_c_bytes": 110632,
     "executable_bytes": 548364
   },
   "overlays": {
-    "full_c_bytes": 211406,
+    "full_c_bytes": 225048,
     "executable_bytes": 798890
   },
   "audit": "complete"

@@ -48,7 +48,7 @@ void Func_02005d9e();
 void Func_02005d6e();
 void Func_02005d86();
 void Func_02005c9c();
-void Func_02005da4();
+s32 Func_02005da4(s32, s32);
 void Func_02005d94();
 void Func_02005db6();
 void Func_02005d2e();
@@ -69,10 +69,11 @@ void Func_02005ce0();
 
 /* In-image data block referenced by the pool word 0x0200c8c0. */
 extern u8 Data_0200c8c0[];
+extern u8 Value_00000e67;
 
 void Func_0200150c(void)
 {
-    s32 msg = 0xe67;   /* r5 */
+    s32 msg;   /* r5 */
 
     Func_02005c0c();
     Func_02005c98(0, 0x106, 0x32a);          /* 131 << 1 */
@@ -88,6 +89,7 @@ void Func_0200150c(void)
     Func_02005c72(30);
     Func_02005d3a(0, 2);
     Func_02005d9e(20, 0x100, 20);            /* 128 << 1 */
+    msg = (s32)&Value_00000e67;
     Func_02005d6e(msg);                      /* one argument here */
     Func_02005d86(20, 0);
     Func_02005c9c(20);

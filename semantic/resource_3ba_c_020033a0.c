@@ -56,7 +56,8 @@
  * The sprite requests are built at the record's own base, three words each,
  * and handed to Func_080001e8 twelve bytes at a time.  Two cursors run in the
  * assembly — r8 lagging one entry behind the [sp,#12] write pointer — and they
- * are always equal at each call site, so one cursor is written here.
+ * are always equal at each call site.  The C keeps both roles explicit: one
+ * cursor writes the three words while the other identifies the submitted row.
  *
  * SHAPE.  A per-frame ramp/chain renderer.  While the abort flag is clear it
  * ramps the phase counter up (or, once story flag 0x106 is set, back down),
@@ -128,9 +129,9 @@ extern u32 Data_03001e40;
 
 void Func_020033a0(void)
 {
+    u32 tile;
     u8 *record;
     u32 *entry;
-    u32 tile;
     u32 column;
     s32 counter;
     s32 linkCount;
@@ -139,10 +140,11 @@ void Func_020033a0(void)
     u8 *actor;
     s32 across;
     s32 down;
+    u32 *write;
 
-    s32 permuted_22;
     record = Data_03001f3c;
     entry = (u32 *)record;
+    write = entry;
 
     /* Metrics halfword at +2 of the slot's four-byte entry, scaled down. */
     tile = Data_03001b10[*(s16 *)(record + 216) * 2 + 1] >> 5;
@@ -173,41 +175,40 @@ void Func_020033a0(void)
         }
     }
 
-    permuted_22 = *(s16 *)(record + 218);
+    counter = *(s16 *)(record + 218);
     if (counter == 0) {
-        Func_02006fde(*(s16 *)(record + 216));
+        Func_02006fde(*(s16 *)((u8 *)write + 216));
         return;
     }
-    counter  = permuted_22;
 
     column = ((u32)(counter * 6) - 8) & 0xff;
 
     /* Head. */
-    entry[1] = (u32)((104 - (linkCount << 4)) << 16) | column | 0x8000;
-    entry[0] = 0;
-    entry[2] = tile | 0xe400;
+    *write++ = 0;
+    *write++ = (u32)((104 - (linkCount << 4)) << 16) | column | 0x8000;
+    *write++ = tile | 0xe400;
     Func_02007054(entry, 255, 12);
     entry += 3;
 
     /* Body, top half. */
     for (i = 0; (u32)i < (u32)linkCount; i++) {
-        entry[0] = 0;
-        entry[1] = (u32)((96 - (i << 4)) << 16) | column | 0x40000000;
-        entry[2] = (tile + 2) | 0xe400;
+        *write++ = 0;
+        *write++ = (u32)((96 - (i << 4)) << 16) | column | 0x40000000;
+        *write++ = (tile + 2) | 0xe400;
         Func_02007096(entry, 255, 12);
         entry += 3;
     }
 
     /* Two joint sprites. */
-    entry[0] = 0;
-    entry[1] = 0x700000 | column | 0x8000;          /* 224 << 15 */
-    entry[2] = (tile + 6) | 0xe400;
+    *write++ = 0;
+    *write++ = 0x700000 | column | 0x8000;          /* 224 << 15 */
+    *write++ = (tile + 6) | 0xe400;
     Func_020070d6(entry, 255, 12);
     entry += 3;
 
-    entry[0] = 0;
-    entry[1] = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
-    entry[2] = (tile + 6) | 0xe400;
+    *write++ = 0;
+    *write++ = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
+    *write++ = (tile + 6) | 0xe400;
     Func_02007106(entry, 255, 12);
     entry += 3;
 
@@ -217,9 +218,9 @@ void Func_020033a0(void)
         u32 vertical = 0x800000;
 
         for (i = 0; (u32)i < (u32)linkCount; i++) {
-            entry[0] = 0;
-            entry[1] = column | vertical | 0x40000000 | 0x10000000;
-            entry[2] = (tile + 2) | 0xe400;
+            *write++ = 0;
+            *write++ = column | vertical | 0x40000000 | 0x10000000;
+            *write++ = (tile + 2) | 0xe400;
             Func_0200714c(entry, 255, 12);
             entry += 3;
             vertical += 0x100000;
@@ -232,9 +233,9 @@ void Func_020033a0(void)
     column |= 0x8000;
     column |= 0x10000000;
 
-    entry[0] = 0;
-    entry[1] = column;
-    entry[2] = tile | 0xe400;
+    *write++ = 0;
+    *write++ = column;
+    *write++ = tile | 0xe400;
     Func_020071a2(entry, 255, 12);
     entry += 3;
 
@@ -252,10 +253,10 @@ void Func_020033a0(void)
                                0xe0000);
         across = across + (*(s16 *)(record + 218) * 6);
 
-        entry[0] = 0;
-        entry[1] = (((u32)(across - 4)) & 0xff) | (u32)(down << 16)
+        *write++ = 0;
+        *write++ = (((u32)(across - 4)) & 0xff) | (u32)(down << 16)
                    | 0x40000000;
-        entry[2] = (tile + 12) | 0xe400;
+        *write++ = (tile + 12) | 0xe400;
         Func_0200723e(entry, 255, 12);
         entry += 3;
     }
@@ -273,9 +274,9 @@ void Func_020033a0(void)
                            0xe0000);
     across = across + (*(s16 *)(record + 218) * 6);
 
-    entry[0] = 0;
-    entry[1] = (((u32)(across - 4)) & 0xff) | (u32)(down << 16) | 0x40000000;
-    entry[2] = (tile + 8) | 0xe400;
+    *write++ = 0;
+    *write++ = (((u32)(across - 4)) & 0xff) | (u32)(down << 16) | 0x40000000;
+    *write++ = (tile + 8) | 0xe400;
 
     /* Only r0 and r1 are set at this site; see the note above. */
     Func_020072c0(entry, 255);

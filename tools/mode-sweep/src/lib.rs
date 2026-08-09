@@ -104,6 +104,12 @@ pub const FORK_MODES: &[&str] = &[
     "-fthumb-sink-pool-load-to-use",
     // Unwired fork mode found by sweeping toplev.c directly; witness resource_39e:26d8.
     "-fthumb-sink-constant-past-call",
+    // Sink a callee-saved pool constant across a bounded two-call sequence.
+    // Witness resource_377:133c.
+    "-fthumb-sink-constant-past-call-pair",
+    // Sink a callee-saved constant across one to three independent argument
+    // setters and their call. Witness resource_375:0be0.
+    "-fthumb-sink-constant-past-call-args",
     // Two-pool-word twin of -fthumb-call-arg0-before-pool. Witness
     // resource_371:1a98.
     "-fthumb-call-arg0-before-pool-pair",
@@ -132,6 +138,7 @@ pub const FORK_MODES: &[&str] = &[
     // The literal r1-before-r0 pair, only in a sheet opening after a call.
     // Witnesses resource_3b9:06bc, resource_376:0258, resource_376:0190.
     "-fthumb-call-literal-arg1-first-after-call",
+    "-fthumb-literal-arg1-first-before-zero-pair",
     "-fthumb-call-literal-arg1-first-chained",
     "-fthumb-small-shift-before-immediates",
     "-fthumb-blockmove-dest-before-source",
@@ -629,6 +636,7 @@ const AGBCC_FLAGS: &[&str] = &[
     "-mliteral-before-shift",
     "-mcommutative-copy-constant",
     "-mprologue-next-high-reg",
+    "-mtrack-narrow-value-r1",
     "-mcompare-only-and-tst",
     "-msplit-single-postinc-store",
     "-mkeep-volatile-branch-tails",
@@ -1986,9 +1994,9 @@ mod tests {
     #[test]
     fn mode_table_has_the_expected_shape() {
         // Counts measured from the migrated native table:
-        //   FORK_MODES.length === 90, STOCK_SWITCHES.length === 21,
+        //   FORK_MODES.length === 93, STOCK_SWITCHES.length === 21,
         //   MODES.length === 137.
-        assert_eq!(FORK_MODES.len(), 90);
+        assert_eq!(FORK_MODES.len(), 93);
         assert_eq!(STOCK_SWITCHES.len(), 21);
         assert_eq!(modes().len(), 137);
         assert_eq!(

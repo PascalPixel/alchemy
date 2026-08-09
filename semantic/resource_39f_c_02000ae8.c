@@ -53,50 +53,61 @@ void Func_02003998();
 /* Relocated IWRAM helper: turns a distance and a descriptor duration into a
  * per-frame step. */
 
-void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                   u32 flags, const u8 *options)
+void Func_02000ae8(s32 x, s32 y,
+                   s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
+                   const u8 *options)
 {
+    u32 table_offset;
     u8 *party;
+    u32 copied_bits;
+    s32 flag_mask;
+    u32 block_bits;
     u8 *effect;
     u8 *block;
+    u8 *cursor;
     u16 *tag;
-    s32 kind;
-
-    s32 permuted_51;
     party = Func_020038c6(0);
 
     /* 128 << 13.  With that bit set and an options block present the effect's
      * kind comes from the options rather than from the default 222. */
-    if ((flags & 0x100000) != 0 && options != 0) kind = *(s16 *)(options + 24);
-    else kind = 222;
-
-    effect = Func_02003864(kind, x, y, z);
+    if ((flags & 0x100000) != 0 && options != 0) {
+        effect = Func_02003864(*(s16 *)(options + 24), x, y, z);
+    } else {
+        effect = Func_02003864(222, x, y, z);
+    }
     if (effect == 0) return;
 
     block = *(u8 **)(effect + 80);
 
     Func_0200386e(effect, (flags + 1) & 15);
-    Func_02003888(effect, Data_0200b058[flags & 15]);
+    table_offset = (flags & 15) << 2;
+    Func_02003888(effect,
+                   *(u32 *)((u8 *)Data_0200b058 + table_offset));
 
-    block[38] = 0;
-    effect[85] = 0;
+    cursor = effect + 85;
+    *cursor = 0;
+    cursor = block + 38;
+    *cursor = 0;
 
     /* 0x02008ab1 is Func_02000ab0 with the Thumb bit: the per-frame
      * integrator. */
     *(u32 *)(effect + 108) = 0x02008ab1;
 
     *(s32 *)(effect + 68) = vx;
+    x = 3;
     *(s32 *)(effect + 72) = vy;
     *(s32 *)(effect + 76) = vz;
 
     /* Bits 2 and 3 of the effect's mode byte are copied from the party's. */
-    block[9] = (u8)((block[9] & 0xf3) | ((*(u8 **)(party + 80))[9] & 0x0c));
+    copied_bits = (*(u8 **)(party + 80))[9] & 12;
+    block_bits = *(volatile u8 *)(block + 9);
+    flag_mask = ~12;
+    block[9] = (u8)((block_bits & flag_mask) | copied_bits);
 
+    tag = (u16 *)(effect + 100);
     *(s32 *)(effect + 48) = 0;
     *(s32 *)(effect + 52) = 0;
-
     *tag = 0;
-    tag = (u16 *)(effect + 100);
 
     /* Everything below is optional detail: the whole block is skipped unless
      * some high flag bit is set and an options record was supplied. */
@@ -108,17 +119,18 @@ void Func_02000ae8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 
     if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
         effect[35] = (u8)(effect[35] & 0xfe);
-        permuted_51 = (u8)((block[9] & 0xf3) | ((options[0] & 3) << 2));
+        block[9] = (u8)((block[9] & flag_mask)
+                        | ((options[0] & x) << 2));
     }
-        block[9]  = permuted_51;
 
     if ((flags & 0x80000) != 0) {                   /* 128 << 12 */
-        *(s32 *)(effect + 28) = *(s32 *)(options + 12);
         *(s32 *)(effect + 24) = *(s32 *)(options + 8);
+        *(s32 *)(effect + 28) = *(s32 *)(options + 12);
     }
 
     if ((flags & 0x40000) != 0) {                   /* 128 << 11 */
-        const s32 *descriptor = (const s32 *)Data_0200b058[flags & 15];
+        const s32 *descriptor =
+            (const s32 *)Data_0200b058[table_offset >> 2];
         s32 delta;
 
         /* The 0x80000 test is the same register the previous block left live:

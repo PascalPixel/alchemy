@@ -87,10 +87,63 @@ pub fn accepted_score(value: &Json, key: &str) -> Option<Score> {
         return None;
     }
     as_str(get(value, "id"))?;
-    as_bool(get(value, "compiled"))?;
-    as_bool(get(value, "exact"))?;
-    as_number(get(value, "expected_size"))?;
+    as_str(get(value, "source"))?;
+    valid_config(get(value, "config"))?;
+    let compiled = as_bool(get(value, "compiled"))?;
+    let exact = as_bool(get(value, "exact"))?;
+    let expected_size = nonnegative_integer(get(value, "expected_size"))?;
+    if !as_bool(get(value, "cached")).is_some() {
+        return None;
+    }
+    if !compiled {
+        if exact || as_str(get(value, "error")).is_none()
+            || get(value, "actual_size").is_some()
+            || get(value, "differing_bytes").is_some()
+            || get(value, "first_difference").is_some()
+        {
+            return None;
+        }
+    } else {
+        if get(value, "error").is_some() {
+            return None;
+        }
+        let actual_size = nonnegative_integer(get(value, "actual_size"))?;
+        let differing_bytes = nonnegative_integer(get(value, "differing_bytes"))?;
+        if exact {
+            if actual_size != expected_size
+                || differing_bytes != 0
+                || get(value, "first_difference").is_some()
+            {
+                return None;
+            }
+        } else {
+            let first = nonnegative_integer(get(value, "first_difference"))?;
+            if differing_bytes == 0 || first >= actual_size.max(expected_size) {
+                return None;
+            }
+        }
+    }
     Some(Score { json: value.clone() })
+}
+
+fn valid_config(value: Option<&Json>) -> Option<()> {
+    let config = value?;
+    let strings = |value: Option<&Json>| {
+        matches!(value, Some(Json::Array(items)) if items.iter().all(|item| as_str(Some(item)).is_some()))
+    };
+    if !strings(get(config, "ids"))
+        || !strings(get(config, "flags"))
+        || !strings(get(config, "remove_flags"))
+        || as_str(get(config, "compiler_family")).is_none()
+    {
+        return None;
+    }
+    Some(())
+}
+
+fn nonnegative_integer(value: Option<&Json>) -> Option<u64> {
+    let number = as_number(value)?;
+    (number.is_finite() && number >= 0.0 && number.fract() == 0.0).then_some(number as u64)
 }
 
 /// `{ ...cached, cached: true }`.
@@ -131,6 +184,20 @@ mod tests {
             ("compiled".into(), Json::Bool(true)),
             ("exact".into(), Json::Bool(false)),
             ("expected_size".into(), Json::Number(2.0)),
+            ("actual_size".into(), Json::Number(2.0)),
+            ("differing_bytes".into(), Json::Number(1.0)),
+            ("first_difference".into(), Json::Number(0.0)),
+            ("source".into(), Json::String("x.c".into())),
+            ("config".into(), config()),
+        ])
+    }
+
+    fn config() -> Json {
+        Json::Object(vec![
+            ("ids".into(), Json::Array(vec![])),
+            ("flags".into(), Json::Array(vec![])),
+            ("remove_flags".into(), Json::Array(vec![])),
+            ("compiler_family".into(), Json::String("routed".into())),
         ])
     }
 
@@ -154,6 +221,36 @@ mod tests {
     }
 
     #[test]
+    fn incomplete_exact_and_failure_branches_are_misses() {
+        let mut exact = row("k");
+        set(&mut exact, "exact", Json::Bool(true));
+        assert!(accepted_score(&exact, "k").is_none());
+        let mut failure = row("k");
+        set(&mut failure, "compiled", Json::Bool(false));
+        set(&mut failure, "exact", Json::Bool(false));
+        set(&mut failure, "error", Json::String("failed".into()));
+        assert!(accepted_score(&failure, "k").is_none());
+    }
+
+    #[test]
+    fn a_complete_failure_row_remains_supported() {
+        let mut failure = row("k");
+        set(&mut failure, "compiled", Json::Bool(false));
+        set(&mut failure, "exact", Json::Bool(false));
+        set(&mut failure, "error", Json::String("failed".into()));
+        set(&mut failure, "actual_size", Json::Null);
+        set(&mut failure, "differing_bytes", Json::Null);
+        set(&mut failure, "first_difference", Json::Null);
+        // Absent fields, rather than null fields, are the actual writer shape.
+        let Json::Object(fields) = &mut failure else { unreachable!() };
+        fields.retain(|(name, value)| {
+            !matches!(name.as_str(), "actual_size" | "differing_bytes" | "first_difference")
+                || !matches!(value, Json::Null)
+        });
+        assert!(accepted_score(&failure, "k").is_some());
+    }
+
+    #[test]
     fn unknown_keys_survive_the_round_trip_in_order() {
         let mut extended = row("k");
         set(&mut extended, "future_field", Json::Number(7.0));
@@ -169,7 +266,12 @@ mod tests {
 
     #[test]
     fn the_non_null_assertion_yields_nan_not_zero() {
-        let score = Score { json: row("k") };
+        let score = Score {
+            json: Json::Object(vec![(
+                "compiled".into(),
+                Json::Bool(true),
+            )]),
+        };
         assert!(score.differing_asserted().is_nan());
         assert_eq!(score.differing_or_zero(), 0.0);
         assert_eq!(score.differing_or_infinity(), f64::INFINITY);

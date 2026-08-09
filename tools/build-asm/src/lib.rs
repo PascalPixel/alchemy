@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use alchemy_bundle::sha256;
+use alchemy_bundle::{bundle::host_executable_signature, sha256};
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use serde::Deserialize;
@@ -424,10 +424,78 @@ fn self_digest() -> Result<String, String> {
     Ok(sha256::hex(&bytes))
 }
 
-pub fn region_cache_key(source: &[u8], linked_address: u64) -> Result<String, String> {
-    let mut bytes = format!("asm:{}:{linked_address:x}\0", self_digest()?).into_bytes();
-    bytes.extend_from_slice(source);
+const ASSEMBLY_BINUTILS: [&str; 4] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+];
+
+fn production_binutil_signatures() -> Result<Vec<(String, String)>, String> {
+    ASSEMBLY_BINUTILS
+        .iter()
+        .map(|name| {
+            host_executable_signature(&[*name])
+                .map(|signature| ((*name).to_string(), signature))
+                .map_err(|error| format!("{name}: {error}"))
+        })
+        .collect()
+}
+
+fn region_cache_record(data: &[u8]) -> String {
+    let mut record = Map::new();
+    record.insert("format".into(), number(1));
+    record.insert("size".into(), number(data.len() as u64));
+    record.insert("sha256".into(), Value::String(sha256::hex(data)));
+    canonical_json(&Value::Object(record))
+}
+
+fn read_region_cache(payload: &Path, record: &Path) -> Option<Vec<u8>> {
+    let data = std::fs::read(payload).ok()?;
+    let bytes = std::fs::read(record).ok()?;
+    let value: Value = serde_json::from_slice(&bytes).ok()?;
+    if value.get("format").and_then(Value::as_u64) != Some(1)
+        || value.get("size").and_then(Value::as_u64) != Some(data.len() as u64)
+        || value.get("sha256").and_then(Value::as_str) != Some(sha256::hex(&data).as_str())
+    {
+        return None;
+    }
+    Some(data)
+}
+
+fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
+    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+/// Build a region key from injectable tool signatures so tests do not depend
+/// on an installed ARM toolchain. The ordered name/signature pairs are part of
+/// the key, and this material intentionally migrates the old region namespace
+/// once; old entries remain on disk but are unreachable.
+pub fn region_cache_key_with_signatures(
+    source: &[u8],
+    linked_address: u64,
+    binutils: &[(String, String)],
+) -> Result<String, String> {
+    let mut bytes = Vec::new();
+    append_frame(
+        &mut bytes,
+        b"build-asm cache identity: signed ordered binutils",
+    );
+    append_frame(&mut bytes, self_digest()?.as_bytes());
+    append_frame(&mut bytes, &linked_address.to_be_bytes());
+    append_frame(&mut bytes, &(binutils.len() as u64).to_be_bytes());
+    for (name, signature) in binutils {
+        append_frame(&mut bytes, name.as_bytes());
+        append_frame(&mut bytes, signature.as_bytes());
+    }
+    append_frame(&mut bytes, source);
     Ok(sha256::hex(&bytes))
+}
+
+pub fn region_cache_key(source: &[u8], linked_address: u64) -> Result<String, String> {
+    let binutils = production_binutil_signatures()?;
+    region_cache_key_with_signatures(source, linked_address, &binutils)
 }
 
 fn valid_external(name: &str) -> bool {
@@ -447,6 +515,7 @@ fn build_region(
     output_dir: &Path,
     cache_dir: &Path,
     run_address: Option<u64>,
+    binutils: &[(String, String)],
 ) -> Result<BuiltRegion, String> {
     let name = stem(source);
     let address = u64::from_str_radix(&name, 16)
@@ -459,9 +528,10 @@ fn build_region(
         std::fs::read(source).map_err(|error| format!("{}: {error}", source.display()))?;
     let cached = cache_dir.join(format!(
         "{}.bin",
-        region_cache_key(&source_bytes, linked_address)?
+        region_cache_key_with_signatures(&source_bytes, linked_address, binutils)?
     ));
-    if let Ok(data) = std::fs::read(&cached) {
+    let record = cached.with_extension("record");
+    if let Some(data) = read_region_cache(&cached, &record) {
         std::fs::write(&binary, &data).map_err(|error| format!("{}: {error}", binary.display()))?;
         return Ok(BuiltRegion {
             address,
@@ -564,6 +634,11 @@ fn build_region(
         .map_err(|error| format!("{}: {error}", cache_dir.display()))?;
     write_cache_entry_atomically(&cached, &data)
         .map_err(|error| format!("{}: {error}", cached.display()))?;
+    // The sidecar is the last-published commit marker. A payload without a
+    // matching record is always a miss, so an interrupted or concurrent write
+    // cannot make a partial region look valid.
+    write_cache_entry_atomically(&record, region_cache_record(&data).as_bytes())
+        .map_err(|error| format!("{}: {error}", record.display()))?;
     Ok(BuiltRegion {
         address,
         run_address: linked_address,
@@ -655,6 +730,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         }
     }
     let cache = root.join("out/cache/asm-regions");
+    let binutils = production_binutil_signatures()?;
     let mut found = BTreeSet::new();
     let mut counts: BTreeMap<String, Count> = BTreeMap::new();
     let mut regions: Vec<(u64, Value)> = Vec::new();
@@ -667,6 +743,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             &output,
             &cache,
             placement.map(|item| item.run_address),
+            &binutils,
         )
         .map_err(|error| format!("{source_name}: {error}"))?;
         if let Some(placement) = placement {
@@ -846,14 +923,81 @@ mod tests {
 
     #[test]
     fn cache_key_changes_with_source_and_address() {
+        let binutils = test_binutils();
         assert_ne!(
-            region_cache_key(b"a", 1).unwrap(),
-            region_cache_key(b"b", 1).unwrap()
+            region_cache_key_with_signatures(b"a", 1, &binutils).unwrap(),
+            region_cache_key_with_signatures(b"b", 1, &binutils).unwrap()
         );
         assert_ne!(
-            region_cache_key(b"a", 1).unwrap(),
-            region_cache_key(b"a", 2).unwrap()
+            region_cache_key_with_signatures(b"a", 1, &binutils).unwrap(),
+            region_cache_key_with_signatures(b"a", 2, &binutils).unwrap()
         );
+    }
+
+    fn test_binutils() -> Vec<(String, String)> {
+        ASSEMBLY_BINUTILS
+            .iter()
+            .map(|name| ((*name).to_string(), format!("{name}-signature-a")))
+            .collect()
+    }
+
+    #[test]
+    fn cache_key_changes_for_each_ordered_binutil_signature() {
+        let base = test_binutils();
+        for index in 0..base.len() {
+            let mut changed = base.clone();
+            changed[index].1.push('x');
+            assert_ne!(
+                region_cache_key_with_signatures(b"source", 1, &base).unwrap(),
+                region_cache_key_with_signatures(b"source", 1, &changed).unwrap(),
+                "binutil index {index} must invalidate the region cache"
+            );
+        }
+        let mut reversed = base.clone();
+        reversed.reverse();
+        assert_ne!(
+            region_cache_key_with_signatures(b"source", 1, &base).unwrap(),
+            region_cache_key_with_signatures(b"source", 1, &reversed).unwrap()
+        );
+    }
+
+    #[test]
+    fn region_cache_requires_a_matching_last_published_record() {
+        let directory =
+            std::env::temp_dir().join(format!("alchemy-build-asm-cache-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&directory);
+        std::fs::create_dir_all(&directory).unwrap();
+        let payload = directory.join("region.bin");
+        let record = directory.join("region.record");
+        let data = b"assembled region";
+        write_cache_entry_atomically(&payload, data).unwrap();
+        write_cache_entry_atomically(&record, region_cache_record(data).as_bytes()).unwrap();
+
+        assert_eq!(read_region_cache(&payload, &record), Some(data.to_vec()));
+
+        std::fs::remove_file(&record).unwrap();
+        assert!(read_region_cache(&payload, &record).is_none());
+        write_cache_entry_atomically(&record, br#"{"size":16}"#).unwrap();
+        assert!(read_region_cache(&payload, &record).is_none());
+        write_cache_entry_atomically(&record, b"truncated").unwrap();
+        assert!(read_region_cache(&payload, &record).is_none());
+        write_cache_entry_atomically(
+            &record,
+            region_cache_record(b"different").as_bytes(),
+        )
+        .unwrap();
+        assert!(read_region_cache(&payload, &record).is_none());
+
+        write_cache_entry_atomically(&record, region_cache_record(data).as_bytes()).unwrap();
+        let mut corrupt = data.to_vec();
+        corrupt[0] ^= 1;
+        std::fs::write(&payload, corrupt).unwrap();
+        assert!(read_region_cache(&payload, &record).is_none());
+
+        std::fs::write(&payload, &data[..data.len() - 1]).unwrap();
+        assert!(read_region_cache(&payload, &record).is_none());
+
+        std::fs::remove_dir_all(directory).unwrap();
     }
 
     #[test]

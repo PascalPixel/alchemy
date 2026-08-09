@@ -1,19 +1,22 @@
 //! Native entry point for the asset build stage.
 
-use std::collections::{hash_map::DefaultHasher, BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::fs;
-use std::hash::{Hash, Hasher};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
+use std::sync::{Arc, Mutex, OnceLock};
 
+use alchemy_bundle::bundle::{compiler_bundle_signature, host_executable_signature};
+use alchemy_bundle::sha256;
 use alignment_tail::parse_alignment_tail;
 use archive_asset::{
     build_archive, self_test as archive_self_test, ArchivePlan, ArchiveStream, PixelFormat,
 };
 use asset_paths::AssetPaths;
 use audio_engine_data::build_audio_engine_data;
+use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use extract_resource::{PaletteGroup, PaletteOperation};
 use gba_header::{build_gba_header_component, read_gba_header_source};
@@ -306,50 +309,235 @@ fn hex_address(address: usize) -> String {
     format!("0x{address:08x}")
 }
 
-fn tool_spec(tool: &str) -> (&str, &str) {
-    match tool {
-        "message_archive" => ("message-archive", "message_archive"),
-        "kind2-resources" => ("kind2-resources", "kind2-resources"),
-        "kind1-map-grid" => ("kind1-map-grid", "kind1-map-grid"),
-        "resource_byte_canvases" => ("resource-byte-canvases", "resource-byte-canvases"),
-        "resource_3ce" => ("resource-3ce", "resource-3ce"),
-        "resource_d1_d3" => ("resource-d1-d3", "resource-d1-d3"),
-        "resource_01c" => ("resource-01c", "resource-01c"),
-        "sentou_gamen_data" => ("sentou-gamen-data", "sentou-gamen-data"),
-        "sentou_hyouji" => ("sentou-hyouji", "sentou-hyouji"),
-        "sentou_kouka_runtime" => ("sentou-kouka-runtime", "sentou-kouka-runtime"),
-        "sentou_menu_data" => ("sentou-menu-data", "sentou-menu-data"),
-        "sentou_resources" => ("sentou-resources", "sentou-resources"),
-        "namae_nyuuryoku" => ("namae-nyuuryoku", "namae-nyuuryoku"),
-        "simple_resources" => ("simple-resources", "simple-resources"),
-        "static_sprite_series" => ("static-sprite-series", "static-sprite-series"),
-        "staff_roll" => ("staff-roll", "staff-roll"),
-        "f0_archive" => ("f0-archive", "f0-archive"),
-        "audio_wave" => ("audio-wave", "audio-wave"),
-        "byte_value_regions" => ("byte-value-regions", "byte-value-regions"),
-        "early_runtime_data" => ("early-runtime-data", "early-runtime-data"),
-        "late_runtime_residual" => ("late-runtime-residual", "late-runtime-residual"),
-        "executable_gap_sources" => ("executable-gap-sources", "executable-gap-sources"),
-        "map_container_components" => ("map-container-components", "map-container-components"),
-        "map_load_table" => ("map-load-table", "map-load-table"),
-        "music_residuals" => ("music-residuals", "music-residuals"),
-        "tokushu-map-resources" | "chiiki-map-resources" => ("map-resources", tool),
-        "runtime_support_data" => ("runtime-support-data", "runtime-support-data"),
-        "character_catalog" => ("character-catalog", "character-catalog"),
-        "localization_font" => ("localization-font", "localization-font"),
-        "localization_tables" => ("localization-tables", "localization-tables"),
-        "battle_effect_data" => ("battle-effect-data", "battle-effect-data"),
-        "resource_directory" => ("resource-directory", "resource-directory"),
-        "resource_5" => ("resource-5", "resource-5"),
-        "title_resources" => ("title-resources", "title-resources"),
-        "indexed_still" => ("indexed-still", "indexed-still"),
-        "skip_sprite_archive" => ("skip-sprite-archive", "skip-sprite-archive"),
-        "wordstream" => ("wordstream", "wordstream"),
-        "pairtable" => ("pairtable", "pairtable"),
-        "music" => ("music", "music"),
-        "encounter_data" => ("encounter-data", "encounter-data"),
-        _ => (tool, tool),
+const NATIVE_TOOL_SPECS: &[(&str, &str, &str)] = &[
+    ("build-assets", "build-assets", "build-assets"),
+    ("message_archive", "message-archive", "message_archive"),
+    ("kind2-resources", "kind2-resources", "kind2-resources"),
+    ("kind1-map-grid", "kind1-map-grid", "kind1-map-grid"),
+    (
+        "resource_byte_canvases",
+        "resource-byte-canvases",
+        "resource-byte-canvases",
+    ),
+    ("resource_3ce", "resource-3ce", "resource-3ce"),
+    ("resource_d1_d3", "resource-d1-d3", "resource-d1-d3"),
+    ("resource_01c", "resource-01c", "resource-01c"),
+    (
+        "sentou_gamen_data",
+        "sentou-gamen-data",
+        "sentou-gamen-data",
+    ),
+    ("sentou_hyouji", "sentou-hyouji", "sentou-hyouji"),
+    (
+        "sentou_kouka_runtime",
+        "sentou-kouka-runtime",
+        "sentou-kouka-runtime",
+    ),
+    ("sentou_menu_data", "sentou-menu-data", "sentou-menu-data"),
+    ("sentou_resources", "sentou-resources", "sentou-resources"),
+    ("namae_nyuuryoku", "namae-nyuuryoku", "namae-nyuuryoku"),
+    ("simple_resources", "simple-resources", "simple-resources"),
+    (
+        "static_sprite_series",
+        "static-sprite-series",
+        "static-sprite-series",
+    ),
+    ("staff_roll", "staff-roll", "staff-roll"),
+    ("f0_archive", "f0-archive", "f0-archive"),
+    ("audio_wave", "audio-wave", "audio-wave"),
+    (
+        "byte_value_regions",
+        "byte-value-regions",
+        "byte-value-regions",
+    ),
+    ("byte-henkan", "byte-henkan", "byte-henkan"),
+    (
+        "early_runtime_data",
+        "early-runtime-data",
+        "early-runtime-data",
+    ),
+    (
+        "late_runtime_residual",
+        "late-runtime-residual",
+        "late-runtime-residual",
+    ),
+    (
+        "executable_gap_sources",
+        "executable-gap-sources",
+        "executable-gap-sources",
+    ),
+    (
+        "map_container_components",
+        "map-container-components",
+        "map-container-components",
+    ),
+    ("music_residuals", "music-residuals", "music-residuals"),
+    (
+        "tokushu-map-resources",
+        "map-resources",
+        "tokushu-map-resources",
+    ),
+    (
+        "chiiki-map-resources",
+        "map-resources",
+        "chiiki-map-resources",
+    ),
+    (
+        "runtime_support_data",
+        "runtime-support-data",
+        "runtime-support-data",
+    ),
+    (
+        "character_catalog",
+        "character-catalog",
+        "character-catalog",
+    ),
+    (
+        "localization_font",
+        "localization-font",
+        "localization-font",
+    ),
+    (
+        "localization_tables",
+        "localization-tables",
+        "localization-tables",
+    ),
+    (
+        "battle_effect_data",
+        "battle-effect-data",
+        "battle-effect-data",
+    ),
+    (
+        "resource_directory",
+        "resource-directory",
+        "resource-directory",
+    ),
+    ("resource_5", "resource-5", "resource-5"),
+    ("title_resources", "title-resources", "title-resources"),
+    ("indexed_still", "indexed-still", "indexed-still"),
+    (
+        "skip_sprite_archive",
+        "skip-sprite-archive",
+        "skip-sprite-archive",
+    ),
+    ("wordstream", "wordstream", "wordstream"),
+    ("pairtable", "pairtable", "pairtable"),
+    ("music", "music", "music"),
+    ("encounter_data", "encounter-data", "encounter-data"),
+];
+
+fn tool_spec(tool: &str) -> Result<(&'static str, &'static str), String> {
+    NATIVE_TOOL_SPECS
+        .iter()
+        .find(|(name, _, _)| *name == tool)
+        .map(|(_, crate_name, binary_name)| (*crate_name, *binary_name))
+        .ok_or_else(|| format!("native asset tool is not registered for cache identity: {tool}"))
+}
+
+type NativeToolKey = (PathBuf, String);
+type NativeToolBuild = OnceLock<Result<PathBuf, String>>;
+type NativeToolCache = Mutex<HashMap<NativeToolKey, Arc<NativeToolBuild>>>;
+
+static NATIVE_TOOL_BUILDS: OnceLock<NativeToolCache> = OnceLock::new();
+
+fn uses_standalone_workspace(manifest: &str) -> bool {
+    manifest.lines().any(|line| line.trim() == "[workspace]")
+}
+
+fn native_binary_path(
+    root: &Path,
+    crate_name: &str,
+    binary_name: &str,
+    manifest: &Path,
+) -> Result<PathBuf, String> {
+    let manifest_text = fs::read_to_string(manifest)
+        .map_err(|error| format!("failed to read native {crate_name} manifest: {error}"))?;
+    let target = native_target_dir(root, crate_name, &manifest_text);
+    Ok(target.join(binary_name))
+}
+
+fn native_target_dir(root: &Path, crate_name: &str, manifest: &str) -> PathBuf {
+    if uses_standalone_workspace(manifest) {
+        root.join("tools").join(crate_name).join("target/release")
+    } else {
+        root.join("tools/target/release")
     }
+}
+
+fn build_native_tool(
+    root: &Path,
+    tool: &str,
+    crate_name: &str,
+    binary_name: &str,
+    manifest: &Path,
+) -> Result<PathBuf, String> {
+    let output = Command::new("cargo")
+        .args([
+            "build",
+            "--release",
+            "--offline",
+            "--quiet",
+            "--manifest-path",
+        ])
+        .arg(manifest)
+        .current_dir(root)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .output()
+        .map_err(|error| format!("failed to start Cargo for native {tool}: {error}"))?;
+    if !output.status.success() {
+        let detail = String::from_utf8_lossy(&output.stderr);
+        let detail = detail.trim();
+        return Err(if detail.is_empty() {
+            format!("Cargo failed to build native {tool}")
+        } else {
+            format!("Cargo failed to build native {tool}: {detail}")
+        });
+    }
+
+    let binary = native_binary_path(root, crate_name, binary_name, manifest)?;
+    if !binary.is_file() {
+        return Err(format!(
+            "Cargo built native {tool}, but its release executable is missing: {}",
+            binary.display()
+        ));
+    }
+    Ok(binary)
+}
+
+fn native_tool_binary(root: &Path, tool: &str) -> Result<PathBuf, String> {
+    let (crate_name, binary_name) = tool_spec(tool)?;
+    let manifest = root.join("tools").join(crate_name).join("Cargo.toml");
+    let build = {
+        let cache = NATIVE_TOOL_BUILDS.get_or_init(|| Mutex::new(HashMap::new()));
+        let mut cache = cache
+            .lock()
+            .map_err(|_| "native tool build cache is poisoned".to_string())?;
+        cache
+            .entry((manifest.clone(), binary_name.to_string()))
+            .or_insert_with(|| Arc::new(OnceLock::new()))
+            .clone()
+    };
+    build
+        .get_or_init(|| build_native_tool(root, tool, crate_name, binary_name, &manifest))
+        .clone()
+}
+
+fn implementation_signature() -> Result<String, String> {
+    let executable = env::current_exe().map_err(|error| error.to_string())?;
+    let bytes =
+        fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
+    Ok(sha256::hex(&bytes))
+}
+
+fn native_helpers_signature(root: &Path) -> Result<String, String> {
+    let mut stream = Vec::new();
+    for (tool, _, _) in NATIVE_TOOL_SPECS {
+        let binary = native_tool_binary(root, tool)?;
+        let bytes = fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))?;
+        stamp_record(&mut stream, tool, &bytes);
+    }
+    Ok(sha256::hex(&stream))
 }
 
 struct ProcessOutput {
@@ -363,28 +551,9 @@ fn run_tool(
     args: &[String],
     input: Option<&[u8]>,
 ) -> Result<ProcessOutput, String> {
-    let (crate_name, binary_name) = tool_spec(tool);
-    let manifest = root.join("tools").join(crate_name).join("Cargo.toml");
-    let standalone = root
-        .join("tools")
-        .join(crate_name)
-        .join("target/release")
-        .join(binary_name);
-    let shared = root.join("tools/target/release").join(binary_name);
-    let mut command;
-    if standalone.exists() {
-        command = Command::new(standalone);
-        command.args(args);
-    } else if shared.exists() {
-        command = Command::new(shared);
-        command.args(args);
-    } else {
-        command = Command::new("cargo");
-        command.args(["run", "--offline", "--quiet", "--manifest-path"]);
-        command.arg(manifest);
-        command.arg("--");
-        command.args(args);
-    }
+    let binary = native_tool_binary(root, tool)?;
+    let mut command = Command::new(binary);
+    command.args(args);
     command
         .current_dir(root)
         .stdout(Stdio::piped())
@@ -4215,57 +4384,246 @@ fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions
     Ok(options)
 }
 
-fn stamp_files(directory: &Path, files: &mut Vec<PathBuf>) -> Result<(), String> {
+fn stamp_files(
+    root: &Path,
+    directory: &Path,
+    files: &mut BTreeMap<String, PathBuf>,
+    include: fn(&str) -> bool,
+) -> Result<(), String> {
     if !directory.exists() {
         return Ok(());
     }
-    for entry in
-        fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?
-    {
-        let entry = entry.map_err(|error| error.to_string())?;
+    let mut entries = fs::read_dir(directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|error| error.to_string())?;
+    entries.sort_by_key(|entry| entry.file_name());
+    for entry in entries {
         let path = entry.path();
         if path.is_dir() {
-            stamp_files(&path, files)?;
+            if !matches!(
+                path.file_name().and_then(|name| name.to_str()),
+                Some("target" | "out" | "scratch")
+            ) {
+                stamp_files(root, &path, files, include)?;
+            }
         } else if path.is_file() {
-            files.push(path);
+            let relative = path
+                .strip_prefix(root)
+                .unwrap_or(&path)
+                .to_string_lossy()
+                .replace('\\', "/");
+            if include(&relative) {
+                files.entry(relative).or_insert(path);
+            }
         }
     }
     Ok(())
 }
 
-fn stage_stamp(root: &Path, manifest: &Path, source_only: bool) -> Result<String, String> {
-    let mut hasher = DefaultHasher::new();
-    format!(
-        "assets:native:{}\0",
-        if source_only { "source-only" } else { "rom" }
+fn include_all_stamp_files(_: &str) -> bool {
+    true
+}
+
+fn is_overlay_exact_source(relative: &str) -> bool {
+    let path = Path::new(relative);
+    let components = path.components().collect::<Vec<_>>();
+    let Some(exact_index) = components
+        .iter()
+        .position(|component| component.as_os_str() == std::ffi::OsStr::new("exact"))
+    else {
+        return false;
+    };
+    let suffix = &components[exact_index + 1..];
+    if suffix.len() == 1 {
+        let name = suffix[0].as_os_str().to_string_lossy();
+        return name.starts_with("resource_") && name.contains("_c_") && name.ends_with(".c");
+    }
+    suffix.len() >= 3
+        && suffix[0]
+            .as_os_str()
+            .to_string_lossy()
+            .starts_with("resource_")
+        && suffix[1].as_os_str() == std::ffi::OsStr::new("c")
+        && suffix
+            .last()
+            .is_some_and(|component| component.as_os_str().to_string_lossy().ends_with(".c"))
+}
+
+fn stamp_record(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
+    stream.extend_from_slice(label.as_bytes());
+    stream.push(0);
+    stream.extend_from_slice(bytes.len().to_string().as_bytes());
+    stream.push(0);
+    stream.extend_from_slice(sha256::hex(bytes).as_bytes());
+    stream.push(0);
+}
+
+struct StageSignatures<'a> {
+    bundle: &'a str,
+    host_binutils: &'a str,
+    implementation: &'a str,
+    native_helpers: &'a str,
+}
+
+fn stage_stamp_with_signature(
+    root: &Path,
+    manifest: &Path,
+    source_only: bool,
+    rom: Option<&[u8]>,
+    signatures: StageSignatures<'_>,
+) -> Result<String, String> {
+    let mut stream = Vec::new();
+    stream.extend_from_slice(b"assets:native:v2\0");
+    stream.extend_from_slice(if source_only {
+        b"mode:source-only\0"
+    } else {
+        b"mode:rom\0"
+    });
+
+    let mut files = BTreeMap::new();
+    stamp_files(
+        root,
+        &root.join("assets"),
+        &mut files,
+        include_all_stamp_files,
+    )?;
+    stamp_files(
+        root,
+        &root.join("exact"),
+        &mut files,
+        is_overlay_exact_source,
+    )?;
+    let manifest_relative = manifest
+        .strip_prefix(root)
+        .unwrap_or(manifest)
+        .to_string_lossy()
+        .replace('\\', "/");
+    files
+        .entry(manifest_relative)
+        .or_insert_with(|| manifest.to_path_buf());
+
+    for (relative, path) in files {
+        let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        stamp_record(&mut stream, &relative, &bytes);
+    }
+
+    stamp_record(
+        &mut stream,
+        "<compiler-bundle>",
+        signatures.bundle.as_bytes(),
+    );
+    stamp_record(
+        &mut stream,
+        "<host-binutils>",
+        signatures.host_binutils.as_bytes(),
+    );
+    stamp_record(
+        &mut stream,
+        "<build-assets-implementation>",
+        signatures.implementation.as_bytes(),
+    );
+    stamp_record(
+        &mut stream,
+        "<native-asset-helpers>",
+        signatures.native_helpers.as_bytes(),
+    );
+    if !source_only {
+        let rom = rom.ok_or("normal asset mode is missing ROM bytes")?;
+        stamp_record(&mut stream, "<rom>", rom);
+    }
+    Ok(sha256::hex(&stream))
+}
+
+fn stage_stamp(
+    root: &Path,
+    manifest: &Path,
+    source_only: bool,
+    rom: Option<&[u8]>,
+) -> Result<String, String> {
+    let bundle_signature = compiler_bundle_signature();
+    let host_tool_signature = host_executable_signature(&[
+        "arm-none-eabi-as",
+        "arm-none-eabi-nm",
+        "arm-none-eabi-ld",
+        "arm-none-eabi-objcopy",
+    ])?;
+    let implementation = implementation_signature()?;
+    let native_helpers = native_helpers_signature(root)?;
+    stage_stamp_with_signature(
+        root,
+        manifest,
+        source_only,
+        rom,
+        StageSignatures {
+            bundle: &bundle_signature,
+            host_binutils: &host_tool_signature,
+            implementation: &implementation,
+            native_helpers: &native_helpers,
+        },
     )
-    .hash(&mut hasher);
-    fs::read(manifest)
-        .map_err(|error| format!("{}: {error}", manifest.display()))?
-        .hash(&mut hasher);
-    let mut files = Vec::new();
-    for directory in ["assets", "tools", "semantic", "exact"] {
-        stamp_files(&root.join(directory), &mut files)?;
+}
+
+fn output_matches(region: &Value) -> bool {
+    let Some(output) = region.get("output").and_then(Value::as_str) else {
+        return false;
+    };
+    let Some(expected_size) = region.get("output_size").and_then(Value::as_u64) else {
+        return false;
+    };
+    let Some(expected_digest) = region.get("output_sha256").and_then(Value::as_str) else {
+        return false;
+    };
+    let path = Path::new(output);
+    let Ok(metadata) = fs::metadata(path) else {
+        return false;
+    };
+    if !metadata.is_file() || metadata.len() != expected_size {
+        return false;
     }
-    files.extend([
-        root.join("tools/build-assets/src/main.rs"),
-        root.join("tools/build-assets/Cargo.toml"),
-        root.join("tools/build-assets/Cargo.lock"),
-    ]);
-    files.sort();
-    for path in files {
-        let metadata =
-            fs::metadata(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-        let relative = path.strip_prefix(root).unwrap_or(&path).to_string_lossy();
-        relative.hash(&mut hasher);
-        metadata.len().hash(&mut hasher);
-        if let Ok(modified) = metadata.modified() {
-            if let Ok(duration) = modified.duration_since(std::time::UNIX_EPOCH) {
-                duration.as_nanos().hash(&mut hasher);
-            }
+    let Ok(bytes) = fs::read(path) else {
+        return false;
+    };
+    bytes.len() as u64 == expected_size && sha256::hex(&bytes) == expected_digest
+}
+
+fn reusable_asset_manifest(
+    manifest: &Value,
+    source_only: bool,
+    rom_size: usize,
+) -> Option<(usize, u64)> {
+    if manifest.get("format")?.as_u64()? != 1
+        || manifest.get("rom_base")?.as_u64()? != ROM_BASE as u64
+        || manifest.get("rom_size")?.as_u64()? != rom_size as u64
+        || manifest.get("verification")?.as_str()?
+            != if source_only { "source_only" } else { "rom" }
+    {
+        return None;
+    }
+    let regions = manifest.get("regions")?.as_array()?;
+    if regions.is_empty() {
+        return None;
+    }
+    let mut total = 0u64;
+    for region in regions {
+        let address = region.get("address")?.as_u64()?;
+        let size = region.get("size")?.as_u64()?;
+        let end = region.get("end")?.as_u64()?;
+        if size == 0
+            || end != address.checked_add(size)?
+            || region.get("output_size")?.as_u64()? != size
+            || region.get("kind")?.as_str().is_none()
+            || region.get("sources")?.as_array().is_none()
+            || !output_matches(region)
+        {
+            return None;
         }
+        total = total.checked_add(size)?;
     }
-    Ok(format!("{:016x}", hasher.finish()))
+    if manifest.get("asset_bytes")?.as_u64()? != total {
+        return None;
+    }
+    Some((regions.len(), total))
 }
 
 fn native_asset_main(arguments: &[String]) -> Result<(), String> {
@@ -4297,7 +4655,12 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     }
     fs::create_dir_all(&options.output)
         .map_err(|error| format!("{}: {error}", options.output.display()))?;
-    let stamp = stage_stamp(&root, &options.manifest, options.source_only)?;
+    let stamp = stage_stamp(
+        &root,
+        &options.manifest,
+        options.source_only,
+        rom.as_deref(),
+    )?;
     let stamp_path = options.output.join("stage-stamp.txt");
     let built_manifest = options.output.join("manifest.json");
     if stamp_path.exists()
@@ -4308,23 +4671,9 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             == stamp
     {
         if let Ok(previous) = json(&built_manifest) {
-            let present = previous
-                .get("regions")
-                .and_then(Value::as_array)
-                .is_some_and(|regions| {
-                    regions.iter().all(|region| {
-                        region
-                            .get("output")
-                            .and_then(Value::as_str)
-                            .is_some_and(|output| Path::new(output).exists())
-                    })
-                });
-            if present {
-                let count = previous
-                    .get("regions")
-                    .and_then(Value::as_array)
-                    .map_or(0, Vec::len);
-                let bytes = previous.get("bytes").and_then(Value::as_u64).unwrap_or(0);
+            if let Some((count, bytes)) =
+                reusable_asset_manifest(&previous, options.source_only, rom_size)
+            {
                 println!("assets={count} bytes={bytes} reused=stamp");
                 return Ok(());
             }
@@ -4438,10 +4787,14 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         let sources = closure_sources(&ctx, entry, source_names)?;
         all_sources.extend(sources.iter().cloned());
         let output = options.output.join(format!("{address:08x}.bin"));
-        fs::write(&output, &built).map_err(|error| format!("{}: {error}", output.display()))?;
+        let output_sha256 = sha256::hex(&built);
+        write_cache_entry_atomically(&output, &built)
+            .map_err(|error| format!("{}: {error}", output.display()))?;
         regions.push(serde_json::json!({
             "address": address,
             "size": size,
+            "output_size": built.len(),
+            "output_sha256": output_sha256,
             "end": end,
             "kind": entry.get("kind"),
             "sources": sources,
@@ -4490,12 +4843,10 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         "asset_bytes": asset_bytes,
         "regions": regions,
     });
-    fs::write(
-        &built_manifest,
-        format!("{}\n", canonical_json(&output_manifest)),
-    )
-    .map_err(|error| format!("{}: {error}", built_manifest.display()))?;
-    fs::write(&stamp_path, format!("{stamp}\n"))
+    let manifest_bytes = format!("{}\n", canonical_json(&output_manifest));
+    write_cache_entry_atomically(&built_manifest, manifest_bytes.as_bytes())
+        .map_err(|error| format!("{}: {error}", built_manifest.display()))?;
+    write_cache_entry_atomically(&stamp_path, format!("{stamp}\n").as_bytes())
         .map_err(|error| format!("{}: {error}", stamp_path.display()))?;
     println!(
         "assets={} bytes={asset_bytes}",
@@ -4553,6 +4904,38 @@ fn main() -> ExitCode {
 mod tests {
     use super::*;
 
+    fn stamp_test_root(name: &str) -> PathBuf {
+        let root = env::temp_dir().join(format!(
+            "alchemy-build-assets-{name}-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(root.join("assets")).unwrap();
+        fs::create_dir_all(root.join("tools")).unwrap();
+        fs::create_dir_all(root.join("semantic")).unwrap();
+        fs::create_dir_all(root.join("exact")).unwrap();
+        fs::write(root.join("assets/manifest.json"), b"{\"format\":1}").unwrap();
+        fs::write(root.join("assets/input.bin"), b"aa").unwrap();
+        fs::write(root.join("tools/source.rs"), b"aa").unwrap();
+        root
+    }
+
+    fn source_stamp(root: &Path) -> String {
+        stage_stamp_with_signature(
+            root,
+            &root.join("assets/manifest.json"),
+            true,
+            None,
+            StageSignatures {
+                bundle: "test-bundle",
+                host_binutils: "test-host-binutils",
+                implementation: "test-implementation",
+                native_helpers: "test-native-helpers",
+            },
+        )
+        .unwrap()
+    }
+
     #[test]
     fn parses_decimal_and_hex_numbers() {
         assert_eq!(number(&Value::String("0x10".into()), "n").unwrap(), 16);
@@ -4578,5 +4961,331 @@ mod tests {
     #[test]
     fn rejects_unknown_token_tags() {
         assert!(parse_group(&serde_json::json!(["nope"])).is_err());
+    }
+
+    #[test]
+    fn identifies_standalone_and_shared_native_workspaces() {
+        let root = Path::new("/repo");
+        assert_eq!(
+            native_target_dir(root, "kind2-resources", "[workspace]\n"),
+            PathBuf::from("/repo/tools/kind2-resources/target/release")
+        );
+        assert_eq!(
+            native_target_dir(root, "wordstream", "[package]\n"),
+            PathBuf::from("/repo/tools/target/release")
+        );
+    }
+
+    #[test]
+    fn native_helper_registry_is_exact_and_rejects_unknown_helpers() {
+        let mut expected = [
+            "audio_wave",
+            "battle_effect_data",
+            "build-assets",
+            "byte-henkan",
+            "byte_value_regions",
+            "character_catalog",
+            "early_runtime_data",
+            "encounter_data",
+            "executable_gap_sources",
+            "f0_archive",
+            "indexed_still",
+            "kind1-map-grid",
+            "kind2-resources",
+            "late_runtime_residual",
+            "localization_font",
+            "localization_tables",
+            "map_container_components",
+            "message_archive",
+            "music",
+            "music_residuals",
+            "namae_nyuuryoku",
+            "pairtable",
+            "resource_01c",
+            "resource_3ce",
+            "resource_5",
+            "resource_byte_canvases",
+            "resource_d1_d3",
+            "resource_directory",
+            "runtime_support_data",
+            "sentou_gamen_data",
+            "sentou_hyouji",
+            "sentou_kouka_runtime",
+            "sentou_menu_data",
+            "sentou_resources",
+            "simple_resources",
+            "skip_sprite_archive",
+            "staff_roll",
+            "static_sprite_series",
+            "title_resources",
+            "tokushu-map-resources",
+            "chiiki-map-resources",
+            "wordstream",
+        ];
+        expected.sort_unstable();
+        let mut actual = NATIVE_TOOL_SPECS
+            .iter()
+            .map(|(name, _, _)| *name)
+            .collect::<Vec<_>>();
+        actual.sort_unstable();
+        assert_eq!(actual, expected);
+        assert!(tool_spec("map_load_table").is_err());
+        assert!(tool_spec("not-a-build-assets-helper").is_err());
+    }
+
+    #[test]
+    fn stage_stamp_changes_for_same_length_content_edits() {
+        let root = stamp_test_root("content");
+        let before = source_stamp(&root);
+        fs::write(root.join("assets/input.bin"), b"ab").unwrap();
+        assert_ne!(before, source_stamp(&root));
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn stage_stamp_ignores_timestamp_only_rewrites() {
+        let root = stamp_test_root("timestamp");
+        let before = source_stamp(&root);
+        fs::write(root.join("assets/input.bin"), b"aa").unwrap();
+        assert_eq!(before, source_stamp(&root));
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn unrelated_tool_sources_do_not_invalidate_the_asset_stage() {
+        let root = stamp_test_root("unrelated-tool");
+        let before = source_stamp(&root);
+        fs::write(root.join("tools/source.rs"), b"changed unrelated tool").unwrap();
+        assert_eq!(before, source_stamp(&root));
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn stage_stamp_excludes_generated_target_out_and_scratch_trees() {
+        let root = stamp_test_root("excluded");
+        for directory in ["target", "out", "scratch"] {
+            let path = root.join("tools").join(directory);
+            fs::create_dir_all(&path).unwrap();
+            fs::write(path.join("generated"), b"before").unwrap();
+        }
+        let before = source_stamp(&root);
+        for directory in ["target", "out", "scratch"] {
+            fs::write(
+                root.join("tools").join(directory).join("generated"),
+                b"after",
+            )
+            .unwrap();
+        }
+        assert_eq!(before, source_stamp(&root));
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn stage_stamp_deduplicates_the_manifest_path() {
+        let root = stamp_test_root("deduplicate");
+        let manifest = root.join("assets/manifest.json");
+        let mut files = BTreeMap::new();
+        stamp_files(
+            &root,
+            &root.join("assets"),
+            &mut files,
+            include_all_stamp_files,
+        )
+        .unwrap();
+        let relative = manifest
+            .strip_prefix(&root)
+            .unwrap()
+            .to_string_lossy()
+            .replace('\\', "/");
+        files.entry(relative).or_insert_with(|| manifest.clone());
+        assert_eq!(files.len(), 2);
+        assert_eq!(files.values().filter(|path| *path == &manifest).count(), 1);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn output_reuse_rejects_missing_digest_and_corrupt_outputs() {
+        let root = env::temp_dir().join(format!(
+            "alchemy-build-assets-output-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).unwrap();
+        let output = root.join("region.bin");
+        let bytes = [1u8, 2, 3];
+        fs::write(&output, bytes).unwrap();
+        let region = serde_json::json!({
+            "address": ROM_BASE,
+            "size": bytes.len(),
+            "end": ROM_BASE + bytes.len(),
+            "kind": "fixture",
+            "sources": ["fixture.bin"],
+            "output": output,
+            "output_size": bytes.len(),
+            "output_sha256": sha256::hex(&bytes),
+        });
+        assert!(output_matches(&region));
+        let manifest = serde_json::json!({
+            "format": 1,
+            "rom_base": ROM_BASE,
+            "rom_size": ROM_SIZE,
+            "verification": "source_only",
+            "asset_bytes": bytes.len(),
+            "regions": [region.clone()],
+        });
+        assert_eq!(
+            reusable_asset_manifest(&manifest, true, ROM_SIZE),
+            Some((1, bytes.len() as u64))
+        );
+        let mut incomplete = manifest.clone();
+        incomplete.as_object_mut().unwrap().remove("asset_bytes");
+        assert!(reusable_asset_manifest(&incomplete, true, ROM_SIZE).is_none());
+        fs::write(&output, [1u8, 2, 4]).unwrap();
+        assert!(!output_matches(&region));
+        assert!(reusable_asset_manifest(&manifest, true, ROM_SIZE).is_none());
+        fs::write(&output, [1u8, 2]).unwrap();
+        assert!(!output_matches(&region));
+        assert!(!output_matches(&serde_json::json!({
+            "output": output,
+            "output_size": bytes.len(),
+        })));
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn stage_stamp_separates_mode_rom_compiler_bundle_and_host_binutils() {
+        let root = stamp_test_root("identity");
+        let manifest = root.join("assets/manifest.json");
+        let source = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            true,
+            None,
+            StageSignatures {
+                bundle: "bundle-a",
+                host_binutils: "host-a",
+                implementation: "implementation-a",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let other_source_bundle = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            true,
+            None,
+            StageSignatures {
+                bundle: "bundle-b",
+                host_binutils: "host-a",
+                implementation: "implementation-a",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let normal = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            false,
+            Some(b"rom-a"),
+            StageSignatures {
+                bundle: "bundle-a",
+                host_binutils: "host-a",
+                implementation: "implementation-a",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let other_rom = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            false,
+            Some(b"rom-b"),
+            StageSignatures {
+                bundle: "bundle-a",
+                host_binutils: "host-a",
+                implementation: "implementation-a",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let other_bundle = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            false,
+            Some(b"rom-a"),
+            StageSignatures {
+                bundle: "bundle-b",
+                host_binutils: "host-a",
+                implementation: "implementation-a",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let other_host = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            false,
+            Some(b"rom-a"),
+            StageSignatures {
+                bundle: "bundle-a",
+                host_binutils: "host-b",
+                implementation: "implementation-a",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let other_implementation = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            false,
+            Some(b"rom-a"),
+            StageSignatures {
+                bundle: "bundle-a",
+                host_binutils: "host-a",
+                implementation: "implementation-b",
+                native_helpers: "helpers-a",
+            },
+        )
+        .unwrap();
+        let other_helpers = stage_stamp_with_signature(
+            &root,
+            &manifest,
+            false,
+            Some(b"rom-a"),
+            StageSignatures {
+                bundle: "bundle-a",
+                host_binutils: "host-a",
+                implementation: "implementation-a",
+                native_helpers: "helpers-b",
+            },
+        )
+        .unwrap();
+        assert_ne!(source, normal);
+        assert_ne!(source, other_source_bundle);
+        assert_ne!(normal, other_rom);
+        assert_ne!(normal, other_bundle);
+        assert_ne!(normal, other_host);
+        assert_ne!(normal, other_implementation);
+        assert_ne!(normal, other_helpers);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn core_exact_sources_do_not_invalidate_but_overlay_exact_sources_do() {
+        let root = stamp_test_root("exact-scope");
+        let exact = root.join("exact");
+        fs::create_dir_all(&exact).unwrap();
+        let core = exact.join("08000000.c");
+        let overlay = exact.join("resource_39c_c_02000240.c");
+        fs::write(&core, b"core").unwrap();
+        fs::write(&overlay, b"overlay").unwrap();
+        let before = source_stamp(&root);
+
+        fs::write(&core, b"changed").unwrap();
+        assert_eq!(before, source_stamp(&root));
+
+        fs::write(&overlay, b"changed").unwrap();
+        assert_ne!(before, source_stamp(&root));
+        fs::remove_dir_all(root).unwrap();
     }
 }

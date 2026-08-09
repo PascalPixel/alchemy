@@ -93,6 +93,8 @@ dependencies = [
 name = "overlay-inventory"
 version = "0.1.0"
 dependencies = [
+ "alchemy-bundle",
+ "cache-entry",
  "canonical-json",
  "discover",
  "overlay-disasm",

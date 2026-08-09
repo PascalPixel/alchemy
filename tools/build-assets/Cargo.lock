@@ -66,10 +66,12 @@ dependencies = [
 name = "build-assets"
 version = "0.1.0"
 dependencies = [
+ "alchemy-bundle",
  "alignment-tail",
  "archive-asset",
  "asset-paths",
  "audio-engine-data",
+ "cache-entry",
  "canonical-json",
  "extract-resource",
  "gba-header",

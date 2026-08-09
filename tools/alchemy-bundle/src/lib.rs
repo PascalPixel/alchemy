@@ -19,9 +19,12 @@
 //!    table is an ordered slice. A hash container here would compile, pass a
 //!    casual read, and silently produce a different compiler invocation.
 //!
-//! 2. `compilerBundleSignature` omits `GCC3_DRIVER`, a cache-key behavior
-//!    preserved from the admitted compiler bundle. Its omission is pinned by a
-//!    unit test because changing it invalidates every repository cache.
+//! 2. `compilerBundleSignature` includes every routable staged compiler,
+//!    including `GCC3_DRIVER`. Adding that path deliberately invalidates
+//!    existing compiler-cache entries once. Its result is memoized once per
+//!    process because the staged compiler is treated as immutable for that
+//!    process; mutating the staged bundle after the first signature call is
+//!    unsupported.
 
 pub mod bundle;
 pub mod bundle_data;

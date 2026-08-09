@@ -11,23 +11,24 @@
 //! cargo run --manifest-path tools/self-test/Cargo.toml -- --self-test
 //! ```
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
-use std::time::{Instant, SystemTime};
+use std::time::Instant;
 
 const JOB_SHARE_NUMERATOR: usize = 4;
 const JOB_SHARE_DENOMINATOR: usize = 5;
+const MAX_CARGO_WORKERS: usize = 4;
 
 fn jobs_for(cores: usize) -> usize {
     cores
         .saturating_mul(JOB_SHARE_NUMERATOR)
         .checked_div(JOB_SHARE_DENOMINATOR)
         .unwrap_or(0)
-        .max(1)
+        .clamp(1, MAX_CARGO_WORKERS)
 }
 
 fn available_parallelism() -> usize {
@@ -226,69 +227,37 @@ fn native_root(root: &Path) -> Result<PathBuf, String> {
         })
 }
 
-fn newest_input_time(manifest: &Path, source_root: &Path) -> Option<SystemTime> {
-    fn visit(path: &Path, newest: &mut SystemTime) -> std::io::Result<()> {
-        let metadata = fs::metadata(path)?;
-        let modified = metadata.modified()?;
-        if modified > *newest {
-            *newest = modified;
-        }
-        if metadata.is_dir() {
-            let mut entries = fs::read_dir(path)?.collect::<Result<Vec<_>, _>>()?;
-            entries.sort_by_key(|entry| entry.file_name());
-            for entry in entries {
-                visit(&entry.path(), newest)?;
-            }
-        }
-        Ok(())
-    }
-
-    let mut newest = fs::metadata(manifest).ok()?.modified().ok()?;
-    visit(source_root, &mut newest).ok()?;
-    Some(newest)
-}
-
-fn binary_is_current(binary: &Path, manifest: &Path, source_root: &Path) -> bool {
-    if fs::read(binary)
-        .map(|bytes| {
-            bytes
-                .windows(b"tools-rs/".len())
-                .any(|window| window == b"tools-rs/")
-        })
-        .unwrap_or(false)
-    {
-        return false;
-    }
-    let binary_time = fs::metadata(binary)
-        .and_then(|metadata| metadata.modified())
-        .ok();
-    let input_time = newest_input_time(manifest, source_root);
-    match (binary_time, input_time) {
-        (Some(binary), Some(input)) => binary >= input,
-        _ => false,
-    }
-}
-
-fn current_release_binary(
-    native_root: &Path,
-    crate_dir: &Path,
-    binary_name: &str,
-    manifest: &Path,
-    source_root: &Path,
-) -> Option<PathBuf> {
-    [
-        crate_dir.join("target/release").join(binary_name),
-        native_root.join("target/release").join(binary_name),
-    ]
-    .into_iter()
-    .find(|binary| binary_is_current(binary, manifest, source_root))
-}
-
 #[derive(Debug, Clone)]
 struct Invocation {
     name: String,
     program: PathBuf,
     arguments: Vec<String>,
+    resource_group: Option<&'static str>,
+}
+
+/// These two self-tests both cold-populate the same resource_380 overlay-C
+/// entries. Keep that one shared population transaction together; all other
+/// native self-tests retain the worker pool's normal parallelism.
+fn resource_group(crate_name: &str) -> Option<&'static str> {
+    match crate_name {
+        "overlay-driver" | "overlay-published" => Some("overlay-c/resource_380"),
+        _ => None,
+    }
+}
+
+fn cargo_run_arguments(manifest: &Path, binary_name: &str) -> Vec<String> {
+    vec![
+        "run".to_string(),
+        "--offline".to_string(),
+        "--quiet".to_string(),
+        "--release".to_string(),
+        "--manifest-path".to_string(),
+        manifest.to_string_lossy().into_owned(),
+        "--bin".to_string(),
+        binary_name.to_string(),
+        "--".to_string(),
+        "--self-test".to_string(),
+    ]
 }
 
 fn native_tools(root: &Path) -> Result<Vec<Invocation>, String> {
@@ -350,34 +319,11 @@ fn native_tools(root: &Path) -> Result<Vec<Invocation>, String> {
         }
 
         for target in selected {
-            let binary = current_release_binary(
-                &native_root,
-                &crate_dir,
-                &target.name,
-                &manifest_path,
-                &source_root,
-            );
-            let (program, arguments) = match binary {
-                Some(program) => (program, vec!["--self-test".to_string()]),
-                None => (
-                    PathBuf::from("cargo"),
-                    vec![
-                        "run".to_string(),
-                        "--quiet".to_string(),
-                        "--release".to_string(),
-                        "--manifest-path".to_string(),
-                        manifest_path.to_string_lossy().into_owned(),
-                        "--bin".to_string(),
-                        target.name.clone(),
-                        "--".to_string(),
-                        "--self-test".to_string(),
-                    ],
-                ),
-            };
-            by_crate
-                .entry(crate_name.clone())
-                .or_default()
-                .push((target.name, program, arguments));
+            by_crate.entry(crate_name.clone()).or_default().push((
+                target.name.clone(),
+                PathBuf::from("cargo"),
+                cargo_run_arguments(&manifest_path, &target.name),
+            ));
         }
     }
 
@@ -399,6 +345,7 @@ fn native_tools(root: &Path) -> Result<Vec<Invocation>, String> {
                 name,
                 program,
                 arguments,
+                resource_group: resource_group(&crate_name),
             });
         }
     }
@@ -454,16 +401,30 @@ fn run_one(root: &Path, tool: &Invocation) -> Outcome {
 fn run_all(root: &Path, tools: &[Invocation], jobs: usize) -> Vec<Outcome> {
     let next = Arc::new(AtomicUsize::new(0));
     let results = Arc::new(Mutex::new(Vec::with_capacity(tools.len())));
+    let resource_locks: Arc<BTreeMap<&'static str, Arc<Mutex<()>>>> = Arc::new(
+        tools
+            .iter()
+            .filter_map(|tool| tool.resource_group)
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .map(|resource| (resource, Arc::new(Mutex::new(()))))
+            .collect(),
+    );
     let workers = jobs.min(tools.len());
     std::thread::scope(|scope| {
         for _ in 0..workers {
             let next = Arc::clone(&next);
             let results = Arc::clone(&results);
+            let resource_locks = Arc::clone(&resource_locks);
             scope.spawn(move || loop {
                 let index = next.fetch_add(1, Ordering::Relaxed);
                 if index >= tools.len() {
                     break;
                 }
+                let _resource_guard = tools[index]
+                    .resource_group
+                    .and_then(|resource| resource_locks.get(resource))
+                    .map(|lock| lock.lock().expect("self-test resource mutex"));
                 let outcome = run_one(root, &tools[index]);
                 results
                     .lock()
@@ -514,10 +475,10 @@ path = "src/bin/bench.rs"
     assert_eq!(targets[0].name, "example-tool");
     assert_eq!(targets[1].path, PathBuf::from("src/bin/bench.rs"));
 
-    assert_eq!(jobs_for(18), 14);
+    assert_eq!(jobs_for(18), 4);
     assert_eq!(jobs_for(1), 1);
     assert_eq!(parse_jobs(&["--jobs".into(), "4".into()], 18), Ok(4));
-    assert_eq!(parse_jobs(&["--jobs=64".into()], 18), Ok(14));
+    assert_eq!(parse_jobs(&["--jobs=64".into()], 18), Ok(4));
     assert!(parse_jobs(&["--jobs".into()], 18).is_err());
     assert!(parse_jobs(&["--jobs".into(), "0".into()], 18).is_err());
 
@@ -601,7 +562,6 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::time::Duration;
 
     #[test]
     fn binary_targets_use_explicit_main_bin_and_package_fallback() {
@@ -631,39 +591,43 @@ path = "src/main.rs"
 
     #[test]
     fn jobs_are_bounded_and_invalid_values_are_rejected() {
-        assert_eq!(jobs_for(18), 14);
+        assert_eq!(jobs_for(18), 4);
         assert_eq!(jobs_for(2), 1);
-        assert_eq!(parse_jobs(&[], 18), Ok(14));
+        assert_eq!(parse_jobs(&[], 18), Ok(4));
         assert_eq!(parse_jobs(&["--jobs".into(), "4".into()], 18), Ok(4));
-        assert_eq!(parse_jobs(&["--jobs=64".into()], 18), Ok(14));
+        assert_eq!(parse_jobs(&["--jobs=64".into()], 18), Ok(4));
         assert!(parse_jobs(&["--jobs".into(), "nope".into()], 18).is_err());
         assert!(parse_jobs(&["--jobs".into(), "0".into()], 18).is_err());
     }
 
     #[test]
-    fn freshness_requires_a_binary_at_least_as_new_as_all_inputs() {
-        let root = std::env::temp_dir().join(format!("self-test-freshness-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(root.join("src")).expect("fixture directory");
-        let manifest = root.join("Cargo.toml");
-        let source = root.join("src/main.rs");
-        let binary = root.join("target/release/tool");
-        fs::write(&manifest, "[package]\nname = \"tool\"\n").expect("manifest");
-        fs::write(&source, "fn main() {}\n").expect("source");
-        assert!(!binary_is_current(&binary, &manifest, &root.join("src")));
-        fs::create_dir_all(binary.parent().expect("binary parent")).expect("target directory");
-        fs::write(&binary, "binary\n").expect("binary");
-        // A just-written binary is normally newer than the inputs.  If the
-        // filesystem exposes equal timestamps, equality is intentionally also
-        // accepted by binary_is_current.
-        assert!(binary_is_current(&binary, &manifest, &root.join("src")));
-        fs::write(&binary, b"embedded /repo/tools-rs/tool path\n").expect("retired binary");
-        assert!(!binary_is_current(&binary, &manifest, &root.join("src")));
-        fs::write(&binary, "binary\n").expect("current binary");
-        std::thread::sleep(Duration::from_millis(10));
-        fs::write(&source, "fn main() { println!(\"changed\"); }\n").expect("newer source");
-        assert!(!binary_is_current(&binary, &manifest, &root.join("src")));
-        fs::remove_dir_all(&root).expect("fixture cleanup");
+    fn cargo_command_plan_is_offline_and_selects_exactly_one_binary() {
+        let arguments = cargo_run_arguments(Path::new("tools/example/Cargo.toml"), "example");
+        assert_eq!(arguments[0], "run");
+        assert_eq!(arguments[1], "--offline");
+        assert_eq!(arguments[2], "--quiet");
+        assert_eq!(
+            arguments
+                .iter()
+                .filter(|argument| argument.as_str() == "--bin")
+                .count(),
+            1
+        );
+        assert_eq!(arguments[arguments.len() - 2], "--");
+        assert_eq!(arguments[arguments.len() - 1], "--self-test");
+    }
+
+    #[test]
+    fn resource_group_serializes_the_shared_overlay_population() {
+        assert_eq!(
+            resource_group("overlay-driver"),
+            Some("overlay-c/resource_380")
+        );
+        assert_eq!(
+            resource_group("overlay-published"),
+            Some("overlay-c/resource_380")
+        );
+        assert_eq!(resource_group("overlay-show"), None);
     }
 
     #[test]

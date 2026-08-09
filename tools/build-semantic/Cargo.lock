@@ -25,11 +25,17 @@ version = "0.1.0"
 name = "build-semantic"
 version = "0.1.0"
 dependencies = [
+ "alchemy-bundle",
  "alchemy-plan",
  "alchemy-routing",
+ "cache-entry",
  "serde",
  "serde_json",
 ]
+
+[[package]]
+name = "cache-entry"
+version = "0.1.0"
 
 [[package]]
 name = "equivalent"

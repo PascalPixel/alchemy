@@ -23,7 +23,6 @@ use intervals::{
     round_half_up_percent, to_fixed_2, union_intervals, Interval,
 };
 use json::{canonical_json, Value};
-use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 
 const DEFAULT_TARGET: &str = "gs1-en";
 
@@ -427,19 +426,6 @@ fn main_inventory(root: &Path, target: &str) -> Result<Namespace, String> {
     })
 }
 
-// ---------------------------------------------------------------------------
-// Overlay images
-// ---------------------------------------------------------------------------
-
-/// Compile every overlay that has an exact-C sibling through the native
-/// `overlay-disasm` implementation of `assembleOverlay`.
-fn overlay_images(sources: &[String]) -> Result<Vec<Vec<u8>>, String> {
-    sources
-        .iter()
-        .map(|source| assemble_overlay(&OverlaySource::path(source), OVERLAY_BASE))
-        .collect()
-}
-
 /// `max(1, floor(cores * 0.8))` — the repository-wide parallelism cap.
 fn resolve_jobs() -> usize {
     let cores = std::thread::available_parallelism()
@@ -448,22 +434,12 @@ fn resolve_jobs() -> usize {
     ((cores as f64 * 0.8).floor() as usize).max(1)
 }
 
-fn overlay_inventories(root: &Path, sources: &[String]) -> Result<Vec<Namespace>, String> {
-    let mut compiled: Vec<usize> = Vec::new();
-    for (index, source) in sources.iter().enumerate() {
-        if !overlay::overlay_c_sources(root, source).is_empty() {
-            compiled.push(index);
-        }
-    }
-    let compiled_sources: Vec<String> = compiled
-        .iter()
-        .map(|index| sources[*index].clone())
-        .collect();
-    let images = overlay_images(&compiled_sources)?;
-    let mut per_source: Vec<Option<Vec<u8>>> = vec![None; sources.len()];
-    for (slot, image) in compiled.iter().zip(images) {
-        per_source[*slot] = Some(image);
-    }
+fn overlay_inventories(
+    root: &Path,
+    target: &str,
+    sources: &[String],
+) -> Result<Vec<Namespace>, String> {
+    let cache_inputs = overlay::cache_inputs(root)?;
 
     let next = std::sync::atomic::AtomicUsize::new(0);
     let results: Vec<std::sync::Mutex<Option<Result<Namespace, String>>>> = (0..sources.len())
@@ -477,10 +453,11 @@ fn overlay_inventories(root: &Path, sources: &[String]) -> Result<Vec<Namespace>
                 if index >= sources.len() {
                     break;
                 }
-                let outcome = overlay::overlay_inventory(
+                let outcome = overlay::cached_overlay_inventory(
                     root,
+                    target,
                     &sources[index],
-                    per_source[index].as_deref(),
+                    &cache_inputs,
                     &[],
                 );
                 *results[index].lock().expect("inventory slot") = Some(outcome);
@@ -523,7 +500,7 @@ fn derive_inventory(root: &Path, target: &str) -> Result<Inventory, String> {
         });
     }
     let sources = overlay::overlay_sources(root, target)?;
-    let overlays = overlay_inventories(root, &sources)?;
+    let overlays = overlay_inventories(root, target, &sources)?;
     let total = main.executable_bytes
         + overlays
             .iter()

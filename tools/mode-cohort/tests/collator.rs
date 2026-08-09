@@ -12,11 +12,19 @@ fn native_collator_cases_cover_report_ordering() {
         ("a", "A", Ordering::Less),
         ("a-c", "ab", Ordering::Less),
         ("0800000a", "0800000b", Ordering::Less),
-        ("tools/mode-sweep/src/main.rs", "tools/mode-sweep/src/lib.rs", Ordering::Greater),
+        (
+            "tools/mode-sweep/src/main.rs",
+            "tools/mode-sweep/src/lib.rs",
+            Ordering::Greater,
+        ),
         ("no-gcse", "nogcse", Ordering::Less),
     ];
     for (left, right, expected) in cases {
-        assert_eq!(collate(left, right), expected, "collate({left:?}, {right:?})");
+        assert_eq!(
+            collate(left, right),
+            expected,
+            "collate({left:?}, {right:?})"
+        );
         assert_eq!(collate(right, left), expected.reverse(), "reverse ordering");
     }
 

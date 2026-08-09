@@ -154,6 +154,17 @@ const SELF_SOURCE: [&[u8]; 6] = [
     include_bytes!("selftest.rs"),
 ];
 
+/// Local dependency source whose behavior contributes bytes after compilation.
+///
+/// The compiler plan itself is already represented by its fully framed command
+/// list, but external-symbol stub rendering happens inside `alchemy-symbols`
+/// after that plan. Its source must therefore move the overlay-C cache key too.
+const LINKED_POSTPROCESS_SOURCE: [&[u8]; 3] = [
+    include_bytes!("../../alchemy-symbols/src/lib.rs"),
+    include_bytes!("../../alchemy-symbols/src/call_via_data.rs"),
+    include_bytes!("../../alchemy-symbols/src/symbols.rs"),
+];
+
 /// A digest of this crate's own source, mixed into every overlay-C cache key.
 ///
 /// The command plan stamps the compiler binaries and flags, but NOT the work
@@ -183,6 +194,9 @@ pub fn self_digest() -> String {
     for part in SELF_SOURCE {
         stream.extend_from_slice(part);
     }
+    for part in LINKED_POSTPROCESS_SOURCE {
+        stream.extend_from_slice(part);
+    }
     assert!(
         !stream.is_empty(),
         "overlay_disasm read an EMPTY source; refusing to key the cache"
@@ -197,6 +211,9 @@ pub fn self_digest() -> String {
 pub fn edited_self_digest() -> String {
     let mut stream: Vec<u8> = Vec::new();
     for part in SELF_SOURCE {
+        stream.extend_from_slice(part);
+    }
+    for part in LINKED_POSTPROCESS_SOURCE {
         stream.extend_from_slice(part);
     }
     stream.extend_from_slice(b"//\n");
@@ -215,39 +232,55 @@ pub fn edited_self_digest() -> String {
 /// contents, in command order. `readFileSync` failure becomes the literal
 /// `"unreadable"`, so a missing compiler is distinguishable from an empty one.
 fn plan_stamp(commands: &[Vec<String>], work: &str) -> String {
-    static MEMO: Mutex<Option<BTreeMap<String, String>>> = Mutex::new(None);
-    let identity: String = commands
-        .iter()
-        .map(|command| {
-            command
-                .iter()
-                .map(|part| if part.starts_with(work) { "<work>".to_string() } else { part.clone() })
-                .collect::<Vec<_>>()
-                .join("|")
-        })
-        .collect::<Vec<_>>()
-        .join("");
+    static MEMO: Mutex<Option<BTreeMap<Vec<u8>, String>>> = Mutex::new(None);
+    let identity = command_identity(commands, work);
     {
         let guard = MEMO.lock().expect("plan-stamp lock");
         if let Some(found) = guard.as_ref().and_then(|memo| memo.get(&identity)) {
             return found.clone();
         }
     }
-    let mut stream: Vec<u8> = identity.as_bytes().to_vec();
+    let mut stream = identity.clone();
     for command in commands {
         let Some(binary) = command.first() else { continue };
         if !binary.starts_with('/') {
             continue;
         }
         match fs::read(binary) {
-            Ok(bytes) => stream.extend_from_slice(&bytes),
-            Err(_) => stream.extend_from_slice(b"unreadable"),
+            Ok(bytes) => append_frame(&mut stream, &bytes),
+            Err(_) => append_frame(&mut stream, b"unreadable"),
         }
     }
     let stamp = sha256::hex(&stream);
     let mut guard = MEMO.lock().expect("plan-stamp lock");
     guard.get_or_insert_with(BTreeMap::new).insert(identity, stamp.clone());
     stamp
+}
+
+/// Append one length-delimited field. The cache key must not rely on a
+/// separator: command arguments can contain any byte, including that
+/// separator, and adjacent commands must remain distinguishable.
+fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
+    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
+    let mut identity = Vec::new();
+    append_frame(&mut identity, b"overlay-plan-v2");
+    identity.extend_from_slice(&(commands.len() as u64).to_be_bytes());
+    for command in commands {
+        identity.extend_from_slice(&(command.len() as u64).to_be_bytes());
+        for part in command {
+            let normalized = if part.starts_with(work) {
+                "<work>"
+            } else {
+                part
+            };
+            append_frame(&mut identity, normalized.as_bytes());
+        }
+    }
+    identity
 }
 
 // ---------------------------------------------------------------------------
@@ -378,6 +411,75 @@ pub struct Compiled {
     pub data: Vec<u8>,
 }
 
+const OVERLAY_HOST_TOOLS: [&str; 4] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+];
+
+fn cache_record_path(cached: &Path) -> PathBuf {
+    cached.with_extension("record")
+}
+
+fn cache_record(data: &[u8]) -> String {
+    format!(
+        "overlay-c-cache-v1\n{}\n{}\n",
+        data.len(),
+        sha256::hex(data)
+    )
+}
+
+fn read_valid_cache_entry(cached: &Path) -> Option<Vec<u8>> {
+    let data = fs::read(cached).ok()?;
+    let record = fs::read_to_string(cache_record_path(cached)).ok()?;
+    let mut lines = record.lines();
+    if lines.next() != Some("overlay-c-cache-v1") {
+        return None;
+    }
+    let size = lines.next()?.parse::<usize>().ok()?;
+    let digest = lines.next()?;
+    if lines.next().is_some()
+        || size != data.len()
+        || digest.len() != 64
+        || digest != sha256::hex(&data)
+    {
+        return None;
+    }
+    Some(data)
+}
+
+fn publish_cache_entry(cached: &Path, data: &[u8]) {
+    // Publish the payload first and the record last. A missing or stale record
+    // therefore makes the entry a miss after any interrupted write.
+    if cache_entry::write_cache_entry_atomically(cached, data).is_ok() {
+        let _ = cache_entry::write_cache_entry_atomically(
+            &cache_record_path(cached),
+            cache_record(data).as_bytes(),
+        );
+    }
+}
+
+fn overlay_cache_key(
+    compiler_signature: &str,
+    host_signature: &str,
+    plan_signature: &str,
+    address: i64,
+    call_via_base: i64,
+    source: &[u8],
+) -> String {
+    let mut key = Vec::new();
+    append_frame(&mut key, b"overlay-c-cache-v2");
+    append_frame(&mut key, self_digest().as_bytes());
+    append_frame(&mut key, compiler_signature.as_bytes());
+    append_frame(&mut key, host_signature.as_bytes());
+    append_frame(&mut key, plan_signature.as_bytes());
+    append_frame(&mut key, hex(address, 8).as_bytes());
+    append_frame(&mut key, hex(call_via_base, 8).as_bytes());
+    append_frame(&mut key, source);
+    sha256::hex(&key)
+}
+
 /// `compileOverlayC(source, work, overlay, routingSource = source, extraFlags = [])`.
 pub fn compile_overlay_c(
     source: &Path,
@@ -435,27 +537,27 @@ pub fn compile_overlay_c(
     // leaves every command identical while changing the bytes it emits, and
     // 14,339 entries once survived a rebuild and made resource_39c fail its
     // asset round trip long after `verify` reported green.
-    let mut key: Vec<u8> = Vec::new();
-    key.extend_from_slice(
-        format!(
-            "overlay-c:{}:{}:{}:{}\0",
-            self_digest(),
-            alchemy_bundle::bundle::compiler_bundle_signature(),
-            hex(address, 8),
-            hex(call_via_base, 8)
-        )
-        .as_bytes(),
-    );
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
-    key.extend_from_slice(plan_stamp(&steps, &work_display).as_bytes());
-    key.push(0);
-    key.extend_from_slice(&fs::read(source).map_err(|error| format!("{source_display}: {error}"))?);
-    let cached = overlay_c_cache_dir().join(format!("{}.bin", sha256::hex(&key)));
+    let source_bytes = fs::read(source).map_err(|error| format!("{source_display}: {error}"))?;
+    let plan_signature = plan_stamp(&steps, &work_display);
+    let host_signature = alchemy_bundle::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
+        .map_err(|error| format!("overlay host tool signature: {error}"))?;
+    let cached = overlay_c_cache_dir().join(format!(
+        "{}.bin",
+        overlay_cache_key(
+            &alchemy_bundle::bundle::compiler_bundle_signature(),
+            &host_signature,
+            &plan_signature,
+            address,
+            call_via_base,
+            &source_bytes,
+        )
+    ));
 
     // A cache hit returns before the compile steps ever run, so extra debug
     // flags would silently produce no side-effect files on a repeat invocation.
-    if extra_flags.is_empty() && cached.exists() {
-        if let Ok(data) = fs::read(&cached) {
+    if extra_flags.is_empty() {
+        if let Some(data) = read_valid_cache_entry(&cached) {
             return Ok(Compiled { address, data });
         }
     }
@@ -558,7 +660,7 @@ pub fn compile_overlay_c(
 
     // A cache write failure must never fail a verification.
     let _ = fs::create_dir_all(overlay_c_cache_dir());
-    let _ = cache_entry::write_cache_entry_atomically(&cached, &data);
+    publish_cache_entry(&cached, &data);
 
     Ok(Compiled { address, data })
 }
@@ -896,6 +998,9 @@ mod tests {
         for part in SELF_SOURCE {
             stream.extend_from_slice(part);
         }
+        for part in LINKED_POSTPROCESS_SOURCE {
+            stream.extend_from_slice(part);
+        }
         let edited = sha256::hex(&[stream.as_slice(), b"//\n"].concat());
         assert_ne!(edited, self_digest());
     }
@@ -932,6 +1037,64 @@ mod tests {
             seen += 1;
         }
         assert_eq!(seen, SELF_SOURCE.len(), "SELF_SOURCE length must equal the module count");
+    }
+
+    #[test]
+    fn linked_postprocess_source_is_part_of_the_implementation_identity() {
+        assert_eq!(LINKED_POSTPROCESS_SOURCE.len(), 3);
+        assert!(LINKED_POSTPROCESS_SOURCE
+            .iter()
+            .all(|source| !source.is_empty()));
+    }
+
+    #[test]
+    fn command_identity_frames_arguments_and_commands() {
+        let one = command_identity(&[vec!["a".into(), "bc".into()]], "/tmp/work");
+        let two = command_identity(&[vec!["ab".into(), "c".into()]], "/tmp/work");
+        let three = command_identity(&[vec!["a".into()], vec!["bc".into()]], "/tmp/work");
+        assert_ne!(one, two);
+        assert_ne!(one, three);
+        assert_ne!(two, three);
+    }
+
+    #[test]
+    fn injected_host_signature_changes_overlay_cache_key() {
+        let common = (
+            "compiler",
+            "plan",
+            0x0200_0240,
+            0x8000,
+            b"source".as_slice(),
+        );
+        let first =
+            overlay_cache_key(common.0, "host-a", common.1, common.2, common.3, common.4);
+        let second =
+            overlay_cache_key(common.0, "host-b", common.1, common.2, common.3, common.4);
+        assert_ne!(first, second);
+    }
+
+    #[test]
+    fn cache_hit_rejects_missing_record_and_truncated_payload() {
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-overlay-disasm-cache-test-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&directory);
+        fs::create_dir_all(&directory).expect("cache test directory");
+        let cached = directory.join("entry.bin");
+        let data = b"complete overlay bytes";
+        publish_cache_entry(&cached, data);
+        assert_eq!(
+            read_valid_cache_entry(&cached).as_deref(),
+            Some(data.as_slice())
+        );
+
+        fs::remove_file(cache_record_path(&cached)).expect("remove record");
+        assert!(read_valid_cache_entry(&cached).is_none());
+        publish_cache_entry(&cached, data);
+        fs::write(&cached, &data[..data.len() - 1]).expect("truncate payload");
+        assert!(read_valid_cache_entry(&cached).is_none());
+        fs::remove_dir_all(&directory).expect("remove cache test directory");
     }
 
     // ---- helpers ----------------------------------------------------------

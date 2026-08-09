@@ -28,7 +28,17 @@ pub const SIGNATURE_SOURCES: [&str; 4] = [
     "tools/compiler-corpus-regression/src/pipeline.rs",
 ];
 
-/// `hash(compiler_bundle_signature(), ...four source files)`.
+/// Host executables used by candidate verification and linked-size analysis.
+/// Keep this order stable: it is part of the cache identity.
+pub const HOST_TOOL_EXECUTABLES: [&str; 4] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+];
+
+/// `hash(compiler_bundle_signature(), host_tool_signature, implementation_digest,
+/// ...four source files)`.
 ///
 /// PORT NOTE -- CACHE KEY PROVENANCE. The key is a pure function of its inputs:
 /// the bundle signature (a digest of the compiler binaries themselves), the
@@ -47,24 +57,74 @@ pub const SIGNATURE_SOURCES: [&str; 4] = [
 /// port. It is not read by any production path.
 ///
 /// PORT NOTE -- MEASURED PERFORMANCE TRAP. `compiler_bundle_signature()` digests
-/// roughly 20 MB of compiler binaries and NEITHER side memoizes it. native process's
-/// `CryptoHasher` is native; `alchemy_bundle`'s portable sha256 is about 7x
-/// slower and that alone made the `overlay_disasm` port 5.9x slower overall.
-/// It is called ONCE per process here, so the cost is a constant, and it is
-/// reported as its own line in the benchmark rather than being hidden. It is
-/// deliberately NOT memoized locally: that would win the benchmark by moving
-/// the fix out of `alchemy-bundle`, where it belongs.
+/// roughly 20 MB of compiler binaries. `alchemy_bundle` memoizes that signature
+/// once per process, so the cost is paid once and remains owned by the bundle
+/// layer rather than being duplicated in this crate.
 pub fn compiler_signature() -> Result<String, String> {
+    compiler_signature_with(current_implementation_digest)
+}
+
+/// Build the signature with an injected implementation-digest provider.
+pub fn compiler_signature_with<F>(implementation_digest: F) -> Result<String, String>
+where
+    F: FnOnce() -> Result<String, String>,
+{
+    compiler_signature_with_inputs(implementation_digest, || {
+        alchemy_bundle::bundle::host_executable_signature(&HOST_TOOL_EXECUTABLES)
+    })
+}
+
+/// Build the signature with injected implementation and host-tool providers.
+///
+/// Tests use this boundary so they can prove cache invalidation without
+/// mutating the process `PATH` or replacing a system executable.
+pub fn compiler_signature_with_inputs<F, G>(
+    implementation_digest: F,
+    host_tool_signature: G,
+) -> Result<String, String>
+where
+    F: FnOnce() -> Result<String, String>,
+    G: FnOnce() -> Result<String, String>,
+{
     let root = signature_root();
-    let mut parts: Vec<Vec<u8>> = vec![alchemy_bundle::bundle::compiler_bundle_signature().into_bytes()];
+    let implementation_digest = implementation_digest()?;
+    let host_tool_signature = host_tool_signature()?;
+    compiler_signature_from_parts(
+        &alchemy_bundle::bundle::compiler_bundle_signature(),
+        &host_tool_signature,
+        &implementation_digest,
+        &root,
+    )
+}
+
+fn compiler_signature_from_parts(
+    bundle_signature: &str,
+    host_tool_signature: &str,
+    implementation_digest: &str,
+    root: &Path,
+) -> Result<String, String> {
+    let mut parts: Vec<Vec<u8>> = vec![
+        bundle_signature.as_bytes().to_vec(),
+        host_tool_signature.as_bytes().to_vec(),
+        implementation_digest.as_bytes().to_vec(),
+    ];
     for name in SIGNATURE_SOURCES {
         let path = root.join(name);
-        parts.push(
-            std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-        );
+        parts.push(std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?);
     }
     let borrowed: Vec<&[u8]> = parts.iter().map(|part| part.as_slice()).collect();
     Ok(hash(&borrowed))
+}
+
+/// SHA-256 of a compiled implementation image.
+pub fn implementation_digest(path: &Path) -> Result<String, String> {
+    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    Ok(alchemy_bundle::sha256::hex(&bytes))
+}
+
+fn current_implementation_digest() -> Result<String, String> {
+    let path = std::env::current_exe().map_err(|error| format!("current executable: {error}"))?;
+    implementation_digest(&path)
 }
 
 fn signature_root() -> std::path::PathBuf {
@@ -109,10 +169,36 @@ pub fn rom_slice(rom: &[u8], address: f64, size: f64) -> Vec<u8> {
 /// repository that produces a mangled relative path rather than an error.
 /// Reproduced exactly, including the UTF-16 unit counting.
 pub fn relative_source(source: &str, root: &Path) -> String {
-    let root_units = root.to_string_lossy().chars().map(|c| c.len_utf16()).sum::<usize>();
+    let root_units = root
+        .to_string_lossy()
+        .chars()
+        .map(|c| c.len_utf16())
+        .sum::<usize>();
     let units: Vec<u16> = source.encode_utf16().collect();
     let start = (root_units + 1).min(units.len());
     String::from_utf16_lossy(&units[start..])
+}
+
+/// Build the framed cache identity for one corpus member. The repository-
+/// relative source path is an input because compiler routing and include
+/// resolution may be path-sensitive even when two source files have identical
+/// bytes.
+pub fn cache_key(
+    source: &str,
+    source_bytes: &[u8],
+    expected: &[u8],
+    signature: &str,
+    configuration: &str,
+) -> Result<String, String> {
+    let format = candidate_compiler::jsnum::to_js_number_string(FORMAT)?;
+    Ok(hash(&[
+        format.as_bytes(),
+        source.as_bytes(),
+        source_bytes,
+        expected,
+        signature.as_bytes(),
+        configuration.as_bytes(),
+    ]))
 }
 
 /// One member's compile, verify, link-extent and byte comparison.
@@ -124,27 +210,31 @@ fn evaluate(
     root: &Path,
 ) -> Result<Outcome, String> {
     let expected = rom_slice(rom, member.address, member.size);
-    let source_bytes = std::fs::read(&member.source)
-        .map_err(|error| format!("{}: {error}", member.source))?;
+    let source_bytes =
+        std::fs::read(&member.source).map_err(|error| format!("{}: {error}", member.source))?;
     let configuration = object(vec![
         ("flags", strings(&options.flags)),
-        ("compiler_config", compiler_config_json(&options.compiler_config)),
+        (
+            "compiler_config",
+            compiler_config_json(&options.compiler_config),
+        ),
     ]);
-    let key = hash(&[
-        // `String(FORMAT)` -- ECMAScript number-to-string, so `3` and not `3.0`.
-        candidate_compiler::jsnum::to_js_number_string(FORMAT)?.as_bytes(),
+    let source = relative_source(&member.source, root);
+    let key = cache_key(
+        &source,
         &source_bytes,
         &expected,
-        signature.as_bytes(),
-        canonical_json(&configuration)?.as_bytes(),
-    ]);
+        signature,
+        &canonical_json(&configuration)?,
+    )?;
     let cache_path = join(Path::new(&options.cache), &format!("cache/{key}.json"));
 
-    // PORT NOTE -- BUG REPRODUCED. This read is OUTSIDE the `try` in the
-    // legacy implementation, so a corrupt cache file aborts the whole run instead of
-    // falling back to a recompile. The `?` below propagates identically.
+    // Invalid cache content is a miss; the compile below recomputes the row.
     if let Some(accepted) = read_cache(&cache_path, &key)? {
-        return Ok(Outcome { cached: true, ..accepted });
+        return Ok(Outcome {
+            cached: true,
+            ..accepted
+        });
     }
 
     let scratch = join(Path::new(&options.cache), &format!("scratch/{key}"));
@@ -163,7 +253,8 @@ fn evaluate(
             &options.compiler_config,
         )?;
         let linked_path = join(Path::new(&scratch), &format!("{}.bin", member.stem));
-        let linked = std::fs::read(&linked_path).map_err(|error| format!("{linked_path}: {error}"))?;
+        let linked =
+            std::fs::read(&linked_path).map_err(|error| format!("{linked_path}: {error}"))?;
         let elf = join(Path::new(&scratch), &format!("{}.elf", member.stem));
         let symbols = std::process::Command::new("arm-none-eabi-nm")
             .args(["-S", "--defined-only", &elf])
@@ -173,9 +264,14 @@ fn evaluate(
             // `symbols.stderr.toString().trim() || "nm failed"` -- `||` on the
             // EMPTY STRING, which is falsy, so empty stderr becomes the
             // fallback. `??` would keep the empty string; this is `||`.
-            let text = candidate_compiler::jsstring::js_trim(&String::from_utf8_lossy(&symbols.stderr))
-                .to_string();
-            return Err(if text.is_empty() { "nm failed".to_string() } else { text });
+            let text =
+                candidate_compiler::jsstring::js_trim(&String::from_utf8_lossy(&symbols.stderr))
+                    .to_string();
+            return Err(if text.is_empty() {
+                "nm failed".to_string()
+            } else {
+                text
+            });
         }
         // PORT NOTE -- `options.compilerConfig.family === "gcc2951"` is a
         // STRING comparison against one of the six family literals, and
@@ -193,10 +289,13 @@ fn evaluate(
         };
         // `linked.subarray(0, extent)` CLAMPS; `&linked[..extent]` panics.
         let actual = &linked[..extent.min(linked.len())];
-        Ok((actual.len(), expected.len(), byte_difference(actual, &expected)))
+        Ok((
+            actual.len(),
+            expected.len(),
+            byte_difference(actual, &expected),
+        ))
     };
 
-    let source = relative_source(&member.source, root);
     let outcome = match attempt() {
         Ok((actual_size, expected_size, difference)) => Outcome {
             stem: member.stem.clone(),
@@ -239,7 +338,9 @@ fn evaluate(
 /// and `canonicalJson` preserves insertion order. Any other order silently
 /// invalidates every cached entry. `addFlags`/`removeFlags` are OMITTED when
 /// absent, not written as `null`.
-pub fn compiler_config_json(config: &candidate_compiler::verify::CandidateCompilerConfiguration) -> Json {
+pub fn compiler_config_json(
+    config: &candidate_compiler::verify::CandidateCompilerConfiguration,
+) -> Json {
     let mut entries: Vec<(&str, Json)> = Vec::new();
     if let Some(family) = config.family {
         entries.push(("family", string(family_name(family))));
@@ -278,7 +379,11 @@ where
     });
     slots
         .into_iter()
-        .map(|slot| slot.into_inner().expect("slot poisoned").expect("slot unfilled"))
+        .map(|slot| {
+            slot.into_inner()
+                .expect("slot poisoned")
+                .expect("slot unfilled")
+        })
         .collect()
 }
 
@@ -350,7 +455,10 @@ pub fn run(options: &Options) -> Result<Run, String> {
     let report = object(vec![
         ("format", Json::Number(FORMAT)),
         ("flags", strings(&options.flags)),
-        ("compiler_config", compiler_config_json(&options.compiler_config)),
+        (
+            "compiler_config",
+            compiler_config_json(&options.compiler_config),
+        ),
         ("filters", filters),
         ("available", number(available.len())),
         ("selected", number(selected.len())),
@@ -373,7 +481,11 @@ pub fn run(options: &Options) -> Result<Run, String> {
         "family={} flags={} remove={} available={} selected={} cached={}",
         // `${options.compilerConfig.family}` on `undefined` prints
         // "undefined", not an empty string.
-        options.compiler_config.family.map(family_name).unwrap_or("undefined"),
+        options
+            .compiler_config
+            .family
+            .map(family_name)
+            .unwrap_or("undefined"),
         printed_flags.join(","),
         options.compiler_config.remove_flags.join(","),
         available.len(),
@@ -405,7 +517,10 @@ pub fn run(options: &Options) -> Result<Run, String> {
             lines.push(format!(
                 "REGRESSION {} size={}/{} differing_bytes={} first=0x{}",
                 result.stem,
-                result.actual_size.map(|v| v.to_string()).unwrap_or_else(|| "undefined".into()),
+                result
+                    .actual_size
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "undefined".into()),
                 result.expected_size,
                 result
                     .differing_bytes

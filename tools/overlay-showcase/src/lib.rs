@@ -157,7 +157,10 @@ pub fn canonical_c_source(source: &str) -> bool {
 pub fn is_showcase_id(id: &str) -> bool {
     match id.strip_prefix("resource_") {
         Some(rest) => {
-            !rest.is_empty() && rest.bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+            !rest.is_empty()
+                && rest
+                    .bytes()
+                    .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
         }
         None => false,
     }
@@ -189,7 +192,11 @@ pub fn uses_named_interface(source: &str, id: &str) -> bool {
     false
 }
 
-fn field<'a>(row: &'a serde_json::Value, name: &str, index: usize) -> Result<&'a serde_json::Value, Failure> {
+fn field<'a>(
+    row: &'a serde_json::Value,
+    name: &str,
+    index: usize,
+) -> Result<&'a serde_json::Value, Failure> {
     match row.get(name) {
         Some(value) => Ok(value),
         None => fail(format!("overlays[{index}] has no {name}")),
@@ -206,7 +213,9 @@ fn string(row: &serde_json::Value, name: &str, index: usize) -> Result<String, F
 fn count(row: &serde_json::Value, name: &str, index: usize) -> Result<u64, Failure> {
     match field(row, name, index)?.as_u64() {
         Some(value) => Ok(value),
-        None => fail(format!("overlays[{index}].{name} is not a non-negative integer")),
+        None => fail(format!(
+            "overlays[{index}].{name} is not a non-negative integer"
+        )),
     }
 }
 
@@ -250,7 +259,13 @@ pub fn owner_names(directory: &Path, id: &str) -> io::Result<Vec<String>> {
 }
 
 /// The one line a passing showcase prints.
-pub fn report(id: &str, exact_c_owners: usize, decoded_bytes: u64, sha256: &str, retained_assembly: &str) -> String {
+pub fn report(
+    id: &str,
+    exact_c_owners: usize,
+    decoded_bytes: u64,
+    sha256: &str,
+    retained_assembly: &str,
+) -> String {
     format!(
         "showcase=complete overlay={id} exact_c_owners={exact_c_owners} \
          decoded_bytes={decoded_bytes} sha256={sha256} retained_assembly={retained_assembly}"
@@ -263,13 +278,17 @@ mod tests {
 
     #[test]
     fn plain_c_is_canonical() {
-        assert!(canonical_c_source("#include \"resource_37c.h\"\nvoid Func_02000000(void) { int x = 1; }\n"));
+        assert!(canonical_c_source(
+            "#include \"resource_37c.h\"\nvoid Func_02000000(void) { int x = 1; }\n"
+        ));
     }
 
     #[test]
     fn register_pinned_fakematch_is_rejected() {
         assert!(!canonical_c_source("register int value asm(\"r4\");\n"));
-        assert!(!canonical_c_source("  register void *pointer asm (\"r7\") = 0;\n"));
+        assert!(!canonical_c_source(
+            "  register void *pointer asm (\"r7\") = 0;\n"
+        ));
     }
 
     #[test]
@@ -277,7 +296,9 @@ mod tests {
         // A `;` between them ends `[^;\n]*`.
         assert!(canonical_c_source("register int value; other = wasm(3);\n"));
         // So does a newline.
-        assert!(canonical_c_source("register int value\nint asm_like = 1;\n"));
+        assert!(canonical_c_source(
+            "register int value\nint asm_like = 1;\n"
+        ));
         // `\s*` after `asm` may itself cross a newline, though.
         assert!(!canonical_c_source("register int value asm\n(\"r4\");\n"));
     }
@@ -292,8 +313,12 @@ mod tests {
     #[test]
     fn inline_assembly_spellings_are_rejected() {
         assert!(!canonical_c_source("void f(void) { __asm__(\"nop\"); }\n"));
-        assert!(!canonical_c_source("void f(void) { asm volatile (\"nop\"); }\n"));
-        assert!(!canonical_c_source("void f(void) { asm\tvolatile(\"nop\"); }\n"));
+        assert!(!canonical_c_source(
+            "void f(void) { asm volatile (\"nop\"); }\n"
+        ));
+        assert!(!canonical_c_source(
+            "void f(void) { asm\tvolatile(\"nop\"); }\n"
+        ));
         // `\s+` is required: `asmvolatile` is one identifier.
         assert!(canonical_c_source("int asmvolatile = 1;\n"));
         // And `volatile` must end at a boundary.
@@ -304,9 +329,13 @@ mod tests {
 
     #[test]
     fn incbin_and_m2c_error_are_rejected() {
-        assert!(!canonical_c_source("__attribute__((section(\".incbin\")));\n"));
+        assert!(!canonical_c_source(
+            "__attribute__((section(\".incbin\")));\n"
+        ));
         assert!(!canonical_c_source("    M2C_ERROR(\"unhandled\");\n"));
-        assert!(canonical_c_source("// mentions incbinary and M2C_ERRORS only\n"));
+        assert!(canonical_c_source(
+            "// mentions incbinary and M2C_ERRORS only\n"
+        ));
     }
 
     #[test]
@@ -323,18 +352,39 @@ mod tests {
 
     #[test]
     fn named_interface_must_be_the_showcase_header() {
-        assert!(uses_named_interface("#include \"resource_37c.h\"\n", "resource_37c"));
-        assert!(uses_named_interface("/* head */\n#include   \"resource_37c.h\"\nvoid f(void);\n", "resource_37c"));
+        assert!(uses_named_interface(
+            "#include \"resource_37c.h\"\n",
+            "resource_37c"
+        ));
+        assert!(uses_named_interface(
+            "/* head */\n#include   \"resource_37c.h\"\nvoid f(void);\n",
+            "resource_37c"
+        ));
         // Wrong overlay's header.
-        assert!(!uses_named_interface("#include \"resource_37d.h\"\n", "resource_37c"));
+        assert!(!uses_named_interface(
+            "#include \"resource_37d.h\"\n",
+            "resource_37c"
+        ));
         // Not at a line start.
-        assert!(!uses_named_interface("  #include \"resource_37c.h\"\n", "resource_37c"));
+        assert!(!uses_named_interface(
+            "  #include \"resource_37c.h\"\n",
+            "resource_37c"
+        ));
         // Whitespace after `#include` is mandatory.
-        assert!(!uses_named_interface("#include\"resource_37c.h\"\n", "resource_37c"));
+        assert!(!uses_named_interface(
+            "#include\"resource_37c.h\"\n",
+            "resource_37c"
+        ));
         // A system include of the same stem is not the named interface.
-        assert!(!uses_named_interface("#include <resource_37c.h>\n", "resource_37c"));
+        assert!(!uses_named_interface(
+            "#include <resource_37c.h>\n",
+            "resource_37c"
+        ));
         // `\s+` under `m` may swallow the line break, as in JavaScript.
-        assert!(uses_named_interface("#include\n\"resource_37c.h\"\n", "resource_37c"));
+        assert!(uses_named_interface(
+            "#include\n\"resource_37c.h\"\n",
+            "resource_37c"
+        ));
     }
 
     #[test]
@@ -344,20 +394,24 @@ mod tests {
              "sha256":"d77f","retained_assembly":"veneers only"}]}"#;
         let overlays = parse_manifest(text).unwrap();
         assert_eq!(overlays.len(), 1);
-        assert_eq!(overlays[0], Showcase {
-            id: "resource_37c".into(),
-            decoded_bytes: 344,
-            exact_c_owners: 6,
-            sha256: "d77f".into(),
-            retained_assembly: "veneers only".into(),
-        });
+        assert_eq!(
+            overlays[0],
+            Showcase {
+                id: "resource_37c".into(),
+                decoded_bytes: 344,
+                exact_c_owners: 6,
+                sha256: "d77f".into(),
+                retained_assembly: "veneers only".into(),
+            }
+        );
     }
 
     #[test]
     fn malformed_manifests_are_named_not_guessed() {
         assert!(parse_manifest("{").is_err());
         assert!(parse_manifest(r#"{"format":1}"#).is_err());
-        let missing = r#"{"overlays":[{"id":"resource_37c","decoded_bytes":344,"exact_c_owners":6}]}"#;
+        let missing =
+            r#"{"overlays":[{"id":"resource_37c","decoded_bytes":344,"exact_c_owners":6}]}"#;
         let error = parse_manifest(missing).unwrap_err().to_string();
         assert_eq!(error, "overlays[0] has no sha256");
         let negative = r#"{"overlays":[{"id":"a","decoded_bytes":-1,"exact_c_owners":0,
@@ -370,12 +424,20 @@ mod tests {
 
     #[test]
     fn the_real_manifest_parses_and_registers_every_showcase() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap();
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap();
         let text = fs::read_to_string(root.join("metrics/overlay-showcases.json")).unwrap();
         let overlays = parse_manifest(&text).unwrap();
         assert!(overlays.len() >= 11);
         for overlay in &overlays {
-            assert!(is_showcase_id(&overlay.id), "{} is not a showcase id", overlay.id);
+            assert!(
+                is_showcase_id(&overlay.id),
+                "{} is not a showcase id",
+                overlay.id
+            );
             assert_eq!(overlay.sha256.len(), 64);
             assert!(overlay.decoded_bytes > 0 && overlay.decoded_bytes % 2 == 0);
             assert!(overlay.exact_c_owners > 0);
@@ -384,17 +446,32 @@ mod tests {
 
     #[test]
     fn every_registered_owner_in_the_tree_is_canonical() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap();
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap();
         let text = fs::read_to_string(root.join("metrics/overlay-showcases.json")).unwrap();
         let overlays = parse_manifest(&text).unwrap();
         let mut checked = 0;
         for overlay in &overlays {
             let owners = owner_names(&root.join("exact"), &overlay.id).unwrap();
-            assert_eq!(owners.len(), overlay.exact_c_owners, "{} owner count", overlay.id);
+            assert_eq!(
+                owners.len(),
+                overlay.exact_c_owners,
+                "{} owner count",
+                overlay.id
+            );
             for name in owners {
                 let source = fs::read_to_string(root.join("exact").join(&name)).unwrap();
-                assert!(canonical_c_source(&source), "{name} is not canonical Exact C");
-                assert!(uses_named_interface(&source, &overlay.id), "{name} lacks the named interface");
+                assert!(
+                    canonical_c_source(&source),
+                    "{name} is not canonical Exact C"
+                );
+                assert!(
+                    uses_named_interface(&source, &overlay.id),
+                    "{name} lacks the named interface"
+                );
                 checked += 1;
             }
         }
@@ -403,7 +480,11 @@ mod tests {
 
     #[test]
     fn owners_are_matched_by_prefix_and_extension_and_sorted() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap();
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap();
         let owners = owner_names(&root.join("exact"), "resource_37c").unwrap();
         let mut sorted = owners.clone();
         sorted.sort();
@@ -412,7 +493,9 @@ mod tests {
             assert!(name.starts_with("resource_37c_c_") && name.ends_with(".c"));
         }
         // A neighbouring overlay's owners must not be picked up by prefix.
-        assert!(owner_names(&root.join("exact"), "resource_37").unwrap().is_empty());
+        assert!(owner_names(&root.join("exact"), "resource_37")
+            .unwrap()
+            .is_empty());
         assert!(owner_names(&root.join("does-not-exist"), "resource_37c").is_err());
     }
 

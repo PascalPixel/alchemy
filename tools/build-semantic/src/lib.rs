@@ -4,10 +4,17 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 
+use alchemy_bundle::bundle::compiler_bundle_signature;
+use alchemy_bundle::sha256;
 use alchemy_plan::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use alchemy_routing::routing::CompilerTarget;
+use cache_entry::write_cache_entry_atomically;
 use serde::Deserialize;
+use serde::Serialize;
 use serde_json::Value;
+
+const SEMANTIC_CACHE_SCHEMA: u64 = 1;
+const SEMANTIC_CACHE_DIR: &str = "out/cache/semantic-validation";
 
 #[derive(Debug, Clone, Deserialize)]
 struct OverlayFunction {
@@ -251,6 +258,30 @@ fn sources_below(directory: &Path) -> Result<Vec<PathBuf>, String> {
     Ok(result)
 }
 
+fn files_below(directory: &Path) -> Result<Vec<PathBuf>, String> {
+    if !directory.exists() {
+        return Ok(Vec::new());
+    }
+    let mut result = Vec::new();
+    let listing = std::fs::read_dir(directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?;
+    for entry in listing {
+        let entry = entry.map_err(|error| format!("{}: {error}", directory.display()))?;
+        let path = entry.path();
+        let kind = entry.file_type().map_err(|error| format!("{}: {error}", path.display()))?;
+        if kind.is_dir() {
+            result.extend(files_below(&path)?);
+        } else if std::fs::metadata(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?
+            .is_file()
+        {
+            result.push(path);
+        }
+    }
+    result.sort();
+    Ok(result)
+}
+
 fn relative(root: &Path, path: &Path) -> String {
     path.strip_prefix(root).unwrap_or(path).to_string_lossy().into_owned()
 }
@@ -363,6 +394,7 @@ fn inline_assembly(text: &str) -> bool {
                 continue;
             }
             let rest = text[at + spelling.len()..].trim_start();
+            let rest = rest.strip_prefix("volatile").map_or(rest, str::trim_start);
             if rest.starts_with('(') || rest.starts_with('{') {
                 return true;
             }
@@ -396,6 +428,208 @@ fn checked(command: &[String], cwd: &Path) -> Result<(), String> {
     } else {
         format!("{name} failed: {detail}")
     })
+}
+
+fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
+    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+fn append_text(stream: &mut Vec<u8>, text: &str) {
+    append_frame(stream, text.as_bytes());
+}
+
+fn include_signature(root: &Path) -> Result<String, String> {
+    let mut stream = Vec::new();
+    append_text(&mut stream, "build-semantic include inputs v1");
+    let include = root.join("include");
+    for path in files_below(&include)? {
+        let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        append_text(&mut stream, &relative(root, &path));
+        append_frame(&mut stream, &bytes);
+    }
+    Ok(sha256::hex(&stream))
+}
+
+fn executable_path(program: &str) -> Result<PathBuf, String> {
+    let requested = Path::new(program);
+    if requested.is_absolute() || requested.components().count() > 1 {
+        return std::fs::canonicalize(requested)
+            .map_err(|error| format!("{program}: {error}"));
+    }
+    let path = std::env::var_os("PATH").ok_or_else(|| "PATH is unset".to_string())?;
+    for directory in std::env::split_paths(&path) {
+        let candidate = directory.join(program);
+        if is_executable_file(&candidate) {
+            return std::fs::canonicalize(&candidate)
+                .map_err(|error| format!("{}: {error}", candidate.display()));
+        }
+    }
+    Err(format!("{program} cannot be resolved on PATH"))
+}
+
+fn is_executable_file(path: &Path) -> bool {
+    let Ok(metadata) = std::fs::metadata(path) else { return false };
+    if !metadata.is_file() {
+        return false;
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        metadata.permissions().mode() & 0o111 != 0
+    }
+    #[cfg(not(unix))]
+    {
+        true
+    }
+}
+
+fn host_tool_signature(commands: &[Vec<String>]) -> Result<String, String> {
+    let mut stream = Vec::new();
+    append_text(&mut stream, "build-semantic host tools v1");
+    for command in commands {
+        let program = command.first().ok_or_else(|| "empty compiler command".to_string())?;
+        let path = executable_path(program)?;
+        let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        append_text(&mut stream, program);
+        append_text(&mut stream, &path.to_string_lossy());
+        append_frame(&mut stream, &bytes);
+    }
+    Ok(sha256::hex(&stream))
+}
+
+fn implementation_signature_for(path: &Path) -> Result<String, String> {
+    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    Ok(sha256::hex(&bytes))
+}
+
+fn implementation_signature() -> Result<String, String> {
+    let path = std::env::current_exe().map_err(|error| format!("current executable: {error}"))?;
+    implementation_signature_for(&path)
+}
+
+fn normalized_argument(argument: &str, scratch: &Path) -> String {
+    let scratch = scratch.to_string_lossy();
+    if argument == scratch {
+        return "<scratch>".to_string();
+    }
+    if let Some(rest) = argument.strip_prefix(&format!("{scratch}/")) {
+        let name = Path::new(rest)
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or(rest);
+        let stable = name
+            .split_once('-')
+            .filter(|(prefix, _)| !prefix.is_empty() && prefix.bytes().all(|byte| byte.is_ascii_digit()))
+            .map_or(name, |(_, suffix)| suffix);
+        return format!("<scratch>/{stable}");
+    }
+    argument.to_string()
+}
+
+fn plan_identity(plan: &alchemy_plan::plan::SourceToAssemblyPlan, scratch: &Path) -> Vec<u8> {
+    let mut stream = Vec::new();
+    append_text(&mut stream, "build-semantic compiler plan v1");
+    append_text(&mut stream, plan.target.as_str());
+    append_text(&mut stream, plan.requested_family.as_str());
+    append_text(&mut stream, plan.family.as_str());
+    append_text(&mut stream, &normalized_argument(&plan.routing_source, scratch));
+    append_text(&mut stream, &normalized_argument(&plan.input, scratch));
+    append_text(&mut stream, &normalized_argument(&plan.output, scratch));
+    append_text(&mut stream, &normalized_argument(&plan.compiler_input, scratch));
+    append_frame(&mut stream, &(plan.flags.len() as u64).to_be_bytes());
+    for flag in &plan.flags {
+        append_text(&mut stream, flag);
+    }
+    append_frame(&mut stream, &(plan.steps.len() as u64).to_be_bytes());
+    for step in &plan.steps {
+        append_text(&mut stream, step.kind.as_str());
+        append_frame(&mut stream, &(step.command.len() as u64).to_be_bytes());
+        for argument in &step.command {
+            append_text(&mut stream, &normalized_argument(argument, scratch));
+        }
+    }
+    stream
+}
+
+struct SemanticCacheIdentity<'a> {
+    include_digest: &'a str,
+    compiler_digest: &'a str,
+    host_digest: &'a str,
+    implementation_digest: &'a str,
+}
+
+fn semantic_cache_key(
+    root: &Path,
+    source: &Path,
+    source_bytes: &[u8],
+    plan: &alchemy_plan::plan::SourceToAssemblyPlan,
+    scratch: &Path,
+    identity: &SemanticCacheIdentity<'_>,
+) -> String {
+    let mut stream = Vec::new();
+    append_text(&mut stream, "build-semantic per-source cache v1");
+    append_text(&mut stream, &relative(root, source));
+    append_frame(&mut stream, source_bytes);
+    append_frame(&mut stream, &plan_identity(plan, scratch));
+    append_text(&mut stream, identity.include_digest);
+    append_text(&mut stream, identity.compiler_digest);
+    append_text(&mut stream, identity.host_digest);
+    append_text(&mut stream, identity.implementation_digest);
+    sha256::hex(&stream)
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+struct SemanticCacheRecord {
+    schema: u64,
+    key: String,
+    success: bool,
+    output_size: u64,
+    output_sha256: String,
+}
+
+fn semantic_cache_paths(root: &Path, key: &str) -> (PathBuf, PathBuf) {
+    let directory = root.join(SEMANTIC_CACHE_DIR);
+    (directory.join(format!("{key}.s")), directory.join(format!("{key}.json")))
+}
+
+fn valid_sha256(value: &str) -> bool {
+    value.len() == 64 && value.bytes().all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+}
+
+fn read_semantic_cache(root: &Path, key: &str) -> bool {
+    let (payload_path, record_path) = semantic_cache_paths(root, key);
+    let Ok(record_bytes) = std::fs::read(record_path) else { return false };
+    let Ok(record) = serde_json::from_slice::<SemanticCacheRecord>(&record_bytes) else { return false };
+    if record.schema != SEMANTIC_CACHE_SCHEMA
+        || record.key != key
+        || !record.success
+        || !valid_sha256(&record.output_sha256)
+    {
+        return false;
+    }
+    let Ok(payload) = std::fs::read(payload_path) else { return false };
+    payload.len() as u64 == record.output_size && sha256::hex(&payload) == record.output_sha256
+}
+
+fn write_semantic_cache(root: &Path, key: &str, output: &Path) {
+    let Ok(payload) = std::fs::read(output) else { return };
+    let (payload_path, record_path) = semantic_cache_paths(root, key);
+    if std::fs::create_dir_all(root.join(SEMANTIC_CACHE_DIR)).is_err() {
+        return;
+    }
+    if write_cache_entry_atomically(&payload_path, &payload).is_err() {
+        return;
+    }
+    let record = SemanticCacheRecord {
+        schema: SEMANTIC_CACHE_SCHEMA,
+        key: key.to_string(),
+        success: true,
+        output_size: payload.len() as u64,
+        output_sha256: sha256::hex(&payload),
+    };
+    let Ok(record_bytes) = serde_json::to_vec(&record) else { return };
+    let _ = write_cache_entry_atomically(&record_path, &record_bytes);
 }
 
 fn value_u64(value: &Value, field: &str) -> Result<u64, String> {
@@ -515,9 +749,25 @@ pub fn build_semantic(directory: &Path) -> Result<BuildReport, String> {
         Vec::new()
     };
     let work = Scratch::create()?;
+    let include_digest = if sources.is_empty() {
+        String::new()
+    } else {
+        include_signature(&root)?
+    };
+    let compiler_digest = if sources.is_empty() {
+        String::new()
+    } else {
+        compiler_bundle_signature()
+    };
+    let implementation_digest = if sources.is_empty() {
+        String::new()
+    } else {
+        implementation_signature()?
+    };
     let mut source_bytes = 0u64;
     let mut reviewed_bytes = 0u64;
     let mut admitted: Vec<Admitted> = Vec::new();
+    let mut host_digests: Vec<(Vec<String>, String)> = Vec::new();
     for (index, source) in sources.iter().enumerate() {
         let identity = validate_source(&root, source)?;
         let text = std::fs::read(source).map_err(|error| format!("{}: {error}", source.display()))?;
@@ -587,9 +837,48 @@ pub fn build_semantic(directory: &Path) -> Result<BuildReport, String> {
         );
         options.preprocessed_output = Some(work.0.join(format!("{stem}.i")).to_string_lossy().into_owned());
         let plan = source_to_assembly_plan(&options)?;
-        for step in plan.steps {
+        let host_programs: Vec<String> = plan
+            .steps
+            .iter()
+            .map(|step| {
+                step.command
+                    .first()
+                    .cloned()
+                    .ok_or_else(|| "empty compiler command".to_string())
+            })
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        let host_digest = if let Some((_, digest)) = host_digests
+            .iter()
+            .find(|(programs, _)| *programs == host_programs)
+        {
+            digest.clone()
+        } else {
+            let commands = plan.steps.iter().map(|step| step.command.clone()).collect::<Vec<_>>();
+            let digest = host_tool_signature(&commands)?;
+            host_digests.push((host_programs, digest.clone()));
+            digest
+        };
+        let identity = SemanticCacheIdentity {
+            include_digest: &include_digest,
+            compiler_digest: &compiler_digest,
+            host_digest: &host_digest,
+            implementation_digest: &implementation_digest,
+        };
+        let key = semantic_cache_key(
+            &root,
+            source,
+            &text,
+            &plan,
+            &work.0,
+            &identity,
+        );
+        if read_semantic_cache(&root, &key) {
+            continue;
+        }
+        for step in &plan.steps {
             checked(&step.command, &work.0)?;
         }
+        write_semantic_cache(&root, &key, &output);
     }
     let progress: Value = read_json(&root.join("metrics/gs1-en-progress.json"))?;
     let full_c_bytes = value_u64(&progress["full_c_bytes"], "full_c_bytes")?;
@@ -653,6 +942,48 @@ pub fn self_test() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alchemy_plan::plan::{
+        CompilerCommandStep, CompilerFamily, ResolvedFamily, SourceToAssemblyPlan, StepKind,
+    };
+
+    fn test_plan() -> SourceToAssemblyPlan {
+        SourceToAssemblyPlan {
+            target: CompilerTarget::Gs1,
+            requested_family: CompilerFamily::Routed,
+            family: ResolvedFamily::Gcc296,
+            routing_source: "/repo/semantic/08000000.c".into(),
+            input: "/repo/semantic/08000000.c".into(),
+            output: "/tmp/build-semantic/0000-08000000.s".into(),
+            compiler_input: "/repo/semantic/08000000.c".into(),
+            flags: vec!["-O2".into()],
+            steps: vec![CompilerCommandStep {
+                kind: StepKind::Compile,
+                command: vec![
+                    "/toolchain/xgcc".into(),
+                    "/repo/semantic/08000000.c".into(),
+                    "-S".into(),
+                    "-o".into(),
+                    "/tmp/build-semantic/0000-08000000.s".into(),
+                ],
+            }],
+        }
+    }
+
+    fn test_key(source: &[u8], include: &str, plan: &SourceToAssemblyPlan) -> String {
+        semantic_cache_key(
+            Path::new("/repo"),
+            Path::new("/repo/semantic/08000000.c"),
+            source,
+            plan,
+            Path::new("/tmp/build-semantic"),
+            &SemanticCacheIdentity {
+                include_digest: include,
+                compiler_digest: "compiler",
+                host_digest: "host",
+                implementation_digest: "implementation",
+            },
+        )
+    }
 
     #[test]
     fn unit_self_test_passes() {
@@ -673,5 +1004,54 @@ mod tests {
         assert!(!inline_assembly("int plasma = 1;"));
         assert!(canonical_c_source("int f(void) { return 1; }"));
         assert!(!canonical_c_source("__asm__(\"nop\")"));
+    }
+
+    #[test]
+    fn semantic_cache_key_changes_for_source_headers_and_plan() {
+        let plan = test_plan();
+        let base = test_key(b"int f(void) { return 1; }", "headers-a", &plan);
+        assert_ne!(base, test_key(b"int f(void) { return 2; }", "headers-a", &plan));
+        assert_ne!(base, test_key(b"int f(void) { return 1; }", "headers-b", &plan));
+        let mut changed_plan = plan.clone();
+        changed_plan.flags.push("-fno-builtin".into());
+        assert_ne!(base, test_key(b"int f(void) { return 1; }", "headers-a", &changed_plan));
+    }
+
+    #[test]
+    fn semantic_cache_key_ignores_enumeration_only_scratch_names() {
+        let plan = test_plan();
+        let base = test_key(b"int f(void) { return 1; }", "headers-a", &plan);
+        let mut shifted = plan.clone();
+        shifted.output = shifted.output.replace("0000-", "0999-");
+        for step in &mut shifted.steps {
+            for argument in &mut step.command {
+                *argument = argument.replace("0000-", "0999-");
+            }
+        }
+        assert_eq!(
+            base,
+            test_key(b"int f(void) { return 1; }", "headers-a", &shifted)
+        );
+    }
+
+    #[test]
+    fn semantic_cache_warm_hit_validates_record_and_payload() {
+        let id = SCRATCH_ID.fetch_add(1, Ordering::Relaxed);
+        let root = std::env::temp_dir().join(format!("alchemy-semantic-cache-test-{id}"));
+        std::fs::create_dir_all(&root).unwrap();
+        let output = root.join("output.s");
+        std::fs::write(&output, b"compiled assembly\n").unwrap();
+        write_semantic_cache(&root, "test-key", &output);
+        assert!(read_semantic_cache(&root, "test-key"));
+
+        let (_, record) = semantic_cache_paths(&root, "test-key");
+        std::fs::write(&record, b"{\"schema\":1}").unwrap();
+        assert!(!read_semantic_cache(&root, "test-key"));
+
+        write_semantic_cache(&root, "test-key", &output);
+        let (payload, _) = semantic_cache_paths(&root, "test-key");
+        std::fs::write(&payload, b"truncated").unwrap();
+        assert!(!read_semantic_cache(&root, "test-key"));
+        let _ = std::fs::remove_dir_all(root);
     }
 }

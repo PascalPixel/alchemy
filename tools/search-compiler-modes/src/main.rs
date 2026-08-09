@@ -244,7 +244,7 @@ fn sweep(root: &Path, options: &Options, items: &[Item]) -> Result<Vec<Json>, Fa
 }
 
 fn sweep_one(root: &Path, options: &Options, item: &Item) -> Result<Json, String> {
-    let mut command = Command::new(root.join("tools/mode-sweep/target/release/mode-sweep"));
+    let mut command = cargo_command(root, "mode-sweep");
     command
         .arg(&item.source)
         .arg("--rom")
@@ -290,6 +290,22 @@ fn sweep_one(root: &Path, options: &Options, item: &Item) -> Result<Json, String
     parse_json(&text).map_err(|error| format!("{}: {error}", item.stem))
 }
 
+fn cargo_command(root: &Path, crate_name: &str) -> Command {
+    let mut command = Command::new("cargo");
+    command
+        .args([
+            "run",
+            "--offline",
+            "--quiet",
+            "--release",
+            "--manifest-path",
+        ])
+        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg("--")
+        .current_dir(root);
+    command
+}
+
 /// `String(value)` for the child's numeric arguments.
 fn number_argument(value: f64) -> String {
     search_compiler_modes::js_number_text(value)
@@ -301,9 +317,7 @@ mod tests {
 
     #[test]
     fn repo_root_holds_the_native_queue_inputs() {
-        assert!(repo_root()
-            .join("tools/semantic-queue/Cargo.toml")
-            .exists());
+        assert!(repo_root().join("tools/semantic-queue/Cargo.toml").exists());
         assert!(repo_root().join("tools/mode-sweep/Cargo.toml").exists());
     }
 
@@ -326,5 +340,27 @@ mod tests {
             error.starts_with("ENOENT: no such file or directory"),
             "{error}"
         );
+    }
+
+    #[test]
+    fn sweep_child_is_cargo_authoritative() {
+        let command = cargo_command(Path::new("/repo"), "mode-sweep");
+        assert_eq!(command.get_program(), "cargo");
+        let args: Vec<_> = command
+            .get_args()
+            .map(|arg| arg.to_string_lossy().into_owned())
+            .collect();
+        assert_eq!(
+            args[0..6],
+            [
+                "run",
+                "--offline",
+                "--quiet",
+                "--release",
+                "--manifest-path",
+                "/repo/tools/mode-sweep/Cargo.toml",
+            ]
+        );
+        assert_eq!(args[6], "--");
     }
 }

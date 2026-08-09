@@ -312,7 +312,7 @@
         "byte_exact_reconstruction"
       ],
       "expected_files": 16,
-      "expected_bytes": 5902,
+      "expected_bytes": 5900,
       "files": [
         "08015fb8",
         "0801a7f4",
@@ -424,16 +424,15 @@
         "approved_compiler_prologue_mismatch",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 7,
-      "expected_bytes": 282,
+      "expected_files": 6,
+      "expected_bytes": 252,
       "files": [
         "080006fc",
         "080f9afc",
         "080f9f3c",
         "080fa16c",
         "080fa280",
-        "080fa4cc",
-        "080fb410"
+        "080fa4cc"
       ]
     },
     {
@@ -532,67 +531,6 @@
         "080f47bc",
         "080f4af0",
         "080f4f04"
-      ]
-    },
-    {
-      "kind": "runtime_relocation_helper_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "two_direct_call_targets",
-        "embedded_thumb_helper_template",
-        "copies_helper_from_start_and_end_addresses",
-        "stores_relocated_thumb_entry"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 128,
-      "files": [
-        "08006a78"
-      ],
-      "subregions": [
-        {
-          "load_address": "0x08006a78",
-          "size": 46,
-          "kind": "callable_function_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006aa6",
-          "size": 2,
-          "kind": "alignment",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006aa8",
-          "size": 20,
-          "kind": "literal_pool",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006abc",
-          "size": 4,
-          "kind": "relocatable_thumb_helper_template",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006ac0",
-          "size": 24,
-          "kind": "relocation_installer_code",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006ad8",
-          "size": 12,
-          "kind": "literal_pool_with_helper_bounds",
-          "authorship": "unknown"
-        },
-        {
-          "load_address": "0x08006ae4",
-          "size": 20,
-          "kind": "relocation_installer_code",
-          "authorship": "unknown"
-        }
       ]
     },
     {
@@ -777,12 +715,14 @@
         "tracked_owner_edge",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 36,
-      "expected_bytes": 2534,
+      "expected_files": 38,
+      "expected_bytes": 2486,
       "files": [
         "0800f1bc",
         "0800fd5c",
         "0801c9be",
+        "0801c9c2",
+        "0801c9c6",
         "08021dfa",
         "080268da",
         "0808f498",

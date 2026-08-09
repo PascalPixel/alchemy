@@ -7,19 +7,19 @@
   "executable_bytes": 1347254,
   "categories": {
     "exact_c": {
-      "bytes": 320326,
-      "percent_of_executable": 23.78
+      "bytes": 321834,
+      "percent_of_executable": 23.89
     },
     "semantic_c": {
-      "bytes": 947840,
-      "percent_of_executable": 70.35
+      "bytes": 946428,
+      "percent_of_executable": 70.25
     },
     "assembly": {
-      "bytes": 28870,
-      "percent_of_executable": 2.14
+      "bytes": 28760,
+      "percent_of_executable": 2.13
     },
     "retained_asm": {
-      "bytes": 50218,
+      "bytes": 50232,
       "percent_of_executable": 3.73
     },
     "asset_data": {
@@ -29,8 +29,8 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 109020,
-    "semantic_c_bytes": 409494
+    "exact_c_bytes": 110528,
+    "semantic_c_bytes": 408082
   },
   "overlays": {
     "executable_bytes": 798890,
@@ -40,7 +40,7 @@
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 1795,
+    "semantic_sources": 1785,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
     "semantic_outside_extent_bytes": 25828,
@@ -52,10 +52,10 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109020,
-        "semantic_c": 409494,
-        "assembly": 28870,
-        "retained_asm": 980
+        "exact_c": 110528,
+        "semantic_c": 408082,
+        "assembly": 28760,
+        "retained_asm": 994
       },
       "tiles": 9
     },
@@ -86,12 +86,12 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109020,
-        "semantic_c": 409494,
-        "assembly": 28870,
-        "retained_asm": 980
+        "exact_c": 110528,
+        "semantic_c": 408082,
+        "assembly": 28760,
+        "retained_asm": 994
       },
-      "tiles": 3190
+      "tiles": 3202
     },
     {
       "id": "overlays",

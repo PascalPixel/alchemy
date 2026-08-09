@@ -7,6 +7,16 @@
 
 fn main() {
     let argv: Vec<String> = std::env::args().skip(1).collect();
+    if argv.as_slice() == ["--self-test"] {
+        match coverage_map::selftest::self_test() {
+            Ok(line) => println!("{line}"),
+            Err(message) => {
+                eprintln!("error: {message}");
+                std::process::exit(1);
+            }
+        }
+        return;
+    }
     match coverage_map::cli::run(&argv) {
         Ok(line) => println!("{line}"),
         Err(message) => {

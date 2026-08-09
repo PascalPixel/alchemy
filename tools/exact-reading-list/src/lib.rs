@@ -369,22 +369,58 @@ pub fn render_report(all: &[Pairing], only: Option<&str>, want_blocked: bool) ->
 }
 
 pub struct Options {
+    pub help: bool,
     pub self_test: bool,
     pub json: bool,
     pub blocked: bool,
     pub only: Option<String>,
 }
 
-pub fn parse_args(args: &[String]) -> Options {
-    Options {
-        self_test: args.iter().any(|argument| argument == "--self-test"),
-        json: args.iter().any(|argument| argument == "--json"),
-        blocked: args.iter().any(|argument| argument == "--blocked"),
-        only: args
-            .iter()
-            .find(|argument| is_overlay_name(argument))
-            .cloned(),
+pub const USAGE: &str = "usage: exact-reading-list [resource_XXX] [--json] [--blocked] | --self-test";
+
+pub fn parse_args(args: &[String]) -> Result<Options, String> {
+    let mut options = Options {
+        help: false,
+        self_test: false,
+        json: false,
+        blocked: false,
+        only: None,
+    };
+    for argument in args {
+        match argument.as_str() {
+            "-h" | "--help" => {
+                if options.help || args.len() != 1 {
+                    return Err(USAGE.into());
+                }
+                options.help = true;
+            }
+            "--self-test" => {
+                if options.self_test || args.len() != 1 {
+                    return Err(USAGE.into());
+                }
+                options.self_test = true;
+            }
+            "--json" => {
+                if options.json {
+                    return Err(USAGE.into());
+                }
+                options.json = true;
+            }
+            "--blocked" => {
+                if options.blocked {
+                    return Err(USAGE.into());
+                }
+                options.blocked = true;
+            }
+            value if is_overlay_name(value) => {
+                if options.only.replace(value.to_string()).is_some() {
+                    return Err(USAGE.into());
+                }
+            }
+            _ => return Err(USAGE.into()),
+        }
     }
+    Ok(options)
 }
 
 /// The repository root, found by walking up from the binary's working directory
@@ -609,10 +645,18 @@ mod tests {
             .iter()
             .map(|s| s.to_string())
             .collect();
-        let options = parse_args(&args);
+        let options = parse_args(&args).unwrap();
         assert!(options.json);
         assert!(options.blocked);
         assert!(!options.self_test);
         assert_eq!(options.only.as_deref(), Some("resource_3ce"));
+    }
+
+    #[test]
+    fn help_is_successful_and_unknown_options_are_rejected() {
+        assert!(parse_args(&["-h".into()]).unwrap().help);
+        assert!(parse_args(&["--help".into()]).unwrap().help);
+        assert!(parse_args(&["--unknown".into()]).is_err());
+        assert!(parse_args(&["resource_3ce".into(), "resource_3ce".into()]).is_err());
     }
 }

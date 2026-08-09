@@ -1,12 +1,12 @@
 use sentou_hyouji::{build_sentou_hyouji, self_test, verify_sentou_hyouji, Error, ADDRESS, SIZE};
-use std::path::Path;
 use std::io::{self, Write};
+use std::path::Path;
 use std::process::ExitCode;
 const USAGE: &str =
-    "usage: sentou_hyouji build INDEX --output FILE | verify ROM INDEX | --self-test";
-fn main() -> ExitCode {
-    let a: Vec<String> = std::env::args().skip(1).collect();
-    let r = match a.as_slice() {
+    "usage: sentou_hyouji build INDEX --output FILE | build-stdout INDEX | verify ROM INDEX | --self-test";
+
+fn run(a: &[String]) -> Result<(), Error> {
+    match a {
         [x] if x == "--self-test" => self_test().map(|_| println!("self-test=ok")),
         [cmd, index, flag, out] if cmd == "build" && flag == "--output" => {
             build_sentou_hyouji(Path::new(index)).and_then(|b| {
@@ -24,16 +24,31 @@ fn main() -> ExitCode {
             .map_err(|e| Error(e.to_string()))
             .and_then(|r| verify_sentou_hyouji(&r, Path::new(index)))
             .map(|_| println!("address=0x{ADDRESS:08x} bytes={SIZE} exact=true")),
-        [x] if x == "--help" => {
+        [x] if matches!(x.as_str(), "-h" | "--help") => {
             println!("{USAGE}");
             Ok(())
         }
         _ => Err(Error(USAGE.into())),
-    };
+    }
+}
+
+fn main() -> ExitCode {
+    let a: Vec<String> = std::env::args().skip(1).collect();
+    let r = run(&a);
     if let Err(e) = r {
         eprintln!("error: {e}");
         ExitCode::FAILURE
     } else {
         ExitCode::SUCCESS
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn rejects_unknown_options() {
+        assert!(run(&["--bogus".into()]).is_err());
     }
 }

@@ -16,7 +16,15 @@ use std::process::ExitCode;
 
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let options = exact_reading_list::parse_args(&args);
+    let options = match exact_reading_list::parse_args(&args) {
+        Ok(options) => options,
+        Err(message) => return fail(&message),
+    };
+
+    if options.help {
+        println!("{}", exact_reading_list::USAGE);
+        return ExitCode::SUCCESS;
+    }
 
     if options.self_test {
         return match exact_reading_list::self_test() {

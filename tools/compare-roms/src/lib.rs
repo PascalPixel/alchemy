@@ -1130,9 +1130,45 @@ pub fn self_test() -> Result<usize, String> {
 // CLI argument handling
 // ---------------------------------------------------------------------------
 
-pub const USAGE: &str = "usage: compare-roms REFERENCE CANDIDATE -o OUT [--min-run N] \
+pub const USAGE: &str = "usage: compare-roms REFERENCE CANDIDATE -o OUT [-h|--help] [--min-run N] \
 [--block-size N] [--step N] [--limit N] [--thumb-relocations] \
 [--thumb-reference-range START:END] [--thumb-candidate-range START:END]";
+
+const VALUE_OPTIONS: [&str; 7] = [
+    "-o",
+    "--min-run",
+    "--block-size",
+    "--step",
+    "--limit",
+    "--thumb-reference-range",
+    "--thumb-candidate-range",
+];
+
+fn validate_options(args: &[String]) -> Result<(), String> {
+    let mut index = 0;
+    while index < args.len() {
+        let argument = args[index].as_str();
+        if VALUE_OPTIONS.contains(&argument) {
+            if index + 1 >= args.len() {
+                return Err(format!("{argument} requires a value"));
+            }
+            index += 2;
+            continue;
+        }
+        if matches!(
+            argument,
+            "-h" | "--help" | "--self-test" | "--thumb-relocations"
+        ) {
+            index += 1;
+            continue;
+        }
+        if argument.starts_with('-') {
+            return Err(format!("unknown option: {argument}"));
+        }
+        index += 1;
+    }
+    Ok(())
+}
 
 pub fn option<'a>(args: &'a [String], name: &str, fallback: Option<&'a str>) -> Result<&'a str, String> {
     match args.iter().position(|argument| argument == name) {
@@ -1202,6 +1238,10 @@ pub enum Run {
 }
 
 pub fn run(args: &[String]) -> Result<Run, String> {
+    validate_options(args)?;
+    if args.iter().any(|argument| argument == "-h" || argument == "--help") {
+        return Ok(Run::Printed(USAGE.to_string()));
+    }
     if args.iter().any(|argument| argument == "--self-test") {
         self_test()?;
         return Ok(Run::Printed("self-test=ok".to_string()));
@@ -1562,6 +1602,14 @@ mod tests {
         assert_eq!(
             run(&argv(&["a.gba", "b.gba", "-o", "report.json"])).unwrap_err(),
             "comparison reports must stay under out/ or a temporary directory"
+        );
+        match run(&argv(&["--help"])).unwrap() {
+            Run::Printed(text) => assert!(text.starts_with("usage: compare-roms")),
+            _ => panic!("expected help"),
+        }
+        assert_eq!(
+            run(&argv(&["a.gba", "b.gba", "--bogus"])).unwrap_err(),
+            "unknown option: --bogus"
         );
     }
 }

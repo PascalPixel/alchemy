@@ -521,6 +521,15 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if let Some(order) = lookup(THUMB_CALLEE_REG_ORDER_SOURCES, stem) {
         out.push(format!("-mcallee-reg-order={order}"));
     }
+    if has(CALLEE_REG_ORDER_0132_OVERLAY_SOURCES, key) {
+        push!(&["-mcallee-reg-order=0132"]);
+    }
+    if has(STACK_SLOT_BEFORE_TABLE_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-stack-slot-before-table"]);
+    }
+    if let Some(order) = lookup(HIGH_REG_ORDER_OVERLAY_SOURCES, key) {
+        out.push(format!("-mhigh-reg-order={order}"));
+    }
     if has(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES, key) {
         push!(&["-mthumb-immediate-latency"]);
     }
@@ -616,6 +625,21 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-constant-past-call"]);
+    }
+    if has(POOL_LONG_CALL_ARG0_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-pool-long-call-arg0"]);
+    }
+    if has(ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-order-zero-arg1-before-nonzero-arg0"]);
+    }
+    if has(STORE_BEFORE_POOL_LOAD_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-store-before-pool-load"]);
+    }
+    if has(ORDER_8_0_20_ARGS_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-order-8-0-20-args"]);
+    }
+    if has(ZERO_R1_BEFORE_R0_LOAD_AFTER_8_2_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-zero-r1-before-r0-load-after-8-2"]);
     }
     if has(NO_THREAD_JUMPS_OVERLAY_SOURCES, key) {
         push!(&["-fno-thread-jumps"]);
@@ -769,6 +793,115 @@ mod tests {
         assert_eq!(
             cflags_for_target_source(CompilerTarget::Gs2, "/tmp/080049e8.c"),
             gs2_cflags()
+        );
+    }
+
+    fn assert_flag(source: &str, flag: &str) {
+        let flags = cflags_for_source(source);
+        assert!(
+            flags.iter().any(|candidate| candidate == flag),
+            "{source} should route {flag}, got {flags:?}"
+        );
+    }
+
+    fn assert_no_flag(source: &str, flag: &str) {
+        let flags = cflags_for_source(source);
+        assert!(
+            flags.iter().all(|candidate| candidate != flag),
+            "{source} should not route {flag}, got {flags:?}"
+        );
+    }
+
+    #[test]
+    fn resource_373_scheduler_flags_cover_semantic_and_exact_paths() {
+        let paired_routes = [
+            (
+                "-fthumb-pool-long-call-arg0",
+                "semantic/resource_373_c_02002f14.c",
+                "exact/resource_373_c_02002f14.c",
+            ),
+            (
+                "-fthumb-order-zero-arg1-before-nonzero-arg0",
+                "semantic/resource_373_c_02002f14.c",
+                "exact/resource_373_c_02002f14.c",
+            ),
+            (
+                "-fthumb-store-before-pool-load",
+                "semantic/resource_373_c_02002a54.c",
+                "exact/resource_373_c_02002a54.c",
+            ),
+            (
+                "-fthumb-order-8-0-20-args",
+                "semantic/resource_373_c_02002cb0.c",
+                "exact/resource_373_c_02002cb0.c",
+            ),
+            (
+                "-fthumb-zero-r1-before-r0-load-after-8-2",
+                "semantic/resource_373_c_02002cb0.c",
+                "exact/resource_373_c_02002cb0.c",
+            ),
+        ];
+
+        for (flag, semantic, exact) in paired_routes {
+            assert_flag(semantic, flag);
+            assert_flag(exact, flag);
+        }
+
+        // These neighboring owners are deliberately not part of the 373
+        // routes. Keep the assertions close to the positive paths so a broad
+        // stem-based match cannot silently admit them later.
+        assert_no_flag(
+            "semantic/resource_373_c_02002f15.c",
+            "-fthumb-pool-long-call-arg0",
+        );
+        assert_no_flag(
+            "semantic/resource_373_c_02002a55.c",
+            "-fthumb-store-before-pool-load",
+        );
+        assert_no_flag(
+            "semantic/resource_373_c_02002cb1.c",
+            "-fthumb-order-8-0-20-args",
+        );
+    }
+
+    #[test]
+    fn resource_373_stack_and_register_routes_preserve_path_specificity() {
+        assert_flag(
+            "semantic/resource_373_c_020008c0.c",
+            "-fthumb-stack-slot-before-table",
+        );
+        assert_no_flag(
+            "exact/resource_373_c_020008c0.c",
+            "-fthumb-stack-slot-before-table",
+        );
+        assert_no_flag(
+            "semantic/resource_373_c_020008c1.c",
+            "-fthumb-stack-slot-before-table",
+        );
+
+        for source in [
+            "semantic/resource_373_c_020008c0.c",
+            "semantic/resource_373_c_0200564c.c",
+        ] {
+            assert_flag(source, "-mcallee-reg-order=0132");
+        }
+        assert_no_flag("exact/resource_373_c_020008c0.c", "-mcallee-reg-order=0132");
+        assert_no_flag("exact/resource_373_c_0200564c.c", "-mcallee-reg-order=0132");
+
+        assert_flag(
+            "semantic/resource_373_c_0200564c.c",
+            "-mhigh-reg-order=1203",
+        );
+        assert_no_flag("exact/resource_373_c_0200564c.c", "-mhigh-reg-order=1203");
+
+        assert_flag(
+            "semantic/resource_373_c_0200564c.c",
+            "-fno-sched-depend-count",
+        );
+        assert_no_flag("exact/resource_373_c_0200564c.c", "-fno-sched-depend-count");
+        assert_no_flag(
+            "semantic/resource_373_c_0200565c.c",
+            "-fno-sched-depend-count",
         );
     }
 }

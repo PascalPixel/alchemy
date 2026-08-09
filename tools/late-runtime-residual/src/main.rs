@@ -40,6 +40,27 @@ fn default_catalog() -> PathBuf {
     repository_root().join("assets/data/late_runtime_catalog.json")
 }
 
+fn validate_options(args: &[String]) -> Result<(), String> {
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].as_str() {
+            "--directory" => {
+                if index + 1 >= args.len() {
+                    return Err("--directory requires a value".to_string());
+                }
+                index += 2;
+            }
+            "-h" | "--help" | "--self-test" => index += 1,
+            argument if argument.starts_with('-') => {
+                return Err(format!("unknown option: {argument}"));
+            }
+            _ => index += 1,
+        }
+    }
+    Ok(())
+}
+
+#[derive(Debug)]
 enum Outcome {
     Line(String),
     /// `usage()` prints to stdout and exits 0.
@@ -47,6 +68,10 @@ enum Outcome {
 }
 
 fn run(args: &[String]) -> Result<Outcome, String> {
+    validate_options(args)?;
+    if args.iter().any(|arg| arg == "-h" || arg == "--help") {
+        return Ok(Outcome::Usage);
+    }
     let catalog = default_catalog();
     if let [command, source, address] = args {
         if command == "build-region-stdout" {
@@ -97,5 +122,28 @@ fn main() -> ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn help_aliases_succeed_before_catalog_access() {
+        assert!(matches!(run(&args(&["-h"])), Ok(Outcome::Usage)));
+        assert!(matches!(run(&args(&["--help"])), Ok(Outcome::Usage)));
+    }
+
+    #[test]
+    fn unknown_option_is_rejected_before_catalog_access() {
+        assert_eq!(
+            run(&args(&["verify", "missing.gba", "missing.json", "--bogus"])).unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

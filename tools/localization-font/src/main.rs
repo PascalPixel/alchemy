@@ -9,32 +9,50 @@ use localization_font::{
 };
 use serde_json::Value;
 
-const USAGE: &str = "usage: localization-font {export ROM --root ASSETS --output SOURCE|build SOURCE --root ASSETS --output FILE|verify ROM SOURCE --root ASSETS|--self-test}";
+const USAGE: &str = "usage: localization-font {export ROM --root ASSETS --output SOURCE|build SOURCE --root ASSETS --output FILE|build-stdout SOURCE --root ASSETS|verify ROM SOURCE --root ASSETS|--self-test}";
 
-fn option(args: &[String], name: &str) -> Result<String, Error> {
-    let index = args
-        .iter()
-        .position(|arg| arg == name)
-        .ok_or_else(|| Error(format!("{name} is required")))?;
-    args.get(index + 1)
-        .cloned()
-        .ok_or_else(|| Error(format!("{name} is required")))
+fn option(args: &[String], start: usize, name: &str, allowed: &[&str]) -> Result<String, Error> {
+    let mut found = None;
+    let mut index = start;
+    while index < args.len() {
+        let option = args[index].as_str();
+        if !allowed.contains(&option) {
+            return Err(Error(USAGE.into()));
+        }
+        let value = args
+            .get(index + 1)
+            .filter(|value| !value.starts_with('-'))
+            .cloned()
+            .ok_or_else(|| Error(format!("{option} is required")))?;
+        if option == name {
+            if found.is_some() {
+                return Err(Error(format!("duplicate {option}")));
+            }
+            found = Some(value);
+        }
+        index += 2;
+    }
+    found.ok_or_else(|| Error(format!("{name} is required")))
 }
 
-fn run(mut args: Vec<String>) -> Result<(), Error> {
-    if args.iter().any(|arg| arg == "--self-test") {
+fn run(args: Vec<String>) -> Result<(), Error> {
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        println!("{USAGE}");
+        return Ok(());
+    }
+    if args.len() == 1 && args[0] == "--self-test" {
         self_test()?;
         println!("self-test=ok");
-        args.retain(|arg| arg != "--self-test");
-        if args.is_empty() {
-            return Ok(());
-        }
+        return Ok(());
     }
     match args.first().map(String::as_str) {
         Some("export") => {
+            if args.len() != 6 {
+                return Err(Error(USAGE.into()));
+            }
             let rom_path = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
-            let root = option(&args, "--root")?;
-            let output = option(&args, "--output")?;
+            let root = option(&args, 2, "--root", &["--root", "--output"])?;
+            let output = option(&args, 2, "--output", &["--root", "--output"])?;
             let source = export_localization_font(
                 &fs::read(rom_path).map_err(|e| Error(e.to_string()))?,
                 Path::new(&root),
@@ -57,9 +75,12 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
             Ok(())
         }
         Some("build") => {
+            if args.len() != 6 {
+                return Err(Error(USAGE.into()));
+            }
             let input = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
-            let root = option(&args, "--root")?;
-            let output = option(&args, "--output")?;
+            let root = option(&args, 2, "--root", &["--root", "--output"])?;
+            let output = option(&args, 2, "--output", &["--root", "--output"])?;
             let source: Value =
                 serde_json::from_slice(&fs::read(input).map_err(|e| Error(e.to_string()))?)
                     .map_err(|e| Error(e.to_string()))?;
@@ -72,8 +93,11 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
             Ok(())
         }
         Some("build-stdout") => {
+            if args.len() != 4 {
+                return Err(Error(USAGE.into()));
+            }
             let input = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
-            let root = option(&args, "--root")?;
+            let root = option(&args, 2, "--root", &["--root"])?;
             let source: Value = serde_json::from_slice(
                 &fs::read(input).map_err(|e| Error(e.to_string()))?,
             )
@@ -83,9 +107,12 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
             Ok(())
         }
         Some("verify") => {
+            if args.len() != 5 {
+                return Err(Error(USAGE.into()));
+            }
             let rom_path = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
             let input = args.get(2).ok_or_else(|| Error(USAGE.into()))?;
-            let root = option(&args, "--root")?;
+            let root = option(&args, 3, "--root", &["--root"])?;
             let source: Value =
                 serde_json::from_slice(&fs::read(input).map_err(|e| Error(e.to_string()))?)
                     .map_err(|e| Error(e.to_string()))?;
@@ -110,5 +137,32 @@ fn main() -> ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{option, USAGE};
+
+    #[test]
+    fn option_parser_rejects_unknown_options() {
+        let args = vec![
+            "--root".into(),
+            "assets".into(),
+            "--output".into(),
+            "source".into(),
+        ];
+        assert_eq!(
+            option(&args, 0, "--root", &["--root", "--output"]).unwrap(),
+            "assets"
+        );
+        assert!(option(
+            &["--unknown".into(), "value".into()],
+            0,
+            "--root",
+            &["--root"]
+        )
+        .is_err());
+        assert!(USAGE.contains("build-stdout"));
     }
 }

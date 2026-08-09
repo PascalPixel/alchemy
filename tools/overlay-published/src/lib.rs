@@ -145,21 +145,31 @@ fn parse_owner_filename(overlay: &str, name: &str) -> Option<i64> {
     // only ever asked about filenames that matched `0*([0-9a-f]+)`, i.e. at
     // least one hex digit is captured even when it is `0`.
     let digits = if digits.is_empty() { "0" } else { digits };
-    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_hexdigit() && !(b as char).is_ascii_uppercase()) {
+    if digits.is_empty()
+        || !digits
+            .bytes()
+            .all(|b| b.is_ascii_hexdigit() && !(b as char).is_ascii_uppercase())
+    {
         return None;
     }
-    if rest.is_empty() || !rest.bytes().all(|b| b.is_ascii_hexdigit() && !(b as char).is_ascii_uppercase()) {
+    if rest.is_empty()
+        || !rest
+            .bytes()
+            .all(|b| b.is_ascii_hexdigit() && !(b as char).is_ascii_uppercase())
+    {
         return None;
     }
     i64::from_str_radix(digits, 16).ok()
 }
 
 /// Owners are whatever the tree already claims: a C file, or a manual region.
-pub fn owner_set(overlay: &str) -> HashSet<i64> {
+pub fn owner_set(overlay: &str) -> Result<HashSet<i64>, String> {
     let mut owners = HashSet::new();
     for directory in ["exact", "semantic"] {
         let path = root().join(directory);
-        let Ok(entries) = fs::read_dir(&path) else { continue };
+        let Ok(entries) = fs::read_dir(&path) else {
+            continue;
+        };
         for entry in entries.flatten() {
             let name = entry.file_name();
             let Some(name) = name.to_str() else { continue };
@@ -168,10 +178,10 @@ pub fn owner_set(overlay: &str) -> HashSet<i64> {
             }
         }
     }
-    for region in manual_regions(overlay) {
+    for region in manual_regions(overlay)? {
         owners.insert(region.start);
     }
-    owners
+    Ok(owners)
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -187,27 +197,69 @@ pub struct Region {
 /// produces -- so a candidate sitting behind an exact row cannot be ruled
 /// inside a body by this data alone, and is reported as needing the owner's
 /// check rather than silently dropped.
-pub fn manual_regions(overlay: &str) -> Vec<Region> {
-    let path = root().join("semantic").join("regions.json");
-    let Ok(text) = fs::read_to_string(&path) else { return Vec::new() };
-    let Ok(document) = parse_json(&text) else { return Vec::new() };
+fn manual_regions_from_document(document: &Value, overlay: &str) -> Result<Vec<Region>, String> {
+    let regions = document
+        .get("manual_regions")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "regions.json: missing manual_regions array".to_string())?;
     let mut spans = Vec::new();
-    if let Some(regions) = document.get("manual_regions").and_then(Value::as_array) {
-        for region in regions {
-            let region_overlay = region.get("overlay").and_then(Value::as_str);
-            if region_overlay != Some(overlay) {
-                continue;
-            }
-            let Some(entry) = region.get("entry").and_then(Value::as_str) else { continue };
-            let entry = entry.strip_prefix("0x").or_else(|| entry.strip_prefix("0X")).unwrap_or(entry);
-            let Ok(entry_value) = i64::from_str_radix(entry, 16) else { continue };
-            let start = entry_value - OVERLAY_BASE;
-            let span_bytes = region.get("span_bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64;
-            spans.push(Region { start, end: start + span_bytes });
+    for (index, region) in regions.iter().enumerate() {
+        let region_overlay = region
+            .get("overlay")
+            .and_then(Value::as_str)
+            .ok_or_else(|| format!("regions.json: manual_regions[{index}] has no overlay"))?;
+        let entry = region
+            .get("entry")
+            .and_then(Value::as_str)
+            .ok_or_else(|| format!("regions.json: manual_regions[{index}] has no entry"))?;
+        let entry = entry
+            .strip_prefix("0x")
+            .or_else(|| entry.strip_prefix("0X"))
+            .unwrap_or(entry);
+        let entry_value = i64::from_str_radix(entry, 16).map_err(|_| {
+            format!("regions.json: manual_regions[{index}] has invalid entry '{entry}'")
+        })?;
+        let span_bytes = region
+            .get("span_bytes")
+            .and_then(Value::as_f64)
+            .ok_or_else(|| format!("regions.json: manual_regions[{index}] has no span_bytes"))?;
+        if !span_bytes.is_finite()
+            || span_bytes.fract() != 0.0
+            || span_bytes <= 0.0
+            || span_bytes > i64::MAX as f64
+        {
+            return Err(format!(
+                "regions.json: manual_regions[{index}] has invalid span_bytes {span_bytes}"
+            ));
         }
+        if region_overlay != overlay {
+            continue;
+        }
+        let start = entry_value.checked_sub(OVERLAY_BASE).ok_or_else(|| {
+            format!("regions.json: manual_regions[{index}] entry is below overlay base")
+        })?;
+        if start < 0 {
+            return Err(format!(
+                "regions.json: manual_regions[{index}] entry is outside the overlay image"
+            ));
+        }
+        let span_bytes = span_bytes as i64;
+        let end = start.checked_add(span_bytes).ok_or_else(|| {
+            format!("regions.json: manual_regions[{index}] span overflows its entry")
+        })?;
+        spans.push(Region { start, end });
     }
     spans.sort_by_key(|span| span.start);
-    spans
+    Ok(spans)
+}
+
+pub fn manual_regions(overlay: &str) -> Result<Vec<Region>, String> {
+    let path = root().join("semantic").join("regions.json");
+    let text = fs::read_to_string(&path)
+        .map_err(|error| format!("overlay-published: cannot read {}: {error}", path.display()))?;
+    let document = parse_json(&text)
+        .map_err(|error| format!("overlay-published: malformed {}: {error}", path.display()))?;
+    manual_regions_from_document(&document, overlay)
 }
 
 /// Real, compiled spans for this overlay's exact-C rows.
@@ -217,27 +269,61 @@ pub fn manual_regions(overlay: &str) -> Vec<Region> {
 /// address inside such a row from an address after it, and reported UNRULED.
 /// That ambiguity is what hid the data-installed callbacks in the first
 /// place, so closing it is worth the compile. `overlay_c_spans` omits any row
-/// that fails to build rather than guessing, and the omission simply leaves
-/// the old UNRULED behaviour in place for that row, which is the safe
-/// direction.
-pub fn exact_spans(overlay: &str) -> Vec<Region> {
-    let source_path = root().join("assets").join("code").join(format!("{overlay}_overlay.s"));
-    if !source_path.exists() {
-        return Vec::new();
+/// that fails to build; this boundary compares the discovered rows with the
+/// exact-owner inventory and turns that omission into an explicit failure.
+pub fn exact_spans(overlay: &str) -> Result<Vec<Region>, String> {
+    let source_path = root()
+        .join("assets")
+        .join("code")
+        .join(format!("{overlay}_overlay.s"));
+    if !source_path.is_file() {
+        return Err(format!(
+            "overlay-published: missing overlay assembly {}",
+            source_path.display()
+        ));
     }
+    let expected = exact_starts(overlay)?;
     let source = OverlaySource::path(&source_path);
-    overlay_c_spans(&source, OVERLAY_BASE)
+    let spans = overlay_c_spans(&source, OVERLAY_BASE)
         .into_iter()
-        .map(|span| Region { start: span.start, end: span.end })
-        .collect()
+        .map(|span| Region {
+            start: span.start,
+            end: span.end,
+        })
+        .collect::<Vec<_>>();
+    validate_exact_spans(overlay, &expected, &spans)?;
+    Ok(spans)
+}
+
+fn validate_exact_spans(
+    overlay: &str,
+    expected: &HashSet<i64>,
+    spans: &[Region],
+) -> Result<(), String> {
+    if let Some(start) = expected
+        .iter()
+        .find(|start| !spans.iter().any(|span| span.start == **start))
+    {
+        return Err(format!(
+            "overlay-published: failed C-span discovery for exact owner 0x{:x} in {overlay}",
+            OVERLAY_BASE + start
+        ));
+    }
+    if spans.iter().any(|span| span.end <= span.start) {
+        return Err(format!(
+            "overlay-published: C-span discovery produced an empty span for {overlay}"
+        ));
+    }
+    Ok(())
 }
 
 /// Exact-C row start offsets, used only to name the rows a span is missing
 /// for.
-pub fn exact_starts(overlay: &str) -> HashSet<i64> {
+pub fn exact_starts(overlay: &str) -> Result<HashSet<i64>, String> {
     let mut starts = HashSet::new();
     let path = root().join("exact");
-    let Ok(entries) = fs::read_dir(&path) else { return starts };
+    let entries = fs::read_dir(&path)
+        .map_err(|error| format!("overlay-published: cannot read {}: {error}", path.display()))?;
     for entry in entries.flatten() {
         let name = entry.file_name();
         let Some(name) = name.to_str() else { continue };
@@ -245,7 +331,7 @@ pub fn exact_starts(overlay: &str) -> HashSet<i64> {
             starts.insert(offset - OVERLAY_BASE);
         }
     }
-    starts
+    Ok(starts)
 }
 
 fn read_u16le(image: &[u8], at: i64) -> Option<u16> {
@@ -261,19 +347,23 @@ fn read_u16le(image: &[u8], at: i64) -> Option<u16> {
 
 pub fn sweep(overlay: &str) -> Result<OverlayResidue, String> {
     let image = overlay_image(overlay)?;
-    let owners = owner_set(overlay);
+    let owners = owner_set(overlay)?;
     let mut sorted: Vec<i64> = owners.iter().copied().collect();
     sorted.sort_unstable();
-    let bodies = manual_regions(overlay);
-    let exact = exact_starts(overlay);
-    let compiled = exact_spans(overlay);
+    let bodies = manual_regions(overlay)?;
+    let exact = exact_starts(overlay)?;
+    let compiled = exact_spans(overlay)?;
     let measured_exact_start: HashSet<i64> = compiled.iter().map(|span| span.start).collect();
 
     // Inside a body the tree measured, or inside an exact-C row this tool has
     // now compiled. Both are real spans; the second used to be invisible.
     let inside_recorded_body = |offset: i64| -> bool {
-        bodies.iter().any(|body| offset > body.start && offset < body.end)
-            || compiled.iter().any(|span| offset > span.start && offset < span.end)
+        bodies
+            .iter()
+            .any(|body| offset > body.start && offset < body.end)
+            || compiled
+                .iter()
+                .any(|span| offset > span.start && offset < span.end)
     };
     // Behind an exact-C row whose span is STILL unknown -- that is, one
     // `overlay_c_spans` could not compile. A row it did compile is now
@@ -307,7 +397,9 @@ pub fn sweep(overlay: &str) -> Result<OverlayResidue, String> {
             if target >= 0 && target < image.len() as i64 {
                 let kind = classify(&image, target, &HashSet::new()).kind;
                 let is_veneer_or_call_via = kind == Kind::Veneer || kind == Kind::CallVia;
-                if !is_veneer_or_call_via && !owners.contains(&target) && !seen_call.contains(&target)
+                if !is_veneer_or_call_via
+                    && !owners.contains(&target)
+                    && !seen_call.contains(&target)
                     && !inside_recorded_body(target)
                 {
                     seen_call.insert(target);
@@ -336,7 +428,10 @@ pub fn sweep(overlay: &str) -> Result<OverlayResidue, String> {
             | ((image[a + 2] as u32) << 16)
             | ((image[a + 3] as u32) << 24);
         if let Some(offset) = published_offset(word, image.len() as i64) {
-            if !owners.contains(&offset) && !seen_publish.contains(&offset) && !inside_recorded_body(offset) {
+            if !owners.contains(&offset)
+                && !seen_publish.contains(&offset)
+                && !inside_recorded_body(offset)
+            {
                 seen_publish.insert(offset);
                 let opening = read_u16le(&image, offset).unwrap_or(0);
                 if is_prologue_shape(opening) {
@@ -377,7 +472,13 @@ pub fn sweep(overlay: &str) -> Result<OverlayResidue, String> {
             } else {
                 "UNEXPLAINED — saves lr, outside every recorded body".to_string()
             };
-            shaped.push(ShapedRow { offset: at, halfword, owner, delta, verdict });
+            shaped.push(ShapedRow {
+                offset: at,
+                halfword,
+                owner,
+                delta,
+                verdict,
+            });
         }
         at += 2;
     }
@@ -458,16 +559,22 @@ pub fn self_test() -> Result<(), String> {
     // reported UNRULED, so this asserts BOTH halves of the fix: the span is
     // produced at all, and it decides 0x020006f4 to be outside rather than
     // inside.
-    let spans = exact_spans("resource_380");
+    let spans = exact_spans("resource_380")?;
     let row = spans.iter().find(|span| span.start == 0x390);
     let row = match row {
         Some(row) => row,
         None => return Err("resource_380's exact row at 0x02000390 must compile to a span".into()),
     };
     if row.end != 0x6f4 {
-        return Err(format!("exact row 0x02000390 must end at 0x020006f4, got 0x{:x}", row.end));
+        return Err(format!(
+            "exact row 0x02000390 must end at 0x020006f4, got 0x{:x}",
+            row.end
+        ));
     }
-    if spans.iter().any(|span| 0x6f4 > span.start && 0x6f4 < span.end) {
+    if spans
+        .iter()
+        .any(|span| 0x6f4 > span.start && 0x6f4 < span.end)
+    {
         return Err("0x020006f4 is a row start, not an interior address".into());
     }
     // A row that fails to compile must be omitted, never guessed at, so a
@@ -481,9 +588,16 @@ pub fn self_test() -> Result<(), String> {
     // which is the whole failure mode this tool exists to catch, reproduced
     // inside its own self-test.
     let residue = sweep("resource_380")?;
-    let unruled: Vec<&ShapedRow> = residue.shaped.iter().filter(|row| row.verdict.starts_with("UNRULED")).collect();
+    let unruled: Vec<&ShapedRow> = residue
+        .shaped
+        .iter()
+        .filter(|row| row.verdict.starts_with("UNRULED"))
+        .collect();
     if !unruled.is_empty() {
-        return Err(format!("resource_380 must have no UNRULED rows left, got {}", unruled.len()));
+        return Err(format!(
+            "resource_380 must have no UNRULED rows left, got {}",
+            unruled.len()
+        ));
     }
     // The bounded-window discriminator, asserted on SYNTHETIC bytes rather
     // than on today's residue -- a check pinned to the rows currently in the
@@ -519,7 +633,7 @@ pub fn self_test() -> Result<(), String> {
     if !reaches_return(&short, 0, 1024) {
         return Err("a return at the last halfword must count".into());
     }
-    if reaches_return(&vec![0u8; 4], 0, 1024) {
+    if reaches_return(&[0u8; 4], 0, 1024) {
         return Err("running off the end must not invent a return".into());
     }
 
@@ -550,13 +664,17 @@ pub fn self_test() -> Result<(), String> {
         }
     };
     if kind_of(&[0xb500, 0x4770]) != "called" {
-        return Err("sweep A: a push prologue must stay in `called` -- that count is the invariant".into());
+        return Err(
+            "sweep A: a push prologue must stay in `called` -- that count is the invariant".into(),
+        );
     }
     if kind_of(&[0x4800, 0x4770]) != "calledLeaf" {
         return Err("sweep A: `ldr r0,=X / bx lr` is a LEAF and must not be dropped".into());
     }
     if kind_of(&[0x0000, 0x0000]) != "calledData" {
-        return Err("sweep A: bytes that never return are data, and must be reported as such".into());
+        return Err(
+            "sweep A: bytes that never return are data, and must be reported as such".into(),
+        );
     }
     // And the direction that matters most: the leaf must not be silently
     // absent. Before 2026-08-01 this shape produced NOTHING at all -- not a
@@ -636,8 +754,11 @@ pub fn residue_to_json(result: &OverlayResidue, level: usize) -> String {
         "[]".to_string()
     } else {
         let item_indent = level + 2;
-        let body: Vec<String> =
-            result.shaped.iter().map(|row| shaped_row_json(row, item_indent)).collect();
+        let body: Vec<String> = result
+            .shaped
+            .iter()
+            .map(|row| shaped_row_json(row, item_indent))
+            .collect();
         format!("[\n{}\n{field_indent}]", body.join(",\n"))
     };
     format!(
@@ -661,20 +782,45 @@ pub fn results_to_json(results: &[OverlayResidue]) -> String {
     format!("[\n{}\n]", body.join(",\n"))
 }
 
+const USAGE: &str =
+    "usage: overlay-published [resource_NNN] [--json]\n       overlay-published --self-test";
+
 /// `main()`.
 pub fn run(args: &[String]) -> Result<(), String> {
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        println!("{USAGE}");
+        return Ok(());
+    }
     if args.iter().any(|a| a == "--self-test") {
+        if args.len() != 1 {
+            return Err(format!(
+                "--self-test cannot be combined with other options\n{USAGE}"
+            ));
+        }
         return self_test();
+    }
+    if args.iter().filter(|a| a.as_str() == "--json").count() > 1 {
+        return Err(format!("--json may be supplied only once\n{USAGE}"));
+    }
+    let requested: Vec<&String> = args.iter().filter(|a| !a.starts_with('-')).collect();
+    if args.iter().any(|a| a.starts_with('-') && a != "--json") || requested.len() > 1 {
+        return Err(format!("unknown or misplaced option\n{USAGE}"));
+    }
+    if requested
+        .first()
+        .is_some_and(|name| !name.starts_with("resource_"))
+    {
+        return Err(format!("invalid overlay name\n{USAGE}"));
     }
     // A NAME IS REJECTED BY EXISTENCE, NOT BY SHAPE (fixed 2026-08-01). See
     // the TypeScript original's comment: a well-formed but nonexistent name
     // used to silently sweep every overlay instead of failing.
     let known: HashSet<String> = overlay_names()?.into_iter().collect();
-    let requested: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
     for name in &requested {
         if !known.contains(name.as_str()) {
-            println!("NOTHING SWEPT — no overlay named {name}. This is a FAILURE, not a pass.");
-            std::process::exit(1);
+            return Err(format!(
+                "NOTHING SWEPT — no overlay named {name}. This is a FAILURE, not a pass."
+            ));
         }
     }
     let overlays: Vec<String> = if !requested.is_empty() {
@@ -692,9 +838,16 @@ pub fn run(args: &[String]) -> Result<(), String> {
     }
     let mut residue = 0i64;
     for result in &results {
-        let unexplained: Vec<&ShapedRow> =
-            result.shaped.iter().filter(|row| row.verdict.starts_with("UNEXPLAINED")).collect();
-        let unruled: Vec<&ShapedRow> = result.shaped.iter().filter(|row| row.verdict.starts_with("UNRULED")).collect();
+        let unexplained: Vec<&ShapedRow> = result
+            .shaped
+            .iter()
+            .filter(|row| row.verdict.starts_with("UNEXPLAINED"))
+            .collect();
+        let unruled: Vec<&ShapedRow> = result
+            .shaped
+            .iter()
+            .filter(|row| row.verdict.starts_with("UNRULED"))
+            .collect();
         if result.called.is_empty()
             && result.called_leaf.is_empty()
             && result.called_data.is_empty()
@@ -716,7 +869,10 @@ pub fn run(args: &[String]) -> Result<(), String> {
             println!("  A called    {}", hex(*offset));
         }
         for offset in &result.called_leaf {
-            println!("  A leaf      {}  bl-reached, no push prologue", hex(*offset));
+            println!(
+                "  A leaf      {}  bl-reached, no push prologue",
+                hex(*offset)
+            );
         }
         for offset in &result.called_data {
             println!(
@@ -728,7 +884,10 @@ pub fn run(args: &[String]) -> Result<(), String> {
             println!("  B published {}", hex(*offset));
         }
         for offset in &result.published_leaf {
-            println!("  B leaf      {}  published, no push prologue", hex(*offset));
+            println!(
+                "  B leaf      {}  published, no push prologue",
+                hex(*offset)
+            );
         }
         for offset in &result.published_data {
             println!(
@@ -737,7 +896,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
             );
         }
         for row in unexplained.iter().chain(unruled.iter()) {
-            let label = if row.verdict.starts_with("UNRULED") { "unruled " } else { "shaped  " };
+            let label = if row.verdict.starts_with("UNRULED") {
+                "unruled "
+            } else {
+                "shaped  "
+            };
             let owner = match row.owner {
                 Some(owner) => hex(owner),
                 None => "0x?".to_string(),
@@ -746,7 +909,9 @@ pub fn run(args: &[String]) -> Result<(), String> {
                 "  C {label}  {}  {:x}  nearest owner {owner} +{}",
                 hex(row.offset),
                 row.halfword,
-                row.delta.map(|d| d.to_string()).unwrap_or_else(|| "null".to_string()),
+                row.delta
+                    .map(|d| d.to_string())
+                    .unwrap_or_else(|| "null".to_string()),
             );
         }
     }
@@ -786,18 +951,31 @@ mod tests {
 
     #[test]
     fn exact_spans_resource_380() {
-        let spans = exact_spans("resource_380");
-        let row = spans.iter().find(|span| span.start == 0x390).expect("resource_380 row at 0x390");
+        let spans = exact_spans("resource_380").expect("resource_380 spans");
+        let row = spans
+            .iter()
+            .find(|span| span.start == 0x390)
+            .expect("resource_380 row at 0x390");
         assert_eq!(row.end, 0x6f4);
-        assert!(!spans.iter().any(|span| 0x6f4 > span.start && 0x6f4 < span.end));
+        assert!(!spans
+            .iter()
+            .any(|span| 0x6f4 > span.start && 0x6f4 < span.end));
         assert!(!spans.iter().any(|span| span.end <= span.start));
     }
 
     #[test]
     fn resource_380_has_no_unruled_rows() {
         let residue = sweep("resource_380").expect("resource_380 sweeps");
-        let unruled: Vec<&ShapedRow> = residue.shaped.iter().filter(|row| row.verdict.starts_with("UNRULED")).collect();
-        assert!(unruled.is_empty(), "expected no UNRULED rows, got {}", unruled.len());
+        let unruled: Vec<&ShapedRow> = residue
+            .shaped
+            .iter()
+            .filter(|row| row.verdict.starts_with("UNRULED"))
+            .collect();
+        assert!(
+            unruled.is_empty(),
+            "expected no UNRULED rows, got {}",
+            unruled.len()
+        );
     }
 
     #[test]
@@ -822,7 +1000,7 @@ mod tests {
         short[2] = 0x70;
         short[3] = 0x47;
         assert!(reaches_return(&short, 0, 1024));
-        assert!(!reaches_return(&vec![0u8; 4], 0, 1024));
+        assert!(!reaches_return(&[0u8; 4], 0, 1024));
     }
 
     #[test]
@@ -852,5 +1030,33 @@ mod tests {
     #[test]
     fn full_self_test() {
         self_test().expect("self_test() should pass");
+    }
+
+    #[test]
+    fn help_is_successful_and_unknown_options_are_rejected() {
+        assert!(run(&["--help".into()]).is_ok());
+        assert!(run(&["--unknown".into()]).is_err());
+        assert!(run(&["resource_37c".into(), "resource_380".into()]).is_err());
+    }
+
+    #[test]
+    fn malformed_regions_are_rejected_before_overlay_filtering() {
+        let document = parse_json(r#"{"manual_regions":[{"overlay":"resource_380"}]}"#)
+            .expect("synthetic JSON");
+        let error = manual_regions_from_document(&document, "resource_380").unwrap_err();
+        assert!(error.contains("has no entry"));
+    }
+
+    #[test]
+    fn missing_compiled_span_is_a_failure() {
+        let expected = HashSet::from([0x390]);
+        let error = validate_exact_spans("synthetic", &expected, &[]).unwrap_err();
+        assert!(error.contains("failed C-span discovery"));
+    }
+
+    #[test]
+    fn missing_overlay_assembly_is_a_failure() {
+        let error = exact_spans("not-an-overlay").unwrap_err();
+        assert!(error.contains("missing overlay assembly"));
     }
 }

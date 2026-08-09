@@ -16,7 +16,7 @@ use early_runtime_data::{
     system_error, verify_early_runtime_data, write_build, Error, EARLY_RUNTIME_SOURCE_BYTES,
 };
 
-const USAGE: &str = "usage: early-runtime-data export ROM --directory DIR | build INDEX --directory DIR | verify ROM INDEX | --self-test";
+const USAGE: &str = "usage: early-runtime-data export ROM --directory DIR | build INDEX --directory DIR | build-region-stdout SOURCE ADDRESS | verify ROM INDEX | --self-test";
 
 /// Bun prints these two throw shapes without its `error: ` prefix.
 fn is_bare_throw(message: &str) -> bool {
@@ -40,6 +40,9 @@ fn read_rom(path: &str) -> Result<Vec<u8>, Error> {
 
 fn run(args: &[String]) -> Result<String, Error> {
     let catalog = default_catalog_path();
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        return Ok(USAGE.to_string());
+    }
     if let [command, source, address] = args {
         if command == "build-region-stdout" {
             let digits = address.strip_prefix("0x").unwrap_or(address);
@@ -110,5 +113,17 @@ fn main() -> ExitCode {
             }
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{run, USAGE};
+
+    #[test]
+    fn help_succeeds_and_unknown_options_fail() {
+        assert_eq!(run(&["--help".into()]).unwrap(), USAGE);
+        assert_eq!(run(&["-h".into()]).unwrap(), USAGE);
+        assert!(run(&["--unknown".into()]).is_err());
     }
 }

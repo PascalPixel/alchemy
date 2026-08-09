@@ -36,17 +36,23 @@ s32 Func_020008c0(void)
     s32 *obj;
     s32 i;
     s32 slot;
-    s32 ex, ez, t, k;
+    s32 ez, ex, t, k, finalEz;
 
     obj = Func_020068b6();
     i = 0;
-    while (*(s16 *)((s32 *)obj[20])[10] != Data_0200e1d0[i]) {
-        work.slot = 7;
-        i = i + 1;
-        if ((u32)i > 5) goto searched;
+    if (*(s16 *)((s32 *)obj[20])[10] == Data_0200e1d0[i]) {
+        work.slot = i;
+    } else {
+        for (;;) {
+            work.slot = 7;
+            i = i + 1;
+            if ((u32)i > 5) break;
+            if (*(s16 *)((s32 *)obj[20])[10] == Data_0200e1d0[i]) {
+                work.slot = i;
+                break;
+            }
+        }
     }
-    work.slot = i;
-searched:
     slot = work.slot;
     if ((u32)slot > 6) return 0;
 
@@ -55,12 +61,11 @@ searched:
     work.z = obj[4];
 
     k = slot * 4;
-
-    ez = Data_0200e1e8[k + 1];
-    if (ez < 0) ez = -ez;
-    t = Data_0200e1e8[k + 3];
+    t = Data_0200e1e8[k + 1];
     if (t < 0) t = -t;
-    ez = (ez + t) >> 4;
+    ez = Data_0200e1e8[k + 3];
+    if (ez < 0) ez = -ez;
+    finalEz = (t + ez) >> 4;
 
     ex = Data_0200e1e8[k];
     if (ex < 0) ex = -ex;
@@ -69,13 +74,13 @@ searched:
 
     work.x = work.x + (Data_0200e1e8[k] << 16);
     work.z = work.z + (Data_0200e1e8[k + 1] << 16);
-    work.x = work.x >> 20;
     work.z = work.z >> 20;
+    work.x = work.x >> 20;
     ex = (ex + t) >> 4;
 
-    Func_020068d4(work.x, work.z, ex, ez,
+    Func_020068d4(work.x, work.z, ex, finalEz,
                   (camera[79] >> 20) + work.x, (camera[80] >> 20) + work.z);
-    Func_02000bf0(0, work.x, work.z, ex, ez, 255);
-    Func_02000c02(2, work.x, work.z, ex, ez, 255);
+    Func_02000bf0(0, work.x, work.z, ex, finalEz, 255);
+    Func_02000c02(2, work.x, work.z, ex, finalEz, 255);
     return 1;
 }

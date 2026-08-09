@@ -59,3 +59,13 @@ fn main() -> ExitCode {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn rejects_unknown_options() {
+        assert!(run(&["--bogus".into()]).is_err());
+    }
+}

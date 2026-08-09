@@ -198,6 +198,45 @@ pub fn export_byte_value_regions(
     Ok(())
 }
 
+/// Verify the public export/read path and one representative rejection path.
+pub fn self_test() -> Result<String, String> {
+    let directory = std::env::temp_dir().join(format!(
+        "alchemy-byte-value-regions-self-test-{}",
+        std::process::id()
+    ));
+    let _ = fs::remove_dir_all(&directory);
+    let rom: Vec<u8> = (0..0x100u16).map(|value| value as u8).collect();
+    let specs = [RegionSpec {
+        name: "fixture".into(),
+        address: ROM_BASE + 0x10,
+        size: 8,
+    }];
+    let result = (|| {
+        export_byte_value_regions(&rom, &directory, &specs).map_err(|error| error.to_string())?;
+        let built = build_byte_value_regions(&directory.join("index.json"))
+            .map_err(|error| error.to_string())?;
+        if built
+            != [ByteValueRegion {
+                address: ROM_BASE + 0x10,
+                data: (0x10..0x18).collect(),
+            }]
+        {
+            return Err("byte-value-regions self-test round trip changed".into());
+        }
+        let path = directory.join("invalid.json");
+        fs::write(&path, "{}\n").map_err(|error| error.to_string())?;
+        if !matches!(
+            build_byte_value_regions(&path),
+            Err(RegionError::SourceIdentityDiffers)
+        ) {
+            return Err("byte-value-regions self-test accepted an invalid source".into());
+        }
+        Ok::<_, String>(format!("self-test=ok regions={}", built.len()))
+    })();
+    let _ = fs::remove_dir_all(&directory);
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,9 +1,38 @@
 use std::path::Path;
 use std::process::ExitCode;
 
-use documented::{documented, entry_points, scanned_nothing, violations};
+use documented::{
+    catalog_violations, cataloged, command_names, documented, entry_points, scanned_nothing,
+    self_test, violations,
+};
+
+const USAGE: &str = "usage: documented [--self-test]";
 
 fn main() -> ExitCode {
+    let arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    match arguments.as_slice() {
+        [argument] if matches!(argument.as_str(), "-h" | "--help") => {
+            println!("{USAGE}");
+            return ExitCode::SUCCESS;
+        }
+        [argument] if argument == "--self-test" => {
+            return match self_test() {
+                Ok(line) => {
+                    println!("{line}");
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("error: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [] => {}
+        _ => {
+            eprintln!("error: {USAGE}");
+            return ExitCode::from(2);
+        }
+    }
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .and_then(Path::parent)
@@ -21,20 +50,30 @@ fn main() -> ExitCode {
         eprintln!("error: {why}");
         return ExitCode::FAILURE;
     }
-    let problems = violations(&tools, &docs);
+    let mut problems = violations(&tools, &docs);
+    let commands = command_names();
+    let catalog = match std::fs::read_to_string(root.join("docs/TOOLS.md")) {
+        Ok(text) => cataloged(&text),
+        Err(error) => {
+            eprintln!("error: cannot read docs/TOOLS.md: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
+    problems.extend(catalog_violations(&commands, &catalog));
     if !problems.is_empty() {
         for problem in &problems {
             eprintln!("error: {problem}");
         }
         eprintln!(
-            "\n{} native tool group(s) are undocumented. AGENTS.md is the list; there is no other list.",
+            "\n{} native documentation violation(s). The dispatcher is the command registry.",
             problems.len()
         );
         return ExitCode::FAILURE;
     }
     println!(
-        "documented ok: {} native tool groups, all in AGENTS.md",
-        tools.len()
+        "documented ok: {} command groups in AGENTS.md, {} public commands in docs/TOOLS.md",
+        tools.len(),
+        commands.len()
     );
     ExitCode::SUCCESS
 }

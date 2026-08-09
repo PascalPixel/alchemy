@@ -565,11 +565,15 @@ void Func_020089e8();
 
 void Func_020015dc(void)
 {
-    u8 *record;             /* r6 - whichever actor record is in hand */
+    s32 savedFlag;          /* [sp,#32] - its value on entry */
     u8 *savedFlagSlot;      /* [sp,#28] - &record0[0x55] */
-    u8 savedFlag;           /* [sp,#32] - its value on entry */
     u8 *handle;
-    s32 step;               /* r5 in the two counted loops */
+    u8 *sceneData;
+    s32 unit = 0x10000;
+    s32 mask;
+    s32 answerZero;
+    s32 zero = 0;
+    u8 *record;             /* r6 - whichever actor record is in hand */
 
     Func_020075aa();
 
@@ -577,8 +581,8 @@ void Func_020015dc(void)
     Func_020076e4(-1, -1, -1, 0);
 
     record = Func_020076f8();
-    record[0x55] = 0;
-    Func_02007704(0x017f0000, 0x00a00000, 0x036d0000, 0);
+    record[0x55] = (u8)zero;
+    Func_02007704(0x017f0000, 0x00a00000, 0x036d0000, zero);
 
     Func_020075da(1);
     Func_0200753e();
@@ -589,10 +593,10 @@ void Func_020015dc(void)
 
     /* Record 0's +0x55 flag is stashed in the frame and cleared for the whole
      * scene; the tail puts it back. */
-    *savedFlagSlot = 0;
-    record = Func_0200765e(0);
+    record = Func_0200765e(zero);
     savedFlagSlot = record + 0x55;
     savedFlag = *savedFlagSlot;
+    *savedFlagSlot = (u8)zero;
 
     Func_020076d0(0, 0x01970000, 0x02b20000);
     Func_020076de(21, 0x01880000, 0x03800000);
@@ -603,7 +607,8 @@ void Func_020015dc(void)
     Func_0200778e(1, 0x8000, 0);
     Func_0200779a(5, 0x8000, 0);
     Func_0200773a(0, 11);
-    Func_020076f4(0, Data_0200e590);
+    sceneData = Data_0200e590;
+    Func_020076f4(0, sceneData);
 
     Func_02004b66(23, 2, 1);
 
@@ -619,8 +624,8 @@ void Func_020015dc(void)
 
     /* 128 << 9 into record 0's +0x18 / +0x1c pair; repeated three more times
      * below, once per dialogue beat. */
-    *(s32 *)(record + 24) = 0x10000;
-    *(s32 *)(record + 28) = 0x10000;
+    *(s32 *)(record + 24) = unit;
+    *(s32 *)(record + 28) = unit;
 
     Func_0200781c(0, 0xb000, 40);
     Func_020077c4(0, 3);
@@ -646,13 +651,13 @@ void Func_020015dc(void)
     Func_020078a8(23, 0);
     Func_02007874(23, 0x01860000, 0x034a0000);
     Func_02007884(0, 11);
-    Func_0200783c(0, Data_0200e590);
+    Func_0200783c(0, sceneData);
     Func_02007802(200);
 
-    *(s32 *)(record + 24) = 0x10000;
-    *(s32 *)(record + 28) = 0x10000;
     Func_02007794(7, 0x66, 0x54, 0x29, 2, 1);
     Func_0200785c(0, 1);
+    *(s32 *)(record + 24) = unit;
+    *(s32 *)(record + 28) = unit;
     Func_020078b8(0, 1);
     Func_0200782e(30);
     Func_020078ce(0, 3);
@@ -673,15 +678,15 @@ void Func_020015dc(void)
     Func_02007986(23, 0);
     Func_02007950(23, 0, 0);
     Func_02007960(0, 11);
-    Func_02007918(0, Data_0200e590);
+    Func_02007918(0, sceneData);
     Func_020078de(200);
 
     Func_0200786e(6, 0x66, 0x53, 0x29, 1, 1);
     Func_02007936(0, 1);
     Func_02007992(0, 1);
+    *(s32 *)(record + 24) = unit;
+    *(s32 *)(record + 28) = unit;
     Func_02007908(30);
-    *(s32 *)(record + 24) = 0x10000;
-    *(s32 *)(record + 28) = 0x10000;
     Func_020079a8(0, 3);
     Func_02007916(20);
     Func_02007992(0, 0x168, 0x357);
@@ -700,15 +705,15 @@ void Func_020015dc(void)
     Func_02007a6a(24, 0);
     Func_02007a34(24, 0, 0);
     Func_02007a44(0, 11);
-    Func_020079fc(0, Data_0200e590);
+    Func_020079fc(0, sceneData);
     Func_020079c2(200);
 
     /* Split by the interior pool at 0x02001a12. */
     Func_02007992(5, 0x67, 0x52, 0x2a, 1, 1);
 
     Func_02007a5a(0, 1);
-    *(s32 *)(record + 24) = 0x10000;
-    *(s32 *)(record + 28) = 0x10000;
+    *(s32 *)(record + 24) = unit;
+    *(s32 *)(record + 28) = unit;
     Func_02007af4(0xf03);
     Func_02007ace(21, 2, 20);
     Func_02007b20(21, 0, 20);
@@ -832,8 +837,9 @@ void Func_020015dc(void)
     Func_02007eca(1, 0x188, 0x34b);
 
     /* Clear bit 0 of actor 5's +0x5a flag, then set it again a beat later. */
+    mask = 0xfe;
     handle = Func_02007e98(5) + 0x5a;
-    *handle = (u8)(*handle & 0xfe);
+    *handle = (u8)(*handle & mask);
 
     Func_02007ef0(5, 0x198, 0x34b);
     Func_02007e86(1);
@@ -918,6 +924,7 @@ void Func_020015dc(void)
     Func_0200821c(21, 0);
 
     /* Third question: same one-answer polarity as the second. */
+    answerZero = 0;
     if (Func_02008176(0, 0) == 1) {
         RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
     }
@@ -935,13 +942,13 @@ void Func_020015dc(void)
     Func_020081ba(5);
 
     /* Eleven arguments: four in registers and seven on the stack. */
-    Func_020082dc(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, 0);
+    Func_020082dc(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, answerZero);
 
     record = Func_02008212_b(21);
     /* The +0x50 handle's +0x26 byte, the field resource_373_c_02003380.c
      * models as Resource373Handle::field26. */
     *(*(u8 **)(record + 0x50) + 0x26) = 0;
-    record[0x5a] = (u8)(record[0x5a] & 0xfe);
+    record[0x5a] = (u8)(record[0x5a] & mask);
 
     Func_0200823c(21, 0x30000, 0x18000);
     Func_02008280(21, 0x16c, 0x32f);
@@ -949,10 +956,13 @@ void Func_020015dc(void)
 
     /* Four frames of a constant slide: +0x18000 on the 16.16 word at +0x10 and
      * -0x1999 on the one at +0x1c. */
-    for (step = 0; step != 4; step++) {
-        *(s32 *)(record + 16) = *(s32 *)(record + 16) + 0x18000;
-        *(s32 *)(record + 28) = *(s32 *)(record + 28) + (s32)0xffffe667;
-        Func_02008232(1);
+    {
+        s32 step;
+        for (step = 0; step != 4; step++) {
+            *(s32 *)(record + 16) = *(s32 *)(record + 16) + 0x18000;
+            *(s32 *)(record + 28) = *(s32 *)(record + 28) + (s32)0xffffe667;
+            Func_02008232(1);
+        }
     }
 
     Func_02008304(21, 0, 0);
@@ -980,9 +990,12 @@ void Func_020015dc(void)
     Func_020083e6(21, 0x016c0000, 0x032b0000);
 
     /* Five frames of the reverse slide on +0x1c. */
-    for (step = 0; step != 5; step++) {
-        *(s32 *)(record + 28) = *(s32 *)(record + 28) + 0x1999;
-        Func_02008370(1);
+    {
+        s32 step;
+        for (step = 0; step != 5; step++) {
+            *(s32 *)(record + 28) = *(s32 *)(record + 28) + 0x1999;
+            Func_02008370(1);
+        }
     }
 
     Func_0200837a(60);
@@ -1005,7 +1018,7 @@ void Func_020015dc(void)
     Func_02008416(30);
 
     record = Func_0200844c(21);
-    record[0x23] = (u8)(record[0x23] & 0xfe);
+    record[0x23] = (u8)(record[0x23] & mask);
 
     Func_0200851e(21, 0, 80);
     Func_02008550(21, 0x101, 80);
@@ -1029,7 +1042,7 @@ void Func_020015dc(void)
     Func_02008522(1, 0x40000, 0x20000);
 
     record = Func_02008520(1);
-    record[0x5a] = (u8)(record[0x5a] & 0xfe);
+    record[0x5a] = (u8)(record[0x5a] & mask);
 
     Func_0200855e(1, 0x193, 0x33b);
     Func_02008628(5, 0x102);

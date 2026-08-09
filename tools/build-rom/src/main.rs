@@ -1,7 +1,14 @@
-use build_rom::{main_pipeline, parse_args, ParseOutcome, USAGE};
+use build_rom::{main_pipeline, parse_args, self_test, ParseOutcome, USAGE};
 
 fn main() {
     let argv: Vec<String> = std::env::args().skip(1).collect();
+    if argv.as_slice() == ["--self-test"] {
+        match self_test() {
+            Ok(line) => println!("{line}"),
+            Err(message) => fail(&message),
+        }
+        return;
+    }
     let options = match parse_args(&argv) {
         Ok(ParseOutcome::Help) => {
             println!("{USAGE}");

@@ -58,4 +58,8 @@ pub static OVERLAY_CALL_VIA_BASE: &[(&str, u64)] = &[
 /// entry. One address per overlay serves every site in a narrow address range,
 /// so a row far from the rest gets its own.
 pub static SOURCE_CALL_VIA_BASE: &[(&str, u64)] =
-    &[("exact/resource_373_c_02005610.c", 0x0200_b794)];
+    &[
+        ("exact/resource_373_c_02005610.c", 0x0200_b794),
+        ("semantic/resource_373_c_02000608.c", 0x0200_68d6),
+        ("exact/resource_373_c_02000608.c", 0x0200_68d6),
+    ];

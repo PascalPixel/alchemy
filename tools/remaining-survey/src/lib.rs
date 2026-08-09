@@ -12,6 +12,7 @@
 //! reproduces in a comment.
 
 use std::collections::{HashMap, HashSet};
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Insn {
@@ -87,7 +88,10 @@ pub fn decode(text: &str) -> Decoded {
         if !is_insn {
             continue;
         }
-        insns.push(Insn { off, text: line.trim().to_string() });
+        insns.push(Insn {
+            off,
+            text: line.trim().to_string(),
+        });
         off += if line.starts_with("\tbl\t") { 4 } else { 2 };
     }
     Decoded { insns, pool }
@@ -100,7 +104,9 @@ fn match_pc_load(text: &str) -> Option<(&str, usize)> {
     let reg = reg_at(rest, 0)?;
     let rest = &rest[reg.len()..];
     let rest = rest.strip_prefix(", [pc, #")?;
-    let end = rest.find(|c: char| !c.is_ascii_digit()).unwrap_or(rest.len());
+    let end = rest
+        .find(|c: char| !c.is_ascii_digit())
+        .unwrap_or(rest.len());
     if end == 0 {
         return None;
     }
@@ -142,7 +148,9 @@ fn match_ands_pair(text: &str) -> Option<(&str, &str)> {
 
 /// `/^[a-z]+\t(r\d),/`
 fn match_written(text: &str) -> Option<&str> {
-    let mnem_end = text.find(|c: char| !c.is_ascii_lowercase()).unwrap_or(text.len());
+    let mnem_end = text
+        .find(|c: char| !c.is_ascii_lowercase())
+        .unwrap_or(text.len());
     if mnem_end == 0 {
         return None;
     }
@@ -180,6 +188,16 @@ pub struct Bucket {
     pub name: &'static str,
     pub note: &'static str,
     pub stems: Vec<String>,
+}
+
+/// Resolve a manifest source independently of the process working directory.
+pub fn source_path(root: &Path, source: &str) -> PathBuf {
+    let path = Path::new(source);
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        root.join(path)
+    }
 }
 
 pub fn buckets() -> Vec<Bucket> {
@@ -259,7 +277,12 @@ fn has_store(body: &str) -> bool {
 /// Bucket index for one region's assembly source. Mirrors the TS if/else chain.
 pub fn classify(text: &str) -> usize {
     let decoded = decode(text);
-    let body = decoded.insns.iter().map(|i| i.text.as_str()).collect::<Vec<_>>().join("\n");
+    let body = decoded
+        .insns
+        .iter()
+        .map(|i| i.text.as_str())
+        .collect::<Vec<_>>()
+        .join("\n");
     // `/^mov\tip, pc$/m` over a body whose lines are exactly the insn texts.
     if decoded.insns.iter().any(|i| i.text == "mov\tip, pc") {
         0
@@ -302,10 +325,28 @@ mod tests {
     fn decode_skips_comments_and_labels() {
         let d = decode("_start:\n\tmovs\tr0, #1 @ comment\n\tbl\tfoo\n\tmovs\tr1, #2\n");
         assert_eq!(d.insns.len(), 3);
-        assert_eq!(d.insns[0], Insn { off: 0, text: "movs\tr0, #1".into() });
+        assert_eq!(
+            d.insns[0],
+            Insn {
+                off: 0,
+                text: "movs\tr0, #1".into()
+            }
+        );
         // bl is four bytes, so the following insn sits at 6, not 4.
-        assert_eq!(d.insns[1], Insn { off: 2, text: "bl\tfoo".into() });
-        assert_eq!(d.insns[2], Insn { off: 6, text: "movs\tr1, #2".into() });
+        assert_eq!(
+            d.insns[1],
+            Insn {
+                off: 2,
+                text: "bl\tfoo".into()
+            }
+        );
+        assert_eq!(
+            d.insns[2],
+            Insn {
+                off: 6,
+                text: "movs\tr1, #2".into()
+            }
+        );
         assert!(d.pool.is_empty());
     }
 
@@ -334,7 +375,9 @@ mod tests {
     #[test]
     fn pool_value_resolves_pc_relative_load() {
         // ldr at off 0: base = (0 + 4) & ~3 = 4, so #4 names offset 8.
-        let d = decode("\tldr\tr0, [pc, #4]\n\tmovs\tr1, #0\n\t.4byte 0x00000001\n\t.4byte 0x0000ffff\n");
+        let d = decode(
+            "\tldr\tr0, [pc, #4]\n\tmovs\tr1, #0\n\t.4byte 0x00000001\n\t.4byte 0x0000ffff\n",
+        );
         assert_eq!(pool_value(&d, 0), Some(0xffff));
         assert_eq!(pool_value(&d, 1), None);
         assert_eq!(pool_value(&d, 9), None);
@@ -348,7 +391,8 @@ mod tests {
 
     #[test]
     fn mask_registers_detects_and_against_loaded_constant() {
-        let d = decode("\tldr\tr1, [pc, #4]\n\tmovs\tr2, #3\n\tands\tr0, r1\n\t.4byte 0x0000ffff\n");
+        let d =
+            decode("\tldr\tr1, [pc, #4]\n\tmovs\tr2, #3\n\tands\tr0, r1\n\t.4byte 0x0000ffff\n");
         assert!(mask_registers(&d, 0xffff));
         assert!(!mask_registers(&d, 0x00ff));
     }
@@ -357,8 +401,9 @@ mod tests {
     fn mask_registers_rejects_self_and_and_clobbered_holder() {
         let same = decode("\tldr\tr1, [pc, #4]\n\tnop\n\tands\tr1, r1\n\t.4byte 0x0000ffff\n");
         assert!(!mask_registers(&same, 0xffff));
-        let clobbered =
-            decode("\tldr\tr1, [pc, #8]\n\tmovs\tr1, #0\n\tnop\n\tands\tr0, r1\n\t.4byte 0x0000ffff\n");
+        let clobbered = decode(
+            "\tldr\tr1, [pc, #8]\n\tmovs\tr1, #0\n\tnop\n\tands\tr0, r1\n\t.4byte 0x0000ffff\n",
+        );
         assert!(!mask_registers(&clobbered, 0xffff));
         // A second pc-load of a different word drops the register from `holds`.
         let replaced =
@@ -378,7 +423,10 @@ mod tests {
 
     #[test]
     fn classify_ip_move_wins() {
-        assert_eq!(classify("\tmov\tip, pc\n\tstmia\tr0!, {r1, r2, r3, r4}\n"), 0);
+        assert_eq!(
+            classify("\tmov\tip, pc\n\tstmia\tr0!, {r1, r2, r3, r4}\n"),
+            0
+        );
     }
 
     #[test]
@@ -387,17 +435,26 @@ mod tests {
         assert_eq!(classify("\tstmia\tr3!, {r0, r1, r2}\n"), 3);
         // The poll pattern demands a tab after a newline, which a trimmed body
         // can never contain, so this stays in bucket 3 exactly as the TS leaves it.
-        assert_eq!(classify("\tstmia\tr3!, {r0, r1, r2}\n\tldr\tr0, [r1, #8]\n\tands\tr0, r2\n"), 3);
+        assert_eq!(
+            classify("\tstmia\tr3!, {r0, r1, r2}\n\tldr\tr0, [r1, #8]\n\tands\tr0, r2\n"),
+            3
+        );
     }
 
     #[test]
     fn classify_mask_and_plain() {
-        assert_eq!(classify("\tldr\tr1, [pc, #4]\n\tnop\n\tands\tr0, r1\n\t.4byte 0x0000ffff\n"), 4);
+        assert_eq!(
+            classify("\tldr\tr1, [pc, #4]\n\tnop\n\tands\tr0, r1\n\t.4byte 0x0000ffff\n"),
+            4
+        );
         assert_eq!(classify("\tmovs\tr0, #0\n\tbx\tlr\n"), 6);
         assert_eq!(classify(""), 6);
         // Bucket 5 requires a tab before `orrs`/`ands`, which trimmed lines never
         // provide; ordinary bitfield code therefore lands in `plain`.
-        assert_eq!(classify("\tldrh\tr0, [r1]\n\tands\tr0, r2\n\torrs\tr0, r3\n\tstrh\tr0, [r1]\n"), 6);
+        assert_eq!(
+            classify("\tldrh\tr0, [r1]\n\tands\tr0, r2\n\torrs\tr0, r3\n\tstrh\tr0, [r1]\n"),
+            6
+        );
     }
 
     #[test]
@@ -426,5 +483,18 @@ mod tests {
     #[test]
     fn render_with_no_regions() {
         assert_eq!(render(&buckets()), "0 c_candidate regions remain\n\n");
+    }
+
+    #[test]
+    fn source_paths_are_root_relative() {
+        let root = Path::new("/repo");
+        assert_eq!(
+            source_path(root, "asm/08000000.s"),
+            root.join("asm/08000000.s")
+        );
+        assert_eq!(
+            source_path(root, "/tmp/08000000.s"),
+            PathBuf::from("/tmp/08000000.s")
+        );
     }
 }

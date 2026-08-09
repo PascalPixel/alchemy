@@ -1,44 +1,20 @@
 #include "types.h"
 
-/*
- * Resource 373: spawn the two halves of a paired scene actor.
- *
- * Complete owner: `push {r5, r6, r7, lr}` plus the r8/r9/sl/fp saves and the
- * 8-byte local frame at 0x02005d68, through the single `add sp, #8` epilogue
- * at 0x02005e6a..0x02005e7a, followed by its two-word literal pool.  The
- * spawn loop's two `continue` edges rejoin at 0x02005e34 and the tail runs
- * once; nothing is live past the return.
- *
- * Note the interior literal pools at 0x02005dbc and 0x02005e2c: the loop
- * branches over them, so they sit inside the owner's span rather than after
- * it.  The word at 0x02005dbc is 0, which the reference keeps in r8 as the
- * loop's zero constant.
- *
- * All three calls are placed.  None is an interworking `call_via rN` site.
- *
- * UNCERTAINTY 1: the called service addresses are the ones encoded in the
- * overlay image (shared 0x02000000 namespace, load-time fixups).
- * UNCERTAINTY 2: the tail dereferences both spawn slots without re-testing
- * them, so a failed spawn would fault.  That is what the reference does; it
- * is reproduced rather than guarded.
- * UNCERTAINTY 3: 0x0200dd15 and 0x0200dcc5 are odd (Thumb) addresses stored
- * into the actors' 0x6c behaviour slots; their signatures are not
- * established here.
- */
+/* Resource 373: spawn and configure the two halves of a paired scene actor. */
 
 struct Resource373Sprite {
     u8 unknown_00[5];
     u8 flags05;
-    u8 unknown_06[1];
+    u8 unknown_06;
     u8 flags07;
-    u16 attribute08;                /* 0x08; its high byte is also flags09 */
+    s16 attribute08;
     u8 unknown_0a[0x12];
-    u8 tileGroup;                   /* 0x1c */
+    u8 tileGroup;
     u8 flags1d;
     u8 unknown_1e[8];
     u8 field26;
-    u8 unknown_27[1];
-    u8 *frame;                      /* 0x28 */
+    u8 unknown_27;
+    u8 *frame;
 };
 
 struct Resource373Actor {
@@ -47,14 +23,14 @@ struct Resource373Actor {
     u8 unknown_18[0x0b];
     u8 flags23;
     u8 unknown_24[0x2c];
-    struct Resource373Sprite *sprite;   /* 0x50 */
-    u8 unknown_54[1];
+    struct Resource373Sprite *sprite;
+    u8 unknown_54;
     u8 field55;
     u8 unknown_56[0x0e];
     u16 field64;
     u8 unknown_66[2];
-    void *owner;                        /* 0x68 */
-    void (*behaviour)(void);            /* 0x6c */
+    void *owner;
+    void (*behaviour)(void);
 };
 
 struct Resource373Spawn {
@@ -65,84 +41,93 @@ struct Resource373Spawn {
     s32 field14;
 };
 
-/* Scene state block; the halfword at +0x46 selects the sprite tile group. */
+struct Resource373ActorState {
+    u8 unknown_54;
+    u8 field55;
+    u8 unknown_56[0x0e];
+    u16 field64;
+};
+
+struct Resource373TileGroup {
+    u16 unknown_00;
+    u16 packed;
+};
+
 #define RESOURCE_373_SCENE (*(u8 *volatile *)0x03001f30)
-
-/* Four bytes per tile group; the halfword at +2 packs the palette field. */
-#define RESOURCE_373_TILE_GROUPS ((const u16 *)0x03001b10)
-
-/*
- * The reference reads and writes sprite offset 9 as a byte while it reads and
- * writes offset 8 as a halfword, so the two overlap by construction.
- */
-#define RESOURCE_373_SPRITE_FLAGS09(sprite) \
-    (((u8 *)&(sprite)->attribute08)[1])
+#define RESOURCE_373_TILE_GROUPS ((const struct Resource373TileGroup *)0x03001b10)
 
 struct Resource373Actor *Func_0200bc96();
 void Func_0200bcb6();
 void Func_0200bcb4();
 
-                                         
-
 void Func_02005d68(struct Resource373Spawn *spawn)
 {
-    s32 permuted_20;
     struct Resource373Actor *halves[2];
     u8 *scene = RESOURCE_373_SCENE;
-    struct Resource373Actor *first;
-    struct Resource373Actor *second;
-    u32 index;
+    s32 index;
+    u8 mask;
+    s32 zero;
 
-    for (index = 0; index <= 1; index++) {
+    index = 0;
+    mask = 63;
+    for (; index <= 1; index++) {
         struct Resource373Actor *actor =
             Func_0200bc96(26, spawn->x, spawn->y, spawn->z);
         struct Resource373Sprite *sprite;
-        s32 tileGroup;
-        s32 packed;
+        struct Resource373ActorState *state;
+        u32 packed;
 
+        halves[index] = actor;
         if (actor == 0) {
             continue;
         }
-        halves[index] = actor;
 
         actor->field14 = spawn->field14;
-        actor->field55 = 0;
-        actor->field64 = 0;
         sprite = actor->sprite;
+        state = (struct Resource373ActorState *)((u8 *)actor + 0x54);
+        state->field55 = 0;
+        state->field64 = 0;
+        zero = 0;
+        actor->owner = spawn;
         if (sprite == 0) {
             continue;
         }
-        actor->owner = spawn;
 
         Func_0200bcb6(sprite, 0);
-        sprite->field26 = 0;
+        sprite->field26 = (u8)zero;
         Func_0200bcb4(sprite->tileGroup);
 
-        sprite->tileGroup = (u8)tileGroup;
-        tileGroup  = permuted_20;
-        permuted_20 = *(const u16 *)(scene + 0x46);
+        sprite->tileGroup = (u8)*(const u16 *)(scene + 0x46);
         sprite->flags1d = (u8)(sprite->flags1d | 1);
-
-        /* Bits 5..14 of the group's second halfword become bits 0..9. */
-        packed = RESOURCE_373_TILE_GROUPS[sprite->tileGroup * 2 + 1];
-        packed = (packed << 17) >> 22;
+        packed = RESOURCE_373_TILE_GROUPS[sprite->tileGroup].packed;
+        packed <<= 17;
+        packed >>= 22;
         sprite->attribute08 =
             (u16)((sprite->attribute08 & (s32)0xfffffc00) | packed);
-
-        sprite->flags05 = (u8)(((sprite->flags05 & ~0x20) & 63) | 0x40);
-        sprite->flags07 = (u8)((sprite->flags07 & 63) | 0x80);
-        sprite->frame[22] = 0;
+        sprite->flags05 =
+            (u8)(((sprite->flags05 & ~0x20) & mask) | 0x40);
+        sprite->flags07 = (u8)((sprite->flags07 & mask) | 0x80);
+        sprite->frame[22] = (u8)zero;
     }
 
-    second = halves[1];
-    first = halves[0];
+    {
+        struct Resource373Actor *first = halves[0];
+        struct Resource373Actor *second;
+        s32 flagsMask = ~0x0c;
+        u8 *firstSprite;
+        u8 *secondSprite;
+        u8 secondFlags;
 
-    first->behaviour = (void (*)(void))0x0200dd15;
-    RESOURCE_373_SPRITE_FLAGS09(first->sprite) =
-        (u8)((RESOURCE_373_SPRITE_FLAGS09(first->sprite) & ~0x0c) | 4);
+        firstSprite = (u8 *)first->sprite;
+        first->behaviour = (void (*)(void))0x0200dd15;
+        firstSprite[9] =
+            (u8)((firstSprite[9] & flagsMask) | 4);
 
-    second->flags23 = 2;
-    second->behaviour = (void (*)(void))0x0200dcc5;
-    RESOURCE_373_SPRITE_FLAGS09(second->sprite) =
-        (u8)((RESOURCE_373_SPRITE_FLAGS09(second->sprite) & ~0x0c) | 4);
+        second = halves[1];
+        secondSprite = (u8 *)second->sprite;
+        secondFlags = (u8)((secondSprite[9] & flagsMask) | 4);
+        second->behaviour = (void (*)(void))0x0200dcc5;
+        secondSprite[9] = secondFlags;
+        second->flags23 = 2;
+    }
 }

@@ -8,16 +8,30 @@ use character_catalog::{
     self_test, verify_character_catalog, Error, ROM_BASE,
 };
 
-const USAGE: &str = "usage: character-catalog export ROM --output INDEX | verify ROM INDEX | verify-unit ROM --catalog INDEX --series INDEX --palette PNG | --self-test";
+const USAGE: &str = "usage: character-catalog export ROM --output INDEX | verify ROM INDEX | build-stdout SOURCE | verify-unit ROM --catalog INDEX --series INDEX --palette PNG | --self-test";
 
-fn option(args: &[String], name: &str) -> Result<String, Error> {
-    let index = args
-        .iter()
-        .position(|item| item == name)
-        .ok_or_else(|| Error(format!("missing {name}")))?;
-    args.get(index + 1)
-        .cloned()
-        .ok_or_else(|| Error(format!("missing {name}")))
+fn option(args: &[String], start: usize, name: &str, allowed: &[&str]) -> Result<String, Error> {
+    let mut found = None;
+    let mut index = start;
+    while index < args.len() {
+        let option = args[index].as_str();
+        if !allowed.contains(&option) {
+            return Err(Error(USAGE.into()));
+        }
+        if option == name && found.is_some() {
+            return Err(Error(format!("duplicate {option}")));
+        }
+        let value = args
+            .get(index + 1)
+            .filter(|value| !value.starts_with('-'))
+            .cloned()
+            .ok_or_else(|| Error(format!("missing {option}")))?;
+        if option == name {
+            found = Some(value);
+        }
+        index += 2;
+    }
+    found.ok_or_else(|| Error(format!("missing {name}")))
 }
 
 fn resolve(path: &str) -> String {
@@ -30,16 +44,23 @@ fn resolve(path: &str) -> String {
 
 fn run(args: &[String]) -> Result<(), Error> {
     match args.first().map(String::as_str) {
+        Some(flag) if args.len() == 1 && matches!(flag, "-h" | "--help") => {
+            println!("{USAGE}");
+            Ok(())
+        }
         Some("--self-test") if args.len() == 1 => {
             self_test()?;
             println!("self-test=ok");
             Ok(())
         }
         Some("export") => {
+            if args.len() != 4 {
+                return Err(Error(USAGE.into()));
+            }
             let rom_path = args
                 .get(1)
                 .ok_or_else(|| Error("missing ROM path".into()))?;
-            let output = resolve(&option(args, "--output")?);
+            let output = resolve(&option(args, 2, "--output", &["--output"])?);
             if resolve(rom_path) == output {
                 return Err(Error("refusing to overwrite the ROM".into()));
             }
@@ -61,6 +82,9 @@ fn run(args: &[String]) -> Result<(), Error> {
             Ok(())
         }
         Some("verify") => {
+            if args.len() != 3 {
+                return Err(Error(USAGE.into()));
+            }
             let rom_path = args
                 .get(1)
                 .ok_or_else(|| Error("usage: character-catalog verify ROM INDEX".into()))?;
@@ -74,6 +98,9 @@ fn run(args: &[String]) -> Result<(), Error> {
             Ok(())
         }
         Some("build-stdout") => {
+            if args.len() != 2 {
+                return Err(Error(USAGE.into()));
+            }
             let index_path = args
                 .get(1)
                 .ok_or_else(|| Error("usage: character-catalog build-stdout SOURCE".into()))?;
@@ -85,12 +112,15 @@ fn run(args: &[String]) -> Result<(), Error> {
             Ok(())
         }
         Some("verify-unit") => {
+            if args.len() != 8 {
+                return Err(Error(USAGE.into()));
+            }
             let rom_path = args
                 .get(1)
                 .ok_or_else(|| Error("missing ROM path".into()))?;
-            let catalog_path = option(args, "--catalog")?;
-            let series_path = option(args, "--series")?;
-            let _palette_path = option(args, "--palette")?;
+            let catalog_path = option(args, 2, "--catalog", &["--catalog", "--series", "--palette"])?;
+            let series_path = option(args, 2, "--series", &["--catalog", "--series", "--palette"])?;
+            let _palette_path = option(args, 2, "--palette", &["--catalog", "--series", "--palette"])?;
             let catalog = read_json(&catalog_path)?;
             let catalog_data = character_catalog::build_character_catalog(&catalog)?;
             let series = read_json(&series_path)?;
@@ -151,5 +181,27 @@ fn main() -> ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{option, USAGE};
+
+    #[test]
+    fn option_parser_rejects_unknown_and_missing_values() {
+        let args = vec!["--output".into(), "index.json".into()];
+        assert_eq!(
+            option(&args, 0, "--output", &["--output"]).unwrap(),
+            "index.json"
+        );
+        assert!(option(
+            &["--other".into(), "value".into()],
+            0,
+            "--output",
+            &["--output"]
+        )
+        .is_err());
+        assert!(USAGE.contains("build-stdout"));
     }
 }

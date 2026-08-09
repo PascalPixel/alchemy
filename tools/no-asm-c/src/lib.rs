@@ -173,6 +173,37 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     Ok(files)
 }
 
+/// Exercise the lexical gate and its source-file boundary with a real fixture.
+pub fn self_test() -> Result<String, String> {
+    let forbidden = find_forbidden("fixture.c", "void f(void) { __asm__(\"nop\"); }\n");
+    if forbidden.len() != 1 || forbidden[0].token != "__asm__" {
+        return Err("no-asm-c self-test missed inline assembly".into());
+    }
+    if !find_forbidden("fixture.c", "const char *text = \"asm(\\\"\\\")\";\n").is_empty() {
+        return Err("no-asm-c self-test flagged assembly in a string".into());
+    }
+    let directory =
+        std::env::temp_dir().join(format!("alchemy-no-asm-c-self-test-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&directory);
+    let result = (|| {
+        fs::create_dir_all(directory.join("nested")).map_err(|error| error.to_string())?;
+        fs::write(directory.join("nested/a.c"), "int a;\n").map_err(|error| error.to_string())?;
+        fs::write(directory.join("b.h"), "int b;\n").map_err(|error| error.to_string())?;
+        fs::write(directory.join("notes.md"), "not C\n").map_err(|error| error.to_string())?;
+        let files = source_files(&directory).map_err(|error| error.to_string())?;
+        if files.len() != 2
+            || files
+                .iter()
+                .any(|path| path.extension().and_then(|x| x.to_str()) == Some("md"))
+        {
+            return Err("no-asm-c self-test source boundary changed".into());
+        }
+        Ok("self-test=ok files=2".into())
+    })();
+    let _ = fs::remove_dir_all(&directory);
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

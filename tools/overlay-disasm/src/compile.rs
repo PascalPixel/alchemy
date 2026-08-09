@@ -480,6 +480,10 @@ fn overlay_cache_key(
     sha256::hex(&key)
 }
 
+fn routed_call_via_base(overlay: &str, routing_source: &str) -> i64 {
+    overlay_call_via_base(overlay, Some(routing_source)) as i64
+}
+
 /// `compileOverlayC(source, work, overlay, routingSource = source, extraFlags = [])`.
 pub fn compile_overlay_c(
     source: &Path,
@@ -490,7 +494,9 @@ pub fn compile_overlay_c(
 ) -> Result<Compiled, String> {
     let source_display = source.to_string_lossy().to_string();
     let routing_source = routing_source.unwrap_or(source).to_string_lossy().to_string();
-    let call_via_base = overlay_call_via_base(overlay, Some(&source_display)) as i64;
+    // Candidate contents live at a temporary path, but every source-keyed
+    // compiler decision belongs to the canonical owner used for routing.
+    let call_via_base = routed_call_via_base(overlay, &routing_source);
     let (stem, address) = address_stem(source)?;
     let symbol = format!("Func_{}", stem.to_lowercase());
 
@@ -1071,6 +1077,17 @@ mod tests {
         let second =
             overlay_cache_key(common.0, "host-b", common.1, common.2, common.3, common.4);
         assert_ne!(first, second);
+    }
+
+    #[test]
+    fn temporary_candidate_uses_canonical_call_via_route() {
+        let temporary = "/tmp/alchemy-permuter/resource_373_c_02000608.c";
+        let canonical = "exact/resource_373_c_02000608.c";
+        assert_ne!(
+            overlay_call_via_base("resource_373", Some(temporary)) as i64,
+            routed_call_via_base("resource_373", canonical)
+        );
+        assert_eq!(routed_call_via_base("resource_373", canonical), 0x0200_68d6);
     }
 
     #[test]

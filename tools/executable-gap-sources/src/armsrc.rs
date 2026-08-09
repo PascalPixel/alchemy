@@ -55,7 +55,7 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<Vec<InstructionRow>, String> {
 /// `.global` per entry in exactly that order.
 pub type Names = Vec<(i64, String)>;
 
-fn name_of<'a>(names: &'a Names, address: i64) -> Option<&'a str> {
+fn name_of(names: &Names, address: i64) -> Option<&str> {
     names
         .iter()
         .find(|(at, _)| *at == address)

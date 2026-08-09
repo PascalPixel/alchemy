@@ -155,6 +155,40 @@ pub fn scannable_files(directory: &Path) -> io::Result<Vec<String>> {
     Ok(files)
 }
 
+/// Exercise both sides of the lint and its recursive file boundary.
+pub fn self_test() -> Result<String, String> {
+    let offending = format!(
+        "hasher.update(format!(\"overlay-c-{}:{{address:x}}\").as_bytes());",
+        "v3"
+    );
+    if find_violations("fixture.rs", &offending).len() != 1 {
+        return Err("cache-key-lint self-test missed a versioned key".into());
+    }
+    if !find_violations("fixture.rs", "hasher.update(source_digest.as_bytes());").is_empty() {
+        return Err("cache-key-lint self-test rejected a source-derived key".into());
+    }
+
+    let directory = std::env::temp_dir().join(format!(
+        "alchemy-cache-key-lint-self-test-{}",
+        std::process::id()
+    ));
+    let _ = fs::remove_dir_all(&directory);
+    let result = (|| {
+        fs::create_dir_all(directory.join("nested/target")).map_err(|error| error.to_string())?;
+        fs::write(directory.join("nested/ok.rs"), "").map_err(|error| error.to_string())?;
+        fs::write(directory.join("nested/ignored.ts"), "").map_err(|error| error.to_string())?;
+        fs::write(directory.join("nested/target/build.rs"), "")
+            .map_err(|error| error.to_string())?;
+        let files = scannable_files(&directory).map_err(|error| error.to_string())?;
+        if files != ["nested/ok.rs"] {
+            return Err(format!("cache-key-lint self-test scan changed: {files:?}"));
+        }
+        Ok("self-test=ok files=1".into())
+    })();
+    let _ = fs::remove_dir_all(&directory);
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -4,14 +4,14 @@ use crate::cli::Options;
 use crate::config::family_name;
 use crate::corpus::{corpus, deterministic_sample, hash, join, Member};
 use crate::diff::byte_difference;
-use crate::extent::linked_function_extent;
 use crate::jsparse::utf16_slice_to;
 use crate::jsvalue::{canonical_json, number, object, string, strings, Json};
 use crate::result::{atomic_json, read_cache, Outcome};
 use crate::{FORMAT, ROM_BASE};
 use alchemy_plan::plan::CompilerFamily;
-use alchemy_routing::routing::CompilerTarget;
+use alchemy_routing::routing::{uses_agbcc_compiler, CompilerTarget};
 use candidate_compiler::verify::verify_candidate;
+use integrate_matches::linked_function_extent;
 use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
 use std::sync::Mutex;
@@ -90,7 +90,7 @@ where
     let implementation_digest = implementation_digest()?;
     let host_tool_signature = host_tool_signature()?;
     compiler_signature_from_parts(
-        &alchemy_bundle::bundle::compiler_bundle_signature(),
+        &alchemy_bundle::bundle::compiler_bundle_signature_checked()?,
         &host_tool_signature,
         &implementation_digest,
         &root,
@@ -125,6 +125,37 @@ pub fn implementation_digest(path: &Path) -> Result<String, String> {
 fn current_implementation_digest() -> Result<String, String> {
     let path = std::env::current_exe().map_err(|error| format!("current executable: {error}"))?;
     implementation_digest(&path)
+}
+
+fn validate_experimental_family(name: &str) -> Result<(), String> {
+    let Some((_, driver, expected)) = alchemy_bundle::bundle::experimental_compilers()
+        .into_iter()
+        .find(|(candidate, _, _)| *candidate == name)
+    else {
+        return Err(format!("unknown experimental compiler family: {name}"));
+    };
+    alchemy_bundle::bundle::validate_experimental_compiler(name, &driver, expected)
+}
+
+fn validate_compiler_for_source(
+    source: &str,
+    configuration: &candidate_compiler::verify::CandidateCompilerConfiguration,
+) -> Result<(), String> {
+    alchemy_bundle::bundle::ensure_canonical_bundle_root()?;
+    match configuration.family.unwrap_or(CompilerFamily::Routed) {
+        CompilerFamily::Routed => {
+            if uses_agbcc_compiler(CompilerTarget::Gs1, source) {
+                alchemy_bundle::bundle::validate_agbcc_bundle()
+            } else {
+                alchemy_bundle::bundle::validate_bundle(CompilerTarget::Gs1)
+            }
+        }
+        CompilerFamily::Gcc296 => alchemy_bundle::bundle::validate_bundle(CompilerTarget::Gs1),
+        CompilerFamily::OldAgbcc => alchemy_bundle::bundle::validate_agbcc_bundle(),
+        CompilerFamily::PretEarlyThumb => validate_experimental_family("pret-early-thumb"),
+        CompilerFamily::Gcc2951 => validate_experimental_family("gcc2951"),
+        CompilerFamily::Gcc3 => validate_experimental_family("gcc3"),
+    }
 }
 
 fn signature_root() -> std::path::PathBuf {
@@ -201,6 +232,24 @@ pub fn cache_key(
     ]))
 }
 
+fn read_validated_cache<F>(
+    cache_path: &str,
+    key: &str,
+    validate: F,
+) -> Result<Option<Outcome>, String>
+where
+    F: FnOnce() -> Result<(), String>,
+{
+    // Admission is deliberately before the cache read. A valid-looking row
+    // cannot excuse a compiler that is now missing, non-executable, or
+    // unapproved.
+    validate()?;
+    Ok(read_cache(cache_path, key)?.map(|accepted| Outcome {
+        cached: true,
+        ..accepted
+    }))
+}
+
 /// One member's compile, verify, link-extent and byte comparison.
 fn evaluate(
     member: &Member,
@@ -229,12 +278,10 @@ fn evaluate(
     )?;
     let cache_path = join(Path::new(&options.cache), &format!("cache/{key}.json"));
 
-    // Invalid cache content is a miss; the compile below recomputes the row.
-    if let Some(accepted) = read_cache(&cache_path, &key)? {
-        return Ok(Outcome {
-            cached: true,
-            ..accepted
-        });
+    if let Some(accepted) = read_validated_cache(&cache_path, &key, || {
+        validate_compiler_for_source(&member.source, &options.compiler_config)
+    })? {
+        return Ok(accepted);
     }
 
     let scratch = join(Path::new(&options.cache), &format!("scratch/{key}"));
@@ -400,12 +447,13 @@ pub struct Run {
 }
 
 pub fn run(options: &Options) -> Result<Run, String> {
+    alchemy_bundle::bundle::ensure_canonical_bundle_root()?;
     let root = alchemy_routing::routing::root();
     let available = corpus(options)?;
     let selected = deterministic_sample(&available, options.sample, &options.seed);
     // SCANNING NOTHING IS NOT PASSING. An empty selection is a hard failure on
-    // both sides, and it is the failure the broken `src/` filter produces
-    // today on the real manifest.
+    // both sides, and catches a broken corpus path filter before any compiler
+    // work begins.
     if selected.is_empty() {
         return Err("no exact-C sources matched the selection filters".to_string());
     }
@@ -548,4 +596,89 @@ fn js_hex(value: f64) -> Result<String, String> {
         return Err(format!("cannot render {value} as hexadecimal"));
     }
     Ok(format!("{:x}", value as u64))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::read_validated_cache;
+    use crate::result::{atomic_json, Outcome};
+    use std::path::PathBuf;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    fn temporary_cache_path() -> PathBuf {
+        static NEXT: AtomicUsize = AtomicUsize::new(0);
+        let serial = NEXT.fetch_add(1, Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "alchemy-corpus-validated-cache-{}-{serial}.json",
+            std::process::id()
+        ))
+    }
+
+    fn exact_outcome() -> Outcome {
+        Outcome {
+            stem: "08000000".into(),
+            source: "exact/08000000.c".into(),
+            cache_key: "key".into(),
+            cached: false,
+            compiled: true,
+            exact: true,
+            expected_size: 4,
+            actual_size: Some(4),
+            differing_bytes: Some(0),
+            first_difference: None,
+            error: None,
+        }
+    }
+
+    #[test]
+    fn warmed_cache_is_not_returned_before_compiler_validation() {
+        let path = temporary_cache_path();
+        atomic_json(path.to_str().unwrap(), &exact_outcome().to_json()).unwrap();
+
+        let error = read_validated_cache(path.to_str().unwrap(), "key", || {
+            Err("compiler is not executable".to_string())
+        })
+        .unwrap_err();
+        assert_eq!(error, "compiler is not executable");
+
+        let accepted = read_validated_cache(path.to_str().unwrap(), "key", || Ok(()))
+            .unwrap()
+            .expect("the warmed row remains a hit after admission succeeds");
+        assert!(accepted.cached);
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn warmed_cache_does_not_mask_a_chmod_to_non_executable_compiler() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let cache_path = temporary_cache_path();
+        let compiler_path = cache_path.with_extension("compiler");
+        std::fs::write(&compiler_path, b"compiler bytes").unwrap();
+        let mut permissions = std::fs::metadata(&compiler_path).unwrap().permissions();
+        permissions.set_mode(0o755);
+        std::fs::set_permissions(&compiler_path, permissions).unwrap();
+        atomic_json(cache_path.to_str().unwrap(), &exact_outcome().to_json()).unwrap();
+
+        let mut permissions = std::fs::metadata(&compiler_path).unwrap().permissions();
+        permissions.set_mode(0o644);
+        std::fs::set_permissions(&compiler_path, permissions).unwrap();
+        let error = read_validated_cache(cache_path.to_str().unwrap(), "key", || {
+            let mode = std::fs::metadata(&compiler_path)
+                .unwrap()
+                .permissions()
+                .mode();
+            if mode & 0o111 == 0 {
+                Err("compiler is not executable".to_string())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error, "compiler is not executable");
+
+        let _ = std::fs::remove_file(cache_path);
+        let _ = std::fs::remove_file(compiler_path);
+    }
 }

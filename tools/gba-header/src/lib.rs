@@ -473,7 +473,11 @@ pub fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
 }
 
 pub fn encode_arm_branch(address: u32, target: u32) -> Result<Vec<u8>, String> {
-    if address > 0xffff_fffc || target > 0xffff_fffc || address % 4 != 0 || target % 4 != 0 {
+    if address > 0xffff_fffc
+        || target > 0xffff_fffc
+        || !address.is_multiple_of(4)
+        || !target.is_multiple_of(4)
+    {
         return Err("ARM branch addresses must be aligned u32 values".to_string());
     }
     let words = (target as i64 - (address as i64 + 8)) / 4;

@@ -13,6 +13,26 @@ use std::process::ExitCode;
 
 use check_sanctum::{corpus_guard, parse_sealed, queue, stems, violations, QueueScan, SealedEntry};
 
+const USAGE: &str = "Usage: check-sanctum [--queue | --self-test]\n\nModes:\n  (default)      Validate SANCTUM.md against current owners.\n  --queue        List owners with compiler search spent but shape search unrun.\n  --self-test    Run the ledger gate's internal checks.\n  -h, --help     Show this help.";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Command {
+    Help,
+    Gate,
+    Queue,
+    SelfTest,
+}
+
+fn parse_args(args: &[String]) -> Result<Command, &'static str> {
+    match args {
+        [] => Ok(Command::Gate),
+        [argument] if argument == "--queue" => Ok(Command::Queue),
+        [argument] if argument == "--self-test" => Ok(Command::SelfTest),
+        [argument] if argument == "-h" || argument == "--help" => Ok(Command::Help),
+        _ => Err(USAGE),
+    }
+}
+
 fn root() -> &'static Path {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -154,11 +174,37 @@ fn gate() -> ExitCode {
 
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.iter().any(|a| a == "--self-test") {
-        return self_test();
+    match parse_args(&args) {
+        Ok(Command::Help) => {
+            println!("{USAGE}");
+            ExitCode::SUCCESS
+        }
+        Ok(Command::SelfTest) => self_test(),
+        Ok(Command::Queue) => run_queue(),
+        Ok(Command::Gate) => gate(),
+        Err(message) => fail(message),
     }
-    if args.iter().any(|a| a == "--queue") {
-        return run_queue();
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::{parse_args, Command};
+
+    fn args(items: &[&str]) -> Vec<String> {
+        items.iter().map(|item| (*item).to_string()).collect()
     }
-    gate()
+
+    #[test]
+    fn preserves_default_and_named_modes() {
+        assert_eq!(parse_args(&args(&[])), Ok(Command::Gate));
+        assert_eq!(parse_args(&args(&["--queue"])), Ok(Command::Queue));
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Command::SelfTest));
+        assert_eq!(parse_args(&args(&["-h"])), Ok(Command::Help));
+    }
+
+    #[test]
+    fn rejects_unknown_or_combined_options() {
+        assert!(parse_args(&args(&["--bogus"])).is_err());
+        assert!(parse_args(&args(&["--queue", "--bogus"])).is_err());
+    }
 }

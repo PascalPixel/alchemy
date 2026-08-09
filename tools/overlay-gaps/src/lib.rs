@@ -130,7 +130,7 @@ pub fn mask_banks(image: &[u8], from: i64, to: i64) -> (Vec<bool>, i64, i64) {
 
 pub fn owner_spans(overlay: &str) -> Result<SpansResult, String> {
     let mut by_start = BTreeMap::<i64, i64>::new();
-    for span in manual_regions(overlay) {
+    for span in manual_regions(overlay)? {
         if span.end > span.start {
             by_start
                 .entry(span.start)
@@ -139,7 +139,7 @@ pub fn owner_spans(overlay: &str) -> Result<SpansResult, String> {
         }
     }
     let mut duplicates = Vec::new();
-    for span in exact_spans(overlay) {
+    for span in exact_spans(overlay)? {
         if span.end <= span.start {
             continue;
         }
@@ -158,12 +158,49 @@ pub fn owner_spans(overlay: &str) -> Result<SpansResult, String> {
             .or_insert(span.end);
     }
     Ok(SpansResult {
-        spans: by_start
-            .into_iter()
-            .map(|(start, end)| (start, end))
-            .collect(),
+        spans: by_start.into_iter().collect(),
         duplicates,
     })
+}
+
+fn usage() {
+    println!(
+        "usage: overlay-gaps [--json|--ranked] [OVERLAY ...]\n\nScan one or more named code overlays for uncovered gaps.\nWith no overlay names, scan every published overlay.\n\nOptions:\n  --json     emit machine-readable reports\n  --ranked   print code-suspect gaps in priority order\n  --help     show this help\n  --self-test run focused invariants"
+    );
+}
+
+fn requested_overlays(args: &[String]) -> Result<Option<Vec<String>>, String> {
+    let mut names = Vec::new();
+    for arg in args {
+        if arg.starts_with('-') {
+            if !matches!(
+                arg.as_str(),
+                "--json" | "--ranked" | "--help" | "--self-test"
+            ) {
+                return Err(format!("overlay-gaps: unknown option '{arg}' (try --help)"));
+            }
+        } else {
+            names.push(arg.clone());
+        }
+    }
+    if args.iter().any(|arg| arg == "--self-test") && args.len() != 1 {
+        return Err("overlay-gaps: --self-test cannot be combined with other arguments".into());
+    }
+    if args.iter().any(|arg| arg == "--help") {
+        usage();
+        return Ok(None);
+    }
+    let known = overlay_names()?
+        .into_iter()
+        .collect::<std::collections::HashSet<_>>();
+    for name in &names {
+        if !known.contains(name) {
+            return Err(format!(
+                "overlay-gaps: unknown overlay '{name}'; expected a name from assets/code/*_overlay.s"
+            ));
+        }
+    }
+    Ok(Some(names))
 }
 
 pub fn gaps_between(image: &[u8], spans: &[(i64, i64)]) -> (Vec<Gap>, Vec<Overlap>) {
@@ -449,6 +486,9 @@ pub fn reports_json(reports: &[(String, GapReport)]) -> String {
 }
 
 pub fn run(args: &[String]) -> Result<(), String> {
+    let Some(names) = requested_overlays(args)? else {
+        return Ok(());
+    };
     if args.iter().any(|a| a == "--self-test") {
         return self_test();
     }
@@ -457,11 +497,6 @@ pub fn run(args: &[String]) -> Result<(), String> {
     if json && ranked {
         return Err("choose either --json or --ranked".into());
     }
-    let names = args
-        .iter()
-        .filter(|a| !a.starts_with("--"))
-        .cloned()
-        .collect::<Vec<_>>();
     let overlays = if names.is_empty() {
         overlay_names()?
     } else {
@@ -469,9 +504,9 @@ pub fn run(args: &[String]) -> Result<(), String> {
     };
     let mut reports = Vec::new();
     for overlay in overlays {
-        if let Ok(report) = gaps_of(&overlay) {
-            reports.push((overlay, report));
-        }
+        let report = gaps_of(&overlay)
+            .map_err(|error| format!("overlay-gaps: failed to scan '{overlay}': {error}"))?;
+        reports.push((overlay, report));
     }
     let mut suspects = 0;
     let mut overlapping = 0;
@@ -646,5 +681,17 @@ mod tests {
             result.into_iter().map(|x| x.overlay).collect::<Vec<_>>(),
             vec!["resource_a", "resource_c", "resource_b"]
         );
+    }
+
+    #[test]
+    fn invalid_overlay_is_rejected_before_sweeping() {
+        let error = run(&["not-an-overlay".into()]).unwrap_err();
+        assert!(error.contains("unknown overlay 'not-an-overlay'"));
+    }
+
+    #[test]
+    fn self_test_rejects_extra_arguments() {
+        let error = run(&["--self-test".into(), "--bogus".into()]).unwrap_err();
+        assert!(error.contains("unknown option"));
     }
 }

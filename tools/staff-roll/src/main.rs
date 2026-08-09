@@ -8,6 +8,10 @@ const USAGE: &str = "usage: staff_roll build-stdout INDEX | verify ROM INDEX | -
 
 fn run(args: &[String]) -> Result<(), Error> {
     match args {
+        [flag] if matches!(flag.as_str(), "-h" | "--help") => {
+            println!("{USAGE}");
+            Ok(())
+        }
         [flag] if flag == "--self-test" => {
             println!("staff_roll: self-test bytes={}", self_test()?);
             Ok(())

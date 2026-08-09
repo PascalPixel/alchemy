@@ -4,6 +4,7 @@
 //! the assembler expects for the symbol. Decode the two halfwords at the call
 //! site and name the symbol at the address the assembler needs.
 
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -70,9 +71,11 @@ fn json_file(path: &Path) -> Result<Value> {
 }
 
 fn number(value: Option<&Value>) -> Option<i64> {
-    value
-        .and_then(Value::as_i64)
-        .or_else(|| value.and_then(Value::as_f64).map(|number| number as i64))
+    value.and_then(Value::as_i64).or_else(|| {
+        value.and_then(Value::as_f64).and_then(|number| {
+            (number.is_finite() && number.fract() == 0.0).then_some(number as i64)
+        })
+    })
 }
 
 fn parse_hex(text: &str) -> Option<i64> {
@@ -92,6 +95,31 @@ fn parse_span(text: &str) -> Option<i64> {
     } else {
         text.parse().ok()
     }
+}
+
+fn validate_span(span: i64) -> Result<i64> {
+    if span <= 0 {
+        return Err(format!(
+            "span must be greater than zero; negative, zero, and reversed spans are invalid (got {span})"
+        ));
+    }
+    Ok(span)
+}
+
+fn validate_image_span(image: &[u8], start: i64, span: i64, base: i64) -> Result<()> {
+    let span = validate_span(span)?;
+    let end = start
+        .checked_add(span)
+        .ok_or_else(|| format!("span overflows its end address: start=0x{start:x} span={span}"))?;
+    let image_end = base
+        .checked_add(image.len() as i64)
+        .ok_or_else(|| "assembled image end address overflows".to_string())?;
+    if start < base || end > image_end {
+        return Err(format!(
+            "span is outside the assembled overlay image: [0x{start:x}, 0x{end:x}) is not within [0x{base:x}, 0x{image_end:x})"
+        ));
+    }
+    Ok(())
 }
 
 struct SpanSources {
@@ -124,13 +152,14 @@ impl SpanSources {
                 .ok_or("overlays.json: missing functions array")?;
             let id = format!("{overlay}:{offset:x}");
             let padded_id = format!("{overlay}:{offset:04x}");
-            if let Some(span) = functions.iter().find_map(|item| {
-                (item.get("id").and_then(Value::as_str) == Some(id.as_str())
-                    || item.get("id").and_then(Value::as_str) == Some(padded_id.as_str()))
-                .then(|| number(item.get("span_bytes")))
-                .flatten()
-            }) {
-                return Ok(Some(span));
+            for item in functions {
+                if item.get("id").and_then(Value::as_str) == Some(id.as_str())
+                    || item.get("id").and_then(Value::as_str) == Some(padded_id.as_str())
+                {
+                    let span = number(item.get("span_bytes"))
+                        .ok_or_else(|| format!("{id}: span_bytes is missing or not an integer"))?;
+                    return Ok(Some(validate_span(span)?));
+                }
             }
         }
 
@@ -142,12 +171,17 @@ impl SpanSources {
             .and_then(Value::as_array)
             .ok_or("regions.json: missing manual_regions array")?;
         let entry = format!("0x{:08x}", OVERLAY_BASE + offset);
-        Ok(manual_regions.iter().find_map(|item| {
-            (item.get("overlay").and_then(Value::as_str) == Some(overlay)
-                && item.get("entry").and_then(Value::as_str) == Some(entry.as_str()))
-            .then(|| number(item.get("span_bytes")))
-            .flatten()
-        }))
+        for item in manual_regions {
+            if item.get("overlay").and_then(Value::as_str) == Some(overlay)
+                && item.get("entry").and_then(Value::as_str) == Some(entry.as_str())
+            {
+                let span = number(item.get("span_bytes")).ok_or_else(|| {
+                    format!("{overlay}:{offset:x}: span_bytes is missing or not an integer")
+                })?;
+                return Ok(Some(validate_span(span)?));
+            }
+        }
+        Ok(None)
     }
 }
 
@@ -175,6 +209,13 @@ struct ScanRow {
     named: usize,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum ScanIssue {
+    NoSpan { id: String },
+    Failure { id: String, message: String },
+    NoCallSites { id: String, span: i64 },
+}
+
 fn semantic_owner(name: &str) -> Option<(String, i64)> {
     let lower = name.to_ascii_lowercase();
     let stem = lower.strip_suffix(".c")?;
@@ -193,6 +234,10 @@ fn semantic_owner(name: &str) -> Option<(String, i64)> {
 }
 
 pub fn scan(root: &Path) -> Result<String> {
+    scan_with_limit(root, None)
+}
+
+pub fn scan_with_limit(root: &Path, limit: Option<usize>) -> Result<String> {
     let semantic_dir = root.join("semantic");
     let mut names: Vec<String> = fs::read_dir(&semantic_dir)
         .map_err(|error| format!("{}: {error}", semantic_dir.display()))?
@@ -203,37 +248,67 @@ pub fn scan(root: &Path) -> Result<String> {
 
     let span_sources = SpanSources::load(root)?;
     let mut rows = Vec::new();
-    let mut image_cache: Vec<(String, Vec<u8>)> = Vec::new();
+    let mut issues = Vec::new();
+    let mut image_cache: HashMap<String, std::result::Result<Vec<u8>, String>> = HashMap::new();
+    let mut owners = 0usize;
     for name in names {
         let Some((overlay, offset)) = semantic_owner(&name) else {
             continue;
         };
-        let Some(span) = span_sources.resolve(&overlay, offset)? else {
-            continue;
-        };
-        let image = if let Some((_, image)) = image_cache.iter().find(|(key, _)| key == &overlay) {
-            image.clone()
-        } else {
-            let Ok(image) = assemble_for(root, &overlay) else {
+        owners += 1;
+        let id = format!("{overlay}:{offset:x}");
+        let span = match span_sources.resolve(&overlay, offset) {
+            Ok(Some(span)) => span,
+            Ok(None) => {
+                issues.push(ScanIssue::NoSpan { id });
                 continue;
-            };
-            image_cache.push((overlay.clone(), image.clone()));
-            image
+            }
+            Err(message) => {
+                issues.push(ScanIssue::Failure { id, message });
+                continue;
+            }
         };
-        let sites = bl_site_symbols(&image, OVERLAY_BASE + offset, span, OVERLAY_BASE);
+        let image_result = image_cache
+            .entry(overlay.clone())
+            .or_insert_with(|| assemble_for(root, &overlay));
+        let image = match image_result {
+            Ok(image) => image,
+            Err(message) => {
+                issues.push(ScanIssue::Failure {
+                    id,
+                    message: message.clone(),
+                });
+                continue;
+            }
+        };
+        if let Err(message) = validate_image_span(image, OVERLAY_BASE + offset, span, OVERLAY_BASE)
+        {
+            issues.push(ScanIssue::Failure { id, message });
+            continue;
+        }
+        let sites = bl_site_symbols(image, OVERLAY_BASE + offset, span, OVERLAY_BASE);
         if sites.is_empty() {
+            issues.push(ScanIssue::NoCallSites { id, span });
             continue;
         }
         let source_path = semantic_dir.join(&name);
-        let source = fs::read_to_string(&source_path)
-            .map_err(|error| format!("{}: {error}", source_path.display()))?;
+        let source = match fs::read_to_string(&source_path) {
+            Ok(source) => source,
+            Err(error) => {
+                issues.push(ScanIssue::Failure {
+                    id,
+                    message: format!("{}: {error}", source_path.display()),
+                });
+                continue;
+            }
+        };
         let named = sites
             .iter()
             .filter(|site| source.contains(&symbol_name(site.symbol)))
             .count();
         if named < sites.len() {
             rows.push(ScanRow {
-                id: format!("{overlay}:{offset:x}"),
+                id,
                 span,
                 sites: sites.len(),
                 named,
@@ -241,23 +316,70 @@ pub fn scan(root: &Path) -> Result<String> {
         }
     }
 
-    rows.sort_by(|left, right| right.span.cmp(&left.span));
+    rows.sort_by_key(|row| std::cmp::Reverse(row.span));
     let bytes: i64 = rows.iter().map(|row| row.span).sum();
+    let displayed = limit.map_or(rows.len(), |limit| rows.len().min(limit));
     let mut output = format!(
-        "owners not naming every call site at its decoded address: {} ({} span bytes)\n",
-        rows.len(),
-        bytes
+        "scanned owners: {owners}\nowners not naming every call site at its decoded address: {} ({} span bytes)\n",
+        rows.len(), bytes
     );
-    for row in rows.iter().take(25) {
+    if let Some(limit) = limit.filter(|limit| *limit < rows.len()) {
+        output.push_str(&format!(
+            "displaying {displayed} of {} incomplete owners because --limit {limit} was requested\n",
+            rows.len()
+        ));
+    }
+    for row in rows.iter().take(displayed) {
         output.push_str(&format!(
             "  {:<20} span={:>5} sites={} already_named={}\n",
             row.id, row.span, row.sites, row.named
         ));
     }
+    let no_span = issues
+        .iter()
+        .filter(|issue| matches!(issue, ScanIssue::NoSpan { .. }))
+        .count();
+    let no_sites = issues
+        .iter()
+        .filter(|issue| matches!(issue, ScanIssue::NoCallSites { .. }))
+        .count();
+    let failures = issues.len() - no_span - no_sites;
+    output.push_str(&format!(
+        "scan issues: no_span={no_span} no_call_sites={no_sites} failures={failures}\n"
+    ));
+    for issue in issues {
+        match issue {
+            ScanIssue::NoSpan { id } => output.push_str(&format!("  no_span {id}\n")),
+            ScanIssue::NoCallSites { id, span } => {
+                output.push_str(&format!("  no_call_sites {id} span={span}\n"))
+            }
+            ScanIssue::Failure { id, message } => {
+                output.push_str(&format!("  failure {id}: {message}\n"))
+            }
+        }
+    }
     output.push_str(
         "a bl-displacement residual is only PART of most of these; the span is an upper bound.\n",
     );
     Ok(output)
+}
+
+const USAGE: &str = "usage:\n  bl-site-symbols <overlay:offsetHex> [--span BYTES]\n  bl-site-symbols --scan [--limit COUNT]\n  bl-site-symbols --self-test\n  bl-site-symbols -h|--help";
+
+fn help() -> String {
+    format!(
+        "{USAGE}\n\nBYTES must be a positive decimal or hexadecimal span. Scan reports every owner with a missing/invalid span, assembly/read failure, or no decoded bl site. Results are not truncated unless --limit is explicitly supplied."
+    )
+}
+
+fn parse_limit(text: &str) -> Result<usize> {
+    let limit = text
+        .parse::<usize>()
+        .map_err(|_| format!("--limit must be a non-negative integer (got {text:?})"))?;
+    if limit == 0 {
+        return Err("--limit must be greater than zero".into());
+    }
+    Ok(limit)
 }
 
 pub fn self_test() -> Result<String> {
@@ -303,38 +425,72 @@ fn encode_bl(image: &mut [u8], site: i64, displacement: i64) {
 }
 
 pub fn run(args: &[String]) -> Result<String> {
+    if args.iter().any(|arg| arg == "-h" || arg == "--help") {
+        return Ok(help());
+    }
     if args.iter().any(|arg| arg == "--self-test") {
+        if args.len() != 1 {
+            return Err(format!(
+                "--self-test does not accept other arguments\n{USAGE}"
+            ));
+        }
         return self_test();
     }
     if args.iter().any(|arg| arg == "--scan") {
-        return scan(&root());
+        let mut limit = None;
+        let mut index = 0;
+        while index < args.len() {
+            match args[index].as_str() {
+                "--scan" => {}
+                "--limit" => {
+                    let text = args
+                        .get(index + 1)
+                        .ok_or_else(|| "missing value for --limit".to_string())?;
+                    limit = Some(parse_limit(text)?);
+                    index += 1;
+                }
+                other => return Err(format!("unknown scan argument {other:?}\n{USAGE}")),
+            }
+            index += 1;
+        }
+        return scan_with_limit(&root(), limit);
     }
 
     let id = args.first().cloned().unwrap_or_default();
     let Some((overlay, offset_text)) = id.split_once(':') else {
-        return Err("usage: bl-site-symbols <overlay:offsetHex> [--span BYTES]".into());
+        return Err(USAGE.into());
     };
     if !overlay
         .strip_prefix("resource_")
         .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|byte| byte.is_ascii_hexdigit()))
     {
-        return Err("usage: bl-site-symbols <overlay:offsetHex> [--span BYTES]".into());
+        return Err(USAGE.into());
     }
-    let offset = parse_hex(offset_text).ok_or_else(|| {
-        "usage: bl-site-symbols <overlay:offsetHex> [--span BYTES]".to_string()
-    })?;
+    let offset =
+        parse_hex(offset_text).ok_or_else(|| format!("offset must be hexadecimal\n{USAGE}"))?;
     let span_argument = args.iter().position(|arg| arg == "--span");
     let span = match span_argument {
         Some(index) => {
             let text = args
                 .get(index + 1)
                 .ok_or_else(|| "missing value for --span".to_string())?;
-            parse_span(text).ok_or_else(|| "span must be a number".to_string())?
+            let span = parse_span(text)
+                .ok_or_else(|| "span must be a decimal or hexadecimal integer".to_string())?;
+            validate_span(span)?
         }
         None => resolve_span(&root(), overlay, offset)?
             .ok_or_else(|| format!("no registered span for {id}; pass --span BYTES"))?,
     };
+    if args.len() > 1 {
+        let Some(index) = span_argument else {
+            return Err(format!("unknown argument {:?}\n{USAGE}", args[1]));
+        };
+        if index + 2 != args.len() {
+            return Err(format!("unexpected argument after --span\n{USAGE}"));
+        }
+    }
     let image = assemble_for(&root(), overlay)?;
+    validate_image_span(&image, OVERLAY_BASE + offset, span, OVERLAY_BASE)?;
     let sites = bl_site_symbols(&image, OVERLAY_BASE + offset, span, OVERLAY_BASE);
     let mut output = format!("{id} span={span} call_sites={}\n", sites.len());
     for site in sites {
@@ -413,5 +569,47 @@ mod tests {
     #[test]
     fn self_test_output_is_stable() {
         assert_eq!(self_test().unwrap(), "self-test=ok tool=bl_site_symbols");
+    }
+
+    #[test]
+    fn rejects_non_positive_spans_with_a_clear_error() {
+        assert!(validate_span(-4).unwrap_err().contains("negative"));
+        assert!(validate_span(0).unwrap_err().contains("greater than zero"));
+        let error = run(&[
+            "resource_382:3ac".to_string(),
+            "--span".to_string(),
+            "-4".to_string(),
+        ])
+        .unwrap_err();
+        assert!(error.contains("negative, zero, and reversed spans are invalid"));
+    }
+
+    #[test]
+    fn help_is_available_through_both_conventional_flags() {
+        for flag in ["-h", "--help"] {
+            let output = run(&[flag.to_string()]).unwrap();
+            assert!(output.contains("bl-site-symbols --scan"));
+            assert!(output.contains("Results are not truncated"));
+        }
+    }
+
+    #[test]
+    fn scan_reports_an_owner_without_a_span() {
+        let stamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("clock")
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!("bl-site-symbols-scan-test-{stamp}"));
+        fs::create_dir_all(root.join("semantic")).expect("semantic directory");
+        fs::write(
+            root.join("semantic/resource_382_c_020003ac.c"),
+            "void owner(void) {}\n",
+        )
+        .expect("semantic owner");
+        let output = scan(&root).unwrap();
+        assert!(output.contains("scanned owners: 1"));
+        assert!(output.contains("scan issues: no_span=1"));
+        assert!(output.contains("no_span resource_382:3ac"));
+        fs::remove_dir_all(root).expect("temporary fixture cleanup");
     }
 }

@@ -9,13 +9,11 @@ pub const END: usize = 0x080c5b30;
 pub const SIZE: usize = END - ADDRESS;
 const ROM_BASE: usize = 0x08000000;
 const KIHON_END: usize = 0x080c3734;
-const KOMA_ADDRESS: usize = KIHON_END;
 const KOMA_END: usize = 0x080c3f34;
 const HAICHI_ADDRESS: usize = KOMA_END;
 const HAICHI_END: usize = 0x080c5938;
 const HOSEI_ADDRESS: usize = HAICHI_END;
 const HOSEI_END: usize = 0x080c5a30;
-const GAUGE_ADDRESS: usize = HOSEI_END;
 
 pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -266,10 +264,7 @@ fn build_kihon(path: &Path) -> Result<Vec<u8>> {
             half(&mut out, Some(p), &format!("pose {i}:{x}"))?;
         }
     }
-    for (i, p) in arr(o.get("party_positions").unwrap(), 13, "party positions")?
-        .iter()
-        .enumerate()
-    {
+    for p in arr(o.get("party_positions").unwrap(), 13, "party positions")? {
         let po = object(p, "party position")?;
         out.push(signed_byte(po.get("x"), "party x")?);
         out.push(signed_byte(po.get("y"), "party y")?);
@@ -398,10 +393,10 @@ fn atlas(path: &Path, frames: usize, tw: usize, th: usize, cols: usize) -> Resul
     let im = indexed_png(&data).map_err(|e| Error(e.0))?;
     let w = tw * 8;
     let h = th * 8;
-    if im.width as usize != cols * w || im.height as usize != ((frames + cols - 1) / cols) * h {
+    if im.width as usize != cols * w || im.height as usize != frames.div_ceil(cols) * h {
         return err(format!("{}: atlas dimensions differ", path.display()));
     }
-    let palette: (Vec<[u8; 3]>) = (0..16)
+    let palette: Vec<[u8; 3]> = (0..16)
         .map(|i| {
             let v = (i * 8) as u8;
             [v, v, v]

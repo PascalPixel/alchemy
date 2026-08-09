@@ -18,7 +18,7 @@
 //! come from `alchemy_routing`; a second copy of them here is the hand-sync
 //! problem this effort exists to end.
 
-use std::fs;
+use std::fs::{self, File, OpenOptions};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
@@ -59,6 +59,156 @@ pub fn gcc3_bundle() -> PathBuf {
 }
 pub fn gcc3_driver() -> PathBuf {
     gcc3_bundle().join("cc1")
+}
+
+/// The lock file shared with the compiler repository's staging command. It is
+/// intentionally outside `signature_paths()`: the lock is synchronization
+/// state, not compiler input.
+pub const BUNDLE_LOCK_FILE_NAME: &str = ".alchemy-gcc.lock";
+
+pub fn bundle_lock_path() -> PathBuf {
+    bundle().join(BUNDLE_LOCK_FILE_NAME)
+}
+
+#[cfg(unix)]
+const LOCK_SH: i32 = 1;
+#[cfg(all(unix, test))]
+const LOCK_EX: i32 = 2;
+#[cfg(all(unix, test))]
+const LOCK_NB: i32 = 4;
+
+#[cfg(unix)]
+unsafe extern "C" {
+    fn flock(file_descriptor: i32, operation: i32) -> i32;
+}
+
+#[cfg(unix)]
+fn flock_file(file: &File, operation: i32) -> std::io::Result<()> {
+    use std::os::unix::io::AsRawFd;
+
+    // SAFETY: `file` owns a valid open descriptor for the duration of the
+    // call, and `flock` only borrows that descriptor while applying the
+    // requested POSIX advisory lock.
+    let result = unsafe { flock(file.as_raw_fd(), operation) };
+    if result == 0 {
+        Ok(())
+    } else {
+        Err(std::io::Error::last_os_error())
+    }
+}
+
+#[cfg(unix)]
+struct SharedBundleLock {
+    // Keeping the descriptor in the process-global OnceLock keeps the shared
+    // flock held until process exit.
+    _file: File,
+}
+
+#[cfg(unix)]
+static SHARED_BUNDLE_LOCK: OnceLock<Result<SharedBundleLock>> = OnceLock::new();
+
+/// Acquire the canonical bundle's process-lifetime shared POSIX lock.
+///
+/// The matching staging command takes an exclusive lock on the same file.
+/// This call blocks behind a stage, then retains the descriptor so a later
+/// stage cannot mutate files after validation or signature memoization.
+pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
+    #[cfg(unix)]
+    {
+        let result = SHARED_BUNDLE_LOCK.get_or_init(|| {
+            let path = bundle_lock_path();
+            let file = OpenOptions::new()
+                .create(true)
+                .read(true)
+                .write(true)
+                .truncate(false)
+                .open(&path)
+                .map_err(|error| {
+                    format!(
+                        "cannot open compiler bundle lock {}: {error}",
+                        path.display()
+                    )
+                })?;
+            flock_file(&file, LOCK_SH).map_err(|error| {
+                format!(
+                    "cannot acquire shared compiler bundle lock {}: {error}",
+                    path.display()
+                )
+            })?;
+            Ok(SharedBundleLock { _file: file })
+        });
+        result.as_ref().map(|_| ()).map_err(Clone::clone)
+    }
+
+    #[cfg(not(unix))]
+    {
+        // Alchemy's admitted hosts are POSIX. Keep unsupported hosts
+        // buildable without pretending to provide a non-POSIX flock.
+        Ok(())
+    }
+}
+
+/// Environment variables understood by the standalone compiler repository but
+/// deliberately not by Alchemy's consumer-side routing. A non-canonical value
+/// here would make `stage --check` describe one tree while Alchemy reads
+/// another, so cache/admission entry points reject it instead of silently
+/// proceeding with the fixed consumer path.
+const ALTERNATE_BUNDLE_ROOT_ENV_VARS: [&str; 2] = [
+    "ALCHEMY_GCC_DIST_ROOT",
+    "ALCHEMY_GCC296_EXPERIMENTAL_DIST_ROOT",
+];
+
+fn canonical_bundle_root() -> PathBuf {
+    let path = bundle();
+    fs::canonicalize(&path).unwrap_or(path)
+}
+
+fn resolved_environment_path(path: &Path) -> Result<PathBuf> {
+    let path = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir()
+            .map_err(|error| format!("cannot resolve compiler bundle root: {error}"))?
+            .join(path)
+    };
+    Ok(fs::canonicalize(&path).unwrap_or(path))
+}
+
+fn root_override_error(variable: &str, requested: &Path, canonical: &Path) -> Option<String> {
+    if requested == canonical {
+        None
+    } else {
+        Some(format!(
+            "Alchemy compiler bundle root is fixed at {}; unset {variable} or set it to that exact path (got {})",
+            canonical.display(),
+            requested.display(),
+        ))
+    }
+}
+
+/// Reject alternate staging roots before any compiler admission or cache-key
+/// work. The consumer-side routing intentionally has one canonical bundle
+/// path; an environment override belongs to `alchemy-gcc`, not to Alchemy.
+pub fn ensure_canonical_bundle_root() -> Result<()> {
+    let canonical = canonical_bundle_root();
+    for variable in ALTERNATE_BUNDLE_ROOT_ENV_VARS {
+        let Some(value) = std::env::var_os(variable) else {
+            continue;
+        };
+        if value.is_empty() {
+            continue;
+        }
+        let requested = resolved_environment_path(Path::new(&value))?;
+        if let Some(error) = root_override_error(variable, &requested, &canonical) {
+            return Err(error);
+        }
+    }
+    Ok(())
+}
+
+fn ensure_compiler_bundle_access() -> Result<()> {
+    ensure_canonical_bundle_root()?;
+    acquire_compiler_bundle_shared_lock()
 }
 
 /// `GCC3_CFLAGS`. Stock gcc-3.0 has no `-fcall-used-r4` patch (that is
@@ -231,6 +381,7 @@ fn lookup<'a>(table: &'a [HostDigests], host: &str) -> Option<&'a [&'static str]
 
 /// `validateBundle(target = "gs1")`.
 pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
+    ensure_compiler_bundle_access()?;
     if validated()
         .lock()
         .expect("validation memo is not poisoned")
@@ -298,6 +449,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
 
 /// `validateAgbccBundle()`.
 pub fn validate_agbcc_bundle() -> Result<()> {
+    ensure_compiler_bundle_access()?;
     if *agbcc_validated().lock().expect("memo is not poisoned") {
         return Ok(());
     }
@@ -338,6 +490,7 @@ pub fn validate_experimental_compiler(
     driver: &Path,
     expected: &[HostDigests],
 ) -> Result<()> {
+    ensure_compiler_bundle_access()?;
     if experimental_validated()
         .lock()
         .expect("memo is not poisoned")
@@ -483,28 +636,87 @@ fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Pat
     }
 }
 
+fn file_type_tag(file_type: &fs::FileType) -> &'static [u8] {
+    if file_type.is_file() {
+        b"file"
+    } else if file_type.is_dir() {
+        b"directory"
+    } else if file_type.is_symlink() {
+        b"symlink"
+    } else {
+        b"other"
+    }
+}
+
+#[cfg(unix)]
+fn permission_bits(metadata: &fs::Metadata) -> u32 {
+    use std::os::unix::fs::PermissionsExt;
+
+    metadata.permissions().mode() & 0o7777
+}
+
+#[cfg(not(unix))]
+fn permission_bits(metadata: &fs::Metadata) -> u32 {
+    u32::from(metadata.permissions().readonly())
+}
+
+fn append_metadata_state(stream: &mut Vec<u8>, path: &Path, follow_links: bool) {
+    append_signature_frame(stream, if follow_links { b"stat" } else { b"lstat" });
+    let metadata = if follow_links {
+        fs::metadata(path)
+    } else {
+        fs::symlink_metadata(path)
+    };
+    match metadata {
+        Ok(metadata) => {
+            append_signature_frame(stream, b"present");
+            append_signature_frame(stream, file_type_tag(&metadata.file_type()));
+            append_signature_frame(stream, &permission_bits(&metadata).to_be_bytes());
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            append_signature_frame(stream, b"missing");
+        }
+        Err(_) => {
+            append_signature_frame(stream, b"unreadable");
+        }
+    }
+}
+
+fn append_bundle_path_signature(stream: &mut Vec<u8>, path: &Path) {
+    append_signature_frame(stream, &path_bytes(path));
+    // `validate_bundle` follows links, while a link-versus-regular-file change
+    // is still a stable filesystem input. Record both views so chmod on the
+    // target and file-type changes invalidate the same cache namespace.
+    append_metadata_state(stream, path, false);
+    append_metadata_state(stream, path, true);
+    match fs::read(path) {
+        Ok(bytes) => append_signature_frame(stream, &bytes),
+        Err(_) => append_signature_frame(stream, b"missing"),
+    }
+}
+
+fn compiler_bundle_signature_for_paths(paths: &[PathBuf], include: &Path) -> String {
+    let mut stream: Vec<u8> = Vec::new();
+    append_signature_frame(&mut stream, b"alchemy compiler bundle v2");
+    for path in paths {
+        append_bundle_path_signature(&mut stream, path);
+    }
+    // Every compiler plan adds the repository's `include/` directory. Header
+    // contents therefore belong to the compiler cache identity too.
+    append_signature_frame(&mut stream, b"alchemy compiler include tree v1");
+    append_compiler_input_tree(&mut stream, include, include);
+    sha256::hex(&stream)
+}
+
 /// Computes `compilerBundleSignature()` directly from the staged files.
 ///
 /// This intentionally bypasses the process-wide memo and is useful for tests
 /// and diagnostics. Production callers should use [`compiler_bundle_signature`]
 /// so the staged bundle is hashed only once.
 pub fn compiler_bundle_signature_uncached() -> String {
-    let mut stream: Vec<u8> = Vec::new();
-    for path in signature_paths() {
-        stream.extend_from_slice(path.to_string_lossy().as_bytes());
-        stream.push(0);
-        match fs::read(&path) {
-            Ok(bytes) => stream.extend_from_slice(&bytes),
-            Err(_) => stream.extend_from_slice(b"missing"),
-        }
-        stream.push(0);
-    }
-    // Every compiler plan adds the repository's `include/` directory. Header
-    // contents therefore belong to the compiler cache identity too.
-    append_signature_frame(&mut stream, b"alchemy compiler include tree v1");
-    let include = root().join("include");
-    append_compiler_input_tree(&mut stream, &include, &include);
-    sha256::hex(&stream)
+    ensure_compiler_bundle_access()
+        .unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
+    compiler_bundle_signature_for_paths(&signature_paths(), &root().join("include"))
 }
 
 /// `compilerBundleSignature()`.
@@ -514,21 +726,32 @@ pub fn compiler_bundle_signature_uncached() -> String {
 /// stale cache entry could be accepted.
 ///
 /// PORT NOTE: `Bun.CryptoHasher("sha256")` is fed incrementally; this builds the
-/// same byte stream and hashes it once. SHA-256 is a streaming construction, so
-/// concatenation is bit-identical, not merely equivalent. `digest.update(path)`
-/// on a JS string is UTF-8 encoded, which is what `Path`'s bytes already are.
-/// The literal `"missing"` is the seven ASCII bytes, and it stands in for the
-/// file contents only -- the path and both NULs are still written, so a missing
-/// file and an empty file are distinguishable.
+/// same byte stream and hashes it once. SHA-256 is a streaming construction,
+/// so concatenation is bit-identical, not merely equivalent. `Path` bytes are
+/// framed directly, and the literal `"missing"` is the seven ASCII bytes used
+/// for an absent file. The length frames keep a missing file, an empty file,
+/// and metadata changes distinguishable.
 ///
 /// The staged compiler and tracked include tree are treated as immutable for
-/// the lifetime of a process. Mutating either after this function's first call
-/// is unsupported; the memo intentionally does not observe it.
+/// the lifetime of a process. The shared process-lifetime flock is the
+/// synchronization boundary for the cooperating stage command; direct
+/// mutation that bypasses that lock remains unsupported, and the memo does not
+/// observe it.
 pub fn compiler_bundle_signature() -> String {
+    ensure_compiler_bundle_access()
+        .unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
     static SIGNATURE: OnceLock<String> = OnceLock::new();
     SIGNATURE
         .get_or_init(compiler_bundle_signature_uncached)
         .clone()
+}
+
+/// Fallible entry point for cache/admission callers. The historical
+/// infallible function remains available to lower-level callers, while paths
+/// that can accept a cache hit must reject an alternate staging root first.
+pub fn compiler_bundle_signature_checked() -> Result<String> {
+    ensure_compiler_bundle_access()?;
+    Ok(compiler_bundle_signature())
 }
 
 // ---------------------------------------------------------------------------
@@ -793,6 +1016,144 @@ mod tests {
         let cached = compiler_bundle_signature();
         assert_eq!(cached, compiler_bundle_signature_uncached());
         assert_eq!(cached.len(), 64);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn bundle_signature_changes_for_mode_and_file_type() {
+        use std::os::unix::fs::{symlink, PermissionsExt};
+
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-bundle-file-metadata-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&directory);
+        let include = directory.join("include");
+        fs::create_dir_all(&include).expect("create metadata include directory");
+        let executable = directory.join("cc1");
+        fs::write(&executable, b"compiler bytes").expect("write metadata compiler");
+
+        let mut permissions = fs::metadata(&executable)
+            .expect("stat metadata compiler")
+            .permissions();
+        permissions.set_mode(0o644);
+        fs::set_permissions(&executable, permissions)
+            .expect("make metadata compiler non-executable");
+        let non_executable =
+            compiler_bundle_signature_for_paths(std::slice::from_ref(&executable), &include);
+
+        let mut permissions = fs::metadata(&executable)
+            .expect("restat metadata compiler")
+            .permissions();
+        permissions.set_mode(0o755);
+        fs::set_permissions(&executable, permissions).expect("make metadata compiler executable");
+        let executable_signature =
+            compiler_bundle_signature_for_paths(std::slice::from_ref(&executable), &include);
+        assert_ne!(non_executable, executable_signature);
+
+        let link = directory.join("cc1-link");
+        symlink(&executable, &link).expect("create metadata compiler symlink");
+        let symlink_signature =
+            compiler_bundle_signature_for_paths(std::slice::from_ref(&link), &include);
+        assert_ne!(executable_signature, symlink_signature);
+
+        fs::remove_dir_all(directory).expect("remove metadata test directory");
+    }
+
+    #[test]
+    fn alternate_root_override_is_rejected_by_the_canonical_guard() {
+        let canonical = Path::new("/repo/alchemy-gcc/dist");
+        let requested = Path::new("/tmp/alchemy-gcc/dist");
+        let error = root_override_error("ALCHEMY_GCC_DIST_ROOT", requested, canonical)
+            .expect("alternate root must be rejected");
+        assert!(error.contains("ALCHEMY_GCC_DIST_ROOT"));
+        assert!(error.contains(canonical.to_string_lossy().as_ref()));
+        assert!(root_override_error("ALCHEMY_GCC_DIST_ROOT", canonical, canonical).is_none());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn canonical_root_guard_rejects_an_alternate_environment_in_a_child() {
+        for variable in [
+            "ALCHEMY_GCC_DIST_ROOT",
+            "ALCHEMY_GCC296_EXPERIMENTAL_DIST_ROOT",
+        ] {
+            let status = Command::new(std::env::current_exe().expect("locate test binary"))
+                .args([
+                    "--exact",
+                    "bundle::tests::canonical_root_guard_probe",
+                    "--nocapture",
+                ])
+                .env(variable, "/tmp/alchemy-gcc-alternate/dist")
+                .status()
+                .expect("run canonical-root probe child");
+            assert!(
+                status.success(),
+                "canonical-root probe child failed for {variable}: {status}"
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn canonical_root_guard_probe() {
+        let alternate = "/tmp/alchemy-gcc-alternate/dist";
+        if [
+            "ALCHEMY_GCC_DIST_ROOT",
+            "ALCHEMY_GCC296_EXPERIMENTAL_DIST_ROOT",
+        ]
+        .iter()
+        .any(|variable| std::env::var(variable).as_deref() == Ok(alternate))
+        {
+            assert!(ensure_canonical_bundle_root().is_err());
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn shared_lock_blocks_an_exclusive_child_without_wedging_the_test_process() {
+        let directory =
+            std::env::temp_dir().join(format!("alchemy-bundle-flock-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&directory);
+        fs::create_dir_all(&directory).expect("create flock test directory");
+        let path = directory.join("lock");
+        let file = OpenOptions::new()
+            .create(true)
+            .read(true)
+            .write(true)
+            .truncate(false)
+            .open(&path)
+            .expect("open flock test file");
+        flock_file(&file, LOCK_SH).expect("take parent shared flock");
+
+        let status = Command::new(std::env::current_exe().expect("locate test binary"))
+            .args([
+                "--exact",
+                "bundle::tests::exclusive_lock_probe",
+                "--nocapture",
+            ])
+            .env("ALCHEMY_BUNDLE_FLOCK_PROBE", &path)
+            .status()
+            .expect("run flock probe child");
+        assert!(status.success(), "flock probe child failed: {status}");
+
+        fs::remove_dir_all(directory).expect("remove flock test directory");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn exclusive_lock_probe() {
+        let Some(path) = std::env::var_os("ALCHEMY_BUNDLE_FLOCK_PROBE") else {
+            return;
+        };
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(path)
+            .expect("open flock probe file");
+        let error = flock_file(&file, LOCK_EX | LOCK_NB)
+            .expect_err("exclusive non-blocking flock must see the parent's shared lock");
+        assert_eq!(error.kind(), std::io::ErrorKind::WouldBlock);
     }
 
     #[test]

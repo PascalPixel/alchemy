@@ -15,6 +15,31 @@ use core_retained_audit::{
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+const USAGE: &str = "Usage: core-retained-audit --check [--json]\n       core-retained-audit --self-test\n\nModes:\n  --check       Audit the retained-assembly complement.\n  --json        Emit the audit document (only with --check).\n  --self-test   Run the audit's internal checks.\n  -h, --help    Show this help.";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Command {
+    Help,
+    SelfTest,
+    Check { json: bool },
+}
+
+fn parse_args(argv: &[String]) -> Result<Command, &'static str> {
+    if argv.len() == 1 && (argv[0] == "-h" || argv[0] == "--help") {
+        return Ok(Command::Help);
+    }
+    if argv.len() == 1 && argv[0] == "--self-test" {
+        return Ok(Command::SelfTest);
+    }
+    if argv.is_empty() || !argv.iter().all(|arg| arg == "--check" || arg == "--json") {
+        return Err(USAGE);
+    }
+    if !argv.iter().any(|arg| arg == "--check") {
+        return Err(USAGE);
+    }
+    Ok(Command::Check { json: argv.iter().any(|arg| arg == "--json") })
+}
+
 fn repository_root() -> PathBuf {
     // The binary lives in tools/core-retained-audit/target/<profile>/, but
     // CARGO_MANIFEST_DIR is fixed at compile time and does not depend on the
@@ -36,14 +61,17 @@ fn main() -> ExitCode {
 }
 
 fn run(argv: &[String]) -> Result<ExitCode, String> {
-    if argv.len() == 1 && argv[0] == "--self-test" {
-        return self_test().map(|()| ExitCode::SUCCESS);
+    match parse_args(argv).map_err(str::to_string)? {
+        Command::Help => {
+            println!("{USAGE}");
+            Ok(ExitCode::SUCCESS)
+        }
+        Command::SelfTest => self_test().map(|()| ExitCode::SUCCESS),
+        Command::Check { json } => run_check(json),
     }
-    if argv.iter().any(|argument| argument != "--check" && argument != "--json")
-        || !argv.iter().any(|argument| argument == "--check")
-    {
-        return Err("usage: core-retained-audit --check [--json] | --self-test".into());
-    }
+}
+
+fn run_check(json: bool) -> Result<ExitCode, String> {
     let root = repository_root();
     let display = |relative: &str| root.join(relative).to_string_lossy().into_owned();
     let paths = InputPaths {
@@ -93,7 +121,7 @@ fn run(argv: &[String]) -> Result<ExitCode, String> {
         paths: Some(paths),
     })?;
 
-    if argv.iter().any(|argument| argument == "--json") {
+    if json {
         println!("{}", stringify_pretty(&result.to_json()));
     } else {
         println!(
@@ -274,4 +302,34 @@ fn self_test() -> Result<(), String> {
     }
     println!("self-test=ok");
     Ok(())
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::{parse_args, Command};
+
+    fn args(items: &[&str]) -> Vec<String> {
+        items.iter().map(|item| (*item).to_string()).collect()
+    }
+
+    #[test]
+    fn preserves_check_json_and_self_test_modes() {
+        assert_eq!(
+            parse_args(&args(&["--check"])),
+            Ok(Command::Check { json: false })
+        );
+        assert_eq!(
+            parse_args(&args(&["--check", "--json"])),
+            Ok(Command::Check { json: true })
+        );
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Command::SelfTest));
+        assert_eq!(parse_args(&args(&["--help"])), Ok(Command::Help));
+    }
+
+    #[test]
+    fn rejects_unknown_and_incomplete_options() {
+        assert!(parse_args(&args(&["--bogus"])).is_err());
+        assert!(parse_args(&args(&["--json"])).is_err());
+        assert!(parse_args(&args(&["--check", "--bogus"])).is_err());
+    }
 }

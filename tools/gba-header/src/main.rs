@@ -31,7 +31,35 @@ build SOURCE --output FILE | verify ROM SOURCE | --self-test"
     ExitCode::SUCCESS
 }
 
+fn validate_options(args: &[String]) -> Result<(), String> {
+    let valued = ["-o", "--output", "--directory", "--template"];
+    let mut index = 0;
+    while index < args.len() {
+        let argument = args[index].as_str();
+        if valued.contains(&argument) {
+            if index + 1 >= args.len() {
+                return Err(format!("{argument} requires a value"));
+            }
+            index += 2;
+            continue;
+        }
+        if matches!(argument, "-h" | "--help" | "--self-test") {
+            index += 1;
+            continue;
+        }
+        if argument.starts_with('-') {
+            return Err(format!("unknown option: {argument}"));
+        }
+        index += 1;
+    }
+    Ok(())
+}
+
 fn run(args: &[String]) -> Result<ExitCode, String> {
+    validate_options(args)?;
+    if args.iter().any(|arg| arg == "-h" || arg == "--help") {
+        return Ok(usage());
+    }
     if args.len() == 1 && args[0] == "--self-test" {
         println!("{}", gba_header::self_test()?);
         return Ok(ExitCode::SUCCESS);
@@ -85,9 +113,6 @@ fn run(args: &[String]) -> Result<ExitCode, String> {
         println!("address=0x08000000 bytes={} exact=true", built.len());
         return Ok(ExitCode::SUCCESS);
     }
-    if args.iter().any(|arg| arg == "-h" || arg == "--help") {
-        return Ok(usage());
-    }
     Ok(usage())
 }
 
@@ -98,5 +123,28 @@ fn main() -> ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn help_aliases_succeed_before_file_access() {
+        assert_eq!(run(&args(&["-h"])).unwrap(), ExitCode::SUCCESS);
+        assert_eq!(run(&args(&["--help"])).unwrap(), ExitCode::SUCCESS);
+    }
+
+    #[test]
+    fn unknown_option_is_rejected_before_file_access() {
+        assert_eq!(
+            run(&args(&["verify", "missing.gba", "missing.json", "--bogus"])).unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

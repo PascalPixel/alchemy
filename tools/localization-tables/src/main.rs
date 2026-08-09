@@ -609,15 +609,39 @@ fn truthy(value: Option<&String>) -> Option<&String> {
     value.filter(|text| !text.is_empty())
 }
 
-const USAGE: &str = "usage: localization-tables {export ROM --directory DIR|build SOURCE --output FILE|verify ROM SOURCE}";
+const USAGE: &str = "usage: localization-tables {export ROM --directory DIR|build SOURCE --output FILE|build-stdout SOURCE|verify ROM SOURCE|--self-test}";
 
-fn run(mut args: Vec<String>) -> Result<(), String> {
-    if args.iter().any(|item| item == "--self-test") {
-        self_test()?;
-        args.retain(|item| item != "--self-test");
-        if args.is_empty() {
-            return Ok(());
+fn validate_options(args: &[String], start: usize, allowed: &[&str]) -> Result<(), String> {
+    let mut index = start;
+    let mut seen = Vec::new();
+    while index < args.len() {
+        let option = args[index].as_str();
+        if !allowed.contains(&option) {
+            return Err(USAGE.to_string());
         }
+        if seen.contains(&option) {
+            return Err(USAGE.to_string());
+        }
+        seen.push(option);
+        if args
+            .get(index + 1)
+            .is_none_or(|value| value.starts_with('-'))
+        {
+            return Err(USAGE.to_string());
+        }
+        index += 2;
+    }
+    Ok(())
+}
+
+fn run(args: Vec<String>) -> Result<(), String> {
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        println!("{USAGE}");
+        return Ok(());
+    }
+    if args.len() == 1 && args[0] == "--self-test" {
+        self_test()?;
+        return Ok(());
     }
     if let [command, source] = args.as_slice() {
         if command == "build-stdout" {
@@ -631,6 +655,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
     }
     let command = args.first().map(String::as_str).unwrap_or("");
     if command == "export" {
+        validate_options(&args, 2, &["--directory"])?;
         let rom_path = truthy(args.get(1)).cloned();
         let directory = option(&args, "--directory").filter(|text| !text.is_empty());
         let (rom_path, directory) = match (rom_path, directory) {
@@ -654,6 +679,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         return Ok(());
     }
     if command == "build" {
+        validate_options(&args, 2, &["--output"])?;
         let input = truthy(args.get(1)).cloned();
         let output = option(&args, "--output").filter(|text| !text.is_empty());
         let (input, output) = match (input, output) {
@@ -678,6 +704,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         return Ok(());
     }
     if command == "verify" {
+        validate_options(&args, 3, &[])?;
         let rom_path = truthy(args.get(1)).cloned();
         let input = truthy(args.get(2)).cloned();
         let (rom_path, input) = match (rom_path, input) {
@@ -1038,6 +1065,13 @@ mod tests {
     #[test]
     fn the_self_test_covers_every_region() {
         self_test().expect("self-test passes");
+    }
+
+    #[test]
+    fn help_succeeds_and_unknown_options_fail() {
+        run(vec!["--help".into()]).expect("help succeeds");
+        run(vec!["-h".into()]).expect("short help succeeds");
+        assert!(run(vec!["export".into(), "rom.gba".into(), "--unknown".into(), "x".into()]).is_err());
     }
 
     #[test]

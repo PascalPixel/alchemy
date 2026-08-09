@@ -9,59 +9,48 @@
 
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-Twenty-five years after *Golden Sun* was first released, Alchemy is an
-automated, clean-room attempt to reconstruct the Game Boy Advance classic as
-readable C code, data, artwork, maps, and music.
+Alchemy is an unofficial clean-room reconstruction of the English release of
+*Golden Sun* for the Game Boy Advance. It documents and rebuilds the program,
+assets, and data needed to study the original game and its construction.
 
-## DONE: Currently 27%
+## DONE: Currently 28%
 
-27% of the game's audited executable bytes now build from exact, byte-matching
-C, or belong to the small pieces of low-level code intentionally kept as
-permanent assembly. These four maps show where the code and assets of the
-English release stand today.
+DONE measures executable bytes that rebuild identically to the target: exact C
+plus the small amount of code intentionally retained as permanent assembly.
+Semantic C is tracked separately as readable reconstruction work; it does not
+count toward DONE until its rebuilt bytes are exact.
+
+The four maps below show the current byte metrics for the English release.
+Progress is measured by bytes, not function counts.
+
+For the two code charts, the bright band color marks Exact C, the pale band
+color marks permanent assembly, and the near-white ground covers Semantic C and
+ordinary assembly still to reconstruct. The footer reports separate byte
+shares for Semantic, Permanent ASM, and Exact C; ordinary assembly is not a
+separate footer item.
 
 ### Main game
 
-The main game is the 548,364 bytes of code that remain available while *Golden
-Sun* is running. Bright purple is exact, byte-matching C; the softer purple is
-readable C that still needs to be matched. Dark gray marks the small pieces of
-low-level runtime structure kept as permanent assembly.
+The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in purple with permanent assembly in dark gray.](assets/readme/gs1-en-core.svg?v=5d6113d4)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=3a3326cd)
 
 ### Code overlays
 
-*Golden Sun* also loads 96 additional code modules into memory when it needs
-them. This panel tracks all 798,888 executable bytes across those modules.
-Bright cyan is exact C, the softer cyan is readable C still being matched, gray
-is code still to reconstruct, and dark gray is permanent low-level assembly.
-Eleven of those modules are already completely exact, byte-matching C.
+The game loads 96 additional code overlays containing 798,890 executable bytes
+in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; brightness is completion.](assets/readme/gs1-en-overlays.svg?v=bdd1921c)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=10afc5b8)
 
 ### Images and data
+
+This map covers 6,735,557 bytes of graphics, maps, text, and other data as they
+are converted into understood and reusable assets.
 
 ![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
 
 ### Music and sound
 
-The remaining 563,198 bytes of music, samples, sequences, and soundfonts have
-their own maturity panel so audio progress remains legible instead of being
-compressed into the image chart. Brighter orange means a more complete
-reconstruction.
+This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
 
 ![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
-
-Progress is measured by executable bytes rather than function counts, so every
-claimed byte must compile to the original game before it contributes to the
-headline.
-
-Contributors can follow the evidence-driven matching loop in [PRET.md](PRET.md).
-
-## Preservation and copyright
-
-Alchemy is an unofficial, noncommercial decompilation and preservation project.
-*Golden Sun* and all associated names, characters, graphics, music, text, and
-other original material are copyright Nintendo and Camelot Software Planning.
-Alchemy is not affiliated with or endorsed by either company, and no ownership
-of *Golden Sun* is claimed.

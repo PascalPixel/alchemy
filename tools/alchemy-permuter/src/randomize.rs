@@ -4,6 +4,7 @@ use std::path::Path;
 
 use shape_sweep::{apply_transform, TransformId};
 
+use crate::options::{MAX_PLAN_BYTES, MAX_SOURCE_BYTES};
 use crate::perm::{
     materialize, IGNORE_END, IGNORE_START, PRETEND_END, PRETEND_START, RANDOM_END, RANDOM_START,
 };
@@ -367,6 +368,47 @@ fn declaration(line: &str) -> bool {
         && trimmed.ends_with(';')
 }
 
+fn scalar_declaration_name(line: &str) -> Option<&str> {
+    let trimmed = line.trim();
+    let statement = trimmed.strip_suffix(';')?;
+    if statement.contains("volatile")
+        || statement.contains('*')
+        || statement.contains('[')
+        || statement.contains(']')
+        || statement.contains('(')
+        || statement.contains(')')
+        || !declaration(line)
+    {
+        return None;
+    }
+    let left = statement
+        .split_once(" = ")
+        .map_or(statement, |(left, _)| left);
+    let mut words = left.split_whitespace();
+    let type_name = words.next()?;
+    let name = words.next()?;
+    if words.next().is_some()
+        || !matches!(
+            type_name,
+            "s8" | "u8"
+                | "s16"
+                | "u16"
+                | "s32"
+                | "u32"
+                | "s64"
+                | "u64"
+                | "char"
+                | "short"
+                | "int"
+                | "long"
+        )
+        || !c_identifier(name)
+    {
+        return None;
+    }
+    Some(name)
+}
+
 fn swap_adjacent_declarations(source: &str) -> Vec<Mutation> {
     let lines = line_offsets(source);
     let mut output = Vec::new();
@@ -513,13 +555,173 @@ fn statement(line: &str) -> bool {
         && !declaration(line)
 }
 
+fn c_identifier(text: &str) -> bool {
+    let mut bytes = text.bytes();
+    let Some(first) = bytes.next() else {
+        return false;
+    };
+    (first.is_ascii_alphabetic() || first == b'_')
+        && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+}
+
+fn simple_assignment_parts(line: &str) -> Option<(&str, &str)> {
+    let statement = line.trim().strip_suffix(';')?;
+    let (left, right) = statement.split_once(" = ")?;
+    let left = left.trim();
+    let right = right.trim();
+    (c_identifier(left) && !right.is_empty() && !right.contains(" = ")).then_some((left, right))
+}
+
+fn identifiers(text: &str) -> BTreeSet<&str> {
+    let mut output = BTreeSet::new();
+    let bytes = text.as_bytes();
+    let mut at = 0usize;
+    while at < bytes.len() {
+        if bytes[at].is_ascii_alphabetic() || bytes[at] == b'_' {
+            let start = at;
+            at += 1;
+            while at < bytes.len() && (bytes[at].is_ascii_alphanumeric() || bytes[at] == b'_') {
+                at += 1;
+            }
+            output.insert(&text[start..at]);
+        } else {
+            at += 1;
+        }
+    }
+    output
+}
+
+fn contains_call(expression: &str) -> bool {
+    const TYPE_NAMES: [&str; 11] = [
+        "char", "short", "int", "long", "s8", "u8", "s16", "u16", "s32", "u32", "void",
+    ];
+    let bytes = expression.as_bytes();
+    let mut at = 0usize;
+    while at < bytes.len() {
+        if bytes[at].is_ascii_alphabetic() || bytes[at] == b'_' {
+            let start = at;
+            at += 1;
+            while at < bytes.len() && (bytes[at].is_ascii_alphanumeric() || bytes[at] == b'_') {
+                at += 1;
+            }
+            let name = &expression[start..at];
+            let mut next = at;
+            while next < bytes.len() && bytes[next].is_ascii_whitespace() {
+                next += 1;
+            }
+            if bytes.get(next) == Some(&b'(') && name != "sizeof" && !TYPE_NAMES.contains(&name) {
+                return true;
+            }
+        } else {
+            at += 1;
+        }
+    }
+    false
+}
+
+fn statements_can_swap(first: &str, second: &str, locals: &BTreeSet<String>) -> bool {
+    let Some((first_write, first_rhs)) = simple_assignment_parts(first) else {
+        return false;
+    };
+    let Some((second_write, second_rhs)) = simple_assignment_parts(second) else {
+        return false;
+    };
+    if contains_call(first_rhs)
+        || contains_call(second_rhs)
+        || contains_unproven_memory_access(first_rhs)
+        || contains_unproven_memory_access(second_rhs)
+    {
+        return false;
+    }
+    let identifiers_are_local = |text: &str| {
+        identifiers(text)
+            .into_iter()
+            .all(|identifier| locals.contains(identifier))
+    };
+    if !identifiers_are_local(first_write)
+        || !identifiers_are_local(first_rhs)
+        || !identifiers_are_local(second_write)
+        || !identifiers_are_local(second_rhs)
+    {
+        return false;
+    }
+    let first_reads = identifiers(first_rhs);
+    let second_reads = identifiers(second_rhs);
+    first_write != second_write
+        && !second_reads.contains(first_write)
+        && !first_reads.contains(second_write)
+}
+
+fn contains_unproven_memory_access(expression: &str) -> bool {
+    expression
+        .chars()
+        .any(|character| matches!(character, '[' | ']' | '.' | '&' | '*'))
+        || expression.contains("->")
+        || expression.contains("volatile")
+}
+
 fn swap_adjacent_statements(source: &str) -> Vec<Mutation> {
     let lines = line_offsets(source);
+    let mut roots = vec![None; lines.len()];
+    let mut scopes = vec![Vec::<usize>::new(); lines.len()];
+    let mut locals_by_root = Vec::<Vec<(usize, Vec<usize>, String)>>::new();
+    let mut scope_stack = Vec::<usize>::new();
+    let mut next_scope = 0usize;
+    let mut root = None;
+    for (index, (start, end)) in lines.iter().copied().enumerate() {
+        let line = &source[start..end];
+        if root.is_none()
+            && line
+                .find('{')
+                .is_some_and(|brace| line[..brace].contains(')'))
+        {
+            root = Some(locals_by_root.len());
+            locals_by_root.push(Vec::new());
+        }
+        roots[index] = root;
+        scopes[index] = scope_stack.clone();
+        if let (Some(root), Some(name)) = (root, scalar_declaration_name(line)) {
+            locals_by_root[root].push((index, scope_stack.clone(), name.to_string()));
+        }
+        for byte in line.bytes() {
+            match byte {
+                b'{' => {
+                    scope_stack.push(next_scope);
+                    next_scope += 1;
+                }
+                b'}' => {
+                    scope_stack.pop();
+                }
+                _ => {}
+            }
+        }
+        if scope_stack.is_empty() {
+            root = None;
+        }
+    }
     let mut output = Vec::new();
     for (index, pair) in lines.windows(2).enumerate() {
         let first = &source[pair[0].0..pair[0].1];
         let second = &source[pair[1].0..pair[1].1];
-        if statement(first) && statement(second) {
+        let same_function = roots[index].is_some()
+            && roots[index] == roots[index + 1]
+            && scopes[index] == scopes[index + 1];
+        let locals = roots[index]
+            .and_then(|root| locals_by_root.get(root))
+            .map_or_else(BTreeSet::new, |declarations| {
+                declarations
+                    .iter()
+                    .filter(|(declaration_index, declaration_scope, _)| {
+                        *declaration_index <= index && scopes[index].starts_with(declaration_scope)
+                    })
+                    .map(|(_, _, name)| name.clone())
+                    .collect()
+            });
+        if same_function
+            && statement(first)
+            && statement(second)
+            && statements_can_swap(first, second, &locals)
+        {
             output.push(Mutation {
                 id: format!("reorder-statements-{index}"),
                 source: format!(
@@ -889,10 +1091,13 @@ fn self_assignments(source: &str) -> Vec<Mutation> {
         let Some((left, _)) = assignment_parts(line) else {
             continue;
         };
+        if !c_identifier(left) {
+            continue;
+        }
         let indent = &line[..line.len() - line.trim_start().len()];
         output.push(Mutation {
             id: format!("self-assignment-{index}"),
-            source: replace_range(source, start, start, &format!("{indent}{left} = {left};\n")),
+            source: replace_range(source, end, end, &format!("{indent}{left} = {left};\n")),
         });
     }
     output
@@ -901,7 +1106,7 @@ fn self_assignments(source: &str) -> Vec<Mutation> {
 fn variable_condition_blocks(source: &str) -> Vec<Mutation> {
     let Some(variable) = line_offsets(source).into_iter().find_map(|(start, end)| {
         let line = &source[start..end];
-        declaration(line)
+        (declaration(line) && !line.contains('(') && line.contains(" = "))
             .then(|| {
                 line.trim()
                     .trim_end_matches(';')
@@ -1033,16 +1238,56 @@ fn pass_variants(pass: PassId, source: &str) -> Vec<Mutation> {
     variants
 }
 
-fn source_variants_with_weights(source: &str, weights: &Weights) -> Vec<Mutation> {
+fn source_variants_with_weights_bounded(
+    source: &str,
+    weights: &Weights,
+    limit: usize,
+    byte_budget: usize,
+) -> Result<Vec<Mutation>, String> {
     let mut output = Vec::new();
+    let mut bytes = 0usize;
     for pass in PassId::ALL {
-        if weights.get(pass) > 0 {
-            output.extend(pass_variants(pass, source));
+        if weights.get(pass) == 0 || output.len() == limit {
+            continue;
+        }
+        // Keep only one pass's variants alive at a time. The previous
+        // collector retained every pass and only truncated after all passes
+        // had been materialized.
+        for variant in pass_variants(pass, source) {
+            if output.len() == limit {
+                break;
+            }
+            if variant.source.len() > MAX_SOURCE_BYTES {
+                return Err(format!(
+                    "generated mutation exceeds the {MAX_SOURCE_BYTES}-byte source budget"
+                ));
+            }
+            bytes = bytes.saturating_add(variant.source.len());
+            if bytes > byte_budget {
+                return Err(format!(
+                    "generated mutation stream exceeds the {byte_budget}-byte budget"
+                ));
+            }
+            output.push(variant);
         }
     }
     for id in TransformId::ALL {
+        if output.len() == limit {
+            break;
+        }
         if let Some(mutated) = apply_transform(id, source) {
             if mutated != source {
+                if mutated.len() > MAX_SOURCE_BYTES {
+                    return Err(format!(
+                        "generated transform exceeds the {MAX_SOURCE_BYTES}-byte source budget"
+                    ));
+                }
+                bytes = bytes.saturating_add(mutated.len());
+                if bytes > byte_budget {
+                    return Err(format!(
+                        "generated mutation stream exceeds the {byte_budget}-byte budget"
+                    ));
+                }
                 output.push(Mutation {
                     id: format!("shape-{}", id.id()),
                     source: mutated,
@@ -1050,7 +1295,7 @@ fn source_variants_with_weights(source: &str, weights: &Weights) -> Vec<Mutation
             }
         }
     }
-    output
+    Ok(output)
 }
 
 fn fingerprint(text: &str) -> u64 {
@@ -1144,17 +1389,45 @@ fn randomizable_ranges(source: &str) -> Vec<(usize, usize)> {
         .collect()
 }
 
-fn marked_variants(source: &str, weights: &Weights) -> Vec<Mutation> {
+fn marked_variants_bounded(
+    source: &str,
+    weights: &Weights,
+    limit: usize,
+    byte_budget: usize,
+) -> Result<Vec<Mutation>, String> {
     let mut output = Vec::new();
+    let mut bytes = 0usize;
     for (region, (start, end)) in randomizable_ranges(source).into_iter().enumerate() {
-        for variant in source_variants_with_weights(&source[start..end], weights) {
+        if output.len() == limit {
+            break;
+        }
+        let remaining = limit.saturating_sub(output.len());
+        for variant in source_variants_with_weights_bounded(
+            &source[start..end],
+            weights,
+            remaining,
+            byte_budget.saturating_sub(bytes),
+        )? {
+            if output.len() == limit {
+                break;
+            }
+            bytes = bytes.saturating_add(variant.source.len());
+            if bytes > byte_budget {
+                return Err(format!(
+                    "marked mutation stream exceeds the {byte_budget}-byte budget"
+                ));
+            }
             output.push(Mutation {
                 id: format!("region-{region}:{}", variant.id),
                 source: replace_range(source, start, end, &variant.source),
             });
         }
     }
-    output
+    Ok(output)
+}
+
+fn marked_variants(source: &str, weights: &Weights) -> Vec<Mutation> {
+    marked_variants_bounded(source, weights, 4096, MAX_PLAN_BYTES).unwrap_or_default()
 }
 
 fn mutation_weight(mutation: &Mutation, weights: &Weights) -> u32 {
@@ -1183,30 +1456,36 @@ fn weighted_index(variants: &[Mutation], weights: &Weights, random: &mut SplitMi
     variants.len() - 1
 }
 
-pub(crate) fn mutate_marked_with_weights(
+pub(crate) fn try_mutate_marked_with_weights(
     source: &str,
     seed: u64,
     limit: usize,
     weights: &Weights,
-) -> Vec<Mutation> {
+) -> Result<Vec<Mutation>, String> {
+    if source.len() > MAX_SOURCE_BYTES {
+        return Err(format!(
+            "source is {} bytes; the maximum permutation source is {MAX_SOURCE_BYTES} bytes",
+            source.len()
+        ));
+    }
     if limit == 0 {
-        return Vec::new();
+        return Ok(Vec::new());
     }
     let identity = materialize(source);
     let mut output = vec![("identity".to_string(), source.to_string())];
     let mut seen = BTreeSet::from([identity]);
-    for mutation in marked_variants(source, weights) {
+    for mutation in marked_variants_bounded(source, weights, limit, MAX_PLAN_BYTES)? {
         let rendered = materialize(&mutation.source);
         if seen.insert(rendered) {
             output.push((mutation.id, mutation.source));
             if output.len() == limit {
-                return output
+                return Ok(output
                     .into_iter()
                     .map(|(id, source)| Mutation {
                         id,
                         source: materialize(&source),
                     })
-                    .collect();
+                    .collect());
             }
         }
     }
@@ -1215,7 +1494,12 @@ pub(crate) fn mutate_marked_with_weights(
     while output.len() < limit && misses < limit.saturating_mul(20).max(100) {
         let parent_index = random.index(output.len());
         let parent = output[parent_index].clone();
-        let variants = marked_variants(&parent.1, weights);
+        let variants = marked_variants_bounded(
+            &parent.1,
+            weights,
+            limit.saturating_sub(output.len()),
+            MAX_PLAN_BYTES,
+        )?;
         if variants.is_empty() {
             misses += 1;
             continue;
@@ -1229,13 +1513,31 @@ pub(crate) fn mutate_marked_with_weights(
             misses += 1;
         }
     }
-    output
+    Ok(output
         .into_iter()
         .map(|(id, source)| Mutation {
             id,
             source: materialize(&source),
         })
-        .collect()
+        .collect())
+}
+
+pub(crate) fn mutate_marked_with_weights(
+    source: &str,
+    seed: u64,
+    limit: usize,
+    weights: &Weights,
+) -> Vec<Mutation> {
+    try_mutate_marked_with_weights(source, seed, limit, weights).unwrap_or_else(|_| {
+        if limit == 0 {
+            Vec::new()
+        } else {
+            vec![Mutation {
+                id: "identity".into(),
+                source: materialize(source),
+            }]
+        }
+    })
 }
 
 pub(crate) fn mutate_marked(source: &str, seed: u64, limit: usize) -> Vec<Mutation> {
@@ -1263,6 +1565,55 @@ pub fn self_test() -> Result<(), String> {
     if unique.len() != first.len() {
         return Err("mutation plan contains duplicate sources".into());
     }
+    let self_assignment = self_assignments(source)
+        .into_iter()
+        .find(|mutation| mutation.id == "self-assignment-3")
+        .ok_or_else(|| "safe self-assignment mutation is missing".to_string())?;
+    if !self_assignment
+        .source
+        .contains("    b = x & y;\n    b = b;\n")
+    {
+        return Err("self-assignment must follow initialization".into());
+    }
+    let dependent = "void f(void) {\n    s32 step;\n    s32 probe;\n    s32 input;\n    step = input;\n    probe = step + input;\n}\n";
+    if !swap_adjacent_statements(dependent).is_empty() {
+        return Err("statement reorder crossed a write-to-read dependency".into());
+    }
+    let anti_dependent = "void f(void) {\n    s32 probe;\n    s32 step;\n    s32 input;\n    probe = step + input;\n    step = input;\n}\n";
+    if !swap_adjacent_statements(anti_dependent).is_empty() {
+        return Err("statement reorder crossed a read-to-write dependency".into());
+    }
+    let independent = "void f(void) {\n    s32 x;\n    s32 y;\n    s32 a;\n    s32 b;\n    s32 c;\n    s32 d;\n    x = a + b;\n    y = c + d;\n}\n";
+    if swap_adjacent_statements(independent).len() != 1 {
+        return Err("independent scalar statements were not reorderable".into());
+    }
+    let calls = "void f(void) {\n    s32 x;\n    s32 y;\n    x = first();\n    y = second();\n}\n";
+    if !swap_adjacent_statements(calls).is_empty() {
+        return Err("statement reorder crossed unknown call side effects".into());
+    }
+    let memory = "void f(void) {\n    s32 x;\n    s32 y;\n    s32 source;\n    s32 values;\n    s32 index;\n    x = *source;\n    y = values[index];\n}\n";
+    if !swap_adjacent_statements(memory).is_empty() {
+        return Err("statement reorder crossed unproven memory access".into());
+    }
+    let global = "s32 global;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    s32 local;\n    x = global;\n    y = local;\n}\n";
+    if !swap_adjacent_statements(global).is_empty() {
+        return Err("statement reorder touched a global scalar access".into());
+    }
+    let volatile = "volatile s32 status;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    x = status;\n    y = x;\n}\n";
+    if !swap_adjacent_statements(volatile).is_empty() {
+        return Err("statement reorder touched a volatile scalar access".into());
+    }
+    let later_declaration = "s32 global;\nvolatile s32 status;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    x = global;\n    y = local;\n    s32 local;\n    x = status;\n    y = later;\n    s32 later;\n}\n";
+    if !swap_adjacent_statements(later_declaration).is_empty() {
+        return Err("a later declaration made an earlier assignment swappable".into());
+    }
+    if !self_assignments("    values[index] = value;\n").is_empty() {
+        return Err("self-assignment targeted an indexed lvalue".into());
+    }
+    let prototype = "u8 *Func_020094c0();\nvoid f(void) {\n    s32 value;\n    value = 1;\n}\n";
+    if !variable_condition_blocks(prototype).is_empty() {
+        return Err("function prototype was used as a synthetic condition".into());
+    }
     let names = PassId::ALL
         .into_iter()
         .map(PassId::name)
@@ -1287,4 +1638,50 @@ pub fn self_test() -> Result<(), String> {
         return Err("PERM_RANDOMIZE/IGNORE region boundary was not preserved".into());
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{self_assignments, swap_adjacent_statements};
+
+    #[test]
+    fn accepts_statement_reorders_for_local_nonvolatile_scalars() {
+        let source = "void f(void) {\n    s32 x;\n    s32 y;\n    s32 a;\n    s32 b;\n    x = a + b;\n    y = a - b;\n}\n";
+        assert_eq!(swap_adjacent_statements(source).len(), 1);
+    }
+
+    #[test]
+    fn rejects_statement_reorders_with_unproven_memory_access() {
+        let source = "void f(void) {\n    s32 x;\n    s32 y;\n    s32 source;\n    s32 values;\n    s32 index;\n    x = *source;\n    y = values[index];\n}\n";
+        assert!(swap_adjacent_statements(source).is_empty());
+    }
+
+    #[test]
+    fn rejects_global_and_volatile_scalar_accesses() {
+        let source = "s32 global;\nvolatile s32 status;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    s32 local;\n    x = global;\n    y = local;\n    x = status;\n    y = local;\n}\n";
+        assert!(swap_adjacent_statements(source).is_empty());
+    }
+
+    #[test]
+    fn declaration_visibility_is_position_and_scope_bounded() {
+        let source = "s32 global;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    x = global;\n    y = later;\n    s32 later;\n    {\n        s32 inner;\n        x = inner;\n        y = global;\n    }\n    {\n        s32 sibling;\n        x = sibling;\n        y = inner;\n    }\n}\n";
+        assert!(swap_adjacent_statements(source).is_empty());
+    }
+
+    #[test]
+    fn keeps_self_assignment_after_initializing_statement() {
+        let source = "    value = next();\n";
+        let variants = self_assignments(source);
+        assert_eq!(variants.len(), 1);
+        assert_eq!(
+            variants[0].source,
+            "    value = next();\n    value = value;\n"
+        );
+    }
+
+    #[test]
+    fn rejects_non_scalar_self_assignment_targets() {
+        let source = "    values[index] = value;\n    *pointer = value;\n    9invalid = value;\n";
+        assert!(self_assignments(source).is_empty());
+    }
 }

@@ -72,7 +72,7 @@ pub const ASSET_FRACTION: [(&str, f64); 6] = [
 ];
 
 const BOX_TREE_LEGEND: [(&str, &str); 9] = [
-    ("exact_c", "Exact"),
+    ("exact_c", "Exact C"),
     ("semantic_c", "Semantic"),
     ("retained_asm", "Permanent ASM"),
     ("asset_objects", "Objects"),

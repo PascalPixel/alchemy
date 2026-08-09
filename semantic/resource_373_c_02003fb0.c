@@ -63,7 +63,7 @@
 
 /* The overlay's scene block, reached through the IWRAM pointer at 0x03001ebc;
  * this owner loads that pool word at four separate sites. */
-#define RESOURCE_373_SCENE (*(u8 *volatile *)0x03001ebc)
+#define RESOURCE_373_SCENE (*(u8 **)0x03001ebc)
 #define RESOURCE_373_SCENE_COUNTER (*(u16 *)(RESOURCE_373_SCENE + 0x1d8))
 
 /* In-image data at file offsets 0x6590, 0x6614 and 0x65cc. */
@@ -609,6 +609,7 @@ void Func_02003fb0(void)
     u8 *camera;             /* fp - the record for actor 0 */
     u8 *actor;              /* r7 - whichever record is in hand */
     u32 frame;
+    s32 zero = 0;
 
     camera = Func_02009fa8(0);
 
@@ -618,7 +619,11 @@ void Func_02003fb0(void)
     Func_0200a0c0(-1, -1, -1, 0);
     Func_02009e6e(1);
 
-    Func_02009f32(0x31, 0x35, 8, 4, 20, 50);
+    {
+        s32 frames = 20;
+        s32 delay = 50;
+        Func_02009f32(0x31, 0x35, 8, 4, frames, delay);
+    }
     Func_02009f3e(2, 0x66, 0x54, 0x29, 2, 1);
     Func_02009f4e(1, 0x66, 0x53, 0x29, 1, 1);
     Func_02009f5e(0, 0x67, 0x52, 0x2a, 1, 1);
@@ -635,30 +640,29 @@ void Func_02003fb0(void)
 
     Func_0200a0d6(0, 11);
     Func_0200a08e(0, Data_0200e590);
-
     /* Three actors at the same X/Y with stepped Z (0x348, 0x34c, 0x350). */
-    actor[0x55] = 0;
-    *(s32 *)(actor + 16) = 0x03480000;
     actor = Func_0200a084(23);
+    actor[0x55] = (u8)zero;
+    *(s32 *)(actor + 16) = 0x03480000;
     *(s32 *)(actor + 8) = 0x01840000;
     *(s32 *)(actor + 12) = 0x00a00000;
     Func_0200a00e(actor, 0);
 
-    *(s32 *)(actor + 16) = 0x034c0000;
-    *(s32 *)(actor + 12) = 0x00a00000;
-    actor[0x55] = 0;
-    *(s32 *)(actor + 8) = 0x01840000;
     actor = Func_0200a0ac(24);
+    actor[0x55] = (u8)zero;
+    *(s32 *)(actor + 16) = 0x034c0000;
+    *(s32 *)(actor + 8) = 0x01840000;
+    *(s32 *)(actor + 12) = 0x00a00000;
     Func_0200a02e(actor, 0);
 
     actor = Func_0200a0cc(25);
-    actor[0x55] = 0;
+    actor[0x55] = (u8)zero;
+    *(s32 *)(actor + 16) = 0x03500000;
     *(s32 *)(actor + 8) = 0x01840000;
     *(s32 *)(actor + 12) = 0x00a00000;
     Func_0200a04e(actor, 0);
-    *(s32 *)(actor + 16) = 0x03500000;
 
-    Func_0200a1fa()[0x55] = 0;
+    Func_0200a1fa()[0x55] = (u8)zero;
 
     Func_02009f9e(1);
     Func_0200a202(0x017f0000, 0x00a00000, 0x036d0000, 0);
@@ -853,8 +857,8 @@ void Func_02003fb0(void)
 
     Func_0200a7c8(21, 0, 20);
     Func_0200a7b6(0xf0a);
-    Func_0200a762(21, 0x182, 0x349);
     Func_0200a6f8(10);
+    Func_0200a762(21, 0x182, 0x349);
     Func_0200a7fc(21, 0xd000, 60);
     Func_0200a7bc(21, 2);
     Func_0200a7fe(21, 0, 20);
@@ -1127,7 +1131,11 @@ void Func_02003fb0(void)
     Func_0200b114(1, 13);
     Func_0200b12e(1, 2, 5);
     Func_0200b032(Func_0200b0c4(1), 0);
-    Func_0200b02e(2, 0x66, 0x54, 0x29, 2, 1);
+    {
+        s32 frames = 2;
+        s32 delay = 1;
+        Func_0200b02e(2, 0x66, 0x54, 0x29, frames, delay);
+    }
     Func_0200b24c(0x8f);
     Func_0200b062(0, 0x40000, 0x10000);
     Func_0200b17a(1, 3);

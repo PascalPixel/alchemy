@@ -1,6 +1,6 @@
-# Bare `[workspace]`: this crate is its own workspace so it builds concurrently
-# with its siblings and does not touch `tools/Cargo.toml`. That also means
-# `version.workspace` cannot resolve, so both keys are literal.
+# Bare `[workspace]`: this crate is an independently buildable workspace
+# rather than a member of the aggregate tools workspace. `version.workspace`
+# cannot resolve here, so both keys are literal.
 [workspace]
 
 [package]

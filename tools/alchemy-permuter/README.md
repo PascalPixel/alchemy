@@ -27,9 +27,44 @@ is honored. Run `--help=randomization-passes` to list them.
 
 Searches are deterministic for a seed, deduplicate generated sources, compile
 with bounded parallelism, stop on exact output by default, and write candidates
-plus `report.json` under ignored `out/alchemy-permuter/`. `--resume` journals
-successful measurements incrementally. Its cache identity includes the target
-and compiler inputs, so changed compiler evidence cannot reuse a stale score.
+plus `report.json` under an ignored, dedicated run directory. The default path
+includes a full input identity and seed, so same-named files do not collide.
+`--output DIR` must be a new child directory under the repository `out/` tree
+or the operating system's temporary directory; with multiple inputs it is a
+parent and each input receives its own identity-named child. An existing run
+directory is accepted only with `--resume` and its marker must match the input,
+compiler, and seed. An active claim prevents concurrent runs; a stale claim is
+reported for manual inspection rather than guessed away.
+
+Each run records the exact output files it owns. On Unix, the run is opened and
+claimed through a directory descriptor; owned writes and cleanup use no-follow,
+descriptor-relative operations, so a rename or symlink swap at the visible path
+cannot redirect them. Resume cleanup removes only recorded candidate/report
+files, never every `candidate-*.c` in a shared directory, and preserves
+unrecognized files rather than taking ownership of them.
+
+The v3 journal binds every row to the complete input/compiler/seed run identity,
+candidate source fingerprint, and measurement with SHA-256. A changed or
+unauthenticated row is rejected; an authenticated exact row is still recompiled
+before it can terminate a resumed search. Generated mutation streams are
+bounded while each pass is consumed, and source/plan limits are checked before
+workers start. Candidate/report and journal budgets are conservatively
+preflighted before backend compilation, with runtime checks retained as a final
+I/O guard. Generated sources are capped at 8 MiB each, the retained plan at 128
+MiB, and journal/results at 32 MiB. Every local run also has a hard ceiling of
+100,000 iterations.
+
+Use the permuter only after the C has passed the semantic-readiness checklist in
+[`../../CONTRIBUTING.md`](../../CONTRIBUTING.md). It is a residual search, not a
+substitute for recovering boundaries, types, aliases, calls, or side effects. A
+large diffuse score usually means the input source is not ready.
+
+Automatic statement reordering must preserve C dependencies: write/read,
+read/write, write/write, and ordering across calls whose effects are not proved
+independent. A candidate that compiles or scores better is still rejected if it
+reads a value before initialization or changes reviewed behavior. Inspect every
+winning diff before adoption and reproduce an exact result through the owner's
+real routed build.
 
 The local tool does not implement the permuter@home network protocol. Remote
 execution brings a separate authenticated service, container, and untrusted

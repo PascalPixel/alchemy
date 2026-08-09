@@ -192,6 +192,48 @@ impl Default for Options {
 
 pub const USAGE: &str = "usage: build-rom [-h] [-o OUTPUT] [--jobs JOBS] [rom]";
 
+/// Exercise the shipped pipeline helpers without invoking the full ROM build.
+/// The binary exposes this as `--self-test` so the repository-wide runner tests
+/// the same entry point contributors use.
+pub fn self_test() -> Result<String, String> {
+    let parsed = parse_args(&[
+        "--output".into(),
+        "out/self-test".into(),
+        "--jobs=2".into(),
+        "fixture.gba".into(),
+    ])?;
+    let ParseOutcome::Options(options) = parsed else {
+        return Err("build-rom self-test parsed fixture as help".into());
+    };
+    if options.rom != "fixture.gba" || options.output != "out/self-test" || options.jobs != 2.0 {
+        return Err("build-rom self-test argument fixture changed".into());
+    }
+
+    let pieces = vec![Piece {
+        address: ROM_BASE + 4,
+        size: 4,
+        kind: Kind::Incbin("source.bin".into()),
+    }];
+    let filled = fill_gaps(&pieces, 12)?;
+    let summary = summary_line(&filled, 12);
+    if summary != "identical=True pieces=3 regions=1 source_bytes=4 skeleton_bytes=8" {
+        return Err(format!("build-rom self-test layout changed: {summary}"));
+    }
+    let (lines, placements) = render_fill(&filled, "/rom/fixture.gba", "/rom/fill.o");
+    if lines.len() != 7
+        || placements.len() != 3
+        || !lines.iter().any(|line| line.contains("source.bin"))
+    {
+        return Err("build-rom self-test rendering lost a region".into());
+    }
+    if mismatch_error(&[1, 2, 3], &[1, 9, 3])
+        != "linked ROM differs (size 0x3 vs 0x3, first diff at 0x08000001)"
+    {
+        return Err("build-rom self-test mismatch reporting changed".into());
+    }
+    Ok(format!("self-test=ok pieces={}", filled.len()))
+}
+
 /// The outcome of `parseArgs`: either options, or the `-h` early exit.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParseOutcome {

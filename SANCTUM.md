@@ -1,67 +1,64 @@
-# Sanctum: the sealed-owner ledger
+# Exhausted-search ledger (Sanctum)
 
-Sol Sanctum is sealed until the right keys exist. This ledger records owners
-withdrawn from routine attack because **both** search axes are exhausted, so a
-later agent stops rediscovering the same floor.
+This file prevents contributors from repeatedly attacking an owner after both
+bounded search axes have completed with nonzero residuals. “Sanctum” is the
+*Golden Sun* shorthand: like Sol Sanctum, an owner is sealed until new evidence
+provides a key. The useful mechanism is the ledger and queue, not the name.
 
-This is not the same concept as retained assembly. `retained_asm` in
-[metrics/gs1-en-coverage-map.json](metrics/gs1-en-coverage-map.json), guarded by
-`tools/core-retained-audit`, records regions
-that are permanently assembly. Sanctum records owners that *could* have a C form
-but where the bounded search for it has been run out. Sealing is a statement
-about our search, not about the ROM.
+This is not permanent assembly. Permanent assembly records code deliberately
+kept outside C. A sealed owner may still have an exact C form; it is simply
+withdrawn from routine search until its source model, compiler evidence, or
+tooling changes.
 
-[LAWS.md](LAWS.md) records what we proved true. Sanctum records where we stopped.
+## Admission rule
 
-## The two axes
+An owner may be sealed only when all of these are true:
 
-An owner may only be sealed once both have been run and neither reaches exact:
+1. its C has passed the semantic-readiness review in `CONTRIBUTING.md`;
+2. the bounded compiler-mode search has completed without an exact result;
+3. the bounded deterministic source-shape search has completed without an
+   exact result; and
+4. the smallest witnessed residual is recorded and understood well enough to
+   distinguish it from a bad owner boundary or guessed source model.
 
-| Axis | Tool | Searches |
+The two deterministic axes are:
+
+| Axis | Command | Holds fixed |
 |---|---|---|
-| Compiler | `tools/mode-sweep` | flags and compiler family, source held fixed |
-| Source shape | `tools/shape-sweep/target/release/shape-sweep` | equivalent source forms, compiler held fixed |
+| compiler | `compiler mode_sweep` | source |
+| source shape | `search shape_sweep` | compiler route |
 
-Exhausting one axis is not a seal. A residual that survives every flag is the
-normal starting point for the shape axis, and the reverse holds too.
-
-Both tools are bounded and deterministic, which is what makes a seal meaningful.
-Retired stochastic experiments can be historical evidence, but a run that
-finds nothing proves nothing and can never justify sealing.
+Run these through `tools/dispatch`. A stochastic permuter run that finds
+nothing is cost evidence, not proof of exhaustion, and cannot seal an owner.
 
 ## Entry format
 
-Each entry is one list item under `## Sealed`, in this shape, enforced by
-`tools/check-sanctum`:
+`check check_sanctum` enforces one list item per owner under `## Sealed`:
 
+```text
+- `<owner>` floor=<N>hw axes=compiler,shape — <the localized residual>
 ```
-- `<owner>` floor=<N>hw axes=compiler,shape — <one line naming what the residual is>
-```
 
-`<owner>` is a stem exactly as it appears under `semantic/`, without the
-extension. `floor` is the smallest differing-halfword count either axis reached.
-
-Removing an entry needs no ceremony: if an owner goes exact, the checker
-**requires** its removal, because a sealed owner that is now solved is a lie the
-next agent would believe.
+`<owner>` is the filename stem under `semantic/`. `floor` is the smallest
+differing-halfword count reached by either completed axis; the two axes need
+not end at the same floor. Remove an entry as soon as that owner becomes exact;
+the checker treats a solved sealed owner as stale evidence.
 
 ## Sealed
 
-<!-- No owner qualifies yet: the shape axis (shape-sweep) is newer than
-     every floor record on disk, so nothing has had both axes run against it.
-     An empty section here is the honest state, not an oversight. -->
+<!-- No owner currently qualifies. Existing floor records predate a completed
+     source-shape pass, so claiming both axes would overstate the evidence. -->
 
-## Immediate shape-axis queue
+## Immediate source-shape queue
 
-36 owners have an exhausted **compiler** axis on record and have never had the
-shape axis run. They are the first candidates for `shape-sweep`, and the
-first candidates to become sealed entries if it also fails. Regenerate the list
-with:
+There are currently 32 owners with a completed compiler axis and no recorded
+source-shape pass. This is a live queue, not 32 sealed owners. Regenerate it:
 
-```
-tools/check-sanctum/target/release/check-sanctum --queue
+```sh
+cargo run --release --manifest-path tools/dispatch/Cargo.toml -- \
+  check check_sanctum --queue
 ```
 
-The lowest floors are the best targets: a 10-halfword residual after a complete
-flag sweep is a source-shape question by elimination, which is exactly what the
-shape axis exists to answer.
+Start with the lowest localized floors. If a source is wrong-sized or its
+residual is diffuse, return it to reconstruction instead of treating a failed
+shape sweep as exhaustion.

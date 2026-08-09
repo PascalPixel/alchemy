@@ -74,21 +74,27 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
 {
     u8 *scene = RESOURCE_373_SCENE;
     struct Resource373Object *player = Func_0200634e(0);
-    struct Resource373Object **objects =
-        (struct Resource373Object **)(scene + 0x34);
+    struct Resource373Object **objects;
     s32 slot;
 
-    *directionOut = ((const u16 *)player)[3] >> 12;   /* halfword at +6 */
+    *directionOut = ((const u16 *)player)[3] >> 12;
+    objects = (struct Resource373Object **)(scene + 0x34);
 
     for (slot = 8; (u32)slot <= 65; slot++, objects++) {
         struct Resource373Object *object = *objects;
         struct Resource373Anchor *anchor = (struct Resource373Anchor *)object;
-        s32 kind = object->handle->kind->id;
-        const s32 *kinds = RESOURCE_373_KIND_LIST;
+        s16 kind;
+        const s32 *kinds;
+        const struct Resource373Box *box;
         s32 index;
 
-        for (index = 0; (u32)index <= 5; index++) {
-            const struct Resource373Box *box = &RESOURCE_373_KIND_BOXES[index];
+        index = 0;
+        kind = object->handle->kind->id;
+        box = RESOURCE_373_KIND_BOXES;
+        kinds = RESOURCE_373_KIND_LIST;
+
+        {
+        for (; (u32)index <= 5; index++, box++) {
             s32 step;
             s32 probeX;
             s32 probeZ;
@@ -96,12 +102,17 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
             s32 boxZ0;
             s32 boxX1;
             s32 boxZ1;
+            s32 playerX;
+            s32 playerZ;
 
             if (kind != *kinds++) {
                 continue;
             }
 
             *kindIndexOut = index;
+
+            playerX = player->x;
+            playerZ = player->z;
 
             /*
              * The packed direction word carries the X step in its high half
@@ -110,13 +121,13 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
              * to whole squares by an arithmetic shift of 4.
              */
             step = RESOURCE_373_DIRECTION_STEPS[*directionOut];
-            probeX = ((player->x >> 16) + (step >> 16)) >> 4;
-            probeZ = ((player->z >> 16) + ((step << 16) >> 16)) >> 4;
+            probeX = ((playerX >> 16) + (step >> 16)) >> 4;
+            probeZ = ((playerZ >> 16) + ((step << 16) >> 16)) >> 4;
 
+            boxZ0 = (anchor->anchorZ + box->z0) >> 4;
             boxX0 = (anchor->anchorX + box->x0) >> 4;
             boxX1 = (anchor->anchorX + box->x1) >> 4;
             boxZ1 = (anchor->anchorZ + box->z1) >> 4;
-            boxZ0 = (anchor->anchorZ + box->z0) >> 4;
 
             if (boxX0 > probeX || probeX >= boxX1) {
                 continue;
@@ -126,17 +137,18 @@ struct Resource373Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
             }
 
             if ((index & 1) != 0) {
-                if (boxX0 == (player->x >> 20)) {
+                if (boxX0 == (playerX >> 20)) {
                     continue;
                 }
             } else {
-                if (boxZ0 == (player->z >> 20)) {
+                if (boxZ0 == (playerZ >> 20)) {
                     continue;
                 }
             }
 
             *slotOut = slot;
             return object;
+        }
         }
     }
 

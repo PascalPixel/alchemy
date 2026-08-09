@@ -80,20 +80,14 @@ pub mod re {
     pub fn is_js_space(c: char) -> bool {
         matches!(
             c,
-            '\t' | '\n'
-                | '\u{b}'
-                | '\u{c}'
-                | '\r'
-                | ' '
-                | '\u{a0}'
-                | '\u{1680}'
-                | '\u{2000}'..='\u{200a}'
-                | '\u{2028}'
-                | '\u{2029}'
-                | '\u{202f}'
-                | '\u{205f}'
-                | '\u{3000}'
-                | '\u{feff}'
+            '\t' | '\n' | '\u{b}' | '\u{c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'
+                ..='\u{200a}'
+                    | '\u{2028}'
+                    | '\u{2029}'
+                    | '\u{202f}'
+                    | '\u{205f}'
+                    | '\u{3000}'
+                    | '\u{feff}'
         )
     }
 
@@ -167,9 +161,7 @@ pub mod re {
         let w: Vec<char> = word.chars().collect();
         let mut p = open;
         while p + w.len() <= close {
-            if chars[p..p + w.len()] == w[..]
-                && boundary(chars, p)
-                && boundary(chars, p + w.len())
+            if chars[p..p + w.len()] == w[..] && boundary(chars, p) && boundary(chars, p + w.len())
             {
                 return true;
             }
@@ -237,9 +229,10 @@ pub mod re {
             // then the rest -- mirroring the source alternation order. Order
             // only affects which branch wins, never whether one does, so the
             // simple any() below is equivalent.
-            if fixed.iter().any(|m| {
-                starts_with(body, i, m) && boundary(body, i + m.chars().count())
-            }) {
+            if fixed
+                .iter()
+                .any(|m| starts_with(body, i, m) && boundary(body, i + m.chars().count()))
+            {
                 return true;
             }
             i + 3 <= body.len()
@@ -313,9 +306,7 @@ pub mod re {
             return false;
         }
         let mut e = i + 1;
-        while e < line.len()
-            && (line[e].is_ascii_alphanumeric() || line[e] == '.')
-        {
+        while e < line.len() && (line[e].is_ascii_alphanumeric() || line[e] == '.') {
             e += 1;
         }
         e < line.len() && is_js_space(line[e])
@@ -517,14 +508,14 @@ pub fn group_owners(rows: &[RowFacts]) -> Vec<Owner> {
 // ---------------------------------------------------------------------------
 
 pub fn read_utf8_lossy(path: &Path) -> Result<String, String> {
-    let bytes = fs::read(path)
-        .map_err(|error| format!("cannot read {}: {error}", path.display()))?;
+    let bytes =
+        fs::read(path).map_err(|error| format!("cannot read {}: {error}", path.display()))?;
     Ok(String::from_utf8_lossy(&bytes).into_owned())
 }
 
 fn admitted_stems(root: &Path) -> BTreeSet<String> {
     let mut stems = BTreeSet::new();
-    for directory in ["exact", "semantic/main"] {
+    for directory in ["exact", "semantic"] {
         let path = root.join(directory);
         if !path.exists() {
             continue;
@@ -682,21 +673,20 @@ fn registered_coverage(root: &Path) -> Result<Coverage, String> {
                 (a.start, a.end, b.start, b.end)
             {
                 if a_start < b_end && b_start < a_end {
-                    return Err(
-                        "overlapping non-C ranges in semantic/main-regions.json".into()
-                    );
+                    return Err("overlapping non-C ranges in semantic/main-regions.json".into());
                 }
             }
         }
         let a = non_c_ranges[index];
         if let (Some(a_start), Some(a_end)) = (a.start, a.end) {
-            if executable_ranges.iter().any(|range| match (range.start, range.end) {
-                (Some(start), Some(end)) => a_start < end && start < a_end,
-                _ => false,
-            }) {
-                return Err(
-                    "non-C range overlaps registered semantic executable coverage".into(),
-                );
+            if executable_ranges
+                .iter()
+                .any(|range| match (range.start, range.end) {
+                    (Some(start), Some(end)) => a_start < end && start < a_end,
+                    _ => false,
+                })
+            {
+                return Err("non-C range overlaps registered semantic executable coverage".into());
             }
         }
     }
@@ -746,7 +736,11 @@ pub fn census_declared_closed(root: &Path) -> Result<bool, String> {
 }
 
 pub fn read_manifest_regions(root: &Path) -> Result<Vec<Region>, String> {
-    let path = root.join("out").join("full").join("asm").join("manifest.json");
+    let path = root
+        .join("out")
+        .join("full")
+        .join("asm")
+        .join("manifest.json");
     let manifest: serde_json::Value = serde_json::from_str(&read_utf8_lossy(&path)?)
         .map_err(|error| format!("cannot parse {}: {error}", path.display()))?;
     let regions = manifest
@@ -816,10 +810,14 @@ pub fn open_owners(root: &Path) -> Result<Vec<Owner>, String> {
         {
             continue;
         }
-        if coverage.owner_spans.iter().any(|span| match (span.lo, span.hi) {
-            (Some(lo), Some(hi)) => region.address >= lo && region.address < hi,
-            _ => false,
-        }) {
+        if coverage
+            .owner_spans
+            .iter()
+            .any(|span| match (span.lo, span.hi) {
+                (Some(lo), Some(hi)) => region.address >= lo && region.address < hi,
+                _ => false,
+            })
+        {
             continue;
         }
         if coverage
@@ -906,7 +904,10 @@ pub fn owners_to_json(owners: &[Owner]) -> String {
             "    \"executableBytes\": {},\n",
             owner.executable_bytes
         ));
-        out.push_str(&format!("    \"excludedBytes\": {},\n", owner.excluded_bytes));
+        out.push_str(&format!(
+            "    \"excludedBytes\": {},\n",
+            owner.excluded_bytes
+        ));
         out.push_str(&format!(
             "    \"advertisedBytes\": {},\n",
             owner.advertised_bytes
@@ -918,7 +919,11 @@ pub fn owners_to_json(owners: &[Owner]) -> String {
             owner.suspected_pool_bytes
         ));
         out.push_str("  }");
-        out.push_str(if index + 1 < owners.len() { ",\n" } else { "\n" });
+        out.push_str(if index + 1 < owners.len() {
+            ",\n"
+        } else {
+            "\n"
+        });
     }
     out.push(']');
     out
@@ -1178,15 +1183,27 @@ mod tests {
     #[test]
     fn blx_matches_the_three_letter_branch_alternative() {
         // `bl` and `b` both fail their \b check on "blx"; b[a-z]{2} wins.
-        assert!(has_branch_or_stack(&"\tblx r3\n".chars().collect::<Vec<_>>()));
+        assert!(has_branch_or_stack(
+            &"\tblx r3\n".chars().collect::<Vec<_>>()
+        ));
         // Uppercase is not matched: the alternation has no /i flag.
-        assert!(!has_branch_or_stack(&"\tBLX r3\n".chars().collect::<Vec<_>>()));
+        assert!(!has_branch_or_stack(
+            &"\tBLX r3\n".chars().collect::<Vec<_>>()
+        ));
         // `b.n` matches via the bare `b` branch, since '.' is a non-word char.
-        assert!(has_branch_or_stack(&"\tb.n .L_1\n".chars().collect::<Vec<_>>()));
+        assert!(has_branch_or_stack(
+            &"\tb.n .L_1\n".chars().collect::<Vec<_>>()
+        ));
         // A four-letter b-word does not match any branch.
-        assert!(!has_branch_or_stack(&"\tbendy r3\n".chars().collect::<Vec<_>>()));
-        assert!(has_branch_or_stack(&"\tbeq .L_1\n".chars().collect::<Vec<_>>()));
-        assert!(!has_branch_or_stack(&"\tmovs r0, #0\n".chars().collect::<Vec<_>>()));
+        assert!(!has_branch_or_stack(
+            &"\tbendy r3\n".chars().collect::<Vec<_>>()
+        ));
+        assert!(has_branch_or_stack(
+            &"\tbeq .L_1\n".chars().collect::<Vec<_>>()
+        ));
+        assert!(!has_branch_or_stack(
+            &"\tmovs r0, #0\n".chars().collect::<Vec<_>>()
+        ));
     }
 
     #[test]
@@ -1199,7 +1216,10 @@ mod tests {
         assert_eq!(count_bl_calls(&"\tbl\n".chars().collect::<Vec<_>>()), 0);
         // Blank lines before a call still yield exactly one match, because the
         // greedy `\s*` from the earlier line start swallows them.
-        assert_eq!(count_bl_calls(&"\n\n\tbl a\n".chars().collect::<Vec<_>>()), 1);
+        assert_eq!(
+            count_bl_calls(&"\n\n\tbl a\n".chars().collect::<Vec<_>>()),
+            1
+        );
     }
 
     #[test]
@@ -1404,10 +1424,7 @@ mod tests {
             calls: 0,
         };
         // "\u{ffff}" > "\u{10000}" in UTF-16 code units, but "<" as bytes.
-        let owners = group_owners(&[
-            row(0x0800_0004, "\u{10000}"),
-            row(0x0800_0000, "\u{ffff}"),
-        ]);
+        let owners = group_owners(&[row(0x0800_0004, "\u{10000}"), row(0x0800_0000, "\u{ffff}")]);
         let stems: Vec<&str> = owners[0].rows.iter().map(|r| r.stem.as_str()).collect();
         assert_eq!(stems, ["\u{ffff}", "\u{10000}"]);
     }
@@ -1482,6 +1499,24 @@ mod tests {
     fn pad_start_does_not_truncate() {
         assert_eq!(pad_start_5(4), "    4");
         assert_eq!(pad_start_5(123456), "123456");
+    }
+
+    #[test]
+    fn admitted_sources_use_the_flat_semantic_directory() {
+        let root = std::env::temp_dir().join(format!(
+            "semantic-owner-scope-layout-{}-{}",
+            std::process::id(),
+            line!()
+        ));
+        fs::create_dir_all(root.join("semantic/main")).unwrap();
+        fs::write(root.join("semantic/08001234.c"), "").unwrap();
+        fs::write(root.join("semantic/main/08005678.c"), "").unwrap();
+
+        let stems = admitted_stems(&root);
+        fs::remove_dir_all(&root).unwrap();
+
+        assert!(stems.contains("08001234"));
+        assert!(!stems.contains("08005678"));
     }
 
     // -- Real-tree agreement ------------------------------------------------

@@ -3,9 +3,13 @@ use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-use wordstream::{export_words, import_words};
+use wordstream::{export_words, import_words, self_test};
 
 fn run(args: Vec<String>) -> Result<(), String> {
+    if args.as_slice() == ["--self-test"] {
+        println!("{}", self_test()?);
+        return Ok(());
+    }
     if args.iter().any(|arg| arg == "-h" || arg == "--help") {
         println!("usage: wordstream {{export,build}} INPUT OUTPUT");
         return Ok(());

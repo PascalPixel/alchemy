@@ -1,5 +1,3 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
-
 # Compiler law ledger
 
 This ledger records compiler behavior that Alchemy has reproduced from its
@@ -14,10 +12,25 @@ locally. A confirmed law must name its in-repository evidence, scope, and
 confirmation date. An exact match proves the cited source shape; broader claims
 must be tested on more than one function before being generalized.
 
+This is an evidence ledger, not the contributor tutorial or a live work queue.
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), use heading search here when a
+localized residual suggests a known compiler behavior, and put current work in
+[STATUS.md](STATUS.md). Preserve negative experiments: they are stop rules that
+keep later contributors from paying for the same dead end.
+
 Operational compiler/build commands in this ledger use the native `tools`
 paths. A `.ts` or `.py` name retained in a dated measurement, experiment, or
 retirement table identifies the historical implementation that produced that
 evidence; it is not a current command.
+
+The current GS1 compiler source is
+[`alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c`](alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c).
+Dated entries may retain fork-relative locators such as `gcc-2.96/gcc/...`,
+short `arm.c:<line>` references, or scratch paths under `work/` and `/tmp/`.
+Those are historical evidence locators, not current repository paths or
+instructions. Game-specific claims in this ledger come from the approved ROM
+set and local reconstruction evidence; external project references describe
+generic methodology only and are not game-knowledge evidence.
 
 ## Confirmed laws
 
@@ -587,13 +600,13 @@ against the approved bundle; full sourced notes in
   pre-epilogue pools, the queue-push head order, and the store-multiple
   idiom are candidates for a second-vintage explanation. Any second
   approved bundle is a project decision with its own evidence bar.
-- **Permuter craft imports:** upstream decomp-permuter's manual-mode
+- **Generic permuter methodology:** upstream decomp-permuter's manual-mode
   PERM macro family (alternative sets, statement lineswap, deferred
-  meta-variables) and per-compiler weight files are proven mechanisms to
-  port into `permute_v1.ts`; scoring uses graded objdump-diff penalties
-  with stack offsets excluded by default. Matched-example retrieval during
-  drafting is the community's highest-value context signal
-  (validates tool-investment priority 5).
+  meta-variables) and per-compiler weight files are cited as generic mechanisms
+  considered for the historical `permute_v1.ts`; scoring uses graded
+  objdump-diff penalties with stack offsets excluded by default. Matched-example
+  retrieval during drafting is a workflow signal, not game-specific source or
+  naming evidence.
 
 ### In-place pointer advance and preheader statement order (2026-07-24)
 
@@ -1756,8 +1769,9 @@ against the approved bundle; full sourced notes in
   the shape of that account and it should not be repeated. It is not one block
   (two branches, above). And the residual runs the *other* way: within the code
   region the reference emits **7** split `movs #imm` / `lsls #k` pairs and one
-  `adds rN,rM,#0` copy, while the best candidate (`/tmp/ov37a2614/candD.c`,
-  four separate `u8 *` locals) emits **15** split pairs and no copies. Our
+  `adds rN,rM,#0` copy, while the best candidate (an unretained,
+  historical/non-reproducible candidate with four separate `u8 *` locals)
+  emits **15** split pairs and no copies. Our
   output over-splits where the reference shares; the CSE deficit is on our side.
 - **Recorded:** 2026-07-25; `37a:2614` park and the refuted mechanism 2026-07-25.
 
@@ -2303,7 +2317,8 @@ singletons. Each is an installed byte-exact match.
   `-fno-schedule-insns2` the tail is exact and the prologue transposes instead.
   Both settings sit at 4 mismatched bytes. This is the second function known to
   want one `sched2` decision each way, after `resource_3a0_c_02000048.c`.
-- **Best candidate kept at** `/tmp/best/resource_3ca_004c.c` (not adopted).
+- **Historical/non-reproducible:** the best candidate was kept in an
+  unretained temporary file and was not adopted.
 - **Recorded:** 2026-07-25.
 
 ### The overlay `0x0030` distance family walks its arguments with `*p++` (2026-07-25)
@@ -2340,7 +2355,8 @@ singletons. Each is an installed byte-exact match.
   shorter and pads. (3) The reference's interworking epilogue pops into `r1`,
   the fork into `r0`. `-fno-schedule-insns2` makes (1) worse (30 bytes), and
   `-fno-regmove` does not touch (2).
-- **Candidates kept at** `work/near/overlay_0030_family/` (not adopted).
+- **Historical/non-reproducible:** candidates were kept in an unretained
+  temporary directory and were not adopted.
 - **Recorded:** 2026-07-25.
 
 ### Fixed RAM addresses are declared globals, not `(void *)` literals (2026-07-25)
@@ -2437,10 +2453,11 @@ singletons. Each is an installed byte-exact match.
   Only 78 entries are functions of a shape the pipeline will even attempt, and
   `overlay_match.ts --all --max-bytes 96` selects 57 of them.
 - **Those 57 are the near-miss set already known.** Sweeping them produces 39
-  compiled candidates whose mismatch counts reproduce `/tmp/near.list` exactly,
-  and 18 build failures. There is no untried pool of easy overlay wins: every
-  overlay function that can be compiled at all has been compiled, and what
-  remains is the residual analysis in the entries above.
+  compiled candidates whose mismatch counts reproduce the unretained historical
+  near-miss list exactly, and 18 build failures. There is no untried pool of
+  easy overlay wins: every overlay function that can be compiled at all has
+  been compiled, and what remains is the residual analysis in the entries
+  above.
 - **There is no untouched convertible block behind the filters.** Every one of
   the 95 `unresolved > 0` entries also has `code_bytes < 8`; the ordering of the
   classification above just counts them under `unresolved` first. So the 95, the

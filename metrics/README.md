@@ -1,34 +1,27 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+# Generated metrics
 
-# Executable metric inventories
+This directory contains tracked, source-derived measurements for each build
+target. The files contain addresses, interval classifications, counts, and
+evidence references—never ROM bytes or disassembly output.
 
-These target-scoped inventories are generated and checked by
-`tools/full-c-progress/target/release/full-c-progress`. They contain only addresses, interval
-classifications, sizes, and clean-room evidence references—never ROM bytes or
-disassembly output.
+For `gs1-en`:
 
-Regenerate an inventory after changing executable classification:
+- `gs1-en-executable.json` is the audited executable denominator;
+- `gs1-en-progress.json` is exact C divided by that denominator;
+- `gs1-en-coverage-map.json` supplies the dashboard and README charts; and
+- `full-c-history.{json,csv}` records the first-parent exact-C history.
 
-```sh
-tools/full-c-progress/target/release/full-c-progress --target gs1-en --write-inventory
-```
-
-An inventory with `audit: "incomplete"` deliberately prevents publication of
-Full-C Byte Share for that target.
-
-## Coverage map
-
-`<target>-coverage-map.json` holds the tile data behind the README treemap:
-ROM areas, executable areas, and the byte split of every tile between
-byte-exact C, semantic C, assembly, and asset data. The native
-`tools/coverage-map/target/release/coverage-map`
-derives it from tracked evidence only—the executable inventory, `src/`,
-`asm/`, `assets/code/`, `assets/manifest.json`, and the tracked `semantic/`
-sources—so a fresh clone can regenerate it without a ROM, a toolchain, or a build
-output. Its derived exact-C totals must equal the tracked Full-C report or the
-tool refuses to write.
+Use the repository commands rather than editing generated files:
 
 ```sh
-make coverage        # rewrite the map and assets/readme/<target>-coverage.svg
-make coverage-check  # fail if tracked coverage has moved past the map
+make progress        # calculate the live exact-C metric
+make progress-check  # compare tracked reports with the source tree
+make coverage        # rewrite the map, charts, and README cache keys
+make coverage-check  # check those artifacts without writing
 ```
+
+An executable inventory marked `audit: "incomplete"` fails closed: it cannot
+publish a progress percentage. A denominator correction is a separate audited
+change, not ordinary decompilation progress. See
+[`../docs/FULL-C-BYTE-SHARE.md`](../docs/FULL-C-BYTE-SHARE.md) for the metric
+contract.

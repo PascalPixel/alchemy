@@ -87,7 +87,6 @@ void Func_020057fc(struct Resource373Emitter *emitter)
 
         if (particle != 0) {
             s32 height;
-            s32 speed;
 
             Func_0200b7a8(particle, 0);
             Func_0200b760(particle, (const void *)0x0200e6e4);
@@ -100,15 +99,17 @@ void Func_020057fc(struct Resource373Emitter *emitter)
 
             particle->lifetime = Func_0200b726() - Func_0200b72c();
 
-            speed = Func_0200b734();
-            speed = ((speed * 2 + speed) << 3) + 0x80000;   /* 24x + 0x80000 */
-            Func_0200b19a(particle, speed, Func_0200b744());
+            Func_0200b19a(
+                particle,
+                ((Func_0200b734() * 3) << 3) + 0x80000,
+                Func_0200b744());
         }
     }
 
     Func_0200ba08(131);
 
     emitter->x = 0;
+    emitter->y = 0;
     emitter->z = 0;
     emitter->field38 = (s32)0x80000000;
     emitter->field3c = (s32)0x80000000;
@@ -116,5 +117,4 @@ void Func_020057fc(struct Resource373Emitter *emitter)
     emitter->field24 = 0;
     emitter->field28 = 0;
     emitter->field2c = 0;
-    emitter->y = 0;
 }

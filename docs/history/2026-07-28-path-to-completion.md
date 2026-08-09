@@ -1,3 +1,5 @@
+> Historical archive: planning study beginning 2026-07-28. Preserved for evidence; use [STATUS.md](../../STATUS.md) for the current project state.
+
 > **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
 
 # Path to completion
@@ -8,7 +10,7 @@ ownership is 160,872 bytes. After exact-C supersession and executable-extent
 accounting, the reviewed semantic tier contributes another **804,102 bytes**;
 together they cover **1,070,026 / 1,343,410 bytes (79.65%)**. This combined
 figure is reviewed semantic coverage, not the Full-C headline or a completion
-forecast; [`../HANDOVER.md`](../HANDOVER.md) is the authoritative current audit.
+forecast; [`../../STATUS.md`](../../STATUS.md) is the authoritative current status.
 
 The primary integration point is `main`. The main-executable reviewed semantic-C
 census is closed and enforced by `make semantic-check`; exact-C replacement
@@ -27,7 +29,7 @@ escape hatch.
 
 Everything below this paragraph is a historical planning study from 2026-07-28.
 It is retained for the measured compiler and queue evidence, not as a live
-counter or scheduling order. Use [`../HANDOVER.md`](../HANDOVER.md) for current
+counter or scheduling order. Use [`../../STATUS.md`](../../STATUS.md) for current
 work and `make progress` plus `make coverage-check` for current numbers.
 
 The main-image diagnostic ledger contains 1,369 exact-C regions and 631

@@ -46,8 +46,19 @@ dependencies = [
  "alchemy-plan",
  "alchemy-routing",
  "candidate-compiler",
+ "integrate-matches",
 ]
 
 [[package]]
 name = "decomp-targets"
 version = "0.1.0"
+
+[[package]]
+name = "integrate-matches"
+version = "0.1.0"
+dependencies = [
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "candidate-compiler",
+]

@@ -234,6 +234,9 @@ fn cache_key(
     implementation_digest: &str,
     host_tool_signature: &str,
 ) -> String {
+    let routing_source = search_compiler_modes::relative_path(&root(), Path::new(&candidate.source));
+    let call_via_base =
+        alchemy_symbols::symbols::overlay_call_via_base(&candidate.overlay, Some(&routing_source));
     let identity = Json::Object(vec![
         ("id".into(), Json::String(candidate.id.clone())),
         ("source".into(), Json::String(candidate.source.clone())),
@@ -248,6 +251,7 @@ fn cache_key(
         canonical_json(&identity).as_bytes(),
         implementation_digest.as_bytes(),
         host_tool_signature.as_bytes(),
+        &call_via_base.to_le_bytes(),
     ])
 }
 
@@ -727,6 +731,24 @@ mod tests {
                 "implementation",
                 "host-tools",
             )
+        );
+
+        let mut call_via_override = candidate.clone();
+        call_via_override.overlay = "resource_373".into();
+        call_via_override.source = root()
+            .join("exact/resource_373_c_02000608.c")
+            .to_string_lossy()
+            .into_owned();
+        let override_source = search_compiler_modes::relative_path(
+            &root(),
+            Path::new(&call_via_override.source),
+        );
+        assert_eq!(
+            alchemy_symbols::symbols::overlay_call_via_base(
+                &call_via_override.overlay,
+                Some(&override_source),
+            ),
+            0x0200_68d6,
         );
     }
 

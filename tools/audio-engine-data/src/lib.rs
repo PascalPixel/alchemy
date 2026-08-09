@@ -18,6 +18,7 @@ const BANK_1_ADDRESS: usize = 0x080f_c138;
 const WAVEFORM_ADDRESS: usize = 0x080f_c504;
 const PLAYER_ADDRESS: usize = 0x080f_c624;
 const SOURCE_NAMES: [&str; 4] = ["seigyo.json", "onshoku.json", "hakei.json", "saisei.json"];
+const USAGE: &str = "usage: audio-engine-data export ROM --directory DIR | verify ROM --index INDEX | --self-test";
 
 fn error<T>(message: impl Into<String>) -> Result<T> {
     Err(message.into())
@@ -231,11 +232,11 @@ fn alignment(
 }
 
 fn unsigned_bytes(value: &Value, count: usize, label: &str) -> Result<Vec<u8>> {
-    Ok(array(value, count, label)?
+    array(value, count, label)?
         .iter()
         .enumerate()
         .map(|(index, item)| integer(item, 0, 255, &format!("{label} {index}")).map(|v| v as u8))
-        .collect::<Result<Vec<_>>>()?)
+        .collect::<Result<Vec<_>>>()
 }
 
 fn unsigned_halfwords(value: &Value, count: usize, label: &str) -> Result<Vec<u8>> {
@@ -706,8 +707,8 @@ fn read_tones(path: &Path) -> Result<Map<String, Value>> {
 fn build_tones(source: &Map<String, Value>) -> Result<Vec<u8>> {
     let banks = array(field(source, "banks")?, 2, "tone banks")?;
     let mut output = Vec::new();
-    for bank in 0..2 {
-        let item = object(&banks[bank], &format!("tone bank {bank}"))?;
+    for (bank, bank_value) in banks.iter().enumerate() {
+        let item = object(bank_value, &format!("tone bank {bank}"))?;
         exact_keys(
             item,
             &["name", "address", "records"],
@@ -1322,6 +1323,9 @@ pub fn self_test() -> Result<String> {
 }
 
 pub fn run(args: Vec<String>) -> Result<Option<String>> {
+    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+        return Ok(Some(USAGE.into()));
+    }
     if args.len() == 1 && args[0] == "--self-test" {
         return Ok(Some(self_test()?));
     }
@@ -1335,7 +1339,7 @@ pub fn run(args: Vec<String>) -> Result<Option<String>> {
             Path::new(&args[3]),
         )?));
     }
-    error("usage: audio-engine-data export ROM --directory DIR | verify ROM --index INDEX | --self-test")
+    error(USAGE)
 }
 
 #[cfg(test)]
@@ -1345,5 +1349,12 @@ mod tests {
     #[test]
     fn self_test_passes() {
         assert_eq!(self_test().unwrap(), "self-test=ok adversarial=12");
+    }
+
+    #[test]
+    fn help_is_successful_and_unknown_options_are_rejected() {
+        assert_eq!(run(vec!["-h".into()]).unwrap(), Some(USAGE.into()));
+        assert_eq!(run(vec!["--help".into()]).unwrap(), Some(USAGE.into()));
+        assert!(run(vec!["--unknown".into()]).is_err());
     }
 }

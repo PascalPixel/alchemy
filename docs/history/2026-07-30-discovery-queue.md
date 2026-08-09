@@ -1,3 +1,5 @@
+> Historical archive: discovery audit dated 2026-07-30. Preserved for evidence; use [STATUS.md](../../STATUS.md) for the current project state.
+
 > **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
 
 # Discovery queue (historical measurement, 2026-07-30)
@@ -6,7 +8,7 @@ This document records the 2026-07-30 queue/discovery audit.  Its region counts,
 bytes, and recommendations below are historical snapshots, not current project
 metrics.  For verified current exact/semantic coverage, target limitations,
 provenance, compiler stopping rules, and the quarantined alchemy-gcc
-experiment, use [`../HANDOVER.md`](../HANDOVER.md).
+experiment, use [`../../STATUS.md`](../../STATUS.md).
 
 **`asm_c_debt_bytes=395816` and the code-overlay inventory's ~16 KB adoptable queue
 do not describe the same bytes, and neither one is missing the other's work.**
@@ -273,7 +275,7 @@ function-boundary rows of any blocker class fall under that threshold, worth
 | `0x08011fd8` | 96 | 42 | 3 |
 
 `0x08006408`, `0x0800430c` and `0x080f7f30` are documented near-misses in
-[REMAINING.md](REMAINING.md) — they are cheap to re-score but each parks on a
+[REMAINING.md](../../STATUS.md) — they are cheap to re-score but each parks on a
 different residual mechanism.
 
 ## 4. The cheapest way to widen discovery
@@ -361,7 +363,7 @@ largest — would calibrate the rest.
 
 The bottleneck is not discovery. **The main image has a complete, boundary-proven,
 727-row queue that nothing has been drafting against**: the `work/hand/` tree
-referenced by [REMAINING.md](REMAINING.md) no longer exists, and all 575 notes
+referenced by [REMAINING.md](../../STATUS.md) no longer exists, and all 575 notes
 under the historical `work/` notes are `resource_*` overlays. Overlay work
 absorbed the effort while a 395,816-byte queue with 72% of its bytes carrying no
 construct blocker sat unattended. Section 3 is that queue; section 4 describes

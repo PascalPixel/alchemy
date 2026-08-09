@@ -14,7 +14,7 @@ use alchemy_routing::routing::{root, CompilerTarget};
 use candidate_compiler::{verify_candidate, CandidateCompilerConfiguration, ROM_BASE};
 use overlay_disasm::{assemble_overlay, compile_overlay_candidate, OverlaySource, OVERLAY_BASE};
 
-pub const USAGE: &str = "usage: shape-sweep <candidate.c> [--pairs] [--top N] [--self-test]";
+pub const USAGE: &str = "usage: shape-sweep CANDIDATE [--pairs] [--top N]\n       shape-sweep --self-test\n\nSearch bounded source-shape transforms against one candidate.\n  -h, --help     show this help\n      --pairs    include pairwise transforms\n      --top N    print N best results (default: 12)\n      --self-test validate transforms without candidate compilation";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TransformId {
@@ -432,9 +432,7 @@ fn first_plain_declaration(source: &str, from: usize) -> Option<(usize, usize, S
 fn apply_sink_declaration_to_block(source: &str) -> Option<String> {
     let opening = first_function_open(source)?;
     let (start, end, declaration) = first_plain_declaration(source, opening + 1)?;
-    if source[end..].find('{').is_none() {
-        return None;
-    }
+    source[end..].find('{')?;
     let stripped = format!("{}{}", &source[..start], &source[end..]);
     let insert = first_function_open(&stripped)?;
     Some(format!(
@@ -627,14 +625,62 @@ fn subarray(data: &[u8], begin: i64, end: i64) -> Vec<u8> {
     }
 }
 
-fn parse_top(args: &[String]) -> isize {
-    let Some(index) = args.iter().position(|arg| arg == "--top") else {
-        return 12;
-    };
-    args.get(index + 1)
-        .and_then(|value| value.parse::<isize>().ok())
-        .filter(|value| *value != 0)
-        .unwrap_or(12)
+#[derive(Debug, PartialEq, Eq)]
+enum ParsedArgs {
+    Help,
+    SelfTest,
+    Search {
+        candidate: String,
+        pairs: bool,
+        top: isize,
+    },
+}
+
+fn parse_args(args: &[String]) -> Result<ParsedArgs, String> {
+    if args.len() == 1 {
+        return match args[0].as_str() {
+            "-h" | "--help" => Ok(ParsedArgs::Help),
+            "--self-test" => Ok(ParsedArgs::SelfTest),
+            _ => parse_search_args(args),
+        };
+    }
+    parse_search_args(args)
+}
+
+fn parse_search_args(args: &[String]) -> Result<ParsedArgs, String> {
+    let mut candidate = None;
+    let mut pairs = false;
+    let mut top = 12;
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].as_str() {
+            "-h" | "--help" | "--self-test" => return Err(USAGE.to_string()),
+            "--pairs" if !pairs => pairs = true,
+            "--pairs" => return Err(USAGE.to_string()),
+            "--top" => {
+                index += 1;
+                let value = args.get(index).ok_or_else(|| USAGE.to_string())?;
+                top = value.parse::<isize>().map_err(|_| USAGE.to_string())?;
+                if top == 0 {
+                    top = 12;
+                }
+            }
+            value if value.starts_with('-') => return Err(USAGE.to_string()),
+            value => {
+                if candidate.replace(value.to_string()).is_some() {
+                    return Err(USAGE.to_string());
+                }
+            }
+        }
+        index += 1;
+    }
+    candidate
+        .map(|candidate| ParsedArgs::Search {
+            candidate,
+            pairs,
+            top,
+        })
+        .ok_or_else(|| USAGE.to_string())
 }
 
 fn self_test() -> Result<(), String> {
@@ -723,18 +769,27 @@ fn attempt_candidate(
 }
 
 pub fn run(args: Vec<String>) -> Result<(), String> {
-    if args.iter().any(|arg| arg == "--self-test") {
-        return self_test();
-    }
-    let Some(candidate) = args.iter().find(|arg| !arg.starts_with("--")) else {
-        return Err(USAGE.to_string());
+    let parsed = parse_args(&args)?;
+    let ParsedArgs::Search {
+        candidate,
+        pairs,
+        top,
+    } = parsed
+    else {
+        return match parsed {
+            ParsedArgs::Help => {
+                println!("{USAGE}");
+                Ok(())
+            }
+            ParsedArgs::SelfTest => self_test(),
+            ParsedArgs::Search { .. } => unreachable!(),
+        };
     };
-    let top = parse_top(&args);
     let root = root();
-    let original = root.join(candidate);
+    let original = root.join(&candidate);
     let source = fs::read_to_string(&original)
         .map_err(|error| format!("{}: {error}", original.display()))?;
-    let attempts = plan(&source, args.iter().any(|arg| arg == "--pairs"));
+    let attempts = plan(&source, pairs);
     if attempts.is_empty() {
         println!("no transform matched this source; the shape axis is exhausted for it");
         return Ok(());
@@ -742,13 +797,13 @@ pub fn run(args: Vec<String>) -> Result<(), String> {
     let rom = fs::read(root.join("roms").join("gs1-en.gba"))
         .map_err(|error| format!("roms/gs1-en.gba: {error}"))?;
     let work = TempDir::new()?;
-    let candidate_stem = stem(candidate);
+    let candidate_stem = stem(&candidate);
     let overlay = overlay_name(&candidate_stem);
     let mut rows = Vec::new();
     for attempt in &attempts {
         if let Ok(row) = attempt_candidate(
             attempt,
-            candidate,
+            &candidate,
             overlay.as_deref(),
             &original,
             &rom,
@@ -790,6 +845,31 @@ mod tests {
     #[test]
     fn self_test_passes() {
         self_test().expect("shape sweep self-test");
+    }
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn cli_contract_has_help_and_rejects_unknown_or_ambiguous_options() {
+        assert_eq!(parse_args(&args(&["-h"])), Ok(ParsedArgs::Help));
+        assert_eq!(parse_args(&args(&["--help"])), Ok(ParsedArgs::Help));
+        assert_eq!(
+            parse_args(&args(&["--self-test"])),
+            Ok(ParsedArgs::SelfTest)
+        );
+        assert_eq!(
+            parse_args(&args(&["semantic/example.c", "--pairs", "--top", "-3"])),
+            Ok(ParsedArgs::Search {
+                candidate: "semantic/example.c".into(),
+                pairs: true,
+                top: -3,
+            })
+        );
+        assert!(parse_args(&args(&["semantic/example.c", "--unknown"])).is_err());
+        assert!(parse_args(&args(&["semantic/example.c", "--top"])).is_err());
+        assert!(parse_args(&args(&["--self-test", "semantic/example.c"])).is_err());
     }
 
     #[test]

@@ -360,6 +360,7 @@ void Func_020034c8(void)
     u8 *actor;              /* r7 - the record currently being configured */
     u32 frame;              /* r5 in the fade loop */
     s32 messageId;          /* r5 once the loop is done */
+    s32 timerOffset;
 
     cameraRecord = Func_020094c0(0);
     sceneActor = Func_020094c8(14);
@@ -389,8 +390,8 @@ void Func_020034c8(void)
     *(s32 *)(actor + 8) = 0x01840000;
     Func_020094d4(actor, 0);
 
-    actor[0x55] = 0;
     actor = Func_02009572(12);
+    actor[0x55] = 0;
     *(s32 *)(actor + 12) = 0x00a00000;
     *(s32 *)(actor + 16) = 0x034c0000;
     *(s32 *)(actor + 8) = 0x01840000;
@@ -426,7 +427,8 @@ void Func_020034c8(void)
 
     /* The scene block's u32 at +0x1c8 is a countdown/timer, set to 60 here and
      * again just before the owner returns. */
-    *(s32 *)(RESOURCE_373_SCENE + 0x1c8) = 60;
+    timerOffset = 0x1c8;
+    *(s32 *)(RESOURCE_373_SCENE + timerOffset) = 60;
 
     Func_02009778();
     Func_020096ae(5);
@@ -502,7 +504,7 @@ void Func_020034c8(void)
     Func_0200986c(10);
     Func_020099a0(0x40000, 0x8000);
     Func_020099ba(0x018c0000, -1, 0x024c0000, 1);
-    Func_02009904(5, 0x1c8, 0x2e3);
+    Func_02009904(5, timerOffset, 0x2e3);
     Func_020099d0();
     Func_0200989e(10);
     Func_020099b8(1, 0x105, 40);
@@ -704,7 +706,7 @@ void Func_020034c8(void)
     Func_02009f80(1, 0x1c2, 0x2ee);
     Func_02009f1e(60);
 
-    *(s32 *)(RESOURCE_373_SCENE + 0x1c8) = 60;
+    *(s32 *)(RESOURCE_373_SCENE + timerOffset) = 60;
 
     Func_0200a088();
     Func_0200a094();

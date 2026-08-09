@@ -32,6 +32,7 @@ pub const BASE_SHIFT: i64 = 0x8000;
 pub const ENTRY_VENEER_LOAD: u16 = 0x4c00;
 /// `bx r4` -- the second halfword of the entry veneer.
 pub const ENTRY_VENEER_BRANCH: u16 = 0x4720;
+const USAGE: &str = "usage: overlay-driver <resource_NNN>\n       overlay-driver --all [--unowned]\n       overlay-driver --self-test";
 
 pub fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -101,14 +102,20 @@ fn is_overlay_source(name: &str) -> bool {
     let Some(hex) = rest.strip_suffix("_overlay.s") else {
         return false;
     };
-    !hex.is_empty() && hex.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    !hex.is_empty()
+        && hex
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 /// `/^resource_[0-9a-f]+$/` -- the argument form.
 fn is_overlay_argument(name: &str) -> bool {
     match name.strip_prefix("resource_") {
         Some(hex) => {
-            !hex.is_empty() && hex.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+            !hex.is_empty()
+                && hex
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
         }
         None => false,
     }
@@ -130,7 +137,8 @@ struct Owners {
 impl Owners {
     fn manual_regions(&mut self, root: &Path) -> &HashMap<String, Vec<String>> {
         self.manual.get_or_insert_with(|| {
-            let bytes = std::fs::read(root.join("semantic").join("regions.json")).unwrap_or_default();
+            let bytes =
+                std::fs::read(root.join("semantic").join("regions.json")).unwrap_or_default();
             let mut table: HashMap<String, Vec<String>> = HashMap::new();
             for record in json_scan::scan_records(&bytes, "manual_regions", "entry", "offset") {
                 if let (Some(overlay), Some(entry)) = (record.overlay, record.text) {
@@ -211,8 +219,56 @@ fn main() {
 /// The body of `main`, with output captured so the self-test can drive it.
 /// Returns the process exit code.
 fn run(root: &Path, argv: &[String], out: &mut dyn FnMut(&str)) -> i32 {
+    if argv.len() == 1 && matches!(argv[0].as_str(), "-h" | "--help") {
+        out(USAGE);
+        return 0;
+    }
+    if argv.iter().any(|a| a == "--self-test") {
+        if argv.len() != 1 {
+            out("--self-test cannot be combined with other options");
+            out(USAGE);
+            return 1;
+        }
+        return match self_test(root) {
+            Ok(()) => 0,
+            Err(message) => {
+                out(&message);
+                1
+            }
+        };
+    }
     let want_all = argv.iter().any(|a| a == "--all");
     let only_unowned = argv.iter().any(|a| a == "--unowned");
+    if argv.iter().filter(|a| a.as_str() == "--all").count() > 1
+        || argv.iter().filter(|a| a.as_str() == "--unowned").count() > 1
+        || (only_unowned && !want_all)
+    {
+        out(USAGE);
+        return 1;
+    }
+    for argument in argv {
+        if argument != "--all" && argument != "--unowned" && !is_overlay_argument(argument) {
+            out(&format!("unknown or misplaced option: {argument}"));
+            out(USAGE);
+            return 1;
+        }
+    }
+    if want_all && argv.iter().any(|argument| is_overlay_argument(argument)) {
+        out("--all cannot be combined with an overlay name");
+        out(USAGE);
+        return 1;
+    }
+    if !want_all
+        && argv
+            .iter()
+            .filter(|argument| is_overlay_argument(argument))
+            .count()
+            > 1
+    {
+        out("only one overlay name may be supplied");
+        out(USAGE);
+        return 1;
+    }
     let names: Vec<String> = if want_all {
         overlay_names(root)
     } else {
@@ -222,7 +278,7 @@ fn run(root: &Path, argv: &[String], out: &mut dyn FnMut(&str)) -> i32 {
             .collect()
     };
     if names.is_empty() {
-        out("usage: overlay-driver <resource_NNN> | --all [--unowned]");
+        out(USAGE);
         return 1;
     }
 
@@ -302,10 +358,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         "thumb-bit driver offset",
     )?;
     image[4..8].copy_from_slice(&entry.to_le_bytes());
-    check(
-        driver_offset(&image) == Some(0x40),
-        "even driver offset",
-    )?;
+    check(driver_offset(&image) == Some(0x40), "even driver offset")?;
     image[4..8].copy_from_slice(&((OVERLAY_BASE + BASE_SHIFT + 0x4000) as u32).to_le_bytes());
     check(
         driver_offset(&image).is_none(),
@@ -438,7 +491,10 @@ mod tests {
         // differ by exactly one zero and both forms are load-bearing (the exact-C
         // filename uses the padded one).
         let offset = 0x3f24usize;
-        assert_eq!(format!("0x0{:x}", OVERLAY_BASE + offset as i64), "0x02003f24");
+        assert_eq!(
+            format!("0x0{:x}", OVERLAY_BASE + offset as i64),
+            "0x02003f24"
+        );
         assert_eq!(format!("0x{:x}", OVERLAY_BASE + offset as i64), "0x2003f24");
     }
 
@@ -447,10 +503,28 @@ mod tests {
         let mut lines = Vec::new();
         let code = run(&repo_root(), &[], &mut |line| lines.push(line.to_string()));
         assert_eq!(code, 1);
+        assert_eq!(lines, [USAGE]);
+    }
+
+    #[test]
+    fn help_succeeds_and_unknown_options_fail_before_scanning() {
+        let mut help = Vec::new();
         assert_eq!(
-            lines,
-            ["usage: overlay-driver <resource_NNN> | --all [--unowned]"]
+            run(&repo_root(), &["--help".into()], &mut |line| help
+                .push(line.to_string())),
+            0
         );
+        assert_eq!(help, [USAGE]);
+
+        let mut unknown = Vec::new();
+        assert_eq!(
+            run(&repo_root(), &["--unknown".into()], &mut |line| unknown
+                .push(line.to_string())),
+            1
+        );
+        assert!(unknown
+            .iter()
+            .any(|line| line.contains("unknown or misplaced")));
     }
 
     #[test]

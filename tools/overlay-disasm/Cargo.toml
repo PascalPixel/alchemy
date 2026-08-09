@@ -4,6 +4,7 @@
 name = "overlay-disasm"
 version = "0.1.0"
 edition = "2021"
+default-run = "overlay-disasm"
 
 [lib]
 name = "overlay_disasm"
@@ -19,7 +20,7 @@ path = "src/main.rs"
 alchemy-symbols = { path = "../alchemy-symbols" }
 alchemy-plan = { path = "../alchemy-plan" }
 alchemy-bundle = { path = "../alchemy-bundle" }
-# `CompilerTarget` lives here. Read-only: another agent is live in this crate.
+# `CompilerTarget` lives here. This dependency is read-only for this crate.
 alchemy-routing = { path = "../alchemy-routing" }
 discover = { path = "../discover" }
 cache-entry = { path = "../cache-entry" }

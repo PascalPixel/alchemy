@@ -611,13 +611,34 @@ fn self_test() -> Result<(), String> {
     Ok(())
 }
 
+const USAGE: &str = "usage: full-c-history [--write|--self-test]\n\nMeasures first-parent Full-C history, or runs the native self-test.\nWith no option, --write is the default.\n  -h, --help     show this help\n      --write    write docs/full-c-history.json and .csv\n      --self-test validate history parsing without repository work";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Action {
+    Help,
+    SelfTest,
+    Write,
+}
+
+fn parse_args(arguments: &[String]) -> Result<Action, String> {
+    match arguments {
+        [] => Ok(Action::Write),
+        [arg] if arg == "--write" => Ok(Action::Write),
+        [arg] if arg == "--self-test" => Ok(Action::SelfTest),
+        [arg] if arg == "-h" || arg == "--help" => Ok(Action::Help),
+        _ => Err(USAGE.to_string()),
+    }
+}
+
 fn run() -> Result<(), String> {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let root = repo_root();
-    match arguments.first().map(String::as_str) {
-        Some("--self-test") => self_test(),
-        None | Some("--write") => write_ledger(&root),
-        _ => Err("usage: full-c-history [--write|--self-test]".to_string()),
+    match parse_args(&arguments)? {
+        Action::Help => {
+            println!("{USAGE}");
+            Ok(())
+        }
+        Action::SelfTest => self_test(),
+        Action::Write => write_ledger(&repo_root()),
     }
 }
 
@@ -631,6 +652,21 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn cli_contract_has_help_and_rejects_unknown_options() {
+        assert_eq!(parse_args(&args(&[])), Ok(Action::Write));
+        assert_eq!(parse_args(&args(&["--write"])), Ok(Action::Write));
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Action::SelfTest));
+        assert_eq!(parse_args(&args(&["-h"])), Ok(Action::Help));
+        assert_eq!(parse_args(&args(&["--help"])), Ok(Action::Help));
+        assert!(parse_args(&args(&["--unknown"])).is_err());
+        assert!(parse_args(&args(&["--write", "extra"])).is_err());
+    }
 
     fn entry(oid: &str, path: &str) -> TreeEntry {
         TreeEntry { oid: oid.to_string(), path: path.to_string() }

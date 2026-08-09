@@ -1,10 +1,9 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
-
 # Clean-room and publication contract
 
-Alchemy is a clean-room reconstruction. This contract is part of the source
-tree so that a fresh clone has the same evidence and publication boundary as
-the working repository.
+Alchemy is an unofficial clean-room reconstruction. This contract gives a
+fresh clone the same evidence and publication boundary as the working
+repository. It is an engineering policy, not a claim that publication is free
+of legal risk.
 
 ## Evidence boundary
 
@@ -59,15 +58,20 @@ git config core.hooksPath .hooks
 
 The hooks run the staged and outgoing-history checks implemented by
 `tools/check-publication`, including commits where a forbidden artifact was
-added and later deleted. The same checks can be run directly:
+added and later deleted. From a fresh clone, run the same checks through Cargo:
 
 ```sh
-tools/check-publication/target/release/check-publication --staged
-tools/check-publication/target/release/check-publication --self-test
+cargo run --release --manifest-path tools/check-publication/Cargo.toml -- --staged
+cargo run --release --manifest-path tools/check-publication/Cargo.toml -- --self-test
 ```
 
 The file-shape gate is defense in depth; it cannot determine where knowledge
 came from. Every contribution must honor the evidence boundary above.
+
+The compiler fork is maintained and distributed separately under its own
+upstream licensing and corresponding-source obligations. The main repository
+pins and verifies an approved compiler bundle; it does not copy compiler
+binaries or their licence payload into the game-source tree.
 
 Before claiming a milestone, run the source-only build, the full ROM build, and
 the aggregate test suite. “Byte closure” means a zero-fallback, byte-identical

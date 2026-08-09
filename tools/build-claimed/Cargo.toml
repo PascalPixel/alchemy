@@ -1,7 +1,6 @@
-# Bare `[workspace]`: this crate is its own workspace, so it builds without
-# touching `tools/Cargo.toml` and without competing with sibling agents for
-# that manifest. `version`/`edition` are literal because `.workspace`
-# inheritance cannot resolve from a bare workspace.
+# Bare `[workspace]`: this crate is an independently buildable workspace
+# rather than a member of the aggregate tools workspace. `version`/`edition`
+# are literal because `.workspace` inheritance is unavailable here.
 [workspace]
 
 [package]

@@ -1,11 +1,14 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
-
 # Compiler evidence
 
 Findings that justify a change to the pinned gcc 2.96 Camelot fork, kept here
 so the evidence survives the machine the probe ran on. Each entry records the
 mechanism, a prototype diff against the fork source, and the collateral
 measurement a routed mode needs.
+
+This is a chronological evidence ledger. Digests, corpus counts, and route
+totals inside an entry describe that admission run; they are not a second live
+compiler registry. The native bundle/routing tables and current verification
+output are authoritative today.
 
 The applied entries below are admitted from this ledger. Remaining entries are
 still experimental: landing one requires the fork change

@@ -674,7 +674,7 @@ fn renderers(map: &CoverageMap) -> Result<(), String> {
         "box-tree chrome or rectangle-label typography drifted",
     )?;
     refuse(
-        !box_tree.contains("Exact 30.0%")
+        !box_tree.contains("Exact C 30.0%")
             || !box_tree.contains("Semantic 40.0%")
             || !box_tree.contains("Permanent ASM 30.0%")
             || box_tree.contains("Unknown"),
@@ -684,10 +684,14 @@ fn renderers(map: &CoverageMap) -> Result<(), String> {
         !box_tree.contains("DONE 60.0%") || !box_tree.contains("dominant-baseline=\"middle\""),
         "box-tree completion or vertically centred legend is missing",
     )?;
-    let legend_order: Vec<Option<usize>> = ["Semantic 40.0%", "Permanent ASM 30.0%", "Exact 30.0%"]
-        .iter()
-        .map(|legend| box_tree.find(&format!(">{legend}</text>")))
-        .collect();
+    let legend_order: Vec<Option<usize>> = [
+        "Semantic 40.0%",
+        "Permanent ASM 30.0%",
+        "Exact C 30.0%",
+    ]
+    .iter()
+    .map(|legend| box_tree.find(&format!(">{legend}</text>")))
+    .collect();
     let ascending = legend_order.iter().all(Option::is_some)
         && legend_order.windows(2).all(|pair| pair[0] < pair[1]);
     refuse(

@@ -2,6 +2,8 @@ use std::path::Path;
 
 use semantic_queue::{format_row, js_parse_int, js_slice_limit, semantic_queue, to_json};
 
+const USAGE: &str = "Usage: semantic-queue [--help|-h] [--self-test] [--json] [--limit=N]\n\nRank semantic C drafts by reconstruction cost.\n";
+
 /// PORT NOTE: `selfTest()` in the TypeScript is a smoke test that duplicates
 /// assertions now held by `#[cfg(test)] mod tests`. The flag is kept so the
 /// binary mirrors the CLI surface exactly, and it re-checks the same four
@@ -29,8 +31,31 @@ fn self_test() {
     println!("self-test=ok");
 }
 
+fn validate_arguments(arguments: &[String]) -> Result<(), String> {
+    if let Some(argument) = arguments.iter().find(|argument| {
+        !matches!(
+            argument.as_str(),
+            "-h" | "--help" | "--self-test" | "--json"
+        ) && !argument.starts_with("--limit=")
+    }) {
+        return Err(format!("unknown option: {argument}\n{USAGE}"));
+    }
+    Ok(())
+}
+
 fn main() {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
+    if let Err(error) = validate_arguments(&arguments) {
+        eprintln!("error: {error}");
+        std::process::exit(2);
+    }
+    if arguments
+        .iter()
+        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
+    {
+        print!("{USAGE}");
+        return;
+    }
     if arguments.iter().any(|argument| argument == "--self-test") {
         self_test();
         return;
@@ -64,4 +89,21 @@ fn main() {
         queue.len(),
         queue.iter().map(|item| item.bytes).sum::<i64>()
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unknown_options_are_rejected_before_the_scan() {
+        let error = validate_arguments(&["--not-an-option".into()]).unwrap_err();
+        assert!(error.contains("unknown option: --not-an-option"));
+    }
+
+    #[test]
+    fn documented_arguments_remain_valid() {
+        validate_arguments(&["--json".into(), "--limit=5".into()]).unwrap();
+        validate_arguments(&["--self-test".into()]).unwrap();
+    }
 }

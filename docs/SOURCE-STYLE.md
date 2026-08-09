@@ -1,34 +1,64 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+# Source style
 
-# ソース命名規約
+This guide describes the style of reconstructed C. It is a readability and
+provenance convention, not evidence that a name appeared in the original
+source. A name or comment must never conceal uncertainty or replace byte-exact
+verification. See [`PROVENANCE.md`](../PROVENANCE.md) for the clean-room
+boundary and [`CONTRIBUTING.md`](../CONTRIBUTING.md) for the reconstruction
+loop.
 
-再構築ソースは、2001年頃の日本製コンソールゲームらしい簡潔な書き方を
-標準とする。ただし、実物から回収した名前であるとは主張しない。
+## Japanese-era naming conventions
 
-## 名前
+The canonical source aims for the concise style common in Japanese console
+games of the early 2000s. Use these conventions when the meaning is supported
+by evidence:
 
-- 意味が確定した資産には短いローマ字名を使う。例: `iwamuro`,
-  `ougonmon`, `taki`, `ki`, `hashi`。
-- コードでは当時らしい短縮形を優先する。例: `Flg`, `Ev`, `Btl`,
-  `Chr`, `Tbl`, `Work`, `Pos`, `No`, `Get`, `Set`。
-- 挙動から証明できない固有名は作らない。意味が弱い間は `Func_`、
-  `Data_`、アドレス名、`unknown_` を残す。
-- 復元上の名前と実在した原名を区別する。ROM内文字列などの根拠がない
-  限り、「原名を回収した」とは記載しない。
+- Use short romanized names for assets whose meaning is established, such as
+  `iwamuro`, `ougonmon`, `taki`, `ki`, and `hashi`.
+- Prefer period-appropriate abbreviations in code: `Flg`, `Ev`, `Btl`, `Chr`,
+  `Tbl`, `Work`, `Pos`, `No`, `Get`, and `Set`.
+- Keep names deliberately opaque when the meaning is not proven:
+  `Func_`, `Data_`, address-based names, and `unknown_` are better than a
+  confident guess.
+- Distinguish a reconstruction name from a recovered original name. Do not
+  claim to have recovered an original identifier unless the ROM or another
+  permitted source actually supports that claim.
 
-## コメント
+This convention applies to reconstructed identifiers, not to copied code. Do
+not import game-specific names, types, comments, or function bodies from
+another decompilation project.
 
-- `.c` と `.h` の説明コメントはUTF-8の日本語で簡潔に書く。
-- 処理の関係、不変条件、ハードウェア上の制約を書く。
-- コンパイラ都合の記述は、レジスタ順や評価順など必要な理由だけを書く。
-- 推測日記、画面一枚だけの感想、英語の併記は避ける。
+## Comments
 
-例:
+Comments should be concise and explain facts useful to a future contributor:
+relationships between values, invariants, hardware constraints, and any
+compiler-sensitive reason that is necessary to understand the exact result.
+Do not turn comments into a speculation diary, a screenshot caption, or a
+claim about the original source.
+
+Canonical `.c` and `.h` comments are normally brief Japanese UTF-8 comments,
+matching the project's Japanese naming convention. English comments are fine
+when they make a technical constraint or provenance fact clearer; avoid
+duplicating every comment in both languages.
 
 ```c
 /* マップチップ切替。ヘッダ値に従い表示窓へ文字ブロックを割り当てる。 */
 /* セル番号は下位12bit。上位4bitは属性値として扱う。 */
 ```
 
-型名や識別子の変更も必ず既存のバイト一致検証を通す。見た目の古さのために
-未確認の意味を付けず、判明した範囲から段階的に整える。
+Use comments to record a demonstrated invariant, not an unverified semantic
+interpretation. If an explanation depends on compiler behavior, record the
+reproduction and scope in `LAWS.md` as well.
+
+## Types and structure
+
+Prefer the simplest C shape supported by the evidence. Keep uncertain fields,
+casts, aliases, signedness, and control flow explicit until they are proved.
+Do not humanize a source merely to make it look modern or elegant: a small
+change in type or alias information can change register allocation and break
+the exact bytes. Any identifier, type, or comment change still requires the
+owner's routed byte comparison.
+
+Never use `asm(...)`, fixed-register bindings, empty assembly barriers, or any
+other assembly escape hatch in C or headers. Byte equality never overrides
+that rule.

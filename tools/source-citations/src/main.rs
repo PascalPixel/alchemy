@@ -8,6 +8,24 @@ use std::process::ExitCode;
 
 use source_citations::{check, self_test};
 
+const USAGE: &str = "Usage: source-citations [--self-test]\n\nModes:\n  (default)      Validate clean-room source citations and retirements.\n  --self-test    Run the citation check's internal checks.\n  -h, --help     Show this help.";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Command {
+    Help,
+    Check,
+    SelfTest,
+}
+
+fn parse_args(args: &[String]) -> Result<Command, &'static str> {
+    match args {
+        [] => Ok(Command::Check),
+        [argument] if argument == "--self-test" => Ok(Command::SelfTest),
+        [argument] if argument == "-h" || argument == "--help" => Ok(Command::Help),
+        _ => Err(USAGE),
+    }
+}
+
 /// The TypeScript resolves ROOT from import.meta.url; the binary resolves it
 /// from its own manifest, which sits two levels below the repository root.
 fn root() -> PathBuf {
@@ -20,7 +38,19 @@ fn root() -> PathBuf {
 
 fn main() -> ExitCode {
     let root = root();
-    if std::env::args().any(|argument| argument == "--self-test") {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let command = match parse_args(&args) {
+        Ok(command) => command,
+        Err(message) => {
+            eprintln!("error: {message}");
+            return ExitCode::FAILURE;
+        }
+    };
+    if command == Command::Help {
+        println!("{USAGE}");
+        return ExitCode::SUCCESS;
+    }
+    if command == Command::SelfTest {
         return match self_test(&root) {
             Ok(()) => {
                 println!("source_citations self-test ok");
@@ -43,5 +73,27 @@ fn main() -> ExitCode {
             }
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::{parse_args, Command};
+
+    fn args(items: &[&str]) -> Vec<String> {
+        items.iter().map(|item| (*item).to_string()).collect()
+    }
+
+    #[test]
+    fn preserves_default_and_self_test_modes() {
+        assert_eq!(parse_args(&args(&[])), Ok(Command::Check));
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Command::SelfTest));
+        assert_eq!(parse_args(&args(&["--help"])), Ok(Command::Help));
+    }
+
+    #[test]
+    fn rejects_unknown_options() {
+        assert!(parse_args(&args(&["--bogus"])).is_err());
+        assert!(parse_args(&args(&["--self-test", "--bogus"])).is_err());
     }
 }

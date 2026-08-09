@@ -1,11 +1,19 @@
 use std::path::PathBuf;
 
+pub const MAX_ITERATIONS: usize = 100_000;
+pub const MAX_SOURCE_BYTES: usize = 8 * 1024 * 1024;
+pub const MAX_PLAN_BYTES: usize = 128 * 1024 * 1024;
+pub const MAX_OUTPUT_BYTES: usize = 32 * 1024 * 1024;
+pub const MAX_TOP: usize = 256;
+pub const MAX_SUMMARY_BYTES: usize = 1024;
+pub const MAX_JOURNAL_ROW_BYTES: usize = 2 * 1024;
+
 pub const USAGE: &str = "usage: alchemy-permuter <candidate.c|legacy-directory>... [options]\n\
   --iterations N   bounded generated candidates (default 1000)\n\
   --jobs N, -j N   parallel compiler workers (default CPUs-2; explicit max 64)\n\
   --seed N         deterministic random seed (default 1)\n\
-  --top N          retained improving candidates (default 12)\n\
-  --output DIR     ignored report/candidate directory\n\
+  --top N          retained improving candidates (default 12; max 256)\n\
+  --output DIR     new, dedicated ignored run directory (or parent for many inputs)\n\
   --manual-only    evaluate PERM_* choices without random mutation\n\
   --show-errors    display failed compiler diagnostics\n\
   --better-only    retain only candidates better than the baseline\n\
@@ -70,6 +78,9 @@ impl Options {
             match args[at].as_str() {
                 "--iterations" => {
                     iterations = positive(args.get(at + 1), "--iterations")?;
+                    if iterations > MAX_ITERATIONS {
+                        return Err(format!("--iterations must not exceed {MAX_ITERATIONS}"));
+                    }
                     at += 2;
                 }
                 "--jobs" | "-j" => {
@@ -86,6 +97,9 @@ impl Options {
                 }
                 "--top" => {
                     top = positive(args.get(at + 1), "--top")?;
+                    if top > MAX_TOP {
+                        return Err(format!("--top must not exceed {MAX_TOP}"));
+                    }
                     at += 2;
                 }
                 "--output" => {
@@ -196,5 +210,39 @@ pub fn self_test() -> Result<(), String> {
     if Options::parse(&["--jobs".into(), "0".into(), "x.c".into()]).is_ok() {
         return Err("option parser accepted zero jobs".into());
     }
+    if Options::parse(&[
+        "--iterations".into(),
+        (MAX_ITERATIONS + 1).to_string(),
+        "x.c".into(),
+    ])
+    .is_ok()
+    {
+        return Err("option parser accepted an unbounded iteration request".into());
+    }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Options, MAX_ITERATIONS, MAX_TOP};
+
+    #[test]
+    fn rejects_iterations_above_hard_cap() {
+        let args = [
+            "--iterations".to_string(),
+            (MAX_ITERATIONS + 1).to_string(),
+            "candidate.c".to_string(),
+        ];
+        assert!(Options::parse(&args).is_err());
+    }
+
+    #[test]
+    fn rejects_unbounded_retained_output() {
+        let args = [
+            "--top".to_string(),
+            (MAX_TOP + 1).to_string(),
+            "candidate.c".to_string(),
+        ];
+        assert!(Options::parse(&args).is_err());
+    }
 }

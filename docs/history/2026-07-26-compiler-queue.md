@@ -1,3 +1,5 @@
+> Historical archive: compiler study beginning 2026-07-26. Preserved for evidence; use [STATUS.md](../../STATUS.md) for the current project state.
+
 > **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
 
 # alchemy-gcc prototype results (2026-07-26)
@@ -5,7 +7,7 @@
 This entire document is a historical compiler study. Its TypeScript harness
 names and ignored `work/` paths are preserved to identify the experiments that
 produced the measurements; current compiler work uses the native `tools`
-tools and Makefile commands described in [`../HANDOVER.md`](../HANDOVER.md).
+tools and Makefile commands described in [`../../STATUS.md`](../../STATUS.md).
 
 ## Stock-option matrix completion (2026-07-28)
 

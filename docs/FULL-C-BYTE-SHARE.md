@@ -1,139 +1,71 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+# Executable progress metrics
 
-# Full-C Byte Share
+Alchemy publishes two related byte measurements. They deliberately answer
+different questions.
 
-Full-C Byte Share is Alchemy's sole headline progress metric:
+| Label | Numerator | Use |
+|---|---|---|
+| **Exact C** | byte-identical executable spans emitted from canonical C | contributor progress, history, and commit subjects |
+| **DONE** | Exact C plus audited permanent assembly | README and chart completion |
+
+Semantic C is shown as work in progress. Ordinary reconstruction assembly is
+still work to convert. Neither contributes to Exact C or DONE.
+
+## Exact C
 
 ```text
 union(byte-identical executable spans emitted from canonical C)
 ----------------------------------------------------------------
-union(all audited executable spans in the main image and code overlays)
+union(all audited executable spans in the main image and overlays)
 ```
 
-The current exact fraction is generated with `make progress`. The
-percentage is a round-half-up, two-decimal presentation of that fraction; it
-is not stored independently in commit subjects.
+Read the live value with `make progress`. The tracked report is
+[`../metrics/gs1-en-progress.json`](../metrics/gs1-en-progress.json). Progress
+uses executable bytes, not owners or functions, because differently sized
+owners should not carry equal weight.
 
-## Denominator evidence
+Every commit subject ends with `[ ☀️ X / Y ]`, where X and Y are whole decimal
+kilobytes derived from the staged exact-C report. The pre-commit gate compares
+the subject with the staged metric. It rejects an unexplained regression or
+denominator change.
 
-For GS1-English, the main-image inventory is the non-overlapping union of the
-byte-verified claimed-C and classified reconstruction-assembly manifests.
-This includes Thumb and ARM bodies, startup code, structural assembly, linker
-veneers, literal-bearing regions, and executable alignment while excluding
-data/assets gaps in the ROM image.
+## Audited denominator
 
-Each of the 96 decoded code overlays is independently namespaced. Its tracked,
-byte-round-tripping canonical assembly distinguishes instruction lines from
-data directives. The inventory maps assembler listing addresses back to those
-source lines, adds PC-relative literal targets, fixed `ldr`/`bx` veneers,
-verified C placeholder spans, and two-byte executable alignment, and records
-the complement as excluded data. It rejects overlaps and incomplete decoded
-byte accounting.
+The GS1-English denominator is the non-overlapping union of executable bytes
+in the resident main image and all 96 code overlays. It includes Thumb and ARM
+bodies, veneers, literal-bearing executable regions, and executable alignment;
+it excludes data and assets. The tracked interval evidence is
+[`../metrics/gs1-en-executable.json`](../metrics/gs1-en-executable.json).
 
-The tracked inventory is
-[`metrics/gs1-en-executable.json`](../metrics/gs1-en-executable.json).
-`make progress-check` regenerates the interval union and rejects a stale
-inventory.
+`make progress-check` regenerates that evidence and refuses incomplete,
+overlapping, or stale ownership. A target whose inventory says
+`audit: "incomplete"` cannot publish a percentage. A proved denominator
+correction must be isolated and use the repository's explicit metric-correction
+commit subject; ordinary decompilation work does not change the denominator.
 
-GS2-English currently has only a compiler/bootstrap source and no complete
-executable classification. Its target-scoped inventory is deliberately marked
-`incomplete`; the metric fails closed instead of publishing a partial
-denominator.
+## Ownership evidence
 
-## Numerator evidence
+Main-image exact spans come from the claimed-code build manifest. Overlay exact
+spans come from compiler-filled `AlchemyC_` placeholders backed by canonical C
+files. Every span must fit wholly inside its audited executable owner and may
+not overlap another claim.
 
-Main C spans come from the normal claimed-code manifest after compilation and
-linking. Code-overlay C spans come from the verified `AlchemyC_` placeholder
-ownership represented by matching code-overlay C files. Every span must be wholly
-contained in its target's audited executable union and ownership may not
-overlap.
+Inline assembly, fixed-register bindings, copied bytes, and other fakematch
+scaffolding are excluded even if they happen to link. ROM equality and valid C
+ownership are independent yes/no requirements.
 
-Legacy inline-assembly or hard-register fakematches are excluded even if an old
-claimed build links them. Source ownership and ROM equality remain separate
-yes/no verification properties.
+## Charts and live dashboard
 
-## Commit subjects and history
+`make coverage` derives
+[`../metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json) and
+the four SVGs under `assets/readme/`. It also synchronizes the README `DONE`
+headline and cache keys. Exact C must agree byte-for-byte with the tracked
+progress report or the writer refuses to publish.
 
-Every new commit subject ends with:
+The dashboard server derives the same categories directly from the worktree,
+watches relevant source inputs, and serves `http://localhost:4649/`. A service
+may additionally bind a configured LAN address without giving up localhost.
 
-```text
-[ ☀️ X / Y ]
-```
-
-X and Y are whole kilobytes, floor of bytes/1000. The byte-exact record stays
-in `metrics/gs1-en-progress.json`; the subject is its legible summary, and the
-hook compares kilobytes to kilobytes on both sides.
-
-The hook checks that fraction against
-`metrics/gs1-en-progress.json` from the Git index, not the unstaged working
-tree. Changes to executable source or inventory require that regenerated
-report to be staged. After the one legacy-to-Full-C transition, denominator
-changes are rejected by default and numerator regressions are always rejected.
-If a boundary audit proves that executable bytes were previously excluded or
-non-executable bytes included, the correction must stage the regenerated
-executable inventory and use an explicit
-`metrics: correct executable denominator` commit subject. Ordinary
-decompilation commits cannot change the denominator.
-
-Historical commits are not rewritten. `tools/full-c-history/target/release/full-c-history` measures every
-first-parent tree against the fixed audited denominator and writes
-[`full-c-history.json`](full-c-history.json) and
-[`full-c-history.csv`](full-c-history.csv). It derives ownership from each
-commit tree rather than trusting incompatible legacy subject suffixes.
-
-## Coverage map
-
-`tools/coverage-map/target/release/coverage-map` publishes the same measurement as four pictures:
-[`gs1-en-core.svg`](../assets/readme/gs1-en-core.svg),
-[`gs1-en-overlays.svg`](../assets/readme/gs1-en-overlays.svg),
-[`gs1-en-images.svg`](../assets/readme/gs1-en-images.svg), and
-[`gs1-en-music.svg`](../assets/readme/gs1-en-music.svg), with the tile data in
-[`metrics/gs1-en-coverage-map.json`](../metrics/gs1-en-coverage-map.json).
-
-It derives exact and semantic ownership the way the history ledger does—from
-tracked trees. Dark-gray retained ownership additionally reads the latest verified
-full-build assembly manifest; run the publication redraw after `make verify`.
-If that manifest is absent, only explicit tracked non-code spans are dark gray and
-the unresolved complement remains gray:
-
-* main-image exact C: `src/<address>.c` against audited region boundaries,
-  excluding register-pinned, inline-assembly and fakematch sources;
-* code-overlay exact C: `AlchemyC_` placeholder spans in `assets/code/*_overlay.s`;
-* semantic C: `semantic/` sources sized by `semantic/main-regions.json`,
-  `semantic/regions.json`, or their single audited region, clipped to the
-  executable union and with exact C subtracted, because exact always wins;
-* ROM-image layout: the audited executable union, the compressed code-overlay streams in
-  `assets/manifest.json`, and the complement of both as asset data.
-
-For call-target evidence, code-overlay inventory scans the compiler-filled image,
-not the zero-filled assembly placeholder image. Canonical assembly listings
-still supply the instruction/directive boundaries. This keeps raw leaf and
-call-via-bank code visible when its only caller has already become exact C.
-
-The exact-C numbers it derives must equal `metrics/gs1-en-progress.json`
-exactly; a disagreement is an error rather than a redrawn picture. That report
-is read from the selected exact source tree, so the check also holds when an
-explicit ref is used. Semantic C is not part of Full-C Byte Share and is drawn
-as a separate colour, never folded into the headline fraction.
-
-`tools/dashboard-server/target/release/dashboard-server` serves a separate live worktree view. It
-derives the same ownership map directly in memory, watches `asm/`, `assets/`,
-`metrics/`, `semantic/`, `src/`, and the verified assembly manifest, and pushes
-a new draw to the browser after relevant changes. It deliberately tolerates a
-temporarily stale tracked progress report while editing; the normal publication
-path does not.
-
-The map records its input trees in `provenance.exact_source` and
-`provenance.semantic_source`. Both `--write` and `--check` re-resolve those
-values; `--exact-ref` and `--semantic-ref` can override them, while `worktree`
-selects the local tree. Normal `main` publication uses `worktree` for both, so
-the checked-in pictures describe the commit being published.
-
-A recorded ref that is not available locally is an error, not a fall back to
-the working tree: falling back could quietly republish an older measurement.
-Likewise a redraw that cannot see the recorded semantic source refuses rather
-than publishing that portion as zero.
-
-The map is regenerated on `main`, so `make coverage-check` is not part of
-`make verify`; regenerate the pictures explicitly with `make coverage` when
-coverage changes.
+The first-parent Exact-C history is described in
+[`full-c-history.md`](full-c-history.md). Historical rows are measured from
+their trees rather than trusted from old commit messages.

@@ -1,11 +1,12 @@
 //! Each test here pins one JavaScript semantic that the naive Rust spelling
 //! gets wrong. A later "simplification" to the obvious form must FAIL these.
 
-use compiler_corpus_regression::cli::{parse_arguments, ParseOutcome};
+use compiler_corpus_regression::cli::{parse_arguments, ParseOutcome, USAGE};
 use compiler_corpus_regression::config::{compiler_configuration_of, flags_of};
-use compiler_corpus_regression::corpus::{deterministic_sample, hash, hexadecimal_stem, Member};
+use compiler_corpus_regression::corpus::{
+    corpus, deterministic_sample, hash, hexadecimal_stem, Member,
+};
 use compiler_corpus_regression::diff::byte_difference;
-use compiler_corpus_regression::extent::linked_function_extent;
 use compiler_corpus_regression::jsparse::{
     default_sort_cmp, is_js_integer, is_js_safe_integer, js_abs, js_greater_than, parse_int,
     utf16_slice_to,
@@ -16,6 +17,7 @@ use compiler_corpus_regression::pipeline::{
     relative_source, rom_slice,
 };
 use compiler_corpus_regression::result::{atomic_json, cached_result, read_cache, Outcome};
+use integrate_matches::linked_function_extent;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -182,6 +184,43 @@ fn member(stem: &str, address: u32) -> Member {
     }
 }
 
+fn manifest_options(regions: &str) -> (compiler_corpus_regression::cli::Options, PathBuf) {
+    let path = temporary_cache_path("manifest");
+    std::fs::write(&path, format!(r#"{{"regions":[{regions}]}}"#)).unwrap();
+    let mut options = options(&["--flags", "-O2"]);
+    options.manifest = path.to_string_lossy().into_owned();
+    (options, path)
+}
+
+#[test]
+fn corpus_accepts_a_flat_exact_c_owner() {
+    let (options, manifest) =
+        manifest_options(r#"{"source":"exact/08091780.c","address":0,"size":4}"#);
+    let members = corpus(&options).unwrap();
+    assert_eq!(members.len(), 1);
+    assert_eq!(members[0].stem, "08091780");
+    assert!(members[0].source.ends_with("exact/08091780.c"));
+    let _ = std::fs::remove_file(manifest);
+}
+
+#[test]
+fn corpus_rejects_parent_directory_traversal_in_exact_sources() {
+    let (options, manifest) =
+        manifest_options(r#"{"source":"exact/../exact/08091780.c","address":0,"size":4}"#);
+    let error = corpus(&options).unwrap_err();
+    assert!(error.contains("flat exact") || error.contains("traversal"));
+    let _ = std::fs::remove_file(manifest);
+}
+
+#[test]
+fn corpus_excludes_legacy_non_c_and_unrelated_sources() {
+    let (options, manifest) = manifest_options(
+        r#"{"source":"src/not-an-address.c"},{"source":"exact/08091780.txt"},{"source":"other/not-an-address.c"},{"source":"exact/08091780.s"}"#,
+    );
+    assert!(corpus(&options).unwrap().is_empty());
+    let _ = std::fs::remove_file(manifest);
+}
+
 #[test]
 fn deterministic_sample_is_input_order_independent_and_matches_the_naive_comparator() {
     let members: Vec<Member> = (0..64u32)
@@ -280,6 +319,13 @@ fn options(list: &[&str]) -> compiler_corpus_regression::cli::Options {
 fn cli_rejects_a_run_that_changes_nothing() {
     assert!(parse_arguments(&args(&[])).is_err());
     assert!(parse_arguments(&args(&["--flags", ",,"])).is_err());
+}
+
+#[test]
+fn cli_help_names_every_path_override() {
+    for option in ["--rom", "--manifest", "--cache", "--report"] {
+        assert!(USAGE.contains(option), "help omitted accepted option {option}");
+    }
 }
 
 #[test]
@@ -461,9 +507,9 @@ fn compiler_signature_changes_when_a_host_tool_signature_changes_without_path_mu
 }
 
 #[test]
-fn cache_key_includes_the_repository_relative_source_path() {
+fn cache_key_includes_the_exact_repository_relative_source_path() {
     let first = cache_key(
-        "src/exact/08000000.c",
+        "exact/08000000.c",
         b"same source",
         b"same expected",
         "same compiler",
@@ -471,7 +517,7 @@ fn cache_key_includes_the_repository_relative_source_path() {
     )
     .unwrap();
     let second = cache_key(
-        "src/alternate/08000000.c",
+        "src/08000000.c",
         b"same source",
         b"same expected",
         "same compiler",

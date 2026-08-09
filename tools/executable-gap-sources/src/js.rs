@@ -98,20 +98,6 @@ fn is_hex_literal(text: &str, digits: usize) -> bool {
             .all(|c| c.is_ascii_digit() || ('a'..='f').contains(&c))
 }
 
-/// `/^[a-z][a-z0-9_]*$/`
-pub fn is_snake_identifier(text: &str) -> bool {
-    let mut characters = text.chars();
-    matches!(characters.next(), Some(first) if first.is_ascii_lowercase())
-        && characters.all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
-}
-
-/// `/^[a-z][a-z0-9-]*$/`
-pub fn is_kebab_identifier(text: &str) -> bool {
-    let mut characters = text.chars();
-    matches!(characters.next(), Some(first) if first.is_ascii_lowercase())
-        && characters.all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
-}
-
 /// `/^[A-Za-z_][A-Za-z0-9_]*$/`
 pub fn is_c_identifier(text: &str) -> bool {
     let mut characters = text.chars();

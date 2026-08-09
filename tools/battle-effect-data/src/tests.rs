@@ -540,7 +540,7 @@ fn parse_rejects_a_document_with_the_wrong_shape() {
 fn the_cli_reports_its_usage_the_way_the_typescript_does() {
     assert_eq!(
         run(vec![]).unwrap_err(),
-        "usage: battle-effect-data {export ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS}"
+        "usage: battle-effect-data {build-stdout SOURCE --root ASSETS|export ROM --root ASSETS --output SOURCE|export-prefix ROM --root ASSETS --output SOURCE|verify ROM SOURCE --root ASSETS|verify-prefix ROM SOURCE --root ASSETS}"
     );
     assert_eq!(
         run(vec!["export".into(), "rom.gba".into()]).unwrap_err(),
@@ -557,6 +557,19 @@ fn the_cli_reports_its_usage_the_way_the_typescript_does() {
     );
     // `--self-test` wins wherever it appears, exactly as `args.includes` does.
     run(vec!["verify".into(), "--self-test".into()]).expect("self-test wins");
+    run(vec!["--help".into()]).expect("help succeeds");
+    assert!(run(vec!["verify".into(), "rom.gba".into(), "source.json".into(), "--unknown".into(), "x".into()]).is_err());
+    assert!(run(vec![
+        "export".into(),
+        "rom.gba".into(),
+        "--root".into(),
+        "a".into(),
+        "--root".into(),
+        "b".into(),
+        "--output".into(),
+        "source".into()
+    ])
+    .is_err());
     // An empty string is falsy in JS, so it fails the usage check rather than
     // being treated as a path.
     assert_eq!(

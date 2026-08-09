@@ -165,8 +165,8 @@ fn pointer(rom: &[u8], address: u32) -> Result<u32, Error> {
 fn png_indexed(pixels: &[u8], width: usize, height: usize, depth: u8) -> Result<Vec<u8>, Error> {
     if width == 0
         || height == 0
-        || width % 8 != 0
-        || height % 8 != 0
+        || !width.is_multiple_of(8)
+        || !height.is_multiple_of(8)
         || pixels.len() != width * height
     {
         return err("indexed image dimensions differ");
@@ -185,15 +185,14 @@ fn png_indexed(pixels: &[u8], width: usize, height: usize, depth: u8) -> Result<
     let bytes_per_row = width * usize::from(depth) / 8;
     let mut rows = vec![0u8; height * (bytes_per_row + 1)];
     for y in 0..height {
-        let mut target = y * (bytes_per_row + 1) + 1;
         let pixels_per_byte = 8 / usize::from(depth);
-        for x in (0..width).step_by(pixels_per_byte) {
+        let row_start = y * (bytes_per_row + 1) + 1;
+        for (offset, x) in (0..width).step_by(pixels_per_byte).enumerate() {
             let mut byte = 0u8;
             for part in 0..pixels_per_byte {
                 byte |= pixels[y * width + x + part] << (8 - usize::from(depth) * (part + 1));
             }
-            rows[target] = byte;
-            target += 1;
+            rows[row_start + offset] = byte;
         }
     }
     let mut ihdr = vec![0u8; 13];
@@ -280,8 +279,8 @@ fn atlas_frames(
 }
 
 fn pack_tiles(pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, Error> {
-    if width % 8 != 0
-        || height % 8 != 0
+    if !width.is_multiple_of(8)
+        || !height.is_multiple_of(8)
         || pixels.len() != width * height
         || pixels.iter().any(|pixel| *pixel >= 16)
     {
@@ -304,7 +303,10 @@ fn pack_tiles(pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, Err
 }
 
 fn unpack_tiles(source: &[u8], width: usize, height: usize) -> Result<Vec<u8>, Error> {
-    if width % 8 != 0 || height % 8 != 0 || source.len() != width * height / 2 {
+    if !width.is_multiple_of(8)
+        || !height.is_multiple_of(8)
+        || source.len() != width * height / 2
+    {
         return err("4bpp tile extent differs");
     }
     let mut pixels = vec![0u8; width * height];

@@ -6,6 +6,33 @@ use music::{
     SoundTableEntry, SoundTableSource, SymbolValue,
 };
 
+const USAGE: &str =
+    "usage: music extract-sound-table ROM --address ADDRESS --count COUNT -o OUTPUT\n       music build-stdout SOURCE | --self-test\n       music [-h|--help]";
+
+fn validate_options(args: &[String]) -> std::result::Result<(), String> {
+    let valued = ["-o", "--address", "--count"];
+    let mut index = 0;
+    while index < args.len() {
+        let argument = args[index].as_str();
+        if valued.contains(&argument) {
+            if index + 1 >= args.len() {
+                return Err(format!("{argument} requires a value"));
+            }
+            index += 2;
+            continue;
+        }
+        if matches!(argument, "-h" | "--help" | "--self-test") {
+            index += 1;
+            continue;
+        }
+        if argument.starts_with('-') {
+            return Err(format!("unknown option: {argument}"));
+        }
+        index += 1;
+    }
+    Ok(())
+}
+
 fn source(path: &str) -> Result<SoundTableSource> {
     let bytes = std::fs::read(path).map_err(|error| format!("{path}: {error}"))?;
     let value: serde_json::Value =
@@ -80,6 +107,11 @@ fn source(path: &str) -> Result<SoundTableSource> {
 }
 
 fn run(args: &[String]) -> Result<()> {
+    validate_options(args).map_err(|message| message.to_string())?;
+    if args.iter().any(|a| a == "-h" || a == "--help") {
+        println!("{USAGE}");
+        return Ok(());
+    }
     if args.iter().any(|a| a == "--self-test") {
         self_test()?;
         println!("self-test=ok");
@@ -112,10 +144,7 @@ fn run(args: &[String]) -> Result<()> {
     if args.first().map(String::as_str) != Some("extract-sound-table")
         || args.get(1).is_none_or(String::is_empty)
     {
-        println!(
-            "usage: music extract-sound-table ROM --address ADDRESS --count COUNT -o OUTPUT"
-        );
-        println!("       music.ts --self-test");
+        println!("{USAGE}");
         return Ok(());
     }
     let rom = std::fs::read(&args[1]).map_err(|e| format!("{}: {e}", args[1]))?;
@@ -145,5 +174,28 @@ fn main() -> ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn help_aliases_succeed_before_file_access() {
+        assert!(run(&args(&["-h"])).is_ok());
+        assert!(run(&args(&["--help"])).is_ok());
+    }
+
+    #[test]
+    fn unknown_option_is_rejected_before_file_access() {
+        assert_eq!(
+            run(&args(&["extract-sound-table", "missing.gba", "--bogus"])).unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

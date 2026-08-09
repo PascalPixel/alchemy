@@ -327,6 +327,14 @@ mod tests {
             overlay_call_via_base("resource_373", Some("./exact/resource_373_c_02005610.c")),
             0x0200_b794
         );
+        assert_eq!(
+            overlay_call_via_base("resource_373", Some("semantic/resource_373_c_02000608.c")),
+            0x0200_68d6
+        );
+        assert_eq!(
+            overlay_call_via_base("resource_373", Some("exact/resource_373_c_02000608.c")),
+            0x0200_68d6
+        );
         // An unlisted source falls through to the overlay's own entry.
         assert_eq!(
             overlay_call_via_base("resource_373", Some("exact/resource_373_c_02000030.c")),

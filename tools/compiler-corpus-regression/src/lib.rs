@@ -10,11 +10,9 @@
 //! TWO DEFECTS ARE CORRECTED HERE, both documented at their site and both
 //! confirmed by running the legacy implementation:
 //!
-//! 1. `corpus()` filters `region.source.startsWith("src/")` while every region
-//!    in `out/full/claimed/manifest.json` is under `exact/`, and there is no
-//!    `src/` directory in the repository at all. `git log -L 240,245` puts that
-//!    literal in the tool's FIRST commit `c7b7f3736`, so it is NOT a
-//!    `b3ab4841b` breakage. See `corpus::corpus`.
+//! 1. `corpus()` selects the canonical flat `exact/*.c` owners from
+//!    `out/full/claimed/manifest.json`; the legacy `src/*.c` selector is
+//!    excluded. See `corpus::corpus`.
 //! 2. `main()` digests `join(ROOT, "tools", name)` for four files that
 //!    `b3ab4841b` moved into `tools/lib/` and `tools/compiler/`, plus the
 //!    currently executing compiled binary. That is the confirmed `b3ab4841b`
@@ -27,7 +25,6 @@ pub mod cli;
 pub mod config;
 pub mod corpus;
 pub mod diff;
-pub mod extent;
 pub mod jsparse;
 pub mod jsvalue;
 pub mod pipeline;

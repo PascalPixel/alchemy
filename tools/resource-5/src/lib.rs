@@ -675,7 +675,7 @@ fn build_elemental_profile(value: &Value, index: usize) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-fn at<'a>(rom: &'a [u8], address: usize, size: usize) -> &'a [u8] {
+fn at(rom: &[u8], address: usize, size: usize) -> &[u8] {
     &rom[address - ROM_BASE..address - ROM_BASE + size]
 }
 
@@ -1087,7 +1087,32 @@ fn output(args: &[String]) -> Option<String> {
         .next_back()
 }
 
+fn validate_options(args: &[String]) -> Result<()> {
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].as_str() {
+            "-o" | "--output" => {
+                if index + 1 >= args.len() {
+                    return err(format!("{} requires a value", args[index]));
+                }
+                index += 2;
+            }
+            "-h" | "--help" | "--self-test" => index += 1,
+            argument if argument.starts_with('-') => {
+                return err(format!("unknown option: {argument}"));
+            }
+            _ => index += 1,
+        }
+    }
+    Ok(())
+}
+
 pub fn run(mut args: Vec<String>) -> Result<()> {
+    validate_options(&args)?;
+    if args.iter().any(|value| value == "-h" || value == "--help") {
+        println!("usage: resource-5 {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}");
+        return Ok(());
+    }
     if args.iter().any(|value| value == "--self-test") {
         self_test()?;
         println!("self-test=ok");
@@ -1174,5 +1199,19 @@ mod tests {
             .unwrap()
             .insert("extra".into(), json!(1));
         assert!(parse_document(&value).is_err());
+    }
+
+    #[test]
+    fn unknown_options_are_rejected_before_file_access() {
+        assert_eq!(
+            run(vec![
+                "verify".into(),
+                "missing.gba".into(),
+                "missing.json".into(),
+                "--bogus".into(),
+            ])
+            .unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

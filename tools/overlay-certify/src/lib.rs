@@ -95,8 +95,14 @@ pub fn certify_image(
     owner_list: &[(i64, i64)],
 ) -> Result<Certification, String> {
     let mut spans = owner_list.to_vec();
+    for (start, end) in &spans {
+        if *start < 0 || *end <= *start {
+            return Err(format!(
+                "overlay-certify: invalid owner span 0x{start:x}-0x{end:x}"
+            ));
+        }
+    }
     spans.sort_by_key(|(start, _)| *start);
-    spans.retain(|(start, end)| end > start);
     if spans.is_empty() {
         return Ok(empty(overlay, image.len()));
     }
@@ -370,24 +376,55 @@ fn certification_json(result: &Certification) -> String {
     )
 }
 
+fn usage() {
+    println!(
+        "usage: overlay-certify [--check] [--json] [OVERLAY ...]\n\nReport certification findings for one or more named code overlays.\nWith no overlay names, report every published overlay.\n\nOptions:\n  --json      emit machine-readable reports\n  --check     return failure when any finding exists\n  --help      show this help\n  --self-test run focused invariants\n\nReport mode is advisory and preserves the report even when findings exist."
+    );
+}
+
+fn requested_overlays(args: &[String]) -> Result<Option<Vec<String>>, String> {
+    let mut names = Vec::new();
+    for arg in args {
+        if arg.starts_with('-') {
+            if !matches!(
+                arg.as_str(),
+                "--check" | "--json" | "--help" | "--self-test"
+            ) {
+                return Err(format!(
+                    "overlay-certify: unknown option '{arg}' (try --help)"
+                ));
+            }
+        } else {
+            names.push(arg.clone());
+        }
+    }
+    if args.iter().any(|arg| arg == "--self-test") && args.len() != 1 {
+        return Err("overlay-certify: --self-test cannot be combined with other arguments".into());
+    }
+    if args.iter().any(|arg| arg == "--help") {
+        usage();
+        return Ok(None);
+    }
+    let known = overlay_names()?.into_iter().collect::<HashSet<_>>();
+    for name in &names {
+        if !known.contains(name) {
+            return Err(format!(
+                "overlay-certify: unknown overlay '{name}'; expected a name from assets/code/*_overlay.s"
+            ));
+        }
+    }
+    Ok(Some(names))
+}
+
 pub fn run(args: &[String]) -> Result<(), String> {
+    let Some(requested) = requested_overlays(args)? else {
+        return Ok(());
+    };
     if args.iter().any(|arg| arg == "--self-test") {
         return self_test();
     }
-    let requested = args
-        .iter()
-        .filter(|arg| !arg.starts_with("--"))
-        .cloned()
-        .collect::<Vec<_>>();
-    let known = overlay_names()?;
-    for name in &requested {
-        if !known.contains(name) {
-            println!("NOTHING SWEPT — no overlay named {name}. This is a FAILURE, not a pass.");
-            return Err("unknown overlay".into());
-        }
-    }
     let overlays = if requested.is_empty() {
-        known
+        overlay_names()?
     } else {
         requested
     };
@@ -438,7 +475,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         }
     }
     println!("\noverlays={} sweep_e_findings={findings}", results.len());
-    if findings > 0 {
+    if findings > 0 && args.iter().any(|arg| arg == "--check") {
         return Err(format!("sweep E found {findings} findings"));
     }
     Ok(())
@@ -457,5 +494,26 @@ mod tests {
     fn prologue_helpers_are_used_by_the_native_boundary() {
         assert!(overlay_published::is_prologue_shape(0xb500));
         assert!(overlay_published::saves_link_register(0xb560));
+    }
+
+    #[test]
+    fn invalid_owner_spans_are_rejected() {
+        let image = [0u8; 4];
+        for owners in [[(0, 0)], [(-1, 2)], [(3, 2)]] {
+            let error = certify_image("synthetic", &image, &owners).unwrap_err();
+            assert!(error.contains("invalid owner span"), "{error}");
+        }
+    }
+
+    #[test]
+    fn invalid_overlay_is_rejected_before_certification() {
+        let error = run(&["not-an-overlay".into()]).unwrap_err();
+        assert!(error.contains("unknown overlay 'not-an-overlay'"));
+    }
+
+    #[test]
+    fn self_test_rejects_extra_arguments() {
+        let error = run(&["--self-test".into(), "--bogus".into()]).unwrap_err();
+        assert!(error.contains("unknown option"));
     }
 }

@@ -51,7 +51,36 @@ fn integer_option(text: Option<String>, label: &str) -> Result<f64, String> {
     integer_text(text.as_deref(), label)
 }
 
+fn validate_options(args: &[String]) -> Result<(), String> {
+    let valued = ["-o", "--output", "--address", "--slots"];
+    let mut index = 0;
+    while index < args.len() {
+        let argument = args[index].as_str();
+        if valued.contains(&argument) {
+            if index + 1 >= args.len() {
+                return Err(format!("{argument} requires a value"));
+            }
+            index += 2;
+            continue;
+        }
+        if matches!(argument, "-h" | "--help" | "--self-test") {
+            index += 1;
+            continue;
+        }
+        if argument.starts_with('-') {
+            return Err(format!("unknown option: {argument}"));
+        }
+        index += 1;
+    }
+    Ok(())
+}
+
 fn run(mut args: Vec<String>) -> Result<(), String> {
+    validate_options(&args)?;
+    if args.iter().any(|item| item == "-h" || item == "--help") {
+        println!("{USAGE}");
+        return Ok(());
+    }
     if args.iter().any(|item| item == "--self-test") {
         self_test()?;
         println!("self-test=ok");
@@ -239,7 +268,22 @@ mod tests {
     #[test]
     fn help_and_self_test_succeed() {
         run(strings(&["--help"])).expect("help");
+        run(strings(&["-h"])).expect("short help");
         run(strings(&[])).expect("bare invocation prints usage");
         run(strings(&["--self-test"])).expect("self test");
+    }
+
+    #[test]
+    fn unknown_options_are_rejected_before_file_access() {
+        assert_eq!(
+            run(strings(&[
+                "verify",
+                "missing.gba",
+                "missing.json",
+                "--bogus"
+            ]))
+            .unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

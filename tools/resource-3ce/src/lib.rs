@@ -74,7 +74,7 @@ fn number(v: &Value, label: &str) -> Result<usize> {
     let Some(n) = v.as_f64() else {
         return err(format!("{label} must be a numeric integer"));
     };
-    if !n.is_finite() || n.fract() != 0.0 || n < 0.0 || n > 9_007_199_254_740_991.0 {
+    if !n.is_finite() || n.fract() != 0.0 || !(0.0..=9_007_199_254_740_991.0).contains(&n) {
         return err(format!("{label} must be a numeric integer"));
     }
     Ok(n as usize)
@@ -477,7 +477,33 @@ fn positional(args: &[String]) -> Vec<String> {
         .map(|(_, a)| a.clone())
         .collect()
 }
+
+fn validate_options(args: &[String]) -> Result<()> {
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].as_str() {
+            "-o" | "--output" => {
+                if index + 1 >= args.len() {
+                    return err(format!("{} requires a value", args[index]));
+                }
+                index += 2;
+            }
+            "-h" | "--help" | "--self-test" => index += 1,
+            argument if argument.starts_with('-') => {
+                return err(format!("unknown option: {argument}"));
+            }
+            _ => index += 1,
+        }
+    }
+    Ok(())
+}
+
 pub fn run(mut args: Vec<String>) -> Result<()> {
+    validate_options(&args)?;
+    if args.iter().any(|a| a == "-h" || a == "--help") {
+        println!("usage: resource-3ce {{export ROM DIRECTORY|verify ROM LAYOUT|build-stream LAYOUT|build-fill LAYOUT}} [-o FILE] | --self-test");
+        return Ok(());
+    }
     if args.iter().any(|a| a == "--self-test") {
         self_test()?;
         println!("self-test=ok");
@@ -557,5 +583,19 @@ mod tests {
     fn layout_is_stable() {
         let text = canonical_json(&layout_document());
         assert!(text.contains("\"resource_id\": \"0x3ce\""));
+    }
+
+    #[test]
+    fn unknown_options_are_rejected_before_file_access() {
+        assert_eq!(
+            run(vec![
+                "verify".into(),
+                "missing.gba".into(),
+                "missing.json".into(),
+                "--bogus".into(),
+            ])
+            .unwrap_err(),
+            "unknown option: --bogus"
+        );
     }
 }

@@ -1,42 +1,25 @@
-> **C/H hard blocker:** Never use `asm(...)`, `__asm(...)`, `__asm_(...)`, `__asm__(...)`, fixed-register bindings, or empty assembly barriers. Byte equality never overrides this rule.
+# Documentation
 
-# Where things are
+The current status and next focus are in [`../STATUS.md`](../STATUS.md).
 
-One page so nobody has to guess. `main` is authoritative; update the single
-handover when an operational fact changes instead of creating another status
-document.
+## Working rules
 
-## Start here
-
-| you want | read |
-| --- | --- |
-| current state and what to do next | [`../HANDOVER.md`](../HANDOVER.md) |
-| how to do the work — levers, park classes, compiler modes | [`../HANDOVER.md`](../HANDOVER.md) |
-| the rules that are not negotiable | [`../PROVENANCE.md`](../PROVENANCE.md), [`../LAWS.md`](../LAWS.md) |
+- [`../CONTRIBUTING.md`](../CONTRIBUTING.md) — contributor workflow.
+- [`../AGENTS.md`](../AGENTS.md) — repository operating rules and tool groups.
+- [`TOOLS.md`](TOOLS.md) — every public command, internal classifications, mutation boundaries, and cache expectations.
+- [`../LAWS.md`](../LAWS.md) — compiler behavior established by evidence.
+- [`../SANCTUM.md`](../SANCTUM.md) — exhausted search axes and sealed owners.
+- [`../PROVENANCE.md`](../PROVENANCE.md) — clean-room and publication boundary.
 
 ## Reference
 
-| document | what it is |
-| --- | --- |
-| [FULL-C-BYTE-SHARE.md](FULL-C-BYTE-SHARE.md) | the headline metric and how the coverage map derives it |
-| [PATH-TO-COMPLETION.md](PATH-TO-COMPLETION.md) | measured status and the remaining-work breakdown |
-| [DISCOVERY-QUEUE.md](DISCOVERY-QUEUE.md) | what `asm_c_debt_bytes` is and is not |
-| [COMPILER-QUEUE.md](COMPILER-QUEUE.md) | compiler-mode candidates |
-| [REMAINING.md](REMAINING.md) | the residual categories |
-| [SOURCE-STYLE.md](SOURCE-STYLE.md) | how canonical C is written here |
-| `LAWS.md` and `HANDOVER.md` | resolved twin-template evidence and transposition method |
-| [compiler-evidence/](compiler-evidence/) | collateral for each admitted compiler lever |
-| [full-c-history.json](full-c-history.json) / [.csv](full-c-history.csv) | first-parent measurement history |
+- [`FULL-C-BYTE-SHARE.md`](FULL-C-BYTE-SHARE.md) — metric definition and map derivation.
+- [`SOURCE-STYLE.md`](SOURCE-STYLE.md) — canonical C conventions.
+- [`compiler-evidence/`](compiler-evidence/) — evidence for admitted compiler behavior.
+- [`full-c-history.md`](full-c-history.md) — how the generated first-parent history is measured.
+- [`full-c-history.json`](full-c-history.json) / [`full-c-history.csv`](full-c-history.csv) — generated progress history.
 
-## Archive
+## History
 
-Finished humanization records and compiler-family experiments remain in Git
-history and in the dated documents above. They are kept for their measurements,
-not because they are current. If you are looking for what to do next, use
-`HANDOVER.md`.
-
-## The rule that keeps this list short
-
-A dated document is a **record**, not a queue. Actionable findings belong in
-`HANDOVER.md`; completed historical records belong in `archive/`.
-Git holds the durable project history.
+The dated queue, compiler, planning, and audit records are preserved in
+[`history/`](history/). They are evidence, not live queues or current metrics.

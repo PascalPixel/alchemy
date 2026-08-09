@@ -1,7 +1,25 @@
-use cache_key_lint::{find_violations, scannable_files, Finding};
+use cache_key_lint::{find_violations, scannable_files, self_test, Finding};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+
+const USAGE: &str = "usage: cache-key-lint [--self-test]\n\nScan native Rust sources for hand-maintained cache-key versions.\nWith no option, scan the repository tools tree.\n  -h, --help     show this help\n      --self-test validate the lint without repository work";
+
+#[derive(Debug, PartialEq, Eq)]
+enum Action {
+    Help,
+    SelfTest,
+    Scan,
+}
+
+fn parse_args(args: &[String]) -> Result<Action, String> {
+    match args {
+        [] => Ok(Action::Scan),
+        [arg] if arg == "-h" || arg == "--help" => Ok(Action::Help),
+        [arg] if arg == "--self-test" => Ok(Action::SelfTest),
+        _ => Err(USAGE.to_string()),
+    }
+}
 
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -25,6 +43,34 @@ fn scan(root: &Path, directory: &str) -> Result<(usize, Vec<Finding>), String> {
 }
 
 fn main() -> ExitCode {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let action = match parse_args(&args) {
+        Ok(action) => action,
+        Err(message) => {
+            eprintln!("{message}");
+            return ExitCode::FAILURE;
+        }
+    };
+    match action {
+        Action::Help => {
+            println!("{USAGE}");
+            ExitCode::SUCCESS
+        }
+        Action::SelfTest => match self_test() {
+            Ok(line) => {
+                println!("{line}");
+                ExitCode::SUCCESS
+            }
+            Err(message) => {
+                eprintln!("{message}");
+                ExitCode::FAILURE
+            }
+        },
+        Action::Scan => scan_repository(),
+    }
+}
+
+fn scan_repository() -> ExitCode {
     let root = repository_root();
     let mut scanned = 0;
     let mut findings = Vec::new();
@@ -65,4 +111,22 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE;
     }
     ExitCode::SUCCESS
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_string()).collect()
+    }
+
+    #[test]
+    fn cli_contract_has_help_and_rejects_unknown_options() {
+        assert_eq!(parse_args(&args(&[])), Ok(Action::Scan));
+        assert_eq!(parse_args(&args(&["-h"])), Ok(Action::Help));
+        assert_eq!(parse_args(&args(&["--help"])), Ok(Action::Help));
+        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Action::SelfTest));
+        assert!(parse_args(&args(&["--unknown"])).is_err());
+    }
 }

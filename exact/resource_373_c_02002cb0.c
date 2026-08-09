@@ -139,90 +139,94 @@ void Func_02002cb0(void)
     u8 *record;
     /* r5 is loaded once from the pool and reused twice; the second use is
      * `adds r0, r5, #6`. */
-    s32 cue = 0x1c45;
 
     /* No argument register is written before this branch. */
     Func_02008c70();
 
     Func_02008d38(0, 0);
     Func_02008d32(8, 0, 20);
-    Func_02008d52(cue);
-    Func_02008d32(8, 2);
-    Func_02008d7c(8, 0, 20);
+    do {
+        u16 cue = 0x1c45;
+        Func_02008d52(cue);
+        Func_02008d32(8, 2);
+        Func_02008d7c(8, 0, 20);
 
-    /* 128 << 9 and 128 << 6: 1.0 and 0.125 in 16.16. */
-    Func_02008dc8(0x10000, 0x2000);
-    /* 199 << 17 is 398.0; the pooled 0x02460000 is 582.0. */
-    Func_02008de0(0x18e0000, -1, 0x2460000, 1);
+        /* 128 << 9 and 128 << 6: 1.0 and 0.125 in 16.16. */
+        Func_02008dc8(0x10000, 0x2000);
+        /* 199 << 17 is 398.0; the pooled 0x02460000 is 582.0. */
+        Func_02008de0(0x18e0000, -1, 0x2460000, 1);
 
-    /* 0.8 and 0.4 in 16.16, applied to both actors. */
-    Func_02008cf2(0, 0xcccc, 0x6666);
-    Func_02008cfc(1, 0xcccc, 0x6666);
+        /* 0.8 and 0.4 in 16.16, applied to both actors. */
+        Func_02008cf2(0, 0xcccc, 0x6666);
+        Func_02008cfc(1, 0xcccc, 0x6666);
 
-    Func_02008d42(0, 420, 608);       /* 210 << 1, 152 << 2 */
-    Func_02008dd6(0, 0xa000, 0);      /* 160 << 8 */
-    Func_02008de2(8, 0x3000, 0);      /* 192 << 6 */
+        Func_02008d42(0, 420, 608);       /* 210 << 1, 152 << 2 */
+        Func_02008dd6(0, 0xa000, 0);      /* 160 << 8 */
+        Func_02008de2(8, 0x3000, 0);      /* 192 << 6 */
 
-    record = Func_02008d20(0);
-    if (record != 0) {
-        /* The 16.16 X and Z words of the queried record, copied onto actor 1. */
-        Func_02008d86(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
-    }
+        record = Func_02008d20(0);
+        if (record != 0) {
+            /* The 16.16 X and Z words of the queried record, copied onto actor 1. */
+            Func_02008d86(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        }
 
-    Func_02008d7c(1, 402, 608);       /* 201 << 1, 152 << 2 */
-    Func_02008e10(1, 0xd000, 20);     /* 208 << 8 */
-    Func_02008e00(0x1001, 0);
-    Func_02008e24(8, 0x5000, 20);     /* 160 << 7 */
-    Func_02008dcc(8, 3);
-    Func_02008e1c(0x4008, 0);
-    Func_02008dd4(0, 3);
-    Func_02008de4(1, 3);
-    Func_02008d52(20);
-    Func_02008e0a(8, 2);
-    Func_02008e3a(0x4008, 0);
+        Func_02008d7c(1, 402, 608);       /* 201 << 1, 152 << 2 */
+        Func_02008e10(1, 0xd000, 20);     /* 208 << 8 */
+        Func_02008e00(0x1001, 0);
+        Func_02008e24(8, 0x5000, 20);     /* 160 << 7 */
+        Func_02008dcc(8, 3);
+        Func_02008e1c(0x4008, 0);
+        Func_02008dd4(0, 3);
+        Func_02008de4(1, 3);
+        Func_02008d52(20);
+        Func_02008e0a(8, 2);
+        Func_02008e3a(0x4008, 0);
 
-    if (Func_02008d92(0, 0) == 1) {
-        RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
-        Func_02008e2e(8, 1);
-    }
+        if (Func_02008d92(0, 0) == 1) {
+            u8 *scene = RESOURCE_373_SCENE;
+            u16 *counter = (u16 *)(scene + 0x1d8);
+            *counter = (u16)(*counter + 1);
+            Func_02008e2e(8, 1);
+        }
 
-    Func_02008e78(0x4008, 0, 40);
-    Func_02008eaa(8, 0x105, 60);
-    Func_02008e70(cue + 6);
-    Func_02008e92(0x4008, 0, 20);
-    Func_02008e62(1, 1);
-    Func_02008db8(40);
-    Func_02008eaa(0x1001, 0, 40);
-    Func_02008e7a(8, 1);
-    Func_02008ece(8, 0xd000, 20);     /* 208 << 8 */
-    Func_02008ebe(0x4008, 0);
-    Func_02008e7e(1, 3);
-    Func_02008ed8(0x1001, 0, 120);
-    Func_02008ee2(0x4008, 0, 20);
-    Func_02008f14(1, 0x105, 40);
-    Func_02008ef6(0x1001, 0, 40);
-    Func_02008eae(8, 4);
-    Func_02008f08(0x4008, 0, 20);
-    Func_02008ec0(1, 3);
-    Func_02008e2e(40);
-    Func_02008f32(8, 0x5000, 20);     /* 160 << 7 */
-    Func_02008f2c(0x4008, 0, 10);
-    Func_02008edc(0, 3);
-    Func_02008eec(1, 3);
-    Func_02008e5a(20);
-    Func_02008efa(8, 3);
-    Func_02008efa(1, 2);
+        Func_02008e78(0x4008, 0, 40);
+        Func_02008eaa(8, 0x105, 60);
+        Func_02008e70(cue + 6);
+        Func_02008e92(0x4008, 0, 20);
+        Func_02008e62(1, 1);
+        Func_02008db8(40);
+        Func_02008eaa(0x1001, 0, 40);
+        Func_02008e7a(8, 1);
+        Func_02008ece(8, 0xd000, 20);     /* 208 << 8 */
+        Func_02008ebe(0x4008, 0);
+        Func_02008e7e(1, 3);
+        Func_02008ed8(0x1001, 0, 120);
+        Func_02008ee2(0x4008, 0, 20);
+        Func_02008f14(1, 0x105, 40);
+        Func_02008ef6(0x1001, 0, 40);
+        Func_02008eae(8, 4);
+        Func_02008f08(0x4008, 0, 20);
+        Func_02008ec0(1, 3);
+        Func_02008e2e(40);
+        Func_02008f32(8, 0x5000, 20);     /* 160 << 7 */
+        Func_02008f2c(0x4008, 0, 10);
+        Func_02008edc(0, 3);
+        Func_02008eec(1, 3);
+        Func_02008e5a(20);
+        Func_02008efa(8, 3);
+        Func_02008efa(1, 2);
 
-    record = Func_02008ea0(0);
-    if (record != 0) {
-        /* The s16 integer views at +10 and +18 of the same 16.16 X and Z. */
-        Func_02008eda(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
-    }
+        record = Func_02008ea0(0);
+        if (record != 0) {
+            /* The s16 integer views at +10 and +18 of the same 16.16 X and Z. */
+            Func_02008eda(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        }
 
-    Func_02008f08(1);
-    Func_02008f1a(1, 0, 0);
-    Func_02008e88(0x303);
+        Func_02008f08(1);
+        Func_02008f1a(1, 0, 0);
+        Func_02008e88(0x303);
 
-    /* Common exit; no argument registers are set. */
-    Func_02008eac();
+        /* Common exit; no argument registers are set. */
+        Func_02008eac();
+    } while (0);
 }

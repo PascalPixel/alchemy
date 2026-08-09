@@ -10,7 +10,7 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use dispatch::{all_entries, Entry, Target};
+use dispatch::{all_entries, non_public_target, non_public_targets, Entry, Target};
 
 /// Repository-level files whose commands and native paths are part of the
 /// architecture contract.  Keep this list deliberately independent of any
@@ -33,6 +33,14 @@ pub struct NativeTarget {
     pub group: String,
     pub name: String,
     pub path: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CargoBinary {
+    pub crate_name: String,
+    pub package: String,
+    pub binary: String,
+    pub manifest: PathBuf,
 }
 
 fn quoted_value(line: &str, key: &str) -> Option<String> {
@@ -143,14 +151,18 @@ fn parse_crate(root: &Path, directory: &Path) -> Result<NativeCrate, String> {
 
     let mut binaries = Vec::new();
     let mut invalid_paths = Vec::new();
+    let mut main_declared = false;
+    let mut declared_paths = BTreeSet::new();
     for (name, path) in binary_declarations(&manifest, &package) {
+        main_declared |= path == "src/main.rs";
+        declared_paths.insert(path.clone());
         if directory.join(&path).is_file() {
             binaries.push(name);
         } else {
             invalid_paths.push(format!("tools/{directory_name}/{path}"));
         }
     }
-    if directory.join("src/main.rs").is_file() && !binaries.iter().any(|name| name == &package) {
+    if directory.join("src/main.rs").is_file() && !main_declared {
         binaries.push(package.clone());
     }
     let bin_directory = directory.join("src/bin");
@@ -158,8 +170,17 @@ fn parse_crate(root: &Path, directory: &Path) -> Result<NativeCrate, String> {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.extension().and_then(|extension| extension.to_str()) == Some("rs") {
+                let relative = format!(
+                    "src/bin/{}",
+                    path.file_name()
+                        .and_then(|name| name.to_str())
+                        .unwrap_or_default()
+                );
+                if declared_paths.contains(&relative) {
+                    continue;
+                }
                 if let Some(stem) = path.file_stem().and_then(|stem| stem.to_str()) {
-                    let name = stem.replace('_', "-");
+                    let name = stem.to_string();
                     if !binaries.iter().any(|existing| existing == &name) {
                         binaries.push(name);
                     }
@@ -226,6 +247,29 @@ pub fn scan_crates(root: &Path) -> Result<Vec<NativeCrate>, String> {
     Ok(crates)
 }
 
+/// Flatten the manifest parser's binary declarations into classification
+/// identities. `scan_crates` already handles explicit `[[bin]]`, `src/main.rs`,
+/// and `src/bin/*.rs`; spawning one `cargo metadata` process per standalone
+/// workspace would verify the same 121 declarations much more slowly.
+pub fn cargo_binary_targets(root: &Path) -> Result<Vec<CargoBinary>, String> {
+    let crates = scan_crates(root)?;
+    Ok(crates
+        .into_iter()
+        .flat_map(|native| {
+            let manifest = root
+                .join("tools")
+                .join(&native.directory)
+                .join("Cargo.toml");
+            native.binaries.into_iter().map(move |binary| CargoBinary {
+                crate_name: native.directory.clone(),
+                package: native.package.clone(),
+                binary,
+                manifest: manifest.clone(),
+            })
+        })
+        .collect())
+}
+
 pub fn dispatch_targets() -> Vec<NativeTarget> {
     all_entries()
         .map(|(group, Entry { name, target })| {
@@ -239,7 +283,7 @@ pub fn dispatch_targets() -> Vec<NativeTarget> {
         .collect()
 }
 
-fn crate_map<'a>(crates: &'a [NativeCrate]) -> BTreeMap<&'a str, &'a NativeCrate> {
+fn crate_map(crates: &[NativeCrate]) -> BTreeMap<&str, &NativeCrate> {
     crates
         .iter()
         .map(|native| (native.directory.as_str(), native))
@@ -308,6 +352,95 @@ pub fn valid_dispatch_targets(
         }
     }
     (roots, problems)
+}
+
+/// Enforce the one-to-one public/non-public classification of Cargo bins.
+pub fn classification_problems(
+    cargo: &[CargoBinary],
+    targets: &[NativeTarget],
+    crates: &[NativeCrate],
+) -> Vec<String> {
+    let mut problems = Vec::new();
+    let mut public = BTreeMap::<(String, String), Vec<String>>::new();
+    for target in targets {
+        let binary = Path::new(&target.path)
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or_default()
+            .to_string();
+        match target_crate(&target.path, crates) {
+            Ok(crate_name) => public
+                .entry((crate_name, binary))
+                .or_default()
+                .push(format!("{} {}", target.group, target.name)),
+            Err(error) => problems.push(format!("public classification {}: {error}", target.name)),
+        }
+    }
+    for (identity, entries) in &public {
+        if entries.len() > 1 {
+            problems.push(format!(
+                "Cargo binary {}/{} is publicly classified more than once: {}",
+                identity.0,
+                identity.1,
+                entries.join(", ")
+            ));
+        }
+    }
+
+    let mut non_public = BTreeSet::new();
+    for target in non_public_targets() {
+        let identity = (target.crate_name.to_string(), target.binary.to_string());
+        if !non_public.insert(identity.clone()) {
+            problems.push(format!(
+                "non-public classification {} / {} is duplicated",
+                target.crate_name, target.binary
+            ));
+        }
+        if public.contains_key(&identity) {
+            problems.push(format!(
+                "Cargo binary {} / {} is classified as both public and {:?}",
+                target.crate_name, target.binary, target.kind
+            ));
+        }
+    }
+
+    let cargo_identities: BTreeSet<_> = cargo
+        .iter()
+        .map(|target| (target.crate_name.clone(), target.binary.clone()))
+        .collect();
+    for target in non_public_targets() {
+        if !cargo_identities.contains(&(target.crate_name.to_string(), target.binary.to_string())) {
+            problems.push(format!(
+                "non-public classification is stale: {}/{} is not in Cargo metadata",
+                target.crate_name, target.binary
+            ));
+        }
+    }
+    for target in cargo {
+        let identity = (target.crate_name.clone(), target.binary.clone());
+        let is_public = public.contains_key(&identity);
+        let is_non_public = non_public_target(&target.crate_name, &target.binary).is_some();
+        match (is_public, is_non_public) {
+            (true, false) | (false, true) => {}
+            (true, true) => problems.push(format!(
+                "Cargo binary {}/{} has overlapping public and non-public classifications",
+                target.crate_name, target.binary
+            )),
+            (false, false) => problems.push(format!(
+                "Cargo binary {}/{} has no public or non-public classification",
+                target.crate_name, target.binary
+            )),
+        }
+    }
+    for identity in public.keys() {
+        if !cargo_identities.contains(identity) {
+            problems.push(format!(
+                "public classification is stale: {}/{} is not in Cargo metadata",
+                identity.0, identity.1
+            ));
+        }
+    }
+    problems
 }
 
 fn path_char(byte: u8) -> bool {
@@ -562,7 +695,9 @@ pub fn scanned_nothing(
     if crate_count == 0 {
         Some("architecture scanned no Cargo crates under tools -- nothing was checked".into())
     } else if target_count == 0 {
-        Some("architecture found no native dispatch entries -- nothing was checked".into())
+        Some(
+            "architecture found no commands in the dispatch registry -- nothing was checked".into(),
+        )
     } else if document_count == 0 {
         Some("architecture found no Markdown files -- nothing was compared".into())
     } else {
@@ -763,5 +898,15 @@ mod tests {
         let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
         let crates = scan_crates(&repository).expect("native crates");
         assert!(native_command_roots(&repository, &crates).contains("kind2-resources"));
+    }
+
+    #[test]
+    fn every_current_cargo_binary_has_one_classification() {
+        let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let crates = scan_crates(&repository).expect("native crates");
+        let cargo = cargo_binary_targets(&repository).expect("Cargo metadata");
+        let problems = classification_problems(&cargo, &dispatch_targets(), &crates);
+        assert!(problems.is_empty(), "classification problems: {problems:?}");
+        assert!(!cargo.iter().any(|target| target.binary == "text-bg"));
     }
 }

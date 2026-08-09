@@ -44,17 +44,9 @@ void Func_020040e2();
 void Func_02003ace();
 void Func_02004124();
 
-/* Scene flag test: zero means not yet set. */
-
-                     
-/* Scene flag set. */
-
-/* The callback this owner installs; defined at 0x02001e94 in this overlay. */
-void Func_02001e94(void);
-
 void Func_02001bc4(void)
 {
-    Func_02004044(Func_02001e94);
+    Func_02004044((void (*)(void))0x02009e95);
     Func_0200414e(14, 0, 0);
 
     if (Func_020040e4(0x207) != 0) {

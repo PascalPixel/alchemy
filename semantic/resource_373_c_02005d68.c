@@ -73,7 +73,6 @@ void Func_02005d68(struct Resource373Spawn *spawn)
         struct Resource373Actor *actor =
             Func_0200bc96(26, spawn->x, spawn->y, spawn->z);
         struct Resource373Sprite *sprite;
-        struct Resource373ActorState *state;
         u32 packed;
 
         mask = 63;
@@ -84,9 +83,8 @@ void Func_02005d68(struct Resource373Spawn *spawn)
 
         actor->field14 = spawn->field14;
         sprite = actor->sprite;
-        state = (struct Resource373ActorState *)((u8 *)actor + 0x54);
-        state->field55 = 0;
-        state->field64 = 0;
+        actor->field55 = 0;
+        actor->field64 = 0;
         zero = 0;
         actor->owner = spawn;
         if (sprite == 0) {

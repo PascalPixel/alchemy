@@ -69,75 +69,39 @@
 
 /* Overlay imports (via the veneer table).  Old-style declarations: overlay
  * imports vary their argument count between call sites. */
-s32 Func_020022c2();
-u8 *Func_020022da();
-u8 *Func_02002410();
-s32 Func_0200242e();
-u8 *Func_020024a6();
+s32 Func_080770c0();
+u8 *Func_08077008();
+s32 Func_08077018();
 
                     
 
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
-    const u32 *members = (const u32 *)0x020096c0;
     const u16 *flag_ids = (const u16 *)0x020096d0;
     const u16 *present_ids = (const u16 *)0x020096dc;
     const u16 *counted_ids = (const u16 *)0x020096ec;
 
     u32 packed[8];
+    s32 length;
     u32 levels;
     u32 djinn;
-    u32 present_bits;
-    u32 flag_bits;
-    s32 length;
-    s32 i;
-    s32 member;
-    s32 slot;
-    s32 bit;
-    s32 shift;
-    u8 *cursor;
-    u8 *actor;
-    u8 *stats;
+    u8 present_bits;
+    u8 flag_bits;
+    u32 i;
+    s32 j;
+    s32 k;
 
     length = 11;
-    if (mode == 1) {
-        length = 39;
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-    } else if (mode > 1) {
-        if (mode == 2) {
-            length = 9;
-        }
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
-    } else if (mode == 0) {
+    switch (mode) {
+    case 0:
         length = 173;
+        break;
+    case 1:
+        length = 39;
+        break;
+    case 2:
+        length = 9;
+        break;
     }
 
     for (i = 0; i != length; i++) {
@@ -154,17 +118,19 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 
     /* Six event flags, one bit each, low bit first. */
     for (i = 0; i != 6; i++) {
-        if (Func_020022c2(flag_ids[i]) != 0) {
-            flag_bits = (flag_bits | (1u << i)) & 0xff;
+        if (Func_080770c0(flag_ids[i]) != 0) {
+            flag_bits |= 1u << i;
         }
     }
 
-    for (member = 0; member != 4; member++) {
+    for (i = 0; i != 4; i++) {
         u32 word0;
         u32 word1;
         s32 level;
+        u8 *actor;
+        u8 *stats;
 
-        actor = Func_020022da(members[member]);
+        actor = Func_08077008(((const u32 *)0x020096c0)[i]);
         stats = actor + 16;
 
         /* Clamps, applied to the record itself. */
@@ -200,8 +166,8 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         word1 = ((u32)*(u16 *)(stats + 10) << 22) |
                 ((u32)*(u16 *)(stats + 12) << 12) |
                 ((u32)*(u8 *)(stats + 14) << 4);
-        packed[member * 2] = word0;
-        packed[member * 2 + 1] = word1;
+        packed[i * 2] = word0;
+        packed[i * 2 + 1] = word1;
 
         /* Level: clamped to 1..99 in the record, then packed 7 bits each. */
         if (actor[15] > 99) {
@@ -211,75 +177,96 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
             actor[15] = 1;
         }
         level = actor[15];
-        levels |= (u32)level << (member * 8 - member);
+        levels |= (u32)level << (i * 8 - i);
 
         /* Four counters summed across the whole party, 7 bits apart. */
-        for (i = 0; i != 4; i++) {
-            djinn += ((const u32 *)(actor + 248))[i] << (i * 7);
+        for (j = 0; j != 4; j++) {
+            djinn += ((const u32 *)(actor + 248))[j] << (j * 7);
         }
 
         /* Presence of eight specific items anywhere in the 15 slots. */
-        for (slot = 0; slot != 15; slot++) {
-            u32 id = *(u16 *)(actor + 216 + slot * 2) & 0x1ff;
+        for (j = 0; j != 15; j++) {
+            u32 id = *(u16 *)(actor + 216 + j * 2) & 0x1ff;
 
-            for (i = 0; i != 8; i++) {
-                if (id == present_ids[i]) {
-                    present_bits = (present_bits | (1u << i)) & 0xff;
+            for (k = 0; k != 8; k++) {
+                if (id == present_ids[k]) {
+                    present_bits |= 1u << k;
                 }
             }
         }
     }
 
     if (mode == 0) {
+        s32 out_pos;
+        s32 bit;
+        s32 party_index;
+        s32 item_index;
+        s32 counted_index;
+        u32 item_pos;
+
         /* Every item id in the party, nine bits each, from offset 39. */
-        cursor = out + 39;
+        out_pos = 39;
         bit = 0;
-        for (member = 0; member != 4; member++) {
-            actor = Func_02002410(members[member]);
-            for (slot = 0; slot != 15; slot++) {
+        for (party_index = 0; party_index != 4; party_index++) {
+            u8 *actor;
+
+            actor = Func_08077008(
+                ((const volatile u32 *)0x020096c0)[party_index]);
+            item_pos = 216;
+            item_index = 0;
+            do {
                 u32 id;
 
-                Func_0200242e(*(u16 *)(actor + 216 + slot * 2));
-                id = *(u16 *)(actor + 216 + slot * 2) & 0x1ff;
+                Func_08077018(*(u16 *)(actor + item_pos));
+                id = *(u16 *)(actor + item_pos) % 0x200;
 
-                cursor[0] = (u8)(cursor[0] + (id >> (bit + 1)));
-                cursor[1] = (u8)(cursor[1] + (id << (7 - bit)));
+                out[out_pos] = (u8)(out[out_pos] + (id >> (bit + 1)));
+                out[out_pos + 1] =
+                    (u8)(out[out_pos + 1] + (id << (7 - bit)));
                 bit++;
-                cursor++;
+                out_pos++;
                 if (bit == 7) {
                     bit = 0;
-                    cursor++;
+                    out_pos++;
                 }
-            }
+                item_index++;
+                item_pos += 2;
+            } while (item_index != 15);
         }
 
         /* Held count of 23 specific items per member, five bits each, from
          * offset 107.  The bit cursor starts at -1 and steps by -5. */
-        cursor = out + 107;
-        shift = -1;
-        for (member = 0; member != 4; member++) {
-            actor = Func_020024a6(members[member]);
-            for (i = 0; i != 23; i++) {
+        out_pos = 107;
+        bit = -1;
+        for (party_index = 0; party_index != 4; party_index++) {
+            u8 *actor;
+
+            actor = Func_08077008(
+                ((const volatile u32 *)0x020096c0)[party_index]);
+            for (counted_index = 0; counted_index != 23; counted_index++) {
                 u32 count = 0;
+                u16 target_id = counted_ids[counted_index];
 
-                for (slot = 0; slot != 15; slot++) {
-                    u16 entry = *(u16 *)(actor + 216 + slot * 2);
+                for (item_index = 0; item_index != 15; item_index++) {
+                    u16 entry = *(u16 *)(actor + 216 + item_index * 2);
+                    u32 id = entry % 0x200;
 
-                    if ((entry & 0x1ff) == counted_ids[i]) {
+                    if (id == target_id) {
                         count = (entry & 0xf800) >> 11;
                     }
                 }
 
-                if (shift < 0) {
-                    *cursor = (u8)(*cursor + (count >> -shift));
-                    cursor++;
-                    shift += 8;
+                if (bit < 0) {
+                    out[out_pos] =
+                        (u8)(out[out_pos] + (count >> -bit));
+                    out_pos++;
+                    bit += 8;
                 }
-                *cursor = (u8)(*cursor + (count << shift));
-                shift -= 5;
-                if (shift == -5) {
-                    cursor++;
-                    shift = 3;
+                out[out_pos] = (u8)(out[out_pos] + (count << bit));
+                bit -= 5;
+                if (bit == -5) {
+                    out_pos++;
+                    bit = 3;
                 }
             }
         }
@@ -291,7 +278,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 
     if (mode != 2) {
         /* Four 60-bit stat entries, two per 15-byte group, big-endian. */
-        cursor = out + (mode != 0 ? 9 : 8);
+        u8 *cursor = out + (mode != 0 ? 9 : 8);
         for (i = 0; i != 2; i++) {
             u32 a = packed[i * 4 + 0];
             u32 b = packed[i * 4 + 1];

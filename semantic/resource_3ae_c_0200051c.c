@@ -138,9 +138,10 @@ extern void Func_02001c70();
 extern void Func_02001bae();
 extern void Func_02001bc6();
 extern void Func_02001bea();
+
 void Func_0200051c(void)
 {
-    s32 price;
+    register s32 price;
     s32 window;
     u8 **counter;
 

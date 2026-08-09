@@ -1,5 +1,29 @@
 #include "types.h"
 
+typedef struct SceneRecord {
+    u8 pad_00[6];
+    u16 facing;
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 pad_14[14];
+    u8 state;
+    u8 pad_23;
+    s32 motion_24;
+    u8 pad_28[4];
+    s32 motion_2c;
+    s32 rate_x;
+    s32 rate_z;
+    u8 pad_38[33];
+    u8 flags;
+} SceneRecord;
+
+typedef struct Position3 {
+    s32 x;
+    s32 y;
+    s32 z;
+} Position3;
+
 /*
  * resource_3ba owner at 0x020038f8, 360 bytes (0x020038f8-0x02003a5f):
  * 344 bytes of code plus the four-word literal pool at 0x02003a50, which ends
@@ -63,19 +87,19 @@
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-u8 *Func_020075cc();
-u8 *Func_020071f6(s32 *, u8 *);
-u8 *Func_02007220(s32 *, u8 *);
-u8 *Func_0200724c(s32 *, u8 *);
-s32 Func_020075e6();
-void Func_02007594();
-void Func_020074fa();
-void Func_020075da();
-void Func_020075ea();
-void Func_02007810();
-void Func_020075fe();
-void Func_0200781e();
-void Func_020075e4();
+SceneRecord *Func_020075cc();
+SceneRecord *Func_020071f6(Position3 *, SceneRecord *);
+SceneRecord *Func_02007220(Position3 *, SceneRecord *);
+SceneRecord *Func_0200724c(Position3 *, SceneRecord *);
+s32 Func_020075e6(SceneRecord *, Position3 *);
+void Func_02007594(SceneRecord *, s32);
+void Func_020074fa(s32);
+void Func_020075da(SceneRecord *, s32, s32, s32);
+void Func_020075ea(SceneRecord *, s32, s32, s32);
+void Func_02007810(s32);
+void Func_020075fe(SceneRecord *);
+void Func_0200781e(s32);
+void Func_020075e4(SceneRecord *, s32);
                                 /* scene record for a subject handle */
                                 /* select presentation mode (record, mode) */
                                 /* place the record at (x, y, z) */
@@ -93,82 +117,90 @@ extern s16 Data_02000240[];
 
 void Func_020038f8(void)
 {
-    u8 *subject;
-    u8 *target;
-    u8 *blocker;
+    SceneRecord *subject;
+    SceneRecord *target;
+    SceneRecord *blocker;
     u32 step;
-    s32 direction;
-    s32 position[3];
-    s32 data_index;
+    s32 x_step;
+    u32 direction;
+    Position3 position;
+    u32 data_index = 250;
     s32 zero;
+    s32 subject_handle;
 
-    data_index = 250;
-    subject = Func_020075cc(*(s32 *)((u8 *)Data_02000240 + (data_index << 1)));
+    subject_handle = *(s32 *)((u8 *)Data_02000240 + (data_index << 1));
+    subject = Func_020075cc(subject_handle);
 
-    direction = *(u16 *)(subject + 6) >> 12;
+    direction = subject->facing >> 12;
 
     step = Data_0200c154[direction];
-    position[0] = *(s32 *)(subject + 8) + (s32)(step & 0xffff0000);
-    position[1] = *(s32 *)(subject + 12);
-    position[2] = *(s32 *)(subject + 16) + (s32)(step << 16);
+    x_step = (s32)step;
+    x_step &= (s32)0xffff0000;
+    position.y = subject->y;
+    position.z = subject->z + (s32)(step << 16);
+    position.x = subject->x + x_step;
 
-    target = Func_020071f6(position, subject);
+    target = Func_020071f6(&position, subject);
     if (target == 0) {
         return;
     }
 
     /* Is the cell one step beyond the target already taken? */
     step = Data_0200c154[direction];
-    position[0] = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
-    position[1] = *(s32 *)(target + 12);
-    position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
+    x_step = (s32)step;
+    x_step &= (s32)0xffff0000;
+    position.x = target->x + x_step;
+    position.y = target->y;
+    position.z = target->z + (s32)(step << 16);
 
-    blocker = Func_02007220(position, target);
-    if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
+    blocker = Func_02007220(&position, target);
+    if (blocker != 0 && (blocker->flags & 1) != 0) {
         return;
     }
 
     /* ...and the cell directly above the target? */
-    position[0] = *(s32 *)(target + 8);
-    position[1] = *(s32 *)(target + 12) + 0x100000;      /* 128 << 13 */
-    position[2] = *(s32 *)(target + 16);
+    position.x = target->x;
+    position.y = target->y + 0x100000;      /* 128 << 13 */
+    position.z = target->z;
 
-    blocker = Func_0200724c(position, target);
-    if (blocker != 0 && (*(blocker + 0x59) & 1) != 0) {
+    blocker = Func_0200724c(&position, target);
+    if (blocker != 0 && (blocker->flags & 1) != 0) {
         return;
     }
 
+    target->state = 2;
     zero = 0;
-    *(target + 0x22) = 2;
 
     step = Data_0200c154[direction];
-    position[0] = *(s32 *)(target + 8) + (s32)(step & 0xffff0000);
-    position[1] = *(s32 *)(target + 12);
-    position[2] = *(s32 *)(target + 16) + (s32)(step << 16);
+    x_step = (s32)step;
+    x_step &= (s32)0xffff0000;
+    position.y = target->y;
+    position.z = target->z + (s32)(step << 16);
+    position.x = target->x + x_step;
 
-    if (Func_020075e6(target, position) > 0) {
+    if (Func_020075e6(target, &position) > 0) {
         return;
     }
 
     Func_02007594(subject, 8);
     Func_020074fa(15);
 
-    *(s32 *)(target + 0x30) = 0x3333;
-    *(s32 *)(target + 0x34) = 0x3333;
-    Func_020075da(target, position[0], position[1], position[2]);
+    target->rate_x = 0x3333;
+    target->rate_z = 0x3333;
+    Func_020075da(target, position.x, position.y, position.z);
 
-    *(s32 *)(subject + 0x30) = 0x3333;
-    *(s32 *)(subject + 0x34) = 0x3333;
-    Func_020075ea(subject, position[0], position[1], position[2]);
+    subject->rate_x = 0x3333;
+    subject->rate_z = 0x3333;
+    Func_020075ea(subject, position.x, position.y, position.z);
 
     Func_02007810(0xee);
     Func_020075fe(target);
     Func_0200781e(0x120);                                /* 144 << 1 */
 
-    *(s32 *)(target + 8) = position[0];
-    *(s32 *)(target + 16) = position[2];
-    *(s32 *)(target + 0x24) = zero;
-    *(s32 *)(target + 0x2c) = zero;
+    target->x = position.x;
+    target->z = position.z;
+    target->motion_24 = zero;
+    target->motion_2c = zero;
 
     Func_020075e4(subject, 1);
 }

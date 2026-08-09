@@ -154,6 +154,7 @@ pub const FORK_MODES: &[&str] = &[
     // Witnesses resource_382:0fb4/:1010/:113c, resource_3b9:1c6c.
     "-fthumb-stack-args-before-stores",
     "-fthumb-postcall-byte-increment-r2",
+    "-fthumb-boolean-r8-scratch-r2",
     "-fthumb-entry-frame-cluster",
     "-fthumb-literal-before-index-shift",
     "-fthumb-call-target-before-final-shift",

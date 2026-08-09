@@ -129,8 +129,8 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
     let mut probe = Probe { trace: Trace::new() };
     callback_arity_lint()?;
 
-    let expected: [&str; 58] = [
-        "08006910", "080069a4",
+    let expected: [&str; 59] = [
+        "08006878", "08006910", "080069a4",
         "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
         "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
         "080f9a50",
@@ -148,7 +148,7 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
     // same predicate without dragging a JSON writer -- and its float formatting
     // trap -- into a test that has no numbers in it.
     let agbcc_o1 = [
-        "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24",
+        "08006878", "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24",
         "08006f84", "08007028", "08007098", "0800711c", "080071a8",
         "08007220",
     ];

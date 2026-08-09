@@ -67,8 +67,11 @@ s32 *Func_02003a60(void)
     s32 facing;
     s32 position[3];
     s32 *occupant;
+    s32 index;
 
-    record = Func_0200772c(*(void **)&Data_02000240[250], 500);
+    index = 250;
+    index <<= 1;
+    record = Func_0200772c(*(void **)((u8 *)Data_02000240 + index), index);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;

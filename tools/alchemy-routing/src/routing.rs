@@ -512,7 +512,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(BOOLEAN_R8_SCRATCH_R2_SOURCES, stem) {
         push!(&["-fthumb-boolean-r8-scratch-r2"]);
     }
-    if has(GROUP_CONTROL_REMATERIALIZE_SOURCES, stem) {
+    if has(GROUP_CONTROL_REMATERIALIZE_SOURCES, stem)
+        || has(GROUP_CONTROL_REMATERIALIZE_OVERLAY_SOURCES, key)
+    {
         push!(&["-fthumb-group-control-rematerialize"]);
     }
     if has(SCHED_POOL_LOAD_LATE_SOURCES, stem) {
@@ -946,6 +948,32 @@ mod tests {
         assert_no_flag(
             "semantic/resource_373_c_0200565c.c",
             "-fno-sched-depend-count",
+        );
+    }
+
+    #[test]
+    fn resource_392_palette_twins_share_narrow_routes() {
+        for source in [
+            "semantic/resource_392_c_02000bcc.c",
+            "exact/resource_392_c_02000bcc.c",
+            "semantic/resource_393_c_02000d9c.c",
+            "exact/resource_393_c_02000d9c.c",
+            "semantic/resource_394_c_02000f74.c",
+            "exact/resource_394_c_02000f74.c",
+        ] {
+            for flag in [
+                "-fthumb-group-control-last",
+                "-fthumb-group-control-rematerialize",
+                "-mthumb-load-latency-one",
+                "-mgrouped-dma-store",
+            ] {
+                assert_flag(source, flag);
+            }
+        }
+
+        assert_no_flag(
+            "exact/resource_37a_c_02000d9c.c",
+            "-fthumb-group-control-rematerialize",
         );
     }
 }

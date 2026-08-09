@@ -630,6 +630,44 @@ const AGBCC_FLAGS: &[&str] = &[
     "-mcommutative-copy-constant",
     "-mprologue-next-high-reg",
     "-mcompare-only-and-tst",
+    "-msplit-single-postinc-store",
+    "-mkeep-volatile-branch-tails",
+    "-mkeep-user-register-copies",
+    "-mstatus-mask-copy",
+];
+
+const AGBCC_EXPERIMENTAL_COMBINATIONS: &[(&str, &[&str])] = &[
+    (
+        "agbcc-fae58-split-tails",
+        &["-msplit-single-postinc-store", "-mkeep-volatile-branch-tails"],
+    ),
+    (
+        "agbcc-fae58-split-tails-no-expensive",
+        &[
+            "-fno-expensive-optimizations",
+            "-msplit-single-postinc-store",
+            "-mkeep-volatile-branch-tails",
+        ],
+    ),
+    (
+        "agbcc-fae58-split-tails-user-copy",
+        &[
+            "-fno-regmove",
+            "-msplit-single-postinc-store",
+            "-mkeep-volatile-branch-tails",
+            "-mkeep-user-register-copies",
+        ],
+    ),
+    (
+        "agbcc-fae58-all",
+        &[
+            "-fno-expensive-optimizations",
+            "-fno-regmove",
+            "-msplit-single-postinc-store",
+            "-mkeep-volatile-branch-tails",
+            "-mkeep-user-register-copies",
+        ],
+    ),
 ];
 
 /// The complete mode table, in exact source order.
@@ -667,6 +705,18 @@ pub fn modes() -> Vec<Mode> {
             id: format!("agbcc-{}", &flag[2..]),
             family: Family::Backend,
             add_flags: vec![flag.to_string()],
+            remove_flags: Vec::new(),
+            compiler_family: Some("old-agbcc"),
+            supported_compiler_families: None,
+            exclusive: false,
+            evidence: PROVEN,
+        });
+    }
+    for (id, flags) in AGBCC_EXPERIMENTAL_COMBINATIONS {
+        list.push(Mode {
+            id: (*id).to_string(),
+            family: Family::Backend,
+            add_flags: flags.iter().map(|flag| (*flag).to_string()).collect(),
             remove_flags: Vec::new(),
             compiler_family: Some("old-agbcc"),
             supported_compiler_families: None,

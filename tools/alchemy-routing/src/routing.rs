@@ -578,6 +578,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-call-literal-arg1-first-after-call"]);
     }
+    if has(LITERAL_ARG1_FIRST_BEFORE_ZERO_PAIR_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-literal-arg1-first-before-zero-pair"]);
+    }
     if has(SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-small-shift-before-immediates"]);
     }
@@ -625,6 +628,12 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-constant-past-call"]);
+    }
+    if has(SINK_CONSTANT_PAST_CALL_PAIR_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-sink-constant-past-call-pair"]);
+    }
+    if has(SINK_CONSTANT_PAST_CALL_ARGS_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-sink-constant-past-call-args"]);
     }
     if has(POOL_LONG_CALL_ARG0_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-pool-long-call-arg0"]);
@@ -737,6 +746,9 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
         }
         if has(AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES, &stem) {
             out.push("-mprologue-next-high-reg".to_string());
+        }
+        if has(AGBCC_TRACK_NARROW_VALUE_R1_SOURCES, &stem) {
+            out.push("-mtrack-narrow-value-r1".to_string());
         }
         if has(AGBCC_COMPARE_ONLY_AND_TST_SOURCES, &stem) {
             out.push("-mcompare-only-and-tst".to_string());

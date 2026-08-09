@@ -238,14 +238,15 @@ void Func_020030b2();
 
 void Func_02000614(void)
 {
-    u8 *workspace;
+    u8 *entry_workspace;
+    u8 *exit_workspace;
     s32 *record;
 
     Func_02002a6c();
 
-    *(u32 *)(workspace + 456) = 32;
-    *(u32 *)(workspace + 448) = 256;
-    workspace = *(u8 **)0x03001ebc;
+    entry_workspace = *(u8 **)0x03001ebc;
+    *(u32 *)(entry_workspace + 448) = 256;
+    *(u32 *)(entry_workspace + 456) = 32;
 
     Func_02002b76();
     Func_02002b8a();
@@ -428,9 +429,9 @@ void Func_02000614(void)
 
     Func_02003080_b(0x12f);
 
-    workspace = *(u8 **)0x03001ebc;
-    *(u32 *)(workspace + 456) = 16;
-    *(u32 *)(workspace + 448) = 516;
+    exit_workspace = *(u8 **)0x03001ebc;
+    *(u32 *)(exit_workspace + 448) = 516;
+    *(u32 *)(exit_workspace + 456) = 16;
 
     Func_020030b2();
 }

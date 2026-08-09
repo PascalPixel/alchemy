@@ -36,7 +36,7 @@ struct Beat393Subject {
     u8 marker;                      /* 0x23 */
 };
 
-void Func_020014ce();
+s32 Func_020014ce();
 s32 Func_02001a70();
 struct Beat393Subject *Func_02001aa2();
 void Func_02001a7c();
@@ -55,19 +55,24 @@ void Func_02001900();
                                     /* fill a tile rectangle's attribute byte */
                                     /* the follow-up sequence */
 
+static __inline__ void DrawBeat393(s32 left, s32 top, s32 width, s32 height,
+                                   s32 tile, s32 palette)
+{
+    Func_02001a7c(left, top, width, height, tile, palette);
+}
+
 s32 Func_02000bf8(void)
 {
     u8 *workspace = SCENE393_WORKSPACE;
 
     *(s32 *)(workspace + 448) = 516;
-
     Func_020014ce(10);
 
     if (Func_02001a70(0x201) != 0) {
         struct Beat393Subject *subject = Func_02001aa2(10);
 
         subject->marker = 2;
-        Func_02001a7c(32, 20, 2, 4, 11, 16);
+        DrawBeat393(32, 20, 2, 4, 11, 16);
         Func_02000e90(2, 12, 16, 1, 4, 0);
         Func_02001aac(Func_02001ad6(10), 0);
     }

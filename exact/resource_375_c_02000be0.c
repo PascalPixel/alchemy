@@ -207,6 +207,8 @@ void Func_02002d9a();
 void Func_02002e46();
 void Func_02002d0a();
 
+extern u8 Data_02009ce0[];
+
                      
 
                      
@@ -233,10 +235,14 @@ void Func_02000be0(void)
     s32 second_line;
     u8 *slot;
     u8 *actor;
+    u8 *data;
+    u8 value;
+    s16 x_part;
+    s16 z_part;
     s32 x;
     s32 z;
+    s32 mask;
 
-    s32 permuted_156;
     if (Func_0200264a(0x808) != 0) {
         return;
     }
@@ -245,8 +251,8 @@ void Func_02000be0(void)
     Func_020027ca(17);
     Func_02002668(0x808);
 
-    Func_02002730(line);
     line = 0xf85;
+    Func_02002730(line);
     Func_02002752(14, 0, 10);
 
     Func_020026bc(0, 0x13333, 0x9999);
@@ -255,8 +261,10 @@ void Func_02000be0(void)
     Func_02002792(0, 0x4000, 10);
 
     slot = Func_020026e0(0);
-    x = *(s16 *)(slot + 10) << 16;
-    z = *(s16 *)(slot + 18) << 16;
+    x_part = *(s16 *)(slot + 10);
+    z_part = *(s16 *)(slot + 18);
+    z = (s32)z_part << 16;
+    x = (s32)x_part << 16;
 
     Func_0200273e(5, x, z);
     Func_02002748(1, x, z);
@@ -396,19 +404,22 @@ void Func_02000be0(void)
     Func_02002bf0(14, 0x8000, 0x4000);
 
     actor = Func_02002bee(14);
-    permuted_156 = (u8)(*(u8 *)(actor + 0x5a) & 0xfe);
+    mask = 0xfe;
+    *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) & mask);
     actor = Func_02002c02(15);
-    *(u8 *)(actor + 0x5a) = permuted_156;
-    *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) & 0xfe);
+    *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) & mask);
 
     Func_02002c4a(14, 0x188, 0x178);
     Func_02002c60(15, 0x178, 0x178);
     Func_02002c0e(6);
 
     actor = Func_02002c34(14);
-    *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) | 1);
+    mask = 1;
+    value = *(u8 *)(actor + 0x5a);
+    *(u8 *)(actor + 0x5a) = (u8)(value | mask);
     actor = Func_02002c46(15);
-    *(u8 *)(actor + 0x5a) = (u8)(*(u8 *)(actor + 0x5a) | 1);
+    value = *(u8 *)(actor + 0x5a);
+    *(u8 *)(actor + 0x5a) = (u8)(value | mask);
 
     Func_02002ca8(14, 0);
     Func_02002cb0(15, 0);
@@ -436,8 +447,9 @@ void Func_02000be0(void)
     Func_02002d2e(5);
     Func_02002d40(5, 0, 0);
 
-    Func_02002d8e(14, 0x10000, (void *)0x02009ce0);
-    Func_02002d9a(15, 0x10000, (void *)0x02009ce0);
+    data = Data_02009ce0;
+    Func_02002d8e(14, 0x10000, data);
+    Func_02002d9a(15, 0x10000, data);
     Func_02002e46();
     Func_02002d0a();
 }

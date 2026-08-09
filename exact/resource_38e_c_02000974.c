@@ -88,43 +88,55 @@ void Func_02001492();
 
 void Func_02000974(s32 selector)
 {
-    struct SceneEntity *entity = Func_02001474(selector);
-    struct SceneHandle *handle = entity->handle;
+    u8 *entity;
+    u8 *handle;
+    u8 *flagAt92;
+    u8 flags;
+    s32 zero;
+    s32 one;
     s32 gradient;
+    s32 mode;
+    s32 lock;
 
-    handle->field27 = 0;
-    handle->flags05 = (u8)(handle->flags05 & ~0x20);
-    handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
+    entity = (u8 *)Func_02001474(selector);
+    handle = *(u8 **)(entity + 80);
 
-    Func_0200144e(entity, 0);
+    mode = ~12;
+    mode &= handle[9];
+    mode |= 4;
+    lock = handle[5];
+    lock &= ~32;
+    handle[5] = (u8)lock;
+    mode &= 15;
+    handle[9] = (u8)mode;
 
-    entity->field5c = 0;
-    entity->field55 = 0;
+    zero = 0;
+    handle[39] = (u8)zero;
+    Func_0200144e(entity, zero);
 
-    /* 0x109 selects a companion entity; when absent the sprite drops a row. */
+    flagAt92 = entity + 92;
+    *flagAt92 = (u8)zero;
+    entity[85] = (u8)zero;
+
     if (Func_0200147c(0x109) == 0) {
-        entity->y += 0x00200000;    /* 0x80 << 14 */
+        *(s32 *)(entity + 12) += 0x00200000;
     }
 
-    entity->flags23 = (u8)(entity->flags23 & ~1);
-    entity->field61 = 1;
+    flags = (u8)(entity[35] & ~1);
+    one = 1;
+    entity[35] = flags;
+    entity[97] = (u8)one;
 
-    /*
-     * Func_08000140 reserves 0x608 (0xc1 << 3) bytes on channel 17 and
-     * returns the base of the reservation; the ramp uploaded below starts
-     * 0x400 (0x80 << 3) bytes into it.  Func_08015250's result is discarded,
-     * so only its side effect on the shared workspace matters.
-     */
     gradient = Func_0200146c(17, 0x608);
-    gradient += 0x400;
     Func_020014ac(0xb5);
-    Func_02001494(handle->paletteIndex, 0x80, gradient);
+    gradient += 0x400;
+    Func_02001494(handle[28], 0x80, gradient);
     Func_02001492(17);
 
-    entity->field30 = 0;
-    entity->behaviour = (void (*)(void))0x0200890d;
-    entity->shadowX = entity->x;
-    entity->shadowY = entity->y;
-    entity->field5c = 1;
-    entity->field56 = 0;
+    *(s32 *)(entity + 56) = *(s32 *)(entity + 8);
+    *(s32 *)(entity + 48) = zero;
+    *(s32 *)(entity + 60) = *(s32 *)(entity + 12);
+    *flagAt92 = (u8)one;
+    *(u32 *)(entity + 108) = 0x0200890d;
+    entity[86] = (u8)zero;
 }

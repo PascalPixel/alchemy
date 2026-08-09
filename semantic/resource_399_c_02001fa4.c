@@ -95,7 +95,7 @@ void Func_02001fa4(void)
         heading = Data_0200a430[(Data_03001ae8 >> 4) & 15];
         /* The test is on heading << 16 against 0xffff0000, i.e. the signed
          * halfword -1 meaning "no heading". */
-        if ((s16)heading == -1) {
+        if ((heading << 16) == (s32)0xffff0000) {
             return;
         }
         /* No argument register is written before this branch. */

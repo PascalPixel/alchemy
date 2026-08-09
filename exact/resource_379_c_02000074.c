@@ -62,6 +62,7 @@
 
 /* IWRAM pointer cell naming the scene workspace. */
 extern u8 *Data_03001ebc;
+extern u8 Data_02008cb4[];
 
 /* Old-style declarations: this overlay's imports vary their arity by site. */
 void Func_02000b70();
@@ -323,6 +324,21 @@ void Func_02001560();
 void Func_02001656();
 void Func_0200158a();
 
+static __inline__ void BumpSkippedBeats379(void)
+{
+    u16 *counter = (u16 *)(Data_03001ebc + 472);
+
+    *counter = *counter + 1;
+}
+
+static __inline__ s32 StartScript379(void)
+{
+    s32 script = (s32)Data_02008cb4;
+
+    Func_0200150c(0, script);
+    return script;
+}
+
                      
 
                      
@@ -352,6 +368,7 @@ void Func_0200158a();
 void Func_02000074(void)
 {
     u8 *state;
+    s32 script;
 
     Func_02000b70();   /* 76 */
     Func_02000bd0(14, 0);   /* 7e */
@@ -567,8 +584,7 @@ pose_join:                                      /* 0x020004ec */
     Func_020012a0(40);   /* 7ae */
     Func_02001320(9, 1);   /* 7b6 */
     Func_02001350(9, 0);   /* 7be */
-    state = Data_03001ebc;
-    *(u16 *)(state + 472) += 1;
+    BumpSkippedBeats379();
     goto beat_join;
 beat_variant_b:                                 /* 0x020007f0 */
     Func_020012e4(40);   /* 7f2 */
@@ -578,8 +594,7 @@ beat_variant_b:                                 /* 0x020007f0 */
     Func_020013b4(9, 0x8000, 0);   /* 81a */
     Func_02001312(40);   /* 820 */
     Func_02001392(9, 1);   /* 828 */
-    state = Data_03001ebc;
-    *(u16 *)(state + 472) += 1;
+    BumpSkippedBeats379();
     Func_020013d2(9, 0);   /* 840 */
 beat_join:                                      /* 0x02000844 */
     Func_02001338(30);   /* 846 */
@@ -635,9 +650,9 @@ beat_join:                                      /* 0x02000844 */
     Func_02001540(1, 1);   /* 9d6 */
     Func_020014ce(40);   /* 9dc */
     Func_02001522(10, 255, 0x186);   /* 9e8 */
-    Func_0200150c(0, 0x2008cb4);   /* 9f2 */
+    script = StartScript379();   /* 9f2 */
     Func_020014ea(40);   /* 9f8 */
-    Func_0200151a(1, 0x2008cb4);   /* a00 */
+    Func_0200151a(1, script);   /* a00 */
     Func_02001528(1);   /* a06 */
     Func_020015b4(11, 0x102, 0);   /* a12 */
     Func_020015c0(12, 0x102, 0);   /* a1e */
@@ -657,4 +672,3 @@ beat_join:                                      /* 0x02000844 */
     Func_02001656(1);   /* a84 */
     Func_0200158a();   /* a88 */
 }
-

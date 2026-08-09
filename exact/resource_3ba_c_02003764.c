@@ -89,46 +89,47 @@ extern u8 Data_0200bf14[];
 
 /* The per-frame task this owner installs; in-image code at file offset
  * 0x33a0 (0x0200b3a0 - 0x8000). */
-void Func_020033a0(void);
+void Func_0200b3a0(void);
 
-void Func_02003764(s32 actorA, s32 actorB, s32 param3, s32 param4,
-                   s32 param5, s32 param6, s32 param7)
+void Func_02003764(s32 first, s32 second, s32 mode, s32 centre,
+                   s32 extra, s32 third, s32 fourth)
 {
-    u8 *scene;
+    u8 *descriptor;
+    u8 *first_record;
+    u8 *second_record;
     s32 handle;
-    u8 *recordA;
-    u8 *recordB;
-    s32 paletteIndex;
+    s32 extent;
 
-    scene = Func_020072c6(59, 0x7170);
-    handle = Func_020072e0(0x200);
+    descriptor = Func_020072c6(59, 0x7170);
+    handle = Func_020072e0(512);
 
-    *(u16 *)(scene + 222) = (u16)actorA;
-    *(u16 *)(scene + 224) = (u16)actorB;
-    *(u16 *)(scene + 226) = (u16)param6;
-    *(u16 *)(scene + 228) = (u16)param7;
-    *(u16 *)(scene + 230) = (u16)param3;
-    *(s32 *)(scene + 232) = param4;
-    *(s32 *)(scene + 236) = param5;
+    *(u16 *)(descriptor + 222) = (u16)first;
+    *(u16 *)(descriptor + 224) = (u16)second;
+    *(u16 *)(descriptor + 226) = (u16)third;
+    *(u16 *)(descriptor + 228) = (u16)fourth;
+    *(u16 *)(descriptor + 230) = (u16)mode;
+    *(s32 *)(descriptor + 232) = centre;
+    *(s32 *)(descriptor + 236) = extra;
 
-    recordA = Func_02007478(actorA);
-    recordB = Func_02007480(actorB);
+    first_record = Func_02007478(first);
+    second_record = Func_02007480(second);
 
     if (Func_02007428(0x109) == 0) {
-        *(s32 *)(recordB + 8) = (param4 * 2) - *(s32 *)(recordA + 8);
-        *(s32 *)(recordB + 16) = *(s32 *)(recordA + 16);
+        *(s32 *)(second_record + 8) =
+            (centre << 1) - *(s32 *)(first_record + 8);
+        *(s32 *)(second_record + 16) = *(s32 *)(first_record + 16);
     }
 
-    *(u16 *)(scene + 218) = 0;
-    *(u16 *)(scene + 220) = 0;
+    *(u16 *)(descriptor + 218) = 0;
+    *(u16 *)(descriptor + 220) = 0;
 
     Func_02007356(Data_0200bf14, handle);
 
-    paletteIndex = Func_0200737a();
-    *(u16 *)(scene + 216) = (u16)paletteIndex;
-    Func_02007386((s16)paletteIndex, 0x200, handle);
+    extent = Func_0200737a();
+    *(u16 *)(descriptor + 216) = (u16)extent;
+    Func_02007386((s16)extent, 512, handle);
 
-    Func_02007326((void (*)(void))((s32)&Func_020033a0 | 1), 0xc76);
+    Func_02007326((s32)Func_0200b3a0 + 1, 0xc76);
 
     Func_02007374(handle);
 }

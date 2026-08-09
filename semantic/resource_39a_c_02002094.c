@@ -38,23 +38,23 @@ extern s16 Data_02000240[];
 extern u32 Data_03001ae8;
 
 /* The installed callback, named by its in-image address. */
-s32 Func_02004498();
+u8 *Func_02004498();
 void Func_0200440a();
 s32 Func_020043ec();
 void Func_02004392();
 s32 Func_02004406();
 s32 Func_02004410();
-s32 Func_02004426();
+void Func_02004426();
 void Func_02004406_b();
 void Func_02004416();
-s32 Func_02004444();
-s32 Func_0200446e();
+void Func_02004444();
+void Func_0200446e();
 s32 Func_02004480();
 s32 Func_0200448e();
 void Func_02004450();
-s32 Func_020044c4();
-s32 Func_020044c2();
-s32 Func_020044d0();
+void Func_020044c4();
+void Func_020044c2();
+void Func_020044d0();
 void Func_02004466();
 void Func_02004484();
 void Func_02004568();
@@ -86,17 +86,17 @@ void Func_02002094(void)
         heading = Data_0200a464[(Data_03001ae8 >> 4) & 15];
         /* The test is on heading << 16 against 0xffff0000, i.e. the signed
          * halfword -1 meaning "no heading". */
-        if ((s16)heading == -1) {
+        if ((heading << 16) == (s32)0xffff0000) {
             return;
         }
         /* No argument register is written before this branch. */
         Func_0200440a();
 
         /* movs r3,#0x80 / lsls r3,#12 builds the 0x80000 bias kept in fp. */
-        x = (*(s32 *)(subject + 8) & (s32)0xfff00000) + 0x80000;
-        z = (*(s32 *)(subject + 16) & (s32)0xfff00000) + 0x80000;
-        probe[0] = x;
         probe[1] = *(s32 *)(subject + 12);
+        x = (*(s32 *)(subject + 8) & (s32)0xfff00000) + 0x80000;
+        probe[0] = x;
+        z = (*(s32 *)(subject + 16) & (s32)0xfff00000) + 0x80000;
         probe[2] = z;
 
         goal = Func_020043ec((s32)subject[34], x, z);
@@ -116,39 +116,42 @@ void Func_02002094(void)
         }
 
         /* Rewind the probe to the position it held before 0x02004392. */
-        *(s32 *)(subject + 52) = 0x1999;
         probe[0] = x;
+        *(s32 *)(subject + 52) = 0x1999;
+        probe[2] = z;
         *(s32 *)(subject + 48) = 0x20000;
         *(u16 *)(subject + 100) = 0;
-        probe[2] = z;
         Func_02004426(subject, x, *(s32 *)(subject + 12), z);
         /* Same import as the probe above, two arguments here. */
         Func_02004406_b(subject, 2);
         Func_02004416(subject, 48);
-        *(void **)(subject + 108) = (void *)Func_02002014;
         Func_02004444(subject);
+        *(void **)(subject + 108) = (void *)Func_02002014;
 
-        for (;;) {
-            Func_0200446e((s32)0x100000, heading, probe);
-            marker = Func_02004480((s32)subject[34], probe[0], probe[2]);
-            if (marker == 255) {
-                break;
-            }
-            if (Func_0200448e((s32)subject[34], probe[0], probe[2])
-                    - *(s32 *)(subject + 12) > 0x80000) {
-                break;
-            }
-            *(s32 *)(subject + 48) = 0x20000;
-            *(s32 *)(subject + 52) = 0x1999;
-            x = probe[0];
-            z = probe[2];
-            Func_02004450(subject, probe[0], probe[1], probe[2]);
-            Func_020044c4(subject);
-            if (marker != goal) {
-                goto blocked;
-            }
+        goto advanceProbe;
+continueProbe:
+        if (Func_0200448e((s32)subject[34], probe[0], probe[2])
+                - *(s32 *)(subject + 12) > 0x80000) {
+            goto finishProbe;
+        }
+        *(s32 *)(subject + 48) = 0x20000;
+        *(s32 *)(subject + 52) = 0x1999;
+        x = probe[0];
+        z = probe[2];
+        Func_02004450(subject, probe[0], probe[1], probe[2]);
+        Func_020044c4(subject);
+        if (marker != goal) {
+            goto blocked;
         }
 
+advanceProbe:
+        Func_0200446e((s32)0x100000, heading, probe);
+        marker = Func_02004480((s32)subject[34], probe[0], probe[2]);
+        if (marker != 255) {
+            goto continueProbe;
+        }
+
+finishProbe:
         *(s32 *)(subject + 48) = 0x20000;
         *(s32 *)(subject + 52) = 0x10000;
         Func_020044c2(subject, x, *(s32 *)(subject + 12), z);

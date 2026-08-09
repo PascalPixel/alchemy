@@ -1,7 +1,7 @@
 #include "types.h"
 
 /*
- * resource_3b2 owner at 0x02002ed8, 216 bytes: bring one scene entity into
+ * resource_3a8 owner at 0x02003a3c, 216 bytes: bring one scene entity into
  * its idle presentation state.
  *
  * Complete owner: 'push {r5, r6, r7, lr}' plus the r8/r9/sl saves, through a
@@ -15,13 +15,13 @@
  * callback pointer.
  *
  * What was changed:
- *  - the callback 0x0200dae1 becomes 0x0200ae71.  Under the proven 0x02008000
- *    link base that is file offset 0x2e70 plus the Thumb bit, and that offset
+ *  - the callback 0x0200dae1 becomes 0x0200b9d5.  Under the proven 0x02008000
+ *    link base that is file offset 0x39d4 plus the Thumb bit, and that offset
  *    really does open with 'push {r5, r6, r7, lr}' (0xb5e0) - the same opening
  *    as resource_373's 0x5ae0, which is an independent check on both the base
  *    and the pointer's meaning.
  *  - all seven calls were re-resolved with 'cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
- *    resource_3b2 2ed8': 7 sites, 7 distinct veneers, publishing exactly the same
+ *    resource_3a8 3a3c': 7 sites, 7 distinct veneers, publishing exactly the same
  *    main-image imports in the same order as resource_373.  The 373 source
  *    predates the corrected 'bl' rule and named the imports by their encoded
  *    displacements; worse, it gave the first and third calls the SAME name
@@ -71,13 +71,12 @@ struct SceneEntity {
 };
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
-struct SceneEntity *Func_02005f6c();
-void Func_02005f4e();
-struct SceneEntity *Func_02005f84();
-s32 Func_02005f3c();
-s32 Func_02005fb4();
-void Func_02005f64();
-void Func_02005f62();
+struct SceneEntity *Func_02007664();
+void Func_0200762e();
+s32 Func_02007604();
+s32 Func_02007694();
+void Func_0200762c();
+void Func_0200762a();
                                          /* scene entity by selector */
                                          /* companion entity by selector, or 0 */
                                     /* set presentation mode */
@@ -86,28 +85,47 @@ void Func_02005f62();
                                     /* upload a palette ramp */
                                     /* shared-workspace side effect */
 
-void Func_02002ed8(s32 selector)
+void Func_02003a3c(s32 selector)
 {
-    struct SceneEntity *entity = Func_02005f6c(selector);
-    struct SceneHandle *handle = entity->handle;
+    u8 *entity;
+    u8 *handle;
+    u8 *flagAt92;
+    u8 flags;
+    s32 zero;
+    s32 one;
     s32 gradient;
+    s32 mode;
+    s32 lock;
 
-    handle->field27 = 0;
-    handle->flags05 = (u8)(handle->flags05 & ~0x20);
-    handle->flags09 = (u8)(((handle->flags09 & ~0x0c) | 0x04) & 0x0f);
+    entity = (u8 *)Func_02007664(selector);
+    handle = *(u8 **)(entity + 80);
 
-    Func_02005f4e(entity, 0);
+    mode = ~12;
+    mode &= handle[9];
+    mode |= 4;
+    lock = handle[5];
+    lock &= ~32;
+    handle[5] = (u8)lock;
+    mode &= 15;
+    handle[9] = (u8)mode;
 
-    entity->field5c = 0;
-    entity->field55 = 0;
+    zero = 0;
+    handle[39] = (u8)zero;
+    Func_0200762e(entity, zero);
+
+    flagAt92 = entity + 92;
+    *flagAt92 = (u8)zero;
+    entity[85] = (u8)zero;
 
     /* 0x109 selects a companion entity; when absent the sprite drops a row. */
-    if (Func_02005f84(0x109) == 0) {
-        entity->y += 0x00200000;    /* 0x80 << 14 */
+    if (Func_02007664(0x109) == 0) {
+        *(s32 *)(entity + 12) += 0x00200000;
     }
 
-    entity->flags23 = (u8)(entity->flags23 & ~1);
-    entity->field61 = 1;
+    flags = (u8)(entity[35] & ~1);
+    one = 1;
+    entity[35] = flags;
+    entity[97] = (u8)one;
 
     /*
      * Func_08000140 reserves 0x608 (0xc1 << 3) bytes on channel 17 and
@@ -115,16 +133,16 @@ void Func_02002ed8(s32 selector)
      * 0x400 (0x80 << 3) bytes into it.  Func_08015250's result is discarded,
      * so only its side effect on the shared workspace matters.
      */
-    gradient = Func_02005f3c(17, 0x608);
+    gradient = Func_02007604(17, 0x608);
+    Func_02007694(0xb5);
     gradient += 0x400;
-    Func_02005fb4(0xb5);
-    Func_02005f64(handle->paletteIndex, 0x80, gradient);
-    Func_02005f62(17);
+    Func_0200762c(handle[28], 0x80, gradient);
+    Func_0200762a(17);
 
-    entity->field30 = 0;
-    entity->behaviour = (void (*)(void))0x0200ae71;
-    entity->shadowX = entity->x;
-    entity->shadowY = entity->y;
-    entity->field5c = 1;
-    entity->field56 = 0;
+    *(s32 *)(entity + 56) = *(s32 *)(entity + 8);
+    *(s32 *)(entity + 48) = zero;
+    *(s32 *)(entity + 60) = *(s32 *)(entity + 12);
+    *flagAt92 = (u8)one;
+    *(u32 *)(entity + 108) = 0x0200b9d5;
+    entity[86] = (u8)zero;
 }

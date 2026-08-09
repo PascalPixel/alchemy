@@ -1,13 +1,5 @@
 #include "types.h"
 
-/*
- * Two sibling entry points that retune a live sound track.  Each checks the
- * track's 'Smsh' signature word before touching anything, so a slot that has
- * been torn down is ignored rather than corrupted; the two differ only in the
- * state they leave behind.  Caller unknown for both: no direct call, branch or
- * pool word in the image reaches either entry.
- */
-
 #define SIGNATURE_080FA4CC 0x68736D53
 
 struct Track_080fa4cc {

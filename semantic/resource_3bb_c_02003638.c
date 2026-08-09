@@ -47,6 +47,8 @@
  *
  * Otherwise a list of twelve-byte entries is built from the start of the
  * workspace and each one is submitted with Func_080001e8(entry, 255, 12).
+ * Separate write and submission cursors reproduce the two synchronized roles
+ * visible in the assembly without conflating the stores with the call input.
  * The list is a frame: one top piece, `count` left-column pieces, two middle
  * pieces, `count` right-column pieces, one bottom piece, and up to two marker
  * pieces for the participants named at +224 and +222 - the latter only when
@@ -97,9 +99,9 @@ extern u8 Data_0200c194[];
 
 void Func_02003638(void)
 {
+    s32 tile;
     u8 *workspace;
     u32 *out;
-    s32 tile;
     s32 count;
     s32 state;
     s32 column;
@@ -110,8 +112,11 @@ void Func_02003638(void)
     u8 *marker;
     s32 screen_y;
     s32 screen_x;
+    u32 *write;
 
     workspace = *(u8 **)0x03001f3c;
+    out = (u32 *)workspace;
+    write = out;
 
     /* The graphics slot's tile base: entry `slot` of the four-byte table at
      * 0x03001b10, halfword at +2, shifted down 5. */
@@ -144,58 +149,57 @@ void Func_02003638(void)
 
     state = *(s16 *)(workspace + 218);
     if (state == 0) {
-        Func_0200750e(*(s16 *)(workspace + 216));
+        Func_0200750e(*(s16 *)((u8 *)write + 216));
         return;
     }
 
     column = (state * 6 - 8) & 0xff;
-    out = (u32 *)workspace;
 
     /* Top piece. */
-    out[2] = tile | 0xe400;
-    out[0] = 0;
-    out[1] = ((104 - (count << 4)) << 16) | column | 0x8000;
+    *write++ = 0;
+    *write++ = ((104 - (count << 4)) << 16) | column | 0x8000;
+    *write++ = tile | 0xe400;
     Func_02007584(out, 255, 12);
     out += 3;
 
     /* Left column. */
     for (index = 0; (u32)index < (u32)count; index++) {
-        out[0] = 0;
-        out[1] = ((96 - (index << 4)) << 16) | column | 0x40000000;
-        out[2] = (tile + 2) | 0xe400;
+        *write++ = 0;
+        *write++ = ((96 - (index << 4)) << 16) | column | 0x40000000;
+        *write++ = (tile + 2) | 0xe400;
         Func_020075c6(out, 255, 12);
         out += 3;
     }
 
     /* The two middle pieces. */
-    out[0] = 0;
-    out[2] = (tile + 6) | 0xe400;
+    *write++ = 0;
+    *write++ = 0x700000 | column | 0x8000;            /* 224 << 15 */
+    *write++ = (tile + 6) | 0xe400;
     Func_02007606(out, 255, 12);
     out += 3;
-    out[1] = 0x700000 | column | 0x8000;            /* 224 << 15 */
 
-    out[1] = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
-    out[2] = (tile + 6) | 0xe400;
+    *write++ = 0;
+    *write++ = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
+    *write++ = (tile + 6) | 0xe400;
     Func_02007636(out, 255, 12);
     out += 3;
-    out[0] = 0;
 
     /* Right column: the same rows mirrored, with the row field advancing by
      * 0x100000 from 0x800000 instead of counting down. */
     for (index = 0; (u32)index < (u32)count; index++) {
-        out[0] = 0;
-        out[1] = column | (0x800000 + (index << 20)) | 0x40000000 | 0x10000000;
-        out[2] = (tile + 2) | 0xe400;
+        *write++ = 0;
+        *write++ = column | (0x800000 + (index << 20)) | 0x40000000 | 0x10000000;
+        *write++ = (tile + 2) | 0xe400;
         Func_0200767c(out, 255, 12);
         out += 3;
     }
 
     /* Bottom piece.  `column` is folded into the packed word in place here,
      * which is why it is not reused afterwards. */
-    out[0] = 0;
+    *write++ = 0;
+    *write++ = column | (((count << 4) + 128) << 16) | 0x8000 | 0x10000000;
+    *write++ = tile | 0xe400;
     Func_020076d2(out, 255, 12);
-    out[1] = column | (((count << 4) + 128) << 16) | 0x8000 | 0x10000000;
-    out[2] = tile | 0xe400;
     out += 3;
 
     if ((*(s32 *)0x03001e40 & 15) <= 4) return;
@@ -208,9 +212,9 @@ void Func_02003638(void)
                                  0xe0000);
         screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
-        out[0] = 0;
-        out[1] = screen_x | (screen_y << 16) | 0x40000000;
-        out[2] = (tile + 12) | 0xe400;
+        *write++ = 0;
+        *write++ = screen_x | (screen_y << 16) | 0x40000000;
+        *write++ = (tile + 12) | 0xe400;
         Func_0200776e(out, 255, 12);
         out += 3;
     }
@@ -224,9 +228,9 @@ void Func_02003638(void)
                              0xe0000);
     screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
 
-    out[1] = screen_x | (screen_y << 16) | 0x40000000;
-    out[0] = 0;
-    out[2] = (tile + 8) | 0xe400;
+    *write++ = 0;
+    *write++ = screen_x | (screen_y << 16) | 0x40000000;
+    *write++ = (tile + 8) | 0xe400;
 
     /* This site leaves r2 holding the cursor rather than the 12 every other
      * submission passes, so only two arguments are asserted. */

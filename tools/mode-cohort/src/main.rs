@@ -5,7 +5,8 @@ use search_compiler_modes::{canonical_json, is_js_integer, js_number, parse_json
 use std::path::Path;
 use std::process::Command;
 
-const USAGE: &str = "usage: mode-cohort [--jobs N] [--max-pairs N] [--max-triples N] CANDIDATE.c [CANDIDATE.c ...]";
+const USAGE: &str =
+    "usage: mode-cohort [--jobs N] [--max-pairs N] [--max-triples N] CANDIDATE.c [CANDIDATE.c ...]";
 
 fn main() {
     match run() {
@@ -34,6 +35,22 @@ fn number_argument(arguments: &[String], index: usize) -> f64 {
 
 fn available_parallelism() -> f64 {
     std::thread::available_parallelism().map_or(8.0, |n| n.get() as f64)
+}
+
+fn cargo_command(root: &Path, crate_name: &str) -> Command {
+    let mut command = Command::new("cargo");
+    command
+        .args([
+            "run",
+            "--offline",
+            "--quiet",
+            "--release",
+            "--manifest-path",
+        ])
+        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg("--")
+        .current_dir(root);
+    command
 }
 
 fn run() -> Result<Vec<String>, String> {
@@ -122,7 +139,8 @@ fn sweep_member(
     max_pairs: f64,
     max_triples: f64,
 ) -> Result<Report, String> {
-    let output = Command::new(root.join("tools/mode-sweep/target/release/mode-sweep"))
+    let mut command = cargo_command(root, "mode-sweep");
+    let output = command
         .arg(source)
         .args([
             "--pairs",
@@ -314,5 +332,27 @@ mod tests {
     #[test]
     fn collate_is_reachable_from_the_binary() {
         assert_eq!(mode_cohort::collate("a-b", "a+b"), std::cmp::Ordering::Less);
+    }
+
+    #[test]
+    fn sweep_child_is_cargo_authoritative() {
+        let command = cargo_command(Path::new("/repo"), "mode-sweep");
+        assert_eq!(command.get_program(), "cargo");
+        let args: Vec<_> = command
+            .get_args()
+            .map(|arg| arg.to_string_lossy().into_owned())
+            .collect();
+        assert_eq!(
+            args[0..6],
+            [
+                "run",
+                "--offline",
+                "--quiet",
+                "--release",
+                "--manifest-path",
+                "/repo/tools/mode-sweep/Cargo.toml",
+            ]
+        );
+        assert_eq!(args[6], "--");
     }
 }

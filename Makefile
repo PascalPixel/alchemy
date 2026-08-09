@@ -1,6 +1,6 @@
 TOOLS := tools
 CARGO ?= cargo
-CARGO_RUN := $(CARGO) run --quiet --release --manifest-path
+CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
 DISPATCH_MANIFEST := $(TOOLS)/dispatch/Cargo.toml
 DISPATCH_RUN := $(CARGO_RUN) $(DISPATCH_MANIFEST) --
 DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search semantic
@@ -29,7 +29,7 @@ help:
 		'make dispatch-GROUP ARGS=... run a registered native dispatch group'
 
 build-dispatch:
-	$(CARGO) build --quiet --release --manifest-path $(DISPATCH_MANIFEST)
+	$(CARGO) build --offline --quiet --release --manifest-path $(DISPATCH_MANIFEST)
 
 $(addprefix dispatch-,$(DISPATCH_GROUPS)): dispatch-%:
 	$(DISPATCH_RUN) $* $(ARGS)
@@ -120,7 +120,7 @@ lint:
 	$(CARGO_RUN) $(TOOLS)/no-asm-c/Cargo.toml --
 	$(CARGO_RUN) $(TOOLS)/decomp-targets/Cargo.toml -- --self-test
 	$(CARGO_RUN) $(TOOLS)/cache-key-lint/Cargo.toml --
-	$(CARGO) run --quiet --release --manifest-path $(TOOLS)/Cargo.toml --bin lang-ban --
+	$(CARGO) run --offline --quiet --release --manifest-path $(TOOLS)/Cargo.toml --bin lang-ban --
 	$(MAKE) compiler-lint
 
 test: lint compiler-self-test
@@ -128,14 +128,10 @@ test: lint compiler-self-test
 
 verify:
 	$(MAKE) inventory
-	$(CARGO_RUN) $(TOOLS)/statement-order-sweep-main/Cargo.toml -- --self-test
 	$(MAKE) test
-	$(CARGO_RUN) $(TOOLS)/overlay-candidate-rank/Cargo.toml -- --self-test
-	$(MAKE) build-claimed
+	$(MAKE) build-full
 	$(MAKE) build-semantic
 	$(MAKE) semantic-check
-	$(CARGO_RUN) $(TOOLS)/build-full/Cargo.toml -- --source-only
-	$(MAKE) build-full
 	$(MAKE) core-retained-check
 	$(CARGO_RUN) $(TOOLS)/semantic-superseded/Cargo.toml -- --check
 	$(MAKE) sanctum

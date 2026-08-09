@@ -18,6 +18,18 @@ use crate::compile::{PreparedTarget, Score as ByteScore};
 
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
+/// The host tools used by both Alchemy candidate-verification paths.
+///
+/// `objdump` is intentionally absent: Alchemy candidates are scored from the
+/// linked bytes, while the directory backend below owns its own command and
+/// identity.
+const ALCHEMY_HOST_TOOLS: [&str; 4] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+];
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Measurement {
     pub exact: bool,
@@ -153,6 +165,7 @@ pub fn prepare(
 #[derive(Clone)]
 struct AlchemyBackend {
     name: String,
+    identity: String,
     target: PreparedTarget,
 }
 
@@ -163,11 +176,53 @@ impl AlchemyBackend {
             .and_then(|value| value.to_str())
             .unwrap_or("alchemy")
             .to_string();
+        let target = PreparedTarget::prepare(path, base_source)?;
+        let implementation_signature = current_executable_signature()?;
+        let compiler_signature = alchemy_bundle::bundle::compiler_bundle_signature();
+        let host_signature = alchemy_bundle::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
+            .map_err(|error| format!("Alchemy host tool signature: {error}"))?;
         Ok(Self {
             name,
-            target: PreparedTarget::prepare(path, base_source)?,
+            identity: alchemy_identity(
+                &target.identity(),
+                &implementation_signature,
+                &compiler_signature,
+                &host_signature,
+            ),
+            target,
         })
     }
+}
+
+fn current_executable_signature() -> Result<String, String> {
+    let path = std::env::current_exe()
+        .map_err(|error| format!("cannot locate current executable: {error}"))?;
+    let bytes = fs::read(&path)
+        .map_err(|error| format!("cannot read current executable {}: {error}", path.display()))?;
+    if bytes.is_empty() {
+        return Err(format!("current executable {} is empty", path.display()));
+    }
+    Ok(alchemy_bundle::sha256::hex(&bytes))
+}
+
+fn append_identity_field(stream: &mut Vec<u8>, value: &str) {
+    stream.extend_from_slice(&(value.len() as u64).to_be_bytes());
+    stream.extend_from_slice(value.as_bytes());
+}
+
+fn alchemy_identity(
+    target_identity: &str,
+    implementation_signature: &str,
+    compiler_signature: &str,
+    host_signature: &str,
+) -> String {
+    let mut stream = Vec::new();
+    append_identity_field(&mut stream, "alchemy-permuter-alchemy-backend-v2");
+    append_identity_field(&mut stream, target_identity);
+    append_identity_field(&mut stream, implementation_signature);
+    append_identity_field(&mut stream, compiler_signature);
+    append_identity_field(&mut stream, host_signature);
+    alchemy_bundle::sha256::hex(&stream)
 }
 
 impl Backend for AlchemyBackend {
@@ -176,14 +231,7 @@ impl Backend for AlchemyBackend {
     }
 
     fn identity(&self) -> String {
-        alchemy_bundle::sha256::hex(
-            format!(
-                "{}\0{}",
-                alchemy_bundle::bundle::compiler_bundle_signature(),
-                self.target.identity()
-            )
-            .as_bytes(),
-        )
+        self.identity.clone()
     }
 
     fn baseline(&self) -> Measurement {
@@ -674,6 +722,16 @@ pub fn self_test() -> Result<(), String> {
         parse_disassembly("0: e59f0000 ldr r0, [pc]\n0: R_ARM_ABS32 other_symbol\n");
     if instruction_score(&candidate_relocation, &target_relocation).exact {
         return Err("generic scorer discarded relocation identity".into());
+    }
+    let base = alchemy_identity("target", "implementation-a", "compiler-a", "host-a");
+    if base == alchemy_identity("target", "implementation-b", "compiler-a", "host-a")
+        || base == alchemy_identity("target", "implementation-a", "compiler-b", "host-a")
+        || base == alchemy_identity("target", "implementation-a", "compiler-a", "host-b")
+    {
+        return Err("Alchemy backend identity did not invalidate a changed input".into());
+    }
+    if current_executable_signature()?.len() != 64 {
+        return Err("current executable signature is not SHA-256".into());
     }
     Ok(())
 }

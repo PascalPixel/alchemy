@@ -399,26 +399,16 @@ pub fn experimental_compilers() -> Vec<(&'static str, PathBuf, &'static [HostDig
 // compilerBundleSignature
 // ---------------------------------------------------------------------------
 
-/// The eleven paths `compilerBundleSignature` digests, in order.
+/// The twelve paths `compilerBundleSignature` digests, in order.
 ///
-/// PORT NOTE -- REAL BUG, REPRODUCED AS WRITTEN. `GCC3_DRIVER` is absent from
-/// this list even though gcc3 is a routable `CompilerFamily` with its own
-/// `GCC3_CFLAGS` and its own `GCC3_EXPECTED` digests. Swapping the staged gcc3
-/// `cc1` therefore does NOT change the signature, so a cache entry produced by
-/// one gcc3 build validates against another. That is a defect in
-/// the former compiler module, not in this port, and it is left alone deliberately:
-/// `compilerBundleSignature` is cache-key material in six call sites, and
-/// changing its input set invalidates every cache in the repository at once.
-/// Fixing it is a separate, deliberate decision that needs its own cache
-/// migration. Do not "correct" this list without that plan.
+/// `GCC3_DRIVER` is included because gcc3 is a routable `CompilerFamily` with
+/// its own staged driver, flags, and approved digests. Adding it deliberately
+/// invalidates existing compiler-cache entries once; leaving it out would let
+/// a cache entry produced by one gcc3 build validate against another.
 ///
-/// (`PRET_EARLY_THUMB_DRIVER` and `GCC2951_DRIVER`, the other two experimental
-/// compilers, ARE included -- so the omission is specific to gcc3 rather than a
-/// consistent policy of excluding experimental compilers.)
-///
-/// [`SIGNATURE_PATH_EXPRESSIONS`] mirrors the same list as the TypeScript
-/// expression text so `crate::drift` can gate the omission rather than trusting
-/// this comment.
+/// (`PRET_EARLY_THUMB_DRIVER` and `GCC2951_DRIVER` are also included.)
+/// [`SIGNATURE_PATH_EXPRESSIONS`] mirrors this order as the source expression
+/// text used by the parity checks.
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
     let gs2 = gs2_bundle();
@@ -434,15 +424,13 @@ pub fn signature_paths() -> Vec<PathBuf> {
         agbcc_driver(),
         pret_early_thumb_driver(),
         gcc2951_driver(),
+        gcc3_driver(),
     ]
 }
 
-/// The same eleven entries as [`signature_paths`], written as the TypeScript
-/// writes them. Compared against the parsed `const paths = [...]` inside
-/// `compilerBundleSignature` by `crate::drift`, which is what makes the
-/// gcc3 omission a gated fact instead of a comment: adding `GCC3_DRIVER` on
-/// either side fails the gate until both sides agree.
-pub const SIGNATURE_PATH_EXPRESSIONS: [&str; 11] = [
+/// The same twelve entries as [`signature_paths`], written as the TypeScript
+/// writes them, in the same order.
+pub const SIGNATURE_PATH_EXPRESSIONS: [&str; 12] = [
     "join(BUNDLE, \"xgcc\")",
     "join(BUNDLE, \"cpp\")",
     "join(BUNDLE, \"tradcpp\")",
@@ -454,23 +442,53 @@ pub const SIGNATURE_PATH_EXPRESSIONS: [&str; 11] = [
     "AGBCC_DRIVER",
     "PRET_EARLY_THUMB_DRIVER",
     "GCC2951_DRIVER",
+    "GCC3_DRIVER",
 ];
 
-/// `compilerBundleSignature()`.
+fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {
+    let relative = directory.strip_prefix(base).unwrap_or(directory);
+    let entries = match fs::read_dir(directory) {
+        Ok(entries) => {
+            let mut entries = entries.filter_map(std::result::Result::ok).collect::<Vec<_>>();
+            entries.sort_by_key(|entry| entry.file_name());
+            entries
+        }
+        Err(_) => {
+            append_signature_frame(stream, relative.to_string_lossy().as_bytes());
+            append_signature_frame(stream, b"unreadable-directory");
+            return;
+        }
+    };
+    for entry in entries {
+        let path = entry.path();
+        let relative = path.strip_prefix(base).unwrap_or(&path);
+        match entry.file_type() {
+            Ok(kind) if kind.is_dir() => append_compiler_input_tree(stream, &path, base),
+            Ok(kind) if kind.is_file() => {
+                append_signature_frame(stream, relative.to_string_lossy().as_bytes());
+                match fs::read(&path) {
+                    Ok(bytes) => append_signature_frame(stream, &bytes),
+                    Err(_) => append_signature_frame(stream, b"unreadable-file"),
+                }
+            }
+            Ok(_) => {
+                append_signature_frame(stream, relative.to_string_lossy().as_bytes());
+                append_signature_frame(stream, b"unsupported-entry");
+            }
+            Err(_) => {
+                append_signature_frame(stream, relative.to_string_lossy().as_bytes());
+                append_signature_frame(stream, b"unreadable-entry");
+            }
+        }
+    }
+}
+
+/// Computes `compilerBundleSignature()` directly from the staged files.
 ///
-/// Cache-key material in six TypeScript call sites. A single differing byte
-/// silently invalidates a cache entry or, worse, wrongly validates one, so this
-/// function's parity with the TypeScript is the load-bearing measurement of the
-/// whole crate.
-///
-/// PORT NOTE: `Bun.CryptoHasher("sha256")` is fed incrementally; this builds the
-/// same byte stream and hashes it once. SHA-256 is a streaming construction, so
-/// concatenation is bit-identical, not merely equivalent. `digest.update(path)`
-/// on a JS string is UTF-8 encoded, which is what `Path`'s bytes already are.
-/// The literal `"missing"` is the seven ASCII bytes, and it stands in for the
-/// file contents only -- the path and both NULs are still written, so a missing
-/// file and an empty file are distinguishable.
-pub fn compiler_bundle_signature() -> String {
+/// This intentionally bypasses the process-wide memo and is useful for tests
+/// and diagnostics. Production callers should use [`compiler_bundle_signature`]
+/// so the staged bundle is hashed only once.
+pub fn compiler_bundle_signature_uncached() -> String {
     let mut stream: Vec<u8> = Vec::new();
     for path in signature_paths() {
         stream.extend_from_slice(path.to_string_lossy().as_bytes());
@@ -481,7 +499,133 @@ pub fn compiler_bundle_signature() -> String {
         }
         stream.push(0);
     }
+    // Every compiler plan adds the repository's `include/` directory. Header
+    // contents therefore belong to the compiler cache identity too.
+    append_signature_frame(&mut stream, b"alchemy compiler include tree v1");
+    let include = root().join("include");
+    append_compiler_input_tree(&mut stream, &include, &include);
     sha256::hex(&stream)
+}
+
+/// `compilerBundleSignature()`.
+///
+/// Cache-key material for compilation. A single differing byte in an admitted
+/// compiler executable or tracked project header must move the signature, or a
+/// stale cache entry could be accepted.
+///
+/// PORT NOTE: `Bun.CryptoHasher("sha256")` is fed incrementally; this builds the
+/// same byte stream and hashes it once. SHA-256 is a streaming construction, so
+/// concatenation is bit-identical, not merely equivalent. `digest.update(path)`
+/// on a JS string is UTF-8 encoded, which is what `Path`'s bytes already are.
+/// The literal `"missing"` is the seven ASCII bytes, and it stands in for the
+/// file contents only -- the path and both NULs are still written, so a missing
+/// file and an empty file are distinguishable.
+///
+/// The staged compiler and tracked include tree are treated as immutable for
+/// the lifetime of a process. Mutating either after this function's first call
+/// is unsupported; the memo intentionally does not observe it.
+pub fn compiler_bundle_signature() -> String {
+    static SIGNATURE: OnceLock<String> = OnceLock::new();
+    SIGNATURE
+        .get_or_init(compiler_bundle_signature_uncached)
+        .clone()
+}
+
+// ---------------------------------------------------------------------------
+// PATH executable signatures
+// ---------------------------------------------------------------------------
+
+type HostExecutableSignatureCache = Vec<(Vec<String>, Result<String>)>;
+
+fn host_executable_signature_cache() -> &'static Mutex<HostExecutableSignatureCache> {
+    static CACHE: OnceLock<Mutex<HostExecutableSignatureCache>> = OnceLock::new();
+    CACHE.get_or_init(|| Mutex::new(Vec::new()))
+}
+
+fn path_bytes(path: &Path) -> Vec<u8> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::ffi::OsStrExt;
+        path.as_os_str().as_bytes().to_vec()
+    }
+    #[cfg(not(unix))]
+    {
+        path.to_string_lossy().as_bytes().to_vec()
+    }
+}
+
+fn append_signature_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
+    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+fn resolve_host_executable(name: &str) -> Result<PathBuf> {
+    if name.is_empty() {
+        return Err("host executable name is empty".to_string());
+    }
+    let path = std::env::var_os("PATH")
+        .ok_or_else(|| "PATH is unset; cannot resolve host executable".to_string())?;
+    for directory in std::env::split_paths(&path) {
+        let candidate = directory.join(name);
+        if executable_mode(&candidate) == Some(true) {
+            return fs::canonicalize(&candidate).map_err(|error| {
+                format!(
+                    "host executable {name} resolved at {} but its path cannot be read: {error}",
+                    candidate.display()
+                )
+            });
+        }
+    }
+    Err(format!("host executable {name} cannot be resolved on PATH"))
+}
+
+fn host_executable_signature_uncached_names(names: &[String]) -> Result<String> {
+    let mut stream = Vec::new();
+    append_signature_frame(&mut stream, b"alchemy-bundle host-executables v1");
+    append_signature_frame(&mut stream, &(names.len() as u64).to_be_bytes());
+    for name in names {
+        let path = resolve_host_executable(name)?;
+        let bytes = fs::read(&path).map_err(|error| {
+            format!(
+                "host executable {name} resolved at {} but cannot be read: {error}",
+                path.display()
+            )
+        })?;
+        append_signature_frame(&mut stream, name.as_bytes());
+        append_signature_frame(&mut stream, &path_bytes(&path));
+        append_signature_frame(&mut stream, &bytes);
+    }
+    Ok(sha256::hex(&stream))
+}
+
+/// Computes a SHA-256 signature for an ordered list of host executables.
+///
+/// Each name is resolved through `PATH`, and the signature frames the request
+/// order, requested name, resolved path, and complete file bytes with lengths.
+/// A missing or unreadable executable returns an error. Successful and failed
+/// results are memoized per ordered name list while the process runs; callers
+/// must treat `PATH`, its resolutions, and the resolved files as immutable after
+/// the first request for a given list.
+pub fn host_executable_signature(executables: &[&str]) -> Result<String> {
+    let names: Vec<String> = executables.iter().map(|name| (*name).to_string()).collect();
+    let mut cache = host_executable_signature_cache()
+        .lock()
+        .expect("host executable signature memo is not poisoned");
+    if let Some((_, result)) = cache.iter().find(|(cached, _)| *cached == names) {
+        return result.clone();
+    }
+    let result = host_executable_signature_uncached_names(&names);
+    cache.push((names, result.clone()));
+    result
+}
+
+/// Computes [`host_executable_signature`] without consulting its memo.
+///
+/// This is intended for tests and diagnostics; production cache keys should
+/// use the memoized function and its immutable-input invariant.
+pub fn host_executable_signature_uncached(executables: &[&str]) -> Result<String> {
+    let names: Vec<String> = executables.iter().map(|name| (*name).to_string()).collect();
+    host_executable_signature_uncached_names(&names)
 }
 
 // ---------------------------------------------------------------------------
@@ -613,26 +757,108 @@ mod tests {
     }
 
     #[test]
-    fn signature_omits_gcc3_driver_as_the_typescript_does() {
-        // PORT NOTE guard: this pins the KNOWN BUG. If someone adds gcc3 to
-        // `signature_paths`, this test fails and forces them to read the note
-        // about busting every cache in the repository first.
+    fn signature_includes_routable_gcc3_driver_in_order() {
         let paths = signature_paths();
-        assert_eq!(paths.len(), 11);
-        assert!(
-            !paths.contains(&gcc3_driver()),
-            "gcc3 cc1 must stay out of the signature until a cache migration lands"
-        );
-        assert!(paths.contains(&gcc2951_driver()));
-        assert!(paths.contains(&pret_early_thumb_driver()));
+        assert_eq!(paths.len(), 12);
+        assert_eq!(paths[9], pret_early_thumb_driver());
+        assert_eq!(paths[10], gcc2951_driver());
+        assert_eq!(paths[11], gcc3_driver());
+        assert_eq!(SIGNATURE_PATH_EXPRESSIONS.len(), 12);
+        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[9], "PRET_EARLY_THUMB_DRIVER");
+        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[10], "GCC2951_DRIVER");
+        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[11], "GCC3_DRIVER");
     }
 
     #[test]
-    fn signature_is_stable_and_is_a_sha256_hex_string() {
-        let first = compiler_bundle_signature();
-        let second = compiler_bundle_signature();
-        assert_eq!(first, second);
-        assert_eq!(first.len(), 64);
+    fn compiler_input_tree_signature_moves_with_header_content() {
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-bundle-headers-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&directory);
+        fs::create_dir_all(directory.join("nested")).unwrap();
+        let header = directory.join("nested/test.h");
+        fs::write(&header, b"aa").unwrap();
+        let mut before = Vec::new();
+        append_compiler_input_tree(&mut before, &directory, &directory);
+        fs::write(&header, b"ab").unwrap();
+        let mut after = Vec::new();
+        append_compiler_input_tree(&mut after, &directory, &directory);
+        assert_ne!(sha256::hex(&before), sha256::hex(&after));
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn cached_signature_matches_uncached_signature() {
+        let cached = compiler_bundle_signature();
+        assert_eq!(cached, compiler_bundle_signature_uncached());
+        assert_eq!(cached.len(), 64);
+    }
+
+    #[test]
+    fn signature_cache_is_thread_safe() {
+        let expected = compiler_bundle_signature();
+        let threads: Vec<_> = (0..8)
+            .map(|_| std::thread::spawn(compiler_bundle_signature))
+            .collect();
+        for thread in threads {
+            assert_eq!(
+                thread.join().expect("signature thread did not panic"),
+                expected
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn path_executable_signature_is_order_and_content_sensitive() {
+        use std::os::unix::fs::PermissionsExt;
+
+        static PATH_TEST_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        let _lock = PATH_TEST_LOCK
+            .get_or_init(|| Mutex::new(()))
+            .lock()
+            .expect("PATH test lock is not poisoned");
+        static TEST_ID: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+        let id = TEST_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-bundle-host-signature-{}-{id}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&directory).expect("create host signature test directory");
+        let as_name = format!("alchemy-test-as-{id}");
+        let ld_name = format!("alchemy-test-ld-{id}");
+        let as_path = directory.join(&as_name);
+        let ld_path = directory.join(&ld_name);
+        fs::write(&as_path, b"as-bytes").expect("write as test executable");
+        fs::write(&ld_path, b"ld-bytes").expect("write ld test executable");
+        for path in [&as_path, &ld_path] {
+            let mut permissions = fs::metadata(path)
+                .expect("stat test executable")
+                .permissions();
+            permissions.set_mode(0o755);
+            fs::set_permissions(path, permissions).expect("make test executable executable");
+        }
+
+        let previous_path = std::env::var_os("PATH");
+        std::env::set_var("PATH", &directory);
+        let names = [as_name.as_str(), ld_name.as_str()];
+        let ordered = host_executable_signature(&names).expect("sign ordered executables");
+        let reversed = host_executable_signature_uncached(&[names[1], names[0]])
+            .expect("sign reversed executables");
+        assert_ne!(ordered, reversed);
+
+        fs::write(&as_path, b"changed-as-bytes").expect("change test executable");
+        let changed =
+            host_executable_signature_uncached(&names).expect("sign changed executable contents");
+        assert_ne!(ordered, changed);
+        assert!(host_executable_signature_uncached(&["missing-host-executable"]).is_err());
+
+        match previous_path {
+            Some(path) => std::env::set_var("PATH", path),
+            None => std::env::remove_var("PATH"),
+        }
+        fs::remove_dir_all(directory).expect("remove host signature test directory");
     }
 
     #[test]

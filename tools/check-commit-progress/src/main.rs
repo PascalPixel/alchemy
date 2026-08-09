@@ -36,6 +36,33 @@ fn command_output(program: &Path, args: &[&str], cwd: &Path) -> Result<String, S
     String::from_utf8(output.stdout).map_err(|e| e.to_string())
 }
 
+fn cargo_command(root: &Path, crate_name: &str) -> Command {
+    let mut command = Command::new("cargo");
+    command
+        .args([
+            "run",
+            "--offline",
+            "--quiet",
+            "--release",
+            "--manifest-path",
+        ])
+        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg("--")
+        .current_dir(root);
+    command
+}
+
+fn cargo_output(root: &Path, crate_name: &str, args: &[&str]) -> Result<String, String> {
+    let output = cargo_command(root, crate_name)
+        .args(args)
+        .output()
+        .map_err(|e| format!("could not run cargo for {crate_name}: {e}"))?;
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
+    }
+    String::from_utf8(output.stdout).map_err(|e| e.to_string())
+}
+
 fn git(root: &Path, args: &[&str]) -> Result<String, String> {
     command_output(Path::new("git"), args, root)
 }
@@ -56,7 +83,7 @@ fn commas(value: u64) -> String {
     let digits = value.to_string();
     let mut out = String::new();
     for (i, ch) in digits.chars().enumerate() {
-        if i > 0 && (digits.len() - i) % 3 == 0 {
+        if i > 0 && (digits.len() - i).is_multiple_of(3) {
             out.push(',');
         }
         out.push(ch);
@@ -200,8 +227,7 @@ fn report_required(paths: &[String], target: &str) -> bool {
 }
 
 fn current_report(root: &Path, target: &str) -> Result<Value, String> {
-    let binary = root.join("tools/full-c-progress/target/release/full-c-progress");
-    let output = command_output(&binary, &["--target", target, "--json"], root)?;
+    let output = cargo_output(root, "full-c-progress", &["--target", target, "--json"])?;
     serde_json::from_str(&output).map_err(|e| format!("invalid full-c-progress output: {e}"))
 }
 
@@ -308,5 +334,32 @@ fn main() -> ExitCode {
             eprintln!("error: {e}");
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn progress_child_is_cargo_authoritative() {
+        let command = cargo_command(Path::new("/repo"), "full-c-progress");
+        assert_eq!(command.get_program(), "cargo");
+        let args: Vec<_> = command
+            .get_args()
+            .map(|arg| arg.to_string_lossy().into_owned())
+            .collect();
+        assert_eq!(
+            args[0..6],
+            [
+                "run",
+                "--offline",
+                "--quiet",
+                "--release",
+                "--manifest-path",
+                "/repo/tools/full-c-progress/Cargo.toml",
+            ]
+        );
+        assert_eq!(args[6], "--");
     }
 }

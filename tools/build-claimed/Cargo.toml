@@ -21,9 +21,11 @@ path = "src/main.rs"
 # Sibling crates, not third-party dependencies. Each already owns a proved port
 # of the layer this tool calls; a second copy of any of them is exactly the
 # hand-sync problem the Rust effort exists to end.
+alchemy-bundle = { path = "../alchemy-bundle" }
 alchemy-plan = { path = "../alchemy-plan" }
 alchemy-routing = { path = "../alchemy-routing" }
 alchemy-symbols = { path = "../alchemy-symbols" }
 decomp-targets = { path = "../decomp-targets" }
+cache-entry = { path = "../cache-entry" }
 canonical-json = { path = "../canonical-json" }
 serde_json = { version = "1", features = ["preserve_order"] }

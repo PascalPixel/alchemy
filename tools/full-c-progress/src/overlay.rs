@@ -13,8 +13,12 @@
 // listing classification here.
 
 use std::collections::{HashMap, HashSet};
+use std::fs;
 use std::path::Path;
 use std::process::Command;
+
+use alchemy_bundle::sha256 as bundle_sha256;
+use overlay_disasm::{assemble_overlay, OverlaySource};
 
 use crate::intervals::{
     interval_bytes, merge_classified, union_intervals, Interval, Span, OVERLAY_BASE,
@@ -363,6 +367,210 @@ pub fn read_lossy(path: &Path) -> Result<String, String> {
 // ---------------------------------------------------------------------------
 // Overlay inventory
 // ---------------------------------------------------------------------------
+
+/// Inputs shared by every per-overlay cache key in one progress run.
+///
+/// The executable digest covers this crate and its path dependencies. The
+/// explicit include digest remains in the key as an audit-visible statement of
+/// the repository headers that affect the compiler plan, even though the
+/// compiler-bundle signature also includes the tracked include tree.
+#[derive(Debug, Clone)]
+pub struct CacheInputs {
+    implementation: String,
+    includes: String,
+    compiler: String,
+    host_tools: String,
+}
+
+fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
+    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+fn collect_files(directory: &Path, base: &Path, files: &mut Vec<String>) -> Result<(), String> {
+    let entries = fs::read_dir(directory).map_err(|error| error.to_string())?;
+    for entry in entries {
+        let entry = entry.map_err(|error| error.to_string())?;
+        let path = entry.path();
+        let kind = entry.file_type().map_err(|error| error.to_string())?;
+        if kind.is_dir() {
+            collect_files(&path, base, files)?;
+        } else if kind.is_file() {
+            files.push(
+                path.strip_prefix(base)
+                    .map_err(|error| error.to_string())?
+                    .to_string_lossy()
+                    .replace('\\', "/"),
+            );
+        }
+    }
+    Ok(())
+}
+
+fn include_signature(root: &Path) -> Result<String, String> {
+    let include = root.join("include");
+    let mut files = Vec::new();
+    collect_files(&include, &include, &mut files)?;
+    files.sort();
+    let mut stream = Vec::new();
+    append_frame(&mut stream, b"full-c-progress-include-v1");
+    for relative in files {
+        append_frame(&mut stream, relative.as_bytes());
+        let bytes = fs::read(include.join(&relative)).map_err(|error| error.to_string())?;
+        append_frame(&mut stream, &bytes);
+    }
+    Ok(crate::sha256::hex(&stream))
+}
+
+/// Compute the expensive, run-wide cache inputs once rather than once per
+/// overlay. A current executable digest is deliberately used instead of a
+/// hand-maintained list of Rust path dependencies.
+pub fn cache_inputs(root: &Path) -> Result<CacheInputs, String> {
+    let executable = std::env::current_exe().map_err(|error| error.to_string())?;
+    let implementation =
+        bundle_sha256::hex(&fs::read(executable).map_err(|error| error.to_string())?);
+    let compiler = alchemy_bundle::bundle::compiler_bundle_signature();
+    let host_tools = alchemy_bundle::bundle::host_executable_signature(&[
+        "arm-none-eabi-as",
+        "arm-none-eabi-nm",
+        "arm-none-eabi-ld",
+        "arm-none-eabi-objcopy",
+    ])
+    .map_err(|error| error.to_string())?;
+    Ok(CacheInputs {
+        implementation,
+        includes: include_signature(root)?,
+        compiler,
+        host_tools,
+    })
+}
+
+fn overlay_cache_directory(root: &Path) -> std::path::PathBuf {
+    match std::env::var_os("ALCHEMY_FULL_C_PROGRESS_OVERLAY_CACHE") {
+        Some(path) => path.into(),
+        None => root.join("out/cache/full-c-progress-overlay"),
+    }
+}
+
+fn overlay_cache_key(
+    inputs: &CacheInputs,
+    target: &str,
+    source: &str,
+    c_sources: &[String],
+    audited_callers: &[Interval],
+) -> Result<String, String> {
+    let mut stream = Vec::new();
+    append_frame(&mut stream, b"full-c-progress-overlay-cache-v1");
+    append_frame(&mut stream, target.as_bytes());
+    append_frame(&mut stream, source.as_bytes());
+    append_frame(&mut stream, &OVERLAY_BASE.to_be_bytes());
+    append_frame(&mut stream, inputs.implementation.as_bytes());
+    append_frame(&mut stream, inputs.includes.as_bytes());
+    append_frame(&mut stream, inputs.compiler.as_bytes());
+    append_frame(&mut stream, inputs.host_tools.as_bytes());
+
+    let source_bytes = fs::read(source).map_err(|error| format!("{source}: {error}"))?;
+    append_frame(&mut stream, &source_bytes);
+    append_frame(&mut stream, &(c_sources.len() as u64).to_be_bytes());
+    for c_source in c_sources {
+        append_frame(&mut stream, c_source.as_bytes());
+        let bytes = fs::read(c_source).map_err(|error| format!("{c_source}: {error}"))?;
+        append_frame(&mut stream, &bytes);
+    }
+
+    append_frame(&mut stream, &(audited_callers.len() as u64).to_be_bytes());
+    for interval in audited_callers {
+        append_frame(&mut stream, &interval.start.to_bits().to_be_bytes());
+        append_frame(&mut stream, &interval.end.to_bits().to_be_bytes());
+        append_frame(&mut stream, interval.kind.as_bytes());
+        append_frame(&mut stream, interval.evidence.as_bytes());
+    }
+    Ok(crate::sha256::hex(&stream))
+}
+
+fn cache_record(key: &str, payload: &[u8]) -> String {
+    format!(
+        "full-c-progress-overlay-cache-v1\nkey={key}\nsize={}\nsha256={}\n",
+        payload.len(),
+        crate::sha256::hex(payload)
+    )
+}
+
+fn read_cached_namespace(root: &Path, key: &str, source: &str) -> Option<Namespace> {
+    let directory = overlay_cache_directory(root);
+    let payload_path = directory.join(format!("{key}.json"));
+    let record_path = directory.join(format!("{key}.record"));
+    let payload = fs::read(&payload_path).ok()?;
+    let record = fs::read_to_string(&record_path).ok()?;
+    if record != cache_record(key, &payload) {
+        return None;
+    }
+    let text = std::str::from_utf8(&payload).ok()?;
+    let value = crate::json::parse(text).ok()?;
+    if crate::json::canonical_json(&value) != text {
+        return None;
+    }
+    let namespace = crate::namespace_from_json(&value).ok()?;
+    let expected_id = js::strip_overlay_suffix(basename(source));
+    if namespace.id != expected_id
+        || namespace.decoded_bytes.is_none()
+        || namespace.excluded_bytes.is_none()
+        || namespace.audit != "complete"
+        || crate::json::canonical_json(&crate::namespace_json(&namespace)) != text
+    {
+        return None;
+    }
+    Some(namespace)
+}
+
+fn publish_cached_namespace(root: &Path, key: &str, namespace: &Namespace) {
+    let directory = overlay_cache_directory(root);
+    if fs::create_dir_all(&directory).is_err() {
+        return;
+    }
+    let payload = crate::json::canonical_json(&crate::namespace_json(namespace));
+    let payload_path = directory.join(format!("{key}.json"));
+    let record_path = directory.join(format!("{key}.record"));
+    // The record is the last publication. A killed writer therefore leaves a
+    // missing or mismatched record, which is a miss rather than a bad result.
+    if cache_entry::write_cache_entry_atomically(&payload_path, payload.as_bytes()).is_ok() {
+        let _ = cache_entry::write_cache_entry_atomically(
+            &record_path,
+            cache_record(key, payload.as_bytes()).as_bytes(),
+        );
+    }
+}
+
+/// Read a complete cached overlay namespace, or perform the one miss path.
+///
+/// On a miss the exact-C image is assembled once, and the source listing is
+/// assembled once by `overlay_inventory`; the image is passed into that
+/// listing pass instead of being rediscovered or rebuilt by the caller.
+pub fn cached_overlay_inventory(
+    root: &Path,
+    target: &str,
+    source: &str,
+    inputs: &CacheInputs,
+    audited_callers: &[Interval],
+) -> Result<Namespace, String> {
+    let c_sources = overlay_c_sources(root, source);
+    let key = overlay_cache_key(inputs, target, source, &c_sources, audited_callers)?;
+    if let Some(namespace) = read_cached_namespace(root, &key, source) {
+        return Ok(namespace);
+    }
+
+    let image = if c_sources.is_empty() {
+        None
+    } else {
+        Some(assemble_overlay(
+            &OverlaySource::path(source),
+            OVERLAY_BASE,
+        )?)
+    };
+    let namespace = overlay_inventory(root, source, image.as_deref(), audited_callers)?;
+    publish_cached_namespace(root, &key, &namespace);
+    Ok(namespace)
+}
 
 fn basename(path: &str) -> &str {
     path.rsplit('/').next().unwrap_or(path)
@@ -756,6 +964,160 @@ pub fn overlay_c_spans(root: &Path, source: &str) -> Result<Vec<crate::OwnedSpan
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn cache_test_dir(label: &str) -> std::path::PathBuf {
+        let stamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("test clock")
+            .as_nanos();
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-full-c-progress-cache-{label}-{}-{stamp}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&directory).expect("cache test directory");
+        directory
+    }
+
+    fn cache_namespace() -> Namespace {
+        Namespace {
+            id: "resource_380".to_string(),
+            decoded_bytes: Some(4.0),
+            executable_bytes: 4.0,
+            excluded_bytes: Some(0.0),
+            audit: "complete".to_string(),
+            intervals: Vec::new(),
+            evidence: vec!["test".to_string()],
+        }
+    }
+
+    #[test]
+    fn overlay_cache_key_moves_for_all_compiler_inputs_and_options() {
+        let directory = cache_test_dir("key");
+        let source = directory.join("resource_380_overlay.s");
+        let c_source = directory.join("resource_380_c_02000010.c");
+        fs::write(&source, b"source-a").expect("assembly source");
+        fs::write(&c_source, b"c-source-a").expect("exact source");
+        let c_sources = vec![c_source.to_string_lossy().into_owned()];
+        let inputs = CacheInputs {
+            implementation: "implementation-a".to_string(),
+            includes: "includes-a".to_string(),
+            compiler: "compiler-a".to_string(),
+            host_tools: "host-a".to_string(),
+        };
+        let callers = vec![Interval::new(1, 3, "thumb", "test")];
+        let base = overlay_cache_key(
+            &inputs,
+            "gs1-en",
+            &source.to_string_lossy(),
+            &c_sources,
+            &callers,
+        )
+        .expect("base cache key");
+
+        for (label, mut changed) in [
+            ("implementation", inputs.clone()),
+            ("includes", inputs.clone()),
+            ("compiler", inputs.clone()),
+            ("host tools", inputs.clone()),
+        ] {
+            match label {
+                "implementation" => changed.implementation.push('b'),
+                "includes" => changed.includes.push('b'),
+                "compiler" => changed.compiler.push('b'),
+                "host tools" => changed.host_tools.push('b'),
+                _ => unreachable!(),
+            }
+            assert_ne!(
+                overlay_cache_key(
+                    &changed,
+                    "gs1-en",
+                    &source.to_string_lossy(),
+                    &c_sources,
+                    &callers,
+                )
+                .expect("changed cache key"),
+                base,
+                "{label} must invalidate the overlay result"
+            );
+        }
+        fs::write(&source, b"source-b").expect("changed assembly source");
+        assert_ne!(
+            overlay_cache_key(
+                &inputs,
+                "gs1-en",
+                &source.to_string_lossy(),
+                &c_sources,
+                &callers,
+            )
+            .expect("changed source key"),
+            base
+        );
+        fs::write(&source, b"source-a").expect("restore assembly source");
+        fs::write(&c_source, b"c-source-b").expect("changed exact source");
+        assert_ne!(
+            overlay_cache_key(
+                &inputs,
+                "gs1-en",
+                &source.to_string_lossy(),
+                &c_sources,
+                &callers,
+            )
+            .expect("changed exact key"),
+            base
+        );
+        assert_ne!(
+            overlay_cache_key(
+                &inputs,
+                "gs2-en",
+                &source.to_string_lossy(),
+                &c_sources,
+                &callers,
+            )
+            .expect("changed target key"),
+            base
+        );
+        assert_ne!(
+            overlay_cache_key(
+                &inputs,
+                "gs1-en",
+                &source.to_string_lossy(),
+                &c_sources,
+                &[]
+            )
+            .expect("changed options key"),
+            base
+        );
+        fs::remove_dir_all(directory).expect("remove key test directory");
+    }
+
+    #[test]
+    fn overlay_cache_rejects_corrupt_payload_and_incomplete_record() {
+        let directory = cache_test_dir("record");
+        let key = "0123456789abcdef";
+        let namespace = cache_namespace();
+        publish_cached_namespace(&directory, key, &namespace);
+        let source = "/tmp/resource_380_overlay.s";
+        let hit = read_cached_namespace(&directory, key, source).expect("valid cache hit");
+        assert_eq!(hit.id, namespace.id);
+        assert_eq!(hit.executable_bytes, namespace.executable_bytes);
+
+        let payload_path = overlay_cache_directory(&directory).join(format!("{key}.json"));
+        let record_path = overlay_cache_directory(&directory).join(format!("{key}.record"));
+        let payload = fs::read(&payload_path).expect("published payload");
+        fs::write(&payload_path, [payload.as_slice(), b" "].concat()).expect("corrupt payload");
+        assert!(
+            read_cached_namespace(&directory, key, source).is_none(),
+            "a digest mismatch must be a cache miss"
+        );
+
+        publish_cached_namespace(&directory, key, &namespace);
+        fs::write(&record_path, "full-c-progress-overlay-cache-v1\nkey=").expect("truncate record");
+        assert!(
+            read_cached_namespace(&directory, key, source).is_none(),
+            "an incomplete record must be a cache miss"
+        );
+        fs::remove_dir_all(directory).expect("remove record test directory");
+    }
 
     fn span(start: i64, end: i64) -> DirectiveSpan {
         DirectiveSpan { start, end }

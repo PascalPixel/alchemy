@@ -12,6 +12,10 @@ edition = "2021"
 [dependencies]
 # Sibling crates, not third-party dependencies: the already-landed Rust
 # halves of the exact TypeScript modules `overlay_inventory.ts` imports.
+#   ../alchemy-bundle -> compiler_bundle_signature and sha256
+alchemy-bundle = { path = "../alchemy-bundle" }
+#   ../cache-entry -> atomic publication of the report and its cache record
+cache-entry = { path = "../cache-entry" }
 #   ../lib/discover.ts -> Discovery, sx
 discover = { path = "../discover" }
 #   ../lib/overlay_disasm.ts -> assembleOverlay, overlayCAddresses, OVERLAY_BASE

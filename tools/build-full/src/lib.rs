@@ -229,6 +229,19 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
     }
 }
 
+fn cargo_child(root: &Path, manifest: &str) -> Vec<String> {
+    vec![
+        "cargo".into(),
+        "run".into(),
+        "--quiet".into(),
+        "--release".into(),
+        "--offline".into(),
+        "--manifest-path".into(),
+        root.join(manifest).to_string_lossy().into_owned(),
+        "--".into(),
+    ]
+}
+
 fn read_json(path: &Path) -> Result<Value, String> {
     let data = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_slice(&data).map_err(|error| format!("{}: {error}", path.display()))
@@ -427,6 +440,15 @@ fn gap_values(gaps: &[GapRegion], prefix: &str, kind: &str) -> Value {
     Value::Array(gaps.iter().map(|gap| json!({"address":gap.address,"size":gap.size,"source":format!("{prefix}/{:08x}",gap.address),"kind":kind})).collect())
 }
 
+fn require_source_ownership(source_only: bool, unowned_bytes: usize) -> Result<(), String> {
+    if !source_only && unowned_bytes != 0 {
+        return Err(format!(
+            "full build leaves {unowned_bytes} ROM bytes unowned; ROM fallback is forbidden"
+        ));
+    }
+    Ok(())
+}
+
 fn place_regions(
     regions: &[Region],
     image: &[u8],
@@ -513,13 +535,8 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let mut mask = vec![0u8; target.rom_size as usize];
 
     let claimed_dir = rooted(root, &options.claimed_output);
-    let mut command = vec![
-        root.join("tools/build-claimed/target/release/build-claimed")
-            .to_string_lossy()
-            .into_owned(),
-        "--target".into(),
-        target.id.to_string(),
-    ];
+    let mut command = cargo_child(root, "tools/build-claimed/Cargo.toml");
+    command.extend(["--target".into(), target.id.to_string()]);
     if options.source_only {
         command.push("--source-only".into());
     } else {
@@ -551,10 +568,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let asm_dir = rooted(root, target.asm_dir);
     if asm_dir.exists() && has_assembly_sources(&asm_dir)? {
         let output = rooted(root, &options.asm_output);
-        let mut command = vec![root
-            .join("tools/build-asm/target/release/build-asm")
-            .to_string_lossy()
-            .into_owned()];
+        let mut command = cargo_child(root, "tools/build-asm/Cargo.toml");
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -580,10 +594,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let asset_manifest = rooted(root, &options.asset_manifest);
     if asset_manifest.exists() {
         let output = rooted(root, &options.asset_output);
-        let mut command = vec![root
-            .join("tools/build-assets/target/release/build-assets")
-            .to_string_lossy()
-            .into_owned()];
+        let mut command = cargo_child(root, "tools/build-assets/Cargo.toml");
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -613,13 +624,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         }
     }
     let output = rooted(root, &options.output);
-    if let Some(parent) = output.parent() {
-        std::fs::create_dir_all(parent)
-            .map_err(|error| format!("{}: {error}", parent.display()))?;
-    }
-    if let Some(bytes) = &rebuilt {
-        std::fs::write(&output, bytes).map_err(|error| format!("{}: {error}", output.display()))?;
-    }
 
     let source_bytes = mask.iter().map(|byte| *byte as usize).sum::<usize>();
     let code_bytes = value_u64(&claimed_document["claimed_bytes"], "claimed bytes")? as usize;
@@ -659,6 +663,16 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         &fallback_path,
         json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
     )?;
+
+    require_source_ownership(options.source_only, unowned_bytes)?;
+
+    if let Some(parent) = output.parent() {
+        std::fs::create_dir_all(parent)
+            .map_err(|error| format!("{}: {error}", parent.display()))?;
+    }
+    if let Some(bytes) = &rebuilt {
+        std::fs::write(&output, bytes).map_err(|error| format!("{}: {error}", output.display()))?;
+    }
 
     let mut report = Map::new();
     macro_rules! field {
@@ -783,6 +797,10 @@ pub fn self_test() -> Result<(), String> {
     if reconstruction_progress(100, 10, 50, 5, 25, 9).is_ok() {
         return Err("incomplete byte reconstruction count was accepted".into());
     }
+    if require_source_ownership(false, 1).is_ok() {
+        return Err("ROM fallback was accepted by the full-build gate".into());
+    }
+    require_source_ownership(true, 1)?;
     Ok(())
 }
 
@@ -810,5 +828,29 @@ mod tests {
     #[test]
     fn positional_rom_is_rejected_in_source_only() {
         assert!(parse_args(&args(&["--source-only", "x.gba"])).is_err());
+    }
+
+    #[test]
+    fn child_tools_are_run_through_cargo() {
+        assert_eq!(
+            cargo_child(Path::new("/repo"), "tools/build-claimed/Cargo.toml"),
+            vec![
+                "cargo".to_string(),
+                "run".to_string(),
+                "--quiet".to_string(),
+                "--release".to_string(),
+                "--offline".to_string(),
+                "--manifest-path".to_string(),
+                "/repo/tools/build-claimed/Cargo.toml".to_string(),
+                "--".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn normal_build_rejects_unowned_bytes() {
+        assert!(require_source_ownership(false, 1).is_err());
+        assert!(require_source_ownership(false, 0).is_ok());
+        assert!(require_source_ownership(true, 1).is_ok());
     }
 }

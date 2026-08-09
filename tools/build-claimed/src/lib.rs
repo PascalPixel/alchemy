@@ -45,9 +45,11 @@ use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
 use std::sync::Mutex;
 
+use alchemy_bundle::bundle::{compiler_bundle_signature, host_executable_signature};
 use alchemy_plan::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use alchemy_routing::routing::CompilerTarget;
 use alchemy_symbols::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
+use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use decomp_targets::{
     decomp_target, parse_decomp_target, target_for, DecompCompilerTarget, DecompTarget,
@@ -86,7 +88,9 @@ pub type Result<T> = std::result::Result<T, String>;
 /// with `linked=1456 failures=0`. This tool is NOT a victim, so nothing is
 /// corrected here.
 pub fn root() -> String {
-    alchemy_routing::routing::root().to_string_lossy().into_owned()
+    alchemy_routing::routing::root()
+        .to_string_lossy()
+        .into_owned()
 }
 
 /// `const OBJECT_CACHE = join(ROOT, "out/cache/claimed-objects")`.
@@ -111,9 +115,10 @@ pub fn stem(path: &str) -> &str {
 ///
 /// THE KEY DIGESTS INPUTS, NOT A VERSION LITERAL. There is no `-vN` string
 /// anywhere in it: the plan description names the compiler binaries and every
-/// routed flag, and the toolchain stamp folds in the contents of every absolute
-/// binary in the plan, so a changed compiler, a changed flag route or a changed
-/// source all produce a different key. A hand-bumped literal is what poisoned
+/// routed flag, and the toolchain stamp folds in the complete compiler-bundle
+/// signature plus the trusted assembler/nm signature, so a changed compiler, a
+/// changed flag route or a changed source all produce a different key. A
+/// hand-bumped literal is what poisoned
 /// `out/cache/overlay-c` across checkouts; this cache cannot acquire that
 /// failure mode.
 ///
@@ -128,33 +133,86 @@ pub fn object_cache_key(source_bytes: &[u8], plan_description: &str) -> String {
     digest.digest_hex()
 }
 
-/// `toolchainStamp(commands)`.
-///
-/// PORT NOTE -- the `join("")` separators are all empty, in the original and
-/// here. Two different argv lists can therefore concatenate to the same string
-/// (`["-o","x"]` and `["-ox"]`), which makes the stamp weaker than it looks.
-/// It is left as written: changing the separator changes every cache key and
-/// discards a cache with 8,700-odd live entries, which is a build-visible
-/// decision, not a port decision.
-///
-/// An unreadable binary contributes the literal `"unreadable"` rather than
-/// failing, so a missing compiler still produces a stable key -- and the
-/// compile that follows fails loudly anyway.
-pub fn toolchain_stamp(commands: &[Vec<String>]) -> String {
-    let mut parts: Vec<String> = Vec::new();
-    for command in commands {
-        parts.push(command.concat());
-        let Some(binary) = command.first() else {
-            continue;
-        };
-        if is_absolute(binary) {
-            match std::fs::read(binary) {
-                Ok(bytes) => parts.push(sha256::sha256_hex(&bytes)),
-                Err(_) => parts.push("unreadable".to_string()),
-            }
+/// The host tools used while compiling a claimed object and inspecting it.
+const CLAIMED_OBJECT_BINUTILS: [&str; 2] = ["arm-none-eabi-as", "arm-none-eabi-nm"];
+
+/// Inputs which are deliberately fixed for one cache namespace.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CacheSignatures {
+    compiler_bundle: String,
+    binutils: String,
+    implementation: String,
+}
+
+impl CacheSignatures {
+    /// Resolve and sign every production input trusted by the object cache.
+    pub fn production() -> Result<Self> {
+        Ok(Self {
+            compiler_bundle: compiler_bundle_signature(),
+            binutils: host_executable_signature(&CLAIMED_OBJECT_BINUTILS)?,
+            implementation: current_executable_signature()?,
+        })
+    }
+
+    /// Supply deterministic signatures for tests without requiring a toolchain.
+    pub fn injected(compiler_bundle: &str, binutils: &str, implementation: &str) -> Self {
+        Self {
+            compiler_bundle: compiler_bundle.to_string(),
+            binutils: binutils.to_string(),
+            implementation: implementation.to_string(),
         }
     }
-    parts.concat()
+}
+
+fn current_executable_signature() -> Result<String> {
+    let path = std::env::current_exe().map_err(|error| format!("current executable: {error}"))?;
+    let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    if bytes.is_empty() {
+        return Err(format!("current executable is empty: {}", path.display()));
+    }
+    Ok(sha256::sha256_hex(&bytes))
+}
+
+fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
+    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+fn framed_commands(commands: &[Vec<String>]) -> Vec<u8> {
+    let mut stream = Vec::new();
+    append_frame(&mut stream, &(commands.len() as u64).to_be_bytes());
+    for command in commands {
+        append_frame(&mut stream, &(command.len() as u64).to_be_bytes());
+        for argument in command {
+            append_frame(&mut stream, argument.as_bytes());
+        }
+    }
+    stream
+}
+
+/// Build the cache stamp from injective argv framing and the complete trusted
+/// toolchain signatures. Adding this material intentionally migrates every old
+/// claimed-object key once; old entries remain on disk but are unreachable.
+pub fn toolchain_stamp_with_signatures(
+    commands: &[Vec<String>],
+    signatures: &CacheSignatures,
+) -> String {
+    let mut stream = Vec::new();
+    append_frame(
+        &mut stream,
+        b"build-claimed cache identity: framed argv and signed toolchain",
+    );
+    append_frame(&mut stream, &framed_commands(commands));
+    append_frame(&mut stream, signatures.compiler_bundle.as_bytes());
+    append_frame(&mut stream, signatures.binutils.as_bytes());
+    append_frame(&mut stream, signatures.implementation.as_bytes());
+    sha256::sha256_hex(&stream)
+}
+
+/// Production form of [`toolchain_stamp_with_signatures`].
+pub fn toolchain_stamp(commands: &[Vec<String>]) -> Result<String> {
+    let signatures = CacheSignatures::production()?;
+    Ok(toolchain_stamp_with_signatures(commands, &signatures))
 }
 
 /// `cachedToolchainStamp`, the in-process memo in front of [`toolchain_stamp`].
@@ -164,22 +222,25 @@ pub fn toolchain_stamp(commands: &[Vec<String>]) -> String {
 /// megabyte compiler binaries. An insertion-ordered `Vec` stands in for the
 /// `Map`; the iteration order is unobservable here, but the rule in this crate
 /// is that no unordered container exists at all.
-#[derive(Default)]
 pub struct ToolchainStampCache {
-    entries: Mutex<Vec<(String, String)>>,
+    signatures: CacheSignatures,
+    entries: Mutex<Vec<(Vec<u8>, String)>>,
 }
 
 impl ToolchainStampCache {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new() -> Result<Self> {
+        Ok(Self::with_signatures(CacheSignatures::production()?))
+    }
+
+    pub fn with_signatures(signatures: CacheSignatures) -> Self {
+        Self {
+            signatures,
+            entries: Mutex::new(Vec::new()),
+        }
     }
 
     pub fn stamp(&self, commands: &[Vec<String>]) -> String {
-        let identity: String = commands
-            .iter()
-            .map(|command| command.concat())
-            .collect::<Vec<_>>()
-            .concat();
+        let identity = framed_commands(commands);
         if let Some(found) = self
             .entries
             .lock()
@@ -189,7 +250,7 @@ impl ToolchainStampCache {
         {
             return found.1.clone();
         }
-        let stamp = toolchain_stamp(commands);
+        let stamp = toolchain_stamp_with_signatures(commands, &self.signatures);
         self.entries
             .lock()
             .expect("stamp cache is not poisoned")
@@ -245,7 +306,10 @@ impl SymbolTable {
     }
 
     pub fn addresses(&self) -> Vec<f64> {
-        self.entries.iter().map(|(_, (address, _))| *address).collect()
+        self.entries
+            .iter()
+            .map(|(_, (address, _))| *address)
+            .collect()
     }
 }
 
@@ -350,7 +414,11 @@ pub fn self_test() -> Result<String> {
         let address = js_parse_int(&name[5..], 16).expect("literal hex");
         symbols.set(name, address, 2.0);
     }
-    let names: Vec<String> = symbols.entries.iter().map(|(name, _)| name.clone()).collect();
+    let names: Vec<String> = symbols
+        .entries
+        .iter()
+        .map(|(name, _)| name.clone())
+        .collect();
     if module_end(&names, &symbols)? != 0x0801_c0dau32 as f64 {
         return Err("multi-function C module range self-test failed".to_string());
     }
@@ -552,6 +620,90 @@ pub enum CacheOutcome {
     Miss,
 }
 
+fn write_claimed_cache_entry(
+    cached_object: &str,
+    object_bytes: &[u8],
+    cached_assembly: &str,
+    assembly_bytes: &[u8],
+    cached_meta: &str,
+    meta_bytes: &[u8],
+) -> Result<()> {
+    write_cache_entry_atomically(Path::new(cached_object), object_bytes)
+        .map_err(|error| format!("{cached_object}: {error}"))?;
+    write_cache_entry_atomically(Path::new(cached_assembly), assembly_bytes)
+        .map_err(|error| format!("{cached_assembly}: {error}"))?;
+    // Metadata is the commit marker: publish it only after both payloads are
+    // complete, so an interrupted writer cannot make a partial entry look
+    // valid to a later cache lookup.
+    write_cache_entry_atomically(Path::new(cached_meta), meta_bytes)
+        .map_err(|error| format!("{cached_meta}: {error}"))?;
+    Ok(())
+}
+
+fn claimed_cache_metadata(
+    object_bytes: &[u8],
+    assembly_bytes: &[u8],
+    defined: &[String],
+    undefined: &[String],
+) -> String {
+    let mut meta = Map::new();
+    meta.insert("definedNames".into(), string_values(defined));
+    meta.insert("undefinedNames".into(), string_values(undefined));
+    meta.insert("objectSize".into(), Value::from(object_bytes.len() as u64));
+    meta.insert(
+        "objectSha256".into(),
+        Value::String(sha256::sha256_hex(object_bytes)),
+    );
+    meta.insert(
+        "assemblySize".into(),
+        Value::from(assembly_bytes.len() as u64),
+    );
+    meta.insert(
+        "assemblySha256".into(),
+        Value::String(sha256::sha256_hex(assembly_bytes)),
+    );
+    // Keep the historical no-newline metadata representation byte-exact.
+    canonical_json(&Value::Object(meta))
+}
+
+fn payload_matches_metadata(
+    metadata: &Value,
+    size_key: &str,
+    digest_key: &str,
+    payload: &[u8],
+) -> bool {
+    if metadata.get(size_key).and_then(Value::as_u64) != Some(payload.len() as u64) {
+        return false;
+    }
+    let Some(expected) = metadata.get(digest_key).and_then(Value::as_str) else {
+        return false;
+    };
+    expected == sha256::sha256_hex(payload)
+}
+
+fn read_claimed_cache_hit(
+    cached_object: &str,
+    cached_assembly: &str,
+    cached_meta: &str,
+    object: &str,
+    assembly: &str,
+) -> Option<Vec<Vec<String>>> {
+    let meta = std::fs::read(cached_meta).ok()?;
+    let parsed: Value = serde_json::from_slice(&meta).ok()?;
+    let defined = string_array(parsed.get("definedNames"))?;
+    let undefined = string_array(parsed.get("undefinedNames"))?;
+    let object_bytes = std::fs::read(cached_object).ok()?;
+    let assembly_bytes = std::fs::read(cached_assembly).ok()?;
+    if !payload_matches_metadata(&parsed, "objectSize", "objectSha256", &object_bytes)
+        || !payload_matches_metadata(&parsed, "assemblySize", "assemblySha256", &assembly_bytes)
+    {
+        return None;
+    }
+    std::fs::write(object, &object_bytes).ok()?;
+    std::fs::write(assembly, &assembly_bytes).ok()?;
+    Some(vec![defined, undefined])
+}
+
 fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
     match target {
         DecompCompilerTarget::Gs1 => CompilerTarget::Gs1,
@@ -579,35 +731,22 @@ pub fn compile_source(
     );
     plan_options.preprocessed_output = Some(join(object_dir, &format!("{name}.i")));
     let plan = source_to_assembly_plan(&plan_options)?;
-    let source_bytes = std::fs::read(source)
-        .map_err(|error| format!("{source}: {error}"))?;
+    let source_bytes = std::fs::read(source).map_err(|error| format!("{source}: {error}"))?;
     let commands: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
     let key = object_cache_key(&source_bytes, &stamps.stamp(&commands));
     let cached_object = join(object_cache, &format!("{key}.o"));
     let cached_assembly = join(object_cache, &format!("{key}.s"));
     let cached_meta = join(object_cache, &format!("{key}.json"));
 
-    // The original's `try { ... } catch { symbols = null }`.
-    //
-    // PORT NOTE -- BUG, REPRODUCED. That bare `catch` swallows EVERY failure,
-    // not only "the entry is absent": a permission error, a truncated object or
-    // a half-written JSON all read as a miss and silently recompile. Named here
-    // rather than fixed, because "fixing" it means deciding which errors are
-    // fatal, and that changes when a build stops.
-    let hit = (|| -> Option<Vec<Vec<String>>> {
-        let meta = std::fs::read(&cached_meta).ok()?;
-        let parsed: Value = serde_json::from_slice(&meta).ok()?;
-        let defined = string_array(parsed.get("definedNames"))?;
-        let undefined = string_array(parsed.get("undefinedNames"))?;
-        // The order matters: the original parses the meta, then copies the
-        // object, then the assembly. A missing object after a present meta is
-        // still a miss.
-        let object_bytes = std::fs::read(&cached_object).ok()?;
-        std::fs::write(&object, &object_bytes).ok()?;
-        let assembly_bytes = std::fs::read(&cached_assembly).ok()?;
-        std::fs::write(&assembly, &assembly_bytes).ok()?;
-        Some(vec![defined, undefined])
-    })();
+    // Metadata is the commit marker. A new-key entry is a hit only when both
+    // payloads still match the size and digest recorded before that marker.
+    let hit = read_claimed_cache_hit(
+        &cached_object,
+        &cached_assembly,
+        &cached_meta,
+        &object,
+        &assembly,
+    );
     if let Some(mut lists) = hit {
         let undefined_names = lists.pop().expect("two lists");
         let defined_names = lists.pop().expect("two lists");
@@ -643,8 +782,10 @@ pub fn compile_source(
         .stdout,
     );
     let expected = format!("Func_{name}");
-    if !defined.iter().any(|symbol| *symbol == expected)
-        || defined.iter().any(|symbol| !is_lowercase_func_symbol(symbol))
+    if !defined.contains(&expected)
+        || defined
+            .iter()
+            .any(|symbol| !is_lowercase_func_symbol(symbol))
     {
         return Err(format!(
             "{}: expected {expected} and address-named functions, found {}",
@@ -664,18 +805,18 @@ pub fn compile_source(
     }
     std::fs::create_dir_all(object_cache).map_err(|error| format!("{object_cache}: {error}"))?;
     let object_bytes = std::fs::read(&object).map_err(|error| format!("{object}: {error}"))?;
-    std::fs::write(&cached_object, &object_bytes)
-        .map_err(|error| format!("{cached_object}: {error}"))?;
-    let assembly_bytes = std::fs::read(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
-    std::fs::write(&cached_assembly, &assembly_bytes)
-        .map_err(|error| format!("{cached_assembly}: {error}"))?;
-    // NOTE: no trailing newline here, unlike `manifest.json`. That asymmetry is
-    // in the original and is byte-visible in ~8,700 live cache entries.
-    let mut meta = Map::new();
-    meta.insert("definedNames".into(), string_values(&defined));
-    meta.insert("undefinedNames".into(), string_values(&undefined_names));
-    std::fs::write(&cached_meta, canonical_json(&Value::Object(meta)))
-        .map_err(|error| format!("{cached_meta}: {error}"))?;
+    let assembly_bytes =
+        std::fs::read(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
+    let meta_bytes =
+        claimed_cache_metadata(&object_bytes, &assembly_bytes, &defined, &undefined_names);
+    write_claimed_cache_entry(
+        &cached_object,
+        &object_bytes,
+        &cached_assembly,
+        &assembly_bytes,
+        &cached_meta,
+        meta_bytes.as_bytes(),
+    )?;
     Ok((
         Compiled {
             object,
@@ -695,7 +836,12 @@ fn string_array(value: Option<&Value>) -> Option<Vec<String>> {
 }
 
 fn string_values(items: &[String]) -> Value {
-    Value::Array(items.iter().map(|item| Value::String(item.clone())).collect())
+    Value::Array(
+        items
+            .iter()
+            .map(|item| Value::String(item.clone()))
+            .collect(),
+    )
 }
 
 fn strings(items: &[&str]) -> Vec<String> {
@@ -760,10 +906,7 @@ where
     let mut out = Vec::with_capacity(items.len());
     let taken = results.into_inner().expect("results are not poisoned");
     for slot in taken {
-        match slot.expect("every index was visited") {
-            Ok(value) => out.push(value),
-            Err(error) => return Err(error),
-        }
+        out.push(slot.expect("every index was visited")?);
     }
     Ok(out)
 }
@@ -876,7 +1019,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let object_dir = join(&output, "obj");
     std::fs::create_dir_all(&object_dir).map_err(|error| format!("{object_dir}: {error}"))?;
 
-    let stamps = ToolchainStampCache::new();
+    let stamps = ToolchainStampCache::new()?;
     let jobs = options.jobs as usize;
     let compiled_pairs = map_limit(&sources, jobs, |source| {
         compile_source(
@@ -955,7 +1098,14 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let binary = join(&output, "claimed.bin");
     run(
         root,
-        &strings(&["arm-none-eabi-ld", "-T", &linker, "-o", &elf, &symbols_object]),
+        &strings(&[
+            "arm-none-eabi-ld",
+            "-T",
+            &linker,
+            "-o",
+            &elf,
+            &symbols_object,
+        ]),
     )?;
     written.push(elf.clone());
     run(
@@ -1038,10 +1188,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         let offset = address - image_base;
         let actual = js_subarray(&image, offset, offset + size);
         if end > limit {
-            failures.push(format!(
-                "{}: linked extent outside ROM",
-                basename(source)
-            ));
+            failures.push(format!("{}: linked extent outside ROM", basename(source)));
         }
         if let Some(rom) = &rom {
             let expected = js_subarray(rom, address - ROM_BASE, end - ROM_BASE);
@@ -1089,7 +1236,12 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     document.insert(
         "verification".into(),
         Value::String(
-            if options.source_only { "source_only" } else { "rom" }.to_string(),
+            if options.source_only {
+                "source_only"
+            } else {
+                "rom"
+            }
+            .to_string(),
         ),
     );
     document.insert("image_base".into(), js_number(image_base));
@@ -1097,7 +1249,11 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     document.insert("claimed_bytes".into(), js_number(total));
     document.insert("regions".into(), Value::Array(manifest.clone()));
     let text = format!("{}\n", canonical_json(&Value::Object(document)));
-    write_file(&join(&output, "manifest.json"), text.as_bytes(), &mut written)?;
+    write_file(
+        &join(&output, "manifest.json"),
+        text.as_bytes(),
+        &mut written,
+    )?;
 
     Ok(BuildSummary {
         linked: manifest.len(),
@@ -1118,7 +1274,11 @@ pub fn js_number_to_display(value: f64) -> String {
         return "NaN".to_string();
     }
     if value.is_infinite() {
-        return if value > 0.0 { "Infinity".into() } else { "-Infinity".into() };
+        return if value > 0.0 {
+            "Infinity".into()
+        } else {
+            "-Infinity".into()
+        };
     }
     if js_is_integer(value) && value.abs() < 1e21 {
         return format!("{}", value as i64);
@@ -1221,10 +1381,7 @@ mod tests {
     #[test]
     fn object_cache_key_separates_its_two_chunks() {
         // Without the NUL these two would collide.
-        assert_ne!(
-            object_cache_key(b"yz", "x"),
-            object_cache_key(b"z", "xy")
-        );
+        assert_ne!(object_cache_key(b"yz", "x"), object_cache_key(b"z", "xy"));
     }
 
     #[test]
@@ -1444,22 +1601,205 @@ mod tests {
     }
 
     #[test]
-    fn toolchain_stamp_concatenates_with_empty_separators() {
-        // PINNED AS A DEFECT: the empty `join("")` makes these two argv lists
-        // indistinguishable. A port that "improved" the separator would change
-        // every one of ~8,700 live cache keys.
+    fn claimed_cache_rewrites_keep_all_three_files_byte_exact() {
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-build-claimed-cache-{}",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_dir_all(&directory);
+        std::fs::create_dir_all(&directory).unwrap();
+        let object = directory.join("key.o");
+        let assembly = directory.join("key.s");
+        let metadata = directory.join("key.json");
+
+        write_claimed_cache_entry(
+            object.to_str().unwrap(),
+            &[1, 2, 3, 4],
+            assembly.to_str().unwrap(),
+            b"long assembly",
+            metadata.to_str().unwrap(),
+            br#"{"definedNames":["Func_old"],"undefinedNames":[]}"#,
+        )
+        .unwrap();
+        write_claimed_cache_entry(
+            object.to_str().unwrap(),
+            &[9, 8],
+            assembly.to_str().unwrap(),
+            b"short",
+            metadata.to_str().unwrap(),
+            br#"{"definedNames":["Func_new"],"undefinedNames":[]}"#,
+        )
+        .unwrap();
+
+        assert_eq!(std::fs::read(&object).unwrap(), [9, 8]);
+        assert_eq!(std::fs::read(&assembly).unwrap(), b"short");
+        assert_eq!(
+            std::fs::read(&metadata).unwrap(),
+            br#"{"definedNames":["Func_new"],"undefinedNames":[]}"#
+        );
+        std::fs::remove_dir_all(directory).unwrap();
+    }
+
+    fn cache_fixture(
+        name: &str,
+        object_bytes: &[u8],
+        assembly_bytes: &[u8],
+        metadata: &[u8],
+    ) -> (
+        std::path::PathBuf,
+        std::path::PathBuf,
+        std::path::PathBuf,
+        std::path::PathBuf,
+        std::path::PathBuf,
+    ) {
+        let directory = std::env::temp_dir().join(format!(
+            "alchemy-build-claimed-cache-{name}-{}",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_dir_all(&directory);
+        std::fs::create_dir_all(&directory).unwrap();
+        let cached_object = directory.join("cached.o");
+        let cached_assembly = directory.join("cached.s");
+        let cached_meta = directory.join("cached.json");
+        let object = directory.join("output.o");
+        std::fs::write(&cached_object, object_bytes).unwrap();
+        std::fs::write(&cached_assembly, assembly_bytes).unwrap();
+        std::fs::write(&cached_meta, metadata).unwrap();
+        (
+            directory,
+            cached_object,
+            cached_assembly,
+            cached_meta,
+            object,
+        )
+    }
+
+    #[test]
+    fn claimed_cache_hit_accepts_matching_payload_digests() {
+        let object_bytes = b"object payload";
+        let assembly_bytes = b"assembly payload";
+        let defined = vec!["Func_08000000".to_string()];
+        let metadata = claimed_cache_metadata(object_bytes, assembly_bytes, &defined, &[]);
+        let (directory, cached_object, cached_assembly, cached_meta, object) =
+            cache_fixture("valid", object_bytes, assembly_bytes, metadata.as_bytes());
+        let assembly = directory.join("output.s");
+
+        assert_eq!(
+            read_claimed_cache_hit(
+                cached_object.to_str().unwrap(),
+                cached_assembly.to_str().unwrap(),
+                cached_meta.to_str().unwrap(),
+                object.to_str().unwrap(),
+                assembly.to_str().unwrap(),
+            ),
+            Some(vec![defined, Vec::new()])
+        );
+        assert_eq!(std::fs::read(object).unwrap(), object_bytes);
+        assert_eq!(std::fs::read(assembly).unwrap(), assembly_bytes);
+        std::fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn claimed_cache_hit_rejects_corrupt_or_truncated_payloads() {
+        let object_bytes = b"object payload";
+        let assembly_bytes = b"assembly payload";
+        let metadata = claimed_cache_metadata(object_bytes, assembly_bytes, &[], &[]);
+        let (directory, cached_object, cached_assembly, cached_meta, object) =
+            cache_fixture("corrupt", object_bytes, assembly_bytes, metadata.as_bytes());
+        let assembly = directory.join("output.s");
+        let paths = || {
+            (
+                cached_object.to_str().unwrap(),
+                cached_assembly.to_str().unwrap(),
+                cached_meta.to_str().unwrap(),
+                object.to_str().unwrap(),
+                assembly.to_str().unwrap(),
+            )
+        };
+
+        std::fs::write(&cached_object, b"object corrupt").unwrap();
+        assert!(
+            read_claimed_cache_hit(paths().0, paths().1, paths().2, paths().3, paths().4).is_none()
+        );
+        std::fs::write(&cached_object, object_bytes).unwrap();
+        std::fs::write(&cached_assembly, b"corrupt").unwrap();
+        assert!(
+            read_claimed_cache_hit(paths().0, paths().1, paths().2, paths().3, paths().4).is_none()
+        );
+        std::fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn claimed_cache_hit_rejects_metadata_without_new_digest_fields() {
+        let object_bytes = b"object payload";
+        let assembly_bytes = b"assembly payload";
+        let legacy = br#"{"definedNames":[],"undefinedNames":[]}"#;
+        let (directory, cached_object, cached_assembly, cached_meta, object) =
+            cache_fixture("legacy-metadata", object_bytes, assembly_bytes, legacy);
+        let assembly = directory.join("output.s");
+
+        assert!(read_claimed_cache_hit(
+            cached_object.to_str().unwrap(),
+            cached_assembly.to_str().unwrap(),
+            cached_meta.to_str().unwrap(),
+            object.to_str().unwrap(),
+            assembly.to_str().unwrap(),
+        )
+        .is_none());
+        std::fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn toolchain_stamp_frames_argv_and_removes_the_pinned_collision() {
         let left = vec![strings(&["/bin/does-not-exist", "-o", "x"])];
         let right = vec![strings(&["/bin/does-not-exist", "-ox"])];
-        assert_eq!(toolchain_stamp(&left), toolchain_stamp(&right));
-        // An unreadable absolute binary contributes the literal marker.
-        assert!(toolchain_stamp(&left).contains("unreadable"));
+        let signatures = CacheSignatures::injected("compiler-a", "binutils-a", "implementation-a");
+        assert_ne!(
+            toolchain_stamp_with_signatures(&left, &signatures),
+            toolchain_stamp_with_signatures(&right, &signatures)
+        );
+
+        let cache = ToolchainStampCache::with_signatures(signatures);
+        assert_ne!(cache.stamp(&left), cache.stamp(&right));
     }
 
     #[test]
     fn stamp_cache_returns_the_same_answer_as_the_uncached_form() {
-        let cache = ToolchainStampCache::new();
+        let signatures = CacheSignatures::injected("compiler-a", "binutils-a", "implementation-a");
+        let cache = ToolchainStampCache::with_signatures(signatures.clone());
         let commands = vec![strings(&["arm-none-eabi-as", "-o", "x"])];
-        assert_eq!(cache.stamp(&commands), toolchain_stamp(&commands));
-        assert_eq!(cache.stamp(&commands), toolchain_stamp(&commands));
+        assert_eq!(
+            cache.stamp(&commands),
+            toolchain_stamp_with_signatures(&commands, &signatures)
+        );
+        assert_eq!(
+            cache.stamp(&commands),
+            toolchain_stamp_with_signatures(&commands, &signatures)
+        );
+    }
+
+    #[test]
+    fn toolchain_stamp_changes_for_compiler_and_binutil_signatures() {
+        let commands = vec![strings(&["compiler", "-o", "object"])];
+        let base = CacheSignatures::injected("compiler-a", "binutils-a", "implementation-a");
+        let changed_compiler =
+            CacheSignatures::injected("compiler-b", "binutils-a", "implementation-a");
+        let changed_binutils =
+            CacheSignatures::injected("compiler-a", "binutils-b", "implementation-a");
+        let changed_implementation =
+            CacheSignatures::injected("compiler-a", "binutils-a", "implementation-b");
+        let base_stamp = toolchain_stamp_with_signatures(&commands, &base);
+        assert_ne!(
+            base_stamp,
+            toolchain_stamp_with_signatures(&commands, &changed_compiler)
+        );
+        assert_ne!(
+            base_stamp,
+            toolchain_stamp_with_signatures(&commands, &changed_binutils)
+        );
+        assert_ne!(
+            base_stamp,
+            toolchain_stamp_with_signatures(&commands, &changed_implementation)
+        );
     }
 }

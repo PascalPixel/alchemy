@@ -40,42 +40,32 @@ impl Journal {
     fn open(output: &Path, identity: &str, resume: bool) -> Result<Self, String> {
         fs::create_dir_all(output).map_err(|error| format!("{}: {error}", output.display()))?;
         let path = output.join("journal.tsv");
-        let header = format!("alchemy-permuter-journal-v1\t{identity}");
+        let header = format!("alchemy-permuter-journal-v2\t{identity}");
         let mut cached = BTreeMap::new();
         let mut append = false;
         if resume {
-            if let Ok(text) = fs::read_to_string(&path) {
-                let mut lines = text.lines();
-                if lines.next() == Some(header.as_str()) {
-                    append = true;
-                    for line in lines {
-                        let fields = line.split('\t').collect::<Vec<_>>();
-                        if fields.len() != 9 {
-                            continue;
-                        }
-                        let parsed = (|| {
-                            Some((
-                                fields[0].to_string(),
-                                Measurement {
-                                    exact: fields[1] == "1",
-                                    score: fields[2].parse().ok()?,
-                                    differences: fields[3].parse().ok()?,
-                                    expected_size: fields[4].parse().ok()?,
-                                    actual_size: fields[5].parse().ok()?,
-                                    first_difference: if fields[6] == "-" {
-                                        None
-                                    } else {
-                                        Some(fields[6].parse().ok()?)
-                                    },
-                                    fingerprint: u64::from_str_radix(fields[7], 16).ok()?,
-                                    summary: fields[8].replace("\\t", "\t"),
-                                },
-                            ))
-                        })();
-                        if let Some((fingerprint, measurement)) = parsed {
+            match fs::read_to_string(&path) {
+                Ok(text) => {
+                    let mut lines = text.lines();
+                    if lines.next() == Some(header.as_str()) {
+                        append = true;
+                        for (line_number, line) in lines.enumerate() {
+                            let fields = line.split('\t').collect::<Vec<_>>();
+                            let Some((fingerprint, measurement)) = parse_journal_row(&fields)
+                            else {
+                                return Err(format!(
+                                    "{}: invalid or incomplete row {}",
+                                    path.display(),
+                                    line_number + 2
+                                ));
+                            };
                             cached.insert(fingerprint, measurement);
                         }
                     }
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(error) => {
+                    return Err(format!("{}: {error}", path.display()));
                 }
             }
         }
@@ -126,6 +116,54 @@ impl Journal {
             .flush()
             .map_err(|error| format!("{}: {error}", self.path.display()))
     }
+}
+
+fn parse_journal_row(fields: &[&str]) -> Option<(String, Measurement)> {
+    if fields.len() != 9 || fields[0].is_empty() || fields[8].is_empty() {
+        return None;
+    }
+    let exact = match fields[1] {
+        "0" => false,
+        "1" => true,
+        _ => return None,
+    };
+    let score: u64 = fields[2].parse().ok()?;
+    let differences: usize = fields[3].parse().ok()?;
+    let expected_size: usize = fields[4].parse().ok()?;
+    let actual_size: usize = fields[5].parse().ok()?;
+    let first_difference = if fields[6] == "-" {
+        None
+    } else {
+        Some(fields[6].parse().ok()?)
+    };
+    let fingerprint = u64::from_str_radix(fields[7], 16).ok()?;
+    if score == u64::MAX {
+        return None;
+    }
+    if exact
+        && (score != 0
+            || differences != 0
+            || expected_size != actual_size
+            || first_difference.is_some())
+    {
+        return None;
+    }
+    if first_difference.is_some_and(|index| index > expected_size.max(actual_size)) {
+        return None;
+    }
+    Some((
+        fields[0].to_string(),
+        Measurement {
+            exact,
+            score,
+            differences,
+            expected_size,
+            actual_size,
+            first_difference,
+            fingerprint,
+            summary: fields[8].replace("\\t", "\t"),
+        },
+    ))
 }
 
 fn source_fingerprint(source: &str) -> String {
@@ -579,6 +617,22 @@ pub fn self_test() -> Result<(), String> {
         journal.record("77cc", &measurement)?;
     }
     let restored = Journal::open(&journal_dir, "55aa", true)?.cached("77cc");
+    if Journal::open(&journal_dir, "changed-identity", true)?
+        .cached("77cc")
+        .is_some()
+    {
+        return Err("stale journal data was reused after an identity change".into());
+    }
+    Journal::open(&journal_dir, "55aa", false)?;
+    let journal_path = journal_dir.join("journal.tsv");
+    let mut journal_text = fs::read_to_string(&journal_path)
+        .map_err(|error| format!("{}: {error}", journal_path.display()))?;
+    journal_text.push_str("incomplete row\n");
+    fs::write(&journal_path, journal_text)
+        .map_err(|error| format!("{}: {error}", journal_path.display()))?;
+    if Journal::open(&journal_dir, "55aa", true).is_ok() {
+        return Err("corrupt journal row was accepted during resume".into());
+    }
     let _ = fs::remove_file(journal_dir.join("journal.tsv"));
     let _ = fs::remove_dir(&journal_dir);
     if restored != Some(measurement) {

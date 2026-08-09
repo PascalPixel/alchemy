@@ -40,6 +40,8 @@ version = "0.1.0"
 name = "full-c-progress"
 version = "0.1.0"
 dependencies = [
+ "alchemy-bundle",
+ "cache-entry",
  "overlay-disasm",
 ]
 

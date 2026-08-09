@@ -8,6 +8,7 @@ use std::sync::{
     Mutex,
 };
 
+use cache_entry::write_cache_entry_atomically;
 use candidate_compiler::jsnum::parse_hex;
 use candidate_compiler::verify::{
     js_subarray, verify_candidate, CandidateCompilerConfiguration, CandidateCompilerFamily,
@@ -22,6 +23,14 @@ use mode_sweep::{
     Config, Evidence, Options, OptionsOutcome, SELF_TEST_CHECK_FLOOR, USAGE,
 };
 use search_compiler_modes::{canonical_json, parse_json, Json};
+
+const MODE_SWEEP_BINUTILS: [&str; 5] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+    "arm-none-eabi-objdump",
+];
 
 #[derive(Debug, Clone)]
 struct Score {
@@ -145,28 +154,33 @@ fn bounded_integer(value: f64, name: &str) -> Result<usize, String> {
     Ok(value as usize)
 }
 
-fn score_one(
-    _root: &Path,
-    options: &Options,
-    rom: &[u8],
-    source_bytes: &[u8],
-    reference: &[u8],
-    reference_asm: &[String],
-    compiler_digest: &str,
-    output: &Path,
-    stem: &str,
+struct ScoreContext<'a> {
+    options: &'a Options,
+    rom: &'a [u8],
+    source_bytes: &'a [u8],
+    reference: &'a [u8],
+    reference_asm: &'a [String],
+    compiler_digest: &'a str,
+    implementation_digest: &'a str,
+    host_tool_signature: &'a str,
+    output: &'a Path,
+    stem: &'a str,
     address: f64,
-    config: Config,
-) -> Score {
-    let config_json = canonical_json(&config.to_json());
-    let cache_key = hash(&[
-        &mode_sweep::FORMAT.to_string().into_bytes(),
-        source_bytes,
-        reference,
-        compiler_digest.as_bytes(),
-        config_json.as_bytes(),
-    ]);
-    let cache_path = output.join("cache").join(format!("{cache_key}.json"));
+}
+
+fn score_one(context: &ScoreContext<'_>, config: Config) -> Score {
+    let cache_key = mode_sweep::score_cache_key(
+        context.source_bytes,
+        context.reference,
+        context.compiler_digest,
+        &config,
+        context.implementation_digest,
+        context.host_tool_signature,
+    );
+    let cache_path = context
+        .output
+        .join("cache")
+        .join(format!("{cache_key}.json"));
     if let Ok(text) = fs::read_to_string(&cache_path) {
         if let Ok(document) = parse_json(&text) {
             if let Some(mut score) = score_from_json(&document, &cache_key) {
@@ -176,7 +190,7 @@ fn score_one(
         }
     }
 
-    let work = output.join("scratch").join(&cache_key);
+    let work = context.output.join("scratch").join(&cache_key);
     let result = (|| -> Result<Score, String> {
         fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
         let family = compiler_family(&config.compiler_family)?;
@@ -186,18 +200,18 @@ fn score_one(
             remove_flags: config.remove_flags.clone(),
         };
         verify_candidate(
-            &options.source,
-            rom,
+            &context.options.source,
+            context.rom,
             &work.to_string_lossy(),
             &[],
             ROM_BASE,
             CompilerTarget::Gs1,
             &configuration,
         )?;
-        let linked_path = work.join(format!("{stem}.bin"));
+        let linked_path = work.join(format!("{}.bin", context.stem));
         let linked = fs::read(&linked_path)
             .map_err(|error| format!("{}: {error}", linked_path.display()))?;
-        let symbols_path = work.join(format!("{stem}.elf"));
+        let symbols_path = work.join(format!("{}.elf", context.stem));
         let symbols = Command::new("arm-none-eabi-nm")
             .args(["-S", "--defined-only"])
             .arg(&symbols_path)
@@ -206,8 +220,8 @@ fn score_one(
         let extent = if symbols.status.success() {
             linked_function_extent(
                 &String::from_utf8_lossy(&symbols.stdout),
-                &format!("Func_{stem}"),
-                address,
+                &format!("Func_{}", context.stem),
+                context.address,
                 linked.len(),
             )?
         } else {
@@ -226,9 +240,9 @@ fn score_one(
             error: None,
             evidence: Some(classify(
                 actual,
-                reference,
+                context.reference,
                 &disassemble(&actual_path),
-                reference_asm,
+                context.reference_asm,
             )),
         })
     })();
@@ -245,8 +259,9 @@ fn score_one(
             evidence: None,
         },
     };
-    let _ = fs::create_dir_all(output.join("cache"));
-    let _ = fs::write(&cache_path, canonical_json(&score.to_json()) + "\n");
+    let _ = fs::create_dir_all(context.output.join("cache"));
+    let cache_json = canonical_json(&score.to_json()) + "\n";
+    let _ = write_cache_entry_atomically(&cache_path, cache_json.as_bytes());
     score
 }
 
@@ -299,25 +314,46 @@ fn rank(mut scores: Vec<Score>) -> Vec<Score> {
     scores
 }
 
-fn report_json(
-    options: &Options,
-    stem: &str,
-    source_bytes: &[u8],
-    reference: &[u8],
-    compiler_digest: &str,
-    single: &[Score],
-    pairs: &[Score],
-    triples: &[Score],
-    factorial: &[Score],
-    pair_plan: &[Config],
-    all_pairs: &[Config],
-    triple_plan: &[Config],
-    all_triples: &[Config],
-    factorial_plan: &[Config],
-    all_factorial: &[Config],
-    seeds: &[String],
+struct ReportInputs<'a> {
+    options: &'a Options,
+    stem: &'a str,
+    source_bytes: &'a [u8],
+    reference: &'a [u8],
+    compiler_digest: &'a str,
+    single: &'a [Score],
+    pairs: &'a [Score],
+    triples: &'a [Score],
+    factorial: &'a [Score],
+    pair_plan: &'a [Config],
+    all_pairs: &'a [Config],
+    triple_plan: &'a [Config],
+    all_triples: &'a [Config],
+    factorial_plan: &'a [Config],
+    all_factorial: &'a [Config],
+    seeds: &'a [String],
     bounded: bool,
-) -> Json {
+}
+
+fn report_json(input: &ReportInputs<'_>) -> Json {
+    let ReportInputs {
+        options,
+        stem,
+        source_bytes,
+        reference,
+        compiler_digest,
+        single,
+        pairs,
+        triples,
+        factorial,
+        pair_plan,
+        all_pairs,
+        triple_plan,
+        all_triples,
+        factorial_plan,
+        all_factorial,
+        seeds,
+        bounded,
+    } = *input;
     let phases = {
         let mut phases = vec![
             Json::String("routed-default".into()),
@@ -453,21 +489,26 @@ fn run(options: Options, root: &Path) -> Result<(), String> {
     let reference_asm = disassemble(&output.join("reference.bin"));
     let compiler_digest =
         compiler_signature(root).map_err(|error| format!("compiler signature: {error}"))?;
+    let implementation_digest = mode_sweep::current_binary_digest()
+        .map_err(|error| format!("implementation digest: {error}"))?;
+    let host_tool_signature = alchemy_bundle::bundle::host_executable_signature(&MODE_SWEEP_BINUTILS)
+        .map_err(|error| format!("host tool signature: {error}"))?;
     let jobs = bounded_integer(options.jobs, "jobs")?;
+    let score_context = ScoreContext {
+        options: &options,
+        rom: &rom,
+        source_bytes: &source_bytes,
+        reference: &reference,
+        reference_asm: &reference_asm,
+        compiler_digest: &compiler_digest,
+        implementation_digest: &implementation_digest,
+        host_tool_signature: &host_tool_signature,
+        output: &output,
+        stem: &stem,
+        address,
+    };
     let score = |config: &Config| {
-        score_one(
-            root,
-            &options,
-            &rom,
-            &source_bytes,
-            &reference,
-            &reference_asm,
-            &compiler_digest,
-            &output,
-            &stem,
-            address,
-            config.clone(),
-        )
+        score_one(&score_context, config.clone())
     };
     let single = phase(&single_configs(), jobs, score);
     let all_pairs = pair_configs(None);
@@ -533,25 +574,25 @@ fn run(options: Options, root: &Path) -> Result<(), String> {
         && pair_plan.len() == all_pairs.len()
         && (!options.family_factorial || factorial_plan.len() == all_factorial.len())
         && (all_triples.is_empty() || options.triples && triple_plan.len() == all_triples.len());
-    let report = report_json(
-        &options,
-        &stem,
-        &source_bytes,
-        &reference,
-        &compiler_digest,
-        &single,
-        &pairs,
-        &triples,
-        &factorial,
-        &pair_plan,
-        &all_pairs,
-        &triple_plan,
-        &all_triples,
-        &factorial_plan,
-        &all_factorial,
-        &seeds,
+    let report = report_json(&ReportInputs {
+        options: &options,
+        stem: &stem,
+        source_bytes: &source_bytes,
+        reference: &reference,
+        compiler_digest: &compiler_digest,
+        single: &single,
+        pairs: &pairs,
+        triples: &triples,
+        factorial: &factorial,
+        pair_plan: &pair_plan,
+        all_pairs: &all_pairs,
+        triple_plan: &triple_plan,
+        all_triples: &all_triples,
+        factorial_plan: &factorial_plan,
+        all_factorial: &all_factorial,
+        seeds: &seeds,
         bounded,
-    );
+    });
     let ranked = rank(
         single
             .iter()

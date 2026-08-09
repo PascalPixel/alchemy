@@ -108,6 +108,7 @@ version = "0.1.0"
 dependencies = [
  "alchemy-bundle",
  "alchemy-routing",
+ "cache-entry",
  "candidate-compiler",
  "candidate-show",
  "integrate-matches",
@@ -134,6 +135,7 @@ dependencies = [
  "alchemy-plan",
  "alchemy-routing",
  "alchemy-symbols",
+ "cache-entry",
  "mode-sweep",
  "overlay-disasm",
  "search-compiler-modes",

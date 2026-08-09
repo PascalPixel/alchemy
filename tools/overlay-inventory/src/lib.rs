@@ -9,6 +9,11 @@
 
 mod wyhash;
 
+use alchemy_bundle::{
+    bundle::{compiler_bundle_signature, host_executable_signature},
+    sha256,
+};
+use cache_entry::write_cache_entry_atomically;
 use discover::{sx, Discovery, Mode};
 use overlay_disasm::{assemble_overlay, overlay_c_addresses, OverlaySource, OVERLAY_BASE};
 use serde_json::{Map, Value};
@@ -21,6 +26,14 @@ pub struct Options {
     pub output: PathBuf,
     pub top: usize,
 }
+
+const CACHE_FORMAT: u64 = 1;
+const INVENTORY_HOST_TOOLS: [&str; 4] = [
+    "arm-none-eabi-as",
+    "arm-none-eabi-nm",
+    "arm-none-eabi-ld",
+    "arm-none-eabi-objcopy",
+];
 
 /// Two levels above `CARGO_MANIFEST_DIR` (`tools/overlay-inventory`) is the
 /// repository root, matching `dirname(dirname(dirname(import.meta.url)))` in
@@ -68,6 +81,218 @@ pub fn options_of(argv: &[String], root: &Path) -> Result<Options, String> {
     Ok(options)
 }
 
+fn append_identity_part(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
+    stream.extend_from_slice(&(label.len() as u64).to_le_bytes());
+    stream.extend_from_slice(label.as_bytes());
+    stream.extend_from_slice(&(bytes.len() as u64).to_le_bytes());
+    stream.extend_from_slice(bytes);
+}
+
+fn implementation_identity() -> Result<String, String> {
+    let executable = std::env::current_exe().map_err(|error| error.to_string())?;
+    let bytes =
+        fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
+    if bytes.is_empty() {
+        return Err(format!(
+            "inventory executable is empty: {}",
+            executable.display()
+        ));
+    }
+    Ok(sha256::hex(&bytes))
+}
+
+fn inventory_identity_from_contents(
+    assets: &Path,
+    overlays: &[(String, Vec<u8>)],
+    exact_sources: &[(String, Vec<u8>)],
+    implementation: &str,
+    compiler_bundle: &str,
+    host_tools: &str,
+) -> String {
+    let mut stream = Vec::new();
+    append_identity_part(&mut stream, "format", &CACHE_FORMAT.to_le_bytes());
+    append_identity_part(
+        &mut stream,
+        "assets-option",
+        assets.to_string_lossy().as_bytes(),
+    );
+    append_identity_part(&mut stream, "implementation", implementation.as_bytes());
+    append_identity_part(&mut stream, "compiler-bundle", compiler_bundle.as_bytes());
+    append_identity_part(&mut stream, "host-tools", host_tools.as_bytes());
+    for (name, bytes) in overlays {
+        append_identity_part(&mut stream, &format!("asset/{name}"), bytes);
+    }
+    for (name, bytes) in exact_sources {
+        append_identity_part(&mut stream, &format!("exact/{name}"), bytes);
+    }
+    sha256::hex(&stream)
+}
+
+fn overlay_sources(assets: &Path) -> Result<Vec<(String, PathBuf)>, String> {
+    let suffix = "_overlay.s";
+    let mut overlays: Vec<(String, PathBuf)> = read_dir(assets)
+        .map_err(|error| error.to_string())?
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with("resource_") && name.ends_with(suffix) {
+                Some((name[..name.len() - suffix.len()].to_string(), entry.path()))
+            } else {
+                None
+            }
+        })
+        .filter(|(_, path)| fs::metadata(path).map(|m| m.len() > 0).unwrap_or(false))
+        .collect();
+    overlays.sort_by(|a, b| a.0.cmp(&b.0));
+    if overlays.is_empty() {
+        return Err(format!("no overlay sources under {}", assets.display()));
+    }
+    Ok(overlays)
+}
+
+fn exact_sources(overlays: &[(String, PathBuf)]) -> Vec<PathBuf> {
+    let mut sources: Vec<PathBuf> = overlays
+        .iter()
+        .flat_map(|(_, path)| {
+            overlay_disasm::compile::overlay_c_sources(&OverlaySource::path(path.clone()))
+        })
+        .collect();
+    sources.sort_by(|a, b| a.to_string_lossy().cmp(&b.to_string_lossy()));
+    sources.dedup();
+    sources
+}
+
+fn inventory_identity(
+    options: &Options,
+    overlays: &[(String, PathBuf)],
+    exact: &[PathBuf],
+) -> Result<String, String> {
+    let overlay_contents = overlays
+        .iter()
+        .map(|(name, path)| {
+            fs::read(path)
+                .map(|bytes| (name.clone(), bytes))
+                .map_err(|error| format!("{}: {error}", path.display()))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let exact_contents = exact
+        .iter()
+        .map(|path| {
+            let name = path
+                .strip_prefix(overlay_disasm::paths::root())
+                .unwrap_or(path)
+                .to_string_lossy()
+                .into_owned();
+            fs::read(path)
+                .map(|bytes| (name, bytes))
+                .map_err(|error| format!("{}: {error}", path.display()))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(inventory_identity_from_contents(
+        &options.assets,
+        &overlay_contents,
+        &exact_contents,
+        &implementation_identity()?,
+        &compiler_bundle_signature(),
+        &host_executable_signature(&INVENTORY_HOST_TOOLS)?,
+    ))
+}
+
+fn cache_record_path(output: &Path) -> PathBuf {
+    let mut path = output.as_os_str().to_os_string();
+    path.push(".cache");
+    path.into()
+}
+
+struct CacheRecord {
+    identity: String,
+    output_size: u64,
+    output_sha256: String,
+}
+
+fn cache_record_text(record: &CacheRecord) -> String {
+    let mut value = Map::new();
+    value.insert("format".into(), Value::from(CACHE_FORMAT));
+    value.insert("identity".into(), Value::String(record.identity.clone()));
+    value.insert("output_size".into(), Value::from(record.output_size));
+    value.insert(
+        "output_sha256".into(),
+        Value::String(record.output_sha256.clone()),
+    );
+    format!(
+        "{}\n",
+        canonical_json::canonical_json(&Value::Object(value))
+    )
+}
+
+fn parse_cache_record(bytes: &[u8]) -> Option<CacheRecord> {
+    let value: Value = serde_json::from_slice(bytes).ok()?;
+    let Value::Object(map) = value else {
+        return None;
+    };
+    if map.len() != 4 || map.get("format").and_then(Value::as_u64) != Some(CACHE_FORMAT) {
+        return None;
+    }
+    let identity = map.get("identity")?.as_str()?.to_string();
+    let output_size = map.get("output_size")?.as_u64()?;
+    let output_sha256 = map.get("output_sha256")?.as_str()?.to_string();
+    if output_sha256.len() != 64 || !output_sha256.chars().all(|c| c.is_ascii_hexdigit()) {
+        return None;
+    }
+    Some(CacheRecord {
+        identity,
+        output_size,
+        output_sha256,
+    })
+}
+
+fn valid_cached_report(report: &Value) -> bool {
+    report.get("format").and_then(Value::as_u64) == Some(1)
+        && report.get("generated_at").and_then(Value::as_str).is_some()
+        && report.get("totals").and_then(Value::as_object).is_some()
+        && report.get("families").and_then(Value::as_array).is_some()
+        && report.get("functions").and_then(Value::as_array).is_some()
+}
+
+fn cached_report(output: &Path, record_path: &Path, identity: &str) -> Option<(Vec<u8>, Value)> {
+    let record = parse_cache_record(&fs::read(record_path).ok()?)?;
+    if record.identity != identity {
+        return None;
+    }
+    let bytes = fs::read(output).ok()?;
+    if bytes.len() as u64 != record.output_size || sha256::hex(&bytes) != record.output_sha256 {
+        return None;
+    }
+    let report: Value = serde_json::from_slice(&bytes).ok()?;
+    if !valid_cached_report(&report) {
+        return None;
+    }
+    Some((bytes, report))
+}
+
+fn publish_report(
+    output: &Path,
+    record_path: &Path,
+    identity: &str,
+    bytes: &[u8],
+) -> Result<(), String> {
+    if let Some(parent) = output.parent() {
+        fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+    }
+    write_cache_entry_atomically(output, bytes)
+        .map_err(|error| format!("{}: {error}", output.display()))?;
+    let record = CacheRecord {
+        identity: identity.to_string(),
+        output_size: bytes.len() as u64,
+        output_sha256: sha256::hex(bytes),
+    };
+    if let Some(parent) = record_path.parent() {
+        fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+    }
+    write_cache_entry_atomically(record_path, cache_record_text(&record).as_bytes())
+        .map_err(|error| format!("{}: {error}", record_path.display()))
+}
+
 const FILLER_HALFWORD_BUDGET: i64 = 4;
 const POOL_WORD_BUDGET: i64 = 64;
 
@@ -99,7 +324,8 @@ fn next_entry_after_return(discovery: &Discovery, last: i64) -> Option<i64> {
                 Some(candidate)
             };
         }
-        let aligns_pool = (candidate & 3) == 2 && discovery.literal_slots.contains(&(candidate + 2));
+        let aligns_pool =
+            (candidate & 3) == 2 && discovery.literal_slots.contains(&(candidate + 2));
         if half == 0 || half == 0x46c0 || aligns_pool {
             fillers += 1;
             if fillers > FILLER_HALFWORD_BUDGET {
@@ -233,7 +459,10 @@ pub fn self_test() -> Result<(), String> {
     };
     let from_scan = |discovery: &Discovery, entry: i64| -> bool {
         match discovery.function(entry) {
-            Some(info) => info.sources.iter().any(|source| source.starts_with("after-return:")),
+            Some(info) => info
+                .sources
+                .iter()
+                .any(|source| source.starts_with("after-return:")),
             None => false,
         }
     };
@@ -249,7 +478,10 @@ pub fn self_test() -> Result<(), String> {
         (0x12, 'h', 0x2000),
         (0x14, 'h', 0xbd10),
     ]));
-    check("pool words must be stepped over", from_scan(&pooled, base + 0x10))?;
+    check(
+        "pool words must be stepped over",
+        from_scan(&pooled, base + 0x10),
+    )?;
     check(
         "pool words are not function entries",
         pooled.function(base + 0x08).is_none() && pooled.function(base + 0x0c).is_none(),
@@ -327,12 +559,17 @@ pub fn self_test() -> Result<(), String> {
         (0x08, 'w', 0x0a0b0c0d),
     ];
     let tail: [(usize, char, u32); 2] = [(0x14, 'h', 0xb510), (0x16, 'h', 0xbd10)];
-    let leaves: [(&str, &[(usize, char, u32)]); 3] = [
+    type Leaf = (&'static str, &'static [(usize, char, u32)]);
+    let leaves: [Leaf; 3] = [
         ("bx lr", &[(0x0c, 'h', 0x4770)]),
         ("movs", &[(0x0c, 'h', 0x2001), (0x0e, 'h', 0x4770)]),
         (
             "pc-relative load",
-            &[(0x0c, 'h', 0x4800), (0x0e, 'h', 0x4770), (0x10, 'w', 0x0a0b0c0d)],
+            &[
+                (0x0c, 'h', 0x4800),
+                (0x0e, 'h', 0x4770),
+                (0x10, 'w', 0x0a0b0c0d),
+            ],
         ),
     ];
     for (label, leaf) in leaves {
@@ -440,7 +677,10 @@ fn fingerprint(discovery: &Discovery, addresses: &[i64]) -> String {
         if instruction.size == 4 && (half & 0xf800) == 0xf000 {
             let low = discovery.u16(address + 2);
             let offset = sx(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
-            tokens.push(format!("bl:{}", target_class(discovery, address + 4 + offset)));
+            tokens.push(format!(
+                "bl:{}",
+                target_class(discovery, address + 4 + offset)
+            ));
         } else if (half & 0xf800) == 0xe000 {
             tokens.push(format!("b:{}", half >> 11));
         } else if (half & 0xf000) == 0xd000 && ((half >> 8) & 0xf) < 0xe {
@@ -482,8 +722,6 @@ fn converted_placeholders(source: &Path) -> Result<BTreeMap<i64, i64>, String> {
         if !trimmed.ends_with(':') {
             continue;
         }
-        let head = &candidate_lower[..candidate_lower.len() - 0]; // placeholder, unused branch below replaced
-        let _ = head;
         let hex_part = &trimmed[..trimmed.len() - 1];
         let prefix_len = "AlchemyC_".len();
         if hex_part.len() != prefix_len + 8 {
@@ -552,7 +790,10 @@ fn parse_space_directive(line: &str) -> Option<i64> {
     if token.is_empty() {
         return None;
     }
-    if let Some(hex) = token.strip_prefix("0x").or_else(|| token.strip_prefix("0X")) {
+    if let Some(hex) = token
+        .strip_prefix("0x")
+        .or_else(|| token.strip_prefix("0X"))
+    {
         i64::from_str_radix(hex, 16).ok()
     } else {
         token.parse::<i64>().ok()
@@ -599,35 +840,143 @@ impl FunctionRow {
         map.insert("overlay".into(), Value::String(self.overlay.clone()));
         map.insert("entry".into(), Value::from(self.entry));
         map.insert("offset".into(), Value::from(self.offset));
-        map.insert("instruction_count".into(), Value::from(self.instruction_count));
+        map.insert(
+            "instruction_count".into(),
+            Value::from(self.instruction_count),
+        );
         map.insert(
             "instruction_offsets".into(),
-            Value::Array(self.instruction_offsets.iter().map(|v| Value::from(*v)).collect()),
+            Value::Array(
+                self.instruction_offsets
+                    .iter()
+                    .map(|v| Value::from(*v))
+                    .collect(),
+            ),
         );
         map.insert("code_bytes".into(), Value::from(self.code_bytes));
         map.insert("span_bytes".into(), Value::from(self.span_bytes));
         map.insert("calls".into(), Value::from(self.calls));
         map.insert("returns".into(), Value::from(self.returns));
-        map.insert("starts_with_prologue".into(), Value::from(self.starts_with_prologue));
+        map.insert(
+            "starts_with_prologue".into(),
+            Value::from(self.starts_with_prologue),
+        );
         map.insert("unresolved".into(), Value::from(self.unresolved));
         map.insert(
             "unresolved_sites".into(),
-            Value::Array(self.unresolved_sites.iter().map(|v| Value::from(*v)).collect()),
+            Value::Array(
+                self.unresolved_sites
+                    .iter()
+                    .map(|v| Value::from(*v))
+                    .collect(),
+            ),
         );
         map.insert("jump_tables".into(), Value::from(self.jump_tables));
-        map.insert("fingerprint".into(), Value::String(self.fingerprint.clone()));
+        map.insert(
+            "fingerprint".into(),
+            Value::String(self.fingerprint.clone()),
+        );
         map.insert(
             "seed_sources".into(),
-            Value::Array(self.seed_sources.iter().map(|v| Value::String(v.clone())).collect()),
+            Value::Array(
+                self.seed_sources
+                    .iter()
+                    .map(|v| Value::String(v.clone()))
+                    .collect(),
+            ),
         );
         map.insert(
             "contained_by".into(),
-            Value::Array(self.contained_by.iter().map(|v| Value::String(v.clone())).collect()),
+            Value::Array(
+                self.contained_by
+                    .iter()
+                    .map(|v| Value::String(v.clone()))
+                    .collect(),
+            ),
         );
-        map.insert("structural_veneer".into(), Value::from(self.structural_veneer));
+        map.insert(
+            "structural_veneer".into(),
+            Value::from(self.structural_veneer),
+        );
         map.insert("data_walk".into(), Value::from(self.data_walk));
         Value::Object(map)
     }
+}
+
+fn report_total(report: &Value, name: &str) -> i64 {
+    report
+        .get("totals")
+        .and_then(Value::as_object)
+        .and_then(|totals| totals.get(name))
+        .and_then(Value::as_i64)
+        .unwrap_or(0)
+}
+
+fn print_report_summary(report: &Value, options: &Options, overlay_count: usize) {
+    println!(
+        "overlays={} converted_functions={} unconverted_discoveries={} ordinary_unconverted_discoveries={} tiny_unconverted_discoveries={} contained_unconverted_discoveries={} returning_unconverted_discoveries={} ordinary_prologue_return_discoveries={} structural_veneer_discoveries={} data_walk_discoveries={}",
+        overlay_count,
+        report_total(report, "converted_functions"),
+        report_total(report, "functions"),
+        report_total(report, "ordinary_unconverted_discoveries"),
+        report_total(report, "tiny_unconverted_discoveries"),
+        report_total(report, "contained_unconverted_discoveries"),
+        report_total(report, "returning_unconverted_discoveries"),
+        report_total(report, "ordinary_prologue_return_discoveries"),
+        report_total(report, "structural_veneer_discoveries"),
+        report_total(report, "data_walk_discoveries")
+    );
+    println!(
+        "decoded_bytes={} instruction_bytes={} converted_instruction_bytes={} converted_span_bytes={} converted_internal_entries={} undiscovered_converted_functions={} unresolved={} jump_tables={}",
+        report_total(report, "decoded_bytes"),
+        report_total(report, "instruction_bytes"),
+        report_total(report, "converted_instruction_bytes"),
+        report_total(report, "converted_span_bytes"),
+        report_total(report, "converted_internal_entries"),
+        report_total(report, "undiscovered_converted_functions"),
+        report_total(report, "unresolved"),
+        report_total(report, "jump_tables")
+    );
+    println!(
+        "duplicate_families={} duplicate_functions={}",
+        report_total(report, "duplicate_families"),
+        report_total(report, "duplicate_functions")
+    );
+    if let Some(families) = report.get("families").and_then(Value::as_array) {
+        for family in families
+            .iter()
+            .filter(|family| family.get("count").and_then(Value::as_i64).unwrap_or(0) > 1)
+            .take(options.top)
+        {
+            let fingerprint = family
+                .get("fingerprint")
+                .and_then(Value::as_str)
+                .unwrap_or("");
+            let count = family.get("count").and_then(Value::as_i64).unwrap_or(0);
+            let overlays = family.get("overlays").and_then(Value::as_i64).unwrap_or(0);
+            let code_bytes = family
+                .get("code_bytes")
+                .and_then(Value::as_i64)
+                .unwrap_or(0);
+            let member_values = family
+                .get("members")
+                .and_then(Value::as_array)
+                .cloned()
+                .unwrap_or_default();
+            let sample = member_values
+                .iter()
+                .filter_map(Value::as_str)
+                .take(12)
+                .collect::<Vec<_>>()
+                .join(",");
+            let tail = if member_values.len() > 12 { ",..." } else { "" };
+            println!(
+                "{}\tcount={}\toverlays={}\tbytes={}\t{}{}",
+                fingerprint, count, overlays, code_bytes, sample, tail
+            );
+        }
+    }
+    println!("report={}", options.output.display());
 }
 
 pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
@@ -635,23 +984,13 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
         return self_test();
     }
     let options = options_of(args, root)?;
-    let suffix = "_overlay.s";
-    let mut overlays: Vec<(String, PathBuf)> = read_dir(&options.assets)
-        .map_err(|error| error.to_string())?
-        .filter_map(|entry| entry.ok())
-        .filter_map(|entry| {
-            let name = entry.file_name().to_string_lossy().to_string();
-            if name.starts_with("resource_") && name.ends_with(suffix) {
-                Some((name[..name.len() - suffix.len()].to_string(), entry.path()))
-            } else {
-                None
-            }
-        })
-        .filter(|(_, path)| fs::metadata(path).map(|m| m.len() > 0).unwrap_or(false))
-        .collect();
-    overlays.sort_by(|a, b| a.0.cmp(&b.0));
-    if overlays.is_empty() {
-        return Err(format!("no overlay sources under {}", options.assets.display()));
+    let overlays = overlay_sources(&options.assets)?;
+    let exact = exact_sources(&overlays);
+    let identity = inventory_identity(&options, &overlays, &exact)?;
+    let record_path = cache_record_path(&options.output);
+    if let Some((_bytes, report)) = cached_report(&options.output, &record_path, &identity) {
+        print_report_summary(&report, &options, overlays.len());
+        return Ok(());
     }
 
     let mut functions: Vec<FunctionRow> = Vec::new();
@@ -708,7 +1047,11 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
         let converted_spans: Vec<(i64, i64)> = placeholders.iter().map(|(a, b)| (*a, *b)).collect();
         decoded_bytes += data.len() as i64;
         let discovery = discover_overlay(&data);
-        instruction_bytes += discovery.instructions.values().map(|item| item.size).sum::<i64>();
+        instruction_bytes += discovery
+            .instructions
+            .values()
+            .map(|item| item.size)
+            .sum::<i64>();
         converted_instruction_bytes += discovery
             .instructions
             .iter()
@@ -722,7 +1065,8 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
         unresolved += discovery.unresolved.len() as i64;
         jump_tables += discovery.jump_tables.len() as i64;
 
-        let mut discovered_converted: std::collections::BTreeSet<i64> = std::collections::BTreeSet::new();
+        let mut discovered_converted: std::collections::BTreeSet<i64> =
+            std::collections::BTreeSet::new();
         let mut entries = discovery.function_entries();
         entries.sort_unstable();
         for entry in entries {
@@ -770,7 +1114,8 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
                 .count() as i64;
             let mut unresolved_sites: Vec<i64> = info.unresolved.iter().copied().collect();
             unresolved_sites.sort_unstable();
-            let unresolved_sites: Vec<i64> = unresolved_sites.iter().map(|s| s - OVERLAY_BASE).collect();
+            let unresolved_sites: Vec<i64> =
+                unresolved_sites.iter().map(|s| s - OVERLAY_BASE).collect();
             let jump_tables_in_fn = discovery
                 .jump_table_sites
                 .keys()
@@ -808,7 +1153,9 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
 
     let mut instruction_owners: BTreeMap<String, BTreeMap<i64, Vec<String>>> = BTreeMap::new();
     for function in &functions {
-        let owners = instruction_owners.entry(function.overlay.clone()).or_default();
+        let owners = instruction_owners
+            .entry(function.overlay.clone())
+            .or_default();
         for offset in &function.instruction_offsets {
             let address = function.entry + offset;
             owners.entry(address).or_default().push(function.id.clone());
@@ -839,7 +1186,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
         })
         .collect();
     let tiny = functions.iter().filter(|f| f.code_bytes <= 6).count() as i64;
-    let contained = functions.iter().filter(|f| !f.contained_by.is_empty()).count() as i64;
+    let contained = functions
+        .iter()
+        .filter(|f| !f.contained_by.is_empty())
+        .count() as i64;
     let returning = functions.iter().filter(|f| f.returns > 0).count() as i64;
     let span_suspects: Vec<&FunctionRow> = functions
         .iter()
@@ -868,7 +1218,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
         if !groups.contains_key(&function.fingerprint) {
             group_order.push(function.fingerprint.clone());
         }
-        groups.entry(function.fingerprint.clone()).or_default().push(function);
+        groups
+            .entry(function.fingerprint.clone())
+            .or_default()
+            .push(function);
     }
     struct Family {
         fingerprint: String,
@@ -895,52 +1248,92 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
     families.sort_by(|a, b| b.count.cmp(&a.count).then(b.code_bytes.cmp(&a.code_bytes)));
 
     let duplicate_families = families.iter().filter(|f| f.count > 1).count() as i64;
-    let duplicate_functions = families.iter().filter(|f| f.count > 1).map(|f| f.count).sum::<i64>();
+    let duplicate_functions = families
+        .iter()
+        .filter(|f| f.count > 1)
+        .map(|f| f.count)
+        .sum::<i64>();
 
     let mut totals = Map::new();
     totals.insert("overlays".into(), Value::from(overlays.len() as i64));
     totals.insert("decoded_bytes".into(), Value::from(decoded_bytes));
-    totals.insert("converted_functions".into(), Value::from(converted_functions));
-    totals.insert("unconverted_discoveries".into(), Value::from(functions.len() as i64));
+    totals.insert(
+        "converted_functions".into(),
+        Value::from(converted_functions),
+    );
+    totals.insert(
+        "unconverted_discoveries".into(),
+        Value::from(functions.len() as i64),
+    );
     totals.insert("tiny_unconverted_discoveries".into(), Value::from(tiny));
-    totals.insert("contained_unconverted_discoveries".into(), Value::from(contained));
-    totals.insert("returning_unconverted_discoveries".into(), Value::from(returning));
+    totals.insert(
+        "contained_unconverted_discoveries".into(),
+        Value::from(contained),
+    );
+    totals.insert(
+        "returning_unconverted_discoveries".into(),
+        Value::from(returning),
+    );
     totals.insert(
         "ordinary_prologue_return_discoveries".into(),
         Value::from(ordinary_prologue_return),
     );
     totals.insert("structural_veneer_discoveries".into(), Value::from(veneers));
     totals.insert("data_walk_discoveries".into(), Value::from(data_walks));
-    totals.insert("converted_internal_entries".into(), Value::from(converted_internal_entries));
+    totals.insert(
+        "converted_internal_entries".into(),
+        Value::from(converted_internal_entries),
+    );
     totals.insert(
         "undiscovered_converted_functions".into(),
         Value::from(undiscovered_converted_functions),
     );
     totals.insert("functions".into(), Value::from(functions.len() as i64));
-    totals.insert("ordinary_unconverted_discoveries".into(), Value::from(ordinary.len() as i64));
-    totals.insert("ordinary_functions".into(), Value::from(ordinary.len() as i64));
+    totals.insert(
+        "ordinary_unconverted_discoveries".into(),
+        Value::from(ordinary.len() as i64),
+    );
+    totals.insert(
+        "ordinary_functions".into(),
+        Value::from(ordinary.len() as i64),
+    );
     totals.insert("instruction_bytes".into(), Value::from(instruction_bytes));
     totals.insert(
         "converted_instruction_bytes".into(),
         Value::from(converted_instruction_bytes),
     );
-    totals.insert("converted_span_bytes".into(), Value::from(converted_span_bytes));
+    totals.insert(
+        "converted_span_bytes".into(),
+        Value::from(converted_span_bytes),
+    );
     totals.insert("unresolved".into(), Value::from(unresolved));
     totals.insert("jump_tables".into(), Value::from(jump_tables));
     totals.insert("duplicate_families".into(), Value::from(duplicate_families));
-    totals.insert("duplicate_functions".into(), Value::from(duplicate_functions));
+    totals.insert(
+        "duplicate_functions".into(),
+        Value::from(duplicate_functions),
+    );
 
     let families_json: Vec<Value> = families
         .iter()
         .map(|family| {
             let mut map = Map::new();
-            map.insert("fingerprint".into(), Value::String(family.fingerprint.clone()));
+            map.insert(
+                "fingerprint".into(),
+                Value::String(family.fingerprint.clone()),
+            );
             map.insert("count".into(), Value::from(family.count));
             map.insert("overlays".into(), Value::from(family.overlays));
             map.insert("code_bytes".into(), Value::from(family.code_bytes));
             map.insert(
                 "members".into(),
-                Value::Array(family.members.iter().map(|m| Value::String(m.clone())).collect()),
+                Value::Array(
+                    family
+                        .members
+                        .iter()
+                        .map(|m| Value::String(m.clone()))
+                        .collect(),
+                ),
             );
             Value::Object(map)
         })
@@ -948,10 +1341,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
 
     let mut report = Map::new();
     report.insert("format".into(), Value::from(1));
-    report.insert(
-        "generated_at".into(),
-        Value::String(iso_now()),
-    );
+    report.insert("generated_at".into(), Value::String(iso_now()));
     report.insert("totals".into(), Value::Object(totals));
     report.insert("families".into(), Value::Array(families_json));
     report.insert(
@@ -960,38 +1350,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<(), String> {
     );
     let report_value = Value::Object(report);
 
-    if let Some(parent) = options.output.parent() {
-        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
-    }
     let text = format!("{}\n", canonical_json::canonical_json(&report_value));
-    fs::write(&options.output, text).map_err(|error| error.to_string())?;
+    publish_report(&options.output, &record_path, &identity, text.as_bytes())?;
 
-    println!(
-        "overlays={} converted_functions={} unconverted_discoveries={} ordinary_unconverted_discoveries={} tiny_unconverted_discoveries={} contained_unconverted_discoveries={} returning_unconverted_discoveries={} ordinary_prologue_return_discoveries={} structural_veneer_discoveries={} data_walk_discoveries={}",
-        overlays.len(),
-        converted_functions,
-        functions.len(),
-        ordinary.len(),
-        tiny,
-        contained,
-        returning,
-        ordinary_prologue_return,
-        veneers,
-        data_walks
-    );
-    println!(
-        "decoded_bytes={decoded_bytes} instruction_bytes={instruction_bytes} converted_instruction_bytes={converted_instruction_bytes} converted_span_bytes={converted_span_bytes} converted_internal_entries={converted_internal_entries} undiscovered_converted_functions={undiscovered_converted_functions} unresolved={unresolved} jump_tables={jump_tables}"
-    );
-    println!("duplicate_families={duplicate_families} duplicate_functions={duplicate_functions}");
-    for family in families.iter().filter(|f| f.count > 1).take(options.top) {
-        let sample = family.members.iter().take(12).cloned().collect::<Vec<_>>().join(",");
-        let tail = if family.count > 12 { ",..." } else { "" };
-        println!(
-            "{}\tcount={}\toverlays={}\tbytes={}\t{}{}",
-            family.fingerprint, family.count, family.overlays, family.code_bytes, sample, tail
-        );
-    }
-    println!("report={}", options.output.display());
+    print_report_summary(&report_value, &options, overlays.len());
 
     Ok(())
 }
@@ -1021,7 +1383,7 @@ fn format_iso(millis_since_epoch: i64) -> String {
 fn civil_from_days(z: i64) -> (i64, i64, i64) {
     let z = z + 719_468;
     let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
-    let doe = (z - era * 146_097) as i64;
+    let doe = z - era * 146_097;
     let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146_096) / 365;
     let y = yoe + era * 400;
     let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
@@ -1030,4 +1392,221 @@ fn civil_from_days(z: i64) -> (i64, i64, i64) {
     let m = if mp < 10 { mp + 3 } else { mp - 9 };
     let y = if m <= 2 { y + 1 } else { y };
     (y, m, d)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn identity(
+        asset: &[u8],
+        exact: &[u8],
+        implementation: &str,
+        compiler: &str,
+        host_tools: &str,
+    ) -> String {
+        inventory_identity_from_contents(
+            Path::new("assets/code"),
+            &[("resource_test".to_string(), asset.to_vec())],
+            &[("resource_test_c_02000000.c".to_string(), exact.to_vec())],
+            implementation,
+            compiler,
+            host_tools,
+        )
+    }
+
+    fn test_dir(label: &str) -> PathBuf {
+        let path = std::env::temp_dir().join(format!(
+            "alchemy-overlay-inventory-{label}-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&path);
+        fs::create_dir_all(&path).unwrap();
+        path
+    }
+
+    #[test]
+    fn source_content_changes_invalidate_identity() {
+        let base = identity(b"overlay", b"exact", "implementation", "compiler", "host");
+        assert_ne!(
+            base,
+            identity(
+                b"changed overlay",
+                b"exact",
+                "implementation",
+                "compiler",
+                "host"
+            )
+        );
+        assert_ne!(
+            base,
+            identity(
+                b"overlay",
+                b"changed exact",
+                "implementation",
+                "compiler",
+                "host"
+            )
+        );
+    }
+
+    #[test]
+    fn implementation_and_compiler_identity_are_key_material() {
+        let base = identity(b"overlay", b"exact", "implementation", "compiler", "host");
+        assert_ne!(
+            base,
+            identity(
+                b"overlay",
+                b"exact",
+                "changed implementation",
+                "compiler",
+                "host"
+            )
+        );
+        assert_ne!(
+            base,
+            identity(
+                b"overlay",
+                b"exact",
+                "implementation",
+                "changed compiler",
+                "host"
+            )
+        );
+        assert_ne!(
+            base,
+            identity(
+                b"overlay",
+                b"exact",
+                "implementation",
+                "compiler",
+                "changed host"
+            )
+        );
+    }
+
+    #[test]
+    fn top_only_changes_printed_truncation() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(Path::parent)
+            .unwrap();
+        let assets = root.join("assets/code");
+        let overlays = overlay_sources(&assets).unwrap();
+        let exact = exact_sources(&overlays);
+        let first = Options {
+            assets: assets.clone(),
+            output: root.join("out/first.json"),
+            top: 1,
+        };
+        let second = Options {
+            assets,
+            output: root.join("out/second.json"),
+            top: 100,
+        };
+        assert_eq!(
+            inventory_identity(&first, &overlays, &exact).unwrap(),
+            inventory_identity(&second, &overlays, &exact).unwrap()
+        );
+    }
+
+    #[test]
+    fn exact_inputs_use_overlay_disasm_source_discovery() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(Path::parent)
+            .unwrap();
+        let overlays = fs::read_dir(root.join("assets/code"))
+            .unwrap()
+            .filter_map(|entry| entry.ok())
+            .filter_map(|entry| {
+                let path = entry.path();
+                let name = path.file_name()?.to_string_lossy().to_string();
+                name.strip_suffix("_overlay.s")
+                    .filter(|name| name.starts_with("resource_"))
+                    .map(|name| (name.to_string(), path))
+            })
+            .find(|(_, path)| {
+                !overlay_disasm::compile::overlay_c_sources(&OverlaySource::path(path.clone()))
+                    .is_empty()
+            })
+            .into_iter()
+            .collect::<Vec<_>>();
+        assert!(
+            !overlays.is_empty(),
+            "fixture must have an exact overlay source"
+        );
+        let expected =
+            overlay_disasm::compile::overlay_c_sources(&OverlaySource::path(overlays[0].1.clone()));
+        assert_eq!(exact_sources(&overlays), expected);
+    }
+
+    #[test]
+    fn corrupt_json_output_is_rejected_even_with_a_matching_record() {
+        let directory = test_dir("corrupt-output");
+        let output = directory.join("report.json");
+        let record_path = cache_record_path(&output);
+        let corrupt = b"not json\n";
+        let record = CacheRecord {
+            identity: "identity".to_string(),
+            output_size: corrupt.len() as u64,
+            output_sha256: sha256::hex(corrupt),
+        };
+        fs::write(&output, corrupt).unwrap();
+        fs::write(&record_path, cache_record_text(&record)).unwrap();
+        assert!(cached_report(&output, &record_path, "identity").is_none());
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn structurally_incomplete_json_output_is_rejected() {
+        let directory = test_dir("incomplete-output");
+        let output = directory.join("report.json");
+        let record_path = cache_record_path(&output);
+        let incomplete = br#"{"format":1}
+"#;
+        let record = CacheRecord {
+            identity: "identity".to_string(),
+            output_size: incomplete.len() as u64,
+            output_sha256: sha256::hex(incomplete),
+        };
+        fs::write(&output, incomplete).unwrap();
+        fs::write(&record_path, cache_record_text(&record)).unwrap();
+        assert!(cached_report(&output, &record_path, "identity").is_none());
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn malformed_and_old_records_miss() {
+        let directory = test_dir("malformed-record");
+        let output = directory.join("report.json");
+        let record_path = cache_record_path(&output);
+        let bytes = br#"{"ok":true}
+"#;
+        fs::write(&output, bytes).unwrap();
+        fs::write(&record_path, b"{}\n").unwrap();
+        assert!(cached_report(&output, &record_path, "identity").is_none());
+        fs::write(&record_path, b"{\"format\":0}\n").unwrap();
+        assert!(cached_report(&output, &record_path, "identity").is_none());
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn warm_hit_reuses_stable_content_and_record() {
+        let directory = test_dir("warm-hit");
+        let output = directory.join("nested").join("report.json");
+        let record_path = cache_record_path(&output);
+        let bytes = br#"{"format":1,"generated_at":"now","totals":{},"families":[],"functions":[]}
+"#;
+        publish_report(&output, &record_path, "identity", bytes).unwrap();
+        let first_record = fs::read(&record_path).unwrap();
+        let (first_bytes, _) = cached_report(&output, &record_path, "identity").unwrap();
+        publish_report(&output, &record_path, "identity", &first_bytes).unwrap();
+        let second_record = fs::read(&record_path).unwrap();
+        let (second_bytes, _) = cached_report(&output, &record_path, "identity").unwrap();
+        assert_eq!(first_bytes, bytes);
+        assert_eq!(second_bytes, bytes);
+        assert_eq!(first_record, second_record);
+        fs::remove_dir_all(directory).unwrap();
+    }
 }

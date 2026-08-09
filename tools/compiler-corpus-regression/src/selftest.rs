@@ -83,7 +83,8 @@ pub fn self_test() -> Result<String, String> {
 
     let example = parse(
         r#"{"stem":"08000000","source":"src/08000000.c","cache_key":"key",
-            "cached":false,"compiled":true,"exact":true,"expected_size":4}"#,
+            "cached":false,"compiled":true,"exact":true,"expected_size":4,
+            "actual_size":4,"differing_bytes":0}"#,
     )?;
     let empty = object(vec![("cache_key", string("key"))]);
     if cached_result(&example, "key").is_none()

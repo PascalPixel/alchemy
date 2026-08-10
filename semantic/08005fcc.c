@@ -1,6 +1,19 @@
 #include "types.h"
 
-extern u8 Data_02002240[];
+struct LinkState_08005fcc {
+    u8 mode;
+    u8 initialized;
+    u8 received_hi;
+    u8 received_lo;
+    u8 padding04[5];
+    u8 error;
+    u8 padding0a;
+    u8 tick;
+    u8 padding0c[8];
+    s32 transfer_state;
+};
+
+extern struct LinkState_08005fcc Data_02002240;
 
 s32 Func_08005fcc(void)
 {
@@ -17,7 +30,7 @@ s32 Func_08005fcc(void)
     s32 mask;
     s32 temp;
 
-    initialized = Data_02002240[1];
+    initialized = Data_02002240.initialized;
     keys = *(volatile u32 *)key_base;
     mask = 0x88;
 
@@ -26,7 +39,7 @@ s32 Func_08005fcc(void)
         masked_keys &= mask;
         if (masked_keys == 8) {
             zero = keys & 4;
-            if (zero == 0 && *(s32 *)(Data_02002240 + 0x14) == -1) {
+            if (zero == 0 && Data_02002240.transfer_state == -1) {
                 wait_control = (volatile u16 *)0x04000208;
                 interrupt_enable = (volatile u16 *)0x04000200;
                 *wait_control = zero;
@@ -39,18 +52,18 @@ s32 Func_08005fcc(void)
                 interrupt_flags = (volatile u16 *)0x04000202;
                 *interrupt_flags = 0xc0;
                 *(volatile u32 *)0x0400010c = 0xc963;
-                Data_02002240[0] = masked_keys;
+                Data_02002240.mode = masked_keys;
             }
-            Data_02002240[1] = 1;
+            Data_02002240.initialized = 1;
         }
-        Data_02002240[0xb]++;
+        Data_02002240.tick++;
     }
 
-    packed = Data_02002240[3] | (Data_02002240[2] << 8);
-    if (Data_02002240[0] == 8)
+    packed = Data_02002240.received_lo | (Data_02002240.received_hi << 8);
+    if (Data_02002240.mode == 8)
         packed |= mask & 0x80;
     result = packed;
-    if (Data_02002240[9] != 0)
+    if (Data_02002240.error != 0)
         result |= 0x1000;
     if ((u32)(keys << 26) >> 30 > 1)
         result |= 0x2000;

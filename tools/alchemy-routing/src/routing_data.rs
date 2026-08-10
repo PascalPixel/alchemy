@@ -240,6 +240,10 @@ pub static CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c0_c_02000adc.c",
     "semantic/resource_3c0_c_02000adc.c",
 ];
+pub static CALL_ARG12_BEFORE_ARG0_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_39a_c_02001b1c.c",
+    "exact/resource_39a_c_02001b1c.c",
+];
 pub static FIXED_LR_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3ab_c_020007f4.c",
     "semantic/resource_3ab_c_020007f4.c",

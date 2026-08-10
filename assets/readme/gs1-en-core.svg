@@ -9332,7 +9332,7 @@
 <rect x="522.043995" y="258.387929" width="2.957025" height="3.398576" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x08079390–0x080793b8: 40 bytes">
-<rect x="525.00102" y="258.387929" width="2.957025" height="3.398576" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<rect x="525.00102" y="258.387929" width="2.957025" height="3.398576" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
 </g>
 <g aria-label="0x08079700–0x08079728: 40 bytes">
 <rect x="527.958045" y="258.387929" width="2.957025" height="3.398576" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
@@ -9822,5 +9822,5 @@
 <rect x="134" y="288" width="10" height="10" style="fill:hsl(275, 48%, 74%);fill:oklch(0.740 0.130 295)"/>
 <text class="weyard" x="148" y="293" dominant-baseline="middle">Permanent ASM 0.2%</text>
 <rect x="294" y="288" width="10" height="10" style="fill:hsl(275, 71%, 65%);fill:oklch(0.645 0.195 295)"/>
-<text class="weyard" x="308" y="293" dominant-baseline="middle">Exact C 20.3%</text>
+<text class="weyard" x="308" y="293" dominant-baseline="middle">Exact C 20.4%</text>
 </svg>

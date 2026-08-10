@@ -1,15 +1,15 @@
 # Current status
 
-Snapshot: 2026-08-09. This is the live status surface. Dated investigations and
+Snapshot: 2026-08-10. This is the live status surface. Dated investigations and
 their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 320,326 / 1,347,254 executable bytes (**23.78%**).
-- **Public DONE:** **28%**, combining Exact C with audited permanent assembly.
-- **Resource 373:** 10,230 / 24,954 bytes DONE (**41.00%**): 9,398 Exact C
-  bytes plus 832 permanent-assembly bytes. Five owners were newly adopted in
-  this round, and 7 semantic owners remain.
+- **Exact C:** 350,934 / 1,347,254 executable bytes (**26.05%**).
+- **Public DONE:** **30%**, combining Exact C with audited permanent assembly.
+- The generated coverage maps and dashboard are the live per-overlay source of
+  truth; this page records the current contributor frontier rather than a
+  second hand-maintained per-overlay ledger.
 - Exact C is the contributor progress counter. DONE answers the public
   completion question by also including code deliberately retained as permanent
   assembly. Semantic C, function counts, and queue sizes are diagnostics.
@@ -63,8 +63,8 @@ on port 4649.
 
 ## Immediate focus
 
-Finish the seven remaining `resource_373` owners through reconstruction and
-small, evidenced residual searches. Keep the exact adoption boundary auditable,
-preserve the clean-room rules in [`PROVENANCE.md`](PROVENANCE.md), and record
-reusable compiler behavior in [`LAWS.md`](LAWS.md) and exhausted search axes in
-[`SANCTUM.md`](SANCTUM.md).
+Prioritize duplicate overlay families and same-size, small-residual main-image
+owners through reconstruction and evidenced residual searches. Keep the exact
+adoption boundary auditable, preserve the clean-room rules in
+[`PROVENANCE.md`](PROVENANCE.md), and record reusable compiler behavior in
+[`LAWS.md`](LAWS.md) and exhausted search axes in [`SANCTUM.md`](SANCTUM.md).

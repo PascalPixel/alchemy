@@ -407,6 +407,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-call-arg1-before-arg0"]);
     }
+    if has(CALL_ARG12_BEFORE_ARG0_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-call-arg12-before-arg0"]);
+    }
     if has(CALL_ARG0_REG_SOURCE_SOURCES, stem) {
         push!(&[
             "-fthumb-call-arg1-before-arg0",
@@ -907,6 +910,22 @@ mod tests {
         assert_no_flag(
             "semantic/resource_373_c_02002cb1.c",
             "-fthumb-order-8-0-20-args",
+        );
+    }
+
+    #[test]
+    fn resource_39a_byte_arg_sheet_route_is_path_specific() {
+        assert_flag(
+            "semantic/resource_39a_c_02001b1c.c",
+            "-fthumb-call-arg12-before-arg0",
+        );
+        assert_flag(
+            "exact/resource_39a_c_02001b1c.c",
+            "-fthumb-call-arg12-before-arg0",
+        );
+        assert_no_flag(
+            "semantic/resource_39a_c_02001b20.c",
+            "-fthumb-call-arg12-before-arg0",
         );
     }
 

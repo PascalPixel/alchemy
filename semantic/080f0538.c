@@ -1,8 +1,15 @@
 #include "types.h"
 
+struct DmaTransfer_080f0538 {
+    u32 source;
+    u32 destination;
+    u32 control;
+};
+
 void Func_080f0538(void)
 {
     s32 phase;
+    s32 remainder;
     s32 y;
     u32 tile;
     s32 column;
@@ -10,15 +17,17 @@ void Func_080f0538(void)
     s32 row;
     u16 raw_phase;
     u8 *entry;
+    volatile struct DmaTransfer_080f0538 *dma;
 
     raw_phase = *(volatile u16 *)0x02004c00;
+    remainder = raw_phase & 7;
     phase = (s16)raw_phase;
     if (phase < 0)
         phase += 7;
     tile = (phase >> 3) & 31;
     tile *= 24;
-    y = 16 - (raw_phase & 7);
     entry = *(u8 **)0x02004c0c + 0xc0;
+    y = -remainder + 16;
 
     row = 0;
     do {
@@ -41,15 +50,20 @@ void Func_080f0538(void)
         y += 8;
     } while (row <= 15);
 
+    dma = (volatile struct DmaTransfer_080f0538 *)0x040000d4;
     {
-        u32 source = *(u32 *)0x02004c0c;
-        u32 destination = 0x07000000;
-        u32 control = 0x84000100;
-        u32 *dma = (u32 *)0x040000d4;
+        u32 source;
+        u32 destination;
+        u32 control;
 
-        dma[0] = source;
-        dma[1] = destination;
-        dma[2] = control;
+        source = *(u32 *)0x02004c0c;
+        destination = 0x07000000;
+        control = 0x84000100;
+        *dma = (struct DmaTransfer_080f0538){
+            source,
+            destination,
+            control,
+        };
     }
 
     if (*(volatile s16 *)0x02004c04 == 0 &&

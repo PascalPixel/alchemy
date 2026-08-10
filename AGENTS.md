@@ -49,6 +49,27 @@ checkout.
 7. Record reusable evidence, run the focused checks, then run `make verify` once
    before committing with regenerated metrics.
 
+## Productive rounds
+
+The default multi-agent unit is the bounded round defined in
+[CONTRIBUTING.md](CONTRIBUTING.md). Assume lanes share the checkout and generated
+outputs. Every lane needs an assigned owner or family, a disjoint write set,
+explicit search and time limits, and a terminal report. Source lanes may not
+edit routing, ledgers, compiler state, adoption outputs, metrics, or git.
+
+The coordinator owns the baseline, assignments, shared outputs, root routing,
+adoption, metrics, verification, and commits. At most one designated compiler
+lane may have exclusive access to `alchemy-gcc/` and its staged runtime; all
+other lanes hold compiler and route fixed. Commands that mutate `out/`,
+manifests, inventory, generated assembly, or staged compiler outputs must use a
+supported isolated work path or be serialized.
+
+Do not integrate or start another round until every lane and descendant process
+is stopped, every terminal report is collected, and the shared diff is audited.
+Apply adoptions serially and run one final `make verify`. If no separate
+coordinator exists, the sole agent assumes that role and performs the sequence
+serially.
+
 ## Common entry points
 
 Use the root Makefile for normal work:

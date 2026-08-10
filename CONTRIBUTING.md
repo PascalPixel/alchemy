@@ -9,7 +9,9 @@ game-knowledge evidence.
 
 ## The working loop
 
-Work on one owner at a time.
+Work on one owner or one proved duplicate family per lane. A coordinator may
+run several disjoint lanes as one bounded round, but each candidate must remain
+independently understandable and provable.
 
 1. Pick an owner with the dispatcher commands `semantic_queue` or
    `overlay_twins --leads`.
@@ -26,6 +28,80 @@ Work on one owner at a time.
 6. Record reusable evidence in `LAWS.md`, and record an exhausted deterministic
    axis in `SANCTUM.md` only when it is genuinely exhausted.
 7. Run `make verify` once after the work is complete and before committing.
+
+## Parallel family rounds
+
+Parallel work is most effective when it multiplies one piece of understanding
+across independent owners. Start with `overlay_twins --leads`: a readable lead
+that unlocks one or more transpositions usually has better expected return than
+a larger isolated owner. For main-image work, prefer same-size candidates with
+a small localized residual. Large diffuse mismatches go back to reconstruction;
+they are not automatically high-priority because their byte count is large.
+
+The coordinator establishes a baseline, then gives each worker a contract:
+
+- exact owner or family IDs, source paths, spans, and total potential bytes;
+- a disjoint set of files the worker may edit;
+- source-only or compiler authority—never an ambiguous mixture;
+- clean-room, no-assembly, no-adoption, and no-commit boundaries;
+- maximum candidates or iterations, a wall-clock limit, permitted search axes,
+  and explicit stop conditions; and
+- a required report of source and eventual paths, route/compiler identity,
+  sizes, differing halfwords, modes tried, rejected candidates, retained files,
+  shared outputs touched, and focused tests.
+
+`STATUS.md` and discovery reports are advisory, not reservations. Work starts
+only after the coordinator assigns the owner and records its write set. Assume
+every lane shares the checkout and generated outputs. Workers must not reset,
+stage, commit, clean broad output directories, independently claim another
+owner, or touch another lane's files. Restore only speculative changes made by
+the lane after dispatch and inside its recorded write set; never use broad
+`git restore`, `git reset`, deletion, or cleanup around pre-existing work.
+
+All lanes are source-only by default. One coordinator-designated compiler lane
+may have exclusive access to `alchemy-gcc/`, its tests, and the staged runtime;
+every other lane holds compiler and route fixed. The compiler lane does not
+adopt, commit, push, or edit root routing and approved-digest tables. It reports
+the evidence and computed digests for central integration. Source lanes report
+an exact witnessed mode rather than editing routing themselves.
+
+`out/`, candidate reports, manifests, inventory, generated assembly, and staged
+compiler outputs are shared mutable state. Use a supported lane-specific work
+directory when available; otherwise the coordinator serializes the command.
+Workers never delete or reset shared outputs. Workers also submit proposed
+`LAWS.md`, `SANCTUM.md`, `STATUS.md`, routing, and other ledger entries in their
+terminal report rather than editing those shared files.
+
+Workers stop after the current bounded experiment when asked. A failed lane is
+still useful when it leaves truthful C or negative evidence, but it must remove
+only its own speculative regressions and identify every retained change. At a
+lane's deadline, stop its descendant commands, confirm none remain, audit its
+write set and shared outputs, and collect a terminal report. The coordinator
+should work on a separate owner or prepare integration without editing an
+active lane's files.
+
+At round close, stop new dispatches and collect every lane before mutating
+shared state. Revalidate all claimed matches with the current compiler, add
+routes centrally, and rehearse the eventual exact path. Apply overlay
+adoptions serially because they rewrite shared overlay assembly. Then run:
+
+```sh
+make dispatch-semantic ARGS='semantic_superseded --check'
+make inventory                         # after overlay changes
+make dispatch-metrics ARGS='full_c_progress --write-report'
+make coverage                          # when executable metrics changed
+make coverage-check
+make verify
+```
+
+Do not start another round while a worker, descendant process, unreviewed lane
+change, or unresolved shared output remains. If the compiler changed, finish
+its focused regressions and full routed zero-regression corpus, then commit and
+push the compiler repository first. Every round still closes with one verified
+main-repository progress checkpoint.
+
+The measured origin and stop rules for this protocol are preserved in
+[`docs/history/2026-08-09-exact-c-round-method.md`](docs/history/2026-08-09-exact-c-round-method.md).
 
 During iteration, invoke a public command through a `dispatch-*` Makefile
 wrapper or use a focused native binary. The root Makefile is the workflow
@@ -79,6 +155,11 @@ compiler route fixed while changing C.
    localized residual. Keep the search bounded and inspect every winning diff.
 6. Change the compiler only with narrow positive and negative regression tests
    and reproducible evidence across the affected owners.
+
+Do not run every step merely because it exists. A witnessed sibling shape can
+jump directly to exact-path rehearsal. Conversely, a wrong-sized or diffuse
+candidate should not consume a mode sweep or permuter budget until its source
+model is repaired.
 
 Permutation is a search aid, not a reconstruction engine. It must preserve
 write/read, read/write, write/write, initialization, and call-order

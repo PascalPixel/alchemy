@@ -5,7 +5,7 @@ their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 350,934 / 1,347,254 executable bytes (**26.05%**).
+- **Exact C:** 350,974 / 1,347,254 executable bytes (**26.05%**).
 - **Public DONE:** **30%**, combining Exact C with audited permanent assembly.
 - The generated coverage maps and dashboard are the live per-overlay source of
   truth; this page records the current contributor frontier rather than a
@@ -61,10 +61,20 @@ the repository root; overlay scans reject invalid input instead of hiding scan
 errors; and the dashboard supports both localhost and the configured LAN host
 on port 4649.
 
+The bounded-round protocol is currently enforced by coordinator ownership plus
+the existing compiler, architecture, adoption, and verification gates. Native
+round manifests, shared-output leases, and transactional adoption are not yet
+implemented. Until they are, agents must treat generated outputs and adoption
+as serialized shared state exactly as required by
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## Immediate focus
 
-Prioritize duplicate overlay families and same-size, small-residual main-image
-owners through reconstruction and evidenced residual searches. Keep the exact
-adoption boundary auditable, preserve the clean-room rules in
+The remaining duplicate-overlay leads are `resource_3ba:33a0` /
+`resource_3bb:3638` (1,928 family bytes) and `resource_371:4058` /
+`resource_373:5d68` (568 family bytes). Both currently need source-model work;
+their size alone does not justify another broad search. In parallel, prioritize
+same-size, small-residual main-image owners and newly witnessed exact siblings.
+Keep the exact adoption boundary auditable, preserve the clean-room rules in
 [`PROVENANCE.md`](PROVENANCE.md), and record reusable compiler behavior in
 [`LAWS.md`](LAWS.md) and exhausted search axes in [`SANCTUM.md`](SANCTUM.md).

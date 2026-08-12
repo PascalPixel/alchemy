@@ -41,7 +41,7 @@ void *Func_08077080(s32);
 void Func_080771a8(s32, s32, s32);
 void Func_080771b0(s32, s32, s32);
 void Func_080771b8(s32, s32, s32);
-s32 Func_080aae14(u16 *, u16 *, s16 *, s32 *, s32 *);
+s8 Func_080aae14(u16 *, u16 *, s16 *, s32 *, s32 *);
 void Func_080ae958(void *, s32, s32, s32);
 void Func_080ae9f0(void *, s32, s32, s32);
 
@@ -149,9 +149,10 @@ s32 Func_080acab8(
                 window, 0xf030 + character[284 + i],
                 row + 1 + i * 2, base_y + 5, 0);
         }
+
     }
 
-    {
+    if (comparison_row == 0) {
         s32 marker_x = x + 70;
         s32 marker_y;
 
@@ -203,11 +204,11 @@ s32 Func_080acab8(
         s16 entries[48];
         s32 removed;
         s32 added;
-        s32 count;
+        s8 count;
         s32 columns = 6 - (operation != 3);
         s32 start = columns * (comparison_row - 1);
 
-        count = (s8)Func_080aae14(
+        count = Func_080aae14(
             (u16 *)(work + 88), (u16 *)(character + 88),
             entries, &removed, &added);
 

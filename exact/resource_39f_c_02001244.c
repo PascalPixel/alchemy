@@ -63,6 +63,7 @@ void Func_02004184();
 void Func_02001244(void)
 {
     u8 *slot;
+    s32 offset;
 
     slot = Func_02004008(11);
 
@@ -95,7 +96,8 @@ void Func_02001244(void)
     Func_02004080(0x301);
     Func_020040ea(14, 0, 0);
 
-    ((u8 *)Data_02000240)[0x22b] = 3;
+    offset = 0x22b;
+    ((u8 *)Data_02000240)[offset] = 3;
 
     Func_02004184(53, 0);
 

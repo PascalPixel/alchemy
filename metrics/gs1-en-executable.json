@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1347254,
+  "total_union_bytes": 1347256,
   "main": {
     "id": "main",
     "executable_bytes": 548364,
@@ -17615,8 +17615,8 @@
     {
       "id": "resource_39f",
       "decoded_bytes": 15916,
-      "executable_bytes": 11266,
-      "excluded_bytes": 4650,
+      "executable_bytes": 11268,
+      "excluded_bytes": 4648,
       "audit": "complete",
       "intervals": [
         {
@@ -17848,10 +17848,10 @@
           "evidence": "resource_39f_overlay.s:1747:pc-relative-literal"
         },
         {
-          "start": 33561862,
+          "start": 33561860,
           "end": 33562062,
           "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
+          "evidence": "resource_39f:1d04 starts with push {r5,r6,lr} at 0x02001d04; overlay inventory confirms the prologue-started returning owner"
         },
         {
           "start": 33562062,

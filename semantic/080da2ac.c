@@ -34,6 +34,9 @@ struct EffectPoint_080da2ac {
     s32 active;
 };
 
+#define SCENE_080DA2AC \
+    (*(struct Scene_080da2ac **)(runtime + 0x7828))
+
 s32 Func_08002322(s32);
 void Func_08002dd8(s32);
 void Func_080030f8(s32);
@@ -55,21 +58,17 @@ void Func_080f9010(s32);
 
 void Func_080da2ac(struct Scene_080da2ac *scene)
 {
-    u32 *runtime_header = (u32 *)0x03001eec;
-    u8 *runtime = (u8 *)runtime_header[0];
-    void *render_context = (void *)runtime_header[1];
+    u8 *runtime = *(u8 **)0x03001eec;
+    void *render_context = *(void **)0x03001ef0;
     void *effect_context = *(void **)0x03001e80;
     Transfer_080da2ac transfer = (Transfer_080da2ac)0x03001388;
     Renderer_080da2ac renderer;
-    struct EffectPoint_080da2ac *effect_points =
-        (struct EffectPoint_080da2ac *)(runtime + 0x7080);
-    const u8 *timing = (const u8 *)(0x080eea38 + scene->variant * 3);
     s32 horizontal_offset;
     s32 widths[4];
     s32 frame;
     s32 index;
 
-    *(struct Scene_080da2ac **)(runtime + 0x7828) = scene;
+    SCENE_080DA2AC = scene;
     Func_080cd594(1);
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x04000050 = 0;
@@ -93,7 +92,7 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
         }
     }
 
-    if (scene->direction == 1) {
+    if (SCENE_080DA2AC->direction == 1) {
         *(volatile s32 *)0x04000028 = -0x7000;
         horizontal_offset = -112;
     } else {
@@ -103,8 +102,8 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
     Func_080ed408(46, 7, 7, 3, 1);
     renderer = *(Renderer_080da2ac *)0x03001f08;
 
-    for (index = 0; index < scene->object_count; index++)
-        effect_points[index].active = 0;
+    for (index = 0; index < SCENE_080DA2AC->object_count; index++)
+        ((struct EffectPoint_080da2ac *)(runtime + 0x7080))[index].active = 0;
 
     *(s32 *)(runtime + 0x7780) = 1;
     *(s32 *)(runtime + 0x7784) = 0;
@@ -117,7 +116,10 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
     *(s32 *)(runtime + 0x77a8) = 128;
     Func_080f9010(0x8d);
 
-    for (frame = 0; frame < timing[0]; frame++) {
+    for (
+        frame = 0;
+        frame < ((const u8 *)0x080eea38)[SCENE_080DA2AC->variant * 3];
+        frame++) {
         s32 band;
         s32 left = 0;
         s32 x = 8;
@@ -126,14 +128,15 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
         Func_080049ac();
         Func_080051d8(effect_context, (u8 *)effect_context + 12);
 
-        if (frame == timing[0] - 16)
+        if (frame == ((const u8 *)0x080eea38)[SCENE_080DA2AC->variant * 3] - 16)
             Func_080b50e8(0x85);
 
         for (band = 0; band < 3; band++) {
             if ((frame & 31) + 32 == start)
                 widths[band] += 32;
 
-            if (frame >= start && frame < start + timing[1]) {
+            if (frame >= start &&
+                frame < start + ((const u8 *)0x080eea38)[SCENE_080DA2AC->variant * 3 + 1]) {
                 s32 height =
                     widths[band] *
                     Func_08002322((frame - start) << 10) >> 16;
@@ -152,9 +155,9 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
                     runtime,
                     x, 96 - height, 40, 16);
 
-                for (index = 0; index < scene->object_count; index++) {
+                for (index = 0; index < SCENE_080DA2AC->object_count; index++) {
                     struct Object_080da2ac *object =
-                        Func_080b5098(scene->object_ids[index])->object;
+                        Func_080b5098(SCENE_080DA2AC->object_ids[index])->object;
                     s32 source_point[3];
                     s32 projected[3];
 
@@ -172,7 +175,7 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
                     }
                     if (object->y < 0) {
                         Func_080d6888(
-                            scene->object_ids[index], 0, 5, -1, 0);
+                            SCENE_080DA2AC->object_ids[index], 0, 5, -1, 0);
                     }
                 }
             }
@@ -182,20 +185,22 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
             start += 4;
         }
 
-        for (index = 0; index < scene->object_count; index++) {
+        for (index = 0; index < SCENE_080DA2AC->object_count; index++) {
             struct Object_080da2ac *object =
-                Func_080b5098(scene->object_ids[index])->object;
+                Func_080b5098(SCENE_080DA2AC->object_ids[index])->object;
 
-            if (effect_points[index].active == 0 &&
+            if (((struct EffectPoint_080da2ac *)(runtime + 0x7080))[index].active == 0 &&
                 object->y <= 0 &&
                 object->vertical_impulse < 0) {
-                effect_points[index].active = 1;
+                ((struct EffectPoint_080da2ac *)(runtime + 0x7080))[index].active = 1;
                 Func_080d6888(
-                    scene->object_ids[index], 7, 5, index, 5);
+                    SCENE_080DA2AC->object_ids[index], 7, 5, index, 5);
             }
         }
 
-        Func_080e155c(timing[2], timing[2]);
+        Func_080e155c(
+            ((const u8 *)0x080eea38)[SCENE_080DA2AC->variant * 3 + 2],
+            ((const u8 *)0x080eea38)[SCENE_080DA2AC->variant * 3 + 2]);
         Func_080cd52c();
         *(s32 *)(runtime + 0x7824) = 1;
         Func_080030f8(1);

@@ -125,37 +125,21 @@ struct CombatantState_080bae40 *Func_08077008(s32 actor);
 struct ClassDefinition_080bae40 *Func_08077198(u8 class_id);
 s32 Func_080772b8(s32 filter_mode);
 
-s32 LoadS32_080bae40(const s32 *values, s32 index) {
-    return values[index];
-}
-
-void StoreS32_080bae40(s32 *values, s32 index, s32 value) {
-    values[index] = value;
-}
-
-u16 LoadU16_080bae40(const u16 *values, s32 index) {
-    return values[index];
-}
-
-void StoreU16_080bae40(u16 *values, s32 index, u16 value) {
-    values[index] = value;
-}
-
-static u8 StageMarker_080bae40(
+static inline u8 StageMarker_080bae40(
     const struct CombatantState_080bae40 *state,
     s32 index
 ) {
     return state->stage_data[index * 2];
 }
 
-static s8 StageValue_080bae40(
+static inline s8 StageValue_080bae40(
     const struct CombatantState_080bae40 *state,
     s32 index
 ) {
     return (s8)state->stage_data[index * 2 + 1];
 }
 
-static s32 CountPrimaryStatuses_080bae40(
+static inline s32 CountPrimaryStatuses_080bae40(
     const struct CombatantState_080bae40 *state
 ) {
     s32 count = 0;
@@ -169,7 +153,7 @@ static s32 CountPrimaryStatuses_080bae40(
     return count;
 }
 
-static s32 FilterMatches_080bae40(
+static inline s32 FilterMatches_080bae40(
     const struct CombatantState_080bae40 *state,
     s32 mode
 ) {
@@ -269,7 +253,7 @@ static s32 FilterMatches_080bae40(
     return matches;
 }
 
-static s32 FallbackMatches_080bae40(
+static inline s32 FallbackMatches_080bae40(
     const struct CombatantState_080bae40 *state,
     const struct TargetRequest_080bae40 *request
 ) {
@@ -293,7 +277,7 @@ static s32 FallbackMatches_080bae40(
     }
 }
 
-static s32 RankedPairOutOfOrder_080bae40(
+static inline s32 RankedPairOutOfOrder_080bae40(
     s32 first,
     s32 second,
     u32 actor
@@ -313,7 +297,7 @@ static s32 RankedPairOutOfOrder_080bae40(
     return first_state->maximum_value < second_state->maximum_value;
 }
 
-static void SortRankedCandidates_080bae40(
+static inline void SortRankedCandidates_080bae40(
     s32 ids[6],
     s32 tokens[6],
     s32 count,
@@ -339,7 +323,7 @@ static void SortRankedCandidates_080bae40(
     }
 }
 
-static s32 ChooseRankedToken_080bae40(
+static inline s32 ChooseRankedToken_080bae40(
     const s32 tokens[6],
     s32 count
 ) {
@@ -390,11 +374,9 @@ s32 Func_080bae40(u32 actor, const struct TargetRequest_080bae40 *request) {
 
             if (candidate == 0xfe) continue;
             if (request->roster_mode == 4 && candidate != (s32)actor) continue;
-            StoreS32_080bae40(candidate_ids, candidate_count, candidate);
-            StoreU16_080bae40(
-                candidate_tokens,
-                candidate_count,
-                (u16)(token_base | index));
+            candidate_ids[candidate_count] = candidate;
+            candidate_tokens[candidate_count] =
+                (u16)(token_base | index);
             candidate_count++;
         }
     }
@@ -405,21 +387,15 @@ s32 Func_080bae40(u32 actor, const struct TargetRequest_080bae40 *request) {
 
     for (index = 0; index < candidate_count; index++) {
         struct CombatantState_080bae40 *state =
-            Func_08077008(LoadS32_080bae40(candidate_ids, index));
+            Func_08077008(candidate_ids[index]);
         s32 matches = FilterMatches_080bae40(state, request->filter_mode);
 
         if (matches == 0) {
             matches = FallbackMatches_080bae40(state, request);
         }
         if (matches != 0) {
-            StoreS32_080bae40(
-                candidate_ids,
-                selected_count,
-                LoadS32_080bae40(candidate_ids, index));
-            StoreS32_080bae40(
-                selected_tokens,
-                selected_count,
-                LoadU16_080bae40(candidate_tokens, index));
+            candidate_ids[selected_count] = candidate_ids[index];
+            selected_tokens[selected_count] = candidate_tokens[index];
             selected_count++;
         }
     }

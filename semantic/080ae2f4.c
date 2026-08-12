@@ -45,7 +45,11 @@ void Func_080a1114(void *);
 s32 Func_080ae2f4(void)
 {
     u8 *state = *(u8 **)0x03001f2c;
-    s32 selection = 0;
+    /* The two panels share one mutable page cursor.  Keeping a cursor
+     * reference reflects the original loop, which updates the selected page
+     * through the active panel cursor rather than a transient expression. */
+    s32 selection_value = 0;
+    s32 *selection = &selection_value;
     s32 counts[2] = {1, 1};
     s32 redraw = 1;
     s32 animation = 0;
@@ -106,7 +110,7 @@ s32 Func_080ae2f4(void)
                 0, 0, 3, 0, 1);
             Func_080acab8(
                 PTR_AT(state, 0x34), 0, 0, *displayed_value,
-                0, 0, 3, selection + 1, 1);
+                0, 0, 3, *selection + 1, 1);
             engine[0xea6] = 0;
         }
 
@@ -116,7 +120,7 @@ s32 Func_080ae2f4(void)
 
             for (i = 0; i < counts[0]; i++) {
                 s32 tile = i <= 9 ? i + 0xf031 : 0xf030;
-                if (i == selection)
+                if (i == *selection)
                     tile -= 0x1000;
                 Func_08015280(
                     window, tile,
@@ -161,17 +165,17 @@ s32 Func_080ae2f4(void)
         }
 
         if (held & 0x20) {
-            selection--;
-            selection = Func_080aa538(selection, counts[0]);
+            (*selection)--;
+            *selection = Func_080aa538(*selection, counts[0]);
             Func_080f9010(0x6f);
             Func_0800352c();
             redraw = 1;
         } else if (held & 0x10) {
-            selection++;
+            (*selection)++;
             Func_080f9010(0x6f);
             Func_0800352c();
             redraw = 1;
-            selection = Func_080aa538(selection, counts[0]);
+            *selection = Func_080aa538(*selection, counts[0]);
         }
         Func_080030f8(1);
     }

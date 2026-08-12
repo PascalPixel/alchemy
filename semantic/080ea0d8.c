@@ -118,6 +118,23 @@ typedef struct {
     s32 active;
 } FallingSprite_080ea0d8;
 
+/* Runtime + 0x77d8 is a separate sixteen-slot object record.  The exact
+ * Func_080dbb24 witness establishes its allocation/enable/index/variant
+ * protocol; this owner later replaces those slots with its own grouped-index
+ * setup, so it must preserve the low two flag bits while clearing the variant. */
+typedef struct {
+    u8 unknown00[9];
+    u8 flags09_low : 2;
+    u8 variant : 2;
+    u8 flags09_high : 4;
+    u8 unknown0a[28];
+    s8 enabled;
+} ProjectionObject_080ea0d8;
+
+typedef struct {
+    ProjectionObject_080ea0d8 *objects[16];
+} ProjectionObjectState_080ea0d8;
+
 s32 Func_080022ec();
 s32 Func_080022fc();
 s32 Func_0800231c();
@@ -376,6 +393,8 @@ void Func_080ea0d8(s32 *arg0) {
     void *var_r6;
     void *var_r6_2;
     void *var_r6_3;
+    ProjectionObjectState_080ea0d8 *projectionObjects;
+    ProjectionObject_080ea0d8 **projectionObjectSlot;
 
     sp68 = M2C_FIELD((void *)0x03001EF0, s32 *, 0);
     sp64 = *(u8 **)0x03001EEC;
@@ -709,19 +728,20 @@ loop_15:
         var_r7_11 += 1;
         Func_08009038(temp_r0_10);
     } while (var_r7_11 != 0x10);
-    var_r6_4 = 0x77D8;
+    projectionObjects = (ProjectionObjectState_080ea0d8 *)(sp64 + 0x77D8);
+    projectionObjectSlot = projectionObjects->objects;
     var_r7_12 = 0;
     do {
         temp_r0_11 = Func_08009030(0x186);
-        *(void **)(sp64 + var_r6_4) = temp_r0_11;
+        *projectionObjectSlot = temp_r0_11;
         if (temp_r0_11 != NULL) {
-            M2C_FIELD(temp_r0_11, s8 *, 0x26) = 0;
+            ((ProjectionObject_080ea0d8 *)temp_r0_11)->enabled = 0;
             Func_08009020(temp_r0_11, Func_080022fc(var_r7_12, 3));
-            temp_r2_3 = *(void **)(sp64 + var_r6_4);
-            M2C_FIELD(temp_r2_3, u8 *, 9) = (u8) (M2C_FIELD(temp_r2_3, u8 *, 9) & ~0xC);
+            temp_r2_3 = *projectionObjectSlot;
+            ((ProjectionObject_080ea0d8 *)temp_r2_3)->variant = 0;
         }
         var_r7_12 += 1;
-        var_r6_4 += 4;
+        projectionObjectSlot += 1;
     } while (var_r7_12 != 0x10);
     Func_08002dd8(0x2E);
     Func_080ed408(0x2E, 7, 7, 3, 2);

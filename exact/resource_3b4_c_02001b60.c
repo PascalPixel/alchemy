@@ -39,8 +39,8 @@
  */
 
 /* Returns the record for a numbered slot. */
-u8 *Func_020040a6();
-u8 *Func_020040ae();
+s32 *Func_020040a6();
+s32 *Func_020040ae();
 void Func_02004174();
 void Func_0200417a();
 void Func_02003598();
@@ -53,12 +53,13 @@ void Func_02003680();
 
 void Func_02001b60(void)
 {
-    u8 *first = Func_020040a6(0);
-    u8 *other = Func_020040ae(8);
+    s32 *first = Func_020040a6(0);
+    s32 *other = Func_020040ae(8);
+    s32 first_x = first[2] / 0x100000;
+    s32 other_x = other[2] / 0x100000;
 
-    if (*(s32 *)(first + 8) / 0x100000 == 38 &&
-        *(s32 *)(other + 8) / 0x100000 != 38) {
-        u16 facing = *(u16 *)(first + 6);
+    if (first_x == 38 && other_x != 38) {
+        u16 facing = ((u16 *)first)[3];
 
         /* r0 holds `facing` at both branches; whether either callee reads it
          * is unverified, so no argument is asserted. */

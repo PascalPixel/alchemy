@@ -349,6 +349,8 @@ pub static THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b9_c_02002964.c",
 ];
 pub static CALLEE_REG_ORDER_0132_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3bf_c_02000d54.c",
+    "exact/resource_3bf_c_02000d54.c",
     "semantic/resource_373_c_020008c0.c",
     "semantic/resource_373_c_0200564c.c",
 ];

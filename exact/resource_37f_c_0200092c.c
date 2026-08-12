@@ -43,7 +43,7 @@ void Func_020024f0_b();
 void Func_02002502();
 void Func_02002514();
 s32 Func_02002542();
-void Func_020025c4();
+void Func_020025c4(s32 tint, s32 x, s32 z);
 void Func_02002540();
 void Func_02002552();
 void Func_02002564();
@@ -60,7 +60,10 @@ void Func_0200092c(void)
     *(s32 *)(workspace + 448) = 448 - 192;
 
     if (Func_020024d6(0x814) != 0) {
-        Data_0200a69c = 0;
+        s32 clear = 0;
+        s32 *counter = &Data_0200a69c;
+
+        *counter = clear;
         /* The pool word is the callback's code address plus the Thumb bit,
          * not a pointer cell. */
         Func_0200248a((void *)0x02009ac9, 3200);

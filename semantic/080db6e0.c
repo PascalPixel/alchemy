@@ -180,7 +180,7 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
 
                 Func_080e3944(particle, projected);
                 projected[0] =
-                    projected[0] / 2 +
+                    (projected[0] >> 1) +
                     (S32_AT(argument, 4) << 5) - 0x10;
                 if (projected[2] < 0xa0)
                     projected[2] = 0xa0;
@@ -212,7 +212,7 @@ s32 Func_080db6e0(void *argument, s32 monochrome)
                     s32 projected[3];
                     Func_080e3944(emitter, projected);
                     projected[0] =
-                        projected[0] / 2 +
+                        (projected[0] >> 1) +
                         (S32_AT(argument, 4) << 5) - 0x10;
 
                     if (emitter->age <= 0x14) {

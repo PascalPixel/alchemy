@@ -22,7 +22,7 @@ struct Particle_080da6cc {
     ((s32)((u32)(left) * (u32)(right)) >> (shift))
 
 #define DAMP_080DA6CC(value) \
-    ((s32)((u32)(value) * 60) / 64)
+    ((s32)((u32)(value) * 60) >> 6)
 
 s32 Func_080022fc(s32 value, s32 modulus);
 s32 Func_0800231c(s32 angle);

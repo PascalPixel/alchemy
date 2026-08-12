@@ -72,7 +72,7 @@ static const u8 *const SparkSizes_080dab74 = (const u8 *)0x080ede96;
 void Func_08002dd8(s32);
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
-u16 Func_08002304(s32, s32);
+s32 Func_08002304(s32, s32);
 s32 Func_0800231c(s32);
 s32 Func_08002322(s32);
 u32 Func_08004458(void);
@@ -90,17 +90,11 @@ void Func_080e0524(void *, void *, s32, s32);
 void Func_080e3944(s32, s32 *);
 void Func_080f9010(s32);
 
-static s32 HalfSigned_080dab74(s32 value) {
-    u32 bits = value;
-    return (s32)(bits + (bits >> 31)) >> 1;
-}
-
 /* Run the orbit, curtain, burst, and recycled-spark layers of the scene. */
 void Func_080dab74(struct SceneContext_080dab74 *context) {
     struct SceneWork_080dab74 *work = Runtime_080dab74->work;
     s32 render_target = Runtime_080dab74->render_target;
     u8 *sprite_sheet = Runtime_080dab74->sprite_sheet;
-    const u8 *config = &SceneConfigs_080dab74[context->variant * 3];
     Renderer_080dab74 renderers[2];
     s32 display_state[3];
     s32 source_position[3];
@@ -127,13 +121,22 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
     Func_080041d8(0x080cd261, 0x480);
     if (context->side == 1) REG_BG2X_080DAB74 = 0xffff9000;
 
-    for (frame = 0; frame != config[2] + 0x4b; frame++) {
+    for (frame = 0;
+         frame !=
+         SceneConfigs_080dab74[work->context->variant * 3 + 2] + 0x4b;
+         frame++) {
         s32 lower = 0x780000;
         s32 upper = 0;
-        s32 orbit_count = frame < config[2] ? config[0] : 0x10;
+        s32 orbit_count =
+            frame < SceneConfigs_080dab74[work->context->variant * 3 + 2]
+                ? SceneConfigs_080dab74[work->context->variant * 3]
+                : 0x10;
         u32 sound_window = frame - 0x24;
 
-        if (frame == config[2] + 0x0b) Func_080b50e8(0x84);
+        if (frame ==
+            SceneConfigs_080dab74[work->context->variant * 3 + 2] + 0x0b) {
+            Func_080b50e8(0x84);
+        }
         display_state[0] = 0;
         display_state[1] = 0;
         display_state[2] = 0x02000000;
@@ -142,13 +145,14 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
         if (sound_window <= 0x1b && (frame & 3) == 0) Func_080f9010(0x73);
         if (frame == 0x55) Func_080f9010(0x88);
 
-        for (index = 0; index < context->actor_count; index++) {
+        for (index = 0; index < work->context->actor_count; index++) {
             if (frame == 0x28 + index * 4) {
-                Func_080d6888(context->actor_ids[index], 9, 5, -1, 0);
+                Func_080d6888(work->context->actor_ids[index], 9, 5, -1, 0);
             }
         }
 
-        if (frame < config[2] + 0x23) {
+        if (frame <
+            SceneConfigs_080dab74[work->context->variant * 3 + 2] + 0x23) {
             for (index = 0; index < orbit_count; index++) {
                 struct Particle_080dab74 *particle = &work->particles[index];
 
@@ -177,7 +181,8 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
                                      width, height);
                     }
 
-                    if (frame < config[2]) {
+                    if (frame <
+                        SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
                         if (frame > index + 0x10) {
                             if (particle->radius_or_z > 4) particle->radius_or_z -= 2;
                             if (particle->y <= 0x2fffff) particle->y += 0x50000;
@@ -196,15 +201,23 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
         lower += 0x400000;
         upper += 0x400000;
 
-        if (frame < config[2]) {
-            for (index = 0; index < config[1]; index++) {
+        if (frame <
+            SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
+            for (index = 0;
+                 index < SceneConfigs_080dab74[work->context->variant * 3 + 1];
+                 index++) {
                 if (index < Func_080022ec((s32)sound_window, 3)) {
                     s32 image = Func_080022fc(index, 3);
                     u8 height = CurtainHeights_080dab74[image];
                     s32 x = CurtainPositions_080dab74[index * 2];
                     s32 y = CurtainPositions_080dab74[index * 2 + 1] - height;
 
-                    renderers[frame >= config[2] - 7 ? 1 : 0](
+                    renderers[frame >=
+                                      SceneConfigs_080dab74[
+                                          work->context->variant * 3 + 2] -
+                                          7
+                                  ? 1
+                                  : 0](
                         render_target,
                         &work->graphics[CurtainOffsets_080dab74[image]],
                         x, y, 0x20, height);
@@ -212,7 +225,7 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
             }
         }
 
-        if (frame == config[2]) {
+        if (frame == SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
             for (index = 0; index < 0x20; index++) {
                 struct Particle_080dab74 *particle = &BURST_PARTICLES_080DAB74[index];
 
@@ -224,7 +237,7 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
             }
         }
 
-        if (frame >= config[2]) {
+        if (frame >= SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
             for (index = 0; index < 0x18; index++) {
                 struct Particle_080dab74 *particle = &BURST_PARTICLES_080DAB74[index];
 
@@ -249,7 +262,7 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
         upper >>= 16;
         if (upper <= lower) upper = lower + 1;
 
-        if (frame == config[2]) {
+        if (frame == SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
             for (index = 0; index < 0x20; index++) {
                 struct Particle_080dab74 *particle = &work->particles[index];
 
@@ -264,26 +277,31 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
             }
         }
 
-        if (frame >= config[2]) {
-            u32 age = frame - config[2];
+        if (frame >= SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
+            s32 age =
+                frame - SceneConfigs_080dab74[work->context->variant * 3 + 2];
 
             for (index = 0; index < 0x20; index++) {
                 struct Particle_080dab74 *particle = &work->particles[index];
 
                 if ((u32)particle->timer <= 0x11) {
-                    s32 image = HalfSigned_080dab74(0x11 - particle->timer);
+                    s32 elapsed = 0x11 - particle->timer;
+                    s32 image = (elapsed + ((u32)elapsed >> 31)) >> 1;
                     u8 size = SparkSizes_080dab74[image];
+                    s32 half_age = (age + ((u32)age >> 31)) >> 1;
 
                     renderers[1](render_target,
                                  sprite_sheet + SparkOffsets_080dab74[image],
                                  (s16)(particle->velocity_x >> 16) - size / 2,
                                  (s16)(particle->velocity_y >> 16) - size / 2 -
-                                     HalfSigned_080dab74(age),
+                                     half_age,
                                  size, size);
                 }
                 particle->timer--;
                 if ((particle->timer == -1 || particle->timer == 0x11) &&
-                    frame < config[2] + 0x23) {
+                    frame <
+                        SceneConfigs_080dab74[work->context->variant * 3 + 2] +
+                            0x23) {
                     particle->timer = 0x11;
                     particle->velocity_x = (Func_08004458() & 0x7f) << 16;
                     particle->velocity_y =

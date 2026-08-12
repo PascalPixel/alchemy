@@ -23,6 +23,40 @@ typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 #define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
+/*
+ * This resolver consumes the battle plan assembled by Func_080be378.  Keeping
+ * the producer's layout here makes the four parallel per-target arrays
+ * explicit: the selected member, its range adjustment, its effect modifier,
+ * and the resolver result.  The tail word is updated when a damaged actor
+ * awards the plan's delayed follow-up credit.
+ */
+typedef struct BattlePlan_080bbb0c {
+    u8 actor_id;                 /* 0x00 */
+    s8 member_count;             /* 0x01 */
+    u8 target_ids[28];           /* 0x02 */
+    s8 range_adjustments[14];    /* 0x1e */
+    s8 target_modifiers[14];     /* 0x2c */
+    s8 target_outcomes[14];      /* 0x3a */
+    u16 command;                 /* 0x48 */
+    u8 padding_4a[2];
+    s32 action_id;               /* 0x4c */
+    s32 range_index;             /* 0x50 */
+    u8 padding_54[0x0c];
+    s32 follow_up_credit;        /* 0x60 */
+} BattlePlan_080bbb0c;
+
+/* Static ability record returned by Func_08077080. */
+typedef struct BattleAction_080bbb0c {
+    u8 target_mode;              /* 0x00 */
+    u8 element_flags;            /* 0x01 */
+    u8 padding_02;
+    u8 effect;                   /* 0x03 */
+    u8 padding_04[4];
+    u8 range_rule;               /* 0x08 */
+    u8 padding_09;
+    u16 magnitude;               /* 0x0a */
+} BattleAction_080bbb0c;
+
 s32 Func_080022ec(s32, s32);
 s32 Func_080022f4(s32, s32);
 void Func_08002df0(void *);
@@ -30,7 +64,7 @@ void *Func_08004938(s32);
 void Func_08015130(s32);
 u8 *Func_08077008(s32);
 void Func_08077010(s32);
-u8 *Func_08077080(s32);
+BattleAction_080bbb0c *Func_08077080(s32);
 s32 Func_080770c0(s32);
 void Func_08077120(s32, s32);
 void Func_08077128(s32);
@@ -66,7 +100,7 @@ u32 Func_080c1fa8(s32);
  * direct message emission followed by `goto finalize`; they are not separate
  * ABI-callable functions.
  */
-s32 Func_080bbb0c(void *arg0, s32 arg1) {
+s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     s16 queued_ids[7];
     s16 *sp4;
     s32 sp8;
@@ -86,8 +120,8 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     s32 action_id;
     s32 actor_id;
     u8 *actor_state;
-    u8 *action;
-    u8 *request;
+    BattleAction_080bbb0c *action;
+    BattlePlan_080bbb0c *request;
     s16 *var_r6;
     s16 temp_r0_3;
     s16 temp_r1_3;
@@ -222,12 +256,11 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     u8 var_r5;
     u8 *temp_r0_5;
     u8 *temp_r1;
-    u8 *temp_r2;
     u8 *temp_r4_2;
     u8 *var_r2;
     u8 *var_r2_2;
 
-    request = (u8 *) arg0;
+    request = arg0;
     sp3C = 0;
     sp34 = 0;
     health_delta = 0;
@@ -236,19 +269,18 @@ s32 Func_080bbb0c(void *arg0, s32 arg1) {
     sp14 = 0;
     battle_state = *(void **)0x03001E74;
     target_snapshot = Func_08004938(0x14C);
-    actor_id = (s32) M2C_FIELD(request, u8, 0);
-    temp_r2 = request + 2;
-    action_id = M2C_FIELD(request, s32, 0x4C);
-    target_id = *(temp_r2 + arg1);
-    sp30 = *((s8 *) temp_r2 + (arg1 + 0x1C));
-    range_index = M2C_FIELD(arg0, s32, 0x50);
-    sp20 = *((s8 *) request + (arg1 + 0x2C));
+    actor_id = (s32) request->actor_id;
+    action_id = request->action_id;
+    target_id = request->target_ids[arg1];
+    sp30 = request->range_adjustments[arg1];
+    range_index = request->range_index;
+    sp20 = request->target_modifiers[arg1];
     action = Func_08077080(action_id);
     actor_state = Func_08077008(actor_id);
     target_state = Func_08077008((s32) target_id);
     ((WordCopy)0x03001388)(target_snapshot, target_state, 0x14C);
-    if (M2C_FIELD(action, u8, 8) != 0xFF) {
-        range_distance = *((s8 *) request + (arg1 + 0x10));
+    if (action->range_rule != 0xFF) {
+        range_distance = request->target_ids[arg1 + 0x0e];
         if (range_distance < 0) {
             range_distance = -range_distance;
         }
@@ -289,16 +321,16 @@ loop_13:
             sp14 = 1;
         }
     }
-    temp_r2_2 = M2C_FIELD(request, u32, 0x50);
+    temp_r2_2 = (u32) request->range_index;
     if (temp_r2_2 <= 3U) {
-        sp4 = (s16 *)(request + 0x48);
-        if (M2C_FIELD(request, s16, 0x48) != 2) {
+        sp4 = &request->command;
+        if (request->command != 2) {
             spC = M2C_FIELD(actor_state, s16, (temp_r2_2 * 4) + 0x48);
         } else {
             goto block_21;
         }
     } else {
-        sp4 = (s16 *)(request + 0x48);
+        sp4 = &request->command;
 block_21:
         spC = 0x64;
     }
@@ -310,24 +342,24 @@ block_21:
             Func_080bbabc(0xDU, 5U);
         }
     }
-    sp18 = 0xF & M2C_FIELD(action, u8, 1);
-    var_r0_2 = *(temp_r2 + (arg1 + 0x38));
+    sp18 = 0xF & action->element_flags;
+    var_r0_2 = request->target_outcomes[arg1];
     if (var_r0_2 == -1) {
         var_r0_2 = (s8) Func_08077178(
             actor_id,
             target_id,
             range_index,
-            M2C_FIELD(action, u8, 3),
+            action->effect,
             M2C_FIELD((u8 *)0x080C2AB8, u8, range_distance)
         );
     }
     action_allowed = (s32) var_r0_2;
-    if ((u32) ((M2C_FIELD(action, u8, 3) + 0xCE) << 0x18) > 0x01000000U) {
+    if ((u32) ((action->effect + 0xCE) << 0x18) > 0x01000000U) {
 
     } else {
         var_r5 = M2C_FIELD(actor_state, u8, 0x128);
         temp_r8 = Func_080b7514();
-        if (M2C_FIELD(action, u8, 3) == 0x33) {
+        if (action->effect == 0x33) {
             var_r5 = Func_080c1fa8(M2C_FIELD(battle_state, s32, 0));
         }
         if ((action_allowed != 0) && (Func_080b6cdc(var_r5) != 0) && (temp_r8 >= 0)) {
@@ -403,7 +435,7 @@ block_57:
         }
     }
     if (action_allowed != 0) {
-        temp_r2_4 = M2C_FIELD(action, u8, 3);
+        temp_r2_4 = action->effect;
         switch (temp_r2_4) {
         case 0x35:
             action_allowed = 0;
@@ -447,7 +479,7 @@ loop_63:
     }
     if (sp1C != 0) {
 
-    } else if ((M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080772b8(M2C_FIELD(action, u8, 3)) == 0)) {
+    } else if ((M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080772b8(action->effect) == 0)) {
 
     } else if ((u32) (sp18 + 1) > 0xCU) {
 
@@ -469,7 +501,7 @@ loop_90:
             if (var_r8 == 0) {
                 sp3C = 0;
             }
-            temp_r5_2 = M2C_FIELD(action, u16, 0xA);
+            temp_r5_2 = action->magnitude;
             if (sp18 == 4) {
                 var_r0_4 = Func_080022ec(Func_08077180(M2C_FIELD(actor_state, u16, 0x3C), (u32) effect_scale, 0U, sp3C) * temp_r5_2, 0xA);
             } else {
@@ -558,7 +590,7 @@ block_247:
             Func_08077128(target_id);
             break;
         case 10:
-            if (M2C_FIELD(action, u16, 0xA) == 0) {
+            if (action->magnitude == 0) {
 
             } else {
                 temp_r6_2 = M2C_FIELD(target_state, s16, 0x3A);
@@ -568,7 +600,7 @@ block_247:
                 temp_r3_5 = (s8) M2C_FIELD(target_state, u8, 0x12B);
                 var_r5_7 = Func_080022ec(
                     M2C_FIELD((u8 *)0x080C2AC0, s32, range_distance * 4) *
-                        Func_08077188(M2C_FIELD(action, u16, 0xA), sp3C, 0x100),
+                        Func_08077188(action->magnitude, sp3C, 0x100),
                     0x64
                 ) * sp30;
                 if (temp_r3_5 != 0) {
@@ -578,7 +610,7 @@ block_247:
                         var_r5_7 = (u32) Func_080022ec((s32) var_r5_7, 0xA);
                     }
                 }
-                if ((M2C_FIELD(action, u8, 3) == 0x20) && ((s32) var_r5_7 > (s32) temp_r6_2)) {
+                if ((action->effect == 0x20) && ((s32) var_r5_7 > (s32) temp_r6_2)) {
                     var_r5_7 = (u32) temp_r6_2;
                 }
                 Func_080bbabc(8U, (u32) target_id);
@@ -601,7 +633,7 @@ block_247:
             }
             break;
         case 1:
-            temp_r3_6 = M2C_FIELD(action, u16, 0xA);
+            temp_r3_6 = action->magnitude;
             if (temp_r3_6 == 0) {
 
             } else {
@@ -633,7 +665,7 @@ block_247:
             }
             break;
         case -1:
-            if (M2C_FIELD(action, u16, 0xA) == 0) {
+            if (action->magnitude == 0) {
 
             } else {
                 temp_r6_4 = M2C_FIELD(target_state, s16, 0x3A);
@@ -643,7 +675,7 @@ block_247:
                 temp_r3_8 = (s8) M2C_FIELD(target_state, u8, 0x12B);
                 var_r5_9 = Func_080022ec(
                     M2C_FIELD((u8 *)0x080C2AF0, s32, range_distance * 4) *
-                        Func_08077188(M2C_FIELD(action, u16, 0xA), sp3C, 0x100),
+                        Func_08077188(action->magnitude, sp3C, 0x100),
                     0x64
                 ) * sp30;
                 if (temp_r3_8 != 0) {
@@ -675,7 +707,7 @@ block_226:
         case 5:
         case 6:
         case 8:
-            if (M2C_FIELD(action, u16, 0xA) == 0) {
+            if (action->magnitude == 0) {
 
             } else {
                 temp_r6_5 = M2C_FIELD(target_state, s16, 0x38);
@@ -687,7 +719,7 @@ loop_175:
                 if (var_r8_2 == 0) {
                     sp3C = 0;
                 }
-                var_r5_10 = M2C_FIELD(action, u16, 0xA);
+                var_r5_10 = action->magnitude;
                 if (*sp4 == 6) {
                     switch (action_id) {
                     case 380:
@@ -780,7 +812,7 @@ block_196:
             }
             break;
         case 11:
-            temp_r3_10 = M2C_FIELD(action, u16, 0xA);
+            temp_r3_10 = action->magnitude;
             if (temp_r3_10 == 0) {
 
             } else {
@@ -815,7 +847,7 @@ block_196:
                 Func_080bbabc(0xBU, (u32) target_id);
                 Func_080bbabc(0U, (u32) target_id);
                 Func_080bbabc(4U, 0x854U);
-            } else if (M2C_FIELD(action, u16, 0xA) == 0) {
+            } else if (action->magnitude == 0) {
 
             } else {
                 temp_r6_7 = M2C_FIELD(target_state, s16, 0x38);
@@ -824,7 +856,7 @@ block_196:
                 }
                 var_r5_14 = Func_080022ec(
                     M2C_FIELD((u8 *)0x080C2B68, s32, range_distance * 4) *
-                        (Func_08077188(M2C_FIELD(action, u16, 0xA), sp3C, 0x100) * sp30),
+                        (Func_08077188(action->magnitude, sp3C, 0x100) * sp30),
                     0x64
                 );
                 temp_r3_12 = (s8) M2C_FIELD(target_state, u8, 0x12B);
@@ -863,16 +895,16 @@ block_196:
         }
     }
     Func_080bbabc(0U, (u32) target_id);
-    if ((Func_080772b8(M2C_FIELD(action, u8, 3)) == 0) && (M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080bbae8((s32) M2C_FIELD(action, u8, 3)) == 0)) {
+    if ((Func_080772b8(action->effect) == 0) && (M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080bbae8((s32) action->effect) == 0)) {
         goto finalize;
     }
     if (action_allowed == 0) {
         goto finalize;
     }
-    if ((u32) (M2C_FIELD(action, u8, 3) - 3) > 0x42U) {
+    if ((u32) (action->effect - 3) > 0x42U) {
         goto finalize;
     }
-    switch ((s32) M2C_FIELD(action, u8, 3) - 3) {
+    switch ((s32) action->effect - 3) {
     case 0x3D:
         if (M2C_FIELD(target_state, u8, 0x138) != 0) {
             M2C_FIELD(target_state, u8, 0x138) = 0U;
@@ -943,7 +975,7 @@ block_196:
         temp_r8_2 = (u16) M2C_FIELD(target_state, s16, 0x38);
         temp_r6_8 = (u16) M2C_FIELD(target_state, s16, 0x34);
         temp_r2_5 = M2C_FIELD(target_state, s16, 0x34);
-        if (M2C_FIELD(action, u8, 3) == 0x3D) {
+        if (action->effect == 0x3D) {
             var_r0_6 = temp_r2_5 * 0x3C;
         } else {
             var_r0_6 = temp_r2_5 * 0x1E;
@@ -1295,7 +1327,7 @@ block_399:
     case 0x39:
         temp_r6_10 = M2C_FIELD(actor_state, s16, 0x38);
         var_r5_17 = health_delta;
-        if (M2C_FIELD(action, u8, 3) == 0x3C) {
+        if (action->effect == 0x3C) {
             var_r5_17 = (u32) ((s32) (var_r5_17 + (var_r5_17 >> 0x1F)) >> 1);
         }
         temp_r3_26 = M2C_FIELD(actor_state, s16, 0x34);
@@ -1462,7 +1494,7 @@ finalize:
             if (var_r0 == 0) {
                 var_r0 = 1;
             }
-            M2C_FIELD(request, s32, 0x60) = (s32) (M2C_FIELD(request, s32, 0x60) + var_r0);
+            request->follow_up_credit += var_r0;
         }
     }
     return var_r0;

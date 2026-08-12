@@ -84,11 +84,16 @@ void Func_02000e5c();           /* the installed per-frame task */
 void Func_020016a8(void)
 {
     u8 *state = Data_0200a070;
-    u8 *z_table = Data_0200a05e;
-    u8 *x_table = Data_0200a05a;
-    u16 *heading_table = Data_0200a062;
-    u8 *record = Data_0200a0d0;
     s32 index = 0;
+    u8 *x_table;
+    u16 *heading_table;
+    u8 *record;
+    u8 *z_table;
+
+    x_table = Data_0200a05a;
+    record = Data_0200a0d0;
+    heading_table = Data_0200a062;
+    z_table = Data_0200a05e;
 
     do {
         *(s32 *)(record + 0) = (s32)*x_table << 16;
@@ -119,5 +124,10 @@ void Func_020016a8(void)
     Func_02002f8c(Func_02003036(20), 2);
     Func_02002f98(Func_02003042(21), 2);
 
-    Func_02002f80(Func_02000e5c, 0xc83);
+    {
+        s32 budget = 0xc83;
+        void (*task)(void) = (void (*)(void))0x02008e5d;
+
+        Func_02002f80(task, budget);
+    }
 }

@@ -58,10 +58,10 @@ typedef void (*Renderer_080db264)(
 struct Particle_080db264 {
     s32 x;
     s32 y;
-    s32 unknown_08;
+    s32 launch_x;
     s32 velocity_x;
     s32 velocity_y;
-    s32 unknown_14;
+    s32 launch_y;
     s32 timer;
 };
 
@@ -121,9 +121,9 @@ void Func_080db264(void *argument)
 
         particle->x = 0x4000;
         particle->y = 0x7000;
-        particle->velocity_x =
+        particle->launch_x =
             (s32)(radius * Func_08002322(angle)) >> 16;
-        particle->unknown_14 =
+        particle->launch_y =
             -(s32)(radius * Func_0800231c(angle) * 2) >> 16;
         particle->timer = 0;
     }

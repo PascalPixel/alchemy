@@ -62,4 +62,12 @@ pub static SOURCE_CALL_VIA_BASE: &[(&str, u64)] =
         ("exact/resource_373_c_02005610.c", 0x0200_b794),
         ("semantic/resource_373_c_02000608.c", 0x0200_68d6),
         ("exact/resource_373_c_02000608.c", 0x0200_68d6),
+        ("semantic/resource_389_c_02000608.c", 0x0200_1c9a),
+        ("exact/resource_389_c_02000608.c", 0x0200_1c9a),
+        ("semantic/resource_391_c_02000608.c", 0x0200_34ae),
+        ("exact/resource_391_c_02000608.c", 0x0200_34ae),
+        ("semantic/resource_392_c_02000608.c", 0x0200_160e),
+        ("exact/resource_392_c_02000608.c", 0x0200_160e),
+        ("semantic/resource_393_c_02000608.c", 0x0200_1656),
+        ("exact/resource_393_c_02000608.c", 0x0200_1656),
     ];

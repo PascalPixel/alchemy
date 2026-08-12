@@ -33,11 +33,12 @@ typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 typedef struct BattlePlan_080bbb0c {
     u8 actor_id;                 /* 0x00 */
     s8 member_count;             /* 0x01 */
-    u8 target_ids[28];           /* 0x02 */
+    u8 target_ids[14];           /* 0x02 */
+    s8 range_distances[14];      /* 0x10 */
     s8 range_adjustments[14];    /* 0x1e */
     s8 target_modifiers[14];     /* 0x2c */
     s8 target_outcomes[14];      /* 0x3a */
-    u16 command;                 /* 0x48 */
+    s16 command;                 /* 0x48 */
     u8 padding_4a[2];
     s32 action_id;               /* 0x4c */
     s32 range_index;             /* 0x50 */
@@ -71,7 +72,7 @@ void Func_08077128(s32);
 void Func_08077140(s32, s32, s32);
 s32 Func_08077178(s32, s32, s32, s32, s32);
 s32 Func_08077180(u16, u32, u16, s32);
-s32 Func_08077188(u16, s32, s32);
+s32 Func_08077188(s32, s32, s32);
 s32 Func_08077190(u16, s32, s32);
 s32 Func_080771a0(void);
 s32 Func_080772b8(s32);
@@ -122,6 +123,7 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     s32 sp8;
     s16 *sp4;
     BattlePlan_080bbb0c *request;
+    u8 *target_fields;
     s16 *var_r6;
     s16 temp_r0_3;
     s16 temp_r1_3;
@@ -197,17 +199,17 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     s8 temp_r3_8;
     s8 temp_r3_9;
     s32 range_distance;
-    s8 var_r0_2;
+    s32 var_r0_2;
     u16 temp_r0_7;
     u16 temp_r1_2;
     u16 temp_r3_10;
     u16 temp_r3_21;
     u16 temp_r3_6;
-    u16 temp_r5_2;
+    s32 temp_r5_2;
     u16 temp_r6_8;
     u16 temp_r8_2;
-    u16 effect_scale;
-    u16 var_r5_10;
+    s32 effect_scale;
+    s32 var_r5_10;
     u32 temp_r2_2;
     u32 temp_r3_2;
     u32 var_r1_10;
@@ -253,7 +255,7 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     u8 var_r1_17;
     u8 var_r1_18;
     u8 var_r1_19;
-    u8 var_r5;
+    s32 var_r5;
     u8 *temp_r0_5;
     u8 *temp_r1;
     u8 *temp_r4_2;
@@ -262,16 +264,17 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
 
     request = arg0;
     sp3C = 0;
+    battle_state = *(void **)0x03001E74;
     sp34 = 0;
     health_delta = 0;
     sp28 = 0;
     sp1C = 0;
     sp14 = 0;
-    battle_state = *(void **)0x03001E74;
     target_snapshot = Func_08004938(0x14C);
     actor_id = (s32) request->actor_id;
+    target_fields = request->target_ids;
+    target_id = target_fields[arg1];
     action_id = request->action_id;
-    target_id = request->target_ids[arg1];
     sp30 = request->range_adjustments[arg1];
     range_index = request->range_index;
     sp20 = request->target_modifiers[arg1];
@@ -280,7 +283,7 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     target_state = Func_08077008((s32) target_id);
     ((WordCopy)0x03001388)(target_snapshot, target_state, 0x14C);
     if (action->range_rule != 0xFF) {
-        range_distance = request->target_ids[arg1 + 0x0e];
+        range_distance = request->range_distances[arg1];
         if (range_distance < 0) {
             range_distance = -range_distance;
         }
@@ -306,8 +309,9 @@ loop_7:
             sp14 = -1;
         }
         var_r1_2 = 0;
-        if ((s32) temp_r0_3 <= (s32) M2C_FIELD(temp_r4_2, s16, 2)) {
-            var_r2_2 = target_state + 0x24;
+        var_r2_2 = target_state;
+        var_r2_2 += 0x24;
+        if ((s32) temp_r0_3 <= (s32) M2C_FIELD(var_r2_2, s16, 2)) {
 loop_13:
             var_r1_2 += 1;
             var_r2_2 += 4;
@@ -343,17 +347,19 @@ block_21:
         }
     }
     sp18 = 0xF & action->element_flags;
-    var_r0_2 = request->target_outcomes[arg1];
-    if (var_r0_2 == -1) {
-        var_r0_2 = (s8) Func_08077178(
+    {
+        s32 outcome_index = arg1 + 0x38;
+        var_r0_2 = ((s8 *)target_fields)[outcome_index];
+    }
+    action_allowed = var_r0_2 != -1
+        ? var_r0_2
+        : Func_08077178(
             actor_id,
             target_id,
             range_index,
             action->effect,
             M2C_FIELD((u8 *)0x080C2AB8, u8, range_distance)
         );
-    }
-    action_allowed = (s32) var_r0_2;
     if ((u32) ((action->effect + 0xCE) << 0x18) > 0x01000000U) {
 
     } else {

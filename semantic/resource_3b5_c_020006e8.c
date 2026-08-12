@@ -30,7 +30,9 @@ void Func_020006e8(u8 *self)
 {
     u8 *player;
     u8 *player_sprite;
-    u8 *sprite;
+    u8 *first_sprite;
+    u8 *second_sprite;
+    s32 clear;
     s32 shade;
 
     if (self == 0) {
@@ -39,14 +41,12 @@ void Func_020006e8(u8 *self)
 
     player = Func_02001470(0);
     player_sprite = *(u8 **)(player + 0x50);
-
+    shade = player_sprite[9];
     self[0x23] = 0;
-
-    shade = player_sprite[9] & 12;
-
-    sprite = *(u8 **)(self + 0x50);
-    sprite[9] = (u8)((sprite[9] & ~12) | shade);
-
-    sprite = *(u8 **)(self + 0x50);
-    sprite[21] = (u8)((sprite[21] & ~12) | shade);
+    shade &= 12;
+    first_sprite = *(u8 **)(self + 0x50);
+    clear = -13;
+    first_sprite[9] = (u8)((first_sprite[9] & clear) | shade);
+    second_sprite = *(u8 **)(self + 0x50);
+    second_sprite[21] = (u8)((second_sprite[21] & clear) | shade);
 }

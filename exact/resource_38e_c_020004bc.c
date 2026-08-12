@@ -50,6 +50,7 @@
 
 /* The shared cross-overlay scene workspace. */
 extern s16 Data_02000240[];
+extern u8 Value_00000022;
 
 /* Pointer CELL holding the per-overlay workspace base, not the workspace. */
 extern u8 *Data_03001ebc;
@@ -78,16 +79,21 @@ s32 Func_020004bc(void)
     u8 *workspace = Data_03001ebc;
     struct SceneEntity *entity;
     struct SceneHandle *handle;
+    u8 *flags23;
+    s32 zero;
 
     *(s32 *)(workspace + 448) = 256;            /* 128 << 1 */
 
     entity = Func_02000fc4(8);
-    entity->flags23 = 0;
+    flags23 = (u8 *)entity + 35;
+    zero = 0;
+    *flags23 = (u8)zero;
 
     handle = entity->handle;
-    handle->flags09 = (u8)((handle->flags09 & ~0x0c) | 0x04);
+    zero -= 13;
+    handle->flags09 = (u8)((handle->flags09 & zero) | 0x04);
 
-    if (Data_02000240[224] == 0x22) {
+    if (Data_02000240[224] == (s32)&Value_00000022) {
         Func_02000a00();
     }
 

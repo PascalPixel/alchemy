@@ -101,6 +101,9 @@ void Func_020010c8(void)
 
     /* Byte offset 141 << 2 = 564, i.e. halfword index 282. */
     if (Data_02000240[282] == 0) {
-        *(s16 *)(workspace + 386) = 99;     /* 193 << 1 */
+        s16 *field = (s16 *)(workspace + 386); /* 193 << 1 */
+        s32 value = 99;
+
+        *field = value;
     }
 }

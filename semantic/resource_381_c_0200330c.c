@@ -89,6 +89,7 @@ void Func_0200330c(s32 slot, u32 requested)
     u32 index;
     u8 *record;
 
+    count = requested;
     field = (Field *)Func_02006744(33, 404);
 
     /* DMA3: fixed-source 32-bit fill of the whole 404-byte workspace. */
@@ -98,7 +99,6 @@ void Func_0200330c(s32 slot, u32 requested)
     dma[1] = (u32)field;
     dma[2] = 0x85000065;
 
-    count = requested;
     if (count > 10) {
         count = 10;
     }

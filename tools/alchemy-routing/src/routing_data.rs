@@ -215,14 +215,20 @@ pub static ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39a_c_02001004.c",
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
 ];
 pub static BYTE_ORR_R5_ONLY_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
 ];
 pub static SCENE_CALL_SHEETS_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
 ];
 pub static CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ae_c_020002dc.c",
@@ -236,6 +242,8 @@ pub static CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
     "exact/resource_3c3_c_02000730.c",
     "exact/resource_3c0_c_02000adc.c",
     "semantic/resource_3c0_c_02000adc.c",
@@ -448,6 +456,8 @@ pub static NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3b1_c_0200413c.c",
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
     "exact/resource_3b9_c_02002904.c",
     "semantic/resource_3b9_c_02002904.c",
     "exact/resource_382_c_020012c0.c",
@@ -648,6 +658,8 @@ pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
     "exact/resource_38f_c_02000304.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
     "exact/resource_379_c_02000074.c",
     "exact/resource_3b8_c_02002014.c",
     "exact/resource_3bd_c_02002c44.c",
@@ -907,6 +919,8 @@ pub static NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_385_c_020009f8.c",
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
     "exact/resource_3aa_c_02001494.c",
     "semantic/resource_3aa_c_02001494.c",
     "exact/resource_3b8_c_02002014.c",
@@ -1039,6 +1053,8 @@ pub static LITERAL_ARG1_FIRST_BEFORE_ZERO_PAIR_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_375_c_02000be0.c",
     "semantic/resource_379_c_02000074.c",
     "exact/resource_379_c_02000074.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
 ];
 pub static SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39f_c_020021b0.c",
@@ -1219,6 +1235,8 @@ pub static NO_GCSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_375_c_02000be0.c",
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
     "exact/resource_3cd_c_020000c0.c",
     "semantic/resource_373_c_02002a54.c",
     "exact/resource_373_c_02002a54.c",

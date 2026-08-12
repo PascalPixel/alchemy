@@ -63,7 +63,7 @@ void Func_0200092c(void)
         Data_0200a69c = 0;
         /* The pool word is the callback's code address plus the Thumb bit,
          * not a pointer cell. */
-        Func_0200248a((void *)((s32)Func_02001ac8 + 1), 3200);
+        Func_0200248a((void *)0x02009ac9, 3200);
     }
 
     if (Func_020024f0(0x879) != 0) {
@@ -74,9 +74,13 @@ void Func_0200092c(void)
     }
 
     if (Func_02002542(0x815) != 0) {
-        Func_020025c4(8, 0x780000, 0xe80000);
-        Func_02002540(2, 10, 1, 1, 6, 14);
-        Func_02002552(2, 10, 1, 1, 7, 14);
-        Func_02002564(2, 10, 1, 1, 8, 14);
+        Func_020025c4(8, 240 << 15, 232 << 16);
+        {
+            s32 stackBottom = 14;
+
+            Func_02002540(2, 10, 1, 1, 6, stackBottom);
+            Func_02002552(2, 10, 1, 1, 7, stackBottom);
+            Func_02002564(2, 10, 1, 1, 8, stackBottom);
+        }
     }
 }

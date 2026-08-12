@@ -56,19 +56,15 @@ void Func_02003622();
                         /* this overlay */
 
 extern s16 Data_02000240[];
+extern u8 Value_0000006a;
 
 s32 Func_02001a0c(void)
 {
     u8 *workspace;
-    s32 flagId;
-
-    flagId = 0x204;
     workspace = *(u8 **)0x03001ebc;
-    *(s32 *)(workspace + 448) = flagId;
+    *(s32 *)(workspace + 448) = 0x204;
 
-    if (Data_02000240[224] != 0x6a) {
-        return 0;
-    }
+    if (Data_02000240[224] == (s32)&Value_0000006a) {
 
     Func_02003524(Func_02003566(8), 0);
     Func_02003530(Func_02003572(9), 0);
@@ -91,8 +87,9 @@ s32 Func_02001a0c(void)
     if (Func_02003594(0x203) != 0) {
         Func_02003610(11, 5);
     }
-    if (Func_020035a6(flagId) != 0) {
+    if (Func_020035a6(0x204) != 0) {
         Func_02003622(9, 5);
+    }
     }
 
     return 0;

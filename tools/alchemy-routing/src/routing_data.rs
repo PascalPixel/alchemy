@@ -359,6 +359,8 @@ pub static STACK_SLOT_BEFORE_TABLE_OVERLAY_SOURCES: &[&str] =
 pub static HIGH_REG_ORDER_OVERLAY_SOURCES: &[(&str, &str)] =
     &[("semantic/resource_373_c_0200564c.c", "1203")];
 pub static NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3b7_c_02000880.c",
+    "exact/resource_3b7_c_02000880.c",
     "semantic/resource_373_c_0200564c.c",
     "exact/resource_3cb_c_02000128.c",
     "exact/resource_38f_c_020026cc.c",
@@ -1029,6 +1031,8 @@ pub static LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ce_c_0200029c.c",
 ];
 pub static LITERAL_ARG1_FIRST_BEFORE_ZERO_PAIR_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3b7_c_020009f8.c",
+    "exact/resource_3b7_c_020009f8.c",
     "semantic/resource_3c3_c_02000730.c",
     "exact/resource_3c3_c_02000730.c",
     "semantic/resource_375_c_02000be0.c",

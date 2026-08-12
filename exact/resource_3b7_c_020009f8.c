@@ -79,6 +79,7 @@
 
 extern s32 Data_02000240[];     /* RAM workspace; also indexed as s16 elsewhere */
 extern s32 Data_02001000;
+extern u8 Data_00000089[];
 
 s32 Func_020022f8();
 void Func_02002322();
@@ -138,7 +139,7 @@ void Func_020009f8(void)
         Func_020023ec(0, 0x8000, 0);        /* 128 << 8 */
         Func_0200238a(20);
         Func_0200240a(0x1fd, 0);
-        Func_0200240a(0x89, 13);
+        Func_0200240a((s32)Data_00000089, 13);
     } else {
         u16 *counter = (u16 *)(*(char **)0x03001ebc + 472);   /* 236 * 2 */
 

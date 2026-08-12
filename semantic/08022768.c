@@ -2,21 +2,28 @@
 
 extern u8 *Data_03001e8c;
 
-void Func_08022768(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+void Func_08022768(s32 x, s32 y, s32 width, s32 height, u32 palette)
 {
-    s32 x = arg0;
-    s32 y = arg1;
-    s32 width = arg2;
-    s32 height = arg3;
-    u8 *state = Data_03001e8c;
-    u32 tileValue = (arg4 & 1) << 12;
+    u8 *base;
+    u8 *status;
+    u32 palette_bits;
+    u32 status_bit;
+    s32 clipped_width;
+    s32 row;
+
+    base = Data_03001e8c;
+    clipped_width = width;
+    palette_bits = palette;
+    palette_bits &= 1;
+    palette_bits <<= 12;
 
     if (x < 0) {
-        width += x;
+        clipped_width += x;
         x = 0;
     }
-    if (x + width > 29)
-        width = 30 - x;
+    if (x + clipped_width > 29)
+        clipped_width = 30 - x;
+
     if (y < 0) {
         height += y;
         y = 0;
@@ -24,24 +31,32 @@ void Func_08022768(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
     if (y + height > 29)
         height = 20 - y;
 
-    if (width > 0 && height > 0) {
-        u8 *rowFlags = state + 0xea3;
-        s32 rowOffset = (y << 6) + (x * 2);
+    if (clipped_width > 0 && height > 0) {
+        status = base + 0xea3;
+        status_bit = 2;
+        row = (y << 6) + (x << 1);
 
         do {
-            s32 remaining = width;
-            u16 *tile = (u16 *)(state + rowOffset);
+            u16 *entry = (u16 *)(base + row);
+            s32 remaining = clipped_width;
 
             if (remaining != 0) {
+                u32 clear_mask = 0xffffefff;
+
                 do {
-                    *tile = (*tile & 0xffffefff) | tileValue;
+                    u32 value = *entry;
+
+                    value &= clear_mask;
+                    value |= palette_bits;
+                    *entry = value;
                     remaining--;
-                    tile++;
+                    entry++;
                 } while (remaining != 0);
             }
-            *rowFlags |= 2 << ((u32)y >> 2);
+
+            *status |= status_bit << ((u32)y >> 2);
             height--;
-            rowOffset += 0x40;
+            row += 64;
             y++;
         } while (height != 0);
     }

@@ -105,6 +105,19 @@ typedef void (*ArmFill_080ea0d8)(void *destination, u32 size, u32 value);
 typedef void (*Renderer_080ea0d8)(s32 target, void *source, s32 x, s32 y,
                                   u32 width, s32 height);
 
+/* The 0x03001eec + 0x7080 phase owns sixteen 0x1c-byte falling sprites.
+ * The same fields are initialized at frames 0xd6 and 0x118, then consumed
+ * by the projection/render loop after frame 0xd5. */
+typedef struct {
+    s32 x;
+    s32 y;
+    s32 depth;
+    s32 unused_c;
+    s32 velocity;
+    s32 unused_14;
+    s32 active;
+} FallingSprite_080ea0d8;
+
 s32 Func_080022ec();
 s32 Func_080022fc();
 s32 Func_0800231c();
@@ -331,13 +344,13 @@ void Func_080ea0d8(s32 *arg0) {
     u8 *var_r1;
     u8 *var_r1_3;
     u8 *var_r3;
-    u8 *var_r5_10;
+    FallingSprite_080ea0d8 *var_r5_10;
     u8 *var_r5_3;
     u8 *var_r5_4;
     u8 *var_r5_5;
     u8 *var_r5_6;
-    u8 *var_r5_7;
-    u8 *var_r5_8;
+    FallingSprite_080ea0d8 *var_r5_7;
+    FallingSprite_080ea0d8 *var_r5_8;
     u8 *var_r6_7;
     u8 *var_r6_8;
     u8 *var_r7_18;
@@ -877,15 +890,15 @@ second_frame_loop:
         M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85001000;
         Func_080b5040(1, 0x3A, 0, (void *)0x040000d4);
         var_r7_15 = 0;
-        var_r5_7 = sp64 + 0x7080;
+        var_r5_7 = (FallingSprite_080ea0d8 *)(sp64 + 0x7080);
         do {
-            M2C_FIELD(var_r5_7, s32 *, 0) = (s32) (((0x3F & Func_08004458()) + 0x20) << 0x10);
-            M2C_FIELD(var_r5_7, s32 *, 4) = (s32) (((0x1F & Func_08004458()) + 0x60) << 0x10);
-            M2C_FIELD(var_r5_7, s32 *, 0x10) = (s32) (((0xF & Func_08004458()) + 0x10) << 0xF);
-            M2C_FIELD(var_r5_7, s32 *, 8) = (s32) (0x8000 - ((s32) M2C_FIELD(var_r5_7, s32 *, 0) >> 7));
+            var_r5_7->x = ((0x3F & Func_08004458()) + 0x20) << 0x10;
+            var_r5_7->y = ((0x1F & Func_08004458()) + 0x60) << 0x10;
+            var_r5_7->velocity = ((0xF & Func_08004458()) + 0x10) << 0xF;
+            var_r5_7->depth = 0x8000 - (var_r5_7->x >> 7);
             var_r7_15 += 1;
-            M2C_FIELD(var_r5_7, s32 *, 0x18) = 1;
-            var_r5_7 += 0x1C;
+            var_r5_7->active = 1;
+            var_r5_7 += 1;
         } while (var_r7_15 != 0x10);
     }
     if (frame == 0x118) {
@@ -901,14 +914,14 @@ second_frame_loop:
         *(s16 *)0x04000052 = 0x1010;
         M2C_FIELD(sp60, s32 *, 0x10) = 0;
         var_r7_16 = 0;
-        var_r5_8 = sp64 + 0x7080;
+        var_r5_8 = (FallingSprite_080ea0d8 *)(sp64 + 0x7080);
         do {
-            M2C_FIELD(var_r5_8, s32 *, 0) = (s32) (((0x3F & Func_08004458()) + 0x100) << 0x10);
-            M2C_FIELD(var_r5_8, s32 *, 4) = (s32) (((0x1F & Func_08004458()) + 0x60) << 0x10);
+            var_r5_8->x = ((0x3F & Func_08004458()) + 0x100) << 0x10;
+            var_r5_8->y = ((0x1F & Func_08004458()) + 0x60) << 0x10;
             var_r7_16 += 1;
-            M2C_FIELD(var_r5_8, s32 *, 0x10) = (s32) (((0xF & Func_08004458()) + 0x10) << 0xF);
-            M2C_FIELD(var_r5_8, s32 *, 8) = 0;
-            var_r5_8 += 0x1C;
+            var_r5_8->velocity = ((0xF & Func_08004458()) + 0x10) << 0xF;
+            var_r5_8->depth = 0;
+            var_r5_8 += 1;
         } while (var_r7_16 != 0x10);
         sp20 = 0x110;
         M2C_FIELD(sp64, s32 *, 0x7780) = 0;
@@ -1205,10 +1218,10 @@ loop_184:
         var_r7_23 = 0;
         var_r4_7 = particlePosition;
         var_r6_7 = sp64 + 0x77D8;
-        var_r5_10 = sp64 + 0x7080;
+        var_r5_10 = (FallingSprite_080ea0d8 *)(sp64 + 0x7080);
         do {
-            if (M2C_FIELD(var_r5_10, s32 *, 0x18) != 0) {
-                var_r3_14 = M2C_FIELD(var_r5_10, s32 *, 8) + ((s32) M2C_FIELD(var_r5_10, s32 *, 4) >> 7);
+            if (var_r5_10->active != 0) {
+                var_r3_14 = var_r5_10->depth + (var_r5_10->y >> 7);
                 depthRange[0] = var_r3_14;
                 if (var_r3_14 <= 0x7FF) {
                     var_r3_14 = 0x800;
@@ -1216,33 +1229,33 @@ loop_184:
                 }
                 depthRange[1] = var_r3_14;
                 M2C_FIELD(var_r4_7, s32 *, 4) = 0xFF0000;
-                M2C_FIELD(var_r4_7, s32 *, 0) = (s32) M2C_FIELD(var_r5_10, s32 *, 0);
-                M2C_FIELD(var_r4_7, s32 *, 8) = (s32) (M2C_FIELD(var_r5_10, s32 *, 4) + 0xFF0000);
+                M2C_FIELD(var_r4_7, s32 *, 0) = var_r5_10->x;
+                M2C_FIELD(var_r4_7, s32 *, 8) = var_r5_10->y + 0xFF0000;
                 Func_08009008(*(void **)var_r6_7, var_r4_7, depthRange, 0);
-                temp_r2_12 = M2C_FIELD(var_r5_10, s32 *, 4) - M2C_FIELD(var_r5_10, s32 *, 0x10);
-                M2C_FIELD(var_r5_10, s32 *, 4) = temp_r2_12;
+                temp_r2_12 = var_r5_10->y - var_r5_10->velocity;
+                var_r5_10->y = temp_r2_12;
                 if (temp_r2_12 <= 0xFFFFF) {
                     if (frame <= 0x117) {
                         var_r3_15 = (0x3F & Func_08004458()) + sp20 + 0x20;
                     } else {
                         var_r3_15 = ((0x3F & Func_08004458()) + sp20) - 0x20;
                     }
-                    M2C_FIELD(var_r5_10, s32 *, 0) = (s32) (var_r3_15 << 0x10);
+                    var_r5_10->x = var_r3_15 << 0x10;
                     if (frame > 0x12D) {
-                        M2C_FIELD(var_r5_10, s32 *, 0x18) = 0;
+                        var_r5_10->active = 0;
                     } else {
                         if (frame > 0xF5) {
                             var_r3_16 = 0x600000;
                         } else {
-                            var_r3_16 = 0xC00000 - M2C_FIELD(var_r5_10, s32 *, 0);
+                            var_r3_16 = 0xC00000 - var_r5_10->x;
                         }
-                        M2C_FIELD(var_r5_10, s32 *, 4) = var_r3_16;
+                        var_r5_10->y = var_r3_16;
                     }
                 }
             }
             var_r7_23 += 1;
             var_r6_7 += 4;
-            var_r5_10 += 0x1C;
+            var_r5_10 += 1;
         } while (var_r7_23 != 0x10);
         if (frame <= 0x117) {
             var_r7_24 = 0;

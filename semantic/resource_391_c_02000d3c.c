@@ -881,8 +881,8 @@ void Func_02000d3c(void)
     Func_02003c2a(0x1474);
     Func_020036e6(1, 10);
     Func_02003c38(0x147c);
-    Func_02003714(2, movement_c000, 20);
     movement_c000 = 0xc000;
+    Func_02003714(2, movement_c000, 20);
     Func_02003c28(2, 3);
     Func_0200370c(2, 20);
     Func_0200372e(1, 0, 20);

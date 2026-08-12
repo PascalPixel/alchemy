@@ -1,75 +1,135 @@
 /* resource_391 0x02000608-0x020008bf: staged actor move/redraw family. */
 #include "types.h"
-u8 *Func_0808a080(s32);
-void Func_0808a090(s32,s32,s32); void Func_0808a100(s32,s32);
-void Func_0808a010(s32); void Func_0808a0e0(s32,s32,s32);
-void Func_0808a0e8(s32); void Func_08009080(u8 *,s32);
-void Func_080f9010(s32); void Func_08009150(u8 *,s32,s32,s32);
-void Func_08009158(u8 *); void Func_080091c0(s32,s32,s32,s32,s32,s32);
-void Func_0808a5e8(void);
-s32 Func_02000244(s32,s32,s32,s32,s32,s32);
 
-void Func_02000608(s32 row, s32 slot, s32 x, s32 elevation, s32 y,
-                   void (*callback)(void))
+extern s32 Data_0200adc0[][4];
+extern s32 Data_0200ad68[];
+
+u8 *Func_0808a080(s32 slot);
+void Func_0808a090(s32 id, s32 value, s32 callback);
+void Func_0808a100(s32 id, s32 mode);
+void Func_0808a010(s32 frames);
+void Func_0808a0e0(s32 id, s32 x, s32 y);
+void Func_0808a0e8(s32 id);
+void Func_08009080(u8 *actor, s32 mode);
+void Func_080f9010(s32 sound);
+void Func_08009150(u8 *actor, s32 x, s32 elevation, s32 y);
+void Func_08009158(u8 *actor);
+void Func_080091c0(s32 x, s32 y, s32 width, s32 height,
+                   s32 localX, s32 localY);
+void Func_0808a5e8(void);
+s32 Func_02000244(s32 layer, s32 x, s32 y, s32 width, s32 height, s32 value);
+
+struct Resource391MoveArgs {
+    s32 row;
+    s32 actorSlot;
+    s32 targetX;
+    s32 elevation;
+    s32 targetY;
+    void (*callback)(void);
+};
+
+void Func_02000608(struct Resource391MoveArgs args)
 {
-    u8 *runtime = *(u8 **)0x03001e70;
-    s32 *delta = (s32 *)0x0200adc0 + row * 4;
+#define DISP_WORD(offset) (Data_0200adc0[args.row][(offset) >> 2])
+    u8 *world = *(u8 **)0x03001e70;
     u8 *lead = Func_0808a080(0);
     s32 direction = *(u16 *)(lead + 6) >> 12;
-    u8 *object = Func_0808a080(slot);
-    s32 a1 = delta[1] < 0 ? -delta[1] : delta[1];
-    s32 a0 = delta[0] < 0 ? -delta[0] : delta[0];
-    s32 a3 = delta[3] < 0 ? -delta[3] : delta[3];
-    s32 originalX = *(s32 *)(object + 8) + (delta[0] << 16);
-    s32 a2 = delta[2] < 0 ? -delta[2] : delta[2];
-    s32 width = (a0 + a2) >> 4, depth = (a1 + a3) >> 4;
-    s32 originalZ = *(s32 *)(object + 16) + (delta[1] << 16);
-    s32 oldTileX = originalX >> 20, oldTileZ = originalZ >> 20;
-    s32 moveX, moveZ, packed, tileX, tileZ, globalX, globalZ;
+    u8 *actor = Func_0808a080(args.actorSlot);
+    s32 dy0 = DISP_WORD(4) < 0 ? -DISP_WORD(4) : DISP_WORD(4);
+    s32 dy1 = DISP_WORD(12) < 0 ? -DISP_WORD(12) : DISP_WORD(12);
+    s32 height = (dy0 + dy1) >> 4;
+    s32 dx0 = DISP_WORD(0) < 0 ? -DISP_WORD(0) : DISP_WORD(0);
+    s32 dx1 = DISP_WORD(8) < 0 ? -DISP_WORD(8) : DISP_WORD(8);
+    s32 width = (dx0 + dx1) >> 4;
+    s32 oldPosition[3];
+    s32 occupiedPosition[3];
+    s32 baseX;
+    s32 baseY;
+    s32 targetWorldX;
+    s32 targetWorldY;
 
-    *(s32 *)(object + 48) = 0x8000;
-    *(s32 *)(object + 52) = 0x1999;
-    Func_02000244(0, oldTileX, oldTileZ, width, depth, 0);
+    *(s32 *)(actor + 48) = 0x8000;
+    *(s32 *)(actor + 52) = 0x1999;
+    oldPosition[0] = *(s32 *)(actor + 8);
+    oldPosition[2] = *(s32 *)(actor + 16);
+    occupiedPosition[0] = *(s32 *)(actor + 8)
+        + (DISP_WORD(0) << 16);
+    occupiedPosition[2] = *(s32 *)(actor + 16)
+        + (DISP_WORD(4) << 16);
+    occupiedPosition[0] >>= 20;
+    occupiedPosition[2] >>= 20;
+    Func_02000244(0, occupiedPosition[0], occupiedPosition[2], width, height, 0);
     Func_0808a090(0, 0x8000, 0x1999);
     Func_0808a100(0, 8);
     Func_0808a010(15);
-    moveX = x - originalX; if (moveX < 0) moveX += 0x1ffff;
-    moveZ = y - originalZ; if (moveZ < 0) moveZ += 0x1ffff;
-    Func_0808a0e0(0, moveX >> 17, moveZ >> 17);
+
+    {
+        s32 moveX = args.targetX - oldPosition[0];
+        if (moveX < 0)
+            moveX += 0x1ffff;
+        moveX >>= 17;
+        {
+            s32 moveY = args.targetY - oldPosition[2];
+            if (moveY < 0)
+                moveY += 0x1ffff;
+            moveY >>= 17;
+            Func_0808a0e0(0, moveX, moveY);
+        }
+    }
+
     lead = Func_0808a080(0);
     *(u32 *)(lead + 108) = 0x020082a9;
     Func_0808a010(4);
-    if ((u32)(direction - 6) <= 7) Func_08009080(object, 3);
-    else Func_08009080(object, 2);
+    if ((u32)(direction - 6) <= 7)
+        Func_08009080(actor, 3);
+    else
+        Func_08009080(actor, 2);
     Func_080f9010(0xef);
-    Func_08009150(object, x, elevation, y);
+    Func_08009150(actor, args.targetX, args.elevation, args.targetY);
     Func_0808a0e8(0);
     Func_0808a100(0, 2);
     Func_0808a090(0, 0x4ccc, 0x1999);
-    packed = ((s32 *)0x0200ad68)[direction];
-    Func_0808a0e0(0, (s16)(packed >> 16) / 2, (s16)packed / 2);
-    if (callback) callback();
+
+    {
+        s32 packed = Data_0200ad68[direction];
+        Func_0808a0e0(0, (s16)(packed >> 16) / 2, (s16)packed / 2);
+    }
+    if (args.callback)
+        args.callback();
     Func_0808a0e8(0);
     Func_0808a100(0, 1);
+
     lead = Func_0808a080(0);
     *(u32 *)(lead + 108) = 0;
-    Func_08009158(object);
+    Func_08009158(actor);
     Func_080f9010(0x120);
     Func_080f9010(0xd5);
-    *(s32 *)(object + 8) = x; *(s32 *)(object + 16) = y;
-    *(s32 *)(object + 36) = 0; *(s32 *)(object + 44) = 0;
-    Func_08009080(object, 1);
-    tileX = (x + (delta[0] << 16)) >> 20;
-    tileZ = (y + (delta[1] << 16)) >> 20;
-    globalX = (*(s32 *)(runtime + 316) >> 20) + tileX;
-    globalZ = (*(s32 *)(runtime + 320) >> 20) + tileZ;
-    Func_080091c0(tileX, tileZ, width, depth, globalX, globalZ);
-    Func_02000244(0, tileX, tileZ, width, depth, 255);
-    Func_02000244(2, tileX, tileZ, width, depth, 255);
-    oldTileX = originalX >> 20; oldTileZ = originalZ >> 20;
-    Func_080091c0((*(s32 *)(runtime + 316) >> 20) + oldTileX,
-                  (*(s32 *)(runtime + 320) >> 20) + oldTileZ,
-                  width, depth, oldTileX, oldTileZ);
-    Func_02000244(2, oldTileX, oldTileZ, width, depth, 0);
+    *(s32 *)(actor + 8) = args.targetX;
+    *(s32 *)(actor + 16) = args.targetY;
+    *(s32 *)(actor + 36) = 0;
+    *(s32 *)(actor + 44) = 0;
+    Func_08009080(actor, 1);
+
+    args.targetX += DISP_WORD(0) << 16;
+    args.targetY += DISP_WORD(4) << 16;
+    args.targetX >>= 20;
+    args.targetY >>= 20;
+    baseX = *(s32 *)(world + 316) >> 20;
+    baseY = *(s32 *)(world + 320) >> 20;
+    targetWorldX = baseX + args.targetX;
+    targetWorldY = baseY + args.targetY;
+    Func_080091c0(args.targetX, args.targetY, width, height,
+                  targetWorldX, targetWorldY);
+    Func_02000244(0, args.targetX, args.targetY, width, height, 255);
+    Func_02000244(2, args.targetX, args.targetY, width, height, 255);
+
+    oldPosition[0] += DISP_WORD(0) << 16;
+    oldPosition[2] += DISP_WORD(4) << 16;
+    oldPosition[0] >>= 20;
+    oldPosition[2] >>= 20;
+    Func_080091c0(baseX + oldPosition[0], baseY + oldPosition[2], width, height,
+                  oldPosition[0], oldPosition[2]);
+    Func_02000244(2, oldPosition[0], oldPosition[2], width, height, 0);
     Func_0808a5e8();
+#undef DISP_WORD
 }

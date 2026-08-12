@@ -21,58 +21,103 @@
  */
 
 #define RESOURCE_389_SCENE (*(u8 *volatile *)0x03001ebc)
+#define RESOURCE_389_DIRECTION_STEPS ((const s32 *)0x02009554)
+#define RESOURCE_389_TYPES ((const s32 *)0x02009594)
 
-u8 *Func_0808a080();
+struct Resource389Kind {
+    s16 id;
+};
 
-u8 *Func_0200034c(s32 *direction_out, s32 *movement_out, s32 *rectangle_out)
+struct Resource389Handle {
+    u8 unknown_00[0x28];
+    struct Resource389Kind *kind;
+};
+
+struct Resource389Actor {
+    u8 unknown_00[8];
+    s32 x;
+    u8 unknown_0c[4];
+    s32 z;
+    u8 unknown_14[0x3c];
+    struct Resource389Handle *handle;
+};
+
+struct Resource389Anchor {
+    u8 unknown_00[10];
+    s16 x;
+    u8 unknown_0c[6];
+    s16 z;
+};
+
+struct Resource389Rectangle {
+    s32 x0;
+    s32 z0;
+    s32 x1;
+    s32 z1;
+};
+
+#define RESOURCE_389_RECTANGLES ((const struct Resource389Rectangle *)0x020095ac)
+
+struct Resource389Actor *Func_0808a080();
+
+struct Resource389Actor *Func_0200034c(s32 *directionOut, s32 *movementOut,
+                                        s32 *rectangleOut)
 {
-    const s32 *types = (const s32 *)0x02009594;
-    const s32 (*rectangles)[4] = (const s32 (*)[4])0x020095ac;
-    const s32 *steps = (const s32 *)0x02009554;
-    u8 **slots = (u8 **)(RESOURCE_389_SCENE + 0x34);
-    u8 *leader = Func_0808a080(0);
-    s32 direction = *(u16 *)(leader + 6) >> 12;
-    s32 packed_step = steps[direction];
-    s32 ahead_x = ((*(s32 *)(leader + 8) >> 16) + (packed_step >> 16)) >> 4;
-    s32 ahead_z = ((*(s32 *)(leader + 16) >> 16) + (s16)packed_step) >> 4;
+    u8 *scene = RESOURCE_389_SCENE;
+    struct Resource389Actor *leader = Func_0808a080(0);
+    struct Resource389Actor **actors;
     s32 slot;
 
-    *direction_out = direction;
+    *directionOut = ((const u16 *)leader)[3] >> 12;
+    actors = (struct Resource389Actor **)(scene + 0x34);
 
-    for (slot = 8; slot <= 65; slot++) {
-        u8 *actor = slots[slot];
-        u8 *subrecord = *(u8 **)(actor + 0x50);
-        s16 actor_type = **(s16 **)(subrecord + 0x28);
-        s32 rectangle;
+    for (slot = 8; (u32)slot <= 65; slot++, actors++) {
+        struct Resource389Actor *actor = *actors;
+        struct Resource389Anchor *anchor = (struct Resource389Anchor *)actor;
+        s16 type = actor->handle->kind->id;
+        const s32 *types = RESOURCE_389_TYPES;
+        const struct Resource389Rectangle *rectangle = RESOURCE_389_RECTANGLES;
+        s32 index;
 
-        for (rectangle = 0; rectangle <= 5; rectangle++) {
-            s32 min_x;
-            s32 min_z;
-            s32 max_x;
-            s32 max_z;
+        for (index = 0; (u32)index <= 5; index++, rectangle++) {
+            s32 step;
+            s32 aheadX;
+            s32 aheadZ;
+            s32 minX;
+            s32 minZ;
+            s32 maxX;
+            s32 maxZ;
+            s32 leaderX;
+            s32 leaderZ;
 
-            if (actor_type != types[rectangle])
+            if (type != *types++)
                 continue;
 
-            min_x = (*(s16 *)(actor + 0x0a) + rectangles[rectangle][0]) >> 4;
-            min_z = (*(s16 *)(actor + 0x12) + rectangles[rectangle][1]) >> 4;
-            *rectangle_out = rectangle;
-            max_x = (*(s16 *)(actor + 0x0a) + rectangles[rectangle][2]) >> 4;
-            max_z = (*(s16 *)(actor + 0x12) + rectangles[rectangle][3]) >> 4;
+            *rectangleOut = index;
+            leaderX = leader->x;
+            leaderZ = leader->z;
+            step = RESOURCE_389_DIRECTION_STEPS[*directionOut];
+            aheadX = ((leaderX >> 16) + (step >> 16)) >> 4;
+            aheadZ = ((leaderZ >> 16) + ((step << 16) >> 16)) >> 4;
+            minX = (anchor->x + rectangle->x0) >> 4;
+            minZ = (anchor->z + rectangle->z0) >> 4;
+            maxX = (anchor->x + rectangle->x1) >> 4;
+            maxZ = (anchor->z + rectangle->z1) >> 4;
 
-            if (min_x > ahead_x || ahead_x >= max_x ||
-                min_z > ahead_z || ahead_z >= max_z)
+            if (minX > aheadX || aheadX >= maxX)
+                continue;
+            if (minZ > aheadZ || aheadZ >= maxZ)
                 continue;
 
-            if ((rectangle & 1) != 0) {
-                if (min_x == (*(s32 *)(leader + 8) >> 20))
+            if ((index & 1) != 0) {
+                if (minX == (leaderX >> 20))
                     continue;
             } else {
-                if (min_z == (*(s32 *)(leader + 16) >> 20))
+                if (minZ == (leaderZ >> 20))
                     continue;
             }
 
-            *movement_out = 8;
+            *movementOut = 8;
             return actor;
         }
     }

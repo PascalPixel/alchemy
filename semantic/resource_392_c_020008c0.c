@@ -1,29 +1,87 @@
-/* resource_392 0x020008c0-0x020009db: kind-selected rectangle redraw. */
 #include "types.h"
-u8 *Func_0808a080(s32);
-void Func_080091c0(s32,s32,s32,s32,s32,s32);
-s32 Func_02000244(s32,s32,s32,s32,s32,s32);
+
+extern s32 *Data_03001e70;
+extern s32 Data_02008f08[];
+extern s32 Data_02008f20[];
+
+extern s32 *Func_0808a080(s32 slot);
+extern void Func_080091c0(s32 tileX, s32 tileZ, s32 width, s32 height,
+                          s32 worldX, s32 worldZ);
+extern s32 Func_02000244(s32 layer, s32 tileX, s32 tileZ, s32 width,
+                         s32 height, s32 alpha);
+
+struct Work {
+    s32 slot;
+    s32 unused;
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 w;
+};
+
 s32 Func_020008c0(s32 slot)
 {
-    u8 *runtime = *(u8 **)0x03001e70;
-    u8 *object = Func_0808a080(slot);
-    s16 kind = **(s16 **)(*(u8 **)(object + 80) + 40);
-    s32 *keys = (s32 *)0x02008f08, *delta;
-    s32 index, a0, a1, a2, a3, width, depth, tileX, tileZ, globalX, globalZ;
-    for (index = 0; index < 6; index++) if (kind == keys[index]) break;
-    if (index == 6) return 0;
-    delta = (s32 *)0x02008f20 + index * 4;
-    a3 = delta[3] < 0 ? -delta[3] : delta[3];
-    width = (a0 + a2) >> 4; depth = (a1 + a3) >> 4;
-    a2 = delta[2] < 0 ? -delta[2] : delta[2];
-    a0 = delta[0] < 0 ? -delta[0] : delta[0];
-    a1 = delta[1] < 0 ? -delta[1] : delta[1];
-    tileX = (*(s32 *)(object + 8) + (delta[0] << 16)) >> 20;
-    globalX = (*(s32 *)(runtime + 316) >> 20) + tileX;
-    tileZ = (*(s32 *)(object + 16) + (delta[1] << 16)) >> 20;
-    globalZ = (*(s32 *)(runtime + 320) >> 20) + tileZ;
-    Func_080091c0(tileX, tileZ, width, depth, globalX, globalZ);
-    Func_02000244(0, tileX, tileZ, width, depth, 255);
-    Func_02000244(2, tileX, tileZ, width, depth, 255);
+    s32 *world = Data_03001e70;
+    struct Work work;
+    s32 *actor;
+    s32 i;
+    s32 index;
+    s32 height;
+    s32 width;
+    s32 temporary;
+    s32 tableIndex;
+    s32 finalHeight;
+
+    actor = Func_0808a080(slot);
+    i = 0;
+    if (*(s16 *)((s32 *)actor[20])[10] == Data_02008f08[i]) {
+        work.slot = i;
+    } else {
+        for (;;) {
+            work.slot = 7;
+            i = i + 1;
+            if ((u32)i > 5)
+                break;
+            if (*(s16 *)((s32 *)actor[20])[10] == Data_02008f08[i]) {
+                work.slot = i;
+                break;
+            }
+        }
+    }
+    index = work.slot;
+    if ((u32)index > 6)
+        return 0;
+
+    work.x = actor[2];
+    work.y = actor[3];
+    work.z = actor[4];
+
+    tableIndex = index * 4;
+    temporary = Data_02008f20[tableIndex + 1];
+    if (temporary < 0)
+        temporary = -temporary;
+    height = Data_02008f20[tableIndex + 3];
+    if (height < 0)
+        height = -height;
+    finalHeight = (temporary + height) >> 4;
+
+    width = Data_02008f20[tableIndex];
+    if (width < 0)
+        width = -width;
+    temporary = Data_02008f20[tableIndex + 2];
+    if (temporary < 0)
+        temporary = -temporary;
+
+    work.x = work.x + (Data_02008f20[tableIndex] << 16);
+    work.z = work.z + (Data_02008f20[tableIndex + 1] << 16);
+    work.z = work.z >> 20;
+    work.x = work.x >> 20;
+    width = (width + temporary) >> 4;
+
+    Func_080091c0(work.x, work.z, width, finalHeight,
+                  (world[79] >> 20) + work.x,
+                  (world[80] >> 20) + work.z);
+    Func_02000244(0, work.x, work.z, width, finalHeight, 255);
+    Func_02000244(2, work.x, work.z, width, finalHeight, 255);
     return 1;
 }

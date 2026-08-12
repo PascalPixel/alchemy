@@ -23,8 +23,27 @@
  * multiset check both exclude that data rather than inventing a call.
  */
 
-#define STATE_3BA ((u8 *)0x02001000)
-#define WORKSPACE_3BA (*(u8 *volatile *)0x03001f3c)
+typedef struct {
+    s16 mode;
+    s16 mirror;
+    s16 actor_id;
+    u16 cursor;
+    s16 settled_frames;
+} State3ba;
+
+typedef struct {
+    u8 pad_e0[0xe0];
+    u16 next_actor_id;
+    u16 heading_negative;
+    u16 heading_positive;
+    u16 pad_e6;
+    s32 x;
+    s32 z;
+    s16 waypoints[0x3840];
+} Workspace3ba;
+
+#define STATE_3BA ((State3ba *)0x02001000)
+#define WORKSPACE_3BA (*(Workspace3ba *volatile *)0x03001f3c)
 
 s32 Func_08000100();
 void Func_08009080();
@@ -36,40 +55,40 @@ u8 *Func_0808a080();
 
 void Func_020031c0(void)
 {
-    s32 permuted_12;
-    u8 *state = STATE_3BA;
-    u8 *workspace = WORKSPACE_3BA;
-    u8 *actor = Func_0808a080(*(s16 *)(state + 4));
-    u16 cursor;
+    State3ba *state = STATE_3BA;
+    Workspace3ba *workspace = WORKSPACE_3BA;
+    u8 *actor = Func_0808a080(state->actor_id);
     s32 target_x;
     s32 target_z;
 
     if (actor == 0)
         return;
 
-    if (*(s16 *)state == 1) {
+    if (state->mode == 1) {
+        u16 cursor;
         s16 first;
         s16 second;
 
-        first = *(s16 *)(workspace + 0xf0 + (s16)cursor * 2);
-        cursor = *(u16 *)(state + 6);
-        *(u16 *)(state + 6) = (u16)(cursor + 2);
-        second = *(s16 *)(workspace + 0xf0 + (s16)(cursor + 1) * 2);
+        cursor = state->cursor;
+        first = workspace->waypoints[(s16)cursor];
+        cursor++;
+        second = workspace->waypoints[(s16)cursor];
+        state->cursor = (u16)(cursor + 1);
 
         if (first == 0 && second == 0) {
-            *(u16 *)state = 9;
+            state->mode = 9;
             Func_08009080(actor, 1);
 
-            if (*(s32 *)(workspace + 0xe8) >= *(s32 *)(actor + 8))
-                target_x = *(s32 *)(workspace + 0xe8) + (s32)0xfff40000;
-            target_x = *(s32 *)(workspace + 0xe8) + 0x000c0000;
+            target_x = workspace->x + 0x000c0000;
+            if (workspace->x < *(s32 *)(actor + 8))
+                target_x = workspace->x + (s32)0xfff40000;
 
             if (Func_080770c0(0x211) != 0) {
-                target_z = *(s32 *)(workspace + 0xec) + 0x00100000;
-                *(u16 *)(actor + 0x64) = *(u16 *)(workspace + 0xe4);
+                target_z = workspace->z + 0x00100000;
+                *(u16 *)(actor + 0x64) = workspace->heading_positive;
             } else {
-                target_z = *(s32 *)(workspace + 0xec) + (s32)0xfff00000;
-                *(u16 *)(actor + 0x64) = *(u16 *)(workspace + 0xe2);
+                target_z = workspace->z + (s32)0xfff00000;
+                *(u16 *)(actor + 0x64) = workspace->heading_negative;
             }
 
             *(s32 *)(actor + 0x34) = 0x4000;
@@ -82,8 +101,8 @@ void Func_020031c0(void)
 
             target_x = (s32)first << 16;
             target_z = (s32)second << 16;
-            if (*(s16 *)(state + 2) != 0)
-                target_x = *(s32 *)(workspace + 0xe8) * 2 - target_x;
+            if (state->mirror != 0)
+                target_x = workspace->x * 2 - target_x;
 
             if (*(s32 *)(actor + 8) != target_x || *(s32 *)(actor + 16) != target_z) {
                 turn = (s16)((u16)Func_08000100(
@@ -96,32 +115,34 @@ void Func_020031c0(void)
                 *(u16 *)(actor + 6) = (u16)(*(u16 *)(actor + 6) + turn);
                 *(s32 *)(actor + 8) = target_x;
                 *(s32 *)(actor + 16) = target_z;
-                *(u16 *)(state + 8) = 0;
+                state->settled_frames = 0;
             } else {
-                *(u16 *)(state + 8) = (u16)(*(u16 *)(state + 8) + 1);
+                state->settled_frames++;
             }
 
-            if (*(s16 *)(state + 8) > 2)
+            if (state->settled_frames > 2)
                 Func_08009080(actor, 1);
             else
                 Func_08009080(actor, 5);
         }
-    } else if (*(s16 *)state == 2) {
+    } else if (state->mode == 2) {
+        u16 cursor;
         s16 next_cursor;
 
-        permuted_12 = *(u16 *)(state + 6);
-        *(s16 *)(workspace + 0xf0 + (s16)cursor * 2) = *(s16 *)(actor + 0x0a);
-        *(s16 *)(workspace + 0xf0 + (s16)(cursor + 1) * 2) = *(s16 *)(actor + 0x12);
-        next_cursor = (s16)(cursor + 2);
-        cursor  = permuted_12;
-        *(u16 *)(state + 6) = (u16)next_cursor;
+        cursor = state->cursor;
+        workspace->waypoints[(s16)cursor] = *(s16 *)(actor + 0x0a);
+        cursor++;
+        workspace->waypoints[(s16)cursor] = *(s16 *)(actor + 0x12);
+        cursor++;
+        next_cursor = (s16)cursor;
+        state->cursor = (u16)next_cursor;
 
         if (next_cursor == 0x383e) {
-            *(u16 *)(workspace + 0xf0 + next_cursor * 2) = 0;
-            *(u16 *)(workspace + 0xf0 + (next_cursor + 1) * 2) = 0;
-            *(u16 *)(state + 4) = *(u16 *)(workspace + 0xe0);
-            *(u16 *)(state + 6) = 0;
-            *(u16 *)state = 1;
+            workspace->waypoints[next_cursor] = 0;
+            workspace->waypoints[next_cursor + 1] = 0;
+            state->actor_id = workspace->next_actor_id;
+            state->cursor = 0;
+            state->mode = 1;
         }
     }
 }

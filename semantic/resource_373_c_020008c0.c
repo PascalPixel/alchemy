@@ -1,24 +1,14 @@
 #include "types.h"
 
-/*
- * resource_373 owner at 0x020008c0: the "spawn the two effect layers over the
- * current stage's bounding box" helper.  Looks up the running stage id in a
- * seven-entry table, gives up when it is not one of the six known ids, then
- * derives a centre and a half-extent from the matching 16-byte box record and
- * hands them to three presentation calls.
- *
- * This owner is duplicated (same shape, different literals) across twelve
- * overlays: 373, 3c4, 389, 39f, 3c5, 3bf, 391, 3b2, 3b4, 392, 3bd, 393.
- */
-
 extern s32 *Data_03001e70;
 extern s32 Data_0200e1d0[];
 extern s32 Data_0200e1e8[];
 
-extern s32 *Func_020068b6(void);
-extern void Func_020068d4(s32 x, s32 z, s32 ex, s32 ez, s32 cx, s32 cz);
-extern void Func_02000bf0(s32 kind, s32 x, s32 z, s32 ex, s32 ez, s32 alpha);
-extern void Func_02000c02(s32 kind, s32 x, s32 z, s32 ex, s32 ez, s32 alpha);
+extern s32 *Func_0808a080(s32 slot);
+extern void Func_080091c0(s32 tileX, s32 tileZ, s32 width, s32 height,
+                          s32 worldX, s32 worldZ);
+extern s32 Func_02000244(s32 layer, s32 tileX, s32 tileZ, s32 width,
+                          s32 height, s32 alpha);
 
 struct Work {
     s32 slot;
@@ -29,58 +19,69 @@ struct Work {
     s32 w;
 };
 
-s32 Func_020008c0(void)
+s32 Func_020008c0(s32 slot)
 {
-    s32 *camera = Data_03001e70;
+    s32 *world = Data_03001e70;
     struct Work work;
-    s32 *obj;
+    s32 *actor;
     s32 i;
-    s32 slot;
-    s32 ez, ex, t, k, finalEz;
+    s32 index;
+    s32 height;
+    s32 width;
+    s32 temporary;
+    s32 tableIndex;
+    s32 finalHeight;
 
-    obj = Func_020068b6();
+    actor = Func_0808a080(slot);
     i = 0;
-    if (*(s16 *)((s32 *)obj[20])[10] == Data_0200e1d0[i]) {
+    if (*(s16 *)((s32 *)actor[20])[10] == Data_0200e1d0[i]) {
         work.slot = i;
     } else {
         for (;;) {
             work.slot = 7;
             i = i + 1;
-            if ((u32)i > 5) break;
-            if (*(s16 *)((s32 *)obj[20])[10] == Data_0200e1d0[i]) {
+            if ((u32)i > 5)
+                break;
+            if (*(s16 *)((s32 *)actor[20])[10] == Data_0200e1d0[i]) {
                 work.slot = i;
                 break;
             }
         }
     }
-    slot = work.slot;
-    if ((u32)slot > 6) return 0;
+    index = work.slot;
+    if ((u32)index > 6)
+        return 0;
 
-    work.x = obj[2];
-    work.y = obj[3];
-    work.z = obj[4];
+    work.x = actor[2];
+    work.y = actor[3];
+    work.z = actor[4];
 
-    k = slot * 4;
-    t = Data_0200e1e8[k + 1];
-    if (t < 0) t = -t;
-    ez = Data_0200e1e8[k + 3];
-    if (ez < 0) ez = -ez;
-    finalEz = (t + ez) >> 4;
+    tableIndex = index * 4;
+    temporary = Data_0200e1e8[tableIndex + 1];
+    if (temporary < 0)
+        temporary = -temporary;
+    height = Data_0200e1e8[tableIndex + 3];
+    if (height < 0)
+        height = -height;
+    finalHeight = (temporary + height) >> 4;
 
-    ex = Data_0200e1e8[k];
-    if (ex < 0) ex = -ex;
-    t = Data_0200e1e8[k + 2];
-    if (t < 0) t = -t;
+    width = Data_0200e1e8[tableIndex];
+    if (width < 0)
+        width = -width;
+    temporary = Data_0200e1e8[tableIndex + 2];
+    if (temporary < 0)
+        temporary = -temporary;
 
-    work.x = work.x + (Data_0200e1e8[k] << 16);
-    work.z = work.z + (Data_0200e1e8[k + 1] << 16);
+    work.x = work.x + (Data_0200e1e8[tableIndex] << 16);
+    work.z = work.z + (Data_0200e1e8[tableIndex + 1] << 16);
     work.z = work.z >> 20;
     work.x = work.x >> 20;
-    ex = (ex + t) >> 4;
+    width = (width + temporary) >> 4;
 
-    Func_020068d4(work.x, work.z, ex, finalEz,
-                  (camera[79] >> 20) + work.x, (camera[80] >> 20) + work.z);
-    Func_02000bf0(0, work.x, work.z, ex, finalEz, 255);
-    Func_02000c02(2, work.x, work.z, ex, finalEz, 255);
+    Func_080091c0(work.x, work.z, width, finalHeight,
+                  (world[79] >> 20) + work.x,
+                  (world[80] >> 20) + work.z);
+    Func_02000244(0, work.x, work.z, width, finalHeight, 255);
+    Func_02000244(2, work.x, work.z, width, finalHeight, 255);
     return 1;
 }

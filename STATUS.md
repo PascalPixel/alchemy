@@ -102,6 +102,32 @@ driver, the 8,956-byte `resource_3c9` choreography block, and the 18,600-byte
 campaigns until their call perimeters are narrower; shared calls alone do not
 prove a reusable source skeleton.
 
+### Five-kilobyte assault map
+
+The 2026-08-12 large-core survey replaced broad subsystem labels with audited
+cuts. These are real contiguous logic cores or repeated families, not totals
+manufactured from unrelated neighbours.
+
+| Priority | Core | Audited scope | Fresh semantic opportunity | Exact leverage |
+|---:|---|---:|---:|---|
+| 1 | Staged actor probe/move/redraw family (`373`, `389`, `391`, `392`, `393`) | 6,380 bytes | 5,684 bytes | Exact `373:0608` witnesses the 696-byte movement shape; all five triplets share clean `034c`, `0608`, `08c0`, and `09dc` seams. |
+| 2 | Battle action preparation / target selection | `080ba27c-080bbb0c`, 6,288 bytes | 5,146 bytes | 1,134 exact bytes constrain three action builders and the 1,864-byte target selector. |
+| 3 | Comparison-render subsystem | `080ac8fc-080ae714`, 7,704 bytes | 6,656 bytes | 1,048 exact bytes fix the renderer ABI, portrait/motion infrastructure, and both outer seams. |
+| 4 | Main scene launch suite | `080da2ac-080db6e0`, 5,172 bytes | 5,148 bytes | Two exact tail wrappers witness the following renderer modes; four scene owners share one runtime/render vocabulary. |
+| 5 | Main effect/render suite | `080db6e0-080dd2ac`, 7,116 bytes | 6,914 bytes | Seven exact mode wrappers constrain `080dbc30`; exact allocator and dispatch owners bound the suite. |
+| 6 | Menu/OAM controller | `080f60a0-080f7db4`, 7,444 bytes | 7,444 bytes | Exact entry/palette helpers bound the front; a 452-byte exact barrier separates the independent compressor. |
+| 7 | `resource_3c9` choreography | `12c8-35c4`, 8,956 bytes | 8,620 bytes | Three semantic scripts are interleaved with 336 exact helper/callback bytes and exact outer seams. |
+| 8 | `resource_373` cinematic script island | `15dc-5594`, 16,312 bytes | 13,636 bytes | Five exact setup/dispatcher owners divide three large scripts at proved boundaries. |
+| 9 | Queued battle-action resolver | `080bbb0c-080bd3c8`, 6,332 bytes | 6,332 bytes | One coherent owner; exact queue emitter is called 154 times, but no duplicate source witness exists. |
+| 10 | `resource_391` cinematic scene driver | `0d3c-2768`, 6,700 bytes | 6,700 bytes | Exact local helpers and installed callbacks close its perimeter; source residual remains diffuse. |
+
+The first staged-actor round corrected the raw `0xb084` prologue
+classification in four overlays, transferred the exact by-value movement ABI
+to `389`, `391`, and `392`, and recovered the shared redraw record/call model.
+Routed movement residuals are currently 115, 116, and 90 bytes respectively;
+redraw residuals reached 74 bytes in `373` and 72 bytes in `392`. These are
+reconstruction baselines, not Exact C, and must not be permuted while diffuse.
+
 For each selected core, create one coordinator brief that freezes its owner
 set, byte accounting, exact witnesses, import/export seam, compiler routes, and
 adoption order. Do not expand the core mid-round. A core is complete only when

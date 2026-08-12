@@ -61,25 +61,37 @@ void Func_02002132();
 
 void Func_02000880(void)
 {
+    char *base;
     s32 *workspace;
     const u16 *ramp;
+    volatile u16 *blend_control;
+    volatile u16 *blend_alpha;
+    u16 blend_value;
     s32 i;
 
-    /* The pointer stored at the IWRAM workspace base, then 178 * 2 bytes in. */
-    workspace = (s32 *)(*(char **)0x03001e70 + 356);
+    /* Preserve the scene base across the entry callback. */
+    base = *(char **)0x03001e70;
 
     Func_02002254(216);
 
-    for (i = 15; i >= 0; i--) {
+    /* The pointer stored at the IWRAM workspace base, then 178 * 2 bytes in. */
+    workspace = (s32 *)(base + 356);
+
+    for (i = 15; i >= 0;) {
         /* Adding 0xffff0000 is subtracting 1.0 in 16.16. */
         workspace[3] = workspace[3] + (s32)0xffff0000;
+        i--;
         Func_0200210c(4);
     }
 
+    blend_value = 0x3f42;
+    blend_control = (volatile u16 *)0x04000050;
     ramp = Data_02009fc0;
-    for (i = 7; i >= 0; i--) {
-        *(volatile u16 *)0x04000050 = 0x3f42;    /* BLDCNT */
-        *(volatile u16 *)0x04000052 = *ramp++;   /* BLDALPHA */
+    blend_alpha = (volatile u16 *)0x04000052;
+    for (i = 7; i >= 0;) {
+        *blend_control = blend_value;            /* BLDCNT */
+        *blend_alpha = *ramp++;                   /* BLDALPHA */
+        i--;
         Func_02002132(8);
     }
 }

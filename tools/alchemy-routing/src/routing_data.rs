@@ -229,6 +229,8 @@ pub static SCENE_CALL_SHEETS_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_38f_c_020008ec.c",
     "semantic/resource_391_c_02000d3c.c",
     "exact/resource_391_c_02000d3c.c",
+    "semantic/resource_39f_c_02001d04.c",
+    "exact/resource_39f_c_02001d04.c",
 ];
 pub static CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ae_c_020002dc.c",

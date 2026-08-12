@@ -158,6 +158,7 @@ pub static EXPECTED: &[HostTargets] = &[
                             "6e6e5c937000c9615808de15303326e10a63492afd8b910caece1b49cb90098d",
                             "55e1f2b4d73c84477cbc6726b21fe6d4d2f380a96f3128ae4287106cc1e9b855",
                             "617c8c19b0bed0d036772e1b880c2ca5cc83ee93635746e83b74fbe5981a925a",
+                            "f1c3da7776e67ae6e6133512eb9f08df1b1dc8f2bf29731e478011c490413707",
                         ],
                     ),
                 ],

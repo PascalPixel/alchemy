@@ -326,6 +326,8 @@ pub static SCHED_LOW_DEST_FIRST_SOURCES: &[&str] = &[
     "08097540", "02001958", "02000260", "02003dec", "02003e34", "02003d10", "020040e8", "020029dc",
 ];
 pub static THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_386_c_020004e4.c",
+    "exact/resource_386_c_020004e4.c",
     "exact/resource_3c6_c_02000078.c",
     "exact/resource_3b7_c_02000154.c",
     "exact/resource_3b7_c_02000178.c",
@@ -844,6 +846,8 @@ pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.
 pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static SCHED_CALL_DEST_DESCENDING_SOURCES: &[&str] = &["08091f14"];
 pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_381_c_0200330c.c",
+    "exact/resource_381_c_0200330c.c",
     "exact/resource_3bb_c_020039fc.c",
     "semantic/resource_3ba_c_02003764.c",
     "exact/resource_3ba_c_02003764.c",
@@ -1009,6 +1013,8 @@ pub static STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_382_c_02001090.c",
 ];
 pub static LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_377_c_02000e34.c",
+    "exact/resource_377_c_02000e34.c",
     "exact/resource_3b9_c_020006bc.c",
     "semantic/resource_3b9_c_020006bc.c",
     "exact/resource_376_c_02000258.c",

@@ -370,7 +370,7 @@ AlchemyC_020002a8:
 	.2byte 0x0200
 AlchemyC_02000474:
 	.space 0x194
-	.2byte 0xb084
+	sub	sp, #16
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

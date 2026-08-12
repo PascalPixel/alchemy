@@ -39,8 +39,8 @@ void Func_02004b70();
 void Func_02004bba();
 void Func_02004c30();
 void Func_02004b1e();
-s16 *Func_02004b44();
-s16 *Func_02004b4e();
+u8 *Func_02004b44();
+u8 *Func_02004b4e();
 void Func_02002b32();
 void Func_02004b42();
 void Func_02004c3c();
@@ -72,8 +72,8 @@ void Func_02001d04(void)
     Func_02004b1e(60);
 
     Func_02002b32(15,
-                  Func_02004b44(0)[5],
-                  Func_02004b4e(0)[9],
+                  *(s16 *)(Func_02004b44(0) + 10),
+                  *(s16 *)(Func_02004b4e(0) + 18),
                   0x60000);                           /* 192 << 11 */
 
     Func_02004b44(10);

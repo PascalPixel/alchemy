@@ -51,8 +51,8 @@ void Func_02003458(void)
         s16 first;
         s16 second;
 
-        first = *(s16 *)(workspace + 0xf0 + (s16)cursor * 2);
         cursor = *(u16 *)(state + 6);
+        first = *(s16 *)(workspace + 0xf0 + (s16)cursor * 2);
         *(u16 *)(state + 6) = (u16)(cursor + 2);
         second = *(s16 *)(workspace + 0xf0 + (s16)(cursor + 1) * 2);
 
@@ -60,9 +60,9 @@ void Func_02003458(void)
             *(u16 *)state = 9;
             Func_08009080(actor, 1);
 
+            target_x = *(s32 *)(workspace + 0xe8) + 0x000c0000;
             if (*(s32 *)(workspace + 0xe8) >= *(s32 *)(actor + 8))
                 target_x = *(s32 *)(workspace + 0xe8) + (s32)0xfff40000;
-            target_x = *(s32 *)(workspace + 0xe8) + 0x000c0000;
 
             if (Func_080770c0(0x211) != 0) {
                 target_z = *(s32 *)(workspace + 0xec) + 0x00100000;
@@ -110,10 +110,10 @@ void Func_02003458(void)
         s16 next_cursor;
 
         permuted_12 = *(u16 *)(state + 6);
+        cursor = permuted_12;
         *(s16 *)(workspace + 0xf0 + (s16)cursor * 2) = *(s16 *)(actor + 0x0a);
         *(s16 *)(workspace + 0xf0 + (s16)(cursor + 1) * 2) = *(s16 *)(actor + 0x12);
         next_cursor = (s16)(cursor + 2);
-        cursor  = permuted_12;
         *(u16 *)(state + 6) = (u16)next_cursor;
 
         if (next_cursor == 0x383e) {

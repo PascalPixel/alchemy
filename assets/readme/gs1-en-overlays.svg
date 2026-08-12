@@ -7940,8 +7940,8 @@
 <g aria-label="3b4 · semantic owner 0x02001f78: 96 bytes">
 <rect x="308.626503" y="258.751598" width="3.983079" height="4.156486" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 </g>
-<g aria-label="3b4 · semantic owner 0x02001df8: 92 bytes">
-<rect x="312.609582" y="258.751598" width="3.817117" height="4.156486" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<g aria-label="3b4 · AlchemyC_02001df8 · byte-exact C: 92 bytes">
+<rect x="312.609582" y="258.751598" width="3.817117" height="4.156486" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 </g>
 <g aria-label="3b4 · AlchemyC_0200006c · byte-exact C: 88 bytes">
 <rect x="316.426699" y="258.751598" width="3.651156" height="4.156486" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
@@ -13305,8 +13305,8 @@
 <g aria-label="3c3 · semantic owner 0x02000334: 142 bytes">
 <rect x="483.751759" y="248.910007" width="5.432468" height="4.507806" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 </g>
-<g aria-label="3c3 · semantic owner 0x02000730: 124 bytes">
-<rect x="489.184227" y="248.910007" width="4.743845" height="4.507806" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<g aria-label="3c3 · AlchemyC_02000730 · byte-exact C: 124 bytes">
+<rect x="489.184227" y="248.910007" width="4.743845" height="4.507806" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>
 </g>
 <g aria-label="3c3 · AlchemyC_02000288 · byte-exact C: 112 bytes">
 <rect x="483.751759" y="253.417813" width="4.367516" height="4.422394" style="fill:hsl(190, 71%, 65%);fill:oklch(0.645 0.128 200)"/>

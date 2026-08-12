@@ -4,8 +4,8 @@ void Func_08017248(s32 x, s32 y, u32 width, u32 height, s32 mode)
 {
     u8 **state_address = (u8 **)0x03001e8c;
     u8 *state;
-    u32 row_a, column_a, tile_a;
-    u32 row_b, column_b, tile_b;
+    u32 row_a, column_a, tile_a, step_a;
+    u32 row_b, column_b, tile_b, step_b;
 
     y <<= 5;
     state = *state_address;
@@ -24,11 +24,12 @@ void Func_08017248(s32 x, s32 y, u32 width, u32 height, s32 mode)
                 column_a = 1;
                 y += 2;
                 if (column_a < width - 1) {
+                    step_a = height - 2;
                     tile_a = row_a + 0x127;
                     do {
-                        *(u16 *)y = (tile_a & 0xfff) | 0xf000;
                         column_a++;
-                        tile_a += height - 2;
+                        *(u16 *)y = (tile_a & 0xfff) | 0xf000;
+                        tile_a += step_a;
                         y += 2;
                     } while (column_a < width - 1);
                 }
@@ -43,11 +44,12 @@ void Func_08017248(s32 x, s32 y, u32 width, u32 height, s32 mode)
             do {
                 column_b = 0;
                 if (column_b < width) {
+                    step_b = height - 2;
                     tile_b = row_b + 0x127;
                     do {
-                        *(u16 *)y = (tile_b & 0xfff) | 0xf000;
                         column_b++;
-                        tile_b += height - 2;
+                        *(u16 *)y = (tile_b & 0xfff) | 0xf000;
+                        tile_b += step_b;
                         y += 2;
                     } while (column_b < width);
                 }

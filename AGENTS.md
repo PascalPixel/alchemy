@@ -32,6 +32,17 @@ checkout.
 
 ## The contributor loop
 
+An open-ended request such as "continue decompilation" is coordinator work,
+not permission for a worker to roam. A worker must have one owner or proved
+family, one disjoint write set, one authoritative scoring path, a 30-minute
+default deadline, and a terminal report. If any field is absent, stop after
+discovery and ask the coordinator for a generated brief; do not repeatedly
+inspect reports, invent ad-hoc probes, switch owners, or choose a compiler
+theory. For a main-image source, generate the canonical brief with
+`decomp_diagnose --agent-brief`. An overlay coordinator must provide the same
+fields using the canonical overlay scorer. Production-path scores outrank
+internal dump diagnostics.
+
 1. Pick a small owner with `semantic semantic_queue`, or an overlay family with
    `overlay overlay_twins --leads`.
 2. Recover the real boundary, entries, types, signedness, aliases, calls, stack

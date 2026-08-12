@@ -32,19 +32,20 @@ void Func_08010788(
         (struct RasterObject_08010788 *)
         (*(u8 **)0x03001E70 + 0x104);
     struct RasterAnchor_08010788 anchors[3];
-    s32 row;
+    s32 y;
+    s32 y_end = destination_y + height;
 
-    for (row = 0; row < 3; row++, object++) {
-        anchors[row].x = object->x >> 20;
-        anchors[row].y = object->y >> 20;
+    for (y = 0; y < 3; y++, object++) {
+        anchors[y].x = object->x >> 20;
+        anchors[y].y = object->y >> 20;
     }
 
-    for (row = 0; row < height; row++) {
-        s32 y = destination_y + row;
-        s32 column;
+    y = destination_y;
+    while (y < y_end) {
+        s32 x = destination_x;
+        s32 x_end = destination_x + width;
 
-        for (column = 0; column < width; column++) {
-            s32 x = destination_x + column;
+        while (x < x_end) {
             u32 source_entry = *source++;
             u32 tile = source_entry & 0xFFF;
             u32 screen_offset =
@@ -67,9 +68,12 @@ void Func_08010788(
                 }
                 screen_offset += 0x800;
             }
+
+            x++;
         }
 
         source += 128 - width;
         destination += 128 - width;
+        y++;
     }
 }

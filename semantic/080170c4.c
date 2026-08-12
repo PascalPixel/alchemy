@@ -1,21 +1,20 @@
 #include "types.h"
 
-struct Dma_080170c4 {
-    const void *source;
-    void *destination;
-    u32 control;
-};
-
-u16 *Func_080170c4(u16 *destination, u16 value, s32 count)
+u16 *Func_080170c4(u16 *destination, u32 value, s32 count)
 {
     u16 fill;
+    u16 *source;
+    u32 *dma;
+    u32 control;
 
     if (count > 0) {
-        struct Dma_080170c4 *dma = (struct Dma_080170c4 *)0x040000D4;
+        source = &fill;
         fill = value;
-        dma->source = &fill;
-        dma->destination = destination;
-        dma->control = 0x81000000 | count;
+        dma = (u32 *)0x040000D4;
+        control = 0x81000000 | count;
+        dma[0] = (u32)source;
+        dma[1] = (u32)destination;
+        dma[2] = control;
         destination += count;
     }
     return destination;

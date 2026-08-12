@@ -1,62 +1,46 @@
 #include "types.h"
 
-extern u8 *Data_03001e8c;
-
-void Func_08022768(s32 x, s32 y, s32 width, s32 height, u32 palette)
+void Func_08022768(s32 x, s32 y, s32 width, s32 height, u32 field)
 {
-    u8 *base;
-    u8 *status;
-    u32 palette_bits;
-    u32 status_bit;
-    s32 clipped_width;
-    s32 row;
+    u8 *base = *(u8 **)0x03001e8c;
 
-    base = Data_03001e8c;
-    clipped_width = width;
-    palette_bits = palette;
-    palette_bits &= 1;
-    palette_bits <<= 12;
-
+    field &= 1;
+    field <<= 12;
     if (x < 0) {
-        clipped_width += x;
+        width += x;
         x = 0;
     }
-    if (x + clipped_width > 29)
-        clipped_width = 30 - x;
-
+    if (x + width > 29) {
+        width = 30 - x;
+    }
     if (y < 0) {
         height += y;
         y = 0;
     }
-    if (y + height > 29)
+    if (y + height > 29) {
         height = 20 - y;
-
-    if (clipped_width > 0 && height > 0) {
-        status = base + 0xea3;
-        status_bit = 2;
-        row = (y << 6) + (x << 1);
+    }
+    if (width > 0 && height > 0) {
+        u8 *dirty = base + 0xea3;
+        s32 offset = (y << 6) + (x << 1);
+        u32 dirty_bit = 2;
 
         do {
-            u16 *entry = (u16 *)(base + row);
-            s32 remaining = clipped_width;
+            u16 *pixel = (u16 *)((u32)offset + (u32)base);
+            s32 remaining = width;
 
-            if (remaining != 0) {
-                u32 clear_mask = 0xffffefff;
+            while (remaining != 0) {
+                u32 value = *pixel;
 
-                do {
-                    u32 value = *entry;
-
-                    value &= clear_mask;
-                    value |= palette_bits;
-                    *entry = value;
-                    remaining--;
-                    entry++;
-                } while (remaining != 0);
+                value &= 0xffffefff;
+                value |= field;
+                remaining--;
+                *pixel = value;
+                pixel++;
             }
-
-            *status |= status_bit << ((u32)y >> 2);
+            *dirty = (dirty_bit << ((u32)y >> 2)) | *dirty;
             height--;
-            row += 64;
+            offset += 64;
             y++;
         } while (height != 0);
     }

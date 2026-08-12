@@ -52,10 +52,12 @@ u32 Func_08021e6c(s32 alternate)
         U8_AT(state, index) = 0xff;
     U32_AT(state, 0x100) = 1;
 
-    if (alternate == 0)
-        window = Func_080162d4(20, 17, 10, 3, 6);
-    else
-        window = Func_080162d4(22, 17, 8, 3, 6);
+    window = Func_080162d4(
+        alternate == 0 ? 20 : 22,
+        17,
+        alternate == 0 ? 10 : 8,
+        3,
+        6);
     U32_AT(state, 0x1ac) = (u32)window;
     S32_AT(state, 0x1c4) = -1;
 

@@ -56,14 +56,14 @@ void Func_0200092c(void)
 
     Func_020024ca(324);
 
-    *(s32 *)(workspace + 448) = 32;
     workspace = Data_03001ebc;
+    *(s32 *)(workspace + 448) = 448 - 192;
 
     if (Func_020024d6(0x814) != 0) {
         Data_0200a69c = 0;
         /* The pool word is the callback's code address plus the Thumb bit,
          * not a pointer cell. */
-        Func_0200248a((void *)((s32)Func_02001ac8 | 1), 3200);
+        Func_0200248a((void *)((s32)Func_02001ac8 + 1), 3200);
     }
 
     if (Func_020024f0(0x879) != 0) {

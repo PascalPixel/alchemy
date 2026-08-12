@@ -1392,28 +1392,34 @@ void Func_02000d3c(void)
     Func_02004a7c(40);
     Func_020045e8(11, 10);
     Func_02004b58(0, 0x8000, 0);
-    Func_02004b68(1, 0x4000, 0);
-    Func_02004b72(3, 0, 0);
-    Func_02004630(2, 0xc000, 40);
+    {
+        s32 angle_c000 = 0xc0;
+        s32 angle_e000;
+
+        angle_c000 <<= 8;
+
+        Func_02004b68(1, 0x4000, 0);
+        Func_02004b72(3, 0, 0);
+        Func_02004630(2, angle_c000, 40);
     Func_02004620(12, 10);
     Func_02004ba0(0, 258, 0);
     Func_02004bac(1, 258, 0);
     Func_02004bb8(2, 258, 0);
     Func_02004bc4(3, 258, 0);
-    Func_02004bbe(0, 0xc000, 0);
-    Func_02004bc8(1, 0xc000, 0);
-    Func_02004bd2(2, 0xc000, 0);
-    Func_02004690(3, 0xc000, 80);
+    Func_02004bbe(0, angle_c000, 0);
+    Func_02004bc8(1, angle_c000, 0);
+    Func_02004bd2(2, angle_c000, 0);
+    Func_02004690(3, angle_c000, 80);
     Func_02004680(12, 10);
     Func_02004bf0(0, 0x8000, 0);
     Func_02004bfc(1, 0x4000, 0);
-    Func_02004c06(2, 0xc000, 0);
+    Func_02004c06(2, angle_c000, 0);
     Func_020046c4(3, 0, 40);
     Func_020046b4(11, 10);
-    Func_02004c22(0, 0xc000, 0);
-    Func_02004c2c(1, 0xc000, 0);
-    Func_02004c36(2, 0xc000, 0);
-    Func_020046f4(3, 0xc000, 10);
+    Func_02004c22(0, angle_c000, 0);
+    Func_02004c2c(1, angle_c000, 0);
+    Func_02004c36(2, angle_c000, 0);
+    Func_020046f4(3, angle_c000, 10);
     Func_02004c00(0, 4);
     Func_02004c08(1, 4);
     Func_02004c10(3, 4);
@@ -1427,7 +1433,7 @@ void Func_02000d3c(void)
     Func_02004732(12, 20);
     Func_02004ca2(0, 0x8000, 0);
     Func_02004cae(1, 0x4000, 0);
-    Func_02004cb8(2, 0xc000, 0);
+    Func_02004cb8(2, angle_c000, 0);
     Func_02004776(3, 0, 20);
     Func_02004766(12, 10);
 
@@ -1435,14 +1441,14 @@ void Func_02000d3c(void)
     Func_02004ce2(1, 2);
     Func_02004cea(3, 2);
     Func_02004cfa(2, 2);
-    Func_02004d2c(0, 0xc000, 0);
-    Func_02004d36(1, 0xc000, 0);
-    Func_02004d40(2, 0xc000, 0);
-    Func_02004d4a(3, 0xc000, 0);
+    Func_02004d2c(0, angle_c000, 0);
+    Func_02004d36(1, angle_c000, 0);
+    Func_02004d40(2, angle_c000, 0);
+    Func_02004d4a(3, angle_c000, 0);
     Func_020047ee(12, 20);
     Func_02004d5e(0, 0x8000, 0);
     Func_02004d6a(1, 0x4000, 0);
-    Func_02004d74(2, 0xc000, 0);
+    Func_02004d74(2, angle_c000, 0);
     Func_02004832(3, 0, 20);
     Func_02004822(11, 20);
     Func_02004da2(0, 258, 0);
@@ -1451,10 +1457,10 @@ void Func_02000d3c(void)
     Func_02004dc6(2, 258, 0);
     Func_02004cf4(40);
     Func_02004860(12, 10);
-    Func_02004dce(0, 0xc000, 0);
-    Func_02004dd8(1, 0xc000, 0);
-    Func_02004de2(2, 0xc000, 0);
-    Func_020048a0(3, 0xc000, 10);
+    Func_02004dce(0, angle_c000, 0);
+    Func_02004dd8(1, angle_c000, 0);
+    Func_02004de2(2, angle_c000, 0);
+    Func_020048a0(3, angle_c000, 10);
     Func_02004890(12, 10);
     Func_02004db4(0, 3);
     Func_02004dbc(1, 3);
@@ -1494,7 +1500,8 @@ void Func_02000d3c(void)
     Func_02004e44(3)->f23 |= 1;
 
     Func_02004ed8(2, 2);
-    Func_020049be(2, 0xe000, 10);
+    angle_e000 = 0xe000;
+    Func_020049be(2, angle_e000, 10);
     Func_02004f02(2, 0);
     Func_02004f1e(1, 0x2000, 0);
     Func_02004f28(3, 0, 0);
@@ -1512,8 +1519,8 @@ void Func_02000d3c(void)
             Func_02004ebe(40);
             Func_02004a46(1, 0x4000, 20);
             Func_02004a36(1, 10);
-            Func_02004a58(2, 0xc000, 20);
-            Func_02004a62(2, 0xe000, 20);
+            Func_02004a58(2, angle_c000, 20);
+            Func_02004a62(2, angle_e000, 20);
             Func_02004f76(2, 3);
             Func_02004a5a(2, 20);
             Func_02004a7e(1, 0x2000, 20);
@@ -1550,7 +1557,7 @@ void Func_02000d3c(void)
             Func_02004fe8(20);
             Func_020050ca(2, 0x103, 0);
             Func_02004ff8(40);
-            Func_02004b7e(2, 0xe000, 10);
+            Func_02004b7e(2, angle_e000, 10);
             Func_02004b6e(2, 10);
             if (Data_0200b394 != 0) {
                 Func_02004b96(3, 0, 10);
@@ -1578,7 +1585,7 @@ void Func_02000d3c(void)
             Func_02005166(2, 2);
             if (Data_0200b394 != 0) {
                 Func_02004c56(2, 0xa000, 40);
-                Func_02004c62(2, 0xe000, 20);
+                Func_02004c62(2, angle_e000, 20);
             }
             Func_02004c52(2, 10);
             Func_0200518e(0, 2);
@@ -1636,6 +1643,7 @@ alternate_scene_tail:
             Func_02004dc6(2, 20);
             goto scene_close;
         }
+    }
     }
 
 scene_close:

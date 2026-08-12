@@ -86,7 +86,7 @@ estimates until a core brief records a frozen call census.
 |---:|---|---|---:|---:|---|
 | 1 | selected | Configurable spawn/copy family | 5,192 executable bytes, 22 owners | at least 2,360 exact; 2,832 immediate semantic targets | Eleven overlays share a 472-byte spawner and 56-byte integrator. Five exact spawners witness six semantic copies in `resource_3c9`, `39c`, `39d`, `39e`, `380`, and `3a5`. Freeze per-overlay tables, callbacks, and veneer identities as shims. |
 | 2 | selected | `resource_3ba` / `3bb` paired render tasks | 2,888 bytes, two mirrored 1,444-byte slices | 0 exact / 2,888 semantic | `3ba:31c0-3764` and `3bb:3458-39fc` cross-check one another and each has only eight distinct imported callees. Exact adjacent installers at `3ba:3764` and `3bb:39fc` are the cut seam. |
-| 3 | selected | `resource_39f` slot procession | 2,896 bytes, 11 adjacent owners | 2,388 exact / 508 semantic | Nine exact owners constrain `39f:15d0` and `39f:1d04`. Keep slot records, party-heading reads, and the `Data_02000240 + 0x22b` completion byte at the perimeter. `1d04` is already localized to two swapped halfwords. |
+| 3 | selected | `resource_39f` slot procession | 2,896 bytes, 11 adjacent owners | 2,608 exact / 288 semantic | Ten exact owners now constrain the remaining `39f:15d0` owner. Keep slot records, party-heading reads, and the `Data_02000240 + 0x22b` completion byte at the perimeter. `1d04` was adopted byte-exact on 2026-08-12. |
 | 4 | surveyed | Main menu presentation/OAM | `0x080f6000-0x080f86f8`, 9,976 bytes | 604 exact / 9,364 semantic / 8 retained | A repeated update/render pipeline around `080f6440`, `080f7460`, and `080f7f78`. DMA, renderer slots 46/47, and allocation are shims; per-frame state and OAM construction are the core. |
 | 5 | surveyed | Main scene/effect C island | `0x080da2ac-0x080dd2ac`, 12,288 bytes | 226 exact / 12,062 semantic | A contiguous zero-assembly island with repeated renderer and scene plumbing. Cut at renderer-table dispatch, resource services, and IWRAM helpers. This is the cleanest single main-image subsystem boundary. |
 | 6 | surveyed | Staged actor movement/redraw | 4,890 executable bytes, 10 owners in five overlays | mixed; `373:0608` is a 696-byte exact witness | `373`, `389`, `391`, `392`, and `393` share the movement/effect owner and kind-selected redraw. Displacement tables, orientation tables, and callbacks are shims. |
@@ -119,7 +119,7 @@ manufactured from unrelated neighbours.
 | 7 | `resource_3c9` choreography | `12c8-35c4`, 8,956 bytes | 8,620 bytes | Three semantic scripts are interleaved with 336 exact helper/callback bytes and exact outer seams. |
 | 8 | `resource_373` cinematic script island | `15dc-5594`, 16,312 bytes | 13,636 bytes | Five exact setup/dispatcher owners divide three large scripts at proved boundaries. |
 | 9 | Queued battle-action resolver | `080bbb0c-080bd3c8`, 6,332 bytes | 6,332 bytes | One coherent owner; exact queue emitter is called 154 times, but no duplicate source witness exists. |
-| 10 | `resource_391` cinematic scene driver | `0d3c-2768`, 6,700 bytes | 6,700 bytes | Exact local helpers and installed callbacks close its perimeter; source residual remains diffuse. |
+| 10 | `resource_391` cinematic scene driver | `0d3c-2768`, 6,700 bytes | complete | Adopted byte-exact on 2026-08-12. Exact local helpers, installed callbacks, and the sibling scene-sheet witness closed its perimeter. |
 
 The first staged-actor round corrected the raw `0xb084` prologue
 classification in four overlays, transferred the exact by-value movement ABI

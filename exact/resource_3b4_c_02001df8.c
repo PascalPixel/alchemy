@@ -41,16 +41,23 @@
 
 void Func_02003b9e();
 s32 *Func_02004344();
-void Func_020042fa();
+void Func_020042fa(s32, s32, s32, s32, s32, s32);
 s32 *Func_02004368();
-void Func_0200431c();
+void Func_0200431c(s32, s32, s32, s32, s32, s32);
                      
 /* Returns the record for a numbered slot. */
 
 void Func_02001df8(void)
 {
+    s32 *slot;
+    s32 tile;
+
     Func_02003b9e();
 
-    Func_020042fa(53, 55, 1, 1, Func_02004344(11)[2] / 0x100000, 55);
-    Func_0200431c(53, 55, 1, 1, Func_02004368(12)[2] / 0x100000, 55);
+    slot = Func_02004344(11);
+    tile = slot[2] / 0x100000;
+    Func_020042fa(53, 55, 1, 1, tile, 55);
+    slot = Func_02004368(12);
+    tile = slot[2] / 0x100000;
+    Func_0200431c(53, 55, 1, 1, tile, 55);
 }

@@ -69,20 +69,28 @@ void Func_02000730(void)
     }
 
     Func_02001068(0x264e);
-    Func_02001078(9, 0);
+    {
+        s32 arg1 = 0;
+        s32 arg0 = 9;
 
-    if (Func_02001008(0, 0) != 0) {
-        /* Skip-beat counter, two beats' worth. */
-        workspace = Data_03001ebc;
-        *(u16 *)(workspace + 472) += 2;
-        Func_02001094(9, 0);
-        goto done;
+        Func_02001078(arg0, arg1);
     }
 
+    if (Func_02001008(0, 0) != 0) {
+        goto skip;
+    }
+
+    Func_02001094(9, 0);
     Func_0200106c(9, 4);
-    Func_020010a4(9, 0);
 
 close:
+    Func_020010a4(9, 0);
+    goto done;
+
+skip:
+    /* Skip-beat counter, two beats' worth. */
+    workspace = Data_03001ebc;
+    *(u16 *)(workspace + 472) += 2;
     Func_020010be(9, 0);
 
 done:

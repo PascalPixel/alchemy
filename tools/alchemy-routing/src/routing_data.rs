@@ -1029,6 +1029,8 @@ pub static LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ce_c_0200029c.c",
 ];
 pub static LITERAL_ARG1_FIRST_BEFORE_ZERO_PAIR_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_3c3_c_02000730.c",
+    "exact/resource_3c3_c_02000730.c",
     "semantic/resource_375_c_02000be0.c",
     "exact/resource_375_c_02000be0.c",
     "semantic/resource_379_c_02000074.c",

@@ -11,21 +11,21 @@ void Func_080e727c(s32 red_add, s32 green_add, s32 blue_add) {
     do {
         u32 color = *palette;
         u32 expanded = (u16)color << 16;
-        s32 red = (expanded >> 26) & mask;
+        s32 blue = (expanded >> 26) & mask;
         s32 green = (expanded >> 21) & mask;
-        s32 blue = color & mask;
+        s32 red = color & mask;
 
-        red += red_add;
+        blue += red_add;
         green += green_add;
-        blue += blue_add;
-        if (red > 31)
-            red = 31;
-        if (green > 31)
-            green = 31;
+        red += blue_add;
         if (blue > 31)
             blue = 31;
+        if (green > 31)
+            green = 31;
+        if (red > 31)
+            red = 31;
 
         index++;
-        *palette++ = (red << 10) | (green << 5) | blue;
+        *palette++ = (blue << 10) | (green << 5) | red;
     } while (index != 63);
 }

@@ -50,6 +50,28 @@ The coordinator establishes a baseline, then gives each worker a contract:
   sizes, differing halfwords, modes tried, rejected candidates, retained files,
   shared outputs touched, and focused tests.
 
+Do not dispatch a worker with only "continue decompilation." That sentence
+delegates owner selection, reconstruction, matching strategy, compiler policy,
+adoption, and verification at once and has no terminal state. Once a source
+candidate exists for a main-image owner, generate its compact contract and
+canonical production-path score with:
+
+```sh
+make dispatch-decomp ARGS='decomp_diagnose --agent-brief semantic/OWNER.c'
+```
+
+Pass that output to the worker unchanged, followed only by owner-specific local
+evidence. The brief deliberately allows one file, one search axis, three
+non-improving scores, and 30 minutes. Internal compiler-dump tools may explain a
+production score; they never replace it. If the brief says `reconstruct`, the
+worker may test one structural hypothesis and must not begin compiler or
+permuter search. If it says `exact`, the worker stops and reports the witness;
+the coordinator still owns adoption.
+
+For an overlay, the coordinator supplies the same fields but obtains the score
+from the canonical overlay path; `decomp_diagnose` accepts numeric main-image
+owners. Do not substitute an internal dump-mode score.
+
 `STATUS.md` and discovery reports are advisory, not reservations. Work starts
 only after the coordinator assigns the owner and records its write set. Assume
 every lane shares the checkout and generated outputs. Workers must not reset,

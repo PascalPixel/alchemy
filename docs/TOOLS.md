@@ -81,7 +81,7 @@ route, bundle digest, and candidate span before interpreting a result.
 | Command | Purpose |
 |---|---|
 | `discover` | Produce the function/instruction/call discovery report from a local ROM. |
-| `decomp_diagnose` | Compile and explain a candidate's localized residual. |
+| `decomp_diagnose` | Compile and explain a numeric main-image candidate's localized residual; `--agent-brief` emits the bounded worker contract and canonical score. |
 | `integrate_matches` | Gate main-image `src_<address>.c` drafts and install byte-identical matches into `exact/` only with explicit apply mode. |
 | `remaining_survey` | Survey remaining executable regions from any current working directory. |
 

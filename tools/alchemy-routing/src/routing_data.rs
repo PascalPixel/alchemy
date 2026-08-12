@@ -525,6 +525,10 @@ pub static NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
 // collapsed by the TypeScript `Set` and inert here. Reproduced deliberately;
 // see the note on GROUPED_DMA_STORE_SOURCES.
 pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_389_c_020010c8.c",
+    "exact/resource_389_c_020010c8.c",
+    "semantic/resource_37f_c_0200092c.c",
+    "exact/resource_37f_c_0200092c.c",
     "semantic/resource_3c1_c_02000120.c",
     "exact/resource_3c1_c_02000120.c",
     "semantic/resource_3c1_c_02000194.c",

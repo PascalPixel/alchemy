@@ -185,12 +185,23 @@ s32 Func_080ba6ac(
     UsedItem *used_item)
 {
     BattleWork work;
-    s32 *global = Data_03001f00;
+    s32 *global;
     Motion *primary_object;
+    Character_080ba6ac *character;
+    QueuedItem *queue;
+    s16 slot;
+    u16 item;
+    u8 item_type;
+    s32 direction;
     s32 i;
 
     (void)unused;
-    global[0] = input->primary_id <= 4 ? 0x2000 : -0x2000;
+    global = Data_03001f00;
+    direction = -0x2000;
+    if (input->primary_id <= 4)
+        direction = 0x2000;
+    if (global[0] != direction)
+        global[0] = direction;
     Func_080b9d34(input, &work);
     Func_080c10e8(0, 0);
 
@@ -199,29 +210,35 @@ s32 Func_080ba6ac(
     Func_08009088(primary_object, 0x10);
     work.secondary_is_low_id = input->secondary_id <= 7;
 
-    for (i = 0; i < work.count; i++) {
-        Record *record =
-            Func_080b7f70(Func_080b7dd0(work.members[i])->object, 0);
-        s32 child_count = record->child_count - 1;
-        s32 child;
+    {
+        s32 output_offset = 0;
 
-        for (child = 0; child < child_count; child++) {
-            work.child_values[i][child] =
-                record->children[child]->value;
+        for (i = 0; i < work.count; i++) {
+            Record *record =
+                Func_080b7f70(Func_080b7dd0(work.members[i])->object, 0);
+            s32 child;
+
+            for (child = 0; child < record->child_count - 1; child++) {
+                ((u8 *)work.child_values)[output_offset + child] =
+                    record->children[child]->value;
+            }
+            output_offset += 4;
         }
     }
 
     Func_080041d8(0x080bd899, 0x0c80);
     if (work.flags != 0) {
-        WorldState_080ba6ac *world = Data_03001e74;
+        s32 fade_offset = 0;
 
-        for (i = 0; i < 20; i++) {
-            s32 factor = 0x10000 - i * 0x444;
+        for (i = 0; i <= 19; i++) {
+            WorldState_080ba6ac *world = Data_03001e74;
+            s32 factor = 0x10000 - fade_offset;
 
             world->palette_factor = factor;
             Func_080c1724(
                 world->palette, 0x050000c0, factor, 0x80);
             Func_080030f8(1);
+            fade_offset += 0x444;
         }
         if ((input->flags & 0x4000) != 0)
             Func_080c9008(&work);
@@ -236,39 +253,34 @@ s32 Func_080ba6ac(
     for (i = 0; i < work.count; i++)
         Func_080b8000(work.members[i]);
 
-    {
-        Character_080ba6ac *character =
-            Func_08077008(used_item->actor_id);
-        s16 slot = used_item->inventory_slot;
-        u16 item = character->inventory[slot];
-        u8 item_type = Func_08077018(item)->type;
-
-        if (item_type == 1) {
-            if (Func_08077058(used_item->actor_id, slot) == 2) {
-                QueuedItem *queue = Data_03001e74->queued_items;
-
-                for (i = 0; i < 20; i++) {
-                    if (queue[i].kind == 2 &&
-                        queue[i].actor_id == used_item->actor_id) {
-                        if (queue[i].inventory_slot == slot)
-                            queue[i].inventory_slot = -1;
-                        else if (queue[i].inventory_slot > slot)
-                            queue[i].inventory_slot--;
-                    }
+    character = Func_08077008(used_item->actor_id);
+    slot = used_item->inventory_slot;
+    item = character->inventory[slot];
+    item_type = Func_08077018(item)->type;
+    if (item_type == 1) {
+        if (Func_08077058(used_item->actor_id, slot) == 2) {
+            queue = Data_03001e74->queued_items;
+            for (i = 0; i <= 19; i++) {
+                if (queue[i].kind == 2 &&
+                    queue[i].actor_id == used_item->actor_id) {
+                    if (queue[i].inventory_slot == slot)
+                        queue[i].inventory_slot = -1;
+                    else if (queue[i].inventory_slot > slot)
+                        queue[i].inventory_slot--;
                 }
             }
-        } else if (item_type == 2) {
-            if ((Func_080771a0() & 7) == 0) {
-                Func_080bbabc(2, item);
-                Func_080bbabc(4, 0x81c);
-                Func_08077060(used_item->actor_id, slot);
-                Func_080bb938();
-            }
-        } else if (item_type == 4) {
-            if ((item & 0x1ff) == 0xb8)
-                item = 0xb9;
-            character->inventory[slot] = item;
         }
+    } else if (item_type == 2) {
+        if ((Func_080771a0() & 7) == 0) {
+            Func_080bbabc(2, item);
+            Func_080bbabc(4, 0x81c);
+            Func_08077060(used_item->actor_id, slot);
+            Func_080bb938();
+        }
+    } else if (item_type == 4) {
+        if ((item & 0x1ff) == 0xb8)
+            item = 0xb9;
+        character->inventory[slot] = item;
     }
 
     return 0;

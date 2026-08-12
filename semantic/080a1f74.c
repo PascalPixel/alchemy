@@ -9,7 +9,6 @@ void Func_080a1f74(s32 kind, s8 *destination)
 {
     const s8 *source;
     s8 value;
-    s32 index;
 
     source = &Data_080af2a6;
     switch (kind) {
@@ -25,10 +24,10 @@ void Func_080a1f74(s32 kind, s8 *destination)
     }
     value = *source;
     *destination = value;
-    index = 0;
+    kind = 0;
     while (value != -1) {
-        index++;
-        if (index > 31) {
+        kind++;
+        if (kind > 31) {
             break;
         }
         source++;

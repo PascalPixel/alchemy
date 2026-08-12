@@ -97,142 +97,161 @@ void Func_020077f0();
 extern u8 Data_0200c174[];
 extern u8 Data_0200c194[];
 
+/* IWRAM. */
+extern u8 *Data_03001f3c;
+extern u16 Data_03001b10[];
+extern u32 Data_03001e40;
+
 void Func_02003638(void)
 {
-    s32 tile;
     u8 *workspace;
-    u32 *out;
-    s32 count;
+    u32 *entry;
+    struct {
+        u32 tile;
+        u32 *write;
+        u8 *workspace;
+    } cursors;
+    u32 column;
     s32 state;
-    s32 column;
-    s32 row;
+    s32 count;
     s32 index;
     s32 handle;
-    u16 stepped;
     u8 *marker;
-    s32 screen_y;
     s32 screen_x;
-    u32 *write;
+    s32 screen_y;
 
-    workspace = *(u8 **)0x03001f3c;
-    out = (u32 *)workspace;
-    write = out;
+    workspace = Data_03001f3c;
+    cursors.write = (u32 *)workspace;
+    entry = cursors.write;
+    cursors.workspace = workspace;
 
-    /* The graphics slot's tile base: entry `slot` of the four-byte table at
-     * 0x03001b10, halfword at +2, shifted down 5. */
-    tile = *(u16 *)(0x03001b10 + (*(s16 *)(workspace + 216) << 2) + 2) >> 5;
+    cursors.tile = Data_03001b10[*(s16 *)(workspace + 216) * 2 + 1] >> 5;
 
     count = *(s16 *)(workspace + 230);
 
     if (*(s16 *)(workspace + 220) != 0) {
         *(u16 *)(workspace + 218) = 2;
-    } else if (Func_02007574(262) != 0) {           /* 131 << 1 */
+    } else if (Func_02007574(0x106) != 0) {
         if (*(s16 *)(workspace + 218) > 0) {
-            *(u16 *)(workspace + 218) = (u16)(*(u16 *)(workspace + 218) - 1);
+            *(u16 *)(workspace + 218) = *(u16 *)(workspace + 218) - 1;
         }
     } else if (*(s16 *)(workspace + 218) <= 1) {
-        stepped = (u16)(*(u16 *)(workspace + 218) + 1);
+        u16 stepped = *(u16 *)(workspace + 218) + 1;
         *(u16 *)(workspace + 218) = stepped;
 
-        if ((stepped << 16) == 0x10000) {           /* the 16-bit value is 1 */
-            /* DMA3: source, destination, then control in one burst. */
+        if (((s32)stepped << 16) == 0x10000) {
             *(volatile u32 *)0x040000d4 = (u32)Data_0200c174;
             *(volatile u32 *)0x040000d8 = 0x050003c0;
             *(volatile u32 *)0x040000dc = 0x80000010;
 
-            handle = Func_020074bc(512);            /* 128 << 2 */
+            handle = Func_020074bc(0x200);
             Func_020074d6(Data_0200c194, handle);
-            Func_020074fc(*(s16 *)(workspace + 216), 512, handle);
+            Func_020074fc(*(s16 *)(workspace + 216), 0x200, handle);
             Func_020074e2(handle);
         }
     }
 
     state = *(s16 *)(workspace + 218);
     if (state == 0) {
-        Func_0200750e(*(s16 *)((u8 *)write + 216));
+        Func_0200750e(*(s16 *)((u8 *)cursors.write + 216));
         return;
     }
 
-    column = (state * 6 - 8) & 0xff;
+    column = ((u32)(state * 6) - 8) & 0xff;
 
-    /* Top piece. */
-    *write++ = 0;
-    *write++ = ((104 - (count << 4)) << 16) | column | 0x8000;
-    *write++ = tile | 0xe400;
-    Func_02007584(out, 255, 12);
-    out += 3;
+    cursors.write[0] = 0;
+    cursors.write[1] = (u32)((104 - (count << 4)) << 16) | column | 0x8000;
+    cursors.write[2] = cursors.tile | 0xe400;
+    Func_02007584(entry, 255, 12);
+    entry += 3;
+    cursors.write += 3;
 
-    /* Left column. */
     for (index = 0; (u32)index < (u32)count; index++) {
-        *write++ = 0;
-        *write++ = ((96 - (index << 4)) << 16) | column | 0x40000000;
-        *write++ = (tile + 2) | 0xe400;
-        Func_020075c6(out, 255, 12);
-        out += 3;
+        cursors.write[0] = 0;
+        cursors.write[1] = (u32)((96 - (index << 4)) << 16) | column | 0x40000000;
+        cursors.write[2] = (cursors.tile + 2) | 0xe400;
+        Func_020075c6(entry, 255, 12);
+        entry += 3;
+        cursors.write += 3;
     }
 
-    /* The two middle pieces. */
-    *write++ = 0;
-    *write++ = 0x700000 | column | 0x8000;            /* 224 << 15 */
-    *write++ = (tile + 6) | 0xe400;
-    Func_02007606(out, 255, 12);
-    out += 3;
+    cursors.write[0] = 0;
+    cursors.write[1] = 0x700000 | column | 0x8000;
+    cursors.write[2] = (cursors.tile + 6) | 0xe400;
+    Func_02007606(entry, 255, 12);
+    entry += 3;
+    cursors.write += 3;
 
-    *write++ = 0;
-    *write++ = 0x780000 | column | 0x8000 | 0x10000000;   /* 240 << 15 */
-    *write++ = (tile + 6) | 0xe400;
-    Func_02007636(out, 255, 12);
-    out += 3;
+    cursors.write[0] = 0;
+    cursors.write[1] = 0x780000 | column | 0x8000 | 0x10000000;
+    cursors.write[2] = (cursors.tile + 6) | 0xe400;
+    Func_02007636(entry, 255, 12);
+    entry += 3;
+    cursors.write += 3;
 
-    /* Right column: the same rows mirrored, with the row field advancing by
-     * 0x100000 from 0x800000 instead of counting down. */
-    for (index = 0; (u32)index < (u32)count; index++) {
-        *write++ = 0;
-        *write++ = column | (0x800000 + (index << 20)) | 0x40000000 | 0x10000000;
-        *write++ = (tile + 2) | 0xe400;
-        Func_0200767c(out, 255, 12);
-        out += 3;
+    {
+        u32 vertical = 0x800000;
+
+        for (index = 0; (u32)index < (u32)count; index++) {
+            cursors.write[0] = 0;
+            cursors.write[1] = column | vertical | 0x40000000 | 0x10000000;
+            cursors.write[2] = (cursors.tile + 2) | 0xe400;
+            Func_0200767c(entry, 255, 12);
+            entry += 3;
+            cursors.write += 3;
+            vertical += 0x100000;
+        }
     }
 
-    /* Bottom piece.  `column` is folded into the packed word in place here,
-     * which is why it is not reused afterwards. */
-    *write++ = 0;
-    *write++ = column | (((count << 4) + 128) << 16) | 0x8000 | 0x10000000;
-    *write++ = tile | 0xe400;
-    Func_020076d2(out, 255, 12);
-    out += 3;
+    column |= (u32)(((count << 4) + 128) << 16);
+    column |= 0x8000;
+    column |= 0x10000000;
 
-    if ((*(s32 *)0x03001e40 & 15) <= 4) return;
+    cursors.write[0] = 0;
+    cursors.write[1] = column;
+    cursors.write[2] = cursors.tile | 0xe400;
+    Func_020076d2(entry, 255, 12);
+    entry += 3;
+    cursors.write += 3;
 
-    marker = Func_02007942(*(s16 *)(workspace + 224));
+    if ((Data_03001e40 & 15) <= 4) {
+        return;
+    }
+
+    marker = Func_02007942(*(s16 *)(cursors.workspace + 224));
     if (marker != 0) {
-        screen_y = Func_0200767c_b(*(s32 *)(marker + 8) - *(s32 *)(workspace + 232),
-                                 0xe0000) + 112;    /* 224 << 12 */
-        screen_x = Func_02007692(*(s32 *)(marker + 16) - *(s32 *)(workspace + 236),
+        screen_x = Func_0200767c_b(*(s32 *)(marker + 8) - *(s32 *)(cursors.workspace + 232),
+                                   0xe0000);
+        screen_y = screen_x + 112;
+        screen_x = Func_02007692(*(s32 *)(marker + 16) - *(s32 *)(cursors.workspace + 236),
                                  0xe0000);
-        screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
+        screen_x = screen_x + (*(s16 *)(cursors.workspace + 218) * 6);
 
-        *write++ = 0;
-        *write++ = screen_x | (screen_y << 16) | 0x40000000;
-        *write++ = (tile + 12) | 0xe400;
-        Func_0200776e(out, 255, 12);
-        out += 3;
+        cursors.write[0] = 0;
+        cursors.write[1] = (((u32)(screen_x - 4)) & 0xff) |
+                           (u32)(screen_y << 16) | 0x40000000;
+        cursors.write[2] = (cursors.tile + 12) | 0xe400;
+        Func_0200776e(entry, 255, 12);
+        entry += 3;
+        cursors.write += 3;
     }
 
-    marker = Func_020079ca(*(s16 *)(workspace + 222));
-    if (marker == 0) return;
+    marker = Func_020079ca(*(s16 *)(cursors.workspace + 222));
+    if (marker == 0) {
+        return;
+    }
 
-    screen_y = Func_02007704(*(s32 *)(marker + 8) - *(s32 *)(workspace + 232),
-                             0xe0000) + 112;
-    screen_x = Func_0200771a(*(s32 *)(marker + 16) - *(s32 *)(workspace + 236),
+    screen_x = Func_02007704(*(s32 *)(marker + 8) - *(s32 *)(cursors.workspace + 232),
                              0xe0000);
-    screen_x = (screen_x + *(s16 *)(workspace + 218) * 6 - 4) & 0xff;
+    screen_y = screen_x + 112;
+    screen_x = Func_0200771a(*(s32 *)(marker + 16) - *(s32 *)(cursors.workspace + 236),
+                             0xe0000);
+    screen_x = screen_x + (*(s16 *)(cursors.workspace + 218) * 6);
 
-    *write++ = 0;
-    *write++ = screen_x | (screen_y << 16) | 0x40000000;
-    *write++ = (tile + 8) | 0xe400;
+    cursors.write[0] = 0;
+    cursors.write[1] = (((u32)(screen_x - 4)) & 0xff) |
+                       (u32)(screen_y << 16) | 0x40000000;
+    cursors.write[2] = (cursors.tile + 8) | 0xe400;
 
-    /* This site leaves r2 holding the cursor rather than the 12 every other
-     * submission passes, so only two arguments are asserted. */
-    Func_020077f0(out, 255);
+    Func_020077f0(entry, 255);
 }

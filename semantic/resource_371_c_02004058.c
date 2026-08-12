@@ -3,7 +3,7 @@
 /* Resource 371: spawn and configure the two halves of a paired attachment. */
 
 extern u8 *Data_03001f30;
-extern u16 Data_03001b10[];
+extern u8 Data_03001b10[];
 
 u8 *Func_0200828e();
 void Func_020082ae();
@@ -17,7 +17,8 @@ void Func_02004058(u8 *parent)
     u8 *pieces[2];
     u8 *piece;
     u8 *record;
-    s32 index;
+    u32 index;
+    u32 id;
 
     for (index = 0; index <= 1; index++) {
         piece = Func_0200828e(26,
@@ -44,11 +45,11 @@ void Func_02004058(u8 *parent)
 
         record[0x1c] = (u8)*(u16 *)(state + 70);
         record[0x1d] |= 1;
+        id = *(u16 *)(Data_03001b10 + record[0x1c] * 4 + 2);
         *(u16 *)(record + 8) = (u16)
-            ((*(u16 *)(record + 8) & 0xfc00) |
-             ((Data_03001b10[record[0x1c] * 2 + 1] >> 5) & 0x3ff));
-        record[5] = (u8)((record[5] & ~0x20 & 0x3f) | 0x40);
-        record[7] = (u8)((record[7] & 0x3f) | 0x80);
+            ((*(u16 *)(record + 8) & 0xfc00) | ((id << 17) >> 22));
+        record[5] = (u8)(((record[5] & ~0x20) & 63) | 0x40);
+        record[7] = (u8)((record[7] & 63) | 0x80);
         *(u8 *)(*(u8 **)(record + 0x28) + 0x16) = 0;
     }
 

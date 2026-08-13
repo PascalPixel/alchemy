@@ -76,62 +76,81 @@
  * cached pointer would drop three sites from the multiset.
  */
 
-void Func_0808a090();          /* 16.16 pair setter */
-void Func_0808a010();          /* wait this many frames */
-void Func_0808a170();          /* show a dialogue line by id */
-void Func_0808a1e8();          /* play animation id for n frames */
-void Func_0808a188();          /* wait for the slot's action, with a duration */
-void Func_0808a138();          /* select an entity presentation */
-void Func_0808a110();          /* scene-presentation request */
-void Func_0808a0f0();          /* (selector, x, z) placement */
-void Func_0808a0d0();          /* place an entity */
-void Func_0808a1b8();          /* face slot along heading */
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_080f9010();          /* one-argument notify */
-void Func_02000f80(void);      /* local: facing-quadrant selector */
+void Func_0200544c();
+void Func_02005412();
+void Func_020054e2();
+void Func_020054ec();
+void Func_02005526();
+u8 *Func_02005518();
+void Func_020054e0();
+u8 *Func_0200550e();
+void Func_0200545e();
+void Func_02005548();
+void Func_0200548e();
+void Func_02005578();
+void Func_020054f8();
+void Func_02005476();
+void Func_02005528();
+void Func_02002048();
+void Func_0200552a();
+void Func_02005538();
+u8 *Func_020054f6();
+u8 *Func_02005502();
+void Func_0200569e();
+void Func_020054fc();
+void Func_02005566();
+void Func_02005602();
 
 void Func_0200102c(s32 variant)
 {
-    s32 line = 0x183a;
+    s32 line;
 
-    Func_0808a090(15, 0xcccc, 0x6666);
-    Func_0808a010(60);
-    Func_0808a170(line);
+    Func_0200544c(15, 0xcccc, 0x6666);
+    Func_02005412(60);
+    line = 0x183a;
+
+    Func_020054e2(line);
 
     if (variant == 0) {
-        Func_0808a170(line - 1);
-        Func_0808a1e8(15, 0x101, 60);
-        Func_0808a188(15, 0, 20);
-        Func_0808a138(15, 2);
-        Func_0808a170(0x18ae);
-        Func_0808a188(15, 0, 20);
-        Func_0808a110(15, 4);
-        Func_0808a010(20);
-        Func_0808a188(15, 0, 20);
-        Func_0808a110(15, 3);
-        Func_0808a010(20);
+        Func_020054ec(line - 1);
+        Func_02005526(15, 0x101, 60);
+        Func_02005518(15, 0, 20);
+        Func_020054e0(15, 2);
+        Func_0200550e(0x18ae);
+        Func_02005530(15, 0, 20);
+        Func_020054e0(15, 4);
+        Func_0200545e(20);
+        Func_02005548(15, 0, 20);
+        Func_020054f8(15, 3);
+        Func_02005476(20);
     }
 
     if (variant == 2) {
-        Func_0808a170(0x18ac);
-        Func_0808a138(15, 2);
-        Func_0808a010(20);
+        Func_02005548(0x18ac);
+        Func_02005528(15, 2);
+        Func_0200548e(20);
     }
 
-    Func_0808a188(15, 0, 20);
-    Func_02000f80();
-    Func_0808a138(15, 3);
+    Func_02005578(15, 0, 20);
+    Func_02002048();
+    Func_02005544(15, 3);
 
-    Func_0808a0f0(19, 232 << 16, 168 << 16);
-    Func_0808a0f0(20, 232 << 16, 168 << 16);
+    Func_0200552a(19, 232 << 16, 168 << 16);
+    Func_02005538(20, 232 << 16, 168 << 16);
 
-    *(s32 *)(Func_0808a080(19) + 12) = 0xc0000;        /* 192 << 12, 12.0 */
-    *(s32 *)(Func_0808a080(19) + 60) = 0x80000000;     /* 128 << 24 */
-    *(s32 *)(Func_0808a080(19) + 24) = 0xcccc;
-    *(u16 *)(*(u8 **)(Func_0808a080(19) + 80) + 30) = 0x8000;   /* 128 << 8 */
+    *(s32 *)(Func_020054f6(19) + 12) = 0xc0000;        /* 192 << 12, 12.0 */
+    *(s32 *)(Func_02005502(19) + 60) = 0x80000000;     /* 128 << 24 */
+    *(s32 *)(Func_0200550e(19) + 24) = 0xcccc;
+    {
+        s32 heading;
 
-    Func_080f9010(124);
-    Func_0808a010(40);
-    Func_0808a0d0(15, 216, 152);
-    Func_0808a1b8(15, 0x2000, 30);                     /* 128 << 6 */
+        heading = 128;
+        heading <<= 8;
+        *(u16 *)(*(u8 **)(Func_02005518(19) + 80) + 30) = heading;
+    }
+
+    Func_0200569e(124);
+    Func_020054fc(40);
+    Func_02005566(15, 216, 152);
+    Func_02005602(15, 0x2000, 30);                     /* 128 << 6 */
 }

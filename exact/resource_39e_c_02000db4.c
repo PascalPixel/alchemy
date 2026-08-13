@@ -43,14 +43,10 @@ extern void Func_02000fa2(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 fl
 
 void Func_02000db4(void)
 {
-    u8 *record;
-    u32 i;
-    s32 step;
-
-    record = Func_020051c6(19);
-    i = 0;
-    step = 8;
-    *(u16 *)(*(u8 **)(record + 80) + 30) = 0;
+    u8 *record = Func_020051c6(19);
+    u32 i = 0;
+    s32 step = 8;
+    s32 zero;
     do {
         Func_02005118(step);
         *(s32 *)(record + 16) += 0xffff0000;
@@ -58,6 +54,8 @@ void Func_02000db4(void)
         i++;
         step -= 2;
     } while (i <= 3);
+    zero = 0;
+    *(u16 *)(*(u8 **)(record + 80) + 30) = (u16)zero;
     Func_02005370(227);
     Func_02000f4c(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + 0xfff80000, 0xffff3334,

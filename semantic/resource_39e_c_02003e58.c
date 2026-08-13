@@ -1,13 +1,13 @@
 #include "types.h"
 
 /*
- * resource_39e owner at 0x02003e58, 580 bytes: THE OVERLAY'S ENTRY
+ * resource_39e owner at 0x02003e58, 644 bytes: THE OVERLAY'S ENTRY
  * DRIVER, and the reason this overlay's closure was false -- the
  * function the loader actually calls was owned by nobody while the
  * rows it leads to were drafted.
  *
  * It is the target of this overlay's header veneer (the word at image
- * offset 4; bun tools/overlay-driver resource_39e), so nothing
+ * offset 4; `overlay overlay_driver resource_39e`), so nothing
  * inside the image calls it.
  *
  * Top split is on the s16 scene id at 0x02000240+448:
@@ -29,7 +29,7 @@
  *        tail: Func_02000048(0x1300000, 0x180000, 0xe00000, 223) --
  *        the exact-C owner -- then Func_0808a100 on 10 and 11;
  *     3: raise flag 0x12f; with 0x895 clear run Func_02002ad0 (the
- *        4976-byte row in this overlay's undrafted gap), otherwise,
+ *        now-exact 5000-byte row in this overlay's former gap), otherwise,
  *        if 0x8b2 is clear, park actors 8 and 9 at the origin.
  *
  * - any other scene: Func_0808a5e0(170), set bit 4 of record 9's +89,
@@ -56,97 +56,147 @@
 
 extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
+extern u8 Value_0000003d;
 
-extern void *Func_02000048(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_020027ec(void);
-extern void Func_02002ad0(void);
-
-extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-extern s32 Func_080770c0(s32 flagId);
-extern void Func_080770d0(s32 flagId);
-extern u8 *Func_0808a080(s32 id);
-extern void Func_0808a0f0(s32 id, s32 x, s32 y);
-extern void Func_0808a100(s32 id, s32 arg1);
-extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a5e0(s32 arg0);
+/*
+ * The overlay's BL sites call local relocation veneers, not the logical
+ * 0x080xxxxx imports printed by overlay_show.  These aliases are named from
+ * the raw Thumb targets in the released overlay.  A suffix distinguishes two
+ * signatures that share one relocation address.
+ */
+extern s32 Func_0200824c();
+extern void Func_020082f0();
+extern void Func_020082fa();
+extern s32 Func_02008268();
+extern s32 Func_02008274();
+extern s32 Func_02008280();
+extern void Func_020066ba();
+extern void Func_020082aa();
+extern s32 Func_020082a0();
+extern u8 *Func_020082f4();
+extern s32 Func_020082ce();
+extern void Func_02008370();
+extern s32 Func_020082e6();
+extern void Func_02008388();
+extern u8 *Func_02008346();
+extern u8 *Func_02008350();
+extern u8 *Func_02008358();
+extern u8 *Func_02008360();
+extern u8 *Func_02008368();
+extern u8 *Func_02008372();
+extern void Func_0200834c();
+extern void *Func_0200400a();
+extern void Func_0200841e();
+extern void Func_02008426();
+extern void Func_020083aa();
+extern s32 Func_020083a0();
+extern void Func_02006abc();
+extern s32 Func_020083b0();
+extern void Func_0200844e();
+extern void Func_02008458();
+extern void Func_02008578();
+extern u8 *Func_0200841e_b();
+extern s32 Func_020083f4();
+extern s32 Func_020083fe();
+extern void Func_020083f6();
+extern s32 Func_0200841c();
+extern void Func_020084be();
+extern void Func_02008540();
+extern void Func_0200842c();
 
 s32 Func_02003e58(void)
 {
     u8 *record;
-    s16 sub;
-
-    if (Data_02000240[224] == 61) {
+    if (Data_02000240[224] == (s32)&Value_0000003d) {
         *(s32 *)(Data_03001ebc + 448) = 521;
-        if (sub == 1) {
-            if (Func_080770c0(0x88f) != 0) {
-                Func_0808a100(8, 6);
+        if (Data_02000240[225] == 1) {
+            if (Func_0200824c(0x88f) != 0) {
+                Func_020082f0(8, 6);
             } else {
-                Func_0808a100(8, 5);
-                if (Func_080770c0(0xf14) != 0
-                    && Func_080770c0(0x893) == 0
-                    && Func_080770c0(0x109) == 0) {
-                    Func_020027ec();
+                Func_020082fa(8, 5);
+                if (Func_02008268(0xf14) != 0
+                    && Func_02008274(0x893) == 0
+                    && Func_02008280(0x109) == 0) {
+                    Func_020066ba();
                 }
             }
-        } else if (sub == 2 || sub == 4) {
-            Func_080770d0(0x12f);
-            if (Func_080770c0(0x895) == 0) {
-                record = Func_0808a080(19);
+        } else if (Data_02000240[225] == 2 || Data_02000240[225] == 4) {
+            Func_020082aa(0x12f);
+            if (Func_020082a0(0x895) == 0) {
+                record = Func_020082f4(19);
+                record[85] = 0;
                 *(s32 *)(record + 12) = 0xc0000;
                 *(s32 *)(record + 60) = 0xc0000;
                 *(s32 *)(record + 24) = 0xcccc;
-                record[85] = 0;
                 *(s32 *)(record + 28) = 0x8000;
                 *(u16 *)(*(u8 **)(record + 80) + 30) = 0x8000;
-                if (Func_080770c0(0x89a) != 0) {
-                    Func_0808a0f0(18, 0xf80000, 0xd00000);
-                    if (Func_080770c0(0x89b) == 0) {
-                        Func_0808a0f0(16, 0x1000000, 0xf00000);
-                        *(s32 *)(Func_0808a080(18) + 108) = 0x02008325;
-                        *(s32 *)(Func_0808a080(13) + 108) = 0x02008325;
-                        *(s32 *)(Func_0808a080(14) + 108) = 0x02008325;
-                        *(s32 *)(Func_0808a080(15) + 108) = 0x02008325;
-                        *(s32 *)(Func_0808a080(16) + 108) = 0x02008325;
+                if (Func_020082ce(0x89a) != 0) {
+                    Func_02008370(18, 0xf80000, 0xd00000);
+                    if (Func_020082e6(0x89b) == 0) {
+                        Func_02008388(16, 0x1000000, 0xf00000);
+                        *(s32 *)(Func_02008346(18) + 108) = 0x02008325;
+                        *(s32 *)(Func_02008350(13) + 108) = 0x02008325;
+                        *(s32 *)(Func_02008358(14) + 108) = 0x02008325;
+                        *(s32 *)(Func_02008360(15) + 108) = 0x02008325;
+                        *(s32 *)(Func_02008368(16) + 108) = 0x02008325;
                     }
                 }
             } else {
-                record = Func_0808a080(19);
+                record = Func_02008372(19);
                 record[85] = 0;
-                *(s32 *)(record + 24) = 0xcccc;
-                *(s32 *)(record + 60) = 0xc0000;
-                *(s32 *)(record + 28) = 0x8000;
                 *(s32 *)(record + 12) = 0xc0000;
-                record[89] |= 8;
+                *(s32 *)(record + 60) = 0xc0000;
+                *(s32 *)(record + 24) = 0xcccc;
+                *(s32 *)(record + 28) = 0x8000;
+                {
+                    u8 *flag = record + 89;
+                    u8 value = *flag;
+                    *flag = value | 8;
+                }
                 *(u16 *)(*(u8 **)(record + 80) + 30) = 0x8000;
-                Func_080091c0(14, 11, 1, 1, 14, 10);
+                {
+                    s32 stack_arg0 = 14;
+                    s32 stack_arg1 = 10;
+                    Func_0200834c(14, 11, 1, 1, stack_arg0, stack_arg1);
+                }
             }
-            Func_02000048(0x1300000, 0x180000, 0xe00000, 223);
-            Func_0808a100(10, 5);
-            Func_0808a100(11, 5);
-        } else if (sub == 3) {
-            Func_080770d0(0x12f);
-            if (Func_080770c0(0x895) == 0) {
-                Func_02002ad0();
-            } else if (Func_080770c0(0x8b2) == 0) {
-                Func_0808a0f0(8, 0, 0);
-                Func_0808a0f0(9, 0, 0);
+            Func_0200400a(0x1300000, 0x180000, 0xe00000, 223);
+            Func_0200841e(10, 5);
+            Func_02008426(11, 5);
+        } else if (Data_02000240[225] == 3) {
+            Func_020083aa(0x12f);
+            if (Func_020083a0(0x895) == 0) {
+                Func_02006abc();
+            } else if (Func_020083b0(0x8b2) == 0) {
+                Func_0200844e(8, 0, 0);
+                Func_02008458(9, 0, 0);
             }
         }
-        sub = Data_02000240[225];
         return 0;
     }
 
-    Func_0808a5e0(170);
-    Func_0808a080(9)[89] |= 16;
+    Func_02008578(170);
+    Func_0200841e_b(9)[89] |= 16;
     if (Data_02000240[225] == 3
-        && Func_080770c0(0xf14) != 0
-        && Func_080770c0(0x894) == 0) {
-        Func_080091c0(10, 84, 1, 1, 10, 24);
+        && Func_020083f4(0xf14) != 0
+        && Func_020083fe(0x894) == 0) {
+        {
+            s32 stack_arg0 = 10;
+            s32 stack_arg1 = 24;
+            Func_020083f6(10, 84, 1, 1, stack_arg0, stack_arg1);
+        }
+    }
+    if (Func_0200841c(0x892) != 0) {
+        {
+            s32 actor = 9;
+            Func_020084be(actor, 0x980000, 0x1880000);
+        }
+        Func_02008540(9, 0, 0);
+        {
+            s32 stack_arg0 = 10;
+            s32 stack_arg1 = 22;
+            Func_0200842c(10, 26, 1, 1, stack_arg0, stack_arg1);
+        }
     }
     return 0;
-    if (Func_080770c0(0x892) != 0) {
-        Func_0808a0f0(9, 0x980000, 0x1880000);
-        Func_0808a1b8(9, 0, 0);
-        Func_080091c0(10, 26, 1, 1, 10, 22);
-    }
 }

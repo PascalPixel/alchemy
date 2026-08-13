@@ -92,7 +92,7 @@ all 1,727 unfinished scopes down to the smallest owner.
 The index accounts for all 1,347,264 executable bytes: 897,406 target bytes are
 reviewed semantic C, and 446,330 bytes occur only in Exact C or audited
 permanent assembly scopes. Its rows never overlap. There are currently eight
-independent unfinished owner scopes of at least 5 KiB;
+independent unfinished owner scopes of at least 5 kB;
 the first ten rows are:
 
 | Rank | Namespace / owner | Scope |

@@ -135,14 +135,6 @@ typedef struct {
     ProjectionObject_080ea0d8 *objects[16];
 } ProjectionObjectState_080ea0d8;
 
-typedef struct {
-    s32 count;
-    s32 row;
-    s32 rowStep;
-    s32 centerX;
-    s32 centerY;
-} GeometryState_080ea0d8;
-
 s32 Func_080022ec();
 s32 Func_080022fc();
 s32 Func_0800231c();
@@ -190,7 +182,11 @@ void RunCinematicProjectionEffect(s32 *effect_context) {
     s32 *projectionStatePointer;
     u8 *sp1C;
     u32 sp20;
-    GeometryState_080ea0d8 geometry;
+    s32 geometryCount;
+    s32 geometryRow;
+    s32 geometryRowStep;
+    s32 geometryCenterX;
+    s32 geometryCenterY;
     void *sp38;
     s32 sp3C;
     s32 sp40;
@@ -775,12 +771,12 @@ loop_15:
     M2C_FIELD((void *)0x040000D4, u32 **, 0) = &sp8C;
     M2C_FIELD((void *)0x040000D4, s32 *, 4) = sp68;
     M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85001000;
-    geometry.centerY = 0x3C;
-    geometry.centerX = 0x2C;
+    geometryCenterY = 0x3C;
+    geometryCenterX = 0x2C;
     sp20 = 0;
-    geometry.row = 0;
-    geometry.rowStep = 6;
-    geometry.count = 2;
+    geometryRow = 0;
+    geometryRowStep = 6;
+    geometryCount = 2;
     M2C_FIELD(sp64, s32 *, 0x7780) = 2;
     M2C_FIELD(sp64, s32 *, 0x7784) = 0x4B;
     sp8C = sp20;
@@ -890,12 +886,12 @@ second_frame_loop:
         Func_080b5038(1, 0x3EU, 7);
     }
     if (frame == 0x96) {
-        geometry.centerY = 0x70;
-        geometry.centerX = 0x20;
-        geometry.row = 0;
+        geometryCenterY = 0x70;
+        geometryCenterX = 0x20;
+        geometryRow = 0;
         sp8C = 0;
-        geometry.count = 4;
-        geometry.rowStep = 8;
+        geometryCount = 4;
+        geometryRowStep = 8;
         M2C_FIELD((void *)0x040000D4, u32 **, 0) = &sp8C;
         M2C_FIELD((void *)0x040000D4, s32 *, 4) = (s32) sp64;
         M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85000E10;
@@ -1061,14 +1057,14 @@ second_frame_loop:
 
     } else {
         var_r7_20 = 0;
-        if (geometry.count == 0) {
+        if (geometryCount == 0) {
 
         } else {
 loop_181:
-            var_lr = geometry.row;
+            var_lr = geometryRow;
             var_sl = 0;
-            var_r8 = geometry.row;
-            if (geometry.row < 0) {
+            var_r8 = geometryRow;
+            if (geometryRow < 0) {
 
             } else {
 loop_184:
@@ -1078,18 +1074,18 @@ loop_184:
                     var_r3_7 += 7;
                 }
                 temp_r3_18 = var_r3_7 >> 3;
-                var_r0_5 = geometry.centerY + temp_r3_18;
-                var_r4_3 = geometry.centerY - temp_r3_18;
-                var_r3_8 = var_sl * geometry.rowStep;
+                var_r0_5 = geometryCenterY + temp_r3_18;
+                var_r4_3 = geometryCenterY - temp_r3_18;
+                var_r3_8 = var_sl * geometryRowStep;
                 if (var_r3_8 < 0) {
                     var_r3_8 += 7;
                 }
-                var_r2_3 = geometry.centerX + (var_r3_8 >> 3);
+                var_r2_3 = geometryCenterX + (var_r3_8 >> 3);
                 var_r3_9 = var_sl * 8;
                 if (var_r3_9 < 0) {
                     var_r3_9 += 7;
                 }
-                var_r1_5 = geometry.centerX - (var_r3_9 >> 3);
+                var_r1_5 = geometryCenterX - (var_r3_9 >> 3);
                 if (var_r1_5 < 0) {
                     var_r1_5 = 0;
                 }
@@ -1108,8 +1104,8 @@ loop_184:
                 sp64[temp_r1_4 + var_r0_5] = 0x14;
                 sp64[temp_r5_12 + var_r4_3] = 0x14;
                 sp64[temp_r1_4 + var_r4_3] = 0x14;
-                var_r0_6 = geometry.centerY + temp_r3_17 + 1;
-                var_r4_4 = (geometry.centerY - temp_r3_17) + 1;
+                var_r0_6 = geometryCenterY + temp_r3_17 + 1;
+                var_r4_4 = (geometryCenterY - temp_r3_17) + 1;
                 if (var_r4_4 < 0) {
                     var_r4_4 = 0;
                 }
@@ -1126,18 +1122,18 @@ loop_184:
                     var_r3_10 += 7;
                 }
                 temp_r3_20 = var_r3_10 >> 3;
-                var_r0_7 = geometry.centerY + temp_r3_20;
-                var_r4_5 = geometry.centerY - temp_r3_20;
-                var_r3_11 = var_lr * geometry.rowStep;
+                var_r0_7 = geometryCenterY + temp_r3_20;
+                var_r4_5 = geometryCenterY - temp_r3_20;
+                var_r3_11 = var_lr * geometryRowStep;
                 if (var_r3_11 < 0) {
                     var_r3_11 += 7;
                 }
-                var_r2_4 = geometry.centerX + (var_r3_11 >> 3);
+                var_r2_4 = geometryCenterX + (var_r3_11 >> 3);
                 var_r3_12 = var_lr * 8;
                 if (var_r3_12 < 0) {
                     var_r3_12 += 7;
                 }
-                var_r1_6 = geometry.centerX - (var_r3_12 >> 3);
+                var_r1_6 = geometryCenterX - (var_r3_12 >> 3);
                 if (var_r4_5 < 0) {
                     var_r4_5 = 0;
                 }
@@ -1156,8 +1152,8 @@ loop_184:
                 sp64[temp_r2_10 + var_r0_7] = 0x14;
                 sp64[temp_r6_11 + var_r4_5] = 0x14;
                 sp64[temp_r2_10 + var_r4_5] = 0x14;
-                var_r0_8 = geometry.centerY + temp_r3_19 + 1;
-                var_r4_6 = (geometry.centerY - temp_r3_19) + 1;
+                var_r0_8 = geometryCenterY + temp_r3_19 + 1;
+                var_r4_6 = (geometryCenterY - temp_r3_19) + 1;
                 if (var_r4_6 < 0) {
                     var_r4_6 = 0;
                 }
@@ -1180,8 +1176,8 @@ loop_184:
                 }
             }
             var_r7_20 += 1;
-            geometry.row += 1;
-            if (var_r7_20 != geometry.count) {
+            geometryRow += 1;
+            if (var_r7_20 != geometryCount) {
                 goto loop_181;
             }
         }

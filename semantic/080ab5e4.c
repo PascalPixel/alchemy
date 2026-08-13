@@ -1,5 +1,6 @@
 #include "types.h"
 
+#define RunTwoPaneSelectionMenu Func_080ab5e4
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 u16 Func_080022f4(u16, s32);
@@ -38,6 +39,11 @@ void Func_080ae714(void *, s32);
 void Func_080b50f8(void);
 void Func_080f9010(s32);
 
+struct MenuSlotState {
+    s8 availability[16];
+    s8 flags[8];
+};
+
 /*
  * Interactive two-pane selection/menu owner.
  *
@@ -45,7 +51,7 @@ void Func_080f9010(s32);
  * independent C ABI.  Calls to that address are expressed below as jumps back
  * to `redraw_entry`, which preserves the original stack-owned state.
  */
-s32 Func_080ab5e4(s32 arg0) {
+s32 RunTwoPaneSelectionMenu(s32 pane) {
     u32 sp8;
     s32 spC;
     s32 sp10;
@@ -65,7 +71,6 @@ s32 Func_080ab5e4(s32 arg0) {
     s32 sp48;
     void *sp4C;
     s32 sp50;
-    s8 sp54;
     s32 *var_r2_3;
     s32 temp_r0_2;
     s32 temp_r0_3;
@@ -158,11 +163,9 @@ s32 Func_080ab5e4(s32 arg0) {
     void *temp_r9;
     s32 var_r5;
     s32 dialog;
-    /* The eight live slot flags sit at the high end of the original frame;
-     * retain the surrounding dead stack cells while recovering that lifetime. */
-    s8 slotFlags[20];
+    struct MenuSlotState slotState;
 
-    sp50 = arg0;
+    sp50 = pane;
     temp_r3 = *(void **)0x03001F2C;
     sp4C = temp_r3;
     temp_r9 = FIELD(temp_r3, void **, 0x184);
@@ -172,14 +175,14 @@ s32 Func_080ab5e4(s32 arg0) {
     temp_r5 = FIELD(sp4C, u16 *, temp_r2 + 0x174);
     sp38 = (s32) (u16) Func_08002304((s32) temp_r5, 0xA);
     temp_r0 = Func_080022f4(temp_r5, 0xA);
-    sp1C = slotFlags;
+    sp1C = slotState.flags;
     sp30 = (s32) temp_r0;
     sp2C = 0;
     sp28 = 0;
     sp24 = 0;
     sp20 = 0;
     sp3C = -1;
-    var_r3 = slotFlags + 7;
+    var_r3 = slotState.flags + 7;
     do {
         *var_r3 = 0;
         var_r3 -= 1;
@@ -215,7 +218,7 @@ s32 Func_080ab5e4(s32 arg0) {
             } while (temp_r1 < (s32) FIELD(sp4C, u8 *, 0x219));
         }
     } else {
-        Func_080ae714(&sp54, (s32) FIELD(sp4C, s8 *, 0x1C));
+        Func_080ae714(slotState.availability, (s32) FIELD(sp4C, s8 *, 0x1C));
         sp44 = 0;
         if ((s32) FIELD(sp4C, u8 *, 0x219) > 0) {
             var_r0 = sp1C;
@@ -224,7 +227,7 @@ s32 Func_080ab5e4(s32 arg0) {
             do {
                 if (sp44 == FIELD(sp4C, s8 *, 0x1C)) {
                     *var_r2_2 = 7;
-                } else if ((u8) (&sp54)[sp44] != 0) {
+                } else if ((u8) slotState.availability[sp44] != 0) {
                     *var_r2_2 = 0;
                 } else {
                     *var_r2_2 = 3;

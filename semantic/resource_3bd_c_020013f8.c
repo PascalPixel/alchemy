@@ -103,7 +103,6 @@ void RunActorFormationScene(void) {
     s16 temp_r6;
     s32 temp_r3;
     s32 temp_r5;
-    void *temp_r5_2;
     s32 temp_sl;
     s32 temp_sl_2;
     s32 var_r5;
@@ -478,14 +477,17 @@ void RunActorFormationScene(void) {
     Func_0808a588(2, 0xA);
     Func_0808a090(0xA, ((s32)(u32)0x00016666), ((s32)(u32)0x0000b333));
     Func_0808a090(0xB, ((s32)(u32)0x0000b333), ((s32)(u32)0x00016666));
-    temp_r5_2 = (void *)(u32)0x0200c478;
-    Func_0808a098(0xA, temp_r5_2);
-    Func_0808a010(3);
-    Func_0808a580(0xB, -0x10, 0);
-    Func_0808a098(0xB, temp_r5_2);
-    Func_0808a0a0(0xA);
-    Func_0808a580(0xA, 0, -0x10);
-    Func_0808a0a0(0xB);
+    {
+        void *formationScript;
+        formationScript = (void *)(u32)0x0200c478;
+        Func_0808a098(0xA, formationScript);
+        Func_0808a010(3);
+        Func_0808a580(0xB, -0x10, 0);
+        Func_0808a098(0xB, formationScript);
+        Func_0808a0a0(0xA);
+        Func_0808a580(0xA, 0, -0x10);
+        Func_0808a0a0(0xB);
+    }
     Func_0808a1b8(0xA, 0, 0);
     Func_0808a1b8(0xB, 0, 0);
     Func_0808a0a8(0);

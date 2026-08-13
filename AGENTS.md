@@ -7,8 +7,8 @@ audited permanent-assembly category; semantic C is useful work but is not done.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow,
 [docs/TOOLS.md](docs/TOOLS.md) for commands, [STATUS.md](STATUS.md) for the live
-frontier, and [PROVENANCE.md](PROVENANCE.md) before handling evidence or build
-artifacts.
+frontier, [TARGETS.md](TARGETS.md) for the exhaustive largest-first owner queue,
+and [PROVENANCE.md](PROVENANCE.md) before handling evidence or build artifacts.
 
 ## Repository shape
 
@@ -212,6 +212,7 @@ script or a warning remembered by one contributor.
 | [SANCTUM.md](SANCTUM.md) | owners with both bounded search axes exhausted, plus the live one-axis queue |
 | [PROVENANCE.md](PROVENANCE.md) | clean-room evidence, publication boundary, and retired-tool recovery |
 | [STATUS.md](STATUS.md) | current measured frontier and next decisions |
+| [TARGETS.md](TARGETS.md) | generated non-overlapping target ranking, largest to smallest |
 
 Keep dated experiments in the history archive rather than in current guidance.
 Do not erase negative evidence simply to make documentation shorter.

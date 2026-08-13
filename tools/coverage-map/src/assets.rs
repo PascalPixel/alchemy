@@ -840,17 +840,13 @@ pub fn asset_maturity_tiles(tree: &SourceTree) -> Result<Vec<Tile>, String> {
 
 /// Main-image regions that will never become C by design.
 ///
-/// PORT NOTE (reproduced bug): the TypeScript builds this path as
-/// `join(dirname(dirname(dirname(import.meta.url))), "..", "out", "full",
-/// "asm", "manifest.json")`. Three `dirname` calls already reach the repository
-/// root, so the extra `".."` resolves to the repository's *parent*. The
-/// full-build manifest is therefore never found and the function always falls
-/// back to the explicit `non_c_ranges` evidence alone. The same off-by-one
-/// parent hop is reproduced here rather than fixed; see the crate report.
+/// The current full-build manifest provides detailed retained classifications
+/// when present. A closed semantic census is handled by the pipeline itself,
+/// so a clean tree without generated output still derives the same complete
+/// retained complement.
 pub fn retained_main_spans() -> Vec<Span> {
     let repo = root();
     let manifest_path = repo
-        .join("..")
         .join("out")
         .join("full")
         .join("asm")

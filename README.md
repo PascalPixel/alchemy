@@ -13,7 +13,7 @@ Alchemy is an unofficial clean-room reconstruction of the English release of
 *Golden Sun* for the Game Boy Advance. It documents and rebuilds the program,
 assets, and data needed to study the original game and its construction.
 
-## DONE: Currently 31%
+## DONE: Currently 33%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus the small amount of code intentionally retained as permanent assembly.
@@ -33,14 +33,14 @@ separate footer item.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=e0237be8)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=653b88f5)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,890 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=1262590c)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=8987da3d)
 
 ### Images and data
 

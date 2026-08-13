@@ -3387,3 +3387,29 @@ bytes long because rematerialization overshoots wherever a reference cache is
 still missing from the source. Alignment census, not byte diffs, is the tool
 that made this owner tractable: byte diffs count every shifted encoding, while
 the census names the register, the value, and the sites of each missing local.
+
+## Addendum (2026-08-13): the 373 cinematic giants each have one dominant axis
+
+Single-mode cohorts over the three remaining `resource_373` scripts, run on
+the d3d2481 fork, disagree about the lead mode — these are three different
+reconstruction problems, not one:
+
+- `373:34c8` (2,792 bytes): `-fthumb-no-constant-reuse` is dominant
+  (2,332 -> 2,024 differing bytes), the 391 pattern. The reference's
+  register census: r9 holds the camera record for the whole first half, one
+  shared zero clears the successive actors' +0x55 flags from sl
+  (sites 0x3594/0x35b6 after a fresh r7 zero at 0x350e), r8 caches the
+  shared +12 placement word 0x00a00000 from its first store at 0x3574, r5
+  caches the +8 word 0x01840000, and sl/r8/r9/fp are re-bound to new
+  values at 0x366a/0x3944/0x3950/0x396a/0x397e as the script changes phase.
+  A first witnessed-locals probe (zero55/lift/depth8) was alignment-neutral
+  because the surrounding register pressure is still un-modeled; model the
+  phase re-bindings before re-trying the locals.
+- `373:15dc` (5,240 bytes): `-mgrouped-dma-store` leads (4,172), with
+  pool-load scheduling next — a DMA/copy-heavy owner, not a constant-reuse
+  one.
+- `373:3fb0` (5,604 bytes): no mode moves it more than ~70 bytes; its
+  residual mixes cached-versus-fresh constants in both directions, so the
+  census must come first, as it did for 391.
+- The new `-fthumb-scene-call-sheets` matchers are shaped for the 391
+  sheets and do not fire on any of the three 373 scripts.

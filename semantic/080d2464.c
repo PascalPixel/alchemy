@@ -115,7 +115,9 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
     struct Particle_080d2464 *trails =
         (struct Particle_080d2464 *)(runtime + 0x7080);
     s32 direction = 1;
-    s32 origin[3] = { 0, 0, 0 };
+    /* The target leaves these undefined in mode 0; Spawn's mode-0 path
+     * does not consume their values. */
+    s32 origin[3];
     s32 beam_x = 212 << 16;
     s32 beam_y = (s32)0xffc40000;
     s32 frame;

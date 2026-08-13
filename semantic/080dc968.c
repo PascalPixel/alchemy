@@ -65,13 +65,8 @@ void Func_080e396c(s16, s32 *);
 void Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 
-static void Render_080dc968(
-    Renderer_080dc968 renderer, void *context, u8 *runtime,
-    s32 source, s32 x, s32 y, s32 width, s32 height)
-{
-    renderer(
-        context, runtime + source, x, y, width, height);
-}
+#define Render_080dc968(renderer, context, runtime, source, x, y, width, height) \
+    (renderer)((context), (runtime) + (source), (x), (y), (width), (height))
 
 void Func_080dc968(struct Scene_080dc968 *scene)
 {

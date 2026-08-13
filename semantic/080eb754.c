@@ -51,10 +51,11 @@ void Func_080f9010(s32);
 
 void Func_080eb754(struct Scene_080eb754 *scene)
 {
-    u8 *runtime = *(u8 **)0x03001eec;
-    void *render_context = *(void **)0x03001ef0;
-    u8 *graphics = *(u8 **)0x03001ef4;
-    u32 *callback_state = *(u32 **)0x03001f00;
+    u32 *header = (u32 *)0x03001ef0;
+    u8 *runtime = (u8 *)header[-1];
+    void *render_context = (void *)header[0];
+    u8 *graphics = (u8 *)header[1];
+    u32 *callback_state = (u32 *)header[4];
     Renderer_080eb754 renderer;
     struct Particle_080eb754 *primary =
         (struct Particle_080eb754 *)(runtime + 0x7080);
@@ -115,7 +116,7 @@ void Func_080eb754(struct Scene_080eb754 *scene)
     }
 
     Func_080ed408(46, 7, 7, 3, 3);
-    renderer = *(Renderer_080eb754 *)0x03001f08;
+    renderer = (Renderer_080eb754)header[6];
     *(volatile u16 *)0x0400000c = 0x0786;
 
     projection[0] = *(const s32 *)0x080edae0;

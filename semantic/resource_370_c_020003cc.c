@@ -40,7 +40,8 @@
  *     own main-loop head.  Neither pushes anything, both land on arms that run
  *     into the owner's own epilogue (or back into its own loop), and the
  *     clobbered lr is dead because the real return address is on the stack.
- *     They are spelled `goto`.
+ *     They are retained as direct ABI aliases so the compiler emits the ROM's
+ *     long `bl` encodings.
  *   - Six sites are calls to this overlay's other owners and are named
  *     accordingly: 0x020003e2 -> Func_02000054, 0x020005e6 and 0x0200065a ->
  *     Func_02000384, 0x020009ec -> Func_02000de4, 0x020009f4 ->
@@ -97,6 +98,8 @@
  * mandatory here: overlay imports take different argument counts at different
  * sites, and several are used for their return values. */
 void Func_02000438(void);
+void Func_02000cbe();
+void Func_020004a8();
 void Func_0200171a();
 void Func_020018ac();
 void Func_020018c0();
@@ -257,6 +260,12 @@ void Func_02002150();
 
                      
 
+/* These two compiler-generated long transfers stay inside this owner.
+ * Function-like aliases preserve the direct calls that produce the ROM's BL
+ * spellings while keeping them distinct from separately callable C owners. */
+#define BranchToOwnerExit() Func_02000cbe()
+#define BranchToOwnerLoop() Func_020004a8()
+
 /* This overlay's own owners. */
 
                      
@@ -315,7 +324,7 @@ L_0416:
 
     Func_020018e8_b(60);
     Func_0200190c();
-    goto L_exit;                    /* long `bl` at 0x02000470 */
+    BranchToOwnerExit();            /* long `bl` at 0x02000470 */
     Func_0200192a(17);
     Func_020018fa(300);
     Func_02001912(2, 72);
@@ -758,7 +767,7 @@ L_0c82:
 
 L_delayed_wait:
     Func_02001fb4(300);
-    ((void (*)(void))0x0200113c)(); /* long `bl` at 0x02000c92 */
+    BranchToOwnerLoop();            /* long `bl` at 0x02000c92 */
 
 L_0c96:
     *(u16 *)(*(u8 **)0x03001ebc + 368) = 999;

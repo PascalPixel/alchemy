@@ -163,10 +163,10 @@ s32 Func_080ab5e4(s32 arg0) {
     sp50 = arg0;
     temp_r3 = *(void **)0x03001F2C;
     sp4C = temp_r3;
+    temp_r9 = FIELD(temp_r3, void **, 0x184);
     temp_r2 = sp50 * 2;
     sp48 = 1;
     sp34 = temp_r2;
-    temp_r9 = FIELD(temp_r3, void **, 0x184);
     temp_r5 = FIELD(sp4C, u16 *, temp_r2 + 0x174);
     sp38 = (s32) (u16) Func_08002304((s32) temp_r5, 0xA);
     temp_r0 = Func_080022f4(temp_r5, 0xA);

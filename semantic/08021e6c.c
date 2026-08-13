@@ -12,7 +12,7 @@ void *Func_08004970(s32);
 void *Func_080162d4(s32, s32, s32, s32, s32);
 void *Func_08077000(s32);
 void Func_080b5130(s32, void *);
-void Func_08021d88(void *, s32);
+void Func_08021d88(void *, s32, s32);
 void Func_080041d8(void (*)(void), s32);
 void Func_0800307c(s32, s32, const void *);
 s32 Func_08003d28(const void *);
@@ -90,7 +90,8 @@ u32 Func_08021e6c(s32 alternate)
     U16_AT(state, 0x110) = (u16)(u32)tilemap;
     count = 0;
     while (count <= 5 && S32_AT(state, 0x1c8 + count * 4) != -1) {
-        Func_08021d88(state, count);
+        Func_08021d88(
+            state, count, S32_AT(state, 0x1c8 + count * 4));
         count++;
         U16_AT(state, 0x12c + (count - 1) * 28) = (u16)(u32)tilemap;
     }
@@ -213,7 +214,8 @@ u32 Func_08021e6c(s32 alternate)
                 (void *)U32_AT(state, 0x1ac), 0, 0);
             S32_AT(state, 0x1c4) = *selectedPointer;
             Func_08021d88(
-                state, S32_AT(state, 0x1c8 + *selectedPointer * 4));
+                state, *selectedPointer,
+                S32_AT(state, 0x1c8 + *selectedPointer * 4));
         }
 
         S32_AT(state, 0x1bc) = Func_08003d28((u8 *)state + 0x1b4);

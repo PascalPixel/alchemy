@@ -118,11 +118,6 @@ void Func_080e396c(s16, s32 *);
 void Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 
-static s32 HalfTowardZero_080d91dc(s32 value)
-{
-    return (value + ((u32)value >> 31)) >> 1;
-}
-
 void Func_080d91dc(
     struct Scene_080d91dc *scene, s32 mode)
 {
@@ -445,8 +440,8 @@ void Func_080d91dc(
                     frame < start + 104) {
                     s32 image =
                         Func_080022fc(
-                            HalfTowardZero_080d91dc(
-                                frame - start - 80),
+                            (frame - start - 80 +
+                             ((u32)(frame - start - 80) >> 31)) >> 1,
                             6);
                     const void *source =
                         runtime + 0x2b8e +

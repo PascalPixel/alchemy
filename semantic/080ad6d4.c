@@ -181,8 +181,6 @@ s32 Func_080ad6d4(s32 mode)
 
     page_index[0] = 0;
     page_index[1] = 0;
-    page_count[0] = 1;
-    page_count[1] = 1;
 
     /* Entry layout: reset the cursor object and the slot metric tables. */
     state->cursor_14->kind_05 = 13;
@@ -197,6 +195,9 @@ s32 Func_080ad6d4(s32 mode)
     Func_080030f8(1);
     Func_080a1114((void **)&state->window_10c);
     Func_080a10d0(&state->window_10c, 0, 0, 30, 5, 2);
+
+    page_count[0] = 1;
+    page_count[1] = 1;
 
     if (mode <= 1) {
         /* Two-member preview: each member tries the other's attribute

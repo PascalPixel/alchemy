@@ -447,10 +447,13 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                 struct Object_080d6970 *object =
                     Func_080b5098(scene->actor_ids[actor])->object;
                 s32 projected[3];
-                s32 source[3] = {object->x, object->y, object->z};
+                s32 source[3];
                 struct Particle_080d6970 *spark =
                     (struct Particle_080d6970 *)
                         (runtime + 0x3f46 + actor * 168);
+                source[0] = object->x;
+                source[1] = object->y;
+                source[2] = object->z;
                 Func_080e3944(source, projected);
                 for (i = 0; i < 6; i++, spark++) {
                     if (spark->age == 0) {
@@ -589,7 +592,6 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                 s32 delay = actor * 4;
                 s32 projected[3];
                 s32 source[3];
-
                 if (frame >= actor_start &&
                     frame < delay + 314) {
                     struct Object_080d6970 *object =

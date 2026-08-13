@@ -2,6 +2,60 @@
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
+/*
+ * The state pointer at 03001F04 is the same 0x61c-byte object initialized by
+ * Func_080f7460.  Its first five records are 0x1c bytes apart; the byte at
+ * +0x19 is the record's enabled flag, +0x1a is its signed spawn delay, and
+ * +0x1b is unused padding.  The typed prefix below records the recovered
+ * ownership without forcing the long OAM builder through guessed names.
+ */
+struct MenuRecord_080f6440 {
+    s32 position;
+    u8 choices[21];
+    u8 enabled;
+    s8 spawn_delay;
+    u8 padding;
+};
+
+struct OamEntry_080f6440 {
+    u32 attributes;
+    u32 tile;
+};
+
+struct MenuState_080f6440 {
+    struct MenuRecord_080f6440 records[5];
+    s32 mode;
+    s32 row;
+    s32 column;
+    s32 option_count;
+    u16 input_latched;
+    u16 input_pressed;
+    u16 display_flags;
+    u16 transition_timer;
+    u8 padding_a4[4];
+    s32 frame;
+    s32 icon_state[7];
+    struct OamEntry_080f6440 oam[128];
+    s32 primary_window;
+    s32 secondary_window;
+    u8 padding_4d0[0x148];
+    s32 presentation_state;
+};
+
+struct DmaChannel_080f6440 {
+    const void *source;
+    void *destination;
+    u32 control;
+};
+
+struct PresentationWorkspace_080f6440 {
+    u8 padding_0000[0x7780];
+    s32 effect_mode;
+    s32 effect_value;
+    u8 padding_7788[4];
+    s32 effect_timer;
+};
+
 s32 Func_080022fc(s32, s32);
 s32 Func_08002322(s32);
 u32 Func_08004458(void);
@@ -25,6 +79,9 @@ void Func_080f9010(s32);
  * continuations of this owner, not separately callable C functions.
  */
 void Func_080f6440(void) {
+    struct MenuState_080f6440 *state;
+    struct PresentationWorkspace_080f6440 *workspace;
+    struct DmaChannel_080f6440 *dma;
     s32 *spC;
     s32 dma_control;
     s32 dma_destination;
@@ -184,12 +241,15 @@ void Func_080f6440(void) {
     u8 *var_r5_3;
     s32 var_r6_11;
 
-    temp_r7 = *(u8 **)0x03001F04;
-    sp24 = *(u8 **)0x03001EEC;
+    state = *(struct MenuState_080f6440 **)0x03001F04;
+    temp_r7 = (u8 *)state;
+    workspace = *(struct PresentationWorkspace_080f6440 **)0x03001EEC;
+    sp24 = (u8 *)workspace;
     sp1C = 0x400;
     sp20 = 0;
     Func_08004458();
-    temp_dma = (void *)0x040000B0;
+    dma = (struct DmaChannel_080f6440 *)0x040000B0;
+    temp_dma = (void *)dma;
     M2C_FIELD(temp_dma, volatile u16 *, 0xA) =
         (u16) (0xC5FF & M2C_FIELD(temp_dma, volatile u16 *, 0xA));
     M2C_FIELD(temp_dma, volatile u16 *, 0xA) =
@@ -203,31 +263,31 @@ void Func_080f6440(void) {
     M2C_FIELD(temp_dma, s32 *, 8) = dma_control;
     temp_r4 = *(s32 *)0x03001AE8;
     temp_r4 = (s32) ((u32) temp_r4 << 16);
-    M2C_FIELD(temp_r7, u16 *, 0xA0) =
-        (u16) (((u32) temp_r4 >> 16) & ~M2C_FIELD(temp_r7, u16 *, 0x9C));
+    state->display_flags =
+        (u16) (((u32) temp_r4 >> 16) & ~state->input_latched);
     temp_r1 = *(s32 *)0x03001AE8 & 0xF0;
-    M2C_FIELD(temp_r7, u16 *, 0x9E) = temp_r1;
-    if ((0xF0 & M2C_FIELD(temp_r7, u16 *, 0x9C)) == temp_r1) {
-        var_r2 = M2C_FIELD(temp_r7, u16 *, 0xA2);
+    state->input_pressed = temp_r1;
+    if ((0xF0 & state->input_latched) == temp_r1) {
+        var_r2 = state->transition_timer;
         if ((u32) var_r2 > 0xCU) {
-            M2C_FIELD(temp_r7, u16 *, 0xA2) = 0xCU;
+            state->transition_timer = 0xCU;
             var_r2 = 0xC;
         }
         if (var_r2 == 0) {
-            M2C_FIELD(temp_r7, u16 *, 0xA2) = 4U;
+            state->transition_timer = 4U;
         } else {
-            M2C_FIELD(temp_r7, u16 *, 0xA2) = (u16) (var_r2 + 0xFFFF);
-            M2C_FIELD(temp_r7, u16 *, 0x9E) = (u16) sp20;
+            state->transition_timer = (u16) (var_r2 + 0xFFFF);
+            state->input_pressed = (u16) sp20;
         }
     } else {
-        M2C_FIELD(temp_r7, u16 *, 0xA2) = 0xCU;
+        state->transition_timer = 0xCU;
     }
-    M2C_FIELD(temp_r7, u16 *, 0x9C) = (u16) ((u32) temp_r4 >> 16);
+    state->input_latched = (u16) ((u32) temp_r4 >> 16);
     temp_r3 = *(u8 *)0x03001D20;
     if (temp_r3 != 0) {
         goto common_render_init;
     }
-    temp_r2 = (s32 *)(temp_r7 + 0x8C);
+    temp_r2 = &state->mode;
     spC = temp_r2;
     sp18 = temp_r2;
     temp_r5 = M2C_FIELD(temp_r7, s32 *, 0x8C);
@@ -269,7 +329,7 @@ void Func_080f6440(void) {
 
         } else {
             *sp18 = 1;
-            M2C_FIELD(sp24, s32 *, 0x778C) = 0;
+            workspace->effect_timer = 0;
             Func_08015018(M2C_FIELD(temp_r7, s32 *, 0x4C8), 1);
             var_r5 = 0;
             if (*var_r8 != 0) {
@@ -306,7 +366,7 @@ block_35:
         }
         if (1 & M2C_FIELD(temp_r7, u16 *, 0xA0)) {
             M2C_FIELD(temp_r7, s32 *, 0xA8) = 0;
-            M2C_FIELD(sp24, s32 *, 0x778C) = 0;
+            workspace->effect_timer = 0;
             var_r8_2 = (s32 *)(temp_r7 + 0x94);
             if (M2C_FIELD(temp_r7, s32 *, 0x94) == 4) {
                 M2C_FIELD(temp_r7, s32 *, 0x94) = 0;
@@ -422,8 +482,8 @@ block_65:
             M2C_FIELD(temp_r7, s32 *, 0xA8) = sp1C;
             M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F44;
             M2C_FIELD((void *)0x04000050, s16 *, 2) = 0x1010;
-            M2C_FIELD(sp24, s32 *, 0x7780) = temp_r5;
-            M2C_FIELD(sp24, s32 *, 0x7784) = 0x4B;
+            workspace->effect_mode = temp_r5;
+            workspace->effect_value = 0x4B;
         }
         var_fp = (s32 *)(temp_r7 + 0x98);
         var_r8_2 = (s32 *)(temp_r7 + 0x94);
@@ -485,8 +545,8 @@ block_172:
             Func_080f9010(0x132);
             var_r3_2 = M2C_FIELD(temp_r7, s32 *, 0xA8);
         }
-        if ((var_r3_2 > 0x38) && (((s32) M2C_FIELD(sp24, s32 *, 0x778C) > 0x1F) || (0x100 & M2C_FIELD(temp_r7, u16 *, 0xA0)))) {
-            M2C_FIELD(sp24, s32 *, 0x778C) = (s32) temp_r3;
+        if ((var_r3_2 > 0x38) && ((workspace->effect_timer > 0x1F) || (0x100 & M2C_FIELD(temp_r7, u16 *, 0xA0)))) {
+            workspace->effect_timer = (s32) temp_r3;
             var_r6_4 = 0;
             var_r5_3 = temp_r7 + 0x18;
 loop_103:
@@ -584,8 +644,8 @@ loop_103:
                 M2C_FIELD((void *)0x0200024C, s8 *, sp10 + 0x120) = -1;
                 *sp18 = 2;
                 Func_080f9010(0xAB);
-                M2C_FIELD(sp24, s32 *, 0x7780) = 1;
-                M2C_FIELD(sp24, s32 *, 0x7784) = 0;
+                workspace->effect_mode = 1;
+                workspace->effect_value = 0;
                 M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
                 Func_08015018(M2C_FIELD(temp_r7, s32 *, 0x4C8), 1);
                 var_r8_2 = (s32 *)(temp_r7 + 0x94);
@@ -617,8 +677,8 @@ loop_103:
                         M2C_FIELD(var_r2_8, u8 *, 2) = (u8) (M2C_FIELD(var_r2_8, u8 *, 2) | 0xFF);
                         var_r2_8 += 0x1C;
                     } while (var_r6_8 != 5);
-                    M2C_FIELD(sp24, s32 *, 0x7780) = 1;
-                    M2C_FIELD(sp24, s32 *, 0x7784) = 0;
+                    workspace->effect_mode = 1;
+                    workspace->effect_value = 0;
                     M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
                     temp_r0_9 = Func_08015010(0x12, 0, 0xC, 4, 6);
                     M2C_FIELD(temp_r7, s32 *, 0x4CC) = temp_r0_9;
@@ -650,7 +710,7 @@ block_161:
                 var_r1_3 += 0x1C;
             } while (var_r6_9 != 5);
         }
-        M2C_FIELD(sp24, s32 *, 0x778C) = (s32) (M2C_FIELD(sp24, s32 *, 0x778C) + 1);
+        workspace->effect_timer += 1;
         *sp14 += 1;
     }
 common_render_init:

@@ -128,7 +128,7 @@ inspecting status.
 |---|---|
 | `overlay_disasm`, `overlay_show`, `overlay_entry` | Inspect decoded owner bytes, entries, calls, and linked layout. |
 | `exact_reading_list`, `overlay_twins` | Find exact relatives and reusable owner families. |
-| `overlay_candidate_rank`, `overlay_call_order_check` | Rank candidate residuals and compare call order. |
+| `overlay_candidate_rank`, `overlay_call_order_check` | Rank candidate residuals and compare resolved call order, including human-readable aliases, suffixed ABI spellings, and site-relative overlay relocation symbols. |
 | `overlay_gaps`, `overlay_unindexed`, `overlay_inventory` | Find unowned, unindexed, or newly discoverable executable spans; `overlay_inventory` produces the diagnostic inventory file used by semantic compilation and overlay adoption. |
 | `overlay_mode_cohort` | Test a routed compiler-mode hypothesis across overlay owners. |
 | `overlay_certify` | Report owner-certification findings; `--check` turns findings into a failing gate. |

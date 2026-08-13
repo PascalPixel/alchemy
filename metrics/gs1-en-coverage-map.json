@@ -40,9 +40,9 @@
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 1703,
+    "semantic_sources": 1702,
     "main_semantic_census": "closed",
-    "semantic_superseded_bytes": 644,
+    "semantic_superseded_bytes": 0,
     "semantic_outside_extent_bytes": 25746,
     "semantic_unresolved": []
   },

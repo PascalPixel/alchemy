@@ -275,8 +275,8 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     target_fields = request->target_ids;
     target_id = target_fields[arg1];
     action_id = request->action_id;
-    sp30 = request->range_adjustments[arg1];
     range_index = request->range_index;
+    sp30 = request->range_adjustments[arg1];
     sp20 = request->target_modifiers[arg1];
     action = Func_08077080(action_id);
     actor_state = Func_08077008(actor_id);

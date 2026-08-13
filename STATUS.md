@@ -5,7 +5,7 @@ their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 376,432 / 1,347,264 executable bytes (**27.94%**).
+- **Exact C:** 377,422 / 1,347,336 executable bytes (**28.01%**).
 - **Public DONE:** **33%**, combining Exact C with audited permanent assembly.
 - The generated coverage maps and dashboard are the live per-overlay source of
   truth; this page records the current contributor frontier rather than a
@@ -89,8 +89,8 @@ machine-readable index in
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json) retains
 all 1,727 unfinished scopes down to the smallest owner.
 
-The index accounts for all 1,347,264 executable bytes: 891,846 target bytes are
-reviewed semantic C, and 451,890 bytes occur only in Exact C or audited
+The index accounts for all 1,347,336 executable bytes: 890,990 target bytes are
+reviewed semantic C, and 452,818 bytes occur only in Exact C or audited
 permanent assembly scopes. Its rows never overlap. There are currently seven
 independent unfinished owner scopes of at least 5 kB;
 the first ten rows are:
@@ -113,6 +113,28 @@ stale ranking. This owner-level list is the authoritative byte-accounted
 priority surface. The broader cuts below are secondary coordination views:
 they deliberately include exact witnesses or combine related owners, and may
 therefore overlap one another.
+
+The exact 6,700-byte `resource_391:0d3c` scene driver is a useful semantic,
+control-flow, and naming witness for these large sheets, but it is not a
+compiler-route template: its current exact build uses nine narrow routed
+behaviors. Transfer a proved source shape from it when the target agrees; do
+not copy that route stack into another owner. Large diffuse residuals stay on
+the source-reconstruction path, and any compiler experiment must hold the
+source fixed and test one evidenced behavior at a time.
+
+The 2026-08-13 large-owner checkpoint leaves the following measured source
+baselines. Main-image diagnostics report differing bytes; overlay diagnostics
+report differing halfwords, so the residual column states its unit explicitly.
+
+| Owner | Candidate / target | Current residual | Retained source evidence |
+|---|---:|---:|---|
+| `080bbb0c` | 6,340 / 6,332 | 5,648 bytes | Load `range_index` before the selected range adjustment. |
+| `resource_3bd:13f8` | 6,144 / 6,220 | 2,949 halfwords | Hardware-register values and the actor aggregate remain the useful baseline. |
+| `resource_380:27f8` | 5,916 / 5,932 | 2,678 halfwords | No additional source model survived this checkpoint. |
+| `080ea0d8` | 5,752 / 5,756 | 5,360 bytes | Preserve full-width RNG values and the five-field geometry state. |
+| `resource_3bf:3054` | 5,656 / 5,604 | 2,509 halfwords | Preserve the line-cursor aggregate. |
+| `resource_373:15dc` | 5,216 / 5,240 | 2,227 halfwords | No additional source model survived this checkpoint. |
+| `resource_381:1410` | 5,088 / 5,136 | 2,478 halfwords | Workspace/counter order is corrected; continue phase-by-phase from the humanized scene vocabulary. |
 
 ## Campaign cuts (secondary; may overlap)
 

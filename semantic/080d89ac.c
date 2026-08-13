@@ -11,7 +11,6 @@ struct Scene_080d89ac {
     u8 unknown_08[12];
     s32 object_count;
     s32 style;
-    s32 special;
     s32 layout;
     u8 unknown_20[4];
     s16 object_ids[1];

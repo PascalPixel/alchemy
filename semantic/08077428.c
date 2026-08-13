@@ -185,8 +185,9 @@ loop_27:
             temp_r2_3 = M2C_FIELD(values, void **, 0x58);
             temp_r3_3 = (var_r8 * 4) + 0x18;
             temp_r1_5 = *(temp_r2_3 + temp_r3_3);
+            temp_r3_5 = M2C_FIELD((temp_r2_3 + temp_r3_3), s8 *, 1);
             M2C_FIELD(values, s32 *, 0x48) = (s32) temp_r1_5;
-            M2C_FIELD(values, s32 *, 0x54) = (s32) M2C_FIELD((temp_r2_3 + temp_r3_3), s8 *, 1);
+            M2C_FIELD(values, s32 *, 0x54) = (s32) temp_r3_5;
             switch ((u32) temp_r1_5) {
             case 0:
                 break;
@@ -307,9 +308,10 @@ loop_62:
                 temp_r2_3 = M2C_FIELD(values, void **, 0x58);
                 temp_r3_3 = (var_r8 * 4) + 0x18;
                 temp_r1_5 = *(temp_r2_3 + temp_r3_3);
+                temp_r3_5 = M2C_FIELD((temp_r2_3 + temp_r3_3), s8 *, 1);
                 M2C_FIELD(values, s32 *, 0x48) = (s32) temp_r1_5;
                 temp_r1_8 = temp_r1_5 - 7;
-                M2C_FIELD(values, s32 *, 0x54) = (s32) M2C_FIELD((temp_r2_3 + temp_r3_3), s8 *, 1);
+                M2C_FIELD(values, s32 *, 0x54) = (s32) temp_r3_5;
                 switch (temp_r1_8) {
                 case 0:
                     M2C_FIELD(values, s32 *, 0) = Func_080022ec(M2C_FIELD(values, s32 *, 0x54) * M2C_FIELD(values, s32 *, 0), 0xA);

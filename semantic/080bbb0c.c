@@ -101,7 +101,9 @@ u32 Func_080c1fa8(s32);
  * direct message emission followed by `goto finalize`; they are not separate
  * ABI-callable functions.
  */
-s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
+#define ResolveBattleActionTarget Func_080bbb0c
+
+s32 ResolveBattleActionTarget(BattlePlan_080bbb0c *plan, s32 target_slot) {
     s16 queued_ids[7];
     BattleAction_080bbb0c *action;
     u8 *actor_state;
@@ -262,7 +264,7 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     u8 *var_r2;
     u8 *range_upper_cursor;
 
-    request = arg0;
+    request = plan;
     sp3C = 0;
     battle_state = *(void **)0x03001E74;
     sp34 = 0;
@@ -273,17 +275,17 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     target_snapshot = Func_08004938(0x14C);
     actor_id = (s32) request->actor_id;
     target_fields = request->target_ids;
-    target_id = target_fields[arg1];
+    target_id = target_fields[target_slot];
     action_id = request->action_id;
     range_index = request->range_index;
-    sp30 = request->range_adjustments[arg1];
-    sp20 = request->target_modifiers[arg1];
+    sp30 = request->range_adjustments[target_slot];
+    sp20 = request->target_modifiers[target_slot];
     action = Func_08077080(action_id);
     actor_state = Func_08077008(actor_id);
     target_state = Func_08077008((s32) target_id);
     ((WordCopy)0x03001388)(target_snapshot, target_state, 0x14C);
     if (action->range_rule != 0xFF) {
-        range_distance = request->range_distances[arg1];
+        range_distance = request->range_distances[target_slot];
         if (range_distance < 0) {
             range_distance = -range_distance;
         }
@@ -348,7 +350,7 @@ block_21:
     }
     sp18 = 0xF & action->element_flags;
     {
-        s32 outcome_index = arg1 + 0x38;
+        s32 outcome_index = target_slot + 0x38;
         var_r0_2 = ((s8 *)target_fields)[outcome_index];
     }
     action_allowed = var_r0_2 != -1

@@ -122,14 +122,11 @@ void Func_080d91dc(
     struct Scene_080d91dc *scene, s32 mode)
 {
     void **header = (void **)0x03001eec;
-    u8 *runtime = header[0];
-    void *render_context = header[1];
-    Transfer_080d91dc transfer =
-        (Transfer_080d91dc)0x03001388;
-    SquareRoot_080d91dc square_root =
-        (SquareRoot_080d91dc)0x030001d8;
+    u8 *runtime = *header++;
+    void *render_context = *header;
     struct Particle_080d91dc *particles =
         (struct Particle_080d91dc *)0x02010000;
+    Renderer_080d91dc renderers[2];
     void *effect_context;
     s32 layout_x = 0;
     s32 layout_y = 0;
@@ -137,6 +134,10 @@ void Func_080d91dc(
     s32 renderer_mode;
     s32 frame;
     s32 i;
+    s32 origin_position[3];
+    s32 projected_position[3];
+    s32 object_position[3];
+    s32 camera_position[3];
 
     *(struct Scene_080d91dc **)(runtime + 0x7828) =
         scene;
@@ -163,7 +164,7 @@ void Func_080d91dc(
 
     if (mode == 3 || mode == 5) {
         Func_080e0524(0xb0, runtime + 0x2b8e, 1, 1);
-        transfer(
+        ((Transfer_080d91dc)0x03001388)(
             (void *)0x05000000,
             Func_08002f40(mode == 3 ? 0x93 : 0x8d),
             0x80);
@@ -186,7 +187,7 @@ void Func_080d91dc(
             palette = 0x8f;
         else
             palette = 0xbb;
-        transfer(
+        ((Transfer_080d91dc)0x03001388)(
             (void *)0x05000000,
             Func_08002f40(palette),
             0x80);
@@ -211,11 +212,9 @@ void Func_080d91dc(
     }
 
     if (scene->object_count == 1) {
-        s32 position[3];
-
-        Func_080e396c(scene->object_ids[0], position);
+        Func_080e396c(scene->object_ids[0], camera_position);
         camera_offset =
-            Func_080022ec(-position[0] * 4, 5) + 64;
+            Func_080022ec(-camera_position[0] * 4, 5) + 64;
     } else if (scene->direction == 1) {
         camera_offset = -64;
     } else {
@@ -248,22 +247,19 @@ void Func_080d91dc(
                 layout_y +
                 ((Func_0800231c(angle) * 4) >> 16) -
                 24;
-            Renderer_080d91dc renderer;
-            Renderer_080d91dc renderer_47;
-
             if (frame > 32)
                 y += 64 - frame * 2;
             Func_080ed408(
                 46, 7, 7, renderer_mode ^ 4, 2);
-            renderer = *(Renderer_080d91dc *)0x03001f08;
+            renderers[0] = *(Renderer_080d91dc *)0x03001f08;
             Func_080ed408(
                 47, 7, 7, renderer_mode ^ 4, 3);
-            renderer_47 = *(Renderer_080d91dc *)0x03001f0c;
-            renderer(
+            renderers[1] = *(Renderer_080d91dc *)0x03001f0c;
+            renderers[0](
                 render_context, runtime + 0x65c0,
                 x, y, 40, 40);
             if (frame <= 3)
-                renderer_47(
+                renderers[1](
                     render_context, runtime + 0x65c0,
                     x, y, 40, 40);
             Func_08002dd8(47);
@@ -275,11 +271,7 @@ void Func_080d91dc(
             s16 object_id = scene->object_ids[i];
             struct Object_080d91dc *object =
                 Func_080b5098(object_id)->object;
-            s32 position[3];
-            s32 projected[3];
             s32 particle_index;
-            Renderer_080d91dc particle_renderer;
-
             if (frame == start + 80)
                 Func_080f9010(0xd4);
 
@@ -287,12 +279,12 @@ void Func_080d91dc(
             Func_080051d8(
                 effect_context,
                 (u8 *)effect_context + 12);
-            position[0] = object->x;
-            position[1] =
+            object_position[0] = object->x;
+            object_position[1] =
                 Func_080022ec(
                     Func_080b5070(object_id) * 2, 3);
-            position[2] = object->z;
-            Func_08004cb4(position);
+            object_position[2] = object->z;
+            Func_08004cb4(object_position);
 
             if (frame == start + 48)
                 Func_080d6888(
@@ -312,7 +304,7 @@ void Func_080d91dc(
                     46, 7, 7, renderer_mode, 2);
                 Func_080ed408(
                     47, 7, 7, renderer_mode, 3);
-                particle_renderer =
+                renderers[1] =
                     *(Renderer_080d91dc *)0x03001f0c;
 
                 for (particle_index = 0;
@@ -327,38 +319,39 @@ void Func_080d91dc(
                     if (frame <= start + particle_index)
                         continue;
 
-                    magnitude = square_root(
+                    magnitude =
+                        ((SquareRoot_080d91dc)0x030001d8)(
                         (particle->x >> 8) *
                             (particle->x >> 8) +
                         (particle->y >> 8) *
                             (particle->y >> 8) +
                         (particle->z >> 8) *
-                            (particle->z >> 8));
+                        (particle->z >> 8));
                     magnitude >>= 9;
                     if (magnitude == 0)
                         continue;
 
                     Func_080e3944(
-                        &particle->x, projected);
-                    projected[0] =
+                        &particle->x, projected_position);
+                    projected_position[0] =
                         Func_080022ec(
-                            projected[0] * 4, 5) +
-                        camera_offset;
-                    depth = projected[2];
+                            projected_position[0] * 4, 5) +
+                            camera_offset;
+                    depth = projected_position[2];
                     if (depth <= 313)
                         depth = 314;
                     if (depth > 634)
                         depth = 634;
-                    projected[2] = depth;
+                    projected_position[2] = depth;
                     radius =
                         6 - ((depth - 314) / 64);
-                    particle_renderer(
+                    renderers[1](
                         render_context,
                         runtime +
                             ((const u16 *)0x080ede5c)
                                 [radius - 1],
-                        projected[0] - radius,
-                        projected[1] - radius,
+                        projected_position[0] - radius,
+                        projected_position[1] - radius,
                         radius * 2, radius * 2);
 
                     particle->x -=
@@ -375,12 +368,12 @@ void Func_080d91dc(
                 Func_08002dd8(46);
             }
 
-            position[0] = 0;
-            position[1] = 0;
-            position[2] = 0;
-            Func_080e3944(position, projected);
-            projected[0] =
-                Func_080022ec(projected[0] * 4, 5) +
+            origin_position[0] = 0;
+            origin_position[1] = 0;
+            origin_position[2] = 0;
+            Func_080e3944(origin_position, projected_position);
+            projected_position[0] =
+                Func_080022ec(projected_position[0] * 4, 5) +
                 camera_offset;
 
             if (frame >= start + 52 &&
@@ -390,11 +383,13 @@ void Func_080d91dc(
 
                 Func_080ed408(
                     46, 7, 7, renderer_mode, 2);
-                (*(Renderer_080d91dc *)0x03001f08)(
+                renderers[0] =
+                    *(Renderer_080d91dc *)0x03001f08;
+                renderers[0](
                     render_context,
                     runtime + 0x60e + image * 0x640,
-                    projected[0] - 20,
-                    projected[1] - 20,
+                    projected_position[0] - 20,
+                    projected_position[1] - 20,
                     40, 40);
                 Func_08002dd8(46);
             }
@@ -408,12 +403,14 @@ void Func_080d91dc(
 
                     Func_080ed408(
                         46, 7, 7, renderer_mode, 2);
-                    (*(Renderer_080d91dc *)0x03001f08)(
+                    renderers[0] =
+                        *(Renderer_080d91dc *)0x03001f08;
+                    renderers[0](
                         render_context,
                         runtime + 0x2b8e +
                             image * 0x3c0,
-                        projected[0] - 12,
-                        projected[1] - 20,
+                        projected_position[0] - 12,
+                        projected_position[1] - 20,
                         24, 40);
                     Func_08002dd8(46);
                 }
@@ -426,12 +423,14 @@ void Func_080d91dc(
 
                     Func_080ed408(
                         46, 7, 7, renderer_mode, 2);
-                    (*(Renderer_080d91dc *)0x03001f08)(
+                    renderers[0] =
+                        *(Renderer_080d91dc *)0x03001f08;
+                    renderers[0](
                         render_context,
                         runtime + 0x2b8e +
                             image * 0x800,
-                        projected[0] - 16,
-                        projected[1] - 32,
+                        projected_position[0] - 16,
+                        projected_position[1] - 32,
                         32, 64);
                     Func_08002dd8(46);
                 }
@@ -446,27 +445,24 @@ void Func_080d91dc(
                     const void *source =
                         runtime + 0x2b8e +
                         image * 0x800;
-                    Renderer_080d91dc renderer;
-                    Renderer_080d91dc renderer_47;
-
                     Func_080ed408(
                         46, 7, 7, renderer_mode, 2);
-                    renderer =
+                    renderers[0] =
                         *(Renderer_080d91dc *)0x03001f08;
                     Func_080ed408(
                         47, 7, 7,
                         renderer_mode | 8, 2);
-                    renderer_47 =
+                    renderers[1] =
                         *(Renderer_080d91dc *)0x03001f0c;
-                    renderer(
+                    renderers[0](
                         render_context, source,
-                        projected[0] - 32,
-                        projected[1] - 24,
+                        projected_position[0] - 32,
+                        projected_position[1] - 24,
                         64, 32);
-                    renderer_47(
+                    renderers[1](
                         render_context, source,
-                        projected[0] - 32,
-                        projected[1] + 8,
+                        projected_position[0] - 32,
+                        projected_position[1] + 8,
                         64, 32);
                     Func_08002dd8(47);
                     Func_08002dd8(46);
@@ -479,12 +475,14 @@ void Func_080d91dc(
 
                 Func_080ed408(
                     46, 7, 7, renderer_mode, 3);
-                (*(Renderer_080d91dc *)0x03001f08)(
+                renderers[0] =
+                    *(Renderer_080d91dc *)0x03001f08;
+                renderers[0](
                     render_context,
                     runtime + 0x2b8e +
                         image * 0x640,
-                    projected[0] - 20,
-                    projected[1] - 20,
+                    projected_position[0] - 20,
+                    projected_position[1] - 20,
                     40, 40);
                 Func_08002dd8(46);
             }

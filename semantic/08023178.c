@@ -38,8 +38,8 @@ typedef struct {
 } MenuWindow_08023178;
 
 typedef struct {
-    s8 cursor[3];
-    u8 pad03;
+    u8 pad00;
+    s8 cursor[4];
     s32 displayed_value;
     s32 previous_value;
     s32 mode;
@@ -97,19 +97,23 @@ void Func_080f9010(s32);
  * the initial selection is the entry equal to `member`.  The routine owns both
  * windows and all twelve temporary sprites until the modal loop terminates.
  */
-s32 Func_08023178(u16 *members, s32 member_count, u32 member)
+#define ShowPartyMemberDetails Func_08023178
+
+s32 ShowPartyMemberDetails(u16 *members, s32 member_count, u32 member)
 {
     MenuSprite_08023178 cursor_sprite;
     MenuSprite_08023178 row_sprites[11];
-    void *row_tiles[11];
     s8 row_kinds[11];
-    MenuState_08023178 state;
+    void *row_tiles[11];
+    MenuSprite_08023178 row_sprite_9;
+    MenuSprite_08023178 row_sprite_10;
     void *actor;
     void *actor_snapshot;
     void *cursor_tiles;
     void *row_tile;
     MenuWindow_08023178 *main_window;
     MenuWindow_08023178 *key_window;
+    MenuState_08023178 state;
     u32 input;
     s32 selected_list_index = 0;
     s32 row_count = 0;
@@ -117,10 +121,11 @@ s32 Func_08023178(u16 *members, s32 member_count, u32 member)
     s32 running = 1;
     s32 i;
 
+    state.pad00 = 0;
     state.cursor[0] = 0;
     state.cursor[1] = 0;
     state.cursor[2] = 0;
-    state.pad03 = 0;
+    state.cursor[3] = 0;
     state.displayed_value = 0;
     state.previous_value = 0;
     state.mode = 0;
@@ -286,26 +291,26 @@ refresh:
     state.icon_y *= 8;
     actor = Func_080b5098(member);
 
-    row_sprites[10].allocation = WORD_AT(WORD_AT(actor, 0), 80);
-    row_sprites[10].attr0 = 0x0400;
-    row_sprites[10].attr1 = 0x0470;
-    row_sprites[10].attr2 =
-        HALF_AT((void *)row_sprites[10].allocation, 8) & 0x03ff;
-    Func_08003dec(&row_sprites[10], 240);
+    row_sprite_10.allocation = WORD_AT(WORD_AT(actor, 0), 80);
+    row_sprite_10.attr0 = 0x0400;
+    row_sprite_10.attr1 = 0x0470;
+    row_sprite_10.attr2 =
+        HALF_AT((void *)row_sprite_10.allocation, 8) & 0x03ff;
+    Func_08003dec(&row_sprite_10, 240);
 
-    row_sprites[9].allocation = (u32)row_tile;
-    row_sprites[9].attr0 = 0x400;
-    row_sprites[9].attr1 =
+    row_sprite_9.allocation = (u32)row_tile;
+    row_sprite_9.attr0 = 0x400;
+    row_sprite_9.attr1 =
         (u16)((main_window->x * 8 + state.icon_x + 16 -
                ((WORD_GLOBAL(0x03001e40) & 4) >> 2)) & 0x1ff);
-    row_sprites[9].attr2 =
+    row_sprite_9.attr2 =
         (u16)(Func_080040d0(row_tile, 0x080310a4) & 0x03ff);
-    BYTE_AT(&row_sprites[9], 4) =
+    BYTE_AT(&row_sprite_9, 4) =
         (u8)(main_window->y * 8 + state.icon_y + 16 -
              ((WORD_GLOBAL(0x03001e40) & 4) >> 2));
-    BYTE_AT(&row_sprites[9], 7) =
-        (BYTE_AT(&row_sprites[9], 7) & 0xc0) | 0x10;
-    Func_08003dec(&row_sprites[9], 241);
+    BYTE_AT(&row_sprite_9, 7) =
+        (BYTE_AT(&row_sprite_9, 7) & 0xc0) | 0x10;
+    Func_08003dec(&row_sprite_9, 241);
 
     if (redraw != 0) {
         u8 *data = Func_08077008(member);

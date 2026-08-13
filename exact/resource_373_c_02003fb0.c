@@ -3,6 +3,24 @@
 /*
  * resource_373 owner at 0x02003fb0, 5,604 bytes.
  *
+ * This is the Vale roof-repair scene outside Isaac's home, three years after
+ * the Mt Aleph disaster and shortly before Isaac, Garet and Jenna leave with
+ * Kraden.  The local English message archive proves the cast and context:
+ * 0x0f03 is Dora's "Good job, Isaac", 0x0f0a mentions Isaac and Garet
+ * studying Psynergy, 0x0f0e names Kyle's death, and 0x0f27 calls Isaac as
+ * stubborn as his father.  The cast mapping used while reading the script is:
+ *
+ *   scene slot 0   Isaac       proved by the addressed dialogue and response
+ *   scene slot 21  Dora        proved by her dialogue and question poses
+ *   scene slot 1   Jenna       inferred from the paired entrance choreography
+ *   scene slot 5   Garet       inferred from the paired entrance choreography
+ *   scene slots 23-25          the three stepped roof-patch props
+ *
+ * The message archive separately identifies actor-name placeholders 1, 2 and
+ * 6 as Isaac, Garet and Jenna.  Do not treat that numbering as the scene-slot
+ * numbering.  Keep the Jenna/Garet scene-slot assignments marked as inferred
+ * until an actor setup table independently distinguishes them.
+ *
  * Complete owner: `push {r5, r6, r7, lr}` plus the r9/sl/fp and r8 saves and a
  * 28-byte local frame at 0x02003fb0, through the single epilogue at
  * 0x0200556a-0x0200557a, followed by its final literal pool at
@@ -606,12 +624,15 @@ void Func_0200b52c();
 
 void Func_02003fb0(void)
 {
-    u8 *camera;             /* fp - the record for actor 0 */
+    u8 *isaac;              /* fp - scene slot 0 */
     u8 *actor;              /* r7 - whichever record is in hand */
-    u32 frame;
-    s32 zero = 0;
+    u8 actor_zero;
+    s32 facing_c000;
+    s32 facing_4000;
+    s32 roof_x;
+    s32 roof_y;
 
-    camera = Func_02009fa8(0);
+    isaac = Func_02009fa8(0);
 
     Func_02009f86();
 
@@ -629,40 +650,54 @@ void Func_02003fb0(void)
     Func_02009f5e(0, 0x67, 0x52, 0x2a, 1, 1);
 
     Func_0200a074(21, 0x01880000, 0x03800000);
-    *(u16 *)(Func_0200a022(21) + 6) = 0xc000;
+    {
+        u8 *dora = Func_0200a022(21);
+        facing_c000 = 0xc000;
+        actor_zero = 0;
+        *(u16 *)(dora + 6) = facing_c000;
+    }
 
     Func_0200a096(1, 0x012a0000, 0x02e00000);
-    *(u16 *)(Func_0200a044(1) + 6) = 0x4000;
+    {
+        u8 *jenna = Func_0200a044(1); /* inferred from this scene's cast */
+        facing_4000 = 0x4000;
+        *(u16 *)(jenna + 6) = facing_4000;
+    }
 
     Func_0200a0b4(5, 0x012a0000, 0x02f80000);
     /* Split by the interior pool at 0x02004082. */
-    *(u16 *)(Func_0200a062(5) + 6) = 0x4000;
+    {
+        u8 *garet = Func_0200a062(5); /* inferred from this scene's cast */
+        *(u16 *)(garet + 6) = facing_4000;
+    }
 
     Func_0200a0d6(0, 11);
     Func_0200a08e(0, Data_0200e590);
-    /* Three actors at the same X/Y with stepped Z (0x348, 0x34c, 0x350). */
+    /* Three roof patches at the same X/Y with stepped Z (0x348, 0x34c, 0x350). */
+    roof_x = 0x01840000;
+    roof_y = 0x00a00000;
     actor = Func_0200a084(23);
-    actor[0x55] = (u8)zero;
+    actor[0x55] = actor_zero;
     *(s32 *)(actor + 16) = 0x03480000;
-    *(s32 *)(actor + 8) = 0x01840000;
-    *(s32 *)(actor + 12) = 0x00a00000;
+    *(s32 *)(actor + 8) = roof_x;
+    *(s32 *)(actor + 12) = roof_y;
     Func_0200a00e(actor, 0);
 
     actor = Func_0200a0ac(24);
-    actor[0x55] = (u8)zero;
+    actor[0x55] = actor_zero;
     *(s32 *)(actor + 16) = 0x034c0000;
-    *(s32 *)(actor + 8) = 0x01840000;
-    *(s32 *)(actor + 12) = 0x00a00000;
+    *(s32 *)(actor + 8) = roof_x;
+    *(s32 *)(actor + 12) = roof_y;
     Func_0200a02e(actor, 0);
 
     actor = Func_0200a0cc(25);
-    actor[0x55] = (u8)zero;
+    actor[0x55] = actor_zero;
     *(s32 *)(actor + 16) = 0x03500000;
-    *(s32 *)(actor + 8) = 0x01840000;
-    *(s32 *)(actor + 12) = 0x00a00000;
+    *(s32 *)(actor + 8) = roof_x;
+    *(s32 *)(actor + 12) = roof_y;
     Func_0200a04e(actor, 0);
 
-    Func_0200a1fa()[0x55] = (u8)zero;
+    Func_0200a1fa()[0x55] = (u8)actor_zero;
 
     Func_02009f9e(1);
     Func_0200a202(0x017f0000, 0x00a00000, 0x036d0000, 0);
@@ -672,15 +707,15 @@ void Func_02003fb0(void)
     *(s32 *)(RESOURCE_373_SCENE + 0x1c8) = 32;
 
     Func_0200a23e();
-    Func_0200a132(5, 0x8000, 0x4000);
-    Func_0200a13e(1, 0x8000, 0x4000);
+    Func_0200a132(5, 0x8000, facing_4000);
+    Func_0200a13e(1, 0x8000, facing_4000);
     Func_0200a14e(5, Data_0200e614);
     Func_0200a156(1, Data_0200e5cc);
     Func_0200a11c(40);
     Func_0200a164(0, 1);
 
-    *(s32 *)(camera + 24) = 0x10000;
-    *(s32 *)(camera + 28) = 0x10000;
+    *(s32 *)(isaac + 24) = 0x10000;
+    *(s32 *)(isaac + 28) = 0x10000;
 
     Func_0200a232(0, 0xb000, 40);
     Func_0200a1da(0, 3);
@@ -688,19 +723,22 @@ void Func_02003fb0(void)
     Func_0200a18a(0, 0x4ccc, 0x2666);
     Func_0200a1d0(0, 0x190, 0x348);
     Func_0200a166(10);
-    Func_0200a268(0, 0xc000, 30);
+    Func_0200a268(0, facing_c000, 30);
     Func_0200a228(0, 1);
     Func_0200a17e(20);
     Func_0200a282(0, 0x8000, 40);
 
     Func_0200976e();
 
-    /* ---- beat 1: actor 23 ---- */
+    /* ---- roof-repair beat 1: patch 1 ---- */
     Func_0200a226(0, 17);
     Func_0200a080(CALLBACK_02005a08, 0xc80);
-    for (frame = 0; frame <= 39; frame++) {
-        Func_02009e14(camera);
-        Func_0200a088(1);
+    {
+        u32 frame;
+        for (frame = 0; frame <= 39; frame++) {
+            Func_02009e14(isaac);
+            Func_0200a088(1);
+        }
     }
     Func_0200a2c4(0, 1);
     Func_0200a0a8(CALLBACK_020055c0, 0xc80);
@@ -711,8 +749,10 @@ void Func_02003fb0(void)
     Func_0200a264(23, 0x190, 0x33a);
     Func_0200a20a(20);
 
-    actor = Func_0200a240(0) + 0x23;
-    *actor = (u8)(*actor | 1);
+    {
+        u8 *flags = Func_0200a240(0);
+        flags[0x23] = (u8)(flags[0x23] | 1);
+    }
 
     Func_0200a2b2(0, 1);
     Func_0200a114(CALLBACK_02005a08);
@@ -727,11 +767,11 @@ void Func_02003fb0(void)
     Func_0200a2ae(0, Data_0200e590);
     Func_0200a274(120);
 
-    /* ---- beat 2: actor 24 ---- */
+    /* ---- roof-repair beat 2: patch 2 ---- */
     Func_0200a208(7, 0x66, 0x54, 0x29, 2, 1);
     Func_0200a2d0(0, 1);
-    *(s32 *)(camera + 24) = 0x10000;
-    *(s32 *)(camera + 28) = 0x10000;
+    *(s32 *)(isaac + 24) = 0x10000;
+    *(s32 *)(isaac + 28) = 0x10000;
     Func_0200a332(0, 1);
     Func_0200a2a8(40);
     Func_0200a348(0, 3);
@@ -740,9 +780,12 @@ void Func_02003fb0(void)
     Func_0200a3c8(0, 0, 20);
     Func_0200a368(0, 17);
     Func_0200a1c2(CALLBACK_02005a08, 0xc80);
-    for (frame = 0; frame <= 39; frame++) {
-        Func_02009f56(camera);
-        Func_0200a1ca(1);
+    {
+        u32 frame;
+        for (frame = 0; frame <= 39; frame++) {
+            Func_02009f56(isaac);
+            Func_0200a1ca(1);
+        }
     }
     Func_0200a406(0, 1);
     Func_0200a1ea(CALLBACK_020055c0, 0xc80);
@@ -753,8 +796,10 @@ void Func_02003fb0(void)
     Func_0200a3a6(24, 0x179, 0x33c);
     Func_0200a34c(20);
 
-    actor = Func_0200a382(0) + 0x23;
-    *actor = (u8)(*actor | 1);
+    {
+        u8 *flags = Func_0200a382(0);
+        flags[0x23] = (u8)(flags[0x23] | 1);
+    }
 
     Func_0200a3f4(0, 1);
     Func_0200a256(CALLBACK_02005a08);
@@ -769,11 +814,11 @@ void Func_02003fb0(void)
     Func_0200a3f0(0, Data_0200e590);
     Func_0200a3b6(120);
 
-    /* ---- beat 3: actor 25 ---- */
+    /* ---- roof-repair beat 3: patch 3 ---- */
     Func_0200a348(6, 0x66, 0x53, 0x29, 1, 1);
     Func_0200a410(0, 1);
-    *(s32 *)(camera + 24) = 0x10000;
-    *(s32 *)(camera + 28) = 0x10000;
+    *(s32 *)(isaac + 24) = 0x10000;
+    *(s32 *)(isaac + 28) = 0x10000;
     Func_0200a472(0, 1);
     Func_0200a3e8(40);
     Func_0200a488(0, 3);
@@ -784,9 +829,12 @@ void Func_02003fb0(void)
     Func_0200a4b8(0, 17);
     Func_0200a312(CALLBACK_02005a08, 0xc80);
     /* Split by the interior pool at 0x02004484. */
-    for (frame = 0; frame <= 39; frame++) {
-        Func_0200a0f0(camera);
-        Func_0200a364(1);
+    {
+        u32 frame;
+        for (frame = 0; frame <= 39; frame++) {
+            Func_0200a0f0(isaac);
+            Func_0200a364(1);
+        }
     }
     Func_0200a5a0(0, 1);
     Func_0200a384(CALLBACK_020055c0, 0xc80);
@@ -797,8 +845,10 @@ void Func_02003fb0(void)
     Func_0200a540(25, 0x168, 0x345);
     Func_0200a4e6(20);
 
-    actor = Func_0200a51c(0) + 0x23;
-    *actor = (u8)(*actor | 1);
+    {
+        u8 *flags = Func_0200a51c(0);
+        flags[0x23] = (u8)(flags[0x23] | 1);
+    }
 
     Func_0200a58e(0, 1);
     Func_0200a3ec(CALLBACK_02005a08);
@@ -815,13 +865,13 @@ void Func_02003fb0(void)
 
     Func_02009b40();
 
-    /* ---- the questioning sequence ---- */
+    /* ---- Dora questions Isaac after the roof repair ---- */
     Func_0200a4e2(5, 0x67, 0x52, 0x2a, 1, 1);
     Func_0200a5aa(0, 1);
-    *(s32 *)(camera + 24) = 0x10000;
-    *(s32 *)(camera + 28) = 0x10000;
+    *(s32 *)(isaac + 24) = 0x10000;
+    *(s32 *)(isaac + 28) = 0x10000;
     Func_0200a61e(21, 2, 20);
-    Func_0200a654(0xf03);
+    Func_0200a654(0xf03); /* Dora: "Good job, Isaac." */
     Func_0200a676(21, 0, 10);
     Func_0200a692(0, 0x1000, 10);
     Func_020078a2(21, 5, 6, 0);
@@ -850,15 +900,18 @@ void Func_02003fb0(void)
 
     if (Func_0200a6a6(0, 0) == 0) {
         Func_0200a722(21, 3);
-        RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
+        {
+            u16 *counter = (u16 *)(RESOURCE_373_SCENE + 0x1d8);
+            *counter = *counter + 1;
+        }
     } else {
         Func_0200a76e(21, 4);
     }
 
     Func_0200a7c8(21, 0, 20);
-    Func_0200a7b6(0xf0a);
-    Func_0200a6f8(10);
+    Func_0200a7b6(0xf0a); /* Dora: Isaac and Garet have studied Psynergy. */
     Func_0200a762(21, 0x182, 0x349);
+    Func_0200a6f8(10);
     Func_0200a7fc(21, 0xd000, 60);
     Func_0200a7bc(21, 2);
     Func_0200a7fe(21, 0, 20);
@@ -866,13 +919,14 @@ void Func_02003fb0(void)
     Func_0200a802(21, 0);
 
     if (Func_0200a75a(0, 0) == 1) {
-        RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
+        u16 *counter = (u16 *)(RESOURCE_373_SCENE + 0x1d8);
+        *counter = *counter + 1;
     }
 
     Func_0200a838(21, 0, 20);
     Func_0200a854(21, 0xd000, 60);
     Func_0200a814(21, 2);
-    Func_0200a83a(0xf0e);
+    Func_0200a83a(0xf0e); /* Dora recalls Kyle's death. */
     Func_0200a85c(21, 0, 20);
     Func_0200a7f0(21, 0x182, 0x339);
     Func_0200a786(10);
@@ -894,6 +948,7 @@ void Func_02003fb0(void)
     Func_0200a8b2(0, 3);
     Func_0200a8ba(21, 3);
     Func_0200a914(21, 0, 10);
+    /* ---- Garet and Jenna arrive and join Isaac and Dora ---- */
     Func_0200a95c(0x6666, 0xccc);
     Func_0200a974(0x01790000, 0x00a00000, 0x035c0000, 1);
     Func_0200a88a(5, 0x10000, 0x8000);
@@ -925,14 +980,20 @@ void Func_02003fb0(void)
     Func_0200a99a(1, 0x4ccc, 0x2666);
     Func_0200a9d6(1, 0x188, 0x34b);
 
-    actor = Func_0200a9a4_b(5) + 0x5a;
-    *actor = (u8)(*actor & 0xfe);
+    {
+        s32 mask = 0xfe;
+        {
+            u8 *flags = Func_0200a9a4_b(5);
+            flags[0x5a] = (u8)(flags[0x5a] & mask);
+        }
 
     Func_0200a9fc(5, 0x198, 0x34b);
     Func_0200a992(1);
 
-    actor = Func_0200a9c8(5) + 0x5a;
-    *actor = (u8)(*actor | 1);
+    {
+        u8 *flags = Func_0200a9c8(5);
+        flags[0x5a] = (u8)(flags[0x5a] | 1);
+    }
 
     Func_0200aaa6(5, 0x8000, 0);
     Func_0200aa34(1);
@@ -1008,39 +1069,48 @@ void Func_02003fb0(void)
     Func_0200acfe(21, 4);
     Func_0200ad46(21, 0);
 
-    if (Func_0200aca0(0, 0) == 1) {
-        RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
+        {
+            s32 branch_zero = 0;
+
+            if (Func_0200aca0(0, 0) == 1) {
+                u16 *counter = (u16 *)(RESOURCE_373_SCENE + 0x1d8);
+                *counter = *counter + 1;
+            }
+
+            Func_0200ad7e(21, 0, 20);
+            Func_0200ad6c(0xf27); /* Dora: Isaac is as stubborn as his father. */
+            Func_0200adb6(21, 0x103, 0);
+            Func_0200ad5e(21, 3);
+            Func_0200ada0(21, 0, 10);
+            Func_0200ad62(21, 4, 0);
+            Func_0200ad7a(21, 3);
+            Func_0200ad62(21, 7);
+            Func_0200acd8(5);
+
+            /* Eleven arguments: four in registers and seven on the stack. */
+            Func_0200adfa(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, branch_zero);
+
+            Func_0200ae98(0xa1);
+
+            actor = Func_0200ad36_b(21); /* Dora */
+            /* The +0x50 handle's +0x26 byte. */
+            *(*(u8 **)(actor + 0x50) + 0x26) = branch_zero;
+            actor[0x5a] = (u8)(actor[0x5a] & mask);
+        }
     }
-
-    Func_0200ad7e(21, 0, 20);
-    Func_0200ad6c(0xf27);
-    Func_0200adb6(21, 0x103, 0);
-    Func_0200ad5e(21, 3);
-    Func_0200ada0(21, 0, 10);
-    Func_0200ad62(21, 4, 0);
-    Func_0200ad7a(21, 3);
-    Func_0200ad62(21, 7);
-    Func_0200acd8(5);
-
-    /* Eleven arguments: four in registers and seven on the stack. */
-    Func_0200adfa(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, 0);
-
-    Func_0200ae98(0xa1);
-
-    actor = Func_0200ad36_b(21);
-    /* The +0x50 handle's +0x26 byte. */
-    *(*(u8 **)(actor + 0x50) + 0x26) = 0;
-    actor[0x5a] = (u8)(actor[0x5a] & 0xfe);
 
     Func_0200ad60(21, 0x30000, 0x18000);
     Func_0200ada4(21, 0x16c, 0x32f);
     Func_0200ad3a(4);
 
     /* Four frames of a constant slide. */
-    for (frame = 0; frame != 4; frame++) {
-        *(s32 *)(actor + 16) = *(s32 *)(actor + 16) + 0x18000;
-        *(s32 *)(actor + 28) = *(s32 *)(actor + 28) + (s32)0xffffe667;
-        Func_0200ad56(1);
+    {
+        u32 frame;
+        for (frame = 0; frame != 4; frame++) {
+            *(s32 *)(actor + 16) = *(s32 *)(actor + 16) + 0x18000;
+            *(s32 *)(actor + 28) = *(s32 *)(actor + 28) + (s32)0xffffe667;
+            Func_0200ad56(1);
+        }
     }
 
     Func_0200adec(21, 0, 0);
@@ -1069,9 +1139,12 @@ void Func_02003fb0(void)
     Func_0200aed4(21, 0x016c0000, 0x032b0000);
 
     /* Five frames of the reverse slide. */
-    for (frame = 0; frame != 5; frame++) {
-        *(s32 *)(actor + 28) = *(s32 *)(actor + 28) + 0x1999;
-        Func_0200ae5e(1);
+    {
+        u32 frame;
+        for (frame = 0; frame != 5; frame++) {
+            *(s32 *)(actor + 28) = *(s32 *)(actor + 28) + 0x1999;
+            Func_0200ae5e(1);
+        }
     }
 
     Func_0200ae68(60);
@@ -1117,7 +1190,8 @@ void Func_02003fb0(void)
     Func_0200b09a(1, 1);
     Func_0200b050(1, 0x40000, 0x20000);
 
-    actor = Func_0200b04e(1);
+    /* Dora relents; Jenna and Garet prepare to leave with Isaac. */
+    actor = Func_0200b04e(1); /* Jenna, inferred */
     actor[0x5a] = (u8)(actor[0x5a] & 0xfe);
 
     Func_0200b08c(1, 0x193, 0x33b);
@@ -1132,8 +1206,8 @@ void Func_02003fb0(void)
     Func_0200b12e(1, 2, 5);
     Func_0200b032(Func_0200b0c4(1), 0);
     {
-        s32 frames = 2;
         s32 delay = 1;
+        s32 frames = 2;
         Func_0200b02e(2, 0x66, 0x54, 0x29, frames, delay);
     }
     Func_0200b24c(0x8f);
@@ -1210,13 +1284,13 @@ void Func_02003fb0(void)
     Func_0200b3d6(21, 3);
     Func_0200b344(60);
 
-    actor = Func_0200b37a_b(1);
+    actor = Func_0200b37a_b(1); /* Jenna, inferred */
     actor[0x5a] = (u8)(actor[0x5a] | 1);
 
-    actor = Func_0200b38e(5);
+    actor = Func_0200b38e(5); /* Garet, inferred */
     actor[0x5a] = (u8)(actor[0x5a] | 1);
 
-    actor = Func_0200b3a0(0);
+    actor = Func_0200b3a0(0); /* Isaac */
     Func_0200b3b8(1, 0x10000, 0x8000);
     Func_0200b3c6(5, 0x10000, 0x8000);
     Func_0200b490(0, 0, 0);
@@ -1245,8 +1319,10 @@ void Func_02003fb0(void)
     Func_0200b4de(0, 0x178, 0x390);
     Func_0200b572(0, 0xc000, 0);
 
-    actor = Func_0200b4b0(21) + 0x5a;
-    *actor = (u8)(*actor | 1);
+    {
+        u8 *flags = Func_0200b4b0(21);
+        flags[0x5a] = (u8)(flags[0x5a] | 1);
+    }
 
     Func_02008860(21, 6, 5, 0);
 
@@ -1264,10 +1340,10 @@ void Func_02003fb0(void)
     Func_0200b4f6(0x12f);
 
     /* Leave record 0 in the state the next scene expects. */
-    camera[0x55] = 3;
-    *(s32 *)(camera + 12) = 0x00a00000;
-    *(s32 *)(camera + 0x3c) = (s32)0x80000000;
-    *(s32 *)(camera + 0x28) = 0;
+    isaac[0x55] = 3;
+    *(s32 *)(isaac + 12) = 0x00a00000;
+    *(s32 *)(isaac + 0x3c) = (s32)0x80000000;
+    *(s32 *)(isaac + 0x28) = 0;
 
     /* Common exit; no argument register is set. */
     Func_0200b52c();

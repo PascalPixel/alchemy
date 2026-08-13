@@ -4,11 +4,13 @@
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /*
- * Resource 381's scene-direction sheet.
+ * Resource 381's Sol Sanctum collapse scene-direction sheet.
  *
- * This routine initializes the overlay scene, creates paired actors and
- * effects, then advances a long sequence of placements, animations, waits,
- * and transitions. Coordinates use 16.16 fixed point. Calls use their
+ * The tracked message archive identifies this sequence: Isaac and Garet
+ * escape after Jenna and Kraden disappear, the Wise One warns that Mt. Aleph
+ * will erupt, and the Elemental Star effect is returned to its bag. This
+ * routine creates those actors and effects, then advances their placements,
+ * animations, waits, and transitions. Coordinates use 16.16 fixed point. Calls use their
  * resolved service or overlay-local identities; old-style declarations remain
  * where differing call shapes do not justify a stronger shared ABI claim.
  *
@@ -113,7 +115,7 @@ extern void Func_080f9010();
 #define InitializeScenePairActor Func_02002820
 #define RenderFirstWipeStep      Func_0200284c
 #define RenderSecondWipeStep     Func_020028dc
-#define RunTenEntitySetPiece     Func_020029a4
+#define ArrangeElementalStars    Func_020029a4
 #define BuildSceneTileGrid       Func_02002c9c
 #define ConfigureSceneTransition Func_02002d48
 #define UpdateActorEffectFrame   Func_02002d94
@@ -128,8 +130,8 @@ typedef struct {
 /* ABI entry for RunResource381SceneDirection. */
 void Func_02001410(void) {
     s32 effectResource;
-    void *actor15;
-    SceneWorkspace *sceneWorkspace;
+    SceneWorkspace *sceneWorkspace = *(SceneWorkspace **)0x03001EC4;
+    void *wiseOne = GetActorRecord(0xF);
     s32 actorApproachStep;
     s32 firstWipeDelay;
     s32 secondWipeDelay;
@@ -142,27 +144,25 @@ void Func_02001410(void) {
     u32 thirdEffectWarmupFrame;
     u8 extraActorIndex;
     void *cameraRecord;
-    void *actor0HiddenRecordB;
-    void *actor1HiddenRecordB;
-    void *actor0VisibleRecordB;
-    void *actor1VisibleRecordB;
-    void *actor0FlagsRecord;
-    void *actor1FlagsRecord;
-    void *actor0HiddenRecordA;
-    void *actor1HiddenRecordA;
-    void *actor0VisibleRecordA;
-    void *actor1VisibleRecordA;
-    void *effectSpawnOrigin;
-    void *spawnedEffectActor;
-    void *actor1;
-    void *spawnedEffectSubrecord;
-    void *actor1Sprite;
-    void *actor0;
-    void *actor0Sprite;
+    void *isaacHiddenRecordB;
+    void *garetHiddenRecordB;
+    void *isaacVisibleRecordB;
+    void *garetVisibleRecordB;
+    void *isaacFlagsRecord;
+    void *garetFlagsRecord;
+    void *isaacHiddenRecordA;
+    void *garetHiddenRecordA;
+    void *isaacVisibleRecordA;
+    void *garetVisibleRecordA;
+    void *isaacRecordForStar;
+    void *elementalStarEffect;
+    void *garet;
+    void *elementalStarSprite;
+    void *garetSprite;
+    void *isaac;
+    void *isaacSprite;
 
-    /* Establish the shared scene workspace and the long-lived actor-15 record. */
-    sceneWorkspace = *(SceneWorkspace **)0x03001EC4;
-    actor15 = GetActorRecord(0xF);
+    /* Establish the shared scene workspace and the long-lived Wise One record. */
     RemoveFrameTask(0x0200935D);
     *(s32 *)0x0200BB68 = 3;
     WaitSceneFrames(0x50);
@@ -203,16 +203,16 @@ void Func_02001410(void) {
     Func_0808a330(0x10000, 0);
     Func_0808a348(0x28);
     WaitSceneFrames(0x28);
-    actor0 = GetActorRecord(0);
-    actor1 = GetActorRecord(1);
-    actor0Sprite = FIELD(actor0, void **, 0x50);
-    actor1Sprite = FIELD(actor1, void **, 0x50);
+    isaac = GetActorRecord(0);
+    garet = GetActorRecord(1);
+    isaacSprite = FIELD(isaac, void **, 0x50);
+    garetSprite = FIELD(garet, void **, 0x50);
     actorApproachStep = 0x6000;
     do {
-        FIELD(actor0Sprite, u16 *, 0x1E) = (u16) (FIELD(actor0Sprite, u16 *, 0x1E) + 0x100);
-        FIELD(actor1Sprite, u16 *, 0x1E) = (u16) (FIELD(actor1Sprite, u16 *, 0x1E) + 0xFFFFFF00);
-        FIELD(actor0, s32 *, 8) = (s32) (FIELD(actor0, s32 *, 8) + actorApproachStep);
-        FIELD(actor1, s32 *, 8) = (s32) (FIELD(actor1, s32 *, 8) - actorApproachStep);
+        FIELD(isaacSprite, u16 *, 0x1E) = (u16) (FIELD(isaacSprite, u16 *, 0x1E) + 0x100);
+        FIELD(garetSprite, u16 *, 0x1E) = (u16) (FIELD(garetSprite, u16 *, 0x1E) + 0xFFFFFF00);
+        FIELD(isaac, s32 *, 8) = (s32) (FIELD(isaac, s32 *, 8) + actorApproachStep);
+        FIELD(garet, s32 *, 8) = (s32) (FIELD(garet, s32 *, 8) - actorApproachStep);
         AdvanceTaskFrames(1);
         openingFrame += 1;
     } while (openingFrame <= 0x13U);
@@ -227,10 +227,10 @@ void Func_02001410(void) {
     Func_0808a0c0(1, 0xDC, 0x96);
     SetActorPresentation(0, 2);
     SetActorPresentation(1, 2);
-    actor0FlagsRecord = GetActorRecord(0);
-    FIELD(actor0FlagsRecord, u8 *, 0x23) = (u8) (FIELD(actor0FlagsRecord, u8 *, 0x23) | 1);
-    actor1FlagsRecord = GetActorRecord(1);
-    FIELD(actor1FlagsRecord, u8 *, 0x23) = (u8) (1 | FIELD(actor1FlagsRecord, u8 *, 0x23));
+    isaacFlagsRecord = GetActorRecord(0);
+    FIELD(isaacFlagsRecord, u8 *, 0x23) = (u8) (FIELD(isaacFlagsRecord, u8 *, 0x23) | 1);
+    garetFlagsRecord = GetActorRecord(1);
+    FIELD(garetFlagsRecord, u8 *, 0x23) = (u8) (1 | FIELD(garetFlagsRecord, u8 *, 0x23));
     Func_0808a0a8(0);
     Func_0808a0a8(1);
     MoveActor(0, 0x2000, 0);
@@ -344,7 +344,7 @@ void Func_02001410(void) {
     RequestActorPresentation(0, 3);
     WaitSceneFrames(0xA);
     PlaySoundCue(0x17);
-    /* Change presentation scale and introduce actor 15 into the scene. */
+    /* Change presentation scale and introduce the Wise One into the scene. */
     ConfigureSceneTransition(1, 4, 0);
     sceneWorkspace->cameraTransitionEnabled = 0;
     SetCameraZoom(0x50000, 0x50000, 0x10000);
@@ -451,10 +451,10 @@ void Func_02001410(void) {
     WaitSceneFrames(0x14);
     SetActorScale(0, 0x20000, 0x10000);
     SetActorScale(1, 0x20000, 0x10000);
-    actor0HiddenRecordA = GetActorRecord(0);
-    FIELD(actor0HiddenRecordA, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor0HiddenRecordA, u8 *, 0x5A));
-    actor1HiddenRecordA = GetActorRecord(1);
-    FIELD(actor1HiddenRecordA, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor1HiddenRecordA, u8 *, 0x5A));
+    isaacHiddenRecordA = GetActorRecord(0);
+    FIELD(isaacHiddenRecordA, u8 *, 0x5A) = (u8) (0xFE & FIELD(isaacHiddenRecordA, u8 *, 0x5A));
+    garetHiddenRecordA = GetActorRecord(1);
+    FIELD(garetHiddenRecordA, u8 *, 0x5A) = (u8) (0xFE & FIELD(garetHiddenRecordA, u8 *, 0x5A));
     ConfigureActorAnimation(0, 4, 0);
     ConfigureActorAnimation(1, 4, 0);
     Func_0808a0b8(0, 0x100, 0x96);
@@ -462,10 +462,10 @@ void Func_02001410(void) {
     Func_0808a0e8(1);
     ConfigureSceneTransition(0, 0x28, 0);
     WaitSceneFrames(0x14);
-    actor0VisibleRecordA = GetActorRecord(0);
-    FIELD(actor0VisibleRecordA, u8 *, 0x5A) = (u8) (FIELD(actor0VisibleRecordA, u8 *, 0x5A) | 1);
-    actor1VisibleRecordA = GetActorRecord(1);
-    FIELD(actor1VisibleRecordA, u8 *, 0x5A) = (u8) (1 | FIELD(actor1VisibleRecordA, u8 *, 0x5A));
+    isaacVisibleRecordA = GetActorRecord(0);
+    FIELD(isaacVisibleRecordA, u8 *, 0x5A) = (u8) (FIELD(isaacVisibleRecordA, u8 *, 0x5A) | 1);
+    garetVisibleRecordA = GetActorRecord(1);
+    FIELD(garetVisibleRecordA, u8 *, 0x5A) = (u8) (1 | FIELD(garetVisibleRecordA, u8 *, 0x5A));
     Func_0808a130(0, 2);
     SetActorMode(1, 2);
     WaitSceneFrames(0x28);
@@ -501,7 +501,7 @@ void Func_02001410(void) {
     RequestActorPresentation(0xF, 2);
     firstEffectWarmupFrame = 0;
     do {
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         firstEffectWarmupFrame += 1;
         AdvanceTaskFrames(1);
     } while (firstEffectWarmupFrame <= 0x27U);
@@ -512,7 +512,7 @@ void Func_02001410(void) {
     PlaySoundCue(0x121);
     RemoveFrameTask(0x0200A93D);
     SetCameraZoom(0x10000, 0x10000, 0x10000);
-    /* Close the first actor-15 effect through the 16-step tile wipe. */
+    /* Close the Wise One's first effect through the 16-step tile wipe. */
     firstWipeDelay = 0xF;
     do {
         RenderFirstWipeStep(0);
@@ -554,8 +554,8 @@ void Func_02001410(void) {
     MoveActor(1, 0xB000, 0);
     SetCameraTarget(0xE00000, firstWipeDelay, 0x9E0000, 1);
     CommitCameraMove();
-    /* Run the four ten-entity set-piece variants around the pulse effect. */
-    RunTenEntitySetPiece(0);
+    /* Run the four Elemental Star arrangements around the pulsing star. */
+    ArrangeElementalStars(0);
     SetActorMode(0xF, 2);
     WaitSceneFrames(0x14);
     WaitForActorAction(0xF, 0);
@@ -567,45 +567,45 @@ void Func_02001410(void) {
         Func_08015040(0x110C, 1);
         WaitSceneFrames(0x28);
     }
-    effectSpawnOrigin = GetActorRecord(0);
-    spawnedEffectActor = Func_080090c8(0x16, FIELD(effectSpawnOrigin, s32 *, 8), FIELD(effectSpawnOrigin, s32 *, 0xC) + 0x240000, FIELD(effectSpawnOrigin, s32 *, 0x10));
-    if (spawnedEffectActor != NULL) {
+    isaacRecordForStar = GetActorRecord(0);
+    elementalStarEffect = Func_080090c8(0x16, FIELD(isaacRecordForStar, s32 *, 8), FIELD(isaacRecordForStar, s32 *, 0xC) + 0x240000, FIELD(isaacRecordForStar, s32 *, 0x10));
+    if (elementalStarEffect != NULL) {
         effectResource = Func_08000140(0x11, 0x608);
-        spawnedEffectSubrecord = FIELD(spawnedEffectActor, void **, 0x50);
-        FIELD(spawnedEffectSubrecord, s8 *, 0x26) = 0;
-        FIELD((spawnedEffectSubrecord + 0x26), s8 *, 1) = 0;
-        FIELD(spawnedEffectSubrecord, u8 *, 5) = (u8) (-0x21 & FIELD(spawnedEffectSubrecord, u8 *, 5));
-        FIELD(spawnedEffectSubrecord, u8 *, 9) = (u8) ((0xF & FIELD(spawnedEffectSubrecord, u8 *, 9) & ~0xC) | 4);
+        elementalStarSprite = FIELD(elementalStarEffect, void **, 0x50);
+        FIELD(elementalStarSprite, s8 *, 0x26) = 0;
+        FIELD((elementalStarSprite + 0x26), s8 *, 1) = 0;
+        FIELD(elementalStarSprite, u8 *, 5) = (u8) (-0x21 & FIELD(elementalStarSprite, u8 *, 5));
+        FIELD(elementalStarSprite, u8 *, 9) = (u8) ((0xF & FIELD(elementalStarSprite, u8 *, 9) & ~0xC) | 4);
         Func_08015250(0xDE);
-        Func_080001c8(FIELD(spawnedEffectSubrecord, u8 *, 0x1C), 0x80, effectResource + 0x400);
+        Func_080001c8(FIELD(elementalStarSprite, u8 *, 0x1C), 0x80, effectResource + 0x400);
         Func_08000150(0x11);
         SetActorSlotPresentation(0, 0x1C);
-        Func_0808a390(spawnedEffectActor, 3);
+        Func_0808a390(elementalStarEffect, 3);
         SetActorSlotPresentation(0, 0x1C);
     }
     ConfigureSceneTransition(1, 0x14, 0);
     pulseFrame = 0;
     do {
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         AdvanceTaskFrames(1);
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         AdvanceTaskFrames(1);
-        FIELD(spawnedEffectActor, s32 *, 0x18) = 0x6666;
-        FIELD(spawnedEffectActor, s32 *, 0x1C) = 0x6666;
-        UpdateActorEffectFrame(actor15);
+        FIELD(elementalStarEffect, s32 *, 0x18) = 0x6666;
+        FIELD(elementalStarEffect, s32 *, 0x1C) = 0x6666;
+        UpdateActorEffectFrame(wiseOne);
         AdvanceTaskFrames(1);
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         pulseFrame += 1;
         AdvanceTaskFrames(1);
-        FIELD(spawnedEffectActor, s32 *, 0x18) = 0x10000;
-        FIELD(spawnedEffectActor, s32 *, 0x1C) = 0x10000;
+        FIELD(elementalStarEffect, s32 *, 0x18) = 0x10000;
+        FIELD(elementalStarEffect, s32 *, 0x1C) = 0x10000;
     } while (pulseFrame <= 0x17U);
     Func_0808a158(0xF, 0);
     ConfigureSceneTransition(0, 0x14, 0);
     ShowSceneDialogue(0x110D);
     WaitForActorActionFrames(0xF, 0, 0x14);
-    if (spawnedEffectActor != NULL) {
-        Func_080090d0(spawnedEffectActor);
+    if (elementalStarEffect != NULL) {
+        Func_080090d0(elementalStarEffect);
     }
     SetActorSlotPresentation(0, 1);
     WaitSceneFrames(0x14);
@@ -616,13 +616,13 @@ void Func_02001410(void) {
     MoveActor(0xF, 0x4000, 0);
     SetCameraRates(0x40000, 0x8000);
     Func_02002c1c(0xE8, 0x1D0);
-    RunTenEntitySetPiece(1);
+    ArrangeElementalStars(1);
     WaitForActorAction(0xF, 0);
     Func_02002c1c(0x2C7, 0x90);
-    RunTenEntitySetPiece(2);
+    ArrangeElementalStars(2);
     WaitForActorAction(0xF, 0);
     Func_02002c1c(0x2C7, 0x1D0);
-    RunTenEntitySetPiece(3);
+    ArrangeElementalStars(3);
     WaitForActorAction(0xF, 0);
     MoveActor(0xF, 0x1000, 0);
     PlaceActor(1, 0x02460000, 0x01590000);
@@ -652,18 +652,18 @@ void Func_02001410(void) {
     SetCameraTarget(0xB80000, -1, 0x840000, 1);
     ConfigureActorAnimation(0, 6, 0);
     ConfigureActorAnimation(1, 6, 0);
-    actor0HiddenRecordB = GetActorRecord(0);
-    FIELD(actor0HiddenRecordB, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor0HiddenRecordB, u8 *, 0x5A));
-    actor1HiddenRecordB = GetActorRecord(1);
-    FIELD(actor1HiddenRecordB, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor1HiddenRecordB, u8 *, 0x5A));
+    isaacHiddenRecordB = GetActorRecord(0);
+    FIELD(isaacHiddenRecordB, u8 *, 0x5A) = (u8) (0xFE & FIELD(isaacHiddenRecordB, u8 *, 0x5A));
+    garetHiddenRecordB = GetActorRecord(1);
+    FIELD(garetHiddenRecordB, u8 *, 0x5A) = (u8) (0xFE & FIELD(garetHiddenRecordB, u8 *, 0x5A));
     Func_0808a0b8(0, 0xF5, 0x91);
     Func_0808a0b8(1, 0xD7, 0xA8);
     Func_0808a0e8(1);
     WaitSceneFrames(0x50);
-    actor0VisibleRecordB = GetActorRecord(0);
-    FIELD(actor0VisibleRecordB, u8 *, 0x5A) = (u8) (FIELD(actor0VisibleRecordB, u8 *, 0x5A) | 1);
-    actor1VisibleRecordB = GetActorRecord(1);
-    FIELD(actor1VisibleRecordB, u8 *, 0x5A) = (u8) (1 | FIELD(actor1VisibleRecordB, u8 *, 0x5A));
+    isaacVisibleRecordB = GetActorRecord(0);
+    FIELD(isaacVisibleRecordB, u8 *, 0x5A) = (u8) (FIELD(isaacVisibleRecordB, u8 *, 0x5A) | 1);
+    garetVisibleRecordB = GetActorRecord(1);
+    FIELD(garetVisibleRecordB, u8 *, 0x5A) = (u8) (1 | FIELD(garetVisibleRecordB, u8 *, 0x5A));
     Func_0808a0b8(0xF, 0xB8, 0x57);
     Func_0808a0e8(0xF);
     MoveActor(0xF, 0x4000, 0);
@@ -671,7 +671,7 @@ void Func_02001410(void) {
     RequestActorPresentation(0xF, 2);
     secondEffectWarmupFrame = 0;
     do {
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         secondEffectWarmupFrame += 1;
         AdvanceTaskFrames(1);
     } while (secondEffectWarmupFrame <= 0x27U);
@@ -711,7 +711,7 @@ void Func_02001410(void) {
     RequestActorPresentation(0xF, 2);
     thirdEffectWarmupFrame = 0;
     do {
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         thirdEffectWarmupFrame += 1;
         AdvanceTaskFrames(1);
     } while (thirdEffectWarmupFrame <= 0x27U);
@@ -769,7 +769,7 @@ void Func_02001410(void) {
     WaitSceneFrames(0x14);
     finalEffectFrame = 0;
     do {
-        UpdateActorEffectFrame(actor15);
+        UpdateActorEffectFrame(wiseOne);
         finalEffectFrame += 1;
         AdvanceTaskFrames(1);
     } while (finalEffectFrame <= 0x27U);

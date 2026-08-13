@@ -253,11 +253,8 @@ block_11:
     }
     renderer_46 = *(Renderer_080dea70 *)0x03001F08;
     Func_080e0524((void *)0x73, sp68, 0, 0);
-    switch (arg1) {
-    case 0:
-    case 8:
+    if (arg1 == 0 || arg1 == 5 || arg1 == 8) {
         if (arg1 == 5) {
-        case 5:
             sp5C = 2;
         }
         if (arg1 == 8) {
@@ -285,22 +282,19 @@ block_24:
         var_r3_2 = 0x4B;
 block_42:
         var_r2 = (s32 *)(temp_r0 + 0x7784);
-        break;
-    case 1:
+    } else if (arg1 == 1) {
         Func_080e0524((void *)0x5D, temp_r0, 1, 1);
         *(s16 *)0x04000050 = 0;
         M2C_FIELD(temp_r0, s32 *, 0x7780) = arg1;
         var_r2 = (s32 *)(temp_r0 + 0x7784);
         var_r3_2 = 0;
-        break;
-    case 2:
+    } else if (arg1 == 2) {
         ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0x7F), 0x80);
         Func_080e0524((void *)0x5C, temp_r0, 0, 0);
         M2C_FIELD(temp_r0, s32 *, 0x7780) = arg1;
         var_r2 = (s32 *)(temp_r0 + 0x7784);
         var_r3_2 = 0x32;
-        break;
-    default:
+    } else {
         if (((u32) (arg1 - 3) <= 1U) || (arg1 == 0xB)) {
             var_r3_3 = 1;
             var_r0_2 = (void *)0x5B;
@@ -318,7 +312,7 @@ block_42:
         Func_080e0524(var_r0_2, var_r1, 1, var_r3_3);
         M2C_FIELD(temp_r0, s32 *, 0x7780) = 2;
         var_r3_2 = 0x32;
-        goto block_42;
+        var_r2 = (s32 *)(temp_r0 + 0x7784);
     }
     *var_r2 = var_r3_2;
     Func_080041d8((const void *)0x080CD261, 0x480);

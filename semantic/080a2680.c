@@ -97,11 +97,11 @@ void Func_080f9010(s32);
  */
 s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
 {
-    u8 *state = Data_03001f2c;
-    s32 phase = 0;
-    s32 done = 0;
-    s32 menu = 0;
     s32 result = 0;
+    s32 menu = 0;
+    s32 done = 0;
+    s32 phase = 0;
+    u8 *state = Data_03001f2c;
 
     while (!done && Func_080770c0(0x150) == 0) {
         s32 command;
@@ -391,8 +391,8 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
 
         case 7: {
             s32 failure = 0;
-            s32 slot;
-            s32 i;
+            u8 slot;
+            u8 i;
             u8 *first_record;
             u8 *second_record;
             void *first_copy;
@@ -414,12 +414,12 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
             ((WordCopy)0x03001388)(second_copy, second_record, 0x14c);
 
             for (i = 0; i < 30; i++) {
-                slot = Func_08077058(
+                command = Func_08077058(
                     FIELD(state, u8, 0x2a6 + i),
                     FIELD(state, u16, 0x174));
-                if (slot == 2)
+                if (command == 2)
                     break;
-                if (slot == -1)
+                if (command == -1)
                     failure = 1;
             }
             i++;

@@ -103,7 +103,7 @@ s32 Func_08023178(u16 *members, s32 member_count, u32 member)
     MenuSprite_08023178 row_sprites[11];
     void *row_tiles[11];
     s8 row_kinds[11];
-    MenuState_08023178 state = {{0, 0, 0}, 0, 0, 0, 0, 0, 0, 0};
+    MenuState_08023178 state;
     void *actor;
     void *actor_snapshot;
     void *cursor_tiles;
@@ -116,6 +116,17 @@ s32 Func_08023178(u16 *members, s32 member_count, u32 member)
     s32 redraw = 1;
     s32 running = 1;
     s32 i;
+
+    state.cursor[0] = 0;
+    state.cursor[1] = 0;
+    state.cursor[2] = 0;
+    state.pad03 = 0;
+    state.displayed_value = 0;
+    state.previous_value = 0;
+    state.mode = 0;
+    state.limit = 0;
+    state.icon_x = 0;
+    state.icon_y = 0;
 
     actor = PTR_AT(0x03001f34, void);
     actor_snapshot = Func_080040b4(0x200);

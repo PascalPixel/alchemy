@@ -530,7 +530,6 @@ extern u8 Data_02009b94[];
 
 void Func_02000360(void)
 {
-    u8 *workspace;
     s32 skipped;
 
     Func_02001de8();
@@ -541,9 +540,8 @@ void Func_02000360(void)
     Func_02001f06(1);
     Func_02001dcc(1);
 
-    SETUP_WORD(workspace) = 24;
-    REQUEST_WORD(workspace) = 513;
-    workspace = WORKSPACE;
+    SETUP_WORD(WORKSPACE) = 24;
+    REQUEST_WORD(WORKSPACE) = 513;
 
     Func_02001ea2(8, 0x03580000, 0x01b80000);
     Func_02001eb0(0, 0x03580000, 0x01e60000);
@@ -709,12 +707,12 @@ void Func_02000360(void)
     /* Decision 1. Note this one tests against 1, not 0. */
     skipped = 1;
     if (Func_02002428(0, 0) == 1) {
-        EVENT_COUNT(workspace) += 1;
+        EVENT_COUNT(WORKSPACE) += 1;
         skipped = 0;
     }
     Func_020024ce(1, 0, 10);
     if (skipped != 0) {
-        EVENT_COUNT(workspace) += 1;
+        EVENT_COUNT(WORKSPACE) += 1;
     }
 
     Func_020024fc(2, 0x8000, 10);
@@ -743,11 +741,11 @@ void Func_02000360(void)
         Func_0200251c(20);
         Func_0200259c(8, 3);
         Func_020025d6(8, 0, 10);
-        EVENT_COUNT(workspace) += 1;
+        EVENT_COUNT(WORKSPACE) += 1;
     } else {
         Func_02002554(20);
         Func_020025d4(8, 4);
-        EVENT_COUNT(workspace) += 1;
+        EVENT_COUNT(WORKSPACE) += 1;
         Func_0200261c(8, 0, 10);
     }
 
@@ -1004,9 +1002,8 @@ void Func_02000360(void)
     Func_02002e74(2, Data_02009b94);
     Func_02002e84(3, Data_02009b94);
 
-    workspace = WORKSPACE;
-    SETUP_WORD(workspace) = 16;
-    REQUEST_WORD(workspace) = 521;
+    SETUP_WORD(WORKSPACE) = 16;
+    REQUEST_WORD(WORKSPACE) = 521;
 
     Func_02002e5a(0x12f);
     Func_02002e58(0x912);

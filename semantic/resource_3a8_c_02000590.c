@@ -511,16 +511,7 @@ extern u8 Data_02009f15[];
 
 void Func_02000590(void)
 {
-    u8 *scene;
-    u8 *entity;
-    u8 *counter;
-    s32 pose;
-    void (*abortSound)() = Func_080f9010;
-    void (*abortScene)() = Func_0808a248;
-    void (*abortReset)() = Func_0808a368;
-    void (*abortSettle)() = Func_0808a370;
-
-    scene = Data_03001ebc;
+    u8 *scene = Data_03001ebc;
 
     Func_02004190();
 
@@ -580,16 +571,18 @@ void Func_02000590(void)
     Func_020043a6(33, Data_0200bdc4);
     Func_020043ae(34, Data_0200bdc4);
 
-    *(s16 *)counter = 0;
-    counter = Func_0200439c(21) + 100;
-    Func_020043c4(21, Data_0200bdc4);
+    {
+        u8 *counter = Func_0200439c(21) + 100;
+        *(s16 *)counter = 0;
+        Func_020043c4(21, Data_0200bdc4);
 
-    Func_020044b6(0x00ba0000, -1, 0x01100000, 1);
-    Func_020043e4(20);
-    Func_02004496(20, 0, 0);
-    do {
-        Func_020042cc(1);
-    } while (*(s16 *)counter == 0);
+        Func_020044b6(0x00ba0000, -1, 0x01100000, 1);
+        Func_020043e4(20);
+        Func_02004496(20, 0, 0);
+        do {
+            Func_020042cc(1);
+        } while (*(s16 *)counter == 0);
+    }
 
     Func_020043b2(40);
     Func_0200446a(27, 2);
@@ -620,12 +613,10 @@ void Func_02000590(void)
     Func_02004590(20, 0, 10);
     Func_02004560(20, 2);
 
-    entity = Func_020044e6(20);
-    entity[90] = (u8)(entity[90] & 0xfe);
+    Func_020044e6(20)[90] &= 0xfe;
     Func_02004542(20, 172, 264);
     Func_020044d8(1);
-    entity = Func_0200450e_b(20);
-    entity[90] = (u8)(entity[90] | 1);
+    Func_0200450e_b(20)[90] |= 1;
 
     Func_020045ec(27, 0x8000, 0);
     Func_020045f8(28, 0x8000, 0);
@@ -634,12 +625,10 @@ void Func_02000590(void)
     Func_020045b8(20, 3);
     Func_02004526(20);
 
-    entity = Func_0200455c(20);
-    entity[90] = (u8)(entity[90] & 0xfe);
+    Func_0200455c(20)[90] &= 0xfe;
     Func_020045b0(20, 172, 272);
     Func_02004546(1);
-    entity = Func_0200457c(20);
-    entity[90] = (u8)(entity[90] | 1);
+    Func_0200457c(20)[90] |= 1;
     Func_020045d0(20, 180, 272);
 
     Func_02004662(20, 0, 0);
@@ -750,10 +739,8 @@ void Func_02000590(void)
     Func_0200498a(21);
     Func_02004860(1);
 
-    entity = Func_0200496e(20);
-    *(s16 *)(entity + 100) = 0;     /* from r8, which is 0 */
-    entity = Func_0200497a(21);
-    *(s16 *)(entity + 100) = 0;     /* from r8, which is 0 */
+    *(s16 *)(Func_0200496e(20) + 100) = 0;
+    *(s16 *)(Func_0200497a(21) + 100) = 0;
 
     Func_0200499a(20, 0x0000cccc, 0x00006666);
     Func_020049a4(21, 0x0000cccc, 0x00006666);
@@ -771,12 +758,10 @@ void Func_02000590(void)
 
     for (;;) {
         Func_020048e0(1);
-        entity = Func_020049ee(20);
-        if (*(s16 *)(entity + 100) == 0) {
+        if (*(s16 *)(Func_020049ee(20) + 100) == 0) {
             continue;
         }
-        entity = Func_020049fe(21);
-        if (*(s16 *)(entity + 100) == 1) {
+        if (*(s16 *)(Func_020049fe(21) + 100) == 1) {
             break;
         }
     }
@@ -939,13 +924,11 @@ void Func_02000590(void)
     Func_02004f4e(33, Data_0200be00);
     Func_02004f56(34, Data_0200be00);
 
-    entity = Func_02004f44(21);
-    *(s16 *)(entity + 100) = 0;
+    *(s16 *)(Func_02004f44(21) + 100) = 0;
     Func_02004f6c(21, Data_0200be00);
     do {
         Func_02004e52(1);
-        entity = Func_02004f60(21);
-    } while (*(s16 *)(entity + 100) != 1);
+    } while (*(s16 *)(Func_02004f60(21) + 100) != 1);
 
     Func_02004f40(80);
     Func_02004fd6(14, 0x01540000, 0x01120000);
@@ -969,23 +952,22 @@ void Func_02000590(void)
     Func_020050ac(14, 4, 40);
     Func_02005056(14, 0x00013333, 0x00009999);
 
-    *(s16 *)(entity + 100) = 0;
-    entity = Func_0200504c(14);
+    *(s16 *)(Func_0200504c(14) + 100) = 0;
     Func_02005074(14, Data_0200be00);
     do {
         Func_02004f5a(1);
-        entity = Func_02005068(14);
-    } while (*(s16 *)(entity + 100) != 1);
+    } while (*(s16 *)(Func_02005068(14) + 100) != 1);
 
     Func_020050d6(14, 0x01670000, 0x013a0000);
-    entity = Func_02005084(14);
+    Func_02005084(14);
     Func_020050ee(20, 0x01c70000, 0x01b20000);
-    entity = Func_0200509c(20);
-    *(u16 *)(entity + 6) = 0xd000;
-    *(u16 *)(entity + 6) = 0xd000;
+    {
+        u8 *entity = Func_0200509c(20);
+        *(u16 *)(entity + 6) = 0xd000;
+        *(u16 *)(entity + 6) = 0xd000;
+    }
     Func_02005104(21, 0x01d00000, 0x01a00000);
-    entity = Func_020050b2_b(21);
-    *(u16 *)(entity + 6) = 0x5000;
+    *(u16 *)(Func_020050b2_b(21) + 6) = 0x5000;
 
     Func_020050c6(27);
     Func_020050cc(28);
@@ -1000,28 +982,25 @@ void Func_02000590(void)
 
     if (*(s16 *)(scene + 364) == 9) {
         Func_02005148(0, 224, 458);
-        entity = Func_0200510e(0);
+        *(u16 *)(Func_0200510e(0) + 6) = 0xc000;
     } else {
-        pose = 0xc000;
         Func_0200515e(0, 40, 248);
-        entity = Func_02005124(0);
-        pose = 0x4000;
+        *(u16 *)(Func_02005124(0) + 6) = 0x4000;
     }
-    *(u16 *)(entity + 6) = (u16)pose;
 
-    goto finish;
     Func_02005266();
     Func_020050f4(0x911);
+    goto finish;
 
 aborted:
-    /* Reached only by the two `bl 0x0200151c` gotos above.  Keep the four
-     * known static targets explicit through typed pointers: the address-order
+    /* Reached only by the two `bl 0x0200151c` gotos above. Keep the four
+     * known static targets explicit through typed constant-pointer casts: the address-order
      * checker intentionally classifies those two BLs as intra-owner gotos and
      * therefore does not walk this out-of-line target block as a call region. */
-    abortSound(123);
-    abortScene(*(s16 *)(scene + 364));
-    abortReset();
-    abortSettle();
+    ((void (*)(s32))Func_080f9010)(123);
+    ((void (*)(s32))Func_0808a248)(*(s16 *)(scene + 364));
+    ((void (*)(void))Func_0808a368)();
+    ((void (*)(void))Func_0808a370)();
 
 finish:
     Func_02005136();

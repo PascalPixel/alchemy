@@ -239,12 +239,13 @@ exact.
 ## Committing
 
 Regenerate metrics after executable-source changes. The commit subject must
-end with the generated progress form:
+start with the generated Exact-C progress prefix:
 
 ```text
-[ ☀️ exact / total ]
+☀️ N% – description
 ```
 
-Use `make verify` before committing; a green focused test is not a substitute
-for the complete gate. A deliberate regression or denominator correction must
-say so in the subject as required by the repository checks.
+`N` is the nearest whole Exact-C percentage from the staged report, never the
+public DONE percentage. Use `make verify` before committing; a green focused
+test is not a substitute for the complete gate. A deliberate regression or
+denominator correction must still be plainly described.

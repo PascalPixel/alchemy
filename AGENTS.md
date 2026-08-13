@@ -227,9 +227,13 @@ Do not erase negative evidence simply to make documentation shorter.
   methodology is reusable, but game knowledge is not.
 - Adopt from outside `exact/` through the owner-specific gate, ensure the
   diagnostic inventory file exists for overlay tools, and regenerate progress.
-- Commit subjects end with `[ ☀️ exact / total ]` matching staged metrics. A
-  proved denominator correction and a deliberate regression use their explicit
-  repository subject forms.
+- Commit subjects start `☀️ N% – `, where `N` is the nearest whole Exact-C
+  percentage from staged metrics. This is Exact C, never the public DONE
+  share; the audited executable denominator is held uniform for history.
+- Codex-authored commits use `Codex <noreply@openai.com>` and Claude-authored
+  commits use `Claude <noreply@anthropic.com>`. Other agents use their truthful
+  established agent identity. Never use a human identity as the default author
+  for an agent-generated commit.
 - Never resolve compiler routing tables or the fork's GS1 source file
   [`alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c`](alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c)
   by taking one side wholesale. Three-way merge and review every independent

@@ -5,10 +5,10 @@
 // C file in every historical tree. That is the whole cost of the tool, and it is
 // exactly the kind of work the TypeScript version pays an interpreter tax on.
 // The measurement rules themselves are unchanged: commit objects are never
-// rewritten, each first-parent tree is measured from its tracked C ownership
-// against the current audited fixed executable denominator, and commit subjects
-// are omitted because this is a numeric progress ledger, not a copy of the
-// repository's messages.
+// rewritten, each tree is measured from its tracked C ownership against the
+// current audited fixed executable denominator, and commit subjects are omitted
+// because this is a numeric progress ledger, not a copy of the repository's
+// messages.
 //
 // PORT NOTE: the TypeScript entry point throws on failure, so `bun` prints a
 // JavaScript stack trace and exits 1. This binary prints `error: <message>` on
@@ -80,7 +80,7 @@ struct HistoryEntry {
     percent: f64,
     main_full_c_bytes: i64,
     overlay_full_c_bytes: i64,
-    canonical_suffix: String,
+    canonical_prefix: String,
     evidence: Vec<String>,
     correction: Option<String>,
 }
@@ -120,28 +120,43 @@ fn read_json(path: &Path) -> Result<json::Value, String> {
 // ---------------------------------------------------------------------------
 // Metric helpers shared in behavior with the native Full-C progress tool.
 
+#[cfg(test)]
 fn integer(value: f64, label: &str) -> Result<i64, String> {
     // Number.isSafeInteger: one number type, so 1.0 is an integer here too.
-    if !value.is_finite() || value.fract() != 0.0 || value.abs() > 9_007_199_254_740_991.0 || value < 0.0
+    if !value.is_finite()
+        || value.fract() != 0.0
+        || value.abs() > 9_007_199_254_740_991.0
+        || value < 0.0
     {
         return Err(format!("{label} must be a non-negative safe integer"));
     }
     Ok(value as i64)
 }
 
-/// The commit marker is rendered in whole kilobytes (floor of bytes/1000).
-fn kilobytes(value: i64) -> Result<i64, String> {
-    Ok(integer(value as f64, "byte count")?.div_euclid(1000))
+/// Commit subjects identify the exact-C percentage, rounded to the nearest
+/// whole percentage with ties toward +∞. The detailed report still carries the
+/// two-decimal percentage for charts and historical analysis.
+fn nearest_whole_percent(numerator: i64, denominator: i64) -> Result<i64, String> {
+    if denominator <= 0 {
+        return Err("executable denominator must be positive".to_string());
+    }
+    if numerator < 0 || numerator > denominator {
+        return Err("Full-C numerator exceeds executable denominator".to_string());
+    }
+    numerator
+        .checked_mul(100)
+        .and_then(|scaled| scaled.checked_add(denominator / 2))
+        .map(|rounded| rounded.div_euclid(denominator))
+        .ok_or_else(|| "percentage arithmetic overflowed".to_string())
 }
 
-fn format_subject(full_c_bytes: i64, executable_bytes: i64) -> Result<String, String> {
+fn format_subject_prefix(full_c_bytes: i64, executable_bytes: i64) -> Result<String, String> {
     if full_c_bytes > executable_bytes {
         return Err("Full-C numerator exceeds executable denominator".to_string());
     }
     Ok(format!(
-        "[ ☀️ {} / {} ]",
-        js::commas(kilobytes(full_c_bytes)?),
-        js::commas(kilobytes(executable_bytes)?)
+        "☀️ {}% –",
+        nearest_whole_percent(full_c_bytes, executable_bytes)?
     ))
 }
 
@@ -158,7 +173,13 @@ fn round_half_up_percent(numerator: i64, denominator: i64) -> Result<f64, String
 
 fn region_map(root: &Path) -> Result<HashMap<String, RegionSize>, String> {
     let mut result: HashMap<String, RegionSize> = HashMap::new();
-    for relative in ["out/full/asm/manifest.json", "out/full/claimed/manifest.json"] {
+    for relative in [
+        "out/full/asm/manifest.json",
+        "out/full/claimed/manifest.json",
+    ] {
+        if !root.join(relative).exists() {
+            continue;
+        }
         let document = read_json(&root.join(relative))?;
         let rows = document
             .get("regions")
@@ -166,11 +187,22 @@ fn region_map(root: &Path) -> Result<HashMap<String, RegionSize>, String> {
             .unwrap_or(&[])
             .to_vec();
         for row in rows {
-            let source = row.get("source").and_then(json::Value::as_str).unwrap_or("undefined");
-            let Some(stem) = js::region_stem(source) else { continue };
+            let source = row
+                .get("source")
+                .and_then(json::Value::as_str)
+                .unwrap_or("undefined");
+            let Some(stem) = js::region_stem(source) else {
+                continue;
+            };
             let value = RegionSize {
-                address: row.get("address").and_then(json::Value::as_f64).unwrap_or(f64::NAN) as i64,
-                size: row.get("size").and_then(json::Value::as_f64).unwrap_or(f64::NAN) as i64,
+                address: row
+                    .get("address")
+                    .and_then(json::Value::as_f64)
+                    .unwrap_or(f64::NAN) as i64,
+                size: row
+                    .get("size")
+                    .and_then(json::Value::as_f64)
+                    .unwrap_or(f64::NAN) as i64,
             };
             if let Some(previous) = result.get(&stem) {
                 if *previous != value {
@@ -192,6 +224,27 @@ struct Commit {
 fn commits(root: &Path) -> Result<Vec<Commit>, String> {
     let format = "--format=%H%x1f%aI%x1f%cI%x1e";
     let log = git(root, &["log", "--first-parent", "--reverse", format])?;
+    Ok(log
+        .split('\u{1e}')
+        .map(str::trim)
+        .filter(|record| !record.is_empty())
+        .map(|record| {
+            let mut fields = record.split('\u{1f}');
+            Commit {
+                commit: fields.next().unwrap_or_default().to_string(),
+                author: fields.next().unwrap_or_default().to_string(),
+                committer: fields.next().unwrap_or_default().to_string(),
+            }
+        })
+        .collect())
+}
+
+fn all_commits(root: &Path, revision: &str) -> Result<Vec<Commit>, String> {
+    let format = "--format=%H%x1f%aI%x1f%cI%x1e";
+    let log = git(
+        root,
+        &["log", "--topo-order", "--reverse", format, revision],
+    )?;
     Ok(log
         .split('\u{1e}')
         .map(str::trim)
@@ -269,7 +322,9 @@ fn overlay_placeholders(source: &str) -> Vec<(String, i64)> {
 
 /// `source.split(/\r?\n/)`
 fn split_lines(source: &str) -> impl Iterator<Item = &str> {
-    source.split('\n').map(|line| line.strip_suffix('\r').unwrap_or(line))
+    source
+        .split('\n')
+        .map(|line| line.strip_suffix('\r').unwrap_or(line))
 }
 
 struct Measured {
@@ -296,7 +351,9 @@ fn measured_tree(
     for entry in entries {
         // src/ is the pre-consolidation layout; exact/ is where the tree
         // consolidation moved the main image's canonical exact C.
-        let Some(stem) = js::main_c_path(&entry.path) else { continue };
+        let Some(stem) = js::main_c_path(&entry.path) else {
+            continue;
+        };
         let region = sizes.get(&stem).copied();
         let acceptable = js::acceptable_historical_c(blobs.get(root, &entry.oid)?);
         if !acceptable {
@@ -313,17 +370,25 @@ fn measured_tree(
 
     let mut overlays = 0i64;
     for entry in entries {
-        let Some(stem) = js::overlay_container(&entry.path) else { continue };
+        let Some(stem) = js::overlay_container(&entry.path) else {
+            continue;
+        };
         // Overlay exact C moved from assets/code/ to exact/ in the tree
         // consolidation; measure whichever layout the commit's tree carries.
         let prefixes = [format!("assets/code/{stem}_c_"), format!("exact/{stem}_c_")];
         let mut c_paths_by_address: Vec<(String, String)> = Vec::new();
         for candidate in entries {
-            if !prefixes.iter().any(|prefix| candidate.path.starts_with(prefix.as_str())) {
+            if !prefixes
+                .iter()
+                .any(|prefix| candidate.path.starts_with(prefix.as_str()))
+            {
                 continue;
             }
             if let Some(address) = js::overlay_c_address(&candidate.path) {
-                match c_paths_by_address.iter_mut().find(|(key, _)| *key == address) {
+                match c_paths_by_address
+                    .iter_mut()
+                    .find(|(key, _)| *key == address)
+                {
                     Some(slot) => slot.1 = candidate.path.clone(),
                     None => c_paths_by_address.push((address, candidate.path.clone())),
                 }
@@ -348,7 +413,12 @@ fn measured_tree(
         }
     }
 
-    Ok(Measured { main, overlays, accepted, excluded })
+    Ok(Measured {
+        main,
+        overlays,
+        accepted,
+        excluded,
+    })
 }
 
 struct Ledger {
@@ -396,29 +466,35 @@ fn ledger(root: &Path) -> Result<Ledger, String> {
             .iter()
             .filter(|(path, size)| previous_accepted.get(path).unwrap_or(*size) > *size)
             .map(|(path, size)| {
-                format!("{path}:-{}B", previous_accepted.get(path).unwrap_or(*size) - size)
+                format!(
+                    "{path}:-{}B",
+                    previous_accepted.get(path).unwrap_or(*size) - size
+                )
             })
             .collect();
-        let correction = if full_c < previous {
-            let mut text = format!(
+        let correction =
+            if full_c < previous {
+                let mut text =
+                    format!(
                 "measured C ownership decreased by {} bytes; removed/reclassified paths: {}",
                 previous - full_c,
                 if removed.is_empty() { "(none)".to_string() } else { removed.join(", ") }
             );
-            if !shrunk.is_empty() {
-                let _ = write!(text, "; spans shrunk in place: {}", shrunk.join(", "));
-            }
-            Some(text)
-        } else {
-            None
-        };
+                if !shrunk.is_empty() {
+                    let _ = write!(text, "; spans shrunk in place: {}", shrunk.join(", "));
+                }
+                Some(text)
+            } else {
+                None
+            };
         if full_c < previous && removed.is_empty() && shrunk.is_empty() {
             return Err(format!("{}: unexplained Full-C regression", commit.commit));
         }
         let mut evidence = vec![
             "commit tree src/<address>.c ownership mapped to audited main executable regions"
                 .to_string(),
-            "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans".to_string(),
+            "commit tree overlay C files mapped to same-tree AlchemyC placeholder spans"
+                .to_string(),
             "noncanonical register-pinned/inline-assembly/fakematch C excluded".to_string(),
         ];
         if !measured.excluded.is_empty() {
@@ -435,7 +511,7 @@ fn ledger(root: &Path) -> Result<Ledger, String> {
             percent: round_half_up_percent(full_c, denominator)?,
             main_full_c_bytes: measured.main,
             overlay_full_c_bytes: measured.overlays,
-            canonical_suffix: format_subject(full_c, denominator)?,
+            canonical_prefix: format_subject_prefix(full_c, denominator)?,
             evidence,
             correction,
         });
@@ -466,7 +542,11 @@ fn canonical_ledger_json(output: &Ledger) -> String {
     );
     let _ = writeln!(text, "  \"executable_bytes\": {},", output.executable_bytes);
     text.push_str("  \"history_scope\": \"first-parent\",\n");
-    let _ = writeln!(text, "  \"generated_from\": {},", json::quote(&output.generated_from));
+    let _ = writeln!(
+        text,
+        "  \"generated_from\": {},",
+        json::quote(&output.generated_from)
+    );
     if output.entries.is_empty() {
         text.push_str("  \"entries\": []\n}");
         return text;
@@ -481,17 +561,37 @@ fn canonical_ledger_json(output: &Ledger) -> String {
             "      \"first_parent_position\": {},",
             entry.first_parent_position
         );
-        let _ = writeln!(record, "      \"author_time\": {},", json::quote(&entry.author_time));
+        let _ = writeln!(
+            record,
+            "      \"author_time\": {},",
+            json::quote(&entry.author_time)
+        );
         let _ = writeln!(
             record,
             "      \"committer_time\": {},",
             json::quote(&entry.committer_time)
         );
         let _ = writeln!(record, "      \"full_c_bytes\": {},", entry.full_c_bytes);
-        let _ = writeln!(record, "      \"executable_bytes\": {},", entry.executable_bytes);
-        let _ = writeln!(record, "      \"remaining_bytes\": {},", entry.remaining_bytes);
-        let _ = writeln!(record, "      \"percent\": {},", json::number(entry.percent));
-        let _ = writeln!(record, "      \"main_full_c_bytes\": {},", entry.main_full_c_bytes);
+        let _ = writeln!(
+            record,
+            "      \"executable_bytes\": {},",
+            entry.executable_bytes
+        );
+        let _ = writeln!(
+            record,
+            "      \"remaining_bytes\": {},",
+            entry.remaining_bytes
+        );
+        let _ = writeln!(
+            record,
+            "      \"percent\": {},",
+            json::number(entry.percent)
+        );
+        let _ = writeln!(
+            record,
+            "      \"main_full_c_bytes\": {},",
+            entry.main_full_c_bytes
+        );
         let _ = writeln!(
             record,
             "      \"overlay_full_c_bytes\": {},",
@@ -499,8 +599,8 @@ fn canonical_ledger_json(output: &Ledger) -> String {
         );
         let _ = writeln!(
             record,
-            "      \"canonical_suffix\": {},",
-            json::quote(&entry.canonical_suffix)
+            "      \"canonical_prefix\": {},",
+            json::quote(&entry.canonical_prefix)
         );
         record.push_str("      \"derivation_status\": \"measured\",\n");
         let inline = entry
@@ -511,7 +611,11 @@ fn canonical_ledger_json(output: &Ledger) -> String {
             .join(", ");
         let _ = write!(record, "      \"evidence\": [{inline}]");
         if let Some(correction) = &entry.correction {
-            let _ = write!(record, ",\n      \"correction\": {}", json::quote(correction));
+            let _ = write!(
+                record,
+                ",\n      \"correction\": {}",
+                json::quote(correction)
+            );
         }
         record.push_str("\n    }");
         records.push(record);
@@ -532,7 +636,7 @@ const COLUMNS: [&str; 13] = [
     "percent",
     "main_full_c_bytes",
     "overlay_full_c_bytes",
-    "canonical_suffix",
+    "canonical_prefix",
     "derivation_status",
     "correction",
 ];
@@ -549,7 +653,7 @@ fn csv_column(entry: &HistoryEntry, column: &str) -> String {
         "percent" => json::number(entry.percent),
         "main_full_c_bytes" => entry.main_full_c_bytes.to_string(),
         "overlay_full_c_bytes" => entry.overlay_full_c_bytes.to_string(),
-        "canonical_suffix" => entry.canonical_suffix.clone(),
+        "canonical_prefix" => entry.canonical_prefix.clone(),
         "derivation_status" => "measured".to_string(),
         // `entry[column] ?? ""`: an absent correction becomes an empty cell.
         "correction" => entry.correction.clone().unwrap_or_default(),
@@ -581,11 +685,18 @@ fn write_ledger(root: &Path) -> Result<(), String> {
     if output.entries.is_empty() {
         return Err("no first-parent history was measured".to_string());
     }
-    std::fs::write(root.join("docs/full-c-history.json"), canonical_ledger_json(&output))
-        .map_err(|error| error.to_string())?;
+    std::fs::write(
+        root.join("docs/full-c-history.json"),
+        canonical_ledger_json(&output),
+    )
+    .map_err(|error| error.to_string())?;
     std::fs::write(root.join("docs/full-c-history.csv"), ledger_csv(&output))
         .map_err(|error| error.to_string())?;
-    let regressions = output.entries.iter().filter(|entry| entry.correction.is_some()).count();
+    let regressions = output
+        .entries
+        .iter()
+        .filter(|entry| entry.correction.is_some())
+        .count();
     println!(
         "history={} measured={} unmeasured=0 corrections={regressions} denominator={}",
         output.entries.len(),
@@ -595,10 +706,141 @@ fn write_ledger(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
+/// One independently measured tree in the complete reachable commit DAG.
+///
+/// The checked-in ledger remains deliberately first-parent: it is a compact
+/// contributor-progress view. A whole-DAG export is for audits such as a
+/// history rewrite, where every merge side must be measured rather than
+/// borrowing a first-parent result.
+struct DagMeasurement {
+    commit: String,
+    tree: String,
+    author_time: String,
+    committer_time: String,
+    main_full_c_bytes: i64,
+    overlay_full_c_bytes: i64,
+    full_c_bytes: i64,
+    executable_bytes: i64,
+    percent: f64,
+    nearest_whole_percent: i64,
+    excluded: Vec<String>,
+}
+
+fn full_dag_measurements(root: &Path, revision: &str) -> Result<Vec<DagMeasurement>, String> {
+    let report = read_json(&root.join("metrics/gs1-en-progress.json"))?;
+    if report.get("audit").and_then(json::Value::as_str) != Some("complete")
+        || report.get("metric").and_then(json::Value::as_str) != Some("full-c-byte-share")
+    {
+        return Err("current audited Full-C report is required".to_string());
+    }
+    let denominator = report
+        .get("executable_bytes")
+        .and_then(json::Value::as_f64)
+        .ok_or("executable_bytes is missing")? as i64;
+    let sizes = region_map(root)?;
+    if sizes.is_empty() {
+        return Err("no audited main C regions are available".to_string());
+    }
+    let history = all_commits(root, revision)?;
+    if history.is_empty() {
+        return Err("no reachable commits were measured".to_string());
+    }
+    let mut blobs = BlobCache::default();
+    let mut result = Vec::with_capacity(history.len());
+    for commit in history {
+        let measured = measured_tree(root, &mut blobs, &tree(root, &commit.commit)?, &sizes)?;
+        let full_c_bytes = measured.main + measured.overlays;
+        if full_c_bytes > denominator {
+            return Err(format!("{}: numerator exceeds denominator", commit.commit));
+        }
+        result.push(DagMeasurement {
+            tree: git(root, &["rev-parse", &format!("{}^{{tree}}", commit.commit)])?
+                .trim()
+                .to_string(),
+            commit: commit.commit,
+            author_time: commit.author,
+            committer_time: commit.committer,
+            main_full_c_bytes: measured.main,
+            overlay_full_c_bytes: measured.overlays,
+            full_c_bytes,
+            executable_bytes: denominator,
+            percent: round_half_up_percent(full_c_bytes, denominator)?,
+            nearest_whole_percent: nearest_whole_percent(full_c_bytes, denominator)?,
+            excluded: measured.excluded,
+        });
+    }
+    Ok(result)
+}
+
+const DAG_COLUMNS: [&str; 12] = [
+    "commit",
+    "tree",
+    "author_time",
+    "committer_time",
+    "main_full_c_bytes",
+    "overlay_full_c_bytes",
+    "full_c_bytes",
+    "executable_bytes",
+    "percent",
+    "nearest_whole_percent",
+    "derivation_status",
+    "excluded",
+];
+
+fn dag_measurements_csv(entries: &[DagMeasurement]) -> String {
+    let mut lines = vec![DAG_COLUMNS.join(",")];
+    for entry in entries {
+        let fields = [
+            entry.commit.clone(),
+            entry.tree.clone(),
+            entry.author_time.clone(),
+            entry.committer_time.clone(),
+            entry.main_full_c_bytes.to_string(),
+            entry.overlay_full_c_bytes.to_string(),
+            entry.full_c_bytes.to_string(),
+            entry.executable_bytes.to_string(),
+            json::number(entry.percent),
+            entry.nearest_whole_percent.to_string(),
+            "measured".to_string(),
+            entry.excluded.join(";"),
+        ];
+        lines.push(
+            fields
+                .iter()
+                .map(|field| js::csv_cell(field))
+                .collect::<Vec<_>>()
+                .join(","),
+        );
+    }
+    lines.join("\n") + "\n"
+}
+
+fn write_all_measurements(root: &Path, revision: &str, output: &Path) -> Result<(), String> {
+    let rows = full_dag_measurements(root, revision)?;
+    std::fs::write(output, dag_measurements_csv(&rows)).map_err(|error| error.to_string())?;
+    let denominator = rows
+        .first()
+        .map(|entry| entry.executable_bytes)
+        .unwrap_or(0);
+    println!(
+        "history={} measured={} unmeasured=0 denominator={} output={}",
+        rows.len(),
+        rows.len(),
+        denominator,
+        output.display()
+    );
+    Ok(())
+}
+
 fn self_test() -> Result<(), String> {
     let placeholders =
         overlay_placeholders("AlchemyC_02000010:\n\t.space 2\n.L_02000012:\n\t.space 4\n\tbx lr\n");
-    if placeholders.iter().find(|(key, _)| key == "02000010").map(|(_, size)| *size) != Some(6) {
+    if placeholders
+        .iter()
+        .find(|(key, _)| key == "02000010")
+        .map(|(_, size)| *size)
+        != Some(6)
+    {
         return Err("overlay placeholder adapter failed".to_string());
     }
     if js::acceptable_historical_c("register int x asm(\"r4\");") {
@@ -611,13 +853,14 @@ fn self_test() -> Result<(), String> {
     Ok(())
 }
 
-const USAGE: &str = "usage: full-c-history [--write|--self-test]\n\nMeasures first-parent Full-C history, or runs the native self-test.\nWith no option, --write is the default.\n  -h, --help     show this help\n      --write    write docs/full-c-history.json and .csv\n      --self-test validate history parsing without repository work";
+const USAGE: &str = "usage: full-c-history [--write|--self-test]\n       full-c-history --all --revision REVISION --output PATH\n\nMeasures first-parent Full-C history, exports an independently measured\nreachable DAG for an audit, or runs the native self-test. With no option,\n--write is the default.\n  -h, --help     show this help\n      --write    write docs/full-c-history.json and .csv\n      --all      measure every commit reachable from REVISION\n      --revision commit to measure with --all\n      --output   external CSV path for --all\n      --self-test validate history parsing without repository work";
 
 #[derive(Debug, PartialEq, Eq)]
 enum Action {
     Help,
     SelfTest,
     Write,
+    All { revision: String, output: PathBuf },
 }
 
 fn parse_args(arguments: &[String]) -> Result<Action, String> {
@@ -626,7 +869,31 @@ fn parse_args(arguments: &[String]) -> Result<Action, String> {
         [arg] if arg == "--write" => Ok(Action::Write),
         [arg] if arg == "--self-test" => Ok(Action::SelfTest),
         [arg] if arg == "-h" || arg == "--help" => Ok(Action::Help),
-        _ => Err(USAGE.to_string()),
+        _ => {
+            let mut all = false;
+            let mut revision = None;
+            let mut output = None;
+            let mut index = 0usize;
+            while index < arguments.len() {
+                match arguments[index].as_str() {
+                    "--all" => all = true,
+                    "--revision" => {
+                        index += 1;
+                        revision = arguments.get(index).cloned();
+                    }
+                    "--output" => {
+                        index += 1;
+                        output = arguments.get(index).map(PathBuf::from);
+                    }
+                    _ => return Err(USAGE.to_string()),
+                }
+                index += 1;
+            }
+            match (all, revision, output) {
+                (true, Some(revision), Some(output)) => Ok(Action::All { revision, output }),
+                _ => Err(USAGE.to_string()),
+            }
+        }
     }
 }
 
@@ -639,6 +906,9 @@ fn run() -> Result<(), String> {
         }
         Action::SelfTest => self_test(),
         Action::Write => write_ledger(&repo_root()),
+        Action::All { revision, output } => {
+            write_all_measurements(&repo_root(), &revision, &output)
+        }
     }
 }
 
@@ -664,12 +934,29 @@ mod tests {
         assert_eq!(parse_args(&args(&["--self-test"])), Ok(Action::SelfTest));
         assert_eq!(parse_args(&args(&["-h"])), Ok(Action::Help));
         assert_eq!(parse_args(&args(&["--help"])), Ok(Action::Help));
+        assert_eq!(
+            parse_args(&args(&[
+                "--all",
+                "--revision",
+                "old",
+                "--output",
+                "/tmp/report.csv"
+            ])),
+            Ok(Action::All {
+                revision: "old".to_string(),
+                output: PathBuf::from("/tmp/report.csv"),
+            })
+        );
         assert!(parse_args(&args(&["--unknown"])).is_err());
         assert!(parse_args(&args(&["--write", "extra"])).is_err());
+        assert!(parse_args(&args(&["--all", "--revision", "old"])).is_err());
     }
 
     fn entry(oid: &str, path: &str) -> TreeEntry {
-        TreeEntry { oid: oid.to_string(), path: path.to_string() }
+        TreeEntry {
+            oid: oid.to_string(),
+            path: path.to_string(),
+        }
     }
 
     #[test]
@@ -685,11 +972,13 @@ mod tests {
     }
 
     #[test]
-    fn percent_rounds_half_up_and_subject_uses_floored_kilobytes() {
+    fn percent_rounds_half_up_and_subject_uses_nearest_whole_exact_c_percentage() {
         assert_eq!(round_half_up_percent(1, 8).unwrap(), 12.5);
         assert_eq!(round_half_up_percent(317066, 1345890).unwrap(), 23.56);
-        assert_eq!(format_subject(123456, 1234567).unwrap(), "[ ☀️ 123 / 1,234 ]");
-        assert!(format_subject(2, 1).is_err());
+        assert_eq!(nearest_whole_percent(1, 8).unwrap(), 13);
+        assert_eq!(nearest_whole_percent(370872, 1347264).unwrap(), 28);
+        assert_eq!(format_subject_prefix(123456, 1234567).unwrap(), "☀️ 10% –");
+        assert!(format_subject_prefix(2, 1).is_err());
         assert!(round_half_up_percent(1, 0).is_err());
     }
 
@@ -707,7 +996,9 @@ mod tests {
         map.set("a", 2);
         map.set("z", 3);
         assert_eq!(
-            map.iter().map(|(key, value)| (key.as_str(), *value)).collect::<Vec<_>>(),
+            map.iter()
+                .map(|(key, value)| (key.as_str(), *value))
+                .collect::<Vec<_>>(),
             vec![("z", 3), ("a", 2)]
         );
     }
@@ -716,10 +1007,18 @@ mod tests {
     /// rules are exercised without touching the repository's real history.
     fn fixture() -> (BlobCache, Vec<TreeEntry>, HashMap<String, RegionSize>) {
         let mut blobs = BlobCache::default();
-        blobs.cache.insert("aa".into(), "int f(void) { return 1; }\n".into());
-        blobs.cache.insert("bb".into(), "register int x asm(\"r4\");\n".into());
-        blobs.cache.insert("cc".into(), "int g(void) { return 2; }\n".into());
-        blobs.cache.insert("dd".into(), "int h(void) { return 3; }\n".into());
+        blobs
+            .cache
+            .insert("aa".into(), "int f(void) { return 1; }\n".into());
+        blobs
+            .cache
+            .insert("bb".into(), "register int x asm(\"r4\");\n".into());
+        blobs
+            .cache
+            .insert("cc".into(), "int g(void) { return 2; }\n".into());
+        blobs
+            .cache
+            .insert("dd".into(), "int h(void) { return 3; }\n".into());
         blobs.cache.insert(
             "ee".into(),
             "AlchemyC_02000010:\n\t.space 0x20\n\tbx lr\nAlchemyC_02000040:\n\t.space 4\n".into(),
@@ -733,8 +1032,20 @@ mod tests {
             entry("dd", "exact/kind1_c_02000099.c"),
         ];
         let mut sizes = HashMap::new();
-        sizes.insert("08000100".to_string(), RegionSize { address: 0x0800_0100, size: 64 });
-        sizes.insert("08000200".to_string(), RegionSize { address: 0x0800_0200, size: 16 });
+        sizes.insert(
+            "08000100".to_string(),
+            RegionSize {
+                address: 0x0800_0100,
+                size: 64,
+            },
+        );
+        sizes.insert(
+            "08000200".to_string(),
+            RegionSize {
+                address: 0x0800_0200,
+                size: 16,
+            },
+        );
         (blobs, entries, sizes)
     }
 
@@ -770,7 +1081,9 @@ mod tests {
         let (mut blobs, entries, mut sizes) = fixture();
         sizes.remove("08000200");
         let measured = measured_tree(&repo_root(), &mut blobs, &entries, &sizes).unwrap();
-        assert!(measured.excluded.contains(&"exact/08000200.c:noncanonical-C".to_string()));
+        assert!(measured
+            .excluded
+            .contains(&"exact/08000200.c:noncanonical-C".to_string()));
     }
 
     fn sample_ledger() -> Ledger {
@@ -790,7 +1103,7 @@ mod tests {
                     percent: 0.0,
                     main_full_c_bytes: 0,
                     overlay_full_c_bytes: 0,
-                    canonical_suffix: format_subject(0, 1_345_890).unwrap(),
+                    canonical_prefix: format_subject_prefix(0, 1_345_890).unwrap(),
                     evidence: vec!["one".to_string(), "two".to_string()],
                     correction: None,
                 },
@@ -805,7 +1118,7 @@ mod tests {
                     percent: round_half_up_percent(317_066, 1_345_890).unwrap(),
                     main_full_c_bytes: 109_020,
                     overlay_full_c_bytes: 208_046,
-                    canonical_suffix: format_subject(317_066, 1_345_890).unwrap(),
+                    canonical_prefix: format_subject_prefix(317_066, 1_345_890).unwrap(),
                     evidence: vec!["one".to_string()],
                     correction: Some("dropped src/a.c, src/b.c".to_string()),
                 },
@@ -820,7 +1133,9 @@ mod tests {
         assert!(text.contains("\n  \"entries\": [\n    {\n      \"commit\": \"aaa\","));
         assert!(text.contains("\n      \"evidence\": [\"one\", \"two\"]\n    },\n"));
         assert!(text.contains("\n      \"percent\": 23.56,\n"));
-        assert!(text.contains("\n      \"correction\": \"dropped src/a.c, src/b.c\"\n    }\n  ]\n}"));
+        assert!(
+            text.contains("\n      \"correction\": \"dropped src/a.c, src/b.c\"\n    }\n  ]\n}")
+        );
         assert!(!text.ends_with('\n'));
         // The subject's emoji survives unescaped, as JSON.stringify leaves it.
         assert!(text.contains("☀️"));
@@ -831,7 +1146,7 @@ mod tests {
         let text = ledger_csv(&sample_ledger());
         let lines: Vec<&str> = text.trim_end_matches('\n').split('\n').collect();
         assert_eq!(lines[0], COLUMNS.join(","));
-        assert!(lines[1].ends_with(",\"[ ☀️ 0 / 1,345 ]\",measured,"));
+        assert!(lines[1].ends_with(",☀️ 0% –,measured,"));
         assert!(lines[2].contains(",23.56,"));
         assert!(lines[2].ends_with(",measured,\"dropped src/a.c, src/b.c\""));
         assert!(text.ends_with("\n"));

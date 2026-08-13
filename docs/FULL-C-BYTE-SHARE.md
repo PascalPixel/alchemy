@@ -24,10 +24,11 @@ Read the live value with `make progress`. The tracked report is
 uses executable bytes, not owners or functions, because differently sized
 owners should not carry equal weight.
 
-Every commit subject ends with `[ ☀️ X / Y ]`, where X and Y are whole decimal
-kilobytes derived from the staged exact-C report. The pre-commit gate compares
-the subject with the staged metric. It rejects an unexplained regression or
-denominator change.
+Every commit subject starts `☀️ N% – description`, where `N` is the nearest
+whole percentage from the staged Exact-C numerator divided by the audited
+executable denominator. This is Exact C, never the public DONE share. The
+pre-commit gate compares `N` with the staged metric; it does not derive a
+percentage from display kilobytes.
 
 ## Audited denominator
 
@@ -39,9 +40,10 @@ it excludes data and assets. The tracked interval evidence is
 
 `make progress-check` regenerates that evidence and refuses incomplete,
 overlapping, or stale ownership. A target whose inventory says
-`audit: "incomplete"` cannot publish a percentage. A proved denominator
-correction must be isolated and use the repository's explicit metric-correction
-commit subject; ordinary decompilation work does not change the denominator.
+`audit: "incomplete"` cannot publish a percentage. The current audited
+denominator is used uniformly for Exact-C history; historical corrections are
+annotations, not row-by-row denominator changes. Ordinary decompilation work
+does not change the denominator.
 
 ## Ownership evidence
 

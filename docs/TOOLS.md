@@ -53,7 +53,7 @@ subprocess protocol is not mistaken for the contributor interface.
 |---|---|
 | `architecture` | Require every crate, binary, dispatch target, path, and classification to be valid and reachable. |
 | `cache_key_lint` | Ensure expensive cached results include all inputs that can change their meaning. |
-| `check_commit_progress` | Compare the staged progress report with the required commit-subject suffix. |
+| `check_commit_progress` | Compare the staged progress report with the required Exact-C percentage subject prefix. |
 | `check_publication` | Reject ROMs, build products, opaque dumps, credentials, and other non-publishable content. |
 | `check_sanctum` | Validate sealed owners or print the one-axis source-shape queue. |
 | `core_retained_audit` | Verify that retained main-image assembly has explicit, complete justification. |
@@ -115,7 +115,7 @@ itself.
 | `compare_roms` | Compare approved local ROM editions without publishing byte diffs. |
 | `coverage_map` | Check or regenerate the dashboard, exhaustive core-target index, `TARGETS.md`, SVGs, and README versions. |
 | `dashboard_server` | Serve one live worktree dashboard on localhost and an optional LAN address. |
-| `full_c_history` | Measure and optionally rewrite the first-parent Exact-C history. |
+| `full_c_history` | Write the first-parent Exact-C ledger; `--all` exports an independently measured reachable-DAG audit. |
 | `full_c_progress` | Calculate, check, or write the audited Exact-C report and denominator. |
 
 `coverage_map --write`, `full_c_history --write`, and the `full_c_progress`

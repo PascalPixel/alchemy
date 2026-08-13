@@ -19,6 +19,22 @@
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 #define NULL ((void *)0)
 
+struct ActorSub {
+    u8 pad00[9];
+    u8 flags09;
+    u8 pad0a[0x14];
+    s16 field1e;
+    u8 pad20[6];
+    u8 field26;
+};
+
+struct Actor {
+    u8 pad00[0x50];
+    struct ActorSub *sub;
+    u8 pad54[6];
+    u8 flags5a;
+};
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-non-prototype"
@@ -31,7 +47,7 @@ void Func_0808a010();
 void Func_0808a018();
 void Func_0808a020();
 s32 Func_0808a070();
-u8 * Func_0808a080();
+struct Actor * Func_0808a080();
 void Func_0808a090();
 void Func_0808a098();
 void Func_0808a0a0();
@@ -100,10 +116,9 @@ void Func_020013f8(void) {
     void *temp_r0_7;
     void *temp_r0_8;
     void *temp_r0_9;
-    void *temp_r1;
-    void *temp_r1_2;
-    void *temp_r3_2;
-    void *temp_r7;
+    struct ActorSub *temp_r1;
+    struct ActorSub *temp_r1_2;
+    struct Actor *temp_r7;
 
     Func_080770c8(((s32)(u32)0x00000962));
     Func_080772e8(0xED);
@@ -144,15 +159,15 @@ void Func_020013f8(void) {
     Func_0808a138(8, 2);
     Func_0808a010(0x3C);
     Func_080f9010(0x11);
-    FIELD(FIELD(temp_r7, void **, 0x50), s16 *, 0x1E) = 0;
+    temp_r7->sub->field1e = 0;
     Func_0808a128(8, 0xA, 0x46);
     var_r5 = 0x1D;
     do {
-        temp_r1 = FIELD(temp_r7, void **, 0x50);
-        FIELD(temp_r1, u8 *, 9) = (u8) (-0xD & FIELD(temp_r1, u8 *, 9));
+        temp_r1 = temp_r7->sub;
+        temp_r1->flags09 = (u8) (-0xD & temp_r1->flags09);
         Func_0808a010(2);
-        temp_r1_2 = FIELD(temp_r7, void **, 0x50);
-        FIELD(temp_r1_2, u8 *, 9) = (u8) ((-0xD & FIELD(temp_r1_2, u8 *, 9)) | 8);
+        temp_r1_2 = temp_r7->sub;
+        temp_r1_2->flags09 = (u8) ((-0xD & temp_r1_2->flags09) | 8);
         var_r5 -= 1;
         Func_0808a010(2);
     } while (var_r5 >= 0);
@@ -161,7 +176,7 @@ void Func_020013f8(void) {
     temp_r5 = FIELD(Func_0808a080(8), s16 *, 0x12) << 0x10;
     Func_0808a0f0(8, 0, 0);
     Func_0808a0f0(9, temp_r6 << 0x10, temp_r5);
-    FIELD(FIELD(temp_r7, void **, 0x50), s8 *, 0x26) = 0;
+    temp_r7->sub->field26 = 0;
     Func_080f9010(0x1E);
     Func_0808a090(9, ((s32)(u32)0x0000cccc), ((s32)(u32)0x00006666));
     Func_0808a580(9, 0x20, 0x20);
@@ -746,9 +761,8 @@ void Func_020013f8(void) {
     *(s16 *)((u8 *)(unsigned long)(u32)temp_r3 + 0x52a) = 5;
     *(s16 *)((u8 *)(unsigned long)(u32)temp_r3 + 0x536) = 0x1F;
     Func_080000c0(1);
-    temp_r3_2 = ((void *)(u32)0x00003f42);
-    FIELD(temp_r3_2, s16 *, 0) = (s16)0x04000050;
-    FIELD(temp_r3_2, s16 *, 2) = (s16) ((s32)(u32)0x00000c04);
+    *(s16 *)(u32)0x04000050 = (s16)0x3f42;
+    *(s16 *)(u32)0x04000052 = (s16)0x0c04;
     Func_0808a220(0, 1);
     Func_0808a218();
     Func_0808a010(0xA);
@@ -872,4 +886,3 @@ void Func_020013f8(void) {
     Func_0808a4f0();
     Func_0808a020();
 }
-

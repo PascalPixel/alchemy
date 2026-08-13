@@ -74,6 +74,35 @@ extern void Func_02004b86(void);
 extern void Func_02004ada();
 extern void Func_02004b32();
 
+/*
+ * These names describe only the behavior witnessed in this owner.  The raw
+ * relocations above remain the ABI boundary; the aliases keep the executable
+ * body readable without assigning undocumented game-specific identities.
+ */
+#define GetSceneRecord                 Func_0200492e
+#define OpenSceneBracket               Func_0200490c
+#define PlaySceneDialogue              Func_020049d2
+#define ConfigureSceneTiming           Func_020049f4
+#define ConfigureScenePosition         Func_02004980
+#define ConfigureSceneHeight           Func_02004a1c
+#define SetSceneCue                    Func_02004ada
+#define GetActorField40Target          Func_02004968
+#define GetActorOffsetTarget           Func_02004974
+#define ConfigureActorState            Func_0200499a
+#define SetActorAnimation              Func_020049b6
+#define FinishActorSetup               Func_020049dc
+#define GetActorFlagTarget             Func_020049a2
+#define SetActorPresentation           Func_02004a74
+#define FinishSceneCue                 Func_02004b32
+#define SpawnSceneObjectPositiveTurn  Func_02000718
+#define SpawnSceneObjectNeutral       Func_02000732
+#define SpawnSceneObjectNegativeTurn  Func_0200074c
+#define WaitSceneFrames                Func_020049ea
+#define RunSceneAward                  Func_02004b86
+#define AwardSceneEvent                Func_020049ca
+#define SetStoryFlag                   Func_020049f8
+#define CloseSceneBracket              Func_02004a1c
+
 void Func_02000518(void)
 {
     s32 spawnArgs[10];
@@ -82,53 +111,53 @@ void Func_02000518(void)
     s32 spawnOffset;               /* 0x40000, added to record[16] */
     s32 spawnFlags;                /* 0x10000, also written to record[72] */
 
-    record = Func_0200492e(9);
-    Func_0200490c();
-    Func_020049d2(0x17b4);
-    Func_020049f4(9, 0, 20);
-    Func_02004980(0, 168, 196 << 1);
-    Func_02004a1c(0, 192 << 8, 20);
-    Func_02004ada(132);
+    record = GetSceneRecord(9);
+    OpenSceneBracket();
+    PlaySceneDialogue(0x17b4);
+    ConfigureSceneTiming(9, 0, 20);
+    ConfigureScenePosition(0, 168, 196 << 1);
+    ConfigureSceneHeight(0, 192 << 8, 20);
+    SetSceneCue(132);
 
-    actor = Func_02004968(9);
+    actor = GetActorField40Target(9);
     *(s32 *)(actor + 40) = 160 << 13;
 
-    actor = Func_02004974(9);
+    actor = GetActorOffsetTarget(9);
     spawnOffset = 128 << 11;
     *(s32 *)(actor + 72) = spawnOffset;
 
-    Func_0200499a(9, 192 << 10, 192 << 9);
-    Func_020049b6(9, 152, 196 << 1);
-    Func_020049dc(9);
+    ConfigureActorState(9, 192 << 10, 192 << 9);
+    SetActorAnimation(9, 152, 196 << 1);
+    FinishActorSetup(9);
 
-    actor = Func_020049a2(9);
+    actor = GetActorFlagTarget(9);
     spawnFlags = 128 << 9;
     *(s32 *)(actor + 72) = spawnFlags;
 
-    Func_02004a74(9, 0, 0);
-    Func_02004b32(132);
+    SetActorPresentation(9, 0, 0);
+    FinishSceneCue(132);
 
     spawnArgs[1] = 7;
 
-    Func_02000718(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    SpawnSceneObjectPositiveTurn(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
                   128 << 8, 0, 0, spawnFlags, (u8 *)spawnArgs);
 
-    Func_02000732(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    SpawnSceneObjectNeutral(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
                   0, 0, 0, spawnFlags, (u8 *)spawnArgs);
 
-    Func_0200074c(*(s32 *)(record + 8), *(s32 *)(record + 12),
+    SpawnSceneObjectNegativeTurn(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
                   (s32)0xffff8000, 0, 0, spawnFlags, (u8 *)spawnArgs);
 
-    Func_020049ea(30);
-    Func_02004b86();
+    WaitSceneFrames(30);
+    RunSceneAward();
     {
         s32 arg0 = 10;
         s32 arg1 = 22;
-        Func_020049ca(10, 24, 1, 1, arg0, arg1);
+        AwardSceneEvent(10, 24, 1, 1, arg0, arg1);
     }
-    Func_020049f8(0x892);
-    Func_02004a1c();
+    SetStoryFlag(0x892);
+    CloseSceneBracket();
 }

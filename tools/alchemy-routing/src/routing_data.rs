@@ -142,6 +142,8 @@ pub static NO_CONSTANT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_37b_c_02000614.c",
     "semantic/resource_375_c_02000be0.c",
     "exact/resource_375_c_02000be0.c",
+    "semantic/resource_39e_c_02002ad0.c",
+    "exact/resource_39e_c_02002ad0.c",
 ];
 pub static POOL_LONG_CALL_ARG0_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002f14.c",
@@ -674,6 +676,8 @@ pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_38f_c_020008ec.c",
     "semantic/resource_391_c_02000d3c.c",
     "exact/resource_391_c_02000d3c.c",
+    "semantic/resource_39e_c_02002ad0.c",
+    "exact/resource_39e_c_02002ad0.c",
     "exact/resource_379_c_02000074.c",
     "exact/resource_3b8_c_02002014.c",
     "exact/resource_3bd_c_02002c44.c",
@@ -1079,6 +1083,8 @@ pub static LITERAL_ARG1_FIRST_BEFORE_ZERO_PAIR_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_379_c_02000074.c",
     "semantic/resource_391_c_02000d3c.c",
     "exact/resource_391_c_02000d3c.c",
+    "semantic/resource_39e_c_02002ad0.c",
+    "exact/resource_39e_c_02002ad0.c",
     "semantic/resource_373_c_02003fb0.c",
     "exact/resource_373_c_02003fb0.c",
 ];

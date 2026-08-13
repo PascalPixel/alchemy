@@ -5,7 +5,7 @@ their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 370,872 / 1,347,264 executable bytes (**27.53%**).
+- **Exact C:** 376,432 / 1,347,264 executable bytes (**27.94%**).
 - **Public DONE:** **33%**, combining Exact C with audited permanent assembly.
 - The generated coverage maps and dashboard are the live per-overlay source of
   truth; this page records the current contributor frontier rather than a
@@ -89,9 +89,9 @@ machine-readable index in
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json) retains
 all 1,727 unfinished scopes down to the smallest owner.
 
-The index accounts for all 1,347,264 executable bytes: 897,406 target bytes are
-reviewed semantic C, and 446,330 bytes occur only in Exact C or audited
-permanent assembly scopes. Its rows never overlap. There are currently eight
+The index accounts for all 1,347,264 executable bytes: 891,846 target bytes are
+reviewed semantic C, and 451,890 bytes occur only in Exact C or audited
+permanent assembly scopes. Its rows never overlap. There are currently seven
 independent unfinished owner scopes of at least 5 kB;
 the first ten rows are:
 
@@ -104,9 +104,9 @@ the first ten rows are:
 | 5 | `resource_3bf:0x02003054` | 5,604 bytes |
 | 6 | `resource_373:0x020015dc` | 5,240 bytes |
 | 7 | `resource_381:0x02001410` | 5,136 bytes |
-| 8 | `resource_39e:0x02002ad0` | 5,000 bytes |
-| 9 | `main:0x080ab5e4` | 4,888 bytes |
-| 10 | `resource_39d:0x02001af0` | 4,840 bytes |
+| 8 | `main:0x080ab5e4` | 4,888 bytes |
+| 9 | `resource_39d:0x02001af0` | 4,840 bytes |
+| 10 | `resource_3c9:0x02002360` | 4,708 bytes |
 
 `make coverage` regenerates both forms and `make coverage-check` rejects a
 stale ranking. This owner-level list is the authoritative byte-accounted
@@ -180,6 +180,23 @@ set, byte accounting, exact witnesses, import/export seam, compiler routes, and
 adoption order. Do not expand the core mid-round. A core is complete only when
 every centre owner is exact or explicitly moved outside the centre as a
 reviewed semantic edge shim, and the resulting build passes `make verify`.
+
+### `resource_39e` scene transfer
+
+The Vale roof-repair source model has now transferred to three more owners:
+the 5,000-byte scripted roof scene at `2ad0`, the 224-byte script beat at
+`0db4`, and the 336-byte scene-effect routine at `41ec`. Together they add
+5,560 Exact-C bytes. The strict scripted-scene set is now 9 / 17 owners exact,
+with eight scenes remaining. The broader 16-owner transfer queue, which also
+includes scene drivers, effects, selectors, and helpers, is 3 / 16 complete
+this round, leaving 7,388 of its original 12,948 bytes unresolved.
+
+The nearest remaining witnessed residuals are `3e58` (644 bytes, 28 differing
+bytes after all 39 calls were resolved), `0518` (320 bytes, 93 differing
+bytes), and `102c` (282-byte owner, 130 differing bytes with a boundary/source
+shape mismatch). Larger scene drivers at `27ec`, `1160`, `1494`, and `1dbc`
+have complete call maps but still need structural reconstruction; they are not
+permutation-ready.
 
 The authoritative measurements are
 [`metrics/gs1-en-executable.json`](metrics/gs1-en-executable.json),

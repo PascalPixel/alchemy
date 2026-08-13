@@ -128,15 +128,15 @@ report differing halfwords, so the residual column states its unit explicitly.
 
 | Owner | Candidate / target | Current residual | Retained source evidence |
 |---|---:|---:|---|
-| `080bbb0c` | 6,340 / 6,332 | 5,648 bytes | Load `range_index` before the selected range adjustment. |
-| `resource_3bd:13f8` | 6,144 / 6,220 | 2,947 halfwords | Typed actor positions, sprite pointer, and visibility flag are ROM-witnessed; continue from that aggregate. |
-| `resource_380:27f8` | 5,916 / 5,932 | 2,678 halfwords | No additional source model survived this checkpoint. |
-| `080ea0d8` | 5,752 / 5,756 | 5,360 bytes | Preserve full-width RNG values and the five-field geometry state. |
+| `080bbb0c` | 6,340 / 6,332 | 5,648 bytes | `ResolveBattleActionTarget` now names the plan and target-slot contract. Load `range_index` before the selected range adjustment; the next rewrite should type the battle-state range table so its two threshold scans acquire their distinct ROM lifetimes naturally. |
+| `resource_3bd:13f8` | 6,144 / 6,220 | 2,947 halfwords | `RunActorFormationScene` names the bounded choreography. Typed actor positions, sprite pointer, visibility flag, and actor-8 subrecord lifetime are ROM-witnessed; continue from that aggregate. |
+| `resource_380:27f8` | 5,912 / 5,932 | 2,799 halfwords | `RunResource380GrandFinale` names the actor-9 and reference-record lifetimes; both record lookups now precede their dereferences. This valid-C baseline replaces the lower-scoring undefined draft. |
+| `080ea0d8` | 5,748 / 5,756 | 5,353 bytes | `RunCinematicProjectionEffect` names the owner and its retained context. Preserve full-width RNG values, explicit low-16-bit extraction, and the five-field geometry state. |
 | `resource_3bf:3054` | 5,656 / 5,604 | 2,509 halfwords | Preserve the line-cursor aggregate. |
-| `resource_373:15dc` | 5,216 / 5,240 | 2,227 halfwords | No additional source model survived this checkpoint. |
+| `resource_373:15dc` | 5,216 / 5,240 | 2,227 halfwords | `RunValeRoofRepairScene` now records Isaac, Dora, Jenna, Garet, and the four witnessed dialogue beats. Exact-sibling declaration scopes regress here, so continue from this neutral vocabulary rather than copying its route shape. |
 | `resource_381:1410` | 5,088 / 5,136 | 2,478 halfwords | `RunSolSanctumCollapse` now names Isaac, Garet, the Wise One, camera state, and Elemental Star fields from exact-sibling evidence without changing codegen; continue phase-by-phase from that vocabulary. |
 
-This checkpoint also retained nine smaller but structurally useful advances:
+This checkpoint also retained twenty-eight smaller but structurally useful advances:
 
 Candidate/target spans below include owner-owned literal or alignment tails;
 the generated core-target index counts executable bytes only. Thus
@@ -144,21 +144,39 @@ the generated core-target index counts executable bytes only. Thus
 
 | Owner | Candidate / target | Current residual | Retained source evidence |
 |---|---:|---:|---|
-| `resource_39d:1af0` | 4,844 / 4,844 | 2,246 halfwords | The workspace cell is initialized before use, replacing an undefined draft dereference with the ROM dataflow. |
+| `080ab5e4` | 4,780 / 4,888 | 4,498 bytes | A 20-byte slot-flag workspace recovers the ROM's 108-byte frame and removes one differing halfword; the remaining residual is still semantic-source work. |
+| `resource_39d:1af0` | 4,852 / 4,844 | 2,377 halfwords | `RunScene59ValeSequence` names the actor/workspace roles, and both workspace-counter paths now load their pointer before use. This valid-C baseline supersedes the smaller undefined draft. |
 | `resource_3aa:0360` | 4,260 / 4,268 | 1,834 halfwords | Holding the IWRAM workspace pointer cell matches the ROM lifetime and removes 90 differing halfwords. |
-| `resource_378:088c` | 3,964 / 4,080 | 2,007 halfwords | Three missing scene request/setup stores are restored at their witnessed instruction sites. |
+| `resource_3a8:0590` | 4,108 / 4,092 | 1,847 halfwords | The 4,092-byte stored owner contributes 4,064 executable bytes; cautious actor and phase vocabulary is recorded without changing code generation. |
+| `resource_378:088c` | 3,984 / 4,080 | 1,879 halfwords | `RunEnsembleCutscene` names the owner. ROM-witnessed per-site veneer symbols remove 128 differing halfwords while preserving all 489 imported-call sites. The `BL` at `0x02000912` enters this owner's shared exit tail, so it remains source-level control flow rather than a fabricated callee. |
+| `080f6440` | 3,792 / 3,804 | 3,609 bytes | `UpdateMenuPresentationAndOam` now names the subsystem boundary. A typed five-entry menu-record aggregate recovers enabled flags, signed spawn delays, positions, and choice bytes, removing 59 differing bytes. |
+| `resource_383:36f8` | 3,768 / 3,796 | 1,572 halfwords | `RunDialoguePromptScene` names the owner. All 387 imported calls retain their ROM-witnessed veneer identities, removing 168 differing halfwords while preserving the complete call order. |
+| `080e7404` | 3,416 / 3,640 | 3,463 bytes | ROM offsets establish the frame's `+7` vector as world position and `+10` vector as screen position; those roles are now named correctly without forcing a misleading aggregate rewrite. |
+| `resource_3c9:12c8` | 3,616 / 3,604 | 1,711 halfwords | `RunScriptedActorChoreography` names the owner. ROM-witnessed veneer identities remove 51 differing halfwords while all 363 semantic calls remain valid; actor 6's lookup/callback pair and the flag test/set pair retain their real APIs rather than raw relocation names. |
+| `resource_378:187c` | 3,378 / 3,400 | 1,531 halfwords | `RunSceneEightEnsembleSequence` names the witnessed scene phase. Per-site veneer identities remove 105 differing halfwords while all 400 calls remain semantically valid. |
+| `080d1714` | 3,404 / 3,384 | 3,092 bytes | Five real eight-actor arrays and two three-word projection vectors replace scalar placeholders and undefined pointer arithmetic. Their declaration order reproduces the ROM's facing/position/velocity/radius/angle stack order; the candidate frame is now 344 bytes versus the ROM's 356. |
+| `08023178` | 3,424 / 3,320 | 3,310 bytes | `ShowPartyMemberDetails` now names the modal. Four selection bytes, an 11-entry sprite array, and separate row-9/row-10 special sprites recover the witnessed stack model, removing 65 differing bytes and 84 candidate bytes. |
 | `080d6970` | 3,308 / 3,308 | 3,106 bytes | Direct calls through the two renderer slots remove a spurious wrapper, reach target size, and remove 180 differing bytes. |
+| `080a2680` | 3,100 / 3,128 | 2,799 bytes | `RunCharacterItemTransferMenu`; the ROM's `0xa8` animation/abort sentinel and `amount > 1` quantity-selection condition replace two incorrect semantic guesses, removing 26 differing bytes. |
+| `080ca60c` | 2,952 / 2,968 | 2,840 bytes | `RunCombatVisualEffect` names the context/variant boundary. A 156-byte coordinate scratch aggregate with 12-byte entries restores the witnessed frame shape and removes 23 differing bytes. |
 | `08023e70` | 2,728 / 2,756 | 2,319 bytes | ROM-shaped character masks and four-byte inventory records remove 46 differing bytes while retaining named field access. |
 | `resource_3c7:0508` | 2,544 / 2,532 | 1,148 halfwords | Both branch arms now update the workspace skip counter directly, removing a non-ROM helper and 12 differing halfwords. |
+| `080cbc0c` | 2,462 / 2,508 | 2,436 bytes | `RunCircularRevealEffect` now contains the ROM's direct two-pixel-thick symmetric-circle rasterizer rather than hiding roughly 700 owner bytes behind fabricated local helpers. |
+| `0808c4f8` | 2,378 / 2,428 | 2,297 bytes | `RunMapFieldEventLoop`; direct `Func_0808c4c0` calls replace a fabricated private wrapper, restoring the ROM's call shape and removing 59 differing bytes. |
+| `080f7460` | 2,260 / 2,388 | 2,265 bytes | `RunStatusMenuPresentation` shares the five-record position/enabled/spawn-delay vocabulary with `080f6440`; removing persistent hardware/map pointers restores the ROM's shorter lifetimes and removes 33 differing bytes. |
+| `080d2464` | 2,288 / 2,356 | 2,260 bytes | `RunDirectionalParticleSceneEffect` now contains both ROM-inline particle-spawn loops, reuses the saved scene slot, and recomputes particle-bank pointers at their witnessed phases. The rewrite restores 236 candidate bytes and removes 263 instruction mismatches. |
 | `08021e6c` | 2,212 / 2,300 | 2,110 bytes | Setup now installs callback `0x08021e15`; the sibling `0x08021dfd` callback is reserved for cleanup, matching the ROM pools and call sites. |
+| `080d91dc` | 2,088 / 2,268 | 2,200 bytes | Separate persistent camera, object, projection, and origin vectors plus a function-scope renderer table restore ROM-witnessed lifetimes, removing nine differing bytes and 28 instruction mismatches. |
 | `08024934` | 2,156 / 2,124 | 1,970 bytes | The ROM's inline division and 36-entry stack buffers remove 86 differing bytes; the four active-row flags retain the target's redraw-before-draw lifetime. |
+| `08077428` | 2,000 / 2,024 | 1,130 bytes | Caching each signed item modifier before updating scratch state restores the ROM's evaluation order in both adjustment loops, removing four differing bytes and 37 instruction mismatches. |
+| `080e823c` | 1,904 / 1,968 | 1,867 bytes | ROM arithmetic establishes `0x4000` as the particles' late vertical acceleration. The correction is byte-neutral but removes a semantic guess before structural matching continues. |
 | `08025200` | 1,816 / 1,836 | 1,521 bytes | The ROM's 12-byte sprite/OAM record removes 203 differing bytes and now names attributes 0–3 directly. |
+| `080d89ac` | 1,708 / 2,024 | 1,910 bytes | Removing a spurious scene field restores the ROM-witnessed layout at `+0x1c` and object-ID array at `+0x24`, removing one differing byte and one instruction mismatch. |
 
-Two main-image owners are now explicit rewrite leads rather than permutation
-targets: `080d1714` has a 172-byte candidate frame versus the ROM's 356-byte
-frame, and `08026080` is 3,568 / 2,138 bytes with a 400-byte candidate frame
-versus the ROM's 324-byte frame. Rebuild their aggregate/local models before
-trying another leaf-level spelling.
+`08026080` remains an explicit rewrite lead rather than a permutation target:
+it is 3,568 / 2,138 bytes with a 400-byte candidate frame versus the ROM's
+324-byte frame. Rebuild its aggregate/local model before trying another
+leaf-level spelling.
 
 ## Campaign cuts (secondary; may overlap)
 

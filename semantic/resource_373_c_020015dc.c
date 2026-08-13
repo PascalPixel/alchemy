@@ -3,6 +3,14 @@
 /*
  * resource_373 owner at 0x020015dc, 5,240 bytes.
  *
+ * This is the shorter Vale roof-repair scene outside Isaac's home.  Its exact
+ * 0x02003fb0 sibling uses the same message ids and choreography: 0x0f03 is
+ * Dora's "Good job, Isaac", 0x0f0a discusses Isaac and Garet studying
+ * Psynergy, 0x0f0e recalls Kyle's death, and 0x0f27 calls Isaac as stubborn as
+ * his father.  The sibling proves scene slot 0 as Isaac and slot 21 as Dora;
+ * slots 1 and 5 are Jenna and Garet respectively by the same still-marked
+ * inferred entrance choreography.
+ *
  * Complete owner: `push {r5, r6, r7, lr}` plus the r9/sl/fp and r8 saves and a
  * 36-byte local frame at 0x020015dc, through the single epilogue at
  * 0x02002a26-0x02002a36, followed by its final literal pool at
@@ -563,16 +571,18 @@ void Func_020089e8();
 
 /* Intra-overlay callees. */
 
-void Func_020015dc(void)
+#define RunValeRoofRepairScene Func_020015dc
+
+void RunValeRoofRepairScene(void)
 {
-    s32 savedFlag;          /* [sp,#32] - its value on entry */
-    u8 *savedFlagSlot;      /* [sp,#28] - &record0[0x55] */
-    u8 *handle;
-    u8 *sceneData;
-    s32 unit = 0x10000;
-    s32 mask;
-    s32 answerZero;
-    s32 zero = 0;
+    s32 saved_record0_flag; /* [sp,#32] - its value on entry */
+    u8 *record0_flag_slot;  /* [sp,#28] - &record0[0x55] */
+    u8 *flag_slot;
+    u8 *scene_path_data;
+    s32 actor_scale = 0x10000;
+    s32 clear_flag_mask;
+    s32 branch_zero;
+    s32 scene_zero = 0;
     u8 *record;             /* r6 - whichever actor record is in hand */
 
     Func_020075aa();
@@ -581,8 +591,8 @@ void Func_020015dc(void)
     Func_020076e4(-1, -1, -1, 0);
 
     record = Func_020076f8();
-    record[0x55] = (u8)zero;
-    Func_02007704(0x017f0000, 0x00a00000, 0x036d0000, zero);
+    record[0x55] = (u8)scene_zero;
+    Func_02007704(0x017f0000, 0x00a00000, 0x036d0000, scene_zero);
 
     Func_020075da(1);
     Func_0200753e();
@@ -593,10 +603,10 @@ void Func_020015dc(void)
 
     /* Record 0's +0x55 flag is stashed in the frame and cleared for the whole
      * scene; the tail puts it back. */
-    record = Func_0200765e(zero);
-    savedFlagSlot = record + 0x55;
-    savedFlag = *savedFlagSlot;
-    *savedFlagSlot = (u8)zero;
+    record = Func_0200765e(scene_zero);
+    record0_flag_slot = record + 0x55;
+    saved_record0_flag = *record0_flag_slot;
+    *record0_flag_slot = (u8)scene_zero;
 
     Func_020076d0(0, 0x01970000, 0x02b20000);
     Func_020076de(21, 0x01880000, 0x03800000);
@@ -607,8 +617,8 @@ void Func_020015dc(void)
     Func_0200778e(1, 0x8000, 0);
     Func_0200779a(5, 0x8000, 0);
     Func_0200773a(0, 11);
-    sceneData = Data_0200e590;
-    Func_020076f4(0, sceneData);
+    scene_path_data = Data_0200e590;
+    Func_020076f4(0, scene_path_data);
 
     Func_02004b66(23, 2, 1);
 
@@ -624,8 +634,8 @@ void Func_020015dc(void)
 
     /* 128 << 9 into record 0's +0x18 / +0x1c pair; repeated three more times
      * below, once per dialogue beat. */
-    *(s32 *)(record + 24) = unit;
-    *(s32 *)(record + 28) = unit;
+    *(s32 *)(record + 24) = actor_scale;
+    *(s32 *)(record + 28) = actor_scale;
 
     Func_0200781c(0, 0xb000, 40);
     Func_020077c4(0, 3);
@@ -651,13 +661,13 @@ void Func_020015dc(void)
     Func_020078a8(23, 0);
     Func_02007874(23, 0x01860000, 0x034a0000);
     Func_02007884(0, 11);
-    Func_0200783c(0, sceneData);
+    Func_0200783c(0, scene_path_data);
     Func_02007802(200);
 
     Func_02007794(7, 0x66, 0x54, 0x29, 2, 1);
     Func_0200785c(0, 1);
-    *(s32 *)(record + 24) = unit;
-    *(s32 *)(record + 28) = unit;
+    *(s32 *)(record + 24) = actor_scale;
+    *(s32 *)(record + 28) = actor_scale;
     Func_020078b8(0, 1);
     Func_0200782e(30);
     Func_020078ce(0, 3);
@@ -678,14 +688,14 @@ void Func_020015dc(void)
     Func_02007986(23, 0);
     Func_02007950(23, 0, 0);
     Func_02007960(0, 11);
-    Func_02007918(0, sceneData);
+    Func_02007918(0, scene_path_data);
     Func_020078de(200);
 
     Func_0200786e(6, 0x66, 0x53, 0x29, 1, 1);
     Func_02007936(0, 1);
     Func_02007992(0, 1);
-    *(s32 *)(record + 24) = unit;
-    *(s32 *)(record + 28) = unit;
+    *(s32 *)(record + 24) = actor_scale;
+    *(s32 *)(record + 28) = actor_scale;
     Func_02007908(30);
     Func_020079a8(0, 3);
     Func_02007916(20);
@@ -705,16 +715,17 @@ void Func_020015dc(void)
     Func_02007a6a(24, 0);
     Func_02007a34(24, 0, 0);
     Func_02007a44(0, 11);
-    Func_020079fc(0, sceneData);
+    Func_020079fc(0, scene_path_data);
     Func_020079c2(200);
 
     /* Split by the interior pool at 0x02001a12. */
     Func_02007992(5, 0x67, 0x52, 0x2a, 1, 1);
 
     Func_02007a5a(0, 1);
-    *(s32 *)(record + 24) = unit;
-    *(s32 *)(record + 28) = unit;
-    Func_02007af4(0xf03);
+    *(s32 *)(record + 24) = actor_scale;
+    *(s32 *)(record + 28) = actor_scale;
+    /* ---- Dora questions Isaac after the roof repair ---- */
+    Func_02007af4(0xf03); /* Dora: "Good job, Isaac." */
     Func_02007ace(21, 2, 20);
     Func_02007b20(21, 0, 20);
     Func_02007b3c(0, 0x1000, 20);
@@ -754,7 +765,7 @@ void Func_020015dc(void)
     Func_02007bf4(21, 4);
     Func_02007b62(20);
     Func_02007c54(21, 0, 20);
-    Func_02007c42(0xf0a);
+    Func_02007c42(0xf0a); /* Dora: Isaac and Garet have studied Psynergy. */
     Func_02007bee(21, 0x182, 0x349);
     Func_02007b84(10);
     Func_02007c88(21, 0xd000, 60);
@@ -774,7 +785,7 @@ void Func_020015dc(void)
     Func_02007cec(21, 0xd000, 60);
     Func_02007cac(21, 2);
     Func_02007c02(20);
-    Func_02007cd8(0xf0e);
+    Func_02007cd8(0xf0e); /* Dora recalls Kyle's death. */
     Func_02007cfa(21, 0, 20);
     Func_02007c8e(21, 0x182, 0x339);
     Func_02007c24(10);
@@ -799,6 +810,7 @@ void Func_020015dc(void)
     Func_02007d64(21, 3);
     Func_02007cd2(20);
     Func_02007dc4(21, 0, 10);
+    /* ---- Garet and Jenna arrive and join Isaac and Dora ---- */
     Func_02007e0c(0x6666, 0xccc);
     Func_02007e24(0x01790000, 0x00a00000, 0x035c0000, 1);
     Func_02007d38(5, 0x10000, 0x8000);
@@ -837,15 +849,15 @@ void Func_020015dc(void)
     Func_02007eca(1, 0x188, 0x34b);
 
     /* Clear bit 0 of actor 5's +0x5a flag, then set it again a beat later. */
-    mask = 0xfe;
-    handle = Func_02007e98(5) + 0x5a;
-    *handle = (u8)(*handle & mask);
+    clear_flag_mask = 0xfe;
+    flag_slot = Func_02007e98(5) + 0x5a;
+    *flag_slot = (u8)(*flag_slot & clear_flag_mask);
 
     Func_02007ef0(5, 0x198, 0x34b);
     Func_02007e86(1);
 
-    handle = Func_02007ebc(5) + 0x5a;
-    *handle = (u8)(*handle | 1);
+    flag_slot = Func_02007ebc(5) + 0x5a;
+    *flag_slot = (u8)(*flag_slot | 1);
 
     Func_02007f9a(5, 0x8000, 0);
     Func_02007f28(1);
@@ -924,14 +936,14 @@ void Func_020015dc(void)
     Func_0200821c(21, 0);
 
     /* Third question: same one-answer polarity as the second. */
-    answerZero = 0;
+    branch_zero = 0;
     if (Func_02008176(0, 0) == 1) {
         RESOURCE_373_SCENE_COUNTER = RESOURCE_373_SCENE_COUNTER + 1;
     }
 
     Func_02008168(40);
     Func_0200825a(21, 0, 20);
-    Func_02008248(0xf27);
+    Func_02008248(0xf27); /* Dora: Isaac is as stubborn as his father. */
     Func_02008292(21, 0x103, 0);
     Func_0200823a(21, 3);
     Func_02008190(30);
@@ -942,13 +954,13 @@ void Func_020015dc(void)
     Func_020081ba(5);
 
     /* Eleven arguments: four in registers and seven on the stack. */
-    Func_020082dc(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, answerZero);
+    Func_020082dc(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, branch_zero);
 
-    record = Func_02008212_b(21);
+    record = Func_02008212_b(21); /* Dora */
     /* The +0x50 handle's +0x26 byte, the field resource_373_c_02003380.c
      * models as Resource373Handle::field26. */
     *(*(u8 **)(record + 0x50) + 0x26) = 0;
-    record[0x5a] = (u8)(record[0x5a] & mask);
+    record[0x5a] = (u8)(record[0x5a] & clear_flag_mask);
 
     Func_0200823c(21, 0x30000, 0x18000);
     Func_02008280(21, 0x16c, 0x32f);
@@ -1017,8 +1029,8 @@ void Func_020015dc(void)
     Func_020084c0(21, 2);
     Func_02008416(30);
 
-    record = Func_0200844c(21);
-    record[0x23] = (u8)(record[0x23] & mask);
+    record = Func_0200844c(21); /* Dora */
+    record[0x23] = (u8)(record[0x23] & clear_flag_mask);
 
     Func_0200851e(21, 0, 80);
     Func_02008550(21, 0x101, 80);
@@ -1041,8 +1053,8 @@ void Func_020015dc(void)
     Func_0200856c(1, 1);
     Func_02008522(1, 0x40000, 0x20000);
 
-    record = Func_02008520(1);
-    record[0x5a] = (u8)(record[0x5a] & mask);
+    record = Func_02008520(1); /* Jenna, inferred */
+    record[0x5a] = (u8)(record[0x5a] & clear_flag_mask);
 
     Func_0200855e(1, 0x193, 0x33b);
     Func_02008628(5, 0x102);
@@ -1132,13 +1144,13 @@ void Func_020015dc(void)
     Func_020088dc(21, 3);
     Func_0200884a(60);
 
-    record = Func_02008880_b(1);
+    record = Func_02008880_b(1); /* Jenna, inferred */
     record[0x5a] = (u8)(record[0x5a] | 1);
 
-    record = Func_02008894(5);
+    record = Func_02008894(5); /* Garet, inferred */
     record[0x5a] = (u8)(record[0x5a] | 1);
 
-    record = Func_020088a6(0);
+    record = Func_020088a6(0); /* Isaac */
     Func_020088be(1, 0x10000, 0x8000);
     Func_020088cc(5, 0x10000, 0x8000);
     Func_02008996(0, 0, 0);
@@ -1165,8 +1177,8 @@ void Func_020015dc(void)
     Func_020089c0(0, 0x178, 0x390);
     Func_02008a54(0, 0xc000, 0);
 
-    handle = Func_02008992(21) + 0x5a;
-    *handle = (u8)(*handle | 1);
+    flag_slot = Func_02008992(21) + 0x5a; /* Dora */
+    *flag_slot = (u8)(*flag_slot | 1);
 
     Func_02005d42(21, 6, 5, 0);
 
@@ -1183,7 +1195,7 @@ void Func_020015dc(void)
     Func_020089c4(0x12f);
 
     /* Put record 0's +0x55 flag back the way the scene found it. */
-    *savedFlagSlot = savedFlag;
+    *record0_flag_slot = (u8)saved_record0_flag;
 
     /* Common exit; no argument register is set. */
     Func_020089e8();

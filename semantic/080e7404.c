@@ -257,8 +257,8 @@ s32 Func_080e7404(s32 arg0, s32 arg1) {
     phaseTwoProjection = stackWorkspace;
     phaseOneProjection = stackWorkspace + 2;
     projected = stackWorkspace + 4;
-    screen = stackWorkspace + 7;
-    world = stackWorkspace + 10;
+    screen = stackWorkspace + 10;
+    world = stackWorkspace + 7;
     transform = stackWorkspace + 13;
 
     sp4C = arg1;

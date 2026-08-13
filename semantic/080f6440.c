@@ -78,8 +78,11 @@ void Func_080f9010(s32);
  * Owner span: 0x080f6440-0x080f731c.  Long branches within that span are
  * continuations of this owner, not separately callable C functions.
  */
-void Func_080f6440(void) {
+#define UpdateMenuPresentationAndOam Func_080f6440
+
+void UpdateMenuPresentationAndOam(void) {
     struct MenuState_080f6440 *state;
+    struct MenuRecord_080f6440 *records;
     struct PresentationWorkspace_080f6440 *workspace;
     struct DmaChannel_080f6440 *dma;
     s32 *spC;
@@ -242,6 +245,7 @@ void Func_080f6440(void) {
     s32 var_r6_11;
 
     state = *(struct MenuState_080f6440 **)0x03001F04;
+    records = state->records;
     temp_r7 = (u8 *)state;
     workspace = *(struct PresentationWorkspace_080f6440 **)0x03001EEC;
     sp24 = (u8 *)workspace;
@@ -346,13 +350,11 @@ void Func_080f6440(void) {
         var_r9 = 0;
         M2C_FIELD(temp_r7, s32 *, 0xA8) = (s32) (M2C_FIELD(temp_r7, s32 *, 0xA8) + 1);
         var_r5_2 = 0;
-        if (M2C_FIELD(temp_r7, u8 *, 0x19) != 0) {
-            var_r2_2 = temp_r7 + 0x19;
+        if (records[0].enabled != 0) {
 loop_32:
             var_r5_2 += 1;
             if (var_r5_2 != 5) {
-                var_r2_2 += 0x1C;
-                if (*var_r2_2 == 0) {
+                if (records[var_r5_2].enabled == 0) {
                     goto block_34;
                 }
                 goto loop_32;
@@ -550,14 +552,13 @@ block_172:
             var_r6_4 = 0;
             var_r5_3 = temp_r7 + 0x18;
 loop_103:
-            if ((M2C_FIELD(var_r5_3, u8 *, 1) != 0) || (M2C_FIELD(var_r5_3, s8 *, 2) != -1)) {
+            if ((records[var_r6_4].enabled != 0) || (records[var_r6_4].spawn_delay != -1)) {
                 var_r6_4 += 1;
-                var_r5_3 += 0x1C;
                 if (var_r6_4 != 5) {
                     goto loop_103;
                 }
             } else {
-                M2C_FIELD(var_r5_3, s8 *, 2) = (s8) ((Func_08004458() & 3) + 4);
+                records[var_r6_4].spawn_delay = (s8) ((Func_08004458() & 3) + 4);
                 Func_080f9010(0x133);
             }
         }
@@ -575,11 +576,10 @@ loop_103:
         var_r2_7 = temp_r7 + 0x18;
         var_r0 = 0;
         do {
-            if ((M2C_FIELD(var_r2_7, u8 *, 1) == 1) || ((M2C_FIELD(var_r2_7, s8 *, 2) == 0) && ((M2C_FIELD(temp_r7, s32 *, var_r0) & 0xF) == 8))) {
+            if ((records[var_r6_6].enabled == 1) || ((records[var_r6_6].spawn_delay == 0) && ((records[var_r6_6].position & 0xF) == 8))) {
                 var_r1_2 += 1;
             }
             var_r6_6 += 1;
-            var_r2_7 += 0x1C;
             var_r0 += 0x1C;
         } while (var_r6_6 != 5);
         if (var_r1_2 != 5) {
@@ -691,23 +691,22 @@ loop_103:
             var_r6_9 = 0;
             var_r1_3 = temp_r7;
             do {
-                if (M2C_FIELD(var_r1_3, u8 *, 0x19) == 0) {
-                    if (M2C_FIELD(var_r1_3, s8 *, 0x1A) != 0) {
+                if (records[var_r6_9].enabled == 0) {
+                    if (records[var_r6_9].spawn_delay != 0) {
                         goto block_161;
                     }
-                    var_r2_9 = M2C_FIELD(var_r1_3, s32 *, 0);
+                    var_r2_9 = records[var_r6_9].position;
                     if ((0xF & var_r2_9) != 8) {
 block_161:
-                        temp_r3_8 = M2C_FIELD(var_r1_3, s32 *, 0) + 8;
-                        M2C_FIELD(var_r1_3, s32 *, 0) = temp_r3_8;
+                        temp_r3_8 = records[var_r6_9].position + 8;
+                        records[var_r6_9].position = temp_r3_8;
                         var_r2_9 = temp_r3_8;
                     }
                     if (var_r2_9 == 0x150) {
-                        M2C_FIELD(var_r1_3, s32 *, 0) = 0;
+                        records[var_r6_9].position = 0;
                     }
                 }
                 var_r6_9 += 1;
-                var_r1_3 += 0x1C;
             } while (var_r6_9 != 5);
         }
         workspace->effect_timer += 1;
@@ -882,17 +881,17 @@ common_render:
         var_r8_4 = temp_r3_19 + 0xCC;
         var_r4_6 = temp_r3_19 + 0xC8;
 loop_214:
-        temp_r2_9 = M2C_FIELD(var_r5_11, s32 *, 0);
+        temp_r2_9 = records[var_r6_15].position;
         var_r3_3 = temp_r2_9;
         if (temp_r2_9 < 0) {
             var_r3_3 += 0xF;
         }
         M2C_FIELD(temp_r7, s32 *, var_r4_6) = ((var_sl_3 * 0x10) + (temp_r2_9 - ((var_r3_3 >> 4) * 0x10)) + 4) | var_fp_2 | 0x80006000;
-        var_r0_10 = M2C_FIELD(var_r5_11, s32 *, 0);
+        var_r0_10 = records[var_r6_15].position;
         if (var_r0_10 < 0) {
             var_r0_10 += 0xF;
         }
-        M2C_FIELD(temp_r7, s32 *, var_r8_4) = (M2C_FIELD(var_r5_11, u8 *, Func_080022fc((var_sl_3 - (var_r0_10 >> 4)) + 0x15, 0x15) + 4) * 0x10) | 0x800;
+        M2C_FIELD(temp_r7, s32 *, var_r8_4) = (records[var_r6_15].choices[Func_080022fc((var_sl_3 - (var_r0_10 >> 4)) + 0x15, 0x15)] * 0x10) | 0x800;
         var_sl_3 += 1;
         var_r8_4 += 8;
         var_r4_6 += 8;

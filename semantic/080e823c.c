@@ -235,7 +235,7 @@ void Func_080e823c(void *argument)
             particle->x += particle->velocity_x;
             particle->y += particle->velocity_y;
             if (frame > 96)
-                particle->velocity_y += 0x10000;
+                particle->velocity_y += 0x4000;
             if (particle->y > 0x780000) {
                 particle->timer++;
                 if (particle->timer == 1) {

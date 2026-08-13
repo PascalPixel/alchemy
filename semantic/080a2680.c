@@ -22,6 +22,8 @@
  */
 #include "types.h"
 
+#define RunCharacterItemTransferMenu Func_080a2680
+
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -95,7 +97,7 @@ void Func_080f9010(s32);
  * temporarily suspend dispatch.  The three output words are committed only
  * after a selection has been accepted.
  */
-s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
+s32 RunCharacterItemTransferMenu(s32 *source_out, s32 *target_out, s32 *item_out)
 {
     s32 result = 0;
     s32 menu = 0;
@@ -103,7 +105,7 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
     s32 phase = 0;
     u8 *state = Data_03001f2c;
 
-    while (!done && Func_080770c0(0x150) == 0) {
+    while (!done && Func_080770c0(0xa8) == 0) {
         s32 command;
 
         switch (phase) {
@@ -321,7 +323,7 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
                     s32 amount = (item >> 11) + 1;
                     if (start + amount > 30)
                         amount = 30 - start;
-                    chosen = amount < 0
+                    chosen = amount > 1
                         ? Func_080a4f08(0, amount, 0) : 0;
                     if (chosen == -1) {
                         phase = 6;
@@ -363,7 +365,7 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
                 Func_080a51d0();
                 chosen = Func_080a5388();
             }
-            if (Func_080770c0(0x150) != 0)
+            if (Func_080770c0(0xa8) != 0)
                 break;
 
             Func_080a3e88(second, 1);
@@ -481,7 +483,7 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
                 FIELD(state, u16, 0x178) &= 0x5ff;
                 Func_080a51d0();
                 confirm = Func_080a5388();
-                if (Func_080770c0(0x150) == 0) {
+                if (Func_080770c0(0xa8) == 0) {
                     Func_08015278(FIELD(state, void *, 44));
                     Func_080a4e20();
                     Func_080a3e88(FIELD(state, u8, 0x21b), 1);
@@ -584,7 +586,7 @@ s32 Func_080a2680(s32 *source_out, s32 *target_out, s32 *item_out)
         }
     }
 
-    if (Func_080770c0(0x150) != 0)
+    if (Func_080770c0(0xa8) != 0)
         result = -1;
     return result;
 }

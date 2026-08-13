@@ -93,7 +93,9 @@ void Func_080f9010();
 #pragma clang diagnostic pop
 #endif
 
-void Func_020013f8(void) {
+#define RunActorFormationScene Func_020013f8
+
+void RunActorFormationScene(void) {
     s16 *temp_r7_2;
     s16 *temp_r7_3;
     s16 *temp_r8;
@@ -120,9 +122,6 @@ void Func_020013f8(void) {
     struct Actor *actor3_visible;
     struct Actor *actor2_visible;
     struct Actor *position_source_1;
-    struct ActorSub *temp_r1;
-    struct ActorSub *temp_r1_2;
-    struct Actor *temp_r7;
 
     Func_080770c8(((s32)(u32)0x00000962));
     Func_080772e8(0xED);
@@ -154,33 +153,38 @@ void Func_020013f8(void) {
     Func_0808a1b8(3, 0xC000, 0);
     Func_0808a1b8(2, 0xC000, 0);
     Func_0808a010(0x14);
-    temp_r7 = Func_0808a080(8);
-    Func_0808a010(0x1E);
-    Func_0808a138(8, 2);
-    Func_0808a010(0x1E);
-    Func_0808a138(8, 2);
-    Func_0808a010(0x1E);
-    Func_0808a138(8, 2);
-    Func_0808a010(0x3C);
-    Func_080f9010(0x11);
-    temp_r7->sub->field1e = 0;
-    Func_0808a128(8, 0xA, 0x46);
-    var_r5 = 0x1D;
-    do {
-        temp_r1 = temp_r7->sub;
-        temp_r1->flags09 = (u8) (-0xD & temp_r1->flags09);
-        Func_0808a010(2);
-        temp_r1_2 = temp_r7->sub;
-        temp_r1_2->flags09 = (u8) ((-0xD & temp_r1_2->flags09) | 8);
-        var_r5 -= 1;
-        Func_0808a010(2);
-    } while (var_r5 >= 0);
-    Func_0808a010(0x28);
-    temp_r6 = Func_0808a080(8)->position_x;
-    temp_r5 = Func_0808a080(8)->position_y << 0x10;
-    Func_0808a0f0(8, 0, 0);
-    Func_0808a0f0(9, temp_r6 << 0x10, temp_r5);
-    temp_r7->sub->field26 = 0;
+    {
+        struct Actor *scene_actor;
+        struct ActorSub *subrecord;
+        struct ActorSub *subrecord_with_flag;
+        scene_actor = Func_0808a080(8);
+        Func_0808a010(0x1E);
+        Func_0808a138(8, 2);
+        Func_0808a010(0x1E);
+        Func_0808a138(8, 2);
+        Func_0808a010(0x1E);
+        Func_0808a138(8, 2);
+        Func_0808a010(0x3C);
+        Func_080f9010(0x11);
+        scene_actor->sub->field1e = 0;
+        Func_0808a128(8, 0xA, 0x46);
+        var_r5 = 0x1D;
+        do {
+            subrecord = scene_actor->sub;
+            subrecord->flags09 = (u8) (-0xD & subrecord->flags09);
+            Func_0808a010(2);
+            subrecord_with_flag = scene_actor->sub;
+            subrecord_with_flag->flags09 = (u8) ((-0xD & subrecord_with_flag->flags09) | 8);
+            var_r5 -= 1;
+            Func_0808a010(2);
+        } while (var_r5 >= 0);
+        Func_0808a010(0x28);
+        temp_r6 = Func_0808a080(8)->position_x;
+        temp_r5 = Func_0808a080(8)->position_y << 0x10;
+        Func_0808a0f0(8, 0, 0);
+        Func_0808a0f0(9, temp_r6 << 0x10, temp_r5);
+        scene_actor->sub->field26 = 0;
+    }
     Func_080f9010(0x1E);
     Func_0808a090(9, ((s32)(u32)0x0000cccc), ((s32)(u32)0x00006666));
     Func_0808a580(9, 0x20, 0x20);

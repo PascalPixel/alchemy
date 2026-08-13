@@ -180,7 +180,9 @@ void Func_080e3944();
 void Func_080ed408();
 void Func_080f9010();
 
-void Func_080ea0d8(s32 *arg0) {
+#define RunCinematicProjectionEffect Func_080ea0d8
+
+void RunCinematicProjectionEffect(s32 *effect_context) {
     s32 sp8;
     s32 spC;
     void *objectTransform;
@@ -405,7 +407,7 @@ void Func_080ea0d8(s32 *arg0) {
     sp60 = M2C_FIELD((void *)0x03001EF0, void **, 0x10);
     sp50 = M2C_FIELD((void *)0x03001EF0, u8 **, 4);
     sp4C = *(s32 *)0x03001E80;
-    M2C_FIELD(sp64, s32 **, 0x7828) = arg0;
+    M2C_FIELD(sp64, s32 **, 0x7828) = effect_context;
     Func_080cd594(0x2000);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     Func_080c9048();
@@ -467,10 +469,10 @@ loop_4:
     var_r7_2 = 0;
     do {
         M2C_FIELD(var_r5_2, s32 *, 0) = (s32) ((0xF & Func_08004458()) + 0x48);
-        M2C_FIELD(var_r5_2, s32 *, 0xC) = (s32) (u16) Func_08004458();
-        M2C_FIELD(var_r5_2, s32 *, 0x10) = (s32) (u16) Func_08004458();
+        M2C_FIELD(var_r5_2, s32 *, 0xC) = Func_08004458() & 0xFFFF;
+        M2C_FIELD(var_r5_2, s32 *, 0x10) = Func_08004458() & 0xFFFF;
         var_r7_2 += 1;
-        M2C_FIELD(var_r5_2, s32 *, 0x10) = (s32) (u16) Func_08004458();
+        M2C_FIELD(var_r5_2, s32 *, 0x10) = Func_08004458() & 0xFFFF;
         var_r5_2 += 0x1C;
     } while (var_r7_2 != 0x80);
     var_r6 = (void *)0x02010E00;

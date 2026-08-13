@@ -72,6 +72,7 @@ struct Descriptor {
     u8 unused8[16];
     u16 field24;
     u8 unused26[6];
+    u8 unused32[8];
 };
 
 void Func_020041ec(void)
@@ -84,29 +85,29 @@ void Func_020041ec(void)
     s32 scale;
 
     Func_02008778(0x83);
-    *(u32 *)(record + 108) = 0x0200c1c5;
-    record = Func_02008606(8);
+    *(u32 *)(Func_02008606(8) + 108) = 0x0200c1c5;
     Func_020085e0(40);
     Func_0200872a(128 << 9, 0);
     Func_0200872a(0x205c54, 1);
     Func_02008740(60);
     Func_020085fe(40);
     Func_020087ac(0x83);
-    *(u32 *)(record + 108) = 0x0200c1c5;
-    record = Func_0200863a(2);
+    *(u32 *)(Func_0200863a(2) + 108) = 0x0200c1c5;
     Func_02008612(120);
+    record = Func_02008648(8);
     descriptor.field0 = 1;
     descriptor.field4 = 2;
     descriptor.field24 = 0x011d;
-    record = Func_02008648(8);
     for (i = 0; i <= 63; i++) {
         if ((i & 3) == 0) {
             Func_020087e2(246);
         }
         x = *(s32 *)(record + 8)
-            + (((u32)(Func_020085c6() * 3) << 4) & 0xffff0000) + 0xfff40000;
+            + ((((u32)(Func_020085c6() * 3) << 4) >> 16) << 16)
+            + 0xfff40000;
         y = *(s32 *)(record + 12)
-            + (((u32)Func_020085de() << 5) & 0xffff0000) + 0xfff00000;
+            + ((((u32)Func_020085de() << 5) >> 16) << 16)
+            + 0xfff00000;
         scale = (((u32)((u32)Func_020085f2() << 2) >> 16) << 15) + (128 << 8);
         Func_020043fe(x, y, *(s32 *)(record + 16), 0,
                       scale, 0, 152 << 13, (u8 *)&descriptor);
@@ -116,11 +117,9 @@ void Func_020041ec(void)
     Func_020086ae(30);
     Func_020087f0(128 << 9, 1);
     Func_02008806(60);
-    *(u32 *)(record + 108) = 0;
-    *(u32 *)(record + 108) = 0;
     Func_020086c4(40);
-    record = Func_020086fa(8);
-    record = Func_02008704(2);
+    *(u32 *)(Func_020086fa(8) + 108) = 0;
+    *(u32 *)(Func_02008704(2) + 108) = 0;
     Func_02008798(8, 0);
     Func_020087a0(2, 0);
 }

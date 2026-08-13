@@ -51,37 +51,38 @@
  * path, so some later consumer must.
  */
 
-extern void Func_02000718(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-extern void Func_02000732(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-extern void Func_0200074c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-extern void Func_020049ca(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
-extern void Func_020049f8(s32 flagId);
-extern void Func_020049ea(s32 frames);
+extern void Func_02000718();
+extern void Func_02000732();
+extern void Func_0200074c();
+extern void Func_020049ca();
+extern void Func_020049f8();
+extern void Func_020049ea();
 extern void Func_0200490c(void);
 extern void Func_02004a1c();
-extern u8 *Func_0200492e(s32 slot);
-extern u8 *Func_02004968(s32 slot);
-extern u8 *Func_02004974(s32 slot);
-extern u8 *Func_020049a2(s32 slot);
-extern void Func_0200499a(s32 slot, s32 a1, s32 a2);
-extern void Func_020049b6(s32 slot, s32 a1, s32 a2);
-extern void Func_02004980(s32 slot, s32 a1, s32 a2);
-extern void Func_020049dc(s32 slot);
-extern void Func_020049d2(s32 dialogueId);
-extern void Func_020049f4(s32 slot, s32 a1, s32 a2);
-extern void Func_02004a74(s32 slot, s32 a1, s32 a2);
+extern u8 *Func_0200492e();
+extern u8 *Func_02004968();
+extern u8 *Func_02004974();
+extern u8 *Func_020049a2();
+extern void Func_0200499a();
+extern void Func_020049b6();
+extern void Func_02004980();
+extern void Func_020049dc();
+extern void Func_020049d2();
+extern void Func_020049f4();
+extern void Func_02004a74();
 extern void Func_02004b86(void);
-extern void Func_02004ada(s32 arg0);
-extern void Func_02004b32(s32 arg0);
+extern void Func_02004ada();
+extern void Func_02004b32();
 
 void Func_02000518(void)
 {
-    u8 *record = Func_0200492e(9);
+    s32 block[10];
+    u8 *record;
     u8 *other;
-    s32 spawnOffset = 128 << 11;   /* 0x40000, added to record[16] */
-    s32 spawnFlags = 128 << 9;     /* 0x10000, also written to record[72] */
-    s32 block[2];
+    s32 spawnOffset;               /* 0x40000, added to record[16] */
+    s32 spawnFlags;                /* 0x10000, also written to record[72] */
 
+    record = Func_0200492e(9);
     Func_0200490c();
     Func_020049d2(0x17b4);
     Func_020049f4(9, 0, 20);
@@ -92,14 +93,16 @@ void Func_02000518(void)
     other = Func_02004968(9);
     *(s32 *)(other + 40) = 160 << 13;
 
-    *(s32 *)(other + 72) = spawnOffset;
     other = Func_02004974(9);
+    spawnOffset = 128 << 11;
+    *(s32 *)(other + 72) = spawnOffset;
 
     Func_0200499a(9, 192 << 10, 192 << 9);
     Func_020049b6(9, 152, 196 << 1);
     Func_020049dc(9);
 
     other = Func_020049a2(9);
+    spawnFlags = 128 << 9;
     *(s32 *)(other + 72) = spawnFlags;
 
     Func_02004a74(9, 0, 0);
@@ -121,7 +124,11 @@ void Func_02000518(void)
 
     Func_020049ea(30);
     Func_02004b86();
-    Func_020049ca(10, 24, 1, 1, 10, 22);
+    {
+        s32 arg0 = 10;
+        s32 arg1 = 22;
+        Func_020049ca(10, 24, 1, 1, arg0, arg1);
+    }
     Func_020049f8(0x892);
     Func_02004a1c();
 }

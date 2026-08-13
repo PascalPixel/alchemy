@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define RunFlag910TenActorScene Func_02000590
+
 /*
  * resource_3a8 owner at 0x02000590, 4,092 stored bytes (4,064 executable
  * bytes): the overlay's main scripted
@@ -510,7 +512,7 @@ extern u8 Data_0200be00[];          /* 0x3e00 */
 /* 0x02009f15 = file offset 0x1f14 + the Thumb bit = Func_02001f14. */
 extern u8 Data_02009f15[];
 
-void Func_02000590(void)
+void RunFlag910TenActorScene(void)
 {
     u8 *scene = Data_03001ebc;
 

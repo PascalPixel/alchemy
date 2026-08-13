@@ -98,23 +98,16 @@ extern void Func_080f9010(s32 arg0);
 
 void RunResource380GrandFinale(void)
 {
-    union {
-        u8 *pointer;
-        s32 value;
-    } referenceRecordOrTextValue;
+    u8 *referenceRecord;
     u8 *actorRecord;
     u8 *recordByte;
-    union {
-        u8 *pointer;
-        s32 value;
-    } phaseByteOrTextValue;
+    u8 *phaseByte;
     u8 *actorEntry;
     u8 zeroByte;
     s32 initialSlideOffset;
     s32 slideDelta;
     s32 actor9PackedMode;
     s32 actor9PackedModeTail;
-    s32 textField28;
     u32 frameCounter;
 
     Func_0808a018();
@@ -131,20 +124,20 @@ void RunResource380GrandFinale(void)
     /* Acquire both records before their first field access.  The earlier draft
      * happened to score from stale register contents but dereferenced two
      * uninitialized C pointers. */
-    referenceRecordOrTextValue.pointer = Func_0808a080(8);
-    actorRecord = Func_0808a080(0);
+    referenceRecord = Func_0808a080(8);
     initialSlideOffset = 0x1999;
-    *(s32 *)(referenceRecordOrTextValue.pointer + 24) = initialSlideOffset;
+    *(s32 *)(referenceRecord + 24) = initialSlideOffset;
+    *(s32 *)(referenceRecord + 28) = initialSlideOffset;
+    actorRecord = Func_0808a080(0);
     slideDelta = 0;
-    *(s32 *)(referenceRecordOrTextValue.pointer + 28) = initialSlideOffset;
     recordByte = *(u8 **)(actorRecord + 0x50) + 38;
     *recordByte = slideDelta;
     *(s32 *)(actorRecord + 28) = initialSlideOffset;
     *(s32 *)(actorRecord + 24) = initialSlideOffset;
     Func_0808a158(0, 256);
     Func_0808a0f0(0, 0x01d70000, 0x1220000);
-    phaseByteOrTextValue.pointer = actorRecord + 0x55;
-    *phaseByteOrTextValue.pointer = slideDelta;
+    phaseByte = actorRecord + 0x55;
+    *phaseByte = slideDelta;
     *(s32 *)(actorRecord + 12) = 0x280000;
     *(s32 *)(Data_03001ebc + 448) = 515;
     *(s32 *)(Data_03001ebc + 456) = 32;
@@ -159,11 +152,11 @@ void RunResource380GrandFinale(void)
         *(s32 *)(actorRecord + 12) += -0x1999;
         *(s32 *)(actorRecord + 24) += slideDelta;
         *(s32 *)(actorRecord + 28) += slideDelta;
-        *(s32 *)(referenceRecordOrTextValue.pointer + 24) += slideDelta;
-        *(s32 *)(referenceRecordOrTextValue.pointer + 28) += slideDelta;
+        *(s32 *)(referenceRecord + 24) += slideDelta;
+        *(s32 *)(referenceRecord + 28) += slideDelta;
         Func_0808a010(1);
     }
-    *phaseByteOrTextValue.pointer = 5;
+    *phaseByte = 5;
     Func_0808a010(80);
     Func_0808a208(0x4ccc, 0x999);
     Func_0808a210(0x01d70000, -1, 0x1220000, 1);
@@ -171,7 +164,7 @@ void RunResource380GrandFinale(void)
         *(s32 *)(actorRecord + 12) += -0x8000;
         Func_0808a010(1);
     }
-    *phaseByteOrTextValue.pointer = 3;
+    *phaseByte = 3;
     Func_0808a010(20);
     Func_0808a1e0(0, 1);
     Func_0808a080(0)[0x23] |= 1;
@@ -261,12 +254,12 @@ void RunResource380GrandFinale(void)
     *recordByte = zeroByte;
     *(s32 *)(actorRecord + 24) = 0x1999;
     *(s32 *)(actorRecord + 28) = 0x1999;
-    *(s32 *)(referenceRecordOrTextValue.pointer + 24) = 0x1999;
-    *(s32 *)(referenceRecordOrTextValue.pointer + 28) = 0x1999;
+    *(s32 *)(referenceRecord + 24) = 0x1999;
+    *(s32 *)(referenceRecord + 28) = 0x1999;
     Func_0808a158(9, 256);
     Func_0808a0f0(9, 0x01d70000, 0x1220000);
-    phaseByteOrTextValue.pointer = actorRecord + 0x55;
-    *phaseByteOrTextValue.pointer = zeroByte;
+    phaseByte = actorRecord + 0x55;
+    *phaseByte = zeroByte;
     *(s32 *)(actorRecord + 12) = 0x280000;
     Func_0808a010(1);
     Func_0808a170(0x103c);
@@ -288,18 +281,18 @@ void RunResource380GrandFinale(void)
         *(s32 *)(actorRecord + 12) += -0x1999;
         *(s32 *)(actorRecord + 24) += slideDelta;
         *(s32 *)(actorRecord + 28) += slideDelta;
-        *(s32 *)(referenceRecordOrTextValue.pointer + 24) += slideDelta;
-        *(s32 *)(referenceRecordOrTextValue.pointer + 28) += slideDelta;
+        *(s32 *)(referenceRecord + 24) += slideDelta;
+        *(s32 *)(referenceRecord + 28) += slideDelta;
         Func_0808a010(1);
     }
-    *phaseByteOrTextValue.pointer = 5;
+    *phaseByte = 5;
     Func_0808a010(80);
     for (frameCounter = 0; (frameCounter >> 16) != 60;) {
         *(s32 *)(actorRecord + 12) += -0x8000;
         Func_0808a010(1);
         frameCounter += 0x10000;
     }
-    *phaseByteOrTextValue.pointer = 3;
+    *phaseByte = 3;
     Func_0808a010(30);
     Func_0808a1e0(9, 1);
     Func_0808a080(9)[0x23] |= 1;
@@ -604,57 +597,63 @@ void RunResource380GrandFinale(void)
     Func_0808a010(20);
     Func_02004248(actor9PackedMode, 40);
 
-    /* Closing text blocks on actor 9's record (the 178c idiom,
-     * bracketed by Func_080000c0(6) refreshes). */
-    actorRecord = Func_0808a080(9);
-    Func_080000c0(6);
-    phaseByteOrTextValue.value = 0x30000;
-    referenceRecordOrTextValue.value = 0x20000;
-    *(s32 *)(actorRecord + 0x34) = referenceRecordOrTextValue.value;
-    *(s32 *)(actorRecord + 0x30) = phaseByteOrTextValue.value;
-    textField28 = 0x60000;
-    Func_080f9010(0x99);
-    *(s32 *)(actorRecord + 0x28) = textField28;
-    Func_0808a0c0(9, 471, 395);
-    Func_080000c0(6);
-    Func_0808a090(9, 0x4ccc, 0x2666);
-    recordByte = actorRecord + 90;
-    *recordByte &= 0xfe;
-    Func_0808a0b8(9, 473, 395);
-    Func_0808a0e8(9);
-    Func_0808a138(9, 2);
-    Func_0808a0b8(9, 469, 395);
-    Func_0808a0e8(9);
-    Func_0808a138(9, 2);
-    Func_0808a0b8(9, 471, 395);
-    Func_0808a0e8(9);
-    Func_02004248(9, 10);
-    Func_0808a090(9, 0xcccc, 0x6666);
-    Func_0808a0d0(9, 471, 411);
-    Func_0808a090(9, 0x4ccc, 0x2666);
-    *recordByte &= 0xfe;
-    Func_0808a0b8(9, 474, 411);
-    Func_0808a0e8(9);
-    Func_0808a138(9, 3);
-    Func_0808a0b8(9, 468, 411);
-    Func_0808a0e8(9);
-    Func_0808a138(9, 3);
-    Func_0808a0b8(9, 471, 411);
-    Func_0808a0e8(9);
-    Func_0808a1f0(9, 258);
-    Func_0808a130(9, 3);
-    Func_02004248(9, 10);
-    Func_0808a090(9, 0x3333, 0x1999);
-    Func_0808a0d0(9, 471, 395);
-    Func_0808a098(9, 1);
-    Func_0808a010(30);
-    *recordByte |= 1;
-    Func_0808a1b8(9, 0xc000, 60);
-    Func_080000c0(6);
-    *(s32 *)(actorRecord + 0x30) = phaseByteOrTextValue.value;
-    *(s32 *)(actorRecord + 0x34) = referenceRecordOrTextValue.value;
-    Func_080f9010(0x99);
-    *(s32 *)(actorRecord + 0x28) = textField28;
+    {
+        s32 textField28;
+        s32 textField30;
+        s32 textField34;
+
+        /* Closing text blocks on actor 9's record (the 178c idiom,
+         * bracketed by Func_080000c0(6) refreshes). */
+        actorRecord = Func_0808a080(9);
+        Func_080000c0(6);
+        textField30 = 0x30000;
+        textField34 = 0x20000;
+        *(s32 *)(actorRecord + 0x34) = textField34;
+        *(s32 *)(actorRecord + 0x30) = textField30;
+        textField28 = 0x60000;
+        Func_080f9010(0x99);
+        *(s32 *)(actorRecord + 0x28) = textField28;
+        Func_0808a0c0(9, 471, 395);
+        Func_080000c0(6);
+        Func_0808a090(9, 0x4ccc, 0x2666);
+        recordByte = actorRecord + 90;
+        *recordByte &= 0xfe;
+        Func_0808a0b8(9, 473, 395);
+        Func_0808a0e8(9);
+        Func_0808a138(9, 2);
+        Func_0808a0b8(9, 469, 395);
+        Func_0808a0e8(9);
+        Func_0808a138(9, 2);
+        Func_0808a0b8(9, 471, 395);
+        Func_0808a0e8(9);
+        Func_02004248(9, 10);
+        Func_0808a090(9, 0xcccc, 0x6666);
+        Func_0808a0d0(9, 471, 411);
+        Func_0808a090(9, 0x4ccc, 0x2666);
+        *recordByte &= 0xfe;
+        Func_0808a0b8(9, 474, 411);
+        Func_0808a0e8(9);
+        Func_0808a138(9, 3);
+        Func_0808a0b8(9, 468, 411);
+        Func_0808a0e8(9);
+        Func_0808a138(9, 3);
+        Func_0808a0b8(9, 471, 411);
+        Func_0808a0e8(9);
+        Func_0808a1f0(9, 258);
+        Func_0808a130(9, 3);
+        Func_02004248(9, 10);
+        Func_0808a090(9, 0x3333, 0x1999);
+        Func_0808a0d0(9, 471, 395);
+        Func_0808a098(9, 1);
+        Func_0808a010(30);
+        *recordByte |= 1;
+        Func_0808a1b8(9, 0xc000, 60);
+        Func_080000c0(6);
+        *(s32 *)(actorRecord + 0x30) = textField30;
+        *(s32 *)(actorRecord + 0x34) = textField34;
+        Func_080f9010(0x99);
+        *(s32 *)(actorRecord + 0x28) = textField28;
+    }
     Func_0808a0c0(9, 471, 360);
     Func_080000c0(6);
     Func_0808a010(40);

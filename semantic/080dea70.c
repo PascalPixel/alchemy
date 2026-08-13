@@ -1,5 +1,6 @@
 #include "types.h"
 
+#define RunSelectorDrivenBattleEffect Func_080dea70
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct Work_02000000 {
@@ -103,7 +104,8 @@ void Func_080f9010(s32);
  * Owner span: 0x080dea70-0x080df8b8.  The long branches to the frame loop and
  * cleanup are continuations of this owner, not separately callable functions.
  */
-s32 Func_080dea70(struct Work_02000000 *arg0, s32 arg1) {
+s32 RunSelectorDrivenBattleEffect(
+    struct Work_02000000 *effect, s32 selector) {
     s32 sp14;
     s32 sp18;
     s32 sp1C;
@@ -226,19 +228,19 @@ s32 Func_080dea70(struct Work_02000000 *arg0, s32 arg1) {
     sp6C = M2C_FIELD(runtime_globals, s32 *, -0x6C);
     sp68 = M2C_FIELD(runtime_globals, u8 **, 8);
     sp64 = 0;
-    M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828) = arg0;
-    sp5C = arg0->field_18;
-    if (arg1 == 0xA) {
+    M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828) = effect;
+    sp5C = effect->field_18;
+    if (selector == 0xA) {
         Func_080cd594(0);
     } else {
         Func_080cd594(1);
     }
     temp_r2 = M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828);
     if (temp_r2->field_1c == 1) {
-        Func_080de2f8(arg0, 1, temp_r2->field_4, 2,
+        Func_080de2f8(effect, 1, temp_r2->field_4, 2,
                      &setup_projection[1], &setup_projection[0]);
     }
-    if (arg1 == 5) {
+    if (selector == 5) {
         if (M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_4 == 1) {
             var_r3 = 2;
             goto block_11;
@@ -253,11 +255,11 @@ block_11:
     }
     renderer_46 = *(Renderer_080dea70 *)0x03001F08;
     Func_080e0524((void *)0x73, sp68, 0, 0);
-    if (arg1 == 0 || arg1 == 5 || arg1 == 8) {
-        if (arg1 == 5) {
+    if (selector == 0 || selector == 5 || selector == 8) {
+        if (selector == 5) {
             sp5C = 2;
         }
-        if (arg1 == 8) {
+        if (selector == 8) {
             sp5C = 0;
         }
         if (sp5C == 0) {
@@ -271,35 +273,35 @@ block_24:
         } else {
             Func_080e0524((void *)0x81, temp_r0 + 0x1000, 1, 1);
         }
-        if (arg1 == 5) {
+        if (selector == 5) {
             ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0xB9), 0x80);
         }
         Func_080e0524((void *)0xC7, temp_r0 + 0x2000, 1, 0);
-        if (arg1 == 5) {
+        if (selector == 5) {
             ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0xB9), 0x80);
         }
         M2C_FIELD(temp_r0, s32 *, 0x7780) = 2;
         var_r3_2 = 0x4B;
 block_42:
         var_r2 = (s32 *)(temp_r0 + 0x7784);
-    } else if (arg1 == 1) {
+    } else if (selector == 1) {
         Func_080e0524((void *)0x5D, temp_r0, 1, 1);
         *(s16 *)0x04000050 = 0;
-        M2C_FIELD(temp_r0, s32 *, 0x7780) = arg1;
+        M2C_FIELD(temp_r0, s32 *, 0x7780) = selector;
         var_r2 = (s32 *)(temp_r0 + 0x7784);
         var_r3_2 = 0;
-    } else if (arg1 == 2) {
+    } else if (selector == 2) {
         ((WordCopy_080dea70)0x03001388)((void *)0x05000000, Func_08002f40(0x7F), 0x80);
         Func_080e0524((void *)0x5C, temp_r0, 0, 0);
-        M2C_FIELD(temp_r0, s32 *, 0x7780) = arg1;
+        M2C_FIELD(temp_r0, s32 *, 0x7780) = selector;
         var_r2 = (s32 *)(temp_r0 + 0x7784);
         var_r3_2 = 0x32;
     } else {
-        if (((u32) (arg1 - 3) <= 1U) || (arg1 == 0xB)) {
+        if (((u32) (selector - 3) <= 1U) || (selector == 0xB)) {
             var_r3_3 = 1;
             var_r0_2 = (void *)0x5B;
             var_r1 = temp_r0;
-        } else if (arg1 == 6) {
+        } else if (selector == 6) {
             var_r3_3 = 1;
             var_r0_2 = (void *)0x68;
             var_r1 = temp_r0;
@@ -317,8 +319,8 @@ block_42:
     *var_r2 = var_r3_2;
     Func_080041d8((const void *)0x080CD261, 0x480);
     temp_r6 = *Func_080b5098(M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_8);
-    sp54 = arg1 * 4;
-    temp_r3 = arg1 * 5;
+    sp54 = selector * 4;
+    temp_r3 = selector * 5;
     sp58 = M2C_FIELD((void *)0x080EEBEC, u8 *, temp_r3);
     temp_sl = M2C_FIELD((void *)0x080EEBEC, u8 *, temp_r3 + 1);
     sp50 = M2C_FIELD((void *)0x080EEBEC, u8 *, temp_r3 + 2);
@@ -346,7 +348,7 @@ loop_48:
             var_r5 = (sp18 * 0x1C) + temp_r0 + 0x7080;
 loop_51:
             M2C_FIELD(var_r5, s32 *, 0) = (s32) M2C_FIELD(temp_r6, s32 *, 8);
-            switch (arg1) {
+            switch (selector) {
             case 7:
                 var_r3_4 = M2C_FIELD(temp_r6, s32 *, 0xC) + ((0xF & Func_08004458()) << 0x10) + 0x3A0000;
 block_67:
@@ -367,17 +369,17 @@ block_63:
                 M2C_FIELD(var_r5, s32 *, 4) = (s32) (M2C_FIELD(temp_r6, s32 *, 0xC) + temp_r3_2 + ((var_r3_5 - var_r2_2) << 0x10));
                 break;
             default:
-                if ((u32) (arg1 - 3) <= 1U) {
+                if ((u32) (selector - 3) <= 1U) {
                     var_r2_2 = 0x1F & Func_08004458();
                     var_r3_5 = 0x10;
                     goto block_63;
                 }
-                if (arg1 == 0xB) {
+                if (selector == 0xB) {
                     var_r2_2 = 0x3F & Func_08004458();
                     var_r3_5 = 0x20;
                     goto block_63;
                 }
-                if (arg1 == 5) {
+                if (selector == 5) {
                     var_r3_4 = M2C_FIELD(temp_r6, s32 *, 0xC) + temp_r3_2;
                 } else {
                     var_r3_4 = M2C_FIELD(temp_r6, s32 *, 0xC) + sp48;
@@ -386,7 +388,7 @@ block_63:
             }
             M2C_FIELD(var_r5, s32 *, 8) = (s32) M2C_FIELD(temp_r6, s32 *, 0x10);
             M2C_FIELD(var_r5, s32 *, 0xC) = Func_080022ec(M2C_FIELD(temp_r7, s32 *, 8) - M2C_FIELD(var_r5, s32 *, 0), (s32) temp_sl);
-            switch (arg1) {
+            switch (selector) {
             case 7:
                 var_r0_3 = ((M2C_FIELD(temp_r7, s32 *, 0xC) + ((0x3F & Func_08004458()) << 0x10)) - M2C_FIELD(var_r5, s32 *, 4)) + 0xFFF40000;
 block_84:
@@ -404,10 +406,10 @@ block_83:
                 var_r0_3 = ((M2C_FIELD(temp_r7, s32 *, 0xC) + ((0x1F & Func_08004458()) << 0x10)) - M2C_FIELD(var_r5, s32 *, 4)) + 0x40000;
                 goto block_84;
             default:
-                if (((u32) (arg1 - 3) <= 1U) || (arg1 == 0xB) || (arg1 == 5)) {
+                if (((u32) (selector - 3) <= 1U) || (selector == 0xB) || (selector == 5)) {
                     M2C_FIELD(var_r5, s32 *, 0x10) = 0;
                 } else {
-                    if (arg1 == 6) {
+                    if (selector == 6) {
                         var_r0_4 = M2C_FIELD(temp_r7, s32 *, 0xC) + ((s32) (sp40 + (sp40 >> 0x1F)) >> 1) + ((0xF & Func_08004458()) << 0x10);
                     } else {
                         var_r0_4 = (M2C_FIELD(temp_r7, s32 *, 0xC) + sp40) - ((0xF & Func_08004458()) << 0x10);
@@ -441,7 +443,7 @@ block_83:
         var_r3_6 += 0x1C;
         sp80 = temp_r4;
     } while (temp_r4 != 0x400);
-    if (arg1 == 6) {
+    if (selector == 6) {
         var_r3_7 = (M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_14 * sp4C) + (sp50 * sp58) + 0x20;
     } else {
         var_r3_7 = (M2C_FIELD(temp_r0, struct Work_02000000 **, 0x7828)->field_14 * sp4C) + (sp50 * sp58) + 0x10;
@@ -456,7 +458,7 @@ frame_loop:
     if (sp64 > 0) {
         sp64 -= 1;
     }
-    switch (arg1) {
+    switch (selector) {
     case 5:
         break;
     case 6:
@@ -533,7 +535,7 @@ loop_124:
                 M2C_FIELD(temp_r3_3, u32 *, 0x7080) = (u32) (M2C_FIELD(temp_r3_3, u32 *, 0x7080) + M2C_FIELD(temp_r6_2, s32 *, 0xC));
                 M2C_FIELD(temp_r6_2, s32 *, 4) = (s32) (M2C_FIELD(temp_r6_2, s32 *, 4) + M2C_FIELD(temp_r6_2, s32 *, 0x10));
                 M2C_FIELD(temp_r6_2, s32 *, 8) = (s32) (M2C_FIELD(temp_r6_2, s32 *, 8) + M2C_FIELD(temp_r6_2, s32 *, 0x14));
-                if (arg1 == 6) {
+                if (selector == 6) {
                     var_r5_2 = (void *)0x02013800;
                     var_r2_3 = 0;
                     var_r1_2 = 0x200;
@@ -589,17 +591,17 @@ block_138:
                             sp34 = 0;
                             var_r2_5 = sp28;
                             M2C_FIELD(temp_r6_2, s32 *, 0x18) = 1;
-                            if (arg1 == 5) {
+                            if (selector == 5) {
                                 Func_080b50e8(0x86);
                                 goto block_149;
                             }
-                            if ((arg1 != 6) && (sp64 == 0)) {
+                            if ((selector != 6) && (sp64 == 0)) {
                                 sp64 = 8;
                                 Func_080f9010(0x84);
 block_149:
                                 ;
                             }
-                            if (arg1 == 2) {
+                            if (selector == 2) {
                                 temp_r5_3 = ((0x1F & Func_08004458()) + 0x20) << 0xC;
                                 if (Func_08004458() & 1) {
                                     var_r3_9 = M2C_FIELD(temp_r6_2, s32 *, 0x10) + temp_r5_3;
@@ -613,7 +615,7 @@ block_149:
                             M2C_FIELD(var_r2_5, s32 *, 0) = projected[0];
                             M2C_FIELD(var_r2_5, s32 *, 4) = projected[1];
                             M2C_FIELD(var_r2_5, s32 *, 8) = 0;
-                            if (arg1 != 7) {
+                            if (selector != 7) {
                                 M2C_FIELD(temp_r0, s32 *, 0x77A8) = 2;
                             }
                             Func_080d6888(
@@ -625,7 +627,7 @@ block_149:
                                 5,
                                 sp80,
                                 8);
-                            switch (arg1) {
+                            switch (selector) {
                             case 7:
                             case 9:
                             case 10:
@@ -647,7 +649,7 @@ block_149:
                                     5);
                                 break;
                             }
-                            temp_r2_4 = 5 ^ arg1;
+                            temp_r2_4 = 5 ^ selector;
                             var_r2_6 = 0xC - ((u32) ((0 - temp_r2_4) | temp_r2_4) >> 0x1F);
                             var_r5_3 = (void *)0x02010AF0;
                             var_r1_3 = 0x64;
@@ -667,7 +669,7 @@ loop_164:
                                 if (sp34 == M2C_FIELD(
                                         (void *)0x080EEBEC,
                                         u8 *,
-                                        sp54 + arg1 + 4)) {
+                                        sp54 + selector + 4)) {
                                     goto burst_pool_ready;
                                 }
                             }
@@ -681,7 +683,7 @@ burst_pool_ready:
                         }
                     }
                 }
-                switch (arg1) {
+                switch (selector) {
                 case 0:
                 case 5:
                 case 8:
@@ -795,7 +797,7 @@ block_194:
             goto loop_121;
         }
     }
-    if ((arg1 != 0) && (arg1 != 5) && (arg1 != 8)) {
+    if ((selector != 0) && (selector != 5) && (selector != 8)) {
 
     } else {
         sp80 = 0;

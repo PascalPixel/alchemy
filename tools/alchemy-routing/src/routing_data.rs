@@ -142,6 +142,8 @@ pub static NO_CONSTANT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_37b_c_02000614.c",
     "semantic/resource_375_c_02000be0.c",
     "exact/resource_375_c_02000be0.c",
+    "semantic/resource_391_c_02000d3c.c",
+    "exact/resource_391_c_02000d3c.c",
 ];
 pub static POOL_LONG_CALL_ARG0_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002f14.c",
@@ -993,6 +995,8 @@ pub static CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_371_c_02001938.c",
     "exact/resource_371_c_020019e8.c",
     "semantic/resource_371_c_020019e8.c",
+    "exact/resource_391_c_02000d3c.c",
+    "semantic/resource_391_c_02000d3c.c",
 ];
 pub static CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_02000b8c.c",

@@ -3364,3 +3364,26 @@ record zero pins it to a high register at entry (wrong form), while
 loop-initializing it lets the piece zero hoist and spill the state pointer
 (also wrong); the pairing is decided inside the allocator, not by any
 statement order tried so far.
+
+## Addendum (2026-08-13): the 391 cinematic driver rematerializes constants
+
+The 6,700-byte scene script `resource_391:0d3c` carried a diffuse 2,675
+halfword residual at the default route. Instruction-stream alignment against
+the reference (pools excluded) shows the reference *rematerializes* almost
+every repeated small constant — every `-1` argument is a fresh
+`movs/negs` pair — while the default route's CSE caches one copy in a
+callee-saved register. Routing `-fthumb-no-constant-reuse` (the mode's sixth
+and by far largest user) plus `-fthumb-call-arg0-before-pool` collapsed the
+production residual to 1,928 halfwords in one step.
+
+What the reference does cache, it caches through block-scoped named locals:
+the movement angles (`0x2000..0xe000`) live in callee-saved low registers per
+scene block, the `->f23 &= 0xfe` clusters share one `keep = 0xfe` local per
+cluster (witnessed as `movs r6, #254` at first use, `adds r3, r6, #0` at the
+seven following sites), and two high-register constants (`0x4000` in r8,
+`0xc000` in sl) serve the first block. The remaining residual is exactly the
+un-modeled tail of those cached ranges — the compiled span is currently eight
+bytes long because rematerialization overshoots wherever a reference cache is
+still missing from the source. Alignment census, not byte diffs, is the tool
+that made this owner tractable: byte diffs count every shifted encoding, while
+the census names the register, the value, and the sites of each missing local.

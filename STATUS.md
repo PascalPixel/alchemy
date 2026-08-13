@@ -131,7 +131,7 @@ manufactured from unrelated neighbours.
 | 7 | `resource_3c9` choreography | `12c8-35c4`, 8,956 bytes | 8,620 bytes | Three semantic scripts are interleaved with 336 exact helper/callback bytes and exact outer seams. |
 | 8 | `resource_373` cinematic script island | `15dc-5594`, 16,312 bytes | 13,636 bytes | Five exact setup/dispatcher owners divide three large scripts at proved boundaries. |
 | 9 | Queued battle-action resolver | `080bbb0c-080bd3c8`, 6,332 bytes | 6,332 bytes | One coherent owner; exact queue emitter is called 154 times, but no duplicate source witness exists. |
-| 10 | `resource_391` cinematic scene driver | `0d3c-2768`, 6,700 bytes | 6,700 bytes | Exact local helpers and installed callbacks close its perimeter; source residual remains diffuse. |
+| 10 | `resource_391` cinematic scene driver | `0d3c-2768`, 6,700 bytes | 6,700 bytes | Exact local helpers and installed callbacks close its perimeter. Routed `-fthumb-no-constant-reuse` plus `-fthumb-call-arg0-before-pool` and the first witnessed constant locals cut the residual 2,675 -> 1,928 halfwords; the remaining residual is the un-modeled cached-constant ranges named in LAWS. |
 
 The first staged-actor round corrected the raw `0xb084` prologue
 classification in four overlays, transferred the exact by-value movement ABI

@@ -45,6 +45,16 @@
  * end of the 0x3384-byte assembled reconstruction.  The overlay image is
  * writable EWRAM, so those are live variables, not constants.
  *
+ * MATCHING STATE (2026-08-13).  The production route now carries
+ * -fthumb-no-constant-reuse and -fthumb-call-arg0-before-pool: the reference
+ * rematerializes repeated small constants (every -1 is a fresh movs/negs)
+ * and orders immediate arguments before pool loads.  Those two routes plus
+ * the first witnessed constant locals (`keep_fe` below) cut the residual
+ * from 2,675 to 1,928 differing halfwords.  What the reference does cache it
+ * caches as block-scoped named locals in callee-saved registers; the
+ * remaining residual is the un-modeled tail of those cached ranges, mapped
+ * by register/value/site in the LAWS addendum of the same date.
+ *
  * This owner is the WRITER of the state the two installed tasks read, which
  * settles the open question in resource_391_c_020027c8.c and matches
  * resource_391_c_02002974.c exactly:
@@ -784,6 +794,13 @@ void Func_02002ad8(void);
 void Func_02000d3c(void)
 {
     struct Obj *p;
+    s32 keep_fe;
+    s32 turn_c000;
+    s32 beat_4000;
+    s32 beat_2000;
+    s32 beat_6000;
+    s32 lift_a000;
+    s32 lift_4000;
     s32 actor1_2000;
     s32 actor1_6000;
 
@@ -1040,10 +1057,11 @@ void Func_02000d3c(void)
 
     Data_0200b38c = 3;
 
-    Func_02003fce(0)->f23 &= 0xfe;
-    Func_02003fe0(1)->f23 &= 0xfe;
-    Func_02003ff0(2)->f23 &= 0xfe;
-    Func_02004000(3)->f23 &= 0xfe;
+    keep_fe = 0xfe;
+    Func_02003fce(0)->f23 &= keep_fe;
+    Func_02003fe0(1)->f23 &= keep_fe;
+    Func_02003ff0(2)->f23 &= keep_fe;
+    Func_02004000(3)->f23 &= keep_fe;
     Func_020040c2(0, 3);
     Func_020040ca(1, 3);
     Func_020040d2(2, 3);
@@ -1055,24 +1073,24 @@ void Func_02000d3c(void)
 
     Func_02004140(220);
 
-    Func_02004046(13)->f23 &= 0xfe;
+    Func_02004046(13)->f23 &= keep_fe;
     Func_02004108(13, 2);
     Func_020040bc(13, 253 << 16, 0x025b0000);
     Func_0200407e(13, Data_0200af6c);
 
-    Func_02004074(14)->f23 &= 0xfe;
+    Func_02004074(14)->f23 &= keep_fe;
     Func_02004136(14, 2);
     Func_020040ea(14, 233 << 16, 0x02750000);
     Func_020040aa(14, Data_0200af6c);
 
     if (Data_0200b394 != 0) {
-        Func_020040a8(15)->f23 &= 0xfe;
+        Func_020040a8(15)->f23 &= keep_fe;
         Func_0200416a(15, 2);
         Func_0200411e(15, 207 << 16, 0x02610000);
         Func_020040de(15, Data_0200af6c);
     }
 
-    Func_020040d4(16)->f23 &= 0xfe;
+    Func_020040d4(16)->f23 &= keep_fe;
     Func_02004196(16, 2);
     Func_0200414c(16, 227 << 16, 145 << 18);
     Func_0200410c(16, Data_0200af6c);
@@ -1190,9 +1208,11 @@ void Func_02000d3c(void)
     }
 
     Func_020044ae(1, 2, 0);
-    Func_02003fa6(1, 0x4000, 20);
+    beat_4000 = 0x4000;
+    Func_02003fa6(1, beat_4000, 20);
     Func_020044bc(1, 3);
-    Func_02003fba(1, 0x2000, 10);
+    beat_2000 = 0x2000;
+    Func_02003fba(1, beat_2000, 10);
     Func_02003faa(1, 20);
     Func_020044d6(1, 3);
     Func_02004454(10);
@@ -1215,15 +1235,16 @@ void Func_02000d3c(void)
     Func_020044ca(p, 1);
     Func_0200457e(0, 4, 0);
     Func_02004578(0, 1);
-    Func_0200407e(0, 0x6000, 60);
+    beat_6000 = 0x6000;
+    Func_0200407e(0, beat_6000, 60);
     Func_020045e4(0, 0x105, 0);
     Func_020045ee(2, 0x105, 0);
     Func_0200451c(60);
     Func_020040a4(0, 0xa000, 20);
     Func_020045b8(1, 3);
     Func_020045c0(0, 3);
-    Func_020040be(0, 0x6000, 10);
-    Func_020040c8(1, 0x4000, 10);
+    Func_020040be(0, beat_6000, 10);
+    Func_020040c8(1, beat_4000, 10);
     Func_02004620(2, 0xc000, 0);
     Func_020045e8(2, 3);
     Func_020040cc(2, 20);
@@ -1236,7 +1257,7 @@ void Func_02000d3c(void)
     Func_02004654(2, 0);
     Func_02004624(2, 3);
     Func_02004678(2, 0xe000, 0);
-    Func_02004682(1, 0x2000, 0);
+    Func_02004682(1, beat_2000, 0);
 
     if (Func_020045da(0, 0) == 0) {
         Func_0200464e(2, 3);
@@ -1244,7 +1265,7 @@ void Func_02000d3c(void)
         SKIP_BEAT();
     } else {
         Func_02004690(1, 2);
-        Func_02004176(1, 0x2000, 10);
+        Func_02004176(1, beat_2000, 10);
         Func_0200469a(1, 2);
         Func_020046ca(1, 0);
     }
@@ -1267,12 +1288,14 @@ void Func_02000d3c(void)
     }
 
     Func_0200476e(1, 0x2000, 0);
-    Func_0200422c(0, 0xa000, 10);
+    lift_a000 = 0xa000;
+    Func_0200422c(0, lift_a000, 10);
     Func_02004738(0, 3);
     Func_02004748(1, 3);
     Func_020046c6(20);
     Func_0200479e(0, 0x6000, 0);
-    Func_0200425c(1, 0x4000, 10);
+    lift_4000 = 0x4000;
+    Func_0200425c(1, lift_4000, 10);
     Func_02004770(2, 4);
     Func_020046ee(20);
     Func_020047d2(0, 258, 0);
@@ -1282,8 +1305,8 @@ void Func_02000d3c(void)
     Func_020047b8(2, 2);
     Func_0200428c(2, 20);
     Func_020047fc(1, 0x2000, 0);
-    Func_020042ba(0, 0xa000, 40);
-    Func_02004810(1, 0x4000, 0);
+    Func_020042ba(0, lift_a000, 40);
+    Func_02004810(1, lift_4000, 0);
     Func_020042d0(0, 0x6000, 10);
     Func_020042dc(2, 0xc000, 10);
     Func_020047f0(2, 3);
@@ -1301,7 +1324,7 @@ void Func_02000d3c(void)
     Func_02004868(1, 2);
     Func_02004350(1, 0x2000, 10);
     Func_02004894(1, 0);
-    Func_020048ae(0, 0xa000, 0);
+    Func_020048ae(0, lift_a000, 0);
 
     if (Func_02004806(0, 0) == 0) {
         Func_02004882(1, 3);
@@ -1330,19 +1353,21 @@ void Func_02000d3c(void)
     Func_0200491c(3, 2);
     Func_0200492e(2, 2);
     Func_02004896(60);
-    Func_0200441c(2, 0xc000, 10);
+    turn_c000 = 0xc000;
+    Func_0200441c(2, turn_c000, 10);
     Func_02004956(0x149d);
     Func_02004412(2, 10);
-    Func_02004434(1, 0xc000, 10);
-    Func_0200443e(0, 0xc000, 10);
+    Func_02004434(1, turn_c000, 10);
+    Func_0200443e(0, turn_c000, 10);
     if (Data_0200b394 != 0) {
-        Func_02004450(3, 0xc000, 10);
+        Func_02004450(3, turn_c000, 10);
     }
 
-    Func_020048fa(0)->f23 &= 0xfe;
-    Func_0200490c_b(1)->f23 &= 0xfe;
-    Func_0200491c_b(2)->f23 &= 0xfe;
-    Func_0200492c_b(3)->f23 &= 0xfe;
+    keep_fe = 0xfe;
+    Func_020048fa(0)->f23 &= keep_fe;
+    Func_0200490c_b(1)->f23 &= keep_fe;
+    Func_0200491c_b(2)->f23 &= keep_fe;
+    Func_0200492c_b(3)->f23 &= keep_fe;
     Func_020049ec(0, 3);
     Func_020049f4(1, 3);
     Func_020049fc(2, 3);

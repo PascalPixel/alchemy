@@ -97,29 +97,39 @@ void Func_02005538();
 u8 *Func_020054f6();
 u8 *Func_02005502();
 void Func_02005530();
+void Func_02000f80();
 void Func_0200569e();
 void Func_020054fc();
 void Func_02005566();
 void Func_02005602();
 
+#define SetSceneScale Func_0200544c
+#define WaitSceneFrames Func_02005412
+#define ShowSceneDialogue Func_020054e2
+#define ShowSceneFollowup Func_020054ec
+#define PlaySceneAnimation Func_02005526
+#define SetScenePose Func_020054e0
+#define SetScenePosition Func_0200552a
+#define SetScenePositionAlt Func_02005538
+#define SetupRoofActorsByFacing Func_02000f80
+
 void Func_0200102c(s32 variant)
 {
     s32 line;
 
-    Func_0200544c(15, 0xcccc, 0x6666);
-    Func_02005412(60);
+    SetSceneScale(15, 0xcccc, 0x6666);
+    WaitSceneFrames(60);
     line = 0x183a;
-
-    Func_020054e2(line);
+    ShowSceneDialogue(line);
 
     if (variant == 0) {
-        Func_020054ec(line - 1);
-        Func_02005526(15, 0x101, 60);
+        ShowSceneFollowup(line - 1);
+        PlaySceneAnimation(15, 0x101, 60);
         Func_02005518(15, 0, 20);
-        Func_020054e0(15, 2);
+        SetScenePose(15, 2);
         Func_0200550e(0x18ae);
         Func_02005530(15, 0, 20);
-        Func_020054e0(15, 4);
+        SetScenePose(15, 4);
         Func_0200545e(20);
         Func_02005548(15, 0, 20);
         Func_020054f8(15, 3);
@@ -133,11 +143,11 @@ void Func_0200102c(s32 variant)
     }
 
     Func_02005578(15, 0, 20);
-    Func_02000f80();
+    SetupRoofActorsByFacing();
     Func_02005544(15, 3);
 
-    Func_0200552a(19, 232 << 16, 168 << 16);
-    Func_02005538(20, 232 << 16, 168 << 16);
+    SetScenePosition(19, 232 << 16, 168 << 16);
+    SetScenePositionAlt(20, 232 << 16, 168 << 16);
 
     *(s32 *)(Func_020054f6(19) + 12) = 192 << 12;      /* 12.0 */
     *(s32 *)(Func_02005502(19) + 60) = 128 << 24;

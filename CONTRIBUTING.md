@@ -17,7 +17,10 @@ independently understandable and provable.
    `overlay_twins --leads`.
 2. Reconstruct credible C in `semantic/<owner>.c`. Establish the boundaries,
    entry points, calls, arguments, types, signedness, aliasing, control flow,
-   and side effects from local evidence.
+   and side effects from local evidence. As soon as behavior is demonstrated,
+   give the entry and its calls cautious behavioral names in the readable C;
+   keep `Func_XXXXXXXX` only in declarations or transparent ABI aliases. Do
+   not replace an unknown address with a more confident guess.
 3. Check semantic readiness. The source should have the right size class and a
    residual that can be explained in small clusters. A large, diffuse
    residual usually means the source model is wrong; return to reconstruction.

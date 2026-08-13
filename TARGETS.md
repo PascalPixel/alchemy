@@ -6,16 +6,16 @@ largest to smallest. Broader multi-owner campaign cuts belong in
 [`STATUS.md`](STATUS.md); they may overlap and therefore are not used for byte
 accounting. Regenerate this page and the complete index with `make coverage`.
 
-- **Unfinished scopes:** 1,724
+- **Unfinished scopes:** 1,721
 - **Address spaces scanned:** 97 (84 still contain targets)
-- **Target bytes:** 891,846 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 451,890 Exact C or audited permanent assembly bytes
-- **Executable bytes accounted for:** 1,347,264
+- **Target bytes:** 890,990 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 452,818 Exact C or audited permanent assembly bytes
+- **Executable bytes accounted for:** 1,347,336
 
 ## Main target list
 
 This table contains every scope of at least 1,000 bytes (215 rows). The complete
-1,724-row index, including the smallest audited owners, is
+1,721-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
@@ -37,7 +37,7 @@ This table contains every scope of at least 1,000 bytes (215 rows). The complete
 | 15 | 4,044 | 4,044 | `resource_39d:0x02000b24` |
 | 16 | 3,804 | 3,804 | `main:0x080f6440` |
 | 17 | 3,796 | 3,796 | `resource_383:0x020036f8` |
-| 18 | 3,788 | 3,788 | `resource_38d:0x020008c0` |
+| 18 | 3,790 | 3,790 | `resource_38d:0x020008c0` |
 | 19 | 3,656 | 3,656 | `main:0x080dea70` |
 | 20 | 3,640 | 3,640 | `main:0x080e7404` |
 | 21 | 3,604 | 3,604 | `resource_3c9:0x020012c8` |
@@ -157,7 +157,7 @@ This table contains every scope of at least 1,000 bytes (215 rows). The complete
 | 135 | 1,308 | 1,308 | `main:0x080aa768` |
 | 136 | 1,308 | 1,308 | `main:0x080e1040` |
 | 137 | 1,308 | 1,308 | `resource_39c:0x020028b0` |
-| 138 | 1,294 | 1,294 | `resource_371:0x020039fc` |
+| 138 | 1,296 | 1,296 | `resource_371:0x020039fc` |
 | 139 | 1,288 | 1,288 | `main:0x080e94b8` |
 | 140 | 1,280 | 1,280 | `resource_3b8:0x02000af8` |
 | 141 | 1,272 | 1,272 | `main:0x080b0aac` |

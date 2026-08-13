@@ -66,44 +66,9 @@ static void QueueTransfer_080cbc0c(
     *interrupt_master = saved;
 }
 
-static void PlotPixel_080cbc0c(s32 x, s32 y)
-{
-    volatile u8 *tiles = (volatile u8 *)0x02010000;
+#define RunCircularRevealEffect Func_080cbc0c
 
-    if (x < 0)
-        x = 0;
-    if (x > 255)
-        x = 255;
-    if (y < 0)
-        y = 0;
-    if (y > 119)
-        y = 119;
-    tiles[(y >> 3) * 0x800 + (y & 7) * 8 +
-          (x >> 3) * 0x40 + (x & 7)] = 2;
-}
-
-static void PlotSymmetricCircle_080cbc0c(s32 x, s32 y)
-{
-    PlotPixel_080cbc0c(96 + x, 60 + y);
-    PlotPixel_080cbc0c(96 + x, 60 - y);
-    PlotPixel_080cbc0c(96 - x, 60 + y);
-    PlotPixel_080cbc0c(96 - x, 60 - y);
-    PlotPixel_080cbc0c(96 + y, 60 + x);
-    PlotPixel_080cbc0c(96 + y, 60 - x);
-    PlotPixel_080cbc0c(96 - y, 60 + x);
-    PlotPixel_080cbc0c(96 - y, 60 - x);
-
-    PlotPixel_080cbc0c(97 + x, 60 + y);
-    PlotPixel_080cbc0c(97 + x, 60 - y);
-    PlotPixel_080cbc0c(97 - x, 60 + y);
-    PlotPixel_080cbc0c(97 - x, 60 - y);
-    PlotPixel_080cbc0c(97 + y, 60 + x);
-    PlotPixel_080cbc0c(97 + y, 60 - x);
-    PlotPixel_080cbc0c(97 - y, 60 + x);
-    PlotPixel_080cbc0c(97 - y, 60 - x);
-}
-
-void Func_080cbc0c(void *scene)
+void RunCircularRevealEffect(void *scene)
 {
     u8 *runtime = Func_080048b0(39, 0x782c);
     void *render_context = Func_080048b0(40, 0x4000);
@@ -234,6 +199,7 @@ void Func_080cbc0c(void *scene)
 
         if (frame <= 3) {
             s32 radius;
+            volatile u8 *tilemap = (volatile u8 *)0x02010000;
 
             *(volatile u16 *)0x05000002 =
                 (u16)((frame + 8) * 0x421);
@@ -243,7 +209,96 @@ void Func_080cbc0c(void *scene)
                 s32 error = radius;
 
                 while (x >= y) {
-                    PlotSymmetricCircle_080cbc0c(x, y);
+                    s32 x_left = 96 - x;
+                    s32 x_right = 96 + x;
+                    s32 y_top = 60 - y;
+                    s32 y_bottom = 60 + y;
+                    s32 index_x;
+                    s32 index_y;
+                    s32 row_offset;
+
+                    if (y_top < 0)
+                        y_top = 0;
+                    if (y_bottom > 119)
+                        y_bottom = 119;
+                    if (x_left < 0)
+                        x_left = 0;
+                    if (x_right > 255)
+                        x_right = 255;
+                    index_x = (x_right < 0 ? x_right + 7 : x_right) >> 3;
+                    index_y = (y_bottom < 0 ? y_bottom + 7 : y_bottom) >> 3;
+                    row_offset = index_y << 11;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    index_y = (y_top < 0 ? y_top + 7 : y_top) >> 3;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    index_x = (x_left < 0 ? x_left + 7 : x_left) >> 3;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+
+                    x_right++;
+                    x_left++;
+                    if (x_right < 0)
+                        x_right = 0;
+                    if (x_right > 255)
+                        x_right = 255;
+                    index_x = (x_right < 0 ? x_right + 7 : x_right) >> 3;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    index_x = (x_left < 0 ? x_left + 7 : x_left) >> 3;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+
+                    x_left = 96 - y;
+                    x_right = 96 + y;
+                    y_top = 60 - x;
+                    y_bottom = 60 + x;
+                    if (x_left < 0)
+                        x_left = 0;
+                    if (x_right > 255)
+                        x_right = 255;
+                    if (y_top < 0)
+                        y_top = 0;
+                    if (y_bottom > 119)
+                        y_bottom = 119;
+                    index_x = (x_right < 0 ? x_right + 7 : x_right) >> 3;
+                    index_y = (y_bottom < 0 ? y_bottom + 7 : y_bottom) >> 3;
+                    row_offset = index_y << 11;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    index_y = (y_top < 0 ? y_top + 7 : y_top) >> 3;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    index_x = (x_left < 0 ? x_left + 7 : x_left) >> 3;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+
+                    x_right++;
+                    x_left++;
+                    if (x_right < 0)
+                        x_right = 0;
+                    if (x_right > 255)
+                        x_right = 255;
+                    index_x = (x_right < 0 ? x_right + 7 : x_right) >> 3;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_right & 7)] = 2;
+                    index_x = (x_left < 0 ? x_left + 7 : x_left) >> 3;
+                    tilemap[row_offset + ((y_bottom & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+                    tilemap[(index_y << 11) + ((y_top & 7) << 3) +
+                            (index_x << 6) + (x_left & 7)] = 2;
+
                     error -= y * 2 + 1;
                     if (error < 0) {
                         error += x * 2 - 2;

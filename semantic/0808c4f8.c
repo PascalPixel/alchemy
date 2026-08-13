@@ -21,6 +21,8 @@
  */
 #include "types.h"
 
+#define RunMapFieldEventLoop Func_0808c4f8
+
 typedef s32 (*Callee_0808c4f8)(void);
 
 #define S16(base, off) (*(volatile s16 *)((u8 *)(base) + (off)))
@@ -108,12 +110,7 @@ extern void Func_0809c138(s32);
 extern void Func_0809c3a4(void);
 extern void Func_080f9010(s32);
 
-static void close_field_action(void)
-{
-    Func_0808c4c0();
-}
-
-s32 Func_0808c4f8(void)
+s32 RunMapFieldEventLoop(void)
 {
     volatile u8 *const state = (volatile u8 *)0x02000400;
     volatile s32 *const current_actor = (volatile s32 *)0x02000434;
@@ -221,7 +218,7 @@ s32 Func_0808c4f8(void)
             Func_0808c44c();
             if (!Func_080919d8(U16(state, 0x7c)))
                 Func_08091a58(U16(state, 0x7c), 0);
-            close_field_action();
+            Func_0808c4c0();
             U16(state, 0x7c) = 0;
         }
     }
@@ -279,7 +276,7 @@ event_loop:
                 Func_08015040((const void *)0x91a, 1);
             }
             if (S16(work, 0x186)) {
-                close_field_action();
+                Func_0808c4c0();
                 goto clear_command;
             }
             Func_08009080(actor, *current_actor == 0
@@ -302,7 +299,7 @@ event_loop:
             }
             U16(state, 0) = U16(state, 4);
             U16(state, 2) = U16(state, 6);
-            close_field_action();
+            Func_0808c4c0();
             result = 0x3e7;
             goto finish;
         } else if (command == -888) {
@@ -379,7 +376,7 @@ clear_command:
             Func_080151e8();
             S16(work, 0xcc0) = 1;
         }
-        close_field_action();
+        Func_0808c4c0();
         Func_080770d0(0x106);
         Func_080772f0();
         S16(work, 0x172) = 0;
@@ -388,14 +385,14 @@ clear_command:
     if (S16(work, 0x178)) {
         Func_0808c44c();
         Func_0808d5dc(U16(work, 0x178) & 0xfff);
-        close_field_action();
+        Func_0808c4c0();
         S16(work, 0x178) = 0;
         goto event_loop;
     }
     if (S16(work, 0x17a)) {
         Func_0808c44c();
         Func_0808d9a4(S16(work, 0x17a));
-        close_field_action();
+        Func_0808c4c0();
         S16(work, 0x17a) = 0;
         goto event_loop;
     }
@@ -403,14 +400,14 @@ clear_command:
         Func_08015208();
         Func_0808c44c();
         Func_0808e680(S16(work, 0x17e));
-        close_field_action();
+        Func_0808c4c0();
         S16(work, 0x17e) = 0;
         goto event_loop;
     }
     if (S16(work, 0x180)) {
         Func_0808c44c();
         Func_0808e23c(S16(work, 0x180), S16(work, 0x19a));
-        close_field_action();
+        Func_0808c4c0();
         S16(work, 0x180) = 0;
         goto event_loop;
     }
@@ -448,7 +445,7 @@ clear_command:
                 Func_08015040((const void *)0xc2f, 1);
             }
         }
-        close_field_action();
+        Func_0808c4c0();
         Func_080770d0(0x106);
         S16(work, 0x176) = 0;
     }

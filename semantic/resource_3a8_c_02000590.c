@@ -1,7 +1,8 @@
 #include "types.h"
 
 /*
- * resource_3a8 owner at 0x02000590, 4,092 bytes: the overlay's main scripted
+ * resource_3a8 owner at 0x02000590, 4,092 stored bytes (4,064 executable
+ * bytes): the overlay's main scripted
  * cutscene - the one gated on story flag 0x910 being set and 0x911 not yet
  * latched, which stages ten scene entities (14, 20, 21, 27-34) through a long
  * choreography and finally latches 0x911.
@@ -513,6 +514,7 @@ void Func_02000590(void)
 {
     u8 *scene = Data_03001ebc;
 
+    /* ---- Open the gated scene and stage its ten script actors. ---- */
     Func_02004190();
 
     if (Func_02004178(0x910) == 0) {
@@ -571,6 +573,7 @@ void Func_02000590(void)
     Func_020043a6(33, Data_0200bdc4);
     Func_020043ae(34, Data_0200bdc4);
 
+    /* ---- Wait for actor 21's opening script to finish. ---- */
     {
         u8 *counter = Func_0200439c(21) + 100;
         *(s16 *)counter = 0;
@@ -584,6 +587,7 @@ void Func_02000590(void)
         } while (*(s16 *)counter == 0);
     }
 
+    /* ---- Bring actors 27-32 into the central choreography. ---- */
     Func_020043b2(40);
     Func_0200446a(27, 2);
     Func_020044be(27, 0x5000, 20);
@@ -631,6 +635,7 @@ void Func_02000590(void)
     Func_0200457c(20)[90] |= 1;
     Func_020045d0(20, 180, 272);
 
+    /* ---- Hand the scene from actor 20 to the paired actors 21/33/34. ---- */
     Func_02004662(20, 0, 0);
     Func_0200465c(20, 0, 10);
     Func_0200468e(34, 0x105, 0);
@@ -735,6 +740,7 @@ void Func_02000590(void)
 
     Func_0200485e(Data_02009f15);   /* = Func_02001f14 + Thumb bit */
 
+    /* ---- Run the paired actor-20/21 exchange and poll both completions. ---- */
     Func_02004984(20);
     Func_0200498a(21);
     Func_02004860(1);
@@ -766,6 +772,7 @@ void Func_02000590(void)
         }
     }
 
+    /* ---- Close the paired exchange, then resolve actor 31 and the final group. ---- */
     Func_02004a28(20, Data_0200c164);
     Func_02004a30(21, Data_0200c1ac);
 
@@ -930,6 +937,7 @@ void Func_02000590(void)
         Func_02004e52(1);
     } while (*(s16 *)(Func_02004f60(21) + 100) != 1);
 
+    /* ---- Play the final actor-14 entrance and settle the room. ---- */
     Func_02004f40(80);
     Func_02004fd6(14, 0x01540000, 0x01120000);
     Func_02004e7c(1);
@@ -978,6 +986,7 @@ void Func_02000590(void)
     Func_020050ea(33);
     Func_020050f0(34);
 
+    /* ---- Restore the presentation variant and latch story flag 0x911. ---- */
     Func_0200524e(17);
 
     if (*(s16 *)(scene + 364) == 9) {

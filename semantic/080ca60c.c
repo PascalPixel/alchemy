@@ -100,6 +100,19 @@ typedef void *(*WordCopy_080ca60c)(void *destination, const void *source,
 typedef void (*Renderer_080ca60c)(s32 target, void *source, s32 x, s32 y,
                                   u32 width, s32 height);
 
+/* The four coordinate scratch results occupy one contiguous ROM-shaped frame
+ * region: each two-word result is followed by one unused word. */
+typedef struct {
+    s32 sp6C[2];
+    s32 pad6C;
+    s32 sp78[2];
+    s32 pad78;
+    s32 sp38[2];
+    s32 pad38;
+    s32 sp44[2];
+    s32 pad44;
+} CoordinateScratch_080ca60c;
+
 /*
  * Run the selector-driven combat visual from resource setup through its final
  * presentation frame.  The first particle bank supplies orbiting/spark
@@ -110,7 +123,9 @@ typedef void (*Renderer_080ca60c)(s32 target, void *source, s32 x, s32 y,
  * uses BL for two local control-flow edges; `cleanup` and `frame_loop` express
  * those edges without inventing callees.
  */
-s32 Func_080ca60c(s32 arg0, s32 arg1) {
+#define RunCombatVisualEffect Func_080ca60c
+
+s32 RunCombatVisualEffect(s32 visual_context, s32 visual_variant) {
     s32 sp8;
     s32 spC;
     s32 sp10;
@@ -123,10 +138,9 @@ s32 Func_080ca60c(s32 arg0, s32 arg1) {
     s32 sp2C;
     void **sp30;
     s32 sp34;
-    s32 sp38[2];
+    CoordinateScratch_080ca60c scratch;
     void *sp3C;
     void *sp40;
-    u32 sp44;
     s32 sp48;
     s32 sp4C;
     void *sp50;
@@ -135,8 +149,6 @@ s32 Func_080ca60c(s32 arg0, s32 arg1) {
     s32 sp5C;
     s32 sp60;
     Renderer_080ca60c renderers[2];
-    s32 sp6C[2];
-    s32 sp78[2];
     s32 *var_r5_3;
     s32 temp_r0;
     s32 temp_r0_3;
@@ -212,12 +224,12 @@ s32 Func_080ca60c(s32 arg0, s32 arg1) {
     void *var_r6;
     void *var_r7;
 
-    sp60 = arg1;
+    sp60 = visual_variant;
     temp_r1 = M2C_FIELD((void *)0x03001EEC, void **, 0);
     sp5C = M2C_FIELD((void *)0x03001EEC, s32 *, 4);
     sp50 = M2C_FIELD((void *)0x03001EEC, void **, 8);
     sp4C = *(s32 *)0x03001E80;
-    M2C_FIELD(temp_r1, s32 *, 0x7828) = arg0;
+    M2C_FIELD(temp_r1, s32 *, 0x7828) = visual_context;
     if (sp60 == 8) {
         Func_080cd594(0);
     } else {
@@ -266,8 +278,8 @@ loop_16:
     do {
         Func_080e3980(
             *(s16 *)((u8 *)(u32)M2C_FIELD(temp_r1, s32 *, 0x7828) + spC),
-            &sp44);
-        temp_r3_2 = sp44;
+            &scratch.sp44);
+        temp_r3_2 = scratch.sp44[0];
         M2C_FIELD(var_r5, s32 *, 0) = (s32) (((s32) (temp_r3_2 + (temp_r3_2 >> 0x1F)) >> 1) << 0x10);
         M2C_FIELD(var_r5, s32 *, 4) = 0x500000;
         M2C_FIELD(var_r5, s32 *, 8) = 0;
@@ -334,12 +346,12 @@ loop_16:
     M2C_FIELD(temp_r1, s32 *, 0x7780) = 2;
     M2C_FIELD(temp_r1, s32 *, 0x7784) = 0x4B;
     Func_080041d8(0x080CD261, 0x480);
-    temp_r2 = sp38;
+    temp_r2 = scratch.sp38;
     Func_080e396c((s32) M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s16 *, 0x24), temp_r2);
-    Func_080e3980((s32) M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s16 *, 0x24), sp78);
-    temp_r1_2 = M2C_FIELD(sp38, s32 *, 4);
-    temp_r3_3 = M2C_FIELD(sp78, s32 *, 4) - temp_r1_2;
-    M2C_FIELD(sp38, s32 *, 4) = (s32) (temp_r1_2 + ((s32) (temp_r3_3 + (temp_r3_3 >> 0x1F)) >> 1));
+    Func_080e3980((s32) M2C_FIELD(M2C_FIELD(temp_r1, s32 *, 0x7828), s16 *, 0x24), scratch.sp78);
+    temp_r1_2 = M2C_FIELD(scratch.sp38, s32 *, 4);
+    temp_r3_3 = M2C_FIELD(scratch.sp78, s32 *, 4) - temp_r1_2;
+    M2C_FIELD(scratch.sp38, s32 *, 4) = (s32) (temp_r1_2 + ((s32) (temp_r3_3 + (temp_r3_3 >> 0x1F)) >> 1));
     sp58 = 0;
     var_r1 = sp48 - sp60;
     if (M2C_FIELD((var_r1 + 6), u8 *, 0x080EDF04) == 0)
@@ -379,10 +391,10 @@ frame_loop:
             temp_r3_4 = (void *)(temp_r1_4 + 5);
             Func_080ed408(0x2E, 7, 7, 3, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
             temp_r5_2 = (sp20 * 0x360) + temp_r1 + 0xC80;
-            (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, ((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) - 0x12, 0x38, 0x12U, 0x30);
+            (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, ((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) - 0x12, 0x38, 0x12U, 0x30);
             Func_08002dd8(0x2E);
             Func_080ed408(0x2E, 7, 7, 7, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
-            (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, (s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1, 0x38, 0x12U, 0x30);
+            (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, (s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1, 0x38, 0x12U, 0x30);
             Func_08002dd8(0x2E);
             temp_r6 = (void *)(temp_r1_4 + 4);
             temp_r5_3 = M2C_FIELD(temp_r6, u8 *, 0x080EDF04);
@@ -430,11 +442,11 @@ frame_loop:
                 Func_080ed408(0x2E, 7, 7, 7, 2);
                 temp_r5_7 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58);
                 temp_r4_2 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
-                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, ((((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) - ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - temp_r5_7) + 8, sp38[1] - (temp_r4_2 >> 1), (u32) temp_r5_7, (s32) temp_r4_2);
+                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, ((((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) - ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - temp_r5_7) + 8, scratch.sp38[1] - (temp_r4_2 >> 1), (u32) temp_r5_7, (s32) temp_r4_2);
             } else {
                 Func_080ed408(0x2E, 7, 7, 3, 2);
                 temp_r4_3 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
-                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, (((s32) (sp38[0] + (sp38[0] >> 0x1F)) >> 1) + ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - 8, sp38[1] - (temp_r4_3 >> 1), (u32) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58), (s32) temp_r4_3);
+                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, (((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) + ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - 8, scratch.sp38[1] - (temp_r4_3 >> 1), (u32) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58), (s32) temp_r4_3);
             }
             Func_08002dd8(0x2E);
             temp_r5_8 = M2C_FIELD(sp28, u8 *, 0x080EDF04);
@@ -492,10 +504,10 @@ frame_loop:
             temp_r0_4 = (u16) Func_08004458();
             sp8 = (s32) temp_r0_4;
             temp_r5_11 = 0x1F & Func_08004458();
-            temp_r6_3 = M2C_FIELD(sp38, u32 *, 0);
+            temp_r6_3 = M2C_FIELD(scratch.sp38, u32 *, 0);
             temp_r5_12 = temp_r5_11 + 4;
             temp_r6_4 = (((s32) (temp_r6_3 + (temp_r6_3 >> 0x1F)) >> 1) + ((s32) (temp_r5_12 * Func_08002322((s32) temp_r0_4)) >> 0x11)) - ((u8) M2C_FIELD(temp_r7, u8 *, 0x080EDECA) >> 1);
-            temp_r5_13 = (M2C_FIELD(sp38, s32 *, 4) - ((s32) (temp_r5_12 * Func_0800231c((s32) temp_r0_4)) >> 0x11)) - ((u8) M2C_FIELD(temp_r7, u8 *, 0x080EDED0) >> 1);
+            temp_r5_13 = (M2C_FIELD(scratch.sp38, s32 *, 4) - ((s32) (temp_r5_12 * Func_0800231c((s32) temp_r0_4)) >> 0x11)) - ((u8) M2C_FIELD(temp_r7, u8 *, 0x080EDED0) >> 1);
             Func_080ed408(0x2F, 7, 7, 3 | M2C_FIELD((Func_08004458() & 3), u8 *, 0x080EDF7B), 3);
             (*(Renderer_080ca60c *)0x03001F0C)(sp5C, M2C_FIELD((temp_r7 * 2), u16 *, 0x080EDEBE) + temp_r1, temp_r6_4, temp_r5_13, (u32) M2C_FIELD(temp_r7, u8 *, 0x080EDECA), (s32) M2C_FIELD(temp_r7, u8 *, 0x080EDED0));
             Func_08002dd8(0x2F);
@@ -545,10 +557,10 @@ loop_83:
         temp_r7_2 = var_sl * 2;
         do {
             if ((s32) M2C_FIELD(var_r5_5, s32 *, 0x18) >= 0) {
-                Func_080e3944((s32) var_r5_5, sp6C);
-                temp_r2_3 = (s32) M2C_FIELD(sp6C, s32 *, 0) >> 1;
-                M2C_FIELD(sp6C, s32 *, 0) = temp_r2_3;
-                renderers[1](sp5C, sp50 + M2C_FIELD((temp_r7_2 - 2), u16 *, 0x080EDE48), temp_r2_3 - (var_sl >> 1), M2C_FIELD(sp6C, s32 *, 4) - var_sl, var_sl, temp_r7_2);
+                Func_080e3944((s32) var_r5_5, scratch.sp6C);
+                temp_r2_3 = (s32) M2C_FIELD(scratch.sp6C, s32 *, 0) >> 1;
+                M2C_FIELD(scratch.sp6C, s32 *, 0) = temp_r2_3;
+                renderers[1](sp5C, sp50 + M2C_FIELD((temp_r7_2 - 2), u16 *, 0x080EDE48), temp_r2_3 - (var_sl >> 1), M2C_FIELD(scratch.sp6C, s32 *, 4) - var_sl, var_sl, temp_r7_2);
                 Func_080e38b8(var_r5_5, 0x3C, 0);
                 temp_r3_6 = M2C_FIELD(var_r5_5, s32 *, 0x18) + 1;
                 M2C_FIELD(var_r5_5, s32 *, 0x18) = temp_r3_6;
@@ -573,12 +585,12 @@ loop_83:
         do {
             temp_r5_14 = M2C_FIELD(var_r7, s32 *, 0x18);
             if (temp_r5_14 >= 0) {
-                Func_080e3944((s32) var_r7, sp6C);
-                M2C_FIELD(sp6C, s32 *, 0) = (s32) ((s32) M2C_FIELD(sp6C, s32 *, 0) >> 1);
+                Func_080e3944((s32) var_r7, scratch.sp6C);
+                M2C_FIELD(scratch.sp6C, s32 *, 0) = (s32) ((s32) M2C_FIELD(scratch.sp6C, s32 *, 0) >> 1);
                 Func_080e38b8(var_r7, 0x3C, 0);
                 temp_r5_15 = (temp_r5_14 >> 3) + 1;
                 temp_r0_6 = temp_r5_15 * 2;
-                renderers[1](sp5C, sp50 + M2C_FIELD((temp_r0_6 - 2), u16 *, 0x080EDE48), M2C_FIELD(sp6C, s32 *, 0) - ((s32) (temp_r5_15 + (temp_r5_15 >> 0x1F)) >> 1), M2C_FIELD(sp6C, s32 *, 4) - temp_r5_15, temp_r5_15, temp_r0_6);
+                renderers[1](sp5C, sp50 + M2C_FIELD((temp_r0_6 - 2), u16 *, 0x080EDE48), M2C_FIELD(scratch.sp6C, s32 *, 0) - ((s32) (temp_r5_15 + (temp_r5_15 >> 0x1F)) >> 1), M2C_FIELD(scratch.sp6C, s32 *, 4) - temp_r5_15, temp_r5_15, temp_r0_6);
                 M2C_FIELD(var_r7, s32 *, 0x18) = (s32) (M2C_FIELD(var_r7, s32 *, 0x18) - 1);
             }
             var_r8_13 += 1;

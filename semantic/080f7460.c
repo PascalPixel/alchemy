@@ -17,10 +17,10 @@ struct EffectParticle_080f7460 {
 };
 
 struct MenuRecord_080f7460 {
-    s32 enabled;
+    s32 position;
     u8 choices[21];
-    u8 selection;
-    u8 cancel_selection;
+    u8 enabled;
+    s8 spawn_delay;
     u8 padding;
 };
 
@@ -123,16 +123,10 @@ void Func_080f731c(void);
  * menu records, creates the initial windows, then owns the complete animated
  * frame loop and its teardown.
  */
-void Func_080f7460(void)
+#define RunStatusMenuPresentation Func_080f7460
+
+void RunStatusMenuPresentation(void)
 {
-    volatile struct DmaChannel_080f7460 *dma =
-        (volatile struct DmaChannel_080f7460 *)0x040000d4;
-    volatile u16 *blend_control = (volatile u16 *)0x04000050;
-    volatile u16 *blend_alpha = (volatile u16 *)0x04000052;
-    volatile u16 *bg_scroll = (volatile u16 *)0x04000014;
-    volatile u16 *display_control = (volatile u16 *)0x04000000;
-    u16 *map = (u16 *)0x06002800;
-    u16 *secondary_map = (u16 *)0x06003000;
     u16 *palette_work;
     u16 *palette_source;
     u8 *tiles = Func_080048b0(41, 0x60e);
@@ -159,20 +153,22 @@ void Func_080f7460(void)
     for (row = 0; row < 20; row++) {
         for (column = 0; column < 32; column++) {
             if (column >= 5 && column <= 24 && row >= 3 && row <= 13)
-                map[row * 32 + column] = 0xa1a6;
+                ((u16 *)0x06002800)[row * 32 + column] = 0xa1a6;
             else if (column > 29)
-                map[row * 32 + column] = 0;
+                ((u16 *)0x06002800)[row * 32 + column] = 0;
             else
-                map[row * 32 + column] = 0xa1a8 + next_tile++;
+                ((u16 *)0x06002800)[row * 32 + column] = 0xa1a8 + next_tile++;
         }
     }
 
     palette_source = (u16 *)Func_08002f40(0x76);
     Func_08005340(palette_source, tiles);
     palette_source = (u16 *)Func_08002f40(0x3f);
-    dma->source = palette_source;
-    dma->destination = (void *)0x05000140;
-    dma->control = 0x84000008;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        palette_source;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x05000140;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000008;
     Func_08005340((u8 *)palette_source + 32, (void *)0x0600b500);
 
     index = 0;
@@ -180,9 +176,12 @@ void Func_080f7460(void)
         u8 *source = (u8 *)0x02010000 + row * 15 * 64;
         for (column = 0; column < 30; column++, source += 32) {
             if (!(column >= 5 && column <= 24 && row >= 3 && row <= 13)) {
-                dma->source = source;
-                dma->destination = (void *)(0x06002d00 + index * 32);
-                dma->control = 0x84000008;
+                ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+                    source;
+                ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+                    (void *)(0x06002d00 + index * 32);
+                ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control =
+                    0x84000008;
                 index++;
             }
         }
@@ -193,10 +192,10 @@ void Func_080f7460(void)
     for (row = 0; row < 20; row++) {
         for (column = 0; column < 32; column++) {
             if ((u32)(row - 2) <= 14)
-                secondary_map[row * 32 + column] =
+                ((u16 *)0x06003000)[row * 32 + column] =
                     (u16)(row * 32 + column + 148);
             else
-                secondary_map[row * 32 + column] = 0x509;
+                ((u16 *)0x06003000)[row * 32 + column] = 0x509;
         }
     }
 
@@ -213,12 +212,12 @@ void Func_080f7460(void)
     }
     *(volatile u16 *)0x04000048 = 0x3737;
     *(volatile u16 *)0x0400004a = 0x2727;
-    *blend_control = 0x3f44;
-    *blend_alpha = 0x1010;
-    bg_scroll[0] = 0;
-    bg_scroll[2] = 0;
-    bg_scroll[1] = 0xff60;
-    bg_scroll[3] = 0xff60;
+    *(volatile u16 *)0x04000050 = 0x3f44;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    ((volatile u16 *)0x04000014)[0] = 0;
+    ((volatile u16 *)0x04000014)[2] = 0;
+    ((volatile u16 *)0x04000014)[1] = 0xff60;
+    ((volatile u16 *)0x04000014)[3] = 0xff60;
     *(volatile u16 *)0x04000040 = 0x28c8;
     *(volatile u16 *)0x04000044 = 0x1878;
     *(volatile u16 *)0x04000040 = 0xf0;
@@ -234,31 +233,41 @@ void Func_080f7460(void)
     palette_work = (u16 *)(workspace + 0x200);
 
     palette_source = (u16 *)Func_08002f40(0x8f);
-    dma->source = palette_source;
-    dma->destination = (void *)0x05000080;
-    dma->control = 0x84000020;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        palette_source;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x05000080;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000020;
     ((volatile u16 *)0x05000080)[0] = 0x2f8b;
     ((volatile u16 *)0x05000080)[1] = 0x5bf6;
 
     palette_source = (u16 *)Func_08002f40(0x40);
-    dma->source = palette_source;
-    dma->destination = (void *)0x05000200;
-    dma->control = 0x84000078;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        palette_source;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x05000200;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000078;
     Func_08005340(
         (u8 *)palette_source + 480,
         (void *)0x06010000);
-    dma->source = (const void *)0x02010000;
-    dma->destination = (void *)0x06010000;
-    dma->control = 0x84001b30;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        (const void *)0x02010000;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x06010000;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84001b30;
 
     palette_source = (u16 *)Func_08002f40(0x41);
-    dma->source = palette_source;
-    dma->destination = (void *)0x050003e0;
-    dma->control = 0x84000008;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        palette_source;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x050003e0;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000008;
     Func_08005340((u8 *)palette_source + 32, (void *)0x06016e00);
-    dma->source = (const void *)0x02010000;
-    dma->destination = (void *)0x06010000;
-    dma->control = 0x84000480;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        (const void *)0x02010000;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x06010000;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000480;
 
     Func_08015000();
     Func_080f731c();
@@ -266,9 +275,9 @@ void Func_080f7460(void)
     for (row = 0; row < 5; row++) {
         struct MenuRecord_080f7460 *record = &state->menu[row];
 
-        record->enabled = 8;
-        record->selection = 0;
-        record->cancel_selection = 0xff;
+        record->position = 8;
+        record->enabled = 0;
+        record->spawn_delay = -1;
         for (column = 0; column < 21; column++)
             record->choices[column] =
                 (u8)Func_08002304((s32)Func_08004458(), 5);
@@ -302,15 +311,18 @@ void Func_080f7460(void)
     renderers[1] = *(Renderer_080f7460 *)0x03001f0c;
 
     ((ArmFill_080f7460)0x03000168)(canvas, 0x8000, 0);
-    dma->source = canvas;
-    dma->destination = (void *)0x06003500;
-    dma->control = 0x84002000;
-    dma->source = (const void *)0x05000000;
-    dma->destination = workspace;
-    dma->control = 0x84000080;
-    dma->source = palette_work;
-    dma->destination = (void *)0x05000200;
-    dma->control = 0x84000080;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source = canvas;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x06003500;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84002000;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source =
+        (const void *)0x05000000;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination = workspace;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000080;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->source = palette_work;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->destination =
+        (void *)0x05000200;
+    ((volatile struct DmaChannel_080f7460 *)0x040000d4)->control = 0x84000080;
 
     Func_080f6038(palette_work, (u16 *)0x05000200, 0, 256);
     Func_080f6038(
@@ -318,7 +330,7 @@ void Func_080f7460(void)
         (u16 *)0x05000000,
         0,
         256);
-    *display_control = 0x909;
+    *(volatile u16 *)0x04000000 = 0x909;
 
     if (Func_080772e0(228) == 1) {
         state->message_window = Func_08015010(6, 16, 18, 3, 6);

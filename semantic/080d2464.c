@@ -53,51 +53,9 @@ void Func_080e727c(s32, s32, s32);
 void Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 
-static void Spawn_080d2464(
-    struct Particle_080d2464 *particles,
-    s32 count,
-    s32 mode,
-    s32 origin_x,
-    s32 origin_y,
-    s32 direction,
-    s32 fast)
-{
-    s32 i;
+#define RunDirectionalParticleSceneEffect Func_080d2464
 
-    for (i = 0; i < count; i++) {
-        struct Particle_080d2464 *particle = &particles[i];
-
-        if (particle->age < 0) {
-            s32 angle = (Func_08004458() & 0x1fff) + 0x4e20;
-            s32 speed = (Func_08004458() & 0xff) + 128;
-
-            if (mode == 0) {
-                if (fast) {
-                    particle->x = 68 << 16;
-                    particle->y = 64 << 16;
-                } else {
-                    particle->x =
-                        ((Func_08004458() & 7) + 78) << 16;
-                    particle->y = 70 << 16;
-                }
-            } else {
-                particle->x = fast
-                    ? origin_x << 16
-                    : ((Func_08004458() & 7) + origin_x - 8) << 16;
-                particle->y = origin_y << 16;
-            }
-            particle->velocity_x =
-                speed * Func_08002322(angle) >> (fast ? 6 : 9);
-            particle->velocity_y =
-                speed * Func_0800231c(angle) >> (fast ? 6 : 9);
-            particle->age = 0;
-            (void)direction;
-            return;
-        }
-    }
-}
-
-void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
+void RunDirectionalParticleSceneEffect(struct Scene_080d2464 *scene, s32 mode)
 {
     u8 *runtime = *(u8 **)0x03001eec;
     void *render_context = *(void **)0x03001ef0;
@@ -106,24 +64,18 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
     Renderer_080d2464 renderer0;
     Renderer_080d2464 renderer1;
     Transfer_080d2464 transfer = (Transfer_080d2464)0x03001388;
-    struct Particle_080d2464 *small =
-        (struct Particle_080d2464 *)(runtime + 0x7320);
-    struct Particle_080d2464 *sparks =
-        (struct Particle_080d2464 *)(runtime + 0x74e0);
-    struct Particle_080d2464 *large =
-        (struct Particle_080d2464 *)0x02010000;
-    struct Particle_080d2464 *trails =
-        (struct Particle_080d2464 *)(runtime + 0x7080);
+    struct Scene_080d2464 **scene_slot =
+        (struct Scene_080d2464 **)(runtime + 0x7828);
     s32 direction = 1;
-    /* The target leaves these undefined in mode 0; Spawn's mode-0 path
-     * does not consume their values. */
+    /* The target leaves these undefined in mode 0; its mode-0 paths do not
+     * consume their values. */
     s32 origin[3];
     s32 beam_x = 212 << 16;
     s32 beam_y = (s32)0xffc40000;
     s32 frame;
     s32 i;
 
-    *(struct Scene_080d2464 **)(runtime + 0x7828) = scene;
+    *scene_slot = scene;
     Func_080cd594(0);
     *(volatile u16 *)0x04000052 = 0x1010;
     *(volatile u16 *)0x0400000c = 0x0784;
@@ -152,30 +104,33 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
 
     if (mode != 0) {
         direction = -1;
-        if (scene->direction != 1)
+        if ((*scene_slot)->direction != 1)
             direction = 1;
     }
     if (mode == 1) {
-        Func_080e396c(scene->target_id, origin);
+        Func_080e396c((*scene_slot)->target_id, origin);
         origin[0] /= 2;
         origin[1] = 66;
-        origin[0] = scene->direction == 1 ? 76 : 44;
+        origin[0] = (*scene_slot)->direction == 1 ? 76 : 44;
     }
 
     for (i = 0; i < 64; i++)
         ((struct Particle_080d2464 *)(runtime + 0x7098))[i].age = -1;
     for (i = 0; i < 16; i++) {
-        small[i].x = direction == 1
+        ((struct Particle_080d2464 *)(runtime + 0x7320))[i].x =
+            direction == 1
             ? (Func_08004458() & 0x7f) + 128
             : (Func_08004458() & 0x7f) - 128;
-        small[i].y = (Func_08004458() & 7) - 72;
-        small[i].age = -(s32)(Func_08004458() & 31);
+        ((struct Particle_080d2464 *)(runtime + 0x7320))[i].y =
+            (Func_08004458() & 7) - 72;
+        ((struct Particle_080d2464 *)(runtime + 0x7320))[i].age =
+            -(s32)(Func_08004458() & 31);
     }
     for (i = 0; i < 512; i++)
-        large[i].age = -1;
+        ((struct Particle_080d2464 *)0x02010000)[i].age = -1;
 
     if (mode == 0) {
-        Func_080d6750(scene);
+        Func_080d6750(*scene_slot);
         Func_080030f8(1);
         Func_080dbb24(8, (s32)0x03001b04, 2);
     }
@@ -189,9 +144,9 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
                 Func_08009020(*(void **)(runtime + 0x77e4), 10);
                 Func_08009020(*(void **)(runtime + 0x77e8), 11);
             }
-            for (i = 0; i < scene->object_count; i++) {
-                Func_080d6888(scene->object_ids[i], 10, 5, -1, 0);
-                Func_080b5088(scene->object_ids[i], 4);
+            for (i = 0; i < (*scene_slot)->object_count; i++) {
+                Func_080d6888((*scene_slot)->object_ids[i], 10, 5, -1, 0);
+                Func_080b5088((*scene_slot)->object_ids[i], 4);
             }
             frame = 160;
         }
@@ -220,29 +175,76 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
             s32 made = 0;
 
             for (i = 0; i < 512 && made < wanted; i++) {
-                if (large[i].age < 0) {
+                if (((struct Particle_080d2464 *)0x02010000)[i].age < 0) {
                     s32 lane = i & 3;
-                    large[i].x =
+                    ((struct Particle_080d2464 *)0x02010000)[i].x =
                         ((Func_08004458() & 0xff) - 32) << 16;
-                    large[i].y = 112 << 16;
-                    large[i].velocity_x =
+                    ((struct Particle_080d2464 *)0x02010000)[i].y =
+                        112 << 16;
+                    ((struct Particle_080d2464 *)0x02010000)[i].velocity_x =
                         ((Func_08004458() & 0x7f) +
                          *(u8 *)(0x080ee184 + lane)) << 9;
-                    large[i].velocity_y =
+                    ((struct Particle_080d2464 *)0x02010000)[i].velocity_y =
                         -(((Func_08004458() & 0x7f) +
                            *(u8 *)(0x080ee184 + lane)) << 11);
-                    large[i].age = 0;
+                    ((struct Particle_080d2464 *)0x02010000)[i].age = 0;
                     made++;
                 }
             }
         }
 
-        if (frame >= 41 && frame <= 127 && (frame & 1))
-            Spawn_080d2464(sparks, 24, mode,
-                           origin[0], origin[1], direction, 0);
-        if (frame >= 129 && frame <= 175)
-            Spawn_080d2464(trails, 24, mode,
-                           origin[0], origin[1], direction, 1);
+        if (frame >= 41 && frame <= 127 && (frame & 1)) {
+            for (i = 0; i < 24; i++) {
+                struct Particle_080d2464 *particle =
+                    &((struct Particle_080d2464 *)(runtime + 0x74e0))[i];
+
+                if (particle->age < 0) {
+                    s32 angle = (Func_08004458() & 0x1fff) + 0x4e20;
+                    s32 speed = (Func_08004458() & 0xff) + 128;
+
+                    if (mode == 0) {
+                        particle->x =
+                            ((Func_08004458() & 7) + 78) << 16;
+                        particle->y = 70 << 16;
+                    } else {
+                        particle->x =
+                            ((Func_08004458() & 7) + origin[0] - 8) << 16;
+                        particle->y = origin[1] << 16;
+                    }
+                    particle->velocity_x =
+                        speed * Func_08002322(angle) >> 9;
+                    particle->velocity_y =
+                        speed * Func_0800231c(angle) >> 9;
+                    particle->age = 0;
+                    break;
+                }
+            }
+        }
+        if (frame >= 129 && frame <= 175) {
+            for (i = 0; i < 24; i++) {
+                struct Particle_080d2464 *particle =
+                    &((struct Particle_080d2464 *)(runtime + 0x7080))[i];
+
+                if (particle->age < 0) {
+                    s32 angle = (Func_08004458() & 0x1fff) + 0x4e20;
+                    s32 speed = (Func_08004458() & 0xff) + 128;
+
+                    if (mode == 0) {
+                        particle->x = 68 << 16;
+                        particle->y = 64 << 16;
+                    } else {
+                        particle->x = origin[0] << 16;
+                        particle->y = origin[1] << 16;
+                    }
+                    particle->velocity_x =
+                        speed * Func_08002322(angle) >> 6;
+                    particle->velocity_y =
+                        speed * Func_0800231c(angle) >> 6;
+                    particle->age = 0;
+                    break;
+                }
+            }
+        }
 
         if (frame == 48)
             Func_080f9010(141);
@@ -251,7 +253,8 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
 
         if (frame <= 175) {
             for (i = 0; i < 24; i++) {
-                struct Particle_080d2464 *particle = &trails[i];
+                struct Particle_080d2464 *particle =
+                    &((struct Particle_080d2464 *)(runtime + 0x7080))[i];
                 if (particle->age >= 0) {
                     renderer0(
                         render_context,
@@ -268,7 +271,8 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
         }
 
         for (i = 0; i < 24; i++) {
-            struct Particle_080d2464 *particle = &sparks[i];
+            struct Particle_080d2464 *particle =
+                &((struct Particle_080d2464 *)(runtime + 0x74e0))[i];
             if (particle->age >= 0) {
                 renderer1(
                     render_context, (const void *)0x080ee188,
@@ -285,7 +289,8 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
 
         if (frame <= 175) {
             for (i = 0; i < 512; i++) {
-                struct Particle_080d2464 *particle = &large[i];
+                struct Particle_080d2464 *particle =
+                    &((struct Particle_080d2464 *)0x02010000)[i];
                 if (particle->age >= 0) {
                     s32 image = *(u8 *)(0x080ee18a + (i & 3));
                     renderer0(
@@ -336,15 +341,16 @@ void Func_080d2464(struct Scene_080d2464 *scene, s32 mode)
         }
 
         if (frame == 138) {
-            for (i = 0; i < scene->object_count; i++) {
-                Func_080d6888(scene->object_ids[i], 10, 5, -1, 0);
-                Func_080b5088(scene->object_ids[i], 4);
+            for (i = 0; i < (*scene_slot)->object_count; i++) {
+                Func_080d6888((*scene_slot)->object_ids[i], 10, 5, -1, 0);
+                Func_080b5088((*scene_slot)->object_ids[i], 4);
             }
         }
 
         if (frame <= 175) {
             for (i = 0; i < 16; i++) {
-                struct Particle_080d2464 *particle = &small[i];
+                struct Particle_080d2464 *particle =
+                    &((struct Particle_080d2464 *)(runtime + 0x7320))[i];
 
                 if (particle->y > 55 && particle->age <= 11) {
                     s32 image = particle->age / 2;

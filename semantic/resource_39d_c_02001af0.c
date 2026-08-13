@@ -56,25 +56,25 @@ extern void Func_0808a370();
 extern void Func_0808a4f0();
 extern void Func_080f9010();
 
-#define RunScene59Sequence Func_02001af0
+#define RunScene59ValeSequence Func_02001af0
 
-void RunScene59Sequence(void) {
-    s32 actor_y_and_velocity;
-    void **scene_state;
-    void *actor_record;
-    void *temp_r2;
-    void *temp_r2_10;
-    void *temp_r2_11;
-    void *temp_r2_12;
-    void *temp_r2_2;
-    void *temp_r2_3;
-    void *temp_r2_4;
-    void *temp_r2_5;
-    void *temp_r2_6;
-    void *temp_r2_7;
-    void *temp_r2_8;
-    void *temp_r2_9;
-    void *scene_context;
+void RunScene59ValeSequence(void) {
+    s32 actor9_fixed_y;
+    void **workspace_cell;
+    void *actor_one_record;
+    void *scene_counter_initial;
+    void *scene_counter_initial_alt;
+    void *scene_counter_mid_a;
+    void *scene_counter_mid_b;
+    void *scene_counter_first_a;
+    void *scene_counter_first_b;
+    void *scene_counter_system_a;
+    void *scene_counter_system_b;
+    void *scene_counter_later_a;
+    void *scene_counter_later_b;
+    void *scene_counter_final_a;
+    void *scene_counter_final_b;
+    void *scene_system;
 
     Func_0808a018();
     FIELD(Func_0808a080(9), s8 *, 0x55) = 0;
@@ -94,8 +94,8 @@ void RunScene59Sequence(void) {
     Func_08009128();
     Func_080000c0(1);
     /* The ROM loads this IWRAM pointer cell before the request store. */
-    scene_state = (void **)0x03001ebc;
-    SCENE_REQUEST(*scene_state) = 0x100;
+    workspace_cell = (void **)0x03001ebc;
+    SCENE_REQUEST(*workspace_cell) = 0x100;
     Func_0808a360();
     Func_0808a370();
     Func_0808a010(0x3C);
@@ -189,11 +189,11 @@ void RunScene59Sequence(void) {
     if (Func_0808a070(0, 0) == 0) {
         Func_0808a138(1, 2);
         Func_0808a188(1, 0, 0x14);
-        temp_r2 = *scene_state;
-        SCENE_SKIP_COUNT(temp_r2) = (u16) (SCENE_SKIP_COUNT(temp_r2) + 1);
+        scene_counter_initial = *workspace_cell;
+        SCENE_SKIP_COUNT(scene_counter_initial) = (u16) (SCENE_SKIP_COUNT(scene_counter_initial) + 1);
     } else {
-        temp_r2_2 = *scene_state;
-        SCENE_SKIP_COUNT(temp_r2_2) = (u16) (SCENE_SKIP_COUNT(temp_r2_2) + 1);
+        scene_counter_initial_alt = *workspace_cell;
+        SCENE_SKIP_COUNT(scene_counter_initial_alt) = (u16) (SCENE_SKIP_COUNT(scene_counter_initial_alt) + 1);
         Func_0808a138(1, 1);
         Func_0808a188(1, 0, 0x14);
     }
@@ -299,14 +299,16 @@ void RunScene59Sequence(void) {
     Func_0808a1b8(3, 0xE000, 0);
     Func_0808a010(0x14);
     if (Func_0808a070(0, 0) == 0) {
-        temp_r2_3 = *(u8 **)0x03001ebc;
+        scene_counter_first_a = *(u8 **)0x03001ebc;
         Func_0808a010(0x1E);
         Func_0808a180(0x18, 0);
-        SCENE_SKIP_COUNT(temp_r2_3) = (u16) (SCENE_SKIP_COUNT(temp_r2_3) + 1);
+        SCENE_SKIP_COUNT(scene_counter_first_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_first_a) + 1);
     } else {
         Func_0808a010(0x1E);
-        SCENE_SKIP_COUNT(temp_r2_4) = (u16) (SCENE_SKIP_COUNT(temp_r2_4) + 1);
-        temp_r2_4 = *(u8 **)0x03001ebc;
+        /* This branch needs its own workspace load; stale register contents
+         * are not a valid C dependency. */
+        scene_counter_first_b = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_first_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_first_b) + 1);
         Func_0808a180(0x18, 0);
     }
     Func_0808a010(0x14);
@@ -372,16 +374,16 @@ void RunScene59Sequence(void) {
     Func_0808a1b8(2, 0x8000, 0x14);
     Func_0808a188(0x18, 0, 0x14);
     Func_0808a208(0x30000, 0x6000);
-    scene_context = *(u8 **)0x03001e70;
+    scene_system = *(u8 **)0x03001e70;
     Func_0808a210(0x980000, -1, 0xD80000, 1);
-    FIELD((FIELD(scene_context, s32 *, 0) + 0x164), s32 *, 0xC) = 0x03800000;
+    FIELD((FIELD(scene_system, s32 *, 0) + 0x164), s32 *, 0xC) = 0x03800000;
     Func_08009128();
     Func_080000c0(1);
     FIELD(Func_0808a080(9), s8 *, 0x55) = 0;
     Func_0808a0f0(9, 0x680000, 0x01080000);
-    actor_y_and_velocity = 0xffe00000;
-    FIELD(Func_0808a080(9), s32 *, 0xC) = actor_y_and_velocity;
-    FIELD(Func_0808a080(9), s32 *, 0x3C) = actor_y_and_velocity;
+    actor9_fixed_y = 0xffe00000;
+    FIELD(Func_0808a080(9), s32 *, 0xC) = actor9_fixed_y;
+    FIELD(Func_0808a080(9), s32 *, 0x3C) = actor9_fixed_y;
     Func_08009180(0x1D, 0x4A, 4, 0x4A, 5, 4);
     Func_0808a1e0(0x11, 0);
     Func_0808a1e0(0x12, 0);
@@ -411,11 +413,11 @@ void RunScene59Sequence(void) {
         Func_0808a138(0x16, 2);
         Func_0808a010(0x14);
         Func_0808a188(0x16, 0, 0x14);
-        temp_r2_5 = FIELD(scene_context, void **, 0x4C);
-        SCENE_SKIP_COUNT(temp_r2_5) = (u16) (SCENE_SKIP_COUNT(temp_r2_5) + 1);
+        scene_counter_system_a = FIELD(scene_system, void **, 0x4C);
+        SCENE_SKIP_COUNT(scene_counter_system_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_a) + 1);
     } else {
-        temp_r2_6 = FIELD(scene_context, void **, 0x4C);
-        SCENE_SKIP_COUNT(temp_r2_6) = (u16) (SCENE_SKIP_COUNT(temp_r2_6) + 1);
+        scene_counter_system_b = FIELD(scene_system, void **, 0x4C);
+        SCENE_SKIP_COUNT(scene_counter_system_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_b) + 1);
         Func_0808a010(0x14);
         Func_0808a188(0x16, 0, 0x14);
     }
@@ -432,11 +434,11 @@ void RunScene59Sequence(void) {
         Func_0808a138(0x18, 2);
         Func_0808a010(0x14);
         Func_0808a188(0x18, 0, 0x14);
-        temp_r2_7 = *(u8 **)0x03001ebc;
-        SCENE_SKIP_COUNT(temp_r2_7) = (u16) (SCENE_SKIP_COUNT(temp_r2_7) + 1);
+        scene_counter_mid_a = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_mid_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_mid_a) + 1);
     } else {
-        temp_r2_8 = *(u8 **)0x03001ebc;
-        SCENE_SKIP_COUNT(temp_r2_8) = (u16) (SCENE_SKIP_COUNT(temp_r2_8) + 1);
+        scene_counter_mid_b = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_mid_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_mid_b) + 1);
         Func_0808a010(0x14);
         Func_0808a138(0x18, 1);
         Func_0808a010(0x14);
@@ -463,11 +465,11 @@ void RunScene59Sequence(void) {
         Func_0808a110(0x18, 3);
         Func_0808a010(0x14);
         Func_0808a188(0x18, 0, 0x14);
-        temp_r2_9 = *(u8 **)0x03001ebc;
-        SCENE_SKIP_COUNT(temp_r2_9) = (u16) (SCENE_SKIP_COUNT(temp_r2_9) + 1);
+        scene_counter_later_a = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_later_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_later_a) + 1);
     } else {
-        temp_r2_10 = *(u8 **)0x03001ebc;
-        SCENE_SKIP_COUNT(temp_r2_10) = (u16) (SCENE_SKIP_COUNT(temp_r2_10) + 1);
+        scene_counter_later_b = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_later_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_later_b) + 1);
         Func_0808a110(0x18, 4);
         Func_0808a010(0x14);
         Func_0808a188(0x18, 0, 0x14);
@@ -520,11 +522,11 @@ void RunScene59Sequence(void) {
         Func_0808a110(2, 3);
         Func_0808a010(0x14);
         Func_0808a188(2, 0, 0x14);
-        temp_r2_11 = *(u8 **)0x03001ebc;
-        SCENE_SKIP_COUNT(temp_r2_11) = (u16) (SCENE_SKIP_COUNT(temp_r2_11) + 1);
+        scene_counter_final_a = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_final_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_final_a) + 1);
     } else {
-        temp_r2_12 = *(u8 **)0x03001ebc;
-        SCENE_SKIP_COUNT(temp_r2_12) = (u16) (SCENE_SKIP_COUNT(temp_r2_12) + 1);
+        scene_counter_final_b = *(u8 **)0x03001ebc;
+        SCENE_SKIP_COUNT(scene_counter_final_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_final_b) + 1);
         Func_0808a138(2, 2);
         Func_0808a010(0x14);
         Func_0808a188(2, 0, 0x14);
@@ -551,8 +553,8 @@ void RunScene59Sequence(void) {
     Func_0808a090(1, 0x0000cccc, 0x00006666);
     Func_0808a0d0(3, 0x148, 0xD8);
     Func_0808a1b8(2, 0xA000, 0);
-    actor_record = Func_0808a080(1);
-    FIELD(actor_record, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor_record, u8 *, 0x5A));
+    actor_one_record = Func_0808a080(1);
+    FIELD(actor_one_record, u8 *, 0x5A) = (u8) (0xFE & FIELD(actor_one_record, u8 *, 0x5A));
     Func_0808a0c8(1, 0x138, 0xC8);
     Func_0808a0c8(3, 0x118, 0xD8);
     Func_0808a0e8(1);

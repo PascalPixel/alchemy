@@ -158,7 +158,9 @@ s32 Func_080ab5e4(s32 arg0) {
     void *temp_r9;
     s32 var_r5;
     s32 dialog;
-    s8 slotFlags[8];
+    /* The eight live slot flags sit at the high end of the original frame;
+     * retain the surrounding dead stack cells while recovering that lifetime. */
+    s8 slotFlags[20];
 
     sp50 = arg0;
     temp_r3 = *(void **)0x03001F2C;

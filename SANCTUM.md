@@ -46,15 +46,6 @@ the checker treats a solved sealed owner as stale evidence.
 
 ## Sealed
 
-- `resource_39f_c_02001d04` floor=2hw axes=compiler,shape — the reference
-  keeps the split constant `movs r3, #192 / lsls r3, #11` adjacent before the
-  four-argument presentation call and copies `r1` from `r5` after it; the fork
-  schedules the copy between the halves. The exact slot-11 sibling
-  `resource_39f_c_02001244` compiles the identical sheet correctly on the same
-  default route. 155 single modes, 400 deterministic pairs, and the complete
-  shape-transform set all leave the two swapped halfwords at 0x02001d9a and
-  0x02001d9c; `-fno-sched-depend-count` fixes the site but reorders 27 bytes
-  of matching code elsewhere in the owner.
 - `resource_3b7_c_02000880` floor=2hw axes=compiler,shape — in the
   eight-frame BLDALPHA loop the reference orders `adds r5, #2` before the
   volatile `strh` and `movs r0, #8` after it; the routed

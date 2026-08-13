@@ -813,6 +813,8 @@ pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c9_c_02001280.c",
     "semantic/resource_373_c_02002cb0.c",
     "exact/resource_373_c_02002cb0.c",
+    "semantic/resource_39e_c_02003e58.c",
+    "exact/resource_39e_c_02003e58.c",
 ];
 pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ae_c_02000144.c",
@@ -1115,6 +1117,8 @@ pub static POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES: &[&str] = &[
 pub static SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_371_c_020002f0.c",
     "semantic/resource_371_c_020002f0.c",
+    "semantic/resource_39e_c_02003e58.c",
+    "exact/resource_39e_c_02003e58.c",
 ];
 pub static ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b1_c_02005ca4.c",

@@ -244,16 +244,7 @@ s32 RunResource39eSceneDriver(void)
         }
     }
     if (IsFlag0892Set(0x892) != 0) {
-        {
-            s32 actor = 9;
-            s32 x;
-            s32 y;
-            x = 0x98;
-            y = 0xc4;
-            x <<= 16;
-            y <<= 17;
-            PlaceFallbackActor9(actor, x, y);
-        }
+        PlaceFallbackActor9(9, 0x98 << 16, 0xc4 << 17);
         HaltFallbackActor9(9, 0, 0);
         {
             s32 stack_arg0 = 10;

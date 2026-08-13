@@ -307,6 +307,16 @@ fn map_path(target: &str) -> std::path::PathBuf {
         .join(format!("{target}-coverage-map.json"))
 }
 
+fn core_index_path(target: &str) -> std::path::PathBuf {
+    root()
+        .join("metrics")
+        .join(format!("{target}-core-targets.json"))
+}
+
+fn target_list_path() -> std::path::PathBuf {
+    root().join("TARGETS.md")
+}
+
 pub fn run(argv: &[String]) -> Result<String, String> {
     let options = options_of(argv)?;
     if options.help {
@@ -347,12 +357,31 @@ pub fn run(argv: &[String]) -> Result<String, String> {
     })?;
     let trees = crate::boxtree::render_box_trees(&map, Some(&exact), true)?;
     let json = canonical_json(&tracked_document(&map));
+    let core_index = crate::core_index::build(&map, &options.target)?;
+    let core_index_json = canonical_json(&core_index);
+    let target_list = crate::core_index::markdown(&core_index)?;
 
     if options.check {
-        return check(&options, &map, &trees, &json, semantic.as_ref());
+        return check(
+            &options,
+            &map,
+            &trees,
+            &json,
+            &core_index_json,
+            &target_list,
+            semantic.as_ref(),
+        );
     }
     if options.write {
-        return write(&options, &map, &trees, &json, semantic.is_some());
+        return write(
+            &options,
+            &map,
+            &trees,
+            &json,
+            &core_index_json,
+            &target_list,
+            semantic.is_some(),
+        );
     }
     summarize(&map.document)
 }
@@ -406,6 +435,8 @@ fn check(
     map: &CoverageMap,
     trees: &[(&'static str, String)],
     json: &str,
+    core_index_json: &str,
+    target_list: &str,
     semantic: Option<&SourceTree>,
 ) -> Result<String, String> {
     let tracked_map = read_text(&map_path(&options.target))?;
@@ -417,6 +448,8 @@ fn check(
         })
         .collect::<Result<_, _>>()?;
     let tracked = crate::json::parse(&tracked_map)?;
+    let tracked_core_index = read_text(&core_index_path(&options.target))?;
+    let tracked_target_list = read_text(&target_list_path())?;
 
     let mut stale: Vec<&str> = Vec::new();
     if js_not_equal(
@@ -456,6 +489,8 @@ fn check(
         .and_then(|node| node.get("semantic_source"))
         .and_then(|value| value.as_str());
     let rendered_differs = tracked_map != json
+        || tracked_core_index != core_index_json
+        || tracked_target_list != target_list
         || crate::boxtree::BOX_TREES
             .iter()
             .any(|tree| tree_text(&tracked_trees, tree) != tree_text(trees, tree));
@@ -488,6 +523,8 @@ fn write(
     map: &CoverageMap,
     trees: &[(&'static str, String)],
     json: &str,
+    core_index_json: &str,
+    target_list: &str,
     semantic_resolved: bool,
 ) -> Result<String, String> {
     let tracked_on_disk = std::fs::read_to_string(map_path(&options.target))
@@ -503,6 +540,12 @@ fn write(
     let map_file = map_path(&options.target);
     std::fs::write(&map_file, json)
         .map_err(|error| format!("cannot write {}: {error}", map_file.display()))?;
+    let core_index_file = core_index_path(&options.target);
+    std::fs::write(&core_index_file, core_index_json)
+        .map_err(|error| format!("cannot write {}: {error}", core_index_file.display()))?;
+    let target_list_file = target_list_path();
+    std::fs::write(&target_list_file, target_list)
+        .map_err(|error| format!("cannot write {}: {error}", target_list_file.display()))?;
     for tree in crate::boxtree::BOX_TREES.iter() {
         let path = crate::boxtree::box_tree_path(&options.target, tree);
         std::fs::write(&path, tree_text(trees, tree))
@@ -526,8 +569,10 @@ fn write(
         .map(|tree| relative(crate::boxtree::box_tree_path(&options.target, tree)))
         .collect();
     Ok(format!(
-        "map={} trees={} {}",
+        "map={} core_index={} targets={} trees={} {}",
         relative(map_file),
+        relative(core_index_file),
+        relative(target_list_file),
         tree_paths.join(","),
         summarize(&map.document)?
     ))

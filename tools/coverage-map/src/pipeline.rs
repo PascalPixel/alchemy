@@ -141,6 +141,27 @@ fn category_entry(bytes: i64, executable_bytes: i64) -> Result<Value, String> {
     ]))
 }
 
+/// A closed ordinary-C census makes the executable complement permanent.
+///
+/// `core-retained-audit` independently proves that the current full assembly
+/// manifest covers this complement and rejects ordinary compiler output in it.
+/// Keeping the complement gray here after that census closes would put proven
+/// runtime assembly, veneers, and alignment back into the contributor queue.
+fn main_retained_coverage(
+    executable: &[Span],
+    exact: &[Span],
+    semantic: &[Span],
+    explicit: &[Span],
+    census_closed: bool,
+) -> Vec<Span> {
+    if !census_closed {
+        return normalize(explicit);
+    }
+    let mut owned = exact.to_vec();
+    owned.extend_from_slice(semantic);
+    subtract(executable, &normalize(&owned))
+}
+
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
     let rom_bytes = rom_size(&options.target)?;
     let inventory = read_json(
@@ -301,10 +322,16 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let semantic_bytes = semantic_main_bytes + semantic_overlay_bytes;
 
     // ------------------------------------------------ executable universe
-    // Dark grey is reserved for spans with an explicit retained-assembly
-    // contract. A closed semantic census does not by itself prove the rest
-    // permanent, so any complement without evidence stays unresolved assembly.
-    let main_retained = retained_main_spans();
+    // The closed semantic census and the independent retained-complement gate
+    // jointly prove that every remaining main-image byte is permanent
+    // assembly. During an open census, only explicit retained evidence counts.
+    let main_retained = main_retained_coverage(
+        &main_executable,
+        &exact_main_union,
+        &semantic_main,
+        &retained_main_spans(),
+        semantic_coverage.main_census_closed,
+    );
     let mut executable_areas: Vec<Area> = vec![area(
         "main",
         "Main image",
@@ -653,5 +680,21 @@ mod tests {
         );
         assert!(tiles[0].get("address").is_none());
         assert_eq!(tiles[0].get("label").and_then(|v| v.as_str()), Some("a"));
+    }
+
+    #[test]
+    fn a_closed_census_moves_only_the_unowned_complement_to_retained() {
+        let executable = vec![Span::new(0, 100)];
+        let exact = vec![Span::new(0, 20)];
+        let semantic = vec![Span::new(40, 80)];
+        assert_eq!(
+            main_retained_coverage(&executable, &exact, &semantic, &[], true),
+            vec![Span::new(20, 40), Span::new(80, 100)]
+        );
+        let explicit = vec![Span::new(90, 100)];
+        assert_eq!(
+            main_retained_coverage(&executable, &exact, &semantic, &explicit, false),
+            explicit
+        );
     }
 }

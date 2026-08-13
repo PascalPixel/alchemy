@@ -3,9 +3,9 @@
 //
 // WHY: this is the arithmetic core of the Full-C progress metric -- the
 // audited union that forms the denominator, the byte-identical C union that
-// forms the numerator, and the kilobyte subject marker both are rendered
-// into. It is separated from the overlay decoding so the traps can be pinned
-// by tests that assemble intervals directly.
+// forms the numerator, and the nearest-whole Exact-C percentage rendered in a
+// commit-subject prefix. It is separated from the overlay decoding so the
+// traps can be pinned by tests that assemble intervals directly.
 //
 // PORT NOTE: `start` and `end` are `f64`, not integers. In JavaScript there is
 // only one number type, so `validateIntervals` accepting `1.0` and rejecting
@@ -160,64 +160,47 @@ pub fn commas(value: f64) -> Result<String, String> {
     Ok(crate::js::commas(value as i64))
 }
 
-fn canonical_count(value: &str, label: &str) -> Result<f64, String> {
-    // PORT NOTE: `Number("")` is 0 and `Number("0x10")` is 16 under the
-    // ECMAScript StringNumericLiteral grammar, neither of which `f64::from_str`
-    // would produce. The caller only ever passes a `[0-9,]` run captured by
-    // SUBJECT, so after removing commas the text is a plain decimal digit run
-    // -- but an empty run must still read as 0 rather than a parse failure,
-    // and the `commas(parsed) !== value` round trip is what rejects it.
-    let digits = value.replace(',', "");
-    let parsed = if digits.is_empty() {
-        0.0
-    } else {
-        digits.parse::<f64>().unwrap_or(f64::NAN)
-    };
-    let canonical =
-        is_safe_integer(parsed) && parsed >= 0.0 && crate::js::commas(parsed as i64) == value;
-    if !canonical {
-        return Err(format!("{label} is not canonically comma-separated"));
-    }
-    Ok(parsed)
-}
-
-/// Whole kilobytes, floored, so the subject reads `[ ☀️ 316 / 1,345 ]`.
-pub fn kilobytes(value: f64) -> Result<f64, String> {
-    Ok((integer(value, "byte count")? / 1000.0).floor())
-}
-
+/// The subject prefix is the nearest whole Exact-C share, with a half-percent
+/// tie rounding toward +∞. It deliberately never uses the public DONE share.
 pub fn format_subject(full_c_bytes: f64, executable_bytes: f64) -> Result<String, String> {
     if full_c_bytes > executable_bytes {
         return Err("Full-C numerator exceeds executable denominator".to_string());
     }
     Ok(format!(
-        "[ \u{2600}\u{fe0f} {} / {} ]",
-        commas(kilobytes(full_c_bytes)?)?,
-        commas(kilobytes(executable_bytes)?)?
+        "\u{2600}\u{fe0f} {}% –",
+        nearest_whole_percent(full_c_bytes, executable_bytes)? as i64
     ))
 }
 
 pub struct Subject {
-    pub full_c_kilobytes: f64,
-    pub executable_kilobytes: f64,
+    pub exact_c_percent: f64,
 }
 
-/// `undefined` when the marker is absent; `Err` when it is present but not
-/// canonical, which is how the TypeScript distinguishes "no marker" from
-/// "broken marker".
+/// `undefined` when the prefix is absent. The commit gate compares this value
+/// with the staged exact-C report, not a rounded kilobyte approximation.
 pub fn parse_subject(subject: &str) -> Result<Option<Subject>, String> {
-    let Some((numerator, denominator)) = crate::js::subject_match(subject) else {
+    let Some(percent) = crate::js::subject_match(subject) else {
         return Ok(None);
     };
-    let full_c_kilobytes = canonical_count(numerator, "Full-C numerator")?;
-    let executable_kilobytes = canonical_count(denominator, "executable denominator")?;
-    if full_c_kilobytes > executable_kilobytes {
+    let exact_c_percent = percent
+        .parse::<f64>()
+        .map_err(|_| "Exact-C percentage is invalid".to_string())?;
+    if exact_c_percent > 100.0 {
+        return Err("Exact-C percentage exceeds 100".to_string());
+    }
+    Ok(Some(Subject { exact_c_percent }))
+}
+
+pub fn nearest_whole_percent(numerator: f64, denominator: f64) -> Result<f64, String> {
+    integer(numerator, "Full-C numerator")?;
+    integer(denominator, "executable denominator")?;
+    if denominator <= 0.0 {
+        return Err("executable denominator must be positive".to_string());
+    }
+    if numerator > denominator {
         return Err("Full-C numerator exceeds executable denominator".to_string());
     }
-    Ok(Some(Subject {
-        full_c_kilobytes,
-        executable_kilobytes,
-    }))
+    Ok(((numerator * 100.0 + denominator / 2.0) / denominator).floor())
 }
 
 pub fn round_half_up_percent(numerator: f64, denominator: f64) -> Result<f64, String> {
@@ -366,20 +349,19 @@ mod tests {
     }
 
     #[test]
-    fn subject_round_trips_and_rejects_non_canonical_markers() {
+    fn subject_round_trips_and_rejects_legacy_markers() {
         assert_eq!(
             format_subject(123456.0, 1234567.0).unwrap(),
-            "[ \u{2600}\u{fe0f} 123 / 1,234 ]"
+            "\u{2600}\u{fe0f} 10% –"
         );
-        let parsed = parse_subject("decomp: x [ \u{2600}\u{fe0f} 123 / 1,234 ]")
+        let parsed = parse_subject("\u{2600}\u{fe0f} 10% – decomp: x")
             .unwrap()
             .unwrap();
-        assert_eq!(parsed.full_c_kilobytes, 123.0);
-        assert_eq!(parsed.executable_kilobytes, 1234.0);
+        assert_eq!(parsed.exact_c_percent, 10.0);
         for invalid in [
-            "x [ \u{2600}\u{fe0f} 1234 / 1,234 ]",
-            "x [ \u{2600}\u{fe0f} 123/1,234 ]",
-            "x [ \u{2600}\u{fe0f} 123 / 1,234 bytes]",
+            "\u{2600}\u{fe0f} 10% –",
+            "\u{2600}\u{fe0f} 1000% – x",
+            "\u{2600}\u{fe0f} 10% - x",
             "x [C 123,456/1,234,567 bytes]",
             "x [ \u{2600}\u{fe0f} 2 / 1 ]",
             "x [123 of 456]",
@@ -394,10 +376,10 @@ mod tests {
     }
 
     #[test]
-    fn kilobytes_floor_and_percent_round_half_up() {
-        assert_eq!(kilobytes(1999.0).unwrap(), 1.0);
-        assert_eq!(kilobytes(999.0).unwrap(), 0.0);
+    fn percentage_rounds_half_up_at_two_precisions() {
         assert_eq!(round_half_up_percent(1.0, 8.0).unwrap(), 12.5);
+        assert_eq!(nearest_whole_percent(1.0, 8.0).unwrap(), 13.0);
+        assert_eq!(nearest_whole_percent(370872.0, 1347264.0).unwrap(), 28.0);
         assert!(round_half_up_percent(1.0, 0.0).is_err());
         assert_eq!(
             to_fixed_2(round_half_up_percent(1.0, 8.0).unwrap()),

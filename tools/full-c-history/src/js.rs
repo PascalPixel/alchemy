@@ -13,20 +13,14 @@
 pub fn is_js_space(character: char) -> bool {
     matches!(
         character,
-        '\t' | '\n'
-            | '\u{b}'
-            | '\u{c}'
-            | '\r'
-            | ' '
-            | '\u{a0}'
-            | '\u{1680}'
-            | '\u{2000}'..='\u{200a}'
-            | '\u{2028}'
-            | '\u{2029}'
-            | '\u{202f}'
-            | '\u{205f}'
-            | '\u{3000}'
-            | '\u{feff}'
+        '\t' | '\n' | '\u{b}' | '\u{c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'
+            ..='\u{200a}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202f}'
+                | '\u{205f}'
+                | '\u{3000}'
+                | '\u{feff}'
     )
 }
 
@@ -42,11 +36,17 @@ fn is_hex(character: char) -> bool {
 /// JS `\b` before `at`: the previous character is a non-word character (or the
 /// match is at the start of the subject) while the next one is a word char.
 fn word_boundary_before(text: &str, at: usize) -> bool {
-    text[..at].chars().next_back().is_none_or(|previous| !is_js_word(previous))
+    text[..at]
+        .chars()
+        .next_back()
+        .is_none_or(|previous| !is_js_word(previous))
 }
 
 fn word_boundary_after(text: &str, at: usize) -> bool {
-    text[at..].chars().next().is_none_or(|next| !is_js_word(next))
+    text[at..]
+        .chars()
+        .next()
+        .is_none_or(|next| !is_js_word(next))
 }
 
 fn find_word(text: &str, needle: &str) -> Vec<usize> {
@@ -186,7 +186,9 @@ pub fn blank_line(line: &str) -> bool {
 
 /// `/^\s*\.L_[0-9a-z_.$]+:\s*$/i`
 pub fn local_label(line: &str) -> bool {
-    let Some(rest) = strip_prefix_ci(trim_js_start(line), ".L_") else { return false };
+    let Some(rest) = strip_prefix_ci(trim_js_start(line), ".L_") else {
+        return false;
+    };
     let taken = rest
         .find(|character: char| {
             !(character.is_ascii_alphanumeric() || matches!(character, '_' | '.' | '$'))
@@ -231,7 +233,8 @@ pub fn space_directive(line: &str) -> Option<i64> {
 pub fn main_c_path(path: &str) -> Option<String> {
     let rest = strip_prefix_ci(path, "src/").or_else(|| strip_prefix_ci(path, "exact/"))?;
     let (address, rest) = take_hex8(rest)?;
-    rest.eq_ignore_ascii_case(".c").then(|| address.to_ascii_lowercase())
+    rest.eq_ignore_ascii_case(".c")
+        .then(|| address.to_ascii_lowercase())
 }
 
 /// `/([0-9a-f]{8})\.(?:c|s)$/i` on a manifest `source` — lowercased address.
@@ -287,7 +290,9 @@ pub fn ls_tree_row(line: &str) -> Option<(String, String)> {
         return None;
     }
     let mut rest = head;
-    let digits = rest.find(|c: char| !c.is_ascii_digit()).unwrap_or(rest.len());
+    let digits = rest
+        .find(|c: char| !c.is_ascii_digit())
+        .unwrap_or(rest.len());
     if digits == 0 {
         return None;
     }
@@ -324,6 +329,7 @@ pub fn csv_cell(value: &str) -> String {
 
 /// `commas`, the `\B(?=(\d{3})+(?!\d))` thousands grouping over a decimal
 /// integer rendering.
+#[cfg(test)]
 pub fn commas(value: i64) -> String {
     let text = value.to_string();
     let (sign, digits) = match text.strip_prefix('-') {
@@ -381,8 +387,14 @@ mod tests {
 
     #[test]
     fn placeholder_line_shapes() {
-        assert_eq!(alchemy_c_label("AlchemyC_02000010:").as_deref(), Some("02000010"));
-        assert_eq!(alchemy_c_label("  ALCHEMYC_0200ABCD:  ").as_deref(), Some("0200abcd"));
+        assert_eq!(
+            alchemy_c_label("AlchemyC_02000010:").as_deref(),
+            Some("02000010")
+        );
+        assert_eq!(
+            alchemy_c_label("  ALCHEMYC_0200ABCD:  ").as_deref(),
+            Some("0200abcd")
+        );
         assert_eq!(alchemy_c_label("AlchemyC_0200001:"), None);
         assert!(local_label("\t.L_02000012:"));
         assert!(local_label(".l_a.b$c:"));
@@ -403,8 +415,14 @@ mod tests {
         assert_eq!(region_stem("asm/0200abcd.s").as_deref(), Some("0200abcd"));
         assert_eq!(region_stem("x/0200ABCD.c").as_deref(), Some("0200abcd"));
         assert_eq!(region_stem("x/0200abcd.h"), None);
-        assert_eq!(overlay_container("assets/code/kind1_overlay.s"), Some("kind1"));
-        assert_eq!(overlay_container("assets/code/a_overlay_overlay.s"), Some("a_overlay"));
+        assert_eq!(
+            overlay_container("assets/code/kind1_overlay.s"),
+            Some("kind1")
+        );
+        assert_eq!(
+            overlay_container("assets/code/a_overlay_overlay.s"),
+            Some("a_overlay")
+        );
         assert_eq!(overlay_container("exact/kind1_overlay.s"), None);
         assert_eq!(
             overlay_c_address("exact/kind1_c_02000010.c").as_deref(),

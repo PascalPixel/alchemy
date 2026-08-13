@@ -987,21 +987,17 @@ fn self_test() -> Result<(), String> {
     if !overlap_diagnostics(&[item(0, 4), item(0, 4)])?.is_empty() {
         return Err("identical alias failed".to_string());
     }
-    if intervals::kilobytes(1999.0)? != 1.0 || intervals::kilobytes(999.0)? != 0.0 {
-        return Err("kilobyte floor failed".to_string());
-    }
-    if format_subject(123_456.0, 1_234_567.0)? != "[ ☀️ 123 / 1,234 ]" {
+    if format_subject(123_456.0, 1_234_567.0)? != "☀️ 10% –" {
         return Err("subject format failed".to_string());
     }
-    match intervals::parse_subject("decomp: x [ ☀️ 123 / 1,234 ]")? {
-        Some(parsed)
-            if parsed.full_c_kilobytes == 123.0 && parsed.executable_kilobytes == 1234.0 => {}
+    match intervals::parse_subject("☀️ 10% – decomp: x")? {
+        Some(parsed) if parsed.exact_c_percent == 10.0 => {}
         _ => return Err("subject parse failed".to_string()),
     }
     for invalid in [
-        "x [ ☀️ 1234 / 1,234 ]",
-        "x [ ☀️ 123/1,234 ]",
-        "x [ ☀️ 123 / 1,234 bytes]",
+        "☀️ 1000% – decomp: x",
+        "☀️ 10% - decomp: x",
+        "☀️ 10% –",
         "x [C 123,456/1,234,567 bytes]",
         "x [ ☀️ 2 / 1 ]",
         "x [123 of 456]",

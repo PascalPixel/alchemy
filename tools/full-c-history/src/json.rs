@@ -95,7 +95,10 @@ fn parse_number(bytes: &[u8], cursor: &mut usize) -> Result<Value, String> {
         *cursor += 1;
     }
     while *cursor < bytes.len()
-        && matches!(bytes[*cursor], b'0'..=b'9' | b'.' | b'e' | b'E' | b'-' | b'+')
+        && matches!(
+            bytes[*cursor],
+            b'0'..=b'9' | b'.' | b'e' | b'E' | b'-' | b'+'
+        )
     {
         *cursor += 1;
     }
@@ -134,7 +137,8 @@ fn parse_string(bytes: &[u8], cursor: &mut usize) -> Result<String, String> {
                         )
                         .map_err(|error| error.to_string())?;
                         units.push(
-                            u16::from_str_radix(hex, 16).map_err(|_| "bad \\u escape".to_string())?,
+                            u16::from_str_radix(hex, 16)
+                                .map_err(|_| "bad \\u escape".to_string())?,
                         );
                         *cursor += 4;
                     }
@@ -259,13 +263,18 @@ mod tests {
     #[test]
     fn parses_nested_documents_in_source_order() {
         let document = parse(r#"{"b": 1, "a": [1, {"z": "y"}], "c": null}"#).unwrap();
-        let Value::Obj(members) = &document else { panic!("expected object") };
+        let Value::Obj(members) = &document else {
+            panic!("expected object")
+        };
         assert_eq!(
             members.iter().map(|(k, _)| k.as_str()).collect::<Vec<_>>(),
             vec!["b", "a", "c"]
         );
         assert_eq!(
-            document.get("a").unwrap().as_array().unwrap()[1].get("z").unwrap().as_str(),
+            document.get("a").unwrap().as_array().unwrap()[1]
+                .get("z")
+                .unwrap()
+                .as_str(),
             Some("y")
         );
     }
@@ -273,7 +282,9 @@ mod tests {
     #[test]
     fn repeated_keys_keep_first_position_and_last_value() {
         let document = parse(r#"{"a": 1, "b": 2, "a": 3}"#).unwrap();
-        let Value::Obj(members) = &document else { panic!("expected object") };
+        let Value::Obj(members) = &document else {
+            panic!("expected object")
+        };
         assert_eq!(members[0].0, "a");
         assert_eq!(members[0].1, Value::Num(3.0));
         assert_eq!(members.len(), 2);

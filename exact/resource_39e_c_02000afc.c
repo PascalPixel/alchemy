@@ -1,5 +1,10 @@
 #include "types.h"
 
+struct SceneRecordHeading {
+    u8 pad[6];
+    u16 heading;
+};
+
 /*
  * resource_39e owner at 0x02000afc, 216 bytes: the overlay's SCENE-EXIT
  * routine. It spins until slot 12's pending-work counter drains, resets
@@ -74,44 +79,71 @@ extern void Func_02005012(s32 dialogueId);
 extern void Func_0200502c(s32 dialogueId);
 extern void Func_02005044(s32 slot, s32 a1);
 
-void Func_02000afc(void)
-{
-    Func_02004edc();
+/*
+ * Evidence-backed scene/API aliases.  The underlying names remain the raw
+ * relocation symbols because these are distinct overlay veneers even when
+ * their imported API target is shared.  The aliases describe only the
+ * observed call position and field effect; they do not assign story names.
+ */
+#define OpenSceneExit Func_02004edc
+#define WaitSceneExitStep Func_02004e58
+#define ClearSceneExitGateAtEntry Func_02004f0a
+#define GetSceneExitPendingWork Func_02004f1e
+#define ResetSceneExitPendingWork Func_02004f2a
+#define SetSceneExitCompletionMode Func_02004f34
+#define ClearSceneExitField40 Func_02004f40
+#define SetSceneExitGate Func_02004f48
+#define TransitionSceneExitSlot Func_02004fd0
+#define IsFlag0895Set Func_02004f16
+#define IsFlag089bSet Func_02004f28
+#define ShowSceneExitDialogue1a5b Func_02005000
+#define ShowSceneExitDialogue189e Func_02005012
+#define ShowSceneExitDialogue182a Func_0200502c
+#define FinalizeSceneExitSlot Func_02005044
+#define SetSceneExitHeading Func_02004fa2
+#define ClearSceneExitGateBeforeDescriptor Func_02004fae
+#define InstallSceneExitDescriptor Func_02004fd4
+#define CloseSceneExit Func_02004fa0
+#define RunRoofSceneExit Func_02000afc
 
-    Func_02004f0a(12)[91] = 0;
+void RunRoofSceneExit(void)
+{
+    OpenSceneExit();
+
+    ClearSceneExitGateAtEntry(12)[91] = 0;
 
     goto testPendingWork;
 waitPendingWork:
-        Func_02004e58(1);
+        WaitSceneExitStep(1);
 testPendingWork:
-    if (*(s32 *)(Func_02004f1e(12) + 12) > 0) {
+    if (*(s32 *)(GetSceneExitPendingWork(12) + 12) > 0) {
         goto waitPendingWork;
     }
 
-    *(s32 *)(Func_02004f2a(12) + 12) = 0;
+    *(s32 *)(ResetSceneExitPendingWork(12) + 12) = 0;
 
-    *(s32 *)(Func_02004f34(12) + 60) = 128 << 24;
+    *(s32 *)(SetSceneExitCompletionMode(12) + 60) = 128 << 24;
 
-    *(s32 *)(Func_02004f40(12) + 40) = 0;
+    *(s32 *)(ClearSceneExitField40(12) + 40) = 0;
 
-    Func_02004f48(12)[91] = 1;
+    SetSceneExitGate(12)[91] = 1;
 
-    Func_02004fd0(12, 0, 0);
+    TransitionSceneExitSlot(12, 0, 0);
 
-    if (Func_02004f16(0x895) != 0) {
-        Func_02005000(0x1a5b);
-    } else if (Func_02004f28(0x89b) != 0) {
-        Func_02005012(0x189e);
+    if (IsFlag0895Set(0x895) != 0) {
+        ShowSceneExitDialogue1a5b(0x1a5b);
+    } else if (IsFlag089bSet(0x89b) != 0) {
+        ShowSceneExitDialogue189e(0x189e);
     } else {
-        Func_0200502c(0x182a);
+        ShowSceneExitDialogue182a(0x182a);
     }
 
-    Func_02005044(12, 0);
+    FinalizeSceneExitSlot(12, 0);
 
-    *(u16 *)(Func_02004fa2(12) + 6) = 128 << 7;
+    ((struct SceneRecordHeading *)SetSceneExitHeading(12))->heading = 128 << 7;
 
-    Func_02004fae(12)[91] = 0;
+    ClearSceneExitGateBeforeDescriptor(12)[91] = 0;
 
-    Func_02004fd4(12, (u8 *)0x0200c638);
-    Func_02004fa0();
+    InstallSceneExitDescriptor(12, (u8 *)0x0200c638);
+    CloseSceneExit();
 }

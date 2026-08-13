@@ -6,7 +6,10 @@
  * Derived span, not an inventory row: this owner has no row in
  * out/decomp/overlays.json and no exact sibling.  It was found by sweeping the
  * two-byte gaps in metrics/gs1-en-executable.json for `push {..,lr}`
- * prologues.  Walking from the prologue at 0x02000f80, every branch
+ * prologues.  The executable interval begins at 0x02000f80; the preceding
+ * owner's final pool halfword is at 0x02000f7e, which is why the audited
+ * interval currently starts two bytes late at 0x02000f82.  Walking from the
+ * prologue at 0x02000f80, every branch
  * (0x02000f96, 0x02000fb2, 0x02000fbe, 0x02000fd0, 0x02000fde, 0x02001000)
  * lands inside 0x02000f80-0x02001018, and the walk stops at the interworking
  * return `pop {r0} / bx r0` at 0x02001018-0x0200101a.  So the executable
@@ -23,22 +26,21 @@
  * None is an address: all four are below the 0x02008000 link base and all four
  * are used as arithmetic operands.  The next prologue begins at 0x0200102c.
  *
- * All nine call sites were resolved with
- * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 0f80 101c`, and the
- * per-target histogram is Func_0808a080 x1, Func_0808a0d0 x6, Func_0808a1b8
- * x2:
- *   0x02000f84 -> Func_0808a080     0x02000fe6 -> Func_0808a0d0
- *   0x02000f9e -> Func_0808a0d0     0x02000ff0 -> Func_0808a0d0
- *   0x02000fa8 -> Func_0808a0d0     0x02000ffc -> Func_0808a1b8
- *   0x02000fc6 -> Func_0808a0d0     0x02001008 -> Func_0808a0d0
- *                                   0x02001014 -> Func_0808a1b8
+ * All nine call sites were resolved with the overlay call-target listing, and
+ * the per-target histogram is the scene-record fetch x1, scene-position x6,
+ * and scene-heading x2:
+ *   0x02000f84 -> scene-record fetch   0x02000fe6 -> scene-position
+ *   0x02000f9e -> scene-position       0x02000ff0 -> scene-position
+ *   0x02000fa8 -> scene-position       0x02000ffc -> scene-heading
+ *   0x02000fc6 -> scene-position       0x02001008 -> scene-position
+ *                                   0x02001014 -> scene-heading
  *
- * THREE OF THE FOUR ARMS SHARE ONE Func_0808a1b8 SITE (0x02000ffc) and the
+ * THREE OF THE FOUR ARMS SHARE ONE scene-heading SITE (0x02000ffc) and the
  * fourth has its own (0x02001014).  Writing the close into each arm would put
- * four Func_0808a1b8 calls in the C against two in the assembly — the
- * bracket-close overcount the reconstruction's convention warns about — so the shared
- * tail is spelled with a label and a `goto`, which is what the original
- * control flow is.
+ * four scene-heading calls in the C against two in the assembly — the
+ * bracket-close overcount the reconstruction's convention warns about — so
+ * the three source calls are retained as one compiler-merged tail at the
+ * witnessed site.
  *
  * The selector is the standard facing quantisation: the u16 at record+6 is
  * biased by -0x2000, -0x6000 and +0x6000 in turn and compared unsigned against
@@ -53,37 +55,48 @@
  * the fourth arm) is built with `movs`+`lsls` as a VALUE, not a displacement.
  */
 
-u8 *Func_0808a080();           /* record fetch, returns the record */
-void Func_0808a0d0();
-void Func_0808a1b8();
+/*
+ * Overlay-local relocation names witnessed at the nine call sites.  The
+ * aliases keep the source readable without replacing those machine-producing
+ * symbols with guessed game-specific names.
+ */
+extern u8 *Func_0200538a();
+extern void Func_020053d4();
+extern void Func_020053de();
+extern void Func_020053fc();
+extern void Func_0200541c();
+extern void Func_02005426();
+extern void Func_0200543e();
+extern void Func_020054c2();
+extern void Func_020054da();
 
-void Func_02000f80(void)
+#define SceneRecordFetch Func_0200538a
+#define ScenePosition_216_168 Func_020053d4
+#define ScenePosition_224_168 Func_020053de
+#define ScenePosition_232_160 Func_020053fc
+#define ScenePosition_216_168_B Func_0200541c
+#define ScenePosition_224_172 Func_02005426
+#define ScenePosition_232_160_B Func_0200543e
+#define SceneHeadingShared Func_020054c2
+#define SceneHeadingFourth Func_020054da
+#define SetupRoofActorsByFacing Func_02000f80
+
+void SetupRoofActorsByFacing(void)
 {
-    u16 facing = *(u16 *)(Func_0808a080(0) + 6);
-    s32 amount;
-
+    u16 facing = *(u16 *)(SceneRecordFetch(0) + 6);
     if ((u16)(facing - 0x2000) <= 0x3fff) {
-        Func_0808a0d0(15, 216, 168);
-        Func_0808a0d0(15, 224, 168);
-        amount = 0x2000;
+        ScenePosition_216_168(15, 216, 168);
+        ScenePosition_224_168(15, 224, 168);
+        SceneHeadingShared(15, 128 << 6, 20);
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
-        goto emitSharedFacing;
-        Func_0808a0d0(15, 232, 160);
-        amount = 0x5000;
-        goto emitSharedFacing;
+        ScenePosition_232_160(15, 232, 160);
+        SceneHeadingShared(15, 160 << 7, 20);
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {
-        Func_0808a0d0(15, 216, 168);
-        Func_0808a0d0(15, 224, 172);
-        amount = 0xe000;
-        goto emitSharedFacing;
+        ScenePosition_216_168_B(15, 216, 168);
+        ScenePosition_224_172(15, 224, 172);
+        SceneHeadingShared(15, 224 << 8, 20);
+    } else {
+        ScenePosition_232_160_B(15, 232, 160);
+        SceneHeadingFourth(15, 128 << 6, 20);
     }
-    goto emitFourthFacing;
-
-emitSharedFacing:
-    Func_0808a1b8(15, amount, 20);
-    return;
-
-emitFourthFacing:
-    Func_0808a0d0(15, 232, 160);
-    Func_0808a1b8(15, 0x2000, 20);
 }

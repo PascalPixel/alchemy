@@ -28,6 +28,49 @@ This convention applies to reconstructed identifiers, not to copied code. Do
 not import game-specific names, types, comments, or function bodies from
 another decompilation project.
 
+## Address names and reconstructed APIs
+
+An address is useful evidence, but it is not a useful API. Once local evidence
+establishes what a function does, keep its `Func_XXXXXXXX` relocation or linker
+name at the ABI boundary and use a descriptive reconstruction name in the C
+body:
+
+```c
+extern u8 *Func_0200538a(s32 actor);
+#define GetSceneActor Func_0200538a
+#define SetupRoofActorsByFacing Func_02000f80
+
+void SetupRoofActorsByFacing(void)
+{
+    u8 *actor = GetSceneActor(15);
+    /* ... */
+}
+```
+
+This preserves the emitted symbol while allowing contributors to recognize
+call families and scene structure. Use three confidence levels:
+
+- Keep `Func_`, `Data_`, and field offsets when behavior is still unknown.
+- Use a cautious behavioral name such as `GetSceneActor`, `AdvanceSceneStep`,
+  or `ShowPlacementPanel` when calls, arguments, and effects demonstrate it.
+- Use a story, map, actor, or asset name only when local reconstruction evidence
+  establishes that identity. A plausible interpretation is not enough.
+
+Raw address names should not remain in executable statements or explanatory
+comments once an evidence-backed alias exists. A required exported entry may
+use the same macro technique, leaving the raw name only in the alias layer.
+Code overlays need one extra caution: a synthetic `Func_020...` relocation
+name is not necessarily a stable logical callee. Different call sites may reuse
+one raw spelling with different signatures or engine targets. Give those sites
+separate behavioral aliases rather than forcing one misleading global name.
+When the same verified ABI and behavior recur in multiple owners, graduate the
+alias and prototype to the appropriate shared header instead of maintaining
+slightly different local vocabularies.
+
+Names are reconstruction aids, not claims about Camelot's original identifiers.
+Every naming or prototype change still goes through the routed byte comparison;
+macro expansion alone does not prove that the inferred API is correct.
+
 ## Comments
 
 Comments should be concise and explain facts useful to a future contributor:

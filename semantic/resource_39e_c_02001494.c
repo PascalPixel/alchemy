@@ -302,7 +302,6 @@ extern u8 *Data_03001ebc;
 
 void Func_02001494(void)
 {
-    s32 poseActor;
     u8 *workspace;
 
     Func_0200585e(0x89a);
@@ -516,7 +515,9 @@ void Func_02001494(void)
     if (Func_02006026(0, 0) == 0) {
         Func_020060b2(16, 1);
         Func_02006018(20);
-        poseActor = 16;
+        Func_0200616e(16, 0, 20);
+        Func_02006084(0x898);
+        goto skipComplete;
     } else {
         workspace = Data_03001ebc;
         Func_02006032_b(20);
@@ -530,15 +531,13 @@ void Func_02001494(void)
             Func_020060fa(16, 3);
             Func_02006078(20);
             Func_02006174(18, 176 << 8, 20);
-            poseActor = 18;
+            Func_0200616e(18, 0, 20);
+            Func_02006084(0x898);
+            goto skipComplete;
         } else {
             goto secondSkip;
         }
     }
-
-    Func_0200616e(poseActor, 0, 20);
-    Func_02006084(0x898);
-    goto skipComplete;
 
 secondSkip:
     *(u16 *)(workspace + 472) += 1;

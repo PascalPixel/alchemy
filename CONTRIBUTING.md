@@ -217,7 +217,11 @@ The `resource_373` work made this concrete: a readable rewrite of a proven
 sibling regressed badly because it changed alias information, while a literal
 address-adjusted transcription of the proven C shape matched. Preserve the
 machine-producing structure first; humanize it only after each change remains
-exact.
+exact. As behavior becomes demonstrated, replace address-only names in C bodies
+with the ABI-preserving reconstruction aliases described in
+[`docs/SOURCE-STYLE.md`](docs/SOURCE-STYLE.md). This is part of recovering a
+reusable source family, not a cosmetic pass: repeated verified aliases should
+become shared APIs, while uncertain identities remain address-named.
 
 ## Safety and publication
 

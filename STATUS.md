@@ -183,20 +183,29 @@ reviewed semantic edge shim, and the resulting build passes `make verify`.
 
 ### `resource_39e` scene transfer
 
-The Vale roof-repair source model has now transferred to three more owners:
+The Vale roof-repair source model has now transferred to five more owners:
 the 5,000-byte scripted roof scene at `2ad0`, the 224-byte script beat at
-`0db4`, and the 336-byte scene-effect routine at `41ec`. Together they add
-5,560 Exact-C bytes. The strict scripted-scene set is now 9 / 17 owners exact,
-with eight scenes remaining. The broader 16-owner transfer queue, which also
-includes scene drivers, effects, selectors, and helpers, is 3 / 16 complete
-this round, leaving 7,388 of its original 12,948 bytes unresolved.
+`0db4`, the 336-byte scene-effect routine at `41ec`, the 214-byte named scene
+exit at `0afc`, and the 132-byte named facing selector at `1334`. Together they
+add 5,906 Exact-C bytes. The strict scripted-scene set is now 10 / 17 owners
+exact, with seven scenes remaining. The broader 16-owner transfer queue, which
+also includes scene drivers, effects, selectors, and helpers, is 5 / 16
+complete this round, leaving 7,042 of its original 12,948 bytes unresolved.
 
-The nearest remaining witnessed residuals are `3e58` (644 bytes, 28 differing
-bytes after all 39 calls were resolved), `0518` (320 bytes, 93 differing
+The nearest remaining witnessed residuals are `3e58` (644 bytes, seven
+differing halfwords after all 39 calls were resolved and its two compiler
+routes were proved), `0518` (320 bytes, 93 differing
 bytes), and `102c` (282-byte owner, 130 differing bytes with a boundary/source
 shape mismatch). Larger scene drivers at `27ec`, `1160`, `1494`, and `1dbc`
 have complete call maps but still need structural reconstruction; they are not
 permutation-ready.
+
+This round also corrected 36 raw `push {...,lr}` prologue halfwords that sat
+immediately before already-audited Thumb bodies. That adds 72 executable bytes
+to the denominator without claiming them as C and restores the true lower
+bound of the `0cd4`, `0f80`, and `102c` owners. Scene source now uses
+evidence-backed behavioral aliases in executable statements while retaining
+the synthetic `Func_...` spellings only at the overlay ABI boundary.
 
 The authoritative measurements are
 [`metrics/gs1-en-executable.json`](metrics/gs1-en-executable.json),

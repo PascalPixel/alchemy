@@ -5,8 +5,8 @@ their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 365,268 / 1,347,264 executable bytes (**27.11%**).
-- **Public DONE:** **30%**, combining Exact C with audited permanent assembly.
+- **Exact C:** 370,872 / 1,347,264 executable bytes (**27.53%**).
+- **Public DONE:** **33%**, combining Exact C with audited permanent assembly.
 - The generated coverage maps and dashboard are the live per-overlay source of
   truth; this page records the current contributor frontier rather than a
   second hand-maintained per-overlay ledger.
@@ -80,7 +80,41 @@ implemented. Until they are, agents must treat generated outputs and adoption
 as serialized shared state exactly as required by
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-## Core targets
+## Primary target index
+
+[`TARGETS.md`](TARGETS.md) is the main contributor queue. It is generated from
+the same exhaustive owner partition as the dashboard, sorted largest to
+smallest, and contains every scope of at least 1,000 bytes. The complete
+machine-readable index in
+[`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json) retains
+all 1,727 unfinished scopes down to the smallest owner.
+
+The index accounts for all 1,347,264 executable bytes: 897,406 target bytes are
+reviewed semantic C, and 446,330 bytes occur only in Exact C or audited
+permanent assembly scopes. Its rows never overlap. There are currently eight
+independent unfinished owner scopes of at least 5 KiB;
+the first ten rows are:
+
+| Rank | Namespace / owner | Scope |
+|---:|---|---:|
+| 1 | `main:0x080bbb0c` | 6,332 bytes |
+| 2 | `resource_3bd:0x020013f8` | 6,220 bytes |
+| 3 | `resource_380:0x020027f8` | 5,932 bytes |
+| 4 | `main:0x080ea0d8` | 5,756 bytes |
+| 5 | `resource_3bf:0x02003054` | 5,604 bytes |
+| 6 | `resource_373:0x020015dc` | 5,240 bytes |
+| 7 | `resource_381:0x02001410` | 5,136 bytes |
+| 8 | `resource_39e:0x02002ad0` | 5,000 bytes |
+| 9 | `main:0x080ab5e4` | 4,888 bytes |
+| 10 | `resource_39d:0x02001af0` | 4,840 bytes |
+
+`make coverage` regenerates both forms and `make coverage-check` rejects a
+stale ranking. This owner-level list is the authoritative byte-accounted
+priority surface. The broader cuts below are secondary coordination views:
+they deliberately include exact witnesses or combine related owners, and may
+therefore overlap one another.
+
+## Campaign cuts (secondary; may overlap)
 
 The default unit of progress is now a bounded logic core rather than an
 isolated owner. A core is a measured owner family or contiguous C island with a
@@ -94,7 +128,7 @@ States are `surveyed`, `selected`, `active`, `complete`, and `rejected`.
 Measured scope includes each owner's literal-pool bytes. Boundary counts are
 estimates until a core brief records a frozen call census.
 
-| Rank | State | Core target | Measured scope | Current ownership | Cut and evidence |
+| Priority | State | Core target | Measured scope | Current ownership | Cut and evidence |
 |---:|---|---|---:|---:|---|
 | 1 | complete | Configurable spawn/copy family | 5,192 executable bytes, 22 owners | family spawners exact | Eleven overlays share a 472-byte spawner and 56-byte integrator. The six witnessed semantic copies in `resource_3c9`, `39c`, `39d`, `39e`, `380`, and `3a5` were adopted 2026-08-12. |
 | 2 | selected | `resource_3ba` / `3bb` paired render tasks | 2,888 bytes, two mirrored 1,444-byte slices | 0 exact / 2,888 semantic | `3ba:31c0-3764` and `3bb:3458-39fc` cross-check one another and each has only eight distinct imported callees. Exact adjacent installers at `3ba:3764` and `3bb:39fc` are the cut seam. |
@@ -110,7 +144,8 @@ estimates until a core brief records a frozen call census.
 Reserve targets, in order, are the 3,132-byte entity/handle family, the
 568-byte paired attachment constructor, the 6,220-byte `resource_3bd` scene
 driver, the 8,956-byte `resource_3c9` choreography block, and the 18,600-byte
-`resource_373` cinematic core. The last three are semantic-architecture
+`resource_373` cinematic campaign (whose non-overlapping script island is
+16,312 bytes). The last three are semantic-architecture
 campaigns until their call perimeters are narrower; shared calls alone do not
 prove a reusable source skeleton.
 
@@ -129,7 +164,7 @@ manufactured from unrelated neighbours.
 | 5 | Main effect/render suite | `080db6e0-080dd2ac`, 7,116 bytes | 6,914 bytes | Seven exact mode wrappers constrain `080dbc30`; exact allocator and dispatch owners bound the suite. |
 | 6 | Menu/OAM controller | `080f60a0-080f7db4`, 7,444 bytes | 7,444 bytes | Exact entry/palette helpers bound the front; a 452-byte exact barrier separates the independent compressor. |
 | 7 | `resource_3c9` choreography | `12c8-35c4`, 8,956 bytes | 8,620 bytes | Three semantic scripts are interleaved with 336 exact helper/callback bytes and exact outer seams. |
-| 8 | `resource_373` cinematic script island | `15dc-5594`, 16,312 bytes | 13,636 bytes | Five exact setup/dispatcher owners divide three large scripts at proved boundaries. |
+| 8 | `resource_373` cinematic script island | `15dc-5594`, 16,312 bytes | 8,032 bytes | The now-exact 5,604-byte `3fb0` scene driver joins five exact setup/dispatcher owners, leaving three bounded semantic scripts with 8,280 exact witness bytes around them. |
 | 9 | Queued battle-action resolver | `080bbb0c-080bd3c8`, 6,332 bytes | 6,332 bytes | One coherent owner; exact queue emitter is called 154 times, but no duplicate source witness exists. |
 | 10 | `resource_391` cinematic scene driver | `0d3c-2768`, 6,700 bytes | complete | Adopted byte-exact on 2026-08-12. Exact local helpers, installed callbacks, and the sibling scene-sheet witness closed its perimeter. |
 

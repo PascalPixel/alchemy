@@ -55,6 +55,7 @@ pub mod assets;
 pub mod base64;
 pub mod boxtree;
 pub mod cli;
+pub mod core_index;
 pub mod jsnum;
 pub mod jstext;
 pub mod model;

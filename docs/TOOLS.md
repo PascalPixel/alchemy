@@ -113,7 +113,7 @@ itself.
 |---|---|
 | `audit_residuals` | Account for every remaining executable byte and its current ownership class. |
 | `compare_roms` | Compare approved local ROM editions without publishing byte diffs. |
-| `coverage_map` | Check or regenerate the tracked dashboard map, SVGs, and README versions. |
+| `coverage_map` | Check or regenerate the dashboard, exhaustive core-target index, `TARGETS.md`, SVGs, and README versions. |
 | `dashboard_server` | Serve one live worktree dashboard on localhost and an optional LAN address. |
 | `full_c_history` | Measure and optionally rewrite the first-parent Exact-C history. |
 | `full_c_progress` | Calculate, check, or write the audited Exact-C report and denominator. |

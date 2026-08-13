@@ -261,6 +261,10 @@ pub static EXPECTED: &[HostTargets] = &[
                             "640964de34d6202f6dc5943b0c22b0afd1a8f4f1307ba6d3cf30af4110f5f5e2",
                             "c1c5be8f10668a7a66bfa2d6de2ca89f6ac17ffb57ffe62aedf7935da172f21a",
                             "13287dcb29210f197d7fe484532458197d21a7dc2bdf7ca3fca08af447631d3b",
+                            // Locally-built linux-x64 digest of the pinned fork
+                            // commit be99214, 2026-08-13; admitted through the
+                            // zero-regression routed corpus and `make verify`.
+                            "0cdf8d44546f0d4aabfde38ad6a58717f13b8714d6c022a381704daec4e9b06d",
                         ],
                     ),
                 ],
@@ -273,6 +277,8 @@ pub static EXPECTED: &[HostTargets] = &[
                         &[
                             "7b1a6a96fc4bd5e9de4d83fb2a4ba2ca2a82397cdcd102c4a4d76ef91dc17f58",
                             "d0b10d67bc7f9965d586eba766b77e6ca54cc791b5eb297b55a6b9b6d6d0ef3d",
+                            // Locally-built linux-x64 digest, 2026-08-13.
+                            "6f03f123af95846b89d039273f1476a45c51b9bbcd40ab3b05d51e7edab3e88f",
                         ],
                     ),
                     (
@@ -280,6 +286,8 @@ pub static EXPECTED: &[HostTargets] = &[
                         &[
                             "89791031fa8d4dd686355efb0efdb7c019a4080b770f187b15671dc3c1e71ecc",
                             "9d93c7762f60d13474764d2ca9e721b235ed4935ba7b69012aba054cace60d0d",
+                            // Locally-built linux-x64 digest, 2026-08-13.
+                            "ec23cf22761b2345978cce9e938019e85f09998a1493e86dff628de842734c1c",
                         ],
                     ),
                     (
@@ -287,6 +295,8 @@ pub static EXPECTED: &[HostTargets] = &[
                         &[
                             "a1013c94647eefbe0caad3c2e244b66c1acf2961197bdc31012e4259616c3198",
                             "010da8763b9ebf39cb52aab0412ca350e038ccf4c3aa5647440c2abc91dcad6c",
+                            // Locally-built linux-x64 digest, 2026-08-13.
+                            "8c674563cab8acc50affe87b0efe2a602700ef5e3336c258eb2d8ba6b7b59757",
                         ],
                     ),
                     (
@@ -294,6 +304,8 @@ pub static EXPECTED: &[HostTargets] = &[
                         &[
                             "3e5f1cbcae107b0f6c038a8b91880e377a3612a965014165002b4c530feab56b",
                             "1b1c039eda51c0c2ee67d076f33e3284dd369789378cdf34671b66ba76cd6c75",
+                            // Locally-built linux-x64 digest, 2026-08-13.
+                            "f2b7dc78981916b1a075d021f2bc470dad6cc3d271e2b3bf3429027d207dd1e8",
                         ],
                     ),
                 ],
@@ -323,6 +335,8 @@ pub static AGBCC_EXPECTED: &[(&str, &[&str])] = &[
             "30a2a042c4be2acdd215ffc26c7d27498098ac38607ec8af43cc6598dcecdf55",
             "0c2d5ec04129f7b9d1ecf738f096167af152661bc2506f8fdb2749305fa3eb37",
             "21eca5a4e4d1138a1fdebccc03f6a140cbb74c072d3c10c299d64fa2cf13aef9",
+            // Locally-built linux-x64 digest, 2026-08-13.
+            "f54214bdd928b3e5cc27354fd4a0afe1db861bdcf999779d7c1e3fb29b513db9",
         ],
     ),
     ("linux-arm64", &[]),
@@ -356,6 +370,8 @@ pub static GCC2951_EXPECTED: &[HostDigests] = &[
             "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
             "edbee4fec1a1b59d0fd77273559aebbaf2c92b344bbeeb3539a10b689e71716d",
             "79859ae26c9c29d6b874fe27d4f4cdce72b80839ff05cc017906ef7e179c582a",
+            // Locally-built linux-x64 digest from alchemy-gcc 382014a^, 2026-08-13.
+            "6061a96a0cffec4c3693a67e10b863e62ca32d886cbd0b551bae7894016843f5",
         ],
     ),
     ("linux-arm64", &[]),

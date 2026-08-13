@@ -10,10 +10,20 @@ struct Window_08025200 {
 
 struct Sprite_08025200 {
     u32 unknown_00;
-    u8 y;
-    u8 unknown_05;
-    u16 x;
-    u16 tile;
+    union {
+        u32 word;
+        struct {
+            u16 attribute0;
+            u16 attribute1;
+        } half;
+    } attributes01;
+    union {
+        u32 word;
+        struct {
+            u16 attribute2;
+            u16 affine;
+        } half;
+    } attributes23;
 };
 
 struct MenuState_08025200 {
@@ -86,18 +96,20 @@ s32 Func_08025200(s32 category, const u16 *entries, s32 entry_count)
     for (i = 0; i < 5; i++) {
         struct Sprite_08025200 *sprite = &item_sprites[i];
 
-        sprite->unknown_00 = 0x40000000;
-        sprite->tile = 0;
-        sprite->x =
-            (sprite->x & 0xfe00) |
+        sprite->attributes01.word = 0x40000000;
+        sprite->attributes23.word = 0;
+        sprite->attributes01.half.attribute1 =
+            (sprite->attributes01.half.attribute1 & 0xfe00) |
             ((window->x * 8 + 8) & 0x1ff);
-        sprite->y = (u8)((window->y + i * 2) * 8 + 4);
+        sprite->attributes01.half.attribute0 =
+            (sprite->attributes01.half.attribute0 & 0xff00) |
+            (u8)((window->y + i * 2) * 8 + 4);
     }
 
     for (i = 0; i < 5; i++) {
         item_tiles[i] = Func_080040b4(0x80);
-        item_sprites[i].tile =
-            (item_sprites[i].tile & 0xfc00) |
+        item_sprites[i].attributes23.word =
+            (item_sprites[i].attributes23.word & 0xfc00) |
             (Func_080040d0(item_tiles[i], (const void *)-1) &
              0x3ff);
     }
@@ -153,8 +165,8 @@ s32 Func_08025200(s32 category, const u16 *entries, s32 entry_count)
                         (value & 0x1ff) + 0x182,
                         window, 16, visible_count * 16);
                     Func_0801e71c(15);
-                    item_sprites[visible_count].tile =
-                        (item_sprites[visible_count].tile &
+                    item_sprites[visible_count].attributes23.word =
+                        (item_sprites[visible_count].attributes23.word &
                          0xfc00) |
                         (Func_08021af0(
                              value, item_tiles[visible_count]) &
@@ -212,20 +224,21 @@ s32 Func_08025200(s32 category, const u16 *entries, s32 entry_count)
         for (i = 0; i < visible_count; i++)
             Func_08003dec(&item_sprites[i], 0xf0);
 
-        cursor.unknown_00 = 0x40000000;
-        cursor.tile = 0;
-        cursor.tile =
-            (cursor.tile & 0xfc00) |
+        cursor.attributes01.word = 0x40000000;
+        cursor.attributes23.word = 0;
+        cursor.attributes23.word =
+            (cursor.attributes23.word & 0xfc00) |
             (Func_080040d0(cursor_tile,
                  (const void *)0x080310a4) &
              0x3ff);
-        cursor.x =
-            (cursor.x & 0xfe00) |
+        cursor.attributes01.half.attribute1 =
+            (cursor.attributes01.half.attribute1 & 0xfe00) |
             ((window->x * 8 - 2 +
                  ((*(u32 *)0x03001e40 & 4) >> 1) -
                  4) &
              0x1ff);
-        cursor.y =
+        cursor.attributes01.half.attribute0 =
+            (cursor.attributes01.half.attribute0 & 0xff00) |
             (u8)(((window->y + row_offset) * 8 + 20) -
                  ((*(u32 *)0x03001e40 & 4) >> 2) + 248);
         if (entry_count != 0)

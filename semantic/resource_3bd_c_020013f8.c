@@ -29,7 +29,11 @@ struct ActorSub {
 };
 
 struct Actor {
-    u8 pad00[0x50];
+    u8 pad00[0x0A];
+    s16 position_x;
+    u8 pad0c[6];
+    s16 position_y;
+    u8 pad14[0x3C];
     struct ActorSub *sub;
     u8 pad54[6];
     u8 flags5a;
@@ -105,17 +109,17 @@ void Func_020013f8(void) {
     s32 var_r5_3;
     s32 var_r6;
     s32 var_r6_2;
-    void *temp_r0;
-    void *temp_r0_10;
-    void *temp_r0_11;
-    void *temp_r0_2;
-    void *temp_r0_3;
-    void *temp_r0_4;
-    void *temp_r0_5;
-    void *temp_r0_6;
-    void *temp_r0_7;
-    void *temp_r0_8;
-    void *temp_r0_9;
+    struct Actor *actor0_hidden;
+    struct Actor *position_source_2;
+    struct Actor *position_source_3;
+    struct Actor *actor1_hidden;
+    struct Actor *actor3_hidden;
+    struct Actor *actor2_hidden;
+    struct Actor *actor0_visible;
+    struct Actor *actor1_visible;
+    struct Actor *actor3_visible;
+    struct Actor *actor2_visible;
+    struct Actor *position_source_1;
     struct ActorSub *temp_r1;
     struct ActorSub *temp_r1_2;
     struct Actor *temp_r7;
@@ -172,8 +176,8 @@ void Func_020013f8(void) {
         Func_0808a010(2);
     } while (var_r5 >= 0);
     Func_0808a010(0x28);
-    temp_r6 = FIELD(Func_0808a080(8), s16 *, 0xA);
-    temp_r5 = FIELD(Func_0808a080(8), s16 *, 0x12) << 0x10;
+    temp_r6 = Func_0808a080(8)->position_x;
+    temp_r5 = Func_0808a080(8)->position_y << 0x10;
     Func_0808a0f0(8, 0, 0);
     Func_0808a0f0(9, temp_r6 << 0x10, temp_r5);
     temp_r7->sub->field26 = 0;
@@ -182,26 +186,26 @@ void Func_020013f8(void) {
     Func_0808a580(9, 0x20, 0x20);
     Func_0808a1b8(9, 0x4000, 0);
     Func_0808a010(0x14);
-    temp_r0 = Func_0808a080(0);
-    FIELD(temp_r0, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0, u8 *, 0x5A));
-    temp_r0_2 = Func_0808a080(1);
-    FIELD(temp_r0_2, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_2, u8 *, 0x5A));
-    temp_r0_3 = Func_0808a080(3);
-    FIELD(temp_r0_3, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_3, u8 *, 0x5A));
-    temp_r0_4 = Func_0808a080(2);
-    FIELD(temp_r0_4, u8 *, 0x5A) = (u8) (0xFE & FIELD(temp_r0_4, u8 *, 0x5A));
+    actor0_hidden = Func_0808a080(0);
+    actor0_hidden->flags5a = (u8) (0xFE & actor0_hidden->flags5a);
+    actor1_hidden = Func_0808a080(1);
+    actor1_hidden->flags5a = (u8) (0xFE & actor1_hidden->flags5a);
+    actor3_hidden = Func_0808a080(3);
+    actor3_hidden->flags5a = (u8) (0xFE & actor3_hidden->flags5a);
+    actor2_hidden = Func_0808a080(2);
+    actor2_hidden->flags5a = (u8) (0xFE & actor2_hidden->flags5a);
     Func_0808a578(0, 0, 0x10);
     Func_0808a578(1, 0, 0x10);
     Func_0808a578(3, 0, 0x10);
     Func_0808a580(2, 0, 0x10);
-    temp_r0_5 = Func_0808a080(0);
-    FIELD(temp_r0_5, u8 *, 0x5A) = (u8) (FIELD(temp_r0_5, u8 *, 0x5A) | 1);
-    temp_r0_6 = Func_0808a080(1);
-    FIELD(temp_r0_6, u8 *, 0x5A) = (u8) (FIELD(temp_r0_6, u8 *, 0x5A) | 1);
-    temp_r0_7 = Func_0808a080(3);
-    FIELD(temp_r0_7, u8 *, 0x5A) = (u8) (FIELD(temp_r0_7, u8 *, 0x5A) | 1);
-    temp_r0_8 = Func_0808a080(2);
-    FIELD(temp_r0_8, u8 *, 0x5A) = (u8) (1 | FIELD(temp_r0_8, u8 *, 0x5A));
+    actor0_visible = Func_0808a080(0);
+    actor0_visible->flags5a = (u8) (actor0_visible->flags5a | 1);
+    actor1_visible = Func_0808a080(1);
+    actor1_visible->flags5a = (u8) (actor1_visible->flags5a | 1);
+    actor3_visible = Func_0808a080(3);
+    actor3_visible->flags5a = (u8) (actor3_visible->flags5a | 1);
+    actor2_visible = Func_0808a080(2);
+    actor2_visible->flags5a = (u8) (1 | actor2_visible->flags5a);
     Func_0808a100(0, 1);
     Func_0808a100(1, 1);
     Func_0808a100(3, 1);
@@ -863,23 +867,23 @@ void Func_020013f8(void) {
     Func_0808a090(2, ((s32)(u32)0x00013333), ((s32)(u32)0x00009999));
     Func_0808a090(3, ((s32)(u32)0x00013333), ((s32)(u32)0x00009999));
     Func_0808a100(1, 2);
-    temp_r0_9 = Func_0808a080(0);
-    if (temp_r0_9 != NULL) {
-        Func_0808a0b8(1, FIELD(temp_r0_9, s16 *, 0xA), FIELD(temp_r0_9, s16 *, 0x12));
+    position_source_1 = Func_0808a080(0);
+    if (position_source_1 != NULL) {
+        Func_0808a0b8(1, position_source_1->position_x, position_source_1->position_y);
     }
     Func_0808a0e8(1);
     Func_0808a0f0(1, 0, 0);
     Func_0808a100(2, 2);
-    temp_r0_10 = Func_0808a080(0);
-    if (temp_r0_10 != NULL) {
-        Func_0808a0b8(2, FIELD(temp_r0_10, s16 *, 0xA), FIELD(temp_r0_10, s16 *, 0x12));
+    position_source_2 = Func_0808a080(0);
+    if (position_source_2 != NULL) {
+        Func_0808a0b8(2, position_source_2->position_x, position_source_2->position_y);
     }
     Func_0808a0e8(2);
     Func_0808a0f0(2, 0, 0);
     Func_0808a100(3, 2);
-    temp_r0_11 = Func_0808a080(0);
-    if (temp_r0_11 != NULL) {
-        Func_0808a0b8(3, FIELD(temp_r0_11, s16 *, 0xA), FIELD(temp_r0_11, s16 *, 0x12));
+    position_source_3 = Func_0808a080(0);
+    if (position_source_3 != NULL) {
+        Func_0808a0b8(3, position_source_3->position_x, position_source_3->position_y);
     }
     Func_0808a0e8(3);
     Func_0808a0f0(3, 0, 0);

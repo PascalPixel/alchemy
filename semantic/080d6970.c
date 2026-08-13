@@ -138,18 +138,7 @@ void Func_080e6eac(s32, s32, s32);
 void Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 
-static void Publish_080d6970(
-    void *publisher,
-    void *render_context,
-    const void *source,
-    s32 x,
-    s32 y,
-    s32 width,
-    s32 height)
-{
-    ((Publisher_080d6970)publisher)(
-        render_context, source, x, y, width, height);
-}
+#define RunMosaicScatterScene Func_080d6970
 
 /*
  * Play the long multi-actor scene that scatters the shuffled mosaic, sends
@@ -158,7 +147,7 @@ static void Publish_080d6970(
  * banks used by the original scene rather than treating the runtime as one
  * untyped m2c buffer.
  */
-void Func_080d6970(struct Scene_080d6970 *scene)
+void RunMosaicScatterScene(struct Scene_080d6970 *scene)
 {
     u32 *runtime_header = (u32 *)0x03001eec;
     u8 *runtime = (u8 *)runtime_header[0];
@@ -285,8 +274,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     s32 index = Func_080022fc((frame + i) / 4, 5);
                     s32 width = *(const u8 *)(0x080ee920 + index);
                     s32 height = *(const u8 *)(0x080ee925 + index);
-                    Publish_080d6970(
-                        tiles[0],
+                    tiles[0](
                         render_context,
                         runtime + *(const u16 *)(0x080ee916 + index * 2),
                         *(s16 *)((u8 *)particle + 2) - width / 2,
@@ -329,8 +317,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     while (wrapped > 184)
                         wrapped -= 64;
                     if (wrapped <= 119) {
-                        Publish_080d6970(
-                            tiles[i & 1],
+                        tiles[i & 1](
                             render_context,
                             runtime + (i <= 5 ? 0 : 0x6c0),
                             particle->x,
@@ -351,8 +338,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                             }
                             if (y + height > particle->y)
                                 height -= y + height - particle->y;
-                            Publish_080d6970(
-                                tiles[i & 1],
+                            tiles[i & 1](
                                 render_context,
                                 runtime + (i <= 5 ? 0 : 0x6c0) +
                                     source_y + 192,
@@ -371,12 +357,11 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                         if (strip + width > particle->y)
                             width -= strip + width - particle->y;
                         if (width > 0)
-                            Publish_080d6970(
-                                /* The ROM indexes the table here; the
+                            /* The ROM indexes the table here; the
                                    (i & 1) guard above makes it provably
                                    entry 1, so the earlier draft's tiles[1]
                                    was the right VALUE, not an error. */
-                                tiles[i & 1],
+                            tiles[i & 1](
                                 render_context,
                                 runtime +
                                     *(const u16 *)(0x080ee92a + index * 2),
@@ -396,8 +381,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     s32 index = Func_080022fc(i, 5);
                     s32 width = *(const u8 *)(0x080ee93e + index);
                     s32 height = *(const u8 *)(0x080ee943 + index);
-                    Publish_080d6970(
-                        tiles[0],
+                    tiles[0](
                         render_context,
                         runtime + *(const u16 *)(0x080ee934 + index * 2),
                         *(s16 *)((u8 *)particle + 2),
@@ -464,8 +448,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     }
                     if ((u32)spark->age <= 4) {
                         s32 size = *(const u8 *)(0x080ee952 + spark->age);
-                        Publish_080d6970(
-                            tiles[0],
+                        tiles[0](
                             render_context,
                             runtime +
                                 *(const u16 *)(0x080ee948 + spark->age * 2),
@@ -603,16 +586,14 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                     Func_080e3944(source, projected);
                     projected[0] /= 2;
                     scale = scale * 15 * 32;
-                    Publish_080d6970(
-                        tiles[0],
+                    tiles[0](
                         render_context,
                         runtime + scale,
                         projected[0] - 20,
                         projected[1] - 24,
                         20,
                         24);
-                    Publish_080d6970(
-                        tiles[1],
+                    tiles[1](
                         render_context,
                         runtime + scale,
                         projected[0],
@@ -633,8 +614,7 @@ void Func_080d6970(struct Scene_080d6970 *scene)
                         if ((u32)particle->age <= 26) {
                             size = *(const u16 *)
                                 (0x080ee966 + 12);
-                            Publish_080d6970(
-                                tiles[0],
+                            tiles[0](
                                 render_context,
                                 runtime +
                                     *(const u16 *)(0x080ee958 + 12),

@@ -388,13 +388,7 @@ void Func_020020e0();
 /* Overlay workspace pointer (see assets/code/resource_3c7_c_0200048c.c). */
 extern unsigned char *Data_03001ebc;
 
-/* The frame/beat counter both arms of the 0x0200081e test bump. */
-static void BumpBeatCounter_02000508(void)
-{
-    unsigned short *counter = (unsigned short *)(Data_03001ebc + 472);
-
-    *counter = (unsigned short)(*counter + 1);
-}
+#define SKIP_BEATS (*(unsigned short *)(Data_03001ebc + 472))
 
 void Func_02000508(void)
 {
@@ -514,7 +508,7 @@ void Func_02000508(void)
         Func_02001ab0(11, 3);
         Func_02001a56(30);
         Func_02001af6(11, 0);
-        BumpBeatCounter_02000508();
+        SKIP_BEATS++;
     } else {
         Func_02001a94(20);
         Func_02001b40(0, 0xc000, 0);
@@ -524,7 +518,7 @@ void Func_02000508(void)
         Func_02001ac4(10);
         Func_02001b2c(11, 4);
         Func_02001ad2(20);
-        BumpBeatCounter_02000508();
+        SKIP_BEATS++;
         Func_02001b82(11, 0);
     }
 

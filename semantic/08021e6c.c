@@ -107,7 +107,7 @@ u32 Func_08021e6c(s32 alternate)
     }
 
     Func_080041d8((void (*)(void))0x08021dfd, 0x480);
-    Func_0800307c(2, 136, (const void *)0x08021dfd);
+    Func_0800307c(2, 136, (const void *)0x08021e15);
 
     {
     countPointer = (s32 *)((u8 *)state + 0x1b0);

@@ -128,12 +128,7 @@ s32 Func_080771d8(u8 *);
 struct EntryRecord_08024934 *Func_080771e0(u8);
 void Func_080f9010(s32);
 
-static s32 Div4TowardZero(s32 value)
-{
-    if (value < 0)
-        value += 3;
-    return value >> 2;
-}
+#define Div4TowardZero(value) (((value) < 0 ? (value) + 3 : (value)) >> 2)
 
 s32 Func_08024934(s32 arg0, s32 arg1, u8 *key)
 {
@@ -145,9 +140,12 @@ s32 Func_08024934(s32 arg0, s32 arg1, u8 *key)
     struct SpriteSlot_08024934 cursor;
     u32 graphics[4];
     s16 text[26];
-    u8 visible[96];
-    u8 ordered[96];
-    u8 active[4] = {0, 0, 0, 0};
+    /* The ROM frame reserves 36 entries for each ordering pass. */
+    u8 visible[36];
+    u8 ordered[36];
+    /* The first redraw fills or clears all four slots before they are drawn;
+     * the target has no separate zero-initialization sequence. */
+    u8 active[4];
     s32 selectionMask = 0;
     s32 initialTile = (s16)(s32)Func_080040b4(0x80);
     s32 row = -1;

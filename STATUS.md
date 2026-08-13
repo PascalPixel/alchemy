@@ -129,12 +129,36 @@ report differing halfwords, so the residual column states its unit explicitly.
 | Owner | Candidate / target | Current residual | Retained source evidence |
 |---|---:|---:|---|
 | `080bbb0c` | 6,340 / 6,332 | 5,648 bytes | Load `range_index` before the selected range adjustment. |
-| `resource_3bd:13f8` | 6,144 / 6,220 | 2,949 halfwords | Hardware-register values and the actor aggregate remain the useful baseline. |
+| `resource_3bd:13f8` | 6,144 / 6,220 | 2,947 halfwords | Typed actor positions, sprite pointer, and visibility flag are ROM-witnessed; continue from that aggregate. |
 | `resource_380:27f8` | 5,916 / 5,932 | 2,678 halfwords | No additional source model survived this checkpoint. |
 | `080ea0d8` | 5,752 / 5,756 | 5,360 bytes | Preserve full-width RNG values and the five-field geometry state. |
 | `resource_3bf:3054` | 5,656 / 5,604 | 2,509 halfwords | Preserve the line-cursor aggregate. |
 | `resource_373:15dc` | 5,216 / 5,240 | 2,227 halfwords | No additional source model survived this checkpoint. |
-| `resource_381:1410` | 5,088 / 5,136 | 2,478 halfwords | Workspace/counter order is corrected; continue phase-by-phase from the humanized scene vocabulary. |
+| `resource_381:1410` | 5,088 / 5,136 | 2,478 halfwords | `RunSolSanctumCollapse` now names Isaac, Garet, the Wise One, camera state, and Elemental Star fields from exact-sibling evidence without changing codegen; continue phase-by-phase from that vocabulary. |
+
+This checkpoint also retained nine smaller but structurally useful advances:
+
+Candidate/target spans below include owner-owned literal or alignment tails;
+the generated core-target index counts executable bytes only. Thus
+`resource_39d:1af0` is a 4,844-byte compilation span but a 4,840-byte target.
+
+| Owner | Candidate / target | Current residual | Retained source evidence |
+|---|---:|---:|---|
+| `resource_39d:1af0` | 4,844 / 4,844 | 2,246 halfwords | The workspace cell is initialized before use, replacing an undefined draft dereference with the ROM dataflow. |
+| `resource_3aa:0360` | 4,260 / 4,268 | 1,834 halfwords | Holding the IWRAM workspace pointer cell matches the ROM lifetime and removes 90 differing halfwords. |
+| `resource_378:088c` | 3,964 / 4,080 | 2,007 halfwords | Three missing scene request/setup stores are restored at their witnessed instruction sites. |
+| `080d6970` | 3,308 / 3,308 | 3,106 bytes | Direct calls through the two renderer slots remove a spurious wrapper, reach target size, and remove 180 differing bytes. |
+| `08023e70` | 2,728 / 2,756 | 2,319 bytes | ROM-shaped character masks and four-byte inventory records remove 46 differing bytes while retaining named field access. |
+| `resource_3c7:0508` | 2,544 / 2,532 | 1,148 halfwords | Both branch arms now update the workspace skip counter directly, removing a non-ROM helper and 12 differing halfwords. |
+| `08021e6c` | 2,212 / 2,300 | 2,110 bytes | Setup now installs callback `0x08021e15`; the sibling `0x08021dfd` callback is reserved for cleanup, matching the ROM pools and call sites. |
+| `08024934` | 2,156 / 2,124 | 1,970 bytes | The ROM's inline division and 36-entry stack buffers remove 86 differing bytes; the four active-row flags retain the target's redraw-before-draw lifetime. |
+| `08025200` | 1,816 / 1,836 | 1,521 bytes | The ROM's 12-byte sprite/OAM record removes 203 differing bytes and now names attributes 0–3 directly. |
+
+Two main-image owners are now explicit rewrite leads rather than permutation
+targets: `080d1714` has a 172-byte candidate frame versus the ROM's 356-byte
+frame, and `08026080` is 3,568 / 2,138 bytes with a 400-byte candidate frame
+versus the ROM's 324-byte frame. Rebuild their aggregate/local models before
+trying another leaf-level spelling.
 
 ## Campaign cuts (secondary; may overlap)
 

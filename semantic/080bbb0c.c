@@ -125,7 +125,7 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     BattlePlan_080bbb0c *request;
     u8 *target_fields;
     s16 *var_r6;
-    s16 temp_r0_3;
+    s16 range_value;
     s16 temp_r1_3;
     s16 temp_r2_3;
     s16 temp_r2_5;
@@ -163,9 +163,9 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     s32 var_r0_5;
     s32 var_r0_6;
     s32 var_r0_7;
-    s32 var_r1;
+    s32 range_lower_count;
     s32 var_r1_12;
-    s32 var_r1_2;
+    s32 range_upper_count;
     s32 var_r1_8;
     s32 var_r2_3;
     s32 var_r2_5;
@@ -258,9 +258,9 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
     s32 var_r5;
     u8 *temp_r0_5;
     u8 *temp_r1;
-    u8 *temp_r4_2;
+    u8 *range_table;
     u8 *var_r2;
-    u8 *var_r2_2;
+    u8 *range_upper_cursor;
 
     request = arg0;
     sp3C = 0;
@@ -291,37 +291,37 @@ s32 Func_080bbb0c(BattlePlan_080bbb0c *arg0, s32 arg1) {
         range_distance = 0;
     }
     if (range_index != 4) {
-        temp_r4_2 = target_state + 0x24;
-        temp_r0_3 = M2C_FIELD(((range_index * 4) + target_state), s16, 0x26);
-        var_r1 = 0;
-        if ((s32) temp_r0_3 >= (s32) M2C_FIELD(temp_r4_2, s16, 2)) {
-            var_r2 = temp_r4_2;
+        range_table = target_state + 0x24;
+        range_value = M2C_FIELD(((range_index * 4) + target_state), s16, 0x26);
+        range_lower_count = 0;
+        if ((s32) range_value >= (s32) M2C_FIELD(range_table, s16, 2)) {
+            var_r2 = range_table;
 loop_7:
-            var_r1 += 1;
+            range_lower_count += 1;
             var_r2 += 4;
-            if (var_r1 <= 3) {
-                if ((s32) temp_r0_3 >= (s32) M2C_FIELD(var_r2, s16, 2)) {
+            if (range_lower_count <= 3) {
+                if ((s32) range_value >= (s32) M2C_FIELD(var_r2, s16, 2)) {
                     goto loop_7;
                 }
             }
         }
-        if (var_r1 == 4) {
+        if (range_lower_count == 4) {
             sp14 = -1;
         }
-        var_r1_2 = 0;
-        var_r2_2 = target_state;
-        var_r2_2 += 0x24;
-        if ((s32) temp_r0_3 <= (s32) M2C_FIELD(var_r2_2, s16, 2)) {
+        range_upper_count = 0;
+        range_upper_cursor = target_state;
+        range_upper_cursor += 0x24;
+        if ((s32) range_value <= (s32) M2C_FIELD(range_upper_cursor, s16, 2)) {
 loop_13:
-            var_r1_2 += 1;
-            var_r2_2 += 4;
-            if (var_r1_2 <= 3) {
-                if ((s32) temp_r0_3 <= (s32) M2C_FIELD(var_r2_2, s16, 2)) {
+            range_upper_count += 1;
+            range_upper_cursor += 4;
+            if (range_upper_count <= 3) {
+                if ((s32) range_value <= (s32) M2C_FIELD(range_upper_cursor, s16, 2)) {
                     goto loop_13;
                 }
             }
         }
-        if (var_r1_2 == 4) {
+        if (range_upper_count == 4) {
             sp14 = 1;
         }
     }

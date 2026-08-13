@@ -391,7 +391,7 @@ extern void Func_0200222a();
 /* Overlay entry 0x02000054: set up and execute the scripted scene. */
 void Func_02000054(void) {
     struct SceneActor *actor;
-    struct SceneActor *configuredActor;
+    u8 *configuredFlags;
     struct Resource381SceneState **sceneSlot;
     struct Resource381SceneState *scene;
     s32 *firstPhase;
@@ -400,7 +400,6 @@ void Func_02000054(void) {
     sceneSlot = (struct Resource381SceneState **)0x03001EC4;
     scene = *sceneSlot;
     firstPhase = &scene->scriptPhase;
-
     /* Phase 0: reset the encounter and establish the initial actor layout. */
     Func_02003530();
     Func_0200368e(0x8D);
@@ -675,8 +674,8 @@ block_3:
     Func_02003f42(0xB, 0x19999, 0xCCCC);
     Func_02003f4c(5, 0x13333, 0x9999);
     Func_02003f80(0xB, 0x1DB, 0x152);
-    configuredActor = Func_02003f4e(0xB);
-    configuredActor->flags &= 0xFE;
+    configuredFlags = (u8 *)Func_02003f4e(0xB) + 0x5A;
+    *configuredFlags &= 0xFE;
     Func_02003fa0(0xB, 0x1DB, 0x15C);
     Func_02003fe0(5, 1);
     Func_02003fda(5, 4, 0);
@@ -687,7 +686,7 @@ block_3:
     Func_02004058(0xD, 0, 0x1E);
     Func_02004028(0xB, 1);
     Func_02003f9e(0x14);
-    configuredActor->flags |= 1;
+    *configuredFlags |= 1;
     Func_02003fe4(0xB, 0x10000, 0x8000);
     Func_02004018(0xB, 0x1DB, 0x14C);
     Func_0200409c(0xB, 0xB000, 0x14);

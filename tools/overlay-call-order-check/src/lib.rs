@@ -8,8 +8,10 @@
 //! original's header comment for the full rationale; it is reproduced there,
 //! not duplicated here.
 //!
-//! Ported byte-for-byte behavioural: the same postorder call extraction, the
-//! same machine-call classification, and the same self-test.
+//! The postorder extraction and machine-call classification preserve the
+//! original behavior. Simple object-like aliases such as
+//! `#define WaitFrames Func_0808a010` are expanded before the source walk so
+//! human-readable scene vocabulary does not hide calls from this audit.
 
 use std::collections::{HashMap, HashSet};
 use std::fs;
@@ -282,7 +284,8 @@ fn owner_from_source(path: &Path, manual: &HashMap<String, i64>, inventory: &Inv
     };
     let source = fs::read_to_string(path).map_err(|e| e.to_string())?;
     let symbol = format!("Func_{}", group2.to_lowercase());
-    if !contains_symbol_call(&source, &symbol) {
+    let expanded = expand_simple_call_aliases(&source);
+    if !contains_symbol_call(&expanded, &symbol) {
         return Err(format!("{} does not contain its owner symbol {symbol}", path.display()));
     }
     Ok(SemanticOwner { overlay, offset, span_bytes, source: path.display().to_string(), symbol })
@@ -384,10 +387,10 @@ fn strip_comments_and_strings(source: &str) -> Vec<char> {
 
 fn matching_delimiter(text: &[char], open: usize, left: char, right: char) -> Result<usize, String> {
     let mut depth = 0i64;
-    for index in open..text.len() {
-        if text[index] == left {
+    for (index, character) in text.iter().enumerate().skip(open) {
+        if *character == left {
             depth += 1;
-        } else if text[index] == right {
+        } else if *character == right {
             depth -= 1;
             if depth == 0 {
                 return Ok(index);
@@ -469,7 +472,9 @@ fn is_hex8(chars: &[char]) -> bool {
     chars.len() == 8 && chars.iter().all(|c| c.is_ascii_hexdigit())
 }
 
-/// `\b(Func_[0-9a-f]{8}|callback)\s*\(`, case-insensitive, from `from`.
+/// `\b(Func_[0-9a-f]{8}(?:_\w+)?|callback)\s*\(`, case-insensitive, from
+/// `from`. A suffix distinguishes C declarations that share a numeric ABI
+/// address; call-order identity remains the eight-digit address.
 /// Returns `(open_paren_index, canonical_lowercase_token)`.
 fn find_call_start(body: &[char], from: usize) -> Option<(usize, String)> {
     let callback: Vec<char> = "callback".chars().collect();
@@ -483,9 +488,16 @@ fn find_call_start(body: &[char], from: usize) -> Option<(usize, String)> {
             && i + func_prefix.len() + 8 <= body.len()
             && is_hex8(&body[i + func_prefix.len()..i + func_prefix.len() + 8])
         {
-            let after = i + func_prefix.len() + 8;
+            let address_end = i + func_prefix.len() + 8;
+            let mut after = address_end;
+            if after < body.len() && body[after] == '_' {
+                after += 1;
+                while after < body.len() && is_word_char(body[after]) {
+                    after += 1;
+                }
+            }
             if let Some(open) = skip_ws_expect_paren(body, after) {
-                let hex: String = body[i + func_prefix.len()..after].iter().collect::<String>().to_lowercase();
+                let hex: String = body[i + func_prefix.len()..address_end].iter().collect::<String>().to_lowercase();
                 return Some((open, format!("func_{hex}")));
             }
         }
@@ -504,8 +516,7 @@ fn find_call_start(body: &[char], from: usize) -> Option<(usize, String)> {
 fn calls_in_body(body: &[char]) -> Result<Vec<String>, String> {
     let mut calls = Vec::new();
     let mut cursor = 0usize;
-    loop {
-        let Some((open, token)) = find_call_start(body, cursor) else { break };
+    while let Some((open, token)) = find_call_start(body, cursor) {
         let close = matching_delimiter(body, open, '(', ')')?;
         let nested = calls_in_body(&body[open + 1..close])?;
         calls.extend(nested);
@@ -515,10 +526,62 @@ fn calls_in_body(body: &[char]) -> Result<Vec<String>, String> {
     Ok(calls)
 }
 
+fn simple_call_aliases(source: &str) -> HashMap<String, String> {
+    let mut aliases = HashMap::new();
+    for line in source.lines() {
+        let mut words = line.split_whitespace();
+        if words.next() != Some("#define") {
+            continue;
+        }
+        let Some(alias) = words.next() else { continue };
+        let Some(target) = words.next() else { continue };
+        if alias.is_empty()
+            || !alias.chars().all(is_word_char)
+            || alias.chars().next().is_some_and(|c| c.is_ascii_digit())
+        {
+            continue;
+        }
+        let Some(hex) = target.get(5..) else { continue };
+        if !target.get(..5).is_some_and(|prefix| prefix.eq_ignore_ascii_case("Func_"))
+            || !is_hex8(&hex.chars().collect::<Vec<_>>())
+        {
+            continue;
+        }
+        aliases.insert(alias.to_string(), format!("Func_{}", hex.to_ascii_lowercase()));
+    }
+    aliases
+}
+
+fn expand_simple_call_aliases(source: &str) -> String {
+    let aliases = simple_call_aliases(source);
+    if aliases.is_empty() {
+        return source.to_string();
+    }
+    let chars: Vec<char> = source.chars().collect();
+    let mut expanded = String::with_capacity(source.len());
+    let mut cursor = 0usize;
+    while cursor < chars.len() {
+        if chars[cursor].is_ascii_alphabetic() || chars[cursor] == '_' {
+            let start = cursor;
+            cursor += 1;
+            while cursor < chars.len() && is_word_char(chars[cursor]) {
+                cursor += 1;
+            }
+            let token: String = chars[start..cursor].iter().collect();
+            expanded.push_str(aliases.get(&token).unwrap_or(&token));
+        } else {
+            expanded.push(chars[cursor]);
+            cursor += 1;
+        }
+    }
+    expanded
+}
+
 /// Keep the public function small and make its recursion impossible to
 /// confuse with owner-definition discovery.
 pub fn source_calls(source: &str, symbol: &str) -> Result<Vec<String>, String> {
-    calls_in_body(&owner_body(source, symbol)?)
+    let expanded = expand_simple_call_aliases(source);
+    calls_in_body(&owner_body(&expanded, symbol)?)
 }
 
 // ---------------------------------------------------------------------------
@@ -746,6 +809,31 @@ fn is_iram_name(name: &str) -> bool {
     rest.len() == 6 && rest.chars().all(|c| c.is_ascii_hexdigit())
 }
 
+fn function_address(name: &str) -> Option<i64> {
+    let hex = name.strip_prefix("Func_")?;
+    if hex.len() != 8 || !hex.chars().all(|c| c.is_ascii_hexdigit()) {
+        return None;
+    }
+    i64::from_str_radix(hex, 16).ok()
+}
+
+/// The assembly reconstruction spells an imported overlay call with the
+/// absolute symbol that makes a normal PC-relative assembler reproduce the
+/// ROM's stored displacement. The ROM resolver interprets that displacement
+/// as `target - 2`, so the source spelling for a resolved call is recoverable
+/// as `OVERLAY_BASE + site + target + 2`. This remains call-site specific:
+/// one local spelling can encode different imports at different sites.
+fn source_matches_machine_call(source: &str, machine: &MachineCall) -> bool {
+    if source == machine.name {
+        return true;
+    }
+    if matches!(machine.kind, Kind::CallVia | Kind::Unknown) {
+        return false;
+    }
+    function_address(source)
+        == Some(OVERLAY_BASE + machine.site + machine.target + 2)
+}
+
 pub fn compare_order(owner: SemanticOwner, source_sequence: Vec<String>, machine_sequence: Vec<MachineCall>) -> OrderResult {
     let mut mismatches = Vec::new();
     let mut unresolved_call_via = 0i64;
@@ -805,7 +893,7 @@ pub fn compare_order(owner: SemanticOwner, source_sequence: Vec<String>, machine
             }
             continue;
         }
-        if machine.name != source {
+        if !source_matches_machine_call(&source, &machine) {
             mismatches.push(OrderMismatch {
                 index: index as i64,
                 source: Some(source),
@@ -835,8 +923,9 @@ fn audit_owners(owners: &[SemanticOwner], json: bool) -> Result<i32, String> {
         }
         let image = &images[&owner.overlay];
         let source = fs::read_to_string(&owner.source).map_err(|e| e.to_string())?;
+        let prologues = &prologue_sets[&owner.overlay];
         let source_sequence = source_calls(&source, &owner.symbol)?;
-        let machine_sequence = machine_calls(owner, image, &prologue_sets[&owner.overlay])?;
+        let machine_sequence = machine_calls(owner, image, prologues)?;
         results.push(compare_order(owner.clone(), source_sequence, machine_sequence));
     }
     if json {
@@ -1083,6 +1172,39 @@ pub fn self_test() -> Result<(), String> {
     if callback_calls != vec![CALL_VIA.to_string(), "Func_08000002".to_string()] {
         return Err("source callback must remain visible as call_via".to_string());
     }
+    let alias_source = "#define WaitFrames Func_08000002\nvoid Func_02000000(void) { WaitFrames(); }";
+    if source_calls(alias_source, "Func_02000000")? != vec!["Func_08000002".to_string()] {
+        return Err("simple human-readable call alias must resolve to its ABI symbol".to_string());
+    }
+    let named_owner = "#define RunScene Func_02000000\nvoid RunScene(void) {}";
+    if !contains_symbol_call(
+        &expand_simple_call_aliases(named_owner),
+        "Func_02000000",
+    ) {
+        return Err("human-readable owner alias must remain discoverable".to_string());
+    }
+    let suffixed_source = "void Func_02000000(void) { Func_02000004_b(); }";
+    if source_calls(suffixed_source, "Func_02000000")? != vec!["Func_02000004".to_string()] {
+        return Err("suffixed call spelling must retain its numeric ABI identity".to_string());
+    }
+    let relocated = MachineCall {
+        site: 0x100,
+        target: 0x200,
+        kind: Kind::Veneer,
+        name: "Func_0808a010".to_string(),
+        resolved_call_via_target: None,
+    };
+    if !source_matches_machine_call("Func_02000302", &relocated)
+        || source_matches_machine_call("Func_02000304", &relocated)
+    {
+        return Err("site-relative source veneer identity self-test failed".to_string());
+    }
+    let mut relocated_local = relocated.clone();
+    relocated_local.kind = Kind::Prologue;
+    relocated_local.name = "Func_02000200".to_string();
+    if !source_matches_machine_call("Func_02000302", &relocated_local) {
+        return Err("site-relative local-function identity self-test failed".to_string());
+    }
 
     let mut image = vec![0u8; 0x40];
     // A call-through slot at offset 0x20: bx r3, with a literal target loaded
@@ -1123,11 +1245,10 @@ pub fn self_test() -> Result<(), String> {
     if !explicit.mismatches.is_empty() || explicit.unresolved_call_via != 1 {
         return Err("explicit callback call_via self-test failed".to_string());
     }
-    let rejected = compare_order(owner, vec!["Func_08000000".to_string()], vec![via]);
+    let rejected = compare_order(owner.clone(), vec!["Func_08000000".to_string()], vec![via]);
     if rejected.mismatches.len() != 1 {
         return Err("call_via source mismatch self-test failed".to_string());
     }
-
     let inline: Vec<u8> = vec![0xfc, 0x46, 0x18, 0x47, 0x00, 0x20];
     let reachable_hit: HashSet<i64> = [OVERLAY_BASE].into_iter().collect();
     if !contains_inline_call_through(&inline, 0, inline.len() as i64, &reachable_hit) {

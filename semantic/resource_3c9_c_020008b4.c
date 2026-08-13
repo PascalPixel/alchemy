@@ -94,6 +94,7 @@ extern void Func_02001280(s32 arg0, s32 arg1);
 
 void Func_020008b4(void)
 {
+    s32 zero;
     u8 *record;
     u8 *record0;
     u8 *workspace;
@@ -105,7 +106,8 @@ void Func_020008b4(void)
     Func_02001280(3, 0);
     Func_0808a210(-1, -1, -1, 0);
     Func_080000c0(1);
-    record[0x55] = 0;
+    zero = 0;
+    record[0x55] = zero;
     record[0x23] |= 2;
 
     Func_080091e0(Func_0808a080(18), 0);
@@ -113,7 +115,7 @@ void Func_020008b4(void)
     Func_0808a0f0(18, 145 << 18, 169 << 17);
 
     record0 = Func_0808a080(0);
-    record0[0x55] = 0;
+    record0[0x55] = zero;
     Func_0808a1e0(0, 1);
     Func_0808a0f0(0, 0x02450000, 144 << 17);
     Func_080000c0(1);
@@ -198,7 +200,7 @@ void Func_020008b4(void)
     Func_020008a8(3, 128 << 8);
 
     record = Func_0808a228();
-    record[0x55] = 0;
+    record[0x55] = zero;
     Func_0808a208(0x0004cccc, 0x9999);
     Func_0808a210(152 << 17, 128 << 14, 158 << 16, 1);
     Func_0808a218();

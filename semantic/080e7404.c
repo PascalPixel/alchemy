@@ -130,7 +130,7 @@ s32 Func_080e7404(s32 arg0, s32 arg1) {
     u8 *sp48;
     s32 sp4C;
     s32 sp118;
-    s32 stackWorkspace[17];
+    s32 stackWorkspace[20];
     s32 *phaseOneProjection;
     s32 *phaseTwoProjection;
     s32 *projected;

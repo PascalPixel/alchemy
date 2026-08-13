@@ -464,7 +464,7 @@ void Func_02000488(void)
 {
     s32 fourth;
     u8 *record;
-    s32 i;
+    u32 i;
 
     fourth = Func_02001e0e(3);
 

@@ -421,7 +421,10 @@ void Func_080f7460(void)
         }
 
         if (state->mode == 0 || state->mode == 2) {
-            s32 icons[7] = { 0, 0, 0, 0, 0, 0, 0 };
+            s32 icons[7];
+
+            for (index = 0; index < 7; index++)
+                icons[index] = 0;
 
             if (state->mode == 0) {
                 icons[3] = 1;

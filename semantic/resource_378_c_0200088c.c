@@ -68,8 +68,6 @@ void Func_080f9078();
 
 void Func_0200088c(void)
 {
-    u8 *actor;
-
     Func_0808a018(); /* 0x088e */
     if (Func_080770c0(0x201) != 0) {
         Func_0808a150(0, 8, 0); /* 0x08a2 */
@@ -561,14 +559,16 @@ void Func_0200088c(void)
         Func_080770c8(0x9f0); /* 0x1818 */
         Func_0808a248(0x1e); /* 0x181e */
     } else {
+        u8 *actor;
+
         Func_0808a010(0x1e); /* 0x1826 */
         Func_0808a138(0xc, 1); /* 0x182e */
         Func_0808a110(0xc, 4); /* 0x1836 */
         Func_0808a010(0x14); /* 0x183c */
         Func_0808a180(0xc, 0); /* 0x1844 */
-        actor[0x23] &= (u8)~2;
         Func_0808a010(0x14); /* 0x184a */
         actor = Func_0808a080(0xa); /* 0x1850 */
+        actor[0x23] &= (u8)~2;
         actor = Func_0808a080(0xa); /* 0x1860 */
         *(u32 *)(actor + 0x6c) = 0x02008849;
     }

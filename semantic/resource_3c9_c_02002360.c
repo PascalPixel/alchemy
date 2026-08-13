@@ -259,8 +259,9 @@ void Func_02002360(void)
 
     /* first Func_0808a070 test: one arm bumps the workspace counter now,
        the other defers it past the next block */
-    first_pass = 1;
-    if (Func_0808a070(0, 0) != 0) {
+    if (Func_0808a070(0, 0) == 0) {
+        first_pass = 1;
+    } else {
         (*(u16 *)(Data_03001ebc + 236 * 2))++;
         first_pass = 0;
     }

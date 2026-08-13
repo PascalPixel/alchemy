@@ -24,71 +24,61 @@
  * assembly embedding.
  */
 
-struct Actor_02000658 {
-    u8 reserved00[8];
-    s32 x;
-    u8 reserved0c[4];
-    s32 y;
-    u8 reserved14[0x0f];
-    u8 flags_23;
-    u8 reserved24[0x31];
-    u8 active_55;
-};
-
-struct SceneWork_02000658 {
-    u8 reserved000[456];
-    s32 scene_value;
-    u8 reserved1cc[12];
-    u16 branch_counter;
-};
-
-extern struct SceneWork_02000658 *Data_03001ebc;
+extern u8 *Data_03001ebc;
 extern const u8 Data_020092fc[];
 extern const u8 Data_02009400[];
 extern const u8 Data_02009310[];
 
-extern void Func_0808a018(void);
-extern void Func_0808a020(void);
-extern void Func_0808a010(s32 frames);
-extern s32 Func_0808a070(s32 actor, s32 mode);
-extern struct Actor_02000658 *Func_0808a080(s32 actor);
-extern void Func_0808a090(s32 actor, s32 x, s32 y);
-extern void Func_0808a098(s32 actor, const void *descriptor);
-extern void Func_0808a0a8(s32 actor);
-extern void Func_0808a0b0(s32 actor, const void *descriptor);
-extern void Func_0808a0c8(s32 actor, s32 x, s32 y);
-extern void Func_0808a0d0(s32 actor, s32 x, s32 y);
-extern void Func_0808a0e8(s32 actor);
-extern void Func_0808a0f0(s32 actor, s32 x, s32 y);
-extern void Func_0808a100(s32 actor, s32 mode);
-extern void Func_0808a110(s32 actor, s32 animation);
-extern void Func_0808a128(s32 actor, s32 animation, s32 mode);
-extern void Func_0808a130(s32 actor, s32 mode);
-extern void Func_0808a138(s32 actor, s32 mode);
-extern void Func_0808a168(s32 actor, s32 value, const void *script);
-extern void Func_0808a170(s32 dialogue);
-extern void Func_0808a178(s32 actor, s32 mode);
-extern void Func_0808a180(s32 actor, s32 mode);
-extern void Func_0808a188(s32 actor, s32 mode, s32 frames);
-extern void Func_0808a1b8(s32 actor, s32 value, s32 frames);
-extern void Func_0808a1d0(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-extern void Func_0808a1e0(s32 actor, s32 mode);
-extern void Func_0808a1e8(s32 actor, s32 value, s32 frames);
-extern void Func_0808a208(s32 x, s32 y);
-extern void Func_0808a210(s32 x, s32 y, s32 z, s32 mode);
-extern void Func_0808a218(void);
-extern struct Actor_02000658 *Func_0808a228(void);
-extern void Func_0808a360(void);
-extern void Func_0808a370(void);
-extern void Func_080000c0(s32 frames);
-extern void Func_080000d0(const void *callback, s32 value);
-extern void Func_080000d8(const void *callback);
-extern void Func_080091e0(struct Actor_02000658 *actor, s32 mode);
-extern void Func_080770c8(s32 flag);
+#define ACTOR_X(actor)          (*(s32 *)((actor) + 0x08))
+#define ACTOR_Y(actor)          (*(s32 *)((actor) + 0x10))
+#define ACTOR_FLAGS(actor)      ((actor)[0x23])
+#define ACTOR_ACTIVE(actor)     ((actor)[0x55])
+#define SCENE_VALUE(work)       (*(s32 *)((work) + 0x1C8))
+#define SCENE_BRANCH_COUNT(work) (*(u16 *)((work) + 0x1D8))
+
+extern void Func_0808a018();
+extern void Func_0808a020();
+extern void Func_0808a010();
+extern s32 Func_0808a070();
+extern u8 *Func_0808a080();
+extern void Func_0808a090();
+extern void Func_0808a098();
+extern void Func_0808a0a8();
+extern void Func_0808a0b0();
+extern void Func_0808a0c8();
+extern void Func_0808a0d0();
+extern void Func_0808a0e8();
+extern void Func_0808a0f0();
+extern void Func_0808a100();
+extern void Func_0808a110();
+extern void Func_0808a128();
+extern void Func_0808a130();
+extern void Func_0808a138();
+extern void Func_0808a168();
+extern void Func_0808a170();
+extern void Func_0808a178();
+extern void Func_0808a180();
+extern void Func_0808a188();
+extern void Func_0808a1b8();
+extern void Func_0808a1d0();
+extern void Func_0808a1e0();
+extern void Func_0808a1e8();
+extern void Func_0808a208();
+extern void Func_0808a210();
+extern void Func_0808a218();
+extern u8 *Func_0808a228();
+extern void Func_0808a360();
+extern void Func_0808a370();
+extern void Func_080000c0();
+extern void Func_080000d0();
+extern void Func_080000d8();
+extern void Func_080091e0();
+extern void Func_080770c8();
 
 void Func_02000658(void)
 {
-    struct Actor_02000658 *actor;
+    u8 *actor;
+    const void *callback;
 
     Func_0808a018();
     Func_0808a210(-1, -1, -1, 0);
@@ -105,12 +95,13 @@ void Func_02000658(void)
     Func_080091e0(Func_0808a080(23), 0);
     Func_080091e0(Func_0808a080(24), 0);
     Func_080091e0(Func_0808a080(25), 0);
-    Func_0808a080(23)->active_55 = 0;
-    Func_0808a080(24)->active_55 = 0;
-    Func_0808a080(25)->active_55 = 0;
+    ACTOR_ACTIVE(Func_0808a080(23)) = 0;
+    ACTOR_ACTIVE(Func_0808a080(24)) = 0;
+    ACTOR_ACTIVE(Func_0808a080(25)) = 0;
 
-    Data_03001ebc->scene_value = 32;
-    Func_080000d0((const void *)0x020090c1, 3200);
+    SCENE_VALUE(Data_03001ebc) = 32;
+    callback = (const void *)0x020090c1;
+    Func_080000d0(callback, 3200);
     Func_080000c0(1);
     Func_0808a360();
     Func_0808a370();
@@ -119,15 +110,15 @@ void Func_02000658(void)
 
     actor = Func_0808a080(0);
     if (actor != 0) {
-        Func_0808a0f0(1, actor->x, actor->y);
+        Func_0808a0f0(1, ACTOR_X(actor), ACTOR_Y(actor));
     }
     actor = Func_0808a080(0);
     if (actor != 0) {
-        Func_0808a0f0(2, actor->x, actor->y);
+        Func_0808a0f0(2, ACTOR_X(actor), ACTOR_Y(actor));
     }
     actor = Func_0808a080(0);
     if (actor != 0) {
-        Func_0808a0f0(3, actor->x, actor->y);
+        Func_0808a0f0(3, ACTOR_X(actor), ACTOR_Y(actor));
     }
 
     Func_0808a0c8(1, 792, 512);
@@ -142,7 +133,7 @@ void Func_02000658(void)
     Func_0808a168(2, 0x1000a, Data_020092fc);
     Func_0808a168(3, 0x1000a, Data_020092fc);
     Func_0808a010(300);
-    Func_0808a228()->active_55 = 0;
+    ACTOR_ACTIVE(Func_0808a228()) = 0;
 
     Func_0808a208(0x1999, 0x333);
     Func_0808a210(0x03120000, 0, 0x01ae0000, 1);
@@ -219,7 +210,7 @@ void Func_02000658(void)
     Func_0808a130(10, 2);
     Func_0808a130(11, 2);
 
-    Func_0808a1d0(10, 11, 6, 6, 6, 11, 12, 1, 7, 1, 0);
+    Func_0808a1d0(10, 11, 6, 6, 6, 11, 12, 6, 7, 6, 0);
     Func_0808a010(20);
     Func_0808a208(0x19999, 0x3333);
     Func_0808a210(0x02ee0000, 0, 0x01d40000, 1);
@@ -228,7 +219,7 @@ void Func_02000658(void)
     Func_0808a110(1, 3);
     Func_0808a188(0x1001, 0, 20);
     Func_0808a138(8, 2);
-    Func_080000d8((const void *)0x020090c1);
+    Func_080000d8(callback);
     Func_0808a010(40);
     Func_0808a110(8, 6);
     Func_0808a010(20);
@@ -263,7 +254,7 @@ void Func_02000658(void)
     Func_0808a1b8(3, 0xb000, 0);
 
     if (Func_0808a070(0, 0) == 1) {
-        Data_03001ebc->branch_counter += 1;
+        SCENE_BRANCH_COUNT(Data_03001ebc) += 1;
     }
     Func_0808a210(0x03090000, 0, 0x01ac0000, 1);
     Func_0808a010(20);
@@ -320,7 +311,7 @@ void Func_02000658(void)
     Func_0808a110(9, 3);
 
     actor = Func_0808a080(3);
-    actor->flags_23 &= 0xfe;
+    ACTOR_FLAGS(actor) &= 0xfe;
     Func_0808a1e0(3, 1);
     Func_0808a090(3, 0x10000, 0x8000);
     Func_0808a0d0(3, 0x31a, 0x208);
@@ -329,7 +320,7 @@ void Func_02000658(void)
     Func_0808a0d0(3, 0x310, 0x1f0);
     Func_0808a1b8(3, 0x9000, 10);
     actor = Func_0808a080(3);
-    actor->flags_23 |= 1;
+    ACTOR_FLAGS(actor) |= 1;
     Func_0808a188(3, 0, 20);
     Func_0808a100(8, 3);
     Func_0808a100(9, 3);

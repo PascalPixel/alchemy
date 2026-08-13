@@ -522,6 +522,7 @@ void Func_02002e7c();
 extern u8 Data_02009b94[];
 
 /* IWRAM slot carrying the scene workspace pointer. */
+extern u8 *Data_03001ebc;
 #define WORKSPACE (*(u8 **)0x03001ebc)
 
 #define REQUEST_WORD(w) (*(u32 *)((w) + 448))
@@ -530,6 +531,7 @@ extern u8 Data_02009b94[];
 
 void Func_02000360(void)
 {
+    u8 **workspace_slot = &Data_03001ebc;
     s32 skipped;
 
     Func_02001de8();
@@ -540,8 +542,8 @@ void Func_02000360(void)
     Func_02001f06(1);
     Func_02001dcc(1);
 
-    SETUP_WORD(WORKSPACE) = 24;
-    REQUEST_WORD(WORKSPACE) = 513;
+    SETUP_WORD(*workspace_slot) = 24;
+    REQUEST_WORD(*workspace_slot) = 513;
 
     Func_02001ea2(8, 0x03580000, 0x01b80000);
     Func_02001eb0(0, 0x03580000, 0x01e60000);
@@ -707,12 +709,12 @@ void Func_02000360(void)
     /* Decision 1. Note this one tests against 1, not 0. */
     skipped = 1;
     if (Func_02002428(0, 0) == 1) {
-        EVENT_COUNT(WORKSPACE) += 1;
+        EVENT_COUNT(*workspace_slot) += 1;
         skipped = 0;
     }
     Func_020024ce(1, 0, 10);
     if (skipped != 0) {
-        EVENT_COUNT(WORKSPACE) += 1;
+        EVENT_COUNT(*workspace_slot) += 1;
     }
 
     Func_020024fc(2, 0x8000, 10);
@@ -741,11 +743,11 @@ void Func_02000360(void)
         Func_0200251c(20);
         Func_0200259c(8, 3);
         Func_020025d6(8, 0, 10);
-        EVENT_COUNT(WORKSPACE) += 1;
+        EVENT_COUNT(*workspace_slot) += 1;
     } else {
         Func_02002554(20);
         Func_020025d4(8, 4);
-        EVENT_COUNT(WORKSPACE) += 1;
+        EVENT_COUNT(*workspace_slot) += 1;
         Func_0200261c(8, 0, 10);
     }
 

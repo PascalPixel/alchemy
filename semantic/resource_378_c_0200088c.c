@@ -25,6 +25,8 @@
  */
 
 extern u8 *Data_03001ebc;
+#define SCENE_REQUEST (*(u32 *)(Data_03001ebc + 0x1c0))
+#define SCENE_SETUP_WORD (*(u32 *)(Data_03001ebc + 0x1c8))
 #define SKIP_BEATS (*(u16 *)(Data_03001ebc + 0x1d8))
 
 void Func_0200187c();
@@ -78,6 +80,8 @@ void Func_0200088c(void)
         Func_0808a148(0xa, 0, 0); /* 0x08d4 */
         Func_0808a210(0xc00000, -1, 0xa00000, 1); /* 0x08e6 */
         Func_0808a218(); /* 0x08ea */
+        SCENE_REQUEST = 0x100; /* 0x08ee-0x08fa */
+        SCENE_SETUP_WORD = 0x40; /* 0x08fc-0x0902 */
         Func_0808a360(); /* 0x0904 */
         Func_0808a370(); /* 0x0908 */
         Func_0808a010(0x78); /* 0x090e */
@@ -88,6 +92,7 @@ void Func_0200088c(void)
     Func_0808a010(1); /* 0x0926 */
     Func_0808a210(0xc00000, -1, 0xa00000, 1); /* 0x0938 */
     Func_0808a218(); /* 0x093c */
+    SCENE_REQUEST = 0x209; /* 0x0940-0x094c */
     Func_0808a360(); /* 0x094e */
     Func_0808a370(); /* 0x0952 */
     Func_0200290c(); /* 0x0956 */

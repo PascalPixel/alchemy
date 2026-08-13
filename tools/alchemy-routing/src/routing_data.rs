@@ -166,6 +166,8 @@ pub static STORE_BEFORE_POOL_LOAD_OVERLAY_SOURCES: &[&str] = &[
 pub static ORDER_8_0_20_ARGS_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002cb0.c",
     "exact/resource_373_c_02002cb0.c",
+    "semantic/resource_39e_c_02003e58.c",
+    "exact/resource_39e_c_02003e58.c",
 ];
 pub static ZERO_R1_BEFORE_R0_LOAD_AFTER_8_2_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002cb0.c",
@@ -998,6 +1000,8 @@ pub static NO_STRICT_ALIASING_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c9_c_020021ac.c",
     "exact/resource_3c9_c_02003600.c",
     "exact/resource_397_c_020002a0.c",
+    "semantic/resource_39e_c_02003e58.c",
+    "exact/resource_39e_c_02003e58.c",
 ];
 pub static SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b3_c_02002384.c",

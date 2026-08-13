@@ -315,7 +315,7 @@ fn validate_source(root: &Path, source: &Path) -> Result<Identity, String> {
     let text = std::fs::read(source)
         .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
         .map_err(|error| format!("{}: {error}", source.display()))?;
-    if !defines_function(&text, &symbol) {
+    if !overlay_disasm::source_defines_symbol(&text, &symbol) {
         return Err(format!("{} does not define {symbol}", relative(root, source)));
     }
     if inline_assembly(&text) {
@@ -343,45 +343,6 @@ fn contains_word(text: &str, word: &str) -> bool {
         (at == 0 || !identifier(text.as_bytes()[at - 1]))
             && (at + word.len() == text.len() || !identifier(text.as_bytes()[at + word.len()]))
     })
-}
-
-fn defines_function(text: &str, symbol: &str) -> bool {
-    for (at, _) in text.match_indices(symbol) {
-        if (at > 0 && identifier(text.as_bytes()[at - 1]))
-            || (at + symbol.len() < text.len() && identifier(text.as_bytes()[at + symbol.len()]))
-        {
-            continue;
-        }
-        let rest = &text[at + symbol.len()..];
-        let rest = rest.trim_start();
-        if !rest.starts_with('(') {
-            continue;
-        }
-        let mut depth = 0usize;
-        let mut close = None;
-        for (index, character) in rest.char_indices() {
-            match character {
-                '(' => depth += 1,
-                ')' => {
-                    depth -= 1;
-                    if depth == 0 {
-                        close = Some(index);
-                        break;
-                    }
-                }
-                _ => {}
-            }
-        }
-        let Some(close) = close else { continue };
-        let arguments = &rest[1..close];
-        if arguments.contains(';') || arguments.contains('{') || arguments.contains('}') {
-            continue;
-        }
-        if rest[close + 1..].trim_start().starts_with('{') {
-            return true;
-        }
-    }
-    false
 }
 
 fn inline_assembly(text: &str) -> bool {

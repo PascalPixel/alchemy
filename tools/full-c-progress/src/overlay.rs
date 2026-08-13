@@ -96,11 +96,7 @@ fn halfword_at(binary: &[u8], offset: usize) -> i32 {
 
 /// Recover leaf code written as raw halfwords when a BL in audited Thumb
 /// resolves to it AND the bounded directive run reaches `bx lr`.
-pub fn reached_directive_leaves(
-    binary: &[u8],
-    callers: &[Interval],
-    directives: &[DirectiveSpan],
-) -> Vec<Interval> {
+fn bl_target_starts(binary: &[u8], callers: &[Interval]) -> Vec<i64> {
     // PORT NOTE: `starts` is a JS `Set`, which iterates in insertion order and
     // therefore fixes the order of the leaves this returns. A HashSet would
     // not, so insertion order is tracked explicitly.
@@ -127,7 +123,60 @@ pub fn reached_directive_leaves(
             offset += 2;
         }
     }
-    directive_leaves_at_starts(binary, &starts, directives, "BL-reached")
+    starts
+}
+
+pub fn reached_directive_leaves(
+    binary: &[u8],
+    callers: &[Interval],
+    directives: &[DirectiveSpan],
+) -> Vec<Interval> {
+    directive_leaves_at_starts(
+        binary,
+        &bl_target_starts(binary, callers),
+        directives,
+        "BL-reached",
+    )
+}
+
+fn raw_push_prologues_before_thumb_bodies(
+    binary: &[u8],
+    directives: &[DirectiveSpan],
+    classified: &[Interval],
+) -> Vec<Interval> {
+    let directive_starts: HashSet<i64> = directives.iter().map(|span| span.start).collect();
+    let mut recovered = Vec::new();
+    let mut seen = HashSet::new();
+    for interval in classified.iter().filter(|interval| interval.kind == "thumb") {
+        let body = interval.start as i64;
+        let prologue = body - 2;
+        let offset = prologue - OVERLAY_BASE;
+        if offset < 0
+            || offset + 2 > binary.len() as i64
+            || !directive_starts.contains(&prologue)
+            || classified
+                .iter()
+                .any(|interval| {
+                    interval.start < body as f64 && (prologue as f64) < interval.end
+                })
+        {
+            continue;
+        }
+        // Thumb PUSH with LR is 1011 0101 rlist (`0xb5xx`). A raw push
+        // immediately before an audited Thumb body is its missing prologue,
+        // not a two-byte hole in the executable denominator. This also covers
+        // overlay relocation targets that name the second halfword rather than
+        // the push itself.
+        if halfword_at(binary, offset as usize) & 0xff00 == 0xb500 && seen.insert(prologue) {
+            recovered.push(Interval::new(
+                prologue,
+                body,
+                "thumb",
+                "raw push prologue before audited Thumb body",
+            ));
+        }
+    }
+    recovered
 }
 
 /// Raw leaves whose Thumb entry address is installed in aligned overlay data.
@@ -756,16 +805,13 @@ pub fn overlay_inventory(
     }
 
     let overlay = js::strip_overlay_suffix(&file);
-    let mut candidates: Vec<Interval> = Vec::new();
-    {
-        let mut callers = intervals.clone();
-        callers.extend_from_slice(audited_callers);
-        candidates.extend(reached_directive_leaves(
-            &listing.binary,
-            &callers,
-            &halfword_directives,
-        ));
-    }
+    let mut callers = intervals.clone();
+    callers.extend_from_slice(audited_callers);
+    let mut candidates: Vec<Interval> = reached_directive_leaves(
+        &listing.binary,
+        &callers,
+        &halfword_directives,
+    );
     candidates.extend(published_directive_leaves(
         &listing.binary,
         &halfword_directives,
@@ -800,7 +846,7 @@ pub fn overlay_inventory(
         .filter(|interval| interval.kind == "veneer")
         .cloned()
         .collect();
-    let classified: Vec<Interval> = intervals
+    let mut classified: Vec<Interval> = intervals
         .iter()
         .filter(|interval| {
             if interval.kind != "literal_pool" {
@@ -825,6 +871,11 @@ pub fn overlay_inventory(
         })
         .cloned()
         .collect();
+    classified.extend(raw_push_prologues_before_thumb_bodies(
+        &listing.binary,
+        &halfword_directives,
+        &classified,
+    ));
 
     let mut merged = merge_classified(&classified)?;
     let union = union_intervals(&merged)?;
@@ -1154,6 +1205,29 @@ mod tests {
         assert_eq!(reached.len(), 1);
         assert_eq!(reached[0].start, (OVERLAY_BASE + 0x10) as f64);
         assert_eq!(reached[0].end, (OVERLAY_BASE + 0x14) as f64);
+    }
+
+    #[test]
+    fn a_raw_push_before_an_audited_thumb_body_is_recovered() {
+        let mut image = leaf_image();
+        image[0x10..0x12].copy_from_slice(&[0x10, 0xb5]);
+        let directives = vec![span(OVERLAY_BASE + 0x10, OVERLAY_BASE + 0x12)];
+        let classified = vec![Interval::new(
+            OVERLAY_BASE + 0x12,
+            OVERLAY_BASE + 0x14,
+            "thumb",
+            "test body",
+        )];
+        let recovered =
+            raw_push_prologues_before_thumb_bodies(&image, &directives, &classified);
+        assert_eq!(recovered.len(), 1);
+        assert_eq!(recovered[0].start, (OVERLAY_BASE + 0x10) as f64);
+        assert_eq!(recovered[0].end, (OVERLAY_BASE + 0x12) as f64);
+
+        image[0x11] = 0xb4;
+        assert!(
+            raw_push_prologues_before_thumb_bodies(&image, &directives, &classified).is_empty()
+        );
     }
 
     #[test]

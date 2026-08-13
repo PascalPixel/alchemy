@@ -76,9 +76,9 @@ extern void Func_02004b32();
 
 void Func_02000518(void)
 {
-    s32 block[10];
+    s32 spawnArgs[10];
     u8 *record;
-    u8 *other;
+    u8 *actor;
     s32 spawnOffset;               /* 0x40000, added to record[16] */
     s32 spawnFlags;                /* 0x10000, also written to record[72] */
 
@@ -90,37 +90,37 @@ void Func_02000518(void)
     Func_02004a1c(0, 192 << 8, 20);
     Func_02004ada(132);
 
-    other = Func_02004968(9);
-    *(s32 *)(other + 40) = 160 << 13;
+    actor = Func_02004968(9);
+    *(s32 *)(actor + 40) = 160 << 13;
 
-    other = Func_02004974(9);
+    actor = Func_02004974(9);
     spawnOffset = 128 << 11;
-    *(s32 *)(other + 72) = spawnOffset;
+    *(s32 *)(actor + 72) = spawnOffset;
 
     Func_0200499a(9, 192 << 10, 192 << 9);
     Func_020049b6(9, 152, 196 << 1);
     Func_020049dc(9);
 
-    other = Func_020049a2(9);
+    actor = Func_020049a2(9);
     spawnFlags = 128 << 9;
-    *(s32 *)(other + 72) = spawnFlags;
+    *(s32 *)(actor + 72) = spawnFlags;
 
     Func_02004a74(9, 0, 0);
     Func_02004b32(132);
 
-    block[1] = 7;
+    spawnArgs[1] = 7;
 
     Func_02000718(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
-                  128 << 8, 0, 0, spawnFlags, (u8 *)block);
+                  128 << 8, 0, 0, spawnFlags, (u8 *)spawnArgs);
 
     Func_02000732(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
-                  0, 0, 0, spawnFlags, (u8 *)block);
+                  0, 0, 0, spawnFlags, (u8 *)spawnArgs);
 
     Func_0200074c(*(s32 *)(record + 8), *(s32 *)(record + 12),
                   *(s32 *)(record + 16) + spawnOffset,
-                  (s32)0xffff8000, 0, 0, spawnFlags, (u8 *)block);
+                  (s32)0xffff8000, 0, 0, spawnFlags, (u8 *)spawnArgs);
 
     Func_020049ea(30);
     Func_02004b86();

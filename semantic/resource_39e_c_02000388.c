@@ -50,28 +50,58 @@
  * unidentified beyond "consumes the chosen table".
  */
 
-extern s32 Func_02004772();
-extern void Func_020047dc();
-extern u8 Data_02000240[];
+extern s32 Func_02004772(u8 *table);
+extern void Func_020047dc(u8 *table);
+extern s16 Data_02000240[];
+extern u8 Data_0200c998[];
+extern u8 Value_0000003c;
+
+/*
+ * Descriptive API aliases for the two overlay veneers.  The raw relocation
+ * symbols remain the definitions because these are resource-local entry
+ * points; the aliases describe only their observed effects here.
+ */
+#define ScriptTableNeedsPatch Func_02004772
+#define UseScriptTable        Func_020047dc
+#define ScriptTableAddress ((u8 *)0x0200c998)
+#define ScriptTable        Data_0200c998
+#define FirstScriptTable   ((u8 *)0x0200c8f0)
+#define SecondScriptTable  ((u8 *)0x0200cae8)
 
 u8 *Func_02000388(void)
 {
-    u8 *control = Data_02000240;
-    u8 *table;
+    u8 *result;
 
-    if (*(s16 *)(control + 448) == 60) return (u8 *)0x0200c8f0;
-    if (*(s16 *)(control + 450) == 3) return (u8 *)0x0200cae8;
+    if (Data_02000240[224] == (s32)&Value_0000003c)
+        goto choose_first_table;
+    if (Data_02000240[225] == 3)
+        goto choose_second_table;
 
-    table = (u8 *)0x0200c998;
-    if (Func_02004772(table) != 0) {
-        *(s32 *)(table + 208) = 248 << 16;
+    if (ScriptTableNeedsPatch(ScriptTableAddress) != 0) {
+        u8 *table = ScriptTable;
+
         *(u16 *)(table + 122) = 0x895;
         *(u16 *)(table + 170) = 0x895;
         *(s32 *)(table + 200) = 144 << 17;
+        *(s32 *)(table + 208) = 248 << 16;
         *(u16 *)(table + 266) = 0x895;
         *(u16 *)(table + 290) = 0x895;
     }
 
-    Func_020047dc(table);
-    return table;
+    {
+        u8 *table = ScriptTable;
+        UseScriptTable(table);
+        result = table;
+        goto return_result;
+    }
+
+choose_first_table:
+    result = FirstScriptTable;
+    goto return_result;
+
+choose_second_table:
+    result = SecondScriptTable;
+
+return_result:
+    return result;
 }

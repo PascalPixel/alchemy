@@ -47,6 +47,11 @@ internal dump diagnostics.
    `overlay overlay_twins --leads`.
 2. Recover the real boundary, entries, types, signedness, aliases, calls, stack
    arguments, control flow, and side effects in `semantic/`.
+   As call behavior becomes demonstrated, keep raw `Func_XXXXXXXX` relocation
+   names at the declaration/alias boundary and use cautious descriptive names
+   in executable C and comments. Overlay relocation spellings are call-site
+   evidence, not necessarily stable logical callees; never guess a global API
+   name from an address alone.
 3. Compile and diagnose functions or residual clusters independently. A wrong
    size or large diffuse residual means the source model is not ready.
 4. Try an exact sibling's witnessed shape, then bounded deterministic source

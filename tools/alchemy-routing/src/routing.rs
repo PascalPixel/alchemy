@@ -661,6 +661,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(POOL_LONG_CALL_ARG0_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-pool-long-call-arg0"]);
     }
+    if has(POOL_ZERO_R8_AFTER_R9_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-pool-zero-r8-after-r9"]);
+    }
     if has(ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-order-zero-arg1-before-nonzero-arg0"]);
     }

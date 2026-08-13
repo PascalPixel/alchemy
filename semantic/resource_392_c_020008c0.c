@@ -4,10 +4,12 @@ extern s32 *Data_03001e70;
 extern s32 Data_02008f08[];
 extern s32 Data_02008f20[];
 
-extern s32 *Func_0808a080(s32 slot);
-extern void Func_080091c0(s32 tileX, s32 tileZ, s32 width, s32 height,
+extern s32 *Func_02001706(s32 slot);
+extern void Func_0200177c(s32 tileX, s32 tileZ, s32 width, s32 height,
                           s32 worldX, s32 worldZ);
-extern s32 Func_02000244(s32 layer, s32 tileX, s32 tileZ, s32 width,
+extern s32 Func_02000bf0(s32 layer, s32 tileX, s32 tileZ, s32 width,
+                         s32 height, s32 alpha);
+extern s32 Func_02000c02(s32 layer, s32 tileX, s32 tileZ, s32 width,
                          s32 height, s32 alpha);
 
 struct Work {
@@ -32,7 +34,7 @@ s32 Func_020008c0(s32 slot)
     s32 tableIndex;
     s32 finalHeight;
 
-    actor = Func_0808a080(slot);
+    actor = Func_02001706(slot);
     i = 0;
     if (*(s16 *)((s32 *)actor[20])[10] == Data_02008f08[i]) {
         work.slot = i;
@@ -78,10 +80,10 @@ s32 Func_020008c0(s32 slot)
     work.x = work.x >> 20;
     width = (width + temporary) >> 4;
 
-    Func_080091c0(work.x, work.z, width, finalHeight,
+    Func_0200177c(work.x, work.z, width, finalHeight,
                   (world[79] >> 20) + work.x,
                   (world[80] >> 20) + work.z);
-    Func_02000244(0, work.x, work.z, width, finalHeight, 255);
-    Func_02000244(2, work.x, work.z, width, finalHeight, 255);
+    Func_02000bf0(0, work.x, work.z, width, finalHeight, 255);
+    Func_02000c02(2, work.x, work.z, width, finalHeight, 255);
     return 1;
 }

@@ -1,11 +1,11 @@
 # Current status
 
-Snapshot: 2026-08-12. This is the live status surface. Dated investigations and
+Snapshot: 2026-08-13. This is the live status surface. Dated investigations and
 their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 365,206 / 1,347,264 executable bytes (**27.11%**).
+- **Exact C:** 365,268 / 1,347,264 executable bytes (**27.11%**).
 - **Public DONE:** **30%**, combining Exact C with audited permanent assembly.
 - The generated coverage maps and dashboard are the live per-overlay source of
   truth; this page records the current contributor frontier rather than a
@@ -54,6 +54,18 @@ consumers or demonstrated diagnostic roles. The full trial and rationale are
 recorded in
 [`docs/history/2026-08-09-native-tool-audit.md`](docs/history/2026-08-09-native-tool-audit.md).
 
+The pinned compiler fork now has admitted linux-x64 runtime digests for the
+gs1 `cc1`, the gs2 bundle, and `old_agbcc`, each proven by the zero-regression
+routed corpus and a byte-identical `build-full` before admission; the full
+byte-exact pipeline is exercised end to end on linux hosts. Fresh-environment
+provisioning notes: the mandatory bundle surface still includes the
+comparison probes `dist/pret-early-thumb/cc1` and `dist/gcc2951/cc1`, whose
+source trees were pruned from the `alchemy-gcc` head in `382014a` — build
+them from the pre-prune commit (`382014a^`, `./build.sh pretearlythumb`
+and `./build.sh gcc2951`) and stage the two `cc1` binaries by hand. The
+`source_citations` gate also needs full git history, so unshallow a
+depth-limited clone before running `make lint`.
+
 Recent operational findings are reflected in the native tools: the permuter is
 dependency-aware, bounded, and restricted to safe output cleanup; compiler
 corpus selection uses `exact/*.c`; semantic and remaining-owner tools work from
@@ -84,7 +96,7 @@ estimates until a core brief records a frozen call census.
 
 | Rank | State | Core target | Measured scope | Current ownership | Cut and evidence |
 |---:|---|---|---:|---:|---|
-| 1 | selected | Configurable spawn/copy family | 5,192 executable bytes, 22 owners | at least 2,360 exact; 2,832 immediate semantic targets | Eleven overlays share a 472-byte spawner and 56-byte integrator. Five exact spawners witness six semantic copies in `resource_3c9`, `39c`, `39d`, `39e`, `380`, and `3a5`. Freeze per-overlay tables, callbacks, and veneer identities as shims. |
+| 1 | complete | Configurable spawn/copy family | 5,192 executable bytes, 22 owners | family spawners exact | Eleven overlays share a 472-byte spawner and 56-byte integrator. The six witnessed semantic copies in `resource_3c9`, `39c`, `39d`, `39e`, `380`, and `3a5` were adopted 2026-08-12. |
 | 2 | selected | `resource_3ba` / `3bb` paired render tasks | 2,888 bytes, two mirrored 1,444-byte slices | 0 exact / 2,888 semantic | `3ba:31c0-3764` and `3bb:3458-39fc` cross-check one another and each has only eight distinct imported callees. Exact adjacent installers at `3ba:3764` and `3bb:39fc` are the cut seam. |
 | 3 | selected | `resource_39f` slot procession | 2,896 bytes, 11 adjacent owners | 2,608 exact / 288 semantic | Ten exact owners now constrain the remaining `39f:15d0` owner. Keep slot records, party-heading reads, and the `Data_02000240 + 0x22b` completion byte at the perimeter. `1d04` was adopted byte-exact on 2026-08-12. |
 | 4 | surveyed | Main menu presentation/OAM | `0x080f6000-0x080f86f8`, 9,976 bytes | 604 exact / 9,364 semantic / 8 retained | A repeated update/render pipeline around `080f6440`, `080f7460`, and `080f7f78`. DMA, renderer slots 46/47, and allocation are shims; per-frame state and OAM construction are the core. |

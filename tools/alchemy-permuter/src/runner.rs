@@ -1223,7 +1223,11 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         input.source.len(),
     )?;
     output_budget_preflight(&candidates, options.top)?;
-    let target = backend::prepare(&input, &candidates[0].source, options.show_errors)?;
+    // The baseline is the contributor's untouched source, not whichever
+    // randomized mutation happens to occupy candidate slot zero. Using the
+    // first mutation here made the displayed threshold seed-dependent and
+    // could discard genuine improvements against the actual starting point.
+    let target = backend::prepare(&input, &input.source, options.show_errors)?;
     let baseline = target.baseline();
     let identity = run_identity(&input, target.as_ref(), options.seed)?;
     let mut run = RunDirectory::claim(&output, &identity, options.resume)?;

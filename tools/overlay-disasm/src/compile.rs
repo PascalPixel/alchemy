@@ -484,6 +484,46 @@ fn routed_call_via_base(overlay: &str, routing_source: &str) -> i64 {
     overlay_call_via_base(overlay, Some(routing_source)) as i64
 }
 
+fn definition_guard(name: &str) -> Regex {
+    // PORT NOTE: this is the TypeScript guard, factored so an ABI-preserving
+    // object-like macro can expose a descriptive C name without weakening the
+    // requirement that preprocessing emits the address-derived linker symbol.
+    Regex::new(&format!(r"\b{name}\s*\([^;{{}}]*\)\s*\{{"), "")
+}
+
+fn c_identifier(text: &str) -> bool {
+    let mut bytes = text.bytes();
+    match bytes.next() {
+        Some(first) if first == b'_' || first.is_ascii_alphabetic() => {}
+        _ => return false,
+    }
+    bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+}
+
+pub fn source_defines_symbol(text: &str, symbol: &str) -> bool {
+    if definition_guard(symbol).is_match(text) {
+        return true;
+    }
+
+    // Accept exactly one transparent object-like alias layer:
+    //     #define SetupRoofActorsByFacing Func_02000f80
+    //     void SetupRoofActorsByFacing(void) { ... }
+    // Function-like macros, chained aliases, replacement expressions, and
+    // trailing tokens remain rejected so the source-to-symbol proof is easy
+    // to audit without running an independent preprocessor in the guard.
+    for line in text.lines() {
+        let fields: Vec<&str> = line.split_ascii_whitespace().collect();
+        if fields.len() != 3 || fields[0] != "#define" || fields[2] != symbol {
+            continue;
+        }
+        let alias = fields[1];
+        if c_identifier(alias) && definition_guard(alias).is_match(text) {
+            return true;
+        }
+    }
+    false
+}
+
 /// `compileOverlayC(source, work, overlay, routingSource = source, extraFlags = [])`.
 pub fn compile_overlay_c(
     source: &Path,
@@ -501,12 +541,11 @@ pub fn compile_overlay_c(
     let symbol = format!("Func_{}", stem.to_lowercase());
 
     let text = fs::read_to_string(source).map_err(|error| format!("{source_display}: {error}"))?;
-    // PORT NOTE: `new RegExp("\\b" + symbol + "\\s*\\([^;{}]*\\)\\s*\\{")` is
-    // built by interpolation, unanchored, ASCII `\b`. `[^;{}]*` is greedy and
-    // spans newlines, because a negated class is NOT `.` and so is not stopped
-    // by a line terminator.
-    let guard = Regex::new(&format!(r"\b{symbol}\s*\([^;{{}}]*\)\s*\{{"), "");
-    if !guard.is_match(&text) {
+    // PORT NOTE: the direct-name branch retains the TypeScript regex exactly:
+    // unanchored ASCII `\b`, and a greedy `[^;{}]*` class that spans lines.
+    // The additional alias branch is Alchemy's documented reconstruction-name
+    // convention and still proves that preprocessing emits `symbol`.
+    if !source_defines_symbol(&text, &symbol) {
         return Err(format!("overlay C source does not define {symbol}: {source_display}"));
     }
 
@@ -1159,5 +1198,37 @@ mod tests {
             address_stem(Path::new("/x/p_c_0200BEEF.c")).expect("hex").1,
             0x0200_beef
         );
+    }
+
+    #[test]
+    fn source_symbol_guard_accepts_direct_and_transparent_alias_definitions() {
+        assert!(source_defines_symbol(
+            "void Func_02000f80(void) { }",
+            "Func_02000f80"
+        ));
+        assert!(source_defines_symbol(
+            "#define SetupRoofActorsByFacing Func_02000f80\n\
+             void SetupRoofActorsByFacing(void)\n{\n}\n",
+            "Func_02000f80"
+        ));
+    }
+
+    #[test]
+    fn source_symbol_guard_rejects_opaque_or_unbound_aliases() {
+        assert!(!source_defines_symbol(
+            "#define SetupRoofActorsByFacing Func_02000f80",
+            "Func_02000f80"
+        ));
+        assert!(!source_defines_symbol(
+            "#define SetupRoofActorsByFacing() Func_02000f80\n\
+             void SetupRoofActorsByFacing(void) { }",
+            "Func_02000f80"
+        ));
+        assert!(!source_defines_symbol(
+            "#define Alias SetupRoofActorsByFacing\n\
+             #define SetupRoofActorsByFacing Func_02000f80\n\
+             void Alias(void) { }",
+            "Func_02000f80"
+        ));
     }
 }

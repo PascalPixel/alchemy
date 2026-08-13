@@ -80,38 +80,46 @@ void Func_02000e92();          /* local: spawn, eight arguments (entry 1) */
 void Func_02000eaa();          /* local: spawn, eight arguments (entry 2) */
 void Func_02000ec8();          /* local: spawn, eight arguments (entry 3) */
 
+/* Semantic names are aliases only; the raw relocation symbols stay intact. */
+#define GetActor19Record       Func_020050e4
+#define WaitSceneFrames        Func_02005038
+#define LookupAlongComponent   Func_0200506e
+#define LookupAcrossComponent  Func_02005078
+#define NotifySceneEvent       Func_020052ac
+#define EmitSceneActorA        Func_02000e92
+#define EmitSceneActorB        Func_02000eaa
+#define EmitSceneActorC        Func_02000ec8
+
 void Func_02000cd4(void)
 {
-    u8 *record = Func_020050e4(19);
+    u8 *actor = GetActor19Record(19);
     u32 index;
     s32 angle;
-    s32 scalar;
 
     for (index = 8; index <= 12; index++) {
         angle = index << 12;
-        *(u16 *)(*(u8 **)(record + 80) + 30) = (u16)angle;
-        Func_02005038((12 - index) * 2);
-        *(s32 *)(record + 8) -= Func_0200506e(angle) * 6;
-        *(s32 *)(record + 16) -= Func_02005078(angle) * 6;
+        *(u16 *)(*(u8 **)(actor + 80) + 30) = (u16)angle;
+        WaitSceneFrames((12 - index) * 2);
+        *(s32 *)(actor + 8) -= LookupAlongComponent(angle) * 6;
+        *(s32 *)(actor + 16) -= LookupAcrossComponent(angle) * 6;
     }
 
-    *(s32 *)(record + 12) = 0x120000;          /* 144 << 13, i.e. 18.0 */
-    *(s32 *)(record + 60) = 0x120000;
-    *(s32 *)(record + 24) = -0xcccc;           /* 0xffff3334 */
+    *(s32 *)(actor + 12) = 0x120000;           /* 144 << 13, i.e. 18.0 */
+    *(s32 *)(actor + 60) = 0x120000;
+    *(s32 *)(actor + 24) = -0xcccc;            /* 0xffff3334 */
 
-    Func_020052ac(227);
+    NotifySceneEvent(227);
 
-    scalar = 0x3333;                           /* parked in r8 for the third */
-    Func_02000e92(*(s32 *)(record + 8) - 0xc0000,
-                  *(s32 *)(record + 12),
-                  *(s32 *)(record + 16) + 0x80000,
-                  *(s32 *)(record + 16) + 0x80000,
-                  0x10000, scalar, 0, 0, 0);
-    Func_02000eaa(*(s32 *)(record + 8),
-                  *(s32 *)(record + 12),
-                  0xcccc, 0x4ccc, 0, 0, 0);
-    Func_02000ec8(*(s32 *)(record + 8) + 0xa0000,
-                  *(s32 *)(record + 12),
-                  *(s32 *)(record + 16) + 0x80000,
-                  scalar, 0x6666, 0, 0, 0);
+    EmitSceneActorA(*(s32 *)(actor + 8) - 0xc0000,
+                    *(s32 *)(actor + 12),
+                    *(s32 *)(actor + 16) + 0x80000,
+                    0x10000, 0x3333, 0, 0, 0);
+    EmitSceneActorB(*(s32 *)(actor + 8),
+                    *(s32 *)(actor + 12),
+                    *(s32 *)(actor + 16) + 0x80000,
+                    0xcccc, 0x4ccc, 0, 0, 0);
+    EmitSceneActorC(*(s32 *)(actor + 8) + 0xa0000,
+                    *(s32 *)(actor + 12),
+                    *(s32 *)(actor + 16) + 0x80000,
+                    0x3333, 0x6666, 0, 0, 0);
 }

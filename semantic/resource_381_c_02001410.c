@@ -3,6 +3,84 @@
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
+typedef struct SceneSprite {
+    u8 unknown00[5];
+    u8 flags05;
+    u8 unknown06[3];
+    u8 flags09;
+    u8 unknown0A[0x12];
+    u8 tileIndex;
+    u8 unknown1D;
+    u16 facingAngle;
+    u8 unknown20[6];
+    s8 offsetX;
+    s8 offsetY;
+} SceneSprite;
+
+typedef struct SceneActor {
+    u8 unknown00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unknown20[3];
+    u8 flags23;
+    u8 unknown24[0x2C];
+    SceneSprite *sprite;
+    u8 unknown54[6];
+    u8 visible;
+} SceneActor;
+
+typedef struct SceneCamera {
+    u8 unknown00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown14[0x10];
+    s32 targetX;
+    u8 unknown28[4];
+    s32 targetZ;
+    u8 unknown30[8];
+    s32 velocityX;
+    s32 velocityY;
+    s32 velocityZ;
+    u8 unknown44[0x11];
+    s8 active;
+} SceneCamera;
+
+typedef struct SceneWorkspace {
+    u8 unknown000[0x40C];
+    s32 cameraTransitionEnabled;
+} SceneWorkspace;
+
+/* Named raw-field access preserves the current compiler alias shape while the
+ * exact resource_391 scene provides the witnessed record layout above. */
+#define ACTOR_X(actor) FIELD((actor), s32 *, 8)
+#define ACTOR_Y(actor) FIELD((actor), s32 *, 0xC)
+#define ACTOR_Z(actor) FIELD((actor), s32 *, 0x10)
+#define ACTOR_SCALE_X(actor) FIELD((actor), s32 *, 0x18)
+#define ACTOR_SCALE_Y(actor) FIELD((actor), s32 *, 0x1C)
+#define ACTOR_FLAGS(actor) FIELD((actor), u8 *, 0x23)
+#define ACTOR_SPRITE(actor) FIELD((actor), void **, 0x50)
+#define ACTOR_VISIBLE(actor) FIELD((actor), u8 *, 0x5A)
+#define SPRITE_FLAGS(sprite) FIELD((sprite), u8 *, 5)
+#define SPRITE_PRIORITY(sprite) FIELD((sprite), u8 *, 9)
+#define SPRITE_TILE_INDEX(sprite) FIELD((sprite), u8 *, 0x1C)
+#define SPRITE_FACING(sprite) FIELD((sprite), u16 *, 0x1E)
+#define SPRITE_OFFSET_X(sprite) FIELD((sprite), s8 *, 0x26)
+#define SPRITE_OFFSET_Y(sprite) FIELD((sprite), s8 *, 0x27)
+#define CAMERA_X(camera) FIELD((camera), s32 *, 8)
+#define CAMERA_Y(camera) FIELD((camera), s32 *, 0xC)
+#define CAMERA_Z(camera) FIELD((camera), s32 *, 0x10)
+#define CAMERA_TARGET_X(camera) FIELD((camera), s32 *, 0x24)
+#define CAMERA_TARGET_Z(camera) FIELD((camera), s32 *, 0x2C)
+#define CAMERA_VELOCITY_X(camera) FIELD((camera), s32 *, 0x38)
+#define CAMERA_VELOCITY_Y(camera) FIELD((camera), s32 *, 0x3C)
+#define CAMERA_VELOCITY_Z(camera) FIELD((camera), s32 *, 0x40)
+#define CAMERA_ACTIVE(camera) FIELD((camera), s8 *, 0x55)
+
 /*
  * Resource 381's Sol Sanctum collapse scene-direction sheet.
  *
@@ -121,14 +199,9 @@ extern void Func_080f9010();
 #define UpdateActorEffectFrame   Func_02002d94
 #define SetStoryFlag             Func_080770c8
 #define PlaySoundCue             Func_080f9010
+#define RunSolSanctumCollapse    Func_02001410
 
-typedef struct {
-    u8 unknown000[0x40C];
-    s32 cameraTransitionEnabled;
-} SceneWorkspace;
-
-/* ABI entry for RunResource381SceneDirection. */
-void Func_02001410(void) {
+void RunSolSanctumCollapse(void) {
     s32 effectResource;
     SceneWorkspace *sceneWorkspace = *(SceneWorkspace **)0x03001EC4;
     void *wiseOne = GetActorRecord(0xF);
@@ -186,15 +259,15 @@ void Func_02001410(void) {
     BuildSceneTileGrid();
     openingFrame = 0;
     cameraRecord = GetSceneCameraRecord();
-    FIELD(cameraRecord, s8 *, 0x55) = 0;
-    FIELD(cameraRecord, s32 *, 8) = 0xE70000;
-    FIELD(cameraRecord, s32 *, 0x10) = 0x900000;
-    FIELD(cameraRecord, s32 *, 0x38) = 0x80000000;
-    FIELD(cameraRecord, s32 *, 0x3C) = 0x80000000;
-    FIELD(cameraRecord, s32 *, 0x40) = 0x80000000;
-    FIELD(cameraRecord, s32 *, 0xC) = 0;
-    FIELD(cameraRecord, s32 *, 0x24) = 0;
-    FIELD(cameraRecord, s32 *, 0x2C) = 0;
+    CAMERA_ACTIVE(cameraRecord) = 0;
+    CAMERA_X(cameraRecord) = 0xE70000;
+    CAMERA_Z(cameraRecord) = 0x900000;
+    CAMERA_VELOCITY_X(cameraRecord) = 0x80000000;
+    CAMERA_VELOCITY_Y(cameraRecord) = 0x80000000;
+    CAMERA_VELOCITY_Z(cameraRecord) = 0x80000000;
+    CAMERA_Y(cameraRecord) = 0;
+    CAMERA_TARGET_X(cameraRecord) = 0;
+    CAMERA_TARGET_Z(cameraRecord) = 0;
     AdvanceTaskFrames(4);
     Func_08009128();
     AdvanceTaskFrames(4);
@@ -205,22 +278,22 @@ void Func_02001410(void) {
     WaitSceneFrames(0x28);
     isaac = GetActorRecord(0);
     garet = GetActorRecord(1);
-    isaacSprite = FIELD(isaac, void **, 0x50);
-    garetSprite = FIELD(garet, void **, 0x50);
+    isaacSprite = ACTOR_SPRITE(isaac);
+    garetSprite = ACTOR_SPRITE(garet);
     actorApproachStep = 0x6000;
     do {
-        FIELD(isaacSprite, u16 *, 0x1E) = (u16) (FIELD(isaacSprite, u16 *, 0x1E) + 0x100);
-        FIELD(garetSprite, u16 *, 0x1E) = (u16) (FIELD(garetSprite, u16 *, 0x1E) + 0xFFFFFF00);
-        FIELD(isaac, s32 *, 8) = (s32) (FIELD(isaac, s32 *, 8) + actorApproachStep);
-        FIELD(garet, s32 *, 8) = (s32) (FIELD(garet, s32 *, 8) - actorApproachStep);
+        SPRITE_FACING(isaacSprite) = (u16) (SPRITE_FACING(isaacSprite) + 0x100);
+        SPRITE_FACING(garetSprite) = (u16) (SPRITE_FACING(garetSprite) + 0xFFFFFF00);
+        ACTOR_X(isaac) = (s32) (ACTOR_X(isaac) + actorApproachStep);
+        ACTOR_X(garet) = (s32) (ACTOR_X(garet) - actorApproachStep);
         AdvanceTaskFrames(1);
         openingFrame += 1;
     } while (openingFrame <= 0x13U);
     WaitSceneFrames(0x28);
     SetActorScale(0, 0x20000, 0x10000);
     SetActorScale(1, 0x20000, 0x10000);
-    FIELD(FIELD(GetActorRecord(0), void **, 0x50), s16 *, 0x1E) = 0;
-    FIELD(FIELD(GetActorRecord(1), void **, 0x50), s16 *, 0x1E) = 0;
+    SPRITE_FACING(ACTOR_SPRITE(GetActorRecord(0))) = 0;
+    SPRITE_FACING(ACTOR_SPRITE(GetActorRecord(1))) = 0;
     ConfigureActorAnimation(0, 6, 0);
     ConfigureActorAnimation(1, 6, 0);
     Func_0808a0b8(0, 0xF6, 0x96);
@@ -228,9 +301,9 @@ void Func_02001410(void) {
     SetActorPresentation(0, 2);
     SetActorPresentation(1, 2);
     isaacFlagsRecord = GetActorRecord(0);
-    FIELD(isaacFlagsRecord, u8 *, 0x23) = (u8) (FIELD(isaacFlagsRecord, u8 *, 0x23) | 1);
+    ACTOR_FLAGS(isaacFlagsRecord) = (u8) (ACTOR_FLAGS(isaacFlagsRecord) | 1);
     garetFlagsRecord = GetActorRecord(1);
-    FIELD(garetFlagsRecord, u8 *, 0x23) = (u8) (1 | FIELD(garetFlagsRecord, u8 *, 0x23));
+    ACTOR_FLAGS(garetFlagsRecord) = (u8) (1 | ACTOR_FLAGS(garetFlagsRecord));
     Func_0808a0a8(0);
     Func_0808a0a8(1);
     MoveActor(0, 0x2000, 0);
@@ -452,9 +525,9 @@ void Func_02001410(void) {
     SetActorScale(0, 0x20000, 0x10000);
     SetActorScale(1, 0x20000, 0x10000);
     isaacHiddenRecordA = GetActorRecord(0);
-    FIELD(isaacHiddenRecordA, u8 *, 0x5A) = (u8) (0xFE & FIELD(isaacHiddenRecordA, u8 *, 0x5A));
+    ACTOR_VISIBLE(isaacHiddenRecordA) = (u8) (0xFE & ACTOR_VISIBLE(isaacHiddenRecordA));
     garetHiddenRecordA = GetActorRecord(1);
-    FIELD(garetHiddenRecordA, u8 *, 0x5A) = (u8) (0xFE & FIELD(garetHiddenRecordA, u8 *, 0x5A));
+    ACTOR_VISIBLE(garetHiddenRecordA) = (u8) (0xFE & ACTOR_VISIBLE(garetHiddenRecordA));
     ConfigureActorAnimation(0, 4, 0);
     ConfigureActorAnimation(1, 4, 0);
     Func_0808a0b8(0, 0x100, 0x96);
@@ -463,9 +536,9 @@ void Func_02001410(void) {
     ConfigureSceneTransition(0, 0x28, 0);
     WaitSceneFrames(0x14);
     isaacVisibleRecordA = GetActorRecord(0);
-    FIELD(isaacVisibleRecordA, u8 *, 0x5A) = (u8) (FIELD(isaacVisibleRecordA, u8 *, 0x5A) | 1);
+    ACTOR_VISIBLE(isaacVisibleRecordA) = (u8) (ACTOR_VISIBLE(isaacVisibleRecordA) | 1);
     garetVisibleRecordA = GetActorRecord(1);
-    FIELD(garetVisibleRecordA, u8 *, 0x5A) = (u8) (1 | FIELD(garetVisibleRecordA, u8 *, 0x5A));
+    ACTOR_VISIBLE(garetVisibleRecordA) = (u8) (1 | ACTOR_VISIBLE(garetVisibleRecordA));
     Func_0808a130(0, 2);
     SetActorMode(1, 2);
     WaitSceneFrames(0x28);
@@ -568,16 +641,17 @@ void Func_02001410(void) {
         WaitSceneFrames(0x28);
     }
     isaacRecordForStar = GetActorRecord(0);
-    elementalStarEffect = Func_080090c8(0x16, FIELD(isaacRecordForStar, s32 *, 8), FIELD(isaacRecordForStar, s32 *, 0xC) + 0x240000, FIELD(isaacRecordForStar, s32 *, 0x10));
+    elementalStarEffect = Func_080090c8(0x16, ACTOR_X(isaacRecordForStar), ACTOR_Y(isaacRecordForStar) + 0x240000, ACTOR_Z(isaacRecordForStar));
     if (elementalStarEffect != NULL) {
         effectResource = Func_08000140(0x11, 0x608);
-        elementalStarSprite = FIELD(elementalStarEffect, void **, 0x50);
-        FIELD(elementalStarSprite, s8 *, 0x26) = 0;
-        FIELD((elementalStarSprite + 0x26), s8 *, 1) = 0;
-        FIELD(elementalStarSprite, u8 *, 5) = (u8) (-0x21 & FIELD(elementalStarSprite, u8 *, 5));
-        FIELD(elementalStarSprite, u8 *, 9) = (u8) ((0xF & FIELD(elementalStarSprite, u8 *, 9) & ~0xC) | 4);
+        elementalStarSprite = ACTOR_SPRITE(elementalStarEffect);
+        SPRITE_OFFSET_X(elementalStarSprite) = 0;
+        SPRITE_OFFSET_Y(elementalStarSprite) = 0;
+        SPRITE_FLAGS(elementalStarSprite) = (u8) (-0x21 & SPRITE_FLAGS(elementalStarSprite));
+        SPRITE_PRIORITY(elementalStarSprite) =
+            (u8) ((0xF & SPRITE_PRIORITY(elementalStarSprite) & ~0xC) | 4);
         Func_08015250(0xDE);
-        Func_080001c8(FIELD(elementalStarSprite, u8 *, 0x1C), 0x80, effectResource + 0x400);
+        Func_080001c8(SPRITE_TILE_INDEX(elementalStarSprite), 0x80, effectResource + 0x400);
         Func_08000150(0x11);
         SetActorSlotPresentation(0, 0x1C);
         Func_0808a390(elementalStarEffect, 3);
@@ -590,15 +664,15 @@ void Func_02001410(void) {
         AdvanceTaskFrames(1);
         UpdateActorEffectFrame(wiseOne);
         AdvanceTaskFrames(1);
-        FIELD(elementalStarEffect, s32 *, 0x18) = 0x6666;
-        FIELD(elementalStarEffect, s32 *, 0x1C) = 0x6666;
+        ACTOR_SCALE_X(elementalStarEffect) = 0x6666;
+        ACTOR_SCALE_Y(elementalStarEffect) = 0x6666;
         UpdateActorEffectFrame(wiseOne);
         AdvanceTaskFrames(1);
         UpdateActorEffectFrame(wiseOne);
         pulseFrame += 1;
         AdvanceTaskFrames(1);
-        FIELD(elementalStarEffect, s32 *, 0x18) = 0x10000;
-        FIELD(elementalStarEffect, s32 *, 0x1C) = 0x10000;
+        ACTOR_SCALE_X(elementalStarEffect) = 0x10000;
+        ACTOR_SCALE_Y(elementalStarEffect) = 0x10000;
     } while (pulseFrame <= 0x17U);
     Func_0808a158(0xF, 0);
     ConfigureSceneTransition(0, 0x14, 0);
@@ -653,17 +727,17 @@ void Func_02001410(void) {
     ConfigureActorAnimation(0, 6, 0);
     ConfigureActorAnimation(1, 6, 0);
     isaacHiddenRecordB = GetActorRecord(0);
-    FIELD(isaacHiddenRecordB, u8 *, 0x5A) = (u8) (0xFE & FIELD(isaacHiddenRecordB, u8 *, 0x5A));
+    ACTOR_VISIBLE(isaacHiddenRecordB) = (u8) (0xFE & ACTOR_VISIBLE(isaacHiddenRecordB));
     garetHiddenRecordB = GetActorRecord(1);
-    FIELD(garetHiddenRecordB, u8 *, 0x5A) = (u8) (0xFE & FIELD(garetHiddenRecordB, u8 *, 0x5A));
+    ACTOR_VISIBLE(garetHiddenRecordB) = (u8) (0xFE & ACTOR_VISIBLE(garetHiddenRecordB));
     Func_0808a0b8(0, 0xF5, 0x91);
     Func_0808a0b8(1, 0xD7, 0xA8);
     Func_0808a0e8(1);
     WaitSceneFrames(0x50);
     isaacVisibleRecordB = GetActorRecord(0);
-    FIELD(isaacVisibleRecordB, u8 *, 0x5A) = (u8) (FIELD(isaacVisibleRecordB, u8 *, 0x5A) | 1);
+    ACTOR_VISIBLE(isaacVisibleRecordB) = (u8) (ACTOR_VISIBLE(isaacVisibleRecordB) | 1);
     garetVisibleRecordB = GetActorRecord(1);
-    FIELD(garetVisibleRecordB, u8 *, 0x5A) = (u8) (1 | FIELD(garetVisibleRecordB, u8 *, 0x5A));
+    ACTOR_VISIBLE(garetVisibleRecordB) = (u8) (1 | ACTOR_VISIBLE(garetVisibleRecordB));
     Func_0808a0b8(0xF, 0xB8, 0x57);
     Func_0808a0e8(0xF);
     MoveActor(0xF, 0x4000, 0);

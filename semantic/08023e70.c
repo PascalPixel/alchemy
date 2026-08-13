@@ -58,12 +58,6 @@ struct Inventory_08023e70 {
     s32 entry_count;
 };
 
-struct CharacterData_08023e70 {
-    u8 reserved00[0xf8];
-    u32 available[4];
-    u32 selected[4];
-};
-
 union OamWord_08023e70 {
     u32 word;
     struct {
@@ -91,8 +85,18 @@ LAYOUT_OFFSET_GUARD(Engine08023e70_Busy, struct Engine_08023e70, menu_busy, 0xea
 LAYOUT_OFFSET_GUARD(MenuControl08023e70_Row, struct MenuControl_08023e70, row, 0x30);
 LAYOUT_OFFSET_GUARD(MenuControl08023e70_Selected, struct MenuControl_08023e70, selected_entries, 0xe4);
 LAYOUT_OFFSET_GUARD(Inventory08023e70_Count, struct Inventory_08023e70, entry_count, 0x108);
-LAYOUT_OFFSET_GUARD(CharacterData08023e70_Available, struct CharacterData_08023e70, available, 0xf8);
 LAYOUT_OFFSET_GUARD(ScreenState08023e70_Flags, struct ScreenState_08023e70, flags, 0x0c);
+
+/* These raw views preserve the ROM's base-pointer arithmetic while naming the
+ * character masks and four-byte inventory records it accesses. */
+#define CHARACTER_AVAILABLE(base, row) (*(u32 *)((base) + (row) * 4))
+#define CHARACTER_SELECTED(base, row) (*(u32 *)((base) + 0x10 + (row) * 4))
+#define INVENTORY_ENTRIES(base) ((base) + 8)
+#define INVENTORY_ENTRY_COUNT(base) (*(s32 *)((base) + 0x108))
+#define INVENTORY_ROW(entry) ((entry)[0])
+#define INVENTORY_SLOT(entry) ((entry)[1])
+#define INVENTORY_CATEGORY(entry) ((entry)[2])
+#define INVENTORY_QUANTITY(entry) (*(s8 *)((entry) + 3))
 
 extern struct Engine_08023e70 *Data_03001e8c;
 extern struct MenuControl_08023e70 *Data_03001f34;
@@ -134,9 +138,11 @@ s32 Func_080022ec(s32, s32);
 void Func_0800352c(void);
 void Func_080f9010(s32);
 void *Func_08077000(s32);
-void *Func_08077008(s32);
+u8 *Func_08077008(s32);
 
 s32 Func_08023e70(s32 arg0, s32 arg1) {
+    struct CursorSprite_08023e70 cursorSprite;
+    s16 description[26];
     struct CursorSprite_08023e70 *sp4;
     u8 *sp8;
     s16 *spC;
@@ -207,17 +213,14 @@ s32 Func_08023e70(s32 arg0, s32 arg1) {
     u16 temp_r5_3;
     u32 temp_r0_3;
     u32 temp_r0_4;
-    struct Inventory_08023e70 *temp_r0;
-    struct InventoryEntry_08023e70 *temp_r0_2;
-    struct InventoryEntry_08023e70 *temp_r2_2;
+    u8 *temp_r0;
+    u8 *temp_r0_2;
+    u8 *temp_r2_2;
     struct MenuControl_08023e70 *temp_r3;
     struct Window_08023e70 *temp_r3_10;
     struct ScreenState_08023e70 *temp_r3_9;
     struct Window_08023e70 *temp_r7;
-    struct CharacterData_08023e70 *var_r8;
-
-    struct CursorSprite_08023e70 cursorSprite;
-    s16 description[26];
+    u8 *var_r8;
 
     (void)arg1;
     sp4C = arg0;
@@ -247,31 +250,31 @@ s32 Func_08023e70(s32 arg0, s32 arg1) {
         var_r5 = &sp38[sp34];
 loop_2:
         temp_r2 = 1 << var_r6_2;
-        if (var_r8->selected[var_r7] & temp_r2) {
+        if (CHARACTER_SELECTED(var_r8, var_r7) & temp_r2) {
             *var_r5 = (var_r7 << 8) | var_r6_2;
             var_r5 += 1;
             sp34 += 1;
-        } else if (var_r8->available[var_r7] & temp_r2) {
+        } else if (CHARACTER_AVAILABLE(var_r8, var_r7) & temp_r2) {
             var_r0 = 0;
             if ((u32) sp4C > 7U) {
                 var_r0 = 1;
             }
             temp_r0 = Func_08077000(var_r0);
             var_r1 = 0;
-            temp_r0_2 = temp_r0->entries;
+            temp_r0_2 = INVENTORY_ENTRIES(temp_r0);
             var_r4 = 0;
-            if (temp_r0->entry_count > 0) {
-                if ((temp_r0_2[0].category != sp4C) ||
-                    (temp_r0_2[0].row != var_r7) ||
-                    (temp_r0_2[0].slot != var_r6_2)) {
+            if (INVENTORY_ENTRY_COUNT(temp_r0) > 0) {
+                if ((INVENTORY_CATEGORY(temp_r0_2) != sp4C) ||
+                    (INVENTORY_ROW(temp_r0_2) != var_r7) ||
+                    (INVENTORY_SLOT(temp_r0_2) != var_r6_2)) {
 loop_11:
                     var_r1 += 1;
-                    if (var_r1 < temp_r0->entry_count) {
+                    if (var_r1 < INVENTORY_ENTRY_COUNT(temp_r0)) {
                         var_r4 = var_r1 * 4;
-                        temp_r2_2 = &temp_r0_2[var_r1];
-                        if ((temp_r2_2->category == sp4C) &&
-                            (temp_r2_2->row == var_r7) &&
-                            (temp_r2_2->slot == var_r6_2)) {
+                        temp_r2_2 = temp_r0_2 + var_r4;
+                        if ((INVENTORY_CATEGORY(temp_r2_2) == sp4C) &&
+                            (INVENTORY_ROW(temp_r2_2) == var_r7) &&
+                            (INVENTORY_SLOT(temp_r2_2) == var_r6_2)) {
 
                         } else {
                             goto loop_11;
@@ -285,7 +288,7 @@ loop_11:
             }
             temp_r2_3 = (var_r7 << 8) | var_r6_2 | 0x10000;
             *var_r5 = temp_r2_3;
-            temp_r3_2 = temp_r0_2[var_r1].quantity;
+            temp_r3_2 = INVENTORY_QUANTITY(temp_r0_2 + var_r1 * 4);
             if ((s32) temp_r3_2 > 0) {
                 *var_r5 = temp_r2_3 | (temp_r3_2 << 0x11);
             }

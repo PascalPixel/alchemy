@@ -49,7 +49,9 @@ extern void Func_0808a250();
 extern void Func_0808a260();
 extern void Func_080f9010();
 
-void Func_02000b24(void) {
+#define RunScene58Sequence Func_02000b24
+
+void RunScene58Sequence(void) {
     void *temp_r0;
     void *temp_r0_10;
     void *temp_r0_11;
@@ -145,8 +147,8 @@ void Func_02000b24(void) {
         Func_0808a110(1, 4);
         Func_0808a010(0x14);
         Func_0808a188(1, 0, 0x14);
-        FIELD(temp_r2, u16 *, 0x1D8) = (u16) (FIELD(temp_r2, u16 *, 0x1D8) + 2);
         temp_r2 = *(u8 **)0x03001ebc;
+        FIELD(temp_r2, u16 *, 0x1D8) = (u16) (FIELD(temp_r2, u16 *, 0x1D8) + 2);
     } else {
         temp_r2_2 = *(u8 **)0x03001ebc;
         FIELD(temp_r2_2, u16 *, 0x1D8) = (u16) (FIELD(temp_r2_2, u16 *, 0x1D8) + 2);

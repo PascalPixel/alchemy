@@ -74,7 +74,6 @@ void RunScene59ValeSequence(void) {
     void *scene_counter_later_b;
     void *scene_counter_final_a;
     void *scene_counter_final_b;
-    void *scene_system;
 
     Func_0808a018();
     FIELD(Func_0808a080(9), s8 *, 0x55) = 0;
@@ -374,52 +373,55 @@ void RunScene59ValeSequence(void) {
     Func_0808a1b8(2, 0x8000, 0x14);
     Func_0808a188(0x18, 0, 0x14);
     Func_0808a208(0x30000, 0x6000);
-    scene_system = *(u8 **)0x03001e70;
-    Func_0808a210(0x980000, -1, 0xD80000, 1);
-    FIELD((FIELD(scene_system, s32 *, 0) + 0x164), s32 *, 0xC) = 0x03800000;
-    Func_08009128();
-    Func_080000c0(1);
-    FIELD(Func_0808a080(9), s8 *, 0x55) = 0;
-    Func_0808a0f0(9, 0x680000, 0x01080000);
-    actor9_fixed_y = 0xffe00000;
-    FIELD(Func_0808a080(9), s32 *, 0xC) = actor9_fixed_y;
-    FIELD(Func_0808a080(9), s32 *, 0x3C) = actor9_fixed_y;
-    Func_08009180(0x1D, 0x4A, 4, 0x4A, 5, 4);
-    Func_0808a1e0(0x11, 0);
-    Func_0808a1e0(0x12, 0);
-    Func_02003324();
-    Func_0808a1e0(0x11, 1);
-    Func_0808a1e0(0x12, 1);
-    Func_0808a218();
-    Func_0808a010(0x1E);
-    Func_0808a1b8(0x18, 0x8000, 0x14);
-    Func_0808a188(0x18, 0, 0x14);
-    Func_0808a210(0x01180000, -1, 0xD80000, 1);
-    Func_0808a218();
-    Func_0808a1b8(0x18, 0x3000, 0x14);
-    Func_0808a100(0x18, 5);
-    Func_0808a188(0x18, 0, 0x14);
-    Func_0808a138(2, 2);
-    Func_0808a010(0x14);
-    Func_0808a1b8(2, 0xA000, 0x14);
-    Func_0808a188(2, 0, 0x14);
-    Func_0808a138(1, 1);
-    Func_0808a010(0x14);
-    Func_0808a188(1, 0, 0x14);
-    Func_0808a1e8(0x18, 0x00000101, 0x3C);
-    Func_0808a178(0x18, 0);
-    if (Func_0808a070(0, 0) == 0) {
+    {
+        void **scene_system_cell;
+        Func_0808a210(0x980000, -1, 0xD80000, 1);
+        scene_system_cell = (void **)0x03001e70;
+        FIELD(((u8 *)*scene_system_cell + 0x164), s32 *, 0xC) = 0x03800000;
+        Func_08009128();
+        Func_080000c0(1);
+        FIELD(Func_0808a080(9), s8 *, 0x55) = 0;
+        Func_0808a0f0(9, 0x680000, 0x01080000);
+        actor9_fixed_y = 0xffe00000;
+        FIELD(Func_0808a080(9), s32 *, 0xC) = actor9_fixed_y;
+        FIELD(Func_0808a080(9), s32 *, 0x3C) = actor9_fixed_y;
+        Func_08009180(0x1D, 0x4A, 4, 0x4A, 5, 4);
+        Func_0808a1e0(0x11, 0);
+        Func_0808a1e0(0x12, 0);
+        Func_02003324();
+        Func_0808a1e0(0x11, 1);
+        Func_0808a1e0(0x12, 1);
+        Func_0808a218();
+        Func_0808a010(0x1E);
+        Func_0808a1b8(0x18, 0x8000, 0x14);
+        Func_0808a188(0x18, 0, 0x14);
+        Func_0808a210(0x01180000, -1, 0xD80000, 1);
+        Func_0808a218();
+        Func_0808a1b8(0x18, 0x3000, 0x14);
+        Func_0808a100(0x18, 5);
+        Func_0808a188(0x18, 0, 0x14);
+        Func_0808a138(2, 2);
         Func_0808a010(0x14);
-        Func_0808a138(0x16, 2);
+        Func_0808a1b8(2, 0xA000, 0x14);
+        Func_0808a188(2, 0, 0x14);
+        Func_0808a138(1, 1);
         Func_0808a010(0x14);
-        Func_0808a188(0x16, 0, 0x14);
-        scene_counter_system_a = FIELD(scene_system, void **, 0x4C);
-        SCENE_SKIP_COUNT(scene_counter_system_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_a) + 1);
-    } else {
-        scene_counter_system_b = FIELD(scene_system, void **, 0x4C);
-        SCENE_SKIP_COUNT(scene_counter_system_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_b) + 1);
-        Func_0808a010(0x14);
-        Func_0808a188(0x16, 0, 0x14);
+        Func_0808a188(1, 0, 0x14);
+        Func_0808a1e8(0x18, 0x00000101, 0x3C);
+        Func_0808a178(0x18, 0);
+        if (Func_0808a070(0, 0) == 0) {
+            Func_0808a010(0x14);
+            Func_0808a138(0x16, 2);
+            Func_0808a010(0x14);
+            Func_0808a188(0x16, 0, 0x14);
+            scene_counter_system_a = FIELD(scene_system_cell, void **, 0x4C);
+            SCENE_SKIP_COUNT(scene_counter_system_a) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_a) + 1);
+        } else {
+            scene_counter_system_b = FIELD(scene_system_cell, void **, 0x4C);
+            SCENE_SKIP_COUNT(scene_counter_system_b) = (u16) (SCENE_SKIP_COUNT(scene_counter_system_b) + 1);
+            Func_0808a010(0x14);
+            Func_0808a188(0x16, 0, 0x14);
+        }
     }
     Func_0808a138(0x18, 2);
     Func_0808a010(0x14);

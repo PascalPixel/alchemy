@@ -74,6 +74,8 @@ typedef void *(*WordCopy_080e7404)(void *destination, const void *source,
 typedef void (*Renderer_080e7404)(void *target, const void *source, s32 x,
                                   s32 y, u32 width, s32 height);
 
+#define RunTwoStageProjectionVisualEffect Func_080e7404
+
 void Func_08002dd8(s32);
 void Func_080030f8(u32);
 void Func_080041d8(const void *, s32);
@@ -117,7 +119,7 @@ void Func_080f9010(s32);
  * are continuations of this owner rather than independently callable entries.
  */
 
-s32 Func_080e7404(s32 arg0, s32 arg1) {
+s32 RunTwoStageProjectionVisualEffect(s32 context, s32 mode) {
     Renderer_080e7404 renderer_46_first;
     Renderer_080e7404 renderer_46_second;
     s32 sp10;
@@ -261,10 +263,10 @@ s32 Func_080e7404(s32 arg0, s32 arg1) {
     world = stackWorkspace + 7;
     transform = stackWorkspace + 13;
 
-    sp4C = arg1;
+    sp4C = mode;
     sp48 = *(u8 **)0x03001EF0;
     state = *(u8 **)0x03001EEC;
-    M2C_FIELD(state, s32 *, 0x7828) = arg0;
+    M2C_FIELD(state, s32 *, 0x7828) = context;
     Func_080cd594(0x2000);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     if (sp4C == 1) {

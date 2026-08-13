@@ -45,16 +45,6 @@
  * end of the 0x3384-byte assembled reconstruction.  The overlay image is
  * writable EWRAM, so those are live variables, not constants.
  *
- * MATCHING STATE (2026-08-13).  The production route now carries
- * -fthumb-no-constant-reuse and -fthumb-call-arg0-before-pool: the reference
- * rematerializes repeated small constants (every -1 is a fresh movs/negs)
- * and orders immediate arguments before pool loads.  Those two routes plus
- * the first witnessed constant locals (`keep_fe` below) cut the residual
- * from 2,675 to 1,928 differing halfwords.  What the reference does cache it
- * caches as block-scoped named locals in callee-saved registers; the
- * remaining residual is the un-modeled tail of those cached ranges, mapped
- * by register/value/site in the LAWS addendum of the same date.
- *
  * This owner is the WRITER of the state the two installed tasks read, which
  * settles the open question in resource_391_c_020027c8.c and matches
  * resource_391_c_02002974.c exactly:
@@ -765,6 +755,76 @@ void Func_020027c8(void);
 void Func_02002974(void);
 void Func_02002ad8(void);
 
+static __inline__ void Call_02003a6a(s32 actor, s32 x, s32 z)
+{
+    Func_02003a6a(actor, x, z);
+}
+
+static __inline__ void Call_02003a7e(s32 actor, s32 x, s32 z)
+{
+    Func_02003a7e(actor, x, z);
+}
+
+static __inline__ void Call_02003a88(s32 actor, s32 x, s32 z)
+{
+    Func_02003a88(actor, x, z);
+}
+
+static __inline__ void Call_02003ad0(s32 actor, s32 x, s32 z)
+{
+    Func_02003ad0(actor, x, z);
+}
+
+static __inline__ void Call_02003c20(s32 actor, s32 value, s32 mode)
+{
+    Func_02003c20(actor, value, mode);
+}
+
+static __inline__ void Call_020045e4(s32 actor, s32 value, s32 mode)
+{
+    Func_020045e4(actor, value, mode);
+}
+
+static __inline__ void Call_02004aa2(s32 actor, s32 value, s32 mode)
+{
+    Func_02004aa2(actor, value, mode);
+}
+
+static __inline__ void Call_02004aac(s32 actor, s32 value, s32 mode)
+{
+    Func_02004aac(actor, value, mode);
+}
+
+static __inline__ void Call_02004ab6(s32 actor, s32 value, s32 mode)
+{
+    Func_02004ab6(actor, value, mode);
+}
+
+static __inline__ void Call_02004f7c(s32 actor, s32 value, s32 mode)
+{
+    Func_02004f7c(actor, value, mode);
+}
+
+static __inline__ void Call_02004f86(s32 actor, s32 value, s32 mode)
+{
+    Func_02004f86(actor, value, mode);
+}
+
+static __inline__ void Call_0200529a(s32 actor, s32 x, s32 z)
+{
+    Func_0200529a(actor, x, z);
+}
+
+static __inline__ void Call_020052a4(s32 actor, s32 x, s32 z)
+{
+    Func_020052a4(actor, x, z);
+}
+
+static __inline__ void Call_020052ae(s32 actor, s32 x, s32 z)
+{
+    Func_020052ae(actor, x, z);
+}
+
                      
 
                     
@@ -794,15 +854,7 @@ void Func_02002ad8(void);
 void Func_02000d3c(void)
 {
     struct Obj *p;
-    s32 keep_fe;
-    s32 turn_c000;
-    s32 beat_4000;
-    s32 beat_2000;
-    s32 beat_6000;
-    s32 lift_a000;
-    s32 lift_4000;
-    s32 actor1_2000;
-    s32 actor1_6000;
+    s32 *has_actor;
 
     Func_02003952();
     Func_02003a44(-1, -1, -1, 0);
@@ -810,7 +862,8 @@ void Func_02000d3c(void)
     Func_02003a5c(246 << 16, -1, 151 << 18, 0);
 
     /* The scene-variant flag: with it clear, slot 3 and actor 15 are absent. */
-    Data_0200b394 = Func_0200396c(3);
+    has_actor = &Data_0200b394;
+    *has_actor = Func_0200396c(3);
 
     p = Func_020039a4(13);
     Func_02003972(p, 0);
@@ -844,10 +897,10 @@ void Func_02000d3c(void)
     Func_02003b34();
     Func_02003b40();
 
-    Func_02003a6a(0, 0xcccc, 0x6666);
+    Call_02003a6a(0, 0xcccc, 0x6666);
     Func_02003aac(0, 254, 0x251);
-    Func_02003a7e(1, 0x9999, 0x4ccc);
-    Func_02003a88(2, 0x9999, 0x4ccc);
+    Call_02003a7e(1, 0x9999, 0x4ccc);
+    Call_02003a88(2, 0x9999, 0x4ccc);
 
     p = Func_02003a86(0);
     if (p != 0) {
@@ -861,7 +914,7 @@ void Func_02000d3c(void)
     Func_02003ac8(2, Data_0200ae54);
 
     if (Data_0200b394 != 0) {
-        Func_02003ad0(3, 0x9999, 0x4ccc);
+        Call_02003ad0(3, 0x9999, 0x4ccc);
         p = Func_02003ace(0);
         if (p != 0) {
             Func_02003b34(3, p->f08, p->f10);
@@ -870,9 +923,9 @@ void Func_02000d3c(void)
     }
 
     {
-        s32 movement_2000;
         s32 movement_4000;
         s32 movement_6000;
+        s32 movement_2000;
         s32 movement_a000;
         s32 movement_c000;
 
@@ -891,7 +944,7 @@ void Func_02000d3c(void)
         Func_02003bfc(1, movement_2000, 0);
         movement_a000 = 0xa000;
         Func_020036ba(0, movement_a000, 10);
-        Func_02003c20(1, 0x101, 0);
+        Call_02003c20(1, 0x101, 0);
         Func_02003c2a(0, 0x101, 0);
         Func_02003b58(40);
         Func_02003c2a(1, movement_4000, 0);
@@ -925,7 +978,7 @@ void Func_02000d3c(void)
 
     /* First effect task: the 0x27c8 spawner, gated by Data_0200b398. */
     Data_0200b398 = 1;
-    Func_02003bd6((void *)((u32)Func_020027c8 + 1), 3200);
+    Func_02003bd6((void (*)(void))0x0200a7c9, 3200);
 
     Func_02003bd4(20);
     Func_02003d4c(0x00405210, 1);
@@ -1004,9 +1057,9 @@ void Func_02000d3c(void)
     }
 
     /* Stop the 0x27c8 spawner, then uninstall it. */
-    Func_02003e3a(160);
     Data_0200b398 = 0;
-    Func_02003dd0((void *)((u32)Func_020027c8 + 1));
+    Func_02003e3a(160);
+    Func_02003dd0((void (*)(void))0x0200a7c9);
 
     Func_02003e46(120);
     Func_02003f3e(0x00406218, 1);
@@ -1017,7 +1070,7 @@ void Func_02000d3c(void)
     Data_0200b388 = 0;
     Data_0200b384 = 0x00800000;
     Data_0200b38c = 1;
-    Func_02003dfe((void *)((u32)Func_02002974 + 1), 3200);
+    Func_02003dfe((void (*)(void))0x0200a975, 3200);
 
     Func_02003e7c(180);
     Func_02003fa2(21);
@@ -1030,6 +1083,7 @@ void Func_02000d3c(void)
     Func_02003ec8(60);
     Func_02003a34(2, 20);
 
+    Data_0200b38c = 2;
     Func_02003f74(2, 2);
     Func_02003ee2(20);
     Func_02003f82(1, 1);
@@ -1044,7 +1098,6 @@ void Func_02000d3c(void)
     Func_02003fc2(1, 2);
     Func_02003f30(20);
     Func_02003fd0(3, 2);
-    Data_0200b38c = 2;
     Func_0200401c(1, 258, 0);
     Func_02003ab0(1, 20);
 
@@ -1057,11 +1110,10 @@ void Func_02000d3c(void)
 
     Data_0200b38c = 3;
 
-    keep_fe = 0xfe;
-    Func_02003fce(0)->f23 &= keep_fe;
-    Func_02003fe0(1)->f23 &= keep_fe;
-    Func_02003ff0(2)->f23 &= keep_fe;
-    Func_02004000(3)->f23 &= keep_fe;
+    Func_02003fce(0)->f23 &= 0xfe;
+    Func_02003fe0(1)->f23 &= 0xfe;
+    Func_02003ff0(2)->f23 &= 0xfe;
+    Func_02004000(3)->f23 &= 0xfe;
     Func_020040c2(0, 3);
     Func_020040ca(1, 3);
     Func_020040d2(2, 3);
@@ -1069,28 +1121,28 @@ void Func_02000d3c(void)
 
     /* Third effect task: 0x2ad8. */
     Data_0200b390 = 0;
-    Func_02003fa2((void *)((u32)Func_02002ad8 + 1), 3200);
+    Func_02003fa2((void (*)(void))0x0200aad9, 3200);
 
     Func_02004140(220);
 
-    Func_02004046(13)->f23 &= keep_fe;
+    Func_02004046(13)->f23 &= 0xfe;
     Func_02004108(13, 2);
     Func_020040bc(13, 253 << 16, 0x025b0000);
     Func_0200407e(13, Data_0200af6c);
 
-    Func_02004074(14)->f23 &= keep_fe;
+    Func_02004074(14)->f23 &= 0xfe;
     Func_02004136(14, 2);
     Func_020040ea(14, 233 << 16, 0x02750000);
     Func_020040aa(14, Data_0200af6c);
 
     if (Data_0200b394 != 0) {
-        Func_020040a8(15)->f23 &= keep_fe;
+        Func_020040a8(15)->f23 &= 0xfe;
         Func_0200416a(15, 2);
         Func_0200411e(15, 207 << 16, 0x02610000);
         Func_020040de(15, Data_0200af6c);
     }
 
-    Func_020040d4(16)->f23 &= keep_fe;
+    Func_020040d4(16)->f23 &= 0xfe;
     Func_02004196(16, 2);
     Func_0200414c(16, 227 << 16, 145 << 18);
     Func_0200410c(16, Data_0200af6c);
@@ -1103,7 +1155,7 @@ void Func_02000d3c(void)
     }
 
     Func_020040f8(300);
-    Func_0200408e((void *)((u32)Func_02002974 + 1));
+    Func_0200408e((void (*)(void))0x0200a975);
     Func_02004104(120);
     Func_0200422a(17);
     Func_02004204(0x10000, 1);
@@ -1168,17 +1220,21 @@ void Func_02000d3c(void)
     Func_02003e12(1, 0x4000, 60);
     Func_02003e02(1, 20);
     Func_0200433e(1, 2);
-    actor1_2000 = 0x2000;
-    Func_02003e14(1, 10);
-    Func_0200435a(0, 3);
-    Func_02003e40_b(1, actor1_2000, 20);
-    Func_020043a8(1, 0x101, 0);
-    actor1_6000 = 0x6000;
-    Func_020042d8(40);
-    Func_02003e5e(1, actor1_6000, 40);
-    Func_02003e68(1, actor1_2000, 20);
-    Func_02003e72(1, actor1_6000, 20);
-    Func_02003e7c(1, actor1_2000, 10);
+    {
+        s32 actor1_2000 = 0x2000;
+        s32 actor1_6000;
+
+        Func_02003e14(1, 10);
+        Func_0200435a(0, 3);
+        Func_02003e40_b(1, actor1_2000, 20);
+        Func_020043a8(1, 0x101, 0);
+        actor1_6000 = 0x6000;
+        Func_020042d8(40);
+        Func_02003e5e(1, actor1_6000, 40);
+        Func_02003e68(1, actor1_2000, 20);
+        Func_02003e72(1, actor1_6000, 20);
+        Func_02003e7c(1, actor1_2000, 10);
+    }
     Func_0200439a(1, 2, 0);
     Func_02004310(40);
     Func_020043aa(1, 2, 0);
@@ -1207,67 +1263,75 @@ void Func_02000d3c(void)
         SKIP_BEAT();
     }
 
-    Func_020044ae(1, 2, 0);
-    beat_4000 = 0x4000;
-    Func_02003fa6(1, beat_4000, 20);
-    Func_020044bc(1, 3);
-    beat_2000 = 0x2000;
-    Func_02003fba(1, beat_2000, 10);
-    Func_02003faa(1, 20);
-    Func_020044d6(1, 3);
-    Func_02004454(10);
-    Func_020044fc(2, 1);
-    Func_02004462(40);
-    Func_0200450a(2, 2);
-    Func_02004470(20);
-    Func_02004548(2, 2);
-    Func_0200449e(2)->f23 |= 1;
-    p = Func_020044ae_b(2);
-    Func_0200447c(p, 1);
-    Func_0200452e(2, 4, 0);
-    Func_02004526(2, 1);
-    Func_0200457a(2, 0xc000, 0);
-    Func_0200455a(0, 2);
-    Func_020044c0(10);
-    Func_02004598(0, 2);
-    Func_020044ee(0)->f23 |= 1;
-    p = Func_020044fc_b(0);
-    Func_020044ca(p, 1);
-    Func_0200457e(0, 4, 0);
-    Func_02004578(0, 1);
-    beat_6000 = 0x6000;
-    Func_0200407e(0, beat_6000, 60);
-    Func_020045e4(0, 0x105, 0);
-    Func_020045ee(2, 0x105, 0);
-    Func_0200451c(60);
-    Func_020040a4(0, 0xa000, 20);
-    Func_020045b8(1, 3);
-    Func_020045c0(0, 3);
-    Func_020040be(0, beat_6000, 10);
-    Func_020040c8(1, beat_4000, 10);
-    Func_02004620(2, 0xc000, 0);
-    Func_020045e8(2, 3);
-    Func_020040cc(2, 20);
-    Func_020045f0(0, 3);
-    Func_020045f8(3, 3);
-    Func_02004608(1, 3);
-    Func_02004586(20);
-    Func_0200462e(2, 1);
-    Func_02004594(20);
-    Func_02004654(2, 0);
-    Func_02004624(2, 3);
-    Func_02004678(2, 0xe000, 0);
-    Func_02004682(1, beat_2000, 0);
+    {
+        s32 angle_2000;
+        s32 angle_4000;
+        s32 angle_6000;
 
-    if (Func_020045da(0, 0) == 0) {
-        Func_0200464e(2, 3);
-        Func_0200465e(1, 3);
-        SKIP_BEAT();
-    } else {
-        Func_02004690(1, 2);
-        Func_02004176(1, beat_2000, 10);
-        Func_0200469a(1, 2);
-        Func_020046ca(1, 0);
+        angle_4000 = 0x80;
+        Func_020044ae(1, 2, 0);
+        angle_4000 <<= 7;
+        angle_2000 = 0x80;
+        angle_2000 <<= 6;
+        Func_02003fa6(1, angle_4000, 20);
+        Func_020044bc(1, 3);
+        Func_02003fba(1, angle_2000, 10);
+        Func_02003faa(1, 20);
+        Func_020044d6(1, 3);
+        Func_02004454(10);
+        Func_020044fc(2, 1);
+        Func_02004462(40);
+        Func_0200450a(2, 2);
+        Func_02004470(20);
+        Func_02004548(2, 2);
+        Func_0200449e(2)->f23 |= 1;
+        p = Func_020044ae_b(2);
+        Func_0200447c(p, 1);
+        Func_0200452e(2, 4, 0);
+        Func_02004526(2, 1);
+        Func_0200457a(2, 0xc000, 0);
+        Func_0200455a(0, 2);
+        Func_020044c0(10);
+        Func_02004598(0, 2);
+        Func_020044ee(0)->f23 |= 1;
+        p = Func_020044fc_b(0);
+        Func_020044ca(p, 1);
+        angle_6000 = 0x6000;
+        Func_0200457e(0, 4, 0);
+        Func_02004578(0, 1);
+        Func_0200407e(0, angle_6000, 60);
+        Call_020045e4(0, 0x105, 0);
+        Func_020045ee(2, 0x105, 0);
+        Func_0200451c(60);
+        Func_020040a4(0, 0xa000, 20);
+        Func_020045b8(1, 3);
+        Func_020045c0(0, 3);
+        Func_020040be(0, angle_6000, 10);
+        Func_020040c8(1, angle_4000, 10);
+        Func_02004620(2, 0xc000, 0);
+        Func_020045e8(2, 3);
+        Func_020040cc(2, 20);
+        Func_020045f0(0, 3);
+        Func_020045f8(3, 3);
+        Func_02004608(1, 3);
+        Func_02004586(20);
+        Func_0200462e(2, 1);
+        Func_02004594(20);
+        Func_02004654(2, 0);
+        Func_02004624(2, 3);
+        Func_02004678(2, 0xe000, 0);
+        Func_02004682(1, angle_2000, 0);
+
+        if (Func_020045da(0, 0) == 0) {
+            Func_0200464e(2, 3);
+            Func_0200465e(1, 3);
+            SKIP_BEAT();
+        } else {
+            Func_02004690(1, 2);
+            Func_02004176(1, angle_2000, 10);
+            Func_0200469a(1, 2);
+            Func_020046ca(1, 0);
+        }
     }
 
     Func_02004192(1, 0x4000, 10);
@@ -1287,44 +1351,50 @@ void Func_02000d3c(void)
         SKIP_BEAT();
     }
 
-    Func_0200476e(1, 0x2000, 0);
-    lift_a000 = 0xa000;
-    Func_0200422c(0, lift_a000, 10);
-    Func_02004738(0, 3);
-    Func_02004748(1, 3);
-    Func_020046c6(20);
-    Func_0200479e(0, 0x6000, 0);
-    lift_4000 = 0x4000;
-    Func_0200425c(1, lift_4000, 10);
-    Func_02004770(2, 4);
-    Func_020046ee(20);
-    Func_020047d2(0, 258, 0);
-    Func_020047de(1, 258, 0);
-    Func_0200470c(80);
-    Func_02004294(2, 0xe000, 10);
-    Func_020047b8(2, 2);
-    Func_0200428c(2, 20);
-    Func_020047fc(1, 0x2000, 0);
-    Func_020042ba(0, lift_a000, 40);
-    Func_02004810(1, lift_4000, 0);
-    Func_020042d0(0, 0x6000, 10);
-    Func_020042dc(2, 0xc000, 10);
-    Func_020047f0(2, 3);
-    Func_020042d4(2, 10);
-    Func_0200485a(1, 258);
-    Func_02004780(40);
-    Func_020042ec(1, 20);
-    Func_02004818(2, 3);
-    Func_02004796(20);
-    Func_0200487a(1, 258, 0);
-    Func_020047a8(40);
-    Func_02004314(1, 20);
-    Func_02004838(2, 3);
-    Func_02004324(2, 10);
-    Func_02004868(1, 2);
-    Func_02004350(1, 0x2000, 10);
-    Func_02004894(1, 0);
-    Func_020048ae(0, lift_a000, 0);
+    {
+        s32 angle_4000;
+        s32 angle_a000;
+
+        angle_a000 = 0xa000;
+        Func_0200476e(1, 0x2000, 0);
+        Func_0200422c(0, angle_a000, 10);
+        Func_02004738(0, 3);
+        Func_02004748(1, 3);
+        Func_020046c6(20);
+        angle_4000 = 0x80;
+        Func_0200479e(0, 0x6000, 0);
+        angle_4000 <<= 7;
+        Func_0200425c(1, angle_4000, 10);
+        Func_02004770(2, 4);
+        Func_020046ee(20);
+        Func_020047d2(0, 258, 0);
+        Func_020047de(1, 258, 0);
+        Func_0200470c(80);
+        Func_02004294(2, 0xe000, 10);
+        Func_020047b8(2, 2);
+        Func_0200428c(2, 20);
+        Func_020047fc(1, 0x2000, 0);
+        Func_020042ba(0, angle_a000, 40);
+        Func_02004810(1, angle_4000, 0);
+        Func_020042d0(0, 0x6000, 10);
+        Func_020042dc(2, 0xc000, 10);
+        Func_020047f0(2, 3);
+        Func_020042d4(2, 10);
+        Func_0200485a(1, 258);
+        Func_02004780(40);
+        Func_020042ec(1, 20);
+        Func_02004818(2, 3);
+        Func_02004796(20);
+        Func_0200487a(1, 258, 0);
+        Func_020047a8(40);
+        Func_02004314(1, 20);
+        Func_02004838(2, 3);
+        Func_02004324(2, 10);
+        Func_02004868(1, 2);
+        Func_02004350(1, 0x2000, 10);
+        Func_02004894(1, 0);
+        Func_020048ae(0, angle_a000, 0);
+    }
 
     if (Func_02004806(0, 0) == 0) {
         Func_02004882(1, 3);
@@ -1345,29 +1415,32 @@ void Func_02000d3c(void)
     Data_0200b388 = 0;
     Data_0200b384 = 0x00800000;
     Data_0200b38c = 1;
-    Func_020047ee((void *)((u32)Func_02002974 + 1), 3200);
+    Func_020047ee((void (*)(void))0x0200a975, 3200);
 
     Func_0200486c(80);
-    Func_0200490c(0, 2);
-    Func_02004914(1, 2);
-    Func_0200491c(3, 2);
-    Func_0200492e(2, 2);
-    Func_02004896(60);
-    turn_c000 = 0xc000;
-    Func_0200441c(2, turn_c000, 10);
-    Func_02004956(0x149d);
-    Func_02004412(2, 10);
-    Func_02004434(1, turn_c000, 10);
-    Func_0200443e(0, turn_c000, 10);
-    if (Data_0200b394 != 0) {
-        Func_02004450(3, turn_c000, 10);
+    {
+        s32 angle_c000;
+
+        Func_0200490c(0, 2);
+        Func_02004914(1, 2);
+        Func_0200491c(3, 2);
+        Func_0200492e(2, 2);
+        angle_c000 = 0xc000;
+        Func_02004896(60);
+        Func_0200441c(2, angle_c000, 10);
+        Func_02004956(0x149d);
+        Func_02004412(2, 10);
+        Func_02004434(1, angle_c000, 10);
+        Func_0200443e(0, angle_c000, 10);
+        if (Data_0200b394 != 0) {
+            Func_02004450(3, angle_c000, 10);
+        }
     }
 
-    keep_fe = 0xfe;
-    Func_020048fa(0)->f23 &= keep_fe;
-    Func_0200490c_b(1)->f23 &= keep_fe;
-    Func_0200491c_b(2)->f23 &= keep_fe;
-    Func_0200492c_b(3)->f23 &= keep_fe;
+    Func_020048fa(0)->f23 &= 0xfe;
+    Func_0200490c_b(1)->f23 &= 0xfe;
+    Func_0200491c_b(2)->f23 &= 0xfe;
+    Func_0200492c_b(3)->f23 &= 0xfe;
     Func_020049ec(0, 3);
     Func_020049f4(1, 3);
     Func_020049fc(2, 3);
@@ -1394,9 +1467,9 @@ void Func_02000d3c(void)
 
     Func_0200451c(11, 80);
     Func_02004524(12, 20);
-    Func_02004aa2(0, 0x101, 0);
-    Func_02004aac(1, 0x101, 0);
-    Func_02004ab6(2, 0x101, 0);
+    Call_02004aa2(0, 0x101, 0);
+    Call_02004aac(1, 0x101, 0);
+    Call_02004ab6(2, 0x101, 0);
     Func_02004ac0(3, 0x101, 0);
     Func_020049ee(60);
     Func_0200455a(12, 20);
@@ -1495,24 +1568,29 @@ void Func_02000d3c(void)
     Func_02004e1a(12, 0);
     Func_02004e22(11, 0);
 
-    Func_02004cf8((void *)((u32)Func_02002974 + 1));
+    Func_02004cf8((void (*)(void))0x0200a975);
     Func_02004d6e(80);
     Func_02004e68(0x10000, 1);
     Func_02004e76(60);
     Func_02004d04(80);
 
-    Func_02004dca(13);
-    Func_02004dd0(14);
-    /* Unlike the first pass, slot 15 is faded unconditionally here. */
-    Func_02004dd8(15);
-    Func_02004dde(16);
-    Func_02004d24(1);
-    Func_02004dde(13, Data_0200afc8);
-    Func_02004de6(14, Data_0200afc8);
-    if (Data_0200b394 != 0) {
-        Func_02004df4(15, Data_0200afc8);
+    {
+        s32 *has_actor_late;
+
+        Func_02004dca(13);
+        Func_02004dd0(14);
+        has_actor_late = &Data_0200b394;
+        /* Unlike the first pass, slot 15 is faded unconditionally here. */
+        Func_02004dd8(15);
+        Func_02004dde(16);
+        Func_02004d24(1);
+        Func_02004dde(13, Data_0200afc8);
+        Func_02004de6(14, Data_0200afc8);
+        if (*has_actor_late != 0) {
+            Func_02004df4(15, Data_0200afc8);
+        }
+        Func_02004e14(16, Data_0200afc8);
     }
-    Func_02004e14(16, Data_0200afc8);
 
     Func_02004dd2(20);
     Func_02004eaa(0, 2);
@@ -1538,8 +1616,8 @@ void Func_02000d3c(void)
 
         if (Func_02004ea4(0, 0) == 0) {
             Func_02004a16(3, 0, 20);
-            Func_02004f7c(1, 0x101, 0);
-            Func_02004f86(2, 0x101, 0);
+            Call_02004f7c(1, 0x101, 0);
+            Call_02004f86(2, 0x101, 0);
             Func_02004f90(3, 0x101, 0);
             Func_02004ebe(40);
             Func_02004a46(1, 0x4000, 20);
@@ -1564,6 +1642,7 @@ void Func_02000d3c(void)
 
         Func_02004fea(3, 3);
         Func_02004ffa(1, 3);
+        goto shared_scene_tail;
     } else {
         Func_02004f7a(20);
         Func_0200500a(1, 3);
@@ -1610,7 +1689,7 @@ void Func_02000d3c(void)
             Func_02005166(2, 2);
             if (Data_0200b394 != 0) {
                 Func_02004c56(2, 0xa000, 40);
-                Func_02004c62(2, angle_e000, 20);
+                Func_02004c62(2, 0xe000, 20);
             }
             Func_02004c52(2, 10);
             Func_0200518e(0, 2);
@@ -1673,9 +1752,9 @@ alternate_scene_tail:
 
 scene_close:
     Func_02005388(17);
-    Func_0200529a(1, 0x00013333, 0x9999);
-    Func_020052a4(2, 0x00013333, 0x9999);
-    Func_020052ae(3, 0x00013333, 0x9999);
+    Call_0200529a(1, 0x00013333, 0x9999);
+    Call_020052a4(2, 0x00013333, 0x9999);
+    Call_020052ae(3, 0x00013333, 0x9999);
 
     Func_0200530e(1, 2);
     p = Func_020052b4(0);

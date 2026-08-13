@@ -94,7 +94,7 @@ pub static NO_GCSE_SOURCES: &[&str] = &[
     "08004144",
 ];
 pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878", "08004144"];
-pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c"];
+pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c", "02004058", "02005d68"];
 pub static NO_CONTIGUOUS_IMMEDIATE_SOURCES: &[&str] =
     &["080a1090", "08005a78", "0800d304", "08019bac"];
 pub static SPLIT_GROUP_BASE_SOURCES: &[&str] = &["08005a78"];
@@ -215,6 +215,8 @@ pub static ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39a_c_02001004.c",
     "exact/resource_38f_c_020008ec.c",
     "semantic/resource_38f_c_020008ec.c",
+    "exact/resource_3b5_c_020006e8.c",
+    "semantic/resource_3b5_c_020006e8.c",
 ];
 pub static BYTE_ORR_R5_ONLY_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",

@@ -244,56 +244,23 @@ fn parse_int_auto(text: &str) -> Option<i64> {
 // Commit-subject grammar
 // ---------------------------------------------------------------------------
 
-/// `[0-9]{1,3}(?:,[0-9]{3})*`, greedy.
+const SUBJECT_OPEN: &str = "\u{2600}\u{fe0f} ";
+
+/// `/^☀️ ([0-9]{1,3})% – .+$/`
 ///
-/// PORT NOTE: the pattern is always followed by a literal that shares no
-/// character with `[0-9,]`, so the greedy run is forced to the whole
-/// digit/comma run and backtracking can only shorten it into a position the
-/// following literal rejects. Requiring the WHOLE run to parse is therefore
-/// exactly equivalent, and it is what makes `1234 / 1,234` fail to match.
-fn canonical_number_run(text: &str) -> Option<(&str, &str)> {
-    let taken = text
-        .find(|character: char| !(character.is_ascii_digit() || character == ','))
-        .unwrap_or(text.len());
-    let (run, rest) = text.split_at(taken);
-    let mut groups = run.split(',');
-    let head = groups.next()?;
-    if head.is_empty() || head.len() > 3 || !head.chars().all(|c| c.is_ascii_digit()) {
+/// The new convention is a prefix: the readable subject follows the exact-C
+/// percentage. The grammar requires a nonempty description after the en dash.
+pub fn subject_match(subject: &str) -> Option<&str> {
+    let rest = subject.strip_prefix(SUBJECT_OPEN)?;
+    let digits = rest
+        .find(|character: char| !character.is_ascii_digit())
+        .unwrap_or(rest.len());
+    if digits == 0 || digits > 3 {
         return None;
     }
-    for group in groups {
-        if group.len() != 3 || !group.chars().all(|c| c.is_ascii_digit()) {
-            return None;
-        }
-    }
-    Some((run, rest))
-}
-
-const SUBJECT_OPEN: &str = "[ \u{2600}\u{fe0f} ";
-
-/// `/\[ ☀️ ([0-9]{1,3}(?:,[0-9]{3})*) \/ ([0-9]{1,3}(?:,[0-9]{3})*) \]$/`
-///
-/// Unanchored at the start (leftmost match wins) and anchored at the end.
-pub fn subject_match(subject: &str) -> Option<(&str, &str)> {
-    let mut from = 0usize;
-    while let Some(offset) = subject[from..].find(SUBJECT_OPEN) {
-        let at = from + offset;
-        from = at + 1;
-        let rest = &subject[at + SUBJECT_OPEN.len()..];
-        let Some((numerator, rest)) = canonical_number_run(rest) else {
-            continue;
-        };
-        let Some(rest) = rest.strip_prefix(" / ") else {
-            continue;
-        };
-        let Some((denominator, rest)) = canonical_number_run(rest) else {
-            continue;
-        };
-        if rest == " ]" {
-            return Some((numerator, denominator));
-        }
-    }
-    None
+    let (percent, rest) = rest.split_at(digits);
+    let description = rest.strip_prefix("% – ")?;
+    (!description.is_empty()).then_some(percent)
 }
 
 // ---------------------------------------------------------------------------
@@ -634,27 +601,19 @@ mod tests {
     #[test]
     fn subject_grammar_matches_the_checked_examples() {
         assert_eq!(
-            subject_match("decomp: x [ \u{2600}\u{fe0f} 123 / 1,234 ]"),
-            Some(("123", "1,234"))
+            subject_match("\u{2600}\u{fe0f} 10% – decomp: x"),
+            Some("10")
         );
-        assert_eq!(subject_match("x [ \u{2600}\u{fe0f} 1234 / 1,234 ]"), None);
-        assert_eq!(subject_match("x [ \u{2600}\u{fe0f} 123/1,234 ]"), None);
-        assert_eq!(
-            subject_match("x [ \u{2600}\u{fe0f} 123 / 1,234 bytes]"),
-            None
-        );
+        assert_eq!(subject_match("\u{2600}\u{fe0f} 1000% – too wide"), None);
+        assert_eq!(subject_match("\u{2600}\u{fe0f} 10% - wrong dash"), None);
+        assert_eq!(subject_match("\u{2600}\u{fe0f} 10% –"), None);
         assert_eq!(subject_match("x [C 123,456/1,234,567 bytes]"), None);
         assert_eq!(subject_match("x [123 of 456]"), None);
+        // The marker must be a prefix, and the description is mandatory.
+        assert_eq!(subject_match("decomp: \u{2600}\u{fe0f} 10% – x"), None);
         assert_eq!(
-            subject_match("x [ \u{2600}\u{fe0f} 2 / 1 ]"),
-            Some(("2", "1"))
-        );
-        // Anchored at the end only: trailing text after `]` kills the match.
-        assert_eq!(subject_match("[ \u{2600}\u{fe0f} 1 / 2 ] tail"), None);
-        // Leftmost of two candidates wins; the first one here cannot reach `$`.
-        assert_eq!(
-            subject_match("[ \u{2600}\u{fe0f} 9 / 9 ] [ \u{2600}\u{fe0f} 1 / 2 ]"),
-            Some(("1", "2"))
+            subject_match("\u{2600}\u{fe0f} 1% – description with ☀️ 2% – text"),
+            Some("1")
         );
     }
 

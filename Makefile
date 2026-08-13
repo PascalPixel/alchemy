@@ -21,7 +21,7 @@ help:
 		'make build-rom       rebuild the ROM' \
 		'make build-assets    rebuild the asset tree' \
 		'make progress        print byte-exact progress' \
-		'make progress-subject print the commit progress subject' \
+		'make progress-subject print the Exact-C commit subject prefix' \
 		'make progress-history refresh the progress history ledger' \
 		'make coverage        refresh the dashboard maps' \
 		'make showcase        run the overlay showcase' \

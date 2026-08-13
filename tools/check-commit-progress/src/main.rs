@@ -9,10 +9,9 @@ struct Report {
     remaining_bytes: u64,
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct Subject {
-    full_c_kb: u64,
-    executable_kb: u64,
+    exact_c_percent: u64,
 }
 
 fn root() -> PathBuf {
@@ -67,55 +66,35 @@ fn git(root: &Path, args: &[&str]) -> Result<String, String> {
     command_output(Path::new("git"), args, root)
 }
 
-fn canonical_count(text: &str) -> Option<u64> {
-    if text.is_empty() || !text.bytes().all(|b| b.is_ascii_digit() || b == b',') {
-        return None;
-    }
-    let value = text.replace(',', "").parse::<u64>().ok()?;
-    if commas(value) == text {
-        Some(value)
-    } else {
-        None
-    }
+fn exact_c_percent(report: &Report) -> Result<u64, String> {
+    let scaled = report
+        .full_c_bytes
+        .checked_mul(100)
+        .ok_or("Exact-C percentage arithmetic overflow")?;
+    scaled
+        .checked_add(report.executable_bytes / 2)
+        .ok_or_else(|| "Exact-C percentage arithmetic overflow".to_string())
+        .map(|rounded| rounded / report.executable_bytes)
 }
 
-fn commas(value: u64) -> String {
-    let digits = value.to_string();
-    let mut out = String::new();
-    for (i, ch) in digits.chars().enumerate() {
-        if i > 0 && (digits.len() - i).is_multiple_of(3) {
-            out.push(',');
-        }
-        out.push(ch);
-    }
-    out
-}
-
-fn format_subject(report: &Report) -> String {
-    format!(
-        "[ ☀️ {} / {} ]",
-        commas(report.full_c_bytes / 1000),
-        commas(report.executable_bytes / 1000)
-    )
+fn format_subject(report: &Report) -> Result<String, String> {
+    Ok(format!("☀️ {}% –", exact_c_percent(report)?))
 }
 
 fn parse_subject(text: &str) -> Option<Subject> {
-    let marker = "[ ☀️ ";
-    let start = text.rfind(marker)?;
-    if !text.ends_with(" ]") {
+    let rest = text.strip_prefix("☀️ ")?;
+    let count = rest
+        .find(|character: char| !character.is_ascii_digit())
+        .unwrap_or(rest.len());
+    if count == 0 || count > 3 {
         return None;
     }
-    let body = &text[start + marker.len()..text.len() - 2];
-    let (left, right) = body.split_once(" / ")?;
-    if right.contains(" / ") {
+    let (percent, rest) = rest.split_at(count);
+    if !rest.starts_with("% – ") || rest.len() == "% – ".len() {
         return None;
     }
-    let full_c_kb = canonical_count(left)?;
-    let executable_kb = canonical_count(right)?;
-    (full_c_kb <= executable_kb).then_some(Subject {
-        full_c_kb,
-        executable_kb,
-    })
+    let exact_c_percent = percent.parse::<u64>().ok()?;
+    (exact_c_percent <= 100).then_some(Subject { exact_c_percent })
 }
 
 fn report(value: &Value, target: &str) -> Result<Report, String> {
@@ -143,7 +122,8 @@ fn report(value: &Value, target: &str) -> Result<Report, String> {
         executable_bytes: count("executable_bytes")?,
         remaining_bytes: count("remaining_bytes")?,
     };
-    if result.full_c_bytes > result.executable_bytes
+    if result.executable_bytes == 0
+        || result.full_c_bytes > result.executable_bytes
         || result.full_c_bytes.checked_add(result.remaining_bytes) != Some(result.executable_bytes)
     {
         return Err("staged report arithmetic is invalid".into());
@@ -151,42 +131,16 @@ fn report(value: &Value, target: &str) -> Result<Report, String> {
     Ok(result)
 }
 
-fn legacy_subject(subject: &str) -> bool {
-    let suffix = subject.rsplit_once('[').map(|(_, s)| s).unwrap_or("");
-    suffix.ends_with(']')
-        && (suffix.contains(" of ") || suffix.starts_with("C ") || suffix.contains(" C bytes]"))
-}
-
-fn check(message: &str, report: &Report, previous: Option<&str>) -> Result<(), String> {
+fn check(message: &str, report: &Report) -> Result<(), String> {
     let subject = message.lines().next().unwrap_or("");
+    let expected = format_subject(report)?;
     let parsed = parse_subject(subject)
-        .ok_or_else(|| format!("commit subject must end with {}", format_subject(report)))?;
-    if parsed.full_c_kb != report.full_c_bytes / 1000
-        || parsed.executable_kb != report.executable_bytes / 1000
-    {
+        .ok_or_else(|| format!("commit subject must start with {expected}"))?;
+    if parsed.exact_c_percent != exact_c_percent(report)? {
         return Err(format!(
-            "commit suffix is stale; expected {}",
-            format_subject(report)
+            "commit Exact-C percentage is stale; expected {}",
+            expected
         ));
-    }
-    let Some(previous) = previous else {
-        return Ok(());
-    };
-    if let Some(old) = parse_subject(previous) {
-        if parsed.executable_kb != old.executable_kb
-            && !subject.starts_with("metrics: correct executable denominator")
-        {
-            return Err(format!("executable denominator changed from {} to {}; use an explicit metrics: correct executable denominator commit", old.executable_kb, parsed.executable_kb));
-        }
-        if parsed.full_c_kb < old.full_c_kb
-            && !subject.starts_with("metrics: revert reduces Full-C")
-        {
-            return Err(format!("Full-C bytes regressed from {} to {}; if deliberate use a 'metrics: revert reduces Full-C' commit carrying the true current suffix", old.full_c_kb, parsed.full_c_kb));
-        }
-    } else if !legacy_subject(previous)
-        && !subject.starts_with("metrics: restore Full-C counter chain")
-    {
-        return Err("previous commit has neither canonical Full-C nor recognized transition syntax; resume the chain with a 'metrics: restore Full-C counter chain' commit carrying the current suffix".into());
     }
     Ok(())
 }
@@ -237,40 +191,20 @@ fn self_test() -> Result<(), String> {
         executable_bytes: 1234567,
         remaining_bytes: 1111111,
     };
-    check(
-        "ok [ ☀️ 123 / 1,234 ]",
-        &report,
-        Some("old [C 123,456/1,234,567 bytes]"),
-    )?;
-    check(
-        "metrics: restore Full-C counter chain [ ☀️ 123 / 1,234 ]",
-        &report,
-        Some("docs"),
-    )?;
-    check(
-        "metrics: revert reduces Full-C [ ☀️ 123 / 1,234 ]",
-        &report,
-        Some("old [ ☀️ 200 / 1,234 ]"),
-    )?;
+    check("☀️ 10% – valid Exact-C prefix", &report)?;
     for bad in [
         "missing",
-        "bad [ ☀️ 1234 / 1,234 ]",
-        "stale [ ☀️ 122 / 1,234 ]",
+        "☀️ 1000% – too wide",
+        "☀️ 9% – stale",
+        "☀️ 10% - wrong dash",
+        "☀️ 10% –",
+        "old [ ☀️ 123 / 1,234 ]",
     ] {
-        if check(bad, &report, None).is_ok() {
+        if check(bad, &report).is_ok() {
             return Err(format!("invalid subject accepted: {bad}"));
         }
     }
-    if check(
-        "regress [ ☀️ 123 / 1,234 ]",
-        &report,
-        Some("old [ ☀️ 200 / 1,234 ]"),
-    )
-    .is_ok()
-    {
-        return Err("unannounced regression accepted".into());
-    }
-    println!("self-test=ok suffix=full-c-byte-share");
+    println!("self-test=ok prefix=exact-c-percent");
     Ok(())
 }
 
@@ -307,24 +241,8 @@ fn run() -> Result<(), String> {
     if report_required(&paths, &target) && current_report(&root, &target)? != staged_value {
         return Err(format!("{report_path} is stale: regenerate it with the Rust full-c-progress tool and stage it with executable-source changes"));
     }
-    let previous = git(&root, &["log", "-1", "--format=%s"])?
-        .trim()
-        .to_string();
-    if let Some(old) = parse_subject(&previous) {
-        if metric.executable_bytes / 1000 != old.executable_kb
-            && !paths.contains(&format!("metrics/{target}-executable.json"))
-        {
-            return Err(format!(
-                "denominator correction requires staged metrics/{target}-executable.json"
-            ));
-        }
-    }
     let message = std::fs::read_to_string(message_path).map_err(|e| e.to_string())?;
-    check(
-        &message,
-        &metric,
-        (!previous.is_empty()).then_some(previous.as_str()),
-    )
+    check(&message, &metric)
 }
 
 fn main() -> ExitCode {

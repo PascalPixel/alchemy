@@ -3304,3 +3304,63 @@ without incompatible function-pointer casts or borrowed external labels.
 When a compiler cohort bypasses a build stage, always promote the source only
 after re-running the repository's real route; a manually preprocessed scratch
 proof is not yet an integration proof.
+
+## Addendum (2026-08-13): the linux-x64 fork runtime is byte-equivalent, proven end to end
+
+The pinned `alchemy-gcc` commit `be99214` had approved digests only for hosts
+that had already built it; a fresh linux-x64 build of the same sources produced
+new binaries for the gs1 `cc1`, the four gs2 executables, and `old_agbcc`,
+while `xgcc`, `cpp`, `tradcpp`, and the stock gcc3 probe reproduced digests
+already in the ledger. The new digests were admitted only after the complete
+chain of proof on this host: `build-claimed` linked all 1,483 exact owners with
+zero failures, the full routed corpus regression recompiled 1,483/1,483 members
+with zero byte regressions, and `build-full` reproduced `gs1-en.gba`
+byte-identically with zero fallback bytes. A digest mismatch against this
+ledger is not codegen drift evidence; the admission bar is exactly this chain,
+never a spot check.
+
+## Addendum (2026-08-13): the shade-mirror callback needed the mask as the and destination
+
+`resource_3b5:06e8` (62 bytes) sat at 22 differing bytes with a semantics-true
+source because every remaining byte was register naming. Three source-shape
+facts closed it to a routed-mode witness, now exact:
+
+- `shade = player_sprite[9]; shade &= 12;` keeps the loaded byte's register as
+  the and destination; the reference wants the immediate's register
+  (`movs r1, #12 / ands r1, r2`), which requires the raw byte in its own local
+  and the two-statement spelling `shade = 12; shade &= raw;`. The folded
+  single-expression forms canonicalize back to the load-side destination.
+- The final `|` store had to be spelled value-first,
+  `(s32)(shade) | (u8)((second_sprite[21] & clear));` — this one spelling flips
+  the whole function's r0/r1 role assignment (sprite pointers to r0, selector
+  to r1) and is behavior-identical, since the truncation happens below bit 8
+  either way. The natural `(u8)((x & clear) | shade)` spelling misallocates
+  nine bytes of encodings.
+- The last two bytes were the or destination: the reference reuses the dead
+  masked input (`orrs r2, r1`). The already-admitted
+  `-fthumb-orr-dead-input-reuse` route closes exactly that; this owner is its
+  fourth exact overlay user. A stochastic permuter run found the value-first
+  spelling; the mode cohort on that candidate found the route. Composing the
+  two bounded searches on an updated candidate is cheap and worth doing before
+  declaring an allocation residual compiler-blocked.
+
+## Addendum (2026-08-13): the paired attachment constructor needs -fno-strength-reduce
+
+The 284-byte twins `resource_371:4058` / `resource_373:5d68` spawn two pieces
+in a `for (index = 0; index <= 1; index++)` loop and store each result into a
+two-slot stack array. On the default route the array store strength-reduces
+into a pointer walk (`stmia r3!` plus a cursor spilled to the frame) that can
+never match the reference's indexed `lsls r3, r7, #2 / str r0, [r3, r2]`;
+`-fno-strength-reduce` (routed by stem, precedent `080a9d3c`) restores the
+indexed form, the reference's `sub sp, #8` frame, and the entry sequence
+byte-for-byte. The piece clears at +0x55/+0x64 must share one s32 zero local
+through a `p` / `p + 15` base (one `movs` zero, incremented address), while
+the record-branch clears at +0x26/+0x16 share a second zero the reference
+holds in r8 from a per-iteration literal-pool load. The open residual is one
+high-register pairing — the reference gives sl to the array base and r8 to the
+record zero, this source receives the opposite — and every remaining differing
+byte is that swap rippling through the encodings. Entry-initializing the
+record zero pins it to a high register at entry (wrong form), while
+loop-initializing it lets the piece zero hoist and spill the state pointer
+(also wrong); the pairing is decided inside the allocator, not by any
+statement order tried so far.

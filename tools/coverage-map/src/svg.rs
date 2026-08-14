@@ -21,6 +21,9 @@ pub const MUTED: &str = "#8f8f8f";
 pub const SANS: &str = "'Geist Sans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 pub const MONO: &str =
     "'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace";
+/// One category keeps a stable colour across every coverage renderer: audited
+/// permanent assembly is representation, not a point on a C-match ramp.
+pub const PERMANENT_ASM_FILL: &str = "#7dd3fc";
 
 pub struct CategoryStyle {
     pub fill: &'static str,
@@ -51,8 +54,8 @@ pub fn category_style(category: &str) -> &'static CategoryStyle {
         label: "assembly",
     };
     const RETAINED: CategoryStyle = CategoryStyle {
-        fill: "#50e3c2",
-        ink: "#04241d",
+        fill: PERMANENT_ASM_FILL,
+        ink: "#082f49",
         label: "permanent asm",
     };
     const ASSET: CategoryStyle = CategoryStyle {

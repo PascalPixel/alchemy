@@ -100,12 +100,11 @@ impl Watcher {
             })
             .collect();
         // Completed-build evidence is another coverage input, but does not
-        // require a process restart.
+        // require a process restart. Missing files remain watch targets so a
+        // first build or first diagnosis is observed when it creates one.
         for file in paths::coverage_build_files_at(root) {
-            if file.exists() {
-                let seen = fingerprint(&file);
-                coverage.push((file, seen));
-            }
+            let seen = fingerprint(&file);
+            coverage.push((file, seen));
         }
         Watcher {
             coverage,
@@ -179,11 +178,7 @@ mod tests {
             "// server\n",
         )
         .unwrap();
-        std::fs::write(
-            dir.join("tools/coverage-map/src/lib.rs"),
-            "// coverage\n",
-        )
-        .unwrap();
+        std::fs::write(dir.join("tools/coverage-map/src/lib.rs"), "// coverage\n").unwrap();
         std::fs::write(dir.join("unwatched.txt"), "nothing\n").unwrap();
         dir
     }
@@ -262,6 +257,22 @@ mod tests {
                 matches!(watcher.tick(), Tick::Idle),
                 "a change is reported once"
             );
+        });
+    }
+
+    #[test]
+    fn the_first_diagnosis_marker_wakes_a_watcher_that_started_without_it() {
+        let root = scratch("watch-diagnosis");
+        with_root(&root, || {
+            let marker = root.join("out/decomp/diagnose/.revision");
+            assert!(!marker.exists());
+            let mut watcher = Watcher::new(&root);
+            assert!(matches!(watcher.tick(), Tick::Idle));
+            settle();
+            std::fs::create_dir_all(marker.parent().unwrap()).unwrap();
+            std::fs::write(&marker, "08001234\n").unwrap();
+            settle();
+            assert!(matches!(watcher.tick(), Tick::Coverage));
         });
     }
 

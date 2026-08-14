@@ -1,19 +1,15 @@
-#include "types.h"
+#include "battle_event.h"
 
-struct Entries {
-    u8 values[64];
-    u32 data[65];
-};
-
-u32 Func_080bbabc(u32 value, u32 data)
+u32 Func_080bbabc(u32 opcode, u32 operand)
 {
     u8 *base = *(u8 **)0x03001e74;
-    struct Entries *entries = (struct Entries *)(base + 1720);
-    u32 *count = (u32 *)(base + 2044);
+    struct BattleEventQueue *queue =
+        (struct BattleEventQueue *)(base + 1720);
+    u32 *count = (u32 *)&queue->count;
     u32 index = *count;
 
-    entries->values[index] = value;
-    entries->data[index] = data;
+    queue->opcodes[index] = opcode;
+    queue->operands[index] = operand;
     *count = index + 1;
-    return value;
+    return opcode;
 }

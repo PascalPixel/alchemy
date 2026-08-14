@@ -93,6 +93,11 @@ pub fn coverage_build_files_at(repository_root: &Path) -> Vec<PathBuf> {
             .join("full")
             .join("assets")
             .join("manifest.json"),
+        repository_root
+            .join("out")
+            .join("decomp")
+            .join("diagnose")
+            .join(".revision"),
     ]
 }
 
@@ -165,7 +170,8 @@ mod tests {
             source().exists(),
             "the Rust server must be reachable from root()"
         );
-        assert!(restart_files()
+        assert!(
+            restart_files()
                 .iter()
                 .all(|path| path.extension().and_then(|e| e.to_str()) == Some("rs")),
             "restart paths must contain native Rust sources only"

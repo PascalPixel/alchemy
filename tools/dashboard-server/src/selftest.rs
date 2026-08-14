@@ -4,9 +4,9 @@ use coverage_map::boxtree::BOX_TREES;
 
 use crate::assets::STYLES;
 use crate::client::bundled_client;
+use crate::paths;
 use crate::routes::shell_has_authored_markup;
 use crate::state::{affects_coverage, compute};
-use crate::paths;
 
 /// Sum a byte field over the matching tiles.
 ///
@@ -33,16 +33,27 @@ pub fn self_test() -> Result<String, String> {
     let live = compute()?;
     let trees = &live.trees;
     let tree_svg = |name: &str| {
-        trees.iter().find(|(id, _)| *id == name).map(|(_, svg)| svg.as_str()).unwrap_or("")
+        trees
+            .iter()
+            .find(|(id, _)| *id == name)
+            .map(|(_, svg)| svg.as_str())
+            .unwrap_or("")
     };
-    if live.exact_bytes <= 0.0 || BOX_TREES.iter().any(|name| !tree_svg(name).starts_with("<svg "))
+    if live.exact_bytes <= 0.0
+        || BOX_TREES
+            .iter()
+            .any(|name| !tree_svg(name).starts_with("<svg "))
     {
         return Err("dashboard live coverage generation failed".to_string());
     }
 
     // The overlay cohort checks, rebuilt from the same map.
     let map = rebuild_map()?;
-    let Some(overlay_area) = map.executable_areas.iter().find(|area| area.id == "overlays") else {
+    let Some(overlay_area) = map
+        .executable_areas
+        .iter()
+        .find(|area| area.id == "overlays")
+    else {
         return Err("dashboard live map lost its code overlays".to_string());
     };
     let overlay_tiles = |id: &str| {
@@ -54,16 +65,12 @@ pub fn self_test() -> Result<String, String> {
     };
     let overlay_bytes = |id: &str| sum_of(overlay_tiles(id).iter().map(|tile| tile.bytes));
     let unknown_bytes = |id: &str| {
-        sum_of(
-            overlay_tiles(id)
+        sum_of(overlay_tiles(id).iter().map(|tile| {
+            tile.categories
                 .iter()
-                .map(|tile| {
-                    tile.categories
-                        .iter()
-                        .find(|(key, _)| key == "assembly")
-                        .map_or(0, |(_, value)| *value)
-                }),
-        )
+                .find(|(key, _)| key == "assembly")
+                .map_or(0, |(_, value)| *value)
+        }))
     };
     let visual_cohort = ["373", "3c9", "380", "3c8", "383", "372", "3bd", "3af"];
     // `new Set(cohort.map(overlayBytes)).size < 6`. `Set` is SameValueZero, so
@@ -95,7 +102,9 @@ pub fn self_test() -> Result<String, String> {
                 && tile.label.contains("0x02000000\u{2013}0x02000030")
         });
         if header.is_none() {
-            return Err(format!("{id} fixed overlay header is not retained exact assembly"));
+            return Err(format!(
+                "{id} fixed overlay header is not retained exact assembly"
+            ));
         }
     }
 
@@ -104,12 +113,17 @@ pub fn self_test() -> Result<String, String> {
         || !tree_svg("images").contains("IMAGES")
         || !tree_svg("music").contains("MUSIC")
         || !tree_svg("music").contains("fill=\"#c85d00\"")
+        || !tree_svg("core").contains("fill=\"#7dd3fc\"")
+        || !tree_svg("overlays").contains("fill=\"#7dd3fc\"")
+        || !tree_svg("core").contains("id=\"byte-match-ramp\"")
+        || !tree_svg("overlays").contains("id=\"byte-match-ramp\"")
         || BOX_TREES
             .iter()
             .any(|name| !tree_svg(name).contains("font-family:Weyard;font-size:16px"))
     {
         return Err(
-            "dashboard SVGs do not carry their own 16px Weyard title and legend chrome".to_string(),
+            "dashboard SVGs lost their shared palette, C-match ramp, or 16px Weyard chrome"
+                .to_string(),
         );
     }
 
@@ -136,7 +150,9 @@ pub fn self_test() -> Result<String, String> {
     if !STYLES.contains("--weyard-font: italic 400 16px/15px Weyard")
         || !STYLES.contains(".hover-tooltip")
         || STYLES.contains("font-size:")
-        || font_shorthands.iter().any(|line| line != "font: var(--weyard-font);")
+        || font_shorthands
+            .iter()
+            .any(|line| line != "font: var(--weyard-font);")
     {
         return Err("dashboard UI typography drifted from the one 16px Weyard size".to_string());
     }
@@ -171,7 +187,10 @@ mod tests {
         let line = self_test().expect("self-test must pass on the live worktree");
         assert!(line.starts_with("self-test=ok dashboard exact="), "{line}");
         let value = line.rsplit('=').next().unwrap();
-        assert!(!value.contains('.'), "an integral byte count must not print a point: {line}");
+        assert!(
+            !value.contains('.'),
+            "an integral byte count must not print a point: {line}"
+        );
         assert!(value.parse::<u64>().unwrap() > 0);
     }
 
@@ -179,15 +198,25 @@ mod tests {
     fn a_live_snapshot_carries_every_summary_field() {
         state::rebuild_coverage();
         let text = state::snapshot().stringify();
-        for key in
-            ["executableBytes", "exactBytes", "exactPercent", "semanticBytes", "combinedBytes"]
-        {
+        for key in [
+            "executableBytes",
+            "exactBytes",
+            "exactPercent",
+            "semanticBytes",
+            "combinedBytes",
+        ] {
             assert!(text.contains(key), "missing {key} in {text}");
         }
         assert!(text.contains("\"generatedAt\":\""));
-        assert!(!text.contains("\"error\""), "a healthy scan reports no error: {text}");
+        assert!(
+            !text.contains("\"error\""),
+            "a healthy scan reports no error: {text}"
+        );
         // No NaN reached the wire as `null`.
-        assert!(!text.contains(":null"), "a NaN would have serialised as null: {text}");
+        assert!(
+            !text.contains(":null"),
+            "a NaN would have serialised as null: {text}"
+        );
     }
 
     #[test]

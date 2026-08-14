@@ -67,6 +67,11 @@ progress report or the writer refuses to publish.
 The dashboard server derives the same categories directly from the worktree,
 watches relevant source inputs, and serves `http://localhost:4649/`. A service
 may additionally bind a configured LAN address without giving up localhost.
+Semantic-owner tiles use fresh ignored diagnosis evidence as an advisory colour
+ramp: gray means 0% positional byte agreement and the tracker hue means 100%.
+Exact C is always shown at the 100% endpoint. Permanent assembly is not part of
+that C-match scale and remains light blue in every code tracker. Missing or
+stale diagnosis evidence is gray and never changes ownership or progress.
 
 The first-parent Exact-C history is described in
 [`full-c-history.md`](full-c-history.md). Historical rows are measured from

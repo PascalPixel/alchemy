@@ -606,8 +606,8 @@ fn layout_and_tiles() -> Result<(), String> {
         "retained colour test",
     )?;
     refuse(
-        !retained_tree.contains("oklch(0.740"),
-        "permanent assembly did not inherit the former semantic colour",
+        !retained_tree.contains("fill=\"#7dd3fc\""),
+        "permanent assembly did not keep its shared light-blue colour",
     )?;
     refuse(
         !retained_tree.contains("DONE 100.0%"),
@@ -684,14 +684,11 @@ fn renderers(map: &CoverageMap) -> Result<(), String> {
         !box_tree.contains("DONE 60.0%") || !box_tree.contains("dominant-baseline=\"middle\""),
         "box-tree completion or vertically centred legend is missing",
     )?;
-    let legend_order: Vec<Option<usize>> = [
-        "Semantic 40.0%",
-        "Permanent ASM 30.0%",
-        "Exact C 30.0%",
-    ]
-    .iter()
-    .map(|legend| box_tree.find(&format!(">{legend}</text>")))
-    .collect();
+    let legend_order: Vec<Option<usize>> =
+        ["Semantic 40.0%", "Permanent ASM 30.0%", "Exact C 30.0%"]
+            .iter()
+            .map(|legend| box_tree.find(&format!(">{legend}</text>")))
+            .collect();
     let ascending = legend_order.iter().all(Option::is_some)
         && legend_order.windows(2).all(|pair| pair[0] < pair[1]);
     refuse(

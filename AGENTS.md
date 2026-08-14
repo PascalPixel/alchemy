@@ -30,6 +30,28 @@ with active experiments. Do not run `git submodule` commands inside a worktree:
 they can rewrite the shared `core.worktree` configuration and break the main
 checkout.
 
+## Reconstruct structure before searching
+
+For a wrong-sized candidate or a large, diffuse residual, stop expression
+tweaks, compiler-mode sweeps, and permutation. Recover the ROM control-flow
+graph first and reconstruct it phase by phase in plain, m2c-like C. Use a
+decompiler as a reading aid when useful, but review the result against the ROM;
+generated pseudocode is an evidence scaffold, not accepted source.
+
+Compare target and candidate by function and basic block, not only by the
+global differing-byte count. Establish switch and jump-table layout, shared
+tails, literal pools, stack slots, aliases, signed loads, value lifetimes,
+calls, and side effects. Account for alignment and branch-displacement cascades
+before treating thousands of shifted bytes as thousands of independent errors.
+A coherent ROM-proved block rewrite may temporarily worsen the global score by
+removing accidental compensation; retain it only with local structural proof.
+
+Search begins only after the candidate has the right boundaries and size class
+and the remaining differences are localized. Then try witnessed sibling shapes
+and bounded deterministic C forms, compiler modes only when source evidence
+points to one, and stochastic permutation last. Neither compiler settings nor
+permutation can recover a wrong CFG, alias model, or lifetime structure.
+
 ## The contributor loop
 
 An open-ended request such as "continue decompilation" is coordinator work,
@@ -53,10 +75,12 @@ internal dump diagnostics.
    evidence, not necessarily stable logical callees; never guess a global API
    name from an address alone.
 3. Compile and diagnose functions or residual clusters independently. A wrong
-   size or large diffuse residual means the source model is not ready.
-4. Try an exact sibling's witnessed shape, then bounded deterministic source
-   forms, then compiler modes. Use stochastic permutation only for a localized,
-   semantically reviewed residual.
+   size or large diffuse residual means the source model is not ready: recover
+   and align the target CFG block by block before searching.
+4. Only after localization, try an exact sibling's witnessed shape, then
+   bounded deterministic source forms, then evidence-backed compiler modes.
+   Use stochastic permutation only for a localized, semantically reviewed
+   residual.
 5. Review every automatic candidate for C dependency and behavior preservation.
    A lower score is not proof of valid source.
 6. Prove the candidate at its eventual path and use the owner-specific adoption

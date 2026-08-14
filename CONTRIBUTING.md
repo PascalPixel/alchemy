@@ -7,6 +7,32 @@ be shared, but game-specific facts must be reconstructed from the approved ROM s
 and local project evidence. External projects are not source, naming, or
 game-knowledge evidence.
 
+## Reconstruction before search
+
+When a candidate has the wrong size or thousands of diffuse differences, its
+source shape is not ready for matching. Freeze its compiler route and recover
+the target ROM's control-flow graph first. Reconstruct one phase and basic
+block at a time in ordinary, m2c-like C: boundaries and entries, switch and
+jump-table layout, shared tails, calls, stack arguments and slots, aliases,
+types and signedness, value lifetimes, literal pools, and side effects. A
+decompiler such as m2c can provide a reading scaffold, but its output must be
+checked against the ROM and rewritten as reviewed C; it is not source evidence
+by itself.
+
+Align target and candidate instructions per block before interpreting the
+global score. Branch displacement, alignment, a missing shared tail, or a
+shifted literal pool can make thousands of later bytes differ while identifying
+only one structural error. Conversely, duplicated or misplaced code can make a
+wrong model score deceptively well. A ROM-proved block rewrite may therefore
+temporarily worsen the total score by exposing missing code elsewhere; retain
+it only when the local block structure and behavior are demonstrated.
+
+Do not spend a compiler sweep or permutation budget on a wrong-sized or diffuse
+candidate. Search starts after the boundaries, CFG, size class, aliases, and
+lifetimes are credible and the residual has been reduced to small explained
+clusters. Deterministic source-shape experiments come first, compiler modes
+require source evidence, and permutation is a bounded last-mile tool.
+
 ## The working loop
 
 Work on one owner or one proved duplicate family per lane. A coordinator may
@@ -168,17 +194,20 @@ make verify        # complete pre-commit authority
 Use the smallest source change that explains the residual, and keep the
 compiler route fixed while changing C.
 
-1. Diagnose the candidate with `decomp-diagnose` and inspect local disassembly,
-   call sites, and residual clusters.
-2. Compare a known exact sibling with `overlay-twins`; transpose a proven
+1. If size is wrong or differences are diffuse, recover the target and
+   candidate CFGs and align their phases, basic blocks, shared tails, cases,
+   and literal pools. Reconstruct until the residual is localized.
+2. Diagnose the localized candidate with `decomp-diagnose` and inspect local
+   disassembly, call sites, and residual clusters.
+3. Compare a known exact sibling with `overlay-twins`; transpose a proven
    machine-producing shape before inventing a new one.
-3. Try small, deterministic changes to types, expressions, lifetimes, and
+4. Try small, deterministic changes to types, expressions, lifetimes, and
    statement shape with `shape-sweep`.
-4. Inspect compiler output and use `mode-sweep` or `mode-cohort` only when the
+5. Inspect compiler output and use `mode-sweep` or `mode-cohort` only when the
    source evidence points to a compiler choice.
-5. Use `alchemy-permuter` only for a semantically ready candidate with a small,
+6. Use `alchemy-permuter` only for a semantically ready candidate with a small,
    localized residual. Keep the search bounded and inspect every winning diff.
-6. Change the compiler only with narrow positive and negative regression tests
+7. Change the compiler only with narrow positive and negative regression tests
    and reproducible evidence across the affected owners.
 
 Do not run every step merely because it exists. A witnessed sibling shape can

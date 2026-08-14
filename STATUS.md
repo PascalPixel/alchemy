@@ -1,6 +1,6 @@
 # Current status
 
-Snapshot: 2026-08-13. This is the live status surface. Dated investigations and
+Snapshot: 2026-08-14. This is the live status surface. Dated investigations and
 their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
@@ -132,13 +132,13 @@ not copy that route stack into another owner. Large diffuse residuals stay on
 the source-reconstruction path, and any compiler experiment must hold the
 source fixed and test one evidenced behavior at a time.
 
-The 2026-08-13 large-owner checkpoint leaves the following measured source
+The 2026-08-14 large-owner checkpoint leaves the following measured source
 baselines. Main-image diagnostics report differing bytes; overlay diagnostics
 report differing halfwords, so the residual column states its unit explicitly.
 
 | Owner | Candidate / target | Current residual | Retained source evidence |
 |---|---:|---:|---|
-| `080bbb0c` | 6,340 / 6,332 | 5,648 bytes | `ResolveBattleActionTarget` now names the plan and target-slot contract. Load `range_index` before the selected range adjustment; the next rewrite should type the battle-state range table so its two threshold scans acquire their distinct ROM lifetimes naturally. |
+| `080bbb0c` | 6,332 / 6,332 | 3,698 bytes | `battle_types.h`, `battle_event.h`, `battle_runtime.h`, and `battle_command.h` now separate proved layouts, the shared event queue, runtime helpers, and command records. `item.h` owns the one canonical 44-byte item definition. All register-derived locals in this resolver now have behavior-based or offset-neutral names, while its load-bearing unsigned byte views remain intact; the candidate and object digests did not move. In the second dispatch, cases `0x3d`, `0x01`, and all but one scratch-register choice in `0x3c` remain normalized-exact; continue the healing load order without perturbing them. |
 | `resource_3bd:13f8` | 6,144 / 6,220 | 2,947 halfwords | `RunActorFormationScene` names the bounded choreography. Typed actor positions, sprite pointer, visibility flag, actor-8 subrecord lifetime, and the scoped formation-script pointer are ROM-witnessed; continue from those phase boundaries. |
 | `resource_380:27f8` | 5,932 / 5,932 | 2,616 halfwords | `RunResource380GrandFinale` now reaches target size. Reference initialization order, separate pointer/scalar lifetimes, and scoped closing-text fields remove 183 differing halfwords while keeping both record lookups before dereference. Reconstruct actor 9's eight-byte workspace next. |
 | `080ea0d8` | 5,732 / 5,756 | 5,353 bytes | `RunCinematicProjectionEffect` names the owner and its retained context. Five independent geometry scalars replace a misleading aggregate without changing the byte residual and remove 29 instruction mismatches; preserve full-width RNG values and explicit low-16-bit extraction. |
@@ -146,7 +146,7 @@ report differing halfwords, so the residual column states its unit explicitly.
 | `resource_373:15dc` | 5,216 / 5,240 | 2,227 halfwords | `RunValeRoofRepairScene` now records Isaac, Dora, Jenna, Garet, and the four witnessed dialogue beats. Exact-sibling declaration scopes regress here, so continue from this neutral vocabulary rather than copying its route shape. |
 | `resource_381:1410` | 5,088 / 5,136 | 2,478 halfwords | `RunSolSanctumCollapse` now names Isaac, Garet, the Wise One, camera state, and Elemental Star fields from exact-sibling evidence without changing codegen; continue phase-by-phase from that vocabulary. |
 
-This checkpoint also retained thirty-one smaller but structurally useful advances:
+This checkpoint also retained thirty-two smaller but structurally useful advances:
 
 Candidate/target spans below include owner-owned literal or alignment tails;
 the generated core-target index counts executable bytes only. Thus
@@ -183,6 +183,7 @@ the generated core-target index counts executable bytes only. Thus
 | `08024934` | 2,156 / 2,124 | 1,970 bytes | The ROM's inline division and 36-entry stack buffers remove 86 differing bytes; the four active-row flags retain the target's redraw-before-draw lifetime. |
 | `08077428` | 2,000 / 2,024 | 1,130 bytes | Caching each signed item modifier before updating scratch state restores the ROM's evaluation order in both adjustment loops, removing four differing bytes and 37 instruction mismatches. |
 | `080e823c` | 1,904 / 1,968 | 1,867 bytes | ROM arithmetic establishes `0x4000` as the particles' late vertical acceleration. The correction is byte-neutral but removes a semantic guess before structural matching continues. |
+| `080bd898` | 1,868 / 1,876 | 1,765 bytes | The dispatcher and exact queue producer now share `BattleEventQueue` and named event opcodes. Its 64 opcodes, 64 operands, target cursor, and count are guarded at their ROM offsets; dispatcher names and both candidate digests remain unchanged. |
 | `08025200` | 1,816 / 1,836 | 1,521 bytes | The ROM's 12-byte sprite/OAM record removes 203 differing bytes and now names attributes 0–3 directly. |
 | `080d89ac` | 1,708 / 2,024 | 1,910 bytes | Removing a spurious scene field restores the ROM-witnessed layout at `+0x1c` and object-ID array at `+0x24`, removing one differing byte and one instruction mismatch. |
 

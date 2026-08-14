@@ -5,7 +5,8 @@ described assets. A code change counts as Exact C only when the rebuilt bytes
 equal the released ROM. `DONE` in the public charts is Exact C plus the small,
 audited permanent-assembly category; semantic C is useful work but is not done.
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow,
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the working method and its stop
+rules,
 [docs/TOOLS.md](docs/TOOLS.md) for commands, [STATUS.md](STATUS.md) for the live
 frontier, [TARGETS.md](TARGETS.md) for the exhaustive largest-first owner queue,
 and [PROVENANCE.md](PROVENANCE.md) before handling evidence or build artifacts.
@@ -52,6 +53,12 @@ and bounded deterministic C forms, compiler modes only when source evidence
 points to one, and stochastic permutation last. Neither compiler settings nor
 permutation can recover a wrong CFG, alias model, or lifetime structure.
 
+Write the compiler's input, never its transcribed output. Hand-strength-reduced
+walking offsets, hand-CSE'd temporaries, and hand-hoisted invariants change
+what the earlier optimizer passes see and yield shapes the ROM does not have;
+state natural indexing and ordinary expressions and let the fork reproduce the
+ROM form (CONTRIBUTING.md, "Write the compiler's input, not its output").
+
 ## The contributor loop
 
 An open-ended request such as "continue decompilation" is coordinator work,
@@ -79,8 +86,9 @@ internal dump diagnostics.
    and align the target CFG block by block before searching.
 4. Only after localization, try an exact sibling's witnessed shape, then
    bounded deterministic source forms, then evidence-backed compiler modes.
-   Use stochastic permutation only for a localized, semantically reviewed
-   residual.
+   Use stochastic permutation only behind the last-mile gate in
+   CONTRIBUTING.md: a localized, semantically reviewed residual whose score is
+   dominated by register noise, with a written hypothesis and a stated budget.
 5. Review every automatic candidate for C dependency and behavior preservation.
    A lower score is not proof of valid source.
 6. Prove the candidate at its eventual path and use the owner-specific adoption
@@ -88,6 +96,11 @@ internal dump diagnostics.
    overlays. Adopt from outside `exact/`; copying a file is not proof.
 7. Record reusable evidence, run the focused checks, then run `make verify` once
    before committing with regenerated metrics.
+
+Every session ends in one of three states: an exact witness adopted through a
+gate, a newly recorded fact (a law, a typed field, a measured negative), or an
+honest stop in the ledgers. A session that only iterated failed, whatever the
+score did.
 
 ## Productive rounds
 
@@ -198,6 +211,9 @@ transforms; compiler search holds source fixed; `alchemy_permuter` is a bounded
 rescue search with dependency-safe reordering, a hard iteration ceiling, and
 protected output cleanup. Never promote a near-match or use search to conceal
 wrong boundaries, missing side effects, guessed types, or diffuse residuals.
+Stochastic search runs only behind the last-mile gate in CONTRIBUTING.md:
+localized residual, register-noise dominant score, a written hypothesis, a
+stated budget, and a stop after two stalled rounds.
 
 ## decomp
 
@@ -267,6 +283,9 @@ Do not erase negative evidence simply to make documentation shorter.
   [`alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c`](alchemy-gcc/gcc-2.96/gcc/config/arm/arm.c)
   by taking one side wholesale. Three-way merge and review every independent
   entry.
+- Never launch a bounded search without a written structural hypothesis. Two
+  consecutive searches with no new structural fact between them end the axis;
+  return to the assembly or the RTL dumps before spending further iterations.
 
 ## The compiler fork
 

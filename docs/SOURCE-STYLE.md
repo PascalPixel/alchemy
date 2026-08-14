@@ -102,6 +102,12 @@ change in type or alias information can change register allocation and break
 the exact bytes. Any identifier, type, or comment change still requires the
 owner's routed byte comparison.
 
+The same bound runs in the other direction: write the compiler's input, not
+its output. State plain indexing and ordinary expressions rather than
+transcribing optimizer artifacts such as walking offsets, hand-shared
+subexpressions, or hoisted invariants back into the source; the reasoning and
+symptoms are in [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+
 Never use `asm(...)`, fixed-register bindings, empty assembly barriers, or any
 other assembly escape hatch in C or headers. Byte equality never overrides
 that rule.

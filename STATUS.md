@@ -16,24 +16,10 @@ their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Working loop
 
-1. Pick an owner with the dispatcher commands `semantic_queue` or
-   `overlay_twins --leads`.
-2. Reconstruct and review the owner in `semantic/` until its boundaries,
-   control flow, data flow, calls, and side effects are credible.
-3. Use witnessed sibling shapes and bounded deterministic source searches for a
-   small residual. Search compiler modes only when the residual supports it.
-4. Use `tools/alchemy-permuter` only as a bounded rescue search. Candidates must
-   preserve C dependencies and compile to the owner; a near-match is not an
-   adoption.
-5. Adopt an exact result through the owner-specific gate: `integrate_matches`
-   for main-image drafts or `overlay_adopt` for code overlays. Ensure the
-   diagnostic inventory exists with `make inventory` before overlay adoption,
-   then regenerate metrics, run verification, and commit with the required
-   progress-bearing subject.
-
-The authoritative gate is `make verify`. During iteration, use `make test`,
-`make lint`, `make progress`, and the focused build stages documented in
-[`AGENTS.md`](AGENTS.md).
+The per-session loop is in [`AGENTS.md`](AGENTS.md) and the full working
+method, including where each kind of search must stop, is in
+[`CONTRIBUTING.md`](CONTRIBUTING.md). This page stays the measured frontier:
+what is exact, what is parked, and what the next decisions are.
 
 ## Tooling state
 

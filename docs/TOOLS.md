@@ -21,18 +21,20 @@ command; `make build-semantic` invokes the repository's semantic build stage.
 ## Recommended path
 
 ```text
-semantic_queue / overlay_twins
-        -> reconstruct and review semantic C
+read the target assembly and write the fact sheet down
+        -> semantic_queue / overlay_twins
+        -> reconstruct and review semantic C (compiler input, not output)
         -> decomp_diagnose / overlay_show
         -> shape_sweep
-        -> mode_sweep or mode_cohort
-        -> alchemy_permuter only for a small reviewed residual
+        -> mode_sweep or mode_cohort, only with ledger evidence
+        -> alchemy_permuter, last mile only, behind the CONTRIBUTING.md gate
         -> integrate_matches (main image) or overlay_adopt (code overlay)
         -> make verify
 ```
 
 The list below is a map, not an instruction to run every search. Start with the
-smallest command that can answer the current question.
+smallest command that can answer the current question, and escalate only with a
+new structural fact in hand: two stalled searches on one axis end that axis.
 
 ## assets
 

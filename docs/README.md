@@ -4,7 +4,7 @@ The current status and next focus are in [`../STATUS.md`](../STATUS.md).
 
 ## Working rules
 
-- [`../CONTRIBUTING.md`](../CONTRIBUTING.md) — contributor workflow.
+- [`../CONTRIBUTING.md`](../CONTRIBUTING.md) — the working method: how progress happens and where searches stop.
 - [`../AGENTS.md`](../AGENTS.md) — repository operating rules and tool groups.
 - [`TOOLS.md`](TOOLS.md) — every public command, internal classifications, mutation boundaries, and cache expectations.
 - [`../LAWS.md`](../LAWS.md) — compiler behavior established by evidence.

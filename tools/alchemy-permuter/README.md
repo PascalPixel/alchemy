@@ -54,10 +54,19 @@ I/O guard. Generated sources are capped at 8 MiB each, the retained plan at 128
 MiB, and journal/results at 32 MiB. Every local run also has a hard ceiling of
 100,000 iterations.
 
-Use the permuter only after the C has passed the semantic-readiness checklist in
-[`../../CONTRIBUTING.md`](../../CONTRIBUTING.md). It is a residual search, not a
-substitute for recovering boundaries, types, aliases, calls, or side effects. A
-large diffuse score usually means the input source is not ready.
+Launch the permuter only behind the last-mile gate in
+[`../../CONTRIBUTING.md`](../../CONTRIBUTING.md): reference size reached, the
+residual localized and reviewed against the matching-readiness checklist in
+[`../../semantic/README.md`](../../semantic/README.md), a dominant
+register-noise score, and a written hypothesis with a stated budget. It is a
+residual search, not a substitute for recovering boundaries, types, aliases,
+calls, or side effects; a large diffuse score means the input source is not
+ready. Size the round to the source before launching: iterations times source
+bytes times three must fit the 128 MiB plan budget, so a 60 kB source affords
+roughly 700 iterations per round and a larger request errors before starting.
+Tie-accepting walks measurably outperform strict better-only climbs. Two
+stalled rounds with no structural insight in the winners end the axis, and a
+null run is cost evidence, not exhaustion proof.
 
 Automatic statement reordering must preserve C dependencies: write/read,
 read/write, write/write, and ordering across calls whose effects are not proved

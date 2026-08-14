@@ -1,44 +1,41 @@
-#include "types.h"
+#include "battle_event.h"
 
-struct ScriptState_080bd898 {
-    u8 command[64];
-    s32 argument[64];
-    s32 command_index;
-    s32 command_count;
+struct BattleScriptState {
+    struct BattleEventQueue events;
     s32 state;
-    s32 delay;
+    s32 event_index;
     s32 timer;
-    u8 sprite[12];
+    u8 effect_sprite[12];
     s32 animation_id;
     s32 actor_id;
     s32 sound_id;
     s32 actor_argument;
 };
 
-struct RenderObject_080bd898 {
+struct BattleRenderObjectView {
     u8 unknown_00[40];
     u8 *attributes;
 };
 
-struct Actor_080bd898 {
-    void *objects;
+struct BattleActorView {
+    void *actor_objects;
     u8 unknown_04[38];
     s16 flag_2a;
 };
 
-struct SpriteSource_080bd898 {
+struct BattleSpriteSource {
     u8 unknown_00[12];
     u16 tile;
     u16 y;
 };
 
-struct SpritePosition_080bd898 {
+struct BattleSpritePosition {
     u8 unknown_00[4];
     u16 x;
     u16 y;
 };
 
-struct Sprite_080bd898 {
+struct BattleEffectSprite {
     u32 unknown_00;
     u8 y;
     u8 unknown_05;
@@ -63,10 +60,10 @@ void Func_080151d0(s32);
 void Func_080152b8(const u16 *);
 void *Func_08077008(s32);
 s32 Func_080b6cd0(s32);
-struct Actor_080bd898 *Func_080b7dd0(s32);
+struct BattleActorView *Func_080b7dd0(s32);
 void Func_080b7e60(s32);
 void *Func_080b7f70(void *, s32);
-void Func_080b78e4(s32, struct Actor_080bd898 *);
+void Func_080b78e4(s32, struct BattleActorView *);
 void Func_080b7aac(s32);
 void Func_080ba918(void *, s32);
 void Func_080bac6c(s32);
@@ -82,9 +79,9 @@ void Func_080f9010(s32);
 void Func_080bd898(void)
 {
     u8 *runtime = *(u8 **)0x03001e74;
-    struct ScriptState_080bd898 *script =
-        (struct ScriptState_080bd898 *)(runtime + 0x6b8);
-    void *objects[4];
+    struct BattleScriptState *script =
+        (struct BattleScriptState *)(runtime + 0x6b8);
+    void *actor_objects[4];
 
     if (*(s32 *)(runtime + 0x800) == 0)
         return;
@@ -92,12 +89,12 @@ void Func_080bd898(void)
     for (;;) {
         switch (script->state) {
         case 1:
-            if (script->command_index < *(s8 *)(runtime + 0x655)) {
-                script->command_count = 0;
-                script->delay = 0;
+            if (script->events.target_index < *(s8 *)(runtime + 0x655)) {
+                script->events.count = 0;
+                script->event_index = 0;
                 script->timer = 0;
-                Func_080bbb0c(runtime + 0x654, script->command_index);
-                script->command_index++;
+                Func_080bbb0c(runtime + 0x654, script->events.target_index);
+                script->events.target_index++;
                 script->state = 2;
             } else {
                 script->state = 4;
@@ -105,83 +102,83 @@ void Func_080bd898(void)
             break;
 
         case 2: {
-            s32 index;
+            s32 queue_index;
 
-            for (index = script->delay;
-                 index < script->command_count && script->state == 2;
-                 index = script->delay) {
-                s32 argument;
+            for (queue_index = script->event_index;
+                 queue_index < script->events.count && script->state == 2;
+                 queue_index = script->event_index) {
+                s32 operand;
 
                 if (script->timer != 0) {
                     script->timer--;
                     return;
                 }
 
-                argument = script->argument[index];
-                switch (script->command[index]) {
-                case 14:
-                    Func_080f9010(argument);
+                operand = script->events.operands[queue_index];
+                switch (script->events.opcodes[queue_index]) {
+                case BATTLE_EVENT_SOUND:
+                    Func_080f9010(operand);
                     break;
-                case 13:
+                case BATTLE_EVENT_SCRIPT_UPDATE:
                     Func_080bb928(script);
                     break;
-                case 0:
-                    Func_08015120(argument, 1);
+                case BATTLE_EVENT_UNIT:
+                    Func_08015120(operand, 1);
                     break;
-                case 1:
-                    Func_08015120(argument, 5);
+                case BATTLE_EVENT_VALUE:
+                    Func_08015120(operand, 5);
                     break;
-                case 2:
-                    Func_08015120(argument & 0x1ff, 2);
+                case BATTLE_EVENT_ITEM:
+                    Func_08015120(operand & 0x1ff, 2);
                     break;
-                case 3:
-                    Func_08015120(argument & 0x3fff, 4);
+                case BATTLE_EVENT_ACTION:
+                    Func_08015120(operand & 0x3fff, 4);
                     break;
-                case 6:
+                case BATTLE_EVENT_MARK:
                     (*(s32 **)0x03001ee4)[2] = 1;
                     break;
-                case 4:
-                    if (argument >= 0)
-                        Func_080151d0(argument);
+                case BATTLE_EVENT_TEXT:
+                    if (operand >= 0)
+                        Func_080151d0(operand);
                     script->state = 3;
                     *(s32 *)0x03001af8 = 0;
                     break;
-                case 5:
-                    if (argument >= 0)
-                        Func_080151d0(argument);
+                case BATTLE_EVENT_TEXT_CONTINUE:
+                    if (operand >= 0)
+                        Func_080151d0(operand);
                     script->state = 13;
                     break;
-                case 7:
+                case BATTLE_EVENT_RESET:
                     Func_08015118();
                     break;
-                case 12:
-                    Func_080bb8e8(argument);
+                case BATTLE_EVENT_ACTOR_EFFECT:
+                    Func_080bb8e8(operand);
                     break;
-                case 8: {
-                    struct Actor_080bd898 *actor;
+                case BATTLE_EVENT_ACTOR_BEGIN: {
+                    struct BattleActorView *actor;
 
                     if (script->sound_id > 0)
                         Func_080f9010(script->sound_id);
-                    script->actor_id = argument;
-                    actor = Func_080b7dd0(argument);
-                    Func_08009080(actor->objects, 5);
+                    script->actor_id = operand;
+                    actor = Func_080b7dd0(operand);
+                    Func_08009080(actor->actor_objects, 5);
                     script->state = 10;
                     script->timer = 0;
                     break;
                 }
-                case 9: {
-                    struct Actor_080bd898 *actor;
+                case BATTLE_EVENT_ACTOR_RESOLVE: {
+                    struct BattleActorView *actor;
                     u8 *metadata;
                     s32 i;
                     void *object;
 
-                    script->actor_id = argument;
-                    Func_080c24f0(argument, script->actor_argument);
-                    Func_080bb588(argument);
-                    metadata = Func_08077008(argument);
+                    script->actor_id = operand;
+                    Func_080c24f0(operand, script->actor_argument);
+                    Func_080bb588(operand);
+                    metadata = Func_08077008(operand);
                     for (i = 0;
                          (object = Func_080b7f70(
-                              Func_080b7dd0(argument)->objects, i)) != 0;
+                              Func_080b7dd0(operand)->actor_objects, i)) != 0;
                          i++) {
                         Func_08009020(object,
                             metadata[0x12a] == 1 ? 5 : 4);
@@ -192,22 +189,22 @@ void Func_080bd898(void)
                     }
                     break;
                 }
-                case 10:
+                case BATTLE_EVENT_REFRESH:
                     Func_08015130(runtime[0x41]);
                     break;
-                case 11: {
-                    struct Actor_080bd898 *actor =
-                        Func_080b7dd0(argument);
+                case BATTLE_EVENT_ACTOR_FINISH: {
+                    struct BattleActorView *actor =
+                        Func_080b7dd0(operand);
 
-                    Func_080b78e4(argument, actor);
-                    actor = Func_080b7dd0(argument);
-                    Func_080ba918(actor->objects,
-                        Func_080b6cd0(argument));
-                    Func_080b7aac(argument);
+                    Func_080b78e4(operand, actor);
+                    actor = Func_080b7dd0(operand);
+                    Func_080ba918(actor->actor_objects,
+                        Func_080b6cd0(operand));
+                    Func_080b7aac(operand);
                     break;
                 }
                 }
-                script->delay++;
+                script->event_index++;
             }
 
             if (script->state == 2)
@@ -232,11 +229,11 @@ void Func_080bd898(void)
         case 5: {
             u32 phase = (*(u32 *)0x03001e40 >> 2) & 7;
             const void *tiles = (const u8 *)0x080c3734 + phase * 128;
-            void **view = *(void ***)0x03001ee4;
-            struct SpriteSource_080bd898 *source = view[0];
-            struct SpritePosition_080bd898 *position = view[1];
-            struct Sprite_080bd898 *sprite =
-                (struct Sprite_080bd898 *)script->sprite;
+            void **battle_view = *(void ***)0x03001ee4;
+            struct BattleSpriteSource *sprite_source = battle_view[0];
+            struct BattleSpritePosition *sprite_position = battle_view[1];
+            struct BattleEffectSprite *effect_sprite =
+                (struct BattleEffectSprite *)script->effect_sprite;
             s32 sine;
 
             if (script->animation_id == -1)
@@ -245,19 +242,19 @@ void Func_080bd898(void)
             Func_08015118();
             Func_080039fc((void *)0x0400004a, 4);
             Func_0800393c((void *)0x0400004a, 16);
-            sprite->unknown_00 = 0xa000;
-            sprite->tile = 0;
-            sprite->tile =
-                (sprite->tile & 0xfc00) |
+            effect_sprite->unknown_00 = 0xa000;
+            effect_sprite->tile = 0;
+            effect_sprite->tile =
+                (effect_sprite->tile & 0xfc00) |
                 (Func_080040d0(script->animation_id, tiles) & 0x3ff);
-            sprite->x =
-                (sprite->x & 0xfe00) |
-                ((source->tile * 8 + (position->x >> 8) + 4) & 0x1ff);
+            effect_sprite->x =
+                (effect_sprite->x & 0xfe00) |
+                ((sprite_source->tile * 8 + (sprite_position->x >> 8) + 4) & 0x1ff);
             sine = Func_08002322(*(s32 *)0x03001e40 << 12);
             if (sine < 0)
                 sine += 0x7fff;
-            sprite->y =
-                (source->y * 8) + (position->y >> 8) +
+            effect_sprite->y =
+                (sprite_source->y * 8) + (sprite_position->y >> 8) +
                 (sine >> 15) + 6;
 
             if ((*(s32 *)0x03001ae8 & 2) != 0 ||
@@ -270,7 +267,7 @@ void Func_080bd898(void)
                 break;
             }
 
-            Func_08003dec(sprite, 0xf0);
+            Func_08003dec(effect_sprite, 0xf0);
             return;
         }
 
@@ -279,19 +276,19 @@ void Func_080bd898(void)
 
             if ((script->timer & 1) != 0) {
                 if ((script->timer & 2) != 0) {
-                    struct Actor_080bd898 *actor;
+                    struct BattleActorView *actor;
 
                     ids[0] = 0xff;
                     actor = Func_080b7dd0(script->actor_id);
-                    Func_080ba918(actor->objects,
+                    Func_080ba918(actor->actor_objects,
                         Func_080b6cd0(script->actor_id));
                 } else {
-                    struct Actor_080bd898 *actor;
+                    struct BattleActorView *actor;
 
                     ids[0] = (u16)script->actor_id;
                     ids[1] = 0xff;
                     actor = Func_080b7dd0(script->actor_id);
-                    Func_080ba918(actor->objects, 7);
+                    Func_080ba918(actor->actor_objects, 7);
                 }
                 Func_080152b8(ids);
             }
@@ -346,11 +343,11 @@ void Func_080bd898(void)
                 }
                 if (value == 6 || (script->timer & 7) == 0) {
                     count = 0;
-                    while ((objects[count] = Func_080b7f70(
-                                Func_080b7dd0(script->actor_id)->objects,
+                    while ((actor_objects[count] = Func_080b7f70(
+                                Func_080b7dd0(script->actor_id)->actor_objects,
                                 count)) != 0) {
-                        struct RenderObject_080bd898 *object =
-                            objects[count];
+                        struct BattleRenderObjectView *object =
+                            actor_objects[count];
 
                         object->attributes[5] = value;
                         object->attributes[22] |= 0xff;
@@ -368,19 +365,19 @@ void Func_080bd898(void)
             }
 
             if (frame > 4) {
-                struct Actor_080bd898 *actor =
+                struct BattleActorView *actor =
                     Func_080b7dd0(script->actor_id);
 
                 actor->flag_2a = 1;
                 count = 0;
-                while ((objects[count] =
-                            Func_080b7f70(actor->objects, count)) != 0)
+                while ((actor_objects[count] =
+                            Func_080b7f70(actor->actor_objects, count)) != 0)
                     count++;
 
                 value = frame * 4 - 20;
                 if (value > 127) {
                     for (i = 0; i < count; i++)
-                        Func_080bd850(objects[i], 0);
+                        Func_080bd850(actor_objects[i], 0);
                     Func_080b7e60(script->actor_id);
                     script->state = 2;
                     script->timer = 0;
@@ -388,10 +385,10 @@ void Func_080bd898(void)
                 }
 
                 for (i = 0; i < count; i++) {
-                    Func_080090f8(objects[i], value);
-                    Func_080090f8(objects[i], value + 1);
-                    Func_080090f8(objects[i], value + 2);
-                    Func_080090f8(objects[i], value + 3);
+                    Func_080090f8(actor_objects[i], value);
+                    Func_080090f8(actor_objects[i], value + 1);
+                    Func_080090f8(actor_objects[i], value + 2);
+                    Func_080090f8(actor_objects[i], value + 3);
                 }
             }
             script->timer++;

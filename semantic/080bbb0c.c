@@ -1,97 +1,37 @@
-/*
- * Correctness fix, veneer audit (2026-08-01).
- *
- * `Func_080072f0` is not a function.  0x080072e4 begins the GCC
- * `__call_via_rN` veneer bank -- fifteen four-byte `bx rN; nop` entries,
- * r0..lr, ending at 0x08007320 -- so 0x080072f0 is `__call_via_r3` and
- * `bl 0x80072f0` calls whatever r3 holds.
- *
- * At every site in this file the ROM loads r3 from the literal pool with
- * the constant 0x03001388, so the callee is the relocated IWRAM word copy
- * at that address.  Its signature is not guessed: the EXACT source
- * src/080d40ec.c declares it as
- * `void *(*)(void *destination, const void *source, s32 size)` and
- * src/080e0524.c casts the same address to the same shape.
- *
- * Note what the previous draft had already half-seen: it passed
- * 0x03001388 as a fourth ARGUMENT.  That value was never an argument --
- * it is the callee, and the register load that produced it is the call
- * target, not a parameter.
- */
-#include "types.h"
+#include "battle_command.h"
+#include "motion_object.h"
+
+/* exact/080d40ec.c and exact/080e0524.c witness this IWRAM copy ABI. */
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 #define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
-/*
- * This resolver consumes the battle plan assembled by Func_080be378.  Keeping
- * the producer's layout here makes the four parallel per-target arrays
- * explicit: the selected member, its range adjustment, its effect modifier,
- * and the resolver result.  The tail word is updated when a damaged actor
- * awards the plan's delayed follow-up credit.
- */
-typedef struct BattlePlan_080bbb0c {
-    u8 actor_id;                 /* 0x00 */
-    s8 member_count;             /* 0x01 */
-    u8 target_ids[14];           /* 0x02 */
-    s8 range_distances[14];      /* 0x10 */
-    s8 range_adjustments[14];    /* 0x1e */
-    s8 target_modifiers[14];     /* 0x2c */
-    s8 target_outcomes[14];      /* 0x3a */
-    s16 command;                 /* 0x48 */
-    u8 padding_4a[2];
-    s32 action_id;               /* 0x4c */
-    s32 range_index;             /* 0x50 */
-    u8 padding_54[0x0c];
-    s32 follow_up_credit;        /* 0x60 */
-} BattlePlan_080bbb0c;
-
-/* Static ability record returned by Func_08077080. */
-typedef struct BattleAction_080bbb0c {
-    u8 target_mode;              /* 0x00 */
-    u8 element_flags;            /* 0x01 */
-    u8 padding_02;
-    u8 effect;                   /* 0x03 */
-    u8 padding_04[4];
-    u8 range_rule;               /* 0x08 */
-    u8 padding_09;
-    u16 magnitude;               /* 0x0a */
-} BattleAction_080bbb0c;
 
 s32 Func_080022ec(s32, s32);
 s32 Func_080022f4(s32, s32);
 void Func_08002df0(void *);
 void *Func_08004938(s32);
 void Func_08015130(s32);
-u8 *Func_08077008(s32);
-void Func_08077010(s32);
-BattleAction_080bbb0c *Func_08077080(s32);
-s32 Func_080770c0(s32);
 void Func_08077120(s32, s32);
-void Func_08077128(s32);
 void Func_08077140(s32, s32, s32);
 s32 Func_08077178(s32, s32, s32, s32, s32);
 s32 Func_08077180(u16, u32, u16, s32);
 s32 Func_08077188(s32, s32, s32);
 s32 Func_08077190(u16, s32, s32);
-s32 Func_080771a0(void);
-s32 Func_080772b8(s32);
 s32 Func_080b6ae0(s16 *);
 void Func_080b6c90(void);
 s32 Func_080b6cdc(s32);
 void Func_080b6f44(void *, s32, s32, s32);
 s32 Func_080b7514(void);
 void Func_080b7548(void);
-void *Func_080b7dd0(s32);
+struct BattleObjectSlot *Func_080b7dd0(s32);
 void Func_080b8000(s32);
-u32 Func_080bbabc(u32, u32);
 s32 Func_080bbae8(s32);
 s32 Func_080c1df4(s32, s32);
 s32 Func_080c1f50(s32);
 u32 Func_080c1fa8(s32);
 
 /*
- * Resolve one target from a queued battle action.  The request identifies the
+ * Resolve one target from a queued battle action.  The plan identifies the
  * acting combatant, action, target list, range slot, and per-target modifiers.
  * The routine applies the action's HP/PP/stat/status effect to the live target,
  * queues the corresponding battle messages, and then performs common cleanup.
@@ -101,191 +41,190 @@ u32 Func_080c1fa8(s32);
  * direct message emission followed by `goto finalize`; they are not separate
  * ABI-callable functions.
  */
-#define ResolveBattleActionTarget Func_080bbb0c
-
-s32 ResolveBattleActionTarget(BattlePlan_080bbb0c *plan, s32 target_slot) {
+s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s16 queued_ids[7];
-    BattleAction_080bbb0c *action;
+    struct BattleAction *action;
     u8 *actor_state;
     s32 actor_id;
     s32 action_id;
-    s32 sp3C;
+    s32 stat_delta;
     u8 *battle_state;
-    s32 sp34;
-    s32 sp30;
-    u32 health_delta;
-    s32 sp28;
+    s32 halve_defense;
+    s32 target_adjustment;
+    u32 effect_amount;
+    s32 leave_one_hp;
     s32 action_allowed;
-    s32 sp20;
-    s32 sp1C;
-    s32 sp18;
-    s32 sp14;
-    u8 *target_snapshot;
-    s32 spC;
-    s32 sp8;
-    s16 *sp4;
-    BattlePlan_080bbb0c *request;
-    u8 *target_fields;
-    s16 *var_r6;
+    s32 target_modifier;
+    s32 skip_primary_effect;
+    s32 action_family;
+    s32 range_relation;
+    struct BattleUnit *target_snapshot;
+    s32 source_stat;
+    s32 power_bonus_percent;
+    s16 *command;
+    struct BattlePlan *plan;
+    u8 *target_ids;
+    s16 *queued_object_cursor;
     s16 range_value;
-    s16 temp_r1_3;
-    s16 temp_r2_3;
-    s16 temp_r2_5;
-    s16 temp_r2_6;
-    s16 temp_r2_7;
-    s16 temp_r3_11;
-    s16 temp_r3_26;
-    s16 temp_r3_27;
-    s16 temp_r3_28;
-    s16 temp_r3_7;
-    s16 temp_r5_4;
-    s16 temp_r5_5;
-    s16 temp_r5_6;
-    s16 temp_r6;
-    s16 temp_r6_10;
-    s16 temp_r6_2;
-    s16 temp_r6_3;
-    s16 temp_r6_4;
-    s16 temp_r6_5;
-    s16 temp_r6_6;
-    s16 temp_r6_7;
-    s16 temp_r6_9;
+    s16 actor_pp_before_drain;
+    s16 turn_order_entry;
+    s16 target_max_hp_signed;
+    s16 actor_max_pp_for_drain;
+    s16 target_max_pp;
+    s16 actor_max_hp;
+    s16 actor_max_pp;
+    s16 target_pp_available;
+    s16 target_max_hp;
+    s16 actor_pp;
+    s16 target_hp;
+    s16 target_pp;
+    s16 actor_hp;
+    s16 target_hp_before_heal;
+    s16 target_pp_before_damage;
+    s16 target_hp_before_ranged_damage;
+    s16 target_pp_before_recovery;
+    s16 target_hp_before_effect;
     u8 *target_state;
-    s32 temp_r0_4;
-    s32 temp_r0_6;
-    s32 temp_r3_4;
-    s32 temp_r5;
-    s32 temp_r5_3;
-    s32 temp_r8;
+    struct BattleUnit *target_unit;
+    s32 object_effect_config;
+    s32 queued_object_count;
+    s32 queued_id;
+    s32 hp_minus_one;
+    s32 range_check_score;
+    s32 healing_power;
+    s32 effect_object_id;
     s32 range_index;
-    s32 var_lr;
-    s32 var_r0;
-    s32 var_r0_3;
-    s32 var_r0_4;
-    s32 var_r0_5;
-    s32 var_r0_6;
-    s32 var_r0_7;
+    s32 turn_order_tail_offset;
+    s32 result;
+    s32 turn_order_offset;
+    s32 base_damage;
+    s32 modifier_numerator;
+    s32 recovery_percent_product;
     s32 range_lower_count;
-    s32 var_r1_12;
+    s32 recovery_source_stat;
     s32 range_upper_count;
-    s32 var_r1_8;
-    s32 var_r2_3;
-    s32 var_r2_5;
-    s32 var_r3;
-    s32 var_r3_2;
-    s32 var_r3_3;
-    s32 var_r4;
-    s32 var_r5_11;
-    s32 var_r5_14;
-    s32 var_r5_15;
-    s32 var_r5_16;
-    s32 var_r5_18;
-    s32 var_r5_19;
-    s32 var_r5_2;
-    s32 var_r5_3;
-    s32 var_r5_4;
-    s32 var_r5_5;
-    s32 var_r6_2;
-    s32 var_r6_3;
-    s32 var_r6_4;
-    s32 var_r6_5;
-    s32 var_r8;
-    s32 var_r8_2;
-    s8 *var_r1_20;
-    s8 *var_r2_6;
-    s8 *var_r2_7;
-    s8 *var_r2_8;
-    s8 temp_r3_12;
-    s8 temp_r3_3;
-    s8 temp_r3_5;
-    s8 temp_r3_8;
-    s8 temp_r3_9;
+    s32 actor_adjustment_offset;
+    s32 target_adjustment_offset;
+    s32 battle_record_offset;
+    s32 effect_case;
+    s32 queue_head;
+    s32 range_scale;
+    s32 prior_health;
+    s32 restored_pp;
+    s32 healing_source_stat;
+    s32 object_anchor_x;
+    s32 range_scale_table;
+    s32 scratch_value;
+    s32 range_scale_offset;
+    u8 status_mask;
+    s32 turn_order_next_offset;
+    s32 scaled_ranged_damage;
+    s32 effect_damage;
+    s32 recovered_hp;
+    s32 actor_recovered_pp;
+    s32 drained_pp;
+    s32 turn_order_index;
+    s32 queued_object_remaining;
+    s32 adjusted_damage;
+    s32 modified_damage;
+    s32 resulting_hp;
+    s32 resulting_pp;
+    s32 secondary_resulting_pp;
+    s32 actor_recovered_hp;
+    s32 damage_pass;
+    s32 ranged_damage_pass;
+    u8 *status_flags;
+    s8 *status_level_one;
+    s8 *status_level_two;
+    s8 effect_guard_level;
+    s8 guard_level;
+    s8 pp_guard_level;
+    s8 secondary_pp_guard_level;
+    s8 ranged_guard_level;
     s32 range_distance;
-    s32 var_r0_2;
-    u16 temp_r0_7;
-    u16 temp_r1_2;
-    u16 temp_r3_10;
-    u16 temp_r3_21;
-    u16 temp_r3_6;
-    s32 temp_r5_2;
-    u16 temp_r6_8;
-    u16 temp_r8_2;
-    s32 effect_scale;
-    s32 var_r5_10;
-    u32 temp_r2_2;
-    u32 temp_r3_2;
-    u32 var_r1_10;
-    u32 var_r1_11;
-    u32 var_r1_13;
-    u32 var_r1_14;
-    u32 var_r1_15;
-    u32 var_r1_21;
-    u32 var_r1_22;
-    u32 var_r1_3;
-    u32 var_r1_4;
-    u32 var_r1_5;
-    u32 var_r1_6;
-    u32 var_r1_7;
-    u32 var_r1_9;
-    u32 var_r2_4;
-    u32 var_r5_12;
-    u32 var_r5_13;
-    u32 var_r5_17;
-    u32 var_r5_6;
-    u32 var_r5_7;
-    u32 var_r5_8;
-    u32 var_r5_9;
-    u32 var_r6_6;
-    u8 temp_r0_8;
-    u8 temp_r2_4;
-    u8 temp_r3_13;
-    u8 temp_r3_14;
-    u8 temp_r3_15;
-    u8 temp_r3_16;
-    u8 temp_r3_17;
-    u8 temp_r3_18;
-    u8 temp_r3_19;
-    u8 temp_r3_20;
-    u8 temp_r3_22;
-    u8 temp_r3_23;
-    u8 temp_r3_24;
-    u8 temp_r3_25;
-    u8 temp_r3_29;
-    u8 temp_r3_30;
+    s32 cached_action_result;
+    u32 target_defense;
+    u16 max_hp_for_half_revive;
+    s32 action_power;
+    u32 target_max_hp_unsigned;
+    u32 target_hp_before_percent_heal;
+    s32 effective_defense;
+    s32 scaled_action_power;
+    u32 range_index_unsigned;
+    u32 modifier_product;
+    u32 ranged_damage_text;
+    u32 ranged_defeat_text;
+    u32 effect_damage_text;
+    u32 recovered_hp_amount;
+    u32 defeat_effect_text;
+    u32 effect_text;
+    u32 effect_message;
+    u32 continuation_text;
+    u32 damage_text;
+    u32 defeat_text;
+    u32 pp_damage_text;
+    u32 secondary_pp_damage_text;
+    u32 battle_record_index;
+    u32 ranged_damage;
+    u32 pp_recovery;
+    u32 actor_hp_recovery;
+    u32 damage;
+    u32 pp_damage;
+    u32 healed_hp;
+    u32 secondary_pp_damage;
+    u32 actor_pp_recovery;
+    u8 recovery_roll;
+    u8 effect_id;
+    s32 attack_down_one;
+    s32 attack_down_two;
+    s32 attack_up_one;
+    s32 attack_up_two;
+    s32 defense_down_one;
+    s32 defense_down_two;
+    s32 defense_up_one;
+    s32 defense_up_two;
+    s32 resistance_down_one;
+    s32 resistance_down_two;
+    s32 resistance_up_one;
+    s32 resistance_up_two;
+    u8 status_141_value;
+    u8 status_13c_value;
     u8 target_id;
-    u8 var_r1_16;
-    u8 var_r1_17;
-    u8 var_r1_18;
-    u8 var_r1_19;
-    s32 var_r5;
-    u8 *temp_r0_5;
-    u8 *temp_r1;
+    s8 applied_resistance_down_one;
+    s8 applied_resistance_down_two;
+    u8 applied_resistance_up_one;
+    u8 applied_resistance_up_two;
+    s32 class_id;
+    struct BattleObjectSlot *object_slot;
+    u8 *turn_order_base;
     u8 *range_table;
-    u8 *var_r2;
-    u8 *range_upper_cursor;
+    u8 *lower_threshold;
+    s16 *upper_threshold;
+    u32 status_140_address;
 
-    request = plan;
-    sp3C = 0;
+    plan = input_plan;
+    stat_delta = 0;
     battle_state = *(void **)0x03001E74;
-    sp34 = 0;
-    health_delta = 0;
-    sp28 = 0;
-    sp1C = 0;
-    sp14 = 0;
-    target_snapshot = Func_08004938(0x14C);
-    actor_id = (s32) request->actor_id;
-    target_fields = request->target_ids;
-    target_id = target_fields[target_slot];
-    action_id = request->action_id;
-    range_index = request->range_index;
-    sp30 = request->range_adjustments[target_slot];
-    sp20 = request->target_modifiers[target_slot];
-    action = Func_08077080(action_id);
-    actor_state = Func_08077008(actor_id);
-    target_state = Func_08077008((s32) target_id);
-    ((WordCopy)0x03001388)(target_snapshot, target_state, 0x14C);
-    if (action->range_rule != 0xFF) {
-        range_distance = request->range_distances[target_slot];
+    halve_defense = 0;
+    effect_amount = 0;
+    leave_one_hp = 0;
+    skip_primary_effect = 0;
+    range_relation = 0;
+    target_snapshot = Func_08004938(BATTLE_UNIT_SIZE);
+    actor_id = (s32) plan->actor_id;
+    target_ids = plan->target_ids;
+    target_id = *(target_ids + target_slot);
+    action_id = plan->action_id;
+    range_index = plan->range_index;
+    target_adjustment = plan->target_adjustments[target_slot];
+    target_modifier = plan->target_modifiers[target_slot];
+    action = BattleAction_Get(action_id);
+    actor_state = (u8 *)BattleUnit_Get(actor_id);
+    target_state = (u8 *)BattleUnit_Get((s32) target_id);
+    target_unit = (struct BattleUnit *)target_state;
+    ((WordCopy)0x03001388)(target_snapshot, target_state, BATTLE_UNIT_SIZE);
+    if (action->range != 0xFF) {
+        range_distance = plan->target_offsets[target_slot];
         if (range_distance < 0) {
             range_distance = -range_distance;
         }
@@ -297,64 +236,69 @@ s32 ResolveBattleActionTarget(BattlePlan_080bbb0c *plan, s32 target_slot) {
         range_value = M2C_FIELD(((range_index * 4) + target_state), s16, 0x26);
         range_lower_count = 0;
         if ((s32) range_value >= (s32) M2C_FIELD(range_table, s16, 2)) {
-            var_r2 = range_table;
+            lower_threshold = range_table;
 loop_7:
             range_lower_count += 1;
-            var_r2 += 4;
+            lower_threshold += 4;
             if (range_lower_count <= 3) {
-                if ((s32) range_value >= (s32) M2C_FIELD(var_r2, s16, 2)) {
+                if ((s32) range_value >= (s32) M2C_FIELD(lower_threshold, s16, 2)) {
                     goto loop_7;
                 }
             }
         }
         if (range_lower_count == 4) {
-            sp14 = -1;
+            range_relation = -1;
         }
         range_upper_count = 0;
-        range_upper_cursor = target_state;
-        range_upper_cursor += 0x24;
-        if ((s32) range_value <= (s32) M2C_FIELD(range_upper_cursor, s16, 2)) {
+        range_table = target_state;
+        range_table += 0x24;
+        if ((s32) range_value <= (s32) M2C_FIELD(range_table, s16, 2)) {
+            upper_threshold = (s16 *)(target_state + 0x24);
 loop_13:
             range_upper_count += 1;
-            range_upper_cursor += 4;
+            upper_threshold += 2;
             if (range_upper_count <= 3) {
-                if ((s32) range_value <= (s32) M2C_FIELD(range_upper_cursor, s16, 2)) {
+                if ((s32) range_value <= (s32) upper_threshold[1]) {
                     goto loop_13;
                 }
             }
         }
         if (range_upper_count == 4) {
-            sp14 = 1;
+            range_relation = 1;
         }
     }
-    temp_r2_2 = (u32) request->range_index;
-    if (temp_r2_2 <= 3U) {
-        sp4 = &request->command;
-        if (request->command != 2) {
-            spC = M2C_FIELD(actor_state, s16, (temp_r2_2 * 4) + 0x48);
+    range_index_unsigned = (u32) plan->range_index;
+    if (range_index_unsigned <= 3U) {
+        command = &plan->command;
+        if (plan->command != 2) {
+            actor_adjustment_offset = (range_index_unsigned * 4) + 0x48;
+            source_stat = M2C_FIELD(actor_state, s16, actor_adjustment_offset);
         } else {
             goto block_21;
         }
     } else {
-        sp4 = &request->command;
+        command = &plan->command;
 block_21:
-        spC = 0x64;
+        source_stat = 0x64;
     }
-    if ((*sp4 == 5) && (temp_r2_2 <= 3U) && (sp14 > 0)) {
-        temp_r5 = spC - M2C_FIELD((target_state + ((temp_r2_2 * 4) + 0x48)), s16, 2);
-        temp_r5 += 0x1E;
-        temp_r5 *= 0x28F;
-        if (temp_r5 > (Func_080771a0() & 0xFFFF)) {
-            Func_080bbabc(0xDU, 5U);
+    if ((*command == 5) && (range_index_unsigned <= 3U) && (range_relation > 0)) {
+        target_adjustment_offset = (range_index_unsigned * 4) + 0x48;
+        range_check_score = source_stat - M2C_FIELD(
+            target_state + target_adjustment_offset,
+            s16,
+            2
+        );
+        range_check_score += 0x1E;
+        range_check_score *= 0x28F;
+        if (range_check_score > (BattleRandom_Next() & 0xFFFF)) {
+            BattleEvent_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5U);
         }
     }
-    sp18 = 0xF & action->element_flags;
-    {
-        s32 outcome_index = target_slot + 0x38;
-        var_r0_2 = ((s8 *)target_fields)[outcome_index];
-    }
-    action_allowed = var_r0_2 != -1
-        ? var_r0_2
+    action_family = 0xF & action->target_flags;
+    /* Load plan->target_results[target_slot] through the live ID base. */
+    cached_action_result = ((s8 *)target_ids)[target_slot + 0x38];
+    action_allowed = cached_action_result != -1
+        ? cached_action_result
         : Func_08077178(
             actor_id,
             target_id,
@@ -365,545 +309,594 @@ block_21:
     if ((u32) ((action->effect + 0xCE) << 0x18) > 0x01000000U) {
 
     } else {
-        var_r5 = M2C_FIELD(actor_state, u8, 0x128);
-        temp_r8 = Func_080b7514();
+        class_id = M2C_FIELD(actor_state, u8, 0x128);
+        effect_object_id = Func_080b7514();
         if (action->effect == 0x33) {
-            var_r5 = Func_080c1fa8(M2C_FIELD(battle_state, s32, 0));
+            class_id = Func_080c1fa8(M2C_FIELD(battle_state, s32, 0));
         }
-        if ((action_allowed != 0) && (Func_080b6cdc(var_r5) != 0) && (temp_r8 >= 0)) {
-            temp_r0_4 = Func_080c1df4(var_r5, 1);
-            if (0x8000 & temp_r0_4) {
-                Func_080c1f50(var_r5);
+        if ((action_allowed != 0) && (Func_080b6cdc(class_id) != 0) && (effect_object_id >= 0)) {
+            object_effect_config = Func_080c1df4(class_id, 1);
+            if (0x8000 & object_effect_config) {
+                Func_080c1f50(class_id);
             }
-            Func_08077140(temp_r8, var_r5, 0x7FFF & temp_r0_4);
-            temp_r1 = battle_state + 2;
-            var_r5_2 = 0;
-            var_lr = 0;
-            var_r0_3 = 0x64;
-            var_r4 = 0;
-            if (M2C_FIELD(temp_r1, s16, 0x64) == 0xFE) {
-                M2C_FIELD(temp_r1, s16, 0x64) = (s16) temp_r8;
+            Func_08077140(effect_object_id, class_id, 0x7FFF & object_effect_config);
+            turn_order_base = battle_state + 2;
+            turn_order_index = 0;
+            turn_order_tail_offset = 0;
+            turn_order_offset = 0x64;
+            turn_order_next_offset = 0;
+            queue_head = M2C_FIELD(turn_order_base, s16, turn_order_offset);
+            if (queue_head == 0xFE) {
+                M2C_FIELD(turn_order_base, s16, turn_order_offset) = (s16) effect_object_id;
             } else {
 loop_41:
-                temp_r2_3 = M2C_FIELD(temp_r1, s16, var_r0_3);
-                if (temp_r2_3 != 0xFF) {
-                    var_r5_2 += 1;
-                    var_r0_3 += 2;
-                    var_r4 += 2;
-                    if (var_r5_2 <= 5) {
-                        var_lr = var_r4;
-                        if (M2C_FIELD(temp_r1, s16, var_r0_3) == 0xFE) {
-                            M2C_FIELD(temp_r1, s16, var_r0_3) = (s16) temp_r8;
+                turn_order_entry = M2C_FIELD(turn_order_base, s16, turn_order_offset);
+                if (turn_order_entry != 0xFF) {
+                    turn_order_index += 1;
+                    turn_order_offset += 2;
+                    turn_order_next_offset += 2;
+                    if (turn_order_index <= 5) {
+                        turn_order_tail_offset = turn_order_next_offset;
+                        if (M2C_FIELD(turn_order_base, s16, turn_order_offset) == 0xFE) {
+                            M2C_FIELD(turn_order_base, s16, turn_order_offset) = (s16) effect_object_id;
                         } else {
                             goto loop_41;
                         }
                     }
                 } else {
-                    M2C_FIELD(temp_r1, s16, var_r0_3) = (s16) temp_r8;
-                    M2C_FIELD(temp_r1, s16, var_lr + 0x66) = temp_r2_3;
+                    M2C_FIELD(turn_order_base, s16, turn_order_offset) = (s16) effect_object_id;
+                    M2C_FIELD(turn_order_base, s16, turn_order_tail_offset + 0x66) = turn_order_entry;
                 }
             }
             Func_080b7548();
-            temp_r0_5 = Func_080b7dd0(temp_r8);
-            var_r2_3 = M2C_FIELD(temp_r0_5, s32, 0xC);
-            if (var_r2_3 < 0) {
-                var_r2_3 += 0xFFFF;
+            object_slot = Func_080b7dd0(effect_object_id);
+            object_anchor_x = object_slot->anchor_x;
+            if (object_anchor_x < 0) {
+                object_anchor_x += 0xFFFF;
             }
-            var_r3 = M2C_FIELD(temp_r0_5, s32, 0x10);
-            if (var_r3 < 0) {
-                var_r3 += 0xFFFF;
+            scratch_value = object_slot->anchor_z;
+            if (scratch_value < 0) {
+                scratch_value += 0xFFFF;
             }
-            Func_080b6f44(temp_r0_5, temp_r8, var_r2_3 >> 0x10, var_r3 >> 0x10);
+            Func_080b6f44(object_slot, effect_object_id, object_anchor_x >> 0x10, scratch_value >> 0x10);
             Func_080b6c90();
-            temp_r0_6 = Func_080b6ae0(queued_ids);
-            if (temp_r0_6 > 0) {
-                var_r6 = queued_ids;
-                var_r5_3 = temp_r0_6;
+            queued_object_count = Func_080b6ae0(queued_ids);
+            if (queued_object_count > 0) {
+                queued_object_cursor = queued_ids;
+                queued_object_remaining = queued_object_count;
                 do {
-                    temp_r0_7 = (u16) *var_r6;
-                    var_r5_3 -= 1;
-                    var_r6++;
-                    Func_080b8000((s32) temp_r0_7);
-                } while (var_r5_3 != 0);
+                    queued_id = *queued_object_cursor;
+                    queued_object_remaining -= 1;
+                    queued_object_cursor++;
+                    Func_080b8000(queued_id);
+                } while (queued_object_remaining != 0);
             }
-            Func_080bbabc(0U, (u32) temp_r8);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) effect_object_id);
             if (action_id != 0x1F7) {
-                var_r1_3 = 0x8F5;
+                effect_message = 0x8F5;
             } else {
-                var_r1_3 = 0x8F3;
+                effect_message = 0x8F3;
             }
             goto block_57;
         }
         if (action_id == 0x1F7) {
-            var_r1_3 = 0x8F4;
+            effect_message = 0x8F4;
 block_57:
-            Func_080bbabc(4U, var_r1_3);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, effect_message);
         } else {
-            Func_080bbabc(4U, 0x8F6U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8F6U);
         }
     }
     if (action_allowed != 0) {
-        temp_r2_4 = action->effect;
-        switch (temp_r2_4) {
-        case 0x35:
+        effect_id = action->effect;
+        effect_case = effect_id;
+        if (effect_case == 0x35) {
             action_allowed = 0;
-            var_r2_4 = 0;
-            if (M2C_FIELD(battle_state, s16, 0x2EC) == target_id) {
+            battle_record_index = 0;
+            battle_record_offset = 0x2EC;
+            if (M2C_FIELD(battle_state, s16, battle_record_offset) == target_id) {
                 action_allowed = 1;
             } else {
 loop_63:
-                var_r2_4 += 1;
-                if (var_r2_4 <= 0x13U) {
-                    if (*(battle_state + ((var_r2_4 * 0x10) + 0x2EC)) == target_id) {
+                battle_record_index += 1;
+                if (battle_record_index <= 0x13U) {
+                    battle_record_offset = (battle_record_index * 0x10) + 0x2EC;
+                    if (M2C_FIELD(
+                        battle_state,
+                        s16,
+                        battle_record_offset
+                    ) == target_id) {
                         action_allowed = 1;
                     } else {
                         goto loop_63;
                     }
                 }
             }
-            break;
-        case 0x23:
-            sp34 = 1;
-            break;
-        case 0x22:
-            sp28 = 1;
-            break;
-        case 0x1B:
-            sp1C = 1;
-            break;
-        case 0x37:
+        } else if (effect_case == 0x23) {
+            halve_defense = 1;
+        } else if (effect_case == 0x22) {
+            leave_one_hp = 1;
+        } else if (effect_case == 0x1B) {
+            skip_primary_effect = 1;
+        } else if (effect_case == 0x37) {
             if (M2C_FIELD(actor_state, s16, 0x38) != 0) {
-                Func_080bbabc(0xCU, (u32) actor_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, (u32) actor_id);
             }
-            break;
-        case 0x20:
+        } else if (effect_case == 0x20) {
             if (M2C_FIELD(target_state, s16, 0x3A) != 0) {
-                sp18 = 0xA;
+                action_family = 0xA;
             } else {
                 action_allowed = 0;
             }
-            break;
         }
     }
-    if (sp1C != 0) {
+    if (skip_primary_effect != 0) {
 
-    } else if ((M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080772b8(action->effect) == 0)) {
+    } else if ((M2C_FIELD(target_state, s16, 0x38) == 0) && (BattleEffect_Classify(action->effect) == 0)) {
 
-    } else if ((u32) (sp18 + 1) > 0xCU) {
+    } else if ((u32) (action_family + 1) > 0xCU) {
 
     } else {
-        switch (sp18) {
+        switch (action_family) {
         case 3:
         case 4:
-            temp_r1_2 = M2C_FIELD(target_state, u16, 0x3E);
-            temp_r6 = M2C_FIELD(target_state, s16, 0x38);
-            effect_scale = temp_r1_2;
-            if (sp34 != 0) {
-                effect_scale = (u16) (temp_r1_2 >> 1);
+            target_defense = M2C_FIELD(target_state, u16, 0x3E);
+            target_hp = M2C_FIELD(target_state, s16, 0x38);
+            effective_defense = target_defense;
+            if (halve_defense != 0) {
+                effective_defense = (u16) (target_defense >> 1);
             }
-            var_r8 = 1;
+            damage_pass = 1;
 loop_90:
             if (range_index != 4) {
-                sp3C = spC - M2C_FIELD((target_state + ((range_index * 4) + 0x48)), s16, 2);
+                target_adjustment_offset = range_index * 4;
+                target_adjustment_offset += 0x48;
+                stat_delta = source_stat - M2C_FIELD(
+                    target_state + target_adjustment_offset,
+                    s16,
+                    2
+                );
             }
-            if (var_r8 == 0) {
-                sp3C = 0;
+            if (damage_pass == 0) {
+                stat_delta = 0;
             }
-            temp_r5_2 = action->magnitude;
-            if (sp18 == 4) {
-                var_r0_4 = Func_080022ec(Func_08077180(M2C_FIELD(actor_state, u16, 0x3C), (u32) effect_scale, 0U, sp3C) * temp_r5_2, 0xA);
+            action_power = action->power;
+            if (action_family == 4) {
+                base_damage = Func_080022ec(Func_08077180(M2C_FIELD(actor_state, u16, 0x3C), (u32) effective_defense, 0U, stat_delta) * action_power, 0xA);
             } else {
-                var_r0_4 = Func_08077180(M2C_FIELD(actor_state, u16, 0x3C), (u32) effect_scale, temp_r5_2, sp3C);
+                base_damage = Func_08077180(M2C_FIELD(actor_state, u16, 0x3C), (u32) effective_defense, action_power, stat_delta);
             }
-            var_r5_4 = var_r0_4 * sp30;
-            if (sp20 != 0) {
-                if (sp20 == 1) {
-                    var_r0_5 = var_r5_4 * 5;
-                    if (var_r0_5 < 0) {
-                        var_r0_5 += 3;
+            adjusted_damage = target_adjustment * base_damage;
+            if (target_modifier != 0) {
+                if (target_modifier == 1) {
+                    modifier_numerator = adjusted_damage * 5;
+                    if (modifier_numerator < 0) {
+                        modifier_numerator += 3;
                     }
-                    var_r5_5 = var_r0_5 >> 2;
+                    modified_damage = modifier_numerator >> 2;
                 } else {
-                    temp_r3_2 = var_r5_4 * 3;
-                    var_r5_5 = (s32) (temp_r3_2 + (temp_r3_2 >> 0x1F)) >> 1;
+                    modifier_product = adjusted_damage * 3;
+                    modified_damage = (s32) (modifier_product + (modifier_product >> 0x1F)) >> 1;
                 }
-                var_r5_4 = var_r5_5 + Func_080022f4(M2C_FIELD(target_state, u8, 0xF), 5) + 6;
-                if (var_r8 == 0) {
-                    Func_080bbabc(6U, 0U);
-                    var_r1_4 = 0x822;
+                adjusted_damage = modified_damage +
+                    (u8) Func_080022f4(M2C_FIELD(target_state, u8, 0xF), 5) +
+                    6;
+                if (damage_pass == 0) {
+                    BattleEvent_Push(BATTLE_EVENT_MARK, 0U);
+                    continuation_text = 0x822;
                     if ((u32) target_id <= 7U) {
-                        var_r1_4 = 0x823;
+                        continuation_text = 0x823;
                     }
-                    Func_080bbabc(5U, var_r1_4);
+                    BattleEvent_Push(BATTLE_EVENT_TEXT_CONTINUE, continuation_text);
                 }
             }
-            var_r5_6 = var_r5_4 + (3 & Func_080771a0());
-            temp_r3_3 = (s8) M2C_FIELD(target_state, u8, 0x12B);
-            if (temp_r3_3 != 0) {
-                if (temp_r3_3 == 1) {
-                    var_r5_6 = (u32) ((s32) (var_r5_6 + (var_r5_6 >> 0x1F)) >> 1);
+            damage = adjusted_damage + (3 & BattleRandom_Next());
+            guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
+            if (guard_level != 0) {
+                if (guard_level == 1) {
+                    damage = (u32) ((s32) (damage + (damage >> 0x1F)) >> 1);
                 } else {
-                    var_r5_6 = (u32) Func_080022ec((s32) var_r5_6, 0xA);
+                    damage = (u32) Func_080022ec((s32) damage, 0xA);
                 }
             }
-            if ((s32) var_r5_6 <= 0) {
-                var_r5_6 = 1;
+            if ((s32) damage <= 0) {
+                damage = 1;
             }
-            if (sp28 != 0) {
-                temp_r3_4 = temp_r6 - 1;
-                if ((s32) var_r5_6 < temp_r3_4) {
-                    var_r5_6 = (u32) temp_r3_4;
-                    if ((s32) var_r5_6 <= 0) {
-                        var_r5_6 = 1;
+            if (leave_one_hp != 0) {
+                hp_minus_one = target_hp - 1;
+                if ((s32) damage < hp_minus_one) {
+                    damage = (u32) hp_minus_one;
+                    if ((s32) damage <= 0) {
+                        damage = 1;
                     }
                 }
             }
-            if ((Func_080770c0(0x16E) != 0) && (*sp4 == 5) && ((s32) temp_r6 <= (s32) var_r5_6)) {
-                var_r5_6 = temp_r6 - 1;
+            if ((BattleFlag_Test(0x16E) != 0) && (*command == 5) && ((s32) target_hp <= (s32) damage)) {
+                damage = target_hp - 1;
             }
-            var_r8 += 1;
-            if (var_r8 <= 1) {
+            damage_pass += 1;
+            if (damage_pass <= 1) {
                 goto loop_90;
             }
-            Func_080bbabc(8U, (u32) target_id);
-            Func_080bbabc(0U, (u32) target_id);
-            var_r6_2 = temp_r6 - var_r5_6;
-            Func_080bbabc(1U, var_r5_6);
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+            resulting_hp = target_hp - damage;
+            BattleEvent_Push(BATTLE_EVENT_VALUE, damage);
             if ((u32) target_id <= 7U) {
-                var_r1_5 = sp14 + 0x834;
+                damage_text = range_relation + 0x834;
             } else {
-                var_r1_5 = sp14 + 0x831;
+                damage_text = range_relation + 0x831;
             }
-            Func_080bbabc(4U, var_r1_5);
-            if (var_r6_2 > 0) {
-block_245:
-                Func_080bbabc(0xBU, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, damage_text);
+            if (resulting_hp > 0) {
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
             } else {
-                Func_080bbabc(9U, (u32) target_id);
-                Func_080bbabc(0U, (u32) target_id);
-                var_r6_2 = 0;
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+                resulting_hp = 0;
                 if ((u32) target_id > 7U) {
-block_243:
-                    var_r1_6 = 0x824;
+                    defeat_text = 0x824;
                 } else {
-                    var_r1_6 = 0x825;
+                    defeat_text = 0x825;
                 }
-block_244:
-                Func_080bbabc(4U, var_r1_6);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, defeat_text);
             }
-block_246:
-block_247:
-            health_delta = M2C_FIELD(target_state, s16, 0x38) - var_r6_2;
-            M2C_FIELD(target_state, s16, 0x38) = (s16) var_r6_2;
-            Func_08077128(target_id);
-            break;
+            prior_health = M2C_FIELD(target_state, s16, 0x38);
+            goto block_247;
         case 10:
-            if (action->magnitude == 0) {
+            if (action->power == 0) {
 
             } else {
-                temp_r6_2 = M2C_FIELD(target_state, s16, 0x3A);
+                target_pp = M2C_FIELD(target_state, s16, 0x3A);
                 if (range_index != 4) {
-                    sp3C = spC - M2C_FIELD((target_state + ((range_index * 4) + 0x48)), s16, 2);
+                    target_adjustment_offset = range_index * 4;
+                    target_adjustment_offset += 0x48;
+                    stat_delta = source_stat - M2C_FIELD(
+                        target_state + target_adjustment_offset,
+                        s16,
+                        2
+                    );
                 }
-                temp_r3_5 = (s8) M2C_FIELD(target_state, u8, 0x12B);
-                var_r5_7 = Func_080022ec(
-                    M2C_FIELD((u8 *)0x080C2AC0, s32, range_distance * 4) *
-                        Func_08077188(action->magnitude, sp3C, 0x100),
-                    0x64
-                ) * sp30;
-                if (temp_r3_5 != 0) {
-                    if (temp_r3_5 == 1) {
-                        var_r5_7 = (u32) ((s32) (var_r5_7 + (var_r5_7 >> 0x1F)) >> 1);
+                pp_damage = Func_08077188(action->power, stat_delta, 0x100);
+                pp_damage *= M2C_FIELD(
+                    (u8 *)0x080C2AC0,
+                    s32,
+                    range_distance * 4
+                );
+                pp_damage = Func_080022ec(pp_damage, 0x64);
+                pp_damage *= target_adjustment;
+                pp_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
+                if (pp_guard_level != 0) {
+                    if (pp_guard_level == 1) {
+                        pp_damage = (u32) ((s32) (pp_damage + (pp_damage >> 0x1F)) >> 1);
                     } else {
-                        var_r5_7 = (u32) Func_080022ec((s32) var_r5_7, 0xA);
+                        pp_damage = (u32) Func_080022ec((s32) pp_damage, 0xA);
                     }
                 }
-                if ((action->effect == 0x20) && ((s32) var_r5_7 > (s32) temp_r6_2)) {
-                    var_r5_7 = (u32) temp_r6_2;
+                if ((action->effect == 0x20) && ((s32) pp_damage > (s32) target_pp)) {
+                    pp_damage = (u32) target_pp;
                 }
-                Func_080bbabc(8U, (u32) target_id);
-                Func_080bbabc(1U, var_r5_7);
-                Func_080bbabc(0U, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_VALUE, pp_damage);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 if ((u32) target_id <= 7U) {
-                    var_r1_7 = 0x82A;
+                    pp_damage_text = 0x82A;
                 } else {
-                    var_r1_7 = 0x829;
+                    pp_damage_text = 0x829;
                 }
-                var_r6_3 = temp_r6_2 - var_r5_7;
-                Func_080bbabc(4U, var_r1_7);
-                if (var_r6_3 <= 0) {
-                    var_r6_3 = 0;
+                resulting_pp = target_pp - pp_damage;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, pp_damage_text);
+                if (resulting_pp <= 0) {
+                    resulting_pp = 0;
                 }
-                Func_080bbabc(0xBU, (u32) target_id);
-                health_delta = M2C_FIELD(target_state, s16, 0x3A) - var_r6_3;
-                M2C_FIELD(target_state, s16, 0x3A) = (s16) var_r6_3;
-                Func_08077128(target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
+                effect_amount = M2C_FIELD(target_state, s16, 0x3A) - resulting_pp;
+                M2C_FIELD(target_state, s16, 0x3A) = (s16) resulting_pp;
+                BattleUnit_UpdateRatios(target_id);
             }
             break;
         case 1:
-            temp_r3_6 = action->magnitude;
-            if (temp_r3_6 == 0) {
+            healing_power = action->power;
+            if (healing_power == 0) {
 
             } else {
-                temp_r6_3 = M2C_FIELD(target_state, s16, 0x38);
-                var_r1_8 = spC;
+                target_hp_before_heal = M2C_FIELD(target_state, s16, 0x38);
+                healing_source_stat = source_stat;
                 if (range_index == 4) {
-                    var_r1_8 = 0x64;
+                    healing_source_stat = 0x64;
                 }
-                temp_r5_3 = Func_080022ec(
-                    M2C_FIELD((u8 *)0x080C2AD8, s32, range_distance * 4) *
-                        Func_08077190(temp_r3_6, var_r1_8, 0x100),
-                    0x64
-                ) * sp30;
-                var_r5_8 = temp_r5_3 + (3 & Func_080771a0());
-                temp_r3_7 = M2C_FIELD(target_state, s16, 0x34);
-                var_r6_2 = temp_r6_3 + var_r5_8;
-                if (var_r6_2 > (s32) temp_r3_7) {
-                    var_r6_2 = (s32) temp_r3_7;
-                    var_r5_8 = var_r6_2 - M2C_FIELD(target_state, s16, 0x38);
+                healing_power = Func_08077190(healing_power, healing_source_stat, 0x100);
+                healing_power *= ((s32 *)0x080C2AD8)[range_distance];
+                healing_power = Func_080022ec(healing_power, 0x64);
+                healing_power *= target_adjustment;
+                healed_hp = healing_power + (3 & BattleRandom_Next());
+                target_max_hp = M2C_FIELD(target_state, s16, 0x34);
+                resulting_hp = target_hp_before_heal + healed_hp;
+                if (resulting_hp > (s32) target_max_hp) {
+                    resulting_hp = (s32) target_max_hp;
+                    healed_hp = resulting_hp - M2C_FIELD(target_state, s16, 0x38);
                 }
-                Func_080bbabc(0U, (u32) target_id);
-                if (var_r6_2 == M2C_FIELD(target_state, s16, 0x34)) {
-                    Func_080bbabc(4U, 0x820U);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+                if (resulting_hp == M2C_FIELD(target_state, s16, 0x34)) {
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
                 } else {
-                    Func_080bbabc(1U, var_r5_8);
-                    Func_080bbabc(4U, 0x81DU);
+                    BattleEvent_Push(BATTLE_EVENT_VALUE, healed_hp);
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);
                 }
+                prior_health = M2C_FIELD(target_state, s16, 0x38);
                 goto block_247;
             }
             break;
         case -1:
-            if (action->magnitude == 0) {
+            if (action->power == 0) {
 
             } else {
-                temp_r6_4 = M2C_FIELD(target_state, s16, 0x3A);
+                target_pp_before_damage = M2C_FIELD(target_state, s16, 0x3A);
                 if (range_index != 4) {
-                    sp3C = spC - M2C_FIELD((target_state + ((range_index * 4) + 0x48)), s16, 2);
+                    target_adjustment_offset = range_index * 4;
+                    target_adjustment_offset += 0x48;
+                    stat_delta = source_stat - M2C_FIELD(
+                        target_state + target_adjustment_offset,
+                        s16,
+                        2
+                    );
                 }
-                temp_r3_8 = (s8) M2C_FIELD(target_state, u8, 0x12B);
-                var_r5_9 = Func_080022ec(
-                    M2C_FIELD((u8 *)0x080C2AF0, s32, range_distance * 4) *
-                        Func_08077188(action->magnitude, sp3C, 0x100),
-                    0x64
-                ) * sp30;
-                if (temp_r3_8 != 0) {
-                    if (temp_r3_8 == 1) {
-                        var_r5_9 = (u32) ((s32) (var_r5_9 + (var_r5_9 >> 0x1F)) >> 1);
+                secondary_pp_damage = Func_08077188(action->power, stat_delta, 0x100);
+                secondary_pp_damage *= M2C_FIELD(
+                    (u8 *)0x080C2AF0,
+                    s32,
+                    range_distance * 4
+                );
+                secondary_pp_damage = Func_080022ec(secondary_pp_damage, 0x64);
+                secondary_pp_damage *= target_adjustment;
+                secondary_pp_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
+                if (secondary_pp_guard_level != 0) {
+                    if (secondary_pp_guard_level == 1) {
+                        secondary_pp_damage = (u32) ((s32) (secondary_pp_damage + (secondary_pp_damage >> 0x1F)) >> 1);
                     } else {
-                        var_r5_9 = (u32) Func_080022ec((s32) var_r5_9, 0xA);
+                        secondary_pp_damage = (u32) Func_080022ec((s32) secondary_pp_damage, 0xA);
                     }
                 }
-                Func_080bbabc(8U, (u32) target_id);
-                Func_080bbabc(1U, var_r5_9);
-                Func_080bbabc(0U, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_VALUE, secondary_pp_damage);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 if ((u32) target_id <= 7U) {
-                    var_r1_9 = 0x827;
+                    secondary_pp_damage_text = 0x827;
                 } else {
-                    var_r1_9 = 0x826;
+                    secondary_pp_damage_text = 0x826;
                 }
-                var_r6_4 = temp_r6_4 - var_r5_9;
-                Func_080bbabc(4U, var_r1_9);
-                if (var_r6_4 <= 0) {
-                    var_r6_4 = 0;
+                secondary_resulting_pp = target_pp_before_damage - secondary_pp_damage;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, secondary_pp_damage_text);
+                if (secondary_resulting_pp <= 0) {
+                    secondary_resulting_pp = 0;
                 }
-                Func_080bbabc(0xBU, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
 block_226:
-                M2C_FIELD(target_state, s16, 0x3A) = (s16) var_r6_4;
-                Func_08077128(target_id);
+                M2C_FIELD(target_state, s16, 0x3A) = (s16) secondary_resulting_pp;
+                BattleUnit_UpdateRatios(target_id);
             }
             break;
         case 5:
         case 6:
         case 8:
-            if (action->magnitude == 0) {
+            if (action->power == 0) {
 
             } else {
-                temp_r6_5 = M2C_FIELD(target_state, s16, 0x38);
-                var_r8_2 = 1;
+                ranged_damage_pass = 1;
+                target_hp_before_ranged_damage = M2C_FIELD(target_state, s16, 0x38);
 loop_175:
                 if (range_index != 4) {
-                    sp3C = spC - M2C_FIELD((target_state + ((range_index * 4) + 0x48)), s16, 2);
+                    target_adjustment_offset = range_index * 4;
+                    target_adjustment_offset += 0x48;
+                    stat_delta = source_stat - M2C_FIELD(
+                        target_state + target_adjustment_offset,
+                        s16,
+                        2
+                    );
                 }
-                if (var_r8_2 == 0) {
-                    sp3C = 0;
+                if (ranged_damage_pass == 0) {
+                    stat_delta = 0;
                 }
-                var_r5_10 = action->magnitude;
-                if (*sp4 == 6) {
+                scaled_action_power = action->power;
+                if (*command == 6) {
                     switch (action_id) {
                     case 380:
                     case 386:
                     case 392:
                     case 398:
-                        sp8 = 3;
+                        power_bonus_percent = 3;
                         break;
                     case 381:
                     case 387:
                     case 393:
                     case 399:
-                        sp8 = 6;
+                        power_bonus_percent = 6;
                         break;
                     case 382:
                     case 388:
                     case 394:
                     case 400:
-                        sp8 = 9;
+                        power_bonus_percent = 9;
                         break;
                     case 383:
                     case 389:
                     case 395:
                     case 401:
-                        sp8 = 0xC;
+                        power_bonus_percent = 0xC;
                         break;
                     }
-                    var_r5_10 += Func_080022ec(sp8 * M2C_FIELD(target_state, s16, 0x34), 0x64);
+                    scaled_action_power += Func_080022ec(power_bonus_percent * M2C_FIELD(target_state, s16, 0x34), 0x64);
                 }
-                var_r5_11 = Func_08077188(var_r5_10, sp3C, 0x100) * sp30;
-                switch (sp18) {
+                scaled_ranged_damage = Func_08077188(scaled_action_power, stat_delta, 0x100);
+                scaled_ranged_damage *= target_adjustment;
+                switch (action_family) {
                 case 5:
-                    var_r2_5 = 0x080C2B08;
-                    var_r3_2 = range_distance * 4;
+                    range_scale_table = 0x080C2B08;
+                    range_scale_offset = range_distance * 4;
 block_196:
-                    var_r5_11 = Func_080022ec(
-                        M2C_FIELD((u8 *)var_r2_5, s32, var_r3_2) * var_r5_11,
+                    range_scale = M2C_FIELD((u8 *)range_scale_table, s32, range_scale_offset);
+                    scaled_ranged_damage = Func_080022ec(
+                        range_scale * scaled_ranged_damage,
                         0x64
                     );
                     break;
                 case 8:
-                    var_r2_5 = 0x080C2B20;
-                    var_r3_2 = range_distance * 4;
+                    range_scale_table = 0x080C2B20;
+                    range_scale_offset = range_distance * 4;
                     goto block_196;
                 case 6:
-                    var_r2_5 = 0x080C2B38;
-                    var_r3_2 = range_distance * 4;
+                    range_scale_table = 0x080C2B38;
+                    range_scale_offset = range_distance * 4;
                     goto block_196;
                 }
-                var_r5_12 = var_r5_11 + (3 & Func_080771a0());
-                temp_r3_9 = (s8) M2C_FIELD(target_state, u8, 0x12B);
-                if (temp_r3_9 != 0) {
-                    if (temp_r3_9 == 1) {
-                        var_r5_12 = (u32) ((s32) (var_r5_12 + (var_r5_12 >> 0x1F)) >> 1);
+                ranged_damage = scaled_ranged_damage + (3 & BattleRandom_Next());
+                ranged_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
+                if (ranged_guard_level != 0) {
+                    if (ranged_guard_level == 1) {
+                        ranged_damage = (u32) ((s32) (ranged_damage + (ranged_damage >> 0x1F)) >> 1);
                     } else {
-                        var_r5_12 = (u32) Func_080022ec((s32) var_r5_12, 0xA);
+                        ranged_damage = (u32) Func_080022ec((s32) ranged_damage, 0xA);
                     }
                 }
-                if ((Func_080770c0(0x16E) != 0) && (*sp4 == 6) && ((s32) temp_r6_5 > (s32) var_r5_12)) {
-                    var_r5_12 = (u32) temp_r6_5;
+                if ((BattleFlag_Test(0x16E) != 0) && (*command == 6) && ((s32) target_hp_before_ranged_damage > (s32) ranged_damage)) {
+                    ranged_damage = (u32) target_hp_before_ranged_damage;
                 }
-                var_r8_2 += 1;
-                if (var_r8_2 <= 1) {
+                ranged_damage_pass += 1;
+                if (ranged_damage_pass <= 1) {
                     goto loop_175;
                 }
-                Func_080bbabc(8U, (u32) target_id);
-                Func_080bbabc(1U, var_r5_12);
-                Func_080bbabc(0U, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_VALUE, ranged_damage);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 if ((u32) target_id <= 7U) {
-                    var_r1_10 = sp14 + 0x834;
+                    ranged_damage_text = range_relation + 0x834;
                 } else {
-                    var_r1_10 = sp14 + 0x831;
+                    ranged_damage_text = range_relation + 0x831;
                 }
-                var_r6_2 = temp_r6_5 - var_r5_12;
-                Func_080bbabc(4U, var_r1_10);
-                if (var_r6_2 <= 0) {
-                    Func_080bbabc(9U, (u32) target_id);
-                    Func_080bbabc(0U, (u32) target_id);
-                    var_r6_2 = 0;
+                resulting_hp = target_hp_before_ranged_damage - ranged_damage;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, ranged_damage_text);
+                if (resulting_hp <= 0) {
+                    BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, (u32) target_id);
+                    BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+                    resulting_hp = 0;
                     if ((u32) target_id <= 7U) {
-                        var_r1_11 = 0x825;
+                        ranged_defeat_text = 0x825;
                     } else {
-                        var_r1_11 = 0x824;
+                        ranged_defeat_text = 0x824;
                     }
-                    Func_080bbabc(4U, var_r1_11);
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, ranged_defeat_text);
                 } else {
-                    Func_080bbabc(0xBU, (u32) target_id);
+                    BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
                 }
+                prior_health = M2C_FIELD(target_state, s16, 0x38);
                 goto block_247;
             }
             break;
         case 11:
-            temp_r3_10 = action->magnitude;
-            if (temp_r3_10 == 0) {
+            pp_recovery = action->power;
+            if (pp_recovery == 0) {
 
             } else {
-                temp_r6_6 = M2C_FIELD(target_state, s16, 0x3A);
-                var_r1_12 = spC;
+                target_pp_before_recovery = M2C_FIELD(target_state, s16, 0x3A);
+                recovery_source_stat = source_stat;
                 if (range_index == 4) {
-                    var_r1_12 = 0x64;
+                    recovery_source_stat = 0x64;
                 }
-                var_r5_13 = Func_080022ec(
-                    M2C_FIELD((u8 *)0x080C2B50, s32, range_distance * 4) *
-                        Func_08077190(temp_r3_10, var_r1_12, 0x100),
-                    0x64
-                ) * sp30;
-                temp_r3_11 = M2C_FIELD(target_state, s16, 0x36);
-                var_r6_4 = temp_r6_6 + var_r5_13;
-                if (var_r6_4 > (s32) temp_r3_11) {
-                    var_r6_4 = (s32) temp_r3_11;
-                    var_r5_13 = var_r6_4 - M2C_FIELD(target_state, s16, 0x3A);
+                pp_recovery = Func_08077190(
+                    pp_recovery,
+                    recovery_source_stat,
+                    0x100
+                );
+                pp_recovery *= ((s32 *)0x080C2B50)[range_distance];
+                pp_recovery = Func_080022ec(pp_recovery, 0x64);
+                pp_recovery *= target_adjustment;
+                target_max_pp = M2C_FIELD(target_state, s16, 0x36);
+                restored_pp = target_pp_before_recovery + pp_recovery;
+                if (restored_pp > (s32) target_max_pp) {
+                    restored_pp = (s32) target_max_pp;
+                    pp_recovery = restored_pp - M2C_FIELD(target_state, s16, 0x3A);
                 }
-                Func_080bbabc(0U, (u32) target_id);
-                if (var_r6_4 == M2C_FIELD(target_state, s16, 0x36)) {
-                    Func_080bbabc(4U, 0x821U);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+                if (restored_pp == M2C_FIELD(target_state, s16, 0x36)) {
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
                 } else {
-                    Func_080bbabc(1U, var_r5_13);
-                    Func_080bbabc(4U, 0x81EU);
+                    BattleEvent_Push(BATTLE_EVENT_VALUE, pp_recovery);
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
                 }
-                goto block_226;
+                M2C_FIELD(target_state, s16, 0x3A) = (s16) restored_pp;
+                BattleUnit_UpdateRatios(target_id);
             }
             break;
         case 2:
             if (action_allowed == 0) {
-                Func_080bbabc(0xBU, (u32) target_id);
-                Func_080bbabc(0U, (u32) target_id);
-                Func_080bbabc(4U, 0x854U);
-            } else if (action->magnitude == 0) {
+                goto block_case2_failure;
+            } else if (action->power == 0) {
 
             } else {
-                temp_r6_7 = M2C_FIELD(target_state, s16, 0x38);
+                target_hp_before_effect = M2C_FIELD(target_state, s16, 0x38);
                 if (range_index != 4) {
-                    sp3C = spC - M2C_FIELD((target_state + ((range_index * 4) + 0x48)), s16, 2);
+                    target_adjustment_offset = range_index * 4;
+                    target_adjustment_offset += 0x48;
+                    stat_delta = source_stat - M2C_FIELD(
+                        target_state + target_adjustment_offset,
+                        s16,
+                        2
+                    );
                 }
-                var_r5_14 = Func_080022ec(
-                    M2C_FIELD((u8 *)0x080C2B68, s32, range_distance * 4) *
-                        (Func_08077188(action->magnitude, sp3C, 0x100) * sp30),
-                    0x64
+                effect_damage = Func_08077188(action->power, stat_delta, 0x100);
+                effect_damage *= target_adjustment;
+                effect_damage *= M2C_FIELD(
+                    (u8 *)0x080C2B68,
+                    s32,
+                    range_distance * 4
                 );
-                temp_r3_12 = (s8) M2C_FIELD(target_state, u8, 0x12B);
-                if (temp_r3_12 != 0) {
-                    if (temp_r3_12 == 1) {
-                        var_r5_14 = (s32) (var_r5_14 + ((u32) var_r5_14 >> 0x1F)) >> 1;
+                effect_damage = Func_080022ec(effect_damage, 0x64);
+                effect_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
+                if (effect_guard_level != 0) {
+                    if (effect_guard_level == 1) {
+                        effect_damage = (s32) (effect_damage + ((u32) effect_damage >> 0x1F)) >> 1;
                     } else {
-                        var_r5_14 = Func_080022ec(var_r5_14, 0xA);
+                        effect_damage = Func_080022ec(effect_damage, 0xA);
                     }
                 }
-                Func_080bbabc(8U, (u32) target_id);
-                Func_080bbabc(1U, (u32) var_r5_14);
-                Func_080bbabc(0U, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
+                BattleEvent_Push(BATTLE_EVENT_VALUE, (u32) effect_damage);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 if ((u32) target_id <= 7U) {
-                    var_r1_13 = 0x827;
+                    effect_damage_text = 0x827;
                 } else {
-                    var_r1_13 = 0x826;
+                    effect_damage_text = 0x826;
                 }
-                var_r6_2 = temp_r6_7 - var_r5_14;
-                Func_080bbabc(4U, var_r1_13);
-                if (var_r6_2 <= 0) {
-                    Func_080bbabc(9U, (u32) target_id);
-                    Func_080bbabc(0U, (u32) target_id);
-                    var_r6_2 = 0;
+                resulting_hp = target_hp_before_effect - effect_damage;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, effect_damage_text);
+                if (resulting_hp <= 0) {
+                    BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, (u32) target_id);
+                    BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+                    resulting_hp = 0;
                     if ((u32) target_id <= 7U) {
-                        var_r1_6 = 0x825;
+                        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x825U);
                     } else {
-                        goto block_243;
+                        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x824U);
                     }
-                    goto block_244;
+                } else {
+                    BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
                 }
-                goto block_245;
-                goto block_246;
+                prior_health = M2C_FIELD(target_state, s16, 0x38);
+block_247:
+                effect_amount = prior_health - resulting_hp;
+                M2C_FIELD(target_state, s16, 0x38) = (s16) resulting_hp;
+                BattleUnit_UpdateRatios(target_id);
             }
+            break;
+block_case2_failure:
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854U);
             break;
         }
     }
-    Func_080bbabc(0U, (u32) target_id);
-    if ((Func_080772b8(action->effect) == 0) && (M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080bbae8((s32) action->effect) == 0)) {
+    BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+    if ((BattleEffect_Classify(action->effect) == 0) && (M2C_FIELD(target_state, s16, 0x38) == 0) && (Func_080bbae8((s32) action->effect) == 0)) {
         goto finalize;
     }
     if (action_allowed == 0) {
@@ -916,264 +909,270 @@ block_196:
     case 0x3D:
         if (M2C_FIELD(target_state, u8, 0x138) != 0) {
             M2C_FIELD(target_state, u8, 0x138) = 0U;
-            Func_080bbabc(4U, 0x88BU);
-            Func_080bbabc(0U, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88BU);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
         }
         if (M2C_FIELD(target_state, u8, 0x13B) != 0) {
             M2C_FIELD(target_state, u8, 0x13B) = 0U;
-            Func_080bbabc(7U, 0U);
-            Func_080bbabc(0U, (u32) target_id);
-            Func_080bbabc(4U, 0x88DU);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88DU);
         }
         M2C_FIELD(target_state, u8, 0x13C) = 0U;
         if (M2C_FIELD(target_state, u8, 0x13D) != 0) {
             M2C_FIELD(target_state, u8, 0x13D) = 0U;
-            Func_080bbabc(4U, 0x88CU);
-            Func_080bbabc(0U, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88CU);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
         }
         if (M2C_FIELD(target_state, u8, 0x141) != 0) {
             M2C_FIELD(target_state, u8, 0x141) = 0U;
-            Func_080bbabc(4U, 0x894U);
-            Func_080bbabc(0U, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x894U);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
         }
         if (M2C_FIELD(target_state, u8, 0x140) != 0) {
             M2C_FIELD(target_state, u8, 0x140) = 0U;
-            Func_080bbabc(4U, 0x88FU);
-            Func_080bbabc(0U, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88FU);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
         }
         if (M2C_FIELD(target_state, s8, 0x131) != 0) {
-            Func_080bbabc(4U, 0x884U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x884U);
             M2C_FIELD(target_state, s8, 0x131) = 0;
         }
-        Func_080bbabc(7U, 0U);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
         goto finalize;
 
     case 0x1:
         if (M2C_FIELD(target_state, u8, 0x138) != 0) {
             M2C_FIELD(target_state, u8, 0x138) = 0U;
-            Func_080bbabc(7U, 0U);
-            Func_080bbabc(0U, (u32) target_id);
-            Func_080bbabc(4U, 0x88BU);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88BU);
         }
         if (M2C_FIELD(target_state, u8, 0x13B) != 0) {
             M2C_FIELD(target_state, u8, 0x13B) = 0U;
-            Func_080bbabc(7U, 0U);
-            Func_080bbabc(0U, (u32) target_id);
-            Func_080bbabc(4U, 0x88DU);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88DU);
         }
         M2C_FIELD(target_state, u8, 0x13C) = 0U;
         if (M2C_FIELD(target_state, u8, 0x13D) != 0) {
             M2C_FIELD(target_state, u8, 0x13D) = 0U;
-            Func_080bbabc(7U, 0U);
-            Func_080bbabc(0U, (u32) target_id);
-            Func_080bbabc(4U, 0x88CU);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88CU);
         }
         if (M2C_FIELD(target_state, u8, 0x141) == 0) {
             goto finalize;
         }
         M2C_FIELD(target_state, u8, 0x141) = 0;
-        Func_080bbabc(7U, 0U);
-        Func_080bbabc(0U, (u32) target_id);
-        Func_080bbabc(4U, 0x894U);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+        BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x894U);
         goto finalize;
 
     case 0x3A:
     case 0x3B:
-        temp_r5_4 = M2C_FIELD(target_state, s16, 0x38);
-        temp_r8_2 = (u16) M2C_FIELD(target_state, s16, 0x38);
-        temp_r6_8 = (u16) M2C_FIELD(target_state, s16, 0x34);
-        temp_r2_5 = M2C_FIELD(target_state, s16, 0x34);
-        if (action->effect == 0x3D) {
-            var_r0_6 = temp_r2_5 * 0x3C;
+        target_hp_before_percent_heal = *(volatile u16 *)&target_unit->hp;
+        scratch_value = *(volatile u8 *)&action->effect;
+        recovered_hp = target_unit->hp;
+        target_max_hp_unsigned = *(u16 *)&target_unit->max_hp;
+        target_max_hp_signed = *(volatile s16 *)&target_unit->max_hp;
+        if (scratch_value == 0x3D) {
+            recovery_percent_product = target_max_hp_signed * 0x3C;
         } else {
-            var_r0_6 = temp_r2_5 * 0x1E;
+            recovery_percent_product = target_max_hp_signed * 0x1E;
         }
-        var_r5_15 = temp_r5_4 + Func_080022ec(var_r0_6, 0x64);
-        temp_r2_6 = (s16) temp_r6_8;
-        if (var_r5_15 > (s32) temp_r2_6) {
-            var_r5_15 = (s32) temp_r2_6;
+        recovered_hp += Func_080022ec(recovery_percent_product, 0x64);
+        if (recovered_hp > (s16) target_max_hp_unsigned) {
+            recovered_hp = (s16) target_max_hp_unsigned;
         }
-        var_r1_14 = var_r5_15 - (s16) temp_r8_2;
-        if ((var_r1_14 == 0) && (sp18 != 1)) {
+        recovered_hp_amount = recovered_hp - (s16) target_hp_before_percent_heal;
+        if ((recovered_hp_amount == 0) && (action_family != 1)) {
             goto finalize;
         }
-        if (var_r5_15 == (s32) temp_r2_6) {
-            Func_080bbabc(4U, 0x820U);
+        if (recovered_hp == (s16) target_max_hp_unsigned) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
         } else {
-            Func_080bbabc(1U, var_r1_14);
-            Func_080bbabc(4U, 0x81DU);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, recovered_hp_amount);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);
         }
-        M2C_FIELD(target_state, s16, 0x38) = (s16) var_r5_15;
-block_402:
-        Func_08077128(target_id);
-        break;
-    case 0x3C:
-        temp_r6_9 = M2C_FIELD(target_state, s16, 0x36);
-        temp_r5_5 = M2C_FIELD(target_state, s16, 0x3A);
-        var_r5_16 = temp_r5_5 + Func_080022ec(temp_r6_9 * 7, 0x64);
-        if (var_r5_16 > (s32) temp_r6_9) {
-            var_r5_16 = (s32) temp_r6_9;
-        }
-        var_r1_15 = var_r5_16 - temp_r5_5;
-        if ((var_r1_15 == 0) && (sp18 != 0xB)) {
-            goto finalize;
-        }
-        if (var_r5_16 == temp_r6_9) {
-            Func_080bbabc(4U, 0x821U);
-        } else {
-            Func_080bbabc(1U, var_r1_15);
-            Func_080bbabc(4U, 0x81EU);
-        }
-        M2C_FIELD(target_state, s16, 0x3A) = (s16) var_r5_16;
+        M2C_FIELD(target_state, s16, 0x38) = (s16) recovered_hp;
         goto block_402;
+    case 0x3C: {
+        s16 current_pp;
+        s16 max_pp;
+        s32 recovered_pp;
+        u32 pp_delta;
+
+        max_pp = M2C_FIELD(target_state, s16, 0x36);
+        recovered_pp = M2C_FIELD(target_state, s16, 0x3A);
+        current_pp = recovered_pp;
+        recovered_pp += Func_080022ec(max_pp * 7, 0x64);
+        if (recovered_pp > (s32) max_pp) {
+            recovered_pp = (s32) max_pp;
+        }
+        pp_delta = recovered_pp - current_pp;
+        if ((pp_delta == 0) && (action_family != 0xB)) {
+            goto finalize;
+        }
+        if (recovered_pp == max_pp) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_VALUE, pp_delta);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
+        }
+        M2C_FIELD(target_state, s16, 0x3A) = (s16) recovered_pp;
+        goto block_402;
+    }
     case 0x38:
         M2C_FIELD(target_state, s8, 0x147) = 8;
         M2C_FIELD(target_state, s8, 0x146) = 5;
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_state, u16, 0x40) - M2C_FIELD(target_snapshot, u16, 0x40));
-        Func_080bbabc(4U, 0x877U);
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_state, u16, 0x40) - M2C_FIELD(target_snapshot, u16, 0x40));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x877U);
         goto finalize;
 
     case 0x37:
-        M2C_FIELD(target_state, s8, 0x147) = -4;
+        M2C_FIELD(target_state, u8, 0x147) = 0xFCU;
         M2C_FIELD(target_state, s8, 0x146) = 5;
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_snapshot, u16, 0x40) - M2C_FIELD(target_state, u16, 0x40));
-        Func_080bbabc(4U, 0x878U);
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_snapshot, u16, 0x40) - M2C_FIELD(target_state, u16, 0x40));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x878U);
         goto finalize;
 
+    /*
+     * Modifier bytes are semantically signed, but these unsigned byte-view
+     * loads are intentional: replacing them with direct signed members makes
+     * this GCC route emit sign-extending loads and perturbs the whole owner.
+     */
     case 0x6:
-        temp_r3_13 = M2C_FIELD(target_state, u8, 0x133) - 1;
-        M2C_FIELD(target_state, u8, 0x133) = temp_r3_13;
-        if ((s32) (s8) temp_r3_13 < -4) {
+        attack_down_one = M2C_FIELD(target_state, u8, 0x133) - 1;
+        M2C_FIELD(target_state, u8, 0x133) = attack_down_one;
+        if ((s32) (s8) attack_down_one < -4) {
             M2C_FIELD(target_state, u8, 0x133) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x133) > 4) {
             M2C_FIELD(target_state, u8, 0x133) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_snapshot, u16, 0x3C) - M2C_FIELD(target_state, u16, 0x3C));
-        Func_080bbabc(4U, 0x860U);
-        var_r2_6 = target_state + 0x132;
-block_405:
-        *var_r2_6 = 7;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_snapshot, u16, 0x3C) - M2C_FIELD(target_state, u16, 0x3C));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x860U);
+        M2C_FIELD(target_state, u8, 0x132) = 7;
         break;
     case 0x5:
-        temp_r3_14 = M2C_FIELD(target_state, u8, 0x133) - 2;
-        M2C_FIELD(target_state, u8, 0x133) = temp_r3_14;
-        if ((s32) (s8) temp_r3_14 < -4) {
+        attack_down_two = M2C_FIELD(target_state, u8, 0x133) - 2;
+        M2C_FIELD(target_state, u8, 0x133) = attack_down_two;
+        if ((s32) (s8) attack_down_two < -4) {
             M2C_FIELD(target_state, u8, 0x133) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x133) > 4) {
             M2C_FIELD(target_state, u8, 0x133) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_snapshot, u16, 0x3C) - M2C_FIELD(target_state, u16, 0x3C));
-        Func_080bbabc(4U, 0x860U);
-        var_r2_6 = target_state + 0x132;
-        goto block_405;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_snapshot, u16, 0x3C) - M2C_FIELD(target_state, u16, 0x3C));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x860U);
+        M2C_FIELD(target_state, u8, 0x132) = 7;
+        break;
     case 0x4:
-        temp_r3_15 = M2C_FIELD(target_state, u8, 0x133) + 1;
-        M2C_FIELD(target_state, u8, 0x133) = temp_r3_15;
-        if ((s32) (s8) temp_r3_15 < -4) {
+        attack_up_one = M2C_FIELD(target_state, u8, 0x133) + 1;
+        M2C_FIELD(target_state, u8, 0x133) = attack_up_one;
+        if ((s32) (s8) attack_up_one < -4) {
             M2C_FIELD(target_state, u8, 0x133) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x133) > 4) {
             M2C_FIELD(target_state, u8, 0x133) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_state, u16, 0x3C) - M2C_FIELD(target_snapshot, u16, 0x3C));
-        Func_080bbabc(4U, 0x861U);
-        var_r0_7 = 0x99;
-block_404:
-        var_r2_6 = target_state + (var_r0_7 * 2);
-        goto block_405;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_state, u16, 0x3C) - M2C_FIELD(target_snapshot, u16, 0x3C));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x861U);
+        M2C_FIELD(target_state, u8, 0x132) = 7;
+        break;
     case 0x3:
-        temp_r3_16 = M2C_FIELD(target_state, u8, 0x133) + 2;
-        M2C_FIELD(target_state, u8, 0x133) = temp_r3_16;
-        if ((s32) (s8) temp_r3_16 < -4) {
+        attack_up_two = M2C_FIELD(target_state, u8, 0x133) + 2;
+        M2C_FIELD(target_state, u8, 0x133) = attack_up_two;
+        if ((s32) (s8) attack_up_two < -4) {
             M2C_FIELD(target_state, u8, 0x133) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x133) > 4) {
             M2C_FIELD(target_state, u8, 0x133) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_state, u16, 0x3C) - M2C_FIELD(target_snapshot, u16, 0x3C));
-        Func_080bbabc(4U, 0x861U);
-        var_r2_6 = target_state + 0x132;
-        goto block_405;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_state, u16, 0x3C) - M2C_FIELD(target_snapshot, u16, 0x3C));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x861U);
+        M2C_FIELD(target_state, u8, 0x132) = 7;
+        break;
     case 0xA:
-        temp_r3_17 = M2C_FIELD(target_state, u8, 0x135) - 1;
-        M2C_FIELD(target_state, u8, 0x135) = temp_r3_17;
-        if ((s32) (s8) temp_r3_17 < -4) {
+        defense_down_one = M2C_FIELD(target_state, u8, 0x135) - 1;
+        M2C_FIELD(target_state, u8, 0x135) = defense_down_one;
+        if ((s32) (s8) defense_down_one < -4) {
             M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x135) > 4) {
             M2C_FIELD(target_state, u8, 0x135) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_snapshot, u16, 0x3E) - M2C_FIELD(target_state, u16, 0x3E));
-        Func_080bbabc(4U, 0x862U);
-        var_r2_6 = target_state + 0x134;
-        goto block_405;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_snapshot, u16, 0x3E) - M2C_FIELD(target_state, u16, 0x3E));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x862U);
+        M2C_FIELD(target_state, u8, 0x134) = 7;
+        break;
     case 0x9:
-        temp_r3_18 = M2C_FIELD(target_state, u8, 0x135) - 2;
-        M2C_FIELD(target_state, u8, 0x135) = temp_r3_18;
-        if ((s32) (s8) temp_r3_18 < -4) {
+        defense_down_two = M2C_FIELD(target_state, u8, 0x135) - 2;
+        M2C_FIELD(target_state, u8, 0x135) = defense_down_two;
+        if ((s32) (s8) defense_down_two < -4) {
             M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x135) > 4) {
             M2C_FIELD(target_state, u8, 0x135) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_snapshot, u16, 0x3E) - M2C_FIELD(target_state, u16, 0x3E));
-        Func_080bbabc(4U, 0x862U);
-        var_r0_7 = 0x9A;
-        goto block_404;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_snapshot, u16, 0x3E) - M2C_FIELD(target_state, u16, 0x3E));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x862U);
+        M2C_FIELD(target_state, u8, 0x134) = 7;
+        break;
     case 0x8:
-        temp_r3_19 = M2C_FIELD(target_state, u8, 0x135) + 1;
-        M2C_FIELD(target_state, u8, 0x135) = temp_r3_19;
-        if ((s32) (s8) temp_r3_19 < -4) {
+        defense_up_one = M2C_FIELD(target_state, u8, 0x135) + 1;
+        M2C_FIELD(target_state, u8, 0x135) = defense_up_one;
+        if ((s32) (s8) defense_up_one < -4) {
             M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x135) > 4) {
             M2C_FIELD(target_state, u8, 0x135) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_state, u16, 0x3E) - M2C_FIELD(target_snapshot, u16, 0x3E));
-        Func_080bbabc(4U, 0x863U);
-        var_r2_6 = target_state + 0x134;
-        goto block_405;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_state, u16, 0x3E) - M2C_FIELD(target_snapshot, u16, 0x3E));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x863U);
+        M2C_FIELD(target_state, u8, 0x134) = 7;
+        break;
     case 0x7:
-        temp_r3_20 = M2C_FIELD(target_state, u8, 0x135) + 2;
-        M2C_FIELD(target_state, u8, 0x135) = temp_r3_20;
-        if ((s32) (s8) temp_r3_20 < -4) {
+        defense_up_two = M2C_FIELD(target_state, u8, 0x135) + 2;
+        M2C_FIELD(target_state, u8, 0x135) = defense_up_two;
+        if ((s32) (s8) defense_up_two < -4) {
             M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x135) > 4) {
             M2C_FIELD(target_state, u8, 0x135) = 4U;
         }
-        Func_08077010(target_id);
-        Func_080bbabc(1U, M2C_FIELD(target_state, u16, 0x3E) - M2C_FIELD(target_snapshot, u16, 0x3E));
-        Func_080bbabc(4U, 0x863U);
-        var_r2_6 = target_state + 0x134;
-        goto block_405;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, M2C_FIELD(target_state, u16, 0x3E) - M2C_FIELD(target_snapshot, u16, 0x3E));
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x863U);
+        M2C_FIELD(target_state, u8, 0x134) = 7;
+        break;
     case 0x2:
         if (M2C_FIELD(target_state, s16, 0x38) != 0) {
 
         } else {
-            Func_080bbabc(4U, 0x864U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864U);
             M2C_FIELD(target_state, s16, 0x38) = (s16) (u16) M2C_FIELD(target_state, s16, 0x34);
-            Func_08077128(target_id);
+            BattleUnit_UpdateRatios(target_id);
         }
         break;
     case 0x35:
         if (M2C_FIELD(target_state, s16, 0x38) != 0) {
 
         } else {
-            Func_080bbabc(4U, 0x864U);
-            temp_r3_21 = (u16) M2C_FIELD(target_state, s16, 0x34);
-            M2C_FIELD(target_state, s16, 0x38) = (s16) ((s32) ((s16) temp_r3_21 + ((u32) (temp_r3_21 << 0x10) >> 0x1F)) >> 1);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864U);
+            max_hp_for_half_revive = (u16) M2C_FIELD(target_state, s16, 0x34);
+            M2C_FIELD(target_state, s16, 0x38) = (s16) ((s32) ((s16) max_hp_for_half_revive + ((u32) (max_hp_for_half_revive << 0x10) >> 0x1F)) >> 1);
             goto block_402;
         }
         break;
@@ -1181,82 +1180,86 @@ block_404:
         if (M2C_FIELD(target_state, s16, 0x38) != 0) {
 
         } else {
-            Func_080bbabc(4U, 0x864U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864U);
             M2C_FIELD(target_state, s16, 0x38) = (s16) Func_080022ec(M2C_FIELD(target_state, s16, 0x34) * 8, 0xA);
             goto block_402;
         }
         break;
     case 0x0:
         if (M2C_FIELD(target_state, s8, 0x131) != 0) {
-            Func_080bbabc(4U, 0x884U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x884U);
         }
         M2C_FIELD(target_state, s8, 0x131) = 0;
         break;
     case 0xE:
-        temp_r3_22 = M2C_FIELD(target_state, u8, 0x137) - 1;
-        M2C_FIELD(target_state, u8, 0x137) = temp_r3_22;
-        if ((s32) (s8) temp_r3_22 < -4) {
+        resistance_down_one = M2C_FIELD(target_state, u8, 0x137) - 1;
+        M2C_FIELD(target_state, u8, 0x137) = resistance_down_one;
+        if ((s32) (s8) resistance_down_one < -4) {
             M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
         }
-        var_r1_16 = M2C_FIELD(target_state, u8, 0x137);
-        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x137) > 4) {
+        resistance_down_one = M2C_FIELD(target_state, s8, 0x137);
+        applied_resistance_down_one = M2C_FIELD(target_state, u8, 0x137);
+        if (resistance_down_one > 4) {
             M2C_FIELD(target_state, u8, 0x137) = 4U;
-            var_r1_16 = 4;
+            applied_resistance_down_one = 4;
         }
-        Func_080bbabc(1U, (M2C_FIELD(target_snapshot, s8, 0x137) - (s8) var_r1_16) * 0x14);
-        Func_080bbabc(4U, 0x865U);
-        var_r0_7 = 0x9B;
-        goto block_404;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, (M2C_FIELD(target_snapshot, s8, 0x137) - (s8) applied_resistance_down_one) * 0x14);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x865U);
+        M2C_FIELD(target_state, u8, 0x136) = 7;
+        break;
     case 0xD:
-        temp_r3_23 = M2C_FIELD(target_state, u8, 0x137) - 2;
-        M2C_FIELD(target_state, u8, 0x137) = temp_r3_23;
-        if ((s32) (s8) temp_r3_23 < -4) {
+        resistance_down_two = M2C_FIELD(target_state, u8, 0x137) - 2;
+        M2C_FIELD(target_state, u8, 0x137) = resistance_down_two;
+        if ((s32) (s8) resistance_down_two < -4) {
             M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
         }
-        var_r1_17 = M2C_FIELD(target_state, u8, 0x137);
-        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x137) > 4) {
+        resistance_down_two = M2C_FIELD(target_state, s8, 0x137);
+        applied_resistance_down_two = M2C_FIELD(target_state, u8, 0x137);
+        if (resistance_down_two > 4) {
             M2C_FIELD(target_state, u8, 0x137) = 4U;
-            var_r1_17 = 4;
+            applied_resistance_down_two = 4;
         }
-        Func_080bbabc(1U, (M2C_FIELD(target_snapshot, s8, 0x137) - (s8) var_r1_17) * 0x14);
-        Func_080bbabc(4U, 0x865U);
-        var_r0_7 = 0x9B;
-        goto block_404;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, (M2C_FIELD(target_snapshot, s8, 0x137) - (s8) applied_resistance_down_two) * 0x14);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x865U);
+        M2C_FIELD(target_state, u8, 0x136) = 7;
+        break;
     case 0xC:
-        temp_r3_24 = M2C_FIELD(target_state, u8, 0x137) + 1;
-        M2C_FIELD(target_state, u8, 0x137) = temp_r3_24;
-        if ((s32) (s8) temp_r3_24 < -4) {
+        resistance_up_one = M2C_FIELD(target_state, u8, 0x137) + 1;
+        M2C_FIELD(target_state, u8, 0x137) = resistance_up_one;
+        if ((s32) (s8) resistance_up_one < -4) {
             M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
         }
-        var_r1_18 = M2C_FIELD(target_state, u8, 0x137);
-        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x137) > 4) {
+        resistance_up_one = M2C_FIELD(target_state, s8, 0x137);
+        applied_resistance_up_one = M2C_FIELD(target_state, u8, 0x137);
+        if (resistance_up_one > 4) {
             M2C_FIELD(target_state, u8, 0x137) = 4U;
-            var_r1_18 = 4;
+            applied_resistance_up_one = 4;
         }
-        Func_080bbabc(1U, ((s8) var_r1_18 - (s8) (u8) M2C_FIELD(target_snapshot, s8, 0x137)) * 0x14);
-        Func_080bbabc(4U, 0x866U);
-        var_r0_7 = 0x9B;
-        goto block_404;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, ((s8) applied_resistance_up_one - (s8) (u8) M2C_FIELD(target_snapshot, s8, 0x137)) * 0x14);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x866U);
+        M2C_FIELD(target_state, u8, 0x136) = 7;
+        break;
     case 0xB:
-        temp_r3_25 = M2C_FIELD(target_state, u8, 0x137) + 2;
-        M2C_FIELD(target_state, u8, 0x137) = temp_r3_25;
-        if ((s32) (s8) temp_r3_25 < -4) {
+        resistance_up_two = M2C_FIELD(target_state, u8, 0x137) + 2;
+        M2C_FIELD(target_state, u8, 0x137) = resistance_up_two;
+        if ((s32) (s8) resistance_up_two < -4) {
             M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
         }
-        var_r1_19 = M2C_FIELD(target_state, u8, 0x137);
-        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x137) > 4) {
+        resistance_up_two = M2C_FIELD(target_state, s8, 0x137);
+        applied_resistance_up_two = M2C_FIELD(target_state, u8, 0x137);
+        if (resistance_up_two > 4) {
             M2C_FIELD(target_state, u8, 0x137) = 4U;
-            var_r1_19 = 4;
+            applied_resistance_up_two = 4;
         }
-        Func_080bbabc(1U, ((s8) var_r1_19 - (s8) (u8) M2C_FIELD(target_snapshot, s8, 0x137)) * 0x14);
-        Func_080bbabc(4U, 0x866U);
-        var_r0_7 = 0x9B;
-        goto block_404;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, ((s8) applied_resistance_up_two - (s8) (u8) M2C_FIELD(target_snapshot, s8, 0x137)) * 0x14);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x866U);
+        M2C_FIELD(target_state, u8, 0x136) = 7;
+        break;
     case 0xF:
         if (M2C_FIELD(target_state, s8, 0x131) != 0) {
 
         } else {
-            Func_080bbabc(4U, 0x867U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x867U);
             M2C_FIELD(target_state, s8, 0x131) = 1;
         }
         break;
@@ -1264,138 +1267,141 @@ block_404:
         if ((s32) M2C_FIELD(target_state, s8, 0x131) > 1) {
 
         } else {
-            Func_080bbabc(4U, 0x874U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x874U);
             M2C_FIELD(target_state, s8, 0x131) = 2;
         }
         break;
     case 0x11:
-        Func_080bbabc(4U, 0x868U);
-        var_r2_6 = target_state + 0x138;
-        goto block_405;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x868U);
+        M2C_FIELD(target_state, u8, 0x138) = 7;
+        break;
     case 0x12:
-        Func_080bbabc(4U, 0x869U);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x869U);
         M2C_FIELD(target_state, s8, 0x139) = 7;
         break;
     case 0x13:
-        Func_080bbabc(4U, 0x86AU);
-        var_r2_6 = target_state + 0x13A;
-        goto block_405;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86AU);
+        M2C_FIELD(target_state, u8, 0x13A) = 7;
+        break;
     case 0x14:
-        Func_080bbabc(4U, 0x86BU);
-        var_r2_6 = target_state + 0x13B;
-        goto block_405;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86BU);
+        M2C_FIELD(target_state, u8, 0x13B) = 7;
+        break;
     case 0x15:
-        Func_080bbabc(4U, 0x86CU);
-        var_r0_7 = 0x9E;
-        goto block_404;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86CU);
+        M2C_FIELD(target_state, u8, 0x13C) = 7;
+        break;
     case 0x16:
         if ((u32) target_id <= 7U) {
-            Func_080bbabc(4U, 0x86DU);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86DU);
         } else {
-            Func_080bbabc(4U, 0x876U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x876U);
         }
-        var_r1_20 = target_state + 0x13D;
-        var_r3_3 = 7;
-block_394:
-        *var_r1_20 = var_r3_3 | M2C_FIELD(target_state, u8, 0x13D);
-        break;
+        status_flags = target_state + 0x13D;
+        status_mask = 7;
+        goto block_394;
     case 0x40:
         if ((u32) target_id <= 7U) {
-            Func_080bbabc(4U, 0x86DU);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86DU);
         } else {
-            Func_080bbabc(4U, 0x876U);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x876U);
         }
-        var_r1_20 = target_state + 0x13D;
-        var_r3_3 = 0x10;
-        goto block_394;
+        status_flags = target_state + 0x13D;
+        status_mask = 0x10;
+block_394:
+        *status_flags = status_mask | *status_flags;
+        break;
     case 0x18:
-        Func_080bbabc(9U, (u32) target_id);
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, (u32) target_id);
         if (M2C_FIELD(target_state, u8, 0x12A) == 2) {
-            var_r1_21 = 0x84F;
+            defeat_effect_text = 0x84F;
             goto block_399;
         }
         if (action_id == 0xDB) {
-            var_r1_21 = 0x850;
+            defeat_effect_text = 0x850;
 block_399:
-            Func_080bbabc(4U, var_r1_21);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, defeat_effect_text);
         } else {
-            Func_080bbabc(4U, 0x84CU);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x84CU);
         }
-        M2C_FIELD(target_state, s16, 0x38) = 0;
-        goto block_402;
+        scratch_value = 0;
+        M2C_FIELD(target_state, s16, 0x38) = (s16) scratch_value;
+block_402:
+        BattleUnit_UpdateRatios(target_id);
+        break;
     case 0x1A:
-        Func_080bbabc(4U, 0x86FU);
-        var_r0_7 = 0x9F;
-        goto block_404;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86FU);
+        M2C_FIELD(target_state, u8, 0x13E) = 7;
+        break;
     case 0x1B:
-        Func_080bbabc(4U, 0x870U);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x870U);
         M2C_FIELD(target_state, s8, 0x13F) = 7;
         break;
     case 0x1C:
     case 0x39:
-        temp_r6_10 = M2C_FIELD(actor_state, s16, 0x38);
-        var_r5_17 = health_delta;
+        actor_hp = M2C_FIELD(actor_state, s16, 0x38);
+        actor_hp_recovery = effect_amount;
         if (action->effect == 0x3C) {
-            var_r5_17 = (u32) ((s32) (var_r5_17 + (var_r5_17 >> 0x1F)) >> 1);
+            actor_hp_recovery = (u32) ((s32) (actor_hp_recovery + (actor_hp_recovery >> 0x1F)) >> 1);
         }
-        temp_r3_26 = M2C_FIELD(actor_state, s16, 0x34);
-        var_r6_5 = temp_r6_10 + var_r5_17;
-        if (var_r6_5 > (s32) temp_r3_26) {
-            var_r6_5 = (s32) temp_r3_26;
-            var_r5_17 = var_r6_5 - temp_r6_10;
+        actor_max_hp = M2C_FIELD(actor_state, s16, 0x34);
+        actor_recovered_hp = actor_hp + actor_hp_recovery;
+        if (actor_recovered_hp > (s32) actor_max_hp) {
+            actor_recovered_hp = (s32) actor_max_hp;
+            actor_hp_recovery = actor_recovered_hp - actor_hp;
         }
-        Func_080bbabc(7U, 0U);
-        Func_080bbabc(0U, (u32) actor_id);
-        if (var_r6_5 == M2C_FIELD(actor_state, s16, 0x34)) {
-            Func_080bbabc(4U, 0x820U);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+        BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) actor_id);
+        if (actor_recovered_hp == M2C_FIELD(actor_state, s16, 0x34)) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
         } else {
-            Func_080bbabc(1U, var_r5_17);
-            Func_080bbabc(4U, 0x81DU);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, actor_hp_recovery);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);
         }
-        M2C_FIELD(actor_state, s16, 0x38) = (s16) var_r6_5;
-block_421:
-        Func_08077128((u8) actor_id);
-        break;
-    case 0x1D:
-        temp_r5_6 = M2C_FIELD(actor_state, s16, 0x3A);
-        var_r6_6 = health_delta;
-        temp_r3_27 = M2C_FIELD(actor_state, s16, 0x36);
-        var_r5_18 = temp_r5_6 + var_r6_6;
-        if (var_r5_18 > (s32) temp_r3_27) {
-            var_r5_18 = (s32) temp_r3_27;
-            var_r6_6 = var_r5_18 - temp_r5_6;
-        }
-        Func_080bbabc(7U, 0U);
-        Func_080bbabc(0U, (u32) actor_id);
-        if (var_r5_18 == M2C_FIELD(actor_state, s16, 0x36)) {
-            Func_080bbabc(4U, 0x821U);
-        } else {
-            Func_080bbabc(1U, var_r6_6);
-            Func_080bbabc(4U, 0x81EU);
-        }
-        M2C_FIELD(actor_state, s16, 0x3A) = (s16) var_r5_18;
+        M2C_FIELD(actor_state, s16, 0x38) = (s16) actor_recovered_hp;
         goto block_421;
+    case 0x1D:
+        actor_pp = M2C_FIELD(actor_state, s16, 0x3A);
+        actor_pp_recovery = effect_amount;
+        actor_max_pp = M2C_FIELD(actor_state, s16, 0x36);
+        actor_recovered_pp = actor_pp + actor_pp_recovery;
+        if (actor_recovered_pp > (s32) actor_max_pp) {
+            actor_recovered_pp = (s32) actor_max_pp;
+            actor_pp_recovery = actor_recovered_pp - actor_pp;
+        }
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
+        BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) actor_id);
+        if (actor_recovered_pp == M2C_FIELD(actor_state, s16, 0x36)) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_VALUE, actor_pp_recovery);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
+        }
+        M2C_FIELD(actor_state, s16, 0x3A) = (s16) actor_recovered_pp;
+block_421:
+        BattleUnit_UpdateRatios((u8) actor_id);
+        break;
     case 0x42:
-        var_r5_19 = Func_080022ec((s32) health_delta, 0xA);
-        temp_r3_28 = M2C_FIELD(target_state, s16, 0x3A);
-        if ((s32) temp_r3_28 < var_r5_19) {
-            var_r5_19 = (s32) temp_r3_28;
+        drained_pp = Func_080022ec((s32) effect_amount, 0xA);
+        target_pp_available = M2C_FIELD(target_state, s16, 0x3A);
+        if ((s32) target_pp_available < drained_pp) {
+            drained_pp = (s32) target_pp_available;
         }
-        temp_r1_3 = M2C_FIELD(actor_state, s16, 0x3A);
-        temp_r2_7 = M2C_FIELD(actor_state, s16, 0x36);
-        if ((s32) (temp_r1_3 + var_r5_19) > (s32) temp_r2_7) {
-            var_r5_19 = temp_r2_7 - temp_r1_3;
+        actor_pp_before_drain = M2C_FIELD(actor_state, s16, 0x3A);
+        actor_max_pp_for_drain = M2C_FIELD(actor_state, s16, 0x36);
+        if ((s32) (actor_pp_before_drain + drained_pp) > (s32) actor_max_pp_for_drain) {
+            drained_pp = actor_max_pp_for_drain - actor_pp_before_drain;
         }
-        if (var_r5_19 == 0) {
+        if (drained_pp == 0) {
 
         } else {
-            Func_080bbabc(1U, (u32) var_r5_19);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, (u32) drained_pp);
             if ((u32) target_id <= 7U) {
-                Func_080bbabc(4U, 0x85FU);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x85FU);
             } else {
-                Func_080bbabc(4U, 0x85EU);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x85EU);
             }
-            Func_08077120(actor_id, var_r5_19);
+            Func_08077120(actor_id, drained_pp);
         }
         break;
     case 0x1E:
@@ -1418,92 +1424,97 @@ block_421:
         M2C_FIELD(target_state, s8, 0x12D) = 0;
         M2C_FIELD(target_state, s8, 0x12E) = 0;
         M2C_FIELD(target_state, s8, 0x12F) = 0;
-        var_r1_22 = 0x896;
+        effect_text = 0x896;
 block_446:
-        Func_080bbabc(4U, var_r1_22);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, effect_text);
         break;
     case 0x17:
-        Func_080bbabc(4U, 0x872U);
-        var_r2_7 = target_state + 0x140;
-block_452:
-        *var_r2_7 = 1;
-        break;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x872U);
+        status_level_one = target_state + 0x140;
+        goto block_452;
     case 0x19:
-        temp_r3_29 = M2C_FIELD(target_state, u8, 0x141);
-        if (temp_r3_29 == 0) {
-            Func_080bbabc(4U, 0x873U);
+        status_141_value = M2C_FIELD(target_state, u8, 0x141);
+        if (status_141_value == 0) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x873U);
             M2C_FIELD(target_state, u8, 0x141) = 7U;
-        } else if ((u32) temp_r3_29 > 1U) {
-            M2C_FIELD(target_state, u8, 0x141) = (u8) (temp_r3_29 + 0xFF);
-            Func_080bbabc(1U, (u32) M2C_FIELD(target_state, u8, 0x141));
-            var_r1_22 = 0x875;
-            goto block_446;
+        } else if ((u32) status_141_value > 1U) {
+            M2C_FIELD(target_state, u8, 0x141) = (u8) (status_141_value + 0xFF);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, (u32) M2C_FIELD(target_state, u8, 0x141));
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x875U);
         }
         break;
     case 0x3F:
-        Func_080bbabc(4U, 0x87DU);
-        var_r2_8 = target_state + 0x144;
-block_454:
-        *var_r2_8 = 2;
-        break;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87DU);
+        status_level_two = target_state + 0x144;
+        goto block_454;
     case 0x33:
-        Func_080bbabc(4U, 0x87EU);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87EU);
         M2C_FIELD(target_state, s8, 0x148) = 1;
         if ((u32) target_id <= 7U) {
             M2C_FIELD(battle_state, u8, 0x43) = (u8) (M2C_FIELD(battle_state, u8, 0x43) | 2);
         }
         break;
     case 0x32:
-        Func_080bbabc(4U, 0x87FU);
-        var_r2_7 = target_state + 0x145;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87FU);
+        status_level_one = target_state + 0x145;
         goto block_452;
     case 0x2B:
-        Func_080bbabc(4U, 0x881U);
-        var_r2_7 = target_state + 0x12B;
-        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x12B) <= 0) {
-            goto block_452;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x881U);
+        status_level_one = target_state + 0x12B;
+        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x12B) > 0) {
+            break;
         }
+block_452:
+        *status_level_one = 1;
         break;
     case 0x2C:
-        Func_080bbabc(4U, 0x882U);
-        var_r2_8 = target_state + 0x12B;
-        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x12B) <= 1) {
-            goto block_454;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882U);
+        status_level_two = target_state + 0x12B;
+        if ((s32) (s8) M2C_FIELD(target_state, u8, 0x12B) > 1) {
+            break;
         }
+block_454:
+        *status_level_two = 2;
         break;
     case 0x2A:
-        Func_080bbabc(4U, -1U);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, -1U);
         break;
     }
 finalize:
-    Func_080bbabc(7U, 0U);
+    BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
     if (M2C_FIELD(target_state, s16, 0x38) != 0) {
-        temp_r3_30 = M2C_FIELD(target_state, u8, 0x13C);
-        if ((temp_r3_30 != 0) && ((u32) temp_r3_30 <= 6U) && ((s32) health_delta > 0)) {
-            temp_r0_8 = Func_080771a0() & 3;
-            if (temp_r0_8 == 0) {
-                M2C_FIELD(target_state, u8, 0x13C) = temp_r0_8;
-                Func_080bbabc(0U, (u32) target_id);
-                Func_080bbabc(4U, 0x883U);
+        status_13c_value = M2C_FIELD(target_state, u8, 0x13C);
+        if (status_13c_value != 0) {
+            if ((u32) status_13c_value <= 6U) {
+                if ((s32) effect_amount > 0) {
+                    recovery_roll = BattleRandom_Next() & 3;
+                    if (recovery_roll == 0) {
+                        M2C_FIELD(target_state, u8, 0x13C) = recovery_roll;
+                        BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
+                        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x883U);
+                    }
+                }
             }
         }
     }
     Func_08002df0((s16 *) target_snapshot);
-    Func_08077010(target_id);
+    BattleUnit_Recalculate(target_id);
     Func_08015130(M2C_FIELD(*(void **)0x03001E74, u8, 0x41));
     if (M2C_FIELD(target_state, s16, 0x38) != 0) {
-        Func_080bbabc(0xBU, (u32) target_id);
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
     }
-    var_r0 = 0x140;
-    if (M2C_FIELD(actor_state, u8, 0x140) != 0) {
-        var_r0 = Func_080771a0() & 3;
-        if ((var_r0 == 0) && ((s32) health_delta > 0)) {
-            var_r0 = (s32) health_delta >> 2;
-            if (var_r0 == 0) {
-                var_r0 = 1;
+    status_140_address = (u32)actor_state;
+    result = 0x140;
+    status_140_address += result;
+    if (*(volatile u8 *)status_140_address != 0) {
+        result = BattleRandom_Next() & 3;
+        if ((result == 0) && ((s32) effect_amount > 0)) {
+            result = (s32) effect_amount >> 2;
+            if (result == 0) {
+                result = 1;
             }
-            request->follow_up_credit += var_r0;
+            plan->pending_amount_60 += result;
         }
     }
-    return var_r0;
+    return result;
 }

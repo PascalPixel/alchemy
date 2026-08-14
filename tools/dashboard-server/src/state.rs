@@ -3,7 +3,7 @@
 use std::path::Path;
 use std::sync::Mutex;
 
-use coverage_map::boxtree::{render_box_trees, svg_cache_version, BOX_TREES};
+use coverage_map::boxtree::{render_box_trees_with_matches, svg_cache_version, BOX_TREES};
 use coverage_map::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use coverage_map::tree::work_tree_at;
 
@@ -143,7 +143,8 @@ pub fn compute() -> Result<LiveCoverage, String> {
         validate_tracked_progress: false,
         prefer_verified_assets: true,
     })?;
-    let trees = render_box_trees(&map, Some(&tree), true)?;
+    let match_scores = crate::matches::diagnostic_match_scores(paths::root().as_path());
+    let trees = render_box_trees_with_matches(&map, Some(&tree), true, &match_scores)?;
     let revision = BOX_TREES
         .iter()
         .map(|name| {

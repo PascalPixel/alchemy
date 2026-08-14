@@ -105,6 +105,11 @@ fn run() -> Result<Option<String>, String> {
     let rom = std::fs::read(&rom_path)
         .map_err(|error| format!("ENOENT: {}: {error}", rom_path.display()))?;
     let diagnosis = diagnose_candidate(&source, &rom, &scratch, &root)?;
+    std::fs::write(
+        root.join("out/decomp/diagnose/.revision"),
+        format!("{}\n", diagnosis.stem),
+    )
+    .map_err(|error| format!("cannot notify dashboard: {error}"))?;
     if agent_brief {
         Ok(Some(agent_brief_text(&source, &diagnosis)))
     } else {

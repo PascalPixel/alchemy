@@ -43,14 +43,14 @@ separate footer item.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=653b88f5)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=643b73d8)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,890 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=954c36ba)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=a890bc69)
 
 ### Images and data
 

@@ -457,3 +457,13 @@ global API. The paired exact `resource_37d`/`resource_37e:0054` setup owners
 likewise share a guarded runtime view for the independently proved words at
 `+0x1c0` and `+0x1c8`; their three separate 16.16 scale locals remain explicit
 to preserve the ROM's entry-block materialisation.
+
+Six further exact overlay owners now replace their local field shells with
+guarded views. `resource_380:0314` extends `OverlayObject` only through its
+proved angle, coordinate inputs, linked-object pointer, and cleared control
+bit. `37c:0054` and `388:0054` retain their independent scale/command locals
+while documenting their runtime words and slot bytes; `3a8:0040` records the
+action timer and an otherwise unknown halfword; `3af:0030` records its two
+fixed-point-sized components and countdown; and `390:0030` records the
+fifteen 0x18-byte table entries it initializes. All broader gameplay identity
+remains deliberately unassigned.

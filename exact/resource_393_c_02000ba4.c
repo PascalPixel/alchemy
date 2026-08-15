@@ -1,18 +1,19 @@
-#include "types.h"
+#include "resource_393.h"
 
-struct Struct3848 { u8 pad00[8]; u32 field08; s32 field0c; u32 field10; };
-extern u8 Data_02000240[];
-extern struct Struct3848 *Func_02001a38(s32 arg0);
-extern void Func_0200168a(u32 *arg0);
+#define GetResource393Object Func_02001a38
+#define ApplyResource393Position Func_0200168a
+#define Resource393SharedWork Data_02000240
+#define SubmitResource393ObjectPosition Func_02000ba4
 
-void Func_02000ba4(void) {
-    u32 buf[3];
-    s32 off = 500;
-    struct Struct3848 *p = Func_02001a38(*(s32 *)(Data_02000240 + off));
-    u32 base = p->field08 & 0xfff00000;
-    buf[0] = base + 0x80000;
-    buf[1] = p->field0c;
-    buf[2] = (p->field10 & 0xfff00000) + 0x80000;
-    buf[0] = base + 0x280000;
-    Func_0200168a(buf);
+void SubmitResource393ObjectPosition(void)
+{
+    struct Resource393Position position;
+    struct Resource393Object *object = GetResource393Object(Resource393SharedWork.object_id);
+    u32 x_base = object->position_x & 0xfff00000;
+
+    position.x = x_base + 0x80000;
+    position.y = object->position_y;
+    position.z = (object->position_z & 0xfff00000) + 0x80000;
+    position.x = x_base + 0x280000;
+    ApplyResource393Position(&position);
 }

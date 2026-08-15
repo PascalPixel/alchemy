@@ -1,7 +1,7 @@
 #include "types.h"
 #include "motion_object.h"
 
-struct BattleObjectSlot *Func_080b7dd0(s32 object_id) {
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
     u8 *base = *(u8 **)0x03001E74;
     u8 *result_base = base + 0x74;
     s32 offset;

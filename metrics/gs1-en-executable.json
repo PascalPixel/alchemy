@@ -12815,7 +12815,7 @@
           "start": 33564544,
           "end": 33564566,
           "kind": "thumb",
-          "evidence": "resource_391_overlay.s:1265:verified-C-placeholder"
+          "evidence": "resource_391_overlay.s:1190:verified-C-placeholder"
         },
         {
           "start": 33564566,
@@ -12883,36 +12883,6 @@
         },
         {
           "start": 33556956,
-          "end": 33557082,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557082,
-          "end": 33557084,
-          "kind": "executable_alignment",
-          "evidence": "resource_392_overlay.s:two-byte-zero-between-executable-spans"
-        },
-        {
-          "start": 33557084,
-          "end": 33557088,
-          "kind": "literal_pool",
-          "evidence": "resource_392_overlay.s:447:pc-relative-literal"
-        },
-        {
-          "start": 33557088,
-          "end": 33557276,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557276,
-          "end": 33557284,
-          "kind": "literal_pool",
-          "evidence": "adjacent audited literal_pool spans; see namespace evidence"
-        },
-        {
-          "start": 33557284,
           "end": 33557682,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -12927,7 +12897,7 @@
           "start": 33557684,
           "end": 33557900,
           "kind": "thumb",
-          "evidence": "resource_392_overlay.s:533:verified-C-placeholder"
+          "evidence": "resource_392_overlay.s:448:verified-C-placeholder"
         },
         {
           "start": 33557908,
@@ -12983,18 +12953,6 @@
         },
         {
           "start": 33556956,
-          "end": 33557160,
-          "kind": "thumb",
-          "evidence": "adjacent audited thumb spans; see namespace evidence"
-        },
-        {
-          "start": 33557160,
-          "end": 33557164,
-          "kind": "literal_pool",
-          "evidence": "resource_393_overlay.s:492:pc-relative-literal"
-        },
-        {
-          "start": 33557164,
           "end": 33558044,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"

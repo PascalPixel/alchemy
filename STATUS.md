@@ -407,3 +407,10 @@ offset `0x6c` and share `StagedActorMoveArgs`. Their bodies use the reconstructe
 collision-layer, footprint-redraw, and sound workflow. Overlay relocation
 spellings remain confined to local alias blocks; repeated synthetic spellings
 with different call-site roles retain separate aliases.
+
+`resource_391:0b1c` now uses the guarded `StagedActorEffect` and
+`StagedActorEffectRequest` layouts. Its exported entry is expressed as
+`RunStagedActorStepEffect`, and all sixteen calls in the executable body have
+behavioral aliases covering setup, cell testing, movement, waits, restoration,
+and completion. Unknown storage remains offset-bearing rather than receiving a
+speculative story-specific name.

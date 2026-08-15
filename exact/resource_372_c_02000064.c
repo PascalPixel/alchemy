@@ -1,30 +1,41 @@
 #include "types.h"
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_020046fa(s32, s16);
-s32 Func_02004714(void);
+struct FixedPointCountdown {
+    u8 pad_00[0x18];
+    s32 fixed_point_18;
+    s32 fixed_point_1c;
+    u8 pad_20[0x44];
+    s16 countdown;
+};
 
-s32 Func_02000064(void *arg0) {
-    switch (M2C_FIELD(arg0, s16, 0x64)) {
+extern u32 Func_020046fa(u32 value, u32 divisor);
+extern u32 Func_02004714(void);
+
+#define UnsignedRemainder Func_020046fa
+#define NextRandomValue Func_02004714
+#define UpdateFixedPointCountdown Func_02000064
+
+s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state) {
+    switch (state->countdown) {
     case 6:
-        M2C_FIELD(arg0, s32, 0x18) += (s32) 0xFFFFC000;
-        M2C_FIELD(arg0, s32, 0x1C) += 0x2000;
+        state->fixed_point_18 += (s32) 0xFFFFC000;
+        state->fixed_point_1c += 0x2000;
         break;
     case 4:
-        M2C_FIELD(arg0, s32, 0x18) += 0x2000;
+        state->fixed_point_18 += 0x2000;
         /* The load at 0x0200009E owns the Thumb-like data word at 0x020000E0. */
-        M2C_FIELD(arg0, s32, 0x1C) += (s32) 0xF870F001;
+        state->fixed_point_1c += (s32) 0xF870F001;
         break;
     case 2:
-        M2C_FIELD(arg0, s32, 0x18) += 0x1000;
-        M2C_FIELD(arg0, s32, 0x1C) += (s32) 0xFFFFF800;
+        state->fixed_point_18 += 0x1000;
+        state->fixed_point_1c += (s32) 0xFFFFF800;
         break;
     case 0:
-        M2C_FIELD(arg0, s32, 0x18) = 0x10000;
-        M2C_FIELD(arg0, s32, 0x1C) = 0x10000;
-        M2C_FIELD(arg0, s16, 0x64) = (s16) (Func_020046fa(Func_02004714(), 90) + 60);
+        state->fixed_point_18 = 0x10000;
+        state->fixed_point_1c = 0x10000;
+        state->countdown = (s16) (UnsignedRemainder(NextRandomValue(), 90) + 60);
         break;
     }
-    M2C_FIELD(arg0, s16, 0x64)--;
+    state->countdown--;
     return 1;
 }

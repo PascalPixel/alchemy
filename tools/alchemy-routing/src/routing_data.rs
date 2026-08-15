@@ -83,7 +83,7 @@ pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3cb_c_02001050.c",
     "semantic/resource_3cb_c_02001050.c",
 ];
-pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c"];
+pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080bbb0c"];
 pub static NO_CSE_TWO_INSN_IMMEDIATE_SOURCES: &[&str] = &["080108c4"];
 pub static GROUP_VALUE2_IN_PLACE_SOURCES: &[&str] = &["080b5ad4"];
 pub static NO_RERUN_CSE_AFTER_LOOP_SOURCES: &[&str] =

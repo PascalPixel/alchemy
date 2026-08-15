@@ -29,6 +29,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "cache-entry"
+version = "0.1.0"
+
+[[package]]
 name = "candidate-compiler"
 version = "0.1.0"
 dependencies = [
@@ -47,10 +51,15 @@ dependencies = [
  "alchemy-routing",
  "candidate-compiler",
  "integrate-matches",
+ "overlay-disasm",
 ]
 
 [[package]]
 name = "decomp-targets"
+version = "0.1.0"
+
+[[package]]
+name = "discover"
 version = "0.1.0"
 
 [[package]]
@@ -61,4 +70,16 @@ dependencies = [
  "alchemy-routing",
  "alchemy-symbols",
  "candidate-compiler",
+]
+
+[[package]]
+name = "overlay-disasm"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "cache-entry",
+ "discover",
 ]

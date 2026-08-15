@@ -532,6 +532,33 @@ pub fn compile_overlay_c(
     routing_source: Option<&Path>,
     extra_flags: &[String],
 ) -> Result<Compiled, String> {
+    // PORT NOTE: an EMPTY slice must stay `undefined` at the plan layer, not
+    // `Some(empty)`. The mutation-aware path preserves that distinction.
+    let mutations = if extra_flags.is_empty() {
+        None
+    } else {
+        Some(CompilerFlagMutations {
+            add_flags: extra_flags.to_vec(),
+            remove_flags: Vec::new(),
+        })
+    };
+    compile_overlay_with_mutations(source, work, overlay, routing_source, mutations.as_ref())
+}
+
+fn compile_overlay_with_mutations(
+    source: &Path,
+    work: &Path,
+    overlay: &str,
+    routing_source: Option<&Path>,
+    mutations: Option<&CompilerFlagMutations>,
+) -> Result<Compiled, String> {
+    let extra_flags: Vec<String> = mutations
+        .map(|m| {
+            let mut all = m.add_flags.clone();
+            all.extend(m.remove_flags.iter().cloned());
+            all
+        })
+        .unwrap_or_default();
     let source_display = source.to_string_lossy().to_string();
     let routing_source = routing_source.unwrap_or(source).to_string_lossy().to_string();
     // Candidate contents live at a temporary path, but every source-keyed
@@ -567,12 +594,10 @@ pub fn compile_overlay_c(
     options.preprocessed_output = Some(at(&format!("{stem}.i")));
     // PORT NOTE: `extraFlags.length > 0 ? { addFlags: extraFlags } : undefined`.
     // An EMPTY slice must stay `undefined`, not `Some(empty)`: the plan layer
-    // distinguishes them.
-    if !extra_flags.is_empty() {
-        options.flags = Some(CompilerFlagMutations {
-            add_flags: extra_flags.to_vec(),
-            remove_flags: Vec::new(),
-        });
+    // distinguishes them. The caller has already collapsed its mutation set to
+    // `None` when it is empty, so pass it through verbatim.
+    if let Some(requested) = mutations {
+        options.flags = Some(requested.clone());
     }
     let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
 
@@ -722,6 +747,26 @@ pub fn compile_overlay_candidate(
     extra_flags: &[String],
 ) -> Result<Compiled, String> {
     compile_overlay_c(source, work, overlay, routing_source, extra_flags)
+}
+
+/// `compile_overlay_candidate` with the full flag mutation surface, so a caller
+/// can REMOVE routed flags as well as add them.
+///
+/// This exists for routing-necessity measurement. Asking "is this owner's
+/// routing load-bearing" means compiling it once as routed and once with those
+/// flags removed, and comparing the two results through the real overlay path:
+/// the owner's link address, its generated symbol stubs, and its routed plan.
+/// Approximating that with a bare `cc1` invocation does not reproduce it, and
+/// the approximation reports pool-placement modes as no-ops because their
+/// effect only appears once the owner is placed and linked.
+pub fn compile_overlay_mutated(
+    source: &Path,
+    work: &Path,
+    overlay: &str,
+    routing_source: Option<&Path>,
+    mutations: &CompilerFlagMutations,
+) -> Result<Compiled, String> {
+    compile_overlay_with_mutations(source, work, overlay, routing_source, Some(mutations))
 }
 
 // ---------------------------------------------------------------------------

@@ -162,7 +162,6 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     u32 recovered_hp_amount;
     u32 defeat_effect_text;
     u32 effect_text;
-    u32 effect_message;
     u32 continuation_text;
     u32 damage_text;
     u32 defeat_text;
@@ -383,16 +382,12 @@ block_21:
             }
             BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) effect_object_id);
             if (action_id != 0x1F7) {
-                effect_message = 0x8F5;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8F5U);
             } else {
-                effect_message = 0x8F3;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8F3U);
             }
-            goto block_57;
-        }
-        if (action_id == 0x1F7) {
-            effect_message = 0x8F4;
-block_57:
-            BattleEvent_Push(BATTLE_EVENT_TEXT, effect_message);
+        } else if (action_id == 0x1F7) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8F4U);
         } else {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8F6U);
         }

@@ -74,33 +74,33 @@ void Func_020007f8(void)
     u8 *target;
     u8 *blocker;
     s32 heading;
-    s32 step;
+    s32 tileX;
+    s32 tileZ;
     s32 place[3];
 
-    s32 permuted_24;
-    s32 permuted_48;
     player = Func_02001180(0);
     heading = *(u16 *)(player + 6) >> 12;
-    step = Data_02009064[heading];
 
-    target = (u8 *)Func_02000ff6(
-        (*(s16 *)(player + 10) + (step >> 16)) >> 4,
-        (*(s16 *)(player + 18) + ((step << 16) >> 16)) >> 4);
+    tileX = (*(s16 *)(player + 10)
+        + (Data_02009064[heading] >> 16)) >> 4;
+    tileZ = (*(s16 *)(player + 18)
+        + ((Data_02009064[heading] << 16) >> 16)) >> 4;
+    target = (u8 *)Func_02000ff6(tileX, tileZ);
     if (target == 0) return;
 
-    step = Data_02009064[heading];
-    blocker = (u8 *)Func_0200101a(
-        (*(s16 *)(target + 10) + (step >> 16)) >> 4,
-        (*(s16 *)(target + 18) + ((step << 16) >> 16)) >> 4);
+    tileX = (*(s16 *)(target + 10)
+        + (Data_02009064[heading] >> 16)) >> 4;
+    tileZ = (*(s16 *)(target + 18)
+        + ((Data_02009064[heading] << 16) >> 16)) >> 4;
+    blocker = (u8 *)Func_0200101a(tileX, tileZ);
     if (blocker != 0) return;
 
     target[0x22] = 2;
 
-    permuted_24 = Data_02009064[heading];
-    place[0] = *(s32 *)(target + 8) + (step & (s32)0xffff0000);
-    step  = permuted_24;
+    place[0] = *(s32 *)(target + 8)
+        + (Data_02009064[heading] & (s32)0xffff0000);
     place[1] = *(s32 *)(target + 12);
-    place[2] = *(s32 *)(target + 16) + (step << 16);
+    place[2] = *(s32 *)(target + 16) + (Data_02009064[heading] << 16);
 
     if (Func_020011c0(target, place) > 0) return;
 
@@ -119,9 +119,8 @@ void Func_020007f8(void)
     Func_020011ea(target);
 
     *(s32 *)(target + 8) = place[0];
-    permuted_48 = place[2];
+    *(s32 *)(target + 16) = place[2];
     *(s32 *)(target + 36) = (s32)blocker;
-    *(s32 *)(target + 16) = permuted_48;
     *(s32 *)(target + 44) = (s32)blocker;
 
     Func_020011f0(player, 1);

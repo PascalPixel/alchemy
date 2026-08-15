@@ -64,24 +64,24 @@ s32 Func_02001314();
 
 s32 Func_020000c0(u8 *object)
 {
-    s16 *xState = (s16 *)(object + 100);
-    s16 *zState = (s16 *)(object + 102);
+    s16 *state;
     s32 x;
     s32 z;
 
-    if (*xState == 9) {
-    } else if (*xState != 0) {
+    state = (s16 *)(object + 100);
+    if (*state == 9) {
+        *(s32 *)(object + 76) = 0;
+    } else if (*state != 0) {
         x = *(s32 *)(object + 76) - (s32)((u32)(Func_020012a0() << 11) >> 16);
         *(s32 *)(object + 76) = x;
-        *(s32 *)(object + 76) = 0;
         if (x < (s32)0xffff4000) {
-            *xState = 0;
+            *state = 0;
         }
     } else {
         x = *(s32 *)(object + 76) + (s32)((u32)(Func_020012b8() << 11) >> 16);
         *(s32 *)(object + 76) = x;
         if (x > 0xc000) {                       /* 192 << 8 */
-            *xState = 1;
+            *state = 1;
         }
     }
 
@@ -90,21 +90,22 @@ s32 Func_020000c0(u8 *object)
         *(s32 *)(object + 8) += *(s32 *)(object + 76);
     }
 
-    if (*zState == 9) {
+    state = (s16 *)(object + 102);
+    if (*state == 9) {
         *(s32 *)(object + 12) = 0;
-    } else if (*zState != 0) {
+    } else if (*state != 0) {
         z = *(s32 *)(object + 12) -
             (s32)((u32)((Func_020012fa() * 3) << 14) >> 16);
         *(s32 *)(object + 12) = z;
         if (z < 0) {
-            *zState = 0;
+            *state = 0;
         }
     } else {
         z = *(s32 *)(object + 12) +
             (s32)((u32)((Func_02001314() * 3) << 14) >> 16);
         *(s32 *)(object + 12) = z;
         if (z > 0x00100000) {                   /* 128 << 13 */
-            *zState = 1;
+            *state = 1;
         }
     }
 

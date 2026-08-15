@@ -40,14 +40,15 @@
  * file offset here.  The signed halfword read out of it selects the scene.
  */
 
-/* Old-style declarations; Func_02000570 is called with three further
- * registers set that it does not read — see that file. */
-void Func_02000b1a();
+/* Veneer declarations. Func_02000570 is called with three further registers
+ * set that it does not read — see that file. */
+void Func_02000b1a(s32, s32, s32, s32, s32, s32);
 u8  *Func_02000b80();
 u8  *Func_02000b8c();
 u8  *Func_02000b94();
 void Func_02000abe();
 void Func_02000b34();
+extern s16 Data_02000240[];
 
                        /* veneer 0x664 — actor record accessor */
 
@@ -55,19 +56,22 @@ void Func_02000b34();
 
 s32 Func_020004e4(void)
 {
-    s32 offset = 448;
     s32 scene;
+    s32 zero;
 
-    *(s32 *)(WORKSPACE + offset) = offset + 73;
-    scene = *(s16 *)((u8 *)0x02000240 + offset);
-    offset += 2;
+    *(s32 *)(WORKSPACE + 448) = 521;
+    scene = Data_02000240[225];
 
     if (scene == 5) {
+        s32 fifth = 4;
+        s32 sixth = 3;
+
         /* Two arguments are passed on the stack: 4 then 3. */
-        Func_02000b1a(0, 120, 8, 67, 4, 3);
-        Func_02000b80(8)[0x55] = 0;
-        *(s32 *)(Func_02000b8c(8) + 12) = 0;
-        *(s32 *)(Func_02000b94(8) + 20) = 0;
+        Func_02000b1a(0, 120, 8, 67, fifth, sixth);
+        zero = 0;
+        Func_02000b80(8)[0x55] = zero;
+        *(s32 *)(Func_02000b8c(8) + 12) = zero;
+        *(s32 *)(Func_02000b94(8) + 20) = zero;
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
         Func_02000abe(0xe7, 0x02380000, 0x00100000, 0x02a00000);

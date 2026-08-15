@@ -170,6 +170,10 @@ pub static SINK_PAST_POOL_LOAD_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3ce_c_02000b10.c",
     "exact/resource_3ce_c_02000b10.c",
 ];
+pub static SCHED_38F_CALL_CLUSTER_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/resource_38f_c_020003c8.c",
+    "exact/resource_38f_c_020003c8.c",
+];
 pub static SINK_STORE_PAST_STORE_SOURCES: &[&str] = &["08006408"];
 pub static SINK_ADD_IMMEDIATE_SOURCES: &[&str] = &["080c0130"];
 pub static HOIST_ADD_IMMEDIATE_SOURCES: &[&str] = &["08011568"];

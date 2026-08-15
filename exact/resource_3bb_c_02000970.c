@@ -30,22 +30,19 @@
  * Uncertainty: what the two words mean is not established here - only that
  * some other task publishes them while this owner spins.
  *
- * EXACTNESS PARKING NOTE (2026-08-15).  Two searches stalled; parked.  What
- * was measured: the reference keeps nothing live across the poll call - each
- * status read reloads its pool ADDRESS in its own block (three pc-relative
- * loads, two shared end-pool words, push {r5, lr} only), and the timeout
- * compare keeps GE with 600 built inline (`movs r3, #150 / lsls r3, #2 /
- * bge`).  Routed gcc 2.96 instead hoists both addresses into r6/r7 across
- * the call (push {r5, r6, r7, lr}) and canonicalizes to `ble` against a
- * pooled 599, in every loop spelling tried (while, while+tail-reload, for).
- * old_agbcc -O2 -fcall-used-r4 reproduces the no-hoist reloads and the
- * two-register frame exactly but pools 599, places the test block before the
- * body, splits the pool mid-function, and uses r0 scratch where the
- * reference's r3 scratch and movs/adds/lsls interleave are gcc 2.96
- * scheduler idiom.  Verdict: a fork-mode-shaped gap in gcc 2.96 (suppress
- * loop-invariant hoisting of pool-address loads across calls, and keep the
- * GE-shiftable-constant compare), not a source-shape gap.  Compiler changes
- * are sign-off items; witness recorded in the compiler-side queue.
+ * Routed with -fno-hoist-volatile-address (evidenced fork mode, witness is
+ * this owner): stock gcc 2.96 hoists both pool addresses into r6/r7 across
+ * the poll call, cross jumping merges the entry load with the loop-tail
+ * reload, and the first scheduling pass drifts the counter clear between an
+ * address load and its dereference.  The mode vetoes all three for volatile
+ * dereferences only, and the reference then falls out instruction-exact.
+ *
+ * The goto spelling below is load-bearing: the reference places the test
+ * block after the body with a preheader jump into it (entry load of the
+ * first word, `b` to the test), and reloads only the first word on the
+ * loop-tail path.  A structured while loop makes gcc emit the test block
+ * first; the explicit preheader/body/test/done labels reproduce the
+ * reference block order without any -freorder-blocks routing.
  */
 
 /* Per-site veneers (raw sub_ symbols from the overlay .s), both ultimately
@@ -60,13 +57,21 @@ extern volatile s32 Data_0200c838;
 void Func_02000970(void)
 {
     s32 polls;
+    s32 first;
 
     Func_02004716(10);
 
+    first = Data_0200c834;
     polls = 0;
-    while (Data_0200c834 != 0 || Data_0200c838 != 75) {
-        Func_02004724(1);
-        polls = polls + 1;
-        if (polls >= 600) break;
-    }
+    goto test;
+body:
+    Func_02004724(1);
+    polls = polls + 1;
+    if (polls >= 600) goto done;
+    first = Data_0200c834;
+test:
+    if (first != 0) goto body;
+    if (Data_0200c838 != 75) goto body;
+done:
+    return;
 }

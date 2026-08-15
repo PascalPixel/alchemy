@@ -730,6 +730,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES, key) {
         push!(&["-fno-cse-pool-immediate"]);
     }
+    if has(NO_HOIST_VOLATILE_ADDRESS_OVERLAY_SOURCES, key) {
+        push!(&["-fno-hoist-volatile-address"]);
+    }
     if has(NO_CONSTANT_REUSE_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-no-constant-reuse"]);
     }
@@ -888,6 +891,18 @@ mod tests {
         assert!(
             flags.iter().all(|candidate| candidate != flag),
             "{source} should not route {flag}, got {flags:?}"
+        );
+    }
+
+    #[test]
+    fn resource_3bb_polled_load_route_is_owner_specific() {
+        assert_flag(
+            "exact/resource_3bb_c_02000970.c",
+            "-fno-hoist-volatile-address",
+        );
+        assert_no_flag(
+            "exact/resource_3bb_c_02000950.c",
+            "-fno-hoist-volatile-address",
         );
     }
 

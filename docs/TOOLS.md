@@ -177,7 +177,7 @@ the dispatcher deliberately. Their classification is enforced in
 
 | Class | Binaries | Why non-public |
 |---|---|---|
-| compiler/RTL diagnostics | `candidate-explain`, `candidate-show`, `rtl-align`, `rtl-insn`, `rtl-schedule`, `rtl-sexpr`, `thumb-disasm` | Read compiler dumps or expose narrow implementation details after a public compiler command has isolated a theory. |
+| compiler/RTL diagnostics | `candidate-explain`, `candidate-show`, `route-dump`, `rtl-align`, `rtl-insn`, `rtl-schedule`, `rtl-sexpr`, `thumb-disasm` | Read compiler dumps or expose narrow implementation details after a public compiler command has isolated a theory. `route-dump` answers "what flags is this source actually built with" by calling the routing crate; never reconstruct that mapping by scanning `routing.rs`, because flags are pushed from several code shapes and a partial scan reads as "unrouted". |
 | build internals | `kind2-resources`, `late-runtime-data`, `overlay-published`, `alchemy-zlib` | Subprocess or format protocols owned by a public build command. |
 | repository diagnostics | `alchemy-lints`, `jobs`, `lang-ban`, `parity_dump` | Gate internals, worker plumbing, language policy, or a migration-parity auxiliary. |
 | self-test/support | `dispatch`, `alchemy-selftest`, `cache-entry`, `decomp-targets`, `self-test` | Hosts or fixtures used to enforce the public layer rather than separate workflows. |

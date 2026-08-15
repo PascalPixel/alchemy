@@ -664,6 +664,12 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(POOL_ZERO_R8_AFTER_R9_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-pool-zero-r8-after-r9"]);
     }
+    if has(POOL_R1_LSL4_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-pool-r1-lsl4"]);
+    }
+    if has(STRICT_ADDSI_IMM_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-strict-addsi-imm"]);
+    }
     if has(ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-order-zero-arg1-before-nonzero-arg0"]);
     }
@@ -913,6 +919,20 @@ mod tests {
         assert_no_flag(
             "semantic/resource_373_c_02002cb1.c",
             "-fthumb-order-8-0-20-args",
+        );
+    }
+
+    #[test]
+    fn main_image_080bbb0c_pool_r1_lsl4_route_is_path_specific() {
+        assert_flag("semantic/080bbb0c.c", "-fthumb-pool-r1-lsl4");
+        assert_flag("exact/080bbb0c.c", "-fthumb-pool-r1-lsl4");
+        // The callee and the nearest neighboring owners never inherit the
+        // repair; the route names exactly one main-image function.
+        assert_no_flag("exact/080bbabc.c", "-fthumb-pool-r1-lsl4");
+        assert_no_flag("semantic/080bb938.c", "-fthumb-pool-r1-lsl4");
+        assert_no_flag(
+            "semantic/resource_373_c_02003fb0.c",
+            "-fthumb-pool-r1-lsl4",
         );
     }
 

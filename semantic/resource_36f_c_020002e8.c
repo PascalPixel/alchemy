@@ -73,7 +73,7 @@
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 void Func_02000740(void);
 void Func_0200089a();
-void Func_020004be(void);
+void Func_020004be();
 void Func_02000848();
 void Func_0200097c();
 void Func_02000942();
@@ -90,6 +90,7 @@ void Func_02000238(void);
 
 /* In-image: the sprite task's frame counter. */
 extern u16 Data_0200868c[];
+extern u8 Value_00000000;
 
 struct DisplayWrite_020002e8 {
     u32 value;
@@ -104,51 +105,57 @@ struct DisplayQueue_020002e8 {
 };
 
 /* Deferred display-register writes, drained by the vblank handler. */
-#define DISPLAY_QUEUE_020002e8 ((struct DisplayQueue_020002e8 *)0x02002090)
+extern struct DisplayQueue_020002e8 Data_02002090[];
 
-static void Queue_020002e8(u32 value, u32 address)
-{
-    volatile u16 *interruptMaster = (volatile u16 *)0x04000208;
-    u16 saved = *interruptMaster;
-    s32 slot;
-
-    /* `strh r5,[r5]`: storing the register's own address clears bit 0. */
-    *interruptMaster = 0x0208;
-
-    slot = DISPLAY_QUEUE_020002e8->count;
-    if (slot <= 31) {
-        DISPLAY_QUEUE_020002e8->count = (u16)(slot + 1);
-        DISPLAY_QUEUE_020002e8->entries[slot].value = value;
-        DISPLAY_QUEUE_020002e8->entries[slot].address = address;
-        DISPLAY_QUEUE_020002e8->entries[slot].flags = 0x20000;
-    }
-
-    *interruptMaster = saved;
-}
+#define Queue_020002e8(queue, interruptMaster, value, address)              \
+    do {                                                                    \
+        u32 saved = *(interruptMaster);                                     \
+        s32 slot;                                                           \
+                                                                            \
+        /* Storing the pointer's low halfword clears IME bit 0. */          \
+        *(interruptMaster) = (u16)(u32)(interruptMaster);                   \
+        slot = (queue)->count;                                              \
+        if (slot <= 31) {                                                   \
+            u8 *record = (u8 *)(queue) + slot * 12;                         \
+            u32 *entry = (u32 *)record;                                     \
+                                                                            \
+            entry++;                                                       \
+            (queue)->count = (u16)(slot + 1);                               \
+            *entry++ = (value);                                             \
+            *entry++ = (address);                                           \
+            *entry = 0x20000;                                               \
+        }                                                                   \
+        *(interruptMaster) = saved;                                         \
+    } while (0)
 
 void Func_020002e8(void)
 {
+    struct DisplayQueue_020002e8 *queue;
+    volatile u16 *interruptMaster;
     u8 *workspace;
     s32 step;
 
     Func_02000740();
     Func_0200089a(30);
 
-    Data_0200868c[0] = 0;
-    Func_020004be();
+    Data_0200868c[0] = (u16)(u32)&Value_00000000;
+    Func_020004be(0);
 
     /* 0x02008239 == Func_02000238 + the Thumb bit. */
     Func_02000848((s32)Func_02000238 + 1, 3200);   /* 200 << 4 */
 
-    Queue_020002e8(0x1540, 0x04000000);            /* DISPCNT   */
-    Queue_020002e8(0x2fce, 0x04000050);            /* BLDCNT    */
-    Queue_020002e8(0x0010, 0x04000054);            /* BLDY      */
-    Queue_020002e8(0x1010, 0x04000052);            /* BLDALPHA  */
+    queue = Data_02002090;
+    interruptMaster = (volatile u16 *)0x04000208;
+
+    Queue_020002e8(queue, interruptMaster, 0x1540, 0x04000000); /* DISPCNT  */
+    Queue_020002e8(queue, interruptMaster, 0x2fce, 0x04000050); /* BLDCNT   */
+    Queue_020002e8(queue, interruptMaster, 0x0010, 0x04000054); /* BLDY     */
+    Queue_020002e8(queue, interruptMaster, 0x1010, 0x04000052); /* BLDALPHA */
 
     Func_0200097c(120);
 
     for (step = 0; step <= 16; step++) {
-        Queue_020002e8((u32)(16 - step), 0x04000054);
+        Queue_020002e8(queue, interruptMaster, (u32)(16 - step), 0x04000054);
         Func_02000942(3);
     }
 

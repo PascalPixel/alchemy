@@ -293,6 +293,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_GCSE_SOURCES, stem) {
         push!(&["-fno-gcse"]);
     }
+    if has(NO_GCSE_OVERLAY_SOURCES, key) {
+        push!(&["-fno-gcse"]);
+    }
     if has(NO_EXPENSIVE_SOURCES, stem) {
         push!(&["-fno-expensive-optimizations"]);
     }
@@ -305,7 +308,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SCHED_LOW_DEST_FIRST_SOURCES, stem) {
         push!(&["-fsched-low-dest-first"]);
     }
-    if has(NO_CONTIGUOUS_IMMEDIATE_SOURCES, stem) {
+    if has(NO_CONTIGUOUS_IMMEDIATE_SOURCES, stem)
+        || has(NO_CONTIGUOUS_IMMEDIATE_OVERLAY_SOURCES, key)
+    {
         push!(&["-fno-thumb-contiguous-immediate"]);
     }
     if has(NO_SCHED_DEPEND_COUNT_SOURCES, stem) {
@@ -322,6 +327,15 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(MINIPOOL_TAIL_FIRST_SOURCES, stem) {
         push!(&["-fthumb-minipool-tail-first"]);
+    }
+    if has(DIALOGUE_MINIPOOL_SPLIT_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-dialogue-minipool-split"]);
+    }
+    if has(DIALOGUE_ZERO_BEFORE_ACTOR_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-dialogue-zero-before-actor"]);
+    }
+    if has(DIALOGUE_SECOND_ZERO_BEFORE_ACTOR_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-dialogue-second-zero-before-actor"]);
     }
     if has(ENTRY_SAVES_DESCENDING_SOURCES, stem) {
         push!(&["-fthumb-entry-saves-descending"]);
@@ -353,8 +367,14 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES, stem) {
         push!(&["-fthumb-return-value-before-stack-adjust"]);
     }
-    if has(SINK_GROUP_POOL_LOADS_SOURCES, stem) {
+    if has(SINK_GROUP_POOL_LOADS_SOURCES, stem) || has(SINK_GROUP_POOL_LOADS_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-group-pool-loads"]);
+    }
+    if has(POOL_LOAD_BASE_FIRST_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-pool-load-base-first"]);
+    }
+    if has(SPRITE_SHEET_ORDER_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-sprite-sheet-order"]);
     }
     if has(SINK_STACK_ADJUST_SOURCES, stem) {
         push!(&["-fthumb-sink-stack-adjust"]);
@@ -368,7 +388,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SINK_BLOCK_CONSTANT_SOURCES, stem) {
         push!(&["-fthumb-sink-block-constant"]);
     }
-    if has(SINK_PAST_POOL_LOAD_SOURCES, stem) {
+    if has(SINK_PAST_POOL_LOAD_SOURCES, stem) || has(SINK_PAST_POOL_LOAD_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-past-pool-load"]);
     }
     if has(GROUP_VALUE1_BEFORE_BASE_SOURCES, stem) {
@@ -455,6 +475,32 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(NO_CONSTANT_REUSE_SOURCES, stem) {
         push!(&["-fthumb-no-constant-reuse"]);
+    }
+    if has(NO_ZERO_REUSE_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-no-zero-reuse"]);
+    }
+    if has(DIALOGUE_RECORD_MASK_SHEET_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-dialogue-record-mask-sheet"]);
+    }
+    if has(VALUE_ENTRY_3CE_OVERLAY_SOURCES, key) {
+        push!(&[
+            "-mgrouped-dma-store",
+            "-fno-flow2-cleanup-cfg",
+            "-fno-cse-two-insn-immediate",
+            "-fno-reload-cse-regs",
+            "-fthumb-group-value1-before-base",
+            "-fthumb-group-value1-in-place",
+            "-fthumb-sink-group-pool-loads",
+            "-fthumb-group-control-last",
+            "-fthumb-hoist-add-immediate",
+            "-fthumb-3ce-value-entry-cluster",
+        ]);
+    }
+    if has(PANEL_3CD_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-3cd-panel-sheets"]);
+    }
+    if has(PHASE_REGISTERS_3AF_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-3af-phase-registers"]);
     }
     if has(HOIST_ADD_IMMEDIATE_SOURCES, stem) {
         push!(&[
@@ -624,6 +670,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-arg-before-shift-in-sheet"]);
+    }
+    if has(ARG_BEFORE_TWO_SHIFTS_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-arg-before-two-shifts"]);
     }
     if has(SINK_LOAD_PAST_STORE_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-load-past-store"]);
@@ -974,6 +1023,93 @@ mod tests {
     }
 
     #[test]
+    fn resource_36f_portrait_dma_route_is_owner_specific() {
+        for source in [
+            "semantic/resource_36f_c_020001c0.c",
+            "exact/resource_36f_c_020001c0.c",
+        ] {
+            for flag in [
+                "-mgrouped-dma-store",
+                "-fno-thumb-contiguous-immediate",
+                "-fno-cse-pool-immediate",
+                "-fthumb-sink-group-pool-loads",
+                "-fthumb-pool-load-base-first",
+            ] {
+                assert_flag(source, flag);
+            }
+        }
+
+        for flag in [
+            "-mgrouped-dma-store",
+            "-fno-thumb-contiguous-immediate",
+            "-fno-cse-pool-immediate",
+            "-fthumb-sink-group-pool-loads",
+            "-fthumb-pool-load-base-first",
+        ] {
+            assert_no_flag("semantic/resource_36f_c_020001c1.c", flag);
+        }
+    }
+
+    #[test]
+    fn resource_3b0_root_routes_are_owner_specific() {
+        for source in [
+            "semantic/resource_3b0_c_020000c0.c",
+            "exact/resource_3b0_c_020000c0.c",
+        ] {
+            assert_flag(source, "-fthumb-hi-immediate");
+            assert_no_flag(source, "-fno-cse-two-insn-immediate");
+            assert_no_flag(source, "-fthumb-arg-before-two-shifts");
+        }
+
+        for source in [
+            "semantic/resource_3b0_c_02000240.c",
+            "exact/resource_3b0_c_02000240.c",
+        ] {
+            assert_flag(source, "-fthumb-hi-immediate");
+            assert_flag(source, "-fno-cse-two-insn-immediate");
+            assert_flag(source, "-fthumb-arg-before-two-shifts");
+        }
+
+        for flag in [
+            "-fthumb-hi-immediate",
+            "-fno-cse-two-insn-immediate",
+            "-fthumb-arg-before-two-shifts",
+        ] {
+            assert_no_flag("semantic/resource_3b0_c_02000241.c", flag);
+        }
+    }
+
+    #[test]
+    fn resource_392_query_copy_route_is_owner_specific() {
+        for source in [
+            "semantic/resource_392_c_020009f8.c",
+            "exact/resource_392_c_020009f8.c",
+        ] {
+            assert_flag(source, "-fthumb-blockmove-dest-before-source");
+        }
+        assert_no_flag(
+            "semantic/resource_392_c_020009f9.c",
+            "-fthumb-blockmove-dest-before-source",
+        );
+    }
+
+    #[test]
+    fn resource_36f_sprite_sheet_route_is_owner_specific() {
+        assert_flag(
+            "semantic/resource_36f_c_02000238.c",
+            "-fthumb-sprite-sheet-order",
+        );
+        assert_flag(
+            "exact/resource_36f_c_02000238.c",
+            "-fthumb-sprite-sheet-order",
+        );
+        assert_no_flag(
+            "semantic/resource_36f_c_02000239.c",
+            "-fthumb-sprite-sheet-order",
+        );
+    }
+
+    #[test]
     fn resource_392_palette_twins_share_narrow_routes() {
         for source in [
             "semantic/resource_392_c_02000bcc.c",
@@ -996,6 +1132,157 @@ mod tests {
         assert_no_flag(
             "exact/resource_37a_c_02000d9c.c",
             "-fthumb-group-control-rematerialize",
+        );
+    }
+
+    #[test]
+    fn resource_3c2_dialogue_routes_are_path_specific() {
+        for source in [
+            "semantic/resource_3c2_c_0200006c.c",
+            "exact/resource_3c2_c_0200006c.c",
+        ] {
+            assert_flag(source, "-fno-gcse");
+            assert_flag(source, "-fthumb-dialogue-minipool-split");
+            assert_flag(source, "-fthumb-dialogue-zero-before-actor");
+        }
+        for source in [
+            "semantic/resource_3c2_c_02000a78.c",
+            "exact/resource_3c2_c_02000a78.c",
+        ] {
+            assert_flag(source, "-fthumb-no-zero-reuse");
+            assert_flag(source, "-fthumb-dialogue-record-mask-sheet");
+        }
+        assert_no_flag(
+            "semantic/resource_3c2_c_0200006d.c",
+            "-fthumb-dialogue-minipool-split",
+        );
+        assert_no_flag(
+            "semantic/resource_3c2_c_02000a79.c",
+            "-fthumb-dialogue-record-mask-sheet",
+        );
+    }
+
+    #[test]
+    fn resource_3c7_dialogue_routes_are_path_specific() {
+        for address in ["020000c8", "0200015c", "020001c8", "02000234", "0200029c"] {
+            for directory in ["semantic", "exact"] {
+                let source = format!("{directory}/resource_3c7_c_{address}.c");
+                assert_flag(&source, "-fthumb-dialogue-minipool-split");
+            }
+        }
+        for source in [
+            "semantic/resource_3c7_c_020000c8.c",
+            "exact/resource_3c7_c_020000c8.c",
+        ] {
+            assert_flag(source, "-fno-gcse");
+            assert_flag(source, "-fthumb-dialogue-second-zero-before-actor");
+            assert_no_flag(source, "-fthumb-dialogue-zero-before-actor");
+        }
+        assert_no_flag(
+            "semantic/resource_3c7_c_020000c9.c",
+            "-fthumb-dialogue-second-zero-before-actor",
+        );
+    }
+
+    #[test]
+    fn resource_3ce_value_entry_route_is_path_specific() {
+        for source in [
+            "semantic/resource_3ce_c_02000cf4.c",
+            "exact/resource_3ce_c_02000cf4.c",
+            "semantic/resource_3cd_c_020004b0.c",
+            "exact/resource_3cd_c_020004b0.c",
+        ] {
+            for flag in [
+                "-mgrouped-dma-store",
+                "-fno-flow2-cleanup-cfg",
+                "-fno-cse-two-insn-immediate",
+                "-fno-reload-cse-regs",
+                "-fthumb-group-value1-before-base",
+                "-fthumb-group-value1-in-place",
+                "-fthumb-sink-group-pool-loads",
+                "-fthumb-group-control-last",
+                "-fthumb-hoist-add-immediate",
+                "-fthumb-3ce-value-entry-cluster",
+            ] {
+                assert_flag(source, flag);
+            }
+        }
+        assert_no_flag(
+            "semantic/resource_3ce_c_02000cf5.c",
+            "-fthumb-3ce-value-entry-cluster",
+        );
+
+        for source in [
+            "semantic/resource_3ce_c_02000b10.c",
+            "exact/resource_3ce_c_02000b10.c",
+        ] {
+            assert_flag(source, "-fthumb-no-constant-reuse");
+            assert_flag(source, "-fthumb-sink-past-pool-load");
+        }
+        assert_no_flag(
+            "semantic/resource_3ce_c_02000b11.c",
+            "-fthumb-no-constant-reuse",
+        );
+    }
+
+    #[test]
+    fn resource_3cd_panel_route_is_path_specific() {
+        for source in [
+            "semantic/resource_3cd_c_020000ec.c",
+            "exact/resource_3cd_c_020000ec.c",
+        ] {
+            assert_flag(source, "-fthumb-3cd-panel-sheets");
+        }
+        assert_no_flag(
+            "semantic/resource_3cd_c_020000ed.c",
+            "-fthumb-3cd-panel-sheets",
+        );
+    }
+
+    #[test]
+    fn resource_392_scene_pair_route_is_path_specific() {
+        for source in [
+            "semantic/resource_392_c_02000a2c.c",
+            "exact/resource_392_c_02000a2c.c",
+        ] {
+            assert_flag(
+                source,
+                "-fthumb-order-zero-arg1-before-nonzero-arg0",
+            );
+        }
+        assert_no_flag(
+            "semantic/resource_392_c_02000a2d.c",
+            "-fthumb-order-zero-arg1-before-nonzero-arg0",
+        );
+    }
+
+    #[test]
+    fn resource_3af_phase_route_is_path_specific() {
+        for source in [
+            "semantic/resource_3af_c_020000c4.c",
+            "exact/resource_3af_c_020000c4.c",
+        ] {
+            assert_flag(source, "-fsched-low-dest-first");
+            assert_flag(source, "-fthumb-3af-phase-registers");
+        }
+        assert_no_flag(
+            "semantic/resource_3af_c_020000c5.c",
+            "-fthumb-3af-phase-registers",
+        );
+    }
+
+    #[test]
+    fn resource_391_entry_scene_route_is_path_specific() {
+        for source in [
+            "semantic/resource_391_c_02000c68.c",
+            "exact/resource_391_c_02000c68.c",
+        ] {
+            assert_flag(source, "-fthumb-stack-args-before-stores");
+            assert_flag(source, "-fthumb-scene-call-sheets");
+        }
+        assert_no_flag(
+            "semantic/resource_391_c_02000c69.c",
+            "-fthumb-scene-call-sheets",
         );
     }
 }

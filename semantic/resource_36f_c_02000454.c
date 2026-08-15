@@ -45,14 +45,17 @@
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 void Func_020009e4();
 void *Func_020009e6();
+extern u8 Value_0000001a;
+extern u8 Value_00000681;
+extern u16 Data_03001ad0[];
 
-                     
-
-static void Dma3_02000454(const void *source, void *destination, u32 control)
+static __inline__ void Dma3_02000454(const void *source, void *destination, u32 control)
 {
-    *(volatile u32 *)0x040000d4 = (u32)source;
-    *(volatile u32 *)0x040000d8 = (u32)destination;
-    *(volatile u32 *)0x040000dc = control;
+    volatile u32 *dma = (volatile u32 *)0x040000d4;
+
+    dma[0] = (u32)source;
+    dma[1] = (u32)destination;
+    dma[2] = control;
 }
 
 void Func_02000454(void)
@@ -60,17 +63,20 @@ void Func_02000454(void)
     u8 *resource;
     u16 *screen;
     u32 *scroll;
-    s32 tile;
+    s32 resource_id = (s32)&Value_0000001a;
+    s16 tile;
+    s32 blank = 511;
     u32 row;
     u32 column;
     u32 i;
+    u32 workspace_value = 160;
 
     Func_020009e4(0);
 
-    *(volatile u16 *)0x0400000c = 0x0681;   /* BG1CNT */
-    *(u16 *)0x03001ada = 0;
+    *(volatile u16 *)0x0400000c = (u16)(u32)&Value_00000681; /* BG1CNT */
+    Data_03001ad0[5] = 0;
 
-    resource = (u8 *)Func_020009e6(26);
+    resource = (u8 *)Func_020009e6(resource_id);
 
     /* 112 words of palette straight from the resource block. */
     Dma3_02000454(resource, (void *)0x05000000, 0x84000070);
@@ -78,28 +84,34 @@ void Func_02000454(void)
     Func_020009e4(resource + 448, (void *)0x02010000);
 
     /* 9,600 words of decoded tiles into character memory. */
-    Dma3_02000454((const void *)0x02010000, (void *)0x06006800, 0x84002580);
+    Dma3_02000454(
+        (const void *)0x02010000,
+        (void *)0x06006800,
+        0x84002580);
 
     screen = (u16 *)0x06003000;
     tile = 416;
     for (row = 0; row <= 19; row++) {
         for (column = 0; column <= 29; column++) {
-            tile = (s16)(tile + 1);
-            *screen++ = (u16)tile;
+            *screen++ = tile;
+            tile++;
         }
         /* The two off-screen columns of every row get the blank id. */
-        *screen++ = 511;
-        *screen++ = 511;
+        *screen++ = (u16)blank;
+        *screen++ = (u16)blank;
     }
 
+    scroll = (u32 *)Data_03001ad0;
     for (i = 0; i <= 3; i++) {
         ((u16 *)scroll)[1] = 0;
         ((u16 *)scroll)[0] = 0;
         scroll++;
     }
-    scroll = (u32 *)0x03001ad0;
 
-    Dma3_02000454((const void *)0x03001ad0, (void *)0x04000010, 0x84000004);
+    Dma3_02000454(
+        Data_03001ad0,
+        (void *)0x04000010,
+        0x84000004);
 
-    *(u16 *)((u8 *)*(void **)0x03001e70 + 20) = 0x1400;
+    *(u16 *)((u8 *)*(void **)0x03001e70 + 20) = workspace_value << 5;
 }

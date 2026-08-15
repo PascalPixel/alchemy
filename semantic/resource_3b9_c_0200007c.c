@@ -43,8 +43,9 @@
  * that the result is spelled '(s32)Data_0200bxxx', and that 0x8c/0x8e are the
  * two interesting maps.  _02000238 even tests sub-state 12 - the same value
  * that selects a dedicated arm here.  Their '(s32)&Value_0000008c' spelling is
- * the exact reconstruction's pooling device for the integer 0x8c and carries no meaning,
- * so this file writes the integer.
+ * the exact reconstruction's pooling device for the integer 0x8c and carries
+ * no meaning; this owner uses the same spelling for the two pooled map
+ * constants.
  *
  * All ten result words are EVEN, so under the proven base they are in-image
  * data at file offsets 0x3324, 0x339c, 0x35f4, 0x375c, 0x37bc, 0x387c, 0x399c,
@@ -59,6 +60,8 @@
  */
 
 extern s16 Data_02000240[];
+extern u8 Value_0000008c;
+extern u8 Value_0000008e;
 
 extern u8 Data_0200b324[];          /* offset 0x3324, the map fallback */
 extern u8 Data_0200b39c[];          /* offset 0x339c */
@@ -80,43 +83,43 @@ s32 Func_0200007c(void)
     s16 map = Data_02000240[224];
     s16 state;
 
-    if (map == 0x8c) {
+    if (map == (s32)&Value_0000008c) {
         state = Data_02000240[225];
-        if ((unsigned int)(state - 5) > 65) {
-            return (s32)Data_0200b75c;
+        if ((unsigned int)(state - 5) <= 65) {
+            switch (state) {
+            case 5:
+            case 69:
+                return (s32)Data_0200b39c;
+            case 7:
+            case 70:
+                return (s32)Data_0200b5f4;
+            case 8:
+            case 21:
+            case 31:
+            case 64:
+            case 65:
+            case 67:
+                return (s32)Data_0200b7bc;
+            case 12:
+                return (s32)Data_0200b87c;
+            case 66:
+            case 68:
+                return (s32)Data_0200b99c;
+            default:
+                break;
+            }
         }
-        switch (state) {
-        case 5:
-        case 69:
-            return (s32)Data_0200b39c;
-        case 7:
-        case 70:
-            return (s32)Data_0200b5f4;
-        case 8:
-        case 21:
-        case 31:
-        case 64:
-        case 65:
-        case 67:
-            return (s32)Data_0200b7bc;
-        case 12:
-            return (s32)Data_0200b87c;
-        case 66:
-        case 68:
-            return (s32)Data_0200b99c;
-        default:
-            return (s32)Data_0200b75c;
-        }
+        return (s32)Data_0200b75c;
     }
 
-    if (map != 0x8e) {
-        return (s32)Data_0200b324;
+    if (map == (s32)&Value_0000008e) {
+        if (Func_02002d94(0x950) != 0) {
+            return (s32)Data_0200be1c;
+        }
+        if (Func_02002da2(0x962) != 0) {
+            return (s32)Data_0200bbdc;
+        }
+        return (s32)Data_0200ba44;
     }
-    if (Func_02002d94(0x950) != 0) {
-        return (s32)Data_0200be1c;
-    }
-    if (Func_02002da2(0x962) != 0) {
-        return (s32)Data_0200bbdc;
-    }
-    return (s32)Data_0200ba44;
+    return (s32)Data_0200b324;
 }

@@ -76,6 +76,66 @@ implemented. Until they are, agents must treat generated outputs and adoption
 as serialized shared state exactly as required by
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+## Nearest overlay closure frontier
+
+Overlay work is ordered by remaining executable owner bytes, not by overlay
+number or by the size of one attractive function. Discovery proof remains
+separate from adoption: the rows below do not enter Exact C until
+`overlay_adopt` succeeds under an approved compiler bundle.
+
+| Order | Overlay | Indexed unfinished bytes | Discovery-proved this round | Discovery remainder | Next fact |
+|---:|---|---:|---:|---:|---|
+| 1 | `resource_3c2` | 538 | 538 | 0 | Whole overlay awaits exact-path rehearsal. |
+| 2 | `resource_3ce` | 700 | 700 | 0 | Whole overlay awaits exact-path rehearsal. |
+| 3 | `resource_392` | 788 | 208 | 580 | The two remaining 296/284-byte owners are the shared `391`/`392`/`393` probe/redraw family. |
+| 4 | `resource_393` | 760 | 180 | 580 | Same shared probe/redraw family; the 180-byte placement wrapper is exact. |
+| 5 | `resource_36f` | 888 | 296 | 592 | Two exact small owners leave the 364-byte probe and 228-byte redraw. |
+| 6 | `resource_391` | 972 | 212 | 760 | The 212-byte scene-call owner is exact; three owners remain. |
+| 7 | `resource_38a` | 1,188 | 0 | 1,188 | Next untouched whole-overlay frontier. |
+| 8 | `resource_3c3` | 1,374 | 0 | 1,374 | Its 142-byte scene bracket has correct size and calls but still needs evidenced instruction ordering. |
+
+For the shared 284-byte redraw owner, target and candidate have the same size
+and control flow. RTL identifies the dominant residual at global allocation:
+the candidate assigns the stack work-record address and normalized width to
+`r6`/`r7`, while the ROM assigns the same natural lifetimes to `r7`/`r6`.
+Naming the loop sentinel as a separate scalar grows the function and is a
+measured negative. Explicit x-before-z normalization and separate world-origin
+scalars retain the ROM-witnessed source order; do not repeat the completed
+24-order scheduler/declaration sweep without a new allocator or source-lifetime
+fact.
+
+For `resource_36f:0454`, the ROM and `resource_370:0054` targets prove the same
+228-byte redraw body through the final workspace store; the latter's semantic C
+is not an exact-source witness. The current candidate reaches the reference size
+with the evidenced grouped-DMA lowering, but its tile loop still keeps one extra
+callee-saved value. Natural `screen[row * 32 + column]` indexing is a measured
+negative: it produces a 236-byte loop using `lr`, `ip`, and `r7`, rather than the
+ROM's low-register walking recurrence. Do not repeat the saved register-order,
+mode, DMA-form, rematerialization, or natural-index experiments without a new
+RTL lifetime fact.
+
+For `resource_36f:02e8`, the 360-byte candidate already has the ROM's eight
+calls and five queue blocks; the apparent broad call residual is displacement
+fallout from the ROM's first interior literal pool. The target keeps the IME
+pointer, queue base, and fade counter in `r5`, `r7`, and `r6`, respectively.
+Changing the saved IME scalar from `u32` to `u16` is a measured negative: gcc
+adds sign-extension pairs to every queue block and grows the owner to 372
+bytes. The remaining first-order issue is the two-pool layout, followed by
+callee-register lifetime reuse; do not rewrite the proved queue CFG.
+
+For `resource_391:0a68`, the ROM's `ldmia`/`stmia` copy into the two outgoing
+stack arguments proves that the six-word placement result is passed to the
+redraw helper as an aggregate by value, not as six independently spelled
+scalars. That source correction plus a direct `Func_0808a080(10)[35] = 2`
+store reduces the candidate to 178 bytes against the 180-byte owner and makes
+the query, gate, scene calls, and actor update structurally agree. The remaining
+floor is confined to the two six-argument call sheets: even the exact
+`resource_391:0c68` source shape and its `stack-args-before-stores` route leave
+the first pair's constant order reversed and allocate the second pair's zero
+to `r2` instead of the ROM's reused `r5`. Narrowing the zero scalar's scope is
+codegen-neutral. Return only with a new allocator-lifetime fact; do not resume
+scalar-call or declaration-order search.
+
 ## Primary target index
 
 [`TARGETS.md`](TARGETS.md) is the main contributor queue. It is generated from

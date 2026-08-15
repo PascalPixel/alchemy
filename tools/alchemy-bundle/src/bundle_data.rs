@@ -36,6 +36,7 @@ pub static EXPECTED: &[HostTargets] = &[
                             "87e09e3f1e2fd711e952d6831c73099b14a059a6ca594b16c11b9a83394483ed",
                             "df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3",
                             "f92badaf03dbcfc4a79f0c4da9ee5159186f48dd8328403cbf05734a1aa21f42",
+                            "d23dd7bc8db20de72c5e94abc6e31dcb2ef7acf248c75fe759353964b84bb149",
                         ],
                     ),
                     (
@@ -44,6 +45,7 @@ pub static EXPECTED: &[HostTargets] = &[
                             "f72b13ad2368419f2cc8c24966e030a57638bfce3f97868043196dac41e13575",
                             "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
                             "96ef7e4d9e3932817c023712850e3a15f0eb5b33904215c63c4eda4c17b43b1a",
+                            "a32292460a7587e302e4980c65f05c591b7a53b37d699ebdd63b284836065858",
                         ],
                     ),
                     (
@@ -52,6 +54,7 @@ pub static EXPECTED: &[HostTargets] = &[
                             "822c5cf4b38ea231f6eeeadcdf3a457518a25202c8a0a04aadf0942154e5436b",
                             "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
                             "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
+                            "470d53cee8a67cf75a91191620e50b8e8c536c5947171b5a48e5d845fe5ef375",
                         ],
                     ),
                     (
@@ -161,6 +164,9 @@ pub static EXPECTED: &[HostTargets] = &[
                             "f1c3da7776e67ae6e6133512eb9f08df1b1dc8f2bf29731e478011c490413707",
                             "4e695fe0593e536228ebb7b2276fdd0a0af4a7322368180c101ea867aebc42a9",
                             "d3f2c504f5d4ccec4e11e444bce36bd11559268246de55d8abb6a002d877392c",
+                            "06d0e05fe541f4c2553829225fbd965137c3f724012a727f9cd93e9f62bcf572",
+                            "1a6ed295b5717305df60934b853df1851f93c44e04013fccfa3959316e90828a",
+                            "360d5102ba14270af8c50c97535ef49d8afe21052599af31d289357ebcfc0847",
                         ],
                     ),
                 ],

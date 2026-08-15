@@ -1,106 +1,75 @@
-#include "types.h"
+#include "staged_actor_probe.h"
 
-struct Obj {
-    u8 pad00[8];
-    s32 field08;
-    s32 field0c;
-    s32 field10;
-    u8 pad14[0x22 - 0x14];
-    u8 field22;
-};
+#define FindStagedActorProbePosition Func_02000474
 
-struct Arg {
-    s32 field00;
-    s32 field04;
-    s32 field08;
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-};
+s32 FindStagedActorProbePosition(struct StagedActorProbe *probe) {
+    struct StagedActorProbePosition position;
+    s32 direction;
+    struct StagedActor *actor;
+    s32 step_count;
+    s32 footprint_height;
+    u8 *transition_mode;
+    s32 footprint_width;
+    s32 row;
+    s32 column;
+    s32 lower_bound;
+    s32 upper_bound;
+    s32 current_y;
+    s32 unused_offset;
+    u8 *unused_table;
+    s32 footprint_index;
 
-struct Vec {
-    s32 x;
-    s32 y;
-    s32 z;
-};
+    probe->unknown_14 = 0;
+    actor = FindStagedActorProbeTarget(
+        &direction, &probe->actor_slot, probe);
+    if (actor == 0) return 0;
+    transition_mode = &actor->transition_mode;
+    *transition_mode = 2;
+    step_count = 0;
 
-struct Rect {
-    s32 a;
-    s32 b;
-    s32 c;
-    s32 d;
-};
+    footprint_index = probe->footprint_index;
+    lower_bound = StagedActorFootprints[footprint_index].z0;
+    if (lower_bound < 0) lower_bound = -lower_bound;
+    upper_bound = StagedActorFootprints[footprint_index].z1;
+    if (upper_bound < 0) upper_bound = -upper_bound;
+    footprint_height = (lower_bound + upper_bound) >> 4;
 
-extern struct Rect Data_0200adc0[];
-extern u32 Data_0200ad68[];
+    lower_bound = StagedActorFootprints[footprint_index].x0;
+    if (lower_bound < 0) lower_bound = -lower_bound;
+    upper_bound = StagedActorFootprints[footprint_index].x1;
+    if (upper_bound < 0) upper_bound = -upper_bound;
+    footprint_width = (lower_bound + upper_bound) >> 4;
 
-extern struct Obj *Func_020007de(s32 *arg0, s32 *arg1, struct Arg *arg2);
-extern s32 Func_02003140(struct Obj *arg0, s32 *arg1);
-
-s32 Func_02000474(struct Arg *arg) {
-    struct Vec v;
-    s32 idx;
-    struct Obj *obj;
-    s32 count;
-    s32 ny;
-    u8 *flag;
-    s32 nx;
-    s32 i;
-    s32 j;
-    s32 t;
-    s32 u;
-    s32 yv;
-    s32 off;
-    u8 *tb;
-    s32 k;
-
-    arg->field14 = 0;
-    obj = Func_020007de(&idx, &arg->field04, arg);
-    if (obj == 0) return 0;
-    flag = &obj->field22;
-    *flag = 2;
-    count = 0;
-
-    k = arg->field00;
-    t = Data_0200adc0[k].b;
-    if (t < 0) t = -t;
-    u = Data_0200adc0[k].d;
-    if (u < 0) u = -u;
-    ny = (t + u) >> 4;
-
-    t = Data_0200adc0[k].a;
-    if (t < 0) t = -t;
-    u = Data_0200adc0[k].c;
-    if (u < 0) u = -u;
-    nx = (t + u) >> 4;
-
-    v.x = obj->field08 + (Data_0200ad68[idx] & 0xffff0000);
-    yv = obj->field0c;
-    v.y = yv;
-    v.z = obj->field10 + (Data_0200ad68[idx] << 16);
-    arg->field0c = yv;
+    position.x = actor->x.value
+        + (StagedActorDirectionSteps[direction] & 0xffff0000);
+    current_y = actor->y;
+    position.y = current_y;
+    position.z = actor->z.value + (StagedActorDirectionSteps[direction] << 16);
+    probe->position_y = current_y;
 
     for (;;) {
-        arg->field10 = v.z + (Data_0200adc0[arg->field00].b << 16);
-        for (i = 0; i < ny; i++) {
-            arg->field08 = v.x + (Data_0200adc0[arg->field00].a << 16);
-            for (j = 0; j < nx; j++) {
-                if (Func_02003140(obj, &arg->field08) == 2) goto hit;
-                arg->field08 += 0x100000;
+        probe->position_z = position.z
+            + (StagedActorFootprints[probe->footprint_index].z0 << 16);
+        for (row = 0; row < footprint_height; row++) {
+            probe->position_x = position.x
+                + (StagedActorFootprints[probe->footprint_index].x0 << 16);
+            for (column = 0; column < footprint_width; column++) {
+                if (ClassifyStagedActorProbePosition(actor, &probe->position_x) == 2) goto hit;
+                probe->position_x += 0x100000;
             }
-            arg->field10 += 0x100000;
+            probe->position_z += 0x100000;
         }
-        count++;
-        v.x += Data_0200ad68[idx] & 0xffff0000;
-        v.z += Data_0200ad68[idx] << 16;
+        step_count++;
+        position.x += StagedActorDirectionSteps[direction] & 0xffff0000;
+        position.z += StagedActorDirectionSteps[direction] << 16;
     }
 hit:
-    *flag = 0;
-    if (count == 0) return 0;
-    arg->field08 = obj->field08
-        + (s32)(Data_0200ad68[idx] & 0xffff0000) * count;
-    arg->field0c = obj->field0c;
-    arg->field10 = obj->field10
-        + count * (s32)(Data_0200ad68[idx] << 16);
+    *transition_mode = 0;
+    if (step_count == 0) return 0;
+    probe->position_x = actor->x.value
+        + (s32)(StagedActorDirectionSteps[direction] & 0xffff0000) * step_count;
+    probe->position_y = actor->y;
+    probe->position_z = actor->z.value
+        + step_count * (s32)(StagedActorDirectionSteps[direction] << 16);
     return 1;
 }

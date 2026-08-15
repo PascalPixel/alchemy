@@ -983,6 +983,8 @@ pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
+pub static NO_HOIST_VOLATILE_ADDRESS_OVERLAY_SOURCES: &[&str] =
+    &["exact/resource_3bb_c_02000970.c"];
 pub static SCHED_CALL_DEST_DESCENDING_SOURCES: &[&str] = &["08091f14"];
 pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_381_c_0200330c.c",

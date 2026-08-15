@@ -1,29 +1,33 @@
-#include "types.h"
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "staged_actor.h"
 
-s32 Func_0200649a();
-s32 Func_020064b4();
+#define GetDescendingMotionStep Func_0200649a
+#define GetAscendingMotionStep Func_020064b4
+#define UpdateStagedActorVerticalPosition Func_02000058
 
-s32 Func_02000058(void *arg0) {
-    s16 var_r3;
-    s32 temp_r3;
-    s32 temp_r3_2;
+s32 GetDescendingMotionStep(void);
+s32 GetAscendingMotionStep(void);
 
-    if (M2C_FIELD(arg0, s16 *, 0x66) != 0) {
-        temp_r3 = (M2C_FIELD(arg0, s32 *, 0xC) - ((u32) (Func_0200649a() << 0xF) >> 0x10)) + 0xFFFF8000;
-        M2C_FIELD(arg0, s32 *, 0xC) = temp_r3;
-        if (temp_r3 < 0) {
-            var_r3 = 0;
+s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor) {
+    s16 vertical_motion_direction;
+    s32 descending_y;
+    s32 ascending_y;
+
+    if (actor->vertical_motion_direction != 0) {
+        descending_y = (actor->y
+            - ((u32) (GetDescendingMotionStep() << 0xF) >> 0x10)) + 0xFFFF8000;
+        actor->y = descending_y;
+        if (descending_y < 0) {
+            vertical_motion_direction = 0;
             goto block_5;
         }
     } else {
-        temp_r3_2 = M2C_FIELD(arg0, s32 *, 0xC) + ((u32) (Func_020064b4() << 0xF) >> 0x10) + 0x8000;
-        M2C_FIELD(arg0, s32 *, 0xC) = temp_r3_2;
-        if (temp_r3_2 > 0x80000) {
-            var_r3 = 1;
+        ascending_y = actor->y
+            + ((u32) (GetAscendingMotionStep() << 0xF) >> 0x10) + 0x8000;
+        actor->y = ascending_y;
+        if (ascending_y > 0x80000) {
+            vertical_motion_direction = 1;
 block_5:
-            M2C_FIELD(arg0, s16 *, 0x66) = var_r3;
+            actor->vertical_motion_direction = vertical_motion_direction;
         }
     }
     return 1;

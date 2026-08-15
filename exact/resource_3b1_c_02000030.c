@@ -1,18 +1,19 @@
-#include "types.h"
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "staged_actor.h"
 
-void Func_02006488(void *, s32);
+#define InitializeStagedActorState Func_02006488
+#define ResetStagedActorState Func_02000030
 
-s32 Func_02000030(void *arg0) {
-    Func_02006488(arg0, 1);
-    M2C_FIELD(arg0, s32 *, 8) = 0;
-    M2C_FIELD(arg0, s32 *, 0xC) = 0;
-    M2C_FIELD(arg0, s32 *, 0x10) = 0;
-    M2C_FIELD(arg0, s32 *, 0x24) = 0;
-    M2C_FIELD(arg0, s32 *, 0x28) = 0;
-    M2C_FIELD(arg0, s32 *, 0x2C) = 0;
-    M2C_FIELD(arg0, s32 *, 0x3C) = 0x80000000;
-    M2C_FIELD(arg0, s32 *, 0x38) = 0x80000000;
+void InitializeStagedActorState(struct StagedActor *actor, s32 state);
+
+s32 ResetStagedActorState(struct StagedActor *actor) {
+    InitializeStagedActorState(actor, 1);
+    actor->x.value = 0;
+    actor->y = 0;
+    actor->z.value = 0;
+    actor->unknown_24 = 0;
+    actor->unknown_28 = 0;
+    actor->unknown_2c = 0;
+    actor->unknown_3c = 0x80000000;
+    actor->unknown_38 = 0x80000000;
     return 0;
 }

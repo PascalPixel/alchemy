@@ -29,6 +29,23 @@
  *
  * Uncertainty: what the two words mean is not established here - only that
  * some other task publishes them while this owner spins.
+ *
+ * EXACTNESS PARKING NOTE (2026-08-15).  Two searches stalled; parked.  What
+ * was measured: the reference keeps nothing live across the poll call - each
+ * status read reloads its pool ADDRESS in its own block (three pc-relative
+ * loads, two shared end-pool words, push {r5, lr} only), and the timeout
+ * compare keeps GE with 600 built inline (`movs r3, #150 / lsls r3, #2 /
+ * bge`).  Routed gcc 2.96 instead hoists both addresses into r6/r7 across
+ * the call (push {r5, r6, r7, lr}) and canonicalizes to `ble` against a
+ * pooled 599, in every loop spelling tried (while, while+tail-reload, for).
+ * old_agbcc -O2 -fcall-used-r4 reproduces the no-hoist reloads and the
+ * two-register frame exactly but pools 599, places the test block before the
+ * body, splits the pool mid-function, and uses r0 scratch where the
+ * reference's r3 scratch and movs/adds/lsls interleave are gcc 2.96
+ * scheduler idiom.  Verdict: a fork-mode-shaped gap in gcc 2.96 (suppress
+ * loop-invariant hoisting of pool-address loads across calls, and keep the
+ * GE-shiftable-constant compare), not a source-shape gap.  Compiler changes
+ * are sign-off items; witness recorded in the compiler-side queue.
  */
 
 /* Per-site veneers (raw sub_ symbols from the overlay .s), both ultimately

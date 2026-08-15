@@ -1,14 +1,16 @@
-#include "types.h"
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-typedef struct {
-    u8 pad[9];
-    u8 f0:2;
-    u8 f1:2;
-    u8 f2:4;
-} Rec;
+#include "overlay_object.h"
 
-void Func_02000030(void *object, s32 value) {
-    Rec *record;
-    record = M2C_FIELD(object, Rec *, 0x50);
-    record->f1 = value;
+struct OverlayObjectRecordFieldView {
+    u8 unknown_00[9];
+    u8 unknown_00_0 : 2;
+    u8 field_01 : 2;
+    u8 unknown_04_0 : 4;
+};
+
+#define SetOverlayObjectRecordField1 Func_02000030
+
+void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 value) {
+    struct OverlayObjectRecordFieldView *record;
+    record = (struct OverlayObjectRecordFieldView *)object->record;
+    record->field_01 = value;
 }

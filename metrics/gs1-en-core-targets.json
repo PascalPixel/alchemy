@@ -10,17 +10,17 @@
     "overlap": "none; broader campaign cuts are intentionally excluded"
   },
   "accounting": {
-    "executable_bytes": 1347336,
+    "executable_bytes": 1347316,
     "audited_address_spaces": 97,
     "address_spaces_with_targets": 79,
-    "target_count": 1710,
-    "target_scope_bytes": 891464,
-    "target_bytes": 887936,
-    "semantic_c_bytes": 887936,
+    "target_count": 1709,
+    "target_scope_bytes": 891462,
+    "target_bytes": 887934,
+    "semantic_c_bytes": 887934,
     "assembly_bytes": 0,
     "exact_c_leverage_bytes": 0,
     "permanent_assembly_leverage_bytes": 3528,
-    "resolved_only_bytes": 455872
+    "resolved_only_bytes": 455854
   },
   "targets": [
     {
@@ -20527,18 +20527,6 @@
       "scope_bytes": 10,
       "target_bytes": 10,
       "semantic_c_bytes": 10,
-      "assembly_bytes": 0,
-      "exact_c_leverage_bytes": 0,
-      "permanent_assembly_bytes": 0
-    },
-    {
-      "rank": 1710,
-      "namespace": "resource_391",
-      "address": "0x02000a68",
-      "label": "391 · semantic owner 0x02000a68",
-      "scope_bytes": 2,
-      "target_bytes": 2,
-      "semantic_c_bytes": 2,
       "assembly_bytes": 0,
       "exact_c_leverage_bytes": 0,
       "permanent_assembly_bytes": 0

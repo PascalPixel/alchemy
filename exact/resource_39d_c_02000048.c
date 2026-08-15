@@ -1,28 +1,33 @@
-#include "types.h"
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#include "overlay_object.h"
 
-void *Func_020036ca(s32, s32, s32, s32);
-void Func_02003710(void *, s32);
-void Func_02003728(void *, s32);
-void Func_020037e8(void *, s32);
+extern struct OverlayObject *Func_020036ca(s32, s32, s32, s32);
+extern void Func_02003710(struct OverlayObject *, s32);
+extern void Func_02003728(struct OverlayObject *, s32);
+extern void Func_020037e8(struct OverlayObject *, s32);
 
-void *Func_02000048(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    void *object;
-    void *record;
-    s32 mask;
+#define AcquireOverlayObject Func_020036ca
+#define RunOverlayObjectCommand0 Func_02003710
+#define RunOverlayObjectCommand1 Func_02003728
+#define RunOverlayObjectCommand14 Func_020037e8
+#define PrepareOverlayObject Func_02000048
 
-    object = Func_020036ca(arg3, arg0, arg1, arg2);
-    if (object != NULL) {
-        record = M2C_FIELD(object, void *, 0x50);
-        mask = -0xD;
-        M2C_FIELD(record, u8, 9) = (u8)(mask & M2C_FIELD(record, u8, 9));
-        M2C_FIELD(object, u8, 0x55) = 0;
-        M2C_FIELD(object, u8, 0x59) = 8;
-        Func_02003710(object, 0);
-        Func_020037e8(object, 0xE);
-        Func_02003728(object, 1);
+struct OverlayObject *PrepareOverlayObject(
+    s32 first, s32 second, s32 third, s32 fourth) {
+    struct OverlayObject *object;
+    struct OverlayObjectRecord *record;
+    s32 flags_mask;
+
+    object = AcquireOverlayObject(fourth, first, second, third);
+    if (object != 0) {
+        record = object->record;
+        flags_mask = -0xD;
+        record->flags = (u8)(flags_mask & record->flags);
+        object->unknown_55 = 0;
+        object->unknown_59 = 8;
+        RunOverlayObjectCommand0(object, 0);
+        RunOverlayObjectCommand14(object, 0xE);
+        RunOverlayObjectCommand1(object, 1);
         return object;
     }
-    return NULL;
+    return 0;
 }

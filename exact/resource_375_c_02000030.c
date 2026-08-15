@@ -1,30 +1,32 @@
 #include "types.h"
+#include "facing_object.h"
 #define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_02001a9e(s32, s32);
+#define CalculateFacingAngle Func_02001a9e
 
-s32 Func_02000030(void *arg0) {
-    s32 var_r0;
-    u16 temp_r3;
-    s32 temp;
-    void *temp_r1;
+#define UpdateFacingTowardTarget Func_02000030
+s32 UpdateFacingTowardTarget(struct FacingObject *object) {
+    s32 facing_delta;
+    u16 old_facing;
+    s32 target_facing;
+    struct FacingObject *target;
 
-    temp_r1 = M2C_FIELD(arg0, void *, 0x68);
-    if (temp_r1 != NULL) {
-        M2C_FIELD(arg0, u8, 0x5A) = (u8) (0xFE & M2C_FIELD(arg0, u8, 0x5A));
-        temp = (u16) Func_02001a9e(M2C_FIELD(temp_r1, s32, 0x10) - M2C_FIELD(arg0, s32, 0x10), M2C_FIELD(temp_r1, s32, 8) - M2C_FIELD(arg0, s32, 8));
-        temp_r3 = M2C_FIELD(arg0, u16, 6);
-        var_r0 = (s16)(temp - temp_r3);
-        if (var_r0 != 0) {
-            if (var_r0 > 0x1000) {
-                var_r0 = 0x1000;
+    target = object->facing_target;
+    if (target != NULL) {
+        object->facing_flags = (u8) (0xFE & object->facing_flags);
+        target_facing = (u16) CalculateFacingAngle(target->position_z - object->position_z, target->position_x - object->position_x);
+        old_facing = object->facing;
+        facing_delta = (s16)(target_facing - old_facing);
+        if (facing_delta != 0) {
+            if (facing_delta > 0x1000) {
+                facing_delta = 0x1000;
             }
             /* The load at 0x0200006E owns the Thumb-like data word at 0x02000084. */
-            if (var_r0 < (s32)0xF842F001) {
-                var_r0 = (s32)0xF842F001;
+            if (facing_delta < (s32)0xF842F001) {
+                facing_delta = (s32)0xF842F001;
             }
-            M2C_FIELD(arg0, u16, 6) = (u16) (temp_r3 + var_r0);
+            object->facing = (u16) (old_facing + facing_delta);
         }
     }
     return 1;

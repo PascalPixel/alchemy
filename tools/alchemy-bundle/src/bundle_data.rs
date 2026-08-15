@@ -37,6 +37,7 @@ pub static EXPECTED: &[HostTargets] = &[
                             "df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3",
                             "f92badaf03dbcfc4a79f0c4da9ee5159186f48dd8328403cbf05734a1aa21f42",
                             "d23dd7bc8db20de72c5e94abc6e31dcb2ef7acf248c75fe759353964b84bb149",
+                            "16ac4d27040dd7fa63c2f82c529d24bb440c4e66606bb5a32fb1110d1c617761",
                         ],
                     ),
                     (
@@ -46,6 +47,7 @@ pub static EXPECTED: &[HostTargets] = &[
                             "c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915",
                             "96ef7e4d9e3932817c023712850e3a15f0eb5b33904215c63c4eda4c17b43b1a",
                             "a32292460a7587e302e4980c65f05c591b7a53b37d699ebdd63b284836065858",
+                            "d00d7786ee57848a1a8f94dfd7565cacbab066171381f14e8759635243a2fd87",
                         ],
                     ),
                     (
@@ -55,11 +57,15 @@ pub static EXPECTED: &[HostTargets] = &[
                             "553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281",
                             "ebc87e2f3bf595bd2014ee9f8a67d07a27cb83b4ba50e3b2ca62b1f91999e5d4",
                             "470d53cee8a67cf75a91191620e50b8e8c536c5947171b5a48e5d845fe5ef375",
+                            "8cb3c7b89bdcd4ba66a5d299d32a4c992fd876a99ad66e862afc85b62a2ac4fa",
                         ],
                     ),
                     (
                         "cc1",
                         &[
+                            "17b2febf9a8055d48882af905fd228addb2a753c26aa1a4ff4393803649a0207",
+                            "965517df69c4ade33edb507d868308190eb3df3199d0672c1f37520f600b258d",
+                            "21bd5c18d79d2311e1ee94bcd2fb9fd462b533c39fdbccbfe13a95480dd490c1",
                             "bc528ade6cbca24f1cd7617d7026425f080c416b05f357ac61e4e9a5205aa20e",
                             "a87643db2f11e3c39f4740a9c416d52dfd1ca4e9362a8b1147faf011068fec40",
                             "4a19cd86373f0c95f8d5e2f1d6b85867e4afcb2a166e39e1fecc9f7777533906",
@@ -169,6 +175,8 @@ pub static EXPECTED: &[HostTargets] = &[
                             "f3ccfd052849ec18df78a164b6e6ed4a5486ff649f4bef469a1b45ac1ac314f9",
                             "413e5499342d45ca7a99b23a8dc8e4268b5f2f1096cd84d0ea856ae297b307a5",
                             "87d76f342805be1346c36ecd3ae75b1787d4c9d85b4eddb0d9e9acc36b5f1219",
+
+                            "b47e7c081f228fd8af166a94f224b94609813e0e0eace5edb79d28f1e6e37305",
                         ],
                     ),
                 ],

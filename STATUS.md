@@ -381,7 +381,7 @@ quality gates: an honest `unknown_` remains preferable to an unsupported name.
 | Order | Family | Measured reason | Next bounded change |
 |---:|---|---|---|
 | 1 | Battle object runtime (`080b7b30-080b7f70`) | Shared slot/object/record layout recurs throughout exact and semantic battle code. | Replace owner-local offset shells with `MotionObject` and `BattleObjectSlot`; preserve raw function ABI names. |
-| 2 | Staged actor probe family (`resource_373/389/391/392/393`) | Thirteen homologous owners duplicate 54 placeholder-heavy fields each. | `resource_391:00c4` now establishes the shared guarded actor layout; migrate its four exact siblings, then graduate the independently proved rectangle and step-table fields. |
+| 2 | Staged actor transition family (twelve overlays) | Twelve homologous owners duplicated the same placeholder-heavy layout and address-only call sheet. | All twelve `00c4` owners now share the guarded actor layout and behavioral call vocabulary; graduate the independently proved rectangle and probe fields next. |
 | 3 | `080933f8` / `080970f8` | Highest main-image placeholder densities, 82 and 71 measured tokens. | Reconstruct each local layout from its complete exact call perimeter before naming fields. |
 | 4 | `080b6b40` / `080b9d34` | Dense battle-runtime positional names adjacent to the shared object family. | Reuse the proved slot/record vocabulary and keep uncertain command fields opaque. |
 | 5 | `080a90bc` | Large readable owner still carries 56 placeholder tokens and address-only calls. | Graduate its guarded state/session layouts and add cautious local behavioral aliases. |
@@ -391,9 +391,95 @@ now share the guarded motion-object model; raw offset macros and positional
 locals were removed while the authoritative full-image comparison remained
 byte-identical.
 
-The first staged-actor owner, `resource_391:00c4`, now uses a shared
-`StagedActor` layout and names the locally proved lead/next actor, destination,
-facing-step, collision, transition, and movement-rate roles. Fields whose
-meaning remains uncertain retain offset-bearing `unknown_` names. The other
-four exact homologues remain queued so their overlay-local call addresses can
-be reviewed independently rather than replaced mechanically.
+All twelve staged-actor `00c4` owners now use the shared `StagedActor` layout and
+name the locally proved lead/next actor, destination, facing-step, collision,
+transition, and movement-rate roles. Their executable bodies use behavioral
+aliases such as `FindNextStagedActor`, `StartNextStagedActorMove`, and
+`FinishStagedActorEffect`; synthetic `Func_020...` spellings remain only in each
+overlay's declaration/alias boundary. The two distinct meanings routed through
+`resource_393`'s shared relocation spelling retain separate call-site aliases.
+Fields whose meaning remains uncertain keep offset-bearing `unknown_` names.
+
+The exact 696-byte movement/redraw owners in `resource_373`, `resource_391`,
+and `resource_392` now extend that same header through the callback field at
+offset `0x6c` and share `StagedActorMoveArgs`. Their bodies use the reconstructed
+`MoveStagedActorAndRedraw` API and name the complete movement, callback,
+collision-layer, footprint-redraw, and sound workflow. Overlay relocation
+spellings remain confined to local alias blocks; repeated synthetic spellings
+with different call-site roles retain separate aliases.
+
+`resource_391:0b1c` now uses the guarded `StagedActorEffect` and
+`StagedActorEffectRequest` layouts. Its exported entry is expressed as
+`RunStagedActorStepEffect`, and all sixteen calls in the executable body have
+behavioral aliases covering setup, cell testing, movement, waits, restoration,
+and completion. Unknown storage remains offset-bearing rather than receiving a
+speculative story-specific name.
+
+Eight exact small-overlay facing controllers (`374`, `375`, `376`, `377`,
+`38b`, `38d`, `38e`, and `3a4`) now share the guarded `FacingObject` header.
+Their executable bodies use `UpdateFacingTowardTarget` and
+`CalculateFacingAngle`, with positions, target, flags, and facing represented
+as fields rather than `M2C_FIELD` offset expressions.
+
+The exact `resource_393:0aac` sibling now reuses the same actor-effect header
+and behavioral API. The adjacent `resource_393:0bf8` scene owner is exposed as
+`RunScenePhase516`; its flag tests, subject lookup, rectangle draw, presentation
+mode, numbered beats, and follow-up all use local behavioral aliases while the
+raw relocation names remain at the declaration boundary.
+
+Twelve exact small-overlay distance owners (`373`, `389`, `391`, `392`, `393`,
+`39f`, `3b2`, `3b4`, `3bd`, `3bf`, `3c4`, and `3c5`) now share
+`FixedPointPosition`. Their `CalculateFixedPointPositionDistance` entry describes
+the proved three-axis 16.16 delta, squared-distance, and resident
+integer-square-root sequence without assigning a speculative gameplay role.
+
+The `resource_389`, `resource_392`, and `resource_393` `02a8` probe siblings
+now share `StagedActorProbePoint` and the guarded nested probe-state view. The
+new `CheckStagedActorProbe` vocabulary records only the observed forward point,
+six-value test, and state-reset path; nested storage at `+0x50/+0x28` remains
+explicitly unknown. `resource_3b1` also extends `StagedActor` with the proven
+two-byte vertical-motion direction at `+0x66`, replacing two more offset shells
+with `ResetStagedActorState` and `UpdateStagedActorVerticalPosition`.
+
+`resource_3ba:2f64`, `resource_3bb:31fc`, and `resource_3bc:3c94` now expose
+their exact fixed-width text routine as `WriteU32AsHex`: eight low-nibble table
+lookups written backward and terminated with zero. The unrelated
+`resource_372:0064` owner similarly replaces its local offset macros with its
+proved fixed-point countdown and random-remainder setup; neither small local
+record is promoted to a shared header prematurely.
+
+Ten exact `02000048` object-setup wrappers (`380`, `382`, `385`, `387`, `38a`,
+`396`, `39b`, `39c`, `39d`, and `39e`) now share the guarded `OverlayObject`
+prefix: the proved nested-record pointer at `+0x50`, flag byte at `+0x09`, and
+otherwise opaque control bytes at `+0x55` and `+0x59`. Their command roles
+remain local aliases because the shared relocation spellings do not yet prove a
+global API. The paired exact `resource_37d`/`resource_37e:0054` setup owners
+likewise share a guarded runtime view for the independently proved words at
+`+0x1c0` and `+0x1c8`; their three separate 16.16 scale locals remain explicit
+to preserve the ROM's entry-block materialisation.
+
+Six further exact overlay owners now replace their local field shells with
+guarded views. `resource_380:0314` extends `OverlayObject` only through its
+proved angle, coordinate inputs, linked-object pointer, and cleared control
+bit. `37c:0054` and `388:0054` retain their independent scale/command locals
+while documenting their runtime words and slot bytes; `3a8:0040` records the
+action timer and an otherwise unknown halfword; `3af:0030` records its two
+fixed-point-sized components and countdown; and `390:0030` records the
+fifteen 0x18-byte table entries it initializes. All broader gameplay identity
+remains deliberately unassigned.
+
+The next Luna wave humanizes four compact exact owners without expanding their
+boundaries: `resource_378:0030` reuses `FacingObject` and keeps its `+0x64`
+selector neutral; `resource_386:0030` keeps two accessor-returned state views
+separate at `+0x08` and `+0x10`; `resource_3c8:0030` reuses the proven
+`OverlayObject` bytes at `+0x55` and `+0x59`; and `resource_39d:0030` preserves
+the record's two-bit field assignment in a local guarded view. The 386 source
+required a direct field expression rather than named pointer temporaries to
+retain its 60-byte owner boundary; inventory and byte proof now pass.
+
+The following Luna round humanizes the large exact `resource_39e:0200071c`
+scene driver without claiming a new shared layout. Its proven workspace and
+actor-record accesses use local names, while every unresolved relocation stays
+an offset-bearing `unknown_scene_step_` alias at the ABI boundary. The source
+body retains its original calls, constants, control flow, and field offsets;
+the owner remains byte-exact after inventory and the claimed build.

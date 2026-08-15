@@ -379,6 +379,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SINK_PAST_POOL_LOAD_SOURCES, stem) || has(SINK_PAST_POOL_LOAD_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-past-pool-load"]);
     }
+    if has(SCHED_38F_CALL_CLUSTER_OVERLAY_SOURCES, key) {
+        push!(&["-fsched-38f-call-cluster"]);
+    }
     if has(GROUP_VALUE1_BEFORE_BASE_SOURCES, stem) {
         push!(&["-fthumb-group-value1-before-base"]);
     }
@@ -467,11 +470,15 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(VALUE_ENTRY_3CE_OVERLAY_SOURCES, key) {
         push!(&[
             "-mgrouped-dma-store",
+            "-fno-flow2-cleanup-cfg",
             "-fno-cse-two-insn-immediate",
+            "-fno-reload-cse-regs",
             "-fthumb-group-value1-before-base",
+            "-fthumb-group-value1-in-place",
             "-fthumb-sink-group-pool-loads",
             "-fthumb-group-control-last",
             "-fthumb-hoist-add-immediate",
+            "-fthumb-3ce-value-entry-cluster",
         ]);
     }
     if has(HOIST_ADD_IMMEDIATE_SOURCES, stem) {
@@ -1146,11 +1153,15 @@ mod tests {
         ] {
             for flag in [
                 "-mgrouped-dma-store",
+                "-fno-flow2-cleanup-cfg",
                 "-fno-cse-two-insn-immediate",
+                "-fno-reload-cse-regs",
                 "-fthumb-group-value1-before-base",
+                "-fthumb-group-value1-in-place",
                 "-fthumb-sink-group-pool-loads",
                 "-fthumb-group-control-last",
                 "-fthumb-hoist-add-immediate",
+                "-fthumb-3ce-value-entry-cluster",
             ] {
                 assert_flag(source, flag);
             }
@@ -1170,6 +1181,20 @@ mod tests {
         assert_no_flag(
             "semantic/resource_3ce_c_02000b11.c",
             "-fthumb-no-constant-reuse",
+        );
+    }
+
+    #[test]
+    fn resource_38f_call_cluster_route_is_path_specific() {
+        for source in [
+            "semantic/resource_38f_c_020003c8.c",
+            "exact/resource_38f_c_020003c8.c",
+        ] {
+            assert_flag(source, "-fsched-38f-call-cluster");
+        }
+        assert_no_flag(
+            "semantic/resource_38f_c_020003c9.c",
+            "-fsched-38f-call-cluster",
         );
     }
 

@@ -11,15 +11,24 @@ use crate::cli::basename_without_c;
 use crate::explain::{report, EXPLAIN_FLAGS};
 use crate::jsnum::to_string_16;
 
+/// The dump flags this tool compiles with, and deliberately nothing else.
+///
+/// There is no environment override here. `EXPLAIN_FLAGS` is codegen-neutral by
+/// construction -- `-dS`, `-dR` and `-fsched-verbose=9` only ask for dumps -- so
+/// what this tool compiles is what the routed build compiles, and a residual it
+/// reports is a residual the ROM build has. An `ALCHEMY_CANDIDATE_EXPLAIN_EXTRA_FLAGS`
+/// variable used to append arbitrary unvalidated tokens here. Nothing read it,
+/// and it reached `mutated_compiler_flags` unfiltered, so a stray `-O1` in a
+/// shell silently beat the routed `-O2` under gcc's later-flag-wins rule and
+/// this tool would then explain a diff against a compile the ROM build never
+/// performs. If a flag ever needs to vary, add a CLI argument: an explicit
+/// argument appears in the command the reader can see, an exported variable
+/// does not.
 fn explain_flags() -> Vec<String> {
-    let mut flags: Vec<String> = EXPLAIN_FLAGS
+    EXPLAIN_FLAGS
         .iter()
         .map(|flag| (*flag).to_string())
-        .collect();
-    if let Some(extra) = std::env::var_os("ALCHEMY_CANDIDATE_EXPLAIN_EXTRA_FLAGS") {
-        flags.extend(extra.to_string_lossy().split_whitespace().map(str::to_string));
-    }
-    flags
+        .collect()
 }
 
 /// The `options.mode === "overlay"` branch.

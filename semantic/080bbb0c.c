@@ -544,8 +544,7 @@ loop_90:
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0x824U);
                 }
             }
-            prior_health = M2C_FIELD(target_state, s16, 0x38);
-            goto block_247;
+            goto block_246;
         case 10:
             if (action->power == 0) {
 
@@ -884,6 +883,7 @@ block_196:
 block_actor_finish:
                     BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
                 }
+block_246:
                 prior_health = M2C_FIELD(target_state, s16, 0x38);
 block_247:
                 effect_amount = prior_health - resulting_hp;

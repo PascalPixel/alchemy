@@ -381,7 +381,7 @@ quality gates: an honest `unknown_` remains preferable to an unsupported name.
 | Order | Family | Measured reason | Next bounded change |
 |---:|---|---|---|
 | 1 | Battle object runtime (`080b7b30-080b7f70`) | Shared slot/object/record layout recurs throughout exact and semantic battle code. | Replace owner-local offset shells with `MotionObject` and `BattleObjectSlot`; preserve raw function ABI names. |
-| 2 | Staged actor probe family (`resource_373/389/391/392/393`) | Thirteen homologous owners duplicated 54 placeholder-heavy fields each. | All five `00c4` transition owners now share the guarded actor layout and behavioral call vocabulary; graduate the independently proved rectangle and step-table fields next. |
+| 2 | Staged actor transition family (twelve overlays) | Twelve homologous owners duplicated the same placeholder-heavy layout and address-only call sheet. | All twelve `00c4` owners now share the guarded actor layout and behavioral call vocabulary; graduate the independently proved rectangle and probe fields next. |
 | 3 | `080933f8` / `080970f8` | Highest main-image placeholder densities, 82 and 71 measured tokens. | Reconstruct each local layout from its complete exact call perimeter before naming fields. |
 | 4 | `080b6b40` / `080b9d34` | Dense battle-runtime positional names adjacent to the shared object family. | Reuse the proved slot/record vocabulary and keep uncertain command fields opaque. |
 | 5 | `080a90bc` | Large readable owner still carries 56 placeholder tokens and address-only calls. | Graduate its guarded state/session layouts and add cautious local behavioral aliases. |
@@ -391,7 +391,7 @@ now share the guarded motion-object model; raw offset macros and positional
 locals were removed while the authoritative full-image comparison remained
 byte-identical.
 
-All five staged-actor `00c4` owners now use the shared `StagedActor` layout and
+All twelve staged-actor `00c4` owners now use the shared `StagedActor` layout and
 name the locally proved lead/next actor, destination, facing-step, collision,
 transition, and movement-rate roles. Their executable bodies use behavioral
 aliases such as `FindNextStagedActor`, `StartNextStagedActorMove`, and

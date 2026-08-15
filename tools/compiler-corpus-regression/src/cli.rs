@@ -32,6 +32,9 @@ pub struct Options {
     pub radius: f64,
     pub sources: Vec<String>,
     pub report: Option<String>,
+    /// Native addition: measure overlay routing necessity instead of the
+    /// ported main-image corpus. See `crate::overlays`.
+    pub overlays: bool,
 }
 
 pub const USAGE: &str = concat!(
@@ -50,7 +53,8 @@ pub const USAGE: &str = concat!(
     "  --radius BYTES      neighbor radius (default 0x10000)\n",
     "  --sources A,B       restrict to explicit source stems\n",
     "  --jobs N            parallel compiler jobs (default 4)\n",
-    "  --report FILE       also write the canonical JSON report",
+    "  --report FILE       also write the canonical JSON report\n",
+    "  --overlays          measure overlay routing necessity (native, not the ROM corpus)",
 );
 
 /// `parseOptions` either produces options or asks the caller to print usage and
@@ -82,6 +86,7 @@ fn defaults() -> Options {
         radius: 0x10000 as f64,
         sources: Vec::new(),
         report: None,
+        overlays: false,
     }
 }
 
@@ -169,6 +174,7 @@ pub fn parse_arguments(argv: &[String]) -> Result<ParseOutcome, String> {
                 }
             }
             "--report" => options.report = Some(take!()),
+            "--overlays" => options.overlays = true,
             "-h" | "--help" => return Ok(ParseOutcome::Help),
             other => return Err(format!("unknown argument: {other}")),
         }
@@ -196,7 +202,9 @@ pub fn parse_arguments(argv: &[String]) -> Result<ParseOutcome, String> {
         && options.compiler_config.family == Some(CompilerFamily::Routed)
         && options.compiler_config.add_flags.is_empty()
         && options.compiler_config.remove_flags.is_empty();
-    if unchanged {
+    // Overlay mode derives its own strip set from the routing tables, so it
+    // is a complete request on its own and needs no baseline-changing config.
+    if unchanged && !options.overlays {
         return Err(
             "provide --flags or a compiler configuration that changes the routed baseline"
                 .to_string(),

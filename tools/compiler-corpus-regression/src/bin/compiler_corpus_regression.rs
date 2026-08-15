@@ -24,6 +24,46 @@ fn main() {
         Ok(ParseOutcome::Options(options)) => options,
         Err(message) => fail(&message),
     };
+    // Native addition, ahead of the ported pipeline because it answers a
+    // different question against a different corpus. See `crate::overlays`.
+    if options.overlays {
+        let root = alchemy_routing::routing::root();
+        let cache = std::path::Path::new(&options.cache).join("overlays");
+        match compiler_corpus_regression::overlays::run(root, &cache) {
+            Ok(verdicts) => {
+                let mut load_bearing = 0usize;
+                let mut unmeasured = 0usize;
+                for verdict in &verdicts {
+                    if let Some(note) = &verdict.note {
+                        unmeasured += 1;
+                        println!("UNMEASURED {} {note}", verdict.source);
+                        continue;
+                    }
+                    if verdict.load_bearing {
+                        load_bearing += 1;
+                        println!(
+                            "LOAD-BEARING {} size={}/{} first_diff={} flags={}",
+                            verdict.source,
+                            verdict.routed_len,
+                            verdict.stripped_len,
+                            verdict
+                                .first_difference
+                                .map(|v| format!("0x{v:x}"))
+                                .unwrap_or_else(|| "-".to_string()),
+                            verdict.extras.join(" ")
+                        );
+                    }
+                }
+                let removable = verdicts.len() - load_bearing - unmeasured;
+                println!(
+                    "overlay routing: owners={} load_bearing={load_bearing} removable={removable} unmeasured={unmeasured}",
+                    verdicts.len()
+                );
+                std::process::exit(0);
+            }
+            Err(message) => fail(&message),
+        }
+    }
     match run(&options) {
         Ok(outcome) => {
             for line in &outcome.lines {

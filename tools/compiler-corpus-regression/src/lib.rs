@@ -27,6 +27,7 @@ pub mod corpus;
 pub mod diff;
 pub mod jsparse;
 pub mod jsvalue;
+pub mod overlays;
 pub mod pipeline;
 pub mod result;
 pub mod selftest;

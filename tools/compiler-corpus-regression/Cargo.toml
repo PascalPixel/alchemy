@@ -30,6 +30,7 @@ candidate-compiler = { path = "../candidate-compiler" }
 alchemy-bundle = { path = "../alchemy-bundle" }
 alchemy-plan = { path = "../alchemy-plan" }
 alchemy-routing = { path = "../alchemy-routing" }
+overlay-disasm = { path = "../overlay-disasm" }
 integrate-matches = { path = "../integrate-matches" }
 
 [lib]

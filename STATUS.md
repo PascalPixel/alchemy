@@ -467,3 +467,12 @@ action timer and an otherwise unknown halfword; `3af:0030` records its two
 fixed-point-sized components and countdown; and `390:0030` records the
 fifteen 0x18-byte table entries it initializes. All broader gameplay identity
 remains deliberately unassigned.
+
+The next Luna wave humanizes four compact exact owners without expanding their
+boundaries: `resource_378:0030` reuses `FacingObject` and keeps its `+0x64`
+selector neutral; `resource_386:0030` keeps two accessor-returned state views
+separate at `+0x08` and `+0x10`; `resource_3c8:0030` reuses the proven
+`OverlayObject` bytes at `+0x55` and `+0x59`; and `resource_39d:0030` preserves
+the record's two-bit field assignment in a local guarded view. The 386 source
+required a direct field expression rather than named pointer temporaries to
+retain its 60-byte owner boundary; inventory and byte proof now pass.

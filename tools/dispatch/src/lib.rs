@@ -132,6 +132,12 @@ pub struct NonPublicTarget {
 /// them to become accidental commands when a manifest gains a new target.
 const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
+        crate_name: "route-dump",
+        binary: "route-dump",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
         crate_name: "alchemy-lints",
         binary: "alchemy-lints",
         kind: NonPublicKind::InternalDiagnostic,
@@ -977,7 +983,7 @@ mod tests {
         assert!(find_entry(Group::Search, "shape_sweep").is_some());
         assert!(find_entry(Group::Search, "alchemy_permuter").is_some());
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
-        assert_eq!(non_public_targets().len(), 22);
+        assert_eq!(non_public_targets().len(), 23);
         assert_eq!(
             non_public_target("candidate-explain", "candidate-explain").map(|target| target.kind),
             Some(NonPublicKind::InternalDiagnostic)

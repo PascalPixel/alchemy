@@ -55,33 +55,46 @@ void Func_02001900();
                                     /* fill a tile rectangle's attribute byte */
                                     /* the follow-up sequence */
 
+#define RunSceneBeat10 Func_020014ce
+#define IsSceneFlag0201Set Func_02001a70
+#define GetSceneBeatSubject Func_02001aa2
+#define DrawSceneBeatRectangle Func_02001a7c
+#define FillSceneTileAttributes Func_02000e90
+#define GetScenePresentationSubject Func_02001ad6
+#define SetScenePresentationMode Func_02001aac
+#define RunSceneBeat8 Func_0200151e
+#define RunSceneBeat9 Func_02001524
+#define IsSceneFlag0845Set Func_02001ac6
+#define RunPhase516Followup Func_02001900
+#define RunScenePhase516 Func_02000bf8
+
 static __inline__ void DrawBeat393(s32 left, s32 top, s32 width, s32 height,
                                    s32 tile, s32 palette)
 {
-    Func_02001a7c(left, top, width, height, tile, palette);
+    DrawSceneBeatRectangle(left, top, width, height, tile, palette);
 }
 
-s32 Func_02000bf8(void)
+s32 RunScenePhase516(void)
 {
     u8 *workspace = SCENE393_WORKSPACE;
 
     *(s32 *)(workspace + 448) = 516;
-    Func_020014ce(10);
+    RunSceneBeat10(10);
 
-    if (Func_02001a70(0x201) != 0) {
-        struct Beat393Subject *subject = Func_02001aa2(10);
+    if (IsSceneFlag0201Set(0x201) != 0) {
+        struct Beat393Subject *subject = GetSceneBeatSubject(10);
 
         subject->marker = 2;
         DrawBeat393(32, 20, 2, 4, 11, 16);
-        Func_02000e90(2, 12, 16, 1, 4, 0);
-        Func_02001aac(Func_02001ad6(10), 0);
+        FillSceneTileAttributes(2, 12, 16, 1, 4, 0);
+        SetScenePresentationMode(GetScenePresentationSubject(10), 0);
     }
 
-    Func_0200151e(8);
-    Func_02001524(9);
+    RunSceneBeat8(8);
+    RunSceneBeat9(9);
 
-    if (Func_02001ac6(0x845) == 0) {
-        Func_02001900(6);
+    if (IsSceneFlag0845Set(0x845) == 0) {
+        RunPhase516Followup(6);
     }
     return 0;
 }

@@ -414,3 +414,9 @@ with different call-site roles retain separate aliases.
 behavioral aliases covering setup, cell testing, movement, waits, restoration,
 and completion. Unknown storage remains offset-bearing rather than receiving a
 speculative story-specific name.
+
+The exact `resource_393:0aac` sibling now reuses the same actor-effect header
+and behavioral API. The adjacent `resource_393:0bf8` scene owner is exposed as
+`RunScenePhase516`; its flag tests, subject lookup, rectangle draw, presentation
+mode, numbered beats, and follow-up all use local behavioral aliases while the
+raw relocation names remain at the declaration boundary.

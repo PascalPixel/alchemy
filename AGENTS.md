@@ -304,11 +304,21 @@ owner.
    which never interworks with ARM and so needs no veneers. Routed today as
    `NO_INTERWORK`, covering 14 main stems and 24 overlay entries, every one of
    them EWRAM-resident.
-3. **agbcc.** The sound engine, 8 sources, a vendored driver from a different
-   toolchain.
+3. **agbcc.** The sound engine, a vendored driver from a different toolchain.
+   57 owner files route here, measured with `route-dump` over `exact/*.c` on
+   2026-08-16. These are not routing debt: they are a real second toolchain,
+   and they fail a forced-gcc296 baseline sweep by construction. Any count of
+   remaining flag debt must exclude them.
 4. **agbcc at `-O1`.** Two of those sound sources. This one is provisional: if
    both are reconstructed correctly it collapses into configuration 3 and the
    real answer is three.
+
+Three gcc296 owners additionally carry an optimisation-level override, which
+is a fifth configuration the list above does not account for: `08021e28` and
+`080049e8` at `-O1`, and `08019d2c` at `-Os`. An opt-level route is the least
+defensible kind, because no makefile compiles one function at `-Os` and its
+neighbours at `-O2`. Treat all three as reconstruction targets, not settled
+configurations.
 
 There is no ARM-mode configuration. No C owner compiles to ARM, and `-mthumb`
 is never removed by any route. The ROM's ARM code is real but deliberately

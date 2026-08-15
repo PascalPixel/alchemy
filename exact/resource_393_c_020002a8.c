@@ -1,55 +1,58 @@
 #include "types.h"
-
-typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
-typedef struct { u8 filler0[0x28]; s16 *unk28; } Sub;
-typedef struct {
-    u8 filler0[6]; u16 unk6; s32 unk8; s32 unkC; s32 unk10;
-    u8 filler14[0x10]; s32 unk24; u8 filler28[4]; s32 unk2C;
-    u8 filler30[8]; s32 unk38; u8 filler3C[4]; s32 unk40;
-    u8 filler44[0xC]; Sub *unk50;
-} Ent;
+#include "staged_actor_probe_state.h"
 
 extern s32 Data_02008f10[];
 extern s32 Data_02008f50[];
-extern Ent *Func_02000342(Desc *, Ent *);
-extern s32 Func_0200116e(Ent *, Desc *);
+extern struct StagedActor *Func_02000342(
+    struct StagedActorProbePoint *, struct StagedActor *);
+extern s32 Func_0200116e(
+    struct StagedActor *, struct StagedActorProbePoint *);
 
-s32 Func_020002a8(Ent *a)
+#define StagedActorDirectionSteps Data_02008f10
+#define StagedActorProbeValues Data_02008f50
+#define FindStagedActorAtProbe Func_02000342
+#define CheckStagedActorProbePosition Func_0200116e
+#define CheckStagedActorProbe Func_020002a8
+
+s32 CheckStagedActorProbe(struct StagedActor *actor)
 {
-    Desc d;
-    u32 idx;
-    s32 m;
-    Ent *r;
-    idx = a->unk6 >> 12;
-    m = Data_02008f10[idx];
-    d.unk0 = a->unk8 + (m & 0xffff0000);
-    d.unk4 = a->unkC;
-    m = m << 16;
-    d.unk8 = a->unk10 + m;
-    r = Func_02000342(&d, a);
-    if (r != 0) {
-        u32 i = 0;
-        s32 v = *r->unk50->unk28;
-        s32 *p = Data_02008f50;
+    struct StagedActorProbePoint probe;
+    u32 direction;
+    s32 packed_step;
+    struct StagedActor *target_actor;
+
+    direction = actor->direction_and_kind >> 12;
+    packed_step = StagedActorDirectionSteps[direction];
+    probe.x = actor->x.value + (packed_step & 0xffff0000);
+    probe.y = actor->y;
+    packed_step = packed_step << 16;
+    probe.z = actor->z.value + packed_step;
+    target_actor = FindStagedActorAtProbe(&probe, actor);
+    if (target_actor != 0) {
+        u32 probe_value_index = 0;
+        s32 target_probe_value =
+            *(STAGED_ACTOR_PROBE_DETAILS(target_actor)->unknown_28);
+        s32 *probe_values = StagedActorProbeValues;
+
         do {
-            if (v == *p++) goto done;
-            i++;
-        } while (i <= 5);
-        a->unk24 = 0;
-        a->unk2C = 0;
-        a->unk38 = 0x80000000;
-        a->unk40 = 0x80000000;
+            if (target_probe_value == *probe_values++) goto done;
+            probe_value_index++;
+        } while (probe_value_index <= 5);
+        actor->unknown_24 = 0;
+        actor->unknown_2c = 0;
+        actor->unknown_38 = 0x80000000;
+        actor->unknown_40 = 0x80000000;
     }
-    m = Data_02008f10[idx];
-    d.unk0 = a->unk8 + (m & 0xffff0000);
-    d.unk4 = a->unkC;
-    m = m << 16;
-    d.unk8 = a->unk10 + m;
-    if (Func_0200116e(a, &d) > 0) {
-        a->unk24 = 0;
-        a->unk2C = 0;
-        a->unk38 = 0x80000000;
-        a->unk40 = 0x80000000;
+    packed_step = StagedActorDirectionSteps[direction];
+    probe.x = actor->x.value + (packed_step & 0xffff0000);
+    probe.y = actor->y;
+    packed_step = packed_step << 16;
+    probe.z = actor->z.value + packed_step;
+    if (CheckStagedActorProbePosition(actor, &probe) > 0) {
+        actor->unknown_24 = 0;
+        actor->unknown_2c = 0;
+        actor->unknown_38 = 0x80000000;
+        actor->unknown_40 = 0x80000000;
     }
 done:
     return 0;

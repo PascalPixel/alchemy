@@ -17,7 +17,23 @@ extern void Func_02002dc0(struct StagedActor *actor);
 extern void Func_02002f0c(void);
 extern void Func_02002dc8(struct StagedActor *actor, s32 mode);
 
-void Func_020000c4(void) {
+#define StagedActorStepTable Data_0200ad68
+#define GetStagedActor Func_02002cf8
+#define FindNextStagedActor Func_02000176
+#define FindBlockingStagedActor Func_020001a2
+#define FindElevatedBlockingStagedActor Func_020001ce
+#define CanStartStagedActorMove Func_02002d84
+#define SetStagedActorMode Func_02002d5c
+#define SelectStagedActorSlot Func_02002d44
+#define StartStagedActorEffect Func_02002eea
+#define StartNextStagedActorMove Func_02002da2
+#define StartLeadStagedActorMove Func_02002db2
+#define FinishStagedActorMove Func_02002dc0
+#define FinishStagedActorEffect Func_02002f0c
+#define SetStagedActorTransition Func_02002dc8
+#define AdvanceStagedActorPair Func_020000c4
+
+void AdvanceStagedActorPair(void) {
     s32 destination[3];
     struct StagedActor *lead_actor;
     struct StagedActor *next_actor;
@@ -27,53 +43,53 @@ void Func_020000c4(void) {
     s32 move_rate;
     s32 zero;
 
-    lead_actor = Func_02002cf8(0);
+    lead_actor = GetStagedActor(0);
     facing_index = lead_actor->direction_and_kind >> 12;
-    step = Data_0200ad68[facing_index];
+    step = StagedActorStepTable[facing_index];
     destination[0] = lead_actor->x.value + (step & 0xffff0000);
     destination[1] = lead_actor->y;
     step <<= 16;
     destination[2] = lead_actor->z.value + step;
-    next_actor = Func_02000176(destination, lead_actor);
+    next_actor = FindNextStagedActor(destination, lead_actor);
     if (next_actor == 0) return;
 
-    step = Data_0200ad68[facing_index];
+    step = StagedActorStepTable[facing_index];
     destination[0] = next_actor->x.value + (step & 0xffff0000);
     destination[1] = next_actor->y;
     step <<= 16;
     destination[2] = next_actor->z.value + step;
-    blocking_actor = Func_020001a2(destination, next_actor);
+    blocking_actor = FindBlockingStagedActor(destination, next_actor);
     if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0) return;
 
     destination[0] = next_actor->x.value;
     destination[1] = next_actor->y + 0x100000;
     destination[2] = next_actor->z.value;
-    blocking_actor = Func_020001ce(destination, next_actor);
+    blocking_actor = FindElevatedBlockingStagedActor(destination, next_actor);
     if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0) return;
 
     next_actor->transition_mode = 2;
-    step = Data_0200ad68[facing_index];
+    step = StagedActorStepTable[facing_index];
     destination[0] = next_actor->x.value + (step & 0xffff0000);
     destination[1] = next_actor->y;
     step <<= 16;
     destination[2] = next_actor->z.value + step;
-    if (Func_02002d84(next_actor, destination) > 0) return;
+    if (CanStartStagedActorMove(next_actor, destination) > 0) return;
 
     zero = next_actor->transition_busy;
     if (zero != 0) return;
 
-    Func_02002d5c(lead_actor, 8);
+    SetStagedActorMode(lead_actor, 8);
     move_rate = 0x3333;
-    Func_02002d44(15);
-    Func_02002eea(185);
+    SelectStagedActorSlot(15);
+    StartStagedActorEffect(185);
     next_actor->move_rate_x = move_rate;
     next_actor->move_rate_z = move_rate;
-    Func_02002da2(next_actor, destination[0], destination[1], destination[2]);
+    StartNextStagedActorMove(next_actor, destination[0], destination[1], destination[2]);
     lead_actor->move_rate_x = move_rate;
     lead_actor->move_rate_z = move_rate;
-    Func_02002db2(lead_actor, destination[0], destination[1], destination[2]);
-    Func_02002dc0(next_actor);
-    Func_02002f0c();
+    StartLeadStagedActorMove(lead_actor, destination[0], destination[1], destination[2]);
+    FinishStagedActorMove(next_actor);
+    FinishStagedActorEffect();
     next_actor->x.value = destination[0];
     next_actor->z.value = destination[2];
     next_actor->unknown_24 = zero;
@@ -84,5 +100,5 @@ void Func_020000c4(void) {
     lead_actor->unknown_2c = zero;
     lead_actor->x.value = lead_actor->x.parts.cell << 16;
     lead_actor->z.value = lead_actor->z.parts.cell << 16;
-    Func_02002dc8(lead_actor, 1);
+    SetStagedActorTransition(lead_actor, 1);
 }

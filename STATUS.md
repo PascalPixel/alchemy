@@ -415,6 +415,12 @@ behavioral aliases covering setup, cell testing, movement, waits, restoration,
 and completion. Unknown storage remains offset-bearing rather than receiving a
 speculative story-specific name.
 
+Eight exact small-overlay facing controllers (`374`, `375`, `376`, `377`,
+`38b`, `38d`, `38e`, and `3a4`) now share the guarded `FacingObject` header.
+Their executable bodies use `UpdateFacingTowardTarget` and
+`CalculateFacingAngle`, with positions, target, flags, and facing represented
+as fields rather than `M2C_FIELD` offset expressions.
+
 The exact `resource_393:0aac` sibling now reuses the same actor-effect header
 and behavioral API. The adjacent `resource_393:0bf8` scene owner is exposed as
 `RunScenePhase516`; its flag tests, subject lookup, rectangle draw, presentation

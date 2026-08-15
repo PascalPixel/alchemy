@@ -399,3 +399,11 @@ aliases such as `FindNextStagedActor`, `StartNextStagedActorMove`, and
 overlay's declaration/alias boundary. The two distinct meanings routed through
 `resource_393`'s shared relocation spelling retain separate call-site aliases.
 Fields whose meaning remains uncertain keep offset-bearing `unknown_` names.
+
+The exact 696-byte movement/redraw owners in `resource_373`, `resource_391`,
+and `resource_392` now extend that same header through the callback field at
+offset `0x6c` and share `StagedActorMoveArgs`. Their bodies use the reconstructed
+`MoveStagedActorAndRedraw` API and name the complete movement, callback,
+collision-layer, footprint-redraw, and sound workflow. Overlay relocation
+spellings remain confined to local alias blocks; repeated synthetic spellings
+with different call-site roles retain separate aliases.

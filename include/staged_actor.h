@@ -33,10 +33,21 @@ struct StagedActor {
     u8 collision_flags;
     u8 unknown_5a[8];
     u8 transition_busy;
+    u8 unknown_63[9];
+    u32 movement_callback;
+};
+
+struct StagedActorMoveArgs {
+    s32 displacement_row;
+    s32 actor_slot;
+    s32 target_x;
+    s32 elevation;
+    s32 target_z;
+    void (*callback)(void);
 };
 
 #define STAGED_ACTOR_OFFSET(field) ((u32)&(((struct StagedActor *)0)->field))
-typedef char StagedActor_size[sizeof(struct StagedActor) == 0x64 ? 1 : -1];
+typedef char StagedActor_size[sizeof(struct StagedActor) == 0x70 ? 1 : -1];
 typedef char StagedActor_x_offset[
     STAGED_ACTOR_OFFSET(x) == 0x08 ? 1 : -1
 ];
@@ -48,6 +59,9 @@ typedef char StagedActor_collision_flags_offset[
 ];
 typedef char StagedActor_transition_busy_offset[
     STAGED_ACTOR_OFFSET(transition_busy) == 0x62 ? 1 : -1
+];
+typedef char StagedActor_movement_callback_offset[
+    STAGED_ACTOR_OFFSET(movement_callback) == 0x6c ? 1 : -1
 ];
 #undef STAGED_ACTOR_OFFSET
 

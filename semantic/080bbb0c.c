@@ -620,7 +620,7 @@ loop_90:
                 }
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 if (resulting_hp == M2C_FIELD(target_state, s16, 0x34)) {
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x822U);
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
                 } else {
                     BattleEvent_Push(BATTLE_EVENT_VALUE, healed_hp);
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);

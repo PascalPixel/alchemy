@@ -12,7 +12,9 @@ struct FacingObject {
     s32 position_z;
     u8 unknown_14[0x46];
     u8 facing_flags;
-    u8 unknown_5b[0x0d];
+    u8 unknown_5b[9];
+    /* This selector is passed to the resolver by resource 378; its identity is unknown. */
+    s16 unknown_64;
     struct FacingObject *facing_target;
 };
 
@@ -29,6 +31,9 @@ typedef char FacingObject_position_z_offset[
 ];
 typedef char FacingObject_facing_flags_offset[
     FACING_OBJECT_OFFSET(facing_flags) == 0x5a ? 1 : -1
+];
+typedef char FacingObject_unknown_64_offset[
+    FACING_OBJECT_OFFSET(unknown_64) == 0x64 ? 1 : -1
 ];
 typedef char FacingObject_facing_target_offset[
     FACING_OBJECT_OFFSET(facing_target) == 0x68 ? 1 : -1

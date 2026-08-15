@@ -23,7 +23,9 @@ struct MotionObject {
     s32 target_z;
     s32 vertical_motion_phase;
     s32 vertical_motion_strength;
-    u8 unknown_4c[0x09];
+    u8 unknown_4c[0x04];
+    void *records;
+    u8 record_storage_kind;
     u8 motion_flags;
     u8 unknown_56[0x02];
     u8 snap_to_target;
@@ -37,7 +39,11 @@ struct BattleObjectSlot {
     u8 unknown_04[0x08];
     s32 anchor_x;
     s32 anchor_z;
-    u8 unknown_14[0x18];
+    u8 unknown_14[0x0c];
+    s32 runtime_word_20;
+    s32 runtime_word_24;
+    s16 active;
+    u8 unknown_2a[0x02];
 };
 
 #define MOTION_OBJECT_OFFSET(type, field) \
@@ -58,11 +64,20 @@ typedef char MotionObject_target_x_offset[
 typedef char MotionObject_motion_flags_offset[
     MOTION_OBJECT_OFFSET(struct MotionObject, motion_flags) == 0x55 ? 1 : -1
 ];
+typedef char MotionObject_records_offset[
+    MOTION_OBJECT_OFFSET(struct MotionObject, records) == 0x50 ? 1 : -1
+];
+typedef char MotionObject_record_storage_kind_offset[
+    MOTION_OBJECT_OFFSET(struct MotionObject, record_storage_kind) == 0x54 ? 1 : -1
+];
 typedef char BattleObjectSlot_size[
     sizeof(struct BattleObjectSlot) == 0x2c ? 1 : -1
 ];
 typedef char BattleObjectSlot_anchor_x_offset[
     MOTION_OBJECT_OFFSET(struct BattleObjectSlot, anchor_x) == 0x0c ? 1 : -1
+];
+typedef char BattleObjectSlot_active_offset[
+    MOTION_OBJECT_OFFSET(struct BattleObjectSlot, active) == 0x28 ? 1 : -1
 ];
 
 #undef MOTION_OBJECT_OFFSET

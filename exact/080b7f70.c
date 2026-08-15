@@ -1,19 +1,14 @@
 #include "types.h"
+#include "motion_object.h"
 
-struct Fields_080b7f70 {
-    u8 filler[0x50];
-    void *field50;
-    u8 field54;
-};
-
-void *Func_080b7f70(struct Fields_080b7f70 *object, s32 item_index) {
-    s32 type = object->field54 & 0xF;
-    if (type == 1) {
-        if (item_index == 0) {
-            return object->field50;
+void *Func_080b7f70(struct MotionObject *object, s32 record_index) {
+    s32 storage_kind = object->record_storage_kind & 0xF;
+    if (storage_kind == 1) {
+        if (record_index == 0) {
+            return object->records;
         }
-    } else if (type == 2) {
-        return ((void **)object->field50)[item_index];
+    } else if (storage_kind == 2) {
+        return ((void **)object->records)[record_index];
     }
     return NULL;
 }

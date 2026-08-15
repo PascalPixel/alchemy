@@ -24,42 +24,47 @@ struct PlacementResult {
     struct PlacementTail tail;
 };
 
-s32 Func_02000474(struct PlacementResult *result);
-void Func_02000608(struct PlacementResult result);
-void Func_0808a100(s32,s32); void Func_0808a0e0(s32,s32,s32);
-void Func_0808a010(s32); void Func_080f9010(s32);
-u8 *Func_0808a080(s32); void Func_080091c0(s32,s32,s32,s32,s32,s32);
-s32 Func_02000244(s32,s32,s32,s32,s32,s32);
-void Func_080770c8(s32); void Func_080091e0(u8 *,s32);
+/* Raw overlay relocation spellings.  They are call-site evidence, so the two
+ * logical actor-access calls deliberately use different names. */
+void Func_02001872(void);
+s32 Func_02000e7a(struct PlacementResult *result);
+void Func_02001026(struct PlacementResult result);
+void Func_020018e0(s32,s32); void Func_020018dc(s32,s32,s32);
+void Func_020018b2(s32); u8 *Func_02001918();
+void Func_02001900(s32,s32); u8 *Func_020018de(s32);
+void Func_020018b8(s32,s32,s32,s32,s32,s32);
+s32 Func_02000ccc(s32,s32,s32,s32,s32,s32);
+void Func_020018f2(s32); void Func_020018ee(u8 *,s32);
+void Func_0200191a(void);
 
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    Func_080091c0(left, top, width, height, tile, palette);
+    Func_020018b8(left, top, width, height, tile, palette);
 }
 
 void Func_020009f8(void)
 {
     struct PlacementResult result;
-    Func_0808a018();
-    if (Func_02000474(&result)) {
-        Func_02000608(result);
+    Func_02001872();
+    if (Func_02000e7a(&result)) {
+        Func_02001026(result);
         if (result.second == 10 && (result.third >> 20) == 12) {
             u8 *actor;
             s32 zero;
-            Func_0808a100(10, 3);
-            Func_0808a0e0(10, -18, 6);
-            Func_0808a010(30);
-            Func_080f9010(240);
-            Func_0808a100(10, 8);
-            Func_0808a080(10)[35] = 2;
+            Func_020018e0(10, 3);
+            Func_020018dc(10, -18, 6);
+            Func_020018b2(30);
+            Func_02001918(240);
+            Func_02001900(10, 8);
+            Func_020018de(10)[35] = 2;
             zero = 0;
             DrawPlacement(32, 20, 2, 4, 11, 16);
-            Func_02000244(2, 12, 16, 1, 4, zero);
-            Func_080770c8(0x201);
-            actor = Func_0808a080(10);
-            Func_080091e0(actor, 0);
+            Func_02000ccc(2, 12, 16, 1, 4, zero);
+            Func_020018f2(0x201);
+            actor = Func_02001918(10);
+            Func_020018ee(actor, 0);
         }
     }
-    Func_0808a020();
+    Func_0200191a();
 }

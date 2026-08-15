@@ -447,3 +447,13 @@ lookups written backward and terminated with zero. The unrelated
 `resource_372:0064` owner similarly replaces its local offset macros with its
 proved fixed-point countdown and random-remainder setup; neither small local
 record is promoted to a shared header prematurely.
+
+Ten exact `02000048` object-setup wrappers (`380`, `382`, `385`, `387`, `38a`,
+`396`, `39b`, `39c`, `39d`, and `39e`) now share the guarded `OverlayObject`
+prefix: the proved nested-record pointer at `+0x50`, flag byte at `+0x09`, and
+otherwise opaque control bytes at `+0x55` and `+0x59`. Their command roles
+remain local aliases because the shared relocation spellings do not yet prove a
+global API. The paired exact `resource_37d`/`resource_37e:0054` setup owners
+likewise share a guarded runtime view for the independently proved words at
+`+0x1c0` and `+0x1c8`; their three separate 16.16 scale locals remain explicit
+to preserve the ROM's entry-block materialisation.

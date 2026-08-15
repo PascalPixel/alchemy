@@ -1,78 +1,77 @@
 #include "types.h"
+#include "staged_actor_effect.h"
 
-struct Obj {
-    u8 pad00[0x0c];
-    s32 field0c;
-    u8 pad10[4];
-    s32 field14;
-    u8 pad18[0x28 - 0x18];
-    s32 field28;
-    u8 pad2c[4];
-    s32 field30;
-    s32 field34;
-    u8 pad38[0x55 - 0x38];
-    u8 field55;
-};
-
-struct Arg {
-    u8 pad00[2];
-    s16 field02;
-    u8 pad04[6];
-    s16 field0a;
-};
-
-extern struct Obj *Func_0200374e(s32 arg0);
-extern s32 Func_0200371e(struct Obj *arg0, struct Arg *arg1);
+extern struct StagedActorEffect *Func_0200374e(s32 actor_index);
+extern s32 Func_0200371e(struct StagedActorEffect *actor,
+                         struct StagedActorEffectRequest *request);
 extern void Func_02003750(void);
-extern void Func_020036f0(struct Obj *arg0, s32 arg1);
-extern void Func_020036d6(s32 arg0);
-extern void Func_0200387c(s32 arg0);
-extern void Func_02003704(struct Obj *arg0, s32 arg1);
-extern void Func_0200376e(struct Obj *arg0, s32 arg1);
-extern s32 Func_020037ec(s32 arg0, s32 arg1, s32 arg2);
-extern void Func_0200373c(struct Obj *arg0, s32 arg1);
-extern void Func_0200378c(struct Obj *arg0, s32 arg1);
-extern void Func_02003830(s32 arg0, s32 arg1);
-extern void Func_02003744(s32 arg0);
-extern void Func_02003756(s32 arg0);
-extern void Func_0200376c(s32 arg0);
+extern void Func_020036f0(struct StagedActorEffect *actor, s32 mode);
+extern void Func_020036d6(s32 actor_index);
+extern void Func_0200387c(s32 effect_id);
+extern void Func_02003704(struct StagedActorEffect *actor, s32 mode);
+extern void Func_0200376e(struct StagedActorEffect *actor, s32 mode);
+extern s32 Func_020037ec(s32 layer, s32 cell_x, s32 cell_z);
+extern void Func_0200373c(struct StagedActorEffect *actor, s32 mode);
+extern void Func_0200378c(struct StagedActorEffect *actor, s32 mode);
+extern void Func_02003830(s32 frames, s32 mode);
+extern void Func_02003744(s32 mode);
+extern void Func_02003756(s32 frames);
+extern void Func_0200376c(s32 mode);
 extern void Func_02003810(void);
 
-s32 Func_02000b1c(struct Arg *arg0) {
-    struct Obj *obj = Func_0200374e(0);
-    u8 *flags = &obj->field55;
+#define GetStagedActorEffect Func_0200374e
+#define CanStartStagedActorEffect Func_0200371e
+#define BeginStagedActorEffect Func_02003750
+#define SetStagedActorEffectMode Func_020036f0
+#define SelectStagedActorEffectSlot Func_020036d6
+#define StartStagedActorEffectSound Func_0200387c
+#define SetStagedActorMotionMode Func_02003704
+#define PrepareStagedActorEffect Func_0200376e
+#define TestStagedActorEffectCell Func_020037ec
+#define StartStagedActorEffectMove Func_0200373c
+#define SetStagedActorEffectTransition Func_0200378c
+#define WaitStagedActorEffect Func_02003830
+#define AdvanceStagedActorEffect Func_02003744
+#define WaitSceneFrames Func_02003756
+#define RestoreStagedActorEffect Func_0200376c
+#define FinishStagedActorEffect Func_02003810
+#define RunStagedActorStepEffect Func_02000b1c
+
+s32 RunStagedActorStepEffect(struct StagedActorEffectRequest *request) {
+    struct StagedActorEffect *actor = GetStagedActorEffect(0);
+    u8 *flags = &actor->motion_flags;
     u8 saved = *flags;
-    s32 result = Func_0200371e(obj, arg0);
+    s32 result = CanStartStagedActorEffect(actor, request);
 
     if (result == 0) {
-        Func_02003750();
-        Func_020036f0(obj, 6);
-        Func_020036d6(6);
-        Func_0200387c(152);
-        Func_02003704(obj, 7);
-        obj->field30 = 0x30000;
-        obj->field34 = 0x20000;
-        obj->field28 = 0x40000;
+        BeginStagedActorEffect();
+        SetStagedActorEffectMode(actor, 6);
+        SelectStagedActorEffectSlot(6);
+        StartStagedActorEffectSound(152);
+        SetStagedActorMotionMode(actor, 7);
+        actor->move_rate_x = 0x30000;
+        actor->move_rate_z = 0x20000;
+        actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
-        Func_0200376e(obj, 0);
-        Func_020037ec(0, arg0->field02, arg0->field0a);
-        Func_0200373c(obj, 6);
-        Func_0200378c(obj, 1);
+        PrepareStagedActorEffect(actor, 0);
+        TestStagedActorEffectCell(0, request->cell_x, request->cell_z);
+        StartStagedActorEffectMove(actor, 6);
+        SetStagedActorEffectTransition(actor, 1);
         *flags = (u8)result;
-        Func_02003830(10, 7);
-        obj->field0c += 0xffff0000;
-        obj->field14 += 0xffff0000;
-        Func_02003744(2);
-        obj->field0c += 0xffff0000;
-        obj->field14 += 0xffff0000;
-        Func_02003756(10);
-        obj->field0c += 0x10000;
-        obj->field14 += 0x10000;
-        Func_0200376c(4);
-        obj->field0c += 0x10000;
-        obj->field14 += 0x10000;
+        WaitStagedActorEffect(10, 7);
+        actor->position_x += 0xffff0000;
+        actor->position_z += 0xffff0000;
+        AdvanceStagedActorEffect(2);
+        actor->position_x += 0xffff0000;
+        actor->position_z += 0xffff0000;
+        WaitSceneFrames(10);
+        actor->position_x += 0x10000;
+        actor->position_z += 0x10000;
+        RestoreStagedActorEffect(4);
+        actor->position_x += 0x10000;
+        actor->position_z += 0x10000;
         *flags = saved;
-        Func_02003810();
+        FinishStagedActorEffect();
         return 1;
     }
     return 0;

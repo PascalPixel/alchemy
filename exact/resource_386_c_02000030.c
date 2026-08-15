@@ -1,21 +1,16 @@
-#include "types.h"
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "resource_386_state.h"
 
-void Func_02000676(s32);
-void Func_02000688(s32);
-void *Func_0200069a(s32);
-void *Func_020006a2(s32);
+#define Resource386_CheckWindow Func_02000030
 
-void Func_02000030(void) {
+void Resource386_CheckWindow(void) {
     s32 temp_r3;
     s32 temp_r5;
 
-    temp_r5 = M2C_FIELD(Func_0200069a(0), s32 *, 8);
-    temp_r3 = (s32) M2C_FIELD(Func_020006a2(0), s32 *, 0x10) >> 0x14;
+    temp_r5 = ((struct Resource386FirstView *)Resource386_GetFirstView(0))->sample_08;
+    temp_r3 = (s32) ((struct Resource386SecondView *)Resource386_GetSecondView(0))->sample_10 >> 0x14;
     if (((u32) ((temp_r5 >> 0x14) - 0x22) <= 1U) && (temp_r3 > 0x28) && (temp_r3 <= 0x2A)) {
-        Func_02000676(0x250);
+        Resource386_OnWindowMatch(0x250);
         return;
     }
-    Func_02000688(0x250);
+    Resource386_OnWindowMiss(0x250);
 }

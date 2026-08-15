@@ -1,13 +1,19 @@
-#include "types.h"
+#include "overlay_object.h"
 #define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_02004e8c(void *, s32);
 void Func_02004f8c(void *, s32);
 
-void Func_02000030(void *arg0, s32 arg1) {
-    M2C_FIELD(arg0, s8 *, 0x55) = 0;
-    M2C_FIELD((arg0 + 0x55), s8 *, 4) = 8;
-    Func_02004e8c(arg0, 0);
-    Func_02004f8c(arg0, arg1);
+#define RunOverlayObjectCommand0 Func_02004e8c
+#define RunOverlayObjectCommand1 Func_02004f8c
+#define ConfigureOverlayObject Func_02000030
+
+void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter) {
+    object->unknown_55 = 0;
+    object->unknown_59 = 8;
+    RunOverlayObjectCommand0(object, 0);
+    RunOverlayObjectCommand1(object, parameter);
 }
+
+#undef RunOverlayObjectCommand0
+#undef RunOverlayObjectCommand1

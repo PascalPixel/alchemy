@@ -114,6 +114,7 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s32 restored_pp;
     s32 healing_source_stat;
     s32 object_anchor_x;
+    s32 object_anchor_z;
     s32 range_scale_table;
     s32 scratch_value;
     s32 range_scale_offset;
@@ -146,8 +147,9 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     u8 *allowed_table;
     s32 *recovery_table;
     s32 cached_result_offset;
+    s32 result_slot_offset;
     u32 target_defense;
-    u16 max_hp_for_half_revive;
+    u32 max_hp_for_half_revive;
     s32 action_power;
     u32 target_max_hp_unsigned;
     u32 target_hp_before_percent_heal;
@@ -192,7 +194,6 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     u8 status_141_value;
     u8 status_13c_value;
     u8 target_id;
-    s8 applied_resistance_down_one;
     s8 applied_resistance_down_two;
     u8 applied_resistance_up_one;
     u8 applied_resistance_up_two;
@@ -254,9 +255,9 @@ loop_7:
             range_relation = -1;
         }
         range_upper_count = 0;
-        range_table = target_state;
-        range_table += 0x24;
-        if ((s32) range_value <= (s32) M2C_FIELD(range_table, s16, 2)) {
+        lower_threshold = target_state;
+        lower_threshold += 0x24;
+        if ((s32) range_value <= (s32) M2C_FIELD(lower_threshold, s16, 2)) {
             for (;;) {
                 range_upper_count += 1;
                 if (range_upper_count > 3) {
@@ -302,8 +303,8 @@ block_21:
     }
     action_family = 0xF & action->target_flags;
     /* Load plan->target_results[target_slot] through the live ID base. */
-    cached_result_offset = target_slot + 0x38;
-    cached_action_result = ((s8 *)target_ids)[cached_result_offset];
+    result_slot_offset = target_slot + 0x38;
+    cached_action_result = ((s8 *)target_ids)[result_slot_offset];
     if (cached_action_result == -1) {
         allowed_table = (u8 *)0x080C2AB8;
         cached_action_result = Func_08077178(
@@ -366,8 +367,8 @@ block_21:
             Func_080b7548();
             object_slot = Func_080b7dd0(effect_object_id);
             object_anchor_x = object_slot->anchor_x / 65536;
-            scratch_value = object_slot->anchor_z / 65536;
-            Func_080b6f44(object_slot, effect_object_id, object_anchor_x, scratch_value);
+            object_anchor_z = object_slot->anchor_z / 65536;
+            Func_080b6f44(object_slot, effect_object_id, object_anchor_x, object_anchor_z);
             Func_080b6c90();
             queued_object_count = Func_080b6ae0(queued_ids);
             if (queued_object_count > 0) {
@@ -742,13 +743,7 @@ loop_175:
                 case 5:
                     range_scale_table = 0x080C2B08;
                     range_scale_offset = range_distance * 4;
-block_196:
-                    range_scale = M2C_FIELD((u8 *)range_scale_table, s32, range_scale_offset);
-                    scaled_ranged_damage = Func_080022ec(
-                        range_scale * scaled_ranged_damage,
-                        0x64
-                    );
-                    break;
+                    goto block_196;
                 case 8:
                     range_scale_table = 0x080C2B20;
                     range_scale_offset = range_distance * 4;
@@ -756,7 +751,13 @@ block_196:
                 case 6:
                     range_scale_table = 0x080C2B38;
                     range_scale_offset = range_distance * 4;
-                    goto block_196;
+block_196:
+                    range_scale = M2C_FIELD((u8 *)range_scale_table, s32, range_scale_offset);
+                    scaled_ranged_damage = Func_080022ec(
+                        range_scale * scaled_ranged_damage,
+                        0x64
+                    );
+                    break;
                 }
                 ranged_damage = scaled_ranged_damage + (3 & BattleRandom_Next());
                 ranged_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
@@ -812,7 +813,11 @@ block_196:
                 }
                 pp_recovery = Func_08077190(pp_recovery, recovery_source_stat, 0x100);
                 recovery_table = (s32 *)0x080C2B50;
-                pp_recovery = Func_080022ec(pp_recovery * recovery_table[range_distance], 0x64);
+                cached_result_offset = range_distance * 4;
+                pp_recovery = Func_080022ec(
+                    pp_recovery * M2C_FIELD(recovery_table, s32, cached_result_offset),
+                    0x64
+                );
                 pp_recovery *= target_adjustment;
                 target_max_pp = M2C_FIELD(target_state, s16, 0x36);
                 restored_pp = target_pp_before_recovery + pp_recovery;
@@ -1176,7 +1181,7 @@ block_case2_failure:
 
         } else {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864U);
-            max_hp_for_half_revive = (u16) M2C_FIELD(target_state, s16, 0x34);
+            max_hp_for_half_revive = M2C_FIELD(target_state, u16, 0x34);
             M2C_FIELD(target_state, s16, 0x38) = (s16) ((s32) ((s16) max_hp_for_half_revive + ((u32) (max_hp_for_half_revive << 0x10) >> 0x1F)) >> 1);
             goto block_402;
         }
@@ -1203,12 +1208,10 @@ block_case2_failure:
             M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
         }
         resistance_down_one = M2C_FIELD(target_state, s8, 0x137);
-        applied_resistance_down_one = M2C_FIELD(target_state, u8, 0x137);
         if (resistance_down_one > 4) {
             M2C_FIELD(target_state, u8, 0x137) = 4U;
-            applied_resistance_down_one = 4;
         }
-        BattleEvent_Push(BATTLE_EVENT_VALUE, (M2C_FIELD(target_snapshot, s8, 0x137) - (s8) applied_resistance_down_one) * 0x14);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, (M2C_FIELD(target_snapshot, s8, 0x137) - M2C_FIELD(target_state, s8, 0x137)) * 0x14);
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x865U);
         M2C_FIELD(target_state, u8, 0x136) = 7;
         break;

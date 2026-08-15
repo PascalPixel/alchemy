@@ -177,6 +177,11 @@ pub static EXPECTED: &[HostTargets] = &[
                             "87d76f342805be1346c36ecd3ae75b1787d4c9d85b4eddb0d9e9acc36b5f1219",
 
                             "b47e7c081f228fd8af166a94f224b94609813e0e0eace5edb79d28f1e6e37305",
+                            // getenv gates removed from thumb_order_grouped_dma_store
+                            // (2026-08-16). Behaviour-identical to the predecessor:
+                            // the gates read unset variables, so the guarded code
+                            // already ran unconditionally.
+                            "6f28a0715073960e649c1c1aaad689c62a09038aa393634528e56d944be1e714",
                         ],
                     ),
                 ],

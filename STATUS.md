@@ -426,3 +426,24 @@ and behavioral API. The adjacent `resource_393:0bf8` scene owner is exposed as
 `RunScenePhase516`; its flag tests, subject lookup, rectangle draw, presentation
 mode, numbered beats, and follow-up all use local behavioral aliases while the
 raw relocation names remain at the declaration boundary.
+
+Twelve exact small-overlay distance owners (`373`, `389`, `391`, `392`, `393`,
+`39f`, `3b2`, `3b4`, `3bd`, `3bf`, `3c4`, and `3c5`) now share
+`FixedPointPosition`. Their `CalculateFixedPointPositionDistance` entry describes
+the proved three-axis 16.16 delta, squared-distance, and resident
+integer-square-root sequence without assigning a speculative gameplay role.
+
+The `resource_389`, `resource_392`, and `resource_393` `02a8` probe siblings
+now share `StagedActorProbePoint` and the guarded nested probe-state view. The
+new `CheckStagedActorProbe` vocabulary records only the observed forward point,
+six-value test, and state-reset path; nested storage at `+0x50/+0x28` remains
+explicitly unknown. `resource_3b1` also extends `StagedActor` with the proven
+two-byte vertical-motion direction at `+0x66`, replacing two more offset shells
+with `ResetStagedActorState` and `UpdateStagedActorVerticalPosition`.
+
+`resource_3ba:2f64`, `resource_3bb:31fc`, and `resource_3bc:3c94` now expose
+their exact fixed-width text routine as `WriteU32AsHex`: eight low-nibble table
+lookups written backward and terminated with zero. The unrelated
+`resource_372:0064` owner similarly replaces its local offset macros with its
+proved fixed-point countdown and random-remainder setup; neither small local
+record is promoted to a shared header prematurely.

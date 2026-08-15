@@ -186,6 +186,53 @@ fn root_override_error(variable: &str, requested: &Path, canonical: &Path) -> Op
     }
 }
 
+/// Variables that once switched code generation from the ambient environment.
+///
+/// `thumb_order_grouped_dma_store` gated three sub-behaviours on `getenv`, so
+/// exporting one of these silently changed emitted Thumb ordering with no
+/// diagnostic, no digest change, and no cache key covering it. alchemy-gcc
+/// a3b1837 removed the gates, but this ledger is additive and still admits
+/// every `cc1` approved before that, so a stale staged binary plus a leftover
+/// export reproduces the defect on a bundle that validates perfectly clean.
+const REFUSED_CODEGEN_ENV_VARS: [&str; 3] = [
+    "ALCHEMY_NO_FOUR_WORD",
+    "ALCHEMY_NO_LOOP0",
+    "ALCHEMY_NO_LOOP1",
+];
+
+/// Refuse a build whose environment can still reach a gated compiler.
+///
+/// This closes the stale-binary path without invalidating a single approved
+/// digest. Pruning the pre-fix digests would also work, but it would force a
+/// compiler rebuild on every other checkout to remove a hazard that only bites
+/// when one of these is exported; refusing the variable is the cheaper half of
+/// the same guarantee. A current binary ignores these entirely, so the only
+/// build this rejects is one that was never reproducible anyway.
+fn codegen_override_error(variable: &str, set: bool) -> Option<String> {
+    if set {
+        Some(format!(
+            "{variable} is set. It switched compiler behaviour in bundles built before \
+             alchemy-gcc a3b1837, which the approved-digest ledger still admits, so this \
+             build would not be reproducible and its result would be cached under a key \
+             that does not mention it. Unset it."
+        ))
+    } else {
+        None
+    }
+}
+
+fn ensure_no_codegen_environment_overrides() -> Result<()> {
+    for variable in REFUSED_CODEGEN_ENV_VARS {
+        // An empty value is treated as unset, matching how the staging-root
+        // check above reads its own variables.
+        let set = std::env::var_os(variable).is_some_and(|value| !value.is_empty());
+        if let Some(error) = codegen_override_error(variable, set) {
+            return Err(error);
+        }
+    }
+    Ok(())
+}
+
 /// Reject alternate staging roots before any compiler admission or cache-key
 /// work. The consumer-side routing intentionally has one canonical bundle
 /// path; an environment override belongs to `alchemy-gcc`, not to Alchemy.
@@ -207,6 +254,7 @@ pub fn ensure_canonical_bundle_root() -> Result<()> {
 }
 
 fn ensure_compiler_bundle_access() -> Result<()> {
+    ensure_no_codegen_environment_overrides()?;
     ensure_canonical_bundle_root()?;
     acquire_compiler_bundle_shared_lock()
 }
@@ -1234,5 +1282,27 @@ mod tests {
     #[test]
     fn output_text_is_lossy_not_panicking() {
         assert_eq!(output_text(&[0xff, b'a']), "\u{fffd}a");
+    }
+
+    #[test]
+    fn a_set_codegen_variable_is_refused_and_names_itself() {
+        let error = codegen_override_error("ALCHEMY_NO_LOOP1", true)
+            .expect("a set codegen override must be refused");
+        assert!(error.starts_with("ALCHEMY_NO_LOOP1 is set."));
+        assert!(error.ends_with("Unset it."));
+        assert_eq!(codegen_override_error("ALCHEMY_NO_LOOP1", false), None);
+    }
+
+    /// The list is the guard. A gate added to the compiler without its variable
+    /// added here would be switchable from the environment again.
+    #[test]
+    fn every_refused_codegen_variable_is_distinct_and_alchemy_scoped() {
+        for variable in REFUSED_CODEGEN_ENV_VARS {
+            assert!(variable.starts_with("ALCHEMY_"), "{variable}");
+        }
+        let mut seen: Vec<&str> = REFUSED_CODEGEN_ENV_VARS.to_vec();
+        seen.sort_unstable();
+        seen.dedup();
+        assert_eq!(seen.len(), REFUSED_CODEGEN_ENV_VARS.len());
     }
 }

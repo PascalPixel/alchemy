@@ -84,6 +84,24 @@
  *    HANDOVER records for resource_370.
  *  - The second loop's guard is `0 < linkCount` — r6 was reset to 0 before it,
  *    so it is a fresh count, not a continuation of the first loop's index.
+ *
+ * EXACTNESS PARKING NOTE (2026-08-15).  A flag sweep (555 configs, exact=0,
+ * best gain 13B) and a four-compile source-shape iteration both stalled;
+ * parked under the two-stalled-searches rule.  Confirmed against the
+ * reference during that iteration, for whoever resumes:
+ *   - the record pointer itself is the request cursor: it lives in r8, is
+ *     passed as r0 at every submit site, and advances +12 per call by reusing
+ *     the #12 argument register (`add r8, r2`);  there is no separate `entry`
+ *     pseudo.  Spilling `record += 12` at each site gets r8 correct.
+ *   - stack frame is sub sp,#20 with slots: #0 down/loop-2 word2 temp,
+ *     #4 lifted = linkCount<<4 (shared by head `104 - lifted` and tail
+ *     `lifted + 128`), #8 tile, #12 write cursor, #16 record copy (base).
+ *   - remaining gaps are allocation-level, not shape-level: write never gets
+ *     its own spill slot (frame comes out 16, write stays in r7), linkCount
+ *     lands in r9 instead of fp, the record copy routes through ip instead of
+ *     low r1, and the metrics-table read compiles add-#2-into-index instead
+ *     of base+index then `ldrh [r3,#2]`.
+ * The mirror resource_3bb_c_02003638.c shares this note verbatim in spirit.
  */
 
 /* Import veneers, named by the main-image function each one reaches.

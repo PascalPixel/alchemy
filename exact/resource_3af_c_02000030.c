@@ -1,30 +1,34 @@
-#include "types.h"
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#include "resource_3af_motion.h"
 
-s32 Func_020042e6(s32, s16);
-s32 Func_020042f8(void);
+#define UpdateResource3afMotion Func_02000030
+#define BuildMotionCountdown Func_020042e6
+#define GetMotionCountdownInput Func_020042f8
 
-s32 Func_02000030(void *arg0) {
-    switch (M2C_FIELD(arg0, s16, 0x64)) {
+s32 BuildMotionCountdown(s32, s16);
+s32 GetMotionCountdownInput(void);
+
+s32 UpdateResource3afMotion(struct Resource3afMotion *motion) {
+    switch (motion->countdown) {
     case 6:
-        M2C_FIELD(arg0, s32, 0x18) += (s32) 0xFFFFC000;
-        M2C_FIELD(arg0, s32, 0x1C) += 0x2000;
+        motion->component_a += (s32) 0xFFFFC000;
+        motion->component_b += 0x2000;
         break;
     case 4:
-        M2C_FIELD(arg0, s32, 0x18) += 0x2000;
+        motion->component_a += 0x2000;
         /* The load at 0x0200006A owns the Thumb-like data word at 0x020000AC. */
-        M2C_FIELD(arg0, s32, 0x1C) += (s32) 0xF856F001;
+        motion->component_b += (s32) 0xF856F001;
         break;
     case 2:
-        M2C_FIELD(arg0, s32, 0x18) += 0x1000;
-        M2C_FIELD(arg0, s32, 0x1C) += (s32) 0xFFFFF800;
+        motion->component_a += 0x1000;
+        motion->component_b += (s32) 0xFFFFF800;
         break;
     case 0:
-        M2C_FIELD(arg0, s32, 0x18) = 0x10000;
-        M2C_FIELD(arg0, s32, 0x1C) = 0x10000;
-        M2C_FIELD(arg0, s16, 0x64) = (s16) (Func_020042e6(Func_020042f8(), 90) + 60);
+        motion->component_a = 0x10000;
+        motion->component_b = 0x10000;
+        motion->countdown =
+            (s16) (BuildMotionCountdown(GetMotionCountdownInput(), 90) + 60);
         break;
     }
-    M2C_FIELD(arg0, s16, 0x64)--;
+    motion->countdown--;
     return 1;
 }

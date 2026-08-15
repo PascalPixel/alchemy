@@ -1,11 +1,12 @@
 #include "types.h"
+#include "motion_object.h"
 
 struct Fields_080b7e04 {
     u8 filler[0x10];
     s32 field10;
 };
 
-void Func_080b7e04(void *owner) {
+void ResetMotionRecordGroup(void *owner) {
     s32 remaining;
     s32 zero;
     struct Fields_080b7e04 **items;

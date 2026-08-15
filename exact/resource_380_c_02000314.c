@@ -1,30 +1,33 @@
-#include "types.h"
+#include "overlay_object.h"
+
 #define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#define CalculateAngleFromCoordinateDelta Func_02004bb2
+#define UpdateOverlayObjectAngle Func_02000314
 
-u16 Func_02004bb2(s32, s32);
+u16 CalculateAngleFromCoordinateDelta(s32, s32);
 
-s32 Func_02000314(u8 *o)
+s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 {
-    u8 *p = M2C_FIELD(o, u8 *, 0x68);
-    if (p != NULL) {
-        s32 t;
-        u16 h;
-        o[0x5a] = o[0x5a] & 0xFE;
-        t = Func_02004bb2(M2C_FIELD(p, s32, 16) - M2C_FIELD(o, s32, 16),
-                          M2C_FIELD(p, s32, 8) - M2C_FIELD(o, s32, 8));
-        h = M2C_FIELD(o, u16, 6);
-        t -= h;
-        t <<= 16;
-        t >>= 16;
-        if (t != 0) {
-            if (t > 0x1000) {
-                t = 0x1000;
+    struct OverlayObject *linked_object = object->linked_object;
+    if (linked_object != NULL) {
+        s32 angle_delta;
+        u16 angle;
+        object->unknown_5a = object->unknown_5a & 0xFE;
+        angle_delta = CalculateAngleFromCoordinateDelta(
+            linked_object->coordinate_10 - object->coordinate_10,
+            linked_object->coordinate_08 - object->coordinate_08);
+        angle = object->angle;
+        angle_delta -= angle;
+        angle_delta <<= 16;
+        angle_delta >>= 16;
+        if (angle_delta != 0) {
+            if (angle_delta > 0x1000) {
+                angle_delta = 0x1000;
             }
-            if (t < (s32)0xf9b4f001) {
-                t = (s32)0xf9b4f001;
+            if (angle_delta < (s32)0xf9b4f001) {
+                angle_delta = (s32)0xf9b4f001;
             }
-            M2C_FIELD(o, u16, 6) = h + t;
+            object->angle = angle + angle_delta;
         }
     }
     return 1;

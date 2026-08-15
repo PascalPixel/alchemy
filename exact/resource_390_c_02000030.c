@@ -1,28 +1,30 @@
 #include "resource_390.h"
+#include "resource_390_table.h"
 
 #include "types.h"
-#define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Func_02000030(void *arg0) {
-    u32 index;
-    register u8 kind;
-    register s32 enabled;
-    register u16 normal;
-    register u16 special;
+#define Resource390_InitRecords Func_02000030
 
-    index = 0;
-    kind = 2;
-    enabled = 1;
-    normal = 0x69;
-    special = 0x6E;
+void Resource390_InitRecords(struct Resource390TableEntry *entry) {
+    u32 entry_index;
+    register u8 value_16;
+    register s32 value_04;
+    register u16 default_value_00;
+    register u16 alternate_value_00;
+
+    entry_index = 0;
+    value_16 = 2;
+    value_04 = 1;
+    default_value_00 = 0x69;
+    alternate_value_00 = 0x6E;
     do {
-        M2C_FIELD(arg0, u8, 0x16) = kind;
-        M2C_FIELD(arg0, s32, 4) = enabled;
-        M2C_FIELD(arg0, u16, 0) = normal;
-        if (index == 4 || index == 7) {
-            M2C_FIELD(arg0, u16, 0) = special;
+        entry->unknown_16 = value_16;
+        entry->unknown_04 = value_04;
+        entry->unknown_00 = default_value_00;
+        if (entry_index == 4 || entry_index == 7) {
+            entry->unknown_00 = alternate_value_00;
         }
-        index++;
-        arg0 = (u8 *)arg0 + 0x18;
-    } while (index <= 0xE);
+        entry_index++;
+        entry = (struct Resource390TableEntry *)((u8 *)entry + 0x18);
+    } while (entry_index <= 0xE);
 }

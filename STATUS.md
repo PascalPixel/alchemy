@@ -476,3 +476,10 @@ separate at `+0x08` and `+0x10`; `resource_3c8:0030` reuses the proven
 the record's two-bit field assignment in a local guarded view. The 386 source
 required a direct field expression rather than named pointer temporaries to
 retain its 60-byte owner boundary; inventory and byte proof now pass.
+
+The following Luna round humanizes the large exact `resource_39e:0200071c`
+scene driver without claiming a new shared layout. Its proven workspace and
+actor-record accesses use local names, while every unresolved relocation stays
+an offset-bearing `unknown_scene_step_` alias at the ABI boundary. The source
+body retains its original calls, constants, control flow, and field offsets;
+the owner remains byte-exact after inventory and the claimed build.

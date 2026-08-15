@@ -1,6 +1,4 @@
-#include "types.h"
-#define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "resource_3a8_effect.h"
 
 s32 Func_02003b7e();
 s32 Func_02003bac();
@@ -8,32 +6,39 @@ s32 Func_02003bba();
 u8 Func_02003bcc(void *, s32);
 u8 Func_02003bd6(void *, s32);
 
-s32 Func_02000040(void *arg0) {
-    u32 temp_r0;
-    u32 temp_r3;
+#define SampleEffectAction Func_02003b7e
+#define SampleEffectOffset Func_02003bac
+#define SampleEffectTimer Func_02003bba
+#define RunEffectAction3 Func_02003bcc
+#define RunEffectAction4 Func_02003bd6
+#define UpdateResource3a8Effect Func_02000040
 
-    if (M2C_FIELD(arg0, s16 *, 0x66) == 0) {
-        temp_r0 = (u32) (Func_02003b7e() * 8) >> 0x10;
-        switch (temp_r0) {
+s32 UpdateResource3a8Effect(struct Resource3a8Effect *effect) {
+    u32 action;
+    u32 next_timer;
+
+    if (effect->action_timer == 0) {
+        action = (u32) (SampleEffectAction() * 8) >> 0x10;
+        switch (action) {
         case 0:
-            Func_02003bcc(arg0, 3);
+            RunEffectAction3(effect, 3);
             break;
         case 1:
-            Func_02003bd6(arg0, 4);
+            RunEffectAction4(effect, 4);
             break;
         case 3:
         case 4:
-            M2C_FIELD(arg0, u16 *, 6) += (u32) (Func_02003bac() << 0xF) >> 0x10;
+            effect->unknown_06 += (u32) (SampleEffectOffset() << 0xF) >> 0x10;
             break;
         }
-        temp_r3 = (u32) (Func_02003bba() * 0x50) >> 0x10;
-        M2C_FIELD(arg0, s16 *, 0x66) = (s16) temp_r3;
-        if (temp_r3 != 0) {
-            goto block_10;
+        next_timer = (u32) (SampleEffectTimer() * 0x50) >> 0x10;
+        effect->action_timer = (s16) next_timer;
+        if (next_timer != 0) {
+            goto decrement_timer;
         }
     } else {
-block_10:
-        --M2C_FIELD(arg0, s16 *, 0x66);
+decrement_timer:
+        --effect->action_timer;
     }
     return 1;
 }

@@ -1,114 +1,102 @@
 #include "types.h"
-
-union Slot {
-    s32 w;
-    struct { s16 lo, hi; } h;
-};
-
-struct Obj {
-    u8 pad00[6];
-    u16 field06;
-    union Slot u08;
-    s32 field0c;
-    union Slot u10;
-    u8 pad14[0x22 - 0x14];
-    u8 field22;
-    u8 pad23[1];
-    s32 field24;
-    u8 pad28[4];
-    s32 field2c;
-    s32 field30;
-    s32 field34;
-    s32 field38;
-    u8 pad3c[4];
-    s32 field40;
-    u8 pad44[0x59 - 0x44];
-    u8 field59;
-    u8 pad5a[0x62 - 0x5a];
-    u8 field62;
-};
+#include "staged_actor.h"
 
 extern u32 Data_0200d0e8[];
 
-extern struct Obj *Func_02005230(s32 arg0);
-extern struct Obj *Func_020006e6(s32 *arg0, struct Obj *arg1);
-extern struct Obj *Func_02000712(s32 *arg0, struct Obj *arg1);
-extern struct Obj *Func_0200073e(s32 *arg0, struct Obj *arg1);
-extern s32 Func_0200528c(struct Obj *arg0, s32 *arg1);
-extern void Func_0200523c(struct Obj *arg0, s32 arg1);
+extern struct StagedActor *Func_02005230(s32 arg0);
+extern struct StagedActor *Func_020006e6(s32 *arg0, struct StagedActor *arg1);
+extern struct StagedActor *Func_02000712(s32 *arg0, struct StagedActor *arg1);
+extern struct StagedActor *Func_0200073e(s32 *arg0, struct StagedActor *arg1);
+extern s32 Func_0200528c(struct StagedActor *arg0, s32 *arg1);
+extern void Func_0200523c(struct StagedActor *arg0, s32 arg1);
 extern void Func_02005214(s32 arg0);
 extern void Func_02005472(s32 arg0);
-extern void Func_0200528a(struct Obj *arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void Func_0200529a(struct Obj *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200528a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void Func_0200529a(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void Func_020052a8();
 extern void Func_02005494(void);
 
-void Func_02000374(void) {
-    s32 buf[3];
-    struct Obj *a;
-    struct Obj *b;
-    struct Obj *p;
-    s32 k;
-    u32 w;
-    s32 c;
-    s32 z;
+#define StagedActorDirectionSteps Data_0200d0e8
+#define GetStagedActor Func_02005230
+#define FindActorAtPosition Func_020006e6
+#define FindActorAtForwardPosition Func_02000712
+#define FindActorAbovePosition Func_0200073e
+#define CheckStagedActorMove Func_0200528c
+#define SetStagedActorMode Func_0200523c
+#define WaitSceneFrames Func_02005214
+#define PlaySoundCue Func_02005472
+#define SetStagedActorMoveTarget Func_0200528a
+#define SetLeadActorMoveTarget Func_0200529a
+#define UpdateStagedActorState Func_020052a8
+#define FinalizeStagedActorUpdate Func_02005494
+#define RunStagedActorTransition Func_02000374
 
-    a = Func_02005230(0);
-    k = a->field06 >> 12;
-    w = Data_0200d0e8[k];
-    buf[0] = a->u08.w + (w & 0xffff0000);
-    buf[1] = a->field0c;
-    w <<= 16;
-    buf[2] = a->u10.w + w;
-    b = Func_020006e6(buf, a);
-    if (b == 0) return;
+void RunStagedActorTransition(void) {
+    s32 target_position[3];
+    struct StagedActor *leader;
+    struct StagedActor *actor;
+    struct StagedActor *blocking_actor;
+    s32 direction_index;
+    u32 packed_step;
+    s32 move_rate;
+    s32 transition_busy;
 
-    w = Data_0200d0e8[k];
-    buf[0] = b->u08.w + (w & 0xffff0000);
-    buf[1] = b->field0c;
-    w <<= 16;
-    buf[2] = b->u10.w + w;
-    p = Func_02000712(buf, b);
-    if (p != 0 && (p->field59 & 1) != 0) return;
+    leader = GetStagedActor(0);
+    direction_index = leader->direction_and_kind >> 12;
+    packed_step = StagedActorDirectionSteps[direction_index];
+    target_position[0] = leader->x.value + (packed_step & 0xffff0000);
+    target_position[1] = leader->y;
+    packed_step <<= 16;
+    target_position[2] = leader->z.value + packed_step;
+    actor = FindActorAtPosition(target_position, leader);
+    if (actor == 0) return;
 
-    buf[0] = b->u08.w;
-    buf[1] = b->field0c + 0x100000;
-    buf[2] = b->u10.w;
-    p = Func_0200073e(buf, b);
-    if (p != 0 && (p->field59 & 1) != 0) return;
+    packed_step = StagedActorDirectionSteps[direction_index];
+    target_position[0] = actor->x.value + (packed_step & 0xffff0000);
+    target_position[1] = actor->y;
+    packed_step <<= 16;
+    target_position[2] = actor->z.value + packed_step;
+    blocking_actor = FindActorAtForwardPosition(target_position, actor);
+    if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0) return;
 
-    b->field22 = 2;
-    w = Data_0200d0e8[k];
-    buf[0] = b->u08.w + (w & 0xffff0000);
-    buf[1] = b->field0c;
-    w <<= 16;
-    buf[2] = b->u10.w + w;
-    if (Func_0200528c(b, buf) > 0) return;
+    target_position[0] = actor->x.value;
+    target_position[1] = actor->y + 0x100000;
+    target_position[2] = actor->z.value;
+    blocking_actor = FindActorAbovePosition(target_position, actor);
+    if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0) return;
 
-    z = b->field62;
-    if (z != 0) return;
+    actor->transition_mode = 2;
+    packed_step = StagedActorDirectionSteps[direction_index];
+    target_position[0] = actor->x.value + (packed_step & 0xffff0000);
+    target_position[1] = actor->y;
+    packed_step <<= 16;
+    target_position[2] = actor->z.value + packed_step;
+    if (CheckStagedActorMove(actor, target_position) > 0) return;
 
-    Func_0200523c(a, 8);
-    c = 0x3333;
-    Func_02005214(15);
-    Func_02005472(185);
-    b->field30 = c;
-    b->field34 = c;
-    Func_0200528a(b, buf[0], buf[1], buf[2]);
-    a->field30 = c;
-    a->field34 = c;
-    Func_0200529a(a, buf[0], buf[1], buf[2]);
-    Func_020052a8(b);
-    Func_02005494();
-    b->u08.w = buf[0];
-    b->u10.w = buf[2];
-    b->field24 = z;
-    b->field2c = z;
-    a->field38 = 0x80000000;
-    a->field40 = 0x80000000;
-    a->field24 = z;
-    a->field2c = z;
-    a->u08.w = a->u08.h.hi << 16;
-    a->u10.w = a->u10.h.hi << 16;
-    Func_020052a8(a, 1);
+    transition_busy = actor->transition_busy;
+    if (transition_busy != 0) return;
+
+    SetStagedActorMode(leader, 8);
+    move_rate = 0x3333;
+    WaitSceneFrames(15);
+    PlaySoundCue(185);
+    actor->move_rate_x = move_rate;
+    actor->move_rate_z = move_rate;
+    SetStagedActorMoveTarget(actor, target_position[0], target_position[1], target_position[2]);
+    leader->move_rate_x = move_rate;
+    leader->move_rate_z = move_rate;
+    SetLeadActorMoveTarget(leader, target_position[0], target_position[1], target_position[2]);
+    UpdateStagedActorState(actor);
+    FinalizeStagedActorUpdate();
+    actor->x.value = target_position[0];
+    actor->z.value = target_position[2];
+    actor->unknown_24 = transition_busy;
+    actor->unknown_2c = transition_busy;
+    leader->unknown_38 = 0x80000000;
+    leader->unknown_40 = 0x80000000;
+    leader->unknown_24 = transition_busy;
+    leader->unknown_2c = transition_busy;
+    leader->x.value = leader->x.parts.cell << 16;
+    leader->z.value = leader->z.parts.cell << 16;
+    UpdateStagedActorState(leader, 1);
 }

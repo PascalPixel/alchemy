@@ -893,7 +893,14 @@ fn canonicalize_with_missing(path: &Path) -> Result<PathBuf, String> {
 
 fn output_location(output: &Path) -> Result<(PathBuf, Vec<OsString>), String> {
     let resolved = canonicalize_with_missing(output)?;
+    let repository_root = canonicalize_with_missing(root())?;
     let repository_out = canonicalize_with_missing(&root().join("out"))?;
+    if resolved.starts_with(&repository_root) && !resolved.starts_with(&repository_out) {
+        return Err(format!(
+            "refusing output path {}: repository outputs must be under out/",
+            output.display()
+        ));
+    }
     let temporary_roots = [std::env::temp_dir(), PathBuf::from("/tmp")]
         .into_iter()
         .filter_map(|path| fs::canonicalize(path).ok())

@@ -670,6 +670,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(STRICT_ADDSI_IMM_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-strict-addsi-imm"]);
     }
+    if has(SEXTQI_MINUEND_BASE_CONFLICT_OVERLAY_SOURCES, key) {
+        push!(&["-fsextqi-minuend-base-conflict"]);
+    }
     if has(ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-order-zero-arg1-before-nonzero-arg0"]);
     }

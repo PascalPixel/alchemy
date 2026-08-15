@@ -161,6 +161,10 @@ pub static STRICT_ADDSI_IMM_OVERLAY_SOURCES: &[&str] = &[
     "semantic/080bbb0c.c",
     "exact/080bbb0c.c",
 ];
+pub static SEXTQI_MINUEND_BASE_CONFLICT_OVERLAY_SOURCES: &[&str] = &[
+    "semantic/080bbb0c.c",
+    "exact/080bbb0c.c",
+];
 pub static ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002f14.c",
     "exact/resource_373_c_02002f14.c",

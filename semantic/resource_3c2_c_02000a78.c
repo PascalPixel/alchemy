@@ -66,24 +66,23 @@ u8 *Func_0200165e();
  * `ldr r3,[pc] / ldr r1,[r3]`. */
 extern u8 *Data_03001ebc;
 
-static void Configure_02000a78(u8 *record)
-{
-    u8 *sub;
+typedef struct SceneState_02000240 {
+    u8 unknown_000[450];
+    s16 selector;
+} SceneState_02000240;
 
-    sub = (u8 *)*(void **)(record + 0x50);
-    sub[38] = 0;
-
-    sub = (u8 *)*(void **)(record + 0x50);
-    *(s16 *)(sub + 30) = 0x4000;
-}
+extern SceneState_02000240 Data_02000240;
 
 s32 Func_02000a78(void)
 {
     u8 *workspace;
     u8 *record;
     u8 *sub;
+    s32 zero;
+    s32 second_zero;
+    s32 angle;
 
-    if (*(s16 *)((u8 *)0x02000240 + 450) == 90) {
+    if (Data_02000240.selector == 90) {
         Func_020015d0(0x96f);
     }
 
@@ -91,22 +90,26 @@ s32 Func_02000a78(void)
     *(s32 *)(workspace + 448) = 521;
     *(s32 *)(workspace + 456) = 24;
 
-    record = Func_02001614(12);
-    record[89] |= 4;
+    Func_02001614(12)[89] |= 4;
 
-    record = Func_02001628(13);
-    record[89] |= 4;
+    zero = 0;
+    Func_02001628(13)[89] |= 4;
 
     record = Func_02001636(20);
-    Configure_02000a78(record);
+    ((u8 *)*(void * volatile *)(record + 0x50))[38] = zero;
+    angle = 0x4000;
+    *(s16 *)((u8 *)*(void * volatile *)(record + 0x50) + 30) = angle;
+    second_zero = 0;
     /* The +0x50 sub-record is reloaded a third time for the field-9 update. */
-    sub = (u8 *)*(void **)(record + 0x50);
-    sub[9] = (u8)((sub[9] & ~0x0c) | 4);
+    sub = (u8 *)*(void * volatile *)(record + 0x50);
+    sub[9] &= ~0x0c;
+    sub[9] |= 4;
 
     record = Func_0200165e(21);
-    Configure_02000a78(record);
+    ((u8 *)*(void * volatile *)(record + 0x50))[38] = second_zero;
+    *(s16 *)((u8 *)*(void * volatile *)(record + 0x50) + 30) = angle;
     record[85] = 2;
-    *(s32 *)(record + 12) = 0;
+    *(s32 *)(record + 12) = zero;
 
     return 0;
 }

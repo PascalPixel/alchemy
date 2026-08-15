@@ -50,18 +50,19 @@ extern u8 Data_020088f8[];
 
 void Func_02000214(void)
 {
-    volatile u32 *dma3 = (volatile u32 *)0x040000d4;
-    volatile u32 *held = (volatile u32 *)0x03001c94;
-    volatile u32 *pressed = (volatile u32 *)0x03001b04;
+    volatile u32 *dma3;
+    u32 dmaSource;
+    u32 dmaDestination;
+    u32 dmaControl;
+    volatile u32 *held;
+    volatile u32 *pressed;
     s32 window;
     s32 preview;
     s32 cursor;
     s32 redraw;
     s32 direction;
     s32 masked;
-    s32 value;
     u32 keys;
-    u8 *entry;
 
     direction = 0;
     Func_080f9010(0x70);
@@ -73,12 +74,19 @@ void Func_02000214(void)
     redraw = 1;
 
     /* DMA3SAD is rewritten between bursts, so both transfers start there. */
-    dma3[0] = 0x05000200;
-    dma3[1] = 0x050001c0;
-    dma3[2] = 0x80000010;
-    dma3[0] = 0x050001e8;
-    dma3[1] = 0x050001c0 + 28;
-    dma3[2] = 0x80000001;
+    dma3 = (volatile u32 *)0x040000d4;
+    dmaSource = 0x05000200;
+    dmaDestination = 0x050001c0;
+    dmaControl = 0x80000010;
+    dma3[0] = dmaSource;
+    dma3[1] = dmaDestination;
+    dma3[2] = dmaControl;
+    dmaSource = 0x050001e8;
+    dmaDestination += 28;
+    dmaControl = 0x80000001;
+    dma3[0] = dmaSource;
+    dma3[1] = dmaDestination;
+    dma3[2] = dmaControl;
 
     Func_080000c0(1);
 
@@ -106,6 +114,7 @@ void Func_02000214(void)
             }
         }
 
+        held = (volatile u32 *)0x03001c94;
         keys = *held;
         if ((keys & 1) != 0) {
             if (Func_08077030(cursor) != -1)
@@ -115,12 +124,13 @@ void Func_02000214(void)
         keys = *held;
         if ((keys & 2) != 0) {
             Func_080f9010(0x71);
-            goto close;
+            goto finish;
         }
 
+        pressed = (volatile u32 *)0x03001b04;
         if ((*pressed & 0x40) != 0) {
             cursor -= 1;
-            direction = -1;
+            direction = 255;
             redraw = 1;
             Func_080f9010(0x6f);
         }
@@ -138,7 +148,7 @@ void Func_02000214(void)
         }
         if ((*pressed & 0x20) != 0) {
             cursor -= 10;
-            direction = -1;
+            direction = 255;
             redraw = 1;
             Func_080f9010(0x6f);
         }
@@ -150,28 +160,26 @@ void Func_02000214(void)
         }
         if ((*pressed & 0x200) != 0) {
             cursor -= 30;
-            direction = -1;
+            direction = 255;
             redraw = 1;
             Func_080f9010(0x6f);
         }
 
-        if (direction == -1) {
-            value = cursor + 270;
+        if ((s32)(s8)direction == -1) {
+            s32 value = cursor + 270;
             for (;;) {
                 cursor = Func_030003ac(value, 270);
-                entry = Func_08077018(cursor & 0x1ff);
-                if (*(u16 *)(entry + 6) != 0)
+                if (*(u16 *)(Func_08077018(cursor & 0x1ff) + 6) != 0)
                     break;
                 value = cursor + 0x10d;
             }
         }
 
-        if (direction == 1) {
-            value = cursor + 270;
+        if ((u8)direction == 1) {
+            s32 value = cursor + 270;
             for (;;) {
                 cursor = Func_030003ac(value, 270);
-                entry = Func_08077018(cursor & 0x1ff);
-                if (*(u16 *)(entry + 6) != 0)
+                if (*(u16 *)(Func_08077018(cursor & 0x1ff) + 6) != 0)
                     break;
                 value = cursor + 0x10f;
             }
@@ -179,11 +187,13 @@ void Func_02000214(void)
 
         direction = 0;
         Func_080000c0(1);
-    }
+        continue;
 
-close:
-    Func_08015270(window);
-    Func_080000c0(1);
-    Func_08015018(window, 1);
-    Func_08015018(preview, 1);
+    finish:
+        Func_08015270(window);
+        Func_080000c0(1);
+        Func_08015018(window, 1);
+        Func_08015018(preview, 1);
+        break;
+    }
 }

@@ -58,9 +58,11 @@ void Func_020013d4();
 void Func_020000c8(s32 actor)
 {
     u16 *scene = Func_020012e4(0);
+    u32 facing;
     s32 message;
 
-    if ((((s32)scene[3] + 0x2000) & 0xc000) == 0xc000) {
+    facing = (((u32)scene[3] + 0x2000) & 0xffffc000) << 16;
+    if (facing == 0xc0000000u) {
         Func_020013e2(0x20, actor);
         return;
     }

@@ -286,6 +286,59 @@ Do not erase negative evidence simply to make documentation shorter.
 - Never launch a bounded search without a written structural hypothesis. Two
   consecutive searches with no new structural fact between them end the axis;
   return to the assembly or the RTL dumps before spending further iterations.
+- The build targets at most four compiler configurations, listed under
+  [Build configurations](#build-configurations). A per-file route is not a
+  configuration; it is an admission that the reconstruction is wrong and a flag
+  is standing in for the fix. Adding one is allowed, but it is debt and it is
+  recorded as debt, never as a result.
+
+## Build configurations
+
+Camelot shipped a makefile, not a per-file flag database. The reconstruction
+targets the same shape: **at most four configurations**, each justified by a
+structural property of the code it compiles, never by the identity of a single
+owner.
+
+1. **Thumb with interworking.** The main image and the bulk of the game.
+2. **Thumb without interworking.** Overlay code in the `0200xxxx` EWRAM range,
+   which never interworks with ARM and so needs no veneers. Routed today as
+   `NO_INTERWORK`, covering 14 main stems and 24 overlay entries, every one of
+   them EWRAM-resident.
+3. **agbcc.** The sound engine, 8 sources, a vendored driver from a different
+   toolchain.
+4. **agbcc at `-O1`.** Two of those sound sources. This one is provisional: if
+   both are reconstructed correctly it collapses into configuration 3 and the
+   real answer is three.
+
+There is no ARM-mode configuration. No C owner compiles to ARM, and `-mthumb`
+is never removed by any route. The ROM's ARM code is real but deliberately
+retained as assembly, roughly 24 regions and 9,200 bytes across
+`relocated_arm_runtime_module`, `armv4t_helper_bank`, `gba_arm_entry`,
+`relocated_stack_arm_kernel` and the IWRAM veneers.
+
+Everything beyond those four is overfitting. A routed mode is a claim that the
+original compiler behaved unusually at that owner. That claim is almost always
+false; the likelier explanation is that our C differs from Camelot's and the
+flag is cheaper than finding out how. Modes named after the owner they were
+built to match cannot be real compiler behaviour by construction.
+
+**Measure it, do not estimate it.** Compile the exact corpus against the plain
+baseline and count what stops matching:
+
+```
+cargo run --release --manifest-path tools/dispatch/Cargo.toml -- \
+  compiler compiler_corpus_regression --config baseline.json --sample 0 --jobs 14
+```
+
+with `{"family":"gcc296"}` as the config. Measured 2026-08-15: **1,299 of 1,483
+exact main-image owners (87.6%) compile byte-exact with no per-file routing at
+all.** 184 regress, median 28 differing bytes. Of 192 routed main-image stems,
+182 are load-bearing and only 4 are provably removable, so the table is not
+accumulated cruft; it is real debt against real defects.
+
+That sweep only covers owners already in `exact/`. A semantic owner absent from
+the regression list has not been proved routing-free, it has merely not been
+tested, so never prune a route on that basis.
 
 ## The compiler fork
 

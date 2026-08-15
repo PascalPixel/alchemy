@@ -130,9 +130,12 @@ extern u8 Data_02008914[];
 
 void Func_020004b0(void)
 {
-    u32 *dma3 = (u32 *)0x040000d4;
-    s32 *held = (s32 *)0x03001c94;
-    s32 *pressed = (s32 *)0x03001b04;
+    volatile u32 *dma3;
+    u32 dma_source;
+    u32 dma_destination;
+    u32 dma_control;
+    volatile s32 *held;
+    volatile s32 *pressed;
     s32 window;                 /* r7 */
     s32 preview;                /* r9 — see the defect note above */
     s32 counter;                /* r6 */
@@ -149,12 +152,19 @@ void Func_020004b0(void)
     redraw = 1;
 
     /* Two DMA3 bursts; r3 is rewound 12 bytes, so both start at DMA3SAD. */
-    dma3[0] = 0x05000200;
-    dma3[1] = 0x050001c0;
-    dma3[2] = 0x80000010;
-    dma3[0] = 0x050001e8;
-    dma3[1] = 0x050001c0 + 28;
-    dma3[2] = 0x80000001;
+    dma3 = (volatile u32 *)0x040000d4;
+    dma_source = 0x05000200;
+    dma_control = 0x80000010;
+    dma3[0] = dma_source;
+    dma_destination = 0x050001c0;
+    dma3[1] = dma_destination;
+    dma3[2] = dma_control;
+    dma_destination += 28;
+    dma_source = 0x050001e8;
+    dma_control = 0x80000001;
+    dma3[0] = dma_source;
+    dma3[1] = dma_destination;
+    dma3[2] = dma_control;
 
     Func_02000cde(1);
 
@@ -177,52 +187,50 @@ loop:
             Func_02000d72(masked, window, 0, 48);
         }
 
-        if ((*held & 2) == 0) {
-            goto interact;
+        held = (volatile s32 *)0x03001c94;
+        if ((*held & 2) != 0) {
+            Func_02000e4c(0x71);
+            Func_02000dba(window);
+            Func_02000d78(1);
+            Func_02000d90(window, 1);
+            Func_02000d98(preview, 1);
+            return;
         }
 
-close_panel:
-        Func_02000e4c(0x71);
-        Func_02000dba(window);
-        Func_02000d78(1);
-        Func_02000d90(window, 1);
-        Func_02000d98(preview, 1);
-        return;
-
-interact:
+        pressed = (volatile s32 *)0x03001b04;
         if ((*pressed & 0x40) != 0) {
+            direction = 255;
             counter -= 1;
-            direction = -1;
             redraw = 1;
             Func_02000e94(0x6f);
         }
         if ((*pressed & 0x80) != 0) {
-            counter += 1;
             direction = 1;
+            counter += 1;
             redraw = 1;
             Func_02000eac(0x6f);
         }
         if ((*pressed & 0x10) != 0) {
-            counter += 10;
             direction = 1;
+            counter += 10;
             redraw = 1;
             Func_02000ec4(0x6f);
         }
         if ((*pressed & 0x20) != 0) {
+            direction = 255;
             counter -= 10;
-            direction = -1;
             redraw = 1;
             Func_02000ede(0x6f);
         }
         if ((*pressed & 0x100) != 0) {          /* 128 << 1 */
-            counter += 30;
             direction = 1;
+            counter += 30;
             redraw = 1;
             Func_02000ef8(0x6f);
         }
         if ((*pressed & 0x200) != 0) {          /* 128 << 2 */
+            direction = 255;
             counter -= 30;
-            direction = -1;
             redraw = 1;
             Func_02000f14(0x6f);
         }

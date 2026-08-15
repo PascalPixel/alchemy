@@ -50,7 +50,12 @@
  */
 
 /* RAM globals, spelled unshifted as the byte-exact siblings do. */
-extern u8 Data_02000240[];
+struct SceneState {
+    u8 filler_000[450];
+    s16 gate;
+};
+
+extern struct SceneState Data_02000240;
 
 /* Old-style declarations are mandatory in overlay sources. */
 void Func_02001530();
@@ -78,15 +83,16 @@ void Func_0200399e();
 s32 Func_02000c68(void)
 {
     u8 *obj;
+    s32 zero;
 
     Func_02001530(10);
 
     if (Func_0200386c(0x200) != 0) {
-        obj[0x23] = 2;
-        obj = Func_020038a6(10);
+        Func_020038a6(10)[0x23] = 2;
 
         Func_02003878(0, 17, 2, 4, 19, 17);
-        Func_02000ef4(2, 20, 17, 1, 4, 0);
+        zero = 0;
+        Func_02000ef4(2, 20, 17, 1, 4, zero);
 
         obj = Func_020038da(10);
         Func_020038a8(obj, 0);
@@ -95,7 +101,7 @@ s32 Func_02000c68(void)
     Func_02001582(8);
     Func_02001588(9);
 
-    if (*(s16 *)(Data_02000240 + 450) == 4) {
+    if (Data_02000240.gate == 4) {
         if (Func_020038d2(0x843) == 0) {
             Func_02001a22();
         }

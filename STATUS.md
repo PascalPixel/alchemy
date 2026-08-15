@@ -1,11 +1,11 @@
 # Current status
 
-Snapshot: 2026-08-14. This is the live status surface. Dated investigations and
+Snapshot: 2026-08-15. This is the live status surface. Dated investigations and
 their original measurements are archived under [`docs/history/`](docs/history/).
 
 ## Progress
 
-- **Exact C:** 377,422 / 1,347,336 executable bytes (**28.01%**).
+- **Exact C:** 380,540 / 1,347,336 executable bytes (**28.24%**).
 - **Public DONE:** **33%**, combining Exact C with audited permanent assembly.
 - The generated coverage maps and dashboard are the live per-overlay source of
   truth; this page records the current contributor frontier rather than a
@@ -13,6 +13,30 @@ their original measurements are archived under [`docs/history/`](docs/history/).
 - Exact C is the contributor progress counter. DONE answers the public
   completion question by also including code deliberately retained as permanent
   assembly. Semantic C, function counts, and queue sizes are diagnostics.
+
+## Routing debt
+
+The build should have four compiler configurations
+([`AGENTS.md`](AGENTS.md#build-configurations)). It has **133**, plus the
+baseline, spread over 181 routing lists and 1,120 per-source entries.
+
+Measured 2026-08-15 by compiling the exact corpus against the plain baseline:
+
+- **1,299 of 1,483 exact main-image owners (87.6%) need no per-file routing.**
+  The corpus is mostly genuinely reconstructed, not flag-matched.
+- **184 regress**, median 28 differing bytes, maximum 273. Each is a
+  reconstruction defect that a routed flag currently conceals.
+- Of 192 routed main-image stems, **182 are load-bearing**; only 4 are provably
+  removable. There is nothing meaningful to prune. The gap closes by fixing
+  sources, not by deleting routes.
+- The overlay side, 1,080 of the 1,120 entries, is **unmeasured**. An empirical
+  strip-and-restore stalled at `resource_3ce`, which still failed after its own
+  entries were restored, so its dependency is not captured by those entries
+  alone. Measuring the overlay half is the next useful step.
+
+The 184 regressions are the highest-quality reconstruction targets in the
+project: the correct bytes are already known, the deltas are small and
+localised, and each fix retires a configuration rather than adding one.
 
 ## Working loop
 

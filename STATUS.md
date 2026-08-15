@@ -364,3 +364,29 @@ The authoritative measurements are
 `out/decomp/overlays.json`. Preserve clean-room rules from
 [`PROVENANCE.md`](PROVENANCE.md), compiler evidence in [`LAWS.md`](LAWS.md),
 and exhausted axes in [`SANCTUM.md`](SANCTUM.md).
+
+## Exact-C humanization frontier
+
+Humanization is a byte-preserving maintenance campaign, not progress credit.
+Rank families by locally evidenced shared types and placeholder density; do not
+mass-rename address symbols or infer story identities. Every batch must retain
+the ABI spellings at declarations, replace only demonstrated roles, and pass
+the complete byte-identical build.
+
+The 2026-08-15 baseline covers 4,169 exact owners and contains 4,357 positional
+argument spellings, 1,003 `M2C_FIELD` uses, and 2,193 mechanical
+`var`/`temp`/`tmp` spellings. These counts are navigation signals rather than
+quality gates: an honest `unknown_` remains preferable to an unsupported name.
+
+| Order | Family | Measured reason | Next bounded change |
+|---:|---|---|---|
+| 1 | Battle object runtime (`080b7b30-080b7f70`) | Shared slot/object/record layout recurs throughout exact and semantic battle code. | Replace owner-local offset shells with `MotionObject` and `BattleObjectSlot`; preserve raw function ABI names. |
+| 2 | Staged actor probe family (`resource_373/389/391/392/393`) | Thirteen homologous owners duplicate 54 placeholder-heavy fields each. | Graduate only cross-owner-proved actor, rectangle, and step-table fields into one shared header. |
+| 3 | `080933f8` / `080970f8` | Highest main-image placeholder densities, 82 and 71 measured tokens. | Reconstruct each local layout from its complete exact call perimeter before naming fields. |
+| 4 | `080b6b40` / `080b9d34` | Dense battle-runtime positional names adjacent to the shared object family. | Reuse the proved slot/record vocabulary and keep uncertain command fields opaque. |
+| 5 | `080a90bc` | Large readable owner still carries 56 placeholder tokens and address-only calls. | Graduate its guarded state/session layouts and add cautious local behavioral aliases. |
+
+Completed first batch: `080b7b30`, `080b7e24`, `080b7e60`, and `080b7f70`
+now share the guarded motion-object model; raw offset macros and positional
+locals were removed while the authoritative full-image comparison remained
+byte-identical.

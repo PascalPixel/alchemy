@@ -177,7 +177,6 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     u32 secondary_pp_damage;
     u32 actor_pp_recovery;
     u8 recovery_roll;
-    s32 effect_case;
     s32 attack_down_one;
     s32 attack_down_two;
     s32 attack_up_one;
@@ -416,18 +415,17 @@ loop_63:
                 }
             }
         } else {
-            effect_case = action->effect;
-            if (effect_case == 0x23) {
+            if (action->effect == 0x23) {
                 halve_defense = 1;
-            } else if (effect_case == 0x22) {
+            } else if (action->effect == 0x22) {
                 leave_one_hp = 1;
-            } else if (effect_case == 0x1B) {
+            } else if (action->effect == 0x1B) {
                 skip_primary_effect = 1;
-            } else if (effect_case == 0x37) {
+            } else if (action->effect == 0x37) {
                 if (M2C_FIELD(actor_state, s16, 0x38) != 0) {
                     BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, (u32) actor_id);
                 }
-            } else if (effect_case == 0x20) {
+            } else if (action->effect == 0x20) {
                 if (M2C_FIELD(target_state, s16, 0x3A) != 0) {
                     action_family = 0xA;
                 } else {

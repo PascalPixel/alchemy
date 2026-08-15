@@ -59,7 +59,9 @@
 
 struct Sub {
     u8 pad00[9];
-    u8 f09;
+    u8 f09_a : 2;
+    u8 f09_b : 2;
+    u8 f09_c : 4;
 };
 
 struct Obj {
@@ -161,6 +163,7 @@ void Func_020003c8(void)
     u32 i;
     s32 x;
     s32 speed;
+    s32 unit;
 
     Func_02002e06();
 
@@ -213,25 +216,29 @@ void Func_020003c8(void)
     Func_02003122(188);
 
     /* Ten objects along a line: x starts at 148.0 and steps by 4.0. */
+    i = 0;
+    unit = 128;
+    unit <<= 9;
     x = 0x00940000;
-    for (i = 0; i <= 9; i++) {
-        x = x + 0x40000;
+    while (i <= 9) {
         p = Func_02002f44(222, x, 0, 0x01020000);
         if (p != 0) {
             p->f55 = 0;
             Func_02002f90(p, 0);
             sub = p->f50;
-            p->f24 = speed;
-            sub->f09 = sub->f09 & ~13;
+            sub->f09_b = 0;
             p->f64 = (u16)((((u32)(Func_02002f4a() * 40)) >> 16) + 40);
-            p->f2c = 0x10000;
+            speed = (s32)(((i & 3) << 16) + unit) >> 1;
+            p->f2c = unit;
+            p->f24 = speed;
             if ((i & 1) != 0) {
                 p->f24 = -speed;
             }
             Func_02002f8e(p, 1);
             Func_02002f9e(p, Data_0200ae20);
-            speed = (s32)(((i & 3) << 16) + 0x10000) >> 1;
         }
+        x = x + 0x40000;
+        i++;
     }
 
     Func_02002fee(91, 19, 72, 9, 5, 7);

@@ -108,62 +108,62 @@ extern u8 Data_020088d0[];
 void Func_020000ec(void)
 {
     u8 *record;
+    volatile s32 *work;
+    volatile u32 *pressed;
     s32 window;
     s32 redraw;
+    s32 caption;
 
-    record = Func_02000950(*(s32 *)(Data_02000240 + 500));
+    work = (volatile s32 *)Data_02000240;
+    record = Func_02000950(work[125]);
     window = Func_02000902(0, 0, 30, 9, 2);
 
-    Func_02000922(0x0c20, window, 0, 0);
-    Func_02000930(0x0c21, window, 0, 16);
-    Func_0200093e(0x0c22, window, 0, 32);
-
+    caption = 0x0c20;
+    Func_02000922(caption, window, 0, 0);
+    Func_02000930(caption + 1, window, 0, 16);
+    caption += 2;
     redraw = 1;
+    Func_0200093e(caption, window, 0, 32);
 
 loop:
     {
-        u32 pressed;
-
         if (redraw != 0) {
             Func_02000978(window);
             Func_02000964(record, window, 0, 48);
             Func_02000978(Data_020088d0, window, 48, 48);
-            Func_0200099c(record[15], 0, window, 72, 48);
             redraw = 0;
+            Func_0200099c(record[15], 0, window, 72, 48);
         }
 
-        pressed = *(u32 *)0x03001c94;
+        pressed = (volatile u32 *)0x03001c94;
 
-        if ((pressed & 8) != 0 || (pressed & 4) != 0) {
+        if ((*pressed & 8) != 0 || (*pressed & 4) != 0) {
             Func_02000250(5);
             Func_02000a5e(93);
             redraw = 1;
         }
 
-        if ((pressed & 1) != 0) {
+        if ((*pressed & 1) != 0) {
             Func_02000268(1);
             Func_02000a76(91);
             redraw = 1;
         }
 
-        if ((pressed & 2) == 0) {
-            goto scheduler;
+        if ((*pressed & 2) != 0) {
+            Func_02000a88(113);
+            Func_020009f6(window);
+            Func_020009b4(1);
+            Func_020009cc(window, 1);
+
+            /* Deliberate non-sequential refresh order. */
+            Func_02000a32(0);
+            Func_02000a38(1);
+            Func_02000a3e(3);
+            Func_02000a44(2);
+            return;
         }
+
+        Func_020009e6(1);
+        goto loop;
     }
-
-    Func_02000a88(113);
-    Func_020009f6(window);
-    Func_020009b4(1);
-    Func_020009cc(window, 1);
-
-    /* Deliberate non-sequential refresh order. */
-    Func_02000a32(0);
-    Func_02000a38(1);
-    Func_02000a3e(3);
-    Func_02000a44(2);
-    return;
-
-scheduler:
-    Func_020009e6(1);
-    goto loop;
 }

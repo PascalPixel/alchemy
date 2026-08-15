@@ -137,9 +137,12 @@ void Func_0200205e();
 
 void Func_02000cf4(void)
 {
-    u32 *dma3 = (u32 *)0x040000d4;
-    s32 *held = (s32 *)0x03001c94;
-    s32 *pressed = (s32 *)0x03001b04;
+    volatile u32 *dma3;
+    u32 dma_source;
+    u32 dma_destination;
+    u32 dma_control;
+    volatile s32 *held;
+    volatile s32 *pressed;
     s32 window;                 /* r7 */
     s32 preview;                /* sl */
     s32 counter;                /* r6 */
@@ -155,12 +158,19 @@ void Func_02000cf4(void)
     redraw = 1;
 
     /* Two DMA3 bursts; r3 is rewound 12 bytes, so both start at DMA3SAD. */
-    dma3[0] = 0x05000200;
-    dma3[1] = 0x050001c0;
-    dma3[2] = 0x80000010;
-    dma3[0] = 0x050001e8;
-    dma3[1] = 0x050001c0 + 28;
-    dma3[2] = 0x80000001;
+    dma3 = (volatile u32 *)0x040000d4;
+    dma_source = 0x05000200;
+    dma_control = 0x80000010;
+    dma3[0] = dma_source;
+    dma_destination = 0x050001c0;
+    dma3[1] = dma_destination;
+    dma3[2] = dma_control;
+    dma_destination += 28;
+    dma_source = 0x050001e8;
+    dma_control = 0x80000001;
+    dma3[0] = dma_source;
+    dma3[1] = dma_destination;
+    dma3[2] = dma_control;
 
     Func_02001ed4(1);
 
@@ -188,6 +198,7 @@ void Func_02000cf4(void)
             }
         }
 
+        held = (volatile s32 *)0x03001c94;
         if ((*held & 1) != 0) {
             if (Func_02002028(counter) == -1)
                 goto confirm;
@@ -200,6 +211,7 @@ void Func_02000cf4(void)
             goto finish;
         }
 
+        pressed = (volatile s32 *)0x03001b04;
         if ((*pressed & 0x40) != 0) {
             counter -= 1;
             redraw = 1;
@@ -232,11 +244,13 @@ void Func_02000cf4(void)
         }
 
         Func_02002030(1);
-    }
+        continue;
 
-finish:
-    Func_020020a0(window);
-    Func_0200203e(1);
-    Func_02002056(window, 1);
-    Func_0200205e(preview, 1);
+    finish:
+        Func_020020a0(window);
+        Func_0200203e(1);
+        Func_02002056(window, 1);
+        Func_0200205e(preview, 1);
+        break;
+    }
 }

@@ -1,52 +1,102 @@
-/* resource_393 0x020008c0-0x020009db: redraw one staged actor's footprint. */
 #include "types.h"
 
-u8 *Func_0808a080(s32 slot);
-void Func_080091c0(s32 worldX, s32 worldZ, s32 width, s32 height,
-                   s32 tileX, s32 tileZ);
-s32 Func_02000244(s32 layer, s32 tileX, s32 tileZ, s32 width, s32 height,
-                   s32 alpha);
+/*
+ * resource_393 0x020008c0-0x020009db: redraw one staged actor's footprint.
+ * The stack work record and the first-element special case are both visible in
+ * the ROM CFG and match the independently reconstructed resource_392 sibling.
+ */
+
+extern s32 *Data_03001e70;
+extern s32 Data_02008f50[];
+extern s32 Data_02008f68[];
+
+extern s32 *Func_02001756(s32 slot);
+extern void Func_020017dc(s32 tileX, s32 tileZ, s32 width, s32 height,
+                          s32 worldX, s32 worldZ);
+extern s32 Func_02000bf0(s32 layer, s32 tileX, s32 tileZ, s32 width,
+                         s32 height, s32 alpha);
+extern s32 Func_02000c02(s32 layer, s32 tileX, s32 tileZ, s32 width,
+                         s32 height, s32 alpha);
+
+struct Work393 {
+    s32 slot;
+    s32 unused;
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 w;
+};
 
 s32 Func_020008c0(s32 slot)
 {
-    u8 *world = *(u8 **)0x03001e70;
-    u8 *actor = Func_0808a080(slot);
-    s16 kind = **(s16 **)(*(u8 **)(actor + 80) + 40);
-    s32 *ids = (s32 *)0x02008f50;
-    u32 index;
-    s32 *delta;
-    s32 dx0;
-    s32 dz0;
-    s32 dx1;
-    s32 dz1;
-    s32 width;
+    s32 *world = Data_03001e70;
+    struct Work393 work;
+    s32 *actor;
+    s32 i;
+    s32 index;
     s32 height;
-    s32 tileX;
-    s32 tileZ;
-    s32 baseX;
-    s32 baseZ;
+    s32 width;
+    s32 temporary;
+    s32 tableIndex;
+    s32 finalHeight;
+    s32 worldX;
+    s32 worldZ;
+    s32 rawWidth;
 
-    for (index = 0; index < 6; index++) {
-        if (kind == ids[index])
-            break;
+    actor = Func_02001756(slot);
+    i = 0;
+    if (*(s16 *)((s32 *)actor[20])[10] == Data_02008f50[i]) {
+        work.slot = i;
+    } else {
+        for (;;) {
+            work.slot = 7;
+            i = i + 1;
+            if ((u32)i > 5)
+                break;
+            if (*(s16 *)((s32 *)actor[20])[10] == Data_02008f50[i]) {
+                work.slot = i;
+                break;
+            }
+        }
     }
-    if (index == 6)
+    index = work.slot;
+    if ((u32)index > 6)
         return 0;
 
-    delta = (s32 *)0x02008f68 + index * 4;
-    dz0 = delta[1] < 0 ? -delta[1] : delta[1];
-    dz1 = delta[3] < 0 ? -delta[3] : delta[3];
-    height = (dz0 + dz1) >> 4;
-    dx0 = delta[0] < 0 ? -delta[0] : delta[0];
-    dx1 = delta[2] < 0 ? -delta[2] : delta[2];
-    tileX = (*(s32 *)(actor + 8) + (delta[0] << 16)) >> 20;
-    width = (dx0 + dx1) >> 4;
-    tileZ = (*(s32 *)(actor + 16) + (delta[1] << 16)) >> 20;
-    baseX = *(s32 *)(world + 316) >> 20;
-    baseZ = *(s32 *)(world + 320) >> 20;
+    work.x = actor[2];
+    work.y = actor[3];
+    work.z = actor[4];
 
-    Func_080091c0(baseX + tileX, baseZ + tileZ, width, height, tileX, tileZ);
-    Func_02000244(0, tileX, tileZ, width, height, 255);
-    Func_02000244(2, tileX, tileZ, width, height, 255);
+    tableIndex = index * 4;
+    temporary = Data_02008f68[tableIndex + 1];
+    if (temporary < 0)
+        temporary = -temporary;
+    height = Data_02008f68[tableIndex + 3];
+    if (height < 0)
+        height = -height;
+    finalHeight = (temporary + height) >> 4;
+
+    rawWidth = Data_02008f68[tableIndex];
+    width = rawWidth;
+    if (width < 0)
+        width = -width;
+    temporary = Data_02008f68[tableIndex + 2];
+    if (temporary < 0)
+        temporary = -temporary;
+
+    work.x = work.x + (rawWidth << 16);
+    work.z = work.z + (Data_02008f68[tableIndex + 1] << 16);
+    /* The ROM normalizes x before z, then keeps both values through the call. */
+    work.x = work.x >> 20;
+    work.z = work.z >> 20;
+    width = (width + temporary) >> 4;
+
+    /* Both world-origin scalars are live before either stacked sum is stored. */
+    worldX = world[79] >> 20;
+    worldZ = world[80] >> 20;
+    Func_020017dc(work.x, work.z, width, finalHeight,
+                  worldX + work.x, worldZ + work.z);
+    Func_02000bf0(0, work.x, work.z, width, finalHeight, 255);
+    Func_02000c02(2, work.x, work.z, width, finalHeight, 255);
     return 1;
 }

@@ -66,11 +66,33 @@ void Func_0200076a();
 
 /* In-image halfword: the cached palette slot for this overlay's portrait. */
 extern s16 Data_02008650[];
+extern u8 Value_0000001c;
+
+static __inline__ void Dma3_020001c0(volatile u32 *dma, u32 source,
+                                    u32 destination, u32 control)
+{
+    dma[0] = source;
+    dma[1] = destination;
+    dma[2] = control;
+}
+
+static __inline__ u32 Dma3Status_020001c0(void)
+{
+    volatile u32 *dma = (volatile u32 *)0x040000d4;
+
+    return dma[2];
+}
 
 void Func_020001c0(void)
 {
     s32 handle;
     u8 *source;
+    u32 palette_source;
+    u32 palette_destination;
+    u32 palette_control;
+    volatile u32 *dma;
+    s32 tile_source;
+    s32 tile_bytes;
 
     handle = Func_02000710(1312);       /* 164 << 3 == 32 palette + 1280 tile */
 
@@ -78,17 +100,23 @@ void Func_020001c0(void)
         Data_02008650[0] = (s16)Func_02000744();
     }
 
-    source = Func_0200075c(0x1c);
+    source = Func_0200075c((s32)&Value_0000001c);
     Func_02000742(source, handle);
 
     /* DMA3: 8 words of palette from the head of the scratch. */
-    *(volatile u32 *)0x040000d4 = (u32)handle;
-    *(volatile u32 *)0x040000d8 = 0x050003e0;
-    *(volatile u32 *)0x040000dc = 0x84000008;
+    dma = (volatile u32 *)0x040000d4;
+    palette_source = (u32)handle;
+    palette_destination = 0x050003e0;
+    palette_control = 0x84000008;
+    Dma3_020001c0(dma, palette_source, palette_destination, palette_control);
 
-    Func_02000766(Data_02008650[0], 1280, handle + 32);   /* 160 << 3 */
+    tile_source = handle;
+    tile_bytes = 160;
+    tile_source += 32;
+    tile_bytes <<= 3;
+    Func_02000766(Data_02008650[0], tile_bytes, tile_source);
 
-    while ((*(volatile u32 *)0x040000dc & 0x80000000) != 0) {
+    while ((Dma3Status_020001c0() & 0x80000000) != 0) {
     }
 
     Func_0200076a(handle);

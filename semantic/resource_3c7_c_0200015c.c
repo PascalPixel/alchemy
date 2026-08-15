@@ -50,8 +50,10 @@ void Func_0200143e();
 void Func_0200015c(s32 actor)
 {
     u16 *scene = Func_02001378(0);
+    u32 facing;
 
-    if ((((s32)scene[3] + 0x2000) & 0xc000) == 0xc000) {
+    facing = (((u32)scene[3] + 0x2000) & 0xffffc000) << 16;
+    if (facing == 0xc0000000u) {
         Func_02001476(0x21, actor);
     } else if (Func_0200136c(0x9a7) != 0) {
         Func_02001416(0x28f2);

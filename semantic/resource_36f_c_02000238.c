@@ -63,20 +63,29 @@ extern u16 Data_0200868c[];
 /* In-image: the 18-entry, 12-byte-per-entry sprite request scratch. */
 extern u32 Data_020086a0[];
 
+struct PaletteSlot_02000238 {
+    u16 unknown_00;
+    u16 character_base;
+};
+
 void Func_02000238(void)
 {
-    u32 *write = Data_020086a0;
-    s32 tile = *(u16 *)((u8 *)0x03001b10 + (Data_02008650[0] << 2) + 2) >> 5;
     u32 *submit = Data_020086a0;
-    u32 row;
+    volatile u32 *write = Data_020086a0;
+    struct PaletteSlot_02000238 *palette_slots =
+        (struct PaletteSlot_02000238 *)0x03001b10;
+    u32 character_base = palette_slots[Data_02008650[0]].character_base;
+    u32 x = 136;
+    s32 tile = character_base >> 5;
+    s32 row;
 
     for (row = 0; row <= 17; row++) {
         s32 remaining;
+        s32 y = 232 - ((18 - row) << 3);
 
-        write[1] = (u32)((88 + (row << 3)) << 16) | 136 | 0x8400;   /* 132 << 8 */
-        write[0] = 0;
-        write[2] = 0xf000 | (u32)tile;                              /* 240 << 8 */
-        write += 3;
+        *write++ = 0;
+        *write++ = (u32)y << 16 | x | (132 << 8);
+        *write++ = 0xf000 | (u32)tile;
 
         remaining = (s32)(s16)Data_0200868c[0] / 2 - row;
         if (remaining < 0) {
@@ -87,8 +96,9 @@ void Func_02000238(void)
         }
 
         if (remaining != 0) {
-            Func_02000824(submit, 255);
+            u32 *current = submit;
             submit += 3;
+            Func_02000824(current, 255);
         }
 
         tile += 2;

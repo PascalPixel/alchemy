@@ -8,7 +8,7 @@ void Func_02000380(void)
     if (x < 0) x += 0xfffff;
     if ((x >> 20) != 24) return;
     Func_020004f4(8);
-    actor = Func_0808a080(8); actor[35] |= 2;
+    Func_0808a080(8)[35] |= 2;
     Func_080091c0(19, 74, 9, 3, 19, 17);
     actor = Func_0808a080(8); Func_080091e0(actor, 0);
     Func_080770c8(0x864);

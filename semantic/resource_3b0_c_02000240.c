@@ -117,19 +117,27 @@ extern u8 Data_02000240[];
 extern s32 Data_02009928[];
 extern s32 Data_02009940[];
 
+/* Symbolic word constants: the ROM loads these from the final literal pool. */
+extern u8 Value_0000006f[];
+extern u8 Value_00000209[];
+
 s32 Func_02000240(void)
 {
-    u8 *work = Data_02000240;
+    u8 *work;
     s32 mode;
 
     Func_0200144c(324);                             /* 162 << 1 */
 
-    *(s32 *)(*(u8 **)0x03001ebc + 448) = 0x209;
+    *(s32 *)(*(u8 **)0x03001ebc + 448) = (u32)Value_00000209;
 
     if (Func_02001458(0x927) != 0 || Func_02001462(0x928) != 0) {
         if (Func_0200146c(0x93e) == 0 && Func_02001478(0x8a0) == 0) {
-            Data_02009940[0] = Func_0200144a() & 0xffff;
-            Data_02009928[0] = Func_02001456() & 0xffff;
+            s32 *savedValue;
+
+            savedValue = Data_02009940;
+            *savedValue = (u16)Func_0200144a();
+            savedValue = Data_02009928;
+            *savedValue = (u16)Func_02001456();
             /* 0x020090a1 == the in-image task at 0x10a0, plus the Thumb bit. */
             Func_0200145e(0x020090a1, 3200);        /* 200 << 4 */
         }
@@ -139,67 +147,75 @@ s32 Func_02000240(void)
         Func_02001528(8, 0x00a40000, 0x01480000);   /* 164 << 16, 164 << 17 */
     }
 
+    work = Data_02000240;
     mode = *(s16 *)(work + 450) - 1;
-    if ((u32)mode > 13) {
-        return 0;
-    }
+    if ((u32)mode <= 13) {
+        switch (mode) {
+        case 0: {
+            u8 *entity;
 
-    switch (mode) {
-    case 0: {
-        u8 *entity;
+            if (Func_02001518(0x109) != 0) {
+                return 0;
+            }
 
-        if (Func_02001518(0x109) != 0) {
-            return 0;
+            entity = Func_0200155a(0);
+            Func_02001540();
+            Func_02001614();
+
+            *(s32 *)(entity + 12) = 0x00380000;     /* 224 << 14 */
+
+            Func_0200160c(-1, -1, -1, 0);
+            Func_02001502(1);
+            Func_02001612(0, 0);
+            Func_02001536();
+            Func_02001514(1);
+            Func_02001580();
+            break;
         }
 
-        entity = Func_0200155a(0);
-        Func_02001540();
-        Func_02001614();
+        case 9:
+            if (Func_02001568(0x928) != 0) {
+                Func_020007dc();
+            } else {
+                Func_02000786();
+            }
+            break;
 
-        *(s32 *)(entity + 12) = 0x00380000;         /* 224 << 14 */
+        case 10: {
+            s32 sceneValue = (u32)Value_0000006f;
 
-        Func_0200160c(-1, -1, -1, 0);
-        Func_02001502(1);
-        Func_02001612(0, 0);
-        Func_02001536();
-        Func_02001514(1);
-        Func_02001580();
-        break;
-    }
-
-    case 9:
-        if (Func_02001568(0x928) != 0) {
-            Func_020007dc();
-        } else {
-            Func_02000786();
+            *(u16 *)(work + 452) = sceneValue;
+            *(u16 *)(work + 454) = 30;
+            Func_020008f8();
+            break;
         }
-        break;
 
-        *(u16 *)(work + 452) = 0x6f;
-        *(u16 *)(work + 454) = 30;
-        Func_020008f8();
-    case 10:
-        break;
+        case 11: {
+            s32 sceneValue = (u32)Value_0000006f;
 
-    case 11:
-        *(u16 *)(work + 452) = 0x6f;
-        *(u16 *)(work + 454) = 30;
-        Func_02000b5e();
-        break;
+            *(u16 *)(work + 452) = sceneValue;
+            *(u16 *)(work + 454) = 30;
+            Func_02000b5e();
+            break;
+        }
 
-    case 12:
-        *(u16 *)(work + 452) = 0x6f;
-        *(u16 *)(work + 454) = 30;
-        Func_02000ec0();
-        break;
+        case 12: {
+            s32 sceneValue = (u32)Value_0000006f;
 
-    case 13:
-        Func_02001246();
-        break;
+            *(u16 *)(work + 452) = sceneValue;
+            *(u16 *)(work + 454) = 30;
+            Func_02000ec0();
+            break;
+        }
 
-    default:
-        /* Indices 1..8 share the jump table's default entry. */
-        break;
+        case 13:
+            Func_02001246();
+            break;
+
+        default:
+            /* Indices 1..8 share the jump table's default entry. */
+            break;
+        }
     }
 
     return 0;

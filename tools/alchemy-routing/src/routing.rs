@@ -293,6 +293,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_GCSE_SOURCES, stem) {
         push!(&["-fno-gcse"]);
     }
+    if has(NO_GCSE_OVERLAY_SOURCES, key) {
+        push!(&["-fno-gcse"]);
+    }
     if has(NO_EXPENSIVE_SOURCES, stem) {
         push!(&["-fno-expensive-optimizations"]);
     }
@@ -305,7 +308,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SCHED_LOW_DEST_FIRST_SOURCES, stem) {
         push!(&["-fsched-low-dest-first"]);
     }
-    if has(NO_CONTIGUOUS_IMMEDIATE_SOURCES, stem) {
+    if has(NO_CONTIGUOUS_IMMEDIATE_SOURCES, stem)
+        || has(NO_CONTIGUOUS_IMMEDIATE_OVERLAY_SOURCES, key)
+    {
         push!(&["-fno-thumb-contiguous-immediate"]);
     }
     if has(NO_SCHED_DEPEND_COUNT_SOURCES, stem) {
@@ -353,8 +358,11 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES, stem) {
         push!(&["-fthumb-return-value-before-stack-adjust"]);
     }
-    if has(SINK_GROUP_POOL_LOADS_SOURCES, stem) {
+    if has(SINK_GROUP_POOL_LOADS_SOURCES, stem) || has(SINK_GROUP_POOL_LOADS_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-group-pool-loads"]);
+    }
+    if has(POOL_LOAD_BASE_FIRST_OVERLAY_SOURCES, key) {
+        push!(&["-fthumb-pool-load-base-first"]);
     }
     if has(SINK_STACK_ADJUST_SOURCES, stem) {
         push!(&["-fthumb-sink-stack-adjust"]);
@@ -368,7 +376,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SINK_BLOCK_CONSTANT_SOURCES, stem) {
         push!(&["-fthumb-sink-block-constant"]);
     }
-    if has(SINK_PAST_POOL_LOAD_SOURCES, stem) {
+    if has(SINK_PAST_POOL_LOAD_SOURCES, stem) || has(SINK_PAST_POOL_LOAD_OVERLAY_SOURCES, key) {
         push!(&["-fthumb-sink-past-pool-load"]);
     }
     if has(GROUP_VALUE1_BEFORE_BASE_SOURCES, stem) {
@@ -455,6 +463,16 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(NO_CONSTANT_REUSE_SOURCES, stem) {
         push!(&["-fthumb-no-constant-reuse"]);
+    }
+    if has(VALUE_ENTRY_3CE_OVERLAY_SOURCES, key) {
+        push!(&[
+            "-mgrouped-dma-store",
+            "-fno-cse-two-insn-immediate",
+            "-fthumb-group-value1-before-base",
+            "-fthumb-sink-group-pool-loads",
+            "-fthumb-group-control-last",
+            "-fthumb-hoist-add-immediate",
+        ]);
     }
     if has(HOIST_ADD_IMMEDIATE_SOURCES, stem) {
         push!(&[
@@ -997,6 +1015,74 @@ mod tests {
     }
 
     #[test]
+    fn resource_36f_portrait_dma_route_is_owner_specific() {
+        for source in [
+            "semantic/resource_36f_c_020001c0.c",
+            "exact/resource_36f_c_020001c0.c",
+        ] {
+            for flag in [
+                "-mgrouped-dma-store",
+                "-fno-thumb-contiguous-immediate",
+                "-fno-cse-pool-immediate",
+                "-fthumb-sink-group-pool-loads",
+                "-fthumb-pool-load-base-first",
+            ] {
+                assert_flag(source, flag);
+            }
+        }
+
+        for flag in [
+            "-mgrouped-dma-store",
+            "-fno-thumb-contiguous-immediate",
+            "-fno-cse-pool-immediate",
+            "-fthumb-sink-group-pool-loads",
+            "-fthumb-pool-load-base-first",
+        ] {
+            assert_no_flag("semantic/resource_36f_c_020001c1.c", flag);
+        }
+    }
+
+    #[test]
+    fn resource_3b0_root_routes_are_owner_specific() {
+        for source in [
+            "semantic/resource_3b0_c_020000c0.c",
+            "exact/resource_3b0_c_020000c0.c",
+        ] {
+            assert_flag(source, "-fthumb-hi-immediate");
+            assert_no_flag(source, "-fno-cse-two-insn-immediate");
+        }
+
+        for source in [
+            "semantic/resource_3b0_c_02000240.c",
+            "exact/resource_3b0_c_02000240.c",
+        ] {
+            assert_flag(source, "-fthumb-hi-immediate");
+            assert_flag(source, "-fno-cse-two-insn-immediate");
+        }
+
+        for flag in [
+            "-fthumb-hi-immediate",
+            "-fno-cse-two-insn-immediate",
+        ] {
+            assert_no_flag("semantic/resource_3b0_c_02000241.c", flag);
+        }
+    }
+
+    #[test]
+    fn resource_392_query_copy_route_is_owner_specific() {
+        for source in [
+            "semantic/resource_392_c_020009f8.c",
+            "exact/resource_392_c_020009f8.c",
+        ] {
+            assert_flag(source, "-fthumb-blockmove-dest-before-source");
+        }
+        assert_no_flag(
+            "semantic/resource_392_c_020009f9.c",
+            "-fthumb-blockmove-dest-before-source",
+        );
+    }
+
+    #[test]
     fn resource_392_palette_twins_share_narrow_routes() {
         for source in [
             "semantic/resource_392_c_02000bcc.c",
@@ -1019,6 +1105,102 @@ mod tests {
         assert_no_flag(
             "exact/resource_37a_c_02000d9c.c",
             "-fthumb-group-control-rematerialize",
+        );
+    }
+
+    #[test]
+    fn resource_3c2_dialogue_routes_are_path_specific() {
+        for source in [
+            "semantic/resource_3c2_c_0200006c.c",
+            "exact/resource_3c2_c_0200006c.c",
+            "semantic/resource_3c7_c_020000c8.c",
+            "exact/resource_3c7_c_020000c8.c",
+        ] {
+            assert_flag(source, "-fno-gcse");
+        }
+        assert_no_flag("semantic/resource_3c2_c_0200006d.c", "-fno-gcse");
+    }
+
+    #[test]
+    fn resource_3ce_value_entry_route_is_path_specific() {
+        for source in [
+            "semantic/resource_3ce_c_02000cf4.c",
+            "exact/resource_3ce_c_02000cf4.c",
+            "semantic/resource_3cd_c_020004b0.c",
+            "exact/resource_3cd_c_020004b0.c",
+        ] {
+            for flag in [
+                "-mgrouped-dma-store",
+                "-fno-cse-two-insn-immediate",
+                "-fthumb-group-value1-before-base",
+                "-fthumb-sink-group-pool-loads",
+                "-fthumb-group-control-last",
+                "-fthumb-hoist-add-immediate",
+            ] {
+                assert_flag(source, flag);
+            }
+        }
+        assert_no_flag(
+            "semantic/resource_3ce_c_02000cf5.c",
+            "-fthumb-group-value1-before-base",
+        );
+
+        for source in [
+            "semantic/resource_3ce_c_02000b10.c",
+            "exact/resource_3ce_c_02000b10.c",
+        ] {
+            assert_flag(source, "-fthumb-no-constant-reuse");
+            assert_flag(source, "-fthumb-sink-past-pool-load");
+        }
+        assert_no_flag(
+            "semantic/resource_3ce_c_02000b11.c",
+            "-fthumb-no-constant-reuse",
+        );
+    }
+
+    #[test]
+    fn resource_392_scene_pair_route_is_path_specific() {
+        for source in [
+            "semantic/resource_392_c_02000a2c.c",
+            "exact/resource_392_c_02000a2c.c",
+        ] {
+            assert_flag(
+                source,
+                "-fthumb-order-zero-arg1-before-nonzero-arg0",
+            );
+        }
+        assert_no_flag(
+            "semantic/resource_392_c_02000a2d.c",
+            "-fthumb-order-zero-arg1-before-nonzero-arg0",
+        );
+    }
+
+    #[test]
+    fn resource_3af_phase_route_is_path_specific() {
+        for source in [
+            "semantic/resource_3af_c_020000c4.c",
+            "exact/resource_3af_c_020000c4.c",
+        ] {
+            assert_flag(source, "-fsched-low-dest-first");
+        }
+        assert_no_flag(
+            "semantic/resource_3af_c_020000c5.c",
+            "-fsched-low-dest-first",
+        );
+    }
+
+    #[test]
+    fn resource_391_entry_scene_route_is_path_specific() {
+        for source in [
+            "semantic/resource_391_c_02000c68.c",
+            "exact/resource_391_c_02000c68.c",
+        ] {
+            assert_flag(source, "-fthumb-stack-args-before-stores");
+            assert_flag(source, "-fthumb-scene-call-sheets");
+        }
+        assert_no_flag(
+            "semantic/resource_391_c_02000c69.c",
+            "-fthumb-scene-call-sheets",
         );
     }
 }

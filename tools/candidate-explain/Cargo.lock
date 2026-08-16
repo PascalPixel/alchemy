@@ -49,11 +49,19 @@ dependencies = [
  "alchemy-plan",
  "alchemy-routing",
  "candidate-compiler",
+ "decomp-diagnose",
  "overlay-disasm",
  "rtl-align",
  "rtl-insn",
  "rtl-schedule",
  "thumb-disasm",
+]
+
+[[package]]
+name = "decomp-diagnose"
+version = "0.1.0"
+dependencies = [
+ "candidate-compiler",
 ]
 
 [[package]]

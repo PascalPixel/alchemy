@@ -56,6 +56,41 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### 32 more entries are redundant, and how to remove them safely
+
+Every earlier measurement stripped an owner's whole extras set at once, which
+cannot see a redundant flag sitting beside a load-bearing one. 212 owners carry
+more than one flag, 996 flag-entries in total.
+
+Testing each flag individually across the 68 multi-flag **main-image** owners
+(209 single-flag removals, each recompiled and compared) found **32 entries the
+owner does not need**: it stays byte-exact with that one flag gone. Three owners
+carry several such flags, and removing all of an owner's redundant flags
+together was also verified byte-exact (`080c0130` four, `08006408` five,
+`08019bac` two), so they are jointly and not merely individually redundant.
+
+Two traps make this harder to apply than to measure, and both were hit:
+
+1. **A list can grant several flags.** Removing a stem from
+   `UNSCHEDULED_SOURCES` drops `-fno-schedule-insns` *and*
+   `-fno-schedule-insns2`, and only the first was proved redundant.
+   `SINK_ADD_IMMEDIATE_SOURCES` grants eleven. Only remove a stem when every
+   flag its list grants has been proved redundant for that owner. Six lists
+   grant exactly one flag and are safe: `EARLY_FRAME_ALLOCATION_SOURCES`,
+   `GROUP_CONTROL_LAST_SOURCES`, `THUMB_NO_IF_CONVERT_SOURCES`,
+   `HIGH_REGISTER_MOVE_FIRST_SOURCES`, `GROUP_ZERO_ANY_REGISTER_SOURCES`,
+   `GROUPED_DMA_STORE_SOURCES`.
+2. **A flag can come from several lists.** Deleting a stem from one list may
+   leave the flag arriving from another, so always confirm with `route-dump`
+   that the flag actually disappeared rather than assuming the edit worked.
+
+A third trap is shell, not routing: `while IFS=$'\t' read` leaves `IFS` set for
+the loop body, so `for f in $extras` does not split on spaces and every
+`--remove-flags` becomes a no-op that reports the owner exact. That produced a
+59-entry false positive list before the sanity check
+(`--remove-flags -mgrouped-dma-store` on `08002f10` must give 6 differing
+halfwords, not 0) exposed it.
+
 ### The pool-versus-split cluster: 158 owners against 1
 
 The single largest coherent group in the routing debt is one decision asked in

@@ -1115,7 +1115,7 @@ block_case2_failure:
         M2C_FIELD(target_state, u8, 0x134) = 7;
         break;
     case 0x9:
-        defense_down_two = M2C_FIELD(target_state, u8, 0x135) - 2;
+        defense_down_two = M2C_FIELD(target_state, s8, 0x135) - 2;
         M2C_FIELD(target_state, u8, 0x135) = defense_down_two;
         if ((s32) (s8) defense_down_two < -4) {
             M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
@@ -1146,7 +1146,7 @@ block_case2_failure:
         defense_up_two = M2C_FIELD(target_state, u8, 0x135) + 2;
         M2C_FIELD(target_state, u8, 0x135) = defense_up_two;
         if ((s32) (s8) defense_up_two < -4) {
-            M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
+            M2C_FIELD(target_state, s8, 0x135) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x135) > 4) {
             M2C_FIELD(target_state, u8, 0x135) = 4U;
@@ -1205,7 +1205,7 @@ block_case2_failure:
         M2C_FIELD(target_state, u8, 0x136) = 7;
         break;
     case 0xD:
-        resistance_down_two = M2C_FIELD(target_state, u8, 0x137) - 2;
+        resistance_down_two = M2C_FIELD(target_state, s8, 0x137) - 2;
         M2C_FIELD(target_state, u8, 0x137) = resistance_down_two;
         if ((s32) (s8) resistance_down_two < -4) {
             M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
@@ -1224,7 +1224,7 @@ block_case2_failure:
         resistance_up_one = M2C_FIELD(target_state, u8, 0x137) + 1;
         M2C_FIELD(target_state, u8, 0x137) = resistance_up_one;
         if ((s32) (s8) resistance_up_one < -4) {
-            M2C_FIELD(target_state, u8, 0x137) = 0xFCU;
+            M2C_FIELD(target_state, s8, 0x137) = 0xFCU;
         }
         resistance_up_one = M2C_FIELD(target_state, s8, 0x137);
         applied_resistance_up_one = M2C_FIELD(target_state, u8, 0x137);

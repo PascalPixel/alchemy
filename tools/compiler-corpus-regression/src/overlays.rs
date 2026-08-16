@@ -143,6 +143,91 @@ pub fn evaluate_addition(
     }
 }
 
+/// Compile one owner as routed, and again with `stripped` removed.
+///
+/// `load_bearing` false means the owner does not need that flag: it is a
+/// redundant grant that can be retired without reconstructing anything. This is
+/// the per-flag question, which `evaluate` cannot answer because it strips an
+/// owner's whole extras set at once and so cannot see a redundant flag sitting
+/// beside a load-bearing one.
+pub fn evaluate_removal(
+    owner: &OverlayOwner,
+    stripped: &[String],
+    root: &Path,
+    work: &Path,
+) -> OverlayVerdict {
+    let source = root.join(&owner.source);
+    let routed = compile_overlay_mutated(
+        &source,
+        &work.join("routed"),
+        &owner.overlay,
+        None,
+        &CompilerFlagMutations { add_flags: Vec::new(), remove_flags: Vec::new() },
+    );
+    let reduced = compile_overlay_mutated(
+        &source,
+        &work.join("reduced"),
+        &owner.overlay,
+        None,
+        &CompilerFlagMutations {
+            add_flags: Vec::new(),
+            remove_flags: stripped.to_vec(),
+        },
+    );
+    match (routed, reduced) {
+        (Ok(Compiled { data: a, .. }), Ok(Compiled { data: b, .. })) => OverlayVerdict {
+            source: owner.source.clone(),
+            extras: owner.extras.clone(),
+            load_bearing: a != b,
+            routed_len: a.len(),
+            stripped_len: b.len(),
+            first_difference: first_difference(&a, &b),
+            note: None,
+        },
+        (routed, reduced) => {
+            let note = match (&routed, &reduced) {
+                (Err(error), _) => format!("routed compile failed: {error}"),
+                (_, Err(error)) => format!("reduced compile failed: {error}"),
+                _ => unreachable!(),
+            };
+            OverlayVerdict {
+                source: owner.source.clone(),
+                extras: owner.extras.clone(),
+                load_bearing: true,
+                routed_len: 0,
+                stripped_len: 0,
+                first_difference: None,
+                note: Some(note),
+            }
+        }
+    }
+}
+
+/// Test every routed overlay owner one flag at a time.
+///
+/// Returns a verdict per (owner, flag) pair. Owners carrying a single flag are
+/// skipped: `run` already answers them, and re-testing would double the cost of
+/// the sweep for nothing.
+pub fn run_per_flag(root: &Path, cache: &Path) -> Result<Vec<(String, OverlayVerdict)>, String> {
+    let owners = routed_overlay_owners(root)?;
+    let mut verdicts = Vec::new();
+    let mut index = 0usize;
+    for owner in owners.iter().filter(|o| o.extras.len() > 1) {
+        for flag in &owner.extras {
+            let work: PathBuf = cache.join(format!("flag-{index:05}"));
+            index += 1;
+            std::fs::create_dir_all(work.join("routed"))
+                .map_err(|error| format!("{}: {error}", work.display()))?;
+            std::fs::create_dir_all(work.join("reduced"))
+                .map_err(|error| format!("{}: {error}", work.display()))?;
+            let verdict =
+                evaluate_removal(owner, std::slice::from_ref(flag), root, &work);
+            verdicts.push((flag.clone(), verdict));
+        }
+    }
+    Ok(verdicts)
+}
+
 /// Measure what adding `added` to every overlay owner would cost.
 pub fn run_addition(
     root: &Path,

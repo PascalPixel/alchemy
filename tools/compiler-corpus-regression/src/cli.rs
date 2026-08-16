@@ -35,6 +35,9 @@ pub struct Options {
     /// Native addition: measure overlay routing necessity instead of the
     /// ported main-image corpus. See `crate::overlays`.
     pub overlays: bool,
+    /// Native addition: test each routed flag of a multi-flag overlay owner
+    /// separately, to find grants the owner does not need.
+    pub per_flag: bool,
 }
 
 pub const USAGE: &str = concat!(
@@ -55,6 +58,7 @@ pub const USAGE: &str = concat!(
     "  --jobs N            parallel compiler jobs (default 4)\n",
     "  --report FILE       also write the canonical JSON report\n",
     "  --overlays          measure overlay routing necessity (native, not the ROM corpus)",
+    "  --per-flag          overlay mode, one routed flag at a time",
 );
 
 /// `parseOptions` either produces options or asks the caller to print usage and
@@ -87,6 +91,7 @@ fn defaults() -> Options {
         sources: Vec::new(),
         report: None,
         overlays: false,
+        per_flag: false,
     }
 }
 
@@ -175,6 +180,10 @@ pub fn parse_arguments(argv: &[String]) -> Result<ParseOutcome, String> {
             }
             "--report" => options.report = Some(take!()),
             "--overlays" => options.overlays = true,
+            "--per-flag" => {
+                options.overlays = true;
+                options.per_flag = true;
+            }
             "-h" | "--help" => return Ok(ParseOutcome::Help),
             other => return Err(format!("unknown argument: {other}")),
         }

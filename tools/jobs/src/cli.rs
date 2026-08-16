@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // How many things this repository may run at once.
 //
 // 80% of the cores, never all of them. Every parallel runner here spawns a full
@@ -64,7 +67,7 @@ fn self_test() {
     println!("jobs self-test ok");
 }
 
-fn main() {
+pub fn entry(arguments: &[String]) {
     if std::env::args().any(|a| a == "--self-test") {
         self_test();
     } else {

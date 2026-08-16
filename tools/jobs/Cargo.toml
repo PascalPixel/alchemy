@@ -2,7 +2,3 @@
 name = "jobs"
 version.workspace = true
 edition.workspace = true
-
-[[bin]]
-name = "jobs"
-path = "src/main.rs"

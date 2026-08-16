@@ -31,6 +31,8 @@
 //! about today's tree: they sit far below the real numbers so ordinary edits
 //! never trip them and a scanner that goes blind always does.
 
+pub mod cli;
+
 pub mod flag_capability;
 pub mod stem_collision;
 

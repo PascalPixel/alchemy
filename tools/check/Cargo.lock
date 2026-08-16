@@ -3,6 +3,25 @@
 version = 4
 
 [[package]]
+name = "alchemy-lints"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+]
+
+[[package]]
+name = "alchemy-routing"
+version = "0.1.0"
+
+[[package]]
+name = "architecture"
+version = "0.1.0"
+dependencies = [
+ "dispatch",
+ "documented",
+]
+
+[[package]]
 name = "byte-value-regions"
 version = "0.1.0"
 dependencies = [
@@ -29,6 +48,8 @@ dependencies = [
 name = "check"
 version = "0.1.0"
 dependencies = [
+ "alchemy-lints",
+ "architecture",
  "byte-value-regions",
  "cache-entry",
  "cache-key-lint",
@@ -43,6 +64,7 @@ dependencies = [
  "discover",
  "executable-gap-sources",
  "extract-resource",
+ "jobs",
  "lang-ban",
  "late-runtime-data",
  "music-residuals",
@@ -100,6 +122,17 @@ name = "discover"
 version = "0.1.0"
 
 [[package]]
+name = "dispatch"
+version = "0.1.0"
+
+[[package]]
+name = "documented"
+version = "0.1.0"
+dependencies = [
+ "dispatch",
+]
+
+[[package]]
 name = "equivalent"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -134,6 +167,10 @@ name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+
+[[package]]
+name = "jobs"
+version = "0.1.0"
 
 [[package]]
 name = "lang-ban"

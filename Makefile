@@ -194,7 +194,7 @@ statement-order-check:
 	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- shape-sweep --self-test
 
 compiler-lint:
-	$(CARGO_RUN) $(TOOLS)/alchemy-lints/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- alchemy-lints
 
 compiler-self-test:
 	$(CARGO_RUN) $(TOOLS)/alchemy-selftest/Cargo.toml --
@@ -213,7 +213,7 @@ crate-tests:
 	done
 
 lint: pristine-options-check standard-check crate-tests
-	$(CARGO_RUN) $(TOOLS)/architecture/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- architecture
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- source-citations
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- no-asm-c
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- decomp-targets --self-test

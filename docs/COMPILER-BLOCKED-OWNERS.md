@@ -134,25 +134,30 @@ reference size reached and the residual localized into explained clusters.
 Neither holds: the size is 8 bytes short and the residual is diffuse across the
 whole function.
 
-**The first divergence was attacked directly and did not move.** It is the
-argument setup for `Func_08077140(effect_object_id, class_id, 0x7FFF &
-object_effect_config)`: the reference loads r0 last, we load it first. Three
-C variants were tried -- hoisting the mask into a temp, hoisting the first
-argument into a temp, and hoisting both -- and every one produced **exactly
-2286**, unchanged to the halfword.
+**Searched, not guessed.** Everything below was measured on this owner with a
+harness whose unshuffled control reads exactly `2286 / 6324`.
 
-That makes four owners now measured the same way, across fourteen C variants:
+| axis | trials | best result |
+|---|---|---|
+| every stock flag and pair | 171 | none beats baseline 2286 |
+| random declaration orders | 24 | all worse (2345-2357) |
+| every pairwise declaration swap | **12,090** | **0 better**, 9,453 neutral, 2,637 worse |
+| C variants at the first divergence | 6 | 3 were no-ops, 3 real ones all worse |
 
-| owner | residual | variants | result |
-|---|---|---|---|
-| `080043e0` | 2 of 64 B | 7 | always exactly 2 |
-| `080b6a60` | 5 of 128 B | 2 | 5, or 14 when worse |
-| `080038bc` | 11 of 64 B | 2 | always exactly 11 |
-| `080bbb0c` | 2286 of 6332 B | 3 | always exactly 2286 |
+Declaration order is therefore at a strict local optimum: no single swap of the
+156 locals improves it, and the aggregate shuffles show the current order is
+already far better than chance. **Size never moved from 6324 in any of the
+12,090 swaps** -- declaration order drives the ordering residual and cannot
+touch the 8-byte gap. They are two independent problems.
 
-Not one C change moved any residual in this class. That is the evidence for
-calling it a compiler difference rather than a source problem, and it is now
-measured on the largest owner as well as the smallest.
+A CORRECTION worth keeping, because it nearly became a false conclusion in this
+file: an earlier round of three C variants each scored exactly 2286, and that
+was reported as evidence the residual is invariant to source changes. It was
+not. Those three produced **byte-identical assembly** -- gcc folded every temp
+away and the only diff was internal label renumbering. Variants gcc cannot fold
+move the score immediately (2294, 2583), and one of them reached size 6328,
+four bytes closer. The residual IS C-responsive. Any claim that it is not
+should be checked against whether the variant changed the emitted code at all.
 
 So the order of work is fixed: close the 8 bytes first -- it is structural, and
 the +70 `ldr` register-pressure signal is the lead -- then localize the residual

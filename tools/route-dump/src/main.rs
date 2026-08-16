@@ -15,7 +15,16 @@
 //!   route-dump <source> [<source> ...]   flags for the named sources
 //!   route-dump --all                     every live C source under the tree
 //!   route-dump --routed                  only sources with non-baseline flags
+//!   route-dump --standard                the baseline flag set, one per line
+//!   route-dump --debt                    count of sources deviating from it
 //!   route-dump --self-test
+//!
+//! `--standard` exists so the Makefile can assert that the flag set it
+//! documents is the flag set the build actually uses. Camelot's own build was
+//! a makefile, not a per-file flag database, and the upstream
+//! `Coaltergeist/camelot-gcc` reproduces the whole ROM against one such set.
+//! Every deviation Alchemy still carries is debt, and `--debt` is what
+//! measures it shrinking.
 
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -102,8 +111,31 @@ fn main() -> ExitCode {
             }
         };
     }
+    if arguments.iter().any(|a| a == "--standard") {
+        for flag in baseline() {
+            println!("{flag}");
+        }
+        return ExitCode::SUCCESS;
+    }
+    if arguments.iter().any(|a| a == "--debt") {
+        let sources = live_sources();
+        let deviating = sources
+            .iter()
+            .filter(|source| {
+                !routed_extras(source).is_empty()
+                    || uses_agbcc_compiler(CompilerTarget::Gs1, source)
+            })
+            .count();
+        println!(
+            "routing debt: {deviating} of {} live sources deviate from the standard",
+            sources.len()
+        );
+        return ExitCode::SUCCESS;
+    }
     if arguments.is_empty() || arguments.iter().any(|a| a == "-h" || a == "--help") {
-        eprintln!("usage: route-dump <source>... | --all | --routed | --self-test");
+        eprintln!(
+            "usage: route-dump <source>... | --all | --routed | --standard | --debt | --self-test"
+        );
         return ExitCode::FAILURE;
     }
     let only_routed = arguments.iter().any(|a| a == "--routed");

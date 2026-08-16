@@ -1,3 +1,28 @@
+# ---------------------------------------------------------------------------
+# The compiler standard.
+#
+# This is the whole supported flag set. It mirrors the Makefile of the upstream
+# compiler project, Coaltergeist/camelot-gcc, which reproduces the Golden Sun
+# ROM byte-identically against this set and nothing else. Alchemy targets the
+# same standard: Camelot shipped a makefile, not a per-file flag database.
+#
+# Anything a source needs beyond this is DEBT, not configuration. It records an
+# admission that the reconstruction is wrong and a flag is standing in for the
+# fix. `make routing-debt` reports how many sources still deviate;
+# `make standard-check` asserts that these flags are the flags the build
+# actually uses, so this block cannot drift away from the routing crate.
+# ---------------------------------------------------------------------------
+GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
+                 -fno-builtin -nostdinc -ffreestanding \
+                 -fcall-used-r4 -Iinclude
+
+# The only sanctioned deviations, matching upstream's three:
+#   1. one overlay stem that never interworks, so needs no veneers
+#   2. a small number of translation units the original built at -O1
+#   3. the stock m4a ("Sappy") audio engine, which only matches under old_agbcc
+NO_INTERWORK_CFLAGS := $(filter-out -mthumb-interwork,$(GCC296_CFLAGS))
+O1_CFLAGS           := $(subst -O2,-O1,$(GCC296_CFLAGS))
+
 TOOLS := tools
 CARGO ?= cargo
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
@@ -5,7 +30,8 @@ DISPATCH_MANIFEST := $(TOOLS)/dispatch/Cargo.toml
 DISPATCH_RUN := $(CARGO_RUN) $(DISPATCH_MANIFEST) --
 DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search semantic
 
-.PHONY: help verify test lint build-claimed build-asm build-assets build-semantic \
+.PHONY: help verify test lint standard-check routing-debt \
+	build-claimed build-asm build-assets build-semantic \
 	build-full build-rom inventory semantic-check core-retained-check sanctum \
 	progress progress-check progress-subject progress-history coverage coverage-check \
 	showcase compiler-checks compiler-sweep compiler-cohort overlay-compiler-cohort \
@@ -27,6 +53,41 @@ help:
 		'make showcase        run the overlay showcase' \
 		'make compiler-checks run focused native compiler checks' \
 		'make dispatch-GROUP ARGS=... run a registered native dispatch group'
+
+ROUTE_DUMP := $(TOOLS)/route-dump/target/release/route-dump
+
+# Assert that the flag set documented above is the flag set the build uses.
+# Two places naming the standard is only safe if a gate compares them.
+standard-check:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/route-dump/Cargo.toml
+	@printf '%s\n' $(GCC296_CFLAGS) | grep -v '^-I' | sort > /tmp/alchemy-standard-makefile.txt
+	@$(ROUTE_DUMP) --standard | grep -v '^-I' | sort > /tmp/alchemy-standard-routing.txt
+	@if diff -q /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt >/dev/null; then \
+		printf 'standard ok: Makefile and routing agree on %s codegen flags\n' \
+			"$$(wc -l < /tmp/alchemy-standard-makefile.txt | tr -d ' ')"; \
+	else \
+		printf 'standard MISMATCH between Makefile and routing:\n'; \
+		diff /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt; \
+		exit 1; \
+	fi
+	@# The include flag is compared separately: the routing crate absolutizes it
+	@# so the build works from any working directory, while the Makefile and
+	@# upstream both spell it relatively. Both must resolve to this repo's
+	@# include/ directory, and neither affects code generation.
+	@$(ROUTE_DUMP) --standard | grep '^-I' | sed 's/^-I//' | while read -r dir; do \
+		if [ ! -d "$$dir" ]; then \
+			printf 'standard MISMATCH: include path %s does not exist\n' "$$dir"; exit 1; \
+		fi; \
+		if [ "$$(cd "$$dir" && pwd -P)" != "$$(cd include && pwd -P)" ]; then \
+			printf 'standard MISMATCH: include path %s is not this repo include/\n' "$$dir"; exit 1; \
+		fi; \
+	done
+	@printf 'include ok: routed include path resolves to this repository include/\n'
+
+# How far the tree still is from building on the standard alone.
+routing-debt:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/route-dump/Cargo.toml
+	@$(ROUTE_DUMP) --debt
 
 build-dispatch:
 	$(CARGO) build --offline --quiet --release --manifest-path $(DISPATCH_MANIFEST)

@@ -475,11 +475,14 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
             "-fthumb-3ce-value-entry-cluster",
         ]);
     }
+    // Each of the three bundles below has exactly one member, and each was
+    // measured flag by flag: the entries left out are ones the owner still
+    // compiles byte-exact without. A bundle that grants more than its owner
+    // needs reads as evidence the whole group is load-bearing when it is not.
     if has(HOIST_ADD_IMMEDIATE_SOURCES, stem) {
         push!(&[
             "-mgrouped-dma-store",
             "-fthumb-group-control-rematerialize",
-            "-mlow-reg-order=2013",
             "-fthumb-sink-block-constant",
             "-fthumb-hoist-add-immediate",
         ]);
@@ -487,13 +490,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SINK_ADD_IMMEDIATE_SOURCES, stem) {
         push!(&[
             "-mgrouped-dma-store",
-            "-fthumb-sink-group-pool-loads",
-            "-mthumb-load-latency-one",
-            "-mearly-frame-allocation",
             "-fthumb-move-before-immediate-alu",
             "-fthumb-sink-block-constant",
             "-fthumb-sink-constant-past-memory",
-            "-fthumb-earliest-frame-allocation",
             "-fthumb-copy-before-add-immediate",
             "-fno-schedule-insns2",
             "-fthumb-sink-add-immediate",
@@ -501,11 +500,6 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has(SINK_STORE_PAST_STORE_SOURCES, stem) {
         push!(&[
-            "-mgrouped-dma-store",
-            "-fthumb-sink-group-pool-loads",
-            "-mthumb-load-latency-one",
-            "-mearly-frame-allocation",
-            "-fthumb-move-before-immediate-alu",
             "-fthumb-sink-block-constant",
             "-fthumb-sink-constant-past-memory",
             "-fthumb-sink-store-past-store",

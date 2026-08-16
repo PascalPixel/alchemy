@@ -21,8 +21,9 @@
 //!
 //! `--standard` exists so the Makefile can assert that the flag set it
 //! documents is the flag set the build actually uses. Camelot's own build was
-//! a makefile, not a per-file flag database, and the upstream
-//! `Coaltergeist/camelot-gcc` reproduces the whole ROM against one such set.
+//! a makefile, not a per-file flag database, and `Coaltergeist/camelot-gcc` --
+//! a separate project, not an upstream of this one -- reproduces the whole ROM
+//! against one such set.
 //! Every deviation Alchemy still carries is debt, and `--debt` is what
 //! measures it shrinking.
 

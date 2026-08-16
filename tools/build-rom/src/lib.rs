@@ -18,6 +18,8 @@
 //!   instead of Node's `ENOENT: no such file or directory, open '<path>'`.
 //!   The exit code (1) and the empty stdout are unchanged.
 
+pub mod cli;
+
 use std::path::{Path, PathBuf};
 use std::process::Command;
 

@@ -280,7 +280,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "build_asm",
-        target: Target::Binary("tools/build-asm/target/release/build-asm"),
+        target: Target::Sub("tools/build-stage/target/release/build-stage", "asm"),
     },
     Entry {
         name: "build_assets",
@@ -288,19 +288,19 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "build_claimed",
-        target: Target::Binary("tools/build-claimed/target/release/build-claimed"),
+        target: Target::Sub("tools/build-stage/target/release/build-stage", "claimed"),
     },
     Entry {
         name: "build_full",
-        target: Target::Binary("tools/build-full/target/release/build-full"),
+        target: Target::Sub("tools/build-stage/target/release/build-stage", "full"),
     },
     Entry {
         name: "build_rom",
-        target: Target::Binary("tools/build-rom/target/release/build-rom"),
+        target: Target::Sub("tools/build-stage/target/release/build-stage", "rom"),
     },
     Entry {
         name: "build_semantic",
-        target: Target::Binary("tools/build-semantic/target/release/build-semantic"),
+        target: Target::Sub("tools/build-stage/target/release/build-stage", "semantic"),
     },
     Entry {
         name: "byte_henkan",

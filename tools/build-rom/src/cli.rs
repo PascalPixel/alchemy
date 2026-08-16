@@ -1,7 +1,10 @@
-use build_rom::{main_pipeline, parse_args, self_test, ParseOutcome, USAGE};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
 
-fn main() {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+use crate::{main_pipeline, parse_args, self_test, ParseOutcome, USAGE};
+
+pub fn entry(arguments: &[String]) {
+    let argv: Vec<String> = arguments.to_vec();
     if argv.as_slice() == ["--self-test"] {
         match self_test() {
             Ok(line) => println!("{line}"),

@@ -119,22 +119,22 @@ $(addprefix dispatch-,$(DISPATCH_GROUPS)): dispatch-%:
 	$(DISPATCH_RUN) $* $(ARGS)
 
 build-claimed:
-	$(CARGO_RUN) $(TOOLS)/build-claimed/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- claimed
 
 build-asm:
-	$(CARGO_RUN) $(TOOLS)/build-asm/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- asm
 
 build-assets:
 	$(CARGO_RUN) $(TOOLS)/build-assets/Cargo.toml --
 
 build-semantic:
-	$(CARGO_RUN) $(TOOLS)/build-semantic/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- semantic
 
 build-full:
-	$(CARGO_RUN) $(TOOLS)/build-full/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- full
 
 build-rom:
-	$(CARGO_RUN) $(TOOLS)/build-rom/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- rom
 
 inventory:
 	$(CARGO_RUN) $(TOOLS)/overlay-inventory/Cargo.toml --

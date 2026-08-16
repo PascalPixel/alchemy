@@ -3,7 +3,7 @@
 
 use crate::{build, parse_args, root, self_test, ParsedArgs};
 
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+pub fn entry(arguments: &[String]) {
     let arguments: Vec<String> = arguments.to_vec();
     if arguments.iter().any(|argument| argument == "--self-test") {
         match self_test() {

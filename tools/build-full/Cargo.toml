@@ -13,7 +13,3 @@ serde_json = { version = "1", features = ["preserve_order"] }
 [lib]
 name = "build_full"
 path = "src/lib.rs"
-
-[[bin]]
-name = "build-full"
-path = "src/main.rs"

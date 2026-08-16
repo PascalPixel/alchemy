@@ -1138,7 +1138,7 @@ pub fn self_test() -> Result<(), Error> {
         .and_then(Path::parent)
         .unwrap();
     let plan = root.join("assets/graphics/resources_d1_d3_index.json");
-    let rom = root.join("baserom.gba");
+    let rom = root.join("roms/gs1-en.gba");
     if plan.is_file() && rom.is_file() {
         verify_resource_d1_d3(&rom, &plan)?;
     }
@@ -1249,7 +1249,7 @@ mod tests {
             .and_then(Path::parent)
             .unwrap();
         let result = verify_resource_d1_d3(
-            &root.join("baserom.gba"),
+            &root.join("roms/gs1-en.gba"),
             &root.join("assets/graphics/resources_d1_d3_index.json"),
         )
         .unwrap();

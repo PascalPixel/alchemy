@@ -1606,7 +1606,7 @@ mod tests {
             .unwrap()
             .parent()
             .unwrap();
-        let rom = root.join("baserom.gba");
+        let rom = root.join("roms/gs1-en.gba");
         if rom.is_file() {
             let bytes = fs::read(rom).unwrap();
             let source = export_runtime_support_data(&bytes).unwrap();

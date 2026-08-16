@@ -1060,7 +1060,7 @@ pub fn self_test() -> Result<()> {
         .parent()
         .and_then(Path::parent)
         .unwrap();
-    let rom = root.join("baserom.gba");
+    let rom = root.join("roms/gs1-en.gba");
     let source = root.join("assets/data/resource_5_database.json");
     if rom.is_file() && source.is_file() {
         verify_resource_5(&rom, &source)?;

@@ -1,0 +1,16 @@
+# Bare `[workspace]`: independently buildable, like every other tool crate.
+[workspace]
+
+[package]
+name = "dev"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+audit-residuals = { path = "../audit-residuals" }
+bl-site-symbols = { path = "../bl-site-symbols" }
+alchemy-permuter = { path = "../alchemy-permuter" }
+
+[[bin]]
+name = "dev"
+path = "src/main.rs"

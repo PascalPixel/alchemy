@@ -151,6 +151,30 @@ The size constraint has to lead; the ordering score follows.
 Reaching reference size also opens the permuter, which CONTRIBUTING gates behind
 exactly that.
 
+**THE STRUCTURAL FACT (extracted after the searches stalled).** With size exact,
+the diff finally aligns and the residual has shape: **184 differing runs**, of
+which 111 are single isolated instructions -- but eight long runs hold nearly
+half the total. The largest, `0x12c6-0x1480`, is 199 instructions.
+
+Reading that region gives the disease, and it is not ordering noise:
+
+    ! 12c0  movs r0, #4      | movs r0, #1
+      12c2  bl   0xffffffb0  | bl   0xffffffb0
+    ! 12c6  movs r0, #155    | ldr  r1, [pc, #752]
+    ! 12c8  lsls r0, r0, #1  | movs r0, #4
+    ! 12ca  adds r2, r7, r0  | bl   0xffffffb0
+    ! 12cc  b.n  0x14fc      |
+
+The reference calls that function **twice**, with 1 and then 4. We call it once,
+and branch to a shared tail at `0x14fc` where the reference has the code written
+out inline. **Our C factors a tail the original duplicated.** That is a source
+structure difference, and it explains why every ordering-level search plateaued:
+they were permuting around a block that should not be shared at all.
+
+Re-running all 171 flag trials against this improved baseline confirms no stock
+option changes it, so the fix belongs in the C: un-share that tail, and check the
+other seven long runs for the same disease before assuming they are noise.
+
 **Four axes are now exhausted at this owner**, all measured:
 
 | axis | trials | result |

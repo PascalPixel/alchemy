@@ -68,7 +68,7 @@ fn parse_args(arguments: &[String]) -> Result<Command, &'static str> {
 }
 
 pub fn entry(arguments: &[String]) {
-    match run() {
+    match run(arguments) {
         Ok(Some(text)) => println!("{text}"),
         Ok(None) => {}
         Err(message) => {
@@ -78,7 +78,7 @@ pub fn entry(arguments: &[String]) {
     }
 }
 
-fn run() -> Result<Option<String>, String> {
+fn run(arguments: &[String]) -> Result<Option<String>, String> {
     let arguments: Vec<String> = arguments.to_vec();
     let command = parse_args(&arguments).map_err(str::to_string)?;
     if command == Command::Help {

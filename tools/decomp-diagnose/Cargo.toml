@@ -9,9 +9,5 @@ edition = "2021"
 name = "decomp_diagnose"
 path = "src/lib.rs"
 
-[[bin]]
-name = "decomp-diagnose"
-path = "src/main.rs"
-
 [dependencies]
 candidate-compiler = { path = "../candidate-compiler" }

@@ -27,6 +27,7 @@ semantic-queue = { path = "../semantic-queue" }
 lang-ban = { path = "../lang-ban" }
 check-commit-progress = { path = "../check-commit-progress" }
 coverage-map = { path = "../coverage-map" }
+byte-value-regions = { path = "../byte-value-regions" }
 
 [[bin]]
 name = "check"

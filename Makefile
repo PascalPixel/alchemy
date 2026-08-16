@@ -175,7 +175,7 @@ compiler-sweep:
 	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- mode-sweep --self-test
 
 compiler-cohort:
-	$(CARGO_RUN) $(TOOLS)/mode-cohort/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- mode-cohort --self-test
 
 overlay-compiler-cohort:
 	$(CARGO_RUN) $(TOOLS)/overlay-mode-cohort/Cargo.toml -- --self-test

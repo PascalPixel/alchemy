@@ -1,4 +1,7 @@
-use byte_value_regions::{build_byte_value_regions, self_test};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{build_byte_value_regions, self_test};
 use serde_json::json;
 use std::io::Write;
 use std::path::Path;
@@ -41,15 +44,15 @@ fn parse_u32(text: &str) -> Result<u32, String> {
     u32::from_str_radix(digits, 16).map_err(|_| format!("invalid address: {text}"))
 }
 
-fn main() {
-    if let Err(error) = run() {
+pub fn entry(arguments: &[String]) {
+    if let Err(error) = run(arguments) {
         eprintln!("{error}");
         std::process::exit(1);
     }
 }
 
-fn run() -> Result<(), String> {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+fn run(arguments: &[String]) -> Result<(), String> {
+    let args: Vec<String> = arguments.to_vec();
     let action = parse_args(&args)?;
     let Action::Build {
         source,

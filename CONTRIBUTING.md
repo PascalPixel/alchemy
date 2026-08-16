@@ -47,6 +47,12 @@ tripwire is mechanical, not a judgment call:
   it") is looping before it starts. Do not launch it.
 - Rising iteration counts against a flat best score mean the remaining
   distance is structural. No volume of the same search crosses it.
+- An exhausted generator is not an exhausted axis. Before closing an axis,
+  write down what the generator could not propose. The un-cache generator only
+  offered candidates whose cached expression was a bare field read, 35 of them,
+  and the C side was recorded as close to spent on that basis. Relaxing the
+  restriction to any single-assignment call-free local gave 81 candidates, one
+  of them worth 98 halfwords.
 
 Every session ends in one of exactly three states: an exact witness adopted
 through a gate; a new recorded fact (a `LAWS.md` law, a typed field or named
@@ -85,8 +91,9 @@ types, named fields, and brief comments:
 - Calls and side effects, and every value's lifetime across them.
 
 Every escalation step later in this file consumes this fact sheet. A session
-with no fact sheet has nothing to escalate with, and a wrong-sized or diffuse
-candidate almost always means the sheet is missing or wrong.
+with no fact sheet has nothing to escalate with, and a candidate whose
+differences are diffused across every region almost always means the sheet is
+missing or wrong. A size difference on its own means nothing either way.
 
 ## Write the compiler's input, not its output
 
@@ -129,8 +136,10 @@ The bound runs in both directions, and both are measured:
 The global differing-byte count is a cost meter, not a compass. Branch
 displacement, alignment, a missing shared tail, or a shifted literal pool can
 make thousands of later bytes differ while identifying only one structural
-error, and past a size slip, per-row instruction diffs are garbage. After
-every compile:
+error, and past a size slip, per-row instruction diffs are garbage in both
+directions: the count can fall by luck as easily as rise, so a size delta
+invalidates an improvement as much as a regression (see "Ways the numbers
+lie"). After every compile:
 
 - Align target and candidate per function and basic block. Across shifted
   regions use slip-immune comparisons: instruction multisets, call
@@ -138,8 +147,11 @@ every compile:
 - Cluster the mismatches into regions and name each region's disease (wrong
   loop shape, wrong lifetime, wrong operand order, missing field) before
   touching the source again.
-- A wrong-sized candidate, or mismatches diffused across every region, is a
-  reconstruction failure. No search fixes it; return to the fact sheet.
+- Mismatches diffused across every region are a reconstruction failure. No
+  search fixes it; return to the fact sheet. A size difference is not that
+  signal: the better reconstruction is frequently a different size from the
+  reference, and filtering on size is its own documented trap (see "Ways the
+  numbers lie").
 - A ROM-proved block rewrite may temporarily worsen the global score by
   exposing missing code elsewhere. Retain it only with local structural
   proof. Conversely, never keep a score improvement you cannot explain:
@@ -148,7 +160,8 @@ every compile:
 `decomp_diagnose` reports the canonical production-path score and the
 dominant residual class. Dominant register-allocation noise at the reference
 size is the signature of correct structure. Anything else is reconstruction
-work, not search work.
+work, not search work. That reads forward only: being off the reference size
+is not evidence the structure is wrong.
 
 ## Techniques that have paid off
 
@@ -176,6 +189,13 @@ only when the hoisted expression is a load. Hoisting a value already in a
 register (`finish_target = (u32) target_id;`) compiles byte-identical, because
 cprop propagates the single-def copy away before scheduling. A negative result
 from hoisting a copy says nothing about hoisting a load.
+
+**Cross-jumping is unreachable from C. Stop attacking it from the source.**
+On `080bbb0c` the reference stores `strh r0, [r7, #56]` inline at 0x1228 and
+branches past it, while we branch to a merged tail. Source-level duplication
+cannot undo the merge: all four duplication variants compiled byte-identical,
+because gcc re-merges the tail as fast as the source splits it. A residual of
+this shape is compiler-side work or an accepted loss, never a respelling.
 
 **Grep the file for its own precedent before theorizing about the compiler.**
 The `080bbb0c` size fix was a two-line hoist using a variable that was already
@@ -220,8 +240,9 @@ Use the smallest source change that explains the residual, and keep the
 compiler route fixed while changing C. Deterministic before stochastic,
 source before compiler:
 
-1. Wrong size or diffuse differences: back to reconstruction under the two
-   sections above. Spend no search budget here.
+1. Diffuse differences: back to reconstruction under the two sections above.
+   Spend no search budget here. Judge what comes back by structural distance,
+   not by whether it returned to the reference size.
 2. Diagnose the localized candidate with `decomp_diagnose`; inspect local
    disassembly, call sites, and residual clusters.
 3. Compare a known exact sibling with `overlay_twins`; transpose a proven
@@ -292,9 +313,12 @@ start. `check_sanctum --queue` lists the owners one axis away.
 Parallel work is most effective when it multiplies one piece of understanding
 across independent owners. Start with `overlay_twins --leads`: a readable lead
 that unlocks one or more transpositions usually has better expected return than
-a larger isolated owner. For main-image work, prefer same-size candidates with
-a small localized residual. Large diffuse mismatches go back to reconstruction;
-they are not automatically high-priority because their byte count is large.
+a larger isolated owner. For main-image work, prefer candidates with a small
+localized residual, which at that stage usually means they already sit at the
+reference size; that is an observation about owners near the finish line, not a
+filter to apply to reconstructions in flight. Large diffuse mismatches go back
+to reconstruction; they are not automatically high-priority because their byte
+count is large.
 
 The coordinator establishes a baseline, then gives each worker a contract:
 
@@ -305,8 +329,10 @@ The coordinator establishes a baseline, then gives each worker a contract:
 - maximum candidates or iterations, a wall-clock limit, permitted search axes,
   and explicit stop conditions; and
 - a required report of source and eventual paths, route/compiler identity,
-  sizes, differing halfwords, modes tried, rejected candidates, retained files,
-  shared outputs touched, and focused tests.
+  sizes, differing halfwords, the size-immune structural distance beside them
+  (a halfword count is comparable only against a baseline of the same size),
+  modes tried, rejected candidates, retained files, shared outputs touched, and
+  focused tests.
 
 Do not dispatch a worker with only "continue decompilation." That sentence
 delegates owner selection, reconstruction, matching strategy, compiler policy,
@@ -429,7 +455,7 @@ score as a new build. In particular, an apparent regression observed through a
 stale cache is a false signal: after a compiler rebuild, clear the affected
 ignored overlay cache (`out/cache/overlay-c/`) before diagnosing drift.
 
-### Four ways the numbers lie
+### Ways the numbers lie
 
 Every one of these produced a wrong conclusion that survived until it was
 checked a second way. Check the second way first.
@@ -450,6 +476,29 @@ are already counted as byte-exact by the build. Treating them as broken
 invented a 13,632-byte deficit that did not exist. The rule: `differing=1` with
 `reference - candidate == 2` is padding, not a defect. Confirm against
 `out/full/claimed/manifest.json`, which lists what the build actually claimed.
+
+**The reference size is not a constraint, and filtering on it costs rounds.**
+Matching the reference size is the final acceptance test, not a property that
+grows monotonically on the way there. A reconstruction can need to get much
+larger or much smaller before it gets right. On `080bbb0c` the decompiler-shaped
+baseline sat exactly at the reference size, 6332, with structural distance 508,
+and every reconstruction that beat it did so at a different size: control-first
+452 at 6324, structs-first 439 at 6324, surgical 434 at 6336. A search filtered
+to `size == 6332` discards all three and pins the owner to the decompiler
+shape's local optimum. Applying that filter cost roughly four rounds in one
+session. Rank reconstructions by structural distance and let the size land
+where it lands.
+
+**`differing_halfwords` compares candidates of the same size and nothing else.**
+It is a positional metric. A size delta shifts every later halfword and
+reshuffles which ones happen to line up, and with most halfwords already
+differing there is ample room to gain by luck. Measured on one owner: the 6332
+baseline reports 1801 differing halfwords at structural distance 508, and a 6336
+variant reports 1656, 145 apparently better, at structural distance 525, 17
+instructions structurally worse. A whole search was built on chasing those
+wrong-size winners, on the theory that beating the phase penalty proved they
+were closer. It did not. Across any size change, score with the register-blind
+structural distance instrument in [`docs/TOOLS.md`](docs/TOOLS.md) instead.
 
 **`make progress` reads `out/full/`, and only `build-full` writes it.**
 `build-claimed` writes somewhere else. Running `build-claimed` and then
@@ -474,6 +523,23 @@ owners and the register-allocation failures. It was measured: ascending order
 takes the main image from **1107 exact to 258**, losing 849 owners and gaining
 zero. The descending order is load-bearing for four fifths of everything that
 currently matches. Do not revisit this without reading that number first.
+
+**A high compile-failure rate means a broken harness, not a dead axis.** The
+branch-inversion scanner walked back from `} else {`, whose braces cancel, so it
+took the first body line as the if-header and spliced mid-statement: 44 pairs,
+32 compile failures. Starting the walk at depth 1 gave 53 pairs and 6 failures.
+Most of the malformed variants still compiled, so the sweep read as merely
+unproductive rather than wrong. Check the failure rate before reporting a sweep
+as spent, and fix the generator before believing its verdict.
+
+**An inert variant is not evidence, and inertness has to be ruled out.** Two
+instances in one session. BSD `sed` does not support `\b`, so a probe replaced
+nothing and "passed" trivially; `grep -c` returning 0 on the edited source is
+what caught it. And duplicating `block_402` at both goto sites took the source
+from 7 calls to 11 and emitted a **byte-identical** binary, because gcc re-merges
+the tail. An unchanged score is not proof the variant was tested; it is more
+often proof it was never applied. Prove non-inertness with `cmp` on the binary,
+or by counting the edit in the source, before recording any negative result.
 
 **A main-image owner that stops matching goes back to `semantic/`.** The build
 globs `exact/` for byte-exact owners and falls back to the assembly in `asm/`

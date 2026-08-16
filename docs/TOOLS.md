@@ -36,6 +36,32 @@ The list below is a map, not an instruction to run every search. Start with the
 smallest command that can answer the current question, and escalate only with a
 new structural fact in hand: two stalled searches on one axis end that axis.
 
+## Candidate distance
+
+The distance numbers these commands print are not interchangeable, so read the
+two candidate sizes before choosing a field. `candidate-show`'s
+`differing_halfwords`, the `byte_mismatches` half of `decomp_diagnose`'s
+canonical score, and the permuter's linked-byte score are all positional byte
+comparisons, valid only between candidates of identical size: a size delta
+reshuffles which halfwords line up rather than merely inflating the count.
+`decomp_diagnose`'s `instruction_mismatches` aligns on a register-blind edit
+distance and so survives a size change, but it folds register-only differences
+into the same integer as semantic ones.
+
+When sizes differ and you need the structural distance alone, disassemble
+`candidate.bin` and `reference.bin` from the candidate-show work directory,
+canonicalise absolute addresses and register names, align the two instruction
+streams with a sequence matcher, and count instructions inside non-equal hunks.
+Canonicalising registers is not optional. With addresses normalised alone, a run
+differing purely in register allocation has no matching text, presents as an
+unmatched 86-instruction block, and reads as evidence of block reordering.
+Blinding registers took one owner from 974 mismatching instructions to 489 and
+cut excursions of eight or more instructions from 15 to 4. The script currently
+lives in scratch as `score.sh` and should be promoted into `tools/`, replacing
+its hardcoded `arm-none-eabi-objdump` and repository-root paths with
+`thumb-disasm` and the usual root resolution. The measurement that settles which
+metric to trust is in `docs/COMPILER-BLOCKED-OWNERS.md`.
+
 ## assets
 
 | Command | Purpose |
@@ -83,7 +109,7 @@ route, bundle digest, and candidate span before interpreting a result.
 | Command | Purpose |
 |---|---|
 | `discover` | Produce the function/instruction/call discovery report from a local ROM. |
-| `decomp_diagnose` | Compile and explain a numeric main-image candidate's localized residual; `--agent-brief` emits the bounded worker contract and canonical score. |
+| `decomp_diagnose` | Compile and explain a numeric main-image candidate's localized residual; `--agent-brief` emits the bounded worker contract and canonical score, whose `instruction_mismatches` survives a size change and whose `byte_mismatches` does not. |
 | `integrate_matches` | Gate main-image `src_<address>.c` drafts and install byte-identical matches into `exact/` only with explicit apply mode. |
 | `remaining_survey` | Survey remaining executable regions from any current working directory. |
 

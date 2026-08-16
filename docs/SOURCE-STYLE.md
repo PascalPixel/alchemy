@@ -69,7 +69,15 @@ slightly different local vocabularies.
 
 Names are reconstruction aids, not claims about Camelot's original identifiers.
 Every naming or prototype change still goes through the routed byte comparison;
-macro expansion alone does not prove that the inferred API is correct.
+macro expansion alone does not prove that the inferred API is correct. That
+comparison is cheap insurance rather than a deterrent, because the naming layer
+is measurably byte-neutral: renaming locals produced byte-identical output over
+19 occurrences, and aliasing a callee through the `#define HumanName
+Func_<addr>` pattern produced byte-identical output over 18 real call sites,
+both verified with `cmp` on the binary (2026-08-16). Humanizing spelling cannot
+regress a score, so run it without fear, and read any byte delta after a
+naming-only pass as a genuine regression to investigate rather than expected
+churn.
 
 ## Comments
 
@@ -97,16 +105,32 @@ reproduction and scope in `LAWS.md` as well.
 
 Prefer the simplest C shape supported by the evidence. Keep uncertain fields,
 casts, aliases, signedness, and control flow explicit until they are proved.
-Do not humanize a source merely to make it look modern or elegant: a small
-change in type or alias information can change register allocation and break
-the exact bytes. Any identifier, type, or comment change still requires the
-owner's routed byte comparison.
+Risk lives in types, scoping, and control flow, not in spelling. A small change
+in type or alias information can change register allocation and break the exact
+bytes, so do not retype or re-scope a source merely to make it look modern or
+elegant. Identifier and comment changes are measurably free, as recorded above.
+Every change of any kind still goes through the owner's routed byte comparison.
 
 The same bound runs in the other direction: write the compiler's input, not
 its output. State plain indexing and ordinary expressions rather than
 transcribing optimizer artifacts such as walking offsets, hand-shared
 subexpressions, or hoisted invariants back into the source; the reasoning and
 symptoms are in [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+
+A decompiler `goto` chain is the clearest instance of output transcribed as
+input, and removing one is the largest structural win measured so far. On
+080bbb0c, deleting six decompiler labels took the register-blind structural
+distance 508 -> 452 and cut labels from 19 to 5 (2026-08-16); see
+[`CONTRIBUTING.md`](../CONTRIBUTING.md) for that instrument. This is not a
+license to strip every `goto`: `LAWS.md` records two cases where an explicit
+`goto` is exactly what the reference compiled from, the shared-tail CFG where
+N duplicated tails do not cross-jump and writing them out cost 97 of 104 bytes,
+and the loop whose exit must be a `goto` rather than a `break` to suppress the
+loop roll. Delete a `goto` that a decompiler invented, keep one the evidence
+demands. Do not extend this to types: full correct `struct BattleUnit` typing
+scored **worse** than the decompiler shape on the same owner, and pointer
+retyping alone was byte-identical. Struct-shaped source is not automatically
+closer to the original.
 
 Never use `asm(...)`, fixed-register bindings, empty assembly barriers, or any
 other assembly escape hatch in C or headers. Byte equality never overrides

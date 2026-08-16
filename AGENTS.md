@@ -53,6 +53,13 @@ and bounded deterministic C forms, compiler modes only when source evidence
 points to one, and stochastic permutation last. Neither compiler settings nor
 permutation can recover a wrong CFG, alias model, or lifetime structure.
 
+Size class is a ballpark, never a filter: on 080bbb0c the three reconstructions
+that beat the baseline (508 -> 452, 439, 434) sat at 6324, 6324, and 6336
+against a reference 6332, so a same-size filter discards all three. Once sizes
+differ, `differing_halfwords` is invalid rather than merely noisy, because the
+shift reshuffles which halfwords align; rank by register-blind structural
+distance instead ([CONTRIBUTING.md](CONTRIBUTING.md) for the measurements).
+
 Write the compiler's input, never its transcribed output. Hand-strength-reduced
 walking offsets, hand-CSE'd temporaries, and hand-hoisted invariants change
 what the earlier optimizer passes see and yield shapes the ROM does not have;
@@ -90,7 +97,9 @@ internal dump diagnostics.
    CONTRIBUTING.md: a localized, semantically reviewed residual whose score is
    dominated by register noise, with a written hypothesis and a stated budget.
 5. Review every automatic candidate for C dependency and behavior preservation.
-   A lower score is not proof of valid source.
+   A lower score is not proof of valid source, and an unchanged score is not
+   proof the variant did anything: prove it non-inert with `cmp` on the built
+   binary before believing either reading.
 6. Prove the candidate at its eventual path and use the owner-specific adoption
    gate: `integrate_matches` for main-image drafts and `overlay_adopt` for code
    overlays. Adopt from outside `exact/`; copying a file is not proof.
@@ -286,6 +295,10 @@ Do not erase negative evidence simply to make documentation shorter.
 - Never launch a bounded search without a written structural hypothesis. Two
   consecutive searches with no new structural fact between them end the axis;
   return to the assembly or the RTL dumps before spending further iterations.
+- An exhausted generator is not an exhausted axis. Before recording an axis
+  dead, state what the candidate generator excluded: relaxing the un-cache
+  generator from bare field reads to any single-assignment call-free local took
+  35 candidates to 81, one of them worth 98 halfwords.
 - The build targets at most four compiler configurations, listed under
   [Build configurations](#build-configurations). A per-file route is not a
   configuration; it is an admission that the reconstruction is wrong and a flag

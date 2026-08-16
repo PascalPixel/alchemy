@@ -130,7 +130,6 @@ s32 Func_0808a5d0(s16, s32);
  * without parsing a new stream.
  */
 s32 Func_08018038(s32 arg0, s32 arg1) {
-    u16 *spC;
     s32 sp10;
     s32 sp14;
     s32 sp18;
@@ -173,7 +172,6 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
     u16 *var_r2;
     u16 *var_r2_2;
     u16 *var_r2_3;
-    u16 temp_r3;
     u16 var_r0_3;
     u16 var_r2_4;
     u16 var_r2_5;
@@ -185,7 +183,6 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
     u32 var_r4_3;
     u32 var_r7;
     u8 *var_r0_6;
-    u8 *var_r1_3;
     void *temp_r1;
     void *temp_r1_2;
 
@@ -194,10 +191,9 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
     sp2C = temp_r1;
     sp28 = 1;
     sp24 = 0;
-    temp_r3 = Data_03001e8c->write_cursor;
     sp14 = 1;
-    sp20 = (s32) temp_r3;
-    var_r6 = temp_r3;
+    sp20 = (s32) (Data_03001e8c->write_cursor);
+    var_r6 = (Data_03001e8c->write_cursor);
     var_r7 = 0;
     temp_r1_2 = Data_03001e8c->command_buffer;
     sp1C = 0;
@@ -215,7 +211,6 @@ s32 Func_08018038(s32 arg0, s32 arg1) {
         /* Latched once, before the loop, exactly as r9 is at 0x080180bc. */
         readToken = *(TextTokenReader_08018038 *)0x03001F18;
         Func_08019bac(sp38, sp30);
-        spC = sp54;
 loop_3:
         temp_r5 = var_r7;
         var_r7 = readToken(sp38);
@@ -228,8 +223,8 @@ loop_3:
                 case 18:
                 case 29:
                 case 17:
-                    readToken(sp38);
                     break;
+                    readToken(sp38);
                 case 19:
                     readToken(sp38);
                     var_r0 = 3;
@@ -237,8 +232,8 @@ block_36:
                     Func_08019944(var_r0, arg1);
                     break;
                 default:
-                    sp14 = 0;
                     break;
+                    sp14 = 0;
                 case 22:
                     var_r0 = 5;
                     goto block_36;
@@ -253,9 +248,9 @@ block_36:
                     var_r0 = 6;
                     goto block_36;
                 case 1:
+                    break;
                     sp14 = 0;
                     var_r7 = 2;
-                    break;
                 }
             }
         } else {
@@ -298,10 +293,10 @@ block_36:
                     temp_r5_2 = readToken(sp38) - 1;
                     expansion_index = temp_r5_2;
                     expansion_path = 0x14;
-                    Func_080196c4((Func_08019944(2, arg1) & 0x1FF) + 0x182, (s32) spC, 0x18);
+                    Func_080196c4((Func_08019944(2, arg1) & 0x1FF) + 0x182, (s32) (sp54), 0x18);
                     if (expansion_path != 0x14)
                         expansion_index = temp_r5_2;
-                    var_r1 = spC;
+                    var_r1 = (sp54);
                     goto block_147;
                 }
                 if (var_r7 <= 0x14U) {
@@ -316,8 +311,8 @@ block_157:
                         } else {
                             var_r3 = 0;
                         }
-                        sp34 = var_r3;
                         break;
+                        sp34 = var_r3;
                     case 3:
                         goto block_157;
                     case 17:
@@ -366,11 +361,11 @@ block_147:
                     case 19:
                         temp_r5_4 = readToken(sp38) - 1;
                         expansion_index = temp_r5_4;
+                        Func_080196c4(Func_08019944(3, arg1) + 0x741, (s32) (sp54), 0x18);
                         expansion_path = 0x13;
-                        Func_080196c4(Func_08019944(3, arg1) + 0x741, (s32) spC, 0x18);
                         if (expansion_path != 0x13)
                             expansion_index = temp_r5_4;
-                        var_r1 = spC;
+                        var_r1 = (sp54);
                         goto block_147;
                     }
                 } else {
@@ -386,8 +381,8 @@ block_147:
                         }
                         break;
                     case 23:
-                        Func_080196c4(Func_0808a5d0((s16) Func_08019944(6, arg1), 1) + 0x99B, (s32) spC, 0x18);
-                        var_r1_2 = spC;
+                        Func_080196c4(Func_0808a5d0((s16) Func_08019944(6, arg1), 1) + 0x99B, (s32) (sp54), 0x18);
+                        var_r1_2 = (sp54);
                         var_r2_4 = *var_r1_2;
                         var_r0_3 = var_r6;
                         if (var_r2_4 != 0) {
@@ -399,8 +394,8 @@ block_147:
                             } while (var_r2_4 != 0);
                         }
 block_148:
-                        var_r6 = var_r0_3;
                         break;
+                        var_r6 = var_r0_3;
                     case 24:
                         Data_03001e8c->command_buffer[var_r6] = 0x8F;
                         temp_r6_3 = (var_r6 + 1) & 0x1FF;
@@ -424,8 +419,8 @@ block_148:
                         break;
                     case 30:
                     case 2:
-                        sp14 = 0;
                         break;
+                        sp14 = 0;
                     case 29:
                         temp_r6_5 = (var_r6 + 1) & 0x1FF;
                         Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
@@ -449,11 +444,10 @@ block_148:
 
                         } else {
                             var_r0_6 = sp44 + var_r4_4;
-                            var_r1_3 = var_r0_6;
 loop_124:
-                            Data_03001e8c->command_buffer[var_r6] = (s16)*var_r1_3;
+                            Data_03001e8c->command_buffer[var_r6] = (s16)*(var_r0_6);
                             var_r4_4 += 1;
-                            var_r1_3 += 1;
+                            (var_r0_6) += 1;
                             var_r6 = (var_r6 + 1) & 0x1FF;
                             if (var_r4_4 == 0x10) {
 
@@ -468,8 +462,8 @@ loop_124:
                         }
                         break;
                     default:
-                        Func_080196c4(Func_08019944(4, arg1) + 0x333, (s32) spC, 0x18);
-                        var_r1_4 = spC;
+                        Func_080196c4(Func_08019944(4, arg1) + 0x333, (s32) (sp54), 0x18);
+                        var_r1_4 = (sp54);
                         var_r2_5 = *var_r1_4;
                         var_r0_3 = var_r6;
                         if (var_r2_5 != 0) {

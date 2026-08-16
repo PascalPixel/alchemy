@@ -31,8 +31,8 @@ struct SelectionState_0801a66c {
     u8 padding2fc[0x09];
     u8 cursor_attribute0_high;
     u8 padding306;
-    u8 cursor_attribute1_high;
     u8 padding308;
+    u8 cursor_attribute1_high;
     u8 cursor_attribute2_high;
     u8 padding30a[0x0c];
     s16 cursor_frame;

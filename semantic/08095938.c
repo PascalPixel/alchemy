@@ -28,8 +28,8 @@ void Func_08095938(void *effect_pointer) {
     s32 current;
     s32 difference;
 
-    effect = effect_pointer;
     reference = Func_08092054(*(u32 *)0x02000434);
+    effect = effect_pointer;
     age = *(s16 *)(effect + 0x38);
     angle = *(u16 *)(effect + 0x3C);
     elevation = *(u16 *)(effect + 0x3E);

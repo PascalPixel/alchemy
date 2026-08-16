@@ -11,10 +11,10 @@ struct BattleCommandAvailability {
 };
 
 struct BattleCommandStateView {
-    u8 unknown_000[0x178];
     u16 selected_effect;
     u8 unknown_17a[0x9f];
     u8 combatant_count;
+    u8 unknown_000[0x178];
     u8 current_combatant;
 };
 

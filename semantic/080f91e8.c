@@ -15,18 +15,18 @@ void Func_080f91e8(void)
 
     countdown = *(u8 *)0x02003000;
     if (countdown != 0) {
-        if (countdown == 1) {
+        if (!(countdown == 1)) {
+            *(u8 *)0x02003000 = countdown - 1;
+        } else {
             if (*(u8 *)0x02004214 == 0) {
                 *(u8 *)0x02003000 = 0;
                 *(u16 *)0x02003034 = 0x0100;
             }
-        } else {
-            *(u8 *)0x02003000 = countdown - 1;
         }
     }
 
-    target = *(s16 *)0x02003034;
     current = *(s16 *)0x02003008;
+    target = *(s16 *)0x02003034;
     if (target != current) {
         delta = target - current;
         step = *(u16 *)0x02003010;

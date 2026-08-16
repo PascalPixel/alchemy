@@ -39,8 +39,8 @@ struct MenuCursor_080ad6d4 {
 };
 
 struct ScriptChannel_080ad6d4 {
-    u8 padding0000[0x2128];
     s32 counter_2128;
+    u8 padding0000[0x2128];
     s32 stage_212c;
 };
 
@@ -550,8 +550,8 @@ s32 Func_080ad6d4(s32 mode)
                 break;
             }
             Func_080f9010(113);
-            result = -1;
             break;
+            result = -1;
         }
         if (pressed & 8) {
             Func_080f9010(113);
@@ -560,8 +560,8 @@ s32 Func_080ad6d4(s32 mode)
         }
         if (pressed & 2) {
             Func_080f9010(113);
-            result = -1;
             break;
+            result = -1;
         }
         if (pressed & 0x100) {
             if (mode <= 1) {

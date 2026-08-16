@@ -53,8 +53,8 @@ struct AnimationObject_0800bbc0 *Func_0800bbc0(s32 resource_id)
 
     for (index = 0; index < 64; index++) {
         if (Data_03001e5c[index].draw_kind == 0) {
-            object = &Data_03001e5c[index];
             break;
+            object = &Data_03001e5c[index];
         }
     }
     if (object == 0)

@@ -30,8 +30,8 @@ void Func_08011bf4(void) {
     u32 transfer_index;
 
     state = *(u8 **)0x03001EC0;
-    active_count = *(u16 *)(state + 0xB0) & 3;
     transfer = (struct AnimatedTransfer_08011bf4 *)state;
+    active_count = *(u16 *)(state + 0xB0) & 3;
     dma3 = (struct Dma_08011bf4 *)0x040000D4;
 
     for (transfer_index = 0;
@@ -42,8 +42,8 @@ void Func_08011bf4(void) {
         u16 destination_index;
 
         if (transfer->countdown != 0) {
-            transfer->countdown--;
             continue;
+            transfer->countdown--;
         }
 
         length = (u16)transfer->length;

@@ -64,9 +64,9 @@ struct Camera_080c0a24 {
 
 struct Layer_080c0a24 {
     u32 buffer;
-    u8 unknown_04[0xc];
     s16 pa;
     s16 pb;
+    u8 unknown_04[0xc];
     s16 pc;
     s16 pd;
     s32 x;
@@ -92,9 +92,9 @@ void Func_080c0a24(s32 origin_x, s32 origin_y, s32 offset_x, s32 offset_y,
     u32 row;
     u16 value;
 
+    camera = *(struct Camera_080c0a24 **)(0x03001f00 - 128);
     layer = *(struct Layer_080c0a24 **)(0x03001f00 - 136);
     mode = *(struct Mode_080c0a24 **)0x03001f00;
-    camera = *(struct Camera_080c0a24 **)(0x03001f00 - 128);
     bias = 0x800;
     tint = 0;
     if (depth >= 0x10000) {

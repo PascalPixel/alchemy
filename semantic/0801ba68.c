@@ -107,8 +107,8 @@ void Func_0801ba68(SelectionState_0801ba68 *state, u32 direction)
         SlidingNode_0801ba68 *head = state->head;
 
         selection = state->first_visible + 4;
-        resource = state->resource_ids[selection];
         variant = state->variants[selection];
+        resource = state->resource_ids[selection];
         node = Func_0801a910(0);
         if (node == 0) {
             return;
@@ -151,8 +151,8 @@ void Func_0801ba68(SelectionState_0801ba68 *state, u32 direction)
         SlidingNode_0801ba68 *old_head = state->head;
 
         selection = state->first_visible;
-        resource = state->resource_ids[selection];
         variant = state->variants[selection];
+        resource = state->resource_ids[selection];
         node = Func_0801a910(0);
         if (node == 0) {
             return;

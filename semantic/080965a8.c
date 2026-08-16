@@ -27,8 +27,8 @@ struct Actor_080965a8 {
     s32 y;
     s32 z;
     u8 padding14[4];
-    s32 scale_x;
     s32 scale_y;
+    s32 scale_x;
     u8 padding20[3];
     u8 mode;
     s32 motion_x;

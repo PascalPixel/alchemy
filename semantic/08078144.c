@@ -39,8 +39,8 @@ void Func_08078144(void)
 
             *(u16 *)(state + 58) = *(u16 *)(state + 54);
 
-            numerator = *(s16 *)(state + 56);
             denominator = *(s16 *)(state + 52);
+            numerator = *(s16 *)(state + 56);
             t = Func_080022ec(numerator << 14, denominator);
             v14 = 0x4000;
             if (t <= 0x4000) {

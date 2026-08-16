@@ -8,8 +8,8 @@ s32 Func_080022ec(s32 value, s32 divisor);
 s32 Func_08018850(s32 start, s32 *width, s32 *height, s16 *spacing)
 {
     u8 *text_state = Data_03001e8c;
-    s16 line_widths[4];
     s16 word_counts[4];
+    s16 line_widths[4];
     s32 current_width = 0;
     s32 words = 0;
     s32 line = 0;

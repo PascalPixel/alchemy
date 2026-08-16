@@ -51,9 +51,9 @@ void Func_0801a7f4(void)
     state = *(u8 **)0x03001e98;
     limit = *(u16 *)(state + 916);
     index = *(u16 *)(state + 924);
+    entry = (const u16 *)(state + index * 2 + 852);
     previous = NULL;
     count = 0;
-    entry = (const u16 *)(state + index * 2 + 852);
     goto test;
 
 populate:

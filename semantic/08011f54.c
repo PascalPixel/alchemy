@@ -53,7 +53,6 @@ s32 Func_08011f54(s32 index, s32 x, s32 y)
     s32 roundedX;
     s32 roundedY;
     s32 offset;
-    u32 entryOffset;
 
     table = Data_03001e70;
     x >>= 16;
@@ -70,7 +69,6 @@ s32 Func_08011f54(s32 index, s32 x, s32 y)
     roundedY = y;
     if (y < 0)
         roundedY += 15;
-    entryOffset = map[(((roundedY >> 4) << 7) + (roundedX >> 4)) * 4 + 3] * 4;
-    return Data_080134fc[Data_0202c000[entryOffset] & 15](
-        Data_0202c001 + entryOffset, x & 15, y & 15);
+    return Data_080134fc[Data_0202c000[(map[(((roundedY >> 4) << 7) + (roundedX >> 4)) * 4 + 3] * 4)] & 15](
+        Data_0202c001 + (map[(((roundedY >> 4) << 7) + (roundedX >> 4)) * 4 + 3] * 4), x & 15, y & 15);
 }

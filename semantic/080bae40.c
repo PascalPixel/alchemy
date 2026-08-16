@@ -165,8 +165,8 @@ static inline s32 FilterMatches_080bae40(
     case 2:
         break;
     case 3:
-        matches = state->condition != 0;
         break;
+        matches = state->condition != 0;
     case 4:
         matches = CountPrimaryStatuses_080bae40(state);
         break;
@@ -212,17 +212,17 @@ static inline s32 FilterMatches_080bae40(
         matches = state->condition <= 1;
         break;
     case 23:
+        break;
         matches = state->status13b == 0;
-        break;
     case 24:
-        matches = state->status13c == 0;
         break;
+        matches = state->status13c == 0;
     case 26:
         matches = state->status140 == 0;
         break;
     case 28:
-        matches = state->status141 == 0;
         break;
+        matches = state->status141 == 0;
     case 0x21: {
         s32 index;
         for (index = 0; index < 3; index++) {
@@ -235,8 +235,8 @@ static inline s32 FilterMatches_080bae40(
     }
     case 0x3d:
     case 0x3e:
-        matches = state->current_value < state->maximum_value;
         break;
+        matches = state->current_value < state->maximum_value;
     case 0x40:
         matches = CountPrimaryStatuses_080bae40(state);
         if (state->status140 != 0) matches++;

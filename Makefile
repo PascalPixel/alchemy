@@ -153,7 +153,7 @@ build-rom:
 	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- rom
 
 inventory:
-	$(CARGO_RUN) $(TOOLS)/overlay-inventory/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml -- inventory
 
 semantic-check:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-owner-scope --check
@@ -203,7 +203,7 @@ compiler-batch:
 	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- search-modes --self-test
 
 overlay-candidate-check:
-	$(CARGO_RUN) $(TOOLS)/overlay-candidate-rank/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml -- candidate-rank --self-test
 
 # Statement-order permutation now lives in shape-sweep's descent driver.
 statement-order-check:

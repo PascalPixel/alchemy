@@ -28,6 +28,6 @@ void Func_08004760(void)
     destination = 0x03001cbc;
     *(volatile u32 *)destination = 0x06002000;
     display = 128;
-    display <<= 3;
     Data_04000008 = display;
+    display <<= 3;
 }

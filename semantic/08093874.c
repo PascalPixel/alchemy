@@ -14,8 +14,8 @@ struct EffectObject_08093874 {
     s32 z;
     u8 unknown_14[0x3c];
     struct EffectVisual_08093874 *visual;
-    u8 unknown_54;
     u8 state_55;
+    u8 unknown_54;
     u8 unknown_56[0x0e];
     u16 phase;
     u16 source_id;

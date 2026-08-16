@@ -69,7 +69,6 @@ s32 Func_0800f7f4(void *arg0) {
         u16 direction_class = direction & 0xF000;
         s32 delta_z;
         s32 current_x;
-        s32 candidate_x;
         s32 cell_z;
         struct MapCell_0800f7f4 *map =
             (struct MapCell_0800f7f4 *)0x02010000;
@@ -113,15 +112,14 @@ s32 Func_0800f7f4(void *arg0) {
         }
         cell_z = (cell_z >> 20) << 7;
 
-        candidate_x = candidate.x;
-        if (candidate_x < 0) {
-            candidate_x += 0xFFFFF;
+        if ((candidate.x) < 0) {
+            (candidate.x) += 0xFFFFF;
         }
-        candidate_x >>= 20;
+        (candidate.x) >>= 20;
 
         if (Func_0801219c(&candidate) != 0 ||
             map[current_x + cell_z].collision !=
-                map[candidate_x + cell_z].collision) {
+                map[(candidate.x) + cell_z].collision) {
             obstruction = 4;
             command = 12;
         } else if ((*input & 0x40) != 0) {

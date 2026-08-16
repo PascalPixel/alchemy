@@ -173,8 +173,8 @@ void Func_080f9c90(struct Player_080f9c90 *player)
         if ((s32)player->status >= 0) {
             player->tempo_counter += player->tempo_increment;
             while (player->tempo_counter >= 150) {
-                remaining = player->track_count;
                 track = player->tracks;
+                remaining = player->track_count;
                 track_bit = 1;
                 active_mask = 0;
 
@@ -248,8 +248,8 @@ void Func_080f9c90(struct Player_080f9c90 *player)
                                 s32 counter;
                                 s32 value;
 
-                                track->lfo_counter += track->lfo_speed;
                                 counter = track->lfo_counter;
+                                track->lfo_counter += track->lfo_speed;
                                 if ((s8)(counter - 64) < 0) {
                                     value = (s8)counter;
                                 } else {
@@ -278,8 +278,8 @@ void Func_080f9c90(struct Player_080f9c90 *player)
                 player->tempo_counter -= 150;
             }
 
-            remaining = player->track_count;
             track = player->tracks;
+            remaining = player->track_count;
             for (; remaining > 0; remaining--, track++) {
                 if ((track->flags & 0x80) == 0 ||
                     (track->flags & 0x0f) == 0) {

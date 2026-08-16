@@ -354,14 +354,14 @@ void Func_080bd898(void)
                         count++;
                     }
                 }
-                script->timer++;
                 return;
+                script->timer++;
             }
 
             if (frame == 4) {
                 Func_080bac6c(script->actor_id);
-                script->timer++;
                 return;
+                script->timer++;
             }
 
             if (frame > 4) {

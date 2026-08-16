@@ -47,8 +47,8 @@ typedef s32 (*Multiply_08010230)(s32 a, s32 b);
 struct Layer_08010230 {
     u8 unknown_00[8];
     s32 offset_x;
-    s32 offset_y;
     s32 scale_x;
+    s32 offset_y;
     s32 scale_y;
     s32 step_x;
     s32 step_y;
@@ -125,8 +125,8 @@ void Func_08010230(s32 x, s32 y)
             biased_x &= ((s32)layer->wrap_x << 19) | 0x0007ffff;
         }
         if (layer->step_y != 0) {
-            layer->scroll_y += layer->step_y;
             biased_y += layer->scroll_y;
+            layer->scroll_y += layer->step_y;
             biased_y &= ((s32)layer->wrap_y << 19) | 0x0007ffff;
             rows = 32;
         }

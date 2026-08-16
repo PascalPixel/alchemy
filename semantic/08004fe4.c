@@ -132,10 +132,10 @@ void Func_08004fe4(const s32 *self, const s32 *other, s32 *out)
 
     ndySq = multiply(ndy, ndy);
     horizontalMag2 = 0x10000 - ndySq;
-    if (horizontalMag2 > 0) {
-        scale2 = divide(0x80000000, Func_080045d4(horizontalMag2)) << 1;
-    } else {
+    if (!(horizontalMag2 > 0)) {
         scale2 = scale1;
+    } else {
+        scale2 = divide(0x80000000, Func_080045d4(horizontalMag2)) << 1;
     }
 
     rz = multiply(ndz, scale2);

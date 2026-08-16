@@ -18,8 +18,8 @@ u32 Func_080c1fa8(u32 id)
     if (id >= 380) {
         id = 1;
     }
-    entry = &Data_080c5c38 + id * 16;
     out = buffer;
+    entry = &Data_080c5c38 + id * 16;
     value = entry + 1;
     flag = entry + 11;
     remaining = 4;

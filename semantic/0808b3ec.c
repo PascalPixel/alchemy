@@ -140,14 +140,7 @@ void Func_0808b3ec(struct PublishRequest_0808b3ec *record, s32 counter)
         category = Func_0808b398(record->id);
         object = Func_0808ba1c(localSlot);
 
-        if (object != 0) {
-            /* slot already occupied: refresh it with the new record's
-               params, unless the mode flag suppresses that */
-            if (Func_080770c0(0x109) == 0) {
-                Func_080090f0(object, record->param_0c, record->param_10,
-                              record->param_14);
-            }
-        } else {
+        if (!(object != 0)) {
             /* slot empty: create a new object for this record */
             object = Func_080090c8(category, record->param_0c,
                                     record->param_10, record->param_14);
@@ -175,6 +168,13 @@ void Func_0808b3ec(struct PublishRequest_0808b3ec *record, s32 counter)
 
             if (Func_080770c0(33) != 0 && (u32)(category - 18) <= 1) {
                 Func_08009228(object, 226);
+            }
+        } else {
+            /* slot already occupied: refresh it with the new record's
+               params, unless the mode flag suppresses that */
+            if (Func_080770c0(0x109) == 0) {
+                Func_080090f0(object, record->param_0c, record->param_10,
+                              record->param_14);
             }
         }
 

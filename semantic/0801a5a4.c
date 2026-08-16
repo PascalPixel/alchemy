@@ -7,10 +7,10 @@ typedef struct {
 } DmaRegisters;
 
 typedef struct {
-    u8 filler0[0x600];
     u16 first;
     u16 second;
     u32 value;
+    u8 filler0[0x600];
 } State;
 
 extern void *Func_080048b0(u32, u32);

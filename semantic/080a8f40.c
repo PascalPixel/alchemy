@@ -8,8 +8,8 @@ struct Page_080a8f40 {
 };
 
 struct MenuState_080a8f40 {
-    u8 padding000[0x1C8];
     u16 item_ids[40];
+    u8 padding000[0x1C8];
     u8 show_items;
     u8 padding219;
     u8 owner_id;

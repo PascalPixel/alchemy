@@ -120,18 +120,18 @@ s32 RunSelectorDrivenBattleEffect(
     u32 sp40;
     struct Work_02000000 **sp44;
     u32 sp48;
-    s32 sp4C;
     s32 sp50;
+    s32 sp4C;
     s32 sp54;
     s32 sp58;
     s32 sp5C;
     s32 sp60;
     s32 sp64;
     u8 *sp68;
-    s32 sp6C;
     s32 sp78;
-    s32 sp7C;
+    s32 sp6C;
     s32 sp80;
+    s32 sp7C;
     s32 sp84;
     s32 setup_projection[2];
     s32 projected[3];
@@ -428,8 +428,8 @@ block_83:
             }
         }
         temp_r1 = sp80 + 1;
-        sp18 += sp58;
         sp14 += 2;
+        sp18 += sp58;
         sp80 = temp_r1;
         if (temp_r1 != M2C_FIELD(*sp44, s32 *, 0x14)) {
             goto loop_48;
@@ -522,8 +522,8 @@ loop_121:
 
         } else {
             sp2C = sp1C;
-            sp28 = (u8 *)0x02010000 + (sp3C * 0x1C);
             sp24 = 0;
+            sp28 = (u8 *)0x02010000 + (sp3C * 0x1C);
 loop_124:
             if ((s32) (sp24 + sp2C) >= sp78) {
 
@@ -715,8 +715,8 @@ burst_pool_ready:
                     if ((s32) var_r0_5 <= var_r1_4) {
                         var_r1_5 = (Func_080022fc(sp78, 6) * 0x300) + temp_r0;
                         var_r2_7 = projected[0] - 0x10;
-                        var_r3_10 = projected[1] - 0xC;
                         draw_width = 0x20U;
+                        var_r3_10 = projected[1] - 0xC;
                         draw_height = 0x18;
 block_197:
                         renderer_46(
@@ -776,12 +776,12 @@ block_194:
                     draw_height = 0x17;
                     goto block_197;
                 default:
-                    renderer_46(sp84, temp_r0, projected[0] - 0x14, projected[1] - 0x20, 0x28, 0x40);
                     break;
+                    renderer_46(sp84, temp_r0, projected[0] - 0x14, projected[1] - 0x20, 0x28, 0x40);
                 }
             }
-            temp_r1_3 = sp7C + 1;
             sp24 += sp50;
+            temp_r1_3 = sp7C + 1;
             sp7C = temp_r1_3;
             sp28 += 0x1C;
             sp3C += 1;

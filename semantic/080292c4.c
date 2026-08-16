@@ -22,12 +22,10 @@ void Func_080292c4(s32 handle, s32 selection)
     y = 16;
     row = 0;
     do {
-        u8 *cursor;
 
-        cursor = number;
         do {
-            *cursor++ = 0;
-        } while (cursor != number + 5);
+            *(number)++ = 0;
+        } while ((number) != number + 5);
 
         Func_08029274(flag, 3, number);
         Func_0801e940(number, handle, 0, y);

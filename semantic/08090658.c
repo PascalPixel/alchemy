@@ -65,9 +65,9 @@ void Func_08090658(void)
 
             state->fade_frames = 0;
             Func_08004278(Func_08090658);
+            return;
             *dma_control &= 0xc5ff;
             *dma_control &= 0x7fff;
-            return;
         }
 
         {

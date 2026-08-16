@@ -760,9 +760,19 @@ fn attempt_candidate(
             CompilerTarget::Gs1,
             &CandidateCompilerConfiguration::default(),
         )?;
+        // Score against the OWNER's extent, not the candidate's.
+        // `verify_candidate` slices both sides to the linked binary's length,
+        // so `verification.expected` is always exactly as long as whatever this
+        // attempt compiled to. Scoring against it makes the length term in
+        // `differing_halfwords` permanently zero, and a shape that drops bytes
+        // off the end scores as well as one that keeps them. See
+        // `decomp_diagnose::owner_reference`.
+        let stem = candidate_compiler::verify::source_stem(candidate);
+        let expected =
+            decomp_diagnose::owner_reference(root(), rom, &stem, &verification.expected);
         Ok(Row {
             ids: attempt.ids.clone(),
-            differing: differing_halfwords(&verification.actual, &verification.expected),
+            differing: differing_halfwords(&verification.actual, &expected),
             size: verification.size as usize,
         })
     }

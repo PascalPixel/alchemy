@@ -10,7 +10,7 @@ use crate::jsnum::{pad_start, parse_int_16, to_string_16};
 use crate::matchers::overlay_id;
 
 pub const USAGE: &str =
-    "usage: candidate-explain OVERLAY:OFFSET --source FILE [--routing-source FILE] [--span BYTES] [--work DIR]\n\
+    "usage: candidate-explain OVERLAY:OFFSET --source FILE [--routing-source FILE] [--span BYTES] [--work DIR] [--remove-flags -fa,-fb]\n\
      \x20      candidate_explain.ts semantic/main/08xxxxxx.c [--work DIR]";
 
 #[derive(Debug, Clone, PartialEq)]
@@ -33,6 +33,13 @@ pub enum Options {
         /// span as `Option<u32>` and rejecting the unparsable case would be a
         /// bug fix, and this port fixes nothing.
         span: Option<f64>,
+        /// Routed flags to REMOVE before compiling.
+        ///
+        /// Native addition. The explain path compiles with the owner's routed
+        /// flags, which is right for explaining a residual the ROM build has,
+        /// but useless for asking whether an owner still reproduces WITHOUT a
+        /// routed flag -- the question every routing retirement turns on.
+        remove_flags: Vec<String>,
     },
     Main {
         source: PathBuf,
@@ -57,6 +64,7 @@ pub fn parse_arguments(argv: &[String], cwd: &Path) -> ParseOutcome {
     let mut work = String::new();
     let mut span: Option<f64> = None;
 
+    let mut remove_flags: Vec<String> = Vec::new();
     let mut index = 0usize;
     while index < argv.len() {
         let argument = argv[index].as_str();
@@ -74,6 +82,19 @@ pub fn parse_arguments(argv: &[String], cwd: &Path) -> ParseOutcome {
             "--work" => {
                 index += 1;
                 work = argv.get(index).cloned().unwrap_or_default();
+            }
+            "--remove-flags" => {
+                index += 1;
+                remove_flags = argv
+                    .get(index)
+                    .map(|value| {
+                        value
+                            .split(',')
+                            .filter(|part| !part.is_empty())
+                            .map(str::to_string)
+                            .collect()
+                    })
+                    .unwrap_or_default();
             }
             "--span" => {
                 index += 1;
@@ -119,6 +140,7 @@ pub fn parse_arguments(argv: &[String], cwd: &Path) -> ParseOutcome {
             routing_source: resolve(cwd, &routing_source),
             work: resolve_work(cwd, &work, "work/candidate-explain-overlay"),
             span,
+            remove_flags,
         }));
     }
 

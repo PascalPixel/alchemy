@@ -33,7 +33,7 @@
 // of the probe, not of the data, and the tables are mirrored as they stand.
 
 pub static FIXED_R3_SOURCES: &[&str] = &[
-    "080fb6ec", "080fb700", "080fb714", "080fb728", "080fb73c", "080fb750", "080fb75c", "080fb768",
+    "080fb6ec", "080fb700", "080fb714", "080fb728", "080fb73c", "080fb768",
     "080fb77c",
 ];
 pub static OPTIMIZE_O1_SOURCES: &[&str] = &["080049e8", "08021e28"];
@@ -264,7 +264,7 @@ pub static GROUP_CONTROL_REMATERIALIZE_OVERLAY_SOURCES: &[&str] = &[
 pub static SCHED_POOL_LOAD_LATE_SOURCES: &[&str] = &["080f377c", "08091174"];
 pub static THUMB_LEAF_NO_LR_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
 pub static THUMB_NO_IF_CONVERT_SOURCES: &[&str] = &["080fa1ac"];
-pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["080fb75c", "080fb750", "08029274", "08011590", "080060e8", "080043e0", "0800439c", "08004358", "0800430c", "080042c8", "08004198", "0800307c", "08002f10", "080f9a30"];
+pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["08029274", "08011590", "080060e8", "080043e0", "0800439c", "08004358", "0800430c", "080042c8", "08004198", "0800307c", "08002f10", "080f9a30"];
 pub static THUMB_LOW_REG_ORDER_SOURCES: &[(&str, &str)] = &[
     ("080f9a30", "01231230"),
     ("080fa264", "30120123"),
@@ -1088,7 +1088,7 @@ pub static DEFAULT_ABI_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_020013ac.c",
     "exact/resource_3a7_c_020013e4.c",
 ];
-pub static AGBCC_SOURCES: &[&str] = &[
+pub static AGBCC_SOURCES: &[&str] = &["080fb75c", "080fb750", 
     "08006878", "080069a4", "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68",
     "08006cdc", "08006d50", "08006dec", "08006e24", "08006f48", "08006f84", "08007028", "08007098",
     "0800711c", "080071a8", "08007220", "080f9a50", "080fada0", "080fadf0", "080fa1fc", "080fa2a0",

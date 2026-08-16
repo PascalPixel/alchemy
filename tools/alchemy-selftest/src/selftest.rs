@@ -129,7 +129,11 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
     let mut probe = Probe { trace: Trace::new() };
     callback_arity_lint()?;
 
-    let expected: [&str; 59] = [
+    // 080fb750 and 080fb75c joined on 2026-08-16. They are m4a engine owners
+    // that were routed to gcc296 with -ffixed-r3 and -fno-schedule-insns2
+    // emulating what old_agbcc does natively; under old_agbcc they are
+    // byte-exact with no flags at all, like the neighbours they sit between.
+    let expected: [&str; 61] = [
         "08006878", "08006910", "080069a4",
         "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
         "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
@@ -138,6 +142,7 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         "080fa424", "080fa458", "080fa490", "080fa4cc", "080fa514", "080fa55c", "080fa6a0", "080fa798", "080fa83c", "080fa8d4", "080fa928", "080fa9a4",
         "080fa9e0", "080faa58", "080fab3c", "080fab7c", "080fac44", "080facf8", "080fada0", "080fadf0", "080fae58",
         "080fb2a4", "080fb2cc", "080fb334", "080fb3a8", "080fb410", "080fb430", "080fb4a4", "080fb518", "080fb670", "080fb6a4",
+        "080fb750", "080fb75c",
     ];
     if sorted_set(AGBCC_SOURCES) != expected {
         return fail("old_agbcc source allowlist self-test failed");

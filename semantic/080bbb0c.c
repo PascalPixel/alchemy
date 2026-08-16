@@ -523,10 +523,10 @@ loop_90:
             BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
             resulting_hp = target_hp - damage;
             BattleEvent_Push(BATTLE_EVENT_VALUE, damage);
-            if ((u32) target_id <= 7U) {
-                ranged_damage_text = range_relation + 0x834;
-            } else {
+            if (!((u32) target_id <= 7U)) {
                 ranged_damage_text = range_relation + 0x831;
+            } else {
+                ranged_damage_text = range_relation + 0x834;
             }
             BattleEvent_Push(BATTLE_EVENT_TEXT, ranged_damage_text);
             if (resulting_hp > 0) {
@@ -578,10 +578,10 @@ loop_90:
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
                 BattleEvent_Push(BATTLE_EVENT_VALUE, pp_damage);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
-                if ((u32) target_id <= 7U) {
-                    pp_damage_text = 0x82A;
-                } else {
+                if (!((u32) target_id <= 7U)) {
                     pp_damage_text = 0x829;
+                } else {
+                    pp_damage_text = 0x82A;
                 }
                 resulting_pp = (M2C_FIELD(target_state, s16, 0x3A)) - pp_damage;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, pp_damage_text);
@@ -616,11 +616,11 @@ loop_90:
                     healed_hp = resulting_hp - M2C_FIELD(target_state, s16, 0x38);
                 }
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
-                if (resulting_hp == M2C_FIELD(target_state, s16, 0x34)) {
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
-                } else {
+                if (!(resulting_hp == M2C_FIELD(target_state, s16, 0x34))) {
                     BattleEvent_Push(BATTLE_EVENT_VALUE, healed_hp);
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);
+                } else {
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
                 }
                 prior_health = M2C_FIELD(target_state, s16, 0x38);
                 goto block_247;
@@ -1014,11 +1014,11 @@ block_case2_failure:
         if ((pp_delta == 0) && (action_family != 0xB)) {
             goto finalize;
         }
-        if (recovered_pp == max_pp) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
-        } else {
+        if (!(recovered_pp == max_pp)) {
             BattleEvent_Push(BATTLE_EVENT_VALUE, pp_delta);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
         }
         M2C_FIELD(target_state, s16, 0x3A) = (s16) recovered_pp;
         goto block_402;
@@ -1368,11 +1368,11 @@ block_402:
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
         BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) actor_id);
-        if (actor_recovered_pp == M2C_FIELD(actor_state, s16, 0x36)) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
-        } else {
+        if (!(actor_recovered_pp == M2C_FIELD(actor_state, s16, 0x36))) {
             BattleEvent_Push(BATTLE_EVENT_VALUE, actor_pp_recovery);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
         }
         M2C_FIELD(actor_state, s16, 0x3A) = (s16) actor_recovered_pp;
 block_421:

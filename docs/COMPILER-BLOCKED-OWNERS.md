@@ -92,3 +92,49 @@ compiler-side and each needs its own measured experiment:
    than accommodated.
 3. Whether Camelot's scheduler differed -- the `080043e0` case above is a clean,
    2-byte, fully-characterised witness to test any such hypothesis against.
+
+## 080bbb0c, measured 2026-08-16
+
+The largest single owner, 6,332 bytes, and the clearest picture of what the
+remaining distance actually is.
+
+    candidate=6324  reference=6332  differing_halfwords=2286   (73% of rows)
+
+**The C is substantially right.** Instruction multiset overlap is **94%** --
+the same instructions, in different places. The first 258 bytes are
+byte-identical, then it diverges and does not resynchronise.
+
+**The divergence is adjacent-instruction reordering**, not wrong code. It
+re-syncs after every swap:
+
+    ! 0202  mov  r0, r8          adds r1, r5, #0
+    ! 0204  adds r1, r5, #0      ands r2, r6
+    ! 0206  ands r2, r6          mov  r0, r8
+    ! 0218  movs r4, #0          mov  ip, r1
+    ! 021c  mov  ip, r1          movs r4, #0
+
+Identical instructions, permuted, roughly 1,140 times over. That is why 73%
+looks catastrophic while the real disagreement is much smaller.
+
+**No stock flag helps.** All 18 stock options and all 153 pairs were tried:
+171 trials, and not one improves on the no-flag baseline of 2286. The
+scheduler flags (`-fno-schedule-insns`, `-fno-schedule-insns2`) change the
+emitted code substantially -- thousands of lines -- without getting closer, so
+the ordering is coming out of RTL generation rather than the scheduler. That
+makes it a C-shape question in principle, and one with ~1,140 sites.
+
+**The 8-byte size gap is distributed, not at the tail.** The trailing literal
+pool matches almost exactly (one word differs), so the missing 8 bytes are
+spread through the function's interleaved pools. Reference emits 70 more `ldr`
+against our extra `movs`/`lsls`: it reloads where we keep values in registers,
+which is a register-pressure difference.
+
+**The permuter is not yet allowed at this owner.** CONTRIBUTING's gate requires
+reference size reached and the residual localized into explained clusters.
+Neither holds: the size is 8 bytes short and the residual is diffuse across the
+whole function.
+
+So the order of work is fixed: close the 8 bytes first -- it is structural, and
+the +70 `ldr` register-pressure signal is the lead -- then localize the residual
+into clusters, and only then permute. Attempting the permuter now would be
+searching noise with a structural error still in the source.

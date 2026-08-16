@@ -158,7 +158,7 @@ progress-subject:
 	$(CARGO_RUN) $(TOOLS)/full-c-progress/Cargo.toml -- --subject
 
 progress-history:
-	$(CARGO_RUN) $(TOOLS)/full-c-history/Cargo.toml -- --write
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- full-c-history --write
 
 coverage:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- coverage-map --write

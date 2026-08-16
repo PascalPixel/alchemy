@@ -127,7 +127,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn help_succeeds_and_unknown_modes_fail_before_work() {
+    fn help_succeeds_and_unknown_modes_fail_before_work(arguments: &[String]) {
         assert!(validate_arguments(&["--help".into()]).unwrap());
         assert!(validate_arguments(&["--unknown".into()]).is_err());
         assert!(validate_arguments(&[

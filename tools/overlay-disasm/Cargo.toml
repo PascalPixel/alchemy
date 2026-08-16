@@ -4,15 +4,10 @@
 name = "overlay-disasm"
 version = "0.1.0"
 edition = "2021"
-default-run = "overlay-disasm"
 
 [lib]
 name = "overlay_disasm"
 path = "src/lib.rs"
-
-[[bin]]
-name = "overlay-disasm"
-path = "src/main.rs"
 
 [dependencies]
 # Sibling crates owning the former compiler-module surface. These are not

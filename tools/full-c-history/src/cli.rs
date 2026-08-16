@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // Non-destructive Full-C history ledger, ported from tools/metrics/full_c_history.ts.
 //
 // WHY THIS FILE EXISTS: the ledger walks every first-parent commit, so it runs
@@ -14,7 +17,10 @@
 // JavaScript stack trace and exits 1. This binary prints `error: <message>` on
 // stderr and exits 1. The message text matches; the trace does not.
 
+#[path = "js.rs"]
+
 mod js;
+#[path = "json.rs"]
 mod json;
 
 use std::collections::HashMap;
@@ -897,8 +903,8 @@ fn parse_args(arguments: &[String]) -> Result<Action, String> {
     }
 }
 
-fn run() -> Result<(), String> {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+fn run(arguments: &[String]) -> Result<(), String> {
+    let arguments: Vec<String> = arguments.to_vec();
     match parse_args(&arguments)? {
         Action::Help => {
             println!("{USAGE}");
@@ -912,8 +918,8 @@ fn run() -> Result<(), String> {
     }
 }
 
-fn main() {
-    if let Err(error) = run() {
+pub fn entry(arguments: &[String]) {
+    if let Err(error) = run(arguments) {
         eprintln!("error: {error}");
         std::process::exit(1);
     }

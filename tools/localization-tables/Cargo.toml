@@ -4,7 +4,3 @@
 name = "localization-tables"
 version = "0.1.0"
 edition = "2021"
-
-[[bin]]
-name = "localization-tables"
-path = "src/main.rs"

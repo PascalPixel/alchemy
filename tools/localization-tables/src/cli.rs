@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // Rust port of tools/make/localization_tables.ts.
 //
 // Why this file exists: the three localization table regions in the main image
@@ -13,7 +16,10 @@
 // against the TypeScript in the parity run and against the tracked files by the
 // rest of the toolchain.
 
+#[path = "jsnum.rs"]
+
 mod jsnum;
+#[path = "json.rs"]
 mod json;
 
 use std::io::Write;
@@ -732,8 +738,8 @@ fn run(args: Vec<String>) -> Result<(), String> {
     Err(USAGE.to_string())
 }
 
-fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let args: Vec<String> = arguments.to_vec();
     if let Err(message) = run(args) {
         // PORT NOTE: Bun prints a source excerpt and a stack trace around this
         // line. The `error: <message>` line itself is identical, and that is

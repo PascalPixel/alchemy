@@ -403,8 +403,7 @@ fn report_json(input: &ReportInputs<'_>) -> Json {
                             "routed",
                             "gcc296",
                             "old-agbcc",
-                            "pret-early-thumb",
-                            "gcc2951",
+                            "gcc3",
                         ]
                         .into_iter()
                         .map(|s| Json::String(s.into()))

@@ -350,26 +350,6 @@ const DECLARED: &[Spec] = &[
         evidence: PROVEN,
     },
     Spec {
-        id: "compiler-pret-early-thumb",
-        family: Family::Compiler,
-        add: &[],
-        remove: &[],
-        compiler_family: Some("pret-early-thumb"),
-        supported: None,
-        exclusive: true,
-        evidence: HISTORICAL,
-    },
-    Spec {
-        id: "compiler-gcc2951",
-        family: Family::Compiler,
-        add: &[],
-        remove: &[],
-        compiler_family: Some("gcc2951"),
-        supported: None,
-        exclusive: true,
-        evidence: HISTORICAL,
-    },
-    Spec {
         id: "opt-o1",
         family: Family::Optimization,
         add: &["-O1"],
@@ -1844,7 +1824,7 @@ pub fn self_test() -> Result<usize, String> {
                     || config.compiler_family == "gcc296"
             })
             && factorial.iter().any(|config| {
-                config.compiler_family == "gcc2951"
+                config.compiler_family == "old-agbcc"
                     && config.ids.iter().any(|id| id == "cse-gcse-off")
                     && config.ids.iter().any(|id| id == "reg-regmove-off")
             }),
@@ -2008,9 +1988,13 @@ mod tests {
         //   FORK_MODES.length === 98, STOCK_SWITCHES.length === 21,
         //   AGBCC_EXPERIMENTAL_COMBINATIONS.length === 4,
         //   MODES.length === 154.
+        //
+        // MODES is 152 now: the compiler-gcc2951 and compiler-pret-early-thumb
+        // specs are gone, because both named staged binaries that no source in
+        // any repo could rebuild.
         assert_eq!(FORK_MODES.len(), 98);
         assert_eq!(STOCK_SWITCHES.len(), 21);
-        assert_eq!(modes().len(), 154);
+        assert_eq!(modes().len(), 152);
         assert_eq!(
             modes().len(),
             DECLARED.len()
@@ -2253,7 +2237,7 @@ mod tests {
         ]));
         // supportedCompilerFamilies gates on the selected compiler.
         assert!(!compatible(&[
-            by_id("compiler-gcc2951"),
+            by_id("compiler-old-agbcc"),
             by_id("reg-peephole2-off")
         ]));
         assert!(compatible(&[
@@ -2325,9 +2309,13 @@ mod tests {
         assert_eq!(keys.len(), before, "pair plan contains duplicates");
         assert_eq!(pairs, pair_configs(None));
 
+        // The floor was 100 when three non-gcc296 compiler families were in
+        // the table. Removing gcc2951 and pret-early-thumb removed two thirds
+        // of the factorial's outer loop, so the real space is 66. The floor
+        // tracks the space, not the other way round.
         let factorial = historical_family_factorial_configs();
         assert!(
-            factorial.len() > 100,
+            factorial.len() > 50,
             "factorial plan collapsed to {}",
             factorial.len()
         );

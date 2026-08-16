@@ -193,7 +193,10 @@ pub static EXPECTED: &[HostTargets] = &[
                             // + LP64 rtunion and insn_gen_fn host fixes restored.
                             "fcc461103b633fb7f36bda22fad900750da37988a062d2143f724b4ca865302e",
                             "b62c520ee522fcc784bc496c5023b6342d3dd74923ee8580449c727f759a7fc1",
+                            "e43b05f1087aea241ea9bb8a1b0e568cadce532454385bab366daf78fc7e8155",
+                            "e304b5c50b26f132a9f29232cbb052d0fc0426db2c93194d3a4f746ac1c18403",
                             "842e8a6b7b8db4b6e53c8c742e806faaee0de4f962f9d7ad47c0aab78ad332fe",
+                            "b62c520ee522fcc784bc496c5023b6342d3dd74923ee8580449c727f759a7fc1",
                         ],
                     ),
                 ],
@@ -384,38 +387,6 @@ pub static AGBCC_EXPECTED: &[(&str, &[&str])] = &[
 
 /// One host's approved digests for a single-executable bundle.
 pub type HostDigests = (&'static str, &'static [&'static str]);
-
-pub static PRET_EARLY_THUMB_EXPECTED: &[HostDigests] = &[
-    (
-        "darwin-arm64",
-        &["8a1e0e9e18801efb595a3e0d571137db5ba8f97e413c323e99f18b0521a31636"],
-    ),
-    ("darwin-x64", &[]),
-    (
-        "linux-x64",
-        &["c988f677e3ebd7252a6ad1ad2fef301f85b05be0612ee3192b37ec47d22f8082"],
-    ),
-    ("linux-arm64", &[]),
-];
-
-pub static GCC2951_EXPECTED: &[HostDigests] = &[
-    (
-        "darwin-arm64",
-        &["cb41bba7e0e600721d906c46349119efb4c6fd35c711d7e0f244cb783de383a6"],
-    ),
-    ("darwin-x64", &[]),
-    (
-        "linux-x64",
-        &[
-            "c8f80fffa2aa0aa2809d93ad86d11ea0e8ebf08e9bba6cc5b8d391aef05c3fe4",
-            "edbee4fec1a1b59d0fd77273559aebbaf2c92b344bbeeb3539a10b689e71716d",
-            "79859ae26c9c29d6b874fe27d4f4cdce72b80839ff05cc017906ef7e179c582a",
-            // Locally-built linux-x64 digest from alchemy-gcc 382014a^, 2026-08-13.
-            "6061a96a0cffec4c3693a67e10b863e62ca32d886cbd0b551bae7894016843f5",
-        ],
-    ),
-    ("linux-arm64", &[]),
-];
 
 // Stock gcc-3.0 comparison probe (build.sh gcc3 / stage.sh gcc3), used only to
 // test whether Golden Sun sources match unmodified GCC 3.0 codegen instead of

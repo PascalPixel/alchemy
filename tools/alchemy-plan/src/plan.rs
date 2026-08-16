@@ -27,10 +27,10 @@
 use std::path::PathBuf;
 
 use alchemy_bundle::bundle::{
-    compiler_command_for_target, gcc2951_driver, gcc3_cflags, gcc3_driver, pret_early_thumb_driver,
+    compiler_command_for_target, gcc3_cflags, gcc3_driver,
     validate_agbcc_bundle, validate_bundle, validate_experimental_compiler,
 };
-use alchemy_bundle::bundle_data::{GCC2951_EXPECTED, GCC3_EXPECTED, PRET_EARLY_THUMB_EXPECTED};
+use alchemy_bundle::bundle_data::GCC3_EXPECTED;
 use alchemy_routing::routing::{
     agbcc_cflags, agbcc_driver, bundle, cflags_for_source, cflags_for_target,
     cflags_for_target_source, root, uses_agbcc_compiler, CompilerTarget,
@@ -53,8 +53,6 @@ pub enum CompilerFamily {
     Routed,
     Gcc296,
     OldAgbcc,
-    PretEarlyThumb,
-    Gcc2951,
     Gcc3,
 }
 
@@ -67,8 +65,6 @@ pub enum CompilerFamily {
 pub enum ResolvedFamily {
     Gcc296,
     OldAgbcc,
-    PretEarlyThumb,
-    Gcc2951,
     Gcc3,
 }
 
@@ -80,8 +76,6 @@ impl CompilerFamily {
             Self::Routed => "routed",
             Self::Gcc296 => "gcc296",
             Self::OldAgbcc => "old-agbcc",
-            Self::PretEarlyThumb => "pret-early-thumb",
-            Self::Gcc2951 => "gcc2951",
             Self::Gcc3 => "gcc3",
         }
     }
@@ -93,8 +87,6 @@ impl CompilerFamily {
             "routed" => Self::Routed,
             "gcc296" => Self::Gcc296,
             "old-agbcc" => Self::OldAgbcc,
-            "pret-early-thumb" => Self::PretEarlyThumb,
-            "gcc2951" => Self::Gcc2951,
             "gcc3" => Self::Gcc3,
             _ => return None,
         })
@@ -102,12 +94,10 @@ impl CompilerFamily {
 
     /// Every member, in the declaration order of the TypeScript union. Callers
     /// that sweep the whole space (the corpus harness) rely on this order.
-    pub const ALL: [CompilerFamily; 6] = [
+    pub const ALL: [CompilerFamily; 4] = [
         CompilerFamily::Routed,
         CompilerFamily::Gcc296,
         CompilerFamily::OldAgbcc,
-        CompilerFamily::PretEarlyThumb,
-        CompilerFamily::Gcc2951,
         CompilerFamily::Gcc3,
     ];
 }
@@ -123,8 +113,6 @@ impl From<ResolvedFamily> for CompilerFamily {
         match family {
             ResolvedFamily::Gcc296 => Self::Gcc296,
             ResolvedFamily::OldAgbcc => Self::OldAgbcc,
-            ResolvedFamily::PretEarlyThumb => Self::PretEarlyThumb,
-            ResolvedFamily::Gcc2951 => Self::Gcc2951,
             ResolvedFamily::Gcc3 => Self::Gcc3,
         }
     }
@@ -304,29 +292,19 @@ pub fn source_to_assembly_plan(
         }
         CompilerFamily::Gcc296 => ResolvedFamily::Gcc296,
         CompilerFamily::OldAgbcc => ResolvedFamily::OldAgbcc,
-        CompilerFamily::PretEarlyThumb => ResolvedFamily::PretEarlyThumb,
-        CompilerFamily::Gcc2951 => ResolvedFamily::Gcc2951,
         CompilerFamily::Gcc3 => ResolvedFamily::Gcc3,
     };
     if family != ResolvedFamily::Gcc296 && options.target != CompilerTarget::Gs1 {
         return Err(format!("{} is only approved for gs1", family.as_str()));
     }
 
-    // PORT NOTE: the canonical-flag ternary chain is transcribed branch for
-    // branch rather than tidied, because two of its arms are surprising and
-    // tidying them would look like a correction:
-    //
-    //   * only the `routed` request consults `cflagsForTargetSource`. Asking
-    //     explicitly for `gcc296` gets `cflagsForTarget`, i.e. the target's base
-    //     flags WITHOUT the per-source routing additions. A caller that names
-    //     the family it expected to be routed to therefore gets a different
-    //     command line than `routed` would have produced for the same source.
-    //   * `pret-early-thumb` and `gcc2951` both fall through to `AGBCC_CFLAGS`,
-    //     which is the old-agbcc flag set, not their own. Only `gcc3` has its
-    //     own list.
-    //
-    // Both are reported, not fixed. Changing either changes emitted assembly for
-    // every experimental sweep already on record.
+    // One arm here is surprising and is reported rather than fixed: only the
+    // `routed` request consults `cflagsForTargetSource`. Asking explicitly for
+    // `gcc296` gets `cflagsForTarget`, i.e. the target's base flags WITHOUT the
+    // per-source routing additions, so a caller that names the family it
+    // expected to be routed to gets a different command line than `routed`
+    // would have produced for the same source. Changing it changes emitted
+    // assembly for every sweep already on record.
     let canonical: Vec<String> = if requested_family == CompilerFamily::Routed {
         cflags_for_target_source(options.target, &options.routing_source)
     } else if family == ResolvedFamily::Gcc3 {
@@ -347,33 +325,25 @@ pub fn source_to_assembly_plan(
     if family != ResolvedFamily::Gcc296 {
         let driver: PathBuf = match family {
             ResolvedFamily::OldAgbcc => agbcc_driver(),
-            ResolvedFamily::PretEarlyThumb => pret_early_thumb_driver(),
             ResolvedFamily::Gcc3 => gcc3_driver(),
-            // The TypeScript's final ternary arm. gcc296 cannot reach here.
-            ResolvedFamily::Gcc2951 | ResolvedFamily::Gcc296 => gcc2951_driver(),
+            // gcc296 never takes this branch; it is handled above.
+            ResolvedFamily::Gcc296 => unreachable!("gcc296 does not use a separate driver"),
         };
         match family {
             ResolvedFamily::OldAgbcc => validate_agbcc_bundle()?,
-            ResolvedFamily::PretEarlyThumb => {
-                validate_experimental_compiler(family.as_str(), &driver, PRET_EARLY_THUMB_EXPECTED)?
-            }
             ResolvedFamily::Gcc3 => {
                 validate_experimental_compiler(family.as_str(), &driver, GCC3_EXPECTED)?
             }
-            ResolvedFamily::Gcc2951 | ResolvedFamily::Gcc296 => {
-                validate_experimental_compiler(family.as_str(), &driver, GCC2951_EXPECTED)?
-            }
+            ResolvedFamily::Gcc296 => unreachable!("gcc296 does not use a separate driver"),
         }
         compiler_input = options
             .preprocessed_output
             .clone()
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
-        // PORT NOTE: the minor-version selector is `gcc2951 ? 95 : gcc3 ? 0 : 9`,
-        // so old-agbcc AND pret-early-thumb both preprocess as GNUC 2.9. See the
-        // `-D__GNUC__=2` note on `direct_preprocessor_command` for why the gcc3
-        // value of 0 is a defect that is nonetheless left in place.
+        // old-agbcc preprocesses as GNUC 2.9. See the `-D__GNUC__=2` note on
+        // `direct_preprocessor_command` for why the gcc3 value of 0 is a defect
+        // that is nonetheless left in place.
         let gcc_minor = match family {
-            ResolvedFamily::Gcc2951 => 95,
             ResolvedFamily::Gcc3 => 0,
             _ => 9,
         };
@@ -654,15 +624,16 @@ mod tests {
             assert_eq!(CompilerFamily::parse(family.as_str()), Some(family));
             checked += 1;
         }
-        // FLOOR: the TypeScript union has exactly six members.
-        assert_eq!(checked, 6);
+        // FLOOR: four members. The union was six until gcc2951 and
+        // pret-early-thumb were removed -- they named staged binaries that no
+        // source in any repo could rebuild, so nothing could reproduce a result
+        // either of them produced.
+        assert_eq!(checked, 4);
         assert_eq!(CompilerFamily::parse("gcc297"), None);
         // Resolved families never spell themselves "routed".
         for family in [
             ResolvedFamily::Gcc296,
             ResolvedFamily::OldAgbcc,
-            ResolvedFamily::PretEarlyThumb,
-            ResolvedFamily::Gcc2951,
             ResolvedFamily::Gcc3,
         ] {
             assert_ne!(family.as_str(), "routed");
@@ -673,8 +644,6 @@ mod tests {
     fn non_gcc296_families_are_rejected_on_gs2() {
         for family in [
             CompilerFamily::OldAgbcc,
-            CompilerFamily::PretEarlyThumb,
-            CompilerFamily::Gcc2951,
             CompilerFamily::Gcc3,
         ] {
             let mut options = SourceToAssemblyPlanOptions::new(
@@ -720,8 +689,8 @@ mod tests {
 
     #[test]
     fn gcc3_cflags_are_the_only_family_specific_list() {
-        // PORT NOTE guard: pret-early-thumb and gcc2951 deliberately share
-        // AGBCC_CFLAGS. Pinned so the sharing cannot be "fixed" silently.
+        // gcc3 is the only family carrying its own flag list; old-agbcc uses
+        // AGBCC_CFLAGS. Pinned so a third list cannot appear unnoticed.
         let agbcc = agbcc_cflags();
         assert!(!agbcc.is_empty(), "AGBCC_CFLAGS must not be empty");
         assert_ne!(gcc3_cflags(), agbcc);

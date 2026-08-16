@@ -5,8 +5,7 @@
 //!
 //! Formerly the bundle section of the TypeScript compiler module:
 //!
-//! * `PRET_EARLY_THUMB_BUNDLE`/`_DRIVER`, `GCC2951_BUNDLE`/`_DRIVER`,
-//!   `GCC3_BUNDLE`/`_DRIVER`, `GCC3_CFLAGS`
+//! * `GCC3_BUNDLE`/`_DRIVER`, `GCC3_CFLAGS`
 //! * `HostKey`, `hostKey`, `UNSUPPORTED_HOST_MESSAGE`, `hostAdmissionMessage`
 //! * `validateBundle`, `validateAgbccBundle`, `validateExperimentalCompiler`
 //! * `compilerBundleSignature`
@@ -29,8 +28,7 @@ use alchemy_routing::routing::{
 };
 
 use crate::bundle_data::{
-    HostDigests, AGBCC_EXPECTED, EXPECTED, GCC2951_EXPECTED, GCC3_EXPECTED,
-    PRET_EARLY_THUMB_EXPECTED,
+    HostDigests, AGBCC_EXPECTED, EXPECTED, GCC3_EXPECTED,
 };
 use crate::sha256;
 
@@ -42,18 +40,6 @@ pub type Result<T> = std::result::Result<T, String>;
 // Paths
 // ---------------------------------------------------------------------------
 
-pub fn pret_early_thumb_bundle() -> PathBuf {
-    bundle().join("pret-early-thumb")
-}
-pub fn pret_early_thumb_driver() -> PathBuf {
-    pret_early_thumb_bundle().join("cc1")
-}
-pub fn gcc2951_bundle() -> PathBuf {
-    bundle().join("gcc2951")
-}
-pub fn gcc2951_driver() -> PathBuf {
-    gcc2951_bundle().join("cc1")
-}
 pub fn gcc3_bundle() -> PathBuf {
     bundle().join("gcc3")
 }
@@ -582,32 +568,25 @@ pub fn validate_experimental_compiler(
     Ok(())
 }
 
-/// The three experimental compilers, as `(name, driver, expected)` triples, in
-/// the order in the approved bundle table.
+/// The experimental compilers, as `(name, driver, expected)` triples, in the
+/// order in the approved bundle table.
 pub fn experimental_compilers() -> Vec<(&'static str, PathBuf, &'static [HostDigests])> {
-    vec![
-        (
-            "pret-early-thumb",
-            pret_early_thumb_driver(),
-            PRET_EARLY_THUMB_EXPECTED,
-        ),
-        ("gcc2951", gcc2951_driver(), GCC2951_EXPECTED),
-        ("gcc3", gcc3_driver(), GCC3_EXPECTED),
-    ]
+    vec![("gcc3", gcc3_driver(), GCC3_EXPECTED)]
 }
 
 // ---------------------------------------------------------------------------
 // compilerBundleSignature
 // ---------------------------------------------------------------------------
 
-/// The twelve paths `compilerBundleSignature` digests, in order.
+/// The ten paths `compilerBundleSignature` digests, in order.
 ///
-/// `GCC3_DRIVER` is included because gcc3 is a routable `CompilerFamily` with
-/// its own staged driver, flags, and approved digests. Adding it deliberately
-/// invalidates existing compiler-cache entries once; leaving it out would let
-/// a cache entry produced by one gcc3 build validate against another.
+/// `GCC3_DRIVER` is included because gcc3 has its own staged driver, flags, and
+/// approved digests; leaving it out would let a cache entry produced by one
+/// gcc3 build validate against another.
 ///
-/// (`PRET_EARLY_THUMB_DRIVER` and `GCC2951_DRIVER` are also included.)
+/// `PRET_EARLY_THUMB_DRIVER` and `GCC2951_DRIVER` used to be here too. They
+/// named binaries no source in any repo could rebuild, so the compiler cache
+/// was partly keyed on two orphans. Removing them invalidates the cache once.
 /// [`SIGNATURE_PATH_EXPRESSIONS`] mirrors this order as the source expression
 /// text used by the parity checks.
 pub fn signature_paths() -> Vec<PathBuf> {
@@ -623,15 +602,13 @@ pub fn signature_paths() -> Vec<PathBuf> {
         gs2.join("tradcpp0"),
         gs2.join("cc1"),
         agbcc_driver(),
-        pret_early_thumb_driver(),
-        gcc2951_driver(),
         gcc3_driver(),
     ]
 }
 
-/// The same twelve entries as [`signature_paths`], written as the TypeScript
+/// The same ten entries as [`signature_paths`], written as the TypeScript
 /// writes them, in the same order.
-pub const SIGNATURE_PATH_EXPRESSIONS: [&str; 12] = [
+pub const SIGNATURE_PATH_EXPRESSIONS: [&str; 10] = [
     "join(BUNDLE, \"xgcc\")",
     "join(BUNDLE, \"cpp\")",
     "join(BUNDLE, \"tradcpp\")",
@@ -641,8 +618,6 @@ pub const SIGNATURE_PATH_EXPRESSIONS: [&str; 12] = [
     "join(GS2_BUNDLE, \"tradcpp0\")",
     "join(GS2_BUNDLE, \"cc1\")",
     "AGBCC_DRIVER",
-    "PRET_EARLY_THUMB_DRIVER",
-    "GCC2951_DRIVER",
     "GCC3_DRIVER",
 ];
 
@@ -994,12 +969,7 @@ mod tests {
         let mut keys = HOST_KEYS.to_vec();
         keys.sort_unstable();
         assert_eq!(hosts, keys);
-        for table in [
-            AGBCC_EXPECTED,
-            PRET_EARLY_THUMB_EXPECTED,
-            GCC2951_EXPECTED,
-            GCC3_EXPECTED,
-        ] {
+        for table in [AGBCC_EXPECTED, GCC3_EXPECTED] {
             let hosts: Vec<&str> = table.iter().map(|(host, _)| *host).collect();
             assert_eq!(hosts, HOST_KEYS.to_vec());
         }
@@ -1030,14 +1000,10 @@ mod tests {
     #[test]
     fn signature_includes_routable_gcc3_driver_in_order() {
         let paths = signature_paths();
-        assert_eq!(paths.len(), 12);
-        assert_eq!(paths[9], pret_early_thumb_driver());
-        assert_eq!(paths[10], gcc2951_driver());
-        assert_eq!(paths[11], gcc3_driver());
-        assert_eq!(SIGNATURE_PATH_EXPRESSIONS.len(), 12);
-        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[9], "PRET_EARLY_THUMB_DRIVER");
-        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[10], "GCC2951_DRIVER");
-        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[11], "GCC3_DRIVER");
+        assert_eq!(paths.len(), 10);
+        assert_eq!(paths[9], gcc3_driver());
+        assert_eq!(SIGNATURE_PATH_EXPRESSIONS.len(), 10);
+        assert_eq!(SIGNATURE_PATH_EXPRESSIONS[9], "GCC3_DRIVER");
     }
 
     #[test]

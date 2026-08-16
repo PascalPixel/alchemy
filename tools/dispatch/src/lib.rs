@@ -907,19 +907,26 @@ mod tests {
         assert!(find_entry(Group::Search, "shape_sweep").is_some());
         assert!(find_entry(Group::Search, "alchemy_permuter").is_some());
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
-        assert_eq!(non_public_targets().len(), 23);
+        // Consolidation removed most standalone diagnostics; the ones left
+        // are hosts and the crates that must run when dispatch is broken.
+        assert_eq!(non_public_targets().len(), 8);
         assert_eq!(
+            // candidate-explain is now a `compiler` subcommand, not a
+            // standalone diagnostic.
             non_public_target("candidate-explain", "candidate-explain").map(|target| target.kind),
-            Some(NonPublicKind::InternalDiagnostic)
+            None
         );
-        assert!(!public_target("candidate-explain", "candidate-explain"));
-        assert!(should_self_test("candidate-explain", "candidate-explain"));
+        // It is reachable as `compiler candidate-explain`, so it IS public now
+        // and no longer carries its own self-test obligation.
+        assert!(!should_self_test("candidate-explain", "candidate-explain"));
         assert!(!should_self_test(
             "compiler-corpus-regression",
             "compiler-corpus-regression-bench"
         ));
-        assert!(should_self_test("build-rom", "build-rom"));
-        assert!(should_self_test("discover", "discover"));
+        // Both are subcommands now (`build-stage rom`, `check discover`), so
+        // the self-test obligation belongs to their host, not to them.
+        assert!(!should_self_test("build-rom", "build-rom"));
+        assert!(!should_self_test("discover", "discover"));
         assert_eq!(
             top_level_usage(),
             "usage: dispatch <assets|check|compiler|decomp|make|metrics|overlay|search|semantic> <subcommand> [args...]"
@@ -933,9 +940,11 @@ mod tests {
                 Path::new("/repo"),
                 Target::Sub("tools/assets/target/release/assets", "message-archive")
             ),
+            // Consolidation: the command is a subcommand of the `assets`
+            // binary, so it resolves to that host's manifest, not the crate's.
             Ok(ResolvedTarget {
-                manifest: PathBuf::from("/repo/tools/message-archive/Cargo.toml"),
-                binary: "message_archive".to_string(),
+                manifest: PathBuf::from("/repo/tools/assets/Cargo.toml"),
+                binary: "assets".to_string(),
             })
         );
     }
@@ -948,8 +957,8 @@ mod tests {
                 Target::Sub("tools/check/target/release/check", "cache-key-lint")
             ),
             Ok(ResolvedTarget {
-                manifest: PathBuf::from("/repo/tools/Cargo.toml"),
-                binary: "cache-key-lint".to_string(),
+                manifest: PathBuf::from("/repo/tools/check/Cargo.toml"),
+                binary: "check".to_string(),
             })
         );
     }
@@ -984,10 +993,11 @@ mod tests {
             "--quiet",
             "--release",
             "--manifest-path",
-            "/repo/tools/message-archive/Cargo.toml",
+            "/repo/tools/assets/Cargo.toml",
             "--bin",
-            "message_archive",
+            "assets",
             "--",
+            "message-archive",
             "--self-test",
             "extra value",
         ]

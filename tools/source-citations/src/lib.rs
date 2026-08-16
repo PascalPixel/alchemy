@@ -268,9 +268,9 @@ pub fn collect_sources(root: &Path) -> Vec<(String, String)> {
 /// The whole gate: `Ok(summary line)` or `Err(problem lines)`.
 pub fn check(root: &Path) -> Result<String, Vec<String>> {
     let sources = collect_sources(root);
-    let provenance = match std::fs::read_to_string(root.join("PROVENANCE.md")) {
+    let provenance = match std::fs::read_to_string(root.join("CONTRIBUTING.md")) {
         Ok(text) => text,
-        Err(error) => return Err(vec![format!("cannot read PROVENANCE.md: {error}")]),
+        Err(error) => return Err(vec![format!("cannot read CONTRIBUTING.md: {error}")]),
     };
 
     // PORT NOTE (deliberate divergence, and the reason it exists): the
@@ -621,7 +621,7 @@ mod tests {
     fn a_missing_provenance_file_is_a_failure() {
         let root = fixture_root("no_provenance", &[("exact/a.c", b"tools/x.ts")]);
         let problems = check(&root).expect_err("a missing PROVENANCE.md must fail");
-        assert!(problems[0].starts_with("cannot read PROVENANCE.md"), "{problems:?}");
+        assert!(problems[0].starts_with("cannot read CONTRIBUTING.md"), "{problems:?}");
     }
 
     #[test]

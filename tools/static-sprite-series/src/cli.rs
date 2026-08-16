@@ -144,7 +144,7 @@ fn number_field(value: &serde_json::Value, name: &str) -> Result<i64, Error> {
 }
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
+    match run(&arguments.to_vec()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => { eprintln!("error: {message}"); ExitCode::FAILURE }
     }

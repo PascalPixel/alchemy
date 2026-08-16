@@ -11,7 +11,7 @@ fn usage() {
 }
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    let mut arguments = std::env::args().skip(1);
+    let mut arguments = arguments.iter().cloned();
     let Some(argument) = arguments.next() else {
         if let Err(error) = crate::server::run() {
             eprintln!("error: {error}");

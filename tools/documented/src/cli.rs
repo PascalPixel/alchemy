@@ -12,7 +12,7 @@ use crate::{
 const USAGE: &str = "usage: documented [--self-test]";
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    let arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    let arguments = arguments.to_vec();
     match arguments.as_slice() {
         [argument] if matches!(argument.as_str(), "-h" | "--help") => {
             println!("{USAGE}");

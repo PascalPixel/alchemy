@@ -4,7 +4,7 @@
 use std::process::ExitCode;
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    if std::env::args().any(|arg| arg == "--self-test") {
+    if arguments.iter().any(|arg| arg == "--self-test") {
         // The behaviour lives in the crate's tests, where a failure names the
         // property it broke. This binary only reports that they were run.
         println!("self-test=ok (run `cargo test -p cache-entry` for the assertions)");

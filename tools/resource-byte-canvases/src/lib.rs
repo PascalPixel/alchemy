@@ -369,7 +369,7 @@ mod tests {
             .expect("clock")
             .as_nanos();
         let root = std::env::temp_dir().join(format!("alchemy-resource-byte-canvases-{stamp}"));
-        let rom_path = root.join("baserom.gba");
+        let rom_path = root.join("roms/gs1-en.gba");
         let directory = root.join("assets");
         let mut rom = vec![0u8; 0x0080_0000];
         for resource in RESOURCES {

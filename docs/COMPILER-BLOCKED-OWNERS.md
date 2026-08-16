@@ -146,6 +146,45 @@ improvements; a size-constrained greedy over them gives
 `M2C_FIELD(target_state, s8, 0x135)` and `(…, s8, 0x137)`: **1961 -> 1916, size
 still exact**.
 
+**Where 080bbb0c stands at 1801, and what the next session should read first.**
+
+Session took this owner 2286 -> 1801, size exact and held. Four axes moved it:
+un-caching locals, signedness flips, branch inversion, and -- the one that
+unstuck it -- broadening the candidate generator after I had wrongly declared
+the C side spent.
+
+Register-blind alignment at 1801: 508 mismatching instructions of 2,926, spread
+over 256 hunks. That shape is the important part. It is not a few big structural
+errors; it is ~80 sites where we emit one or two instructions more than the
+reference, plus four larger ones (+22 at 0x123c, +16 at 0x1456, +7 at 0x14ec,
++7 at 0x15a6). Death by a thousand cuts, consistent with allocation and small
+scheduling differences rather than with wrong control flow.
+
+**The one signal nothing explains yet.** Every sweep round produces a variant
+that scores far better four bytes long -- 1772, then 1660 -- and buying those
+four bytes back has now failed four times across three independent axes
+(un-caching, signedness, inversion), roughly thirty pairings, best size-exact
+result always worse than leaving them. A wrong-size variant beating a right-size
+one is not noise: a 4-byte excess phase-shifts everything after it and inflates
+the count, so those variants win *despite* a penalty. Something real is being
+reported that none of these transforms can express. Read that before running
+another sweep.
+
+**Two instrument bugs recorded so they are not repeated.** The alignment must
+canonicalise register names or regalloc differences masquerade as block reorders
+(974 -> 489 mismatching instructions once registers are blinded). And the
+`} else {` brace scanner needs to start at depth 1, or it matches the first body
+line as the if-header and silently emits garbage -- 32 of 44 candidates failed to
+compile before that fix.
+
+**One difference is proven unreachable from C:** cross-jumping. Duplicating
+block_402 at both goto sites takes the source from 7 UpdateRatios calls to 11 and
+emits a byte-identical binary. Verified with cmp, not with the score.
+
+**Reverse axis is closed.** Re-caching repeated field reads into locals, limited
+to fields never written in this function (the only semantics-preserving form),
+yields exactly two candidates; both are worse (2321/6340 and 1936/6328).
+
 **2026-08-16: the residual is now measured, and it is compiler-side.**
 
 Aligning the two disassemblies instruction-by-instruction (see the layout delta

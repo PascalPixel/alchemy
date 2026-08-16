@@ -459,7 +459,7 @@ const METRICS: &[Entry] = &[
     },
     Entry {
         name: "coverage_map",
-        target: Target::Binary("tools/coverage-map/target/release/coverage-map"),
+        target: Target::Sub("tools/check/target/release/check", "coverage-map"),
     },
     Entry {
         name: "dashboard_server",

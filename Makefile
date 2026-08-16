@@ -161,10 +161,10 @@ progress-history:
 	$(CARGO_RUN) $(TOOLS)/full-c-history/Cargo.toml -- --write
 
 coverage:
-	$(CARGO_RUN) $(TOOLS)/coverage-map/Cargo.toml -- --write
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- coverage-map --write
 
 coverage-check:
-	$(CARGO_RUN) $(TOOLS)/coverage-map/Cargo.toml -- --check
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- coverage-map --check
 
 showcase:
 	$(CARGO_RUN) $(TOOLS)/overlay-showcase/Cargo.toml -- --all

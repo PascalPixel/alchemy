@@ -1,3 +1,5 @@
+pub mod entrypoint;
+
 // ROM coverage map: a treemap of the audited GS1-EN image, drawn as a dark
 // product-dashboard card for the README.
 //

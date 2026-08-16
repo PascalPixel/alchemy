@@ -26,6 +26,7 @@ compare-roms = { path = "../compare-roms" }
 semantic-queue = { path = "../semantic-queue" }
 lang-ban = { path = "../lang-ban" }
 check-commit-progress = { path = "../check-commit-progress" }
+coverage-map = { path = "../coverage-map" }
 
 [[bin]]
 name = "check"

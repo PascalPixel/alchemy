@@ -7,9 +7,6 @@ edition = "2021"
 name = "sentou_hyouji"
 path = "src/lib.rs"
 
-[[bin]]
-name = "sentou-hyouji"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

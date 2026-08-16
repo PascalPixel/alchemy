@@ -175,6 +175,12 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
+        crate_name: "rtl",
+        binary: "rtl",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
         crate_name: "candidate-show",
         binary: "candidate-show",
         kind: NonPublicKind::InternalDiagnostic,
@@ -205,20 +211,8 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
-        crate_name: "rtl-insn",
-        binary: "rtl-insn",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "rtl-schedule",
         binary: "rtl-schedule",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "rtl-sexpr",
-        binary: "rtl-sexpr",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },
@@ -460,11 +454,11 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "sentou_gamen_data",
-        target: Target::Binary("tools/sentou-gamen-data/target/release/sentou-gamen-data"),
+        target: Target::Sub("tools/data/target/release/data", "battle-screen"),
     },
     Entry {
         name: "sentou_hyouji",
-        target: Target::Binary("tools/sentou-hyouji/target/release/sentou-hyouji"),
+        target: Target::Sub("tools/data/target/release/data", "battle-display"),
     },
     Entry {
         name: "sentou_kouka_runtime",
@@ -472,7 +466,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "sentou_menu_data",
-        target: Target::Binary("tools/sentou-menu-data/target/release/sentou-menu-data"),
+        target: Target::Sub("tools/data/target/release/data", "battle-menu"),
     },
     Entry {
         name: "sentou_resources",

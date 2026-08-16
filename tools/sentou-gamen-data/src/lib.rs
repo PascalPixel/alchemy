@@ -4,6 +4,8 @@
 //! and PNGs are authored assets, while the build and ROM verification paths are
 //! the parts needed by the native asset toolchain.
 
+pub mod cli;
+
 use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::Value;

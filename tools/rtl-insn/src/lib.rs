@@ -14,6 +14,8 @@
 //!
 //! Port of `tools/lib/rtl_insn.ts`.
 
+pub mod cli;
+
 pub mod jsnum;
 
 use jsnum::{js_number, js_number_to_string};

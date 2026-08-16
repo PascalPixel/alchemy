@@ -7,9 +7,6 @@ edition = "2021"
 name = "sentou_gamen_data"
 path = "src/lib.rs"
 
-[[bin]]
-name = "sentou-gamen-data"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

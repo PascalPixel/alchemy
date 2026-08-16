@@ -1,0 +1,15 @@
+# Bare `[workspace]`: independently buildable, like every other tool crate.
+[workspace]
+
+[package]
+name = "rtl"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rtl-insn = { path = "../rtl-insn" }
+rtl-sexpr = { path = "../rtl-sexpr" }
+
+[[bin]]
+name = "rtl"
+path = "src/main.rs"

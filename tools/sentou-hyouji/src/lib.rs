@@ -1,3 +1,5 @@
+pub mod cli;
+
 use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::Value;

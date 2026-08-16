@@ -36,7 +36,10 @@ dependencies = [
  "audio-engine-data",
  "battle-effect-data",
  "runtime-support-data",
+ "sentou-gamen-data",
+ "sentou-hyouji",
  "sentou-kouka-runtime",
+ "sentou-menu-data",
 ]
 
 [[package]]
@@ -111,10 +114,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "sentou-gamen-data"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "import-asset",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-hyouji"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "import-asset",
+ "serde_json",
+]
+
+[[package]]
 name = "sentou-kouka-runtime"
 version = "0.1.0"
 dependencies = [
  "canonical-json",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-menu-data"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "import-asset",
  "serde_json",
 ]
 

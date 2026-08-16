@@ -6,7 +6,3 @@ edition.workspace = true
 [lib]
 name = "wordstream"
 path = "src/lib.rs"
-
-[[bin]]
-name = "wordstream"
-path = "src/main.rs"

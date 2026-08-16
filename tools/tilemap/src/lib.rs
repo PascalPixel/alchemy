@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Text form for a 16-bit tilemap: one row per line, one four-digit
 // little-endian hex word per entry.
 //

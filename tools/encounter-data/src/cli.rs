@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the encounter-data extents. `verify` is the gate build_assets leans
 // on: it rebuilds every region from the tracked JSON and compares it to the
 // ROM, so a silent drift in the JSON cannot pass. Ported from
@@ -8,7 +11,7 @@ use std::process::ExitCode;
 
 use serde_json::json;
 
-use encounter_data::{
+use crate::{
     build_encounter_regions, export_encounter_data, matches_rom, option, self_test, Result,
 };
 
@@ -96,8 +99,8 @@ fn run(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match run(&args) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

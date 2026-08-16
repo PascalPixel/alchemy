@@ -4,6 +4,8 @@
 //! glyph widths, line pointers, and a one-bit font atlas.  This crate owns the
 //! build and ROM-verification boundary used by the asset builder.
 
+pub mod cli;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 

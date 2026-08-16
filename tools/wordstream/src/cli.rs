@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-use wordstream::{export_words, import_words, self_test};
+use crate::{export_words, import_words, self_test};
 
 fn run(args: Vec<String>) -> Result<(), String> {
     if args.as_slice() == ["--self-test"] {
@@ -44,7 +47,7 @@ fn run(args: Vec<String>) -> Result<(), String> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

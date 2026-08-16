@@ -7,8 +7,15 @@ name = "reverse-gcc296"
 version = "0.1.0"
 edition = "2021"
 
-# No dependencies. The scorer shells out to the already-built `candidate-show`
-# and to the ARM objdump, both of which the repository already requires.
+[dependencies]
+# Sibling crate, not a third-party dependency.
+#   alchemy-permuter -> `mutate()`, its 34 AST-based randomization passes.
+# Reusing that engine rather than reimplementing it: three of this crate's own
+# line-based rewrites duplicated passes the permuter already had on a real AST.
+alchemy-permuter = { path = "../alchemy-permuter" }
+
+# The scorer shells out to the already-built `candidate-show` and to the ARM
+# objdump, both of which the repository already requires.
 
 [lib]
 name = "reverse_gcc296"

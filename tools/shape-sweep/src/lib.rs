@@ -1,10 +1,21 @@
 //! Native bounded source-shape search.
 //!
+//! Also hosts the iterative descent driver (`descend`), merged in from the
+//! short-lived `reverse-gcc296` crate. That crate rebuilt three transforms
+//! `alchemy-permuter` already had, plus `InlineSingleUseTemp` which lived here,
+//! plus the statement permutation `statement-order-sweep-main` already did. Only
+//! its arm-order transform, its iterative driver and its size-independent metric
+//! were new, so those merged here and the crate was deleted.
+//!
 //! The transforms are deliberately textual and deliberately small. They are
 //! not a C rewriter: each one is a witnessed source shape from `LAWS.md`, and
 //! a failed compile is simply an unproductive probe. The compiler and overlay
 //! paths are shared native APIs so a shape result is measured by the same
 //! byte-exact machinery used by the rest of the repository.
+
+pub mod descend;
+pub mod descend_rewrite;
+pub mod descend_score;
 
 use std::fs;
 use std::path::{Path, PathBuf};

@@ -82,81 +82,173 @@ impl Search {
         out
     }
 
-    /// Greedy descent over the complete neighbourhood.
+    /// Descent over the complete neighbourhood, with a shortlist and bounded
+    /// plateau moves.
     ///
-    /// Each round evaluates every single-edit variant and accepts the best
-    /// strict improvement. Field-level results are known NOT to compose (four
-    /// individually-improving field renames measured worse together than the
-    /// best one alone), so the neighbourhood is regenerated from the accepted
-    /// source every round rather than batching independent wins.
+    /// Individually-improving edits are known NOT to compose (four field renames
+    /// each improved alone and were worse together than the best one), so edits
+    /// are always applied one at a time and every applied edit is scored as
+    /// applied. Nothing is ever accepted on a predicted score.
+    ///
+    /// The shortlist is the speedup. A full scan costs a few hundred compiles to
+    /// buy one edit. After accepting one, the other labels that improved are
+    /// very likely still to improve, so they are retried alone, which costs tens
+    /// of compiles instead of hundreds. A full scan runs again only once the
+    /// shortlist stops paying.
+    ///
+    /// Plateau moves exist because pure greedy stops at the first flat spot.
+    /// Equal-scoring moves are accepted up to `plateau_budget`, and abandoned if
+    /// they do not lead to a strict improvement.
     pub fn descend(
         &self,
         seed: &str,
         max_rounds: usize,
+        plateau_budget: usize,
         mut report: impl FnMut(&str),
     ) -> (String, Vec<Step>) {
         let mut current = seed.to_string();
-        let mut history = Vec::new();
+        let mut history: Vec<Step> = Vec::new();
 
-        let base = match score::score(
-            &self.root,
-            &self.candidate_show,
-            &self.objdump,
-            &current,
-            &self.stem,
-            &self.work.join("base"),
-        ) {
-            Some(score) => score,
-            None => {
-                report("seed does not compile");
-                return (current, history);
-            }
+        let Some(base) = self.score_one(&current, "base") else {
+            report("seed does not compile");
+            return (current, history);
         };
         let mut best = base.clone();
+        let mut best_source = current.clone();
+        let mut best_history_len = 0usize;
         report(&format!("seed distance={} size={}", best.distance, best.size));
 
+        let mut shortlist: Vec<String> = Vec::new();
+        let mut plateau_used = 0usize;
+        let mut compiles = 0usize;
+
         for round in 1..=max_rounds {
-            let variants = rewrite::neighbourhood(&current);
-            if variants.is_empty() {
+            let all = rewrite::neighbourhood(&current);
+            if all.is_empty() {
                 report("neighbourhood empty");
                 break;
             }
+            // Prefer the shortlist; fall back to the full neighbourhood.
+            let using_shortlist = !shortlist.is_empty();
+            let variants: Vec<Variant> = if using_shortlist {
+                all.iter().filter(|v| shortlist.contains(&v.label)).cloned().collect()
+            } else {
+                all.clone()
+            };
+            if variants.is_empty() {
+                shortlist.clear();
+                continue;
+            }
+
             let scored = self.score_all(&variants);
-            let improvement = scored
+            compiles += variants.len();
+
+            // Remember every label that improved, for the next round.
+            shortlist = scored
+                .iter()
+                .filter(|(_, score)| score.distance < best.distance)
+                .map(|(index, _)| variants[*index].label.clone())
+                .collect();
+
+            let strict = scored
                 .iter()
                 .filter(|(_, score)| score.distance < best.distance)
                 .min_by_key(|(_, score)| score.distance);
 
-            match improvement {
-                Some((index, score)) => {
+            if let Some((index, score)) = strict {
+                report(&format!(
+                    "round {round}{}: {}/{} compiled, {} -> {} ({}) size {}",
+                    if using_shortlist { " [shortlist]" } else { "" },
+                    scored.len(),
+                    variants.len(),
+                    best.distance,
+                    score.distance,
+                    variants[*index].label,
+                    score.size
+                ));
+                current = variants[*index].source.clone();
+                best = score.clone();
+                history.push(Step {
+                    label: variants[*index].label.clone(),
+                    distance: score.distance,
+                    size: score.size,
+                });
+                best_source = current.clone();
+                best_history_len = history.len();
+                plateau_used = 0;
+                // Drop the accepted label so the shortlist does not retry it.
+                let accepted = &variants[*index].label;
+                shortlist.retain(|label| label != accepted);
+                continue;
+            }
+
+            if using_shortlist {
+                // Shortlist exhausted; force a full scan next round.
+                shortlist.clear();
+                continue;
+            }
+
+            // No strict improvement anywhere. Try a lateral move.
+            // A lateral move must be one we have not already taken, or the walk
+            // oscillates between two equal-scoring states. History labels carry
+            // a `=` prefix for plateau steps, so strip it before comparing.
+            let lateral = scored
+                .iter()
+                .filter(|(_, score)| score.distance == best.distance)
+                .find(|(index, _)| {
+                    let label = &variants[*index].label;
+                    !history
+                        .iter()
+                        .any(|step| step.label.trim_start_matches('=') == label)
+                });
+            match lateral {
+                Some((index, score)) if plateau_used < plateau_budget => {
+                    plateau_used += 1;
                     report(&format!(
-                        "round {round}: {} of {} compiled, best {} -> {} ({}) size {}",
-                        scored.len(),
-                        variants.len(),
-                        best.distance,
-                        score.distance,
-                        variants[*index].label,
-                        score.size
+                        "round {round}: no improvement, plateau move {}/{} ({})",
+                        plateau_used, plateau_budget, variants[*index].label
                     ));
                     current = variants[*index].source.clone();
                     best = score.clone();
                     history.push(Step {
-                        label: variants[*index].label.clone(),
+                        label: format!("={}", variants[*index].label),
                         distance: score.distance,
                         size: score.size,
                     });
                 }
-                None => {
+                _ => {
                     report(&format!(
-                        "round {round}: {} of {} compiled, no improvement, converged",
+                        "round {round}: {}/{} compiled, converged after {} compiles",
                         scored.len(),
-                        variants.len()
+                        variants.len(),
+                        compiles
                     ));
                     break;
                 }
             }
         }
+
+        // A plateau walk that never paid off is churn. Return the best source.
+        if history.len() > best_history_len {
+            report(&format!(
+                "discarding {} unproductive plateau move(s)",
+                history.len() - best_history_len
+            ));
+            history.truncate(best_history_len);
+            return (best_source, history);
+        }
         (current, history)
+    }
+
+    fn score_one(&self, source: &str, tag: &str) -> Option<Score> {
+        score::score(
+            &self.root,
+            &self.candidate_show,
+            &self.objdump,
+            source,
+            &self.stem,
+            &self.work.join(tag),
+        )
     }
 }
 

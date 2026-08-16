@@ -65,9 +65,7 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_02001574.c",
 ];
 pub static UNSCHEDULED_SOURCES: &[&str] = &[
-    "08002f10", "0800307c", "08006b84", "080060e8", "08004198", "080042c8", "0800430c", "08004358",
-    "0800439c", "080043e0", "08011590", "08029274", "080fb714", "080fb728", "080fb73c", "080fb750",
-    "080fb75c", "080fb768", "080fb77c",
+    "08006b84", "080fb714", "080fb728", "080fb73c",     "080fb768", "080fb77c",
 ];
 pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39f_c_02000ab0.c",
@@ -276,7 +274,7 @@ pub static GROUP_CONTROL_REMATERIALIZE_OVERLAY_SOURCES: &[&str] = &[
 pub static SCHED_POOL_LOAD_LATE_SOURCES: &[&str] = &["080f377c", "08091174"];
 pub static THUMB_LEAF_NO_LR_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
 pub static THUMB_NO_IF_CONVERT_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
-pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["080f9a30"];
+pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["080fb75c", "080fb750", "08029274", "08011590", "080060e8", "080043e0", "0800439c", "08004358", "0800430c", "080042c8", "08004198", "0800307c", "08002f10", "080f9a30"];
 pub static THUMB_LOW_REG_ORDER_SOURCES: &[(&str, &str)] = &[
     ("080f9a30", "01231230"),
     ("080fa264", "30120123"),

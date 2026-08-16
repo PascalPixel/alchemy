@@ -56,6 +56,34 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### The standard is right and the routed sources are wrong (measured)
+
+Promotion was tested on the four largest overlay flags with
+`compiler_corpus_regression --overlays --flags F`, which compiles every overlay
+owner as routed and again with `F` added, and counts the ones whose bytes move.
+An adopted owner is byte-exact as routed by construction, so "moved" is "broke".
+
+| flag | carriers | would break |
+|---|---|---|
+| `-fsched-low-dest-first` | 194 | 217 |
+| `-fno-cse-two-insn-immediate` | 73 | 143 |
+| `-fno-cse-pool-immediate` | 40 | 92 |
+| `-fno-rerun-cse-after-loop` | 39 | 86 |
+
+Every one breaks roughly twice as many owners as it retires, so no promotion is
+available and that whole avenue is closed. But the ratio settles a more useful
+question. Camelot's build had exactly ONE setting per flag. If a flag is needed
+by 39 owners and actively wrong for 86, the original setting was the stock one,
+which is the standard in the Makefile. **The carriers are therefore defective
+reconstructions, not evidence of an unusual compiler.** That is 346 overlay
+owners across these four flags alone.
+
+This is the empirical backing for the rule already stated in AGENTS.md: a
+per-file route is an admission that the reconstruction is wrong. It is now
+measured rather than asserted, and it means the routing tables can only be
+retired by fixing sources -- never by promoting a flag, and never by deleting an
+entry without a fix.
+
 ### Removing a route is re-derivation, not a spelling change
 
 Measured 2026-08-16 on the cheapest target in the tree. `exact/080044d0.c` is

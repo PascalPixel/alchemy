@@ -37,7 +37,7 @@ DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search sema
 	progress progress-check progress-subject progress-history coverage coverage-check \
 	showcase compiler-checks compiler-sweep compiler-cohort overlay-compiler-cohort \
 	compiler-corpus compiler-batch overlay-candidate-check statement-order-check \
-	compiler-lint compiler-self-test build-dispatch build-all $(addprefix dispatch-,$(DISPATCH_GROUPS))
+	compiler-lint compiler-self-test build-dispatch build-all clean clean-preview $(addprefix dispatch-,$(DISPATCH_GROUPS))
 
 help:
 	@printf '%s\n' \
@@ -112,6 +112,36 @@ standard-check:
 routing-debt:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/check/Cargo.toml
 	@$(ROUTE_DUMP) --debt
+
+# ---------------------------------------------------------------------------
+# Reclaim disk. This repository reached 64 GB decompiling a 32 MB game, because
+# nothing ever pruned the intermediate trees.
+#
+# DELIBERATELY NOT `git clean -fdX`. roms/ is itself gitignored, so git clean
+# removes it, and NO pathspec prevents that: an entirely-ignored directory is
+# removed as a unit, so `:!roms`, `:(exclude)roms`, `:(exclude)roms/**` and
+# `-e roms` were each verified to still list `Would remove roms/`. Naming the
+# trees explicitly cannot delete the ROMs by construction.
+# ---------------------------------------------------------------------------
+CLEAN_TREES := out work build builds dist cmatch comparisons compiler-output \
+               diffs disassembly dumps m2c objdump reports analysis \
+               .cache target
+
+clean:
+	@before=$$(du -sm . 2>/dev/null | cut -f1); \
+	rm -rf $(CLEAN_TREES); \
+	rm -rf $(TOOLS)/*/target; \
+	rm -rf $(TOOLS)/scratch/*; \
+	find . -depth -type d -empty -not -path './.git/*' -delete 2>/dev/null; \
+	after=$$(du -sm . 2>/dev/null | cut -f1); \
+	printf 'clean ok: %s MB -> %s MB (roms/ untouched: %s files)\n' \
+	  "$$before" "$$after" "$$(ls roms/*.gba 2>/dev/null | wc -l | tr -d ' ')"
+
+clean-preview:
+	@printf 'would remove:\n'; \
+	for t in $(CLEAN_TREES); do [ -e "$$t" ] && printf '  %-22s %s\n' "$$t" "$$(du -sh $$t 2>/dev/null | cut -f1)"; done; \
+	printf '  %-22s %s\n' "tools/*/target" "$$(du -sch $(TOOLS)/*/target 2>/dev/null | tail -1 | cut -f1)"; \
+	printf 'roms/ is NOT in that list and is never touched by this target.\n'
 
 build-dispatch:
 	$(CARGO) build --offline --quiet --release --manifest-path $(DISPATCH_MANIFEST)

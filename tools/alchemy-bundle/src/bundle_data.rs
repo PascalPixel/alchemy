@@ -37,10 +37,10 @@ pub static EXPECTED: &[HostTargets] = &[
             (
                 "gs1",
                 &[
-                    ("xgcc", &["df0413f0051c07c654a753764235f39891d6f08a95d603a50f3cca9c645fc4e3"]),
-                    ("cpp", &["c6e5093aa3cda856c10b8fdff5a7f645a6ca63c92d2aea46688f8da4f5357915"]),
-                    ("tradcpp", &["553a34add496b8a063707e32376824ba11cf0153b4b6283309c9a2518a866281"]),
-                    ("cc1", &["e43b05f1087aea241ea9bb8a1b0e568cadce532454385bab366daf78fc7e8155"]),
+                    ("xgcc", &["1c0b96c0193a3f547bf10c70078d87df10a62d34207da545653165b65c80d4c2"]),
+                    ("cpp", &["c69d8c0423517be6a4962bd88e343c193a0842a164dd600550ceb36f8155d736"]),
+                    ("tradcpp", &["f1e4340c3550029675b49e22976dd7d10588e365816ae0f2decd19729371ee00"]),
+                    ("cc1", &["f7d1aeb098815f9b98c5df25bb47bab89aa14b1ab184b63c1472986f515fa3dd"]),
                 ],
             ),
             (
@@ -128,7 +128,7 @@ pub static EXPECTED: &[HostTargets] = &[
 pub static AGBCC_EXPECTED: &[(&str, &[&str])] = &[
     (
         "darwin-arm64",
-        &["47cf6aea486d4cdcfac9142b57246a09e4a273235e2463a9019b20675c9eeb5f"],
+        &["bd3205fe49a5d7c553d8d1ec1940474bfd07d0d7ba2c1c7df928094d35da806a"],
     ),
     ("darwin-x64", &[]),
     ("linux-x64", &[]),

@@ -26,6 +26,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("semantic-queue", "semantic queue"),
     ("lang-ban", "lang ban"),
     ("check-commit-progress", "check commit progress"),
+    ("coverage-map", "refresh the dashboard coverage maps"),
 ];
 
 fn main() -> ExitCode {
@@ -38,6 +39,7 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "coverage-map" => { coverage_map::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "lang-ban" => lang_ban::cli::entry(&rest),
         "check-commit-progress" => check_commit_progress::cli::entry(&rest),
         "compare-roms" => { compare_roms::cli::entry(&rest); ExitCode::SUCCESS }

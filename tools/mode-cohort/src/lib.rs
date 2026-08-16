@@ -8,6 +8,8 @@
 //! The worker invokes the native `tools/mode-sweep` binary. This crate owns
 //! only cohort aggregation and report shaping.
 
+pub mod entrypoint;
+
 pub mod aggregate;
 pub mod collate;
 pub mod jsops;

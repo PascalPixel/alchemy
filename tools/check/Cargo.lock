@@ -3,6 +3,14 @@
 version = 4
 
 [[package]]
+name = "byte-value-regions"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "serde_json",
+]
+
+[[package]]
 name = "cache-entry"
 version = "0.1.0"
 
@@ -21,6 +29,7 @@ dependencies = [
 name = "check"
 version = "0.1.0"
 dependencies = [
+ "byte-value-regions",
  "cache-entry",
  "cache-key-lint",
  "check-commit-progress",

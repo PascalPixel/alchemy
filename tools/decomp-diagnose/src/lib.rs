@@ -1,3 +1,5 @@
+pub mod entrypoint;
+
 // Exact-C candidate diagnostics, ported from tools/decomp/decomp_diagnose.ts.
 //
 // WHY THIS FILE EXISTS

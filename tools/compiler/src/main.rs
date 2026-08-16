@@ -20,6 +20,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("residuals", "audit remaining residual bytes"),
     ("bl-symbols", "report bl call-site symbols"),
     ("dashboard-server", "serve the coverage dashboard"),
+    ("mode-cohort", "mode cohort"),
+    ("decomp-diagnose", "decomp diagnose"),
 ];
 
 fn main() -> ExitCode {
@@ -32,6 +34,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "mode-cohort" => { mode_cohort::entrypoint::entry(&rest); ExitCode::SUCCESS }
+        "decomp-diagnose" => { decomp_diagnose::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "permute" => match alchemy_permuter::run(rest.clone()) {
             Ok(()) => ExitCode::SUCCESS,
             Err(message) => { eprintln!("error: {message}"); ExitCode::FAILURE }

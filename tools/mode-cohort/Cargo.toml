@@ -21,7 +21,3 @@ search-compiler-modes = { path = "../search-compiler-modes" }
 [lib]
 name = "mode_cohort"
 path = "src/lib.rs"
-
-[[bin]]
-name = "mode-cohort"
-path = "src/main.rs"

@@ -1,3 +1,5 @@
+pub mod entrypoint;
+
 // Regions of the ROM kept as literal byte values in JSON, for data no better
 // representation has been found for yet.
 //

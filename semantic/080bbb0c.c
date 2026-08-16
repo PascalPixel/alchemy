@@ -51,7 +51,7 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     u8 *battle_state;
     s32 halve_defense;
     s32 target_adjustment;
-    u32 effect_amount;
+    u32 target_resource_delta;
     s32 leave_one_hp;
     s32 action_allowed;
     s32 target_modifier;
@@ -83,16 +83,16 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s16 target_hp_before_effect;
     u8 *target_state;
     struct BattleUnit *target_unit;
-    s32 object_effect_config;
+    s32 name_suffix_code;
     s32 queued_object_count;
     s32 queued_id;
     s32 hp_minus_one;
-    s32 range_check_score;
+    s32 script_update_chance;
     s32 healing_power;
     s32 effect_object_id;
     s32 range_index;
     s32 turn_order_tail_offset;
-    s32 turn_order_entry_offset;
+    s32 turn_order_head_offset;
     s32 turn_order_offset;
     s32 turn_order_next_offset;
     s32 result;
@@ -105,9 +105,9 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s32 actor_adjustment_offset;
     s32 target_adjustment_offset;
     s32 battle_record_offset;
-    s32 queue_head;
+    s32 turn_order_head_entry;
     s32 range_scale;
-    s32 prior_health;
+    s32 target_hp_before_commit;
     s32 restored_pp;
     s32 healing_source_stat;
     s32 object_anchor_x;
@@ -139,11 +139,11 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s8 pp_guard_level;
     s8 secondary_pp_guard_level;
     s32 range_distance;
-    s32 cached_action_result;
+    s32 target_result;
     u8 *allowed_table;
-    s32 *recovery_table;
-    s32 cached_result_offset;
-    s32 result_slot_offset;
+    s32 *range_falloff_table;
+    s32 range_falloff_offset;
+    s32 target_result_offset;
     u32 target_defense;
     u32 max_hp_for_half_revive;
     s32 action_power;
@@ -195,7 +195,7 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     struct BattleObjectSlot *object_slot;
     u8 *turn_order_base;
     u8 *turn_order_scan_base;
-    s32 turn_order_tail_slot;
+    s32 turn_order_terminator_offset;
     u8 *range_table;
     u8 *lower_threshold;
     s16 *upper_threshold;
@@ -205,7 +205,7 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     stat_delta = 0;
     battle_state = *(void **)0x03001E74;
     halve_defense = 0;
-    effect_amount = 0;
+    target_resource_delta = 0;
     leave_one_hp = 0;
     skip_primary_effect = 0;
     range_relation = 0;
@@ -284,24 +284,24 @@ block_21:
     }
     if ((*command == 5) && (range_index_unsigned <= 3U) && (range_relation > 0)) {
         target_adjustment_offset = (range_index_unsigned * 4) + 0x48;
-        range_check_score = source_stat - M2C_FIELD(
+        script_update_chance = source_stat - M2C_FIELD(
             target_state + target_adjustment_offset,
             s16,
             2
         );
-        range_check_score += 0x1E;
-        range_check_score *= 0x28F;
-        if (range_check_score > (BattleRandom_Next() & 0xFFFF)) {
+        script_update_chance += 0x1E;
+        script_update_chance *= 0x28F;
+        if (script_update_chance > (BattleRandom_Next() & 0xFFFF)) {
             BattleEvent_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5U);
         }
     }
     action_family = 0xF & action->target_flags;
     /* Load plan->target_results[target_slot] through the live ID base. */
-    result_slot_offset = target_slot + 0x38;
-    cached_action_result = ((s8 *)target_ids)[result_slot_offset];
-    if (cached_action_result == -1) {
+    target_result_offset = target_slot + 0x38;
+    target_result = ((s8 *)target_ids)[target_result_offset];
+    if (target_result == -1) {
         allowed_table = (u8 *)0x080C2AB8;
-        cached_action_result = Func_08077178(
+        target_result = Func_08077178(
             actor_id,
             target_id,
             range_index,
@@ -309,8 +309,8 @@ block_21:
             allowed_table[range_distance]
         );
     }
-    action_allowed = cached_action_result;
-    cached_action_result = 0;
+    action_allowed = target_result;
+    target_result = 0;
     if ((u32) ((action->effect + 0xCE) << 0x18) > 0x01000000U) {
 
     } else {
@@ -320,28 +320,28 @@ block_21:
             class_id = Func_080c1fa8(M2C_FIELD(battle_state, s32, 0));
         }
         if ((action_allowed != 0) && (Func_080b6cdc(class_id) != 0) && (effect_object_id >= 0)) {
-            object_effect_config = Func_080c1df4(class_id, 1);
-            if (0x8000 & object_effect_config) {
+            name_suffix_code = Func_080c1df4(class_id, 1);
+            if (0x8000 & name_suffix_code) {
                 Func_080c1f50(class_id);
             }
-            Func_08077140(effect_object_id, class_id, 0x7FFF & object_effect_config);
+            Func_08077140(effect_object_id, class_id, 0x7FFF & name_suffix_code);
             turn_order_base = battle_state + 2;
-            turn_order_entry_offset = 0x64;
+            turn_order_head_offset = 0x64;
             turn_order_index = 0;
             turn_order_tail_offset = 0;
             turn_order_next_offset = 0;
-            queue_head = M2C_FIELD(turn_order_base, s16, turn_order_entry_offset);
-            if (queue_head == 0xFE) {
-                M2C_FIELD(turn_order_base, s16, turn_order_entry_offset) = (s16) effect_object_id;
+            turn_order_head_entry = M2C_FIELD(turn_order_base, s16, turn_order_head_offset);
+            if (turn_order_head_entry == 0xFE) {
+                M2C_FIELD(turn_order_base, s16, turn_order_head_offset) = (s16) effect_object_id;
             } else {
                 turn_order_offset = 0x64;
                 for (;;) {
                     turn_order_scan_base = battle_state + 2;
                     turn_order_entry = *(s16 *)(turn_order_offset + (s32) turn_order_scan_base);
                     if (turn_order_entry == 0xFF) {
-                        turn_order_tail_slot = turn_order_tail_offset + 0x66;
+                        turn_order_terminator_offset = turn_order_tail_offset + 0x66;
                         M2C_FIELD(turn_order_base, s16, turn_order_offset) = (s16) effect_object_id;
-                        M2C_FIELD(turn_order_base, s16, turn_order_tail_slot) = turn_order_entry;
+                        M2C_FIELD(turn_order_base, s16, turn_order_terminator_offset) = turn_order_entry;
                         break;
                     }
                     turn_order_index += 1;
@@ -556,10 +556,10 @@ loop_90:
                 }
                 action_power = action->power;
                 pp_damage = Func_08077188(action_power, stat_delta, 0x100);
-                recovery_table = (s32 *)0x080C2AC0;
-                cached_result_offset = range_distance * 4;
+                range_falloff_table = (s32 *)0x080C2AC0;
+                range_falloff_offset = range_distance * 4;
                 pp_damage = Func_080022ec(
-                    pp_damage * M2C_FIELD(recovery_table, s32, cached_result_offset),
+                    pp_damage * M2C_FIELD(range_falloff_table, s32, range_falloff_offset),
                     0x64
                 );
                 pp_damage *= target_adjustment;
@@ -588,7 +588,7 @@ loop_90:
                     resulting_pp = 0;
                 }
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
-                effect_amount = M2C_FIELD(target_state, s16, 0x3A) - resulting_pp;
+                target_resource_delta = M2C_FIELD(target_state, s16, 0x3A) - resulting_pp;
                 M2C_FIELD(target_state, s16, 0x3A) = (s16) resulting_pp;
                 BattleUnit_UpdateRatios(target_id);
             }
@@ -604,8 +604,8 @@ loop_90:
                     healing_source_stat = 0x64;
                 }
                 healing_power = Func_08077190(healing_power, healing_source_stat, 0x100);
-                recovery_table = (s32 *)0x080C2AD8;
-                healing_power = Func_080022ec(healing_power * recovery_table[range_distance], 0x64);
+                range_falloff_table = (s32 *)0x080C2AD8;
+                healing_power = Func_080022ec(healing_power * range_falloff_table[range_distance], 0x64);
                 healing_power *= target_adjustment;
                 healed_hp = healing_power + (3 & BattleRandom_Next());
                 target_max_hp = M2C_FIELD(target_state, s16, 0x34);
@@ -621,7 +621,7 @@ loop_90:
                 } else {
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
                 }
-                prior_health = M2C_FIELD(target_state, s16, 0x38);
+                target_hp_before_commit = M2C_FIELD(target_state, s16, 0x38);
                 goto block_247;
             }
             break;
@@ -784,7 +784,7 @@ block_196:
                 } else {
                     BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
                 }
-                prior_health = M2C_FIELD(target_state, s16, 0x38);
+                target_hp_before_commit = M2C_FIELD(target_state, s16, 0x38);
                 goto block_247;
             }
             break;
@@ -799,10 +799,10 @@ block_196:
                     recovery_source_stat = 0x64;
                 }
                 pp_recovery = Func_08077190(pp_recovery, recovery_source_stat, 0x100);
-                recovery_table = (s32 *)0x080C2B50;
-                cached_result_offset = range_distance * 4;
+                range_falloff_table = (s32 *)0x080C2B50;
+                range_falloff_offset = range_distance * 4;
                 pp_recovery = Func_080022ec(
-                    pp_recovery * M2C_FIELD(recovery_table, s32, cached_result_offset),
+                    pp_recovery * M2C_FIELD(range_falloff_table, s32, range_falloff_offset),
                     0x64
                 );
                 pp_recovery *= target_adjustment;
@@ -879,9 +879,9 @@ block_actor_finish:
                     BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, (u32) target_id);
                 }
 block_246:
-                prior_health = M2C_FIELD(target_state, s16, 0x38);
+                target_hp_before_commit = M2C_FIELD(target_state, s16, 0x38);
 block_247:
-                effect_amount = prior_health - resulting_hp;
+                target_resource_delta = target_hp_before_commit - resulting_hp;
                 M2C_FIELD(target_state, s16, 0x38) = (s16) resulting_hp;
                 BattleUnit_UpdateRatios(target_id);
             }
@@ -1335,7 +1335,7 @@ block_402:
     case 0x1C:
     case 0x39:
         actor_hp = M2C_FIELD(actor_state, s16, 0x38);
-        actor_hp_recovery = effect_amount;
+        actor_hp_recovery = target_resource_delta;
         if (action->effect == 0x3C) {
             actor_hp_recovery = (u32) ((s32) (actor_hp_recovery + (actor_hp_recovery >> 0x1F)) >> 1);
         }
@@ -1357,7 +1357,7 @@ block_402:
         goto block_421;
     case 0x1D:
         actor_pp = M2C_FIELD(actor_state, s16, 0x3A);
-        actor_pp_recovery = effect_amount;
+        actor_pp_recovery = target_resource_delta;
         actor_max_pp = M2C_FIELD(actor_state, s16, 0x36);
         actor_recovered_pp = actor_pp + actor_pp_recovery;
         if (actor_recovered_pp > (s32) actor_max_pp) {
@@ -1377,7 +1377,7 @@ block_421:
         BattleUnit_UpdateRatios((u8) actor_id);
         break;
     case 0x42:
-        drained_pp = Func_080022ec((s32) effect_amount, 0xA);
+        drained_pp = Func_080022ec((s32) target_resource_delta, 0xA);
         target_pp_available = M2C_FIELD(target_state, s16, 0x3A);
         if ((s32) target_pp_available < drained_pp) {
             drained_pp = (s32) target_pp_available;
@@ -1480,7 +1480,7 @@ finalize:
         status_13c_value = M2C_FIELD(target_state, u8, 0x13C);
         if (status_13c_value != 0) {
             if ((u32) status_13c_value <= 6U) {
-                if ((s32) effect_amount > 0) {
+                if ((s32) target_resource_delta > 0) {
                     recovery_roll = BattleRandom_Next() & 3;
                     if (recovery_roll == 0) {
                         M2C_FIELD(target_state, u8, 0x13C) = recovery_roll;
@@ -1502,8 +1502,8 @@ finalize:
     status_140_address += result;
     if (*(volatile u8 *)status_140_address != 0) {
         result = BattleRandom_Next() & 3;
-        if ((result == 0) && ((s32) effect_amount > 0)) {
-            result = (s32) effect_amount >> 2;
+        if ((result == 0) && ((s32) target_resource_delta > 0)) {
+            result = (s32) target_resource_delta >> 2;
             if (result == 0) {
                 result = 1;
             }

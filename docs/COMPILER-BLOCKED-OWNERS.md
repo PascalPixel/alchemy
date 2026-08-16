@@ -134,32 +134,37 @@ reference size reached and the residual localized into explained clusters.
 Neither holds: the size is 8 bytes short and the residual is diffuse across the
 whole function.
 
-**A working axis was found: un-cache field reads.** The `+70 ldr` signal was
-real and actionable. Locals that cache a field read once and use it many times
-are a deviation where the reference re-reads; inlining the right ones moves the
-score substantially. Greedy search over 31 safely-inlinable candidates:
+**Current state: `1961 / 6332`, size EXACT.** Down from 2286 / 6324.
 
-    baseline                                   2286 / 6324
-    inline target_max_hp_unsigned              2188 / 6316
-    + target_pp                                2129 / 6320
-    + defense_down_two                         2121 / 6328
-    + target_max_hp_signed                     1992 / 6336   <- converged
-    + target_max_pp, max_hp_for_half_revive    1992 / 6336
+**The working axis: un-cache field reads.** The `+70 ldr` signal was real. Our C
+caches field reads in locals where the reference RE-READS them. Inlining the
+right ones moves the score, and inlining the right ones *while holding size at
+6332* moves both at once.
 
-**2286 -> 1992, a 13% reduction**, and three single inlines reached the exact
-reference size of 6332 on their own (attack_down_one, defense_down_two,
-defense_down_one) -- the size gap is reachable, it simply does not coincide with
-the best ordering score yet.
+The reconciliation matters more than the score. Optimising differing-halfwords
+alone drifts the size (best was 1992 at 6336, four bytes over). Constraining the
+search to subsets that land on 6332 exactly and minimising within that produced
+`[target_pp, target_max_hp_signed, actor_max_pp_for_drain]` -- **1961 differing
+at exactly reference size**, better on both axes than the size-blind optimum.
+The size constraint has to lead; the ordering score follows.
 
-The minimal set is five inlines -- `target_pp`, `target_max_hp_unsigned`,
-`target_max_hp_signed`, `defense_down_two`, `max_hp_for_half_revive` -- and 387
-randomised subsets of all 31 candidates found nothing better than 1992. Every
-top-scoring subset contains those same five, so 1992 is a robust plateau for
-this axis, not a greedy artefact.
+Reaching reference size also opens the permuter, which CONTRIBUTING gates behind
+exactly that.
 
-One of the inlines multiplies a `volatile` read from one to two. That is an
-observable semantic change, kept because it is worth 129 of the improvement,
-which is itself evidence the original C read it twice.
+**Four axes are now exhausted at this owner**, all measured:
+
+| axis | trials | result |
+|---|---|---|
+| stock flags and pairs | 171 | nothing beats baseline |
+| random declaration orders | 24 | all worse |
+| pairwise declaration swaps | 12,090 | 0 better |
+| inline cached field reads | 31 + 387 subsets | **2286 -> 1961**, converged |
+| alchemy-permuter, 7 seeds | 4,634 candidates | 0 better; 4,480 tie at 1961 |
+
+The permuter stalling for seven rounds is the documented tripwire: two stalled
+rounds with no structural insight end the axis. Further search here is looping.
+What is needed next is a new structural fact out of the assembly or the RTL
+dumps, not another round.
 
 **Searched, not guessed.** Everything below was measured on this owner with a
 harness whose unshuffled control reads exactly `2286 / 6324`.

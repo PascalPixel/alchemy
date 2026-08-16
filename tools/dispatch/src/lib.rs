@@ -508,7 +508,7 @@ const OVERLAY: &[Entry] = &[
     },
     Entry {
         name: "overlay_showcase",
-        target: Target::Binary("tools/overlay-showcase/target/release/overlay-showcase"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "showcase"),
     },
     Entry {
         name: "overlay_twins",

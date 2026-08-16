@@ -35,6 +35,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("show", "show one overlay"),
     ("twins", "find mirrored overlay pairs"),
     ("unindexed", "report unindexed overlays"),
+    ("showcase", "run the overlay showcase"),
 ];
 
 fn root() -> PathBuf {
@@ -95,6 +96,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "showcase" => { overlay_showcase::entrypoint::entry(&rest); ExitCode::SUCCESS }
+
         "adopt" => code(overlay_adopt::run(&root(), &rest)),
         "call-order-check" => code(overlay_call_order_check::run(&rest)),
         "candidate-rank" => {

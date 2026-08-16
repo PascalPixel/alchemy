@@ -19,6 +19,17 @@ pub struct Score {
     pub distance: u32,
     /// Emitted byte size. Reported, never constrained.
     pub size: u32,
+    /// Raw positional halfword mismatch straight from candidate-show. NOT an
+    /// objective (it is meaningless across sizes), but zero here with a size
+    /// match is the definition of done, so it is the stopping condition.
+    pub halfwords: u32,
+}
+
+impl Score {
+    /// The only thing that actually counts as finished.
+    pub fn is_exact(&self, reference_size: u32) -> bool {
+        self.halfwords == 0 && self.size == reference_size
+    }
 }
 
 /// Canonicalise one disassembled instruction so that differences which are not
@@ -182,10 +193,11 @@ pub fn score(
         return None;
     }
     let size = field(first, "candidate=")?;
+    let halfwords = field(first, "differing_halfwords=")?;
 
     let candidate = disassemble(objdump, &build.join("candidate.bin")).ok()?;
     let reference = disassemble(objdump, &build.join("reference.bin")).ok()?;
-    Some(Score { distance: distance(&candidate, &reference), size })
+    Some(Score { distance: distance(&candidate, &reference), size, halfwords })
 }
 
 fn field(line: &str, key: &str) -> Option<u32> {

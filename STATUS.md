@@ -56,6 +56,53 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### One behaviour behind 197 flag-grants: constants are rematerialised, not shared
+
+The single largest lever found. Six routed flags -- `-fno-cse-two-insn-immediate`
+(75 owners), `-fno-rerun-cse-after-loop` (42), `-fno-cse-pool-immediate` (42),
+`-fno-cse-shift-immediate` (29), `-fno-cse-skip-blocks` (5) and
+`-fno-cse-follow-jumps` (4) -- account for **197 of the 928 flag-grants, 21% of
+all routing**, and they are facets of one compiler behaviour.
+
+Root cause, read out of RTL dumps rather than inferred, and reached
+independently by several agents:
+
+1. `precompute_register_parameters` in `alchemy-gcc/gcc-2.96/gcc/calls.c` (~857)
+   forces any call argument whose `rtx_cost` exceeds `COSTS_N_INSNS(1)` into a
+   fresh pseudo. Its guard, `SMALL_REGISTER_CLASSES && *reg_parm_seen`, is always
+   true for a Thumb call that passes anything in registers, so every expensive
+   constant argument gets a pseudo.
+2. `cse2` then rewrites the *other* occurrence of that constant -- the one in the
+   branch arm -- to read the pseudo instead of rebuilding the value.
+
+The reference does neither: it rebuilds the constant at every site. Diffing the
+`.09.cse2` dumps for `resource_373_c_02000ba8` with and without the flag shows
+the pass makes exactly one change in the whole function,
+`(set (reg:SI 0 r0) (const_int 2055))` becoming `(set (reg:SI 0 r0) (reg:SI 35))`.
+Nothing else differs at any pass.
+
+**No source form escapes it**, and that was tested rather than assumed. Naming
+the constant in a local is cprop'd away and re-shared. Inverting the branch does
+not help, because `cse_end_of_basic_block` explores both arms and only ends a
+region at a label it did not itself branch to, so a condition and its body are
+always one CSE region however the branch is spelled. Respelling the constant
+(`0xc0 << 10` for `0x30000`, `~0` for `-1`) folds to identical RTL. Using a
+declared-but-unused `Value_00000315` extern does not help either: a `symbol_ref`
+hashes and CSEs exactly like a `const_int`. The only source-level escape is a
+duplicate variable holding the constant twice, which is the banned hack.
+
+So this is the second kind of entry described in the never-invent rule: a real
+behaviour of Camelot's compiler, currently modelled as six switchable options. If
+constant rematerialisation is made unconditional -- the reference's behaviour,
+not an option -- roughly 197 grants and six invented flags retire together, and
+about a fifth of the routing debt goes with them.
+
+Two owners also came with a narrowing side finding: `resource_373_c_02000ba8` and
+`_02005950` compile byte-identically under `-fno-cse-pool-immediate` (plus
+`-fno-cse-shift-immediate` for the second), so their `-fno-rerun-cse-after-loop`
+rows could be re-routed onto the narrower modes today. That is a re-route rather
+than a removal, and it is only worth doing if the unconditional fix stalls.
+
 ### The real divergence from pret: 125 invented compiler options
 
 Measured 2026-08-16 against the pristine gcc-2.96 at the fork point. Of the 138

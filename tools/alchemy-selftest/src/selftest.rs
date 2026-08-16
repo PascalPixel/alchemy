@@ -657,14 +657,7 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         return fail("source-to-assembly forced old_agbcc self-test failed");
     }
 
-    for (family, driver, minor) in [
-        (
-            CompilerFamily::PretEarlyThumb,
-            alchemy_bundle_pret_early_thumb_driver(),
-            "9",
-        ),
-        (CompilerFamily::Gcc2951, alchemy_bundle_gcc2951_driver(), "95"),
-    ] {
+    for (family, driver, minor) in [(CompilerFamily::Gcc3, alchemy_bundle_gcc3_driver(), "0")] {
         let name = family.as_str();
         let mut options = SourceToAssemblyPlanOptions::new(
             GS1,
@@ -734,7 +727,7 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         return fail("source-to-assembly GS2 old_agbcc rejection self-test failed");
     }
 
-    for family in [CompilerFamily::PretEarlyThumb, CompilerFamily::Gcc2951] {
+    for family in [CompilerFamily::Gcc3] {
         let mut options = SourceToAssemblyPlanOptions::new(
             GS2,
             "/installed/080000c0.c",
@@ -768,17 +761,11 @@ fn is_err_containing<T>(result: &Result<T, String>, needle: &str) -> bool {
     }
 }
 
-// The two experimental drivers `selfTest` names. Read from the bundle crate
-// that owns the paths rather than retyped as literals here, which is the whole
+// The experimental driver `selfTest` names. Read from the bundle crate that
+// owns the path rather than retyped as a literal here, which is the whole
 // point of depending on it.
-fn alchemy_bundle_pret_early_thumb_driver() -> String {
-    alchemy_bundle::bundle::pret_early_thumb_driver()
-        .to_string_lossy()
-        .into_owned()
-}
-
-fn alchemy_bundle_gcc2951_driver() -> String {
-    alchemy_bundle::bundle::gcc2951_driver()
+fn alchemy_bundle_gcc3_driver() -> String {
+    alchemy_bundle::bundle::gcc3_driver()
         .to_string_lossy()
         .into_owned()
 }

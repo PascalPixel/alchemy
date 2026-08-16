@@ -69,12 +69,10 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .output()
         .map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
 
-    // PORT NOTE -- the gcc2951 exclusion and the `exitCode === 0` test are both
-    // load-bearing: a failed `nm` falls back to the entry symbol's own size
-    // rather than erroring.
-    let extent = if symbols.status.success()
-        && options.configuration.family != Some(CandidateCompilerFamily::Gcc2951)
-    {
+    // PORT NOTE -- the `exitCode === 0` test is load-bearing: a failed `nm`
+    // falls back to the entry symbol's own size rather than erroring. This also
+    // carried a gcc2951 exclusion, dropped with that family.
+    let extent = if symbols.status.success() {
         let text = String::from_utf8_lossy(&symbols.stdout);
         linked_function_extent(&text, &format!("Func_{stem}"), address, linked.len() as f64)?
     } else {

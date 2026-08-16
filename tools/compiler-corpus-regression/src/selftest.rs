@@ -100,8 +100,6 @@ pub fn self_test() -> Result<String, String> {
         CompilerFamily::Routed,
         CompilerFamily::Gcc296,
         CompilerFamily::OldAgbcc,
-        CompilerFamily::PretEarlyThumb,
-        CompilerFamily::Gcc2951,
         CompilerFamily::Gcc3,
     ] {
         if family_name(family).is_empty() {

@@ -152,8 +152,6 @@ fn validate_compiler_for_source(
         }
         CompilerFamily::Gcc296 => alchemy_bundle::bundle::validate_bundle(CompilerTarget::Gs1),
         CompilerFamily::OldAgbcc => alchemy_bundle::bundle::validate_agbcc_bundle(),
-        CompilerFamily::PretEarlyThumb => validate_experimental_family("pret-early-thumb"),
-        CompilerFamily::Gcc2951 => validate_experimental_family("gcc2951"),
         CompilerFamily::Gcc3 => validate_experimental_family("gcc3"),
     }
 }
@@ -320,13 +318,10 @@ fn evaluate(
                 text
             });
         }
-        // PORT NOTE -- `options.compilerConfig.family === "gcc2951"` is a
-        // STRING comparison against one of the six family literals, and
-        // `undefined === "gcc2951"` is false, so an absent family takes the
-        // `linkedFunctionExtent` branch. Modelled as `Some(Gcc2951)`.
-        let extent = if options.compiler_config.family == Some(CompilerFamily::Gcc2951) {
-            verification.actual.len()
-        } else {
+        // The gcc2951 family used to take `verification.actual.len()` here
+        // instead of the linked extent. gcc2951 named a binary no source could
+        // rebuild and is gone, so only the linked-extent arm survives.
+        let extent = {
             linked_function_extent(
                 &String::from_utf8_lossy(&symbols.stdout),
                 &format!("Func_{}", member.stem),

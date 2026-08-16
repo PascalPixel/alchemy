@@ -4,7 +4,7 @@ use std::path::Path;
 
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]";
 
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 
@@ -98,7 +98,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                 match family {
                     Some(family) => options.configuration.family = Some(family),
                     None => {
-                        return Err("--family must be routed, gcc296, old-agbcc, pret-early-thumb, gcc2951, or gcc3".to_string())
+                        return Err("--family must be routed, gcc296, old-agbcc, or gcc3".to_string())
                     }
                 }
             }
@@ -138,8 +138,6 @@ impl FamilyFromStr for CandidateCompilerFamily {
             "routed" => Some(Self::Routed),
             "gcc296" => Some(Self::Gcc296),
             "old-agbcc" => Some(Self::OldAgbcc),
-            "pret-early-thumb" => Some(Self::PretEarlyThumb),
-            "gcc2951" => Some(Self::Gcc2951),
             "gcc3" => Some(Self::Gcc3),
             _ => None,
         }
@@ -215,7 +213,7 @@ mod tests {
         let error = parse(&["a.c", "--family", "clang"]).unwrap_err();
         assert_eq!(
             error,
-            "--family must be routed, gcc296, old-agbcc, pret-early-thumb, gcc2951, or gcc3"
+            "--family must be routed, gcc296, old-agbcc, or gcc3"
         );
         assert_eq!(parse(&["a.c", "--family"]).unwrap_err(), error);
     }

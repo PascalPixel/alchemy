@@ -43,7 +43,7 @@ pub struct Options {
 pub const USAGE: &str = concat!(
     "usage: compiler-corpus-regression (--flags FLAG[,FLAG...] | --config FILE) [options]\n",
     "  --config FILE       CandidateCompilerConfiguration JSON:\n",
-    "                      {\"family\":\"routed|gcc296|old-agbcc|pret-early-thumb|gcc2951|gcc3\",\n",
+    "                      {\"family\":\"routed|gcc296|old-agbcc|gcc3\",\n",
     "                       \"addFlags\":[...],\"removeFlags\":[...]}\n",
     "  --flags FLAGS       compatibility shorthand for additional flags\n",
     "  --rom FILE          reference ROM (default roms/gs1-en.gba)\n",

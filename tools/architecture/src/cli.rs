@@ -124,10 +124,10 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     problems.extend(target_problems);
     problems.extend(classification_problems(&cargo_targets, &targets, &crates));
     problems.extend(violations(&tools, &documented(&read_agents(&root))));
-    let catalog = match fs::read_to_string(root.join("docs/TOOLS.md")) {
+    let catalog = match fs::read_to_string(root.join("CONTRIBUTING.md")) {
         Ok(text) => cataloged(&text),
         Err(error) => {
-            problems.push(format!("docs/TOOLS.md could not be read: {error}"));
+            problems.push(format!("CONTRIBUTING.md could not be read: {error}"));
             Default::default()
         }
     };

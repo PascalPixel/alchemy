@@ -139,7 +139,7 @@ fn run_queue() -> ExitCode {
 
 fn gate() -> ExitCode {
     let root = root();
-    let ledger = root.join("SANCTUM.md");
+    let ledger = root.join("CONTRIBUTING.md");
     let text = match std::fs::read_to_string(&ledger) {
         Ok(text) => text,
         // PORT NOTE: the TS lets readFileSync throw; the message here is the

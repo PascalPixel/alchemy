@@ -1144,7 +1144,7 @@ pub fn mode_sweep_output_directory(root: &Path, source: &str, contents: &[u8]) -
 /// Native source modules whose bytes go into the compiler signature.
 pub const SIGNATURE_SOURCES: [&str; 3] = [
     "tools/mode-sweep/src/lib.rs",
-    "tools/mode-sweep/src/main.rs",
+    "tools/mode-sweep/src/cli.rs",
     "tools/candidate-compiler/src/verify.rs",
 ];
 

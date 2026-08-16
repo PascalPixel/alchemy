@@ -329,11 +329,203 @@ pub fn statement_order_variants(source: &str) -> Vec<Variant> {
     variants
 }
 
+/// Identifiers appearing in a fragment of C.
+fn identifiers(text: &str) -> Vec<String> {
+    let mut names = Vec::new();
+    let mut current = String::new();
+    for character in text.chars() {
+        if character.is_alphanumeric() || character == '_' {
+            current.push(character);
+        } else if !current.is_empty() {
+            names.push(std::mem::take(&mut current));
+        }
+    }
+    if !current.is_empty() {
+        names.push(current);
+    }
+    names
+}
+
+fn contains_call(text: &str) -> bool {
+    // A `(` that is not a cast and not the start of a grouped expression
+    // following an operator. Cheap and deliberately over-eager.
+    let bytes: Vec<char> = text.chars().collect();
+    for index in 0..bytes.len() {
+        if bytes[index] != '(' {
+            continue;
+        }
+        let mut back = index;
+        while back > 0 && bytes[back - 1] == ' ' {
+            back -= 1;
+        }
+        if back == 0 {
+            continue;
+        }
+        let previous = bytes[back - 1];
+        if previous.is_alphanumeric() || previous == '_' {
+            // `name(` -- a call, unless it is a known type keyword.
+            let mut start = back;
+            while start > 0 && (bytes[start - 1].is_alphanumeric() || bytes[start - 1] == '_') {
+                start -= 1;
+            }
+            let word: String = bytes[start..back].iter().collect();
+            if !matches!(word.as_str(), "if" | "while" | "for" | "switch" | "return" | "sizeof") {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+/// True when the expression reads memory, so an intervening call could change it.
+fn reads_memory(text: &str) -> bool {
+    text.contains("->") || text.contains('[') || text.contains('*')
+}
+
+/// Un-cache a single-assignment local: replace its uses with its defining
+/// expression and drop the declaration and the assignment.
+///
+/// This axis is a measured win. On the first owner swept, un-caching one local
+/// was worth 98 halfwords, and it was found only after the *generator* was
+/// widened, not the axis. An exhausted generator is not an exhausted axis.
+///
+/// Safety, which is this function's whole job:
+/// the expression must be call-free; no identifier it reads may be assigned
+/// between the definition and the last use; and if it reads memory, no call may
+/// appear in that window either, since a call can write through any pointer.
+pub fn uncache_variants(source: &str) -> Vec<Variant> {
+    let lines: Vec<String> = source.split('\n').map(str::to_string).collect();
+    let mut variants = Vec::new();
+
+    // Locals declared one-per-line at the top of the function.
+    let mut declared: Vec<(usize, String)> = Vec::new();
+    for (index, line) in lines.iter().enumerate() {
+        let t = line.trim();
+        let Some(name) = t.strip_suffix(';') else { continue };
+        let mut parts = name.split_whitespace();
+        let (Some(type_word), Some(identifier)) = (parts.next(), parts.next()) else { continue };
+        if parts.next().is_some() {
+            continue;
+        }
+        if !matches!(type_word, "u8" | "s8" | "u16" | "s16" | "u32" | "s32" | "int") {
+            continue;
+        }
+        let identifier = identifier.trim_start_matches('*');
+        if identifier.chars().all(|c| c.is_alphanumeric() || c == '_') && !identifier.is_empty() {
+            declared.push((index, identifier.to_string()));
+        }
+    }
+
+    for (declaration_line, name) in declared {
+        // Exactly one plain assignment to it, and at least two later uses.
+        let mut assignment = None;
+        let mut assignment_count = 0;
+        let mut use_lines = Vec::new();
+        for (index, line) in lines.iter().enumerate() {
+            let mentions = identifiers(line).iter().any(|w| *w == name);
+            if !mentions {
+                continue;
+            }
+            let t = line.trim();
+            if let Some(position) = find_plain_assignment(t.trim_end_matches(';')) {
+                if t[..position].trim() == name {
+                    assignment_count += 1;
+                    assignment = Some((index, t[position + 1..].trim_end_matches(';').trim().to_string()));
+                    continue;
+                }
+            }
+            if index != declaration_line {
+                use_lines.push(index);
+            }
+        }
+        if assignment_count != 1 || use_lines.len() < 2 {
+            continue;
+        }
+        let Some((assignment_line, expression)) = assignment else { continue };
+        if use_lines.iter().any(|&u| u < assignment_line) {
+            continue; // used before defined; not a simple cache
+        }
+        if contains_call(&expression) || expression.len() > 90 {
+            continue;
+        }
+
+        let operands: Vec<String> = identifiers(&expression);
+        let last_use = *use_lines.iter().max().unwrap();
+        let mut hazard = false;
+        for line in lines.iter().take(last_use + 1).skip(assignment_line + 1) {
+            let t = line.trim();
+            if reads_memory(&expression) && contains_call(t) {
+                hazard = true;
+                break;
+            }
+            if let Some(position) = find_plain_assignment(t.trim_end_matches(';')) {
+                let written = t[..position].trim();
+                if operands.iter().any(|operand| written.contains(operand.as_str())) {
+                    hazard = true;
+                    break;
+                }
+            }
+        }
+        if hazard {
+            continue;
+        }
+
+        let mut out: Vec<String> = Vec::with_capacity(lines.len());
+        for (index, line) in lines.iter().enumerate() {
+            if index == declaration_line || index == assignment_line {
+                continue;
+            }
+            if use_lines.contains(&index) {
+                out.push(replace_identifier(line, &name, &format!("({expression})")));
+            } else {
+                out.push(line.clone());
+            }
+        }
+        variants.push(Variant {
+            label: format!("uncache:{name}"),
+            source: out.join("\n"),
+        });
+    }
+    variants
+}
+
+/// Replace whole-word occurrences of `name`, leaving `foo_name` and `name_bar`
+/// alone.
+fn replace_identifier(line: &str, name: &str, replacement: &str) -> String {
+    let characters: Vec<char> = line.chars().collect();
+    let target: Vec<char> = name.chars().collect();
+    let mut out = String::with_capacity(line.len());
+    let mut index = 0;
+    while index < characters.len() {
+        let matches_here = index + target.len() <= characters.len()
+            && characters[index..index + target.len()] == target[..];
+        let left_ok = index == 0 || !(characters[index - 1].is_alphanumeric() || characters[index - 1] == '_');
+        let right = index + target.len();
+        let right_ok = right >= characters.len()
+            || !(characters[right].is_alphanumeric() || characters[right] == '_');
+        if matches_here && left_ok && right_ok {
+            out.push_str(replacement);
+            index = right;
+        } else {
+            out.push(characters[index]);
+            index += 1;
+        }
+    }
+    out
+}
+
 /// The full single-edit neighbourhood of a source.
 pub fn neighbourhood(source: &str) -> Vec<Variant> {
     let mut all = arm_order_variants(source);
     all.extend(statement_order_variants(source));
+    all.extend(uncache_variants(source));
     all
+}
+
+/// Which line an edit touches, used to keep batched edits from overlapping.
+pub fn touched_line(label: &str) -> Option<usize> {
+    let (_, tail) = label.split_once('@')?;
+    tail.parse().ok()
 }
 
 #[cfg(test)]
@@ -410,5 +602,67 @@ mod tests {
     #[test]
     fn casts_are_not_mistaken_for_calls() {
         assert!(can_swap("    a = (u32) x;", "    b = (s16) y;"));
+    }
+
+    const CACHE: &str = "    s32 level;\n    level = base + 1;\n    a = level;\n    b = level;";
+
+    #[test]
+    fn uncaches_a_single_assignment_local() {
+        let variants = uncache_variants(CACHE);
+        assert_eq!(variants.len(), 1, "expected one un-cache candidate");
+        let out = &variants[0].source;
+        assert!(!out.contains("s32 level;"), "declaration must go");
+        assert!(!out.contains("level = base + 1;"), "assignment must go");
+        assert_eq!(out.matches("(base + 1)").count(), 2, "both uses inlined");
+    }
+
+    #[test]
+    fn refuses_when_an_operand_is_reassigned_between_uses() {
+        let source = "    s32 level;\n    level = base + 1;\n    a = level;\n    base = 9;\n    b = level;";
+        assert!(uncache_variants(source).is_empty(), "base changes in the window");
+    }
+
+    #[test]
+    fn refuses_when_a_call_could_clobber_a_memory_read() {
+        let source = "    s32 level;\n    level = unit->hp;\n    a = level;\n    Recalculate(id);\n    b = level;";
+        assert!(uncache_variants(source).is_empty(), "call may write through the pointer");
+    }
+
+    #[test]
+    fn a_call_is_harmless_when_the_expression_reads_no_memory() {
+        let source = "    s32 level;\n    level = base + 1;\n    a = level;\n    Recalculate(id);\n    b = level;";
+        assert_eq!(uncache_variants(source).len(), 1, "pure expression is call-immune");
+    }
+
+    #[test]
+    fn refuses_a_defining_expression_that_calls() {
+        let source = "    s32 level;\n    level = Compute(base);\n    a = level;\n    b = level;";
+        assert!(uncache_variants(source).is_empty(), "would duplicate a call");
+    }
+
+    #[test]
+    fn refuses_when_assigned_more_than_once() {
+        let source = "    s32 level;\n    level = base + 1;\n    a = level;\n    level = base + 2;\n    b = level;";
+        assert!(uncache_variants(source).is_empty());
+    }
+
+    #[test]
+    fn replacement_respects_word_boundaries() {
+        assert_eq!(replace_identifier("a = level + level_max;", "level", "(X)"), "a = (X) + level_max;");
+        assert_eq!(replace_identifier("a = max_level;", "level", "(X)"), "a = max_level;");
+    }
+
+    #[test]
+    fn call_detection_ignores_casts_and_keywords() {
+        assert!(!contains_call("(u32) x + 1"));
+        assert!(!contains_call("(a + b) * c"));
+        assert!(contains_call("Func_08000000(1)"));
+    }
+
+    #[test]
+    fn touched_line_parses_positional_labels_only() {
+        assert_eq!(touched_line("arm@990"), Some(990));
+        assert_eq!(touched_line("stmt@12"), Some(12));
+        assert_eq!(touched_line("uncache:level"), None);
     }
 }

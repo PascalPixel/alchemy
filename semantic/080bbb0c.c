@@ -489,10 +489,10 @@ scan_decisions:
             BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
             resulting_hp = target_hp - damage;
             BattleEvent_Push(BATTLE_EVENT_VALUE, damage);
-            if ((u32) target_id <= 7U) {
-                ranged_damage_text = range_relation + 0x834;
-            } else {
+            if (!((u32) target_id <= 7U)) {
                 ranged_damage_text = range_relation + 0x831;
+            } else {
+                ranged_damage_text = range_relation + 0x834;
             }
             BattleEvent_Push(BATTLE_EVENT_TEXT, ranged_damage_text);
             /* Shares case 2's write-back tail; the reference does too. */
@@ -579,11 +579,11 @@ scan_decisions:
                     healed_hp = resulting_hp - target->hp;
                 }
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
-                if (resulting_hp == target->max_hp) {
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
-                } else {
+                if (!(resulting_hp == target->max_hp)) {
                     BattleEvent_Push(BATTLE_EVENT_VALUE, healed_hp);
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);
+                } else {
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
                 }
                 prior_health = target->hp;
                 effect_amount = prior_health - resulting_hp;
@@ -694,8 +694,8 @@ scan_decisions:
                     falloff_offset_ranged = range_distance * 4;
                     goto apply_falloff;
                 case 6:
-                    falloff_offset_ranged = range_distance * 4;
                     falloff_table = 0x080C2B38;
+                    falloff_offset_ranged = range_distance * 4;
 apply_falloff:
                     falloff_percent = M2C_FIELD((u8 *)falloff_table, s32, falloff_offset_ranged);
                     scaled_ranged_damage = DivideSigned(
@@ -802,9 +802,9 @@ apply_falloff:
                         effect_damage = DivideSigned(effect_damage, 0xA);
                     }
                 }
+                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
                 BattleEvent_Push(BATTLE_EVENT_VALUE, (u32) effect_damage);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
                 if ((u32) target_id > 7U) {
                     effect_damage_text = 0x826;
                 } else {
@@ -930,11 +930,11 @@ commit_damage:
         if ((recovered_hp_amount == 0) && (action_family != 1)) {
             goto finalize;
         }
-        if (recovered_hp != (s16) target_max_hp_unsigned) {
+        if (!(recovered_hp != (s16) target_max_hp_unsigned)) {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
+        } else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, recovered_hp_amount);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81DU);
-        } else {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
         }
         target->hp = (s16) recovered_hp;
         BattleUnit_UpdateRatios(target_id);
@@ -956,11 +956,11 @@ commit_damage:
         if ((pp_delta == 0) && (action_family != 0xB)) {
             goto finalize;
         }
-        if (recovered_pp == max_pp) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
-        } else {
+        if (!(recovered_pp == max_pp)) {
             BattleEvent_Push(BATTLE_EVENT_VALUE, pp_delta);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
         }
         target->pp = (s16) recovered_pp;
         BattleUnit_UpdateRatios(target_id);
@@ -1295,11 +1295,11 @@ commit_damage:
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0U);
         BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) actor_id);
-        if (actor_recovered_pp == actor->max_pp) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
-        } else {
+        if (!(actor_recovered_pp == actor->max_pp)) {
             BattleEvent_Push(BATTLE_EVENT_VALUE, actor_pp_recovery);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81EU);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821U);
         }
         actor->pp = (s16) actor_recovered_pp;
         BattleUnit_UpdateRatios((u8) actor_id);
@@ -1316,10 +1316,10 @@ commit_damage:
         }
         if (drained_pp != 0) {
             BattleEvent_Push(BATTLE_EVENT_VALUE, (u32) drained_pp);
-            if ((u32) target_id <= 7U) {
-                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x85FU);
-            } else {
+            if (!((u32) target_id <= 7U)) {
                 BattleEvent_Push(BATTLE_EVENT_TEXT, 0x85EU);
+            } else {
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x85FU);
             }
             Func_08077120(actor_id, drained_pp);
         }

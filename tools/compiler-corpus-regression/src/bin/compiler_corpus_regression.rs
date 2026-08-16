@@ -29,6 +29,45 @@ fn main() {
     if options.overlays {
         let root = alchemy_routing::routing::root();
         let cache = std::path::Path::new(&options.cache).join("overlays");
+        // With --flags, the question flips from "is this owner's routing
+        // load-bearing" to "would promoting these flags into the overlay
+        // baseline break an owner that does not carry them".
+        if !options.flags.is_empty() {
+            match compiler_corpus_regression::overlays::run_addition(root, &cache, &options.flags) {
+                Ok(verdicts) => {
+                    let mut broken = 0usize;
+                    let mut unmeasured = 0usize;
+                    for verdict in &verdicts {
+                        if let Some(note) = &verdict.note {
+                            unmeasured += 1;
+                            println!("UNMEASURED {} {note}", verdict.source);
+                            continue;
+                        }
+                        if verdict.load_bearing {
+                            broken += 1;
+                            println!(
+                                "WOULD-BREAK {} size={}/{} first_diff={}",
+                                verdict.source,
+                                verdict.routed_len,
+                                verdict.stripped_len,
+                                verdict
+                                    .first_difference
+                                    .map(|v| format!("0x{v:x}"))
+                                    .unwrap_or_else(|| "-".to_string()),
+                            );
+                        }
+                    }
+                    let unaffected = verdicts.len() - broken - unmeasured;
+                    println!(
+                        "overlay promotion of [{}]: tested={} would_break={broken} unaffected={unaffected} unmeasured={unmeasured}",
+                        options.flags.join(" "),
+                        verdicts.len()
+                    );
+                    std::process::exit(if broken == 0 { 0 } else { 1 });
+                }
+                Err(message) => fail(&message),
+            }
+        }
         match compiler_corpus_regression::overlays::run(root, &cache) {
             Ok(verdicts) => {
                 let mut load_bearing = 0usize;

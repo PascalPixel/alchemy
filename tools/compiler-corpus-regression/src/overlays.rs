@@ -53,6 +53,119 @@ fn overlay_of(source: &str) -> Option<String> {
     Some(format!("resource_{id}"))
 }
 
+/// Every adopted overlay owner, whether or not it carries routed flags.
+///
+/// `routed_overlay_owners` answers "is this owner's routing load-bearing" and so
+/// only needs owners that have routing. Promotion asks the opposite question --
+/// "would adding this flag to the overlay baseline break an owner that does not
+/// have it" -- and that population is every overlay owner, most of which are
+/// currently flag-free.
+pub fn all_overlay_owners(root: &Path) -> Result<Vec<OverlayOwner>, String> {
+    let baseline: std::collections::BTreeSet<String> =
+        cflags_for_target(CompilerTarget::Gs1).into_iter().collect();
+    let directory = root.join("exact");
+    let entries = std::fs::read_dir(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?;
+    let mut owners = Vec::new();
+    for entry in entries.filter_map(Result::ok) {
+        let path = entry.path();
+        if path.extension().and_then(|e| e.to_str()) != Some("c") {
+            continue;
+        }
+        let Some(name) = path.file_name().and_then(|n| n.to_str()) else { continue };
+        if !name.starts_with("resource_") {
+            continue;
+        }
+        let source = format!("exact/{name}");
+        let Some(overlay) = overlay_of(&source) else { continue };
+        let extras: Vec<String> = cflags_for_source(&source)
+            .into_iter()
+            .filter(|flag| !baseline.contains(flag))
+            .collect();
+        owners.push(OverlayOwner { source, overlay, extras });
+    }
+    owners.sort_by(|a, b| a.source.cmp(&b.source));
+    Ok(owners)
+}
+
+/// Compile one owner as routed, and again with `added` on top.
+///
+/// Bytes that change mean this owner would stop reproducing the cartridge if
+/// `added` became part of the overlay baseline. No reference bytes are needed:
+/// the owner is byte-exact as routed by construction, so "changed" is "broke".
+pub fn evaluate_addition(
+    owner: &OverlayOwner,
+    added: &[String],
+    root: &Path,
+    work: &Path,
+) -> OverlayVerdict {
+    let source = root.join(&owner.source);
+    let routed = compile_overlay_mutated(
+        &source,
+        &work.join("routed"),
+        &owner.overlay,
+        None,
+        &CompilerFlagMutations { add_flags: Vec::new(), remove_flags: Vec::new() },
+    );
+    let promoted = compile_overlay_mutated(
+        &source,
+        &work.join("promoted"),
+        &owner.overlay,
+        None,
+        &CompilerFlagMutations { add_flags: added.to_vec(), remove_flags: Vec::new() },
+    );
+    match (routed, promoted) {
+        (Ok(Compiled { data: a, .. }), Ok(Compiled { data: b, .. })) => OverlayVerdict {
+            source: owner.source.clone(),
+            extras: owner.extras.clone(),
+            load_bearing: a != b,
+            routed_len: a.len(),
+            stripped_len: b.len(),
+            first_difference: first_difference(&a, &b),
+            note: None,
+        },
+        (routed, promoted) => {
+            let note = match (&routed, &promoted) {
+                (Err(error), _) => format!("routed compile failed: {error}"),
+                (_, Err(error)) => format!("promoted compile failed: {error}"),
+                _ => unreachable!(),
+            };
+            OverlayVerdict {
+                source: owner.source.clone(),
+                extras: owner.extras.clone(),
+                load_bearing: true,
+                routed_len: 0,
+                stripped_len: 0,
+                first_difference: None,
+                note: Some(note),
+            }
+        }
+    }
+}
+
+/// Measure what adding `added` to every overlay owner would cost.
+pub fn run_addition(
+    root: &Path,
+    cache: &Path,
+    added: &[String],
+) -> Result<Vec<OverlayVerdict>, String> {
+    let owners = all_overlay_owners(root)?;
+    let mut verdicts = Vec::with_capacity(owners.len());
+    for (index, owner) in owners.iter().enumerate() {
+        // An owner that already carries the flag cannot be broken by adding it.
+        if added.iter().all(|flag| owner.extras.contains(flag)) && !added.is_empty() {
+            continue;
+        }
+        let work: PathBuf = cache.join(format!("add-{index:04}"));
+        std::fs::create_dir_all(work.join("routed"))
+            .map_err(|error| format!("{}: {error}", work.display()))?;
+        std::fs::create_dir_all(work.join("promoted"))
+            .map_err(|error| format!("{}: {error}", work.display()))?;
+        verdicts.push(evaluate_addition(owner, added, root, &work));
+    }
+    Ok(verdicts)
+}
+
 /// Every adopted overlay owner that carries routed flags beyond the baseline.
 pub fn routed_overlay_owners(root: &Path) -> Result<Vec<OverlayOwner>, String> {
     let baseline: std::collections::BTreeSet<String> =

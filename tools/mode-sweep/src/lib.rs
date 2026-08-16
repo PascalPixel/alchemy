@@ -17,6 +17,8 @@
 //! deliberately owns no second compiler implementation: routing and command
 //! construction remain in the Rust layers below it.
 
+pub mod cli;
+
 use std::path::{Path, PathBuf};
 
 use search_compiler_modes::{canonical_json, sha256_hex, Json};

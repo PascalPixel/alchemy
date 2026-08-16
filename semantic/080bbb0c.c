@@ -658,10 +658,10 @@ loop_90:
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
                 BattleEvent_Push(BATTLE_EVENT_VALUE, secondary_pp_damage);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
-                if ((u32) target_id <= 7U) {
-                    secondary_pp_damage_text = 0x827;
-                } else {
+                if (!((u32) target_id <= 7U)) {
                     secondary_pp_damage_text = 0x826;
+                } else {
+                    secondary_pp_damage_text = 0x827;
                 }
                 secondary_resulting_pp = target_pp_before_damage - secondary_pp_damage;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, secondary_pp_damage_text);
@@ -849,10 +849,10 @@ block_196:
                 effect_damage = Func_080022ec(effect_damage, 0x64);
                 effect_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
                 if (effect_guard_level != 0) {
-                    if (effect_guard_level == 1) {
-                        effect_damage = (s32) (effect_damage + ((u32) effect_damage >> 0x1F)) >> 1;
-                    } else {
+                    if (!(effect_guard_level == 1)) {
                         effect_damage = Func_080022ec(effect_damage, 0xA);
+                    } else {
+                        effect_damage = (s32) (effect_damage + ((u32) effect_damage >> 0x1F)) >> 1;
                     }
                 }
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
@@ -1287,10 +1287,10 @@ block_case2_failure:
         M2C_FIELD(target_state, u8, 0x13C) = 7;
         break;
     case 0x16:
-        if ((u32) target_id <= 7U) {
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86DU);
-        } else {
+        if (!((u32) target_id <= 7U)) {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x876U);
+        } else {
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x86DU);
         }
         status_flags = target_state + 0x13D;
         status_mask = 7;

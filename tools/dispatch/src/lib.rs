@@ -310,7 +310,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "audio_engine_data",
-        target: Target::Binary("tools/audio-engine-data/target/release/audio-engine-data"),
+        target: Target::Sub("tools/data/target/release/data", "audio-engine"),
     },
     Entry {
         name: "audio_wave",
@@ -318,7 +318,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "battle_effect_data",
-        target: Target::Binary("tools/battle-effect-data/target/release/battle-effect-data"),
+        target: Target::Sub("tools/data/target/release/data", "battle-effect"),
     },
     Entry {
         name: "build_asm",
@@ -456,7 +456,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "runtime_support_data",
-        target: Target::Binary("tools/runtime-support-data/target/release/runtime-support-data"),
+        target: Target::Sub("tools/data/target/release/data", "runtime-support"),
     },
     Entry {
         name: "sentou_gamen_data",
@@ -468,7 +468,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "sentou_kouka_runtime",
-        target: Target::Binary("tools/sentou-kouka-runtime/target/release/sentou-kouka-runtime"),
+        target: Target::Sub("tools/data/target/release/data", "battle-runtime"),
     },
     Entry {
         name: "sentou_menu_data",

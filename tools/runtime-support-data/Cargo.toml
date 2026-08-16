@@ -9,9 +9,6 @@ edition = "2021"
 name = "runtime_support_data"
 path = "src/lib.rs"
 
-[[bin]]
-name = "runtime-support-data"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

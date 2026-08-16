@@ -16,6 +16,3 @@ shape-sweep = { path = "../shape-sweep" }
 name = "alchemy_permuter"
 path = "src/lib.rs"
 
-[[bin]]
-name = "alchemy-permuter"
-path = "src/main.rs"

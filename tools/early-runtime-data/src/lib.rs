@@ -1,3 +1,5 @@
+pub mod cli;
+
 // What is actually IN the two spans the early-runtime code reads?
 //
 // `0x08012f20..0x08013784` and `0x0801403c..0x08015000` are ROM regions the

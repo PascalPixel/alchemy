@@ -9,6 +9,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("insn", "inspect RTL instructions"),
     ("sexpr", "inspect RTL s-expressions"),
     ("schedule", "inspect RTL scheduling"),
+    ("rtl-align", "rtl align"),
 ];
 
 fn main() -> ExitCode {
@@ -25,6 +26,7 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "rtl-align" => rtl_align::cli::entry(&rest),
         "insn" => rtl_insn::cli::entry(&rest),
         "sexpr" => rtl_sexpr::cli::entry(&rest),
         "schedule" => rtl_schedule::cli::entry(&rest),

@@ -20,6 +20,8 @@ music-residuals = { path = "../music-residuals" }
 semantic-owner-scope = { path = "../semantic-owner-scope" }
 semantic-superseded = { path = "../semantic-superseded" }
 source-citations = { path = "../source-citations" }
+cache-key-lint = { path = "../cache-key-lint" }
+no-asm-c = { path = "../no-asm-c" }
 
 [[bin]]
 name = "check"

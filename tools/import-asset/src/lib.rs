@@ -16,6 +16,8 @@
 //! reproduces the JavaScript rather than the "correct" behaviour, and each
 //! such spot carries a `PORT NOTE`.
 
+pub mod cli;
+
 use alchemy_zlib::{crc32, inflate_sync};
 
 pub type Rgb = [u8; 3];

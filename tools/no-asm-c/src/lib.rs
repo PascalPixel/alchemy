@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Hard gate: C and header sources may never use assembly escape hatches.
 //
 // Ported from tools/check/no_asm_c.ts. The scanner blanks comments and string

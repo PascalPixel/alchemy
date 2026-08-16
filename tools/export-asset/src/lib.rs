@@ -15,6 +15,8 @@
 //!
 //! Port of `tools/lib/export_asset.ts`.
 
+pub mod cli;
+
 use alchemy_zlib::{crc32, deflate_sync, DeflateOptions};
 use import_asset::{js_number_json, Report, Rgb};
 

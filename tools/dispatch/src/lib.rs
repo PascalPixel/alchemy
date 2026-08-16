@@ -57,7 +57,7 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "cache_key_lint",
-        target: Target::Binary("tools/target/release/cache-key-lint"),
+        target: Target::Sub("tools/check/target/release/check", "cache-key-lint"),
     },
     Entry {
         name: "check_commit_progress",
@@ -81,7 +81,7 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "no_asm_c",
-        target: Target::Binary("tools/target/release/no-asm-c"),
+        target: Target::Sub("tools/check/target/release/check", "no-asm-c"),
     },
     Entry {
         name: "source_citations",
@@ -96,7 +96,7 @@ const ASSETS: &[Entry] = &[
     },
     Entry {
         name: "export_asset",
-        target: Target::Binary("tools/export-asset/target/release/export-asset"),
+        target: Target::Sub("tools/assets/target/release/assets", "export-asset"),
     },
     Entry {
         name: "extract_resource",
@@ -104,7 +104,7 @@ const ASSETS: &[Entry] = &[
     },
     Entry {
         name: "import_asset",
-        target: Target::Binary("tools/import-asset/target/release/import-asset"),
+        target: Target::Sub("tools/assets/target/release/assets", "import-asset"),
     },
     Entry {
         name: "tilemap",
@@ -203,12 +203,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         binary: "parity_dump",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: false,
-    },
-    NonPublicTarget {
-        crate_name: "rtl-align",
-        binary: "rtl-align",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
     },
     NonPublicTarget {
         crate_name: "thumb-disasm",
@@ -326,7 +320,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "early_runtime_data",
-        target: Target::Binary("tools/early-runtime-data/target/release/early-runtime-data"),
+        target: Target::Sub("tools/assets/target/release/assets", "early-runtime-data"),
     },
     Entry {
         name: "encounter_data",
@@ -342,7 +336,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "gba_header",
-        target: Target::Binary("tools/gba-header/target/release/gba-header"),
+        target: Target::Sub("tools/assets/target/release/assets", "gba-header"),
     },
     Entry {
         name: "indexed_still",
@@ -993,7 +987,7 @@ mod tests {
         assert_eq!(
             resolve_target(
                 Path::new("/repo"),
-                Target::Binary("tools/target/release/cache-key-lint")
+                Target::Sub("tools/check/target/release/check", "cache-key-lint")
             ),
             Ok(ResolvedTarget {
                 manifest: PathBuf::from("/repo/tools/Cargo.toml"),

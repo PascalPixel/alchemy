@@ -56,6 +56,39 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### The pool-versus-split cluster: 158 owners against 1
+
+The single largest coherent group in the routing debt is one decision asked in
+both directions:
+
+| mode | owners | says |
+|---|---|---|
+| `-fno-cse-two-insn-immediate` | 77 | do not pool this constant |
+| `-fno-cse-pool-immediate` | 42 | do not pool this constant |
+| `-fno-cse-shift-immediate` | 31 | do not pool this constant |
+| `-fthumb-no-constant-reuse` | 8 | do not pool this constant |
+| `-fthumb-pool-r1-lsl4` | 1 | **do** pool this constant |
+
+All five are our own modes, and 158 owners against 1 cannot both be modelling
+the same compiler. Stock gcc pools more eagerly than the reference does, so the
+158 are a single systematic reconstruction defect rather than five behaviours,
+and they are 15.6% of the whole debt. `resource_3bf_c_0200175c` is a clean
+witness: 96 bytes routed, 100 stripped, because without the flag gcc pools the
+constants 588 and 386 instead of splitting each into `movs`+`lsls` -- pooling
+costs six bytes where the split costs four.
+
+One tempting explanation is already tested and weak: that these sources hoist
+constants into variables and CSE then commons them. Only 6 of a 40-owner sample
+do that, so it is not the mechanism.
+
+What the sample does show is that routed owners frequently carry a source hack
+*as well as* their flag. `resource_372_c_02000f38.c` declares
+`c1 = 0x311; c2 = 0x831; c3 = 0x311; c4 = 0x831;` -- four variables for two
+values, duplicated to defeat CSE -- and still needs its route. Compare
+`exact/080044d0.c`'s dead round trip. Retiring these entries means deleting the
+hack and the flag together and re-deriving the owner, which is why the count
+does not fall by editing expressions.
+
 ### The standard is right and the routed sources are wrong (measured)
 
 Promotion was tested on the four largest overlay flags with

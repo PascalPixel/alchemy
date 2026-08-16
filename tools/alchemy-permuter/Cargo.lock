@@ -54,6 +54,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "decomp-diagnose"
+version = "0.1.0"
+dependencies = [
+ "candidate-compiler",
+]
+
+[[package]]
 name = "decomp-targets"
 version = "0.1.0"
 
@@ -79,5 +86,6 @@ version = "0.1.0"
 dependencies = [
  "alchemy-routing",
  "candidate-compiler",
+ "decomp-diagnose",
  "overlay-disasm",
 ]

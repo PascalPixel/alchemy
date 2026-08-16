@@ -31,6 +31,7 @@ byte-value-regions = { path = "../byte-value-regions" }
 architecture = { path = "../architecture" }
 alchemy-lints = { path = "../alchemy-lints" }
 jobs = { path = "../jobs" }
+integrate-matches = { path = "../integrate-matches" }
 
 [[bin]]
 name = "check"

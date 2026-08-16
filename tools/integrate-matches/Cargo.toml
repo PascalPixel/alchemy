@@ -7,7 +7,6 @@
 name = "integrate-matches"
 version = "0.1.0"
 edition = "2021"
-default-run = "integrate-matches"
 
 [dependencies]
 # Sibling crates, not third-party dependencies. `integrate-matches` imports
@@ -32,11 +31,3 @@ candidate-compiler = { path = "../candidate-compiler" }
 [lib]
 name = "integrate_matches"
 path = "src/lib.rs"
-
-[[bin]]
-name = "integrate-matches"
-path = "src/bin/integrate_matches.rs"
-
-[[bin]]
-name = "integrate-matches-bench"
-path = "src/bin/integrate_matches_bench.rs"

@@ -3,6 +3,13 @@
 version = 4
 
 [[package]]
+name = "alchemy-bundle"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+]
+
+[[package]]
 name = "alchemy-lints"
 version = "0.1.0"
 dependencies = [
@@ -10,8 +17,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "alchemy-plan"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-routing",
+]
+
+[[package]]
 name = "alchemy-routing"
 version = "0.1.0"
+
+[[package]]
+name = "alchemy-symbols"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+]
 
 [[package]]
 name = "architecture"
@@ -36,6 +58,16 @@ version = "0.1.0"
 [[package]]
 name = "cache-key-lint"
 version = "0.1.0"
+
+[[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "decomp-targets",
+]
 
 [[package]]
 name = "canonical-json"
@@ -64,6 +96,7 @@ dependencies = [
  "discover",
  "executable-gap-sources",
  "extract-resource",
+ "integrate-matches",
  "jobs",
  "lang-ban",
  "late-runtime-data",
@@ -160,6 +193,16 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
 dependencies = [
  "equivalent",
  "hashbrown",
+]
+
+[[package]]
+name = "integrate-matches"
+version = "0.1.0"
+dependencies = [
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "candidate-compiler",
 ]
 
 [[package]]

@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // Our own codebase is ASM, C, Rust, WAV, PCM -- and JSON as a fallback.
 //
 // This check fails when a file with a banned extension exists under `tools/`
@@ -135,12 +138,12 @@ fn render_counts(counts: &BTreeMap<&'static str, usize>) -> String {
         .join(" ")
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> ExitCode {
     let root = repo_root();
     let Scan { visited, found } = scan(&root);
     let allowed = read_allowlist();
 
-    if std::env::args().any(|a| a == "--write-allowlist") {
+    if arguments.iter().any(|a| a == "--write-allowlist") {
         let mut body = String::from(
             "# Grandfathered banned-language files under tools/.\n\
              # This list may shrink and must never grow. See AGENTS.md, Hard rules.\n",
@@ -168,7 +171,7 @@ fn main() -> ExitCode {
     let removed: Vec<&String> = allowed.difference(&found).collect();
     let counts = by_extension(&found);
 
-    if std::env::args().any(|a| a == "--stat") {
+    if arguments.iter().any(|a| a == "--stat") {
         println!(
             "lang-ban: {} banned-language files remain ({}), {} ported out so far",
             found.len(),

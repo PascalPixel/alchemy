@@ -1,4 +1,4 @@
 #!/bin/sh
 # Validate the terminal Full-C Byte Share suffix against the staged report.
 exec cargo run --offline --quiet --release \
-  --manifest-path tools/check-commit-progress/Cargo.toml -- "$1"
+  --manifest-path tools/check/Cargo.toml -- check-commit-progress "$1"

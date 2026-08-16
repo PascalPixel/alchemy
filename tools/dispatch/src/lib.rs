@@ -102,12 +102,6 @@ const COMPILER: &[Entry] = &[
         name: "mode_sweep",
         target: Target::Binary("tools/mode-sweep/target/release/mode-sweep"),
     },
-    Entry {
-        name: "statement_order_sweep_main",
-        target: Target::Binary(
-            "tools/statement-order-sweep-main/target/release/statement-order-sweep-main",
-        ),
-    },
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

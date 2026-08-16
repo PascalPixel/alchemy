@@ -99,7 +99,6 @@ intended corpus was actually inspected.
 | `compiler_corpus_regression` | Recompile routed `exact/*.c` owners and require zero byte regressions. |
 | `mode_cohort` | Test one compiler hypothesis across a bounded owner cohort. |
 | `mode_sweep` | Search the approved compiler/flag matrix for one fixed source candidate. |
-| `statement_order_sweep_main` | Test bounded statement-order forms for a main-image candidate. |
 
 Compiler searches are evidence tools, not source generators. Pin the source,
 route, bundle digest, and candidate span before interpreting a result.

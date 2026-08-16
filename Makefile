@@ -189,8 +189,9 @@ compiler-batch:
 overlay-candidate-check:
 	$(CARGO_RUN) $(TOOLS)/overlay-candidate-rank/Cargo.toml -- --self-test
 
+# Statement-order permutation now lives in shape-sweep's descent driver.
 statement-order-check:
-	$(CARGO_RUN) $(TOOLS)/statement-order-sweep-main/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/shape-sweep/Cargo.toml -- --self-test
 
 compiler-lint:
 	$(CARGO_RUN) $(TOOLS)/alchemy-lints/Cargo.toml --

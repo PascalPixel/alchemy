@@ -56,6 +56,34 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### Where -mgrouped-dma-store's over-firing comes from
+
+Promoting `-mgrouped-dma-store` to the baseline is the largest single win
+available: 49 owners lose their route, and it is the closest to break-even of
+any flag, breaking 37 owners against 49 carriers, with 35 of the 37 differing by
+exactly four bytes.
+
+The over-firing is not in the transforms. `exact/0801671c.c` is a witness that
+contains **no stores at all** -- four call arguments and a `bl` -- yet turning
+the mode on moves `lsls r1, r1, #4` ahead of a pool load, two halfwords. None of
+the three transforms can reach it: `arm_pre_reload` skips anything that is not a
+`thumb_scalar_word_store` at offset 0, both reorder loops in
+`thumb_order_grouped_dma_store` require a `CODE_FOR_thumb_store_multiple3`
+neighbour, and `thumb_group_four_word_records` needs twelve consecutive stores.
+
+It comes from the machine description. `thumb_store_multiple4` in `arm.md`
+carries `&& TARGET_GROUPED_DMA_STORE` in its `define_insn` condition, so the
+flag changes which patterns `recog` will accept **for the whole compilation**,
+not only where stores exist. A function with no stores still sees different
+recognition, and therefore different scheduling.
+
+That splits the mode into a part that is load-bearing (the two transforms) and a
+part that is incidental (pattern availability). Separating them is the concrete
+next step, and it is a fork change rather than 49 reconstructions. Before
+adopting it, note that making `thumb_store_multiple4` unconditional changes the
+baseline for every owner, so it needs a rebuild, a fresh digest admission, and a
+full corpus regression rather than a spot check.
+
 ### Not all routing is a source defect: -mgrouped-dma-store is real
 
 The working assumption has been that a per-file route admits the reconstruction

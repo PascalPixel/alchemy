@@ -56,6 +56,29 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### Removing a route is re-derivation, not a spelling change
+
+Measured 2026-08-16 on the cheapest target in the tree. `exact/080044d0.c` is
+212 bytes and drops to a **single** differing halfword when its
+`-fno-rerun-cse-after-loop` is removed: both sides already emit the copy
+`adds r1, r0, #0`, and only the first comparison differs, reading `r0` where the
+reference reads `r1`.
+
+It still cannot be retired, because the source was **written around the flag**.
+It carries a dead round trip (`ratio = value; value = ratio;`) whose own comment
+declares it load-bearing and states that it needs the flag to stop a later pass
+collapsing the pair back. Replacing it with the natural form
+(`ratio = Func_080022ec(...)`) scores **35** differing halfwords, with and
+without the flag: the hack holds the whole shape together and the flag only
+covers its last halfword.
+
+That is the shape of the debt. A routed owner is not a correct reconstruction
+plus one stray flag; it is frequently a source shaped to the flag. Retiring the
+route means re-deriving what Camelot actually wrote, per owner, and a cheap
+by-the-numbers target can still be a hard one. Budget accordingly: 131
+main-image and 440 overlay owners, 14,988 of the 111,622 claimed main-image
+bytes (13.4%).
+
 ## The DMA-descriptor family (largest unblocked lever)
 
 `remaining_survey` classifies **113 of the 550 remaining main-image regions as

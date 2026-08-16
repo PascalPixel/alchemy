@@ -82,13 +82,31 @@ Measured 2026-08-16, all three reverted:
   before the transfer. This reference is `base load, value move, control`, a
   different ordering variant, and the base load is not adjacent in our output.
 
-The open question, and the right next experiment: every exact owner in this
-family has a **constant** control word (`0x84000003`, `0x85000006`), while
-`080170c4` computes one at runtime (`0x81000000 | count`). That is the only
-remaining structural difference, and it would explain why the `orrs` lands
-somewhere the matcher does not expect. Census the 113 regions for computed
-versus constant control words before extending the mode; do not build a matcher
-on this single witness.
+**The computed-control theory is dead; the census was run.** A constant control
+word is not the discriminator: 7 exact DMA owners compute theirs, including
+`exact/08002fb0.c` with a literal `control |= words;`. Do not re-derive this.
+
+The census did find one real asymmetry. Across the 64 exact DMA owners:
+
+| stack-address source | computed control | exact owners |
+|---|---|---|
+| no  | no  | 32 |
+| no  | yes | 7 |
+| yes | no  | 25 |
+| yes | yes | **0** |
+
+Both traits appear separately in byte-exact owners; the combination never does,
+and `080170c4` is exactly that combination. That is suggestive, but it does not
+support a compiler mode, because only **three** semantic owners share the
+combination and two are unusable as witnesses: `080030f8` fails comparison
+outright ("compiled function symbols differ"), and `08005d10` is 404 bytes
+against 350 with 201 differing halfwords, which is a wrong reconstruction rather
+than a scheduling residual.
+
+So the family reduces to a **single usable witness**, and one witness is not an
+admission case. The axis is closed until either `08005d10` is reconstructed far
+enough to become a second witness, or a DMA owner with both traits is drafted
+from the 113 remaining regions. Reopen then, not before.
 
 ## Working loop
 

@@ -229,8 +229,7 @@ pub static BYTE_ORR_R5_ONLY_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
     "exact/resource_391_c_02000d3c.c",
 ];
-pub static SCENE_CALL_SHEETS_OVERLAY_SOURCES: &[&str] = &["exact/resource_38f_c_020003c8.c", 
-    "exact/resource_38f_c_020008ec.c",
+pub static SCENE_CALL_SHEETS_OVERLAY_SOURCES: &[&str] = &[    "exact/resource_38f_c_020008ec.c",
     "exact/resource_391_c_02000d3c.c",
     "exact/resource_39f_c_02001d04.c",
         "semantic/resource_391_c_02000c68.c",
@@ -414,10 +413,9 @@ pub static GROUPED_DMA_STORE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_392_c_02000b8c.c",
     "exact/resource_392_c_02000bac.c",
 ];
-pub static NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES: &[&str] = &["exact/resource_3b1_c_02000cc8.c", "exact/resource_3b1_c_02000b84.c", 
-    "exact/resource_383_c_0200082c.c",
+pub static NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES: &[&str] = &["exact/resource_383_c_0200082c.c",
         ];
-pub static NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES: &[&str] = &[
+pub static NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES: &[&str] = &["exact/resource_3b1_c_02000cc8.c", "exact/resource_3b1_c_02000b84.c", 
     "exact/resource_372_c_02000278.c",
     "exact/resource_398_c_02000304.c",
 ];
@@ -703,8 +701,7 @@ pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39e_c_02003e58.c",
     "exact/resource_38f_c_020003c8.c",
 ];
-pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &["exact/resource_3b9_c_020004c8.c", 
-    "exact/resource_3ae_c_02000144.c",
+pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[    "exact/resource_3ae_c_02000144.c",
     "exact/resource_3cb_c_020002d8.c",
     "exact/resource_372_c_0200150c.c",
     "exact/resource_3bc_c_020002f8.c",

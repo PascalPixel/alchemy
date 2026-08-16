@@ -10,6 +10,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("search-modes", "search compiler mode combinations"),
     ("shape-sweep", "bounded source-shape search, with the iterative descent driver"),
     ("thumb-disasm", "thumb disasm"),
+    ("candidate-show", "compile one candidate and show the byte comparison"),
+    ("candidate-explain", "explain a candidate's routing and flags"),
 ];
 
 fn main() -> ExitCode {
@@ -22,6 +24,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "candidate-show" => { candidate_show::entrypoint::entry(&rest); ExitCode::SUCCESS }
+        "candidate-explain" => { candidate_explain::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "thumb-disasm" => match thumb_disasm::cli::entry(&rest) {
             Ok(()) => ExitCode::SUCCESS,
             Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }

@@ -12,6 +12,8 @@
 //! differential harness in `src/bin/candidate_explain_parity.rs` can hold both
 //! implementations to the same output.
 
+pub mod entrypoint;
+
 pub mod cli;
 pub mod explain;
 pub mod jsnum;

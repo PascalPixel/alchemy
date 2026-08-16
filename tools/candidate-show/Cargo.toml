@@ -24,7 +24,3 @@ alchemy-routing = { path = "../alchemy-routing" }
 [lib]
 name = "candidate_show"
 path = "src/lib.rs"
-
-[[bin]]
-name = "candidate-show"
-path = "src/bin/candidate_show.rs"

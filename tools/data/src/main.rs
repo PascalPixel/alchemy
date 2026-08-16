@@ -13,6 +13,9 @@ const COMMANDS: &[(&str, &str)] = &[
     ("battle-effect", "build the battle-effect data package"),
     ("runtime-support", "build the runtime support data package"),
     ("battle-runtime", "build and verify the battle-effect runtime (sentou kouka)"),
+    ("battle-menu", "build the battle menu data (sentou menu)"),
+    ("battle-screen", "build the battle screen data (sentou gamen)"),
+    ("battle-display", "build the battle display data (sentou hyouji)"),
 ];
 
 fn report<E: std::fmt::Display>(result: Result<(), E>) -> ExitCode {
@@ -53,6 +56,9 @@ fn main() -> ExitCode {
         "battle-effect" => report(battle_effect_data::run(rest)),
         "runtime-support" => report(runtime_support_data::run(rest)),
         "battle-runtime" => report(sentou_kouka_runtime::run(rest)),
+        "battle-menu" => sentou_menu_data::cli::entry(&rest),
+        "battle-screen" => sentou_gamen_data::cli::entry(&rest),
+        "battle-display" => sentou_hyouji::cli::entry(&rest),
         other => {
             eprintln!("unknown data command: {other}\n\n{USAGE}");
             list();

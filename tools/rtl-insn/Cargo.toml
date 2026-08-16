@@ -9,9 +9,6 @@ edition = "2021"
 name = "rtl_insn"
 path = "src/lib.rs"
 
-[[bin]]
-name = "rtl-insn"
-path = "src/main.rs"
 
 [dependencies]
 rtl-sexpr = { path = "../rtl-sexpr" }

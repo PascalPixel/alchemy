@@ -7,9 +7,6 @@ edition = "2021"
 name = "sentou_menu_data"
 path = "src/lib.rs"
 
-[[bin]]
-name = "sentou-menu-data"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

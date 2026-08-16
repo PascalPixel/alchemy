@@ -1,6 +1,8 @@
 //! Native source-to-ROM builder for `sentou_menu_index.json`.
 //! The ROM-to-source exporter remains owned by the existing asset worker.
 
+pub mod cli;
+
 use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
 use serde_json::Value;

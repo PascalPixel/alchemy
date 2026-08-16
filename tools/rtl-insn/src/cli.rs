@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the RTL instruction extractor.
 //
 // `--self-test` mirrors the TypeScript original's `--self-test` flag exactly,
@@ -14,7 +17,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use rtl_insn::{callee_symbol, dest_register, json_insns, parse_insns, BinaryOp, Dependency, DependencyKind, InsnKind, RtlExpr};
+use crate::{callee_symbol, dest_register, json_insns, parse_insns, BinaryOp, Dependency, DependencyKind, InsnKind, RtlExpr};
 
 fn repository_root() -> &'static Path {
     Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap()
@@ -101,8 +104,8 @@ fn self_test() {
     println!("self-test=ok tool=rtl-insn");
 }
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
     if arguments.iter().any(|argument| argument == "--self-test") {
         self_test();
         return ExitCode::SUCCESS;

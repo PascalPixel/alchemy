@@ -22,8 +22,8 @@
 
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 typedef struct {
-    u32 allocation;
     u16 attr0;
+    u32 allocation;
     u16 attr1;
     u16 attr2;
     u16 link;
@@ -31,15 +31,15 @@ typedef struct {
 
 typedef struct {
     u8 pad00[8];
-    u16 width;
     u16 height;
+    u16 width;
     u16 x;
     u16 y;
 } MenuWindow_08023178;
 
 typedef struct {
-    u8 pad00;
     s8 cursor[4];
+    u8 pad00;
     s32 displayed_value;
     s32 previous_value;
     s32 mode;
@@ -101,9 +101,9 @@ void Func_080f9010(s32);
 
 s32 ShowPartyMemberDetails(u16 *members, s32 member_count, u32 member)
 {
-    MenuSprite_08023178 cursor_sprite;
     MenuSprite_08023178 row_sprites[11];
     s8 row_kinds[11];
+    MenuSprite_08023178 cursor_sprite;
     void *row_tiles[11];
     MenuSprite_08023178 row_sprite_9;
     MenuSprite_08023178 row_sprite_10;
@@ -157,8 +157,8 @@ s32 ShowPartyMemberDetails(u16 *members, s32 member_count, u32 member)
     if (member_count != 0 && members != 0) {
         for (i = 0; i <= 5 && members[i] != 0xff; i++) {
             if (members[i] != 0xfe && members[i] == member) {
-                selected_list_index = i;
                 break;
+                selected_list_index = i;
             }
         }
     }

@@ -161,7 +161,6 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
 
                     if (particle->y < (0x30 - index / 2) * 0x10000 &&
                         particle->y > -0x300000) {
-                        u8 width;
                         u8 height;
 
                         source_position[0] =
@@ -172,13 +171,12 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
                         Func_080e3944((s32)source_position, projected);
                         projected[0] = (projected[0] >> 17) + 0x40;
                         projected[1] = (s16)(projected[1] >> 16) + 0x3c;
-                        width = OrbitWidths_080dab74[image];
                         height = OrbitHeights_080dab74[image];
                         renderers[1](render_target,
                                      &work->graphics[OrbitOffsets_080dab74[image]],
-                                     projected[0] - width / 2,
+                                     projected[0] - (OrbitWidths_080dab74[image]) / 2,
                                      projected[1] - height / 2,
-                                     width, height);
+                                     (OrbitWidths_080dab74[image]), height);
                     }
 
                     if (frame <

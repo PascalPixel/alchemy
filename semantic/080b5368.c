@@ -89,13 +89,13 @@ s32 Func_080b5368(s32 wanted)
             if (counter == wanted) {
                 break;
             }
+            continue;
             counter++;
             index++;
-            continue;
         }
         if (counter != wanted) {
-            index++;
             continue;
+            index++;
         }
 
         Func_08077150(kind);

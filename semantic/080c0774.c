@@ -66,8 +66,8 @@ void Func_080c0774(s32 mode, s32 unused, s32 fade)
             s32 green = (color >> 5) & 0x1f;
             s32 blue = (color >> 10) & 0x1f;
 
-            red = red > fade ? red - fade : 0;
             green = green > fade ? green - fade : 0;
+            red = red > fade ? red - fade : 0;
             blue = blue > fade ? blue - fade : 0;
             destination[index] = (blue << 10) | (green << 5) | red;
         }

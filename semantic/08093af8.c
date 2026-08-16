@@ -79,8 +79,8 @@ struct WorldObject_08093af8 *Func_08093af8(
                     delta_z += 0x0000ffff;
                 }
                 delta_x >>= 16;
-                delta_z >>= 16;
                 z_squared = delta_z * delta_z;
+                delta_z >>= 16;
                 distance = ((Resident_030001D8)0x030001d8)(
                     delta_x * delta_x + z_squared);
 

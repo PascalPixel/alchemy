@@ -50,8 +50,8 @@ s32 Func_080acab8(
     s32 first_index, s32 second_index, s32 operation,
     s32 comparison_row, s32 draw_portrait)
 {
-    u8 *character;
     u8 *work;
+    u8 *character;
     u8 *party = *(u8 **)0x03001f2c;
     s32 first_class;
     s32 first_value;
@@ -64,11 +64,11 @@ s32 Func_080acab8(
     s32 i;
 
     character = Func_08077008(character_id);
-    first_class = party[2 + first_index + 596] & 31;
     first_value = party[first_index + 596];
+    first_class = party[2 + first_index + 596] & 31;
     first_flag = U16_AT(party, 376 + first_index * 2) & 0x8000;
-    second_class = party[2 + second_index + 596] & 31;
     second_value = party[second_index + 596];
+    second_class = party[2 + second_index + 596] & 31;
     second_flag = U16_AT(party, 376 + second_index * 2) & 0x8000;
 
     work = Func_08004938(332);

@@ -70,8 +70,8 @@ void Func_080f02b0(s32 arg0, s32 arg1)
     buffer = Func_08002f40(arg0);
     if (arg1 == 0) {
         fill = 0;
-        paletteValue = 0x05000000;
         destination = 0x06000000;
+        paletteValue = 0x05000000;
     } else {
         fill = 0x80808080;
         paletteValue = 0x05000100;

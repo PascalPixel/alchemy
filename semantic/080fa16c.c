@@ -47,19 +47,19 @@ void Func_080fa16c(void *player, struct Track_080fa16c *track)
     struct ListNode_080fa16c *node;
 
     value = cursor[0];
-    if (value >= 128) {
-        value = track->cachedValue;
-    } else {
+    if (!(value >= 128)) {
         track->cachedValue = value;
         *(u8 **)((u8 *)track + 64) = cursor + 1;
+    } else {
+        value = track->cachedValue;
     }
 
     node = track->list;
     while (node != 0) {
         if ((node->flags & 0x83) != 0 && (node->flags & 0x40) == 0 &&
             node->marker == value) {
-            node->flags |= 0x40;
             break;
+            node->flags |= 0x40;
         }
         node = node->next;
     }

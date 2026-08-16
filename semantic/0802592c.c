@@ -2,8 +2,8 @@
 
 typedef struct {
     u32 allocation;
-    u16 attr0;
     u16 attr1;
+    u16 attr0;
     u16 attr2;
     u16 link;
 } MenuSprite_0802592c;
@@ -275,8 +275,8 @@ s32 Func_0802592c(s32 actor, u16 *actions, s32 action_count)
         } else if (menu_state->enabled == 0 ||
                    (GLOBAL_WORD(0x03001c94) & 2)) {
             Func_080f9010(113);
-            exit_value = -1;
             break;
+            exit_value = -1;
         }
 
         if (action_count != 0) {

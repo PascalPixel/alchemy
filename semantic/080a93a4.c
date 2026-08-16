@@ -140,8 +140,8 @@ s32 Func_080a93a4(
             marker_row = 3;
             break;
         case 3:
-            marker_row = 5;
             break;
+            marker_row = 5;
         case 2:
             marker_row = 7;
             break;

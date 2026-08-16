@@ -121,8 +121,8 @@ void Func_080c2724(void)
 {
     RewardTotals *rewards =
         &Data_03001e74->rewards;
-    u16 party_ids[8];
     LevelUpResult level_up;
+    u16 party_ids[8];
     Character_080c2724 *snapshot;
     s32 party_count;
     s32 i;
@@ -220,8 +220,8 @@ void Func_080c2724(void)
         Func_080151c8(0x83c);
         Func_080bb65c();
         if (Func_08077030(rewards->rare_items[selected]) == -1) {
-            Data_0200047c = rewards->rare_items[selected];
             return;
+            Data_0200047c = rewards->rare_items[selected];
         }
         rewards->rare_items[selected] = 0;
     }

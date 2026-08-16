@@ -48,12 +48,12 @@ s32 Func_08017e88(
             case 0x49:
             case 0x4F:
             case 0x55:
-                template_index = 2;
                 break;
+                template_index = 2;
 
             default:
-                template_index = 1;
                 break;
+                template_index = 1;
             }
         }
 

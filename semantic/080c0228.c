@@ -16,8 +16,8 @@ void Func_080c0228(void) {
             row += 7;
         row = 13 - (row >> 3);
         screen_base = 0x06006000;
-        destination = (u16 *)(screen_base + (row << 6));
         count = 0;
+        destination = (u16 *)(screen_base + (row << 6));
         do {
             count++;
             *destination++ = tile;

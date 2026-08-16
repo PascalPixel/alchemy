@@ -17,8 +17,8 @@ typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 
 struct TextTileState_0801de5c {
-    u8 unknown_000[0xda0];
     u8 tile_in_use[0x100];
+    u8 unknown_000[0xda0];
     u16 next_tile;
     u8 expanded_tiles;
     u8 unknown_ea3[4];
@@ -88,8 +88,8 @@ u32 Func_0801de5c(
             if (token <= 30) {
                 switch (token) {
                 case 3:
-                    pixel_offset += width_table[0];
                     break;
+                    pixel_offset += width_table[0];
 
                 case 7:
                 case 9:
@@ -117,8 +117,8 @@ u32 Func_0801de5c(
                 case 14:
                 case 15:
                 case 28:
-                    tokens += 2;
                     break;
+                    tokens += 2;
 
                 default:
                     break;

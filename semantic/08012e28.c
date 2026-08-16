@@ -55,8 +55,8 @@ void Func_08012e28(void)
         count = 8;
         break;
     case 20:
-        angle = 0;
         step = 0;
+        angle = 0;
         alternate = -0x8000;
         count = 4;
         break;

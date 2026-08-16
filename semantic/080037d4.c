@@ -14,8 +14,8 @@ u32 Func_080037d4(u32 index)
     offset = index * 152;
     dma = (u32 *)0x040000d4;
     source = (u32)Data_08000404;
-    source = offset + source;
     destination = 0x03000bd8;
+    source = offset + source;
     control = 0x84000026;
     dma[0] = source;
     dma[1] = destination;

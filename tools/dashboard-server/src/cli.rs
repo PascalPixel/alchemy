@@ -11,7 +11,9 @@ fn usage() {
 }
 
 pub fn entry(arguments: &[String]) {
-    let mut arguments = std::env::args().skip(1);
+    // Must consume the PASSED slice: as a `compiler` subcommand, env::args()
+    // still contains the host binary and the subcommand name.
+    let mut arguments = arguments.iter().cloned();
     let Some(argument) = arguments.next() else {
         if let Err(error) = crate::server::run() {
             eprintln!("error: {error}");

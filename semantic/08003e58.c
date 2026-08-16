@@ -15,7 +15,6 @@ s32 Func_08003e58(u32 id, u32 size)
     sizes = Data_03001b10;
     position = 0;
     for (;;) {
-        u32 start;
         u32 end;
         u32 fill;
         u8 *cursor;
@@ -27,14 +26,13 @@ s32 Func_08003e58(u32 id, u32 size)
 
         if (Data_03001810[position] != 0xff) {
 occupied:
-            position += sizes[Data_03001810[position] * 2] >> 6;
             continue;
+            position += sizes[Data_03001810[position] * 2] >> 6;
         }
 
-        start = position;
-        end = start + count;
-        if ((u32)start < end) {
-            cursor = Data_03001810 + start;
+        end = (position) + count;
+        if ((u32)(position) < end) {
+            cursor = Data_03001810 + (position);
             do {
                 value = *cursor++;
                 if (value != 0xff)
@@ -44,7 +42,7 @@ occupied:
         }
 
         for (fill = 0; fill < count; fill++)
-            Data_03001810[start + fill] = id;
-        return start << 6;
+            Data_03001810[(position) + fill] = id;
+        return (position) << 6;
     }
 }

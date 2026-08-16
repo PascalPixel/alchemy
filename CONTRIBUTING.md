@@ -5004,6 +5004,32 @@ dispatch is broken.
 
 ---
 
+
+### 080bbb0c: source-level search is exhausted, measured four ways
+
+Do not spend another session searching this owner's source shape. On 2026-08-17,
+at 1951 differing halfwords, four independent strategies were run to completion:
+
+| strategy | budget | result |
+|---|---|---|
+| `compiler shape-sweep --descend` | 426 neighbours, 1,278 compiles | no improvement |
+| `compiler shape-sweep` bounded transforms | 4 applicable, 2 compiled | both worse (1972, 2874) |
+| `compiler permute` | 780 candidates | no improvement, baseline == best |
+| basin-hopping: permute 6 seeds -> descend from 24 lateral candidates | ~4,200 candidates + 24 descents | all returned exactly 1951 |
+
+Roughly 15,000 compiles, zero movement. Four strategies with different move sets
+reaching the identical number is the strongest available evidence that the
+residual is not reachable from source shape at all.
+
+That agrees with the independent measurement from the other direction:
+register-blind alignment puts about half this owner's residual in register
+allocation, which is global and untouched by any source rewrite, and the
+cross-jumping case was proven byte-identical under source duplication.
+
+The remaining path is compiler-side (the regs_ever_live guard and hard-register
+descriptor). Note REG_ALLOC_ORDER itself is load-bearing and already tested:
+flipping it to ascending took the corpus from 1107 exact owners to 258.
+
 ## Status
 
 

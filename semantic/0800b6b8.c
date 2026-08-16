@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct AssetLookup_0800b6b8 {
-    u16 source;
     s16 id;
+    u16 source;
 };
 
 void *Func_08002f40(s32);
@@ -35,8 +35,8 @@ s32 Func_0800b6b8(
         return 0;
     }
 
-    layer_state = *(u8 **)0x03001E68 + layer * 8;
     dimensions = Func_08185000((s16)asset_id);
+    layer_state = *(u8 **)0x03001E68 + layer * 8;
     *(s32 *)(layer_state + 0x1C) = (layer << 12) | asset_id;
     *(u8 **)(layer_state + 0x20) = destination;
 

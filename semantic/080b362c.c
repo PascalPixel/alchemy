@@ -15,8 +15,8 @@ struct MenuState {
 };
 
 struct CombatantState {
-    u8 unknown_000[0xd8];
     u16 effects[15];
+    u8 unknown_000[0xd8];
 };
 
 extern struct MenuState *Data_03001f2c;
@@ -76,8 +76,8 @@ s32 Func_080b362c(s32 combatant)
 
             if (status == 0) {
                 Func_080f9010(0x70);
-                result = index;
                 break;
+                result = index;
             }
 
             if (status == -4) {
@@ -95,9 +95,9 @@ s32 Func_080b362c(s32 combatant)
             redraw = 1;
         } else if (*(volatile u32 *)0x03001c94 & 2) {
             Func_080f9010(0x71);
+            break;
             branch_barrier = 4;
             result = -1;
-            break;
         } else {
             if (*(volatile u32 *)0x03001b04 & 0x20) {
                 Func_080f9010(0x6f);

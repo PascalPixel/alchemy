@@ -103,8 +103,8 @@ typedef void (*Renderer_080ca60c)(s32 target, void *source, s32 x, s32 y,
 /* The four coordinate scratch results occupy one contiguous ROM-shaped frame
  * region: each two-word result is followed by one unused word. */
 typedef struct {
-    s32 sp6C[2];
     s32 pad6C;
+    s32 sp6C[2];
     s32 sp78[2];
     s32 pad78;
     s32 sp38[2];
@@ -128,14 +128,13 @@ typedef struct {
 s32 RunCombatVisualEffect(s32 visual_context, s32 visual_variant) {
     s32 sp8;
     s32 spC;
-    s32 sp10;
     s32 sp14;
+    s32 sp10;
     s32 sp18[2];
     void *sp1C;
     s32 sp20;
     void *sp24;
     void *sp28;
-    s32 sp2C;
     void **sp30;
     s32 sp34;
     CoordinateScratch_080ca60c scratch;
@@ -147,7 +146,6 @@ s32 RunCombatVisualEffect(s32 visual_context, s32 visual_variant) {
     s32 sp54;
     s32 sp58;
     s32 sp5C;
-    s32 sp60;
     Renderer_080ca60c renderers[2];
     s32 *var_r5_3;
     s32 temp_r0;
@@ -177,7 +175,6 @@ s32 RunCombatVisualEffect(s32 visual_context, s32 visual_variant) {
     s32 var_r0;
     s32 var_r0_2;
     s32 var_r0_3;
-    s32 var_r1;
     s32 var_r8;
     s32 var_r8_10;
     s32 var_r8_11;
@@ -224,13 +221,12 @@ s32 RunCombatVisualEffect(s32 visual_context, s32 visual_variant) {
     void *var_r6;
     void *var_r7;
 
-    sp60 = visual_variant;
     temp_r1 = M2C_FIELD((void *)0x03001EEC, void **, 0);
     sp5C = M2C_FIELD((void *)0x03001EEC, s32 *, 4);
     sp50 = M2C_FIELD((void *)0x03001EEC, void **, 8);
     sp4C = *(s32 *)0x03001E80;
     M2C_FIELD(temp_r1, s32 *, 0x7828) = visual_context;
-    if (sp60 == 8) {
+    if ((visual_variant) == 8) {
         Func_080cd594(0);
     } else {
         Func_080cd594(1);
@@ -238,13 +234,13 @@ s32 RunCombatVisualEffect(s32 visual_context, s32 visual_variant) {
     *(s16 *)0x04000052 = 0x1010;
     Func_080e0524((void *)0x73, sp50, 0, 0);
     Func_080e0524((void *)0xCE, temp_r1, 1, 0);
-    sp48 = sp60 * 8;
-    if (M2C_FIELD((sp60 * 7), u8 *, 0x080EDF04) == 0) {
+    sp48 = (visual_variant) * 8;
+    if (M2C_FIELD(((visual_variant) * 7), u8 *, 0x080EDF04) == 0) {
         Func_080e0524((void *)0xC5, temp_r1 + 0xC80, 0, 0);
     } else {
         Func_080e0524((void *)0xC6, temp_r1 + 0xC80, 0, 0);
     }
-    temp_r3 = M2C_FIELD(((sp48 - sp60) + 3), u8 *, 0x080EDF04);
+    temp_r3 = M2C_FIELD(((sp48 - (visual_variant)) + 3), u8 *, 0x080EDF04);
     switch (temp_r3) {
     case 0:
         var_r0 = 0xCC;
@@ -304,7 +300,7 @@ loop_16:
         M2C_FIELD(var_r5_2, s32 *, 0x14) = (s32) (temp_r0 << 0xB);
         var_r5_2 += 0x1C;
     } while (var_r8_2 != 0x80);
-    temp_r0_2 = (void *)(sp48 - sp60);
+    temp_r0_2 = (void *)(sp48 - (visual_variant));
     sp40 = temp_r0_2;
     sp3C = temp_r0_2 + 2;
     var_r6 = (void *)0x02013800;
@@ -353,26 +349,87 @@ loop_16:
     temp_r3_3 = M2C_FIELD(scratch.sp78, s32 *, 4) - temp_r1_2;
     M2C_FIELD(scratch.sp38, s32 *, 4) = (s32) (temp_r1_2 + ((s32) (temp_r3_3 + (temp_r3_3 >> 0x1F)) >> 1));
     sp58 = 0;
-    var_r1 = sp48 - sp60;
-    if (M2C_FIELD((var_r1 + 6), u8 *, 0x080EDF04) == 0)
+    if (M2C_FIELD(((sp48 - (visual_variant)) + 6), u8 *, 0x080EDF04) == 0)
         goto cleanup;
     sp14 = sp4C + 0xC;
-    sp2C = var_r1;
     sp30 = temp_r1 + 0x7828;
-    sp28 = (void *)(var_r1 + 4);
-    sp24 = (void *)(var_r1 + 2);
+    sp28 = (void *)((sp48 - (visual_variant)) + 4);
+    sp24 = (void *)((sp48 - (visual_variant)) + 2);
 frame_loop:
     /*
      * r2 is deliberately live across the backwards BL edge in the original:
      * both entries load the selector-times-eight value immediately before
      * reaching this block.
      */
-    temp_r2_2 = (void *)(sp48 - sp60);
+    temp_r2_2 = (void *)(sp48 - (visual_variant));
     temp_r4 = M2C_FIELD((temp_r2_2 + 4), u8 *, 0x080EDF04);
     temp_r1_3 = M2C_FIELD((temp_r2_2 + 1), u8 *, 0x080EDF04) * temp_r4;
     sp34 = 0;
     temp_r0_3 = temp_r1_3 * 4;
-    if (M2C_FIELD(temp_r2_2, u8 *, 0x080EDF04) != 0) {
+    if (!(M2C_FIELD(temp_r2_2, u8 *, 0x080EDF04) != 0)) {
+        if (sp58 >= (s32) (temp_r1_3 * 6)) {
+
+        } else {
+            temp_r6_2 = Func_080022fc(Func_080022ec(sp58, (s32) temp_r4), 6);
+            if (M2C_FIELD(*sp30, s32 *, 4) == 1) {
+                Func_080ed408(0x2E, 7, 7, 7, 2);
+                temp_r5_7 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58);
+                temp_r4_2 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
+                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, ((((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) - ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - temp_r5_7) + 8, scratch.sp38[1] - (temp_r4_2 >> 1), (u32) temp_r5_7, (s32) temp_r4_2);
+            } else {
+                Func_080ed408(0x2E, 7, 7, 3, 2);
+                temp_r4_3 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
+                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, (((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) + ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - 8, scratch.sp38[1] - (temp_r4_3 >> 1), (u32) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58), (s32) temp_r4_3);
+            }
+            Func_08002dd8(0x2E);
+            temp_r5_8 = M2C_FIELD(sp28, u8 *, 0x080EDF04);
+            if (Func_080022fc(sp58, temp_r5_8 * 6) != (temp_r5_8 * 4)) {
+
+            } else {
+                if ((visual_variant) == 8) {
+                    Func_080b50e8(0x86);
+                } else {
+                    Func_080f9010(0x85);
+                    Func_080b50e8(0x85);
+                }
+                if (0x10 & M2C_FIELD(sp24, u8 *, 0x080EDF04)) {
+                    M2C_FIELD(temp_r1, s32 *, 0x77A8) = 8;
+                    Func_080d6888(M2C_FIELD(*sp30, s16 *, 0x24), 7, 5, 0, 0xC);
+                    Func_080b5088(M2C_FIELD(*sp30, s16 *, 0x24), 4);
+                    var_r5_3 = (s32 *)0x02013818;
+                    var_r8_7 = 0;
+                    do {
+                        var_r8_7 += 1;
+                        *var_r5_3 = (Func_08004458() & 0xF) + 0xF;
+                        var_r5_3 += 0x1C;
+                    } while (var_r8_7 != 0x200);
+                } else {
+                    M2C_FIELD(temp_r1, s32 *, 0x77A8) = 4;
+                    Func_080d6888(M2C_FIELD(*sp30, s16 *, 0x24), 7, 5, 0, 8);
+                    var_r8_8 = 0;
+                    do {
+                        temp_r5_9 = (void *)(((
+                            Func_080022ec(sp58, M2C_FIELD((((sp48 - (visual_variant))) + 4), u8 *, 0x080EDF04) * 6)
+                            << 5) + var_r8_8) * 0x1C + 0x02013800);
+                        M2C_FIELD(temp_r5_9, s32 *, 0x18) = (s32) ((0xF & Func_08004458()) + 7);
+                        var_r8_8 += 1;
+                    } while (var_r8_8 != 0x20);
+                }
+                var_r8_9 = 0;
+                temp_r5_10 = M2C_FIELD(sp28, u8 *, 0x080EDF04) * 6;
+                do {
+                    temp_r3_5 = (((Func_080022ec(sp58, temp_r5_10) * 0x10) + var_r8_9) * 0x1C) + temp_r1 + 0x7080;
+                    var_r8_9 += 1;
+                    M2C_FIELD(temp_r3_5, s32 *, 0x18) = 0;
+                } while (var_r8_9 != 8);
+            }
+        }
+        if ((u32) (sp58 - 0xC) > 0x13U) {
+
+        } else {
+            sp34 = 1;
+        }
+    } else {
         if (sp58 >= (s32) (temp_r0_3 + 4)) {
 
         } else {
@@ -387,7 +444,7 @@ frame_loop:
             } else {
                 sp20 = 3;
             }
-            temp_r1_4 = sp48 - sp60;
+            temp_r1_4 = sp48 - (visual_variant);
             temp_r3_4 = (void *)(temp_r1_4 + 5);
             Func_080ed408(0x2E, 7, 7, 3, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
             temp_r5_2 = (sp20 * 0x360) + temp_r1 + 0xC80;
@@ -411,7 +468,7 @@ frame_loop:
                 var_r8_4 = 0;
                 do {
                     temp_r5_4 = (void *)(((
-                        Func_080022ec(sp58, M2C_FIELD((sp2C + 4), u8 *, 0x080EDF04) * 6)
+                        Func_080022ec(sp58, M2C_FIELD((((sp48 - (visual_variant))) + 4), u8 *, 0x080EDF04) * 6)
                         << 6) + var_r8_4) * 0x1C + 0x02013800);
                     M2C_FIELD(temp_r5_4, s32 *, 0x18) = (s32) ((0xF & Func_08004458()) + 7);
                     var_r8_4 += 1;
@@ -432,69 +489,6 @@ frame_loop:
             if (sp20 == 3) {
                 sp34 = 1;
             }
-        }
-    } else {
-        if (sp58 >= (s32) (temp_r1_3 * 6)) {
-
-        } else {
-            temp_r6_2 = Func_080022fc(Func_080022ec(sp58, (s32) temp_r4), 6);
-            if (M2C_FIELD(*sp30, s32 *, 4) == 1) {
-                Func_080ed408(0x2E, 7, 7, 7, 2);
-                temp_r5_7 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58);
-                temp_r4_2 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
-                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, ((((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) - ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - temp_r5_7) + 8, scratch.sp38[1] - (temp_r4_2 >> 1), (u32) temp_r5_7, (s32) temp_r4_2);
-            } else {
-                Func_080ed408(0x2E, 7, 7, 3, 2);
-                temp_r4_3 = M2C_FIELD(temp_r6_2, u8 *, 0x080EDF5E);
-                (*(Renderer_080ca60c *)0x03001F08)(sp5C, M2C_FIELD((temp_r6_2 * 2), u16 *, 0x080EDF64) + temp_r1, (((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) + ((u8) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF70) >> 1)) - 8, scratch.sp38[1] - (temp_r4_3 >> 1), (u32) M2C_FIELD(temp_r6_2, u8 *, 0x080EDF58), (s32) temp_r4_3);
-            }
-            Func_08002dd8(0x2E);
-            temp_r5_8 = M2C_FIELD(sp28, u8 *, 0x080EDF04);
-            if (Func_080022fc(sp58, temp_r5_8 * 6) != (temp_r5_8 * 4)) {
-
-            } else {
-                if (sp60 == 8) {
-                    Func_080b50e8(0x86);
-                } else {
-                    Func_080f9010(0x85);
-                    Func_080b50e8(0x85);
-                }
-                if (0x10 & M2C_FIELD(sp24, u8 *, 0x080EDF04)) {
-                    M2C_FIELD(temp_r1, s32 *, 0x77A8) = 8;
-                    Func_080d6888(M2C_FIELD(*sp30, s16 *, 0x24), 7, 5, 0, 0xC);
-                    Func_080b5088(M2C_FIELD(*sp30, s16 *, 0x24), 4);
-                    var_r5_3 = (s32 *)0x02013818;
-                    var_r8_7 = 0;
-                    do {
-                        var_r8_7 += 1;
-                        *var_r5_3 = (Func_08004458() & 0xF) + 0xF;
-                        var_r5_3 += 0x1C;
-                    } while (var_r8_7 != 0x200);
-                } else {
-                    M2C_FIELD(temp_r1, s32 *, 0x77A8) = 4;
-                    Func_080d6888(M2C_FIELD(*sp30, s16 *, 0x24), 7, 5, 0, 8);
-                    var_r8_8 = 0;
-                    do {
-                        temp_r5_9 = (void *)(((
-                            Func_080022ec(sp58, M2C_FIELD((sp2C + 4), u8 *, 0x080EDF04) * 6)
-                            << 5) + var_r8_8) * 0x1C + 0x02013800);
-                        M2C_FIELD(temp_r5_9, s32 *, 0x18) = (s32) ((0xF & Func_08004458()) + 7);
-                        var_r8_8 += 1;
-                    } while (var_r8_8 != 0x20);
-                }
-                var_r8_9 = 0;
-                temp_r5_10 = M2C_FIELD(sp28, u8 *, 0x080EDF04) * 6;
-                do {
-                    temp_r3_5 = (((Func_080022ec(sp58, temp_r5_10) * 0x10) + var_r8_9) * 0x1C) + temp_r1 + 0x7080;
-                    var_r8_9 += 1;
-                    M2C_FIELD(temp_r3_5, s32 *, 0x18) = 0;
-                } while (var_r8_9 != 8);
-            }
-        }
-        if ((u32) (sp58 - 0xC) > 0x13U) {
-
-        } else {
-            sp34 = 1;
         }
     }
     if ((4 & M2C_FIELD(sp24, u8 *, 0x080EDF04)) && (sp34 != 0)) {
@@ -521,7 +515,7 @@ frame_loop:
     Func_080ed408(0x2F, 7, 7, 3, 3);
     renderers[1] = *(Renderer_080ca60c *)0x03001F0C;
     sp54 = 0;
-    sp1C = (void *)(sp2C + 2);
+    sp1C = (void *)(((sp48 - (visual_variant))) + 2);
 loop_83:
     temp_r9 = *Func_080b5098(M2C_FIELD(*sp30, s32 *, 8));
     if (1 & M2C_FIELD(sp1C, u8 *, 0x080EDF04)) {
@@ -543,7 +537,7 @@ loop_83:
     }
     if (2 & M2C_FIELD(sp1C, u8 *, 0x080EDF04)) {
         var_sl = 3;
-        if (sp60 == 0xB) {
+        if ((visual_variant) == 0xB) {
             var_sl = 8;
         }
         if (sp58 == 0x37) {
@@ -614,7 +608,7 @@ loop_83:
     Func_080030f8(1U);
     temp_r0_7 = sp58 + 1;
     sp58 = temp_r0_7;
-    if (temp_r0_7 != M2C_FIELD(((sp48 - sp60) + 6), u8 *, 0x080EDF04)) {
+    if (temp_r0_7 != M2C_FIELD(((sp48 - (visual_variant)) + 6), u8 *, 0x080EDF04)) {
         goto frame_loop;
     }
 cleanup:

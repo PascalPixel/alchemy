@@ -193,15 +193,15 @@ s32 Func_080a8114(void)
 
             if ((Data_03001c94 & 1) != 0) {
                 Func_080f9010(0x70);
+                break;
                 done = 1;
                 result = 1;
-                break;
             }
             if ((Data_03001c94 & 2) != 0) {
                 Func_080f9010(0x71);
+                break;
                 done = 1;
                 result = -1;
-                break;
             }
 
             if ((Data_03001b04 & 0x40) != 0) {
@@ -221,8 +221,8 @@ s32 Func_080a8114(void)
             }
             if ((Data_03001b04 & 0x20) != 0) {
                 Func_080f9010(0x6f);
-                redraw = 1;
                 pane--;
+                redraw = 1;
             }
 
             if ((Data_03001b04 & 0x300) != 0) {
@@ -241,8 +241,8 @@ s32 Func_080a8114(void)
                 state->selected_id = character_id;
                 state->selected_character = (u8)character_id;
                 state->character_index = (s8)next_index;
-                Func_080a1804(state, character_id);
                 break;
+                Func_080a1804(state, character_id);
             }
         }
     }

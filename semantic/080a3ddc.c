@@ -15,8 +15,8 @@ s32 Func_080a3ddc(u8 *arg0, u16 *arg1) {
 
     offset = 0;
     src = (u16 *)(arg0 + 216);
-    out = arg1;
     count = 0;
+    out = arg1;
     j = 14;
     do {
         *(u16 *)(offset + (s32)arg1) = 0;

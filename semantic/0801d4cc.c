@@ -89,8 +89,8 @@ s32 Func_0801d4cc(void)
                     i != S8_AT(state, 0x598));
             }
 
-            x = U16_AT(settings_window, 0x0c) * 8;
             y = U16_AT(settings_window, 0x0e) * 8;
+            x = U16_AT(settings_window, 0x0c) * 8;
             Func_080b0030(
                 state + 0x5b4,
                 x + 0x8c +
@@ -144,11 +144,15 @@ s32 Func_0801d4cc(void)
             }
             state[0x594] = U8_AT((void *)0x080367d0, preset);
             state[0x595] = U8_AT((void *)0x080367d6, preset);
-            redraw = 1;
             continue;
+            redraw = 1;
         }
 
-        if (!(*(u32 *)0x03001c94 & 9)) {
+        if (*(u32 *)0x03001c94 & 9) {
+            result = 0;
+            Func_080f9010(0x70);
+            break;
+        } else {
             if (*(u32 *)0x03001c94 & 2) {
                 result = -1;
                 Func_080f9010(0x71);
@@ -175,10 +179,6 @@ s32 Func_0801d4cc(void)
                     redraw = 1;
                 }
             }
-        } else {
-            result = 0;
-            Func_080f9010(0x70);
-            break;
         }
     }
 

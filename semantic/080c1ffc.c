@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct EncounterPattern_080c1ffc {
-    u8 order;
     u8 category[5];
+    u8 order;
     u8 initial_count[5];
     u8 desired_count[5];
 };
@@ -40,8 +40,8 @@ s32 Func_080c1ffc(s32 pattern_id)
     struct EncounterState_080c1ffc *state = Data_03001e74;
     const struct EncounterPattern_080c1ffc *pattern;
     s32 count[5];
-    s32 opportunity[5];
     s32 available[5];
+    s32 opportunity[5];
     u16 selected[14];
     s32 selection_count = 0;
     s32 difficulty_delta = 0;

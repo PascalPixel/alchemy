@@ -159,13 +159,13 @@ s32 Func_0801c49c(void)
         }
         if (*(volatile u32 *)0x03001c94 & 2) {
             Func_080f9010(0x71);
-            branch_barrier = 1;
             break;
+            branch_barrier = 1;
         }
         if (*(volatile u32 *)0x03001c94 & 8) {
             Func_080f9010(0x71);
-            branch_barrier = 2;
             break;
+            branch_barrier = 2;
         }
     }
 

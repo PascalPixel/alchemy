@@ -143,18 +143,16 @@ void Func_080ed104(void *object)
 
             if (frame >= index / 2 + 8 && particle->phase <= 28) {
                 s32 image = Func_080022ec(particle->phase, 3);
-                s32 size;
 
                 if (image > 6)
                     image = 6;
-                size = image_sizes[image];
                 renderers[0](
                     render_context,
                     runtime + 0x460 + image_offsets[image],
-                    (s16)(particle->x >> 16) - (size >> 1),
-                    (s16)(particle->y >> 16) - (size >> 1),
-                    size,
-                    size);
+                    (s16)(particle->x >> 16) - ((image_sizes[image]) >> 1),
+                    (s16)(particle->y >> 16) - ((image_sizes[image]) >> 1),
+                    (image_sizes[image]),
+                    (image_sizes[image]));
                 particle->phase++;
                 Func_080e3908(particle, 62, -0x2000);
             }

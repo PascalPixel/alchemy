@@ -121,8 +121,8 @@ void Func_080f9080(s32 request)
             while (Data_080fc624[player_index].player_00->busy_04 != 0) {
                 player_index--;
                 if (player_index <= 3) {
-                    player_index = 7;
                     break;
+                    player_index = 7;
                 }
             }
         }

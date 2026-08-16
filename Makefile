@@ -30,7 +30,7 @@ DISPATCH_MANIFEST := $(TOOLS)/dispatch/Cargo.toml
 DISPATCH_RUN := $(CARGO_RUN) $(DISPATCH_MANIFEST) --
 DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search semantic
 
-.PHONY: help verify test lint standard-check routing-debt \
+.PHONY: help verify test lint standard-check routing-debt pristine-options-check \
 	build-claimed build-asm build-assets build-semantic \
 	build-full build-rom inventory semantic-check core-retained-check sanctum \
 	progress progress-check progress-subject progress-history coverage coverage-check \
@@ -219,3 +219,21 @@ verify:
 	$(CARGO_RUN) $(TOOLS)/semantic-superseded/Cargo.toml -- --check
 	$(MAKE) sanctum
 	$(MAKE) progress-check
+
+# The axe stays swung: the files that DEFINE compiler options must remain
+# byte-identical to pristine gcc 2.96. An invented option cannot be routed if it
+# cannot be declared, so this is the enforcement that outlives any routing table.
+COMPILER_FORK_POINT := fdafcb49a2cf2a588da235cac24333a0c9f621d9
+OPTION_FILES := gcc-2.96/gcc/toplev.c gcc-2.96/gcc/flags.h gcc-2.96/gcc/config/arm/arm.h
+
+pristine-options-check:
+	@cd alchemy-gcc && \
+	if git diff --quiet $(COMPILER_FORK_POINT) -- $(OPTION_FILES); then \
+		printf 'pristine ok: option-defining compiler files match stock gcc 2.96\n'; \
+	else \
+		printf 'INVENTED OPTION INFRASTRUCTURE REJECTED. These files declare compiler\n'; \
+		printf 'options and must stay identical to stock gcc 2.96:\n'; \
+		git diff --stat $(COMPILER_FORK_POINT) -- $(OPTION_FILES) | sed 's/^/  /'; \
+		printf 'A byte match reached by inventing an option is not a reconstruction.\n'; \
+		exit 1; \
+	fi

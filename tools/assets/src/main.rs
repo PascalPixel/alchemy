@@ -61,6 +61,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("battle-menu", "build the battle menu data (sentou menu)"),
     ("battle-screen", "build the battle screen data (sentou gamen)"),
     ("battle-display", "build the battle display data (sentou hyouji)"),
+    ("zlib", "deflate and inflate ROM data"),
 ];
 
 fn report<E: std::fmt::Display>(result: Result<(), E>) -> ExitCode {
@@ -87,6 +88,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "zlib" => { alchemy_zlib::entrypoint::entry(&rest); ExitCode::SUCCESS }
+
 
         "map-tokushu" => { map_resources::entry_tokushu::entry(&rest); ExitCode::SUCCESS }
         "map-chiiki" => { map_resources::entry_chiiki::entry(&rest); ExitCode::SUCCESS }

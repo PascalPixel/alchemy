@@ -149,12 +149,6 @@ pub struct NonPublicTarget {
 /// them to become accidental commands when a manifest gains a new target.
 const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
-        crate_name: "zlib",
-        binary: "alchemy-zlib",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "dispatch",
         binary: "dispatch",
         kind: NonPublicKind::SelfTestSupport,
@@ -883,7 +877,7 @@ mod tests {
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
-        assert_eq!(non_public_targets().len(), 4);
+        assert_eq!(non_public_targets().len(), 3);
         assert_eq!(
             // candidate-explain is now a `compiler` subcommand, not a
             // standalone diagnostic.

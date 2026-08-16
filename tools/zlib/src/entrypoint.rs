@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI entrypoint mirroring the TypeScript `tools/lib/zlib.ts --self-test`,
 //! plus deflate/inflate filters used by the differential harness.
 //!
@@ -7,7 +10,7 @@
 
 use std::io::{Read, Write};
 
-use alchemy_zlib::{crc32, deflate_sync, inflate_sync, DeflateOptions};
+use crate::{crc32, deflate_sync, inflate_sync, DeflateOptions};
 
 fn read_stdin() -> Vec<u8> {
     let mut buffer = Vec::new();
@@ -55,8 +58,8 @@ fn self_test() {
     println!("self-test=ok tool=zlib cases={}", cases.len());
 }
 
-fn main() {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let arguments: Vec<String> = arguments.to_vec();
     if arguments.iter().any(|argument| argument == "--self-test") {
         self_test();
         return;

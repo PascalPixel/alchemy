@@ -38,18 +38,16 @@ pub fn compiler_family_of(value: &Json) -> Result<CompilerFamily, String> {
         Json::String(text) => text.as_str(),
         _ => "",
     };
-    // PORT NOTE -- the legacy implementation compares against six exact lowercase
+    // PORT NOTE -- the legacy implementation compares against exact lowercase
     // literals with `===`. No case folding, no trimming. `"GCC296"` is
     // rejected there and is rejected here.
     match text {
         "routed" => Ok(CompilerFamily::Routed),
         "gcc296" => Ok(CompilerFamily::Gcc296),
         "old-agbcc" => Ok(CompilerFamily::OldAgbcc),
-        "pret-early-thumb" => Ok(CompilerFamily::PretEarlyThumb),
-        "gcc2951" => Ok(CompilerFamily::Gcc2951),
         "gcc3" => Ok(CompilerFamily::Gcc3),
         _ => Err(
-            "compiler config family must be routed, gcc296, old-agbcc, pret-early-thumb, gcc2951, or gcc3"
+            "compiler config family must be routed, gcc296, old-agbcc, or gcc3"
                 .to_string(),
         ),
     }
@@ -60,8 +58,6 @@ pub fn family_name(family: CompilerFamily) -> &'static str {
         CompilerFamily::Routed => "routed",
         CompilerFamily::Gcc296 => "gcc296",
         CompilerFamily::OldAgbcc => "old-agbcc",
-        CompilerFamily::PretEarlyThumb => "pret-early-thumb",
-        CompilerFamily::Gcc2951 => "gcc2951",
         CompilerFamily::Gcc3 => "gcc3",
     }
 }

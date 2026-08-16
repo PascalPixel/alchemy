@@ -1,5 +1,7 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
 
+pub mod cli;
+
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};

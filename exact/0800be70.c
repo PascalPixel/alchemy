@@ -31,10 +31,13 @@ void Func_0800be70(u8 *object, u32 position)
             if ((u32)(position - 0x40) <= 0x3F) {
                 u8 entry;
                 u16 *cell;
+                u32 parity;
 
                 entry = table[(position + row * 16) & index_mask];
                 cell = (u16 *)((u8 *)destination + (entry & offset_mask));
-                if (((entry >> 1) * 2) != entry)
+                parity = 1;
+                parity &= entry;
+                if (parity != 0)
                     *cell = *(u8 *)cell;
                 else
                     *cell &= high_mask;

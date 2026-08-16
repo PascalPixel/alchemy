@@ -104,6 +104,7 @@ impl Search {
         seed: &str,
         max_rounds: usize,
         plateau_budget: usize,
+        permuter_seeds: usize,
         mut report: impl FnMut(&str),
     ) -> (String, Vec<Step>) {
         let mut current = seed.to_string();
@@ -133,7 +134,7 @@ impl Search {
         let mut compiles = 0usize;
 
         for round in 1..=max_rounds {
-            let all = rewrite::neighbourhood(&current);
+            let all = rewrite::neighbourhood_with(&current, permuter_seeds, 400);
             if all.is_empty() {
                 report("neighbourhood empty");
                 break;
@@ -162,8 +163,11 @@ impl Search {
 
             // Byte-exactness beats every distance comparison: it is the goal,
             // and the distance metric is only a proxy for it.
-            if let Some((index, score)) =
-                scored.iter().find(|(_, s)| s.is_exact(reference_size))
+            // A closure only counts if the source is one we would commit. A
+            // degenerate variant that hits the bytes is a cheat, not a result.
+            if let Some((index, score)) = scored
+                .iter()
+                .find(|(i, s)| s.is_exact(reference_size) && rewrite::is_plausible(&variants[*i]))
             {
                 report(&format!("EXACT via {} after {} compiles", variants[*index].label, compiles));
                 history.push(Step {

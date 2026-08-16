@@ -11,7 +11,7 @@ use std::process::ExitCode;
 use reverse_gcc296::{default_jobs, repository_root, rewrite, score, Search};
 
 const USAGE: &str = "\
-Usage: reverse-gcc296 <source.c> [--apply] [--rounds N] [--jobs N] [--plateau N]
+Usage: reverse-gcc296 <source.c> [--apply] [--rounds N] [--jobs N] [--plateau N] [--permuter N]
        reverse-gcc296 --self-test
 
 Systematic single-edit descent against the byte oracle. The objective is a
@@ -33,6 +33,7 @@ fn main() -> ExitCode {
     let mut rounds = 40usize;
     let mut jobs = default_jobs();
     let mut plateau = 2usize;
+    let mut permuter = 0usize;
     let mut index = 1;
     while index < args.len() {
         match args[index].as_str() {
@@ -40,6 +41,10 @@ fn main() -> ExitCode {
             "--rounds" => {
                 index += 1;
                 rounds = args.get(index).and_then(|v| v.parse().ok()).unwrap_or(rounds);
+            }
+            "--permuter" => {
+                index += 1;
+                permuter = args.get(index).and_then(|v| v.parse().ok()).unwrap_or(permuter);
             }
             "--plateau" => {
                 index += 1;
@@ -94,8 +99,8 @@ fn main() -> ExitCode {
         jobs,
     };
 
-    println!("jobs={} rounds<={} plateau={}", search.jobs, rounds, plateau);
-    let (best, history) = search.descend(&seed, rounds, plateau, |line| println!("{line}"));
+    println!("jobs={} rounds<={} plateau={} permuter_seeds={}", search.jobs, rounds, plateau, permuter);
+    let (best, history) = search.descend(&seed, rounds, plateau, permuter, |line| println!("{line}"));
 
     if history.is_empty() {
         println!("no improvement found");

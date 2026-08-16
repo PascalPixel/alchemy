@@ -45,13 +45,13 @@ fn parse_u32(text: &str) -> Result<u32, String> {
 }
 
 pub fn entry(arguments: &[String]) {
-    if let Err(error) = run() {
+    if let Err(error) = run(arguments) {
         eprintln!("{error}");
         std::process::exit(1);
     }
 }
 
-fn run() -> Result<(), String> {
+fn run(arguments: &[String]) -> Result<(), String> {
     let args: Vec<String> = arguments.to_vec();
     let action = parse_args(&args)?;
     let Action::Build {

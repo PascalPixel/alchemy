@@ -12,7 +12,7 @@ const USAGE: &str =
     "usage: mode-cohort [--jobs N] [--max-pairs N] [--max-triples N] CANDIDATE.c [CANDIDATE.c ...]";
 
 pub fn entry(arguments: &[String]) {
-    match run() {
+    match run(arguments) {
         Ok(lines) => {
             for line in lines {
                 println!("{line}");
@@ -56,7 +56,7 @@ fn cargo_command(root: &Path, crate_name: &str) -> Command {
     command
 }
 
-fn run() -> Result<Vec<String>, String> {
+fn run(arguments: &[String]) -> Result<Vec<String>, String> {
     let arguments: Vec<String> = arguments.to_vec();
     if arguments.iter().any(|argument| argument == "--self-test") {
         return Ok(vec![self_test()?]);

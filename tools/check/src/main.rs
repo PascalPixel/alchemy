@@ -27,6 +27,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("lang-ban", "lang ban"),
     ("check-commit-progress", "check commit progress"),
     ("coverage-map", "refresh the dashboard coverage maps"),
+    ("byte-value-regions", "byte value regions"),
 ];
 
 fn main() -> ExitCode {
@@ -39,6 +40,7 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "byte-value-regions" => { byte_value_regions::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "coverage-map" => { coverage_map::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "lang-ban" => lang_ban::cli::entry(&rest),
         "check-commit-progress" => check_commit_progress::cli::entry(&rest),

@@ -121,7 +121,7 @@ const COMPILER: &[Entry] = &[
     },
     Entry {
         name: "mode_cohort",
-        target: Target::Binary("tools/mode-cohort/target/release/mode-cohort"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "mode-cohort"),
     },
     Entry {
         name: "mode_sweep",
@@ -215,7 +215,7 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
 const DECOMP: &[Entry] = &[
     Entry {
         name: "decomp_diagnose",
-        target: Target::Binary("tools/decomp-diagnose/target/release/decomp-diagnose"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "decomp-diagnose"),
     },
     Entry {
         name: "discover",
@@ -278,7 +278,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "byte_value_regions",
-        target: Target::Binary("tools/target/release/byte-value-regions"),
+        target: Target::Sub("tools/check/target/release/check", "byte-value-regions"),
     },
     Entry {
         name: "character_catalog",

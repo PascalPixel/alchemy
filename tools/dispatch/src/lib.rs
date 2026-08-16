@@ -108,7 +108,7 @@ const ASSETS: &[Entry] = &[
     },
     Entry {
         name: "tilemap",
-        target: Target::Binary("tools/tilemap/target/release/tilemap"),
+        target: Target::Sub("tools/assets/target/release/assets", "tilemap"),
     },
 ];
 
@@ -308,7 +308,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "audio_wave",
-        target: Target::Binary("tools/audio-wave/target/release/audio-wave"),
+        target: Target::Sub("tools/assets/target/release/assets", "audio-wave"),
     },
     Entry {
         name: "battle_effect_data",
@@ -348,7 +348,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "character_catalog",
-        target: Target::Binary("tools/character-catalog/target/release/character-catalog"),
+        target: Target::Sub("tools/assets/target/release/assets", "character-catalog"),
     },
     Entry {
         name: "chiiki_map_resources",
@@ -360,7 +360,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "encounter_data",
-        target: Target::Binary("tools/encounter-data/target/release/encounter-data"),
+        target: Target::Sub("tools/assets/target/release/assets", "encounter-data"),
     },
     Entry {
         name: "executable_gap_sources",
@@ -378,7 +378,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "indexed_still",
-        target: Target::Binary("tools/indexed-still/target/release/indexed-still"),
+        target: Target::Sub("tools/assets/target/release/assets", "indexed-still"),
     },
     Entry {
         name: "kind1_map_grid",
@@ -420,7 +420,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "pairtable",
-        target: Target::Binary("tools/target/release/pairtable"),
+        target: Target::Sub("tools/assets/target/release/assets", "pairtable"),
     },
     Entry {
         name: "resource_01c",
@@ -482,7 +482,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "staff_roll",
-        target: Target::Binary("tools/staff-roll/target/release/staff-roll"),
+        target: Target::Sub("tools/assets/target/release/assets", "staff-roll"),
     },
     Entry {
         name: "static_sprite_series",
@@ -498,7 +498,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "wordstream",
-        target: Target::Binary("tools/target/release/wordstream"),
+        target: Target::Sub("tools/assets/target/release/assets", "wordstream"),
     },
 ];
 

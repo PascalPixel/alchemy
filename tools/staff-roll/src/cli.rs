@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use staff_roll::{build_staff_roll, self_test, verify_staff_roll, Error};
+use crate::{build_staff_roll, self_test, verify_staff_roll, Error};
 
 const USAGE: &str = "usage: staff_roll build-stdout INDEX | verify ROM INDEX | --self-test";
 
@@ -34,7 +37,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

@@ -4,6 +4,8 @@
 //! begin with 128 little-endian BGR555 palette entries and continue with a
 //! seven-bit delta stream, padded to a 16-bit boundary.
 
+pub mod cli;
+
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};

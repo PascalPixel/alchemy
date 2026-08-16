@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI mirror of `tools/make/audio_wave.ts`.
 //!
 //! `--self-test` anywhere in the arguments runs the self-test and prints
@@ -9,7 +12,7 @@
 use std::io::Write;
 use std::process::ExitCode;
 
-use audio_wave::{ExactWaveHeaderSource, ExactWavePaddingSource, Scalar, WaveRecordSource};
+use crate::{ExactWaveHeaderSource, ExactWavePaddingSource, Scalar, WaveRecordSource};
 
 const USAGE: &str =
     "usage: audio-wave build-record-stdout SOURCE WAV | --self-test\n       audio-wave [-h|--help]";
@@ -118,7 +121,7 @@ fn run(args: &[String]) -> Result<ExitCode, String> {
         if command == "build-record-stdout" {
             let outcome = (|| {
                 let wav = std::fs::read(wav).map_err(|error| error.to_string())?;
-                let (built, report) = audio_wave::build_wave_record(&source(catalog)?, &wav)?;
+                let (built, report) = crate::build_wave_record(&source(catalog)?, &wav)?;
                 eprintln!(
                     "{}",
                     serde_json::json!({
@@ -142,7 +145,7 @@ fn run(args: &[String]) -> Result<ExitCode, String> {
         }
     }
     if args.iter().any(|arg| arg == "--self-test") {
-        audio_wave::self_test().map_err(|message| message.to_string())?;
+        crate::self_test().map_err(|message| message.to_string())?;
         Ok(ExitCode::SUCCESS)
     } else {
         println!("{USAGE}");
@@ -150,7 +153,7 @@ fn run(args: &[String]) -> Result<ExitCode, String> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(code) => code,
         Err(message) => {

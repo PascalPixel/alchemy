@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Golden Sun's encounter data lives in three fixed ROM extents: a 32-byte
 // brightness curve, the 0x1d48-byte encounter table (formations, preload IDs,
 // per-encounter metadata), and a 0x1680-byte zero-fill run that pads the block

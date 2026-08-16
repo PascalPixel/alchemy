@@ -1,4 +1,7 @@
-use indexed_still::{export_series, read_still_index, self_test, Error};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{export_series, read_still_index, self_test, Error};
 use std::path::{Path, PathBuf};
 use std::io::{self, Write};
 use std::process::ExitCode;
@@ -48,7 +51,7 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
     if args.first().map(String::as_str) == Some("build-stdout") {
         let source = args.get(1).ok_or_else(|| Error("build-stdout requires an image".into()))?;
         let image = std::fs::read(source).map_err(|e| Error(e.to_string()))?;
-        let (built, _) = indexed_still::build_still(&image)?;
+        let (built, _) = crate::build_still(&image)?;
         io::stdout().write_all(&built).map_err(|e| Error(e.to_string()))?;
         return Ok(());
     }
@@ -74,7 +77,7 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

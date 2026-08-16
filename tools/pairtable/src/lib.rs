@@ -1,3 +1,5 @@
+pub mod cli;
+
 // A table of u16 pairs as text, two `0xNNNN` values per line.
 //
 // Ported from tools/make/pairtable.ts. The literal grammar and comment

@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use character_catalog::{
+use crate::{
     canonical_catalog, catalog_size, descriptor_count, export_character_catalog, read_json,
     self_test, verify_character_catalog, Error, ROM_BASE,
 };
@@ -105,7 +108,7 @@ fn run(args: &[String]) -> Result<(), Error> {
                 .get(1)
                 .ok_or_else(|| Error("usage: character-catalog build-stdout SOURCE".into()))?;
             let catalog = read_json(index_path)?;
-            let bytes = character_catalog::build_character_catalog(&catalog)?;
+            let bytes = crate::build_character_catalog(&catalog)?;
             io::stdout()
                 .write_all(&bytes)
                 .map_err(|error| Error(format!("stdout: {error}")))?;
@@ -122,7 +125,7 @@ fn run(args: &[String]) -> Result<(), Error> {
             let series_path = option(args, 2, "--series", &["--catalog", "--series", "--palette"])?;
             let _palette_path = option(args, 2, "--palette", &["--catalog", "--series", "--palette"])?;
             let catalog = read_json(&catalog_path)?;
-            let catalog_data = character_catalog::build_character_catalog(&catalog)?;
+            let catalog_data = crate::build_character_catalog(&catalog)?;
             let series = read_json(&series_path)?;
             let series_address = integer_field(&series, "address")?;
             let series_size = integer_field(&series, "size")?;
@@ -174,7 +177,7 @@ fn array_len(value: &serde_json::Value, name: &str) -> Result<usize, Error> {
         .ok_or_else(|| Error(format!("invalid {name}")))
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

@@ -40,16 +40,10 @@ void Func_02000f38(void)
     u8 *obj2;
     s32 e1;
     s32 e2;
-    s32 c1 = 0x311;
-    s32 c2 = 0x831;
-    s32 c3 = 0x311;
-    s32 c4 = 0x831;
-    s32 c5 = 0x30c;
-    s32 c6 = 0x30c;
 
-    if (Func_0200561a(c1) == 0) {
+    if (Func_0200561a(0x311) == 0) {
         Func_02005644();
-        if (Func_0200562a(c2) == 0) {
+        if (Func_0200562a(0x831) == 0) {
             obj = Func_02005684(12);
             e1 = 0x40000;
             e2 = 0x40000;
@@ -73,11 +67,11 @@ void Func_02000f38(void)
             Func_020056ae(-1, -1, 0xe666);
             Func_020056ba();
             Func_020058a6();
-            Func_020056e4(c4);
+            Func_020056e4(0x831);
         }
         Func_020020a8();
-        Func_020056ee(c3);
-        if (Func_020056ec(0x837) != 0 && Func_020056f6(0x841) == 0 && Func_02005702(c5) == 0) {
+        Func_020056ee(0x311);
+        if (Func_020056ec(0x837) != 0 && Func_020056f6(0x841) == 0 && Func_02005702(0x30c) == 0) {
             obj2 = Func_0200575c(0);
             if (*(s32 *)(obj2 + 0xc) > 0x800000) {
                 Func_02002aa6(0xdb, 0x34b);
@@ -86,7 +80,7 @@ void Func_02000f38(void)
                 Func_02002abc(0xd6, 0x38c);
                 Func_020057de(0, 0xdb, 0x38f);
             }
-            Func_0200574e(c6);
+            Func_0200574e(0x30c);
         }
         Func_02005772();
     }

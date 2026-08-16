@@ -694,8 +694,8 @@ scan_decisions:
                     falloff_offset_ranged = range_distance * 4;
                     goto apply_falloff;
                 case 6:
-                    falloff_table = 0x080C2B38;
                     falloff_offset_ranged = range_distance * 4;
+                    falloff_table = 0x080C2B38;
 apply_falloff:
                     falloff_percent = M2C_FIELD((u8 *)falloff_table, s32, falloff_offset_ranged);
                     scaled_ranged_damage = DivideSigned(
@@ -719,10 +719,10 @@ apply_falloff:
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, (u32) target_id);
                 BattleEvent_Push(BATTLE_EVENT_VALUE, ranged_damage);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);
-                if ((u32) target_id <= 7U) {
-                    ranged_damage_text = range_relation + 0x834;
-                } else {
+                if (!((u32) target_id <= 7U)) {
                     ranged_damage_text = range_relation + 0x831;
+                } else {
+                    ranged_damage_text = range_relation + 0x834;
                 }
                 resulting_hp = target_hp_before_ranged_damage - ranged_damage;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, ranged_damage_text);
@@ -759,8 +759,8 @@ apply_falloff:
                     pp_recovery * M2C_FIELD(falloff_percents, s32, falloff_offset),
                     0x64
                 );
-                pp_recovery *= target_adjustment;
                 target_max_pp = target->max_pp;
+                pp_recovery *= target_adjustment;
                 restored_pp = target_pp_before_recovery + pp_recovery;
                 if (restored_pp > (s32) target_max_pp) {
                     restored_pp = (s32) target_max_pp;
@@ -945,8 +945,8 @@ commit_damage:
         s32 recovered_pp;
         u32 pp_delta;
 
-        max_pp = target->max_pp;
         recovered_pp = target->pp;
+        max_pp = target->max_pp;
         current_pp = recovered_pp;
         recovered_pp += DivideSigned(max_pp * 7, 0x64);
         if (recovered_pp > (s32) max_pp) {

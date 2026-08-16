@@ -701,9 +701,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_THREAD_JUMPS_OVERLAY_SOURCES, key) {
         push!(&["-fno-thread-jumps"]);
     }
-    if has(NO_GCSE_OVERLAY_SOURCES, key) {
-        push!(&["-fno-gcse"]);
-    }
+    // NO_GCSE_OVERLAY_SOURCES is already consulted earlier in this function.
+    // A second identical consumer handed six owners -fno-gcse twice, which is
+    // idempotent for gcc but makes every routed-flag census double-count it.
     if has(NO_EXPENSIVE_OVERLAY_SOURCES, key) {
         push!(&["-fno-expensive-optimizations"]);
     }

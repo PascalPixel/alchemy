@@ -1,9 +1,10 @@
 # ---------------------------------------------------------------------------
 # The compiler standard.
 #
-# This is the whole supported flag set. It mirrors the Makefile of the upstream
-# compiler project, Coaltergeist/camelot-gcc, which reproduces the Golden Sun
-# ROM byte-identically against this set and nothing else. Alchemy targets the
+# This is the whole supported flag set. It mirrors the Makefile of
+# Coaltergeist/camelot-gcc -- a separate project, not an upstream of this one --
+# which reproduces the Golden Sun ROM byte-identically against this set and
+# nothing else. Alchemy targets the
 # same standard: Camelot shipped a makefile, not a per-file flag database.
 #
 # Anything a source needs beyond this is DEBT, not configuration. It records an

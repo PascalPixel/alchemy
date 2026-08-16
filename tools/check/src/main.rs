@@ -34,6 +34,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("integrate-matches", "integrate matched candidates into the tree"),
     ("full-c-history", "full c history"),
     ("localization-tables", "localization tables"),
+    ("route-dump", "dump the compiler flag routing"),
 ];
 
 fn main() -> ExitCode {
@@ -46,6 +47,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "route-dump" => route_dump::entrypoint::entry(&rest),
+
         "full-c-history" => { full_c_history::cli::entry(&rest); ExitCode::SUCCESS }
         "localization-tables" => { localization_tables::cli::entry(&rest); ExitCode::SUCCESS }
         "integrate-matches" => { integrate_matches::entry_main::entry(&rest); ExitCode::SUCCESS }

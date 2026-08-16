@@ -55,12 +55,13 @@ help:
 		'make compiler-checks run focused native compiler checks' \
 		'make dispatch-GROUP ARGS=... run a registered native dispatch group'
 
-ROUTE_DUMP := $(TOOLS)/route-dump/target/release/route-dump
+# route-dump is a `check` subcommand now; invoke it through cargo like the rest.
+ROUTE_DUMP := $(CARGO) run --offline --quiet --release --manifest-path $(TOOLS)/check/Cargo.toml -- route-dump
 
 # Assert that the flag set documented above is the flag set the build uses.
 # Two places naming the standard is only safe if a gate compares them.
 standard-check:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/route-dump/Cargo.toml
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/check/Cargo.toml
 	@printf '%s\n' $(GCC296_CFLAGS) | grep -v '^-I' | sort > /tmp/alchemy-standard-makefile.txt
 	@$(ROUTE_DUMP) --standard | grep -v '^-I' | sort > /tmp/alchemy-standard-routing.txt
 	@if diff -q /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt >/dev/null; then \
@@ -109,7 +110,7 @@ standard-check:
 
 # How far the tree still is from building on the standard alone.
 routing-debt:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/route-dump/Cargo.toml
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/check/Cargo.toml
 	@$(ROUTE_DUMP) --debt
 
 build-dispatch:

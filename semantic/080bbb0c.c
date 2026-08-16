@@ -559,7 +559,8 @@ loop_90:
                         2
                     );
                 }
-                pp_damage = Func_08077188(action->power, stat_delta, 0x100);
+                action_power = action->power;
+                pp_damage = Func_08077188(action_power, stat_delta, 0x100);
                 recovery_table = (s32 *)0x080C2AC0;
                 cached_result_offset = range_distance * 4;
                 pp_damage = Func_080022ec(

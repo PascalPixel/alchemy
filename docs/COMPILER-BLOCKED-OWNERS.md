@@ -134,7 +134,21 @@ reference size reached and the residual localized into explained clusters.
 Neither holds: the size is 8 bytes short and the residual is diffuse across the
 whole function.
 
-**Current state: `1961 / 6332`, size EXACT.** Down from 2286 / 6324.
+**Current state: `1916 / 6332`, size EXACT.** Down from 2286 / 6324 -- a 16%
+reduction with the size gap closed.
+
+**Signedness is the second working axis.** Counting load opcodes across the
+aligned diff: the reference has **2 more `ldrsb` and 2 fewer `ldrb`** than we
+emit, and we emit **24 more `lsls`** -- manual extension the reference gets free
+from the load type. That says a small number of our `u8` field reads are
+actually `s8`. Flipping each of the 121 `u8` sites in turn found five
+improvements; a size-constrained greedy over them gives
+`M2C_FIELD(target_state, s8, 0x135)` and `(…, s8, 0x137)`: **1961 -> 1916, size
+still exact**.
+
+Opcode-count deltas are a *directional instrument*, not just a diagnosis. `ldrsb
++2 / ldrb -2` named the defect class, its size, and where to look, and the
+search that followed was mechanical.
 
 **The working axis: un-cache field reads.** The `+70 ldr` signal was real. Our C
 caches field reads in locals where the reference RE-READS them. Inlining the

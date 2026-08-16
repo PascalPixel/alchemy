@@ -9,9 +9,6 @@ edition = "2021"
 name = "battle_effect_data"
 path = "src/lib.rs"
 
-[[bin]]
-name = "battle-effect-data"
-path = "src/main.rs"
 
 [dependencies]
 alchemy-zlib = { path = "../zlib" }

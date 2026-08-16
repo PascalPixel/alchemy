@@ -97,6 +97,23 @@ be tested rather than swept. Use `--span` taken from the `--overlays` output;
 a guessed span silently counts the surplus reference bytes as differences and
 will report a working edit as a regression.
 
+**A byte-identical span is NOT proof for an overlay owner.** A third case,
+`resource_39e_c_02002ad0.c`, declared `pose1 = 3; pose0 = 3;` in one scope and
+passed `Func_020081a0(pose0, pose1)`. Inlining to `Func_020081a0(3, 3)` compiled
+**byte-identical over the owner's whole 5,000-byte span**, and `make verify`
+then failed:
+
+    error: asset at 0x087b2078 (golden-sun-general-lz):
+           palette token plan does not reconstruct input
+
+Verify is green with the edit stashed, so the edit caused it. Overlays are
+stored compressed, the owner is one part of a much larger overlay, and an edit
+can leave the owner's span identical while changing the overlay around it and
+breaking the asset round trip. That round trip is the only proof that closes an
+overlay owner; `candidate-explain` over one span cannot. Run `make verify`
+before believing any overlay source change, and treat a per-owner comparison as
+a fast pre-filter only.
+
 What the sample does show is that routed owners frequently carry a source hack
 *as well as* their flag. `resource_372_c_02000f38.c` declares
 `c1 = 0x311; c2 = 0x831; c3 = 0x311; c4 = 0x831;` -- four variables for two

@@ -9,9 +9,6 @@ edition = "2021"
 name = "resource_d1_d3"
 path = "src/lib.rs"
 
-[[bin]]
-name = "resource-d1-d3"
-path = "src/main.rs"
 
 [dependencies]
 alignment-tail = { path = "../alignment-tail" }

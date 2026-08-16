@@ -183,7 +183,7 @@ fn parse_arguments(arguments: &[String]) -> Result<CommandLine, Failure> {
     }
 }
 
-fn run() -> Result<(), Failure> {
+fn run(arguments: &[String]) -> Result<(), Failure> {
     let root = repository_root();
     let arguments: Vec<String> = arguments.to_vec();
     match parse_arguments(&arguments)? {
@@ -211,7 +211,7 @@ fn run() -> Result<(), Failure> {
 }
 
 pub fn entry(arguments: &[String]) -> ExitCode {
-    match run() {
+    match run(arguments) {
         Ok(()) => ExitCode::SUCCESS,
         Err(failure) => {
             eprintln!("{failure}");
@@ -225,7 +225,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn cli_contract_is_strict_and_help_is_side_effect_free() {
+    fn cli_contract_is_strict_and_help_is_side_effect_free(arguments: &[String]) {
         assert_eq!(
             parse_arguments(&["--help".into()]).unwrap(),
             CommandLine::Help

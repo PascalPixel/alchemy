@@ -1,3 +1,5 @@
+pub mod entrypoint;
+
 // Prove that a named showcase overlay is closed, descriptively named, and
 // still reconstructs the reviewed decoded image byte for byte.
 //

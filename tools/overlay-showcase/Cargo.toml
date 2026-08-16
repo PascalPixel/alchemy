@@ -9,10 +9,6 @@ edition = "2021"
 name = "overlay_showcase"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-showcase"
-path = "src/main.rs"
-
 [dependencies]
 serde_json = { version = "1", features = ["preserve_order"] }
 alchemy-bundle = { path = "../alchemy-bundle" }

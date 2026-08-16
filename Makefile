@@ -167,7 +167,7 @@ coverage-check:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- coverage-map --check
 
 showcase:
-	$(CARGO_RUN) $(TOOLS)/overlay-showcase/Cargo.toml -- --all
+	$(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml -- showcase --all
 
 compiler-checks: compiler-sweep compiler-cohort overlay-compiler-cohort compiler-corpus compiler-batch
 

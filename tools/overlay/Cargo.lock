@@ -140,6 +140,7 @@ dependencies = [
  "overlay-mode-cohort",
  "overlay-published",
  "overlay-show",
+ "overlay-showcase",
  "overlay-twins",
  "overlay-unindexed",
 ]
@@ -255,6 +256,15 @@ version = "0.1.0"
 dependencies = [
  "overlay-call-targets",
  "overlay-disasm",
+]
+
+[[package]]
+name = "overlay-showcase"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "overlay-disasm",
+ "serde_json",
 ]
 
 [[package]]

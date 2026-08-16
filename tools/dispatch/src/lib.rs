@@ -156,6 +156,12 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
+        crate_name: "reverse-gcc296",
+        binary: "reverse-gcc296",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
         crate_name: "candidate-show",
         binary: "candidate-show",
         kind: NonPublicKind::InternalDiagnostic,

@@ -22,6 +22,7 @@ alchemy-permuter = { path = "../alchemy-permuter" }
 dashboard-server = { path = "../dashboard-server" }
 mode-cohort = { path = "../mode-cohort" }
 decomp-diagnose = { path = "../decomp-diagnose" }
+compiler-corpus-regression = { path = "../compiler-corpus-regression" }
 
 [[bin]]
 name = "compiler"

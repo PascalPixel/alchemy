@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the late runtime residual source. Ported from the `main` block of
 // tools/make/late_runtime_residual.ts, argument shapes and stdout lines verbatim.
 //
@@ -17,7 +20,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use late_runtime_residual::{
+use crate::{
     build_late_runtime_residual, export_late_runtime_residual, self_test,
     verify_late_runtime_residual,
 };
@@ -105,8 +108,8 @@ fn run(args: &[String]) -> Result<Outcome, String> {
     Ok(Outcome::Usage)
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match run(&args) {
         // `export` prints nothing at all in the TypeScript.
         Ok(Outcome::Line(line)) if line.is_empty() => ExitCode::SUCCESS,

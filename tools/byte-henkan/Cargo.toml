@@ -9,9 +9,5 @@ edition = "2021"
 name = "byte_henkan"
 path = "src/lib.rs"
 
-[[bin]]
-name = "byte-henkan"
-path = "src/main.rs"
-
 [dependencies]
 serde_json = { version = "1", features = ["preserve_order"] }

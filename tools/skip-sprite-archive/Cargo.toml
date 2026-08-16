@@ -9,10 +9,6 @@ edition = "2021"
 name = "skip_sprite_archive"
 path = "src/lib.rs"
 
-[[bin]]
-name = "skip-sprite-archive"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-zlib = { path = "../zlib" }
 export-asset = { path = "../export-asset" }

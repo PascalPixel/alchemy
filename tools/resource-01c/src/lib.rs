@@ -4,6 +4,8 @@
 //! builder. This crate owns the equivalent standalone export, verify, and
 //! self-test commands so direct use does not require Bun.
 
+pub mod cli;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};

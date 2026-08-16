@@ -1,4 +1,7 @@
-use map_container_components::{
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{
     build_blend_animation, build_descriptors, build_header, build_metatiles, build_queues,
     build_sparse, export_blend_animation, export_descriptors, export_header, export_metatiles,
     export_queues, export_sparse, self_test, Result,
@@ -161,7 +164,7 @@ fn run(mut args: Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

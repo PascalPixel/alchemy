@@ -1,4 +1,7 @@
-use kind2_resources::{
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{
     self_test, verify_kind2_resource, verify_kind2_series, write_build_stdout, write_encode_stdout,
     Result,
 };
@@ -56,7 +59,7 @@ fn run(mut args: Vec<String>) -> Result<()> {
         _ => Err(USAGE.into()),
     }
 }
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

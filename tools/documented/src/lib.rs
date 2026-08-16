@@ -3,6 +3,8 @@
 //! The dispatcher is the registry. Every group has operational policy in
 //! AGENTS.md and every public command appears in docs/TOOLS.md.
 
+pub mod cli;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 /// The one source of truth for the user-facing native tools.

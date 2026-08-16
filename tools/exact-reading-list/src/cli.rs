@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI entry point for the exact-reading-list report.
 //
 //   exact-reading-list                  # every overlay, ranked
@@ -14,20 +17,20 @@
 use std::io::Write;
 use std::process::ExitCode;
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    let options = match exact_reading_list::parse_args(&args) {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
+    let options = match crate::parse_args(&args) {
         Ok(options) => options,
         Err(message) => return fail(&message),
     };
 
     if options.help {
-        println!("{}", exact_reading_list::USAGE);
+        println!("{}", crate::USAGE);
         return ExitCode::SUCCESS;
     }
 
     if options.self_test {
-        return match exact_reading_list::self_test() {
+        return match crate::self_test() {
             Ok(()) => {
                 println!("self-test=ok");
                 ExitCode::SUCCESS
@@ -36,30 +39,30 @@ fn main() -> ExitCode {
         };
     }
 
-    let root = match exact_reading_list::repository_root() {
+    let root = match crate::repository_root() {
         Ok(root) => root,
         Err(message) => return fail(&message),
     };
-    let all = match exact_reading_list::reading_list(&root) {
+    let all = match crate::reading_list(&root) {
         Ok(list) => list,
         Err(message) => return fail(&message),
     };
 
     if options.json {
-        let mut list: Vec<exact_reading_list::Pairing> = all
+        let mut list: Vec<crate::Pairing> = all
             .into_iter()
             .filter(|item| item.blocked == options.blocked)
             .collect();
         if let Some(name) = options.only.as_deref() {
             list.retain(|item| item.overlay == name);
         }
-        println!("{}", exact_reading_list::render_json(&list));
+        println!("{}", crate::render_json(&list));
         return ExitCode::SUCCESS;
     }
 
     print!(
         "{}",
-        exact_reading_list::render_report(&all, options.only.as_deref(), options.blocked)
+        crate::render_report(&all, options.only.as_deref(), options.blocked)
     );
     ExitCode::SUCCESS
 }

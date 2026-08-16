@@ -1,14 +1,17 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::path::Path;
 use std::process::ExitCode;
 
-use documented::{
+use crate::{
     catalog_violations, cataloged, command_names, documented, entry_points, scanned_nothing,
     self_test, violations,
 };
 
 const USAGE: &str = "usage: documented [--self-test]";
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     match arguments.as_slice() {
         [argument] if matches!(argument.as_str(), "-h" | "--help") => {

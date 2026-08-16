@@ -1,7 +1,10 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::io::Write;
 use std::process::ExitCode;
 
-use music::{
+use crate::{
     build_sound_table, canonical_json, cli_integer, extract_sound_table, option, self_test, Result,
     SoundTableEntry, SoundTableSource, SymbolValue,
 };
@@ -166,8 +169,8 @@ fn run(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match run(&args) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

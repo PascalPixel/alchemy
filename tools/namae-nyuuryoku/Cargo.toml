@@ -9,10 +9,6 @@ edition = "2021"
 name = "namae_nyuuryoku"
 path = "src/lib.rs"
 
-[[bin]]
-name = "namae-nyuuryoku"
-path = "src/main.rs"
-
 [dependencies]
 extract-resource = { path = "../extract-resource" }
 serde_json = { version = "1", features = ["preserve_order"] }

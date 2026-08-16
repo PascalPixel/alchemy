@@ -9,10 +9,6 @@ edition = "2021"
 name = "archive_asset"
 path = "src/lib.rs"
 
-[[bin]]
-name = "archive-asset"
-path = "src/main.rs"
-
 [dependencies]
 alignment-tail = { path = "../alignment-tail" }
 export-asset = { path = "../export-asset" }

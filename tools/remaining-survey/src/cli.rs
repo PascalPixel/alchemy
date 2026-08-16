@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::path::Path;
 use std::process::ExitCode;
 
-use remaining_survey::{buckets, classify, render, source_path};
+use crate::{buckets, classify, render, source_path};
 
 const USAGE: &str = "Usage: remaining-survey [--help|-h] [--self-test]\n\nClassify remaining c_candidate assembly regions.\n";
 
@@ -81,8 +84,8 @@ fn run(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
     match run(&arguments) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

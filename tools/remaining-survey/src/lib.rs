@@ -11,6 +11,8 @@
 //! are hand-rolled here (no regex crate); each matcher carries the pattern it
 //! reproduces in a comment.
 
+pub mod cli;
+
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 

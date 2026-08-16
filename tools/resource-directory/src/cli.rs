@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI entrypoint for the resource directory tool, mirroring `main()` in
 // tools/make/resource_directory.ts.
 //
@@ -14,7 +17,7 @@ use std::fs;
 use std::io::Write;
 use std::process::ExitCode;
 
-use resource_directory::{
+use crate::{
     build_resource_directory, canonical_json, document, export_resource_directory, hex,
     integer_text, js_number_string, self_test, DIRECTORY_ADDRESS, DIRECTORY_SLOTS, ROM_BASE,
 };
@@ -174,7 +177,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
     Err(format!("unknown command: {command}"))
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

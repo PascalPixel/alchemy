@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Port of tools/make/resource_directory.ts (the resource directory builder,
 // exporter and verifier for the 1000-slot pointer table at 0x08320000).
 //

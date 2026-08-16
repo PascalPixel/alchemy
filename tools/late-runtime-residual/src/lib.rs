@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Port of tools/make/late_runtime_residual.ts.
 //
 // WHY THIS FILE EXISTS: the late runtime data package (tools/lib/late_runtime_data.ts,

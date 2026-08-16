@@ -9,10 +9,6 @@ edition = "2021"
 name = "f0_archive"
 path = "src/lib.rs"
 
-[[bin]]
-name = "f0-archive"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-zlib = { path = "../zlib" }
 export-asset = { path = "../export-asset" }

@@ -9,10 +9,6 @@ edition = "2021"
 name = "static_sprite_series"
 path = "src/lib.rs"
 
-[[bin]]
-name = "static-sprite-series"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-zlib = { path = "../zlib" }
 canonical-json = { path = "../canonical-json" }

@@ -1,4 +1,7 @@
-use namae_nyuuryoku::{
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{
     build_namae_nyuuryoku, self_test, verify_namae_nyuuryoku, Error, ADDRESS, SIZE,
 };
 use std::io::{self, Write};
@@ -45,7 +48,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

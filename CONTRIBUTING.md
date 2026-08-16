@@ -475,12 +475,17 @@ takes the main image from **1107 exact to 258**, losing 849 owners and gaining
 zero. The descending order is load-bearing for four fifths of everything that
 currently matches. Do not revisit this without reading that number first.
 
-**Overlay owners cannot be parked.** Moving `exact/<addr>.c` to
-`non_matching/` is how a main-image owner is set aside; the build globs
-`exact/` and falls back to assembly. Do this to an overlay owner and
+**A main-image owner that stops matching goes back to `semantic/`.** The build
+globs `exact/` for byte-exact owners and falls back to the assembly in `asm/`
+for everything else, so moving `exact/<addr>.c` to `semantic/<addr>.c` sets an
+owner aside without losing the C. It is not parked or special-cased; it is
+ordinary not-yet-matching C sitting where all the other not-yet-matching C
+lives, to be picked up again as understanding improves.
+
+**Overlay owners cannot be set aside this way.** Do it to an overlay owner and
 `make inventory` fails with `orphaned placeholders`, because the `.space` in
-`assets/code/resource_<id>_overlay.s` still expects compiled C to fill it.
-An overlay owner is fixed or it is reverted along with its placeholder.
+`assets/code/resource_<id>_overlay.s` still expects compiled C to fill it. An
+overlay owner is fixed, or it is reverted along with its placeholder.
 
 Matching under `semantic/` is not final proof. Compiler flags are routed by
 repository-relative source path. Main-image drafts are checked by

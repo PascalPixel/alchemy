@@ -1,9 +1,13 @@
-# The parked owners: what is actually blocking them
+# Owners that need compiler behaviour we do not have
 
-100 main-image owners sit in `non_matching/`. They were parked when the compiler
-axe deleted 120 invented options, and 12 have since been reconstructed in C.
-This file records what blocks the rest, because three separate bulk attempts
-have now failed and the reasons are specific rather than "needs more effort".
+100 main-image owners live in `semantic/` rather than `exact/`. They stopped
+matching when the compiler axe deleted 120 invented options, and 12 have since
+been reconstructed in C. They are not parked or quarantined -- they are
+ordinary not-yet-matching C, in the folder all not-yet-matching C lives in,
+with their assembly in `asm/` building the ROM meanwhile.
+
+This file records what blocks them, because three separate bulk attempts have
+now failed and the reasons are specific rather than "needs more effort".
 
 ## The split
 

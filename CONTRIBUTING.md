@@ -429,6 +429,42 @@ score as a new build. In particular, an apparent regression observed through a
 stale cache is a false signal: after a compiler rebuild, clear the affected
 ignored overlay cache (`out/cache/overlay-c/`) before diagnosing drift.
 
+### Four ways the numbers lie
+
+Every one of these produced a wrong conclusion that survived until it was
+checked a second way. Check the second way first.
+
+**A stale object cache invents link failures.** `out/cache/claimed-objects/`
+holds objects keyed by compile identity. After the compiler changed, four
+main-image owners appeared to overgrow and overlap their neighbours, and
+`build-claimed` refused to link. Every one of them compiled byte-exact
+standalone. Clearing the caches and rebuilding gave `linked=1371 failures=0`
+with no source change at all: the overlap was fresh objects mixed with stale
+ones. A section-overlap error is a cache symptom until proven otherwise.
+
+**`reference=` includes trailing alignment padding.** `candidate-show` reports
+`candidate=226 reference=228 differing_halfwords=1` for a function that is
+completely correct: the reference is padded to a 4-byte boundary and the
+candidate is not. 276 main-image owners are in exactly this state and all 276
+are already counted as byte-exact by the build. Treating them as broken
+invented a 13,632-byte deficit that did not exist. The rule: `differing=1` with
+`reference - candidate == 2` is padding, not a defect. Confirm against
+`out/full/claimed/manifest.json`, which lists what the build actually claimed.
+
+**`make progress` reads `out/full/`, and only `build-full` writes it.**
+`build-claimed` writes somewhere else. Running `build-claimed` and then
+`progress` reports the previous run's number, silently. If `build-full` fails
+part way -- it stops at the first bad overlay -- the main-image half refreshes
+and the overlay half stays frozen at whatever the last complete run produced.
+A percentage read while `build-full` is failing is part fresh, part fossil.
+
+**Overlay owners cannot be parked.** Moving `exact/<addr>.c` to
+`non_matching/` is how a main-image owner is set aside; the build globs
+`exact/` and falls back to assembly. Do this to an overlay owner and
+`make inventory` fails with `orphaned placeholders`, because the `.space` in
+`assets/code/resource_<id>_overlay.s` still expects compiled C to fill it.
+An overlay owner is fixed or it is reverted along with its placeholder.
+
 Matching under `semantic/` is not final proof. Compiler flags are routed by
 repository-relative source path. Main-image drafts are checked by
 `integrate_matches`, which routes a `src_<main-address>.c` candidate as its

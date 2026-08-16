@@ -1,4 +1,7 @@
-//! `assets`: one executable for the archival asset extractors.
+//! `assets`: one executable for every ROM data and resource extractor.
+//!
+//! Absorbed the former `resource` and `data` hosts: three binaries for one job
+//! was the same sprawl this consolidation exists to remove.
 //!
 //! These tools ran once, produced the 11,636 files committed under `assets/`,
 //! and have not been needed since. They are NOT deletable: in a clean-room
@@ -42,7 +45,33 @@ const COMMANDS: &[(&str, &str)] = &[
     ("export-asset", "export asset"),
     ("import-asset", "import asset"),
     ("message-archive", "message archive"),
+
+    ("3ce", "decode resource 3ce"),
+    ("5", "decode resource 5"),
+    ("d1-d3", "decode resources d1 through d3"),
+    ("title", "decode title-screen resources"),
+    ("sentou", "decode battle (sentou) resources"),
+    ("map-tokushu", "decode special (tokushu) map resources"),
+    ("map-chiiki", "decode regional (chiiki) map resources"),
+
+    ("audio-engine", "build the audio engine data package"),
+    ("battle-effect", "build the battle-effect data package"),
+    ("runtime-support", "build the runtime support data package"),
+    ("battle-runtime", "build and verify the battle-effect runtime (sentou kouka)"),
+    ("battle-menu", "build the battle menu data (sentou menu)"),
+    ("battle-screen", "build the battle screen data (sentou gamen)"),
+    ("battle-display", "build the battle display data (sentou hyouji)"),
 ];
+
+fn report<E: std::fmt::Display>(result: Result<(), E>) -> ExitCode {
+    match result {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
+        }
+    }
+}
 
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -58,6 +87,32 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+
+        "map-tokushu" => { map_resources::entry_tokushu::entry(&rest); ExitCode::SUCCESS }
+        "map-chiiki" => { map_resources::entry_chiiki::entry(&rest); ExitCode::SUCCESS }
+        "3ce" => report(resource_3ce::run(rest)),
+        "5" => report(resource_5::run(rest)),
+        "d1-d3" => report(resource_d1_d3::run(rest)),
+        "title" => report(title_resources::run(rest)),
+        "sentou" => report(sentou_resources::run(&rest)),
+
+        "audio-engine" => match audio_engine_data::run(rest) {
+            Ok(Some(message)) => {
+                println!("{message}");
+                ExitCode::SUCCESS
+            }
+            Ok(None) => ExitCode::SUCCESS,
+            Err(error) => {
+                eprintln!("error: {error}");
+                ExitCode::FAILURE
+            }
+        },
+        "battle-effect" => report(battle_effect_data::run(rest)),
+        "runtime-support" => report(runtime_support_data::run(rest)),
+        "battle-runtime" => report(sentou_kouka_runtime::run(rest)),
+        "battle-menu" => sentou_menu_data::cli::entry(&rest),
+        "battle-screen" => sentou_gamen_data::cli::entry(&rest),
+        "battle-display" => sentou_hyouji::cli::entry(&rest),
         "message-archive" => { message_archive::cli::entry(&rest); ExitCode::SUCCESS }
         "gba-header" => gba_header::cli::entry(&rest),
         "early-runtime-data" => early_runtime_data::cli::entry(&rest),

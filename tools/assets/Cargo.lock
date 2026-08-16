@@ -3,6 +3,32 @@
 version = 4
 
 [[package]]
+name = "alchemy-bundle"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+]
+
+[[package]]
+name = "alchemy-plan"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-routing",
+]
+
+[[package]]
+name = "alchemy-routing"
+version = "0.1.0"
+
+[[package]]
+name = "alchemy-symbols"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+]
+
+[[package]]
 name = "alchemy-zlib"
 version = "0.1.0"
 
@@ -30,7 +56,9 @@ name = "assets"
 version = "0.1.0"
 dependencies = [
  "archive-asset",
+ "audio-engine-data",
  "audio-wave",
+ "battle-effect-data",
  "byte-henkan",
  "character-catalog",
  "documented",
@@ -47,20 +75,38 @@ dependencies = [
  "late-runtime-residual",
  "localization-font",
  "map-container-components",
+ "map-resources",
  "message-archive",
  "music",
  "namae-nyuuryoku",
  "pairtable",
  "remaining-survey",
  "resource-01c",
+ "resource-3ce",
+ "resource-5",
  "resource-byte-canvases",
+ "resource-d1-d3",
  "resource-directory",
+ "runtime-support-data",
+ "sentou-gamen-data",
+ "sentou-hyouji",
+ "sentou-kouka-runtime",
+ "sentou-menu-data",
+ "sentou-resources",
  "simple-resources",
  "skip-sprite-archive",
  "staff-roll",
  "static-sprite-series",
  "tilemap",
+ "title-resources",
  "wordstream",
+]
+
+[[package]]
+name = "audio-engine-data"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
 ]
 
 [[package]]
@@ -71,11 +117,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "battle-effect-data"
+version = "0.1.0"
+dependencies = [
+ "alchemy-zlib",
+ "extract-resource",
+ "import-asset",
+]
+
+[[package]]
 name = "byte-henkan"
 version = "0.1.0"
 dependencies = [
  "serde_json",
 ]
+
+[[package]]
+name = "cache-entry"
+version = "0.1.0"
 
 [[package]]
 name = "canonical-json"
@@ -91,6 +150,10 @@ dependencies = [
  "canonical-json",
  "serde_json",
 ]
+
+[[package]]
+name = "discover"
+version = "0.1.0"
 
 [[package]]
 name = "dispatch"
@@ -268,6 +331,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "map-resources"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "kind1-map-grid",
+ "map-container-components",
+ "serde_json",
+]
+
+[[package]]
 name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -293,6 +366,18 @@ version = "0.1.0"
 dependencies = [
  "extract-resource",
  "serde_json",
+]
+
+[[package]]
+name = "overlay-disasm"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "cache-entry",
+ "discover",
 ]
 
 [[package]]
@@ -339,6 +424,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "resource-3ce"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "extract-resource",
+ "overlay-disasm",
+ "serde_json",
+]
+
+[[package]]
+name = "resource-5"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "serde_json",
+]
+
+[[package]]
 name = "resource-byte-canvases"
 version = "0.1.0"
 dependencies = [
@@ -349,9 +452,74 @@ dependencies = [
 ]
 
 [[package]]
+name = "resource-d1-d3"
+version = "0.1.0"
+dependencies = [
+ "alignment-tail",
+ "canonical-json",
+ "export-asset",
+ "extract-resource",
+ "import-asset",
+ "serde_json",
+]
+
+[[package]]
 name = "resource-directory"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
+]
+
+[[package]]
+name = "runtime-support-data"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-gamen-data"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "import-asset",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-hyouji"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "import-asset",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-kouka-runtime"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-menu-data"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "import-asset",
+ "serde_json",
+]
+
+[[package]]
+name = "sentou-resources"
+version = "0.1.0"
+dependencies = [
+ "alignment-tail",
+ "extract-resource",
+ "import-asset",
  "serde_json",
 ]
 
@@ -456,6 +624,17 @@ dependencies = [
 [[package]]
 name = "tilemap"
 version = "0.1.0"
+
+[[package]]
+name = "title-resources"
+version = "0.1.0"
+dependencies = [
+ "alignment-tail",
+ "export-asset",
+ "extract-resource",
+ "import-asset",
+ "serde_json",
+]
 
 [[package]]
 name = "unicode-ident"

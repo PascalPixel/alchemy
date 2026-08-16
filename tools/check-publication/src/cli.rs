@@ -93,23 +93,23 @@ fn self_test() -> ExitCode {
         ),
         (
             "an opening conflict marker was accepted",
-            conflict_marker_reason("HANDOVER.md", b"a\n<<<<<<< HEAD\nb\n").is_some(),
+            conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some(),
         ),
         (
             "a closing conflict marker was accepted",
-            conflict_marker_reason("HANDOVER.md", b"a\n>>>>>>> topic\n").is_some(),
+            conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some(),
         ),
         (
             "the history-facing gate flagged a conflict marker",
-            publication_entry_reason("HANDOVER.md", b"x\n<<<<<<< HEAD\n").is_none(),
+            publication_entry_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none(),
         ),
         (
             "a Markdown heading underline was rejected as a conflict marker",
-            conflict_marker_reason("HANDOVER.md", b"Title\n=======\n\nbody\n").is_none(),
+            conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none(),
         ),
         (
             "a marker-like string without the separator was rejected",
-            conflict_marker_reason("HANDOVER.md", b"see <<<<<<<HEAD in the output\n").is_none(),
+            conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n").is_none(),
         ),
         (
             "a binary extension was scanned for conflict markers",

@@ -772,22 +772,22 @@ mod tests {
 
     #[test]
     fn conflict_markers_are_rejected() {
-        assert!(conflict_marker_reason("HANDOVER.md", b"a\n<<<<<<< HEAD\nb\n").is_some());
-        assert!(conflict_marker_reason("HANDOVER.md", b"a\n>>>>>>> topic\n").is_some());
+        assert!(conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some());
+        assert!(conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some());
         // The shared entry reason must not flag markers because it also scans
         // immutable outgoing history.
         assert_eq!(
-            publication_entry_reason("HANDOVER.md", b"x\n<<<<<<< HEAD\n"),
+            publication_entry_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n"),
             None
         );
         // A bare ======= is a Markdown heading underline, not a conflict.
         assert_eq!(
-            conflict_marker_reason("HANDOVER.md", b"Title\n=======\n\nbody\n"),
+            conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n"),
             None
         );
         // <<<<<<< without the trailing space is ordinary prose or a diff sample.
         assert_eq!(
-            conflict_marker_reason("HANDOVER.md", b"see <<<<<<<HEAD in the output\n"),
+            conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n"),
             None
         );
         assert_eq!(

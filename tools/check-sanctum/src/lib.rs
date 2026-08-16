@@ -509,7 +509,7 @@ mod tests {
             .unwrap()
             .parent()
             .unwrap();
-        let text = std::fs::read_to_string(root.join("SANCTUM.md")).expect("SANCTUM.md must exist");
+        let text = std::fs::read_to_string(root.join("CONTRIBUTING.md")).expect("SANCTUM.md must exist");
         let entries = parse_sealed(&text).expect("the real ledger must parse");
         let semantic = stems(root, "semantic");
         let exact = stems(root, "exact");

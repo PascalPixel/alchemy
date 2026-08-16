@@ -8,13 +8,13 @@ struct LinkState_08006240 {
     u8 transfer_error;
     u8 unknown_0a[0x0a];
     s32 send_index;
-    s32 receive_index[2];
     u8 unknown_20[8];
+    s32 receive_index[2];
     u16 *pending_send_buffer;
     u16 *send_buffer;
-    u16 *receive_buffer[2];
     u8 unknown_38[8];
     u16 *completed_receive_buffer[2];
+    u16 *receive_buffer[2];
 };
 
 /*
@@ -54,9 +54,7 @@ void Func_08006240(void)
     for (channel = 0; channel < 2; channel++) {
         s32 index = state->receive_index[channel];
 
-        if (incoming[channel] == 0xfefe && index > 13) {
-            state->receive_index[channel] = -1;
-        } else {
+        if (!(incoming[channel] == 0xfefe && index > 13)) {
             state->receive_buffer[channel][index] = incoming[channel];
             if (index == 13) {
                 u16 *buffer = state->completed_receive_buffer[channel];
@@ -66,6 +64,8 @@ void Func_08006240(void)
                 state->receive_buffer[channel] = buffer;
                 state->channel_status[channel] |= 1;
             }
+        } else {
+            state->receive_index[channel] = -1;
         }
 
         if (state->transfer_error != 0) {

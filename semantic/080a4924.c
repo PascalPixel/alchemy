@@ -152,8 +152,8 @@ void Func_080a4924(s32 window, s32 encoded_effect)
         switch (effect->category) {
         case 1:
             Func_08015080(0xb63, window, 0, row * 8);
-            row++;
             break;
+            row++;
         case 2:
             if (encoded_effect & 0x400) {
                 Func_08015080(0xb73, window, 0, row * 8);

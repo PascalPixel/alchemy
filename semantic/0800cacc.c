@@ -208,28 +208,7 @@ void Func_0800cacc(void)
 
             if (phaseSelector == 0) {
                 /* Phase A: full 3-axis accelerate/decelerate toward pushback_38. */
-                if (object->pushback_38[0] == (s32)0x80000000) {
-                    s32 vx = object->velocity_24[0];
-                    s32 vy = object->velocity_24[1];
-                    s32 vz = object->velocity_24[2];
-                    s32 speed = Func_080045d4(multiply(vx, vx) + multiply(vy, vy) + multiply(vz, vz));
-
-                    if (speed == 0) {
-                        object->velocity_24[0] = 0;
-                        object->velocity_24[1] = 0;
-                        object->velocity_24[2] = 0;
-                    } else {
-                        s32 reduced = speed - object->acceleration_34;
-                        s32 ratio;
-                        if (reduced < 0) {
-                            reduced = 0;
-                        }
-                        ratio = ratioHelper(speed, reduced);
-                        object->velocity_24[0] = multiply(vx, ratio);
-                        object->velocity_24[1] = multiply(vy, ratio);
-                        object->velocity_24[2] = multiply(vz, ratio);
-                    }
-                } else {
+                if (!(object->pushback_38[0] == (s32)0x80000000)) {
                     s32 dx = object->pushback_38[0] - newX;
                     s32 dy = object->pushback_38[1] - newY;
                     s32 dz = object->pushback_38[2] - newZ;
@@ -263,18 +242,13 @@ void Func_0800cacc(void)
                             object->velocity_24[2] = multiply(nvz, scale);
                         }
                     }
-                }
-            } else {
-                /* Phase B: horizontal-only (X/Z), dual-precision distance check. */
-                if (object->pushback_38[0] == (s32)0x80000000) {
+                } else {
                     s32 vx = object->velocity_24[0];
+                    s32 vy = object->velocity_24[1];
                     s32 vz = object->velocity_24[2];
-                    s32 speed = Func_080045d4(multiply(vx, vx) + multiply(vz, vz));
+                    s32 speed = Func_080045d4(multiply(vx, vx) + multiply(vy, vy) + multiply(vz, vz));
 
-                    if (speed == 0) {
-                        object->velocity_24[0] = 0;
-                        object->velocity_24[2] = 0;
-                    } else {
+                    if (!(speed == 0)) {
                         s32 reduced = speed - object->acceleration_34;
                         s32 ratio;
                         if (reduced < 0) {
@@ -282,9 +256,17 @@ void Func_0800cacc(void)
                         }
                         ratio = ratioHelper(speed, reduced);
                         object->velocity_24[0] = multiply(vx, ratio);
+                        object->velocity_24[1] = multiply(vy, ratio);
                         object->velocity_24[2] = multiply(vz, ratio);
+                    } else {
+                        object->velocity_24[0] = 0;
+                        object->velocity_24[1] = 0;
+                        object->velocity_24[2] = 0;
                     }
-                } else {
+                }
+            } else {
+                /* Phase B: horizontal-only (X/Z), dual-precision distance check. */
+                if (!(object->pushback_38[0] == (s32)0x80000000)) {
                     s32 dxWrapped = object->pushback_38[0] - newX;
                     s32 dzWrapped = object->pushback_38[2] - newZ;
                     s32 dist;
@@ -300,8 +282,8 @@ void Func_0800cacc(void)
                         s32 dxRaw = object->pushback_38[0] - newX;
                         s32 dzRaw = object->pushback_38[2] - newZ;
                         dist = Func_080045d4(multiply(dxRaw, dxRaw) + multiply(dzRaw, dzRaw));
-                        dxWrapped = dxRaw;
                         dzWrapped = dzRaw;
+                        dxWrapped = dxRaw;
                     }
 
                     if (dist == 0) {
@@ -320,6 +302,24 @@ void Func_0800cacc(void)
                             object->velocity_24[0] = multiply(nvx, scale);
                             object->velocity_24[2] = multiply(nvz, scale);
                         }
+                    }
+                } else {
+                    s32 vx = object->velocity_24[0];
+                    s32 vz = object->velocity_24[2];
+                    s32 speed = Func_080045d4(multiply(vx, vx) + multiply(vz, vz));
+
+                    if (speed == 0) {
+                        object->velocity_24[0] = 0;
+                        object->velocity_24[2] = 0;
+                    } else {
+                        s32 reduced = speed - object->acceleration_34;
+                        s32 ratio;
+                        if (reduced < 0) {
+                            reduced = 0;
+                        }
+                        ratio = ratioHelper(speed, reduced);
+                        object->velocity_24[0] = multiply(vx, ratio);
+                        object->velocity_24[2] = multiply(vz, ratio);
                     }
                 }
             }
@@ -434,10 +434,10 @@ void Func_0800cacc(void)
             if (lockedAxis == 16) {
                 target = object->pushback_38[0];
                 newCoord = newX;
-                if (newCoord == target) {
-                    reached = 1;
-                } else {
+                if (!(newCoord == target)) {
                     oldCoord = object->position_08[0];
+                } else {
+                    reached = 1;
                 }
             } else if (lockedAxis == 17) {
                 target = object->pushback_38[1];

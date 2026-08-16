@@ -245,12 +245,12 @@ void UpdateMenuPresentationAndOam(void) {
     s32 var_r6_11;
 
     state = *(struct MenuState_080f6440 **)0x03001F04;
-    records = state->records;
     temp_r7 = (u8 *)state;
+    records = state->records;
     workspace = *(struct PresentationWorkspace_080f6440 **)0x03001EEC;
     sp24 = (u8 *)workspace;
-    sp1C = 0x400;
     sp20 = 0;
+    sp1C = 0x400;
     Func_08004458();
     dma = (struct DmaChannel_080f6440 *)0x040000B0;
     temp_dma = (void *)dma;
@@ -260,8 +260,8 @@ void UpdateMenuPresentationAndOam(void) {
         (u16) (0x7FFF & M2C_FIELD(temp_dma, volatile u16 *, 0xA));
     (void) M2C_FIELD(temp_dma, volatile u16 *, 0xA);
     dma_source = (s32) (temp_r7 + 0x4D8);
-    dma_destination = 0x04000054;
     dma_control = 0xA2600001;
+    dma_destination = 0x04000054;
     M2C_FIELD(temp_dma, s32 *, 0) = dma_source;
     M2C_FIELD(temp_dma, s32 *, 4) = dma_destination;
     M2C_FIELD(temp_dma, s32 *, 8) = dma_control;
@@ -297,8 +297,8 @@ void UpdateMenuPresentationAndOam(void) {
     temp_r5 = M2C_FIELD(temp_r7, s32 *, 0x8C);
     if (temp_r5 == 0) {
         temp_r0 = Func_080772e0(0xE4);
-        var_fp = (s32 *)(temp_r7 + 0x98);
         Func_080150b0(temp_r0 - M2C_FIELD(temp_r7, s32 *, 0x98), 2, M2C_FIELD(temp_r7, s32 *, 0x4CC), 0x40, (s32) temp_r3);
+        var_fp = (s32 *)(temp_r7 + 0x98);
         Func_080150b0(M2C_FIELD(temp_r7, s32 *, 0x98), 2, M2C_FIELD(temp_r7, s32 *, 0x4CC), 0x40, 8);
         var_r8 = var_fp;
         if (2 & M2C_FIELD(temp_r7, u16 *, 0xA0)) {
@@ -415,10 +415,7 @@ block_35:
             }
         }
         temp_r2_2 = *sp18;
-        if (temp_r2_2 != 5) {
-            Func_08015018(M2C_FIELD(temp_r7, s32 *, 0x4C8), 1);
-            var_fp = (s32 *)(temp_r7 + 0x98);
-        } else {
+        if (!(temp_r2_2 != 5)) {
             temp_r2_3 = M2C_FIELD(temp_r7, s32 *, 0x90);
             if (temp_r2_3 == 5) {
                 if (var_r9 != 0) {
@@ -471,6 +468,9 @@ block_65:
                 M2C_FIELD(temp_r7, s32 *, 0x618) = temp_r2_2;
                 var_fp = (s32 *)(temp_r7 + 0x98);
             }
+        } else {
+            Func_08015018(M2C_FIELD(temp_r7, s32 *, 0x4C8), 1);
+            var_fp = (s32 *)(temp_r7 + 0x98);
         }
     } else if (temp_r5 == 2) {
         temp_r3_5 = M2C_FIELD(temp_r7, s32 *, 0xA8) + 1;
@@ -582,10 +582,7 @@ loop_103:
             var_r6_6 += 1;
             var_r0 += 0x1C;
         } while (var_r6_6 != 5);
-        if (var_r1_2 != 5) {
-            var_fp = (s32 *)(temp_r7 + 0x98);
-            var_r8_2 = (s32 *)(temp_r7 + 0x94);
-        } else {
+        if (!(var_r1_2 != 5)) {
             sp10 = 0;
             var_sl = 0;
             var_fp = (s32 *)(temp_r7 + 0x98);
@@ -686,6 +683,9 @@ loop_103:
                     Func_08015080(0x904, M2C_FIELD(temp_r7, s32 *, 0x4CC), 0, 0);
                 }
             }
+        } else {
+            var_fp = (s32 *)(temp_r7 + 0x98);
+            var_r8_2 = (s32 *)(temp_r7 + 0x94);
         }
         if (*sp18 == 1) {
             var_r6_9 = 0;
@@ -741,8 +741,8 @@ common_render:
     }
     if (*spC == 3) {
         var_lr = sp24;
-        temp_r3_9 = sp20 * 8;
         var_r6_11 = 0;
+        temp_r3_9 = sp20 * 8;
         var_ip = temp_r3_9 + 0xCC;
         var_r5_6 = temp_r3_9 + 0xC8;
         do {
@@ -872,8 +872,8 @@ common_render:
         var_r1_6 += 8;
         var_r5_10 += 0x10;
     } while (var_sl_2 != 7);
-    var_r6_15 = 0;
     var_fp_2 = 0x280000;
+    var_r6_15 = 0;
     var_r5_11 = temp_r7;
     do {
         temp_r3_19 = sp20 * 8;
@@ -899,8 +899,8 @@ loop_214:
         if (var_sl_3 != 7) {
             goto loop_214;
         }
-        var_r6_15 += 1;
         var_fp_2 += 0x200000;
+        var_r6_15 += 1;
         var_r5_11 += 0x1C;
     } while (var_r6_15 != 5);
     var_r4_7 = 0x28;
@@ -928,8 +928,8 @@ block_225:
     var_r1_7 = var_r0_12;
     var_r5_12 = 0;
     var_r8_5 = 0xC;
-    var_lr_2 = var_r1_7;
     var_ip_4 = temp_r3_20 + 0xC8;
+    var_lr_2 = var_r1_7;
     do {
         M2C_FIELD(temp_r7, s32 *, var_ip_4) = sp1C | var_r8_5 | 0x80CE6000;
         switch (var_r5_12) {

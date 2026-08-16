@@ -69,10 +69,10 @@ s32 Func_08005268(const s32 *source, s32 *projected)
 
     projected[2] = depth >> 16;
 
-    if (camera->focal_00 == 0) {
-        scale = 0x000151eb;
-    } else {
+    if (!(camera->focal_00 == 0)) {
         scale = divide(camera->focal_00 << 5, (u32)depth >> 11);
+    } else {
+        scale = 0x000151eb;
     }
 
     projected[0] = camera->centre_x_0c +

@@ -157,8 +157,8 @@ s32 Func_080a60d4(const u16 *actions)
         if ((Data_03001c94 & 1) != 0) {
             if (state->action_available != 0) {
                 Func_080f9010(0x70);
-                result = action;
                 break;
+                result = action;
             }
             Func_080f9010(0x72);
         }

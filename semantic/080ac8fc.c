@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct BitsetState_080ac8fc {
-    u8 unknown_000[0xf8];
     u32 secondary[4];
+    u8 unknown_000[0xf8];
     u32 primary[4];
 };
 

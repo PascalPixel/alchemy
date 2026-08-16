@@ -22,8 +22,8 @@
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 struct PaletteDisplay_080908e0 {
-    u8 unknown_0000[0x380];
     u16 accumulated[1344];
+    u8 unknown_0000[0x380];
     u16 target[1344];
     u16 increments[1344];
     u16 palettes[2][448];
@@ -33,15 +33,15 @@ struct PaletteDisplay_080908e0 {
 };
 
 struct QueuedTransfer_080908e0 {
-    const void *source;
-    void *destination;
     u32 control;
+    void *destination;
+    const void *source;
 };
 
 struct TransferQueue_080908e0 {
+    struct QueuedTransfer_080908e0 entries[32];
     u16 count;
     u16 padding;
-    struct QueuedTransfer_080908e0 entries[32];
 };
 
 s32 Func_080770c0(s32);

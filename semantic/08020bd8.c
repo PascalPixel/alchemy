@@ -202,16 +202,16 @@ s32 Func_08020bd8(s32 combatant)
         Func_080f9010(0x70);
         if (x == 18) {
             if (y == 5) {
-                if (selected_count == 0) {
+                if (!(selected_count == 0)) {
+                    for (i = 0; i < 15; i++)
+                        saved[i] = selected[i];
+                } else {
                     refresh_path = 1;
                     list_sprite->field_05 = 13;
                     Func_08016478(list_window);
                     Func_08020b64(list_window, saved);
                     refresh_path = 3;
                     Func_080030f8(10);
-                } else {
-                    for (i = 0; i < 15; i++)
-                        saved[i] = selected[i];
                 }
                 break;
             }
@@ -249,8 +249,8 @@ delete_last:
             move_list = 1;
             continue;
         }
-        result = -1;
         break;
+        result = -1;
     }
 
     Func_08016418(grid_window, 2);

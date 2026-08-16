@@ -37,16 +37,16 @@ struct Progress_080935d4 {
     u8 unknown_11a[0x22e];
     s32 factor_348;
     s32 result_34c;
-    s32 start_350;
     s32 end_354;
+    s32 start_350;
     s16 steps_358;
     s16 step_35a;
 };
 
 /* Record hanging off the resource; +0x5b is its busy byte. */
 struct Record_080935d4 {
-    u8 unknown_00[0x5b];
     u8 busy_5b;
+    u8 unknown_00[0x5b];
 };
 
 s32 Func_080022ec(s32 numerator, s32 denominator);

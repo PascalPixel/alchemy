@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct BlendState_080c10e8 {
-    u8 unknown_000[0x64e];
     u16 blend_step;
+    u8 unknown_000[0x64e];
     u16 blend_mode;
 };
 

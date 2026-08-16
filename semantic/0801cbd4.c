@@ -34,8 +34,8 @@
 typedef s32 (*Multiply_0801cbd4)(s32 a, s32 b);
 
 struct Block_0801cbd4 {
-    u8 unknown_000[0x576];
     u16 red_576;
+    u8 unknown_000[0x576];
     u16 green_578;
     u16 blue_57a;
 };

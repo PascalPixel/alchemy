@@ -79,8 +79,8 @@ s32 Func_0800dd70(struct Actor_0800dd70 *actor)
     if (radius < 0) {
         radius += 0xffff;
     }
-    radius >>= 16;
     leash = radius * radius;
+    radius >>= 16;
 
     for (attempt = 1; attempt <= 7; attempt++) {
         s32 probe[3];

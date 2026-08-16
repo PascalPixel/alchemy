@@ -46,8 +46,8 @@ u8 Func_0800615c(void *destination)
     *(volatile u16 *)0x04000208 = 1;
     Data_02002240.flags[3] = 0;
 
-    output = destination;
     stream = 0;
+    output = destination;
     do {
         u16 *table = Data_02002240.tables[stream];
         u8 *scan = (u8 *)table;

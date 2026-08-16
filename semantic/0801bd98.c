@@ -16,8 +16,8 @@ struct Config_0801bd98 {
     unsigned int clear5_6 : 2;
     u8 pad6;
     unsigned int keep7_0 : 6;
-    unsigned int set7_6 : 2;
     unsigned int value8 : 10;
+    unsigned int set7_6 : 2;
     unsigned int clear8_10 : 2;
     unsigned int clear8_12 : 4;
 };

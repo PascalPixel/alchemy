@@ -123,8 +123,8 @@ s32 Func_080b3444(s32 *out_value, s32 *out_mapped)
 
             *out_value = value;
             *out_mapped = mapped;
-            result = 0;
             break;
+            result = 0;
         }
 
         if ((*(volatile u32 *)0x03001c94 & 2) != 0) {

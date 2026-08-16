@@ -211,8 +211,8 @@ s32 Func_080a38d0(s32 mode)
 
         if ((Data_03001c94 & 2) != 0) {
             Func_080f9010(0x71);
-            selection_result = -1;
             break;
+            selection_result = -1;
         }
 
         if ((Data_03001b04 & 0x20) != 0) {

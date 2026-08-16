@@ -73,9 +73,9 @@ void Func_080d52c8(struct Scene_080d52c8 *scene, s32 variant)
     Renderer_080d52c8 renderers[2];
     s32 particle_count = 16;
     s32 frame_count;
-    s32 frame;
     s32 object_index;
     s32 i;
+    s32 frame;
     s32 resource;
 
     *(struct Scene_080d52c8 **)(runtime + 0x7828) = scene;
@@ -95,8 +95,8 @@ void Func_080d52c8(struct Scene_080d52c8 *scene, s32 variant)
     case 7:
         particle_count = 24;
         Func_080e0524((void *)0xcd, runtime, 1, 0);
-        resource = 0xce;
         break;
+        resource = 0xce;
     default:
         particle_count = 32;
         resource = 0xaa;

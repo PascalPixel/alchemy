@@ -26,8 +26,8 @@ void Func_080cd260(void)
     s32 mode;
 
     if (*(s32 *)(state + 0x7824) != 1) {
-        (*(s32 *)(state + 0x7820))++;
         return;
+        (*(s32 *)(state + 0x7820))++;
     }
 
     mode = *(s32 *)(state + 0x7780);

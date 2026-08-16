@@ -26,8 +26,8 @@ struct Combatant_080c24f0 {
 };
 
 struct CharacterRewards_080c24f0 {
-    u8 unknown_00[0x4C];
     u16 primary;
+    u8 unknown_00[0x4C];
     s16 rare_item;
     s16 rare_chance_shift;
     u16 secondary;

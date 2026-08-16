@@ -134,7 +134,7 @@ fn run(args: Vec<String>) -> Result<(), Error> {
 }
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(std::env::args().skip(1).collect()) {
+    match run(arguments.to_vec()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {
             eprintln!("error: {message}");

@@ -212,7 +212,7 @@ fn self_test() -> Result<(), String> {
 }
 
 fn run() -> Result<(), String> {
-    let mut args: Vec<String> = std::env::args().skip(1).collect();
+    let mut args: Vec<String> = arguments.to_vec();
     if args.iter().any(|a| a == "--self-test") {
         return self_test();
     }

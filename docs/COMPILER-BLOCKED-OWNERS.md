@@ -146,6 +146,20 @@ improvements; a size-constrained greedy over them gives
 `M2C_FIELD(target_state, s8, 0x135)` and `(…, s8, 0x137)`: **1961 -> 1916, size
 still exact**.
 
+**The next lead, unclaimed because of 4 bytes.** Re-running the opcode census at
+1916 leaves `ldr +63` as the dominant delta -- still the un-caching axis. A fresh
+candidate sweep against the current source finds inlining `status_141_value`
+worth **1916 -> 1772**, a 144-point jump. It costs 4 bytes: 6336, not 6332.
+Nothing among the other 34 inline candidates restores those 4 bytes without
+giving the gain back (best size-exact pairing is 2019).
+
+A state at the wrong size can never be byte-exact, so 1916 / 6332 stays the
+committed state. Claiming the 1772 needs a size-neutral partner from a DIFFERENT
+axis -- a signedness flip or declaration change that costs -4 bytes -- which
+needs a harness that searches the two axes jointly. That is the next piece of
+tooling this owner wants, and it is worth building: two independent axes each
+have improvements stranded by small size deltas.
+
 Opcode-count deltas are a *directional instrument*, not just a diagnosis. `ldrsb
 +2 / ldrb -2` named the defect class, its size, and where to look, and the
 search that followed was mechanical.

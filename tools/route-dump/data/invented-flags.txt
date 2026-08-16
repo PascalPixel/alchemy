@@ -1,0 +1,135 @@
+# Compiler options this fork invented. gcc 2.96 has none of them.
+#
+# HARD RULE: never add to this file. A byte match reached by inventing a
+# compiler option is not a reconstruction, it is a switch that hides one.
+# pret/pokeemerald builds Pokemon Emerald with ZERO invented options: its
+# per-file overrides are compiler SELECTION (old_agbcc, agbcc_arm) and
+# stock flags (-O, -O2, -mthumb-interwork, -ffreestanding). That is the
+# shape alchemy-gcc has to reach.
+#
+# This list may only SHRINK. Each entry is retired by reconstructing the
+# owners that depend on it, or by proving the behaviour is Camelot's and
+# making it unconditional in the compiler. `make standard-check` fails on
+# a routed flag that is neither stock nor listed here, and fails again on
+# an entry here that nothing routes any more.
+#
+-floop-invariant-block-head
+-fno-canonicalize-comparison
+-fno-cse-pool-immediate
+-fno-cse-shift-immediate
+-fno-cse-two-insn-immediate
+-fno-flow2-cleanup-cfg
+-fno-gcse-insert-load
+-fno-hoist-volatile-address
+-fno-reload-cse-regs
+-fno-sched-alias
+-fno-sched-depend-count
+-fno-thumb-contiguous-immediate
+-fsched-38f-call-cluster
+-fsched-call-dest-descending
+-fsched-high-dest-first
+-fsched-low-dest-first
+-fsched-store-first
+-fsextqi-minuend-base-conflict
+-fthumb-0807a664-exact
+-fthumb-3ce-value-entry-cluster
+-fthumb-arg-before-final-shift
+-fthumb-arg-before-shift-in-sheet
+-fthumb-arg0-after-split
+-fthumb-blockmove-dest-before-source
+-fthumb-boolean-r8-scratch-r2
+-fthumb-byte-orr-r5-only
+-fthumb-call-arg0-before-pool
+-fthumb-call-arg0-before-pool-pair
+-fthumb-call-arg0-before-store
+-fthumb-call-arg0-between-pool-pair
+-fthumb-call-arg0-pool-load
+-fthumb-call-arg0-reg-source
+-fthumb-call-arg1-before-arg0
+-fthumb-call-arg12-before-arg0
+-fthumb-call-argreg-before-pool
+-fthumb-call-literal-arg1-first
+-fthumb-call-literal-arg1-first-after-call
+-fthumb-call-literal-arg1-first-chained
+-fthumb-call-pool-arg1-first
+-fthumb-call-target-before-final-shift
+-fthumb-collapse-dead-scratch
+-fthumb-copy-before-add-immediate
+-fthumb-entry-frame-cluster
+-fthumb-entry-saves-descending
+-fthumb-group-control-last
+-fthumb-group-control-rematerialize
+-fthumb-group-pooled-control-last
+-fthumb-group-value1-before-base
+-fthumb-group-value1-in-place
+-fthumb-group-value2-in-place
+-fthumb-group-zero-any-register
+-fthumb-hi-immediate
+-fthumb-high-move-before-alu
+-fthumb-high-move-before-stack-store
+-fthumb-high-move-before-store
+-fthumb-hoist-add-immediate
+-fthumb-hoist-parameter-save
+-fthumb-late-frame-allocation
+-fthumb-leaf-no-lr
+-fthumb-literal-arg1-first-before-zero-pair
+-fthumb-literal-before-index-shift
+-fthumb-low-constant-before-high-move
+-fthumb-minipool-tail-first
+-fthumb-move-before-alu
+-fthumb-move-before-immediate-alu
+-fthumb-move-before-unary-alu
+-fthumb-no-constant-reuse
+-fthumb-no-if-convert
+-fthumb-order-8-0-20-args
+-fthumb-order-zero-arg1-before-nonzero-arg0
+-fthumb-orr-dead-input-reuse
+-fthumb-orr-into-older-input
+-fthumb-pool-load-base-first
+-fthumb-pool-load-before-load
+-fthumb-pool-long-call-arg0
+-fthumb-pool-r1-lsl4
+-fthumb-pool-zero-r8-after-r9
+-fthumb-postcall-byte-increment-r2
+-fthumb-return-value-before-stack-adjust
+-fthumb-rotate-orr-mask-load
+-fthumb-scene-call-sheets
+-fthumb-sched-pool-load-late
+-fthumb-shift-before-store-in-split
+-fthumb-single-arg-immediate-before-halfword-store
+-fthumb-sink-add-immediate
+-fthumb-sink-block-constant
+-fthumb-sink-constant-past-call
+-fthumb-sink-constant-past-call-args
+-fthumb-sink-constant-past-call-pair
+-fthumb-sink-constant-past-memory
+-fthumb-sink-dependent-load
+-fthumb-sink-group-pool-loads
+-fthumb-sink-load-past-store
+-fthumb-sink-past-pool-load
+-fthumb-sink-pool-load-to-use
+-fthumb-sink-stack-adjust
+-fthumb-sink-store-past-store
+-fthumb-small-shift-before-immediates
+-fthumb-split-group-base
+-fthumb-stack-args-before-stores
+-fthumb-stack-slot-before-table
+-fthumb-store-before-pool-load
+-fthumb-store-value-before-base
+-fthumb-strict-addsi-imm
+-fthumb-swap-adjacent-shifts
+-fthumb-swap-shifts-across-insn
+-fthumb-zero-r1-before-r0-load-after-8-2
+-mcall-arg0-move-first
+-mcallee-reg-order=0132
+-mearly-frame-allocation
+-mgrouped-dma-store
+-mhigh-reg-order=1203
+-mhigh-register-move-first
+-mlow-reg-order=01231230
+-mlow-reg-order=30120123
+-mlow-reg-order=32013021
+-mthumb-early-literal-pool
+-mthumb-entry-literal-first
+-mthumb-immediate-latency
+-mthumb-load-latency-one

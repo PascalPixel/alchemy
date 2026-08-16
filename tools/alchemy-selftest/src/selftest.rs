@@ -457,7 +457,10 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
         return fail("0808c30c CSE-rerun routing self-test failed");
     }
 
-    if !has(&probe.cflags(GS1, "/tmp/0801ed40.c"), "-fno-gcse")
+    // 0801ed40 was routed with -fno-gcse until it was measured compiling
+    // byte-identically without it, so the expectation is inverted rather than
+    // dropped: it must now receive the bare standard.
+    if has(&probe.cflags(GS1, "/tmp/0801ed40.c"), "-fno-gcse")
         || !has(&probe.cflags(GS1, "/tmp/080981b0.c"), "-fno-gcse")
         || !has(&probe.cflags(GS1, "/tmp/08098c08.c"), "-fno-gcse")
         || !has(&probe.cflags(GS1, "/tmp/080b3284.c"), "-fno-gcse")

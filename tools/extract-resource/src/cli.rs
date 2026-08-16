@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI entrypoint, ported from `main()` in `tools/lib/extract_resource.ts`.
 //!
 //! PORT NOTE: stdout is byte-identical to the TypeScript. Usage failures differ
@@ -8,7 +11,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use extract_resource::{decode, self_test, ResourceKind, ROM_BASE, TABLE};
+use crate::{decode, self_test, ResourceKind, ROM_BASE, TABLE};
 
 const VALUE_OPTIONS: [&str; 7] =
     ["--id", "--address", "--format", "--input-end", "--max-output", "-o", "--output"];
@@ -205,7 +208,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

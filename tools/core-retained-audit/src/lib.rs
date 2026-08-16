@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Main-image retained-assembly guard — Rust port of
 // `tools/check/core_retained_audit.ts`.
 //

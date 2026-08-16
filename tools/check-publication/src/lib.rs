@@ -16,6 +16,8 @@
 //! working directory, so every scan can be pointed at a temporary tree in
 //! tests. At the repository root the two are identical.
 
+pub mod cli;
+
 use std::path::Path;
 use std::process::Command;
 

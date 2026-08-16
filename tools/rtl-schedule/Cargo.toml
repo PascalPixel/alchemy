@@ -9,9 +9,5 @@ edition = "2021"
 name = "rtl_schedule"
 path = "src/lib.rs"
 
-[[bin]]
-name = "rtl-schedule"
-path = "src/main.rs"
-
 [dependencies]
 rtl-insn = { path = "../rtl-insn" }

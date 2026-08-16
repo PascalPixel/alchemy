@@ -1,14 +1,17 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the main-image retained-assembly guard.
 //
 //   core-retained-audit --check
 //   core-retained-audit --check --json
 //   core-retained-audit --self-test
 
-use core_retained_audit::json::stringify_pretty;
-use core_retained_audit::load::{
+use crate::json::stringify_pretty;
+use crate::load::{
     canonical_spans, executable_is_nonempty, main_inventory, manifests,
 };
-use core_retained_audit::{
+use crate::{
     audit_core_retained, normalized, AsmRegion, AuditInput, ClaimedRegion, InputPaths,
     InventoryInterval, NonCRange, Span, ROM_BASE,
 };
@@ -47,8 +50,8 @@ fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().to_path_buf()
 }
 
-fn main() -> ExitCode {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let argv: Vec<String> = arguments.to_vec();
     match run(&argv) {
         Ok(code) => code,
         Err(message) => {

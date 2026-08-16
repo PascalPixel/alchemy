@@ -1,0 +1,26 @@
+[workspace]
+
+[package]
+name = "check"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cache-entry = { path = "../cache-entry" }
+check-publication = { path = "../check-publication" }
+check-sanctum = { path = "../check-sanctum" }
+core-retained-audit = { path = "../core-retained-audit" }
+decomp-constraints = { path = "../decomp-constraints" }
+decomp-targets = { path = "../decomp-targets" }
+discover = { path = "../discover" }
+executable-gap-sources = { path = "../executable-gap-sources" }
+extract-resource = { path = "../extract-resource" }
+late-runtime-data = { path = "../late-runtime-data" }
+music-residuals = { path = "../music-residuals" }
+semantic-owner-scope = { path = "../semantic-owner-scope" }
+semantic-superseded = { path = "../semantic-superseded" }
+source-citations = { path = "../source-citations" }
+
+[[bin]]
+name = "check"
+path = "src/main.rs"

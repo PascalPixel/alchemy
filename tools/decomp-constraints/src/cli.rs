@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the assembly-constraint inference: given function stems, read
 // asm/<stem>.s, work out which permutation operators are worth trying on that
 // function, and write the record to out/decomp/constraints/<stem>.json.
@@ -8,7 +11,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use decomp_constraints::{canonical_json, infer_assembly_constraints, regex::Regex};
+use crate::{canonical_json, infer_assembly_constraints, regex::Regex};
 
 // The TypeScript derives ROOT from import.meta.url, three directories up from
 // tools/search/. CARGO_MANIFEST_DIR is tools/decomp-constraints at compile
@@ -55,8 +58,8 @@ fn parse_args(arguments: &[String]) -> Result<Command, &'static str> {
     Ok(Command::Stems(stems))
 }
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
 
     // PORT NOTE: cargo test is the real suite, but --self-test survives so the
     // repository's own gate can invoke the Rust binary exactly where it used

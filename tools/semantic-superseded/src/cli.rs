@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI for `semantic-superseded`, a port of `tools/semantic/semantic_superseded.ts`.
 //!
 //!   semantic-superseded             # print the paths, one per line
@@ -8,7 +11,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use semantic_superseded::{canonical_c_source, superseded_sources};
+use crate::{canonical_c_source, superseded_sources};
 
 const USAGE: &str = "Usage: semantic-superseded [--check | --self-test]\n\nModes:\n  (default)      Print semantic sources superseded by exact sources.\n  --check        Print matches and exit 1 when any are found.\n  --self-test    Run the superseded-source check's internal checks.\n  -h, --help     Show this help.";
 
@@ -121,8 +124,8 @@ fn self_test() {
     println!("self-test=ok");
 }
 
-fn main() -> ExitCode {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let argv: Vec<String> = arguments.to_vec();
     let command = match parse_args(&argv) {
         Ok(command) => command,
         Err(message) => {

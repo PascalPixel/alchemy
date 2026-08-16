@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! Port of the `main()` in `tools/check/source_citations.ts`.
 //!
 //!   source-citations
@@ -6,7 +9,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use source_citations::{check, self_test};
+use crate::{check, self_test};
 
 const USAGE: &str = "Usage: source-citations [--self-test]\n\nModes:\n  (default)      Validate clean-room source citations and retirements.\n  --self-test    Run the citation check's internal checks.\n  -h, --help     Show this help.";
 
@@ -36,9 +39,9 @@ fn root() -> PathBuf {
         .to_path_buf()
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     let root = root();
-    let args: Vec<String> = std::env::args().skip(1).collect();
+    let args: Vec<String> = arguments.to_vec();
     let command = match parse_args(&args) {
         Ok(command) => command,
         Err(message) => {

@@ -71,7 +71,9 @@ uniform (seven distinct shapes across the twelve overlay crates). Then strip
 
 ### B. Logic lives inside `main.rs` (~75 crates)
 
-Scripted, with auto-revert. `/tmp/extract.py` in the session that wrote this:
+Scripted, with auto-revert. The script is NOT checked in: `lang-ban` correctly
+bans non-Rust files under `tools/`, and tooling there must be a workspace crate.
+The seven steps below are the whole algorithm, so rewrite it in the scratchpad:
 
 1. move `src/main.rs` to `src/cli.rs`
 2. `fn main` becomes `pub fn entry(arguments: &[String]) -> ExitCode`
@@ -106,6 +108,11 @@ Success rate on the one real batch: 6 of 9, with 3 restored cleanly.
   `command[0]`. Linking it as a command adapter made `make build-rom` panic
   instead of failing cleanly. Read what the function DOES, never just its name.
   This is the same class of error as assuming uniform signatures.
+- **`for c in $VAR` DOES NOT WORD-SPLIT IN ZSH.** Four consecutive batches
+  reported `extracted=0` and were read four times as "these crates resist
+  extraction". Each had iterated ONCE over the entire string. Zero attempted, not
+  zero succeeded. Use an array: `B=(a b c); for c in $B`. This is the third
+  distinct zsh word-splitting failure recorded on this project.
 - **Do not run diagnostics that `rm -rf` a crate directory.** One session deleted
   three crates this way and recovered only because everything was committed.
   Diagnose on a copy under the scratchpad.

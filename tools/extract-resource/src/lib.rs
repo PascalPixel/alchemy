@@ -9,6 +9,8 @@
 //! [`DecodeError`] and, in `main.rs`, a separate usage-error path. Every
 //! message string is character-for-character identical to the former behavior.
 
+pub mod cli;
+
 use std::fmt;
 
 pub const ROM_BASE: u32 = 0x0800_0000;

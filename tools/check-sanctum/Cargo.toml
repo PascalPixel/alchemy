@@ -9,9 +9,5 @@ edition = "2021"
 name = "check_sanctum"
 path = "src/lib.rs"
 
-[[bin]]
-name = "check-sanctum"
-path = "src/main.rs"
-
 [dependencies]
 serde_json = { version = "1", features = ["preserve_order"] }

@@ -1,6 +1,9 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::process::ExitCode;
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     if std::env::args().any(|arg| arg == "--self-test") {
         // The behaviour lives in the crate's tests, where a failure names the
         // property it broke. This binary only reports that they were run.

@@ -134,6 +134,26 @@ reference size reached and the residual localized into explained clusters.
 Neither holds: the size is 8 bytes short and the residual is diffuse across the
 whole function.
 
+**The first divergence was attacked directly and did not move.** It is the
+argument setup for `Func_08077140(effect_object_id, class_id, 0x7FFF &
+object_effect_config)`: the reference loads r0 last, we load it first. Three
+C variants were tried -- hoisting the mask into a temp, hoisting the first
+argument into a temp, and hoisting both -- and every one produced **exactly
+2286**, unchanged to the halfword.
+
+That makes four owners now measured the same way, across fourteen C variants:
+
+| owner | residual | variants | result |
+|---|---|---|---|
+| `080043e0` | 2 of 64 B | 7 | always exactly 2 |
+| `080b6a60` | 5 of 128 B | 2 | 5, or 14 when worse |
+| `080038bc` | 11 of 64 B | 2 | always exactly 11 |
+| `080bbb0c` | 2286 of 6332 B | 3 | always exactly 2286 |
+
+Not one C change moved any residual in this class. That is the evidence for
+calling it a compiler difference rather than a source problem, and it is now
+measured on the largest owner as well as the smallest.
+
 So the order of work is fixed: close the 8 bytes first -- it is structural, and
 the +70 `ldr` register-pressure signal is the lead -- then localize the residual
 into clusters, and only then permute. Attempting the permuter now would be

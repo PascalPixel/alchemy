@@ -23,9 +23,5 @@ exact-reading-list = { path = "../exact-reading-list" }
 name = "overlay_published"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-published"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

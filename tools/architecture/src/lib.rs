@@ -35,6 +35,15 @@ pub struct NativeTarget {
     pub group: String,
     pub name: String,
     pub path: String,
+    /// Subcommand this entry passes to a shared binary, when several commands
+    /// are hosted by one executable.
+    ///
+    /// One binary per command was the rule while `tools/` shipped 115
+    /// executables. Consolidating a family into one binary deliberately breaks
+    /// that, so identity becomes (crate, binary, subcommand) rather than
+    /// (crate, binary): `overlay adopt` and `overlay certify` are distinct
+    /// commands that legitimately share `overlay`.
+    pub subcommand: Option<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -275,11 +284,12 @@ pub fn cargo_binary_targets(root: &Path) -> Result<Vec<CargoBinary>, String> {
 pub fn dispatch_targets() -> Vec<NativeTarget> {
     all_entries()
         .map(|(group, Entry { name, target })| {
-            let Target::Binary(path) = target;
+            let path = target.path();
             NativeTarget {
                 group: group.name().to_string(),
                 name: name.to_string(),
                 path: path.to_string(),
+                subcommand: target.prefix().map(str::to_string),
             }
         })
         .collect()
@@ -357,13 +367,24 @@ pub fn valid_dispatch_targets(
 }
 
 /// Enforce the one-to-one public/non-public classification of Cargo bins.
+
+/// True when this (crate, binary) is publicly registered under any subcommand.
+fn is_public_identity(
+    public: &BTreeMap<(String, String, Option<String>), Vec<String>>,
+    identity: &(String, String),
+) -> bool {
+    public
+        .keys()
+        .any(|(crate_name, binary, _)| crate_name == &identity.0 && binary == &identity.1)
+}
+
 pub fn classification_problems(
     cargo: &[CargoBinary],
     targets: &[NativeTarget],
     crates: &[NativeCrate],
 ) -> Vec<String> {
     let mut problems = Vec::new();
-    let mut public = BTreeMap::<(String, String), Vec<String>>::new();
+    let mut public = BTreeMap::<(String, String, Option<String>), Vec<String>>::new();
     for target in targets {
         let binary = Path::new(&target.path)
             .file_name()
@@ -372,7 +393,7 @@ pub fn classification_problems(
             .to_string();
         match target_crate(&target.path, crates) {
             Ok(crate_name) => public
-                .entry((crate_name, binary))
+                .entry((crate_name, binary, target.subcommand.clone()))
                 .or_default()
                 .push(format!("{} {}", target.group, target.name)),
             Err(error) => problems.push(format!("public classification {}: {error}", target.name)),
@@ -398,7 +419,7 @@ pub fn classification_problems(
                 target.crate_name, target.binary
             ));
         }
-        if public.contains_key(&identity) {
+        if is_public_identity(&public, &identity) {
             problems.push(format!(
                 "Cargo binary {} / {} is classified as both public and {:?}",
                 target.crate_name, target.binary, target.kind
@@ -420,7 +441,7 @@ pub fn classification_problems(
     }
     for target in cargo {
         let identity = (target.crate_name.clone(), target.binary.clone());
-        let is_public = public.contains_key(&identity);
+        let is_public = is_public_identity(&public, &identity);
         let is_non_public = non_public_target(&target.crate_name, &target.binary).is_some();
         match (is_public, is_non_public) {
             (true, false) | (false, true) => {}
@@ -435,7 +456,9 @@ pub fn classification_problems(
         }
     }
     for identity in public.keys() {
-        if !cargo_identities.contains(identity) {
+        // Stale means the (crate, binary) does not exist in Cargo metadata; the
+        // subcommand is not part of that question.
+        if !cargo_identities.contains(&(identity.0.clone(), identity.1.clone())) {
             problems.push(format!(
                 "public classification is stale: {}/{} is not in Cargo metadata",
                 identity.0, identity.1

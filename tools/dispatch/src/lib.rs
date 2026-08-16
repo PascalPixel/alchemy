@@ -17,6 +17,31 @@ pub enum Group {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Target {
     Binary(&'static str),
+    /// A binary that hosts several former tools as subcommands: (path, subcommand).
+    ///
+    /// Consolidation target. `tools/` shipped 115 executables, which nothing
+    /// could enumerate, so agents repeatedly rebuilt work that already existed.
+    /// Folding a family of tools into one binary keeps every capability while
+    /// leaving one entry point to discover.
+    Sub(&'static str, &'static str),
+}
+
+impl Target {
+    /// The binary path, whichever shape this is.
+    pub fn path(self) -> &'static str {
+        match self {
+            Target::Binary(path) => path,
+            Target::Sub(path, _) => path,
+        }
+    }
+
+    /// Arguments the dispatcher must prepend before the caller's own.
+    pub fn prefix(self) -> Option<&'static str> {
+        match self {
+            Target::Binary(_) => None,
+            Target::Sub(_, subcommand) => Some(subcommand),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -212,12 +237,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
         crate_name: "late-runtime-data",
         binary: "late-runtime-data",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "overlay-published",
-        binary: "overlay-published",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },
@@ -523,23 +542,19 @@ const OVERLAY: &[Entry] = &[
     },
     Entry {
         name: "overlay_adopt",
-        target: Target::Binary("tools/overlay-adopt/target/release/overlay-adopt"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "adopt"),
     },
     Entry {
         name: "overlay_call_order_check",
-        target: Target::Binary(
-            "tools/overlay-call-order-check/target/release/overlay-call-order-check",
-        ),
+        target: Target::Sub("tools/overlay/target/release/overlay", "call-order-check"),
     },
     Entry {
         name: "overlay_candidate_rank",
-        target: Target::Binary(
-            "tools/overlay-candidate-rank/target/release/overlay-candidate-rank",
-        ),
+        target: Target::Sub("tools/overlay/target/release/overlay", "candidate-rank"),
     },
     Entry {
         name: "overlay_certify",
-        target: Target::Binary("tools/overlay-certify/target/release/overlay-certify"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "certify"),
     },
     Entry {
         name: "overlay_disasm",
@@ -551,23 +566,23 @@ const OVERLAY: &[Entry] = &[
     },
     Entry {
         name: "overlay_entry",
-        target: Target::Binary("tools/overlay-entry/target/release/overlay-entry"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "entry"),
     },
     Entry {
         name: "overlay_gaps",
-        target: Target::Binary("tools/overlay-gaps/target/release/overlay-gaps"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "gaps"),
     },
     Entry {
         name: "overlay_inventory",
-        target: Target::Binary("tools/overlay-inventory/target/release/overlay-inventory"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "inventory"),
     },
     Entry {
         name: "overlay_mode_cohort",
-        target: Target::Binary("tools/overlay-mode-cohort/target/release/overlay-mode-cohort"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "mode-cohort"),
     },
     Entry {
         name: "overlay_show",
-        target: Target::Binary("tools/overlay-show/target/release/overlay-show"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "show"),
     },
     Entry {
         name: "overlay_showcase",
@@ -575,11 +590,11 @@ const OVERLAY: &[Entry] = &[
     },
     Entry {
         name: "overlay_twins",
-        target: Target::Binary("tools/overlay-twins/target/release/overlay-twins"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "twins"),
     },
     Entry {
         name: "overlay_unindexed",
-        target: Target::Binary("tools/overlay-unindexed/target/release/overlay-unindexed"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "unindexed"),
     },
 ];
 
@@ -712,7 +727,7 @@ fn target_identity(path: &str) -> Option<(&str, &str)> {
 
 pub fn public_target(crate_name: &str, binary: &str) -> bool {
     all_entries().any(|(_, entry)| {
-        let Target::Binary(path) = entry.target;
+        let path = entry.target.path();
         target_identity(path) == Some((crate_name, binary))
     })
 }
@@ -758,7 +773,7 @@ struct ResolvedTarget {
 }
 
 fn resolve_target(repository: &Path, target: Target) -> Result<ResolvedTarget, String> {
-    let Target::Binary(path) = target;
+    let path = target.path();
     let components: Vec<_> = Path::new(path).components().collect();
     let (manifest, binary) = match components.as_slice() {
         [std::path::Component::Normal(tools), std::path::Component::Normal(target), std::path::Component::Normal(release), std::path::Component::Normal(binary)]
@@ -818,9 +833,14 @@ fn command_plan(
     arguments: &[String],
     repository: &Path,
 ) -> Result<CommandPlan, String> {
+    let mut combined = Vec::new();
+    if let Some(subcommand) = entry.target.prefix() {
+        combined.push(subcommand.to_string());
+    }
+    combined.extend_from_slice(arguments);
     Ok(CommandPlan {
         target: resolve_target(repository, entry.target)?,
-        arguments: arguments.to_vec(),
+        arguments: combined,
     })
 }
 
@@ -828,8 +848,7 @@ fn run_child(entry: Entry, arguments: &[String], repository: &Path) -> ExitCode 
     let plan = match command_plan(entry, arguments, repository) {
         Ok(plan) => plan,
         Err(error) => {
-            let Target::Binary(binary) = entry.target;
-            eprintln!("dispatch: could not plan {binary}: {error}");
+            eprintln!("dispatch: could not plan {}: {error}", entry.target.path());
             return ExitCode::FAILURE;
         }
     };
@@ -846,8 +865,7 @@ fn run_child(entry: Entry, arguments: &[String], repository: &Path) -> ExitCode 
             .map(|code| ExitCode::from(code.clamp(0, u8::MAX as i32) as u8))
             .unwrap_or(ExitCode::FAILURE),
         Err(error) => {
-            let Target::Binary(binary) = entry.target;
-            eprintln!("dispatch: could not run {binary}: {error}");
+            eprintln!("dispatch: could not run {}: {error}", entry.target.path());
             ExitCode::FAILURE
         }
     }
@@ -937,7 +955,9 @@ mod tests {
             usage(Group::Check).lines().next(),
             Some("usage: check <subcommand> [args...]")
         );
-        assert_eq!(usage(Group::Compiler).lines().count(), 5);
+        // 4, not 5: statement-order-sweep-main was deleted once shape-sweep's
+        // descent driver absorbed its job.
+        assert_eq!(usage(Group::Compiler).lines().count(), 4);
         assert_eq!(usage(Group::Decomp).lines().count(), 5);
         assert_eq!(usage(Group::Make).lines().count(), 50);
         assert_eq!(usage(Group::Metrics).lines().count(), 7);

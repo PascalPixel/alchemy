@@ -14,9 +14,5 @@ overlay-published = { path = "../overlay-published" }
 name = "overlay_certify"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-certify"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

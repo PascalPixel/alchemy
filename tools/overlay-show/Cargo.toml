@@ -20,9 +20,5 @@ overlay-call-targets = { path = "../overlay-call-targets" }
 name = "overlay_show"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-show"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

@@ -7,6 +7,10 @@
 name = "overlay-mode-cohort"
 version = "0.1.0"
 edition = "2021"
+# `src/main.rs` stays as compile-time data for a self-test that reads its own
+# usage text via include_str!. It is no longer an entry point: this command now
+# lives in the consolidated `overlay` binary.
+autobins = false
 
 [dependencies]
 # Sibling crates, not third-party dependencies. Between them they already own
@@ -44,9 +48,6 @@ overlay-disasm = { path = "../overlay-disasm" }
 name = "overlay_mode_cohort"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-mode-cohort"
-path = "src/main.rs"
 
 [profile.release]
 opt-level = 3

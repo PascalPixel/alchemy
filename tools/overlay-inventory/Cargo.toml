@@ -27,9 +27,5 @@ serde_json = { version = "1", features = ["preserve_order"] }
 name = "overlay_inventory"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-inventory"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

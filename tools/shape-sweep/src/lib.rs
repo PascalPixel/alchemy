@@ -806,7 +806,8 @@ pub fn run(args: Vec<String>) -> Result<(), String> {
             .and_then(|v| v.parse().ok())
             .unwrap_or(40usize);
         let _ = position;
-        return descend::run_cli(&candidate, rounds);
+        let rank_halfwords = args.iter().any(|a| a == "--halfwords");
+        return descend::run_cli(&candidate, rounds, rank_halfwords);
     }
     let parsed = parse_args(&args)?;
     let ParsedArgs::Search {

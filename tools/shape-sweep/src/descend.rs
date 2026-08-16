@@ -98,6 +98,7 @@ impl Search {
         max_rounds: usize,
         plateau_budget: usize,
         permuter_seeds: usize,
+        rank_halfwords: bool,
         mut report: impl FnMut(&str),
     ) -> (String, Vec<Step>) {
         let mut current = seed.to_string();
@@ -150,7 +151,7 @@ impl Search {
             // Remember every label that improved, for the next round.
             shortlist = scored
                 .iter()
-                .filter(|(_, score)| score.distance < best.distance)
+                .filter(|(_, score)| if rank_halfwords { score.halfwords < best.halfwords } else { score.distance < best.distance })
                 .map(|(index, _)| variants[*index].label.clone())
                 .collect();
 
@@ -173,8 +174,8 @@ impl Search {
 
             let strict = scored
                 .iter()
-                .filter(|(_, score)| score.distance < best.distance)
-                .min_by_key(|(_, score)| score.distance);
+                .filter(|(_, score)| if rank_halfwords { score.halfwords < best.halfwords } else { score.distance < best.distance })
+                .min_by_key(|(_, score)| if rank_halfwords { score.halfwords } else { score.distance });
 
             if let Some((index, score)) = strict {
                 report(&format!(
@@ -215,7 +216,7 @@ impl Search {
             // a `=` prefix for plateau steps, so strip it before comparing.
             let lateral = scored
                 .iter()
-                .filter(|(_, score)| score.distance == best.distance)
+                .filter(|(_, score)| if rank_halfwords { score.halfwords == best.halfwords } else { score.distance == best.distance })
                 .find(|(index, _)| {
                     let label = &variants[*index].label;
                     !history
@@ -333,7 +334,7 @@ impl Search {
 /// metric and the one progress is measured in; `distance` is the size-independent
 /// proxy the search ranks by. They can move in opposite directions, and hiding
 /// that behind one number is how the earlier size confusion happened.
-pub fn run_cli(candidate: &str, rounds: usize) -> Result<(), String> {
+pub fn run_cli(candidate: &str, rounds: usize, rank_halfwords: bool) -> Result<(), String> {
     let root = PathBuf::from(crate::root());
     let absolute = if std::path::Path::new(candidate).is_absolute() {
         PathBuf::from(candidate)
@@ -357,7 +358,7 @@ pub fn run_cli(candidate: &str, rounds: usize) -> Result<(), String> {
         stem: stem.clone(),
         jobs: default_jobs(),
     };
-    let (best, history) = search.descend(&seed, rounds, 2, 0, |line| println!("{line}"));
+    let (best, history) = search.descend(&seed, rounds, 2, 0, rank_halfwords, |line| println!("{line}"));
     if history.is_empty() {
         println!("{stem}: no improvement");
         return Ok(());

@@ -25,7 +25,9 @@ u8 *Func_0800a97c(const u8 *source, u8 *destination)
     sentinel <<= 1;
     base = literal;
     start = destination;
-    goto apply_control;
+    command++;
+    control |= sentinel;
+    goto dispatch;
 
 back_reference:
     length = token >> 12;
@@ -46,7 +48,6 @@ shift:
         control = *command;
         sentinel = 128;
         sentinel <<= 1;
-    apply_control:
         command++;
         control |= sentinel;
     }

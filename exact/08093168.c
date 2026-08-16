@@ -16,22 +16,21 @@ void Func_08093168(s32 unused0, s32 unused1, s32 x, s32 y)
     struct State_08093168 *state = Data_03001ebc;
     s32 adjustedY = y;
     s32 adjustedX = originalX;
+    s32 minX = 8;
+    s32 minY = 20;
     s32 handle;
 
     if (adjustedY > 119)
         adjustedY += 32;
     else
         adjustedY -= 32;
-    if (8 <= originalX)
-        goto x_ok;
-    adjustedX = 8;
-x_ok:
+
+    if (originalX < minX)
+        adjustedX = minX;
     if (adjustedX > 312)
         adjustedX = 312;
-    if (20 <= adjustedY)
-        goto y_ok;
-    adjustedY = 20;
-y_ok:
+    if (adjustedY < minY)
+        adjustedY = minY;
     if (adjustedY > 220)
         adjustedY = 220;
 

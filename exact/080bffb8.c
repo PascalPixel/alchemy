@@ -16,14 +16,11 @@ s32 Func_080bffb8(void)
     bg0cnt = *(volatile u16 *)0x04000008;
     *(volatile u16 *)0x04000008 = bg0cnt | 0x40;
     reg = (volatile u16 *)0x04000008;
-    reg++;
-    bg1cnt = *reg;
+    bg1cnt = *++reg;
     *reg = bg1cnt | 0x40;
-    reg++;
-    bg2cnt = *reg;
+    bg2cnt = *++reg;
     *reg = bg2cnt | 0x40;
-    reg++;
-    bg3cnt = *reg;
+    bg3cnt = *++reg;
     *reg = bg3cnt | 0x40;
     reg += 0x21;
     *reg = 0x3eee;

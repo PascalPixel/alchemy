@@ -23,21 +23,25 @@ void Func_08015130(s32 mode);
 void Func_080babdc(s32 id)
 {
     u16 selection[2];
+    u16 *sel;
+    s32 target;
     s32 remaining;
 
     Func_08077008(id);
     Func_08009080(Func_080b7dd0(id)->object, 5);
 
+    sel = selection;
     remaining = 1;
     do {
-        selection[1] = 0xff;
-        selection[0] = id;
-        Func_080152b8(selection);
+        target = 0xff;
+        sel[1] = target;
+        sel[0] = id;
+        Func_080152b8(sel);
         Func_080ba918(Func_080b7dd0(id)->object, 7);
         Func_080030f8(2);
 
-        selection[0] = id;
-        Func_080152b8(selection);
+        sel[0] = id;
+        Func_080152b8(sel);
         Func_080ba918(Func_080b7dd0(id)->object, Func_080b6cd0(id));
         Func_080030f8(2);
         remaining--;

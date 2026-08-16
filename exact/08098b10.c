@@ -61,14 +61,13 @@ again:
         object->velocity_z = 0x30000;
         object->velocity_x = 0x30000;
         object->enabled = 0;
-        goto advance;
+        object->state++;
+        return;
     }
 
     if (state == 1) {
         if (Func_0809ba34(object) == 0) {
-            s8 *stateAddress = &object->state;
-
-            *stateAddress = *stateAddress + 1;
+            object->state++;
             goto again;
         }
         return;
@@ -87,7 +86,6 @@ again:
         object->z = value.z;
         object->scale = 0x800;
         object->enabled = 1;
-advance:
         object->state++;
         return;
     }

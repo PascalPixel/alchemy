@@ -56,6 +56,37 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### Unconditional rematerialisation: tested, too broad, and the narrower rule
+
+The obvious fix for the cse family was tried and measured on 2026-08-16, not
+left as a suggestion. `CSE_KEEP_CONSTANT_P` in `alchemy-gcc/gcc-2.96/gcc/cse.c`
+was reduced to
+
+    ((X) != 0 && CSE_CONSTANT_CLASS (X) != 0)
+
+so every constant too expensive for a single Thumb immediate is rematerialised
+rather than shared, with no option involved. The compiler was rebuilt, staged
+and admitted, and the corpus recompiled.
+
+**It works, and it is too broad.** `resource_37b_c_02001b44` compiles
+byte-exact with `-fno-cse-pool-immediate` REMOVED, which is the proof that the
+three flags are describing one real behaviour rather than three. But forcing it
+everywhere causes **217 regressions** against roughly 146 grants retired, so the
+reference does not rematerialise every expensive constant. It shares some.
+
+The root cause the agents found says where the line is. The pseudo is created by
+`precompute_register_parameters` in `calls.c`, which only runs for **call
+arguments**. A constant that is not a call argument never goes through that path,
+so it has no pseudo for `cse2` to redirect a later use to. That makes the
+candidate rule narrower than what was tested: rematerialise an expensive constant
+that is a call argument, and leave every other constant shareable. Testing that
+needs `cse.c` to know whether the value feeds a call, which the current predicate
+cannot see, so it is a real change rather than a one-line edit.
+
+Reverted; the compiler is back at digest `ed8bfc49` and verify is green. The
+experiment cost one rebuild and settled a question that had been open all
+session.
+
 ### One behaviour behind 197 flag-grants: constants are rematerialised, not shared
 
 The single largest lever found. Six routed flags -- `-fno-cse-two-insn-immediate`

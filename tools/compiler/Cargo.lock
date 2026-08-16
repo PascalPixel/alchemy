@@ -10,6 +10,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "alchemy-permuter"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-routing",
+ "candidate-compiler",
+ "overlay-disasm",
+ "shape-sweep",
+]
+
+[[package]]
 name = "alchemy-plan"
 version = "0.1.0"
 dependencies = [
@@ -26,6 +37,23 @@ name = "alchemy-symbols"
 version = "0.1.0"
 dependencies = [
  "alchemy-routing",
+]
+
+[[package]]
+name = "audit-residuals"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "bl-site-symbols"
+version = "0.1.0"
+dependencies = [
+ "overlay-disasm",
+ "serde_json",
 ]
 
 [[package]]
@@ -66,15 +94,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "canonical-json"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
 name = "compiler"
 version = "0.1.0"
 dependencies = [
+ "alchemy-permuter",
+ "audit-residuals",
+ "bl-site-symbols",
  "candidate-explain",
  "candidate-show",
+ "dashboard-server",
  "mode-sweep",
+ "rtl-align",
+ "rtl-insn",
+ "rtl-schedule",
+ "rtl-sexpr",
  "search-compiler-modes",
  "shape-sweep",
  "thumb-disasm",
+]
+
+[[package]]
+name = "coverage-map"
+version = "0.1.0"
+
+[[package]]
+name = "dashboard-server"
+version = "0.1.0"
+dependencies = [
+ "coverage-map",
 ]
 
 [[package]]
@@ -226,6 +280,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba"
 dependencies = [
  "serde_core",
+ "serde_derive",
 ]
 
 [[package]]

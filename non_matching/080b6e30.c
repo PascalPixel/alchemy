@@ -11,14 +11,13 @@ s32 Func_080b6e30(s32 value)
 
     base = *(u8 **)0x03001e74;
     index = 0;
-    offset = 4;
     do {
+        offset = index * 2 + 4;
         item = *(s16 *)(offset + (u32)base);
         if (item == value) {
             Func_08009270(index, 0, 0, 0);
             *(s16 *)(offset + (u32)base) = 0;
         }
-        offset += 2;
         index++;
     } while (index <= 5);
 }

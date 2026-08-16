@@ -10,18 +10,21 @@ s32 Func_080b8824(s16 *unused)
 {
     s16 values[14];
     s32 count;
+    s32 shown;
     s32 index;
 
     (void)unused;
     if (((u32)(Func_08004458() << 4) >> 16) != 0) {
         count = Func_080b6b40(1, values);
-        index = 0;
+        shown = 0;
         if (count != 0) {
+            index = 0;
             do {
                 Func_080b8064(values[index]);
-                index++;
+                shown++;
                 Func_080030f8(8);
-            } while (index != count);
+                index++;
+            } while (shown != count);
         }
         Func_080030f8(22);
         return 1;

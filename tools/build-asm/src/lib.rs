@@ -1,5 +1,7 @@
 //! Assemble retained source regions and emit their classified manifest.
 
+pub mod cli;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;

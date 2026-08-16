@@ -5,7 +5,7 @@ use crate::{build_semantic, repository_root, self_test};
 
 const USAGE: &str = "usage: build-semantic [--self-test]";
 
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+pub fn entry(arguments: &[String]) {
     let arguments: Vec<String> = arguments.to_vec();
     if arguments.as_slice() == ["-h"] || arguments.as_slice() == ["--help"] {
         println!("{USAGE}");

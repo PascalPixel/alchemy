@@ -29,6 +29,33 @@ fn main() {
     if options.overlays {
         let root = alchemy_routing::routing::root();
         let cache = std::path::Path::new(&options.cache).join("overlays");
+        // --per-flag asks the narrower question: of a multi-flag owner's
+        // routed flags, which ones does it not actually need?
+        if options.per_flag {
+            match compiler_corpus_regression::overlays::run_per_flag(root, &cache) {
+                Ok(verdicts) => {
+                    let mut redundant = 0usize;
+                    let mut unmeasured = 0usize;
+                    for (flag, verdict) in &verdicts {
+                        if verdict.note.is_some() {
+                            unmeasured += 1;
+                            continue;
+                        }
+                        if !verdict.load_bearing {
+                            redundant += 1;
+                            println!("REDUNDANT {} {flag}", verdict.source);
+                        }
+                    }
+                    println!(
+                        "overlay per-flag: tested={} redundant={redundant} load_bearing={} unmeasured={unmeasured}",
+                        verdicts.len(),
+                        verdicts.len() - redundant - unmeasured
+                    );
+                    std::process::exit(0);
+                }
+                Err(message) => fail(&message),
+            }
+        }
         // With --flags, the question flips from "is this owner's routing
         // load-bearing" to "would promoting these flags into the overlay
         // baseline break an owner that does not carry them".

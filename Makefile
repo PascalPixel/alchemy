@@ -172,7 +172,7 @@ showcase:
 compiler-checks: compiler-sweep compiler-cohort overlay-compiler-cohort compiler-corpus compiler-batch
 
 compiler-sweep:
-	$(CARGO_RUN) $(TOOLS)/mode-sweep/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- mode-sweep --self-test
 
 compiler-cohort:
 	$(CARGO_RUN) $(TOOLS)/mode-cohort/Cargo.toml -- --self-test
@@ -184,14 +184,14 @@ compiler-corpus:
 	$(CARGO_RUN) $(TOOLS)/compiler-corpus-regression/Cargo.toml --bin compiler-corpus-regression -- --self-test
 
 compiler-batch:
-	$(CARGO_RUN) $(TOOLS)/search-compiler-modes/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- search-modes --self-test
 
 overlay-candidate-check:
 	$(CARGO_RUN) $(TOOLS)/overlay-candidate-rank/Cargo.toml -- --self-test
 
 # Statement-order permutation now lives in shape-sweep's descent driver.
 statement-order-check:
-	$(CARGO_RUN) $(TOOLS)/shape-sweep/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- shape-sweep --self-test
 
 compiler-lint:
 	$(CARGO_RUN) $(TOOLS)/alchemy-lints/Cargo.toml --
@@ -203,7 +203,7 @@ compiler-self-test:
 # tests and 3 self-tests sat failing against flags deleted by the axe.
 CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
                compiler-corpus-regression mode-sweep alchemy-selftest \
-               shape-sweep
+               shape-sweep dispatch
 
 crate-tests:
 	@for c in $(CRATE_TESTS); do \

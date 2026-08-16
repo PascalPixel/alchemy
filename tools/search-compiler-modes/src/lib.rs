@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Pure core of the batch front-end for the compiler configuration explorer
 // (tools/search/search_compiler_modes.ts).
 //

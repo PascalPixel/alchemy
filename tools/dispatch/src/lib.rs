@@ -125,7 +125,7 @@ const COMPILER: &[Entry] = &[
     },
     Entry {
         name: "mode_sweep",
-        target: Target::Binary("tools/mode-sweep/target/release/mode-sweep"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "mode-sweep"),
     },
 ];
 
@@ -561,11 +561,11 @@ const SEARCH: &[Entry] = &[
     },
     Entry {
         name: "search_compiler_modes",
-        target: Target::Binary("tools/search-compiler-modes/target/release/search-compiler-modes"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "search-modes"),
     },
     Entry {
         name: "shape_sweep",
-        target: Target::Binary("tools/shape-sweep/target/release/shape-sweep"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "shape-sweep"),
     },
 ];
 

@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! Run the two toolchain-free lints over the tree.
 //!
 //!   alchemy-lints                       both
@@ -9,7 +12,7 @@
 
 use std::process::ExitCode;
 
-use alchemy_lints::{flag_capability, repository_root, stem_collision, Report};
+use crate::{flag_capability, repository_root, stem_collision, Report};
 
 fn print(report: &Report) {
     println!("== {}", report.lint);
@@ -28,9 +31,9 @@ fn print(report: &Report) {
     println!("  {}", if report.ok() { "ok" } else { "FAILED" });
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> ExitCode {
     let root = repository_root();
-    let wanted: Vec<String> = std::env::args().skip(1).collect();
+    let wanted: Vec<String> = arguments.to_vec();
     let selected = |name: &str| wanted.is_empty() || wanted.iter().any(|one| one == name);
 
     let mut reports = Vec::new();

@@ -11,7 +11,3 @@ alchemy-routing = { path = "../alchemy-routing" }
 [lib]
 name = "alchemy_lints"
 path = "src/lib.rs"
-
-[[bin]]
-name = "alchemy-lints"
-path = "src/main.rs"

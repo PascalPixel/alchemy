@@ -11,7 +11,3 @@ path = "src/lib.rs"
 [dependencies]
 documented = { path = "../documented" }
 dispatch = { path = "../dispatch" }
-
-[[bin]]
-name = "architecture"
-path = "src/main.rs"

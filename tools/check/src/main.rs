@@ -28,6 +28,9 @@ const COMMANDS: &[(&str, &str)] = &[
     ("check-commit-progress", "check commit progress"),
     ("coverage-map", "refresh the dashboard coverage maps"),
     ("byte-value-regions", "byte value regions"),
+    ("architecture", "architecture"),
+    ("alchemy-lints", "alchemy lints"),
+    ("jobs", "jobs"),
 ];
 
 fn main() -> ExitCode {
@@ -40,6 +43,9 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "architecture" => { architecture::cli::entry(&rest); ExitCode::SUCCESS }
+        "alchemy-lints" => { alchemy_lints::cli::entry(&rest); ExitCode::SUCCESS }
+        "jobs" => { jobs::cli::entry(&rest); ExitCode::SUCCESS }
         "byte-value-regions" => { byte_value_regions::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "coverage-map" => { coverage_map::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "lang-ban" => lang_ban::cli::entry(&rest),

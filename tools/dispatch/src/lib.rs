@@ -53,7 +53,7 @@ pub struct Entry {
 const CHECK: &[Entry] = &[
     Entry {
         name: "architecture",
-        target: Target::Binary("tools/architecture/target/release/architecture"),
+        target: Target::Sub("tools/check/target/release/check", "architecture"),
     },
     Entry {
         name: "cache_key_lint",
@@ -151,12 +151,6 @@ pub struct NonPublicTarget {
 /// them to become accidental commands when a manifest gains a new target.
 const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
-        crate_name: "alchemy-lints",
-        binary: "alchemy-lints",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: false,
-    },
-    NonPublicTarget {
         crate_name: "zlib",
         binary: "alchemy-zlib",
         kind: NonPublicKind::InternalDiagnostic,
@@ -165,12 +159,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
         crate_name: "route-dump",
         binary: "route-dump",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "jobs",
-        binary: "jobs",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },

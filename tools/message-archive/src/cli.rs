@@ -1534,7 +1534,7 @@ mod tests {
     // --- whole-archive round trip against the real ROM ----------------------
 
     fn rom() -> Option<Vec<u8>> {
-        std::fs::read(repository_root().join("baserom.gba")).ok()
+        std::fs::read(repository_root().join("roms/gs1-en.gba")).ok()
     }
 
     #[test]

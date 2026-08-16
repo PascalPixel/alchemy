@@ -548,7 +548,7 @@ pub fn self_test() -> Result<(), Error> {
         .and_then(Path::parent)
         .unwrap();
     let plan = root.join("assets/graphics/resource_01c_stream.json");
-    let rom = root.join("baserom.gba");
+    let rom = root.join("roms/gs1-en.gba");
     if plan.is_file() && rom.is_file() {
         verify_resource_01c(&rom, &plan)?;
     }
@@ -566,7 +566,7 @@ mod tests {
             .and_then(Path::parent)
             .unwrap();
         let plan = root.join("assets/graphics/resource_01c_stream.json");
-        let rom = root.join("baserom.gba");
+        let rom = root.join("roms/gs1-en.gba");
         let result = verify_resource_01c(&rom, &plan).expect("resource 01c parity");
         assert_eq!(result, "identical=true glyphs=36 source_bytes=692");
     }

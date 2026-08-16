@@ -726,7 +726,7 @@ mod tests {
             .and_then(Path::parent)
             .unwrap();
         let result =
-            verify_title_resources(&root.join("baserom.gba"), &root.join("assets/graphics"))
+            verify_title_resources(&root.join("roms/gs1-en.gba"), &root.join("assets/graphics"))
                 .unwrap();
         assert_eq!(result, "identical=true resources=3 source=65327 fallback=1");
     }

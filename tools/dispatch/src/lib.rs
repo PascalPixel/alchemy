@@ -61,7 +61,7 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "check_commit_progress",
-        target: Target::Binary("tools/check-commit-progress/target/release/check-commit-progress"),
+        target: Target::Sub("tools/check/target/release/check", "check-commit-progress"),
     },
     Entry {
         name: "check_publication",
@@ -151,12 +151,6 @@ pub struct NonPublicTarget {
 /// them to become accidental commands when a manifest gains a new target.
 const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
-        crate_name: "route-dump",
-        binary: "route-dump",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "alchemy-lints",
         binary: "alchemy-lints",
         kind: NonPublicKind::InternalDiagnostic,
@@ -171,6 +165,12 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
         crate_name: "candidate-explain",
         binary: "candidate-explain",
+        kind: NonPublicKind::InternalDiagnostic,
+        self_test: true,
+    },
+    NonPublicTarget {
+        crate_name: "route-dump",
+        binary: "route-dump",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },
@@ -191,12 +191,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         binary: "jobs",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "lang-ban",
-        binary: "lang-ban",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: false,
     },
     NonPublicTarget {
         crate_name: "overlay-disasm",
@@ -358,7 +352,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "message_archive",
-        target: Target::Binary("tools/message-archive/target/release/message_archive"),
+        target: Target::Sub("tools/assets/target/release/assets", "message-archive"),
     },
     Entry {
         name: "music",
@@ -967,7 +961,7 @@ mod tests {
         assert_eq!(
             resolve_target(
                 Path::new("/repo"),
-                Target::Binary("tools/message-archive/target/release/message_archive")
+                Target::Sub("tools/assets/target/release/assets", "message-archive")
             ),
             Ok(ResolvedTarget {
                 manifest: PathBuf::from("/repo/tools/message-archive/Cargo.toml"),
@@ -1008,7 +1002,7 @@ mod tests {
         let plan = command_plan(
             Entry {
                 name: "message_archive",
-                target: Target::Binary("tools/message-archive/target/release/message_archive"),
+                target: Target::Sub("tools/assets/target/release/assets", "message-archive"),
             },
             &["--self-test".to_string(), "extra value".to_string()],
             Path::new("/repo"),

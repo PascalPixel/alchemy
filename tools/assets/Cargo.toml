@@ -41,6 +41,7 @@ gba-header = { path = "../gba-header" }
 early-runtime-data = { path = "../early-runtime-data" }
 export-asset = { path = "../export-asset" }
 import-asset = { path = "../import-asset" }
+message-archive = { path = "../message-archive" }
 
 [[bin]]
 name = "assets"

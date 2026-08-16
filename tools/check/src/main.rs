@@ -24,6 +24,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("no-asm-c", "no asm c"),
     ("compare-roms", "compare roms"),
     ("semantic-queue", "semantic queue"),
+    ("lang-ban", "lang ban"),
+    ("check-commit-progress", "check commit progress"),
 ];
 
 fn main() -> ExitCode {
@@ -36,6 +38,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "lang-ban" => lang_ban::cli::entry(&rest),
+        "check-commit-progress" => check_commit_progress::cli::entry(&rest),
         "compare-roms" => { compare_roms::cli::entry(&rest); ExitCode::SUCCESS }
         "semantic-queue" => { semantic_queue::cli::entry(&rest); ExitCode::SUCCESS }
         "cache-key-lint" => cache_key_lint::cli::entry(&rest),

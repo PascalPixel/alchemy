@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
@@ -208,8 +211,8 @@ fn self_test() -> Result<(), String> {
     Ok(())
 }
 
-fn run() -> Result<(), String> {
-    let mut args: Vec<String> = std::env::args().skip(1).collect();
+fn run(arguments: &[String]) -> Result<(), String> {
+    let mut args: Vec<String> = arguments.to_vec();
     if args.iter().any(|a| a == "--self-test") {
         return self_test();
     }
@@ -245,8 +248,8 @@ fn run() -> Result<(), String> {
     check(&message, &metric)
 }
 
-fn main() -> ExitCode {
-    match run() {
+pub fn entry(arguments: &[String]) -> ExitCode {
+    match run(arguments) {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             eprintln!("error: {e}");

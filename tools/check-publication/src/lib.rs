@@ -282,6 +282,44 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
     ))
 }
 
+
+/// The only markdown files this repository keeps.
+///
+/// 31 markdown files were collapsed into one because agents did not read any of
+/// them, for the same reason they did not find 121 separate tool binaries: a
+/// surface nobody can enumerate is a surface nobody opens. Letting new ones
+/// accumulate rebuilds the problem one file at a time.
+pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md", "AGENTS.md", "CLAUDE.md"];
+
+/// Reject NEW `.txt` and `.md` files. Existing ones keep working: the rule is
+/// about growth, not about the ten data files already tracked.
+///
+/// `tracked` is the set of paths already in HEAD.
+pub fn new_text_file_reason(path: &str, tracked: &std::collections::BTreeSet<String>) -> Option<String> {
+    let suffix = extension(path);
+    if suffix != "txt" && suffix != "md" {
+        return None;
+    }
+    if tracked.contains(path) {
+        return None;
+    }
+    if suffix == "md" {
+        if ALLOWED_MARKDOWN.contains(&path) {
+            return None;
+        }
+        return Some(format!(
+            "new markdown file {path}: this repository keeps exactly four \
+             (README.md, CONTRIBUTING.md, AGENTS.md, CLAUDE.md). Put the content \
+             in CONTRIBUTING.md, which is the single shared document"
+        ));
+    }
+    Some(format!(
+        "new text file {path}: notes and scratch output do not belong in the tree. \
+         Put durable content in CONTRIBUTING.md and transient output in the \
+         scratch directory"
+    ))
+}
+
 /// Why a staged or committed entry may not be published, or `None`.
 pub fn publication_entry_reason(path: &str, data: &[u8]) -> Option<String> {
     if let Some(reason) = publication_path_reason(path) {
@@ -425,10 +463,29 @@ impl Entry<'_> {
     }
 }
 
+/// Paths already in HEAD, so the new-text-file rule only fires on growth.
+fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
+    // ls-files reads the INDEX, which already contains the file being staged, so
+    // every new file would look tracked and the rule would never fire. Read HEAD.
+    git(root, &["ls-tree", "-r", "HEAD", "--name-only"], None, "tracked path scan")
+        .map(|out| {
+            String::from_utf8_lossy(&out)
+                .lines()
+                .map(str::to_string)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
 /// The shared reject pass. Failure order follows entry order.
 pub fn reject(entries: &[Entry]) -> Result<(), String> {
     let mut failures: Vec<String> = Vec::new();
+    let tracked = tracked_paths(Path::new("."));
     for entry in entries {
+        if let Some(reason) = new_text_file_reason(&entry.path, &tracked) {
+            failures.push(format!("{} {reason}", entry.scope));
+            continue;
+        }
         if let Some(reason) = publication_path_reason(&entry.path) {
             failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
             continue;

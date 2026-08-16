@@ -790,6 +790,24 @@ fn attempt_candidate(
 }
 
 pub fn run(args: Vec<String>) -> Result<(), String> {
+    // `--descend` runs the iterative driver merged in from reverse-gcc296. It was
+    // in the crate but unreachable from the CLI, which is the same "exists but
+    // nobody can find it" failure this consolidation exists to fix.
+    if let Some(position) = args.iter().position(|a| a == "--descend") {
+        let candidate = args
+            .iter()
+            .find(|a| !a.starts_with("--") && a.ends_with(".c"))
+            .cloned()
+            .ok_or_else(|| "usage: shape-sweep --descend CANDIDATE [--rounds N]".to_string())?;
+        let rounds = args
+            .iter()
+            .position(|a| a == "--rounds")
+            .and_then(|i| args.get(i + 1))
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(40usize);
+        let _ = position;
+        return descend::run_cli(&candidate, rounds);
+    }
     let parsed = parse_args(&args)?;
     let ParsedArgs::Search {
         candidate,

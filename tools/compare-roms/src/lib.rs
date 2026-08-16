@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Why this exists: the decompilation loop needs a cheap, honest answer to "how
 // close is this build to the reference ROM?" that survives code motion. A plain
 // same-offset byte diff collapses to noise the moment a function changes size,

@@ -205,12 +205,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: false,
     },
     NonPublicTarget {
-        crate_name: "thumb-disasm",
-        binary: "thumb-disasm",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "dispatch",
         binary: "dispatch",
         kind: NonPublicKind::SelfTestSupport,
@@ -467,7 +461,7 @@ const METRICS: &[Entry] = &[
     },
     Entry {
         name: "compare_roms",
-        target: Target::Binary("tools/compare-roms/target/release/compare-roms"),
+        target: Target::Sub("tools/check/target/release/check", "compare-roms"),
     },
     Entry {
         name: "coverage_map",
@@ -475,7 +469,7 @@ const METRICS: &[Entry] = &[
     },
     Entry {
         name: "dashboard_server",
-        target: Target::Binary("tools/dashboard-server/target/release/dashboard-server"),
+        target: Target::Sub("tools/dev/target/release/dev", "dashboard-server"),
     },
     Entry {
         name: "full_c_history",
@@ -576,7 +570,7 @@ const SEMANTIC: &[Entry] = &[
     },
     Entry {
         name: "semantic_queue",
-        target: Target::Binary("tools/semantic-queue/target/release/semantic-queue"),
+        target: Target::Sub("tools/check/target/release/check", "semantic-queue"),
     },
     Entry {
         name: "semantic_superseded",

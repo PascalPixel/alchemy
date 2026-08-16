@@ -16,6 +16,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("permute", "bounded C permutation search over a candidate"),
     ("residuals", "audit remaining residual bytes"),
     ("bl-symbols", "report bl call-site symbols"),
+    ("dashboard-server", "dashboard server"),
 ];
 
 fn text(result: Result<String, String>) -> ExitCode {
@@ -50,6 +51,7 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "dashboard-server" => { dashboard_server::cli::entry(&rest); ExitCode::SUCCESS }
         "residuals" => text(audit_residuals::run(&rest)),
         "bl-symbols" => text(bl_site_symbols::run(&rest).map_err(|e| e.to_string())),
         "permute" => match alchemy_permuter::run(rest) {

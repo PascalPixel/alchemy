@@ -192,12 +192,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         kind: NonPublicKind::BenchAuxiliary,
         self_test: false,
     },
-    NonPublicTarget {
-        crate_name: "integrate-matches",
-        binary: "integrate-matches-bench",
-        kind: NonPublicKind::BenchAuxiliary,
-        self_test: false,
-    },
 ];
 
 const DECOMP: &[Entry] = &[
@@ -211,7 +205,7 @@ const DECOMP: &[Entry] = &[
     },
     Entry {
         name: "integrate_matches",
-        target: Target::Binary("tools/integrate-matches/target/release/integrate-matches"),
+        target: Target::Sub("tools/check/target/release/check", "integrate-matches"),
     },
     Entry {
         name: "remaining_survey",
@@ -909,7 +903,7 @@ mod tests {
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
-        assert_eq!(non_public_targets().len(), 8);
+        assert_eq!(non_public_targets().len(), 7);
         assert_eq!(
             // candidate-explain is now a `compiler` subcommand, not a
             // standalone diagnostic.

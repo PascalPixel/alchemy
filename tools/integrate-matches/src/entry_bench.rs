@@ -1,3 +1,5 @@
+//! CLI moved out of src/bin so this command can be linked.
+
 //! Decomposed benchmark: whole-process, interpreter startup, and the work with
 //! startup subtracted.
 //!
@@ -7,10 +9,10 @@
 
 use std::time::Instant;
 
-use integrate_matches::pipeline::run_pipeline;
+use crate::pipeline::run_pipeline;
 
-fn main() {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let arguments: Vec<String> = arguments.to_vec();
     let Some(directory) = arguments.first() else {
         eprintln!("usage: integrate-matches-bench <directory> [repeats]");
         std::process::exit(2);

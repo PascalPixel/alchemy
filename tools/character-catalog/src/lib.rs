@@ -5,6 +5,8 @@
 //! is deliberately kept dynamic here because the tracked schema uses tuples
 //! for commands, labels, and directory entries.
 
+pub mod cli;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 

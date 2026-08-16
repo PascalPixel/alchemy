@@ -1,3 +1,5 @@
+pub mod cli;
+
 // A stream of little-endian u16 words as text, one `0xNNNN` per line.
 //
 // Ported from tools/make/wordstream.ts. The numeric-literal grammar is shared

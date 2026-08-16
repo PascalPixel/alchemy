@@ -9,10 +9,6 @@ edition = "2021"
 name = "staff_roll"
 path = "src/lib.rs"
 
-[[bin]]
-name = "staff-roll"
-path = "src/main.rs"
-
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 import-asset = { path = "../import-asset" }

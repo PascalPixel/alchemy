@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-use pairtable::{export_pairs, import_pairs};
+use crate::{export_pairs, import_pairs};
 
 fn self_test() -> Result<(), String> {
     let raw: Vec<u8> = [0u16, 1, 0x1234, 0xabcd, 0xffff, 2]
@@ -60,7 +63,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

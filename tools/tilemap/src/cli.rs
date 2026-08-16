@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::path::Path;
 use std::process::ExitCode;
 
-use tilemap::{export_tilemap, import_tilemap};
+use crate::{export_tilemap, import_tilemap};
 
 fn value(args: &[String], name: &str) -> Result<String, String> {
     let index = args
@@ -73,7 +76,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

@@ -9,10 +9,6 @@ edition = "2021"
 name = "indexed_still"
 path = "src/lib.rs"
 
-[[bin]]
-name = "indexed-still"
-path = "src/main.rs"
-
 [dependencies]
 export-asset = { path = "../export-asset" }
 generated-files = { path = "../generated-files" }

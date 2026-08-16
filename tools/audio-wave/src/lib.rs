@@ -20,6 +20,8 @@
 //! the only message that has no TS counterpart, and it is unreachable for any
 //! input the TS would have accepted on a 64-bit host.
 
+pub mod cli;
+
 /// A manifest scalar: JSON gives these as either a string or a number, exactly
 /// like the TS `string | number` unions.
 #[derive(Debug, Clone, PartialEq)]

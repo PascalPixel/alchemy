@@ -1,0 +1,24 @@
+# Bare `[workspace]`: independently buildable, like every other tool crate.
+[workspace]
+
+[package]
+name = "assets"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Archival extractors, now linked as libraries. They are the provenance record
+# for committed assets, so they must survive; they simply do not need to be
+# separate executables. See docs/ENTRY-POINTS.md.
+tilemap = { path = "../tilemap" }
+wordstream = { path = "../wordstream" }
+pairtable = { path = "../pairtable" }
+indexed-still = { path = "../indexed-still" }
+encounter-data = { path = "../encounter-data" }
+character-catalog = { path = "../character-catalog" }
+staff-roll = { path = "../staff-roll" }
+audio-wave = { path = "../audio-wave" }
+
+[[bin]]
+name = "assets"
+path = "src/main.rs"

@@ -20,18 +20,13 @@ void *Func_080b7f70(struct Fields_080b7f70 *, s32);
 
 struct Record_080ba918 *Func_080ba918(void *object, s32 value)
 {
-    u32 first_mask;
-    void *saved_object;
-    s32 saved_value;
     s32 object_index;
     struct Record_080ba918 *record;
+    u32 first_mask;
 
-    first_mask = (u8)((u32)object | ~(u32)object);
-    saved_object = (void *)((u32)object +
-        (((u32)object | ~(u32)object) + 1));
-    saved_value = value + (((u32)object | ~(u32)object) + 1);
     object_index = 0;
-    while ((record = Func_080b7f70(saved_object, object_index)) != NULL) {
+    first_mask = 0xff;
+    while ((record = Func_080b7f70(object, object_index)) != NULL) {
         struct Child_080ba918 *child;
         struct Child_080ba918 **children;
         s32 child_count;
@@ -43,7 +38,7 @@ struct Record_080ba918 *Func_080ba918(void *object, s32 value)
         children = record->children;
         child->flags |= first_mask;
         child_count = record->child_count;
-        child->value = saved_value;
+        child->value = value;
         if (child_count > 1) {
             zero = 0;
             inner_mask = 0xff;

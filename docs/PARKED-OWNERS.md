@@ -57,6 +57,24 @@ of `-1` (`-1`, `~0`, `0xFFFFFFFF`). **Every one produced exactly
 `differing_halfwords=2`.** The residual is invariant to C shape, which is what
 identifies it as a scheduler decision rather than a source problem.
 
+## All three workable owners tested by hand, same answer
+
+The first workflow left eleven owners reverted. One (`0800be70`) was later
+recovered; seven are store-multiple, above. The remaining **three were each
+worked by hand**, and every one is invariant to C shape:
+
+| owner | residual | variants tried | best result |
+|---|---|---|---|
+| `080043e0` | 2 of 64 bytes | 7 -- four declaration orderings, index hoisting, three spellings of `-1` | **always exactly 2** |
+| `080b6a60` | 5 of 128 bytes | 2 -- decrement into the `while` condition, decrement moved earlier | 5, or 14 (worse) |
+| `080038bc` | 11 of 64 bytes | 2 -- constant referenced in the other order, inner scope removed | **always exactly 11** |
+
+In every case the candidate and reference contain the *same instructions* in a
+different order, and `080038bc` additionally swaps two literal-pool words.
+Nothing expressible in C moved any of them. Three owners, eleven variants, zero
+change in residual: that is what identifies this class as scheduling rather than
+source, and it is why a fourth reconstruction pass is not the answer.
+
 ## What would actually move these
 
 Not another reconstruction pass -- two have run, recovering 4 owners against 42

@@ -1,0 +1,19 @@
+# Bare `[workspace]`: this crate is an independently buildable workspace
+# rather than a member of the aggregate tools workspace.
+[workspace]
+
+[package]
+name = "reverse-gcc296"
+version = "0.1.0"
+edition = "2021"
+
+# No dependencies. The scorer shells out to the already-built `candidate-show`
+# and to the ARM objdump, both of which the repository already requires.
+
+[lib]
+name = "reverse_gcc296"
+path = "src/lib.rs"
+
+[[bin]]
+name = "reverse-gcc296"
+path = "src/bin/reverse_gcc296.rs"

@@ -201,7 +201,8 @@ compiler-self-test:
 # Tool-crate unit tests. Nothing ran these before, which is how 14 routing
 # tests and 3 self-tests sat failing against flags deleted by the axe.
 CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
-               compiler-corpus-regression mode-sweep alchemy-selftest
+               compiler-corpus-regression mode-sweep alchemy-selftest \
+               reverse-gcc296
 
 crate-tests:
 	@for c in $(CRATE_TESTS); do \

@@ -409,7 +409,7 @@ const METRICS: &[Entry] = &[
     },
     Entry {
         name: "full_c_progress",
-        target: Target::Binary("tools/full-c-progress/target/release/full-c-progress"),
+        target: Target::Sub("tools/check/target/release/check", "progress"),
     },
 ];
 

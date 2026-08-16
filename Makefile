@@ -150,13 +150,13 @@ sanctum:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- check-sanctum
 
 progress:
-	$(CARGO_RUN) $(TOOLS)/full-c-progress/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- progress
 
 progress-check:
-	$(CARGO_RUN) $(TOOLS)/full-c-progress/Cargo.toml -- --check
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- progress --check
 
 progress-subject:
-	$(CARGO_RUN) $(TOOLS)/full-c-progress/Cargo.toml -- --subject
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- progress --subject
 
 progress-history:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- full-c-history --write

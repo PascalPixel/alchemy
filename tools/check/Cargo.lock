@@ -97,6 +97,7 @@ dependencies = [
  "executable-gap-sources",
  "extract-resource",
  "full-c-history",
+ "full-c-progress",
  "integrate-matches",
  "jobs",
  "lang-ban",
@@ -187,6 +188,15 @@ name = "full-c-history"
 version = "0.1.0"
 
 [[package]]
+name = "full-c-progress"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "cache-entry",
+ "overlay-disasm",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -264,6 +274,18 @@ dependencies = [
 [[package]]
 name = "no-asm-c"
 version = "0.1.0"
+
+[[package]]
+name = "overlay-disasm"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "cache-entry",
+ "discover",
+]
 
 [[package]]
 name = "proc-macro2"

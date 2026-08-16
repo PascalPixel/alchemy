@@ -35,6 +35,7 @@ integrate-matches = { path = "../integrate-matches" }
 full-c-history = { path = "../full-c-history" }
 localization-tables = { path = "../localization-tables" }
 route-dump = { path = "../route-dump" }
+full-c-progress = { path = "../full-c-progress" }
 
 [[bin]]
 name = "check"

@@ -24,7 +24,7 @@ void Func_0809537c(s32 flags);
 s16 Func_0808b074(s32 value);
 void *Func_0808ba1c(u32 object);
 void Func_0808adf0(void *object);
-void Func_0808b320(s32 first, s32 second);
+s32 Func_0808b320(s32 first, s32 second);
 
 void Func_08091f14(s32 flags, s32 value)
 {

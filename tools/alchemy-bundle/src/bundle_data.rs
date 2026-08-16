@@ -182,6 +182,11 @@ pub static EXPECTED: &[HostTargets] = &[
                             // the gates read unset variables, so the guarded code
                             // already ran unconditionally.
                             "6f28a0715073960e649c1c1aaad689c62a09038aa393634528e56d944be1e714",
+                            // thumb_store_multiple4 un-gated from
+                            // TARGET_GROUPED_DMA_STORE (2026-08-16), so the
+                            // option no longer changes recog for functions its
+                            // transforms cannot reach.
+                            "ed8bfc49e05e78689ec348a2ab1a3bc8ac90a54270e50d25a398806e19f31bbe",
                         ],
                     ),
                 ],

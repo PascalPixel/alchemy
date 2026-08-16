@@ -20,23 +20,41 @@ The build should have four compiler configurations
 ([`AGENTS.md`](AGENTS.md#build-configurations)). It has **133**, plus the
 baseline, spread over 181 routing lists and 1,120 per-source entries.
 
-Measured 2026-08-15 by compiling the exact corpus against the plain baseline:
+Measured 2026-08-15 by compiling the exact corpus against the plain baseline,
+corrected 2026-08-16:
 
 - **1,299 of 1,483 exact main-image owners (87.6%) need no per-file routing.**
   The corpus is mostly genuinely reconstructed, not flag-matched.
-- **184 regress**, median 28 differing bytes, maximum 273. Each is a
-  reconstruction defect that a routed flag currently conceals.
+- **127 regress, not the 184 first reported.** 57 of that 184 carry no extra
+  flags at all: they route to `agbcc`, and old_agbcc rejects a gcc296 fork flag
+  outright, so forcing a gcc296 baseline on them fails by construction. They are
+  configuration 3, not debt. Any future baseline sweep has to exclude them.
 - Of 192 routed main-image stems, **182 are load-bearing**; only 4 are provably
   removable. There is nothing meaningful to prune. The gap closes by fixing
   sources, not by deleting routes.
-- The overlay side, 1,080 of the 1,120 entries, is **unmeasured**. An empirical
-  strip-and-restore stalled at `resource_3ce`, which still failed after its own
-  entries were restored, so its dependency is not captured by those entries
-  alone. Measuring the overlay half is the next useful step.
+- **The overlay side is now measured: 435 of 440 routed overlay owners are
+  load-bearing (98.9%), 5 removable, 0 unmeasured** (`compiler_corpus_regression
+  --overlays`, 2026-08-16). Overlay routing is more necessary than the main
+  image's, not less. The earlier `resource_3ce` stall was a measurement artifact:
+  a bare `cpp`/`cc1` approximation cannot see a pool-placement mode, because the
+  effect only appears once the owner is linked at its own address with its symbol
+  stubs resolved. Two such approximations each reported ~450 phantom no-ops, and
+  acting on either broke the ROM.
 
-The 184 regressions are the highest-quality reconstruction targets in the
-project: the correct bytes are already known, the deltas are small and
+There is therefore **no dead routing anywhere in the tree**. All 133
+configurations exist because roughly 620 owners genuinely stop reproducing the
+cartridge without them, and the path to four is reconstruction throughout: 127
+main-image owners plus 435 overlay owners.
+
+The main-image regressions remain the highest-quality reconstruction targets in
+the project: the correct bytes are already known, the deltas are small and
 localised, and each fix retires a configuration rather than adding one.
+
+A fifth configuration also exists that the four-configuration list does not
+account for: three gcc296 owners carry an optimisation-level override
+(`08021e28` and `080049e8` at `-O1`, `08019d2c` at `-Os`). Treat those as
+reconstruction targets; no makefile compiles one function at `-Os` and its
+neighbours at `-O2`.
 
 ## Working loop
 
@@ -221,7 +239,7 @@ report differing halfwords, so the residual column states its unit explicitly.
 
 | Owner | Candidate / target | Current residual | Retained source evidence |
 |---|---:|---:|---|
-| `080bbb0c` | 6,332 / 6,332 | 3,698 bytes | `battle_types.h`, `battle_event.h`, `battle_runtime.h`, and `battle_command.h` now separate proved layouts, the shared event queue, runtime helpers, and command records. `item.h` owns the one canonical 44-byte item definition. All register-derived locals in this resolver now have behavior-based or offset-neutral names, while its load-bearing unsigned byte views remain intact; the candidate and object digests did not move. In the second dispatch, cases `0x3d`, `0x01`, and all but one scratch-register choice in `0x3c` remain normalized-exact; continue the healing load order without perturbing them. |
+| `080bbb0c` | 6,332 / 6,332 | 3,155 bytes | **2026-08-16: back at reference size with the best residual yet.** A two-line hoist at C line 562 (`action_power = action->power;` ahead of `Func_08077188`) closed a 4-byte deficit, took byte mismatches 4,122 to 3,155 and instruction mismatches 817 to 681, and flipped `dominant` from `control_flow` to `register_only`. The site was localised by decoding the switch jump table at 0x03c0 as absolute case targets; see the techniques section of [`CONTRIBUTING.md`](CONTRIBUTING.md). The residual is now entirely register allocation. Reference size plus `dominant=register_only` opens the permuter gate for the first time, but the permuter has already measured dead twice on this owner without `PERM_*` markers, and a last-mile tool is the wrong instrument for 3,155 bytes. Also falsified and reverted here: a `-fthumb-strict-pool-constant` fork mode, which overshot to 6,336 because it makes constant-select diamonds branchy at more sites than the reference does. `battle_types.h`, `battle_event.h`, `battle_runtime.h`, and `battle_command.h` now separate proved layouts, the shared event queue, runtime helpers, and command records. `item.h` owns the one canonical 44-byte item definition. All register-derived locals in this resolver now have behavior-based or offset-neutral names, while its load-bearing unsigned byte views remain intact; the candidate and object digests did not move. In the second dispatch, cases `0x3d`, `0x01`, and all but one scratch-register choice in `0x3c` remain normalized-exact; continue the healing load order without perturbing them. |
 | `resource_3bd:13f8` | 6,144 / 6,220 | 2,947 halfwords | `RunActorFormationScene` names the bounded choreography. Typed actor positions, sprite pointer, visibility flag, actor-8 subrecord lifetime, and the scoped formation-script pointer are ROM-witnessed; continue from those phase boundaries. |
 | `resource_380:27f8` | 5,932 / 5,932 | 2,616 halfwords | `RunResource380GrandFinale` now reaches target size. Reference initialization order, separate pointer/scalar lifetimes, and scoped closing-text fields remove 183 differing halfwords while keeping both record lookups before dereference. Reconstruct actor 9's eight-byte workspace next. |
 | `080ea0d8` | 5,732 / 5,756 | 5,353 bytes | `RunCinematicProjectionEffect` names the owner and its retained context. Five independent geometry scalars replace a misleading aggregate without changing the byte residual and remove 29 instruction mismatches; preserve full-width RNG values and explicit low-16-bit extraction. |

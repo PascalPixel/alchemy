@@ -150,6 +150,70 @@ dominant residual class. Dominant register-allocation noise at the reference
 size is the signature of correct structure. Anything else is reconstruction
 work, not search work.
 
+## Techniques that have paid off
+
+**Decode a switch jump table into a layout delta map.** A run of
+`stmia rN!, {...}` with rotating base registers and near-random register lists
+is not code. It is a jump table disassembled as instructions: look just above it
+for `lsls r3,r3,#2 / ldr r3,[r3,r2] / mov pc,r3`, and check that every odd
+halfword decodes as `lsrs r3,r1,#32`, the high half of a ROM address. Do not
+attack that region as source. Decode it instead. Each entry is an absolute case
+target, so subtracting the two sides gives a map of exactly where the layouts
+drift, and absolute targets do not move with instruction text, so the map is
+immune to the phase confound that ruins raw diffs. On `080bbb0c` this read
+"level at 0x578, +4 by 0x6fc, +14 by 0xb1a" and bracketed a real defect to a
+390-byte window inside a 6,332-byte function.
+
+**An extra register copy before a call names an evaluation-order difference.**
+When the reference spends an instruction you do not, in the shape
+`ldr r0,[base] / ldrh r5,[r0,#n] / ... / adds r0,r5,#0 / bl` against your
+`ldr r5,[base] / ldrh r0,[r5,#n] / bl`, it evaluated that argument first, parked
+it in a callee-saved register while setting up the others, then copied it into
+place. Assign the expression to a local before the call to restore that order.
+
+**Hoist memory loads; do not bother hoisting register copies.** The above works
+only when the hoisted expression is a load. Hoisting a value already in a
+register (`finish_target = (u32) target_id;`) compiles byte-identical, because
+cprop propagates the single-def copy away before scheduling. A negative result
+from hoisting a copy says nothing about hoisting a load.
+
+**Grep the file for its own precedent before theorizing about the compiler.**
+The `080bbb0c` size fix was a two-line hoist using a variable that was already
+declared, already used exactly that way at another case, and already applied to
+the identical call 140 lines further down. Hours went into if-conversion
+internals while the answer sat in the same function.
+
+## What not to do
+
+- **Do not trust `dominant=control_flow` while the sizes differ.** Branch-target
+  and pool-address deltas inflate the control-flow and literal buckets whenever
+  lengths diverge. Re-read the classification once size matches; on `080bbb0c`
+  it flipped straight to `register_only`.
+- **Do not score against a reference whose length you have not checked.**
+  `verify_candidate` derives its span from the linked binary when `nm` reports
+  no size, and slices both sides to it, so its `expected` is as long as whatever
+  the candidate compiled to. Use `decomp_diagnose::owner_reference`. Two tools
+  disagreeing about one owner's reference length (6,332 against 6,328) is what
+  exposed this.
+- **Do not let anything ambient decide code generation.** No `getenv` in the
+  compiler, no environment variable appending compiler flags in tooling. It
+  changes emitted bytes with no diagnostic, and no cache key covers it, so the
+  wrong result is cached and reused. If a behaviour must be switchable it gets a
+  real flag, which is visible in the command a reader can see.
+- **Do not admit a mode because one owner improves.** `-fthumb-strict-pool-constant`
+  was well-motivated (a pooled constant reserves four pool bytes, so the
+  if-conversion size gate should count it twice) and still wrong: it made
+  diamonds branchy at more sites than the reference does, overshooting a
+  correct 6,332 to 6,336. Without a discriminator between the sites that should
+  branch and those that should not, a plausible mode is just overfitting.
+- **Do not report a measurement you have not spot-checked.** Three separate
+  sweeps produced confident wrong numbers in one session. `zsh` silently ate
+  `:g` as a parameter modifier in `"$sha:gcc-2.96/..."`, so every `git cat-file`
+  failed and every failure counted as "no gates found", inverting the result.
+  BSD `awk` has no `strtonum`. A command backgrounded with both `nohup` and a
+  runner's own background mode reports the launcher's exit code, not the job's.
+  Check that a scan actually scanned before believing it.
+
 ## Escalation order
 
 Use the smallest source change that explains the residual, and keep the

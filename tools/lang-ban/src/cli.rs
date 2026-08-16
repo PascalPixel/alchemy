@@ -143,7 +143,7 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     let Scan { visited, found } = scan(&root);
     let allowed = read_allowlist();
 
-    if std::env::args().any(|a| a == "--write-allowlist") {
+    if arguments.iter().any(|a| a == "--write-allowlist") {
         let mut body = String::from(
             "# Grandfathered banned-language files under tools/.\n\
              # This list may shrink and must never grow. See AGENTS.md, Hard rules.\n",
@@ -171,7 +171,7 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     let removed: Vec<&String> = allowed.difference(&found).collect();
     let counts = by_extension(&found);
 
-    if std::env::args().any(|a| a == "--stat") {
+    if arguments.iter().any(|a| a == "--stat") {
         println!(
             "lang-ban: {} banned-language files remain ({}), {} ported out so far",
             found.len(),

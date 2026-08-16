@@ -38,7 +38,7 @@ fn run(args: &[String]) -> Result<(), Error> {
 }
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
+    match run(&arguments.to_vec()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("error: {error}");

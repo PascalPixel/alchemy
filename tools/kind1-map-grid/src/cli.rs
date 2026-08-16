@@ -89,7 +89,7 @@ fn run(mut args: Vec<String>) -> Result<()> {
 }
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(std::env::args().skip(1).collect()) {
+    match run(arguments.to_vec()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {
             eprintln!("error: {message}");

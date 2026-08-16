@@ -178,7 +178,7 @@ fn array_len(value: &serde_json::Value, name: &str) -> Result<usize, Error> {
 }
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
+    match run(&arguments.to_vec()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {
             eprintln!("error: {message}");

@@ -51,7 +51,7 @@ pub fn hash(parts: &[&[u8]]) -> String {
 pub fn self_digest() -> String {
     let sources: [&str; 12] = [
         include_str!("lib.rs"),
-        include_str!("main.rs"),
+        include_str!("legacy_entry.rs.txt"),
         include_str!("aggregate.rs"),
         include_str!("collate.rs"),
         include_str!("json.rs"),

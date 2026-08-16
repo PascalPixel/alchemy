@@ -9,10 +9,6 @@ edition = "2021"
 name = "map_container_components"
 path = "src/lib.rs"
 
-[[bin]]
-name = "map-container-components"
-path = "src/main.rs"
-
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 extract-resource = { path = "../extract-resource" }

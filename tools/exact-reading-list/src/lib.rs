@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Which semantic reconstruction explains each overlay row you have not yet
 // matched byte-exactly.
 //

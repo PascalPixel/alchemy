@@ -6,6 +6,8 @@
 //! and makes this crate a byte-for-byte companion to the existing TypeScript
 //! library used by the native asset build stage.
 
+pub mod cli;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};

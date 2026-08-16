@@ -9,10 +9,6 @@ edition = "2021"
 name = "resource_01c"
 path = "src/lib.rs"
 
-[[bin]]
-name = "resource-01c"
-path = "src/main.rs"
-
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 export-asset = { path = "../export-asset" }

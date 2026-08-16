@@ -4,6 +4,8 @@
 //! The TypeScript module remains available because the asset builders still
 //! import its library functions during the migration.
 
+pub mod cli;
+
 use canonical_json::canonical_json;
 use extract_resource::{
     decode_general_trace, decode_palette_trace, encode_general, encode_palette, GeneralToken,

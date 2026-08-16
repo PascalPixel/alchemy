@@ -14,6 +14,8 @@
 //! because the tool only ever writes JSON and never parses it. Key order is
 //! therefore exactly the JS object insertion order.
 
+pub mod cli;
+
 use std::collections::{HashMap, HashSet};
 use std::fmt::Write as _;
 

@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use static_sprite_series::{
+use crate::{
     build_series, export_series, read_json, self_test, verify_series, Error, Options,
     STATIC_DESCRIPTOR_COUNT, STATIC_DESCRIPTOR_TABLE, STATIC_PALETTE_ENTRIES,
     STATIC_PALETTE_OFFSET, STATIC_SERIES_ADDRESS, STATIC_SERIES_END,
@@ -59,7 +62,7 @@ fn path_same(a: &str, b: &str) -> bool {
 fn number(text: Option<String>, default: i64) -> Result<i64, Error> {
     match text {
         None => Ok(default),
-        Some(text) => static_sprite_series::parse_integer(&text, "integer"),
+        Some(text) => crate::parse_integer(&text, "integer"),
     }
 }
 
@@ -134,13 +137,13 @@ fn run(args: &[String]) -> Result<(), Error> {
 
 fn number_field(value: &serde_json::Value, name: &str) -> Result<i64, Error> {
     match value.get(name) {
-        Some(serde_json::Value::String(text)) => static_sprite_series::parse_integer(text, name),
+        Some(serde_json::Value::String(text)) => crate::parse_integer(text, name),
         Some(serde_json::Value::Number(number)) => number.as_i64().ok_or_else(|| Error(format!("invalid {name}"))),
         _ => Err(Error(format!("invalid {name}"))),
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => { eprintln!("error: {message}"); ExitCode::FAILURE }

@@ -4,6 +4,8 @@
 //! tool able to validate the same extensible document shape as the TypeScript
 //! implementation while preserving the tracked field order on export.
 
+pub mod cli;
+
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};

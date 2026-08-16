@@ -9,9 +9,5 @@ edition = "2021"
 name = "documented"
 path = "src/lib.rs"
 
-[[bin]]
-name = "documented"
-path = "src/main.rs"
-
 [dependencies]
 dispatch = { path = "../dispatch" }

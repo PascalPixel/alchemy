@@ -4,6 +4,8 @@
 //! by zero-skip encoded indexed frames.  Plans and PNGs remain the interchange
 //! format, while this crate owns the standalone codec and its parity checks.
 
+pub mod cli;
+
 use alchemy_zlib::{deflate_sync, DeflateOptions};
 use export_asset::chunk;
 use generated_files::prune_files;

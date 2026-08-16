@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::path::Path;
 use std::process::ExitCode;
 
-use archive_asset::{extract_archive, plan_json, self_test, PixelFormat, ROM_BASE};
+use crate::{extract_archive, plan_json, self_test, PixelFormat, ROM_BASE};
 use export_asset::js_number;
 
 const USAGE: &str = "usage: archive-asset [--self-test] ROM --address ADDRESS --input-end END --chunk-width WIDTH --chunk-height HEIGHT --columns COLUMNS --plan PLAN --atlas ATLAS [--source-end END] [options]";
@@ -113,7 +116,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

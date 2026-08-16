@@ -9,9 +9,5 @@ edition = "2021"
 name = "remaining_survey"
 path = "src/lib.rs"
 
-[[bin]]
-name = "remaining-survey"
-path = "src/main.rs"
-
 [dependencies]
 serde_json = { version = "1", features = ["preserve_order"] }

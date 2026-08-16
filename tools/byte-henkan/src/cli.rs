@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::env;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use byte_henkan::{build_byte_henkan_tables, self_test};
+use crate::{build_byte_henkan_tables, self_test};
 
 fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|arg| arg == "--self-test") {
@@ -39,8 +42,8 @@ fn run(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match run(&args) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

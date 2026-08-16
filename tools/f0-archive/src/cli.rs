@@ -1,4 +1,7 @@
-use f0_archive::{build_archive, extract_archive, self_test, verify_archive, Error};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{build_archive, extract_archive, self_test, verify_archive, Error};
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
@@ -93,7 +96,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

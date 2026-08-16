@@ -4,6 +4,8 @@
 //! fourteen sixteen-byte rows; each table is followed by two reserved zero rows,
 //! so every table occupies exactly 256 bytes of the ROM region.
 
+pub mod cli;
+
 use std::fs;
 use std::path::Path;
 

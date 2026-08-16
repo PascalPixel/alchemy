@@ -5,6 +5,8 @@
 //! it writes anything.  The PNG and codec implementations are shared with the
 //! other native asset tools, so the round trip remains byte exact.
 
+pub mod cli;
+
 use std::fmt;
 
 use alignment_tail::{

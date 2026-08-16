@@ -1,4 +1,7 @@
-use resource_01c::{
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{
     export_resource_01c, self_test, verify_resource_01c, Error, GLYPHS, RESOURCE_SIZE,
 };
 use std::path::Path;
@@ -31,14 +34,14 @@ fn run(args: &[String]) -> Result<(), Error> {
         return Ok(());
     }
     if args.len() == 2 && args[0] == "build-stdout" {
-        let (bytes, _) = resource_01c::build_resource_01c(Path::new(&args[1]))?;
+        let (bytes, _) = crate::build_resource_01c(Path::new(&args[1]))?;
         io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
         return Ok(());
     }
     Err(Error(USAGE.into()))
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

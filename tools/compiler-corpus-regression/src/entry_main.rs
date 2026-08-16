@@ -1,11 +1,13 @@
+//! CLI moved out of src/bin so this command can be linked.
+
 //! `if (import.meta.main) await main();`
 
-use compiler_corpus_regression::cli::{parse_arguments, ParseOutcome, USAGE};
-use compiler_corpus_regression::pipeline::run;
-use compiler_corpus_regression::selftest::self_test;
+use crate::cli::{parse_arguments, ParseOutcome, USAGE};
+use crate::pipeline::run;
+use crate::selftest::self_test;
 
-fn main() {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let argv: Vec<String> = arguments.to_vec();
     // `native process.argv.includes("--self-test")` scans the WHOLE argv, including
     // argv[0] and argv[1], and wins over every other argument no matter where
     // it appears -- `--flags --self-test` runs the self-test.
@@ -32,7 +34,7 @@ fn main() {
         // --per-flag asks the narrower question: of a multi-flag owner's
         // routed flags, which ones does it not actually need?
         if options.per_flag {
-            match compiler_corpus_regression::overlays::run_per_flag(root, &cache) {
+            match crate::overlays::run_per_flag(root, &cache) {
                 Ok(verdicts) => {
                     let mut redundant = 0usize;
                     let mut unmeasured = 0usize;
@@ -60,7 +62,7 @@ fn main() {
         // load-bearing" to "would promoting these flags into the overlay
         // baseline break an owner that does not carry them".
         if !options.flags.is_empty() {
-            match compiler_corpus_regression::overlays::run_addition(root, &cache, &options.flags) {
+            match crate::overlays::run_addition(root, &cache, &options.flags) {
                 Ok(verdicts) => {
                     let mut broken = 0usize;
                     let mut unmeasured = 0usize;
@@ -95,7 +97,7 @@ fn main() {
                 Err(message) => fail(&message),
             }
         }
-        match compiler_corpus_regression::overlays::run(root, &cache) {
+        match crate::overlays::run(root, &cache) {
             Ok(verdicts) => {
                 let mut load_bearing = 0usize;
                 let mut unmeasured = 0usize;

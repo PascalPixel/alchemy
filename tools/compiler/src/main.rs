@@ -22,6 +22,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("dashboard-server", "serve the coverage dashboard"),
     ("mode-cohort", "mode cohort"),
     ("decomp-diagnose", "decomp diagnose"),
+    ("corpus-regression", "run the compiler corpus regression"),
 ];
 
 fn main() -> ExitCode {
@@ -34,6 +35,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "corpus-regression" => { compiler_corpus_regression::entry_main::entry(&rest); ExitCode::SUCCESS }
+
         "mode-cohort" => { mode_cohort::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "decomp-diagnose" => { decomp_diagnose::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "permute" => match alchemy_permuter::run(rest.clone()) {

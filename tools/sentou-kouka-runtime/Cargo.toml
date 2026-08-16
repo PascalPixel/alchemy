@@ -9,9 +9,6 @@ edition = "2021"
 name = "sentou_kouka_runtime"
 path = "src/lib.rs"
 
-[[bin]]
-name = "sentou-kouka-runtime"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

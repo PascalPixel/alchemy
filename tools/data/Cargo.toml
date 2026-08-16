@@ -1,0 +1,18 @@
+# Bare `[workspace]`: independently buildable, like every other tool crate.
+[workspace]
+
+[package]
+name = "data"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Former *-data binaries, now linked as libraries.
+audio-engine-data = { path = "../audio-engine-data" }
+battle-effect-data = { path = "../battle-effect-data" }
+runtime-support-data = { path = "../runtime-support-data" }
+sentou-kouka-runtime = { path = "../sentou-kouka-runtime" }
+
+[[bin]]
+name = "data"
+path = "src/main.rs"

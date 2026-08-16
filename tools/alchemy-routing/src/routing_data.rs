@@ -84,7 +84,7 @@ pub static NO_GCSE_SOURCES: &[&str] = &[
 pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878", "08004144"];
 pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c", "02004058", "02005d68"];
 pub static NO_CONTIGUOUS_IMMEDIATE_SOURCES: &[&str] =
-    &["080a1090", "08005a78", "0800d304", "08019bac"];
+    &["080a1090", "08005a78"];
 pub static NO_CONTIGUOUS_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_36f_c_020001c0.c",
     "exact/resource_36f_c_020001c0.c",
@@ -95,7 +95,7 @@ pub static HOIST_PARAMETER_SAVE_SOURCES: &[&str] =
 pub static MINIPOOL_TAIL_FIRST_SOURCES: &[&str] = &["080a9aec"];
 pub static ENTRY_SAVES_DESCENDING_SOURCES: &[&str] = &["08093054"];
 pub static GROUP_CONTROL_LAST_SOURCES: &[&str] = &[
-    "080c08a8", "08005a78", "08005c68", "080907b0", "08090824", "080b010c", "0808fe38", "080b0744",
+    "080c08a8", "08005a78", "08005c68", "08090824", "0808fe38", "080b0744",
 ];
 pub static GROUP_VALUE1_BEFORE_BASE_SOURCES: &[&str] = &["080907b0"];
 pub static GROUP_POOLED_CONTROL_LAST_SOURCES: &[&str] = &["0801a4fc"];
@@ -105,7 +105,7 @@ pub static LOOP_INVARIANT_BLOCK_HEAD_SOURCES: &[&str] = &["080a3354", "080b5d3c"
 pub static CALL_ARG0_REG_SOURCE_SOURCES: &[&str] = &["080a90bc"];
 pub static SINK_CONSTANT_PAST_CALL_SOURCES: &[&str] = &["080a90bc"];
 pub static MOVE_BEFORE_UNARY_ALU_SOURCES: &[&str] = &["080a90bc"];
-pub static GROUP_ZERO_ANY_REGISTER_SOURCES: &[&str] = &["0808fe38", "080c08a8"];
+pub static GROUP_ZERO_ANY_REGISTER_SOURCES: &[&str] = &["0808fe38"];
 pub static ARG0_AFTER_SPLIT_SOURCES: &[&str] = &["0808fe38"];
 pub static CALL_ARG0_POOL_LOAD_SOURCES: &[&str] = &["0808fe38"];
 pub static RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES: &[&str] = &["0808fecc"];
@@ -219,7 +219,7 @@ pub static ENTRY_LITERAL_FIRST_SOURCES: &[&str] = &[
     "08003a3c",
 ];
 pub static HIGH_REGISTER_MOVE_FIRST_SOURCES: &[&str] =
-    &["0808b8e8", "080b6e30", "08002fb0", "08003e10", "08019bac"];
+    &["0808b8e8", "080b6e30", "08002fb0", "08003e10"];
 pub static ORR_DEAD_INPUT_REUSE_SOURCES: &[&str] = &["08003adc"];
 pub static ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a8_c_02003768.c",
@@ -273,7 +273,7 @@ pub static GROUP_CONTROL_REMATERIALIZE_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static SCHED_POOL_LOAD_LATE_SOURCES: &[&str] = &["080f377c", "08091174"];
 pub static THUMB_LEAF_NO_LR_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
-pub static THUMB_NO_IF_CONVERT_SOURCES: &[&str] = &["080f9a30", "080fa1ac", "080fa264"];
+pub static THUMB_NO_IF_CONVERT_SOURCES: &[&str] = &["080fa1ac"];
 pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["080fb75c", "080fb750", "08029274", "08011590", "080060e8", "080043e0", "0800439c", "08004358", "0800430c", "080042c8", "08004198", "0800307c", "08002f10", "080f9a30"];
 pub static THUMB_LOW_REG_ORDER_SOURCES: &[(&str, &str)] = &[
     ("080f9a30", "01231230"),
@@ -291,7 +291,7 @@ pub static LITERAL_BEFORE_INDEX_SHIFT_SOURCES: &[&str] = &["0800307c"];
 pub static CALL_TARGET_BEFORE_FINAL_SHIFT_SOURCES: &[&str] = &["080cd358"];
 pub static LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES: &[&str] = &["080a5614", "080ba918"];
 pub static HIGH_MOVE_BEFORE_STACK_STORE_SOURCES: &[&str] = &["08095290"];
-pub static EARLY_FRAME_ALLOCATION_SOURCES: &[&str] = &["0809802c", "08004760"];
+pub static EARLY_FRAME_ALLOCATION_SOURCES: &[&str] = &["0809802c"];
 pub static CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3bf_c_02001cf0.c",
     "exact/resource_3a0_c_02000048.c",

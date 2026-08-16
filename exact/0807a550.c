@@ -7,7 +7,6 @@ s32 Func_0807a550(u8 *counts)
     s32 found = 0;
     u8 *base = Func_08077330(0);
     u8 *entry = base + 8;
-    u32 *limit;
     s32 index;
 
     if (counts != 0) {
@@ -21,9 +20,8 @@ s32 Func_0807a550(u8 *counts)
         *slot = found;
         counts[0] = found;
     }
-    limit = (u32 *)(base + 264);
     index = 0;
-    if (*limit != 0) {
+    if (*((u32 *)(base + 264)) != 0) {
         do {
             if (*(s8 *)(entry + 3) == -1) {
                 if (counts != 0) {
@@ -33,6 +31,6 @@ s32 Func_0807a550(u8 *counts)
             }
             index++;
             entry += 4;
-        } while (index != (s32)*limit);
+        } while (index != (s32)*((u32 *)(base + 264)));
     }
     return found;}

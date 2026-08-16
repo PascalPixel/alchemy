@@ -113,10 +113,20 @@ impl Search {
             report("seed does not compile");
             return (current, history);
         };
+        // The reference size, read from the seed compile. Used ONLY to detect
+        // true closure; it is never a search constraint.
+        let reference_size = self.reference_size().unwrap_or(base.size);
         let mut best = base.clone();
         let mut best_source = current.clone();
         let mut best_history_len = 0usize;
-        report(&format!("seed distance={} size={}", best.distance, best.size));
+        report(&format!(
+            "seed distance={} size={} halfwords={} reference={}",
+            best.distance, best.size, best.halfwords, reference_size
+        ));
+        if base.is_exact(reference_size) {
+            report("seed is already byte-exact");
+            return (current, history);
+        }
 
         let mut shortlist: Vec<String> = Vec::new();
         let mut plateau_used = 0usize;
@@ -149,6 +159,20 @@ impl Search {
                 .filter(|(_, score)| score.distance < best.distance)
                 .map(|(index, _)| variants[*index].label.clone())
                 .collect();
+
+            // Byte-exactness beats every distance comparison: it is the goal,
+            // and the distance metric is only a proxy for it.
+            if let Some((index, score)) =
+                scored.iter().find(|(_, s)| s.is_exact(reference_size))
+            {
+                report(&format!("EXACT via {} after {} compiles", variants[*index].label, compiles));
+                history.push(Step {
+                    label: variants[*index].label.clone(),
+                    distance: score.distance,
+                    size: score.size,
+                });
+                return (variants[*index].source.clone(), history);
+            }
 
             let strict = scored
                 .iter()
@@ -280,5 +304,28 @@ mod tests {
     #[test]
     fn neighbourhood_of_a_trivial_file_is_empty() {
         assert!(rewrite::neighbourhood("int main(void) { return 0; }").is_empty());
+    }
+}
+
+impl Search {
+    /// The reference byte size for this owner, taken from a seed compile.
+    fn reference_size(&self) -> Option<u32> {
+        let file = self.work.join("refsize").join(format!("{}.c", self.stem));
+        std::fs::create_dir_all(file.parent()?).ok()?;
+        let source = std::fs::read_to_string(self.root.join("semantic").join(format!("{}.c", self.stem))).ok()?;
+        std::fs::write(&file, source).ok()?;
+        let output = std::process::Command::new(&self.candidate_show)
+            .arg(&file)
+            .arg("--work")
+            .arg(self.work.join("refsize").join("w"))
+            .current_dir(&self.root)
+            .output()
+            .ok()?;
+        let text = String::from_utf8_lossy(&output.stdout);
+        let first = text.lines().next()?;
+        let start = first.find("reference=")? + "reference=".len();
+        let rest = &first[start..];
+        let end = rest.find(|c: char| !c.is_ascii_digit()).unwrap_or(rest.len());
+        rest[..end].parse().ok()
     }
 }

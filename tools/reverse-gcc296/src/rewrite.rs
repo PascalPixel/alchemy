@@ -514,11 +514,56 @@ fn replace_identifier(line: &str, name: &str, replacement: &str) -> String {
     out
 }
 
+/// True for a bare local declaration line such as `    s32 name;`.
+fn is_declaration(line: &str) -> bool {
+    let t = line.trim();
+    let Some(body) = t.strip_suffix(';') else { return false };
+    let mut parts = body.split_whitespace();
+    let (Some(type_word), Some(name)) = (parts.next(), parts.next()) else { return false };
+    if parts.next().is_some() {
+        return false; // initialisers and multi-declarators are not reorderable here
+    }
+    if !matches!(
+        type_word,
+        "u8" | "s8" | "u16" | "s16" | "u32" | "s32" | "int" | "void" | "unsigned" | "struct"
+    ) {
+        return false;
+    }
+    let name = name.trim_start_matches('*');
+    !name.is_empty() && name.chars().all(|c| c.is_alphanumeric() || c == '_')
+}
+
+/// Exchange two adjacent local declarations.
+///
+/// Declaration order is trivially behaviour-preserving for uninitialised locals,
+/// and it is the ONLY move in this set that reaches register allocation, which
+/// is otherwise a global property no source shuffling touches. Six owners in the
+/// corpus sit at structural distance 0 while still not being byte-exact, meaning
+/// they differ from the reference in allocation alone; nothing else here can
+/// move them.
+pub fn declaration_order_variants(source: &str) -> Vec<Variant> {
+    let lines: Vec<String> = source.split('\n').map(str::to_string).collect();
+    let mut variants = Vec::new();
+    for index in 0..lines.len().saturating_sub(1) {
+        if !is_declaration(&lines[index]) || !is_declaration(&lines[index + 1]) {
+            continue;
+        }
+        let mut swapped = lines.clone();
+        swapped.swap(index, index + 1);
+        variants.push(Variant {
+            label: format!("decl@{}", index + 1),
+            source: swapped.join("\n"),
+        });
+    }
+    variants
+}
+
 /// The full single-edit neighbourhood of a source.
 pub fn neighbourhood(source: &str) -> Vec<Variant> {
     let mut all = arm_order_variants(source);
     all.extend(statement_order_variants(source));
     all.extend(uncache_variants(source));
+    all.extend(declaration_order_variants(source));
     all
 }
 

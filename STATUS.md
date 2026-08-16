@@ -81,6 +81,22 @@ One tempting explanation is already tested and weak: that these sources hoist
 constants into variables and CSE then commons them. Only 6 of a 40-owner sample
 do that, so it is not the mechanism.
 
+**The duplicate-constant hack is worth removing but is not always dead.** 14
+routed owners declare several locals holding the same literal so CSE cannot
+common them. Two were tested and they behave oppositely:
+
+- `resource_372_c_02000f38.c` (six locals, three values): inlining is
+  byte-identical, so the hack was doing nothing. Removed in `b8aaacb8c`, and it
+  also closed that owner's stripped-length gap, 360/364 to 364/364.
+- `resource_37a_c_02001790.c` (twelve locals, four values): inlining compiles
+  SHORTER and the owner then overlaps its neighbour, so the duplicates are
+  holding the span. Reverted.
+
+So the hack is dead in some owners and load-bearing in others, and each has to
+be tested rather than swept. Use `--span` taken from the `--overlays` output;
+a guessed span silently counts the surplus reference bytes as differences and
+will report a working edit as a regression.
+
 What the sample does show is that routed owners frequently carry a source hack
 *as well as* their flag. `resource_372_c_02000f38.c` declares
 `c1 = 0x311; c2 = 0x831; c3 = 0x311; c4 = 0x831;` -- four variables for two

@@ -6,6 +6,8 @@
 //! its edges.  Keeping those three facts in the gate makes it useful after the
 //! old source tree disappears.
 
+pub mod cli;
+
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};

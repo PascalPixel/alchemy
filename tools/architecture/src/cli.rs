@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use architecture::{
+use crate::{
     authoritative_sources, cargo_binary_targets, classification_problems, dispatch_targets,
     native_command_roots, native_paths, scan_crates, scanned_nothing, unreachable_crates,
     valid_dispatch_targets, valid_paths, workspace_members,
@@ -52,26 +55,26 @@ fn wants_help(arguments: &[String]) -> bool {
     arguments.len() == 1 && matches!(arguments[0].as_str(), "-h" | "--help")
 }
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
     if wants_help(&arguments) {
         print!("{USAGE}");
         return ExitCode::SUCCESS;
     }
     if let Some(position) = arguments.iter().position(|a| a == "--search") {
         let terms: Vec<String> = arguments[position + 1..].to_vec();
-        let tools = match architecture::catalog::read(&root().join("tools")) {
+        let tools = match crate::catalog::read(&root().join("tools")) {
             Ok(value) => value,
             Err(error) => {
                 eprintln!("error: {error}");
                 return ExitCode::FAILURE;
             }
         };
-        print!("{}", architecture::catalog::render(&tools, &terms));
+        print!("{}", crate::catalog::render(&tools, &terms));
         return ExitCode::SUCCESS;
     }
     if arguments.iter().any(|argument| argument == "--self-test") {
-        return match architecture::self_test() {
+        return match crate::self_test() {
             Ok(()) => {
                 println!("architecture self-test ok");
                 ExitCode::SUCCESS
@@ -135,7 +138,7 @@ fn main() -> ExitCode {
     for text in sources.iter().map(|(_, text)| text) {
         for path in native_paths(text) {
             let candidate = if path.starts_with("tools/target/release/") {
-                architecture::target_crate(&path, &crates).ok()
+                crate::target_crate(&path, &crates).ok()
             } else {
                 path.strip_prefix("tools/")
                     .and_then(|path| path.split('/').next())

@@ -65,5 +65,3 @@ target/
 *.rlib
 *.rmeta
 *.pdb
-tools/reverse-gcc296/target/
-tools/reverse-gcc296/examples/

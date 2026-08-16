@@ -558,43 +558,17 @@ pub fn declaration_order_variants(source: &str) -> Vec<Variant> {
     variants
 }
 
-/// Permuter passes that exist to PERTURB codegen, not to produce source anyone
-/// would ship. They insert identities, dead blocks, and duplicated arms.
+/// NOTE ON LAYERING. This module deliberately does NOT call
+/// `alchemy-permuter::mutate`. The permuter already depends on this crate, so
+/// depending back on it is a dependency cycle. The permuter is the right place
+/// to combine random sampling with this descent, not the other way round.
 ///
-/// The permuter's own workflow assumes a human cleans these up after a match is
-/// found. This tool commits what it finds, so importing them wholesale lets the
-/// search "close" an owner with source no engineer wrote. That is not a
-/// hypothetical: `08078144` reached byte-exact through `perm_var_cond_block`,
-/// emitting `if (owner) { X; } else { X; }` with identical arms. Byte-exact, and
-/// rejected.
-///
-/// Excluded from closure candidates. They remain legitimate for escaping a local
-/// optimum, which is why the exclusion lives here rather than in the pass list.
-const NOISE_PASSES: &[&str] = &[
-    "perm_xor_zero",
-    "perm_add_mask",
-    "perm_mult_zero",
-    "perm_dummy_comma_expr",
-    "perm_add_self_assignment",
-    "perm_empty_stmt",
-    "perm_ins_block",
-    "perm_pad_var_decl",
-    "perm_var_cond_block",
-    "perm_duplicate_assignment",
-    "perm_sameline",
-];
-
-/// True when a variant is source we would be willing to commit.
-///
-/// A byte-exact match is necessary but NOT sufficient. The output also has to be
-/// credible as the original, or we are just writing obfuscated C that happens to
-/// hash correctly, which is the same category of cheat as an asm() block.
+/// The plausibility rule that lived with that integration is kept, because it is
+/// about output quality, not about where variants come from: a byte-exact match
+/// built from a degenerate construct is a cheat, not a result. Owner 08078144
+/// reached byte-exact through `if (owner) { X; } else { X; }` with identical
+/// arms, and was rejected.
 pub fn is_plausible(variant: &Variant) -> bool {
-    if NOISE_PASSES.iter().any(|pass| variant.label.contains(pass)) {
-        return false;
-    }
-    // Structural tell that survives any label check: an if/else whose arms are
-    // textually identical.
     let lines: Vec<String> = variant.source.split('\n').map(str::to_string).collect();
     for site in find_if_else(&lines) {
         let then_arm: Vec<&str> = lines[site.open + 1..site.els].iter().map(|l| l.trim()).collect();
@@ -603,7 +577,6 @@ pub fn is_plausible(variant: &Variant) -> bool {
             return false;
         }
     }
-    // Single-line degenerate form the line-based scanner above cannot see.
     if variant.source.contains("} else {") {
         for line in variant.source.split('\n') {
             if let Some((then_part, else_part)) = line.split_once("} else {") {
@@ -618,38 +591,6 @@ pub fn is_plausible(variant: &Variant) -> bool {
     true
 }
 
-/// Variants drawn from `alchemy-permuter`'s 34 AST-based randomization passes.
-///
-/// This crate should not reimplement what the permuter already does properly.
-/// Three of the rewrites above (statement order, declaration order, un-caching)
-/// duplicate `perm_reorder_stmts`, `perm_reorder_decls` and
-/// `perm_expand_expr`/`perm_inline`, which operate on a real parse tree rather
-/// than on lines. They are kept because they are EXHAUSTIVE: every site, every
-/// round, deterministically. The permuter SAMPLES.
-///
-/// So the two compose rather than compete. The local rewrites cover the cheap
-/// axes completely; the permuter contributes the exotic ones (masks, casts,
-/// commutation, assignment chaining, block insertion) that would be a large
-/// amount of fragile line-surgery to reproduce here.
-///
-/// Seeds are fixed, so the neighbourhood stays deterministic for a given source.
-pub fn permuter_variants(source: &str, seeds: &[u64], limit: usize) -> Vec<Variant> {
-    let mut variants = Vec::new();
-    for &seed in seeds {
-        for mutation in alchemy_permuter::mutate(source, seed, limit) {
-            // The permuter always emits the unmodified source first.
-            if mutation.id == "identity" || mutation.source == source {
-                continue;
-            }
-            variants.push(Variant {
-                label: format!("perm:{}", mutation.id),
-                source: mutation.source,
-            });
-        }
-    }
-    variants
-}
-
 /// The exhaustive part of the neighbourhood: every site of every local rewrite.
 pub fn local_neighbourhood(source: &str) -> Vec<Variant> {
     let mut all = arm_order_variants(source);
@@ -659,23 +600,10 @@ pub fn local_neighbourhood(source: &str) -> Vec<Variant> {
     all
 }
 
-/// The full single-edit neighbourhood: exhaustive local rewrites, plus a
-/// deterministic sample of the permuter's pass library.
-///
-/// `permuter_seeds` of 0 gives the local-only behaviour.
-pub fn neighbourhood_with(source: &str, permuter_seeds: usize, limit: usize) -> Vec<Variant> {
-    let mut all = local_neighbourhood(source);
-    if permuter_seeds > 0 {
-        let seeds: Vec<u64> = (0..permuter_seeds as u64).collect();
-        let mut seen: Vec<String> = all.iter().map(|v| v.source.clone()).collect();
-        for variant in permuter_variants(source, &seeds, limit) {
-            if !seen.contains(&variant.source) {
-                seen.push(variant.source.clone());
-                all.push(variant);
-            }
-        }
-    }
-    all
+/// The full single-edit neighbourhood. `_permuter_seeds` is accepted and
+/// ignored: see the layering note above.
+pub fn neighbourhood_with(source: &str, _permuter_seeds: usize, _limit: usize) -> Vec<Variant> {
+    local_neighbourhood(source)
 }
 
 /// The full single-edit neighbourhood of a source, local rewrites only.
@@ -829,49 +757,6 @@ mod tests {
 }
 
 #[cfg(test)]
-mod permuter_tests {
-    use super::*;
-
-    const SAMPLE: &str = "void f(void) {\n    s32 a;\n    s32 b;\n    a = 1;\n    b = a + 2;\n}\n";
-
-    #[test]
-    fn permuter_contributes_variants() {
-        let variants = permuter_variants(SAMPLE, &[0, 1], 40);
-        assert!(!variants.is_empty(), "permuter engine produced nothing");
-        assert!(variants.iter().all(|v| v.label.starts_with("perm:")));
-    }
-
-    #[test]
-    fn identity_is_never_offered_as_a_variant() {
-        for variant in permuter_variants(SAMPLE, &[0, 1, 2], 40) {
-            assert_ne!(variant.source, SAMPLE, "identity leaked into the neighbourhood");
-        }
-    }
-
-    #[test]
-    fn the_hybrid_neighbourhood_is_a_superset() {
-        let local = local_neighbourhood(SAMPLE).len();
-        let hybrid = neighbourhood_with(SAMPLE, 2, 40).len();
-        assert!(hybrid >= local, "hybrid {hybrid} lost variants against local {local}");
-    }
-
-    #[test]
-    fn zero_seeds_means_local_only() {
-        assert_eq!(
-            neighbourhood_with(SAMPLE, 0, 40).len(),
-            local_neighbourhood(SAMPLE).len()
-        );
-    }
-
-    #[test]
-    fn the_neighbourhood_is_deterministic() {
-        let first: Vec<String> = neighbourhood_with(SAMPLE, 3, 40).iter().map(|v| v.source.clone()).collect();
-        let second: Vec<String> = neighbourhood_with(SAMPLE, 3, 40).iter().map(|v| v.source.clone()).collect();
-        assert_eq!(first, second, "search must be reproducible");
-    }
-}
-
-#[cfg(test)]
 mod plausibility_tests {
     use super::*;
 
@@ -889,14 +774,6 @@ mod plausibility_tests {
     fn rejects_the_single_line_degenerate_form() {
         let source = "    if (owner) { a = 1; } else { a = 1; }";
         assert!(!is_plausible(&variant("perm:x", source)));
-    }
-
-    #[test]
-    fn rejects_every_noise_pass_by_label() {
-        for pass in NOISE_PASSES {
-            let label = format!("perm:region-0:{}:thing-1", pass);
-            assert!(!is_plausible(&variant(&label, "    a = 1;")), "{pass} must not close an owner");
-        }
     }
 
     #[test]

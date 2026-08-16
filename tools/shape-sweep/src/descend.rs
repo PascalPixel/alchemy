@@ -1,27 +1,20 @@
-//! `reverse-gcc296`: systematic source search against a byte oracle.
+//! Iterative descent over the complete rewrite neighbourhood.
 //!
-//! This is not a decompiler. Decompilation is hard because there is no oracle.
-//! Here the compiler is a known, deterministic function and we can compile and
-//! compare, so the problem is not "recover the source" but "find any preimage".
-//! The compiler is provably not injective on this codebase (identifier renames,
-//! callee aliasing, and tail duplication all produce byte-identical output), so
-//! any member of the equivalence class will do.
+//! Merged in from the short-lived `reverse-gcc296` crate, which duplicated this
+//! crate's job. `shape-sweep` already searched bounded source shapes against the
+//! byte oracle; what it lacked was an ITERATIVE driver (it swept once, plus
+//! pairs) and a size-independent objective. Those are what moved in. The
+//! duplicated transforms did not.
 //!
-//! The difference from the existing permuter is the search, not the machinery.
-//! The permuter samples random mutations by weight. This evaluates the COMPLETE
-//! single-edit neighbourhood of a measured rewrite set and descends. On the
-//! first owner tried, 4,634 random permuter candidates found nothing while a
-//! systematic sweep of one transformation found 97 points.
-
-pub mod rewrite;
-pub mod score;
+//! It closed one owner unaided before the merge: 0807a550, via un-caching, in
+//! six compiles.
 
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
-pub use rewrite::Variant;
-pub use score::Score;
+use crate::descend_rewrite::{self as rewrite, Variant};
+use crate::descend_score::{self as score, Score};
 
 /// One accepted step of the descent.
 #[derive(Clone, Debug)]
@@ -64,7 +57,7 @@ impl Search {
                     if index >= variants.len() {
                         break;
                     }
-                    if let Some(score) = score::score(
+                    if let Some(score) = crate::descend_score::score(
                         &self.root,
                         &self.candidate_show,
                         &self.objdump,
@@ -134,7 +127,7 @@ impl Search {
         let mut compiles = 0usize;
 
         for round in 1..=max_rounds {
-            let all = rewrite::neighbourhood_with(&current, permuter_seeds, 400);
+            let all = crate::descend_rewrite::neighbourhood_with(&current, permuter_seeds, 400);
             if all.is_empty() {
                 report("neighbourhood empty");
                 break;
@@ -167,7 +160,7 @@ impl Search {
             // degenerate variant that hits the bytes is a cheat, not a result.
             if let Some((index, score)) = scored
                 .iter()
-                .find(|(i, s)| s.is_exact(reference_size) && rewrite::is_plausible(&variants[*i]))
+                .find(|(i, s)| s.is_exact(reference_size) && crate::descend_rewrite::is_plausible(&variants[*i]))
             {
                 report(&format!("EXACT via {} after {} compiles", variants[*index].label, compiles));
                 history.push(Step {
@@ -269,7 +262,7 @@ impl Search {
     }
 
     fn score_one(&self, source: &str, tag: &str) -> Option<Score> {
-        score::score(
+        crate::descend_score::score(
             &self.root,
             &self.candidate_show,
             &self.objdump,
@@ -307,7 +300,7 @@ mod tests {
 
     #[test]
     fn neighbourhood_of_a_trivial_file_is_empty() {
-        assert!(rewrite::neighbourhood("int main(void) { return 0; }").is_empty());
+        assert!(crate::descend_rewrite::neighbourhood("int main(void) { return 0; }").is_empty());
     }
 }
 

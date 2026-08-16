@@ -56,6 +56,43 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### Redundant flag-grants: retired, and the avenue is now exhausted
+
+2026-08-16. Every routed flag was tested individually, main image and overlay,
+and the unnecessary ones removed. Flag-grants fell from 996 to 944.
+
+| what | how many |
+|---|---|
+| moved off `-fno-schedule-insns` to a narrower list | 13 owners |
+| entries deleted where the list granted exactly the redundant flag | 9 |
+| single-owner bundles narrowed in `routing.rs` | 3 (9→4, 11→7, 5→4) |
+| overlay grants retired | 8 + 4 one-of-a-pair + 1 cascade |
+| duplicate `NO_GCSE_OVERLAY_SOURCES` consumer deleted | 6 double-grants |
+
+Re-running the sweeps afterwards now reports **0 redundant** on 61 main-image
+multi-flag owners and **0 removable** on 435 routed overlay owners. There is no
+flag left that an owner does not need. Everything remaining is load-bearing, and
+the only way to retire it is to reconstruct the owner.
+
+Three rules this cost, in the order they bit:
+
+1. **Never read `routing.rs` to learn which list grants which flag.** Flags are
+   pushed from several code shapes and a text scan under-matches. Measure it:
+   remove the stem, rebuild, diff `route-dump`'s output. 57 pairs over seven
+   rounds established the map used here.
+2. **Individually redundant is not jointly redundant.** Removing both of
+   `resource_3b9_c_020004c8`'s redundant flags overlapped its neighbour, and
+   both of `resource_38f`'s and each `resource_3b1`'s broke the
+   golden-sun-general-lz asset round trip -- each having passed the individual
+   test. Take one per owner, then re-measure.
+3. **Redundancy cascades.** With `-fthumb-orr-dead-input-reuse` gone,
+   `-fthumb-byte-orr-r5-only` became redundant on the same owner. Re-run the
+   sweep after every batch instead of treating its first output as a worklist.
+
+`resource_3b1_c_02000b84` and `_02000cc8` are the closest owners in the corpus
+to needing no routing at all, at one flag each. Both reached zero before
+`make verify` rejected it, so each genuinely needs one of its two.
+
 ### 32 more entries are redundant, and how to remove them safely
 
 Every earlier measurement stripped an owner's whole extras set at once, which

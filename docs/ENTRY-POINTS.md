@@ -50,6 +50,7 @@ is needed and none should be attempted; it is weeks of churn for nothing that
 | `resource` | 5 crates | |
 | `data` | 7 crates | 4 linked + 3 extracted |
 | `rtl` | 2 crates | both extracted |
+| `dev` | 3 crates | `permute`, `residuals`, `bl-symbols` |
 | `shape-sweep` | `statement-order-sweep-main` deleted, `reverse-gcc296` folded in | |
 
 Plumbing that had to change, and is now in place:
@@ -100,15 +101,21 @@ Success rate on the one real batch: 6 of 9, with 3 restored cleanly.
 - **`make build-full` already fails on HEAD** (`assembly overlaps another source
   at 0x0800a97c`, the resource_3ce/resource_372 blocker). It cannot be used as a
   smoke test. Verified by stashing and reproducing on a clean tree.
+- **`pub fn run` is NOT a reliable signal that a crate exposes a CLI.**
+  `build_rom::run(root, command)` is a *subprocess spawner* that executes
+  `command[0]`. Linking it as a command adapter made `make build-rom` panic
+  instead of failing cleanly. Read what the function DOES, never just its name.
+  This is the same class of error as assuming uniform signatures.
 - **Do not run diagnostics that `rm -rf` a crate directory.** One session deleted
   three crates this way and recovered only because everything was committed.
   Diagnose on a copy under the scratchpad.
 
 ## Order of work remaining (~90 binaries)
 
-1. The crates that still export `run` and ship a binary: `alchemy-permuter`,
-   `audit-residuals`, `bl-site-symbols`, `build-claimed`, `build-rom`,
-   `compare-roms`, `map-resources`. Recipe A. Cheapest wins left.
+1. Remaining crates exporting `run`: `build-claimed`, `compare-roms`,
+   `map-resources`. Recipe A, but VERIFY each `run` is really a CLI entry first
+   (see the `build_rom` trap). `build-rom` is excluded: its `run` is a subprocess
+   spawner and its real entry is `parse_args` + `main_pipeline`.
 2. The archival extractors, recipe B in batches with auto-revert, folded behind a
    single `assets` entry point. This is the bulk: roughly seventy crates behind
    one binary, not seven binaries of ten.

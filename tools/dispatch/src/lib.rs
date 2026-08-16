@@ -92,7 +92,7 @@ const CHECK: &[Entry] = &[
 const ASSETS: &[Entry] = &[
     Entry {
         name: "bl_site_symbols",
-        target: Target::Binary("tools/bl-site-symbols/target/release/bl-site-symbols"),
+        target: Target::Sub("tools/dev/target/release/dev", "bl-symbols"),
     },
     Entry {
         name: "export_asset",
@@ -505,7 +505,7 @@ const MAKE: &[Entry] = &[
 const METRICS: &[Entry] = &[
     Entry {
         name: "audit_residuals",
-        target: Target::Binary("tools/audit-residuals/target/release/audit-residuals"),
+        target: Target::Sub("tools/dev/target/release/dev", "residuals"),
     },
     Entry {
         name: "compare_roms",
@@ -595,7 +595,7 @@ const OVERLAY: &[Entry] = &[
 const SEARCH: &[Entry] = &[
     Entry {
         name: "alchemy_permuter",
-        target: Target::Binary("tools/alchemy-permuter/target/release/alchemy-permuter"),
+        target: Target::Sub("tools/dev/target/release/dev", "permute"),
     },
     Entry {
         name: "decomp_constraints",

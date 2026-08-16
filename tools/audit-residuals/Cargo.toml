@@ -9,9 +9,6 @@ edition = "2021"
 name = "audit_residuals"
 path = "src/lib.rs"
 
-[[bin]]
-name = "audit-residuals"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

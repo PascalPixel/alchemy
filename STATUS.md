@@ -56,6 +56,40 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+## The DMA-descriptor family (largest unblocked lever)
+
+`remaining_survey` classifies **113 of the 550 remaining main-image regions as
+"DMA descriptor, no poll"**, plus 7 more blocked on the same construct. That is
+the biggest single family left, so its ordering rule is worth more than any
+individual owner.
+
+`semantic/080170c4.c` is the cheapest witness: 52/52 bytes, 5 differing
+halfwords, `semantic=0`, three instructions from exact. Its residual is purely
+the order of the descriptor setup before `stmia r3!, {r0, r1, r2}`:
+
+    ours       ldr r3(dma) | lsls r2 | strh | orrs r2(control) | adds r1(dest)
+    reference  lsls r2 | strh | ldr r3(dma) | adds r1(dest) | orrs r2(control)
+
+Measured 2026-08-16, all three reverted:
+
+- **Source shape does not steer it.** Three spellings -- moving the `control`
+  assignment next to the stores, adopting the proven inner-block idiom from
+  `exact/08002fb0.c`, and writing through the pointer (`*source = value`) as
+  `exact/0800bc48.c` does -- each produced a **byte-identical** residual. gcc
+  knows `source == &fill` and schedules the block the same way regardless.
+- **`-mgrouped-dma-store` is already routed here and does not fire.** Its loop
+  matcher requires `value move, base load, control load, transfer` adjacent
+  before the transfer. This reference is `base load, value move, control`, a
+  different ordering variant, and the base load is not adjacent in our output.
+
+The open question, and the right next experiment: every exact owner in this
+family has a **constant** control word (`0x84000003`, `0x85000006`), while
+`080170c4` computes one at runtime (`0x81000000 | count`). That is the only
+remaining structural difference, and it would explain why the `orrs` lands
+somewhere the matcher does not expect. Census the 113 regions for computed
+versus constant control words before extending the mode; do not build a matcher
+on this single witness.
+
 ## Working loop
 
 The per-session loop is in [`AGENTS.md`](AGENTS.md) and the full working

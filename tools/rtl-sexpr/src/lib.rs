@@ -14,6 +14,8 @@
 //! handling of malformed input (unterminated strings, unbalanced parens,
 //! stray closers).
 
+pub mod cli;
+
 /// A parsed S-expression node.
 ///
 /// PORT NOTE: the TypeScript original models this as a discriminated union

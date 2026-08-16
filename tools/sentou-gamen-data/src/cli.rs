@@ -1,4 +1,7 @@
-use sentou_gamen_data::{
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{
     build_sentou_gamen_data, self_test, verify_sentou_gamen_data, Error, SIZE,
 };
 use std::io::Write;
@@ -40,7 +43,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {

@@ -1,4 +1,7 @@
-use sentou_hyouji::{build_sentou_hyouji, self_test, verify_sentou_hyouji, Error, ADDRESS, SIZE};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{build_sentou_hyouji, self_test, verify_sentou_hyouji, Error, ADDRESS, SIZE};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
@@ -32,8 +35,8 @@ fn run(a: &[String]) -> Result<(), Error> {
     }
 }
 
-fn main() -> ExitCode {
-    let a: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let a: Vec<String> = arguments.to_vec();
     let r = run(&a);
     if let Err(e) = r {
         eprintln!("error: {e}");

@@ -1,4 +1,7 @@
-use sentou_menu_data::{build_sentou_menu_data, self_test, verify_sentou_menu_data, Error, ADDRESS, SIZE};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{build_sentou_menu_data, self_test, verify_sentou_menu_data, Error, ADDRESS, SIZE};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
@@ -31,7 +34,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }

@@ -69,6 +69,7 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s16 actor_pp_before_drain;
     s32 turn_order_entry;
     s16 actor_max_pp_for_drain;
+    s16 target_max_pp;
     s16 actor_max_hp;
     s16 actor_max_pp;
     s16 target_pp_available;
@@ -805,9 +806,10 @@ block_196:
                     0x64
                 );
                 pp_recovery *= target_adjustment;
+                target_max_pp = M2C_FIELD(target_state, s16, 0x36);
                 restored_pp = target_pp_before_recovery + pp_recovery;
-                if (restored_pp > (s32) (M2C_FIELD(target_state, s16, 0x36))) {
-                    restored_pp = (s32) (M2C_FIELD(target_state, s16, 0x36));
+                if (restored_pp > (s32) target_max_pp) {
+                    restored_pp = (s32) target_max_pp;
                     pp_recovery = restored_pp - M2C_FIELD(target_state, s16, 0x3A);
                 }
                 BattleEvent_Push(BATTLE_EVENT_UNIT, (u32) target_id);

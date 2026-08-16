@@ -218,7 +218,7 @@ lint: pristine-options-check standard-check crate-tests
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- no-asm-c
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- decomp-targets --self-test
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- cache-key-lint
-	$(CARGO) run --offline --quiet --release --manifest-path $(TOOLS)/Cargo.toml --bin lang-ban --
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- lang-ban
 	$(MAKE) compiler-lint
 
 test: lint compiler-self-test

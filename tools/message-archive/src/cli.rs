@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! Port of `tools/make/message_archive.ts` (Golden Sun message archive codec).
 //!
 //! PORT NOTE: the TypeScript file has no local imports, so nothing was inlined
@@ -1151,8 +1154,8 @@ fn self_test() -> Res<()> {
     Ok(())
 }
 
-fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let args: Vec<String> = arguments.to_vec();
     if let Err(error) = run(&args) {
         eprintln!("error: {error}");
         std::process::exit(1);

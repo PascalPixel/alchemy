@@ -24,6 +24,8 @@ cache-key-lint = { path = "../cache-key-lint" }
 no-asm-c = { path = "../no-asm-c" }
 compare-roms = { path = "../compare-roms" }
 semantic-queue = { path = "../semantic-queue" }
+lang-ban = { path = "../lang-ban" }
+check-commit-progress = { path = "../check-commit-progress" }
 
 [[bin]]
 name = "check"

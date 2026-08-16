@@ -23,6 +23,7 @@ version = "0.1.0"
 dependencies = [
  "cache-entry",
  "cache-key-lint",
+ "check-commit-progress",
  "check-publication",
  "check-sanctum",
  "compare-roms",
@@ -32,6 +33,7 @@ dependencies = [
  "discover",
  "executable-gap-sources",
  "extract-resource",
+ "lang-ban",
  "late-runtime-data",
  "music-residuals",
  "no-asm-c",
@@ -39,6 +41,13 @@ dependencies = [
  "semantic-queue",
  "semantic-superseded",
  "source-citations",
+]
+
+[[package]]
+name = "check-commit-progress"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
 ]
 
 [[package]]
@@ -111,6 +120,10 @@ name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+
+[[package]]
+name = "lang-ban"
+version = "0.1.0"
 
 [[package]]
 name = "late-runtime-data"

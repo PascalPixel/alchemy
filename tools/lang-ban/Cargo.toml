@@ -2,7 +2,3 @@
 name = "lang-ban"
 version.workspace = true
 edition.workspace = true
-
-[[bin]]
-name = "lang-ban"
-path = "src/main.rs"

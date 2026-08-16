@@ -41,6 +41,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("early-runtime-data", "early runtime data"),
     ("export-asset", "export asset"),
     ("import-asset", "import asset"),
+    ("message-archive", "message archive"),
 ];
 
 fn main() -> ExitCode {
@@ -57,6 +58,7 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "message-archive" => { message_archive::cli::entry(&rest); ExitCode::SUCCESS }
         "gba-header" => gba_header::cli::entry(&rest),
         "early-runtime-data" => early_runtime_data::cli::entry(&rest),
         "export-asset" => export_asset::cli::entry(&rest),

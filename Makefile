@@ -83,6 +83,28 @@ standard-check:
 		fi; \
 	done
 	@printf 'include ok: routed include path resolves to this repository include/\n'
+	@# HARD RULE: no invented compiler options. Every routed flag must be a stock
+	@# gcc 2.96 option or an already-grandfathered invention, and the grandfathered
+	@# list may only shrink. See tools/route-dump/data/invented-flags.txt.
+	@$(ROUTE_DUMP) --routed 2>/dev/null | cut -f3 | tr ' ' '\n' | grep '^-' | sort -u > /tmp/alchemy-routed-flags.txt
+	@grep -v '^#' $(TOOLS)/route-dump/data/stock-flags.txt | grep . | sort -u > /tmp/alchemy-stock.txt
+	@grep -v '^#' $(TOOLS)/route-dump/data/invented-flags.txt | grep . | sort -u > /tmp/alchemy-invented.txt
+	@sort -u /tmp/alchemy-stock.txt /tmp/alchemy-invented.txt > /tmp/alchemy-allowed.txt
+	@if comm -23 /tmp/alchemy-routed-flags.txt /tmp/alchemy-allowed.txt | grep -q .; then \
+		printf 'INVENTED OPTION REJECTED: routed but neither stock nor grandfathered:\n'; \
+		comm -23 /tmp/alchemy-routed-flags.txt /tmp/alchemy-allowed.txt | sed 's/^/  /'; \
+		printf 'A byte match reached by inventing a compiler option is not a reconstruction.\n'; \
+		exit 1; \
+	fi
+	@if comm -13 /tmp/alchemy-routed-flags.txt /tmp/alchemy-invented.txt | grep -q .; then \
+		printf 'STALE: grandfathered inventions nothing routes any more; delete them from\n'; \
+		printf 'tools/route-dump/data/invented-flags.txt so the list keeps shrinking:\n'; \
+		comm -13 /tmp/alchemy-routed-flags.txt /tmp/alchemy-invented.txt | sed 's/^/  /'; \
+		exit 1; \
+	fi
+	@printf 'options ok: %s stock, %s grandfathered inventions, 0 new\n' \
+		"$$(wc -l < /tmp/alchemy-stock.txt | tr -d ' ')" \
+		"$$(wc -l < /tmp/alchemy-invented.txt | tr -d ' ')"
 
 # How far the tree still is from building on the standard alone.
 routing-debt:

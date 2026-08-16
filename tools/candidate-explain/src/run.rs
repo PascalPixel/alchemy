@@ -46,6 +46,7 @@ pub fn run_overlay(options: &crate::cli::Options) -> Result<String, String> {
         routing_source,
         work,
         span,
+        remove_flags,
     } = options
     else {
         return Err("run_overlay called with a main-image invocation".to_string());
@@ -84,13 +85,25 @@ pub fn run_overlay(options: &crate::cli::Options) -> Result<String, String> {
     // `image.subarray(offset, offset + span)` -- clamping, never panicking, and
     // empty whenever `span` is NaN.
     let expected = js_subarray(&image, offset, offset + span);
-    let compiled = compile_overlay_candidate(
-        source,
-        work,
-        overlay,
-        Some(routing_source),
-        &explain_flags(),
-    )?;
+    // `compile_overlay_candidate` can only ADD flags. Removing one is the
+    // question a routing retirement asks -- does this owner still reproduce
+    // without the flag routed to it -- so the mutated path is used whenever
+    // --remove-flags is given, and the plain one otherwise so the default
+    // command is unchanged.
+    let compiled = if remove_flags.is_empty() {
+        compile_overlay_candidate(source, work, overlay, Some(routing_source), &explain_flags())?
+    } else {
+        overlay_disasm::compile::compile_overlay_mutated(
+            source,
+            work,
+            overlay,
+            Some(routing_source),
+            &alchemy_plan::plan::CompilerFlagMutations {
+                add_flags: explain_flags(),
+                remove_flags: remove_flags.clone(),
+            },
+        )?
+    };
     if (compiled.address as f64) != OVERLAY_BASE as f64 + offset {
         return Err(format!(
             "candidate entry 0x{} does not match {id}",

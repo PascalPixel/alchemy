@@ -9,8 +9,4 @@ edition = "2021"
 name = "alchemy_zlib"
 path = "src/lib.rs"
 
-[[bin]]
-name = "alchemy-zlib"
-path = "src/main.rs"
-
 [dependencies]

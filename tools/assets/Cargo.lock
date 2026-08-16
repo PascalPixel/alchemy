@@ -55,6 +55,7 @@ dependencies = [
 name = "assets"
 version = "0.1.0"
 dependencies = [
+ "alchemy-zlib",
  "archive-asset",
  "audio-engine-data",
  "audio-wave",

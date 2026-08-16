@@ -55,6 +55,7 @@ sentou-kouka-runtime = { path = "../sentou-kouka-runtime" }
 sentou-menu-data = { path = "../sentou-menu-data" }
 sentou-gamen-data = { path = "../sentou-gamen-data" }
 sentou-hyouji = { path = "../sentou-hyouji" }
+alchemy-zlib = { path = "../zlib" }
 
 [[bin]]
 name = "assets"

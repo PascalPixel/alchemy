@@ -167,13 +167,21 @@ Reading that region gives the disease, and it is not ordering noise:
 
 The reference calls that function **twice**, with 1 and then 4. We call it once,
 and branch to a shared tail at `0x14fc` where the reference has the code written
-out inline. **Our C factors a tail the original duplicated.** That is a source
-structure difference, and it explains why every ordering-level search plateaued:
-they were permuting around a block that should not be shared at all.
+out inline. The obvious reading is that our C factors a tail the original
+duplicated -- and that reading was **TESTED AND REFUTED**. The function has 11
+`goto finalize` sites and a 36-line finalize block; inlining that block at each
+site in turn gives 2285-2406 differing and blows the size out to 6512-6568,
+against a baseline of 1961 / 6332. All eleven are far worse. The reference does
+not duplicate `finalize`.
+
+What survives is narrower and still useful: at `0x12c0` the reference passes 1
+where we pass 4, and makes an additional call our code does not make. That is a
+difference in what gets called and with what, not in how a common block is
+reached. The next session starts reading there, without the shared-tail
+assumption.
 
 Re-running all 171 flag trials against this improved baseline confirms no stock
-option changes it, so the fix belongs in the C: un-share that tail, and check the
-other seven long runs for the same disease before assuming they are noise.
+option changes any of it.
 
 **Four axes are now exhausted at this owner**, all measured:
 

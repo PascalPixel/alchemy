@@ -33,7 +33,7 @@
 // of the probe, not of the data, and the tables are mirrored as they stand.
 
 pub static FIXED_R3_SOURCES: &[&str] = &[
-    "080fb6ec", "080fb700", "080fb714", "080fb728", "080fb73c", "080fb768",
+    "080fb6ec", "080fb700", "080fb768",
     "080fb77c",
 ];
 pub static OPTIMIZE_O1_SOURCES: &[&str] = &["080049e8", "08021e28"];
@@ -65,7 +65,7 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_02001574.c",
 ];
 pub static UNSCHEDULED_SOURCES: &[&str] = &[
-    "08006b84", "080fb714", "080fb728", "080fb73c",     "080fb768", "080fb77c",
+    "08006b84", "080fb768", "080fb77c",
 ];
 pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39f_c_02000ab0.c",
@@ -1088,7 +1088,7 @@ pub static DEFAULT_ABI_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_020013ac.c",
     "exact/resource_3a7_c_020013e4.c",
 ];
-pub static AGBCC_SOURCES: &[&str] = &["080fb75c", "080fb750", 
+pub static AGBCC_SOURCES: &[&str] = &["080fb73c", "080fb728", "080fb714", "080fb75c", "080fb750", 
     "08006878", "080069a4", "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68",
     "08006cdc", "08006d50", "08006dec", "08006e24", "08006f48", "08006f84", "08007028", "08007098",
     "0800711c", "080071a8", "08007220", "080f9a50", "080fada0", "080fadf0", "080fa1fc", "080fa2a0",

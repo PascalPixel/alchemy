@@ -160,15 +160,35 @@ reference, plus four larger ones (+22 at 0x123c, +16 at 0x1456, +7 at 0x14ec,
 +7 at 0x15a6). Death by a thousand cuts, consistent with allocation and small
 scheduling differences rather than with wrong control flow.
 
-**The one signal nothing explains yet.** Every sweep round produces a variant
-that scores far better four bytes long -- 1772, then 1660 -- and buying those
-four bytes back has now failed four times across three independent axes
-(un-caching, signedness, inversion), roughly thirty pairings, best size-exact
-result always worse than leaving them. A wrong-size variant beating a right-size
-one is not noise: a 4-byte excess phase-shifts everything after it and inflates
-the count, so those variants win *despite* a penalty. Something real is being
-reported that none of these transforms can express. Read that before running
-another sweep.
+**The four-byte signal is a phase artifact, not a real one. Resolved.**
+
+Every sweep round produces a variant scoring far better four bytes long, and
+buying the bytes back failed four times across three axes. I read that as the
+variants reporting something real, on the reasoning that a 4-byte excess
+phase-shifts everything after it and inflates the count, so winning *despite*
+that penalty meant genuinely closer.
+
+That reasoning was wrong, and measurement settles it. Take the current best such
+variant, un-caching `status_141_value` from the 1801 baseline:
+
+| | differing_halfwords | register-blind mismatching insns |
+|---|---|---|
+| baseline, 6332 | 1801 | **508** / 2926 |
+| variant, 6336 | **1656** | 525 / 2928 |
+
+The variant scores 145 halfwords BETTER while being 17 instructions structurally
+WORSE. A phase shift does not only inflate the count -- it reshuffles which
+halfwords line up, and with ~1800 of 3166 already differing there is plenty of
+room for a shift to improve raw positional agreement by luck. The +4 winners were
+never structurally closer. Do not chase them, and do not spend another round
+hunting a -4 partner to pay for them.
+
+**The practical consequence: differing_halfwords is the wrong objective whenever
+sizes differ.** Use register-blind mismatching instructions as the real distance,
+and treat differing_halfwords as valid only for comparing variants at identical
+size. This is [[alchemy-phase-confound]] biting in the opposite direction from
+the one already documented.
+
 
 **Two instrument bugs recorded so they are not repeated.** The alignment must
 canonicalise register names or regalloc differences masquerade as block reorders

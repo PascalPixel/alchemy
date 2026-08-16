@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the haifa-sched `rank_for_schedule` replica.
 //
 // `--self-test` mirrors the TypeScript original's `--self-test` flag exactly,
@@ -21,7 +24,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use rtl_insn::parse_insns;
-use rtl_schedule::{
+use crate::{
     compare_pair, diagnose, json_dependence_table, json_diagnosis, parse_dependence_table, InsnMap,
     ScheduleContext, Tier,
 };
@@ -271,8 +274,8 @@ fn run_diagnose(positional: &[&String], arguments: &[String]) -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
     if arguments.iter().any(|argument| argument == "--self-test") {
         self_test();
         return ExitCode::SUCCESS;

@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI for the late runtime data package. Ported from the `main` block of
 // tools/lib/late_runtime_data.ts, argument shapes and stdout lines verbatim.
 //
@@ -9,7 +12,7 @@
 use std::path::Path;
 use std::process::ExitCode;
 
-use late_runtime_data::{
+use crate::{
     export_late_runtime_package, self_test, verify_late_runtime_package, write_late_runtime_build,
 };
 
@@ -43,8 +46,8 @@ fn run(args: &[String]) -> Result<String, String> {
     Err(USAGE.into())
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match run(&args) {
         Ok(line) => {
             println!("{line}");

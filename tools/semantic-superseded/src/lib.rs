@@ -13,6 +13,8 @@
 //!
 //! Nothing else from that module is used or ported.
 
+pub mod cli;
+
 /// Each pair is (semantic directory, the exact directory that supersedes it).
 /// A semantic source is superseded when the exact directory holds the same file
 /// name -- both source trees name a file after the address it owns, so equal

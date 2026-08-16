@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Compiler-aware source constraints. Each mutation preserves
 // the likely intent or ABI search space while changing type inference, live ranges,
 // pointer scheduling, or expression lowering.

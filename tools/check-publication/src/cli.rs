@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! check-publication --- port of `tools/check/check_publication.ts`.
 //!
 //!   check-publication --staged      # gate the index (pre-commit)
@@ -15,7 +18,7 @@ use std::io::Read;
 use std::path::Path;
 use std::process::ExitCode;
 
-use check_publication::{
+use crate::{
     check_push, check_staged, commit_message_reason, conflict_marker_reason,
     publication_content_reason, publication_entry_reason, publication_path_reason, ACCEPTED_PATHS,
     REJECTED_PATHS,
@@ -142,8 +145,8 @@ fn self_test() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match args.as_slice() {
         [argument] if argument == "-h" || argument == "--help" => help(),
         [argument] if argument == "--staged" => match check_staged(root()) {

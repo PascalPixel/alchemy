@@ -9,10 +9,6 @@ edition = "2021"
 name = "music_residuals"
 path = "src/lib.rs"
 
-[[bin]]
-name = "music-residuals"
-path = "src/main.rs"
-
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 music = { path = "../music" }

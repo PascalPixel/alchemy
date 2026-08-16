@@ -8,6 +8,8 @@
 //!
 //! Port of `tools/check/check_sanctum.ts`.
 
+pub mod cli;
+
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
 

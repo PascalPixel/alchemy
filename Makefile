@@ -140,13 +140,13 @@ inventory:
 	$(CARGO_RUN) $(TOOLS)/overlay-inventory/Cargo.toml --
 
 semantic-check:
-	$(CARGO_RUN) $(TOOLS)/semantic-owner-scope/Cargo.toml -- --check
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-owner-scope --check
 
 core-retained-check:
-	$(CARGO_RUN) $(TOOLS)/core-retained-audit/Cargo.toml -- --check
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- core-retained-audit --check
 
 sanctum:
-	$(CARGO_RUN) $(TOOLS)/check-sanctum/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- check-sanctum
 
 progress:
 	$(CARGO_RUN) $(TOOLS)/full-c-progress/Cargo.toml --
@@ -214,9 +214,9 @@ crate-tests:
 
 lint: pristine-options-check standard-check crate-tests
 	$(CARGO_RUN) $(TOOLS)/architecture/Cargo.toml --
-	$(CARGO_RUN) $(TOOLS)/source-citations/Cargo.toml --
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- source-citations
 	$(CARGO_RUN) $(TOOLS)/no-asm-c/Cargo.toml --
-	$(CARGO_RUN) $(TOOLS)/decomp-targets/Cargo.toml -- --self-test
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- decomp-targets --self-test
 	$(CARGO_RUN) $(TOOLS)/cache-key-lint/Cargo.toml --
 	$(CARGO) run --offline --quiet --release --manifest-path $(TOOLS)/Cargo.toml --bin lang-ban --
 	$(MAKE) compiler-lint
@@ -231,7 +231,7 @@ verify:
 	$(MAKE) build-semantic
 	$(MAKE) semantic-check
 	$(MAKE) core-retained-check
-	$(CARGO_RUN) $(TOOLS)/semantic-superseded/Cargo.toml -- --check
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-superseded --check
 	$(MAKE) sanctum
 	$(MAKE) progress-check
 

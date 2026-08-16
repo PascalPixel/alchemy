@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! check-sanctum --- gate for SANCTUM.md, the sealed-owner ledger.
 //!
 //!   check-sanctum              # gate the ledger
@@ -11,7 +14,7 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::process::ExitCode;
 
-use check_sanctum::{corpus_guard, parse_sealed, queue, stems, violations, QueueScan, SealedEntry};
+use crate::{corpus_guard, parse_sealed, queue, stems, violations, QueueScan, SealedEntry};
 
 const USAGE: &str = "Usage: check-sanctum [--queue | --self-test]\n\nModes:\n  (default)      Validate SANCTUM.md against current owners.\n  --queue        List owners with compiler search spent but shape search unrun.\n  --self-test    Run the ledger gate's internal checks.\n  -h, --help     Show this help.";
 
@@ -172,8 +175,8 @@ fn gate() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match parse_args(&args) {
         Ok(Command::Help) => {
             println!("{USAGE}");

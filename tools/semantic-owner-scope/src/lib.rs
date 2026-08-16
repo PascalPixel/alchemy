@@ -67,6 +67,8 @@
 //!   the tool's contract. Stdout and exit codes match exactly.
 //! * Nothing else. All stdout bytes match character for character.
 
+pub mod cli;
+
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};

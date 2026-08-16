@@ -8,6 +8,7 @@ const USAGE: &str = "usage: rtl <command> [args]\n       rtl --list";
 const COMMANDS: &[(&str, &str)] = &[
     ("insn", "inspect RTL instructions"),
     ("sexpr", "inspect RTL s-expressions"),
+    ("schedule", "inspect RTL scheduling"),
 ];
 
 fn main() -> ExitCode {
@@ -26,6 +27,7 @@ fn main() -> ExitCode {
     match command {
         "insn" => rtl_insn::cli::entry(&rest),
         "sexpr" => rtl_sexpr::cli::entry(&rest),
+        "schedule" => rtl_schedule::cli::entry(&rest),
         other => {
             eprintln!("unknown rtl command: {other}\n\n{USAGE}");
             list();

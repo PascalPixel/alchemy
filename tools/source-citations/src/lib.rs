@@ -12,6 +12,8 @@
 //!
 //! Port of `tools/check/source_citations.ts`.
 
+pub mod cli;
+
 use std::collections::BTreeSet;
 use std::path::Path;
 use std::process::Command;

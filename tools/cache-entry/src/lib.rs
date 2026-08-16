@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Writing a content-addressed cache entry so it can never be observed
 // half-written.
 //

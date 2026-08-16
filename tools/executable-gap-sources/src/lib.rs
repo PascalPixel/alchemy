@@ -4,6 +4,8 @@
 //! Assembly export is owned by the overlay/discovery tools; this crate keeps
 //! the deterministic build and ROM verification API.
 
+pub mod cli;
+
 // These ports are retained as test-only assembly-rendering fixtures. The
 // production package builder does not own assembly discovery or rendering.
 #[cfg(test)]

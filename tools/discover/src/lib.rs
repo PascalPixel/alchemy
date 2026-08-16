@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Recursive-descent code discovery over a raw GBA image: seed on the reset
 // vector and the header veneers, walk ARM and Thumb flow with a small
 // constant-tracker so literal pools and jump tables resolve, then re-seed from

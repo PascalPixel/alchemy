@@ -9,8 +9,4 @@ edition = "2021"
 name = "semantic_superseded"
 path = "src/lib.rs"
 
-[[bin]]
-name = "semantic-superseded"
-path = "src/main.rs"
-
 [dependencies]

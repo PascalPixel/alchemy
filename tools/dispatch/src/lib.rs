@@ -65,15 +65,15 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "check_publication",
-        target: Target::Binary("tools/check-publication/target/release/check-publication"),
+        target: Target::Sub("tools/check/target/release/check", "check-publication"),
     },
     Entry {
         name: "check_sanctum",
-        target: Target::Binary("tools/check-sanctum/target/release/check-sanctum"),
+        target: Target::Sub("tools/check/target/release/check", "check-sanctum"),
     },
     Entry {
         name: "core_retained_audit",
-        target: Target::Binary("tools/core-retained-audit/target/release/core-retained-audit"),
+        target: Target::Sub("tools/check/target/release/check", "core-retained-audit"),
     },
     Entry {
         name: "documented",
@@ -85,7 +85,7 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "source_citations",
-        target: Target::Binary("tools/source-citations/target/release/source-citations"),
+        target: Target::Sub("tools/check/target/release/check", "source-citations"),
     },
 ];
 
@@ -100,7 +100,7 @@ const ASSETS: &[Entry] = &[
     },
     Entry {
         name: "extract_resource",
-        target: Target::Binary("tools/extract-resource/target/release/extract-resource"),
+        target: Target::Sub("tools/check/target/release/check", "extract-resource"),
     },
     Entry {
         name: "import_asset",
@@ -211,20 +211,8 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
-        crate_name: "rtl-schedule",
-        binary: "rtl-schedule",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "thumb-disasm",
         binary: "thumb-disasm",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "late-runtime-data",
-        binary: "late-runtime-data",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },
@@ -237,18 +225,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
         crate_name: "alchemy-selftest",
         binary: "alchemy-selftest",
-        kind: NonPublicKind::SelfTestSupport,
-        self_test: false,
-    },
-    NonPublicTarget {
-        crate_name: "cache-entry",
-        binary: "cache-entry",
-        kind: NonPublicKind::SelfTestSupport,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "decomp-targets",
-        binary: "decomp-targets",
         kind: NonPublicKind::SelfTestSupport,
         self_test: false,
     },
@@ -279,7 +255,7 @@ const DECOMP: &[Entry] = &[
     },
     Entry {
         name: "discover",
-        target: Target::Binary("tools/discover/target/release/discover"),
+        target: Target::Sub("tools/check/target/release/check", "discover"),
     },
     Entry {
         name: "integrate_matches",
@@ -358,9 +334,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "executable_gap_sources",
-        target: Target::Binary(
-            "tools/executable-gap-sources/target/release/executable-gap-sources",
-        ),
+        target: Target::Sub("tools/check/target/release/check", "executable-gap-sources"),
     },
     Entry {
         name: "f0_archive",
@@ -404,7 +378,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "music_residuals",
-        target: Target::Binary("tools/music-residuals/target/release/music-residuals"),
+        target: Target::Sub("tools/check/target/release/check", "music-residuals"),
     },
     Entry {
         name: "namae_nyuuryoku",
@@ -589,7 +563,7 @@ const SEARCH: &[Entry] = &[
     },
     Entry {
         name: "decomp_constraints",
-        target: Target::Binary("tools/decomp-constraints/target/release/decomp-constraints"),
+        target: Target::Sub("tools/check/target/release/check", "decomp-constraints"),
     },
     Entry {
         name: "search_compiler_modes",
@@ -604,7 +578,7 @@ const SEARCH: &[Entry] = &[
 const SEMANTIC: &[Entry] = &[
     Entry {
         name: "semantic_owner_scope",
-        target: Target::Binary("tools/semantic-owner-scope/target/release/semantic-owner-scope"),
+        target: Target::Sub("tools/check/target/release/check", "semantic-owner-scope"),
     },
     Entry {
         name: "semantic_queue",
@@ -612,7 +586,7 @@ const SEMANTIC: &[Entry] = &[
     },
     Entry {
         name: "semantic_superseded",
-        target: Target::Binary("tools/semantic-superseded/target/release/semantic-superseded"),
+        target: Target::Sub("tools/check/target/release/check", "semantic-superseded"),
     },
 ];
 

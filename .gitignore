@@ -65,3 +65,4 @@ target/
 *.rlib
 *.rmeta
 *.pdb
+tools/reverse-gcc296/target/

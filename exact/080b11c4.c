@@ -5,6 +5,11 @@ s32 Func_08077220(s16, s32);
 
 extern u8 *Data_03001f2c;
 
+union Slot {
+    s32 word;
+    s16 half[2];
+};
+
 void Func_080b11c4(s32 enabled, s32 selected, s32 value)
 {
     u8 *state;
@@ -27,7 +32,7 @@ void Func_080b11c4(s32 enabled, s32 selected, s32 value)
                 else
                     Func_08009020((void *)*item, 1);
                 item[16] = 0x10000;
-                id = *(s16 *)(halfBase + offset);
+                id = ((union Slot *)(halfBase + offset))->half[0];
                 if (Func_08077220(id, value) == 0)
                     item[16] = 0xcccc;
                 index++;

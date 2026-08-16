@@ -197,7 +197,7 @@ compiler-lint:
 compiler-self-test:
 	$(CARGO_RUN) $(TOOLS)/alchemy-selftest/Cargo.toml --
 
-lint:
+lint: pristine-options-check standard-check
 	$(CARGO_RUN) $(TOOLS)/architecture/Cargo.toml --
 	$(CARGO_RUN) $(TOOLS)/source-citations/Cargo.toml --
 	$(CARGO_RUN) $(TOOLS)/no-asm-c/Cargo.toml --

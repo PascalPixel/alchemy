@@ -552,6 +552,85 @@ pub fn lookup(sizes: &[(String, i64)], stem: &str) -> Option<i64> {
         .map(|(_, value)| *value)
 }
 
+/// Slice a main-image owner's reference to the OWNER's extent.
+///
+/// `verify_candidate` derives its span from the linked binary whenever `nm`
+/// reports no size, which is the normal case for these translation units, and
+/// then slices both sides to it. Its `expected` is therefore exactly as long as
+/// whatever the candidate compiled to. Any consumer that scores against that
+/// buffer is blind to a size deficit: a candidate four bytes short is compared
+/// against a reference truncated to the same four-bytes-short length, so the
+/// missing tail cannot be counted, and a scorer whose penalty term is
+/// `actual.len().abs_diff(expected.len())` has a term that is always zero.
+///
+/// This is shared rather than reimplemented per tool so that two tools cannot
+/// disagree about one owner's reference length, which is exactly what happened
+/// between `decomp-diagnose` and `candidate-explain` on `080bbb0c` (6,332
+/// against 6,328).
+///
+/// When the manifest does not name the stem there is no authoritative extent
+/// and the caller's slice stands. Returning an empty reference instead would
+/// read as "every byte matches", which is the worst possible failure here.
+pub fn owner_reference(root: &Path, rom: &[u8], stem: &str, fallback: &[u8]) -> Vec<u8> {
+    let Ok(address) = i64::from_str_radix(stem, 16) else {
+        return fallback.to_vec();
+    };
+    let Some(size) = lookup(&assembly_sizes(root), stem) else {
+        return fallback.to_vec();
+    };
+    let offset = address - ROM_BASE as i64;
+    if offset < 0 || size <= 0 {
+        return fallback.to_vec();
+    }
+    let begin = (offset as usize).min(rom.len());
+    let end = begin.saturating_add(size as usize).min(rom.len());
+    rom[begin..end].to_vec()
+}
+
+#[cfg(test)]
+mod owner_reference_tests {
+    use super::*;
+
+    /// A root with no assembly manifest has no authoritative extent to offer,
+    /// so the caller's slice has to survive intact. Silently returning an empty
+    /// reference would read as "every byte matches", which is the one answer
+    /// this must never give.
+    #[test]
+    fn an_unknown_root_keeps_the_callers_reference() {
+        let rom = vec![0xaa; 64];
+        let fallback = [1u8, 2, 3, 4];
+        let missing = Path::new("/nonexistent-owner-reference-root");
+        assert_eq!(
+            owner_reference(missing, &rom, "080bbb0c", &fallback),
+            fallback.to_vec()
+        );
+    }
+
+    /// A stem that is not hexadecimal has no address, so there is nothing to
+    /// slice and the fallback stands rather than a panic.
+    #[test]
+    fn a_non_hexadecimal_stem_keeps_the_callers_reference() {
+        let rom = vec![0xaa; 64];
+        let fallback = [7u8, 8];
+        assert_eq!(
+            owner_reference(Path::new("/nonexistent"), &rom, "not-an-address", &fallback),
+            fallback.to_vec()
+        );
+    }
+
+    /// An address below the ROM base cannot index the image, and a negative
+    /// offset must never wrap into a slice.
+    #[test]
+    fn an_address_below_the_rom_base_keeps_the_callers_reference() {
+        let rom = vec![0xaa; 64];
+        let fallback = [9u8];
+        assert_eq!(
+            owner_reference(Path::new("/nonexistent"), &rom, "00000010", &fallback),
+            fallback.to_vec()
+        );
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

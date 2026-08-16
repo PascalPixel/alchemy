@@ -151,7 +151,13 @@ reference size of 6332 on their own (attack_down_one, defense_down_two,
 defense_down_one) -- the size gap is reachable, it simply does not coincide with
 the best ordering score yet.
 
-One of the six inlines multiplies a `volatile` read from one to two. That is an
+The minimal set is five inlines -- `target_pp`, `target_max_hp_unsigned`,
+`target_max_hp_signed`, `defense_down_two`, `max_hp_for_half_revive` -- and 387
+randomised subsets of all 31 candidates found nothing better than 1992. Every
+top-scoring subset contains those same five, so 1992 is a robust plateau for
+this axis, not a greedy artefact.
+
+One of the inlines multiplies a `volatile` read from one to two. That is an
 observable semantic change, kept because it is worth 129 of the improvement,
 which is itself evidence the original C read it twice.
 

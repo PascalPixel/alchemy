@@ -227,8 +227,7 @@ pub static ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static BYTE_ORR_R5_ONLY_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_38f_c_020008ec.c",
-    "exact/resource_391_c_02000d3c.c",
-];
+    ];
 pub static SCENE_CALL_SHEETS_OVERLAY_SOURCES: &[&str] = &[    "exact/resource_38f_c_020008ec.c",
     "exact/resource_391_c_02000d3c.c",
     "exact/resource_39f_c_02001d04.c",

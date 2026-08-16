@@ -56,6 +56,83 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### The real divergence from pret: 125 invented compiler options
+
+Measured 2026-08-16 against the pristine gcc-2.96 at the fork point. Of the 138
+distinct flags the routing tables grant:
+
+- **13 are stock gcc 2.96 options**: `-fno-cse-follow-jumps`,
+  `-fno-cse-skip-blocks`, `-fno-expensive-optimizations`, `-fno-force-mem`,
+  `-fno-gcse`, `-fno-optimize-sibling-calls`, `-fno-regmove`,
+  `-fno-rerun-cse-after-loop`, `-fno-schedule-insns`, `-fno-schedule-insns2`,
+  `-fno-strength-reduce`, `-fno-strict-aliasing`, `-fno-thread-jumps`.
+- **125 were invented by this fork** and exist in no released compiler.
+
+Compare `pret/pokeemerald`, whose Makefile is the model this project claims to
+follow. It has one base `CFLAGS` and about eight per-file overrides, and every
+one is either a compiler SELECTION (`old_agbcc` for `m4a.o` and `libc.o`,
+`agbcc_arm` for `librfu_intr.o`) or a stock option (`-O`, `-O2`,
+`-mthumb-interwork`, `-ffreestanding`). It has zero custom compiler modes,
+because `agbcc` is a fixed compiler: you do not add a flag to it per function.
+
+That reframes the target. "Remove the routing" is the symptom; the cause is that
+`alchemy-gcc` is not a compiler, it is a compiler plus 125 switchable
+behaviours. The end state is `alchemy-gcc` shaped like `agbcc`: one standard
+build, one configuration, no per-owner modes, with the only routing in Alchemy
+being which of the two compilers a file uses -- exactly what pokeemerald's
+Makefile does.
+
+Each of the 125 is then a claim that has to resolve one way or the other. Either
+the behaviour is Camelot's compiler, in which case it belongs ON by default and
+unconditionally, or it is not, in which case the owners depending on it are
+mis-reconstructed. `-mgrouped-dma-store` is the worked example of the first kind
+(no C shape reproduces its `stmia`, so it is real) and it still cannot be
+promoted, because its trigger is broader than the reference's -- which makes it
+a real behaviour with a wrong predicate rather than a per-file option.
+
+### Adopting the standard outright: measured, and what blocks it
+
+2026-08-16. `cflags_for_source` was rewritten to grant the Makefile standard and
+nothing else -- the baseline, minus interworking for the stems that never
+interwork, plus `-O1` for the units built that way, with old_agbcc still
+selected separately. All 149 per-file flag lists stopped being consulted.
+
+The routing side works, and is a far smaller change than expected:
+
+| | before | after |
+|---|---|---|
+| routing debt | 668 | **67** |
+| flag-grants | 928 | **3** |
+
+The 67 are 64 agbcc owners plus 3 at `-O1`: exactly the four-configuration
+standard, reached by deleting one function body.
+
+**The build cannot link it.** Without their flags roughly 600 owners compile
+larger and run into their neighbours:
+
+    arm-none-eabi-ld: section .func_08004a5c LMA [08004a5c,08004a97]
+                      overlaps section .func_08004a44 LMA [08004a44,08004a5f]
+
+Owners are linked at fixed addresses, so an owner that grows is not merely wrong,
+it makes the image unbuildable. Every affected owner has to leave `exact/` before
+the standard can be adopted, and **adoption deleted its assembly**: there is no
+`asm/08004a44.s` to fall back to. Un-adopting ~600 owners means regenerating
+their asm from the ROM first, then deleting it again one owner at a time as each
+is reconstructed.
+
+A second cost surfaced in the same run. The agbcc family carries per-file flags
+too -- `agbcc_o1`, `agbcc_no_expensive`, `agbcc_no_gcse`, `agbcc_no_regmove` and
+the prologue and track-narrow sets, all pinned by the self-test. Dropping the
+per-file layer wholesale takes those with it and breaks agbcc owners such as
+`080fa1ac` and `080fa264`, which are otherwise unaffected.
+
+So the order of operations is forced, and it is the reverse of "remove the
+routing, then fix the files": every entry is the only thing keeping its owner
+linkable, so each owner must be reconstructed **before** its route is deleted.
+The routing change itself is trivial and can land in one commit on the day the
+last owner is fixed. What that day costs is 600 reconstructions, not a routing
+edit.
+
 ### Where -mgrouped-dma-store's over-firing comes from
 
 Promoting `-mgrouped-dma-store` to the baseline is the largest single win

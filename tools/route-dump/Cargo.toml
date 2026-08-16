@@ -5,10 +5,6 @@ name = "route-dump"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "route-dump"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-routing = { path = "../alchemy-routing" }
 

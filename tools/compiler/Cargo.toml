@@ -10,6 +10,8 @@ mode-sweep = { path = "../mode-sweep" }
 search-compiler-modes = { path = "../search-compiler-modes" }
 shape-sweep = { path = "../shape-sweep" }
 thumb-disasm = { path = "../thumb-disasm" }
+candidate-show = { path = "../candidate-show" }
+candidate-explain = { path = "../candidate-explain" }
 
 [[bin]]
 name = "compiler"

@@ -163,12 +163,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
-        crate_name: "candidate-explain",
-        binary: "candidate-explain",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "route-dump",
         binary: "route-dump",
         kind: NonPublicKind::InternalDiagnostic,
@@ -177,12 +171,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
         crate_name: "rtl",
         binary: "rtl",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "candidate-show",
-        binary: "candidate-show",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },

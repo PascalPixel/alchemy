@@ -43,6 +43,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "candidate-explain"
+version = "0.1.0"
+dependencies = [
+ "alchemy-plan",
+ "alchemy-routing",
+ "candidate-compiler",
+ "decomp-diagnose",
+ "overlay-disasm",
+ "rtl-align",
+ "rtl-insn",
+ "rtl-schedule",
+ "thumb-disasm",
+]
+
+[[package]]
 name = "candidate-show"
 version = "0.1.0"
 dependencies = [
@@ -54,6 +69,8 @@ dependencies = [
 name = "compiler"
 version = "0.1.0"
 dependencies = [
+ "candidate-explain",
+ "candidate-show",
  "mode-sweep",
  "search-compiler-modes",
  "shape-sweep",
@@ -161,6 +178,32 @@ checksum = "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
 dependencies = [
  "proc-macro2",
 ]
+
+[[package]]
+name = "rtl-align"
+version = "0.1.0"
+dependencies = [
+ "rtl-insn",
+ "thumb-disasm",
+]
+
+[[package]]
+name = "rtl-insn"
+version = "0.1.0"
+dependencies = [
+ "rtl-sexpr",
+]
+
+[[package]]
+name = "rtl-schedule"
+version = "0.1.0"
+dependencies = [
+ "rtl-insn",
+]
+
+[[package]]
+name = "rtl-sexpr"
+version = "0.1.0"
 
 [[package]]
 name = "search-compiler-modes"

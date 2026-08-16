@@ -20,6 +20,8 @@
 //! Nothing here imports compiler tables by name: everything the candidate path
 //! reaches arrives through `verifyCandidate`.
 
+pub mod entrypoint;
+
 pub mod cli;
 pub mod diff;
 pub mod disasm;

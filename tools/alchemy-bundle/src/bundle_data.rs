@@ -190,6 +190,10 @@ pub static EXPECTED: &[HostTargets] = &[
                             // Stock gcc 2.96 plus modern-host build fixes only.
                             // All 120 invented options deleted 2026-08-16.
                             "7eee37524a61a3e2c32c375e4ed841f1075e8fc9022d3e51f7e24743c5ff0671",
+                            // + LP64 rtunion and insn_gen_fn host fixes restored.
+                            "fcc461103b633fb7f36bda22fad900750da37988a062d2143f724b4ca865302e",
+                            "b62c520ee522fcc784bc496c5023b6342d3dd74923ee8580449c727f759a7fc1",
+                            "842e8a6b7b8db4b6e53c8c742e806faaee0de4f962f9d7ad47c0aab78ad332fe",
                         ],
                     ),
                 ],

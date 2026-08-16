@@ -187,6 +187,9 @@ pub static EXPECTED: &[HostTargets] = &[
                             // option no longer changes recog for functions its
                             // transforms cannot reach.
                             "ed8bfc49e05e78689ec348a2ab1a3bc8ac90a54270e50d25a398806e19f31bbe",
+                            // Stock gcc 2.96 plus modern-host build fixes only.
+                            // All 120 invented options deleted 2026-08-16.
+                            "7eee37524a61a3e2c32c375e4ed841f1075e8fc9022d3e51f7e24743c5ff0671",
                         ],
                     ),
                 ],

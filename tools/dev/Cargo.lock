@@ -78,6 +78,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "coverage-map"
+version = "0.1.0"
+
+[[package]]
+name = "dashboard-server"
+version = "0.1.0"
+dependencies = [
+ "coverage-map",
+]
+
+[[package]]
 name = "decomp-diagnose"
 version = "0.1.0"
 dependencies = [
@@ -95,6 +106,7 @@ dependencies = [
  "alchemy-permuter",
  "audit-residuals",
  "bl-site-symbols",
+ "dashboard-server",
 ]
 
 [[package]]

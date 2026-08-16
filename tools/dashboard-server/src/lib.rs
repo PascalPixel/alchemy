@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Dependency-free native dashboard server and live coverage implementation.
 //
 // The library root keeps the server pieces testable while the binary provides

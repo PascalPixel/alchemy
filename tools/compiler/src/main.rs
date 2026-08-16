@@ -9,6 +9,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("mode-sweep", "plan, score and report compiler-mode sweeps"),
     ("search-modes", "search compiler mode combinations"),
     ("shape-sweep", "bounded source-shape search, with the iterative descent driver"),
+    ("thumb-disasm", "thumb disasm"),
 ];
 
 fn main() -> ExitCode {
@@ -21,6 +22,10 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "thumb-disasm" => match thumb_disasm::cli::entry(&rest) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }
+        },
         "mode-sweep" => mode_sweep::cli::entry(&rest),
         "search-modes" => search_compiler_modes::cli::entry(&rest),
         "shape-sweep" => match shape_sweep::run(rest) {

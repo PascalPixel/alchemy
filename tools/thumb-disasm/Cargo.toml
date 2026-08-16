@@ -9,8 +9,4 @@ edition = "2021"
 name = "thumb_disasm"
 path = "src/lib.rs"
 
-[[bin]]
-name = "thumb-disasm"
-path = "src/main.rs"
-
 [dependencies]

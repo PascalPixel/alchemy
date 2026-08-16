@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // The dashboard binary: live server by default, self-test on request.
 
 fn usage() {
@@ -7,10 +10,10 @@ fn usage() {
     );
 }
 
-fn main() {
+pub fn entry(arguments: &[String]) {
     let mut arguments = std::env::args().skip(1);
     let Some(argument) = arguments.next() else {
-        if let Err(error) = dashboard_server::server::run() {
+        if let Err(error) = crate::server::run() {
             eprintln!("error: {error}");
             std::process::exit(1);
         }
@@ -18,7 +21,7 @@ fn main() {
     };
     match argument.as_str() {
         "-h" | "--help" => usage(),
-        "--self-test" if arguments.next().is_none() => match dashboard_server::selftest::self_test() {
+        "--self-test" if arguments.next().is_none() => match crate::selftest::self_test() {
             Ok(line) => println!("{line}"),
             Err(message) => {
                 // Keep self-test failures concise and machine-readable.

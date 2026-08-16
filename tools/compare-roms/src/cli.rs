@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI shell for the ROM comparison report. All logic lives in the library so
 // it can be exercised by tests; this file only moves bytes and sets exit codes.
 //
@@ -15,11 +18,11 @@
 
 use std::io::Write;
 
-fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    match compare_roms::run(&args) {
-        Ok(compare_roms::Run::Printed(text)) => println!("{text}"),
-        Ok(compare_roms::Run::Wrote { path, contents, line }) => {
+pub fn entry(arguments: &[String]) {
+    let args: Vec<String> = arguments.to_vec();
+    match crate::run(&args) {
+        Ok(crate::Run::Printed(text)) => println!("{text}"),
+        Ok(crate::Run::Wrote { path, contents, line }) => {
             // PORT NOTE: `Bun.write` creates missing parent directories.
             if let Some(parent) = std::path::Path::new(&path).parent() {
                 if !parent.as_os_str().is_empty() {

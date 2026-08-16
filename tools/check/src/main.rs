@@ -22,6 +22,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("source-citations", "source citations"),
     ("cache-key-lint", "cache key lint"),
     ("no-asm-c", "no asm c"),
+    ("compare-roms", "compare roms"),
+    ("semantic-queue", "semantic queue"),
 ];
 
 fn main() -> ExitCode {
@@ -34,6 +36,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "compare-roms" => { compare_roms::cli::entry(&rest); ExitCode::SUCCESS }
+        "semantic-queue" => { semantic_queue::cli::entry(&rest); ExitCode::SUCCESS }
         "cache-key-lint" => cache_key_lint::cli::entry(&rest),
         "no-asm-c" => no_asm_c::cli::entry(&rest),
         "cache-entry" => cache_entry::cli::entry(&rest),

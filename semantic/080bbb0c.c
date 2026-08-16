@@ -68,7 +68,6 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s16 range_value;
     s16 actor_pp_before_drain;
     s32 turn_order_entry;
-    s16 actor_max_pp_for_drain;
     s16 target_max_pp;
     s16 actor_max_hp;
     s16 actor_max_pp;
@@ -147,7 +146,9 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s32 cached_result_offset;
     s32 result_slot_offset;
     u32 target_defense;
+    u32 max_hp_for_half_revive;
     s32 action_power;
+    u32 target_max_hp_unsigned;
     u32 target_hp_before_percent_heal;
     s32 effective_defense;
     s32 scaled_action_power;
@@ -178,6 +179,7 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s32 attack_up_one;
     s32 attack_up_two;
     s32 defense_down_one;
+    s32 defense_down_two;
     s32 defense_up_one;
     s32 defense_up_two;
     s32 resistance_down_one;
@@ -973,20 +975,21 @@ block_case2_failure:
         target_hp_before_percent_heal = *(volatile u16 *)&target_unit->hp;
         scratch_value = *(volatile u8 *)&action->effect;
         recovered_hp = target_unit->hp;
+        target_max_hp_unsigned = *(u16 *)&target_unit->max_hp;
         if (scratch_value == 0x3D) {
             recovery_percent_product = (*(volatile s16 *)&target_unit->max_hp) * 0x3C;
         } else {
             recovery_percent_product = (*(volatile s16 *)&target_unit->max_hp) * 0x1E;
         }
         recovered_hp += Func_080022ec(recovery_percent_product, 0x64);
-        if (recovered_hp > (s16) (*(u16 *)&target_unit->max_hp)) {
-            recovered_hp = (s16) (*(u16 *)&target_unit->max_hp);
+        if (recovered_hp > (s16) target_max_hp_unsigned) {
+            recovered_hp = (s16) target_max_hp_unsigned;
         }
         recovered_hp_amount = recovered_hp - (s16) target_hp_before_percent_heal;
         if ((recovered_hp_amount == 0) && (action_family != 1)) {
             goto finalize;
         }
-        if (recovered_hp == (s16) (*(u16 *)&target_unit->max_hp)) {
+        if (recovered_hp == (s16) target_max_hp_unsigned) {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820U);
         } else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, recovered_hp_amount);
@@ -1112,8 +1115,9 @@ block_case2_failure:
         M2C_FIELD(target_state, u8, 0x134) = 7;
         break;
     case 0x9:
-        M2C_FIELD(target_state, u8, 0x135) = (M2C_FIELD(target_state, u8, 0x135) - 2);
-        if ((s32) (s8) (M2C_FIELD(target_state, u8, 0x135) - 2) < -4) {
+        defense_down_two = M2C_FIELD(target_state, u8, 0x135) - 2;
+        M2C_FIELD(target_state, u8, 0x135) = defense_down_two;
+        if ((s32) (s8) defense_down_two < -4) {
             M2C_FIELD(target_state, u8, 0x135) = 0xFCU;
         }
         if ((s32) (s8) M2C_FIELD(target_state, u8, 0x135) > 4) {
@@ -1166,7 +1170,8 @@ block_case2_failure:
 
         } else {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864U);
-            M2C_FIELD(target_state, s16, 0x38) = (s16) ((s32) ((s16) (M2C_FIELD(target_state, u16, 0x34)) + ((u32) ((M2C_FIELD(target_state, u16, 0x34)) << 0x10) >> 0x1F)) >> 1);
+            max_hp_for_half_revive = M2C_FIELD(target_state, u16, 0x34);
+            M2C_FIELD(target_state, s16, 0x38) = (s16) ((s32) ((s16) max_hp_for_half_revive + ((u32) (max_hp_for_half_revive << 0x10) >> 0x1F)) >> 1);
             goto block_402;
         }
         break;
@@ -1380,9 +1385,8 @@ block_421:
             drained_pp = (s32) target_pp_available;
         }
         actor_pp_before_drain = M2C_FIELD(actor_state, s16, 0x3A);
-        actor_max_pp_for_drain = M2C_FIELD(actor_state, s16, 0x36);
-        if ((s32) (actor_pp_before_drain + drained_pp) > (s32) actor_max_pp_for_drain) {
-            drained_pp = actor_max_pp_for_drain - actor_pp_before_drain;
+        if ((s32) (actor_pp_before_drain + drained_pp) > (s32) (M2C_FIELD(actor_state, s16, 0x36))) {
+            drained_pp = (M2C_FIELD(actor_state, s16, 0x36)) - actor_pp_before_drain;
         }
         if (drained_pp == 0) {
 

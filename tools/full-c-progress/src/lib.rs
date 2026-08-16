@@ -1,3 +1,7 @@
+//! Library form of this tool. main.rs BECAME lib.rs rather than moving into a
+//! submodule: its sibling modules reference crate-root types (crate::Namespace,
+//! crate::json), which only resolve if this file stays the crate root.
+
 // Canonical Full-C Byte Share metric.
 //
 // The denominator is an audited union of executable intervals, not a ROM-size,
@@ -9,10 +13,10 @@
 // Native implementation; every deliberate compatibility choice carries a
 // PORT NOTE.
 
-mod intervals;
-mod js;
-mod json;
-mod overlay;
+pub mod intervals;
+pub mod js;
+pub mod json;
+pub mod overlay;
 mod sha256;
 
 use std::collections::HashSet;
@@ -1074,8 +1078,8 @@ fn self_test() -> Result<(), String> {
     Ok(())
 }
 
-fn main() {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let argv: Vec<String> = arguments.to_vec();
     if let Err(message) = run(&argv) {
         // PORT NOTE: an uncaught `throw` in bun prints a stack trace after the
         // message. Only the message is reproduced here; the trace is noise that

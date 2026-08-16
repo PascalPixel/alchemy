@@ -92,7 +92,7 @@ const CHECK: &[Entry] = &[
 const ASSETS: &[Entry] = &[
     Entry {
         name: "bl_site_symbols",
-        target: Target::Sub("tools/dev/target/release/dev", "bl-symbols"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "bl-symbols"),
     },
     Entry {
         name: "export_asset",
@@ -165,12 +165,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
     NonPublicTarget {
         crate_name: "route-dump",
         binary: "route-dump",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
-        crate_name: "rtl",
-        binary: "rtl",
         kind: NonPublicKind::InternalDiagnostic,
         self_test: true,
     },
@@ -439,7 +433,7 @@ const MAKE: &[Entry] = &[
 const METRICS: &[Entry] = &[
     Entry {
         name: "audit_residuals",
-        target: Target::Sub("tools/dev/target/release/dev", "residuals"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "residuals"),
     },
     Entry {
         name: "compare_roms",
@@ -451,7 +445,7 @@ const METRICS: &[Entry] = &[
     },
     Entry {
         name: "dashboard_server",
-        target: Target::Sub("tools/dev/target/release/dev", "dashboard-server"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "dashboard-server"),
     },
     Entry {
         name: "full_c_history",
@@ -529,7 +523,7 @@ const OVERLAY: &[Entry] = &[
 const SEARCH: &[Entry] = &[
     Entry {
         name: "alchemy_permuter",
-        target: Target::Sub("tools/dev/target/release/dev", "permute"),
+        target: Target::Sub("tools/compiler/target/release/compiler", "permute"),
     },
     Entry {
         name: "decomp_constraints",

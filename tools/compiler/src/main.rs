@@ -12,6 +12,14 @@ const COMMANDS: &[(&str, &str)] = &[
     ("thumb-disasm", "thumb disasm"),
     ("candidate-show", "compile one candidate and show the byte comparison"),
     ("candidate-explain", "explain a candidate's routing and flags"),
+    ("rtl-insn", "inspect RTL instructions"),
+    ("rtl-sexpr", "inspect RTL s-expressions"),
+    ("rtl-schedule", "inspect RTL scheduling"),
+    ("rtl-align", "inspect RTL alignment"),
+    ("permute", "bounded C permutation search over a candidate"),
+    ("residuals", "audit remaining residual bytes"),
+    ("bl-symbols", "report bl call-site symbols"),
+    ("dashboard-server", "serve the coverage dashboard"),
 ];
 
 fn main() -> ExitCode {
@@ -24,6 +32,23 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "permute" => match alchemy_permuter::run(rest.clone()) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(message) => { eprintln!("error: {message}"); ExitCode::FAILURE }
+        },
+        "residuals" => match audit_residuals::run(&rest) {
+            Ok(output) => { if !output.is_empty() { println!("{output}"); } ExitCode::SUCCESS }
+            Err(message) => { eprintln!("error: {message}"); ExitCode::FAILURE }
+        },
+        "bl-symbols" => match bl_site_symbols::run(&rest) {
+            Ok(output) => { print!("{output}"); if !output.ends_with('\n') { println!(); } ExitCode::SUCCESS }
+            Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }
+        },
+        "dashboard-server" => { dashboard_server::cli::entry(&rest); ExitCode::SUCCESS }
+        "rtl-insn" => rtl_insn::cli::entry(&rest),
+        "rtl-sexpr" => rtl_sexpr::cli::entry(&rest),
+        "rtl-schedule" => rtl_schedule::cli::entry(&rest),
+        "rtl-align" => rtl_align::cli::entry(&rest),
         "candidate-show" => { candidate_show::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "candidate-explain" => { candidate_explain::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "thumb-disasm" => match thumb_disasm::cli::entry(&rest) {

@@ -84,13 +84,11 @@ pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3cb_c_02001050.c",
 ];
 pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080bbb0c"];
-pub static NO_CSE_TWO_INSN_IMMEDIATE_SOURCES: &[&str] = &["080108c4"];
 pub static GROUP_VALUE2_IN_PLACE_SOURCES: &[&str] = &["080b5ad4"];
 pub static NO_RERUN_CSE_AFTER_LOOP_SOURCES: &[&str] =
     &["08006088", "0808c30c", "080ba918", "080044d0"];
-pub static NO_RERUN_LOOP_OPT_SOURCES: &[&str] = &["0807a0f4"];
 pub static NO_GCSE_SOURCES: &[&str] = &[
-    "0801ed40", "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec", "08004144",
+    "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec", "08004144",
 ];
 pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878", "08004144"];
 pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c", "02004058", "02005d68"];

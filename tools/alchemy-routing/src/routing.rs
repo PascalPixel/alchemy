@@ -281,14 +281,8 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_CSE_FOLLOW_SOURCES, stem) {
         push!(&["-fno-cse-follow-jumps"]);
     }
-    if has(NO_CSE_TWO_INSN_IMMEDIATE_SOURCES, stem) {
-        push!(&["-fno-cse-two-insn-immediate"]);
-    }
     if has(NO_RERUN_CSE_AFTER_LOOP_SOURCES, stem) {
         push!(&["-fno-rerun-cse-after-loop"]);
-    }
-    if has(NO_RERUN_LOOP_OPT_SOURCES, stem) {
-        push!(&["-fno-rerun-loop-opt"]);
     }
     if has(NO_GCSE_SOURCES, stem) {
         push!(&["-fno-gcse"]);

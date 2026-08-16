@@ -242,7 +242,6 @@ pub static ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_37b_c_02000614.c",
     "exact/resource_37b_c_02000614.c",
     "semantic/resource_392_c_02000a2c.c",
-    "exact/resource_392_c_02000a2c.c",
 ];
 pub static STORE_BEFORE_POOL_LOAD_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_373_c_02002a54.c",
@@ -446,7 +445,6 @@ pub static SCHED_LOW_DEST_FIRST_SOURCES: &[&str] = &[
 ];
 pub static THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_386_c_020004e4.c",
-    "exact/resource_386_c_020004e4.c",
     "exact/resource_3c6_c_02000078.c",
     "exact/resource_3b7_c_02000154.c",
     "exact/resource_3b7_c_02000178.c",
@@ -775,7 +773,6 @@ pub static SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3b2_c_02001214.c",
     "exact/resource_3c6_c_020011bc.c",
     "exact/resource_3c6_c_02000158.c",
-    "exact/resource_3cb_c_020011bc.c",
     "exact/resource_38f_c_020008ec.c",
     "exact/resource_38f_c_02000304.c",
     "semantic/resource_38f_c_020008ec.c",
@@ -949,7 +946,6 @@ pub static NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_3bc_c_02002ee8.c",
     "exact/resource_3bc_c_02002ee8.c",
     "semantic/resource_3bc_c_020033d8.c",
-    "exact/resource_3bc_c_020033d8.c",
     "semantic/resource_3bc_c_02003bd0.c",
     "exact/resource_3bc_c_02003bd0.c",
     "semantic/resource_3bc_c_02003d88.c",
@@ -1219,7 +1215,6 @@ pub static BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_39f_c_02000f94.c",
     "semantic/resource_39f_c_02000f94.c",
     "semantic/resource_392_c_020009f8.c",
-    "exact/resource_392_c_020009f8.c",
 ];
 pub static LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3ad_c_020011b8.c",

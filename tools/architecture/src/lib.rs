@@ -10,6 +10,8 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+pub mod catalog;
+
 use dispatch::{all_entries, non_public_target, non_public_targets, Entry, Target};
 
 /// Repository-level files whose commands and native paths are part of the

@@ -58,6 +58,18 @@ fn main() -> ExitCode {
         print!("{USAGE}");
         return ExitCode::SUCCESS;
     }
+    if let Some(position) = arguments.iter().position(|a| a == "--search") {
+        let terms: Vec<String> = arguments[position + 1..].to_vec();
+        let tools = match architecture::catalog::read(&root().join("tools")) {
+            Ok(value) => value,
+            Err(error) => {
+                eprintln!("error: {error}");
+                return ExitCode::FAILURE;
+            }
+        };
+        print!("{}", architecture::catalog::render(&tools, &terms));
+        return ExitCode::SUCCESS;
+    }
     if arguments.iter().any(|argument| argument == "--self-test") {
         return match architecture::self_test() {
             Ok(()) => {

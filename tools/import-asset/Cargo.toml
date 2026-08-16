@@ -9,9 +9,5 @@ edition = "2021"
 name = "import_asset"
 path = "src/lib.rs"
 
-[[bin]]
-name = "import-asset"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-zlib = { path = "../zlib" }

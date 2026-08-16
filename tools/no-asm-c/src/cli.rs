@@ -1,4 +1,7 @@
-use no_asm_c::{find_forbidden, self_test, source_files, SOURCE_ROOTS};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{find_forbidden, self_test, source_files, SOURCE_ROOTS};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -33,8 +36,8 @@ fn repository_root() -> PathBuf {
         .to_path_buf()
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     let action = match parse_args(&args) {
         Ok(action) => action,
         Err(message) => {

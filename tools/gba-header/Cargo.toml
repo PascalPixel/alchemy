@@ -9,10 +9,6 @@ edition = "2021"
 name = "gba_header"
 path = "src/lib.rs"
 
-[[bin]]
-name = "gba-header"
-path = "src/main.rs"
-
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 export-asset = { path = "../export-asset" }

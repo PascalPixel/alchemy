@@ -20,6 +20,8 @@
 //! unmatched lists are likewise indices, and are produced in ascending index
 //! order exactly as `Array.prototype.filter` does.
 
+pub mod cli;
+
 use rtl_insn::{dest_register, RtlExpr, RtlInsn};
 use thumb_disasm::{
     is_branch_mnemonic, is_call_mnemonic, is_load_mnemonic, is_store_mnemonic,

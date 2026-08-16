@@ -9,10 +9,6 @@ edition = "2021"
 name = "rtl_align"
 path = "src/lib.rs"
 
-[[bin]]
-name = "rtl-align"
-path = "src/main.rs"
-
 [dependencies]
 rtl-insn = { path = "../rtl-insn" }
 thumb-disasm = { path = "../thumb-disasm" }

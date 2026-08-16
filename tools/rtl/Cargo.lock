@@ -6,9 +6,18 @@ version = 4
 name = "rtl"
 version = "0.1.0"
 dependencies = [
+ "rtl-align",
  "rtl-insn",
  "rtl-schedule",
  "rtl-sexpr",
+]
+
+[[package]]
+name = "rtl-align"
+version = "0.1.0"
+dependencies = [
+ "rtl-insn",
+ "thumb-disasm",
 ]
 
 [[package]]
@@ -27,4 +36,8 @@ dependencies = [
 
 [[package]]
 name = "rtl-sexpr"
+version = "0.1.0"
+
+[[package]]
+name = "thumb-disasm"
 version = "0.1.0"

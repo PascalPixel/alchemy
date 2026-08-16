@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Forbid hand-maintained version literals in cache keys.
 //
 // Ported from tools/check/cache_key_lint.ts, with the provenance note kept

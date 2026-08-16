@@ -1,5 +1,7 @@
 //! GBA cartridge-header codec, ported from tools/make/gba_header.ts.
 
+pub mod cli;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 

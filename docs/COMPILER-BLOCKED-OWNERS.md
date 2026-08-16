@@ -134,6 +134,27 @@ reference size reached and the residual localized into explained clusters.
 Neither holds: the size is 8 bytes short and the residual is diffuse across the
 whole function.
 
+**A working axis was found: un-cache field reads.** The `+70 ldr` signal was
+real and actionable. Locals that cache a field read once and use it many times
+are a deviation where the reference re-reads; inlining the right ones moves the
+score substantially. Greedy search over 31 safely-inlinable candidates:
+
+    baseline                                   2286 / 6324
+    inline target_max_hp_unsigned              2188 / 6316
+    + target_pp                                2129 / 6320
+    + defense_down_two                         2121 / 6328
+    + target_max_hp_signed                     1992 / 6336   <- converged
+    + target_max_pp, max_hp_for_half_revive    1992 / 6336
+
+**2286 -> 1992, a 13% reduction**, and three single inlines reached the exact
+reference size of 6332 on their own (attack_down_one, defense_down_two,
+defense_down_one) -- the size gap is reachable, it simply does not coincide with
+the best ordering score yet.
+
+One of the six inlines multiplies a `volatile` read from one to two. That is an
+observable semantic change, kept because it is worth 129 of the improvement,
+which is itself evidence the original C read it twice.
+
 **Searched, not guessed.** Everything below was measured on this owner with a
 harness whose unshuffled control reads exactly `2286 / 6324`.
 

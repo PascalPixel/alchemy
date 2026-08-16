@@ -1,0 +1,15 @@
+[workspace]
+
+[package]
+name = "compiler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mode-sweep = { path = "../mode-sweep" }
+search-compiler-modes = { path = "../search-compiler-modes" }
+shape-sweep = { path = "../shape-sweep" }
+
+[[bin]]
+name = "compiler"
+path = "src/main.rs"

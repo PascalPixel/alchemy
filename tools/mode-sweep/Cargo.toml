@@ -34,7 +34,3 @@ integrate-matches = { path = "../integrate-matches" }
 [lib]
 name = "mode_sweep"
 path = "src/lib.rs"
-
-[[bin]]
-name = "mode-sweep"
-path = "src/main.rs"

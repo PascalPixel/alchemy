@@ -11,7 +11,3 @@ semantic-queue = { path = "../semantic-queue" }
 [lib]
 name = "search_compiler_modes"
 path = "src/lib.rs"
-
-[[bin]]
-name = "search-compiler-modes"
-path = "src/main.rs"

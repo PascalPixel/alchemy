@@ -9,10 +9,6 @@ edition = "2021"
 name = "kind1_map_grid"
 path = "src/lib.rs"
 
-[[bin]]
-name = "kind1-map-grid"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-zlib = { path = "../zlib" }
 export-asset = { path = "../export-asset" }

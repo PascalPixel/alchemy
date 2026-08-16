@@ -9,9 +9,5 @@ edition = "2021"
 name = "resource_directory"
 path = "src/lib.rs"
 
-[[bin]]
-name = "resource-directory"
-path = "src/main.rs"
-
 [dependencies]
 serde_json = { version = "1", features = ["preserve_order"] }

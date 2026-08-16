@@ -1,4 +1,7 @@
-use resource_byte_canvases::{
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{
     export_resource_byte_canvases, self_test, verify_resource_byte_canvases, Error, RESOURCES,
     SOURCE_BYTES,
 };
@@ -22,7 +25,7 @@ fn run(args: &[String]) -> Result<(), Error> {
         return Ok(());
     }
     if args.len() == 3 && args[0] == "build-stdout" {
-        let resource = resource_byte_canvases::build_resource_byte_canvases(Path::new(&args[1]))?
+        let resource = crate::build_resource_byte_canvases(Path::new(&args[1]))?
             .into_iter()
             .find(|item| item.id == args[2].to_lowercase())
             .ok_or_else(|| Error(format!("resource {} is absent", args[2])))?;
@@ -44,7 +47,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     Err(Error(USAGE.into()))
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

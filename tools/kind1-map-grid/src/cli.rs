@@ -1,7 +1,10 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::process::ExitCode;
 use std::io::{self, Write};
 
-use kind1_map_grid::{export_grid, self_test, verify_grid, Result, ROM_BASE};
+use crate::{export_grid, self_test, verify_grid, Result, ROM_BASE};
 
 const USAGE: &str = "usage: kind1-map-grid [export|verify] ROM --address N --size N --directory DIR | --self-test";
 
@@ -42,7 +45,7 @@ fn run(mut args: Vec<String>) -> Result<()> {
         let directory = option(&args, "--directory")?;
         let source = std::fs::read_to_string(plan).map_err(|e| e.to_string())?;
         let plan: serde_json::Value = serde_json::from_str(&source).map_err(|e| e.to_string())?;
-        let built = kind1_map_grid::build_grid(&plan, std::path::Path::new(&directory))?;
+        let built = crate::build_grid(&plan, std::path::Path::new(&directory))?;
         io::stdout().write_all(&built).map_err(|e| e.to_string())?;
         return Ok(());
     }
@@ -85,7 +88,7 @@ fn run(mut args: Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

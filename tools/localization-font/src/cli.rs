@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use localization_font::{
+use crate::{
     build_localization_font, canonical_source, export_localization_font, self_test, Error,
     PREFIX_ADDRESS, PREFIX_END,
 };
@@ -118,8 +121,8 @@ fn run(args: Vec<String>) -> Result<(), Error> {
                     .map_err(|e| Error(e.to_string()))?;
             let built = build_localization_font(&source, Path::new(&root))?;
             let rom = fs::read(rom_path).map_err(|e| Error(e.to_string()))?;
-            let start = (PREFIX_ADDRESS - localization_font::ROM_BASE) as usize;
-            let end = (PREFIX_END - localization_font::ROM_BASE) as usize;
+            let start = (PREFIX_ADDRESS - crate::ROM_BASE) as usize;
+            let end = (PREFIX_END - crate::ROM_BASE) as usize;
             if end > rom.len() || built != rom[start..end] {
                 return Err(Error("localization-font source differs from ROM".into()));
             }
@@ -130,7 +133,7 @@ fn run(args: Vec<String>) -> Result<(), Error> {
     }
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

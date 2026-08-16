@@ -4,6 +4,8 @@
 //! surface needed by the asset build boundary. Export remains with the legacy
 //! asset worker until that boundary is removed.
 
+pub mod cli;
+
 use extract_resource::{encode_general, GeneralToken};
 use serde_json::{Map, Value};
 use std::fs;

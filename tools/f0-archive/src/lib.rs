@@ -5,6 +5,8 @@
 //! export/verify CLI and an independently tested implementation of the same
 //! byte contract.
 
+pub mod cli;
+
 use alchemy_zlib::{deflate_sync, DeflateOptions};
 use export_asset::chunk;
 use generated_files::prune_files;

@@ -9,10 +9,6 @@ edition = "2021"
 name = "simple_resources"
 path = "src/lib.rs"
 
-[[bin]]
-name = "simple-resources"
-path = "src/main.rs"
-
 [dependencies]
 export-asset = { path = "../export-asset" }
 extract-resource = { path = "../extract-resource" }

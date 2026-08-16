@@ -18,6 +18,25 @@ encounter-data = { path = "../encounter-data" }
 character-catalog = { path = "../character-catalog" }
 staff-roll = { path = "../staff-roll" }
 audio-wave = { path = "../audio-wave" }
+documented = { path = "../documented" }
+remaining-survey = { path = "../remaining-survey" }
+exact-reading-list = { path = "../exact-reading-list" }
+f0-archive = { path = "../f0-archive" }
+simple-resources = { path = "../simple-resources" }
+kind2-resources = { path = "../kind2-resources" }
+resource-01c = { path = "../resource-01c" }
+resource-byte-canvases = { path = "../resource-byte-canvases" }
+archive-asset = { path = "../archive-asset" }
+skip-sprite-archive = { path = "../skip-sprite-archive" }
+static-sprite-series = { path = "../static-sprite-series" }
+localization-font = { path = "../localization-font" }
+map-container-components = { path = "../map-container-components" }
+byte-henkan = { path = "../byte-henkan" }
+namae-nyuuryoku = { path = "../namae-nyuuryoku" }
+music = { path = "../music" }
+kind1-map-grid = { path = "../kind1-map-grid" }
+resource-directory = { path = "../resource-directory" }
+late-runtime-residual = { path = "../late-runtime-residual" }
 
 [[bin]]
 name = "assets"

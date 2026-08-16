@@ -1,4 +1,7 @@
-use simple_resources::{build_simple_resource, export_simple_resources, self_test, verify_simple_resources, Error};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{build_simple_resource, export_simple_resources, self_test, verify_simple_resources, Error};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
@@ -53,7 +56,7 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
     let root = option(&args, "--directory")?;
     let rom = Path::new(rom);
     let root = Path::new(&root);
-    if simple_resources::same_paths(rom, root) {
+    if crate::same_paths(rom, root) {
         return Err(Error("refusing to overwrite the input ROM".into()));
     }
     let line = if command == "export" {
@@ -64,7 +67,7 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
     println!("{line}");
     Ok(())
 }
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(std::env::args().skip(1).collect()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {

@@ -77,7 +77,7 @@ const CHECK: &[Entry] = &[
     },
     Entry {
         name: "documented",
-        target: Target::Binary("tools/documented/target/release/documented"),
+        target: Target::Sub("tools/assets/target/release/assets", "documented"),
     },
     Entry {
         name: "no_asm_c",
@@ -223,12 +223,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
-        crate_name: "kind2-resources",
-        binary: "kind2-resources",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "late-runtime-data",
         binary: "late-runtime-data",
         kind: NonPublicKind::InternalDiagnostic,
@@ -293,14 +287,14 @@ const DECOMP: &[Entry] = &[
     },
     Entry {
         name: "remaining_survey",
-        target: Target::Binary("tools/remaining-survey/target/release/remaining-survey"),
+        target: Target::Sub("tools/assets/target/release/assets", "remaining-survey"),
     },
 ];
 
 const MAKE: &[Entry] = &[
     Entry {
         name: "archive_asset",
-        target: Target::Binary("tools/archive-asset/target/release/archive-asset"),
+        target: Target::Sub("tools/assets/target/release/assets", "archive-asset"),
     },
     Entry {
         name: "audio_engine_data",
@@ -340,7 +334,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "byte_henkan",
-        target: Target::Binary("tools/byte-henkan/target/release/byte-henkan"),
+        target: Target::Sub("tools/assets/target/release/assets", "byte-henkan"),
     },
     Entry {
         name: "byte_value_regions",
@@ -370,7 +364,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "f0_archive",
-        target: Target::Binary("tools/f0-archive/target/release/f0-archive"),
+        target: Target::Sub("tools/assets/target/release/assets", "f0-archive"),
     },
     Entry {
         name: "gba_header",
@@ -382,15 +376,15 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "kind1_map_grid",
-        target: Target::Binary("tools/kind1-map-grid/target/release/kind1-map-grid"),
+        target: Target::Sub("tools/assets/target/release/assets", "kind1-map-grid"),
     },
     Entry {
         name: "late_runtime_residual",
-        target: Target::Binary("tools/late-runtime-residual/target/release/late-runtime-residual"),
+        target: Target::Sub("tools/assets/target/release/assets", "late-runtime-residual"),
     },
     Entry {
         name: "localization_font",
-        target: Target::Binary("tools/localization-font/target/release/localization-font"),
+        target: Target::Sub("tools/assets/target/release/assets", "localization-font"),
     },
     Entry {
         name: "localization_tables",
@@ -398,9 +392,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "map_container_components",
-        target: Target::Binary(
-            "tools/map-container-components/target/release/map-container-components",
-        ),
+        target: Target::Sub("tools/assets/target/release/assets", "map-container-components"),
     },
     Entry {
         name: "message_archive",
@@ -408,7 +400,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "music",
-        target: Target::Binary("tools/music/target/release/music"),
+        target: Target::Sub("tools/assets/target/release/assets", "music"),
     },
     Entry {
         name: "music_residuals",
@@ -416,7 +408,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "namae_nyuuryoku",
-        target: Target::Binary("tools/namae-nyuuryoku/target/release/namae-nyuuryoku"),
+        target: Target::Sub("tools/assets/target/release/assets", "namae-nyuuryoku"),
     },
     Entry {
         name: "pairtable",
@@ -424,7 +416,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_01c",
-        target: Target::Binary("tools/resource-01c/target/release/resource-01c"),
+        target: Target::Sub("tools/assets/target/release/assets", "resource-01c"),
     },
     Entry {
         name: "resource_3ce",
@@ -436,9 +428,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_byte_canvases",
-        target: Target::Binary(
-            "tools/resource-byte-canvases/target/release/resource-byte-canvases",
-        ),
+        target: Target::Sub("tools/assets/target/release/assets", "resource-byte-canvases"),
     },
     Entry {
         name: "resource_d1_d3",
@@ -446,7 +436,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_directory",
-        target: Target::Binary("tools/resource-directory/target/release/resource-directory"),
+        target: Target::Sub("tools/assets/target/release/assets", "resource-directory"),
     },
     Entry {
         name: "runtime_support_data",
@@ -474,11 +464,11 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "simple_resources",
-        target: Target::Binary("tools/simple-resources/target/release/simple-resources"),
+        target: Target::Sub("tools/assets/target/release/assets", "simple-resources"),
     },
     Entry {
         name: "skip_sprite_archive",
-        target: Target::Binary("tools/skip-sprite-archive/target/release/skip-sprite-archive"),
+        target: Target::Sub("tools/assets/target/release/assets", "skip-sprite-archive"),
     },
     Entry {
         name: "staff_roll",
@@ -486,7 +476,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "static_sprite_series",
-        target: Target::Binary("tools/static-sprite-series/target/release/static-sprite-series"),
+        target: Target::Sub("tools/assets/target/release/assets", "static-sprite-series"),
     },
     Entry {
         name: "title_resources",
@@ -532,7 +522,7 @@ const METRICS: &[Entry] = &[
 const OVERLAY: &[Entry] = &[
     Entry {
         name: "exact_reading_list",
-        target: Target::Binary("tools/exact-reading-list/target/release/exact-reading-list"),
+        target: Target::Sub("tools/assets/target/release/assets", "exact-reading-list"),
     },
     Entry {
         name: "overlay_adopt",

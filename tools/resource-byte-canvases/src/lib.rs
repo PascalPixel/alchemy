@@ -4,6 +4,8 @@
 //! multiple of eight rows. The TypeScript module remains available as a
 //! library for the native asset builder; this crate provides standalone commands.
 
+pub mod cli;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 

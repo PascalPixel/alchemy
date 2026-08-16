@@ -2,6 +2,8 @@
 //!
 //! This crate owns the build-facing API and its verifier.
 
+pub mod cli;
+
 use import_asset::{gba_graphics, gba_palette_rgba, indexed_png};
 use serde_json::{Map, Value};
 use std::fs;

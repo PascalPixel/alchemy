@@ -25,6 +25,8 @@
 //! adler32 are ignored, as node does. Error *messages* are this crate's own;
 //! only the success/failure decision and the produced bytes are contractual.
 
+pub mod entrypoint;
+
 use std::fmt;
 
 /// Compression level, accepted for call-site compatibility with the

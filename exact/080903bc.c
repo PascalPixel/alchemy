@@ -41,7 +41,7 @@ struct Display_080903bc {
     u16 second_102;
 };
 
-extern void Func_08004278(void (*)(void));
+extern s32 Func_08004278(void (*)(void));
 extern void Func_0800307c(s32, s32, s32);
 extern s32 Func_080072f0(s32, s32, s32, s32);
 

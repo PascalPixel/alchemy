@@ -14,26 +14,14 @@ u16 Func_080044d0(s32 x, s32 y)
     } else if (y == 0) {
         result = 0x4000;
     } else {
-        s32 absoluteX;
-
         ratio = y;
         if (ratio < 0)
             ratio = -ratio;
-        absoluteX = x;
-        if (absoluteX < 0)
-            absoluteX = -absoluteX;
+        value = x;
+        if (value < 0)
+            value = -value;
 
-        value = Func_080022ec(absoluteX << 8, ratio);
-        /* The quotient is copied into `ratio` and then back into `value`. The
-           second assignment is dead, and it is load-bearing: without it the
-           quotient's two live names both trace to the call's return register and
-           the first comparison below reads that register, where the reference
-           reads the copy. Writing the round trip makes `value` the copy instead,
-           so the comparison takes `ratio`. Needs -fno-rerun-cse-after-loop, which
-           stops a later pass from collapsing the pair back again; either half
-           alone leaves one differing halfword. */
-        ratio = value;
-        value = ratio;
+        ratio = Func_080022ec(value << 8, ratio);
         result = 0x4000;
         if (ratio <= 0xFB6A) {
             table = (const u16 *)0x08007676;

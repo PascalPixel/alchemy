@@ -77,7 +77,7 @@ pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
 pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080bbb0c"];
 pub static GROUP_VALUE2_IN_PLACE_SOURCES: &[&str] = &["080b5ad4"];
 pub static NO_RERUN_CSE_AFTER_LOOP_SOURCES: &[&str] =
-    &["08006088", "0808c30c", "080ba918", "080044d0"];
+    &["08006088", "0808c30c", "080ba918"];
 pub static NO_GCSE_SOURCES: &[&str] = &[
     "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec", "08004144",
 ];
@@ -186,7 +186,7 @@ pub static GROUP_CONTROL_LAST_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static NO_SCHED_DEPEND_COUNT_SOURCES: &[&str] = &[
     "080b0744", "08002fb0", "08003e10", "08004760", "08005340", "08005394", "080053e8", "0800d304",
-    "08019bac", "08021d88", "080903bc", "080907b0", "08094730",
+    "08019bac", "08021d88", "080907b0", "08094730",
 ];
 pub static MOVE_BEFORE_ALU_SOURCES: &[&str] = &[
     "08002fb0", "08003e10", "08005340", "08005394", "080053e8", "0800d304", "08019bac",
@@ -747,7 +747,7 @@ pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.
 pub static SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static NO_HOIST_VOLATILE_ADDRESS_OVERLAY_SOURCES: &[&str] =
     &["exact/resource_3bb_c_02000970.c"];
-pub static SCHED_CALL_DEST_DESCENDING_SOURCES: &[&str] = &["08091f14"];
+pub static SCHED_CALL_DEST_DESCENDING_SOURCES: &[&str] = &[];
 pub static SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_381_c_0200330c.c",
     "exact/resource_381_c_0200330c.c",

@@ -42,6 +42,19 @@ early-runtime-data = { path = "../early-runtime-data" }
 export-asset = { path = "../export-asset" }
 import-asset = { path = "../import-asset" }
 message-archive = { path = "../message-archive" }
+resource-3ce = { path = "../resource-3ce" }
+resource-5 = { path = "../resource-5" }
+resource-d1-d3 = { path = "../resource-d1-d3" }
+title-resources = { path = "../title-resources" }
+sentou-resources = { path = "../sentou-resources" }
+map-resources = { path = "../map-resources" }
+audio-engine-data = { path = "../audio-engine-data" }
+battle-effect-data = { path = "../battle-effect-data" }
+runtime-support-data = { path = "../runtime-support-data" }
+sentou-kouka-runtime = { path = "../sentou-kouka-runtime" }
+sentou-menu-data = { path = "../sentou-menu-data" }
+sentou-gamen-data = { path = "../sentou-gamen-data" }
+sentou-hyouji = { path = "../sentou-hyouji" }
 
 [[bin]]
 name = "assets"

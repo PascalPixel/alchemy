@@ -214,7 +214,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "audio_engine_data",
-        target: Target::Sub("tools/data/target/release/data", "audio-engine"),
+        target: Target::Sub("tools/assets/target/release/assets", "audio-engine"),
     },
     Entry {
         name: "audio_wave",
@@ -222,7 +222,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "battle_effect_data",
-        target: Target::Sub("tools/data/target/release/data", "battle-effect"),
+        target: Target::Sub("tools/assets/target/release/assets", "battle-effect"),
     },
     Entry {
         name: "build_asm",
@@ -262,7 +262,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "chiiki_map_resources",
-        target: Target::Sub("tools/resource/target/release/resource", "map-chiiki"),
+        target: Target::Sub("tools/assets/target/release/assets", "map-chiiki"),
     },
     Entry {
         name: "early_runtime_data",
@@ -334,11 +334,11 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_3ce",
-        target: Target::Sub("tools/resource/target/release/resource", "3ce"),
+        target: Target::Sub("tools/assets/target/release/assets", "3ce"),
     },
     Entry {
         name: "resource_5",
-        target: Target::Sub("tools/resource/target/release/resource", "5"),
+        target: Target::Sub("tools/assets/target/release/assets", "5"),
     },
     Entry {
         name: "resource_byte_canvases",
@@ -346,7 +346,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_d1_d3",
-        target: Target::Sub("tools/resource/target/release/resource", "d1-d3"),
+        target: Target::Sub("tools/assets/target/release/assets", "d1-d3"),
     },
     Entry {
         name: "resource_directory",
@@ -354,27 +354,27 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "runtime_support_data",
-        target: Target::Sub("tools/data/target/release/data", "runtime-support"),
+        target: Target::Sub("tools/assets/target/release/assets", "runtime-support"),
     },
     Entry {
         name: "sentou_gamen_data",
-        target: Target::Sub("tools/data/target/release/data", "battle-screen"),
+        target: Target::Sub("tools/assets/target/release/assets", "battle-screen"),
     },
     Entry {
         name: "sentou_hyouji",
-        target: Target::Sub("tools/data/target/release/data", "battle-display"),
+        target: Target::Sub("tools/assets/target/release/assets", "battle-display"),
     },
     Entry {
         name: "sentou_kouka_runtime",
-        target: Target::Sub("tools/data/target/release/data", "battle-runtime"),
+        target: Target::Sub("tools/assets/target/release/assets", "battle-runtime"),
     },
     Entry {
         name: "sentou_menu_data",
-        target: Target::Sub("tools/data/target/release/data", "battle-menu"),
+        target: Target::Sub("tools/assets/target/release/assets", "battle-menu"),
     },
     Entry {
         name: "sentou_resources",
-        target: Target::Sub("tools/resource/target/release/resource", "sentou"),
+        target: Target::Sub("tools/assets/target/release/assets", "sentou"),
     },
     Entry {
         name: "simple_resources",
@@ -394,11 +394,11 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "title_resources",
-        target: Target::Sub("tools/resource/target/release/resource", "title"),
+        target: Target::Sub("tools/assets/target/release/assets", "title"),
     },
     Entry {
         name: "tokushu_map_resources",
-        target: Target::Sub("tools/resource/target/release/resource", "map-tokushu"),
+        target: Target::Sub("tools/assets/target/release/assets", "map-tokushu"),
     },
     Entry {
         name: "wordstream",

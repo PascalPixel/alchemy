@@ -5005,6 +5005,36 @@ dispatch is broken.
 ---
 
 
+
+#### Where 080bbb0c's allocation actually diverges (2026-08-17)
+
+Register usage is NOT wholesale different. Counting register mentions across the
+full disassembly of both sides:
+
+| reg | candidate | reference | delta |
+|---|---|---|---|
+| r0 | 681 | 701 | **-20** |
+| r1 | 621 | 612 | +9 |
+| r2 | 471 | 455 | +16 |
+| r3 | 1097 | 1075 | **+22** |
+| r5 | 390 | 396 | -6 |
+| r6 | 251 | 259 | -8 |
+
+Total mentions 4018 against 4003, so the two allocations are within 0.4% of each
+other by volume. The shape of the difference is narrow and specific: we choose
+**r3 about twenty times where the reference chose r0**, with r1 and r2 absorbing
+the remainder.
+
+That matters for anyone opening the compiler side. This is not "the allocator
+behaves differently"; it is a preference at roughly twenty specific sites.
+REG_ALLOC_ORDER is `{3, 2, 1, 0, 12, 14, ...}`, so r3 is allocated first and r0
+fourth. The reference reaching r0 more often means its allocator had r0 free at
+those points, which is a live-range question, not an ordering one. Changing
+REG_ALLOC_ORDER is the wrong lever and is already disproven: flipping it to
+ascending took the corpus from 1107 exact owners to 258.
+
+Start by finding those twenty sites, not by editing the allocator.
+
 ### 080bbb0c: source-level search is exhausted, measured four ways
 
 Do not spend another session searching this owner's source shape. On 2026-08-17,

@@ -7,9 +7,6 @@ edition = "2021"
 name = "resource_5"
 path = "src/lib.rs"
 
-[[bin]]
-name = "resource-5"
-path = "src/main.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }

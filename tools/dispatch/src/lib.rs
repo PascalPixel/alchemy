@@ -434,11 +434,11 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_3ce",
-        target: Target::Binary("tools/resource-3ce/target/release/resource-3ce"),
+        target: Target::Sub("tools/resource/target/release/resource", "3ce"),
     },
     Entry {
         name: "resource_5",
-        target: Target::Binary("tools/resource-5/target/release/resource-5"),
+        target: Target::Sub("tools/resource/target/release/resource", "5"),
     },
     Entry {
         name: "resource_byte_canvases",
@@ -448,7 +448,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "resource_d1_d3",
-        target: Target::Binary("tools/resource-d1-d3/target/release/resource-d1-d3"),
+        target: Target::Sub("tools/resource/target/release/resource", "d1-d3"),
     },
     Entry {
         name: "resource_directory",
@@ -476,7 +476,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "sentou_resources",
-        target: Target::Binary("tools/sentou-resources/target/release/sentou-resources"),
+        target: Target::Sub("tools/resource/target/release/resource", "sentou"),
     },
     Entry {
         name: "simple_resources",
@@ -496,7 +496,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "title_resources",
-        target: Target::Binary("tools/title-resources/target/release/title-resources"),
+        target: Target::Sub("tools/resource/target/release/resource", "title"),
     },
     Entry {
         name: "tokushu_map_resources",

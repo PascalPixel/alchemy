@@ -9,9 +9,6 @@ edition = "2021"
 name = "sentou_resources"
 path = "src/lib.rs"
 
-[[bin]]
-name = "sentou-resources"
-path = "src/main.rs"
 
 [dependencies]
 alignment-tail = { path = "../alignment-tail" }

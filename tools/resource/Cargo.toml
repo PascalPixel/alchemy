@@ -1,0 +1,20 @@
+# Bare `[workspace]`: independently buildable, like every other tool crate.
+[workspace]
+
+[package]
+name = "resource"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Former resource-* binaries, now linked as libraries. One executable, the same
+# capabilities, one surface to enumerate.
+resource-3ce = { path = "../resource-3ce" }
+resource-5 = { path = "../resource-5" }
+resource-d1-d3 = { path = "../resource-d1-d3" }
+title-resources = { path = "../title-resources" }
+sentou-resources = { path = "../sentou-resources" }
+
+[[bin]]
+name = "resource"
+path = "src/main.rs"

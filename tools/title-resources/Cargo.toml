@@ -9,9 +9,6 @@ edition = "2021"
 name = "title_resources"
 path = "src/lib.rs"
 
-[[bin]]
-name = "title-resources"
-path = "src/main.rs"
 
 [dependencies]
 alignment-tail = { path = "../alignment-tail" }

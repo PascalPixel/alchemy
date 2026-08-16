@@ -229,23 +229,28 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     let key = source_key(source);
     let key = key.as_str();
 
-    let abi_base: Vec<String> =
-        if has(DEFAULT_ABI_SOURCES, stem) || has(DEFAULT_ABI_OVERLAY_SOURCES, key) {
-            cflags()
-                .into_iter()
-                .filter(|f| f != "-fcall-used-r4")
-                .collect()
-        } else {
-            cflags()
-        };
+    // pret shape. One base flag set, a small number of per-file overrides, and
+    // every override a STOCK gcc 2.96 option.
+    //
+    // pokeemerald's Makefile is the model: one CFLAGS, about eight per-file
+    // lines, each either a compiler selection or a stock flag. agbcc is a fixed
+    // compiler and nobody adds an option to it per function. The 120 options
+    // this fork invented are gone from routing; see
+    // tools/route-dump/data/invented-flags.txt for the list and AGENTS.md for
+    // the rule that forbids adding another.
+    //
+    // Owners that were reproducing only because an invented option was routed
+    // to them no longer reproduce. That is the point: the difference is back in
+    // the source, where it can be found and fixed, instead of hidden behind a
+    // switch.
     let mut out: Vec<String> =
         if has(NO_INTERWORK_SOURCES, stem) || has(NO_INTERWORK_OVERLAY_SOURCES, key) {
-            abi_base
+            cflags()
                 .into_iter()
                 .filter(|f| f != "-mthumb-interwork")
                 .collect()
         } else {
-            abi_base
+            cflags()
         };
 
     macro_rules! push {
@@ -257,14 +262,8 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(FIXED_R3_SOURCES, stem) {
         push!(&["-ffixed-r3"]);
     }
-    if has(FIXED_LR_SOURCES, stem) {
-        push!(&["-ffixed-r14"]);
-    }
     if has(OPTIMIZE_O1_SOURCES, stem) {
         push!(&["-O1"]);
-    }
-    if has(THUMB_0807A664_SOURCES, stem) {
-        push!(&["-fno-gcse", "-fno-force-mem", "-fthumb-0807a664-exact"]);
     }
     if has(OPTIMIZE_OS_SOURCES, stem) {
         push!(&["-Os"]);
@@ -296,414 +295,24 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_STRENGTH_REDUCE_SOURCES, stem) {
         push!(&["-fno-strength-reduce"]);
     }
-    if has(SCHED_HIGH_DEST_FIRST_SOURCES, stem) {
-        push!(&["-fsched-high-dest-first"]);
-    }
-    if has(SCHED_LOW_DEST_FIRST_SOURCES, stem) {
-        push!(&["-fsched-low-dest-first"]);
-    }
-    if has(NO_CONTIGUOUS_IMMEDIATE_SOURCES, stem)
-        || has(NO_CONTIGUOUS_IMMEDIATE_OVERLAY_SOURCES, key)
-    {
-        push!(&["-fno-thumb-contiguous-immediate"]);
-    }
-    if has(NO_SCHED_DEPEND_COUNT_SOURCES, stem) {
-        push!(&["-fno-sched-depend-count"]);
-    }
-    if has(LATE_FRAME_ALLOCATION_SOURCES, stem) {
-        push!(&["-fthumb-late-frame-allocation"]);
-    }
-    if has(SPLIT_GROUP_BASE_SOURCES, stem) {
-        push!(&["-fthumb-split-group-base"]);
-    }
-    if has(HOIST_PARAMETER_SAVE_SOURCES, stem) {
-        push!(&["-fthumb-hoist-parameter-save"]);
-    }
-    if has(MINIPOOL_TAIL_FIRST_SOURCES, stem) {
-        push!(&["-fthumb-minipool-tail-first"]);
-    }
-    if has(ENTRY_SAVES_DESCENDING_SOURCES, stem) {
-        push!(&["-fthumb-entry-saves-descending"]);
-    }
-    if has(GROUP_CONTROL_LAST_SOURCES, stem) {
-        push!(&["-fthumb-group-control-last"]);
-    }
-    if has(GROUP_POOLED_CONTROL_LAST_SOURCES, stem) {
-        push!(&["-fthumb-group-pooled-control-last"]);
-    }
-    if has(HIGH_MOVE_BEFORE_ALU_SOURCES, stem) {
-        push!(&["-fthumb-high-move-before-alu"]);
-    }
-    if has(MOVE_BEFORE_IMMEDIATE_ALU_SOURCES, stem) {
-        push!(&["-fno-schedule-insns2", "-fthumb-move-before-immediate-alu"]);
-    }
-    if has(LOOP_INVARIANT_BLOCK_HEAD_SOURCES, stem) {
-        push!(&["-floop-invariant-block-head"]);
-    }
-    if has(GROUP_ZERO_ANY_REGISTER_SOURCES, stem) {
-        push!(&["-fthumb-group-zero-any-register"]);
-    }
-    if has(ARG0_AFTER_SPLIT_SOURCES, stem) {
-        push!(&["-fthumb-arg0-after-split"]);
-    }
-    if has(CALL_ARG0_POOL_LOAD_SOURCES, stem) {
-        push!(&["-fthumb-call-arg0-pool-load"]);
-    }
-    if has(RETURN_VALUE_BEFORE_STACK_ADJUST_SOURCES, stem) {
-        push!(&["-fthumb-return-value-before-stack-adjust"]);
-    }
-    if has(SINK_GROUP_POOL_LOADS_SOURCES, stem) || has(SINK_GROUP_POOL_LOADS_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-group-pool-loads"]);
-    }
-    if has(POOL_LOAD_BASE_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-pool-load-base-first"]);
-    }
-    if has(SINK_STACK_ADJUST_SOURCES, stem) {
-        push!(&["-fthumb-sink-stack-adjust"]);
-    }
-    if has(SINK_DEPENDENT_LOAD_SOURCES, stem) {
-        push!(&["-fthumb-sink-dependent-load"]);
-    }
-    if has(COLLAPSE_DEAD_SCRATCH_SOURCES, stem) {
-        push!(&["-fthumb-collapse-dead-scratch"]);
-    }
-    if has(SINK_BLOCK_CONSTANT_SOURCES, stem) {
-        push!(&["-fthumb-sink-block-constant"]);
-    }
-    if has(SINK_PAST_POOL_LOAD_SOURCES, stem) || has(SINK_PAST_POOL_LOAD_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-past-pool-load"]);
-    }
-    if has(SCHED_38F_CALL_CLUSTER_OVERLAY_SOURCES, key) {
-        push!(&["-fsched-38f-call-cluster"]);
-    }
-    if has(GROUP_VALUE1_BEFORE_BASE_SOURCES, stem) {
-        push!(&["-fthumb-group-value1-before-base"]);
-    }
-    if has(GROUP_CONTROL_LAST_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-group-control-last"]);
-    }
-    if has(MOVE_BEFORE_ALU_SOURCES, stem) {
-        push!(&["-fthumb-move-before-alu"]);
-    }
     if has(NO_REGMOVE_SOURCES, stem) {
         push!(&["-fno-regmove"]);
     }
-    if has(ENTRY_LITERAL_FIRST_SOURCES, stem) {
-        push!(&["-fno-schedule-insns2", "-mthumb-entry-literal-first"]);
-    }
-    if has(HIGH_REGISTER_MOVE_FIRST_SOURCES, stem) {
-        push!(&["-mhigh-register-move-first"]);
-    }
-    if has(ORR_DEAD_INPUT_REUSE_SOURCES, stem) {
-        push!(&["-fthumb-orr-dead-input-reuse"]);
-    }
-    if has(ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-orr-dead-input-reuse"]);
-    }
-    if has(BYTE_ORR_R5_ONLY_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-byte-orr-r5-only"]);
-    }
-    if has(SCENE_CALL_SHEETS_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-scene-call-sheets"]);
-    }
-    if has(CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-literal-arg1-first"]);
-    }
-    if has(CALL_ARG1_BEFORE_ARG0_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-arg1-before-arg0"]);
-    }
-    if has(CALL_ARG12_BEFORE_ARG0_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-arg12-before-arg0"]);
-    }
-    if has(CALL_ARG0_REG_SOURCE_SOURCES, stem) {
-        push!(&[
-            "-fthumb-call-arg1-before-arg0",
-            "-fthumb-call-arg0-reg-source"
-        ]);
-    }
-    if has(SINK_CONSTANT_PAST_CALL_SOURCES, stem) {
-        push!(&["-fthumb-sink-constant-past-call"]);
-    }
-    if has(MOVE_BEFORE_UNARY_ALU_SOURCES, stem) {
-        push!(&["-fthumb-move-before-unary-alu"]);
-    }
-    // -O1 is appended after the baseline -O2 and wins as the later option.
     if has(OPTIMIZE_O1_OVERLAY_SOURCES, key) {
         push!(&["-O1"]);
-    }
-    if has(FIXED_LR_OVERLAY_SOURCES, key) {
-        push!(&["-ffixed-r14"]);
-    }
-    if has(ENTRY_FRAME_CLUSTER_SOURCES, stem) {
-        push!(&["-fthumb-entry-frame-cluster"]);
-    }
-    if has(LITERAL_BEFORE_INDEX_SHIFT_SOURCES, stem) {
-        push!(&["-fthumb-literal-before-index-shift"]);
-    }
-    if has(CALL_TARGET_BEFORE_FINAL_SHIFT_SOURCES, stem) {
-        push!(&["-fthumb-call-target-before-final-shift"]);
-    }
-    if has(LOW_CONSTANT_BEFORE_HIGH_MOVE_SOURCES, stem) {
-        push!(&["-fthumb-low-constant-before-high-move"]);
-    }
-    if has(HIGH_MOVE_BEFORE_STACK_STORE_SOURCES, stem) {
-        push!(&["-fthumb-high-move-before-stack-store"]);
-    }
-    if has(EARLY_FRAME_ALLOCATION_SOURCES, stem) {
-        push!(&["-mearly-frame-allocation"]);
     }
     if has(NO_OPTIMIZE_SIBLING_CALLS_SOURCES, stem) {
         push!(&["-fno-optimize-sibling-calls"]);
     }
-    if has(GROUPED_DMA_STORE_SOURCES, stem) {
-        push!(&["-mgrouped-dma-store"]);
-    }
-    if has(NO_CONSTANT_REUSE_SOURCES, stem) {
-        push!(&["-fthumb-no-constant-reuse"]);
-    }
-    if has(VALUE_ENTRY_3CE_OVERLAY_SOURCES, key) {
-        push!(&[
-            "-mgrouped-dma-store",
-            "-fno-flow2-cleanup-cfg",
-            "-fno-cse-two-insn-immediate",
-            "-fno-reload-cse-regs",
-            "-fthumb-group-value1-before-base",
-            "-fthumb-group-value1-in-place",
-            "-fthumb-sink-group-pool-loads",
-            "-fthumb-group-control-last",
-            "-fthumb-hoist-add-immediate",
-            "-fthumb-3ce-value-entry-cluster",
-        ]);
-    }
-    // Each of the three bundles below has exactly one member, and each was
-    // measured flag by flag: the entries left out are ones the owner still
-    // compiles byte-exact without. A bundle that grants more than its owner
-    // needs reads as evidence the whole group is load-bearing when it is not.
-    if has(HOIST_ADD_IMMEDIATE_SOURCES, stem) {
-        push!(&[
-            "-mgrouped-dma-store",
-            "-fthumb-group-control-rematerialize",
-            "-fthumb-sink-block-constant",
-            "-fthumb-hoist-add-immediate",
-        ]);
-    }
-    if has(SINK_ADD_IMMEDIATE_SOURCES, stem) {
-        push!(&[
-            "-mgrouped-dma-store",
-            "-fthumb-move-before-immediate-alu",
-            "-fthumb-sink-block-constant",
-            "-fthumb-sink-constant-past-memory",
-            "-fthumb-copy-before-add-immediate",
-            "-fno-schedule-insns2",
-            "-fthumb-sink-add-immediate",
-        ]);
-    }
-    if has(SINK_STORE_PAST_STORE_SOURCES, stem) {
-        push!(&[
-            "-fthumb-sink-block-constant",
-            "-fthumb-sink-constant-past-memory",
-            "-fthumb-sink-store-past-store",
-            "-fthumb-pool-load-base-first",
-        ]);
-    }
-    if has(GROUP_VALUE2_IN_PLACE_SOURCES, stem) {
-        push!(&["-fthumb-group-value2-in-place"]);
-    }
-    if has(THUMB_IMMEDIATE_LATENCY_SOURCES, stem) {
-        push!(&["-mthumb-immediate-latency"]);
-    }
-    if has(CALL_ARG0_MOVE_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-mcall-arg0-move-first"]);
-    }
-    if has(CALL_ARG0_BEFORE_STORE_SOURCES, stem) {
-        push!(&[
-            "-fno-sched-alias",
-            "-fsched-store-first",
-            "-fthumb-call-arg0-before-store"
-        ]);
-    }
-    if has(POSTCALL_BYTE_INCREMENT_R2_SOURCES, stem) {
-        push!(&["-fthumb-postcall-byte-increment-r2"]);
-    }
-    if has(BOOLEAN_R8_SCRATCH_R2_SOURCES, stem) {
-        push!(&["-fthumb-boolean-r8-scratch-r2"]);
-    }
-    if has(GROUP_CONTROL_REMATERIALIZE_SOURCES, stem)
-        || has(GROUP_CONTROL_REMATERIALIZE_OVERLAY_SOURCES, key)
-    {
-        push!(&["-fthumb-group-control-rematerialize"]);
-    }
-    if has(SCHED_POOL_LOAD_LATE_SOURCES, stem) {
-        push!(&["-fthumb-sched-pool-load-late"]);
-    }
     if has(SCHED2_OFF_THUMB_SOURCES, stem) {
         push!(&["-fno-schedule-insns2"]);
     }
-    if has(THUMB_LEAF_NO_LR_SOURCES, stem) {
-        push!(&["-fthumb-leaf-no-lr"]);
-    }
-    if has(THUMB_NO_IF_CONVERT_SOURCES, stem) {
-        push!(&["-fthumb-no-if-convert"]);
-    }
-    if let Some(order) = lookup(THUMB_LOW_REG_ORDER_SOURCES, stem) {
-        out.push(format!("-mlow-reg-order={order}"));
-    }
-    if let Some(order) = lookup(THUMB_CALLEE_REG_ORDER_SOURCES, stem) {
-        out.push(format!("-mcallee-reg-order={order}"));
-    }
-    if has(CALLEE_REG_ORDER_0132_OVERLAY_SOURCES, key) {
-        push!(&["-mcallee-reg-order=0132"]);
-    }
-    if has(STACK_SLOT_BEFORE_TABLE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-stack-slot-before-table"]);
-    }
-    if let Some(order) = lookup(HIGH_REG_ORDER_OVERLAY_SOURCES, key) {
-        out.push(format!("-mhigh-reg-order={order}"));
-    }
-    if has(THUMB_IMMEDIATE_LATENCY_OVERLAY_SOURCES, key) {
-        push!(&["-mthumb-immediate-latency"]);
-    }
-    if has(NO_CANONICALIZE_COMPARISON_OVERLAY_SOURCES, key) {
-        push!(&["-fno-canonicalize-comparison"]);
-    }
-    if has(NO_SCHED_DEPEND_COUNT_OVERLAY_SOURCES, key) {
-        push!(&["-fno-sched-depend-count"]);
-    }
-    if has(THUMB_LOAD_LATENCY_ONE_OVERLAY_SOURCES, key) {
-        push!(&["-mthumb-load-latency-one"]);
-    }
-    // PORT NOTE: the TypeScript has a `sourceKey(source) === "exact/
-    // resource_379_c_02000074.c" ? [] : []` arm that contributes nothing in
-    // either branch. It is dropped rather than reproduced.
     if has(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES, key) {
         push!(&["-fno-rerun-cse-after-loop"]);
-    }
-    if has(SCHED_POOL_LOAD_LATE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sched-pool-load-late"]);
-    }
-    if has(
-        SINGLE_ARG_IMMEDIATE_BEFORE_HALFWORD_STORE_OVERLAY_SOURCES,
-        key,
-    ) {
-        push!(&["-fthumb-single-arg-immediate-before-halfword-store"]);
-    }
-    if has(SCHED_IMMEDIATE_BEFORE_POOL_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sched-immediate-before-pool"]);
-    }
-    if has(THUMB_HI_IMMEDIATE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-hi-immediate"]);
-    }
-    if has(CALL_POOL_ARG1_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-pool-arg1-first"]);
-    }
-    if has(ARG_BEFORE_FINAL_SHIFT_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-arg-before-final-shift"]);
-    }
-    if has(CALL_ARG0_BEFORE_POOL_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-arg0-before-pool"]);
-    }
-    if has(CALL_ARGREG_BEFORE_POOL_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-argreg-before-pool"]);
-    }
-    if has(SWAP_ADJACENT_SHIFTS_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-swap-adjacent-shifts"]);
-    }
-    if has(STACK_ARGS_BEFORE_STORES_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-stack-args-before-stores"]);
-    }
-    if has(LITERAL_ARG1_FIRST_AFTER_CALL_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-literal-arg1-first-after-call"]);
-    }
-    if has(LITERAL_ARG1_FIRST_BEFORE_ZERO_PAIR_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-literal-arg1-first-before-zero-pair"]);
-    }
-    if has(SMALL_SHIFT_BEFORE_IMMEDIATES_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-small-shift-before-immediates"]);
-    }
-    if has(BLOCKMOVE_DEST_BEFORE_SOURCE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-blockmove-dest-before-source"]);
-    }
-    if has(LITERAL_ARG1_FIRST_CHAINED_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-literal-arg1-first-chained"]);
-    }
-    if has(HIGH_MOVE_BEFORE_STORE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-high-move-before-store"]);
-    }
-    if has(POOL_LOAD_BEFORE_LOAD_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-pool-load-before-load"]);
-    }
-    if has(SHIFT_BEFORE_STORE_IN_SPLIT_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-shift-before-store-in-split"]);
-    }
-    if has(ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-arg-before-shift-in-sheet"]);
-    }
-    if has(SINK_LOAD_PAST_STORE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-load-past-store"]);
-    }
-    if has(CALL_ARG0_BETWEEN_POOL_PAIR_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-arg0-between-pool-pair"]);
-    }
-    if has(STORE_VALUE_BEFORE_BASE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-store-value-before-base"]);
-    }
-    if has(SWAP_SHIFTS_ACROSS_INSN_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-swap-shifts-across-insn"]);
-    }
-    if has(ORR_INTO_OLDER_INPUT_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-orr-into-older-input"]);
-    }
-    if has(ROTATE_ORR_MASK_LOAD_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-rotate-orr-mask-load"]);
-    }
-    if has(CALL_ARG0_BEFORE_POOL_PAIR_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-call-arg0-before-pool-pair"]);
-    }
-    if has(SINK_POOL_LOAD_TO_USE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-pool-load-to-use"]);
-    }
-    if has(SINK_CONSTANT_PAST_CALL_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-constant-past-call"]);
-    }
-    if has(SINK_CONSTANT_PAST_CALL_PAIR_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-constant-past-call-pair"]);
-    }
-    if has(SINK_CONSTANT_PAST_CALL_ARGS_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-sink-constant-past-call-args"]);
-    }
-    if has(POOL_LONG_CALL_ARG0_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-pool-long-call-arg0"]);
-    }
-    if has(POOL_ZERO_R8_AFTER_R9_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-pool-zero-r8-after-r9"]);
-    }
-    if has(POOL_R1_LSL4_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-pool-r1-lsl4"]);
-    }
-    if has(STRICT_ADDSI_IMM_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-strict-addsi-imm"]);
-    }
-    if has(SEXTQI_MINUEND_BASE_CONFLICT_OVERLAY_SOURCES, key) {
-        push!(&["-fsextqi-minuend-base-conflict"]);
-    }
-    if has(ORDER_ZERO_ARG1_BEFORE_NONZERO_ARG0_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-order-zero-arg1-before-nonzero-arg0"]);
-    }
-    if has(STORE_BEFORE_POOL_LOAD_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-store-before-pool-load"]);
-    }
-    if has(ORDER_8_0_20_ARGS_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-order-8-0-20-args"]);
-    }
-    if has(ZERO_R1_BEFORE_R0_LOAD_AFTER_8_2_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-zero-r1-before-r0-load-after-8-2"]);
     }
     if has(NO_THREAD_JUMPS_OVERLAY_SOURCES, key) {
         push!(&["-fno-thread-jumps"]);
     }
-    // NO_GCSE_OVERLAY_SOURCES is already consulted earlier in this function.
-    // A second identical consumer handed six owners -fno-gcse twice, which is
-    // idempotent for gcc but makes every routed-flag census double-count it.
     if has(NO_EXPENSIVE_OVERLAY_SOURCES, key) {
         push!(&["-fno-expensive-optimizations"]);
     }
@@ -716,52 +325,8 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_STRICT_ALIASING_OVERLAY_SOURCES, key) {
         push!(&["-fno-strict-aliasing"]);
     }
-    if has(NO_CSE_TWO_INSN_IMMEDIATE_OVERLAY_SOURCES, key) {
-        push!(&["-fno-cse-two-insn-immediate"]);
-    }
-    if has(NO_CSE_SHIFT_IMMEDIATE_OVERLAY_SOURCES, key) {
-        push!(&["-fno-cse-shift-immediate"]);
-    }
-    if has(NO_CSE_POOL_IMMEDIATE_OVERLAY_SOURCES, key) {
-        push!(&["-fno-cse-pool-immediate"]);
-    }
-    if has(NO_HOIST_VOLATILE_ADDRESS_OVERLAY_SOURCES, key) {
-        push!(&["-fno-hoist-volatile-address"]);
-    }
-    if has(NO_CONSTANT_REUSE_OVERLAY_SOURCES, key) {
-        push!(&["-fthumb-no-constant-reuse"]);
-    }
-    if has(SCHED_LOW_DEST_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-fsched-low-dest-first"]);
-    }
-    if has(SCHED_HIGH_DEST_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-fsched-high-dest-first"]);
-    }
-    if has(SCHED_CALL_DEST_DESCENDING_SOURCES, stem)
-        || has(SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES, key)
-    {
-        push!(&["-fsched-call-dest-descending"]);
-    }
     if has(FIXED_R7_OVERLAY_SOURCES, key) {
         push!(&["-ffixed-r7"]);
-    }
-    if has(NO_SCHED_ALIAS_OVERLAY_SOURCES, key) {
-        push!(&["-fno-sched-alias"]);
-    }
-    if has(NO_GCSE_INSERT_LOAD_OVERLAY_SOURCES, key) {
-        push!(&["-fno-gcse-insert-load"]);
-    }
-    if has(SCHED_STORE_FIRST_OVERLAY_SOURCES, key) {
-        push!(&["-fsched-store-first"]);
-    }
-    if has(GROUPED_DMA_STORE_OVERLAY_SOURCES, key) {
-        push!(&["-mgrouped-dma-store"]);
-    }
-    if has(EARLY_LITERAL_POOL_SOURCES, stem)
-        || has(EARLY_LITERAL_POOL_OVERLAY_SOURCES, stem)
-        || has(EARLY_LITERAL_POOL_OVERLAY_PATHS, key)
-    {
-        push!(&["-mthumb-early-literal-pool"]);
     }
 
     out

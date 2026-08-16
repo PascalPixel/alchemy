@@ -5,6 +5,8 @@
 //! component extents, and composition of a resource from its tracked sources.
 //! It is build-facing: export is intentionally not part of this port.
 
+pub mod entry_chiiki;
+pub mod entry_tokushu;
 use canonical_json::is_canonical_json_text;
 use kind1_map_grid::{build_grid, self_test as grid_self_test};
 use map_container_components::{

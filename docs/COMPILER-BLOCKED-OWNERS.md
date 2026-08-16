@@ -146,6 +146,36 @@ improvements; a size-constrained greedy over them gives
 `M2C_FIELD(target_state, s8, 0x135)` and `(…, s8, 0x137)`: **1961 -> 1916, size
 still exact**.
 
+**2026-08-16: the residual is now measured, and it is compiler-side.**
+
+Aligning the two disassemblies instruction-by-instruction (see the layout delta
+map method) gives 974 mismatching instructions out of 2,926. Re-running the same
+alignment with register names canonicalised drops that to **489**. Half the
+remaining residual on this owner is pure register allocation, and the big
+"block reorder" excursions mostly evaporate: 15 excursions of >=8 instructions
+become 4.
+
+That correction matters, because the first pass canonicalised addresses but NOT
+registers, so a long run differing only in regalloc looked like an unmatched
+86-instruction block. Reading it as a block reorder was wrong. Canonicalise
+registers before calling anything structural.
+
+Of the four surviving excursions, the largest resolves to cross-jumping. At
+0x1228 the reference stores `strh r0, [r7, #56]` inline and branches past it;
+we branch to a merged tail at 0x14d4 that holds one shared copy. Reference emits
+7 copies of that store, we emit 6.
+
+That is not reachable from C. Cases 0x35 and 0x36 both end
+`field 0x38 = <expr>; goto block_402;`, and block_402 is two lines. Inlining it
+at one site, the other, and both raises the call count in the source from 7 to 11
+and produces a **byte-identical binary** every time -- gcc's cross-jumping simply
+re-merges what the source duplicated. Score unchanged at 1903 / 6332 across all
+four variants, and confirmed by `cmp` on the binaries, not by the score alone.
+
+So the C-side axes on this owner are close to spent. What remains is register
+allocation and cross-jumping, both of which live in the compiler. This owner now
+belongs to the compiler-side queue rather than to another source sweep.
+
 **The next lead, unclaimed because of 4 bytes.** Re-running the opcode census at
 1916 leaves `ldr +63` as the dominant delta -- still the un-caching axis. A fresh
 candidate sweep against the current source finds inlining `status_141_value`

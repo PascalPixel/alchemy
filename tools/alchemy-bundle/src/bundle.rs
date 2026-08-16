@@ -994,7 +994,36 @@ mod tests {
                 }
             }
         }
-        assert!(count > 100, "only {count} digests, table looks truncated");
+        assert!(count > 0, "the digest table is empty");
+    }
+
+    /// The amnesty gate. Admitting a new digest must REPLACE the old one, not
+    /// join it: a list of length two approves two different compilers, and the
+    /// whole point of a digest ledger is that exactly one binary is the
+    /// approved one. This is what kept 121 stale `cc1' digests alive.
+    #[test]
+    fn no_executable_approves_more_than_one_digest_per_host() {
+        for (host, targets) in EXPECTED {
+            for (target, executables) in *targets {
+                for (name, digests) in *executables {
+                    assert!(
+                        digests.len() <= 1,
+                        "{host}/{target}/{name} approves {} digests; admitting a new \
+                         one must replace the old, not join it",
+                        digests.len()
+                    );
+                }
+            }
+        }
+        for (label, table) in [("agbcc", AGBCC_EXPECTED), ("gcc3", GCC3_EXPECTED)] {
+            for (host, digests) in table {
+                assert!(
+                    digests.len() <= 1,
+                    "{label}/{host} approves {} digests",
+                    digests.len()
+                );
+            }
+        }
     }
 
     #[test]

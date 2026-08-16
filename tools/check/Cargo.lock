@@ -28,6 +28,7 @@ dependencies = [
  "check-sanctum",
  "compare-roms",
  "core-retained-audit",
+ "coverage-map",
  "decomp-constraints",
  "decomp-targets",
  "discover",
@@ -71,6 +72,10 @@ dependencies = [
 
 [[package]]
 name = "core-retained-audit"
+version = "0.1.0"
+
+[[package]]
+name = "coverage-map"
 version = "0.1.0"
 
 [[package]]

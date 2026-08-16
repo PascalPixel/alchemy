@@ -9,8 +9,4 @@ edition = "2021"
 name = "coverage_map"
 path = "src/lib.rs"
 
-[[bin]]
-name = "coverage-map"
-path = "src/main.rs"
-
 [dependencies]

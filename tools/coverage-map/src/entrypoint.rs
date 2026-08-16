@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // Thin entry point: everything lives in the library root.
 //
 // PORT NOTE: a `throw` out of the TypeScript entry point is reported by Bun as
@@ -5,10 +8,10 @@
 // this binary has no equivalent for. The `error:` line and the status are what
 // the parity harness compares.
 
-fn main() {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let argv: Vec<String> = arguments.to_vec();
     if argv.as_slice() == ["--self-test"] {
-        match coverage_map::selftest::self_test() {
+        match crate::selftest::self_test() {
             Ok(line) => println!("{line}"),
             Err(message) => {
                 eprintln!("error: {message}");
@@ -17,7 +20,7 @@ fn main() {
         }
         return;
     }
-    match coverage_map::cli::run(&argv) {
+    match crate::cli::run(&argv) {
         Ok(line) => println!("{line}"),
         Err(message) => {
             eprintln!("error: {message}");

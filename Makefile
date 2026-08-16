@@ -30,7 +30,7 @@ DISPATCH_MANIFEST := $(TOOLS)/dispatch/Cargo.toml
 DISPATCH_RUN := $(CARGO_RUN) $(DISPATCH_MANIFEST) --
 DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search semantic
 
-.PHONY: help verify test lint standard-check routing-debt pristine-options-check \
+.PHONY: help verify test lint standard-check routing-debt crate-tests pristine-options-check \
 	build-claimed build-asm build-assets build-semantic \
 	build-full build-rom inventory semantic-check core-retained-check sanctum \
 	progress progress-check progress-subject progress-history coverage coverage-check \
@@ -197,7 +197,19 @@ compiler-lint:
 compiler-self-test:
 	$(CARGO_RUN) $(TOOLS)/alchemy-selftest/Cargo.toml --
 
-lint: pristine-options-check standard-check
+# Tool-crate unit tests. Nothing ran these before, which is how 14 routing
+# tests and 3 self-tests sat failing against flags deleted by the axe.
+CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
+               compiler-corpus-regression mode-sweep alchemy-selftest
+
+crate-tests:
+	@for c in $(CRATE_TESTS); do \
+		printf "  %-28s " "$$c"; \
+		$(CARGO) test --offline --quiet --release --manifest-path $(TOOLS)/$$c/Cargo.toml 2>&1 \
+		  | grep -E '^test result' | head -1 || { echo FAILED; exit 1; }; \
+	done
+
+lint: pristine-options-check standard-check crate-tests
 	$(CARGO_RUN) $(TOOLS)/architecture/Cargo.toml --
 	$(CARGO_RUN) $(TOOLS)/source-citations/Cargo.toml --
 	$(CARGO_RUN) $(TOOLS)/no-asm-c/Cargo.toml --

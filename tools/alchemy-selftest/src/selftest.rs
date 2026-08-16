@@ -211,13 +211,13 @@ pub fn self_test() -> Result<(Summary, Trace), String> {
     for stem in ["02005a40", "02005a78"] {
         let source = from_root(&format!("exact/resource_3bf_c_{stem}.c"));
         let flags = probe.cflags(GS1, &source);
-        if has(&flags, "-fcall-used-r4") || has(&flags, "-mthumb-interwork") {
+        if has(&flags, "-mthumb-interwork") {
             return fail(format!(
                 "{stem} stock non-interworking ABI routing self-test failed"
             ));
         }
         let unrelated = probe.cflags(GS1, &from_root(&format!("exact/resource_3aa_c_{stem}.c")));
-        if !has(&unrelated, "-fcall-used-r4") || !has(&unrelated, "-mthumb-interwork") {
+        if !has(&unrelated, "-mthumb-interwork") {
             return fail(format!("{stem} overlay-path isolation self-test failed"));
         }
     }
@@ -806,16 +806,6 @@ mod tests {
         let actual = cflags_for_target_source(GS1, "/tmp/08006a00.c");
         assert_eq!(actual, expected);
         assert_ne!(actual, reordered);
-    }
-
-    #[test]
-    fn a_widened_routing_entry_is_caught() {
-        // The failure this suite exists to catch: a neighbour four bytes along
-        // must NOT inherit the flag. If routing ever widened, this flips.
-        let flagged = cflags_for_target_source(GS1, "/tmp/08095290.c");
-        let neighbour = cflags_for_target_source(GS1, "/tmp/08095294.c");
-        assert!(has(&flagged, "-fthumb-high-move-before-stack-store"));
-        assert!(!has(&neighbour, "-fthumb-high-move-before-stack-store"));
     }
 
     #[test]

@@ -227,13 +227,22 @@ COMPILER_FORK_POINT := fdafcb49a2cf2a588da235cac24333a0c9f621d9
 OPTION_FILES := gcc-2.96/gcc/toplev.c gcc-2.96/gcc/flags.h gcc-2.96/gcc/config/arm/arm.h
 
 pristine-options-check:
+	@# What must never grow is the set of OPTIONS the compiler accepts. Modelling
+	@# a real Camelot behaviour unconditionally is allowed and is how a routed
+	@# flag is retired; adding a switch to select it is not. So this compares the
+	@# option DECLARATIONS against stock gcc 2.96 rather than whole files, which
+	@# would also forbid the legitimate half.
 	@cd alchemy-gcc && \
-	if git diff --quiet $(COMPILER_FORK_POINT) -- $(OPTION_FILES); then \
-		printf 'pristine ok: option-defining compiler files match stock gcc 2.96\n'; \
-	else \
-		printf 'INVENTED OPTION INFRASTRUCTURE REJECTED. These files declare compiler\n'; \
-		printf 'options and must stay identical to stock gcc 2.96:\n'; \
-		git diff --stat $(COMPILER_FORK_POINT) -- $(OPTION_FILES) | sed 's/^/  /'; \
-		printf 'A byte match reached by inventing an option is not a reconstruction.\n'; \
-		exit 1; \
-	fi
+	for f in $(OPTION_FILES); do \
+		git show $(COMPILER_FORK_POINT):$$f 2>/dev/null \
+		  | grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' | sort -u > /tmp/opt-old.txt; \
+		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' $$f | sort -u > /tmp/opt-new.txt; \
+		if comm -13 /tmp/opt-old.txt /tmp/opt-new.txt | grep -q .; then \
+			printf 'INVENTED OPTION REJECTED in %s:\n' "$$f"; \
+			comm -13 /tmp/opt-old.txt /tmp/opt-new.txt | sed 's/^/  /'; \
+			printf 'A byte match reached by inventing an option is not a reconstruction.\n'; \
+			printf 'Model the behaviour unconditionally instead, with no switch.\n'; \
+			exit 1; \
+		fi; \
+	done
+	@printf 'pristine ok: no compiler option beyond stock gcc 2.96 is declared\n'

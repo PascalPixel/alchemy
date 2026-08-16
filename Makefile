@@ -202,7 +202,7 @@ compiler-self-test:
 # tests and 3 self-tests sat failing against flags deleted by the axe.
 CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
                compiler-corpus-regression mode-sweep alchemy-selftest \
-               reverse-gcc296
+               shape-sweep
 
 crate-tests:
 	@for c in $(CRATE_TESTS); do \

@@ -7,6 +7,10 @@ name = "cache-entry"
 version = "0.1.0"
 
 [[package]]
+name = "cache-key-lint"
+version = "0.1.0"
+
+[[package]]
 name = "canonical-json"
 version = "0.1.0"
 dependencies = [
@@ -18,6 +22,7 @@ name = "check"
 version = "0.1.0"
 dependencies = [
  "cache-entry",
+ "cache-key-lint",
  "check-publication",
  "check-sanctum",
  "core-retained-audit",
@@ -28,6 +33,7 @@ dependencies = [
  "extract-resource",
  "late-runtime-data",
  "music-residuals",
+ "no-asm-c",
  "semantic-owner-scope",
  "semantic-superseded",
  "source-citations",
@@ -126,6 +132,10 @@ dependencies = [
  "music",
  "serde_json",
 ]
+
+[[package]]
+name = "no-asm-c"
+version = "0.1.0"
 
 [[package]]
 name = "proc-macro2"

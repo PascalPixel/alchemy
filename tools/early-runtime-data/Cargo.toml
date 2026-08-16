@@ -9,10 +9,6 @@ edition = "2021"
 name = "early_runtime_data"
 path = "src/lib.rs"
 
-[[bin]]
-name = "early-runtime-data"
-path = "src/main.rs"
-
 [dependencies]
 alchemy-zlib = { path = "../zlib" }
 canonical-json = { path = "../canonical-json" }

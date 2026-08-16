@@ -10,6 +10,7 @@ edition = "2021"
 rtl-insn = { path = "../rtl-insn" }
 rtl-sexpr = { path = "../rtl-sexpr" }
 rtl-schedule = { path = "../rtl-schedule" }
+rtl-align = { path = "../rtl-align" }
 
 [[bin]]
 name = "rtl"

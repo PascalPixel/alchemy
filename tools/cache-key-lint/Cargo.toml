@@ -6,7 +6,3 @@ edition.workspace = true
 [lib]
 name = "cache_key_lint"
 path = "src/lib.rs"
-
-[[bin]]
-name = "cache-key-lint"
-path = "src/main.rs"

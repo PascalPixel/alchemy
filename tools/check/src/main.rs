@@ -20,6 +20,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("semantic-owner-scope", "semantic owner scope"),
     ("semantic-superseded", "semantic superseded"),
     ("source-citations", "source citations"),
+    ("cache-key-lint", "cache key lint"),
+    ("no-asm-c", "no asm c"),
 ];
 
 fn main() -> ExitCode {
@@ -32,6 +34,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "cache-key-lint" => cache_key_lint::cli::entry(&rest),
+        "no-asm-c" => no_asm_c::cli::entry(&rest),
         "cache-entry" => cache_entry::cli::entry(&rest),
         "check-publication" => check_publication::cli::entry(&rest),
         "check-sanctum" => check_sanctum::cli::entry(&rest),

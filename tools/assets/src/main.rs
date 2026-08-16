@@ -37,6 +37,10 @@ const COMMANDS: &[(&str, &str)] = &[
     ("kind1-map-grid", "extract kind1 map grid data from the ROM"),
     ("resource-directory", "extract resource directory data from the ROM"),
     ("late-runtime-residual", "extract late runtime residual data from the ROM"),
+    ("gba-header", "gba header"),
+    ("early-runtime-data", "early runtime data"),
+    ("export-asset", "export asset"),
+    ("import-asset", "import asset"),
 ];
 
 fn main() -> ExitCode {
@@ -53,6 +57,10 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "gba-header" => gba_header::cli::entry(&rest),
+        "early-runtime-data" => early_runtime_data::cli::entry(&rest),
+        "export-asset" => export_asset::cli::entry(&rest),
+        "import-asset" => import_asset::cli::entry(&rest),
         "documented" => documented::cli::entry(&rest),
         "remaining-survey" => remaining_survey::cli::entry(&rest),
         "exact-reading-list" => exact_reading_list::cli::entry(&rest),

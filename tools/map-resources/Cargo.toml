@@ -9,14 +9,6 @@ edition = "2021"
 name = "map_resources"
 path = "src/lib.rs"
 
-[[bin]]
-name = "tokushu-map-resources"
-path = "src/tokushu.rs"
-
-[[bin]]
-name = "chiiki-map-resources"
-path = "src/chiiki.rs"
-
 [dependencies]
 canonical-json = { path = "../canonical-json" }
 kind1-map-grid = { path = "../kind1-map-grid" }

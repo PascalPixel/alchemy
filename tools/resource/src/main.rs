@@ -18,6 +18,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("d1-d3", "decode resources d1 through d3"),
     ("title", "decode title-screen resources"),
     ("sentou", "decode battle (sentou) resources"),
+    ("map-tokushu", "decode special (tokushu) map resources"),
+    ("map-chiiki", "decode regional (chiiki) map resources"),
 ];
 
 fn report<E: std::fmt::Display>(result: Result<(), E>) -> ExitCode {
@@ -44,6 +46,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "map-tokushu" => { map_resources::entry_tokushu::entry(&rest); ExitCode::SUCCESS }
+        "map-chiiki" => { map_resources::entry_chiiki::entry(&rest); ExitCode::SUCCESS }
         "3ce" => report(resource_3ce::run(rest)),
         "5" => report(resource_5::run(rest)),
         "d1-d3" => report(resource_d1_d3::run(rest)),

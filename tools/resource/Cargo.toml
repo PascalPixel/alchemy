@@ -14,6 +14,7 @@ resource-5 = { path = "../resource-5" }
 resource-d1-d3 = { path = "../resource-d1-d3" }
 title-resources = { path = "../title-resources" }
 sentou-resources = { path = "../sentou-resources" }
+map-resources = { path = "../map-resources" }
 
 [[bin]]
 name = "resource"

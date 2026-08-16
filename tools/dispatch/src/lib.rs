@@ -274,7 +274,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "chiiki_map_resources",
-        target: Target::Binary("tools/map-resources/target/release/chiiki-map-resources"),
+        target: Target::Sub("tools/resource/target/release/resource", "map-chiiki"),
     },
     Entry {
         name: "early_runtime_data",
@@ -410,7 +410,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "tokushu_map_resources",
-        target: Target::Binary("tools/map-resources/target/release/tokushu-map-resources"),
+        target: Target::Sub("tools/resource/target/release/resource", "map-tokushu"),
     },
     Entry {
         name: "wordstream",

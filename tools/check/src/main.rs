@@ -35,6 +35,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("full-c-history", "full c history"),
     ("localization-tables", "localization tables"),
     ("route-dump", "dump the compiler flag routing"),
+    ("progress", "print byte-exact progress"),
 ];
 
 fn main() -> ExitCode {
@@ -47,6 +48,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "progress" => { full_c_progress::entry(&rest); ExitCode::SUCCESS }
+
         "route-dump" => route_dump::entrypoint::entry(&rest),
 
         "full-c-history" => { full_c_history::cli::entry(&rest); ExitCode::SUCCESS }

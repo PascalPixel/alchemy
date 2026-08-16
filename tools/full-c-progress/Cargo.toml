@@ -5,9 +5,9 @@ name = "full-c-progress"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "full-c-progress"
-path = "src/main.rs"
+[lib]
+name = "full_c_progress"
+path = "src/lib.rs"
 
 [dependencies]
 alchemy-bundle = { path = "../alchemy-bundle" }

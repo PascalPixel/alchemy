@@ -31,6 +31,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("architecture", "architecture"),
     ("alchemy-lints", "alchemy lints"),
     ("jobs", "jobs"),
+    ("integrate-matches", "integrate matched candidates into the tree"),
 ];
 
 fn main() -> ExitCode {
@@ -43,6 +44,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "integrate-matches" => { integrate_matches::entry_main::entry(&rest); ExitCode::SUCCESS }
+
         "architecture" => { architecture::cli::entry(&rest); ExitCode::SUCCESS }
         "alchemy-lints" => { alchemy_lints::cli::entry(&rest); ExitCode::SUCCESS }
         "jobs" => { jobs::cli::entry(&rest); ExitCode::SUCCESS }

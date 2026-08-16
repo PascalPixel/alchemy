@@ -27,6 +27,8 @@
 //! cache key in this crate to get wrong, and none was invented for the port.
 //! `tools/cache-key-lint` is still run against it, and reports nothing.
 
+pub mod entry_bench;
+pub mod entry_main;
 pub mod cleanup;
 pub mod cli;
 pub mod extent;

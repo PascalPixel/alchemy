@@ -1,3 +1,5 @@
+//! CLI moved out of src/bin so this command can be linked.
+
 //! `integrate-matches`'s `main()`.
 //!
 //! PORT NOTE -- the legacy implementation lets an `Error` escape `main`, so native process prints its
@@ -8,12 +10,12 @@
 
 use std::process::ExitCode;
 
-use integrate_matches::cli::{parse_arguments, ParseOutcome, USAGE};
-use integrate_matches::pipeline::run_pipeline;
-use integrate_matches::selftest::self_test;
+use crate::cli::{parse_arguments, ParseOutcome, USAGE};
+use crate::pipeline::run_pipeline;
+use crate::selftest::self_test;
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
     match parse_arguments(&arguments) {
         Err(message) => {
             eprintln!("{message}");

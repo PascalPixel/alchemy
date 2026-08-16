@@ -326,3 +326,43 @@ impl Search {
         rest[..end].parse().ok()
     }
 }
+
+/// CLI entry for `shape-sweep --descend CANDIDATE`.
+///
+/// Reports BOTH numbers every round. `differing_halfwords` is the project's real
+/// metric and the one progress is measured in; `distance` is the size-independent
+/// proxy the search ranks by. They can move in opposite directions, and hiding
+/// that behind one number is how the earlier size confusion happened.
+pub fn run_cli(candidate: &str, rounds: usize) -> Result<(), String> {
+    let root = PathBuf::from(crate::root());
+    let absolute = if std::path::Path::new(candidate).is_absolute() {
+        PathBuf::from(candidate)
+    } else {
+        root.join(candidate)
+    };
+    let stem = absolute
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .ok_or_else(|| format!("cannot read owner stem from {}", absolute.display()))?
+        .to_string();
+    let seed = std::fs::read_to_string(&absolute)
+        .map_err(|error| format!("{}: {error}", absolute.display()))?;
+    let objdump = score::find_objdump().ok_or("no arm-none-eabi-objdump found")?;
+    let candidate_show = root.join("tools/compiler/target/release/compiler");
+    let search = Search {
+        root: root.clone(),
+        candidate_show,
+        objdump,
+        work: std::env::temp_dir().join(format!("shape-sweep-descend-{stem}")),
+        stem: stem.clone(),
+        jobs: default_jobs(),
+    };
+    let (best, history) = search.descend(&seed, rounds, 2, 0, |line| println!("{line}"));
+    if history.is_empty() {
+        println!("{stem}: no improvement");
+        return Ok(());
+    }
+    std::fs::write(&absolute, &best).map_err(|error| format!("{}: {error}", absolute.display()))?;
+    println!("{stem}: {} edits written", history.len());
+    Ok(())
+}

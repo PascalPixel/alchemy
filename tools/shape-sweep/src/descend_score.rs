@@ -180,7 +180,10 @@ pub fn score(
     std::fs::write(&file, source).ok()?;
     let build = work.join("w");
 
+    // candidate-show is a `compiler` subcommand now, so the binary takes the
+    // command name first. Consolidation moved the scorer this driver depends on.
     let output = Command::new(candidate_show)
+        .arg("candidate-show")
         .arg(&file)
         .arg("--work")
         .arg(&build)

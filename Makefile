@@ -37,7 +37,7 @@ DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search sema
 	progress progress-check progress-subject progress-history coverage coverage-check \
 	showcase compiler-checks compiler-sweep compiler-cohort overlay-compiler-cohort \
 	compiler-corpus compiler-batch overlay-candidate-check statement-order-check \
-	compiler-lint compiler-self-test build-dispatch $(addprefix dispatch-,$(DISPATCH_GROUPS))
+	compiler-lint compiler-self-test build-dispatch build-all $(addprefix dispatch-,$(DISPATCH_GROUPS))
 
 help:
 	@printf '%s\n' \
@@ -202,15 +202,57 @@ compiler-self-test:
 # Tool-crate unit tests. Nothing ran these before, which is how 14 routing
 # tests and 3 self-tests sat failing against flags deleted by the axe.
 CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
-               compiler-corpus-regression mode-sweep alchemy-selftest \
+               compiler-corpus-regression mode-sweep \
                shape-sweep dispatch
+# QUARANTINED: alchemy-selftest does not compile. It imports four routing_data
+# constants deleted as orphaned, and its remaining assertions require that
+# -mgrouped-dma-store and -fthumb-group-control-last are routed -- INVENTED
+# options the axe removed, which the no-invented-options rule forbids. It is
+# named in KNOWN_BROKEN below so `build-all` reports it without hiding it.
+# Fixing it means deleting those assertions; putting it back here is the last
+# step of that work.
 
+# A gate that cannot fail is worse than no gate. The former body piped cargo
+# into `grep | head`, so the pipeline reported HEAD's status and a FAILED test
+# line printed happily while make carried on. It shipped green over five real
+# failures. Test cargo's own exit status, not the pipeline's.
 crate-tests:
-	@for c in $(CRATE_TESTS); do \
+	@fail=0; \
+	for c in $(CRATE_TESTS); do \
 		printf "  %-28s " "$$c"; \
-		$(CARGO) test --offline --quiet --release --manifest-path $(TOOLS)/$$c/Cargo.toml 2>&1 \
-		  | grep -E '^test result' | head -1 || { echo FAILED; exit 1; }; \
-	done
+		if out=$$($(CARGO) test --offline --quiet --release --manifest-path $(TOOLS)/$$c/Cargo.toml 2>&1); then \
+			printf '%s\n' "$$out" | grep -E '^test result' | head -1; \
+		else \
+			echo FAILED; \
+			printf '%s\n' "$$out" | grep -E '^(error|thread|test result|assertion)' | head -6; \
+			fail=1; \
+		fi; \
+	done; \
+	test "$$fail" -eq 0
+
+# Nothing compiled every crate, so a crate could stop building and both lint and
+# crate-tests stayed green. Five crates were broken this way before anyone noticed.
+#
+# KNOWN_BROKEN is reported loudly every run and must only ever shrink. It exists
+# so one known failure does not force the whole gate off, which is how the
+# previous gate ended up unable to fail at all.
+KNOWN_BROKEN := alchemy-selftest
+
+build-all:
+	@fail=0; \
+	for d in $(TOOLS)/*/; do \
+		[ -f "$$d/Cargo.toml" ] || continue; \
+		name=$$(basename $$d); \
+		if ! $(CARGO) build --offline --quiet --release --manifest-path "$$d/Cargo.toml" >/dev/null 2>&1; then \
+			if echo " $(KNOWN_BROKEN) " | grep -q " $$name "; then \
+				echo "  KNOWN BROKEN: $$name"; \
+			else \
+				echo "  FAILS TO BUILD: $$name"; fail=1; \
+			fi; \
+		fi; \
+	done; \
+	if [ "$$fail" -eq 0 ]; then echo "build-all ok: every crate compiles except the $(words $(KNOWN_BROKEN)) known-broken"; fi; \
+	test "$$fail" -eq 0
 
 lint: pristine-options-check standard-check crate-tests
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- architecture

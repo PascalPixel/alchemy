@@ -95,32 +95,6 @@ pub static SPLIT_GROUP_BASE_SOURCES: &[&str] = &["08005a78"];
 pub static HOIST_PARAMETER_SAVE_SOURCES: &[&str] =
     &["08005340", "08005394", "080053e8", "08019bac"];
 pub static MINIPOOL_TAIL_FIRST_SOURCES: &[&str] = &["080a9aec"];
-pub static DIALOGUE_MINIPOOL_SPLIT_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3c2_c_0200006c.c",
-    "exact/resource_3c2_c_0200006c.c",
-    "semantic/resource_3c2_c_02000100.c",
-    "exact/resource_3c2_c_02000100.c",
-    "semantic/resource_3c2_c_0200016c.c",
-    "exact/resource_3c2_c_0200016c.c",
-    "semantic/resource_3c7_c_020000c8.c",
-    "exact/resource_3c7_c_020000c8.c",
-    "semantic/resource_3c7_c_0200015c.c",
-    "exact/resource_3c7_c_0200015c.c",
-    "semantic/resource_3c7_c_020001c8.c",
-    "exact/resource_3c7_c_020001c8.c",
-    "semantic/resource_3c7_c_02000234.c",
-    "exact/resource_3c7_c_02000234.c",
-    "semantic/resource_3c7_c_0200029c.c",
-    "exact/resource_3c7_c_0200029c.c",
-];
-pub static DIALOGUE_ZERO_BEFORE_ACTOR_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3c2_c_0200006c.c",
-    "exact/resource_3c2_c_0200006c.c",
-];
-pub static DIALOGUE_SECOND_ZERO_BEFORE_ACTOR_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3c7_c_020000c8.c",
-    "exact/resource_3c7_c_020000c8.c",
-];
 pub static ENTRY_SAVES_DESCENDING_SOURCES: &[&str] = &["08093054"];
 pub static GROUP_CONTROL_LAST_SOURCES: &[&str] = &[
     "080c08a8", "08005a78", "08005c68", "080907b0", "08090824", "080b010c", "0808fe38", "080b0744",
@@ -146,10 +120,6 @@ pub static POOL_LOAD_BASE_FIRST_OVERLAY_SOURCES: &[&str] = &[
     "semantic/resource_36f_c_020001c0.c",
     "exact/resource_36f_c_020001c0.c",
 ];
-pub static SPRITE_SHEET_ORDER_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_36f_c_02000238.c",
-    "exact/resource_36f_c_02000238.c",
-];
 pub static SINK_STACK_ADJUST_SOURCES: &[&str] = &["080c08a8"];
 pub static SINK_DEPENDENT_LOAD_SOURCES: &[&str] = &["080c08a8"];
 pub static COLLAPSE_DEAD_SCRATCH_SOURCES: &[&str] = &["0800fec8"];
@@ -166,26 +136,10 @@ pub static SINK_STORE_PAST_STORE_SOURCES: &[&str] = &["08006408"];
 pub static SINK_ADD_IMMEDIATE_SOURCES: &[&str] = &["080c0130"];
 pub static HOIST_ADD_IMMEDIATE_SOURCES: &[&str] = &["08011568"];
 pub static NO_CONSTANT_REUSE_SOURCES: &[&str] = &["080cd358"];
-pub static NO_ZERO_REUSE_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3c2_c_02000a78.c",
-    "exact/resource_3c2_c_02000a78.c",
-];
-pub static DIALOGUE_RECORD_MASK_SHEET_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3c2_c_02000a78.c",
-    "exact/resource_3c2_c_02000a78.c",
-];
 pub static VALUE_ENTRY_3CE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3ce_c_02000cf4.c",
     "semantic/resource_3cd_c_020004b0.c",
     "exact/resource_3cd_c_020004b0.c",
-];
-pub static PANEL_3CD_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3cd_c_020000ec.c",
-    "exact/resource_3cd_c_020000ec.c",
-];
-pub static PHASE_REGISTERS_3AF_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3af_c_020000c4.c",
-    "exact/resource_3af_c_020000c4.c",
 ];
 pub static NO_CONSTANT_REUSE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_373_c_02002f14.c",
@@ -998,10 +952,6 @@ pub static ARG_BEFORE_SHIFT_IN_SHEET_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3b1_c_02005ca4.c",
     "exact/resource_3a5_c_02001874.c",
     "exact/resource_382_c_02000614.c",
-];
-pub static ARG_BEFORE_TWO_SHIFTS_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3b0_c_02000240.c",
-    "exact/resource_3b0_c_02000240.c",
 ];
 pub static SINK_LOAD_PAST_STORE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_382_c_02000104.c",

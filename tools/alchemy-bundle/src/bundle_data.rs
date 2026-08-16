@@ -128,7 +128,7 @@ pub static EXPECTED: &[HostTargets] = &[
 pub static AGBCC_EXPECTED: &[(&str, &[&str])] = &[
     (
         "darwin-arm64",
-        &["bd3205fe49a5d7c553d8d1ec1940474bfd07d0d7ba2c1c7df928094d35da806a"],
+        &["dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a"],
     ),
     ("darwin-x64", &[]),
     ("linux-x64", &[]),

@@ -135,41 +135,6 @@ fn inventory_span(text: &str, id: &str) -> Option<f64> {
     Some(thumb_disasm::js_number(&digits))
 }
 
-/// Slice the reference to the OWNER's extent, never to the candidate's.
-///
-/// `verify_candidate` derives its span from the linked binary whenever `nm`
-/// reports no size, which is the normal case for these translation units. Its
-/// `expected` is therefore exactly as long as whatever the candidate happened
-/// to compile to, and comparing against that hides a size deficit completely:
-/// a candidate four bytes short is measured against a reference truncated to
-/// the same four-bytes-short length, so the missing tail can never appear in
-/// `differing_halfwords`. On `080bbb0c` that reported `reference=6328` against
-/// a true owner extent of 6,332, disagreeing with `decomp-diagnose` on the same
-/// owner and making the deficit invisible in the tool whose whole job is to
-/// explain the residual.
-///
-/// `decomp-diagnose` already resolves this through the assembly manifest. That
-/// lookup is reused here rather than reimplemented, so the two tools cannot
-/// disagree about one owner's reference length. When the manifest does not name
-/// the stem there is no authoritative extent to use, and the caller's slice
-/// stands.
-fn authoritative_reference(repository: &Path, rom: &[u8], stem: &str, fallback: &[u8]) -> Vec<u8> {
-    let Ok(address) = i64::from_str_radix(stem, 16) else {
-        return fallback.to_vec();
-    };
-    let Some(size) = decomp_diagnose::lookup(&decomp_diagnose::assembly_sizes(repository), stem)
-    else {
-        return fallback.to_vec();
-    };
-    let offset = address as f64 - candidate_compiler::ROM_BASE;
-    if offset < 0.0 || size <= 0 {
-        return fallback.to_vec();
-    }
-    let begin = (offset as usize).min(rom.len());
-    let end = begin.saturating_add(size as usize).min(rom.len());
-    rom[begin..end].to_vec()
-}
-
 /// The main-image branch.
 pub fn run_main_image(source: &Path, work: &Path) -> Result<String, String> {
     let repository = root();
@@ -191,52 +156,9 @@ pub fn run_main_image(source: &Path, work: &Path) -> Result<String, String> {
         },
     )?;
     let stem = basename_without_c(&source.to_string_lossy());
-    let expected = authoritative_reference(&repository, &rom, &stem, &verification.expected);
+    // Score against the OWNER's extent, never the candidate's. See
+    // `decomp_diagnose::owner_reference`.
+    let expected = decomp_diagnose::owner_reference(repository, &rom, &stem, &verification.expected);
     let actual_path = work.join(format!("{stem}.bin"));
     report(&verification.actual, &expected, work, &actual_path, &stem)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// A root with no assembly manifest has no authoritative extent to offer,
-    /// so the caller's slice has to survive intact. Silently returning an empty
-    /// reference here would read as "every byte matches".
-    #[test]
-    fn an_unknown_stem_keeps_the_callers_reference() {
-        let rom = vec![0xaa; 64];
-        let fallback = [1u8, 2, 3, 4];
-        let missing = Path::new("/nonexistent-candidate-explain-root");
-        assert_eq!(
-            authoritative_reference(missing, &rom, "080bbb0c", &fallback),
-            fallback.to_vec()
-        );
-    }
-
-    /// A stem that is not hexadecimal has no address, so there is nothing to
-    /// slice and the fallback stands rather than a panic or an empty vector.
-    #[test]
-    fn a_non_hexadecimal_stem_keeps_the_callers_reference() {
-        let rom = vec![0xaa; 64];
-        let fallback = [7u8, 8];
-        let root = alchemy_routing::routing::root();
-        assert_eq!(
-            authoritative_reference(root, &rom, "not-an-address", &fallback),
-            fallback.to_vec()
-        );
-    }
-
-    /// An address below the ROM base cannot index the image. The fallback is
-    /// the only honest answer; a negative offset must never wrap into a slice.
-    #[test]
-    fn an_address_below_the_rom_base_keeps_the_callers_reference() {
-        let rom = vec![0xaa; 64];
-        let fallback = [9u8];
-        let root = alchemy_routing::routing::root();
-        assert_eq!(
-            authoritative_reference(root, &rom, "00000010", &fallback),
-            fallback.to_vec()
-        );
-    }
 }

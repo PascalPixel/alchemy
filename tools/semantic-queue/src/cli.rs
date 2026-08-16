@@ -1,6 +1,9 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::path::Path;
 
-use semantic_queue::{format_row, js_parse_int, js_slice_limit, semantic_queue, to_json};
+use crate::{format_row, js_parse_int, js_slice_limit, semantic_queue, to_json};
 
 const USAGE: &str = "Usage: semantic-queue [--help|-h] [--self-test] [--json] [--limit=N]\n\nRank semantic C drafts by reconstruction cost.\n";
 
@@ -9,7 +12,7 @@ const USAGE: &str = "Usage: semantic-queue [--help|-h] [--self-test] [--json] [-
 /// binary mirrors the CLI surface exactly, and it re-checks the same four
 /// counters against the same fixtures.
 fn self_test() {
-    use semantic_queue::matchers::*;
+    use crate::matchers::*;
     let draft: Vec<char> = "M2C_UNK Func_08001234(void);\nM2C_ERROR(/* r0 */);\n"
         .chars()
         .collect();
@@ -43,8 +46,8 @@ fn validate_arguments(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn main() {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let arguments: Vec<String> = arguments.to_vec();
     if let Err(error) = validate_arguments(&arguments) {
         eprintln!("error: {error}");
         std::process::exit(2);

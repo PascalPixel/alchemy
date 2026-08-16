@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI entrypoint for the Thumb disassembly-line parser.
 //!
 //! PORT NOTE: the TypeScript's only entrypoint is `--self-test`, which is kept
@@ -11,7 +14,7 @@
 
 use std::io::{self, BufWriter, Read, Write};
 
-use thumb_disasm::{classify, parse_instruction};
+use crate::{classify, parse_instruction};
 
 fn unescape(line: &str) -> String {
     let mut out = String::with_capacity(line.len());
@@ -56,8 +59,8 @@ fn canonical_stream() -> io::Result<()> {
     out.flush()
 }
 
-fn main() -> io::Result<()> {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> io::Result<()> {
+    let args: Vec<String> = arguments.to_vec();
     if args.iter().any(|a| a == "--self-test") {
         self_test();
         return Ok(());

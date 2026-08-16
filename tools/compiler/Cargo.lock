@@ -57,6 +57,7 @@ dependencies = [
  "mode-sweep",
  "search-compiler-modes",
  "shape-sweep",
+ "thumb-disasm",
 ]
 
 [[package]]
@@ -238,6 +239,10 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "thumb-disasm"
+version = "0.1.0"
 
 [[package]]
 name = "unicode-ident"

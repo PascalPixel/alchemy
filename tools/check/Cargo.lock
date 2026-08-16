@@ -25,6 +25,7 @@ dependencies = [
  "cache-key-lint",
  "check-publication",
  "check-sanctum",
+ "compare-roms",
  "core-retained-audit",
  "decomp-constraints",
  "decomp-targets",
@@ -35,6 +36,7 @@ dependencies = [
  "music-residuals",
  "no-asm-c",
  "semantic-owner-scope",
+ "semantic-queue",
  "semantic-superseded",
  "source-citations",
 ]
@@ -47,6 +49,14 @@ version = "0.1.0"
 name = "check-sanctum"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
+]
+
+[[package]]
+name = "compare-roms"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
  "serde_json",
 ]
 
@@ -157,6 +167,13 @@ dependencies = [
 
 [[package]]
 name = "semantic-owner-scope"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
+name = "semantic-queue"
 version = "0.1.0"
 dependencies = [
  "serde_json",

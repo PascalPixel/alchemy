@@ -9,9 +9,5 @@ edition = "2021"
 name = "dashboard_server"
 path = "src/lib.rs"
 
-[[bin]]
-name = "dashboard-server"
-path = "src/main.rs"
-
 [dependencies]
 coverage-map = { path = "../coverage-map" }

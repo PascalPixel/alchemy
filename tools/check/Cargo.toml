@@ -22,6 +22,8 @@ semantic-superseded = { path = "../semantic-superseded" }
 source-citations = { path = "../source-citations" }
 cache-key-lint = { path = "../cache-key-lint" }
 no-asm-c = { path = "../no-asm-c" }
+compare-roms = { path = "../compare-roms" }
+semantic-queue = { path = "../semantic-queue" }
 
 [[bin]]
 name = "check"

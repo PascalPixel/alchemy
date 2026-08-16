@@ -9,6 +9,7 @@ edition = "2021"
 mode-sweep = { path = "../mode-sweep" }
 search-compiler-modes = { path = "../search-compiler-modes" }
 shape-sweep = { path = "../shape-sweep" }
+thumb-disasm = { path = "../thumb-disasm" }
 
 [[bin]]
 name = "compiler"

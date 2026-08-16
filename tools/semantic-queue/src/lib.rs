@@ -32,6 +32,8 @@
 //! on `str` is used. Stems are unique, so the comparator is total and the
 //! (stable) JS sort and Rust's stable sort agree unconditionally.
 
+pub mod cli;
+
 use std::collections::{BTreeSet, HashMap};
 use std::fs;
 use std::path::{Path, PathBuf};

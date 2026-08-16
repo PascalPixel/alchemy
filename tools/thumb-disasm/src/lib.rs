@@ -8,6 +8,8 @@
 //! two places where the underlying language semantics had to be re-created by
 //! hand (JavaScript whitespace/`\w` classes, and `Number(...)` coercion).
 
+pub mod cli;
+
 /// A single parsed operand.
 ///
 /// PORT NOTE: `Imm` carries an `f64`, not an integer. The TypeScript builds it

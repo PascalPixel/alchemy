@@ -1,3 +1,5 @@
+//! CLI moved out of src/bin so this command can be linked.
+
 //! Differential-parity dumper: prints one `key=value` line per observable for a
 //! single overlay, so the harness can diff the Rust and TypeScript answers
 //! field by field rather than on one opaque blob.
@@ -12,11 +14,11 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use alchemy_bundle::sha256;
-use overlay_disasm::compile::hex;
-use overlay_disasm::{OverlaySource, OVERLAY_BASE};
+use crate::compile::hex;
+use crate::{OverlaySource, OVERLAY_BASE};
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> ExitCode {
+    let arguments: Vec<String> = arguments.to_vec();
     let Some(path) = arguments.first() else {
         eprintln!("usage: parity_dump <overlay.s> [--perturb]");
         return ExitCode::FAILURE;
@@ -28,7 +30,7 @@ fn main() -> ExitCode {
     }
     let source = OverlaySource::text(path.clone());
 
-    let image = match overlay_disasm::assemble_overlay(&source, OVERLAY_BASE) {
+    let image = match crate::assemble_overlay(&source, OVERLAY_BASE) {
         Ok(image) => image,
         Err(error) => {
             eprintln!("assemble_overlay: {error}");
@@ -48,11 +50,11 @@ fn main() -> ExitCode {
 
     println!("image.len={}", image.len());
     println!("image.sha256={}", sha256::hex(&image));
-    match overlay_disasm::call_via_bank_base(&image, OVERLAY_BASE) {
+    match crate::call_via_bank_base(&image, OVERLAY_BASE) {
         Some(base) => println!("call_via_bank_base=0x{}", hex(base, 8)),
         None => println!("call_via_bank_base=null"),
     }
-    let addresses = match overlay_disasm::overlay_c_addresses(&source) {
+    let addresses = match crate::overlay_c_addresses(&source) {
         Ok(addresses) => addresses,
         Err(error) => {
             eprintln!("overlay_c_addresses: {error}");
@@ -64,7 +66,7 @@ fn main() -> ExitCode {
         "overlay_c_addresses={}",
         addresses.iter().map(|a| hex(*a, 8)).collect::<Vec<_>>().join(",")
     );
-    let spans = overlay_disasm::overlay_c_spans(&source, OVERLAY_BASE);
+    let spans = crate::overlay_c_spans(&source, OVERLAY_BASE);
     println!("overlay_c_spans.count={}", spans.len());
     println!(
         "overlay_c_spans={}",
@@ -75,7 +77,7 @@ fn main() -> ExitCode {
             .join(",")
     );
 
-    let built = match overlay_disasm::build_overlay_source(&image, OVERLAY_BASE) {
+    let built = match crate::build_overlay_source(&image, OVERLAY_BASE) {
         Ok(text) => text,
         Err(error) => {
             println!("build_overlay_source.error={error}");

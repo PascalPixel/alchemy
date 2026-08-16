@@ -32,6 +32,9 @@
 //! `votes` tally in `call_via_bank_base` (first-past-the-post on ties), and the
 //! `externals` table in `build_overlay_source`.
 
+pub mod entry_parity_dump;
+pub mod cli;
+
 pub mod compile;
 pub mod disasm;
 pub mod paths;

@@ -36,6 +36,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("twins", "find mirrored overlay pairs"),
     ("unindexed", "report unindexed overlays"),
     ("showcase", "run the overlay showcase"),
+    ("disasm", "overlay disasm"),
+    ("parity-dump", "dump overlay parity data"),
 ];
 
 fn root() -> PathBuf {
@@ -96,6 +98,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "disasm" => overlay_disasm::cli::entry(&rest),
+        "parity-dump" => { overlay_disasm::entry_parity_dump::entry(&rest); ExitCode::SUCCESS }
         "showcase" => { overlay_showcase::entrypoint::entry(&rest); ExitCode::SUCCESS }
 
         "adopt" => code(overlay_adopt::run(&root(), &rest)),

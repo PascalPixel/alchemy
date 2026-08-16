@@ -32,6 +32,8 @@ architecture = { path = "../architecture" }
 alchemy-lints = { path = "../alchemy-lints" }
 jobs = { path = "../jobs" }
 integrate-matches = { path = "../integrate-matches" }
+full-c-history = { path = "../full-c-history" }
+localization-tables = { path = "../localization-tables" }
 
 [[bin]]
 name = "check"

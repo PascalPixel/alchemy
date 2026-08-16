@@ -5,8 +5,4 @@ name = "full-c-history"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "full-c-history"
-path = "src/main.rs"
-
 [dependencies]

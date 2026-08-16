@@ -22,6 +22,7 @@ overlay-show = { path = "../overlay-show" }
 overlay-twins = { path = "../overlay-twins" }
 overlay-unindexed = { path = "../overlay-unindexed" }
 overlay-showcase = { path = "../overlay-showcase" }
+overlay-disasm = { path = "../overlay-disasm" }
 
 [[bin]]
 name = "overlay"

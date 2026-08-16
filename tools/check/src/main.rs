@@ -32,6 +32,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("alchemy-lints", "alchemy lints"),
     ("jobs", "jobs"),
     ("integrate-matches", "integrate matched candidates into the tree"),
+    ("full-c-history", "full c history"),
+    ("localization-tables", "localization tables"),
 ];
 
 fn main() -> ExitCode {
@@ -44,6 +46,8 @@ fn main() -> ExitCode {
     }
     let rest: Vec<String> = args[1..].to_vec();
     match command {
+        "full-c-history" => { full_c_history::cli::entry(&rest); ExitCode::SUCCESS }
+        "localization-tables" => { localization_tables::cli::entry(&rest); ExitCode::SUCCESS }
         "integrate-matches" => { integrate_matches::entry_main::entry(&rest); ExitCode::SUCCESS }
 
         "architecture" => { architecture::cli::entry(&rest); ExitCode::SUCCESS }

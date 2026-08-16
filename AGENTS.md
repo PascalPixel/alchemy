@@ -292,6 +292,42 @@ Do not erase negative evidence simply to make documentation shorter.
   is standing in for the fix. Adding one is allowed, but it is debt and it is
   recorded as debt, never as a result.
 
+## Never invent a compiler option
+
+**Hard rule. Do not add a compiler option that stock gcc 2.96 does not have.**
+
+A byte match reached by inventing an option is not a reconstruction. It is a
+switch that hides one, and it moves the difference from the source, where it can
+be found and fixed, into the compiler, where it cannot.
+
+`pret/pokeemerald` builds its ROM with **zero** invented options. Its Makefile
+has one base `CFLAGS` and about eight per-file overrides, and every one is
+either a compiler SELECTION (`old_agbcc` for `m4a.o` and `libc.o`, `agbcc_arm`
+for `librfu_intr.o`) or a stock flag (`-O`, `-O2`, `-mthumb-interwork`,
+`-ffreestanding`). `agbcc` is a fixed compiler; nobody adds a flag to it per
+function. `alchemy-gcc` has to reach that shape.
+
+This repository is not there yet. Measured 2026-08-16 against the pristine
+gcc-2.96 at the fork point, of 138 distinct routed flags **18 are stock and 120
+were invented here**. Those 120 are grandfathered in
+`tools/route-dump/data/invented-flags.txt`, and that file may only ever shrink.
+
+`make standard-check` enforces it both ways: a routed flag that is neither stock
+nor already grandfathered fails the build, and a grandfathered entry that
+nothing routes any more also fails, so the list cannot quietly stop shrinking.
+
+Retiring an entry means one of two things, and both are real work:
+
+- reconstruct the owners that depend on it, so nothing routes it; or
+- prove the behaviour is Camelot's compiler and make it unconditional, with no
+  option at all. `-mgrouped-dma-store` is the live example: no C shape
+  reproduces its `stmia`, so it is genuine, but forcing it on causes 37
+  regressions, which makes it a real behaviour with a predicate that is still
+  wrong.
+
+Adding a stock option is allowed. It exists in the released compiler, pret
+projects use them, and it is recorded in `data/stock-flags.txt`.
+
 ## Build configurations
 
 Camelot shipped a makefile, not a per-file flag database. The reconstruction

@@ -1,12 +1,16 @@
+//! CLI for this crate, moved out of src/bin so the command can be linked
+//! into a shared entry point. Named `entrypoint` because this crate already
+//! owns a `cli` module.
+
 //! `candidate_show.ts`'s `if (import.meta.main) await main()`.
 
 use alchemy_routing::routing::root;
-use candidate_show::cli::{options_of, ParseOutcome, USAGE};
-use candidate_show::diff::self_test;
-use candidate_show::render::render;
+use crate::cli::{options_of, ParseOutcome, USAGE};
+use crate::diff::self_test;
+use crate::render::render;
 
-fn main() {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) {
+    let arguments: Vec<String> = arguments.to_vec();
     // `--self-test` is checked before `optionsOf`, so it wins over an
     // otherwise invalid argv.
     if arguments.iter().any(|argument| argument == "--self-test") {

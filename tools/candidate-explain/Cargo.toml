@@ -41,7 +41,3 @@ decomp-diagnose = { path = "../decomp-diagnose" }
 [lib]
 name = "candidate_explain"
 path = "src/lib.rs"
-
-[[bin]]
-name = "candidate-explain"
-path = "src/bin/candidate_explain.rs"

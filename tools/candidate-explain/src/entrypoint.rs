@@ -1,12 +1,16 @@
+//! CLI for this crate, moved out of src/bin so the command can be linked
+//! into a shared entry point. Named `entrypoint` because this crate already
+//! owns a `cli` module.
+
 //! `bun tools/lib/candidate_explain.ts` -- the CLI entry point.
 
 use std::io::Write;
 
-use candidate_explain::cli::{parse_arguments, Options, ParseOutcome, USAGE};
-use candidate_explain::run::{run_main_image, run_overlay};
-use candidate_explain::self_test;
+use crate::cli::{parse_arguments, Options, ParseOutcome, USAGE};
+use crate::run::{run_main_image, run_overlay};
+use crate::self_test;
 
-fn main() {
+pub fn entry(arguments: &[String]) {
     let argv: Vec<String> = std::env::args().skip(1).collect();
 
     // `Bun.argv.includes("--self-test")` scans the WHOLE argv, including

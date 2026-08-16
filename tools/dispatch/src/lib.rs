@@ -157,12 +157,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
-        crate_name: "route-dump",
-        binary: "route-dump",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: true,
-    },
-    NonPublicTarget {
         crate_name: "dispatch",
         binary: "dispatch",
         kind: NonPublicKind::SelfTestSupport,
@@ -897,7 +891,7 @@ mod tests {
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
-        assert_eq!(non_public_targets().len(), 6);
+        assert_eq!(non_public_targets().len(), 5);
         assert_eq!(
             // candidate-explain is now a `compiler` subcommand, not a
             // standalone diagnostic.

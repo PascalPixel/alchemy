@@ -1,3 +1,5 @@
+//! CLI moved out of src/bin so this command can be linked.
+
 //! Decomposed benchmark: the two costs the task named, measured separately
 //! from the whole-process time so a win or a loss can be attributed.
 //!
@@ -13,10 +15,10 @@
 //! Neither is memoized to make the number look better; memoizing the bundle
 //! signature is a fix that belongs in `alchemy-bundle`, centrally.
 
-use compiler_corpus_regression::corpus::hash;
+use crate::corpus::hash;
 use std::time::Instant;
 
-fn main() {
+pub fn entry(arguments: &[String]) {
     let root = alchemy_routing::routing::root();
 
     let start = Instant::now();

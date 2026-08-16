@@ -109,6 +109,7 @@ dependencies = [
  "bl-site-symbols",
  "candidate-explain",
  "candidate-show",
+ "compiler-corpus-regression",
  "dashboard-server",
  "decomp-diagnose",
  "mode-cohort",
@@ -120,6 +121,18 @@ dependencies = [
  "search-compiler-modes",
  "shape-sweep",
  "thumb-disasm",
+]
+
+[[package]]
+name = "compiler-corpus-regression"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-plan",
+ "alchemy-routing",
+ "candidate-compiler",
+ "integrate-matches",
+ "overlay-disasm",
 ]
 
 [[package]]

@@ -115,9 +115,7 @@ const ASSETS: &[Entry] = &[
 const COMPILER: &[Entry] = &[
     Entry {
         name: "compiler_corpus_regression",
-        target: Target::Binary(
-            "tools/compiler-corpus-regression/target/release/compiler-corpus-regression",
-        ),
+        target: Target::Sub("tools/compiler/target/release/compiler", "corpus-regression"),
     },
     Entry {
         name: "mode_cohort",
@@ -172,12 +170,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         crate_name: "self-test",
         binary: "self-test",
         kind: NonPublicKind::SelfTestSupport,
-        self_test: false,
-    },
-    NonPublicTarget {
-        crate_name: "compiler-corpus-regression",
-        binary: "compiler-corpus-regression-bench",
-        kind: NonPublicKind::BenchAuxiliary,
         self_test: false,
     },
 ];
@@ -891,7 +883,7 @@ mod tests {
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
-        assert_eq!(non_public_targets().len(), 5);
+        assert_eq!(non_public_targets().len(), 4);
         assert_eq!(
             // candidate-explain is now a `compiler` subcommand, not a
             // standalone diagnostic.

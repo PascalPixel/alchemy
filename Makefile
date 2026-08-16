@@ -182,7 +182,7 @@ overlay-compiler-cohort:
 	$(CARGO_RUN) $(TOOLS)/overlay-mode-cohort/Cargo.toml -- --self-test
 
 compiler-corpus:
-	$(CARGO_RUN) $(TOOLS)/compiler-corpus-regression/Cargo.toml --bin compiler-corpus-regression -- --self-test
+	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- corpus-regressionbin compiler-corpus-regression -- --self-test
 
 compiler-batch:
 	$(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml -- search-modes --self-test
@@ -203,7 +203,7 @@ compiler-self-test:
 # Tool-crate unit tests. Nothing ran these before, which is how 14 routing
 # tests and 3 self-tests sat failing against flags deleted by the axe.
 CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
-               compiler-corpus-regression mode-sweep \
+               mode-sweep \
                shape-sweep dispatch
 # QUARANTINED: alchemy-selftest does not compile. It imports four routing_data
 # constants deleted as orphaned, and its remaining assertions require that

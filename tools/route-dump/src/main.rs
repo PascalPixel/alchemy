@@ -1,21 +1,3 @@
-//! Print the compiler flags a source is actually routed with.
-//!
-//! The routing tables are the source of truth for how each translation unit is
-//! built, but that truth is only reachable by calling into the routing crate:
-//! flags are pushed from several distinct code shapes, and the agbcc family
-//! routes through a different function entirely. Reconstructing the mapping by
-//! reading `routing.rs` with a text scanner silently under-matches, and the
-//! missing flags then read as "this source has no routing" rather than as a
-//! gap in the scan. That mistake produced a corpus-wide measurement in which
-//! 456 overlay sources looked flag-free and pruning them broke resource_3ce.
-//!
-//! This binary exists so that measurement asks the routing crate instead.
-//!
-//! Usage:
-//!   route-dump <source> [<source> ...]   flags for the named sources
-//!   route-dump --all                     every live C source under the tree
-//!   route-dump --routed                  only sources with non-baseline flags
-//!   route-dump --self-test
 
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -102,8 +84,31 @@ fn main() -> ExitCode {
             }
         };
     }
+    if arguments.iter().any(|a| a == "--standard") {
+        for flag in baseline() {
+            println!("{flag}");
+        }
+        return ExitCode::SUCCESS;
+    }
+    if arguments.iter().any(|a| a == "--debt") {
+        let sources = live_sources();
+        let deviating = sources
+            .iter()
+            .filter(|source| {
+                !routed_extras(source).is_empty()
+                    || uses_agbcc_compiler(CompilerTarget::Gs1, source)
+            })
+            .count();
+        println!(
+            "routing debt: {deviating} of {} live sources deviate from the standard",
+            sources.len()
+        );
+        return ExitCode::SUCCESS;
+    }
     if arguments.is_empty() || arguments.iter().any(|a| a == "-h" || a == "--help") {
-        eprintln!("usage: route-dump <source>... | --all | --routed | --self-test");
+        eprintln!(
+            "usage: route-dump <source>... | --all | --routed | --standard | --debt | --self-test"
+        );
         return ExitCode::FAILURE;
     }
     let only_routed = arguments.iter().any(|a| a == "--routed");

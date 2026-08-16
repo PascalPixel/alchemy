@@ -12,10 +12,6 @@ edition = "2021"
 name = "build_claimed"
 path = "src/lib.rs"
 
-[[bin]]
-name = "build-claimed"
-path = "src/main.rs"
-
 [dependencies]
 # Sibling crates, not third-party dependencies. Each already owns a proved port
 # of the layer this tool calls; a second copy of any of them is exactly the

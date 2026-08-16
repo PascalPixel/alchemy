@@ -3,7 +3,7 @@
 
 use crate::{build, parse_args, repository_root, ParseOutcome};
 
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+pub fn entry(arguments: &[String]) {
     let arguments: Vec<String> = arguments.to_vec();
     if arguments.as_slice() == ["--self-test"] {
         let sample = vec!["--source-only".to_string(), "--output=out/test".to_string()];

@@ -35,6 +35,8 @@
 //! address in this crate is an `f64` and every operation on one goes through a
 //! named helper in [`js`].
 
+pub mod cli;
+
 pub mod js;
 pub mod nodepath;
 pub mod sha256;

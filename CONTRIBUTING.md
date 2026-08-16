@@ -458,6 +458,23 @@ part way -- it stops at the first bad overlay -- the main-image half refreshes
 and the overlay half stays frozen at whatever the last complete run produced.
 A percentage read while `build-full` is failing is part fresh, part fossil.
 
+**An incremental build silently ignores header changes.** `alchemy-gcc`'s build
+restamps generated files, and the 2000-era makefiles have no header dependency
+tracking, so editing `config/arm/arm.h` and running `make` produces a
+**byte-identical `cc1`** -- the change is simply not compiled in. A measurement
+taken that way reports "no effect" for a change that was never tested. Always
+`rm -rf build-296` before measuring a header edit, and check the digest actually
+moved before believing any result. Editing a `.c` file is fine; only headers
+have this trap.
+
+**REG_ALLOC_ORDER is stock for a reason.** `arm.h` allocates `3, 2, 1, 0` --
+descending. The reference frequently wants ascending registers, which makes
+"flip the allocation order" an obvious-looking fix for both the store-multiple
+owners and the register-allocation failures. It was measured: ascending order
+takes the main image from **1107 exact to 258**, losing 849 owners and gaining
+zero. The descending order is load-bearing for four fifths of everything that
+currently matches. Do not revisit this without reading that number first.
+
 **Overlay owners cannot be parked.** Moving `exact/<addr>.c` to
 `non_matching/` is how a main-image owner is set aside; the build globs
 `exact/` and falls back to assembly. Do this to an overlay owner and

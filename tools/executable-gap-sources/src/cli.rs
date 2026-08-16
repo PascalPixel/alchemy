@@ -1,4 +1,7 @@
-use executable_gap_sources::{build_executable_gap_data, build_section, self_test, verify_rom};
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
+use crate::{build_executable_gap_data, build_section, self_test, verify_rom};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
@@ -50,7 +53,7 @@ fn run(args: &[String]) -> Result<(), String> {
     Err(USAGE.into())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

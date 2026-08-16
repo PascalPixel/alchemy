@@ -1,3 +1,6 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI for `semantic-owner-scope`, mirroring
 //! `tools/semantic/semantic_owner_scope.ts`.
 //!
@@ -9,7 +12,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use semantic_owner_scope::{
+use crate::{
     census_declared_closed, group_owners, has_epilogue, is_stem_argument, open_owners, overlaps,
     owners_to_json, render_report, row_facts_from_assembly, AddressRange, Region,
 };
@@ -171,8 +174,8 @@ fn run(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let args: Vec<String> = arguments.to_vec();
     match run(&args) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

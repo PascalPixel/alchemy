@@ -45,6 +45,8 @@
 //!
 //! Port of `tools/lib/rtl_schedule.ts`.
 
+pub mod cli;
+
 use rtl_insn::jsnum::{js_number, js_number_to_string};
 use rtl_insn::{InsnKind, RtlExpr, RtlInsn};
 

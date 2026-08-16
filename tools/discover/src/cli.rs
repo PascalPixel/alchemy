@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 // CLI wrapper matching `bun tools/lib/discover.ts`: read a ROM image, run the
 // discovery fixpoint, write the canonical-JSON report to -o, and print the
 // one-line summary that callers grep.
 
-use discover::{json::canonical_json, Discovery, ROM_BASE};
+use crate::{json::canonical_json, Discovery, ROM_BASE};
 use std::process::ExitCode;
 
 fn usage() -> ! {
@@ -85,8 +88,8 @@ fn run(argv: &[String]) -> Result<String, String> {
     ))
 }
 
-fn main() -> ExitCode {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    let argv: Vec<String> = arguments.to_vec();
     if argv == ["--self-test"] {
         self_test();
         return ExitCode::SUCCESS;

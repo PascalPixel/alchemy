@@ -9,6 +9,7 @@ edition = "2021"
 [dependencies]
 rtl-insn = { path = "../rtl-insn" }
 rtl-sexpr = { path = "../rtl-sexpr" }
+rtl-schedule = { path = "../rtl-schedule" }
 
 [[bin]]
 name = "rtl"

@@ -7,6 +7,7 @@ name = "rtl"
 version = "0.1.0"
 dependencies = [
  "rtl-insn",
+ "rtl-schedule",
  "rtl-sexpr",
 ]
 
@@ -15,6 +16,13 @@ name = "rtl-insn"
 version = "0.1.0"
 dependencies = [
  "rtl-sexpr",
+]
+
+[[package]]
+name = "rtl-schedule"
+version = "0.1.0"
+dependencies = [
+ "rtl-insn",
 ]
 
 [[package]]

@@ -1,9 +1,12 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 //! CLI mirror of the TS `if (import.meta.main) selfTest()` entry point.
 
 use std::process::ExitCode;
 
-fn main() -> ExitCode {
-    match decomp_targets::self_test() {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    match crate::self_test() {
         Ok(summary) => {
             println!("{summary}");
             ExitCode::SUCCESS

@@ -6,7 +6,3 @@ edition.workspace = true
 [lib]
 name = "cache_entry"
 path = "src/lib.rs"
-
-[[bin]]
-name = "cache-entry"
-path = "src/main.rs"

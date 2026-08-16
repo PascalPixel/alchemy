@@ -9,10 +9,6 @@ edition = "2021"
 name = "discover"
 path = "src/lib.rs"
 
-[[bin]]
-name = "discover"
-path = "src/main.rs"
-
 [dependencies]
 
 [profile.release]

@@ -1,8 +1,11 @@
+//! CLI for this crate, moved out of `main.rs` so the command can be linked
+//! into a shared entry point instead of shipping its own executable.
+
 use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-use music_residuals::{build_region, self_test, verify_music_residuals, Result};
+use crate::{build_region, self_test, verify_music_residuals, Result};
 
 const USAGE: &str =
     "usage: music-residuals build-stdout INDEX ADDRESS | verify ROM --index INDEX | --self-test";
@@ -39,7 +42,7 @@ fn run(args: &[String]) -> Result<()> {
     Err(USAGE.into())
 }
 
-fn main() -> ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {

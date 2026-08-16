@@ -1,3 +1,5 @@
+pub mod cli;
+
 // Port of tools/lib/late_runtime_data.ts.
 //
 // WHY THIS FILE EXISTS: three late ROM ranges (0x080f38bc, 0x080f53ce,

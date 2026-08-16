@@ -5,6 +5,8 @@
 //! every path here is relative to the repo root and target-isolated, and the
 //! self-test enforces both properties.
 
+pub mod cli;
+
 /// Target identifiers. The TS side used a string union; an enum gives us the
 /// same closed set with the compiler doing the checking.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

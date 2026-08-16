@@ -79,6 +79,23 @@ by-the-numbers target can still be a hard one. Budget accordingly: 131
 main-image and 440 overlay owners, 14,988 of the 111,622 claimed main-image
 bytes (13.4%).
 
+The second-cheapest target behaves the same way. `exact/080a3d9c.c` is 64 bytes
+and drops to one differing instruction without its `-fno-regmove`: the AND in
+`result = (u32) (himask & entry) >> 0xB;` lands in `entry`'s register where the
+reference lands it in the mask's. Both operands are dead afterwards, so the
+destination is regmove's free choice. Two source forms were tried and both are
+worse -- swapping the operand order changes nothing, because gcc canonicalises
+commutative operands, and a compound `himask &= entry;` scores 20 differing
+halfwords by making a pre-loop constant loop-carried and restructuring the loop.
+
+Two owners attempted, two closed. The pattern across this session is that
+register-allocation residuals do not respond to spelling: the one real win
+(080bbb0c reaching reference size) came from a structural fact -- an extra
+pre-call register copy naming an argument-evaluation-order difference -- not
+from rewording an expression. Look for the structural fact first; if a residual
+is purely which register a dead-either-way value lands in, source form is
+probably not the lever.
+
 ## The DMA-descriptor family (largest unblocked lever)
 
 `remaining_survey` classifies **113 of the 550 remaining main-image regions as

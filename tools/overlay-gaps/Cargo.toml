@@ -9,10 +9,6 @@ edition = "2021"
 overlay-call-targets = { path = "../overlay-call-targets" }
 overlay-published = { path = "../overlay-published" }
 
-[[bin]]
-name = "overlay-gaps"
-path = "src/main.rs"
-
 [lib]
 name = "overlay_gaps"
 path = "src/lib.rs"

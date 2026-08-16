@@ -25,9 +25,5 @@ alchemy-bundle = { path = "../alchemy-bundle" }
 name = "overlay_twins"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-twins"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

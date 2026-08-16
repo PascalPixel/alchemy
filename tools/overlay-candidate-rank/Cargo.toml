@@ -20,9 +20,5 @@ overlay-disasm = { path = "../overlay-disasm" }
 name = "overlay_candidate_rank"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-candidate-rank"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

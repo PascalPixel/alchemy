@@ -20,9 +20,5 @@ exact-reading-list = { path = "../exact-reading-list" }
 name = "overlay_unindexed"
 path = "src/lib.rs"
 
-[[bin]]
-name = "overlay-unindexed"
-path = "src/main.rs"
-
 [profile.release]
 opt-level = 3

@@ -96,12 +96,16 @@ mod tests {
     }
 
     #[test]
-    fn the_live_grouped_dma_table_really_does_contain_a_duplicate() {
-        // Pins the reason `sorted_set` cannot be simplified to a sort: the
-        // TypeScript literal lists `080c08a8` twice and `new Set` hides it.
-        let table = alchemy_routing::routing_data::GROUPED_DMA_STORE_SOURCES;
-        assert_eq!(table.len(), 50);
-        assert_eq!(sorted_set(table).len(), 49);
+    fn sorted_set_dedupes_it_does_not_merely_sort() {
+        // Pins the reason `sorted_set` cannot be simplified to a sort. This
+        // used to read the live GROUPED_DMA_STORE_SOURCES table, which listed
+        // `080c08a8` twice -- 50 entries collapsing to 49 -- but that table
+        // went with the invented -mgrouped-dma-store option. The property it
+        // protected is real, so it keeps its own fixture rather than a
+        // dependency on whichever routing list happens to contain a duplicate.
+        let table: &[&str] = &["080c08a8", "0800bffc", "080c08a8", "08095290"];
+        assert_eq!(table.len(), 4);
+        assert_eq!(sorted_set(table).len(), 3);
     }
 
     #[test]

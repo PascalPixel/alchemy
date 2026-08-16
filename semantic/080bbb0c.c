@@ -138,7 +138,6 @@ s32 Func_080bbb0c(struct BattlePlan *input_plan, s32 target_slot) {
     s8 guard_level;
     s8 pp_guard_level;
     s8 secondary_pp_guard_level;
-    s8 ranged_guard_level;
     s32 range_distance;
     s32 cached_action_result;
     u8 *allowed_table;
@@ -749,9 +748,8 @@ block_196:
                     break;
                 }
                 ranged_damage = scaled_ranged_damage + (3 & BattleRandom_Next());
-                ranged_guard_level = (s8) M2C_FIELD(target_state, u8, 0x12B);
-                if (ranged_guard_level != 0) {
-                    if (ranged_guard_level == 1) {
+                if (((s8) M2C_FIELD(target_state, u8, 0x12B)) != 0) {
+                    if (((s8) M2C_FIELD(target_state, u8, 0x12B)) == 1) {
                         ranged_damage = (u32) ((s32) (ranged_damage + (ranged_damage >> 0x1F)) >> 1);
                     } else {
                         ranged_damage = (u32) Func_080022ec((s32) ranged_damage, 0xA);

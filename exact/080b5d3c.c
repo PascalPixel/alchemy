@@ -37,17 +37,15 @@ struct Result_080b5d3c *Func_080b5d3c(void)
     index = 0;
     do {
         totals.values[index] = 0;
-        if (object_count > 0) {
-            u16 *object_id = object_ids;
-            s32 remaining = object_count;
+        {
+            s32 slot;
 
-            do {
+            for (slot = 0; slot < object_count; slot++) {
                 struct Object_080b5d3c *object =
-                    Func_08077008(*object_id++);
+                    Func_08077008(object_ids[slot]);
 
-                remaining--;
                 totals.values[index] += object->values[index];
-            } while (remaining != 0);
+            }
         }
         index++;
     } while (index <= 3);

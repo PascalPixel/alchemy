@@ -163,12 +163,6 @@ const NON_PUBLIC: &[NonPublicTarget] = &[
         self_test: true,
     },
     NonPublicTarget {
-        crate_name: "overlay-disasm",
-        binary: "parity_dump",
-        kind: NonPublicKind::InternalDiagnostic,
-        self_test: false,
-    },
-    NonPublicTarget {
         crate_name: "dispatch",
         binary: "dispatch",
         kind: NonPublicKind::SelfTestSupport,
@@ -308,7 +302,7 @@ const MAKE: &[Entry] = &[
     },
     Entry {
         name: "localization_tables",
-        target: Target::Binary("tools/localization-tables/target/release/localization-tables"),
+        target: Target::Sub("tools/check/target/release/check", "localization-tables"),
     },
     Entry {
         name: "map_container_components",
@@ -431,7 +425,7 @@ const METRICS: &[Entry] = &[
     },
     Entry {
         name: "full_c_history",
-        target: Target::Binary("tools/full-c-history/target/release/full-c-history"),
+        target: Target::Sub("tools/check/target/release/check", "full-c-history"),
     },
     Entry {
         name: "full_c_progress",
@@ -462,7 +456,7 @@ const OVERLAY: &[Entry] = &[
     },
     Entry {
         name: "overlay_disasm",
-        target: Target::Binary("tools/overlay-disasm/target/release/overlay-disasm"),
+        target: Target::Sub("tools/overlay/target/release/overlay", "disasm"),
     },
     Entry {
         name: "overlay_driver",
@@ -903,7 +897,7 @@ mod tests {
         assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
-        assert_eq!(non_public_targets().len(), 7);
+        assert_eq!(non_public_targets().len(), 6);
         assert_eq!(
             // candidate-explain is now a `compiler` subcommand, not a
             // standalone diagnostic.

@@ -96,10 +96,12 @@ dependencies = [
  "discover",
  "executable-gap-sources",
  "extract-resource",
+ "full-c-history",
  "integrate-matches",
  "jobs",
  "lang-ban",
  "late-runtime-data",
+ "localization-tables",
  "music-residuals",
  "no-asm-c",
  "semantic-owner-scope",
@@ -180,6 +182,10 @@ name = "extract-resource"
 version = "0.1.0"
 
 [[package]]
+name = "full-c-history"
+version = "0.1.0"
+
+[[package]]
 name = "hashbrown"
 version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -227,6 +233,10 @@ dependencies = [
  "extract-resource",
  "serde_json",
 ]
+
+[[package]]
+name = "localization-tables"
+version = "0.1.0"
 
 [[package]]
 name = "memchr"

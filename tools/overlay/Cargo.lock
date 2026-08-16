@@ -134,6 +134,7 @@ dependencies = [
  "overlay-call-order-check",
  "overlay-candidate-rank",
  "overlay-certify",
+ "overlay-disasm",
  "overlay-entry",
  "overlay-gaps",
  "overlay-inventory",

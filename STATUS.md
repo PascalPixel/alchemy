@@ -56,6 +56,36 @@ account for: three gcc296 owners carry an optimisation-level override
 reconstruction targets; no makefile compiles one function at `-Os` and its
 neighbours at `-O2`.
 
+### Not all routing is a source defect: -mgrouped-dma-store is real
+
+The working assumption has been that a per-file route admits the reconstruction
+is wrong. For `-mgrouped-dma-store`, 49 owners, that is disproved.
+
+`exact/08004838.c` is the clean witness. It writes three DMA registers, and the
+reference compiles them to
+
+    ldr r0,[pc] / ldr r1,[pc] / ldr r2,[pc] / stmia r3!,{r0,r1,r2} / subs r3,#12
+
+Three constants materialised straight into registers and stored as a group, with
+`subs r3,#12` undoing `stmia`'s writeback. Our three `dma[i] = ...` assignments
+give three separate `str`s.
+
+The obvious source fix does not reach it. Writing the same thing as a struct
+assignment, which is how gcc normally emits `stm`, produces a **stack round
+trip** instead: `sub sp,#12`, three stores to the frame, `ldmia` from it, then
+`stmia` to the destination, 22 differing halfwords. Stock gcc 2.96 will not
+materialise three constants in registers and group the stores; it either stores
+them one at a time or block-moves them through memory.
+
+So this mode is not covering for bad C. It reproduces a real behaviour of
+Camelot's compiler that stock gcc 2.96 does not have, and no C shape retires it.
+
+That does not make it correct as implemented. Forcing it corpus-wide causes 383
+regressions against 13 carriers, so its trigger is far broader than the
+reference's. The work it needs is a narrower predicate in the fork, not a
+reconstruction of its 49 owners -- the opposite conclusion from the rest of the
+debt, and worth separating before anyone budgets 49 owners of source work.
+
 ### Redundant flag-grants: retired, and the avenue is now exhausted
 
 2026-08-16. Every routed flag was tested individually, main image and overlay,

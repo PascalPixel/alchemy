@@ -213,13 +213,6 @@ fn has(table: &'static [&'static str], value: &str) -> bool {
     set(table).contains(value)
 }
 
-fn lookup(table: &'static [(&'static str, &'static str)], value: &str) -> Option<&'static str> {
-    table
-        .iter()
-        .find(|(key, _)| *key == value)
-        .map(|(_, entry)| *entry)
-}
-
 /// `cflagsForSource`. The order of the appended flags is load-bearing: later
 /// options win in the driver, and the routed command line for already-verified
 /// regions must not be rewritten.

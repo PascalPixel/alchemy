@@ -297,8 +297,8 @@ pub const UNSUPPORTED_HOST_MESSAGE: &str =
 pub fn host_admission_message(host: &str, what: &str) -> String {
     [
         format!("alchemy-gcc has no approved {what} digests for host {host} yet."),
-        "Admit this host: build the committed fork source (alchemy-gcc/build.sh),".to_string(),
-        "stage it (alchemy-gcc/stage.sh), run the full `make verify`, and pin".to_string(),
+        "Admit this host: build and stage the committed compiler source".to_string(),
+        "(`make` in alchemy-gcc), run the full `make verify`, and pin".to_string(),
         "the digests from that green verify -- the same admission every listed".to_string(),
         "digest already passed.".to_string(),
     ]

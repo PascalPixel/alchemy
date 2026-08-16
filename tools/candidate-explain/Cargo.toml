@@ -28,6 +28,11 @@ rtl-schedule = { path = "../rtl-schedule" }
 alchemy-routing = { path = "../alchemy-routing" }
 #   node:path `basename` / `extname`, used for the routing-stem derivation.
 alchemy-plan = { path = "../alchemy-plan" }
+#   `assembly_sizes` / `lookup`: the owner's authoritative extent, so the
+#   reference is sliced to the OWNER and not to whatever the candidate compiled
+#   to. Reused rather than reimplemented so this tool and `decomp-diagnose`
+#   cannot disagree about the same owner's reference length.
+decomp-diagnose = { path = "../decomp-diagnose" }
 
 # Zero third-party dependencies. Every JS-semantics primitive this port needs
 # (ToNumber, ToString(Number), parseInt, UTF-16 padding) is either reused from

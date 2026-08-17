@@ -110,9 +110,9 @@ extern u8 *Data_03001ebc;
 extern u8 Data_02009730[];
 
 void Func_020027d0();
-void Func_02002730();
-void Func_02002738();
-void Func_02002740();
+s32 Func_02002730();
+s32 Func_02002738();
+s32 Func_02002740();
 void Func_020026b4();
 void Func_02001a70(void);
 s32 Func_020026d6();

@@ -48,7 +48,7 @@
  */
 
 extern s16 Data_02000240[];
-extern void Func_020000a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern s32 Func_020000a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 extern void Func_080000c0(s32 arg0);
 extern void Func_08009180(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);

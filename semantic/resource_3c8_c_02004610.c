@@ -27,7 +27,7 @@ extern void Func_02000118(s32, s32, s32, s32, s32, s32, s32,
 extern void Func_020045f0(void);
 extern void Func_080000c0(s32 frames);
 extern void Func_080000d0(Task_02004610 task, s32 priority);
-extern u32 Func_080000f8(void);
+extern s32 Func_080000f8(void);
 extern void Func_08009180();
 extern void Func_080091e0(void *record, s32 mode);
 extern void Func_080770c8(s32 flag);

@@ -21,7 +21,7 @@
  */
 
 extern u8 *Func_0808a080(s32 actor);
-extern s32 Func_08077148(void);
+extern s8 Func_08077148(void);
 extern s32 Func_080770c0(s32 flag);
 extern void Func_080000c0(s32 frames);
 extern void Func_0808a170(s32 message);
@@ -30,7 +30,7 @@ extern s32 Func_0808a070(s32 actor, s32 mode);
 extern void Func_08077168(s32 value);
 extern void Func_08077150(s32 value);
 extern s32 Func_080a1018(void);
-extern void Func_0808a180(s32 actor, s32 mode);
+extern s32 Func_0808a180(s32 actor, s32 mode);
 extern void Func_08015120(s32 handle, s32 mode);
 extern void Func_0808a090(s32 actor, s32 x, s32 z);
 extern void Func_0808a0f0(s32 actor, s32 x, s32 z);

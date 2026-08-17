@@ -57,7 +57,7 @@ extern void Func_0808a010(s32 frames);
 extern s32 Func_080770c0(s32 flagId);
 extern u8 *Func_0808a080(s32 id);
 extern void Func_0808a090(s32 id, s32 arg1, s32 arg2);
-extern void Func_0808a0d0(s32 id, s32 arg1, s32 arg2);
+extern s32 Func_0808a0d0(s32 id, s32 arg1, s32 arg2);
 extern void Func_0808a0f0(s32 id, s32 arg1, s32 arg2);
 extern void Func_0808a130(s32 id, s32 arg1);
 extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);

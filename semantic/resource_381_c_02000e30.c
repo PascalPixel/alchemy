@@ -1,3 +1,43 @@
+/*
+ * Two differing halfwords at the second Func_020043fc call, and the whole
+ * residual is one instruction's position:
+ *
+ *   ours       movs r1,#128 / lsls r1,r1,#1 / mov r0,sl / bl
+ *   reference  movs r1,#128 / mov r0,sl / lsls r1,r1,#1 / bl
+ *
+ * NOT the allocator, and not this call site. The reorder is controlled by what
+ * follows in and after the basic block, which the probes below isolate. Same
+ * compiler, same flags, only the tail of the function varies:
+ *
+ *   TARGET(a, 0x100);                       -> ours
+ *   TARGET(a, 0x100); store;                -> ours
+ *   TARGET(a, 0x100); store; store;         -> ours
+ *   TARGET(a, 0x100); call;                 -> REFERENCE ORDER
+ *   TARGET(a, 0x100); store; call;          -> REFERENCE ORDER
+ *   TARGET(a, 0x100); call; store;          -> REFERENCE ORDER
+ *   TARGET(a, 0x100); store; call; loop;    -> ours
+ *
+ * A later CALL in the same block produces the reference order; a store does
+ * not; a loop after the block takes it away again. That is INSN_PRIORITY in
+ * haifa-sched.c being the longest path to the END of the block: the two
+ * candidates tie on priority, on the last-scheduled-insn class and on
+ * dependent count, so `rank_for_schedule` falls through to INSN_LUID, and what
+ * follows decides which of them ties first. haifa-sched.c is unmodified stock
+ * 2.96, so the reference order is reachable here -- our own exact corpus emits
+ * this interleave 112 times in 400 owners.
+ *
+ * This owner has both the later call AND the loop, so it lands on ours. Tried
+ * and rejected against the bytes: hoisting `i = 0` above the call (2 -> 64
+ * halfwords), the first loop as `for`, a prototyped 2-arg alias for the
+ * unprototyped import, `0x100` spelled `128 << 1`, moving the p-store before
+ * the call (2 -> 9), and a local temporary for either argument. shape-sweep,
+ * the permuter at 999 candidates, and mode-cohort at 153 configurations all
+ * hold at the baseline.
+ *
+ * So it is a source question, not an allocation one -- the register-blind
+ * verdict would call this a reorder and pass over it -- and the thing to find
+ * is the block tail the original had, not a different spelling of the call.
+ */
 #include "types.h"
 
 typedef struct {

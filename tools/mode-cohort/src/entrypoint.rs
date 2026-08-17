@@ -40,7 +40,15 @@ fn available_parallelism() -> f64 {
     std::thread::available_parallelism().map_or(8.0, |n| n.get() as f64)
 }
 
-fn cargo_command(root: &Path, crate_name: &str) -> Command {
+/// Spawn a sibling tool through the host binary that now carries it.
+///
+/// `mode-sweep` is a library crate hosted by `compiler` and has no bin target of
+/// its own, so `cargo run --manifest-path tools/mode-sweep/Cargo.toml` dies on
+/// "a bin target must be available" and takes the whole cohort with it -- the
+/// first candidate fails and the run stops. The host's manifest plus the
+/// subcommand is the working spelling, the same repair as `candidate-rank`'s
+/// worker spawn in bce2bc1e9.
+fn cargo_command(root: &Path, host_crate: &str, subcommand: &str) -> Command {
     let mut command = Command::new("cargo");
     command
         .args([
@@ -50,8 +58,9 @@ fn cargo_command(root: &Path, crate_name: &str) -> Command {
             "--release",
             "--manifest-path",
         ])
-        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg(root.join("tools").join(host_crate).join("Cargo.toml"))
         .arg("--")
+        .arg(subcommand)
         .current_dir(root);
     command
 }
@@ -142,7 +151,7 @@ fn sweep_member(
     max_pairs: f64,
     max_triples: f64,
 ) -> Result<Report, String> {
-    let mut command = cargo_command(root, "mode-sweep");
+    let mut command = cargo_command(root, "compiler", "mode-sweep");
     let output = command
         .arg(source)
         .args([
@@ -339,7 +348,7 @@ mod tests {
 
     #[test]
     fn sweep_child_is_cargo_authoritative() {
-        let command = cargo_command(Path::new("/repo"), "mode-sweep");
+        let command = cargo_command(Path::new("/repo"), "compiler", "mode-sweep");
         assert_eq!(command.get_program(), "cargo");
         let args: Vec<_> = command
             .get_args()

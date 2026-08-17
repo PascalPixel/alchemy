@@ -271,7 +271,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
 
     // Subtracted, not added: the soft-float library leaves take the stock ABI
     // with r4 callee-saved, so the base set's `-fcall-used-r4` comes back off.
-    if has_owner(CALLEE_SAVED_R4_OVERLAY_SOURCES, source) {
+    if has_owner(CALLEE_SAVED_R4_OVERLAY_SOURCES, source) || has(CALLEE_SAVED_R4_SOURCES, stem) {
         out.retain(|f| f != "-fcall-used-r4");
     }
 
@@ -343,6 +343,9 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     }
     if has_owner(NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES, source) {
         push!(&["-fno-cse-skip-blocks"]);
+    }
+    if has(NO_STRICT_ALIASING_SOURCES, stem) {
+        push!(&["-fno-strict-aliasing"]);
     }
     if has_owner(NO_STRICT_ALIASING_OVERLAY_SOURCES, source) {
         push!(&["-fno-strict-aliasing"]);

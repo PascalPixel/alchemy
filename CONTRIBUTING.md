@@ -271,6 +271,15 @@ boundary, that no label outside the region is destroyed, and that the whole
 overlay still assembles to the same bytes. Copying a file into `exact/` is not
 adoption and will not survive the build.
 
+**Run one `adopt` at a time.** It reaches that verdict by splicing the row into
+`assets/code/<overlay>.s` and restoring the file afterwards, so it writes to the
+tree even when it rejects and even without `--apply` — `--where` is not a
+read-only flag. Twelve rehearsals in parallel raced on those files and left
+seven overlays with real assembly replaced by `.space` placeholders, 368 lines
+gone, while every single rehearsal run beforehand had been clean. `git status`
+after a batch is the cheap check; `git checkout -- assets/code/` is the repair.
+Score in parallel as much as you like, and keep adoption serial.
+
 The inverse exists, and you should use it rather than leaving a broken row in
 place:
 

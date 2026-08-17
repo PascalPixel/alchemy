@@ -3,7 +3,7 @@
 u8 *Func_08077008(s32);
 s32 *Func_080b7dd0(s32);
 void Func_08009080(s32, s32);
-s32 Func_08009088(s32, s32);
+void Func_08009088(s32, s32);
 
 s32 Func_080b7aac(s32 id)
 {

@@ -172,6 +172,54 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let left_lines = ordered(&left);
     let right_lines = ordered(&right);
 
+    // WHICH RESIDUALS ARE WORTH YOUR TIME.
+    //
+    // Two rows can show the same differing-halfword count and be completely
+    // different problems. If both sides hold the SAME instructions and only
+    // their order differs, no source shape reaches it -- the order is decided
+    // after reload, by `rank_for_schedule`'s tie-break chain, and the C no
+    // longer controls it. If some instruction is genuinely wrong, the source
+    // is wrong and reading it will find the defect.
+    //
+    // Measured 2026-08-17 over the 282 size-exact parked overlay rows: 98 rows
+    // (14,858 bytes) are ordering-only and 183 rows (47,456 bytes) carry a
+    // wrong instruction. Ranking those 183 by this count, rather than by
+    // differing halfwords, is what puts a readable defect at the top.
+    //
+    // A pc-relative offset encodes an instruction's POSITION, so a transposed
+    // pool load would otherwise read as two wrong instructions. The resolved
+    // target is printed alongside it, so blank the offset before comparing.
+    let canonical = |line: &str| -> String {
+        let mut out = String::with_capacity(line.len());
+        let mut rest = line;
+        while let Some(start) = rest.find("[pc, #") {
+            out.push_str(&rest[..start]);
+            out.push_str("[pc]");
+            rest = match rest[start..].find(']') {
+                Some(end) => &rest[start + end + 1..],
+                None => "",
+            };
+        }
+        out.push_str(rest);
+        out
+    };
+    let mut pool: std::collections::BTreeMap<String, i64> = std::collections::BTreeMap::new();
+    for line in &left_lines {
+        *pool.entry(canonical(line)).or_default() += 1;
+    }
+    for line in &right_lines {
+        *pool.entry(canonical(line)).or_default() -= 1;
+    }
+    let wrong: i64 = pool.values().map(|count| count.abs()).sum();
+    let class = if differing == 0 {
+        "exact"
+    } else if wrong == 0 {
+        "ordering"
+    } else {
+        "wrong"
+    };
+    println!("class={class} wrong_instructions={wrong}");
+
     if align {
         println!("      candidate                      reference");
         for (candidate, reference) in align_streams(&left_lines, &right_lines) {

@@ -87,7 +87,7 @@ dependencies = [
  "cache-key-lint",
  "check-commit-progress",
  "check-publication",
- "check-sanctum",
+ "check-unmatchable",
  "compare-roms",
  "core-retained-audit",
  "coverage-map",
@@ -110,6 +110,7 @@ dependencies = [
  "semantic-queue",
  "semantic-superseded",
  "source-citations",
+ "symbols",
 ]
 
 [[package]]
@@ -124,7 +125,7 @@ name = "check-publication"
 version = "0.1.0"
 
 [[package]]
-name = "check-sanctum"
+name = "check-unmatchable"
 version = "0.1.0"
 dependencies = [
  "serde_json",
@@ -375,6 +376,10 @@ dependencies = [
 
 [[package]]
 name = "source-citations"
+version = "0.1.0"
+
+[[package]]
+name = "symbols"
 version = "0.1.0"
 
 [[package]]

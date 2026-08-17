@@ -26,6 +26,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("adopt", "adopt a matched overlay candidate"),
     ("park", "un-adopt a row: restore its assembly, move its C to semantic/"),
     ("audit", "compare every adopted row against the bytes it replaced"),
+    ("score", "show one overlay row beside the ROM, like candidate-show"),
     ("call-order-check", "check overlay call ordering"),
     ("candidate-rank", "rank overlay candidates"),
     ("certify", "certify overlay results"),
@@ -110,6 +111,7 @@ fn main() -> ExitCode {
         "adopt" => code(overlay_adopt::run(&root(), &rest)),
         "park" => code(overlay_adopt::park::run(&root(), &rest)),
         "audit" => code(overlay_adopt::park::run_audit(&root(), &rest)),
+        "score" => code(overlay_adopt::score::run(&root(), &rest)),
         "call-order-check" => code(overlay_call_order_check::run(&rest)),
         "candidate-rank" => {
             let self_exe = std::env::current_exe().unwrap_or_else(|_| PathBuf::from("overlay"));
@@ -186,5 +188,5 @@ fn self_test() -> ExitCode {
 }
 
 fn dispatchable(name: &str) -> bool {
-    matches!(name, "adopt" | "audit" | "call-order-check" | "candidate-rank" | "certify" | "disasm" | "entry" | "gaps" | "inventory" | "mode-cohort" | "parity-dump" | "park" | "published" | "show" | "showcase" | "twins" | "unindexed")
+    matches!(name, "adopt" | "audit" | "call-order-check" | "candidate-rank" | "certify" | "disasm" | "entry" | "gaps" | "inventory" | "mode-cohort" | "parity-dump" | "park" | "published" | "score" | "show" | "showcase" | "twins" | "unindexed")
 }

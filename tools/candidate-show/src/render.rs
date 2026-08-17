@@ -128,6 +128,43 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         to_js_number_string(expected.len() as f64)?,
         to_js_number_string(differing.len() as f64)?,
     ));
+    if options.align {
+        // Ordered instruction streams, then aligned as sequences.
+        let ordered = |map: &crate::disasm::Rows| -> Vec<String> {
+            let mut keys: Vec<f64> = map.keys().collect();
+            keys.sort_by(js_numeric_comparator);
+            keys.iter()
+                .map(|key| map.get(*key).unwrap_or("").to_string())
+                .collect()
+        };
+        let left_lines = ordered(&left);
+        let right_lines = ordered(&right);
+        stdout.push_str("      candidate                      reference\n");
+        for (candidate, reference) in align_streams(&left_lines, &right_lines) {
+            let mark = match (&candidate, &reference) {
+                (Some(a), Some(b)) if a == b => " ",
+                (Some(_), Some(_)) => "!",
+                (Some(_), None) => "+",
+                (None, Some(_)) => "-",
+                (None, None) => " ",
+            };
+            let a = slice_utf16(&pad_end(candidate.as_deref().unwrap_or(""), 30), 30);
+            let b = reference.as_deref().unwrap_or("");
+            stdout.push_str(&format!("  {mark} {a} {b}\n"));
+        }
+        return Ok(RenderOutput {
+            stdout,
+            candidate_length: actual.len(),
+            reference_length: expected.len(),
+            differing_halfwords: differing.len(),
+            rows: offsets.len(),
+        });
+    }
+    if actual.len() != expected.len() {
+        stdout.push_str(
+            "  note: the two sides are different lengths, so the offset view below is\n             \x20       phase-shifted and every later row will read as a difference.\n             \x20       Re-run with --align to see the insertion or deletion itself.\n",
+        );
+    }
     stdout.push_str("      offset  candidate                      reference\n");
     for offset in &offsets {
         let mark = if offset_is_differing(&differing, *offset) {
@@ -150,6 +187,90 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         differing_halfwords: differing.len(),
         rows: offsets.len(),
     })
+}
+
+
+/// Canonicalise one instruction so that alignment is not defeated by things
+/// that shift with position.
+///
+/// Branch and pc-relative targets move whenever anything before them changes
+/// size, so two otherwise identical instructions would fail to pair. Blinding
+/// them lets the alignment find the real insertion or deletion.
+pub fn alignment_key(instruction: &str) -> String {
+    let text = match instruction.find('@') {
+        Some(at) => &instruction[..at],
+        None => instruction,
+    };
+    let mut out = String::with_capacity(text.len());
+    let bytes: Vec<char> = text.chars().collect();
+    let mut index = 0;
+    while index < bytes.len() {
+        let c = bytes[index];
+        if c == '0' && index + 1 < bytes.len() && bytes[index + 1] == 'x' {
+            out.push_str("0xN");
+            index += 2;
+            while index < bytes.len() && bytes[index].is_ascii_hexdigit() {
+                index += 1;
+            }
+            continue;
+        }
+        if c.is_ascii_digit() {
+            out.push('N');
+            while index < bytes.len() && bytes[index].is_ascii_digit() {
+                index += 1;
+            }
+            continue;
+        }
+        out.push(if c == '\t' { ' ' } else { c });
+        index += 1;
+    }
+    out.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+/// Longest-common-subsequence alignment of two instruction streams.
+///
+/// Returns one row per output line as `(candidate, reference)`, where `None`
+/// on either side is an instruction the other stream does not have.
+pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
+    let a: Vec<String> = left.iter().map(|line| alignment_key(line)).collect();
+    let b: Vec<String> = right.iter().map(|line| alignment_key(line)).collect();
+    let (rows, columns) = (a.len(), b.len());
+    // Standard LCS table; these streams are function-sized, so the quadratic
+    // table is small and the clarity is worth more than the cleverness.
+    let mut table = vec![vec![0usize; columns + 1]; rows + 1];
+    for i in (0..rows).rev() {
+        for j in (0..columns).rev() {
+            table[i][j] = if a[i] == b[j] {
+                table[i + 1][j + 1] + 1
+            } else {
+                table[i + 1][j].max(table[i][j + 1])
+            };
+        }
+    }
+    let mut out = Vec::new();
+    let (mut i, mut j) = (0usize, 0usize);
+    while i < rows && j < columns {
+        if a[i] == b[j] {
+            out.push((Some(left[i].clone()), Some(right[j].clone())));
+            i += 1;
+            j += 1;
+        } else if table[i + 1][j] >= table[i][j + 1] {
+            out.push((Some(left[i].clone()), None));
+            i += 1;
+        } else {
+            out.push((None, Some(right[j].clone())));
+            j += 1;
+        }
+    }
+    while i < rows {
+        out.push((Some(left[i].clone()), None));
+        i += 1;
+    }
+    while j < columns {
+        out.push((None, Some(right[j].clone())));
+        j += 1;
+    }
+    out
 }
 
 /// `differing.has(offset)` where the set holds byte offsets and the map key is

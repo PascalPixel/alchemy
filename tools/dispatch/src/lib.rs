@@ -68,8 +68,8 @@ const CHECK: &[Entry] = &[
         target: Target::Sub("tools/check/target/release/check", "check-publication"),
     },
     Entry {
-        name: "check_sanctum",
-        target: Target::Sub("tools/check/target/release/check", "check-sanctum"),
+        name: "check_unmatchable",
+        target: Target::Sub("tools/check/target/release/check", "check-unmatchable"),
     },
     Entry {
         name: "core_retained_audit",

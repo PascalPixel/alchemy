@@ -16,6 +16,7 @@
 //! exit code.
 
 pub mod park;
+pub mod score;
 
 use std::fs;
 use std::path::{Path, PathBuf};

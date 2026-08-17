@@ -8,7 +8,8 @@ edition = "2021"
 [dependencies]
 cache-entry = { path = "../cache-entry" }
 check-publication = { path = "../check-publication" }
-check-sanctum = { path = "../check-sanctum" }
+check-unmatchable = { path = "../check-unmatchable" }
+symbols = { path = "../symbols" }
 core-retained-audit = { path = "../core-retained-audit" }
 decomp-constraints = { path = "../decomp-constraints" }
 decomp-targets = { path = "../decomp-targets" }

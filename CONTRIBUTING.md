@@ -800,12 +800,42 @@ coverage as progress and is the most misleading number in the repository. When
 an owner is the wrong size, expect to rewrite it against `overlay score` rather
 than repair it.
 
-### 4. The tooling is frozen
+### 4. Trackers report reachability, not just bytes
+
+`combined` is retired. It added exact and semantic into one percentage and read
+as 94% while a fifth of it reproduced. The coverage line now ends
+`c_able=1,268,190 exact_of_c_able=21.63%`: the bytes that can be C, and how much
+of them is done.
+
+The contributor target list in [Targets](#targets) ranks by bytes and is blind to
+reachability. 228 of its rows and 43,834 of its bytes are not source-reachable at
+all -- 89 `unemittable`, 122 `ordering`, 17 `allocation` -- and some rank high
+because they are large. Use it to see the shape of what is left. Use
+`overlay candidate-rank` to choose, because that is the tool that compiles a
+candidate and knows which class its residual is in.
+
+### 5. Veneers stay in the denominator, and the ceiling is always published
+
+48,760 bytes of linker veneers and 3,020 of alignment are executable bytes in the
+ROM, so they belong in the denominator. They can never be C, so a share measured
+against that denominator can never reach 100. Publish both figures or neither:
+the share of the ROM, and the share of the bytes that can be C.
+
+### 6. The tooling is frozen
 
 163,804 lines of Rust across 135 crates, against 274,372 bytes of ROM
 reconstructed. The loop needs about eight commands and they all exist. Adding a
 tool now requires deleting one, and measurement that explains why we are stuck is
 no longer a deliverable.
+
+### 7. The permuter is a last resort with a number attached
+
+`alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
+passes, and on this corpus it closed nothing: 97 rows at 1,500 to 2,500
+candidates each improved 18 and matched 0. That is what a residue looks like
+after the tractable work has already been taken out of it. Aim it only at rows
+`overlay score` calls `wrong`, after you have read the residual, and treat a
+match it finds as something to explain before adopting.
 
 ### Why, in one paragraph
 

@@ -1,0 +1,42 @@
+{
+  "owner": "resource_3ce:029c",
+  "span_bytes": 1574,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 1574,
+    "reference_bytes": 1574,
+    "wrong_instructions": 0,
+    "differing_halfwords": 380,
+    "class": "ordering"
+  },
+  "shape": {
+    "calls": 196,
+    "loops": 0,
+    "memory_ops": 0
+  },
+  "expressed": [
+    "drafted whole by `overlay reconstruct`: every call, every argument, the pool skip"
+  ],
+  "unexpressed": [],
+  "verified_against_reference": [
+    "byte count 1574 = 1574",
+    "wrong_instructions 0",
+    "every call and argument"
+  ],
+  "blocked_by": "argument setup order alone: the reference emits `movs r1` then `movs r0` before each of the 196 calls, the candidate the other way round. One systematic difference, 196 times, accounting for all 380 differing halfwords.",
+  "rejected": [
+    {
+      "shape": "prototypes instead of empty parens",
+      "result": "no change, 380 halfwords either way"
+    },
+    {
+      "axis": "shape_sweep",
+      "result": "axis exhausted"
+    },
+    {
+      "axis": "overlay_mode_cohort singles",
+      "result": "0 exact"
+    }
+  ],
+  "note": "The closest any owner has come. Exact size, zero wrong instructions, and the whole residual is one swapped pair repeated at every call site. gcc's load_register_parameters walks arguments forward, which is what the candidate emits; the reference is reversed."
+}

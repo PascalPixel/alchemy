@@ -35,6 +35,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("inventory", "rebuild the overlay inventory"),
     ("mode-cohort", "compiler-mode cohort over overlays"),
     ("published", "report published overlays"),
+    ("reconstruct", "draft C for one owner from its own disassembly"),
     ("show", "show one overlay"),
     ("twins", "find mirrored overlay pairs"),
     ("unindexed", "report unindexed overlays"),
@@ -128,6 +129,7 @@ fn main() -> ExitCode {
         "inventory" => unit(overlay_inventory::run(&root(), &rest)),
         "mode-cohort" => lines(overlay_mode_cohort::run(&rest)),
         "published" => unit(overlay_published::run(&rest)),
+        "reconstruct" => lines(overlay_show::reconstruct::run(&rest)),
         "show" => match overlay_show::run(&rest) {
             Ok(overlay_show::Outcome::Usage) => ExitCode::SUCCESS,
             Ok(overlay_show::Outcome::SelfTest(message)) => {
@@ -193,5 +195,5 @@ fn self_test() -> ExitCode {
 }
 
 fn dispatchable(name: &str) -> bool {
-    matches!(name, "adopt" | "audit" | "call-order-check" | "candidate-rank" | "certify" | "disasm" | "entry" | "gaps" | "inventory" | "mode-cohort" | "parity-dump" | "park" | "published" | "score" | "show" | "showcase" | "twins" | "unindexed")
+    matches!(name, "adopt" | "audit" | "call-order-check" | "candidate-rank" | "certify" | "disasm" | "entry" | "gaps" | "inventory" | "mode-cohort" | "parity-dump" | "park" | "published" | "reconstruct" | "score" | "show" | "showcase" | "twins" | "unindexed")
 }

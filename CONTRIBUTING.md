@@ -389,7 +389,14 @@ thing to read:
 | `wrong` | some instruction is genuinely different | **yes** |
 | `ordering` | same instructions, different order | no |
 | `allocation` | same instructions and operands, different registers | no |
-| `unemittable` | the reference uses an instruction this compiler cannot emit | no |
+| `unemittable` | the reference *appears* to use an instruction this compiler cannot emit | confirm first |
+
+`unemittable` is advisory. It reads a disassembled stream, and a literal pool
+word disassembles as whatever its bytes encode: on ARM7TDMI that includes
+`stmia`, `ldmia`, and mnemonics the part cannot execute at all. Measured against
+the assembler's listing, 18 of 89 rows carrying the verdict had no
+multiple-transfer anywhere in their span. Before writing an owner off, check that
+the instruction is inside its span in the assembly.
 
 `ordering` and `allocation` are settled after the source has had its say, by
 `rank_for_schedule` and by reload. `unemittable` means the region is not C at

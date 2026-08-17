@@ -39,12 +39,18 @@ typedef struct Workspace_02000e20 {
     Record_02000e20 *published;   /* +24 */
 } Workspace_02000e20;
 
-Record_02000e20 *Func_0808a080();
+/* Named at its decoded bl site, not by the import it reaches: the call at
+ * 0x02000e24 encodes 0x02003f32, which is this overlay's own veneer entry for
+ * Func_0808a080.  Declaring the import directly costs two halfwords, because a
+ * different site would resolve to a different entry -- the byte-exact
+ * resource_385 and resource_3c4 owners all name the local veneer and record the
+ * import in a comment, which is the convention this follows. */
+Record_02000e20 *Func_02003f32();  /* Func_0808a080 */
 
 extern u8 Value_000000ac;
 void Func_02000e20(void)
 {
-    Record_02000e20 *record = Func_0808a080(0);
+    Record_02000e20 *record = Func_02003f32(0);
     Workspace_02000e20 *workspace = (Workspace_02000e20 *)Data_03001ee0;
     s32 threshold = 0;
 
@@ -70,9 +76,13 @@ void Func_02000e20(void)
         threshold = 93;
     }
 
-    if ((record->height >> 19) > threshold) {
-        workspace->published = record;
-    } else {
+    /* Written with the CLEAR arm first: the reference falls through to the
+     * `published = 0` store and branches over it to publish, so the source tests
+     * `<= threshold`.  Spelling it the other way round is the same behaviour and
+     * costs the opposite branch polarity. */
+    if ((record->height >> 19) <= threshold) {
         workspace->published = 0;
+    } else {
+        workspace->published = record;
     }
 }

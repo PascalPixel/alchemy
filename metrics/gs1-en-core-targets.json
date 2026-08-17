@@ -13,14 +13,14 @@
     "executable_bytes": 1347122,
     "audited_address_spaces": 97,
     "address_spaces_with_targets": 87,
-    "target_count": 2156,
-    "target_scope_bytes": 1003696,
-    "target_bytes": 1000168,
-    "semantic_c_bytes": 1000168,
+    "target_count": 2155,
+    "target_scope_bytes": 1003640,
+    "target_bytes": 1000112,
+    "semantic_c_bytes": 1000112,
     "assembly_bytes": 0,
     "exact_c_leverage_bytes": 0,
     "permanent_assembly_leverage_bytes": 3528,
-    "resolved_only_bytes": 343426
+    "resolved_only_bytes": 343482
   },
   "targets": [
     {
@@ -24265,18 +24265,6 @@
     },
     {
       "rank": 2021,
-      "namespace": "resource_382",
-      "address": "0x02000cc4",
-      "label": "382 · semantic owner 0x02000cc4",
-      "scope_bytes": 56,
-      "target_bytes": 56,
-      "semantic_c_bytes": 56,
-      "assembly_bytes": 0,
-      "exact_c_leverage_bytes": 0,
-      "permanent_assembly_bytes": 0
-    },
-    {
-      "rank": 2022,
       "namespace": "resource_38c",
       "address": "0x020001a8",
       "label": "38c · semantic owner 0x020001a8",
@@ -24288,7 +24276,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2023,
+      "rank": 2022,
       "namespace": "resource_39b",
       "address": "0x02000314",
       "label": "39b · semantic owner 0x02000314",
@@ -24300,7 +24288,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2024,
+      "rank": 2023,
       "namespace": "resource_3a6",
       "address": "0x02000314",
       "label": "3a6 · semantic owner 0x02000314",
@@ -24312,7 +24300,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2025,
+      "rank": 2024,
       "namespace": "resource_3af",
       "address": "0x02000bb8",
       "label": "3af · semantic owner 0x02000bb8",
@@ -24324,7 +24312,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2026,
+      "rank": 2025,
       "namespace": "resource_3af",
       "address": "0x02000bf0",
       "label": "3af · semantic owner 0x02000bf0",
@@ -24336,7 +24324,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2027,
+      "rank": 2026,
       "namespace": "resource_3b3",
       "address": "0x02000314",
       "label": "3b3 · semantic owner 0x02000314",
@@ -24348,7 +24336,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2028,
+      "rank": 2027,
       "namespace": "resource_3be",
       "address": "0x02000314",
       "label": "3be · semantic owner 0x02000314",
@@ -24360,7 +24348,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2029,
+      "rank": 2028,
       "namespace": "resource_3c0",
       "address": "0x02000adc",
       "label": "3c0 · semantic owner 0x02000adc",
@@ -24372,7 +24360,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2030,
+      "rank": 2029,
       "namespace": "main",
       "address": "0x080c91a4",
       "label": "0x080c91a4–0x080c91dc",
@@ -24384,7 +24372,7 @@
       "permanent_assembly_bytes": 24
     },
     {
-      "rank": 2031,
+      "rank": 2030,
       "namespace": "main",
       "address": "0x080037d4",
       "label": "0x080037d4–0x0800380a",
@@ -24396,7 +24384,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2032,
+      "rank": 2031,
       "namespace": "resource_395",
       "address": "0x020012f4",
       "label": "395 · semantic owner 0x020012f4",
@@ -24408,7 +24396,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2033,
+      "rank": 2032,
       "namespace": "resource_3a2",
       "address": "0x02000870",
       "label": "3a2 · semantic owner 0x02000870",
@@ -24420,7 +24408,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2034,
+      "rank": 2033,
       "namespace": "resource_3a2",
       "address": "0x020008a8",
       "label": "3a2 · semantic owner 0x020008a8",
@@ -24432,7 +24420,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2035,
+      "rank": 2034,
       "namespace": "resource_3a7",
       "address": "0x020013ac",
       "label": "3a7 · semantic owner 0x020013ac",
@@ -24444,7 +24432,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2036,
+      "rank": 2035,
       "namespace": "resource_3bf",
       "address": "0x02005a40",
       "label": "3bf · semantic owner 0x02005a40",
@@ -24456,7 +24444,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2037,
+      "rank": 2036,
       "namespace": "main",
       "address": "0x08004858",
       "label": "0x08004858–0x0800488c",
@@ -24468,7 +24456,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2038,
+      "rank": 2037,
       "namespace": "main",
       "address": "0x080170c4",
       "label": "0x080170c4–0x080170f8",
@@ -24480,7 +24468,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2039,
+      "rank": 2038,
       "namespace": "resource_372",
       "address": "0x02000398",
       "label": "372 · semantic owner 0x02000398",
@@ -24492,7 +24480,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2040,
+      "rank": 2039,
       "namespace": "resource_372",
       "address": "0x020003cc",
       "label": "372 · semantic owner 0x020003cc",
@@ -24504,7 +24492,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2041,
+      "rank": 2040,
       "namespace": "resource_372",
       "address": "0x02000400",
       "label": "372 · semantic owner 0x02000400",
@@ -24516,7 +24504,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2042,
+      "rank": 2041,
       "namespace": "resource_398",
       "address": "0x020004b4",
       "label": "398 · semantic owner 0x020004b4",
@@ -24528,7 +24516,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2043,
+      "rank": 2042,
       "namespace": "resource_3a0",
       "address": "0x02000324",
       "label": "3a0 · semantic owner 0x02000324",
@@ -24540,7 +24528,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2044,
+      "rank": 2043,
       "namespace": "resource_3a4",
       "address": "0x020029dc",
       "label": "3a4 · semantic owner 0x020029dc",
@@ -24552,7 +24540,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2045,
+      "rank": 2044,
       "namespace": "resource_3a5",
       "address": "0x02000c38",
       "label": "3a5 · semantic owner 0x02000c38",
@@ -24564,7 +24552,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2046,
+      "rank": 2045,
       "namespace": "resource_3a7",
       "address": "0x02000334",
       "label": "3a7 · semantic owner 0x02000334",
@@ -24576,7 +24564,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2047,
+      "rank": 2046,
       "namespace": "resource_3b5",
       "address": "0x02000568",
       "label": "3b5 · semantic owner 0x02000568",
@@ -24588,7 +24576,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2048,
+      "rank": 2047,
       "namespace": "resource_3b6",
       "address": "0x02000898",
       "label": "3b6 · semantic owner 0x02000898",
@@ -24600,7 +24588,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2049,
+      "rank": 2048,
       "namespace": "resource_3bd",
       "address": "0x02003610",
       "label": "3bd · semantic owner 0x02003610",
@@ -24612,7 +24600,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2050,
+      "rank": 2049,
       "namespace": "main",
       "address": "0x0808fecc",
       "label": "0x0808fecc–0x0808fefc",
@@ -24624,7 +24612,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2051,
+      "rank": 2050,
       "namespace": "main",
       "address": "0x0809bb34",
       "label": "0x0809bb34–0x0809bb64",
@@ -24636,7 +24624,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2052,
+      "rank": 2051,
       "namespace": "main",
       "address": "0x080a22f4",
       "label": "0x080a22f4–0x080a2324",
@@ -24648,7 +24636,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2053,
+      "rank": 2052,
       "namespace": "main",
       "address": "0x080f9b10",
       "label": "0x080f9b10–0x080f9b40",
@@ -24660,7 +24648,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2054,
+      "rank": 2053,
       "namespace": "main",
       "address": "0x080f9f3c",
       "label": "0x080f9f3c–0x080f9f6c",
@@ -24672,7 +24660,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2055,
+      "rank": 2054,
       "namespace": "resource_372",
       "address": "0x02003e18",
       "label": "372 · semantic owner 0x02003e18",
@@ -24684,7 +24672,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2056,
+      "rank": 2055,
       "namespace": "resource_373",
       "address": "0x02000dc0",
       "label": "373 · semantic owner 0x02000dc0",
@@ -24696,7 +24684,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2057,
+      "rank": 2056,
       "namespace": "resource_373",
       "address": "0x02000e54",
       "label": "373 · semantic owner 0x02000e54",
@@ -24708,7 +24696,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2058,
+      "rank": 2057,
       "namespace": "resource_373",
       "address": "0x02000e84",
       "label": "373 · semantic owner 0x02000e84",
@@ -24720,7 +24708,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2059,
+      "rank": 2058,
       "namespace": "resource_373",
       "address": "0x02000f5c",
       "label": "373 · semantic owner 0x02000f5c",
@@ -24732,7 +24720,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2060,
+      "rank": 2059,
       "namespace": "resource_373",
       "address": "0x02000f8c",
       "label": "373 · semantic owner 0x02000f8c",
@@ -24744,7 +24732,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2061,
+      "rank": 2060,
       "namespace": "resource_373",
       "address": "0x02000fbc",
       "label": "373 · semantic owner 0x02000fbc",
@@ -24756,7 +24744,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2062,
+      "rank": 2061,
       "namespace": "resource_374",
       "address": "0x02000750",
       "label": "374 · semantic owner 0x02000750",
@@ -24768,7 +24756,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2063,
+      "rank": 2062,
       "namespace": "resource_374",
       "address": "0x020007ec",
       "label": "374 · semantic owner 0x020007ec",
@@ -24780,7 +24768,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2064,
+      "rank": 2063,
       "namespace": "resource_374",
       "address": "0x0200081c",
       "label": "374 · semantic owner 0x0200081c",
@@ -24792,7 +24780,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2065,
+      "rank": 2064,
       "namespace": "resource_374",
       "address": "0x0200084c",
       "label": "374 · semantic owner 0x0200084c",
@@ -24804,7 +24792,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2066,
+      "rank": 2065,
       "namespace": "resource_374",
       "address": "0x0200087c",
       "label": "374 · semantic owner 0x0200087c",
@@ -24816,7 +24804,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2067,
+      "rank": 2066,
       "namespace": "resource_374",
       "address": "0x020008ac",
       "label": "374 · semantic owner 0x020008ac",
@@ -24828,7 +24816,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2068,
+      "rank": 2067,
       "namespace": "resource_3a5",
       "address": "0x02001874",
       "label": "3a5 · semantic owner 0x02001874",
@@ -24840,7 +24828,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2069,
+      "rank": 2068,
       "namespace": "resource_3a7",
       "address": "0x02000704",
       "label": "3a7 · semantic owner 0x02000704",
@@ -24852,7 +24840,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2070,
+      "rank": 2069,
       "namespace": "resource_3a7",
       "address": "0x02001574",
       "label": "3a7 · semantic owner 0x02001574",
@@ -24864,7 +24852,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2071,
+      "rank": 2070,
       "namespace": "resource_3b1",
       "address": "0x0200037c",
       "label": "3b1 · semantic owner 0x0200037c",
@@ -24876,7 +24864,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2072,
+      "rank": 2071,
       "namespace": "resource_3bf",
       "address": "0x02005c08",
       "label": "3bf · semantic owner 0x02005c08",
@@ -24888,7 +24876,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2073,
+      "rank": 2072,
       "namespace": "main",
       "address": "0x080f9b74",
       "label": "0x080f9b74–0x080f9ba2",
@@ -24900,7 +24888,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2074,
+      "rank": 2073,
       "namespace": "resource_3b1",
       "address": "0x020048e8",
       "label": "3b1 · semantic owner 0x020048e8",
@@ -24912,7 +24900,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2075,
+      "rank": 2074,
       "namespace": "resource_3b4",
       "address": "0x02001fd8",
       "label": "3b4 · semantic owner 0x02001fd8",
@@ -24924,7 +24912,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2076,
+      "rank": 2075,
       "namespace": "main",
       "address": "0x08002f10",
       "label": "0x08002f10–0x08002f3c",
@@ -24936,7 +24924,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2077,
+      "rank": 2076,
       "namespace": "main",
       "address": "0x080251d4",
       "label": "0x080251d4–0x08025200",
@@ -24948,7 +24936,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2078,
+      "rank": 2077,
       "namespace": "resource_383",
       "address": "0x02000428",
       "label": "383 · semantic owner 0x02000428",
@@ -24960,7 +24948,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2079,
+      "rank": 2078,
       "namespace": "resource_383",
       "address": "0x02002564",
       "label": "383 · semantic owner 0x02002564",
@@ -24972,7 +24960,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2080,
+      "rank": 2079,
       "namespace": "resource_399",
       "address": "0x020005dc",
       "label": "399 · semantic owner 0x020005dc",
@@ -24984,7 +24972,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2081,
+      "rank": 2080,
       "namespace": "resource_399",
       "address": "0x020019bc",
       "label": "399 · semantic owner 0x020019bc",
@@ -24996,7 +24984,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2082,
+      "rank": 2081,
       "namespace": "resource_3a4",
       "address": "0x02003a44",
       "label": "3a4 · semantic owner 0x02003a44",
@@ -25008,7 +24996,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2083,
+      "rank": 2082,
       "namespace": "resource_3a5",
       "address": "0x02000e00",
       "label": "3a5 · semantic owner 0x02000e00",
@@ -25020,7 +25008,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2084,
+      "rank": 2083,
       "namespace": "resource_3a8",
       "address": "0x020015b4",
       "label": "3a8 · semantic owner 0x020015b4",
@@ -25032,7 +25020,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2085,
+      "rank": 2084,
       "namespace": "resource_3b1",
       "address": "0x0200012c",
       "label": "3b1 · semantic owner 0x0200012c",
@@ -25044,7 +25032,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2086,
+      "rank": 2085,
       "namespace": "resource_3b4",
       "address": "0x020011d8",
       "label": "3b4 · semantic owner 0x020011d8",
@@ -25056,7 +25044,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2087,
+      "rank": 2086,
       "namespace": "resource_3b5",
       "address": "0x02000260",
       "label": "3b5 · semantic owner 0x02000260",
@@ -25068,7 +25056,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2088,
+      "rank": 2087,
       "namespace": "resource_3b5",
       "address": "0x0200028c",
       "label": "3b5 · semantic owner 0x0200028c",
@@ -25080,7 +25068,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2089,
+      "rank": 2088,
       "namespace": "resource_3c6",
       "address": "0x020011bc",
       "label": "3c6 · semantic owner 0x020011bc",
@@ -25092,7 +25080,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2090,
+      "rank": 2089,
       "namespace": "resource_38d",
       "address": "0x02001958",
       "label": "38d · semantic owner 0x02001958",
@@ -25104,7 +25092,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2091,
+      "rank": 2090,
       "namespace": "resource_38d",
       "address": "0x02001984",
       "label": "38d · semantic owner 0x02001984",
@@ -25116,7 +25104,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2092,
+      "rank": 2091,
       "namespace": "resource_3c5",
       "address": "0x02001158",
       "label": "3c5 · semantic owner 0x02001158",
@@ -25128,7 +25116,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2093,
+      "rank": 2092,
       "namespace": "main",
       "address": "0x08002dd8",
       "label": "0x08002dd8–0x08002e00",
@@ -25140,7 +25128,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2094,
+      "rank": 2093,
       "namespace": "main",
       "address": "0x0800bc48",
       "label": "0x0800bc48–0x0800bc70",
@@ -25152,7 +25140,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2095,
+      "rank": 2094,
       "namespace": "main",
       "address": "0x08011568",
       "label": "0x08011568–0x08011590",
@@ -25164,7 +25152,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2096,
+      "rank": 2095,
       "namespace": "main",
       "address": "0x080fb2a4",
       "label": "0x080fb2a4–0x080fb2cc",
@@ -25176,7 +25164,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2097,
+      "rank": 2096,
       "namespace": "resource_378",
       "address": "0x020032a8",
       "label": "378 · semantic owner 0x020032a8",
@@ -25188,7 +25176,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2098,
+      "rank": 2097,
       "namespace": "resource_37b",
       "address": "0x020015d4",
       "label": "37b · semantic owner 0x020015d4",
@@ -25200,7 +25188,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2099,
+      "rank": 2098,
       "namespace": "resource_37b",
       "address": "0x020015fc",
       "label": "37b · semantic owner 0x020015fc",
@@ -25212,7 +25200,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2100,
+      "rank": 2099,
       "namespace": "resource_3a8",
       "address": "0x0200158c",
       "label": "3a8 · semantic owner 0x0200158c",
@@ -25224,7 +25212,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2101,
+      "rank": 2100,
       "namespace": "resource_3af",
       "address": "0x02000598",
       "label": "3af · semantic owner 0x02000598",
@@ -25236,7 +25224,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2102,
+      "rank": 2101,
       "namespace": "resource_3af",
       "address": "0x02000724",
       "label": "3af · semantic owner 0x02000724",
@@ -25248,7 +25236,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2103,
+      "rank": 2102,
       "namespace": "main",
       "address": "0x080c0eb8",
       "label": "0x080c0eb8–0x080c0edc",
@@ -25260,7 +25248,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2104,
+      "rank": 2103,
       "namespace": "resource_371",
       "address": "0x020002cc",
       "label": "371 · semantic owner 0x020002cc",
@@ -25272,7 +25260,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2105,
+      "rank": 2104,
       "namespace": "resource_376",
       "address": "0x02000298",
       "label": "376 · semantic owner 0x02000298",
@@ -25284,7 +25272,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2106,
+      "rank": 2105,
       "namespace": "resource_389",
       "address": "0x020009dc",
       "label": "389 · semantic owner 0x020009dc",
@@ -25296,7 +25284,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2107,
+      "rank": 2106,
       "namespace": "resource_399",
       "address": "0x020015b4",
       "label": "399 · semantic owner 0x020015b4",
@@ -25308,7 +25296,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2108,
+      "rank": 2107,
       "namespace": "resource_3ca",
       "address": "0x0200004c",
       "label": "3ca · semantic owner 0x0200004c",
@@ -25320,7 +25308,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2109,
+      "rank": 2108,
       "namespace": "resource_3cd",
       "address": "0x0200004c",
       "label": "3cd · semantic owner 0x0200004c",
@@ -25332,7 +25320,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2110,
+      "rank": 2109,
       "namespace": "main",
       "address": "0x08006b84",
       "label": "0x08006b84–0x08006ba6",
@@ -25344,7 +25332,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2111,
+      "rank": 2110,
       "namespace": "resource_39b",
       "address": "0x02000e3c",
       "label": "39b · semantic owner 0x02000e3c",
@@ -25356,7 +25344,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2112,
+      "rank": 2111,
       "namespace": "resource_39c",
       "address": "0x02000dfc",
       "label": "39c · semantic owner 0x02000dfc",
@@ -25368,7 +25356,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2113,
+      "rank": 2112,
       "namespace": "main",
       "address": "0x08004838",
       "label": "0x08004838–0x08004858",
@@ -25380,7 +25368,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2114,
+      "rank": 2113,
       "namespace": "main",
       "address": "0x080f9a30",
       "label": "0x080f9a30–0x080f9a50",
@@ -25392,7 +25380,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2115,
+      "rank": 2114,
       "namespace": "main",
       "address": "0x080f9ac0",
       "label": "0x080f9ac0–0x080f9ae0",
@@ -25404,7 +25392,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2116,
+      "rank": 2115,
       "namespace": "resource_392",
       "address": "0x02000b8c",
       "label": "392 · semantic owner 0x02000b8c",
@@ -25416,7 +25404,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2117,
+      "rank": 2116,
       "namespace": "resource_392",
       "address": "0x02000bac",
       "label": "392 · semantic owner 0x02000bac",
@@ -25428,7 +25416,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2118,
+      "rank": 2117,
       "namespace": "resource_393",
       "address": "0x02000d5c",
       "label": "393 · semantic owner 0x02000d5c",
@@ -25440,7 +25428,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2119,
+      "rank": 2118,
       "namespace": "resource_393",
       "address": "0x02000d7c",
       "label": "393 · semantic owner 0x02000d7c",
@@ -25452,7 +25440,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2120,
+      "rank": 2119,
       "namespace": "resource_394",
       "address": "0x02000f34",
       "label": "394 · semantic owner 0x02000f34",
@@ -25464,7 +25452,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2121,
+      "rank": 2120,
       "namespace": "resource_394",
       "address": "0x02000f54",
       "label": "394 · semantic owner 0x02000f54",
@@ -25476,7 +25464,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2122,
+      "rank": 2121,
       "namespace": "resource_395",
       "address": "0x02001838",
       "label": "395 · semantic owner 0x02001838",
@@ -25488,7 +25476,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2123,
+      "rank": 2122,
       "namespace": "resource_395",
       "address": "0x02001858",
       "label": "395 · semantic owner 0x02001858",
@@ -25500,7 +25488,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2124,
+      "rank": 2123,
       "namespace": "resource_396",
       "address": "0x02001224",
       "label": "396 · semantic owner 0x02001224",
@@ -25512,7 +25500,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2125,
+      "rank": 2124,
       "namespace": "resource_396",
       "address": "0x02001424",
       "label": "396 · semantic owner 0x02001424",
@@ -25524,7 +25512,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2126,
+      "rank": 2125,
       "namespace": "resource_3a8",
       "address": "0x02001f14",
       "label": "3a8 · semantic owner 0x02001f14",
@@ -25536,7 +25524,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2127,
+      "rank": 2126,
       "namespace": "resource_3be",
       "address": "0x020011d8",
       "label": "3be · semantic owner 0x020011d8",
@@ -25548,7 +25536,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2128,
+      "rank": 2127,
       "namespace": "resource_3cb",
       "address": "0x02000128",
       "label": "3cb · semantic owner 0x02000128",
@@ -25560,7 +25548,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2129,
+      "rank": 2128,
       "namespace": "resource_3b1",
       "address": "0x020047cc",
       "label": "3b1 · semantic owner 0x020047cc",
@@ -25572,7 +25560,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2130,
+      "rank": 2129,
       "namespace": "resource_3bf",
       "address": "0x02004638",
       "label": "3bf · semantic owner 0x02004638",
@@ -25584,7 +25572,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2131,
+      "rank": 2130,
       "namespace": "main",
       "address": "0x08004a28",
       "label": "0x08004a28–0x08004a44",
@@ -25596,7 +25584,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2132,
+      "rank": 2131,
       "namespace": "main",
       "address": "0x08004a94",
       "label": "0x08004a94–0x08004ab0",
@@ -25608,7 +25596,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2133,
+      "rank": 2132,
       "namespace": "main",
       "address": "0x080fa264",
       "label": "0x080fa264–0x080fa280",
@@ -25620,7 +25608,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2134,
+      "rank": 2133,
       "namespace": "main",
       "address": "0x080f9ae0",
       "label": "0x080f9ae0–0x080f9afc",
@@ -25632,7 +25620,7 @@
       "permanent_assembly_bytes": 2
     },
     {
-      "rank": 2135,
+      "rank": 2134,
       "namespace": "main",
       "address": "0x080fa1ac",
       "label": "0x080fa1ac–0x080fa1c6",
@@ -25644,7 +25632,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2136,
+      "rank": 2135,
       "namespace": "main",
       "address": "0x08004a44",
       "label": "0x08004a44–0x08004a5c",
@@ -25656,7 +25644,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2137,
+      "rank": 2136,
       "namespace": "main",
       "address": "0x080f9c00",
       "label": "0x080f9c00–0x080f9c18",
@@ -25668,7 +25656,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2138,
+      "rank": 2137,
       "namespace": "resource_3bf",
       "address": "0x02000c78",
       "label": "3bf · semantic owner 0x02000c78",
@@ -25680,7 +25668,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2139,
+      "rank": 2138,
       "namespace": "main",
       "address": "0x080f9c2c",
       "label": "0x080f9c2c–0x080f9c44",
@@ -25692,7 +25680,7 @@
       "permanent_assembly_bytes": 4
     },
     {
-      "rank": 2140,
+      "rank": 2139,
       "namespace": "main",
       "address": "0x080f9a18",
       "label": "0x080f9a18–0x080f9a2e",
@@ -25704,7 +25692,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2141,
+      "rank": 2140,
       "namespace": "resource_39c",
       "address": "0x02000030",
       "label": "39c · semantic owner 0x02000030",
@@ -25716,7 +25704,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2142,
+      "rank": 2141,
       "namespace": "main",
       "address": "0x080f9afc",
       "label": "0x080f9afc–0x080f9b10",
@@ -25728,7 +25716,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2143,
+      "rank": 2142,
       "namespace": "main",
       "address": "0x080f9b4c",
       "label": "0x080f9b4c–0x080f9b60",
@@ -25740,7 +25728,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2144,
+      "rank": 2143,
       "namespace": "main",
       "address": "0x080f9bb8",
       "label": "0x080f9bb8–0x080f9bcc",
@@ -25752,7 +25740,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2145,
+      "rank": 2144,
       "namespace": "main",
       "address": "0x080f9bcc",
       "label": "0x080f9bcc–0x080f9be0",
@@ -25764,7 +25752,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2146,
+      "rank": 2145,
       "namespace": "main",
       "address": "0x080f9c18",
       "label": "0x080f9c18–0x080f9c2c",
@@ -25776,7 +25764,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2147,
+      "rank": 2146,
       "namespace": "main",
       "address": "0x080f9b60",
       "label": "0x080f9b60–0x080f9b72",
@@ -25788,7 +25776,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2148,
+      "rank": 2147,
       "namespace": "main",
       "address": "0x080f9ba4",
       "label": "0x080f9ba4–0x080f9bb6",
@@ -25800,7 +25788,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2149,
+      "rank": 2148,
       "namespace": "main",
       "address": "0x080f9be0",
       "label": "0x080f9be0–0x080f9bf2",
@@ -25812,7 +25800,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2150,
+      "rank": 2149,
       "namespace": "main",
       "address": "0x080fa1d4",
       "label": "0x080fa1d4–0x080fa1e6",
@@ -25824,7 +25812,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2151,
+      "rank": 2150,
       "namespace": "main",
       "address": "0x080fa1e8",
       "label": "0x080fa1e8–0x080fa1fa",
@@ -25836,7 +25824,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2152,
+      "rank": 2151,
       "namespace": "resource_3c7",
       "address": "0x02000030",
       "label": "3c7 · semantic owner 0x02000030",
@@ -25848,7 +25836,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2153,
+      "rank": 2152,
       "namespace": "main",
       "address": "0x080006fc",
       "label": "0x080006fc–0x0800070c",
@@ -25860,7 +25848,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2154,
+      "rank": 2153,
       "namespace": "main",
       "address": "0x0800230c",
       "label": "0x0800230c–0x0800231c",
@@ -25872,7 +25860,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2155,
+      "rank": 2154,
       "namespace": "main",
       "address": "0x080f9b40",
       "label": "0x080f9b40–0x080f9b4a",
@@ -25884,7 +25872,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 2156,
+      "rank": 2155,
       "namespace": "main",
       "address": "0x080f9bf4",
       "label": "0x080f9bf4–0x080f9bfe",

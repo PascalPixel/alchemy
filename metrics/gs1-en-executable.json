@@ -6322,8 +6322,8 @@
     {
      "start": 33570904,
      "end": 33570988,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_371_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_371_overlay.s:thumb"
     },
     {
      "start": 33570988,
@@ -6334,8 +6334,8 @@
     {
      "start": 33570996,
      "end": 33571098,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_371_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_371_overlay.s:thumb"
     },
     {
      "start": 33571098,
@@ -6352,8 +6352,8 @@
     {
      "start": 33571108,
      "end": 33571180,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_371_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_371_overlay.s:thumb"
     },
     {
      "start": 33571180,
@@ -12232,8 +12232,8 @@
     {
      "start": 33562448,
      "end": 33563040,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_383_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_383_overlay.s:thumb"
     },
     {
      "start": 33563040,
@@ -15151,8 +15151,8 @@
     {
      "start": 33557388,
      "end": 33557404,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_392_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_392_overlay.s:thumb"
     },
     {
      "start": 33557404,
@@ -15163,8 +15163,8 @@
     {
      "start": 33557420,
      "end": 33557436,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_392_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_392_overlay.s:thumb"
     },
     {
      "start": 33557436,
@@ -15304,8 +15304,8 @@
     {
      "start": 33557852,
      "end": 33557868,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_393_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_393_overlay.s:thumb"
     },
     {
      "start": 33557868,
@@ -15316,8 +15316,8 @@
     {
      "start": 33557884,
      "end": 33557900,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_393_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_393_overlay.s:thumb"
     },
     {
      "start": 33557900,
@@ -15553,8 +15553,8 @@
     {
      "start": 33558324,
      "end": 33558340,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_394_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_394_overlay.s:thumb"
     },
     {
      "start": 33558340,
@@ -15565,8 +15565,8 @@
     {
      "start": 33558356,
      "end": 33558372,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_394_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_394_overlay.s:thumb"
     },
     {
      "start": 33558372,
@@ -15814,8 +15814,8 @@
     {
      "start": 33560632,
      "end": 33560648,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_395_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_395_overlay.s:thumb"
     },
     {
      "start": 33560648,
@@ -15826,8 +15826,8 @@
     {
      "start": 33560664,
      "end": 33560680,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_395_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_395_overlay.s:thumb"
     },
     {
      "start": 33560680,
@@ -16027,8 +16027,8 @@
     {
      "start": 33559076,
      "end": 33559094,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_396_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_396_overlay.s:thumb"
     },
     {
      "start": 33559094,
@@ -28663,8 +28663,8 @@
     {
      "start": 33555712,
      "end": 33555770,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33555770,
@@ -28681,8 +28681,8 @@
     {
      "start": 33555780,
      "end": 33555868,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33555868,
@@ -28693,8 +28693,8 @@
     {
      "start": 33555880,
      "end": 33555922,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33555922,
@@ -28711,8 +28711,8 @@
     {
      "start": 33555928,
      "end": 33556058,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33556058,
@@ -28729,8 +28729,8 @@
     {
      "start": 33556076,
      "end": 33556134,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33556134,
@@ -28747,8 +28747,8 @@
     {
      "start": 33556144,
      "end": 33556190,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33556190,
@@ -28807,8 +28807,8 @@
     {
      "start": 33556764,
      "end": 33556820,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33556820,
@@ -28819,8 +28819,8 @@
     {
      "start": 33556828,
      "end": 33556874,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b6_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b6_overlay.s:thumb"
     },
     {
      "start": 33556874,
@@ -29179,8 +29179,8 @@
     {
      "start": 33557240,
      "end": 33557310,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b8_overlay.s:thumb"
     },
     {
      "start": 33557310,
@@ -29197,8 +29197,8 @@
     {
      "start": 33557324,
      "end": 33558504,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3b8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3b8_overlay.s:thumb"
     },
     {
      "start": 33558504,
@@ -31489,8 +31489,8 @@
     {
      "start": 33556332,
      "end": 33556996,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3bc_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3bc_overlay.s:thumb"
     },
     {
      "start": 33556996,
@@ -36739,62 +36739,62 @@
     {
      "start": 33566824,
      "end": 33567030,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33567656,
      "end": 33567692,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33567732,
      "end": 33567756,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33567768,
      "end": 33567848,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33567850,
      "end": 33567874,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33567878,
      "end": 33567880,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33567882,
      "end": 33568216,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568700,
      "end": 33568706,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568708,
      "end": 33568724,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568726,
      "end": 33568734,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568812,
@@ -36805,32 +36805,32 @@
     {
      "start": 33568824,
      "end": 33568834,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568838,
      "end": 33568850,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568854,
      "end": 33568864,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33568866,
      "end": 33569040,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33569400,
      "end": 33569434,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33569600,
@@ -36847,8 +36847,8 @@
     {
      "start": 33570726,
      "end": 33570746,
-     "kind": "hand_written_thumb",
-     "evidence": "resource_3c8_overlay.s:reference-uses-thumb-multiple-transfer"
+     "kind": "thumb",
+     "evidence": "resource_3c8_overlay.s:thumb"
     },
     {
      "start": 33570788,

@@ -13,11 +13,14 @@ extern s32 Func_0200381a(void);
 extern void Func_02003870(s32, s32, s32);
 extern void Func_02003890(s32, s32, s32);
 extern u16 Data_0200ade4;
-extern s32 Data_0200ade8;
+/* 手番カウンタ。他のオーバーレイからも書き換わるため volatile。
+ * The reference reloads this cell on the path where the compiler can prove the
+ * value is unchanged, which in ordinary C only a volatile object produces. */
+extern volatile s32 Data_0200ade8;
 
 void Func_02000d9c(void)
 {
-    s32 *st;
+    volatile s32 *st;
     s32 s;
     s32 t1 = 0x10000;
     s32 t2 = 0x10000;
@@ -54,7 +57,7 @@ void Func_02000d9c(void)
             break;
         case 4: {
             s32 val = 2;
-            s32 *p = &Data_0200ade8;
+            volatile s32 *p = &Data_0200ade8;
             *p = val;
         }
             v = 1;
@@ -83,12 +86,9 @@ void Func_02000d9c(void)
     if (s != 0) {
         if (s == 2) {
             Func_02003870(t1, t2, t3);
-            *st = *st - 1;
-        } else {
-            if (s == 1) {
-                Func_02003890(m1, m2, m3);
-            }
-            *st = *st - 1;
+        } else if (s == 1) {
+            Func_02003890(m1, m2, m3);
         }
+        *st = *st - 1;
     }
 }

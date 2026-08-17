@@ -2,12 +2,9 @@
 //!
 //! Recovers the true entry of an overlay function that discovery seeded
 //! partway into its body, by walking back to the previous function's return.
-//! See the TypeScript original's header comment for the full rationale; it is
-//! reproduced there, not duplicated here.
-//!
-//! The TypeScript original is retained until this crate is wired into
-//! `tools/overlay/index.ts` and verified byte-identical on stdout, stderr and
-//! exit code.
+//! The original's header carries the full rationale and is deliberately not
+//! duplicated here. It was deleted with the rest of the TypeScript layer;
+//! recover it with `git show e3867da35:tools/overlay/overlay_entry.ts`.
 
 use std::path::PathBuf;
 

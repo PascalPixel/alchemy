@@ -1,12 +1,9 @@
 //! `tools/overlay/overlay_twins.ts`, in Rust.
 //!
 //! Find owners that are the SAME routine shared verbatim across overlays.
-//! See the TypeScript original's header comment for the full rationale; it is
-//! reproduced there, not duplicated here.
-//!
-//! The TypeScript original is retained until this crate is wired into
-//! `tools/overlay/index.ts` and verified byte-identical on stdout, stderr and
-//! exit code.
+//! The original's header carries the full rationale and is deliberately not
+//! duplicated here. It was deleted with the rest of the TypeScript layer;
+//! recover it with `git show e3867da35:tools/overlay/overlay_twins.ts`.
 
 use std::collections::HashSet;
 use std::fs;

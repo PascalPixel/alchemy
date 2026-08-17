@@ -101,6 +101,15 @@ pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
 // show r4 in the reference prologue, but subtracting the flag does not close
 // any of them and moves 3ad:11b8 from two differing halfwords to fifteen. A
 // saved r4 alone does not make an owner part of this family.
+// Main-image counterparts of the two overlay tables below/above, keyed by bare
+// stem the way every other main-image table is.
+//
+// 08006b84 is the same soft-library ABI case as the overlay r4 family: its
+// reference prologue saves r4 and ours does not.
+pub static CALLEE_SAVED_R4_SOURCES: &[&str] = &["08006b84"];
+// 0801c34c reloads through a differently-typed pointer that strict aliasing
+// lets the compiler keep live.
+pub static NO_STRICT_ALIASING_SOURCES: &[&str] = &["0801c34c"];
 pub static UNSCHEDULED_SOURCES: &[&str] = &[
     "08006b84", "080fb768", "080fb77c",
 ];
@@ -173,6 +182,7 @@ pub static NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3bf_c_020017bc.c",
     "exact/resource_3bf_c_02002308.c",
     "exact/resource_3bf_c_0200238c.c",
+    "exact/resource_3bf_c_02004bfc.c",
     "exact/resource_3ad_c_02000460.c",
     "exact/resource_3b3_c_02002384.c",
     "exact/resource_3b4_c_02001308.c",

@@ -7,12 +7,12 @@
   "executable_bytes": 1347122,
   "categories": {
     "exact_c": {
-      "bytes": 273394,
-      "percent_of_executable": 20.29
+      "bytes": 273856,
+      "percent_of_executable": 20.33
     },
     "semantic_c": {
-      "bytes": 994796,
-      "percent_of_executable": 73.85
+      "bytes": 994334,
+      "percent_of_executable": 73.81
     },
     "assembly": {
       "bytes": 0,
@@ -29,18 +29,18 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 100348,
-    "semantic_c_bytes": 418268
+    "exact_c_bytes": 100538,
+    "semantic_c_bytes": 418078
   },
   "overlays": {
     "executable_bytes": 798758,
-    "exact_c_bytes": 173046,
-    "semantic_c_bytes": 576528
+    "exact_c_bytes": 173318,
+    "semantic_c_bytes": 576256
   },
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 2106,
+    "semantic_sources": 2103,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
     "semantic_outside_extent_bytes": 25958,
@@ -52,8 +52,8 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 100348,
-        "semantic_c": 418268,
+        "exact_c": 100538,
+        "semantic_c": 418078,
         "retained_asm": 29748
       },
       "tiles": 9
@@ -63,8 +63,8 @@
       "label": "Compressed code overlays",
       "bytes": 541489,
       "categories": {
-        "exact_c": 123143,
-        "semantic_c": 383258,
+        "exact_c": 123315,
+        "semantic_c": 383086,
         "assembly": 35088
       },
       "tiles": 11
@@ -85,8 +85,8 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 100348,
-        "semantic_c": 418268,
+        "exact_c": 100538,
+        "semantic_c": 418078,
         "retained_asm": 29748
       },
       "tiles": 3202
@@ -96,8 +96,8 @@
       "label": "Decoded code overlays",
       "bytes": 798758,
       "categories": {
-        "exact_c": 173046,
-        "semantic_c": 576528,
+        "exact_c": 173318,
+        "semantic_c": 576256,
         "retained_asm": 49184
       },
       "tiles": 4549

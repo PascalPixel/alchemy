@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern s32 Func_020052f0();
+extern u8 Func_020052f0();
 extern void Func_02005302();
 extern void Func_02005478();
 extern void Func_02005324();

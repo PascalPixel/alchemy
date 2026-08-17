@@ -6,11 +6,11 @@ struct ParticleSpec_02004610 {
     s32 spread_x;
     s32 spread_y;
     u8 padding10[8];
-    u16 field18;
+    u32 field18;
     u8 padding1a[2];
     const void *payload;
-    u16 padding20;
-    u16 field22;
+    u32 padding20;
+    u32 field22;
 };
 
 typedef void (*Task_02004610)(void);

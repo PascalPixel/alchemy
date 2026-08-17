@@ -24,13 +24,13 @@
 
 
 extern s32 Func_02005a38(s32 id);
-extern s32 Func_02005a42(s32 id);
+extern s32 Func_02005a42(u8 id);
 extern void Func_02005ae8(s32 tag, s32 a, s32 b);
-extern s32 Func_02005a60(s32 id);
+extern s32 Func_02005a60(u8 id);
 extern s32 Func_02005a6a(s32 id);
 extern void Func_02005b0c(s32 tag, s32 a, s32 b);
 extern s32 Func_02005a84(s32 id);
-extern s32 Func_02005a8e(s32 id);
+extern s32 Func_02005a8e(u8 id);
 extern void Func_02005b30(s32 tag, s32 a, s32 b);
 void Func_02001b30(void)
 {

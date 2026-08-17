@@ -1,7 +1,7 @@
 #include "types.h"
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
 
-extern s32 Func_02006f58(s32);
+extern s32 Func_02006f58(u8);
 extern u8 *Func_02006fb2();
 extern u8 *Func_02006fbc(s32);
 extern void Func_02006f90(s32);

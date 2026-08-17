@@ -72,7 +72,7 @@ extern void Func_02001bb4();
 extern void Func_02001b2a();
 extern void Func_02001bb2();
 extern void Func_02001b38();
-extern void Func_02001c08();
+extern s32 Func_02001c08();
 extern s32 Func_02001b68();
 extern void Func_02001bf4();
 extern void Func_02001b6a();

@@ -65,7 +65,7 @@ extern u32 Data_02009928[];           /* in-image: the value being agreed on */
 /* Old-style declarations: arities vary per site across this overlay. */
 void Func_020018c0();
 void Func_020018d2();
-s32 Func_020018e2();
+u8 Func_020018e2();
 s32 Func_020018d8();
 s32 Func_0200190e();
 s32 Func_02001908();

@@ -46,7 +46,7 @@ typedef struct Object {
     s32 field30;
     s32 field34;
     u8 filler38[0x1D];
-    u8 field55;
+    u32 field55;
 } Object;
 
 extern s16 Data_02000240[];

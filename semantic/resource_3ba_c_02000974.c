@@ -6,7 +6,7 @@ extern void Func_02004618(s32);
 extern void Func_0200462c(void);
 extern void Func_02004692(s32, s32, s32);
 extern void Func_020046a0(s32, s32, s32);
-extern void Func_020046d4();
+extern s32 Func_020046d4();
 extern void Func_020046e0(s32, s32, s32);
 extern void Func_020046cc(s32, s32);
 extern void Func_020046de(s32, s32);

@@ -48,7 +48,7 @@ extern s16 Data_020085d0[];
 
 void Func_020004ac();
 void Func_02000456();
-void Func_020004ba();
+s32 Func_020004ba();
 void Func_020004c6();
                                     /* play a sound effect */
                                     /* place a scripted prop (script, x, z) */

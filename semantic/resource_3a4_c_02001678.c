@@ -57,7 +57,7 @@ extern u8 Data_0200d0cc[];   /* image offset 0x50cc: script blob */
 extern u8 Data_0200d12c[];   /* image offset 0x512c: script blob */
 extern u8 Data_0200d150[];   /* image offset 0x5150: script blob */
 
-extern s32 Func_080770c0(s32 flagId);
+extern u8 Func_080770c0(u8 flagId);
 
 u8 *Func_02001678(void)
 {

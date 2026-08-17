@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 *Func_0200487a(s32 actor);
-extern s32 Func_020047ba(void (*callback)(void), s32 interval);
+extern s32 Func_020047ba(void (*callback)(void), s8 interval);
 extern s32 Func_020047c4(void (*callback)(void), s32 interval);
 extern void Func_02004946(s32, s32, s32);
 extern s32 Func_0200486c(s32 flag);

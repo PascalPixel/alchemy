@@ -4,7 +4,7 @@ extern s32 Func_02005368();
 extern void Func_02005382();
 extern void Func_020054f0();
 extern void Func_0200539c();
-extern void Func_020053d0();
+extern s32 Func_020053d0();
 extern void Func_020053dc();
 extern void Func_02005402();
 extern void Func_02005408();

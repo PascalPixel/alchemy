@@ -3,18 +3,18 @@
 
 void Func_0200469e(void);
 void Func_0200469e_b(s32, s32, s32, s32, s32, s32);
-s32 Func_02004684(s32);
-s32 Func_0200468e(s32);
+s32 Func_02004684(u8);
+s32 Func_0200468e(u8);
 void Func_0200477e(s32, s32);
 void Func_02004798(s32, s32, s32, s32);
 void Func_020047a4(void);
 void Func_020047ea(s32);
-s32 Func_020046d4(s32);
+s32 Func_020046d4(u8);
 void Func_020046ba(s32, s32, s32, s32, s32, s32);
 void Func_020047b4(s32, s32, s32);
 void Func_02004712(s32);
 void Func_02004708(s32);
-s32 Func_02004706(s32);
+s32 Func_02004706(u8);
 void Func_02002372(void);
 void Func_0200473a(void);
 

@@ -2,7 +2,7 @@
 
 extern u8 *Func_0808a080(s32);
 extern void Func_080091e0(u8 *,s32);
-extern s32 Func_080770c0(s32);
+extern s32 Func_080770c0(u8);
 extern s32 Func_08000140(s32,s32);
 extern void Func_08015250(s32);
 extern void Func_080001c8(s32,s32,s32);

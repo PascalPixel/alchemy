@@ -52,7 +52,7 @@ u8 *Func_02006744();
 u8 *Func_02006846();
 u8 *Func_0200685a();
 void Func_02006800();
-void Func_02006798();
+s32 Func_02006798();
                         /* fetch or allocate a workspace by id and size */
                         /* install a per-frame task (callback, period) */
                         /* per-record presentation reset */

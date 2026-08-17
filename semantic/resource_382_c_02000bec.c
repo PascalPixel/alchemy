@@ -9,7 +9,7 @@ extern void Func_02002344(int,int,int);
 extern void Func_02002670(int,int);
 extern void Func_02002638(int,int);
 extern int Func_0200259e(int);
-extern int Func_020025b4(int);
+extern int Func_020025b4(u8);
 extern void Func_02002602(void);
 void Func_02000bec(void)
 {

@@ -52,7 +52,7 @@ void Func_020000b0(void)
 {
     volatile u32 *dma3;
     s32 step;
-    u16 frame;
+    u32 frame;
 
     frame = Data_0200981c;
     step = Func_030003f0(frame, 6);

@@ -63,7 +63,7 @@ extern s32 Data_03001e40;       /* the free-running frame counter */
 extern s16 Data_0200c01c[];     /* image offset 0x401c, handed to Func_08009098 */
 
 extern s32 Func_030003e0(s32 value, s32 divisor);
-extern s32 Func_080000f8(void);
+extern u16 Func_080000f8(void);
 extern u8 *Func_080090c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void Func_080f9010(s32 sound_id);
 extern void Func_080091e0(u8 *record, s32 arg1);

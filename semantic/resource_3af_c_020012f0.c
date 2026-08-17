@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern void Func_02005706(s32, s32);
+extern s32 Func_02005706(s32, u8);
 extern void Func_02005720(s32, s32, s32, s32);
 extern void Func_0200572c(void);
 extern void Func_020055fa(s32);
@@ -9,7 +9,7 @@ extern void Func_020055c2(s32, s32, s32, s32, s32, s32);
 extern void Func_02005618(s32);
 extern void Func_020056ae(s32, s32, s32);
 extern void Func_02005668(s32, s32, s32);
-extern void Func_020056b2(s32, s32, s32);
+extern s32 Func_020056b2(s32, s32, s32);
 extern void Func_020056fc();
 extern void Func_020056e4(s32, s32);
 extern void Func_02005768(s32, s32, s32);

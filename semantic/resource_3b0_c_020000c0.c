@@ -58,7 +58,7 @@
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 s32 Func_020012a0();
 s32 Func_020012b8();
-s32 Func_020012fa();
+u8 Func_020012fa();
 s32 Func_02001314();
                                 /* sampled value */
 

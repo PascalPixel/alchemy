@@ -13,12 +13,12 @@
 
 typedef struct LeadActor_02001340 {
     u8 reserved00[90];
-    u8 presentationFlags;
+    u32 presentationFlags;
 } LeadActor_02001340;
 
 typedef struct Runtime_02001340 {
     u8 reserved00[364];
-    s16 presentationMode;
+    s32 presentationMode;
 } Runtime_02001340;
 
 extern void Func_0808a018(void);

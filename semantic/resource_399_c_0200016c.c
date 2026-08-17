@@ -49,7 +49,7 @@ extern u8 Data_0200aa58[];      /* in-image script, file offset 0x2a58 */
 extern u8 Data_0200aad0[];      /* in-image script, file offset 0x2ad0 */
 
 void Func_020023c6();
-s32 Func_0200239c();
+u8 Func_0200239c();
 s32 Func_020023c4();
 
 u8 *Func_0200016c(void)

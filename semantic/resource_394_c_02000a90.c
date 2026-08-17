@@ -32,7 +32,7 @@
 /* Old-style declarations: interfaces vary by call site across this overlay. */
 u8 *Func_02001b24();
 void Func_02001b2a();
-void Func_02001b7a();
+s32 Func_02001b7a();
 s32 Func_02001b7c();
                        /* spawn an object: (id, x, unused, z) */
                        /* set object motion state */

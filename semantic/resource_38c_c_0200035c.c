@@ -5,15 +5,15 @@
 extern void Func_02000878(void);
 extern s32 Func_02000868(s32);
 extern void Func_020008c2(s32);
-extern void Func_020008da(s32, s32);
+extern s32 Func_020008da(s32, s32);
 extern void Func_020008fe(s32, s32, s32);
-extern void Func_020008ee(s32, s32);
-extern void Func_020008d6(s32, s32);
+extern s32 Func_020008ee(s32, s32);
+extern s32 Func_020008d6(s32, s32);
 extern void Func_02000920(s32, s32);
 extern void Func_020008b6(s32);
 extern void Func_020008c4(s32);
 /* Reached with two and with three arguments from different sites. */
-extern void Func_0200090e();
+extern s32 Func_0200090e();
 extern void Func_0200091c(s32);
 extern void Func_02000934(s32, s32);
 extern void Func_02000958(s32, s32, s32);

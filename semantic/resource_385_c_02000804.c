@@ -12,7 +12,7 @@ struct Actor_02000804 {
 
 extern struct Actor_02000804 *Func_0808a080(s32 actor);
 extern void Func_0808a018(void);
-extern s32 Func_080770c0(s32 flag);
+extern s32 Func_080770c0(u8 flag);
 extern void Func_0808a170(s32 dialogue);
 extern void Func_020004b4(s32 actor);
 extern void Func_0200058c(void);

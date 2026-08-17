@@ -42,7 +42,7 @@ void Func_02002e08(void)
     u16 *palette;
     s32 blackCount;
     u32 index;
-    u16 color;
+    u32 color;
     s32 red, green, blue;
 
     do {

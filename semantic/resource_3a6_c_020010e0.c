@@ -4,7 +4,7 @@ u8 *Func_0808a080();
 s32 Func_080091d8();
 void Func_080000c0();
 void Func_08009080();
-void Func_080091e0();
+s32 Func_080091e0();
 void Func_0808a018();
 void Func_0808a020();
 void Func_0808a0c0();

@@ -4,7 +4,7 @@ extern unsigned char *Data_03001ebc;
 
 extern void Func_020012fc(void);
 extern void Func_0200137a(s32);
-extern s32 Func_020012e8(s32);
+extern s32 Func_020012e8(u8);
 extern void Func_020013a4(s32, s32);
 extern void Func_02001312(s32);
 extern void Func_02001336(void);

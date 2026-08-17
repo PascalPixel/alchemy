@@ -53,7 +53,7 @@
 
 /* Imports. Old-style declarations: one name can take different argument
  * counts at different sites in this overlay. */
-s32 Func_020027a4();
+u8 Func_020027a4();
 void Func_0200291a();
 void Func_02002796();
 void Func_0200279c();

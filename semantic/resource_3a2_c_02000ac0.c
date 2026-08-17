@@ -59,7 +59,7 @@ extern u8 *Data_03001ebc;
 extern void Func_02001fb4();
 extern void Func_0200204a();
 extern void Func_0200208c();
-extern void Func_02002064();
+extern s32 Func_02002064();
 extern s32 Func_02001fe4();
 extern void Func_02001fe6();
 extern void Func_02002066();

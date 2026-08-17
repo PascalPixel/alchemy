@@ -45,7 +45,7 @@
 s32 Func_080770c0();           /* test event flag */
 void Func_080770c8();          /* set event flag */
 void Func_0808a018();          /* scene open */
-void Func_0808a208();
+s32 Func_0808a208();
 void Func_0808a200();
 void Func_0808a218();
 void Func_0808a010();          /* wait this many frames */

@@ -35,7 +35,7 @@ u8 *Func_0200007c(void)
 {
     s32 permuted_0;
     s16 scenario = Data_02000240[224];
-    s16 step;
+    s32 step;
 
     if (scenario == 0x10) {
         permuted_0 = Data_02000240[225];

@@ -112,7 +112,7 @@ void Func_020010c4(void)
         s32 y;
 
         /* This order is observable: the random draw precedes actor lookup. */
-        angle = (s16)Func_030003e0(Func_080000f8(), 0xffff);
+        angle = (s32)Func_030003e0(Func_080000f8(), 0xffff);
         actor = Func_0808a080((s32)slot + 16);
         if (Data_0200bac0[slot] != 0)
             continue;
@@ -130,22 +130,22 @@ void Func_020010c4(void)
         Func_08009080(actor, 2);
         Func_08009098(actor, Data_0200ba00);
 
-        first = Func_08000120((u16)angle);
+        first = Func_08000120((u32)angle);
         randomScale = (s32)((((u32)Func_080000f8() << 8) >> 16) << 16);
         *(s32 *)(actor + 8) =
             project(first, randomScale + 0x01000000) + 0x01450000;
         *(s32 *)(actor + 12) = 0;
 
-        second = Func_08000118((u16)angle);
+        second = Func_08000118((u32)angle);
         randomScale = (s32)((((u32)Func_080000f8() << 8) >> 16) << 16);
         *(s32 *)(actor + 16) =
             project(second, randomScale + 0x01000000) + 0x012e0000;
 
-        first = Func_08000120((u16)angle);
+        first = Func_08000120((u32)angle);
         randomScale = (Func_080000f8() & 63) << 16;
         x = project(first, randomScale + 0x80000) + 0x01450000;
 
-        second = Func_08000118((u16)angle);
+        second = Func_08000118((u32)angle);
         randomScale = (Func_080000f8() & 63) << 16;
         y = project(second, randomScale + 0x80000) + 0x011e0000;
 

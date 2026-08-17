@@ -54,7 +54,7 @@ extern void Func_02000f50(void);
 extern void Func_02001094(void);
 
 extern void Func_080000d0(s32 callback, s32 arg1);
-extern s32 Func_080770e0(s32 flagId);
+extern s32 Func_080770e0(u8 flagId);
 extern void Func_080f9010(s32 arg0);
 
 s32 Func_02000e8c(void)

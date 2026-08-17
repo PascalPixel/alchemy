@@ -38,10 +38,10 @@
 /* Old-style declarations: interfaces vary by call site across this overlay. */
 u16 *Func_02000fa8();
 void Func_02001046();
-s32 Func_02000fa6();
+u8 Func_02000fa6();
 void Func_02001022();
 void Func_02001032();
-s32 Func_02000fea();
+u8 Func_02000fea();
 void Func_02000fdc();
 s32 Func_02000fde();
 void Func_02001058();

@@ -27,7 +27,7 @@ void Func_0808a180();
 void Func_02000d68(s32 selector)
 {
     u8 *actor;
-    u16 heading;
+    u32 heading;
     u16 *slot;
     s32 firstRange;
     s32 message;

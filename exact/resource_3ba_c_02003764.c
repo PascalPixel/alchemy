@@ -71,7 +71,7 @@ u8 *Func_02007480();
 s32 Func_02007428();
 void Func_02007356();
 s32 Func_0200737a();
-void Func_02007386();
+s32 Func_02007386();
 void Func_02007326();
 void Func_02007374();
                                 /* allocate/fetch a record by (id, size) */

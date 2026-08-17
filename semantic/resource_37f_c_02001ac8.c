@@ -26,7 +26,7 @@
 extern s32 Data_0200a69c;
 
 void Func_02003662();
-s32 Func_02003620();
+u16 Func_02003620();
 void Func_020037ca();
 void Func_0200368a();
 

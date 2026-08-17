@@ -64,7 +64,7 @@ void Func_02000454(void)
     u16 *screen;
     u32 *scroll;
     s32 resource_id = (s32)&Value_0000001a;
-    s16 tile;
+    s32 tile;
     s32 blank = 511;
     u32 row;
     u32 column;

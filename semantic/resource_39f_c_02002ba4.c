@@ -6,7 +6,7 @@
  * three established trig/random targets match independently. */
 s32 Func_08000118();
 s32 Func_08000120();
-u32 Func_080000f8(void);
+u8 Func_080000f8(void);
 
 s32 Func_02002ba4(u8 *object)
 {

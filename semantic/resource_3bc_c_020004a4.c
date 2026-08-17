@@ -41,12 +41,12 @@ typedef struct Object {
     u8 filler0C[4];
     s32 z;              /* 16.16 */
     u8 filler14[0x0F];
-    u8 field23;
+    u32 field23;
     u8 filler24[0x0C];
     s32 field30;
     s32 field34;
     u8 filler38[0x1D];
-    u8 field55;
+    u32 field55;
 } Object;
 
 Object *Func_02004ecc();

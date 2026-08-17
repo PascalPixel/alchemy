@@ -90,16 +90,20 @@ or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
 ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
 same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=2f6753d9)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=e865af5f)
 
 ### Music and sound
 
 This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
 The finished form is `growl.wav`, `good_morning.mid` and `alchemy.sf2`.
-Nothing has reached it yet: the tree holds `sfx_272. sound_272.mid` and
-unnamed PCM indexed by ROM address, so Named reads 0.0%.
+Every file now carries a name instead of a ROM index, but read the tier as
+**provisional**: the names are manufactured from what each sound measurably is —
+`music_walking_passage_quintet_full`, `effect_sample_large_oneshot` — and none of
+them claims a title or a scene. Nothing was taken from outside the ROM. Replacing
+one is a single edit to `assets/audio/sequences/index.json`, which is exactly what
+they are there for.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0d43be12)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d4f23519)
 
 ## Contributing and project status
 

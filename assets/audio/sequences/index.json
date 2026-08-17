@@ -1,0 +1,1829 @@
+{
+ "format": 1,
+ "engine": "smsh-sequence-series",
+ "sequences": [
+  [
+   0,
+   "music",
+   "0x0815fb78",
+   "0x0000095c"
+  ],
+  [
+   1,
+   "music",
+   "0x081604d4",
+   "0x00000aec"
+  ],
+  [
+   2,
+   "music",
+   "0x08160fc0",
+   "0x000005bc"
+  ],
+  [
+   3,
+   "music",
+   "0x0816157c",
+   "0x0000074c"
+  ],
+  [
+   4,
+   "music",
+   "0x08161cc8",
+   "0x000003a4"
+  ],
+  [
+   5,
+   "music",
+   "0x0816206c",
+   "0x000008d4"
+  ],
+  [
+   6,
+   "music",
+   "0x08162940",
+   "0x000009e4"
+  ],
+  [
+   7,
+   "music",
+   "0x08163324",
+   "0x00000a54"
+  ],
+  [
+   8,
+   "music",
+   "0x08163d78",
+   "0x00000668"
+  ],
+  [
+   9,
+   "music",
+   "0x081643e0",
+   "0x0000081c"
+  ],
+  [
+   10,
+   "music",
+   "0x08164bfc",
+   "0x000006dc"
+  ],
+  [
+   20,
+   "music",
+   "0x081652e0",
+   "0x00000a98"
+  ],
+  [
+   21,
+   "music",
+   "0x08165d78",
+   "0x0000073c"
+  ],
+  [
+   22,
+   "music",
+   "0x081664b4",
+   "0x000012e8"
+  ],
+  [
+   23,
+   "music",
+   "0x0816779c",
+   "0x00000f10"
+  ],
+  [
+   24,
+   "music",
+   "0x081686ac",
+   "0x000012dc"
+  ],
+  [
+   25,
+   "music",
+   "0x08169988",
+   "0x00000c98"
+  ],
+  [
+   26,
+   "music",
+   "0x0816a620",
+   "0x000006dc"
+  ],
+  [
+   27,
+   "music",
+   "0x0816acfc",
+   "0x00000e9c"
+  ],
+  [
+   28,
+   "music",
+   "0x0816bb98",
+   "0x00000c14"
+  ],
+  [
+   29,
+   "music",
+   "0x0816c7ac",
+   "0x0000131c"
+  ],
+  [
+   30,
+   "music",
+   "0x0816dac8",
+   "0x000005f0"
+  ],
+  [
+   40,
+   "music",
+   "0x0816e0b8",
+   "0x00000a9c"
+  ],
+  [
+   41,
+   "music",
+   "0x0816eb54",
+   "0x00000ac8"
+  ],
+  [
+   42,
+   "music",
+   "0x0816f61c",
+   "0x00000c0c"
+  ],
+  [
+   43,
+   "music",
+   "0x08170228",
+   "0x00000dbc"
+  ],
+  [
+   50,
+   "music",
+   "0x08170fe4",
+   "0x00000b34"
+  ],
+  [
+   51,
+   "music",
+   "0x08171b18",
+   "0x00001f24"
+  ],
+  [
+   52,
+   "music",
+   "0x08173a3c",
+   "0x00001964"
+  ],
+  [
+   53,
+   "music",
+   "0x081753a0",
+   "0x00001c0c"
+  ],
+  [
+   54,
+   "music",
+   "0x08176fac",
+   "0x00001f1c"
+  ],
+  [
+   55,
+   "music",
+   "0x08178ec8",
+   "0x00000b18"
+  ],
+  [
+   58,
+   "music",
+   "0x081799e0",
+   "0x0000039c"
+  ],
+  [
+   59,
+   "music",
+   "0x08179d7c",
+   "0x000001d0"
+  ],
+  [
+   60,
+   "music",
+   "0x08179f4c",
+   "0x00000644"
+  ],
+  [
+   61,
+   "music",
+   "0x0817a590",
+   "0x00000798"
+  ],
+  [
+   62,
+   "music",
+   "0x0817ad28",
+   "0x0000035c"
+  ],
+  [
+   63,
+   "music",
+   "0x0817b084",
+   "0x00000dd0"
+  ],
+  [
+   64,
+   "music",
+   "0x0817be54",
+   "0x00000298"
+  ],
+  [
+   67,
+   "music",
+   "0x0817c0ec",
+   "0x00001d68"
+  ],
+  [
+   70,
+   "music",
+   "0x0817de54",
+   "0x00000ab8"
+  ],
+  [
+   72,
+   "music",
+   "0x0817e90c",
+   "0x000007e0"
+  ],
+  [
+   74,
+   "music",
+   "0x0817f0ec",
+   "0x00000b1c"
+  ],
+  [
+   75,
+   "music",
+   "0x0817fc08",
+   "0x00000264"
+  ],
+  [
+   76,
+   "music",
+   "0x0817fe6c",
+   "0x00000774"
+  ],
+  [
+   80,
+   "music",
+   "0x081805e0",
+   "0x000000c0"
+  ],
+  [
+   81,
+   "music",
+   "0x081806a0",
+   "0x000000f8"
+  ],
+  [
+   82,
+   "music",
+   "0x08180798",
+   "0x000000bc"
+  ],
+  [
+   83,
+   "music",
+   "0x08180854",
+   "0x000000f8"
+  ],
+  [
+   84,
+   "music",
+   "0x0818094c",
+   "0x000000c8"
+  ],
+  [
+   85,
+   "music",
+   "0x08180a14",
+   "0x00000060"
+  ],
+  [
+   86,
+   "music",
+   "0x08180a74",
+   "0x00000184"
+  ],
+  [
+   87,
+   "music",
+   "0x08180bf8",
+   "0x00000090"
+  ],
+  [
+   88,
+   "music",
+   "0x08180c88",
+   "0x000000c4"
+  ],
+  [
+   89,
+   "music",
+   "0x08180d4c",
+   "0x000000dc"
+  ],
+  [
+   91,
+   "music",
+   "0x08180e28",
+   "0x00000064"
+  ],
+  [
+   92,
+   "music",
+   "0x08180e8c",
+   "0x000000bc"
+  ],
+  [
+   93,
+   "music",
+   "0x08180f48",
+   "0x00000170"
+  ],
+  [
+   100,
+   "sfx",
+   "0x081810c0",
+   "0x0000002c"
+  ],
+  [
+   101,
+   "sfx",
+   "0x081810ec",
+   "0x00000038"
+  ],
+  [
+   102,
+   "sfx",
+   "0x08181124",
+   "0x0000003c"
+  ],
+  [
+   103,
+   "sfx",
+   "0x08181160",
+   "0x00000050"
+  ],
+  [
+   104,
+   "sfx",
+   "0x081811b0",
+   "0x00000048"
+  ],
+  [
+   105,
+   "sfx",
+   "0x081811f8",
+   "0x00000068"
+  ],
+  [
+   106,
+   "sfx",
+   "0x08181260",
+   "0x0000001c"
+  ],
+  [
+   107,
+   "sfx",
+   "0x0818127c",
+   "0x00000074"
+  ],
+  [
+   108,
+   "sfx",
+   "0x081812f0",
+   "0x00000024"
+  ],
+  [
+   109,
+   "sfx",
+   "0x08181314",
+   "0x00000024"
+  ],
+  [
+   110,
+   "sfx",
+   "0x08181338",
+   "0x00000020"
+  ],
+  [
+   111,
+   "sfx",
+   "0x08181358",
+   "0x00000030"
+  ],
+  [
+   112,
+   "sfx",
+   "0x08181388",
+   "0x00000054"
+  ],
+  [
+   113,
+   "sfx",
+   "0x081813dc",
+   "0x00000058"
+  ],
+  [
+   114,
+   "sfx",
+   "0x08181434",
+   "0x00000060"
+  ],
+  [
+   115,
+   "sfx",
+   "0x08181494",
+   "0x00000044"
+  ],
+  [
+   116,
+   "sfx",
+   "0x081814d8",
+   "0x00000028"
+  ],
+  [
+   117,
+   "sfx",
+   "0x08181500",
+   "0x00000024"
+  ],
+  [
+   118,
+   "sfx",
+   "0x08181524",
+   "0x0000001c"
+  ],
+  [
+   119,
+   "sfx",
+   "0x08181540",
+   "0x0000001c"
+  ],
+  [
+   120,
+   "sfx",
+   "0x0818155c",
+   "0x00000028"
+  ],
+  [
+   121,
+   "sfx",
+   "0x08181584",
+   "0x00000048"
+  ],
+  [
+   122,
+   "sfx",
+   "0x081815cc",
+   "0x0000003c"
+  ],
+  [
+   123,
+   "sfx",
+   "0x08181608",
+   "0x00000064"
+  ],
+  [
+   124,
+   "sfx",
+   "0x0818166c",
+   "0x00000020"
+  ],
+  [
+   125,
+   "sfx",
+   "0x0818168c",
+   "0x00000020"
+  ],
+  [
+   126,
+   "sfx",
+   "0x081816ac",
+   "0x00000070"
+  ],
+  [
+   127,
+   "sfx",
+   "0x0818171c",
+   "0x00000028"
+  ],
+  [
+   128,
+   "sfx",
+   "0x08181744",
+   "0x00000038"
+  ],
+  [
+   129,
+   "sfx",
+   "0x0818177c",
+   "0x00000038"
+  ],
+  [
+   130,
+   "sfx",
+   "0x081817b4",
+   "0x00000028"
+  ],
+  [
+   131,
+   "sfx",
+   "0x081817dc",
+   "0x00000044"
+  ],
+  [
+   132,
+   "sfx",
+   "0x08181820",
+   "0x00000028"
+  ],
+  [
+   133,
+   "sfx",
+   "0x08181848",
+   "0x00000034"
+  ],
+  [
+   134,
+   "sfx",
+   "0x0818187c",
+   "0x00000058"
+  ],
+  [
+   135,
+   "sfx",
+   "0x081818d4",
+   "0x00000050"
+  ],
+  [
+   136,
+   "sfx",
+   "0x08181924",
+   "0x00000028"
+  ],
+  [
+   137,
+   "sfx",
+   "0x0818194c",
+   "0x0000003c"
+  ],
+  [
+   138,
+   "sfx",
+   "0x08181988",
+   "0x00000028"
+  ],
+  [
+   139,
+   "sfx",
+   "0x081819c2",
+   "0x0000001e"
+  ],
+  [
+   140,
+   "sfx",
+   "0x081819e0",
+   "0x00000098"
+  ],
+  [
+   141,
+   "sfx",
+   "0x08181a78",
+   "0x00000058"
+  ],
+  [
+   142,
+   "sfx",
+   "0x08181ad0",
+   "0x00000080"
+  ],
+  [
+   143,
+   "sfx",
+   "0x08181b50",
+   "0x00000024"
+  ],
+  [
+   144,
+   "sfx",
+   "0x08181b74",
+   "0x0000006c"
+  ],
+  [
+   145,
+   "sfx",
+   "0x08181be0",
+   "0x0000006c"
+  ],
+  [
+   146,
+   "sfx",
+   "0x08181c4c",
+   "0x0000001c"
+  ],
+  [
+   147,
+   "sfx",
+   "0x08181c68",
+   "0x00000020"
+  ],
+  [
+   148,
+   "sfx",
+   "0x08181c88",
+   "0x00000020"
+  ],
+  [
+   149,
+   "sfx",
+   "0x08181ca8",
+   "0x00000034"
+  ],
+  [
+   150,
+   "sfx",
+   "0x08181cdc",
+   "0x00000020"
+  ],
+  [
+   151,
+   "sfx",
+   "0x08181cfc",
+   "0x00000044"
+  ],
+  [
+   152,
+   "sfx",
+   "0x08181d40",
+   "0x00000038"
+  ],
+  [
+   153,
+   "sfx",
+   "0x08181d78",
+   "0x00000040"
+  ],
+  [
+   154,
+   "sfx",
+   "0x08181db8",
+   "0x0000004c"
+  ],
+  [
+   155,
+   "sfx",
+   "0x08181e04",
+   "0x00000028"
+  ],
+  [
+   156,
+   "sfx",
+   "0x08181e2c",
+   "0x0000001c"
+  ],
+  [
+   157,
+   "sfx",
+   "0x08181e48",
+   "0x00000020"
+  ],
+  [
+   158,
+   "sfx",
+   "0x08181e68",
+   "0x00000038"
+  ],
+  [
+   159,
+   "sfx",
+   "0x08181ea0",
+   "0x00000024"
+  ],
+  [
+   160,
+   "sfx",
+   "0x08181ec4",
+   "0x00000028"
+  ],
+  [
+   161,
+   "sfx",
+   "0x08181eec",
+   "0x00000024"
+  ],
+  [
+   162,
+   "sfx",
+   "0x08181f10",
+   "0x0000002c"
+  ],
+  [
+   163,
+   "sfx",
+   "0x08181f3c",
+   "0x0000002c"
+  ],
+  [
+   164,
+   "sfx",
+   "0x08181f68",
+   "0x00000020"
+  ],
+  [
+   165,
+   "sfx",
+   "0x08181f88",
+   "0x00000078"
+  ],
+  [
+   166,
+   "sfx",
+   "0x08182000",
+   "0x00000028"
+  ],
+  [
+   167,
+   "sfx",
+   "0x08182028",
+   "0x00000028"
+  ],
+  [
+   168,
+   "sfx",
+   "0x08182050",
+   "0x00000034"
+  ],
+  [
+   169,
+   "sfx",
+   "0x08182084",
+   "0x00000028"
+  ],
+  [
+   170,
+   "sfx",
+   "0x081820ac",
+   "0x00000028"
+  ],
+  [
+   171,
+   "sfx",
+   "0x081820d4",
+   "0x00000024"
+  ],
+  [
+   172,
+   "sfx",
+   "0x081820f8",
+   "0x00000024"
+  ],
+  [
+   173,
+   "sfx",
+   "0x0818211c",
+   "0x00000054"
+  ],
+  [
+   174,
+   "sfx",
+   "0x08182170",
+   "0x00000054"
+  ],
+  [
+   175,
+   "sfx",
+   "0x081821c4",
+   "0x00000054"
+  ],
+  [
+   176,
+   "sfx",
+   "0x08182218",
+   "0x0000002c"
+  ],
+  [
+   177,
+   "sfx",
+   "0x08182244",
+   "0x0000002c"
+  ],
+  [
+   178,
+   "sfx",
+   "0x08182270",
+   "0x00000068"
+  ],
+  [
+   179,
+   "sfx",
+   "0x081822d8",
+   "0x00000044"
+  ],
+  [
+   180,
+   "sfx",
+   "0x0818231c",
+   "0x00000068"
+  ],
+  [
+   181,
+   "sfx",
+   "0x08182384",
+   "0x0000003c"
+  ],
+  [
+   182,
+   "sfx",
+   "0x081823c0",
+   "0x00000060"
+  ],
+  [
+   183,
+   "sfx",
+   "0x08182420",
+   "0x00000038"
+  ],
+  [
+   184,
+   "sfx",
+   "0x08182458",
+   "0x000000d4"
+  ],
+  [
+   185,
+   "sfx",
+   "0x0818252c",
+   "0x00000028"
+  ],
+  [
+   186,
+   "sfx",
+   "0x08182554",
+   "0x00000028"
+  ],
+  [
+   187,
+   "sfx",
+   "0x0818257c",
+   "0x00000028"
+  ],
+  [
+   188,
+   "sfx",
+   "0x081825a4",
+   "0x00000028"
+  ],
+  [
+   189,
+   "sfx",
+   "0x081825cc",
+   "0x00000060"
+  ],
+  [
+   190,
+   "sfx",
+   "0x0818262c",
+   "0x00000084"
+  ],
+  [
+   191,
+   "sfx",
+   "0x081826b0",
+   "0x0000001c"
+  ],
+  [
+   192,
+   "sfx",
+   "0x081826cc",
+   "0x00000030"
+  ],
+  [
+   193,
+   "sfx",
+   "0x081826fc",
+   "0x00000074"
+  ],
+  [
+   194,
+   "sfx",
+   "0x08182770",
+   "0x00000038"
+  ],
+  [
+   195,
+   "sfx",
+   "0x081827a8",
+   "0x00000030"
+  ],
+  [
+   196,
+   "sfx",
+   "0x081827d8",
+   "0x00000058"
+  ],
+  [
+   197,
+   "sfx",
+   "0x08182830",
+   "0x00000234"
+  ],
+  [
+   198,
+   "sfx",
+   "0x08182a64",
+   "0x0000019c"
+  ],
+  [
+   199,
+   "sfx",
+   "0x08182c00",
+   "0x000001d8"
+  ],
+  [
+   200,
+   "sfx",
+   "0x08182dd8",
+   "0x00000140"
+  ],
+  [
+   201,
+   "sfx",
+   "0x08182f18",
+   "0x00000050"
+  ],
+  [
+   202,
+   "sfx",
+   "0x08182f68",
+   "0x00000034"
+  ],
+  [
+   203,
+   "sfx",
+   "0x08182f9c",
+   "0x00000024"
+  ],
+  [
+   204,
+   "sfx",
+   "0x08182fc0",
+   "0x0000008c"
+  ],
+  [
+   205,
+   "sfx",
+   "0x0818304c",
+   "0x00000030"
+  ],
+  [
+   206,
+   "sfx",
+   "0x0818307c",
+   "0x00000034"
+  ],
+  [
+   208,
+   "sfx",
+   "0x081830b0",
+   "0x00000050"
+  ],
+  [
+   209,
+   "sfx",
+   "0x08183100",
+   "0x0000009c"
+  ],
+  [
+   210,
+   "sfx",
+   "0x0818319c",
+   "0x00000040"
+  ],
+  [
+   211,
+   "sfx",
+   "0x081831dc",
+   "0x00000038"
+  ],
+  [
+   212,
+   "sfx",
+   "0x08183214",
+   "0x00000034"
+  ],
+  [
+   213,
+   "sfx",
+   "0x08183248",
+   "0x0000004c"
+  ],
+  [
+   214,
+   "sfx",
+   "0x08183294",
+   "0x0000004c"
+  ],
+  [
+   215,
+   "sfx",
+   "0x081832e0",
+   "0x00000038"
+  ],
+  [
+   216,
+   "sfx",
+   "0x08183318",
+   "0x00000038"
+  ],
+  [
+   217,
+   "sfx",
+   "0x08183350",
+   "0x00000030"
+  ],
+  [
+   218,
+   "sfx",
+   "0x08183380",
+   "0x0000001c"
+  ],
+  [
+   219,
+   "sfx",
+   "0x0818339c",
+   "0x0000002c"
+  ],
+  [
+   220,
+   "sfx",
+   "0x081833c8",
+   "0x00000094"
+  ],
+  [
+   221,
+   "sfx",
+   "0x0818345c",
+   "0x0000002c"
+  ],
+  [
+   222,
+   "sfx",
+   "0x08183488",
+   "0x0000003c"
+  ],
+  [
+   223,
+   "sfx",
+   "0x081834c4",
+   "0x00000028"
+  ],
+  [
+   224,
+   "sfx",
+   "0x081834ec",
+   "0x00000030"
+  ],
+  [
+   225,
+   "sfx",
+   "0x0818351c",
+   "0x00000024"
+  ],
+  [
+   226,
+   "sfx",
+   "0x08183540",
+   "0x00000038"
+  ],
+  [
+   227,
+   "sfx",
+   "0x08183578",
+   "0x00000034"
+  ],
+  [
+   228,
+   "sfx",
+   "0x081835ac",
+   "0x00000024"
+  ],
+  [
+   229,
+   "sfx",
+   "0x081835d0",
+   "0x00000024"
+  ],
+  [
+   230,
+   "sfx",
+   "0x081835f4",
+   "0x00000028"
+  ],
+  [
+   231,
+   "sfx",
+   "0x0818361c",
+   "0x00000040"
+  ],
+  [
+   232,
+   "sfx",
+   "0x0818365c",
+   "0x00000038"
+  ],
+  [
+   233,
+   "sfx",
+   "0x08183694",
+   "0x000000a0"
+  ],
+  [
+   234,
+   "sfx",
+   "0x08183734",
+   "0x0000001c"
+  ],
+  [
+   235,
+   "sfx",
+   "0x08183750",
+   "0x000000a0"
+  ],
+  [
+   236,
+   "sfx",
+   "0x081837f0",
+   "0x00000024"
+  ],
+  [
+   237,
+   "sfx",
+   "0x08183814",
+   "0x0000002c"
+  ],
+  [
+   238,
+   "sfx",
+   "0x08183840",
+   "0x00000078"
+  ],
+  [
+   239,
+   "sfx",
+   "0x081838b8",
+   "0x0000008c"
+  ],
+  [
+   240,
+   "sfx",
+   "0x08183944",
+   "0x0000002c"
+  ],
+  [
+   241,
+   "sfx",
+   "0x08183970",
+   "0x000000c8"
+  ],
+  [
+   242,
+   "sfx",
+   "0x08183a38",
+   "0x00000060"
+  ],
+  [
+   243,
+   "sfx",
+   "0x08183a98",
+   "0x00000034"
+  ],
+  [
+   244,
+   "sfx",
+   "0x08183acc",
+   "0x00000078"
+  ],
+  [
+   245,
+   "sfx",
+   "0x08183b44",
+   "0x00000038"
+  ],
+  [
+   246,
+   "sfx",
+   "0x08183b7c",
+   "0x00000078"
+  ],
+  [
+   247,
+   "sfx",
+   "0x08183bf4",
+   "0x00000028"
+  ],
+  [
+   248,
+   "sfx",
+   "0x08183c1c",
+   "0x00000044"
+  ],
+  [
+   249,
+   "sfx",
+   "0x08183c60",
+   "0x00000034"
+  ],
+  [
+   250,
+   "sfx",
+   "0x08183c94",
+   "0x00000030"
+  ],
+  [
+   251,
+   "sfx",
+   "0x08183cc4",
+   "0x00000030"
+  ],
+  [
+   252,
+   "sfx",
+   "0x08183cf4",
+   "0x00000030"
+  ],
+  [
+   253,
+   "sfx",
+   "0x08183d24",
+   "0x00000058"
+  ],
+  [
+   256,
+   "sfx",
+   "0x08183d7c",
+   "0x00000020"
+  ],
+  [
+   257,
+   "sfx",
+   "0x08183d9c",
+   "0x00000020"
+  ],
+  [
+   258,
+   "sfx",
+   "0x08183dbc",
+   "0x00000020"
+  ],
+  [
+   259,
+   "sfx",
+   "0x08183ddc",
+   "0x00000020"
+  ],
+  [
+   260,
+   "sfx",
+   "0x08183dfc",
+   "0x00000020"
+  ],
+  [
+   261,
+   "sfx",
+   "0x08183e1c",
+   "0x00000020"
+  ],
+  [
+   262,
+   "sfx",
+   "0x08183e3c",
+   "0x00000020"
+  ],
+  [
+   263,
+   "sfx",
+   "0x08183e5c",
+   "0x00000024"
+  ],
+  [
+   264,
+   "sfx",
+   "0x08183e80",
+   "0x00000024"
+  ],
+  [
+   265,
+   "sfx",
+   "0x08183ea4",
+   "0x00000024"
+  ],
+  [
+   266,
+   "sfx",
+   "0x08183ec8",
+   "0x00000024"
+  ],
+  [
+   267,
+   "sfx",
+   "0x08183eec",
+   "0x00000024"
+  ],
+  [
+   268,
+   "sfx",
+   "0x08183f10",
+   "0x00000024"
+  ],
+  [
+   269,
+   "sfx",
+   "0x08183f34",
+   "0x00000024"
+  ],
+  [
+   270,
+   "sfx",
+   "0x08183f58",
+   "0x00000024"
+  ],
+  [
+   271,
+   "sfx",
+   "0x08183f7c",
+   "0x00000024"
+  ],
+  [
+   272,
+   "sfx",
+   "0x08183fa0",
+   "0x00000024"
+  ],
+  [
+   273,
+   "sfx",
+   "0x08183fc4",
+   "0x00000024"
+  ],
+  [
+   274,
+   "sfx",
+   "0x08183fe8",
+   "0x00000024"
+  ],
+  [
+   275,
+   "sfx",
+   "0x0818400c",
+   "0x00000024"
+  ],
+  [
+   276,
+   "sfx",
+   "0x08184030",
+   "0x00000024"
+  ],
+  [
+   277,
+   "sfx",
+   "0x08184054",
+   "0x00000024"
+  ],
+  [
+   278,
+   "sfx",
+   "0x08184078",
+   "0x00000024"
+  ],
+  [
+   279,
+   "sfx",
+   "0x0818409c",
+   "0x00000024"
+  ],
+  [
+   280,
+   "sfx",
+   "0x081840c0",
+   "0x00000028"
+  ],
+  [
+   281,
+   "sfx",
+   "0x081840e8",
+   "0x00000028"
+  ],
+  [
+   282,
+   "sfx",
+   "0x08184110",
+   "0x00000028"
+  ],
+  [
+   283,
+   "sfx",
+   "0x08184138",
+   "0x00000028"
+  ],
+  [
+   284,
+   "sfx",
+   "0x08184160",
+   "0x00000024"
+  ],
+  [
+   285,
+   "sfx",
+   "0x08184184",
+   "0x00000024"
+  ],
+  [
+   286,
+   "sfx",
+   "0x081841a8",
+   "0x00000028"
+  ],
+  [
+   287,
+   "sfx",
+   "0x081841d0",
+   "0x00000028"
+  ],
+  [
+   289,
+   "sfx",
+   "0x08184200",
+   "0x00000034"
+  ],
+  [
+   290,
+   "sfx",
+   "0x08184234",
+   "0x00000058"
+  ],
+  [
+   291,
+   "sfx",
+   "0x0818428c",
+   "0x0000005c"
+  ],
+  [
+   292,
+   "sfx",
+   "0x081842e8",
+   "0x00000038"
+  ],
+  [
+   293,
+   "sfx",
+   "0x08184320",
+   "0x00000038"
+  ],
+  [
+   300,
+   "sfx",
+   "0x08184360",
+   "0x00000028"
+  ],
+  [
+   301,
+   "sfx",
+   "0x08184388",
+   "0x00000024"
+  ],
+  [
+   302,
+   "sfx",
+   "0x081843ac",
+   "0x0000001c"
+  ],
+  [
+   303,
+   "sfx",
+   "0x081843c8",
+   "0x00000024"
+  ],
+  [
+   304,
+   "sfx",
+   "0x081843ec",
+   "0x00000038"
+  ],
+  [
+   305,
+   "sfx",
+   "0x08184424",
+   "0x0000002c"
+  ],
+  [
+   306,
+   "sfx",
+   "0x08184450",
+   "0x0000002c"
+  ],
+  [
+   307,
+   "sfx",
+   "0x0818447c",
+   "0x00000034"
+  ],
+  [
+   308,
+   "sfx",
+   "0x081844b0",
+   "0x00000090"
+  ],
+  [
+   309,
+   "sfx",
+   "0x08184540",
+   "0x0000003c"
+  ],
+  [
+   310,
+   "sfx",
+   "0x0818457c",
+   "0x00000054"
+  ],
+  [
+   311,
+   "sfx",
+   "0x081845d0",
+   "0x000000c8"
+  ]
+ ],
+ "names": {
+  "0": "music_slow_passage_sextet_full",
+  "1": "music_walking_passage_quintet_full_alpha",
+  "2": "music_slow_passage_quintet_full",
+  "3": "music_walking_passage_trio_full",
+  "4": "music_slow_passage_duo_wide",
+  "5": "music_slow_passage_septet_full",
+  "6": "music_walking_passage_septet_full_alpha",
+  "7": "music_walking_passage_quintet_full_beta",
+  "8": "music_brisk_passage_quintet_full_alpha",
+  "9": "music_walking_phrase_sextet_full",
+  "10": "music_walking_phrase_quintet_full",
+  "20": "music_walking_passage_sextet_full_alpha",
+  "21": "music_slow_passage_trio_full",
+  "22": "music_languid_phrase_septet_full_alpha",
+  "23": "music_languid_passage_quartet_full",
+  "24": "music_languid_phrase_septet_full_beta",
+  "25": "music_languid_phrase_quintet_full",
+  "26": "music_slow_phrase_sextet_wide",
+  "27": "music_walking_passage_quintet_full_gamma",
+  "28": "music_walking_passage_septet_full_beta",
+  "29": "music_walking_passage_septet_full_gamma",
+  "30": "music_slow_phrase_quintet_full",
+  "40": "music_walking_passage_octet_full",
+  "41": "music_walking_passage_septet_full_delta",
+  "42": "music_walking_passage_septet_full_epsilon",
+  "43": "music_walking_passage_septet_full_zeta",
+  "50": "music_walking_passage_septet_full_eta",
+  "51": "music_walking_passage_sextet_full_beta",
+  "52": "music_walking_phrase_quartet_full",
+  "53": "music_brisk_passage_quintet_full_beta",
+  "54": "music_brisk_passage_septet_full",
+  "55": "music_brisk_passage_quintet_full_gamma",
+  "58": "music_brisk_short_quintet_full",
+  "59": "music_languid_short_duo_wide",
+  "60": "music_languid_phrase_trio_full_alpha",
+  "61": "music_slow_phrase_quintet_wide",
+  "62": "music_languid_phrase_duo_full",
+  "63": "music_brisk_passage_sextet_full",
+  "64": "music_languid_brief_trio_wide",
+  "67": "music_walking_extended_quintet_full",
+  "70": "music_walking_passage_quartet_full",
+  "72": "music_languid_phrase_trio_full_beta",
+  "74": "music_walking_passage_septet_full_theta",
+  "75": "music_walking_short_quartet_full",
+  "76": "music_brisk_phrase_sextet_full",
+  "80": "music_slow_hit_quartet_full",
+  "81": "music_languid_hit_quintet_wide",
+  "82": "music_walking_brief_quartet_mid",
+  "83": "music_walking_brief_quartet_full_alpha",
+  "84": "music_slow_brief_duo_wide",
+  "85": "music_slow_hit_duo_mid",
+  "86": "music_languid_brief_duo_full",
+  "87": "music_brisk_brief_trio_full",
+  "88": "music_brisk_brief_duo_full",
+  "89": "music_walking_hit_quartet_full",
+  "91": "music_walking_hit_trio_full",
+  "92": "music_walking_brief_quartet_full_beta",
+  "93": "music_brisk_brief_quintet_full",
+  "100": "effect_languid_hit_mono_narrow_alpha",
+  "101": "effect_walking_hit_mono_narrow_alpha",
+  "102": "effect_walking_hit_mono_narrow_beta",
+  "103": "effect_walking_hit_mono_mid_alpha",
+  "104": "effect_driving_brief_trio_narrow",
+  "105": "effect_driving_hit_duo_mid_alpha",
+  "106": "effect_driving_hit_mono_single_alpha",
+  "107": "effect_walking_short_mono_mid",
+  "108": "effect_walking_hit_mono_single_alpha",
+  "109": "effect_slow_hit_mono_single_alpha",
+  "110": "effect_slow_hit_mono_narrow_alpha",
+  "111": "effect_brisk_hit_mono_narrow_alpha",
+  "112": "effect_brisk_hit_mono_mid_alpha",
+  "113": "effect_driving_hit_mono_mid_alpha",
+  "114": "effect_walking_hit_mono_mid_beta",
+  "115": "effect_brisk_hit_mono_narrow_beta",
+  "116": "effect_brisk_hit_duo_wide",
+  "117": "effect_brisk_hit_mono_wide_alpha",
+  "118": "effect_brisk_hit_mono_single_alpha",
+  "119": "effect_brisk_hit_mono_single_beta",
+  "120": "effect_brisk_hit_mono_mid_beta",
+  "121": "effect_brisk_hit_mono_full",
+  "122": "effect_brisk_hit_mono_wide_beta",
+  "123": "effect_brisk_hit_mono_narrow_gamma",
+  "124": "effect_brisk_hit_mono_narrow_delta",
+  "125": "effect_brisk_hit_mono_narrow_epsilon",
+  "126": "effect_walking_hit_mono_full",
+  "127": "effect_walking_hit_mono_wide_alpha",
+  "128": "effect_driving_hit_mono_narrow_alpha",
+  "129": "effect_slow_hit_mono_mid_alpha",
+  "130": "effect_walking_hit_mono_wide_beta",
+  "131": "effect_slow_hit_duo_mid_alpha",
+  "132": "effect_brisk_hit_mono_wide_gamma",
+  "133": "effect_driving_hit_mono_mid_beta",
+  "134": "effect_brisk_hit_duo_full_alpha",
+  "135": "effect_brisk_hit_duo_full_beta",
+  "136": "effect_slow_hit_mono_narrow_beta",
+  "137": "effect_walking_brief_mono_single_alpha",
+  "138": "effect_languid_hit_mono_narrow_beta",
+  "139": "effect_walking_hit_mono_narrow_gamma",
+  "140": "effect_slow_hit_trio_mid_alpha",
+  "141": "effect_walking_short_mono_narrow",
+  "142": "effect_walking_hit_duo_full_alpha",
+  "143": "effect_driving_hit_duo_mid_beta",
+  "144": "effect_brisk_hit_duo_mid",
+  "145": "effect_slow_hit_duo_mid_beta",
+  "146": "effect_languid_hit_mono_single_alpha",
+  "147": "effect_languid_hit_mono_narrow_gamma",
+  "148": "effect_languid_hit_mono_narrow_delta",
+  "149": "effect_languid_brief_duo_narrow",
+  "150": "effect_languid_brief_mono_single_alpha",
+  "151": "effect_walking_hit_trio_wide",
+  "152": "effect_driving_hit_mono_single_beta",
+  "153": "effect_driving_hit_mono_single_gamma",
+  "154": "effect_brisk_hit_mono_wide_delta",
+  "155": "effect_brisk_hit_mono_wide_epsilon",
+  "156": "effect_languid_hit_mono_single_beta",
+  "157": "effect_languid_hit_mono_narrow_epsilon",
+  "158": "effect_walking_hit_mono_mid_gamma",
+  "159": "effect_walking_hit_mono_wide_gamma",
+  "160": "effect_walking_hit_mono_mid_delta",
+  "161": "effect_brisk_hit_mono_wide_zeta",
+  "162": "effect_languid_brief_mono_narrow_alpha",
+  "163": "effect_languid_brief_mono_narrow_beta",
+  "164": "effect_languid_hit_mono_narrow_zeta",
+  "165": "effect_driving_brief_mono_wide",
+  "166": "effect_walking_brief_mono_single_beta",
+  "167": "effect_slow_hit_mono_single_beta",
+  "168": "effect_brisk_hit_duo_narrow_alpha",
+  "169": "effect_walking_brief_mono_single_gamma",
+  "170": "effect_walking_brief_mono_single_delta",
+  "171": "effect_brisk_brief_mono_narrow_alpha",
+  "172": "effect_brisk_brief_mono_narrow_beta",
+  "173": "effect_brisk_hit_mono_mid_gamma",
+  "174": "effect_brisk_hit_mono_mid_delta",
+  "175": "effect_brisk_hit_mono_mid_epsilon",
+  "176": "effect_brisk_hit_mono_mid_zeta",
+  "177": "effect_brisk_hit_mono_mid_eta",
+  "178": "effect_languid_brief_duo_mid",
+  "179": "effect_brisk_phrase_mono_single",
+  "180": "effect_slow_hit_duo_wide",
+  "181": "effect_languid_hit_trio_mid",
+  "182": "effect_languid_hit_trio_narrow_alpha",
+  "183": "effect_languid_hit_trio_narrow_beta",
+  "184": "effect_driving_hit_duo_narrow_alpha",
+  "185": "effect_driving_hit_mono_narrow_beta",
+  "186": "effect_driving_hit_mono_narrow_gamma",
+  "187": "effect_slow_hit_mono_mid_beta",
+  "188": "effect_slow_hit_mono_narrow_gamma",
+  "189": "effect_slow_hit_duo_mid_gamma",
+  "190": "effect_slow_hit_mono_mid_gamma",
+  "191": "effect_languid_hit_mono_single_gamma",
+  "192": "effect_languid_hit_mono_narrow_eta",
+  "193": "effect_languid_hit_duo_full",
+  "194": "effect_languid_hit_mono_single_delta",
+  "195": "effect_languid_hit_mono_narrow_theta",
+  "196": "effect_driving_brief_mono_narrow",
+  "197": "effect_brisk_brief_mono_single_alpha",
+  "198": "effect_brisk_brief_mono_single_beta",
+  "199": "effect_languid_brief_mono_single_beta",
+  "200": "effect_slow_hit_mono_narrow_delta",
+  "201": "effect_slow_hit_mono_wide",
+  "202": "effect_slow_hit_duo_narrow",
+  "203": "effect_slow_hit_mono_narrow_epsilon",
+  "204": "effect_brisk_hit_duo_narrow_beta",
+  "205": "effect_brisk_brief_mono_narrow_gamma",
+  "206": "effect_slow_hit_mono_full",
+  "208": "effect_slow_hit_trio_mid_beta",
+  "209": "effect_languid_hit_mono_mid",
+  "210": "effect_slow_hit_mono_narrow_zeta",
+  "211": "effect_slow_hit_mono_narrow_eta",
+  "212": "effect_languid_hit_duo_narrow_alpha",
+  "213": "effect_driving_hit_mono_single_delta",
+  "214": "effect_brisk_hit_duo_full_gamma",
+  "215": "effect_walking_hit_mono_single_beta",
+  "216": "effect_brisk_hit_mono_narrow_zeta",
+  "217": "effect_slow_hit_mono_mid_delta",
+  "218": "effect_slow_hit_mono_single_gamma",
+  "219": "effect_languid_hit_duo_narrow_beta",
+  "220": "effect_walking_hit_duo_wide_alpha",
+  "221": "effect_brisk_hit_mono_mid_theta",
+  "222": "effect_driving_hit_mono_wide",
+  "223": "effect_walking_hit_mono_narrow_delta",
+  "224": "effect_languid_hit_mono_single_epsilon",
+  "225": "effect_brisk_hit_duo_narrow_gamma",
+  "226": "effect_slow_hit_duo_single",
+  "227": "effect_slow_hit_duo_mid_delta",
+  "228": "effect_slow_hit_duo_mid_epsilon",
+  "229": "effect_slow_hit_duo_mid_zeta",
+  "230": "effect_slow_hit_mono_narrow_theta",
+  "231": "effect_slow_hit_duo_mid_eta",
+  "232": "effect_slow_hit_duo_mid_theta",
+  "233": "effect_driving_hit_mono_narrow_delta",
+  "234": "effect_languid_hit_mono_single_zeta",
+  "235": "effect_driving_hit_duo_narrow_beta",
+  "236": "effect_brisk_hit_mono_single_gamma",
+  "237": "effect_languid_hit_mono_single_eta",
+  "238": "effect_languid_hit_duo_mid",
+  "239": "effect_driving_hit_duo_narrow_gamma",
+  "240": "effect_brisk_hit_mono_narrow_eta",
+  "241": "effect_walking_brief_mono_mid",
+  "242": "effect_brisk_hit_trio_mid",
+  "243": "effect_brisk_hit_duo_narrow_delta",
+  "244": "effect_brisk_brief_duo_full",
+  "245": "effect_brisk_brief_mono_narrow_delta",
+  "246": "effect_walking_hit_mono_single_gamma",
+  "247": "effect_languid_brief_mono_narrow_gamma",
+  "248": "effect_walking_hit_duo_full_beta",
+  "249": "effect_languid_hit_mono_narrow_iota",
+  "250": "effect_driving_hit_mono_single_epsilon",
+  "251": "effect_driving_hit_mono_single_zeta",
+  "252": "effect_driving_hit_mono_single_eta",
+  "253": "effect_driving_hit_duo_narrow_delta",
+  "256": "effect_driving_hit_mono_single_theta",
+  "257": "effect_driving_hit_mono_single_iota",
+  "258": "effect_driving_hit_mono_single_kappa",
+  "259": "effect_driving_hit_mono_single_lambda",
+  "260": "effect_driving_hit_mono_single_mu",
+  "261": "effect_driving_hit_mono_single_nu",
+  "262": "effect_driving_hit_mono_single_xi",
+  "263": "effect_driving_hit_mono_single_omicron",
+  "264": "effect_driving_hit_mono_single_pi",
+  "265": "effect_driving_hit_mono_single_rho",
+  "266": "effect_driving_hit_mono_single_sigma",
+  "267": "effect_driving_hit_mono_single_tau",
+  "268": "effect_driving_hit_mono_single_upsilon",
+  "269": "effect_driving_hit_mono_single_phi",
+  "270": "effect_driving_hit_mono_single_chi",
+  "271": "effect_driving_hit_mono_single_psi",
+  "272": "effect_driving_hit_mono_single_omega",
+  "273": "effect_driving_hit_mono_single_alphabeta",
+  "274": "effect_driving_hit_mono_single_betabeta",
+  "275": "effect_driving_hit_mono_single_gammabeta",
+  "276": "effect_driving_hit_mono_single_deltabeta",
+  "277": "effect_driving_hit_mono_single_epsilonbeta",
+  "278": "effect_driving_hit_mono_single_zetabeta",
+  "279": "effect_driving_hit_mono_single_etabeta",
+  "280": "effect_brisk_hit_mono_single_delta",
+  "281": "effect_brisk_hit_mono_single_epsilon",
+  "282": "effect_brisk_hit_mono_single_zeta",
+  "283": "effect_brisk_hit_mono_single_eta",
+  "284": "effect_driving_hit_mono_single_thetabeta",
+  "285": "effect_driving_hit_mono_single_iotabeta",
+  "286": "effect_driving_hit_mono_single_kappabeta",
+  "287": "effect_driving_hit_mono_single_lambdabeta",
+  "289": "effect_brisk_hit_duo_single",
+  "290": "effect_languid_brief_duo_wide_alpha",
+  "291": "effect_languid_brief_duo_wide_beta",
+  "292": "effect_driving_hit_mono_single_mubeta",
+  "293": "effect_driving_hit_mono_single_nubeta",
+  "300": "effect_driving_hit_mono_mid_gamma",
+  "301": "effect_driving_hit_mono_narrow_epsilon",
+  "302": "effect_driving_hit_mono_narrow_zeta",
+  "303": "effect_driving_hit_mono_narrow_eta",
+  "304": "effect_slow_hit_duo_mid_iota",
+  "305": "effect_slow_hit_mono_mid_epsilon",
+  "306": "effect_brisk_hit_mono_narrow_theta",
+  "307": "effect_brisk_hit_duo_narrow_epsilon",
+  "308": "effect_walking_brief_quartet_wide_alpha",
+  "309": "effect_walking_hit_duo_wide_beta",
+  "310": "effect_walking_hit_duo_single",
+  "311": "effect_walking_brief_quartet_wide_beta"
+ },
+ "names_note": "PROVISIONAL names, manufactured from what each sequence measurably IS and meant to be replaced by ear. Each is <class>_<tempo>_<length>_<voices>_<range>: the tempo band from the first set-tempo meta event, the length band in beats from the longest track over the division, the voice count from distinct program-change values, and the pitch range from the lowest and highest note played. Ties inside one bucket take a Greek-letter suffix in id order. None of this claims a title or a scene -- no name here was taken from outside the ROM, which the evidence boundary forbids, so nothing is asserted that the sequence bytes do not say. Renaming is a one-line edit per entry: build-assets reads this map and falls back to <class>_<id> when an id is absent."
+}

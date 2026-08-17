@@ -1,0 +1,1918 @@
+{
+ "format": 1,
+ "kind": "golden-sun-battle-sprite-animations",
+ "evidence": "chr_catalog descriptor +5 is the animation count and +16 points at a directory of that many u32 script pointers, the scripts sitting immediately before it. A script is (frame, duration) byte pairs, duration in 60Hz ticks, terminated by an opcode byte >= 0xf0 with one argument: 0xf1 hold, 0xfd and 0xfe loop. Decoded across the whole table this reads 5,692 frame references with 10 out of range, all in six banks whose extraction is short.",
+ "gif_rule": "animation 1 is the idle loop and is what the gif shows. Animation 0 is a single-frame static pose in every bank checked; animation 1 holds one frame for 80-190 ticks and cuts to a second for 6-8, which is a blink or a breath, and ends on a loop opcode. Banks whose animation 1 has fewer than two steps fall back to the longest looping animation.",
+ "entries": [
+  {
+   "name": "bandit",
+   "descriptor": "0x1b",
+   "frames_extracted": 1,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       240
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       240
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "dread-hound",
+   "descriptor": "0xa3",
+   "frames_extracted": 33,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       4
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       5
+      ],
+      [
+       3,
+       5
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       30,
+       6
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       18,
+       6
+      ],
+      [
+       21,
+       6
+      ],
+      [
+       24,
+       6
+      ],
+      [
+       27,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       9,
+       5
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       12,
+       5
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    }
+   ],
+   "gif": "assets/readme/dread-hound.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    83,
+    83
+   ]
+  },
+  {
+   "name": "earth-golem",
+   "descriptor": "0x23",
+   "frames_extracted": 35,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       4
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       120
+      ],
+      [
+       12,
+       155
+      ],
+      [
+       0,
+       60
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       30,
+       6
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       18,
+       6
+      ],
+      [
+       21,
+       6
+      ],
+      [
+       24,
+       6
+      ],
+      [
+       27,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       15
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       33,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xf0:17",
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 6,
+     "steps": [
+      [
+       34,
+       15
+      ]
+     ],
+     "opcodes": [
+      "0xf0:17",
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/earth-golem.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    2000,
+    2583,
+    1000
+   ]
+  },
+  {
+   "name": "felix",
+   "descriptor": "0x145",
+   "frames_extracted": 20,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       30
+      ],
+      [
+       2,
+       30
+      ],
+      [
+       4,
+       30
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       12,
+       13
+      ],
+      [
+       14,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       30
+      ],
+      [
+       8,
+       6
+      ],
+      [
+       10,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:2"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       18,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       16,
+       6
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/felix.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    500,
+    500,
+    500
+   ]
+  },
+  {
+   "name": "garet",
+   "descriptor": "0x141",
+   "frames_extracted": 20,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       15
+      ],
+      [
+       2,
+       12
+      ],
+      [
+       4,
+       12
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       6,
+       13
+      ],
+      [
+       8,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       12,
+       30
+      ],
+      [
+       14,
+       6
+      ],
+      [
+       16,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:2"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       18,
+       15
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       10,
+       6
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/garet.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    250,
+    200,
+    200
+   ]
+  },
+  {
+   "name": "grand-golem",
+   "descriptor": "0x40",
+   "frames_extracted": 67,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       120
+      ],
+      [
+       3,
+       8
+      ],
+      [
+       0,
+       90
+      ],
+      [
+       9,
+       190
+      ],
+      [
+       0,
+       90
+      ],
+      [
+       3,
+       8
+      ],
+      [
+       0,
+       190
+      ],
+      [
+       3,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       30,
+       8
+      ],
+      [
+       15,
+       8
+      ],
+      [
+       18,
+       8
+      ],
+      [
+       21,
+       8
+      ],
+      [
+       24,
+       8
+      ],
+      [
+       27,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       15
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       33,
+       120
+      ],
+      [
+       36,
+       8
+      ],
+      [
+       33,
+       90
+      ],
+      [
+       42,
+       190
+      ],
+      [
+       33,
+       90
+      ],
+      [
+       36,
+       8
+      ],
+      [
+       33,
+       190
+      ],
+      [
+       36,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 6,
+     "steps": [
+      [
+       63,
+       10
+      ],
+      [
+       48,
+       10
+      ],
+      [
+       51,
+       10
+      ],
+      [
+       54,
+       10
+      ],
+      [
+       57,
+       10
+      ],
+      [
+       60,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 7,
+     "steps": [
+      [
+       39,
+       15
+      ]
+     ],
+     "opcodes": [
+      "0xfe:5"
+     ]
+    },
+    {
+     "index": 8,
+     "steps": [
+      [
+       42,
+       7
+      ],
+      [
+       33,
+       6
+      ],
+      [
+       45,
+       7
+      ],
+      [
+       33,
+       6
+      ],
+      [
+       42,
+       7
+      ],
+      [
+       33,
+       6
+      ],
+      [
+       45,
+       7
+      ],
+      [
+       33,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfe:5"
+     ]
+    },
+    {
+     "index": 9,
+     "steps": [
+      [
+       66,
+       7
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf0:17",
+      "0xfd:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/grand-golem.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    2000,
+    133,
+    1500,
+    3167,
+    1500,
+    133,
+    3167,
+    133
+   ]
+  },
+  {
+   "name": "isaac",
+   "descriptor": "0x140",
+   "frames_extracted": 20,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       20
+      ],
+      [
+       2,
+       20
+      ],
+      [
+       4,
+       20
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       6,
+       13
+      ],
+      [
+       8,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       12,
+       30
+      ],
+      [
+       14,
+       6
+      ],
+      [
+       16,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:2"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       18,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       10,
+       6
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/isaac.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    333,
+    333,
+    333
+   ]
+  },
+  {
+   "name": "ivan",
+   "descriptor": "0x142",
+   "frames_extracted": 20,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       35
+      ],
+      [
+       2,
+       35
+      ],
+      [
+       4,
+       35
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       12,
+       13
+      ],
+      [
+       14,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       30
+      ],
+      [
+       8,
+       6
+      ],
+      [
+       10,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:2"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       18,
+       20
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       16,
+       20
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/ivan.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    583,
+    583,
+    583
+   ]
+  },
+  {
+   "name": "killer-ape",
+   "descriptor": "0xc9",
+   "frames_extracted": 2,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       0,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "magicore",
+   "descriptor": "0x86",
+   "frames_extracted": 34,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       80
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       0,
+       90
+      ],
+      [
+       12,
+       90
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       0,
+       190
+      ],
+      [
+       3,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       30,
+       8
+      ],
+      [
+       15,
+       8
+      ],
+      [
+       18,
+       8
+      ],
+      [
+       21,
+       8
+      ],
+      [
+       24,
+       8
+      ],
+      [
+       27,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       9,
+       8
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       12,
+       8
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       12,
+       8
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       9,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       33,
+       7
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf0:17",
+      "0xfd:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/magicore.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    1333,
+    100,
+    1500,
+    1500,
+    500,
+    100,
+    500,
+    100,
+    3167,
+    100
+   ]
+  },
+  {
+   "name": "mia",
+   "descriptor": "0x143",
+   "frames_extracted": 20,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       30
+      ],
+      [
+       2,
+       30
+      ],
+      [
+       4,
+       30
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       14,
+       13
+      ],
+      [
+       16,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       30
+      ],
+      [
+       8,
+       6
+      ],
+      [
+       10,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:2"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       18,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       12,
+       6
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/mia.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    500,
+    500,
+    500
+   ]
+  },
+  {
+   "name": "mimic",
+   "descriptor": "0xe4",
+   "frames_extracted": 4,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       0,
+       6
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       1,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       0,
+       6
+      ],
+      [
+       1,
+       6
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       3,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/mimic.gif",
+   "gif_animation": 2,
+   "gif_delays_ms": [
+    100,
+    100,
+    100,
+    100
+   ]
+  },
+  {
+   "name": "nightmare",
+   "descriptor": "0x109",
+   "frames_extracted": 1,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recluse",
+   "descriptor": "0x10a",
+   "frames_extracted": 1,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       0,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "thunder-lizard",
+   "descriptor": "0x31",
+   "frames_extracted": 33,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       8
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       80
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       0,
+       90
+      ],
+      [
+       12,
+       160
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       0,
+       190
+      ],
+      [
+       3,
+       6
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       30,
+       10
+      ],
+      [
+       15,
+       10
+      ],
+      [
+       18,
+       10
+      ],
+      [
+       21,
+       10
+      ],
+      [
+       24,
+       10
+      ],
+      [
+       27,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       30
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       9,
+       7
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    }
+   ],
+   "gif": "assets/readme/thunder-lizard.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    1333,
+    100,
+    1500,
+    2667,
+    500,
+    100,
+    500,
+    100,
+    3167,
+    100
+   ]
+  },
+  {
+   "name": "wild-gryphon",
+   "descriptor": "0x70",
+   "frames_extracted": 35,
+   "animations": [
+    {
+     "index": 0,
+     "steps": [
+      [
+       0,
+       4
+      ]
+     ],
+     "opcodes": [
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 1,
+     "steps": [
+      [
+       0,
+       120
+      ],
+      [
+       9,
+       120
+      ],
+      [
+       0,
+       105
+      ],
+      [
+       3,
+       15
+      ],
+      [
+       0,
+       90
+      ],
+      [
+       3,
+       10
+      ],
+      [
+       0,
+       90
+      ],
+      [
+       3,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 2,
+     "steps": [
+      [
+       15,
+       9
+      ],
+      [
+       21,
+       9
+      ],
+      [
+       24,
+       9
+      ],
+      [
+       27,
+       9
+      ],
+      [
+       30,
+       9
+      ],
+      [
+       33,
+       9
+      ]
+     ],
+     "opcodes": [
+      "0xfd:0"
+     ]
+    },
+    {
+     "index": 3,
+     "steps": [
+      [
+       6,
+       16
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 4,
+     "steps": [
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       12,
+       7
+      ],
+      [
+       0,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xfe:1"
+     ]
+    },
+    {
+     "index": 5,
+     "steps": [
+      [
+       36,
+       10
+      ]
+     ],
+     "opcodes": [
+      "0xf0:17",
+      "0xf1:0"
+     ]
+    },
+    {
+     "index": 6,
+     "steps": [
+      [
+       37,
+       10
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "opcodes": [
+      "0xf0:17",
+      "0xf1:0"
+     ]
+    }
+   ],
+   "gif": "assets/readme/wild-gryphon.gif",
+   "gif_animation": 1,
+   "gif_delays_ms": [
+    2000,
+    2000,
+    1750,
+    250,
+    1500,
+    167,
+    1500,
+    167
+   ]
+  }
+ ]
+}

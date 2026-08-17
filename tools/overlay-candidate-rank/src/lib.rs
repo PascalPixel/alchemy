@@ -44,12 +44,14 @@ pub struct Measurement {
     pub candidate_bytes: Option<i64>,
     pub size_delta: Option<i64>,
     pub differing_halfwords: Option<i64>,
-    /// `exact` / `ordering` / `wrong`, from `candidate_show::render::residual_class`.
+    /// `exact` / `ordering` / `allocation` / `wrong`, from
+    /// `candidate_show::render::residual_class`.
     ///
     /// Ranking by differing halfwords alone puts a blocked scheduler tie and a
     /// two-line source defect in the same tier. This column is what tells them
-    /// apart: `ordering` means both sides hold the same instructions and no
-    /// source shape reaches the difference, so read a `wrong` row instead.
+    /// apart: `ordering` means both sides hold the same instructions and
+    /// `allocation` means they differ only in which registers they name, and
+    /// neither is reachable from source, so read a `wrong` row instead.
     pub residual_class: Option<String>,
     pub wrong_instructions: Option<i64>,
     pub semantic_source: String,

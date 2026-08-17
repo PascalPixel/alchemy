@@ -80,11 +80,14 @@ s32 Func_02000cd0(const Target_02000cd0 *target)
 
     Func_02003d6a(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
+    /* 両方の判定は末尾の共有ブロックへ分岐する。
+     * Both guards branch to one shared exit placed after the body; writing
+     * `return 1` twice puts an inline copy near the top instead. */
     if (Func_02003dca(actor, probe) == 1) {
-        return 1;
+        goto refuse;
     }
     if (Func_02003dd6(actor, target) != 0) {
-        return 1;
+        goto refuse;
     }
 
     Func_02003e2e();
@@ -107,4 +110,7 @@ s32 Func_02000cd0(const Target_02000cd0 *target)
     actor->flags = savedFlags;
     Func_02003eaa();
     return 0;
+
+refuse:
+    return 1;
 }

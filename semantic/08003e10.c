@@ -40,60 +40,39 @@ extern u8 Data_08001dc8;
 extern u8 Value_000000e0;
 
 /*
- * WHY THIS ROW DOES NOT CLOSE.  The reference merges the three DMA writes into
- * `stmia r3!, {r0, r1, r2}` followed by `subs r3, #12`, where this emits three
- * separate `str`.  That peephole only fires when the three source registers
- * ascend with the offsets they are stored to -- the reference has source in r0,
- * destination in r1 and control in r2 -- and which register holds which value is
- * the allocator's decision.
+ * WHY THIS ROW DOES NOT CLOSE: it was never C.
  *
- * Readings tried here and on 08004838, none of which fired it: the control word
- * computed inside the block and outside it, first and last; no temporaries at
- * all; a struct assigned field by field; a struct initialised at its
- * declaration; either of those stored through a cast or through a pointer
- * variable (all three struct forms spill to the stack and cost 8 bytes); a
- * post-increment walk; indexed stores; the pointer declared first, last, and
- * assigned separately; and the constants declared in both orders.
+ * The reference merges the three DMA writes into `stmia r3!, {r0, r1, r2}` plus a
+ * `subs r3, #12`, where this emits three separate `str`.  An earlier version of
+ * this note called that a peephole nobody had worked out yet and said whoever did
+ * would unlock 82 owners.  That was wrong, and wrong in the expensive direction:
+ * `bef5cad7c` settled it from arm.md, which gates both store-multiple peepholes
+ * on TARGET_ARM.  Stock gcc 2.96 cannot emit a Thumb multiple-transfer from ANY
+ * source, so there is no reading of this function that produces the reference.
+ * The region is hand-written assembly or a library object.
  *
- * On 08004838, the smallest instance, the residual reduces to the numbering
- * ALONE and nothing else: base pointer r3, the same three pool words loaded in
- * the same order, and the three stores at ascending offsets 0, 4, 8 in the same
- * order -- all identical to the reference.  The only difference left is that gcc
- * numbers the values r2, r1, r0 where the reference has r0, r1, r2.  Assignment
- * order does control the store offset order (assigning in reverse scrambles the
- * stores to +4, +0, +8 and loses even that), but the descending numbering is
- * invariant across every reading that keeps the offsets ascending.  So the source
- * reaches the whole shape except which register number each value gets, which is
- * the one thing it cannot name.
+ * `residual_class` now returns `unemittable` for a reference-side stmia or ldmia,
+ * so the ranking says this rather than leaving it to be rediscovered.  Only the
+ * reference side counts: the same mnemonic on our side is an ordinary defect in
+ * our source.
  *
- * WHERE THE DECISION IS MADE.  Compiling the smallest instance with RTL dumps
- * puts it in the global allocator, not in anything the source says.  The three
- * values become pseudos 32, 33 and 34 -- stored at offsets 0, 4 and 8
- * respectively -- and the base becomes 35.  After local allocation all four are
- * still pseudos with IDENTICAL cost vectors and all four prefer LO_REGS; the
- * global pass then assigns 32 -> r2, 33 -> r1, 34 -> r0 and 35 -> r3, i.e.
- * descending for three equal-priority pseudos, where the ROM has ascending.
+ * The readings tried here are kept because they are still true about the source,
+ * just not the route to a match: the control word computed inside the block and
+ * outside it, first and last; no temporaries at all; a struct assigned field by
+ * field; a struct initialised at its declaration; either stored through a cast or
+ * a pointer variable (all three struct forms spill and cost 8 bytes); a
+ * post-increment walk; indexed stores; the pointer declared first, last and
+ * assigned separately; constants in both declaration orders.
  *
- * It is not a compiler-family question either: `candidate-show --family` gives 6
- * differing halfwords for both `routed` and `gcc296` and 8 for `old-agbcc`, so no
- * approved compiler here produces the merge from this source.
+ * The related constant-sharing question is settled too, and separately: two
+ * identical (const_int N) trees are unified by cse and reload gives the result a
+ * hard register instead of rematerialising it.  Identical trees, so no spelling
+ * reaches that either.
  *
- * That leaves two possibilities worth separating before anyone spends more on it.
- * Either the original source has something that changes the pseudos' priorities
- * -- a live range that is not identical, which every reading tried above failed
- * to produce -- or this fork's allocator orders equal-priority pseudos
- * differently from the compiler Camelot used.  The second would make these 82
- * owners a compiler discrepancy rather than 82 source problems, and it is
- * checkable against a stock gcc 2.96 ARM build, which this tree does not carry.
- *
- * This is not a local problem.  82 candidates across the main image differ from
- * their reference by exactly this merge, 15,438 bytes in all, and 35 of them are
- * DMA kicks like this one.  No byte-exact owner in the corpus writes 0x040000d4
- * at all, and the retained-assembly classes already carry
- * `deliberate_dma_kick_macro`, so the shape has never been reproduced from C
- * here.  Whoever works out what makes the merge fire unlocks all 82 at once;
- * until then this row is waiting on that, not on a better reading of its own
- * behaviour.
+ * Its header also claimed "This file is byte-exact, so nothing below is
+ * rewritten", while sitting in semantic/ at 12 differing halfwords.  Corrected in
+ * place rather than deleted: a stale byte-exact claim reads as a reason not to
+ * look, and the veneer content the note exists for is still sound.
  */
 void Func_08003e10(s32 request)
 {

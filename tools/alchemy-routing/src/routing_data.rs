@@ -130,6 +130,11 @@ pub static NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES: &[&str] = &["exact/resource_3b1_c
 ];
 pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["exact/resource_372_c_02000ec4.c"];
 pub static NO_STRICT_ALIASING_OVERLAY_SOURCES: &[&str] = &[
+    // Reference reloads through a differently-typed pointer where strict
+    // aliasing lets the rerun keep the first load live.
+    "exact/resource_381_c_02002e0c.c",
+    "exact/resource_381_c_02002e5c.c",
+    "exact/resource_3b0_c_02000030.c",
     "exact/resource_373_c_02000608.c",
     "exact/resource_389_c_02000608.c",
     "exact/resource_391_c_02000608.c",
@@ -151,6 +156,23 @@ pub static NO_THREAD_JUMPS_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c4_c_02001aba.c",
 ];
 pub static NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES: &[&str] = &[
+    // The rematerialisation shape: the reference rebuilds a two-instruction
+    // constant at each use, while the rerun of cse after loop commons the two
+    // into one callee-saved register and pays for it with an extra register in
+    // the prologue and a copy at each use. The tell is a `push` that saves one
+    // more register than the reference's.
+    "exact/resource_3a8_c_020015b4.c",
+    "exact/resource_3a8_c_0200158c.c",
+    "exact/resource_3bf_c_0200169c.c",
+    "exact/resource_3cb_c_020002d8.c",
+    "exact/resource_374_c_02000634.c",
+    "exact/resource_3ad_c_0200033c.c",
+    "exact/resource_3b4_c_02001cf8.c",
+    "exact/resource_3b8_c_02003f84.c",
+    "exact/resource_3bf_c_0200175c.c",
+    "exact/resource_3bf_c_020017bc.c",
+    "exact/resource_3bf_c_02002308.c",
+    "exact/resource_3bf_c_0200238c.c",
     "exact/resource_3ad_c_02000460.c",
     "exact/resource_3b3_c_02002384.c",
     "exact/resource_3b4_c_02001308.c",

@@ -12,17 +12,14 @@ A change counts when the rebuilt bytes equal the released ROM. Everything else
 — readable C, better names, faster tools — is worth doing, and is not the same
 thing.
 
-This guide says what to do. It does not record what has been tried: that
-belongs in commit messages, where it is attached to the change it explains and
-does not have to be read by everyone forever.
-
 ## Contents
 
 - [Provenance and copyright](#provenance-and-copyright)
 - [Setting up](#setting-up)
-- [The working method](#the-working-method)
+- [The loop](#the-loop)
 - [Reading a residual](#reading-a-residual)
 - [Source style](#source-style)
+- [Where the project is](#where-the-project-is)
 - [Tools](#tools)
 - [Build stages](#build-stages)
 - [The compiler standard](#the-compiler-standard)
@@ -136,6 +133,24 @@ the fact was obtained, so it stays. This table says where to find the tool.
 | `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
 | `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
 
+## Setting up
+
+You need a Rust toolchain, `arm-none-eabi-binutils`, Python 3, and the approved
+ROM set in `roms/` (gitignored — put it there yourself).
+
+The compiler lives in the `alchemy-gcc` submodule and its built binaries are
+expected at `alchemy-gcc/dist/`. In a **git worktree** the submodule directory
+is empty; link the staged compiler in rather than making `alchemy-gcc` itself a
+symlink, which git refuses:
+
+```bash
+ln -s /path/to/main/checkout/roms roms
+mkdir -p alchemy-gcc && ln -s /path/to/main/checkout/alchemy-gcc/dist alchemy-gcc/dist
+```
+
+Do not run `git submodule` commands inside a worktree — they can rewrite the
+shared configuration and break the main checkout.
+
 Activate the hooks and the generated-file merge driver once per clone:
 
 ```bash
@@ -153,45 +168,6 @@ owners. Regenerate afterwards; `make verify` fails on a stale artifact, so a
 forgotten regeneration cannot reach a commit. Without the line git falls back to
 an ordinary conflict, which is safe and merely tedious.
 
----
-
-
-Activate the hooks and the generated-file merge driver once per clone:
-
-```bash
-git config core.hooksPath .hooks
-git config merge.generated.driver true
-```
-
-`pre-commit` runs the publication gate over the staged change, `commit-msg`
-validates the progress prefix in your subject, and `pre-push` re-runs the
-publication gate over every outgoing commit.
-
-The second line resolves the generated artifacts in `.gitattributes` by keeping
-your side of a merge, because neither side is correct once both branches have
-adopted owners. Regenerate afterwards; `make verify` fails on a stale artifact,
-so a forgotten regeneration cannot reach a commit.
-
----
-
-## Setting up
-
-You need a Rust toolchain, `arm-none-eabi-binutils`, Python 3, and the
-approved ROM set in `roms/` (gitignored — put it there yourself).
-
-The compiler lives in the `alchemy-gcc` submodule and its built binaries are
-expected at `alchemy-gcc/dist/`. In a **git worktree** the submodule directory
-is empty; link the staged compiler in rather than making `alchemy-gcc` itself a
-symlink, which git refuses:
-
-```bash
-ln -s /path/to/main/checkout/roms roms
-mkdir -p alchemy-gcc && ln -s /path/to/main/checkout/alchemy-gcc/dist alchemy-gcc/dist
-```
-
-Do not run `git submodule` commands inside a worktree — they can rewrite the
-shared configuration and break the main checkout.
-
 Then confirm the tree is healthy:
 
 ```bash
@@ -201,7 +177,7 @@ make verify          # the authoritative gate
 
 ---
 
-## The working method
+## The loop
 
 Read the target assembly, work out what C the original author wrote, write that
 C, compile it, compare the bytes, fix the difference. Repeat until identical.
@@ -209,25 +185,28 @@ C, compile it, compare the bytes, fix the difference. Repeat until identical.
 What this repository adds is **feedback**. You are not diffing by eye. The tools
 compile your candidate, link it at its real address, compare it against the
 reference bytes, and say how far off you are and in what way. A gate then
-refuses to adopt anything that does not reproduce. Use that loop tightly: edit,
-score, read the residual, edit again.
+refuses to adopt anything that does not reproduce.
+
+There are two tiers and no third place for work to sit. A byte is exact C that
+rebuilds identically, or it is assembly. Your unfinished candidate lives in
+`work/`, which is gitignored — not in the tree, and not in a commit.
 
 ### 1. Pick an owner
 
 An *owner* is one function-sized region with a fixed address.
 
 - Main image: assembly in `asm/<address>.s`, C in `exact/<address>.c` once it
-  matches. An unfinished candidate stays in your worktree.
+  matches.
 - Code overlays: assembly in `assets/code/resource_<id>_overlay.s`, C in
-  `exact/resource_<id>_c_<address>.c` once it matches, and in your worktree
-  until then.
+  `exact/resource_<id>_c_<address>.c` once it matches.
 
-`overlay candidate-rank` and `compiler main-rank` rank candidates by what is
-wrong with them rather than by how much differs; read [Reading a
-residual](#reading-a-residual) before picking from either. `overlay twins`
+[Targets](#targets) lists every unfinished scope, largest first. `overlay twins`
 finds owners that mirror one you have already finished, which is usually the
-cheapest next thing to do. [Targets](#targets) lists every unfinished scope,
-largest first.
+cheapest next thing to do — a 90-byte shape that appears four times pays for
+itself three more times. `discover` and `remaining_survey` map what is left.
+
+Name your draft after the owner: `work/080bbb0c.c`, or
+`work/resource_3b2_c_02000da4.c`. The rankers find drafts by that name.
 
 ### 2. Read the assembly before writing any C
 
@@ -239,8 +218,8 @@ never a source draft. Get these facts first:
   saved, stack slots and arguments, and whether a shared tail is reached from
   elsewhere.
 - **Types and signedness**, read off the load widths. `ldrb`/`ldrsb`/`ldrh`/
-  `ldrsh` are declarations, not hints. A `lsls`/`asrs` pair is a sign
-  extension the source asked for.
+  `ldrsh` are declarations, not hints. A `lsls`/`asrs` pair is a sign extension
+  the source asked for.
 - **Control flow.** Loop heads and bottoms, switch and jump-table layout,
   branch cascades, fall-through seams.
 - **Aggregate layout.** Which offsets cluster around which base registers, and
@@ -249,8 +228,13 @@ never a source draft. Get these facts first:
   pooled word and an inline `movs` are different source spellings.
 - **Calls and side effects**, and every value's lifetime across them.
 
-`overlay disasm`, `overlay show` and `overlay entry` decode overlay bytes;
-`discover` and `remaining_survey` map what is left.
+`overlay disasm`, `overlay show` and `overlay entry` decode overlay bytes.
+
+Before you start, check whether the owner is C at all. A region is permanently
+assembly only when its instructions could not have come from this compiler —
+see [Permanent assembly](#permanent-assembly). Grepping the span for `stmia`,
+`ldmia`, `swi` and the `mov ip, lr` / `bx ip` pair takes a second and tells you
+whether you are looking at a reconstruction job or a registered exception.
 
 ### 3. Write the compiler's input, not its output
 
@@ -260,10 +244,10 @@ statement order. The optimiser then reproduces the ROM's shape by itself,
 because that is exactly what it did the first time.
 
 The common mistake is transcribing the optimiser's work back into the source —
-hand-strength-reduced pointer walks instead of `arr[i]`, hand-shared
-temporaries instead of repeating an expression, hoisted invariants. That does
-not lock in the ROM's shape; it changes what the earlier passes see, and the
-result diverges somewhere else.
+hand-strength-reduced pointer walks instead of `arr[i]`, hand-shared temporaries
+instead of repeating an expression, hoisted invariants. That does not lock in
+the ROM's shape; it changes what the earlier passes see, and the result diverges
+somewhere else.
 
 A loop whose exit test is at the top reads as a `goto` in the disassembly. Write
 the loop. Scaffolding it as `x = g; goto test; body: …; test: if (x) goto body;`
@@ -278,14 +262,11 @@ Prefer the shape a 2001 author would have written.
 ```bash
 # a main-image owner
 cargo run --release --manifest-path tools/compiler/Cargo.toml -- \
-  candidate-show work/080a1234.c --align
+  candidate-show work/080bbb0c.c --align
 
 # an overlay row -- same output, same flag, no span argument
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
-  score work/resource_373_c_0200034c.c --align
-
-# a decomposed view, with the residual classified
-make dispatch-decomp ARGS='decomp_diagnose work/080a1234.c'
+  score work/resource_3b2_c_02000da4.c --align
 ```
 
 **Read the diff, not the number.** `--align` pairs the two instruction streams
@@ -304,9 +285,23 @@ every later row reads as a difference. The tool warns you when that applies.
 Then make the smallest source change that explains what you saw, and score
 again.
 
+**A large owner still gives partial signal.** The matching prefix at the top of
+`--align` is real: on `080bbb0c`, 6,332 bytes in a single function, an opening
+that merely keeps enough values live across calls reproduces the whole
+seven-instruction register-save sequence exactly. Each block you write correctly
+extends that prefix, and the first `+`/`-` row is the next thing to write. Only
+the frame size — `sub sp, #100` — waits for the whole body, because the frame is
+as big as the widest spill anywhere in it.
+
+`overlay candidate-rank` and `compiler main-candidate-rank` rank the drafts in
+`work/` by what is wrong with them rather than by how much differs. Read
+[Reading a residual](#reading-a-residual) before picking from either.
+
 ### 5. Adopt
 
-Adoption is gated. It rebuilds and compares before it accepts anything.
+Adoption is gated. It rebuilds and compares before it accepts anything, and it
+refuses everything else — a candidate that is 32 bytes against a 6,332-byte
+reference is rejected at `+0x0` with both sizes named.
 
 ```bash
 # main image: proves a src_<address>.c draft, installs to exact/
@@ -314,7 +309,7 @@ make dispatch-decomp ARGS='integrate_matches /path/to/draft --apply'
 
 # overlay: rehearses the whole overlay, then splices the row in
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
-  adopt resource_373:034c --source work/resource_373_c_0200034c.c --span 320 --apply
+  adopt resource_373:034c --source work/resource_373_c_0200034c.c --apply
 ```
 
 An overlay row is spliced into a fixed-size hole, so the gate checks the region
@@ -324,9 +319,14 @@ adoption and will not survive the build.
 
 **Run one adoption at a time.** It reaches that verdict by splicing the row into
 `assets/code/<overlay>.s` and restoring the file afterwards, so it writes to the
-tree even when it rejects and even without `--apply` — `--where` is not a
-read-only flag. `OverlayLock` serialises it per overlay; score in parallel as
-much as you like, and keep adoption serial.
+tree even when it rejects and even without `--apply`. `OverlayLock` serialises
+it per overlay; score in parallel as much as you like, and keep adoption serial.
+
+A zero score is not an owner. Of 1,276 candidates once scored in bulk, eight
+reproduced exactly and none were adoptable: six were 8-byte veneer stubs, and
+the two real ones were measured across spans straddling several audited
+intervals, so the gate refused them as not single owners. Put it through the
+gate rather than believing the number.
 
 The inverse exists, and you should use it rather than leaving a broken row in
 place:
@@ -343,7 +343,7 @@ sides.
 
 ### 6. When an owner will not converge
 
-Take another owner. A main-image owner needs nothing done to it -- the build
+Take another owner. A main-image owner needs nothing done to it — the build
 falls back to `asm/<address>.s` whenever `exact/<address>.c` is absent. An
 overlay row must be parked with the command above, because its assembly has to
 come back into the overlay.
@@ -375,38 +375,50 @@ figure hashes. Take either side there and let `make coverage` correct it; the
 prose around them is hand-written and merges normally, which is exactly why
 those two are not auto-resolved.
 
+`metrics/gs1-en-executable.json` is the audit, not a generated file. When both
+sides have touched it, compare the two entry by entry before choosing — twice
+now the difference has been interval coalescing with identical byte totals,
+which is safe to drop, and a real change would not be.
+
 ---
 
 ## Reading a residual
 
 A differing-halfword count says how much differs. It does not say what kind of
-problem you have, and the two are not related. `overlay score` and
-`overlay candidate-rank` classify every residual, and the class is the first
-thing to read:
+problem you have, and the two are not related. `overlay score` and the rankers
+classify every residual, and the class is the first thing to read:
 
 | class | what it means | worth reading? |
 |---|---|---|
 | `exact` | the bytes match | adopt it |
 | `wrong` | some instruction is genuinely different | **yes** |
-| `ordering` | same instructions, different order | no |
-| `allocation` | same instructions and operands, different registers | no |
+| `size mismatch` | a statement is missing or extra | **yes** |
+| `ordering` | same instructions, different order | rarely |
+| `allocation` | same instructions and operands, different registers | rarely |
 | `unemittable` | the reference *appears* to use an instruction this compiler cannot emit | confirm first |
 
-`unemittable` is advisory. It reads a disassembled stream, and a literal pool
-word disassembles as whatever its bytes encode: on ARM7TDMI that includes
-`stmia`, `ldmia`, and mnemonics the part cannot execute at all. Measured against
-the assembler's listing, 18 of 89 rows carrying the verdict had no
-multiple-transfer anywhere in their span. Before writing an owner off, check that
-the instruction is inside its span in the assembly.
+Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
+is not a near miss.
 
 `ordering` and `allocation` are settled after the source has had its say, by
-`rank_for_schedule` and by reload. `unemittable` means the region is not C at
-all: `arm.md` gates both store-multiple peepholes on `TARGET_ARM`, so a
-reference-side Thumb `stmia` or `ldmia` cannot have come from any source, and
-hand-written assembly and library objects sit in every ROM.
+`rank_for_schedule` and by reload. They are not always immovable — a standalone
+`x = p->field;` statement gives the scheduler a free-floating load to hoist,
+where folding the read into the expression that uses it can anchor it — but
+`shape_sweep` exhausts the bounded transforms quickly, and when it reports the
+axis exhausted, believe it.
 
-Rank `wrong` rows and skip the rest. A small halfword count on a blocked row is
-not a near miss.
+`unemittable` is advisory and wrong about one time in five. It reads a
+disassembled stream, and a literal pool word disassembles as whatever its bytes
+encode: on ARM7TDMI that includes `stmia`, `ldmia`, and mnemonics the part
+cannot execute at all. Measured against the assembler's listing, 18 of 89 rows
+carrying the verdict had no multiple-transfer anywhere in their span. It also
+fires on any large size mismatch, where it means nothing. Before writing an
+owner off, check that the instruction is inside its span in the assembly.
+
+Where it is true, it is decisive: `arm.md` gates both store-multiple peepholes
+on `TARGET_ARM`, so a reference-side Thumb `stmia` or `ldmia` cannot have come
+from any C source, and hand-written assembly and library objects sit in every
+ROM.
 
 Two shapes inside `wrong` are worth naming because they look like source
 problems and are not. A candidate that holds a constant in a callee-saved
@@ -540,6 +552,113 @@ a speculation diary, and do not claim to have recovered an original identifier
 the evidence does not support.
 
 ---
+## Where the project is
+
+Exact C stands at 274,776 bytes, 20.4% of the executable image. Permanent
+assembly — linker veneers, alignment, and routines whose instructions no C can
+produce — adds 216,278. Together those are DONE, 36% of the ROM's executable
+bytes, and DONE is what the sun in every commit subject reports.
+
+Publish both figures or neither. The share of the ROM is the honest headline;
+the share of the bytes that *can* be C says how much of the job is left. That
+second denominator is 1,130,844, and exact C is 24.3% of it.
+
+### 100% is reachable, and the compiler is the minority obstacle
+
+This is a measurement, not an opinion. All 1,276 overlay candidates from a
+since-deleted tier were scored against the ROM. Counting only real owners — 32
+bytes or more, so the 8-byte veneer stubs that score exact trivially are
+excluded — 1,242 of them classify as:
+
+| share | class | what it means |
+|---:|---|---|
+| 58.5% | size mismatch | a statement is missing or extra |
+| 26.0% | wrong | operands differ: a type, a prototype, a constant |
+| 12.9% | ordering | a scheduler tie |
+| 1.9% | allocation | reload picked different registers |
+| 0.6% | unemittable | a shape no stock gcc 2.96 emits |
+
+**84.5% of what is left is ordinary reconstruction** — read the assembly again,
+find the statement you missed, fix the type. About one owner in six sits in the
+families the compiler decides.
+
+The sample is drawn from sources someone already wrote and failed to close, so
+it is biased toward hard cases. That makes the finding stronger, not weaker:
+even among owners known to have resisted once, five in six failed for a reason
+the contributor controls.
+
+The largest single target, `main:0x080bbb0c` at 6,332 bytes, carries no
+permanence marker at all — no Thumb multiple-transfer, no SWI, no veneer idiom,
+and no entry in `asm/classification.json`. Every byte of it is reachable as C.
+
+### Why the project stalled at 20% for two weeks
+
+Not a compiler wall. A third tier held 862,856 bytes of C that did not
+reproduce and reported it as 74% coverage against a 20% match rate, so the work
+that would actually close owners never got picked up. The queue was full of
+already-attempted owners and the thing missing from each was another read of
+the assembly.
+
+The tier is gone. Its sources are recoverable per file with
+`git show 84ea2392a:semantic/<name>.c`, and their comments carry call
+resolutions and field layouts worth reading before you reopen an owner. Their C
+did not build the ROM and never would have. When an owner is the wrong size,
+expect to rewrite it against the score rather than repair it.
+
+### Finish overlays, do not spread
+
+Work one overlay to completion, smallest remaining first, rather than picking
+owners by score across the whole ROM. Within one overlay the callees, types,
+structures and idioms are shared, so every owner you finish makes the next one
+cheaper, and `overlay twins` and `exact_reading_list` can actually find you a
+worked example. Across the ROM that compounding is lost. It also changes what a
+day's work produces: "this overlay is finished" is an artifact, "the number
+went up 0.04%" is not.
+
+We have finished 65% of the overlay owners and 22% of the overlay bytes, because
+we did the small ones: the median adopted owner is 46 bytes and the median owner
+still parked is 204. What remains is filtered twice over, once for size and once
+for having already failed. The way out is reconstructing large functions by
+reading them.
+
+### Veneers stay in the denominator
+
+48,760 bytes of linker veneers and 3,020 of alignment are executable bytes in
+the ROM, so they belong in the denominator. They can never be C, so a share
+measured against that denominator can never reach 100. `resource_3cc` is
+finished and reads 64%.
+
+### The tooling is frozen
+
+The loop needs about eight commands and they all exist. Adding a tool now
+requires deleting one, and measurement that explains why we are stuck is no
+longer a deliverable.
+
+### The permuter is a last resort with a number attached
+
+`alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
+passes, and on this corpus it closed nothing: 97 rows at 1,500 to 2,500
+candidates each improved 18 and matched 0. Aim it only at rows the score calls
+`wrong`, after you have read the residual, and treat a match it finds as
+something to explain before adopting.
+
+### Assets: named is the bar
+
+An asset is finished when it is a standalone file whose name says what it is —
+`vale_night.png`, `rock_front.png`, `isaac_running_south_west.png`,
+`djinn_venus.gif`, `growl.wav`, `good_morning.mid`, `alchemy.sf2`. A stem
+carrying the ROM's own numbering is not that, whether the number is decimal
+(`sfx_272`), a `resource_<hex>` index, or a short hex token standing in for one.
+
+Everything in a standard format but still ID-named is **Extracted**, which is a
+real step and not the last one. Images are 1.8% Named and music 0.0%. Those
+numbers were 32.6% and 99.6% until August 2026, when the top tier was being
+awarded for the *category name* — anything called audio counted as finished —
+rather than for a file existing. Tiers are counted per file, so one well-named
+member cannot promote its package.
+
+---
+
 ## Tools
 
 Everything runs through nine dispatch groups:
@@ -605,7 +724,7 @@ by hand, and if you find yourself doing so, that is worth a note in the commit.
 | `overlay_mode_cohort` | Compares one compiler hypothesis across a set of overlay owners. |
 
 The `overlay` binary also carries `score`, `park` and `audit`, described in
-[the working method](#the-working-method). `score` is the overlay counterpart
+[the working method](#the-loop). `score` is the overlay counterpart
 of `candidate-show`: same output, same `--align`, and it derives the row's span
 rather than asking you for one.
 
@@ -767,162 +886,6 @@ Use the smallest stage that answers your question.
 `make verify` is green only when the ROM rebuilds byte-identically with no
 fallback bytes, every gate passes, and the tracked metrics match the tree. That
 is the only result that proves anything.
-
----
-
-## What this project is doing now
-
-Four decisions, taken 2026-08-17 against the numbers below. They are settled;
-reopen them with evidence, not with preference.
-
-### 1. Finish overlays, do not spread
-
-Work one overlay to completion, smallest remaining first, rather than picking
-owners by score across the whole ROM. Ten overlays are at or above 60% and the C
-work left in them is small.
-
-The reason is not tidiness. Within one overlay the callees, types, structures
-and idioms are shared, so every owner you finish makes the next one cheaper, and
-`overlay twins` and `exact_reading_list` can actually find you a worked example.
-Across the ROM that compounding is lost. It also changes what a day's work
-produces: "this overlay is finished" is an artifact, "the number went up 0.04%"
-is not.
-
-### 2. Count against the bytes that can be C
-
-`exact / executable` is measured against a denominator that includes 165,278
-bytes -- 12.27% -- that are not instructions: 48,760 of linker veneers, 34,256 of
-literal pools, 3,020 of alignment, 79,242 structural. A veneer is emitted by the
-linker and will never be C, so an overlay whose every function is reconstructed
-still reports well short of 100%. `resource_3cc` is finished and reads 64%.
-
-Report both figures and never the second alone. The share of the ROM is the
-honest headline; the share of the C-able bytes is what says how much of the
-actual job is left.
-
-### 3. Two tiers, and no third place for work to sit
-
-A byte is exact C that rebuilds identically, or it is assembly. There is no
-semantic tier, and `make verify` fails if one reappears.
-
-The tier held 862,856 bytes of C that did not reproduce and reported it as 74%
-coverage against a 20% match rate, which is how a project loses track of how
-much of the job is left. pret has two tiers and can reach 100%; the arithmetic
-only closes if every byte is in one of them. Unmatched work is work in progress:
-keep it in your worktree until it reproduces, exactly as you would keep an
-unfinished function locally.
-
-The 1,817 sources that were in it are in git, recoverable per file with
-`git show 84ea2392a:semantic/<name>.c`. Their analysis is worth reading before
-you reopen an owner; their C did not build the ROM and never would have.
-
-### 3a. The road to 100%, and what is actually in the way
-
-100% of the bytes that can be C is reachable, and the compiler is the minority
-obstacle. That is a measurement, not an opinion.
-
-All 1,276 overlay candidates in the deleted tier were scored against the ROM.
-Counting only real owners -- 32 bytes or more, so the 8-byte veneer stubs that
-score exact trivially are excluded -- 1,242 of them classify as:
-
-| share | class | what it means |
-|---:|---|---|
-| 58.5% | size mismatch | a statement is missing or extra |
-| 26.0% | wrong | operands differ: a type, a prototype, a constant |
-| 12.9% | ordering | a scheduler tie |
-| 1.9% | allocation | reload picked different registers |
-| 0.6% | unemittable | the reference shape no stock gcc 2.96 emits |
-
-**84.5% of what is left is ordinary reconstruction** -- read the assembly again,
-find the statement you missed, fix the type. About one owner in six sits in the
-families the compiler decides, and those are the ones worth a `shape_sweep` or
-an `unmatchable.json` entry.
-
-The sample is drawn from sources someone already wrote and failed to close, so
-it is biased toward hard cases. That makes the finding stronger, not weaker:
-even among owners known to have resisted once, four in five failed for a reason
-the contributor controls.
-
-No owner in the corpus was sitting there already reproducing. Of 1,276 sources,
-eight scored zero differing halfwords: six were 8-byte veneer stubs, and the two
-real ones -- `resource_3b9:007c` at 444 bytes and `resource_3c4:0e20` at 168 --
-were scored across spans that straddle several audited intervals, so the
-adoption gate refuses them as not single owners. Every one was checked against
-the gate rather than trusted from its score. If you filter that corpus by score,
-filter by size first, and then adopt rather than believe the number.
-
-This is the real reason the project sat at 20% for two weeks. It was not a
-compiler wall. It was 862,856 bytes of half-finished C that looked like
-progress, ranked like progress, and reported as 74% coverage, so the work that
-would actually close owners never got picked up. The queue was full of
-already-attempted owners and the thing missing from each was another read of
-the assembly.
-
-A worked example of the loop, end to end, on `resource_3b2:0da4` (90 bytes):
-read the target, find the established struct in a finished owner from the same
-overlay, write the C, and score it. Three iterations took it from nothing to
-`wrong_instructions=0`; what remained was two halfwords of `ordering`, which
-survived every transform `shape_sweep` has. That is what the one-in-five owner
-looks like.
-
-### 3b. What the old semantic pile taught, kept
-
-994,000 bytes of reviewed C that does not reproduce is not 74% of the way to
-anything. Three quarters of it does not emit the right NUMBER of bytes, which
-means it was written without ever being compared to the ROM.
-
-Keep the files: the comments carry call resolutions, field layouts and recorded
-uncertainties that cost real work. Stop reporting `combined`, which presents
-coverage as progress and is the most misleading number in the repository. When
-an owner is the wrong size, expect to rewrite it against `overlay score` rather
-than repair it.
-
-### 4. Trackers report reachability, not just bytes
-
-`combined` is retired. It added exact and semantic into one percentage and read
-as 94% while a fifth of it reproduced. The coverage line now ends
-`c_able=1,268,190 exact_of_c_able=21.63%`: the bytes that can be C, and how much
-of them is done.
-
-The contributor target list in [Targets](#targets) ranks by bytes and is blind to
-reachability. 228 of its rows and 43,834 of its bytes are not source-reachable at
-all -- 89 `unemittable`, 122 `ordering`, 17 `allocation` -- and some rank high
-because they are large. Use it to see the shape of what is left. Use
-`overlay candidate-rank` to choose, because that is the tool that compiles a
-candidate and knows which class its residual is in.
-
-### 5. Veneers stay in the denominator, and the ceiling is always published
-
-48,760 bytes of linker veneers and 3,020 of alignment are executable bytes in the
-ROM, so they belong in the denominator. They can never be C, so a share measured
-against that denominator can never reach 100. Publish both figures or neither:
-the share of the ROM, and the share of the bytes that can be C.
-
-### 6. The tooling is frozen
-
-163,804 lines of Rust across 135 crates, against 274,372 bytes of ROM
-reconstructed. The loop needs about eight commands and they all exist. Adding a
-tool now requires deleting one, and measurement that explains why we are stuck is
-no longer a deliverable.
-
-### 7. The permuter is a last resort with a number attached
-
-`alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
-passes, and on this corpus it closed nothing: 97 rows at 1,500 to 2,500
-candidates each improved 18 and matched 0. That is what a residue looks like
-after the tractable work has already been taken out of it. Aim it only at rows
-`overlay score` calls `wrong`, after you have read the residual, and treat a
-match it finds as something to explain before adopting.
-
-### Why, in one paragraph
-
-We have finished 65% of the overlay owners and 22% of the overlay bytes, because
-we did the small ones: the median adopted owner is 46 bytes and the median owner
-still parked is 204. Writing C everywhere first consumed the tractable work in
-one pass and banked only the part that matched, so what remains is filtered twice
-over, once for size and once for having already failed. There is no tool that
-undoes that. The way out is reconstructing large functions by reading them, one
-overlay at a time, which is the work that was skipped.
 
 ---
 

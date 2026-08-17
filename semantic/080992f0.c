@@ -30,7 +30,7 @@ struct Object_080992f0 {
     s16 phase_64;
 };
 
-s32 Func_08002322(s32 angle);
+u8 Func_08002322(s32 angle);
 
 void Func_080992f0(struct Object_080992f0 *object)
 {

@@ -26,7 +26,7 @@ void Func_080978c4(void);
 void Func_08091200(s32 value, s32 mode);
 void Func_08091254(s32 mode);
 void Func_08097a7c(void);
-void Func_080041d8(const void *callback, s32 period);
+s32 Func_080041d8(const void *callback, s32 period);
 
 void Func_08097540(s32 arg0, s32 arg1)
 {

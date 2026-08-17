@@ -11,7 +11,7 @@ void Func_0808a460(void);
 s8 Func_08077158(s32);
 s32 Func_08004080(void);
 void Func_08003fa4(s32 index, s32 count, s32 source);
-void Func_080041d8(s32 message, s32 code);
+s32 Func_080041d8(s32 message, s32 code);
 
 void Func_080b010c(void)
 {

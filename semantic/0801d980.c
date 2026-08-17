@@ -7,7 +7,7 @@ struct DmaTransfer {
 };
 
 void *Func_080048f4(s32 arg0, s32 arg1);
-void Func_080041d8(const void *, s32);
+s32 Func_080041d8(const void *, s32);
 
 void Func_0801d980(void)
 {

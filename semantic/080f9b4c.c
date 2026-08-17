@@ -27,7 +27,7 @@ struct Player_080f9b4c {
 
 struct Track_080f9b4c;
 
-u8 Func_080f9ab4(struct Track_080f9b4c *track);
+s32 Func_080f9ab4(struct Track_080f9b4c *track);
 
 void Func_080f9b4c(struct Player_080f9b4c *player, struct Track_080f9b4c *track)
 {

@@ -20,10 +20,10 @@ void Func_08019908(u32, u32);
 s32 Func_08019ba0(s32);
 void *Func_080165d8(s32, s32, s32, s32, const u16 *, s32);
 void Func_080f9010(s32);
-void Func_08003dec(u32 *, s32);
+s32 Func_08003dec(u32 *, s32);
 void Func_080030f8(s32);
 s32 Func_080f9048(void);
-void Func_08016418(s32, s32);
+s32 Func_08016418(s32, s32);
 void Func_08003f3c(s32);
 
 void Func_08021390(u32 arg0)

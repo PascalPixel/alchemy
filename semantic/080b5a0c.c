@@ -3,7 +3,7 @@
 extern u8 *Data_03001e74;
 extern const s8 Data_080c2a10[];
 
-s32 Func_080b6a60(u16 *);
+u8 Func_080b6a60(u16 *);
 s32 Func_080b6ae0(s16 *);
 
 void Func_080b5a0c(void)

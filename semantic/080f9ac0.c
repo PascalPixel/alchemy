@@ -27,7 +27,7 @@ struct Track_080f9ac0 {
     const u8 *command;
 };
 
-u8 Func_080f9a98(const u8 *position);
+s32 Func_080f9a98(const u8 *position);
 
 void Func_080f9ac0(void *player, struct Track_080f9ac0 *track)
 {

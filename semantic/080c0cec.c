@@ -35,13 +35,13 @@ extern struct Runtime_080c0cec Data_03001e80;
 extern struct Transfer_080c0cec Data_03001ce0;
 
 s32 Func_080022ec(s32, s32);
-void Func_080049ac(void);
+s32 Func_080049ac(void);
 void Func_08004cb4(void *);
 void Func_08004c1c(s32);
 void Func_08004bd4(s32);
 void Func_080051d8(struct State_080c0cec *, void *);
 void Func_08005258(u32, u32, u32);
-void Func_08005268(struct Vector_080c0cec *, struct Vector_080c0cec *);
+s32 Func_08005268(struct Vector_080c0cec *, struct Vector_080c0cec *);
 void Func_080c0a24(u32, u32, s32, s32, u32);
 
 static inline u32 Scale_080c0cec(u32 value, u32 (*scale)(u32, u32))

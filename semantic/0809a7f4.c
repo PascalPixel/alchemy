@@ -55,7 +55,7 @@ struct Particle_0809a7f4 {
     u32 handler_6c;
 };
 
-s32 Func_0800231c(s32 angle);
+u8 Func_0800231c(s32 angle);
 s32 Func_08002322(s32 angle);
 u32 Func_08004458(void);
 

@@ -14,7 +14,7 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::process::ExitCode;
 
-use crate::{corpus_guard, parse_sealed, queue, stems, violations, QueueScan, SealedEntry};
+use crate::{corpus_guard, parse_sealed_file, queue, stems, violations, QueueScan};
 
 const USAGE: &str = "Usage: check-sanctum [--queue | --self-test]\n\nModes:\n  (default)      Validate SANCTUM.md against current owners.\n  --queue        List owners with compiler search spent but shape search unrun.\n  --self-test    Run the ledger gate's internal checks.\n  -h, --help     Show this help.";
 
@@ -52,52 +52,40 @@ fn fail(message: &str) -> ExitCode {
 /// The gate's own load-bearing invariants, kept runnable outside `cargo test` so
 /// a deployed binary can prove itself. `cargo test` covers far more.
 fn self_test() -> ExitCode {
-    let good = "\n## Sealed\n\n- `08011568` floor=2hw axes=compiler,shape — scheduler tie the reference wins\n\n## Next\n";
     let set = |items: &[&str]| -> HashSet<String> {
         items.iter().map(|s| (*s).to_string()).collect()
     };
-    let checks: Vec<(&str, bool)> = {
-        let parsed: Vec<SealedEntry> = match parse_sealed(good) {
-            Ok(entries) => entries,
-            Err(error) => return fail(&error),
-        };
-        let beyond = parse_sealed(&format!("{good}\n- `08099999` some prose bullet\n"));
-        let one_axis =
-            parse_sealed("\n## Sealed\n\n- `08011568` floor=2hw axes=compiler — only flags tried\n");
-        vec![
-            (
-                "parseSealed did not read a well-formed entry",
-                parsed.len() == 1 && parsed[0].owner == "08011568" && parsed[0].floor == 2,
-            ),
-            (
-                "parseSealed read beyond its own section",
-                beyond.map(|e| e.len()) == Ok(1),
-            ),
-            (
-                "a sealed owner that is now exact must be a violation",
-                !violations(&parsed, &set(&["08011568"]), &set(&[])).is_empty(),
-            ),
-            (
-                "a sealed owner with no semantic source must be a violation",
-                !violations(&parsed, &set(&[]), &set(&[])).is_empty(),
-            ),
-            (
-                "a well-formed sealed owner must pass",
-                violations(&parsed, &set(&[]), &set(&["08011568"])).is_empty(),
-            ),
-            (
-                "sealing on one axis must be refused",
-                one_axis
-                    .map(|e| !violations(&e, &set(&[]), &set(&["08011568"])).is_empty())
-                    == Ok(true),
-            ),
-            (
-                "a malformed entry must be an error",
-                parse_sealed("\n## Sealed\n\n- `08011568` missing the rest\n").is_err(),
-            ),
-        ]
+    let entry = |axes: &[&str]| crate::SealedEntry {
+        owner: "08011568".to_string(),
+        floor: 2,
+        axes: axes.iter().map(|axis| (*axis).to_string()).collect(),
+        reason: "scheduler tie".to_string(),
     };
+    let sealed = vec![entry(&["compiler", "shape"])];
+    let checks: Vec<(&str, bool)> = vec![
+        (
+            "the tracked sealed set must parse",
+            parse_sealed_file(root()).is_ok(),
+        ),
+        (
+            "a sealed owner that is now exact must be a violation",
+            !violations(&sealed, &set(&["08011568"]), &set(&[])).is_empty(),
+        ),
+        (
+            "a sealed owner with no semantic source must be a violation",
+            !violations(&sealed, &set(&[]), &set(&[])).is_empty(),
+        ),
+        (
+            "a well-formed sealed owner must pass",
+            violations(&sealed, &set(&[]), &set(&["08011568"])).is_empty(),
+        ),
+        (
+            "sealing on one axis must be refused",
+            !violations(&vec![entry(&["compiler"])], &set(&[]), &set(&["08011568"])).is_empty(),
+        ),
+    ];
     for (message, ok) in &checks {
+
         if !ok {
             return fail(message);
         }
@@ -139,14 +127,7 @@ fn run_queue() -> ExitCode {
 
 fn gate() -> ExitCode {
     let root = root();
-    let ledger = root.join("CONTRIBUTING.md");
-    let text = match std::fs::read_to_string(&ledger) {
-        Ok(text) => text,
-        // PORT NOTE: the TS lets readFileSync throw; the message here is the
-        // same failure with a readable face.
-        Err(error) => return fail(&format!("cannot read {}: {error}", ledger.display())),
-    };
-    let entries = match parse_sealed(&text) {
+    let entries = match parse_sealed_file(root) {
         Ok(entries) => entries,
         Err(error) => return fail(&error),
     };

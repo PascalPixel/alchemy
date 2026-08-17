@@ -23,7 +23,6 @@ use crate::{
     canonical_json, default_options, mode_sweep_output_directory, options_of, parse_json,
     resolve_path, summarize, Json, Options, ParseOutcome, MISSING_PATH, USAGE,
 };
-use semantic_queue::semantic_queue;
 
 // The TypeScript derives ROOT from import.meta.url, three directories up from
 // tools/search/. CARGO_MANIFEST_DIR is tools/search-compiler-modes at
@@ -141,14 +140,16 @@ fn run(root: &Path, arguments: &[String]) -> Result<String, Failure> {
         }
     }
 
+    // `--queue` is required. It used to default to ranking the semantic corpus,
+    // which meant a run with no queue searched a corpus the caller never named
+    // -- and once that corpus was empty the search silently examined nothing
+    // and reported success. Name what you want searched.
     let mut items: Vec<Item> = if options.queue.is_empty() {
-        semantic_queue(root)
-            .into_iter()
-            .map(|entry| Item {
-                stem: entry.stem,
-                source: resolve_path(root, &entry.draft),
-            })
-            .collect()
+        return Err(Failure::Error(
+            "--queue is required: give a JSON file with an `items` array of \
+             `candidate` paths"
+                .to_string(),
+        ));
     } else {
         let queue_text = read_text(Path::new(&options.queue)).map_err(Failure::Error)?;
         let queue = parse_json(&queue_text).map_err(Failure::Error)?;
@@ -320,7 +321,6 @@ mod tests {
 
     #[test]
     fn repo_root_holds_the_native_queue_inputs() {
-        assert!(repo_root().join("tools/semantic-queue/Cargo.toml").exists());
         assert!(repo_root().join("tools/mode-sweep/Cargo.toml").exists());
     }
 

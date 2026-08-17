@@ -18,13 +18,10 @@ executable-gap-sources = { path = "../executable-gap-sources" }
 extract-resource = { path = "../extract-resource" }
 late-runtime-data = { path = "../late-runtime-data" }
 music-residuals = { path = "../music-residuals" }
-semantic-owner-scope = { path = "../semantic-owner-scope" }
-semantic-superseded = { path = "../semantic-superseded" }
 source-citations = { path = "../source-citations" }
 cache-key-lint = { path = "../cache-key-lint" }
 no-asm-c = { path = "../no-asm-c" }
 compare-roms = { path = "../compare-roms" }
-semantic-queue = { path = "../semantic-queue" }
 lang-ban = { path = "../lang-ban" }
 check-commit-progress = { path = "../check-commit-progress" }
 coverage-map = { path = "../coverage-map" }

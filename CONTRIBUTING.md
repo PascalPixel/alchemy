@@ -217,9 +217,10 @@ score, read the residual, edit again.
 An *owner* is one function-sized region with a fixed address.
 
 - Main image: assembly in `asm/<address>.s`, C in `exact/<address>.c` once it
-  matches, `semantic/<address>.c` while it does not.
+  matches. An unfinished candidate stays in your worktree.
 - Code overlays: assembly in `assets/code/resource_<id>_overlay.s`, C in
-  `exact/resource_<id>_c_<address>.c` or `semantic/…` respectively.
+  `exact/resource_<id>_c_<address>.c` once it matches, and in your worktree
+  until then.
 
 `overlay candidate-rank` and `compiler main-rank` rank candidates by what is
 wrong with them rather than by how much differs; read [Reading a
@@ -277,14 +278,14 @@ Prefer the shape a 2001 author would have written.
 ```bash
 # a main-image owner
 cargo run --release --manifest-path tools/compiler/Cargo.toml -- \
-  candidate-show semantic/080a1234.c --align
+  candidate-show work/080a1234.c --align
 
 # an overlay row -- same output, same flag, no span argument
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
-  score semantic/resource_373_c_0200034c.c --align
+  score work/resource_373_c_0200034c.c --align
 
 # a decomposed view, with the residual classified
-make dispatch-decomp ARGS='decomp_diagnose semantic/080a1234.c'
+make dispatch-decomp ARGS='decomp_diagnose work/080a1234.c'
 ```
 
 **Read the diff, not the number.** `--align` pairs the two instruction streams
@@ -313,7 +314,7 @@ make dispatch-decomp ARGS='integrate_matches /path/to/draft --apply'
 
 # overlay: rehearses the whole overlay, then splices the row in
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
-  adopt resource_373:034c --source semantic/resource_373_c_0200034c.c --span 320 --apply
+  adopt resource_373:034c --source work/resource_373_c_0200034c.c --span 320 --apply
 ```
 
 An overlay row is spliced into a fixed-size hole, so the gate checks the region
@@ -335,17 +336,17 @@ cargo run --release --manifest-path tools/overlay/Cargo.toml -- park resource_37
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- audit --all
 ```
 
-`park` restores a row's assembly and moves its C to `semantic/`. `audit`
+`park` restores a row's assembly and returns its C to your worktree. `audit`
 compares every adopted row against the bytes it replaced and names any that no
 longer reproduce. Run it after any merge that brought in adoptions from both
 sides.
 
 ### 6. When an owner will not converge
 
-Move it to `semantic/`, take another owner. A main-image owner moves by putting
-its C at `semantic/<address>.c`; the build falls back to `asm/<address>.s`
-automatically. An overlay row must be parked with the command above, because
-its assembly has to come back into the overlay.
+Take another owner. A main-image owner needs nothing done to it -- the build
+falls back to `asm/<address>.s` whenever `exact/<address>.c` is absent. An
+overlay row must be parked with the command above, because its assembly has to
+come back into the overlay.
 
 Understanding accumulates: every owner you finish becomes a worked example of
 what correct source looks like for this compiler, and the next one is easier
@@ -590,7 +591,7 @@ by hand, and if you find yourself doing so, that is worth a note in the commit.
 | `overlay_disasm` | Decodes overlay bytes to assembly. |
 | `overlay_show` | Shows a byte range of one overlay, optionally annotated. |
 | `overlay_entry` | Reports overlay entry points. |
-| `overlay_inventory` | Rebuilds the diagnostic inventory that overlay tools and semantic compilation read. |
+| `overlay_inventory` | Rebuilds the diagnostic inventory the overlay tools read. |
 | `overlay_gaps` | Names unclaimed executable ranges. |
 | `overlay_unindexed` | Names executable spans discovery has not indexed. |
 | `overlay_twins` | Finds owners that mirror one another, so a solved shape can be reused. |
@@ -608,30 +609,19 @@ The `overlay` binary also carries `score`, `park` and `audit`, described in
 of `candidate-show`: same output, same `--align`, and it derives the row's span
 rather than asking you for one.
 
-### semantic — reviewed C that is not yet exact
+### Where unfinished work lives
 
-| Command | What it tells you |
-|---|---|
-| `semantic_queue` | Ranks current candidates, ignoring resolved blockers. |
-| `semantic_owner_scope` | Verifies a source covers its complete audited owner. |
-| `semantic_superseded` | Finds sources made obsolete by an adoption. |
+Nowhere in the tree. A byte is exact C or it is assembly, and there is no third
+directory for C that does not reproduce yet.
 
-Passing these does not make a source an exact claim. `semantic/regions.json`
-records the reviewed boundary for an owner discovery did not index;
-`semantic/sealed.json` holds the small set withdrawn from routine work.
+Keep your candidate in `work/`, which is gitignored. Every tool that scores a
+source takes a path, so `candidate-show work/080a1234.c --align` and
+`score work/resource_373_c_0200034c.c --align` behave exactly as they did when
+the file lived in a tracked tier. Adoption moves it to `exact/` when it matches.
 
-`exact/provisional.json` is the opposite register: owners whose bytes are final
-but whose source is not. Add an entry when you got the bytes by writing toward
-them rather than by reconstructing — a constant respelled as a symbol to force a
-pool word, a duplicated local to defeat common subexpression elimination, a
-prototype changed for its effect on register allocation rather than because the
-interface says so.
-
-The match still counts and the build is still correct; the bytes are right. What
-the entry withdraws is the source's standing as *evidence*. `exact/` is the
-corpus every later owner is compared against, so a source that was contrived to
-match teaches a shape the compiler never asked for. Empty is the goal, and a
-growing list means matches are being bought rather than earned.
+`semantic/regions.json` and `semantic/main-regions.json` survive as the audited
+owner boundaries for regions discovery did not index -- evidence about where an
+owner starts and ends, which is independent of anyone's C.
 
 ### search — bounded source and compiler exploration
 
@@ -708,7 +698,6 @@ claim; a percentage over a failing build is not evidence.
 | `build_claimed` | Links the byte-exact owners. |
 | `build_asm` | Rebuilds the assembled stage. |
 | `build_assets` | Rebuilds the asset tree. |
-| `build_semantic` | Compiles the semantic sources. |
 | `build_full` | Composes exact C, retained assembly and assets, and compares against the ROM. |
 | `build_rom` | Rebuilds the ROM. |
 | `archive_asset` | Rebuilds generic archive containers. |
@@ -765,8 +754,7 @@ Use the smallest stage that answers your question.
 |---|---|
 | `make build-claimed` | Links the byte-exact owners. Fast; answers "does my owner still link and match?" |
 | `make build-asm` | Rebuilds the assembled stage. |
-| `make inventory` | Produces the overlay inventory that overlay tools and `make build-semantic` need. |
-| `make build-semantic` | Compiles the semantic sources, checking each has an admitted owner. |
+| `make inventory` | Produces the overlay inventory that overlay tools. |
 | `make build-assets` | Rebuilds the asset tree. |
 | `make build-full` | Composes everything and compares against the ROM. |
 | `make build-rom` | Rebuilds the ROM image. |
@@ -938,9 +926,13 @@ The commit subject starts with the generated progress prefix:
 ☀️ N% – description
 ```
 
-`N` is the nearest whole byte-exact percentage from the staged report — not the
-public `DONE` figure. `make progress-subject` prints it. The `commit-msg` hook
-checks it.
+`N` is the nearest whole `DONE` percentage — exact C plus permanent assembly —
+from the staged progress report and the staged coverage map, so it matches the
+figure on the README. It was the exact-C share alone until August 2026, which
+meant the sun said 20% beside a README that said 36%. `make progress-subject`
+prints it. The `commit-msg` hook checks it, and both read the index rather than
+the working tree so an unstaged metric cannot set the percentage of a commit
+that does not contain it.
 
 Agent-authored commits use the agent's own identity
 (`Claude <noreply@anthropic.com>`, `Codex <noreply@openai.com>`); never a human

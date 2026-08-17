@@ -26,9 +26,9 @@ with or endorsed by either company.
 ## DONE: Currently 36%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
-plus code that is permanently assembly. Semantic C is tracked separately as
-readable reconstruction work; it does not count toward DONE until its rebuilt
-bytes are exact.
+plus code that is permanently assembly. Nothing else counts. There is no tier
+for C that reads well but does not reproduce: a byte is exact C, or it is
+assembly still to reconstruct.
 
 Three figures, because one of them alone would mislead:
 
@@ -63,23 +63,23 @@ The four maps below show the current byte metrics for the English release.
 Progress is measured by bytes, not function counts.
 
 For the two code charts, the bright band color marks Exact C, the pale band
-color marks permanent assembly, and the near-white ground covers Semantic C and
-ordinary assembly still to reconstruct. The footer reports separate byte
-shares for Semantic, Permanent ASM, and Exact C; ordinary assembly is not a
-separate footer item.
+color marks permanent assembly, and the near-white ground is assembly still to
+reconstruct. The footer reports Exact C, Permanent ASM and their sum as DONE
+for that band alone, so it differs from the whole-ROM figure above; assembly
+still to reconstruct is the remainder and is not a separate footer item.
 
 ### Main game
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=0fbe5821)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=7379ded6)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=d38f9f80)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=41534a89)
 
 ### Images and data
 

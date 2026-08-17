@@ -55,10 +55,9 @@ pub const MUSIC_HUE: HueBand = HueBand {
 
 const GROUND: &str = "#ffffff";
 
-pub const CODE_FRACTION: [(&str, f64); 5] = [
+pub const CODE_FRACTION: [(&str, f64); 4] = [
     ("humanized_c", 1.0),
     ("exact_c", 1.0),
-    ("semantic_c", 0.0),
     ("assembly", 0.0),
     ("retained_asm", 0.0),
 ];
@@ -76,9 +75,8 @@ pub const ASSET_FRACTION: [(&str, f64); 6] = [
     ("asset_data", 0.08),
 ];
 
-const BOX_TREE_LEGEND: [(&str, &str); 9] = [
+const BOX_TREE_LEGEND: [(&str, &str); 8] = [
     ("exact_c", "Exact C"),
-    ("semantic_c", "Semantic"),
     ("retained_asm", "Permanent ASM"),
     ("asset_objects", "Objects"),
     ("asset_color", "Color images"),
@@ -1018,7 +1016,7 @@ pub fn render_box_trees_with_matches(
     if images.bytes + music.bytes != assets.area.bytes {
         return Err("published asset split does not conserve its byte total".to_string());
     }
-    let code_order = ["semantic_c", "retained_asm", "exact_c", "humanized_c"];
+    let code_order = ["retained_asm", "exact_c", "humanized_c"];
     Ok(vec![
         (
             "core",
@@ -1041,7 +1039,7 @@ pub fn render_box_trees_with_matches(
             render_box_tree_with_matches(
                 overlays,
                 "Decoded code-overlay coverage box tree, cyan band; each resource contains its \
-                 exact, semantic, and assembly source regions",
+                 exact-C, permanent-assembly and unreconstructed regions",
                 &OVERLAY_HUE,
                 &CODE_FRACTION,
                 &code_order,
@@ -1290,14 +1288,10 @@ mod tests {
     }
 
     #[test]
-    fn code_tiles_use_the_match_ramp_and_permanent_assembly_stays_blue() {
-        let mut semantic = Tile {
-            label: "owner 0x08001234".to_string(),
-            bytes: 32,
-            address: Some(0x0800_1234),
-            ..Tile::default()
-        };
-        semantic.set_category("semantic_c", 32);
+    fn code_tiles_carry_the_band_colour_and_permanent_assembly_stays_blue() {
+        // Two categories, because there are two tiers. This asserted a
+        // byte-match ramp over semantic tiles until that tier was deleted; a
+        // byte is exact or it is not, and there is no partial credit to shade.
         let mut retained = Tile {
             label: "assembly 0x08001254".to_string(),
             bytes: 16,
@@ -1312,27 +1306,25 @@ mod tests {
             ..Tile::default()
         };
         exact.set_category("exact_c", 16);
-        let mut scores = ByteMatchScores::new();
-        scores.insert("08001234".to_string(), 0.5);
         let svg = render_box_tree_with_matches(
-            &area("code", "Code", vec![semantic, retained, exact]),
-            "code ramp",
+            &area("code", "Code", vec![retained, exact]),
+            "code colours",
             &CORE_HUE,
             &CODE_FRACTION,
-            &["semantic_c", "retained_asm", "exact_c"],
+            &["retained_asm", "exact_c"],
             &[],
             BoxTreeEvidence {
                 title: "Code",
-                byte_match_scores: &scores,
+                byte_match_scores: &ByteMatchScores::new(),
             },
         )
         .unwrap();
 
-        assert!(svg.contains("50.0% byte match"), "{svg}");
-        assert!(svg.contains("oklch(0.740 0.130 295)"), "{svg}");
         assert!(svg.contains("oklch(0.550 0.260 295)"), "{svg}");
         assert!(svg.contains("fill=\"#7dd3fc\""), "{svg}");
-        assert!(svg.contains("fill=\"url(#byte-match-ramp)\""), "{svg}");
+        // The ramp is gone with the tier that needed it.
+        assert!(!svg.contains("byte-match-ramp"), "{svg}");
+        assert!(!svg.contains("byte match"), "{svg}");
     }
 
     #[test]

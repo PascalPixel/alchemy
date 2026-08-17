@@ -70,19 +70,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "build-semantic"
-version = "0.1.0"
-dependencies = [
- "alchemy-bundle",
- "alchemy-plan",
- "alchemy-routing",
- "cache-entry",
- "overlay-disasm",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "build-stage"
 version = "0.1.0"
 dependencies = [
@@ -90,7 +77,6 @@ dependencies = [
  "build-claimed",
  "build-full",
  "build-rom",
- "build-semantic",
 ]
 
 [[package]]
@@ -106,10 +92,6 @@ dependencies = [
 
 [[package]]
 name = "decomp-targets"
-version = "0.1.0"
-
-[[package]]
-name = "discover"
 version = "0.1.0"
 
 [[package]]
@@ -145,18 +127,6 @@ name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
-
-[[package]]
-name = "overlay-disasm"
-version = "0.1.0"
-dependencies = [
- "alchemy-bundle",
- "alchemy-plan",
- "alchemy-routing",
- "alchemy-symbols",
- "cache-entry",
- "discover",
-]
 
 [[package]]
 name = "proc-macro2"

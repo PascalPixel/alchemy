@@ -290,16 +290,6 @@ version = "0.1.0"
 [[package]]
 name = "search-compiler-modes"
 version = "0.1.0"
-dependencies = [
- "semantic-queue",
-]
-
-[[package]]
-name = "semantic-queue"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
 
 [[package]]
 name = "serde"

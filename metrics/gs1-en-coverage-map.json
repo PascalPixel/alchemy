@@ -11,16 +11,16 @@
       "percent_of_executable": 20.39
     },
     "semantic_c": {
-      "bytes": 858028,
-      "percent_of_executable": 63.69
+      "bytes": 862856,
+      "percent_of_executable": 64.05
     },
     "assembly": {
       "bytes": 0,
       "percent_of_executable": 0
     },
     "retained_asm": {
-      "bytes": 214470,
-      "percent_of_executable": 15.92
+      "bytes": 209642,
+      "percent_of_executable": 15.56
     },
     "asset_data": {
       "bytes": 7298755,
@@ -35,15 +35,15 @@
   "overlays": {
     "executable_bytes": 798758,
     "exact_c_bytes": 174086,
-    "semantic_c_bytes": 551410
+    "semantic_c_bytes": 556238
   },
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 1799,
+    "semantic_sources": 1817,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 23068,
+    "semantic_outside_extent_bytes": 25954,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -64,8 +64,8 @@
       "bytes": 541489,
       "categories": {
         "exact_c": 123873,
-        "semantic_c": 364826,
-        "assembly": 52790
+        "semantic_c": 368373,
+        "assembly": 49243
       },
       "tiles": 11
     },
@@ -97,10 +97,10 @@
       "bytes": 798758,
       "categories": {
         "exact_c": 174086,
-        "semantic_c": 551410,
-        "retained_asm": 73262
+        "semantic_c": 556238,
+        "retained_asm": 68434
       },
-      "tiles": 4554
+      "tiles": 4550
     }
   ]
 }

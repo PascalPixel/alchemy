@@ -37,8 +37,8 @@ struct WorldObject_08093af8 {
     s32 y;
     s32 z;
     u8 unknown_14[0x3c];
-    struct ObjectVisual_08093af8 *visual;
     u8 kind;
+    struct ObjectVisual_08093af8 *visual;
     u8 unknown_55[0x1b];
 };
 

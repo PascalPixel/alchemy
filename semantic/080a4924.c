@@ -111,14 +111,14 @@ void Func_080a4924(s32 window, s32 encoded_effect)
 
             Func_08015080(modifier->kind + 0xb3b, window, 0, y);
             Func_08015098((const void *)0x080af21c, window, 0x40, y);
-            if (modifier->value > 9) {
-                Func_080150b0(1, 1, window, 0x48, y);
-                Func_08015098((const void *)0x080af220, window, 0x50, y);
-                digit = modifier->value - 10;
-            } else {
+            if (!(modifier->value > 9)) {
                 Func_080150b0(0, 1, window, 0x48, y);
                 Func_08015098((const void *)0x080af220, window, 0x50, y);
                 digit = modifier->value;
+            } else {
+                Func_080150b0(1, 1, window, 0x48, y);
+                Func_08015098((const void *)0x080af220, window, 0x50, y);
+                digit = modifier->value - 10;
             }
             Func_080150b0(digit, 1, window, 0x58, y);
             break;
@@ -155,19 +155,19 @@ void Func_080a4924(s32 window, s32 encoded_effect)
             break;
             row++;
         case 2:
-            if (encoded_effect & 0x400) {
-                Func_08015080(0xb73, window, 0, row * 8);
-                branch_barrier = 1;
-                row++;
-                Func_08015080(0xb74, window, 0, row * 8);
-                branch_barrier = 2;
-                row++;
-            } else {
+            if (!(encoded_effect & 0x400)) {
                 Func_08015080(0xb71, window, 0, row * 8);
                 branch_barrier = 3;
                 row++;
                 Func_08015080(0xb72, window, 0, row * 8);
                 branch_barrier = 4;
+                row++;
+            } else {
+                Func_08015080(0xb73, window, 0, row * 8);
+                branch_barrier = 1;
+                row++;
+                Func_08015080(0xb74, window, 0, row * 8);
+                branch_barrier = 2;
                 row++;
             }
             break;

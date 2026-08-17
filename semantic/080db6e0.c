@@ -52,8 +52,8 @@ typedef void (*Renderer_080db6e0)(
 #define PTR_AT(p, o) (*(void **)((u8 *)(p) + (o)))
 
 struct Particle_080db6e0 {
-    s32 x;
     s32 y;
+    s32 x;
     s32 z;
     s32 velocity_x;
     s32 velocity_y;

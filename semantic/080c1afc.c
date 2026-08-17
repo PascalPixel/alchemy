@@ -94,13 +94,13 @@ s16 Func_080c1afc(s32 *difference)
     if (eligible > 32)
         eligible = 32;
 
-    if (eligible != 0) {
+    if (!(eligible != 0)) {
+        *difference = 0;
+        result = 1;
+    } else {
         selected = ((u32)eligible * Func_08004458()) >> 16;
         result = candidates[selected].record_id;
         *difference = level - candidates[selected].score;
-    } else {
-        *difference = 0;
-        result = 1;
     }
 
     Func_08002df0(candidates);

@@ -92,11 +92,11 @@ void Func_080da2ac(struct Scene_080da2ac *scene)
         }
     }
 
-    if (SCENE_080DA2AC->direction == 1) {
+    if (!(SCENE_080DA2AC->direction == 1)) {
+        horizontal_offset = 0;
+    } else {
         *(volatile s32 *)0x04000028 = -0x7000;
         horizontal_offset = -112;
-    } else {
-        horizontal_offset = 0;
     }
 
     Func_080ed408(46, 7, 7, 3, 1);

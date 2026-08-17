@@ -23,15 +23,15 @@ void Func_08019854(struct State_08019854 *state) {
     struct Record_08019854 *record;
     u32 bottom;
     u32 left;
-    u32 right;
     u32 top;
+    u32 right;
     u32 mode;
 
     record = state->record;
     top = record->right;
+    mode = record->mode;
     bottom = record->bottom;
     left = record->left;
-    mode = record->mode;
     right = record->top;
 
     if (mode == 4) {

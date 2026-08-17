@@ -105,8 +105,8 @@ s32 Func_0802106c(void)
 
         if ((*(volatile u32 *)0x03001b04 & 2) != 0) {
             Func_080f9010(0x71);
-            selection = -1;
             break;
+            selection = -1;
         }
         if ((*(volatile u32 *)0x03001b04 & 1) != 0) {
             Func_080f9010(0x70);

@@ -12,8 +12,8 @@ struct State_080a1d08 {
     void *fallback_handle;
     u8 padding030[0x0C];
     void *active_handle;
-    u8 padding040[0x1E2];
     u16 finished;
+    u8 padding040[0x1E2];
 };
 
 typedef char Display_080a1d08_size[

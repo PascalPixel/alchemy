@@ -134,8 +134,8 @@ s32 Func_08024934(s32 arg0, s32 arg1, u8 *key)
 {
     struct FieldUiState_08024934 *engine = Data_03001e8c;
     struct Window_08024934 *heading;
-    struct Window_08024934 *keyWindow;
     struct Window_08024934 *listWindow;
+    struct Window_08024934 *keyWindow;
     struct SpriteSlot_08024934 rowSprites[4];
     struct SpriteSlot_08024934 cursor;
     u32 graphics[4];
@@ -396,18 +396,18 @@ s32 Func_08024934(s32 arg0, s32 arg1, u8 *key)
             } else if (pressed & 0x10) {
                 Func_080f9010(111);
                 Func_0800352c();
-                if (row + 4 >= count) {
-                    if (row != 0) {
-                        column = savedColumn;
-                        row = 0;
-                    }
-                } else {
+                if (!(row + 4 >= count)) {
                     row += 4;
                     column = savedColumn;
                     if (row == Div4TowardZero(last) * 4) {
                         column = count - row - 1;
                         if (column > savedColumn)
                             column = savedColumn;
+                    }
+                } else {
+                    if (row != 0) {
+                        column = savedColumn;
+                        row = 0;
                     }
                 }
                 pageWidth = column * 2;

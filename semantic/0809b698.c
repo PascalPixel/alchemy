@@ -28,8 +28,8 @@ struct SceneObject_0809b698 {
 struct SceneSequence_0809b698 {
     u8 unknown_000[0x10];
     struct SceneObject_0809b698 *object;
-    u8 unknown_014[0x706];
     s16 graphic_handle;
+    u8 unknown_014[0x706];
 };
 
 struct TransitionState_0809b698 {

@@ -192,16 +192,7 @@ s32 Func_080ba978(ActionInput_080ba978 *input, s32 options)
         }
     }
 
-    if (input->message_mode != 0) {
-        if (input->message_mode == 1) {
-            Func_080bbabc(0, input->primary_id);
-            Func_080bbabc(4, 0x856);
-        } else {
-            Func_080bbabc(4, 0x855);
-        }
-        Func_080bb938();
-        Func_080c1a14();
-    } else {
+    if (!(input->message_mode != 0)) {
         Func_080041d8(0x080bd899, 0x0c80);
         if (work.flags != 0) {
             if ((input->flags & 0x4000) != 0)
@@ -215,6 +206,15 @@ s32 Func_080ba978(ActionInput_080ba978 *input, s32 options)
         Func_08009080(primary_object, 1);
         for (i = 0; i < work.count; i++)
             Func_080b8000(work.members[i]);
+    } else {
+        if (input->message_mode == 1) {
+            Func_080bbabc(0, input->primary_id);
+            Func_080bbabc(4, 0x856);
+        } else {
+            Func_080bbabc(4, 0x855);
+        }
+        Func_080bb938();
+        Func_080c1a14();
     }
     return 0;
 }

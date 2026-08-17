@@ -5,8 +5,8 @@ struct Particle_080dfa48 {
     s32 y;
     s32 z;
     s32 velocity_x;
-    s32 velocity_y;
     s32 velocity_z;
+    s32 velocity_y;
     s32 timer;
 };
 

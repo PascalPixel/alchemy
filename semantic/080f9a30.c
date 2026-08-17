@@ -29,8 +29,8 @@ void Func_080f9a30(struct Node_080f9a30 *node)
     if (list == 0)
         return;
 
-    next = node->next;
     previous = node->previous;
+    next = node->next;
 
     if (previous != 0)
         previous->next = next;

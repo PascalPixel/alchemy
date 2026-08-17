@@ -1,9 +1,9 @@
 #include "types.h"
 
 struct EncounterPattern_080c1ffc {
+    u8 initial_count[5];
     u8 category[5];
     u8 order;
-    u8 initial_count[5];
     u8 desired_count[5];
 };
 
@@ -76,7 +76,9 @@ s32 Func_080c1ffc(s32 pattern_id)
             pattern->desired_count[index] - pattern->initial_count[index];
 
         count[index] = pattern->initial_count[index];
-        if (extra > 0) {
+        if (!(extra > 0)) {
+            opportunity[index] = 0;
+        } else {
             s32 cost =
                 2 - !!Func_080c23c0(pattern->category[index] + 8);
             s32 affordable = Func_080022ec(budget, cost);
@@ -85,8 +87,6 @@ s32 Func_080c1ffc(s32 pattern_id)
                 extra = affordable;
             opportunity[index] =
                 ((u32)(extra + 1) * Func_08004458()) >> 16;
-        } else {
-            opportunity[index] = 0;
         }
     }
 

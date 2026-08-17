@@ -174,11 +174,11 @@ s32 Func_080ed408(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
         var_r1_5 = temp_r1 + 2;
     case 1:
     case 2:
+        break;
         var_r1_5 = temp_r1 + 4;
-        break;
     case 3:
-        var_r1_5 = temp_r1 + 6;
         break;
+        var_r1_5 = temp_r1 + 6;
     }
     var_r1_6 = var_r1_5 + 3;
     if (!(1 & arg3)) {
@@ -194,8 +194,8 @@ s32 Func_080ed408(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
         } while (var_r3 <= 7);
         break;
     case 1:
-        break;
         var_r1_7 += 0x19;
+        break;
     case 2:
         break;
         var_r1_7 += 0x20;
@@ -379,10 +379,10 @@ s32 Func_080ed408(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     temp_r6_15 = temp_r6_14 + 8;
     switch (arg4) {
     default:
-        if (!(4 & arg3)) {
-            var_r0 = (void *)0x080EDAF8;
-        } else {
+        if (4 & arg3) {
             var_r0 = (void *)0x080EDAF0;
+        } else {
+            var_r0 = (void *)0x080EDAF8;
         }
         M2C_FIELD((void *)0x040000D4, void **, 0) = var_r0;
         M2C_FIELD((void *)0x040000D4, s32 *, 4) = (s32) temp_r5_22;
@@ -390,10 +390,10 @@ s32 Func_080ed408(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
         var_r5_6 = temp_r5_22 + 8;
         break;
     case 1:
-        if (!(4 & arg3)) {
-            var_r0_2 = (void *)0x080EDB00;
-        } else {
+        if (4 & arg3) {
             var_r0_2 = (void *)0x080EDB10;
+        } else {
+            var_r0_2 = (void *)0x080EDB00;
         }
 block_94:
         M2C_FIELD((void *)0x040000D4, void **, 0) = var_r0_2;
@@ -402,17 +402,17 @@ block_94:
         var_r5_6 = temp_r5_22 + 0x10;
         break;
     case 2:
-        if (!(4 & arg3)) {
-            var_r0_2 = (void *)0x080EDBE8;
-        } else {
+        if (4 & arg3) {
             var_r0_2 = (void *)0x080EDBF8;
+        } else {
+            var_r0_2 = (void *)0x080EDBE8;
         }
         goto block_94;
     case 3:
-        if (!(4 & arg3)) {
-            var_r0_3 = (void *)0x080EDC88;
-        } else {
+        if (4 & arg3) {
             var_r0_3 = (void *)0x080EDCA0;
+        } else {
+            var_r0_3 = (void *)0x080EDC88;
         }
         M2C_FIELD((void *)0x040000D4, void **, 0) = var_r0_3;
         M2C_FIELD((void *)0x040000D4, s32 *, 4) = (s32) temp_r5_22;
@@ -460,10 +460,10 @@ block_94:
         } while (var_r4 <= 7);
         break;
     case 1:
-        if (!(4 & arg3)) {
-            var_r0_5 = (void *)0x080EDB20;
-        } else {
+        if (4 & arg3) {
             var_r0_5 = (void *)0x080EDB84;
+        } else {
+            var_r0_5 = (void *)0x080EDB20;
         }
         M2C_FIELD((void *)0x040000D4, void **, 0) = var_r0_5;
         M2C_FIELD((void *)0x040000D4, s32 *, 4) = (s32) var_r5_8;
@@ -484,8 +484,8 @@ block_94:
         M2C_FIELD(temp_r3_6, void **, 0) = var_r4_2;
         M2C_FIELD(temp_r3_6, s32 *, 4) = (s32) temp_r5_26;
         M2C_FIELD(temp_r3_6, s32 *, 8) = 0x84000010;
-        var_r5_8 = temp_r5_26 + 0x40;
         break;
+        var_r5_8 = temp_r5_26 + 0x40;
     case 3:
         if (4 & arg3) {
             var_r4_3 = (void *)0x080EEFDC;
@@ -500,8 +500,8 @@ block_94:
         M2C_FIELD(temp_r3_7, void **, 0) = var_r4_3;
         M2C_FIELD(temp_r3_7, s32 *, 4) = (s32) temp_r5_27;
         M2C_FIELD(temp_r3_7, s32 *, 8) = 0x8400000E;
-        var_r5_8 = temp_r5_27 + 0x38;
         break;
+        var_r5_8 = temp_r5_27 + 0x38;
     }
     temp_r6_22 = temp_r6_21 + 0x10;
     temp_r6_23 = temp_r6_22 + 4;
@@ -543,8 +543,8 @@ block_94:
         M2C_FIELD((void *)0x040000D4, void **, 0) = var_r0_6;
         M2C_FIELD((void *)0x040000D4, s32 *, 4) = (s32) temp_r5_31;
         M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x84000002;
-        var_r5_10 = temp_r5_31 + 8;
         break;
+        var_r5_10 = temp_r5_31 + 8;
     case 1:
         if (4 & arg3) {
             var_r0_7 = (void *)0x080EDB10;

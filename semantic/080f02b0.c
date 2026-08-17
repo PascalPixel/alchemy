@@ -91,8 +91,8 @@ void Func_080f02b0(s32 arg0, s32 arg1)
     Data_03001e50.slot49(buffer + 0x100, destination, fill);
     Func_08002dd8(49);
 
-    count = &Data_02002090;
     ime = &Data_04000208;
+    count = &Data_02002090;
     savedIme = *(volatile u16 *)ime;
     *(volatile u16 *)ime = (u16)(u32)ime;
     index = *count;

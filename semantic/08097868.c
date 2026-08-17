@@ -7,8 +7,8 @@ struct DmaTransfer_08097868 {
 };
 
 struct EffectState_08097868 {
-    u8 data[0x28a];
     u8 frame;
+    u8 data[0x28a];
     u8 padding[9];
     u8 inactive;
 };
@@ -27,8 +27,8 @@ void Func_08097868(void)
         volatile u16 *control = (volatile u16 *)0x040000ba;
 
         source = (u32)((u8 *)state + state->frame * 0x144);
-        destination = 0x04000010;
         dmaControl = 0xa2600001;
+        destination = 0x04000010;
         *control &= 0xc5ff;
         *control &= 0x7fff;
         dma[0] = source;

@@ -30,10 +30,10 @@ void Func_0801868c(
     box_height = *height;
 
     if ((flags & 2) == 0) {
-        if (flags & 1) {
-            Func_08018a50(text, width, height, measurement_context);
-        } else {
+        if (!(flags & 1)) {
             Func_08018850(text, width, height, measurement_context);
+        } else {
+            Func_08018a50(text, width, height, measurement_context);
         }
     }
 

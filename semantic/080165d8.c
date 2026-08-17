@@ -40,8 +40,8 @@ struct Slot *Func_080165d8(void *entry, s32 field12, s32 x, s32 y,
     selected = 0;
     for (index = 0; index != 3; index++, slot++) {
         if (slot->entry == 0) {
-            selected = slot;
             break;
+            selected = slot;
         }
     }
 

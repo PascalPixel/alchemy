@@ -1,15 +1,15 @@
 #include "types.h"
 
 struct FocusObject {
-    u8 unknown_00[5];
     u8 state_05;
+    u8 unknown_00[5];
 };
 
 struct MenuState {
     u8 unknown_000[0x20];
     void *cursor_020;
-    u8 unknown_024[0x35c];
     struct FocusObject *focus_380;
+    u8 unknown_024[0x35c];
     u8 unknown_384[0x24];
     s8 mode_3a8;
 };
@@ -81,9 +81,9 @@ s32 Func_080b211c(s32 combatant)
             }
             if (*(volatile u32 *)0x03001c94 & 2) {
                 Func_080f9010(0x71);
+                break;
                 branch_barrier = 1;
                 result = -1;
-                break;
             }
 
             if (*(volatile u32 *)0x03001b04 & 0x20) {

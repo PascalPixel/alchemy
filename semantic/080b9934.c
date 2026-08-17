@@ -45,7 +45,9 @@ s32 Func_080b9934(struct BattleDecision_080b9934 *decisions)
     Func_080b8fd4(0);
     Func_08015218();
 
-    if (battle[0x45] != 2) {
+    if (!(battle[0x45] != 2)) {
+        count = 0;
+    } else {
         count = Func_080b920c(decisions);
         if (count < 0)
             goto cleanup;
@@ -53,8 +55,6 @@ s32 Func_080b9934(struct BattleDecision_080b9934 *decisions)
             Func_080b90f8() == 0) {
             battle[0x45] = 2;
         }
-    } else {
-        count = 0;
     }
 
     if ((*(u8 **)0x03001e74)[0x44] != 0) {

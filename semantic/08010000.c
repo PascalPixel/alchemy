@@ -64,8 +64,8 @@ struct Map_08010000 {
     s32 bound_low_x;
     s32 bound_low_y;
     s32 bound_high_x;
-    s32 bound_high_y;
     u8 unknown_fc[8];
+    s32 bound_high_y;
     struct Layer_08010000 layers[3];
 };
 
@@ -111,8 +111,8 @@ void Func_08010000(void)
     high_x = map->bound_high_x - velocity_x + (s32)0xff100000;
 
     velocity_y = map->velocity_y;
-    low_y = map->bound_low_y + velocity_y;
     high_y = map->bound_high_y - velocity_y + (s32)0xff600000;
+    low_y = map->bound_low_y + velocity_y;
 
     if (high_x < low_x)
         high_x = low_x;

@@ -25,8 +25,8 @@ s32 Func_080a3ddc(u8 *arg0, u16 *arg1) {
             count++;
             out++;
         }
-        src++;
         offset += 2;
+        src++;
         j--;
     } while (j >= 0);
     return count;

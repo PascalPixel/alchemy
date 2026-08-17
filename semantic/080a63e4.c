@@ -103,7 +103,9 @@ s32 Func_080a63e4(s32 suppress_preview)
             break;
         }
 
-        if (redraw != 0) {
+        if (!(redraw != 0)) {
+            selection_bytes = selection * 2;
+        } else {
             s32 coordinate;
             u16 actor_id;
 
@@ -123,9 +125,11 @@ s32 Func_080a63e4(s32 suppress_preview)
                 ((u16)coordinate & 0x01ff);
 
             if (suppress_preview == 0) {
-                Func_080a112c(state->action_window, actor_id, 0, 0);
                 Func_080a1804(state, actor_id);
-                if (Func_080770c0(0x151) == 0 && preview_open == 0) {
+                Func_080a112c(state->action_window, actor_id, 0, 0);
+                if (!(Func_080770c0(0x151) == 0 && preview_open == 0)) {
+                    Func_080770d0(0x151);
+                } else {
                     Func_08015270(state->preview_window);
                     Func_08015080(
                         (state->preview_resource & 0x3fff) + 0x53a,
@@ -133,12 +137,8 @@ s32 Func_080a63e4(s32 suppress_preview)
                         0,
                         0);
                     preview_open = 1;
-                } else {
-                    Func_080770d0(0x151);
                 }
             }
-        } else {
-            selection_bytes = selection * 2;
         }
 
         Func_080a1a40((selection_bytes + selection) * 8 - 10, 16);
@@ -146,13 +146,13 @@ s32 Func_080a63e4(s32 suppress_preview)
 
         if ((Data_03001c94 & 1) != 0) {
             Func_080f9010(0x70);
-            result = state->actor_ids[selection];
             break;
+            result = state->actor_ids[selection];
         }
         if ((Data_03001c94 & 2) != 0) {
             Func_080f9010(0x71);
-            result = -1;
             break;
+            result = -1;
         }
         if ((Data_03001b04 & 0x20) != 0) {
             Func_080f9010(0x6f);

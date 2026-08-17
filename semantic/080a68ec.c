@@ -2,8 +2,8 @@
 #include "types.h"
 
 struct ActionSlot_080a68ec {
-    u16 action;
     u16 unknown_02;
+    u16 action;
 };
 
 struct Combatant_080a68ec {

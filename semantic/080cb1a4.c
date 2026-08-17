@@ -137,8 +137,8 @@ void Func_080cb1a4(void *argument)
         source_point[0] = S32_AT_080CB1A4(primary, 8);
         source_point[1] = S32_AT_080CB1A4(primary, 12);
         source_point[2] = S32_AT_080CB1A4(primary, 16);
-        Func_080e3944(source_point, projected);
         projected[0] >>= 1;
+        Func_080e3944(source_point, projected);
 
         if ((u32)(frame - 54) <= 1) {
             renderer(

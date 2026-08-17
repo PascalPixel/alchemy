@@ -32,7 +32,49 @@ void Func_080cde90(u32 x0, s32 y0, u32 x1, s32 y1, s32 intensity)
     if (y1 > 127)
         y1 = 127;
 
-    if (absoluteDx < absoluteDy) {
+    if (!(absoluteDx < absoluteDy)) {
+        s32 dy;
+        s32 step;
+
+        if (!(dx < 0)) {
+            dy = y1 - y0;
+        } else {
+            u32 swapX = x0;
+            s32 swapY = y0;
+
+            x0 = x1;
+            x1 = swapX;
+            y0 = y1;
+            y1 = swapY;
+            originalDy = y1 - y0;
+            dx = (s32)(x1 - x0);
+            dy = originalDy;
+        }
+
+        absoluteDy = dy < 0 ? (s32)(0U - (u32)dy) : dy;
+        if (!(dx >= 0)) {
+            step = Func_080022ec(
+                (s32)((u32)absoluteDy << 8), (s32)(x0 - x1));
+        } else {
+            step = Func_080022ec((s32)((u32)absoluteDy << 8), dx);
+        }
+        while (x0 != x1) {
+            u32 offset = GRID_OFFSET(x0, y0);
+
+            if ((s32)grid[offset] < intensity)
+                grid[offset] = (u8)intensity;
+
+            error += step;
+            if ((error & 0x100) != 0) {
+                if (originalDy > 0)
+                    y0++;
+                else
+                    y0--;
+                error &= ~0x100;
+            }
+            x0++;
+        }
+    } else {
         s32 step;
 
         if (originalDy < 0) {
@@ -63,48 +105,6 @@ void Func_080cde90(u32 x0, s32 y0, u32 x1, s32 y1, s32 intensity)
                 error &= ~0x100;
             }
             y0++;
-        }
-    } else {
-        s32 dy;
-        s32 step;
-
-        if (dx < 0) {
-            u32 swapX = x0;
-            s32 swapY = y0;
-
-            x0 = x1;
-            x1 = swapX;
-            y0 = y1;
-            y1 = swapY;
-            originalDy = y1 - y0;
-            dx = (s32)(x1 - x0);
-            dy = originalDy;
-        } else {
-            dy = y1 - y0;
-        }
-
-        absoluteDy = dy < 0 ? (s32)(0U - (u32)dy) : dy;
-        if (dx >= 0) {
-            step = Func_080022ec((s32)((u32)absoluteDy << 8), dx);
-        } else {
-            step = Func_080022ec(
-                (s32)((u32)absoluteDy << 8), (s32)(x0 - x1));
-        }
-        while (x0 != x1) {
-            u32 offset = GRID_OFFSET(x0, y0);
-
-            if ((s32)grid[offset] < intensity)
-                grid[offset] = (u8)intensity;
-
-            error += step;
-            if ((error & 0x100) != 0) {
-                if (originalDy > 0)
-                    y0++;
-                else
-                    y0--;
-                error &= ~0x100;
-            }
-            x0++;
         }
     }
 }

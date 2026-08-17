@@ -21,8 +21,8 @@ void Func_0801c34c(void)
     u16 *field;
 
     base = Data_03001ebc;
-    x = 8;
     y = 8;
+    x = 8;
     resource = Func_0808a5d0(Data_02000240[224], Data_02000240[225]) + 0x99b;
     Func_080187ac(resource, (s32)&x, (s32)&y, (s32)&third, (s32)&fourth);
     x = (30 - third) >> 1;

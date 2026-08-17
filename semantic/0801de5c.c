@@ -17,10 +17,10 @@ typedef void (*ArmFill)(void *destination, u32 size, u32 value);
 typedef void (*Resident_03000164)(void *destination, u32 size, u32 value);
 
 struct TextTileState_0801de5c {
-    u8 tile_in_use[0x100];
-    u8 unknown_000[0xda0];
     u16 next_tile;
     u8 expanded_tiles;
+    u8 tile_in_use[0x100];
+    u8 unknown_000[0xda0];
     u8 unknown_ea3[4];
     u8 palette_bank;
     u8 unknown_ea8[6];
@@ -64,7 +64,14 @@ u32 Func_0801de5c(
         sizeof(translation),
         (u32)scratch);
 
-    if (palette_bits == 0xf000) {
+    if (!(palette_bits == 0xf000)) {
+        translation[1] = state->glyph_style & 0x0f;
+        translation[3] = 1;
+        ((ArmFill)0x03000168)(
+            scratch,
+            0x800,
+            0x0e0e0e0e);
+    } else {
         translation[1] =
             palette_table[state->glyph_style & 0x0f];
         translation[3] = 3;
@@ -72,13 +79,6 @@ u32 Func_0801de5c(
             scratch,
             0x800,
             0x04040404);
-    } else {
-        translation[1] = state->glyph_style & 0x0f;
-        translation[3] = 1;
-        ((ArmFill)0x03000168)(
-            scratch,
-            0x800,
-            0x0e0e0e0e);
     }
 
     if (tokens != 0) {
@@ -142,8 +142,8 @@ u32 Func_0801de5c(
                         color = translation[pixels & 0x0f];
                         if (color != 0)
                             destination[1] = color;
-                        pixels >>= 4;
                         destination += 2;
+                        pixels >>= 4;
                     }
                     destination += 0xf8;
                 }

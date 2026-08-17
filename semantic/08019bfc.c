@@ -31,8 +31,8 @@ u32 Func_08019bfc(struct DecoderState_08019bfc *state)
     packed_end = tree - 1;
     input = state->input;
     input_bits = state->input_bits;
-    tree_bits = 1;
     leaf = 0;
+    tree_bits = 1;
 
     for (;;) {
         bit = tree_bits & 1;

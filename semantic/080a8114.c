@@ -149,7 +149,10 @@ s32 Func_080a8114(void)
                     }
                 } else {
                     Func_08015270(state->selector_window);
-                    if (extended_alternate != 0) {
+                    if (!(extended_alternate != 0)) {
+                        selection =
+                            (s8)Func_080022fc(selection + 7, 7);
+                    } else {
                         s32 wrapped = selection + 8;
                         s32 quotient_value = wrapped;
 
@@ -157,9 +160,6 @@ s32 Func_080a8114(void)
                             quotient_value = selection + 15;
                         selection =
                             (s8)(wrapped - (quotient_value >> 3) * 8);
-                    } else {
-                        selection =
-                            (s8)Func_080022fc(selection + 7, 7);
                     }
                 }
 

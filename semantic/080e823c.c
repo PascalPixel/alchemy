@@ -2,8 +2,8 @@
 #include "types.h"
 
 struct Particle_080e823c {
-    s32 x;
     s32 y;
+    s32 x;
     s32 z;
     s32 velocity_x;
     s32 velocity_y;

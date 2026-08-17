@@ -8,13 +8,13 @@ struct RewardTotals_080c24f0 {
 };
 
 struct BattleGlobals_080c24f0 {
-    u8 unknown_000[0x10];
     u16 character_order[6];
+    u8 unknown_000[0x10];
     u8 unknown_01C[0x20];
     u16 earliest_character;
     u16 ordering_state;
-    u8 unknown_040[0x4F0];
     struct RewardTotals_080c24f0 rewards;
+    u8 unknown_040[0x4F0];
 };
 
 struct Combatant_080c24f0 {

@@ -7,22 +7,22 @@ typedef void (*PrimaryCallback_08095a44)(
 
 struct PrimaryObject_08095a44 {
     u8 unknown_00[8];
-    s32 x;
     s32 y;
+    s32 x;
     s32 z;
     u8 unknown_14[0x58];
     PrimaryCallback_08095a44 callback;
 };
 
 struct SceneState_08095a44 {
-    u8 unknown_00[0x58];
     struct EffectSlot particles[24];
+    u8 unknown_00[0x58];
 };
 
 struct Vector_08095a44 {
     s32 x;
-    s32 y;
     s32 z;
+    s32 y;
 };
 
 extern struct SceneState_08095a44 *Data_03001f30;

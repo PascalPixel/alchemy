@@ -88,8 +88,8 @@ s32 Func_08093c00(void)
     s32 marker;
     s32 drop;
 
-    actor = (struct Actor_08093c00 *)Func_08092054(*(s32 *)(0x02000240 + 500));
     result = -1;
+    actor = (struct Actor_08093c00 *)Func_08092054(*(s32 *)(0x02000240 + 500));
     facing = (0x2000 + actor->facing) & 0xc000;
     saved_flags = actor->flags;
     context = *(u8 **)0x03001ebc;

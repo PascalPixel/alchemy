@@ -18,8 +18,8 @@ struct Runtime_080c0cec {
 };
 
 struct Vector_080c0cec {
-    s32 first;
     s32 second;
+    s32 first;
     s32 third;
 };
 

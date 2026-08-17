@@ -177,9 +177,7 @@ void Func_0800cacc(void)
             continue;
         }
 
-        if (object->blocked_5e != 0) {
-            object->blocked_5e -= 1;
-        } else {
+        if (!(object->blocked_5e != 0)) {
             for (;;) {
                 s32 entry = object->program_00[object->step_04];
                 if ((u32)entry > 63) {
@@ -194,6 +192,8 @@ void Func_0800cacc(void)
             if (object->program_00 == 0) {
                 continue;
             }
+        } else {
+            object->blocked_5e -= 1;
         }
 
         newX = object->position_08[0];
@@ -221,11 +221,7 @@ void Func_0800cacc(void)
                     dz >>= 16;
                     dist = isqrtIwram(multiply(dx, dx) + multiply(dy, dy) + multiply(dz, dz));
 
-                    if (dist == 0) {
-                        newX = object->pushback_38[0];
-                        newY = object->pushback_38[1];
-                        newZ = object->pushback_38[2];
-                    } else {
+                    if (!(dist == 0)) {
                         s32 ratio = ratioHelper(dist << 16, object->acceleration_34);
                         s32 nvx = object->velocity_24[0] + multiply(dx, ratio);
                         s32 nvy = object->velocity_24[1] + multiply(dy, ratio);
@@ -241,6 +237,10 @@ void Func_0800cacc(void)
                             object->velocity_24[1] = multiply(nvy, scale);
                             object->velocity_24[2] = multiply(nvz, scale);
                         }
+                    } else {
+                        newY = object->pushback_38[1];
+                        newX = object->pushback_38[0];
+                        newZ = object->pushback_38[2];
                     }
                 } else {
                     s32 vx = object->velocity_24[0];
@@ -282,8 +282,8 @@ void Func_0800cacc(void)
                         s32 dxRaw = object->pushback_38[0] - newX;
                         s32 dzRaw = object->pushback_38[2] - newZ;
                         dist = Func_080045d4(multiply(dxRaw, dxRaw) + multiply(dzRaw, dzRaw));
-                        dzWrapped = dzRaw;
                         dxWrapped = dxRaw;
+                        dzWrapped = dzRaw;
                     }
 
                     if (dist == 0) {

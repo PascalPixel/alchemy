@@ -264,30 +264,7 @@ block_36:
                     var_r6 = (var_r6 + 1) & 0x1FF;
                 }
             }
-            if (var_r7 > 0x1FU) {
-                if ((Data_03001e8c->insert_wait_command != 0) && ((var_r7 == 0x20) || (sp1C > 0xAU))) {
-                    temp_r6 = (var_r6 + 1) & 0x1FF;
-                    Data_03001e8c->command_buffer[var_r6] = 0x2E;
-                    temp_r6_2 = (temp_r6 + 1) & 0x1FF;
-                    Data_03001e8c->command_buffer[temp_r6] = 0x2E;
-                    Data_03001e8c->command_buffer[temp_r6_2] = 0x2E;
-                    var_r6 = (temp_r6_2 + 1) & 0x1FF;
-                    sp10 = 1;
-                    if (sp1C > 0xAU) {
-                        var_r7 = 0x20;
-                    }
-                }
-                if (var_r7 == 0x22) {
-                    temp_r2 = sp24 ^ 1;
-                    sp24 = temp_r2;
-                    if (temp_r2 != 0) {
-                        var_r7 = 0x8E;
-                    }
-                }
-                Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
-                var_r6 = (var_r6 + 1) & 0x1FF;
-                sp28 = 0;
-            } else {
+            if (!(var_r7 > 0x1FU)) {
                 expansion_index = 0;
                 if (var_r7 == 0x14) {
                     temp_r5_2 = readToken(sp38) - 1;
@@ -477,6 +454,29 @@ loop_124:
                         goto block_148;
                     }
                 }
+            } else {
+                if ((Data_03001e8c->insert_wait_command != 0) && ((var_r7 == 0x20) || (sp1C > 0xAU))) {
+                    temp_r6 = (var_r6 + 1) & 0x1FF;
+                    Data_03001e8c->command_buffer[var_r6] = 0x2E;
+                    temp_r6_2 = (temp_r6 + 1) & 0x1FF;
+                    Data_03001e8c->command_buffer[temp_r6] = 0x2E;
+                    Data_03001e8c->command_buffer[temp_r6_2] = 0x2E;
+                    var_r6 = (temp_r6_2 + 1) & 0x1FF;
+                    sp10 = 1;
+                    if (sp1C > 0xAU) {
+                        var_r7 = 0x20;
+                    }
+                }
+                if (var_r7 == 0x22) {
+                    temp_r2 = sp24 ^ 1;
+                    sp24 = temp_r2;
+                    if (temp_r2 != 0) {
+                        var_r7 = 0x8E;
+                    }
+                }
+                Data_03001e8c->command_buffer[var_r6] = (s16)var_r7;
+                var_r6 = (var_r6 + 1) & 0x1FF;
+                sp28 = 0;
             }
         }
         temp_r5_5 = sp1C + 1;

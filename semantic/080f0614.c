@@ -17,8 +17,8 @@ void Func_080f0614(void)
 
         if (rounded < 0)
             rounded += 7;
-        index = rounded >> 3;
         previous = *previousAddress;
+        index = rounded >> 3;
         if (previous < 0)
             previous += 7;
         if (index != (previous >> 3)) {

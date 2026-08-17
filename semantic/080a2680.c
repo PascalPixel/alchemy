@@ -130,8 +130,8 @@ s32 RunCharacterItemTransferMenu(s32 *source_out, s32 *target_out, s32 *item_out
 
         case 1:
             if (Func_080a3d6c(FIELD(state, u8, 0x21a)) == 0) {
-                phase = 0;
                 break;
+                phase = 0;
             }
             Func_080a4ee0();
             Func_080a4e44();
@@ -471,8 +471,8 @@ s32 RunCharacterItemTransferMenu(s32 *source_out, s32 *target_out, s32 *item_out
                 Func_080a1d08(0xb84, 15, 14);
             } else {
                 s32 confirm;
-                Func_08077010(FIELD(state, u8, 0x21a));
                 Func_08077010(FIELD(state, u8, 0x21b));
+                Func_08077010(FIELD(state, u8, 0x21a));
                 Func_080772c0(FIELD(state, u8, 0x21a));
                 Func_080772c0(FIELD(state, u8, 0x21b));
                 Func_080a4e68();
@@ -568,17 +568,17 @@ s32 RunCharacterItemTransferMenu(s32 *source_out, s32 *target_out, s32 *item_out
             Func_080a3ef0(
                 FIELD(state, u8, 0x21a), FIELD(state, u16, 0x174), 0);
             FIELD(FIELD(state, u8 *, 20), u8, 5) = 1;
-            phase = 9;
             break;
+            phase = 9;
 
         case 12:
             (void)Func_080a4f08(0, 30, 0);
-            phase = 1;
             break;
+            phase = 1;
 
         case 8:
-            phase = 1;
             break;
+            phase = 1;
 
         default:
             done = 1;

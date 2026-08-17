@@ -41,8 +41,8 @@ activate:
     case 1:
         Func_0800615c(other);
         Func_080060e8(value);
-        state = (u8 *)0x02002240;
         break;
+        state = (u8 *)0x02002240;
     }
 
     state[0x0B]++;

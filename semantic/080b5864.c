@@ -17,8 +17,8 @@ struct InteractionState {
     u8 reserved00[68];
     u8 active;
     u8 reserved45[11];
-    u8 selector;
     u8 delay;
+    u8 selector;
     u8 pending;
 };
 
@@ -62,31 +62,29 @@ void Func_080b5864(void)
         *(struct InteractionState **)(0x03001e80 - 12);
     struct RenderArguments arguments;
     void *position;
-    s32 roundedDifference;
     s16 difference;
     u16 current;
 
     if (interaction->active != 0) {
-        if ((*(volatile u16 *)0x03001f64 & 3) != 3) {
-            interaction->delay++;
-            if (interaction->delay > 24)
-                interaction->pending = 1;
-        } else {
+        if (!((*(volatile u16 *)0x03001f64 & 3) != 3)) {
             u32 selector = (*(volatile u32 *)0x04000128 << 26) >> 30;
 
             if (interaction->selector != selector)
                 interaction->pending = 1;
             interaction->delay = 0;
+        } else {
+            interaction->delay++;
+            if (interaction->delay > 24)
+                interaction->pending = 1;
         }
     }
 
     if (transition->framesRemaining != 0) {
         current = scene->angle1;
         difference = transition->target - current;
-        roundedDifference = difference;
         if (difference < 0)
-            roundedDifference += 15;
-        scene->angle1 = current + (roundedDifference >> 4);
+            (difference) += 15;
+        scene->angle1 = current + ((difference) >> 4);
         transition->framesRemaining--;
     }
 

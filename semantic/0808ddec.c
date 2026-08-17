@@ -90,8 +90,8 @@ s32 Func_0808ddec(u32 arg0)
                 dz += 0xFFFF;
             dz >>= 16;
 
-            sqx = dx * dx;
             sqy = dy * dy;
+            sqx = dx * dx;
             sqz = dz * dz;
             result = ((Resident_030001D8)0x030001d8)(sqx + sqy + sqz);
 

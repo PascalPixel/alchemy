@@ -14,8 +14,8 @@ typedef void (*Renderer_080ce85c)(
     s32 height);
 
 struct Scene_080ce85c {
-    s32 unknown_00;
     s32 mode;
+    s32 unknown_00;
     u8 unknown_08[12];
     s32 count;
     u8 unknown_18[12];

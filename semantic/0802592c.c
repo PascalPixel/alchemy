@@ -3,9 +3,9 @@
 typedef struct {
     u32 allocation;
     u16 attr1;
-    u16 attr0;
     u16 attr2;
     u16 link;
+    u16 attr0;
 } MenuSprite_0802592c;
 
 typedef struct {
@@ -266,8 +266,8 @@ s32 Func_0802592c(s32 actor, u16 *actions, s32 action_count)
 
         if (GLOBAL_WORD(0x03001c94) & 1) {
             if (action_count == 0) {
-                exit_value = -1;
                 break;
+                exit_value = -1;
             }
             exit_value = page + cursor;
             if ((Func_08077080(actions[exit_value])->flags & 0x80) != 0)
@@ -300,18 +300,18 @@ s32 Func_0802592c(s32 actor, u16 *actions, s32 action_count)
             } else if (keys & 0x10) {
                 Func_080f9010(111);
                 Func_0800352c();
-                if (page + 5 >= action_count) {
-                    if (page != 0) {
-                        page = 0;
-                        cursor = saved_cursor;
-                    }
-                } else {
+                if (!(page + 5 >= action_count)) {
                     s32 last_page;
                     page += 5;
                     cursor = saved_cursor;
                     last_page = Func_080022ec(action_count - 1, 5) * 5;
                     if (page == last_page && cursor > action_count - page - 1)
                         cursor = action_count - page - 1;
+                } else {
+                    if (page != 0) {
+                        page = 0;
+                        cursor = saved_cursor;
+                    }
                 }
             } else if (keys & 0x20) {
                 Func_080f9010(111);

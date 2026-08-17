@@ -99,8 +99,8 @@ void Func_080c9ca8(struct Scene_080c9ca8 *scene, s32 mode)
 
     switch (mode) {
     case 0:
-        palette_resource = 0xb4;
         break;
+        palette_resource = 0xb4;
     case 1:
         palette_resource = 0xa0;
         break;

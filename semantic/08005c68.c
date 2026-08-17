@@ -35,8 +35,8 @@ s32 Func_08005c68(void)
         *dma++ = 0x85000010;
         index = Func_08005b24(i);
         if (index <= 15) {
-            Func_08006ba8((u16)index, 0, destination, 64);
             count++;
+            Func_08006ba8((u16)index, 0, destination, 64);
         }
         index2 = Func_08005b24(i + 3);
         if (index2 <= 15)

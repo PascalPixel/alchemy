@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct CharacterMetadata_080b7424 {
-    u8 unknown_000[0x128];
     u8 type;
+    u8 unknown_000[0x128];
 };
 
 struct CharacterMetadata_080b7424 *Func_08077008(s32 character_id);

@@ -4,8 +4,8 @@ struct TileWindow_08019000 {
     u8 padding_00[8];
     u16 width;
     u16 height;
-    u16 x;
     u16 y;
+    u16 x;
 };
 
 extern u16 *Data_03001e8c;

@@ -19,15 +19,15 @@ struct CombatantState_080bd424 {
     u8 unknown_124[4];
     u8 character;
     u8 unavailable;
-    u8 unknown_12A[0x13];
     u8 flag_13D;
+    u8 unknown_12A[0x13];
     u8 unknown_13E[0xA];
     u8 flag_148;
 };
 
 struct CharacterActions_080bd424 {
-    u8 unknown_00[0x35];
     s8 battle_class;
+    u8 unknown_00[0x35];
     s8 selection_mode;
     u8 availability;
     u16 actions[18];
@@ -98,16 +98,16 @@ void Func_080bd424(void *arg0, s32 advance) {
 
         switch (character->selection_mode) {
         case 0:
-            selection = Func_080bd3e4((u8 *)0x080C2B80);
             break;
+            selection = Func_080bd3e4((u8 *)0x080C2B80);
 
         case 1:
-            selection = Func_080bd3e4((u8 *)0x080C2B88);
             break;
+            selection = Func_080bd3e4((u8 *)0x080C2B88);
 
         case 2:
-            selection = Func_080bd3e4((u8 *)0x080C2B90);
             break;
+            selection = Func_080bd3e4((u8 *)0x080C2B90);
 
         case 3:
             if ((combatant->selection_state & 1) == 0) {
@@ -272,8 +272,8 @@ void Func_080bd424(void *arg0, s32 advance) {
 
         default:
             decision->target = Func_080b9a70(decision->actor);
-            searching = 0;
             break;
+            searching = 0;
         }
 
         if (advance == 0) {

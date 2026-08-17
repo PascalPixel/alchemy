@@ -71,7 +71,6 @@ void Func_080d05fc(struct Scene_080d05fc *scene)
     s32 intro_x = 0;
     s32 intro_y = 0;
     s32 object_position;
-    s32 base_x;
     s32 frame;
     u8 *resource;
 
@@ -94,8 +93,7 @@ void Func_080d05fc(struct Scene_080d05fc *scene)
     *(s32 *)(runtime + 0x7784) = 0x04040404;
     Func_080041d8((const void *)0x080cd261, 0x480);
     Func_080e396c(scene->object_ids[0], &object_position);
-    base_x = 64 - object_position;
-    *(volatile s32 *)0x04000028 = base_x << 8;
+    *(volatile s32 *)0x04000028 = (64 - object_position) << 8;
     Func_080f9010(0x8e);
 
     for (frame = 0; frame < scene->object_count * 20 + 72; frame++) {
@@ -115,7 +113,7 @@ void Func_080d05fc(struct Scene_080d05fc *scene)
             Renderer_080d05fc intro_renderers[2];
             s32 angle = frame << 11;
             s32 x = ((Func_08002322(angle) * 20) >> 16)
-                + intro_x + base_x - 20;
+                + intro_x + (64 - object_position) - 20;
             s32 y = ((Func_0800231c(angle) * 4) >> 16)
                 + intro_y - 24;
 
@@ -149,7 +147,7 @@ void Func_080d05fc(struct Scene_080d05fc *scene)
             world.y = object->y;
             world.z = object->z;
             Func_080e3944(&world, &projected);
-            projected.x = object_position + base_x;
+            projected.x = object_position + (64 - object_position);
             projected.y -= 24;
 
             if (phase <= 67) {

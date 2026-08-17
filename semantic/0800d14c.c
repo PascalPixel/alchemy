@@ -154,8 +154,8 @@ void Func_0800d14c(struct Object_0800d14c *object, s32 x, s32 y, s32 z)
     object->landing_38[1] = y;
     object->landing_38[2] = z;
 
-    span_x = x - object->position_08[0];
     span_y = y - object->position_08[1];
+    span_x = x - object->position_08[0];
     span_z = z - object->position_08[2];
 
     object->facing_56 = 16;

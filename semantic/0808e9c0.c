@@ -30,8 +30,8 @@ struct SceneObject_0808e9c0 {
     s32 x;
     u8 unknown_0c[4];
     s32 z;
-    u8 unknown_14[0x0f];
     u8 active_23;
+    u8 unknown_14[0x0f];
     u8 unknown_24[0x35];
     u8 active_59;
     u8 unknown_5a[10];

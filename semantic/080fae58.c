@@ -406,21 +406,21 @@ void Func_080fae58(void)
             volatile u8 *master = (volatile u8 *)0x04000081;
 
             *master = (*master & ~channel->pan_mask) | channel->pan;
-            if (number == 3) {
-                *reg_envelope =
-                    Data_080fba04[channel->envelope_volume];
-                if ((channel->n4_control & 0x80) != 0) {
-                    *reg_sweep = 0x80;
-                    *reg_freq_high = channel->n4_control;
-                    channel->n4_control &= 0x7f;
-                }
-            } else {
+            if (!(number == 3)) {
                 envelope_rate &= 15;
                 *reg_envelope =
                     (channel->envelope_volume << 4) + envelope_rate;
                 *reg_freq_high = channel->n4_control | 0x80;
                 if (number == 1 && (*reg_sweep & 8) == 0) {
                     *reg_freq_high = channel->n4_control | 0x80;
+                }
+            } else {
+                *reg_envelope =
+                    Data_080fba04[channel->envelope_volume];
+                if ((channel->n4_control & 0x80) != 0) {
+                    *reg_sweep = 0x80;
+                    *reg_freq_high = channel->n4_control;
+                    channel->n4_control &= 0x7f;
                 }
             }
         }

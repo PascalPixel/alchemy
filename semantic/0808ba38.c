@@ -4,8 +4,8 @@ struct Inner_0808ba38 {
     u8 pad00[9];
     u8 flags09;
     u8 pad0a[0x1a];
-    u8 value24;
     u8 pad25;
+    u8 value24;
     u8 value26;
 };
 
@@ -36,9 +36,9 @@ void Func_0808ba38(void) {
 
     base = (u8 *)0x02001124;
     values24 = base + 0xe00;
+    count = 0;
     values26 = base + 0xe20;
     flags = base + 0xe40;
-    count = 0;
     limit = 0x42;
 
     if (*(s16 *)(Data_03001ebc + 0x19e) == 3)
@@ -60,8 +60,8 @@ void Func_0808ba38(void) {
 
         if (object->active == 1) {
             struct Inner_0808ba38 *inner = object->inner;
-            value24 = inner->value24;
             value26 = inner->value26;
+            value24 = inner->value24;
             flag = ((u32)inner->flags09 << 28) >> 30;
         } else {
             value24 = 0;

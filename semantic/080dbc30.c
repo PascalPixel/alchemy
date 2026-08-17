@@ -107,20 +107,20 @@ void Func_080dbc30(struct Scene_080dbc30 *scene, s32 mode)
         } else {
             switch (mode) {
             case 0:
+                break;
                 palette_resource = 0x7d;
-                break;
             case 1:
+                break;
                 palette_resource = 0xb9;
-                break;
             case 2:
+                break;
                 palette_resource = 0x6e;
-                break;
             case 3:
+                break;
                 palette_resource = 0xa1;
-                break;
             default:
-                palette_resource = 0x8d;
                 break;
+                palette_resource = 0x8d;
             }
             transfer(
                 (void *)0x05000000,
@@ -163,7 +163,26 @@ void Func_080dbc30(struct Scene_080dbc30 *scene, s32 mode)
             Func_080b50e8(0x86);
         }
 
-        if (mode == 5) {
+        if (!(mode == 5)) {
+            s32 target_x =
+                object_positions[selected][0]
+                    + (Func_08004458() & 31) - 16;
+            s32 target_y =
+                object_positions[selected][1]
+                    + (Func_08004458() & 63) - 16;
+
+            if (frame <= 47) {
+                struct Particle_080dbc30 *particle = &particles[frame];
+
+                particle->x = anchor[0] << 15;
+                particle->y = anchor[1] << 16;
+                particle->velocity_x =
+                    (target_x - anchor[0]) << 11;
+                particle->velocity_y =
+                    (target_y - anchor[1]) << 11;
+                particle->phase = 0;
+            }
+        } else {
             const void *source;
             s32 x;
 
@@ -185,25 +204,6 @@ void Func_080dbc30(struct Scene_080dbc30 *scene, s32 mode)
                 anchor[1] - 32,
                 72,
                 62);
-        } else {
-            s32 target_x =
-                object_positions[selected][0]
-                    + (Func_08004458() & 31) - 16;
-            s32 target_y =
-                object_positions[selected][1]
-                    + (Func_08004458() & 63) - 16;
-
-            if (frame <= 47) {
-                struct Particle_080dbc30 *particle = &particles[frame];
-
-                particle->x = anchor[0] << 15;
-                particle->y = anchor[1] << 16;
-                particle->velocity_x =
-                    (target_x - anchor[0]) << 11;
-                particle->velocity_y =
-                    (target_y - anchor[1]) << 11;
-                particle->phase = 0;
-            }
         }
 
         for (i = 0; i < 64; i++) {
@@ -248,15 +248,7 @@ void Func_080dbc30(struct Scene_080dbc30 *scene, s32 mode)
             }
         }
 
-        if (mode == 5) {
-            for (i = 0; i < scene->object_count; i++) {
-                if (frame >= i * 4 + 2 && (frame & 7) == i) {
-                    *(s32 *)(runtime + 0x77a8) = 8;
-                    Func_080d6888(
-                        scene->object_ids[i], 7, 5, i, 4);
-                }
-            }
-        } else {
+        if (!(mode == 5)) {
             for (i = 0; i < scene->object_count; i++) {
                 if (frame >= i * 4 + 16 && (frame & 7) == i) {
                     *(s32 *)(runtime + 0x77a8) = 8;
@@ -267,6 +259,14 @@ void Func_080dbc30(struct Scene_080dbc30 *scene, s32 mode)
                         Func_080d6888(
                             scene->object_ids[i], 7, 5, i, 4);
                     Func_080b5088(scene->object_ids[i], 4);
+                }
+            }
+        } else {
+            for (i = 0; i < scene->object_count; i++) {
+                if (frame >= i * 4 + 2 && (frame & 7) == i) {
+                    *(s32 *)(runtime + 0x77a8) = 8;
+                    Func_080d6888(
+                        scene->object_ids[i], 7, 5, i, 4);
                 }
             }
         }

@@ -20,7 +20,6 @@ void Func_0801ef68(struct WindowFrame_0801ef68 *window, s32 flags)
     u32 right_edge = window->width - 1;
     s32 first_separator = 1;
     s32 separator_adjustment = 0;
-    s32 separator;
 
     if ((flags & 1) == 0) {
         flags &= ~2;
@@ -30,10 +29,9 @@ void Func_0801ef68(struct WindowFrame_0801ef68 *window, s32 flags)
         first_separator = 0;
     }
 
-    separator = first_separator;
-    while (separator_offsets[separator] >= 0) {
+    while (separator_offsets[(first_separator)] >= 0) {
         u32 column =
-            (u32)(separator_offsets[separator] + separator_adjustment);
+            (u32)(separator_offsets[(first_separator)] + separator_adjustment);
 
         if (column < right_edge) {
             u32 row;
@@ -52,7 +50,7 @@ void Func_0801ef68(struct WindowFrame_0801ef68 *window, s32 flags)
                 tilemap[(window->y + row) * 32 + window->x + column] = tile;
             }
         }
-        separator++;
+        (first_separator)++;
     }
 
     if (display_state[0x0ea5] != 0) {

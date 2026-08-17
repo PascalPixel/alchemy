@@ -67,7 +67,16 @@ s32 Func_08091a58(u16 item_id)
 
     for (;;) {
         Func_08015040(0x0978, 1);
-        if (Func_080b0058(&selected_actor, &selected_slot) == -1) {
+        if (!(Func_080b0058(&selected_actor, &selected_slot) == -1)) {
+            s32 count;
+
+            Func_08077008(selected_actor);
+            count = Func_08077020(selected_actor, selected_slot);
+            while (count > 0) {
+                count--;
+                Func_080772b0(selected_actor, selected_slot);
+            }
+        } else {
             ItemDefinition_08091a58 *item = Func_08077018(item_id);
 
             if ((item->flags & 8) != 0) {
@@ -88,15 +97,6 @@ s32 Func_08091a58(u16 item_id)
             Func_08015040(0x097a, 1);
             state->saved_value = saved_value;
             return -1;
-        } else {
-            s32 count;
-
-            Func_08077008(selected_actor);
-            count = Func_08077020(selected_actor, selected_slot);
-            while (count > 0) {
-                count--;
-                Func_080772b0(selected_actor, selected_slot);
-            }
         }
 
         current = Func_08077030(item_id);

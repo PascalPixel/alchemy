@@ -27,9 +27,9 @@ typedef s32 (*Multiply_080982dc)(s32 a, s32 b);
 struct Stats_080982dc {
     u8 unknown_000[0x17e];
     u16 marker_17e;
-    u8 unknown_180[0xb3a];
     s16 countdown_cba;
     s16 target_x_cbc;
+    u8 unknown_180[0xb3a];
     s16 target_z_cbe;
     s16 enable_cc0;
 };

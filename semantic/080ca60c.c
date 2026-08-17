@@ -309,11 +309,7 @@ loop_16:
         M2C_FIELD(var_r6, s32 *, 0) = (s32) M2C_FIELD(temp_sl, s32 *, 8);
         M2C_FIELD(var_r6, s32 *, 4) = 0x140000;
         M2C_FIELD(var_r6, s32 *, 8) = (s32) M2C_FIELD(temp_sl, s32 *, 0x10);
-        if (M2C_FIELD(sp40, u8 *, 0x080EDF04) == 1) {
-            M2C_FIELD(var_r6, s32 *, 0xC) = (s32) (((u8) Func_08004458() - 0x80) << 0xB);
-            M2C_FIELD(var_r6, s32 *, 0x10) = (s32) (((u8) Func_08004458() - 0x80) << 0xB);
-            M2C_FIELD(var_r6, s32 *, 0x14) = (s32) (((u8) Func_08004458() - 0x80) << 0xB);
-        } else {
+        if (!(M2C_FIELD(sp40, u8 *, 0x080EDF04) == 1)) {
             if (0x10 & M2C_FIELD(sp3C, u8 *, 0x080EDF04)) {
                 M2C_FIELD(var_r6, s32 *, 0xC) = (s32) ((Func_08004458() & 0x1FF) << 0xB);
                 M2C_FIELD(var_r6, s32 *, 0x10) = (s32) (((Func_08004458() & 0x1FF) + 0xFFFFFF00) << 0xB);
@@ -327,6 +323,10 @@ loop_16:
             if ((s32) M2C_FIELD(var_r6, s32 *, 0) > 0) {
                 M2C_FIELD(var_r6, s32 *, 0xC) = (s32) (0 - M2C_FIELD(var_r6, s32 *, 0xC));
             }
+        } else {
+            M2C_FIELD(var_r6, s32 *, 0xC) = (s32) (((u8) Func_08004458() - 0x80) << 0xB);
+            M2C_FIELD(var_r6, s32 *, 0x10) = (s32) (((u8) Func_08004458() - 0x80) << 0xB);
+            M2C_FIELD(var_r6, s32 *, 0x14) = (s32) (((u8) Func_08004458() - 0x80) << 0xB);
         }
         var_r8_3 += 1;
         M2C_FIELD(var_r6, s32 *, 0x18) = -1;
@@ -446,8 +446,8 @@ frame_loop:
             }
             temp_r1_4 = sp48 - (visual_variant);
             temp_r3_4 = (void *)(temp_r1_4 + 5);
-            Func_080ed408(0x2E, 7, 7, 3, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
             temp_r5_2 = (sp20 * 0x360) + temp_r1 + 0xC80;
+            Func_080ed408(0x2E, 7, 7, 3, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));
             (*(Renderer_080ca60c *)0x03001F08)(sp5C, temp_r5_2, ((s32) (scratch.sp38[0] + (scratch.sp38[0] >> 0x1F)) >> 1) - 0x12, 0x38, 0x12U, 0x30);
             Func_08002dd8(0x2E);
             Func_080ed408(0x2E, 7, 7, 7, (s32) M2C_FIELD(temp_r3_4, u8 *, 0x080EDF04));

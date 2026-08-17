@@ -17,7 +17,26 @@ void Func_08017248(s32 x, s32 y, u32 width, u32 height, s32 mode)
         return;
 
     y += 64;
-    if (mode == 0) {
+    if (!(mode == 0)) {
+        row_b = 1;
+        if (row_b < height - 1) {
+            do {
+                column_b = 0;
+                if (column_b < width) {
+                    step_b = height - 2;
+                    tile_b = row_b + 0x127;
+                    do {
+                        column_b++;
+                        *(u16 *)y = (tile_b & 0xfff) | 0xf000;
+                        tile_b += step_b;
+                        y += 2;
+                    } while (column_b < width);
+                }
+                row_b++;
+                y += (32 - width) * 2;
+            } while (row_b < height - 1);
+        }
+    } else {
         row_a = 1;
         if (row_a < height - 1) {
             do {
@@ -37,25 +56,6 @@ void Func_08017248(s32 x, s32 y, u32 width, u32 height, s32 mode)
                 row_a++;
                 y += (32 - width) * 2;
             } while (row_a < height - 1);
-        }
-    } else {
-        row_b = 1;
-        if (row_b < height - 1) {
-            do {
-                column_b = 0;
-                if (column_b < width) {
-                    step_b = height - 2;
-                    tile_b = row_b + 0x127;
-                    do {
-                        column_b++;
-                        *(u16 *)y = (tile_b & 0xfff) | 0xf000;
-                        tile_b += step_b;
-                        y += 2;
-                    } while (column_b < width);
-                }
-                row_b++;
-                y += (32 - width) * 2;
-            } while (row_b < height - 1);
         }
     }
     state[0xea3] = 1;

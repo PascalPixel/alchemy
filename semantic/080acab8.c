@@ -57,8 +57,8 @@ s32 Func_080acab8(
     s32 first_value;
     s32 first_flag;
     s32 second_class;
-    s32 second_value;
     s32 second_flag;
+    s32 second_value;
     s32 x = base_x * 8;
     s32 y = base_y * 8;
     s32 i;

@@ -52,8 +52,8 @@ struct Actor_0800dd70 {
     s16 step_04;
     u16 heading_06;
     s32 position_08[3];
-    u8 unknown_14[0x4a];
     u16 blocked_5e;
+    u8 unknown_14[0x4a];
     u8 unknown_60[4];
     s16 anchor_x_64;
     s16 anchor_z_66;

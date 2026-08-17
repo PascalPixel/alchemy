@@ -68,8 +68,8 @@ void Func_080bb938(void)
             Func_080bace8(argument);
             break;
         case 10:
-            Func_08015130((*(u8 **)0x03001e74)[0x41]);
             break;
+            Func_08015130((*(u8 **)0x03001e74)[0x41]);
         case 11:
             Func_080b78e4(argument, Func_080b7dd0(argument));
             Func_080b7aac(argument);

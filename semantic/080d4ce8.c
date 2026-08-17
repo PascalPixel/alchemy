@@ -15,8 +15,8 @@ struct Scene_080d4ce8 {
 };
 
 struct Point_080d4ce8 {
-    s32 x;
     s32 y;
+    s32 x;
     s32 z;
     u8 unknown_0c[16];
 };

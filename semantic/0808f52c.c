@@ -205,10 +205,10 @@ void Func_0808f52c(void) {
         M2C_FIELD(temp_r4, u16 *, 2) = 1U;
         temp_r5 = M2C_FIELD(sp14, u16 *, 0x52A);
         var_r4 = temp_r4 + 2 + 2;
-        if (temp_r5 & 0x20) {
-            var_r5 = 0x20 - (0x1F & temp_r5);
-        } else {
+        if (!(temp_r5 & 0x20)) {
             var_r5 = temp_r5 & 0x1F;
+        } else {
+            var_r5 = 0x20 - (0x1F & temp_r5);
         }
         temp_r5_2 = M2C_FIELD(var_r5, u8 *, 0x0809E8AC);
         var_r8 = 0;
@@ -255,8 +255,8 @@ void Func_0808f52c(void) {
                     if (temp_r7 != 0) {
                         sp10 = M2C_FIELD(var_sl, u8 *, 5) - temp_r3_4;
                         spC = M2C_FIELD(var_sl, u8 *, 7) - temp_r6_3;
-                        var_r2 = 0;
                         var_r3_3 = 0;
+                        var_r2 = 0;
                         var_r9_2 = temp_r7;
                         do {
                             sp8 = var_r2;
@@ -289,8 +289,8 @@ void Func_0808f52c(void) {
         var_r4_3 = temp_r4 + 2 + 2;
         var_r8_3 = 0;
         do {
-            sp0 = var_r4_3;
             var_r0 = ((temp_r5_5 & 0x1F) * 0x10) + ((u32) (Func_08004458() * 0x10) >> 0x10);
+            sp0 = var_r4_3;
             if (var_r0 > 0xFFU) {
                 var_r0 = 0xFF;
             }
@@ -338,12 +338,12 @@ void Func_0808f52c(void) {
         break;
     case 0x4:
         temp_r5_8 = M2C_FIELD(sp14, u16 *, 0x52A);
-        if (0x20 & temp_r5_8) {
-            M2C_FIELD(temp_r4, u16 *, 0) = 1;
-            var_r3_5 = 0x7F7F;
-        } else {
+        if (!(0x20 & temp_r5_8)) {
             M2C_FIELD(temp_r4, u16 *, 0) = 0x7F7F;
             var_r3_5 = 1;
+        } else {
+            M2C_FIELD(temp_r4, u16 *, 0) = 1;
+            var_r3_5 = 0x7F7F;
         }
         M2C_FIELD(temp_r4, u16 *, 2) = var_r3_5;
         var_r4_5 = temp_r4 + 2 + 2;
@@ -480,8 +480,8 @@ void Func_0808f52c(void) {
         }
         M2C_FIELD(temp_r4, u16 *, 0) = M2C_FIELD(sp14, u16 *, 0x534);
         M2C_FIELD(temp_r4, u16 *, 2) = (u16) M2C_FIELD(sp14, u16 *, 0x536);
-        temp_r5_18 = M2C_FIELD(sp14, u16 *, 0x52A);
         var_r4_8 = temp_r4 + 2 + 2;
+        temp_r5_18 = M2C_FIELD(sp14, u16 *, 0x52A);
         if (temp_r5_18 & 0x20) {
             var_r5_5 = 0x20 - (0x1F & temp_r5_18);
         } else {

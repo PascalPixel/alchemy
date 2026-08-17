@@ -157,10 +157,10 @@ void Func_0808bec0(s32 tableSelect, s32 x, s32 y, s32 z)
         s32 xIndex;
         s32 zIndex;
 
-        if ((u32)tableSelect <= 2) {
-            base = *(u8 **)(terrainBase + tableSelect * 48 + 304);
-        } else {
+        if (!((u32)tableSelect <= 2)) {
             base = *(u8 **)0x02010000;
+        } else {
+            base = *(u8 **)(terrainBase + tableSelect * 48 + 304);
         }
 
         xIndex = (x >= 0) ? x : x + 0xfffff;

@@ -13,19 +13,17 @@ void Func_0801ccc0(s32 color, s32 brightness)
     volatile u16 *palette = (volatile u16 *)0x050001E8;
     s16 channels[3];
     s16 base;
-    s16 adjustment;
     s16 red;
     s16 green;
     s16 blue;
 
     base = (s16)(Func_080022fc(color + 0xC, 0x18) * 4);
-    adjustment = (s16)(brightness - 7);
 
-    red = (s16)(curve[(s16)Func_080022fc(base, 0x60)] + adjustment);
+    red = (s16)(curve[(s16)Func_080022fc(base, 0x60)] + ((s16)(brightness - 7)));
     green = (s16)(
-        curve[Func_080022fc(base + 0x20, 0x60)] + adjustment);
+        curve[Func_080022fc(base + 0x20, 0x60)] + ((s16)(brightness - 7)));
     blue = (s16)(
-        curve[Func_080022fc(base + 0x40, 0x60)] + adjustment);
+        curve[Func_080022fc(base + 0x40, 0x60)] + ((s16)(brightness - 7)));
 
     if (red < 0) {
         red = 0;

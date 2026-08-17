@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct Entry_08011b54 {
-    u32 source;
     u16 field4;
+    u32 source;
     u16 field6;
     u16 value8;
     u16 count;

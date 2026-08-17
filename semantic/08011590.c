@@ -3,8 +3,8 @@
 struct S {
     u8 pad0[0xFC];
     u8 unk_FC;
-    u8 pad1[3];
     s16 a;
+    u8 pad1[3];
     s16 b;
 };
 
@@ -61,8 +61,8 @@ void Func_0801161c(void)
     *reg = value;
     reg += 101;
     source = 0x02038000;
-    destination = 0x06008000;
     control = 0x84002000;
+    destination = 0x06008000;
     dma = (struct D *)reg;
     dma->source = source;
     dma->destination = destination;

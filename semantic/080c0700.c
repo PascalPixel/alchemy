@@ -9,7 +9,6 @@ s32 Func_080c0700(s32 unused, s32 index)
     volatile u16 *interruptMaster;
     u32 savedInterruptMaster;
     u32 *slot;
-    u32 *dma;
     u32 source;
     u32 destination;
     u32 control;
@@ -19,13 +18,12 @@ s32 Func_080c0700(s32 unused, s32 index)
     *slot = *interruptMaster;
     *interruptMaster = (u16)(u32)interruptMaster;
     if (index == 0) {
-        dma = (u32 *)0x040000d4;
         source = (u32)entry;
         destination = 0x050000c0;
         control = 0x80000080;
-        dma[0] = source;
-        dma[1] = destination;
-        dma[2] = control;
+        ((u32 *)0x040000d4)[0] = source;
+        ((u32 *)0x040000d4)[1] = destination;
+        ((u32 *)0x040000d4)[2] = control;
     } else {
         s32 offset = 0x10000 - index * 1092;
 

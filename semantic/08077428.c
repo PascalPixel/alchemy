@@ -119,8 +119,8 @@ s32 Func_08077428(s32 owner)
 block_8:
         temp_r2 = M2C_FIELD(state, s16 *, 0x36);
         temp_r3_2 = M2C_FIELD(state, s16 *, 0x16);
-        temp_r3_2 *= temp_r2;
         var_r2_3 = temp_r3_2;
+        temp_r3_2 *= temp_r2;
         if (temp_r3_2 < 0) {
             var_r2_3 += 0x3FFF;
         }
@@ -371,12 +371,12 @@ loop_62:
         var_r0 += 1;
         var_r4 += 8;
     } while (var_r5 >= 0);
-    var_r5 = 3;
     var_r1_3 = 0x2C;
+    var_r5 = 3;
     do {
         var_r5 -= 1;
-        *(s32 *)(values + var_r1_3) += M2C_FIELD(state, s8 *, 0x137) * 0x14;
         var_r1_3 += 8;
+        *(s32 *)(values + var_r1_3) += M2C_FIELD(state, s8 *, 0x137) * 0x14;
     } while (var_r5 >= 0);
     if (M2C_FIELD(state, u8 *, 0x129) != 0) {
         temp_r3_6 = M2C_FIELD(state, u8 *, 0x128);

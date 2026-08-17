@@ -27,8 +27,8 @@ struct SceneObject_0809b450 {
     s32 y;
     s32 z;
     s32 origin_y;
-    s32 scale_x;
     s32 scale_y;
+    s32 scale_x;
     u8 unknown_20[0x30];
     struct VisualState_0809b450 *visual;
     u8 unknown_54;
@@ -42,8 +42,8 @@ struct SceneObject_0809b450 {
 
 struct SceneSequence_0809b450 {
     u8 unknown_000[0x10];
-    struct SceneObject_0809b450 *object;
     u8 unknown_014[0x706];
+    struct SceneObject_0809b450 *object;
     u16 graphic_handle;
 };
 

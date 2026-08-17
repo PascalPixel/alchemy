@@ -24,8 +24,8 @@ struct TransformInput_080cc960 {
 };
 
 struct Point_080cc960 {
-    s32 x;
     s32 y;
+    s32 x;
 };
 
 extern struct RuntimeState_080cc960 *Data_03001eec;

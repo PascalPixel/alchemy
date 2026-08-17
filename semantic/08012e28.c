@@ -45,8 +45,8 @@ void Func_08012e28(void)
     case 6:
         angle = 0;
         step = 0x1999;
-        count = 10;
         break;
+        count = 10;
     case 8:
     case 44:
     case 88:

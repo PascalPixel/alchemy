@@ -35,8 +35,8 @@ void Func_080930bc(s32 message)
     s32 y;
     s32 window;
 
-    context = *(u8 **)0x03001ebc;
     message &= 0xfff;
+    context = *(u8 **)0x03001ebc;
     Func_0808ba1c(message);
     *(s32 *)(context + 500) = message;
 

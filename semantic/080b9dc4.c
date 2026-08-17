@@ -13,8 +13,8 @@ struct BattleState_080b9dc4 {
 
 struct ObjectState_080b9dc4 {
     u8 unknown_000[0x13b];
-    u8 flag_13b;
     u8 flag_13c;
+    u8 flag_13b;
 };
 
 s32 Func_080c10e8(const u16 *opposite_objects, s32 mode);

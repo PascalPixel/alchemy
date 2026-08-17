@@ -39,8 +39,8 @@ struct Record_08079460 {
     u16 field_34;
     u16 field_36;
     u16 field_38;
-    u16 field_3a;
     u8 unknown_3c[0x9c];
+    u16 field_3a;
     u16 equipment[15];
     u8 unknown_f6[0x2a];
     s32 field_120;

@@ -115,8 +115,8 @@ void Func_08010230(s32 x, s32 y)
             continue;
         }
 
-        rows = 22;
         biased_x = multiply(*(s32 *)(context + 228), layer->scale_x);
+        rows = 22;
         biased_y = multiply(*(s32 *)(context + 232), layer->scale_y);
 
         if (layer->step_x != 0) {
@@ -132,8 +132,8 @@ void Func_08010230(s32 x, s32 y)
         }
 
         biased_x += layer->offset_x;
-        biased_y += layer->offset_y;
         layer++;
+        biased_y += layer->offset_y;
 
         adjusted_x = biased_x;
         if (biased_x < 0) {

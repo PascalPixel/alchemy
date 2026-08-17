@@ -493,6 +493,23 @@ a symbol, or the value is dead in your source and the compiler dropped it —
 check for a variable that is assigned in one branch and read in another before
 reaching for `Value_<addr>`.
 
+A value that appears both as an immediate and out of a register is a variable,
+not a literal. When one call takes 8 as `movs r3, #8` for one argument and as
+`mov r3, r8` for another, a literal cannot produce both: the second came from a
+local assigned before the loop and held across it. This is the cheapest way to
+tell a hoisted invariant from a constant, and it is usually worth more than it
+looks -- on resource_39a:1e08 it closed 12 bytes of size difference in one edit.
+
+An overlay function pointer is the LINKED address, not the overlay-relative one.
+The pool word for `Func_02001d78` in an overlay linked at 0x02008000 is
+0x02009d79: the routine, plus the Thumb bit, at its linked address. Read the base
+off a finished sibling; `exact/resource_39a_c_02002094.c` writes
+`(void *)Func_0200a014` for an owner at offset 0x2014.
+
+An increment emitted after the last call of a loop body lives in the loop TEST.
+`pass++;` as a statement emits `adds r5, #1` before whatever follows it; the
+reference emitting it afterwards is `while ((unsigned int)++pass <= 3)`.
+
 Where two guards return the same thing, the reference usually reaches one shared
 block placed after the body. Writing `return 1` twice puts an inline copy near
 the top instead; a `goto` to one label at the end is the shape that matches.

@@ -1,0 +1,23 @@
+{
+  "owner": "resource_3a8:0504",
+  "span_bytes": 138,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 138,
+    "reference_bytes": 138,
+    "wrong_instructions": 0,
+    "differing_halfwords": 2,
+    "class": "ordering"
+  },
+  "expressed": [
+    "drafted whole by `overlay reconstruct`"
+  ],
+  "unexpressed": [],
+  "verified_against_reference": [
+    "byte count 138 = 138",
+    "wrong_instructions 0"
+  ],
+  "blocked_by": "instruction order only: one swapped pair",
+  "rejected": [],
+  "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions."
+}

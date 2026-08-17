@@ -1128,8 +1128,8 @@ byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
 - **Unfinished scopes:** 2,236
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 856,068 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 489,298 Exact C or audited permanent assembly bytes
+- **Target bytes:** 855,986 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 489,380 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list

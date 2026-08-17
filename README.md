@@ -34,9 +34,9 @@ Three figures, because one of them alone would mislead:
 
 | | bytes | share |
 |---|---:|---:|
-| Exact C | 274,776 | 20.40% of executable |
+| Exact C | 274,858 | 20.40% of executable |
 | Permanent assembly | 216,278 | 16.05% of executable |
-| **DONE** | **491,054** | **36.45% of executable** |
+| **DONE** | **491,136** | **36.46% of executable** |
 
 
 Permanent assembly is not a shortcut and not a backlog. It is overwhelmingly
@@ -47,7 +47,7 @@ never become C.
 
 That also means 100% of the ROM is not the target. Of the 1,347,122 executable
 bytes, 216,278 can never be C, so the reconstruction's own ceiling is 1,130,844
-and **exact C stands at 24.30% of the bytes that can be C**. An overlay whose
+and **exact C stands at 24.31% of the bytes that can be C**. An overlay whose
 every function is reconstructed still reports short of 100% because its veneers
 count against it.
 
@@ -79,7 +79,7 @@ The main game contains 548,364 executable bytes in the purple band.
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=8606c4fe)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=09deec8a)
 
 ### Images and data
 

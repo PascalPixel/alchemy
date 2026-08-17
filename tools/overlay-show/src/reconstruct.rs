@@ -154,6 +154,38 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
     }
 
+    // An unconditional forward branch skips a region nothing can fall into. If
+    // no other branch targets an address inside it, that region is data the
+    // compiler placed mid-function, whatever objdump's `@ (0x...)` comments
+    // happened to reference -- a pool word nothing loads is still a pool word.
+    let mut branch_targets: BTreeSet<i64> = BTreeSet::new();
+    for r in &rows {
+        let (op, args) = operands(&r.text);
+        if op.starts_with('b') && op != "bx" && args.len() == 1 {
+            if let Some(x) = hex(&args[0]) {
+                branch_targets.insert(x);
+            }
+        }
+    }
+    let mut pool_skip: BTreeSet<i64> = BTreeSet::new();
+    for r in &rows {
+        let (op, args) = operands(&r.text);
+        if (op == "b" || op == "b.n") && args.len() == 1 {
+            if let Some(target) = hex(&args[0]) {
+                if target > r.addr
+                    && !rows
+                        .iter()
+                        .any(|x| x.addr > r.addr && x.addr < target && branch_targets.contains(&x.addr))
+                {
+                    pool_skip.insert(r.addr);
+                    for x in rows.iter().filter(|x| x.addr > r.addr && x.addr < target) {
+                        pool_words.insert(x.addr);
+                    }
+                }
+            }
+        }
+    }
+
     // A backward branch is a loop. Its bound comes from the comparison just
     // before it and its start from the last `movs` to that register above the
     // top; assuming a start of zero turns a countdown into a single pass.
@@ -490,6 +522,12 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 pending.clear();
                 ptr.insert("r0".to_string(), format!("p{tmp_n}"));
             }
+            // A forward unconditional branch over nothing but pool words is
+            // the compiler stepping around a pool it placed mid-function, not
+            // control flow. Clearing registers on it loses every argument the
+            // caller had already loaded -- which is exactly what the reference
+            // does, setting r1 before the skip and r0 after it.
+            _ if pool_skip.contains(&r.addr) => {}
             _ if op.starts_with('b') && op != "bx" => {
                 for i in 0..4 {
                     let k = format!("r{i}");
@@ -643,6 +681,31 @@ mod tests {
         );
         assert_eq!(d.calls, 1, "the pool must not add calls: {:?}", d.lines);
         assert!(d.lines.iter().any(|l| l.contains("Func_02000100(769);")), "{:?}", d.lines);
+    }
+
+    #[test]
+    fn a_branch_over_a_pool_does_not_clear_the_arguments_behind_it() {
+        // The compiler sets one argument, steps around a pool it placed
+        // mid-function, sets the other, and calls. Treating that branch as
+        // control flow drops the argument loaded before it -- which is how a
+        // 1,574-byte owner came out two bytes short with one wrong
+        // instruction, when it was otherwise exact.
+        let d = draft(
+            &listing(&[
+                " 2000000:\t21ec      \tmovs\tr1, #236",
+                " 2000002:\te002      \tb.n\t0x2000008",
+                " 2000004:\t0000      \tmovs\tr0, r0",
+                " 2000006:\t0c1e      \tlsrs\tr6, r3, #16",
+                " 2000008:\t2002      \tmovs\tr0, #2",
+                " 200000a:\tf001 f800 \tbl\t0x2001000",
+            ]),
+            "Func_02000000",
+        );
+        assert!(
+            d.lines.iter().any(|l| l.contains("Func_02001000(2, 236);")),
+            "the argument set before the pool skip must survive it: {:?}",
+            d.lines
+        );
     }
 
     #[test]

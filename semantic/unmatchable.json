@@ -1,5 +1,15 @@
 {
- "format": 1,
- "comment": "Owners withdrawn from routine work: both bounded search axes are spent and the owner still does not reproduce. Data for the check, not documentation -- it keeps a small number of owners out of the queue without putting a record of dead ends in front of every contributor. An entry is removed the moment its owner becomes exact. The opposite register is exact/provisional.json, which holds owners that DO match but whose source was written toward the bytes.",
- "unmatchable": []
+  "format": 1,
+  "comment": "Owners withdrawn from routine work: both bounded search axes are spent and the owner still does not reproduce. Data for the check, not documentation -- it keeps a small number of owners out of the queue without putting a record of dead ends in front of every contributor. An entry is removed the moment its owner becomes exact. The opposite register is exact/provisional.json, which holds owners that DO match but whose source was written toward the bytes.",
+  "unmatchable": [
+    {
+      "owner": "resource_3bf_c_02003054",
+      "floor_halfwords": 2621,
+      "axes": [
+        "compiler",
+        "shape"
+      ],
+      "reason": "Reconstruction is complete and correct: 636 of 636 calls, in order, through the right per-site veneers, with every argument value matching the reference, the six conditionals in place and the one global store and three pointer dereferences modelled. What differs is register allocation alone. The reference emits no high-register move at all; the candidate emits 124, because cse unifies the repeated 16.16 coordinate constants (0x00B80000 and friends appear three to four times each) and reload parks them in r8, r9, sl and fp, so the candidate pushes four callee-saved registers where the reference pushes {r5, lr} and rebuilds each constant with movs+lsls at its use. That is the rematerialisation family, and no spelling of identical integer constants reaches it. shape_sweep reports the axis exhausted; overlay_mode_cohort tried three configurations with 0 exact."
+    }
+  ]
 }

@@ -90,6 +90,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut target = None;
     let mut extra: Vec<String> = Vec::new();
     let mut expecting_flags = false;
+    let mut expecting_span = false;
+    let mut override_span: Option<i64> = None;
     for argument in argv {
         if expecting_flags {
             // Comma-separated, so one shell word carries a whole set.
@@ -97,14 +99,29 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             expecting_flags = false;
             continue;
         }
+        if expecting_span {
+            override_span = Some(
+                argument
+                    .parse::<i64>()
+                    .map_err(|_| format!("--span wants a decimal byte count, got {argument:?}"))?,
+            );
+            expecting_span = false;
+            continue;
+        }
         match argument.as_str() {
             "--flags" => expecting_flags = true,
+            "--span" => expecting_span = true,
             "--align" => align = true,
             "-h" | "--help" => {
                 println!(
                     "usage: overlay score <overlay>:<addressHex> | <source.c> [--align]\n\n\
                      Prints the candidate and the ROM reference side by side, in the same\n\
-                     shape as `candidate-show`. The span is derived; do not pass one."
+                     shape as `candidate-show`. The span is derived.\n\n\
+                     --span BYTES overrides that derivation. It is a DIAGNOSTIC, for\n\
+                     the rows whose audited extent is wrong or absent -- a jump table\n\
+                     leaves a hole and `adopt` refuses before any byte is compared, so\n\
+                     without this there is no way to ask whether such a row is already\n\
+                     exact. It does not adopt anything and does not change any gate."
                 );
                 return Ok(0);
             }
@@ -128,9 +145,12 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         source_for(root, &overlay, address)?
     };
 
-    let span = placeholder_span(root, &overlay, address)?
-        .or_else(|| inventory_span(root, &overlay, address))
-        .or(crate::audited_code_span(root, &overlay, address)?)
+    let span = match override_span {
+        Some(span) => Some(span),
+        None => placeholder_span(root, &overlay, address)?
+            .or_else(|| inventory_span(root, &overlay, address))
+            .or(crate::audited_code_span(root, &overlay, address)?),
+    }
         .ok_or_else(|| {
             format!("{overlay}:{address:08x} has neither a placeholder nor an audited span")
         })?;

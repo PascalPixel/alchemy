@@ -328,6 +328,37 @@ sides. It compares every adopted row against the bytes it replaced, which is the
 one check that a merged tree has not silently broken an owner neither branch
 touched.
 
+### The constant-rematerialisation family, and why a flag cannot buy it
+
+The largest single residual family in the overlays: we compute a constant once,
+keep it in a callee-saved register and copy it into the argument register at
+each call, where the reference rebuilds it at every use. It is 98 rows and
+36,230 bytes of the size-exact pool alone, and it always costs a `push` the
+reference does not have.
+
+The RTL says what happens. At expansion there are two independent
+`(const_int N)` materialisations; cse unifies them into one pseudo carrying a
+`REG_EQUAL`/`REG_EQUIV` note, and reload then hands that pseudo a hard register
+instead of rematerialising from the note. Because the two constants are
+identical trees, cse *must* unify them, which is why no source spelling reaches
+it: operand order, naming the value, widening it, splitting it across branches
+and separating the call sites all leave the same pair of trees.
+
+`-fno-rerun-cse-after-loop` does reach it, and it is a stock option, so routing
+it per file is permitted and would be recorded as debt. Do not. Measured over
+whole overlays it breaks more than it buys, inside the same translation unit:
+
+| overlay | adopted rows it regresses | parked rows it makes exact |
+|---|---:|---:|
+| `resource_3bf` | 7 | 6 |
+| `resource_3b4` | 4 | 1 |
+| `resource_3cb` | 1 | 1 |
+
+An overlay whose owners disagree about a flag is not an overlay that was
+compiled with it. Corpus-wide the flag makes 16 rows byte-exact, 1,510 bytes,
+and that number is not a reconstruction -- it is the size of the family that
+happens to invert. The mechanism is real and the flag is not the answer.
+
 ### An owner containing a switch cannot currently be adopted
 
 A Thumb switch emits a jump table, and `metrics/gs1-en-executable.json`
@@ -739,16 +770,16 @@ executable runs), sorted largest to smallest. Broader multi-owner campaign cuts
 belong in [Status](#status); they may overlap and therefore are not used for
 byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 2,132
+- **Unfinished scopes:** 2,127
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 996,094 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 347,500 Exact C or audited permanent assembly bytes
+- **Target bytes:** 995,532 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 348,062 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (227 rows). The complete
-2,132-row index, including the smallest audited owners, is
+2,127-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

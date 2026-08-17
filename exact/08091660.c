@@ -6,7 +6,7 @@ void Func_08091660(void)
 {
     struct BattleRenderObject *object;
 
-    object = Func_0808ba1c(Data_02000240.object_id);
+    object = GetObject(Data_02000240.object_id);
     object->unknown_30 = 0x10000;
     object->unknown_34 = 0x8000;
     object->unknown_38 = 0x80000000;

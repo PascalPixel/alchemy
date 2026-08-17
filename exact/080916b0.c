@@ -19,7 +19,7 @@ void Func_080916b0(void) {
         runtime->unknown_cc2 = zero;
         runtime->unknown_cc4 = zero;
         runtime->unknown_1c8 = 0x10;
-        runtime->unknown_1cc = zero;
+        runtime->mode_1cc = zero;
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;

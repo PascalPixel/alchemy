@@ -3,6 +3,8 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 s32 Func_08009098(void *, s32);
 void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2);
 void *Func_08096c80(s32, s32, s32, s32);
@@ -28,8 +30,8 @@ void Func_08099920(void *object) {
             M2C_FIELD(temp_r0, s32 *, 0x18) = 0x8000;
             M2C_FIELD(temp_r0, s8 *, 0x55) = 2;
             M2C_FIELD(temp_r0, s32 *, 0x28) = 0x10000;
-            M2C_FIELD(temp_r0, s32 *, 0x30) = (s32) (Func_08004458() + 0x13333);
-            Func_08096bec(temp_r0, 0x200000, Func_08004458());
+            M2C_FIELD(temp_r0, s32 *, 0x30) = (s32) (Rand() + 0x13333);
+            Func_08096bec(temp_r0, 0x200000, Rand());
             ptr2 = &M2C_FIELD(temp_r0, s16 *, 0x5E);
             phase2 = 6;
             *ptr2 = phase2;

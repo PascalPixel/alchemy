@@ -37,7 +37,7 @@ void Func_08099678(void)
 
     runtime_slot_address = (u32)&Data_03001ebc;
     runtime = Data_03001ebc;
-    object = Func_0808ba1c(Data_02000240.object_id);
+    object = GetObject(Data_02000240.object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 

@@ -29,6 +29,8 @@ struct Object_08092624 {
 
 extern struct Object_08092624 *Func_080090c8(s32, s32, s32, s32);
 extern s32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 extern void Func_08009080(struct Object_08092624 *, s32);
 extern void Func_08009098(struct Object_08092624 *, const void *);
 extern void Func_080929d8(struct Object_08092624 *);
@@ -43,7 +45,7 @@ void Func_08092624(struct Object_08092624 *source, s32 optional)
     object = Func_080090c8(222, source->x, source->y, source->z);
     if (object != 0) {
         child = object->child;
-        switch (Func_08004458() & 1) {
+        switch (Rand() & 1) {
         case 1:
             Func_08009080(object, 2);
             Func_08009098(object, (const void *)0x0809fbec);
@@ -58,9 +60,9 @@ void Func_08092624(struct Object_08092624 *source, s32 optional)
             Func_080929d8(object);
 
         object->mode_55 = 0;
-        value = Func_08002304(Func_08004458(), 10) + 5;
+        value = Func_08002304(Rand(), 10) + 5;
         object->field_34 = -0x1999 * value;
-        value = Func_08002304(Func_08004458(), 15) - 7;
+        value = Func_08002304(Rand(), 15) - 7;
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;

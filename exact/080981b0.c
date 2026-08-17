@@ -29,6 +29,8 @@ struct Particle_080981b0 *Func_08096c80(
     s32 kind, s32 x, s32 y, s32 z);
 void Func_08009098(struct Particle_080981b0 *particle, const void *callback);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_08096bec(struct Particle_080981b0 *particle, s32 speed, s32 angle);
 void Func_080090d0(struct Effect_080981b0 *effect);
 extern u8 Data_0809f0d4;
@@ -64,16 +66,16 @@ void Func_080981b0(struct Effect_080981b0 *effect)
             s32 speed;
 
             Func_08009098(particle, &Data_0809f0d4);
-            scale = Func_08004458();
+            scale = Rand();
             particle->baseScale = baseScale;
             scale += baseScale;
             particle->scale = (s32)scale;
             particle->mode = 2;
             particle->field48 = 0xa3d;
-            random = Func_08004458();
-            particle->randomOffset = (s32)(random - Func_08004458());
-            speed = Func_08004458() * 24 + 0x80000;
-            Func_08096bec(particle, speed, Func_08004458());
+            random = Rand();
+            particle->randomOffset = (s32)(random - Rand());
+            speed = Rand() * 24 + 0x80000;
+            Func_08096bec(particle, speed, Rand());
         }
         count--;
     } while (count >= 0);

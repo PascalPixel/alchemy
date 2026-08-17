@@ -15,8 +15,8 @@ struct RenderSetup_0809bb64 {
     u16 sentinel;
     u8 unknown_14[4];
     s32 scale;
-    s32 handle;
     struct RenderRecord_0809bb64 records[67];
+    s32 handle;
 };
 
 struct ReferenceObject_0809bb64 {

@@ -22,8 +22,8 @@ struct Scene_080cc5d8 {
 };
 
 struct Particle_080cc5d8 {
-    s32 angle;
     s32 radius;
+    s32 angle;
     s32 distance;
     s32 unknown_0c;
     s32 unknown_10;

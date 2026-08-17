@@ -1,10 +1,10 @@
 #include "types.h"
 
 struct RecordStore_08005920 {
-    u8 occupied[16];
     u8 record_ids[16];
-    u16 generations[16];
+    u8 occupied[16];
     u8 image[4096];
+    u16 generations[16];
 };
 
 struct RecordHeader_08005920 {

@@ -40,8 +40,8 @@ void Func_08028808(s32 arg0, s32 arg1, s32 arg2) {
             *(s16 *)(entry + 0xC) = position * 8;
             *(s16 *)(entry + 0xE) = arg0 * 8;
             i++;
-            position += 3;
             entry += 0x14;
+            position += 3;
         } while (i < *countPtr);
     }
     state->handle = Func_080162d4(position, arg0, state->field90, 3, 2);

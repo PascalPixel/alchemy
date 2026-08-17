@@ -2,8 +2,8 @@
 
 struct BitsetState_080ac8fc {
     u32 secondary[4];
-    u8 unknown_000[0xf8];
     u32 primary[4];
+    u8 unknown_000[0xf8];
 };
 
 extern struct BitsetState_080ac8fc *Func_08077008(s32 owner);

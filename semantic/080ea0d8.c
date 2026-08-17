@@ -224,7 +224,6 @@ void RunCinematicProjectionEffect(s32 *effect_context) {
     s32 temp_r2_12;
     s32 temp_r2_13;
     s32 temp_r2_14;
-    s32 temp_r2_2;
     s32 temp_r2_9;
     s32 temp_r3;
     s32 temp_r3_16;
@@ -237,7 +236,6 @@ void RunCinematicProjectionEffect(s32 *effect_context) {
     s32 temp_r3_3;
     s32 temp_r3_4;
     s32 temp_r4_2;
-    s32 temp_r4_3;
     s32 temp_r5;
     s32 temp_r5_10;
     s32 temp_r5_11;
@@ -262,7 +260,6 @@ void RunCinematicProjectionEffect(s32 *effect_context) {
     s32 temp_r6_12;
     s32 temp_r6_13;
     s32 temp_r6_3;
-    s32 temp_r6_4;
     s32 temp_r6_5;
     s32 temp_r6_6;
     s32 temp_r6_8;
@@ -270,7 +267,6 @@ void RunCinematicProjectionEffect(s32 *effect_context) {
     s32 temp_r7;
     s32 temp_r7_2;
     s32 temp_r9;
-    s32 var_lr;
     s32 var_r0;
     s32 var_r0_2;
     s32 var_r0_3;
@@ -658,17 +654,16 @@ loop_15:
         temp_sl = M2C_FIELD(var_r1_2, u8 *, 0x080EEF28);
         temp_r6 = M2C_FIELD((var_r1_2 * 2), u16 *, 0x080EEF30) + 0x600;
         Func_080ed408(0x2F, 7, 7, 3, 2);
-        temp_r2_2 = 0x3C - temp_sl;
         temp_r3_4 = temp_sl * 2;
         temp_r6_2 = &sp64[temp_r6];
         temp_r5_3 = 0x50 - temp_r3_4;
-        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, temp_r2_2, temp_r5_3, (u32) temp_sl, temp_r3_4);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, (0x3C - temp_sl), temp_r5_3, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 7, 2);
         (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, 0x3C, temp_r5_3, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 0xB, 2);
-        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, temp_r2_2, 0x50, (u32) temp_sl, temp_r3_4);
+        (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, (0x3C - temp_sl), 0x50, (u32) temp_sl, temp_r3_4);
         Func_08002dd8(0x2F);
         Func_080ed408(0x2F, 7, 7, 0xF, 2);
         (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, temp_r6_2, 0x3C, 0x50, (u32) temp_sl, temp_r3_4);
@@ -700,10 +695,9 @@ loop_15:
             Func_080ed408(0x2F, 7, 7, 3, 2);
             var_r7_10 = 0;
             do {
-                temp_r6_4 = var_r7_10 << 9;
-                temp_r5_6 = ((s32) (spC * Func_08002322(temp_r6_4)) >> 0x10) - 4;
+                temp_r5_6 = ((s32) (spC * Func_08002322((var_r7_10 << 9))) >> 0x10) - 4;
                 var_r7_10 += 1;
-                (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, &sp64[temp_r5_5], temp_r5_6 + 0x3C, ((s32) (spC * Func_0800231c(temp_r6_4)) >> 0x11) + 0x48, 8, 0x10);
+                (*(Renderer_080ea0d8 *)0x03001F0C)(sp68, &sp64[temp_r5_5], temp_r5_6 + 0x3C, ((s32) (spC * Func_0800231c((var_r7_10 << 9))) >> 0x11) + 0x48, 8, 0x10);
             } while (var_r7_10 != 0x80);
             Func_08002dd8(0x2F);
         }
@@ -1008,11 +1002,10 @@ second_frame_loop:
         temp_r6_7 = 0x4C - frame;
         temp_r0_16 = sp64 + 0x64E8;
         temp_r5_8 = (s32) (temp_r6_7 + (temp_r6_7 >> 0x1F)) >> 1;
-        temp_r4_3 = 0x31 - temp_r5_8;
-        sp8 = temp_r4_3;
-        renderer_46(sp68, temp_r0_16, temp_r4_3, 0x26 - temp_r6_7, 0x16, 0x2C);
+        sp8 = (0x31 - temp_r5_8);
+        renderer_46(sp68, temp_r0_16, (0x31 - temp_r5_8), 0x26 - temp_r6_7, 0x16, 0x2C);
         temp_r6_8 = temp_r6_7 + 0x26;
-        renderer_46(sp68, temp_r0_16, temp_r4_3, temp_r6_8, 0x16, 0x2C);
+        renderer_46(sp68, temp_r0_16, (0x31 - temp_r5_8), temp_r6_8, 0x16, 0x2C);
         temp_r5_9 = temp_r5_8 + 0x31;
         renderer_46(sp68, temp_r0_16, temp_r5_9, 0x26 - temp_r6_7, 0x16, 0x2C);
         renderer_46(sp68, temp_r0_16, temp_r5_9, temp_r6_8, 0x16, 0x2C);
@@ -1046,8 +1039,8 @@ second_frame_loop:
         var_r7_19 = 0;
         do {
             temp_r6_10 = var_r7_19 << 8;
-            temp_r5_11 = ((s32) (temp_r0_17 * Func_08002322(temp_r6_10)) >> 0x10) - 5;
             var_r7_19 += 1;
+            temp_r5_11 = ((s32) (temp_r0_17 * Func_08002322(temp_r6_10)) >> 0x10) - 5;
             renderer_46(sp68, &sp50[*(u16 *)0x080EDE5A], temp_r5_11 + 0x3C, ((s32) (temp_r0_17 * Func_0800231c(temp_r6_10)) >> 0x11) + 0x32, 0xAU, 0x14);
         } while (var_r7_19 != 0x100);
     }
@@ -1061,14 +1054,13 @@ second_frame_loop:
 
         } else {
 loop_181:
-            var_lr = geometryRow;
             var_sl = 0;
             var_r8 = geometryRow;
             if (geometryRow < 0) {
 
             } else {
 loop_184:
-                temp_r3_17 = (s32) (((u32) var_lr >> 0x1F) + var_lr) >> 1;
+                temp_r3_17 = (s32) (((u32) (geometryRow) >> 0x1F) + (geometryRow)) >> 1;
                 var_r3_7 = temp_r3_17 * 8;
                 if (var_r3_7 < 0) {
                     var_r3_7 += 7;
@@ -1124,12 +1116,12 @@ loop_184:
                 temp_r3_20 = var_r3_10 >> 3;
                 var_r0_7 = geometryCenterY + temp_r3_20;
                 var_r4_5 = geometryCenterY - temp_r3_20;
-                var_r3_11 = var_lr * geometryRowStep;
+                var_r3_11 = (geometryRow) * geometryRowStep;
                 if (var_r3_11 < 0) {
                     var_r3_11 += 7;
                 }
                 var_r2_4 = geometryCenterX + (var_r3_11 >> 3);
-                var_r3_12 = var_lr * 8;
+                var_r3_12 = (geometryRow) * 8;
                 if (var_r3_12 < 0) {
                     var_r3_12 += 7;
                 }
@@ -1167,11 +1159,11 @@ loop_184:
                 temp_r3_21 = (var_r8 - (var_sl * 2)) - 1;
                 var_r8 = temp_r3_21;
                 if (temp_r3_21 < 0) {
-                    var_r8 = ((var_lr * 2) + var_r8) - 2;
-                    var_lr -= 1;
+                    var_r8 = (((geometryRow) * 2) + var_r8) - 2;
+                    (geometryRow) -= 1;
                 }
                 var_sl += 1;
-                if (var_lr >= (s32) var_sl) {
+                if ((geometryRow) >= (s32) var_sl) {
                     goto loop_184;
                 }
             }
@@ -1188,8 +1180,8 @@ loop_184:
         var_r7_21 = 0;
         do {
             temp_r5_13 = (s32) (temp_r3_22 * Func_08002322(var_r6_5)) >> 0x10;
-            temp_r2_11 = ((s32) (frame + ((u32) frame >> 0x1F)) >> 1) + var_r7_21;
             temp_r0_18 = (s32) ((frame - 0x46) * Func_0800231c(var_r6_5)) >> 0x10;
+            temp_r2_11 = ((s32) (frame + ((u32) frame >> 0x1F)) >> 1) + var_r7_21;
             var_r3_13 = temp_r2_11;
             if (temp_r2_11 < 0) {
                 var_r3_13 = temp_r2_11 + 3;
@@ -1263,15 +1255,15 @@ loop_184:
                         var_r3_15 = ((0x3F & Func_08004458()) + sp20) - 0x20;
                     }
                     var_r5_10->x = var_r3_15 << 0x10;
-                    if (frame > 0x12D) {
-                        var_r5_10->active = 0;
-                    } else {
+                    if (!(frame > 0x12D)) {
                         if (frame > 0xF5) {
                             var_r3_16 = 0x600000;
                         } else {
                             var_r3_16 = 0xC00000 - var_r5_10->x;
                         }
                         var_r5_10->y = var_r3_16;
+                    } else {
+                        var_r5_10->active = 0;
                     }
                 }
             }
@@ -1326,8 +1318,8 @@ loop_184:
          */
         goto second_frame_loop;
     }
-    var_r7_26 = 0;
     var_r6_8 = sp64 + 0x77D8;
+    var_r7_26 = 0;
     do {
         temp_r0_19 = *(void **)var_r6_8;
         var_r6_8 += 4;

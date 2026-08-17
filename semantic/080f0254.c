@@ -13,8 +13,8 @@ void Func_080f0254(u32 page)
         tiles = 0x06000000;
         palette = 0x05000000;
     } else {
-        fill = 0x81818181;
         tiles = 0x06008000;
+        fill = 0x81818181;
         palette = 0x05000100;
     }
 

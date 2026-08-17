@@ -27,16 +27,14 @@ void Func_080e46f0(s32 index)
 {
     u16 colors[64];
     u16 *palette = (u16 *)0x05000000;
-    u16 *palette_cursor;
     s32 i;
 
     ((WordCopy)0x03001388)(colors, Func_08002f40(index), sizeof(colors));
     colors[0] = 0;
 
-    palette_cursor = palette;
     i = 0;
     do {
-        u32 current = *palette_cursor;
+        u32 current = *(palette);
         u32 target = colors[i];
         s32 red = current & 0x1f;
         s32 green = (current >> 5) & 0x1f;
@@ -60,7 +58,7 @@ void Func_080e46f0(s32 index)
 
         colors[i] = red | (green << 5) | (blue << 10);
         i++;
-        palette_cursor++;
+        (palette)++;
     } while (i != 64);
 
     ((WordCopy)0x03001388)(palette, colors, sizeof(colors));

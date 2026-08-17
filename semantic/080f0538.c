@@ -15,13 +15,11 @@ void Func_080f0538(void)
     s32 column;
     u32 x;
     s32 row;
-    u16 raw_phase;
     u8 *entry;
     volatile struct DmaTransfer_080f0538 *dma;
 
-    raw_phase = *(volatile u16 *)0x02004c00;
-    remainder = raw_phase & 7;
-    phase = (s16)raw_phase;
+    remainder = (*(volatile u16 *)0x02004c00) & 7;
+    phase = (s16)(*(volatile u16 *)0x02004c00);
     if (phase < 0)
         phase += 7;
     tile = (phase >> 3) & 31;

@@ -136,13 +136,7 @@ void Func_080c972c(void *argument)
                     y,
                     24,
                     24);
-                if (particle->y <= 0x27f) {
-                    if (*(s32 *)((u8 *)argument + 4) == 0)
-                        particle->x -= 32;
-                    else
-                        particle->x += 32;
-                    particle->y += 64;
-                } else {
+                if (!(particle->y <= 0x27f)) {
                     s32 fragment_count = config[effect * 4 + 1];
                     s32 fragment_index;
 
@@ -197,6 +191,12 @@ void Func_080c972c(void *argument)
                                 2);
                         }
                     }
+                } else {
+                    if (*(s32 *)((u8 *)argument + 4) == 0)
+                        particle->x -= 32;
+                    else
+                        particle->x += 32;
+                    particle->y += 64;
                 }
             } else if (particle->timer <= 7) {
                 const void *source;

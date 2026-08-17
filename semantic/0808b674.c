@@ -6,8 +6,8 @@ struct SpawnedObject_0808b674 {
     s32 y;
     s32 z;
     s32 display_y;
-    u8 unknown_18[0x0a];
     u8 variant;
+    u8 unknown_18[0x0a];
     u8 unknown_23[0x2d];
     void *resource;
     u8 unknown_54;

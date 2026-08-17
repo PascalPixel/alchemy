@@ -4,9 +4,9 @@
    first 64 bytes as opaque padding with a word at 64; the three tail stores
    here resolve that padding into three parallel per-index arrays. */
 struct Record_03001f1c {
-    u8 states[16];
-    u8 kinds[16];
     u16 values[16];
+    u8 kinds[16];
+    u8 states[16];
     u32 payload[4];
 };
 

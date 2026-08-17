@@ -8,8 +8,8 @@ struct Display_080a4800 {
 struct State_080a4800 {
     u8 padding000[0x10];
     void *background_window;
-    u8 padding014[0x168];
     struct Display_080a4800 *mode_display;
+    u8 padding014[0x168];
     u8 padding180[0x9C];
     struct Display_080a4800 *top_display;
 };
@@ -66,8 +66,8 @@ s32 Func_080a4800(s32 value)
         if (*(u32 *)0x03001C94 & 1)
             break;
         if (*(u32 *)0x03001C94 & 2) {
-            selection = -1;
             break;
+            selection = -1;
         }
 
         if (*(u32 *)0x03001B04 & 0x40) {

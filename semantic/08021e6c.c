@@ -303,8 +303,8 @@ u32 Func_08021e6c(s32 alternate)
         }
         if (alternate != 0 && (pressed & 2) != 0) {
             Func_080f9010(113);
-            result = -1;
             break;
+            result = -1;
         }
         if ((repeated & 0x90) != 0) {
             Func_080f9010(111);
@@ -315,8 +315,8 @@ u32 Func_08021e6c(s32 alternate)
             *selectedPointer = Func_080022fc(
                 *selectedPointer + *countPointer - 1, *countPointer);
         } else if (S32_AT(PTR32(0x03001f34), 76) == 0) {
-            result = *selectedPointer;
             break;
+            result = *selectedPointer;
         } else {
             continue;
         }

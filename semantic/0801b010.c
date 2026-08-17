@@ -68,7 +68,19 @@ void Func_0801b010(u16 type, u32 content_width)
     struct SelectionNode_0801b010 *selection = Func_0801b36c(state);
     struct Window_0801b010 *window = state->description_window;
 
-    if (window == 0) {
+    if (!(window == 0)) {
+        if (content_width != 0 && window->width != content_width + 2) {
+            Func_08016418(window, 2);
+            window = Func_080162d4(
+                ((9 - content_width) >> 1) + 19,
+                17,
+                content_width + 2,
+                3,
+                6);
+            state->description_window = window;
+        }
+        Func_08016478(state->description_window);
+    } else {
         if (type == 6) {
             u32 y = state->special_anchor != 0 ? 17 : 0;
 
@@ -86,18 +98,6 @@ void Func_0801b010(u16 type, u32 content_width)
             state->description_window = window;
         }
         Func_08016478(window);
-    } else {
-        if (content_width != 0 && window->width != content_width + 2) {
-            Func_08016418(window, 2);
-            window = Func_080162d4(
-                ((9 - content_width) >> 1) + 19,
-                17,
-                content_width + 2,
-                3,
-                6);
-            state->description_window = window;
-        }
-        Func_08016478(state->description_window);
     }
 
     if (state->use_entry_description != 0) {

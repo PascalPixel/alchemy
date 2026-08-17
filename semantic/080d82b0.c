@@ -108,8 +108,8 @@ void Func_080d82b0(struct Scene_080d82b0 *scene)
         source_point[0] = object->x;
         source_point[1] = Func_080b5070(object_id) / 2;
         source_point[2] = object->z;
-        Func_080e3944(source_point, projected);
         projected[0] >>= 1;
+        Func_080e3944(source_point, projected);
 
         for (particle_index = 0; particle_index < 128; particle_index++) {
             struct Particle_080d82b0 *particle =

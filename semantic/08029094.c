@@ -43,14 +43,14 @@ s16 Func_08029094(
     }
 
     if (input & MENU_INPUT_UP) {
-        if (*active_half == 0) {
-            primary++;
-            if (primary > 200)
-                primary = 0;
-        } else {
+        if (!(*active_half == 0)) {
             (*secondary)++;
             if (*secondary > 99)
                 *secondary = 0;
+        } else {
+            primary++;
+            if (primary > 200)
+                primary = 0;
         }
         return primary;
     }
@@ -70,15 +70,15 @@ s16 Func_08029094(
     }
 
     if (input & MENU_INPUT_PAGE_UP) {
-        if (*active_half == 0) {
-            *secondary = 0;
-            primary += 10;
-        } else {
+        if (!(*active_half == 0)) {
             s16 previous = *secondary;
 
             *secondary += 10;
             if (*secondary > 99)
                 *secondary = previous - 89;
+        } else {
+            *secondary = 0;
+            primary += 10;
         }
 
         if (primary > 200)

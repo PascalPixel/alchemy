@@ -2,10 +2,10 @@
 
 struct TransferState {
     u8 padding0[0x7780];
-    s32 mode;
     s32 value;
-    u8 padding7788[0x98];
     s32 frame;
+    u8 padding7788[0x98];
+    s32 mode;
     s32 pending;
 };
 

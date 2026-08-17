@@ -32,8 +32,8 @@ struct Record_080b9470 {
 };
 
 struct ActionDefinition_080b9470 {
-    u8 unknown_00[3];
     u8 type;
+    u8 unknown_00[3];
     u8 unknown_04[12];
 };
 

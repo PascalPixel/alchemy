@@ -22,11 +22,11 @@ struct Particle_0800c880 {
     s32 scale_x;
     s32 scale_y;
     u8 unknown_20[2];
-    u8 parameter;
     u8 unknown_23[0x2d];
+    u8 parameter;
     void **targets;
-    u8 mode;
     u8 unknown_55[0x1b];
+    u8 mode;
 };
 
 typedef void (*Transfer_0800c880)(const void *, s32, s32);

@@ -9,12 +9,12 @@ struct DmaTransfer_08094730 {
 struct State_08094730 {
     u8 padding000[0xf01];
     u8 mode;
-    u8 paddingf02[6];
     s32 first;
-    s32 fourth;
+    u8 paddingf02[6];
     s32 second;
-    s32 fifth;
+    s32 fourth;
     s32 third;
+    s32 fifth;
     s32 sixth;
 };
 

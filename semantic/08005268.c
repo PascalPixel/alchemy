@@ -44,8 +44,8 @@ typedef s32 (*Multiply_08005268)(s32 a, s32 b);
    centre the projection is offset by. */
 struct Camera_08005268 {
     s32 focal_00;
-    s32 near_04;
     s32 far_08;
+    s32 near_04;
     s32 centre_x_0c;
     s32 centre_y_10;
 };

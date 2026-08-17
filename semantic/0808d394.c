@@ -23,22 +23,7 @@ struct Record_0808d394 *Func_0808d394(s32 id) {
     do {
         record = *lists++;
         if (record != 0) {
-            if (id <= 7) {
-                test = record->id;
-                    current = *(volatile u16 *)record;
-                if (test != initialSentinel) {
-                    do {
-                        test = (s16)current;
-                        if (test == id)
-                            goto done;
-                        record++;
-                        test = record->id;
-                        current = *(volatile u16 *)record;
-                        if (test == -1)
-                            break;
-                    } while (1);
-                }
-            } else {
+            if (!(id <= 7)) {
                 current = *(volatile u16 *)record;
                 test = (s16)current;
                 if (test != initialSentinel) {
@@ -52,6 +37,21 @@ struct Record_0808d394 *Func_0808d394(s32 id) {
                         record++;
                         current = *(volatile u16 *)record;
                     } while ((s16)current != -1);
+                }
+            } else {
+                test = record->id;
+                    current = *(volatile u16 *)record;
+                if (test != initialSentinel) {
+                    do {
+                        test = (s16)current;
+                        if (test == id)
+                            goto done;
+                        record++;
+                        test = record->id;
+                        current = *(volatile u16 *)record;
+                        if (test == -1)
+                            break;
+                    } while (1);
                 }
             }
         }

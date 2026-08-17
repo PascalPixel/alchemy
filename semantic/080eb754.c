@@ -210,7 +210,9 @@ void Func_080eb754(struct Scene_080eb754 *scene)
             for (i = 0; i < 48; i++) {
                 struct Particle_080eb754 *particle = &primary[i];
 
-                if (particle->timer == 0) {
+                if (!(particle->timer == 0)) {
+                    particle->timer--;
+                } else {
                     s32 size = Func_080022fc(i, 3) + 1;
 
                     renderer(
@@ -225,8 +227,6 @@ void Func_080eb754(struct Scene_080eb754 *scene)
                     particle->y += particle->velocity_y;
                     particle->velocity_y =
                         (particle->velocity_y * 3) / 4;
-                } else {
-                    particle->timer--;
                 }
 
                 if (particle->x > 128 ||
@@ -262,12 +262,12 @@ void Func_080eb754(struct Scene_080eb754 *scene)
             }
         }
 
-        if (*(s32 *)(runtime + 0x77a8) > 0) {
+        if (!(*(s32 *)(runtime + 0x77a8) > 0)) {
+            *(volatile u16 *)0x03001ad6 = 32;
+        } else {
             *(s32 *)(runtime + 0x77a8) -= 1;
             *(volatile u16 *)0x03001ad6 =
                 (Func_08004458() & 7) + 28;
-        } else {
-            *(volatile u16 *)0x03001ad6 = 32;
         }
 
         *(s32 *)(runtime + 0x7824) = 1;

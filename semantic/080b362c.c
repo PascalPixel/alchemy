@@ -6,17 +6,17 @@ struct FocusObject {
 };
 
 struct MenuState {
-    u8 unknown_000[0x20];
-    void *cursor_020;
-    u8 unknown_024[0x35c];
     struct FocusObject *focus_380;
+    void *cursor_020;
+    u8 unknown_000[0x20];
     u8 unknown_384[0x24];
     s8 mode_3a8;
+    u8 unknown_024[0x35c];
 };
 
 struct CombatantState {
-    u16 effects[15];
     u8 unknown_000[0xd8];
+    u16 effects[15];
 };
 
 extern struct MenuState *Data_03001f2c;

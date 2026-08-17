@@ -21,8 +21,8 @@ typedef struct ItemMetadata_080a8d34 {
     u8 padding00;
     u8 flags;
     u8 type;
-    u8 padding03[9];
     u8 category;
+    u8 padding03[9];
 } ItemMetadata_080a8d34;
 
 LAYOUT_OFFSET_GUARD(
@@ -124,12 +124,12 @@ s32 Func_080a8d34(
                 Func_08077080(row_items[i] & 0x3fff);
 
             palette = 15;
-            if (metadata->type != 4) {
+            if (!(metadata->type != 4)) {
+                Func_080a2268(window, 9, x, 19, 1, 15);
+            } else {
                 Func_08015280(window, metadata->type + 1, 24, x, 4);
                 Func_080a2268(window, 9, x, 15, 1, 15);
                 needs_strip = 1;
-            } else {
-                Func_080a2268(window, 9, x, 19, 1, 15);
             }
         }
 

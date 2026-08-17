@@ -28,8 +28,8 @@ u16 *Func_080170f8(u16 x, u16 y, u16 width, u16 height) {
 
     Func_0801e260(x, y, width, height);
     if (engine[0xEA4] != 0) {
-        top_left = 0xF01C;
         top_right = 0xF41C;
+        top_left = 0xF01C;
         bottom_left = 0xF81C;
         bottom_right = 0xFC1C;
     } else {
@@ -39,8 +39,8 @@ u16 *Func_080170f8(u16 x, u16 y, u16 width, u16 height) {
         bottom_right = 0xF015;
     }
 
-    interior_width = width - 2;
     row_advance = 32 - width;
+    interior_width = width - 2;
 
     *row++ = top_left;
     cursor = Func_080170c4(row, 0xF011, interior_width);

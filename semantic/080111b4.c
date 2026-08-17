@@ -57,8 +57,8 @@ struct Map_080111b4 {
     u8 unknown_10[212];
     s32 previous_x;
     s32 previous_z;
-    u8 unknown_ec[44];
     u16 heading;
+    u8 unknown_ec[44];
     u16 pitch;
     u8 unknown_11c[556];
     s32 near;
@@ -67,8 +67,8 @@ struct Map_080111b4 {
 
 struct Transfer_080111b4 {
     u8 unknown_00[12];
-    s32 field0c;
     s32 anchor;
+    s32 field0c;
 };
 
 /* 0x03000118, the IWRAM-relocated ARM fixed-point multiply. */
@@ -199,8 +199,8 @@ void Func_080111b4(void)
 
         Func_080123f4(((Ratio_080111b4)0x0300013c)(cosine, sine),
                       position, context);
-        Data_03001f60 = 0;
         Data_03001af4 = map->heading;
+        Data_03001f60 = 0;
     }
 
     (*(Render_080111b4 *)(Data_03001e50 + 184))(

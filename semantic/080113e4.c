@@ -15,8 +15,8 @@ void Func_080113e4(void)
     if (*(s32 **)state != 0) {
         s32 *position = *(s32 **)state;
 
-        x = position[0];
         y = position[2];
+        x = position[0];
     }
 
     x = (x - 0x01000000) >> 25;

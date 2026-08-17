@@ -8,8 +8,8 @@ struct Particle_08094bbc {
     u16 attr2;
     u8 reserved0a[2];
     s32 x;
-    s32 groundY;
     s32 y;
+    s32 groundY;
     s32 verticalOffset;
     u16 lifetime;
     u8 reserved1e[2];
@@ -75,8 +75,10 @@ void Func_08094bbc(void)
             screenY = ((particle->y - particle->groundY - viewY) >> 16) -
                 (u16)lifetime;
 
-            if ((u32)(screenX + 15) <= 255 &&
-                screenY >= -32 && screenY <= 159) {
+            if (!((u32)(screenX + 15) <= 255 &&
+                screenY >= -32 && screenY <= 159)) {
+                particle->lifetime = 0;
+            } else {
                 if (lifetime <= 59) {
                     tile = (manager->tileIndex + 16) & 0x3ff;
                     particle->verticalOffset += 3;
@@ -101,8 +103,6 @@ void Func_08094bbc(void)
                 particle->attr1 =
                     (particle->attr1 & 0x3fff) | 0x4000;
                 Func_08003dec(particle, 0xf0);
-            } else {
-                particle->lifetime = 0;
             }
         }
 

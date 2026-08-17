@@ -109,8 +109,8 @@ void Func_0800d340(void)
             goto next_object;
         }
 
-        x = object->position_08[0];
         y = object->position_08[1];
+        x = object->position_08[0];
         z = object->position_08[2];
 
         if (object->skipPushback == 0) {
@@ -128,7 +128,15 @@ void Func_0800d340(void)
                         Func_03000118(fullDx, fullDx) +
                         Func_03000118(fullDz, fullDz));
 
-                    if (((u32)fullDist << 8) != 0) {
+                    if (!(((u32)fullDist << 8) != 0)) {
+                        /* Already at (or effectively at) the target:
+                           snap x/z to it outright and leave velocity
+                           untouched -- the asm skips the velocity
+                           update entirely on this path rather than
+                           zeroing it. */
+                        x = object->pushback_38[0];
+                        z = object->pushback_38[2];
+                    } else {
                         s32 ratio = Func_0300013c(
                             (s32)((u32)fullDist << 8), object->acceleration_34);
                         s32 newVelX = object->velocity_24[0] +
@@ -152,14 +160,6 @@ void Func_0800d340(void)
                             object->velocity_24[2] =
                                 Func_03000118(newVelZ, clampRatio);
                         }
-                    } else {
-                        /* Already at (or effectively at) the target:
-                           snap x/z to it outright and leave velocity
-                           untouched -- the asm skips the velocity
-                           update entirely on this path rather than
-                           zeroing it. */
-                        x = object->pushback_38[0];
-                        z = object->pushback_38[2];
                     }
                 } else {
                     x = object->pushback_38[0];
@@ -229,15 +229,15 @@ void Func_0800d340(void)
             case 16: {
                 s32 target = object->pushback_38[0];
 
-                if (x == target) {
-                    arrived = 1;
-                } else {
+                if (!(x == target)) {
                     s32 before = object->position_08[0] - target;
                     s32 after = x - target;
 
                     if ((before ^ after) < 0) {
                         arrived = 1;
                     }
+                } else {
+                    arrived = 1;
                 }
                 break;
             }

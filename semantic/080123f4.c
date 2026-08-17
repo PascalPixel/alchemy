@@ -97,7 +97,10 @@ void Func_080123f4(s32 reference, const s32 *source,
         }
         scale = ratio(span, depth);
 
-        if (scale < 0) {
+        if (!(scale < 0)) {
+            scanlines->offset = 0;
+            scanlines->rotation = 0;
+        } else {
             scanlines->offset =
                 ratio(camera->height_00,
                       multiply(-scale, 128 << 8));
@@ -110,9 +113,6 @@ void Func_080123f4(s32 reference, const s32 *source,
                 scale = -scale;
             }
             scanlines->rotation = multiply(scale, 128 << 8);
-        } else {
-            scanlines->offset = 0;
-            scanlines->rotation = 0;
         }
 
         scanlines->zero_08 = 0;

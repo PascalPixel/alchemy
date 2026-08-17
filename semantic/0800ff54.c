@@ -19,8 +19,8 @@ void Func_0800ff54(u32 block, s32 x, s32 y)
     adjusted = x + ((u32)x >> 31);
     row = (adjusted >> 1) & 127;
     column = x & 30;
-    parity = x & 1;
     row_mask = 0x3f80;
+    parity = x & 1;
     i = 0;
 
     do {

@@ -12,8 +12,8 @@ struct EffectObject_0809a8c4 {
     u8 unknown_14[4];
     s32 scale_x;
     s32 scale_y;
-    u8 unknown_20[0x44];
     s16 counter_64;
+    u8 unknown_20[0x44];
     s16 counter_66;
     struct EffectObject_0809a8c4 *parent;
     EffectCallback_0809a8c4 callback;
@@ -29,8 +29,8 @@ struct PositionSource_0809a8c4 {
 struct SceneState_0809a8c4 {
     u8 unknown_00[4];
     s32 x;
-    s32 y;
     s32 z;
+    s32 y;
     struct PositionSource_0809a8c4 *source;
     struct EffectObject_0809a8c4 *secondary;
     u8 unknown_18[8];

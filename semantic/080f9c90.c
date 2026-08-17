@@ -187,15 +187,15 @@ void Func_080f9c90(struct Player_080f9c90 *player)
 
                     for (channel = track->chain; channel != 0;
                          channel = channel->next) {
-                        if ((channel->status & 0xc7) != 0) {
+                        if (!((channel->status & 0xc7) != 0)) {
+                            Func_080fa678(channel);
+                        } else {
                             if (channel->gate_time != 0) {
                                 channel->gate_time -= 1;
                                 if (channel->gate_time == 0) {
                                     channel->status |= 0x40;
                                 }
                             }
-                        } else {
-                            Func_080fa678(channel);
                         }
                     }
 
@@ -242,9 +242,7 @@ void Func_080f9c90(struct Player_080f9c90 *player)
                         track->wait -= 1;
                         if (track->lfo_speed != 0 &&
                             track->mod_depth != 0) {
-                            if (track->lfo_delay_counter != 0) {
-                                track->lfo_delay_counter -= 1;
-                            } else {
+                            if (!(track->lfo_delay_counter != 0)) {
                                 s32 counter;
                                 s32 value;
 
@@ -263,6 +261,8 @@ void Func_080f9c90(struct Player_080f9c90 *player)
                                         track->mod_type == 0 ? 0x0c
                                                              : 0x03;
                                 }
+                            } else {
+                                track->lfo_delay_counter -= 1;
                             }
                         }
                         break;

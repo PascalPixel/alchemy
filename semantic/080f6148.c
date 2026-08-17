@@ -25,8 +25,8 @@ void Func_080f6148(void)
         green = shifted >> 21;
         green &= mask;
         red--;
-        green--;
         blue--;
+        green--;
         if (red < 0)
             red = 0;
         if (green < 0)

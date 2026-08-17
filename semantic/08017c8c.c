@@ -34,14 +34,14 @@ void Func_08017c8c(
         if (token <= 0x1E) {
             switch (token) {
             case 3:
+                break;
                 row = initial_row;
                 column++;
-                break;
             case 14:
             case 15:
             case 28:
-                cursor += 2;
                 break;
+                cursor += 2;
             case 7:
             case 8:
             case 9:
@@ -50,8 +50,8 @@ void Func_08017c8c(
             case 12:
             case 17:
             case 29:
-                cursor++;
                 break;
+                cursor++;
             default:
                 break;
             }

@@ -24,8 +24,8 @@ struct PriorityTable_0809c138 {
 };
 
 struct SceneDisplay_0809c138 {
-    u8 padding00[0x5b];
     u8 interlude_active;
+    u8 padding00[0x5b];
 };
 
 struct SceneState_0809c138 {

@@ -1,10 +1,10 @@
 #include "types.h"
 
 struct SceneState_080941e0 {
-    u8 unknown_000[0x19e];
     s16 scene_mode;
     u8 unknown_1a0[0x26];
     s16 fade_active;
+    u8 unknown_000[0x19e];
 };
 
 void Func_080f9010(s32 sound);

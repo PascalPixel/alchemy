@@ -112,12 +112,12 @@ void Func_080dd77c(void *object)
 
                 source_offset = Func_080022fc(tile, 5);
 
-                if (frame < (i * 2) + 32) {
+                if (!(frame < (i * 2) + 32)) {
+                    width = 160 - ((frame - (i * 2)) * 4);
+                } else {
                     width = ((frame - (i * 2)) * 4) - 16;
                     if (width > 32)
                         width = 32;
-                } else {
-                    width = 160 - ((frame - (i * 2)) * 4);
                 }
 
                 if (width > 0) {

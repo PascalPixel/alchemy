@@ -24,14 +24,14 @@ void Func_0801908c(void *object)
     case 9:
         index9 = *(u16 *)(source + 0xc);
         *(u16 *)(source + 0xc) = index9 + 1;
-        value = *(u16 *)(0x080366f8 + ((index9 & 0x1f) * 2));
         break;
+        value = *(u16 *)(0x080366f8 + ((index9 & 0x1f) * 2));
     case 10:
         index10 = *(u16 *)(source + 0xc);
         *(u16 *)(source + 0xc) = index10 + 1;
         sampled = *(u16 *)(0x080366f8 + ((index10 & 0x1f) * 2));
-        value = sampled >> 1;
         break;
+        value = sampled >> 1;
     case 11:
         index11 = *(u16 *)(source + 0xc);
         if (index11 <= 7) {
@@ -49,30 +49,21 @@ void Func_0801908c(void *object)
         break;
     }
 
-    if (value == 0x100) {
-        bits = target[7];
-        clear63 = -0x3f;
-        bits &= clear63;
-        target[7] = bits;
-        bits = target[5];
-        clear4 = -4;
-        bits &= clear4;
-        target[5] = bits;
-    } else {
+    if (!(value == 0x100)) {
         merged = args[0];
         repeated = value;
+        merged |= repeated;
         merged &= 0xffff0000;
-        merged |= repeated;
         merged &= 0xffff;
-        repeated <<= 16;
         merged |= repeated;
+        repeated <<= 16;
         args[0] = merged;
         args[1] &= 0xffff0000;
         generated = Func_08003d28(args) & 0x1f;
         bits = target[7];
+        bits |= generated * 2;
         clear63 = -0x3f;
         bits &= clear63;
-        bits |= generated * 2;
         target[7] = bits;
         if (value > 0x100) {
             target[5] |= 3;
@@ -82,9 +73,18 @@ void Func_0801908c(void *object)
             return;
         }
         bits = target[5];
+        bits |= 1;
         clear4 = -4;
         bits &= clear4;
-        bits |= 1;
+        target[5] = bits;
+    } else {
+        bits = target[7];
+        clear63 = -0x3f;
+        bits &= clear63;
+        target[7] = bits;
+        bits = target[5];
+        clear4 = -4;
+        bits &= clear4;
         target[5] = bits;
     }
 

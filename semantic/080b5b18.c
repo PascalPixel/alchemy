@@ -15,8 +15,8 @@ void Func_080b5b18(void)
     count = Func_080b6a60(ids);
     index = 0;
     if (index < count) {
-        zero = 0;
         clear = 0;
+        zero = 0;
         do {
             u8 *object = Func_08077008(ids[index]);
             s32 field = 3;

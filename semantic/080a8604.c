@@ -13,8 +13,8 @@ struct BattleUiState {
 };
 
 struct CombatantState {
-    u8 unknown_000[0x48];
     s16 current_values[4][2];
+    u8 unknown_000[0x48];
     u8 unknown_058[0xc0];
     u8 first_digits[4];
     u8 second_digits[4];

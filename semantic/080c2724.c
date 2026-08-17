@@ -31,13 +31,13 @@ typedef struct RewardTotals {
 } RewardTotals;
 
 typedef struct LevelUpResult {
-    s32 unknown00;
     s16 gains[6];
+    s32 unknown00;
 } LevelUpResult;
 
 typedef struct AbilityEntry_080c2724 {
-    u16 ability;
     u16 padding02;
+    u16 ability;
 } AbilityEntry_080c2724;
 
 typedef struct Character_080c2724 {

@@ -245,9 +245,9 @@ delete_last:
             *--write = 0;
             Func_08016478(list_window);
             Func_08020b64(list_window, selected);
+            continue;
             refresh_path = 4;
             move_list = 1;
-            continue;
         }
         break;
         result = -1;

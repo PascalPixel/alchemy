@@ -43,12 +43,12 @@ void Func_08019aa0(s32 text, s32 transition, s32 row_offset)
     column = (30 - width) >> 1;
     row = ((15 - height) >> 1) + row_offset;
 
-    if (transition != 0) {
-        window = Func_080162d4(column, row, width, height, 0);
-    } else {
+    if (!(transition != 0)) {
         window = Func_080162d4(column, row, 0, 0, 2);
         window->width = 0;
         window->height = 0;
+    } else {
+        window = Func_080162d4(column, row, width, height, 0);
     }
 
     if (Func_080165d8(window, text_index, 0, 0, 0, 0) == 0) {

@@ -10,15 +10,15 @@ struct MapDescriptor_0808ab74 {
 };
 
 struct MapLoadState_0808ab74 {
-    u8 unknown_000[0x1c0];
     s16 map_id;
+    u8 unknown_000[0x1c0];
     s16 map_variant;
     u8 unknown_1c4[0x08];
     s16 previous_flag_group;
-    u8 unknown_1ce[0x50];
     s16 fallback_sequence;
-    u8 unknown_220[0x12];
+    u8 unknown_1ce[0x50];
     s16 field_232;
+    u8 unknown_220[0x12];
     u8 unknown_234[0x04];
     s32 field_238;
     u8 unknown_23c[0x02];

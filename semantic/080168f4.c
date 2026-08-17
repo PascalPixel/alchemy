@@ -42,8 +42,8 @@ struct WindowWork_080168f4 {
 struct FieldScriptChannel_080168f4 {
     struct WindowWork_080168f4 *window;
     u16 x_accumulator;
-    u16 y_accumulator;
     u16 text_measurement[4];
+    u16 y_accumulator;
     u16 animation_phase;
     u16 command_index;
     u16 command_delay;
@@ -296,7 +296,6 @@ s32 Func_080168f4(struct FieldScriptChannel_080168f4 *channel) {
                 s32 width;
                 s32 height;
                 s32 old_width;
-                s32 old_height;
                 u16 next_index;
 
                 window = channel->window;
@@ -305,7 +304,6 @@ s32 Func_080168f4(struct FieldScriptChannel_080168f4 *channel) {
                 width = window->width;
                 height = window->height;
                 old_width = width;
-                old_height = height;
                 next_index = channel->command_index;
                 engine->preview_active = 0;
 
@@ -341,8 +339,8 @@ s32 Func_080168f4(struct FieldScriptChannel_080168f4 *channel) {
                             0);
 
                         if (window->flags & 0x80) {
-                            if (old_height != height) {
-                                y -= height - old_height;
+                            if ((height) != height) {
+                                y -= height - (height);
                             }
                             if (y < 0) {
                                 y = 0;

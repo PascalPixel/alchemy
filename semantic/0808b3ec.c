@@ -121,8 +121,8 @@ void Func_0808b3ec(struct PublishRequest_0808b3ec *record, s32 counter)
         if (record->id <= 7) {
             localSlot = record->id;
         } else if (record->id <= 0x2705) {
-            localSlot = counter;
             counter++;
+            localSlot = counter;
         }
         /* else: localSlot keeps whatever value it held from a previous
            iteration, transcribed as-is rather than guessed at */

@@ -7,8 +7,8 @@ struct Inner {
     u8 filler10[10];
     u8 field20;
     u8 filler21;
-    u16 bits : 9;
     u16 rest : 7;
+    u16 bits : 9;
 };
 
 struct Object {

@@ -104,8 +104,8 @@ s32 ShowPartyMemberDetails(u16 *members, s32 member_count, u32 member)
     MenuSprite_08023178 row_sprites[11];
     s8 row_kinds[11];
     MenuSprite_08023178 cursor_sprite;
-    void *row_tiles[11];
     MenuSprite_08023178 row_sprite_9;
+    void *row_tiles[11];
     MenuSprite_08023178 row_sprite_10;
     void *actor;
     void *actor_snapshot;
@@ -263,16 +263,7 @@ refresh:
         state.cursor[state.mode] = (s8)cursor;
     }
 
-    if (state.mode == 0) {
-        const u8 *entry =
-            (const u8 *)0x08037328 +
-            (state.cursor[0] + (cursor_tiles == 0 ? 9 : 0)) * 8;
-        state.displayed_value = entry[0];
-        state.icon_x = entry[1];
-        state.icon_y = entry[2];
-        Func_08022768(main_window->x + entry[3] + 1,
-                      main_window->y + entry[4] + 1, entry[5], 1, 14);
-    } else {
+    if (!(state.mode == 0)) {
         const u8 *entry;
         if (state.mode == 1)
             entry = (const u8 *)0x080373a8 + state.cursor[1] * 4;
@@ -281,6 +272,15 @@ refresh:
         state.displayed_value = entry[0];
         state.icon_x = entry[1];
         state.icon_y = entry[2];
+    } else {
+        const u8 *entry =
+            (const u8 *)0x08037328 +
+            (state.cursor[0] + (cursor_tiles == 0 ? 9 : 0)) * 8;
+        state.displayed_value = entry[0];
+        state.icon_x = entry[1];
+        state.icon_y = entry[2];
+        Func_08022768(main_window->x + entry[3] + 1,
+                      main_window->y + entry[4] + 1, entry[5], 1, 14);
     }
     if (state.previous_value != state.displayed_value) {
         state.previous_value = state.displayed_value;

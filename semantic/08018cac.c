@@ -221,16 +221,7 @@ s32 Func_08018cac(
             result = 1;
     }
 
-    if (record->kind == 2) {
-        if (state->marker_resource == 0x63)
-            state->marker_resource = (u16)Func_08004080();
-
-        record->oam.attr1 =
-            (record->oam.attr1 & 0xfe00) |
-            (((object->x + object->width - 2) * 8 + 4) & 0x01ff);
-        ((u8 *)&record->oam.attr0)[0] =
-            (u8)(((u8)object->y + (u8)object->height - 2) * 8 - 1);
-    } else {
+    if (!(record->kind == 2)) {
         volatile DmaTransfer_08018cac *dma =
             (volatile DmaTransfer_08018cac *)0x040000d4;
         s32 tile = state->tile_base + record_tile_offset;
@@ -244,6 +235,15 @@ s32 Func_08018cac(
             (x + (state->horizontal_offset >> 1) +
              (object->x << 3) + 2) | 0x4000;
         record->oam.attr2 = (u16)tile;
+    } else {
+        if (state->marker_resource == 0x63)
+            state->marker_resource = (u16)Func_08004080();
+
+        record->oam.attr1 =
+            (record->oam.attr1 & 0xfe00) |
+            (((object->x + object->width - 2) * 8 + 4) & 0x01ff);
+        ((u8 *)&record->oam.attr0)[0] =
+            (u8)(((u8)object->y + (u8)object->height - 2) * 8 - 1);
     }
 
     record->terminator = 0xfe;

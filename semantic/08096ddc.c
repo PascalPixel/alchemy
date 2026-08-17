@@ -14,8 +14,8 @@ struct VisualState_08096ddc {
     u8 unknown_0a[0x12];
     u8 resource_handle;
     u8 state_1d;
-    u8 unknown_1e[8];
     u8 state_26;
+    u8 unknown_1e[8];
     u8 unknown_27;
     struct VisualChild_08096ddc *child;
 };
@@ -45,8 +45,8 @@ struct SceneObject_08096ddc {
 struct EffectContext_08096ddc {
     u8 unknown_00[0x10];
     struct SceneObject_08096ddc *original;
-    u8 unknown_14[0x32];
     u16 graphic_handle;
+    u8 unknown_14[0x32];
 };
 
 struct ResourceSlot_08096ddc {

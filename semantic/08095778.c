@@ -72,8 +72,8 @@ void Func_08095778(s32 acknowledge)
                 if (record[1] - 48 != offset)
                     continue;
                 Func_080030f8(40);
-                Func_080955b0(slot, page, entry);
                 break;
+                Func_080955b0(slot, page, entry);
             }
         }
     }

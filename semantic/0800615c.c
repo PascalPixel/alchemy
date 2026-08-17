@@ -30,8 +30,8 @@ u8 Func_0800615c(void *destination)
 
     *(volatile u16 *)0x04000208 = 0;
     left = &Data_02002240.matrix[0];
-    right = &Data_02002240.matrix[4];
     column = 3;
+    right = &Data_02002240.matrix[4];
     do {
         u32 value = *right;
         *right = *left;

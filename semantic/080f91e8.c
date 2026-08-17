@@ -25,8 +25,8 @@ void Func_080f91e8(void)
         }
     }
 
-    current = *(s16 *)0x02003008;
     target = *(s16 *)0x02003034;
+    current = *(s16 *)0x02003008;
     if (target != current) {
         delta = target - current;
         step = *(u16 *)0x02003010;
@@ -43,11 +43,11 @@ void Func_080f91e8(void)
         Func_080fb2cc((void *)0x02004290, 0xFF, (u16)current);
     }
 
-    target = *(s16 *)0x02003030;
     current = *(s16 *)0x02003038;
+    target = *(s16 *)0x02003030;
     if (target != current) {
-        delta = target - current;
         step = *(u16 *)0x0200300C;
+        delta = target - current;
         if (delta > 0)
             current = (s16)(u16)(current + step);
         else

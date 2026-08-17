@@ -14,14 +14,14 @@ struct EffectState_08096fb0 {
     u8 unknown_048[2];
     u16 remaining_slots;
     s32 saved_position[3];
-    u8 unknown_058[0x6C4];
     u8 message_state;
+    u8 unknown_058[0x6C4];
     u8 unknown_71D[3];
 };
 
 struct BattleState_08096fb0 {
-    u8 unknown_000[0xCC0];
     s16 transition_state;
+    u8 unknown_000[0xCC0];
     u8 unknown_CC2[4];
     s8 effect_mode;
 };
@@ -32,8 +32,8 @@ struct ViewState_08096fb0 {
 };
 
 struct SharedState_08096fb0 {
-    u8 unknown_000[0x1DA];
     s16 scene_id;
+    u8 unknown_000[0x1DA];
     u8 unknown_1DC[0x18];
     s32 selected_object;
 };

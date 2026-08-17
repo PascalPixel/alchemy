@@ -10,8 +10,8 @@ struct SceneAssets_08010e14 {
 };
 
 struct SceneState_08010e14 {
-    u8 unknown_000[0x11C];
     const struct SceneAssets_08010e14 *assets;
+    u8 unknown_000[0x11C];
     u8 unknown_120[0x2C];
     u16 first_special_tiles[3];
     u8 unknown_152[0x1A];

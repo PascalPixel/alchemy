@@ -310,12 +310,7 @@ wait_for_input:
                     Func_080f9010(0x6f);
                     Func_0800352c();
                     next_column = column + 5;
-                    if (next_column >= entry_count) {
-                        if (column != 0) {
-                            row = saved_row;
-                            column = 0;
-                        }
-                    } else {
+                    if (!(next_column >= entry_count)) {
                         column = next_column;
                         row = saved_row;
                         if (column ==
@@ -327,15 +322,17 @@ wait_for_input:
                             if (final_row < row)
                                 row = final_row;
                         }
+                    } else {
+                        if (column != 0) {
+                            row = saved_row;
+                            column = 0;
+                        }
                     }
                     row_offset = row * 2;
                 } else if ((keys & 0x20) != 0) {
                     Func_080f9010(0x6f);
                     Func_0800352c();
-                    if (column != 0) {
-                        row = saved_row;
-                        column -= 5;
-                    } else {
+                    if (!(column != 0)) {
                         column =
                             Func_080022ec(entry_count - 1, 5) *
                             5;
@@ -347,6 +344,9 @@ wait_for_input:
                             if (final_row < row)
                                 row = final_row;
                         }
+                    } else {
+                        column -= 5;
+                        row = saved_row;
                     }
                     row_offset = row * 2;
                 }

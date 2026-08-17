@@ -154,14 +154,7 @@ s32 Func_080dd2c4(void *scene, s32 variant)
                     if (height > emitter->limit)
                         height = emitter->limit;
 
-                    if (variant == 0) {
-                        u8 width = U8_AT((void *)0x080eeb48, table);
-                        renderers[i & 1](
-                            graphics_source,
-                            runtime + U16_AT((void *)0x080eeb4e, table * 2),
-                            emitter->x - (width >> 1), emitter->y - height,
-                            width, height);
-                    } else {
+                    if (!(variant == 0)) {
                         s32 maximum = S8_AT((void *)0x080eeb71, i & 7);
                         u8 width = U8_AT((void *)0x080eeb54, table);
                         if (height > maximum)
@@ -169,6 +162,13 @@ s32 Func_080dd2c4(void *scene, s32 variant)
                         renderers[i & 1](
                             graphics_source,
                             runtime + U16_AT((void *)0x080eeb58, table * 2),
+                            emitter->x - (width >> 1), emitter->y - height,
+                            width, height);
+                    } else {
+                        u8 width = U8_AT((void *)0x080eeb48, table);
+                        renderers[i & 1](
+                            graphics_source,
+                            runtime + U16_AT((void *)0x080eeb4e, table * 2),
                             emitter->x - (width >> 1), emitter->y - height,
                             width, height);
                     }

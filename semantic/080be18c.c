@@ -42,8 +42,8 @@ struct Action_080be18c {
 
 struct Selection_080be18c {
     u8 unknown_00;
-    u8 count;
     u8 ids[14];
+    u8 count;
     u8 offsets[14];
     u8 flags[14];
 };

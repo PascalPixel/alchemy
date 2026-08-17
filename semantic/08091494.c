@@ -18,8 +18,8 @@ struct State_08091494 {
 };
 
 struct GlobalState_08091494 {
-    u8 padding[0x1f4];
     u32 selected_object;
+    u8 padding[0x1f4];
 };
 
 extern struct GlobalState_08091494 Data_02000240;
@@ -59,8 +59,8 @@ void Func_08091494(s32 object)
     period <<= 4;
     Func_080041d8(Func_080912b8, period);
 
-    blend_value = 0x3f9e;
     blend = &Data_04000050.control;
+    blend_value = 0x3f9e;
     *blend++ = blend_value;
     blend_value = 0x10;
     *blend++ = blend_value;

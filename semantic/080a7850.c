@@ -77,8 +77,8 @@ void Func_080a7850(void)
         state->geometry_b_23c[row] = 0x46;
     }
 
-    Func_08015270(state->grid_window_024);
     Func_08015070(state->grid_window_024, 0, 0x0b, 0x1c, 0x0b);
+    Func_08015270(state->grid_window_024);
     Func_08015078(0x0b18, state->text_window_10c, -0x60, 0x84);
 
     for (row = 0; row < 4; row++) {

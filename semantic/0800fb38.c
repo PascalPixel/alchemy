@@ -93,12 +93,12 @@ struct Block_0800fb38 {
     u8 unknown_00[16];
     const void *script;
     u16 display;
-    u8 unknown_16[206];
     s32 scroll_x;
+    u8 unknown_16[206];
     s32 scroll_y;
     s32 corner[4];
-    u8 unknown_fc[4];
     u8 character_base[3];
+    u8 unknown_fc[4];
     u8 unknown_103;
     struct LayerSlot_0800fb38 slots[3];
 };
@@ -229,9 +229,7 @@ s32 Func_0800fb38(s32 index)
     *(volatile u16 *)0x0400000a =
         (u16)(block->character_base[2] | (header->priority_bg1 << 2) | 0x700);
 
-    if (Func_080770c0(368) != 0) {
-        Func_080770d0(368);
-    } else {
+    if (!(Func_080770c0(368) != 0)) {
         buffer = Func_08004938(0x4000);
         if (buffer != 0) {
             s16 saved = *(volatile s16 *)0x05000000;
@@ -256,6 +254,8 @@ s32 Func_0800fb38(s32 index)
                           (void *)0x02028000);
             Func_08002df0(buffer);
         }
+    } else {
+        Func_080770d0(368);
     }
 
     *(volatile u16 *)0x0400004c = 0;

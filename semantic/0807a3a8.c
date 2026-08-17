@@ -6,7 +6,6 @@ s32 Func_0807a3a8(s32 owner, s32 first, s32 second)
 {
     u8 *state;
     u8 *entries;
-    u8 *firstCursor;
     u8 *secondCursor;
     s32 count;
     s32 index;
@@ -25,7 +24,6 @@ s32 Func_0807a3a8(s32 owner, s32 first, s32 second)
     index = 0;
     secondCursor = state + 9;
     offset = 0;
-    firstCursor = entries;
     if (count <= 0)
         goto done;
 
@@ -40,12 +38,12 @@ scan:
     count = *(s32 *)(state + 0x108);
     index++;
     secondCursor += 4;
-    firstCursor += 4;
+    (entries) += 4;
     offset += 4;
     if (index >= count)
         goto done;
     shiftOffset = offset;
-    if (first != *firstCursor || second != *secondCursor)
+    if (first != *(entries) || second != *secondCursor)
         goto scan;
     *(s32 *)(state + 0x108) = count - 1;
     removed = 1;

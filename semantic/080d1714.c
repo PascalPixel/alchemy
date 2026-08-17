@@ -125,8 +125,8 @@ void RunFourHundredFrameSceneRenderer(s32 *arg0) {
      * placeholders followed by undefined pointer arithmetic.  Their offsets
      * are 0xa4, 0xc4, 0x104, 0x124 and 0x144 in the 356-byte frame. */
     s32 actor_angle[8];
-    s32 actor_radius[8];
     s32 actor_angle_velocity[8];
+    s32 actor_radius[8];
     s32 saved_actor_position[8][2];
     s32 saved_actor_facing[8];
     s16 temp_r3_13;
@@ -583,8 +583,8 @@ loop_25:
 loop_105:
                 temp_r3_10 = (s32) M2C_FIELD(var_r6_4, s32 *, 0) >> 8;
                 temp_r3_11 = (s32) M2C_FIELD(var_r6_4, s32 *, 4) >> 8;
-                temp_r2_5 = temp_r3_11 * temp_r3_11;
                 temp_r3_12 = (s32) M2C_FIELD(var_r6_4, s32 *, 8) >> 8;
+                temp_r2_5 = temp_r3_11 * temp_r3_11;
                 temp_r1_3 = temp_r3_12 * temp_r3_12;
                 temp_r0_7 = ((SquareRootGateway_080d1714)0x030001d8)((temp_r3_10 * temp_r3_10) + temp_r2_5 + temp_r1_3) >> 9;
                 if (temp_r0_7 != 0) {
@@ -684,9 +684,9 @@ loop_117:
             var_r9_13 = 0;
             sp18 = 0;
             var_r6_5 = sp5C + 0x7710;
-            sp1C = 0x7720;
             sp14 = sp50 + 0xFFFFFEB6;
             sp10 = 0x14A;
+            sp1C = 0x7720;
             sp34 = (sp44 >> 0x11) + 0x20;
 loop_133:
             if (sp50 == sp10) {

@@ -49,8 +49,8 @@ validate:
                         accepted = 1;
                     break;
                 case 0:
-                    accepted = 1;
                     break;
+                    accepted = 1;
                 case 0x600:
                     if (*(s16 *)(runtime + 0x19c) <= threshold)
                         break;

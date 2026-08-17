@@ -7,8 +7,8 @@ struct MotionObject_0800f7f4 {
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0xE];
     u8 map_layer;
+    u8 unknown_14[0xE];
     u8 unknown_23;
     s32 velocity_x;
     s32 velocity_y;
@@ -33,8 +33,8 @@ struct MapCell_0800f7f4 {
 };
 
 struct MotionMonitor_0800f7f4 {
-    u8 unknown_000[0x19C];
     u16 obstruction_frames;
+    u8 unknown_000[0x19C];
 };
 
 void Func_0800447c(s32, s32, struct ProbePosition_0800f7f4 *);

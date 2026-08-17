@@ -43,14 +43,14 @@ struct ScrollRow_08094544 {
 struct Wobble_08094544 {
     struct ScrollRow_08094544 pages[2][160];
     u8 page;
-    u8 unknown_f01;
     u16 counter;
+    u8 unknown_f01;
     u8 unknown_f04[4];
     s32 low_rate;
     s32 high_rate;
     s32 low_step;
-    s32 high_step;
     s32 low_amplitude;
+    s32 high_step;
     s32 high_amplitude;
 };
 

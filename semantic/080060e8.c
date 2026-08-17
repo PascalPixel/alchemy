@@ -34,12 +34,12 @@ void Func_080060e8(s32 source)
         dma[2] = 0x84000006;
     }
     /* 検査値の欄は0のまま総和に加える。 */
-    hw = *(u16 **)(state + 40);
     index = 0;
+    hw = *(u16 **)(state + 40);
     do {
-        value = *hw;
         index++;
         hw++;
+        value = *hw;
         checksum += value;
     } while ((u32)index <= 13);
     *(u16 *)(*(u8 **)(state + 40) + 2) = ~checksum;

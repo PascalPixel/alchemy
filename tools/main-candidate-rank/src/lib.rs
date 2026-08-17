@@ -282,7 +282,7 @@ pub fn classify(output: &str) -> (Verdict, i64) {
     let mut blind_left: BTreeMap<String, i64> = BTreeMap::new();
     let mut blind_right: BTreeMap<String, i64> = BTreeMap::new();
     let mut differing = 0i64;
-    let mut record = |side: &mut BTreeMap<String, i64>,
+    let record = |side: &mut BTreeMap<String, i64>,
                       blind: &mut BTreeMap<String, i64>,
                       text: &str| {
         *side.entry(normalise(text)).or_default() += 1;

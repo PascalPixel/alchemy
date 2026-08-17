@@ -5,9 +5,7 @@ use std::process::Command;
 
 use alchemy_routing::routing::CompilerTarget;
 use candidate_compiler::jsnum::to_js_number_string;
-use candidate_compiler::verify::{
-    js_subarray, verify_candidate, CandidateCompilerFamily, ROM_BASE,
-};
+use candidate_compiler::verify::{js_subarray, verify_candidate, ROM_BASE};
 
 use crate::cli::Options;
 use crate::diff::differing_offsets;

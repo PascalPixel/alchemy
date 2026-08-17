@@ -317,6 +317,37 @@ pub struct AuditInput {
     pub paths: Option<InputPaths>,
 }
 
+/// Evidence tags whose truth can be read straight out of the assembly.
+///
+/// A permanence claim says "this cannot be C, because the code does X". Where X
+/// is a visible property of the instructions, nothing should stand between the
+/// claim and the file. `nonstandard_thumb_call_module` asserted
+/// `manual_return_address_preserved_in_ip` over 64 files and 26,278 bytes and
+/// was true of 15 files and 348 bytes; the other 49 had ordinary `push`
+/// prologues, and five of them were simultaneously listed as decompilation
+/// targets. Nothing caught it for as long as it stood, so this catches it now.
+///
+/// Only mechanically decidable tags belong here. A claim resting on judgement
+/// (`deliberate_performance`, `hidden_register_context_module`) is not weaker,
+/// it is simply not checkable this way, and inventing a regex for it would be
+/// worse than leaving it to review.
+fn mechanical_evidence(tag: &str, text: &str) -> Option<bool> {
+    let has = |needle: &str| text.contains(needle);
+    let arm_mode = text.lines().any(|line| {
+        let line = line.trim_start();
+        line.starts_with(".arm") || line.starts_with(".code 32")
+    });
+    match tag {
+        "fixed_ldr_r4_bx_r4_literal" => Some(has("ldr\tr4") || has("ldr r4")),
+        "fixed_software_interrupt_instruction" => Some(has("swi") || has("svc")),
+        "arm_instruction_set" => Some(arm_mode),
+        "manual_return_address_preserved_in_ip" => {
+            Some((has("mov\tip, lr") || has("mov ip, lr")) && (has("bx\tip") || has("bx ip")))
+        }
+        _ => None,
+    }
+}
+
 pub fn audit_core_retained(input: &AuditInput) -> Result<CoreRetainedAudit, String> {
     let mut failures: Vec<Failure> = Vec::new();
     let inventory_spans: Vec<Span> = input.inventory.iter().map(|item| item.span).collect();
@@ -416,6 +447,39 @@ pub fn audit_core_retained(input: &AuditInput) -> Result<CoreRetainedAudit, Stri
                     hex(part.start),
                     hex(part.end)
                 ));
+            }
+        }
+    }
+
+    // Every permanence claim whose evidence is visible in the instructions is
+    // read back off the file. See `mechanical_evidence`.
+    if input.paths.is_some() {
+        let retained_kinds = ["keep_asm", "keep_structured_asm", "adjacent_section_alignment"];
+        for region in &input.asm {
+            if !retained_kinds.contains(&region.retention.as_str()) {
+                continue;
+            }
+            // Manifest sources are repo-relative and the gate runs from the
+            // repo root. `paths` being present is what distinguishes a real
+            // run from a unit test with synthetic region names.
+            let Ok(text) = std::fs::read_to_string(&region.source) else {
+                failures.push(format!(
+                    "retained region names a source that cannot be read: {}",
+                    region.source
+                ));
+                continue;
+            };
+            for tag in region.evidence.split(|c: char| c == ',' || c == ';' || c == ' ') {
+                let tag = tag.trim();
+                if tag.is_empty() {
+                    continue;
+                }
+                if mechanical_evidence(tag, &text) == Some(false) {
+                    failures.push(format!(
+                        "retained {} claims {tag} and {} does not show it",
+                        region.kind, region.source
+                    ));
+                }
             }
         }
     }

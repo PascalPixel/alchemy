@@ -87,6 +87,47 @@ yours to honour.
 - Preserve unrelated work in a dirty checkout. Inspect the working tree before
   editing and keep unrelated changes out of your commit.
 
+### Permanent assembly, and why there is no `asm()` in C
+
+A region is permanently assembly when the instructions could not have come from
+this compiler. That claim is recorded in `asm/classification.json` with a kind,
+a confidence and evidence, and `core_retained_audit` reads the evidence back off
+the file for every tag it can decide mechanically. A claim of
+`arm_instruction_set` must show `.arm`, `fixed_ldr_r4_bx_r4_literal` must show
+the veneer pair, and `manual_return_address_preserved_in_ip` must show both
+`mov ip, lr` and `bx ip`.
+
+That check exists because the largest claim in the register was false.
+`nonstandard_thumb_call_module` asserted the ip-return idiom over 64 files and
+26,278 bytes; it is true of 15 files and 348 bytes, and the other 49 have
+ordinary `push` prologues. Five of them were simultaneously listed as
+decompilation targets. Claims resting on judgement rather than a visible
+property are not checked this way and are not weaker for it, but they are the
+ones to read sceptically.
+
+Genuinely permanent looks like this, and no C expresses it:
+
+```
+Func_080f9b4c:
+	mov	ip, lr          @ the return address is kept in ip
+	bl	Func_080f9ab4   @ ...because this bl clobbers lr
+	...
+	bx	ip              @ and there is no stack save anywhere
+```
+
+**No `asm(...)` in C, and it costs us nothing.** pret projects put an
+undecompiled function in the middle of a `.c` file as a `NAKED` body with an
+assembly block, and count it as not decompiled until it is real C. That is the
+same standard as ours; only the filing differs. Our equivalent is a standalone
+`asm/<address>.s` linked at its address, and there are 1,151 of them, so every
+capability inline assembly would buy is already present.
+
+What inline assembly would add is an escape hatch inside a C file, where a byte
+match can be forced instruction by instruction and the result still reads as
+source. This project has already been through that once. `no_asm_c` rejects
+`asm`, `__asm`, register pins and empty barriers, and byte equality does not
+override it.
+
 ### Tools cited by sources but no longer present
 
 A reconstructed source cites the tool that derived a fact. Some of those tools

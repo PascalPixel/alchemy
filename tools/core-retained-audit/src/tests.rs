@@ -459,3 +459,51 @@ fn the_semantic_loader_rejects_a_malformed_registry() {
     let error = semantic_spans(&root, &missing, &starts, ROM_BASE + 0x100, &executable).unwrap_err();
     assert!(error.starts_with("missing required input:"), "{error}");
 }
+
+#[test]
+fn a_permanence_claim_is_read_back_off_the_assembly() {
+    // `nonstandard_thumb_call_module` claimed the ip-return idiom over 64 files
+    // and 26,278 bytes and was true of 15 files and 348 bytes. Nothing caught
+    // it. This is what catches it.
+    let dir = std::env::temp_dir().join(format!("alchemy-evidence-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+
+    let honest = dir.join("honest.s");
+    std::fs::write(&honest, "Func_x:\n\tmov\tip, lr\n\tbl\tFunc_y\n\tbx\tip\n").unwrap();
+    let liar = dir.join("liar.s");
+    std::fs::write(&liar, "Func_x:\n\tpush\t{r4, lr}\n\tbl\tFunc_y\n\tpop\t{r4, pc}\n").unwrap();
+
+    let run = |source: &std::path::Path| {
+        let mut input = base_input();
+        input.paths = Some(InputPaths {
+            inventory: String::new(),
+            semantic: String::new(),
+            asm_manifest: String::new(),
+            claimed_manifest: String::new(),
+        });
+        input.asm = vec![
+            asm_region(ROM_BASE + 8, ROM_BASE + 16, "semantic", "semantic_c"),
+            AsmRegion {
+                span: s(ROM_BASE + 16, ROM_BASE + 32),
+                source: source.to_string_lossy().to_string(),
+                kind: "nonstandard_thumb_call_module".into(),
+                retention: "keep_structured_asm".into(),
+                confidence: "proven".into(),
+                evidence: "manual_return_address_preserved_in_ip,byte_exact_reconstruction".into(),
+            },
+        ];
+        audit_core_retained(&input).unwrap().failures
+    };
+
+    assert!(
+        !run(&honest).iter().any(|f| f.contains("does not show it")),
+        "a file that carries the idiom must pass"
+    );
+    let complaints = run(&liar);
+    assert!(
+        complaints.iter().any(|f| f.contains("manual_return_address_preserved_in_ip")
+            && f.contains("does not show it")),
+        "a push-prologue file claiming the ip idiom must fail, got {complaints:?}"
+    );
+    let _ = std::fs::remove_dir_all(&dir);
+}

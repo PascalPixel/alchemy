@@ -65,3 +65,6 @@ target/
 *.rlib
 *.rmeta
 *.pdb
+
+# Worktree convenience symlink to the shared ROM set.
+/roms

@@ -1467,8 +1467,49 @@ AlchemyC_0200020c:
 	.space 0x34
 AlchemyC_02000240:
 	.space 0x38
-AlchemyC_02000278:
-	.space 0x6c
+	push	{lr}
+	ldr	r0, [pc, #84]
+	bl	sub_0200495a
+	cmp	r0, #0
+	bne.n	.L_02000294
+	movs	r0, #158
+	bl	sub_02004b3c
+	ldr	r0, [pc, #72]
+	movs	r1, #45
+	movs	r2, #39
+	bl	sub_0200491e
+.L_02000294:
+	ldr	r0, [pc, #64]
+	bl	sub_02004974
+	cmp	r0, #0
+	bne.n	.L_020002b4
+	ldr	r0, [pc, #60]
+	bl	sub_0200497e
+	cmp	r0, #0
+	bne.n	.L_020002b4
+	bl	.L_020017b6
+	ldr	r0, [pc, #32]
+	bl	sub_02004994
+	b.n	.L_020002cc
+.L_020002b4:
+	movs	r1, #131
+	movs	r0, #0
+	lsls	r1, r1, #1
+	ldr	r2, [pc, #36]
+	bl	sub_02004a32
+	movs	r0, #3
+	bl	sub_020049b8
+	movs	r0, #6
+	bl	sub_02000426
+.L_020002cc:
+	pop	{r0}
+	bx	r0
+	.4byte 0x00000206
+	.4byte 0x0200d7a0
+	.4byte 0x00000835
+	.4byte 0x00000831
+	.2byte 0x0325
+	.2byte 0x0000
 AlchemyC_020002e4:
 	.space 0x44
 AlchemyC_02000328:
@@ -1476,16 +1517,68 @@ AlchemyC_02000328:
 .L_02000360:
 AlchemyC_02000360:
 	.space 0x38
-AlchemyC_02000398:
-	.space 0x34
-AlchemyC_020003cc:
-	.space 0x34
-AlchemyC_02000400:
-	.space 0x34
+	push	{lr}
+	movs	r0, #158
+	bl	sub_02004c52
+	ldr	r0, [pc, #32]
+	movs	r1, #35
+	movs	r2, #74
+	bl	sub_02004a34
+	movs	r1, #102
+	ldr	r2, [pc, #24]
+	movs	r0, #0
+	bl	sub_02004b26
+	movs	r0, #3
+	bl	sub_02004aac
+	movs	r0, #10
+	bl	.L_0200051a
+	pop	{r0}
+	bx	r0
+	.4byte 0x0200d78a
+	.2byte 0x04b6
+	.2byte 0x0000
+	push	{lr}
+	movs	r0, #158
+	bl	sub_02004c86
+	ldr	r0, [pc, #32]
+	movs	r1, #35
+	movs	r2, #73
+	bl	sub_02004a68
+	movs	r1, #102
+	ldr	r2, [pc, #24]
+	movs	r0, #0
+	bl	sub_02004b5a
+	movs	r0, #3
+	bl	sub_02004ae0
+	movs	r0, #12
+	bl	.L_0200054e
+	pop	{r0}
+	bx	r0
+	.4byte 0x0200d78a
+	.2byte 0x04b6
+	.2byte 0x0000
+	push	{lr}
+	movs	r0, #158
+	bl	sub_02004cba
+	ldr	r0, [pc, #32]
+	movs	r1, #38
+	movs	r2, #72
+	bl	sub_02004a9c
+	movs	r1, #146
+	ldr	r2, [pc, #24]
+	movs	r0, #0
+	bl	sub_02004b8e
+	movs	r0, #3
+	bl	sub_02004b14
+	movs	r0, #13
+	bl	sub_02000582
+	pop	{r0}
+	bx	r0
+	.4byte 0x0200d7a0
+	.2byte 0x049e
+	.2byte 0x0000
 AlchemyC_02000434:
-	.space 0x78
-.L_020004ac:
-	.space 0x6e
+	.space 0xe6
 .L_0200051a:
 	.space 0x34
 .L_0200054e:
@@ -1964,11 +2057,205 @@ AlchemyC_02000434:
 	.4byte 0x0000014f
 	.2byte 0x03bd
 	.2byte 0x0000
-AlchemyC_02000ec4:
-	.space 0x72
+	push	{r5, r6, lr}
+	mov	r6, r8
+	push	{r6}
+	sub	sp, #8
+	movs	r3, #57
+	str	r3, [sp, #4]
+	movs	r6, #21
+	mov	r8, r3
+	movs	r0, #29
+	movs	r1, #64
+	movs	r2, #1
+	movs	r3, #1
+	str	r6, [sp, #0]
+	bl	sub_0200558c
+	movs	r5, #58
+	movs	r0, #29
+	movs	r1, #64
+	movs	r2, #1
+	movs	r3, #1
+	str	r6, [sp, #0]
+	str	r5, [sp, #4]
+	bl	sub_0200559e
+	movs	r3, #22
+	str	r3, [sp, #0]
+	movs	r0, #29
+	movs	r1, #64
+	movs	r2, #1
+	movs	r3, #1
+	str	r5, [sp, #4]
+	bl	sub_020055b0
+	movs	r6, #20
+	movs	r0, #29
+	movs	r1, #64
+	movs	r2, #1
+	movs	r3, #1
+	str	r6, [sp, #0]
+	str	r5, [sp, #4]
+	bl	sub_020055c2
+	mov	r3, r8
+	str	r3, [sp, #4]
+	movs	r0, #28
+	movs	r1, #20
+	movs	r2, #1
+	movs	r3, #1
+	str	r6, [sp, #0]
+	bl	sub_020055d4
+	add	sp, #8
+	pop	{r3}
+	mov	r8, r3
+	pop	{r5, r6}
+	pop	{r0}
+	bx	r0
 	.2byte 0x0000
-AlchemyC_02000f38:
-	.space 0x16c
+	push	{r5, lr}
+	ldr	r0, [pc, #316]
+	bl	sub_0200561a
+	cmp	r0, #0
+	beq.n	.L_02000f46
+	b.n	.L_02001070
+.L_02000f46:
+	bl	sub_02005644
+	ldr	r0, [pc, #304]
+	bl	sub_0200562a
+	cmp	r0, #0
+	bne.n	.L_02001002
+	movs	r0, #12
+	bl	sub_02005684
+	movs	r1, #128
+	adds	r5, r0, #0
+	movs	r2, #128
+	movs	r0, #128
+	lsls	r1, r1, #11
+	lsls	r2, r2, #9
+	lsls	r0, r0, #11
+	bl	sub_02005626
+	movs	r0, #141
+	bl	sub_02005824
+	movs	r0, #40
+	bl	sub_020055b2
+	movs	r0, #145
+	bl	sub_02005830
+	movs	r2, #202
+	movs	r0, #12
+	ldr	r1, [pc, #252]
+	lsls	r2, r2, #18
+	bl	sub_02005714
+	movs	r3, #192
+	lsls	r3, r3, #9
+	str	r3, [r5, #48]
+	str	r3, [r5, #52]
+	movs	r2, #128
+	ldr	r3, [r5, #12]
+	lsls	r2, r2, #17
+	adds	r3, r3, r2
+	str	r3, [r5, #12]
+	str	r3, [r5, #60]
+	movs	r3, #128
+	lsls	r3, r3, #8
+	movs	r1, #145
+	str	r3, [r5, #68]
+	ldr	r2, [pc, #220]
+	movs	r0, #12
+	lsls	r1, r1, #1
+	bl	sub_0200572a
+	movs	r0, #12
+	movs	r1, #1
+	bl	sub_020057ba
+	movs	r1, #129
+	movs	r2, #213
+	lsls	r2, r2, #2
+	movs	r0, #12
+	lsls	r1, r1, #1
+	bl	sub_02005740
+	movs	r0, #12
+	movs	r1, #2
+	bl	sub_020057d0
+	movs	r2, #218
+	movs	r1, #224
+	lsls	r2, r2, #2
+	movs	r0, #12
+	bl	sub_02005754
+	movs	r0, #40
+	bl	sub_020056d2
+	ldr	r0, [pc, #164]
+	bl	sub_02005898
+	movs	r0, #1
+	movs	r1, #1
+	negs	r0, r0
+	negs	r1, r1
+	ldr	r2, [pc, #156]
+	bl	sub_020056ae
+	bl	sub_020056ba
+	bl	sub_020058a6
+	ldr	r0, [pc, #124]
+	bl	sub_020056e4
+.L_02001002:
+	bl	.L_020020a8
+	ldr	r0, [pc, #112]
+	bl	sub_020056ee
+	ldr	r0, [pc, #128]
+	bl	sub_020056ec
+	cmp	r0, #0
+	beq.n	.L_0200106c
+	ldr	r0, [pc, #124]
+	bl	sub_020056f6
+	cmp	r0, #0
+	bne.n	.L_0200106c
+	movs	r0, #195
+	lsls	r0, r0, #2
+	bl	sub_02005702
+	cmp	r0, #0
+	bne.n	.L_0200106c
+	movs	r0, #0
+	bl	sub_0200575c
+	movs	r2, #128
+	ldr	r3, [r0, #12]
+	lsls	r2, r2, #16
+	cmp	r3, r2
+	ble.n	.L_02001050
+	ldr	r1, [pc, #88]
+	movs	r0, #219
+	bl	sub_02002aa6
+	movs	r0, #0
+	movs	r1, #179
+	ldr	r2, [pc, #80]
+	bl	sub_020057c8
+	b.n	.L_02001064
+.L_02001050:
+	movs	r1, #227
+	lsls	r1, r1, #2
+	movs	r0, #214
+	bl	.L_02002abc
+	movs	r0, #0
+	movs	r1, #219
+	ldr	r2, [pc, #64]
+	bl	sub_020057de
+.L_02001064:
+	movs	r0, #195
+	lsls	r0, r0, #2
+	bl	sub_0200574e
+.L_0200106c:
+	bl	sub_02005772
+.L_02001070:
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x00000311
+	.4byte 0x00000831
+	.4byte 0x017d0000
+	.4byte 0x00000341
+	.4byte 0x00000121
+	.4byte 0x0000e666
+	.4byte 0x00000837
+	.4byte 0x00000841
+	.4byte 0x0000034b
+	.4byte 0x0000033d
+	.2byte 0x038f
+	.2byte 0x0000
 AlchemyC_020010a4:
 	.space 0xb0
 	push	{r5, r6, lr}
@@ -2139,7 +2426,9 @@ AlchemyC_020010a4:
 	.2byte 0x02f5
 	.2byte 0x0000
 AlchemyC_020012f0:
-	.space 0x56
+	.space 0x52
+.L_02001342:
+	.space 0x4
 	.2byte 0x0000
 	push	{r5, lr}
 	ldr	r0, [pc, #276]
@@ -2276,18 +2565,290 @@ AlchemyC_020012f0:
 	.2byte 0x0000
 AlchemyC_02001498:
 	.space 0x74
-AlchemyC_0200150c:
-	.space 0xf4
-AlchemyC_02001600:
-	.space 0x84
+	push	{r5, lr}
+	bl	sub_02005c0c
+	movs	r1, #131
+	movs	r0, #0
+	lsls	r1, r1, #1
+	ldr	r2, [pc, #200]
+	bl	sub_02005c98
+	movs	r1, #131
+	movs	r0, #20
+	lsls	r1, r1, #17
+	ldr	r2, [pc, #192]
+	bl	sub_02005cb4
+	movs	r1, #131
+	movs	r0, #20
+	lsls	r1, r1, #1
+	ldr	r2, [pc, #184]
+	bl	sub_02005ca8
+	movs	r1, #128
+	movs	r2, #128
+	movs	r0, #0
+	lsls	r1, r1, #10
+.L_0200153e:
+	lsls	r2, r2, #9
+	bl	sub_02005c7e
+	movs	r0, #0
+	movs	r1, #2
+	movs	r2, #0
+	bl	sub_02005cf0
+	movs	r1, #141
+	ldr	r2, [pc, #156]
+	movs	r0, #0
+	lsls	r1, r1, #1
+	bl	sub_02005cd4
+	movs	r0, #20
+	movs	r1, #1
+	bl	sub_02005cf4
+	movs	r0, #0
+	movs	r1, #4
+	movs	r2, #0
+	bl	sub_02005d0e
+	movs	r2, #0
+	movs	r1, #20
+	movs	r0, #0
+	bl	sub_02005d38
+	bl	sub_02005e24
+	movs	r0, #30
+	bl	sub_02005c72
+	movs	r0, #0
+	movs	r1, #2
+	bl	sub_02005d3a
+	movs	r1, #128
+	movs	r2, #20
+	lsls	r1, r1, #1
+	movs	r0, #20
+	bl	sub_02005d9e
+	ldr	r5, [pc, #92]
+	adds	r0, r5, #0
+	bl	sub_02005d6e
+	movs	r1, #0
+	movs	r0, #20
+	bl	sub_02005d86
+	movs	r0, #20
+	bl	sub_02005c9c
+	movs	r1, #0
+	movs	r0, #20
+	bl	sub_02005da4
+	adds	r5, #4
+	movs	r1, #2
+	movs	r0, #20
+	bl	sub_02005d6e
+	adds	r0, r5, #0
+	bl	sub_02005d94
+	movs	r2, #20
+	movs	r0, #20
+	movs	r1, #0
+	bl	sub_02005db6
+	ldr	r1, [pc, #40]
+	movs	r0, #20
+	bl	sub_02005d2e
+	ldr	r0, [pc, #36]
+	bl	sub_02005cbc
+	bl	sub_02005ce0
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.4byte 0x0000032a
+	.4byte 0x03250000
+	.4byte 0x00000339
+	.4byte 0x00000357
+	.4byte 0x00000e67
+	.4byte 0x0200c8c0
+	.2byte 0x0835
+	.2byte 0x0000
+	push	{lr}
+	ldr	r0, [pc, #108]
+	bl	sub_02005ce2
+	cmp	r0, #0
+	bne.n	.L_0200166a
+	ldr	r0, [pc, #100]
+	bl	sub_02005cec
+	cmp	r0, #0
+	bne.n	.L_0200166a
+	bl	sub_02005d14
+	ldr	r0, [pc, #92]
+	bl	sub_02005df2
+	movs	r0, #22
+	movs	r1, #0
+	movs	r2, #20
+	bl	sub_02005e14
+	movs	r0, #0
+	ldr	r1, [pc, #76]
+	movs	r2, #40
+	bl	sub_02005e3e
+	movs	r1, #191
+	movs	r0, #0
+	lsls	r1, r1, #1
+	ldr	r2, [pc, #68]
+	bl	sub_02005dba
+	movs	r2, #0
+	movs	r0, #0
+	movs	r1, #22
+	bl	sub_02005e04
+	movs	r1, #2
+	movs	r0, #0
+	bl	sub_02005e04
+	movs	r0, #30
+	bl	sub_02005d4a
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_02005e42
+	ldr	r0, [pc, #12]
+	bl	sub_02005d48
+	bl	sub_02005d6c
+.L_0200166a:
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x00000836
+	.4byte 0x00000837
+	.4byte 0x00000e6c
+	.4byte 0x00000101
+	.2byte 0x026b
+	.2byte 0x0000
 AlchemyC_02001684:
 	.space 0x48
-AlchemyC_020016cc:
-	.space 0x70
-AlchemyC_0200173c:
-	.space 0x7a
+	push	{lr}
+	ldr	r0, [pc, #92]
+	bl	sub_02005dae
+	cmp	r0, #0
+	beq.n	.L_0200170c
+	bl	sub_02005dd6
+	movs	r2, #0
+	movs	r1, #0
+	movs	r0, #22
+	bl	sub_02005ea0
+	movs	r0, #20
+	bl	sub_02005dde
+	ldr	r0, [pc, #64]
+	bl	sub_02005ec4
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_02005edc
+	movs	r1, #224
+	movs	r0, #22
+	lsls	r1, r1, #8
+	movs	r2, #10
+	bl	sub_02005f00
+	bl	sub_02005e0c
+	b.n	.L_02001728
+.L_0200170c:
+	ldr	r0, [pc, #36]
+	bl	sub_02005dec
+	cmp	r0, #0
+	bne.n	.L_02001728
+	bl	sub_02005e14
+	ldr	r0, [pc, #28]
+	bl	sub_02005ef2
+	bl	.L_02002e5e
+	bl	sub_02005e2a
+.L_02001728:
+	pop	{r0}
+	bx	r0
+	.4byte 0x00000841
+	.4byte 0x00000ed0
+	.4byte 0x00000837
+	.2byte 0x0e6e
+	.2byte 0x0000
+	push	{r5, lr}
+	movs	r1, #0
+	movs	r0, #22
+	bl	sub_02005f20
+	movs	r0, #0
+	movs	r1, #22
+	movs	r2, #0
+	bl	sub_02005f12
+	movs	r0, #0
+	movs	r1, #0
+	movs	r5, #0
+	bl	sub_02005e7c
+	cmp	r0, #0
+	bne.n	.L_02001768
+	ldr	r0, [pc, #180]
+	bl	sub_02005f36
+	movs	r5, #1
+	b.n	.L_0200176e
+.L_02001768:
+	ldr	r0, [pc, #172]
+	bl	sub_02005f40
+.L_0200176e:
+	movs	r0, #20
+	bl	sub_02005e66
+	movs	r2, #40
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_02005f68
+	movs	r1, #128
+	movs	r0, #22
+	lsls	r1, r1, #1
+	bl	sub_02005f9a
+	movs	r0, #21
+	movs	r1, #3
+	bl	sub_02005f22
+	movs	r1, #1
+	movs	r0, #22
+	bl	sub_02005f2a
+	movs	r0, #40
+	bl	sub_02005e90
+	movs	r1, #0
+	movs	r0, #22
+	movs	r2, #0
+.L_020017a4:
+	bl	sub_02005f62
+	movs	r0, #20
+	bl	sub_02005ea0
+	movs	r0, #22
+	movs	r1, #3
+	bl	sub_02005f50
 .L_020017b6:
-	.space 0x72
+	cmp	r5, #0
+	beq.n	.L_020017c2
+	ldr	r0, [pc, #96]
+	bl	sub_02005f92
+	b.n	.L_020017c8
+.L_020017c2:
+	ldr	r0, [pc, #92]
+	bl	sub_02005f9a
+.L_020017c8:
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_02005fb2
+	movs	r0, #22
+	movs	r1, #2
+	bl	sub_02005f6a
+	movs	r0, #0
+	bl	sub_02005f08
+	cmp	r0, #0
+	beq.n	.L_020017f0
+	movs	r3, #10
+	ldrsh	r1, [r0, r3]
+	movs	r3, #18
+	ldrsh	r2, [r0, r3]
+	movs	r0, #22
+	bl	sub_02005f52
+.L_020017f0:
+	movs	r0, #22
+	bl	sub_02005f78
+	movs	r2, #0
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_02005f8a
+	movs	r0, #1
+	movs	r1, #1
+	bl	sub_02005f1a
+	ldr	r0, [pc, #24]
+	bl	sub_02005ef0
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.4byte 0x00000ee5
+	.4byte 0x00000ee6
+	.4byte 0x00000e70
+	.4byte 0x00000ee7
+	.2byte 0x0837
+	.2byte 0x0000
 	push	{r5, r6, lr}
 	ldr	r0, [pc, #328]
 	bl	sub_02005f0a
@@ -2428,8 +2989,91 @@ AlchemyC_0200173c:
 	.4byte 0x0200c934
 	.2byte 0xc984
 	.2byte 0x0200
-AlchemyC_0200198c:
-	.space 0xd8
+	push	{lr}
+	bl	sub_0200608c
+	movs	r0, #0
+	bl	sub_020060c2
+	cmp	r0, #0
+	beq.n	.L_020019a6
+	ldr	r1, [r0, #8]
+	ldr	r2, [r0, #16]
+	movs	r0, #22
+	bl	sub_02006130
+.L_020019a6:
+	movs	r1, #128
+	movs	r2, #128
+	movs	r0, #22
+	lsls	r1, r1, #9
+	lsls	r2, r2, #8
+	bl	sub_020060ee
+	movs	r0, #22
+	ldr	r1, [pc, #156]
+	ldr	r2, [pc, #156]
+	bl	sub_02006138
+	movs	r2, #0
+	movs	r1, #0
+	movs	r0, #22
+	bl	sub_0200618a
+	movs	r0, #30
+	bl	sub_020060c0
+	ldr	r0, [pc, #140]
+	bl	sub_020061a6
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_020061be
+	movs	r2, #0
+	movs	r1, #22
+	movs	r0, #0
+	bl	sub_020061a0
+	movs	r0, #10
+	bl	sub_020060de
+	movs	r1, #1
+	movs	r0, #0
+	bl	sub_020061a6
+	movs	r0, #20
+	bl	sub_020060ec
+	movs	r1, #128
+	movs	r2, #0
+	movs	r0, #22
+	lsls	r1, r1, #7
+	bl	sub_02006200
+	movs	r0, #22
+	movs	r1, #0
+	bl	sub_020061f0
+	movs	r0, #22
+	movs	r1, #2
+	bl	sub_020061a8
+	movs	r0, #0
+	bl	sub_02006146
+	cmp	r0, #0
+	beq.n	.L_02001a2e
+	movs	r3, #10
+	ldrsh	r1, [r0, r3]
+	movs	r3, #18
+	ldrsh	r2, [r0, r3]
+	movs	r0, #22
+	bl	sub_02006190
+.L_02001a2e:
+	movs	r0, #22
+	bl	sub_020061b6
+	movs	r0, #22
+	movs	r1, #0
+	movs	r2, #0
+	bl	sub_020061c8
+	movs	r1, #128
+	movs	r0, #0
+	lsls	r1, r1, #1
+	ldr	r2, [pc, #24]
+	bl	sub_020061c4
+	bl	sub_02006150
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x00000119
+	.4byte 0x000001fb
+	.4byte 0x00000e7b
+	.2byte 0x0205
+	.2byte 0x0000
 AlchemyC_02001a64:
 	.space 0xb4
 	push	{r5, r6, r7, lr}
@@ -4912,8 +5556,62 @@ AlchemyC_02002d28:
 	.4byte 0x04f60000
 	.2byte 0x0003
 	.2byte 0x0001
-AlchemyC_02003c48:
-	.space 0x9c
+	push	{lr}
+	movs	r0, #20
+	bl	sub_0200828a
+	movs	r0, #179
+	lsls	r0, r0, #1
+	bl	sub_0200833a
+	movs	r0, #0
+	bl	sub_02008300
+	movs	r0, #1
+	bl	sub_02008306
+	movs	r0, #2
+	bl	sub_0200830c
+	movs	r0, #3
+	bl	sub_02008312
+	movs	r0, #4
+	bl	sub_02008318
+	movs	r0, #5
+	bl	sub_0200831e
+	ldr	r0, [pc, #96]
+	movs	r1, #1
+	bl	sub_020084f6
+	movs	r0, #128
+	movs	r1, #2
+	lsls	r0, r0, #9
+	bl	sub_02008500
+	movs	r0, #1
+	bl	sub_0200850e
+	movs	r0, #120
+	bl	sub_020082d4
+	movs	r1, #0
+	movs	r0, #0
+	bl	sub_02008514
+	movs	r0, #60
+	bl	sub_02008522
+	movs	r0, #60
+	bl	sub_020082e8
+	movs	r0, #179
+	lsls	r0, r0, #1
+	bl	sub_020083a0
+	movs	r0, #0
+	bl	sub_02008356
+	movs	r0, #1
+	bl	sub_0200835c
+	movs	r0, #2
+	bl	sub_02008362
+	movs	r0, #3
+	bl	sub_02008368
+	movs	r0, #4
+	bl	sub_0200836e
+	movs	r0, #5
+	bl	sub_02008374
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.2byte 0x0003
+	.2byte 0x0001
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -5075,8 +5773,151 @@ AlchemyC_02003c48:
 	.2byte 0x0000
 	.2byte 0x1e40
 	.2byte 0x0300
-AlchemyC_02003e48:
-	.space 0x168
+	push	{r5, r6, lr}
+	movs	r0, #0
+	bl	sub_0200857a
+	adds	r6, r0, #0
+	movs	r0, #8
+	bl	sub_02008582
+	adds	r5, r0, #0
+	bl	sub_02008558
+	ldr	r0, [pc, #320]
+	bl	sub_0200853e
+	cmp	r0, #0
+	beq.n	.L_02003eca
+	movs	r0, #8
+	bl	sub_020085c0
+	movs	r0, #10
+	bl	sub_02008566
+	movs	r0, #8
+	movs	r1, #2
+	bl	sub_0200862e
+	movs	r0, #40
+	bl	sub_02008574
+	movs	r2, #6
+	ldrsh	r3, [r6, r2]
+	cmp	r3, #0
+	blt.n	.L_02003e94
+	movs	r0, #8
+	movs	r1, #7
+	bl	sub_02008624
+	b.n	.L_02003e9c
+.L_02003e94:
+	movs	r0, #8
+	movs	r1, #8
+	bl	sub_0200862e
+.L_02003e9c:
+	movs	r1, #2
+	movs	r0, #8
+	bl	sub_02008656
+	movs	r0, #20
+	bl	sub_0200859c
+	ldr	r0, [pc, #248]
+	bl	sub_02008682
+	movs	r0, #8
+	movs	r1, #0
+	bl	sub_0200869a
+	ldr	r1, [pc, #236]
+	movs	r0, #8
+	bl	sub_02008602
+	movs	r0, #8
+	movs	r1, #6
+	bl	sub_0200865a
+	b.n	.L_02003f96
+.L_02003eca:
+	movs	r0, #8
+	bl	sub_02008622
+	movs	r3, #128
+	lsls	r3, r3, #9
+	movs	r1, #128
+	str	r3, [r5, #24]
+	str	r3, [r5, #28]
+	movs	r2, #0
+	movs	r0, #8
+	lsls	r1, r1, #5
+	bl	sub_020086de
+	movs	r2, #6
+	ldrsh	r3, [r6, r2]
+	cmp	r3, #0
+	blt.n	.L_02003ef6
+	movs	r0, #8
+	movs	r1, #7
+	bl	sub_02008686
+	b.n	.L_02003efe
+.L_02003ef6:
+	movs	r0, #8
+	movs	r1, #8
+	bl	sub_02008690
+.L_02003efe:
+	movs	r0, #20
+	bl	sub_020085f6
+	ldr	r0, [pc, #164]
+	bl	sub_020086dc
+	movs	r2, #20
+	movs	r0, #8
+	movs	r1, #0
+	bl	sub_020086fe
+	movs	r0, #8
+	movs	r1, #1
+	bl	sub_020086ae
+	movs	r2, #0
+	movs	r1, #4
+	movs	r0, #8
+	bl	sub_020086c8
+	movs	r0, #80
+	bl	sub_0200861e
+	movs	r0, #8
+	movs	r1, #2
+	bl	sub_020086e6
+	movs	r0, #40
+	bl	sub_0200862c
+	movs	r2, #6
+	ldrsh	r3, [r6, r2]
+	cmp	r3, #0
+	blt.n	.L_02003f4c
+	movs	r0, #8
+	movs	r1, #7
+	bl	sub_020086dc
+	b.n	.L_02003f54
+.L_02003f4c:
+	movs	r0, #8
+	movs	r1, #8
+	bl	sub_020086e6
+.L_02003f54:
+	movs	r0, #2
+	bl	sub_0200864c
+	movs	r2, #0
+	movs	r1, #2
+	movs	r0, #8
+	bl	sub_02008706
+	movs	r0, #60
+	bl	sub_0200865c
+	movs	r1, #2
+	movs	r0, #8
+	bl	sub_02008724
+	movs	r0, #20
+	bl	sub_0200866a
+	movs	r0, #8
+	movs	r1, #0
+	bl	sub_02008762
+	ldr	r1, [pc, #36]
+	movs	r0, #8
+	bl	sub_020086ca
+	movs	r0, #8
+	movs	r1, #6
+	bl	sub_02008722
+	ldr	r0, [pc, #12]
+	bl	sub_02008678
+.L_02003f96:
+	bl	sub_0200869c
+	pop	{r5, r6}
+	pop	{r0}
+	bx	r0
+	.4byte 0x00000305
+	.4byte 0x00000ed2
+	.4byte 0x0200cec8
+	.2byte 0x0ed1
+	.2byte 0x0000
 	push	{lr}
 	bl	sub_020086b0
 	movs	r0, #1

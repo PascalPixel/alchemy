@@ -11,7 +11,9 @@ use crate::run::{run_main_image, run_overlay};
 use crate::self_test;
 
 pub fn entry(arguments: &[String]) {
-    let argv: Vec<String> = std::env::args().skip(1).collect();
+    // Must consume the PASSED slice: as a `compiler` subcommand, env::args()
+    // still carries the host binary and the subcommand name.
+    let argv: Vec<String> = arguments.to_vec();
 
     // `Bun.argv.includes("--self-test")` scans the WHOLE argv, including
     // argv[0] and argv[1], and runs before any option parsing.

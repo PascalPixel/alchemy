@@ -319,8 +319,54 @@ Overlay_02000000:
 AlchemyC_02000048:
 	.space 0x56
 	.2byte 0x0000
-AlchemyC_020000a0:
-	.space 0x62
+	push	{r5, r6, lr}
+	adds	r4, r0, #0
+	adds	r5, r1, #0
+	adds	r6, r2, #0
+	adds	r0, r3, #0
+	adds	r2, r5, #0
+	adds	r1, r4, #0
+	adds	r3, r6, #0
+	bl	sub_020024fe
+	adds	r5, r0, #0
+	cmp	r5, #0
+	beq.n	.L_020000fa
+	ldr	r1, [r5, #80]
+	movs	r3, #13
+	ldrb	r2, [r1, #9]
+	negs	r3, r3
+	ands	r3, r2
+	movs	r2, #4
+	orrs	r3, r2
+	adds	r2, r5, #0
+	strb	r3, [r1, #9]
+	adds	r2, #85
+	movs	r3, #0
+	strb	r3, [r2, #0]
+	adds	r2, #4
+	movs	r3, #8
+	strb	r3, [r2, #0]
+	movs	r1, #0
+	bl	sub_02002568
+	adds	r0, r5, #0
+	movs	r1, #15
+	bl	sub_02002640
+	adds	r1, r5, #0
+	adds	r1, #35
+	ldrb	r2, [r1, #0]
+	movs	r3, #254
+	ands	r3, r2
+	movs	r2, #2
+	orrs	r3, r2
+	strb	r3, [r1, #0]
+	adds	r0, r5, #0
+	b.n	.L_020000fc
+.L_020000fa:
+	movs	r0, #0
+.L_020000fc:
+	pop	{r5, r6}
+	pop	{r1}
+	bx	r1
 	.2byte 0x0000
 	.4byte 0x6c426883
 	.4byte 0x6083189b
@@ -1847,8 +1893,23 @@ AlchemyC_02000d58:
 	.4byte 0x0200a91c
 	.2byte 0x00d2
 	.2byte 0x0500
-AlchemyC_02000e3c:
-	.space 0x22
+	push	{lr}
+	ldr	r1, [pc, #8]
+	ldr	r3, [pc, #8]
+	movs	r2, #0
+	b.n	.L_02000e50
+	.2byte 0x0000
+	.4byte 0x00000000
+	.2byte 0x00de
+	.2byte 0x0500
+.L_02000e50:
+	adds	r2, #1
+	strh	r1, [r3, #0]
+	subs	r3, #2
+	cmp	r2, #6
+	bls.n	.L_02000e50
+	pop	{r0}
+	bx	r0
 	.2byte 0x0000
 AlchemyC_02000e60:
 	.space 0xa
@@ -1917,8 +1978,45 @@ AlchemyC_02000eac:
 	.4byte 0x02008cc1
 	.2byte 0x3333
 	.2byte 0x0000
-AlchemyC_02000f48:
-	.space 0x64
+	push	{r5, lr}
+	adds	r5, r0, #0
+	bl	sub_0200342a
+	movs	r0, #228
+	bl	sub_02003568
+	ldr	r2, [pc, #76]
+	movs	r0, #0
+	ldr	r1, [pc, #76]
+	bl	sub_02003452
+	movs	r0, #0
+	movs	r1, #2
+	bl	sub_020034d2
+	movs	r2, #8
+	negs	r2, r2
+	movs	r1, #0
+	movs	r0, #0
+	bl	sub_0200348e
+	movs	r0, #0
+	bl	sub_02003464
+	movs	r1, #0
+	bl	sub_0200340a
+	movs	r0, #8
+	bl	sub_02003458
+	movs	r3, #128
+	lsls	r3, r3, #12
+	lsls	r5, r5, #19
+	adds	r5, r5, r3
+	movs	r0, #0
+	adds	r1, r5, #0
+	movs	r2, #0
+	bl	sub_020034c2
+	movs	r0, #30
+	bl	sub_02003470
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.4byte 0x00003333
+	.2byte 0x6666
+	.2byte 0x0000
 AlchemyC_02000fac:
 	.space 0xc
 AlchemyC_02000fb8:

@@ -231,8 +231,21 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
     }
 }
 
-fn cargo_child(root: &Path, manifest: &str) -> Vec<String> {
-    vec![
+/// `cargo run` for one child build stage.
+///
+/// The stages are subcommands of `build-stage`, not separate executables:
+/// `build-claimed` and `build-asm` lost their `[[bin]]` in the entry-point
+/// consolidation and are linked as libraries. Naming their manifests here made
+/// every `build-full` fail with cargo's "a bin target must be available",
+/// which -- because `make progress` reads `out/full/` and only this stage
+/// writes it -- left the reported percentage frozen at the last complete run
+/// with nothing saying so.
+fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
+    let manifest = match stage {
+        "assets" => "tools/build-assets/Cargo.toml",
+        _ => "tools/build-stage/Cargo.toml",
+    };
+    let mut command = vec![
         "cargo".into(),
         "run".into(),
         "--quiet".into(),
@@ -241,7 +254,11 @@ fn cargo_child(root: &Path, manifest: &str) -> Vec<String> {
         "--manifest-path".into(),
         root.join(manifest).to_string_lossy().into_owned(),
         "--".into(),
-    ]
+    ];
+    if manifest.ends_with("build-stage/Cargo.toml") {
+        command.push(stage.into());
+    }
+    command
 }
 
 fn read_json(path: &Path) -> Result<Value, String> {
@@ -537,7 +554,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let mut mask = vec![0u8; target.rom_size as usize];
 
     let claimed_dir = rooted(root, &options.claimed_output);
-    let mut command = cargo_child(root, "tools/build-claimed/Cargo.toml");
+    let mut command = cargo_child(root, "claimed");
     command.extend(["--target".into(), target.id.to_string()]);
     if options.source_only {
         command.push("--source-only".into());
@@ -570,7 +587,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let asm_dir = rooted(root, target.asm_dir);
     if asm_dir.exists() && has_assembly_sources(&asm_dir)? {
         let output = rooted(root, &options.asm_output);
-        let mut command = cargo_child(root, "tools/build-asm/Cargo.toml");
+        let mut command = cargo_child(root, "asm");
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -596,7 +613,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let asset_manifest = rooted(root, &options.asset_manifest);
     if asset_manifest.exists() {
         let output = rooted(root, &options.asset_output);
-        let mut command = cargo_child(root, "tools/build-assets/Cargo.toml");
+        let mut command = cargo_child(root, "assets");
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -835,7 +852,7 @@ mod tests {
     #[test]
     fn child_tools_are_run_through_cargo() {
         assert_eq!(
-            cargo_child(Path::new("/repo"), "tools/build-claimed/Cargo.toml"),
+            cargo_child(Path::new("/repo"), "claimed"),
             vec![
                 "cargo".to_string(),
                 "run".to_string(),
@@ -843,8 +860,9 @@ mod tests {
                 "--release".to_string(),
                 "--offline".to_string(),
                 "--manifest-path".to_string(),
-                "/repo/tools/build-claimed/Cargo.toml".to_string(),
+                "/repo/tools/build-stage/Cargo.toml".to_string(),
                 "--".to_string(),
+                "claimed".to_string(),
             ]
         );
     }

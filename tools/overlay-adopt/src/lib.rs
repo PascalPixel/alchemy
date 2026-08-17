@@ -15,6 +15,8 @@
 //! `tools/overlay/index.ts` and verified byte-identical on stdout, stderr and
 //! exit code.
 
+pub mod park;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -128,7 +130,7 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
 /// Source line number -> section offset, straight from the assembler.
 /// Keeps the FIRST offset seen per line, matching the TS `Map` semantics
 /// (`if (!offsets.has(line)) offsets.set(...)`).
-fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
+pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     let work = TempDir::new("alchemy-adopt-").map_err(|error| error.to_string())?;
     let listing = work.path().join("listing.txt");
     let object = work.path().join("listing.o");
@@ -158,7 +160,7 @@ fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
 }
 
 /// The lines that encode `[offset, offset + span)`, as a half-open line range.
-fn region_lines(offsets: &[(i64, i64)], offset: i64, span: i64) -> Result<(i64, i64), String> {
+pub fn region_lines(offsets: &[(i64, i64)], offset: i64, span: i64) -> Result<(i64, i64), String> {
     let inside: Vec<i64> = offsets
         .iter()
         .filter(|&&(_, at)| at >= offset && at < offset + span)

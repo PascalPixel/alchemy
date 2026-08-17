@@ -38,7 +38,14 @@ fn command_output(program: &Path, args: &[&str], cwd: &Path) -> Result<String, S
     String::from_utf8(output.stdout).map_err(|e| e.to_string())
 }
 
-fn cargo_command(root: &Path, crate_name: &str) -> Command {
+/// `cargo run` for the progress reporter.
+///
+/// `full-c-progress` is a `check` subcommand now, not a binary of its own: the
+/// entry-point consolidation linked it in and stripped its `[[bin]]`, but this
+/// gate went on naming its manifest, so every commit died on cargo's "a bin
+/// target must be available" -- a commit hook that could not let any commit
+/// through.
+fn cargo_command(root: &Path, subcommand: &str) -> Command {
     let mut command = Command::new("cargo");
     command
         .args([
@@ -48,8 +55,9 @@ fn cargo_command(root: &Path, crate_name: &str) -> Command {
             "--release",
             "--manifest-path",
         ])
-        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg(root.join("tools").join("check").join("Cargo.toml"))
         .arg("--")
+        .arg(subcommand)
         .current_dir(root);
     command
 }
@@ -184,7 +192,7 @@ fn report_required(paths: &[String], target: &str) -> bool {
 }
 
 fn current_report(root: &Path, target: &str) -> Result<Value, String> {
-    let output = cargo_output(root, "full-c-progress", &["--target", target, "--json"])?;
+    let output = cargo_output(root, "progress", &["--target", target, "--json"])?;
     serde_json::from_str(&output).map_err(|e| format!("invalid full-c-progress output: {e}"))
 }
 
@@ -264,7 +272,7 @@ mod tests {
 
     #[test]
     fn progress_child_is_cargo_authoritative() {
-        let command = cargo_command(Path::new("/repo"), "full-c-progress");
+        let command = cargo_command(Path::new("/repo"), "progress");
         assert_eq!(command.get_program(), "cargo");
         let args: Vec<_> = command
             .get_args()
@@ -278,9 +286,10 @@ mod tests {
                 "--quiet",
                 "--release",
                 "--manifest-path",
-                "/repo/tools/full-c-progress/Cargo.toml",
+                "/repo/tools/check/Cargo.toml",
             ]
         );
         assert_eq!(args[6], "--");
+        assert_eq!(args[7], "progress");
     }
 }

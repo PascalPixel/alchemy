@@ -426,6 +426,67 @@ const NATIVE_TOOL_SPECS: &[(&str, &str, &str)] = &[
     ("encounter_data", "encounter-data", "encounter-data"),
 ];
 
+/// The `assets` subcommand that now performs each registered asset tool.
+///
+/// The entry-point consolidation folded 41 of the 42 asset builders into the
+/// single `assets` host and stripped their `[[bin]]`, but this file went on
+/// spawning them as standalone executables. Every `make build-assets` has
+/// failed since with "Cargo built native X, but its release executable is
+/// missing", which took `build-full`, `build-rom` and `make verify` down with
+/// it; the overlay overlap failed earlier in the same run, so the asset break
+/// stayed hidden behind it.
+///
+/// Several subcommands were renamed on the way in (`resource_3ce` -> `3ce`,
+/// `sentou_hyouji` -> `battle-display`, one `map-resources` crate split into
+/// `map-tokushu` and `map-chiiki`), so the mapping is spelled out rather than
+/// derived from the crate name.
+fn assets_subcommand(tool: &str) -> Option<&'static str> {
+    Some(match tool {
+        "message_archive" => "message-archive",
+        "kind2-resources" => "kind2-resources",
+        "kind1-map-grid" => "kind1-map-grid",
+        "resource_byte_canvases" => "resource-byte-canvases",
+        "resource_3ce" => "3ce",
+        "resource_d1_d3" => "d1-d3",
+        "resource_01c" => "resource-01c",
+        "resource_5" => "5",
+        "sentou_gamen_data" => "battle-screen",
+        "sentou_hyouji" => "battle-display",
+        "sentou_kouka_runtime" => "battle-runtime",
+        "sentou_menu_data" => "battle-menu",
+        "sentou_resources" => "sentou",
+        "namae_nyuuryoku" => "namae-nyuuryoku",
+        "simple_resources" => "simple-resources",
+        "static_sprite_series" => "static-sprite-series",
+        "staff_roll" => "staff-roll",
+        "f0_archive" => "f0-archive",
+        "audio_wave" => "audio-wave",
+        "byte_value_regions" => "byte-value-regions",
+        "byte-henkan" => "byte-henkan",
+        "early_runtime_data" => "early-runtime-data",
+        "late_runtime_residual" => "late-runtime-residual",
+        "executable_gap_sources" => "executable-gap-sources",
+        "map_container_components" => "map-container-components",
+        "music_residuals" => "music-residuals",
+        "tokushu-map-resources" => "map-tokushu",
+        "chiiki-map-resources" => "map-chiiki",
+        "runtime_support_data" => "runtime-support",
+        "character_catalog" => "character-catalog",
+        "localization_font" => "localization-font",
+        "localization_tables" => "localization-tables",
+        "battle_effect_data" => "battle-effect",
+        "resource_directory" => "resource-directory",
+        "title_resources" => "title",
+        "indexed_still" => "indexed-still",
+        "skip_sprite_archive" => "skip-sprite-archive",
+        "wordstream" => "wordstream",
+        "pairtable" => "pairtable",
+        "music" => "music",
+        "encounter_data" => "encounter-data",
+        _ => return None,
+    })
+}
+
 fn tool_spec(tool: &str) -> Result<(&'static str, &'static str), String> {
     NATIVE_TOOL_SPECS
         .iter()
@@ -506,7 +567,10 @@ fn build_native_tool(
 }
 
 fn native_tool_binary(root: &Path, tool: &str) -> Result<PathBuf, String> {
-    let (crate_name, binary_name) = tool_spec(tool)?;
+    let (crate_name, binary_name) = match assets_subcommand(tool) {
+        Some(_) => ("assets", "assets"),
+        None => tool_spec(tool)?,
+    };
     let manifest = root.join("tools").join(crate_name).join("Cargo.toml");
     let build = {
         let cache = NATIVE_TOOL_BUILDS.get_or_init(|| Mutex::new(HashMap::new()));
@@ -553,6 +617,9 @@ fn run_tool(
 ) -> Result<ProcessOutput, String> {
     let binary = native_tool_binary(root, tool)?;
     let mut command = Command::new(binary);
+    if let Some(subcommand) = assets_subcommand(tool) {
+        command.arg(subcommand);
+    }
     command.args(args);
     command
         .current_dir(root)

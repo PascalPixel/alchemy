@@ -449,14 +449,73 @@ AlchemyC_02000214:
 	.space 0x8
 AlchemyC_0200021c:
 	.space 0x8
-AlchemyC_02000224:
-	.space 0x3c
-AlchemyC_02000260:
-	.space 0xa
+	push	{lr}
+	movs	r0, #8
+	bl	sub_02000fa6
+	cmp	r0, #0
+	beq.n	.L_02000238
+	adds	r2, r0, #0
+	adds	r2, #89
+	movs	r3, #0
+	strb	r3, [r2, #0]
+.L_02000238:
+	movs	r0, #8
+	bl	sub_02000fb8
+	movs	r1, #0
+	bl	sub_02000f66
+	movs	r1, #136
+	movs	r2, #144
+	movs	r0, #0
+	lsls	r1, r1, #18
+	lsls	r2, r2, #17
+	movs	r3, #253
+	bl	sub_02000f7e
+	movs	r0, #128
+	lsls	r0, r0, #2
+	bl	sub_02000fa6
+	pop	{r0}
+	bx	r0
+	push	{lr}
+	sub	sp, #8
+	movs	r3, #3
+	movs	r2, #26
+	str	r3, [sp, #0]
 .L_0200026a:
-	.space 0x22
-AlchemyC_0200028c:
-	.space 0x2c
+	str	r2, [sp, #4]
+	movs	r3, #1
+	movs	r0, #3
+	movs	r1, #32
+	movs	r2, #1
+	bl	sub_02000f92
+	movs	r1, #224
+	movs	r2, #212
+	movs	r0, #102
+	lsls	r1, r1, #14
+	lsls	r2, r2, #17
+	bl	sub_020010d8
+	add	sp, #8
+	pop	{r0}
+	bx	r0
+	push	{lr}
+	sub	sp, #8
+	movs	r3, #3
+	movs	r2, #26
+	str	r3, [sp, #0]
+	str	r2, [sp, #4]
+	movs	r3, #1
+	movs	r0, #2
+	movs	r1, #25
+	movs	r2, #1
+	bl	sub_02000fbe
+	movs	r1, #1
+	movs	r2, #1
+	movs	r0, #102
+	negs	r1, r1
+	negs	r2, r2
+	bl	sub_02001104
+	add	sp, #8
+	pop	{r0}
+	bx	r0
 AlchemyC_020002b8:
 	.space 0x1c
 AlchemyC_020002d4:
@@ -665,10 +724,51 @@ AlchemyC_020004e8:
 	.space 0x20
 AlchemyC_02000508:
 	.space 0x20
-AlchemyC_02000528:
-	.space 0x40
-AlchemyC_02000568:
-	.space 0x34
+	push	{lr}
+	bl	sub_02001288
+	ldr	r0, [pc, #52]
+	bl	sub_02001326
+	movs	r1, #192
+	movs	r2, #0
+	movs	r0, #25
+	lsls	r1, r1, #8
+	bl	sub_0200135a
+	movs	r0, #25
+	movs	r1, #0
+	bl	sub_0200134a
+	movs	r1, #128
+	movs	r2, #0
+	movs	r0, #25
+	lsls	r1, r1, #8
+	bl	sub_0200136e
+	movs	r0, #25
+	movs	r1, #0
+	bl	sub_0200135e
+	bl	sub_020012c2
+	pop	{r0}
+	bx	r0
+	.2byte 0x1fa0
+	.2byte 0x0000
+	push	{lr}
+	bl	sub_020012c8
+	movs	r1, #128
+	movs	r2, #0
+	movs	r0, #26
+	lsls	r1, r1, #7
+	bl	sub_02001394
+	movs	r1, #2
+	movs	r0, #26
+	bl	sub_0200134c
+	ldr	r0, [pc, #20]
+	bl	sub_0200137a
+	movs	r0, #26
+	movs	r1, #0
+	bl	sub_02001392
+	bl	sub_020012f6
+	pop	{r0}
+	bx	r0
+	.2byte 0x1fa2
+	.2byte 0x0000
 AlchemyC_0200059c:
 	.space 0x20
 AlchemyC_020005bc:
@@ -713,10 +813,108 @@ AlchemyC_020005bc:
 	.4byte 0x00002368
 	.2byte 0x236a
 	.2byte 0x0000
-AlchemyC_02000644:
-	.space 0xa4
-AlchemyC_020006e8:
-	.space 0x3e
+	push	{r5, r6, r7, lr}
+	ldr	r3, [pc, #152]
+	ldr	r7, [r3, #0]
+	bl	sub_020013a8
+	movs	r5, #8
+	movs	r6, #0
+.L_02000652:
+	adds	r0, r5, #0
+	bl	sub_020013d2
+	cmp	r0, #0
+	beq.n	.L_02000662
+	adds	r3, r0, #0
+	adds	r3, #85
+	strb	r6, [r3, #0]
+.L_02000662:
+	adds	r5, #1
+	cmp	r5, #65
+	bls.n	.L_02000652
+	movs	r3, #182
+	lsls	r3, r3, #1
+	adds	r6, r7, r3
+	movs	r3, #0
+	ldrsh	r5, [r6, r3]
+	movs	r0, #158
+	subs	r5, #1
+	bl	sub_020014dc
+	lsls	r4, r5, #3
+	ldr	r0, [pc, #100]
+	adds	r3, r4, #4
+	ldrh	r1, [r0, r3]
+	adds	r3, r3, r0
+	ldrh	r2, [r3, #2]
+	ldr	r0, [r0, r4]
+	bl	sub_0200139e
+	movs	r1, #128
+	movs	r2, #128
+	lsls	r1, r1, #8
+	movs	r0, #0
+	lsls	r2, r2, #7
+	bl	sub_0200141c
+	movs	r0, #0
+	bl	sub_0200141a
+	movs	r3, #0
+	adds	r0, #85
+	strb	r3, [r0, #0]
+	movs	r1, #2
+	movs	r0, #0
+	bl	sub_02001468
+	cmp	r5, #6
+	beq.n	.L_020006c4
+	movs	r2, #8
+	movs	r0, #0
+	movs	r1, #2
+	negs	r2, r2
+	bl	sub_02001460
+	movs	r0, #10
+	bl	sub_02001416
+.L_020006c4:
+	movs	r3, #0
+	ldrsh	r0, [r6, r3]
+	bl	sub_020014fe
+	bl	sub_0200150a
+	bl	sub_02001516
+	bl	sub_0200143a
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x03001ebc
+	.2byte 0x9d00
+	.2byte 0x0200
+	push	{r5, lr}
+	adds	r5, r0, #0
+	cmp	r5, #0
+	beq.n	.L_02000720
+	movs	r0, #0
+	bl	sub_02001470
+	ldr	r3, [r0, #80]
+	adds	r1, r5, #0
+	ldrb	r2, [r3, #9]
+	adds	r1, #35
+	movs	r3, #0
+	strb	r3, [r1, #0]
+	movs	r1, #12
+	ldr	r4, [r5, #80]
+	ands	r1, r2
+	movs	r2, #13
+	ldrb	r0, [r4, #9]
+	negs	r2, r2
+	adds	r3, r2, #0
+	ands	r3, r0
+	orrs	r3, r1
+	strb	r3, [r4, #9]
+	ldr	r0, [r5, #80]
+	ldrb	r3, [r0, #21]
+	ands	r2, r3
+	orrs	r2, r1
+	strb	r2, [r0, #21]
+.L_02000720:
+	pop	{r5}
+	pop	{r0}
+	bx	r0
 	.2byte 0x0000
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #328]

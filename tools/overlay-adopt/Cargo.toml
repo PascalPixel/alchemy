@@ -13,6 +13,7 @@ edition = "2021"
 # halves of the exact TypeScript modules `overlay_adopt.ts` imports.
 #   ../lib/overlay_disasm.ts -> assembleOverlay, OVERLAY_BASE
 overlay-disasm = { path = "../overlay-disasm" }
+extract-resource = { path = "../extract-resource" }
 # A minimal zero-dependency JSON reader, reused rather than reimplemented:
 #   out/decomp/overlays.json, metrics/gs1-en-executable.json
 exact-reading-list = { path = "../exact-reading-list" }

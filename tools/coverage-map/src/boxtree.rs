@@ -67,31 +67,37 @@ pub const CODE_FRACTION: [(&str, f64); 5] = [
     ("retained_asm", 0.0),
 ];
 
-pub const ASSET_FRACTION: [(&str, f64); 6] = [
+pub const ASSET_FRACTION: [(&str, f64); 7] = [
     ("asset_bytes", 0.08),
     ("asset_unclassified", 0.08),
     ("asset_bw", 0.34),
-    ("asset_color", 0.67),
+    ("asset_color", 0.55),
+    ("asset_extracted", 0.75),
     ("asset_objects", 1.0),
     ("asset_data", 0.08),
 ];
 
-const BOX_TREE_LEGEND: [(&str, &str); 8] = [
+const BOX_TREE_LEGEND: [(&str, &str); 9] = [
     ("exact_c", "Exact C"),
     ("retained_asm", "Permanent ASM"),
-    ("asset_objects", "Objects"),
-    ("asset_color", "Color images"),
-    ("asset_bw", "B&W"),
-    ("asset_bytes", "Encoded bytes"),
-    ("asset_unclassified", "Unclassified"),
-    ("asset_data", "Data / assets"),
+    // Plain words, because these are read by people deciding whether the
+    // repository is any use to them. "Named" is a file called vale_night.png or
+    // growl.wav; "Extracted" is the same picture or sound sitting under the
+    // ROM's own numbering, which is not the same as knowing what it is.
+    ("asset_objects", "Named"),
+    ("asset_extracted", "Extracted"),
+    ("asset_color", "Colour images"),
+    ("asset_bw", "Masks"),
+    ("asset_bytes", "Raw bytes"),
+    ("asset_unclassified", "Unknown"),
+    ("asset_data", "Data"),
 ];
 
 // The 540 px README canvas and the one permitted 16 px pixel font are both
 // fixed. These shorter forms leave room for an honest one-decimal percentage.
 const BOX_TREE_COMPACT_LEGEND: [(&str, &str); 3] = [
-    ("asset_color", "Color"),
-    ("asset_bytes", "Encoded"),
+    ("asset_color", "Colour"),
+    ("asset_bytes", "Raw"),
     ("asset_unclassified", "Unknown"),
 ];
 
@@ -826,6 +832,7 @@ fn asset_tree_context(
                 "asset_bytes",
                 "asset_bw",
                 "asset_color",
+                "asset_extracted",
                 "asset_objects",
             ]
         } else {

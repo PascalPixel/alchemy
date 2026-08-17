@@ -7,7 +7,7 @@
 // the publication fallback. Absence returns `None`; a present-but-wrong
 // manifest is an error, never a quietly degraded picture.
 
-use crate::assets::{asset_tier_of, has_extension, manifest_ranges, overlay_streams};
+use crate::assets::{asset_tier_shares, has_extension, manifest_ranges, overlay_streams};
 use crate::jsnum::hex8;
 use crate::json::Value;
 use crate::model::Tile;
@@ -328,7 +328,7 @@ pub fn verified_asset_tiles(tree: &SourceTree, target: &str) -> Result<Option<Ve
             ));
         }
         covered.extend_from_slice(&data);
-        let tier = asset_tier_of(&region.sources, &region.kind);
+        let shares = asset_tier_shares(&region.sources, &region.kind, bytes);
         let family = family_of(region);
         let identity = match region.sources.first() {
             Some(source) => basename(source),
@@ -344,7 +344,11 @@ pub fn verified_asset_tiles(tree: &SourceTree, target: &str) -> Result<Option<Ve
             ..Tile::default()
         };
         tile.set_category("asset_data", bytes);
-        tile.set_category(tier, bytes);
+        for (tier, share) in shares {
+            if share > 0 {
+                tile.add_category(tier, share);
+            }
+        }
         tile.group = Some(family.clone());
         tile.subgroup = if family == region.kind {
             None

@@ -503,45 +503,18 @@ fn tier_rank(tier: &str) -> usize {
 
 /// Representation-form tier for one package.
 pub fn asset_tier_of(sources: &[String], kind: &str) -> &'static str {
-    let lowered = kind.to_ascii_lowercase();
-    if any_of(
-        &lowered,
-        &["music", "sequence", "midi", "wave", "pcm", "audio"],
-    ) || lowered.contains("soundfont")
-        || lowered.contains("sound-font")
-    {
-        return "asset_objects";
-    }
-    if any_of(&lowered, &["sprite", "character-catalog", "chr"])
-        && sources
-            .iter()
-            .any(|name| any_of(name, &["koma_", "frame_"]))
-    {
-        return "asset_objects";
-    }
+    // No kind-name shortcut. A `sprite` package holding `koma_12.png` used to
+    // return the top tier on the strength of the KIND, which is the same defect
+    // as crediting audio for being called audio: the tier has to come from the
+    // files.
+    let _ = kind;
+    // One rule, in `source_tier`. This used to carry its own copy of the
+    // extension chain, and the copy drifted the moment the naming bar landed:
+    // it still called a bare `plain.png` colour-tier while `source_tier` called
+    // it named, so the two disagreed about the same file.
     let mut tier = "asset_bytes";
     for name in sources {
-        let lowered = name.to_ascii_lowercase();
-        let seen = if ends_with_ci(&lowered, ".mid")
-            || ends_with_ci(&lowered, ".wav")
-            || ends_with_ci(&lowered, ".sf2")
-            || ends_with_ci(&lowered, ".pcm")
-            // The TypeScript keeps this as a separate `else if` arm; the two
-            // arms produce the same tier and neither test has a side effect, so
-            // merging them is behaviour-preserving.
-            || object_png(&lowered)
-        {
-            Some("asset_objects")
-        } else if bw_png(&lowered) {
-            Some("asset_bw")
-        } else if ends_with_ci(&lowered, ".png") {
-            Some("asset_color")
-        } else if ends_with_ci(&lowered, ".bin") || ends_with_ci(&lowered, ".tilemap") {
-            Some("asset_bytes")
-        } else {
-            None
-        };
-        if let Some(seen) = seen {
+        if let Some(seen) = source_tier(&name.to_ascii_lowercase()) {
             if tier_rank(seen) > tier_rank(tier) {
                 tier = seen;
             }
@@ -551,6 +524,107 @@ pub fn asset_tier_of(sources: &[String], kind: &str) -> &'static str {
 }
 
 /// `/koma_\d+\.png$|frame_\d+\.png$|object[^/]*\.png$/i`
+/// A finished asset is a standalone file whose NAME says what it is.
+///
+/// `vale_night.png`, `rock_front.png`, `isaac_running_south_west.png`,
+/// `djinn_venus.gif`, `growl.wav`, `good_morning.mid`, `alchemy.sf2`. What the
+/// tree holds today is `resource_226_grid_value_high.png` and
+/// `sfx_272. sound_272.mid` -- the ROM's own numbering, carried straight
+/// through. Those are extracted, not identified, and the difference is the
+/// whole remaining job for images and music.
+///
+/// The test is an identifier run: every ID-shaped name in the tree carries a
+/// number (`resource_226`, `sfx_272`, `koma_007`, `djinn_101_idle`), and none
+/// of the finished forms above carries one.
+fn identified_name(lowered: &str) -> bool {
+    let base = lowered.rsplit('/').next().unwrap_or(lowered);
+    // EVERY extension, not just the last: `..._ea.rgba.png` has to be judged on
+    // `..._ea`, or a double-barrelled suffix hides the identifier behind it.
+    let stem = base.split('.').next().unwrap_or(base);
+    if stem.is_empty() || stem.chars().any(|c| c.is_ascii_digit()) {
+        return false;
+    }
+    // `resource_ad_content` is the resource table's own index, whichever end of
+    // the name it sits at, and a short hex-letter token ANYWHERE is that index
+    // with the digits it happened not to need: `palette_animation_ea`,
+    // `direct_palettes_bb`. Testing only the final token missed every
+    // `resource_<hex>_<word>` in the tree.
+    if stem.starts_with("resource_") {
+        return false;
+    }
+    !stem
+        .split('_')
+        .any(|token| !token.is_empty() && token.len() <= 3 && token.chars().all(|c| matches!(c, 'a'..='f')))
+}
+
+/// The tier one source file reaches on its own, or `None` when the name says
+/// nothing about form.
+fn source_tier(lowered: &str) -> Option<&'static str> {
+    let standard_form = ends_with_ci(lowered, ".mid")
+        || ends_with_ci(lowered, ".wav")
+        || ends_with_ci(lowered, ".sf2")
+        || ends_with_ci(lowered, ".gif")
+        || object_png(lowered);
+    if standard_form && identified_name(lowered) {
+        return Some("asset_objects");
+    }
+    if standard_form || ends_with_ci(lowered, ".pcm") {
+        return Some("asset_extracted");
+    }
+    if bw_png(lowered) {
+        return Some("asset_bw");
+    }
+    if ends_with_ci(lowered, ".png") {
+        return Some(if identified_name(lowered) {
+            "asset_objects"
+        } else {
+            "asset_color"
+        });
+    }
+    if ends_with_ci(lowered, ".bin") || ends_with_ci(lowered, ".tilemap") {
+        return Some("asset_bytes");
+    }
+    None
+}
+
+/// Bytes split across the tiers a package's sources actually occupy.
+///
+/// PER FILE, not per package. A package used to inherit the best tier any one
+/// of its sources reached, so one well-named file promoted every byte beside
+/// it: 34 digit-free names out of 8,404 were carrying 24.5% of the image bytes
+/// into the top tier. Sizes per source are not recorded, so the split is by
+/// source count -- an approximation, and a far smaller one than crediting a
+/// whole package for its best-named member.
+pub fn asset_tier_shares(sources: &[String], kind: &str, size: i64) -> Vec<(&'static str, i64)> {
+    let mut counts: Vec<(&'static str, i64)> = Vec::new();
+    for name in sources {
+        let Some(tier) = source_tier(&name.to_ascii_lowercase()) else {
+            continue;
+        };
+        match counts.iter_mut().find(|(seen, _)| *seen == tier) {
+            Some(entry) => entry.1 += 1,
+            None => counts.push((tier, 1)),
+        }
+    }
+    if counts.is_empty() {
+        return vec![(asset_tier_of(sources, kind), size)];
+    }
+    let total: i64 = counts.iter().map(|(_, n)| *n).sum();
+    let mut out: Vec<(&'static str, i64)> = Vec::new();
+    let mut assigned = 0i64;
+    for (index, (tier, n)) in counts.iter().enumerate() {
+        // The last share takes the remainder so the split always conserves.
+        let bytes = if index + 1 == counts.len() {
+            size - assigned
+        } else {
+            size * n / total
+        };
+        assigned += bytes;
+        out.push((*tier, bytes));
+    }
+    out
+}
+
 fn object_png(lowered: &str) -> bool {
     let Some(stem) = lowered.strip_suffix(".png") else {
         return false;
@@ -646,7 +720,7 @@ pub fn manifest_asset_tiles(
         let mut merged = claimed.clone();
         merged.extend(fresh);
         claimed = normalize(&merged);
-        let tier = asset_tier_of(&range.sources, &range.kind);
+        let shares = asset_tier_shares(&range.sources, &range.kind, bytes);
         let mut tile = Tile {
             label: format!(
                 "{} · 0x{} · {} bytes",
@@ -665,7 +739,11 @@ pub fn manifest_asset_tiles(
             ..Tile::default()
         };
         tile.set_category("asset_data", bytes);
-        tile.set_category(tier, bytes);
+        for (tier, share) in shares {
+            if share > 0 {
+                tile.add_category(tier, share);
+            }
+        }
         tiles.push(tile);
     }
 
@@ -752,14 +830,11 @@ fn maturity_record(
         return;
     }
     let bucket = asset_bucket(kind);
-    // Music, samples and soundfonts live as per-object corpora even where the
-    // package index names them by prefix, so the audio bucket is object-tier
-    // by construction.
-    let tier = if bucket.id == "audio" {
-        "asset_objects"
-    } else {
-        asset_tier_of(sources, if raw_kind.is_empty() { kind } else { raw_kind })
-    };
+    let shares = asset_tier_shares(
+        sources,
+        if raw_kind.is_empty() { kind } else { raw_kind },
+        size,
+    );
     let mut tile = buckets
         .get(&bucket.id.to_string())
         .cloned()
@@ -769,7 +844,11 @@ fn maturity_record(
             ..Tile::default()
         });
     tile.bytes += size;
-    tile.add_category(tier, size);
+    for (tier, bytes) in shares {
+        if bytes > 0 {
+            tile.add_category(tier, bytes);
+        }
+    }
     buckets.insert(bucket.id.to_string(), tile);
 }
 
@@ -989,7 +1068,9 @@ mod tests {
     }
 
     #[test]
-    fn asset_tier_takes_the_highest_rank_seen() {
+    fn asset_tier_comes_from_the_files_not_the_kind() {
+        // `plain.png` is a name that says what it is, so it reaches the top
+        // tier and carries the package with it.
         let sources: Vec<String> = [
             "a/koma_12.png".into(),
             "b/plain.png".into(),
@@ -999,7 +1080,22 @@ mod tests {
         assert_eq!(asset_tier_of(&sources, "tiles"), "asset_objects");
         assert_eq!(
             asset_tier_of(&["b/plain.png".to_string()], "tiles"),
-            "asset_color"
+            "asset_objects"
+        );
+        // A number in the stem is the ROM's index, not a name.
+        assert_eq!(
+            asset_tier_of(&["a/koma_12.png".to_string()], "tiles"),
+            "asset_extracted"
+        );
+        assert_eq!(
+            asset_tier_of(&["a/resource_ad_content.png".to_string()], "tiles"),
+            "asset_color",
+            "a resource index is not a name, whichever end it sits at"
+        );
+        assert_eq!(
+            asset_tier_of(&["a/palette_animation_ea.rgba.png".to_string()], "tiles"),
+            "asset_color",
+            "a short hex token is the index without the digits it did not need"
         );
         assert_eq!(
             asset_tier_of(&["b/mask_a.png".to_string()], "tiles"),
@@ -1009,21 +1105,33 @@ mod tests {
             asset_tier_of(&["b/data.bin".to_string()], "tiles"),
             "asset_bytes"
         );
-        assert_eq!(
-            asset_tier_of(&[], "midi-sequences"),
-            "asset_objects",
-            "kind alone decides"
-        );
-        assert_eq!(asset_tier_of(&[], "sound-font"), "asset_objects");
-        // A sprite kind needs per-frame sources before it counts as objects.
-        assert_eq!(
-            asset_tier_of(&["x/sheet.png".to_string()], "sprite"),
-            "asset_color"
-        );
+        // The kind decides nothing. Both of these used to return the top tier
+        // for their NAME alone, with no file behind them at all.
+        assert_eq!(asset_tier_of(&[], "midi-sequences"), "asset_bytes");
+        assert_eq!(asset_tier_of(&[], "sound-font"), "asset_bytes");
         assert_eq!(
             asset_tier_of(&["x/koma_1.png".to_string()], "sprite"),
-            "asset_objects"
+            "asset_extracted"
         );
+    }
+
+    #[test]
+    fn tier_shares_split_a_package_across_its_files_and_conserve() {
+        let sources: Vec<String> = [
+            "b/plain.png".into(),
+            "a/koma_1.png".into(),
+            "a/koma_2.png".into(),
+            "a/koma_3.png".into(),
+        ]
+        .to_vec();
+        let shares = asset_tier_shares(&sources, "tiles", 400);
+        assert_eq!(shares.iter().map(|(_, n)| *n).sum::<i64>(), 400);
+        let named = shares
+            .iter()
+            .find(|(tier, _)| *tier == "asset_objects")
+            .map(|(_, n)| *n)
+            .unwrap();
+        assert_eq!(named, 100, "one named file in four takes a quarter, not all");
     }
 
     #[test]

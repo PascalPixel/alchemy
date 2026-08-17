@@ -60,13 +60,8 @@ in the cyan band.
 
 ### Images and data
 
-This map covers 6,735,557 bytes of graphics, maps, text, and other data as they
-are converted into understood and reusable assets.
-
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=2f6753d9)
 
 ### Music and sound
 
-This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
-
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0d43be12)

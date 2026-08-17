@@ -622,6 +622,42 @@ The largest single target, `main:0x080bbb0c` at 6,332 bytes, carries no
 permanence marker at all — no Thumb multiple-transfer, no SWI, no veneer idiom,
 and no entry in `asm/classification.json`. Every byte of it is reachable as C.
 
+### Large owners are unproven, and that is where the bytes are
+
+The 84.5% figure above is measured across all owner sizes and is dominated by
+small ones. Broken out by size, the record is much starker:
+
+| owner size | byte-exact | share of open bytes |
+|---|---:|---:|
+| under 128 B | 819 of 1,211 (68%) | 5.0% |
+| 128 B - 512 B | 169 of 834 (20%) | 29.4% |
+| 512 B - 2 KB | 4 of 246 (2%) | 36.6% |
+| 2 KB and over | 0 of 49 (0%) | 29.1% |
+
+No owner over 2 KB has ever been made byte-exact; the largest that has is 1,828
+bytes. Owners of 512 B and over hold **65.6% of the remaining audited overlay
+bytes** and account for 4 of the 992 closed. Plan around that: the method is
+demonstrated at small scale and unproven at the scale where most of the work is.
+
+That is not evidence it cannot be done -- four owners above 512 B did close, and
+nothing about gcc 2.96 forbids matching a large function. It is evidence that
+nobody has yet shown it here, and that a completion estimate extrapolated from
+the small owners is not a forecast.
+
+The one large owner taken to a complete reconstruction, `resource_3bf:3054`,
+reached 636 of 636 calls with every argument value, branch and constant verified
+against the reference, and still missed on register allocation alone. It is also
+the most call-pure large owner measured -- 0.5% of its instructions touch memory,
+against 1.9% for `resource_3bd:13f8` and 5.1% for `resource_38f:08ec` -- so it is
+the case where a call-sequence reconstruction is most nearly the whole source,
+and it is the case that got closest without closing.
+
+Before drawing a conclusion from that, note what a call-sequence reconstruction
+does NOT yet model: loads and stores through a held pointer. `resource_3bd:13f8`
+keeps a pointer in r7 and reads one field repeatedly, and a reconstruction that
+emits only calls and constants cannot express that. Two of the three owners
+above are therefore not yet a fair test of the allocation question.
+
 ### Why the project stalled at 20% for two weeks
 
 Not a compiler wall. A third tier held 862,856 bytes of C that did not

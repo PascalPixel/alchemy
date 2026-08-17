@@ -248,9 +248,51 @@ pub fn without_pc_offset(instruction: &str) -> String {
     out
 }
 
+/// Blank register numbers, so two streams that differ only by which register
+/// holds what compare equal.
+///
+/// `r0`..`r7`, `r8`..`r12` and the aliases the disassembler prints all collapse
+/// to `rN`. `sp`, `lr` and `pc` are NOT blanked: they carry meaning a candidate
+/// can get wrong, and a frame or return difference must stay visible.
+pub fn without_register_numbers(instruction: &str) -> String {
+    let bytes: Vec<char> = instruction.chars().collect();
+    let mut out = String::with_capacity(instruction.len());
+    let mut index = 0usize;
+    while index < bytes.len() {
+        let starts_word = index == 0 || !(bytes[index - 1].is_alphanumeric() || bytes[index - 1] == '_');
+        if starts_word && bytes[index] == 'r' && index + 1 < bytes.len() && bytes[index + 1].is_ascii_digit() {
+            let mut end = index + 1;
+            while end < bytes.len() && bytes[end].is_ascii_digit() {
+                end += 1;
+            }
+            // Only a whole register token, never the `r` of a hex literal.
+            if end >= bytes.len() || !(bytes[end].is_alphanumeric() || bytes[end] == '_') {
+                out.push_str("rN");
+                index = end;
+                continue;
+            }
+        }
+        out.push(bytes[index]);
+        index += 1;
+    }
+    out
+}
+
 /// Is the residual worth reading the source for?
 ///
-/// Returns `("exact" | "ordering" | "wrong", wrong_instruction_count)`.
+/// Returns `("exact" | "ordering" | "registers" | "wrong", wrong_instruction_count)`.
+///
+/// `registers` means the two streams hold the same instructions on the same
+/// operands and differ only in WHICH register carries what. That is the
+/// allocator's decision, made after the source has had its say: on
+/// resource_3b3:1fd4 the reference lets the surviving constant take the
+/// destination of a commutative `orrs` and we let the freshly loaded byte take
+/// it, and no source shape moves it -- operand order is canonicalised at tree
+/// level, and naming, widening, reading through a local and reordering the two
+/// sites all leave it unchanged.
+///
+/// It is separated from `wrong` because it is as unreachable as `ordering` and
+/// was inflating the reachable pile.
 ///
 /// Two owners can show the same differing-halfword count and be completely
 /// different problems. When both sides hold the SAME instructions and only the
@@ -264,15 +306,23 @@ pub fn without_pc_offset(instruction: &str) -> String {
 /// wrong instruction. Ranking by this instead of by differing halfwords is
 /// what separates a two-line fix from eighteen copies of a blocked tie.
 pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) {
-    let mut pool: std::collections::BTreeMap<String, i64> = std::collections::BTreeMap::new();
-    for line in left {
-        *pool.entry(without_pc_offset(line)).or_default() += 1;
-    }
-    for line in right {
-        *pool.entry(without_pc_offset(line)).or_default() -= 1;
-    }
-    let wrong: i64 = pool.values().map(|count| count.abs()).sum();
+    let difference = |canon: &dyn Fn(&str) -> String| -> i64 {
+        let mut pool: std::collections::BTreeMap<String, i64> = std::collections::BTreeMap::new();
+        for line in left {
+            *pool.entry(canon(line)).or_default() += 1;
+        }
+        for line in right {
+            *pool.entry(canon(line)).or_default() -= 1;
+        }
+        pool.values().map(|count| count.abs()).sum()
+    };
+    let wrong = difference(&|line: &str| without_pc_offset(line));
     if wrong > 0 {
+        // Same instructions and operands, different registers: the allocator
+        // decided it, and the source cannot.
+        if difference(&|line: &str| without_register_numbers(&without_pc_offset(line))) == 0 {
+            return ("registers", wrong);
+        }
         return ("wrong", wrong);
     }
     if left == right {
@@ -422,10 +472,34 @@ mod residual_tests {
     }
 
     #[test]
-    fn a_wrong_register_counts_once_per_side() {
-        let left = lines(&["movs r1, #33", "bx lr"]);
-        let right = lines(&["movs r3, #33", "bx lr"]);
-        assert_eq!(residual_class(&left, &right), ("wrong", 2));
+    fn a_register_role_swap_is_the_allocator_not_the_source() {
+        // resource_3b3:1fd4 exactly: a commutative `orrs` whose destination
+        // the allocator picked differently, and the store that follows it.
+        let left = lines(&["orrs r3, r5", "strb r3, [r0, #0]"]);
+        let right = lines(&["orrs r5, r3", "strb r5, [r0, #0]"]);
+        assert_eq!(residual_class(&left, &right).0, "registers");
+    }
+
+    #[test]
+    fn a_different_opcode_is_wrong_even_with_registers_blanked() {
+        let left = lines(&["orrs r3, r5"]);
+        let right = lines(&["ands r5, r3"]);
+        assert_eq!(residual_class(&left, &right).0, "wrong");
+    }
+
+    #[test]
+    fn a_different_immediate_is_wrong() {
+        let left = lines(&["movs r1, #33"]);
+        let right = lines(&["movs r3, #34"]);
+        assert_eq!(residual_class(&left, &right).0, "wrong");
+    }
+
+    #[test]
+    fn the_stack_and_link_registers_are_never_blanked() {
+        // A frame or return difference is a real defect and must stay visible.
+        let left = lines(&["push {r4, lr}", "add sp, #8"]);
+        let right = lines(&["push {r4, r5}", "add sp, #8"]);
+        assert_eq!(residual_class(&left, &right).0, "wrong");
     }
 }
 

@@ -103,7 +103,26 @@
  * style, block-scoped locals, 153 configurations through
  * tools/overlay-mode-cohort (36 compiled, 0 exact), and tools/shape-sweep.
  * Scored with `score --align` from tools/overlay, whose reference was checked
- * against the decoded container rather than the git oracle.
+ * against the decoded container rather than the git oracle.  Re-tested after
+ * the `score --flags` work with seven stock cse-family options -- -fno-gcse,
+ * -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-rerun-cse-after-loop,
+ * -fno-expensive-optimizations, -fno-strength-reduce, -fno-regmove -- and none
+ * corrects the size.  -fno-rerun-cse-after-loop is worth naming because cse2 is
+ * the pass e611e2847 points at, and it does not do it here.
+ *
+ * THIS OWNER IS NOT A SPECIAL CASE.  tools/overlay-candidate-rank scores it
+ * `wrong` with 566 halfwords surviving its register-blind and ordering-blind
+ * verdicts, and the twin 0x020015dc, which this scene is a variant of, is the
+ * same shape at -24 bytes and 672.  Corpus-wide the ranker measures 606 rows,
+ * of which 146 are SHORT of their reference across 98,560 span bytes, and the
+ * four largest targets in the tree are all in that set: resource_3b8:2014 at
+ * -86, resource_38f:08ec at -16, resource_391:0d3c at -28, and this owner.
+ * Classifying their divergence clusters by cause puts constant materialisation
+ * -- pooling, sharing and rebuilding -- at 62%, 50%, 53% and 53% respectively,
+ * with allocation and ordering together never above 7%.  One behaviour, in the
+ * same proportion, blocks the largest owners in the corpus.  The cluster
+ * classification is a reading aid rather than a gate; the size deltas and the
+ * `wrong` counts behind it are tools/overlay-candidate-rank's own.
  */
 
 /* The overlay's scene block, reached through the IWRAM pointer at 0x03001ebc;

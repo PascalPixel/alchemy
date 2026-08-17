@@ -211,7 +211,11 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             .filter(|interval| {
                 matches!(
                     interval.kind.as_str(),
-                    "veneer" | "literal_pool" | "executable_alignment"
+                    // `hand_written_thumb` is a region whose own assembly uses a
+                    // Thumb `stmia`/`ldmia`. `arm.md` gates both store-multiple
+                    // peepholes on TARGET_ARM, so no C reaches it and it is
+                    // permanently assembly, exactly like a veneer.
+                    "veneer" | "literal_pool" | "executable_alignment" | "hand_written_thumb"
                 )
             })
             .collect();

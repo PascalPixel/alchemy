@@ -41,14 +41,22 @@ pub struct Measurement {
     pub candidate_bytes: Option<i64>,
     pub size_delta: Option<i64>,
     pub differing_halfwords: Option<i64>,
-    /// `exact` / `ordering` / `registers` / `wrong`, from
+    /// `exact` / `ordering` / `allocation` / `unemittable` / `wrong`, from
     /// `candidate_show::render::residual_class`.
     ///
     /// Ranking by differing halfwords alone puts a blocked scheduler tie and a
     /// two-line source defect in the same tier. This column is what tells them
-    /// apart: `ordering` means both sides hold the same instructions and
-    /// `registers` means they differ only in which registers they name, and
-    /// neither is reachable from source, so read a `wrong` row instead.
+    /// apart, and only the last is worth opening a source for:
+    ///
+    /// - `ordering`, both sides hold the same instructions in a different
+    ///   sequence, which is settled after reload;
+    /// - `allocation`, they differ only in which registers they name, which is
+    ///   the allocator's choice;
+    /// - `unemittable`, the REFERENCE side holds an instruction stock gcc 2.96
+    ///   cannot emit for Thumb from any source at all, so the region was never
+    ///   C (bef5cad7c);
+    /// - `wrong`, a genuine difference, and the only class a source reading can
+    ///   move.
     pub residual_class: Option<String>,
     pub wrong_instructions: Option<i64>,
     pub semantic_source: String,

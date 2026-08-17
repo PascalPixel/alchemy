@@ -306,6 +306,21 @@ fn render_report(measurements: &[Measurement]) -> String {
         if let Some(diff) = row.differing_halfwords {
             out.push_str(&format!("      \"differingHalfwords\": {diff},\n"));
         }
+        // The class and its count belong in the REPORT, not just in the console
+        // table. They are the two columns that say whether an owner is worth
+        // opening, the worker already serialises them and `parse_measurements`
+        // already reads them -- only this renderer dropped them, so every bulk
+        // consumer of report.json was blind to the classification and had to
+        // re-derive it by scoring all 605 owners again.
+        if let Some(class) = &row.residual_class {
+            out.push_str(&format!(
+                "      \"residualClass\": \"{}\",\n",
+                json_escape(class)
+            ));
+        }
+        if let Some(wrong) = row.wrong_instructions {
+            out.push_str(&format!("      \"wrongInstructions\": {wrong},\n"));
+        }
         out.push_str(&format!(
             "      \"semanticSource\": \"{}\"{}\n",
             json_escape(&row.semantic_source),
@@ -429,7 +444,10 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
             let (class, wrong) =
                 match classify_owner(&owner_work, &compiled.data, expected, address as f64) {
                     Ok(pair) => (Some(pair.0.to_string()), Some(pair.1)),
-                    Err(_) => (None, None),
+                    Err(message) => {
+                        eprintln!("{id}: residual not classified: {message}");
+                        (None, None)
+                    }
                 };
             Ok(Measurement {
                 id: id.clone(),
@@ -789,6 +807,38 @@ mod tests {
         let expected = "{\n  \"measured\": [\n    {\n      \"id\": \"resource_0:0\",\n      \"overlay\": \"resource_0\",\n      \"address\": \"0x0\",\n      \"span\": 4,\n      \"sizeDelta\": 0,\n      \"differingHalfwords\": 2,\n      \"semanticSource\": \"semantic\"\n    }\n  ]\n}\n";
         assert_eq!(render_report(&rows), expected);
         assert_eq!(render_report(&[]), "{\n  \"measured\": []\n}\n");
+    }
+
+    /// The classification has to survive into the report, because that is the
+    /// only place a bulk consumer can read it. It did not, for as long as the
+    /// column existed: the worker serialised it and `parse_measurements` read it,
+    /// and this renderer silently dropped it.
+    #[test]
+    fn the_report_carries_the_residual_class_and_its_count() {
+        let mut row = measurement(4, Some(0), Some(2), None);
+        row.residual_class = Some("allocation".to_string());
+        row.wrong_instructions = Some(8);
+        let rendered = render_report(&[row]);
+        assert!(
+            rendered.contains("\"residualClass\": \"allocation\","),
+            "report lost the class: {rendered}"
+        );
+        assert!(
+            rendered.contains("\"wrongInstructions\": 8,"),
+            "report lost the wrong-instruction count: {rendered}"
+        );
+        // And a round trip, so the two renderers cannot drift apart again.
+        let parsed = parse_measurements(&render_measurements(&[measurement_with_class()]))
+            .expect("worker output parses");
+        assert_eq!(parsed[0].residual_class.as_deref(), Some("ordering"));
+        assert_eq!(parsed[0].wrong_instructions, Some(0));
+    }
+
+    fn measurement_with_class() -> Measurement {
+        let mut row = measurement(4, Some(0), Some(2), None);
+        row.residual_class = Some("ordering".to_string());
+        row.wrong_instructions = Some(0);
+        row
     }
 
     #[test]

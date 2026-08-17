@@ -62,7 +62,7 @@ typedef struct Workspace_02000e20 {
  * 0x0200034c reaches it through 0x0200310c, this owner through 0x02003f32.
  * Naming the callee by the main-image symbol is therefore ambiguous and
  * resolves to the other veneer, so it is named by the entry actually called. */
-Record_02000e20 *Func_02003f32();
+Record_02000e20 *Func_02003f32();  /* Func_0808a080 */
 
 extern u8 Value_000000ac;
 void Func_02000e20(void)

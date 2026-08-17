@@ -4,10 +4,19 @@ extern unsigned char *Data_03001ebc;
 
 extern void Func_020012fc(void);
 extern void Func_0200137a(s32);
-/* 引数は u8 ではない。参照は 0x301 をプール語から渡す。
- * NOT u8. The reference loads a pool word into r0 before this call, so the
- * argument is the whole 0x301; declared u8 it truncated to 1 and the row
- * scored 7 differing halfwords, which read as a near-miss it is not. */
+/* s32, not u8.  The reference loads the pool word 0x00000301 at 0x02000280 into
+ * r0 for this call; a u8 parameter truncates 0x301 to 1 at compile time and emits
+ * `movs r0, #1`, so the callee would receive a different value.  The narrow type
+ * is not a near-miss, it is wrong.
+ *
+ * Widening does NOT close the owner and makes the count worse, 7 differing
+ * halfwords to 36, for a reason that is not this declaration: with both sites
+ * passing 0x301, gcc shares the constant in r5 and pays `push {r5, lr}` for it,
+ * where the reference re-loads the same pool word at each site. Proved by
+ * changing the second site's constant as a diagnostic -- sharing then cannot
+ * happen and the residual falls to 3 halfwords, the remaining 4 bytes being the
+ * second pool word that diagnostic introduces. So what is left here is gcc's
+ * cross-block constant CSE, not the interface. */
 extern s32 Func_020012e8(s32);
 extern void Func_020013a4(s32, s32);
 extern void Func_02001312(s32);

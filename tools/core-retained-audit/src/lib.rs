@@ -341,6 +341,12 @@ fn mechanical_evidence(tag: &str, text: &str) -> Option<bool> {
         "fixed_ldr_r4_bx_r4_literal" => Some(has("ldr\tr4") || has("ldr r4")),
         "fixed_software_interrupt_instruction" => Some(has("swi") || has("svc")),
         "arm_instruction_set" => Some(arm_mode),
+        // `arm.md` gates both store-multiple peepholes on TARGET_ARM, so no C
+        // reaches a Thumb `stmia`/`ldmia`. A region whose own assembly uses one
+        // was not produced by this compiler.
+        "reference_uses_thumb_multiple_transfer" => {
+            Some(text.contains("stmia") || text.contains("ldmia"))
+        }
         "manual_return_address_preserved_in_ip" => {
             Some((has("mov\tip, lr") || has("mov ip, lr")) && (has("bx\tip") || has("bx ip")))
         }

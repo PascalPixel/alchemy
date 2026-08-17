@@ -347,6 +347,41 @@ fn parse_score(output: &str) -> Option<(i64, i64, i64)> {
     Some((numbers[0], numbers[1], numbers[2]))
 }
 
+/// Owners withdrawn from routine work, from `semantic/unmatchable.json`.
+///
+/// A main-image owner is registered under its bare address, `08002f10`, which
+/// is also its source stem, so no translation is needed here -- unlike the
+/// overlay half, where the register and the reading list spell an owner
+/// differently.
+///
+/// Scanned rather than parsed: this crate has no dependencies and pulling a
+/// JSON one in for four hundred bytes of advisory data is not worth it. Same
+/// call `rom_overlay` makes against `assets/manifest.json`. A missing or
+/// malformed register yields an empty set, because ranking a withdrawn owner is
+/// a smaller failure than refusing to rank at all.
+fn unmatchable_owners(root: &Path) -> std::collections::BTreeSet<String> {
+    match fs::read_to_string(root.join("semantic/unmatchable.json")) {
+        Ok(text) => unmatchable_from_text(&text),
+        Err(_) => std::collections::BTreeSet::new(),
+    }
+}
+
+/// The scan itself, kept separate so the self-test can exercise it without a
+/// fixture on disk.
+fn unmatchable_from_text(text: &str) -> std::collections::BTreeSet<String> {
+    let mut out = std::collections::BTreeSet::new();
+    for piece in text.split("\"owner\"").skip(1) {
+        let Some(rest) = piece.split_once(':').map(|(_, rest)| rest) else {
+            continue;
+        };
+        let Some(start) = rest.find('"') else { continue };
+        let tail = &rest[start + 1..];
+        let Some(end) = tail.find('"') else { continue };
+        out.insert(tail[..end].to_string());
+    }
+    out
+}
+
 /// Main-image candidate sources: `semantic/08xxxxxx.c` and nothing else.
 pub fn candidates(root: &Path) -> Vec<PathBuf> {
     let mut found = Vec::new();
@@ -563,6 +598,21 @@ pub fn run(root: &Path, self_exe: &Path, subcommand: &[&str], args: &[String]) -
     if sources.is_empty() {
         return Err("no main-image candidates under semantic/".to_string());
     }
+    // The register's job is to keep withdrawn owners out of this queue. The
+    // overlay ranker had the same gap and had all four of its entries in the
+    // first twenty rows; 30 main-image owners are registered here.
+    let withdrawn = unmatchable_owners(root);
+    let before = sources.len();
+    sources.retain(|path| {
+        path.file_stem()
+            .and_then(|stem| stem.to_str())
+            .is_none_or(|stem| !withdrawn.contains(stem))
+    });
+    let dropped = before - sources.len();
+    if dropped > 0 {
+        // Said out loud: a queue that shrinks quietly reads as coverage.
+        eprintln!("withdrawn={dropped} (semantic/unmatchable.json)");
+    }
     sources.truncate(limit);
 
     // One directory per candidate, so no two concurrent `candidate-show` runs
@@ -733,6 +783,28 @@ pub fn self_test() -> Result<(), String> {
     let swapped = lines(&["  ! adds\tr3, r3, r2                adds\tr3, r2, r3"]);
     if classify(&swapped).0 != Verdict::Allocation {
         return Err("a commutative operand swap must read as allocation".to_string());
+    }
+
+    // The register scan is hand-rolled, so pin it. A withdrawn owner that stops
+    // being recognised comes straight back to the top of the queue, silently.
+    let register = r#"{
+      "format": 1,
+      "comment": "owners withdrawn from routine work",
+      "unmatchable": [
+        { "owner": "08002f10", "floor_halfwords": 6, "reason": "store merge" },
+        { "owner": "resource_3a9_c_0200007c", "reason": "comparison canonicalisation" }
+      ]
+    }"#;
+    let found = unmatchable_from_text(register);
+    if !found.contains("08002f10") || !found.contains("resource_3a9_c_0200007c") {
+        return Err(format!("the register scan missed an owner: {found:?}"));
+    }
+    if found.len() != 2 {
+        return Err(format!("the register scan invented an owner: {found:?}"));
+    }
+    // The word `owner` inside prose must not be read as a field.
+    if !unmatchable_from_text(r#"{"comment": "the owner is withdrawn"}"#).is_empty() {
+        return Err("the register scan read prose as an entry".to_string());
     }
 
     // Blanking registers must not blank an immediate or a mnemonic.

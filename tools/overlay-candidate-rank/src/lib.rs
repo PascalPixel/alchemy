@@ -41,14 +41,22 @@ pub struct Measurement {
     pub candidate_bytes: Option<i64>,
     pub size_delta: Option<i64>,
     pub differing_halfwords: Option<i64>,
-    /// `exact` / `ordering` / `registers` / `wrong`, from
+    /// `exact` / `ordering` / `allocation` / `unemittable` / `wrong`, from
     /// `candidate_show::render::residual_class`.
     ///
     /// Ranking by differing halfwords alone puts a blocked scheduler tie and a
     /// two-line source defect in the same tier. This column is what tells them
-    /// apart: `ordering` means both sides hold the same instructions and
-    /// `registers` means they differ only in which registers they name, and
-    /// neither is reachable from source, so read a `wrong` row instead.
+    /// apart, and only the last is worth opening a source for:
+    ///
+    /// - `ordering`, both sides hold the same instructions in a different
+    ///   sequence, which is settled after reload;
+    /// - `allocation`, they differ only in which registers they name, which is
+    ///   the allocator's choice;
+    /// - `unemittable`, the REFERENCE side holds an instruction stock gcc 2.96
+    ///   cannot emit for Thumb from any source at all, so the region was never
+    ///   C (bef5cad7c);
+    /// - `wrong`, a genuine difference, and the only class a source reading can
+    ///   move.
     pub residual_class: Option<String>,
     pub wrong_instructions: Option<i64>,
     pub semantic_source: String,
@@ -88,6 +96,36 @@ fn classify_owner(
     let _ = fs::remove_file(&ours);
     let _ = fs::remove_file(&theirs);
     Ok(candidate_show::render::residual_class(&left, &right))
+}
+
+/// `resource_3a9` + `0x0200007c` -> `resource_3a9_c_0200007c`, the spelling
+/// `semantic/unmatchable.json` records an owner under.
+fn owner_key(overlay: &str, address: &str) -> String {
+    let hex = address.trim_start_matches("0x");
+    format!("{overlay}_c_{hex:0>8}")
+}
+
+/// Owners withdrawn from routine work, from `semantic/unmatchable.json`.
+///
+/// A missing or unreadable register yields an empty set rather than an error:
+/// the ranker still measures correctly without it, and failing the whole run
+/// over an absent advisory file would be worse than ranking a withdrawn owner.
+fn unmatchable_owners(root: &Path) -> std::collections::BTreeSet<String> {
+    let mut out = std::collections::BTreeSet::new();
+    let Ok(text) = fs::read_to_string(root.join("semantic/unmatchable.json")) else {
+        return out;
+    };
+    let Ok(value) = parse_json(&text) else {
+        return out;
+    };
+    if let Some(entries) = value.get("unmatchable").and_then(Value::as_array) {
+        for entry in entries {
+            if let Some(owner) = entry.get("owner").and_then(Value::as_str) {
+                out.insert(owner.to_string());
+            }
+        }
+    }
+    out
 }
 
 /// `countDifferingHalfwords(actual, expected)`.
@@ -607,6 +645,23 @@ pub fn run(
         .into_iter()
         .filter(|row| !row.blocked)
         .collect();
+    // `semantic/unmatchable.json` exists to "keep a small number of owners out
+    // of the queue" -- its own words -- and this ranker was not reading it, so
+    // every registered owner kept coming back to the top of the list it is
+    // meant to be absent from. All four overlay entries were in the first
+    // twenty rows by cheapness, and their recorded reasons are exactly the
+    // findings a reader spends the session rediscovering: 3a9:007c and 3a9:00e4
+    // say stock gcc always canonicalises `cmp #9 / blt` to `cmp #8 / ble`, and
+    // 3b5:0170 says the ce pass makes its ternary branchless.
+    let withdrawn = unmatchable_owners(root);
+    let before = rows.len();
+    rows.retain(|row| !withdrawn.contains(&owner_key(&row.overlay, &row.address)));
+    let dropped = before - rows.len();
+    if dropped > 0 {
+        // Never silently: a queue that shrinks without saying so reads as
+        // coverage rather than as a withdrawal.
+        eprintln!("withdrawn={dropped} (semantic/unmatchable.json)");
+    }
     if let Some(overlay) = only_overlay {
         rows.retain(|row| row.overlay == overlay);
     }
@@ -727,8 +782,90 @@ pub fn run(
         counts[4],
         counts[5],
     );
+    // Owners `adopt` will refuse even when their C is perfect, because their
+    // span does not tile the audited intervals. Two of them reproduce TODAY --
+    // resource_3b9:007c and resource_3c4:0e20, 612 bytes of byte-exact C that
+    // cannot be banked. Counting them here so a contributor learns it before
+    // spending a session on one rather than at the adoption gate afterwards.
+    // 97ae4f4ad has the reading: a jump table reached from inside a function is
+    // classified as data, so the map leaves a hole in the middle of its owner.
+    let intervals = audited_intervals_by_overlay(root);
+    let held: Vec<&Measurement> = measured
+        .iter()
+        .filter(|row| {
+            let Ok(start) = i64::from_str_radix(row.address.trim_start_matches("0x"), 16) else {
+                return false;
+            };
+            !span_tiles(&intervals, &row.overlay, start, start + row.span)
+        })
+        .collect();
+    if !held.is_empty() {
+        println!(
+            "unadoptable={} bytes={} (span does not tile metrics/gs1-en-executable.json)",
+            held.len(),
+            held.iter().map(|row| row.span).sum::<i64>(),
+        );
+    }
     println!("report={}", work.join("report.json").to_string_lossy());
     Ok(())
+}
+
+/// `overlay id -> (start, end, kind)`, sorted, from the audited executable map.
+fn audited_intervals_by_overlay(root: &Path) -> Vec<(String, Vec<(i64, i64, String)>)> {
+    let mut out = Vec::new();
+    let Ok(text) = fs::read_to_string(root.join("metrics/gs1-en-executable.json")) else {
+        return out;
+    };
+    let Ok(value) = parse_json(&text) else {
+        return out;
+    };
+    for overlay in value.get("overlays").and_then(Value::as_array).unwrap_or(&[]) {
+        let Some(id) = overlay.get("id").and_then(Value::as_str) else {
+            continue;
+        };
+        let mut spans: Vec<(i64, i64, String)> = overlay
+            .get("intervals")
+            .and_then(Value::as_array)
+            .unwrap_or(&[])
+            .iter()
+            .filter_map(|interval| {
+                Some((
+                    interval.get("start").and_then(Value::as_f64)? as i64,
+                    interval.get("end").and_then(Value::as_f64)? as i64,
+                    interval.get("kind").and_then(Value::as_str)?.to_string(),
+                ))
+            })
+            .collect();
+        spans.sort_by_key(|span| span.0);
+        out.push((id.to_string(), spans));
+    }
+    out
+}
+
+/// The same test `overlay-adopt` applies: one interval contains the span, or
+/// the touched intervals tile it contiguously and the last is not alignment.
+fn span_tiles(
+    intervals: &[(String, Vec<(i64, i64, String)>)],
+    overlay: &str,
+    start: i64,
+    end: i64,
+) -> bool {
+    let Some((_, spans)) = intervals.iter().find(|(id, _)| id == overlay) else {
+        // No map for this overlay is not evidence of a hole.
+        return true;
+    };
+    if spans.iter().any(|span| span.0 <= start && end <= span.1) {
+        return true;
+    }
+    let touched: Vec<&(i64, i64, String)> =
+        spans.iter().filter(|span| span.0 < end && start < span.1).collect();
+    if touched.is_empty() {
+        return false;
+    }
+    touched[0].0 <= start
+        && touched[touched.len() - 1].1 >= end
+        && touched.windows(2).all(|pair| pair[0].1 == pair[1].0)
+        && touched[touched.len() - 1].2 != "executable_alignment"
 }
 
 #[cfg(test)]
@@ -754,6 +891,58 @@ mod tests {
             semantic_source: "semantic".to_string(),
             error: error.map(str::to_string),
         }
+    }
+
+    #[test]
+    fn span_tiles_agrees_with_the_rule_overlay_adopt_applies() {
+        // This mirrors `overlay-adopt`'s gate. If the two drift, the ranker
+        // promises a row that adoption then refuses, which is the failure this
+        // count exists to prevent.
+        let map = |spans: &[(i64, i64, &str)]| {
+            vec![(
+                "resource_1".to_string(),
+                spans
+                    .iter()
+                    .map(|(a, b, k)| (*a, *b, (*k).to_string()))
+                    .collect::<Vec<_>>(),
+            )]
+        };
+
+        // One interval containing the span.
+        let one = map(&[(0x100, 0x200, "thumb")]);
+        assert!(span_tiles(&one, "resource_1", 0x110, 0x180));
+
+        // Contiguous tiling is fine; a gap in the middle is not. This is
+        // resource_3b9:007c in miniature -- its 264-byte jump table leaves
+        // exactly this shape of hole.
+        let tiled = map(&[(0x100, 0x140, "thumb"), (0x140, 0x200, "literal_pool")]);
+        assert!(span_tiles(&tiled, "resource_1", 0x100, 0x200));
+        let holed = map(&[(0x100, 0x140, "thumb"), (0x180, 0x200, "thumb")]);
+        assert!(!span_tiles(&holed, "resource_1", 0x100, 0x200));
+
+        // Ending on alignment padding is refused, as adoption refuses it.
+        let padded = map(&[(0x100, 0x140, "thumb"), (0x140, 0x200, "executable_alignment")]);
+        assert!(!span_tiles(&padded, "resource_1", 0x100, 0x200));
+
+        // Running past the last interval is not covered.
+        assert!(!span_tiles(&one, "resource_1", 0x110, 0x280));
+
+        // An overlay absent from the map is not evidence of a hole.
+        assert!(span_tiles(&one, "resource_9", 0x000, 0xfff));
+    }
+
+    #[test]
+    fn owner_key_matches_the_spelling_the_register_uses() {
+        // `semantic/unmatchable.json` records `resource_3a9_c_0200007c`; the
+        // reading list carries the overlay and address apart. If these two
+        // spellings drift the filter silently stops matching and every
+        // withdrawn owner returns to the top of the queue, which is the bug
+        // this pair exists to catch.
+        assert_eq!(owner_key("resource_3a9", "0x0200007c"), "resource_3a9_c_0200007c");
+        assert_eq!(owner_key("resource_3a9", "0200007c"), "resource_3a9_c_0200007c");
+        assert_eq!(owner_key("resource_3b5", "0x02000170"), "resource_3b5_c_02000170");
+        // Short addresses pad, or `resource_370_c_2f8` would match nothing.
+        assert_eq!(owner_key("resource_370", "0x2f8"), "resource_370_c_000002f8");
     }
 
     #[test]

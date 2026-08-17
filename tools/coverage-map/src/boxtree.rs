@@ -399,7 +399,11 @@ impl BoxContext<'_> {
             ))
         ));
         if total <= 0 {
-            let fallback = self.category_order.last().copied().unwrap_or("");
+            // FIRST, not last. Every order in this file runs least-complete to
+            // most-complete, so `last()` painted a tile whose bytes matched no
+            // category as though it were finished. A tile we cannot classify is
+            // unknown work, not done work.
+            let fallback = self.category_order.first().copied().unwrap_or("");
             let fraction = self.fraction_of(fallback);
             let cell = precise_rect(rectangle, &self.category_attributes(fallback, fraction));
             self.lines.push(cell);
@@ -915,7 +919,14 @@ pub fn render_box_trees(
     if images.bytes + music.bytes != assets.area.bytes {
         return Err("published asset split does not conserve its byte total".to_string());
     }
-    let code_order = ["retained_asm", "exact_c", "humanized_c"];
+    // `assembly` leads: it is the least-complete category and the bands stack
+    // least-complete first. Leaving it out of the order was not cosmetic -- a
+    // tile holding only unreconstructed assembly matched no listed category, so
+    // it fell through to the "no categories" path below and was painted with
+    // the LAST entry, `humanized_c`, at fraction 1.0. Undecompiled code was
+    // rendered in the same bright band colour as finished exact C, on the
+    // README figures and on the live dashboard alike.
+    let code_order = ["assembly", "retained_asm", "exact_c", "humanized_c"];
     Ok(vec![
         (
             "core",

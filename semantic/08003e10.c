@@ -55,6 +55,17 @@ extern u8 Value_000000e0;
  * post-increment walk; indexed stores; the pointer declared first, last, and
  * assigned separately; and the constants declared in both orders.
  *
+ * On 08004838, the smallest instance, the residual reduces to the numbering
+ * ALONE and nothing else: base pointer r3, the same three pool words loaded in
+ * the same order, and the three stores at ascending offsets 0, 4, 8 in the same
+ * order -- all identical to the reference.  The only difference left is that gcc
+ * numbers the values r2, r1, r0 where the reference has r0, r1, r2.  Assignment
+ * order does control the store offset order (assigning in reverse scrambles the
+ * stores to +4, +0, +8 and loses even that), but the descending numbering is
+ * invariant across every reading that keeps the offsets ascending.  So the source
+ * reaches the whole shape except which register number each value gets, which is
+ * the one thing it cannot name.
+ *
  * This is not a local problem.  82 candidates across the main image differ from
  * their reference by exactly this merge, 15,438 bytes in all, and 35 of them are
  * DMA kicks like this one.  No byte-exact owner in the corpus writes 0x040000d4

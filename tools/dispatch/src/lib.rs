@@ -118,6 +118,10 @@ const COMPILER: &[Entry] = &[
         target: Target::Sub("tools/compiler/target/release/compiler", "corpus-regression"),
     },
     Entry {
+        name: "main_candidate_rank",
+        target: Target::Sub("tools/compiler/target/release/compiler", "main-rank"),
+    },
+    Entry {
         name: "mode_cohort",
         target: Target::Sub("tools/compiler/target/release/compiler", "mode-cohort"),
     },
@@ -833,9 +837,10 @@ mod tests {
             usage(Group::Check).lines().next(),
             Some("usage: check <subcommand> [args...]")
         );
-        // 4, not 5: statement-order-sweep-main was deleted once shape-sweep's
-        // descent driver absorbed its job.
-        assert_eq!(usage(Group::Compiler).lines().count(), 4);
+        // 5: the header, then compiler-corpus-regression, main-candidate-rank,
+        // mode-cohort and mode-sweep. It was 4 while statement-order-sweep-main
+        // stayed deleted and before main-candidate-rank joined the group.
+        assert_eq!(usage(Group::Compiler).lines().count(), 5);
         assert_eq!(usage(Group::Decomp).lines().count(), 5);
         assert_eq!(usage(Group::Make).lines().count(), 50);
         assert_eq!(usage(Group::Metrics).lines().count(), 7);

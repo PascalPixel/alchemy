@@ -458,8 +458,26 @@ result still has to be read as source and adopted through the owner's gate.
 | Command | What it tells you |
 |---|---|
 | `compiler_corpus_regression` | Recompiles the exact corpus and reports any byte regression. |
+| `main_candidate_rank` | Measures every main-image candidate and separates the residuals that are a plain reorder from the rest. |
 | `mode_sweep` | Searches the approved flag matrix for one fixed candidate. |
 | `mode_cohort` | Tests one compiler hypothesis across a bounded set of owners. |
+
+`main_candidate_rank` is the main image's counterpart to `overlay_candidate_rank`,
+and it answers a second question that one does not. A residual whose two sides
+emit the *same* instructions in a different order is the scheduler's choice, made
+after register allocation, and no source spelling reaches it. One that emits
+*different* instructions might be a type, a prototype, a constant or an
+evaluation order the source decides. So the ranker sorts the second kind first
+and `--worth-opening` hides the rest.
+
+Both labels are weaker than they look, and saying so is the point. `reordering`
+only asserts that the two instruction multisets are equal: evidence that source
+shape is unlikely to reach the residual, not proof the owner cannot match.
+`divergent` is merely its negation, and some divergent owners turn out to be
+allocation as well — `0800fec8` shifts through `r3` where the reference shifts
+`r1` in place, and inlining the load, splitting the temporary and using compound
+shifts all made it worse. Treat the split as which pile to search first, never as
+a claim about what is fixable.
 
 The `compiler` binary additionally hosts `candidate-show` (size, reference size
 and differing halfwords for a candidate), `thumb-disasm`, and the RTL readers

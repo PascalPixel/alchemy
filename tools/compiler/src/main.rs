@@ -12,6 +12,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("thumb-disasm", "thumb disasm"),
     ("candidate-show", "compile one candidate and show the byte comparison"),
     ("candidate-explain", "explain a candidate's routing and flags"),
+    ("main-rank", "rank main-image candidates and classify each residual"),
     ("rtl-insn", "inspect RTL instructions"),
     ("rtl-sexpr", "inspect RTL s-expressions"),
     ("rtl-schedule", "inspect RTL scheduling"),
@@ -61,6 +62,17 @@ fn main() -> ExitCode {
         "rtl-align" => rtl_align::cli::entry(&rest),
         "candidate-show" => { candidate_show::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "candidate-explain" => { candidate_explain::entrypoint::entry(&rest); ExitCode::SUCCESS }
+        "main-rank" => {
+            // The subcommand goes with the path: children re-enter the host at
+            // its `candidate-show` arm, not at `--align` as a command name.
+            let self_exe = std::env::current_exe()
+                .unwrap_or_else(|_| std::path::PathBuf::from("compiler"));
+            let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+            match main_candidate_rank::run(&root, &self_exe, &["candidate-show"], &rest) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }
+            }
+        }
         "thumb-disasm" => match thumb_disasm::cli::entry(&rest) {
             Ok(()) => ExitCode::SUCCESS,
             Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }
@@ -111,5 +123,5 @@ fn self_test() -> ExitCode {
 }
 
 fn dispatchable(name: &str) -> bool {
-    matches!(name, "bl-symbols" | "candidate-explain" | "candidate-show" | "corpus-regression" | "dashboard-server" | "decomp-diagnose" | "mode-cohort" | "mode-sweep" | "permute" | "residuals" | "rtl-align" | "rtl-insn" | "rtl-schedule" | "rtl-sexpr" | "search-modes" | "shape-sweep" | "thumb-disasm")
+    matches!(name, "bl-symbols" | "candidate-explain" | "candidate-show" | "corpus-regression" | "dashboard-server" | "decomp-diagnose" | "main-rank" | "mode-cohort" | "mode-sweep" | "permute" | "residuals" | "rtl-align" | "rtl-insn" | "rtl-schedule" | "rtl-sexpr" | "search-modes" | "shape-sweep" | "thumb-disasm")
 }

@@ -1,0 +1,18 @@
+# Bare `[workspace]`: this crate is an independently buildable workspace rather
+# than a member of the aggregate tools workspace, matching its overlay
+# counterpart `../overlay-candidate-rank`.
+[workspace]
+
+[package]
+name = "main-candidate-rank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+name = "main_candidate_rank"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3

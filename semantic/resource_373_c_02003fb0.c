@@ -77,6 +77,33 @@
  * UNCERTAINTY 3: the tail writes fp[0x3c] = 0x80000000, the same sentinel the
  * byte-exact assets/code/resource_373_c_0200572c.c tests for at word offsets
  * 14 and 16 of its record.  The field is treated as a plain s32 here.
+ *
+ * BLOCKED ON THE COMPILER, NOT ON THIS SOURCE.  This owner was byte-exact at
+ * 6a06b1094 and has not been edited since.  Its flags did not change either:
+ * resource_373 is named in no routing table on either side of the 69741ca0d
+ * cut, and the base flag set is identical across it.  What moved is the
+ * compiler.  alchemy-gcc 0aa47ae replaced gs1cc's SYMBOL_REF hash, which had
+ * hashed the ADDRESS of the symbol string and so bucketed cse differently on
+ * every run; that commit records that the old behaviour emitted different code
+ * for the same source.  The proof here predates the gs1cc work by three days,
+ * so it was taken under the nondeterministic hash and does not reproduce.
+ *
+ * Against the current compiler the candidate is 5,580 bytes to the reference's
+ * 5,604, with 1,786 of 2,489 instruction rows already identical and 279
+ * divergence clusters, 136 of them a pool-versus-inline constant decision --
+ * the family named in b97f278ed.  The first divergence is the
+ * Func_0200a0c0(-1, -1, -1, 0) call below: the reference materialises -1 once
+ * per argument register and gcc commons it into one pseudo with copies.  That
+ * is the line e611e2847 located, rematerialise an expensive constant that is a
+ * call argument and share everything else, which needs cse.c to see whether a
+ * value feeds a call.  It is not reachable from source.
+ *
+ * Tested against that first divergence and rejected, none moving a byte: a
+ * typed callee prototype, duplicated locals in the resource_372_c_02000f38
+ * style, block-scoped locals, 153 configurations through
+ * tools/overlay-mode-cohort (36 compiled, 0 exact), and tools/shape-sweep.
+ * Scored with `score --align` from tools/overlay, whose reference was checked
+ * against the decoded container rather than the git oracle.
  */
 
 /* The overlay's scene block, reached through the IWRAM pointer at 0x03001ebc;

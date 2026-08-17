@@ -1798,8 +1798,8 @@
 <g aria-label="0x08015d74–0x08015e10: 156 bytes">
 <rect x="170.91205" y="94.12536" width="5.842225" height="6.708699" fill="#7dd3fc"/>
 </g>
-<g aria-label="0x0801c34c–0x0801c3e8: 156 bytes · 0.0% byte match">
-<rect x="170.91205" y="100.834059" width="5.842225" height="6.708699" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<g aria-label="0x0801c34c–0x0801c3e8: 156 bytes">
+<rect x="170.91205" y="100.834059" width="5.842225" height="6.708699" style="fill:hsl(275, 95%, 55%);fill:oklch(0.550 0.260 295)"/>
 </g>
 <g aria-label="0x0801f77c–0x0801f818: 156 bytes">
 <rect x="170.91205" y="107.542758" width="5.842225" height="6.708699" style="fill:hsl(275, 95%, 55%);fill:oklch(0.550 0.260 295)"/>
@@ -4905,8 +4905,8 @@
 <g aria-label="0x08005c08–0x08005c2a: 34 bytes">
 <rect x="335.177707" y="255.781942" width="2.888836" height="2.956977" style="fill:hsl(275, 95%, 55%);fill:oklch(0.550 0.260 295)"/>
 </g>
-<g aria-label="0x08006b84–0x08006ba6: 34 bytes · 0.0% byte match">
-<rect x="338.066543" y="255.781942" width="2.888837" height="2.956977" style="fill:hsl(275, 0%, 93%);fill:oklch(0.930 0.000 295)"/>
+<g aria-label="0x08006b84–0x08006ba6: 34 bytes">
+<rect x="338.066543" y="255.781942" width="2.888837" height="2.956977" style="fill:hsl(275, 95%, 55%);fill:oklch(0.550 0.260 295)"/>
 </g>
 <g aria-label="0x08006f48–0x08006f6a: 34 bytes">
 <rect x="316.825097" y="258.738919" width="2.717906" height="3.142942" style="fill:hsl(275, 95%, 55%);fill:oklch(0.550 0.260 295)"/>
@@ -9896,9 +9896,9 @@
 <rect x="536.829121" y="227.069514" width="0.170879" height="52.930486" fill="none" stroke="hsl(275 70% 24%)" stroke-width="2" vector-effect="non-scaling-stroke"/>
 </g>
 <text class="weyard" x="6" y="17">MAIN IMAGE</text>
-<text class="weyard" x="534" y="17" text-anchor="end">DONE 23.7%</text>
+<text class="weyard" x="534" y="17" text-anchor="end">DONE 23.8%</text>
 <rect x="6" y="288" width="10" height="10" fill="url(#byte-match-ramp)"/>
-<text class="weyard" x="20" y="293" dominant-baseline="middle">Semantic 76.3%</text>
+<text class="weyard" x="20" y="293" dominant-baseline="middle">Semantic 76.2%</text>
 <rect x="134" y="288" width="10" height="10" fill="#7dd3fc"/>
 <text class="weyard" x="148" y="293" dominant-baseline="middle">Permanent ASM 5.4%</text>
 <rect x="294" y="288" width="10" height="10" style="fill:hsl(275, 95%, 55%);fill:oklch(0.550 0.260 295)"/>

@@ -671,6 +671,28 @@ is ordinary unfinished work. And the parking persists: 84 high-register moves
 against the reference's 15, with 104 fewer `lsls` and 107 fewer `movs`, which is
 the same shape as `resource_3bf:3054` at smaller magnitude.
 
+The strongest result from that experiment is what happened to the parking as the
+reconstruction got more complete. On `resource_3bd:13f8` the excess
+high-register moves fell as each modelling gap closed:
+
+| what the reconstruction expressed | excess `mov` | bytes of 6,220 |
+|---|---:|---:|
+| calls and constants only | +80 | 5,732 |
+| plus memory through a held pointer | +69 | 5,848 |
+| plus the three loops | **+48** | **5,908** |
+
+`bl`, `ldrb` and `strb` are exact against the reference at 703, 10 and 11. So
+what looks like the compiler parking constants is substantially a source that
+does not yet say everything the original said -- an incomplete reconstruction
+reads as an allocation difference, and closing the gap closes both.
+
+Backward branches matter more than their count suggests. `resource_3bf:3054` has
+NONE: it is 636 calls with no loop anywhere, which is why a linear
+reconstruction could be structurally complete for it. `resource_3bd:13f8` has
+three and `resource_38f:08ec` has two, and a linear walk emits each body once
+without its counter arithmetic or its branch. Check for backward branches before
+concluding anything about a large owner's residual.
+
 The useful correction is that parking is NORMAL at this scale. The reference for
 `resource_3bd:13f8` saves three high registers itself, and the candidate is one
 register over it rather than four. `resource_3bf:3054`'s reference, which saves

@@ -7,6 +7,8 @@ struct Output_08097f80 {
 };
 
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(s32, s32, struct Output_08097f80 *);
 void Func_08097f80(struct EffectSlot *effect)
 {
@@ -21,7 +23,7 @@ next_state:
 
         position.x = effect->origin_x;
         position.z = effect->origin_z;
-        angle = Func_08004458();
+        angle = Rand();
         Func_0800447c(0x1e0000, (u16)angle, &position);
         effect->target_x = position.x;
         effect->target_z = position.z;

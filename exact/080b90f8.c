@@ -17,6 +17,8 @@ s32 Func_080b6b40(s32 arg0, u16 *arg1);
 struct Creature_080b90f8 *Func_08077008(s32);
 s32 Func_080022ec(s32, s32);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 extern u8 Data_02000240[];
 
 s32 Func_080b90f8(void) {
@@ -48,7 +50,7 @@ s32 Func_080b90f8(void) {
             total += Func_08077008((s32) sp8[i])->field_0f;
         }
         accum -= Func_080022ec(total * 0x1F4, count);
-        if ((accum > 0) && ((u32) ((u32) (0x2710 * Func_08004458()) >> 0x10) < (u32) accum)) {
+        if ((accum > 0) && ((u32) ((u32) (0x2710 * Rand()) >> 0x10) < (u32) accum)) {
             sp4 = 1;
         }
         *sp0 += 1;

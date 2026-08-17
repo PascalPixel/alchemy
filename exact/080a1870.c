@@ -9,7 +9,7 @@
    hand-written mask local (s8, u8 or s32, split or inline, with or without a
    copy round trip) either loses the mask copy or turns the `ldrb` into
    `movs #9 / ldrsb`. */
-struct Obj {
+struct Object_080a1870 {
     u8 pad00[9];
     u8 f09_a : 2;
     u8 f09_b : 2;
@@ -65,7 +65,7 @@ void Func_080a1870(void *arg0, s32 arg1, s32 arg2, s32 arg3)
             FIELD(state, u16 *, 0x144 + i * 2) =
                 (arg2 + FIELD(arg0, u16 *, 0xe)) * 8 + 16;
             SLOT(state, 0x154 + i * 4)->w = 0x10000;
-            ((struct Obj *)object)->f09_b = 0;
+            ((struct Object_080a1870 *)object)->f09_b = 0;
             FIELD(object, u8 *, 38) = 0;
             Func_08009020(object, 1);
         }

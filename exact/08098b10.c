@@ -39,6 +39,8 @@ struct Object_08098b10 {
 extern struct Runtime_08098b10 *Data_03001f30;
 
 s32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(s32 magnitude, s32 angle, struct Vector_08098b10 *output);
 void Func_080974d8(struct Vector_08098b10 *value);
 s32 Func_0809ba34(struct Object_08098b10 *object);
@@ -55,7 +57,7 @@ again:
     if (state == 0) {
         value.x = object->source_x;
         value.z = object->source_z;
-        Func_0800447c(0x190000, (u16)Func_08004458(), &value);
+        Func_0800447c(0x190000, (u16)Rand(), &value);
         object->x = value.x;
         object->z = value.z;
         object->velocity_z = 0x30000;
@@ -81,7 +83,7 @@ again:
         value.z = target->z;
         Func_0800447c(0x80000, runtime->angle, &value);
         Func_080974d8(&value);
-        Func_0800447c(0x40000, Func_08004458(), &value);
+        Func_0800447c(0x40000, Rand(), &value);
         object->x = value.x;
         object->z = value.z;
         object->scale = 0x800;

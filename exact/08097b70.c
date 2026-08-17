@@ -29,6 +29,8 @@ struct Object_08097b70 {
 
 extern s32 Func_080044d0(s32, s32);
 extern u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 extern void Func_0800447c(s32, s32, struct Position_08097b70 *);
 extern struct Object_08097b70 *Func_08096c80(s32, s32, s32, s32);
 extern void Func_08009080(struct Object_08097b70 *, s32);
@@ -59,11 +61,11 @@ void Func_08097b70(struct Source_08097b70 *source)
     }
 
     position.x = source->x;
-    position.y = source->y - (Func_08004458() << 4) - 0x80000;
+    position.y = source->y - (Rand() << 4) - 0x80000;
     position.z = source->z;
-    magnitude = Func_08004458() * 3;
+    magnitude = Rand() * 3;
     magnitude <<= 4;
-    Func_0800447c(magnitude, Func_08004458(), &position);
+    Func_0800447c(magnitude, Rand(), &position);
 
     object = Func_08096c80(0x11D, position.x, position.y, position.z);
     if (object != 0) {

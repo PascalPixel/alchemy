@@ -17,8 +17,8 @@ void Func_0809280c(s32 arg0, s32 arg1, s32 arg2)
     struct Object_0809280c *object1;
     struct Object_0809280c *object2;
 
-    object1 = Func_0808ba1c(arg0);
-    object2 = Func_0808ba1c(arg1);
+    object1 = GetObject(arg0);
+    object2 = GetObject(arg1);
     if (object1 != 0 && object2 != 0) {
         object1->angle = Func_080044d0(object2->x - object1->x,
                                       object2->y - object1->y);

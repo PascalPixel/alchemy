@@ -17,6 +17,6 @@ void Func_08091eb0(s32 arg0, s32 arg1)
     if (first == 98 && second == 0)
         Data_02000240.special = (u16)(s32)&Value_00000021;
     if (runtime->mode_19e == 3)
-        Func_0808adf0((u8 *)Func_0808ba1c(Data_02000240.object_id) + 8);
+        Func_0808adf0((u8 *)GetObject(Data_02000240.object_id) + 8);
     Func_0808b320(first, second);
 }

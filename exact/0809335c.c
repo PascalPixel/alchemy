@@ -14,7 +14,7 @@ void Func_0809335c(s32 arg0, s32 arg1) {
     void *temp_r8;
     s32 *ptr;
 
-    temp_r6 = Func_0808ba1c(arg0);
+    temp_r6 = GetObject(arg0);
     temp_r8 = Func_080048f4(0x1B, 0xCCC);
     temp_r5 = M2C_FIELD(temp_r8, void **, 0x1E0);
     ptr = *(s32 **)0x03001E70;

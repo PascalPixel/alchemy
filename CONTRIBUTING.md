@@ -653,10 +653,30 @@ the case where a call-sequence reconstruction is most nearly the whole source,
 and it is the case that got closest without closing.
 
 Before drawing a conclusion from that, note what a call-sequence reconstruction
-does NOT yet model: loads and stores through a held pointer. `resource_3bd:13f8`
+does NOT model: loads and stores through a held pointer. `resource_3bd:13f8`
 keeps a pointer in r7 and reads one field repeatedly, and a reconstruction that
-emits only calls and constants cannot express that. Two of the three owners
-above are therefore not yet a fair test of the allocation question.
+emits only calls and constants cannot express that.
+
+Adding that modelling was tried and it moves the number the way completeness
+should. Teaching the reconstruction pointer-valued loads, field reads and
+writes, and the read-modify-write shape -- `*(u8 *)(p + 90) &= 0xfe`, which is a
+call returning a pointer and one bit being cleared in a byte -- took
+`resource_3bd:13f8` from 674 wrong instructions to 601, and its `ldrb` and `str`
+counts are now exact against the reference at 10 and 2. So the residual tracks
+how much of the source is expressed, not a fixed limit.
+
+What remains after that is still two things, and they should not be conflated.
+Roughly 18 memory operations are unmodelled -- 8 `ldrsh` and 10 `strh` -- which
+is ordinary unfinished work. And the parking persists: 84 high-register moves
+against the reference's 15, with 104 fewer `lsls` and 107 fewer `movs`, which is
+the same shape as `resource_3bf:3054` at smaller magnitude.
+
+The useful correction is that parking is NORMAL at this scale. The reference for
+`resource_3bd:13f8` saves three high registers itself, and the candidate is one
+register over it rather than four. `resource_3bf:3054`'s reference, which saves
+only `{r5, lr}` across 636 calls, is the outlier -- and it is also the only large
+owner with essentially no memory access at all, so it is the one where a
+call-sequence reconstruction is closest to the whole source.
 
 ### Why the project stalled at 20% for two weeks
 

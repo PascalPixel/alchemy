@@ -81,6 +81,7 @@ s32 Func_020003dc(void)
     u8 *workspace;
     u8 *record;
     u8 *attributes;
+    s32 mask;
     s16 *scene;
 
     workspace = Data_03001ebc;
@@ -97,18 +98,30 @@ s32 Func_020003dc(void)
 
     /*
      * The same two-step edit is applied to slots 31 and 32.  These are two
-     * call sites of 0x0808a080 and are kept separate; the mask -13 clears bits
-     * 0, 2 and 3 before bit 3 is set.
+     * call sites of 0x0808a080. The mask is -13, i.e. `~12`, and clears bits 2
+     * and 3 before bit 3 is set -- the source said `~13` while this comment
+     * said -13, and the two disagree by one bit; the reference's
+     * `movs r5,#13 / negs r5,r5` settles it as -13.
+     *
+     * The mask is hoisted to an s32 because the reference materialises the
+     * full 32-bit -13 and shares it across BOTH blocks. Written inline it
+     * narrows to a byte `movs #243`, which is one instruction where the
+     * reference has two.
+     *
+     * Each block reads `attributes` from its OWN record: the second block
+     * takes 0x50 off the record returned by Func_02000e32(32), not off the
+     * first one, and `record[0x23] = 0` precedes the mask in both.
      */
+    mask = ~12;
     record = Func_02000e0e(31);
-    attributes = *(u8 **)(record + 0x50);
-    attributes[9] = (u8)((attributes[9] & ~13) | 8);
     record[0x23] = 0;
-
     attributes = *(u8 **)(record + 0x50);
+    attributes[9] = (u8)((attributes[9] & mask) | 8);
+
     record = Func_02000e32(32);
     record[0x23] = 0;
-    attributes[9] = (u8)((attributes[9] & ~13) | 8);
+    attributes = *(u8 **)(record + 0x50);
+    attributes[9] = (u8)((attributes[9] & mask) | 8);
 
     if (Func_02000e1a(0x8bc) != 0) {
         /* 140 << 18 = 0x2300000, 170 << 18 = 0x2a80000, 128 << 8 = 0x8000. */

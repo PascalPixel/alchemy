@@ -102,8 +102,13 @@
  * typed callee prototype, duplicated locals in the resource_372_c_02000f38
  * style, block-scoped locals, 153 configurations through
  * tools/overlay-mode-cohort (36 compiled, 0 exact), and tools/shape-sweep.
- * Scored with `score --align` from tools/overlay, whose reference was checked
- * against the decoded container rather than the git oracle.  Re-tested after
+ * Scored with `score --align` from tools/overlay.  Its reference for this owner
+ * comes from git, and what makes that trustworthy is not a spot check -- an
+ * earlier note here claimed one against the decoded container, which was wrong,
+ * because `overlay show` assembles assets/code/*.s and does not decode the ROM.
+ * The proof is that `make build-full` reproduces the ROM over 5,628 regions with
+ * byte_identical=yes and rom_fallback_bytes=0, so the assembly the oracle is
+ * built from is ROM-true.  Re-tested after
  * the `score --flags` work with seven stock cse-family options -- -fno-gcse,
  * -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-rerun-cse-after-loop,
  * -fno-expensive-optimizations, -fno-strength-reduce, -fno-regmove -- and none
@@ -123,6 +128,15 @@
  * same proportion, blocks the largest owners in the corpus.  The cluster
  * classification is a reading aid rather than a gate; the size deltas and the
  * `wrong` counts behind it are tools/overlay-candidate-rank's own.
+ *
+ * WHAT THE BEHAVIOUR IS WORTH, over the whole reachable set rather than four
+ * samples.  Of the 141 rows that are the RIGHT size and that the ranker calls
+ * `wrong` -- 50,668 bytes, the set where a source reading is the right tool --
+ * 80 rows and 35,992 bytes have constant materialisation in at least a third of
+ * their clusters, and 61 rows and 14,676 bytes do not.  So the cse.c rule
+ * e611e2847 described stands in front of roughly seventy per cent of the
+ * size-exact work, and the other 14,676 bytes are reachable today by ordinary
+ * reconstruction.  This owner is in the first group and 0x020015dc with it.
  */
 
 /* The overlay's scene block, reached through the IWRAM pointer at 0x03001ebc;

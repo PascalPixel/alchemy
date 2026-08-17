@@ -530,7 +530,7 @@ mod tests {
             .unwrap();
         let index = read_still_index(&root.join("assets/graphics/backgrounds_index.json")).unwrap();
         assert_eq!(index.len(), 34);
-        assert_eq!(index["1d"].file, "resource_1d_rocky_highlands.8bpp.png");
+        assert_eq!(index["1d"].file, "rocky_highlands.8bpp.png");
     }
 
     #[test]

@@ -1,6 +1,6 @@
 //! Drives the port over the real PCM-wave catalog in `assets/audio/`.
 //!
-//! The 32 WAV files listed by `assets/audio/waves_index.json` are the same
+//! The 32 WAV files listed by `assets/audio/waves/index.json` are the same
 //! inputs the native asset builder feeds to `buildWaveRecord`. Each record
 //! is built from the catalog fields, probed back out, and rebuilt through the
 //! exact-header path from the probed values; both builds must agree byte for
@@ -40,7 +40,7 @@ fn scalar_text(value: &Scalar) -> String {
 #[test]
 fn real_wave_catalog_builds_and_round_trips() {
     let root = repo_root();
-    let index_name = "assets/audio/waves_index.json";
+    let index_name = "assets/audio/waves/index.json";
     let index_text = std::fs::read_to_string(root.join(index_name)).unwrap();
     let index = json::parse(&index_text);
     assert_eq!(index.get("format").unwrap().number(), 1.0);
@@ -56,8 +56,12 @@ fn real_wave_catalog_builds_and_round_trips() {
 
     for wave in waves {
         let name = wave.get("name").unwrap().string();
+        // The catalog lives in its own folder, so the index's `source` is joined
+        // to that folder rather than to a `waves_` filename prefix. build-assets
+        // derives the same path by stripping `index.json` from the index name,
+        // which yields an empty prefix here.
         let source = format!(
-            "assets/audio/waves_{}",
+            "assets/audio/waves/{}",
             wave.get("source").unwrap().string()
         );
         let wav = std::fs::read(root.join(&source)).unwrap();

@@ -60,8 +60,8 @@ in the cyan band.
 
 ### Images and data
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=2f6753d9)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=e865af5f)
 
 ### Music and sound
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0d43be12)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d4f23519)

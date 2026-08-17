@@ -67,36 +67,50 @@ fn match_entry(line: &str) -> Option<SealedEntry> {
     })
 }
 
-/// Only the `## Sealed` section is enforced. Prose elsewhere in the ledger names
-/// owners freely -- the queue section lists dozens -- and parsing those as
-/// entries would fail the gate on documentation.
-pub fn parse_sealed(markdown: &str) -> Result<Vec<SealedEntry>, String> {
-    // The ledger used to be its own file with a top-level `## Sealed`. It now
-    // lives inside CONTRIBUTING.md, where the collapse demoted every heading one
-    // level, so the section is `### Sealed` and closes at the next `###`. Accept
-    // either depth rather than pinning the gate to one document layout.
-    let (start, depth) = markdown
-        .find("\n### Sealed")
-        .map(|at| (at, "\n### "))
-        .or_else(|| markdown.find("\n## Sealed").map(|at| (at, "\n## ")))
-        .ok_or_else(|| "the ledger has no 'Sealed' section".to_string())?;
-    let rest = &markdown[start + 1..];
-    // The search starts at offset 1 so the heading that opens the section is not
-    // treated as the one that closes it.
-    let section = match rest[1..].find(depth) {
-        Some(offset) => &rest[..offset + 1],
-        None => rest,
-    };
+/// The sealed set, read from `semantic/sealed.json`.
+///
+/// It used to be a prose section that every contributor read on the way to
+/// anything else. A list of owners that resisted is data for this gate, not
+/// guidance: it belongs in a file the tool consults.
+pub fn parse_sealed_file(root: &Path) -> Result<Vec<SealedEntry>, String> {
+    let path = root.join("semantic/sealed.json");
+    let text = std::fs::read_to_string(&path)
+        .map_err(|error| format!("cannot read {}: {error}", path.display()))?;
+    let value: serde_json::Value =
+        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let rows = value
+        .get("sealed")
+        .and_then(|node| node.as_array())
+        .ok_or_else(|| format!("{}: no `sealed` array", path.display()))?;
     let mut entries = Vec::new();
-    for line in section.split('\n') {
-        if !line.starts_with("- ") {
-            continue;
+    for row in rows {
+        let field = |name: &str| row.get(name).and_then(|node| node.as_str());
+        let owner = field("owner")
+            .ok_or_else(|| format!("{}: an entry has no owner", path.display()))?;
+        let floor = row
+            .get("floor_halfwords")
+            .and_then(|node| node.as_u64())
+            .ok_or_else(|| format!("{owner}: no floor_halfwords"))?;
+        let axes: Vec<String> = row
+            .get("axes")
+            .and_then(|node| node.as_array())
+            .map(|list| {
+                list.iter()
+                    .filter_map(|item| item.as_str().map(str::to_string))
+                    .collect()
+            })
+            .unwrap_or_default();
+        let reason = field("reason")
+            .ok_or_else(|| format!("{owner}: no reason"))?;
+        if axes.is_empty() || reason.trim().is_empty() {
+            return Err(format!("{owner}: an entry needs axes and a reason"));
         }
-        let trimmed = line.trim();
-        match match_entry(trimmed) {
-            Some(entry) => entries.push(entry),
-            None => return Err(format!("malformed sanctum entry: {trimmed}")),
-        }
+        entries.push(SealedEntry {
+            owner: owner.to_string(),
+            floor,
+            axes,
+            reason: reason.to_string(),
+        });
     }
     Ok(entries)
 }

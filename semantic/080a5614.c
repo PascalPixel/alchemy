@@ -54,8 +54,8 @@ s32 Func_080a5614(s32 unused0, s32 unused1, struct Selection_080a5614 *selection
             0);
     }
 
-    height = 1;
     row = 0;
+    height = 1;
     column = 1;
     do {
         if (row == selection->selected)

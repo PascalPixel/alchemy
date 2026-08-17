@@ -84,6 +84,64 @@ generic methodology only and are not game-knowledge evidence.
 
 ### Confirmed laws
 
+#### A callee's return type decides the pre-call argument order
+
+- **Fingerprint:** the candidate is exact except that two setters immediately
+  before a `bl` are transposed -- typically the `r0` copy against a cheap
+  `movs`. Sizes agree, the pool agrees, every branch target agrees.
+- **Mechanism.** `rank_for_schedule` (haifa-sched.c) decides by priority, then
+  register weight, then the class against the last-scheduled insn, then the
+  count of forward dependents, then `INSN_LUID`. Two argument setters that both
+  feed only the call tie every one of those, so the emitted order IS the RTL
+  order, which is expansion order, which is source. A callee declared to return
+  a value keeps that value live across the argument setup; declared `void` it
+  does not, and the two moves swap.
+- **Producing idiom:** declare the callee with the return type the bytes imply,
+  which is not inferable from the call site. BOTH directions occur:
+  `resource_382:020000a0` closes by making a discarded-result callee `void`,
+  and `resource_376:02000190` closes by making an equally discarded-result
+  callee `s32`. Flip one declaration at a time and score; `shape-sweep`'s
+  `return_type_variants` does exactly this, and `--descend` includes it.
+- **Scope:** confirmed on 37 owners across both the main image and the
+  overlays, 29 of them closed outright. `08093054` is the sharpest witness: an
+  earlier session parked it at two halfwords after 74 compiler-mode
+  combinations, and it was a prototype, not an allocation.
+- **Confirmed:** 2026-08-17.
+
+#### Pre-call setter order is otherwise unreachable, and the tell is a split immediate
+
+- **Fingerprint:** exactly one transposed pair, between an argument setter and
+  the second half of a two-instruction immediate (`movs rN,#imm` then `lsls`).
+  The reference interleaves the cheap setter between the halves; we keep the
+  pair adjacent.
+- **Why it is not the return-type law:** the callees here already return
+  `void`, and the tie still falls through `rank_for_schedule` to `INSN_LUID`.
+  What differs is which insn expansion emitted first, and no source spelling
+  reached it: nine shapes measured on `resource_3b5:02000528` -- the constant
+  as a local, written as a shift, a shared local for the repeated argument,
+  narrowed and unprototyped callees, a negative spelling, and a separated
+  statement -- all stayed at four differing bytes.
+- **Scope:** 20 of the 56 closest overlay rows. Two bounded searches have now
+  stalled on this axis; do not spend a third without a new structural fact.
+  This is the family the deleted `-mthumb-immediate-latency` used to paper
+  over, so any future attempt should start from what that mode did to the
+  latency of a `(set (reg) (const_int))` producer, not from more source shapes.
+- **Recorded:** 2026-08-17.
+
+#### Our compiler is pristine, so a byte difference is a source difference
+
+- `alchemy-gcc/gs1cc` differs from Coaltergeist/camelot-gcc's gcc-2.96 in three
+  files and eleven lines: two `insn_gen_fn3` casts (regmove.c, loop.c) and an
+  LP64 `bcopy` stride bug in `arm.md`'s `consttable_4`/`consttable_8`. All
+  three are host-portability fixes and none touches Thumb integer codegen.
+  `haifa-sched.c`, `cse.c`, `calls.c`, `local-alloc.c`, `global.c`,
+  `combine.c`, `arm.c` and `arm.h` are byte-identical.
+- camelot-gcc reproduces the whole Golden Sun ROM against one flag set, so a
+  residual is evidence about our C, never about the compiler. Reach for the
+  compiler only after the source axis is measured and recorded as spent.
+- **Confirmed:** 2026-08-17.
+
+
 #### Minimal live-variable form
 
 - **Fingerprint:** a semantically correct candidate contains the expected
@@ -4803,6 +4861,25 @@ inspecting status.
 | `overlay_showcase` | Render a representative exact overlay for regression and demonstration. |
 | `overlay_driver` | Execute the low-level overlay reconstruction driver. |
 | `overlay_adopt` | Preflight and install an exact code-overlay owner; the inventory file must exist, but an explicit `--span` need not be listed; mutation requires explicit apply intent. |
+| `overlay park` | Un-adopt a row: restore its assembly and move its C to `semantic/`. The inverse of adoption, and the operation the pret routing cut's plan called for. |
+| `overlay audit` | Compare every adopted row against the bytes it replaced, and name the ones that no longer reproduce. |
+
+`overlay park` and `overlay audit` take their truth from the ROM when the
+overlay's compressed container decodes, and from the pre-adoption revision in
+git otherwise. Git alone is not sufficient and the difference is not academic:
+if a row's region was ALREADY a placeholder when it was adopted, git returns a
+`.space` of zeros, a git-against-git proof compares zeros to zeros and passes,
+and parking silently deletes real code. Four overlays were damaged exactly that
+way before the ROM check existed. `park` also refuses a restoration whose
+recovered lines contain another `AlchemyC_` placeholder, and falls back to
+disassembling the ROM when git has nothing usable.
+
+Size alone is not an audit. When the routing cut broke the overlays, 208 rows
+were the wrong SIZE -- which is loud, because the overlay stops assembling --
+and a further 319 were the right size with the wrong BYTES, which links happily
+and surfaces much later as "token plan does not reconstruct decoded input" from
+whichever compressed asset happens to build first. Two thirds of the damage was
+invisible to a size check.
 
 `overlay_inventory` has a material cold scan but a fast content-addressed reuse.
 Run the root `make inventory` target when `out/decomp/overlays.json` is absent or

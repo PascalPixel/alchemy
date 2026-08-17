@@ -1,0 +1,28 @@
+{
+  "owner": "resource_39e:2484",
+  "span_bytes": 132,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 132,
+    "reference_bytes": 132,
+    "wrong_instructions": 0,
+    "differing_halfwords": 5,
+    "class": "ordering"
+  },
+  "shape": {
+    "calls": 13,
+    "loops": 0,
+    "memory_ops": 0
+  },
+  "expressed": [
+    "hand-written from the drafter: both guards as one short-circuit `&&`, both arms, all thirteen calls"
+  ],
+  "unexpressed": [],
+  "verified_against_reference": [
+    "byte count 132 = 132",
+    "wrong_instructions 0"
+  ],
+  "blocked_by": "argument setup order: `movs r0, #0` and `lsls r1, r1, #1` are placed differently around a call, two instructions out of 66",
+  "rejected": [],
+  "note": "The two guards skip to the same address, which is `&&` and not nested ifs -- the else arm belongs to the pair. Reading them as separate ifs gave the first branch the wrong target."
+}

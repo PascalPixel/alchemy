@@ -227,6 +227,87 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         loop_end.insert(r.addr);
     }
 
+    // A forward CONDITIONAL branch is an `if`. The comparison before it gives
+    // the test; the branch is taken when the body should be SKIPPED, so the C
+    // condition is its inverse. If the instruction just before the branch
+    // target is an unconditional forward branch, that is the `else` arm's jump
+    // over the join and the shape is if/else.
+    //
+    // Only the call whose result is tested is expressed. `cmp r0, #0` after a
+    // call is `if (f(...))`; anything else keeps its registers and is left for
+    // the reader, because guessing a condition is worse than leaving a hole.
+    let mut if_at: BTreeMap<i64, (String, i64, Option<i64>)> = BTreeMap::new();
+    let mut close_at: BTreeMap<i64, usize> = BTreeMap::new();
+    let mut else_at: BTreeMap<i64, i64> = BTreeMap::new();
+    // second and later tests of a short-circuit chain -> the `cmp` that owns it
+    let mut and_join: BTreeMap<i64, String> = BTreeMap::new();
+    for (i, r) in rows.iter().enumerate() {
+        let (op, args) = operands(&r.text);
+        let cond = matches!(
+            op.as_str(),
+            "beq" | "beq.n" | "bne" | "bne.n" | "blt" | "blt.n" | "bgt" | "bgt.n"
+                | "bge" | "bge.n" | "ble" | "ble.n"
+        );
+        if !cond || args.len() != 1 {
+            continue;
+        }
+        let Some(target) = hex(&args[0]) else { continue };
+        if target <= r.addr || pool_words.contains(&r.addr) {
+            continue;
+        }
+        // The comparison immediately before, and the call before that.
+        let Some(prev) = rows.get(i.wrapping_sub(1)) else { continue };
+        let (pop_, pargs) = operands(&prev.text);
+        if pop_ != "cmp" || pargs.len() != 2 || pargs[0] != "r0" || immediate(&pargs[1]) != Some(0) {
+            continue;
+        }
+        // taken == skip the body, so invert.
+        let test = match op.trim_end_matches(".n") {
+            "beq" => "!= 0",
+            "bne" => "== 0",
+            "blt" => ">= 0",
+            "bge" => "< 0",
+            "bgt" => "<= 0",
+            "ble" => "> 0",
+            _ => continue,
+        };
+        // if/else when the body ends in an unconditional jump past the target
+        let mut join = None;
+        if let Some(last) = rows.iter().filter(|x| x.addr < target).last() {
+            let (lop, largs) = operands(&last.text);
+            if (lop == "b" || lop == "b.n") && largs.len() == 1 && !pool_skip.contains(&last.addr) {
+                if let Some(j) = hex(&largs[0]) {
+                    if j > target {
+                        join = Some(j);
+                        else_at.insert(target, j);
+                    }
+                }
+            }
+        }
+        // Consecutive tests that skip to the SAME address are one short-circuit
+        // condition, not two ifs: `if (f() == 0 && g() == 0)`. Emitting them
+        // separately gives the first branch the wrong target and nests a block
+        // that never closes where the reference has none.
+        if let Some(prior) = if_at
+            .iter()
+            .find(|(_, v)| v.1 == target && v.2.is_none())
+            .map(|(k, _)| *k)
+        {
+            if join.is_some() {
+                let existing = if_at.remove(&prior).unwrap();
+                if_at.insert(prior, (existing.0, target, join));
+                if let Some(n) = close_at.get_mut(&target) {
+                    if *n > 0 { *n -= 1; }
+                }
+                *close_at.entry(join.unwrap_or(target)).or_insert(0) += 1;
+            }
+            and_join.insert(prev.addr, test.to_string());
+            continue;
+        }
+        if_at.insert(prev.addr, (test.to_string(), target, join));
+        *close_at.entry(join.unwrap_or(target)).or_insert(0) += 1;
+    }
+
     let mut reg: BTreeMap<String, Val> = BTreeMap::new();
     let mut fresh: BTreeMap<String, Val> = BTreeMap::new();
     let mut ptr: BTreeMap<String, String> = BTreeMap::new();
@@ -240,6 +321,8 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     let mut depth = 1usize;
     let mut loop_n = 0usize;
     let mut names: BTreeSet<String> = BTreeSet::new();
+    // callees whose result is tested cannot be void
+    let mut tested: BTreeSet<String> = BTreeSet::new();
     // A callee whose result is held as a pointer cannot be declared void.
     let mut returns_pointer: BTreeSet<String> = BTreeSet::new();
     let mut tmp_n = 0usize;
@@ -308,6 +391,19 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
             ));
             depth += 1;
         }
+        // Close any block whose join is here, then open the else arm.
+        while let Some(n) = close_at.get_mut(&r.addr) {
+            if *n == 0 { break }
+            *n -= 1;
+            depth = depth.saturating_sub(1).max(1);
+            out.push(format!("{}}}", indent(depth)));
+            if *n == 0 { close_at.remove(&r.addr); break }
+        }
+        if else_at.contains_key(&r.addr) {
+            depth = depth.saturating_sub(1).max(1);
+            out.push(format!("{}}} else {{", indent(depth)));
+            depth += 1;
+        }
         if loop_end.contains(&r.addr) {
             depth = depth.saturating_sub(1).max(1);
             out.push(format!("{}}}", indent(depth)));
@@ -315,6 +411,39 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
 
         let (op, args) = operands(&r.text);
+
+        if let Some(test) = and_join.get(&r.addr).cloned() {
+            // The call for this arm was just emitted; fold it into the open
+            // condition instead of testing it separately.
+            if let Some(prev) = out.pop() {
+                let call = prev.trim().trim_end_matches(';').to_string();
+                if let Some(name) = call.split('(').next() {
+                    if name.starts_with("Func_") { tested.insert(name.to_string()); }
+                }
+                if let Some(open) = out.iter_mut().rev().find(|l| l.trim_start().starts_with("if (")) {
+                    let closed = open.trim_end().trim_end_matches('{').trim_end().to_string();
+                    let inner = closed.trim_start().trim_start_matches("if (").trim_end_matches(')');
+                    let lead: String = open.chars().take_while(|c| c.is_whitespace()).collect();
+                    *open = format!("{lead}if ({inner} && {call} {test}) {{");
+                }
+            }
+            continue;
+        }
+        if let Some((test, _target, _join)) = if_at.get(&r.addr).cloned() {
+            // The previous statement is the tested call. Fold it into the `if`
+            // rather than emitting it and then testing nothing.
+            if let Some(prev) = out.pop() {
+                let call = prev.trim().trim_end_matches(';').to_string();
+                if let Some(name) = call.split('(').next() {
+                    if name.starts_with("Func_") {
+                        tested.insert(name.to_string());
+                    }
+                }
+                out.push(format!("{}if ({call} {test}) {{", indent(depth)));
+                depth += 1;
+                continue;
+            }
+        }
 
         // A load or store through a held pointer.
         if let Some(rest) = args.get(1) {
@@ -580,6 +709,8 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     for n in &names {
         if returns_pointer.contains(n) {
             lines.push(format!("void *{n}();"));
+        } else if tested.contains(n) {
+            lines.push(format!("s32 {n}();"));
         } else {
             lines.push(format!("void {n}();"));
         }

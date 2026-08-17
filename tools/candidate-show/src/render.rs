@@ -288,6 +288,21 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
     }
     let wrong: i64 = pool.values().map(|count| count.abs()).sum();
     if wrong > 0 {
+        // THE REFERENCE USES AN INSTRUCTION THIS COMPILER HAS NO PATTERN FOR.
+        //
+        // `arm.md` gates both store-multiple peepholes on `TARGET_ARM`, so
+        // stock gcc 2.96 cannot emit `stmia`/`ldmia` for Thumb from any C at
+        // all. A region whose reference contains one was not produced by this
+        // compiler: hand-written assembly and library objects sit in every ROM.
+        // It is not a near miss, and no source is worth writing for it.
+        //
+        // Only the REFERENCE side counts. The same mnemonic on our side is an
+        // ordinary wrong instruction and must keep reading as one.
+        if right.iter().any(|line| uses_multiple_transfer(line))
+            && !left.iter().any(|line| uses_multiple_transfer(line))
+        {
+            return ("unemittable", wrong);
+        }
         // Same instructions up to which registers they name? Then the residual
         // is the allocator's, and no source spelling names it.
         let mut blind: std::collections::BTreeMap<String, i64> =
@@ -308,6 +323,17 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
     } else {
         ("ordering", 0)
     }
+}
+
+/// Does this line use a Thumb multiple-transfer this compiler cannot generate?
+///
+/// `push`/`pop` are excluded: those ARE emitted for Thumb, by the prologue and
+/// epilogue, and a difference in them is a real difference in what the function
+/// does.
+fn uses_multiple_transfer(instruction: &str) -> bool {
+    instruction
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .any(|word| matches!(word, "stmia" | "ldmia" | "stmdb" | "ldmdb" | "stm" | "ldm"))
 }
 
 /// The instruction with every register name replaced by `R`.
@@ -472,6 +498,31 @@ mod allocation_class_tests {
 
     fn lines(text: &[&str]) -> Vec<String> {
         text.iter().map(|line| line.to_string()).collect()
+    }
+
+    #[test]
+    fn a_reference_multiple_transfer_is_unemittable() {
+        // arm.md gates store-multiple on TARGET_ARM, so no C reaches this.
+        let left = lines(&["str r0, [r3, #0]", "str r1, [r3, #4]"]);
+        let right = lines(&["stmia r3!, {r0, r1}"]);
+        assert_eq!(residual_class(&left, &right).0, "unemittable");
+    }
+
+    #[test]
+    fn our_own_multiple_transfer_is_just_wrong() {
+        // Only the reference side counts. If WE emit one, that is a defect in
+        // our source and must keep reading as one.
+        let left = lines(&["stmia r3!, {r0, r1}"]);
+        let right = lines(&["str r0, [r3, #0]", "str r1, [r3, #4]"]);
+        assert_eq!(residual_class(&left, &right).0, "wrong");
+    }
+
+    #[test]
+    fn push_and_pop_are_not_multiple_transfers() {
+        // Thumb does emit these, and a prologue difference is a real defect.
+        let left = lines(&["push {r4, lr}"]);
+        let right = lines(&["push {r4, r5, lr}"]);
+        assert_ne!(residual_class(&left, &right).0, "unemittable");
     }
 
     #[test]

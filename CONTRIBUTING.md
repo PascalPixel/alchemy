@@ -359,6 +359,44 @@ compiled with it. Corpus-wide the flag makes 16 rows byte-exact, 1,510 bytes,
 and that number is not a reconstruction -- it is the size of the family that
 happens to invert. The mechanism is real and the flag is not the answer.
 
+### Three residuals that are settled: `stmia`, `ldmia`, and constant sharing
+
+These come up in every session, cost a day each time, and have the same answer
+every time. The answer is written here so it is not re-derived.
+
+**A reference-side `stmia` or `ldmia` means the region is not C.** `arm.md`
+gates both store-multiple peepholes on `TARGET_ARM`, so stock gcc 2.96 cannot
+emit a Thumb multiple-transfer from any source. Hand-written assembly and
+library objects sit in every ROM and this is what they look like. `overlay
+score` and `candidate-show` report these as `class=unemittable`. Do not write C
+for them, do not read their residual, and do not treat the owner as a near miss
+because its halfword count is small. Measured: 89 overlay rows, 24,974 bytes,
+and 93 of 200 sampled main-image sources. `push`/`pop` are excluded, because
+Thumb does emit those and a prologue difference is a real defect.
+
+**Constant sharing is understood and is not worth another flag sweep.** We
+compute a constant once, hold it in a callee-saved register and copy it to the
+argument register at each call; the reference rebuilds it at every use. At
+expansion the RTL holds two independent `(const_int N)`; cse unifies them into
+one pseudo with a `REG_EQUIV` note and reload gives that pseudo a hard register
+instead of rematerialising. The two constants are identical trees, so cse must
+unify them, and that is why no spelling reaches it: operand order, naming,
+widening, splitting across branches and separating the call sites have all been
+tried. 98 rows, 36,230 bytes.
+
+`-fno-rerun-cse-after-loop` inverts 16 rows and 1,510 bytes and is a stock
+option, so routing it per file is permitted. It is still refused, on measurement
+rather than principle: inside a single overlay it regresses adopted owners while
+closing parked ones (`resource_3bf` 7 against 6, `resource_3b4` 4 against 1,
+`resource_3cb` 1 against 1). An overlay whose own owners disagree about a flag
+was not compiled with it. A cse.c rule was priced the same way and rejected the
+same way: 31,294 overlay bytes against breaking a third of the main image.
+
+**None of this changes the denominator.** These are executable bytes we have not
+reproduced and they stay counted against us. What changes is that they leave the
+work queue: rank `wrong` rows, skip `unemittable`, and stop paying to rediscover
+the other two.
+
 ### An owner containing a switch cannot currently be adopted
 
 A Thumb switch emits a jump table, and `metrics/gs1-en-executable.json`

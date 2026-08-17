@@ -170,6 +170,16 @@ pub static NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES: &[&str] = &[
     // into one callee-saved register and pays for it with an extra register in
     // the prologue and a copy at each use. The tell is a `push` that saves one
     // more register than the reference's.
+    //
+    // DO NOT strip this table on the strength of bef5cad7c's "closed to flag
+    // sweeps". That commit is right that the flag cannot be applied BROADLY --
+    // measured again here, 12 adopted resource_3bf owners that are NOT in this
+    // table go 2 worse and 0 better under it, which is the 7-against-6 it
+    // reports. But routing is per FILE, and every entry below is an owner the
+    // flag closes outright; the owners it would regress are simply not listed.
+    // `overlay audit --all` is the standing proof: 0 findings with all of these
+    // routed and adopted. Blanket application is refused; per-owner is what a
+    // routing table is for.
     "exact/resource_3a8_c_020015b4.c",
     "exact/resource_3a8_c_0200158c.c",
     "exact/resource_3bf_c_0200169c.c",

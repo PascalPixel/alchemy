@@ -34,9 +34,10 @@ Three figures, because one of them alone would mislead:
 
 | | bytes | share |
 |---|---:|---:|
-| Exact C | 274,372 | 20.37% of executable |
-| Permanent assembly | 78,932 | 5.86% of executable |
-| **DONE** | **353,304** | **26.23% of executable** |
+| Exact C | 274,624 | 20.39% of executable |
+| Permanent assembly | 216,278 | 16.06% of executable |
+| **DONE** | **490,902** | **36.44% of executable** |
+
 
 Permanent assembly is not a shortcut and not a backlog. It is overwhelmingly
 linker veneers and alignment padding, which the linker and assembler emit and no
@@ -44,11 +45,19 @@ C can produce, plus a small set of hand-written routines using calling
 conventions C cannot express. It rebuilds identically, so it is done, and it will
 never become C.
 
-That also means 100% is not the target. Of the 1,347,122 executable bytes,
-78,932 can never be C, so the reconstruction's own ceiling is 1,268,190 and
-**exact C stands at 21.63% of the bytes that can be C**. An overlay whose every
-function is reconstructed still reports short of 100% because its veneers count
-against it.
+That also means 100% of the ROM is not the target. Of the 1,347,122 executable
+bytes, 216,278 can never be C, so the reconstruction's own ceiling is 1,130,844
+and **exact C stands at 24.28% of the bytes that can be C**. An overlay whose
+every function is reconstructed still reports short of 100% because its veneers
+count against it.
+
+DONE rose from 26% to 36% in August 2026 without a line of C being written, and
+that is worth stating plainly rather than presenting as progress. 132,364 bytes
+of hand-written assembly and library code had been sitting in the unfinished
+column: `arm.md` gates both store-multiple peepholes on `TARGET_ARM`, so stock
+gcc 2.96 emits no Thumb `stmia`/`ldmia` from any source, and 281 owners have one
+inside their own span. They rebuild identically and will never be C, which is
+what DONE measures. Exact C did not move.
 
 The four maps below show the current byte metrics for the English release.
 Progress is measured by bytes, not function counts.
@@ -63,14 +72,14 @@ separate footer item.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=d7478fa4)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=0fbe5821)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=3877ff85)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=d38f9f80)
 
 ### Images and data
 

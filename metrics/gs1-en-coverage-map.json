@@ -11,16 +11,16 @@
       "percent_of_executable": 20.39
     },
     "semantic_c": {
-      "bytes": 862856,
-      "percent_of_executable": 64.05
-    },
-    "assembly": {
       "bytes": 0,
       "percent_of_executable": 0
     },
+    "assembly": {
+      "bytes": 856220,
+      "percent_of_executable": 63.56
+    },
     "retained_asm": {
-      "bytes": 209642,
-      "percent_of_executable": 15.56
+      "bytes": 216278,
+      "percent_of_executable": 16.05
     },
     "asset_data": {
       "bytes": 7298755,
@@ -30,20 +30,20 @@
   "main": {
     "executable_bytes": 548364,
     "exact_c_bytes": 100538,
-    "semantic_c_bytes": 306618
+    "semantic_c_bytes": 0
   },
   "overlays": {
     "executable_bytes": 798758,
     "exact_c_bytes": 174086,
-    "semantic_c_bytes": 556238
+    "semantic_c_bytes": 0
   },
   "provenance": {
     "exact_source": "worktree",
-    "semantic_source": "worktree",
-    "semantic_sources": 1817,
-    "main_semantic_census": "closed",
+    "semantic_source": "absent",
+    "semantic_sources": 0,
+    "main_semantic_census": "open",
     "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 25954,
+    "semantic_outside_extent_bytes": 0,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -53,8 +53,8 @@
       "bytes": 548364,
       "categories": {
         "exact_c": 100538,
-        "semantic_c": 306618,
-        "retained_asm": 141208
+        "assembly": 293842,
+        "retained_asm": 153984
       },
       "tiles": 9
     },
@@ -64,8 +64,7 @@
       "bytes": 541489,
       "categories": {
         "exact_c": 123873,
-        "semantic_c": 368373,
-        "assembly": 49243
+        "assembly": 417616
       },
       "tiles": 11
     },
@@ -86,8 +85,8 @@
       "bytes": 548364,
       "categories": {
         "exact_c": 100538,
-        "semantic_c": 306618,
-        "retained_asm": 141208
+        "assembly": 293842,
+        "retained_asm": 153984
       },
       "tiles": 3202
     },
@@ -97,10 +96,10 @@
       "bytes": 798758,
       "categories": {
         "exact_c": 174086,
-        "semantic_c": 556238,
-        "retained_asm": 68434
+        "assembly": 562378,
+        "retained_asm": 62294
       },
-      "tiles": 4550
+      "tiles": 5494
     }
   ]
 }

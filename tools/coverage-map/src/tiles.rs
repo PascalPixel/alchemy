@@ -228,9 +228,18 @@ pub fn overlay_owner_tiles(
         tiles.push(tile);
     }
 
-    // Every remaining executable byte still comes from the checked-in overlay
-    // assembly source, so it is a known byte-exact representation rather than
-    // unknown data. It stays in the retained bucket until an owner lands.
+    // NOT YET DECOMPILED. These bytes do come from checked-in assembly that
+    // reproduces, but reproducing is not the same as being finished:
+    // `retained_asm` means permanently assembly, and crediting every
+    // undecompiled byte to it says the job is done because the ROM builds.
+    //
+    // With a semantic tier in front of it the error was small, because semantic
+    // absorbed the remainder first. Removing that tier exposed it: 575,000
+    // overlay bytes fell straight into `retained_asm` and the published DONE
+    // headline went from 26% to 78% without a line of C being written.
+    //
+    // Undecompiled assembly is `assembly`. Permanence is a claim that has to be
+    // earned in `asm/classification.json` and read back off the instructions.
     let mut consumed = owned.clone();
     consumed.extend(retained_credited.iter().copied());
     for span in subtract(&extent, &consumed) {
@@ -246,7 +255,7 @@ pub fn overlay_owner_tiles(
             address: Some(span.start),
             ..Tile::default()
         };
-        tile.set_category("retained_asm", bytes);
+        tile.set_category("assembly", bytes);
         tiles.push(tile);
     }
     tiles

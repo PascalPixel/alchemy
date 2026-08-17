@@ -154,9 +154,11 @@ dependencies = [
 name = "overlay-adopt"
 version = "0.1.0"
 dependencies = [
+ "candidate-show",
  "exact-reading-list",
  "extract-resource",
  "overlay-disasm",
+ "serde_json",
 ]
 
 [[package]]

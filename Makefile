@@ -33,7 +33,7 @@ DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search sema
 
 .PHONY: help verify test lint standard-check routing-debt crate-tests pristine-options-check \
 	build-claimed build-asm build-assets build-semantic \
-	build-full build-rom inventory semantic-check core-retained-check sanctum \
+	build-full build-rom inventory semantic-check core-retained-check check-owners \
 	progress progress-check progress-subject progress-history coverage coverage-check \
 	showcase compiler-checks compiler-sweep compiler-cohort overlay-compiler-cohort \
 	compiler-corpus compiler-batch overlay-candidate-check statement-order-check \
@@ -176,8 +176,8 @@ semantic-check:
 core-retained-check:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- core-retained-audit --check
 
-sanctum:
-	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- check-sanctum
+check-owners:
+	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- check-unmatchable
 
 progress:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- progress
@@ -305,7 +305,7 @@ verify:
 	$(MAKE) semantic-check
 	$(MAKE) core-retained-check
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-superseded --check
-	$(MAKE) sanctum
+	$(MAKE) check-owners
 	$(MAKE) progress-check
 
 # The axe stays swung: the files that DEFINE compiler options must remain

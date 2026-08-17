@@ -338,7 +338,7 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
         if !source.exists() {
             continue;
         }
-        let reference = match truth_bytes(root, overlay, address, span) {
+        let reference = match truth_window(root, overlay, address, span) {
             Ok((bytes, _)) => bytes,
             Err(error) => {
                 findings.push(format!("{overlay}:{address:08x}\tUNVERIFIED\t{error}"));
@@ -457,7 +457,7 @@ fn rom_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
 
 /// A row's true bytes, from the ROM when its container decodes and from git
 /// otherwise.
-fn truth_bytes(
+pub fn truth_window(
     root: &Path,
     overlay: &str,
     address: i64,
@@ -470,6 +470,17 @@ fn truth_bytes(
         }
     }
     reference_bytes(root, overlay, address, span).map(|bytes| (bytes, "git"))
+}
+
+
+/// The byte span a row's `AlchemyC_` placeholder reserves, when it is adopted.
+/// `None` when the row is parked and its assembly is present instead.
+pub fn placeholder_span(root: &Path, overlay: &str, address: i64) -> Result<Option<i64>, String> {
+    let path = root.join(format!("assets/code/{overlay}_overlay.s"));
+    let assembly = std::fs::read_to_string(&path)
+        .map_err(|error| format!("{}: {error}", path.display()))?;
+    let lines: Vec<&str> = assembly.split('\n').collect();
+    Ok(placeholder_block(&lines, address).map(|(_, _, span)| span))
 }
 
 pub struct Parked {
@@ -487,7 +498,7 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
     let (start, end, span) = placeholder_block(&lines, address)
         .ok_or_else(|| format!("no AlchemyC_{address:08x} placeholder in {}", assembly.display()))?;
 
-    let (reference, oracle) = truth_bytes(root, overlay, address, span)?;
+    let (reference, oracle) = truth_window(root, overlay, address, span)?;
 
     // Prefer the assembly the row actually replaced; it carries the labels and
     // spelling the rest of the file expects. Fall back to disassembling the ROM

@@ -209,27 +209,46 @@ Prefer the shape a 2001 author would have written.
 ### 4. Score it and read the residual
 
 ```bash
-# main image
+# a main-image owner
 cargo run --release --manifest-path tools/compiler/Cargo.toml -- \
-  candidate-show semantic/080a1234.c
+  candidate-show semantic/080a1234.c --align
+
+# an overlay row -- same output, same flag, no span argument
+cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
+  score semantic/resource_373_c_0200034c.c --align
 
 # a decomposed view, with the residual classified
 make dispatch-decomp ARGS='decomp_diagnose semantic/080a1234.c'
 ```
 
-You get the candidate's size, the reference size, and how many halfwords
-differ. Read them in that order:
+**Read the diff, not the number.** `candidate-show` prints the two instruction
+streams side by side; the summary line is a progress indicator, not a
+diagnosis. `--align` pairs the streams as sequences, so an extra or missing
+instruction shows up as itself:
 
-- **Wrong size** means something is missing or extra — a statement, a pool
-  word, an unwanted sign extension. Fix that before anything else.
-- **Right size, differing bytes** means the shape is close and the difference
-  is local. Disassemble both and look at the actual instructions.
+```
+  + push  {lr}                          <- we emit this, the reference does not
+  ! ldr   r3, [pc, #20]    ldr r0, ...  <- both have it, operands differ
+    ldr   r3, [r0, #0]     ldr r3, ...  <- identical
+```
 
-Judge by what the instructions say, not by the count alone. A halfword count
-only compares candidates of the same size: once sizes differ, a shift
-reshuffles which halfwords happen to line up and the number stops meaning
-anything. When you need to compare across a size change, compare the
-instruction streams.
+Without `--align` the two sides are matched by offset, which only works while
+they are the same length: one extra instruction shifts everything after it and
+every later row reads as a difference. The tool warns you when that applies.
+
+Read the result in this order:
+
+- **Wrong size** — something is missing or extra. `+` and `-` rows name it
+  exactly: a statement, a pool word, an unwanted sign extension, a prologue
+  that saves a register the reference does not. Fix that before anything else.
+- **Right size, differing operands** — the shape is right and the difference is
+  local. `!` rows are usually a type, a callee prototype, or the order two
+  values were computed in.
+
+The summary count is only comparable between candidates of the same size. Once
+sizes differ, the shift reshuffles which halfwords happen to line up and the
+number stops meaning anything — which is why the diff is the instrument and the
+count is not.
 
 Then make the smallest source change that explains what you saw, and score
 again.
@@ -391,8 +410,10 @@ contract. Commands that change the tree require an explicit `--apply` or
 | `overlay_driver` | The low-level overlay reconstruction driver. |
 | `overlay_mode_cohort` | Compares one compiler hypothesis across a set of overlay owners. |
 
-The `overlay` binary also carries `park` and `audit`, described in
-[the working method](#the-working-method).
+The `overlay` binary also carries `score`, `park` and `audit`, described in
+[the working method](#the-working-method). `score` is the overlay counterpart
+of `candidate-show`: same output, same `--align`, and it derives the row's span
+rather than asking you for one.
 
 ### semantic — reviewed C that is not yet exact
 
@@ -405,6 +426,19 @@ The `overlay` binary also carries `park` and `audit`, described in
 Passing these does not make a source an exact claim. `semantic/regions.json`
 records the reviewed boundary for an owner discovery did not index;
 `semantic/sealed.json` holds the small set withdrawn from routine work.
+
+`exact/provisional.json` is the opposite register: owners whose bytes are final
+but whose source is not. Add an entry when you got the bytes by writing toward
+them rather than by reconstructing — a constant respelled as a symbol to force a
+pool word, a duplicated local to defeat common subexpression elimination, a
+prototype changed for its effect on register allocation rather than because the
+interface says so.
+
+The match still counts and the build is still correct; the bytes are right. What
+the entry withdraws is the source's standing as *evidence*. `exact/` is the
+corpus every later owner is compared against, so a source that was contrived to
+match teaches a shape the compiler never asked for. Empty is the goal, and a
+growing list means matches are being bought rather than earned.
 
 ### search — bounded source and compiler exploration
 
@@ -441,7 +475,7 @@ compiler's own dumps when you need to know which pass produced a shape.
 | `check_publication` | Rejects ROMs, build products, opaque dumps, credentials and disallowed files. |
 | `no_asm_c` | Rejects inline assembly, register pins and assembly barriers in C and headers. |
 | `source_citations` | Checks that cited tools name paths that exist. |
-| `check_sanctum` | Validates the set withdrawn from routine work, and prints the queue with `--queue`. |
+| `check_unmatchable` | Validates the two owner registers -- unmatchable and provisional -- and prints the queue with `--queue`. |
 | `core_retained_audit` | Requires retained main-image assembly to carry explicit justification. |
 | `cache_key_lint` | Requires cached results to include every input that can change their meaning. |
 | `check_commit_progress` | Compares your commit subject against the staged progress report. |

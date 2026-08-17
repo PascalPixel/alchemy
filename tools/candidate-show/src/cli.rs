@@ -4,7 +4,7 @@ use std::path::Path;
 
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align]";
 
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 
@@ -20,6 +20,14 @@ pub struct Options {
     pub work: Option<String>,
     pub flags: Vec<String>,
     pub configuration: CandidateCompilerConfiguration,
+    /// Align the two instruction streams as SEQUENCES rather than by offset.
+    ///
+    /// The offset view is only readable while the two sides are the same
+    /// length. One extra or missing instruction shifts everything after it, so
+    /// every later row reads as a difference and the diff stops being usable
+    /// exactly when it is most needed. Aligning as sequences shows the
+    /// insertion or deletion as itself and keeps the rest lined up.
+    pub align: bool,
 }
 
 #[derive(Debug)]
@@ -63,7 +71,9 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             add_flags: Vec::new(),
             remove_flags: Vec::new(),
         },
+        align: false,
     };
+    let mut align = false;
     let mut rest: Vec<String> = Vec::new();
     let mut index = 0usize;
     while index < argv.len() {
@@ -80,6 +90,9 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             // A candidate mode has to be visible before it is worth routing:
             // the native allowlists are shared, so probing one here
             // keeps a trial flag out of every other region's build.
+            "--align" => {
+                align = true;
+            }
             "--flags" => {
                 let value = take(&mut index).ok_or_else(|| {
                     "undefined is not an object (evaluating 'argv[++index].split')".to_string()
@@ -111,6 +124,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         return Err(SHORT_USAGE.to_string());
     }
     options.source = rest.remove(0);
+    options.align = align;
     Ok(ParseOutcome::Options(Box::new(options)))
 }
 

@@ -227,6 +227,61 @@ pub fn alignment_key(instruction: &str) -> String {
     out.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
+/// Blank a pc-relative offset, keeping the resolved target the disassembler
+/// prints beside it.
+///
+/// The offset encodes an instruction's POSITION, so without this a pool load
+/// that merely moved reads as two different instructions and every transposed
+/// literal load is misreported as a wrong instruction.
+pub fn without_pc_offset(instruction: &str) -> String {
+    let mut out = String::with_capacity(instruction.len());
+    let mut rest = instruction;
+    while let Some(start) = rest.find("[pc, #") {
+        out.push_str(&rest[..start]);
+        out.push_str("[pc]");
+        rest = match rest[start..].find(']') {
+            Some(end) => &rest[start + end + 1..],
+            None => "",
+        };
+    }
+    out.push_str(rest);
+    out
+}
+
+/// Is the residual worth reading the source for?
+///
+/// Returns `("exact" | "ordering" | "wrong", wrong_instruction_count)`.
+///
+/// Two owners can show the same differing-halfword count and be completely
+/// different problems. When both sides hold the SAME instructions and only the
+/// order differs, no source shape reaches it: emitted order is settled after
+/// reload by `rank_for_schedule`'s tie-break chain, and the C no longer
+/// controls it. When an instruction is genuinely wrong, the source is wrong
+/// and reading it will find the defect.
+///
+/// Measured 2026-08-17 over the 282 size-exact parked overlay rows: 129 rows
+/// (18,414 bytes) were ordering-only and 152 rows (43,900 bytes) carried a
+/// wrong instruction. Ranking by this instead of by differing halfwords is
+/// what separates a two-line fix from eighteen copies of a blocked tie.
+pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) {
+    let mut pool: std::collections::BTreeMap<String, i64> = std::collections::BTreeMap::new();
+    for line in left {
+        *pool.entry(without_pc_offset(line)).or_default() += 1;
+    }
+    for line in right {
+        *pool.entry(without_pc_offset(line)).or_default() -= 1;
+    }
+    let wrong: i64 = pool.values().map(|count| count.abs()).sum();
+    if wrong > 0 {
+        return ("wrong", wrong);
+    }
+    if left == right {
+        ("exact", 0)
+    } else {
+        ("ordering", 0)
+    }
+}
+
 /// Longest-common-subsequence alignment of two instruction streams.
 ///
 /// Returns one row per output line as `(candidate, reference)`, where `None`
@@ -325,6 +380,53 @@ fn hex_lower(value: f64) -> String {
         return to_js_number_string(value).unwrap_or_else(|_| "NaN".to_string());
     }
     format!("{:x}", value as u64)
+}
+
+#[cfg(test)]
+mod residual_tests {
+    use super::*;
+
+    fn lines(text: &[&str]) -> Vec<String> {
+        text.iter().map(|line| line.to_string()).collect()
+    }
+
+    #[test]
+    fn identical_streams_are_exact() {
+        let a = lines(&["movs r0, #1", "bx lr"]);
+        assert_eq!(residual_class(&a, &a), ("exact", 0));
+    }
+
+    #[test]
+    fn a_transposition_is_ordering_not_a_wrong_instruction() {
+        let left = lines(&["movs r0, #1", "lsls r1, r1, #8"]);
+        let right = lines(&["lsls r1, r1, #8", "movs r0, #1"]);
+        assert_eq!(residual_class(&left, &right), ("ordering", 0));
+    }
+
+    #[test]
+    fn a_moved_pool_load_is_ordering_despite_its_changed_offset() {
+        // The offset encodes position; without blanking it this reads as two
+        // wrong instructions and an entire blocked family looks reachable.
+        let left = lines(&["ldr r2, [pc, #24] @ (0x200077c)", "bx lr"]);
+        let right = lines(&["bx lr", "ldr r2, [pc, #20] @ (0x200077c)"]);
+        assert_eq!(residual_class(&left, &right), ("ordering", 0));
+    }
+
+    #[test]
+    fn a_different_target_is_still_wrong() {
+        // Only the offset is blanked, never the resolved address, or a genuine
+        // pool-word difference would be hidden.
+        let left = lines(&["ldr r2, [pc, #24] @ (0x200077c)"]);
+        let right = lines(&["ldr r2, [pc, #24] @ (0x2000780)"]);
+        assert_eq!(residual_class(&left, &right), ("wrong", 2));
+    }
+
+    #[test]
+    fn a_wrong_register_counts_once_per_side() {
+        let left = lines(&["movs r1, #33", "bx lr"]);
+        let right = lines(&["movs r3, #33", "bx lr"]);
+        assert_eq!(residual_class(&left, &right), ("wrong", 2));
+    }
 }
 
 #[cfg(test)]

@@ -490,6 +490,67 @@ fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
     Ok(ParseOutcome::Options(Options { span, id, source, apply, where_ }))
 }
 
+/// An exclusive claim on one overlay's assembly file, released on drop.
+///
+/// WHY THIS EXISTS. Adoption rehearses IN PLACE: it splices the candidate into
+/// `assets/code/<overlay>.s`, assembles, and restores. It has to, because
+/// compiler flags are routed per owner and a candidate compiled from a scratch
+/// copy loses them. That makes the file a shared mutable resource for the whole
+/// splice-assemble-restore window, and two processes working on rows in the SAME
+/// overlay interleave: each captured `original_text` before the other wrote, so
+/// the loser restores the winner's spliced text -- or, worse, reads its
+/// `baseline` from a tree the other process had already spliced, and then
+/// compares against it.
+///
+/// Twelve rehearsals run in parallel left seven overlays with real assembly
+/// replaced by `.space` placeholders, 368 lines gone, while every run made one
+/// at a time beforehand had been clean. Rejection is not protection here: the
+/// writes happen before the verdict, and `--where` is not read-only either.
+///
+/// The lock covers the baseline read as well as the splice, because a
+/// concurrent splice corrupts what we measure against just as surely as what we
+/// write. Drop releases it on every path, including the early returns that a
+/// rejected adoption takes.
+struct OverlayLock {
+    path: PathBuf,
+}
+
+impl OverlayLock {
+    fn acquire(assembly: &Path) -> Result<Self, String> {
+        let path = assembly.with_extension("s.adopt-lock");
+        // `create_new` is the atomic test-and-set; there is no portable advisory
+        // lock in std. Waiting rather than failing keeps `xargs -P` correct
+        // instead of merely safe, which is what a contributor will actually run.
+        for attempt in 0..600 {
+            match fs::OpenOptions::new().write(true).create_new(true).open(&path) {
+                Ok(_) => return Ok(OverlayLock { path }),
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+                    if attempt == 0 {
+                        eprintln!(
+                            "waiting for another adoption to finish with {}",
+                            assembly.display()
+                        );
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(100));
+                }
+                Err(error) => return Err(format!("{}: {error}", path.display())),
+            }
+        }
+        Err(format!(
+            "{} is still locked after 60s. If no other adoption is running, a \
+             previous one was killed mid-splice: check `git status assets/code/` \
+             before deleting the lock file.",
+            path.display()
+        ))
+    }
+}
+
+impl Drop for OverlayLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
+}
+
 fn revert(installed: &Path, assembly: &Path, preexisting: &Option<Vec<u8>>, original_text: &str) -> Result<(), String> {
     match preexisting {
         Some(data) => fs::write(installed, data).map_err(|error| error.to_string())?,
@@ -566,6 +627,9 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     audited_interval(root, &fn_row)?;
 
     let assembly = root.join("assets/code").join(format!("{}_overlay.s", fn_row.overlay));
+    // Held until this function returns, covering the baseline read, the splice
+    // and the restore. See `OverlayLock`.
+    let _lock = OverlayLock::acquire(&assembly)?;
     let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;
     let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     let lines: Vec<String> = original_text.split('\n').map(|line| line.to_string()).collect();

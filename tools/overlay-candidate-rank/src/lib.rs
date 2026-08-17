@@ -44,8 +44,51 @@ pub struct Measurement {
     pub candidate_bytes: Option<i64>,
     pub size_delta: Option<i64>,
     pub differing_halfwords: Option<i64>,
+    /// `exact` / `ordering` / `wrong`, from `candidate_show::render::residual_class`.
+    ///
+    /// Ranking by differing halfwords alone puts a blocked scheduler tie and a
+    /// two-line source defect in the same tier. This column is what tells them
+    /// apart: `ordering` means both sides hold the same instructions and no
+    /// source shape reaches the difference, so read a `wrong` row instead.
+    pub residual_class: Option<String>,
+    pub wrong_instructions: Option<i64>,
     pub semantic_source: String,
     pub error: Option<String>,
+}
+
+/// Disassemble both sides at their real address and classify the residual.
+///
+/// The address matters: a Thumb pc-relative load resolves against it, so
+/// disassembling at 0 would make every pool target differ and report an
+/// ordering-only row as wrong.
+fn classify_owner(
+    work: &Path,
+    candidate: &[u8],
+    reference: &[u8],
+    address: f64,
+) -> Result<(&'static str, i64), String> {
+    let ours = work.join("rank-candidate.bin");
+    let theirs = work.join("rank-reference.bin");
+    fs::write(&ours, candidate).map_err(|error| error.to_string())?;
+    fs::write(&theirs, reference).map_err(|error| error.to_string())?;
+    let ordered = |rows: candidate_show::disasm::Rows| -> Vec<String> {
+        let mut keys: Vec<f64> = rows.keys().collect();
+        keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        keys.iter()
+            .map(|key| rows.get(*key).unwrap_or("").to_string())
+            .collect()
+    };
+    let left = ordered(candidate_show::disasm::disassemble(
+        &ours.to_string_lossy(),
+        address,
+    )?);
+    let right = ordered(candidate_show::disasm::disassemble(
+        &theirs.to_string_lossy(),
+        address,
+    )?);
+    let _ = fs::remove_file(&ours);
+    let _ = fs::remove_file(&theirs);
+    Ok(candidate_show::render::residual_class(&left, &right))
 }
 
 /// `countDifferingHalfwords(actual, expected)`.
@@ -197,6 +240,12 @@ fn render_measurements(measurements: &[Measurement]) -> String {
         if let Some(diff) = row.differing_halfwords {
             out.push_str(&format!(",\"differingHalfwords\":{diff}"));
         }
+        if let Some(class) = &row.residual_class {
+            out.push_str(&format!(",\"residualClass\":\"{}\"", json_escape(class)));
+        }
+        if let Some(wrong) = row.wrong_instructions {
+            out.push_str(&format!(",\"wrongInstructions\":{wrong}"));
+        }
         out.push_str(&format!(
             ",\"semanticSource\":\"{}\"",
             json_escape(&row.semantic_source)
@@ -307,6 +356,14 @@ fn parse_measurements(text: &str) -> Result<Vec<Measurement>, String> {
                 .get("differingHalfwords")
                 .and_then(Value::as_f64)
                 .map(|n| n as i64),
+            residual_class: item
+                .get("residualClass")
+                .and_then(Value::as_str)
+                .map(str::to_string),
+            wrong_instructions: item
+                .get("wrongInstructions")
+                .and_then(Value::as_f64)
+                .map(|n| n as i64),
             semantic_source: item
                 .get("semanticSource")
                 .and_then(Value::as_str)
@@ -364,6 +421,14 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                 Some(&routing_source),
                 &[],
             )?;
+            // Classifying costs two disassembles per owner and is what makes
+            // the table actionable, so a failure here degrades the row to an
+            // unclassified one rather than losing the measurement.
+            let (class, wrong) =
+                match classify_owner(&owner_work, &compiled.data, expected, address as f64) {
+                    Ok(pair) => (Some(pair.0.to_string()), Some(pair.1)),
+                    Err(_) => (None, None),
+                };
             Ok(Measurement {
                 id: id.clone(),
                 overlay: row.overlay.clone(),
@@ -372,6 +437,8 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                 candidate_bytes: Some(compiled.data.len() as i64),
                 size_delta: Some(compiled.data.len() as i64 - row.bytes),
                 differing_halfwords: Some(count_differing_halfwords(&compiled.data, expected)),
+                residual_class: class,
+                wrong_instructions: wrong,
                 semantic_source: row.semantic_source.clone(),
                 error: None,
             })
@@ -386,6 +453,8 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                 candidate_bytes: None,
                 size_delta: None,
                 differing_halfwords: None,
+                residual_class: None,
+                wrong_instructions: None,
                 semantic_source: row.semantic_source.clone(),
                 error: Some(message),
             },
@@ -403,6 +472,8 @@ pub fn self_test() -> Result<(), String> {
         candidate_bytes: None,
         size_delta,
         differing_halfwords,
+        residual_class: None,
+        wrong_instructions: None,
         semantic_source: "semantic/example.c".to_string(),
         error: None,
     };
@@ -582,7 +653,13 @@ pub fn run(
     fs::write(work.join("report.json"), render_report(&measured))
         .map_err(|error| error.to_string())?;
 
-    println!("tier  owner                 span  bytes  delta  diff_hw  semantic source");
+    // `class` is the column to read first. `ordering` means both sides hold the
+    // same instructions and only their order differs, which no source shape
+    // reaches; `wrong` means an instruction is genuinely wrong and reading the
+    // source will find it. Ranking by diff_hw alone mixes the two.
+    println!(
+        "tier  owner                 span  bytes  delta  diff_hw  class     wrong  semantic source"
+    );
     for row in measured.iter().take(top.max(0) as usize) {
         let delta = match row.size_delta {
             None => "error".to_string(),
@@ -597,14 +674,21 @@ pub fn run(
             .differing_halfwords
             .map(|n| n.to_string())
             .unwrap_or_else(|| "-".to_string());
+        let class = row.residual_class.clone().unwrap_or_else(|| "-".to_string());
+        let wrong = row
+            .wrong_instructions
+            .map(|n| n.to_string())
+            .unwrap_or_else(|| "-".to_string());
         println!(
-            "{:>4}  {:<20}  {:>4}  {:>5}  {:>5}  {:>7}  {}",
+            "{:>4}  {:<20}  {:>4}  {:>5}  {:>5}  {:>7}  {:<8}  {:>5}  {}",
             effort_tier(row),
             row.id,
             row.span,
             candidate_bytes,
             delta,
             differing,
+            class,
+            wrong,
             row.semantic_source,
         );
     }
@@ -648,6 +732,8 @@ mod tests {
             candidate_bytes: None,
             size_delta,
             differing_halfwords: differing,
+            residual_class: None,
+            wrong_instructions: None,
             semantic_source: "semantic".to_string(),
             error: error.map(str::to_string),
         }

@@ -186,38 +186,9 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     // wrong instruction. Ranking those 183 by this count, rather than by
     // differing halfwords, is what puts a readable defect at the top.
     //
-    // A pc-relative offset encodes an instruction's POSITION, so a transposed
-    // pool load would otherwise read as two wrong instructions. The resolved
-    // target is printed alongside it, so blank the offset before comparing.
-    let canonical = |line: &str| -> String {
-        let mut out = String::with_capacity(line.len());
-        let mut rest = line;
-        while let Some(start) = rest.find("[pc, #") {
-            out.push_str(&rest[..start]);
-            out.push_str("[pc]");
-            rest = match rest[start..].find(']') {
-                Some(end) => &rest[start + end + 1..],
-                None => "",
-            };
-        }
-        out.push_str(rest);
-        out
-    };
-    let mut pool: std::collections::BTreeMap<String, i64> = std::collections::BTreeMap::new();
-    for line in &left_lines {
-        *pool.entry(canonical(line)).or_default() += 1;
-    }
-    for line in &right_lines {
-        *pool.entry(canonical(line)).or_default() -= 1;
-    }
-    let wrong: i64 = pool.values().map(|count| count.abs()).sum();
-    let class = if differing == 0 {
-        "exact"
-    } else if wrong == 0 {
-        "ordering"
-    } else {
-        "wrong"
-    };
+    // Shared with `overlay candidate-rank`, so the bulk table and the single
+    // owner never disagree about which residuals are worth reading.
+    let (class, wrong) = candidate_show::render::residual_class(&left_lines, &right_lines);
     println!("class={class} wrong_instructions={wrong}");
 
     if align {

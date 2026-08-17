@@ -88,7 +88,7 @@ extern void Func_0808a110(s32 id, s32 arg1);
 extern void Func_0808a138(s32 id, s32 arg1);
 extern void Func_0808a158(s32 id, s32 arg1);
 extern void Func_0808a170(s32 dialogueId);
-extern void Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
+extern s32 Func_0808a1b8(s32 id, s32 arg1, s32 arg2);
 extern void Func_0808a1e8(s32 id, s32 arg1, s32 arg2);
 extern void Func_0808a1f0(s32 id, s32 arg1);
 extern void Func_0808a248(s32 arg0);

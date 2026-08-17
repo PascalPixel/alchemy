@@ -2,7 +2,7 @@
 
 struct DeferredWrite_02000f50 { u32 value; u32 address; u32 mask; };
 
-extern s32 Func_080770c0(s32 flagId);
+extern s32 Func_080770c0(u8 flagId);
 extern void Func_080770c8(s32 flagId);
 extern u8 *Func_0808a080(s32 actorId);
 extern void Func_0808a5e0(s32 resourceId);

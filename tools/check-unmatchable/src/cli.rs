@@ -15,7 +15,7 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use crate::{corpus_guard, provisional_violations, parse_provisional_file, parse_unmatchable_file,
-    queue, stems, violations, QueueScan};
+    queue, read_recon, recon_violations, stems, violations, QueueScan};
 
 const USAGE: &str = "Usage: check-unmatchable [--queue | --self-test]\n\nModes:\n  (default)      Validate the registers against current owners.\n  --queue        List owners with compiler search spent but shape search unrun.\n  --self-test    Run the gate's internal checks.\n  -h, --help     Show this help.";
 
@@ -177,6 +177,13 @@ fn gate() -> ExitCode {
         Err(error) => return fail(&error),
     };
     let mut problems = violations(&entries, &exact, &semantic);
+    // The reconstruction records live or die by the same rule as the registers:
+    // an owner that reached exact must not keep a record of how it did not.
+    let recon = match read_recon(root) {
+        Ok(list) => list,
+        Err(message) => return fail(&message),
+    };
+    problems.extend(recon_violations(&recon, &exact));
     problems.extend(provisional_violations(&provisional, &exact));
     if !problems.is_empty() {
         for problem in &problems {
@@ -190,7 +197,8 @@ fn gate() -> ExitCode {
         provisional.len()
     );
     eprintln!(
-        "checked against {} audited and {} exact owner(s)",
+        "recon records: {}\nchecked against {} audited and {} exact owner(s)",
+        recon.len(),
         semantic.len(),
         exact.len()
     );

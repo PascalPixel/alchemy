@@ -135,8 +135,13 @@ the fact was obtained, so it stays. This table says where to find the tool.
 
 ## Setting up
 
-You need a Rust toolchain, `arm-none-eabi-binutils`, Python 3, and the approved
-ROM set in `roms/` (gitignored — put it there yourself).
+You need a Rust toolchain, `arm-none-eabi-binutils`, and the approved ROM set in
+`roms/` (gitignored — put it there yourself).
+
+The tooling is Rust. Not Python, not shell, not a scripting language that
+happens to be installed: a tool that is not Rust is not in this repository, and
+`architecture` will not catalogue it. Write the throwaway in whatever you like,
+outside the tree.
 
 The compiler lives in the `alchemy-gcc` submodule and its built binaries are
 expected at `alchemy-gcc/dist/`. In a **git worktree** the submodule directory
@@ -839,13 +844,47 @@ rather than asking you for one.
 
 ### Where unfinished work lives
 
-Nowhere in the tree. A byte is exact C or it is assembly, and there is no third
-directory for C that does not reproduce yet.
+Your C lives in `work/`, which is gitignored. What you have LEARNED lives in
+`recon/`, which is not. Those are different things and the split is the point.
 
-Keep your candidate in `work/`, which is gitignored. Every tool that scores a
-source takes a path, so `candidate-show work/080a1234.c --align` and
-`score work/resource_373_c_0200034c.c --align` behave exactly as they did when
-the file lived in a tracked tier. Adoption moves it to `exact/` when it matches.
+A byte is exact C or it is assembly. There is still no third directory for C
+that does not reproduce, and `two-tier-check` still fails if one appears.
+
+**`work/` — the scratchpad.** Every tool that scores a source takes a path, so
+`candidate-show work/080a1234.c --align` and
+`score work/resource_373_c_0200034c.c --align` work exactly as they would from
+anywhere else. Adoption moves the file to `exact/` when it matches. Nothing here
+is committed and nothing here survives a fresh clone, which is correct: an
+unproven source is not an asset.
+
+**`recon/<owner>.json` — the record.** One per owner under active
+reconstruction, holding measurements and a recipe. Never C, never ROM bytes.
+
+```json
+{ "owner": "resource_3bd:13f8", "span_bytes": 6220,
+  "score":  { "candidate_bytes": 5908, "wrong_instructions": 629, "class": "wrong" },
+  "shape":  { "calls": 703, "loops": 3, "memory_ops": 47 },
+  "expressed":   ["call sequence", "memory through a held pointer", "three counted loops"],
+  "unexpressed": [{ "op": "ldrsh", "count": 8, "where": "loop bodies" }],
+  "verified_against_reference": ["bl count 703", "ldrb count 10"],
+  "rejected": [{ "shape": "one base local reassigned", "wrong": 671 }] }
+```
+
+This is not the semantic tier returning. That tier stored unproven C and then
+COUNTED it, which is how 862,856 bytes read as 74% coverage against a 20% match
+rate. A record claims no bytes at all -- it carries the score the tools reported,
+and that score says the owner does not reproduce. There is nothing in it a
+coverage number could add up, and `check-unmatchable` fails a record whose owner
+has since gone exact, whose `wrong_instructions` is 0, or which carries no score
+at all.
+
+What it buys is the thing `work/` cannot: a large owner taken most of the way
+used to leave nothing behind but prose in a commit message, so a clone or a
+fresh worktree started again from zero. `unexpressed` is the honest remaining
+work in instruction counts, and `rejected` carries the number that killed each
+dead end so nobody pays for it twice.
+
+Delete the record when the owner is adopted. The gate will remind you.
 
 `semantic/regions.json` and `semantic/main-regions.json` survive as the audited
 owner boundaries for regions discovery did not index -- evidence about where an

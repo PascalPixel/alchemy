@@ -1,0 +1,52 @@
+{
+  "owner": "resource_3bd:13f8",
+  "span_bytes": 6220,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 5908,
+    "reference_bytes": 6220,
+    "wrong_instructions": 629,
+    "differing_halfwords": 2865,
+    "class": "wrong"
+  },
+  "shape": {
+    "calls": 703,
+    "branches": 721,
+    "loops": 3,
+    "memory_ops": 47
+  },
+  "expressed": [
+    "call sequence",
+    "argument values",
+    "memory through a held pointer",
+    "pointer-valued loads",
+    "register-offset addressing",
+    "read-modify-write",
+    "three counted loops with real bounds"
+  ],
+  "unexpressed": [
+    {
+      "op": "ldrsh",
+      "count": 8,
+      "where": "loop bodies"
+    },
+    {
+      "op": "strh",
+      "count": 10,
+      "where": "loop bodies"
+    },
+    {
+      "op": "cmp",
+      "count": 7,
+      "where": "loop bodies"
+    }
+  ],
+  "verified_against_reference": [
+    "bl count 703",
+    "ldrb count 10",
+    "strb count 11"
+  ],
+  "blocked_by": "not blocked -- ordinary unfinished work, see unexpressed",
+  "rejected": [],
+  "note": "Excess high-register moves fell +80 -> +69 -> +48 as memory and loops were modelled, which is why the remaining gap reads as incomplete source rather than as an allocation wall."
+}

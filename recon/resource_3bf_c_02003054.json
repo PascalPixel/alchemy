@@ -1,0 +1,71 @@
+{
+  "owner": "resource_3bf:3054",
+  "span_bytes": 5604,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 5628,
+    "reference_bytes": 5604,
+    "wrong_instructions": 644,
+    "differing_halfwords": 2621,
+    "class": "wrong"
+  },
+  "shape": {
+    "calls": 636,
+    "distinct_veneers": 577,
+    "branches": 11,
+    "loops": 0,
+    "memory_ops": 10
+  },
+  "expressed": [
+    "call sequence",
+    "per-site veneer naming",
+    "argument values",
+    "six conditionals",
+    "three pointer dereferences",
+    "one global store",
+    "literal pools skipped"
+  ],
+  "unexpressed": [],
+  "verified_against_reference": [
+    "bl count 636",
+    "argument values",
+    "constant multiset: five distinct 128<<k at counts 9/1/16/9/2",
+    "all 11 branches"
+  ],
+  "blocked_by": "register allocation only: reference emits 0 high-register moves, candidate 124",
+  "rejected": [
+    {
+      "shape": "one base local reassigned",
+      "wrong": 671
+    },
+    {
+      "shape": "three base locals",
+      "wrong": 644
+    },
+    {
+      "shape": "no base local",
+      "wrong": 798
+    },
+    {
+      "shape": "base scoped per block",
+      "wrong": 788
+    },
+    {
+      "shape": "carry argument registers across calls",
+      "wrong": 696
+    },
+    {
+      "shape": "model two chained call sites",
+      "wrong": 698
+    },
+    {
+      "axis": "shape_sweep",
+      "result": "axis exhausted"
+    },
+    {
+      "axis": "overlay_mode_cohort singles+pairs",
+      "result": "154 configurations, 0 exact"
+    }
+  ],
+  "note": "Sealed in semantic/unmatchable.json. The only large owner with no loops, so a linear reconstruction is structurally complete for it -- which is why it got closest and why its failure is the one that is not explained."
+}

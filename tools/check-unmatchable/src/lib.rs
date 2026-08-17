@@ -381,3 +381,101 @@ mod tests {
     }
 
 }
+
+// ---------------------------------------------------------------- recon records
+//
+// A record per owner under active reconstruction, in `recon/`. It holds
+// MEASUREMENTS and a recipe, never C and never ROM bytes.
+//
+// WHY IT IS NOT THE SEMANTIC TIER AGAIN. That tier stored unproven C and then
+// counted it, which is how 862,856 bytes read as 74% coverage against a 20%
+// match rate. A record claims no bytes at all: it carries the score the tools
+// actually reported, and that score says the owner does not reproduce. There is
+// nothing in it that a coverage number could add up.
+//
+// WHY IT EXISTS. Before this, a large owner taken most of the way to exact left
+// nothing behind but prose in a commit message. `work/` is gitignored, so a
+// clone or a fresh worktree started from zero against a sentence.
+
+/// One reconstruction record, read only as far as the gate needs it.
+pub struct ReconRecord {
+    pub file: String,
+    pub owner: String,
+    pub stem: String,
+    pub wrong: Option<i64>,
+    pub has_score: bool,
+}
+
+fn json_str(text: &str, key: &str) -> Option<String> {
+    let at = text.find(&format!("\"{key}\""))?;
+    let rest = &text[at + key.len() + 2..];
+    let colon = rest.find(':')?;
+    let tail = rest[colon + 1..].trim_start();
+    let tail = tail.strip_prefix('"')?;
+    let end = tail.find('"')?;
+    Some(tail[..end].to_string())
+}
+
+fn json_num(text: &str, key: &str) -> Option<i64> {
+    let at = text.find(&format!("\"{key}\""))?;
+    let rest = &text[at + key.len() + 2..];
+    let colon = rest.find(':')?;
+    let tail = rest[colon + 1..].trim_start();
+    let end = tail
+        .find(|c: char| !c.is_ascii_digit() && c != '-')
+        .unwrap_or(tail.len());
+    tail[..end].parse().ok()
+}
+
+pub fn read_recon(root: &Path) -> Result<Vec<ReconRecord>, String> {
+    let dir = root.join("recon");
+    let Ok(entries) = std::fs::read_dir(&dir) else {
+        return Ok(Vec::new());
+    };
+    let mut out = Vec::new();
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let name = path.file_name().unwrap_or_default().to_string_lossy().into_owned();
+        if !name.ends_with(".json") || name.starts_with("README") {
+            continue;
+        }
+        let text = std::fs::read_to_string(&path).map_err(|e| format!("{name}: {e}"))?;
+        out.push(ReconRecord {
+            file: name.clone(),
+            owner: json_str(&text, "owner").unwrap_or_default(),
+            stem: name.trim_end_matches(".json").to_string(),
+            wrong: json_num(&text, "wrong_instructions"),
+            has_score: text.contains("\"score\""),
+        });
+    }
+    out.sort_by(|a, b| a.file.cmp(&b.file));
+    Ok(out)
+}
+
+/// Violations for the recon records. `exact` is the set of byte-exact stems.
+pub fn recon_violations(records: &[ReconRecord], exact: &HashSet<String>) -> Vec<String> {
+    let mut problems = Vec::new();
+    for r in records {
+        if r.owner.is_empty() {
+            problems.push(format!("{}: no owner", r.file));
+        }
+        if !r.has_score {
+            problems.push(format!("{}: no score; a record without a measurement is a claim", r.file));
+        }
+        if r.wrong == Some(0) {
+            problems.push(format!(
+                "{}: wrong_instructions is 0, so adopt it and delete this record",
+                r.file
+            ));
+        }
+        // The rule that keeps this from becoming a tier: an owner that reached
+        // exact has no business keeping a record of how it did not.
+        if exact.contains(&r.stem) {
+            problems.push(format!(
+                "{}: {} is byte-exact now; delete the record",
+                r.file, r.stem
+            ));
+        }
+    }
+    problems
+}

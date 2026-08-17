@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "purpose": "One record per owner under active reconstruction. It holds MEASUREMENTS and a RECIPE, never C and never ROM bytes. The C lives in work/, which is gitignored, and is regenerated rather than stored -- that is the whole point. The semantic tier failed because unproven C was stored AND counted; a record cannot be counted, because it claims no bytes and carries the score that says it does not reproduce.",
+  "rules": [
+    "An owner that becomes byte-exact loses its record. `check recon` fails if a record names an owner in exact/.",
+    "`score` is what the tools actually reported, with the date. `check recon --verify` recompiles and refuses a record whose score has drifted.",
+    "`unexpressed` is the work left, in instruction counts read off the reference. It is the honest denominator for 'how far is this owner'.",
+    "`rejected` exists so nobody repeats a measured dead end. Every entry carries the number that killed it."
+  ]
+}

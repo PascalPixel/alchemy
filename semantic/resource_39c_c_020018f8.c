@@ -27,7 +27,7 @@ typedef struct ParticleOptions {
 
 extern void Func_02007316(s32 left, s32 top, s32 right, s32 bottom,
                           s32 style, s32 enabled);
-extern u8 Func_020072ce(void);
+extern u32 Func_020072ce(void);
 extern void Func_02001aa6(s32 x, s32 y, s32 z, s32 kind,
                           s32 velocity, s32 unused, s32 duration,
                           ParticleOptions *options);

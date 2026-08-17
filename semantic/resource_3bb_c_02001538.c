@@ -14,7 +14,7 @@ extern void Func_0808a010();
 extern void Func_0808a180();
 extern void Func_02002ba8();
 extern void Func_0808a090();
-extern s32 Func_020030e8();
+extern void Func_020030e8();
 extern void Func_02000310();
 extern void Func_0808a100();
 extern void Func_0808a0d0();

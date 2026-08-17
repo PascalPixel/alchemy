@@ -56,7 +56,7 @@
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 void Func_02001456(void);
-u8 Func_02001eb6();
+int Func_02001eb6();
 void Func_02001f82();
 void Func_02001eea();
 void Func_02001efc();
@@ -67,9 +67,9 @@ int Func_02001f16();
 void Func_02001fb0();
 void Func_02002024();
 void Func_02001fca();
-s32 Func_0200203e();
+void Func_0200203e();
 void Func_02001fe4();
-s32 Func_02002058();
+void Func_02002058();
 void Func_02001ffe();
 void Func_02002072();
 void *Func_02001fd8();

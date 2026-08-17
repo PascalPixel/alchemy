@@ -323,16 +323,6 @@
       "reason": "Comparison canonicalisation, not a reading. The reference tests `cmp #9 / blt` and stock gcc 2.96 always canonicalises this to `cmp #8 / ble`. Measured on the owner: `!(w < 9)`, `9 <= w`, `w > 8` and `!(9 > w)` all compile to the identical two halfwords, and `w - 9 >= 0` is far worse at 35. There is no source spelling that reaches the reference form and no stock switch for it -- this fork once invented `-fno-canonicalize-comparison` for exactly this, and it is gone."
     },
     {
-      "owner": "resource_3b5_c_02000170",
-      "floor_halfwords": 15,
-      "axes": [
-        "compiler",
-        "shape",
-        "expressiveness"
-      ],
-      "reason": "If-conversion, not a reading. The source computes `(*flags & 1) ? 17 : 16` and gcc's ce pass makes it branchless (`negs / orrs / lsrs #31 / adds #16`) where the reference branches. Writing it as an explicit if/else changes nothing -- gcc canonicalises both to the same RTL -- and stock gcc 2.96 has no if-conversion switch: `-fno-if-conversion` and `-fno-cond-exec` are gcc 3.x options and cc1 here rejects them. This fork once invented `-fthumb-no-if-convert` for it."
-    },
-    {
       "owner": "resource_3b7_c_02000880",
       "floor_halfwords": 2,
       "axes": [

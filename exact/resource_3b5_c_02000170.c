@@ -34,12 +34,16 @@
  * Same convention as 6e7d6a12e and exact/resource_371_c_0200037c.c, where one
  * import reached from three sites carries three names.
  *
- * Func_0200026a is `void` because its result is discarded (b7c1a35a0).  That is
- * byte-neutral here and kept as the truthful reading; widening the other two to
- * s32 is NOT byte-neutral and costs 40 halfwords, so the u8 return stands.
+ * Func_0200026a is `void` because its result is discarded (b7c1a35a0).
+ *
+ * Func_0200022a returns s32: the reference tests its result with `cmp r0, #0`
+ * and never truncates it, so a u8 return costs an `lsls r0, r0, #24` the ROM
+ * does not have.  An earlier reading measured that widening as expensive, but
+ * that was against the conditional-expression form of the partner select
+ * below; once that is a branch, the wide return is what matches.
  */
 u8 *Func_02000f1e();
-u8 Func_0200022a();
+s32 Func_0200022a();
 u8 *Func_02000f34();
 void Func_0200026a();
 
@@ -51,10 +55,22 @@ s32 Func_02000170(u8 *self)
     u16 *flags = (u16 *)(self + 100);
     s32 force = 0;
     s32 range = 18;
+    u8 *partner;
     u8 *player;
 
-    /* Bit 0 of the actor's own flag halfword selects which partner to test. */
-    if (Func_0200022a(self, Func_02000f1e((*flags & 1) ? 17 : 16), 32, 0) != 0) {
+    /*
+     * Bit 0 of the actor's own flag halfword selects which partner to test.
+     * Written as two calls, not `Func_02000f1e(bit ? 17 : 16)`: the reference
+     * branches and joins on one `bl`, which is what cross-jumping the two calls
+     * produces.  As a conditional expression gcc folds it to `16 + (bit != 0)`
+     * and emits the negs/orrs/lsrs boolean instead.
+     */
+    if ((*flags & 1) != 0) {
+        partner = Func_02000f1e(17);
+    } else {
+        partner = Func_02000f1e(16);
+    }
+    if (Func_0200022a(self, partner, 32, 0) != 0) {
         return 0;
     }
 

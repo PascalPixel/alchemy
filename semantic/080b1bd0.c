@@ -77,8 +77,8 @@ s32 Func_080b1bd0(s32 combatant)
 
             if (*(volatile u32 *)0x03001c94 & 1) {
                 Func_080f9010(0x70);
-                result = 0;
                 break;
+                result = 0;
             }
             if (*(volatile u32 *)0x03001c94 & 2) {
                 Func_080f9010(0x71);

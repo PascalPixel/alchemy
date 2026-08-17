@@ -59,8 +59,8 @@ void Func_0808cf78(void)
         if (entry->map_id == map_id &&
             (entry->condition == -1 ||
              Func_080770c0(entry->condition) != 0)) {
-            found = 1;
             break;
+            found = 1;
         }
         entry++;
     }

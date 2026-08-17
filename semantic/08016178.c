@@ -15,10 +15,10 @@ void Func_08016178(u32 x, u32 y, u32 width, u32 height)
 
     base = Data_03001e8c;
     offset = y << 5;
-    offset += x;
     offset <<= 1;
-    cursor = base + offset;
+    offset += x;
     tile = 0xF000;
+    cursor = base + offset;
 
     if (y + height > 20)
         height = 20 - y;

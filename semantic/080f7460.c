@@ -35,8 +35,8 @@ struct EffectState_080f7460 {
     u8 padding_a4[4];
     s32 fade_counter;
     s32 enabled_icons[7];
-    u8 padding_c8[0x400];
     s32 message_window;
+    u8 padding_c8[0x400];
 };
 
 /*

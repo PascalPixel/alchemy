@@ -5,7 +5,6 @@ s32 Func_080022ec(s32, s32);
 void Func_080f62b8(u32 arg0, u32 arg1, u32 arg2, u32 arg3, s32 arg4) {
     s8 *temp_fp;
     s32 temp_ip_5;
-    s32 temp_r2;
     s32 temp_r2_2;
     s32 var_ip;
     s32 var_r0;
@@ -66,9 +65,8 @@ void Func_080f62b8(u32 arg0, u32 arg1, u32 arg2, u32 arg3, s32 arg4) {
         var_r1 = var_r8;
         if (var_r0_2 != var_r4) {
             do {
-                temp_r2 = ((((((var_r0_2 >> 3) << 5) + (var_r1 >> 3)) * 8) + (var_r0_2 & 7)) * 8) + (var_r1 & 7);
-                if ((s32) *(temp_fp + temp_r2) < arg4) {
-                    *(temp_fp + temp_r2) = (s8) arg4;
+                if ((s32) *(temp_fp + (((((((var_r0_2 >> 3) << 5) + (var_r1 >> 3)) * 8) + (var_r0_2 & 7)) * 8) + (var_r1 & 7))) < arg4) {
+                    *(temp_fp + (((((((var_r0_2 >> 3) << 5) + (var_r1 >> 3)) * 8) + (var_r0_2 & 7)) * 8) + (var_r1 & 7))) = (s8) arg4;
                 }
                 var_r9 += var_ip;
                 if (var_r9 & 0x100) {

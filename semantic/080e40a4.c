@@ -42,8 +42,8 @@ struct Point_080e40a4 {
 struct Particle_080e40a4 {
     s32 x;
     s32 y;
-    s32 z;
     s32 velocity_x;
+    s32 z;
     s32 velocity_y;
     s32 velocity_z;
     s32 life;
@@ -103,12 +103,12 @@ void Func_080e40a4(struct Scene_080e40a4 *scene)
     Func_080cdd58();
     *(volatile u16 *)0x0400000a = 0x1f80;
 
-    if (scene->direction == 0) {
-        Func_080ed408(46, 7, 7, 3, 3);
-        Func_080ed408(47, 7, 7, 3, 2);
-    } else {
+    if (!(scene->direction == 0)) {
         Func_080ed408(46, 7, 7, 7, 3);
         Func_080ed408(47, 7, 7, 7, 2);
+    } else {
+        Func_080ed408(46, 7, 7, 3, 3);
+        Func_080ed408(47, 7, 7, 3, 2);
     }
     renderers[0] = *(Renderer_080e40a4 *)0x03001f08;
     renderers[1] = *(Renderer_080e40a4 *)0x03001f0c;

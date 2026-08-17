@@ -37,8 +37,8 @@ struct MenuControl_08023e70 {
     s32 page;
     s32 saved_row;
     u8 reserved3c[0x10];
-    s32 input_enabled;
     u8 reserved50[0x88];
+    s32 input_enabled;
     s32 repeat_active;
     s32 repeat_timer;
     s32 reserved_e0;
@@ -178,7 +178,6 @@ s32 Func_08023e70(s32 arg0, s32 arg1) {
     s32 temp_r2_3;
     s32 temp_r3_4;
     s32 temp_r3_5;
-    s32 temp_r3_6;
     s32 temp_r3_7;
     s32 temp_r3_8;
     s32 temp_r5;
@@ -229,8 +228,8 @@ s32 Func_08023e70(s32 arg0, s32 arg1) {
     sp40 = -1;
     sp3C = Func_080040b4(0x80);
     sp38 = Func_08004970(0x150);
-    sp34 = 0;
     sp30 = sp40;
+    sp34 = 0;
     sp28 = 0;
     sp20 = 0;
     sp50 = 0;
@@ -240,14 +239,14 @@ s32 Func_08023e70(s32 arg0, s32 arg1) {
     Func_0801e3c8(1);
     temp_r9 = Func_080162d4(0x15U, 9U, 9U, 0xBU, 6);
     temp_r3 = Data_03001f34;
-    temp_fp = temp_r3->page;
     var_sl = temp_r3->row;
+    temp_fp = temp_r3->page;
     sp24 = temp_r3->saved_row;
     var_r7 = 0;
     var_r8 = Func_08077008(arg0);
     do {
-        var_r6_2 = 0;
         var_r5 = &sp38[sp34];
+        var_r6_2 = 0;
 loop_2:
         temp_r2 = 1 << var_r6_2;
         if (CHARACTER_SELECTED(var_r8, var_r7) & temp_r2) {
@@ -364,8 +363,8 @@ loop_33:
                     sp28 = 1 << ((u32) (temp_r5 & 0xF00) >> 8);
                 }
             } else {
-                sp44 = Func_08022b44(sp44, sp4C, temp_r5, sp20, &sp50);
                 Func_0801965c((((u32) (0xF00 & temp_r5) >> 8) * 0x14) + (u8) temp_r5 + 0x666, spC, 0x34);
+                sp44 = Func_08022b44(sp44, sp4C, temp_r5, sp20, &sp50);
             }
         }
         sp48->menu_busy = 0;
@@ -447,20 +446,20 @@ loop_74:
             goto loop_74;
         }
         temp_r5_4 = Data_03001ae8 & 0x100;
-        if (temp_r5_4 == 0) {
-            Func_08019000((struct Work_80190000 *)temp_r9, 0xF334,
-                (temp_r9->width - temp_r0_6) - 3,
-                -1, temp_r5_4);
-            Func_08019000((struct Work_80190000 *)temp_r9, 0xF335,
-                temp_r9->width - 2,
-                -1, temp_r5_4);
-        } else {
+        if (!(temp_r5_4 == 0)) {
             Func_08019000((struct Work_80190000 *)temp_r9, 0xF011,
                 (temp_r9->width - temp_r0_6) - 3,
                 -1, 0);
             Func_08019000((struct Work_80190000 *)temp_r9, 0xF012,
                 temp_r9->width - 2,
                 -1, 0);
+        } else {
+            Func_08019000((struct Work_80190000 *)temp_r9, 0xF334,
+                (temp_r9->width - temp_r0_6) - 3,
+                -1, temp_r5_4);
+            Func_08019000((struct Work_80190000 *)temp_r9, 0xF335,
+                temp_r9->width - 2,
+                -1, temp_r5_4);
         }
         *sp8 |= 2 << ((u32)(temp_r9->y - 1) >> 2);
     }
@@ -526,10 +525,10 @@ block_95:
             Func_080f9010(0x6F);
             var_sl -= 1;
             if (var_sl < 0) {
-                if (temp_fp == (Func_080022ec(sp34 - 1, 5) * 5)) {
-                    var_r3 = (sp34 - temp_fp) - 1;
-                } else {
+                if (!(temp_fp == (Func_080022ec(sp34 - 1, 5) * 5))) {
                     var_r3 = 4;
+                } else {
+                    var_r3 = (sp34 - temp_fp) - 1;
                 }
                 var_sl = var_r3;
             }
@@ -609,15 +608,14 @@ block_134:
         } else if (0x10 & var_r7_5) {
             Func_080f9010(0x6F);
             Func_0800352c();
-            temp_r3_6 = temp_fp + 5;
-            if (temp_r3_6 >= sp34) {
+            if ((temp_fp + 5) >= sp34) {
                 if (temp_fp != 0) {
                     var_sl = sp24;
                 }
             } else {
                 var_sl = sp24;
-                if (temp_r3_6 == (Func_080022ec(sp34 - 1, 5) * 5)) {
-                    var_sl = (sp34 - temp_r3_6) - 1;
+                if ((temp_fp + 5) == (Func_080022ec(sp34 - 1, 5) * 5)) {
+                    var_sl = (sp34 - (temp_fp + 5)) - 1;
                     if (var_sl > sp24) {
                         var_sl = sp24;
                     }
@@ -626,9 +624,7 @@ block_134:
         } else if (0x20 & var_r7_5) {
             Func_080f9010(0x6F);
             Func_0800352c();
-            if (temp_fp != 0) {
-                var_sl = sp24;
-            } else {
+            if (!(temp_fp != 0)) {
                 temp_r3_7 = Func_080022ec(sp34 - 1, 5) * 5;
                 var_sl = sp24;
                 if (temp_r3_7 != 0) {
@@ -637,6 +633,8 @@ block_134:
                         var_sl = sp24;
                     }
                 }
+            } else {
+                var_sl = sp24;
             }
         }
         temp_r3_8 = (temp_r9->x * 8) - 2;
@@ -669,12 +667,12 @@ block_134:
                 Func_08022768(temp_r0_8, temp_r1_3, 2, 2, var_r2_2);
             } while (var_r5_3 <= 3);
         }
-        if (Data_03001e40 & 4) {
-            var_r6 = 0x03001388;
-            ((WordCopy)0x03001388)((void *)0x06006500, (const void *)0x08037308, 0x20);
+        if (!(Data_03001e40 & 4)) {
+            ((ArmFill)0x03000168)((void *)0x06006500, 0x20, 0x44444444);
             ((WordCopy)0x03001388)((void *)0x06006520, (const void *)0x08037308, 0x20);
         } else {
-            ((ArmFill)0x03000168)((void *)0x06006500, 0x20, 0x44444444);
+            var_r6 = 0x03001388;
+            ((WordCopy)0x03001388)((void *)0x06006500, (const void *)0x08037308, 0x20);
             ((WordCopy)0x03001388)((void *)0x06006520, (const void *)0x08037308, 0x20);
         }
         Func_080030f8(1U);

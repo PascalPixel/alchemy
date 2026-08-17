@@ -107,9 +107,9 @@ void Func_080d59b0(void *argument)
                 s32 phase = (particle->phase / 16) & 7;
                 const void *source;
 
-                if (phase <= 3) {
-                    source = runtime + (phase * 0x400);
-                    renderers[0](
+                if (!(phase <= 3)) {
+                    source = runtime + (phase * 0x400) - 0x1000;
+                    renderers[1](
                         render_context,
                         source,
                         (s16)((u32)particle->x >> 16) - 16,
@@ -117,8 +117,8 @@ void Func_080d59b0(void *argument)
                         32,
                         32);
                 } else {
-                    source = runtime + (phase * 0x400) - 0x1000;
-                    renderers[1](
+                    source = runtime + (phase * 0x400);
+                    renderers[0](
                         render_context,
                         source,
                         (s16)((u32)particle->x >> 16) - 16,

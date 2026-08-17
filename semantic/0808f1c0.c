@@ -19,8 +19,8 @@ struct Child_0808f1c0 {
     u8 flags9;
     u8 padding0a[0x12];
     u8 transfer_slot;
-    u8 padding1d[9];
     u8 field26;
+    u8 padding1d[9];
     u8 field27;
 };
 

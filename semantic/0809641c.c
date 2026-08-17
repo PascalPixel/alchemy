@@ -53,8 +53,8 @@ void Func_0809641c(struct EffectSlot *effect)
         effect->scale_y = 0x010000;
         effect->flag42 = 0;
         effect->flag41 = 1;
-        effect->state++;
         return;
+        effect->state++;
     }
 
     if (state == 1 || state == 2) {

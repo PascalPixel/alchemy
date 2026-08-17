@@ -3,14 +3,14 @@
 typedef struct EffectState {
     u8 padding0000[0x1f80];
     s16 timer;
-    s16 randomizeDelay;
     s16 alternateSound;
+    s16 randomizeDelay;
 } EffectState;
 
 typedef struct DisplayState {
-    u8 padding0000[0x2a01];
     u8 mode;
     u8 pending;
+    u8 padding0000[0x2a01];
 } DisplayState;
 
 typedef struct GlobalState {

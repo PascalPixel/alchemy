@@ -174,8 +174,8 @@ void Func_080d85d0(void *argument)
                         delta_z =
                             (*(s32 *)((u8 *)primary_object + 16) - particle->z) >>
                             8;
-                        particle->velocity_x += delta_x;
                         particle->velocity_y += delta_y;
+                        particle->velocity_x += delta_x;
                         particle->velocity_z += delta_z;
 
                         if ((u32)(delta_x + 0xfff) <= 0x1ffe &&

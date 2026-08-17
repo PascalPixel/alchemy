@@ -185,8 +185,8 @@ void *Func_08022b44(void *previous_window,
                     Func_08077080(encoded)[9], 2, window, 0x68, y);
 
                 row++;
-                start++;
                 entry += 2;
+                start++;
                 x += 0x10;
                 y += 2;
             }

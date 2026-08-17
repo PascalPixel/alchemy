@@ -3,8 +3,8 @@
 struct EffectVisual_08093874 {
     u8 unknown_00[9];
     u8 orientation;
-    u8 unknown_0a[0x1c];
     u8 state_26;
+    u8 unknown_0a[0x1c];
 };
 
 struct EffectObject_08093874 {
@@ -81,12 +81,12 @@ void Func_08093874(u32 source_id, s32 flags)
     effect->visual->state_26 = 0;
     effect->linked_object = source;
 
-    if ((flags & 0x100) != 0) {
-        effect->visual->orientation =
-            (effect->visual->orientation & (u8)~0x0c) | 4;
-    } else {
+    if (!((flags & 0x100) != 0)) {
         effect->visual->orientation =
             (effect->visual->orientation & (u8)~0x0c) |
             (source->visual->orientation & 0x0c);
+    } else {
+        effect->visual->orientation =
+            (effect->visual->orientation & (u8)~0x0c) | 4;
     }
 }

@@ -30,8 +30,8 @@ typedef struct SelectionState_080a5cc0 {
     u8 target_actor;
     void *prompt_object;
     u16 flags;
-    s16 retry_state;
     u8 padding224[0x36];
+    s16 retry_state;
     s16 result_message;
     u8 padding25c[0x0c];
     u8 action_category;
@@ -246,8 +246,8 @@ s32 Func_080a5cc0(
         }
 
         default:
-            finished = 1;
             break;
+            finished = 1;
         }
     }
 

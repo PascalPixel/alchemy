@@ -95,8 +95,8 @@ void Func_0809a484(
     if (object == NULL)
         return;
 
-    child = object->child;
     motion = templates[templateIndex];
+    child = object->child;
     Func_08009080(object, (flags + 1) & 0xf);
     Func_08009098(object, motion);
     object->mode55 = 0;

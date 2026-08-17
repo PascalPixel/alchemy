@@ -49,8 +49,8 @@ s32 Func_0801d4cc(void)
             s32 x;
             s32 y;
 
-            redraw = 0;
             selection = Func_080022fc(selection + 5, 5);
+            redraw = 0;
             row_value = (s8)state[0x594 + selection];
             state[0x594 + selection] = Func_080022fc(
                 row_value + S8_AT(state, 0x599 + selection),
@@ -148,11 +148,7 @@ s32 Func_0801d4cc(void)
             redraw = 1;
         }
 
-        if (*(u32 *)0x03001c94 & 9) {
-            result = 0;
-            Func_080f9010(0x70);
-            break;
-        } else {
+        if (!(*(u32 *)0x03001c94 & 9)) {
             if (*(u32 *)0x03001c94 & 2) {
                 result = -1;
                 Func_080f9010(0x71);
@@ -179,6 +175,10 @@ s32 Func_0801d4cc(void)
                     redraw = 1;
                 }
             }
+        } else {
+            result = 0;
+            Func_080f9010(0x70);
+            break;
         }
     }
 

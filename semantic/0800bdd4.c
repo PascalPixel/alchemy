@@ -27,7 +27,6 @@ typedef char Object_0800bdd4_children_offset[
 void Func_0800bdd4(struct Object_0800bdd4 *object)
 {
     u32 zero;
-    u32 *source;
     volatile u32 *dma;
     u32 control;
     void **slot;
@@ -43,11 +42,10 @@ void Func_0800bdd4(struct Object_0800bdd4 *object)
             Func_0800bc48(*slot++);
             remaining--;
         } while (remaining >= 0);
-        source = &zero;
-        *source = 0;
+        *(&zero) = 0;
         dma = (volatile u32 *)0x040000d4;
         control = 0x8500000e;
-        dma[0] = (u32)source;
+        dma[0] = (u32)(&zero);
         dma[1] = (u32)object;
         dma[2] = control;
     }

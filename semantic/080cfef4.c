@@ -193,12 +193,7 @@ void Func_080cfef4(void *scene)
             s32 variant = S32_AT(scene, 4) != 0;
             s32 table_index;
 
-            if (frame <= 0x57) {
-                renderers[S32_AT(scene, 4)](
-                    graphics_source, runtime,
-                    U8_AT((void *)0x080ee10c, variant * 7),
-                    U8_AT((void *)0x080ee11a, 0) + y, 0x39, 0x62);
-            } else {
+            if (!(frame <= 0x57)) {
                 table_index = variant * 7;
                 if (frame <= 0x5b) {
                     renderers[S32_AT(scene, 4)](
@@ -240,6 +235,11 @@ void Func_080cfef4(void *scene)
                         graphics_source, (void *)0x020158d2,
                         U8_AT((void *)0x080ee10c, table_index + 6),
                         U8_AT((void *)0x080ee11a, 6) + y, 0x4c, 0x19);
+            } else {
+                renderers[S32_AT(scene, 4)](
+                    graphics_source, runtime,
+                    U8_AT((void *)0x080ee10c, variant * 7),
+                    U8_AT((void *)0x080ee11a, 0) + y, 0x39, 0x62);
             }
         }
 

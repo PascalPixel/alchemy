@@ -22,8 +22,8 @@ struct Particle_080dc968 {
 };
 
 struct Point4_080dc968 {
-    s32 x;
     s32 y;
+    s32 x;
     s32 z;
     s32 unknown_0c;
 };
@@ -360,37 +360,7 @@ void Func_080dc968(struct Scene_080dc968 *scene)
 
             if (frame < i * 2 && frame <= 40)
                 continue;
-            if (particle->life >= 0) {
-                s32 stage;
-                s32 width;
-                s32 height;
-
-                if (particle->life <= 23) {
-                    stage = particle->life / 4;
-                    width = ((const u8 *)0x080ede9f)[stage];
-                    height = ((const u8 *)0x080edea5)[stage];
-                    renderers[i & 1](
-                        render_context,
-                        (u8 *)0x02010000
-                            + ((const u16 *)0x080edeb2)[stage],
-                        particle->x - (width >> 1) - 8,
-                        particle->y
-                            + ((const u8 *)0x080edeab)[stage]
-                            - 40,
-                        width, height);
-                    if (particle->life <= 11) {
-                        Render_080dc968(
-                            renderers[0], render_context, runtime,
-                            0x16ac, particle->x + 4,
-                            particle->y - 40, 16, 21);
-                        Render_080dc968(
-                            renderers[0], render_context, runtime,
-                            0x17fc, particle->x - 16,
-                            particle->y - 19, 29, 35);
-                    }
-                }
-                particle->life++;
-            } else {
+            if (!(particle->life >= 0)) {
                 s32 clipped_height = 24;
 
                 if (particle->y > 56)
@@ -426,6 +396,36 @@ void Func_080dc968(struct Scene_080dc968 *scene)
                             scene->object_ids[target], 1);
                     }
                 }
+            } else {
+                s32 stage;
+                s32 width;
+                s32 height;
+
+                if (particle->life <= 23) {
+                    stage = particle->life / 4;
+                    width = ((const u8 *)0x080ede9f)[stage];
+                    height = ((const u8 *)0x080edea5)[stage];
+                    renderers[i & 1](
+                        render_context,
+                        (u8 *)0x02010000
+                            + ((const u16 *)0x080edeb2)[stage],
+                        particle->x - (width >> 1) - 8,
+                        particle->y
+                            + ((const u8 *)0x080edeab)[stage]
+                            - 40,
+                        width, height);
+                    if (particle->life <= 11) {
+                        Render_080dc968(
+                            renderers[0], render_context, runtime,
+                            0x16ac, particle->x + 4,
+                            particle->y - 40, 16, 21);
+                        Render_080dc968(
+                            renderers[0], render_context, runtime,
+                            0x17fc, particle->x - 16,
+                            particle->y - 19, 29, 35);
+                    }
+                }
+                particle->life++;
             }
         }
 

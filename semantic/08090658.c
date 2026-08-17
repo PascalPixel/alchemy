@@ -18,13 +18,13 @@
 typedef s32 (*Resident_03000380)(s32 arg0, s32 arg1, s32 arg2);
 
 struct TileFadeState_08090658 {
-    u8 unknown_000[0x508];
     u8 packed_tiles[0x22];
+    u8 unknown_000[0x508];
     u16 fade_position;
     u8 unknown_52c[0x0d];
     u8 buffer_index;
-    s8 fade_start;
     s8 fade_end;
+    s8 fade_start;
     s8 fade_frames;
     s8 fade_progress;
 };
@@ -88,10 +88,10 @@ void Func_08090658(void)
         u8 packed_index = tile_order[((phase & 0x1f) * 2 + index) & 0x3f];
         u8 *entry = &state->packed_tiles[packed_index >> 1];
 
-        if ((packed_index & 1) != 0) {
-            *entry = (*entry & 0x0f) | (nibble << 4);
-        } else {
+        if (!((packed_index & 1) != 0)) {
             *entry = (*entry & 0xf0) | nibble;
+        } else {
+            *entry = (*entry & 0x0f) | (nibble << 4);
         }
     }
 

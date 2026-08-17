@@ -363,8 +363,8 @@ block_67:
             case 9:
                 /* Preserve selector 9's distinct RNG sample site. */
                 random_sample = Func_08004458();
-                var_r2_2 = 0x1F & random_sample;
                 var_r3_5 = 0x10;
+                var_r2_2 = 0x1F & random_sample;
 block_63:
                 M2C_FIELD(var_r5, s32 *, 4) = (s32) (M2C_FIELD(temp_r6, s32 *, 0xC) + temp_r3_2 + ((var_r3_5 - var_r2_2) << 0x10));
                 break;
@@ -409,10 +409,10 @@ block_83:
                 if (((u32) (selector - 3) <= 1U) || (selector == 0xB) || (selector == 5)) {
                     M2C_FIELD(var_r5, s32 *, 0x10) = 0;
                 } else {
-                    if (selector == 6) {
-                        var_r0_4 = M2C_FIELD(temp_r7, s32 *, 0xC) + ((s32) (sp40 + (sp40 >> 0x1F)) >> 1) + ((0xF & Func_08004458()) << 0x10);
-                    } else {
+                    if (!(selector == 6)) {
                         var_r0_4 = (M2C_FIELD(temp_r7, s32 *, 0xC) + sp40) - ((0xF & Func_08004458()) << 0x10);
+                    } else {
+                        var_r0_4 = M2C_FIELD(temp_r7, s32 *, 0xC) + ((s32) (sp40 + (sp40 >> 0x1F)) >> 1) + ((0xF & Func_08004458()) << 0x10);
                     }
                     goto block_83;
                 }
@@ -522,8 +522,8 @@ loop_121:
 
         } else {
             sp2C = sp1C;
-            sp24 = 0;
             sp28 = (u8 *)0x02010000 + (sp3C * 0x1C);
+            sp24 = 0;
 loop_124:
             if ((s32) (sp24 + sp2C) >= sp78) {
 
@@ -537,8 +537,8 @@ loop_124:
                 M2C_FIELD(temp_r6_2, s32 *, 8) = (s32) (M2C_FIELD(temp_r6_2, s32 *, 8) + M2C_FIELD(temp_r6_2, s32 *, 0x14));
                 if (selector == 6) {
                     var_r5_2 = (void *)0x02013800;
-                    var_r2_3 = 0;
                     var_r1_2 = 0x200;
+                    var_r2_3 = 0;
 loop_128:
                     if (M2C_FIELD(var_r5_2, s32 *, 0x18) == 0) {
                         M2C_FIELD(var_r5_2, s32 *, 0) = projected[0] << 0x10;
@@ -568,10 +568,10 @@ particle_pool_ready:
                     temp_r1_2 = M2C_FIELD(sp38, s32 *, 8);
                     temp_r2_3 = M2C_FIELD(temp_r3_3, u32 *, 0x7080);
                     if (temp_r1_2 < 0) {
-                        if ((temp_r2_3 >> 0x1F) == 0) {
-
-                        } else {
+                        if (!((temp_r2_3 >> 0x1F) == 0)) {
                             goto block_138;
+                        } else {
+
                         }
                     } else if (((u32) ~temp_r2_3 >> 0x1F) == 0) {
 

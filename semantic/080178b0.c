@@ -102,8 +102,8 @@ s32 Func_080178b0(s32 code, void *tile_data)
         text_colour = 8;
         shadow_colour = 0;
     } else {
-        text_colour = *(const u16 *)(state + 0xeae);
         shadow_colour = 1;
+        text_colour = *(const u16 *)(state + 0xeae);
     }
 
     entry = &FONT_080178B0[code & 0xff];
@@ -111,7 +111,11 @@ s32 Func_080178b0(s32 code, void *tile_data)
     glyph = entry->rows;
 
     mode = *(const u16 *)(state + 0xeac);
-    if (mode == 1) {
+    if (!(mode == 1)) {
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[SHADOW_ORIGIN_080178B0],
+                      shadow_colour);
+        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
+    } else {
         /*
          * Emphasised text: every copy is drawn twice, one pixel apart, and
          * the advance grows by one pixel to match.
@@ -123,10 +127,6 @@ s32 Func_080178b0(s32 code, void *tile_data)
         ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
         ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0 + 1], text_colour);
         advance += 1;
-    } else {
-        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[SHADOW_ORIGIN_080178B0],
-                      shadow_colour);
-        ((GlyphBlit_03000214)0x03000214)(glyph, &bitmap[GLYPH_ORIGIN_080178B0], text_colour);
     }
 
     if ((u16)second_code != 0) {

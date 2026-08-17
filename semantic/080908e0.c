@@ -23,8 +23,8 @@ typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 struct PaletteDisplay_080908e0 {
     u16 accumulated[1344];
-    u8 unknown_0000[0x380];
     u16 target[1344];
+    u8 unknown_0000[0x380];
     u16 increments[1344];
     u16 palettes[2][448];
     u8 active_palette;
@@ -68,16 +68,16 @@ void Func_080908e0(void) {
     }
 
     display->fade_progress++;
-    if ((s8)display->fade_progress < display->fade_frames) {
-        for (index = 0; index < 1344; index++) {
-            display->accumulated[index] += display->increments[index];
-        }
-    } else {
+    if (!((s8)display->fade_progress < display->fade_frames)) {
         ((WordCopy)0x03001388)(
             display->accumulated,
             display->target,
             0xA80);
         display->fade_frames = 0;
+    } else {
+        for (index = 0; index < 1344; index++) {
+            display->accumulated[index] += display->increments[index];
+        }
     }
 
     rendered = display->palettes[display->active_palette ^ 1];

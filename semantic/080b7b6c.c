@@ -179,44 +179,8 @@ void Func_080b7b6c(s16 *list, s32 announce)
                         if (saved_kind != 0) {
                             goto advance;
                         }
-                        if ((slot->resource_04 & 0xfff) == 0x1dc ||
-                            (slot->resource_04 & 0xfff) == 0x1e3) {
-                            RenderManager_080b7b6c *manager = Data_03001e68;
-                            void **bundle_base = (void **)(
-                                (u8 *)manager +
-                                manager->multi_object_count_18 * 4);
-                            void **insertion = (void **)(
-                                (u8 *)bundle_base + 8);
-                            u16 resource = slot->resource_04;
-                            Render_080b7b6c *render;
-
-                            *kind_cell = 2;
-                            *(void ***)(object + 0x50) = insertion;
-                            ((Resident_03000164)0x03000164)(
-                                insertion, 16, 0);
-                            render = Func_08009030(resource);
-                            if (render != 0) {
-                                render->scale_18 = multiply(
-                                    render->scale_18, slot->scale_18);
-                                *(s16 *)(object + 0x20) =
-                                    Func_08185000(resource)[9] >> 1;
-                                *insertion = render;
-                                insertion = (void **)(
-                                    (u8 *)bundle_base + 12);
-                            }
-                            /* Reference stores through a null render
-                             * unguarded; reproduced faithfully. */
-                            ((Render_080b7b6c *)render)->state_26 =
-                                saved_kind;
-                            render = Func_08009030(resource + 0x2001);
-                            if (render != 0) {
-                                render->scale_18 = multiply(
-                                    render->scale_18, slot->scale_18);
-                                *insertion = render;
-                            }
-                            ((Render_080b7b6c *)render)->state_26 =
-                                saved_kind;
-                        } else {
+                        if (!((slot->resource_04 & 0xfff) == 0x1dc ||
+                            (slot->resource_04 & 0xfff) == 0x1e3)) {
                             Render_080b7b6c *render =
                                 Func_08009030(slot->resource_04);
 
@@ -258,6 +222,42 @@ void Func_080b7b6c(s16 *list, s32 announce)
                                     render->state_26 = saved_kind;
                                 }
                             }
+                        } else {
+                            RenderManager_080b7b6c *manager = Data_03001e68;
+                            void **bundle_base = (void **)(
+                                (u8 *)manager +
+                                manager->multi_object_count_18 * 4);
+                            void **insertion = (void **)(
+                                (u8 *)bundle_base + 8);
+                            u16 resource = slot->resource_04;
+                            Render_080b7b6c *render;
+
+                            *kind_cell = 2;
+                            *(void ***)(object + 0x50) = insertion;
+                            ((Resident_03000164)0x03000164)(
+                                insertion, 16, 0);
+                            render = Func_08009030(resource);
+                            if (render != 0) {
+                                render->scale_18 = multiply(
+                                    render->scale_18, slot->scale_18);
+                                *(s16 *)(object + 0x20) =
+                                    Func_08185000(resource)[9] >> 1;
+                                *insertion = render;
+                                insertion = (void **)(
+                                    (u8 *)bundle_base + 12);
+                            }
+                            /* Reference stores through a null render
+                             * unguarded; reproduced faithfully. */
+                            ((Render_080b7b6c *)render)->state_26 =
+                                saved_kind;
+                            render = Func_08009030(resource + 0x2001);
+                            if (render != 0) {
+                                render->scale_18 = multiply(
+                                    render->scale_18, slot->scale_18);
+                                *insertion = render;
+                            }
+                            ((Render_080b7b6c *)render)->state_26 =
+                                saved_kind;
                         }
                         Func_080b7aac(id);
                     }

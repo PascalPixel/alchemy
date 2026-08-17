@@ -183,8 +183,8 @@ s32 Func_080a60d4(const u16 *actions)
 
         if ((Data_03001c94 & 2) != 0) {
             Func_080f9010(0x71);
-            result = -1;
             break;
+            result = -1;
         }
         if ((Data_03001b04 & 0x20) != 0) {
             Func_080f9010(0x6f);

@@ -12,8 +12,8 @@ typedef void (*Renderer_080dfe2c)(
     ((s32)((u32)(left) * (u32)(right)) >> (shift))
 
 struct Object_080dfe2c {
-    s32 x;
     s32 y;
+    s32 x;
     s32 unused08;
     s32 velocity_x;
     s32 velocity_y;

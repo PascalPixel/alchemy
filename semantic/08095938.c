@@ -95,8 +95,8 @@ void Func_08095938(void *effect_pointer) {
         *(u16 *)(effect + 0x3E) = elevation;
         *(s8 *)(effect + 0x40) = stage;
     }
-    angle = *(u16 *)(effect + 0x3C);
     elevation = *(u16 *)(effect + 0x3E);
+    angle = *(u16 *)(effect + 0x3C);
     position.x = *(s32 *)(effect + 0x14);
     position.z = *(s32 *)(effect + 0x18);
     Func_0800447c((s16)angle << 16, (s16)elevation << 11, &position);

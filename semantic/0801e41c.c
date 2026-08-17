@@ -45,11 +45,11 @@ void Func_0801e41c(struct Window *window,
                 case 0xf018:
                     break;
                 case 0xf011:
+                    break;
                     value = 0xf018;
-                    break;
                 case 0xf00e:
-                    value = 0xf009;
                     break;
+                    value = 0xf009;
                 }
             } else if (position == y2) {
                 switch (value) {
@@ -60,11 +60,11 @@ void Func_0801e41c(struct Window *window,
                 case 0xf019:
                     break;
                 case 0xf014:
+                    break;
                     value = 0xf019;
-                    break;
                 case 0xf00e:
-                    value = 0xf00a;
                     break;
+                    value = 0xf00a;
                 }
             } else {
                 switch (value) {
@@ -75,11 +75,11 @@ void Func_0801e41c(struct Window *window,
                 case 0xf009:
                 case 0xf00a:
                 case 0xf00e:
+                    break;
                     value = 0xf00d;
-                    break;
                 default:
-                    value = 0xf00f;
                     break;
+                    value = 0xf00f;
                 }
             }
             *tile = value;
@@ -115,11 +115,11 @@ void Func_0801e41c(struct Window *window,
             case 0xf01a:
                 break;
             case 0xf016:
+                break;
                 value = 0xf01a;
-                break;
             case 0xf00f:
-                value = 0xf00b;
                 break;
+                value = 0xf00b;
             }
         } else if (position == x2) {
             switch (value) {
@@ -130,11 +130,11 @@ void Func_0801e41c(struct Window *window,
             case 0xf01b:
                 break;
             case 0xf017:
+                break;
                 value = 0xf01b;
-                break;
             case 0xf00f:
-                value = 0xf00c;
                 break;
+                value = 0xf00c;
             }
         } else {
             switch (value) {
@@ -145,11 +145,11 @@ void Func_0801e41c(struct Window *window,
             case 0xf00b:
             case 0xf00c:
             case 0xf00f:
+                break;
                 value = 0xf00d;
-                break;
             default:
-                value = 0xf00e;
                 break;
+                value = 0xf00e;
             }
         }
         *tile = value;

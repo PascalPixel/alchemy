@@ -109,8 +109,8 @@ s32 Func_080a38d0(s32 mode)
     s32 redraw = 1;
     s32 position_bytes = 0;
 
-    Func_080a23f4(state->main_window, 13, 5, 17, 12);
     Func_08015270(state->main_window);
+    Func_080a23f4(state->main_window, 13, 5, 17, 12);
     Func_08077008(state->actions[state->initial_position]);
     Func_080041d8(0x080a3c09, 0x0c80);
 
@@ -120,7 +120,9 @@ s32 Func_080a38d0(s32 mode)
             break;
         }
 
-        if (redraw != 0) {
+        if (!(redraw != 0)) {
+            position_bytes = position * 2;
+        } else {
             struct ActionMenuCursor *cursor;
             s32 row;
             u16 action;
@@ -179,7 +181,9 @@ s32 Func_080a38d0(s32 mode)
                         0);
                 }
 
-                if (Func_080770c0(0x151) == 0 && description_open == 0) {
+                if (!(Func_080770c0(0x151) == 0 && description_open == 0)) {
+                    Func_080770d0(0x151);
+                } else {
                     Func_08015270(state->description_window);
                     Func_08015080(
                         (state->subject_id & 0x01ff) + 0x75,
@@ -187,12 +191,8 @@ s32 Func_080a38d0(s32 mode)
                         0,
                         0);
                     description_open = 1;
-                } else {
-                    Func_080770d0(0x151);
                 }
             }
-        } else {
-            position_bytes = position * 2;
         }
 
         Func_080a1a40(((position_bytes + position) * 8) - 10, 16);
@@ -205,8 +205,8 @@ s32 Func_080a38d0(s32 mode)
             }
 
             Func_080f9010(0x70);
-            selection_result = state->actions[position] & 0xff;
             break;
+            selection_result = state->actions[position] & 0xff;
         }
 
         if ((Data_03001c94 & 2) != 0) {

@@ -87,9 +87,7 @@ finished:
         s32 i;
 
         for (i = 0; i <= line; i++) {
-            if (word_counts[i] <= 1) {
-                spacing[i] = 0;
-            } else {
+            if (!(word_counts[i] <= 1)) {
                 s32 available =
                     ((((u32)(max_width + 0x13) >> 3) * 8) - 0x10) -
                     line_widths[i] - 4;
@@ -101,6 +99,8 @@ finished:
                 if ((u32)result > 0xc00)
                     result = 0x200;
                 spacing[i] = result;
+            } else {
+                spacing[i] = 0;
             }
         }
     }

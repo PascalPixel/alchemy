@@ -3,8 +3,8 @@
 
 typedef struct Vec3_080965a8 {
     s32 x;
-    s32 y;
     s32 z;
+    s32 y;
 } Vec3_080965a8;
 
 typedef struct Component_080965a8 {

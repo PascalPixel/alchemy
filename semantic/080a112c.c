@@ -246,8 +246,8 @@ void Func_080a112c(s32 unused, u16 character_id, s32 slot, s32 mode)
 
         for (i = 0; i < 32; i++) {
             if ((character->equipment[i].item & 0x3fff) == item_id) {
-                equipped = 1;
                 break;
+                equipped = 1;
             }
         }
 

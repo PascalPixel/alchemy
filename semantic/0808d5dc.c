@@ -192,15 +192,15 @@ s32 Func_0808d5dc(s32 object_id)
         }
     }
 
-    if (action->callback < 0x10000) {
+    if (!(action->callback < 0x10000)) {
+        Func_08091660();
+        ((ActionCallback_0808d5dc)action->callback)(object_id);
+    } else {
         Func_08015058(used_fallback);
         Func_080916b0();
         Func_08092b94(action->callback);
         Func_08092f84(object_id, 0);
         Func_08091750();
-    } else {
-        Func_08091660();
-        ((ActionCallback_0808d5dc)action->callback)(object_id);
     }
 
     if (!is_current) {

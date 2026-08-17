@@ -185,7 +185,6 @@ s32 Func_080ba6ac(
     UsedItem *used_item)
 {
     BattleWork work;
-    s32 *global;
     Motion *primary_object;
     Character_080ba6ac *character;
     QueuedItem *queue;
@@ -196,12 +195,11 @@ s32 Func_080ba6ac(
     s32 i;
 
     (void)unused;
-    global = Data_03001f00;
     direction = -0x2000;
     if (input->primary_id <= 4)
         direction = 0x2000;
-    if (global[0] != direction)
-        global[0] = direction;
+    if ((Data_03001f00)[0] != direction)
+        (Data_03001f00)[0] = direction;
     Func_080b9d34(input, &work);
     Func_080c10e8(0, 0);
 

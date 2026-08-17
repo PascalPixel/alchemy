@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct OamCommand_08018efc {
-    struct OamCommand_08018efc *next;
     u16 attr0;
+    struct OamCommand_08018efc *next;
     u16 attr1;
     u16 attr2;
     u16 affine;
@@ -21,8 +21,8 @@ struct SpriteNode_08018efc {
 };
 
 struct DisplayState_08018efc {
-    u8 unknown_000[0x698];
     struct SpriteNode_08018efc sprites[64];
+    u8 unknown_000[0x698];
     u8 unknown_d98[0x51e];
     u16 marker_resource;
 };

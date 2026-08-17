@@ -29,8 +29,8 @@ struct Particle_080d5e54 {
     s32 x;
     s32 y;
     s32 z;
-    s32 velocity_x;
     s32 velocity_y;
+    s32 velocity_x;
     s32 velocity_z;
     s32 age;
 };
@@ -133,8 +133,8 @@ void Func_080d5e54(struct Scene_080d5e54 *scene)
         Func_080051d8(effect_context, (u8 *)effect_context + 12);
         if (frame >= 30 && frame <= 69) {
             position[0] += velocity[0];
-            position[1] += velocity[1];
             position[2] += velocity[2];
+            position[1] += velocity[1];
         }
         Func_08004cb4(position);
 

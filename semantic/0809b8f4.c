@@ -87,8 +87,8 @@ void Func_0809b8f4(struct Mover_0809b8f4 *mover)
         return;
     }
 
-    offset_x = mover->target_x - mover->x;
     offset_y = mover->target_y - mover->y;
+    offset_x = mover->target_x - mover->x;
 
     if (mover->check_arrival != 0) {
         whole_x = offset_x;

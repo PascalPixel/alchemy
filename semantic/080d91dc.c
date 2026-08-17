@@ -162,13 +162,7 @@ void Func_080d91dc(
     Func_080e0524(0x76, runtime, 0, 0);
     Func_080e0524(0xb7, runtime + 0x60e, 1, 1);
 
-    if (mode == 3 || mode == 5) {
-        Func_080e0524(0xb0, runtime + 0x2b8e, 1, 1);
-        ((Transfer_080d91dc)0x03001388)(
-            (void *)0x05000000,
-            Func_08002f40(mode == 3 ? 0x93 : 0x8d),
-            0x80);
-    } else {
+    if (!(mode == 3 || mode == 5)) {
         s32 palette;
 
         if (mode == 4)
@@ -190,6 +184,12 @@ void Func_080d91dc(
         ((Transfer_080d91dc)0x03001388)(
             (void *)0x05000000,
             Func_08002f40(palette),
+            0x80);
+    } else {
+        Func_080e0524(0xb0, runtime + 0x2b8e, 1, 1);
+        ((Transfer_080d91dc)0x03001388)(
+            (void *)0x05000000,
+            Func_08002f40(mode == 3 ? 0x93 : 0x8d),
             0x80);
     }
 

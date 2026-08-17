@@ -24,15 +24,15 @@ struct OamEntry_080f6440 {
 
 struct MenuState_080f6440 {
     struct MenuRecord_080f6440 records[5];
-    s32 mode;
     s32 row;
+    s32 mode;
     s32 column;
-    s32 option_count;
     u16 input_latched;
+    s32 option_count;
     u16 input_pressed;
     u16 display_flags;
-    u16 transition_timer;
     u8 padding_a4[4];
+    u16 transition_timer;
     s32 frame;
     s32 icon_state[7];
     struct OamEntry_080f6440 oam[128];
@@ -49,8 +49,8 @@ struct DmaChannel_080f6440 {
 };
 
 struct PresentationWorkspace_080f6440 {
-    u8 padding_0000[0x7780];
     s32 effect_mode;
+    u8 padding_0000[0x7780];
     s32 effect_value;
     u8 padding_7788[4];
     s32 effect_timer;
@@ -292,8 +292,8 @@ void UpdateMenuPresentationAndOam(void) {
         goto common_render_init;
     }
     temp_r2 = &state->mode;
-    spC = temp_r2;
     sp18 = temp_r2;
+    spC = temp_r2;
     temp_r5 = M2C_FIELD(temp_r7, s32 *, 0x8C);
     if (temp_r5 == 0) {
         temp_r0 = Func_080772e0(0xE4);
@@ -311,11 +311,11 @@ void UpdateMenuPresentationAndOam(void) {
         }
         if (0x40 & M2C_FIELD(temp_r7, u16 *, 0xA0)) {
             temp_r3_2 = M2C_FIELD(temp_r7, s32 *, 0x98);
-            if ((temp_r3_2 <= 3) && (temp_r0 > temp_r3_2)) {
+            if (!((temp_r3_2 <= 3) && (temp_r0 > temp_r3_2))) {
+                Func_080f9010(0x71);
+            } else {
                 M2C_FIELD(temp_r7, s32 *, 0x98) = (s32) (temp_r3_2 + 1);
                 Func_080f9010(0x6F);
-            } else {
-                Func_080f9010(0x71);
             }
         }
         if (0x80 & M2C_FIELD(temp_r7, u16 *, 0xA0)) {
@@ -415,7 +415,10 @@ block_35:
             }
         }
         temp_r2_2 = *sp18;
-        if (!(temp_r2_2 != 5)) {
+        if (temp_r2_2 != 5) {
+            Func_08015018(M2C_FIELD(temp_r7, s32 *, 0x4C8), 1);
+            var_fp = (s32 *)(temp_r7 + 0x98);
+        } else {
             temp_r2_3 = M2C_FIELD(temp_r7, s32 *, 0x90);
             if (temp_r2_3 == 5) {
                 if (var_r9 != 0) {
@@ -468,9 +471,6 @@ block_65:
                 M2C_FIELD(temp_r7, s32 *, 0x618) = temp_r2_2;
                 var_fp = (s32 *)(temp_r7 + 0x98);
             }
-        } else {
-            Func_08015018(M2C_FIELD(temp_r7, s32 *, 0x4C8), 1);
-            var_fp = (s32 *)(temp_r7 + 0x98);
         }
     } else if (temp_r5 == 2) {
         temp_r3_5 = M2C_FIELD(temp_r7, s32 *, 0xA8) + 1;
@@ -780,8 +780,8 @@ common_render:
     temp_r3_12 = sp20 * 8;
     var_r1_4 = temp_r3_12 + 0xCC;
     var_r6_12 = (u8 *)0x080F871A;
-    var_ip_2 = (u8 *)0x080F8728;
     var_r5_7 = 0;
+    var_ip_2 = (u8 *)0x080F8728;
     var_r4_2 = var_r1_4;
     var_r0_7 = temp_r3_12 + 0xC8;
     do {
@@ -854,9 +854,9 @@ common_render:
     temp_r3_18 = temp_r1_5 * 8;
     var_sl_2 = 0;
     var_r5_10 = 5;
+    var_r1_6 = temp_r3_18;
     var_r4_5 = temp_r3_18 + 0xCC;
     var_r0_9 = temp_r3_18 + 0xC8;
-    var_r1_6 = temp_r3_18;
     do {
         M2C_FIELD(temp_r7, s32 *, var_r0_9) = (((0x204 - ((1 & var_sl_2) * 8)) & 0x1FF) << 0x10) | sp1C | var_r5_10 | 0x80002000;
         temp_r2_8 = *var_fp;

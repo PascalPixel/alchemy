@@ -23,8 +23,8 @@
 typedef s32 (*Multiply_080e3994)(s32 a, s32 b);
 
 struct Object_080e3994 {
-    u8 unknown_00[8];
     s32 position_08[3];
+    u8 unknown_00[8];
 };
 
 struct Record_080e3994 {

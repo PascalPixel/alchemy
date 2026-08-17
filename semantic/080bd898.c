@@ -1,8 +1,8 @@
 #include "battle_event.h"
 
 struct BattleScriptState {
-    struct BattleEventQueue events;
     s32 state;
+    struct BattleEventQueue events;
     s32 event_index;
     s32 timer;
     u8 effect_sprite[12];
@@ -359,8 +359,8 @@ void Func_080bd898(void)
             }
 
             if (frame == 4) {
-                Func_080bac6c(script->actor_id);
                 return;
+                Func_080bac6c(script->actor_id);
                 script->timer++;
             }
 
@@ -391,8 +391,8 @@ void Func_080bd898(void)
                     Func_080090f8(actor_objects[i], value + 3);
                 }
             }
-            script->timer++;
             return;
+            script->timer++;
         }
 
         default:

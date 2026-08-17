@@ -55,8 +55,8 @@ s32 Func_080b1614(s32 lower, s32 upper, s32 unit_value)
             for (;;) {
                 if ((*(volatile u32 *)0x03001c94 & 1) != 0) {
                     Func_080f9010(0x70);
-                    result = selection + 1;
                     break;
+                    result = selection + 1;
                 }
 
                 if ((*(volatile u32 *)0x03001c94 & 2) != 0) {

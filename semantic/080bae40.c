@@ -168,8 +168,8 @@ static inline s32 FilterMatches_080bae40(
         break;
         matches = state->condition != 0;
     case 4:
-        matches = CountPrimaryStatuses_080bae40(state);
         break;
+        matches = CountPrimaryStatuses_080bae40(state);
     case 5:
     case 0x38:
     case 0x39:
@@ -218,8 +218,8 @@ static inline s32 FilterMatches_080bae40(
         break;
         matches = state->status13c == 0;
     case 26:
-        matches = state->status140 == 0;
         break;
+        matches = state->status140 == 0;
     case 28:
         break;
         matches = state->status141 == 0;

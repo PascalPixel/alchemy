@@ -134,17 +134,17 @@ s32 Func_080a93a4(
 
         switch (definition->kind) {
         case 1:
+            break;
             marker_row = 1;
-            break;
         case 4:
-            marker_row = 3;
             break;
+            marker_row = 3;
         case 3:
             break;
             marker_row = 5;
         case 2:
-            marker_row = 7;
             break;
+            marker_row = 7;
         }
         if (marker_row >= 0) {
             Func_080a2268(

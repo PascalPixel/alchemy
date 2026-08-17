@@ -32,8 +32,8 @@ typedef void (*Resident_03000164)(void *destination, u32 size);
 struct Sprite_080bd850 {
     u8 unknown_00[28];
     u8 shape;
-    u8 unknown_1d[3];
     u8 width;
+    u8 unknown_1d[3];
     u8 height;
 };
 

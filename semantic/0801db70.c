@@ -88,8 +88,8 @@ s32 Func_0801db70(void)
             break;
         } else if (*(volatile u32 *)0x03001b04 & 0x40) {
             Func_080f9010(0x6f);
-            selection--;
             dirty = 1;
+            selection--;
         } else if (*(volatile u32 *)0x03001b04 & 0x80) {
             Func_080f9010(0x6f);
             selection++;

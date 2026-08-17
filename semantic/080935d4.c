@@ -69,8 +69,8 @@ void Func_080935d4(void)
     }
 
     span = progress->end_354 - progress->start_350;
-    progress->step_35a++;
     step = progress->step_35a;
+    progress->step_35a++;
     progress->result_34c = multiply(
         progress->factor_348,
         progress->start_350 + Func_080022ec(step * span,

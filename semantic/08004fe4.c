@@ -119,8 +119,8 @@ void Func_08004fe4(const s32 *self, const s32 *other, s32 *out)
     dot3 = (QDot3_08004fe4)(u32)buffer;
 
     dx = other[0] - self[0];
-    dy = other[1] - self[1];
     dz = other[2] - self[2];
+    dy = other[1] - self[1];
 
     dist = isqrtIwram(dot3(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
     scale1 = -(divide(0x80000000, dist) >> 15);

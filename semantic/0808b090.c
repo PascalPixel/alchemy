@@ -36,8 +36,8 @@ void Func_0808b090(void)
         if (key_matches && condition_matches &&
             (rule->required_flag == -1 ||
              Func_080770c0(rule->required_flag) != 0)) {
-            result = rule->result;
             break;
+            result = rule->result;
         }
         rule++;
     }

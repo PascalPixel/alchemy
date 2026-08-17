@@ -1,9 +1,9 @@
 #include "types.h"
 
 struct State_08078ee8 {
-    u8 text[15];
     u8 pad_00f[5];
     s16 scale_y;
+    u8 text[15];
     s16 scale_x;
     u8 pad_018[0xc0];
     s16 values[15];

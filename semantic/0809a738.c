@@ -42,9 +42,9 @@ struct Particle_0809a738 {
     s32 x_08;
     u8 unknown_0c[4];
     s32 z_10;
-    u8 unknown_14[0x50];
     u16 steps_64;
     s16 turns_66;
+    u8 unknown_14[0x50];
 };
 
 extern u8 Data_0809f0b0[];

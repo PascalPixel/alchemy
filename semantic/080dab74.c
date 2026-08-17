@@ -179,18 +179,18 @@ void Func_080dab74(struct SceneContext_080dab74 *context) {
                                      (OrbitWidths_080dab74[image]), height);
                     }
 
-                    if (frame <
-                        SceneConfigs_080dab74[work->context->variant * 3 + 2]) {
+                    if (!(frame <
+                        SceneConfigs_080dab74[work->context->variant * 3 + 2])) {
+                        particle->radius_or_z += 8;
+                        particle->y -= (Func_080022fc(index, 5) + 2) << 16;
+                        if (lower > particle->y) lower = particle->y;
+                        if (upper < particle->y) upper = particle->y;
+                    } else {
                         if (frame > index + 0x10) {
                             if (particle->radius_or_z > 4) particle->radius_or_z -= 2;
                             if (particle->y <= 0x2fffff) particle->y += 0x50000;
                             particle->angle_or_x += 0x200;
                         }
-                    } else {
-                        particle->radius_or_z += 8;
-                        particle->y -= (Func_080022fc(index, 5) + 2) << 16;
-                        if (lower > particle->y) lower = particle->y;
-                        if (upper < particle->y) upper = particle->y;
                     }
                 }
             }

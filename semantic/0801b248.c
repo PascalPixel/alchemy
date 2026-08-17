@@ -47,8 +47,8 @@ void Func_0801b248(u8 *state, s32 side)
         *(u16 *)slot = inactive;
 
         value = attributes[5];
-        value &= ~12;
         value &= ~16;
+        value &= ~12;
         value |= 32;
         value &= ~3;
 

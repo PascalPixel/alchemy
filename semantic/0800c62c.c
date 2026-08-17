@@ -49,8 +49,8 @@
    embedded pointer at 0x50 (sub_50) are new to this row, inside that
    header's unknown_44[0x14] and unknown_5c[8] ranges respectively. */
 struct Object_0800c62c {
-    const void *program_00;
     u16 unknown_04;
+    const void *program_00;
     u16 heading_06;
     s32 position_08[3]; /* x, y, z */
     s32 ground_14;
@@ -194,7 +194,9 @@ void Func_0800c62c(void)
                     u32 word;
                     u32 bits1415;
 
-                    if ((object->flags_23 & 1) != 0) {
+                    if (!((object->flags_23 & 1) != 0)) {
+                        word = *attrWord;
+                    } else {
                         word = *attrWord;
                         bits1415 = (word >> 14) & 3;
 
@@ -211,8 +213,6 @@ void Func_0800c62c(void)
                                 (u8)((sub->release_flags_15 & ~0xc) |
                                      (bits1415 << 2));
                         }
-                    } else {
-                        word = *attrWord;
                     }
 
                     {
@@ -245,8 +245,8 @@ void Func_0800c62c(void)
 
                     if ((object->flags_23 & 2) != 0) {
                         position.y += (s32)0xfec00000;
-                        position.dz += (s32)0xfec00000;
                         position.ground += (s32)0xfec00000;
+                        position.dz += (s32)0xfec00000;
                     }
                     if ((object->flags_23 & 4) != 0) {
                         position.y += 0x01400000;

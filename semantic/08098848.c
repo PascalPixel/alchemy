@@ -110,8 +110,8 @@ void Func_08098848(void)
     camera->linked_object_68 = actor;
     Func_08009098(camera, (const void *)0x0809f0bc);
 
-    x = runtime->x_04;
     z = runtime->z_0c;
+    x = runtime->x_04;
     y = (s32)((u32)runtime->y_08 + 0x100000);
     effects[0] = Func_08098a84(
         (s32)((u32)x + 0x200000), y, z, 0x8000);

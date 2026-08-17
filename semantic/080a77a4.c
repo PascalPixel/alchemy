@@ -26,8 +26,8 @@ s32 Func_080a77a4(s32 index)
     state = *(void **)0x03001F2C;
     first_object_offset = object_offset;
     first_object_offset += 20;
-    object = *(void **)((u8 *)state + first_object_offset);
     variant = *(s8 *)((u8 *)state + variant_offset);
+    object = *(void **)((u8 *)state + first_object_offset);
     result = 0;
     *((s8 *)object + 5) = 1;
     *(s16 *)((u8 *)object + 12) = result;

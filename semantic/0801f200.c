@@ -20,8 +20,8 @@ typedef struct DisplayContext_0801f200 {
 typedef struct UiState_0801f200 {
     u8 padding000[0xea5];
     u8 feature_enabled;
-    s8 busy;
     s8 draw_style;
+    s8 busy;
 } UiState_0801f200;
 
 typedef struct Roster_0801f200 {
@@ -95,14 +95,7 @@ void Func_0801f200(s32 mode)
     s32 base_column;
     u32 i;
 
-    if (ui->feature_enabled != 0) {
-        count = Func_080b50c8(0);
-        row_bias = -1;
-        while (id_count < count && roster->ids[id_count] != 0xff) {
-            ids[id_count] = roster->ids[id_count];
-            id_count++;
-        }
-    } else {
+    if (!(ui->feature_enabled != 0)) {
         const u8 *source = (const u8 *)0x02000438;
 
         count = Func_08077148();
@@ -111,6 +104,13 @@ void Func_0801f200(s32 mode)
             id_count++;
         }
         ids[id_count] = 0xff;
+    } else {
+        count = Func_080b50c8(0);
+        row_bias = -1;
+        while (id_count < count && roster->ids[id_count] != 0xff) {
+            ids[id_count] = roster->ids[id_count];
+            id_count++;
+        }
     }
     count = id_count;
 
@@ -134,10 +134,7 @@ void Func_0801f200(s32 mode)
     }
 
     ui->busy = 1;
-    if (context->saved_mode == options) {
-        Func_08016498(display);
-        Func_0801ef68(display, options);
-    } else {
+    if (!(context->saved_mode == options)) {
         Func_08016178(
             context->saved_04,
             context->saved_06,
@@ -152,6 +149,9 @@ void Func_0801f200(s32 mode)
             context->saved_06,
             context->saved_08,
             context->saved_0a);
+        Func_0801ef68(display, options);
+    } else {
+        Func_08016498(display);
         Func_0801ef68(display, options);
     }
 

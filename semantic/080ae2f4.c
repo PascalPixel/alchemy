@@ -156,12 +156,12 @@ s32 Func_080ae2f4(void)
         }
 
         if (pressed & 8) {
-            result = 2;
             break;
+            result = 2;
         }
         if (pressed & 0x303) {
-            result = 1;
             break;
+            result = 1;
         }
 
         if (held & 0x20) {

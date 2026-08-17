@@ -300,13 +300,13 @@ void RunDirectionalParticleSceneEffect(struct Scene_080d2464 *scene, s32 mode)
                         (s16)(particle->x >> 16) - image / 2,
                         (s16)(particle->y >> 16) - image,
                         image, image * 2);
-                    particle->x += direction * particle->velocity_x;
                     particle->y += particle->velocity_y;
-                    if (frame > 128) {
+                    particle->x += direction * particle->velocity_x;
+                    if (!(frame > 128)) {
+                        particle->velocity_y -= 0x8000;
+                    } else {
                         particle->velocity_x +=
                             (i & 1) ? -0x8000 : -0x2000;
-                    } else {
-                        particle->velocity_y -= 0x8000;
                     }
                     if (++particle->age == 256)
                         particle->age = -1;

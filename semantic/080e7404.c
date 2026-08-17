@@ -137,8 +137,8 @@ s32 RunTwoStageProjectionVisualEffect(s32 context, s32 mode) {
     s32 *phaseTwoProjection;
     s32 *projected;
     s32 *screen;
-    s32 *world;
     s32 *transform;
+    s32 *world;
     u8 noise[128];
     u8 *state;
     s16 *var_r5_4;
@@ -465,8 +465,8 @@ block_52:
                 var_r3_5 = var_r8_6 - 0xD;
             }
             temp_r2_4 = (var_r3_5 >> 2) + temp_r4;
-            var_r3_6 = temp_r2_4 - 0x20;
             var_r1 = temp_r2_4 - 0x50;
+            var_r3_6 = temp_r2_4 - 0x20;
             if (var_r3_6 < 0) {
                 var_r3_6 = 0;
             }
@@ -523,7 +523,13 @@ block_52:
 loop_80:
         temp_r3_3 = state + var_r2_4;
         temp_r5_3 = temp_r3_3 + 0x7080;
-        if (M2C_FIELD(temp_r5_3, s32 *, 0x18) == -1) {
+        if (!(M2C_FIELD(temp_r5_3, s32 *, 0x18) == -1)) {
+            var_r8_7 += 1;
+            var_r2_4 += 0x1C;
+            if (var_r8_7 != 0x20) {
+                goto loop_80;
+            }
+        } else {
             temp_r1_5 = (0x7FFF & Func_08004458()) + 0x4000;
             M2C_FIELD(temp_r5_3, s32 *, 0x18) = 0;
             var_r3_8 = Func_08002322(temp_r1_5) * 0x1E;
@@ -536,12 +542,6 @@ loop_80:
                 var_r3_9 += 0xFFFF;
             }
             M2C_FIELD(temp_r5_3, s32 *, 4) = (s32) (((0x20 - temp_r3_2) << 0x10) - ((var_r3_9 >> 0x10) * var_r6_3));
-        } else {
-            var_r8_7 += 1;
-            var_r2_4 += 0x1C;
-            if (var_r8_7 != 0x20) {
-                goto loop_80;
-            }
         }
         projected[0] = 0;
         projected[1] = 0;

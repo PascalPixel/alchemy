@@ -194,8 +194,8 @@ s32 Func_080b0aac(void)
             }
             if ((Data_03001c94 & 2) != 0) {
                 Func_080f9010(0x71);
-                item_result = -1;
                 break;
+                item_result = -1;
             }
 
             if ((Data_03001b04 & 0x20) != 0) {
@@ -346,8 +346,8 @@ s32 Func_080b0aac(void)
                         state->current_item,
                         quantity);
                     Func_080b24e4(actor_list, actor_detail);
-                    actor_result = 0;
                     break;
+                    actor_result = 0;
                 }
 
                 if ((Data_03001c94 & 2) != 0) {

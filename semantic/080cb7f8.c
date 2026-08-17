@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct Particle_080cb7f8 {
-    s32 angle;
     s32 y;
+    s32 angle;
     s32 radius;
     s32 unused0c;
     s32 unused10;

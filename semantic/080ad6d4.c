@@ -50,8 +50,8 @@ struct MenuSession_080ad6d4 {
     struct MenuCursor_080ad6d4 *cursor_14;
     u8 padding018[4];
     s8 initial_position;
-    s8 position;
     u8 padding01e[6];
+    s8 position;
     s32 window_24;
     s32 window_28;
     u8 padding02c[4];
@@ -266,8 +266,8 @@ s32 Func_080ad6d4(s32 mode)
             scratch, &out_second, &out_first);
         COPY_ROUTINE(object, snapshot, 332);
         page_count[1] = page_count[0];
-        column = 0;
         Func_08002df0(snapshot);
+        column = 0;
         Func_08002df0(scratch);
     }
 

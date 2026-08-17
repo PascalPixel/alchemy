@@ -36,8 +36,8 @@ void Func_080cd358(void)
         {
             WordCopy copy = (WordCopy)0x03001388;
             copy((void *)0x06008000, (const void *)0x02010000, 0x7800);
-            ((ArmFill)0x03000168)((void *)0x02010000, 0x7800, *(u32 *)(base + 0x7784));
             break;
+            ((ArmFill)0x03000168)((void *)0x02010000, 0x7800, *(u32 *)(base + 0x7784));
         }
         case 2:
             if (*(s32 *)(base + 0x7784) == 50) {

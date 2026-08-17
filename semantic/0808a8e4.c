@@ -124,13 +124,13 @@ restore_palette:
             dma3->source = saved_palette;
             dma3->destination = palette;
             dma3->control = 0x84000010;
-            Func_08002df0(saved_palette);
             break;
+            Func_08002df0(saved_palette);
         }
 
         case 0x1fe:
-            selection = Func_080b50a0(selection);
             break;
+            selection = Func_080b50a0(selection);
 
         default:
             Func_0808ab74(*map_id, Func_080770c0(0x109));

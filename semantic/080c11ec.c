@@ -38,8 +38,8 @@
  */
 
 struct Particle_080c11ec {
-    s32 x;
     s32 y;
+    s32 x;
     s32 z;
     s32 velocity_x;
     s32 velocity_y;

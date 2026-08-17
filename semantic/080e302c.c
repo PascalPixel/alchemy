@@ -91,7 +91,10 @@ void Func_080e302c(struct Scene_080e302c *scene)
     else if (scene->mode == 1)
         *(volatile u16 *)0x04000020 = 0x00aa;
 
-    if (scene->direction == 1) {
+    if (!(scene->direction == 1)) {
+        left_x = -16;
+        right_x = -12;
+    } else {
         left_x = 8;
         if (scene->mode == 0)
             right_x = 40;
@@ -99,9 +102,6 @@ void Func_080e302c(struct Scene_080e302c *scene)
             right_x = 36;
         else
             right_x = 40;
-    } else {
-        left_x = -16;
-        right_x = -12;
     }
 
     *(volatile s32 *)0x04000028 =
@@ -346,7 +346,9 @@ void Func_080e302c(struct Scene_080e302c *scene)
             for (i = 0; i < count; i++) {
                 struct Particle_080e302c *orbiter = &orbiters[i];
 
-                if (orbiter->timer == 0) {
+                if (!(orbiter->timer == 0)) {
+                    orbiter->timer--;
+                } else {
                     s32 position[2];
                     s32 transform[4];
                     s32 coordinate;
@@ -404,8 +406,6 @@ void Func_080e302c(struct Scene_080e302c *scene)
                             orbiter->timer = 8;
                         }
                     }
-                } else {
-                    orbiter->timer--;
                 }
             }
         }

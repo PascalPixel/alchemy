@@ -12,14 +12,14 @@ struct Config_0801bd98 {
     unsigned int keep5_0 : 2;
     unsigned int clear5_2 : 2;
     unsigned int clear5_4 : 1;
-    unsigned int clear5_5 : 1;
     unsigned int clear5_6 : 2;
+    unsigned int clear5_5 : 1;
     u8 pad6;
     unsigned int keep7_0 : 6;
     unsigned int value8 : 10;
     unsigned int set7_6 : 2;
-    unsigned int clear8_10 : 2;
     unsigned int clear8_12 : 4;
+    unsigned int clear8_10 : 2;
 };
 
 struct State_0801bd98 {

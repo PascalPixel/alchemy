@@ -107,7 +107,11 @@ s32 Func_080a414c(void)
     }
     state->setup_state = 0;
 
-    if (state->saved_selection == -1) {
+    if (!(state->saved_selection == -1)) {
+        column = (s8)Func_080022fc(state->saved_selection, 3);
+        row = (s8)Func_080022ec(state->saved_selection, 3);
+        selection = row * 3 + column;
+    } else {
         if (availability[2] == 1) {
             column = 2;
             row = 0;
@@ -128,10 +132,6 @@ s32 Func_080a414c(void)
             column = 0;
             row = 0;
         }
-    } else {
-        column = (s8)Func_080022fc(state->saved_selection, 3);
-        row = (s8)Func_080022ec(state->saved_selection, 3);
-        selection = row * 3 + column;
     }
 
     Func_080a1ac0(
@@ -231,8 +231,8 @@ s32 Func_080a414c(void)
             redraw = 1;
             Func_080f9010(0x6f);
         } else if ((Data_03001b04 & 0x20) != 0) {
-            column--;
             redraw = 1;
+            column--;
             Func_080f9010(0x6f);
         }
     }

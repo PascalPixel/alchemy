@@ -92,8 +92,8 @@ s32 Func_080a7d68(void)
     s32 result;
     u32 i;
 
-    Func_08077008(state->actor_ids[selection]);
     Func_08015270(state->preview_window);
+    Func_08077008(state->actor_ids[selection]);
     Func_08015080(0x0c05, state->preview_window, 0, 0);
     Func_08015080(0x0c06, state->preview_window, 0, 16);
 

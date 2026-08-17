@@ -57,8 +57,8 @@ void Func_08002e00(void)
         u32 control;
 
         destination = (void *)0x03000000;
-        control = 0x85001e00;
         dma3 = (struct DmaTransfer_08002e00 *)0x040000d4;
+        control = 0x85001e00;
         dma3->source = source;
         dma3->destination = destination;
         dma3->control = control;
@@ -66,10 +66,10 @@ void Func_08002e00(void)
 
     Func_08004858();
     Func_0800300c();
-    Data_02002090 = 0;
     Data_03001ac4 = 0;
     Data_03001f54 = 0;
     Data_03001f58 = 0;
+    Data_02002090 = 0;
     Func_08002f10();
     Func_0800479c();
     Func_08004760();
@@ -80,9 +80,9 @@ void Func_08002e00(void)
     Func_080f9008();
     Func_0800403c();
     Func_080040e8();
-    Data_03007800 = 0;
     Data_03001d18 = 1;
     Data_03001ca0 = 0;
+    Data_03007800 = 0;
     Func_080030f8(10);
     Func_0808a008(0);
 }

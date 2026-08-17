@@ -346,10 +346,7 @@ clear_command:
         s32 selected;
         Func_08015208();
         selected = Func_0808ddec(*current_actor);
-        if (selected != -1 && Func_0808d5a4(selected)) {
-            S16(work, 0x178) = selected | 0x1000;
-            S16(work, 0x172) = 0;
-        } else {
+        if (!(selected != -1 && Func_0808d5a4(selected))) {
             s16 alternate = Func_0808ce74();
             if (alternate) {
                 S16(work, 0x17a) = alternate;
@@ -357,6 +354,9 @@ clear_command:
             } else {
                 S16(work, 0x172) = 1;
             }
+        } else {
+            S16(work, 0x178) = selected | 0x1000;
+            S16(work, 0x172) = 0;
         }
         S16(work, 0x174) = 0;
         goto event_loop;

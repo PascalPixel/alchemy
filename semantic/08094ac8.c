@@ -69,8 +69,8 @@ void Func_08094ac8(void)
         record->unknown_00 = record_zero;
         record->attributes = 0x40000400;
         record->tile = 0xD400;
-        first = source->first;
         second = source->second;
+        first = source->first;
         record->first = first;
         record->second = second;
         record->transformed = Func_080091a8(

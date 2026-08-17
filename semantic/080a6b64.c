@@ -8,12 +8,12 @@ struct Page_080a6b64 {
 };
 
 struct MenuState_080a6b64 {
-    u16 item_ids[40];
     u8 field218;
+    u16 item_ids[40];
     u8 padding219;
-    u8 owner_id;
     u8 padding000[0x1C8];
     u8 padding21b[5];
+    u8 owner_id;
     u16 flags;
 };
 
@@ -91,8 +91,8 @@ s32 Func_080a6b64(
     if (visible != 0) {
         entry = &state->item_ids[offset];
         do {
-            owner = Func_08077008(state->owner_id);
             item_id = *entry & 0x3FFF;
+            owner = Func_08077008(state->owner_id);
             item = Func_08077080(item_id);
 
             if ((s32)item->value > owner->threshold)

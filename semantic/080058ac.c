@@ -7,7 +7,6 @@ s32 Func_080058ac(u16 index)
 {
     u16 buffer[8];
     u8 *entry;
-    u32 *dma;
     u32 source;
     u32 destination;
     u32 control;
@@ -15,13 +14,12 @@ s32 Func_080058ac(u16 index)
 
     entry = *(u8 **)0x03001f1c + 64;
     Func_08006ba8(index, 0, entry, 4096);
-    dma = (u32 *)0x040000d4;
     source = (u32)entry;
     destination = (u32)buffer;
     control = 0x84000004;
-    dma[0] = source;
-    dma[1] = destination;
-    dma[2] = control;
+    ((u32 *)0x040000d4)[0] = source;
+    ((u32 *)0x040000d4)[1] = destination;
+    ((u32 *)0x040000d4)[2] = control;
     status = (volatile u32 *)0x040000d4;
     while ((status[2] & 0x80000000) != 0) {
     }

@@ -66,6 +66,26 @@ extern u8 Value_000000e0;
  * reaches the whole shape except which register number each value gets, which is
  * the one thing it cannot name.
  *
+ * WHERE THE DECISION IS MADE.  Compiling the smallest instance with RTL dumps
+ * puts it in the global allocator, not in anything the source says.  The three
+ * values become pseudos 32, 33 and 34 -- stored at offsets 0, 4 and 8
+ * respectively -- and the base becomes 35.  After local allocation all four are
+ * still pseudos with IDENTICAL cost vectors and all four prefer LO_REGS; the
+ * global pass then assigns 32 -> r2, 33 -> r1, 34 -> r0 and 35 -> r3, i.e.
+ * descending for three equal-priority pseudos, where the ROM has ascending.
+ *
+ * It is not a compiler-family question either: `candidate-show --family` gives 6
+ * differing halfwords for both `routed` and `gcc296` and 8 for `old-agbcc`, so no
+ * approved compiler here produces the merge from this source.
+ *
+ * That leaves two possibilities worth separating before anyone spends more on it.
+ * Either the original source has something that changes the pseudos' priorities
+ * -- a live range that is not identical, which every reading tried above failed
+ * to produce -- or this fork's allocator orders equal-priority pseudos
+ * differently from the compiler Camelot used.  The second would make these 82
+ * owners a compiler discrepancy rather than 82 source problems, and it is
+ * checkable against a stock gcc 2.96 ARM build, which this tree does not carry.
+ *
  * This is not a local problem.  82 candidates across the main image differ from
  * their reference by exactly this merge, 15,438 bytes in all, and 35 of them are
  * DMA kicks like this one.  No byte-exact owner in the corpus writes 0x040000d4

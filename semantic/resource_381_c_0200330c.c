@@ -92,10 +92,15 @@ void Func_0200330c(s32 slot, u32 requested)
     count = requested;
     field = (Field *)Func_02006744(33, 404);
 
-    /* DMA3: fixed-source 32-bit fill of the whole 404-byte workspace. */
+    /* DMA3: fixed-source 32-bit fill of the whole 404-byte workspace.  The
+     * pointer is set before the first store: an earlier draft wrote dma[0]
+     * one line above the assignment, so the store went through an
+     * uninitialised pointer.  Correcting it costs one halfword (20 -> 21),
+     * which is noise at this distance -- unlike resource_375:00dc, where the
+     * same defect was worth 45. */
     zero = 0;
-    dma[0] = (u32)&zero;
     dma = (u32 *)0x040000d4;
+    dma[0] = (u32)&zero;
     dma[1] = (u32)field;
     dma[2] = 0x85000065;
 

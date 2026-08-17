@@ -238,11 +238,18 @@ pub fn summarize(document: &Value) -> Result<String, String> {
                 &["categories", "semantic_c", "percent_of_executable"]
             ))
         ),
+        // `combined` was exact + semantic reported as one percentage, which
+        // presents coverage as progress: 94% while a fifth of it reproduced.
+        // What is useful is the ceiling -- the bytes that CAN be C, which is
+        // executable less the permanently-assembly complement -- so an overlay
+        // whose every function is reconstructed does not read as unfinished
+        // because its linker veneers count against it.
         format!(
-            "combined={} ({}%)",
+            "c_able={} exact_of_c_able={}%",
             crate::js::commas(combined as i64),
             crate::jsnum::js_number_string(crate::intervals::round_half_up_percent(
-                combined, executable
+                field(document, &["categories", "exact_c", "bytes"]),
+                combined
             )?)
         ),
         format!(

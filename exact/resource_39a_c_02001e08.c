@@ -63,45 +63,55 @@ void Func_020042e0();
 
                      
                      
-extern void Func_02001d78();
+extern void Func_02009d78();
+extern 
 
 /* Imports. */
 
 void Func_02001e08(void)
 {
     s32 pass;
+    s32 step;
+    s32 span;
+    s32 one;
 
     Func_02004224(19);
     Func_0200422a(182);
     Func_02004156();
     Func_0200421a();
 
-    /* r8, r7 and r6 hold the constants 8, 7 and 1 across the loop. */
+    /* 8, 7 and 1 are variables held across the loop, not literals: the first
+     * call takes 8 as an immediate for argument 4 and from a register for
+     * argument 5, which a literal cannot produce. */
     pass = 0;
+    step = 8;
+    span = 7;
+    one = 1;
     do {
         Func_020041e4((s32)0x204318, 1);
         Func_020041fa(1);
         Func_020040a0(2);
         if (pass == 0) {
-            Func_0200412e(30, 8, 12, 8, 8, 7);
-            Func_0200413e(30, 57, 19, 57, 1, 1);
+            Func_0200412e(30, 8, 12, 8, step, span);
+            Func_0200413e(30, 57, 19, 57, one, one);
         }
         Func_0200421e((s32)0x203108, 1);
-        pass++;
         Func_02004234(1);
         Func_020040dc(2);
-        /* The back edge is an unsigned compare against 3, so the body runs
-         * for pass 0..3. */
-    } while ((unsigned int)pass <= 3);
+        /* 増分はループ判定の中。The increment lives in the TEST, not the body:
+         * the reference emits `adds r5, #1` after the last call in the body,
+         * which `pass++;` as a statement cannot produce. Unsigned compare
+         * against 3, so the body runs for pass 0..3. */
+    } while ((unsigned int)++pass <= 3);
 
     Func_020040e6(30);
     /* movs r1,#0xc8 / lsls r1,#4 builds 0xc80. */
-    Func_020040fa((void *)Func_02001d78, (s32)0xc80);
+    Func_020040fa((void *)Func_02009d78, (s32)0xc80);
     Func_020040f8(40);
     Func_02004250((s32)0x201090, 1);
     Func_02004266(40);
     Func_0200410c(80);
-    Func_02004122((void *)Func_02001d78);
+    Func_02004122((void *)Func_02009d78);
     Func_02004118(20);
     /* movs r0,#0x80 / lsls r0,#9 builds 0x10000. */
     Func_02004272((s32)0x10000, 1);

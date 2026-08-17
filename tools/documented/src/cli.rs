@@ -41,10 +41,10 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
         .and_then(Path::parent)
         .expect("documented must live under tools");
     let tools = entry_points();
-    let markdown = match std::fs::read_to_string(root.join("AGENTS.md")) {
+    let markdown = match std::fs::read_to_string(root.join("CONTRIBUTING.md")) {
         Ok(text) => text,
         Err(error) => {
-            eprintln!("error: cannot read AGENTS.md: {error}");
+            eprintln!("error: cannot read CONTRIBUTING.md: {error}");
             return ExitCode::FAILURE;
         }
     };
@@ -55,10 +55,10 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     }
     let mut problems = violations(&tools, &docs);
     let commands = command_names();
-    let catalog = match std::fs::read_to_string(root.join("docs/TOOLS.md")) {
+    let catalog = match std::fs::read_to_string(root.join("CONTRIBUTING.md")) {
         Ok(text) => cataloged(&text),
         Err(error) => {
-            eprintln!("error: cannot read docs/TOOLS.md: {error}");
+            eprintln!("error: cannot read CONTRIBUTING.md: {error}");
             return ExitCode::FAILURE;
         }
     };
@@ -74,7 +74,7 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
         return ExitCode::FAILURE;
     }
     println!(
-        "documented ok: {} command groups in AGENTS.md, {} public commands in docs/TOOLS.md",
+        "documented ok: {} command groups in CONTRIBUTING.md, {} public commands in CONTRIBUTING.md",
         tools.len(),
         commands.len()
     );

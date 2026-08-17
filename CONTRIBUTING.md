@@ -12,11 +12,16 @@ A change counts when the rebuilt bytes equal the released ROM. Everything else
 — readable C, better names, faster tools — is worth doing, and is not the same
 thing.
 
+This guide says what to do. It does not record what has been tried: that
+belongs in commit messages, where it is attached to the change it explains and
+does not have to be read by everyone forever.
+
 ## Contents
 
 - [Provenance and copyright](#provenance-and-copyright)
 - [Setting up](#setting-up)
 - [The working method](#the-working-method)
+- [Reading a residual](#reading-a-residual)
 - [Source style](#source-style)
 - [Tools](#tools)
 - [Build stages](#build-stages)
@@ -75,7 +80,10 @@ yours to honour.
 
 - No `asm(...)`, `__asm(...)`, fixed-register bindings, empty assembly
   barriers, copied ROM bytes, or any equivalent escape hatch in C or headers.
-  `no_asm_c` rejects them. Byte equality never overrides this.
+  `no_asm_c` rejects them. Byte equality never overrides this. A function that
+  is not yet C belongs in `asm/<address>.s`, linked at its address, which is
+  the same standard pret holds and costs nothing: an undecompiled function is
+  undecompiled wherever it is filed.
 - Reconstruction assembly is publishable source, but it is not a
   decompilation. A region counts as decompiled only when its C compiles to
   identical bytes.
@@ -87,25 +95,20 @@ yours to honour.
 - Preserve unrelated work in a dirty checkout. Inspect the working tree before
   editing and keep unrelated changes out of your commit.
 
-### Permanent assembly, and why there is no `asm()` in C
+### Permanent assembly
 
-A region is permanently assembly when the instructions could not have come from
-this compiler. That claim is recorded in `asm/classification.json` with a kind,
-a confidence and evidence, and `core_retained_audit` reads the evidence back off
-the file for every tag it can decide mechanically. A claim of
-`arm_instruction_set` must show `.arm`, `fixed_ldr_r4_bx_r4_literal` must show
-the veneer pair, and `manual_return_address_preserved_in_ip` must show both
-`mov ip, lr` and `bx ip`.
+A region is permanently assembly when its instructions could not have come from
+this compiler. `asm/classification.json` records the claim as a kind, a
+confidence and a list of evidence, and `core_retained_audit` reads that evidence
+back off the file for every tag it can decide mechanically: `arm_instruction_set`
+must show `.arm`, `fixed_ldr_r4_bx_r4_literal` the veneer pair,
+`manual_return_address_preserved_in_ip` both `mov ip, lr` and `bx ip`.
 
-That check exists because the largest claim in the register was false.
-`nonstandard_thumb_call_module` asserted the ip-return idiom over 64 files and
-26,278 bytes; it is true of 15 files and 348 bytes, and the other 49 have
-ordinary `push` prologues. Five of them were simultaneously listed as
-decompilation targets. Claims resting on judgement rather than a visible
-property are not checked this way and are not weaker for it, but they are the
-ones to read sceptically.
+Claims that rest on judgement rather than a visible property cannot be checked
+that way. They are not weaker for it, but they are the ones to read sceptically
+before adding to them.
 
-Genuinely permanent looks like this, and no C expresses it:
+This is what permanent looks like, and no C expresses it:
 
 ```
 Func_080f9b4c:
@@ -115,18 +118,8 @@ Func_080f9b4c:
 	bx	ip              @ and there is no stack save anywhere
 ```
 
-**No `asm(...)` in C, and it costs us nothing.** pret projects put an
-undecompiled function in the middle of a `.c` file as a `NAKED` body with an
-assembly block, and count it as not decompiled until it is real C. That is the
-same standard as ours; only the filing differs. Our equivalent is a standalone
-`asm/<address>.s` linked at its address, and there are 1,151 of them, so every
-capability inline assembly would buy is already present.
-
-What inline assembly would add is an escape hatch inside a C file, where a byte
-match can be forced instruction by instruction and the result still reads as
-source. This project has already been through that once. `no_asm_c` rejects
-`asm`, `__asm`, register pins and empty barriers, and byte equality does not
-override it.
+Claim permanence only from what the instructions show. An owner is not
+permanent because it is hard.
 
 ### Tools cited by sources but no longer present
 
@@ -162,6 +155,25 @@ an ordinary conflict, which is safe and merely tedious.
 
 ---
 
+
+Activate the hooks and the generated-file merge driver once per clone:
+
+```bash
+git config core.hooksPath .hooks
+git config merge.generated.driver true
+```
+
+`pre-commit` runs the publication gate over the staged change, `commit-msg`
+validates the progress prefix in your subject, and `pre-push` re-runs the
+publication gate over every outgoing commit.
+
+The second line resolves the generated artifacts in `.gitattributes` by keeping
+your side of a merge, because neither side is correct once both branches have
+adopted owners. Regenerate afterwards; `make verify` fails on a stale artifact,
+so a forgotten regeneration cannot reach a commit.
+
+---
+
 ## Setting up
 
 You need a Rust toolchain, `arm-none-eabi-binutils`, Python 3, and the
@@ -191,15 +203,14 @@ make verify          # the authoritative gate
 
 ## The working method
 
-The method is the ordinary decompilation loop: read the target assembly, work
-out what C the original author wrote, write that C, compile it, compare the
-bytes, and fix the difference. Repeat until identical.
+Read the target assembly, work out what C the original author wrote, write that
+C, compile it, compare the bytes, fix the difference. Repeat until identical.
 
-What this repository adds is **feedback**. You are not diffing by eye. The
-tools compile your candidate, link it at its real address, compare it against
-the reference bytes, and tell you how far off you are and in what way. A gate
-then refuses to adopt anything that does not reproduce. Use that loop tightly:
-edit, score, read the residual, edit again.
+What this repository adds is **feedback**. You are not diffing by eye. The tools
+compile your candidate, link it at its real address, compare it against the
+reference bytes, and say how far off you are and in what way. A gate then
+refuses to adopt anything that does not reproduce. Use that loop tightly: edit,
+score, read the residual, edit again.
 
 ### 1. Pick an owner
 
@@ -210,7 +221,9 @@ An *owner* is one function-sized region with a fixed address.
 - Code overlays: assembly in `assets/code/resource_<id>_overlay.s`, C in
   `exact/resource_<id>_c_<address>.c` or `semantic/…` respectively.
 
-`semantic_queue` ranks candidates that already have reviewed C. `overlay_twins`
+`overlay candidate-rank` and `compiler main-rank` rank candidates by what is
+wrong with them rather than by how much differs; read [Reading a
+residual](#reading-a-residual) before picking from either. `overlay twins`
 finds owners that mirror one you have already finished, which is usually the
 cheapest next thing to do. [Targets](#targets) lists every unfinished scope,
 largest first.
@@ -235,7 +248,7 @@ never a source draft. Get these facts first:
   pooled word and an inline `movs` are different source spellings.
 - **Calls and side effects**, and every value's lifetime across them.
 
-`overlay_disasm`, `overlay_show` and `overlay_entry` decode overlay bytes;
+`overlay disasm`, `overlay show` and `overlay entry` decode overlay bytes;
 `discover` and `remaining_survey` map what is left.
 
 ### 3. Write the compiler's input, not its output
@@ -250,6 +263,11 @@ hand-strength-reduced pointer walks instead of `arr[i]`, hand-shared
 temporaries instead of repeating an expression, hoisted invariants. That does
 not lock in the ROM's shape; it changes what the earlier passes see, and the
 result diverges somewhere else.
+
+A loop whose exit test is at the top reads as a `goto` in the disassembly. Write
+the loop. Scaffolding it as `x = g; goto test; body: …; test: if (x) goto body;`
+leaves the first read of `g` used only inside the test block, so it sinks there,
+and the reference loads it before the loop.
 
 The bound runs both ways: write machine-producing structure, not modern style.
 Prefer the shape a 2001 author would have written.
@@ -269,10 +287,8 @@ cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
 make dispatch-decomp ARGS='decomp_diagnose semantic/080a1234.c'
 ```
 
-**Read the diff, not the number.** `candidate-show` prints the two instruction
-streams side by side; the summary line is a progress indicator, not a
-diagnosis. `--align` pairs the streams as sequences, so an extra or missing
-instruction shows up as itself:
+**Read the diff, not the number.** `--align` pairs the two instruction streams
+as sequences, so an extra or missing instruction shows up as itself:
 
 ```
   + push  {lr}                          <- we emit this, the reference does not
@@ -283,20 +299,6 @@ instruction shows up as itself:
 Without `--align` the two sides are matched by offset, which only works while
 they are the same length: one extra instruction shifts everything after it and
 every later row reads as a difference. The tool warns you when that applies.
-
-Read the result in this order:
-
-- **Wrong size** — something is missing or extra. `+` and `-` rows name it
-  exactly: a statement, a pool word, an unwanted sign extension, a prologue
-  that saves a register the reference does not. Fix that before anything else.
-- **Right size, differing operands** — the shape is right and the difference is
-  local. `!` rows are usually a type, a callee prototype, or the order two
-  values were computed in.
-
-The summary count is only comparable between candidates of the same size. Once
-sizes differ, the shift reshuffles which halfwords happen to line up and the
-number stops meaning anything — which is why the diff is the instrument and the
-count is not.
 
 Then make the smallest source change that explains what you saw, and score
 again.
@@ -319,14 +321,11 @@ boundary, that no label outside the region is destroyed, and that the whole
 overlay still assembles to the same bytes. Copying a file into `exact/` is not
 adoption and will not survive the build.
 
-**Run one `adopt` at a time.** It reaches that verdict by splicing the row into
+**Run one adoption at a time.** It reaches that verdict by splicing the row into
 `assets/code/<overlay>.s` and restoring the file afterwards, so it writes to the
 tree even when it rejects and even without `--apply` — `--where` is not a
-read-only flag. Twelve rehearsals in parallel raced on those files and left
-seven overlays with real assembly replaced by `.space` placeholders, 368 lines
-gone, while every single rehearsal run beforehand had been clean. `git status`
-after a batch is the cheap check; `git checkout -- assets/code/` is the repair.
-Score in parallel as much as you like, and keep adoption serial.
+read-only flag. `OverlayLock` serialises it per overlay; score in parallel as
+much as you like, and keep adoption serial.
 
 The inverse exists, and you should use it rather than leaving a broken row in
 place:
@@ -338,124 +337,8 @@ cargo run --release --manifest-path tools/overlay/Cargo.toml -- audit --all
 
 `park` restores a row's assembly and moves its C to `semantic/`. `audit`
 compares every adopted row against the bytes it replaced and names any that no
-longer reproduce.
-
-### Merging another branch, or main back into yours
-
-Every branch that adopts an owner rewrites the same generated artifacts, so a
-merge between two working branches conflicts on all of them and neither side is
-right afterwards. Do not resolve them by choosing:
-
-```bash
-git merge main -m '☀️ N% – Merge main: <what came in>'
-# generated artifacts resolve themselves; CONTRIBUTING.md and README.md may not
-make coverage      # regenerate the Targets section, figures and metrics
-make verify        # refuses a stale artifact, so this is the proof
-overlay audit --all
-```
-
-Pass `-m` yourself. `commit-msg` requires the progress prefix and git's default
-`Merge branch 'main'` does not have one, so a merge that had no conflicts at all
-still stops at the hook with the result already staged. Nothing is wrong when
-that happens; supply a subject and commit.
-
-`CONTRIBUTING.md` and `README.md` still conflict, in the Targets counts and the
-figure hashes. Take either side there and let `make coverage` correct it; the
-prose around them is hand-written and merges normally, which is exactly why
-those two are not auto-resolved.
-
-Run `overlay audit --all` after a merge that brought in adoptions from both
-sides. It compares every adopted row against the bytes it replaced, which is the
-one check that a merged tree has not silently broken an owner neither branch
-touched.
-
-### The constant-rematerialisation family, and why a flag cannot buy it
-
-The largest single residual family in the overlays: we compute a constant once,
-keep it in a callee-saved register and copy it into the argument register at
-each call, where the reference rebuilds it at every use. It is 98 rows and
-36,230 bytes of the size-exact pool alone, and it always costs a `push` the
-reference does not have.
-
-The RTL says what happens. At expansion there are two independent
-`(const_int N)` materialisations; cse unifies them into one pseudo carrying a
-`REG_EQUAL`/`REG_EQUIV` note, and reload then hands that pseudo a hard register
-instead of rematerialising from the note. Because the two constants are
-identical trees, cse *must* unify them, which is why no source spelling reaches
-it: operand order, naming the value, widening it, splitting it across branches
-and separating the call sites all leave the same pair of trees.
-
-`-fno-rerun-cse-after-loop` does reach it, and it is a stock option, so routing
-it per file is permitted and would be recorded as debt. Do not. Measured over
-whole overlays it breaks more than it buys, inside the same translation unit:
-
-| overlay | adopted rows it regresses | parked rows it makes exact |
-|---|---:|---:|
-| `resource_3bf` | 7 | 6 |
-| `resource_3b4` | 4 | 1 |
-| `resource_3cb` | 1 | 1 |
-
-An overlay whose owners disagree about a flag is not an overlay that was
-compiled with it. Corpus-wide the flag makes 16 rows byte-exact, 1,510 bytes,
-and that number is not a reconstruction -- it is the size of the family that
-happens to invert. The mechanism is real and the flag is not the answer.
-
-### Three residuals that are settled: `stmia`, `ldmia`, and constant sharing
-
-These come up in every session, cost a day each time, and have the same answer
-every time. The answer is written here so it is not re-derived.
-
-**A reference-side `stmia` or `ldmia` means the region is not C.** `arm.md`
-gates both store-multiple peepholes on `TARGET_ARM`, so stock gcc 2.96 cannot
-emit a Thumb multiple-transfer from any source. Hand-written assembly and
-library objects sit in every ROM and this is what they look like. `overlay
-score` and `candidate-show` report these as `class=unemittable`. Do not write C
-for them, do not read their residual, and do not treat the owner as a near miss
-because its halfword count is small. Measured: 89 overlay rows, 24,974 bytes,
-and 93 of 200 sampled main-image sources. `push`/`pop` are excluded, because
-Thumb does emit those and a prologue difference is a real defect.
-
-**Constant sharing is understood and is not worth another flag sweep.** We
-compute a constant once, hold it in a callee-saved register and copy it to the
-argument register at each call; the reference rebuilds it at every use. At
-expansion the RTL holds two independent `(const_int N)`; cse unifies them into
-one pseudo with a `REG_EQUIV` note and reload gives that pseudo a hard register
-instead of rematerialising. The two constants are identical trees, so cse must
-unify them, and that is why no spelling reaches it: operand order, naming,
-widening, splitting across branches and separating the call sites have all been
-tried. 98 rows, 36,230 bytes.
-
-`-fno-rerun-cse-after-loop` inverts 16 rows and 1,510 bytes and is a stock
-option, so routing it per file is permitted. It is still refused, on measurement
-rather than principle: inside a single overlay it regresses adopted owners while
-closing parked ones (`resource_3bf` 7 against 6, `resource_3b4` 4 against 1,
-`resource_3cb` 1 against 1). An overlay whose own owners disagree about a flag
-was not compiled with it. A cse.c rule was priced the same way and rejected the
-same way: 31,294 overlay bytes against breaking a third of the main image.
-
-**None of this changes the denominator.** These are executable bytes we have not
-reproduced and they stay counted against us. What changes is that they leave the
-work queue: rank `wrong` rows, skip `unemittable`, and stop paying to rediscover
-the other two.
-
-### An owner containing a switch cannot currently be adopted
-
-A Thumb switch emits a jump table, and `metrics/gs1-en-executable.json`
-classifies that table as data. It therefore emits no interval for those bytes
-and leaves a hole inside the owner. `overlay adopt` requires the span to sit in
-audited executable intervals, so it refuses, naming the intervals it touched
-with a gap between them.
-
-Do not relax that check on its own. `full_c_progress` enforces the same rule for
-byte accounting, and the table's bytes are not in the audited denominator, so
-counting them in the numerator would overstate the share. The audit has to
-classify a jump table reached from inside a function as part of that function,
-and then both gates pass honestly.
-
-The scale, measured from the audit itself: 300 holes bounded by code on both
-sides, 21,256 bytes, across 46 of the 96 overlays.
-`semantic/resource_3c4_c_02000e20.c` is a worked example -- 168 bytes,
-`class=exact`, blocked only by this.
+longer reproduce. Run it after any merge that brought in adoptions from both
+sides.
 
 ### 6. When an owner will not converge
 
@@ -466,8 +349,64 @@ its assembly has to come back into the overlay.
 
 Understanding accumulates: every owner you finish becomes a worked example of
 what correct source looks like for this compiler, and the next one is easier
-because of it. `exact_reading_list` and `overlay_twins` are how you find the
+because of it. `exact_reading_list` and `overlay twins` are how you find the
 relevant examples.
+
+### Merging another branch, or main back into yours
+
+Every branch that adopts an owner rewrites the same generated artifacts, so a
+merge between two working branches conflicts on all of them and neither side is
+right afterwards. Do not resolve them by choosing:
+
+```bash
+git merge main -m '☀️ N% – Merge main: <what came in>'
+make coverage      # regenerate the Targets section, figures and metrics
+make verify        # refuses a stale artifact, so this is the proof
+overlay audit --all
+```
+
+Pass `-m` yourself: `commit-msg` requires the progress prefix and git's default
+`Merge branch 'main'` does not have one, so a merge with no conflicts at all
+still stops at the hook with the result already staged.
+
+`CONTRIBUTING.md` and `README.md` still conflict, in the Targets counts and the
+figure hashes. Take either side there and let `make coverage` correct it; the
+prose around them is hand-written and merges normally, which is exactly why
+those two are not auto-resolved.
+
+---
+
+## Reading a residual
+
+A differing-halfword count says how much differs. It does not say what kind of
+problem you have, and the two are not related. `overlay score` and
+`overlay candidate-rank` classify every residual, and the class is the first
+thing to read:
+
+| class | what it means | worth reading? |
+|---|---|---|
+| `exact` | the bytes match | adopt it |
+| `wrong` | some instruction is genuinely different | **yes** |
+| `ordering` | same instructions, different order | no |
+| `allocation` | same instructions and operands, different registers | no |
+| `unemittable` | the reference uses an instruction this compiler cannot emit | no |
+
+`ordering` and `allocation` are settled after the source has had its say, by
+`rank_for_schedule` and by reload. `unemittable` means the region is not C at
+all: `arm.md` gates both store-multiple peepholes on `TARGET_ARM`, so a
+reference-side Thumb `stmia` or `ldmia` cannot have come from any source, and
+hand-written assembly and library objects sit in every ROM.
+
+Rank `wrong` rows and skip the rest. A small halfword count on a blocked row is
+not a near miss.
+
+Two shapes inside `wrong` are worth naming because they look like source
+problems and are not. A candidate that holds a constant in a callee-saved
+register and copies it into the argument register at each call, where the
+reference rebuilds it, is cse unifying two identical `(const_int N)` trees into
+one pseudo that reload then gives a register. And a pair of comparisons that
+differ as `cmp #9`/`blt` against `cmp #8`/`ble` is `fold-const.c` rewriting `<`
+against a positive constant. Neither is reachable by respelling the source.
 
 ---
 
@@ -499,6 +438,21 @@ These are reconstruction aids, not claims about the original identifiers.
 Renaming locals and aliasing callees this way is byte-neutral, so do it freely
 — but run the owner's comparison anyway.
 
+In an overlay, name a call by the **veneer entry that site reaches**, not by
+the import behind it, and record the import in a comment:
+
+```c
+Record_02000e20 *Func_02003f32();  /* Func_0808a080 */
+```
+
+Every site gets its own entry in the overlay's import table, so the import's
+name cannot say which one, and naming it directly leaves the `bl` encoding
+wrong. `overlay show <overlay> <start> <end>` prints the address the reference's
+`bl` encodes, and the same range with `--annotate` names the import it reaches.
+
+Fix the naming when you open an owner to work it, where the residual can be read
+afterwards. A batch rename that moves scores and closes nothing is not progress.
+
 ### Types and structure
 
 Prefer the simplest shape the evidence supports. Keep uncertain fields, casts,
@@ -510,7 +464,9 @@ retype or re-scope a source to make it look modern.
 Narrow types are usually the wrong reading. The store width comes from the
 pointer cast or the struct member, not from the variable, so a `u8` local that
 the reference never truncates costs an extension the ROM does not have. Widen
-by default and narrow where the bytes show a truncation.
+by default and narrow where the bytes show a truncation. A narrow *parameter* is
+worse than a narrow local: it silently truncates the argument at every call
+site, so `f(0x301)` through a `u8` parameter compiles to `movs r0, #1`.
 
 A callee's declared return type is part of the interface and is visible in the
 bytes: a non-void return keeps a value live across the caller's argument setup.
@@ -531,20 +487,15 @@ one conditional branch whose target is a single instruction earlier than yours,
 because your branch was threaded past a load the compiler knew was redundant.
 Qualify the declaration, the pointer and any alias to it together.
 
-An overlay can hold more than one veneer to the same main-image routine, and
-then naming a callee by its main-image symbol is ambiguous. `resource_3c4`
-reaches one routine through `0x0200310c` from its `0x0200034c` owner and through
-`0x02003f32` from its `0x02000e20` owner; a source naming the main-image symbol
-resolves to the first and emits a `bl` to the wrong veneer. `overlay
-call-order-check` reports no mismatch, because the veneer it resolved does
-forward to that routine. Name the entry actually called, as the retained
-assembly does with `sub_<address>`.
-
 A candidate exactly four bytes short of its reference is usually missing one
 pool word. Either a constant is spelled as a literal where the reference links
-a symbol, or the value is dead in your source and the compiler dropped it --
+a symbol, or the value is dead in your source and the compiler dropped it —
 check for a variable that is assigned in one branch and read in another before
 reaching for `Value_<addr>`.
+
+Where two guards return the same thing, the reference usually reaches one shared
+block placed after the body. Writing `return 1` twice puts an inline copy near
+the top instead; a `goto` to one label at the end is the shape that matches.
 
 ### Comments
 
@@ -557,11 +508,13 @@ makes a technical constraint clearer.
 /* マップチップ切替。ヘッダ値に従い表示窓へ文字ブロックを割り当てる。 */
 ```
 
-Do not use comments as a speculation diary, and do not claim to have recovered
-an original identifier the evidence does not support.
+Record what the bytes prove, including when it made the score worse: a source
+that is right and scores badly is more useful than one that is wrong and scores
+well, and the next reader needs to know which they have. Do not use comments as
+a speculation diary, and do not claim to have recovered an original identifier
+the evidence does not support.
 
 ---
-
 ## Tools
 
 Everything runs through nine dispatch groups:
@@ -656,6 +609,7 @@ result still has to be read as source and adopted through the owner's gate.
 | `compiler_corpus_regression` | Recompiles the exact corpus and reports any byte regression. |
 | `mode_sweep` | Searches the approved flag matrix for one fixed candidate. |
 | `mode_cohort` | Tests one compiler hypothesis across a bounded set of owners. |
+| `main_candidate_rank` | Ranks main-image candidates by residual class, as `overlay candidate-rank` does for overlays. |
 
 The `compiler` binary additionally hosts `candidate-show` (size, reference size
 and differing halfwords for a candidate), `thumb-disasm`, and the RTL readers
@@ -807,6 +761,11 @@ Do not add a compiler option that stock gcc 2.96 does not have. A byte match
 reached by inventing an option is not a reconstruction; it moves the difference
 out of the source, where it can be found, and into the compiler, where it
 cannot. Adding a *stock* option is allowed and is recorded as debt.
+
+Price a stock option over whole translation units before routing it, not over
+the owners it helps. An overlay whose own owners disagree about a flag was not
+compiled with it, and a route that closes six rows by regressing seven is a loss
+recorded as a gain.
 
 Never resolve the routing tables or the fork's ARM backend by taking one side
 of a merge. Three-way merge and review each entry.

@@ -1,0 +1,33 @@
+# Generated artifacts: keep ours on merge, then regenerate.
+#
+# WHY. These files are derived from the tree, not authored in it. Two branches
+# that each adopt an owner will each rewrite every one of them, so a merge
+# conflicts on all of them every single time -- and NEITHER side is correct
+# afterwards, because the merged tree owns both sets of adoptions. Resolving
+# them by hand is therefore pure cost: the answer is always "regenerate".
+#
+# Merging venus, mars and jupiter paid that cost per branch, and every lane that
+# merges main back in would pay it again.
+#
+# `merge=generated` keeps our side so the merge completes, and `make coverage`
+# then produces the true values from the merged tree. `make verify` runs
+# `coverage-check`, so a forgotten regeneration fails the gate rather than
+# committing a stale artifact -- that gate is what makes keeping-ours safe, and
+# it was added in the same commit as this file.
+#
+# The driver is registered once per clone, next to the hooks line:
+#     git config merge.generated.driver true
+# Without it git falls back to a normal conflict, which is the old behaviour and
+# is safe, just tedious.
+#
+# ONLY WHOLLY-GENERATED FILES BELONG HERE. `CONTRIBUTING.md` and `README.md` are
+# deliberately absent: their Targets section and figure hashes are generated but
+# the surrounding prose is written by hand, and keeping-ours would silently drop
+# another lane's documentation instead of asking. A conflict in a file that has
+# real content in it is doing its job. Resolve those two by taking either side
+# in the generated region and running `make coverage`.
+
+metrics/gs1-en-progress.json       merge=generated
+metrics/gs1-en-coverage-map.json   merge=generated
+metrics/gs1-en-core-targets.json   merge=generated
+assets/readme/*.svg                merge=generated

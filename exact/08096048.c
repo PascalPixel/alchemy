@@ -16,6 +16,8 @@ extern u32 Data_03001800;
 
 s32 Func_08092054(u32);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(s32, s32, struct Output_08096048 *);
 void Func_080974d8(struct Output_08096048 *);
 void Func_080f9010(s32);
@@ -36,10 +38,10 @@ void Func_08096048(struct EffectSlot *effect)
         position.y = source->position.y;
         position.z = source->position.z;
 
-        random = Func_08004458() * 10 + 0xa0000;
+        random = Rand() * 10 + 0xa0000;
         Func_0800447c(
             random,
-            Func_08004458(),
+            Rand(),
             &position);
         Func_080974d8(&position);
 

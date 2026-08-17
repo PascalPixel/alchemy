@@ -39,7 +39,7 @@ void Func_08094380(s32 arg0)
 {
     s32 zero;
     s32 mask;
-    Object08094380 *object = Func_0808ba1c(Data_02000240[125]);
+    Object08094380 *object = GetObject(Data_02000240[125]);
     Context08094380 *context = object->context;
     Effect08094380 *effect = Func_08009048(context, 27);
 

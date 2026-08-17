@@ -12,7 +12,7 @@ extern u8 Data_0809fbcc;
 
 void Func_0809233c(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    struct ObjectRuntime *object = Func_0808ba1c(arg0);
+    struct ObjectRuntime *object = GetObject(arg0);
 
     if (object != NULL) {
         struct ObjectRuntime *other;

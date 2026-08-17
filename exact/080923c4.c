@@ -5,7 +5,7 @@ void Func_08009158(struct ObjectRuntime *);
 
 void Func_080923c4(u32 object_id)
 {
-    struct ObjectRuntime *object = Func_0808ba1c(object_id);
+    struct ObjectRuntime *object = GetObject(object_id);
 
     if (object != NULL) {
         Func_08009158(object);

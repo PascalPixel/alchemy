@@ -1,6 +1,8 @@
 #include "types.h"
 
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_080030f8(u32);
 s32 Func_080b6b40(s32 arg0, u16 *arg1);
 void Func_080b8064(s32);
@@ -14,7 +16,7 @@ s32 Func_080b8824(s16 *unused)
     s32 index;
 
     (void)unused;
-    if (((u32)(Func_08004458() << 4) >> 16) != 0) {
+    if (((u32)(Rand() << 4) >> 16) != 0) {
         count = Func_080b6b40(1, values);
         shown = 0;
         if (count != 0) {

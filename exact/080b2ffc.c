@@ -2,6 +2,8 @@
 
 void Func_0808a500(s32);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_08009248(s32, u32);
 
 void Func_080b2ffc(void)
@@ -22,6 +24,6 @@ void Func_080b2ffc(void)
     } while (var_r6 >= 0);
     temp_r5 = *(s8 *)(temp_r7 + 0x3AB);
     if (temp_r5 != -1) {
-        Func_08009248(*(s32 *)(temp_r7 + (offset = (temp_r5 * 4) + 0x114)), (Func_08004458() * 7) >> 16);
+        Func_08009248(*(s32 *)(temp_r7 + (offset = (temp_r5 * 4) + 0x114)), (Rand() * 7) >> 16);
     }
 }

@@ -22,6 +22,8 @@ struct Effect_080b2f4c {
 };
 
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(s32, s32, struct Position *);
 void Func_0808a510(struct Effect_080b2f4c *, s32, s32);
 s32 Func_0808a508(struct Effect_080b2f4c *);
@@ -39,11 +41,11 @@ void Func_080b2f4c(struct Effect_080b2f4c *effect)
     if (state == 0) {
         position.x = effect->source_x;
         position.z = effect->source_z;
-        Func_0800447c(0x280000, Func_08004458(), &position);
+        Func_0800447c(0x280000, Rand(), &position);
         Func_0808a510(effect, position.x, position.z);
         position.x = effect->source_x;
         position.z = effect->source_z;
-        Func_0800447c(0x40000, Func_08004458(), &position);
+        Func_0800447c(0x40000, Rand(), &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->velocity = 0x20000;

@@ -402,7 +402,7 @@ pub struct ReconRecord {
     pub file: String,
     pub owner: String,
     pub stem: String,
-    pub wrong: Option<i64>,
+    pub differing: Option<i64>,
     pub has_score: bool,
 }
 
@@ -444,7 +444,7 @@ pub fn read_recon(root: &Path) -> Result<Vec<ReconRecord>, String> {
             file: name.clone(),
             owner: json_str(&text, "owner").unwrap_or_default(),
             stem: name.trim_end_matches(".json").to_string(),
-            wrong: json_num(&text, "wrong_instructions"),
+            differing: json_num(&text, "differing_halfwords"),
             has_score: text.contains("\"score\""),
         });
     }
@@ -462,9 +462,15 @@ pub fn recon_violations(records: &[ReconRecord], exact: &HashSet<String>) -> Vec
         if !r.has_score {
             problems.push(format!("{}: no score; a record without a measurement is a claim", r.file));
         }
-        if r.wrong == Some(0) {
+        // Byte-exactness is `differing_halfwords`, NOT `wrong_instructions`.
+        // An owner can have zero wrong instructions and still not reproduce:
+        // resource_3ce:029c has 196 calls whose two argument loads are emitted
+        // in the opposite order, which is 380 differing halfwords and no wrong
+        // instruction at all. Reading the wrong field made this gate demand the
+        // adoption of something the adoption gate would refuse.
+        if r.differing == Some(0) {
             problems.push(format!(
-                "{}: wrong_instructions is 0, so adopt it and delete this record",
+                "{}: differing_halfwords is 0, so adopt it and delete this record",
                 r.file
             ));
         }

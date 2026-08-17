@@ -58,21 +58,18 @@ extern volatile s32 Data_0200c838;
 void Func_02000970(void)
 {
     s32 polls;
-    s32 first;
 
-    Func_02004716(((s32) &Value_0000000a));
+    /* 素直な while ループ。 A plain while loop: the goto-scaffolded version let
+     * gcc sink the first read of Data_0200c834 into the test block, where the
+     * reference loads it before the loop. The frame count is a literal ten. */
+    Func_02004716(10);
 
-    first = Data_0200c834;
     polls = 0;
-    goto test;
-body:
-    Func_02004724(1);
-    polls = polls + 1;
-    if (polls >= 600) goto done;
-    first = Data_0200c834;
-test:
-    if (first != 0) goto body;
-    if (Data_0200c838 != 75) goto body;
-done:
-    return;
+    while (Data_0200c834 != 0 || Data_0200c838 != 75) {
+        Func_02004724(1);
+        polls++;
+        if (polls >= 600) {
+            return;
+        }
+    }
 }

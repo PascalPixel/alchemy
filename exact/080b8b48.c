@@ -29,6 +29,8 @@ void Func_080030f8(u32);
 s32 Func_080b8808(u32);
 void Func_08077008(s32);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_08015120(s32, s32);
 void Func_080151c8(s32);
 void Func_080b82c4(s32, s32, s32, s32);
@@ -59,7 +61,7 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
 
     Func_08077008(work.primary_id);
     Func_08077008(work.secondary_id);
-    Func_08004458();
+    Rand();
     Func_08015120(work.primary_id, 1);
     Func_080151c8(0x814);
     Func_080b82c4(work.primary_id, work.secondary_id, 13, 0);

@@ -36,6 +36,8 @@ extern struct State_08099d18 *Data_03001f30;
 extern u8 Data_0809f0b0[];
 
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(s32, s32, struct Vector_08099d18 *);
 void Func_08009080(u8 *, s32);
 void Func_08009098(u8 *, void *);
@@ -52,11 +54,11 @@ void Func_08099d18(void)
     source = Data_03001f30->source;
     position.x = source->x;
     position.y = (s32)((u32)source->y -
-        Func_08004458() * 16 + 0x180000);
+        Rand() * 16 + 0x180000);
     position.z = source->z;
 
-    angle = Func_08004458() * 3;
-    Func_0800447c((s32)(angle * 16), Func_08004458(), &position);
+    angle = Rand() * 3;
+    Func_0800447c((s32)(angle * 16), Rand(), &position);
 
     object = Func_08096c80(
         0x11d,

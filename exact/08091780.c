@@ -12,5 +12,5 @@ void Func_08091780(s32 object_id)
     Func_0809177c();
     Func_0808b674(object_id);
     Func_080030f8(1);
-    Func_0808ba1c(Data_02000240.value);
+    GetObject(Data_02000240.value);
 }

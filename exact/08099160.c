@@ -43,6 +43,8 @@ extern struct GlobalData_08099160 Data_02000240;
 
 void Func_080030f8(s32 frames);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(
     s32 magnitude,
     s32 angle,
@@ -83,24 +85,24 @@ void Func_08099160(void)
             u32 initial_scale;
             s32 magnitude;
 
-            initial_scale = (Func_08004458() >> 1) + 0x8000;
+            initial_scale = (Rand() >> 1) + 0x8000;
             particle->scale_y = initial_scale;
             particle->scale_x = initial_scale;
-            if ((Func_08004458() & 1) != 0)
+            if ((Rand() & 1) != 0)
                 particle->update = Func_08099070;
             else
                 particle->update = Func_080990cc;
 
-            particle->rotation = Func_08004458();
+            particle->rotation = Rand();
             particle->lifetime = 60;
-            particle->orbit_angle = Func_08004458();
+            particle->orbit_angle = Rand();
             Func_08009240(particle, 9);
 
             position_pointer->x = scene->origin.x;
             position_pointer->y = scene->origin.y;
             position_pointer->z = scene->origin.z;
-            magnitude = (Func_08004458() << 2) + 0x20000;
-            Func_0800447c(magnitude, Func_08004458(), position_pointer);
+            magnitude = (Rand() << 2) + 0x20000;
+            Func_0800447c(magnitude, Rand(), position_pointer);
             particle->orbit_center.x = position_pointer->x;
             particle->orbit_center.y = position_pointer->y;
             particle->orbit_center.z = position_pointer->z;

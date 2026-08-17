@@ -10,7 +10,7 @@ void Func_08092560(u32 object_id, s32 speed, s32 event_id)
     s32 val;
     s32 shifted;
 
-    object = Func_0808ba1c(object_id);
+    object = GetObject(object_id);
     if (object != NULL) {
         flags = &object->flags;
         val = *flags | 2;

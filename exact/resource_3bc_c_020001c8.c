@@ -32,23 +32,20 @@ void Func_02004a1e();
 void Func_020001c8(void)
 {
     s32 polls;
-    s32 cond;
 
-    Func_02004a0e(((s32) &Value_0000000a));
+    /* 素直な while ループ。goto 版では初回の読みがテストへ沈む。
+     * A plain while loop. The goto-scaffolded version let gcc sink the first
+     * read of Data_0200d480 into the test block, where the reference loads it
+     * before the loop. And the frame count is a literal ten: the reference
+     * emits `movs r0, #10`, which a Value_ symbol cannot produce. */
+    Func_02004a0e(10);
 
-    cond = Data_0200d480;
     polls = 0;
-    goto test;
-
-loop_body:
-    Func_02004a1e(1);
-    polls++;
-    if (polls > 119) {
-        return;
+    while (Data_0200d480 != 3 || Data_0200d484 != 1) {
+        Func_02004a1e(1);
+        polls++;
+        if (polls > 119) {
+            return;
+        }
     }
-    cond = Data_0200d480;
-
-test:
-    if (cond != 3) goto loop_body;
-    if (Data_0200d484 != 1) goto loop_body;
 }

@@ -455,46 +455,70 @@ fn rom_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-/// A row's true bytes, from the ROM when its container decodes, from git when
-/// the row was adopted once, and otherwise from the overlay as it stands.
-///
-/// The third oracle is what lets a NEVER-ADOPTED row be scored at all. Both
-/// earlier ones need the row to have been adopted at some point: the git oracle
-/// looks for the revision before its `AlchemyC_` placeholder appeared, and
-/// without one it fails outright with "no revision ... contains AlchemyC_". That
-/// is most of the corpus, and it is the large end of it -- `resource_374:17c8`
-/// at 2,816 bytes and `resource_37a:0488` at 1,388 could not be read at all,
-/// while `candidate-rank` measured them the whole time by assembling the
-/// overlay. Same bytes, one tool short of them.
-///
-/// It is only correct when the row is NOT adopted. An adopted row's assembly has
-/// been replaced by a `.space` hole, so assembling the current file would hand
-/// back zeros and call them the reference; the placeholder test is what keeps
-/// those on the rom-or-git path.
+/// A row's true bytes, from the ROM when its container decodes and from git
+/// otherwise.
 pub fn truth_window(
     root: &Path,
     overlay: &str,
     address: i64,
     span: i64,
 ) -> Result<(Vec<u8>, &'static str), String> {
-    if let Ok(image) = rom_overlay(root, overlay) {
-        let start = (address - OVERLAY_BASE) as usize;
-        if let Some(window) = image.get(start..start + span as usize) {
-            return Ok((window.to_vec(), "rom"));
+    // Both paths can fail, and for 95 of the 605 measured overlay candidates --
+    // 80,246 bytes, every owner of some overlays -- both do. Reporting only the
+    // git failure names a missing `AlchemyC_` label, which reads as "this region
+    // is unlabelled" when the actual cause is upstream: the container did not
+    // decode, so there was never a ROM window to prefer. Say both, so the reader
+    // knows which one to chase.
+    let start = (address - OVERLAY_BASE) as usize;
+    let rom = match rom_overlay(root, overlay) {
+        Ok(image) => match image.get(start..start + span as usize) {
+            Some(window) => return Ok((window.to_vec(), "rom")),
+            None => format!(
+                "the decoded container is {} bytes and the row needs {}",
+                image.len(),
+                start + span as usize
+            ),
+        },
+        Err(message) => message,
+    };
+
+    // A PARKED row's own assembly is the reference, and a stronger oracle than
+    // git history: `make verify` is green only when the assembled tree
+    // reproduces the ROM byte for byte, so the bytes at this address already ARE
+    // the ROM's. This is how `overlay candidate-rank` has always obtained them,
+    // which is why it measures 605 owners while `score` could open only 510 --
+    // the other 95, 80,246 bytes, are rows whose container does not decode AND
+    // which have no historical `AlchemyC_` label because they were never adopted.
+    //
+    // Only for a parked row. Once a row is adopted its assembly is a `.space`
+    // hole, so assembling would hand back zeros; `placeholder_span` returning
+    // `Some` is exactly that case, and git remains the oracle for it.
+    let assembled = match placeholder_span(root, overlay, address) {
+        Ok(None) => {
+            let path = root
+                .join("assets/code")
+                .join(format!("{overlay}_overlay.s"));
+            match assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE) {
+                Ok(image) => match image.get(start..start + span as usize) {
+                    Some(window) => return Ok((window.to_vec(), "assembly")),
+                    None => format!(
+                        "the assembled overlay is {} bytes and the row needs {}",
+                        image.len(),
+                        start + span as usize
+                    ),
+                },
+                Err(message) => message,
+            }
         }
-    }
-    if let Ok(bytes) = reference_bytes(root, overlay, address, span) {
-        return Ok((bytes, "git"));
-    }
-    if placeholder_span(root, overlay, address)?.is_none() {
-        let path = root.join(format!("assets/code/{overlay}_overlay.s"));
-        let image = assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE)?;
-        let start = (address - OVERLAY_BASE) as usize;
-        if let Some(window) = image.get(start..start + span as usize) {
-            return Ok((window.to_vec(), "assembled"));
-        }
-    }
-    reference_bytes(root, overlay, address, span).map(|bytes| (bytes, "git"))
+        Ok(Some(_)) => "the row is adopted, so its assembly is a placeholder".to_string(),
+        Err(message) => message,
+    };
+
+    reference_bytes(root, overlay, address, span)
+        .map(|bytes| (bytes, "git"))
+        .map_err(|git| {
+            format!("{git}; no ROM window either: {rom}; and not from the assembly: {assembled}")
+        })
 }
 
 

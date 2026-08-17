@@ -88,8 +88,17 @@ fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut align = false;
     let mut target = None;
+    let mut extra: Vec<String> = Vec::new();
+    let mut expecting_flags = false;
     for argument in argv {
+        if expecting_flags {
+            // Comma-separated, so one shell word carries a whole set.
+            extra.extend(argument.split(',').map(str::to_string));
+            expecting_flags = false;
+            continue;
+        }
         match argument.as_str() {
+            "--flags" => expecting_flags = true,
             "--align" => align = true,
             "-h" | "--help" => {
                 println!(
@@ -128,7 +137,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let (reference, oracle) = truth_window(root, &overlay, address, span)?;
 
     let work = temp_dir("work");
-    let compiled = compile_overlay_c(&source, &work, &overlay, None, &[])?;
+    let compiled = compile_overlay_c(&source, &work, &overlay, None, &extra)?;
 
     let differing = reference
         .chunks(2)

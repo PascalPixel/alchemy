@@ -23,6 +23,27 @@
  * Func_08009080 x4, Func_080091c0 x4, Func_080091e0 x4, Func_0808a3c0 x3 and
  * Func_080770c8 x1 — 34, matching the tool's veneer count exactly.
  *
+ * WHERE THIS ROW STANDS after reading it against the ROM.
+ *
+ * THE SCENE IDS ARE POOLED OBJECTS, not immediates.  The reference compares the
+ * id with `ldr r3, [pc, ...] ; cmp r7, r3` at every branch, and its literal pool
+ * holds 0x7b, 0x7d, 0x71, 0x7e among the eleven words at 0x020011e4 onwards.
+ * 0x7b, 0x7d, 0x71 and 0x7e all fit an 8-bit immediate, so `cmp r3, #123` is
+ * what a plain integer produces and a pool word is what an ADDRESS produces:
+ * these are `(s32)&Value_000000XX`, the idiom every byte-exact sibling in this
+ * overlay already uses for exactly these ids -- resource_3b2_c_02000ec4.c
+ * declares Value_00000071, 72, 7b, 7c and 7d and compares them this way.
+ * Corrected here, which moved the row from 28 bytes SHORT of the reference to 4
+ * bytes over: the four pool words were the missing size.
+ *
+ * WHAT IS LEFT is one callee-saved register too many.  The reference saves r8
+ * alone (`mov r7, r8 ; push {r7}`) and holds the id in r7 with the address
+ * `Data_02000240 + 448` in r8.  We save r8 AND sl, because the draft caches both
+ * `scene` and `current` as separate reads of Data_02000240[224] while the
+ * reference keeps the ADDRESS live and re-reads through it.  Whoever takes this
+ * next should start there: one live value fewer at the head, not another pass
+ * over the branch arms, which now line up.
+ *
  * Behaviour: the overlay's per-scene entry hook.  It first stamps the shared
  * workspace word at +448 with 516, then branches on the scene id in
  * `Data_02000240[224]`:
@@ -60,6 +81,10 @@
  * owner; other overlays pass 0 and 255, so it reads as an intensity or alpha.
  */
 
+extern u8 Value_00000071;
+extern u8 Value_0000007b;
+extern u8 Value_0000007d;
+extern u8 Value_0000007e;
 extern s16 Data_02000240[];             /* the overlay's scene table */
 extern u8 *Data_03001ebc;               /* shared workspace pointer */
 
@@ -130,12 +155,12 @@ s32 Func_02000f70(void)
     *(s32 *)(Data_03001ebc + 448) = 516;
     scene = Data_02000240[224];
 
-    if (scene == 0x7b) {
+    if (scene == (s32)&Value_0000007b) {
         Func_020028b4();
         return 0;
     }
 
-    if (scene == 0x7d) {
+    if (scene == (s32)&Value_0000007d) {
         if (Func_02003ffe(0xef7) == 0) {
             Func_02003fe6(0, 3, 1, 1, 13, 40);
             Func_02003ff8(0, 2, 1, 1, 15, 40);
@@ -157,7 +182,7 @@ s32 Func_02000f70(void)
 
     current = Data_02000240[224];
 
-    if (current == 0x71) {
+    if (current == (s32)&Value_00000071) {
         Func_020026be();
         *(s32 *)(Func_020040d0(8) + 56) = 0x00810000;   /* y = 129.0 */
 
@@ -211,7 +236,7 @@ s32 Func_02000f70(void)
         return 0;
     }
 
-    if (current == 0x7e && Func_020041d2(0xef4) == 0) {
+    if (current == (s32)&Value_0000007e && Func_020041d2(0xef4) == 0) {
         Func_020041ba_b(0, 0, 1, 1, 37, 10);
         Func_020042a8(100, 0x02580000, 0x00a80000);
     }

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "comment": "Owners withdrawn from routine search. This is data for check-sanctum, not documentation: it keeps a small number of owners out of the queue without putting a record of dead ends in front of every contributor. An entry is removed the moment its owner becomes exact.",
+  "sealed": [
+    {
+      "owner": "resource_3b7_c_02000880",
+      "floor_halfwords": 2,
+      "axes": ["compiler", "shape"],
+      "reason": "The reference orders the counter increment before the volatile store and the argument load after it; the emitted pair is transposed."
+    }
+  ]
+}

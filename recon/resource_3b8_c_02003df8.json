@@ -1,0 +1,23 @@
+{
+  "owner": "resource_3b8:3df8",
+  "span_bytes": 72,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 72,
+    "reference_bytes": 72,
+    "wrong_instructions": 0,
+    "differing_halfwords": 2,
+    "class": "ordering"
+  },
+  "expressed": [
+    "drafted whole by `overlay reconstruct`"
+  ],
+  "unexpressed": [],
+  "verified_against_reference": [
+    "byte count 72 = 72",
+    "wrong_instructions 0"
+  ],
+  "blocked_by": "instruction order only: `negs r2, r2` scheduled after `movs r1, #2` rather than before it",
+  "rejected": [],
+  "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions."
+}

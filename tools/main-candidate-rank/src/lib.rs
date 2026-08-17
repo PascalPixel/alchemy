@@ -47,12 +47,16 @@
 //!
 //!   * moving a pc-relative load changes that load's own displacement, so
 //!     `[pc, #524]` and `[pc, #516]` are one load at two positions;
-//!   * the aligned view's two columns are tab-formatted, so splitting them at a
-//!     fixed character offset cuts through the middle of an operand list.
+//!   * the candidate column is a FIXED-WIDTH field -- `pad_end(text, 30)` clipped
+//!     to 30 -- so the split is by offset. A run-of-spaces rule looks right and
+//!     fails on exactly the rows that have no padding left, which are the wide
+//!     ones; a column over 30 characters is also clipped and leaks its tail onto
+//!     the reference side, so that side is anchored on its mnemonic.
 //!
-//! Without the first, 15 reorderings read as disagreements; without the second,
-//! the split is wrong on every row wide enough to matter and the verdict
-//! inverts outright.
+//! Without the first, 15 reorderings read as disagreements. The second bit twice:
+//! an early draft split three characters off and inverted the verdict outright,
+//! reporting 155 owners worth opening where there are 104, and the run-of-spaces
+//! rule that replaced it read 13 overlay reorderings as divergent.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -215,33 +219,60 @@ fn register_at(rest: &[char]) -> (bool, usize) {
 
 /// Split an aligned `!` row into its candidate and reference halves.
 ///
-/// The columns are padded with spaces but the instructions themselves contain
-/// tabs, so the run of padding is the only reliable separator; a fixed offset
-/// lands inside an operand list on any row wide enough to need one.
+/// The candidate column is `pad_end(text, 30)` clipped to exactly 30 units (see
+/// `candidate_show::render`), so the row is `"  ! "` then 30 characters then the
+/// reference. It is a FIXED-WIDTH field, and the run-of-spaces rule an earlier
+/// draft used only works while the content is short enough to leave padding.
+/// This row has none:
+///
+/// ```text
+///   ! ldr	r2, [pc, #20]	@ (0x2000e80) ldr	r2, [pc, #16]	@ (0x2000e80)
+/// ```
+///
+/// One space, because the left text is 31 characters and was clipped -- which
+/// also leaks its tail, here a `)`, onto the front of the reference column. So
+/// the split is by offset and the reference side is then anchored on its
+/// mnemonic, discarding whatever the clip left behind. Without that anchoring a
+/// clipped row compares a mnemonic against `) ldr` and reads as a disagreement.
+pub const CANDIDATE_COLUMN: usize = 30;
+
 pub fn split_columns(body: &str) -> (String, Option<String>) {
-    let trimmed = body.trim_end();
-    let mut gap: Option<usize> = None;
+    // `body` is the row past its three-character mark, so the column starts one
+    // space in.
+    let chars: Vec<char> = body.trim_end().chars().collect();
+    if chars.len() <= 1 {
+        return (String::new(), None);
+    }
+    let start = 1usize;
+    let end = (start + CANDIDATE_COLUMN).min(chars.len());
+    let left: String = chars[start..end].iter().collect();
+    if end >= chars.len() {
+        return (left.trim().to_string(), None);
+    }
+    let right: String = chars[end..].iter().collect();
+    let right = anchor_mnemonic(&right);
+    if right.is_empty() {
+        return (left.trim().to_string(), None);
+    }
+    (left.trim().to_string(), Some(right))
+}
+
+/// Drop anything before the first mnemonic, which is what a clipped candidate
+/// column leaves on the front of the reference column.
+fn anchor_mnemonic(text: &str) -> String {
+    let trimmed = text.trim_start();
     let chars: Vec<char> = trimmed.chars().collect();
-    let mut run = 0usize;
     for (index, ch) in chars.iter().enumerate() {
-        if *ch == ' ' {
-            run += 1;
-        } else {
-            if run >= 3 {
-                gap = Some(index - run);
-                break;
-            }
-            run = 0;
+        if !ch.is_ascii_alphabetic() {
+            continue;
+        }
+        // A mnemonic starts a word and is followed by a separator or its operands.
+        let starts_word = index == 0 || !chars[index - 1].is_ascii_alphanumeric();
+        if starts_word {
+            return chars[index..].iter().collect::<String>().trim().to_string();
         }
     }
-    match gap {
-        Some(at) => {
-            let left: String = chars[..at].iter().collect();
-            let right: String = chars[at..].iter().collect();
-            (left.trim().to_string(), Some(right.trim().to_string()))
-        }
-        None => (trimmed.trim().to_string(), None),
-    }
+    trimmed.trim().to_string()
 }
 
 /// Classify one aligned `candidate-show` output.
@@ -723,10 +754,43 @@ pub fn self_test() -> Result<(), String> {
         return Err("no differing rows must read as exact".to_string());
     }
 
-    // The column split must survive an operand list containing spaces.
-    let (left, right) = split_columns("push\t{r5, r6, r7, lr}          pop\t{r0}");
+    // The column split must survive an operand list containing spaces. Built
+    // with real padding rather than counted spaces, so the case cannot drift
+    // away from the renderer's `pad_end(text, 30)`.
+    let padded = |left: &str, right: &str| {
+        let mut row = String::from(" ");
+        row.push_str(left);
+        while row.chars().count() < 1 + CANDIDATE_COLUMN {
+            row.push(' ');
+        }
+        row.push_str(right);
+        row
+    };
+    let row = padded("push\t{r5, r6, r7, lr}", "pop\t{r0}");
+    let (left, right) = split_columns(&row);
     if left != "push\t{r5, r6, r7, lr}" || right.as_deref() != Some("pop\t{r0}") {
         return Err(format!("column split cut the wrong place: {left:?} / {right:?}"));
+    }
+
+    // A candidate column of exactly 30 characters leaves NO padding, and one
+    // longer than 30 is clipped and leaks its tail onto the reference column.
+    // This is resource_373:0e54's real row: one space between the columns, and a
+    // stray `)` from the clip. A run-of-spaces split reads the whole row as the
+    // candidate side and reports a disagreement that is not there.
+    let clipped = " ldr\tr2, [pc, #20]\t@ (0x2000e80) ldr\tr2, [pc, #16]\t@ (0x2000e80)";
+    let (left, right) = split_columns(clipped);
+    if normalise(&left) != "ldr r2, [pc]" {
+        return Err(format!("clipped candidate column misread: {left:?}"));
+    }
+    match right.as_deref() {
+        Some(text) if normalise(text) == "ldr r2, [pc]" => {}
+        other => return Err(format!("clipped reference column misread: {other:?}")),
+    }
+    // And so the row is what it is: one load at two positions, not a difference.
+    let leaked_row = format!("  !{clipped}");
+    let leaked = lines(&[leaked_row.as_str()]);
+    if classify(&leaked).0 != Verdict::Reordering {
+        return Err("a clipped row must not read as a disagreement".to_string());
     }
 
     if normalise("ldr\tr3, [pc, #916]\t@ (0x2003744)") != normalise("ldr\tr3, [pc, #108]\t@ (0x200341c)")

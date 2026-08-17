@@ -3,10 +3,12 @@
 extern s8 Data_0809f160[];
 
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_08009240(s32, s8);
 
 void Func_0809ad70(s32 arg0) {
     s8 *table = Data_0809f160;
-    s32 index = Func_08004458();
+    s32 index = Rand();
     Func_08009240(arg0, table[(u32)(index * 8) >> 16]);
 }

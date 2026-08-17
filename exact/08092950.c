@@ -9,7 +9,7 @@ void Func_08092950(s32 arg0, s32 arg1) {
     s32 temp_r3;
     void *temp_r0;
 
-    temp_r0 = Func_0808ba1c();
+    temp_r0 = GetObject();
     if (temp_r0 != NULL) {
         temp_r3 = 0x100 & arg1;
         if (temp_r3 != 0) {

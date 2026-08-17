@@ -36,6 +36,8 @@ struct Effect_080942e0 {
 extern u32 Data_02000240[];
 
 struct Entity_080942e0 *Func_0808ba1c(u32);
+/* Object table: 192 pointers at Data_03001ebc + 0x14 (exact/0808ba1c.c). */
+#define GetObject Func_0808ba1c
 struct Effect_080942e0 *Func_08009048(struct Entity_080942e0 *, s32);
 void Func_08009080(struct Entity_080942e0 *, s32);
 void Func_080030f8(s32);
@@ -48,7 +50,7 @@ void Func_080942e0(s32 value)
     struct Entity_080942e0 *context;
     struct Effect_080942e0 *effect;
 
-    object = Func_0808ba1c(Data_02000240[125]);
+    object = GetObject(Data_02000240[125]);
     context = object->context;
     effect = Func_08009048(context, 27);
     zero = 0;

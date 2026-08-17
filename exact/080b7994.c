@@ -13,7 +13,7 @@ struct EffectContext {
     u8 dirty;
 };
 
-struct Effect {
+struct Effect_080b7994 {
     u8 padding_000[6];
     u8 state;
 };
@@ -26,14 +26,14 @@ struct EffectRecord {
     u16 availableMask;
     u8 selectedBit;
     s8 cooldown;
-    struct Effect *effect;
+    struct Effect_080b7994 *effect;
     void *secondaryEffect;
 };
 
 void *Func_080b7f70(struct Fields_080b7f70 *owner, s32 index);
-struct Effect *Func_08009048(struct EffectContext *context, s32 effectId);
-void Func_08009050(struct EffectContext *context, struct Effect *effect);
-void Func_08009070(struct Effect *effect, s32 index);
+struct Effect_080b7994 *Func_08009048(struct EffectContext *context, s32 effectId);
+void Func_08009050(struct EffectContext *context, struct Effect_080b7994 *effect);
+void Func_08009070(struct Effect_080b7994 *effect, s32 index);
 
 /*
  * The reference preserves r0 in its epilogue (pop {r1}; bx r1), matching GCC's
@@ -43,8 +43,8 @@ void Func_08009070(struct Effect *effect, s32 index);
  */
 s32 Func_080b7994(struct EffectRecord *record)
 {
-    struct Effect *oldEffect;
-    struct Effect *effect;
+    struct Effect_080b7994 *oldEffect;
+    struct Effect_080b7994 *effect;
     struct EffectContext *context;
     struct Fields_080b7f70 *owner;
     s32 effectId;
@@ -107,7 +107,7 @@ update:
     if (effectId >= 0 && changed != 0) {
         effect = Func_08009048(context, effectId);
         record->effect = effect;
-        if (effect == (struct Effect *)-1)
+        if (effect == (struct Effect_080b7994 *)-1)
             record->effect = 0;
         effect = record->effect;
         if (effect != 0) {

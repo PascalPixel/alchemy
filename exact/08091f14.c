@@ -23,6 +23,8 @@ extern struct SharedData_08091f14 Data_02000240;
 void Func_0809537c(s32 flags);
 s16 Func_0808b074(s32 value);
 void *Func_0808ba1c(u32 object);
+/* Object table: 192 pointers at Data_03001ebc + 0x14 (exact/0808ba1c.c). */
+#define GetObject Func_0808ba1c
 void Func_0808adf0(void *object);
 s32 Func_0808b320(s32 first, s32 second);
 
@@ -43,7 +45,7 @@ void Func_08091f14(s32 flags, s32 value)
     shared->request = (value + 0x12c) | high;
     state->value = Func_0808b074(value);
     if (state->mode == 3) {
-        void *object = Func_0808ba1c(shared->object);
+        void *object = GetObject(shared->object);
 
         Func_0808adf0((u8 *)object + 8);
     }

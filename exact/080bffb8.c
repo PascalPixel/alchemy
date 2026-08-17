@@ -2,6 +2,8 @@
 
 void Func_08003b70(s32 arg0);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_080030f8(s32);
 
 s32 Func_080bffb8(void)
@@ -27,10 +29,10 @@ s32 Func_080bffb8(void)
 
     Func_08003b70(16);
     for (i = 0; i <= 15; i++) {
-        Func_08004458();
-        Func_08004458();
-        Func_08004458();
-        Func_08004458();
+        Rand();
+        Rand();
+        Rand();
+        Rand();
         *(volatile u16 *)0x0400004c = (i << 8) | i;
         Func_080030f8(1);
     }

@@ -5,25 +5,31 @@ struct Inner {
     s16 *value;
 };
 
-struct Object {
+struct Object_08092be0 {
     u8 unknown_000[80];
     struct Inner *inner;
     u8 active;
 };
 
-struct State {
+/*
+ * This owner's view of Data_03001ebc. include/battle_effect_runtime.h declares
+ * the same global as `struct BattleRuntime` with a different layout; both are
+ * per-owner views of one object and only the fields each owner reads are
+ * evidence. Named for the owner so the two cannot be mistaken for one type.
+ */
+struct Work_08092be0 {
     u8 unknown_000[20];
-    struct Object *objects[4096];
+    struct Object_08092be0 *objects[4096];
 };
 
-extern struct State *Data_03001ebc;
+extern struct Work_08092be0 *Data_03001ebc;
 
 s32 Func_08092be0(s32 value)
 {
-    struct State *state = Data_03001ebc;
+    struct Work_08092be0 *state = Data_03001ebc;
     s32 result = -1;
     s32 index = 8;
-    struct Object *object = state->objects[index];
+    struct Object_08092be0 *object = state->objects[index];
 
     if (object != 0 && object->active == 1 && *object->inner->value == value) {
         result = index;

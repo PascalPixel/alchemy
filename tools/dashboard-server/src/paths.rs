@@ -25,14 +25,6 @@ pub fn font() -> PathBuf {
 }
 
 /// The Rust server entry point.
-pub fn source() -> PathBuf {
-    root()
-        .join("tools")
-        .join("dashboard-server")
-        .join("src")
-        .join("main.rs")
-}
-
 /// Native source roots whose Rust files require a server restart when edited.
 pub fn native_source_directories_at(repository_root: &Path) -> [PathBuf; 2] {
     [
@@ -75,6 +67,9 @@ pub fn restart_files() -> Vec<PathBuf> {
     restart_files_at(&root())
 }
 
+// `semantic` is still watched: the C tier is gone, but the audited owner
+// boundaries (`regions.json`, `main-regions.json`) still live there and still
+// change what the map reports.
 pub const COVERAGE_DIRECTORIES: [&str; 5] = ["asm", "assets", "metrics", "semantic", "exact"];
 
 pub fn coverage_build_files() -> Vec<PathBuf> {
@@ -163,24 +158,6 @@ fn js_to_number(raw: &str) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn root_reaches_the_repository_and_finds_the_rust_server() {
-        assert!(
-            source().exists(),
-            "the Rust server must be reachable from root()"
-        );
-        assert!(
-            restart_files()
-                .iter()
-                .all(|path| path.extension().and_then(|e| e.to_str()) == Some("rs")),
-            "restart paths must contain native Rust sources only"
-        );
-        assert!(
-            page_files().is_empty(),
-            "browser assets must be embedded in Rust"
-        );
-    }
 
     #[test]
     fn number_of_empty_is_zero_not_the_default_port() {

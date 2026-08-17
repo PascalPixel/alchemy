@@ -212,7 +212,14 @@ pub fn summarize(document: &Value) -> Result<String, String> {
     // assembly. It was `exact + semantic`, which described the C anyone had
     // written rather than the C that remains to be written, and which collapses
     // to `exact` -- and reads 100% -- the moment there is no semantic tier.
-    let combined = executable - field(document, &["categories", "retained_asm", "bytes"]);
+    // Fail loudly rather than print `c_able=0 exact_of_c_able=NaN%`. This line
+    // produces the public share; a map missing the key must stop the run, not
+    // degrade into a number that reads like a measurement.
+    let permanent = field(document, &["categories", "retained_asm", "bytes"]);
+    if !permanent.is_finite() || !executable.is_finite() {
+        return Err("coverage map lacks executable_bytes or categories.retained_asm.bytes".into());
+    }
+    let combined = executable - permanent;
     Ok([
         format!(
             "target={}",
@@ -766,7 +773,8 @@ mod tests {
         let document = crate::json::parse(
             r#"{"target":"gs1-en","rom_bytes":8388608,"executable_bytes":1000,
                 "categories":{"exact_c":{"bytes":250,"percent_of_executable":25},
-                              "semantic_c":{"bytes":100,"percent_of_executable":10}},
+                              "semantic_c":{"bytes":100,"percent_of_executable":10},
+                              "retained_asm":{"bytes":200,"percent_of_executable":20}},
                 "provenance":{"semantic_source":"worktree"}}"#,
         )
         .expect("fixture");
@@ -774,7 +782,7 @@ mod tests {
         assert_eq!(
             line,
             "target=gs1-en rom=8,388,608 executable=1,000 exact=250 (25%) semantic=100 (10%) \
-             combined=350 (35%) semantic_source=worktree"
+             c_able=800 exact_of_c_able=31.25% semantic_source=worktree"
         );
     }
 

@@ -28,7 +28,7 @@ pub struct LiveCoverage {
     pub executable_bytes: f64,
     pub exact_bytes: f64,
     pub exact_percent: f64,
-    pub semantic_bytes: f64,
+    pub retained_bytes: f64,
 }
 
 #[derive(Default)]
@@ -143,8 +143,10 @@ pub fn compute() -> Result<LiveCoverage, String> {
         validate_tracked_progress: false,
         prefer_verified_assets: true,
     })?;
-    let match_scores = crate::matches::diagnostic_match_scores(paths::root().as_path());
-    let trees = render_box_trees_with_matches(&map, Some(&tree), true, &match_scores)?;
+    // No match scores: they graded semantic sources by how close their bytes
+    // came, and there is no semantic tier to grade. A byte is exact or it is
+    // not, and the chart shows exactly that.
+    let trees = render_box_trees_with_matches(&map, Some(&tree), true, &Default::default())?;
     let revision = BOX_TREES
         .iter()
         .map(|name| {
@@ -165,7 +167,7 @@ pub fn compute() -> Result<LiveCoverage, String> {
             &map,
             &["categories", "exact_c", "percent_of_executable"],
         )),
-        semantic_bytes: nullish_or_zero(map_number(&map, &["categories", "semantic_c", "bytes"])),
+        retained_bytes: nullish_or_zero(map_number(&map, &["categories", "retained_asm", "bytes"])),
         trees,
     })
 }
@@ -188,16 +190,18 @@ pub fn snapshot_of(state: &State) -> Json {
         None => Json::Undefined,
         Some(live) => {
             let exact = live.exact_bytes;
-            let semantic = live.semantic_bytes;
+            let retained = live.retained_bytes;
             Json::obj(vec![
                 ("executableBytes", Json::Num(live.executable_bytes)),
                 ("exactBytes", Json::Num(exact)),
                 ("exactPercent", Json::Num(live.exact_percent)),
-                ("semanticBytes", Json::Num(semantic)),
+                ("retainedBytes", Json::Num(retained)),
                 // PORT NOTE: JS `+` on two numbers. If either side were NaN
                 // the sum is NaN and stringifies as `null`; f64 addition
                 // already models that, so no `js_add` helper is needed here.
-                ("combinedBytes", Json::Num(exact + semantic)),
+                // `doneBytes` replaced `combinedBytes`, which was exact plus
+                // semantic -- a number that counted C which did not reproduce.
+                ("doneBytes", Json::Num(exact + retained)),
             ])
         }
     };

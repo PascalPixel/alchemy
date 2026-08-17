@@ -77,19 +77,45 @@ fn git(root: &Path, args: &[&str]) -> Result<String, String> {
     command_output(Path::new("git"), args, root)
 }
 
-fn exact_c_percent(report: &Report) -> Result<u64, String> {
-    let scaled = report
+/// Permanent-assembly bytes, from the tracked coverage map.
+///
+/// The subject prefix is DONE -- exact C plus permanent assembly -- and the
+/// progress report only carries the first term.
+fn permanent_asm_bytes(root: &Path, target: &str) -> Result<u64, String> {
+    // The INDEX copy, like the progress report above it. Reading the working
+    // tree would let an unstaged map set the percentage of a commit that does
+    // not contain it.
+    let path = format!("metrics/{target}-coverage-map.json");
+    let text = git(root, &["show", &format!(":{path}")])
+        .map_err(|_| format!("stage {path} before committing"))?;
+    let document: serde_json::Value =
+        serde_json::from_str(&text).map_err(|error| format!("{path}: {error}"))?;
+    document["categories"]["retained_asm"]["bytes"]
+        .as_u64()
+        .ok_or_else(|| format!("{path} has no categories.retained_asm.bytes"))
+}
+
+/// The nearest whole DONE share. It was the Exact-C share alone until 2026-08;
+/// the sun is the project's headline and the headline is DONE.
+fn done_percent(report: &Report, permanent: u64) -> Result<u64, String> {
+    let done = report
         .full_c_bytes
+        .checked_add(permanent)
+        .ok_or("DONE percentage arithmetic overflow")?;
+    if done > report.executable_bytes {
+        return Err("DONE numerator exceeds executable denominator".to_string());
+    }
+    let scaled = done
         .checked_mul(100)
-        .ok_or("Exact-C percentage arithmetic overflow")?;
+        .ok_or("DONE percentage arithmetic overflow")?;
     scaled
         .checked_add(report.executable_bytes / 2)
-        .ok_or_else(|| "Exact-C percentage arithmetic overflow".to_string())
+        .ok_or_else(|| "DONE percentage arithmetic overflow".to_string())
         .map(|rounded| rounded / report.executable_bytes)
 }
 
-fn format_subject(report: &Report) -> Result<String, String> {
-    Ok(format!("☀️ {}% –", exact_c_percent(report)?))
+fn format_subject(report: &Report, permanent: u64) -> Result<String, String> {
+    Ok(format!("☀️ {}% –", done_percent(report, permanent)?))
 }
 
 fn parse_subject(text: &str) -> Option<Subject> {
@@ -142,14 +168,14 @@ fn report(value: &Value, target: &str) -> Result<Report, String> {
     Ok(result)
 }
 
-fn check(message: &str, report: &Report) -> Result<(), String> {
+fn check(message: &str, report: &Report, permanent: u64) -> Result<(), String> {
     let subject = message.lines().next().unwrap_or("");
-    let expected = format_subject(report)?;
+    let expected = format_subject(report, permanent)?;
     let parsed = parse_subject(subject)
         .ok_or_else(|| format!("commit subject must start with {expected}"))?;
-    if parsed.exact_c_percent != exact_c_percent(report)? {
+    if parsed.exact_c_percent != done_percent(report, permanent)? {
         return Err(format!(
-            "commit Exact-C percentage is stale; expected {}",
+            "commit DONE percentage is stale; expected {}",
             expected
         ));
     }
@@ -202,7 +228,7 @@ fn self_test() -> Result<(), String> {
         executable_bytes: 1234567,
         remaining_bytes: 1111111,
     };
-    check("☀️ 10% – valid Exact-C prefix", &report)?;
+    check("☀️ 10% – valid DONE prefix", &report, 0)?;
     for bad in [
         "missing",
         "☀️ 1000% – too wide",
@@ -211,11 +237,11 @@ fn self_test() -> Result<(), String> {
         "☀️ 10% –",
         "old [ ☀️ 123 / 1,234 ]",
     ] {
-        if check(bad, &report).is_ok() {
+        if check(bad, &report, 0).is_ok() {
             return Err(format!("invalid subject accepted: {bad}"));
         }
     }
-    println!("self-test=ok prefix=exact-c-percent");
+    println!("self-test=ok prefix=done-percent");
     Ok(())
 }
 
@@ -253,7 +279,7 @@ fn run(arguments: &[String]) -> Result<(), String> {
         return Err(format!("{report_path} is stale: regenerate it with the Rust full-c-progress tool and stage it with executable-source changes"));
     }
     let message = std::fs::read_to_string(message_path).map_err(|e| e.to_string())?;
-    check(&message, &metric)
+    check(&message, &metric, permanent_asm_bytes(&root, &target)?)
 }
 
 pub fn entry(arguments: &[String]) -> ExitCode {

@@ -32,7 +32,7 @@ DISPATCH_RUN := $(CARGO_RUN) $(DISPATCH_MANIFEST) --
 DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search semantic
 
 .PHONY: help verify test lint standard-check routing-debt crate-tests pristine-options-check \
-	build-claimed build-asm build-assets build-semantic \
+	build-claimed build-asm build-assets \
 	build-full build-rom inventory two-tier-check core-retained-check check-owners \
 	progress progress-check progress-subject progress-history coverage coverage-check \
 	showcase compiler-checks compiler-sweep compiler-cohort overlay-compiler-cohort \
@@ -158,9 +158,6 @@ build-asm:
 build-assets:
 	$(CARGO_RUN) $(TOOLS)/build-assets/Cargo.toml --
 
-build-semantic:
-	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- semantic
-
 build-full:
 	$(CARGO_RUN) $(TOOLS)/build-stage/Cargo.toml -- full
 
@@ -244,7 +241,7 @@ compiler-self-test:
 # tests and 3 self-tests sat failing against flags deleted by the axe.
 CRATE_TESTS := alchemy-routing alchemy-plan alchemy-bundle candidate-show \
                mode-sweep \
-               shape-sweep dispatch
+               shape-sweep dispatch dashboard-server coverage-map
 # QUARANTINED: alchemy-selftest does not compile. It imports four routing_data
 # constants deleted as orphaned, and its remaining assertions require that
 # -mgrouped-dma-store and -fthumb-group-control-last are routed -- INVENTED
@@ -318,7 +315,6 @@ verify:
 	$(MAKE) build-full
 	$(MAKE) two-tier-check
 	$(MAKE) core-retained-check
-	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-superseded --check
 	$(MAKE) check-owners
 	$(MAKE) progress-check
 	@# The coverage map, the Targets section, the README figures and the SVGs are

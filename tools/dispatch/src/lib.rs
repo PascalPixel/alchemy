@@ -11,7 +11,6 @@ pub enum Group {
     Metrics,
     Overlay,
     Search,
-    Semantic,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -227,10 +226,6 @@ const MAKE: &[Entry] = &[
     Entry {
         name: "build_rom",
         target: Target::Sub("tools/build-stage/target/release/build-stage", "rom"),
-    },
-    Entry {
-        name: "build_semantic",
-        target: Target::Sub("tools/build-stage/target/release/build-stage", "semantic"),
     },
     Entry {
         name: "byte_henkan",
@@ -499,21 +494,6 @@ const SEARCH: &[Entry] = &[
     },
 ];
 
-const SEMANTIC: &[Entry] = &[
-    Entry {
-        name: "semantic_owner_scope",
-        target: Target::Sub("tools/check/target/release/check", "semantic-owner-scope"),
-    },
-    Entry {
-        name: "semantic_queue",
-        target: Target::Sub("tools/check/target/release/check", "semantic-queue"),
-    },
-    Entry {
-        name: "semantic_superseded",
-        target: Target::Sub("tools/check/target/release/check", "semantic-superseded"),
-    },
-];
-
 impl Group {
     pub fn parse(name: &str) -> Option<Self> {
         match name {
@@ -525,7 +505,6 @@ impl Group {
             "metrics" => Some(Self::Metrics),
             "overlay" => Some(Self::Overlay),
             "search" => Some(Self::Search),
-            "semantic" => Some(Self::Semantic),
             _ => None,
         }
     }
@@ -540,7 +519,6 @@ impl Group {
             Self::Metrics => "metrics",
             Self::Overlay => "overlay",
             Self::Search => "search",
-            Self::Semantic => "semantic",
         }
     }
 
@@ -554,7 +532,6 @@ impl Group {
             Self::Metrics => METRICS,
             Self::Overlay => OVERLAY,
             Self::Search => SEARCH,
-            Self::Semantic => SEMANTIC,
         }
     }
 }
@@ -568,7 +545,6 @@ const GROUPS: &[Group] = &[
     Group::Metrics,
     Group::Overlay,
     Group::Search,
-    Group::Semantic,
 ];
 
 /// The native command registry consumed by the architecture gate.
@@ -810,7 +786,6 @@ mod tests {
         assert_eq!(Group::parse("metrics"), Some(Group::Metrics));
         assert_eq!(Group::parse("overlay"), Some(Group::Overlay));
         assert_eq!(Group::parse("search"), Some(Group::Search));
-        assert_eq!(Group::parse("semantic"), Some(Group::Semantic));
         for group in [
             Group::Assets,
             Group::Check,
@@ -820,7 +795,6 @@ mod tests {
             Group::Metrics,
             Group::Overlay,
             Group::Search,
-            Group::Semantic,
         ] {
             let names: Vec<_> = group.entries().iter().map(|entry| entry.name).collect();
             let mut sorted = names.clone();
@@ -842,11 +816,11 @@ mod tests {
         // stayed deleted and before main-candidate-rank joined the group.
         assert_eq!(usage(Group::Compiler).lines().count(), 5);
         assert_eq!(usage(Group::Decomp).lines().count(), 5);
-        assert_eq!(usage(Group::Make).lines().count(), 50);
+        // 49: it was 50 until build_semantic went with the semantic tier.
+        assert_eq!(usage(Group::Make).lines().count(), 49);
         assert_eq!(usage(Group::Metrics).lines().count(), 7);
         assert_eq!(usage(Group::Overlay).lines().count(), 16);
         assert_eq!(usage(Group::Search).lines().count(), 5);
-        assert_eq!(usage(Group::Semantic).lines().count(), 4);
         assert!(usage(Group::Check).contains("  architecture"));
     }
 
@@ -879,7 +853,6 @@ mod tests {
         assert!(find_entry(Group::Overlay, "overlay_certify").is_some());
         assert!(find_entry(Group::Search, "shape_sweep").is_some());
         assert!(find_entry(Group::Search, "alchemy_permuter").is_some());
-        assert!(find_entry(Group::Semantic, "semantic_queue").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
         assert_eq!(non_public_targets().len(), 3);

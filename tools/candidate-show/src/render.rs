@@ -248,9 +248,64 @@ pub fn without_pc_offset(instruction: &str) -> String {
     out
 }
 
+/// Whether a register name starts here, and how many characters it spans.
+///
+/// `pc` is deliberately absent: `[pc]` is an addressing mode `without_pc_offset`
+/// already collapses, and blanking it would hide a real pool-versus-register
+/// difference.
+fn register_at(rest: &[char]) -> (bool, usize) {
+    let word: String = rest
+        .iter()
+        .take_while(|c| c.is_alphanumeric())
+        .collect::<String>()
+        .to_ascii_lowercase();
+    if word.len() >= 2 && word.starts_with('r') && word[1..].chars().all(|c| c.is_ascii_digit()) {
+        if let Ok(number) = word[1..].parse::<u32>() {
+            if number <= 15 {
+                return (true, word.len());
+            }
+        }
+    }
+    if matches!(word.as_str(), "sp" | "lr" | "fp" | "ip" | "sl") {
+        return (true, word.len());
+    }
+    (false, 0)
+}
+
+/// The same instruction with every register name blanked to `R`.
+///
+/// Two sides that agree here and disagree on `without_pc_offset` differ only in
+/// which registers they name, which the allocator picks. It keeps mnemonics,
+/// immediates and addressing shape, so a genuine difference still shows: `strb`
+/// against `strh` survives, and so does `#31` against `#30`. `r16` is not a
+/// register and a symbol starting with `r` is not one either.
+pub fn register_blind(instruction: &str) -> String {
+    let normalised = without_pc_offset(instruction);
+    let chars: Vec<char> = normalised.chars().collect();
+    let mut out = String::with_capacity(normalised.len());
+    let mut index = 0usize;
+    while index < chars.len() {
+        let previous_is_word =
+            index > 0 && (chars[index - 1].is_alphanumeric() || chars[index - 1] == '_');
+        let (matched, width) = register_at(&chars[index..]);
+        if matched && !previous_is_word {
+            let after = chars.get(index + width);
+            // A register name ends here only if what follows is not more of a word.
+            if !after.is_some_and(|c| c.is_alphanumeric() || *c == '_') {
+                out.push('R');
+                index += width;
+                continue;
+            }
+        }
+        out.push(chars[index]);
+        index += 1;
+    }
+    out
+}
+
 /// Is the residual worth reading the source for?
 ///
-/// Returns `("exact" | "ordering" | "wrong", wrong_instruction_count)`.
+/// Returns `("exact" | "ordering" | "allocation" | "wrong", wrong_instruction_count)`.
 ///
 /// Two owners can show the same differing-halfword count and be completely
 /// different problems. When both sides hold the SAME instructions and only the
@@ -273,6 +328,23 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
     }
     let wrong: i64 = pool.values().map(|count| count.abs()).sum();
     if wrong > 0 {
+        // Which register holds a value is the allocator's decision, so a
+        // residual that survives `without_pc_offset` but vanishes once register
+        // names are blanked is not something a source reading can move. Pointing
+        // a contributor at one is the same mistake as pointing them at a
+        // reorder, just harder to see, because the instructions really do
+        // differ. `aede5efad` gave the main image this verdict; the overlay half
+        // reached `residual_class` without it and reported these as `wrong`.
+        let mut blind: std::collections::BTreeMap<String, i64> = std::collections::BTreeMap::new();
+        for line in left {
+            *blind.entry(register_blind(line)).or_default() += 1;
+        }
+        for line in right {
+            *blind.entry(register_blind(line)).or_default() -= 1;
+        }
+        if blind.values().all(|count| *count == 0) {
+            return ("allocation", 0);
+        }
         return ("wrong", wrong);
     }
     if left == right {
@@ -422,10 +494,61 @@ mod residual_tests {
     }
 
     #[test]
-    fn a_wrong_register_counts_once_per_side() {
+    fn a_wrong_immediate_counts_once_per_side() {
+        // Was `a_wrong_register_counts_once_per_side` until the allocation
+        // verdict landed. It pins the ARITHMETIC of the counter, one per side,
+        // so it now uses a difference that is still genuinely wrong.
+        let left = lines(&["movs r1, #33", "bx lr"]);
+        let right = lines(&["movs r1, #34", "bx lr"]);
+        assert_eq!(residual_class(&left, &right), ("wrong", 2));
+    }
+
+    #[test]
+    fn a_renamed_register_is_allocation_not_a_wrong_instruction() {
+        // The verdict aede5efad gave the main image, reaching the overlay half
+        // through this shared classifier. Which register holds a value is the
+        // allocator's decision, so a contributor sent to read the source for it
+        // has nothing to find.
         let left = lines(&["movs r1, #33", "bx lr"]);
         let right = lines(&["movs r3, #33", "bx lr"]);
-        assert_eq!(residual_class(&left, &right), ("wrong", 2));
+        assert_eq!(residual_class(&left, &right), ("allocation", 0));
+    }
+
+    #[test]
+    fn a_commutative_operand_swap_reads_as_allocation() {
+        // resource_3b5:06e8, the whole of its two-halfword residual.
+        let left = lines(&["orrs\tr1, r2", "strb\tr1, [r0, #21]"]);
+        let right = lines(&["orrs\tr2, r1", "strb\tr2, [r0, #21]"]);
+        assert_eq!(residual_class(&left, &right), ("allocation", 0));
+    }
+
+    #[test]
+    fn register_blanking_keeps_what_a_source_reading_could_move() {
+        // Immediates, store widths and pool-versus-register must all survive,
+        // or the verdict would hide a real defect behind "the allocator did it".
+        assert_ne!(register_blind("movs\tr2, #31"), register_blind("movs\tr2, #30"));
+        assert_ne!(
+            register_blind("strb\tr3, [r2, #0]"),
+            register_blind("strh\tr3, [r2, #0]")
+        );
+        assert_ne!(
+            register_blind("ldr\tr3, [pc, #20]"),
+            register_blind("ldr\tr3, [r2, #20]")
+        );
+    }
+
+    #[test]
+    fn register_blanking_does_not_reach_into_a_symbol() {
+        // `r16` is not a register and a symbol beginning with `r` is not one.
+        assert_eq!(register_blind("bl\tr16_helper"), "bl\tr16_helper");
+        assert_eq!(register_blind("bl\tresource_read"), "bl\tresource_read");
+    }
+
+    #[test]
+    fn a_genuinely_different_instruction_still_reads_as_wrong() {
+        let left = lines(&["movs\tr2, #8", "ble.n\t0x20000aa"]);
+        let right = lines(&["movs\tr2, #9", "blt.n\t0x20000aa"]);
+        assert_eq!(residual_class(&left, &right).0, "wrong");
     }
 }
 

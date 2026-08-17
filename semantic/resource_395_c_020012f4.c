@@ -91,9 +91,9 @@
 
 void Func_02002d32();
 void Func_02002c50();
-s32 Func_02002d48();
+void Func_02002d48();
 void Func_02002c66();
-s32 Func_02002d5a();
+void Func_02002d5a();
 void Func_02002c78();
 void Func_02002d6c();
 void Func_02002c8a();
@@ -124,7 +124,7 @@ void Func_02002d42();
 void Func_02002e32();
 void Func_02002d50();
 void Func_02002e40();
-s32 Func_02002e6e();
+void Func_02002e6e();
 void Func_02002d8c();
 void Func_02002e7c();
 void Func_02002e86();

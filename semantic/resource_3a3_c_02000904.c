@@ -80,7 +80,7 @@ u8 *Func_0200195c();
 u8 *Func_0200196a();
 u8 *Func_0200197a();
 u8 *Func_02001988_b();
-void Func_02001a30();
+s32 Func_02001a30();
 void Func_02001a38();
 void Func_02001a40();
 void Func_02001906();

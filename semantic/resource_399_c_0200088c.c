@@ -64,7 +64,7 @@ void Func_02002aea();
 void Func_02002ba4();
 void Func_02002af2();
 void Func_02002bd0();
-void Func_02002be0();
+s32 Func_02002be0();
 void Func_02002c04();
 void Func_02002b20();
 void Func_02002b2a();

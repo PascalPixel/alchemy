@@ -79,7 +79,7 @@ s32 Func_020007b0(void)
 {
     volatile u16 *interruptMaster = (volatile u16 *)0x04000208;
     u8 *linkBlock = (u8 *)0x02002220;
-    u16 savedInterruptMaster;
+    u32 savedInterruptMaster;
     s32 status = 0;
     s32 phaseResult;
 

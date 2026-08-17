@@ -21,7 +21,7 @@
  * six argument roles unknown, transcribed in register/stack order.
  */
 
-extern s32 Func_080770c0(s32 flagId);
+extern s32 Func_080770c0(u8 flagId);
 extern void Func_080770c8(s32 flagId);
 extern void Func_080f9010(s32 sound_id);
 extern void Func_08009180(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);

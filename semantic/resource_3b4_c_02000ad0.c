@@ -9,7 +9,7 @@
  */
 
 /* Scene flag test: zero means not yet set. */
-s32 Func_02002fde();
+u8 Func_02002fde();
 /* Scene flag set. */
 void Func_02002ff0();
 void Func_0200300c();

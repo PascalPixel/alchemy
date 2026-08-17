@@ -37,7 +37,7 @@ void Func_02000f8a();
 void Func_02000fa2();
 void Func_02000f9c();
 void Func_02000fac();
-s32 Func_02000f64();
+u8 Func_02000f64();
 void Func_02000f56();
 void Func_02000fbc();
 void Func_02000fc4();

@@ -85,8 +85,8 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     s32 length;
     u32 levels;
     u32 djinn;
-    u8 present_bits;
-    u8 flag_bits;
+    u32 present_bits;
+    u32 flag_bits;
     u32 i;
     s32 j;
     s32 k;

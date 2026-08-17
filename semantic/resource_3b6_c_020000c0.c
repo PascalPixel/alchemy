@@ -37,7 +37,7 @@ void Func_02000b78();
 void Func_02000ab2();
 void Func_02000b10();
 u8 *Func_02000b0e();
-void Func_02000b3c();
+s32 Func_02000b3c();
 void Func_02000b8c();
                        /* fetch a record by slot; 0 when the slot is empty */
 

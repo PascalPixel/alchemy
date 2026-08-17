@@ -30,7 +30,7 @@ void Func_020016da();
 void Func_02001618();
 void Func_020016be();
 s32 Func_0200164e();
-void Func_020016fa();
+s32 Func_020016fa();
 void Func_02001688();
 void Func_020016ae();
 void Func_020016bc();

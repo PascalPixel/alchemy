@@ -31,7 +31,7 @@ typedef struct ParticleOptions {
 } ParticleOptions;
 
 extern ActorPosition *Func_0808a080(s32 index);
-extern u32 Func_080000f8(void);
+extern u8 Func_080000f8(void);
 extern s32 Func_03000380(s32 value, s32 divisor);
 extern void Func_0200013c(s32 x, s32 y, s32 z, s32 kind,
                           s32 verticalOffset, s32 unused,

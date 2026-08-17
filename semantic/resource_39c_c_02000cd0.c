@@ -22,7 +22,7 @@
 
 extern u32 Data_03001e40;
 
-extern u32 Func_080000f8(void);
+extern u8 Func_080000f8(void);
 extern void Func_0200013c(s32, s32, s32, s32, s32, s32, u32, u8 *);
 
 s32 Func_02000cd0(u8 *object)

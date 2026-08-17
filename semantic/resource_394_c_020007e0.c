@@ -54,10 +54,10 @@ extern void Func_020018ca();
 extern void Func_02001888();
 extern void Func_0200190e();
 extern void Func_020018ba();
-extern void Func_020018ea();
+extern s32 Func_020018ea();
 extern void Func_020018d4();
 extern void Func_020018b2();
-extern void Func_02001902();
+extern s32 Func_02001902();
 extern void Func_020018e4();
 extern void Func_02001900();
 extern void Func_020018d6();
@@ -66,8 +66,8 @@ extern void Func_0200191c();
 extern void Func_02001934();
 extern void Func_02001974();
 extern void Func_0200197a();
-extern void Func_020018ee();
-extern void Func_020018fe();
+extern s32 Func_020018ee();
+extern s32 Func_020018fe();
 extern void Func_0200193a();
 void Func_020007e0(void)
 {

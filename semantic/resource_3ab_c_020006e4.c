@@ -1,5 +1,5 @@
 #include "types.h"
-extern s32 Func_080770c0(s32);
+extern s32 Func_080770c0(u8);
 u8 *Func_020006e4(void)
 {
     s16 mapState = *(s16 *)(0x02000240 + 448);

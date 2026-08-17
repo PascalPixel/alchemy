@@ -24,19 +24,19 @@
  */
 
 typedef struct {
-    s16 mode;
-    s16 mirror;
-    s16 actor_id;
-    u16 cursor;
-    s16 settled_frames;
+    s32 mode;
+    s32 mirror;
+    s32 actor_id;
+    u32 cursor;
+    s32 settled_frames;
 } State3ba;
 
 typedef struct {
     u8 pad_e0[0xe0];
-    u16 next_actor_id;
-    u16 heading_negative;
-    u16 heading_positive;
-    u16 pad_e6;
+    u32 next_actor_id;
+    u32 heading_negative;
+    u32 heading_positive;
+    u32 pad_e6;
     s32 x;
     s32 z;
     s16 waypoints[0x3840];
@@ -65,9 +65,9 @@ void Func_020031c0(void)
         return;
 
     if (state->mode == 1) {
-        u16 cursor;
-        s16 first;
-        s16 second;
+        u32 cursor;
+        s32 first;
+        s32 second;
 
         cursor = state->cursor;
         first = workspace->waypoints[(s16)cursor];
@@ -126,8 +126,8 @@ void Func_020031c0(void)
                 Func_08009080(actor, 5);
         }
     } else if (state->mode == 2) {
-        u16 cursor;
-        s16 next_cursor;
+        u32 cursor;
+        s32 next_cursor;
 
         cursor = state->cursor;
         workspace->waypoints[(s16)cursor] = *(s16 *)(actor + 0x0a);

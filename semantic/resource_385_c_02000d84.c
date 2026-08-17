@@ -23,7 +23,7 @@ extern void Func_02001ee4(s32 actor, s32 mode);
 extern void Func_02001eae(s32 actor, s32 width, s32 height);
 extern void Func_02001eda(s32 actor, s32 x, s32 y);
 extern void Func_02001e98(s32 frames);
-extern void Func_02001f4c(s32 actor, s32 value, s32 frames);
+extern s32 Func_02001f4c(s32 actor, s32 value, s32 frames);
 extern void Func_02001f0e(s32 actor, s32 mode, s32 value);
 extern void Func_02001eb4(s32 frames);
 extern void Func_02001f1e(s32 actor, s32 mode, s32 value);

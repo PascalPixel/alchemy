@@ -8,12 +8,12 @@
  */
 struct Actor_020008a8 {
     u8 reserved00[91];
-    u8 accepted;
+    u32 accepted;
 };
 
 struct SceneWork_020008a8 {
     u8 reserved000[472];
-    u16 branch_counter;
+    u32 branch_counter;
 };
 
 extern struct SceneWork_020008a8 *Data_03001ebc;
@@ -24,7 +24,7 @@ extern void Func_0808a100(s32 actor, s32 mode);
 extern void Func_0808a138(s32 actor, s32 mode);
 extern void Func_0808a010(s32 frames);
 extern void Func_0808a170(s32 dialogue);
-extern void Func_0808a150(s32 actor, s32 mode, s32 value);
+extern s32 Func_0808a150(s32 actor, s32 mode, s32 value);
 extern void Func_0808a178(s32 actor, s32 mode);
 extern s32 Func_0808a070(s32 actor, s32 mode);
 extern void Func_0808a180(s32 actor, s32 mode);

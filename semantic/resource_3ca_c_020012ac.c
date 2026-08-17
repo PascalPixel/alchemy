@@ -42,7 +42,7 @@ extern u16 Data_02009c1a;
  * declarations are mandatory here: one import name is reached with different
  * argument counts at different sites in this overlay. */
 void *Func_02002602();
-s32 Func_0200261a();
+u16 Func_0200261a();
 void Func_02002632();
 void Func_02002612();
                          /* allocator: returns a buffer of the requested size */
@@ -65,7 +65,7 @@ void Func_020012ac(void)
      * still in r0 when Func_080001d0 is entered.  Whether that callee reads it
      * is unverified; the dataflow is preserved as written.
      */
-    Data_02009c1a = (u16)Func_0200261a(buffer);
+    Data_02009c1a = (u32)Func_0200261a(buffer);
 
     /*
      * Clear the buffer by DMA from a single stack word: control 0x85000040 is
@@ -80,7 +80,7 @@ void Func_020012ac(void)
     /* The `subs r3, #12` after the `stmia r3!` restores the DMA base and is
      * then dead; it has no observable effect. */
 
-    Func_02002632((s16)Data_02009c1a, 256, buffer);
+    Func_02002632((s32)Data_02009c1a, 256, buffer);
 
     Data_02009c18 = 0x30;
     Func_02002612(Func_020011c4, 3200);

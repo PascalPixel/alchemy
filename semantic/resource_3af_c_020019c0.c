@@ -7,7 +7,7 @@ extern void Func_02005c38(s32);
 extern void Func_02005cf6(s32);
 extern void Func_02005d5a(s32, s32, s32);
 extern u8 *Func_02005d00(s32);
-extern s32 Func_02005ccc(s32);
+extern s32 Func_02005ccc(s16);
 extern void Func_02005d7c(s32, s32, s32);
 extern u8 *Func_02005d22(s32);
 extern void Func_02005d92(s32, s32, s32);

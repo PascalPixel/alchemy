@@ -34,13 +34,13 @@
  * the same name can take different argument counts elsewhere in this overlay.
  * Func_080770c0 and Func_0808a070 are tested, so they need return types. */
 void Func_02001b64();
-s32 Func_02001b4a();
+u8 Func_02001b4a();
 void Func_02001c1c();
 void Func_02001c34();
 void Func_02001c2e();
 void Func_02001c20();
 void Func_02001b96();
-void Func_02001c56();
+s32 Func_02001c56();
 s32 Func_02001bbe();
 void Func_02001c60();
 void Func_02001c68();

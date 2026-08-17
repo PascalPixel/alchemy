@@ -50,8 +50,8 @@
 void Func_02003ede();
 u8 *Func_02003f3c();
 void Func_02003f2a();
-void Func_02004006();
-void Func_02004020();
+s32 Func_02004006();
+s32 Func_02004020();
 void Func_02003e58();
 void Func_02004034();
 void Func_02003eb0();

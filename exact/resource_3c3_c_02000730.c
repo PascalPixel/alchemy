@@ -39,7 +39,7 @@ void Func_02000fd0();
 s32 Func_02000fb6();
 void Func_02001060();
 void Func_02001068();
-void Func_02001078();
+s32 Func_02001078();
 s32 Func_02001008();
 void Func_02001094();
 void Func_0200106c();

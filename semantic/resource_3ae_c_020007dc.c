@@ -58,7 +58,7 @@ void Func_02001d9c();
 void Func_02001e44();
 void Func_02001ddc();
 void Func_02001d26();
-void Func_02001df8();
+s32 Func_02001df8();
 void Func_02001d42();
 void Func_02001dc0();
 void Func_02001ebe();

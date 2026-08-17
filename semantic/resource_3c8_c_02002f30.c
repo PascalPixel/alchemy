@@ -31,7 +31,7 @@
  */
 
 /* Old-style declarations: the imports' real interfaces are not known here. */
-extern void Func_02002fc4();
+extern s32 Func_02002fc4();
 void Func_02007dc8();
 void Func_02007df6();
 void Func_02007e2c();

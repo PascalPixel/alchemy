@@ -36,7 +36,7 @@
 
 u8 *Func_02005afe();
 void Func_02005ae4();
-void Func_02005c0e();
+s32 Func_02005c0e();
 void Func_020059a4();
 void Func_02005b86();
 void Func_02005c1e();

@@ -59,7 +59,7 @@ void Func_020025c2();
 void Func_0200267c();
 void Func_020025ca();
 void Func_020026a8();
-void Func_020026c8();
+s32 Func_020026c8();
 void Func_020025ec();
 s32 Func_020025cc();
 void Func_020025f4();

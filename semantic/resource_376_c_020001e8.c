@@ -1,5 +1,5 @@
 #include "types.h"
-extern s32 Func_080770c0(s32 flagId);
+extern s32 Func_080770c0(u8 flagId);
 extern void Func_080770c8(s32 flagId);
 extern void Func_0808a018(void);
 extern void Func_0808a020(void);

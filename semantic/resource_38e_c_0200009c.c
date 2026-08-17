@@ -47,7 +47,7 @@
 extern s16 Data_02000240[];
 
 /* Old-style declaration: overlay imports vary in arity between call sites. */
-s32 Func_02000b68();
+u8 Func_02000b68();
 s32 Func_02000b7a();
                                      /* read an event flag */
 

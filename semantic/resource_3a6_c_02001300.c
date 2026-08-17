@@ -14,7 +14,7 @@ struct ActorRecord_02001300 {
 
 extern const u8 Data_02000240[];
 extern const s32 Data_02001f00[][2];
-extern s32 Func_080770c0(s32 flag);
+extern u8 Func_080770c0(s32 flag);
 extern struct ActorRecord_02001300 *Func_0808a080(s32 actor);
 extern void Func_0808a0c8(s32 actor, s32 x, s32 z);
 

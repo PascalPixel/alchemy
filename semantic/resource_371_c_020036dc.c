@@ -39,7 +39,7 @@ struct SceneWork_020036dc {
 extern struct Selection_020036dc Data_02000240;
 extern struct SceneWork_020036dc *Data_03001ebc;
 extern struct Actor_020036dc *Func_0808a080(s32 actor);
-extern s32 Func_080770c0(s32 flag);
+extern s32 Func_080770c0(s8 flag);
 extern void Func_0808a018(void);
 extern void Func_0808a1f0(s32 actor, s32 value);
 extern void Func_0808a100(s32 actor, s32 mode);

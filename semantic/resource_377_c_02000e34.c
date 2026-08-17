@@ -67,7 +67,7 @@ void Func_02002848();
 void Func_02002860();
 void Func_02002788();
 void Func_0200285e();
-void Func_02002886();
+s32 Func_02002886();
 void Func_02002898();
 s32 Func_020027a0();
 void Func_02002882();

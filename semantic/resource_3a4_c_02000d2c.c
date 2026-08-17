@@ -88,7 +88,7 @@ void Func_02000d2c(void)
     s32 step;
     s32 lobe;
     s32 cosine;
-    u16 heading;
+    u32 heading;
 
     state = (u8 *)Func_0808a080(10);
     depth = *(s32 *)(state + 12);

@@ -65,7 +65,7 @@ u8 *Func_020079b0();
 s32 Func_02007950();
 void Func_02007886();
 s32 Func_020078aa();
-void Func_020078b6();
+s32 Func_020078b6();
 void Func_02007856();
 void Func_020078a4();
 

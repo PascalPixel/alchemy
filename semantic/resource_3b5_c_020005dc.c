@@ -23,10 +23,10 @@
 void Func_0200133c();
 s32 Func_0200132a();
 void Func_020013ea();
-void Func_02001402();
-void Func_02001452();
-void Func_02001412();
-void Func_020013d2();
+s32 Func_02001402();
+s32 Func_02001452();
+s32 Func_02001412();
+s32 Func_020013d2();
 void Func_0200138a();
 void Func_0200141a();
 void Func_02001432();

@@ -61,12 +61,12 @@ extern u8 Data_02000240[];
 /* Old-style declarations: arities vary per site across this overlay. */
 void Func_02002932();
 void Func_0200297c();
-s32 Func_02002914();
+u8 Func_02002914();
 void Func_02002944();
-s32 Func_02002936();
+u8 Func_02002936();
 void Func_0200294a();
 void Func_020029b8();
-void Func_020029c8();
+s32 Func_020029c8();
 s32 Func_0200298c();
 
                      

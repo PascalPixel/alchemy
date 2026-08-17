@@ -27,7 +27,7 @@
 void Func_0200508e();
 void Func_020050a0();
 void Func_020051a2();
-void Func_020051ac();
+s32 Func_020051ac();
 void Func_02005162();
 void Func_02005170();
 

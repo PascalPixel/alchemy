@@ -103,7 +103,7 @@ void Func_0200218a();
 void Func_02002210();
 void Func_020022ee();
 struct SceneActor *Func_02002234();
-s32 Func_020021aa();
+u32 Func_020021aa();
 struct SceneActor *Func_02002250();
 struct SceneActor *Func_02002258();
 s32 Func_020021d4();

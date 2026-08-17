@@ -14,7 +14,7 @@ struct PlacementResult_020015cc {
 extern s32 Func_02000758(struct PlacementResult_020015cc *result);
 extern void Func_020008ec(s32, s32, s32, s32, s32, void (*)(void));
 extern void Func_02000528();
-extern void Func_080091c0();
+extern s32 Func_080091c0();
 extern void Func_080770c8(s32 flag);
 extern void Func_0808a010(s32 frames);
 extern void Func_0808a018(void);

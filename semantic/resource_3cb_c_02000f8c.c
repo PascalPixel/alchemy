@@ -69,8 +69,8 @@
 extern u8 Data_02000240[];
 
 /* Old-style declarations: arities vary per site across this overlay. */
-s32 Func_02001eca();
-s32 Func_02001ed2();
+u8 Func_02001eca();
+u8 Func_02001ed2();
 void Func_020027ec();
 void Func_02002836();
 s32 Func_020027ce();
@@ -79,7 +79,7 @@ s32 Func_020027e4();
 s32 Func_020027ec_b();
 void Func_02002898();
 void Func_020028b0();
-s32 Func_0200286c();
+u8 Func_0200286c();
 
                      
 

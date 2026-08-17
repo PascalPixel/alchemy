@@ -52,7 +52,7 @@ u8 *Func_02005d9a();
 void Func_02005d80();
 void Func_02005eaa();
 void Func_02005c40();
-void Func_02005e22();
+s32 Func_02005e22();
 void Func_02005e2e();
 void Func_02005c64();
 void Func_02005ecc();

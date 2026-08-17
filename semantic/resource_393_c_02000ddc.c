@@ -3,7 +3,7 @@
 extern u32 Data_020097e0;
 extern u32 Data_020090e0;
 
-extern void Func_02001cb2(s32, s32);
+extern s32 Func_02001cb2(s32, s32);
 extern void Func_02001b9e(void);
 
 void Func_02000ddc(s32 a)

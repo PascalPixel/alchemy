@@ -79,7 +79,7 @@ void Func_02000608(s32 row, s32 actorSlot, s32 targetX, s32 elevation,
     Func_0808a090(0, 0x4ccc, 0x1999);
 
     packed = ((s32 *)0x0200a644)[direction];
-    Func_0808a0e0(0, (s16)(packed >> 16) / 2, (s16)packed / 2);
+    Func_0808a0e0(0, (s32)(packed >> 16) / 2, (s32)packed / 2);
     if (callback)
         callback();
     Func_0808a0e8(0);

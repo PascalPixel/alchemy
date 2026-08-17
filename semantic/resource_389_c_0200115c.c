@@ -73,7 +73,7 @@ void Func_020025da();
 struct SceneActor *Func_020025f8();
 void Func_02002618();
 void Func_0200263c();
-void Func_02002648();
+s32 Func_02002648();
 void Func_02002656();
 void Func_02002678();
 struct SceneActor *Func_02002646();

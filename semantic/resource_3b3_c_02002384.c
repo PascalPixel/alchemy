@@ -8,7 +8,7 @@ extern void Func_02004f3a(s32 x, s32 y, s32 z, s32 mode);
 extern void Func_02004f46(void);
 extern void Func_02004ec4(s32 frames);
 extern void Func_02004ede(s32 frames);
-extern void Func_02004e20(s32 callback, s32 delay);
+extern s32 Func_02004e20(s32 callback, u8 delay);
 extern void Func_02004eee(s32 frames);
 extern s32 Func_02004edc(s32 flagId);
 extern u8 *Func_02004f16(s32 actorId);

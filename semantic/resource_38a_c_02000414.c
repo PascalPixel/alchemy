@@ -36,7 +36,7 @@ extern u8 *Data_03001ebc;
 
 extern void Func_080091c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 extern void Func_080091e0(void *record, s32 arg1);
-extern s32 Func_080770c0(s32 flagId);
+extern s32 Func_080770c0(u8 flagId);
 extern void Func_080770d0(s32 flagId);
 extern u8 *Func_0808a080(s32 id);
 extern void Func_0808a0f0(s32 id, s32 x, s32 y);

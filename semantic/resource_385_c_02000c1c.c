@@ -7,7 +7,7 @@
  */
 struct Actor_02000c1c {
     u8 reserved00[35];
-    u8 control_flags;
+    u32 control_flags;
     u8 reserved24[44];
     u8 *presentation;
 };

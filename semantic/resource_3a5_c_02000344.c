@@ -1,5 +1,5 @@
 #include "types.h"
-s32 Func_080000f8(void); void Func_080f9010(); void Func_0200013c();
+u32 Func_080000f8(void); void Func_080f9010(); void Func_0200013c();
 s32 Func_02000344(u8 *actor)
 {
     u8 params[40]; u32 tick=*(volatile u32 *)0x03001e40; s32 zero=0;

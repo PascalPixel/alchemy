@@ -3,7 +3,7 @@
 
 
 extern s32 Func_020030ea(s32 channel, s32 amount);
-extern s32 Func_020030f8(s32 channel, s32 amount);
+extern s32 Func_020030f8(s32 channel, u8 amount);
 extern s32 Func_02003106(s32 channel, s32 amount);
 u16 Func_020017d0(u16 colour, s32 amount)
 {

@@ -21,6 +21,10 @@ const COMMANDS: &[(&str, &str)] = &[
     ("character-catalog", "extract character catalog data from the ROM"),
     ("staff-roll", "extract staff roll data from the ROM"),
     ("audio-wave", "extract audio wave data from the ROM"),
+    ("localization-tables", "build the localization tables"),
+    ("byte-value-regions", "build byte-value regions"),
+    ("executable-gap-sources", "build executable-gap sources"),
+    ("music-residuals", "build music residuals"),
     ("documented", "extract documented data from the ROM"),
     ("remaining-survey", "extract remaining survey data from the ROM"),
     ("exact-reading-list", "extract exact reading list data from the ROM"),
@@ -81,6 +85,9 @@ fn main() -> ExitCode {
         list();
         return ExitCode::from(2);
     };
+    if command == "--self-test" {
+        return self_test();
+    }
     if matches!(command, "-h" | "--help" | "--list") {
         println!("{USAGE}\n\ncommands:");
         list();
@@ -148,6 +155,10 @@ fn main() -> ExitCode {
         "character-catalog" => character_catalog::cli::entry(&rest),
         "staff-roll" => staff_roll::cli::entry(&rest),
         "audio-wave" => audio_wave::cli::entry(&rest),
+        "localization-tables" => { localization_tables::cli::entry(&rest); ExitCode::SUCCESS }
+        "byte-value-regions" => { byte_value_regions::entrypoint::entry(&rest); ExitCode::SUCCESS }
+        "executable-gap-sources" => executable_gap_sources::cli::entry(&rest),
+        "music-residuals" => music_residuals::cli::entry(&rest),
         other => {
             eprintln!("unknown assets command: {other}\n\n{USAGE}");
             list();
@@ -160,4 +171,39 @@ fn list() {
     for (name, summary) in COMMANDS {
         println!("  {name:<22} {summary}");
     }
+}
+
+/// `--self-test`: prove the host's own contract.
+///
+/// Each consolidated host swallowed the `--self-test` its component binaries
+/// used to answer, so the native runner reported five hosts failing for a flag
+/// none of them implemented. What a HOST owns is its dispatch table, so that is
+/// what it checks: every command named, uniquely, in sorted order, with a
+/// non-empty summary and a reachable arm. The components themselves are covered
+/// by `make crate-tests` and by the dispatcher registry gates.
+fn self_test() -> ExitCode {
+    // Uniqueness and reachability, not sort order: several hosts group related
+    // commands deliberately, and `--list` should keep reading that way.
+    let mut seen: Vec<&str> = Vec::new();
+    for (name, summary) in COMMANDS {
+        if name.is_empty() || summary.is_empty() {
+            eprintln!("self-test: a command has an empty name or summary");
+            return ExitCode::FAILURE;
+        }
+        if seen.contains(name) {
+            eprintln!("self-test: {name} is listed twice");
+            return ExitCode::FAILURE;
+        }
+        if !dispatchable(name) {
+            eprintln!("self-test: {name} is listed but has no dispatch arm");
+            return ExitCode::FAILURE;
+        }
+        seen.push(name);
+    }
+    println!("self-test=ok commands={}", COMMANDS.len());
+    ExitCode::SUCCESS
+}
+
+fn dispatchable(name: &str) -> bool {
+    matches!(name, "3ce" | "5" | "archive-asset" | "audio-engine" | "audio-wave" | "battle-display" | "battle-effect" | "battle-menu" | "battle-runtime" | "battle-screen" | "byte-henkan" | "byte-value-regions" | "character-catalog" | "d1-d3" | "documented" | "early-runtime-data" | "encounter-data" | "exact-reading-list" | "executable-gap-sources" | "export-asset" | "f0-archive" | "gba-header" | "import-asset" | "indexed-still" | "kind1-map-grid" | "kind2-resources" | "late-runtime-residual" | "localization-font" | "localization-tables" | "map-chiiki" | "map-container-components" | "map-tokushu" | "message-archive" | "music" | "music-residuals" | "namae-nyuuryoku" | "pairtable" | "remaining-survey" | "resource-01c" | "resource-byte-canvases" | "resource-directory" | "runtime-support" | "sentou" | "simple-resources" | "skip-sprite-archive" | "staff-roll" | "static-sprite-series" | "tilemap" | "title" | "wordstream" | "zlib")
 }

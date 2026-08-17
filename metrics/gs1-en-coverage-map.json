@@ -4,22 +4,22 @@
   "target": "gs1-en",
   "derivation": "tracked-evidence-v1",
   "rom_bytes": 8388608,
-  "executable_bytes": 1347316,
+  "executable_bytes": 1347122,
   "categories": {
     "exact_c": {
-      "bytes": 380476,
-      "percent_of_executable": 28.24
+      "bytes": 263654,
+      "percent_of_executable": 19.57
     },
     "semantic_c": {
-      "bytes": 887934,
-      "percent_of_executable": 65.9
+      "bytes": 1004536,
+      "percent_of_executable": 74.57
     },
     "assembly": {
       "bytes": 0,
       "percent_of_executable": 0
     },
     "retained_asm": {
-      "bytes": 78906,
+      "bytes": 78932,
       "percent_of_executable": 5.86
     },
     "asset_data": {
@@ -29,21 +29,21 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 111622,
-    "semantic_c_bytes": 406994
+    "exact_c_bytes": 100114,
+    "semantic_c_bytes": 418502
   },
   "overlays": {
-    "executable_bytes": 798952,
-    "exact_c_bytes": 268854,
-    "semantic_c_bytes": 480940
+    "executable_bytes": 798758,
+    "exact_c_bytes": 163540,
+    "semantic_c_bytes": 586034
   },
   "provenance": {
     "exact_source": "worktree",
     "semantic_source": "worktree",
-    "semantic_sources": 1690,
+    "semantic_sources": 2189,
     "main_semantic_census": "closed",
     "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 25746,
+    "semantic_outside_extent_bytes": 25958,
     "semantic_unresolved": []
   },
   "rom_areas": [
@@ -52,8 +52,8 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 111622,
-        "semantic_c": 406994,
+        "exact_c": 100114,
+        "semantic_c": 418502,
         "retained_asm": 29748
       },
       "tiles": 9
@@ -63,9 +63,9 @@
       "label": "Compressed code overlays",
       "bytes": 541489,
       "categories": {
-        "exact_c": 181883,
-        "semantic_c": 324542,
-        "assembly": 35064
+        "exact_c": 116282,
+        "semantic_c": 390116,
+        "assembly": 35091
       },
       "tiles": 11
     },
@@ -85,8 +85,8 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 111622,
-        "semantic_c": 406994,
+        "exact_c": 100114,
+        "semantic_c": 418502,
         "retained_asm": 29748
       },
       "tiles": 3202
@@ -94,13 +94,13 @@
     {
       "id": "overlays",
       "label": "Decoded code overlays",
-      "bytes": 798952,
+      "bytes": 798758,
       "categories": {
-        "exact_c": 268854,
-        "semantic_c": 480940,
-        "retained_asm": 49158
+        "exact_c": 163540,
+        "semantic_c": 586034,
+        "retained_asm": 49184
       },
-      "tiles": 4551
+      "tiles": 4549
     }
   ]
 }

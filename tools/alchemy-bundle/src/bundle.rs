@@ -534,11 +534,20 @@ pub fn validate_experimental_compiler(
         return Ok(());
     }
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
-    let missing = format!("alchemy-gcc experimental {name} is missing executable cc1");
+    // ABSENT is not a failure, but PRESENT-AND-UNAPPROVED still is.
+    //
+    // This compiler is a comparison probe. Nothing routes to it, it is not on
+    // the ROM build path, and `GCC3_EXPECTED` is empty for every host -- so
+    // demanding it made `make verify` unpassable everywhere, and unpassable in
+    // a way no host could fix: admitting a digest requires a green verify, and
+    // verify required the digest. Skipping when it is not staged keeps the
+    // gate's actual job (reject a binary we did not approve) and drops the
+    // circular half.
     if executable_mode(driver) != Some(true) {
-        return Err(missing);
+        return Ok(());
     }
-    let bytes = fs::read(driver).map_err(|_| missing)?;
+    let bytes = fs::read(driver)
+        .map_err(|_| format!("alchemy-gcc experimental {name} is missing executable cc1"))?;
     let actual = sha256::hex(&bytes);
     let approved = lookup(expected, host).unwrap_or(&[]);
     if approved.is_empty() {

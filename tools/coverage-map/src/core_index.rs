@@ -129,18 +129,17 @@ pub fn markdown(document: &Value) -> Result<String, String> {
         .collect();
 
     let mut text = format!(
-        "# Core targets\n\n\
-This is the generated primary contributor target list. It uses non-overlapping\n\
-audited source-owner scopes (or contiguous unresolved executable runs), sorted\n\
-largest to smallest. Broader multi-owner campaign cuts belong in\n\
-[`STATUS.md`](STATUS.md); they may overlap and therefore are not used for byte\n\
-accounting. Regenerate this page and the complete index with `make coverage`.\n\n\
+        "This section is generated. It is the primary contributor target list:\n\
+non-overlapping audited source-owner scopes (or contiguous unresolved\n\
+executable runs), sorted largest to smallest. Broader multi-owner campaign cuts\n\
+belong in [Status](#status); they may overlap and therefore are not used for\n\
+byte accounting. Regenerate with `make coverage` -- do not edit by hand.\n\n\
 - **Unfinished scopes:** {}\n\
 - **Address spaces scanned:** {} ({} still contain targets)\n\
 - **Target bytes:** {} semantic-C or unresolved-assembly bytes\n\
 - **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n\
 - **Executable bytes accounted for:** {}\n\n\
-## Main target list\n\n\
+### Main target list\n\n\
 This table contains every scope of at least 1,000 bytes ({} rows). The complete\n\
 {}-row index, including the smallest audited owners, is\n\
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).\n\n\

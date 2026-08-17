@@ -314,7 +314,48 @@ fn core_index_path(target: &str) -> std::path::PathBuf {
 }
 
 fn target_list_path() -> std::path::PathBuf {
-    root().join("TARGETS.md")
+    root().join("CONTRIBUTING.md")
+}
+
+/// The generated target ranking lives in CONTRIBUTING.md's `## Targets`
+/// section, not in a file of its own.
+///
+/// It used to be `TARGETS.md`. The doc collapse deleted that file and moved its
+/// text into the single shared document, but this writer went on emitting it,
+/// so every `make coverage` recreated an untracked file the publication gate
+/// then refused -- while the copy inside CONTRIBUTING.md went stale, because
+/// nothing regenerated it. Writing the section in place keeps one document AND
+/// one generator.
+const TARGETS_HEADING: &str = "\n## Targets\n";
+
+fn targets_section(document: &str) -> Result<(usize, usize), String> {
+    let start = document
+        .find(TARGETS_HEADING)
+        .ok_or_else(|| "CONTRIBUTING.md has no '## Targets' section".to_string())?;
+    let after = start + TARGETS_HEADING.len();
+    let end = document[after..]
+        .find("\n## ")
+        .map(|offset| after + offset + 1)
+        .unwrap_or(document.len());
+    Ok((after, end))
+}
+
+/// The section's body as currently tracked, for the staleness comparison.
+fn tracked_targets(document: &str) -> Result<String, String> {
+    let (start, end) = targets_section(document)?;
+    Ok(document[start..end].to_string())
+}
+
+/// `document` with the section body replaced.
+fn replace_targets(document: &str, body: &str) -> Result<String, String> {
+    let (start, end) = targets_section(document)?;
+    let mut out = String::with_capacity(document.len() + body.len());
+    out.push_str(&document[..start]);
+    out.push('\n');
+    out.push_str(body.trim_end());
+    out.push('\n');
+    out.push_str(&document[end..]);
+    Ok(out)
 }
 
 pub fn run(argv: &[String]) -> Result<String, String> {
@@ -449,7 +490,12 @@ fn check(
         .collect::<Result<_, _>>()?;
     let tracked = crate::json::parse(&tracked_map)?;
     let tracked_core_index = read_text(&core_index_path(&options.target))?;
-    let tracked_target_list = read_text(&target_list_path())?;
+    // Compared trimmed: the section is spliced into a larger document, so its
+    // surrounding blank lines belong to the document's layout, not the
+    // generator's output.
+    let tracked_target_list = tracked_targets(&read_text(&target_list_path())?)?
+        .trim()
+        .to_string();
 
     let mut stale: Vec<&str> = Vec::new();
     if js_not_equal(
@@ -490,7 +536,7 @@ fn check(
         .and_then(|value| value.as_str());
     let rendered_differs = tracked_map != json
         || tracked_core_index != core_index_json
-        || tracked_target_list != target_list
+        || tracked_target_list != target_list.trim()
         || crate::boxtree::BOX_TREES
             .iter()
             .any(|tree| tree_text(&tracked_trees, tree) != tree_text(trees, tree));
@@ -544,8 +590,12 @@ fn write(
     std::fs::write(&core_index_file, core_index_json)
         .map_err(|error| format!("cannot write {}: {error}", core_index_file.display()))?;
     let target_list_file = target_list_path();
-    std::fs::write(&target_list_file, target_list)
-        .map_err(|error| format!("cannot write {}: {error}", target_list_file.display()))?;
+    let document = read_text(&target_list_file)?;
+    let updated = replace_targets(&document, target_list)?;
+    if updated != document {
+        std::fs::write(&target_list_file, &updated)
+            .map_err(|error| format!("cannot write {}: {error}", target_list_file.display()))?;
+    }
     for tree in crate::boxtree::BOX_TREES.iter() {
         let path = crate::boxtree::box_tree_path(&options.target, tree);
         std::fs::write(&path, tree_text(trees, tree))

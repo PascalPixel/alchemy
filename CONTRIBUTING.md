@@ -244,6 +244,20 @@ left.
 Name your draft after the owner: `work/080bbb0c.c`, or
 `work/resource_3b2_c_02000da4.c`. The rankers find drafts by that name.
 
+For a call-dense owner -- a scene driver, hundreds of `bl` with literal
+arguments -- `overlay reconstruct resource_3bd:13f8` writes a first draft into
+`work/` from the owner's own disassembly: the calls and their arguments, the
+literal pools skipped rather than decoded, a value held in a callee-saved
+register recognised as a local, loads and stores through a held pointer, and
+counted loops with their real bounds.
+
+It is a starting point and not a reconstruction. It models what the bytes
+plainly show and is silent about everything else -- it writes no `if`, so the
+control flow is yours to read and add. Its output goes to `work/` and nowhere
+else; the tool refuses any other path, because a generator aimed at every owner
+is exactly the machine that produced 862,856 bytes of C nobody could use. Score
+it before believing any of it.
+
 ### 2. Read the assembly before writing any C
 
 C written before you understand the target is guesswork with extra steps. A
@@ -802,6 +816,7 @@ reference, not a reading list.
 | `overlay audit --all` | re-prove every adopted row still reproduces |
 | `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it |
 | `overlay twins` | find a finished owner with the same shape |
+| `overlay reconstruct` | draft C for a call-dense owner from its own disassembly |
 | `make verify` | the only result that proves anything |
 
 Most of the rest are asset builders that run as part of `make build-assets`,
@@ -837,8 +852,8 @@ by hand, and if you find yourself doing so, that is worth a note in the commit.
 | `overlay_driver` | The low-level overlay reconstruction driver. |
 | `overlay_mode_cohort` | Compares one compiler hypothesis across a set of overlay owners. |
 
-The `overlay` binary also carries `score`, `park` and `audit`, described in
-[the working method](#the-loop). `score` is the overlay counterpart
+The `overlay` binary also carries `score`, `park`, `audit` and `reconstruct`,
+described in [the loop](#the-loop). `score` is the overlay counterpart
 of `candidate-show`: same output, same `--align`, and it derives the row's span
 rather than asking you for one.
 

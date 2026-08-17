@@ -1,0 +1,732 @@
+//! Draft C for one owner from its own disassembly.
+//!
+//! WHAT THIS IS FOR. A call-dense owner -- a scene or cutscene driver -- is
+//! hundreds of calls with literal arguments and very little else. Transcribing
+//! that by hand is a day of typing during which the interesting question, which
+//! is what the source SAID, never gets asked. This writes the mechanical part so
+//! the reader can spend the time on the rest.
+//!
+//! WHAT IT IS NOT FOR. It is not a decompiler and its output is not a
+//! reconstruction. It emits what the bytes plainly show -- a call, its
+//! arguments, a loop's bounds, a field written through a pointer -- and it is
+//! silent about everything else. A draft that scores badly is a draft, and the
+//! adoption gate refuses it exactly as it refuses anything else that does not
+//! reproduce. Output goes to `work/`, which is gitignored, because a generator
+//! pointed at every owner is precisely the machine that produced 862,856 bytes
+//! of C nobody could use.
+//!
+//! WHAT IT MODELS, all of it read off the instruction stream:
+//!
+//!   * calls, with the arguments freshly loaded into r0-r3 and the stack slots
+//!   * literal pools, located from the pc-relative targets objdump resolves,
+//!     and skipped rather than decoded as instructions
+//!   * a value loaded once into a callee-saved register and used as `base + N`,
+//!     which is a local and not a literal
+//!   * loads and stores through a held pointer, including register-offset
+//!     addressing and the read-modify-write shape
+//!   * counted loops, from the backward branch and the comparison before it
+//!
+//! Registers r4-r7 survive a call and r0-r3 do not, and the simulation follows
+//! that. Getting it wrong drops every argument that was already in a register.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+/// One decoded listing row.
+struct Row {
+    addr: i64,
+    text: String,
+    lo: u16,
+    hi: Option<u16>,
+}
+
+/// A value the simulation is tracking: a number, or a named local.
+#[derive(Clone, Debug, PartialEq)]
+enum Val {
+    Num(i64),
+    Named(String),
+}
+
+impl Val {
+    fn render(&self) -> String {
+        match self {
+            Val::Num(n) => n.to_string(),
+            Val::Named(s) => s.clone(),
+        }
+    }
+}
+
+fn hex(s: &str) -> Option<i64> {
+    i64::from_str_radix(s.trim_start_matches("0x"), 16).ok()
+}
+
+/// `` 2003054:\tb520      \tpush\t{r5, lr}`` -> address, halfwords, text.
+fn parse_row(line: &str) -> Option<Row> {
+    let (addr_part, rest) = line.split_once(':')?;
+    let addr = hex(addr_part.trim())?;
+    let mut fields = rest.split('\t').filter(|f| !f.trim().is_empty());
+    let bytes = fields.next()?.trim();
+    let mut words = bytes.split_whitespace();
+    let lo = u16::from_str_radix(words.next()?, 16).ok()?;
+    let hi = words.next().and_then(|w| u16::from_str_radix(w, 16).ok());
+    let text: Vec<&str> = fields.collect();
+    let text = text.join("\t");
+    let text = text.split('@').next().unwrap_or("").trim().to_string();
+    if text.is_empty() {
+        return None;
+    }
+    Some(Row { addr, text, lo, hi })
+}
+
+/// Operands after the mnemonic, split on commas.
+fn operands(text: &str) -> (String, Vec<String>) {
+    let mut parts = text.splitn(2, |c: char| c.is_whitespace());
+    let op = parts.next().unwrap_or("").to_string();
+    let rest = parts.next().unwrap_or("").trim();
+    // Split on commas OUTSIDE brackets. `ldr r0, [pc, #4]` is two operands,
+    // not three, and splitting naively loses every addressing mode in the file.
+    let mut args: Vec<String> = Vec::new();
+    let mut cur = String::new();
+    let mut depth = 0i32;
+    for c in rest.chars() {
+        match c {
+            '[' | '{' => { depth += 1; cur.push(c); }
+            ']' | '}' => { depth -= 1; cur.push(c); }
+            ',' if depth == 0 => {
+                if !cur.trim().is_empty() { args.push(cur.trim().to_string()); }
+                cur.clear();
+            }
+            _ => cur.push(c),
+        }
+    }
+    if !cur.trim().is_empty() { args.push(cur.trim().to_string()); }
+    (op, args)
+}
+
+fn immediate(token: &str) -> Option<i64> {
+    let t = token.strip_prefix('#')?;
+    if let Some(h) = t.strip_prefix("0x") {
+        i64::from_str_radix(h, 16).ok()
+    } else {
+        t.parse().ok()
+    }
+}
+
+/// A pool word: two halfwords, little end first.
+fn word_at(rows: &BTreeMap<i64, u16>, addr: i64) -> Option<i64> {
+    let lo = *rows.get(&addr)? as i64;
+    let hi = *rows.get(&(addr + 2))? as i64;
+    Some((hi << 16) | lo)
+}
+
+pub struct Draft {
+    pub lines: Vec<String>,
+    pub calls: usize,
+    pub loops: usize,
+    pub memory: usize,
+}
+
+/// Reconstruct a draft from an objdump listing.
+pub fn draft(listing: &[String], func: &str) -> Draft {
+    let rows: Vec<Row> = listing.iter().filter_map(|l| parse_row(l)).collect();
+
+    // Halfword map, for reading pool words.
+    let mut halfwords: BTreeMap<i64, u16> = BTreeMap::new();
+    for r in &rows {
+        halfwords.insert(r.addr, r.lo);
+        if let Some(h) = r.hi {
+            halfwords.insert(r.addr + 2, h);
+        }
+    }
+
+    // Pools, from the targets objdump already resolved in its `@ (0x...)`
+    // comments. A byte-pattern scan misses a pool word whose high half is not
+    // zero, and then decodes four bytes of data as two instructions.
+    let mut pool_words: BTreeSet<i64> = BTreeSet::new();
+    for line in listing {
+        if let Some(at) = line.find("@ (0x") {
+            let tail = &line[at + 5..];
+            if let Some(end) = tail.find(')') {
+                if let Some(a) = hex(tail[..end].trim()) {
+                    pool_words.insert(a);
+                    pool_words.insert(a + 2);
+                }
+            }
+        }
+    }
+
+    // A backward branch is a loop. Its bound comes from the comparison just
+    // before it and its start from the last `movs` to that register above the
+    // top; assuming a start of zero turns a countdown into a single pass.
+    let mut loop_top: BTreeMap<i64, (i64, i64, String)> = BTreeMap::new();
+    let mut loop_end: BTreeSet<i64> = BTreeSet::new();
+    for (i, r) in rows.iter().enumerate() {
+        let (op, args) = operands(&r.text);
+        if !op.starts_with('b') || op == "bx" || op == "bl" || args.len() != 1 {
+            continue;
+        }
+        let Some(target) = hex(&args[0]) else { continue };
+        if target >= r.addr {
+            continue;
+        }
+        let mut counter = String::new();
+        let mut bound = 0;
+        for back in rows[..i].iter().rev().take(6) {
+            let (cop, cargs) = operands(&back.text);
+            if cop == "cmp" && cargs.len() == 2 {
+                if let Some(v) = immediate(&cargs[1]) {
+                    counter = cargs[0].clone();
+                    bound = v;
+                }
+                break;
+            }
+        }
+        let mut start = 0;
+        if !counter.is_empty() {
+            for before in rows.iter().take_while(|x| x.addr < target) {
+                let (mop, margs) = operands(&before.text);
+                if mop == "movs" && margs.len() == 2 && margs[0] == counter {
+                    if let Some(v) = immediate(&margs[1]) {
+                        start = v;
+                    }
+                }
+            }
+        }
+        loop_top.insert(target, (start, bound, op.clone()));
+        loop_end.insert(r.addr);
+    }
+
+    let mut reg: BTreeMap<String, Val> = BTreeMap::new();
+    let mut fresh: BTreeMap<String, Val> = BTreeMap::new();
+    let mut ptr: BTreeMap<String, String> = BTreeMap::new();
+    let mut loaded: BTreeMap<String, String> = BTreeMap::new();
+    let mut pending: BTreeMap<String, (String, String, i64)> = BTreeMap::new();
+    let mut stack: BTreeMap<i64, Val> = BTreeMap::new();
+
+    let mut out: Vec<String> = Vec::new();
+    let mut calls = 0usize;
+    let mut memory = 0usize;
+    let mut depth = 1usize;
+    let mut loop_n = 0usize;
+    let mut names: BTreeSet<String> = BTreeSet::new();
+    // A callee whose result is held as a pointer cannot be declared void.
+    let mut returns_pointer: BTreeSet<String> = BTreeSet::new();
+    let mut tmp_n = 0usize;
+    // temp name -> the line that produced it, so a temp that is actually used
+    // can be promoted to `pN = f(...)` and declared. A temp nothing reads stays
+    // a plain call.
+    let mut temp_line: BTreeMap<String, usize> = BTreeMap::new();
+    let mut temp_fn: BTreeMap<String, String> = BTreeMap::new();
+
+    let indent = |d: usize| "    ".repeat(d);
+
+    // A pool word loaded once into a callee-saved register and then used as
+    // `base + N` is a local. Collect the candidates first.
+    let mut base_values: BTreeSet<i64> = BTreeSet::new();
+    for r in &rows {
+        let (op, args) = operands(&r.text);
+        if op == "ldr" && args.len() == 2 && args[0].starts_with("r") {
+            let n: u32 = args[0][1..].parse().unwrap_or(0);
+            if (4..=7).contains(&n) && args[1].starts_with("[pc") {
+                if let Some(off) = args.get(1).and_then(|a| {
+                    a.split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
+                }) {
+                    if let Some(v) = word_at(&halfwords, ((r.addr + 4) & !3) + off) {
+                        if v > 0 && v < 0x10000 {
+                            base_values.insert(v);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let deref = |base: &str, off: i64, width: &str| -> String {
+        let cast = match width {
+            "ldrb" | "strb" => "u8",
+            "ldrh" | "strh" => "u16",
+            "ldrsh" => "s16",
+            "ldrsb" => "s8",
+            _ => "s32",
+        };
+        let inner = if base.contains(' ') { format!("({base})") } else { base.to_string() };
+        if off == 0 {
+            format!("*({cast} *){inner}")
+        } else {
+            format!("*({cast} *)({inner} + {off})")
+        }
+    };
+
+    for r in &rows {
+        if pool_words.contains(&r.addr) {
+            continue;
+        }
+        if let Some((start, bound, kind)) = loop_top.get(&r.addr) {
+            loop_n += 1;
+            let cmp = if kind.starts_with("ble") {
+                "<="
+            } else if kind.starts_with("bge") {
+                ">="
+            } else {
+                "<"
+            };
+            let step = if cmp == ">=" { "--" } else { "++" };
+            out.push(format!(
+                "{}for (i{loop_n} = {start}; i{loop_n} {cmp} {bound}; i{loop_n}{step}) {{",
+                indent(depth)
+            ));
+            depth += 1;
+        }
+        if loop_end.contains(&r.addr) {
+            depth = depth.saturating_sub(1).max(1);
+            out.push(format!("{}}}", indent(depth)));
+            continue;
+        }
+
+        let (op, args) = operands(&r.text);
+
+        // A load or store through a held pointer.
+        if let Some(rest) = args.get(1) {
+            if rest.starts_with('[') && args.len() == 2 {
+                let inner = rest.trim_start_matches('[').trim_end_matches(']');
+                let mut bits = inner.split(',').map(|s| s.trim());
+                let base = bits.next().unwrap_or("");
+                let off_tok = bits.next().unwrap_or("#0");
+                let off = immediate(off_tok).or_else(|| match reg.get(off_tok) {
+                    Some(Val::Num(n)) => Some(*n),
+                    _ => None,
+                });
+                if let (Some(pbase), Some(off)) = (ptr.get(base).cloned(), off) {
+                    let place = deref(&pbase, off, &op);
+                    if op.starts_with("ldr") {
+                        loaded.insert(args[0].clone(), place.clone());
+                        reg.remove(&args[0]);
+                        fresh.remove(&args[0]);
+                        if op == "ldr" {
+                            ptr.insert(args[0].clone(), format!("*(void **)({pbase} + {off})"));
+                        }
+                        memory += 1;
+                        continue;
+                    }
+                    if op.starts_with("str") {
+                        memory += 1;
+                        if let Some((lv, sym, mask)) = pending.remove(&args[0]) {
+                            if lv == place {
+                                out.push(format!("{}{place} {sym}= {mask:#x};", indent(depth)));
+                                continue;
+                            }
+                        }
+                        let v = loaded
+                            .get(&args[0])
+                            .cloned()
+                            .or_else(|| reg.get(&args[0]).map(|v| v.render()))
+                            .unwrap_or_else(|| "0".to_string());
+                        out.push(format!("{}{place} = {v};", indent(depth)));
+                        continue;
+                    }
+                }
+            }
+        }
+
+        match op.as_str() {
+            "movs" if args.len() == 2 => {
+                let v = immediate(&args[1]).map(Val::Num).or_else(|| reg.get(&args[1]).cloned());
+                match v {
+                    Some(v) => {
+                        reg.insert(args[0].clone(), v.clone());
+                        fresh.insert(args[0].clone(), v);
+                    }
+                    None => {
+                        reg.remove(&args[0]);
+                        fresh.remove(&args[0]);
+                    }
+                }
+                ptr.remove(&args[0]);
+            }
+            "lsls" if args.len() >= 2 => {
+                let (src, shift) = if args.len() == 3 {
+                    (args[1].clone(), immediate(&args[2]))
+                } else {
+                    (args[0].clone(), immediate(&args[1]))
+                };
+                if let (Some(Val::Num(n)), Some(s)) = (reg.get(&src).cloned(), shift) {
+                    reg.insert(args[0].clone(), Val::Num(n << s));
+                    fresh.insert(args[0].clone(), Val::Num(n << s));
+                } else {
+                    reg.remove(&args[0]);
+                    fresh.remove(&args[0]);
+                }
+            }
+            "adds" => {
+                // `adds rN, rP, #0` copies a pointer; `adds rP, #K` offsets one.
+                if args.len() == 2 && ptr.contains_key(&args[0]) {
+                    if let Some(k) = immediate(&args[1]) {
+                        let base = ptr[&args[0]].clone();
+                        ptr.insert(args[0].clone(), format!("(u8 *)({base}) + {k}"));
+                        continue;
+                    }
+                }
+                if args.len() == 3 && ptr.contains_key(&args[1]) && immediate(&args[2]) == Some(0) {
+                    let base = ptr[&args[1]].clone();
+                    ptr.insert(args[0].clone(), base);
+                    reg.remove(&args[0]);
+                    continue;
+                }
+                let (a, b) = if args.len() == 3 {
+                    (reg.get(&args[1]).cloned(), immediate(&args[2]).map(Val::Num).or_else(|| reg.get(&args[2]).cloned()))
+                } else {
+                    (reg.get(&args[0]).cloned(), immediate(&args[1]).map(Val::Num))
+                };
+                let sum = match (a, b) {
+                    (Some(Val::Num(x)), Some(Val::Num(y))) => Some(Val::Num(x + y)),
+                    (Some(Val::Named(n)), Some(Val::Num(y))) => Some(if y == 0 {
+                        Val::Named(n)
+                    } else {
+                        Val::Named(format!("{n} + {y}"))
+                    }),
+                    _ => None,
+                };
+                match sum {
+                    Some(v) => {
+                        reg.insert(args[0].clone(), v.clone());
+                        fresh.insert(args[0].clone(), v);
+                    }
+                    None => {
+                        reg.remove(&args[0]);
+                        fresh.remove(&args[0]);
+                    }
+                }
+            }
+            "negs" if args.len() == 2 => {
+                if let Some(Val::Num(n)) = reg.get(&args[1]).cloned() {
+                    reg.insert(args[0].clone(), Val::Num(-n));
+                    fresh.insert(args[0].clone(), Val::Num(-n));
+                } else {
+                    reg.remove(&args[0]);
+                    fresh.remove(&args[0]);
+                }
+            }
+            "ands" | "orrs" | "bics" | "eors" if args.len() == 2 => {
+                let sym = match op.as_str() {
+                    "ands" => "&",
+                    "orrs" => "|",
+                    "bics" => "&~",
+                    _ => "^",
+                };
+                let place = loaded.get(&args[1]).cloned().or_else(|| loaded.get(&args[0]).cloned());
+                let mask = if loaded.contains_key(&args[1]) {
+                    reg.get(&args[0]).cloned()
+                } else {
+                    reg.get(&args[1]).cloned()
+                };
+                if let (Some(place), Some(Val::Num(m))) = (place, mask) {
+                    pending.insert(args[0].clone(), (place, sym.to_string(), m));
+                }
+                reg.remove(&args[0]);
+                fresh.remove(&args[0]);
+            }
+            "ldr" if args.len() == 2 && args[1].starts_with("[pc") => {
+                let off = args[1]
+                    .split('#')
+                    .nth(1)
+                    .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
+                    .unwrap_or(0);
+                match word_at(&halfwords, ((r.addr + 4) & !3) + off) {
+                    Some(v) if base_values.contains(&v) => {
+                        reg.insert(args[0].clone(), Val::Named("base".into()));
+                        fresh.insert(args[0].clone(), Val::Named("base".into()));
+                        out.push(format!("{}base = {v};", indent(depth)));
+                    }
+                    Some(v) => {
+                        reg.insert(args[0].clone(), Val::Num(v));
+                        fresh.insert(args[0].clone(), Val::Num(v));
+                    }
+                    None => {
+                        reg.remove(&args[0]);
+                        fresh.remove(&args[0]);
+                    }
+                }
+            }
+            "str" if args.len() == 2 && args[1].starts_with("[sp") => {
+                let off = args[1]
+                    .split('#')
+                    .nth(1)
+                    .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
+                    .unwrap_or(0);
+                if let Some(v) = reg.get(&args[0]).cloned() {
+                    stack.insert(off, v);
+                }
+            }
+            _ if op.starts_with("bl") && args.len() == 1 => {
+                let Some(target) = hex(&args[0]) else { continue };
+                let name = format!("Func_{target:08x}");
+                names.insert(name.clone());
+                let mut got: Vec<String> = Vec::new();
+                for i in 0..4 {
+                    match fresh.get(&format!("r{i}")) {
+                        Some(v) => got.push(v.render()),
+                        None => break,
+                    }
+                }
+                for (_, v) in stack.iter() {
+                    got.push(v.render());
+                }
+                tmp_n += 1;
+                temp_line.insert(format!("p{tmp_n}"), out.len());
+                temp_fn.insert(format!("p{tmp_n}"), name.clone());
+                out.push(format!("{}{name}({});", indent(depth), got.join(", ")));
+                calls += 1;
+                // r0 dies (it carries the return); r1-r3 keep what the caller
+                // put there, and r4-r7 survive entirely.
+                for i in 0..4 {
+                    let k = format!("r{i}");
+                    if i == 0 {
+                        reg.remove(&k);
+                        ptr.remove(&k);
+                    }
+                    fresh.remove(&k);
+                }
+                stack.clear();
+                loaded.clear();
+                pending.clear();
+                ptr.insert("r0".to_string(), format!("p{tmp_n}"));
+            }
+            _ if op.starts_with('b') && op != "bx" => {
+                for i in 0..4 {
+                    let k = format!("r{i}");
+                    reg.remove(&k);
+                    fresh.remove(&k);
+                    ptr.remove(&k);
+                }
+                stack.clear();
+                loaded.clear();
+                pending.clear();
+            }
+            _ => {}
+        }
+    }
+
+    while depth > 1 {
+        depth -= 1;
+        out.push(format!("{}}}", indent(depth)));
+    }
+
+    // Promote only the temps something later reads.
+    let mut used: BTreeSet<String> = BTreeSet::new();
+    for (name, at) in &temp_line {
+        let referenced = out
+            .iter()
+            .enumerate()
+            .any(|(i, l)| i != *at && l.contains(name.as_str()));
+        if referenced {
+            used.insert(name.clone());
+            if let Some(f) = temp_fn.get(name) {
+                returns_pointer.insert(f.clone());
+            }
+            let line = out[*at].clone();
+            let lead: String = line.chars().take_while(|c| c.is_whitespace()).collect();
+            out[*at] = format!("{lead}{name} = {};", line.trim_start());
+        }
+    }
+
+    let mut lines = Vec::new();
+    lines.push("#include \"types.h\"".to_string());
+    lines.push(String::new());
+    lines.push(format!(
+        "/* DRAFT for {func}: {calls} calls, {loops} loops, {memory} memory operations.",
+        loops = loop_n
+    ));
+    lines.push(" * Written by `overlay reconstruct` from the owner's own disassembly.".to_string());
+    lines.push(" * It is a starting point, not a reconstruction: read the assembly and".to_string());
+    lines.push(" * fix it. Score it before believing any of it. */".to_string());
+    lines.push(String::new());
+    for n in &names {
+        if returns_pointer.contains(n) {
+            lines.push(format!("void *{n}();"));
+        } else {
+            lines.push(format!("void {n}();"));
+        }
+    }
+    lines.push(String::new());
+    lines.push(format!("void {func}(void)"));
+    lines.push("{".to_string());
+    if !base_values.is_empty() {
+        lines.push("    s32 base;".to_string());
+    }
+    for name in &used {
+        lines.push(format!("    void *{name};"));
+    }
+    for k in 1..=loop_n {
+        lines.push(format!("    s32 i{k};"));
+    }
+    if !base_values.is_empty() || loop_n > 0 || !used.is_empty() {
+        lines.push(String::new());
+    }
+    lines.extend(out);
+    lines.push("}".to_string());
+
+    Draft { lines, calls, loops: loop_n, memory }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn listing(rows: &[&str]) -> Vec<String> {
+        rows.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn a_call_takes_the_arguments_freshly_loaded_into_r0_r3() {
+        let d = draft(
+            &listing(&[
+                " 2000000:\t2004      \tmovs\tr0, #4",
+                " 2000002:\t2101      \tmovs\tr1, #1",
+                " 2000004:\tf000 f800 \tbl\t0x2000100",
+            ]),
+            "Func_02000000",
+        );
+        assert_eq!(d.calls, 1);
+        assert!(d.lines.iter().any(|l| l.contains("Func_02000100(4, 1);")), "{:?}", d.lines);
+    }
+
+    #[test]
+    fn a_backward_branch_becomes_a_loop_with_its_real_start() {
+        let d = draft(
+            &listing(&[
+                " 2000000:\t251d      \tmovs\tr5, #29",
+                " 2000002:\t2000      \tmovs\tr0, #0",
+                " 2000004:\tf000 f800 \tbl\t0x2000100",
+                " 2000008:\t2d00      \tcmp\tr5, #0",
+                " 200000a:\tdafa      \tbge.n\t0x2000002",
+            ]),
+            "Func_02000000",
+        );
+        assert_eq!(d.loops, 1);
+        assert!(
+            d.lines.iter().any(|l| l.contains("for (i1 = 29; i1 >= 0; i1--)")),
+            "a countdown must not be read as starting at zero: {:?}",
+            d.lines
+        );
+    }
+
+    #[test]
+    fn r4_to_r7_survive_a_call_and_r0_does_not() {
+        // r5 is loaded once and used as an argument after an intervening call.
+        let d = draft(
+            &listing(&[
+                " 2000000:\t2507      \tmovs\tr5, #7",
+                " 2000002:\tf000 f800 \tbl\t0x2000100",
+                " 2000006:\t1c28      \tadds\tr0, r5, #0",
+                " 2000008:\tf000 f800 \tbl\t0x2000200",
+            ]),
+            "Func_02000000",
+        );
+        assert!(
+            d.lines.iter().any(|l| l.contains("Func_02000200(7);")),
+            "a value parked in r5 must survive the call: {:?}",
+            d.lines
+        );
+    }
+
+    #[test]
+    fn a_pool_word_is_not_decoded_as_an_instruction() {
+        // The `@ (0x...)` comment is how the pool is located; without it the
+        // two halfwords below would read as instructions.
+        let d = draft(
+            &listing(&[
+                " 2000000:\t4801      \tldr\tr0, [pc, #4]\t@ (0x2000008)",
+                " 2000002:\tf000 f800 \tbl\t0x2000100",
+                " 2000008:\t0301      \tlsls\tr1, r0, #12",
+                " 200000a:\t0000      \tmovs\tr0, r0",
+            ]),
+            "Func_02000000",
+        );
+        assert_eq!(d.calls, 1, "the pool must not add calls: {:?}", d.lines);
+        assert!(d.lines.iter().any(|l| l.contains("Func_02000100(769);")), "{:?}", d.lines);
+    }
+
+    #[test]
+    fn a_read_modify_write_through_a_pointer_is_one_statement() {
+        let d = draft(
+            &listing(&[
+                " 2000000:\tf000 f800 \tbl\t0x2000100",
+                " 2000004:\t305a      \tadds\tr0, #90",
+                " 2000006:\t7802      \tldrb\tr2, [r0, #0]",
+                " 2000008:\t25fe      \tmovs\tr5, #254",
+                " 200000a:\t402a      \tands\tr2, r5",
+                " 200000c:\t7002      \tstrb\tr2, [r0, #0]",
+            ]),
+            "Func_02000000",
+        );
+        assert!(
+            d.lines.iter().any(|l| l.contains("&= 0xfe;")),
+            "the load, mask and store are one compound assignment: {:?}",
+            d.lines
+        );
+    }
+}
+
+/// `overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]`
+///
+/// Writes the draft to `work/` and prints what it modelled. It never writes
+/// anywhere else: the tree has no home for C that does not reproduce, and this
+/// produces C that has not been read yet, which is further from reproducing
+/// than usual.
+pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
+    if argv.iter().any(|a| a == "-h" || a == "--help") {
+        return Ok(vec![
+            "usage: overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]"
+                .to_string(),
+            String::new(),
+            "Drafts C for one owner from its own disassembly, into work/.".to_string(),
+            "It is a starting point. Score it before believing any of it.".to_string(),
+        ]);
+    }
+    let target = argv
+        .iter()
+        .find(|a| a.contains(':') && !a.starts_with('-'))
+        .ok_or("give an owner as <overlay>:<offsetHex>")?;
+    let (overlay, offset) = target.split_once(':').ok_or("expected <overlay>:<offsetHex>")?;
+    let value_after = |flag: &str| -> Option<String> {
+        argv.iter().position(|a| a == flag).and_then(|i| argv.get(i + 1)).cloned()
+    };
+
+    let mut show: Vec<String> = vec![overlay.to_string(), offset.to_string()];
+    if let Some(span) = value_after("--span") {
+        show.push("-n".to_string());
+        show.push(span);
+    }
+    let listing = match crate::run(&show)? {
+        crate::Outcome::Lines(lines) => lines,
+        _ => return Err("overlay show produced no listing".to_string()),
+    };
+    if listing.is_empty() {
+        return Err(format!("{target}: no disassembly; check the overlay and offset"));
+    }
+
+    let addr = i64::from_str_radix(offset.trim_start_matches("0x"), 16)
+        .map_err(|_| format!("{offset}: not a hex offset"))?;
+    let func = format!("Func_{:08x}", 0x0200_0000 + addr);
+    let d = draft(&listing, &func);
+
+    let out = value_after("--out").unwrap_or_else(|| {
+        format!("work/{}_c_{:08x}.c", overlay, 0x0200_0000 + addr)
+    });
+    if !out.starts_with("work/") {
+        return Err(format!(
+            "{out}: drafts go under work/, which is gitignored -- an unread draft is not an asset"
+        ));
+    }
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    std::fs::write(&out, format!("{}\n", d.lines.join("\n"))).map_err(|e| e.to_string())?;
+
+    Ok(vec![
+        format!(
+            "{target}: {} calls, {} loops, {} memory operations -> {out}",
+            d.calls, d.loops, d.memory
+        ),
+        "score it before believing any of it".to_string(),
+    ])
+}

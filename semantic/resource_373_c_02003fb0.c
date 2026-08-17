@@ -137,6 +137,37 @@
  * e611e2847 described stands in front of roughly seventy per cent of the
  * size-exact work, and the other 14,676 bytes are reachable today by ordinary
  * reconstruction.  This owner is in the first group and 0x020015dc with it.
+ *
+ * THE RULE WAS BUILT AND MEASURED, then reverted.  e611e2847 left the narrow
+ * form unimplemented because it "needs cse.c to know whether the value feeds a
+ * call".  It does not: the pseudo cse2 shares is made in calls.c, by
+ * `precompute_register_parameters`, which runs for call arguments and nothing
+ * else, so the narrowing is one condition there --
+ *
+ *     && ! CONSTANT_P (args[i].value)
+ *
+ * on the `copy_to_mode_reg` guard.  A constant can always be rematerialised, so
+ * declining to precompute it into a pseudo costs nothing and leaves each
+ * argument to build its own, which is the reference's shape.
+ *
+ * Built into a private tree and pointed at only this worktree, never the shared
+ * dist.  Overlays: `candidate-rank` over 607 rows goes from 2 exact to 152.
+ * 150 rows and 31,294 bytes become byte-exact, 300 more improve, and NO row
+ * that was exact stops being exact.  resource_3b8:2014, the largest target in
+ * the tree at 7,468 bytes, is one of them, and so is this overlay's 0x020012bc.
+ *
+ * Main image: it breaks 19 of a 60-owner sample of `exact/08*.c`, about a
+ * third, and `build-claimed` will not link because 080b86ec and 080b9acc grow
+ * past their spans into their neighbours.  103 overlay rows also get worse and
+ * the ranker's error count goes 1 -> 18.
+ *
+ * So the answer is not "adopt it".  The answer is that ONE rule is right for
+ * the overlays and wrong for the main image, by a wide margin in both
+ * directions, and that is evidence about the ROM rather than about the rule:
+ * the two halves do not behave as though one compiler configuration produced
+ * both.  Worth pursuing as a per-target difference, not as a global switch.
+ * The compiler was reverted, the admitted digests with it; nothing here depends
+ * on that build.
  */
 
 /* The overlay's scene block, reached through the IWRAM pointer at 0x03001ebc;

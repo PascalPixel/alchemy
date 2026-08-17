@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_080022ec(s32, s32);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
+u8 Func_080162d4(s32, s32, s32, s32, s32);
 
 typedef struct State {
     u8 pad00[0x78];

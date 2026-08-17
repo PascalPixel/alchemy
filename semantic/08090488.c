@@ -45,7 +45,7 @@ extern struct FieldTransition_08090488 *Data_03001ecc;
 extern struct DisplayCoefficients_08090488 *Data_03001e70;
 extern s32 Data_03001e40;
 
-void Func_08004278(const void *);
+s32 Func_08004278(const void *);
 void Func_0800307c(s32, s32, const void *);
 
 /*

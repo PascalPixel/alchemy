@@ -60,7 +60,7 @@ void Func_08004c1c(s32);
 void Func_08004bd4(s32);
 void Func_080051d8(struct State_080c0be4 *, void *);
 void Func_08005258(u32, u32, u32);
-void Func_08005268(struct Vector_080c0be4 *, struct Vector_080c0be4 *);
+s32 Func_08005268(struct Vector_080c0be4 *, struct Vector_080c0be4 *);
 void Func_080c0a24(u32, u32, s32, s32, u32);
 
 static inline u32 Scale_080c0be4(u32 value, u32 (*scale)(u32, u32))

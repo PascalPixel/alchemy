@@ -52,7 +52,7 @@ struct Record_080b84c0 *Func_080b7f70(struct Object_080b84c0 *object,
 void Func_080b7ed8(void);
 s32 Func_08005268(const s32 *source, s32 *projected);
 u8 *Func_08077008(s32 id);
-s32 Func_080c23c0(s32 character);
+u8 Func_080c23c0(s32 character);
 
 s32 Func_080b84c0(s32 id, s32 *projected)
 {

@@ -28,7 +28,7 @@
 s32 Func_08002f40(s32 index);
 void *Func_08005340(s32, s32);
 u32 Func_08004938(s32 arg0);
-void Func_080072fc(s32, void *);
+s32 Func_080072fc(s32, void *);
 void Func_08002df0(void *);
 
 extern u8 Data_08002d5c;

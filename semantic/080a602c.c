@@ -6,7 +6,7 @@ extern u8 Data_00000000[];
 void Func_080a1ac0(s32, s32);
 s32 Func_08077008(s32);
 u8 Func_080a68ec(void *, void *, s32);
-s32 Func_080a60d4(void *, void *);
+u8 Func_080a60d4(void *, void *);
 void Func_080a17c4(void *);
 void Func_080030f8(s32);
 

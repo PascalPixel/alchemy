@@ -24,7 +24,7 @@
  */
 
 void Func_0808ba1c(s32 message);
-s32 Func_08015038(s32 sequence, s32 x, s32 y, s32 flags);
+u8 Func_08015038(s32 sequence, s32 x, s32 y, s32 flags);
 s32 Func_08015050(s32 window);
 void Func_080030f8(s32 frames);
 

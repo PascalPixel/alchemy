@@ -28,10 +28,10 @@ extern struct BlendRegisters_08091494 Data_04000050;
 
 void *Func_080048f4(s32 kind, s32 size);
 void *Func_080048b0(s32 kind, s32 size);
-void Func_08003fa4(s32 value, s32 size, void *destination);
+s32 Func_08003fa4(s32 value, s32 size, void *destination);
 void Func_08002dd8(s32 kind);
 void Func_080041d8(void (*callback)(void), s32 period);
-s32 Func_0808ba1c(u32 object_id);
+u8 Func_0808ba1c(u32 object_id);
 void Func_080912b8(void);
 
 void Func_08091494(s32 object)

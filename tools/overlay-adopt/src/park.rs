@@ -463,13 +463,29 @@ pub fn truth_window(
     address: i64,
     span: i64,
 ) -> Result<(Vec<u8>, &'static str), String> {
-    if let Ok(image) = rom_overlay(root, overlay) {
-        let start = (address - OVERLAY_BASE) as usize;
-        if let Some(window) = image.get(start..start + span as usize) {
-            return Ok((window.to_vec(), "rom"));
+    // Both paths can fail, and for 95 of the 605 measured overlay candidates --
+    // 80,246 bytes, every owner of some overlays -- both do. Reporting only the
+    // git failure names a missing `AlchemyC_` label, which reads as "this region
+    // is unlabelled" when the actual cause is upstream: the container did not
+    // decode, so there was never a ROM window to prefer. Say both, so the reader
+    // knows which one to chase.
+    let rom = match rom_overlay(root, overlay) {
+        Ok(image) => {
+            let start = (address - OVERLAY_BASE) as usize;
+            match image.get(start..start + span as usize) {
+                Some(window) => return Ok((window.to_vec(), "rom")),
+                None => format!(
+                    "the decoded container is {} bytes and the row needs {}",
+                    image.len(),
+                    start + span as usize
+                ),
+            }
         }
-    }
-    reference_bytes(root, overlay, address, span).map(|bytes| (bytes, "git"))
+        Err(message) => message,
+    };
+    reference_bytes(root, overlay, address, span)
+        .map(|bytes| (bytes, "git"))
+        .map_err(|git| format!("{git}; and no ROM window either: {rom}"))
 }
 
 

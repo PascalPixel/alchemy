@@ -115,7 +115,12 @@ fn main() -> ExitCode {
         "call-order-check" => code(overlay_call_order_check::run(&rest)),
         "candidate-rank" => {
             let self_exe = std::env::current_exe().unwrap_or_else(|_| PathBuf::from("overlay"));
-            unit(overlay_candidate_rank::run(&root(), &self_exe, &rest))
+            unit(overlay_candidate_rank::run(
+                &root(),
+                &self_exe,
+                &["candidate-rank"],
+                &rest,
+            ))
         }
         "certify" => unit(overlay_certify::run(&rest)),
         "entry" => lines(overlay_entry::run(&rest)),

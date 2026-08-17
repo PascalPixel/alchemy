@@ -18,6 +18,9 @@ overlay-disasm = { path = "../overlay-disasm" }
 # Shared with `overlay score`, so the bulk table and the single-owner view
 # never disagree about which residuals are worth reading.
 candidate-show = { path = "../candidate-show" }
+# The adoption gate's audited-interval check, so the table cannot rank a row
+# first that the gate will refuse.
+overlay-adopt = { path = "../overlay-adopt" }
 
 [lib]
 name = "overlay_candidate_rank"

@@ -113,6 +113,14 @@ pub fn effort_tier(row: &Measurement) -> i64 {
     if row.error.is_some() || row.size_delta.is_none() || row.differing_halfwords.is_none() {
         return 5;
     }
+    // Not a near miss at any distance: the span is not one audited executable
+    // interval, so the adoption gate refuses it whatever the bytes say. Ranking
+    // it on its residual puts an unadoptable row first -- which is exactly what
+    // happened to resource_3b9:007c and resource_3c4:0e20, both reporting a
+    // perfect match at tier 0 over a span containing a pointer table.
+    if row.residual_class.as_deref() == Some("unindexed-span") {
+        return 4;
+    }
     let size_delta = row.size_delta.unwrap();
     let differing = row.differing_halfwords.unwrap();
     if size_delta != 0 {
@@ -438,7 +446,7 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
             // Classifying costs two disassembles per owner and is what makes
             // the table actionable, so a failure here degrades the row to an
             // unclassified one rather than losing the measurement.
-            let (class, wrong) =
+            let (mut class, wrong) =
                 match classify_owner(&owner_work, &compiled.data, expected, address as f64) {
                     Ok(pair) => (Some(pair.0.to_string()), Some(pair.1)),
                     Err(message) => {
@@ -446,6 +454,15 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                         (None, None)
                     }
                 };
+            // A row whose span is not inside one audited executable interval
+            // cannot be adopted however its bytes compare, so the residual is
+            // not the thing wrong with it. Two rows reached the top of this
+            // table reporting `exact` on spans that swallow a pointer table and
+            // an unindexed gap, and the adoption gate refused both -- ranked
+            // first, unadoptable, every run.
+            if !overlay_adopt::span_is_adoptable(root, &row.overlay, address, row.bytes) {
+                class = Some("unindexed-span".to_string());
+            }
             Ok(Measurement {
                 id: id.clone(),
                 overlay: row.overlay.clone(),

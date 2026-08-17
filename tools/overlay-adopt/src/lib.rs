@@ -397,13 +397,32 @@ pub fn audited_code_span(root: &Path, overlay: &str, entry: i64) -> Result<Optio
 /// The rationale lives in the original's `auditedInterval` doc comment, which
 /// went with the TypeScript layer; recover it with
 /// `git show e3867da35:tools/overlay/overlay_adopt.ts`.
+/// Is `span` at `entry` inside one audited executable interval of `overlay`?
+///
+/// Adoption's safety check, exposed so the rankers can ask the same question.
+/// A row that fails this can never be adopted no matter how its bytes compare,
+/// so reporting it as a near miss -- or as exact -- sends the next contributor
+/// at a region that is not one owner.
+pub fn span_is_adoptable(root: &Path, overlay: &str, entry: i64, span_bytes: i64) -> bool {
+    audited_span(root, overlay, entry, span_bytes, overlay).is_ok()
+}
+
 fn audited_interval(root: &Path, fn_row: &FunctionRow) -> Result<(), String> {
-    let intervals = match audit_intervals(root, &fn_row.overlay)? {
+    audited_span(root, &fn_row.overlay, fn_row.entry, fn_row.span_bytes, &fn_row.id)
+}
+
+fn audited_span(
+    root: &Path,
+    overlay: &str,
+    start: i64,
+    span_bytes: i64,
+    id: &str,
+) -> Result<(), String> {
+    let intervals = match audit_intervals(root, overlay)? {
         Some(intervals) => intervals,
         None => return Ok(()), // un-audited overlay: not this check's call to make
     };
-    let start = fn_row.entry;
-    let end = start + fn_row.span_bytes;
+    let end = start + span_bytes;
     if intervals.iter().any(|interval| interval.start <= start && end <= interval.end) {
         return Ok(());
     }
@@ -439,7 +458,7 @@ fn audited_interval(root: &Path, fn_row: &FunctionRow) -> Result<(), String> {
     };
     Err(format!(
         "{} span 0x{:08x}..0x{:08x} is not inside one audited executable interval: {}{}",
-        fn_row.id, start, end, detail, suggestion
+        id, start, end, detail, suggestion
     ))
 }
 

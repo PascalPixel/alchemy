@@ -265,7 +265,22 @@ pub fn candidates(root: &Path) -> Vec<PathBuf> {
     found
 }
 
-fn measure(root: &Path, self_exe: &Path, subcommand: &[&str], source: &Path) -> Row {
+/// Measure one candidate.
+///
+/// `work` MUST be private to this call. `candidate-show` compiles, links and
+/// disassembles through a work directory that defaults to a single shared path,
+/// so concurrent invocations overwrite each other's intermediates: the first
+/// draft of this ranker shared it and got `objdump failed` on owners that score
+/// perfectly well alone, plus a row count of 183 out of a 108-line comparison.
+/// Both symptoms were one collision, and both would have been read as facts
+/// about the owner rather than about the tool.
+fn measure(
+    root: &Path,
+    self_exe: &Path,
+    subcommand: &[&str],
+    source: &Path,
+    work: &Path,
+) -> Row {
     let relative = source
         .strip_prefix(root)
         .unwrap_or(source)
@@ -276,9 +291,12 @@ fn measure(root: &Path, self_exe: &Path, subcommand: &[&str], source: &Path) -> 
         .and_then(|s| s.to_str())
         .unwrap_or("")
         .to_string();
+    let _ = fs::create_dir_all(work);
     let run = Command::new(self_exe)
         .args(subcommand)
         .arg(source)
+        .arg("--work")
+        .arg(work)
         .arg("--align")
         .current_dir(root)
         .output();
@@ -443,6 +461,12 @@ pub fn run(root: &Path, self_exe: &Path, subcommand: &[&str], args: &[String]) -
     }
     sources.truncate(limit);
 
+    // One directory per candidate, so no two concurrent `candidate-show` runs
+    // share an intermediate. Keyed by address, so a re-run reuses the same paths
+    // rather than accumulating them.
+    let work_root = root.join("out/main-candidate-rank/work");
+    let work_root = work_root.as_path();
+
     let (sender, receiver) = mpsc::channel();
     let chunks: Vec<Vec<PathBuf>> = {
         let mut buckets: Vec<Vec<PathBuf>> = (0..jobs.min(sources.len()))
@@ -459,7 +483,13 @@ pub fn run(root: &Path, self_exe: &Path, subcommand: &[&str], args: &[String]) -
             let sender = sender.clone();
             scope.spawn(move || {
                 for source in chunk {
-                    let _ = sender.send(measure(root, self_exe, subcommand, source));
+                    let stem = source
+                        .file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("candidate");
+                    let work = work_root.join(stem);
+                    let _ = sender.send(
+                        measure(root, self_exe, subcommand, source, &work));
                 }
             });
         }

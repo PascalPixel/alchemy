@@ -8,6 +8,8 @@ extern u8 *Data_03001f30;
 void Func_08098698(void);
 void Func_080f9010(s32);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_0800447c(s32, s32, struct Triple *);
 void *Func_08096c80(s32, s32, s32, s32);
 void Func_08009098(void *, const void *);
@@ -31,8 +33,8 @@ void Func_080985fc(void)
 
         argumentPointer->values[0] = *(s32 *)(state + 4);
         argumentPointer->values[2] = *(s32 *)(state + 12);
-        random = (Func_08004458() * 6) + 0x40000;
-        Func_0800447c(random, Func_08004458(), argumentPointer);
+        random = (Rand() * 6) + 0x40000;
+        Func_0800447c(random, Rand(), argumentPointer);
         argumentPointer->values[1] = *(s32 *)(state + 8);
         object = Func_08096c80(
             0xD9,
@@ -44,7 +46,7 @@ void Func_080985fc(void)
             Func_08009098(object, (const void *)0x0809F11C);
             *((u8 *)object + 0x55) = 2;
         }
-        Func_080030f8((((u32)Func_08004458() * 2) >> 16) + 2);
+        Func_080030f8((((u32)Rand() * 2) >> 16) + 2);
         count--;
     } while (count >= 0);
     Func_080030f8(0x1E);

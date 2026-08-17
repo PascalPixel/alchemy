@@ -35,7 +35,7 @@ s32 Func_08094428(void)
 
                 Func_080770d0(event);
                 object_id = Data_02000240[125];
-                object = Func_0808ba1c(object_id);
+                object = GetObject(object_id);
                 *(s32 *)((u8 *)object + 12) += 0x00a00000;
                 Func_080933f8(-1, -1, -1, 0);
                 while (*(s32 *)((u8 *)object + 12) + *(s32 *)((u8 *)object + 40) >

@@ -5,7 +5,7 @@ void Func_08009148(struct ObjectRuntime *);
 
 void Func_080920fc(u32 object_id, s32 action)
 {
-    struct ObjectRuntime *object = Func_0808ba1c(object_id);
+    struct ObjectRuntime *object = GetObject(object_id);
 
     if (object != NULL) {
         s32 value = 1;

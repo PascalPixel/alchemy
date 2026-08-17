@@ -12,6 +12,8 @@ void Func_080f9010(s32);
 u8 *Func_08096c80(s32, s32, s32, s32);
 void Func_08009098(void *, const void *);
 u32 Func_08004458(void);
+/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+#define Rand Func_08004458
 void Func_08096bec(struct Object_08096bec *, s32, s32);
 
 s32 Func_08098c08(void *source)
@@ -57,16 +59,16 @@ s32 Func_08098c08(void *source)
             s32 y;
 
             Func_08009098(child, (const void *)0x0809F0D4);
-            x = Func_08004458();
+            x = Rand();
             x += speed;
             *(s32 *)((u8 *)child + 0x34) = speed;
             *(s32 *)((u8 *)child + 0x30) = x;
             *(u8 *)((u8 *)child + 0x55) = 0;
-            y = Func_08004458() * 24 + 0x80000;
+            y = Rand() * 24 + 0x80000;
             Func_08096bec(
                 (struct Object_08096bec *)child,
                 y,
-                Func_08004458());
+                Rand());
         }
         count--;
     } while (count >= 0);

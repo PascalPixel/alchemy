@@ -43,7 +43,7 @@ void Func_08099738(void)
     struct Controller_08099738 *controller;
     u32 i;
 
-    object = Func_0808ba1c(Data_02000240.object_id);
+    object = GetObject(Data_02000240.object_id);
     state = object->state;
     controller = state->controller;
 

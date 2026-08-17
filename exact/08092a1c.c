@@ -16,8 +16,8 @@ struct Object_08092a1c {
 void Func_08009098(struct Object_08092a1c *, s32);
 
 void Func_08092a1c(u32 arg0, s32 arg1, s32 arg2) {
-    struct Object_08092a1c *first = Func_0808ba1c(arg0);
-    struct Object_08092a1c *second = Func_0808ba1c(arg1 & 0xff);
+    struct Object_08092a1c *first = GetObject(arg0);
+    struct Object_08092a1c *second = GetObject(arg1 & 0xff);
 
     if (first != 0 && second != 0) {
         first->field_68 = second;

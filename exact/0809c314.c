@@ -29,7 +29,7 @@ void Func_0809c314(void)
 
     id = 8;
     do {
-        temp_r0 = Func_0808ba1c(id);
+        temp_r0 = GetObject(id);
 
         if (temp_r0 != 0) {
             s32 objectX = *(s32 *)(temp_r0 + 8);

@@ -22,13 +22,35 @@
  * performs at most 120 polling yields.
  */
 
-extern s32 Data_0200d480;
-extern s32 Data_0200d484;
+extern volatile s32 Data_0200d480;
+extern volatile s32 Data_0200d484;
 
 extern u8 Value_0000000a;
 void Func_02004a0e();
 void Func_02004a1e();
 
+/*
+ * WHERE THIS ROW STANDS.  The goto form below is SIZE-correct at 60 bytes and 21
+ * differing halfwords.  Writing the wait as an ordinary loop --
+ *
+ *   polls = 0;
+ *   while (Data_0200d480 != 3 || Data_0200d484 != 1) { ...; polls++; if (...) return; }
+ *
+ * -- cuts the residual to 9 halfwords but comes out 64 bytes, four over, and the
+ * same is true keeping `cond` and using `while` instead of the goto.  So the
+ * natural shape is much closer in content and carries one instruction or pool word
+ * the reference does not; the guide's four-byte rule read backwards.  Whoever takes
+ * this next should start from the loop form and hunt those four bytes, not from
+ * here.
+ *
+ * Two things it is NOT.  `&Value_0000000a` is right: passing the literal 10
+ * instead moves the row further out, 21 halfwords to 25.  And `volatile` on
+ * Data_0200d480, or on both globals, changes nothing at all -- the reference
+ * dereferences the pointer once before the loop where we drop that read, which
+ * looks exactly like the guide's volatile tell and is not one.  The scorer was
+ * checked for caching while establishing that: inserting a call moves the count
+ * and removing it restores it, so these are real measurements.
+ */
 void Func_020001c8(void)
 {
     s32 polls;

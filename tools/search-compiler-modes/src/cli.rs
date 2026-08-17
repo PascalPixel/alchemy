@@ -294,7 +294,15 @@ fn sweep_one(root: &Path, options: &Options, item: &Item) -> Result<Json, String
     parse_json(&text).map_err(|error| format!("{}: {error}", item.stem))
 }
 
-fn cargo_command(root: &Path, crate_name: &str) -> Command {
+/// The child is reached through the `compiler` binary, not through its own
+/// crate.
+///
+/// `mode-sweep` is library-only -- no `[[bin]]`, no `main.rs` -- so running its
+/// manifest failed with "a bin target must be available for `cargo run`" and
+/// took the compiler search axis down with it. That axis is one of the two an
+/// owner must spend before it can be sealed as unmatchable, so the register was
+/// unreachable for as long as this was broken.
+fn cargo_command(root: &Path, subcommand: &str) -> Command {
     let mut command = Command::new("cargo");
     command
         .args([
@@ -304,8 +312,9 @@ fn cargo_command(root: &Path, crate_name: &str) -> Command {
             "--release",
             "--manifest-path",
         ])
-        .arg(root.join("tools").join(crate_name).join("Cargo.toml"))
+        .arg(root.join("tools").join("compiler").join("Cargo.toml"))
         .arg("--")
+        .arg(subcommand)
         .current_dir(root);
     command
 }
@@ -361,9 +370,10 @@ mod tests {
                 "--quiet",
                 "--release",
                 "--manifest-path",
-                "/repo/tools/mode-sweep/Cargo.toml",
+                "/repo/tools/compiler/Cargo.toml",
             ]
         );
         assert_eq!(args[6], "--");
+        assert_eq!(args[7], "mode-sweep", "the child is a compiler subcommand");
     }
 }

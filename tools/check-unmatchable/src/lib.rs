@@ -158,7 +158,10 @@ pub fn violations(
                 entry.owner
             ));
         } else if !semantic.contains(&entry.owner) {
-            problems.push(format!("{}: names no owner under semantic/", entry.owner));
+            problems.push(format!(
+                "{}: names no owner in semantic/regions.json",
+                entry.owner
+            ));
         }
         for axis in REQUIRED_AXES {
             if !entry.axes.iter().any(|a| a == axis) {
@@ -186,16 +189,14 @@ pub fn violations(
 ///
 /// Returns `None` when both corpora are populated.
 pub fn corpus_guard(root: &Path, exact: &HashSet<String>, semantic: &HashSet<String>) -> Option<String> {
-    // The unmatchable ledger was a semantic-tier register: it named owners with
-    // reviewed C that could not be made exact. With two tiers there are no such
-    // owners -- unmatched work is assembly -- so an empty semantic corpus is the
-    // expected state, not a broken scan. The provisional register below is the
-    // one that still means something, and its corpus guard still bites.
-    let _ = semantic;
-    if false {
+    // The set is the AUDITED owner boundaries now, not a directory of C. It was
+    // briefly the deleted source tree, and the guard was switched off rather
+    // than repointed -- which meant a scan that read nothing reported success.
+    // 2,340 owners are audited, so an empty set here is a broken read.
+    if semantic.is_empty() {
         return Some(format!(
-            "{} holds no .c owners; the ledger would be checked against nothing",
-            root.join("semantic").display()
+            "{} lists no audited owners; the ledger would be checked against nothing",
+            root.join("semantic/regions.json").display()
         ));
     }
     if exact.is_empty() {
@@ -345,10 +346,10 @@ mod tests {
     }
 
     #[test]
-    fn an_empty_semantic_corpus_is_not_a_pass() {
+    fn an_empty_audited_corpus_is_not_a_pass() {
         let root = Path::new("/repo");
         let message = corpus_guard(root, &set(&["aa"]), &set(&[])).expect("must refuse");
-        assert!(message.contains("/repo/semantic"), "{message}");
+        assert!(message.contains("/repo/semantic/regions.json"), "{message}");
         assert!(message.contains("checked against nothing"), "{message}");
     }
 

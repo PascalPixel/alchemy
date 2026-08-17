@@ -95,6 +95,33 @@ fn self_test() -> ExitCode {
     ExitCode::SUCCESS
 }
 
+/// Owner stems from `semantic/regions.json`: `<overlay>_c_<address>`.
+fn audited_owner_stems(root: &std::path::Path) -> std::collections::HashSet<String> {
+    let mut out = std::collections::HashSet::new();
+    let Ok(text) = std::fs::read_to_string(root.join("semantic/regions.json")) else {
+        return out;
+    };
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(&text) else {
+        return out;
+    };
+    for row in value
+        .get("manual_regions")
+        .and_then(|node| node.as_array())
+        .unwrap_or(&Vec::new())
+    {
+        let (Some(overlay), Some(entry)) = (
+            row.get("overlay").and_then(|n| n.as_str()),
+            row.get("entry").and_then(|n| n.as_str()),
+        ) else {
+            continue;
+        };
+        if let Ok(address) = u32::from_str_radix(entry.trim_start_matches("0x"), 16) {
+            out.insert(format!("{overlay}_c_{address:08x}"));
+        }
+    }
+    out
+}
+
 fn run_queue() -> ExitCode {
     match queue(root()) {
         // PORT NOTE: the TypeScript returns an empty list when out/modesweep is
@@ -134,7 +161,11 @@ fn gate() -> ExitCode {
     };
 
     let exact = stems(root, "exact");
-    let semantic = stems(root, "semantic");
+    // The audited owner boundaries, not a directory of C. This read the
+    // `semantic/` source tree, so once that tier was deleted every entry failed
+    // as "names no owner" and the register could not be used at all -- which
+    // silently removed the only way to withdraw a blocked owner from the queue.
+    let semantic = audited_owner_stems(root);
     // PORT NOTE: added, no TypeScript counterpart. Scanning nothing is not
     // passing; see `corpus_guard`.
     if let Some(message) = corpus_guard(root, &exact, &semantic) {
@@ -159,7 +190,7 @@ fn gate() -> ExitCode {
         provisional.len()
     );
     eprintln!(
-        "checked against {} semantic and {} exact owner(s)",
+        "checked against {} audited and {} exact owner(s)",
         semantic.len(),
         exact.len()
     );

@@ -530,6 +530,26 @@ cargo run --release --manifest-path tools/dispatch/Cargo.toml -- <group> <comman
 contract. Commands that change the tree require an explicit `--apply` or
 `--write`; everything else is read-only.
 
+### The ones you will actually use
+
+There are 99 public commands and the loop needs about eight of them. The full
+catalog below exists so the registry has somewhere to be checked against; it is
+reference, not a reading list.
+
+| | |
+|---|---|
+| `overlay score` | compile a candidate, diff it, classify the residual |
+| `candidate-show` | the same for a main-image owner |
+| `overlay adopt` / `park` | install a proven row, or take one back out |
+| `overlay audit --all` | re-prove every adopted row still reproduces |
+| `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it |
+| `overlay twins` | find a finished owner with the same shape |
+| `make verify` | the only result that proves anything |
+
+Most of the rest are asset builders that run as part of `make build-assets`,
+and gates that run as part of `make verify`. You should not need to invoke them
+by hand, and if you find yourself doing so, that is worth a note in the commit.
+
 ### decomp — find owners and prove drafts
 
 | Command | What it tells you |

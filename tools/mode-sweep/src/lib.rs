@@ -470,6 +470,12 @@ const DECLARED: &[Spec] = &[
         &["-fno-cse-skip-blocks"],
         HISTORICAL,
     ),
+    // The global pass, which the local ones above do not cover. Its absence
+    // was a real hole in the search: parking a repeated constant in a
+    // callee-saved register is gcse's work, so an owner whose whole residual
+    // is that parking could be swept across 153 configurations without ever
+    // testing the one that turns it off. Stock gcc 2.96 option.
+    spec("gcse-off", Family::Cse, &["-fno-gcse"], HISTORICAL),
     spec(
         "cse-rerun-loop-off",
         Family::Cse,
@@ -1991,12 +1997,15 @@ mod tests {
         //   AGBCC_EXPERIMENTAL_COMBINATIONS.length === 4,
         //   MODES.length === 154.
         //
-        // MODES is 152 now: the compiler-gcc2951 and compiler-pret-early-thumb
+        // MODES is 153 now: the compiler-gcc2951 and compiler-pret-early-thumb
         // specs are gone, because both named staged binaries that no source in
-        // any repo could rebuild.
+        // any repo could rebuild, and `gcse-off` was added because the table
+        // covered the local cse passes but not the global one -- the pass that
+        // parks a repeated constant in a callee-saved register, which is the
+        // entire residual of at least one owner.
         assert_eq!(FORK_MODES.len(), 98);
         assert_eq!(STOCK_SWITCHES.len(), 21);
-        assert_eq!(modes().len(), 152);
+        assert_eq!(modes().len(), 153);
         assert_eq!(
             modes().len(),
             DECLARED.len()

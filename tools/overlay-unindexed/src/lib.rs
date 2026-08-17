@@ -8,8 +8,6 @@
 //! `semantic/` or `exact/` C file), report it as "found" -- with
 //! `interior: true` if it falls strictly inside a known row's span.
 //!
-//! The TypeScript original is retained until this crate is wired into
-//! `tools/overlay/index.ts` and verified byte-identical on stdout.
 
 use std::collections::HashSet;
 use std::fs;

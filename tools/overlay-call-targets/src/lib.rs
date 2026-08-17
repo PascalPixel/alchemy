@@ -8,8 +8,9 @@
 //! true_target_offset = stored_displacement + 2
 //! ```
 //!
-//! See the TypeScript original's header comment for the full history and
-//! measured rationale; it is reproduced there, not duplicated here.
+//! The original's header carries the full rationale and is deliberately not
+//! duplicated here. It was deleted with the rest of the TypeScript layer;
+//! recover it with `git show e3867da35:tools/lib/overlay_call_targets.ts`.
 //!
 //! The TypeScript original is retained: eight other TS tools still import
 //! from it (`overlay_published.ts`, `overlay_twins.ts`, `overlay_unindexed.ts`,

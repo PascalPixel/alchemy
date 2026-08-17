@@ -10,10 +10,6 @@
 //! listing rather than by counting directive widths: Thumb encodings are 2 or
 //! 4 bytes and a hand-rolled width table would be wrong exactly where it
 //! matters.
-//!
-//! The TypeScript original is retained until this crate is wired into
-//! `tools/overlay/index.ts` and verified byte-identical on stdout, stderr and
-//! exit code.
 
 pub mod park;
 pub mod score;
@@ -397,8 +393,10 @@ pub fn audited_code_span(root: &Path, overlay: &str, entry: i64) -> Result<Optio
 }
 
 /// Refuse a span that is not contained in ONE audited executable interval.
-/// See the TypeScript original's `auditedInterval` doc comment for the full
-/// rationale; it is reproduced there, not duplicated here.
+///
+/// The rationale lives in the original's `auditedInterval` doc comment, which
+/// went with the TypeScript layer; recover it with
+/// `git show e3867da35:tools/overlay/overlay_adopt.ts`.
 fn audited_interval(root: &Path, fn_row: &FunctionRow) -> Result<(), String> {
     let intervals = match audit_intervals(root, &fn_row.overlay)? {
         Some(intervals) => intervals,

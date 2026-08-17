@@ -328,6 +328,25 @@ sides. It compares every adopted row against the bytes it replaced, which is the
 one check that a merged tree has not silently broken an owner neither branch
 touched.
 
+### An owner containing a switch cannot currently be adopted
+
+A Thumb switch emits a jump table, and `metrics/gs1-en-executable.json`
+classifies that table as data. It therefore emits no interval for those bytes
+and leaves a hole inside the owner. `overlay adopt` requires the span to sit in
+audited executable intervals, so it refuses, naming the intervals it touched
+with a gap between them.
+
+Do not relax that check on its own. `full_c_progress` enforces the same rule for
+byte accounting, and the table's bytes are not in the audited denominator, so
+counting them in the numerator would overstate the share. The audit has to
+classify a jump table reached from inside a function as part of that function,
+and then both gates pass honestly.
+
+The scale, measured from the audit itself: 300 holes bounded by code on both
+sides, 21,256 bytes, across 46 of the 96 overlays.
+`semantic/resource_3c4_c_02000e20.c` is a worked example -- 168 bytes,
+`class=exact`, blocked only by this.
+
 ### 6. When an owner will not converge
 
 Move it to `semantic/`, take another owner. A main-image owner moves by putting
@@ -401,6 +420,15 @@ reload. The tell is small and easy to misread: the whole owner matches except
 one conditional branch whose target is a single instruction earlier than yours,
 because your branch was threaded past a load the compiler knew was redundant.
 Qualify the declaration, the pointer and any alias to it together.
+
+An overlay can hold more than one veneer to the same main-image routine, and
+then naming a callee by its main-image symbol is ambiguous. `resource_3c4`
+reaches one routine through `0x0200310c` from its `0x0200034c` owner and through
+`0x02003f32` from its `0x02000e20` owner; a source naming the main-image symbol
+resolves to the first and emits a `bl` to the wrong veneer. `overlay
+call-order-check` reports no mismatch, because the veneer it resolved does
+forward to that routine. Name the entry actually called, as the retained
+assembly does with `sub_<address>`.
 
 A candidate exactly four bytes short of its reference is usually missing one
 pool word. Either a constant is spelled as a literal where the reference links

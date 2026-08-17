@@ -98,6 +98,36 @@ fn classify_owner(
     Ok(candidate_show::render::residual_class(&left, &right))
 }
 
+/// `resource_3a9` + `0x0200007c` -> `resource_3a9_c_0200007c`, the spelling
+/// `semantic/unmatchable.json` records an owner under.
+fn owner_key(overlay: &str, address: &str) -> String {
+    let hex = address.trim_start_matches("0x");
+    format!("{overlay}_c_{hex:0>8}")
+}
+
+/// Owners withdrawn from routine work, from `semantic/unmatchable.json`.
+///
+/// A missing or unreadable register yields an empty set rather than an error:
+/// the ranker still measures correctly without it, and failing the whole run
+/// over an absent advisory file would be worse than ranking a withdrawn owner.
+fn unmatchable_owners(root: &Path) -> std::collections::BTreeSet<String> {
+    let mut out = std::collections::BTreeSet::new();
+    let Ok(text) = fs::read_to_string(root.join("semantic/unmatchable.json")) else {
+        return out;
+    };
+    let Ok(value) = parse_json(&text) else {
+        return out;
+    };
+    if let Some(entries) = value.get("unmatchable").and_then(Value::as_array) {
+        for entry in entries {
+            if let Some(owner) = entry.get("owner").and_then(Value::as_str) {
+                out.insert(owner.to_string());
+            }
+        }
+    }
+    out
+}
+
 /// `countDifferingHalfwords(actual, expected)`.
 pub fn count_differing_halfwords(actual: &[u8], expected: &[u8]) -> i64 {
     let mut differing = 0i64;
@@ -615,6 +645,23 @@ pub fn run(
         .into_iter()
         .filter(|row| !row.blocked)
         .collect();
+    // `semantic/unmatchable.json` exists to "keep a small number of owners out
+    // of the queue" -- its own words -- and this ranker was not reading it, so
+    // every registered owner kept coming back to the top of the list it is
+    // meant to be absent from. All four overlay entries were in the first
+    // twenty rows by cheapness, and their recorded reasons are exactly the
+    // findings a reader spends the session rediscovering: 3a9:007c and 3a9:00e4
+    // say stock gcc always canonicalises `cmp #9 / blt` to `cmp #8 / ble`, and
+    // 3b5:0170 says the ce pass makes its ternary branchless.
+    let withdrawn = unmatchable_owners(root);
+    let before = rows.len();
+    rows.retain(|row| !withdrawn.contains(&owner_key(&row.overlay, &row.address)));
+    let dropped = before - rows.len();
+    if dropped > 0 {
+        // Never silently: a queue that shrinks without saying so reads as
+        // coverage rather than as a withdrawal.
+        eprintln!("withdrawn={dropped} (semantic/unmatchable.json)");
+    }
     if let Some(overlay) = only_overlay {
         rows.retain(|row| row.overlay == overlay);
     }
@@ -762,6 +809,20 @@ mod tests {
             semantic_source: "semantic".to_string(),
             error: error.map(str::to_string),
         }
+    }
+
+    #[test]
+    fn owner_key_matches_the_spelling_the_register_uses() {
+        // `semantic/unmatchable.json` records `resource_3a9_c_0200007c`; the
+        // reading list carries the overlay and address apart. If these two
+        // spellings drift the filter silently stops matching and every
+        // withdrawn owner returns to the top of the queue, which is the bug
+        // this pair exists to catch.
+        assert_eq!(owner_key("resource_3a9", "0x0200007c"), "resource_3a9_c_0200007c");
+        assert_eq!(owner_key("resource_3a9", "0200007c"), "resource_3a9_c_0200007c");
+        assert_eq!(owner_key("resource_3b5", "0x02000170"), "resource_3b5_c_02000170");
+        // Short addresses pad, or `resource_370_c_2f8` would match nothing.
+        assert_eq!(owner_key("resource_370", "0x2f8"), "resource_370_c_000002f8");
     }
 
     #[test]

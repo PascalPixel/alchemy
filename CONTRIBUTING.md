@@ -936,16 +936,16 @@ executable runs), sorted largest to smallest. Broader multi-owner campaign cuts
 belong in [Status](#status); they may overlap and therefore are not used for
 byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,898
+- **Unfinished scopes:** 1,809
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 882,106 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 461,694 Exact C or audited permanent assembly bytes
+- **Target bytes:** 858,028 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 485,772 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
-This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,898-row index, including the smallest audited owners, is
+This table contains every scope of at least 1,000 bytes (191 rows). The complete
+1,809-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
@@ -1078,70 +1078,66 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 126 | 1,324 | 1,324 | `main:0x080bf678` |
 | 127 | 1,308 | 1,308 | `main:0x080aa768` |
 | 128 | 1,308 | 1,308 | `resource_39c:0x020028b0` |
-| 129 | 1,296 | 1,296 | `resource_371:0x020039fc` |
-| 130 | 1,280 | 1,280 | `resource_3b8:0x02000af8` |
-| 131 | 1,272 | 1,272 | `main:0x080b0aac` |
-| 132 | 1,264 | 1,264 | `main:0x08099da4` |
-| 133 | 1,264 | 1,264 | `resource_3ba:0x020021b8` |
-| 134 | 1,264 | 1,264 | `resource_3bb:0x02002450` |
-| 135 | 1,264 | 1,264 | `resource_3bc:0x02002ee8` |
-| 136 | 1,252 | 1,178 | `main:0x0800f2f8` |
-| 137 | 1,248 | 1,248 | `main:0x080d9ae8` |
-| 138 | 1,240 | 1,240 | `resource_3a4:0x02000ec0` |
-| 139 | 1,236 | 1,236 | `resource_3a4:0x02001838` |
-| 140 | 1,228 | 1,228 | `main:0x080b6f44` |
-| 141 | 1,226 | 1,226 | `main:0x080f4f04` |
-| 142 | 1,224 | 1,224 | `resource_374:0x02000bbc` |
-| 143 | 1,220 | 1,220 | `resource_37b:0x02000150` |
-| 144 | 1,220 | 1,220 | `resource_380:0x02000f8c` |
-| 145 | 1,210 | 1,210 | `resource_39c:0x02003d20` |
-| 146 | 1,204 | 1,204 | `main:0x080ce034` |
-| 147 | 1,192 | 1,192 | `main:0x080da6cc` |
-| 148 | 1,192 | 1,192 | `resource_37a:0x02002108` |
-| 149 | 1,174 | 1,174 | `resource_3bc:0x02000da4` |
-| 150 | 1,172 | 1,172 | `resource_377:0x02000578` |
-| 151 | 1,168 | 1,168 | `main:0x080a4924` |
-| 152 | 1,156 | 1,156 | `resource_372:0x020028a4` |
-| 153 | 1,156 | 1,156 | `resource_3b8:0x02000674` |
-| 154 | 1,152 | 1,152 | `main:0x080191cc` |
-| 155 | 1,152 | 1,152 | `main:0x0801d4cc` |
-| 156 | 1,152 | 1,152 | `main:0x080f26ec` |
-| 157 | 1,148 | 1,148 | `resource_371:0x02002cb4` |
-| 158 | 1,144 | 1,144 | `main:0x080f2028` |
-| 159 | 1,128 | 1,128 | `main:0x080d0000` |
-| 160 | 1,124 | 1,124 | `resource_3b1:0x020038ac` |
-| 161 | 1,120 | 1,120 | `resource_37a:0x02001ca8` |
-| 162 | 1,116 | 1,116 | `main:0x080c02a4` |
-| 163 | 1,116 | 1,116 | `resource_37b:0x0200105c` |
-| 164 | 1,116 | 1,116 | `resource_3b1:0x020057ec` |
-| 165 | 1,116 | 1,116 | `resource_3ba:0x02000db8` |
-| 166 | 1,108 | 1,108 | `resource_3a8:0x020032a4` |
-| 167 | 1,104 | 1,104 | `main:0x080beb08` |
-| 168 | 1,098 | 1,098 | `main:0x080fae58` |
-| 169 | 1,096 | 1,096 | `main:0x080d41a4` |
-| 170 | 1,076 | 1,076 | `main:0x080030f8` |
-| 171 | 1,074 | 1,074 | `main:0x080f4318` |
-| 172 | 1,066 | 1,066 | `main:0x080e5e28` |
-| 173 | 1,064 | 1,064 | `resource_377:0x02000a0c` |
-| 174 | 1,060 | 1,060 | `resource_3cb:0x020012e0` |
-| 175 | 1,056 | 1,056 | `main:0x080ae2f4` |
-| 176 | 1,056 | 1,056 | `resource_399:0x02000b70` |
-| 177 | 1,054 | 1,028 | `main:0x080d77b4` |
-| 178 | 1,052 | 978 | `main:0x0808bec0` |
-| 179 | 1,044 | 1,044 | `main:0x0808d9a4` |
-| 180 | 1,044 | 1,044 | `main:0x080bfba4` |
-| 181 | 1,044 | 1,044 | `main:0x080cb7f8` |
-| 182 | 1,040 | 1,040 | `main:0x080ceb54` |
-| 183 | 1,040 | 1,040 | `main:0x080e90a8` |
-| 184 | 1,036 | 1,036 | `resource_3c8:0x02003068` |
-| 185 | 1,032 | 1,032 | `resource_3b1:0x02001b34` |
-| 186 | 1,028 | 1,028 | `main:0x0801de5c` |
-| 187 | 1,024 | 1,024 | `resource_370:0x02000de4` |
-| 188 | 1,024 | 1,024 | `resource_3af:0x02000ca0` |
-| 189 | 1,024 | 1,024 | `resource_3b1:0x02005d10` |
-| 190 | 1,018 | 1,018 | `resource_3c5:0x020028a0` |
-| 191 | 1,012 | 1,012 | `main:0x080be378` |
-| 192 | 1,006 | 1,006 | `resource_394:0x020003f0` |
-| 193 | 1,006 | 1,006 | `resource_3bb:0x02000bd4` |
-| 194 | 1,000 | 1,000 | `resource_3a4:0x02003028` |
-| 195 | 1,000 | 1,000 | `resource_3bd:0x02003644` |
+| 129 | 1,272 | 1,272 | `main:0x080b0aac` |
+| 130 | 1,264 | 1,264 | `main:0x08099da4` |
+| 131 | 1,264 | 1,264 | `resource_3ba:0x020021b8` |
+| 132 | 1,264 | 1,264 | `resource_3bb:0x02002450` |
+| 133 | 1,264 | 1,264 | `resource_3bc:0x02002ee8` |
+| 134 | 1,252 | 1,178 | `main:0x0800f2f8` |
+| 135 | 1,248 | 1,248 | `main:0x080d9ae8` |
+| 136 | 1,240 | 1,240 | `resource_3a4:0x02000ec0` |
+| 137 | 1,236 | 1,236 | `resource_3a4:0x02001838` |
+| 138 | 1,228 | 1,228 | `main:0x080b6f44` |
+| 139 | 1,226 | 1,226 | `main:0x080f4f04` |
+| 140 | 1,224 | 1,224 | `resource_374:0x02000bbc` |
+| 141 | 1,220 | 1,220 | `resource_37b:0x02000150` |
+| 142 | 1,220 | 1,220 | `resource_380:0x02000f8c` |
+| 143 | 1,210 | 1,210 | `resource_39c:0x02003d20` |
+| 144 | 1,204 | 1,204 | `main:0x080ce034` |
+| 145 | 1,192 | 1,192 | `main:0x080da6cc` |
+| 146 | 1,192 | 1,192 | `resource_37a:0x02002108` |
+| 147 | 1,174 | 1,174 | `resource_3bc:0x02000da4` |
+| 148 | 1,172 | 1,172 | `resource_377:0x02000578` |
+| 149 | 1,168 | 1,168 | `main:0x080a4924` |
+| 150 | 1,156 | 1,156 | `resource_372:0x020028a4` |
+| 151 | 1,156 | 1,156 | `resource_3b8:0x02000674` |
+| 152 | 1,152 | 1,152 | `main:0x080191cc` |
+| 153 | 1,152 | 1,152 | `main:0x0801d4cc` |
+| 154 | 1,152 | 1,152 | `main:0x080f26ec` |
+| 155 | 1,148 | 1,148 | `resource_371:0x02002cb4` |
+| 156 | 1,144 | 1,144 | `main:0x080f2028` |
+| 157 | 1,128 | 1,128 | `main:0x080d0000` |
+| 158 | 1,124 | 1,124 | `resource_3b1:0x020038ac` |
+| 159 | 1,120 | 1,120 | `resource_37a:0x02001ca8` |
+| 160 | 1,116 | 1,116 | `main:0x080c02a4` |
+| 161 | 1,116 | 1,116 | `resource_37b:0x0200105c` |
+| 162 | 1,116 | 1,116 | `resource_3b1:0x020057ec` |
+| 163 | 1,116 | 1,116 | `resource_3ba:0x02000db8` |
+| 164 | 1,108 | 1,108 | `resource_3a8:0x020032a4` |
+| 165 | 1,104 | 1,104 | `main:0x080beb08` |
+| 166 | 1,098 | 1,098 | `main:0x080fae58` |
+| 167 | 1,096 | 1,096 | `main:0x080d41a4` |
+| 168 | 1,076 | 1,076 | `main:0x080030f8` |
+| 169 | 1,074 | 1,074 | `main:0x080f4318` |
+| 170 | 1,066 | 1,066 | `main:0x080e5e28` |
+| 171 | 1,064 | 1,064 | `resource_377:0x02000a0c` |
+| 172 | 1,060 | 1,060 | `resource_3cb:0x020012e0` |
+| 173 | 1,056 | 1,056 | `main:0x080ae2f4` |
+| 174 | 1,056 | 1,056 | `resource_399:0x02000b70` |
+| 175 | 1,054 | 1,028 | `main:0x080d77b4` |
+| 176 | 1,052 | 978 | `main:0x0808bec0` |
+| 177 | 1,044 | 1,044 | `main:0x0808d9a4` |
+| 178 | 1,044 | 1,044 | `main:0x080bfba4` |
+| 179 | 1,044 | 1,044 | `main:0x080cb7f8` |
+| 180 | 1,040 | 1,040 | `main:0x080ceb54` |
+| 181 | 1,040 | 1,040 | `main:0x080e90a8` |
+| 182 | 1,032 | 1,032 | `resource_3b1:0x02001b34` |
+| 183 | 1,028 | 1,028 | `main:0x0801de5c` |
+| 184 | 1,024 | 1,024 | `resource_370:0x02000de4` |
+| 185 | 1,024 | 1,024 | `resource_3af:0x02000ca0` |
+| 186 | 1,024 | 1,024 | `resource_3b1:0x02005d10` |
+| 187 | 1,018 | 1,018 | `resource_3c5:0x020028a0` |
+| 188 | 1,012 | 1,012 | `main:0x080be378` |
+| 189 | 1,006 | 1,006 | `resource_394:0x020003f0` |
+| 190 | 1,006 | 1,006 | `resource_3bb:0x02000bd4` |
+| 191 | 1,000 | 1,000 | `resource_3a4:0x02003028` |

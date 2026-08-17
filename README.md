@@ -23,7 +23,7 @@ is distributed by this repository. *Golden Sun* and its original material are
 copyright Nintendo and Camelot Software Planning. Alchemy is not affiliated
 with or endorsed by either company.
 
-## DONE: Currently 26%
+## DONE: Currently 35%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus code that is permanently assembly. Semantic C is tracked separately as
@@ -63,7 +63,7 @@ separate footer item.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=c298eedc)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=d7478fa4)
 
 ### Code overlays
 

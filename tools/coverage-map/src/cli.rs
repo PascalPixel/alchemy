@@ -208,7 +208,11 @@ pub fn summarize(document: &Value) -> Result<String, String> {
     let exact = field(document, &["categories", "exact_c", "bytes"]);
     let semantic = field(document, &["categories", "semantic_c", "bytes"]);
     let executable = field(document, &["executable_bytes"]);
-    let combined = exact + semantic;
+    // The bytes that CAN be C: everything executable that is not permanently
+    // assembly. It was `exact + semantic`, which described the C anyone had
+    // written rather than the C that remains to be written, and which collapses
+    // to `exact` -- and reads 100% -- the moment there is no semantic tier.
+    let combined = executable - field(document, &["categories", "retained_asm", "bytes"]);
     Ok([
         format!(
             "target={}",

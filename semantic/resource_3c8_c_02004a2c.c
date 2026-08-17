@@ -66,6 +66,7 @@ struct Object_02004a2c {
 /* Used for their return values. */
 struct Object_02004a2c *Func_020098e6();
 struct Object_02004a2c *Func_020098ee();
+extern u8 Value_00000003;
 void Func_020098dc();
 void Func_020099de();
 void Func_02009852();
@@ -131,7 +132,7 @@ void Func_02004a2c(void)
     Func_02009a8a(204);
     Func_02009920(30);
 
-    objectA->mode55 = 3;
+    objectA->mode55 = ((s32) &Value_00000003);
 
     Func_0200992c(24);
     Func_02009a1c(0, 0x101);

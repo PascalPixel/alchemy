@@ -32,7 +32,7 @@
  *   0x200474c -> veneer -> Func_08009158(occupant)          unestablished, same call as resource_3bc_c_020022f4.c / 02003b80.c
  *
  * Data_0200cfc0 (this overlay's direction table, indexed by the subject's
- * facing nibble at +6) is this overlay's counterpart to resource_3bb's
+ * facing nibble at +((s32) &Value_00000006)) is this overlay's counterpart to resource_3bb's
  * Data_0200c3d4 -- same packed-step shape (high half added to x, low half
  * shifted up 16 and added to z).
  */
@@ -43,6 +43,7 @@ extern s32 Data_0200cfc0[];    /* direction table, indexed by facing nibble */
 u8 *Func_0808a080();           /* scene-record accessor, established */
 u8 *Func_020045e0();           /* in-overlay probe lookup, sibling item-28 owner */
 s32 Func_080091d8();           /* established, legality check */
+extern u8 Value_00000006;
 void Func_08009080();          /* established (record, mode) */
 void Func_080000c0();          /* established, advance the task scheduler */
 void Func_08009150();          /* established (record, x, y, z) */
@@ -60,7 +61,7 @@ void Func_02004628(void)
 
     s32 permuted_12;
     s32 permuted_21;
-    facing = *(unsigned short *)(subject + 6) >> 12;
+    facing = *(unsigned short *)(subject + ((s32) &Value_00000006)) >> 12;
     subject = Func_0808a080(*(s32 *)((u8 *)Data_02000240 + 500));
 
     step = Data_0200cfc0[facing];

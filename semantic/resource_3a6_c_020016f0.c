@@ -7,14 +7,14 @@
  * here and no bl inside the image reaches it.
  *
  * Body: write 516 to the workspace's +448 s32, then read the scene id
- * s16 at 0x02000240+448.  For scene 93 only, OVERWRITE that same +448
+ * s16 at 0x02000240+448.  For scene ((s32) &Value_0000005d) only, OVERWRITE that same +448
  * cell with 256, refresh through Func_080000c0(1), put records 11 and
  * 12 into mode 3 and raise flag 0x12f.  Either way, finish by running
  * Func_02001984 and returning 0.
  *
  * The double write to workspace +448 is the notable detail and is
  * transcribed as compiled: 516 is stored unconditionally and 256
- * replaces it inside the scene-93 arm, so the first value is only
+ * replaces it inside the scene-((s32) &Value_0000005d) arm, so the first value is only
  * observable to something that runs between them -- nothing here
  * does. The first write is therefore kept.
  *
@@ -37,13 +37,14 @@ extern u8 *Data_03001ebc;
 extern void Func_02001984(void);
 
 extern void Func_080000c0(s32 arg0);
-extern void Func_080770d0(s32 flagId);
-extern s32 Func_0808a1e0(s32 id, s32 mode);
+void Func_080770d0(s32 flagId);
+void Func_0808a1e0(s32 id, s32 mode);
 
+extern u8 Value_0000005d;
 s32 Func_020016f0(void)
 {
     *(s32 *)(Data_03001ebc + 448) = 516;
-    if (Data_02000240[224] == 93) {
+    if (Data_02000240[224] == ((s32) &Value_0000005d)) {
         *(s32 *)(Data_03001ebc + 448) = 256;
         Func_080000c0(1);
         Func_0808a1e0(11, 3);

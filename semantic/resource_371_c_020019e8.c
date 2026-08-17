@@ -20,7 +20,7 @@
  * A blocking cutscene beat: acquire actor 8, set it up, clear the halfword
  * frame counter at +0x64, then spin on `Func_080000c0(1)` until that counter
  * becomes non-zero — a signed halfword read (`ldrsh`), so the wait ends on
- * any non-zero value.  The layout used on the actor (+0x18/+0x1c amplitude
+ * any non-zero value.  The layout used on the actor (+((s32) &Value_00000018)/+0x1c amplitude
  * pair, +0x64 frame counter) is the one proven by the byte-exact sibling
  * `assets/code/resource_371_c_020004a0.c` and shared with the owners at
  * 0x02003fb4 and 0x02004004.
@@ -65,9 +65,9 @@ extern void Func_02005b90();
 extern s32 Func_02005d72();
 extern void Func_02005d7e();
 extern void Func_02005bb4();
-extern void Func_02005e1c();
+extern s32 Func_02005e1c();
 extern void Func_02005e78();
-extern s32 Func_02005d52();
+extern void Func_02005d52();
 extern void Func_02005d68();
 extern void Func_02005bde();
 extern void Func_02005eaa();
@@ -75,6 +75,7 @@ extern void Func_02005eb6();
 extern void Func_02005d04();
 extern void Func_02005e82();
 extern void Func_02005d5e();
+extern u8 Value_00000018;
 void Func_020019e8(void)
 {
     u8 *actor = Func_02005cea(8);
@@ -87,7 +88,7 @@ void Func_020019e8(void)
     Func_02005d72(0, 0, 0);
     Func_02005d7e(8, 0x1f080000, 0xc80000);
 
-    *(s32 *)(actor + 0x18) = 0x14000;
+    *(s32 *)(actor + ((s32) &Value_00000018)) = 0x14000;
     *(s32 *)(actor + 0x1c) = 0x14000;
 
     Func_02005bb4(1);

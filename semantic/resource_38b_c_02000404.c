@@ -32,7 +32,7 @@
  * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --.
  *
  * REGISTER NOTE.  r5 holds the slot-11 record only up to 0x02000474, where
- * `movs r5, #128 / lsls r5, #9` reuses it as the constant 0x10000.  The
+ * `movs r5, #((s32) &Value_00000080) / lsls r5, #9` reuses it as the constant 0x10000.  The
  * record's +0x55 store at 0x02000468 uses an address computed at 0x02000460,
  * before the clobber, so nothing is lost.  Track r5 per use, not as one
  * variable.
@@ -45,20 +45,20 @@ extern void Func_020014da_b();
 extern void Func_02001582();
 extern void Func_02001552();
 extern void Func_020014e8();
-extern void Func_0200151a();
+extern s32 Func_0200151a();
 extern void Func_02001524();
 extern u8 *Func_02001522();
 extern void Func_020015da();
-extern void Func_02001584();
-extern void Func_02001568();
+extern s32 Func_02001584();
+extern s32 Func_02001568();
 extern void Func_0200157c();
 extern void Func_0200154a();
-extern void Func_0200160e();
+extern s32 Func_0200160e();
 extern void Func_020015b6();
-extern void Func_02001598();
+extern s32 Func_02001598();
 extern void Func_020015ac();
 extern void Func_0200157a();
-extern void Func_0200163e();
+extern s32 Func_0200163e();
 extern void Func_020015e6();
 extern void Func_020015c8();
 extern u8 *Func_020015c0();
@@ -87,6 +87,7 @@ extern void Func_02001612();
 
                             
 
+extern u8 Value_00000080;
 void Func_02000404(void)
 {
     u8 *player;
@@ -124,7 +125,7 @@ void Func_02000404(void)
     *(s32 *)(player + 24) = (s32)0xffff0000;
     *(s32 *)(player + 24) = 0x10000;
     Func_02001568(11, 111, 196);
-    Func_0200157c(0, 128, 185);
+    Func_0200157c(0, ((s32) &Value_00000080), 185);
 
     /* Beat 2. */
     Func_0200154a(20);
@@ -149,7 +150,7 @@ void Func_02000404(void)
 
     Func_020015dc(0, 0x9999, 0x4ccc);
     Func_020015f6(0, 166, 185);
-    /* 128 << 8 = 0x8000. */
+    /* ((s32) &Value_00000080) << 8 = 0x8000. */
     Func_0200166a(0, 0x8000, 20);
     Func_0200167a(11, 2);
     Func_020016ca(0, 11);

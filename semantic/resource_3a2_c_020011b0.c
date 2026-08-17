@@ -109,6 +109,7 @@ extern s16 Data_02000240[];
 extern u8 *Data_03001ebc;
 extern u8 Data_02009730[];
 
+extern u8 Value_00000080;
 void Func_020027d0();
 s32 Func_02002730();
 s32 Func_02002738();
@@ -195,7 +196,7 @@ s32 Func_020011b0(void)
         Func_02001a70();
 
         if (Func_020026d6(0x8b2)) {
-            Func_02002768(13, 136 << 16, 128 << 17);
+            Func_02002768(13, 136 << 16, ((s32) &Value_00000080) << 17);
             Func_020027ca(13, 0, 0);
         }
 

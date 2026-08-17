@@ -11,6 +11,7 @@ extern void Func_080000d0(u8 *, s32);
 extern void Func_080770d0(s32);
 
 /* Complete 340-byte conditional collision-map and actor-19 setup owner. */
+extern u8 Value_0000002e;
 void Func_0200049c(void)
 {
     u8 *leader = Func_0808a080(0);
@@ -31,7 +32,7 @@ void Func_0200049c(void)
         Func_080091c0(28, 31, 1, 1, 7, 16);
     }
 
-    Func_080091b8(47, 4, 1, 1, 46, 4);
+    Func_080091b8(47, 4, 1, 1, ((s32) &Value_0000002e), 4);
     Func_080091c0(34, 37, 3, 3, 13, 3);
     Func_0808a0f0(8, 0x00e80000, 0x00480000);
     *(s32 *)(Func_0808a080(8) + 12) = 0;
@@ -39,7 +40,7 @@ void Func_0200049c(void)
     if (Func_080770c0(0x202) != 0) {
         Func_080091b8(41, 49, 3, 4, 1, 14);
         Func_080091b8(44, 49, 3, 4, 33, 14);
-        Func_080091b8(47, 49, 3, 4, 1, 46);
+        Func_080091b8(47, 49, 3, 4, 1, ((s32) &Value_0000002e));
     } else {
         u8 *actor;
         Func_0808a0f0(19, 0x00380000, 0x010c0000);

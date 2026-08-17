@@ -18,6 +18,7 @@ extern u8 Func_080770c0(s32 flag);
 extern struct ActorRecord_02001300 *Func_0808a080(s32 actor);
 extern void Func_0808a0c8(s32 actor, s32 x, s32 z);
 
+extern u8 Value_00000008;
 void Func_02001300(void)
 {
     u8 *state = *(u8 **)0x03001ebc;
@@ -27,15 +28,15 @@ void Func_02001300(void)
 
     if (Func_080770c0(0x302) == 0)
         return;
-    if (*(const s16 *)(Data_02000240 + 0x24a) == 8)
+    if (*(const s16 *)(Data_02000240 + 0x24a) == ((s32) &Value_00000008))
         return;
 
     index = *(s16 *)(state + 0x16c) - 45;
-    actor8 = Func_0808a080(8);
+    actor8 = Func_0808a080(((s32) &Value_00000008));
     actor0 = Func_0808a080(0);
     actor8->field30 = actor0->field30;
-    actor8 = Func_0808a080(8);
+    actor8 = Func_0808a080(((s32) &Value_00000008));
     actor0 = Func_0808a080(0);
     actor8->field34 = actor0->field34;
-    Func_0808a0c8(8, Data_02001f00[index][0], Data_02001f00[index][1]);
+    Func_0808a0c8(((s32) &Value_00000008), Data_02001f00[index][0], Data_02001f00[index][1]);
 }

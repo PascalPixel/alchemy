@@ -22,6 +22,7 @@
 
 s32 Func_02001df0();
 s32 Func_02001dfc();
+extern u8 Value_000000b6;
 void Func_02001e26();
 void Func_02001f3a();
 void Func_02001f50();
@@ -76,7 +77,7 @@ void Func_02000258(void)
     Func_02001e26();
     Func_02001f3a();
 
-    Func_02001f50(182);
+    Func_02001f50(((s32) &Value_000000b6));
     Func_02001df2(0, 70, 30, 42, 1, 1);
     Func_02001dde();
     Func_02001e44(40);

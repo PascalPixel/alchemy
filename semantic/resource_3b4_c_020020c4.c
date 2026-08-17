@@ -8,6 +8,7 @@ extern void Func_08000150(s32 group);
 extern void Func_08009060(s32 handle);
 
 /* Clear and republish one active actor's presentation resource. */
+extern u8 Value_00000080;
 void Func_020020c4(s32 actorId, s32 selector)
 {
     u8 *actor = Func_0808a080(actorId);
@@ -23,7 +24,7 @@ void Func_020020c4(s32 actorId, s32 selector)
         dma3[1] = (u32)buffer;
         dma3[2] = 0x85000020;
         Func_08015250(selector);
-        tile = Func_080001c8(owner[28], 128, buffer);
+        tile = Func_080001c8(owner[28], ((s32) &Value_00000080), buffer);
         Func_08000150(17);
         actor[92] = 1;
         Func_08009060(*(s32 *)(owner + 40));

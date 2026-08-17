@@ -53,7 +53,7 @@
  * stored to itself, and its low halfword 0x0208 has bit 0 clear, which is all
  * IME reads.  So each block is one critical-section enqueue of a deferred
  * {value, register, 0x20000} write onto a 32-slot, 12-byte-per-slot queue.  The
- * four unrolled ones set DISPCNT = 0x1540, BLDCNT = 0x2fce, BLDY = 16 and
+ * four unrolled ones set DISPCNT = ((s32) &Value_00001540), BLDCNT = 0x2fce, BLDY = 16 and
  * BLDALPHA = 0x1010; the loop then walks BLDY from 16 down to 0, one step per
  * `Func_080000c0(3)`, which is the fade-in.
  *
@@ -71,6 +71,7 @@
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */
+extern u8 Value_00001540;
 void Func_02000740(void);
 void Func_0200089a();
 void Func_020004be();
@@ -147,7 +148,7 @@ void Func_020002e8(void)
     queue = Data_02002090;
     interruptMaster = (volatile u16 *)0x04000208;
 
-    Queue_020002e8(queue, interruptMaster, 0x1540, 0x04000000); /* DISPCNT  */
+    Queue_020002e8(queue, interruptMaster, ((s32) &Value_00001540), 0x04000000); /* DISPCNT  */
     Queue_020002e8(queue, interruptMaster, 0x2fce, 0x04000050); /* BLDCNT   */
     Queue_020002e8(queue, interruptMaster, 0x0010, 0x04000054); /* BLDY     */
     Queue_020002e8(queue, interruptMaster, 0x1010, 0x04000052); /* BLDALPHA */

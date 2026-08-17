@@ -4,12 +4,13 @@ extern void Func_0808a0c8(s32,s32,s32); extern void Func_0808a0e8(s32); extern v
 extern void Func_0808a100(s32,s32); extern void Func_0808a1b8(s32,s32,s32); extern void Func_0808a170(s32);
 extern void Func_0808a180(s32,s32); extern void Func_080770c8(s32); extern void Func_080091c0(s32,s32,s32,s32,s32,s32);
 extern void Func_0808a020(void);
+extern u8 Value_00000002;
 void Func_02000eb0(void)
 {
     if (*(s16 *)(0x02000240 + 588) != 0)
         return;
     Func_0808a018();
-    Func_0808a1e8(8, 0x100, 2);
+    Func_0808a1e8(8, 0x100, ((s32) &Value_00000002));
     Func_0808a1e8(9, 0x100, 15);
     Func_0808a010(30);
     Func_0808a0c8(8, 152, 168);

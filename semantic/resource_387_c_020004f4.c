@@ -6,7 +6,7 @@
  * (bun tools/overlay-driver resource_387), so the loader enters
  * here and no bl inside the image reaches it.
  *
- * Unconditional head: raise flag 324, hold ten ticks, Func_0808a5e0(170),
+ * Unconditional head: raise flag 324, hold ten ticks, Func_0808a5e0(((s32) &Value_000000aa)),
  * put record 11 in mode 2 and SET its +35 byte to 2 outright, then OR
  * bit 4 into record 8's +89 and bit 3 into record 15's +89.  Note the
  * +35 write here is a plain store, where the later blocks OR into the
@@ -55,11 +55,12 @@ extern void Func_0808a0f0(s32 id, s32 x, s32 y);
 extern void Func_0808a100(s32 id, s32 arg1);
 extern void Func_0808a5e0(s32 arg0);
 
+extern u8 Value_000000aa;
 s32 Func_020004f4(void)
 {
     Func_080770c8(324);
     Func_0808a010(10);
-    Func_0808a5e0(170);
+    Func_0808a5e0(((s32) &Value_000000aa));
     Func_0808a100(11, 2);
     Func_0808a080(11)[35] = 2;
     Func_0808a080(8)[89] |= 16;

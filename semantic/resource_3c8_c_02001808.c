@@ -17,7 +17,7 @@
  * order fixed by the byte-exact sibling 0x020010cc.
  *
  * Constants are materialised as `movs #imm ; lsls #shift`: 128<<7 = 0x4000,
- * 192<<10 = 0x30000, 192<<9 = 0x18000, 138<<2 = 552, 129<<1 = 258,
+ * 192<<10 = 0x30000, 192<<9 = 0x18000, 138<<2 = ((s32) &Value_00000228), 129<<1 = 258,
  * 192<<8 = 0xc000, 144<<15 = 0x480000.  0x9999 is pooled.
  *
  * Field offsets: 0x08 and 0x10 are the 16.16 x/z pair of the byte-exact
@@ -60,6 +60,7 @@ struct Object_02001808 {
 struct Object_02001808 *Func_020066bc();
 struct Object_02001808 *Func_020066da();
 s32 Func_02000058();
+extern u8 Value_00000228;
 void Func_0200094c();
 
 void Func_020066aa();
@@ -98,7 +99,7 @@ void Func_02001808(void)
     object->unk6 = 0x4000;
     Func_020066fc(0, 0x00030000, 0x00018000);
     /* +0x0a is the integer part of the 16.16 x above. */
-    Func_0200672a(0, *(s16 *)((u8 *)object + 10), 552);
+    Func_0200672a(0, *(s16 *)((u8 *)object + 10), ((s32) &Value_00000228));
     Func_020066e8(10);
     Func_02006760(0, 22);
     Func_020066f6(30);

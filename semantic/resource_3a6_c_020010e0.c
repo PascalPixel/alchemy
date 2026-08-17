@@ -2,6 +2,7 @@
 
 u8 *Func_0808a080();
 s32 Func_080091d8();
+extern u8 Value_00000055;
 void Func_080000c0();
 void Func_08009080();
 s32 Func_080091e0();
@@ -19,7 +20,7 @@ s32 Func_020010e0(void)
 {
     s32 position[3];
     u8 *record = Func_0808a080(0);
-    u8 saved_flags = record[0x55];
+    u8 saved_flags = record[((s32) &Value_00000055)];
 
     position[1] = *(s32 *)(record + 12);
     position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x00080000;
@@ -29,7 +30,7 @@ s32 Func_020010e0(void)
         return 0;
 
     Func_0808a018();
-    record[0x55] &= 0x7e;
+    record[((s32) &Value_00000055)] &= 0x7e;
     Func_08009080(record, 6);
     Func_080000c0(6);
     Func_080f9010(152);
@@ -43,6 +44,6 @@ s32 Func_020010e0(void)
     Func_08009080(record, 6);
     Func_080091e0(record, 1);
     Func_0808a020();
-    record[0x55] = saved_flags;
+    record[((s32) &Value_00000055)] = saved_flags;
     return 1;
 }

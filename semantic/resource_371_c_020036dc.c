@@ -53,6 +53,7 @@ extern void Func_080770c8(s32 flag);
 extern void Func_080770e8(s32 state, s32 value);
 extern void Func_0808a020(void);
 
+extern u8 Value_00000002;
 void Func_020036dc(s32 reference_actor)
 {
     struct Actor_020036dc *actor;
@@ -84,7 +85,7 @@ void Func_020036dc(s32 reference_actor)
     actor->motion_state = 0;
     actor->variant = 4;
     Func_0808a0e8(selected_actor);
-    Data_02000240.scene_mode = 2;
+    Data_02000240.scene_mode = ((s32) &Value_00000002);
     Func_080770c8(0x2f0);
     Func_080770e8(0x2f8, 180);
     Func_0808a020();

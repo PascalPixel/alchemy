@@ -507,3 +507,38 @@ fn a_permanence_claim_is_read_back_off_the_assembly() {
     );
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn a_thumb_multiple_transfer_claim_is_read_back_off_the_assembly() {
+    let dir = std::env::temp_dir().join(format!("alchemy-stm-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let honest = dir.join("honest.s");
+    std::fs::write(&honest, "Func_x:\n\tstmia\tr3!, {r0, r1}\n\tbx\tlr\n").unwrap();
+    let liar = dir.join("liar.s");
+    std::fs::write(&liar, "Func_x:\n\tstr\tr0, [r3, #0]\n\tbx\tlr\n").unwrap();
+
+    let run = |source: &std::path::Path| {
+        let mut input = base_input();
+        input.paths = Some(InputPaths {
+            inventory: String::new(),
+            semantic: String::new(),
+            asm_manifest: String::new(),
+            claimed_manifest: String::new(),
+        });
+        input.asm = vec![
+            asm_region(ROM_BASE + 8, ROM_BASE + 16, "semantic", "semantic_c"),
+            AsmRegion {
+                span: s(ROM_BASE + 16, ROM_BASE + 32),
+                source: source.to_string_lossy().to_string(),
+                kind: "thumb_multiple_transfer_module".into(),
+                retention: "keep_structured_asm".into(),
+                confidence: "proven".into(),
+                evidence: "reference_uses_thumb_multiple_transfer".into(),
+            },
+        ];
+        audit_core_retained(&input).unwrap().failures
+    };
+    assert!(!run(&honest).iter().any(|f| f.contains("does not show it")));
+    assert!(run(&liar).iter().any(|f| f.contains("reference_uses_thumb_multiple_transfer")));
+    let _ = std::fs::remove_dir_all(&dir);
+}

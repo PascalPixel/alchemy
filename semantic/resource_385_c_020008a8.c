@@ -3,7 +3,7 @@
 /*
  * Complete actor-16 first-time/repeat interaction owner.  The first visit
  * stages actor 16, advances the shared branch counter when the interaction
- * reports success, and records flag 0x308.  Later visits use a short dialogue
+ * reports success, and records flag ((s32) &Value_00000308).  Later visits use a short dialogue
  * wrapper while temporarily accepting input for the actor.
  */
 struct Actor_020008a8 {
@@ -20,12 +20,12 @@ extern struct SceneWork_020008a8 *Data_03001ebc;
 extern s32 Func_080770c0(s32 flag);
 extern void Func_0808a018(void);
 extern struct Actor_020008a8 *Func_0808a080(s32 actor);
-extern void Func_0808a100(s32 actor, s32 mode);
+extern s32 Func_0808a100(s32 actor, s32 mode);
 extern void Func_0808a138(s32 actor, s32 mode);
 extern void Func_0808a010(s32 frames);
 extern void Func_0808a170(s32 dialogue);
 extern s32 Func_0808a150(s32 actor, s32 mode, s32 value);
-extern void Func_0808a178(s32 actor, s32 mode);
+extern s32 Func_0808a178(s32 actor, s32 mode);
 extern s32 Func_0808a070(s32 actor, s32 mode);
 extern void Func_0808a180(s32 actor, s32 mode);
 extern void Func_0808a098(s32 actor, s32 behavior);
@@ -33,11 +33,12 @@ extern void Func_0808a020(void);
 extern void Func_080770c8(s32 flag);
 extern void Func_020004b4(s32 actor);
 
+extern u8 Value_00000308;
 void Func_020008a8(void)
 {
     struct Actor_020008a8 *actor;
 
-    if (Func_080770c0(0x308) == 0) {
+    if (Func_080770c0(((s32) &Value_00000308)) == 0) {
         Func_0808a018();
         actor = Func_0808a080(16);
         actor->accepted = 1;
@@ -54,7 +55,7 @@ void Func_020008a8(void)
         Func_0808a080(16)->accepted = 0;
         Func_0808a098(16, 2);
         Func_0808a020();
-        Func_080770c8(0x308);
+        Func_080770c8(((s32) &Value_00000308));
     } else {
         Func_0808a170(0x1cc2);
         actor = Func_0808a080(16);

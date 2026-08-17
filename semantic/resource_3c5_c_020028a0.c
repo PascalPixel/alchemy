@@ -80,6 +80,7 @@ extern u8 *Data_03001ebc;       /* workspace pointer variable */
 
 /* Old-style declarations are mandatory in overlay sources: one import name can
  * be reached with different argument counts at different sites. */
+extern u8 Value_00000011;
 void Func_0200562c();
 u8 *Func_02005730();
 void Func_020057e8();
@@ -201,7 +202,7 @@ s32 Func_020028a0(void)
         Func_020057f0(9, 6);
 
         if (Data_02000240[225] == 5 && Func_02005754(265) == 0) {
-            Func_020057d6(9, 0x01380000, 0x01480000);   /* 156 << 17, 164 << 17 */
+            Func_020057d6(9, 0x01380000, 0x01480000);   /* 156 << ((s32) &Value_00000011), 164 << ((s32) &Value_00000011) */
         }
 
         Func_02005172();
@@ -320,7 +321,7 @@ place:
 
 special_cases:
         if (index == 4) {
-            Func_020034fe(0x01b80000, 0, 0x01220000, 223);  /* 220<<17, 145<<17 */
+            Func_020034fe(0x01b80000, 0, 0x01220000, 223);  /* 220<<((s32) &Value_00000011), 145<<((s32) &Value_00000011) */
             stack5 = 27;
             stack6 = 13;
             Func_020058f6(22, 13, 1, 1, stack5, stack6);
@@ -328,7 +329,7 @@ special_cases:
             return 0;
         }
         if (index == 6) {
-            Func_0200352a(0x01c00000, 0, 0x01220000, 223);  /* 224<<17, 145<<17 */
+            Func_0200352a(0x01c00000, 0, 0x01220000, 223);  /* 224<<((s32) &Value_00000011), 145<<((s32) &Value_00000011) */
             stack5 = 28;
             stack6 = 10;
             Func_02005922(22, 12, 1, 1, stack5, stack6);
@@ -340,7 +341,7 @@ special_cases:
             stack5 = 14;
             stack6 = 33;
             Func_0200594c(22, 12, 1, 1, stack5, stack6);
-            Func_02003a26(17);
+            Func_02003a26(((s32) &Value_00000011));
             return 0;
         }
         /* Indices 2, 3 and 5 jump straight to the gate at 0x02002d24. */
@@ -369,10 +370,10 @@ special_cases:
 
     if (Func_02005a04(2440) == 0) {
         Func_02005a82(10, 0xffc00000, 0xffc00000);
-        Func_02005a90(11, 0x01180000, 0x01280000);  /* 140<<17, 148<<17 */
-        Func_02005a9e(12, 0x01380000, 0x00f80000);  /* 156<<17, 248<<16 */
+        Func_02005a90(11, 0x01180000, 0x01280000);  /* 140<<((s32) &Value_00000011), 148<<((s32) &Value_00000011) */
+        Func_02005a9e(12, 0x01380000, 0x00f80000);  /* 156<<((s32) &Value_00000011), 248<<16 */
         Func_02005aac(13, 0x01280000, 0x00f80000);
-        Func_02005aba(14, 0x01400000, 0x01280000);  /* 160<<17, 148<<17 */
+        Func_02005aba(14, 0x01400000, 0x01280000);  /* 160<<((s32) &Value_00000011), 148<<((s32) &Value_00000011) */
         Func_02005b2c(11, 0, 0);
         Func_02005b38(12, 0xc000, 0);               /* 192 << 8 */
         Func_02005b44(13, 0xc000, 0);
@@ -389,11 +390,11 @@ special_cases:
     }
 
     if (Func_02005ae0(2437) != 0) {
-        Func_02005b62(8, 0x01180000, 0x00f00000);   /* 140<<17, 240<<16 */
-        Func_02005b70(9, 0x01480000, 0x00f00000);   /* 164<<17 */
+        Func_02005b62(8, 0x01180000, 0x00f00000);   /* 140<<((s32) &Value_00000011), 240<<16 */
+        Func_02005b70(9, 0x01480000, 0x00f00000);   /* 164<<((s32) &Value_00000011) */
         Func_02005be4(8, 0x8000, 0);
         Func_02005bee(9, 0, 0);
-        stack5 = 17;
+        stack5 = ((s32) &Value_00000011);
         stack6 = 14;
         Func_02005aea(81, 14, 4, 1, stack5, stack6);
     }

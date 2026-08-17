@@ -33,13 +33,14 @@
 s32 Func_02001394();
                      /* pseudorandom draw */
 
+extern u8 Value_00000064;
 void Func_0200036c(void)
 {
     const s32 *source = (const s32 *)0x03001ad4;
     u16 scanline = *(u16 *)0x04000006;
 
     if (scanline == 0xe3 || scanline <= 0x34) {
-        if ((u32)(Func_02001394() * 100) >> 16 < *(u32 *)0x0200a0dc) {
+        if ((u32)(Func_02001394() * ((s32) &Value_00000064)) >> 16 < *(u32 *)0x0200a0dc) {
             source = (const s32 *)0x0200a0d0;
         }
     }

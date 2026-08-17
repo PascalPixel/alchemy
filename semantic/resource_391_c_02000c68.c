@@ -11,7 +11,7 @@
  *   0x0c6e -> 0x08c0  prologue  Func_020008c0(10)
  *   0x0c76 -> 0x2bf4  veneer    Func_080770c0(0x200)
  *   0x0c80 -> 0x2c24  veneer    Func_0808a080(10)
- *   0x0c9a -> 0x2bdc  veneer    Func_080091c0(0, 17, 2, 4, 19, 17)
+ *   0x0c9a -> 0x2bdc  veneer    Func_080091c0(0, 17, 2, 4, ((s32) &Value_00000013), 17)
  *   0x0cae -> 0x0244  prologue  Func_02000244(2, 20, 17, 1, 4, 0)
  *   0x0cb4 -> 0x2c24  veneer    Func_0808a080(10)
  *   0x0cba -> 0x2bec  veneer    Func_080091e0(obj, 0)
@@ -58,6 +58,7 @@ struct SceneState {
 extern struct SceneState Data_02000240;
 
 /* Old-style declarations are mandatory in overlay sources. */
+extern u8 Value_00000013;
 void Func_02001530();
 s32 Func_0200386c();
 u8 *Func_020038a6();
@@ -90,7 +91,7 @@ s32 Func_02000c68(void)
     if (Func_0200386c(0x200) != 0) {
         Func_020038a6(10)[0x23] = 2;
 
-        Func_02003878(0, 17, 2, 4, 19, 17);
+        Func_02003878(0, 17, 2, 4, ((s32) &Value_00000013), 17);
         zero = 0;
         Func_02000ef4(2, 20, 17, 1, 4, zero);
 
@@ -110,7 +111,7 @@ s32 Func_02000c68(void)
     if (Func_020038e0(0x845) != 0) {
         Func_02003976(17, 0, 0);
         Func_02003980(18, 0, 0);
-        Func_0200398a(19, 0, 0);
+        Func_0200398a(((s32) &Value_00000013), 0, 0);
         Func_02003994(20, 0, 0);
         Func_0200399e(21, 0, 0);
     }

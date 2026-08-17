@@ -6,6 +6,7 @@ extern void Func_02002478(void *, s32);
 extern u16 Data_02008f81[];
 extern u16 Data_02008f31[];
 
+extern u8 Value_00000022;
 void Func_020010d4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
 {
     u8 *o;
@@ -21,7 +22,7 @@ void Func_020010d4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
     ac = a;
     cc = c;
     dc = d;
-    o = Func_02002430(0x22, n);
+    o = Func_02002430(((s32) &Value_00000022), n);
     src = &zero;
     *src = 0;
     dma = (u32 *)0x040000D4;

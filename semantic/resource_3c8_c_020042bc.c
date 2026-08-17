@@ -37,6 +37,7 @@ extern void Func_0808a370(void);
 extern void Func_0808a5e0(s32 cue);
 extern void Func_080f9010(s32 cue);
 
+extern u8 Value_00000202;
 void Func_020042bc(void)
 {
     struct ParticleSpec_020042bc spec;
@@ -44,7 +45,7 @@ void Func_020042bc(void)
     u32 wave;
     s32 repeat = 0;
 
-    *(s32 *)(state + 0x1c0) = 0x202;
+    *(s32 *)(state + 0x1c0) = ((s32) &Value_00000202);
     Func_0808a018();
     Func_080091e0(Func_0808a080(0), 0);
     Func_0808a158(0, 15);

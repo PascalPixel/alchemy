@@ -32,6 +32,7 @@
  */
 
 u8 *Func_02005e5e();
+extern u8 Value_00014000;
 void Func_02005e44();
 void Func_02005f6e();
 void Func_02005d04();
@@ -68,8 +69,8 @@ void Func_02001b5c(void)
     Func_02005ee6(0, 0, 0);
     Func_02005ef0(8, 0x13e80000, 0x09180000);
 
-    *(s32 *)(actor + 0x1c) = 0x14000;
-    *(s32 *)(actor + 0x18) = 0x14000;
+    *(s32 *)(actor + 0x1c) = ((s32) &Value_00014000);
+    *(s32 *)(actor + 0x18) = ((s32) &Value_00014000);
 
     Func_02005d26(1);
     Func_02005f8e(8, 1);

@@ -6,6 +6,7 @@ extern s32 Func_03000380(s32 value, s32 divisor);
 extern u32 Func_080000f8(void);
 
 /* Fade a captured RGB555 palette through the current three-channel profile. */
+extern u8 Value_0000003e;
 void Func_02001244(void)
 {
     s32 permuted_9;
@@ -21,7 +22,7 @@ void Func_02001244(void)
     if (*(s16 *)(workspace + 382) != 0 || (*(volatile u32 *)0x03001e40 & 31) != 0)
         return;
 
-    for (index = 0; index <= 62; index++) {
+    for (index = 0; index <= ((s32) &Value_0000003e); index++) {
         s32 red;
         s32 green;
         s32 blue;

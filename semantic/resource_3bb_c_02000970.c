@@ -22,7 +22,7 @@
  * offset 0x714 plus the Thumb bit), so they are in-image words at file
  * offsets 0x4834 and 0x4838 rather than RAM globals.
  *
- * Shape: request the wait once with 10, then spin until the first word
+ * Shape: request the wait once with ((s32) &Value_0000000a), then spin until the first word
  * reaches 0 with the second word equal to 75, giving up after 600 polls.
  * The words are read afresh on every pass, so they are declared volatile;
  * only the first is reloaded when the pair test fails on the second.
@@ -47,6 +47,7 @@
 
 /* Per-site veneers (raw sub_ symbols from the overlay .s), both ultimately
  * reaching the same main-image import but each is its own call-site symbol. */
+extern u8 Value_0000000a;
 void Func_02004716();
 void Func_02004724();
 
@@ -59,7 +60,7 @@ void Func_02000970(void)
     s32 polls;
     s32 first;
 
-    Func_02004716(10);
+    Func_02004716(((s32) &Value_0000000a));
 
     first = Data_0200c834;
     polls = 0;

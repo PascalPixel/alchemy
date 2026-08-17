@@ -13,7 +13,7 @@
  * pool 0x02001040-0x0200104b, all past the epilogue; a control-flow walk from
  * the prologue confirms nothing else is skipped.
  *
- * The three pool words are small constants (0x2880, 0x0105, 0x2002), not
+ * The three pool words are small constants (((s32) &Value_00002880), 0x0105, 0x2002), not
  * in-image addresses, so this owner is not a link-base witness either way.
  *
  * The script is a sequence of "act on channel N, then wait k frames" beats.
@@ -37,6 +37,7 @@
 /* Import veneers.  Old-style declarations: one import name can take different
  * argument counts at different sites in this overlay, so no arity is asserted
  * and none of these results is used. */
+extern u8 Value_00002880;
 void Func_0200216e();
 void Func_020020ec();
 void Func_02002164();
@@ -78,7 +79,7 @@ void Func_02002266();
 void Func_020022ac();
 void Func_0200221a();
 void Func_0200229c();
-void Func_020022bc();
+s32 Func_020022bc();
 
                      
 
@@ -88,7 +89,7 @@ void Func_020022bc();
 
 void Func_02000eec(void)
 {
-    Func_0200216e(0x2880);
+    Func_0200216e(((s32) &Value_00002880));
     Func_020020ec(20);
 
     Func_02002164(11, 2);

@@ -66,11 +66,12 @@
 /* Old-style declarations: overlay imports vary in arity between call sites. */
 u8 *Func_02000950();
 s32 Func_02000902();
+extern u8 Value_00000c20;
 void Func_02000922();
 void Func_02000930();
 void Func_0200093e();
-s32 Func_02000978();
-s32 Func_02000964();
+void Func_02000978();
+void Func_02000964();
 void Func_0200099c();
 void Func_02000250();
 void Func_02000a5e();
@@ -118,7 +119,7 @@ void Func_020000ec(void)
     record = Func_02000950(work[125]);
     window = Func_02000902(0, 0, 30, 9, 2);
 
-    caption = 0x0c20;
+    caption = ((s32) &Value_00000c20);
     Func_02000922(caption, window, 0, 0);
     Func_02000930(caption + 1, window, 0, 16);
     caption += 2;

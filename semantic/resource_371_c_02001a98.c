@@ -49,6 +49,7 @@ extern u8 Data_0200d158[];
 extern u8 Data_0200d1b8[];
 
 u8 *Func_02005d9a();
+extern u8 Value_00c80000;
 void Func_02005d80();
 void Func_02005eaa();
 void Func_02005c40();
@@ -58,7 +59,7 @@ void Func_02005c64();
 void Func_02005ecc();
 void Func_02005f28();
 void Func_02005e02();
-s32 Func_02004f1c();
+u8 Func_02004f1c();
 void Func_02005e20();
 void Func_02005e2a();
 void Func_02005ca0();
@@ -75,7 +76,7 @@ void Func_02001a98(void)
     Func_02005eaa(-1, -1, -1, 0);
     Func_02005c40(1);
     Func_02005e22(0, 0, 0);
-    Func_02005e2e(8, 0x1f080000, 0xc80000);
+    Func_02005e2e(8, 0x1f080000, ((s32) &Value_00c80000));
 
     *(s32 *)(actor + 0x18) = 0x14000;
     *(s32 *)(actor + 0x1c) = 0x14000;

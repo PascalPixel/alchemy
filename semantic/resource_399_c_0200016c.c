@@ -48,15 +48,16 @@ extern u8 Data_0200a9e0[];      /* in-image script, file offset 0x29e0 */
 extern u8 Data_0200aa58[];      /* in-image script, file offset 0x2a58 */
 extern u8 Data_0200aad0[];      /* in-image script, file offset 0x2ad0 */
 
+extern u8 Value_00000033;
 void Func_020023c6();
-u8 Func_0200239c();
+s32 Func_0200239c();
 s32 Func_020023c4();
 
 u8 *Func_0200016c(void)
 {
     u8 *script;
 
-    if (Data_02000240[224] == 0x33) {
+    if (Data_02000240[224] == ((s32) &Value_00000033)) {
         script = Data_0200aad0;
         Func_020023c6(script);
         if (Func_0200239c(0x881) != 0) {

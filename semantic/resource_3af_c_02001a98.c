@@ -19,12 +19,13 @@ extern void Func_02005dc2(void);
 extern void Func_02005da0(s32);
 extern void Func_02003760(s32, s32);
 
+extern u8 Value_00000014;
 void Func_02001a98(void)
 {
     Func_02005d88();
     Func_02005ec2(-1, -1, -1, 0);
     Func_02005d10(1);
-    Func_02005e2a(20, 0, 0);
+    Func_02005e2a(((s32) &Value_00000014), 0, 0);
     Func_02005e34(22, 0, 0);
     Func_02005e3e(24, 0, 0);
     Func_02005e48(25, 0, 0);

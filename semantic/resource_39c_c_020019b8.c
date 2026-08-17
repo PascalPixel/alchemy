@@ -89,6 +89,7 @@ extern void Func_0200326a(s32 handle);
 extern void Func_02007640(s32 flag);
 extern void Func_0200766c(void);
 
+extern u8 Value_0000001e;
 void Func_020019b8(void)
 {
     PlacementResult placement;
@@ -101,7 +102,7 @@ void Func_020019b8(void)
             Func_020022e0(placement.deltaIndex, 8,
                           placement.x, placement.y, placement.z,
                           placement.callback);
-            Func_020074a6(30);
+            Func_020074a6(((s32) &Value_0000001e));
             Func_02007664(0xd3);
             Func_02005264();
 

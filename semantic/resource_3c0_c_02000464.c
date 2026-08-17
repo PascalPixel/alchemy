@@ -16,6 +16,7 @@ extern void Func_080f9010(s32 resourceId);
 
 /* Activate one encounter actor relative to the current map actor, initialize
  * its vertical motion, and publish the encounter state exactly once. */
+extern u8 Value_00000009;
 void Func_02000464(s32 encounterActorId)
 {
     s32 mapActorId = *(volatile s32 *)0x02000434;
@@ -27,7 +28,7 @@ void Func_02000464(s32 encounterActorId)
 
     Func_0808a018();
     Func_0808a1f0(mapActorId, 0x101);
-    Func_0808a100(mapActorId, 9);
+    Func_0808a100(mapActorId, ((s32) &Value_00000009));
 
     encounterActor = Func_0808a080(encounterActorId);
     if (encounterActor != 0) {

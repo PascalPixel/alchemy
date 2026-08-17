@@ -23,7 +23,7 @@
  * arguments are asserted for them.
  *
  * `movs #1 ; negs` three times builds the (-1, -1, -1, 0) argument list at
- * 0x0200180a, and 160 << 9 is the 0x14000 written to +0x18/+0x1c (the same
+ * 0x0200180a, and 160 << 9 is the 0x14000 written to +0x18/+((s32) &Value_0000001c) (the same
  * amplitude pair the owners at 0x02003fb4/0x02004004 write).
  *
  * Call-target convention: each `bl` is named by the address its call site
@@ -35,11 +35,12 @@
  */
 
 u8 *Func_02005afe();
+extern u8 Value_0000001c;
 void Func_02005ae4();
 s32 Func_02005c0e();
 void Func_020059a4();
 void Func_02005b86();
-void Func_02005c1e();
+s32 Func_02005c1e();
 void Func_02005c7a();
 void Func_02005b54();
 void Func_02005b96();
@@ -66,7 +67,7 @@ void Func_020017fc(void)
     Func_020059a4(1);
     Func_02005b86(0, 0, 0);
 
-    *(s32 *)(actor + 0x1c) = 0x14000;
+    *(s32 *)(actor + ((s32) &Value_0000001c)) = 0x14000;
     *(s32 *)(actor + 0x18) = 0x14000;
 
     Func_02005c1e(8, 1);

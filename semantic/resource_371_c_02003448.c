@@ -8,6 +8,7 @@ extern const s32 Data_0200e718[];
 
 
 extern s32 Func_02007708(s32 flag);
+extern u8 Value_0000092c;
 s32 Func_02003448(s32 slot)
 {
     s32 first_flag;
@@ -18,7 +19,7 @@ s32 Func_02003448(s32 slot)
         first_flag = 0x935;
         break;
     case 0:
-        first_flag = 0x92c;
+        first_flag = ((s32) &Value_0000092c);
         break;
     case 2:
         first_flag = 0x917;

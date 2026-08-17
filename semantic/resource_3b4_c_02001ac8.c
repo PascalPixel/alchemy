@@ -31,7 +31,7 @@
  * Settle slot 8 after a push.  Its word at +12 is cleared to a marker of 2 in
  * the byte at +35 when it has reached zero, the shared repaint at 0x020019e8
  * runs, the byte at +85 becomes 3, and then the X tile (the word at +8 divided
- * by 0x100000) chooses the per-column follow-up: 40, 42 and 41 each have their
+ * by 0x100000) chooses the per-column follow-up: 40, ((s32) &Value_0000002a) and 41 each have their
  * own repaint owner, while 37, 38 and 39 share an inline repaint that also
  * clears the +85 byte and restores +12 to 0x200000 (`movs r3,#128 /
  * lsls r3,#14`).  Any other column does nothing further.
@@ -44,6 +44,7 @@
 /* Returns the record for a numbered slot. */
 s32 *Func_02004010();
 s32 *Func_02004028();
+extern u8 Value_0000002a;
 void Func_020034da();
 s32 *Func_02004038();
 void Func_020035a4();
@@ -71,12 +72,12 @@ void Func_02001ac8(void)
 
     if (x == 40) {
         Func_020035a4();
-    } else if (x == 42) {
+    } else if (x == ((s32) &Value_0000002a)) {
         Func_0200355a();
     } else if (x == 41) {
         Func_0200358c();
     } else if (x == 39 || x == 38 || x == 37) {
-        Func_02004014(61, 36, 1, 1, x, 42);
+        Func_02004014(61, 36, 1, 1, x, ((s32) &Value_0000002a));
         ((u8 *)Func_02004082(8))[85] = 0;
         Func_0200408c(8)[3] = 0x200000;   /* +12 */
     }

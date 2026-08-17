@@ -10,8 +10,10 @@
 //!
 //! This prints the same shape as `candidate-show`, takes the same `--align`,
 //! and needs no span argument: the span comes from the row's placeholder when
-//! it is adopted, from the overlay inventory when it is parked, and from the
-//! audited interval only as a last resort. The reference comes from the ROM.
+//! it is adopted, from the overlay inventory when it is parked, from the
+//! reviewed boundary in `semantic/regions.json` when discovery never indexed
+//! the owner, and from the audited interval only as a last resort. The
+//! reference comes from the ROM.
 
 use std::path::{Path, PathBuf};
 
@@ -85,6 +87,43 @@ fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     None
 }
 
+/// The row's reviewed span from `semantic/regions.json`.
+///
+/// CONTRIBUTING: that file "records the reviewed boundary for an owner
+/// discovery did not index", which is exactly the case this covers. Without it
+/// the chain falls through to the audited code interval, and that stops at the
+/// end of the CODE -- so an owner whose reviewed extent includes its own
+/// trailing literal pool gets measured short by the size of the pool, against a
+/// candidate that contains it.
+///
+/// resource_391:0608 is the witness. Registered at 696 bytes with the evidence
+/// "seven-word pool at 0x020008a4-0x020008bf"; the derived span was 666. At 666
+/// it reported 14 wrong instructions and read as real work. At 696 it is
+/// `ordering` with none: one call's argument setup, which no source moves.
+///
+/// Ranked BELOW the inventory, not above it. `bl-site-symbols` already pins
+/// that precedence in `inventory_has_priority_over_manual_regions`, and this
+/// keeps the two agreeing.
+fn reviewed_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
+    let text = std::fs::read_to_string(root.join("semantic/regions.json")).ok()?;
+    let value: serde_json::Value = serde_json::from_str(&text).ok()?;
+    for region in value.get("manual_regions")?.as_array()? {
+        if region.get("overlay")?.as_str()? != overlay {
+            continue;
+        }
+        let entry = match region.get("entry")? {
+            serde_json::Value::String(text) => {
+                i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?
+            }
+            other => other.as_i64()?,
+        };
+        if entry == address {
+            return region.get("span_bytes")?.as_i64();
+        }
+    }
+    None
+}
+
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut align = false;
     let mut target = None;
@@ -149,6 +188,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         Some(span) => Some(span),
         None => placeholder_span(root, &overlay, address)?
             .or_else(|| inventory_span(root, &overlay, address))
+            .or_else(|| reviewed_span(root, &overlay, address))
             .or(crate::audited_code_span(root, &overlay, address)?),
     }
         .ok_or_else(|| {

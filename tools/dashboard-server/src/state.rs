@@ -3,7 +3,7 @@
 use std::path::Path;
 use std::sync::Mutex;
 
-use coverage_map::boxtree::{render_box_trees_with_matches, svg_cache_version, BOX_TREES};
+use coverage_map::boxtree::{render_box_trees, svg_cache_version, BOX_TREES};
 use coverage_map::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use coverage_map::tree::work_tree_at;
 
@@ -143,10 +143,7 @@ pub fn compute() -> Result<LiveCoverage, String> {
         validate_tracked_progress: false,
         prefer_verified_assets: true,
     })?;
-    // No match scores: they graded semantic sources by how close their bytes
-    // came, and there is no semantic tier to grade. A byte is exact or it is
-    // not, and the chart shows exactly that.
-    let trees = render_box_trees_with_matches(&map, Some(&tree), true, &Default::default())?;
+    let trees = render_box_trees(&map, Some(&tree), true)?;
     let revision = BOX_TREES
         .iter()
         .map(|name| {

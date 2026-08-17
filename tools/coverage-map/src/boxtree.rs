@@ -17,7 +17,6 @@ use crate::pipeline::CoverageMap;
 use crate::sha1::sha1_hex;
 use crate::svg::{document_number, document_string, PERMANENT_ASM_FILL};
 use crate::treemap::{squarify, Rect};
-use std::collections::BTreeMap;
 
 // ------------------------------------------------------------------ palette
 
@@ -55,16 +54,18 @@ pub const MUSIC_HUE: HueBand = HueBand {
 
 const GROUND: &str = "#ffffff";
 
-pub const CODE_FRACTION: [(&str, f64); 4] = [
+pub const CODE_FRACTION: [(&str, f64); 5] = [
     ("humanized_c", 1.0),
     ("exact_c", 1.0),
+    // `semantic_c` is not a rendered category -- it is in no `category_order`
+    // and no legend -- but it is still in the coverage map's schema, so its
+    // fraction has to stay defined. It used to reach 0.0 through a special case
+    // in `tile_fraction` that returned the byte-match score; without the entry
+    // it would fall through to the 0.08 default and change colour.
+    ("semantic_c", 0.0),
     ("assembly", 0.0),
     ("retained_asm", 0.0),
 ];
-
-/// Advisory byte-match fractions keyed by semantic source stem. These are
-/// live dashboard evidence, never ownership or Exact-C credit.
-pub type ByteMatchScores = BTreeMap<String, f64>;
 
 pub const ASSET_FRACTION: [(&str, f64); 6] = [
     ("asset_bytes", 0.08),
@@ -317,7 +318,6 @@ struct BoxContext<'a> {
     hue: &'a HueBand,
     category_fraction: &'a [(&'a str, f64)],
     category_order: &'a [&'a str],
-    byte_match_scores: &'a ByteMatchScores,
     lines: Vec<String>,
 }
 
@@ -349,46 +349,8 @@ impl BoxContext<'_> {
         }
     }
 
-    fn stop_attributes(&self, fraction: f64) -> String {
-        self.cell_attributes(fraction)
-            .replace("fill:", "stop-color:")
-    }
-
     fn fraction_of(&self, category: &str) -> f64 {
         lookup_number(self.category_fraction, category).unwrap_or(0.08)
-    }
-
-    fn tile_match_key(&self, tile: &Tile) -> Option<String> {
-        let address = tile.address?;
-        if address >= 0x0800_0000 {
-            return Some(hex8(address));
-        }
-        let group = tile.group.as_deref()?;
-        Some(format!(
-            "resource_{}_c_{}",
-            group.to_ascii_lowercase(),
-            hex8(address)
-        ))
-    }
-
-    fn byte_match_fraction(&self, tile: &Tile) -> f64 {
-        let fraction = self
-            .tile_match_key(tile)
-            .and_then(|key| self.byte_match_scores.get(&key).copied())
-            .unwrap_or(0.0);
-        if fraction.is_finite() {
-            fraction.clamp(0.0, 1.0)
-        } else {
-            0.0
-        }
-    }
-
-    fn tile_fraction(&self, tile: &Tile, category: &str) -> f64 {
-        if category == "semantic_c" {
-            self.byte_match_fraction(tile)
-        } else {
-            self.fraction_of(category)
-        }
     }
 
     fn draw_rectangle_label(&mut self, rectangle: Rect, text: &str) {
@@ -428,26 +390,17 @@ impl BoxContext<'_> {
             .iter()
             .map(|category| tile.category(category))
             .sum();
-        let match_detail = if tile.category("semantic_c") > 0 {
-            format!(
-                " · {}% byte match",
-                to_fixed(self.byte_match_fraction(tile) * 100.0, 1)
-            )
-        } else {
-            String::new()
-        };
         self.lines.push(format!(
             "<g aria-label=\"{}\">",
             escape_text(&format!(
-                "{}: {} bytes{}",
+                "{}: {} bytes",
                 tile.label,
                 commas(tile.bytes as f64),
-                match_detail,
             ))
         ));
         if total <= 0 {
             let fallback = self.category_order.last().copied().unwrap_or("");
-            let fraction = self.tile_fraction(tile, fallback);
+            let fraction = self.fraction_of(fallback);
             let cell = precise_rect(rectangle, &self.category_attributes(fallback, fraction));
             self.lines.push(cell);
             let name = leaf_display_name(tile);
@@ -471,7 +424,7 @@ impl BoxContext<'_> {
                 width: rectangle.width,
                 height: bottom - top,
             };
-            let fraction = self.tile_fraction(tile, category);
+            let fraction = self.fraction_of(category);
             let cell = precise_rect(band, &self.category_attributes(category, fraction));
             self.lines.push(cell);
         }
@@ -608,34 +561,7 @@ pub fn render_box_tree(
     folders: &[&str],
     title: &str,
 ) -> Result<String, String> {
-    render_box_tree_with_matches(
-        item,
-        aria_label,
-        hue,
-        category_fraction,
-        category_order,
-        folders,
-        BoxTreeEvidence {
-            title,
-            byte_match_scores: &ByteMatchScores::new(),
-        },
-    )
-}
 
-struct BoxTreeEvidence<'a> {
-    title: &'a str,
-    byte_match_scores: &'a ByteMatchScores,
-}
-
-fn render_box_tree_with_matches(
-    item: &Area,
-    aria_label: &str,
-    hue: &HueBand,
-    category_fraction: &[(&str, f64)],
-    category_order: &[&str],
-    folders: &[&str],
-    evidence: BoxTreeEvidence<'_>,
-) -> Result<String, String> {
     // Keeping the viewBox 1:1 with the CSS size is what makes the one permitted
     // 16 px Weyard face pixel-exact instead of scaling it down.
     let width = 540.0f64;
@@ -650,7 +576,6 @@ fn render_box_tree_with_matches(
         hue,
         category_fraction,
         category_order,
-        byte_match_scores: evidence.byte_match_scores,
         lines: Vec::new(),
     };
     context.lines.push(format!(
@@ -662,23 +587,12 @@ fn render_box_tree_with_matches(
         js_number_string(height),
         escape_text(aria_label),
     ));
-    let byte_match_gradient = if category_order.contains(&"semantic_c") {
-        format!(
-            "<linearGradient id=\"byte-match-ramp\" x1=\"0\" x2=\"1\">\
-             <stop offset=\"0\" {}/><stop offset=\"1\" {}/></linearGradient>",
-            context.stop_attributes(0.0),
-            context.stop_attributes(1.0),
-        )
-    } else {
-        String::new()
-    };
     context.lines.push(format!(
         "<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) \
          format('opentype');font-style:italic;}}\
          .weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}\
-         .rectangle-label{{font-size:8px;}}</style>{}</defs>",
+         .rectangle-label{{font-size:8px;}}</style></defs>",
         embedded_weyard_font()?,
-        byte_match_gradient,
     ));
     context.lines.push(precise_rect(
         Rect {
@@ -713,7 +627,7 @@ fn render_box_tree_with_matches(
     context.draw_nodes(&nodes, plot, 0)?;
     context.lines.push(format!(
         "<text class=\"weyard\" x=\"6\" y=\"17\">{}</text>",
-        escape_text(&evidence.title.to_uppercase())
+        escape_text(&title.to_uppercase())
     ));
 
     let completion_category = if category_order.contains(&"exact_c") {
@@ -767,12 +681,8 @@ fn render_box_tree_with_matches(
             width: 10.0,
             height: 10.0,
         };
-        let cell = if *category == "semantic_c" {
-            precise_rect(swatch, "fill=\"url(#byte-match-ramp)\"")
-        } else {
-            let fraction = context.fraction_of(category);
-            precise_rect(swatch, &context.category_attributes(category, fraction))
-        };
+        let fraction = context.fraction_of(category);
+        let cell = precise_rect(swatch, &context.category_attributes(category, fraction));
         context.lines.push(cell);
         context.lines.push(format!(
             "<text class=\"weyard\" x=\"{}\" y=\"{}\" dominant-baseline=\"middle\">{}</text>",
@@ -977,17 +887,6 @@ pub fn render_box_trees(
     tree: Option<&crate::tree::SourceTree>,
     prefer_verified_assets: bool,
 ) -> Result<Vec<(&'static str, String)>, String> {
-    render_box_trees_with_matches(map, tree, prefer_verified_assets, &ByteMatchScores::new())
-}
-
-/// Render the live panels with advisory semantic-owner byte-match evidence.
-/// Exact ownership still comes exclusively from the coverage map.
-pub fn render_box_trees_with_matches(
-    map: &CoverageMap,
-    tree: Option<&crate::tree::SourceTree>,
-    prefer_verified_assets: bool,
-    byte_match_scores: &ByteMatchScores,
-) -> Result<Vec<(&'static str, String)>, String> {
     let core = map.executable_areas.iter().find(|item| item.id == "main");
     let overlays = map
         .executable_areas
@@ -1020,7 +919,7 @@ pub fn render_box_trees_with_matches(
     Ok(vec![
         (
             "core",
-            render_box_tree_with_matches(
+            render_box_tree(
                 core,
                 "Main-image code coverage box tree, purple band; 64 KiB address banks contain \
                  audited source-owner leaves at their natural executable byte size",
@@ -1028,15 +927,12 @@ pub fn render_box_trees_with_matches(
                 &CODE_FRACTION,
                 &code_order,
                 &["group"],
-                BoxTreeEvidence {
-                    title: "Main image",
-                    byte_match_scores,
-                },
+                "Main image",
             )?,
         ),
         (
             "overlays",
-            render_box_tree_with_matches(
+            render_box_tree(
                 overlays,
                 "Decoded code-overlay coverage box tree, cyan band; each resource contains its \
                  exact-C, permanent-assembly and unreconstructed regions",
@@ -1044,10 +940,7 @@ pub fn render_box_trees_with_matches(
                 &CODE_FRACTION,
                 &code_order,
                 &["group"],
-                BoxTreeEvidence {
-                    title: "Code overlays",
-                    byte_match_scores,
-                },
+                "Code overlays",
             )?,
         ),
         (
@@ -1306,17 +1199,14 @@ mod tests {
             ..Tile::default()
         };
         exact.set_category("exact_c", 16);
-        let svg = render_box_tree_with_matches(
+        let svg = render_box_tree(
             &area("code", "Code", vec![retained, exact]),
             "code colours",
             &CORE_HUE,
             &CODE_FRACTION,
             &["retained_asm", "exact_c"],
             &[],
-            BoxTreeEvidence {
-                title: "Code",
-                byte_match_scores: &ByteMatchScores::new(),
-            },
+            "Code",
         )
         .unwrap();
 
@@ -1327,32 +1217,4 @@ mod tests {
         assert!(!svg.contains("byte match"), "{svg}");
     }
 
-    #[test]
-    fn overlay_tiles_resolve_their_flat_semantic_source_stem() {
-        let mut tile = Tile {
-            label: "375 · semantic owner 0x02000be0".to_string(),
-            bytes: 16,
-            group: Some("375".to_string()),
-            address: Some(0x0200_0be0),
-            ..Tile::default()
-        };
-        tile.set_category("semantic_c", 16);
-        let mut scores = ByteMatchScores::new();
-        scores.insert("resource_375_c_02000be0".to_string(), 0.25);
-        let svg = render_box_tree_with_matches(
-            &area("overlay", "Overlay", vec![tile]),
-            "overlay ramp",
-            &OVERLAY_HUE,
-            &CODE_FRACTION,
-            &["semantic_c"],
-            &["group"],
-            BoxTreeEvidence {
-                title: "Overlay",
-                byte_match_scores: &scores,
-            },
-        )
-        .unwrap();
-        assert!(svg.contains("25.0% byte match"), "{svg}");
-        assert!(svg.contains("oklch(0.835 0.043 200)"), "{svg}");
-    }
 }

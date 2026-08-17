@@ -26,9 +26,29 @@ with or endorsed by either company.
 ## DONE: Currently 26%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
-plus the small amount of code intentionally retained as permanent assembly.
-Semantic C is tracked separately as readable reconstruction work; it does not
-count toward DONE until its rebuilt bytes are exact.
+plus code that is permanently assembly. Semantic C is tracked separately as
+readable reconstruction work; it does not count toward DONE until its rebuilt
+bytes are exact.
+
+Three figures, because one of them alone would mislead:
+
+| | bytes | share |
+|---|---:|---:|
+| Exact C | 274,372 | 20.37% of executable |
+| Permanent assembly | 78,932 | 5.86% of executable |
+| **DONE** | **353,304** | **26.23% of executable** |
+
+Permanent assembly is not a shortcut and not a backlog. It is overwhelmingly
+linker veneers and alignment padding, which the linker and assembler emit and no
+C can produce, plus a small set of hand-written routines using calling
+conventions C cannot express. It rebuilds identically, so it is done, and it will
+never become C.
+
+That also means 100% is not the target. Of the 1,347,122 executable bytes,
+78,932 can never be C, so the reconstruction's own ceiling is 1,268,190 and
+**exact C stands at 21.63% of the bytes that can be C**. An overlay whose every
+function is reconstructed still reports short of 100% because its veneers count
+against it.
 
 The four maps below show the current byte metrics for the English release.
 Progress is measured by bytes, not function counts.
@@ -47,7 +67,7 @@ The main game contains 548,364 executable bytes in the purple band.
 
 ### Code overlays
 
-The game loads 96 additional code overlays containing 798,890 executable bytes
+The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
 ![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=202d27e2)
@@ -67,10 +87,8 @@ This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
 
 ## Contributing and project status
 
-The evidence-driven reconstruction and matching workflow is described in
-[CONTRIBUTING.md](CONTRIBUTING.md). Current work, known blockers, and recent
-progress are summarized in [STATUS.md](STATUS.md). The native tools and their
-architecture are indexed in [docs/README.md](docs/README.md).
-
-The clean-room boundary, source provenance, and publication rules are recorded
-in [PROVENANCE.md](PROVENANCE.md).
+[CONTRIBUTING.md](CONTRIBUTING.md) is the only other page in this repository.
+It carries the reconstruction and matching workflow, the tool catalog, the
+clean-room boundary, the source provenance and the publication rules. Current
+work and known blockers live in the commit history, attached to the change that
+established them.

@@ -62,6 +62,45 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a7_c_0200145c.c",
     "exact/resource_3a7_c_02001574.c",
 ];
+// Soft-float library leaves that keep r4 CALLEE-SAVED, i.e. the stock ARM ABI
+// without `-fcall-used-r4`.
+//
+// The base flag set hands r4 to the allocator because Camelot's own code was
+// built that way. These four are not Camelot's code: they are the compiler's
+// soft-float support routines, and each one's reference prologue and epilogue
+// are `push {r4, ...}` / `pop {r4, ...}` against our `push`/`pop` without it.
+// That is the entire residual for all four -- identical size, two halfwords,
+// the r4 bit in each register list.
+//
+// Same shape of routing as `NO_INTERWORK_OVERLAY_SOURCES` above, which
+// subtracts `-mthumb-interwork` from this same family, and the same reasoning
+// pret uses when it routes `old_agbcc` at `m4a.o` and `libc.o`: a library
+// object is not game code and does not take the game's ABI. Stock option,
+// subtracted per file, recorded as routing debt.
+// The four members already byte-exact WITHOUT this subtraction -- 3a7:1544,
+// 3a7:1554, 3a7:1740 and 3bf:5ae0 -- are deliberately absent. They reproduce
+// on the base set, so routing them here would change flags under a settled
+// owner to no purpose.
+pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
+    "exact/resource_3a7_c_0200145c.c",
+    "exact/resource_3a7_c_02001574.c",
+    "exact/resource_3bf_c_02005af0.c",
+    "exact/resource_3bf_c_02005c08.c",
+    "exact/resource_3a7_c_020013ac.c",
+    "exact/resource_3a7_c_020013e4.c",
+    "exact/resource_3a7_c_020014d8.c",
+    "exact/resource_3a7_c_020015a4.c",
+    "exact/resource_3a7_c_02001770.c",
+    "exact/resource_3bf_c_02005a40.c",
+    "exact/resource_3bf_c_02005a78.c",
+    "exact/resource_3bf_c_02005b6c.c",
+    "exact/resource_3bf_c_02005c38.c",
+    "exact/resource_3bf_c_02005e04.c",
+];
+// Tried and rejected: 3ad:11b8, 3ae:02dc, 3ca:004c, 3ca:00b0 and 3cb:0128 also
+// show r4 in the reference prologue, but subtracting the flag does not close
+// any of them and moves 3ad:11b8 from two differing halfwords to fifteen. A
+// saved r4 alone does not make an owner part of this family.
 pub static UNSCHEDULED_SOURCES: &[&str] = &[
     "08006b84", "080fb768", "080fb77c",
 ];

@@ -328,6 +328,37 @@ sides. It compares every adopted row against the bytes it replaced, which is the
 one check that a merged tree has not silently broken an owner neither branch
 touched.
 
+### The constant-rematerialisation family, and why a flag cannot buy it
+
+The largest single residual family in the overlays: we compute a constant once,
+keep it in a callee-saved register and copy it into the argument register at
+each call, where the reference rebuilds it at every use. It is 98 rows and
+36,230 bytes of the size-exact pool alone, and it always costs a `push` the
+reference does not have.
+
+The RTL says what happens. At expansion there are two independent
+`(const_int N)` materialisations; cse unifies them into one pseudo carrying a
+`REG_EQUAL`/`REG_EQUIV` note, and reload then hands that pseudo a hard register
+instead of rematerialising from the note. Because the two constants are
+identical trees, cse *must* unify them, which is why no source spelling reaches
+it: operand order, naming the value, widening it, splitting it across branches
+and separating the call sites all leave the same pair of trees.
+
+`-fno-rerun-cse-after-loop` does reach it, and it is a stock option, so routing
+it per file is permitted and would be recorded as debt. Do not. Measured over
+whole overlays it breaks more than it buys, inside the same translation unit:
+
+| overlay | adopted rows it regresses | parked rows it makes exact |
+|---|---:|---:|
+| `resource_3bf` | 7 | 6 |
+| `resource_3b4` | 4 | 1 |
+| `resource_3cb` | 1 | 1 |
+
+An overlay whose owners disagree about a flag is not an overlay that was
+compiled with it. Corpus-wide the flag makes 16 rows byte-exact, 1,510 bytes,
+and that number is not a reconstruction -- it is the size of the family that
+happens to invert. The mechanism is real and the flag is not the answer.
+
 ### An owner containing a switch cannot currently be adopted
 
 A Thumb switch emits a jump table, and `metrics/gs1-en-executable.json`

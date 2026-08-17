@@ -758,6 +758,67 @@ is the only result that proves anything.
 
 ---
 
+## What this project is doing now
+
+Four decisions, taken 2026-08-17 against the numbers below. They are settled;
+reopen them with evidence, not with preference.
+
+### 1. Finish overlays, do not spread
+
+Work one overlay to completion, smallest remaining first, rather than picking
+owners by score across the whole ROM. Ten overlays are at or above 60% and the C
+work left in them is small.
+
+The reason is not tidiness. Within one overlay the callees, types, structures
+and idioms are shared, so every owner you finish makes the next one cheaper, and
+`overlay twins` and `exact_reading_list` can actually find you a worked example.
+Across the ROM that compounding is lost. It also changes what a day's work
+produces: "this overlay is finished" is an artifact, "the number went up 0.04%"
+is not.
+
+### 2. Count against the bytes that can be C
+
+`exact / executable` is measured against a denominator that includes 165,278
+bytes -- 12.27% -- that are not instructions: 48,760 of linker veneers, 34,256 of
+literal pools, 3,020 of alignment, 79,242 structural. A veneer is emitted by the
+linker and will never be C, so an overlay whose every function is reconstructed
+still reports well short of 100%. `resource_3cc` is finished and reads 64%.
+
+Report both figures and never the second alone. The share of the ROM is the
+honest headline; the share of the C-able bytes is what says how much of the
+actual job is left.
+
+### 3. The semantic pile is a liability, not an asset
+
+994,000 bytes of reviewed C that does not reproduce is not 74% of the way to
+anything. Three quarters of it does not emit the right NUMBER of bytes, which
+means it was written without ever being compared to the ROM.
+
+Keep the files: the comments carry call resolutions, field layouts and recorded
+uncertainties that cost real work. Stop reporting `combined`, which presents
+coverage as progress and is the most misleading number in the repository. When
+an owner is the wrong size, expect to rewrite it against `overlay score` rather
+than repair it.
+
+### 4. The tooling is frozen
+
+163,804 lines of Rust across 135 crates, against 274,372 bytes of ROM
+reconstructed. The loop needs about eight commands and they all exist. Adding a
+tool now requires deleting one, and measurement that explains why we are stuck is
+no longer a deliverable.
+
+### Why, in one paragraph
+
+We have finished 65% of the overlay owners and 22% of the overlay bytes, because
+we did the small ones: the median adopted owner is 46 bytes and the median owner
+still parked is 204. Writing C everywhere first consumed the tractable work in
+one pass and banked only the part that matched, so what remains is filtered twice
+over, once for size and once for having already failed. There is no tool that
+undoes that. The way out is reconstructing large functions by reading them, one
+overlay at a time, which is the work that was skipped.
+
+---
+
 ## The compiler standard
 
 Camelot shipped a makefile, not a per-file flag database. The build targets the

@@ -288,6 +288,19 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
     if wrong > 0 {
         // THE REFERENCE USES AN INSTRUCTION THIS COMPILER HAS NO PATTERN FOR.
         //
+        // ADVISORY, NOT PROOF. This reads a DISASSEMBLED stream, and a literal
+        // pool word disassembles as whatever its bytes encode -- on ARM7TDMI
+        // that includes `stmia`, `ldmia` and a tail of Thumb-2 and NEON
+        // mnemonics the part cannot execute at all. Measured against the
+        // assembler's own listing, 18 of 89 rows this called `unemittable` had
+        // no multiple-transfer anywhere in their span: a 20% false-positive
+        // rate, and each one is a C target written off on a misread.
+        //
+        // Confirm before acting on it: the instruction must appear inside the
+        // owner's span in the assembly, which is what
+        // `core_retained_audit`'s `reference_uses_thumb_multiple_transfer`
+        // check requires before a permanence claim is allowed to stand.
+        //
         // `arm.md` gates both store-multiple peepholes on `TARGET_ARM`, so
         // stock gcc 2.96 cannot emit `stmia`/`ldmia` for Thumb from any C at
         // all. A region whose reference contains one was not produced by this

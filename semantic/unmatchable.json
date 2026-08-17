@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "comment": "Owners withdrawn from routine work: both bounded search axes are spent and the owner still does not reproduce. Data for the check, not documentation -- it keeps a small number of owners out of the queue without putting a record of dead ends in front of every contributor. An entry is removed the moment its owner becomes exact. The opposite register is exact/provisional.json, which holds owners that DO match but whose source was written toward the bytes.",
+  "unmatchable": [
+    {
+      "owner": "resource_3b7_c_02000880",
+      "floor_halfwords": 2,
+      "axes": [
+        "compiler",
+        "shape"
+      ],
+      "reason": "The reference orders the counter increment before the volatile store and the argument load after it; the emitted pair is transposed."
+    }
+  ]
+}

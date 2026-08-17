@@ -3,7 +3,7 @@
 version = 4
 
 [[package]]
-name = "check-sanctum"
+name = "check-unmatchable"
 version = "0.1.0"
 dependencies = [
  "serde_json",

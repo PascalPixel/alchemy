@@ -8,7 +8,8 @@ const USAGE: &str = "usage: check <command> [args]\n       check --list";
 const COMMANDS: &[(&str, &str)] = &[
     ("cache-entry", "cache entry"),
     ("check-publication", "check publication"),
-    ("check-sanctum", "check sanctum"),
+    ("check-unmatchable", "validate the owner status registers"),
+    ("symbols", "validate the symbol map; --emit writes include/symbols.h"),
     ("core-retained-audit", "core retained audit"),
     ("decomp-constraints", "decomp constraints"),
     ("decomp-targets", "decomp targets"),
@@ -72,7 +73,8 @@ fn main() -> ExitCode {
         "no-asm-c" => no_asm_c::cli::entry(&rest),
         "cache-entry" => cache_entry::cli::entry(&rest),
         "check-publication" => check_publication::cli::entry(&rest),
-        "check-sanctum" => check_sanctum::cli::entry(&rest),
+        "check-unmatchable" => check_unmatchable::cli::entry(&rest),
+        "symbols" => symbols::cli::entry(&rest),
         "core-retained-audit" => core_retained_audit::cli::entry(&rest),
         "decomp-constraints" => decomp_constraints::cli::entry(&rest),
         "decomp-targets" => decomp_targets::cli::entry(&rest),
@@ -124,5 +126,5 @@ fn self_test() -> ExitCode {
 }
 
 fn dispatchable(name: &str) -> bool {
-    matches!(name, "alchemy-lints" | "architecture" | "byte-value-regions" | "cache-entry" | "cache-key-lint" | "check-commit-progress" | "check-publication" | "check-sanctum" | "compare-roms" | "core-retained-audit" | "coverage-map" | "decomp-constraints" | "decomp-targets" | "discover" | "executable-gap-sources" | "extract-resource" | "full-c-history" | "integrate-matches" | "jobs" | "lang-ban" | "late-runtime-data" | "localization-tables" | "music-residuals" | "no-asm-c" | "progress" | "route-dump" | "semantic-owner-scope" | "semantic-queue" | "semantic-superseded" | "source-citations")
+    matches!(name, "alchemy-lints" | "architecture" | "byte-value-regions" | "cache-entry" | "cache-key-lint" | "check-commit-progress" | "check-publication" | "check-unmatchable" | "compare-roms" | "core-retained-audit" | "coverage-map" | "decomp-constraints" | "decomp-targets" | "discover" | "executable-gap-sources" | "extract-resource" | "full-c-history" | "integrate-matches" | "jobs" | "lang-ban" | "late-runtime-data" | "localization-tables" | "music-residuals" | "no-asm-c" | "progress" | "route-dump" | "semantic-owner-scope" | "semantic-queue" | "semantic-superseded" | "source-citations" | "symbols")
 }

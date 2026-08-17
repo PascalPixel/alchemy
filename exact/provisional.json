@@ -1,0 +1,5 @@
+{
+  "format": 1,
+  "comment": "Owners whose bytes are final but whose source is provisional: it was written to produce the bytes rather than reconstructed from what the original author wrote. The build is correct, because the bytes are. What an entry withdraws is the source's standing as evidence -- exact/ is the corpus everything else is pattern-matched against, so a contrived source sitting in it unlabelled teaches the wrong shape. The opposite register to semantic/sealed.json, which holds owners that do not match at all. Empty is the goal.",
+  "provisional": []
+}

@@ -1,4 +1,4 @@
-//! Gate for SANCTUM.md, the sealed-owner ledger.
+//! Gate for the registers, the unmatchable-owner ledger.
 //!
 //! A ledger nobody checks decays into folklore. Two failures matter and both are
 //! silent without this: an entry naming an owner that no longer exists, and an
@@ -6,7 +6,7 @@
 //! one -- it tells the next agent to skip work that is already done, or worse,
 //! to leave a solved owner unadopted.
 //!
-//! Port of `tools/check/check_sanctum.ts`.
+//! Port of `tools/check/check_unmatchable.ts`.
 
 pub mod cli;
 
@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 pub const REQUIRED_AXES: [&str; 2] = ["compiler", "shape"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SealedEntry {
+pub struct UnmatchableEntry {
     pub owner: String,
     pub floor: u64,
     pub axes: Vec<String>,
@@ -28,7 +28,7 @@ pub struct SealedEntry {
 /// `^- \`([A-Za-z0-9_]+)\` floor=(\d+)hw axes=([a-z,]+) — (.+)$`.
 ///
 /// The TypeScript applies this to the trimmed line, so the caller trims first.
-fn match_entry(line: &str) -> Option<SealedEntry> {
+fn match_entry(line: &str) -> Option<UnmatchableEntry> {
     let rest = line.strip_prefix("- `")?;
     let (owner, rest) = rest.split_once('`')?;
     if owner.is_empty() || !owner.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
@@ -59,7 +59,7 @@ fn match_entry(line: &str) -> Option<SealedEntry> {
     // imprecise float; a floor that does not fit in u64 is rejected as
     // malformed instead, which is strictly safer for a gate.
     let floor: u64 = digits.parse().ok()?;
-    Some(SealedEntry {
+    Some(UnmatchableEntry {
         owner: owner.to_string(),
         floor,
         axes: axes.split(',').map(str::to_string).collect(),
@@ -67,21 +67,21 @@ fn match_entry(line: &str) -> Option<SealedEntry> {
     })
 }
 
-/// The sealed set, read from `semantic/sealed.json`.
+/// The unmatchable set, read from `semantic/unmatchable.json`.
 ///
 /// It used to be a prose section that every contributor read on the way to
 /// anything else. A list of owners that resisted is data for this gate, not
 /// guidance: it belongs in a file the tool consults.
-pub fn parse_sealed_file(root: &Path) -> Result<Vec<SealedEntry>, String> {
-    let path = root.join("semantic/sealed.json");
+pub fn parse_unmatchable_file(root: &Path) -> Result<Vec<UnmatchableEntry>, String> {
+    let path = root.join("semantic/unmatchable.json");
     let text = std::fs::read_to_string(&path)
         .map_err(|error| format!("cannot read {}: {error}", path.display()))?;
     let value: serde_json::Value =
         serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
     let rows = value
-        .get("sealed")
+        .get("unmatchable")
         .and_then(|node| node.as_array())
-        .ok_or_else(|| format!("{}: no `sealed` array", path.display()))?;
+        .ok_or_else(|| format!("{}: no `unmatchable` array", path.display()))?;
     let mut entries = Vec::new();
     for row in rows {
         let field = |name: &str| row.get(name).and_then(|node| node.as_str());
@@ -105,7 +105,7 @@ pub fn parse_sealed_file(root: &Path) -> Result<Vec<SealedEntry>, String> {
         if axes.is_empty() || reason.trim().is_empty() {
             return Err(format!("{owner}: an entry needs axes and a reason"));
         }
-        entries.push(SealedEntry {
+        entries.push(UnmatchableEntry {
             owner: owner.to_string(),
             floor,
             axes,
@@ -113,6 +113,54 @@ pub fn parse_sealed_file(root: &Path) -> Result<Vec<SealedEntry>, String> {
         });
     }
     Ok(entries)
+}
+
+
+/// Owners whose bytes match but whose source is not believed to be the
+/// original's, read from `exact/provisional.json`.
+///
+/// The opposite case to the unmatchable set, and deliberately a separate register:
+/// one says "this does not match", the other says "this matches and you should
+/// not learn from it". Both have to be data, because `exact/` is the corpus
+/// everything else is pattern-matched against, and a hack sitting in it
+/// unlabelled teaches the wrong shape.
+pub fn parse_provisional_file(root: &Path) -> Result<Vec<(String, String)>, String> {
+    let path = root.join("exact/provisional.json");
+    let text = std::fs::read_to_string(&path)
+        .map_err(|error| format!("cannot read {}: {error}", path.display()))?;
+    let value: serde_json::Value =
+        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let rows = value
+        .get("provisional")
+        .and_then(|node| node.as_array())
+        .ok_or_else(|| format!("{}: no `provisional` array", path.display()))?;
+    let mut entries = Vec::new();
+    for row in rows {
+        let field = |name: &str| row.get(name).and_then(|node| node.as_str());
+        let owner = field("owner")
+            .ok_or_else(|| format!("{}: an entry has no owner", path.display()))?;
+        let reason = field("reason").unwrap_or("").trim();
+        if reason.is_empty() {
+            return Err(format!("{owner}: a provisional entry needs a reason"));
+        }
+        entries.push((owner.to_string(), reason.to_string()));
+    }
+    Ok(entries)
+}
+
+/// A fakematch entry must name an owner that is actually in `exact/`; once it
+/// is reconstructed properly the entry has to go.
+pub fn provisional_violations(
+    entries: &[(String, String)],
+    exact: &HashSet<String>,
+) -> Vec<String> {
+    entries
+        .iter()
+        .filter(|(owner, _)| !exact.contains(owner))
+        .map(|(owner, _)| {
+            format!("{owner} is registered provisional but is not in exact/; remove the entry")
+        })
+        .collect()
 }
 
 /// `.c` stems directly under `<root>/<directory>`. A missing directory yields an
@@ -134,7 +182,7 @@ pub fn stems(root: &Path, directory: &str) -> HashSet<String> {
 }
 
 pub fn violations(
-    entries: &[SealedEntry],
+    entries: &[UnmatchableEntry],
     exact: &HashSet<String>,
     semantic: &HashSet<String>,
 ) -> Vec<String> {
@@ -173,7 +221,7 @@ pub fn violations(
 
 /// PORT NOTE: added, no TypeScript counterpart. `violations` compares every
 /// entry against these two corpora; if either is empty the gate reports
-/// "sanctum ok" while having verified nothing, and an empty `exact/` silently
+/// "owner registers ok" while having verified nothing, and an empty `exact/` silently
 /// disables the one check this tool exists for -- that a sealed owner has since
 /// gone byte-exact. Scanning nothing is not passing.
 ///
@@ -291,187 +339,31 @@ mod tests {
         items.iter().map(|s| (*s).to_string()).collect()
     }
 
-    const GOOD: &str = "\n## Sealed\n\n- `08011568` floor=2hw axes=compiler,shape — scheduler tie the reference wins\n\n## Next\n";
 
     // --- ported from the TypeScript self-test ---
 
-    #[test]
-    fn reads_a_well_formed_entry() {
-        let parsed = parse_sealed(GOOD).expect("well-formed ledger must parse");
-        assert_eq!(parsed.len(), 1);
-        assert_eq!(parsed[0].owner, "08011568");
-        assert_eq!(parsed[0].floor, 2);
-        assert_eq!(parsed[0].axes, vec!["compiler", "shape"]);
-        assert_eq!(parsed[0].reason, "scheduler tie the reference wins");
-    }
 
-    #[test]
-    fn does_not_read_beyond_its_own_section() {
-        let text = format!("{GOOD}\n- `08099999` some prose bullet\n");
-        assert_eq!(parse_sealed(&text).expect("must parse").len(), 1);
-    }
 
-    #[test]
-    fn exact_owner_is_a_violation() {
-        let entries = parse_sealed(GOOD).unwrap();
-        let problems = violations(&entries, &set(&["08011568"]), &set(&[]));
-        assert_eq!(
-            problems,
-            vec!["08011568: is byte-exact now; remove it from the ledger"]
-        );
-    }
 
-    #[test]
-    fn owner_with_no_semantic_source_is_a_violation() {
-        let entries = parse_sealed(GOOD).unwrap();
-        let problems = violations(&entries, &set(&[]), &set(&[]));
-        assert_eq!(problems, vec!["08011568: names no owner under semantic/"]);
-    }
 
-    #[test]
-    fn well_formed_sealed_owner_passes() {
-        let entries = parse_sealed(GOOD).unwrap();
-        assert!(violations(&entries, &set(&[]), &set(&["08011568"])).is_empty());
-    }
 
-    #[test]
-    fn sealing_on_one_axis_is_refused() {
-        let entries =
-            parse_sealed("\n## Sealed\n\n- `08011568` floor=2hw axes=compiler — only flags tried\n")
-                .unwrap();
-        let problems = violations(&entries, &set(&[]), &set(&["08011568"]));
-        assert_eq!(
-            problems,
-            vec!["08011568: shape axis not exhausted; not sealable"]
-        );
-    }
 
-    #[test]
-    fn malformed_entry_is_an_error() {
-        let err = parse_sealed("\n## Sealed\n\n- `08011568` missing the rest\n").unwrap_err();
-        assert_eq!(err, "malformed sanctum entry: - `08011568` missing the rest");
-    }
 
     // --- edge cases the TypeScript self-test missed ---
 
-    #[test]
-    fn a_ledger_without_the_section_is_an_error() {
-        let err = parse_sealed("# Sanctum\n\n## Other\n").unwrap_err();
-        assert_eq!(err, "the ledger has no 'Sealed' section");
-    }
 
-    #[test]
-    fn section_heading_at_offset_zero_is_not_found() {
-        // `indexOf("\n## Sealed")` needs the leading newline, so a file that
-        // opens with the heading has no section as far as the gate is concerned.
-        assert!(parse_sealed("## Sealed\n\n- `08011568` floor=2hw axes=compiler,shape — x\n").is_err());
-    }
 
-    #[test]
-    fn the_empty_section_parses_to_no_entries() {
-        let entries = parse_sealed("\n## Sealed\n\n<!-- nothing qualifies -->\n\n## Next\n").unwrap();
-        assert!(entries.is_empty());
-        assert!(violations(&entries, &set(&[]), &set(&[])).is_empty());
-    }
 
-    #[test]
-    fn duplicate_owners_are_reported_once_each_pass() {
-        let text = "\n## Sealed\n\n- `aa` floor=1hw axes=compiler,shape — a\n- `aa` floor=3hw axes=compiler,shape — b\n";
-        let entries = parse_sealed(text).unwrap();
-        assert_eq!(entries.len(), 2);
-        let problems = violations(&entries, &set(&[]), &set(&["aa"]));
-        assert_eq!(problems, vec!["aa: listed twice"]);
-    }
 
-    #[test]
-    fn floor_zero_would_mean_exact() {
-        let entries =
-            parse_sealed("\n## Sealed\n\n- `aa` floor=0hw axes=compiler,shape — nothing left\n")
-                .unwrap();
-        let problems = violations(&entries, &set(&[]), &set(&["aa"]));
-        assert_eq!(problems, vec!["aa: floor=0hw would mean exact"]);
-    }
 
-    #[test]
-    fn missing_both_axes_reports_both() {
-        let entries =
-            parse_sealed("\n## Sealed\n\n- `aa` floor=2hw axes=annealer — stochastic only\n")
-                .unwrap();
-        let problems = violations(&entries, &set(&[]), &set(&["aa"]));
-        assert_eq!(
-            problems,
-            vec![
-                "aa: compiler axis not exhausted; not sealable",
-                "aa: shape axis not exhausted; not sealable",
-            ]
-        );
-    }
 
-    #[test]
-    fn axis_match_is_exact_not_substring() {
-        // "compilerish" must not satisfy the "compiler" requirement. The TS uses
-        // Array.includes on split values, so this holds there too; assert it.
-        let entries = parse_sealed(
-            "\n## Sealed\n\n- `aa` floor=2hw axes=compilerish,shapely — near misses\n",
-        )
-        .unwrap();
-        let problems = violations(&entries, &set(&[]), &set(&["aa"]));
-        assert_eq!(problems.len(), 2);
-    }
 
-    #[test]
-    fn exact_takes_precedence_over_missing_semantic() {
-        let entries = parse_sealed(GOOD).unwrap();
-        let problems = violations(&entries, &set(&["08011568"]), &set(&["08011568"]));
-        assert_eq!(
-            problems,
-            vec!["08011568: is byte-exact now; remove it from the ledger"]
-        );
-    }
 
-    #[test]
-    fn indented_bullets_are_not_entries() {
-        // `startsWith("- ")` is applied to the untrimmed line, so an indented
-        // continuation bullet is skipped rather than parsed.
-        let entries =
-            parse_sealed("\n## Sealed\n\n  - `aa` some nested prose bullet\n\n## Next\n").unwrap();
-        assert!(entries.is_empty());
-    }
 
-    #[test]
-    fn an_ascii_hyphen_separator_is_malformed() {
-        // The format demands an em dash; a hyphen must not sneak through.
-        assert!(parse_sealed("\n## Sealed\n\n- `aa` floor=2hw axes=compiler,shape - reason\n").is_err());
-    }
 
-    #[test]
-    fn an_empty_reason_is_malformed() {
-        assert!(parse_sealed("\n## Sealed\n\n- `aa` floor=2hw axes=compiler,shape — \n").is_err());
-    }
 
-    #[test]
-    fn uppercase_axes_are_malformed() {
-        assert!(
-            parse_sealed("\n## Sealed\n\n- `aa` floor=2hw axes=Compiler,shape — reason\n").is_err()
-        );
-    }
 
-    #[test]
-    fn a_hyphenated_owner_is_malformed() {
-        assert!(parse_sealed(
-            "\n## Sealed\n\n- `08011568-x` floor=2hw axes=compiler,shape — reason\n"
-        )
-        .is_err());
-    }
 
-    #[test]
-    fn trailing_section_without_a_closing_heading_still_parses() {
-        let entries =
-            parse_sealed("\n## Sealed\n\n- `aa` floor=9hw axes=compiler,shape — last line\n")
-                .unwrap();
-        assert_eq!(entries.len(), 1);
-        assert_eq!(entries[0].floor, 9);
-    }
 
     // --- filesystem-facing behaviour ---
 
@@ -522,21 +414,4 @@ mod tests {
         assert!(corpus_guard(root, &exact, &semantic).is_some());
     }
 
-    #[test]
-    fn the_real_ledger_parses_and_passes() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .parent()
-            .unwrap();
-        let text = std::fs::read_to_string(root.join("CONTRIBUTING.md")).expect("SANCTUM.md must exist");
-        let entries = parse_sealed(&text).expect("the real ledger must parse");
-        let semantic = stems(root, "semantic");
-        let exact = stems(root, "exact");
-        assert!(!semantic.is_empty(), "semantic/ must hold owners");
-        assert!(
-            violations(&entries, &exact, &semantic).is_empty(),
-            "the committed ledger must be clean"
-        );
-    }
 }

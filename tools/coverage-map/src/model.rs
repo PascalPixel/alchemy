@@ -16,7 +16,13 @@ pub const CATEGORY_ORDER: [&str; 5] = [
     "asset_data",
 ];
 
-pub const ASSET_TIERS: [&str; 4] = ["asset_bytes", "asset_bw", "asset_color", "asset_objects"];
+pub const ASSET_TIERS: [&str; 5] = [
+    "asset_bytes",
+    "asset_bw",
+    "asset_color",
+    "asset_extracted",
+    "asset_objects",
+];
 
 /// One drawable leaf: a byte run of the image with its category composition.
 #[derive(Clone, Debug, Default)]

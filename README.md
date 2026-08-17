@@ -83,16 +83,23 @@ in the cyan band.
 
 ### Images and data
 
-This map covers 6,735,557 bytes of graphics, maps, text, and other data as they
-are converted into understood and reusable assets.
+This map covers 6,735,557 bytes of graphics, maps, text, and other data.
+**Named** is the finished form: a standalone file whose name says what it
+is, like `vale_night.png`, `rock_front.png`, `isaac_running_south_west.png`
+or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
+ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
+same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=2f6753d9)
 
 ### Music and sound
 
 This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
+The finished form is `growl.wav`, `good_morning.mid` and `alchemy.sf2`.
+Nothing has reached it yet: the tree holds `sfx_272. sound_272.mid` and
+unnamed PCM indexed by ROM address, so Named reads 0.0%.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0d43be12)
 
 ## Contributing and project status
 

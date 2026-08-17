@@ -33,6 +33,28 @@ name = "cache-entry"
 version = "0.1.0"
 
 [[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "alchemy-plan",
+ "alchemy-routing",
+ "alchemy-symbols",
+ "decomp-targets",
+]
+
+[[package]]
+name = "candidate-show"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+ "candidate-compiler",
+]
+
+[[package]]
+name = "decomp-targets"
+version = "0.1.0"
+
+[[package]]
 name = "discover"
 version = "0.1.0"
 
@@ -44,6 +66,7 @@ version = "0.1.0"
 name = "overlay-candidate-rank"
 version = "0.1.0"
 dependencies = [
+ "candidate-show",
  "exact-reading-list",
  "overlay-disasm",
 ]

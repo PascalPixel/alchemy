@@ -675,16 +675,16 @@ executable runs), sorted largest to smallest. Broader multi-owner campaign cuts
 belong in [Status](#status); they may overlap and therefore are not used for
 byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 2,139
+- **Unfinished scopes:** 2,132
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 997,476 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 346,118 Exact C or audited permanent assembly bytes
+- **Target bytes:** 996,094 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 347,500 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (227 rows). The complete
-2,139-row index, including the smallest audited owners, is
+2,132-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

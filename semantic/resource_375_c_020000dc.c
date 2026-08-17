@@ -28,13 +28,38 @@
  * channel or slot selector, likewise unnamed.  Func_0808a170 is reached with
  * one argument at all four of its sites and Func_0808a180 with two at both of
  * its, so the varying-arity caveat does not bite inside this owner.
+ *
+ * WHAT IS STILL WRONG, and why this row's score got worse rather than better.
+ * An earlier draft assigned `line` in the flag-set arm, where it is never read,
+ * and read it UNINITIALISED in the other -- so gcc had no value to fold and
+ * emitted a shape that scored 15 differing halfwords at 144 bytes.  That number
+ * was an artefact of undefined behaviour, not evidence of a near-miss, and
+ * ranking by it would send the next reader at an owner that is nowhere near.
+ *
+ * Two readings here are proved by the bytes.  The reference tests
+ * Func_02001b4a's result with a bare `cmp r0, #0` and never truncates it, so the
+ * interface is wider than the `u8` it was declared: `lsls r0, r0, #24` was our
+ * extension, not the ROM's.  And the reference loads 0xf76 into r5 inside the
+ * else arm and derives the other two ids with `adds r0, r5, #1` and `#2`, so
+ * `line` is initialised there and held across the calls -- which is what the
+ * three consecutive ids in the behaviour note already said.
+ *
+ * With both corrections the row is 152 bytes against 148 and 60 halfwords out.
+ * Every well-defined spelling tried lands on the same 152: initialised at the
+ * declaration, assigned before the first call, assigned in the else arm, the
+ * three ids written as explicit constants, compound increments before each call,
+ * a separate local for the derived id, and `volatile` (160).  All of them let
+ * gcc fold 0xf77 and 0xf78 into their own pool words, where the reference keeps
+ * one word and adds to it.  Closing this needs whatever source keeps that base
+ * un-folded, and it is not any of the above.
  */
 
 /* Imports, old-style: arities are established per call site, not globally, and
  * the same name can take different argument counts elsewhere in this overlay.
- * Func_080770c0 and Func_0808a070 are tested, so they need return types. */
+ * Func_080770c0 and Func_0808a070 are tested, so they need return types.
+ * Func_02001b4a is s32 and not u8: the reference never truncates its result. */
 void Func_02001b64();
-u8 Func_02001b4a();
+s32 Func_02001b4a();
 void Func_02001c1c();
 void Func_02001c34();
 void Func_02001c2e();

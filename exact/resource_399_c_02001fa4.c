@@ -140,9 +140,9 @@ void Func_02001fa4(void)
         probe[1] = subject->y;
         probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
         z = probe[2];
+        x = probe[0];
         subject_id = (u8 *)subject;
         subject_id += 34;
-        x = probe[0];
         goal = Func_0200420c((s32)*subject_id, x, z);
         /* movs r0,#0x80 / lsls r0,#13 builds 0x100000.  The probe block is
          * passed by address and is advanced by the callee. */

@@ -102,15 +102,22 @@ the fact was obtained, so it stays. This table says where to find the tool.
 | `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
 | `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
 
-Activate the hooks once per clone:
+Activate the hooks and the generated-file merge driver once per clone:
 
 ```bash
 git config core.hooksPath .hooks
+git config merge.generated.driver true
 ```
 
 `pre-commit` runs the publication gate over the staged change, `commit-msg`
 validates the progress prefix in your subject, and `pre-push` re-runs the
 publication gate over every outgoing commit.
+
+The second line resolves `.gitattributes`'s generated artifacts by keeping your
+side of a merge, because neither side is correct once both branches have adopted
+owners. Regenerate afterwards; `make verify` fails on a stale artifact, so a
+forgotten regeneration cannot reach a commit. Without the line git falls back to
+an ordinary conflict, which is safe and merely tedious.
 
 ---
 
@@ -291,6 +298,30 @@ cargo run --release --manifest-path tools/overlay/Cargo.toml -- audit --all
 `park` restores a row's assembly and moves its C to `semantic/`. `audit`
 compares every adopted row against the bytes it replaced and names any that no
 longer reproduce.
+
+### Merging another branch, or main back into yours
+
+Every branch that adopts an owner rewrites the same generated artifacts, so a
+merge between two working branches conflicts on all of them and neither side is
+right afterwards. Do not resolve them by choosing:
+
+```bash
+git merge main
+# generated artifacts resolve themselves; CONTRIBUTING.md and README.md may not
+make coverage      # regenerate the Targets section, figures and metrics
+make verify        # refuses a stale artifact, so this is the proof
+overlay audit --all
+```
+
+`CONTRIBUTING.md` and `README.md` still conflict, in the Targets counts and the
+figure hashes. Take either side there and let `make coverage` correct it; the
+prose around them is hand-written and merges normally, which is exactly why
+those two are not auto-resolved.
+
+Run `overlay audit --all` after a merge that brought in adoptions from both
+sides. It compares every adopted row against the bytes it replaced, which is the
+one check that a merged tree has not silently broken an owner neither branch
+touched.
 
 ### 6. When an owner will not converge
 

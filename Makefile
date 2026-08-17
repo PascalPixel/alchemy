@@ -307,6 +307,12 @@ verify:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-superseded --check
 	$(MAKE) check-owners
 	$(MAKE) progress-check
+	@# The coverage map, the Targets section, the README figures and the SVGs are
+	@# generated too, and were NOT gated here. That was survivable while they only
+	@# went stale by forgetting `make coverage`; it is not once .gitattributes
+	@# auto-resolves them on merge, because then a stale artifact is the silent
+	@# default rather than a conflict someone has to look at.
+	$(MAKE) coverage-check
 
 # The axe stays swung: the files that DEFINE compiler options must remain
 # byte-identical to pristine gcc 2.96. An invented option cannot be routed if it

@@ -213,14 +213,37 @@ fn has(table: &'static [&'static str], value: &str) -> bool {
     set(table).contains(value)
 }
 
+/// The same cache, keyed by the table's address, but holding each entry's
+/// FILE STEM rather than its path.
+fn stem_set(table: &'static [&'static str]) -> &'static HashSet<String> {
+    static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<String>>>> =
+        OnceLock::new();
+    let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
+    let key = table.as_ptr() as usize;
+    let mut guard = cache.lock().expect("routing cache is not poisoned");
+    guard.entry(key).or_insert_with(|| {
+        let built: HashSet<String> = table.iter().map(|entry| source_stem(entry)).collect();
+        Box::leak(Box::new(built))
+    })
+}
+
+/// Overlay routing follows the OWNER, not the directory its C currently sits
+/// in. `exact/` and `semantic/` are two homes for the same owner, and `adopt`
+/// and `park` move the file between them, so an entry written `exact/<owner>.c`
+/// has to keep routing that owner after a park. `source_key` is a repo-relative
+/// path and silently stops matching, which drops the owner's sanctioned stock
+/// flags and leaves it compiling as something it never was -- the bytes then
+/// differ for a reason that is not in the source at all.
+fn has_owner(table: &'static [&'static str], source: &str) -> bool {
+    stem_set(table).contains(&source_stem(source))
+}
+
 /// `cflagsForSource`. The order of the appended flags is load-bearing: later
 /// options win in the driver, and the routed command line for already-verified
 /// regions must not be rewritten.
 pub fn cflags_for_source(source: &str) -> Vec<String> {
     let stem = overlay_stem(source);
     let stem = stem.as_str();
-    let key = source_key(source);
-    let key = key.as_str();
 
     // pret shape. One base flag set, a small number of per-file overrides, and
     // every override a STOCK gcc 2.96 option.
@@ -237,7 +260,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     // the source, where it can be found and fixed, instead of hidden behind a
     // switch.
     let mut out: Vec<String> =
-        if has(NO_INTERWORK_SOURCES, stem) || has(NO_INTERWORK_OVERLAY_SOURCES, key) {
+        if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) {
             cflags()
                 .into_iter()
                 .filter(|f| f != "-mthumb-interwork")
@@ -245,6 +268,12 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
         } else {
             cflags()
         };
+
+    // Subtracted, not added: the soft-float library leaves take the stock ABI
+    // with r4 callee-saved, so the base set's `-fcall-used-r4` comes back off.
+    if has_owner(CALLEE_SAVED_R4_OVERLAY_SOURCES, source) {
+        out.retain(|f| f != "-fcall-used-r4");
+    }
 
     macro_rules! push {
         ($flags:expr) => {
@@ -261,13 +290,13 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(OPTIMIZE_OS_SOURCES, stem) {
         push!(&["-Os"]);
     }
-    if has(OPTIMIZE_O3_OVERLAY_SOURCES, key) {
+    if has_owner(OPTIMIZE_O3_OVERLAY_SOURCES, source) {
         push!(&["-O3"]);
     }
     if has(UNSCHEDULED_SOURCES, stem) {
         push!(&["-fno-schedule-insns", "-fno-schedule-insns2"]);
     }
-    if has(UNSCHEDULED_OVERLAY_SOURCES, key) {
+    if has_owner(UNSCHEDULED_OVERLAY_SOURCES, source) {
         push!(&["-fno-schedule-insns2"]);
     }
     if has(NO_CSE_FOLLOW_SOURCES, stem) {
@@ -279,7 +308,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_GCSE_SOURCES, stem) {
         push!(&["-fno-gcse"]);
     }
-    if has(NO_GCSE_OVERLAY_SOURCES, key) {
+    if has_owner(NO_GCSE_OVERLAY_SOURCES, source) {
         push!(&["-fno-gcse"]);
     }
     if has(NO_EXPENSIVE_SOURCES, stem) {
@@ -291,7 +320,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(NO_REGMOVE_SOURCES, stem) {
         push!(&["-fno-regmove"]);
     }
-    if has(OPTIMIZE_O1_OVERLAY_SOURCES, key) {
+    if has_owner(OPTIMIZE_O1_OVERLAY_SOURCES, source) {
         push!(&["-O1"]);
     }
     if has(NO_OPTIMIZE_SIBLING_CALLS_SOURCES, stem) {
@@ -300,25 +329,25 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     if has(SCHED2_OFF_THUMB_SOURCES, stem) {
         push!(&["-fno-schedule-insns2"]);
     }
-    if has(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES, key) {
+    if has_owner(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES, source) {
         push!(&["-fno-rerun-cse-after-loop"]);
     }
-    if has(NO_THREAD_JUMPS_OVERLAY_SOURCES, key) {
+    if has_owner(NO_THREAD_JUMPS_OVERLAY_SOURCES, source) {
         push!(&["-fno-thread-jumps"]);
     }
-    if has(NO_EXPENSIVE_OVERLAY_SOURCES, key) {
+    if has_owner(NO_EXPENSIVE_OVERLAY_SOURCES, source) {
         push!(&["-fno-expensive-optimizations"]);
     }
-    if has(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES, key) {
+    if has_owner(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES, source) {
         push!(&["-fno-cse-follow-jumps", "-fno-cse-skip-blocks"]);
     }
-    if has(NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES, key) {
+    if has_owner(NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES, source) {
         push!(&["-fno-cse-skip-blocks"]);
     }
-    if has(NO_STRICT_ALIASING_OVERLAY_SOURCES, key) {
+    if has_owner(NO_STRICT_ALIASING_OVERLAY_SOURCES, source) {
         push!(&["-fno-strict-aliasing"]);
     }
-    if has(FIXED_R7_OVERLAY_SOURCES, key) {
+    if has_owner(FIXED_R7_OVERLAY_SOURCES, source) {
         push!(&["-ffixed-r7"]);
     }
 

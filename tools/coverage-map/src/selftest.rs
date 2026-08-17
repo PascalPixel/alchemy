@@ -461,7 +461,7 @@ fn erase_refusals() -> Result<(), String> {
 fn self_test_tiles() -> Vec<Tile> {
     vec![
         tile("a", 60, &[("exact_c", 30), ("retained_asm", 30)]),
-        tile("b", 40, &[("semantic_c", 40)]),
+        tile("b", 40, &[("assembly", 40)]),
     ]
 }
 
@@ -546,8 +546,11 @@ fn layout_and_tiles() -> Result<(), String> {
     refuse(
         category_total(&overlay_classification, "exact_c") != 20
             || category_total(&overlay_classification, "semantic_c") != 20
-            || category_total(&overlay_classification, "retained_asm") != 60
-            || category_total(&overlay_classification, "assembly") != 0
+            // 20 retained, not 60. The 40 bytes with no owner at all used to
+            // be swept into the retained bucket, which credited undecompiled
+            // overlay code as permanent assembly.
+            || category_total(&overlay_classification, "retained_asm") != 20
+            || category_total(&overlay_classification, "assembly") != 40
             || overlay_classification
                 .iter()
                 .map(|tile| tile.bytes)
@@ -675,7 +678,8 @@ fn renderers(map: &CoverageMap) -> Result<(), String> {
     )?;
     refuse(
         !box_tree.contains("Exact C 30.0%")
-            || !box_tree.contains("Semantic 40.0%")
+            // Assembly still to reconstruct is the ground, not a legend row.
+            || box_tree.contains("Semantic")
             || !box_tree.contains("Permanent ASM 30.0%")
             || box_tree.contains("Unknown"),
         "box-tree title or legend is missing from the reproducible SVG",
@@ -684,16 +688,16 @@ fn renderers(map: &CoverageMap) -> Result<(), String> {
         !box_tree.contains("DONE 60.0%") || !box_tree.contains("dominant-baseline=\"middle\""),
         "box-tree completion or vertically centred legend is missing",
     )?;
-    let legend_order: Vec<Option<usize>> =
-        ["Semantic 40.0%", "Permanent ASM 30.0%", "Exact C 30.0%"]
-            .iter()
-            .map(|legend| box_tree.find(&format!(">{legend}</text>")))
-            .collect();
+    // Permanent assembly, then exact C. The row between them was Semantic.
+    let legend_order: Vec<Option<usize>> = ["Permanent ASM 30.0%", "Exact C 30.0%"]
+        .iter()
+        .map(|legend| box_tree.find(&format!(">{legend}</text>")))
+        .collect();
     let ascending = legend_order.iter().all(Option::is_some)
         && legend_order.windows(2).all(|pair| pair[0] < pair[1]);
     refuse(
         !ascending,
-        "box-tree legend no longer runs from semantic through assembly to exact",
+        "box-tree legend no longer runs from permanent assembly to exact",
     )?;
     refuse(
         !box_tree.contains("viewBox=\"0 0 540 304\"")

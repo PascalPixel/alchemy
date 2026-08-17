@@ -160,15 +160,25 @@ pub fn commas(value: f64) -> Result<String, String> {
     Ok(crate::js::commas(value as i64))
 }
 
-/// The subject prefix is the nearest whole Exact-C share, with a half-percent
-/// tie rounding toward +∞. It deliberately never uses the public DONE share.
-pub fn format_subject(full_c_bytes: f64, executable_bytes: f64) -> Result<String, String> {
-    if full_c_bytes > executable_bytes {
-        return Err("Full-C numerator exceeds executable denominator".to_string());
+/// The subject prefix is the nearest whole DONE share -- exact C plus permanent
+/// assembly -- with a half-percent tie rounding toward +∞.
+///
+/// It was the Exact-C share alone until 2026-08. The sun reads as the project's
+/// headline and the headline is DONE, so a subject that said 20% beside a
+/// README that said 36% was one number pretending to be the other. Pass
+/// `permanent_bytes` from `categories.retained_asm.bytes` in the coverage map.
+pub fn format_subject(
+    full_c_bytes: f64,
+    permanent_bytes: f64,
+    executable_bytes: f64,
+) -> Result<String, String> {
+    let done = full_c_bytes + permanent_bytes;
+    if done > executable_bytes {
+        return Err("DONE numerator exceeds executable denominator".to_string());
     }
     Ok(format!(
         "\u{2600}\u{fe0f} {}% –",
-        nearest_whole_percent(full_c_bytes, executable_bytes)? as i64
+        nearest_whole_percent(done, executable_bytes)? as i64
     ))
 }
 
@@ -351,7 +361,7 @@ mod tests {
     #[test]
     fn subject_round_trips_and_rejects_legacy_markers() {
         assert_eq!(
-            format_subject(123456.0, 1234567.0).unwrap(),
+            format_subject(123456.0, 0.0, 1234567.0).unwrap(),
             "\u{2600}\u{fe0f} 10% –"
         );
         let parsed = parse_subject("\u{2600}\u{fe0f} 10% – decomp: x")
@@ -372,7 +382,9 @@ mod tests {
                 "{invalid} should not parse to a subject"
             );
         }
-        assert!(format_subject(2000.0, 1000.0).is_err());
+        assert!(format_subject(2000.0, 0.0, 1000.0).is_err());
+        // DONE is the sum, so permanence alone can overflow the denominator too.
+        assert!(format_subject(600.0, 600.0, 1000.0).is_err());
     }
 
     #[test]

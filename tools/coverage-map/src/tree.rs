@@ -238,7 +238,7 @@ mod tests {
         let tree = work_tree();
         assert_eq!(tree.id(), "worktree");
         let listing = tree.list("metrics");
-        assert!(listing.contains(&"README.md".to_string()));
+        assert!(listing.contains(&"gs1-en-coverage-map.json".to_string()));
         let sorted = {
             let mut copy = listing.clone();
             copy.sort_by(|left, right| utf16_cmp(left, right));
@@ -248,7 +248,7 @@ mod tests {
             listing, sorted,
             "listings are sorted like readdirSync(...).sort()"
         );
-        assert!(tree.read("metrics/README.md").is_some());
+        assert!(tree.read("metrics/gs1-en-coverage-map.json").is_some());
         assert!(tree.read("metrics/does-not-exist.json").is_none());
         assert!(tree.list("metrics/does-not-exist").is_empty());
     }
@@ -267,7 +267,7 @@ mod tests {
         );
         // A trailing slash is stripped before lookup.
         assert_eq!(tree.list("asm/"), asm);
-        assert!(tree.read("metrics/README.md").is_some());
+        assert!(tree.read("metrics/gs1-en-coverage-map.json").is_some());
         assert!(tree.read("metrics/does-not-exist.json").is_none());
     }
 

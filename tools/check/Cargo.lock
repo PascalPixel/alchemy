@@ -106,9 +106,6 @@ dependencies = [
  "music-residuals",
  "no-asm-c",
  "route-dump",
- "semantic-owner-scope",
- "semantic-queue",
- "semantic-superseded",
  "source-citations",
  "symbols",
 ]
@@ -312,24 +309,6 @@ version = "0.1.0"
 dependencies = [
  "alchemy-routing",
 ]
-
-[[package]]
-name = "semantic-owner-scope"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "semantic-queue"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "semantic-superseded"
-version = "0.1.0"
 
 [[package]]
 name = "serde"

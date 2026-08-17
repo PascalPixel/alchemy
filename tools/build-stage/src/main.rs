@@ -38,7 +38,6 @@ fn main() -> ExitCode {
         "claimed" => { build_claimed::cli::entry(&rest); ExitCode::SUCCESS }
         "full" => match build_full::cli::run(&rest) { 0 => ExitCode::SUCCESS, _ => ExitCode::FAILURE },
         "rom" => { build_rom::cli::entry(&rest); ExitCode::SUCCESS }
-        "semantic" => { build_semantic::cli::entry(&rest); ExitCode::SUCCESS }
         other => { eprintln!("unknown build stage: {other}\n\n{USAGE}"); list(); ExitCode::from(2) }
     }
 }

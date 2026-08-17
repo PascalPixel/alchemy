@@ -10,7 +10,6 @@ build-asm = { path = "../build-asm" }
 build-claimed = { path = "../build-claimed" }
 build-full = { path = "../build-full" }
 build-rom = { path = "../build-rom" }
-build-semantic = { path = "../build-semantic" }
 
 # `build` is a forbidden binary name: cargo reserves it for build directories.
 [[bin]]

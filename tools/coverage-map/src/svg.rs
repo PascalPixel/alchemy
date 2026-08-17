@@ -43,11 +43,6 @@ pub fn category_style(category: &str) -> &'static CategoryStyle {
         ink: "#eaf2ff",
         label: "byte-exact C",
     };
-    const SEMANTIC: CategoryStyle = CategoryStyle {
-        fill: "#ededed",
-        ink: "#333333",
-        label: "semantic C",
-    };
     const ASSEMBLY: CategoryStyle = CategoryStyle {
         fill: "#333333",
         ink: "#a1a1a1",
@@ -65,7 +60,6 @@ pub fn category_style(category: &str) -> &'static CategoryStyle {
     };
     match category {
         "exact_c" => &EXACT,
-        "semantic_c" => &SEMANTIC,
         "retained_asm" => &RETAINED,
         "asset_data" => &ASSET,
         _ => &ASSEMBLY,
@@ -399,7 +393,7 @@ fn category_bar(map: &CoverageMap, frame: Rect, lines: &mut Vec<String>) {
     lines.push(rect_tag(frame, HAIRLINE, &RectOptions::default()));
     let executable = document_number(map, &["executable_bytes"]);
     let mut cursor = frame.x;
-    for category in ["exact_c", "semantic_c", "assembly", "retained_asm"] {
+    for category in ["exact_c", "assembly", "retained_asm"] {
         let bytes = document_number(map, &["categories", category, "bytes"]);
         let category_width = frame.width * (bytes / executable);
         lines.push(rect_tag(
@@ -445,16 +439,15 @@ pub fn render_svg(map: &CoverageMap) -> Result<String, String> {
     let margin = 32.0f64;
     let mut lines: Vec<String> = Vec::new();
     let exact_bytes = document_number(map, &["categories", "exact_c", "bytes"]);
-    let semantic_bytes = document_number(map, &["categories", "semantic_c", "bytes"]);
     let executable = document_number(map, &["executable_bytes"]);
     let rom_bytes = document_number(map, &["rom_bytes"]);
-    let combined = exact_bytes + semantic_bytes;
+    let combined = exact_bytes;
     let combined_percent = js_number_string(crate::intervals::round_half_up_percent(
         combined, executable,
     )?);
 
     lines.push(format!(
-        "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {w} {h}\" width=\"{w}\" height=\"{h}\" font-family=\"{SANS}\" role=\"img\" aria-label=\"Coverage treemap of the English Golden Sun ROM image: {combined_percent}% of the {executable_commas} audited executable bytes are expressed as C\">",
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {w} {h}\" width=\"{w}\" height=\"{h}\" font-family=\"{SANS}\" role=\"img\" aria-label=\"Coverage treemap of the English Golden Sun ROM image: {combined_percent}% of the {executable_commas} audited executable bytes are byte-exact C\">",
         w = js_number_string(width),
         h = js_number_string(height),
         executable_commas = commas(executable),
@@ -509,7 +502,7 @@ pub fn render_svg(map: &CoverageMap) -> Result<String, String> {
     lines.push(label_tag(
         width - margin,
         64.0,
-        "EXACT + SEMANTIC C",
+        "BYTE-EXACT C",
         &LabelOptions {
             size: Some(9.5),
             fill: Some(MUTED),
@@ -531,7 +524,6 @@ pub fn render_svg(map: &CoverageMap) -> Result<String, String> {
             format!("{}%", percent("exact_c")),
             Some("FULL-C BYTE SHARE"),
         ),
-        ("semantic_c", format!("{}%", percent("semantic_c")), None),
         ("assembly", format!("{}%", percent("assembly")), None),
         (
             "retained_asm",
@@ -636,9 +628,8 @@ pub fn render_svg(map: &CoverageMap) -> Result<String, String> {
         width - margin,
         height - 20.0,
         &format!(
-            "exact C: {} · semantic C: {}",
+            "exact C: {}",
             document_string(map, &["provenance", "exact_source"]),
-            document_string(map, &["provenance", "semantic_source"]),
         ),
         &LabelOptions {
             size: Some(9.5),

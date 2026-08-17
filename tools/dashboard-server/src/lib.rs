@@ -11,7 +11,6 @@ pub mod clock;
 pub mod events;
 pub mod http;
 pub mod jsonout;
-pub mod matches;
 pub mod paths;
 pub mod routes;
 pub mod selftest;

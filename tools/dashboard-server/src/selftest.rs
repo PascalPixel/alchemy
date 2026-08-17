@@ -25,7 +25,7 @@ fn sum_of(values: impl Iterator<Item = i64>) -> i64 {
 
 pub fn self_test() -> Result<String, String> {
     if !affects_coverage("assets/code/resource_373_overlay.s")
-        || !affects_coverage("semantic/example.c")
+        || !affects_coverage("semantic/regions.json")
         || affects_coverage("tools/dashboard-server/src/assets.rs")
     {
         return Err("dashboard coverage-path filter failed".to_string());
@@ -115,14 +115,12 @@ pub fn self_test() -> Result<String, String> {
         || !tree_svg("music").contains("fill=\"#c85d00\"")
         || !tree_svg("core").contains("fill=\"#7dd3fc\"")
         || !tree_svg("overlays").contains("fill=\"#7dd3fc\"")
-        || !tree_svg("core").contains("id=\"byte-match-ramp\"")
-        || !tree_svg("overlays").contains("id=\"byte-match-ramp\"")
         || BOX_TREES
             .iter()
             .any(|name| !tree_svg(name).contains("font-family:Weyard;font-size:16px"))
     {
         return Err(
-            "dashboard SVGs lost their shared palette, C-match ramp, or 16px Weyard chrome"
+            "dashboard SVGs lost their shared palette or 16px Weyard chrome"
                 .to_string(),
         );
     }
@@ -202,8 +200,8 @@ mod tests {
             "executableBytes",
             "exactBytes",
             "exactPercent",
-            "semanticBytes",
-            "combinedBytes",
+            "retainedBytes",
+            "doneBytes",
         ] {
             assert!(text.contains(key), "missing {key} in {text}");
         }

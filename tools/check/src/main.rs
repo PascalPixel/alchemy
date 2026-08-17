@@ -18,13 +18,10 @@ const COMMANDS: &[(&str, &str)] = &[
     ("extract-resource", "extract resource"),
     ("late-runtime-data", "late runtime data"),
     ("music-residuals", "music residuals"),
-    ("semantic-owner-scope", "semantic owner scope"),
-    ("semantic-superseded", "semantic superseded"),
     ("source-citations", "source citations"),
     ("cache-key-lint", "cache key lint"),
     ("no-asm-c", "no asm c"),
     ("compare-roms", "compare roms"),
-    ("semantic-queue", "semantic queue"),
     ("lang-ban", "lang ban"),
     ("check-commit-progress", "check commit progress"),
     ("coverage-map", "refresh the dashboard coverage maps"),
@@ -68,7 +65,6 @@ fn main() -> ExitCode {
         "lang-ban" => lang_ban::cli::entry(&rest),
         "check-commit-progress" => check_commit_progress::cli::entry(&rest),
         "compare-roms" => { compare_roms::cli::entry(&rest); ExitCode::SUCCESS }
-        "semantic-queue" => { semantic_queue::cli::entry(&rest); ExitCode::SUCCESS }
         "cache-key-lint" => cache_key_lint::cli::entry(&rest),
         "no-asm-c" => no_asm_c::cli::entry(&rest),
         "cache-entry" => cache_entry::cli::entry(&rest),
@@ -83,8 +79,6 @@ fn main() -> ExitCode {
         "extract-resource" => extract_resource::cli::entry(&rest),
         "late-runtime-data" => late_runtime_data::cli::entry(&rest),
         "music-residuals" => music_residuals::cli::entry(&rest),
-        "semantic-owner-scope" => semantic_owner_scope::cli::entry(&rest),
-        "semantic-superseded" => semantic_superseded::cli::entry(&rest),
         "source-citations" => source_citations::cli::entry(&rest),
         other => {
             eprintln!("unknown check command: {other}\n\n{USAGE}"); list(); ExitCode::from(2)
@@ -126,5 +120,5 @@ fn self_test() -> ExitCode {
 }
 
 fn dispatchable(name: &str) -> bool {
-    matches!(name, "alchemy-lints" | "architecture" | "byte-value-regions" | "cache-entry" | "cache-key-lint" | "check-commit-progress" | "check-publication" | "check-unmatchable" | "compare-roms" | "core-retained-audit" | "coverage-map" | "decomp-constraints" | "decomp-targets" | "discover" | "executable-gap-sources" | "extract-resource" | "full-c-history" | "integrate-matches" | "jobs" | "lang-ban" | "late-runtime-data" | "localization-tables" | "music-residuals" | "no-asm-c" | "progress" | "route-dump" | "semantic-owner-scope" | "semantic-queue" | "semantic-superseded" | "source-citations" | "symbols")
+    matches!(name, "alchemy-lints" | "architecture" | "byte-value-regions" | "cache-entry" | "cache-key-lint" | "check-commit-progress" | "check-publication" | "check-unmatchable" | "compare-roms" | "core-retained-audit" | "coverage-map" | "decomp-constraints" | "decomp-targets" | "discover" | "executable-gap-sources" | "extract-resource" | "full-c-history" | "integrate-matches" | "jobs" | "lang-ban" | "late-runtime-data" | "localization-tables" | "music-residuals" | "no-asm-c" | "progress" | "route-dump" | "source-citations" | "symbols")
 }

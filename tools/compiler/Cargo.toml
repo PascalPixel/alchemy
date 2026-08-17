@@ -12,6 +12,7 @@ shape-sweep = { path = "../shape-sweep" }
 thumb-disasm = { path = "../thumb-disasm" }
 candidate-show = { path = "../candidate-show" }
 candidate-explain = { path = "../candidate-explain" }
+main-candidate-rank = { path = "../main-candidate-rank" }
 rtl-insn = { path = "../rtl-insn" }
 rtl-sexpr = { path = "../rtl-sexpr" }
 rtl-schedule = { path = "../rtl-schedule" }

@@ -24,9 +24,24 @@
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.
  */
 
-/* Old-style declarations: overlay import arities are not fixed per name. */
-u8 *Func_0808a080();
-u8 Func_0200007c();
+/*
+ * Old-style declarations: overlay import arities are not fixed per name.
+ *
+ * Each site names the veneer IT reaches, not the import behind it: the four
+ * calls here are Func_0808a080, Func_0200007c, Func_0808a080, Func_0200007c,
+ * and the reference reaches them through four DIFFERENT veneers.  Naming the
+ * import instead made the linker synthesise fresh ones and every `bl` missed.
+ * Same convention as 6e7d6a12e and exact/resource_371_c_0200037c.c, where one
+ * import reached from three sites carries three names.
+ *
+ * Func_0200026a is `void` because its result is discarded (b7c1a35a0).  That is
+ * byte-neutral here and kept as the truthful reading; widening the other two to
+ * s32 is NOT byte-neutral and costs 40 halfwords, so the u8 return stands.
+ */
+u8 *Func_02000f1e();
+u8 Func_0200022a();
+u8 *Func_02000f34();
+void Func_0200026a();
 
 s32 Func_02000170(u8 *self)
 {
@@ -39,11 +54,11 @@ s32 Func_02000170(u8 *self)
     u8 *player;
 
     /* Bit 0 of the actor's own flag halfword selects which partner to test. */
-    if (Func_0200007c(self, Func_0808a080((*flags & 1) ? 17 : 16), 32, 0) != 0) {
+    if (Func_0200022a(self, Func_02000f1e((*flags & 1) ? 17 : 16), 32, 0) != 0) {
         return 0;
     }
 
-    player = Func_0808a080(0);
+    player = Func_02000f34(0);
 
     /*
      * Widen the test when the scene counter at workspace + 376 is already
@@ -56,6 +71,6 @@ s32 Func_02000170(u8 *self)
         }
     }
 
-    Func_0200007c(self, player, range, force);
+    Func_0200026a(self, player, range, force);
     return 0;
 }

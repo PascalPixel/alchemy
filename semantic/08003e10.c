@@ -1,8 +1,15 @@
 /*
  * VENEER AUDIT NOTE (2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
  *
- * This file is byte-exact, so nothing below is rewritten.  The note records
- * what the call sites actually are, so the next reader is not misled.
+ * This file is NOT byte-exact and the note above once said it was.  It sits in
+ * semantic/ and scores 12 differing halfwords at the right size, 72 bytes, so
+ * whatever was true when the veneer audit was written stopped being true --
+ * most likely at the routing cut that parked several rows in this overlay.  The
+ * claim is corrected here rather than deleted, because a stale "byte-exact" in
+ * a source comment is read as a reason not to look.
+ *
+ * The residual is the store-merge shape described below, not the veneer
+ * question the rest of this note is about.  The veneer content still stands.
  *
  * 0x080072e4 begins the GCC `__call_via_rN` veneer bank: fifteen four-byte
  * `bx rN; nop` entries in register order r0..lr, ending at 0x08007320.  A
@@ -32,6 +39,31 @@ void Func_08002df0(void *);
 extern u8 Data_08001dc8;
 extern u8 Value_000000e0;
 
+/*
+ * WHY THIS ROW DOES NOT CLOSE.  The reference merges the three DMA writes into
+ * `stmia r3!, {r0, r1, r2}` followed by `subs r3, #12`, where this emits three
+ * separate `str`.  That peephole only fires when the three source registers
+ * ascend with the offsets they are stored to -- the reference has source in r0,
+ * destination in r1 and control in r2 -- and which register holds which value is
+ * the allocator's decision.
+ *
+ * Readings tried here and on 08004838, none of which fired it: the control word
+ * computed inside the block and outside it, first and last; no temporaries at
+ * all; a struct assigned field by field; a struct initialised at its
+ * declaration; either of those stored through a cast or through a pointer
+ * variable (all three struct forms spill to the stack and cost 8 bytes); a
+ * post-increment walk; indexed stores; the pointer declared first, last, and
+ * assigned separately; and the constants declared in both orders.
+ *
+ * This is not a local problem.  82 candidates across the main image differ from
+ * their reference by exactly this merge, 15,438 bytes in all, and 35 of them are
+ * DMA kicks like this one.  No byte-exact owner in the corpus writes 0x040000d4
+ * at all, and the retained-assembly classes already carry
+ * `deliberate_dma_kick_macro`, so the shape has never been reproduced from C
+ * here.  Whoever works out what makes the merge fire unlocks all 82 at once;
+ * until then this row is waiting on that, not on a better reading of its own
+ * behaviour.
+ */
 void Func_08003e10(s32 request)
 {
     u32 size = (u32)&Value_000000e0;

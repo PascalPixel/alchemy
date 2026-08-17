@@ -15,6 +15,9 @@ edition = "2021"
 exact-reading-list = { path = "../exact-reading-list" }
 #   ../lib/overlay_disasm.ts -> assembleOverlay, compileOverlayCandidate, OVERLAY_BASE
 overlay-disasm = { path = "../overlay-disasm" }
+# Shared with `overlay score`, so the bulk table and the single-owner view
+# never disagree about which residuals are worth reading.
+candidate-show = { path = "../candidate-show" }
 
 [lib]
 name = "overlay_candidate_rank"

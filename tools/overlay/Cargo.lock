@@ -182,6 +182,7 @@ dependencies = [
 name = "overlay-candidate-rank"
 version = "0.1.0"
 dependencies = [
+ "candidate-show",
  "exact-reading-list",
  "overlay-disasm",
 ]

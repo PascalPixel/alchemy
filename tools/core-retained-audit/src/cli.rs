@@ -105,7 +105,28 @@ fn run_check(json: bool) -> Result<ExitCode, String> {
         );
     }
     let spans = canonical_spans(&root, &executable)?;
-    let loaded = manifests(&root.join("out/full/asm/manifest.json"), &root.join("out/full/claimed/manifest.json"))?;
+    // A STALE MANIFEST READS AS A PASS. `build-full` writes these, and when it
+    // fails early -- a rejected `asm/classification.json`, for instance -- the
+    // previous run's manifests are still on disk. This audit then reports green
+    // over a tree that never built, which is how a false permanence claim
+    // survived a deliberate attempt to reproduce it.
+    let asm_manifest = root.join("out/full/asm/manifest.json");
+    let classification = root.join("asm/classification.json");
+    if let (Ok(manifest_meta), Ok(source_meta)) =
+        (std::fs::metadata(&asm_manifest), std::fs::metadata(&classification))
+    {
+        if let (Ok(built), Ok(edited)) = (manifest_meta.modified(), source_meta.modified()) {
+            if built < edited {
+                return Err(format!(
+                    "{} is older than {}: run `make build-full` before auditing, \
+                     because this audit would otherwise pass over the previous build",
+                    asm_manifest.display(),
+                    classification.display()
+                ));
+            }
+        }
+    }
+    let loaded = manifests(&asm_manifest, &root.join("out/full/claimed/manifest.json"))?;
     if loaded.asm.is_empty() || loaded.claimed.is_empty() {
         return Err(
             "core retained audit read an empty asm or claimed manifest — this is a FAILURE, not a pass"

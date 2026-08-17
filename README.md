@@ -50,20 +50,20 @@ The main game contains 548,364 executable bytes in the purple band.
 The game loads 96 additional code overlays containing 798,890 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=c2288d44)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=994ed26c)
 
 ### Images and data
 
 This map covers 6,735,557 bytes of graphics, maps, text, and other data as they
 are converted into understood and reusable assets.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=af050cbb)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=01eb15ee)
 
 ### Music and sound
 
 This map covers 563,198 bytes of music, samples, sequences, and soundfonts.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d62fa185)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=0de9466b)
 
 ## Contributing and project status
 

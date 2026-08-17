@@ -39,7 +39,7 @@ extern void Func_02001cc2(void);
 extern s32 Func_02001dd6();
 extern u8 *Func_02001e18();
 extern void Func_02001e06();
-extern void Func_02001ed6();
+extern s32 Func_02001ed6();
 extern void Func_02001db2();
 extern void Func_02001e26();
 extern void Func_02001d84();

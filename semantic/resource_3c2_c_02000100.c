@@ -47,7 +47,7 @@
  * overlay imports vary their argument count between call sites. */
 u8 *Func_02000c6c();
 void Func_02000d52();
-s32 Func_02000c68();
+u8 Func_02000c68();
 void Func_02000d02();
 void Func_02000d1a();
 void Func_02000d12();

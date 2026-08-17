@@ -27,7 +27,7 @@
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
 void Func_02001c04();
-void Func_02001cd4();
+s32 Func_02001cd4();
 void Func_02001cee();
 void Func_02001cfa();
 void Func_02001c20();

@@ -8,7 +8,7 @@ extern u8 *Data_03001f30;
 
 
 /* Configure the presentation layer and expose workspace feature 0x71c. */
-extern void Func_02001f70(s32 value, s32 mode);
+extern s32 Func_02001f70(s32 value, s32 mode);
 extern void Func_02001f80(s32 left, s32 right);
 extern void Func_02001fa0(void);
 extern void Func_02001f86(s32 enabled);

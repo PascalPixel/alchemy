@@ -27,7 +27,7 @@ extern u8 Data_0200a524[];
 u8 *Func_020000ec(void)
 {
     s16 scenario = Data_02000240[224];
-    s16 step;
+    s32 step;
 
     if (scenario == 0x13) {
         return Data_0200a2e4;

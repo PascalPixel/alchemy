@@ -14,7 +14,7 @@
 extern void Func_02001fd0(void);
 extern void Func_0200206e(int);
 extern void Func_02001d64(int,int,int);
-extern void Func_02002088(int,int);
+extern s32 Func_02002088(int,int);
 extern int Func_02002010(int,int);
 extern void Func_020020b4(int,int);
 extern void Func_020020d0(int,int,int);

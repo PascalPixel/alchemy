@@ -1,5 +1,5 @@
 #include "types.h"
-extern s32 Func_080770c0(s32 flagId);
+extern u8 Func_080770c0(s32 flagId);
 extern void Func_0808a038(const void *table);
 
 /* Complete 68-byte two-flag table selector through its five-word pool. */

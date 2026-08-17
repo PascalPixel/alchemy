@@ -32,8 +32,8 @@
  */
 
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
-s32 Func_02000f1c();
-s32 Func_02000f3e();
+u8 Func_02000f1c();
+u8 Func_02000f3e();
 s32 Func_02000f50();
 s32 Func_02000f5a();
 void Func_02000f9e();

@@ -1,7 +1,7 @@
 #include "types.h"
 struct EffectObject_020007d8 { u8 unknown_00[10]; s16 unkA; u8 unknown_0c[6]; s16 unk12; u8 unknown_14[0x41]; u8 mode55; u8 unknown_56[0x16]; s32 callback; };
 struct EffectObject_020007d8 *Func_0200568a();
-s32 Func_0200565a();
+u8 Func_0200565a();
 void Func_02005684();
 void Func_0200578a();
 s32 Func_02005712();
@@ -10,7 +10,7 @@ s32 Func_020056d8();
 void Func_02005676();
 void Func_020057fa();
 void Func_0200580e();
-void Func_0200583c();
+s32 Func_0200583c();
 void Func_02005702();
 void Func_02005794();
 void Func_020056b0();

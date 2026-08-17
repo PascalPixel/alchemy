@@ -26,7 +26,7 @@
 
 /* Old-style declarations: overlay import arities are not fixed per name. */
 u8 *Func_0808a080();
-s32 Func_0200007c();
+u8 Func_0200007c();
 
 s32 Func_02000170(u8 *self)
 {

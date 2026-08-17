@@ -3,7 +3,7 @@
 extern void Func_0808a018(void);
 extern u8 *Func_0808a080(s32 actorId);
 extern void Func_02000dd8(s32 actorId);
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
+extern s32 Func_080091c0(s32, s32, s32, s32, s32, s32);
 extern void Func_080770c8(s32 flag);
 extern void Func_0808a020(void);
 

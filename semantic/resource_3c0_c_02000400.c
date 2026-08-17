@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern s32 Func_080770c0(s32 flagId);
+extern s32 Func_080770c0(u8 flagId);
 extern s32 Func_080770e0(s32 counterId);
 extern void Func_080770e8(s32 counterId, s32 value);
 extern u8 *Func_0808a080(s32 actorId);

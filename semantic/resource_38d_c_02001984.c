@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern void Func_02003ef0(s32, s32, s32);
+extern s32 Func_02003ef0(s32, s32, s32);
 extern void Func_02003efc(s32, s32, s32);
 extern void Func_02003f08(s32, s32, s32);
 

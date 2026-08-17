@@ -34,7 +34,7 @@
 /* Raw per-site import labels preserve the relocated BL encodings. */
 s32 *Func_02003a96();
 s32 *Func_02003aa0();
-void Func_02003a78();
+s32 Func_02003a78();
 void Func_02003a88();
 
 void Func_02001624(void)

@@ -43,8 +43,8 @@
  */
 
 struct RegWriteQueue_02000154 {
-    u16 length;
-    u16 unknown_02;
+    u32 length;
+    u32 unknown_02;
     struct {
         u32 value;
         u32 destination;
@@ -62,7 +62,7 @@ void Func_02000154(void)
         (struct RegWriteQueue_02000154 *)0x02002090;
     u16 *frame_counter = (u16 *)0x020096b0;
     u16 *ime = (u16 *)0x04000208;
-    u16 saved_ime;
+    u32 saved_ime;
     u32 level;
     s32 index;
 

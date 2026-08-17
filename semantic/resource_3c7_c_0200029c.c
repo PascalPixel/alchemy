@@ -39,7 +39,7 @@
  * needs a return type. */
 u16 *Func_020014b8();
 void Func_020015c6();
-s32 Func_020014ac();
+u8 Func_020014ac();
 void Func_02001556();
 void Func_0200156e();
 void Func_02001566();

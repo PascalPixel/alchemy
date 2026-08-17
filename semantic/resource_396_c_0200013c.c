@@ -2,11 +2,11 @@
 
 struct Sprite {
     u8 unknown00[9];
-    u8 flags9;
+    u32 flags9;
     u8 unknown0a[20];
-    u16 angle;
+    u32 angle;
     u8 unknown20[6];
-    u8 state26;
+    u32 state26;
 };
 
 struct Particle {
@@ -14,7 +14,7 @@ struct Particle {
     s32 accum18;
     s32 accum1c;
     u8 unknown20[3];
-    u8 flags23;
+    u32 flags23;
     u8 unknown24[12];
     s32 rate30;
     s32 rate34;
@@ -23,10 +23,10 @@ struct Particle {
     s32 velocityY;
     s32 velocityZ;
     struct Sprite *sprite;
-    u8 unknown54;
-    u8 mode55;
+    u32 unknown54;
+    u32 mode55;
     u8 unknown56[14];
-    u16 step64;
+    u32 step64;
     u8 unknown66[6];
     void (*callback)(s32 *particle);
 };
@@ -38,11 +38,11 @@ struct EffectParams {
     s32 color2;
     s32 rate1;
     s32 rate2;
-    s16 id;
+    s32 id;
     u8 unknown1a[2];
     s32 selector;
-    u16 angle;
-    u16 step;
+    u32 angle;
+    u32 step;
     void (*callback)(s32 *particle);
 };
 

@@ -25,13 +25,13 @@ struct FootprintExtent {
 };
 
 struct SearchDirection {
-    s16 z;
-    s16 x;
+    s32 z;
+    s32 x;
 };
 
 struct ObjectHeader {
     u8 unknown00[6];
-    u16 state;
+    u32 state;
 };
 
 struct SceneObject {

@@ -98,13 +98,13 @@ void Func_02002bac(s32 mode, s32 actor, s32 state_base)
 
     if (decision < count) {
         for (i = 0; i < count; i++)
-            Func_08077168((s32)(s8)queued[i]);
+            Func_08077168((s32)(s32)queued[i]);
     }
 
     if (count > 0) {
         for (i = 0; i < count; i++) {
             if ((s8)queued[i] != 0)
-                Func_08077150((s32)(s8)queued[i]);
+                Func_08077150((s32)(s32)queued[i]);
         }
     }
 
@@ -112,12 +112,12 @@ void Func_02002bac(s32 mode, s32 actor, s32 state_base)
 
     if (count > 0) {
         for (i = 0; i < count; i++)
-            Func_08077168((s32)(s8)queued[i]);
+            Func_08077168((s32)(s32)queued[i]);
     }
 
     if (count > 0) {
         for (i = 0; i < count; i++)
-            Func_08077150((s32)(s8)queued[i]);
+            Func_08077150((s32)(s32)queued[i]);
     }
 
     if (handle == -1) {

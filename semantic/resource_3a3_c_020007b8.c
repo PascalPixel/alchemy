@@ -29,7 +29,7 @@
 /* Imports.  Old-style declarations are mandatory in overlay sources. */
 u8 *Func_0808a080();        /* scene/actor record accessor */
 void Func_0808a090();
-void Func_0808a0c0();
+s32 Func_0808a0c0();
 void Func_080f9010();
 void Func_0808a088();
 void Func_080091f0();

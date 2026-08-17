@@ -1,7 +1,7 @@
 #include "types.h"
 extern s32 Func_020025d6(s32); extern s32 Func_020025e0(s32);
 extern void Func_02002638(s32,s32,s32); extern u8 *Func_02002636(s32);
-extern void Func_0200268a(s32,s32); extern void Func_02002676(s32,s32,s32);
+extern void Func_0200268a(s32,s32); extern s32 Func_02002676(s32,s32,s32);
 extern void Func_0200262c(s32); extern void Func_02002712(s32);
 void Func_02000c10(void)
 {

@@ -2,7 +2,7 @@
 
 extern u8 *Data_03001ebc;
 extern u8 *Func_0808a080(s32 actorId);
-extern s32 Func_02000408(u8 *actor, u8 *target, s32 distanceLimit, s32 force);
+extern s32 Func_02000408(u8 *actor, u8 *target, s32 distanceLimit, u8 force);
 
 /* Complete 156-byte actor-18 proximity counter owner. */
 s32 Func_02000500(u8 *actor)

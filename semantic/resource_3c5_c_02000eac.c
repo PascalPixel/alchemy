@@ -8,7 +8,7 @@ extern s32 *Func_02003d24();
 extern s32 *Func_02003d30();
 extern s32 *Func_02003d3c();
 extern u8 *Func_02003d46();
-extern s32 Func_02003d50();
+extern u8 Func_02003d50();
 extern void Func_02003cf6();
 extern void Func_02003e5a();
 extern void Func_02003e6e();

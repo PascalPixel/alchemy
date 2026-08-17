@@ -221,7 +221,7 @@ s32 Func_020012e0(void)
     s32 streak;
     s32 line;
     s32 slot;
-    u16 handle;
+    u32 handle;
 
     Data_02009f50[0] = 0;
     Data_02009f4c[0] = 0;
@@ -257,7 +257,7 @@ s32 Func_020012e0(void)
         *(u16 *)&record[676] = (u16)(*(u16 *)&record[676] + 1);
         *(u16 *)&record[682] = (u16)(*(u16 *)&record[682] + 1);
 
-        streak = (s32)(s8)Func_02002bf6(1016);
+        streak = (s32)(s32)Func_02002bf6(1016);
         line = streak * 2 + 2;
         if (line > 14) {
             line = 14;

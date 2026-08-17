@@ -76,7 +76,7 @@ void Func_0200144e();
 struct SceneEntity *Func_0200147c();
 s32 Func_0200146c();
 s32 Func_020014ac();
-void Func_02001494();
+s32 Func_02001494();
 void Func_02001492();
                                          /* scene entity by selector */
                                          /* companion entity by selector, or 0 */

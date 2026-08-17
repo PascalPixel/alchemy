@@ -64,13 +64,13 @@
 
 #include "types.h"
 
-s32 Func_02002204();
+u8 Func_02002204();
 void Func_020022ba();
 void Func_02002276();
 void Func_0200228e();
 void Func_02002288();
 void Func_020021f0();
-void Func_020022a0();
+s32 Func_020022a0();
 s32 Func_02002270();
 s32 Func_02002250();
 void Func_020022b4();
@@ -84,8 +84,8 @@ s32 Func_020022d2();
 void Func_0200230c();
 void Func_02002324();
 void Func_0200231c();
-void Func_02002334();
-void Func_02002356();
+s32 Func_02002334();
+s32 Func_02002356();
 
                     
 

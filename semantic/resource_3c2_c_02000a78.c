@@ -68,7 +68,7 @@ extern u8 *Data_03001ebc;
 
 typedef struct SceneState_02000240 {
     u8 unknown_000[450];
-    s16 selector;
+    s32 selector;
 } SceneState_02000240;
 
 extern SceneState_02000240 Data_02000240;

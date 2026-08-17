@@ -33,7 +33,7 @@ Slot_02002480 *Func_020055f2();
 void Func_02005598();
 Slot_02002480 *Func_0200560e();
 Slot_02002480 *Func_02005616();
-void Func_020055bc();
+s32 Func_020055bc();
 
 void Func_02002480(void)
 {

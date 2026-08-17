@@ -55,7 +55,7 @@ s32 Func_020017ba();
 void Func_0200188c();
 void Func_0200189c();
 s32 Func_0200181c();
-void Func_020018b8();
+s32 Func_020018b8();
 void Func_020017ee();
 void Func_020018d8();
 void Func_020018d0();

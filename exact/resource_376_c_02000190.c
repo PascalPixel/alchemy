@@ -17,7 +17,7 @@
 extern void Func_02001330(void);
 extern void Func_020013de(s32 message);
 extern void Func_020013d8(s32 actor, s32 target, s32 frames);
-extern void Func_02001410(s32 actor, s32 mode);
+extern s32 Func_02001410(s32 actor, s32 mode);
 extern void Func_02001354(void);
 void Func_02000190(void)
 {

@@ -19,7 +19,7 @@
 extern void Func_02001ae4(void);
 extern void Func_02001bb2(s32 value);
 extern void Func_02001ae8(s32 frames);
-extern s32 Func_02001ace(s32 flag);
+extern s32 Func_02001ace(u8 flag);
 extern void Func_02001bb4(s32 actor, s32 value);
 extern void Func_02001b66(s32 actor, s32 mode, s32 value);
 extern void Func_02001b0c(s32 frames);
@@ -27,7 +27,7 @@ extern void Func_02001b76(s32 actor, s32 mode, s32 value);
 extern void Func_02001b1c(s32 frames);
 extern void Func_020013bc(s32 actor, s32 x, s32 y, s32 wait_value);
 extern void Func_02001b32(s32 frames);
-extern void Func_02001b86(s32 actor, s32 x, s32 y);
+extern s32 Func_02001b86(s32 actor, s32 x, s32 y);
 extern void Func_02001b92(s32 actor, s32 x, s32 y);
 extern void Func_02001b38(s32 flag);
 extern void Func_02001b64(void);

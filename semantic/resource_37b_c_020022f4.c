@@ -3,7 +3,7 @@
 
 void Func_0200474e(void);
 void Func_0200474e_b(s32, s32, s32, s32, s32, s32);
-s32 Func_02004734(s32);
+u8 Func_02004734(u8);
 s32 Func_0200473e(s32);
 void Func_0200482e(s32, s32);
 void Func_02004848(s32, s32, s32, s32);

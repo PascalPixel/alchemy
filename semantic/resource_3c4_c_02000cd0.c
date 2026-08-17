@@ -47,7 +47,7 @@ typedef struct Target_02000cd0 {
 } Target_02000cd0;
 
 Actor_02000cd0 *Func_02003dec();
-void Func_02003d6a();
+s32 Func_02003d6a();
 s32 Func_02003dca();
 s32 Func_02003dd6();
 void Func_02003e2e();

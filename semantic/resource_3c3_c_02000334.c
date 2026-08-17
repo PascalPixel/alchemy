@@ -34,7 +34,7 @@ void Func_02000c04();
 void Func_02000c12();
 void Func_02000c2e();
 void Func_02000c42();
-void Func_02000cbe();
+s32 Func_02000cbe();
 void Func_02000cca();
 void Func_02000c82();
 void Func_02000c0e();

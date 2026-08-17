@@ -38,7 +38,7 @@ void Func_020046ac();
 void Func_0200489a();
 void Func_020048a8();
 void Func_020048b6();
-void Func_020048c4();
+s32 Func_020048c4();
 void Func_020048d4();
 
                      

@@ -9,7 +9,7 @@ struct SceneObject {
     s32 speed;
     s32 range;
     u8 filler4c[9];
-    u8 state;
+    u32 state;
 };
 
 struct Vec {

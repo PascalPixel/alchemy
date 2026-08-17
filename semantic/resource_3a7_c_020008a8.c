@@ -52,7 +52,7 @@ void Func_02001a10();
 void Func_02001a4e();
 void Func_020019d8();
 void Func_02001a2e();
-void Func_020019ee();
+s32 Func_020019ee();
 void Func_02001a44();
 void Func_02001084();
                         /* test a scene completion flag */

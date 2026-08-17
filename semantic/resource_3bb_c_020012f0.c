@@ -21,9 +21,9 @@ extern void Func_0808a208();
 extern void Func_0808a210();
 extern void Func_0808a218();
 extern void Func_0808a180();
-extern void Func_02002ba8();
+extern s32 Func_02002ba8();
 extern void Func_0808a090();
-extern void Func_020030e8();
+extern s32 Func_020030e8();
 extern void Func_0808a010();
 extern u8 *Func_0808a080();
 extern void Func_0808a100();
@@ -31,7 +31,7 @@ extern void Func_0808a1f0();
 extern void Func_02002d84();
 extern void Func_0808a200();
 extern void Func_020020b8();
-extern void Func_02002114();
+extern s32 Func_02002114();
 extern void Func_0808a020();
 
 void Func_020012f0(s32 scene)

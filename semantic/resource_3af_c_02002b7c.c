@@ -22,7 +22,7 @@ extern void Func_02006fd4(s32);
 extern void Func_0200661a(s32);
 extern void Func_02006fb2(s32, s32);
 extern void Func_02006f60(s32, s32, s32);
-extern void Func_02006faa(s32, s32, s32);
+extern s32 Func_02006faa(s32, s32, s32);
 extern void Func_0200702c(s32, s32, s32);
 extern void Func_02006ff4(s32, s32);
 extern void Func_02006652(s32);

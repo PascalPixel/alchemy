@@ -38,7 +38,7 @@ extern void Func_02001984(void);
 
 extern void Func_080000c0(s32 arg0);
 extern void Func_080770d0(s32 flagId);
-extern void Func_0808a1e0(s32 id, s32 mode);
+extern s32 Func_0808a1e0(s32 id, s32 mode);
 
 s32 Func_020016f0(void)
 {

@@ -3,8 +3,8 @@
 /* Install result 33 in the first active type-0x8a registry record. */
 struct RegistryRecord_020027dc {
     s32 state;
-    s16 type;
-    s16 reserved06;
+    s32 type;
+    s32 reserved06;
     s32 result;
 };
 

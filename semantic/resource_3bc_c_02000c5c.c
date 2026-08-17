@@ -59,7 +59,7 @@ void Func_02005754();
 void Func_020056da();
 void Func_02005718();
 void Func_02005726();
-void Func_02005752();
+s32 Func_02005752();
 void Func_0200578e();
 void Func_02005796();
 void Func_02005724();

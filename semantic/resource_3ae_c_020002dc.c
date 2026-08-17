@@ -40,7 +40,7 @@ extern void * Func_02001866();
 extern s32 Func_0200183c();
 extern s32 Func_02001846();
 extern void Func_02001918();
-extern void Func_02001928();
+extern s32 Func_02001928();
 extern void Func_02001954();
 void Func_020002dc(void)
 {

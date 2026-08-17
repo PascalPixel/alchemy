@@ -7,10 +7,10 @@ extern void Func_0200199a(s32, s32);
 extern void Func_02001958(s32);
 extern void Func_020019de(s32);
 extern void Func_0200198a(s32, s32, s32);
-extern void Func_020019ba();
+extern s32 Func_020019ba();
 extern void Func_020019a4();
 extern void Func_02001982(s32);
-extern void Func_020019d2(s32, s32);
+extern s32 Func_020019d2(s32, s32);
 extern void Func_020019b4(s32, s32, s32);
 extern void Func_020019ce(s32, s32, s32);
 extern void Func_020019f4(s32, s32);
@@ -18,7 +18,7 @@ extern void Func_020019ea(s32);
 extern void Func_02001a02(s32, s32);
 extern void Func_02001a42(s32);
 extern void Func_02001a48(s32);
-extern void Func_020019cc(s32, s32, s32, s32, s32, s32);
+extern s32 Func_020019cc(s32, s32, s32, s32, s32, s32);
 extern void Func_02001a08(void);
 
 void Func_020008b0(void)

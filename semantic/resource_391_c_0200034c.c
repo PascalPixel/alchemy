@@ -12,7 +12,7 @@
  */
 
 struct Resource391Kind {
-    s16 id;
+    s32 id;
 };
 
 struct Resource391Handle {
@@ -31,9 +31,9 @@ struct Resource391Object {
 
 struct Resource391Anchor {
     u8 unknown_00[10];
-    s16 anchorX;
+    s32 anchorX;
     u8 unknown_0c[6];
-    s16 anchorZ;
+    s32 anchorZ;
 };
 
 struct Resource391Box {
@@ -65,7 +65,7 @@ struct Resource391Object *Func_0200034c(s32 *directionOut, s32 *slotOut,
     for (slot = 8; slot <= 65; slot++, objects++) {
         struct Resource391Object *object = *objects;
         struct Resource391Anchor *anchor = (struct Resource391Anchor *)object;
-        s16 kind = object->handle->kind->id;
+        s32 kind = object->handle->kind->id;
         s32 index;
 
         for (index = 0; index <= 5; index++, box++) {

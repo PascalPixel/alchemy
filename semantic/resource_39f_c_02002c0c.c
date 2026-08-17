@@ -37,7 +37,7 @@ void Func_020059a6();
 s32 Func_020059ec();
 u8 *Func_0200599c();
 s32 Func_02005a1c();
-void Func_020059c4();
+s32 Func_020059c4();
 void Func_020059c2();
 
 /* Returns 0 when the tagged condition does not hold. */

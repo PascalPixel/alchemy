@@ -10,7 +10,7 @@
  *   compiled with -fno-strength-reduce; the default route strength-reduces it
  *   into a pointer walk (`stmia r3!` plus a spilled cursor) that can never
  *   match the reference's `lsls r3, r7, #2 / str r0, [r3, r2]`;
- * - the piece byte/halfword clears at +0x55/+0x64 must share one s32 zero
+ * - the piece byte/halfword clears at +((s32) &Value_00000055)/+0x64 must share one s32 zero
  *   local through a `p`/`p + 15` base so they compile to one `movs`-zero and
  *   an incremented address, exactly as the reference;
  * - the record-branch clears at +0x26 and +0x16 share a second zero that the
@@ -24,6 +24,7 @@ extern u8 *Data_03001f30;
 extern u8 Data_03001b10[];
 
 u8 *Func_0200828e();
+extern u8 Value_00000055;
 void Func_020082ae();
 void Func_020082a4();
 void Func_02004004(void *object);
@@ -55,7 +56,7 @@ void Func_02004058(u8 *parent)
 
         *(s32 *)(piece + 0x14) = *(s32 *)(parent + 0x14);
         {
-            u8 *p = piece + 0x55;
+            u8 *p = piece + ((s32) &Value_00000055);
             s32 zero = 0;
 
             record = *(u8 **)(piece + 0x50);

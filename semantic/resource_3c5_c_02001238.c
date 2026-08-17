@@ -85,6 +85,7 @@ extern u8 *Data_03001ebc;       /* workspace pointer variable */
 #define POS_Z(rec) (*(s16 *)((u8 *)(rec) + 18))
 
 /* Old-style declarations are mandatory in overlay sources. */
+extern u8 Value_00000148;
 void Func_0200405e();
 void Func_02004064();
 void Func_02004080();
@@ -585,11 +586,11 @@ void Func_02001238(void)
     Func_020048cc(0xe, 0);
     Func_0200481a(0xa);
     Func_02004850(0xe, 0x10000, 0x8000);
-    Func_02004876(0xe, 0x148, 0x138);
+    Func_02004876(0xe, ((s32) &Value_00000148), 0x138);
     Func_02004902(0xe, 0x8000, 0);
     Func_02004848(0x1e);
     Func_0200487e(0xb, 0x10000, 0x8000);
-    Func_020048a4(0xb, 0x148, 0x148);
+    Func_020048a4(0xb, ((s32) &Value_00000148), ((s32) &Value_00000148));
     Func_02004930(0xb, 0x8000, 0);
     Func_02004876(0x14);
     Func_020048a8(1, 0x13333, 0x9999);

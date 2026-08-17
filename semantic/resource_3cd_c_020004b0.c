@@ -85,6 +85,7 @@
  */
 
 /* Old-style declarations: arities vary per call site across this overlay. */
+extern u8 Value_00000050;
 void Func_02000d8c();
 s32 Func_02000cc4();
 void Func_02000cde();
@@ -92,7 +93,7 @@ s32 Func_02000cee();
 void Func_02000d46();
 void Func_02000d54();
 void Func_02000d40();
-void Func_02000d58();
+s32 Func_02000d58();
 void Func_02000d5e();
 void Func_02000d6e();
 void Func_02000d72();
@@ -177,7 +178,7 @@ loop:
             Func_02000d46(window);
             Func_02000d54(window);
             Func_02000d40(Data_0200890c, window, 0, 0);
-            Func_02000d58(counter, 0, window, 0x50, redraw);
+            Func_02000d58(counter, 0, window, ((s32) &Value_00000050), redraw);
 
             Func_02000d5e(Data_02008914, window, 0, 72);
             masked = counter & 0x3fff;

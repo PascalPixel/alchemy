@@ -29,7 +29,7 @@
  * the reward is granted from inside a scripted beat, not from a
  * dispatcher.
  *
- * Actor r5 is then placed (Func_0808a0f0 at 216<<16, 147<<18), given
+ * Actor r5 is then placed (Func_0808a0f0 at 216<<((s32) &Value_00000010), 147<<18), given
  * the 0xcccc/0x6666 fixed-point pair through Func_0808a090 -- the same
  * pair actor 21 gets in this overlay's 0x0200185c scene entry -- and
  * given four Func_0808a0d0 triples: (216,600), (218,604), (234,604),
@@ -91,6 +91,7 @@ extern void Func_0808a370(void);
 extern void Func_02000bb8(void);
 extern void Func_02003a00(s32 id, s32 arg1);
 
+extern u8 Value_00000010;
 void Func_02001c14(s32 actor, s32 partner)
 {
     u8 *workspace;
@@ -103,7 +104,7 @@ void Func_02001c14(s32 actor, s32 partner)
 
     Func_02000bb8();
 
-    Func_0808a0f0(actor, 216 << 16, 147 << 18);
+    Func_0808a0f0(actor, 216 << ((s32) &Value_00000010), 147 << 18);
     Func_0808a090(actor, 0xcccc, 0x6666);
     Func_0808a0d0(actor, 216, 150 << 2);
     Func_0808a0d0(actor, 218, 151 << 2);

@@ -13,10 +13,11 @@ extern void Func_02001f80(s32 left, s32 right);
 extern void Func_02001fa0(void);
 extern void Func_02001f86(s32 enabled);
 extern void Func_02001fa2(void);
+extern u8 Value_00000002;
 void Func_02000d68(void)
 {
     Func_02001f70(78, 1);
-    Func_02001f80(2, 15);
+    Func_02001f80(((s32) &Value_00000002), 15);
     Data_03001f30[0x71c] |= 8;
     Func_02001fa0();
     Func_02001f86(1);

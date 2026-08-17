@@ -12,7 +12,7 @@
  * state 3 with acknowledgement 1, giving up after 120 yields.
  *
  * Both call sites resolve through veneer 0x02004840 to Func_080000c0, the
- * one-argument frame-yield import (10 frames on entry, then 1 per poll).
+ * one-argument frame-yield import (((s32) &Value_0000000a) frames on entry, then 1 per poll).
  *
  * Epilogue `pop {r5} / pop {r0} / bx r0` — r0 is the popped return address,
  * so the owner is void.  r5 is the poll counter and is the reason r5 is saved.
@@ -25,6 +25,7 @@
 extern s32 Data_0200d480;
 extern s32 Data_0200d484;
 
+extern u8 Value_0000000a;
 void Func_02004a0e();
 void Func_02004a1e();
 
@@ -33,7 +34,7 @@ void Func_020001c8(void)
     s32 polls;
     s32 cond;
 
-    Func_02004a0e(10);
+    Func_02004a0e(((s32) &Value_0000000a));
 
     cond = Data_0200d480;
     polls = 0;

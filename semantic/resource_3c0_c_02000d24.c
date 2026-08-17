@@ -8,6 +8,7 @@ extern void Func_0808a0f0(s32 actorId, s32 x, s32 y);
 extern void Func_0808a3c0(s32 resourceId, s32 x, s32 y);
 
 /* Install the scene-A5 actor and effect set, then restore its palette entry. */
+extern u8 Value_00000047;
 void Func_02000d24(void)
 {
     u8 *actor;
@@ -22,8 +23,8 @@ void Func_02000d24(void)
     Func_080091c0(16, 44, 1, 1, 15, 44);
     Func_0808a3c0(100, 0, 0);
     actor[85] = 3;
-    Func_080091c0(12, 71, 1, 1, 127, 127);
-    Func_080091c0(11, 71, 1, 1, 12, 71);
+    Func_080091c0(12, ((s32) &Value_00000047), 1, 1, 127, 127);
+    Func_080091c0(11, ((s32) &Value_00000047), 1, 1, 12, ((s32) &Value_00000047));
     Func_080000d8((void *)0x02008ce5);
     *(volatile u16 *)0x0500019e = *(volatile u16 *)0x02009a00;
 }

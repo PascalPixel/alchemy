@@ -9,7 +9,7 @@ struct PlacementResult_02001390 {
     void (*callback)(void);
 };
 
-/* Placement-driven actor-8/10 scene, complete 284-byte owner to 0x020014ac. */
+/* Placement-driven actor-((s32) &Value_00000008)/10 scene, complete 284-byte owner to 0x020014ac. */
 
 extern s32 Func_02000758(struct PlacementResult_02001390 *result);
 extern void Func_020008ec(s32, s32, s32, s32, s32, void (*)(void));
@@ -25,6 +25,7 @@ extern void Func_0808a100(s32 actor, s32 mode);
 extern void Func_0808a1e0(s32 actor, s32 mode);
 extern void Func_080f9010(s32 cue);
 
+extern u8 Value_00000008;
 void Func_02001390(void)
 {
     struct PlacementResult_02001390 p;
@@ -48,7 +49,7 @@ void Func_02001390(void)
             record = Func_0808a080(p.actor);
             record[0x55] = 3;
             Func_02000cd0(record);
-            Func_0808a100(p.actor, 8);
+            Func_0808a100(p.actor, ((s32) &Value_00000008));
             record = Func_0808a080(p.actor);
             record[0x23] = 2;
 

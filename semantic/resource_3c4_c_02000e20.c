@@ -41,13 +41,14 @@ typedef struct Workspace_02000e20 {
 
 Record_02000e20 *Func_0808a080();
 
+extern u8 Value_000000ac;
 void Func_02000e20(void)
 {
     Record_02000e20 *record = Func_0808a080(0);
     Workspace_02000e20 *workspace = (Workspace_02000e20 *)Data_03001ee0;
     s32 threshold = 0;
 
-    if (Data_02000240[224] == 0xac) {
+    if (Data_02000240[224] == ((s32) &Value_000000ac)) {
         switch (Data_02000240[225]) {
         case 3:
         case 4:

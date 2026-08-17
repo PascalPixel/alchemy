@@ -8816,8 +8816,8 @@
 <g aria-label="399 · semantic owner 0x02000a3c: 128 bytes · 0.0% byte match">
 <rect x="451.514908" y="85.171246" width="4.179812" height="5.282006" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
 </g>
-<g aria-label="399 · semantic owner 0x0200016c: 116 bytes · 0.0% byte match">
-<rect x="455.69472" y="85.171246" width="3.787956" height="5.282006" style="fill:hsl(190, 0%, 93%);fill:oklch(0.930 0.000 200)"/>
+<g aria-label="399 · AlchemyC_0200016c · byte-exact C: 116 bytes">
+<rect x="455.69472" y="85.171246" width="3.787956" height="5.282006" style="fill:hsl(190, 95%, 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="399 · AlchemyC_0200154c · byte-exact C: 104 bytes">
 <rect x="442.240948" y="90.453252" width="3.519761" height="5.096428" style="fill:hsl(190, 95%, 55%);fill:oklch(0.550 0.170 200)"/>

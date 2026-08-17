@@ -5,6 +5,8 @@
 //! header comment for the full rationale; it is reproduced there, not
 //! duplicated here.
 
+pub mod reconstruct;
+
 use std::path::PathBuf;
 use std::process::Command;
 

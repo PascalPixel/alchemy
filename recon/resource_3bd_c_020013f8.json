@@ -3,10 +3,10 @@
   "span_bytes": 6220,
   "score": {
     "measured": "2026-08-17",
-    "candidate_bytes": 5908,
+    "candidate_bytes": 5916,
     "reference_bytes": 6220,
-    "wrong_instructions": 629,
-    "differing_halfwords": 2865,
+    "wrong_instructions": 547,
+    "differing_halfwords": 2875,
     "class": "wrong"
   },
   "shape": {
@@ -22,7 +22,8 @@
     "pointer-valued loads",
     "register-offset addressing",
     "read-modify-write",
-    "three counted loops with real bounds"
+    "three counted loops with real bounds",
+    "drafted by `overlay reconstruct`, which models 30 of its 47 memory operations"
   ],
   "unexpressed": [
     {

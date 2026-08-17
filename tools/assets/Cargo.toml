@@ -18,6 +18,10 @@ encounter-data = { path = "../encounter-data" }
 character-catalog = { path = "../character-catalog" }
 staff-roll = { path = "../staff-roll" }
 audio-wave = { path = "../audio-wave" }
+localization-tables = { path = "../localization-tables" }
+byte-value-regions = { path = "../byte-value-regions" }
+executable-gap-sources = { path = "../executable-gap-sources" }
+music-residuals = { path = "../music-residuals" }
 documented = { path = "../documented" }
 remaining-survey = { path = "../remaining-survey" }
 exact-reading-list = { path = "../exact-reading-list" }

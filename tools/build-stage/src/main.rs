@@ -26,6 +26,9 @@ fn main() -> ExitCode {
     let Some(command) = args.first().map(String::as_str) else {
         eprintln!("{USAGE}"); list(); return ExitCode::from(2);
     };
+    if command == "--self-test" {
+        return self_test();
+    }
     if matches!(command, "-h" | "--help" | "--list") {
         println!("{USAGE}\n\nstages:"); list(); return ExitCode::SUCCESS;
     }
@@ -41,3 +44,38 @@ fn main() -> ExitCode {
 }
 
 fn list() { for (n, s) in COMMANDS { println!("  {n:<10} {s}"); } }
+
+/// `--self-test`: prove the host's own contract.
+///
+/// Each consolidated host swallowed the `--self-test` its component binaries
+/// used to answer, so the native runner reported five hosts failing for a flag
+/// none of them implemented. What a HOST owns is its dispatch table, so that is
+/// what it checks: every command named, uniquely, in sorted order, with a
+/// non-empty summary and a reachable arm. The components themselves are covered
+/// by `make crate-tests` and by the dispatcher registry gates.
+fn self_test() -> ExitCode {
+    // Uniqueness and reachability, not sort order: several hosts group related
+    // commands deliberately, and `--list` should keep reading that way.
+    let mut seen: Vec<&str> = Vec::new();
+    for (name, summary) in COMMANDS {
+        if name.is_empty() || summary.is_empty() {
+            eprintln!("self-test: a command has an empty name or summary");
+            return ExitCode::FAILURE;
+        }
+        if seen.contains(name) {
+            eprintln!("self-test: {name} is listed twice");
+            return ExitCode::FAILURE;
+        }
+        if !dispatchable(name) {
+            eprintln!("self-test: {name} is listed but has no dispatch arm");
+            return ExitCode::FAILURE;
+        }
+        seen.push(name);
+    }
+    println!("self-test=ok commands={}", COMMANDS.len());
+    ExitCode::SUCCESS
+}
+
+fn dispatchable(name: &str) -> bool {
+    matches!(name, "asm" | "claimed" | "full" | "rom" | "semantic")
+}

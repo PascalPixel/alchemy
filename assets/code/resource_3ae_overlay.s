@@ -439,8 +439,40 @@ AlchemyC_02000098:
 	.space 0x8
 AlchemyC_020000a0:
 	.space 0xa4
-AlchemyC_02000144:
-	.space 0x58
+	push	{lr}
+	bl	sub_020016c8
+	ldr	r0, [pc, #68]
+	bl	sub_020016a6
+	movs	r1, #196
+	movs	r2, #148
+	movs	r0, #0
+	lsls	r1, r1, #1
+	lsls	r2, r2, #1
+	bl	sub_02001724
+	movs	r0, #8
+	ldr	r1, [pc, #48]
+	ldr	r2, [pc, #52]
+	bl	sub_0200170e
+	movs	r1, #204
+	movs	r2, #148
+	movs	r0, #8
+	lsls	r1, r1, #1
+	lsls	r2, r2, #1
+	bl	sub_0200173c
+	movs	r1, #128
+	lsls	r1, r1, #8
+	movs	r2, #0
+	movs	r0, #8
+	bl	sub_020017c0
+	movs	r0, #20
+	bl	sub_020016fe
+	bl	sub_02001712
+	pop	{r0}
+	bx	r0
+	.4byte 0x000008aa
+	.4byte 0x00013333
+	.2byte 0x9999
+	.2byte 0x0000
 AlchemyC_0200019c:
 	.space 0xa4
 AlchemyC_02000240:
@@ -496,8 +528,36 @@ AlchemyC_02000240:
 	.4byte 0x03001ebc
 	.2byte 0x1cfe
 	.2byte 0x0000
-AlchemyC_020002dc:
-	.space 0x4c
+	push	{lr}
+	movs	r0, #0
+	bl	sub_02001882
+	bl	sub_02001866
+	ldr	r0, [pc, #48]
+	bl	sub_0200183c
+	cmp	r0, #0
+	beq.n	.L_02000316
+	ldr	r0, [pc, #44]
+	bl	sub_02001846
+	cmp	r0, #0
+	beq.n	.L_02000316
+	ldr	r0, [pc, #36]
+	bl	sub_02001918
+	movs	r1, #0
+	movs	r0, #12
+	bl	sub_02001928
+	movs	r1, #128
+	movs	r0, #12
+	lsls	r1, r1, #7
+	movs	r2, #0
+	bl	sub_02001954
+.L_02000316:
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x000008a7
+	.4byte 0x000008a9
+	.2byte 0x1d23
+	.2byte 0x0000
 	push	{r5, r6, lr}
 	movs	r0, #0
 	bl	sub_020018ce
@@ -662,8 +722,160 @@ AlchemyC_020002dc:
 	.2byte 0x0000
 AlchemyC_020004b8:
 	.space 0x64
-AlchemyC_0200051c:
-	.space 0x16c
+	push	{r5, r6, r7, lr}
+	mov	r7, r8
+	push	{r7}
+	movs	r2, #150
+	lsls	r2, r2, #2
+	sub	sp, #4
+	mov	r8, r2
+	bl	sub_02001aac
+	ldr	r0, [pc, #320]
+	bl	sub_02001a82
+	cmp	r0, #0
+	beq.n	.L_02000548
+	ldr	r0, [pc, #312]
+	bl	sub_02001b54
+	movs	r0, #8
+	movs	r1, #0
+	bl	sub_02001b6c
+	b.n	.L_02000664
+.L_02000548:
+	ldr	r0, [pc, #300]
+	bl	sub_02001b64
+	movs	r1, #0
+	movs	r0, #8
+	bl	sub_02001b74
+	movs	r0, #0
+	movs	r1, #0
+	bl	sub_02001af4
+	cmp	r0, #1
+	bne.n	.L_0200056e
+	movs	r0, #8
+	movs	r1, #0
+	movs	r2, #10
+	bl	sub_02001b9a
+	b.n	.L_02000660
+.L_0200056e:
+	ldr	r7, [pc, #268]
+	movs	r3, #236
+	ldr	r2, [r7, #0]
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	strh	r3, [r2, #0]
+	mov	r0, r8
+	movs	r1, #5
+	bl	sub_02001abc
+	movs	r1, #0
+	movs	r0, #8
+	bl	sub_02001bac
+	movs	r3, #2
+	str	r3, [sp, #0]
+	movs	r1, #8
+	movs	r2, #11
+	movs	r3, #4
+	movs	r0, #19
+	bl	sub_02001ab4
+	adds	r5, r0, #0
+	adds	r1, r5, #0
+	ldr	r0, [pc, #220]
+	movs	r2, #0
+	movs	r3, #0
+	bl	sub_02001ad2
+	ldr	r6, [pc, #212]
+	movs	r3, #8
+	ldr	r0, [r6, #16]
+	movs	r1, #6
+	str	r3, [sp, #0]
+	adds	r2, r5, #0
+	movs	r3, #24
+	bl	sub_02001aec
+	movs	r0, #1
+	negs	r0, r0
+	movs	r1, #0
+	bl	sub_02001b5e
+	cmp	r0, #1
+	bne.n	.L_020005e4
+	adds	r0, r5, #0
+	movs	r1, #2
+	bl	sub_02001af2
+	movs	r1, #4
+	movs	r0, #0
+	bl	sub_02001bc2
+	movs	r0, #10
+	bl	sub_02001b58
+	b.n	.L_02000614
+.L_020005e4:
+	ldr	r3, [r6, #16]
+	cmp	r8, r3
+	bls.n	.L_0200061e
+	adds	r0, r5, #0
+	movs	r1, #2
+	bl	sub_02001b10
+	movs	r1, #3
+	movs	r0, #0
+	bl	sub_02001be0
+	movs	r0, #10
+	bl	sub_02001b76
+	ldr	r2, [r7, #0]
+	movs	r3, #236
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r3, #1
+	movs	r0, #113
+	strh	r3, [r2, #0]
+	bl	sub_02001cc2
+.L_02000614:
+	movs	r0, #8
+	movs	r1, #0
+	bl	sub_02001c42
+	b.n	.L_02000660
+.L_0200061e:
+	adds	r0, r5, #0
+	movs	r1, #2
+	bl	sub_02001b44
+	movs	r1, #3
+	movs	r0, #0
+	bl	sub_02001c14
+	movs	r0, #10
+	bl	sub_02001baa
+	ldr	r3, [r7, #0]
+	movs	r2, #236
+	lsls	r2, r2, #1
+	adds	r3, r3, r2
+	ldrh	r2, [r3, #0]
+	adds	r2, #3
+	strh	r2, [r3, #0]
+	movs	r0, #8
+	movs	r1, #0
+	bl	sub_02001c70
+	movs	r1, #0
+	movs	r0, #235
+	bl	sub_02001be0
+	ldr	r0, [pc, #28]
+	bl	sub_02001bae
+	mov	r3, r8
+	negs	r0, r3
+	bl	sub_02001bc6
+.L_02000660:
+	bl	sub_02001bea
+.L_02000664:
+	add	sp, #4
+	pop	{r3}
+	mov	r8, r3
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	.4byte 0x000008a5
+	.4byte 0x00001d0b
+	.4byte 0x00001d04
+	.4byte 0x03001ebc
+	.4byte 0x00000c8a
+	.2byte 0x0240
+	.2byte 0x0200
 AlchemyC_02000688:
 	.space 0x20
 AlchemyC_020006a8:

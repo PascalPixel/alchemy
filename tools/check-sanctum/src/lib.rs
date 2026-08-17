@@ -71,13 +71,19 @@ fn match_entry(line: &str) -> Option<SealedEntry> {
 /// owners freely -- the queue section lists dozens -- and parsing those as
 /// entries would fail the gate on documentation.
 pub fn parse_sealed(markdown: &str) -> Result<Vec<SealedEntry>, String> {
-    let start = markdown
-        .find("\n## Sealed")
-        .ok_or_else(|| "SANCTUM.md has no '## Sealed' section".to_string())?;
+    // The ledger used to be its own file with a top-level `## Sealed`. It now
+    // lives inside CONTRIBUTING.md, where the collapse demoted every heading one
+    // level, so the section is `### Sealed` and closes at the next `###`. Accept
+    // either depth rather than pinning the gate to one document layout.
+    let (start, depth) = markdown
+        .find("\n### Sealed")
+        .map(|at| (at, "\n### "))
+        .or_else(|| markdown.find("\n## Sealed").map(|at| (at, "\n## ")))
+        .ok_or_else(|| "the ledger has no 'Sealed' section".to_string())?;
     let rest = &markdown[start + 1..];
-    // `rest.indexOf("\n## ", 1)`: search starts at offset 1 so the heading that
-    // opens the section is not treated as the one that closes it.
-    let section = match rest[1..].find("\n## ") {
+    // The search starts at offset 1 so the heading that opens the section is not
+    // treated as the one that closes it.
+    let section = match rest[1..].find(depth) {
         Some(offset) => &rest[..offset + 1],
         None => rest,
     };
@@ -337,7 +343,7 @@ mod tests {
     #[test]
     fn a_ledger_without_the_section_is_an_error() {
         let err = parse_sealed("# Sanctum\n\n## Other\n").unwrap_err();
-        assert_eq!(err, "SANCTUM.md has no '## Sealed' section");
+        assert_eq!(err, "the ledger has no 'Sealed' section");
     }
 
     #[test]

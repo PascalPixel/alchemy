@@ -68,7 +68,7 @@ fn self_test() {
 }
 
 pub fn entry(arguments: &[String]) {
-    if std::env::args().any(|a| a == "--self-test") {
+    if arguments.iter().any(|argument| argument == "--self-test") {
         self_test();
     } else {
         let cores = available_parallelism();

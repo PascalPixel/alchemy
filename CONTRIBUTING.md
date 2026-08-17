@@ -762,13 +762,28 @@ The loop needs about eight commands and they all exist. Adding a tool now
 requires deleting one, and measurement that explains why we are stuck is no
 longer a deliverable.
 
-### The permuter is a last resort with a number attached
+### The permuter cannot reach an ordering residual, and now we know why
 
 `alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
-passes, and on this corpus it closed nothing: 97 rows at 1,500 to 2,500
-candidates each improved 18 and matched 0. Aim it only at rows the score calls
-`wrong`, after you have read the residual, and treat a match it finds as
-something to explain before adopting.
+passes. On this corpus it closed nothing: 97 rows at 1,500 to 2,500 candidates
+each improved 18 and matched 0.
+
+Pointed at the best targets the project has -- owners that are byte-count exact
+with zero wrong instructions, two halfwords from reproducing -- it did not
+improve them once. 200,000 candidates across ten owners, eight seeds apiece on
+the closest two, 89% of the mutations failing to compile at all, and the best
+score never moved off the baseline.
+
+That is not bad luck, it is the wrong instrument. The permuter searches SOURCE
+SHAPE. An `ordering` residual is the post-reload scheduler choosing between two
+independent instructions after the source has had its say, and when the source
+is already right -- right size, right instructions, right operands -- there is
+no shape left to mutate that is not worse. Every candidate it generates is
+either a compile error or a step backwards.
+
+Aim it at rows the score calls `wrong`, where a statement really is missing or a
+type really is off, and read the residual first so you know which you have.
+Treat a match it finds as something to explain before adopting.
 
 ### Assets: named is the bar
 

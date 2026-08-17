@@ -23,30 +23,40 @@
  * the same way.  The overlay image is writable EWRAM, so the counter below is
  * genuinely mutable overlay data, not ROM.
  *
- * The single call site was resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --:
- * 0x020000b8 -> veneer 0x02001314 -> Func_030003f0.  That word has no Thumb
- * bit, so it is one of the ARM-mode helpers relocated into IWRAM (the same
- * family as the 0x030001d8 square root and the 0x03000380 divide), reached
- * through the ordinary veneer table with no r3/r4 load.
+ * The single call site is `bl 0x020013ce` at 0x020000b8, read straight off the
+ * reference, and naming the callee at that address is what reproduces it. The
+ * overlay's own assembly carries `.set sub_020013ce, 0x020013ce` and calls it
+ * the same way. Declaring the IWRAM target instead made the linker synthesise a
+ * fresh veneer at 0x02000100 and the `bl` missed by the whole veneer table.
+ *
+ * WITHDRAWN, not merely restated: this comment used to say the site resolved
+ * `0x020000b8 -> veneer 0x02001314 -> Func_030003f0`, an ARM-mode helper
+ * relocated into IWRAM. The overlay does not contain 0x02001314 anywhere, and
+ * the veneer body around 0x020013ce loads the pool word 0x0808a071, which is a
+ * main-image address with the Thumb bit, not an IWRAM one. Whatever the chain
+ * is, it is not the one recorded here, so the name below stays at the call
+ * address and claims nothing about what it reaches.
  */
 
 extern u16 Data_0200981c;   /* animation frame counter */
 extern u16 Data_020094ac[]; /* colour strip the window is copied from */
 
 /*
- * Relocated IWRAM helper, two integer arguments.  Its neighbour 0x030003e0 is
- * established as the remainder helper (see
- * semantic/overlays/resource_374_c_02000248.c), and the two are sixteen bytes
- * apart, which is the usual shape of a shared divide routine with a quotient
- * entry and a remainder entry.  So this is read as the quotient: the strip
- * index advances one colour every six frames and repeats after six steps,
- * which is exactly the 36-frame wrap below.
+ * The in-overlay call target, two integer arguments, named at its own address
+ * because that is all the bytes establish.
  *
- * UNCERTAINTY: that identification rests on the neighbouring entry point, not
- * on a disassembly of the IWRAM copy.  `counter % 6` would also yield 0..5, so
- * the call is preserved verbatim rather than replaced by an operator.
+ * Behaviour is still read as a quotient: the result is zero-extended to 16 bits
+ * and doubled to index the strip by halfwords, the strip advances one colour
+ * every six frames, and the counter wraps at 36, which is six steps of six.
+ * `counter % 6` would yield the same 0..5, so the call is preserved verbatim
+ * rather than replaced by an operator.
+ *
+ * UNCERTAINTY: the divide-helper identification that used to be asserted here
+ * rested on a veneer chain the overlay does not contain, so it is withdrawn
+ * rather than reworded. What the arithmetic around the call site shows is a
+ * value in 0..5; what produces it is unproven.
  */
-s32 Func_030003f0();
+s32 Func_020013ce();
 
 void Func_020000b0(void)
 {
@@ -55,7 +65,7 @@ void Func_020000b0(void)
     u32 frame;
 
     frame = Data_0200981c;
-    step = Func_030003f0(frame, 6);
+    step = Func_020013ce(frame, 6);
 
     /*
      * lsls #16 / lsrs #15 zero-extends the helper's result to 16 bits and

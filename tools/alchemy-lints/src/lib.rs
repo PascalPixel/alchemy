@@ -34,6 +34,7 @@
 pub mod cli;
 
 pub mod flag_capability;
+pub mod ignored_arguments;
 pub mod stem_collision;
 
 use std::path::{Path, PathBuf};

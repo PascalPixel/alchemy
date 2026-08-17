@@ -12,7 +12,7 @@
 
 use std::process::ExitCode;
 
-use crate::{flag_capability, repository_root, stem_collision, Report};
+use crate::{ignored_arguments, flag_capability, repository_root, stem_collision, Report};
 
 fn print(report: &Report) {
     println!("== {}", report.lint);
@@ -56,10 +56,20 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         }
     }
 
+    if selected("ignored-arguments") {
+        match ignored_arguments::analyse(&root) {
+            Ok(report) => reports.push(report),
+            Err(message) => {
+                eprintln!("error: {message}");
+                return ExitCode::FAILURE;
+            }
+        }
+    }
+
     if reports.is_empty() {
         eprintln!(
             "error: no lint selected; known lints are \
-                   overlay-stem-collision, flag-capability"
+                   overlay-stem-collision, flag-capability, ignored-arguments"
         );
         return ExitCode::FAILURE;
     }

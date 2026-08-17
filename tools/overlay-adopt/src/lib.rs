@@ -543,8 +543,14 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         let mut parts = options.id.splitn(2, ':');
         let overlay = parts.next().unwrap_or("").to_string();
         let offset_text = parts.next().unwrap_or("");
-        let offset = i64::from_str_radix(offset_text, 16)
+        let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16)
             .map_err(|_| format!("unparseable overlay id: {}", options.id))?;
+        // Accept the full load address as well as the overlay-relative offset,
+        // as `overlay score` does. Adding the base unconditionally turned a
+        // copy-pasted `resource_377:02000088` into 0x04000088 and reported it
+        // as outside every audited interval, which reads as "this row is not a
+        // real owner" rather than "you wrote the address the other way".
+        let offset = if offset >= OVERLAY_BASE { offset - OVERLAY_BASE } else { offset };
         FunctionRow { id: options.id.clone(), overlay, entry: OVERLAY_BASE + offset, offset, span_bytes: span }
     } else {
         return Err(format!(

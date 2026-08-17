@@ -66,8 +66,8 @@ void Func_020000dc(void)
     if (Func_02001b4a(0x815) != 0) {
         Func_02001c1c(0x11c4);
         Func_02001c34(12, 0);
-        line = 0xf76;
     } else {
+        line = 0xf76;
         Func_02001c2e(line);
         Func_02001c20(12, 0, 10);
         Func_02001c20(12, 2);

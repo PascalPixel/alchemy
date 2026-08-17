@@ -350,6 +350,19 @@ Fixed addresses touched more than once should be declared objects, not
 extern s16 Data_02000240[];
 ```
 
+A global the reference re-reads on a path where the value provably cannot have
+changed is a `volatile` object, and nothing else in ordinary C produces that
+reload. The tell is small and easy to misread: the whole owner matches except
+one conditional branch whose target is a single instruction earlier than yours,
+because your branch was threaded past a load the compiler knew was redundant.
+Qualify the declaration, the pointer and any alias to it together.
+
+A candidate exactly four bytes short of its reference is usually missing one
+pool word. Either a constant is spelled as a literal where the reference links
+a symbol, or the value is dead in your source and the compiler dropped it --
+check for a variable that is assigned in one branch and read in another before
+reaching for `Value_<addr>`.
+
 ### Comments
 
 Brief, factual, and about things a future contributor needs: relationships
@@ -653,16 +666,16 @@ executable runs), sorted largest to smallest. Broader multi-owner campaign cuts
 belong in [Status](#status); they may overlap and therefore are not used for
 byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 2,155
+- **Unfinished scopes:** 2,154
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 1,000,112 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 343,482 Exact C or audited permanent assembly bytes
+- **Target bytes:** 999,764 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 343,830 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (227 rows). The complete
-2,155-row index, including the smallest audited owners, is
+2,154-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

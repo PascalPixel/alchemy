@@ -21,7 +21,7 @@ extern u16 Data_0200cc5c;
 extern s16 Data_0200cc14;
 extern s16 Data_0200cbf8;
 
-extern s32 Func_03000380(s32 value, u8 divisor);
+extern s32 Func_03000380(s32 value, s32 divisor);
 extern void Func_080001e8(void *command, s32 opacity);
 
 void Func_02002e84(void)

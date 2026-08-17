@@ -48,7 +48,7 @@
  * Old-style declarations: arities vary between call sites in this overlay. */
 void Func_02003c48(void);
 void Func_0200495c();
-u8 Func_02003d70();
+s32 Func_02003d70();
 void Func_02003c6a(void);
 void Func_020049a4();
 void Func_020049ae();
@@ -58,7 +58,7 @@ void Func_020049f4();
 void Func_02004a14();
 void Func_02004a46();
 void Func_020049bc();
-s32 Func_02004a2c();
+void Func_02004a2c();
 void Func_02004a3c();
 void Func_02004a10();
 void Func_02004a1e();

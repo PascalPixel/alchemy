@@ -14,7 +14,7 @@ use std::path::{Path, PathBuf};
 
 pub mod catalog;
 
-use dispatch::{all_entries, non_public_target, non_public_targets, Entry, Target};
+use dispatch::{all_entries, non_public_target, non_public_targets, Entry};
 
 /// Repository-level files whose commands and native paths are part of the
 /// architecture contract.  Keep this list deliberately independent of any

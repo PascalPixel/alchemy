@@ -13,7 +13,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
-use crate::descend_rewrite::{self as rewrite, Variant};
+use crate::descend_rewrite::Variant;
 use crate::descend_score::{self as score, Score};
 
 /// One accepted step of the descent.

@@ -21,7 +21,6 @@
 //! Because of (1) the legacy implementation has never once processed a corpus member, and
 //! because of (2) it could not have reached the compile path even if it had.
 
-pub mod entry_bench;
 pub mod entry_main;
 pub mod cli;
 pub mod config;

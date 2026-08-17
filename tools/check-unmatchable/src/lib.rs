@@ -25,47 +25,6 @@ pub struct UnmatchableEntry {
 }
 
 /// Hand-rolled equivalent of
-/// `^- \`([A-Za-z0-9_]+)\` floor=(\d+)hw axes=([a-z,]+) — (.+)$`.
-///
-/// The TypeScript applies this to the trimmed line, so the caller trims first.
-fn match_entry(line: &str) -> Option<UnmatchableEntry> {
-    let rest = line.strip_prefix("- `")?;
-    let (owner, rest) = rest.split_once('`')?;
-    if owner.is_empty() || !owner.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-        return None;
-    }
-    let rest = rest.strip_prefix(" floor=")?;
-    let digits_len = rest.chars().take_while(char::is_ascii_digit).count();
-    if digits_len == 0 {
-        return None;
-    }
-    let (digits, rest) = rest.split_at(digits_len);
-    let rest = rest.strip_prefix("hw axes=")?;
-    let axes_len = rest
-        .chars()
-        .take_while(|c| c.is_ascii_lowercase() || *c == ',')
-        .count();
-    if axes_len == 0 {
-        return None;
-    }
-    let (axes, rest) = rest.split_at(axes_len);
-    // ` — ` is an em dash flanked by spaces, exactly as the TS regex spells it.
-    let reason = rest.strip_prefix(" \u{2014} ")?;
-    // `.+` requires at least one character and never spans a newline.
-    if reason.is_empty() || reason.contains('\n') {
-        return None;
-    }
-    // PORT NOTE: JS `Number("…")` on an arbitrarily long digit run yields an
-    // imprecise float; a floor that does not fit in u64 is rejected as
-    // malformed instead, which is strictly safer for a gate.
-    let floor: u64 = digits.parse().ok()?;
-    Some(UnmatchableEntry {
-        owner: owner.to_string(),
-        floor,
-        axes: axes.split(',').map(str::to_string).collect(),
-        reason: reason.to_string(),
-    })
-}
 
 /// The unmatchable set, read from `semantic/unmatchable.json`.
 ///

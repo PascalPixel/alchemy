@@ -288,7 +288,9 @@ fn evaluate(
     // Everything from here to the end of `attempt` is inside the legacy implementation's
     // `try`, and every failure becomes `compiled: false` with the message.
     let attempt = || -> Result<(usize, usize, crate::diff::ByteDifference), String> {
-        let verification = verify_candidate(
+        // Called for its side effects: it compiles and links, producing the
+        // .bin and .elf the lines below read back.
+        verify_candidate(
             &member.source,
             rom,
             &scratch,

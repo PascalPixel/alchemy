@@ -215,7 +215,12 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                     // Thumb `stmia`/`ldmia`. `arm.md` gates both store-multiple
                     // peepholes on TARGET_ARM, so no C reaches it and it is
                     // permanently assembly, exactly like a veneer.
-                    "veneer" | "literal_pool" | "executable_alignment" | "hand_written_thumb"
+                    // NOT `literal_pool`. A pool belongs to its function: when
+                    // the function is decompiled the compiler emits the pool,
+                    // so those bytes are C-able work, not permanence. Counting
+                    // them as permanent put ~34,000 bytes into DONE that a
+                    // contributor still has to earn.
+                    "veneer" | "executable_alignment" | "hand_written_thumb"
                 )
             })
             .collect();

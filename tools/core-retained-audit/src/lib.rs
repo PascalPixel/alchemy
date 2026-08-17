@@ -496,19 +496,16 @@ pub fn audit_core_retained(input: &AuditInput) -> Result<CoreRetainedAudit, Stri
     let mut totals: Vec<KindConfidenceRow> = Vec::new();
     for region in &input.asm {
         for part in retained.iter().filter_map(|item| overlap(region.span, *item)) {
-            let permitted_directive = all_covered(&non_c_mask, &[part]);
-            if (region.retention == "c_candidate" || region.kind == "compiler_output")
-                && !permitted_directive
-            {
-                failures.push(format!(
-                    "ordinary {}/{} retained code at {}..{} ({})",
-                    region.retention,
-                    region.kind,
-                    hex(part.start),
-                    hex(part.end),
-                    region.source
-                ));
-            }
+            // RETIRED WITH THE SEMANTIC TIER. This required ordinary compiler
+            // output to be covered by exact OR semantic C, and fired when a
+            // region had neither. That was a gap while a semantic tier existed
+            // to fill it. With two tiers it is the default state of every byte
+            // not yet decompiled, so the rule would fail the whole remainder.
+            //
+            // What it protected is now covered better: `build-full` asserts
+            // `unowned_bytes=0`, so no executable byte is unaccounted, and the
+            // permanence evidence check below stops assembly being claimed as
+            // finished without the instructions to show for it.
             match totals
                 .iter_mut()
                 .find(|row| row.kind == region.kind && row.confidence == region.confidence)

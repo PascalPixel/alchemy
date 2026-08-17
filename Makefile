@@ -33,7 +33,7 @@ DISPATCH_GROUPS := assets check compiler decomp make metrics overlay search sema
 
 .PHONY: help verify test lint standard-check routing-debt crate-tests pristine-options-check \
 	build-claimed build-asm build-assets build-semantic \
-	build-full build-rom inventory semantic-check core-retained-check check-owners \
+	build-full build-rom inventory two-tier-check core-retained-check check-owners \
 	progress progress-check progress-subject progress-history coverage coverage-check \
 	showcase compiler-checks compiler-sweep compiler-cohort overlay-compiler-cohort \
 	compiler-corpus compiler-batch overlay-candidate-check statement-order-check \
@@ -170,8 +170,18 @@ build-rom:
 inventory:
 	$(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml -- inventory
 
-semantic-check:
-	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-owner-scope --check
+# TWO TIERS, ENFORCED. A byte is either exact C that rebuilds identically, or
+# assembly. There is no third state, because a third state is somewhere work
+# goes to sit: this repository carried 862,856 bytes of C that did not
+# reproduce, reported it as 74% coverage against a 20% match rate, and stopped
+# being able to tell how much of the job was left. pret has two tiers and can
+# reach 100%; the arithmetic only closes if every byte is in one of them.
+#
+# Unmatched work is work in progress. Keep it in your worktree until it
+# reproduces, exactly as you would keep an unfinished function locally.
+two-tier-check:
+	@if ls semantic/*.c >/dev/null 2>&1; then 		printf 'THIRD TIER: %s C sources under semantic/ that do not build the ROM.\n' 			"$$(ls semantic/*.c | wc -l | tr -d ' ')"; 		printf 'A byte is exact C or assembly. Finish it, or leave it in your worktree.\n'; 		exit 1; 	fi
+	@printf 'two tiers ok: exact C and assembly, no limbo\n'
 
 core-retained-check:
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- core-retained-audit --check
@@ -306,8 +316,7 @@ verify:
 	$(MAKE) inventory
 	$(MAKE) test
 	$(MAKE) build-full
-	$(MAKE) build-semantic
-	$(MAKE) semantic-check
+	$(MAKE) two-tier-check
 	$(MAKE) core-retained-check
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- semantic-superseded --check
 	$(MAKE) check-owners

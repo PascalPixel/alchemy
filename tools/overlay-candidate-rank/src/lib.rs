@@ -59,7 +59,7 @@ pub struct Measurement {
     ///   move.
     pub residual_class: Option<String>,
     pub wrong_instructions: Option<i64>,
-    pub semantic_source: String,
+    pub draft_source: String,
     pub error: Option<String>,
 }
 
@@ -215,11 +215,11 @@ fn render_worker_input(work: &Path, rows: &[Pairing]) -> String {
             out.push(',');
         }
         out.push_str(&format!(
-            "{{\"overlay\":\"{}\",\"address\":\"{}\",\"bytes\":{},\"semanticSource\":\"{}\",\"blocked\":{}}}",
+            "{{\"overlay\":\"{}\",\"address\":\"{}\",\"bytes\":{},\"draftSource\":\"{}\",\"blocked\":{}}}",
             json_escape(&row.overlay),
             json_escape(&row.address),
             row.bytes,
-            json_escape(&row.semantic_source),
+            json_escape(&row.draft_source),
             row.blocked,
         ));
     }
@@ -251,8 +251,8 @@ fn parse_worker_input(text: &str) -> Result<(PathBuf, Vec<Pairing>), String> {
                 .unwrap_or("")
                 .to_string(),
             bytes: row.get("bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            semantic_source: row
-                .get("semanticSource")
+            draft_source: row
+                .get("draftSource")
                 .and_then(Value::as_str)
                 .unwrap_or("")
                 .to_string(),
@@ -292,8 +292,8 @@ fn render_measurements(measurements: &[Measurement]) -> String {
             out.push_str(&format!(",\"wrongInstructions\":{wrong}"));
         }
         out.push_str(&format!(
-            ",\"semanticSource\":\"{}\"",
-            json_escape(&row.semantic_source)
+            ",\"draftSource\":\"{}\"",
+            json_escape(&row.draft_source)
         ));
         if let Some(error) = &row.error {
             out.push_str(&format!(",\"error\":\"{}\"", json_escape(error)));
@@ -365,8 +365,8 @@ fn render_report(measurements: &[Measurement]) -> String {
             out.push_str(&format!("      \"wrongInstructions\": {wrong},\n"));
         }
         out.push_str(&format!(
-            "      \"semanticSource\": \"{}\"{}\n",
-            json_escape(&row.semantic_source),
+            "      \"draftSource\": \"{}\"{}\n",
+            json_escape(&row.draft_source),
             if row.error.is_some() { "," } else { "" }
         ));
         if let Some(error) = &row.error {
@@ -424,8 +424,8 @@ fn parse_measurements(text: &str) -> Result<Vec<Measurement>, String> {
                 .get("wrongInstructions")
                 .and_then(Value::as_f64)
                 .map(|n| n as i64),
-            semantic_source: item
-                .get("semanticSource")
+            draft_source: item
+                .get("draftSource")
                 .and_then(Value::as_str)
                 .unwrap_or("")
                 .to_string(),
@@ -468,7 +468,7 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
             } else {
                 &[]
             };
-            let source = root.join(&row.semantic_source);
+            let source = root.join(&row.draft_source);
             let routing_source =
                 root.join("exact")
                     .join(format!("{}_c_{}.c", row.overlay, &row.address[2..]));
@@ -511,7 +511,7 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                 differing_halfwords: Some(count_differing_halfwords(&compiled.data, expected)),
                 residual_class: class,
                 wrong_instructions: wrong,
-                semantic_source: row.semantic_source.clone(),
+                draft_source: row.draft_source.clone(),
                 error: None,
             })
         })();
@@ -527,7 +527,7 @@ pub fn measure_worker(root: &Path, input_path: &Path, output_path: &Path) -> Res
                 differing_halfwords: None,
                 residual_class: None,
                 wrong_instructions: None,
-                semantic_source: row.semantic_source.clone(),
+                draft_source: row.draft_source.clone(),
                 error: Some(message),
             },
         });
@@ -546,7 +546,7 @@ pub fn self_test() -> Result<(), String> {
         differing_halfwords,
         residual_class: None,
         wrong_instructions: None,
-        semantic_source: "semantic/example.c".to_string(),
+        draft_source: "semantic/example.c".to_string(),
         error: None,
     };
     if count_differing_halfwords(&[0, 1], &[0, 1]) != 0 {
@@ -662,6 +662,15 @@ pub fn run(
         .into_iter()
         .filter(|row| !row.blocked)
         .collect();
+    // Say so. A bare `measured=0` reads as "nothing left to do" when it means
+    // "you have written nothing yet", and the two could not be further apart.
+    if rows.is_empty() {
+        eprintln!(
+            "no overlay drafts in work/ -- this ranks candidates you have written, \
+             named resource_<id>_c_<address>.c. Pick an owner from the Targets \
+             table or `overlay twins` first."
+        );
+    }
     // `semantic/unmatchable.json` exists to "keep a small number of owners out
     // of the queue" -- its own words -- and this ranker was not reading it, so
     // every registered owner kept coming back to the top of the list it is
@@ -747,7 +756,7 @@ pub fn run(
     // reaches; `wrong` means an instruction is genuinely wrong and reading the
     // source will find it. Ranking by diff_hw alone mixes the two.
     println!(
-        "tier  owner                 span  bytes  delta  diff_hw  class     wrong  semantic source"
+        "tier  owner                 span  bytes  delta  diff_hw  class     wrong  draft"
     );
     for row in measured.iter().take(top.max(0) as usize) {
         let delta = match row.size_delta {
@@ -778,7 +787,7 @@ pub fn run(
             differing,
             class,
             wrong,
-            row.semantic_source,
+            row.draft_source,
         );
     }
     let counts: Vec<usize> = (0..6)
@@ -905,7 +914,7 @@ mod tests {
             differing_halfwords: differing,
             residual_class: None,
             wrong_instructions: None,
-            semantic_source: "semantic".to_string(),
+            draft_source: "semantic".to_string(),
             error: error.map(str::to_string),
         }
     }
@@ -1007,7 +1016,7 @@ mod tests {
     #[test]
     fn render_report_matches_json_stringify_pretty() {
         let rows = vec![measurement(4, Some(0), Some(2), None)];
-        let expected = "{\n  \"measured\": [\n    {\n      \"id\": \"resource_0:0\",\n      \"overlay\": \"resource_0\",\n      \"address\": \"0x0\",\n      \"span\": 4,\n      \"sizeDelta\": 0,\n      \"differingHalfwords\": 2,\n      \"semanticSource\": \"semantic\"\n    }\n  ]\n}\n";
+        let expected = "{\n  \"measured\": [\n    {\n      \"id\": \"resource_0:0\",\n      \"overlay\": \"resource_0\",\n      \"address\": \"0x0\",\n      \"span\": 4,\n      \"sizeDelta\": 0,\n      \"differingHalfwords\": 2,\n      \"draftSource\": \"semantic\"\n    }\n  ]\n}\n";
         assert_eq!(render_report(&rows), expected);
         assert_eq!(render_report(&[]), "{\n  \"measured\": []\n}\n");
     }

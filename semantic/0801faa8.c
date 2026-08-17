@@ -62,8 +62,8 @@ s32 Func_0801faa8(void)
             &Data_020004e4,
             16);
         if (Func_08005920(*data, buffer) != 0) {
-            result = 3;
             Func_0801776c((s32)&Value_0000000b, 1);
+            result = 3;
 negate_result:
             result = -result;
         }

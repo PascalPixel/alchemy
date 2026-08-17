@@ -10,7 +10,7 @@ extern void Func_0808a0d0(s32 actorId, s32 x, s32 y);
 extern void Func_0808a0f0(s32 actorId, s32 x, s32 y);
 extern void Func_0808a100(s32 actorId, s32 direction);
 extern void Func_0808a110(s32 actorId, s32 direction);
-extern void Func_0808a130(s32 actorId, s32 mode);
+extern s32 Func_0808a130(s32 actorId, s32 mode);
 extern void Func_0808a138(s32 actorId, s32 mode);
 extern void Func_0808a148(s32 actorId, s32 distance, s32 frames);
 extern void Func_0808a170(s32 messageId);

@@ -60,11 +60,10 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
     let mut options = Options {
         source: String::new(),
         rom: Some(root.join("roms/gs1-en.gba").to_string_lossy().into_owned()),
-        work: Some(
-            root.join("work/candidate-show")
-                .to_string_lossy()
-                .into_owned(),
-        ),
+        // Filled in from the candidate's own name once the positional argument
+        // is known, so two concurrent runs cannot share intermediates. See the
+        // note above `default_work`.
+        work: None,
         flags: Vec::new(),
         configuration: CandidateCompilerConfiguration {
             family: Some(CandidateCompilerFamily::Routed),
@@ -124,8 +123,41 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         return Err(SHORT_USAGE.to_string());
     }
     options.source = rest.remove(0);
+    if options.work.is_none() {
+        options.work = Some(default_work(root, &options.source));
+    }
     options.align = align;
     Ok(ParseOutcome::Options(Box::new(options)))
+}
+
+/// The work directory a candidate gets when `--work` is not given: one
+/// subdirectory per candidate, not one shared by every invocation.
+///
+/// This used to be a single `work/candidate-show` for the whole tool, which made
+/// it unsafe to run twice at once -- and it is a tool people naturally run over
+/// a whole population. The failures do not look like races. They look like facts
+/// about the owner: `objdump failed` on candidates that score perfectly well
+/// alone, and a residual of 183 differing rows out of a comparison that is only
+/// 108 lines long. Both were seen while ranking the main image, and a later
+/// ad-hoc sweep that forgot to pass `--work` reported 47 owners as free of a
+/// blocker they in fact had.
+///
+/// Keyed by the candidate's file stem, so it is deterministic and a re-run reuses
+/// the same paths instead of accumulating them. Concurrency is safe because
+/// parallel callers are measuring different candidates; two runs on the SAME
+/// candidate still collide, and still need `--work`.
+fn default_work(root: &Path, source: &str) -> String {
+    let stem = Path::new(source)
+        .file_stem()
+        .and_then(|name| name.to_str())
+        .filter(|name| {
+            !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        })
+        .unwrap_or("candidate");
+    root.join("work/candidate-show")
+        .join(stem)
+        .to_string_lossy()
+        .into_owned()
 }
 
 /// `value.split(",").filter(Boolean)`.
@@ -179,10 +211,46 @@ mod tests {
         let options = unwrap_options(&["a.c"]);
         assert_eq!(options.source, "a.c");
         assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs1-en.gba"));
-        assert_eq!(options.work.as_deref(), Some("/repo/work/candidate-show"));
+        assert_eq!(options.work.as_deref(), Some("/repo/work/candidate-show/a"));
         assert_eq!(
             options.configuration.family,
             Some(CandidateCompilerFamily::Routed)
+        );
+    }
+
+    /// The whole point of the per-candidate default: two candidates measured at
+    /// the same time must not share intermediates. When this was one shared
+    /// directory, a parallel sweep reported `objdump failed` on candidates that
+    /// score fine alone and 183 differing rows out of a 108-line comparison.
+    #[test]
+    fn two_candidates_get_separate_work_directories() {
+        let first = unwrap_options(&["semantic/08004838.c"]);
+        let second = unwrap_options(&["semantic/08003e10.c"]);
+        assert_eq!(
+            first.work.as_deref(),
+            Some("/repo/work/candidate-show/08004838")
+        );
+        assert_eq!(
+            second.work.as_deref(),
+            Some("/repo/work/candidate-show/08003e10")
+        );
+        assert_ne!(first.work, second.work);
+    }
+
+    #[test]
+    fn an_explicit_work_directory_still_wins() {
+        let options = unwrap_options(&["a.c", "--work", "/tmp/mine"]);
+        assert_eq!(options.work.as_deref(), Some("/tmp/mine"));
+    }
+
+    /// A stem that is not a plain identifier would put shell-significant or
+    /// traversing characters into a path, so it falls back to a fixed name.
+    #[test]
+    fn an_unusable_stem_falls_back() {
+        let options = unwrap_options(&["semantic/../odd name.c"]);
+        assert_eq!(
+            options.work.as_deref(),
+            Some("/repo/work/candidate-show/candidate")
         );
     }
 

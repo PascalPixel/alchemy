@@ -370,6 +370,29 @@ These are reconstruction aids, not claims about the original identifiers.
 Renaming locals and aliasing callees this way is byte-neutral, so do it freely
 — but run the owner's comparison anyway.
 
+In an overlay, name a call by the **veneer entry that site reaches**, not by the
+import behind it, and record the import in a comment:
+
+```c
+Record_02000e20 *Func_02003f32();  /* Func_0808a080 */
+```
+
+Every site gets its own entry in the overlay's import table, so the import's name
+cannot say which one, and naming it directly leaves the `bl` encoding wrong. This
+is not a style preference: 2,362 byte-exact overlay sources follow it and exactly
+one does not, and `resource_3c4:0x02000e20` closed on it — 2 differing halfwords
+to 0 with no other change. The site's entry is the address the reference's `bl`
+encodes, which `overlay show <overlay> <start> <end>` prints; the same range with
+`--annotate` names the import it reaches, so the two together give both halves of
+the comment.
+
+520 of 1,366 semantic overlay sources still call an import directly. Fourteen of
+them are in the measured population, and renaming per site improves four —
+26 to 20 halfwords, 27 to 16, 56 to 40, 300 to 296 — without closing any, so
+that sweep is deliberately not applied here. Fix the naming when you open one of
+these owners to work it, where the residual can be read afterwards; a batch that
+moves scores and closes nothing is what `c472b9531` backed out.
+
 ### Types and structure
 
 Prefer the simplest shape the evidence supports. Keep uncertain fields, casts,

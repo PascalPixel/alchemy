@@ -104,7 +104,20 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
     let (overlay, address) = resolve(root, &target)?;
-    let source = source_for(root, &overlay, address)?;
+    // An explicit path is scored AS GIVEN. Deriving the source from the
+    // filename instead would silently score the tree's copy, so every variant
+    // in a `/tmp` scratch directory would report the same number and a whole
+    // experiment would read as "no source shape moves it".
+    // Absolutised: the compile runs from a work directory, so a relative path
+    // reaches the compiler as a missing file rather than as this source.
+    let explicit = Path::new(&target);
+    let source = if explicit.is_file() {
+        explicit
+            .canonicalize()
+            .map_err(|error| format!("{}: {error}", explicit.display()))?
+    } else {
+        source_for(root, &overlay, address)?
+    };
 
     let span = placeholder_span(root, &overlay, address)?
         .or_else(|| inventory_span(root, &overlay, address))

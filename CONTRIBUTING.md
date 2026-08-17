@@ -200,10 +200,41 @@ An *owner* is one function-sized region with a fixed address.
 - Code overlays: assembly in `assets/code/resource_<id>_overlay.s`, C in
   `exact/resource_<id>_c_<address>.c` once it matches.
 
-[Targets](#targets) lists every unfinished scope, largest first. `overlay twins`
-finds owners that mirror one you have already finished, which is usually the
-cheapest next thing to do — a 90-byte shape that appears four times pays for
-itself three more times. `discover` and `remaining_survey` map what is left.
+**[Targets](#targets) ranks byte runs, not functions.** Its rows are contiguous
+unresolved spans, so the address at the top of a row is where the run starts,
+which is frequently the middle of a literal pool rather than an entry point.
+`resource_3bf:0x0200298c` and `resource_373:0x02002284` both sit in the first
+ten rows and both disassemble as data. Use the table to see the shape of what
+is left, not to pick.
+
+Pick from `semantic/regions.json`, which holds 2,340 audited owner boundaries —
+an overlay, an entry address and a span — of which 1,348 are unfinished. Those
+addresses are entry points, and the biggest of them are ordinary functions:
+
+```bash
+python3 - <<'EOF'
+import json, os
+d = json.load(open('semantic/regions.json'))
+exact = set(os.listdir('exact'))
+rows = [(r['span_bytes'], r['overlay'], int(r['entry'], 16))
+        for r in d['manual_regions']
+        if f"{r['overlay']}_c_{int(r['entry'], 16):08x}.c" not in exact]
+for n, ov, a in sorted(rows, reverse=True)[:10]:
+    print(f'{n:>6}  {ov}:{a & 0xffff:04x}')
+EOF
+```
+
+Two cheap checks before committing to one. The instruction mix decides how hard
+it is: `resource_3bf:3054` is 5,604 bytes but 1,168 of its 2,187 instructions
+are `movs` and 636 are `bl`, with six compares in the whole function — a
+scripted sequence, far easier than a third of its size in dense arithmetic.
+And count the finished owners in the same overlay: `resource_3bf` has 101, so
+the structs, callees and idioms are already established.
+
+`overlay twins` finds owners that mirror one you have already finished, which is
+usually the cheapest next thing to do — a 90-byte shape that appears four times
+pays for itself three more times. `discover` and `remaining_survey` map what is
+left.
 
 Name your draft after the owner: `work/080bbb0c.c`, or
 `work/resource_3b2_c_02000da4.c`. The rankers find drafts by that name.

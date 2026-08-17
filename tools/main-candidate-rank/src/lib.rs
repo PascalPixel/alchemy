@@ -87,6 +87,12 @@ pub enum Verdict {
     /// the load, splitting the temporary and using compound shifts all made it
     /// worse. So this bucket means "not provably a reorder", not "fixable".
     Divergent,
+    /// The same instructions naming different registers. `080a524c` builds its
+    /// flag in r3 where the reference uses r2 and is otherwise identical;
+    /// `08004144` moves a pair through r1 where the reference uses r5. Which
+    /// register holds a value is the allocator's decision, so like a reorder
+    /// this is not something a source spelling names.
+    Allocation,
     /// The same instructions in a different order: the scheduler's choice.
     Reordering,
     /// Sizes differ, so there is no meaningful positional comparison.
@@ -100,6 +106,7 @@ impl Verdict {
         match self {
             Verdict::Exact => "exact",
             Verdict::Divergent => "divergent",
+            Verdict::Allocation => "allocation",
             Verdict::Reordering => "reordering",
             Verdict::SizeMismatch => "size-mismatch",
             Verdict::Unscored => "unscored",
@@ -154,6 +161,58 @@ pub fn normalise(text: &str) -> String {
     out.trim().to_string()
 }
 
+/// The same instruction with every register name blanked to `R`.
+///
+/// Two sides that agree here and disagree on `normalise` differ only in which
+/// registers they name, which the allocator picks. It keeps mnemonics,
+/// immediates and addressing shape, so a genuine difference still shows: `strb`
+/// against `strh` survives, and so does `#31` against `#30`.
+pub fn register_blind(text: &str) -> String {
+    let normalised = normalise(text);
+    let mut out = String::with_capacity(normalised.len());
+    let chars: Vec<char> = normalised.chars().collect();
+    let mut index = 0usize;
+    while index < chars.len() {
+        let previous_is_word = index > 0 && (chars[index - 1].is_alphanumeric() || chars[index - 1] == '_');
+        let (matched, width) = register_at(&chars[index..]);
+        if matched && !previous_is_word {
+            let after = chars.get(index + width);
+            // A register name ends here only if what follows is not more of a word.
+            if !after.is_some_and(|c| c.is_alphanumeric() || *c == '_') {
+                out.push('R');
+                index += width;
+                continue;
+            }
+        }
+        out.push(chars[index]);
+        index += 1;
+    }
+    out
+}
+
+/// Whether a register name starts here, and how many characters it spans.
+fn register_at(rest: &[char]) -> (bool, usize) {
+    let word: String = rest
+        .iter()
+        .take_while(|c| c.is_alphanumeric())
+        .collect::<String>()
+        .to_ascii_lowercase();
+    if word.len() >= 2 && word.starts_with('r') && word[1..].chars().all(|c| c.is_ascii_digit()) {
+        if let Ok(number) = word[1..].parse::<u32>() {
+            if number <= 15 {
+                return (true, word.len());
+            }
+        }
+    }
+    // `pc` is deliberately absent: `[pc]` is an addressing mode this tool
+    // already collapses, and blanking it would hide a real pool-versus-register
+    // difference.
+    if matches!(word.as_str(), "sp" | "lr" | "fp" | "ip" | "sl") {
+        return (true, word.len());
+    }
+    (false, 0)
+}
+
 /// Split an aligned `!` row into its candidate and reference halves.
 ///
 /// The columns are padded with spaces but the instructions themselves contain
@@ -189,7 +248,15 @@ pub fn split_columns(body: &str) -> (String, Option<String>) {
 pub fn classify(output: &str) -> (Verdict, i64) {
     let mut left: BTreeMap<String, i64> = BTreeMap::new();
     let mut right: BTreeMap<String, i64> = BTreeMap::new();
+    let mut blind_left: BTreeMap<String, i64> = BTreeMap::new();
+    let mut blind_right: BTreeMap<String, i64> = BTreeMap::new();
     let mut differing = 0i64;
+    let mut record = |side: &mut BTreeMap<String, i64>,
+                      blind: &mut BTreeMap<String, i64>,
+                      text: &str| {
+        *side.entry(normalise(text)).or_default() += 1;
+        *blind.entry(register_blind(text)).or_default() += 1;
+    };
     for line in output.lines().skip(2) {
         if line.len() < 3 {
             continue;
@@ -198,18 +265,18 @@ pub fn classify(output: &str) -> (Verdict, i64) {
         let body = &line[3..];
         match mark {
             "+" => {
-                *left.entry(normalise(body)).or_default() += 1;
+                record(&mut left, &mut blind_left, body);
                 differing += 1;
             }
             "-" => {
-                *right.entry(normalise(body)).or_default() += 1;
+                record(&mut right, &mut blind_right, body);
                 differing += 1;
             }
             "!" => {
                 let (a, b) = split_columns(body);
-                *left.entry(normalise(&a)).or_default() += 1;
+                record(&mut left, &mut blind_left, &a);
                 if let Some(b) = b {
-                    *right.entry(normalise(&b)).or_default() += 1;
+                    record(&mut right, &mut blind_right, &b);
                 }
                 differing += 1;
             }
@@ -219,11 +286,17 @@ pub fn classify(output: &str) -> (Verdict, i64) {
     if differing == 0 {
         return (Verdict::Exact, 0);
     }
+    // Order matters: a reorder is the narrowest claim, so test it first, then
+    // the register-blind comparison, and only call it divergent when the two
+    // sides disagree about something neither the scheduler nor the allocator
+    // decides.
     if left == right {
-        (Verdict::Reordering, differing)
-    } else {
-        (Verdict::Divergent, differing)
+        return (Verdict::Reordering, differing);
     }
+    if blind_left == blind_right {
+        return (Verdict::Allocation, differing);
+    }
+    (Verdict::Divergent, differing)
 }
 
 fn parse_score(output: &str) -> Option<(i64, i64, i64)> {
@@ -607,10 +680,43 @@ pub fn self_test() -> Result<(), String> {
     }
 
     // A real disagreement: one side stores a halfword where the other stores a
-    // byte, which is a type the source decides.
+    // byte, which is a type the source decides. It must survive both the
+    // register blanking and the reorder test.
     let differs = lines(&["  ! strb\tr3, [r2, #0]             strh\tr3, [r2, #0]"]);
     if classify(&differs).0 != Verdict::Divergent {
-        return Err("differing store widths must read as a source disagreement".to_string());
+        return Err("differing store widths must stay divergent".to_string());
+    }
+
+    // Registers renamed and nothing else: `080a524c`'s real residual.
+    let renamed = lines(&[
+        "  ! movs\tr3, #1                    movs\tr2, #1",
+        "  ! mov\tr8, r3                     mov\tr8, r2",
+        "  ! cmp\tr3, #0                     cmp\tr2, #0",
+    ]);
+    if classify(&renamed).0 != Verdict::Allocation {
+        return Err("a pure register renaming must read as allocation".to_string());
+    }
+
+    // A commutative add with its operands the other way round is still the same
+    // instruction naming the same registers: `080b0958`.
+    let swapped = lines(&["  ! adds\tr3, r3, r2                adds\tr3, r2, r3"]);
+    if classify(&swapped).0 != Verdict::Allocation {
+        return Err("a commutative operand swap must read as allocation".to_string());
+    }
+
+    // Blanking registers must not blank an immediate or a mnemonic.
+    if register_blind("movs\tr2, #31") == register_blind("movs\tr2, #30") {
+        return Err("register blanking must keep immediates distinct".to_string());
+    }
+    if register_blind("strb\tr3, [r2, #0]") == register_blind("strh\tr3, [r2, #0]") {
+        return Err("register blanking must keep store widths distinct".to_string());
+    }
+    // r16 is not a register, and a symbol beginning with `r` is not either.
+    if register_blind("bl\tr16_helper") != "bl r16_helper" {
+        return Err(format!(
+            "blanking reached into a symbol: {}",
+            register_blind("bl\tr16_helper")
+        ));
     }
 
     if classify(&lines(&[])).0 != Verdict::Exact {
@@ -635,6 +741,6 @@ pub fn self_test() -> Result<(), String> {
         return Err("score line parse failed".to_string());
     }
 
-    println!("self-test=ok checks=8");
+    println!("self-test=ok checks=13");
     Ok(())
 }

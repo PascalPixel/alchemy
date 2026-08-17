@@ -458,7 +458,7 @@ result still has to be read as source and adopted through the owner's gate.
 | Command | What it tells you |
 |---|---|
 | `compiler_corpus_regression` | Recompiles the exact corpus and reports any byte regression. |
-| `main_candidate_rank` | Measures every main-image candidate and separates the residuals that are a plain reorder from the rest. |
+| `main_candidate_rank` | Measures every main-image candidate and sorts the residuals a source reading might move ahead of the ones only the scheduler or the allocator decides. |
 | `mode_sweep` | Searches the approved flag matrix for one fixed candidate. |
 | `mode_cohort` | Tests one compiler hypothesis across a bounded set of owners. |
 
@@ -470,7 +470,13 @@ after register allocation, and no source spelling reaches it. One that emits
 evaluation order the source decides. So the ranker sorts the second kind first
 and `--worth-opening` hides the rest.
 
-Both labels are weaker than they look, and saying so is the point. `reordering`
+A third verdict, `allocation`, is for two sides that emit the same instructions
+naming different registers — `080a524c` builds its flag in `r3` where the
+reference uses `r2`, and `08004144` moves a pair through `r1` where the reference
+uses `r5`. Which register holds a value is the allocator's decision, so like a
+reorder it is not something a source spelling names.
+
+Every label is weaker than it looks, and saying so is the point. `reordering`
 only asserts that the two instruction multisets are equal: evidence that source
 shape is unlikely to reach the residual, not proof the owner cannot match.
 `divergent` is merely its negation, and some divergent owners turn out to be

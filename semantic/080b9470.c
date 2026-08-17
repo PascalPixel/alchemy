@@ -38,7 +38,7 @@ struct ActionDefinition_080b9470 {
 };
 
 void *Func_08077008(s32 owner);
-s32 Func_080771e8(s32 group, s32 index);
+u8 Func_080771e8(s32 group, s32 index);
 struct ActionDefinition_080b9470 *Func_08077080(s32 action);
 
 void Func_080b9470(struct Record_080b9470 *records, s32 count)

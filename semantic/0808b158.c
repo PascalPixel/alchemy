@@ -6,7 +6,7 @@ struct Rule0808b158 {
     void *result;
 };
 
-extern s32 Func_0808a8d0(s32 arg0);
+extern u8 Func_0808a8d0(s32 arg0);
 
 void *Func_0808b158(s32 arg0, s32 arg1)
 {

@@ -7,7 +7,7 @@
  * or state byte 0x21a.  asm/080a7440.s retains byte identity while this file
  * remains the canonical semantic expression.
  */
-s32 Func_080a77a4(s32 selection);
+u8 Func_080a77a4(s32 selection);
 
 s32 Func_080a7440(void)
 {

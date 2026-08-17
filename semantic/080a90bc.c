@@ -108,7 +108,7 @@ s32 Func_080770c0(s32 arg0);
 void Func_080a9cbc(void);
 s32 Func_08077008(s32 arg0);
 s32 Func_080a68ec(s32 arg0, void *arg1, s32 arg2);
-void Func_080a8b8c(void *arg0, s32 arg1);
+s32 Func_080a8b8c(void *arg0, s32 arg1);
 void Func_080a9374(void *arg0, s32 arg1);
 void Func_08015278(void *arg0);
 void Func_080a345c(void);

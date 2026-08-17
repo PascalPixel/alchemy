@@ -28,7 +28,7 @@ struct Object_080937b8 {
 
 struct Object_080937b8 *Func_080090c8(s32, s32, s32, s32);
 void Func_08009098(struct Object_080937b8 *, const void *);
-void Func_08009080(struct Object_080937b8 *, s32);
+s32 Func_08009080(struct Object_080937b8 *, s32);
 void Func_0809163c(s32);
 void Func_080f9010(s32);
 extern u8 Data_00000000[];

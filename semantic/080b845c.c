@@ -48,7 +48,7 @@ struct Record_080b845c *Func_080b7f70(struct Object_080b845c *object,
                                       s32 kind);
 void Func_080b7ed8(void);
 s32 Func_08005268(const s32 *source, s32 *projected);
-u32 Func_080b8530(s32 id);
+u8 Func_080b8530(s32 id);
 
 s32 Func_080b845c(s32 id, s32 *projected)
 {

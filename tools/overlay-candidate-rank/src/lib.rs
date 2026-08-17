@@ -480,7 +480,17 @@ fn validate_args(args: &[String]) -> Result<bool, String> {
 
 /// `main()`. `root` is `overlay_candidate_rank.ts`'s `ROOT`; `self_exe` is the
 /// path this process was invoked as, reused to spawn worker children.
-pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> {
+///
+/// `subcommand` is the argv this command is reached by inside its host. Under
+/// the consolidated `overlay` binary that is `candidate-rank`, and a worker
+/// child spawned without it lands on the host's dispatcher, which rejects
+/// `--worker` as an unknown command. Empty when the crate is its own binary.
+pub fn run(
+    root: &Path,
+    self_exe: &Path,
+    subcommand: &[&str],
+    args: &[String],
+) -> Result<(), String> {
     if validate_args(args)? {
         return Ok(());
     }
@@ -534,29 +544,28 @@ pub fn run(root: &Path, self_exe: &Path, args: &[String]) -> Result<(), String> 
         fs::write(&input_path, render_worker_input(&owner_work, bucket))
             .map_err(|error| error.to_string())?;
         let child = Command::new(self_exe)
+            .args(subcommand)
             .arg("--worker")
             .arg(&input_path)
             .arg(&output_path)
             .current_dir(root)
+            // Piped, not inherited: the failure path below reads this back, and
+            // an inherited handle makes `child.stderr.take()` return None and
+            // reports a bare exit status instead of the worker's own message.
+            .stderr(std::process::Stdio::piped())
             .spawn()
             .map_err(|error| error.to_string())?;
         children.push((child, output_path));
     }
 
     let mut measured: Vec<Measurement> = Vec::new();
-    for (mut child, output_path) in children {
-        let status = child.wait().map_err(|error| error.to_string())?;
+    for (child, output_path) in children {
+        // `wait_with_output`, not `wait`: it drains the stderr pipe while the
+        // child runs, so a worker that outtalks the pipe buffer cannot wedge.
+        let finished = child.wait_with_output().map_err(|error| error.to_string())?;
+        let status = finished.status;
         if !status.success() {
-            let stderr = child
-                .stderr
-                .take()
-                .map(|mut pipe| {
-                    use std::io::Read;
-                    let mut text = String::new();
-                    let _ = pipe.read_to_string(&mut text);
-                    text.trim().to_string()
-                })
-                .unwrap_or_default();
+            let stderr = String::from_utf8_lossy(&finished.stderr).trim().to_string();
             return Err(if stderr.is_empty() {
                 format!("worker failed: {status}")
             } else {

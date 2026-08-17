@@ -748,10 +748,10 @@ apply_falloff:
             if (action->power != 0) {
                 target_pp_before_recovery = target->pp;
                 recovery_source_stat = source_stat;
-                pp_recovery = action->power;
                 if (range_index == 4) {
                     recovery_source_stat = 0x64;
                 }
+                pp_recovery = action->power;
                 pp_recovery = Func_08077190(pp_recovery, recovery_source_stat, 0x100);
                 falloff_percents = (s32 *)0x080C2B50;
                 falloff_offset = range_distance * 4;

@@ -2,14 +2,19 @@
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-struct State {
+/*
+ * This owner's view of Data_02000240, which include/battle_effect_runtime.h
+ * declares as `struct BattleWork`. Two fields are evidence here; the paddings
+ * are arithmetic to reach them.
+ */
+struct Work_080b0444 {
     u8 padding0[0x10];
     s32 value10;
     u8 padding14[0x108];
     s8 value11c;
 };
 
-extern struct State Data_02000240;
+extern struct Work_080b0444 Data_02000240;
 
 void Func_08077050(s32, s32);
 void Func_080b0278(s32, s32);

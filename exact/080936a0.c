@@ -16,7 +16,7 @@
 
 typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
 
-struct State {
+struct Work_080936a0 {
     u8 filler0[848];
     u32 previous;
     u32 current;
@@ -29,7 +29,7 @@ void Func_080041d8(const void *arg0, s32 arg1);
 
 void Func_080936a0(s32 arg0, s32 arg1)
 {
-    struct State *state = *(struct State **)0x03001e70;
+    struct Work_080936a0 *state = *(struct Work_080936a0 **)0x03001e70;
     s32 handle;
     s32 result;
 

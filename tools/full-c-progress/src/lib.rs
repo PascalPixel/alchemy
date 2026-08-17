@@ -777,6 +777,50 @@ fn equal_union(left: &Namespace, right: &Namespace) -> Result<bool, String> {
     )
 }
 
+
+/// Refuse to certify a percentage the build does not back.
+///
+/// The share is derived from OWNERSHIP -- which sources claim which spans --
+/// and ownership is a claim, not a proof. When the overlay half of the build
+/// broke, 527 rows went on being counted while none of them reproduced, and the
+/// tracked report read 27.25% for a tree whose ROM had not been rebuilt in
+/// weeks. Nothing noticed, because nothing tied the number to a build.
+///
+/// `make verify` runs `build-full` after this check, so the record read here is
+/// the previous run's. That is the point: a stale or failed record is exactly
+/// the state that must not publish a number.
+fn check_build_reproduced(root: &Path) -> Result<(), String> {
+    let record = root.join("out/full/rebuilt.json");
+    if !record.exists() {
+        return Err(
+            "no full build to certify the Full-C share against: run `make build-full` first"
+                .to_string(),
+        );
+    }
+    let value = read_json(&record)?;
+    let flag = |name: &str| match value.get(name) {
+        Some(crate::json::Value::Bool(value)) => Some(*value),
+        _ => None,
+    };
+    let count = |name: &str| match value.get(name) {
+        Some(crate::json::Value::Num(value)) => *value,
+        _ => 0.0,
+    };
+    if flag("byte_identical") != Some(true) {
+        return Err("the last full build was not byte-identical; the Full-C share would be fiction"
+            .to_string());
+    }
+    if count("rom_fallback_bytes") > 0.0 || count("unowned_bytes") > 0.0 {
+        return Err(format!(
+            "the last full build fell back to ROM bytes ({} fallback, {} unowned); \
+             the Full-C share would be fiction",
+            count("rom_fallback_bytes"),
+            count("unowned_bytes")
+        ));
+    }
+    Ok(())
+}
+
 fn check_current_inventory(root: &Path, target: &str, tracked: &Inventory) -> Result<(), String> {
     let derived = derive_inventory(root, target)?;
     validate_inventory(&derived)?;
@@ -909,6 +953,7 @@ fn run(argv: &[String]) -> Result<(), String> {
         if canonical_json(&cached) != canonical_json(&report_json(&report)) {
             return Err(format!("tracked {} Full-C report is stale", options.target));
         }
+        check_build_reproduced(&root)?;
     }
     if options.subject {
         println!(

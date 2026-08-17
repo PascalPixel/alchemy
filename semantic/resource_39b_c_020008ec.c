@@ -1,19 +1,19 @@
 #include "types.h"
 
 extern u8 *Data_03001e70;
-extern s32 Func_02000528(s32, s32, s32, s32, s32, s32);
-extern void Func_08009080(u8 *object, s32 mode);
-extern void Func_08009150(u8 *object, s32 x, s32 y, s32 z);
-extern void Func_08009158(u8 *object);
-extern void Func_080091c0(s32, s32, s32, s32, s32, s32);
+void Func_02000528(s32, s32, s32, s32, s32, s32);
+void Func_08009080(u8 *object, s32 mode);
+void Func_08009150(u8 *object, s32 x, s32 y, s32 z);
+void Func_08009158(u8 *object);
+void Func_080091c0(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_0808a010(s32 frames);
 extern u8 *Func_0808a080(s32 index);
-extern void Func_0808a090(s32, s32, s32);
+void Func_0808a090(s32, s32, s32);
 extern void Func_0808a0e0(s32 index, s32 x, s32 z);
-extern void Func_0808a0e8(s32 index);
-extern void Func_0808a100(s32 index, s32 value);
-extern void Func_0808a5e8(void);
-extern void Func_080f9010(s32 value);
+void Func_0808a0e8(s32 index);
+void Func_0808a100(s32 index, s32 value);
+void Func_0808a5e8(void);
+void Func_080f9010(s32 value);
 
 static s32 Abs_020008ec(s32 value)
 {

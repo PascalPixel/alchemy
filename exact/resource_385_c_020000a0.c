@@ -1,13 +1,13 @@
 #include "types.h"
 #define NULL ((void *)0)
 
-void *Func_020006de(s32, s32, s32, s32);
-u8 Func_02000710(void *, s32);
-s8 Func_02000770(void *, s32);
+void *Func_02001132(s32, s32, s32, s32);
+void Func_0200117c(void *, s32);
+void Func_02001244(void *, s32);
 
 void *Func_020000a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *result = Func_020006de(arg3, arg0, arg1, arg2);
+    u8 *result = Func_02001132(arg3, arg0, arg1, arg2);
 
     if (result != NULL) {
         u8 *object = *(u8 **)(result + 0x50);
@@ -21,8 +21,8 @@ void *Func_020000a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         object[9] = mask;
         result[0x55] = 0;
         result[0x59] = 8;
-        Func_02000710(result, 0);
-        Func_02000770(result, 15);
+        Func_0200117c(result, 0);
+        Func_02001244(result, 15);
         result[0x23] = (result[0x23] & 0xfe) | 2;
         return result;
     }

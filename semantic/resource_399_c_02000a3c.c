@@ -1,15 +1,15 @@
 #include "types.h"
 
 extern s32 Func_02002c8a();
-extern s32 Func_02002e38();
-extern s32 Func_02002c8e();
-extern s32 Func_02002d48();
+void Func_02002e38();
+void Func_02002c8e();
+void Func_02002d48();
 extern s32 Func_02002c7e();
-extern s32 Func_02002d78();
-extern s32 Func_02002d88();
-extern s32 Func_02002d98();
-extern s32 Func_02002dbc();
-extern s32 Func_02002cd8();
+void Func_02002d78();
+void Func_02002d88();
+void Func_02002d98();
+void Func_02002dbc();
+void Func_02002cd8();
 
 void Func_02000a3c(void) {
     u16 sel = *(u16 *)(Func_02002c8a(0) + 6);

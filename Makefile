@@ -292,6 +292,11 @@ lint: pristine-options-check standard-check crate-tests
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- decomp-targets --self-test
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- cache-key-lint
 	$(CARGO_RUN) $(TOOLS)/check/Cargo.toml -- lang-ban
+	@# The dispatcher is the command registry and CONTRIBUTING.md is its
+	@# catalog. This was never wired in, so it sat broken -- pointing at a
+	@# docs/TOOLS.md the doc collapse had deleted -- while a command went
+	@# uncatalogued and nothing said so.
+	$(CARGO_RUN) $(TOOLS)/assets/Cargo.toml -- documented
 	$(MAKE) compiler-lint
 
 test: lint compiler-self-test

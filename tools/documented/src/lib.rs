@@ -1,7 +1,7 @@
 //! Documentation policy for the native command layer.
 //!
 //! The dispatcher is the registry. Every group has operational policy in
-//! AGENTS.md and every public command appears in docs/TOOLS.md.
+//! CONTRIBUTING.md and every public command appears in CONTRIBUTING.md.
 
 pub mod cli;
 
@@ -22,7 +22,7 @@ pub fn command_names() -> Vec<String> {
         .collect()
 }
 
-/// Parsed sections from AGENTS.md, retaining first-seen order while allowing a
+/// Parsed sections from CONTRIBUTING.md, retaining first-seen order while allowing a
 /// later duplicate heading to replace its word count.
 #[derive(Debug, Default, Clone)]
 pub struct Docs {
@@ -147,13 +147,13 @@ pub fn scanned_nothing(tool_count: usize, document_count: usize) -> Option<&'sta
     }
 }
 
-/// Check the dispatcher registry against AGENTS.md.
+/// Check the dispatcher registry against CONTRIBUTING.md.
 pub fn violations(tools: &[String], docs: &Docs) -> Vec<String> {
     let mut problems = Vec::new();
     for tool in tools {
         match docs.get(tool) {
             None => problems.push(format!(
-                "{tool}: no section in AGENTS.md -- document it or remove the native tool"
+                "{tool}: no section in CONTRIBUTING.md -- document it or remove the native tool"
             )),
             Some(words) if words < MINIMUM_WORDS => problems.push(format!(
                 "{tool}: only {words} words; a heading is a listing, not documentation"
@@ -258,18 +258,18 @@ pub fn catalog_violations(commands: &[String], catalog: &[String]) -> Vec<String
         .filter(|command| !counts.contains_key(command.as_str()))
         .map(|command| {
             format!(
-                "{command}: absent from docs/TOOLS.md -- document it or remove the dispatch entry"
+                "{command}: absent from CONTRIBUTING.md -- document it or remove the dispatch entry"
             )
         })
         .collect::<Vec<_>>();
     for (entry, count) in counts {
         if !public.contains(entry) {
             problems.push(format!(
-                "{entry}: stale or unknown command in docs/TOOLS.md -- remove it or register it in the dispatcher"
+                "{entry}: stale or unknown command in CONTRIBUTING.md -- remove it or register it in the dispatcher"
             ));
         } else if count > 1 {
             problems.push(format!(
-                "{entry}: appears {count} times in docs/TOOLS.md -- catalog each public command exactly once"
+                "{entry}: appears {count} times in CONTRIBUTING.md -- catalog each public command exactly once"
             ));
         }
     }
@@ -383,7 +383,7 @@ mod tests {
         assert_eq!(
             catalog_violations(&commands, &catalog),
             vec![
-                "shape_sweep: absent from docs/TOOLS.md -- document it or remove the dispatch entry"
+                "shape_sweep: absent from CONTRIBUTING.md -- document it or remove the dispatch entry"
                     .to_string()
             ]
         );
@@ -397,7 +397,7 @@ mod tests {
         );
         let problems = catalog_violations(&commands, &catalog);
         assert!(problems.iter().any(|problem| {
-            problem == "old_command: stale or unknown command in docs/TOOLS.md -- remove it or register it in the dispatcher"
+            problem == "old_command: stale or unknown command in CONTRIBUTING.md -- remove it or register it in the dispatcher"
         }));
     }
 
@@ -411,7 +411,7 @@ mod tests {
         assert_eq!(
             catalog_violations(&commands, &catalog),
             vec![
-                "overlay_adopt: appears 2 times in docs/TOOLS.md -- catalog each public command exactly once"
+                "overlay_adopt: appears 2 times in CONTRIBUTING.md -- catalog each public command exactly once"
                     .to_string()
             ]
         );
@@ -428,7 +428,7 @@ mod tests {
     #[test]
     fn current_live_catalog_matches_the_dispatch_registry() {
         let commands = command_names();
-        let catalog = cataloged(include_str!("../../../docs/TOOLS.md"));
+        let catalog = cataloged(include_str!("../../../CONTRIBUTING.md"));
         assert_eq!(catalog.len(), commands.len());
         assert!(catalog_violations(&commands, &catalog).is_empty());
     }
@@ -454,7 +454,7 @@ mod tests {
             problems,
             vec![
                 "verify: only 2 words; a heading is a listing, not documentation".to_string(),
-                "ghost: no section in AGENTS.md -- document it or remove the native tool"
+                "ghost: no section in CONTRIBUTING.md -- document it or remove the native tool"
                     .to_string(),
             ]
         );

@@ -1,0 +1,34 @@
+{
+  "owner": "main:0x080bbb0c",
+  "span_bytes": 6332,
+  "score": {
+    "measured": "2026-08-17",
+    "candidate_bytes": 100,
+    "reference_bytes": 6332,
+    "wrong_instructions": 2908,
+    "differing_halfwords": 3159,
+    "class": "unemittable (advisory, size mismatch)"
+  },
+  "shape": {
+    "calls": null,
+    "branches": null,
+    "loops": null,
+    "memory_ops": null
+  },
+  "expressed": [
+    "prologue and first argument block only"
+  ],
+  "unexpressed": [
+    {
+      "op": "everything after the opening",
+      "count": null,
+      "where": "whole body"
+    }
+  ],
+  "verified_against_reference": [
+    "seven-instruction register-save prologue matches exactly"
+  ],
+  "blocked_by": "not blocked -- barely started",
+  "rejected": [],
+  "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."
+}

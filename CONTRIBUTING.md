@@ -818,29 +818,35 @@ you reopen an owner; their C did not build the ROM and never would have.
 
 ### 3a. The road to 100%, and what is actually in the way
 
-100% of the bytes that can be C is reachable, and the obstacle is not the
-compiler. That is a measurement, not an opinion.
+100% of the bytes that can be C is reachable, and the compiler is the minority
+obstacle. That is a measurement, not an opinion.
 
-The 1,276 overlay candidates in the deleted tier were sampled (every twelfth,
-107 sources) and scored against the ROM. Their residuals classify as:
+The overlay candidates in the deleted tier were scored against the ROM. Counting
+only real owners -- 32 bytes or more, so the 8-byte veneer stubs that score
+exact trivially are excluded -- 315 of them classify as:
 
 | share | class | what it means |
 |---:|---|---|
-| 63.6% | size mismatch | a statement is missing or extra |
-| 22.4% | wrong | operands differ: a type, a prototype, a constant |
-| 7.5% | ordering | a scheduler tie |
-| 4.7% | allocation | reload picked different registers |
-| 1.9% | exact | already reproduces |
+| 52.7% | size mismatch | a statement is missing or extra |
+| 27.9% | wrong | operands differ: a type, a prototype, a constant |
+| 17.1% | ordering | a scheduler tie |
+| 1.9% | allocation | reload picked different registers |
+| 0.3% | unemittable | the reference shape no stock gcc 2.96 emits |
 
-So **86% of what is left is ordinary reconstruction** -- read the assembly
-again, find the statement you missed, fix the type. Only about one owner in
-eight sits in the two families the compiler decides, and those are the ones
-worth a `shape_sweep` or a note in `unmatchable.json`.
+**81% of what is left is ordinary reconstruction** -- read the assembly again,
+find the statement you missed, fix the type. About one owner in five sits in the
+families the compiler decides, and those are the ones worth a `shape_sweep` or
+an `unmatchable.json` entry.
 
-The sample is drawn from sources that someone already wrote and failed to
-close, so it is biased toward the hard cases. That makes the finding stronger,
-not weaker: even among owners known to have resisted once, the compiler is the
-blocker in roughly one in eight.
+The sample is drawn from sources someone already wrote and failed to close, so
+it is biased toward hard cases. That makes the finding stronger, not weaker:
+even among owners known to have resisted once, four in five failed for a reason
+the contributor controls.
+
+No owner in the corpus was sitting there already reproducing. Every source that
+scored zero differing halfwords was an 8-byte fragment the adoption gate
+correctly refuses as not an audited owner. If you filter that corpus by score,
+filter by size first or the count is meaningless.
 
 This is the real reason the project sat at 20% for two weeks. It was not a
 compiler wall. It was 862,856 bytes of half-finished C that looked like
@@ -853,8 +859,8 @@ A worked example of the loop, end to end, on `resource_3b2:0da4` (90 bytes):
 read the target, find the established struct in a finished owner from the same
 overlay, write the C, and score it. Three iterations took it from nothing to
 `wrong_instructions=0`; what remained was two halfwords of `ordering`, which
-survived every transform `shape_sweep` has. That is what a hard owner looks
-like, and it is the minority case.
+survived every transform `shape_sweep` has. That is what the one-in-five owner
+looks like.
 
 ### 3b. What the old semantic pile taught, kept
 

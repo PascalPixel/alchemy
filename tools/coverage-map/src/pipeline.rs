@@ -141,25 +141,23 @@ fn category_entry(bytes: i64, executable_bytes: i64) -> Result<Value, String> {
     ]))
 }
 
-/// A closed ordinary-C census makes the executable complement permanent.
+/// Permanent assembly is explicit evidence, never a complement.
 ///
-/// `core-retained-audit` independently proves that the current full assembly
-/// manifest covers this complement and rejects ordinary compiler output in it.
-/// Keeping the complement gray here after that census closes would put proven
-/// runtime assembly, veneers, and alignment back into the contributor queue.
-fn main_retained_coverage(
-    executable: &[Span],
-    exact: &[Span],
-    semantic: &[Span],
-    explicit: &[Span],
-    census_closed: bool,
-) -> Vec<Span> {
-    if !census_closed {
-        return normalize(explicit);
-    }
-    let mut owned = exact.to_vec();
-    owned.extend_from_slice(semantic);
-    subtract(executable, &normalize(&owned))
+/// This used to say that once the ordinary-C census was declared closed, every
+/// main-image byte that was not exact or semantic C was permanent. That held
+/// only while semantic C filled the complement: `owned` was exact plus
+/// semantic, so what remained really was veneers and alignment.
+///
+/// With two tiers `owned` collapses to exact C alone, and the same rule claims
+/// the entire unreconstructed main image can never be C -- 447,826 bytes, most
+/// of the contributor target list, relabelled permanent without one line of
+/// evidence. It read as DONE 58% on the live dashboard while the published map
+/// said 36%.
+///
+/// A region is permanent because something proves it is, and `explicit` is
+/// where that proof arrives. The census argument is gone.
+fn main_retained_coverage(explicit: &[Span]) -> Vec<Span> {
+    normalize(explicit)
 }
 
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
@@ -334,13 +332,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     // The closed semantic census and the independent retained-complement gate
     // jointly prove that every remaining main-image byte is permanent
     // assembly. During an open census, only explicit retained evidence counts.
-    let main_retained = main_retained_coverage(
-        &main_executable,
-        &exact_main_union,
-        &semantic_main,
-        &retained_main_spans(),
-        semantic_coverage.main_census_closed,
-    );
+    let main_retained = main_retained_coverage(&retained_main_spans());
     let mut executable_areas: Vec<Area> = vec![area(
         "main",
         "Main image",
@@ -692,18 +684,10 @@ mod tests {
     }
 
     #[test]
-    fn a_closed_census_moves_only_the_unowned_complement_to_retained() {
-        let executable = vec![Span::new(0, 100)];
-        let exact = vec![Span::new(0, 20)];
-        let semantic = vec![Span::new(40, 80)];
-        assert_eq!(
-            main_retained_coverage(&executable, &exact, &semantic, &[], true),
-            vec![Span::new(20, 40), Span::new(80, 100)]
-        );
+    fn permanence_is_explicit_evidence_and_never_the_complement() {
         let explicit = vec![Span::new(90, 100)];
-        assert_eq!(
-            main_retained_coverage(&executable, &exact, &semantic, &explicit, false),
-            explicit
-        );
+        assert_eq!(main_retained_coverage(&explicit), explicit);
+        // Everything else stays assembly. It is work, not permanence.
+        assert_eq!(main_retained_coverage(&[]), Vec::<Span>::new());
     }
 }

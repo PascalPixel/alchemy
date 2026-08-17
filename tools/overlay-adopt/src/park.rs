@@ -598,6 +598,18 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             .ok_or_else(|| format!("expected <overlay>:<addressHex>, got {row}"))?;
         let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
             .map_err(|_| format!("{row}: address must be hexadecimal"))?;
+        // Accept both spellings of the shared id. `adopt` reads this field as an
+        // OFFSET and adds the base, so it takes `resource_3b9:007c` -- which is
+        // also what `candidate-rank` and `overlay-twins` print -- while `audit`
+        // prints the full `resource_3b9:0200007c`. Parking read it as absolute
+        // only, so given the first form it looked for `AlchemyC_0000007c` and
+        // reported no such placeholder: the documented inverse of `adopt`
+        // rejected the ids `adopt` itself accepts.
+        let address = if address < OVERLAY_BASE {
+            OVERLAY_BASE + address
+        } else {
+            address
+        };
         match park_one(root, overlay, address, apply) {
             Ok(parked) => println!(
                 "parked {}:{:08x} span={} lines={}{}",

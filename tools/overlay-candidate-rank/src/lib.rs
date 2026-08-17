@@ -782,8 +782,90 @@ pub fn run(
         counts[4],
         counts[5],
     );
+    // Owners `adopt` will refuse even when their C is perfect, because their
+    // span does not tile the audited intervals. Two of them reproduce TODAY --
+    // resource_3b9:007c and resource_3c4:0e20, 612 bytes of byte-exact C that
+    // cannot be banked. Counting them here so a contributor learns it before
+    // spending a session on one rather than at the adoption gate afterwards.
+    // 97ae4f4ad has the reading: a jump table reached from inside a function is
+    // classified as data, so the map leaves a hole in the middle of its owner.
+    let intervals = audited_intervals_by_overlay(root);
+    let held: Vec<&Measurement> = measured
+        .iter()
+        .filter(|row| {
+            let Ok(start) = i64::from_str_radix(row.address.trim_start_matches("0x"), 16) else {
+                return false;
+            };
+            !span_tiles(&intervals, &row.overlay, start, start + row.span)
+        })
+        .collect();
+    if !held.is_empty() {
+        println!(
+            "unadoptable={} bytes={} (span does not tile metrics/gs1-en-executable.json)",
+            held.len(),
+            held.iter().map(|row| row.span).sum::<i64>(),
+        );
+    }
     println!("report={}", work.join("report.json").to_string_lossy());
     Ok(())
+}
+
+/// `overlay id -> (start, end, kind)`, sorted, from the audited executable map.
+fn audited_intervals_by_overlay(root: &Path) -> Vec<(String, Vec<(i64, i64, String)>)> {
+    let mut out = Vec::new();
+    let Ok(text) = fs::read_to_string(root.join("metrics/gs1-en-executable.json")) else {
+        return out;
+    };
+    let Ok(value) = parse_json(&text) else {
+        return out;
+    };
+    for overlay in value.get("overlays").and_then(Value::as_array).unwrap_or(&[]) {
+        let Some(id) = overlay.get("id").and_then(Value::as_str) else {
+            continue;
+        };
+        let mut spans: Vec<(i64, i64, String)> = overlay
+            .get("intervals")
+            .and_then(Value::as_array)
+            .unwrap_or(&[])
+            .iter()
+            .filter_map(|interval| {
+                Some((
+                    interval.get("start").and_then(Value::as_f64)? as i64,
+                    interval.get("end").and_then(Value::as_f64)? as i64,
+                    interval.get("kind").and_then(Value::as_str)?.to_string(),
+                ))
+            })
+            .collect();
+        spans.sort_by_key(|span| span.0);
+        out.push((id.to_string(), spans));
+    }
+    out
+}
+
+/// The same test `overlay-adopt` applies: one interval contains the span, or
+/// the touched intervals tile it contiguously and the last is not alignment.
+fn span_tiles(
+    intervals: &[(String, Vec<(i64, i64, String)>)],
+    overlay: &str,
+    start: i64,
+    end: i64,
+) -> bool {
+    let Some((_, spans)) = intervals.iter().find(|(id, _)| id == overlay) else {
+        // No map for this overlay is not evidence of a hole.
+        return true;
+    };
+    if spans.iter().any(|span| span.0 <= start && end <= span.1) {
+        return true;
+    }
+    let touched: Vec<&(i64, i64, String)> =
+        spans.iter().filter(|span| span.0 < end && start < span.1).collect();
+    if touched.is_empty() {
+        return false;
+    }
+    touched[0].0 <= start
+        && touched[touched.len() - 1].1 >= end
+        && touched.windows(2).all(|pair| pair[0].1 == pair[1].0)
+        && touched[touched.len() - 1].2 != "executable_alignment"
 }
 
 #[cfg(test)]
@@ -809,6 +891,44 @@ mod tests {
             semantic_source: "semantic".to_string(),
             error: error.map(str::to_string),
         }
+    }
+
+    #[test]
+    fn span_tiles_agrees_with_the_rule_overlay_adopt_applies() {
+        // This mirrors `overlay-adopt`'s gate. If the two drift, the ranker
+        // promises a row that adoption then refuses, which is the failure this
+        // count exists to prevent.
+        let map = |spans: &[(i64, i64, &str)]| {
+            vec![(
+                "resource_1".to_string(),
+                spans
+                    .iter()
+                    .map(|(a, b, k)| (*a, *b, (*k).to_string()))
+                    .collect::<Vec<_>>(),
+            )]
+        };
+
+        // One interval containing the span.
+        let one = map(&[(0x100, 0x200, "thumb")]);
+        assert!(span_tiles(&one, "resource_1", 0x110, 0x180));
+
+        // Contiguous tiling is fine; a gap in the middle is not. This is
+        // resource_3b9:007c in miniature -- its 264-byte jump table leaves
+        // exactly this shape of hole.
+        let tiled = map(&[(0x100, 0x140, "thumb"), (0x140, 0x200, "literal_pool")]);
+        assert!(span_tiles(&tiled, "resource_1", 0x100, 0x200));
+        let holed = map(&[(0x100, 0x140, "thumb"), (0x180, 0x200, "thumb")]);
+        assert!(!span_tiles(&holed, "resource_1", 0x100, 0x200));
+
+        // Ending on alignment padding is refused, as adoption refuses it.
+        let padded = map(&[(0x100, 0x140, "thumb"), (0x140, 0x200, "executable_alignment")]);
+        assert!(!span_tiles(&padded, "resource_1", 0x100, 0x200));
+
+        // Running past the last interval is not covered.
+        assert!(!span_tiles(&one, "resource_1", 0x110, 0x280));
+
+        // An overlay absent from the map is not evidence of a hole.
+        assert!(span_tiles(&one, "resource_9", 0x000, 0xfff));
     }
 
     #[test]

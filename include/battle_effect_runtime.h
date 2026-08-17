@@ -27,7 +27,14 @@ struct BattleRenderObject {
 struct BattleRuntime {
     u8 unknown_000[0x1c8];
     s32 unknown_1c8;
-    s32 unknown_1cc;
+    /*
+     * Two-state, driven by the shoulder buttons off the 0x03001c94 latch:
+     * Func_080915ec sets it to 0 on L (0x200) and to -1 on R (0x100), and
+     * Func_080916b0 initialises it to 0. Func_0809163c calls Func_080030f8
+     * only while it is 0. That is the whole of the evidence -- what the two
+     * states mean is not established, so the name says mode and not more.
+     */
+    s32 mode_1cc;
     u8 unknown_1d0[0x0a];
     u16 unknown_1da;
     s16 unknown_1dc;

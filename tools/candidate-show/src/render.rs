@@ -126,17 +126,26 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         to_js_number_string(expected.len() as f64)?,
         to_js_number_string(differing.len() as f64)?,
     ));
+    // Ordered instruction streams, then aligned as sequences.
+    let ordered = |map: &crate::disasm::Rows| -> Vec<String> {
+        let mut keys: Vec<f64> = map.keys().collect();
+        keys.sort_by(js_numeric_comparator);
+        keys.iter()
+            .map(|key| map.get(*key).unwrap_or("").to_string())
+            .collect()
+    };
+    let left_lines = ordered(&left);
+    let right_lines = ordered(&right);
+    // The same verdict `overlay score` prints, for the same reason: a
+    // differing-halfword count alone puts a blocked tie and a two-line defect in
+    // the same tier. The main image had no way to see it -- `residual_class` lives
+    // in this crate and only the overlay half called it -- so `main-rank` carried
+    // a second implementation, which then could not see `unemittable` when that
+    // class was added and went on offering regions that were never C as readable
+    // defects.
+    let (class, wrong) = residual_class(&left_lines, &right_lines);
+    stdout.push_str(&format!("class={class} wrong_instructions={wrong}\n"));
     if options.align {
-        // Ordered instruction streams, then aligned as sequences.
-        let ordered = |map: &crate::disasm::Rows| -> Vec<String> {
-            let mut keys: Vec<f64> = map.keys().collect();
-            keys.sort_by(js_numeric_comparator);
-            keys.iter()
-                .map(|key| map.get(*key).unwrap_or("").to_string())
-                .collect()
-        };
-        let left_lines = ordered(&left);
-        let right_lines = ordered(&right);
         stdout.push_str("      candidate                      reference\n");
         for (candidate, reference) in align_streams(&left_lines, &right_lines) {
             let mark = match (&candidate, &reference) {

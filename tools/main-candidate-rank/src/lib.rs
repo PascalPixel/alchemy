@@ -1,62 +1,25 @@
 //! `main-rank`: rank every main-image candidate, and say which to open first.
 //!
-//! The overlay half has `overlay candidate-rank`, which as `bce2bc1e9` puts it
-//! is "the tool that says which owners are worth opening". The main image --
-//! 548,364 executable bytes, the larger half of the target -- had no such tool,
-//! so its drafts' distance from the reference was unmeasured in bulk and owners
-//! were chosen by size from the target table instead.
+//! The overlay half has `overlay candidate-rank`, which as `bce2bc1e9` puts it is
+//! "the tool that says which owners are worth opening". The main image --
+//! 548,364 executable bytes, the larger half of the target -- had no such tool, so
+//! its drafts' distance from the reference was unmeasured in bulk and owners were
+//! chosen by size from the target table instead.
 //!
-//! This measures all of them, and adds the one judgement the overlay ranker does
-//! not make: whether a residual is a plain reorder, which nothing in the source
-//! reaches, or something else.
+//! The verdict comes from `candidate_show::render::residual_class`, the same
+//! function `overlay score` and `overlay candidate-rank` use, so the two halves
+//! cannot disagree about whether an owner is worth opening.
 //!
-//! ## Why a distance alone is not enough
+//! This file used to carry its OWN copy of that classification, because
+//! `candidate-show` did not print the class and only the overlay half called the
+//! shared function. Two implementations of one judgement is a defect that waits:
+//! when `unemittable` was added -- a reference-side `stmia` or `ldmia` proving the
+//! region was never C, which arm.md gates on TARGET_ARM -- the copy could not see
+//! it, and went on offering hand-written assembly regions as readable source
+//! defects. `candidate-show` now prints `class=` and this reads it.
 //!
-//! Two owners can both sit two halfwords from the reference and be nothing
-//! alike. If the two sides emit the same instructions in a different ORDER,
-//! they already agree on what to emit and disagree only on when, which past
-//! register allocation is the scheduler's business and no source spelling
-//! reaches. If they emit DIFFERENT instructions, the disagreement is about a
-//! type, a prototype, a constant or an evaluation order the source controls,
-//! reading it MAY be ordinary work -- or may also turn out to be allocation,
-//! which is why the bucket is called `divergent` rather than anything promising.
-//!
-//! Measured over the near-miss band of both halves, that split is 140 owners
-//! and 18,568 bytes of reordering against 104 owners and 11,758 bytes of
-//! divergence, so most of the band is the kind no source reading moves and a
-//! ranker reporting distance alone would send a contributor straight at it.
-//! Eight owners were opened by hand while building this: on every one flagged
-//! reordering, and on the one `divergent` owner that turned out to be allocation
-//! too, each behaviour-preserving reshape (statement order, prototype spelling,
-//! mask and decrement forms, block versus function scope for a hoisted
-//! invariant, inlining a single-use temporary), `shape-sweep`, and 600
-//! iterations of `permute` left the residual exactly where it started.
-//!
-//! ## Reading the classification honestly
-//!
-//! `reordering` is a statement about the two instruction MULTISETS being equal,
-//! nothing more. It is evidence that source shape is unlikely to reach the
-//! residual, not proof that the owner is unmatchable: a different allocation
-//! could still follow from a change this tool cannot see. Treat it as "open
-//! these last", not "these are impossible". And `divergent` is only its
-//! negation, so it carries no promise either -- it is the smaller pile to search,
-//! not a list of fixable owners.
-//!
-//! Two artefacts have to be normalised away first, and both were caught by
-//! disagreeing with owners already read by hand:
-//!
-//!   * moving a pc-relative load changes that load's own displacement, so
-//!     `[pc, #524]` and `[pc, #516]` are one load at two positions;
-//!   * the candidate column is a FIXED-WIDTH field -- `pad_end(text, 30)` clipped
-//!     to 30 -- so the split is by offset. A run-of-spaces rule looks right and
-//!     fails on exactly the rows that have no padding left, which are the wide
-//!     ones; a column over 30 characters is also clipped and leaks its tail onto
-//!     the reference side, so that side is anchored on its mnemonic.
-//!
-//! Without the first, 15 reorderings read as disagreements. The second bit twice:
-//! an early draft split three characters off and inverted the verdict outright,
-//! reporting 155 owners worth opening where there are 104, and the run-of-spaces
-//! rule that replaced it read 13 overlay reorderings as divergent.
+//! Ranking is by verdict first and distance second. A differing-halfword count
+//! alone puts a blocked tie and a two-line defect in the same tier.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -73,34 +36,32 @@ pub struct Row {
     pub candidate_bytes: Option<i64>,
     pub reference_bytes: Option<i64>,
     pub differing_halfwords: Option<i64>,
-    /// Rows the aligned view marks `+`, `-` or `!`.
-    pub differing_rows: Option<i64>,
+    /// `wrong_instructions` from the shared classifier: instructions the two
+    /// sides disagree about, counted once per side. The ranking key, because a
+    /// halfword count is not comparable once the sizes differ.
+    pub wrong_instructions: Option<i64>,
     pub verdict: Verdict,
     pub error: Option<String>,
 }
 
+/// The shared verdict, ordered so the readable defects sort first.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Verdict {
     /// Byte-identical at the right size.
     Exact,
-    /// The two sides emit different instructions. That can be a type, a
-    /// prototype, a constant or an evaluation order the source decides -- and
-    /// it can also be a register the allocator simply chose differently, which
-    /// source shape does not reach either. `0800fec8` is the second kind: it
-    /// shifts through r3 where the reference shifts r1 in place, and inlining
-    /// the load, splitting the temporary and using compound shifts all made it
-    /// worse. So this bucket means "not provably a reorder", not "fixable".
-    Divergent,
-    /// The same instructions naming different registers. `080a524c` builds its
-    /// flag in r3 where the reference uses r2 and is otherwise identical;
-    /// `08004144` moves a pair through r1 where the reference uses r5. Which
-    /// register holds a value is the allocator's decision, so like a reorder
-    /// this is not something a source spelling names.
-    Allocation,
-    /// The same instructions in a different order: the scheduler's choice.
-    Reordering,
+    /// The two sides emit different instructions, and none of the cheaper
+    /// explanations apply: a type, a prototype, a constant, an evaluation order.
+    Wrong,
     /// Sizes differ, so there is no meaningful positional comparison.
     SizeMismatch,
+    /// The same instructions naming different registers. The allocator's choice.
+    Allocation,
+    /// The same instructions in a different order. The scheduler's choice.
+    Ordering,
+    /// A reference-side `stmia`/`ldmia`: stock gcc 2.96 cannot emit a Thumb
+    /// multiple transfer from any source, so the region is hand-written assembly
+    /// or a library object and no reading of the C reaches it.
+    Unemittable,
     /// The candidate did not compile, or produced no score.
     Unscored,
 }
@@ -109,225 +70,47 @@ impl Verdict {
     pub const fn label(self) -> &'static str {
         match self {
             Verdict::Exact => "exact",
-            Verdict::Divergent => "divergent",
-            Verdict::Allocation => "allocation",
-            Verdict::Reordering => "reordering",
+            Verdict::Wrong => "wrong",
             Verdict::SizeMismatch => "size-mismatch",
+            Verdict::Allocation => "allocation",
+            Verdict::Ordering => "ordering",
+            Verdict::Unemittable => "unemittable",
             Verdict::Unscored => "unscored",
         }
     }
 
-    /// Whether this owner is worth opening before the reordering ones. It is
-    /// not a promise that a source reading exists.
+    /// The class string `candidate-show` prints.
+    pub fn from_class(text: &str) -> Option<Self> {
+        Some(match text {
+            "exact" => Verdict::Exact,
+            "wrong" => Verdict::Wrong,
+            "allocation" => Verdict::Allocation,
+            "ordering" => Verdict::Ordering,
+            "unemittable" => Verdict::Unemittable,
+            _ => return None,
+        })
+    }
+
+    /// Whether reading the source is the next step. Not a promise that a reading
+    /// exists -- only that the cheaper explanations have been ruled out.
     pub const fn worth_opening(self) -> bool {
-        matches!(self, Verdict::Divergent | Verdict::SizeMismatch)
+        matches!(self, Verdict::Wrong | Verdict::SizeMismatch)
     }
 }
 
-/// Strip everything that MOVING an instruction alone would change.
-///
-/// A relocated pc-relative load carries a different displacement while being
-/// the same load, and branch and pool addresses shift with any size change, so
-/// none of the three can distinguish a reorder from a real disagreement.
-pub fn normalise(text: &str) -> String {
-    let body = text.split('@').next().unwrap_or("").trim();
-    let mut out = String::with_capacity(body.len());
-    let bytes: Vec<char> = body.chars().collect();
-    let mut index = 0usize;
-    while index < bytes.len() {
-        // `[pc, #NNN]` -> `[pc]`
-        if bytes[index..].starts_with(&['[', 'p', 'c']) {
-            if let Some(close) = bytes[index..].iter().position(|c| *c == ']') {
-                out.push_str("[pc]");
-                index += close + 1;
-                continue;
-            }
-        }
-        // `0x...` -> `ADDR`
-        if bytes[index] == '0' && bytes.get(index + 1) == Some(&'x') {
-            out.push_str("ADDR");
-            index += 2;
-            while index < bytes.len() && bytes[index].is_ascii_hexdigit() {
-                index += 1;
-            }
-            continue;
-        }
-        if bytes[index].is_whitespace() {
-            if !out.ends_with(' ') {
-                out.push(' ');
-            }
-            index += 1;
-            continue;
-        }
-        out.push(bytes[index]);
-        index += 1;
-    }
-    out.trim().to_string()
-}
-
-/// The same instruction with every register name blanked to `R`.
-///
-/// Two sides that agree here and disagree on `normalise` differ only in which
-/// registers they name, which the allocator picks. It keeps mnemonics,
-/// immediates and addressing shape, so a genuine difference still shows: `strb`
-/// against `strh` survives, and so does `#31` against `#30`.
-pub fn register_blind(text: &str) -> String {
-    let normalised = normalise(text);
-    let mut out = String::with_capacity(normalised.len());
-    let chars: Vec<char> = normalised.chars().collect();
-    let mut index = 0usize;
-    while index < chars.len() {
-        let previous_is_word = index > 0 && (chars[index - 1].is_alphanumeric() || chars[index - 1] == '_');
-        let (matched, width) = register_at(&chars[index..]);
-        if matched && !previous_is_word {
-            let after = chars.get(index + width);
-            // A register name ends here only if what follows is not more of a word.
-            if !after.is_some_and(|c| c.is_alphanumeric() || *c == '_') {
-                out.push('R');
-                index += width;
-                continue;
-            }
-        }
-        out.push(chars[index]);
-        index += 1;
-    }
-    out
-}
-
-/// Whether a register name starts here, and how many characters it spans.
-fn register_at(rest: &[char]) -> (bool, usize) {
-    let word: String = rest
-        .iter()
-        .take_while(|c| c.is_alphanumeric())
-        .collect::<String>()
-        .to_ascii_lowercase();
-    if word.len() >= 2 && word.starts_with('r') && word[1..].chars().all(|c| c.is_ascii_digit()) {
-        if let Ok(number) = word[1..].parse::<u32>() {
-            if number <= 15 {
-                return (true, word.len());
-            }
-        }
-    }
-    // `pc` is deliberately absent: `[pc]` is an addressing mode this tool
-    // already collapses, and blanking it would hide a real pool-versus-register
-    // difference.
-    if matches!(word.as_str(), "sp" | "lr" | "fp" | "ip" | "sl") {
-        return (true, word.len());
-    }
-    (false, 0)
-}
-
-/// Split an aligned `!` row into its candidate and reference halves.
-///
-/// The candidate column is `pad_end(text, 30)` clipped to exactly 30 units (see
-/// `candidate_show::render`), so the row is `"  ! "` then 30 characters then the
-/// reference. It is a FIXED-WIDTH field, and the run-of-spaces rule an earlier
-/// draft used only works while the content is short enough to leave padding.
-/// This row has none:
-///
-/// ```text
-///   ! ldr	r2, [pc, #20]	@ (0x2000e80) ldr	r2, [pc, #16]	@ (0x2000e80)
-/// ```
-///
-/// One space, because the left text is 31 characters and was clipped -- which
-/// also leaks its tail, here a `)`, onto the front of the reference column. So
-/// the split is by offset and the reference side is then anchored on its
-/// mnemonic, discarding whatever the clip left behind. Without that anchoring a
-/// clipped row compares a mnemonic against `) ldr` and reads as a disagreement.
-pub const CANDIDATE_COLUMN: usize = 30;
-
-pub fn split_columns(body: &str) -> (String, Option<String>) {
-    // `body` is the row past its three-character mark, so the column starts one
-    // space in.
-    let chars: Vec<char> = body.trim_end().chars().collect();
-    if chars.len() <= 1 {
-        return (String::new(), None);
-    }
-    let start = 1usize;
-    let end = (start + CANDIDATE_COLUMN).min(chars.len());
-    let left: String = chars[start..end].iter().collect();
-    if end >= chars.len() {
-        return (left.trim().to_string(), None);
-    }
-    let right: String = chars[end..].iter().collect();
-    let right = anchor_mnemonic(&right);
-    if right.is_empty() {
-        return (left.trim().to_string(), None);
-    }
-    (left.trim().to_string(), Some(right))
-}
-
-/// Drop anything before the first mnemonic, which is what a clipped candidate
-/// column leaves on the front of the reference column.
-fn anchor_mnemonic(text: &str) -> String {
-    let trimmed = text.trim_start();
-    let chars: Vec<char> = trimmed.chars().collect();
-    for (index, ch) in chars.iter().enumerate() {
-        if !ch.is_ascii_alphabetic() {
-            continue;
-        }
-        // A mnemonic starts a word and is followed by a separator or its operands.
-        let starts_word = index == 0 || !chars[index - 1].is_ascii_alphanumeric();
-        if starts_word {
-            return chars[index..].iter().collect::<String>().trim().to_string();
-        }
-    }
-    trimmed.trim().to_string()
-}
-
-/// Classify one aligned `candidate-show` output.
-pub fn classify(output: &str) -> (Verdict, i64) {
-    let mut left: BTreeMap<String, i64> = BTreeMap::new();
-    let mut right: BTreeMap<String, i64> = BTreeMap::new();
-    let mut blind_left: BTreeMap<String, i64> = BTreeMap::new();
-    let mut blind_right: BTreeMap<String, i64> = BTreeMap::new();
-    let mut differing = 0i64;
-    let record = |side: &mut BTreeMap<String, i64>,
-                      blind: &mut BTreeMap<String, i64>,
-                      text: &str| {
-        *side.entry(normalise(text)).or_default() += 1;
-        *blind.entry(register_blind(text)).or_default() += 1;
-    };
-    for line in output.lines().skip(2) {
-        if line.len() < 3 {
-            continue;
-        }
-        let mark = line[..3].trim();
-        let body = &line[3..];
-        match mark {
-            "+" => {
-                record(&mut left, &mut blind_left, body);
-                differing += 1;
-            }
-            "-" => {
-                record(&mut right, &mut blind_right, body);
-                differing += 1;
-            }
-            "!" => {
-                let (a, b) = split_columns(body);
-                record(&mut left, &mut blind_left, &a);
-                if let Some(b) = b {
-                    record(&mut right, &mut blind_right, &b);
-                }
-                differing += 1;
-            }
-            _ => {}
-        }
-    }
-    if differing == 0 {
-        return (Verdict::Exact, 0);
-    }
-    // Order matters: a reorder is the narrowest claim, so test it first, then
-    // the register-blind comparison, and only call it divergent when the two
-    // sides disagree about something neither the scheduler nor the allocator
-    // decides.
-    if left == right {
-        return (Verdict::Reordering, differing);
-    }
-    if blind_left == blind_right {
-        return (Verdict::Allocation, differing);
-    }
-    (Verdict::Divergent, differing)
+/// `class=<name> wrong_instructions=<n>`, as `candidate-show` prints it.
+fn parse_class(output: &str) -> Option<(Verdict, i64)> {
+    let at = output.find("class=")?;
+    let rest = &output[at + "class=".len()..];
+    let name: String = rest.chars().take_while(|c| !c.is_whitespace()).collect();
+    let verdict = Verdict::from_class(&name)?;
+    let key = "wrong_instructions=";
+    let found = rest.find(key)?;
+    let digits: String = rest[found + key.len()..]
+        .chars()
+        .take_while(char::is_ascii_digit)
+        .collect();
+    Some((verdict, digits.parse().unwrap_or(0)))
 }
 
 fn parse_score(output: &str) -> Option<(i64, i64, i64)> {
@@ -448,7 +231,7 @@ fn measure(
                 candidate_bytes: None,
                 reference_bytes: None,
                 differing_halfwords: None,
-                differing_rows: None,
+                wrong_instructions: None,
                 verdict: Verdict::Unscored,
                 error: Some(error.to_string()),
             }
@@ -471,19 +254,20 @@ fn measure(
             candidate_bytes: None,
             reference_bytes: None,
             differing_halfwords: None,
-            differing_rows: None,
+            wrong_instructions: None,
             verdict: Verdict::Unscored,
             error: Some(first),
         };
     };
-    let (verdict, rows) = if candidate != reference {
-        // A size difference shifts every later halfword, so neither the count
-        // nor a positional comparison means anything here; the aligned row
-        // count is the only usable distance.
-        let (_, rows) = classify(&text);
-        (Verdict::SizeMismatch, rows)
+    // The shared classifier's own verdict, straight off `candidate-show`'s
+    // `class=` line. A size difference outranks it: once the sizes differ the
+    // positional comparison is meaningless, so the row is size-mismatch whatever
+    // the class says, and the wrong-instruction count is the only usable distance.
+    let (class, wrong) = parse_class(&text).unwrap_or((Verdict::Unscored, 0));
+    let verdict = if candidate != reference {
+        Verdict::SizeMismatch
     } else {
-        classify(&text)
+        class
     };
     Row {
         address,
@@ -491,7 +275,7 @@ fn measure(
         candidate_bytes: Some(candidate),
         reference_bytes: Some(reference),
         differing_halfwords: Some(halfwords),
-        differing_rows: Some(rows),
+        wrong_instructions: Some(wrong),
         verdict,
         error: None,
     }
@@ -502,7 +286,7 @@ pub fn compare(left: &Row, right: &Row) -> std::cmp::Ordering {
     let key = |row: &Row| {
         (
             row.verdict,
-            row.differing_rows.unwrap_or(i64::MAX),
+            row.wrong_instructions.unwrap_or(i64::MAX),
             -row.reference_bytes.unwrap_or(0),
         )
     };
@@ -540,8 +324,8 @@ fn render_report(rows: &[Row]) -> String {
         if let Some(value) = row.differing_halfwords {
             out.push_str(&format!("      \"differingHalfwords\": {value},\n"));
         }
-        if let Some(value) = row.differing_rows {
-            out.push_str(&format!("      \"differingRows\": {value},\n"));
+        if let Some(value) = row.wrong_instructions {
+            out.push_str(&format!("      \"wrongInstructions\": {value},\n"));
         }
         if let Some(error) = &row.error {
             out.push_str(&format!("      \"error\": \"{}\",\n", escape(error)));
@@ -687,7 +471,7 @@ fn report(root: &Path, rows: &[Row], top: usize, only_worth: bool) {
     };
     println!(
         "\n{:<9} {:>7} {:>7} {:>6} {:<20} source",
-        "address", "bytes", "delta", "rows", "verdict"
+        "address", "bytes", "delta", "wrong", "verdict"
     );
     for row in shown.iter().take(top) {
         let delta = match (row.candidate_bytes, row.reference_bytes) {
@@ -699,7 +483,7 @@ fn report(root: &Path, rows: &[Row], top: usize, only_worth: bool) {
             row.address,
             row.reference_bytes.map(|b| b.to_string()).unwrap_or_else(|| "-".into()),
             delta,
-            row.differing_rows.map(|r| r.to_string()).unwrap_or_else(|| "-".into()),
+            row.wrong_instructions.map(|r| r.to_string()).unwrap_or_else(|| "-".into()),
             row.verdict.label(),
             row.source,
         );
@@ -716,167 +500,74 @@ fn report(root: &Path, rows: &[Row], top: usize, only_worth: bool) {
     }
 }
 
-/// `--self-test`: the classifier's contract, without compiling anything.
+/// `--self-test`: this crate's own contract. The classification it no longer owns
+/// is tested where it now lives, in `candidate_show::render`.
 pub fn self_test() -> Result<(), String> {
-    // Built from explicit lines rather than with `\` continuations, which strip
-    // the leading whitespace and so would delete the mark column these cases
-    // exist to exercise -- the first draft of this test did exactly that and
-    // reported the classifier broken.
-    let lines = |rows: &[&str]| {
-        let mut text = String::from("candidate=8 reference=8 differing_halfwords=2\n");
-        text.push_str("      candidate                      reference\n");
-        for row in rows {
-            text.push_str(row);
-            text.push('\n');
+    // The class line is the whole interface to the shared verdict.
+    let cases = [
+        ("class=exact wrong_instructions=0", Verdict::Exact, 0),
+        ("class=wrong wrong_instructions=14", Verdict::Wrong, 14),
+        ("class=ordering wrong_instructions=0", Verdict::Ordering, 0),
+        ("class=allocation wrong_instructions=2", Verdict::Allocation, 2),
+        ("class=unemittable wrong_instructions=8", Verdict::Unemittable, 8),
+    ];
+    for (text, want, count) in cases {
+        match parse_class(text) {
+            Some((verdict, wrong)) if verdict == want && wrong == count => {}
+            other => return Err(format!("{text:?} parsed as {other:?}")),
         }
-        text
-    };
-
-    // A reorder: same instructions, different positions, and the moved load
-    // carries a different pc displacement because it moved.
-    let reorder = lines(&[
-        "  + ldr\tr5, [pc, #524]\t@ (0x29c)",
-        "    adds\tr7, r5, #0            adds\tr7, r5, #0",
-        "  -                                ldr\tr5, [pc, #516]\t@ (0x29c)",
-    ]);
-    let (verdict, rows) = classify(&reorder);
-    if verdict != Verdict::Reordering {
-        return Err(format!("a relocated pool load must read as a reorder, got {verdict:?}"));
     }
-    if rows != 2 {
-        return Err(format!("expected 2 differing rows, got {rows}"));
+    // A class this crate does not know must not be guessed at.
+    if parse_class("class=something-new wrong_instructions=0").is_some() {
+        return Err("an unknown class must not parse".to_string());
+    }
+    if parse_class("candidate=8 reference=8 differing_halfwords=0").is_some() {
+        return Err("a score line without a class must not parse".to_string());
     }
 
-    // A `!` row is a PAIR: its left column belongs to the candidate and its
-    // right to the reference. Splitting it wrongly is what inverts the verdict.
-    // These four rows are `080a90bc`'s real residual.
-    let paired = lines(&[
-        "  + adds\tr1, #72\t@ 0x48",
-        "  ! movs\tr2, #31                   movs\tr0, #245\t@ 0xf5",
-        "  -                                adds\tr1, #72\t@ 0x48",
-        "  ! movs\tr0, #245\t@ 0xf5           movs\tr2, #31",
-    ]);
-    if classify(&paired).0 != Verdict::Reordering {
-        return Err("a reorder spread across ! rows must not read as disagreement".to_string());
-    }
-
-    // A real disagreement: one side stores a halfword where the other stores a
-    // byte, which is a type the source decides. It must survive both the
-    // register blanking and the reorder test.
-    let differs = lines(&["  ! strb\tr3, [r2, #0]             strh\tr3, [r2, #0]"]);
-    if classify(&differs).0 != Verdict::Divergent {
-        return Err("differing store widths must stay divergent".to_string());
-    }
-
-    // Registers renamed and nothing else: `080a524c`'s real residual.
-    let renamed = lines(&[
-        "  ! movs\tr3, #1                    movs\tr2, #1",
-        "  ! mov\tr8, r3                     mov\tr8, r2",
-        "  ! cmp\tr3, #0                     cmp\tr2, #0",
-    ]);
-    if classify(&renamed).0 != Verdict::Allocation {
-        return Err("a pure register renaming must read as allocation".to_string());
-    }
-
-    // A commutative add with its operands the other way round is still the same
-    // instruction naming the same registers: `080b0958`.
-    let swapped = lines(&["  ! adds\tr3, r3, r2                adds\tr3, r2, r3"]);
-    if classify(&swapped).0 != Verdict::Allocation {
-        return Err("a commutative operand swap must read as allocation".to_string());
-    }
-
-    // The register scan is hand-rolled, so pin it. A withdrawn owner that stops
-    // being recognised comes straight back to the top of the queue, silently.
-    let register = r#"{
-      "format": 1,
-      "comment": "owners withdrawn from routine work",
-      "unmatchable": [
-        { "owner": "08002f10", "floor_halfwords": 6, "reason": "store merge" },
-        { "owner": "resource_3a9_c_0200007c", "reason": "comparison canonicalisation" }
-      ]
-    }"#;
-    let found = unmatchable_from_text(register);
-    if !found.contains("08002f10") || !found.contains("resource_3a9_c_0200007c") {
-        return Err(format!("the register scan missed an owner: {found:?}"));
-    }
-    if found.len() != 2 {
-        return Err(format!("the register scan invented an owner: {found:?}"));
-    }
-    // The word `owner` inside prose must not be read as a field.
-    if !unmatchable_from_text(r#"{"comment": "the owner is withdrawn"}"#).is_empty() {
-        return Err("the register scan read prose as an entry".to_string());
-    }
-
-    // Blanking registers must not blank an immediate or a mnemonic.
-    if register_blind("movs\tr2, #31") == register_blind("movs\tr2, #30") {
-        return Err("register blanking must keep immediates distinct".to_string());
-    }
-    if register_blind("strb\tr3, [r2, #0]") == register_blind("strh\tr3, [r2, #0]") {
-        return Err("register blanking must keep store widths distinct".to_string());
-    }
-    // r16 is not a register, and a symbol beginning with `r` is not either.
-    if register_blind("bl\tr16_helper") != "bl r16_helper" {
-        return Err(format!(
-            "blanking reached into a symbol: {}",
-            register_blind("bl\tr16_helper")
-        ));
-    }
-
-    if classify(&lines(&[])).0 != Verdict::Exact {
-        return Err("no differing rows must read as exact".to_string());
-    }
-
-    // The column split must survive an operand list containing spaces. Built
-    // with real padding rather than counted spaces, so the case cannot drift
-    // away from the renderer's `pad_end(text, 30)`.
-    let padded = |left: &str, right: &str| {
-        let mut row = String::from(" ");
-        row.push_str(left);
-        while row.chars().count() < 1 + CANDIDATE_COLUMN {
-            row.push(' ');
-        }
-        row.push_str(right);
-        row
-    };
-    let row = padded("push\t{r5, r6, r7, lr}", "pop\t{r0}");
-    let (left, right) = split_columns(&row);
-    if left != "push\t{r5, r6, r7, lr}" || right.as_deref() != Some("pop\t{r0}") {
-        return Err(format!("column split cut the wrong place: {left:?} / {right:?}"));
-    }
-
-    // A candidate column of exactly 30 characters leaves NO padding, and one
-    // longer than 30 is clipped and leaks its tail onto the reference column.
-    // This is resource_373:0e54's real row: one space between the columns, and a
-    // stray `)` from the clip. A run-of-spaces split reads the whole row as the
-    // candidate side and reports a disagreement that is not there.
-    let clipped = " ldr\tr2, [pc, #20]\t@ (0x2000e80) ldr\tr2, [pc, #16]\t@ (0x2000e80)";
-    let (left, right) = split_columns(clipped);
-    if normalise(&left) != "ldr r2, [pc]" {
-        return Err(format!("clipped candidate column misread: {left:?}"));
-    }
-    match right.as_deref() {
-        Some(text) if normalise(text) == "ldr r2, [pc]" => {}
-        other => return Err(format!("clipped reference column misread: {other:?}")),
-    }
-    // And so the row is what it is: one load at two positions, not a difference.
-    let leaked_row = format!("  !{clipped}");
-    let leaked = lines(&[leaked_row.as_str()]);
-    if classify(&leaked).0 != Verdict::Reordering {
-        return Err("a clipped row must not read as a disagreement".to_string());
-    }
-
-    if normalise("ldr\tr3, [pc, #916]\t@ (0x2003744)") != normalise("ldr\tr3, [pc, #108]\t@ (0x200341c)")
+    // Ranking order: the two a reader should open come first, and the three the
+    // compiler decides come last.
+    let mut order = vec![
+        Verdict::Unemittable,
+        Verdict::Ordering,
+        Verdict::Wrong,
+        Verdict::Exact,
+        Verdict::Allocation,
+        Verdict::SizeMismatch,
+    ];
+    order.sort();
+    if order
+        != vec![
+            Verdict::Exact,
+            Verdict::Wrong,
+            Verdict::SizeMismatch,
+            Verdict::Allocation,
+            Verdict::Ordering,
+            Verdict::Unemittable,
+        ]
     {
-        return Err("two positions of one pool load must normalise alike".to_string());
+        return Err(format!("verdicts sort in the wrong order: {order:?}"));
     }
-    if normalise("movs\tr2, #31") == normalise("movs\tr2, #30") {
-        return Err("different immediates must not normalise alike".to_string());
+    for verdict in [Verdict::Wrong, Verdict::SizeMismatch] {
+        if !verdict.worth_opening() {
+            return Err(format!("{} should be worth opening", verdict.label()));
+        }
+    }
+    for verdict in [
+        Verdict::Ordering,
+        Verdict::Allocation,
+        Verdict::Unemittable,
+        Verdict::Exact,
+    ] {
+        if verdict.worth_opening() {
+            return Err(format!("{} should not be worth opening", verdict.label()));
+        }
     }
 
     if parse_score("candidate=304 reference=304 differing_halfwords=2") != Some((304, 304, 2)) {
         return Err("score line parse failed".to_string());
     }
 
-    println!("self-test=ok checks=13");
+    println!("self-test=ok checks=14");
     Ok(())
 }

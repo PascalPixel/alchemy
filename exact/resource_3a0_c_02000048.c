@@ -2,9 +2,9 @@
 #define NULL ((void *)0)
 
 void *Func_020013ca(s32, s32, s32, s32);
-u8 Func_02001410(void *, s32);
-u8 Func_02001428(void *, s32);
-u8 Func_020014e0(void *, s32);
+void Func_02001410(void *, s32);
+void Func_02001428(void *, s32);
+void Func_020014e0(void *, s32);
 
 void *Func_02000048(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

@@ -56,18 +56,18 @@ typedef s32 (*SquareRootGateway_080d1714)(s32 sumOfSquares);
  * r3-selected publisher gateway are written as their resolved destination
  * operations below; the square-root gateway only consumes its first argument.
  */
-s32 Func_08002dd8(s32);
-s32 Func_08004c1c(s32);
-s32 Func_08004c6c(s32);
-s32 Func_08004cb4(s32 *);
-s32 Func_08009008(s32, s32 *, s32, s32);
-s32 Func_080b5040(s32, s32, s32);
-s32 Func_080b50e8(s32);
-s32 Func_080cd52c();
-s32 Func_080cd594(s32);
-s32 Func_080d6750(void *);
-s32 Func_080d67dc();
-s32 Func_080d6888(s16, s32, s32, s32, s32);
+void Func_08002dd8(s32);
+void Func_08004c1c(s32);
+void Func_08004c6c(s32);
+void Func_08004cb4(s32 *);
+void Func_08009008(s32, s32 *, s32, s32);
+void Func_080b5040(s32, s32, s32);
+void Func_080b50e8(s32);
+void Func_080cd52c();
+void Func_080cd594(s32);
+void Func_080d6750(void *);
+void Func_080d67dc();
+void Func_080d6888(s16, s32, s32, s32, s32);
 s32 *Func_080b5098(s32);
 s32 Func_08002f40(s32);
 s32 Func_080022ec(s32, s32);
@@ -75,21 +75,21 @@ s32 Func_080022fc(s32, s32);
 s32 Func_08002304(s32, s32);
 s32 Func_0800231c(s32);
 s32 Func_08002322(s32);
-s32 Func_080030f8(s32);
-s32 Func_080041d8();
-s32 Func_08004278();
+void Func_080030f8(s32);
+void Func_080041d8();
+void Func_08004278();
 s32 Func_08004458(void);
 s32 Func_080044d0(s32, s32);
-s32 Func_080049ac(void);
-s32 Func_080051d8();
-s32 Func_08005340();
-s32 Func_08009038();
-s32 Func_080b5038();
-s32 Func_080dbb24();
-s32 Func_080cdbc0(void);
-s32 Func_080e3944();
+void Func_080049ac(void);
+void Func_080051d8();
+void Func_08005340();
+void Func_08009038();
+void Func_080b5038();
+void Func_080dbb24();
+void Func_080cdbc0(void);
+void Func_080e3944();
 s32 Func_080ed408();
-s32 Func_080f9010(s32);
+void Func_080f9010(s32);
 
 #define RunFourHundredFrameSceneRenderer Func_080d1714
 

@@ -1,11 +1,11 @@
 #include "types.h"
 
-extern s32 Func_02002450(void);
+void Func_02002450(void);
 extern s32 Func_02002436(s32);
-extern s32 Func_02002530(s32);
-extern s32 Func_02002538(s32);
-extern s32 Func_02002548(s32, s32);
-extern s32 Func_0200247c(void);
+void Func_02002530(s32);
+void Func_02002538(s32);
+void Func_02002548(s32, s32);
+void Func_0200247c(void);
 
 void Func_0200021c(void) {
     Func_02002450();

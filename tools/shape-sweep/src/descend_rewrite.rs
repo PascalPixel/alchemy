@@ -592,11 +592,69 @@ pub fn is_plausible(variant: &Variant) -> bool {
 }
 
 /// The exhaustive part of the neighbourhood: every site of every local rewrite.
+
+/// The seven return types a declared callee can plausibly have.
+///
+/// `void` first, because it is the commonest correction.
+const RETURN_TYPES: [&str; 7] = ["void", "s32", "u32", "u8", "s8", "u16", "s16"];
+
+/// Re-declare one callee with a different return type.
+///
+/// WHY THIS IS A SOURCE TRANSFORM AND NOT A GUESS. A callee's return type
+/// decides whether a value stays live across the caller's argument setup, and
+/// that reverses two of the pre-call moves. Both directions occur in this
+/// corpus: `resource_382:020000a0` closes by making a discarded-result callee
+/// `void` and `resource_376:02000190` closes by making an equally
+/// discarded-result callee `s32`, so the type cannot be inferred from the call
+/// site -- only from the bytes. Sweeping it recovered 37 owners that had been
+/// recorded as register-allocation or scheduling residuals, including one
+/// parked after 74 compiler-mode combinations.
+///
+/// Pointer returns are left alone: they are load-bearing at the call site and a
+/// flip would change semantics rather than layout.
+pub fn return_type_variants(source: &str) -> Vec<Variant> {
+    let lines: Vec<&str> = source.split('\n').collect();
+    let mut out = Vec::new();
+    for (index, line) in lines.iter().enumerate() {
+        let trimmed = line.trim();
+        if !trimmed.ends_with(");") || !trimmed.contains("Func_") {
+            continue;
+        }
+        let Some(open) = trimmed.find('(') else { continue };
+        let head = &trimmed[..open];
+        let Some(at) = head.rfind("Func_") else { continue };
+        if head.len() - at != 13 {
+            continue;
+        }
+        let before = head[..at].trim_end();
+        if before.ends_with('*') || before.is_empty() {
+            continue;
+        }
+        let Some(current) = before.split_whitespace().last() else { continue };
+        let Some(position) = line.rfind(current) else { continue };
+        for wanted in RETURN_TYPES {
+            if wanted == current {
+                continue;
+            }
+            let mut rewritten = line.to_string();
+            rewritten.replace_range(position..position + current.len(), wanted);
+            let mut copy: Vec<String> = lines.iter().map(|line| line.to_string()).collect();
+            copy[index] = rewritten;
+            out.push(Variant {
+                label: format!("rettype@{}", index + 1),
+                source: copy.join("\n"),
+            });
+        }
+    }
+    out
+}
+
 pub fn local_neighbourhood(source: &str) -> Vec<Variant> {
     let mut all = arm_order_variants(source);
     all.extend(statement_order_variants(source));
     all.extend(uncache_variants(source));
     all.extend(declaration_order_variants(source));
+    all.extend(return_type_variants(source));
     all
 }
 
@@ -759,6 +817,23 @@ mod tests {
 #[cfg(test)]
 mod plausibility_tests {
     use super::*;
+
+
+    #[test]
+    fn return_type_variants_flip_one_declaration_at_a_time() {
+        let source = "s8 Func_02001b2c(void *, s32);\nvoid *Func_020019ea(s32);\nvoid body(void) {}\n";
+        let variants = return_type_variants(source);
+        // Six alternatives for the one eligible declaration; the pointer return
+        // is skipped because a flip there changes semantics, not layout.
+        assert_eq!(variants.len(), 6);
+        assert!(variants.iter().all(|variant| variant.label == "rettype@1"));
+        assert!(variants
+            .iter()
+            .any(|variant| variant.source.starts_with("void Func_02001b2c(void *, s32);")));
+        assert!(variants
+            .iter()
+            .all(|variant| variant.source.contains("void *Func_020019ea(s32);")));
+    }
 
     fn variant(label: &str, source: &str) -> Variant {
         Variant { label: label.to_string(), source: source.to_string() }

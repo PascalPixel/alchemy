@@ -39,7 +39,7 @@ pub struct Pairing {
     pub overlay: String,
     pub address: String,
     pub bytes: i64,
-    pub semantic_source: String,
+    pub draft_source: String,
     /// True when the report would reject this row; see `starts_in_audited_span`.
     pub blocked: bool,
 }
@@ -153,8 +153,12 @@ pub fn reading_list(root: &Path) -> Result<Vec<Pairing>, String> {
         .get("functions")
         .and_then(Value::as_array)
         .unwrap_or(&[]);
-    let semantic = if root.join("semantic").exists() {
-        directory_names(&root.join("semantic"))
+    // `work/` is where an unfinished candidate lives: gitignored, and the path
+    // every scoring tool already accepts. This read `semantic/` until that tier
+    // was deleted, after which it paired nothing and every caller reported
+    // success over an empty corpus.
+    let drafts = if root.join("work").exists() {
+        directory_names(&root.join("work"))
     } else {
         HashSet::new()
     };
@@ -190,7 +194,7 @@ pub fn reading_list(root: &Path) -> Result<Vec<Pairing>, String> {
         if exact.contains(&base) {
             continue;
         }
-        if !semantic.contains(&base) {
+        if !drafts.contains(&base) {
             continue;
         }
         let Some((_, intervals)) = audited.iter().find(|(id, _)| *id == overlay) else {
@@ -203,7 +207,7 @@ pub fn reading_list(root: &Path) -> Result<Vec<Pairing>, String> {
             overlay,
             address: format!("0x{address}"),
             bytes: row.get("span_bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            semantic_source: format!("semantic/{base}"),
+            draft_source: format!("work/{base}"),
             blocked: !starts_in_audited_span(start, intervals),
         });
     }
@@ -260,7 +264,7 @@ fn json_escape(text: &str) -> String {
 /// `JSON.stringify(list, null, 2)` for the fixed `Pairing` shape.
 ///
 /// PORT NOTE: hand-written rather than derived, because the key order
-/// (`overlay`, `address`, `bytes`, `semanticSource`, `blocked`) is the field
+/// (`overlay`, `address`, `bytes`, `draftSource`, `blocked`) is the field
 /// declaration order in the TS interface and any serializer that sorts keys
 /// would silently rewrite the output.
 pub fn render_json(list: &[Pairing]) -> String {
@@ -280,8 +284,8 @@ pub fn render_json(list: &[Pairing]) -> String {
         ));
         out.push_str(&format!("    \"bytes\": {},\n", item.bytes));
         out.push_str(&format!(
-            "    \"semanticSource\": \"{}\",\n",
-            json_escape(&item.semantic_source)
+            "    \"draftSource\": \"{}\",\n",
+            json_escape(&item.draft_source)
         ));
         out.push_str(&format!("    \"blocked\": {}\n", item.blocked));
         out.push_str("  }");
@@ -346,7 +350,7 @@ pub fn render_report(all: &[Pairing], only: Option<&str>, want_blocked: bool) ->
                     "    {}  {}  {}\n",
                     item.address,
                     pad_start(&item.bytes.to_string(), 6),
-                    item.semantic_source
+                    item.draft_source
                 ));
             }
         }
@@ -636,7 +640,7 @@ mod tests {
         let list = vec![pairing("resource_001", "0x02000010", 10, false)];
         assert_eq!(
             render_json(&list),
-            "[\n  {\n    \"overlay\": \"resource_001\",\n    \"address\": \"0x02000010\",\n    \"bytes\": 10,\n    \"semanticSource\": \"semantic/resource_001_c_02000010.c\",\n    \"blocked\": false\n  }\n]"
+            "[\n  {\n    \"overlay\": \"resource_001\",\n    \"address\": \"0x02000010\",\n    \"bytes\": 10,\n    \"draftSource\": \"semantic/resource_001_c_02000010.c\",\n    \"blocked\": false\n  }\n]"
         );
         assert_eq!(render_json(&[]), "[]");
     }

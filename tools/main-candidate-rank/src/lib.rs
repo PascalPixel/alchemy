@@ -168,7 +168,7 @@ fn unmatchable_from_text(text: &str) -> std::collections::BTreeSet<String> {
 /// Main-image candidate sources: `semantic/08xxxxxx.c` and nothing else.
 pub fn candidates(root: &Path) -> Vec<PathBuf> {
     let mut found = Vec::new();
-    let Ok(entries) = fs::read_dir(root.join("semantic")) else {
+    let Ok(entries) = fs::read_dir(root.join("work")) else {
         return found;
     };
     for entry in entries.flatten() {
@@ -380,7 +380,7 @@ pub fn run(root: &Path, self_exe: &Path, subcommand: &[&str], args: &[String]) -
 
     let mut sources = candidates(root);
     if sources.is_empty() {
-        return Err("no main-image candidates under semantic/".to_string());
+        return Err("no main-image candidates under work/ -- put a draft there, named <address>.c".to_string());
     }
     // The register's job is to keep withdrawn owners out of this queue. The
     // overlay ranker had the same gap and had all four of its entries in the

@@ -821,20 +821,20 @@ you reopen an owner; their C did not build the ROM and never would have.
 100% of the bytes that can be C is reachable, and the compiler is the minority
 obstacle. That is a measurement, not an opinion.
 
-The overlay candidates in the deleted tier were scored against the ROM. Counting
-only real owners -- 32 bytes or more, so the 8-byte veneer stubs that score
-exact trivially are excluded -- 315 of them classify as:
+All 1,276 overlay candidates in the deleted tier were scored against the ROM.
+Counting only real owners -- 32 bytes or more, so the 8-byte veneer stubs that
+score exact trivially are excluded -- 1,242 of them classify as:
 
 | share | class | what it means |
 |---:|---|---|
-| 52.7% | size mismatch | a statement is missing or extra |
-| 27.9% | wrong | operands differ: a type, a prototype, a constant |
-| 17.1% | ordering | a scheduler tie |
+| 58.5% | size mismatch | a statement is missing or extra |
+| 26.0% | wrong | operands differ: a type, a prototype, a constant |
+| 12.9% | ordering | a scheduler tie |
 | 1.9% | allocation | reload picked different registers |
-| 0.3% | unemittable | the reference shape no stock gcc 2.96 emits |
+| 0.6% | unemittable | the reference shape no stock gcc 2.96 emits |
 
-**81% of what is left is ordinary reconstruction** -- read the assembly again,
-find the statement you missed, fix the type. About one owner in five sits in the
+**84.5% of what is left is ordinary reconstruction** -- read the assembly again,
+find the statement you missed, fix the type. About one owner in six sits in the
 families the compiler decides, and those are the ones worth a `shape_sweep` or
 an `unmatchable.json` entry.
 
@@ -843,10 +843,13 @@ it is biased toward hard cases. That makes the finding stronger, not weaker:
 even among owners known to have resisted once, four in five failed for a reason
 the contributor controls.
 
-No owner in the corpus was sitting there already reproducing. Every source that
-scored zero differing halfwords was an 8-byte fragment the adoption gate
-correctly refuses as not an audited owner. If you filter that corpus by score,
-filter by size first or the count is meaningless.
+No owner in the corpus was sitting there already reproducing. Of 1,276 sources,
+eight scored zero differing halfwords: six were 8-byte veneer stubs, and the two
+real ones -- `resource_3b9:007c` at 444 bytes and `resource_3c4:0e20` at 168 --
+were scored across spans that straddle several audited intervals, so the
+adoption gate refuses them as not single owners. Every one was checked against
+the gate rather than trusted from its score. If you filter that corpus by score,
+filter by size first, and then adopt rather than believe the number.
 
 This is the real reason the project sat at 20% for two weeks. It was not a
 compiler wall. It was 862,856 bytes of half-finished C that looked like

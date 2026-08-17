@@ -306,12 +306,17 @@ merge between two working branches conflicts on all of them and neither side is
 right afterwards. Do not resolve them by choosing:
 
 ```bash
-git merge main
+git merge main -m '☀️ N% – Merge main: <what came in>'
 # generated artifacts resolve themselves; CONTRIBUTING.md and README.md may not
 make coverage      # regenerate the Targets section, figures and metrics
 make verify        # refuses a stale artifact, so this is the proof
 overlay audit --all
 ```
+
+Pass `-m` yourself. `commit-msg` requires the progress prefix and git's default
+`Merge branch 'main'` does not have one, so a merge that had no conflicts at all
+still stops at the hook with the result already staged. Nothing is wrong when
+that happens; supply a subject and commit.
 
 `CONTRIBUTING.md` and `README.md` still conflict, in the Targets counts and the
 figure hashes. Take either side there and let `make coverage` correct it; the

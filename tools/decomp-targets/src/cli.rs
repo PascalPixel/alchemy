@@ -6,6 +6,16 @@
 use std::process::ExitCode;
 
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
+    // This command runs one thing. Silently ignoring an argument is worse than
+    // refusing it: `decomp-targets --json` would print the self-test and exit
+    // 0, reading as though the flag had been honoured.
+    for argument in arguments {
+        if argument != "--self-test" {
+            eprintln!("usage: decomp-targets [--self-test]");
+            eprintln!("unrecognised argument: {argument}");
+            return ExitCode::FAILURE;
+        }
+    }
     match crate::self_test() {
         Ok(summary) => {
             println!("{summary}");

@@ -455,8 +455,22 @@ fn rom_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-/// A row's true bytes, from the ROM when its container decodes and from git
-/// otherwise.
+/// A row's true bytes, from the ROM when its container decodes, from git when
+/// the row was adopted once, and otherwise from the overlay as it stands.
+///
+/// The third oracle is what lets a NEVER-ADOPTED row be scored at all. Both
+/// earlier ones need the row to have been adopted at some point: the git oracle
+/// looks for the revision before its `AlchemyC_` placeholder appeared, and
+/// without one it fails outright with "no revision ... contains AlchemyC_". That
+/// is most of the corpus, and it is the large end of it -- `resource_374:17c8`
+/// at 2,816 bytes and `resource_37a:0488` at 1,388 could not be read at all,
+/// while `candidate-rank` measured them the whole time by assembling the
+/// overlay. Same bytes, one tool short of them.
+///
+/// It is only correct when the row is NOT adopted. An adopted row's assembly has
+/// been replaced by a `.space` hole, so assembling the current file would hand
+/// back zeros and call them the reference; the placeholder test is what keeps
+/// those on the rom-or-git path.
 pub fn truth_window(
     root: &Path,
     overlay: &str,
@@ -467,6 +481,17 @@ pub fn truth_window(
         let start = (address - OVERLAY_BASE) as usize;
         if let Some(window) = image.get(start..start + span as usize) {
             return Ok((window.to_vec(), "rom"));
+        }
+    }
+    if let Ok(bytes) = reference_bytes(root, overlay, address, span) {
+        return Ok((bytes, "git"));
+    }
+    if placeholder_span(root, overlay, address)?.is_none() {
+        let path = root.join(format!("assets/code/{overlay}_overlay.s"));
+        let image = assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE)?;
+        let start = (address - OVERLAY_BASE) as usize;
+        if let Some(window) = image.get(start..start + span as usize) {
+            return Ok((window.to_vec(), "assembled"));
         }
     }
     reference_bytes(root, overlay, address, span).map(|bytes| (bytes, "git"))

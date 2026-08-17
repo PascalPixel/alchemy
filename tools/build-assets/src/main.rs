@@ -1270,7 +1270,7 @@ fn closure_self_test() -> Result<String, String> {
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("assets/audio/waves_index.json");
+    let index = root.join("assets/audio/waves/index.json");
     let document: Value = serde_json::from_slice(
         &fs::read(index).map_err(|error| format!("PCM self-test index: {error}"))?,
     )
@@ -1991,8 +1991,24 @@ fn expand_series(
                     let tuple = sequence.as_array().ok_or("sequence tuple malformed")?;
                     let id = json_number(&tuple[0], "song id")?;
                     let class = json_string(&tuple[1], "song class")?;
-                    let stem = format!("sound_{id:03}");
-                    let base = format!("{class}_{id:03}. {stem}");
+                    // The index's `names` map when it has this id, else
+                    // `{class}_{id:03}`. Renaming a sequence is then an edit to one
+                    // JSON string rather than a code change, which is the point:
+                    // the manufactured names are provisional and meant to be
+                    // replaced by ear.
+                    //
+                    // The fallback used to be
+                    // `format!("{class}_{id:03}. sound_{id:03}")`, which put the id
+                    // in twice joined by a period and a space -- every sequence was
+                    // `music_000. sound_000.mid`. The period also truncated the stem
+                    // the asset-maturity rule reads, since it splits on the FIRST
+                    // dot, so the second half was never even looked at.
+                    let base = index
+                        .get("names")
+                        .and_then(|names| names.get(format!("{id}")))
+                        .and_then(Value::as_str)
+                        .map(str::to_string)
+                        .unwrap_or_else(|| format!("{class}_{id:03}"));
                     let midi = directory.join(format!("{base}.mid"));
                     let sidecar = directory.join(format!("{base}.json"));
                     let mut object = serde_json::json!({"address":tuple[2],"size":tuple[3],"kind":"golden-sun-sound-sequence","source":root_relative(&ctx.root, &ctx.source(&midi.to_string_lossy())?)?});

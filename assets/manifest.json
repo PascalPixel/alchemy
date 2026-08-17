@@ -822,7 +822,7 @@
   "series": [
     {
       "kind": "golden-sun-sound-sequence-series",
-      "index": "assets/audio/midi_index.json"
+      "index": "assets/audio/sequences/index.json"
     },
     {
       "kind": "golden-sun-music-residuals",
@@ -830,7 +830,7 @@
     },
     {
       "kind": "golden-sun-pcm-wave-series",
-      "index": "assets/audio/waves_index.json"
+      "index": "assets/audio/waves/index.json"
     },
     {
       "kind": "golden-sun-delta7-still-series",

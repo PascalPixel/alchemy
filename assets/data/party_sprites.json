@@ -1,37 +1,38 @@
 {
-  "format": 1,
-  "kind": "party-battle-sprites",
-  "evidence": "kihon actor_pose_rows idle pose 0x140+actor; names message_archive bank0 index 102+actor (felix hand-mapped bank0 106)",
-  "entries": [
-    {
-      "actor": 0,
-      "name": "Isaac",
-      "descriptor": "0x140",
-      "directory": "battle/characters/isaac"
-    },
-    {
-      "actor": 1,
-      "name": "Garet",
-      "descriptor": "0x141",
-      "directory": "battle/characters/garet"
-    },
-    {
-      "actor": 2,
-      "name": "Ivan",
-      "descriptor": "0x142",
-      "directory": "battle/characters/ivan"
-    },
-    {
-      "actor": 3,
-      "name": "Mia",
-      "descriptor": "0x143",
-      "directory": "battle/characters/mia"
-    },
-    {
-      "actor": 5,
-      "name": "Felix",
-      "descriptor": "0x145",
-      "directory": "battle/characters/felix"
-    }
-  ]
+ "format": 1,
+ "kind": "party-battle-sprites",
+ "evidence": "descriptors: kihon actor_pose_rows, which lists actors 0,1,2,3,5 -- actor 4 does not exist in the ROM and 0x144 is absent from chr_catalog, so actor 5's pose ids (325 = 0x145) are the fifth party sprite. names: message_archive bank0 index 102+actor for actors 0-3 only. THE TWO ID SPACES DIFFER: the pose table skips 4, the name list is dense (102 Isaac, 103 Garet, 104 Ivan, 105 Mia, 106 Felix, 107 Jenna, 108 Sheba), so 102+actor gives 'Jenna' for actor 5 and the rule does not carry. The fifth entry's name is a HAND MAPPING to bank0 106 and is not derived -- do not renumber the actor to 4 to make the name rule fit, and do not rename the bank to jenna to make the actor fit; neither is evidenced. Only the name is open.",
+ "entries": [
+  {
+   "actor": 0,
+   "name": "Isaac",
+   "descriptor": "0x140",
+   "directory": "battle/characters/isaac"
+  },
+  {
+   "actor": 1,
+   "name": "Garet",
+   "descriptor": "0x141",
+   "directory": "battle/characters/garet"
+  },
+  {
+   "actor": 2,
+   "name": "Ivan",
+   "descriptor": "0x142",
+   "directory": "battle/characters/ivan"
+  },
+  {
+   "actor": 3,
+   "name": "Mia",
+   "descriptor": "0x143",
+   "directory": "battle/characters/mia"
+  },
+  {
+   "actor": 5,
+   "name": "Felix",
+   "descriptor": "0x145",
+   "directory": "battle/characters/felix",
+   "name_evidence": "hand-mapped, unproven: bank0 106 is Felix, bank0 107 is Jenna, and 102+actor selects 107"
+  }
+ ]
 }

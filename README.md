@@ -13,20 +13,21 @@ Alchemy is an unofficial clean-room reconstruction of the English release of
 *Golden Sun* for the Game Boy Advance. It documents and rebuilds the program,
 assets, and data needed to study the original game and its construction.
 
+Everything here is reconstructed from the original cartridge itself. No other
+Golden Sun project supplies code, names, or game knowledge to this one.
+
 ## DONE: Currently 37%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
-plus code that is permanently assembly. Nothing else counts. There is no tier
-for C that reads well but does not reproduce: a byte is exact C, or it is
-assembly still to reconstruct.
+plus code that is permanently assembly. Nothing else counts.
 
 Three figures, because one of them alone would mislead:
 
 | | bytes | share |
 |---|---:|---:|
-| Exact C | 274,858 | 20.40% of executable |
-| Permanent assembly | 216,278 | 16.05% of executable |
-| **DONE** | **491,136** | **36.46% of executable** |
+| Exact C | 275,672 | 20.5% of executable |
+| Permanent assembly | 216,278 | 16.0% of executable |
+| **DONE** | **491,950** | **36.5% of executable** |
 
 Permanent assembly is not a shortcut and not a backlog. It is overwhelmingly
 linker veneers and alignment padding, which the linker and assembler emit and no
@@ -34,13 +35,12 @@ C can produce, plus a small set of hand-written routines using calling
 conventions C cannot express. It rebuilds identically, so it is done, and it will
 never become C.
 
-DONE rose from 26% to 36% in August 2026 without a line of C being written, and
-that is worth stating plainly rather than presenting as progress. 132,364 bytes
-of hand-written assembly and library code had been sitting in the unfinished
-column: `arm.md` gates both store-multiple peepholes on `TARGET_ARM`, so stock
-gcc 2.96 emits no Thumb `stmia`/`ldmia` from any source, and 281 owners have one
-inside their own span. They rebuild identically and will never be C, which is
-what DONE measures. Exact C did not move.
+That also means 100% is not the target. Measured against only the bytes that
+can ever be C, **exact C stands at 24.4%**. An overlay whose every function is
+reconstructed still reports short of 100%, because its veneers count against it.
+
+A large step in this figure during August 2026 came from correctly classifying
+code that can never be C, not from new reconstruction. Exact C did not move.
 
 The four maps below show the current byte metrics for the English release.
 Progress is measured by bytes, not function counts.

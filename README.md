@@ -10,7 +10,7 @@
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
 Alchemy is an unofficial clean-room reconstruction of the English release of
-*Golden Sun* for the Game Boy Advance. It documents and rebuilds the program,
+_Golden Sun_ for the Game Boy Advance. It documents and rebuilds the program,
 assets, and data needed to study the original game and its construction.
 
 Everything here is reconstructed from the original cartridge itself. No other
@@ -23,11 +23,11 @@ plus code that is permanently assembly. Nothing else counts.
 
 Three figures, because one of them alone would mislead:
 
-| | bytes | share |
-|---|---:|---:|
-| Exact C | 275,672 | 20.5% of executable |
-| Permanent assembly | 216,278 | 16.0% of executable |
-| **DONE** | **491,950** | **36.5% of executable** |
+|                    |       bytes |                   share |
+| ------------------ | ----------: | ----------------------: |
+| Exact C            |     275,672 |     20.5% of executable |
+| Permanent assembly |     216,278 |     16.0% of executable |
+| **DONE**           | **491,950** | **36.5% of executable** |
 
 Permanent assembly is not a shortcut and not a backlog. It is overwhelmingly
 linker veneers and alignment padding, which the linker and assembler emit and no

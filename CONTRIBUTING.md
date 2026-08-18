@@ -9,7 +9,7 @@ This is the only guide. `AGENTS.md` and `CLAUDE.md` are symlinks to it, and
 `.md` or `.txt` files; a gate enforces it.
 
 A change counts when the rebuilt bytes equal the released ROM. Everything else
-— readable C, better names, faster tools — is worth doing, and is not the same
+-- readable C, better names, faster tools -- is worth doing, and is not the same
 thing.
 
 ## Contents
@@ -19,7 +19,9 @@ thing.
 - [The loop](#the-loop)
 - [Reading a residual](#reading-a-residual)
 - [Source style](#source-style)
+- [Shapes that decide bytes](#shapes-that-decide-bytes)
 - [Where the project is](#where-the-project-is)
+- [Settled questions](#settled-questions)
 - [Tools](#tools)
 - [Build stages](#build-stages)
 - [The compiler standard](#the-compiler-standard)
@@ -32,7 +34,7 @@ thing.
 
 *Golden Sun* and its original material are copyright Nintendo and Camelot
 Software Planning. Alchemy is not affiliated with or endorsed by either
-company. It is a decompilation and preservation effort — not a remake, a ROM
+company. It is a decompilation and preservation effort -- not a remake, a ROM
 hack, an emulator, or a game distribution. No ROM is distributed here.
 
 ### The evidence boundary
@@ -47,7 +49,7 @@ gs2-{en,ja,de,es,fr,it}.gba
 
 `gs1-en.gba` is the build target. The other editions may be compared locally to
 tell shared engine code and data apart from edition-specific content. A
-cross-edition match is evidence about layout or behaviour — never about
+cross-edition match is evidence about layout or behaviour -- never about
 authorship or an original name.
 
 Do not consult any other Golden Sun checkout, repository history, source,
@@ -70,7 +72,7 @@ artifacts to a network tool.
 
 `check_publication` enforces the file-shape half of this on every staged commit
 and on everything you push, including content added and later deleted within
-the outgoing range. It cannot tell where knowledge came from — that part is
+the outgoing range. It cannot tell where knowledge came from -- that part is
 yours to honour.
 
 ### Hard rules
@@ -133,10 +135,12 @@ the fact was obtained, so it stays. This table says where to find the tool.
 | `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
 | `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
 
+---
+
 ## Setting up
 
 You need a Rust toolchain, `arm-none-eabi-binutils`, and the approved ROM set in
-`roms/` (gitignored — put it there yourself).
+`roms/` (gitignored -- put it there yourself).
 
 The tooling is Rust. Not Python, not shell, not a scripting language that
 happens to be installed: a tool that is not Rust is not in this repository, and
@@ -153,7 +157,7 @@ ln -s /path/to/main/checkout/roms roms
 mkdir -p alchemy-gcc && ln -s /path/to/main/checkout/alchemy-gcc/dist alchemy-gcc/dist
 ```
 
-Do not run `git submodule` commands inside a worktree — they can rewrite the
+Do not run `git submodule` commands inside a worktree -- they can rewrite the
 shared configuration and break the main checkout.
 
 Activate the hooks and the generated-file merge driver once per clone:
@@ -194,7 +198,7 @@ refuses to adopt anything that does not reproduce.
 
 There are two tiers and no third place for work to sit. A byte is exact C that
 rebuilds identically, or it is assembly. Your unfinished candidate lives in
-`work/`, which is gitignored — not in the tree, and not in a commit.
+`work/`, which is gitignored -- not in the tree, and not in a commit.
 
 ### 1. Pick an owner
 
@@ -208,38 +212,29 @@ An *owner* is one function-sized region with a fixed address.
 **[Targets](#targets) ranks byte runs, not functions.** Its rows are contiguous
 unresolved spans, so the address at the top of a row is where the run starts,
 which is frequently the middle of a literal pool rather than an entry point.
-`resource_3bf:0x0200298c` and `resource_373:0x02002284` both sit in the first
-ten rows and both disassemble as data. Use the table to see the shape of what
-is left, not to pick.
+Use the table to see the shape of what is left, not to pick.
 
-Pick from `semantic/regions.json`, which holds 2,340 audited owner boundaries —
-an overlay, an entry address and a span — of which 1,348 are unfinished. Those
-addresses are entry points, and the biggest of them are ordinary functions:
+Pick from `semantic/regions.json`, which holds audited owner boundaries -- an
+overlay, an entry address and a span. Those addresses are entry points.
 
-```bash
-python3 - <<'EOF'
-import json, os
-d = json.load(open('semantic/regions.json'))
-exact = set(os.listdir('exact'))
-rows = [(r['span_bytes'], r['overlay'], int(r['entry'], 16))
-        for r in d['manual_regions']
-        if f"{r['overlay']}_c_{int(r['entry'], 16):08x}.c" not in exact]
-for n, ov, a in sorted(rows, reverse=True)[:10]:
-    print(f'{n:>6}  {ov}:{a & 0xffff:04x}')
-EOF
-```
+**Check the owner is adoptable before you write any C.** The adoption gate
+requires the whole span to sit inside ONE audited executable interval from
+`metrics/gs1-en-executable.json`. An owner that straddles a thumb span and its
+literal pool, or that falls in an unaudited gap between two intervals, is
+refused however exact your C is. This is not hypothetical: `resource_38a:04c4`
+is byte-exact and unadoptable, because the pool before it ends at `0x4c4` and
+the next thumb interval starts at `0x4d4`. Filtering the open owners by that
+rule up front costs one pass over the JSON and saves writing C you cannot land.
 
 Two cheap checks before committing to one. The instruction mix decides how hard
-it is: `resource_3bf:3054` is 5,604 bytes but 1,168 of its 2,187 instructions
-are `movs` and 636 are `bl`, with six compares in the whole function — a
-scripted sequence, far easier than a third of its size in dense arithmetic.
-And count the finished owners in the same overlay: `resource_3bf` has 101, so
-the structs, callees and idioms are already established.
+it is: a scripted sequence of `movs` and `bl` with six compares in the whole
+function is far easier than a third of its size in dense arithmetic. And count
+the finished owners in the same overlay -- where a hundred are already done, the
+structs, callees and idioms are established.
 
 `overlay twins` finds owners that mirror one you have already finished, which is
-usually the cheapest next thing to do — a 90-byte shape that appears four times
-pays for itself three more times. `discover` and `remaining_survey` map what is
-left.
+usually the cheapest next thing to do. `discover` and `remaining_survey` map
+what is left.
 
 Name your draft after the owner: `work/080bbb0c.c`, or
 `work/resource_3b2_c_02000da4.c`. The rankers find drafts by that name.
@@ -281,10 +276,11 @@ never a source draft. Get these facts first:
 `overlay disasm`, `overlay show` and `overlay entry` decode overlay bytes.
 
 Before you start, check whether the owner is C at all. A region is permanently
-assembly only when its instructions could not have come from this compiler —
+assembly only when its instructions could not have come from this compiler --
 see [Permanent assembly](#permanent-assembly). Grepping the span for `stmia`,
-`ldmia`, `swi` and the `mov ip, lr` / `bx ip` pair takes a second and tells you
-whether you are looking at a reconstruction job or a registered exception.
+`ldmia`, `swi` and the `mov ip, lr` / `bx ip` pair takes a second. Note that a
+SINGLE-register `ldmia r1!, {r3}` is ordinary C: Thumb has no post-incrementing
+`ldr`, so that is what `*p++` compiles to. The multi-register form is the tell.
 
 ### 3. Write the compiler's input, not its output
 
@@ -293,7 +289,7 @@ structs, arrays indexed by loop variables, ordinary expressions, natural
 statement order. The optimiser then reproduces the ROM's shape by itself,
 because that is exactly what it did the first time.
 
-The common mistake is transcribing the optimiser's work back into the source —
+The common mistake is transcribing the optimiser's work back into the source --
 hand-strength-reduced pointer walks instead of `arr[i]`, hand-shared temporaries
 instead of repeating an expression, hoisted invariants. That does not lock in
 the ROM's shape; it changes what the earlier passes see, and the result diverges
@@ -340,8 +336,8 @@ again.
 that merely keeps enough values live across calls reproduces the whole
 seven-instruction register-save sequence exactly. Each block you write correctly
 extends that prefix, and the first `+`/`-` row is the next thing to write. Only
-the frame size — `sub sp, #100` — waits for the whole body, because the frame is
-as big as the widest spill anywhere in it.
+the frame size -- `sub sp, #100` -- waits for the whole body, because the frame
+is as big as the widest spill anywhere in it.
 
 `overlay candidate-rank` and `compiler main-candidate-rank` rank the drafts in
 `work/` by what is wrong with them rather than by how much differs. Read
@@ -350,7 +346,7 @@ as big as the widest spill anywhere in it.
 ### 5. Adopt
 
 Adoption is gated. It rebuilds and compares before it accepts anything, and it
-refuses everything else — a candidate that is 32 bytes against a 6,332-byte
+refuses everything else -- a candidate that is 32 bytes against a 6,332-byte
 reference is rejected at `+0x0` with both sizes named.
 
 ```bash
@@ -361,6 +357,9 @@ make dispatch-decomp ARGS='integrate_matches /path/to/draft --apply'
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
   adopt resource_373:034c --source work/resource_373_c_0200034c.c --apply
 ```
+
+An owner discovery has not indexed needs its size given explicitly, as
+`--span 64`; the tool says so rather than guessing.
 
 An overlay row is spliced into a fixed-size hole, so the gate checks the region
 boundary, that no label outside the region is destroyed, and that the whole
@@ -393,7 +392,7 @@ sides.
 
 ### 6. When an owner will not converge
 
-Take another owner. A main-image owner needs nothing done to it — the build
+Take another owner. A main-image owner needs nothing done to it -- the build
 falls back to `asm/<address>.s` whenever `exact/<address>.c` is absent. An
 overlay row must be parked with the command above, because its assembly has to
 come back into the overlay.
@@ -425,11 +424,6 @@ figure hashes. Take either side there and let `make coverage` correct it; the
 prose around them is hand-written and merges normally, which is exactly why
 those two are not auto-resolved.
 
-`metrics/gs1-en-executable.json` is the audit, not a generated file. When both
-sides have touched it, compare the two entry by entry before choosing — twice
-now the difference has been interval coalescing with identical byte totals,
-which is safe to drop, and a real change would not be.
-
 ---
 
 ## Reading a residual
@@ -443,112 +437,20 @@ classify every residual, and the class is the first thing to read:
 | `exact` | the bytes match | adopt it |
 | `wrong` | some instruction is genuinely different | **yes** |
 | `size mismatch` | a statement is missing or extra | **yes** |
-| `ordering` | same instructions, different order | rarely |
-| `allocation` | same instructions and operands, different registers | rarely |
+| `ordering` | same instructions, different order | sometimes |
+| `allocation` | same instructions and operands, different registers | sometimes |
 | `unemittable` | the reference *appears* to use an instruction this compiler cannot emit | confirm first |
 
 Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
 is not a near miss.
 
-`ordering` is settled after the source has had its say, by the POST-RELOAD
-SCHEDULER. An earlier version of this file said reload decided it and the
-scheduler merely preserved reload's order. That was wrong, and it was wrong in
-the direction that makes the residual look unreachable, so it is worth saying
-how it was caught.
-
-Take one function and compile it twice, identical except that the second has a
-`switch` with a `default: return`. Both reach reload with the SAME insn chain:
-
-| pass | chain around the pair |
-|---|---|
-| `18.greg`, after reload | `mov r2,#8` / `neg r2,r2` / `mov r0,#0` / `mov r1,#3` -- both builds |
-| `23.sched2`, after scheduling | adjacent build: `mov r2,#8` / `neg` / `mov r1` / `mov r0` |
-| | interleaved build: `mov r2,#8` / `mov r1,#3` / `neg` / `mov r0` |
-
-Reload places them identically. `sched2` then reorders them DIFFERENTLY in the
-two builds. So the pass to read is the scheduler, and what varies is the
-function's basic-block structure -- the `switch` splits one block into
-twenty-four, and the dependence graph the scheduler sees changes with it.
-
-`rank_for_schedule`'s keys, in the order it consults them, are: priority; then
-(before reload only) register weight; then the interblock comparisons; then the
-insn's dependence class relative to the last scheduled insn; then **the number
-of later insns that depend on it**; then `INSN_LUID`. Read them off the
-`-fsched-verbose=5` dependence table, which prints every one:
-
-```
-;;      insn  code    bb   dep  prio  cost   blockage units
-;;        29   173     0     0     3     1    1 - 32   core  : 42 36
-;;        31   173     0     0     3     1    1 - 32   core  : 42 41 36
-```
-
-Here `29` is `mov r0,#31` and `31` is `mov r1,#0`. Same priority, same
-dependence count, but `31` has THREE dependents against `29`'s two, so it wins
-and is emitted first. The extra dependent is the second call's own `r1 = 0`:
-an output-dependence, because nothing between them writes r1. r0's equivalent
-chain is CUT by the intervening call, which returns its value in r0.
-
-That is a lever, and it is reachable from the source. Declaring the intervening
-callee `void` removes the `(set (reg r0) (call ...))` from its RTL, which
-un-cuts r0's chain, gives `mov r0,#31` a third dependent, and flips the pair --
-measured, on `resource_398:04b4`, from two differing halfwords to one.
-
-What is NOT a lever, measured rather than assumed: the spelling of the call or
-its arguments. Twenty-five spellings of one three-argument call -- bare literal,
-`0x10`, `0 - 16`, `-(1 << 4)`, `-16L`, prototype, `void` and `s32` returns,
-narrow and wide parameter types, the constant in a local, in a `const`, in an
-`enum`, in a `volatile`, the pool address as an integer, as `(void *)`, as an
-`extern` array, as `&extern` -- all give the identical residual. When the
-scheduler's keys tie and it falls to `INSN_LUID`, LUID follows the pre-reload
-argument-emission order, and no respelling of the arguments changed that order.
-
-The scheduler tie is still worth understanding, so here it is. On `resource_3b8:3df8` the whole residual is one pair, and the sched2 dump
-shows why it cannot be reached:
-
-| uid | insn | priority | dep count | cost | dependents |
-|---|---|---:|---:|---:|---:|
-| 67 | `r2 = -r2` | 67 | 2 | 1 | 5 |
-| 41 | `r1 = 2` | 67 | 2 | 1 | 5 |
-
-Every key `rank_for_schedule` consults is equal, including the dependent sets,
-which are the same five insns. gcc then takes them in ready-list array order,
-which follows RTL order, and the reference's RTL has `r1 = 2` between
-`r2 = 16` and its `neg` where ours has the pair adjacent. Four spellings were
-measured -- the bare literal, a prototype on the callee, the constant in a
-local, and `0 - 16` -- and all four give the same two differing halfwords.
-
-The snapshot is not the lever either, and that is now checked against
-upstream rather than assumed. `rank_for_schedule` was compared at
-gcc-mirror/gcc as it stood a year before our 2000-07-31 snapshot, at the
-snapshot, and a year after. The final tie-break is the same line in all three:
-
-```c
-/* If insns are equally good, sort by INSN_LUID (original insn order),
-   so that we make the sort stable. ... */
-return INSN_LUID (tmp) - INSN_LUID (tmp2);
-```
-
-1999 and 2000 differ only in comment capitalisation and a `GENERIC_PTR` to
-`PTR` typedef rename. 2001 moved the interblock comparisons behind a
-`current_sched_info->rank` callback and left the keys and the tie-break
-untouched. 2002's comparator is identical to 2001's. And gcc at HEAD, twenty-six
-years on, still ends `rank_for_schedule` with that same line.
-
-Our fork's `haifa-sched.c` is byte-identical to upstream at the snapshot, so
-there is no local divergence to correct, and no version of gcc ever written
-decides this tie differently. The compiler-snapshot axis is closed.
-
-So the compiler SNAPSHOT is not the variable; the scheduler's input is. An
-`ordering` residual is reachable when you can change a key -- block structure, or
-a dependence chain, as above -- and unreachable when every key ties and only
-`INSN_LUID` separates the pair. Read the dependence table before deciding which
-one you have, and record the answer either way.
-
-`allocation` is the same story one pass later, in reload. Both respond to how
-much of the function the source actually expresses: a load written as a
-standalone `x = p->field;` floats free for the scheduler to hoist, where reading
-the field once into a local and using that local twice pins it where the
-reference has it.
+**Do not read `ordering` and `allocation` as compiler verdicts.** Both mean the
+same thing far more often than they mean a wall: the source does not yet express
+what the reference expresses. Twelve owners closed in one session, and several
+arrived carrying an `allocation` or `ordering` label that dissolved the moment
+the right source shape was written. [Shapes that decide
+bytes](#shapes-that-decide-bytes) is that list; read it before concluding
+anything about a residual in either class.
 
 `unemittable` is advisory and wrong about one time in five. It reads a
 disassembled stream, and a literal pool word disassembles as whatever its bytes
@@ -559,9 +461,73 @@ fires on any large size mismatch, where it means nothing. Before writing an
 owner off, check that the instruction is inside its span in the assembly.
 
 Where it is true, it is decisive: `arm.md` gates both store-multiple peepholes
-on `TARGET_ARM`, so a reference-side Thumb `stmia` or `ldmia` cannot have come
-from any C source, and hand-written assembly and library objects sit in every
-ROM.
+on `TARGET_ARM`, so a reference-side Thumb multi-register `stmia` or `ldmia`
+cannot have come from any C source, and hand-written assembly and library
+objects sit in every ROM.
+
+### When ordering really is the scheduler
+
+Some ordering residuals are genuinely out of reach, and it is worth knowing how
+to tell, because the answer is mechanical rather than a matter of taste.
+
+The pass that decides is the POST-RELOAD SCHEDULER, not reload. Compile one
+function twice, identical except that the second has a `switch` with a
+`default: return`, and both reach reload with the SAME insn chain:
+
+| pass | chain around the pair |
+|---|---|
+| `18.greg`, after reload | `mov r2,#8` / `neg r2,r2` / `mov r0,#0` / `mov r1,#3` -- both builds |
+| `23.sched2`, after scheduling | adjacent build: `mov r2,#8` / `neg` / `mov r1` / `mov r0` |
+| | interleaved build: `mov r2,#8` / `mov r1,#3` / `neg` / `mov r0` |
+
+Reload places them identically; `sched2` reorders them differently. What varies
+is the function's basic-block structure, and the dependence graph the scheduler
+builds from it.
+
+`rank_for_schedule` consults, in order: priority; then (before reload only)
+register weight; then the interblock comparisons; then the insn's dependence
+class relative to the last scheduled insn; then **the number of later insns that
+depend on it**; then `INSN_LUID`. Read them off the `-fsched-verbose=5`
+dependence table, which prints every one:
+
+```
+;;      insn  code    bb   dep  prio  cost   blockage units
+;;        29   173     0     0     3     1    1 - 32   core  : 42 36
+;;        31   173     0     0     3     1    1 - 32   core  : 42 41 36
+```
+
+Here `29` is `mov r0,#31` and `31` is `mov r1,#0`. Same priority, same
+dependence count, but `31` has THREE dependents against `29`'s two, so it wins
+and is emitted first. The extra dependent is the second call's own `r1 = 0`: an
+output-dependence, because nothing between them writes r1. r0's equivalent chain
+is CUT by the intervening call, which returns its value in r0.
+
+That is a lever reachable from the source. Declaring the intervening callee
+`void` removes the `(set (reg r0) (call ...))` from its RTL, un-cuts r0's chain,
+gives `mov r0,#31` a third dependent, and flips the pair -- measured, on
+`resource_398:04b4`, from two differing halfwords to one.
+
+What is NOT a lever, measured rather than assumed: the spelling of the call or
+its arguments. Twenty-five spellings of one three-argument call -- bare literal,
+`0x10`, `0 - 16`, `-(1 << 4)`, `-16L`, prototype, `void` and `s32` returns,
+narrow and wide parameter types, the constant in a local, in a `const`, in an
+`enum`, in a `volatile`, the pool address as an integer, as `(void *)`, as an
+`extern` array, as `&extern` -- all give the identical residual. When the keys
+tie and only `INSN_LUID` separates the pair, LUID follows the pre-reload
+argument-emission order, and no respelling of the arguments changed that order.
+
+So an `ordering` residual is reachable when you can change a key -- block
+structure, or a dependence chain -- and unreachable when every key ties. Read
+the dependence table before deciding which one you have, and record the answer
+either way.
+
+One shape in this family is currently unbeaten and worth naming so nobody pays
+for it twice: a `movs r0, #N` that the reference places BETWEEN a
+`movs`/`lsls` constant pair, where reload emits the pair first and LUID puts our
+`movs r0` after it. Six owners sit at two or three differing halfwords with zero
+wrong instructions on exactly this: `resource_3c7:0030`, `resource_3bf:0c78`,
+`resource_389:09dc`, `resource_38d:1958`, `resource_3b5:0260` and
+`resource_3a2:0870`.
 
 Two shapes inside `wrong` are worth naming because they look like source
 problems and are not. A candidate that holds a constant in a callee-saved
@@ -599,7 +565,7 @@ extern u8 *Func_0200538a(s32 actor);
 
 These are reconstruction aids, not claims about the original identifiers.
 Renaming locals and aliasing callees this way is byte-neutral, so do it freely
-— but run the owner's comparison anyway.
+-- but run the owner's comparison anyway.
 
 In an overlay, name a call by the **veneer entry that site reaches**, not by
 the import behind it, and record the import in a comment:
@@ -612,24 +578,43 @@ Every site gets its own entry in the overlay's import table, so the import's
 name cannot say which one, and naming it directly leaves the `bl` encoding
 wrong. `overlay show <overlay> <start> <end>` prints the address the reference's
 `bl` encodes, and the same range with `--annotate` names the import it reaches.
+The encoded address is the one to use; a finished sibling in the same overlay
+settles it in seconds if you are unsure.
 
 Fix the naming when you open an owner to work it, where the residual can be read
 afterwards. A batch rename that moves scores and closes nothing is not progress.
 
-### Types and structure
+### Comments
+
+Brief, factual, and about things a future contributor needs: relationships
+between values, invariants, hardware constraints. Canonical comments are short
+Japanese UTF-8 lines matching the naming convention; English is fine where it
+makes a technical constraint clearer.
+
+```c
+/* マップチップ切替。ヘッダ値に従い表示窓へ文字ブロックを割り当てる。 */
+```
+
+Record what the bytes prove, including when it made the score worse: a source
+that is right and scores badly is more useful than one that is wrong and scores
+well, and the next reader needs to know which they have. Do not use comments as
+a speculation diary, and do not claim to have recovered an original identifier
+the evidence does not support.
+
+---
+
+## Shapes that decide bytes
 
 Prefer the simplest shape the evidence supports. Keep uncertain fields, casts,
 aliases, signedness and control flow explicit until they are proved. Risk lives
 in types, scoping and control flow, not in spelling: a small change to a type
-or an alias can move register allocation and break an exact match. Do not
-retype or re-scope a source to make it look modern.
+or an alias can move register allocation and break an exact match.
 
-Narrow types are usually the wrong reading. The store width comes from the
-pointer cast or the struct member, not from the variable, so a `u8` local that
-the reference never truncates costs an extension the ROM does not have. Widen
-by default and narrow where the bytes show a truncation. A narrow *parameter* is
-worse than a narrow local: it silently truncates the argument at every call
-site, so `f(0x301)` through a `u8` parameter compiles to `movs r0, #1`.
+The rule that closed the most owners: **write the statement order the
+reference's REGISTER LIFETIMES imply, then let the optimiser place the
+instructions.** Everything below is a special case of it.
+
+### Bitfields
 
 `(x & ~M) | V` on a sub-byte field is a BITFIELD ASSIGNMENT, and writing it as
 mask arithmetic does not reproduce. The tell is the width of the mask. A byte
@@ -652,14 +637,31 @@ The assignment does its own masking and shifting, so `rec->mode = value` also
 covers the `(value & 3) << 2` form. This one shape closed four owners --
 `resource_399:1704`, `resource_39c:0030`, `resource_39a:0ed8` and
 `resource_3b1:02f4` -- and each had been sitting at a residual that read like an
-allocation problem. Note that not every mask is a bitfield: a `& ~1` that stays
-narrow (`movs r3, #254`) really is byte arithmetic, and the mask width tells you
-which you are looking at before you write anything.
+allocation problem. Not every mask is a bitfield: a `& ~1` that stays narrow
+(`movs r3, #254`) really is byte arithmetic, and the mask width tells you which
+you are looking at before you write anything.
+
+### Types and widths
+
+Narrow types are usually the wrong reading. The store width comes from the
+pointer cast or the struct member, not from the variable, so a `u8` local that
+the reference never truncates costs an extension the ROM does not have. Widen
+by default and narrow where the bytes show a truncation. A narrow *parameter* is
+worse than a narrow local: it silently truncates the argument at every call
+site, so `f(0x301)` through a `u8` parameter compiles to `movs r0, #1`.
+
+The same rule decides how a constant is built. `resource_38a:04c4` adds a fixed
+step to a halfword field; `+= -2048` lets the compiler narrow the constant to
+`0xf800` and build it with `movs / lsls`, where the reference loads the full
+`0xfffff800` from the pool. Writing it as `-= 2048` keeps the arithmetic wide
+and reproduces.
 
 A callee's declared return type is part of the interface and is visible in the
 bytes: a non-void return keeps a value live across the caller's argument setup.
 If your arguments are set up in the wrong order, check the prototype before you
 suspect the allocator.
+
+### Loads, stores and re-reads
 
 Fixed addresses touched more than once should be declared objects, not
 `(void *)` literals, so the base stays in a register:
@@ -668,13 +670,6 @@ Fixed addresses touched more than once should be declared objects, not
 extern s16 Data_02000240[];
 ```
 
-This applies to a STRUCT FIELD as much as to a global, and the qualifier goes on
-the pointer, not the pointee. `resource_3b5:06e8` stores through `work->f80`
-twice and the reference loads `[r5, #80]` again for the second store; ordinary C
-keeps the first load in a register and the second `ldr` disappears.
-`struct Rec *volatile f80;` reproduces it, `volatile struct Rec *f80;` does not
--- the first says the pointer may change, which is what forces the reload.
-
 A global the reference re-reads on a path where the value provably cannot have
 changed is a `volatile` object, and nothing else in ordinary C produces that
 reload. The tell is small and easy to misread: the whole owner matches except
@@ -682,18 +677,24 @@ one conditional branch whose target is a single instruction earlier than yours,
 because your branch was threaded past a load the compiler knew was redundant.
 Qualify the declaration, the pointer and any alias to it together.
 
-A candidate exactly four bytes short of its reference is usually missing one
-pool word. Either a constant is spelled as a literal where the reference links
-a symbol, or the value is dead in your source and the compiler dropped it —
-check for a variable that is assigned in one branch and read in another before
-reaching for `Value_<addr>`.
+This applies to a STRUCT FIELD as much as to a global, and the qualifier goes on
+the pointer, not the pointee. `resource_3b5:06e8` stores through `work->f80`
+twice and the reference loads `[r5, #80]` again for the second store; ordinary C
+keeps the first load in a register and the second `ldr` disappears.
+`struct Rec *volatile f80;` reproduces it, `volatile struct Rec *f80;` does not
+-- the first says the pointer may change, which is what forces the reload.
+
+A field the reference loads ONCE and uses twice is a local in the source. Read
+it into the local before its first use rather than writing the field expression
+twice; the compiler will common them either way, but the load lands where the
+first mention is.
+
+### Constants and locals
 
 A value that appears both as an immediate and out of a register is a variable,
 not a literal. When one call takes 8 as `movs r3, #8` for one argument and as
 `mov r3, r8` for another, a literal cannot produce both: the second came from a
-local assigned before the loop and held across it. This is the cheapest way to
-tell a hoisted invariant from a constant, and it is usually worth more than it
-looks -- on resource_39a:1e08 it closed 12 bytes of size difference in one edit.
+local assigned before the loop and held across it.
 
 A constant the reference DERIVES from another is a division in the source, and
 not a shift. `resource_3bc:3b40` writes 0x20000 and then 0x10000, and the
@@ -718,59 +719,63 @@ distinction alone is the whole residual:
 
 Reach for locals whenever the reference holds a value in a register across a
 call or stores two of them together, and reach for literals when it rebuilds the
-value each time. The rule of thumb that closed the most owners here: write the
-statement order the reference's REGISTER LIFETIMES imply, then let the optimiser
-place the instructions.
+value each time.
 
-An overlay function pointer is the LINKED address, not the overlay-relative one.
-The pool word for `Func_02001d78` in an overlay linked at 0x02008000 is
-0x02009d79: the routine, plus the Thumb bit, at its linked address. Read the base
-off a finished sibling; `exact/resource_39a_c_02002094.c` writes
-`(void *)Func_0200a014` for an owner at offset 0x2014.
+A candidate exactly four bytes short of its reference is usually missing one
+pool word. Either a constant is spelled as a literal where the reference links
+a symbol, or the value is dead in your source and the compiler dropped it --
+check for a variable that is assigned in one branch and read in another before
+reaching for `Value_<addr>`.
+
+### Statement and control-flow shape
+
+A chained assignment stores RIGHT TO LEFT. `work->f24 = work->f28 = f(...)`
+writes +28 before +24; where the reference writes +24 first, the source is two
+statements through a temporary. That was the entire residual on
+`resource_39c:51b0`.
+
+Where two guards return the same thing, the reference usually reaches one shared
+block placed after the body. Writing `return 0` early puts an inline copy near
+the top and burns a register the reference still has free, which then shows up
+as a redundant move several instructions later. The shape that matches is the
+body inside the `if` with the other value returned after it:
+
+```c
+    if (actor != 0) {
+        ...
+        return actor;
+    }
+    return 0;                   /* not  if (actor == 0) return 0;  first */
+```
 
 An increment emitted after the last call of a loop body lives in the loop TEST.
 `pass++;` as a statement emits `adds r5, #1` before whatever follows it; the
 reference emitting it afterwards is `while ((unsigned int)++pass <= 3)`.
 
-Where two guards return the same thing, the reference usually reaches one shared
-block placed after the body. Writing `return 1` twice puts an inline copy near
-the top instead; a `goto` to one label at the end is the shape that matches.
-
-### Comments
-
-Brief, factual, and about things a future contributor needs: relationships
-between values, invariants, hardware constraints. Canonical comments are short
-Japanese UTF-8 lines matching the naming convention; English is fine where it
-makes a technical constraint clearer.
-
-```c
-/* マップチップ切替。ヘッダ値に従い表示窓へ文字ブロックを割り当てる。 */
-```
-
-Record what the bytes prove, including when it made the score worse: a source
-that is right and scores badly is more useful than one that is wrong and scores
-well, and the next reader needs to know which they have. Do not use comments as
-a speculation diary, and do not claim to have recovered an original identifier
-the evidence does not support.
+An overlay function pointer is the LINKED address, not the overlay-relative one.
+The pool word for `Func_02001d78` in an overlay linked at 0x02008000 is
+0x02009d79: the routine, plus the Thumb bit, at its linked address. Read the base
+off a finished sibling.
 
 ---
+
 ## Where the project is
 
-Exact C stands at 274,776 bytes, 20.4% of the executable image. Permanent
-assembly — linker veneers, alignment, and routines whose instructions no C can
-produce — adds 216,278. Together those are DONE, 36% of the ROM's executable
-bytes, and DONE is what the sun in every commit subject reports.
+Exact C stands at 275,672 bytes, 20.5% of the executable image. Permanent
+assembly -- linker veneers, alignment, and routines whose instructions no C can
+produce -- adds the rest of DONE, which is 37% of the ROM's executable bytes and
+is what the sun in every commit subject reports.
 
 Publish both figures or neither. The share of the ROM is the honest headline;
 the share of the bytes that *can* be C says how much of the job is left. That
-second denominator is 1,130,844, and exact C is 24.3% of it.
+second denominator is 1,130,844, and exact C is 24.4% of it.
 
 ### 100% is reachable, and the compiler is the minority obstacle
 
 This is a measurement, not an opinion. All 1,276 overlay candidates from a
-since-deleted tier were scored against the ROM. Counting only real owners — 32
+since-deleted tier were scored against the ROM. Counting only real owners -- 32
 bytes or more, so the 8-byte veneer stubs that score exact trivially are
-excluded — 1,242 of them classify as:
+excluded -- 1,242 of them classify as:
 
 | share | class | what it means |
 |---:|---|---|
@@ -780,9 +785,9 @@ excluded — 1,242 of them classify as:
 | 1.9% | allocation | reload picked different registers |
 | 0.6% | unemittable | a shape no stock gcc 2.96 emits |
 
-**84.5% of what is left is ordinary reconstruction** — read the assembly again,
-find the statement you missed, fix the type. About one owner in six sits in the
-families the compiler decides.
+**84.5% of what is left is ordinary reconstruction.** That understates it, since
+the twelve owners closed most recently included several labelled `ordering` or
+`allocation` that were source problems after all.
 
 The sample is drawn from sources someone already wrote and failed to close, so
 it is biased toward hard cases. That makes the finding stronger, not weaker:
@@ -790,13 +795,13 @@ even among owners known to have resisted once, five in six failed for a reason
 the contributor controls.
 
 The largest single target, `main:0x080bbb0c` at 6,332 bytes, carries no
-permanence marker at all — no Thumb multiple-transfer, no SWI, no veneer idiom,
+permanence marker at all -- no Thumb multiple-transfer, no SWI, no veneer idiom,
 and no entry in `asm/classification.json`. Every byte of it is reachable as C.
 
 ### Large owners are unproven, and that is where the bytes are
 
-The 84.5% figure above is measured across all owner sizes and is dominated by
-small ones. Broken out by size, the record is much starker:
+The figure above is measured across all owner sizes and is dominated by small
+ones. Broken out by size, the record is much starker:
 
 | owner size | byte-exact | share of open bytes |
 |---|---:|---:|
@@ -824,27 +829,15 @@ the case where a call-sequence reconstruction is most nearly the whole source,
 and it is the case that got closest without closing.
 
 Before drawing a conclusion from that, note what a call-sequence reconstruction
-does NOT model: loads and stores through a held pointer. `resource_3bd:13f8`
-keeps a pointer in r7 and reads one field repeatedly, and a reconstruction that
-emits only calls and constants cannot express that.
-
-Adding that modelling was tried and it moves the number the way completeness
-should. Teaching the reconstruction pointer-valued loads, field reads and
-writes, and the read-modify-write shape -- `*(u8 *)(p + 90) &= 0xfe`, which is a
-call returning a pointer and one bit being cleared in a byte -- took
-`resource_3bd:13f8` from 674 wrong instructions to 601, and its `ldrb` and `str`
-counts are now exact against the reference at 10 and 2. So the residual tracks
-how much of the source is expressed, not a fixed limit.
-
-What remains after that is still two things, and they should not be conflated.
-Roughly 18 memory operations are unmodelled -- 8 `ldrsh` and 10 `strh` -- which
-is ordinary unfinished work. And the parking persists: 84 high-register moves
-against the reference's 15, with 104 fewer `lsls` and 107 fewer `movs`, which is
-the same shape as `resource_3bf:3054` at smaller magnitude.
+does NOT model: loads and stores through a held pointer. Teaching the
+reconstruction pointer-valued loads, field reads and writes, and the
+read-modify-write shape took `resource_3bd:13f8` from 674 wrong instructions to
+601, and its `ldrb` and `str` counts are now exact against the reference at 10
+and 2. So the residual tracks how much of the source is expressed, not a fixed
+limit.
 
 The strongest result from that experiment is what happened to the parking as the
-reconstruction got more complete. On `resource_3bd:13f8` the excess
-high-register moves fell as each modelling gap closed:
+reconstruction got more complete:
 
 | what the reconstruction expressed | excess `mov` | bytes of 6,220 |
 |---|---:|---:|
@@ -852,8 +845,7 @@ high-register moves fell as each modelling gap closed:
 | plus memory through a held pointer | +69 | 5,848 |
 | plus the three loops | **+48** | **5,908** |
 
-`bl`, `ldrb` and `strb` are exact against the reference at 703, 10 and 11. So
-what looks like the compiler parking constants is substantially a source that
+So what looks like the compiler parking constants is substantially a source that
 does not yet say everything the original said -- an incomplete reconstruction
 reads as an allocation difference, and closing the gap closes both.
 
@@ -863,27 +855,6 @@ reconstruction could be structurally complete for it. `resource_3bd:13f8` has
 three and `resource_38f:08ec` has two, and a linear walk emits each body once
 without its counter arithmetic or its branch. Check for backward branches before
 concluding anything about a large owner's residual.
-
-The useful correction is that parking is NORMAL at this scale. The reference for
-`resource_3bd:13f8` saves three high registers itself, and the candidate is one
-register over it rather than four. `resource_3bf:3054`'s reference, which saves
-only `{r5, lr}` across 636 calls, is the outlier -- and it is also the only large
-owner with essentially no memory access at all, so it is the one where a
-call-sequence reconstruction is closest to the whole source.
-
-### Why the project stalled at 20% for two weeks
-
-Not a compiler wall. A third tier held 862,856 bytes of C that did not
-reproduce and reported it as 74% coverage against a 20% match rate, so the work
-that would actually close owners never got picked up. The queue was full of
-already-attempted owners and the thing missing from each was another read of
-the assembly.
-
-The tier is gone. Its sources are recoverable per file with
-`git show 84ea2392a:semantic/<name>.c`, and their comments carry call
-resolutions and field layouts worth reading before you reopen an owner. Their C
-did not build the ROM and never would have. When an owner is the wrong size,
-expect to rewrite it against the score rather than repair it.
 
 ### Finish overlays, do not spread
 
@@ -895,11 +866,11 @@ worked example. Across the ROM that compounding is lost. It also changes what a
 day's work produces: "this overlay is finished" is an artifact, "the number
 went up 0.04%" is not.
 
-We have finished 65% of the overlay owners and 22% of the overlay bytes, because
-we did the small ones: the median adopted owner is 46 bytes and the median owner
-still parked is 204. What remains is filtered twice over, once for size and once
-for having already failed. The way out is reconstructing large functions by
-reading them.
+We have finished most of the overlay owners by count and about a fifth of the
+overlay bytes, because we did the small ones: the median adopted owner is 46
+bytes and the median owner still parked is 204. What remains is filtered twice
+over, once for size and once for having already failed. The way out is
+reconstructing large functions by reading them.
 
 ### Veneers stay in the denominator
 
@@ -908,172 +879,9 @@ the ROM, so they belong in the denominator. They can never be C, so a share
 measured against that denominator can never reach 100. `resource_3cc` is
 finished and reads 64%.
 
-### The host does not reach the bytes, and that was measured
-
-gcc 2.96 was never an FSF release: it is Red Hat's branding of a pre-3.0
-snapshot, shipped in Red Hat Linux 7.0 and 7.1 and disowned upstream. Debian
-stayed on 2.95 and deliberately avoided it, and the era's GBA SDK shipped
-agbcc, which is 2.95. So whoever built this ROM almost certainly had Red Hat,
-and PROVENANCE.txt records that our base -- gcc-mirror `04179d4a511b`,
-`2.96 20000731 (experimental)` -- is the one Red Hat built gcc-2.96-54 from.
-
-That raises a real worry, because `cse.c` hashes a `SYMBOL_REF` by the HOST
-ADDRESS of its name string, and 2000-era Linux had no ASLR. If bucket placement
-reached codegen, matching the bytes could require matching the machine, and
-that would be a different project.
-
-It does not. Compiling the 577-symbol owner `resource_3bf:3054` with the
-environment padded by 0, 8,000 and 60,000 bytes gives one identical hash, as
-does the same test on `resource_3b8:3df8`, as do five repeated runs under macOS
-ASLR. CSE decides equivalence by structural comparison; the hash only orders
-buckets, and a lookup that lands in a different bucket still compares the same
-way. `simplify-rtx.c` was made content-hashed anyway and `cse.c` was left alone,
-which turns out to be harmless rather than an oversight to chase.
-
-Nobody needs a period-correct machine image. If a residual ever looks
-host-shaped, re-run that padding test before believing it.
-
-The COMPILER is a different question, and it is open. Red Hat's shipped 2.96 is
-this base plus a patch series, and we build the bare base. `gcc-2.96-108.1.src.rpm`
-from `archive.kernel.org/centos-vault/2.1/source/i386/SRPMS/` carries
-`gcc-2.96-20000731.tar.bz2` -- byte-identical to our tree for `reload1.c`,
-`cse.c`, `haifa-sched.c` and `config/arm/arm.c` -- and 384 patches, 379 of them
-applied by the spec.
-
-Applying that series to the base and diffing against what we build:
-
-| file | lines changed by Red Hat |
-|---|---:|
-| `gcc/reload1.c` | **285** |
-| `gcc/calls.c` | 64 |
-| `gcc/local-alloc.c` | 61 |
-| `gcc/global.c` | 30 |
-| `gcc/config/arm/arm.c` | 12 |
-| `gcc/haifa-sched.c` | 2, and both inside `print_value`, a dump routine |
-
-Read that table against the pass-order finding above. The scheduler is
-untouched, and reload -- which the `-da` dumps show is what actually places
-these insns -- is the most heavily patched pass in the series. Nine applied
-patches touch it, and `gcc-reload-hardreg-free.patch`, `gcc-cselib-mode.patch`
-and `gcc-pure-reload.patch` are generic rather than target-specific.
-
-That was the state of the question until the compiler was actually built, and
-building it answered it. Development on the first game ran about a year to an
-August 2001 release, which brackets the toolchain between Red Hat 7.0
-(September 2000, `gcc-2.96-54`) and 7.1 (April 2001); 7.2 and RHEL 2.1 both
-post-date the ROM. `gcc-2.96-54.src.rpm` is the era-correct one: same base
-tarball, 70 patches, 68 applied, and against our tree it changes 54 lines of
-`reload1.c`, 58 of `cse.c`, 38 of `local-alloc.c` and 24 of `calls.c`.
-
-Built in a 32-bit i386 container -- where the tree needs NO host patches at all,
-which is the whole reason to build it there -- and pointed at the owners whose
-residual is pure ordering:
-
-| owner | our compiler | Red Hat 7.0 | differing |
-|---|---:|---:|---:|
-| `resource_3b8:3df8` | 11 insns | 11 | **0** |
-| `resource_37a:1380` | 128 insns | 128 | **0** |
-| `resource_3ce:029c` | 588 insns | 588 | **0** |
-
-Byte-identical assembly, including the 1,574-byte owner whose entire residual is
-one swapped pair repeated at 196 call sites. Red Hat's reload changes do not
-reach these owners.
-
-So the compiler axis is closed the same way the host axis was: by measurement,
-not by reading. Our unpatched 2000-07-31 tree is the right compiler, and if
-Camelot used Red Hat's build instead it makes no difference to these bytes.
-
-That leaves the fair question of why `alchemy-gcc` carries changes matching
-neither upstream nor Red Hat. There are three kinds and only one is a gap.
-
-**Host portability**, the bulk of it. `reload1.c`'s fourteen lines are entirely
-`GEN_FCN (icode) (...)` becoming `((insn_gen_fn3) GEN_FCN (icode)) (...)` -- a
-function-pointer cast so the call has a correct prototype on a 64-bit host,
-where an unprototyped call through a pointer worked by accident at 32 bits.
-`expr.c`, `emit-rtl.c`, `optabs.c` and the rest are the same shape. These change
-how gcc is COMPILED, not what it emits, and the Red Hat comparison above is the
-evidence: two differently-patched compilers, one built on arm64 and one on i386,
-agreeing instruction for instruction across three owners.
-
-**The SYMBOL_REF hash** in `simplify-rtx.c`, which its own comment calls a
-deviation rather than a fix. Measured inert: see the padding test above.
-
-**`.align N, 0`** in `config/arm/elf.h`, one line, and this is the real gap. It
-is not compensating for the compiler at all -- it is compensating for the
-ASSEMBLER. Red Hat 7.0 shipped binutils 2.10.0.18; we assemble with 2.47, whose
-default alignment fill is not zero. Neither upstream nor Red Hat needs this line
-because neither was using a 2026 assembler.
-
-One thing the provenance does NOT claim, and it matters: the gs1cc snapshot DATE
-was never measured. The 3.0.0 and agbcc trees both say "confirmed by
-measurement" and name what they beat; gs1cc says only "the 2000-07-31
-development snapshot", inherited because Red Hat used that base. Nobody swept
-neighbouring commits.
-
-Walking gcc's own history says how much room that leaves. For each pass, the
-last change on or before 2000-07-31 and the next one after:
-
-| pass | last change | next change |
-|---|---|---|
-| `reload1.c` | 2000-07-28 | 2000-08-04 |
-| `reload.c` | 2000-07-28 | 2000-08-04 |
-| `cse.c` | 2000-07-28 | 2000-08-04 |
-| `combine.c` | 2000-07-30 | 2000-08-04 |
-| `calls.c` | 2000-07-18 | 2000-08-15 |
-| `expr.c` | 2000-07-12 | 2000-08-06 |
-| `local-alloc.c` | 2000-06-13 | 2000-08-04 |
-| `global.c` | 2000-06-13 | 2000-08-04 |
-| `config/arm/thumb.c` | 2000-04-08 | not again in 2000 |
-| `config/arm/thumb.md` | 2000-04-08 | not again in 2000 |
-
-So any CVS pull between 2000-07-30 and 2000-08-03 gives the same compiler for
-our purposes, and ours sits in the middle of that window. The Thumb back end is
-stable for far longer -- unchanged from April 2000 through the end of the year.
-
-That is why the date was worth checking and why a fine-grained bisect is not:
-the granularity that could move bytes is WEEKS, not days. A snapshot from June,
-or from September once the 08-04 reload and cse changes land, is a different
-compiler; one from 2000-08-01 is not. If the snapshot is ever swept, sweep it at
-that spacing.
-
-So the toolchain is reproduced faithfully in its compiler and papered over in
-its assembler. `binutils-2.10.0.18-1.src.rpm` sits in the same Red Hat 7.0
-archive as the compiler, and the container recipe that built one will build the
-other. Doing that and dropping the `elf.h` line would remove the last change we
-carry that moves bytes.
-
-### The tooling is frozen
-
-The loop needs about eight commands and they all exist. Adding a tool now
-requires deleting one, and measurement that explains why we are stuck is no
-longer a deliverable.
-
-### The permuter cannot reach an ordering residual, and now we know why
-
-`alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
-passes. On this corpus it closed nothing: 97 rows at 1,500 to 2,500 candidates
-each improved 18 and matched 0.
-
-Pointed at the best targets the project has -- owners that are byte-count exact
-with zero wrong instructions, two halfwords from reproducing -- it did not
-improve them once. 200,000 candidates across ten owners, eight seeds apiece on
-the closest two, 89% of the mutations failing to compile at all, and the best
-score never moved off the baseline.
-
-That is not bad luck, it is the wrong instrument. The permuter searches SOURCE
-SHAPE. An `ordering` residual is the post-reload scheduler choosing between two
-independent instructions after the source has had its say, and when the source
-is already right -- right size, right instructions, right operands -- there is
-no shape left to mutate that is not worse. Every candidate it generates is
-either a compile error or a step backwards.
-
-Aim it at rows the score calls `wrong`, where a statement really is missing or a
-type really is off, and read the residual first so you know which you have.
-Treat a match it finds as something to explain before adopting.
-
 ### Assets: named is the bar
 
-An asset is finished when it is a standalone file whose name says what it is —
+An asset is finished when it is a standalone file whose name says what it is --
 `vale_night.png`, `rock_front.png`, `isaac_running_south_west.png`,
 `djinn_venus.gif`, `growl.wav`, `good_morning.mid`, `alchemy.sf2`. A stem
 carrying the ROM's own numbering is not that, whether the number is decimal
@@ -1082,81 +890,9 @@ carrying the ROM's own numbering is not that, whether the number is decimal
 Everything in a standard format but still ID-named is **Extracted**, which is a
 real step and not the last one. Images are 1.8% Named and music 0.0%. Those
 numbers were 32.6% and 99.6% until August 2026, when the top tier was being
-awarded for the *category name* — anything called audio counted as finished —
+awarded for the *category name* -- anything called audio counted as finished --
 rather than for a file existing. Tiers are counted per file, so one well-named
 member cannot promote its package.
-
----
-
-## Tools
-
-Everything runs through nine dispatch groups:
-
-```bash
-make dispatch-<group> ARGS='<command> [args]'
-
-# or directly
-cargo run --release --manifest-path tools/dispatch/Cargo.toml -- <group> <command> [args]
-```
-
-`<group> --list` enumerates a group; `<group> <command> --help` gives the
-contract. Commands that change the tree require an explicit `--apply` or
-`--write`; everything else is read-only.
-
-### The ones you will actually use
-
-There are 99 public commands and the loop needs about eight of them. The full
-catalog below exists so the registry has somewhere to be checked against; it is
-reference, not a reading list.
-
-| | |
-|---|---|
-| `overlay score` | compile a candidate, diff it, classify the residual |
-| `candidate-show` | the same for a main-image owner |
-| `overlay adopt` / `park` | install a proven row, or take one back out |
-| `overlay audit --all` | re-prove every adopted row still reproduces |
-| `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it |
-| `overlay twins` | find a finished owner with the same shape |
-| `overlay reconstruct` | draft C for a call-dense owner from its own disassembly |
-| `make verify` | the only result that proves anything |
-
-Most of the rest are asset builders that run as part of `make build-assets`,
-and gates that run as part of `make verify`. You should not need to invoke them
-by hand, and if you find yourself doing so, that is worth a note in the commit.
-
-### decomp — find owners and prove drafts
-
-| Command | What it tells you |
-|---|---|
-| `discover` | Produces the function, instruction and call discovery report from a local ROM. |
-| `remaining_survey` | Surveys the executable regions still unresolved. |
-| `decomp_diagnose` | Compiles a main-image candidate and classifies its residual; `--agent-brief` emits a bounded work contract with the canonical score. |
-| `integrate_matches` | The main-image adoption gate: proves a `src_<address>.c` draft and installs it only with `--apply`. |
-
-### overlay — the 96 loaded code modules
-
-| Command | What it tells you |
-|---|---|
-| `overlay_disasm` | Decodes overlay bytes to assembly. |
-| `overlay_show` | Shows a byte range of one overlay, optionally annotated. |
-| `overlay_entry` | Reports overlay entry points. |
-| `overlay_inventory` | Rebuilds the diagnostic inventory the overlay tools read. |
-| `overlay_gaps` | Names unclaimed executable ranges. |
-| `overlay_unindexed` | Names executable spans discovery has not indexed. |
-| `overlay_twins` | Finds owners that mirror one another, so a solved shape can be reused. |
-| `exact_reading_list` | Lists finished owners worth reading as worked examples. |
-| `overlay_candidate_rank` | Ranks candidate residuals. |
-| `overlay_call_order_check` | Compares resolved call order, including aliases and relocation spellings. |
-| `overlay_certify` | Reports owner-certification findings; `--check` turns them into a failing gate. |
-| `overlay_adopt` | The overlay adoption gate: rehearses the whole overlay and refuses a mismatch. |
-| `overlay_showcase` | Renders a representative finished overlay for regression and demonstration. |
-| `overlay_driver` | The low-level overlay reconstruction driver. |
-| `overlay_mode_cohort` | Compares one compiler hypothesis across a set of overlay owners. |
-
-The `overlay` binary also carries `score`, `park`, `audit` and `reconstruct`,
-described in [the loop](#the-loop). `score` is the overlay counterpart
-of `candidate-show`: same output, same `--align`, and it derives the row's span
-rather than asking you for one.
 
 ### Where unfinished work lives
 
@@ -1166,14 +902,14 @@ Your C lives in `work/`, which is gitignored. What you have LEARNED lives in
 A byte is exact C or it is assembly. There is still no third directory for C
 that does not reproduce, and `two-tier-check` still fails if one appears.
 
-**`work/` — the scratchpad.** Every tool that scores a source takes a path, so
+**`work/` -- the scratchpad.** Every tool that scores a source takes a path, so
 `candidate-show work/080a1234.c --align` and
 `score work/resource_373_c_0200034c.c --align` work exactly as they would from
 anywhere else. Adoption moves the file to `exact/` when it matches. Nothing here
 is committed and nothing here survives a fresh clone, which is correct: an
 unproven source is not an asset.
 
-**`recon/<owner>.json` — the record.** One per owner under active
+**`recon/<owner>.json` -- the record.** One per owner under active
 reconstruction, holding measurements and a recipe. Never C, never ROM bytes.
 
 ```json
@@ -1188,11 +924,11 @@ reconstruction, holding measurements and a recipe. Never C, never ROM bytes.
 
 This is not the semantic tier returning. That tier stored unproven C and then
 COUNTED it, which is how 862,856 bytes read as 74% coverage against a 20% match
-rate. A record claims no bytes at all -- it carries the score the tools reported,
-and that score says the owner does not reproduce. There is nothing in it a
-coverage number could add up, and `check-unmatchable` fails a record whose owner
-has since gone exact, whose `wrong_instructions` is 0, or which carries no score
-at all.
+rate. A record claims no bytes at all -- it carries the score the tools
+reported, and that score says the owner does not reproduce. There is nothing in
+it a coverage number could add up, and `check_unmatchable` fails a record whose
+owner has since gone exact, whose `wrong_instructions` is 0, or which carries no
+score at all.
 
 What it buys is the thing `work/` cannot: a large owner taken most of the way
 used to leave nothing behind but prose in a commit message, so a clone or a
@@ -1237,7 +973,239 @@ source is structurally right and only the schedule differs. Those are what a
 owner boundaries for regions discovery did not index -- evidence about where an
 owner starts and ends, which is independent of anyone's C.
 
-### search — bounded source and compiler exploration
+---
+
+## Settled questions
+
+These were open, cost real effort, and are now closed by measurement. They are
+recorded so nobody reopens them on a hunch, and so the shape of the evidence is
+available if a residual ever looks like one of them again.
+
+### The host does not reach the bytes
+
+gcc 2.96 was never an FSF release: it is the upstream CVS tree between 2.95 and
+3.0, which Red Hat shipped in Red Hat Linux 7.0 and 7.1 and upstream disowned.
+The raw snapshot's own `version.c` reads `2.96 20000731 (experimental)`, so the
+version string says nothing about which distribution anyone was running.
+`PROVENANCE.txt` records that our base -- gcc-mirror `04179d4a511b` -- is the one
+Red Hat built gcc-2.96-54 from.
+
+That raised a real worry, because `cse.c` hashes a `SYMBOL_REF` by the HOST
+ADDRESS of its name string, and 2000-era Linux had no ASLR. If bucket placement
+reached codegen, matching the bytes could require matching the machine.
+
+It does not. Compiling the 577-symbol owner `resource_3bf:3054` with the
+environment padded by 0, 8,000 and 60,000 bytes gives one identical hash, as
+does the same test on `resource_3b8:3df8`, as do five repeated runs under macOS
+ASLR. CSE decides equivalence by structural comparison; the hash only orders
+buckets, and a lookup that lands in a different bucket still compares the same
+way. Nobody needs a period-correct machine image. If a residual ever looks
+host-shaped, re-run that padding test before believing it.
+
+### Red Hat's patches do not reach these owners
+
+Red Hat's shipped 2.96 is our base plus a patch series, and we build the bare
+base. Development on the first game ran about a year to an August 2001 release,
+which brackets the toolchain between Red Hat 7.0 (September 2000, `gcc-2.96-54`)
+and 7.1 (April 2001). `gcc-2.96-54.src.rpm` is the era-correct one: same base
+tarball, 70 patches, 68 applied, changing 54 lines of `reload1.c`, 58 of `cse.c`,
+38 of `local-alloc.c` and 24 of `calls.c` against our tree.
+
+Built in a 32-bit i386 container -- where the tree needs no host patches at all,
+which is the whole reason to build it there -- and pointed at the owners whose
+residual is pure ordering:
+
+| owner | our compiler | Red Hat 7.0 | differing |
+|---|---:|---:|---:|
+| `resource_3b8:3df8` | 11 insns | 11 | **0** |
+| `resource_37a:1380` | 128 insns | 128 | **0** |
+| `resource_3ce:029c` | 588 insns | 588 | **0** |
+
+Byte-identical assembly, including the 1,574-byte owner whose entire residual is
+one swapped pair repeated at 196 call sites. Our unpatched tree is the right
+compiler, and if Camelot used Red Hat's build instead it makes no difference to
+these bytes. Three owners is not the corpus, so this is strong evidence rather
+than proof.
+
+### The snapshot date has a five-day window
+
+`PROVENANCE.txt` confirms the 3.0.0 tree and agbcc "by measurement" and names
+what each beat. For gs1cc it says only "the 2000-07-31 development snapshot",
+inherited because Red Hat used that base; nobody swept neighbouring commits.
+Walking gcc's own history says how much room that leaves. For each pass, the
+last change on or before 2000-07-31 and the next one after:
+
+| pass | last change | next change |
+|---|---|---|
+| `reload1.c` | 2000-07-28 | 2000-08-04 |
+| `reload.c` | 2000-07-28 | 2000-08-04 |
+| `cse.c` | 2000-07-28 | 2000-08-04 |
+| `combine.c` | 2000-07-30 | 2000-08-04 |
+| `calls.c` | 2000-07-18 | 2000-08-15 |
+| `expr.c` | 2000-07-12 | 2000-08-06 |
+| `local-alloc.c` | 2000-06-13 | 2000-08-04 |
+| `global.c` | 2000-06-13 | 2000-08-04 |
+| `config/arm/thumb.c` | 2000-04-08 | not again in 2000 |
+| `config/arm/thumb.md` | 2000-04-08 | not again in 2000 |
+
+Any CVS pull between 2000-07-30 and 2000-08-03 gives the same compiler for our
+purposes, and ours sits in the middle of that window. The Thumb back end is
+unchanged from April 2000 through the end of the year. A fine-grained bisect is
+therefore pointless -- the granularity that could move bytes is WEEKS. A sweep
+at that spacing is still worth doing, because a June tree, or a September one
+once the 08-04 reload and cse changes land, IS a different compiler.
+
+### The scheduler tie-break is not version-dependent
+
+`rank_for_schedule` was compared at gcc-mirror as it stood a year before our
+snapshot, at the snapshot, and a year after. The final tie-break is the same
+line in all three:
+
+```c
+/* If insns are equally good, sort by INSN_LUID (original insn order),
+   so that we make the sort stable. ... */
+return INSN_LUID (tmp) - INSN_LUID (tmp2);
+```
+
+1999 and 2000 differ only in comment capitalisation and a typedef rename. 2001
+moved the interblock comparisons behind a callback and left the keys and the
+tie-break untouched; 2002's comparator is identical to 2001's; and gcc at HEAD,
+twenty-six years on, still ends the function with that line. Our fork's
+`haifa-sched.c` is byte-identical to upstream at the snapshot, so there is no
+local divergence to correct.
+
+### What our fork still changes, and why
+
+There are three kinds and only one is a gap.
+
+**Host portability**, the bulk of it. `reload1.c`'s fourteen lines are entirely
+`GEN_FCN (icode) (...)` becoming `((insn_gen_fn3) GEN_FCN (icode)) (...)` -- a
+function-pointer cast so the call has a correct prototype on a 64-bit host,
+where an unprototyped call through a pointer worked by accident at 32 bits.
+`expr.c`, `emit-rtl.c`, `optabs.c` and the rest are the same shape. These change
+how gcc is COMPILED, not what it emits, and the Red Hat comparison above is the
+evidence: two differently-patched compilers, one built on arm64 and one on i386,
+agreeing instruction for instruction across three owners.
+
+**The SYMBOL_REF hash** in `simplify-rtx.c`, which its own comment calls a
+deviation rather than a fix. Measured inert: see the padding test above.
+
+**`.align N, 0`** in `config/arm/elf.h`, one line, and this is the real gap. It
+is not compensating for the compiler at all -- it is compensating for the
+ASSEMBLER. Red Hat 7.0 shipped binutils 2.10.0.18; we assemble with 2.47, whose
+default alignment fill is not zero. `binutils-2.10.0.18-1.src.rpm` sits in the
+same Red Hat 7.0 archive as the compiler, and the container recipe that built
+one will build the other. Doing that and dropping the `elf.h` line would remove
+the last change we carry that moves bytes.
+
+### The permuter cannot reach an ordering residual
+
+`alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
+passes. On this corpus it closed nothing: 97 rows at 1,500 to 2,500 candidates
+each improved 18 and matched 0. Pointed at the best targets the project has --
+owners that are byte-count exact with zero wrong instructions, two halfwords
+from reproducing -- it did not improve them once, across 200,000 candidates and
+ten owners, with 89% of mutations failing to compile at all.
+
+That is not bad luck, it is the wrong instrument. The permuter searches SOURCE
+SHAPE. An ordering residual is the post-reload scheduler choosing between two
+independent instructions after the source has had its say, and when the source
+is already right there is no shape left to mutate that is not worse. Aim it at
+rows the score calls `wrong`, and read the residual first so you know which you
+have. Treat a match it finds as something to explain before adopting.
+
+### The tooling is frozen
+
+The loop needs about eight commands and they all exist. Adding a tool now
+requires deleting one, and measurement that explains why we are stuck is no
+longer a deliverable.
+
+---
+
+## Tools
+
+Everything runs through nine dispatch groups:
+
+```bash
+make dispatch-<group> ARGS='<command> [args]'
+
+# or directly
+cargo run --release --manifest-path tools/dispatch/Cargo.toml -- <group> <command> [args]
+```
+
+`<group> --list` enumerates a group; `<group> <command> --help` gives the
+contract. Commands that change the tree require an explicit `--apply` or
+`--write`; everything else is read-only.
+
+### The ones you will actually use
+
+There are 95 public commands and the loop needs about eight of them. The full
+catalog below exists so the registry has somewhere to be checked against; it is
+reference, not a reading list.
+
+| | |
+|---|---|
+| `overlay score` | compile a candidate, diff it, classify the residual |
+| `candidate-show` | the same for a main-image owner |
+| `overlay adopt` / `park` | install a proven row, or take one back out |
+| `overlay audit --all` | re-prove every adopted row still reproduces |
+| `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it |
+| `overlay twins` | find a finished owner with the same shape |
+| `overlay reconstruct` | draft C for a call-dense owner from its own disassembly |
+| `make verify` | the only result that proves anything |
+
+Most of the rest are asset builders that run as part of `make build-assets`,
+and gates that run as part of `make verify`. You should not need to invoke them
+by hand, and if you find yourself doing so, that is worth a note in the commit.
+
+### decomp -- find owners and prove drafts
+
+The main-image half of the loop: locate function-sized regions in the executable
+image, survey what is still unresolved, and prove a candidate against the bytes
+before it is allowed into `exact/`.
+
+| Command | What it tells you |
+|---|---|
+| `discover` | Produces the function, instruction and call discovery report from a local ROM. |
+| `remaining_survey` | Surveys the executable regions still unresolved. |
+| `decomp_diagnose` | Compiles a main-image candidate and classifies its residual; `--agent-brief` emits a bounded work contract with the canonical score. |
+| `integrate_matches` | The main-image adoption gate: proves a `src_<address>.c` draft and installs it only with `--apply`. |
+
+### overlay -- the 96 loaded code modules
+
+The overlay half, which is where most remaining work is. These decode overlay
+bytes, resolve per-site veneers, rank candidates by residual class, find repeated
+shapes, and gate adoption by rehearsing the whole overlay before splicing a row.
+
+| Command | What it tells you |
+|---|---|
+| `overlay_disasm` | Decodes overlay bytes to assembly. |
+| `overlay_show` | Shows a byte range of one overlay, optionally annotated. |
+| `overlay_entry` | Reports overlay entry points. |
+| `overlay_inventory` | Rebuilds the diagnostic inventory the overlay tools read. |
+| `overlay_gaps` | Names unclaimed executable ranges. |
+| `overlay_unindexed` | Names executable spans discovery has not indexed. |
+| `overlay_twins` | Finds owners that mirror one another, so a solved shape can be reused. |
+| `exact_reading_list` | Lists finished owners worth reading as worked examples. |
+| `overlay_candidate_rank` | Ranks candidate residuals. |
+| `overlay_call_order_check` | Compares resolved call order, including aliases and relocation spellings. |
+| `overlay_certify` | Reports owner-certification findings; `--check` turns them into a failing gate. |
+| `overlay_adopt` | The overlay adoption gate: rehearses the whole overlay and refuses a mismatch. |
+| `overlay_showcase` | Renders a representative finished overlay for regression and demonstration. |
+| `overlay_driver` | The low-level overlay reconstruction driver. |
+| `overlay_mode_cohort` | Compares one compiler hypothesis across a set of overlay owners. |
+
+The `overlay` binary also carries `score`, `park`, `audit` and `reconstruct`,
+described in [the loop](#the-loop). `score` is the overlay counterpart of
+`candidate-show`: same output, same `--align`, and it derives the row's span
+rather than asking you for one.
+
+### search -- bounded source and compiler exploration
+
+Each of these holds one axis fixed and reports what changed. They are a last
+resort for a residual you have already localised and understood, not a way to
+find one. A result still has to be read as source and adopted through the
+owner's gate.
 
 | Command | What it tells you |
 |---|---|
@@ -1246,11 +1214,11 @@ owner starts and ends, which is independent of anyone's C.
 | `search_compiler_modes` | Searches approved compiler modes with the source fixed. |
 | `alchemy_permuter` | A bounded source-permutation search with linked-byte scoring. |
 
-These hold one axis fixed and report what changed. They are a last resort for a
-residual you have already localised and understood, not a way to find one. A
-result still has to be read as source and adopted through the owner's gate.
+### compiler -- routed builds and comparisons
 
-### compiler — routed builds and comparisons
+Routed builds of the exact corpus and the flag matrix, plus the main-image
+counterpart of the overlay ranker. Use these to prove a compiler hypothesis
+across a cohort rather than on the single owner that suggested it.
 
 | Command | What it tells you |
 |---|---|
@@ -1264,7 +1232,11 @@ and differing halfwords for a candidate), `thumb-disasm`, and the RTL readers
 `rtl-insn`, `rtl-sexpr`, `rtl-schedule` and `rtl-align`, which read the
 compiler's own dumps when you need to know which pass produced a shape.
 
-### check — the gates
+### check -- the gates
+
+The policy layer. These enforce the evidence and publication boundaries, the
+two-tier rule, the architecture catalogue and the commit contract. A check that
+scans nothing fails; a zero exit means the corpus was inspected.
 
 | Command | What it tells you |
 |---|---|
@@ -1278,9 +1250,12 @@ compiler's own dumps when you need to know which pass produced a shape.
 | `cache_key_lint` | Requires cached results to include every input that can change their meaning. |
 | `check_commit_progress` | Compares your commit subject against the staged progress report. |
 
-A check that scans nothing fails. A zero exit means the corpus was inspected.
+### metrics -- measurement and charts
 
-### metrics — measurement and charts
+Everything that produces a published number or figure. `full_c_progress --check`
+refuses to certify a share unless the last full build reproduced the ROM
+byte-identically with no fallback bytes: ownership is a claim, and a percentage
+over a failing build is not evidence.
 
 | Command | What it tells you |
 |---|---|
@@ -1291,11 +1266,19 @@ A check that scans nothing fails. A zero exit means the corpus was inspected.
 | `compare_roms` | Compares approved local editions without publishing byte diffs. |
 | `dashboard_server` | Serves a live worktree dashboard on localhost. |
 
-`full_c_progress --check` refuses to certify a share unless the last full build
-reproduced the ROM byte-identically with no fallback bytes. Ownership is a
-claim; a percentage over a failing build is not evidence.
+One caution. `full_c_progress --write-inventory` re-derives
+`metrics/gs1-en-executable.json`, and that file is the AUDIT rather than a
+generated artifact. Regenerating it shrinks the permanent-assembly side and
+drops the published DONE figure by a point or two with no change to the tree.
+After adopting owners, write the report and regenerate the coverage map; leave
+the inventory alone unless you are deliberately revising the audit, in which
+case compare it entry by entry before committing.
 
-### assets — extraction and round-tripping
+### assets -- extraction and round-tripping
+
+Decoding a resource from a local ROM, rendering it into a source asset, and
+converting an edited source asset back into a build input. Each of these must
+round-trip: an asset that does not re-encode to the same bytes is not finished.
 
 | Command | What it tells you |
 |---|---|
@@ -1305,7 +1288,12 @@ claim; a percentage over a failing build is not evidence.
 | `tilemap` | Round-trips the textual tilemap format. |
 | `bl_site_symbols` | Recovers and audits branch-and-link symbol evidence, reporting every failure. |
 
-### make — build stages and asset builders
+### make -- build stages and asset builders
+
+The build stages plus one builder per asset package. Nearly all of these run as
+part of `make build-assets` and are listed here because the architecture gate
+requires every dispatch target to be catalogued, not because you should call
+them by hand.
 
 | Command | What it tells you |
 |---|---|
@@ -1368,7 +1356,7 @@ Use the smallest stage that answers your question.
 |---|---|
 | `make build-claimed` | Links the byte-exact owners. Fast; answers "does my owner still link and match?" |
 | `make build-asm` | Rebuilds the assembled stage. |
-| `make inventory` | Produces the overlay inventory that overlay tools. |
+| `make inventory` | Produces the overlay inventory the overlay tools read. |
 | `make build-assets` | Rebuilds the asset tree. |
 | `make build-full` | Composes everything and compares against the ROM. |
 | `make build-rom` | Rebuilds the ROM image. |
@@ -1433,7 +1421,7 @@ The commit subject starts with the generated progress prefix:
 ☀️ N% – description
 ```
 
-`N` is the nearest whole `DONE` percentage — exact C plus permanent assembly —
+`N` is the nearest whole `DONE` percentage -- exact C plus permanent assembly --
 from the staged progress report and the staged coverage map, so it matches the
 figure on the README. It was the exact-C share alone until August 2026, which
 meant the sun said 20% beside a README that said 36%. `make progress-subject`

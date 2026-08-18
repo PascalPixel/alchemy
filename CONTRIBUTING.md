@@ -815,6 +815,31 @@ the ROM, so they belong in the denominator. They can never be C, so a share
 measured against that denominator can never reach 100. `resource_3cc` is
 finished and reads 64%.
 
+### The host does not reach the bytes, and that was measured
+
+gcc 2.96 was never an FSF release: it is Red Hat's branding of a pre-3.0
+snapshot, shipped in Red Hat Linux 7.0 and 7.1 and disowned upstream. Debian
+stayed on 2.95 and deliberately avoided it, and the era's GBA SDK shipped
+agbcc, which is 2.95. So whoever built this ROM almost certainly had Red Hat,
+and PROVENANCE.txt records that our base -- gcc-mirror `04179d4a511b`,
+`2.96 20000731 (experimental)` -- is the one Red Hat built gcc-2.96-54 from.
+
+That raises a real worry, because `cse.c` hashes a `SYMBOL_REF` by the HOST
+ADDRESS of its name string, and 2000-era Linux had no ASLR. If bucket placement
+reached codegen, matching the bytes could require matching the machine, and
+that would be a different project.
+
+It does not. Compiling the 577-symbol owner `resource_3bf:3054` with the
+environment padded by 0, 8,000 and 60,000 bytes gives one identical hash, as
+does the same test on `resource_3b8:3df8`, as do five repeated runs under macOS
+ASLR. CSE decides equivalence by structural comparison; the hash only orders
+buckets, and a lookup that lands in a different bucket still compares the same
+way. `simplify-rtx.c` was made content-hashed anyway and `cse.c` was left alone,
+which turns out to be harmless rather than an oversight to chase.
+
+Nobody needs a period-correct machine image. If a residual ever looks
+host-shaped, re-run that padding test before believing it.
+
 ### The tooling is frozen
 
 The loop needs about eight commands and they all exist. Adding a tool now

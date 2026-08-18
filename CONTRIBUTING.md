@@ -479,11 +479,13 @@ return INSN_LUID (tmp) - INSN_LUID (tmp2);
 
 1999 and 2000 differ only in comment capitalisation and a `GENERIC_PTR` to
 `PTR` typedef rename. 2001 moved the interblock comparisons behind a
-`current_sched_info->rank` callback, and left the keys and the tie-break
-untouched. Our fork's `haifa-sched.c` is byte-identical to upstream at the
-snapshot, so there is no local divergence to correct and no neighbouring
-snapshot that decides the tie differently. Moving the compiler a year in either
-direction changes nothing about this.
+`current_sched_info->rank` callback and left the keys and the tie-break
+untouched. 2002's comparator is identical to 2001's. And gcc at HEAD, twenty-six
+years on, still ends `rank_for_schedule` with that same line.
+
+Our fork's `haifa-sched.c` is byte-identical to upstream at the snapshot, so
+there is no local divergence to correct, and no version of gcc ever written
+decides this tie differently. The compiler-snapshot axis is closed.
 
 So an `ordering` residual is not a source problem in the sense that reading
 harder fixes it. Read it once to confirm it is only order, record it, and move

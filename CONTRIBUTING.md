@@ -864,11 +864,31 @@ these insns -- is the most heavily patched pass in the series. Nine applied
 patches touch it, and `gcc-reload-hardreg-free.patch`, `gcc-cselib-mode.patch`
 and `gcc-pure-reload.patch` are generic rather than target-specific.
 
-This is NOT yet evidence that Red Hat's compiler emits different bytes for our
-owners. It is evidence that the question was never asked, and that the passes it
-would change are exactly the ones deciding our closest residuals. Nothing about
-the earlier "no host archaeology" note covers this; that note was about the
-machine, and this is about the compiler.
+That was the state of the question until the compiler was actually built, and
+building it answered it. Development on the first game ran about a year to an
+August 2001 release, which brackets the toolchain between Red Hat 7.0
+(September 2000, `gcc-2.96-54`) and 7.1 (April 2001); 7.2 and RHEL 2.1 both
+post-date the ROM. `gcc-2.96-54.src.rpm` is the era-correct one: same base
+tarball, 70 patches, 68 applied, and against our tree it changes 54 lines of
+`reload1.c`, 58 of `cse.c`, 38 of `local-alloc.c` and 24 of `calls.c`.
+
+Built in a 32-bit i386 container -- where the tree needs NO host patches at all,
+which is the whole reason to build it there -- and pointed at the owners whose
+residual is pure ordering:
+
+| owner | our compiler | Red Hat 7.0 | differing |
+|---|---:|---:|---:|
+| `resource_3b8:3df8` | 11 insns | 11 | **0** |
+| `resource_37a:1380` | 128 insns | 128 | **0** |
+| `resource_3ce:029c` | 588 insns | 588 | **0** |
+
+Byte-identical assembly, including the 1,574-byte owner whose entire residual is
+one swapped pair repeated at 196 call sites. Red Hat's reload changes do not
+reach these owners.
+
+So the compiler axis is closed the same way the host axis was: by measurement,
+not by reading. Our unpatched 2000-07-31 tree is the right compiler, and if
+Camelot used Red Hat's build instead it makes no difference to these bytes.
 
 ### The tooling is frozen
 

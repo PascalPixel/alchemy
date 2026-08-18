@@ -450,8 +450,29 @@ classify every residual, and the class is the first thing to read:
 Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
 is not a near miss.
 
-`ordering` is settled after the source has had its say, and the RTL says exactly
-how. On `resource_3b8:3df8` the whole residual is one pair, and the sched2 dump
+`ordering` is settled after the source has had its say -- but by RELOAD, not by
+the scheduler, and the difference matters because it changes what the source can
+reach. Dumping every pass with `-da` on `resource_3b8:3df8` shows where the
+order is actually set:
+
+| pass | insn chain around the pair |
+|---|---|
+| `17.lreg`, before reload | `33 37 39 41 43 ...` -- the `-16` is still a pseudo |
+| `18.greg`, after reload | `33 66 67 39 41 ...` -- reload MADE 66 and 67 and put them here |
+| `23.sched2`, after scheduling | `33 66 67 41 39 ...` -- only 39 and 41 swapped |
+
+Reload materialises the constant into two insns and places them before the
+other argument's load. The scheduler then leaves that trio exactly as reload
+left it. The reference wants `66, 41, 67`, which the scheduler was never in a
+position to produce.
+
+So reading only the sched2 dump gives the wrong answer. The tie there is real
+and total, and every key is equal -- but the tie-break never got to decide these
+three, because reload had already fixed their order. Reload's placement responds
+to live ranges and register pressure, which the source does influence. That is a
+different and more workable problem than a scheduler coin-flip.
+
+The scheduler tie is still worth understanding, so here it is. On `resource_3b8:3df8` the whole residual is one pair, and the sched2 dump
 shows why it cannot be reached:
 
 | uid | insn | priority | dep count | cost | dependents |

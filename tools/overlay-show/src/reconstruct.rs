@@ -377,10 +377,19 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
         if let Some((start, bound, kind)) = loop_top.get(&r.addr) {
             loop_n += 1;
+            // `bne` is `!=`, not `<`, and the difference is visible in the
+            // bytes. A counted loop written `i < 4` whose counter is dead in the
+            // body gets reversed by gcc into a countdown to zero, because
+            // comparing against zero is free; written `i != 4` it cannot be
+            // reversed and the reference's `adds`/`cmp #4`/`bne` survives. On
+            // resource_37a:1380 that one spelling took 64 wrong instructions to
+            // 24 across five loops.
             let cmp = if kind.starts_with("ble") {
                 "<="
             } else if kind.starts_with("bge") {
                 ">="
+            } else if kind.starts_with("bne") {
+                "!="
             } else {
                 "<"
             };

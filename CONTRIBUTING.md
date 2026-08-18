@@ -890,6 +890,33 @@ So the compiler axis is closed the same way the host axis was: by measurement,
 not by reading. Our unpatched 2000-07-31 tree is the right compiler, and if
 Camelot used Red Hat's build instead it makes no difference to these bytes.
 
+That leaves the fair question of why `alchemy-gcc` carries changes matching
+neither upstream nor Red Hat. There are three kinds and only one is a gap.
+
+**Host portability**, the bulk of it. `reload1.c`'s fourteen lines are entirely
+`GEN_FCN (icode) (...)` becoming `((insn_gen_fn3) GEN_FCN (icode)) (...)` -- a
+function-pointer cast so the call has a correct prototype on a 64-bit host,
+where an unprototyped call through a pointer worked by accident at 32 bits.
+`expr.c`, `emit-rtl.c`, `optabs.c` and the rest are the same shape. These change
+how gcc is COMPILED, not what it emits, and the Red Hat comparison above is the
+evidence: two differently-patched compilers, one built on arm64 and one on i386,
+agreeing instruction for instruction across three owners.
+
+**The SYMBOL_REF hash** in `simplify-rtx.c`, which its own comment calls a
+deviation rather than a fix. Measured inert: see the padding test above.
+
+**`.align N, 0`** in `config/arm/elf.h`, one line, and this is the real gap. It
+is not compensating for the compiler at all -- it is compensating for the
+ASSEMBLER. Red Hat 7.0 shipped binutils 2.10.0.18; we assemble with 2.47, whose
+default alignment fill is not zero. Neither upstream nor Red Hat needs this line
+because neither was using a 2026 assembler.
+
+So the toolchain is reproduced faithfully in its compiler and papered over in
+its assembler. `binutils-2.10.0.18-1.src.rpm` sits in the same Red Hat 7.0
+archive as the compiler, and the container recipe that built one will build the
+other. Doing that and dropping the `elf.h` line would remove the last change we
+carry that moves bytes.
+
 ### The tooling is frozen
 
 The loop needs about eight commands and they all exist. Adding a tool now

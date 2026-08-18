@@ -916,6 +916,37 @@ dead end so nobody pays for it twice.
 
 Delete the record when the owner is adopted. The gate will remind you.
 
+### A draft is not progress, and its size is not its completeness
+
+`overlay reconstruct` will happily fill `work/` with a thousand drafts in eighty
+seconds. That is a thousand pieces of C that do not reproduce, which is what the
+semantic tier was, and the only things keeping it from becoming that again are
+mechanical: `work/` is gitignored, no drafter output may be written anywhere
+else, and no published figure counts it. `exact` counts adopted owners and
+nothing else.
+
+The dangerous part is not the files, it is the reporting. A draft that is 92% of
+the reference's SIZE sounds nearly finished. Measured against the reference
+instead of guessed at:
+
+| draft size vs reference | owners | instructions actually matching |
+|---|---:|---:|
+| 95-105% | 147 | **13%** |
+| 85-95% | 198 | 9% |
+| 60-85% | 240 | 4% |
+| under 60% | 497 | 0% |
+
+Of 348 drafts at 85% of reference size or better, six match 90% of their
+instructions. The median matches ten percent. Size ratio is not completeness and
+must never be quoted as it -- that is the same move that made 862,856 bytes of
+semantic C read as 74% coverage, and it was made again in this repository in
+August 2026 before anyone checked it.
+
+The figures that mean something are `differing_halfwords`, which is zero only
+when the owner reproduces, and `wrong_instructions`, which is zero when the
+source is structurally right and only the schedule differs. Those are what a
+`recon/` record stores. Quote those.
+
 `semantic/regions.json` and `semantic/main-regions.json` survive as the audited
 owner boundaries for regions discovery did not index -- evidence about where an
 owner starts and ends, which is independent of anyone's C.

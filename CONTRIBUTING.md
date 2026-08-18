@@ -911,6 +911,38 @@ ASSEMBLER. Red Hat 7.0 shipped binutils 2.10.0.18; we assemble with 2.47, whose
 default alignment fill is not zero. Neither upstream nor Red Hat needs this line
 because neither was using a 2026 assembler.
 
+One thing the provenance does NOT claim, and it matters: the gs1cc snapshot DATE
+was never measured. The 3.0.0 and agbcc trees both say "confirmed by
+measurement" and name what they beat; gs1cc says only "the 2000-07-31
+development snapshot", inherited because Red Hat used that base. Nobody swept
+neighbouring commits.
+
+Walking gcc's own history says how much room that leaves. For each pass, the
+last change on or before 2000-07-31 and the next one after:
+
+| pass | last change | next change |
+|---|---|---|
+| `reload1.c` | 2000-07-28 | 2000-08-04 |
+| `reload.c` | 2000-07-28 | 2000-08-04 |
+| `cse.c` | 2000-07-28 | 2000-08-04 |
+| `combine.c` | 2000-07-30 | 2000-08-04 |
+| `calls.c` | 2000-07-18 | 2000-08-15 |
+| `expr.c` | 2000-07-12 | 2000-08-06 |
+| `local-alloc.c` | 2000-06-13 | 2000-08-04 |
+| `global.c` | 2000-06-13 | 2000-08-04 |
+| `config/arm/thumb.c` | 2000-04-08 | not again in 2000 |
+| `config/arm/thumb.md` | 2000-04-08 | not again in 2000 |
+
+So any CVS pull between 2000-07-30 and 2000-08-03 gives the same compiler for
+our purposes, and ours sits in the middle of that window. The Thumb back end is
+stable for far longer -- unchanged from April 2000 through the end of the year.
+
+That is why the date was worth checking and why a fine-grained bisect is not:
+the granularity that could move bytes is WEEKS, not days. A snapshot from June,
+or from September once the 08-04 reload and cse changes land, is a different
+compiler; one from 2000-08-01 is not. If the snapshot is ever swept, sweep it at
+that spacing.
+
 So the toolchain is reproduced faithfully in its compiler and papered over in
 its assembler. `binutils-2.10.0.18-1.src.rpm` sits in the same Red Hat 7.0
 archive as the compiler, and the container recipe that built one will build the

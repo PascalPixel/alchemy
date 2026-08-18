@@ -840,6 +840,36 @@ which turns out to be harmless rather than an oversight to chase.
 Nobody needs a period-correct machine image. If a residual ever looks
 host-shaped, re-run that padding test before believing it.
 
+The COMPILER is a different question, and it is open. Red Hat's shipped 2.96 is
+this base plus a patch series, and we build the bare base. `gcc-2.96-108.1.src.rpm`
+from `archive.kernel.org/centos-vault/2.1/source/i386/SRPMS/` carries
+`gcc-2.96-20000731.tar.bz2` -- byte-identical to our tree for `reload1.c`,
+`cse.c`, `haifa-sched.c` and `config/arm/arm.c` -- and 384 patches, 379 of them
+applied by the spec.
+
+Applying that series to the base and diffing against what we build:
+
+| file | lines changed by Red Hat |
+|---|---:|
+| `gcc/reload1.c` | **285** |
+| `gcc/calls.c` | 64 |
+| `gcc/local-alloc.c` | 61 |
+| `gcc/global.c` | 30 |
+| `gcc/config/arm/arm.c` | 12 |
+| `gcc/haifa-sched.c` | 2, and both inside `print_value`, a dump routine |
+
+Read that table against the pass-order finding above. The scheduler is
+untouched, and reload -- which the `-da` dumps show is what actually places
+these insns -- is the most heavily patched pass in the series. Nine applied
+patches touch it, and `gcc-reload-hardreg-free.patch`, `gcc-cselib-mode.patch`
+and `gcc-pure-reload.patch` are generic rather than target-specific.
+
+This is NOT yet evidence that Red Hat's compiler emits different bytes for our
+owners. It is evidence that the question was never asked, and that the passes it
+would change are exactly the ones deciding our closest residuals. Nothing about
+the earlier "no host archaeology" note covers this; that note was about the
+machine, and this is about the compiler.
+
 ### The tooling is frozen
 
 The loop needs about eight commands and they all exist. Adding a tool now

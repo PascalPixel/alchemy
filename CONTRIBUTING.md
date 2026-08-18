@@ -253,6 +253,49 @@ else; the tool refuses any other path, because a generator aimed at every owner
 is exactly the machine that produced 862,856 bytes of C nobody could use. Score
 it before believing any of it.
 
+### Work a cohort, not an owner
+
+Pick a COHORT and read its members side by side. A cohort is a set of owners
+that share an assembly SHAPE. It is not a subsystem, not an overlay, and not a
+set of files that look related by name -- those groupings say nothing about what
+the compiler did.
+
+Four owners make the point. `resource_3b2:0da4`, `resource_3c4:1068`,
+`resource_3c5:0cf0` and `resource_3c8:096c` sit in four different overlays and
+have nothing to do with each other by feature. Disassembled, they are the same
+90 bytes instruction for instruction, differing only in the address their one
+`bl` encodes. One source shape closes all four.
+
+Cohorts are why the levers in [Shapes that decide
+bytes](#shapes-that-decide-bytes) exist at all. The bitfield rule was not found
+by staring at one owner; it was found because four owners in different overlays
+all carried `movs r3,#13 / negs r3,r3` in their span, and the thing they had in
+common was the only thing that could explain it. A single owner cannot tell you
+which of its features is the one that matters. Two owners that differ in exactly
+one way can.
+
+It is also the guard against looping. With one owner in front of you the only
+move is to keep respelling it, and the residual either falls or you grind. With
+a cohort you have a second reading of the same problem, and the difference
+between two members is itself evidence. If a shape resists across the whole
+cohort, that is a real finding worth recording; if it resists on one member and
+not the others, the member is what is different, not the compiler.
+
+Ways to find one:
+
+- `overlay twins` groups owners by identical shape and names a solved member
+  where one exists. Those groups are cohorts by construction.
+- Disassemble the open owners in bulk and grep the output for an idiom -- the
+  `negs` mask pair, a six-argument call spilling two stack slots, a
+  `movs`/`lsls` constant pair next to a `movs r0`. Each grep is a cohort.
+- Sort by instruction mix rather than by size. Owners with the same ratio of
+  calls to memory operations to branches tend to have come from the same kind
+  of source.
+
+If you hand work to a subagent, hand it a cohort for the same reasons. An agent
+given one owner has the same failure mode you do and no second reading to
+escape it with.
+
 ### 2. Read the assembly before writing any C
 
 C written before you understand the target is guesswork with extra steps. A
@@ -1459,8 +1502,8 @@ byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
 - **Unfinished scopes:** 2,232
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 855,172 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 490,194 Exact C or audited permanent assembly bytes
+- **Target bytes:** 855,068 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 490,298 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
@@ -1469,233 +1512,233 @@ This table contains every scope of at least 1,000 bytes (228 rows). The complete
 2,232-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
-| Rank | Scope | Target | Namespace / owner         |
-| ---: | ----: | -----: | ------------------------- |
-|    1 | 6,332 |  6,332 | `main:0x080bbb0c`         |
-|    2 | 4,888 |  4,888 | `main:0x080ab5e4`         |
-|    3 | 4,224 |  4,224 | `main:0x08027114`         |
-|    4 | 4,138 |  4,138 | `resource_380:0x02002c10` |
-|    5 | 4,122 |  4,122 | `resource_373:0x02002284` |
-|    6 | 3,804 |  3,804 | `main:0x080f6440`         |
-|    7 | 3,702 |  3,702 | `resource_3c6:0x02000218` |
-|    8 | 3,656 |  3,656 | `main:0x080dea70`         |
-|    9 | 3,442 |  3,442 | `resource_378:0x0200088c` |
-|   10 | 3,408 |  3,408 | `resource_378:0x02001874` |
-|   11 | 3,320 |  3,320 | `main:0x08023178`         |
-|   12 | 3,128 |  3,128 | `main:0x080a2680`         |
-|   13 | 3,104 |  2,810 | `main:0x080ad6d4`         |
-|   14 | 3,078 |  3,078 | `resource_3c9:0x0200124c` |
-|   15 | 3,074 |  3,074 | `resource_383:0x02000b48` |
-|   16 | 3,058 |  3,058 | `resource_3c5:0x0200186c` |
-|   17 | 3,046 |  3,046 | `resource_395:0x02000470` |
-|   18 | 3,046 |  3,046 | `resource_39d:0x02001adc` |
-|   19 | 2,908 |  2,908 | `resource_381:0x020003cc` |
-|   20 | 2,854 |  2,854 | `resource_374:0x0200155c` |
-|   21 | 2,756 |  2,756 | `main:0x08023e70`         |
-|   22 | 2,734 |  2,734 | `resource_3a8:0x020026a8` |
-|   23 | 2,672 |  2,672 | `resource_3a8:0x02000aac` |
-|   24 | 2,574 |  2,574 | `resource_39e:0x02002ec8` |
-|   25 | 2,534 |  2,534 | `resource_3bf:0x0200298c` |
-|   26 | 2,508 |  2,508 | `main:0x080cbc0c`         |
-|   27 | 2,502 |  2,502 | `resource_3bf:0x02003c84` |
-|   28 | 2,476 |  2,476 | `resource_3af:0x0200252c` |
-|   29 | 2,444 |  2,444 | `main:0x080eb754`         |
-|   30 | 2,426 |  2,426 | `resource_3b8:0x0200338c` |
-|   31 | 2,418 |  2,418 | `resource_38d:0x02000894` |
-|   32 | 2,388 |  2,388 | `main:0x080f7460`         |
-|   33 | 2,386 |  2,386 | `resource_3b8:0x02001d7c` |
-|   34 | 2,382 |  2,382 | `resource_383:0x02003c6c` |
-|   35 | 2,356 |  2,356 | `main:0x080d2464`         |
-|   36 | 2,342 |  2,342 | `resource_3aa:0x020010f0` |
-|   37 | 2,316 |  2,316 | `main:0x0808f52c`         |
-|   38 | 2,310 |  2,310 | `resource_3b8:0x02002a84` |
-|   39 | 2,300 |  2,300 | `main:0x08021e6c`         |
-|   40 | 2,298 |  2,298 | `resource_380:0x02000a98` |
-|   41 | 2,294 |  2,294 | `resource_3c9:0x02002360` |
-|   42 | 2,268 |  2,268 | `main:0x080d91dc`         |
-|   43 | 2,236 |  2,236 | `resource_39e:0x02001494` |
-|   44 | 2,230 |  2,230 | `resource_3b8:0x02000b40` |
-|   45 | 2,230 |  2,230 | `resource_3bd:0x02001d4c` |
-|   46 | 2,222 |  2,222 | `resource_3bc:0x02001a08` |
-|   47 | 2,218 |  2,218 | `resource_378:0x020027d4` |
-|   48 | 2,218 |  2,218 | `resource_3c9:0x02003e8c` |
-|   49 | 2,206 |  2,206 | `resource_377:0x0200063c` |
-|   50 | 2,194 |  2,194 | `resource_376:0x02000640` |
-|   51 | 2,190 |  2,190 | `resource_396:0x0200069c` |
-|   52 | 2,180 |  2,180 | `resource_3bd:0x02002c38` |
-|   53 | 2,170 |  2,170 | `resource_3ca:0x02000430` |
-|   54 | 2,166 |  2,166 | `resource_38f:0x020011ec` |
-|   55 | 2,166 |  2,166 | `resource_3c9:0x02002c58` |
-|   56 | 2,158 |  2,158 | `resource_373:0x02001a14` |
-|   57 | 2,138 |  2,138 | `main:0x08026080`         |
-|   58 | 2,124 |  2,124 | `main:0x08024934`         |
-|   59 | 2,118 |  2,118 | `resource_371:0x020028e8` |
-|   60 | 2,106 |  2,106 | `resource_3bd:0x020013d4` |
-|   61 | 2,070 |  2,070 | `resource_3b1:0x02001b34` |
-|   62 | 2,068 |  2,068 | `resource_3c2:0x02000240` |
-|   63 | 2,052 |  2,052 | `resource_39e:0x020038d8` |
-|   64 | 2,024 |  2,024 | `main:0x08077428`         |
-|   65 | 2,018 |  2,018 | `resource_3a5:0x020004e4` |
-|   66 | 2,014 |  2,014 | `resource_3c9:0x02000a6c` |
-|   67 | 2,006 |  2,006 | `resource_3a4:0x02001830` |
-|   68 | 2,002 |  2,002 | `resource_38d:0x020019b0` |
-|   69 | 2,002 |  2,002 | `resource_3af:0x02003a0c` |
-|   70 | 1,980 |  1,980 | `main:0x080acab8`         |
-|   71 | 1,978 |  1,978 | `resource_3ad:0x02000808` |
-|   72 | 1,968 |  1,968 | `main:0x080e823c`         |
-|   73 | 1,920 |  1,920 | `main:0x080f7f78`         |
-|   74 | 1,882 |  1,882 | `resource_3b9:0x02001c6c` |
-|   75 | 1,876 |  1,876 | `main:0x0802592c`         |
-|   76 | 1,854 |  1,854 | `resource_3c8:0x020026f8` |
-|   77 | 1,822 |  1,822 | `resource_38f:0x02001e6c` |
-|   78 | 1,816 |  1,816 | `main:0x080e99c0`         |
-|   79 | 1,816 |  1,712 | `main:0x08090a5c`         |
-|   80 | 1,810 |  1,810 | `resource_383:0x02002fd4` |
-|   81 | 1,808 |  1,808 | `resource_3b1:0x02005c9c` |
-|   82 | 1,796 |  1,664 | `main:0x080f3078`         |
-|   83 | 1,770 |  1,770 | `resource_39e:0x020027dc` |
-|   84 | 1,770 |  1,770 | `resource_3b1:0x020028c8` |
-|   85 | 1,768 |  1,768 | `main:0x080d52c8`         |
-|   86 | 1,734 |  1,734 | `resource_383:0x02001e80` |
-|   87 | 1,724 |  1,724 | `main:0x080e89ec`         |
-|   88 | 1,720 |  1,720 | `main:0x080e2974`         |
-|   89 | 1,704 |  1,704 | `resource_3a2:0x02000924` |
-|   90 | 1,702 |  1,702 | `resource_381:0x02002150` |
-|   91 | 1,702 |  1,702 | `resource_3b7:0x020001d8` |
-|   92 | 1,698 |  1,698 | `resource_3ae:0x02000ba0` |
-|   93 | 1,688 |  1,688 | `main:0x080b63c8`         |
-|   94 | 1,682 |  1,682 | `resource_39c:0x02004888` |
-|   95 | 1,680 |  1,680 | `main:0x080a6ccc`         |
-|   96 | 1,660 |  1,660 | `main:0x080de2f8`         |
-|   97 | 1,648 |  1,648 | `main:0x080ed408`         |
-|   98 | 1,648 |  1,648 | `resource_3a2:0x020001dc` |
-|   99 | 1,640 |  1,640 | `main:0x0800aa0c`         |
-|  100 | 1,638 |  1,638 | `resource_373:0x02004084` |
-|  101 | 1,636 |  1,636 | `main:0x0800cacc`         |
-|  102 | 1,632 |  1,632 | `resource_39c:0x02002f58` |
-|  103 | 1,626 |  1,626 | `resource_375:0x020000dc` |
-|  104 | 1,614 |  1,614 | `resource_3bf:0x02003374` |
-|  105 | 1,592 |  1,592 | `main:0x080168f4`         |
-|  106 | 1,588 |  1,588 | `main:0x08022b44`         |
-|  107 | 1,586 |  1,586 | `resource_3c5:0x02001238` |
-|  108 | 1,576 |  1,576 | `main:0x080d2d98`         |
-|  109 | 1,556 |  1,556 | `main:0x080cf8e0`         |
-|  110 | 1,550 |  1,550 | `resource_379:0x02000484` |
-|  111 | 1,540 |  1,540 | `main:0x080e3aa0`         |
-|  112 | 1,514 |  1,514 | `resource_3a4:0x02000d24` |
-|  113 | 1,512 |  1,512 | `main:0x080e4e0c`         |
-|  114 | 1,504 |  1,504 | `main:0x08012518`         |
-|  115 | 1,480 |  1,480 | `resource_399:0x02000f84` |
-|  116 | 1,468 |  1,468 | `main:0x080dbc30`         |
-|  117 | 1,462 |  1,462 | `resource_373:0x020039e8` |
-|  118 | 1,458 |  1,458 | `resource_3c8:0x020047ac` |
-|  119 | 1,448 |  1,448 | `resource_3b0:0x02000af8` |
-|  120 | 1,448 |  1,448 | `resource_3b1:0x020050dc` |
-|  121 | 1,410 |  1,410 | `resource_383:0x020036e8` |
-|  122 | 1,408 |  1,408 | `main:0x08020244`         |
-|  123 | 1,402 |  1,402 | `resource_3b1:0x0200234c` |
-|  124 | 1,398 |  1,398 | `resource_372:0x02001b18` |
-|  125 | 1,382 |  1,382 | `resource_3c9:0x02003924` |
-|  126 | 1,378 |  1,378 | `resource_380:0x02001780` |
-|  127 | 1,376 |  1,376 | `main:0x0801a98c`         |
-|  128 | 1,366 |  1,366 | `resource_37a:0x02000488` |
-|  129 | 1,366 |  1,366 | `resource_3aa:0x0200077c` |
-|  130 | 1,360 |  1,360 | `main:0x080c91dc`         |
-|  131 | 1,336 |  1,336 | `main:0x080a9f10`         |
-|  132 | 1,326 |  1,326 | `resource_391:0x02002004` |
-|  133 | 1,324 |  1,324 | `main:0x080bf678`         |
-|  134 | 1,310 |  1,310 | `resource_373:0x020034c8` |
-|  135 | 1,308 |  1,308 | `main:0x080aa768`         |
-|  136 | 1,308 |  1,308 | `resource_37a:0x02002094` |
-|  137 | 1,306 |  1,306 | `resource_3a8:0x02000590` |
-|  138 | 1,290 |  1,290 | `resource_3af:0x02000c94` |
-|  139 | 1,274 |  1,274 | `resource_387:0x0200066c` |
-|  140 | 1,272 |  1,272 | `main:0x080b0aac`         |
-|  141 | 1,270 |  1,270 | `resource_371:0x02001064` |
-|  142 | 1,270 |  1,270 | `resource_3b1:0x020037d8` |
-|  143 | 1,264 |  1,264 | `main:0x08099da4`         |
-|  144 | 1,262 |  1,262 | `resource_38d:0x020012a0` |
-|  145 | 1,252 |  1,178 | `main:0x0800f2f8`         |
-|  146 | 1,248 |  1,248 | `main:0x080d9ae8`         |
-|  147 | 1,238 |  1,238 | `resource_373:0x02004b24` |
-|  148 | 1,234 |  1,234 | `resource_39d:0x02001608` |
-|  149 | 1,234 |  1,234 | `resource_3af:0x02001db0` |
-|  150 | 1,230 |  1,230 | `resource_371:0x02001f6c` |
-|  151 | 1,230 |  1,230 | `resource_374:0x02000b8c` |
-|  152 | 1,228 |  1,228 | `main:0x080b6f44`         |
-|  153 | 1,226 |  1,226 | `main:0x080f4f04`         |
-|  154 | 1,222 |  1,222 | `resource_37a:0x0200155c` |
-|  155 | 1,218 |  1,218 | `resource_37b:0x02000554` |
-|  156 | 1,210 |  1,210 | `resource_391:0x02001740` |
-|  157 | 1,204 |  1,204 | `main:0x080ce034`         |
-|  158 | 1,198 |  1,198 | `resource_3b1:0x020057ec` |
-|  159 | 1,192 |  1,192 | `main:0x080da6cc`         |
-|  160 | 1,190 |  1,190 | `resource_3bd:0x02002604` |
-|  161 | 1,182 |  1,182 | `resource_3c9:0x02004738` |
-|  162 | 1,180 |  1,180 | `resource_37b:0x0200101c` |
-|  163 | 1,176 |  1,176 | `resource_37b:0x02000a18` |
-|  164 | 1,176 |  1,176 | `resource_380:0x020043bc` |
-|  165 | 1,174 |  1,174 | `resource_3bc:0x020040bc` |
-|  166 | 1,170 |  1,170 | `resource_370:0x020003cc` |
-|  167 | 1,170 |  1,170 | `resource_3b3:0x0200174c` |
-|  168 | 1,168 |  1,168 | `main:0x080a4924`         |
-|  169 | 1,154 |  1,154 | `resource_37f:0x02001604` |
-|  170 | 1,152 |  1,152 | `main:0x080191cc`         |
-|  171 | 1,152 |  1,152 | `main:0x0801d4cc`         |
-|  172 | 1,152 |  1,152 | `main:0x080f26ec`         |
-|  173 | 1,150 |  1,150 | `resource_375:0x020014f4` |
-|  174 | 1,144 |  1,144 | `main:0x080f2028`         |
-|  175 | 1,142 |  1,142 | `resource_373:0x02004ffc` |
-|  176 | 1,128 |  1,128 | `main:0x080d0000`         |
-|  177 | 1,126 |  1,126 | `resource_37f:0x02000f6c` |
-|  178 | 1,116 |  1,116 | `main:0x080c02a4`         |
-|  179 | 1,114 |  1,114 | `resource_3c7:0x02000880` |
-|  180 | 1,110 |  1,110 | `resource_372:0x02003394` |
-|  181 | 1,110 |  1,110 | `resource_3ce:0x02000244` |
-|  182 | 1,106 |  1,106 | `resource_39e:0x02001dbc` |
-|  183 | 1,104 |  1,104 | `main:0x080beb08`         |
-|  184 | 1,102 |  1,102 | `resource_3bb:0x020010dc` |
-|  185 | 1,102 |  1,102 | `resource_3c9:0x02004fec` |
-|  186 | 1,098 |  1,098 | `main:0x080fae58`         |
-|  187 | 1,096 |  1,096 | `main:0x080d41a4`         |
-|  188 | 1,096 |  1,096 | `resource_3b9:0x020011c4` |
-|  189 | 1,094 |  1,094 | `resource_371:0x02000c1c` |
-|  190 | 1,094 |  1,094 | `resource_3bc:0x02001474` |
-|  191 | 1,090 |  1,090 | `resource_372:0x020037ec` |
-|  192 | 1,090 |  1,090 | `resource_39e:0x0200064c` |
-|  193 | 1,078 |  1,078 | `resource_373:0x020015dc` |
-|  194 | 1,078 |  1,078 | `resource_373:0x020046ec` |
-|  195 | 1,078 |  1,078 | `resource_399:0x020019bc` |
-|  196 | 1,076 |  1,076 | `main:0x080030f8`         |
-|  197 | 1,074 |  1,074 | `main:0x080f4318`         |
-|  198 | 1,074 |  1,074 | `resource_3ba:0x02000db8` |
-|  199 | 1,066 |  1,066 | `main:0x080e5e28`         |
-|  200 | 1,056 |  1,056 | `main:0x080ae2f4`         |
-|  201 | 1,054 |  1,054 | `resource_39d:0x020011e8` |
-|  202 | 1,054 |  1,028 | `main:0x080d77b4`         |
-|  203 | 1,052 |  1,052 | `resource_3b1:0x02004254` |
-|  204 | 1,052 |    978 | `main:0x0808bec0`         |
-|  205 | 1,050 |  1,050 | `resource_372:0x020028a4` |
-|  206 | 1,050 |  1,050 | `resource_3aa:0x02000360` |
-|  207 | 1,050 |  1,050 | `resource_3aa:0x02000cd4` |
-|  208 | 1,046 |  1,046 | `resource_380:0x020027f8` |
-|  209 | 1,046 |  1,046 | `resource_381:0x02001b34` |
-|  210 | 1,044 |  1,044 | `main:0x0808d9a4`         |
-|  211 | 1,044 |  1,044 | `main:0x080bfba4`         |
-|  212 | 1,044 |  1,044 | `main:0x080cb7f8`         |
-|  213 | 1,042 |  1,042 | `resource_377:0x02000f90` |
-|  214 | 1,042 |  1,042 | `resource_3a5:0x02001490` |
-|  215 | 1,042 |  1,042 | `resource_3c9:0x02004bd8` |
-|  216 | 1,040 |  1,040 | `main:0x080ceb54`         |
-|  217 | 1,040 |  1,040 | `main:0x080e90a8`         |
-|  218 | 1,038 |  1,038 | `resource_379:0x02000074` |
-|  219 | 1,034 |  1,034 | `resource_39d:0x02000ddc` |
-|  220 | 1,030 |  1,030 | `resource_37b:0x020015d4` |
-|  221 | 1,030 |  1,030 | `resource_38f:0x02001a64` |
-|  222 | 1,030 |  1,030 | `resource_391:0x02001bfc` |
-|  223 | 1,028 |  1,028 | `main:0x0801de5c`         |
-|  224 | 1,026 |  1,026 | `resource_37b:0x02000150` |
-|  225 | 1,022 |  1,022 | `resource_3b8:0x020006dc` |
-|  226 | 1,020 |  1,020 | `resource_3b9:0x02000db0` |
-|  227 | 1,010 |  1,010 | `resource_37a:0x02001ca0` |
-|  228 | 1,006 |  1,006 | `resource_394:0x020003f0` |
+| Rank | Scope | Target | Namespace / owner |
+|---:|---:|---:|---|
+| 1 | 6,332 | 6,332 | `main:0x080bbb0c` |
+| 2 | 4,888 | 4,888 | `main:0x080ab5e4` |
+| 3 | 4,224 | 4,224 | `main:0x08027114` |
+| 4 | 4,138 | 4,138 | `resource_380:0x02002c10` |
+| 5 | 4,122 | 4,122 | `resource_373:0x02002284` |
+| 6 | 3,804 | 3,804 | `main:0x080f6440` |
+| 7 | 3,702 | 3,702 | `resource_3c6:0x02000218` |
+| 8 | 3,656 | 3,656 | `main:0x080dea70` |
+| 9 | 3,442 | 3,442 | `resource_378:0x0200088c` |
+| 10 | 3,408 | 3,408 | `resource_378:0x02001874` |
+| 11 | 3,320 | 3,320 | `main:0x08023178` |
+| 12 | 3,128 | 3,128 | `main:0x080a2680` |
+| 13 | 3,104 | 2,810 | `main:0x080ad6d4` |
+| 14 | 3,078 | 3,078 | `resource_3c9:0x0200124c` |
+| 15 | 3,074 | 3,074 | `resource_383:0x02000b48` |
+| 16 | 3,058 | 3,058 | `resource_3c5:0x0200186c` |
+| 17 | 3,046 | 3,046 | `resource_395:0x02000470` |
+| 18 | 3,046 | 3,046 | `resource_39d:0x02001adc` |
+| 19 | 2,908 | 2,908 | `resource_381:0x020003cc` |
+| 20 | 2,854 | 2,854 | `resource_374:0x0200155c` |
+| 21 | 2,756 | 2,756 | `main:0x08023e70` |
+| 22 | 2,734 | 2,734 | `resource_3a8:0x020026a8` |
+| 23 | 2,672 | 2,672 | `resource_3a8:0x02000aac` |
+| 24 | 2,574 | 2,574 | `resource_39e:0x02002ec8` |
+| 25 | 2,534 | 2,534 | `resource_3bf:0x0200298c` |
+| 26 | 2,508 | 2,508 | `main:0x080cbc0c` |
+| 27 | 2,502 | 2,502 | `resource_3bf:0x02003c84` |
+| 28 | 2,476 | 2,476 | `resource_3af:0x0200252c` |
+| 29 | 2,444 | 2,444 | `main:0x080eb754` |
+| 30 | 2,426 | 2,426 | `resource_3b8:0x0200338c` |
+| 31 | 2,418 | 2,418 | `resource_38d:0x02000894` |
+| 32 | 2,388 | 2,388 | `main:0x080f7460` |
+| 33 | 2,386 | 2,386 | `resource_3b8:0x02001d7c` |
+| 34 | 2,382 | 2,382 | `resource_383:0x02003c6c` |
+| 35 | 2,356 | 2,356 | `main:0x080d2464` |
+| 36 | 2,342 | 2,342 | `resource_3aa:0x020010f0` |
+| 37 | 2,316 | 2,316 | `main:0x0808f52c` |
+| 38 | 2,310 | 2,310 | `resource_3b8:0x02002a84` |
+| 39 | 2,300 | 2,300 | `main:0x08021e6c` |
+| 40 | 2,298 | 2,298 | `resource_380:0x02000a98` |
+| 41 | 2,294 | 2,294 | `resource_3c9:0x02002360` |
+| 42 | 2,268 | 2,268 | `main:0x080d91dc` |
+| 43 | 2,236 | 2,236 | `resource_39e:0x02001494` |
+| 44 | 2,230 | 2,230 | `resource_3b8:0x02000b40` |
+| 45 | 2,230 | 2,230 | `resource_3bd:0x02001d4c` |
+| 46 | 2,222 | 2,222 | `resource_3bc:0x02001a08` |
+| 47 | 2,218 | 2,218 | `resource_378:0x020027d4` |
+| 48 | 2,218 | 2,218 | `resource_3c9:0x02003e8c` |
+| 49 | 2,206 | 2,206 | `resource_377:0x0200063c` |
+| 50 | 2,194 | 2,194 | `resource_376:0x02000640` |
+| 51 | 2,190 | 2,190 | `resource_396:0x0200069c` |
+| 52 | 2,180 | 2,180 | `resource_3bd:0x02002c38` |
+| 53 | 2,170 | 2,170 | `resource_3ca:0x02000430` |
+| 54 | 2,166 | 2,166 | `resource_38f:0x020011ec` |
+| 55 | 2,166 | 2,166 | `resource_3c9:0x02002c58` |
+| 56 | 2,158 | 2,158 | `resource_373:0x02001a14` |
+| 57 | 2,138 | 2,138 | `main:0x08026080` |
+| 58 | 2,124 | 2,124 | `main:0x08024934` |
+| 59 | 2,118 | 2,118 | `resource_371:0x020028e8` |
+| 60 | 2,106 | 2,106 | `resource_3bd:0x020013d4` |
+| 61 | 2,070 | 2,070 | `resource_3b1:0x02001b34` |
+| 62 | 2,068 | 2,068 | `resource_3c2:0x02000240` |
+| 63 | 2,052 | 2,052 | `resource_39e:0x020038d8` |
+| 64 | 2,024 | 2,024 | `main:0x08077428` |
+| 65 | 2,018 | 2,018 | `resource_3a5:0x020004e4` |
+| 66 | 2,014 | 2,014 | `resource_3c9:0x02000a6c` |
+| 67 | 2,006 | 2,006 | `resource_3a4:0x02001830` |
+| 68 | 2,002 | 2,002 | `resource_38d:0x020019b0` |
+| 69 | 2,002 | 2,002 | `resource_3af:0x02003a0c` |
+| 70 | 1,980 | 1,980 | `main:0x080acab8` |
+| 71 | 1,978 | 1,978 | `resource_3ad:0x02000808` |
+| 72 | 1,968 | 1,968 | `main:0x080e823c` |
+| 73 | 1,920 | 1,920 | `main:0x080f7f78` |
+| 74 | 1,876 | 1,876 | `main:0x0802592c` |
+| 75 | 1,854 | 1,854 | `resource_3c8:0x020026f8` |
+| 76 | 1,822 | 1,822 | `resource_38f:0x02001e6c` |
+| 77 | 1,816 | 1,816 | `main:0x080e99c0` |
+| 78 | 1,816 | 1,712 | `main:0x08090a5c` |
+| 79 | 1,810 | 1,810 | `resource_383:0x02002fd4` |
+| 80 | 1,808 | 1,808 | `resource_3b1:0x02005c9c` |
+| 81 | 1,796 | 1,664 | `main:0x080f3078` |
+| 82 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |
+| 83 | 1,770 | 1,770 | `resource_39e:0x020027dc` |
+| 84 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
+| 85 | 1,768 | 1,768 | `main:0x080d52c8` |
+| 86 | 1,734 | 1,734 | `resource_383:0x02001e80` |
+| 87 | 1,724 | 1,724 | `main:0x080e89ec` |
+| 88 | 1,720 | 1,720 | `main:0x080e2974` |
+| 89 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
+| 90 | 1,702 | 1,702 | `resource_381:0x02002150` |
+| 91 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
+| 92 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
+| 93 | 1,688 | 1,688 | `main:0x080b63c8` |
+| 94 | 1,682 | 1,682 | `resource_39c:0x02004888` |
+| 95 | 1,680 | 1,680 | `main:0x080a6ccc` |
+| 96 | 1,660 | 1,660 | `main:0x080de2f8` |
+| 97 | 1,648 | 1,648 | `main:0x080ed408` |
+| 98 | 1,648 | 1,648 | `resource_3a2:0x020001dc` |
+| 99 | 1,640 | 1,640 | `main:0x0800aa0c` |
+| 100 | 1,638 | 1,638 | `resource_373:0x02004084` |
+| 101 | 1,636 | 1,636 | `main:0x0800cacc` |
+| 102 | 1,632 | 1,632 | `resource_39c:0x02002f58` |
+| 103 | 1,626 | 1,626 | `resource_375:0x020000dc` |
+| 104 | 1,614 | 1,614 | `resource_3bf:0x02003374` |
+| 105 | 1,592 | 1,592 | `main:0x080168f4` |
+| 106 | 1,588 | 1,588 | `main:0x08022b44` |
+| 107 | 1,586 | 1,586 | `resource_3c5:0x02001238` |
+| 108 | 1,576 | 1,576 | `main:0x080d2d98` |
+| 109 | 1,556 | 1,556 | `main:0x080cf8e0` |
+| 110 | 1,550 | 1,550 | `resource_379:0x02000484` |
+| 111 | 1,540 | 1,540 | `main:0x080e3aa0` |
+| 112 | 1,514 | 1,514 | `resource_3a4:0x02000d24` |
+| 113 | 1,512 | 1,512 | `main:0x080e4e0c` |
+| 114 | 1,504 | 1,504 | `main:0x08012518` |
+| 115 | 1,480 | 1,480 | `resource_399:0x02000f84` |
+| 116 | 1,468 | 1,468 | `main:0x080dbc30` |
+| 117 | 1,462 | 1,462 | `resource_373:0x020039e8` |
+| 118 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
+| 119 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
+| 120 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
+| 121 | 1,410 | 1,410 | `resource_383:0x020036e8` |
+| 122 | 1,408 | 1,408 | `main:0x08020244` |
+| 123 | 1,402 | 1,402 | `resource_3b1:0x0200234c` |
+| 124 | 1,398 | 1,398 | `resource_372:0x02001b18` |
+| 125 | 1,382 | 1,382 | `resource_3c9:0x02003924` |
+| 126 | 1,378 | 1,378 | `resource_380:0x02001780` |
+| 127 | 1,376 | 1,376 | `main:0x0801a98c` |
+| 128 | 1,366 | 1,366 | `resource_37a:0x02000488` |
+| 129 | 1,366 | 1,366 | `resource_3aa:0x0200077c` |
+| 130 | 1,360 | 1,360 | `main:0x080c91dc` |
+| 131 | 1,336 | 1,336 | `main:0x080a9f10` |
+| 132 | 1,326 | 1,326 | `resource_391:0x02002004` |
+| 133 | 1,324 | 1,324 | `main:0x080bf678` |
+| 134 | 1,310 | 1,310 | `resource_373:0x020034c8` |
+| 135 | 1,308 | 1,308 | `main:0x080aa768` |
+| 136 | 1,308 | 1,308 | `resource_37a:0x02002094` |
+| 137 | 1,306 | 1,306 | `resource_3a8:0x02000590` |
+| 138 | 1,290 | 1,290 | `resource_3af:0x02000c94` |
+| 139 | 1,274 | 1,274 | `resource_387:0x0200066c` |
+| 140 | 1,272 | 1,272 | `main:0x080b0aac` |
+| 141 | 1,270 | 1,270 | `resource_371:0x02001064` |
+| 142 | 1,270 | 1,270 | `resource_3b1:0x020037d8` |
+| 143 | 1,264 | 1,264 | `main:0x08099da4` |
+| 144 | 1,262 | 1,262 | `resource_38d:0x020012a0` |
+| 145 | 1,252 | 1,178 | `main:0x0800f2f8` |
+| 146 | 1,248 | 1,248 | `main:0x080d9ae8` |
+| 147 | 1,238 | 1,238 | `resource_373:0x02004b24` |
+| 148 | 1,234 | 1,234 | `resource_39d:0x02001608` |
+| 149 | 1,234 | 1,234 | `resource_3af:0x02001db0` |
+| 150 | 1,230 | 1,230 | `resource_371:0x02001f6c` |
+| 151 | 1,230 | 1,230 | `resource_374:0x02000b8c` |
+| 152 | 1,228 | 1,228 | `main:0x080b6f44` |
+| 153 | 1,226 | 1,226 | `main:0x080f4f04` |
+| 154 | 1,222 | 1,222 | `resource_37a:0x0200155c` |
+| 155 | 1,218 | 1,218 | `resource_37b:0x02000554` |
+| 156 | 1,210 | 1,210 | `resource_391:0x02001740` |
+| 157 | 1,204 | 1,204 | `main:0x080ce034` |
+| 158 | 1,198 | 1,198 | `resource_3b1:0x020057ec` |
+| 159 | 1,192 | 1,192 | `main:0x080da6cc` |
+| 160 | 1,190 | 1,190 | `resource_3bd:0x02002604` |
+| 161 | 1,182 | 1,182 | `resource_3c9:0x02004738` |
+| 162 | 1,180 | 1,180 | `resource_37b:0x0200101c` |
+| 163 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
+| 164 | 1,176 | 1,176 | `resource_380:0x020043bc` |
+| 165 | 1,174 | 1,174 | `resource_3bc:0x020040bc` |
+| 166 | 1,170 | 1,170 | `resource_370:0x020003cc` |
+| 167 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
+| 168 | 1,168 | 1,168 | `main:0x080a4924` |
+| 169 | 1,154 | 1,154 | `resource_37f:0x02001604` |
+| 170 | 1,152 | 1,152 | `main:0x080191cc` |
+| 171 | 1,152 | 1,152 | `main:0x0801d4cc` |
+| 172 | 1,152 | 1,152 | `main:0x080f26ec` |
+| 173 | 1,150 | 1,150 | `resource_375:0x020014f4` |
+| 174 | 1,144 | 1,144 | `main:0x080f2028` |
+| 175 | 1,142 | 1,142 | `resource_373:0x02004ffc` |
+| 176 | 1,128 | 1,128 | `main:0x080d0000` |
+| 177 | 1,126 | 1,126 | `resource_37f:0x02000f6c` |
+| 178 | 1,116 | 1,116 | `main:0x080c02a4` |
+| 179 | 1,114 | 1,114 | `resource_3c7:0x02000880` |
+| 180 | 1,110 | 1,110 | `resource_372:0x02003394` |
+| 181 | 1,110 | 1,110 | `resource_3ce:0x02000244` |
+| 182 | 1,106 | 1,106 | `resource_39e:0x02001dbc` |
+| 183 | 1,104 | 1,104 | `main:0x080beb08` |
+| 184 | 1,102 | 1,102 | `resource_3bb:0x020010dc` |
+| 185 | 1,102 | 1,102 | `resource_3c9:0x02004fec` |
+| 186 | 1,098 | 1,098 | `main:0x080fae58` |
+| 187 | 1,096 | 1,096 | `main:0x080d41a4` |
+| 188 | 1,096 | 1,096 | `resource_3b9:0x020011c4` |
+| 189 | 1,094 | 1,094 | `resource_371:0x02000c1c` |
+| 190 | 1,094 | 1,094 | `resource_3bc:0x02001474` |
+| 191 | 1,090 | 1,090 | `resource_372:0x020037ec` |
+| 192 | 1,090 | 1,090 | `resource_39e:0x0200064c` |
+| 193 | 1,078 | 1,078 | `resource_373:0x020015dc` |
+| 194 | 1,078 | 1,078 | `resource_373:0x020046ec` |
+| 195 | 1,078 | 1,078 | `resource_399:0x020019bc` |
+| 196 | 1,076 | 1,076 | `main:0x080030f8` |
+| 197 | 1,074 | 1,074 | `main:0x080f4318` |
+| 198 | 1,074 | 1,074 | `resource_3ba:0x02000db8` |
+| 199 | 1,066 | 1,066 | `main:0x080e5e28` |
+| 200 | 1,056 | 1,056 | `main:0x080ae2f4` |
+| 201 | 1,054 | 1,054 | `resource_39d:0x020011e8` |
+| 202 | 1,054 | 1,028 | `main:0x080d77b4` |
+| 203 | 1,052 | 1,052 | `resource_3b1:0x02004254` |
+| 204 | 1,052 | 978 | `main:0x0808bec0` |
+| 205 | 1,050 | 1,050 | `resource_372:0x020028a4` |
+| 206 | 1,050 | 1,050 | `resource_3aa:0x02000360` |
+| 207 | 1,050 | 1,050 | `resource_3aa:0x02000cd4` |
+| 208 | 1,046 | 1,046 | `resource_380:0x020027f8` |
+| 209 | 1,046 | 1,046 | `resource_381:0x02001b34` |
+| 210 | 1,044 | 1,044 | `main:0x0808d9a4` |
+| 211 | 1,044 | 1,044 | `main:0x080bfba4` |
+| 212 | 1,044 | 1,044 | `main:0x080cb7f8` |
+| 213 | 1,042 | 1,042 | `resource_377:0x02000f90` |
+| 214 | 1,042 | 1,042 | `resource_3a5:0x02001490` |
+| 215 | 1,042 | 1,042 | `resource_3c9:0x02004bd8` |
+| 216 | 1,040 | 1,040 | `main:0x080ceb54` |
+| 217 | 1,040 | 1,040 | `main:0x080e90a8` |
+| 218 | 1,038 | 1,038 | `resource_379:0x02000074` |
+| 219 | 1,034 | 1,034 | `resource_39d:0x02000ddc` |
+| 220 | 1,030 | 1,030 | `resource_37b:0x020015d4` |
+| 221 | 1,030 | 1,030 | `resource_38f:0x02001a64` |
+| 222 | 1,030 | 1,030 | `resource_391:0x02001bfc` |
+| 223 | 1,028 | 1,028 | `main:0x0801de5c` |
+| 224 | 1,026 | 1,026 | `resource_37b:0x02000150` |
+| 225 | 1,022 | 1,022 | `resource_3b8:0x020006dc` |
+| 226 | 1,020 | 1,020 | `resource_3b9:0x02000db0` |
+| 227 | 1,010 | 1,010 | `resource_37a:0x02001ca0` |
+| 228 | 1,006 | 1,006 | `resource_394:0x020003f0` |

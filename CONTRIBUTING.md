@@ -450,8 +450,25 @@ classify every residual, and the class is the first thing to read:
 Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
 is not a near miss.
 
-`ordering` and `allocation` are settled after the source has had its say, by
-`rank_for_schedule` and by reload. They are not always immovable — a standalone
+`ordering` is settled after the source has had its say, and the RTL says exactly
+how. On `resource_3b8:3df8` the whole residual is one pair, and the sched2 dump
+shows why it cannot be reached:
+
+| uid | insn | priority | dep count | cost | dependents |
+|---|---|---:|---:|---:|---:|
+| 67 | `r2 = -r2` | 67 | 2 | 1 | 5 |
+| 41 | `r1 = 2` | 67 | 2 | 1 | 5 |
+
+Every key `rank_for_schedule` consults is equal, including the dependent sets,
+which are the same five insns. gcc then takes them in ready-list array order,
+which follows RTL order, and the reference's RTL has `r1 = 2` between
+`r2 = 16` and its `neg` where ours has the pair adjacent. Four spellings were
+measured -- the bare literal, a prototype on the callee, the constant in a
+local, and `0 - 16` -- and all four give the same two differing halfwords.
+
+So an `ordering` residual is not a source problem in the sense that reading
+harder fixes it. Read it once to confirm it is only order, record it, and move
+on. `allocation` is the same story one pass later, in reload. They are not always immovable — a standalone
 `x = p->field;` statement gives the scheduler a free-floating load to hoist,
 where folding the read into the expression that uses it can anchor it — but
 `shape_sweep` exhausts the bounded transforms quickly, and when it reports the

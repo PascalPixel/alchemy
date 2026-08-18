@@ -2805,43 +2805,10 @@ AlchemyC_020018b4:
 	.space 0x40
 AlchemyC_020018f4:
 	.space 0x44
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r6, r0, #0
-	adds	r7, r1, #0
-	mov	r8, r2
-	bl	sub_02003602
-	adds	r5, r0, #0
-	cmp	r5, #0
-	beq.n	.L_0200197a
-	movs	r1, #3
-	adds	r0, r6, #0
-	bl	sub_02003670
-	adds	r1, r5, #0
-	adds	r1, #34
-	movs	r3, #2
-	strb	r3, [r1, #0]
-	adds	r1, #1
-	ldrb	r3, [r1, #0]
-	movs	r2, #2
-	orrs	r2, r3
-	strb	r2, [r1, #0]
-	movs	r2, #128
-	lsls	r2, r2, #12
-	lsls	r3, r7, #20
-	adds	r3, r3, r2
-	mov	r1, r8
-	str	r3, [r5, #8]
-	lsls	r3, r1, #20
-	adds	r3, r3, r2
-	str	r3, [r5, #16]
+AlchemyC_02001938:
+	.space 0x42
 .L_0200197a:
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+	.space 0xa
 	push	{r5, r6, lr}
 	ldr	r2, [pc, #584]
 	movs	r0, #224

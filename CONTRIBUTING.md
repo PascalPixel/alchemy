@@ -466,6 +466,25 @@ which follows RTL order, and the reference's RTL has `r1 = 2` between
 measured -- the bare literal, a prototype on the callee, the constant in a
 local, and `0 - 16` -- and all four give the same two differing halfwords.
 
+The snapshot is not the lever either, and that is now checked against
+upstream rather than assumed. `rank_for_schedule` was compared at
+gcc-mirror/gcc as it stood a year before our 2000-07-31 snapshot, at the
+snapshot, and a year after. The final tie-break is the same line in all three:
+
+```c
+/* If insns are equally good, sort by INSN_LUID (original insn order),
+   so that we make the sort stable. ... */
+return INSN_LUID (tmp) - INSN_LUID (tmp2);
+```
+
+1999 and 2000 differ only in comment capitalisation and a `GENERIC_PTR` to
+`PTR` typedef rename. 2001 moved the interblock comparisons behind a
+`current_sched_info->rank` callback, and left the keys and the tie-break
+untouched. Our fork's `haifa-sched.c` is byte-identical to upstream at the
+snapshot, so there is no local divergence to correct and no neighbouring
+snapshot that decides the tie differently. Moving the compiler a year in either
+direction changes nothing about this.
+
 So an `ordering` residual is not a source problem in the sense that reading
 harder fixes it. Read it once to confirm it is only order, record it, and move
 on. `allocation` is the same story one pass later, in reload. They are not always immovable — a standalone

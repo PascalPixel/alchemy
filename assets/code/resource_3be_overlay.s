@@ -2090,23 +2090,8 @@ AlchemyC_020011c4:
 	.space 0x4
 AlchemyC_020011c8:
 	.space 0x10
-	push	{r5, r6, r7, lr}
-	adds	r7, r0, #0
-	adds	r6, r1, #0
-	movs	r5, #40
-.L_020011e0:
-	cmp	r5, #0
-	beq.n	.L_020011f2
-	movs	r0, #1
-	bl	sub_02002674
-	ldr	r3, [r7, #12]
-	subs	r5, #1
-	cmp	r3, r6
-	bgt.n	.L_020011e0
-.L_020011f2:
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+AlchemyC_020011d8:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

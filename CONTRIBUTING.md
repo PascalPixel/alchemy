@@ -450,27 +450,57 @@ classify every residual, and the class is the first thing to read:
 Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
 is not a near miss.
 
-`ordering` is settled after the source has had its say -- but by RELOAD, not by
-the scheduler, and the difference matters because it changes what the source can
-reach. Dumping every pass with `-da` on `resource_3b8:3df8` shows where the
-order is actually set:
+`ordering` is settled after the source has had its say, by the POST-RELOAD
+SCHEDULER. An earlier version of this file said reload decided it and the
+scheduler merely preserved reload's order. That was wrong, and it was wrong in
+the direction that makes the residual look unreachable, so it is worth saying
+how it was caught.
 
-| pass | insn chain around the pair |
+Take one function and compile it twice, identical except that the second has a
+`switch` with a `default: return`. Both reach reload with the SAME insn chain:
+
+| pass | chain around the pair |
 |---|---|
-| `17.lreg`, before reload | `33 37 39 41 43 ...` -- the `-16` is still a pseudo |
-| `18.greg`, after reload | `33 66 67 39 41 ...` -- reload MADE 66 and 67 and put them here |
-| `23.sched2`, after scheduling | `33 66 67 41 39 ...` -- only 39 and 41 swapped |
+| `18.greg`, after reload | `mov r2,#8` / `neg r2,r2` / `mov r0,#0` / `mov r1,#3` -- both builds |
+| `23.sched2`, after scheduling | adjacent build: `mov r2,#8` / `neg` / `mov r1` / `mov r0` |
+| | interleaved build: `mov r2,#8` / `mov r1,#3` / `neg` / `mov r0` |
 
-Reload materialises the constant into two insns and places them before the
-other argument's load. The scheduler then leaves that trio exactly as reload
-left it. The reference wants `66, 41, 67`, which the scheduler was never in a
-position to produce.
+Reload places them identically. `sched2` then reorders them DIFFERENTLY in the
+two builds. So the pass to read is the scheduler, and what varies is the
+function's basic-block structure -- the `switch` splits one block into
+twenty-four, and the dependence graph the scheduler sees changes with it.
 
-So reading only the sched2 dump gives the wrong answer. The tie there is real
-and total, and every key is equal -- but the tie-break never got to decide these
-three, because reload had already fixed their order. Reload's placement responds
-to live ranges and register pressure, which the source does influence. That is a
-different and more workable problem than a scheduler coin-flip.
+`rank_for_schedule`'s keys, in the order it consults them, are: priority; then
+(before reload only) register weight; then the interblock comparisons; then the
+insn's dependence class relative to the last scheduled insn; then **the number
+of later insns that depend on it**; then `INSN_LUID`. Read them off the
+`-fsched-verbose=5` dependence table, which prints every one:
+
+```
+;;      insn  code    bb   dep  prio  cost   blockage units
+;;        29   173     0     0     3     1    1 - 32   core  : 42 36
+;;        31   173     0     0     3     1    1 - 32   core  : 42 41 36
+```
+
+Here `29` is `mov r0,#31` and `31` is `mov r1,#0`. Same priority, same
+dependence count, but `31` has THREE dependents against `29`'s two, so it wins
+and is emitted first. The extra dependent is the second call's own `r1 = 0`:
+an output-dependence, because nothing between them writes r1. r0's equivalent
+chain is CUT by the intervening call, which returns its value in r0.
+
+That is a lever, and it is reachable from the source. Declaring the intervening
+callee `void` removes the `(set (reg r0) (call ...))` from its RTL, which
+un-cuts r0's chain, gives `mov r0,#31` a third dependent, and flips the pair --
+measured, on `resource_398:04b4`, from two differing halfwords to one.
+
+What is NOT a lever, measured rather than assumed: the spelling of the call or
+its arguments. Twenty-five spellings of one three-argument call -- bare literal,
+`0x10`, `0 - 16`, `-(1 << 4)`, `-16L`, prototype, `void` and `s32` returns,
+narrow and wide parameter types, the constant in a local, in a `const`, in an
+`enum`, in a `volatile`, the pool address as an integer, as `(void *)`, as an
+`extern` array, as `&extern` -- all give the identical residual. When the
+scheduler's keys tie and it falls to `INSN_LUID`, LUID follows the pre-reload
+argument-emission order, and no respelling of the arguments changed that order.
 
 The scheduler tie is still worth understanding, so here it is. On `resource_3b8:3df8` the whole residual is one pair, and the sched2 dump
 shows why it cannot be reached:
@@ -508,13 +538,17 @@ Our fork's `haifa-sched.c` is byte-identical to upstream at the snapshot, so
 there is no local divergence to correct, and no version of gcc ever written
 decides this tie differently. The compiler-snapshot axis is closed.
 
-So an `ordering` residual is not a source problem in the sense that reading
-harder fixes it. Read it once to confirm it is only order, record it, and move
-on. `allocation` is the same story one pass later, in reload. They are not always immovable — a standalone
-`x = p->field;` statement gives the scheduler a free-floating load to hoist,
-where folding the read into the expression that uses it can anchor it — but
-`shape_sweep` exhausts the bounded transforms quickly, and when it reports the
-axis exhausted, believe it.
+So the compiler SNAPSHOT is not the variable; the scheduler's input is. An
+`ordering` residual is reachable when you can change a key -- block structure, or
+a dependence chain, as above -- and unreachable when every key ties and only
+`INSN_LUID` separates the pair. Read the dependence table before deciding which
+one you have, and record the answer either way.
+
+`allocation` is the same story one pass later, in reload. Both respond to how
+much of the function the source actually expresses: a load written as a
+standalone `x = p->field;` floats free for the scheduler to hoist, where reading
+the field once into a local and using that local twice pins it where the
+reference has it.
 
 `unemittable` is advisory and wrong about one time in five. It reads a
 disassembled stream, and a literal pool word disassembles as whatever its bytes
@@ -597,6 +631,31 @@ by default and narrow where the bytes show a truncation. A narrow *parameter* is
 worse than a narrow local: it silently truncates the argument at every call
 site, so `f(0x301)` through a `u8` parameter compiles to `movs r0, #1`.
 
+`(x & ~M) | V` on a sub-byte field is a BITFIELD ASSIGNMENT, and writing it as
+mask arithmetic does not reproduce. The tell is the width of the mask. A byte
+field masked with `~12` in ordinary C narrows to QImode and the compiler emits
+`movs r3, #243`; the bitfield path stays in SImode and builds -13 as
+
+```
+	movs	r3, #13
+	negs	r3, r3
+```
+
+which is two instructions where the arithmetic spelling has one. So
+
+```c
+struct Rec { u8 pad00[9]; u8 lo : 2; u8 mode : 2; u8 hi : 4; };   /* +9, bits 2..3 */
+rec->mode = 1;                    /* not  rec->f9 = (rec->f9 & ~12) | 4;  */
+```
+
+The assignment does its own masking and shifting, so `rec->mode = value` also
+covers the `(value & 3) << 2` form. This one shape closed four owners --
+`resource_399:1704`, `resource_39c:0030`, `resource_39a:0ed8` and
+`resource_3b1:02f4` -- and each had been sitting at a residual that read like an
+allocation problem. Note that not every mask is a bitfield: a `& ~1` that stays
+narrow (`movs r3, #254`) really is byte arithmetic, and the mask width tells you
+which you are looking at before you write anything.
+
 A callee's declared return type is part of the interface and is visible in the
 bytes: a non-void return keeps a value live across the caller's argument setup.
 If your arguments are set up in the wrong order, check the prototype before you
@@ -608,6 +667,13 @@ Fixed addresses touched more than once should be declared objects, not
 ```c
 extern s16 Data_02000240[];
 ```
+
+This applies to a STRUCT FIELD as much as to a global, and the qualifier goes on
+the pointer, not the pointee. `resource_3b5:06e8` stores through `work->f80`
+twice and the reference loads `[r5, #80]` again for the second store; ordinary C
+keeps the first load in a register and the second `ldr` disappears.
+`struct Rec *volatile f80;` reproduces it, `volatile struct Rec *f80;` does not
+-- the first says the pointer may change, which is what forces the reload.
 
 A global the reference re-reads on a path where the value provably cannot have
 changed is a `volatile` object, and nothing else in ordinary C produces that
@@ -1365,16 +1431,16 @@ executable runs), sorted largest to smallest. Broader multi-owner campaign cuts
 belong in [Status](#status); they may overlap and therefore are not used for
 byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 2,236
+- **Unfinished scopes:** 2,234
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 855,986 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 489,380 Exact C or audited permanent assembly bytes
+- **Target bytes:** 855,364 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 490,002 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (228 rows). The complete
-2,236-row index, including the smallest audited owners, is
+2,234-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

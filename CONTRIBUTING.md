@@ -1,7 +1,7 @@
 # Contributing to Alchemy
 
 Alchemy is an unofficial clean-room reconstruction of the English release of
-*Golden Sun* for the Game Boy Advance. The goal is a repository of C and
+_Golden Sun_ for the Game Boy Advance. The goal is a repository of C and
 independently described assets that rebuilds the released ROM byte for byte.
 
 This is the only guide. `AGENTS.md` and `CLAUDE.md` are symlinks to it, and
@@ -32,7 +32,7 @@ thing.
 
 ## Provenance and copyright
 
-*Golden Sun* and its original material are copyright Nintendo and Camelot
+_Golden Sun_ and its original material are copyright Nintendo and Camelot
 Software Planning. Alchemy is not affiliated with or endorsed by either
 company. It is a decompilation and preservation effort -- not a remake, a ROM
 hack, an emulator, or a game distribution. No ROM is distributed here.
@@ -126,14 +126,14 @@ A reconstructed source cites the tool that derived a fact. Some of those tools
 have since been replaced, and the citation is still the truthful record of how
 the fact was obtained, so it stays. This table says where to find the tool.
 
-| Cited tool | Last commit containing it | Recover with |
-|---|---|---|
-| `tools/m2c_guard.ts` | `f185d7346` | `git show f185d7346:tools/m2c_guard.ts` |
-| `tools/main_xref.ts` | `f185d7346` | `git show f185d7346:tools/main_xref.ts` |
-| `tools/overlay_dispatch_sites.ts` | `f185d7346` | `git show f185d7346:tools/overlay_dispatch_sites.ts` |
-| `tools/veneer_resolve.ts` | `f185d7346` | `git show f185d7346:tools/veneer_resolve.ts` |
-| `tools/overlay_driver.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_driver.ts` |
-| `tools/overlay_unindexed.ts` | `87d03abf0` | `git show 87d03abf0:tools/overlay_unindexed.ts` |
+| Cited tool                        | Last commit containing it | Recover with                                         |
+| --------------------------------- | ------------------------- | ---------------------------------------------------- |
+| `tools/m2c_guard.ts`              | `f185d7346`               | `git show f185d7346:tools/m2c_guard.ts`              |
+| `tools/main_xref.ts`              | `f185d7346`               | `git show f185d7346:tools/main_xref.ts`              |
+| `tools/overlay_dispatch_sites.ts` | `f185d7346`               | `git show f185d7346:tools/overlay_dispatch_sites.ts` |
+| `tools/veneer_resolve.ts`         | `f185d7346`               | `git show f185d7346:tools/veneer_resolve.ts`         |
+| `tools/overlay_driver.ts`         | `87d03abf0`               | `git show 87d03abf0:tools/overlay_driver.ts`         |
+| `tools/overlay_unindexed.ts`      | `87d03abf0`               | `git show 87d03abf0:tools/overlay_unindexed.ts`      |
 
 ---
 
@@ -202,7 +202,7 @@ rebuilds identically, or it is assembly. Your unfinished candidate lives in
 
 ### 1. Pick an owner
 
-An *owner* is one function-sized region with a fixed address.
+An _owner_ is one function-sized region with a fixed address.
 
 - Main image: assembly in `asm/<address>.s`, C in `exact/<address>.c` once it
   matches.
@@ -284,7 +284,7 @@ SINGLE-register `ldmia r1!, {r3}` is ordinary C: Thumb has no post-incrementing
 
 ### 3. Write the compiler's input, not its output
 
-The ROM is optimised compiler output. The C you want is what went *in*: plain
+The ROM is optimised compiler output. The C you want is what went _in_: plain
 structs, arrays indexed by loop variables, ordinary expressions, natural
 statement order. The optimiser then reproduces the ROM's shape by itself,
 because that is exactly what it did the first time.
@@ -432,14 +432,14 @@ A differing-halfword count says how much differs. It does not say what kind of
 problem you have, and the two are not related. `overlay score` and the rankers
 classify every residual, and the class is the first thing to read:
 
-| class | what it means | worth reading? |
-|---|---|---|
-| `exact` | the bytes match | adopt it |
-| `wrong` | some instruction is genuinely different | **yes** |
-| `size mismatch` | a statement is missing or extra | **yes** |
-| `ordering` | same instructions, different order | sometimes |
-| `allocation` | same instructions and operands, different registers | sometimes |
-| `unemittable` | the reference *appears* to use an instruction this compiler cannot emit | confirm first |
+| class           | what it means                                                           | worth reading? |
+| --------------- | ----------------------------------------------------------------------- | -------------- |
+| `exact`         | the bytes match                                                         | adopt it       |
+| `wrong`         | some instruction is genuinely different                                 | **yes**        |
+| `size mismatch` | a statement is missing or extra                                         | **yes**        |
+| `ordering`      | same instructions, different order                                      | sometimes      |
+| `allocation`    | same instructions and operands, different registers                     | sometimes      |
+| `unemittable`   | the reference _appears_ to use an instruction this compiler cannot emit | confirm first  |
 
 Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
 is not a near miss.
@@ -474,11 +474,11 @@ The pass that decides is the POST-RELOAD SCHEDULER, not reload. Compile one
 function twice, identical except that the second has a `switch` with a
 `default: return`, and both reach reload with the SAME insn chain:
 
-| pass | chain around the pair |
-|---|---|
-| `18.greg`, after reload | `mov r2,#8` / `neg r2,r2` / `mov r0,#0` / `mov r1,#3` -- both builds |
-| `23.sched2`, after scheduling | adjacent build: `mov r2,#8` / `neg` / `mov r1` / `mov r0` |
-| | interleaved build: `mov r2,#8` / `mov r1,#3` / `neg` / `mov r0` |
+| pass                          | chain around the pair                                                |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `18.greg`, after reload       | `mov r2,#8` / `neg r2,r2` / `mov r0,#0` / `mov r1,#3` -- both builds |
+| `23.sched2`, after scheduling | adjacent build: `mov r2,#8` / `neg` / `mov r1` / `mov r0`            |
+|                               | interleaved build: `mov r2,#8` / `mov r1,#3` / `neg` / `mov r0`      |
 
 Reload places them identically; `sched2` reorders them differently. What varies
 is the function's basic-block structure, and the dependence graph the scheduler
@@ -646,7 +646,7 @@ you are looking at before you write anything.
 Narrow types are usually the wrong reading. The store width comes from the
 pointer cast or the struct member, not from the variable, so a `u8` local that
 the reference never truncates costs an extension the ROM does not have. Widen
-by default and narrow where the bytes show a truncation. A narrow *parameter* is
+by default and narrow where the bytes show a truncation. A narrow _parameter_ is
 worse than a narrow local: it silently truncates the argument at every call
 site, so `f(0x301)` through a `u8` parameter compiles to `movs r0, #1`.
 
@@ -767,7 +767,7 @@ produce -- adds the rest of DONE, which is 37% of the ROM's executable bytes and
 is what the sun in every commit subject reports.
 
 Publish both figures or neither. The share of the ROM is the honest headline;
-the share of the bytes that *can* be C says how much of the job is left. That
+the share of the bytes that _can_ be C says how much of the job is left. That
 second denominator is 1,130,844, and exact C is 24.4% of it.
 
 ### 100% is reachable, and the compiler is the minority obstacle
@@ -777,13 +777,13 @@ since-deleted tier were scored against the ROM. Counting only real owners -- 32
 bytes or more, so the 8-byte veneer stubs that score exact trivially are
 excluded -- 1,242 of them classify as:
 
-| share | class | what it means |
-|---:|---|---|
-| 58.5% | size mismatch | a statement is missing or extra |
-| 26.0% | wrong | operands differ: a type, a prototype, a constant |
-| 12.9% | ordering | a scheduler tie |
-| 1.9% | allocation | reload picked different registers |
-| 0.6% | unemittable | a shape no stock gcc 2.96 emits |
+| share | class         | what it means                                    |
+| ----: | ------------- | ------------------------------------------------ |
+| 58.5% | size mismatch | a statement is missing or extra                  |
+| 26.0% | wrong         | operands differ: a type, a prototype, a constant |
+| 12.9% | ordering      | a scheduler tie                                  |
+|  1.9% | allocation    | reload picked different registers                |
+|  0.6% | unemittable   | a shape no stock gcc 2.96 emits                  |
 
 **84.5% of what is left is ordinary reconstruction.** That understates it, since
 the twelve owners closed most recently included several labelled `ordering` or
@@ -803,12 +803,12 @@ and no entry in `asm/classification.json`. Every byte of it is reachable as C.
 The figure above is measured across all owner sizes and is dominated by small
 ones. Broken out by size, the record is much starker:
 
-| owner size | byte-exact | share of open bytes |
-|---|---:|---:|
-| under 128 B | 819 of 1,211 (68%) | 5.0% |
-| 128 B - 512 B | 169 of 834 (20%) | 29.4% |
-| 512 B - 2 KB | 4 of 246 (2%) | 36.6% |
-| 2 KB and over | 0 of 49 (0%) | 29.1% |
+| owner size    |         byte-exact | share of open bytes |
+| ------------- | -----------------: | ------------------: |
+| under 128 B   | 819 of 1,211 (68%) |                5.0% |
+| 128 B - 512 B |   169 of 834 (20%) |               29.4% |
+| 512 B - 2 KB  |      4 of 246 (2%) |               36.6% |
+| 2 KB and over |       0 of 49 (0%) |               29.1% |
 
 No owner over 2 KB has ever been made byte-exact; the largest that has is 1,828
 bytes. Owners of 512 B and over hold **65.6% of the remaining audited overlay
@@ -839,11 +839,11 @@ limit.
 The strongest result from that experiment is what happened to the parking as the
 reconstruction got more complete:
 
-| what the reconstruction expressed | excess `mov` | bytes of 6,220 |
-|---|---:|---:|
-| calls and constants only | +80 | 5,732 |
-| plus memory through a held pointer | +69 | 5,848 |
-| plus the three loops | **+48** | **5,908** |
+| what the reconstruction expressed  | excess `mov` | bytes of 6,220 |
+| ---------------------------------- | -----------: | -------------: |
+| calls and constants only           |          +80 |          5,732 |
+| plus memory through a held pointer |          +69 |          5,848 |
+| plus the three loops               |      **+48** |      **5,908** |
 
 So what looks like the compiler parking constants is substantially a source that
 does not yet say everything the original said -- an incomplete reconstruction
@@ -890,7 +890,7 @@ carrying the ROM's own numbering is not that, whether the number is decimal
 Everything in a standard format but still ID-named is **Extracted**, which is a
 real step and not the last one. Images are 1.8% Named and music 0.0%. Those
 numbers were 32.6% and 99.6% until August 2026, when the top tier was being
-awarded for the *category name* -- anything called audio counted as finished --
+awarded for the _category name_ -- anything called audio counted as finished --
 rather than for a file existing. Tiers are counted per file, so one well-named
 member cannot promote its package.
 
@@ -913,13 +913,24 @@ unproven source is not an asset.
 reconstruction, holding measurements and a recipe. Never C, never ROM bytes.
 
 ```json
-{ "owner": "resource_3bd:13f8", "span_bytes": 6220,
-  "score":  { "candidate_bytes": 5908, "wrong_instructions": 629, "class": "wrong" },
-  "shape":  { "calls": 703, "loops": 3, "memory_ops": 47 },
-  "expressed":   ["call sequence", "memory through a held pointer", "three counted loops"],
+{
+  "owner": "resource_3bd:13f8",
+  "span_bytes": 6220,
+  "score": {
+    "candidate_bytes": 5908,
+    "wrong_instructions": 629,
+    "class": "wrong"
+  },
+  "shape": { "calls": 703, "loops": 3, "memory_ops": 47 },
+  "expressed": [
+    "call sequence",
+    "memory through a held pointer",
+    "three counted loops"
+  ],
   "unexpressed": [{ "op": "ldrsh", "count": 8, "where": "loop bodies" }],
   "verified_against_reference": ["bl count 703", "ldrb count 10"],
-  "rejected": [{ "shape": "one base local reassigned", "wrong": 671 }] }
+  "rejected": [{ "shape": "one base local reassigned", "wrong": 671 }]
+}
 ```
 
 This is not the semantic tier returning. That tier stored unproven C and then
@@ -952,11 +963,11 @@ the reference's SIZE sounds nearly finished. Measured against the reference
 instead of guessed at:
 
 | draft size vs reference | owners | instructions actually matching |
-|---|---:|---:|
-| 95-105% | 147 | **13%** |
-| 85-95% | 198 | 9% |
-| 60-85% | 240 | 4% |
-| under 60% | 497 | 0% |
+| ----------------------- | -----: | -----------------------------: |
+| 95-105%                 |    147 |                        **13%** |
+| 85-95%                  |    198 |                             9% |
+| 60-85%                  |    240 |                             4% |
+| under 60%               |    497 |                             0% |
 
 Of 348 drafts at 85% of reference size or better, six match 90% of their
 instructions. The median matches ten percent. Size ratio is not completeness and
@@ -1015,11 +1026,11 @@ Built in a 32-bit i386 container -- where the tree needs no host patches at all,
 which is the whole reason to build it there -- and pointed at the owners whose
 residual is pure ordering:
 
-| owner | our compiler | Red Hat 7.0 | differing |
-|---|---:|---:|---:|
-| `resource_3b8:3df8` | 11 insns | 11 | **0** |
-| `resource_37a:1380` | 128 insns | 128 | **0** |
-| `resource_3ce:029c` | 588 insns | 588 | **0** |
+| owner               | our compiler | Red Hat 7.0 | differing |
+| ------------------- | -----------: | ----------: | --------: |
+| `resource_3b8:3df8` |     11 insns |          11 |     **0** |
+| `resource_37a:1380` |    128 insns |         128 |     **0** |
+| `resource_3ce:029c` |    588 insns |         588 |     **0** |
 
 Byte-identical assembly, including the 1,574-byte owner whose entire residual is
 one swapped pair repeated at 196 call sites. Our unpatched tree is the right
@@ -1035,18 +1046,18 @@ inherited because Red Hat used that base; nobody swept neighbouring commits.
 Walking gcc's own history says how much room that leaves. For each pass, the
 last change on or before 2000-07-31 and the next one after:
 
-| pass | last change | next change |
-|---|---|---|
-| `reload1.c` | 2000-07-28 | 2000-08-04 |
-| `reload.c` | 2000-07-28 | 2000-08-04 |
-| `cse.c` | 2000-07-28 | 2000-08-04 |
-| `combine.c` | 2000-07-30 | 2000-08-04 |
-| `calls.c` | 2000-07-18 | 2000-08-15 |
-| `expr.c` | 2000-07-12 | 2000-08-06 |
-| `local-alloc.c` | 2000-06-13 | 2000-08-04 |
-| `global.c` | 2000-06-13 | 2000-08-04 |
-| `config/arm/thumb.c` | 2000-04-08 | not again in 2000 |
-| `config/arm/thumb.md` | 2000-04-08 | not again in 2000 |
+| pass                  | last change | next change       |
+| --------------------- | ----------- | ----------------- |
+| `reload1.c`           | 2000-07-28  | 2000-08-04        |
+| `reload.c`            | 2000-07-28  | 2000-08-04        |
+| `cse.c`               | 2000-07-28  | 2000-08-04        |
+| `combine.c`           | 2000-07-30  | 2000-08-04        |
+| `calls.c`             | 2000-07-18  | 2000-08-15        |
+| `expr.c`              | 2000-07-12  | 2000-08-06        |
+| `local-alloc.c`       | 2000-06-13  | 2000-08-04        |
+| `global.c`            | 2000-06-13  | 2000-08-04        |
+| `config/arm/thumb.c`  | 2000-04-08  | not again in 2000 |
+| `config/arm/thumb.md` | 2000-04-08  | not again in 2000 |
 
 Any CVS pull between 2000-07-30 and 2000-08-03 gives the same compiler for our
 purposes, and ours sits in the middle of that window. The Thumb back end is
@@ -1143,16 +1154,16 @@ There are 95 public commands and the loop needs about eight of them. The full
 catalog below exists so the registry has somewhere to be checked against; it is
 reference, not a reading list.
 
-| | |
-|---|---|
-| `overlay score` | compile a candidate, diff it, classify the residual |
-| `candidate-show` | the same for a main-image owner |
-| `overlay adopt` / `park` | install a proven row, or take one back out |
-| `overlay audit --all` | re-prove every adopted row still reproduces |
-| `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it |
-| `overlay twins` | find a finished owner with the same shape |
-| `overlay reconstruct` | draft C for a call-dense owner from its own disassembly |
-| `make verify` | the only result that proves anything |
+|                                        |                                                         |
+| -------------------------------------- | ------------------------------------------------------- |
+| `overlay score`                        | compile a candidate, diff it, classify the residual     |
+| `candidate-show`                       | the same for a main-image owner                         |
+| `overlay adopt` / `park`               | install a proven row, or take one back out              |
+| `overlay audit --all`                  | re-prove every adopted row still reproduces             |
+| `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it            |
+| `overlay twins`                        | find a finished owner with the same shape               |
+| `overlay reconstruct`                  | draft C for a call-dense owner from its own disassembly |
+| `make verify`                          | the only result that proves anything                    |
 
 Most of the rest are asset builders that run as part of `make build-assets`,
 and gates that run as part of `make verify`. You should not need to invoke them
@@ -1164,12 +1175,12 @@ The main-image half of the loop: locate function-sized regions in the executable
 image, survey what is still unresolved, and prove a candidate against the bytes
 before it is allowed into `exact/`.
 
-| Command | What it tells you |
-|---|---|
-| `discover` | Produces the function, instruction and call discovery report from a local ROM. |
-| `remaining_survey` | Surveys the executable regions still unresolved. |
-| `decomp_diagnose` | Compiles a main-image candidate and classifies its residual; `--agent-brief` emits a bounded work contract with the canonical score. |
-| `integrate_matches` | The main-image adoption gate: proves a `src_<address>.c` draft and installs it only with `--apply`. |
+| Command             | What it tells you                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `discover`          | Produces the function, instruction and call discovery report from a local ROM.                                                       |
+| `remaining_survey`  | Surveys the executable regions still unresolved.                                                                                     |
+| `decomp_diagnose`   | Compiles a main-image candidate and classifies its residual; `--agent-brief` emits a bounded work contract with the canonical score. |
+| `integrate_matches` | The main-image adoption gate: proves a `src_<address>.c` draft and installs it only with `--apply`.                                  |
 
 ### overlay -- the 96 loaded code modules
 
@@ -1177,23 +1188,23 @@ The overlay half, which is where most remaining work is. These decode overlay
 bytes, resolve per-site veneers, rank candidates by residual class, find repeated
 shapes, and gate adoption by rehearsing the whole overlay before splicing a row.
 
-| Command | What it tells you |
-|---|---|
-| `overlay_disasm` | Decodes overlay bytes to assembly. |
-| `overlay_show` | Shows a byte range of one overlay, optionally annotated. |
-| `overlay_entry` | Reports overlay entry points. |
-| `overlay_inventory` | Rebuilds the diagnostic inventory the overlay tools read. |
-| `overlay_gaps` | Names unclaimed executable ranges. |
-| `overlay_unindexed` | Names executable spans discovery has not indexed. |
-| `overlay_twins` | Finds owners that mirror one another, so a solved shape can be reused. |
-| `exact_reading_list` | Lists finished owners worth reading as worked examples. |
-| `overlay_candidate_rank` | Ranks candidate residuals. |
-| `overlay_call_order_check` | Compares resolved call order, including aliases and relocation spellings. |
-| `overlay_certify` | Reports owner-certification findings; `--check` turns them into a failing gate. |
-| `overlay_adopt` | The overlay adoption gate: rehearses the whole overlay and refuses a mismatch. |
-| `overlay_showcase` | Renders a representative finished overlay for regression and demonstration. |
-| `overlay_driver` | The low-level overlay reconstruction driver. |
-| `overlay_mode_cohort` | Compares one compiler hypothesis across a set of overlay owners. |
+| Command                    | What it tells you                                                               |
+| -------------------------- | ------------------------------------------------------------------------------- |
+| `overlay_disasm`           | Decodes overlay bytes to assembly.                                              |
+| `overlay_show`             | Shows a byte range of one overlay, optionally annotated.                        |
+| `overlay_entry`            | Reports overlay entry points.                                                   |
+| `overlay_inventory`        | Rebuilds the diagnostic inventory the overlay tools read.                       |
+| `overlay_gaps`             | Names unclaimed executable ranges.                                              |
+| `overlay_unindexed`        | Names executable spans discovery has not indexed.                               |
+| `overlay_twins`            | Finds owners that mirror one another, so a solved shape can be reused.          |
+| `exact_reading_list`       | Lists finished owners worth reading as worked examples.                         |
+| `overlay_candidate_rank`   | Ranks candidate residuals.                                                      |
+| `overlay_call_order_check` | Compares resolved call order, including aliases and relocation spellings.       |
+| `overlay_certify`          | Reports owner-certification findings; `--check` turns them into a failing gate. |
+| `overlay_adopt`            | The overlay adoption gate: rehearses the whole overlay and refuses a mismatch.  |
+| `overlay_showcase`         | Renders a representative finished overlay for regression and demonstration.     |
+| `overlay_driver`           | The low-level overlay reconstruction driver.                                    |
+| `overlay_mode_cohort`      | Compares one compiler hypothesis across a set of overlay owners.                |
 
 The `overlay` binary also carries `score`, `park`, `audit` and `reconstruct`,
 described in [the loop](#the-loop). `score` is the overlay counterpart of
@@ -1207,12 +1218,12 @@ resort for a residual you have already localised and understood, not a way to
 find one. A result still has to be read as source and adopted through the
 owner's gate.
 
-| Command | What it tells you |
-|---|---|
-| `decomp_constraints` | Derives bounded structural constraints for a candidate. |
-| `shape_sweep` | Tries bounded, behaviour-preserving source shapes with the compiler fixed; `--descend` drives it iteratively. |
-| `search_compiler_modes` | Searches approved compiler modes with the source fixed. |
-| `alchemy_permuter` | A bounded source-permutation search with linked-byte scoring. |
+| Command                 | What it tells you                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `decomp_constraints`    | Derives bounded structural constraints for a candidate.                                                       |
+| `shape_sweep`           | Tries bounded, behaviour-preserving source shapes with the compiler fixed; `--descend` drives it iteratively. |
+| `search_compiler_modes` | Searches approved compiler modes with the source fixed.                                                       |
+| `alchemy_permuter`      | A bounded source-permutation search with linked-byte scoring.                                                 |
 
 ### compiler -- routed builds and comparisons
 
@@ -1220,12 +1231,12 @@ Routed builds of the exact corpus and the flag matrix, plus the main-image
 counterpart of the overlay ranker. Use these to prove a compiler hypothesis
 across a cohort rather than on the single owner that suggested it.
 
-| Command | What it tells you |
-|---|---|
-| `compiler_corpus_regression` | Recompiles the exact corpus and reports any byte regression. |
-| `mode_sweep` | Searches the approved flag matrix for one fixed candidate. |
-| `mode_cohort` | Tests one compiler hypothesis across a bounded set of owners. |
-| `main_candidate_rank` | Ranks main-image candidates by residual class, as `overlay candidate-rank` does for overlays. |
+| Command                      | What it tells you                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `compiler_corpus_regression` | Recompiles the exact corpus and reports any byte regression.                                  |
+| `mode_sweep`                 | Searches the approved flag matrix for one fixed candidate.                                    |
+| `mode_cohort`                | Tests one compiler hypothesis across a bounded set of owners.                                 |
+| `main_candidate_rank`        | Ranks main-image candidates by residual class, as `overlay candidate-rank` does for overlays. |
 
 The `compiler` binary additionally hosts `candidate-show` (size, reference size
 and differing halfwords for a candidate), `thumb-disasm`, and the RTL readers
@@ -1238,17 +1249,17 @@ The policy layer. These enforce the evidence and publication boundaries, the
 two-tier rule, the architecture catalogue and the commit contract. A check that
 scans nothing fails; a zero exit means the corpus was inspected.
 
-| Command | What it tells you |
-|---|---|
-| `architecture` | Requires every crate, binary, dispatch target and path to be valid, reachable and catalogued here. |
-| `documented` | Keeps the command groups and this catalog in step with the registry. |
-| `check_publication` | Rejects ROMs, build products, opaque dumps, credentials and disallowed files. |
-| `no_asm_c` | Rejects inline assembly, register pins and assembly barriers in C and headers. |
-| `source_citations` | Checks that cited tools name paths that exist. |
-| `check_unmatchable` | Validates the two owner registers -- unmatchable and provisional -- and prints the queue with `--queue`. |
-| `core_retained_audit` | Requires retained main-image assembly to carry explicit justification. |
-| `cache_key_lint` | Requires cached results to include every input that can change their meaning. |
-| `check_commit_progress` | Compares your commit subject against the staged progress report. |
+| Command                 | What it tells you                                                                                        |
+| ----------------------- | -------------------------------------------------------------------------------------------------------- |
+| `architecture`          | Requires every crate, binary, dispatch target and path to be valid, reachable and catalogued here.       |
+| `documented`            | Keeps the command groups and this catalog in step with the registry.                                     |
+| `check_publication`     | Rejects ROMs, build products, opaque dumps, credentials and disallowed files.                            |
+| `no_asm_c`              | Rejects inline assembly, register pins and assembly barriers in C and headers.                           |
+| `source_citations`      | Checks that cited tools name paths that exist.                                                           |
+| `check_unmatchable`     | Validates the two owner registers -- unmatchable and provisional -- and prints the queue with `--queue`. |
+| `core_retained_audit`   | Requires retained main-image assembly to carry explicit justification.                                   |
+| `cache_key_lint`        | Requires cached results to include every input that can change their meaning.                            |
+| `check_commit_progress` | Compares your commit subject against the staged progress report.                                         |
 
 ### metrics -- measurement and charts
 
@@ -1257,14 +1268,14 @@ refuses to certify a share unless the last full build reproduced the ROM
 byte-identically with no fallback bytes: ownership is a claim, and a percentage
 over a failing build is not evidence.
 
-| Command | What it tells you |
-|---|---|
-| `full_c_progress` | Calculates, checks or writes the audited byte-exact report. |
-| `full_c_history` | Writes the first-parent progress ledger. |
-| `coverage_map` | Checks or regenerates the dashboard, the target index, the charts and the README figures. |
-| `audit_residuals` | Accounts for every remaining executable byte and its ownership class. |
-| `compare_roms` | Compares approved local editions without publishing byte diffs. |
-| `dashboard_server` | Serves a live worktree dashboard on localhost. |
+| Command            | What it tells you                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| `full_c_progress`  | Calculates, checks or writes the audited byte-exact report.                               |
+| `full_c_history`   | Writes the first-parent progress ledger.                                                  |
+| `coverage_map`     | Checks or regenerates the dashboard, the target index, the charts and the README figures. |
+| `audit_residuals`  | Accounts for every remaining executable byte and its ownership class.                     |
+| `compare_roms`     | Compares approved local editions without publishing byte diffs.                           |
+| `dashboard_server` | Serves a live worktree dashboard on localhost.                                            |
 
 One caution. `full_c_progress --write-inventory` re-derives
 `metrics/gs1-en-executable.json`, and that file is the AUDIT rather than a
@@ -1280,13 +1291,13 @@ Decoding a resource from a local ROM, rendering it into a source asset, and
 converting an edited source asset back into a build input. Each of these must
 round-trip: an asset that does not re-encode to the same bytes is not finished.
 
-| Command | What it tells you |
-|---|---|
-| `extract_resource` | Decodes one resource by id or address and can verify the round trip. |
-| `export_asset` | Renders binary graphics, palette, byte and RGBA forms into source assets. |
-| `import_asset` | Converts PNG, indexed-image and MIDI sources into build inputs. |
-| `tilemap` | Round-trips the textual tilemap format. |
-| `bl_site_symbols` | Recovers and audits branch-and-link symbol evidence, reporting every failure. |
+| Command            | What it tells you                                                             |
+| ------------------ | ----------------------------------------------------------------------------- |
+| `extract_resource` | Decodes one resource by id or address and can verify the round trip.          |
+| `export_asset`     | Renders binary graphics, palette, byte and RGBA forms into source assets.     |
+| `import_asset`     | Converts PNG, indexed-image and MIDI sources into build inputs.               |
+| `tilemap`          | Round-trips the textual tilemap format.                                       |
+| `bl_site_symbols`  | Recovers and audits branch-and-link symbol evidence, reporting every failure. |
 
 ### make -- build stages and asset builders
 
@@ -1295,56 +1306,56 @@ part of `make build-assets` and are listed here because the architecture gate
 requires every dispatch target to be catalogued, not because you should call
 them by hand.
 
-| Command | What it tells you |
-|---|---|
-| `build_claimed` | Links the byte-exact owners. |
-| `build_asm` | Rebuilds the assembled stage. |
-| `build_assets` | Rebuilds the asset tree. |
-| `build_full` | Composes exact C, retained assembly and assets, and compares against the ROM. |
-| `build_rom` | Rebuilds the ROM. |
-| `archive_asset` | Rebuilds generic archive containers. |
-| `audio_engine_data` | Rebuilds the audio engine data package. |
-| `audio_wave` | Rebuilds audio samples. |
-| `music` | Rebuilds sequences. |
-| `music_residuals` | Rebuilds residual audio ownership. |
-| `battle_effect_data` | Rebuilds the battle-effect data package. |
-| `sentou_gamen_data` | Rebuilds battle screen data. |
-| `sentou_hyouji` | Rebuilds battle display data. |
-| `sentou_kouka_runtime` | Rebuilds and verifies the battle-effect runtime. |
-| `sentou_menu_data` | Rebuilds battle menu data. |
-| `sentou_resources` | Rebuilds battle resources. |
-| `encounter_data` | Rebuilds encounter data. |
-| `character_catalog` | Rebuilds the character catalogue. |
-| `localization_font` | Rebuilds the localisation font. |
-| `localization_tables` | Rebuilds the localisation tables. |
-| `namae_nyuuryoku` | Rebuilds the name-entry data. |
-| `staff_roll` | Rebuilds the credits data. |
-| `title_resources` | Rebuilds title-screen resources. |
-| `chiiki_map_resources` | Rebuilds regional map resources. |
-| `tokushu_map_resources` | Rebuilds special map resources. |
-| `kind1_map_grid` | Rebuilds map grids. |
-| `map_container_components` | Rebuilds map container components. |
-| `early_runtime_data` | Rebuilds early runtime-support data. |
-| `runtime_support_data` | Rebuilds runtime-support data. |
-| `late_runtime_residual` | Rebuilds late runtime residuals. |
-| `executable_gap_sources` | Rebuilds or classifies executable-gap inputs. |
-| `gba_header` | Rebuilds the cartridge header. |
-| `f0_archive` | Rebuilds the F0 archive format. |
-| `message_archive` | Rebuilds message archives. |
-| `wordstream` | Rebuilds word streams. |
-| `pairtable` | Rebuilds pair tables. |
-| `byte_henkan` | Rebuilds byte-conversion tables. |
-| `byte_value_regions` | Rebuilds byte-value regions. |
-| `indexed_still` | Rebuilds indexed still images. |
-| `static_sprite_series` | Rebuilds static sprite families. |
-| `skip_sprite_archive` | Rebuilds skipped sprite archives. |
-| `simple_resources` | Rebuilds resources with a simple plan. |
-| `resource_directory` | Rebuilds the resource directory. |
-| `resource_01c` | Rebuilds resource 0x01c. |
-| `resource_5` | Rebuilds resource 5. |
-| `resource_3ce` | Rebuilds resource 0x3ce. |
-| `resource_d1_d3` | Rebuilds resources 0xd1–0xd3. |
-| `resource_byte_canvases` | Rebuilds byte-canvas resources. |
+| Command                    | What it tells you                                                             |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| `build_claimed`            | Links the byte-exact owners.                                                  |
+| `build_asm`                | Rebuilds the assembled stage.                                                 |
+| `build_assets`             | Rebuilds the asset tree.                                                      |
+| `build_full`               | Composes exact C, retained assembly and assets, and compares against the ROM. |
+| `build_rom`                | Rebuilds the ROM.                                                             |
+| `archive_asset`            | Rebuilds generic archive containers.                                          |
+| `audio_engine_data`        | Rebuilds the audio engine data package.                                       |
+| `audio_wave`               | Rebuilds audio samples.                                                       |
+| `music`                    | Rebuilds sequences.                                                           |
+| `music_residuals`          | Rebuilds residual audio ownership.                                            |
+| `battle_effect_data`       | Rebuilds the battle-effect data package.                                      |
+| `sentou_gamen_data`        | Rebuilds battle screen data.                                                  |
+| `sentou_hyouji`            | Rebuilds battle display data.                                                 |
+| `sentou_kouka_runtime`     | Rebuilds and verifies the battle-effect runtime.                              |
+| `sentou_menu_data`         | Rebuilds battle menu data.                                                    |
+| `sentou_resources`         | Rebuilds battle resources.                                                    |
+| `encounter_data`           | Rebuilds encounter data.                                                      |
+| `character_catalog`        | Rebuilds the character catalogue.                                             |
+| `localization_font`        | Rebuilds the localisation font.                                               |
+| `localization_tables`      | Rebuilds the localisation tables.                                             |
+| `namae_nyuuryoku`          | Rebuilds the name-entry data.                                                 |
+| `staff_roll`               | Rebuilds the credits data.                                                    |
+| `title_resources`          | Rebuilds title-screen resources.                                              |
+| `chiiki_map_resources`     | Rebuilds regional map resources.                                              |
+| `tokushu_map_resources`    | Rebuilds special map resources.                                               |
+| `kind1_map_grid`           | Rebuilds map grids.                                                           |
+| `map_container_components` | Rebuilds map container components.                                            |
+| `early_runtime_data`       | Rebuilds early runtime-support data.                                          |
+| `runtime_support_data`     | Rebuilds runtime-support data.                                                |
+| `late_runtime_residual`    | Rebuilds late runtime residuals.                                              |
+| `executable_gap_sources`   | Rebuilds or classifies executable-gap inputs.                                 |
+| `gba_header`               | Rebuilds the cartridge header.                                                |
+| `f0_archive`               | Rebuilds the F0 archive format.                                               |
+| `message_archive`          | Rebuilds message archives.                                                    |
+| `wordstream`               | Rebuilds word streams.                                                        |
+| `pairtable`                | Rebuilds pair tables.                                                         |
+| `byte_henkan`              | Rebuilds byte-conversion tables.                                              |
+| `byte_value_regions`       | Rebuilds byte-value regions.                                                  |
+| `indexed_still`            | Rebuilds indexed still images.                                                |
+| `static_sprite_series`     | Rebuilds static sprite families.                                              |
+| `skip_sprite_archive`      | Rebuilds skipped sprite archives.                                             |
+| `simple_resources`         | Rebuilds resources with a simple plan.                                        |
+| `resource_directory`       | Rebuilds the resource directory.                                              |
+| `resource_01c`             | Rebuilds resource 0x01c.                                                      |
+| `resource_5`               | Rebuilds resource 5.                                                          |
+| `resource_3ce`             | Rebuilds resource 0x3ce.                                                      |
+| `resource_d1_d3`           | Rebuilds resources 0xd1–0xd3.                                                 |
+| `resource_byte_canvases`   | Rebuilds byte-canvas resources.                                               |
 
 ---
 
@@ -1352,19 +1363,19 @@ them by hand.
 
 Use the smallest stage that answers your question.
 
-| Target | What it does |
-|---|---|
+| Target               | What it does                                                                     |
+| -------------------- | -------------------------------------------------------------------------------- |
 | `make build-claimed` | Links the byte-exact owners. Fast; answers "does my owner still link and match?" |
-| `make build-asm` | Rebuilds the assembled stage. |
-| `make inventory` | Produces the overlay inventory the overlay tools read. |
-| `make build-assets` | Rebuilds the asset tree. |
-| `make build-full` | Composes everything and compares against the ROM. |
-| `make build-rom` | Rebuilds the ROM image. |
-| `make progress` | Prints the byte-exact share. |
-| `make coverage` | Refreshes the dashboard, the target index and the charts. |
-| `make test` | Lint plus every native self-test. |
-| `make lint` | Architecture and policy gates. |
-| `make verify` | The authoritative gate. |
+| `make build-asm`     | Rebuilds the assembled stage.                                                    |
+| `make inventory`     | Produces the overlay inventory the overlay tools read.                           |
+| `make build-assets`  | Rebuilds the asset tree.                                                         |
+| `make build-full`    | Composes everything and compares against the ROM.                                |
+| `make build-rom`     | Rebuilds the ROM image.                                                          |
+| `make progress`      | Prints the byte-exact share.                                                     |
+| `make coverage`      | Refreshes the dashboard, the target index and the charts.                        |
+| `make test`          | Lint plus every native self-test.                                                |
+| `make lint`          | Architecture and policy gates.                                                   |
+| `make verify`        | The authoritative gate.                                                          |
 
 `make verify` is green only when the ROM rebuilds byte-identically with no
 fallback bytes, every gate passes, and the tracked metrics match the tree. That
@@ -1394,7 +1405,7 @@ uses, and `make routing-debt` reports how many sources still deviate.
 Do not add a compiler option that stock gcc 2.96 does not have. A byte match
 reached by inventing an option is not a reconstruction; it moves the difference
 out of the source, where it can be found, and into the compiler, where it
-cannot. Adding a *stock* option is allowed and is recorded as debt.
+cannot. Adding a _stock_ option is allowed and is recorded as debt.
 
 Price a stock option over whole translation units before routing it, not over
 the owners it helps. An overlay whose own owners disagree about a flag was not
@@ -1458,233 +1469,233 @@ This table contains every scope of at least 1,000 bytes (228 rows). The complete
 2,232-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
-| Rank | Scope | Target | Namespace / owner |
-|---:|---:|---:|---|
-| 1 | 6,332 | 6,332 | `main:0x080bbb0c` |
-| 2 | 4,888 | 4,888 | `main:0x080ab5e4` |
-| 3 | 4,224 | 4,224 | `main:0x08027114` |
-| 4 | 4,138 | 4,138 | `resource_380:0x02002c10` |
-| 5 | 4,122 | 4,122 | `resource_373:0x02002284` |
-| 6 | 3,804 | 3,804 | `main:0x080f6440` |
-| 7 | 3,702 | 3,702 | `resource_3c6:0x02000218` |
-| 8 | 3,656 | 3,656 | `main:0x080dea70` |
-| 9 | 3,442 | 3,442 | `resource_378:0x0200088c` |
-| 10 | 3,408 | 3,408 | `resource_378:0x02001874` |
-| 11 | 3,320 | 3,320 | `main:0x08023178` |
-| 12 | 3,128 | 3,128 | `main:0x080a2680` |
-| 13 | 3,104 | 2,810 | `main:0x080ad6d4` |
-| 14 | 3,078 | 3,078 | `resource_3c9:0x0200124c` |
-| 15 | 3,074 | 3,074 | `resource_383:0x02000b48` |
-| 16 | 3,058 | 3,058 | `resource_3c5:0x0200186c` |
-| 17 | 3,046 | 3,046 | `resource_395:0x02000470` |
-| 18 | 3,046 | 3,046 | `resource_39d:0x02001adc` |
-| 19 | 2,908 | 2,908 | `resource_381:0x020003cc` |
-| 20 | 2,854 | 2,854 | `resource_374:0x0200155c` |
-| 21 | 2,756 | 2,756 | `main:0x08023e70` |
-| 22 | 2,734 | 2,734 | `resource_3a8:0x020026a8` |
-| 23 | 2,672 | 2,672 | `resource_3a8:0x02000aac` |
-| 24 | 2,574 | 2,574 | `resource_39e:0x02002ec8` |
-| 25 | 2,534 | 2,534 | `resource_3bf:0x0200298c` |
-| 26 | 2,508 | 2,508 | `main:0x080cbc0c` |
-| 27 | 2,502 | 2,502 | `resource_3bf:0x02003c84` |
-| 28 | 2,476 | 2,476 | `resource_3af:0x0200252c` |
-| 29 | 2,444 | 2,444 | `main:0x080eb754` |
-| 30 | 2,426 | 2,426 | `resource_3b8:0x0200338c` |
-| 31 | 2,418 | 2,418 | `resource_38d:0x02000894` |
-| 32 | 2,388 | 2,388 | `main:0x080f7460` |
-| 33 | 2,386 | 2,386 | `resource_3b8:0x02001d7c` |
-| 34 | 2,382 | 2,382 | `resource_383:0x02003c6c` |
-| 35 | 2,356 | 2,356 | `main:0x080d2464` |
-| 36 | 2,342 | 2,342 | `resource_3aa:0x020010f0` |
-| 37 | 2,316 | 2,316 | `main:0x0808f52c` |
-| 38 | 2,310 | 2,310 | `resource_3b8:0x02002a84` |
-| 39 | 2,300 | 2,300 | `main:0x08021e6c` |
-| 40 | 2,298 | 2,298 | `resource_380:0x02000a98` |
-| 41 | 2,294 | 2,294 | `resource_3c9:0x02002360` |
-| 42 | 2,268 | 2,268 | `main:0x080d91dc` |
-| 43 | 2,236 | 2,236 | `resource_39e:0x02001494` |
-| 44 | 2,230 | 2,230 | `resource_3b8:0x02000b40` |
-| 45 | 2,230 | 2,230 | `resource_3bd:0x02001d4c` |
-| 46 | 2,222 | 2,222 | `resource_3bc:0x02001a08` |
-| 47 | 2,218 | 2,218 | `resource_378:0x020027d4` |
-| 48 | 2,218 | 2,218 | `resource_3c9:0x02003e8c` |
-| 49 | 2,206 | 2,206 | `resource_377:0x0200063c` |
-| 50 | 2,194 | 2,194 | `resource_376:0x02000640` |
-| 51 | 2,190 | 2,190 | `resource_396:0x0200069c` |
-| 52 | 2,180 | 2,180 | `resource_3bd:0x02002c38` |
-| 53 | 2,170 | 2,170 | `resource_3ca:0x02000430` |
-| 54 | 2,166 | 2,166 | `resource_38f:0x020011ec` |
-| 55 | 2,166 | 2,166 | `resource_3c9:0x02002c58` |
-| 56 | 2,158 | 2,158 | `resource_373:0x02001a14` |
-| 57 | 2,138 | 2,138 | `main:0x08026080` |
-| 58 | 2,124 | 2,124 | `main:0x08024934` |
-| 59 | 2,118 | 2,118 | `resource_371:0x020028e8` |
-| 60 | 2,106 | 2,106 | `resource_3bd:0x020013d4` |
-| 61 | 2,070 | 2,070 | `resource_3b1:0x02001b34` |
-| 62 | 2,068 | 2,068 | `resource_3c2:0x02000240` |
-| 63 | 2,052 | 2,052 | `resource_39e:0x020038d8` |
-| 64 | 2,024 | 2,024 | `main:0x08077428` |
-| 65 | 2,018 | 2,018 | `resource_3a5:0x020004e4` |
-| 66 | 2,014 | 2,014 | `resource_3c9:0x02000a6c` |
-| 67 | 2,006 | 2,006 | `resource_3a4:0x02001830` |
-| 68 | 2,002 | 2,002 | `resource_38d:0x020019b0` |
-| 69 | 2,002 | 2,002 | `resource_3af:0x02003a0c` |
-| 70 | 1,980 | 1,980 | `main:0x080acab8` |
-| 71 | 1,978 | 1,978 | `resource_3ad:0x02000808` |
-| 72 | 1,968 | 1,968 | `main:0x080e823c` |
-| 73 | 1,920 | 1,920 | `main:0x080f7f78` |
-| 74 | 1,882 | 1,882 | `resource_3b9:0x02001c6c` |
-| 75 | 1,876 | 1,876 | `main:0x0802592c` |
-| 76 | 1,854 | 1,854 | `resource_3c8:0x020026f8` |
-| 77 | 1,822 | 1,822 | `resource_38f:0x02001e6c` |
-| 78 | 1,816 | 1,816 | `main:0x080e99c0` |
-| 79 | 1,816 | 1,712 | `main:0x08090a5c` |
-| 80 | 1,810 | 1,810 | `resource_383:0x02002fd4` |
-| 81 | 1,808 | 1,808 | `resource_3b1:0x02005c9c` |
-| 82 | 1,796 | 1,664 | `main:0x080f3078` |
-| 83 | 1,770 | 1,770 | `resource_39e:0x020027dc` |
-| 84 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
-| 85 | 1,768 | 1,768 | `main:0x080d52c8` |
-| 86 | 1,734 | 1,734 | `resource_383:0x02001e80` |
-| 87 | 1,724 | 1,724 | `main:0x080e89ec` |
-| 88 | 1,720 | 1,720 | `main:0x080e2974` |
-| 89 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
-| 90 | 1,702 | 1,702 | `resource_381:0x02002150` |
-| 91 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
-| 92 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
-| 93 | 1,688 | 1,688 | `main:0x080b63c8` |
-| 94 | 1,682 | 1,682 | `resource_39c:0x02004888` |
-| 95 | 1,680 | 1,680 | `main:0x080a6ccc` |
-| 96 | 1,660 | 1,660 | `main:0x080de2f8` |
-| 97 | 1,648 | 1,648 | `main:0x080ed408` |
-| 98 | 1,648 | 1,648 | `resource_3a2:0x020001dc` |
-| 99 | 1,640 | 1,640 | `main:0x0800aa0c` |
-| 100 | 1,638 | 1,638 | `resource_373:0x02004084` |
-| 101 | 1,636 | 1,636 | `main:0x0800cacc` |
-| 102 | 1,632 | 1,632 | `resource_39c:0x02002f58` |
-| 103 | 1,626 | 1,626 | `resource_375:0x020000dc` |
-| 104 | 1,614 | 1,614 | `resource_3bf:0x02003374` |
-| 105 | 1,592 | 1,592 | `main:0x080168f4` |
-| 106 | 1,588 | 1,588 | `main:0x08022b44` |
-| 107 | 1,586 | 1,586 | `resource_3c5:0x02001238` |
-| 108 | 1,576 | 1,576 | `main:0x080d2d98` |
-| 109 | 1,556 | 1,556 | `main:0x080cf8e0` |
-| 110 | 1,550 | 1,550 | `resource_379:0x02000484` |
-| 111 | 1,540 | 1,540 | `main:0x080e3aa0` |
-| 112 | 1,514 | 1,514 | `resource_3a4:0x02000d24` |
-| 113 | 1,512 | 1,512 | `main:0x080e4e0c` |
-| 114 | 1,504 | 1,504 | `main:0x08012518` |
-| 115 | 1,480 | 1,480 | `resource_399:0x02000f84` |
-| 116 | 1,468 | 1,468 | `main:0x080dbc30` |
-| 117 | 1,462 | 1,462 | `resource_373:0x020039e8` |
-| 118 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
-| 119 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
-| 120 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
-| 121 | 1,410 | 1,410 | `resource_383:0x020036e8` |
-| 122 | 1,408 | 1,408 | `main:0x08020244` |
-| 123 | 1,402 | 1,402 | `resource_3b1:0x0200234c` |
-| 124 | 1,398 | 1,398 | `resource_372:0x02001b18` |
-| 125 | 1,382 | 1,382 | `resource_3c9:0x02003924` |
-| 126 | 1,378 | 1,378 | `resource_380:0x02001780` |
-| 127 | 1,376 | 1,376 | `main:0x0801a98c` |
-| 128 | 1,366 | 1,366 | `resource_37a:0x02000488` |
-| 129 | 1,366 | 1,366 | `resource_3aa:0x0200077c` |
-| 130 | 1,360 | 1,360 | `main:0x080c91dc` |
-| 131 | 1,336 | 1,336 | `main:0x080a9f10` |
-| 132 | 1,326 | 1,326 | `resource_391:0x02002004` |
-| 133 | 1,324 | 1,324 | `main:0x080bf678` |
-| 134 | 1,310 | 1,310 | `resource_373:0x020034c8` |
-| 135 | 1,308 | 1,308 | `main:0x080aa768` |
-| 136 | 1,308 | 1,308 | `resource_37a:0x02002094` |
-| 137 | 1,306 | 1,306 | `resource_3a8:0x02000590` |
-| 138 | 1,290 | 1,290 | `resource_3af:0x02000c94` |
-| 139 | 1,274 | 1,274 | `resource_387:0x0200066c` |
-| 140 | 1,272 | 1,272 | `main:0x080b0aac` |
-| 141 | 1,270 | 1,270 | `resource_371:0x02001064` |
-| 142 | 1,270 | 1,270 | `resource_3b1:0x020037d8` |
-| 143 | 1,264 | 1,264 | `main:0x08099da4` |
-| 144 | 1,262 | 1,262 | `resource_38d:0x020012a0` |
-| 145 | 1,252 | 1,178 | `main:0x0800f2f8` |
-| 146 | 1,248 | 1,248 | `main:0x080d9ae8` |
-| 147 | 1,238 | 1,238 | `resource_373:0x02004b24` |
-| 148 | 1,234 | 1,234 | `resource_39d:0x02001608` |
-| 149 | 1,234 | 1,234 | `resource_3af:0x02001db0` |
-| 150 | 1,230 | 1,230 | `resource_371:0x02001f6c` |
-| 151 | 1,230 | 1,230 | `resource_374:0x02000b8c` |
-| 152 | 1,228 | 1,228 | `main:0x080b6f44` |
-| 153 | 1,226 | 1,226 | `main:0x080f4f04` |
-| 154 | 1,222 | 1,222 | `resource_37a:0x0200155c` |
-| 155 | 1,218 | 1,218 | `resource_37b:0x02000554` |
-| 156 | 1,210 | 1,210 | `resource_391:0x02001740` |
-| 157 | 1,204 | 1,204 | `main:0x080ce034` |
-| 158 | 1,198 | 1,198 | `resource_3b1:0x020057ec` |
-| 159 | 1,192 | 1,192 | `main:0x080da6cc` |
-| 160 | 1,190 | 1,190 | `resource_3bd:0x02002604` |
-| 161 | 1,182 | 1,182 | `resource_3c9:0x02004738` |
-| 162 | 1,180 | 1,180 | `resource_37b:0x0200101c` |
-| 163 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
-| 164 | 1,176 | 1,176 | `resource_380:0x020043bc` |
-| 165 | 1,174 | 1,174 | `resource_3bc:0x020040bc` |
-| 166 | 1,170 | 1,170 | `resource_370:0x020003cc` |
-| 167 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
-| 168 | 1,168 | 1,168 | `main:0x080a4924` |
-| 169 | 1,154 | 1,154 | `resource_37f:0x02001604` |
-| 170 | 1,152 | 1,152 | `main:0x080191cc` |
-| 171 | 1,152 | 1,152 | `main:0x0801d4cc` |
-| 172 | 1,152 | 1,152 | `main:0x080f26ec` |
-| 173 | 1,150 | 1,150 | `resource_375:0x020014f4` |
-| 174 | 1,144 | 1,144 | `main:0x080f2028` |
-| 175 | 1,142 | 1,142 | `resource_373:0x02004ffc` |
-| 176 | 1,128 | 1,128 | `main:0x080d0000` |
-| 177 | 1,126 | 1,126 | `resource_37f:0x02000f6c` |
-| 178 | 1,116 | 1,116 | `main:0x080c02a4` |
-| 179 | 1,114 | 1,114 | `resource_3c7:0x02000880` |
-| 180 | 1,110 | 1,110 | `resource_372:0x02003394` |
-| 181 | 1,110 | 1,110 | `resource_3ce:0x02000244` |
-| 182 | 1,106 | 1,106 | `resource_39e:0x02001dbc` |
-| 183 | 1,104 | 1,104 | `main:0x080beb08` |
-| 184 | 1,102 | 1,102 | `resource_3bb:0x020010dc` |
-| 185 | 1,102 | 1,102 | `resource_3c9:0x02004fec` |
-| 186 | 1,098 | 1,098 | `main:0x080fae58` |
-| 187 | 1,096 | 1,096 | `main:0x080d41a4` |
-| 188 | 1,096 | 1,096 | `resource_3b9:0x020011c4` |
-| 189 | 1,094 | 1,094 | `resource_371:0x02000c1c` |
-| 190 | 1,094 | 1,094 | `resource_3bc:0x02001474` |
-| 191 | 1,090 | 1,090 | `resource_372:0x020037ec` |
-| 192 | 1,090 | 1,090 | `resource_39e:0x0200064c` |
-| 193 | 1,078 | 1,078 | `resource_373:0x020015dc` |
-| 194 | 1,078 | 1,078 | `resource_373:0x020046ec` |
-| 195 | 1,078 | 1,078 | `resource_399:0x020019bc` |
-| 196 | 1,076 | 1,076 | `main:0x080030f8` |
-| 197 | 1,074 | 1,074 | `main:0x080f4318` |
-| 198 | 1,074 | 1,074 | `resource_3ba:0x02000db8` |
-| 199 | 1,066 | 1,066 | `main:0x080e5e28` |
-| 200 | 1,056 | 1,056 | `main:0x080ae2f4` |
-| 201 | 1,054 | 1,054 | `resource_39d:0x020011e8` |
-| 202 | 1,054 | 1,028 | `main:0x080d77b4` |
-| 203 | 1,052 | 1,052 | `resource_3b1:0x02004254` |
-| 204 | 1,052 | 978 | `main:0x0808bec0` |
-| 205 | 1,050 | 1,050 | `resource_372:0x020028a4` |
-| 206 | 1,050 | 1,050 | `resource_3aa:0x02000360` |
-| 207 | 1,050 | 1,050 | `resource_3aa:0x02000cd4` |
-| 208 | 1,046 | 1,046 | `resource_380:0x020027f8` |
-| 209 | 1,046 | 1,046 | `resource_381:0x02001b34` |
-| 210 | 1,044 | 1,044 | `main:0x0808d9a4` |
-| 211 | 1,044 | 1,044 | `main:0x080bfba4` |
-| 212 | 1,044 | 1,044 | `main:0x080cb7f8` |
-| 213 | 1,042 | 1,042 | `resource_377:0x02000f90` |
-| 214 | 1,042 | 1,042 | `resource_3a5:0x02001490` |
-| 215 | 1,042 | 1,042 | `resource_3c9:0x02004bd8` |
-| 216 | 1,040 | 1,040 | `main:0x080ceb54` |
-| 217 | 1,040 | 1,040 | `main:0x080e90a8` |
-| 218 | 1,038 | 1,038 | `resource_379:0x02000074` |
-| 219 | 1,034 | 1,034 | `resource_39d:0x02000ddc` |
-| 220 | 1,030 | 1,030 | `resource_37b:0x020015d4` |
-| 221 | 1,030 | 1,030 | `resource_38f:0x02001a64` |
-| 222 | 1,030 | 1,030 | `resource_391:0x02001bfc` |
-| 223 | 1,028 | 1,028 | `main:0x0801de5c` |
-| 224 | 1,026 | 1,026 | `resource_37b:0x02000150` |
-| 225 | 1,022 | 1,022 | `resource_3b8:0x020006dc` |
-| 226 | 1,020 | 1,020 | `resource_3b9:0x02000db0` |
-| 227 | 1,010 | 1,010 | `resource_37a:0x02001ca0` |
-| 228 | 1,006 | 1,006 | `resource_394:0x020003f0` |
+| Rank | Scope | Target | Namespace / owner         |
+| ---: | ----: | -----: | ------------------------- |
+|    1 | 6,332 |  6,332 | `main:0x080bbb0c`         |
+|    2 | 4,888 |  4,888 | `main:0x080ab5e4`         |
+|    3 | 4,224 |  4,224 | `main:0x08027114`         |
+|    4 | 4,138 |  4,138 | `resource_380:0x02002c10` |
+|    5 | 4,122 |  4,122 | `resource_373:0x02002284` |
+|    6 | 3,804 |  3,804 | `main:0x080f6440`         |
+|    7 | 3,702 |  3,702 | `resource_3c6:0x02000218` |
+|    8 | 3,656 |  3,656 | `main:0x080dea70`         |
+|    9 | 3,442 |  3,442 | `resource_378:0x0200088c` |
+|   10 | 3,408 |  3,408 | `resource_378:0x02001874` |
+|   11 | 3,320 |  3,320 | `main:0x08023178`         |
+|   12 | 3,128 |  3,128 | `main:0x080a2680`         |
+|   13 | 3,104 |  2,810 | `main:0x080ad6d4`         |
+|   14 | 3,078 |  3,078 | `resource_3c9:0x0200124c` |
+|   15 | 3,074 |  3,074 | `resource_383:0x02000b48` |
+|   16 | 3,058 |  3,058 | `resource_3c5:0x0200186c` |
+|   17 | 3,046 |  3,046 | `resource_395:0x02000470` |
+|   18 | 3,046 |  3,046 | `resource_39d:0x02001adc` |
+|   19 | 2,908 |  2,908 | `resource_381:0x020003cc` |
+|   20 | 2,854 |  2,854 | `resource_374:0x0200155c` |
+|   21 | 2,756 |  2,756 | `main:0x08023e70`         |
+|   22 | 2,734 |  2,734 | `resource_3a8:0x020026a8` |
+|   23 | 2,672 |  2,672 | `resource_3a8:0x02000aac` |
+|   24 | 2,574 |  2,574 | `resource_39e:0x02002ec8` |
+|   25 | 2,534 |  2,534 | `resource_3bf:0x0200298c` |
+|   26 | 2,508 |  2,508 | `main:0x080cbc0c`         |
+|   27 | 2,502 |  2,502 | `resource_3bf:0x02003c84` |
+|   28 | 2,476 |  2,476 | `resource_3af:0x0200252c` |
+|   29 | 2,444 |  2,444 | `main:0x080eb754`         |
+|   30 | 2,426 |  2,426 | `resource_3b8:0x0200338c` |
+|   31 | 2,418 |  2,418 | `resource_38d:0x02000894` |
+|   32 | 2,388 |  2,388 | `main:0x080f7460`         |
+|   33 | 2,386 |  2,386 | `resource_3b8:0x02001d7c` |
+|   34 | 2,382 |  2,382 | `resource_383:0x02003c6c` |
+|   35 | 2,356 |  2,356 | `main:0x080d2464`         |
+|   36 | 2,342 |  2,342 | `resource_3aa:0x020010f0` |
+|   37 | 2,316 |  2,316 | `main:0x0808f52c`         |
+|   38 | 2,310 |  2,310 | `resource_3b8:0x02002a84` |
+|   39 | 2,300 |  2,300 | `main:0x08021e6c`         |
+|   40 | 2,298 |  2,298 | `resource_380:0x02000a98` |
+|   41 | 2,294 |  2,294 | `resource_3c9:0x02002360` |
+|   42 | 2,268 |  2,268 | `main:0x080d91dc`         |
+|   43 | 2,236 |  2,236 | `resource_39e:0x02001494` |
+|   44 | 2,230 |  2,230 | `resource_3b8:0x02000b40` |
+|   45 | 2,230 |  2,230 | `resource_3bd:0x02001d4c` |
+|   46 | 2,222 |  2,222 | `resource_3bc:0x02001a08` |
+|   47 | 2,218 |  2,218 | `resource_378:0x020027d4` |
+|   48 | 2,218 |  2,218 | `resource_3c9:0x02003e8c` |
+|   49 | 2,206 |  2,206 | `resource_377:0x0200063c` |
+|   50 | 2,194 |  2,194 | `resource_376:0x02000640` |
+|   51 | 2,190 |  2,190 | `resource_396:0x0200069c` |
+|   52 | 2,180 |  2,180 | `resource_3bd:0x02002c38` |
+|   53 | 2,170 |  2,170 | `resource_3ca:0x02000430` |
+|   54 | 2,166 |  2,166 | `resource_38f:0x020011ec` |
+|   55 | 2,166 |  2,166 | `resource_3c9:0x02002c58` |
+|   56 | 2,158 |  2,158 | `resource_373:0x02001a14` |
+|   57 | 2,138 |  2,138 | `main:0x08026080`         |
+|   58 | 2,124 |  2,124 | `main:0x08024934`         |
+|   59 | 2,118 |  2,118 | `resource_371:0x020028e8` |
+|   60 | 2,106 |  2,106 | `resource_3bd:0x020013d4` |
+|   61 | 2,070 |  2,070 | `resource_3b1:0x02001b34` |
+|   62 | 2,068 |  2,068 | `resource_3c2:0x02000240` |
+|   63 | 2,052 |  2,052 | `resource_39e:0x020038d8` |
+|   64 | 2,024 |  2,024 | `main:0x08077428`         |
+|   65 | 2,018 |  2,018 | `resource_3a5:0x020004e4` |
+|   66 | 2,014 |  2,014 | `resource_3c9:0x02000a6c` |
+|   67 | 2,006 |  2,006 | `resource_3a4:0x02001830` |
+|   68 | 2,002 |  2,002 | `resource_38d:0x020019b0` |
+|   69 | 2,002 |  2,002 | `resource_3af:0x02003a0c` |
+|   70 | 1,980 |  1,980 | `main:0x080acab8`         |
+|   71 | 1,978 |  1,978 | `resource_3ad:0x02000808` |
+|   72 | 1,968 |  1,968 | `main:0x080e823c`         |
+|   73 | 1,920 |  1,920 | `main:0x080f7f78`         |
+|   74 | 1,882 |  1,882 | `resource_3b9:0x02001c6c` |
+|   75 | 1,876 |  1,876 | `main:0x0802592c`         |
+|   76 | 1,854 |  1,854 | `resource_3c8:0x020026f8` |
+|   77 | 1,822 |  1,822 | `resource_38f:0x02001e6c` |
+|   78 | 1,816 |  1,816 | `main:0x080e99c0`         |
+|   79 | 1,816 |  1,712 | `main:0x08090a5c`         |
+|   80 | 1,810 |  1,810 | `resource_383:0x02002fd4` |
+|   81 | 1,808 |  1,808 | `resource_3b1:0x02005c9c` |
+|   82 | 1,796 |  1,664 | `main:0x080f3078`         |
+|   83 | 1,770 |  1,770 | `resource_39e:0x020027dc` |
+|   84 | 1,770 |  1,770 | `resource_3b1:0x020028c8` |
+|   85 | 1,768 |  1,768 | `main:0x080d52c8`         |
+|   86 | 1,734 |  1,734 | `resource_383:0x02001e80` |
+|   87 | 1,724 |  1,724 | `main:0x080e89ec`         |
+|   88 | 1,720 |  1,720 | `main:0x080e2974`         |
+|   89 | 1,704 |  1,704 | `resource_3a2:0x02000924` |
+|   90 | 1,702 |  1,702 | `resource_381:0x02002150` |
+|   91 | 1,702 |  1,702 | `resource_3b7:0x020001d8` |
+|   92 | 1,698 |  1,698 | `resource_3ae:0x02000ba0` |
+|   93 | 1,688 |  1,688 | `main:0x080b63c8`         |
+|   94 | 1,682 |  1,682 | `resource_39c:0x02004888` |
+|   95 | 1,680 |  1,680 | `main:0x080a6ccc`         |
+|   96 | 1,660 |  1,660 | `main:0x080de2f8`         |
+|   97 | 1,648 |  1,648 | `main:0x080ed408`         |
+|   98 | 1,648 |  1,648 | `resource_3a2:0x020001dc` |
+|   99 | 1,640 |  1,640 | `main:0x0800aa0c`         |
+|  100 | 1,638 |  1,638 | `resource_373:0x02004084` |
+|  101 | 1,636 |  1,636 | `main:0x0800cacc`         |
+|  102 | 1,632 |  1,632 | `resource_39c:0x02002f58` |
+|  103 | 1,626 |  1,626 | `resource_375:0x020000dc` |
+|  104 | 1,614 |  1,614 | `resource_3bf:0x02003374` |
+|  105 | 1,592 |  1,592 | `main:0x080168f4`         |
+|  106 | 1,588 |  1,588 | `main:0x08022b44`         |
+|  107 | 1,586 |  1,586 | `resource_3c5:0x02001238` |
+|  108 | 1,576 |  1,576 | `main:0x080d2d98`         |
+|  109 | 1,556 |  1,556 | `main:0x080cf8e0`         |
+|  110 | 1,550 |  1,550 | `resource_379:0x02000484` |
+|  111 | 1,540 |  1,540 | `main:0x080e3aa0`         |
+|  112 | 1,514 |  1,514 | `resource_3a4:0x02000d24` |
+|  113 | 1,512 |  1,512 | `main:0x080e4e0c`         |
+|  114 | 1,504 |  1,504 | `main:0x08012518`         |
+|  115 | 1,480 |  1,480 | `resource_399:0x02000f84` |
+|  116 | 1,468 |  1,468 | `main:0x080dbc30`         |
+|  117 | 1,462 |  1,462 | `resource_373:0x020039e8` |
+|  118 | 1,458 |  1,458 | `resource_3c8:0x020047ac` |
+|  119 | 1,448 |  1,448 | `resource_3b0:0x02000af8` |
+|  120 | 1,448 |  1,448 | `resource_3b1:0x020050dc` |
+|  121 | 1,410 |  1,410 | `resource_383:0x020036e8` |
+|  122 | 1,408 |  1,408 | `main:0x08020244`         |
+|  123 | 1,402 |  1,402 | `resource_3b1:0x0200234c` |
+|  124 | 1,398 |  1,398 | `resource_372:0x02001b18` |
+|  125 | 1,382 |  1,382 | `resource_3c9:0x02003924` |
+|  126 | 1,378 |  1,378 | `resource_380:0x02001780` |
+|  127 | 1,376 |  1,376 | `main:0x0801a98c`         |
+|  128 | 1,366 |  1,366 | `resource_37a:0x02000488` |
+|  129 | 1,366 |  1,366 | `resource_3aa:0x0200077c` |
+|  130 | 1,360 |  1,360 | `main:0x080c91dc`         |
+|  131 | 1,336 |  1,336 | `main:0x080a9f10`         |
+|  132 | 1,326 |  1,326 | `resource_391:0x02002004` |
+|  133 | 1,324 |  1,324 | `main:0x080bf678`         |
+|  134 | 1,310 |  1,310 | `resource_373:0x020034c8` |
+|  135 | 1,308 |  1,308 | `main:0x080aa768`         |
+|  136 | 1,308 |  1,308 | `resource_37a:0x02002094` |
+|  137 | 1,306 |  1,306 | `resource_3a8:0x02000590` |
+|  138 | 1,290 |  1,290 | `resource_3af:0x02000c94` |
+|  139 | 1,274 |  1,274 | `resource_387:0x0200066c` |
+|  140 | 1,272 |  1,272 | `main:0x080b0aac`         |
+|  141 | 1,270 |  1,270 | `resource_371:0x02001064` |
+|  142 | 1,270 |  1,270 | `resource_3b1:0x020037d8` |
+|  143 | 1,264 |  1,264 | `main:0x08099da4`         |
+|  144 | 1,262 |  1,262 | `resource_38d:0x020012a0` |
+|  145 | 1,252 |  1,178 | `main:0x0800f2f8`         |
+|  146 | 1,248 |  1,248 | `main:0x080d9ae8`         |
+|  147 | 1,238 |  1,238 | `resource_373:0x02004b24` |
+|  148 | 1,234 |  1,234 | `resource_39d:0x02001608` |
+|  149 | 1,234 |  1,234 | `resource_3af:0x02001db0` |
+|  150 | 1,230 |  1,230 | `resource_371:0x02001f6c` |
+|  151 | 1,230 |  1,230 | `resource_374:0x02000b8c` |
+|  152 | 1,228 |  1,228 | `main:0x080b6f44`         |
+|  153 | 1,226 |  1,226 | `main:0x080f4f04`         |
+|  154 | 1,222 |  1,222 | `resource_37a:0x0200155c` |
+|  155 | 1,218 |  1,218 | `resource_37b:0x02000554` |
+|  156 | 1,210 |  1,210 | `resource_391:0x02001740` |
+|  157 | 1,204 |  1,204 | `main:0x080ce034`         |
+|  158 | 1,198 |  1,198 | `resource_3b1:0x020057ec` |
+|  159 | 1,192 |  1,192 | `main:0x080da6cc`         |
+|  160 | 1,190 |  1,190 | `resource_3bd:0x02002604` |
+|  161 | 1,182 |  1,182 | `resource_3c9:0x02004738` |
+|  162 | 1,180 |  1,180 | `resource_37b:0x0200101c` |
+|  163 | 1,176 |  1,176 | `resource_37b:0x02000a18` |
+|  164 | 1,176 |  1,176 | `resource_380:0x020043bc` |
+|  165 | 1,174 |  1,174 | `resource_3bc:0x020040bc` |
+|  166 | 1,170 |  1,170 | `resource_370:0x020003cc` |
+|  167 | 1,170 |  1,170 | `resource_3b3:0x0200174c` |
+|  168 | 1,168 |  1,168 | `main:0x080a4924`         |
+|  169 | 1,154 |  1,154 | `resource_37f:0x02001604` |
+|  170 | 1,152 |  1,152 | `main:0x080191cc`         |
+|  171 | 1,152 |  1,152 | `main:0x0801d4cc`         |
+|  172 | 1,152 |  1,152 | `main:0x080f26ec`         |
+|  173 | 1,150 |  1,150 | `resource_375:0x020014f4` |
+|  174 | 1,144 |  1,144 | `main:0x080f2028`         |
+|  175 | 1,142 |  1,142 | `resource_373:0x02004ffc` |
+|  176 | 1,128 |  1,128 | `main:0x080d0000`         |
+|  177 | 1,126 |  1,126 | `resource_37f:0x02000f6c` |
+|  178 | 1,116 |  1,116 | `main:0x080c02a4`         |
+|  179 | 1,114 |  1,114 | `resource_3c7:0x02000880` |
+|  180 | 1,110 |  1,110 | `resource_372:0x02003394` |
+|  181 | 1,110 |  1,110 | `resource_3ce:0x02000244` |
+|  182 | 1,106 |  1,106 | `resource_39e:0x02001dbc` |
+|  183 | 1,104 |  1,104 | `main:0x080beb08`         |
+|  184 | 1,102 |  1,102 | `resource_3bb:0x020010dc` |
+|  185 | 1,102 |  1,102 | `resource_3c9:0x02004fec` |
+|  186 | 1,098 |  1,098 | `main:0x080fae58`         |
+|  187 | 1,096 |  1,096 | `main:0x080d41a4`         |
+|  188 | 1,096 |  1,096 | `resource_3b9:0x020011c4` |
+|  189 | 1,094 |  1,094 | `resource_371:0x02000c1c` |
+|  190 | 1,094 |  1,094 | `resource_3bc:0x02001474` |
+|  191 | 1,090 |  1,090 | `resource_372:0x020037ec` |
+|  192 | 1,090 |  1,090 | `resource_39e:0x0200064c` |
+|  193 | 1,078 |  1,078 | `resource_373:0x020015dc` |
+|  194 | 1,078 |  1,078 | `resource_373:0x020046ec` |
+|  195 | 1,078 |  1,078 | `resource_399:0x020019bc` |
+|  196 | 1,076 |  1,076 | `main:0x080030f8`         |
+|  197 | 1,074 |  1,074 | `main:0x080f4318`         |
+|  198 | 1,074 |  1,074 | `resource_3ba:0x02000db8` |
+|  199 | 1,066 |  1,066 | `main:0x080e5e28`         |
+|  200 | 1,056 |  1,056 | `main:0x080ae2f4`         |
+|  201 | 1,054 |  1,054 | `resource_39d:0x020011e8` |
+|  202 | 1,054 |  1,028 | `main:0x080d77b4`         |
+|  203 | 1,052 |  1,052 | `resource_3b1:0x02004254` |
+|  204 | 1,052 |    978 | `main:0x0808bec0`         |
+|  205 | 1,050 |  1,050 | `resource_372:0x020028a4` |
+|  206 | 1,050 |  1,050 | `resource_3aa:0x02000360` |
+|  207 | 1,050 |  1,050 | `resource_3aa:0x02000cd4` |
+|  208 | 1,046 |  1,046 | `resource_380:0x020027f8` |
+|  209 | 1,046 |  1,046 | `resource_381:0x02001b34` |
+|  210 | 1,044 |  1,044 | `main:0x0808d9a4`         |
+|  211 | 1,044 |  1,044 | `main:0x080bfba4`         |
+|  212 | 1,044 |  1,044 | `main:0x080cb7f8`         |
+|  213 | 1,042 |  1,042 | `resource_377:0x02000f90` |
+|  214 | 1,042 |  1,042 | `resource_3a5:0x02001490` |
+|  215 | 1,042 |  1,042 | `resource_3c9:0x02004bd8` |
+|  216 | 1,040 |  1,040 | `main:0x080ceb54`         |
+|  217 | 1,040 |  1,040 | `main:0x080e90a8`         |
+|  218 | 1,038 |  1,038 | `resource_379:0x02000074` |
+|  219 | 1,034 |  1,034 | `resource_39d:0x02000ddc` |
+|  220 | 1,030 |  1,030 | `resource_37b:0x020015d4` |
+|  221 | 1,030 |  1,030 | `resource_38f:0x02001a64` |
+|  222 | 1,030 |  1,030 | `resource_391:0x02001bfc` |
+|  223 | 1,028 |  1,028 | `main:0x0801de5c`         |
+|  224 | 1,026 |  1,026 | `resource_37b:0x02000150` |
+|  225 | 1,022 |  1,022 | `resource_3b8:0x020006dc` |
+|  226 | 1,020 |  1,020 | `resource_3b9:0x02000db0` |
+|  227 | 1,010 |  1,010 | `resource_37a:0x02001ca0` |
+|  228 | 1,006 |  1,006 | `resource_394:0x020003f0` |

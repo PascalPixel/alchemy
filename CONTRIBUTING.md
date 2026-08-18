@@ -695,6 +695,33 @@ local assigned before the loop and held across it. This is the cheapest way to
 tell a hoisted invariant from a constant, and it is usually worth more than it
 looks -- on resource_39a:1e08 it closed 12 bytes of size difference in one edit.
 
+A constant the reference DERIVES from another is a division in the source, and
+not a shift. `resource_3bc:3b40` writes 0x20000 and then 0x10000, and the
+reference builds the second with `asrs r3, r3, #1` off the register that still
+holds the first. Both `0x10000` and `scale >> 1` rebuild it with `movs / lsls`
+instead; only `scale / 2` reproduces, because the signed division is what leaves
+the shift in the RTL for the register value rather than folding a new constant.
+
+WHERE a local is assigned matters as much as that it exists. Two stack arguments
+initialised at their declaration are materialised and stored one at a time; the
+same two assigned after an intervening statement stay live together and give the
+reference's `movs r3,#8 / movs r2,#32 / str / str`. On `resource_3ad:0094` that
+distinction alone is the whole residual:
+
+```c
+    s32 a, b;
+    if (rec != 0) { ... }
+    a = 8;                      /* not  s32 a = 8, b = 32;  above the if */
+    b = 32;
+    Func_02001bb0(7, 32, 1, 1, a, b);
+```
+
+Reach for locals whenever the reference holds a value in a register across a
+call or stores two of them together, and reach for literals when it rebuilds the
+value each time. The rule of thumb that closed the most owners here: write the
+statement order the reference's REGISTER LIFETIMES imply, then let the optimiser
+place the instructions.
+
 An overlay function pointer is the LINKED address, not the overlay-relative one.
 The pool word for `Func_02001d78` in an overlay linked at 0x02008000 is
 0x02009d79: the routine, plus the Thumb bit, at its linked address. Read the base
@@ -1431,16 +1458,16 @@ executable runs), sorted largest to smallest. Broader multi-owner campaign cuts
 belong in [Status](#status); they may overlap and therefore are not used for
 byte accounting. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 2,234
+- **Unfinished scopes:** 2,232
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 855,364 semantic-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 490,002 Exact C or audited permanent assembly bytes
+- **Target bytes:** 855,172 semantic-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 490,194 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (228 rows). The complete
-2,234-row index, including the smallest audited owners, is
+2,232-row index, including the smallest audited owners, is
 [`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

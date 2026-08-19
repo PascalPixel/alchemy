@@ -3,10 +3,10 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6272,
+    "candidate_bytes": 6276,
     "reference_bytes": 6332,
-    "wrong_instructions": 1513,
-    "differing_halfwords": 2905,
+    "wrong_instructions": 1503,
+    "differing_halfwords": 2894,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
@@ -14,9 +14,11 @@
     "insn_diff_rows_normalized": 111,
     "frame": "100 == reference",
     "walk_window_rows": 12,
-    "insn_diff_rows_nop_filtered": 80,
+    "insn_diff_rows_nop_filtered": 77,
     "note2": "seven of the remaining rows are movs r0,r0 alignment pads before the reference's jump tables and pools; they cannot be written in C and reappear automatically at size parity",
-    "our_side_rows": 56
+    "our_side_rows": 59,
+    "candidate_insns": 2455,
+    "reference_insns": 2483
   },
   "shape": {
     "calls": null,
@@ -87,7 +89,9 @@
     "the four interleave sites subtract AFTER the text push in the source; the scheduler hoists the subs into the call setup and the movs #4 wins its tie at every site as the reference shows",
     "message-site census (per-id ldr counts against the assembled reference) is the body-merge oracle: it pinned the def merge to the DEF_UP pair and exposed the crit text arithmetic",
     "DEF_UP1 assigns its turns offset late; the shorter range wins the call-saved register, the body differentiates, jump2 stops merging -- the def bodies split",
-    "the crit text is MSG_CRITICAL with += 1 for the player side; 0x823 is never loaded, matching the reference's single load and adds #1"
+    "the crit text is MSG_CRITICAL with += 1 for the player side; 0x823 is never loaded, matching the reference's single load and adds #1",
+    "def-down pair splits with late turns offsets at both sites: all five 154-builds present",
+    "pool-value census is fully clean (222=222 words, every 0x8xx and offset value loads equally); remaining deficits are copies, shared push tails, and seven alignment nops"
   ],
   "unexpressed": [
     {

@@ -323,6 +323,10 @@ impl PreparedTarget {
         &self.baseline
     }
 
+    pub fn expected(&self) -> &[u8] {
+        &self.expected
+    }
+
     pub fn identity(&self) -> String {
         let path = self.original.to_string_lossy();
         let mut bytes = self.expected.clone();

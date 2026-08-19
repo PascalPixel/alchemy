@@ -2,14 +2,20 @@
 
 use std::path::Path;
 use std::process::Command;
+use std::time::Instant;
 
 use alchemy_routing::routing::CompilerTarget;
 use candidate_compiler::jsnum::to_js_number_string;
-use candidate_compiler::verify::{js_subarray, verify_candidate, ROM_BASE};
+use candidate_compiler::verify::{compile_to_assembly, js_subarray, verify_candidate, ROM_BASE};
 
 use crate::cli::Options;
+use crate::patch::apply_unified_diff;
+
+/// Rows of the aligned stream printed after the first residual when `--first`.
+pub const FIRST_WINDOW: usize = 48;
 use crate::diff::differing_offsets;
 use crate::disasm::disassemble;
+use crate::insns::gas_insns;
 use crate::extent::linked_function_extent;
 use crate::jsparse::{js_parse_int_radix, pad_end, pad_start_zero, slice_utf16};
 use crate::manifest::{basename_without, region_size};
@@ -29,74 +35,117 @@ pub struct RenderOutput {
 
 /// `main()` minus the argument parsing.
 pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
-    let rom_path = options.rom.as_deref().ok_or_else(|| {
-        "The \"path\" argument must be of type string. Received undefined".to_string()
-    })?;
     let work = options.work.as_deref().ok_or_else(|| {
         "The \"path\" argument must be of type string. Received undefined".to_string()
     })?;
-    let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
     std::fs::create_dir_all(work).map_err(|error| format!("{work}: {error}"))?;
+    if options.asm {
+        return render_asm(root, options, work);
+    }
+    let rom_path = options.rom.as_deref().ok_or_else(|| {
+        "The \"path\" argument must be of type string. Received undefined".to_string()
+    })?;
 
-    let verification = verify_candidate(
-        &options.source,
-        &rom,
-        work,
-        &options.flags,
-        ROM_BASE,
-        CompilerTarget::Gs1,
-        &options.configuration,
-    )?;
-
-    // PORT NOTE -- `basename(source, ".c")`, NOT `candidate_compiler`'s `sourceStem`,
-    // which strips `extname(path)` whatever it is. For `x.cpp` the two
-    // disagree and this file uses the literal `.c` form.
-    let stem = basename_without(&options.source, ".c").to_string();
-    // PORT NOTE -- `Number.parseInt(stem, 16)` with NO validating guard, unlike
-    // `candidate_compiler`'s `parseHex`. It tolerates a `0x` prefix and stops at the
-    // first non-hex character. Routed through the one helper.
-    let address = js_parse_int_radix(&stem, 16);
-
-    let linked_path = Path::new(work).join(format!("{stem}.bin"));
-    let linked = std::fs::read(&linked_path)
-        .map_err(|error| format!("{}: {error}", linked_path.display()))?;
-    let elf = Path::new(work).join(format!("{stem}.elf"));
-    let symbols = Command::new("arm-none-eabi-nm")
-        .args(["-S", "--defined-only"])
-        .arg(&elf)
-        .output()
-        .map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
-
-    // PORT NOTE -- the `exitCode === 0` test is load-bearing: a failed `nm`
-    // falls back to the entry symbol's own size rather than erroring. This also
-    // carried a gcc2951 exclusion, dropped with that family.
-    let extent = if symbols.status.success() {
-        let text = String::from_utf8_lossy(&symbols.stdout);
-        linked_function_extent(&text, &format!("Func_{stem}"), address, linked.len() as f64)?
-    } else {
-        verification.actual.len() as f64
+    let patch_text = match options.patch.as_deref() {
+        None => None,
+        Some("-") => {
+            let mut text = String::new();
+            std::io::Read::read_to_string(&mut std::io::stdin(), &mut text)
+                .map_err(|error| format!("stdin: {error}"))?;
+            Some(text)
+        }
+        Some(path) => Some(
+            std::fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?,
+        ),
     };
 
-    // Promoted sources may own a complete multi-function span after their
-    // reference `.s` row has been removed. In that case the linked extent is
-    // the authoritative candidate boundary; the verification object only knows
-    // the entry symbol's head size.
-    let expected_size = region_size(root, &stem).unwrap_or(linked.len() as f64);
-
-    // PORT NOTE -- `subarray` CLAMPS. `address - ROM_BASE` is hugely negative
-    // for an overlay address, which JavaScript resolves from the END of the
-    // ROM, not from 0 (`js_subarray` implements the real `ToIntegerOrInfinity`
-    // rule). Rust `&rom[a..b]` would panic. Reproduced, not fixed.
-    let actual = js_subarray(&linked, 0.0, extent);
-    let begin = address - ROM_BASE;
-    let expected = js_subarray(&rom, begin, begin + expected_size);
-
+    let stem = basename_without(&options.source, ".c").to_string();
+    let cache_key = source_cache_key(&options.source, &options.flags, patch_text.as_deref())?;
+    let key_path = Path::new(work).join(format!("{stem}.key"));
     let candidate_path = Path::new(work).join("candidate.bin");
     let reference_path = Path::new(work).join("reference.bin");
-    std::fs::write(&candidate_path, &actual)
-        .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
-    std::fs::write(&reference_path, &expected)
-        .map_err(|error| format!("{}: {error}", reference_path.display()))?;
+    let first_path = Path::new(work).join("first.txt");
+    if options.first {
+        if let Some(text) = cached_first_report(&key_path, &cache_key, &first_path) {
+            return Ok(RenderOutput {
+                stdout: text,
+                candidate_length: 0,
+                reference_length: 0,
+                differing_halfwords: 0,
+                rows: 1,
+            });
+        }
+    }
+    let cached = cached_bins(&cache_key, &key_path, &candidate_path, &reference_path);
+
+    let (actual, expected, compile) = if let Some(pair) = cached {
+        pair
+    } else {
+        let scored_source = if let Some(patch) = patch_text.as_deref() {
+            let dest = Path::new(work).join("try").join(format!("{stem}.c"));
+            apply_unified_diff(&options.source, patch, &dest)?;
+            dest.to_string_lossy().into_owned()
+        } else {
+            options.source.clone()
+        };
+        let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
+        let verification = verify_candidate(
+            &scored_source,
+            &rom,
+            work,
+            &options.flags,
+            ROM_BASE,
+            CompilerTarget::Gs1,
+            &options.configuration,
+        )?;
+
+        // PORT NOTE -- `Number.parseInt(stem, 16)` with NO validating guard, unlike
+        // `candidate_compiler`'s `parseHex`. It tolerates a `0x` prefix and stops at the
+        // first non-hex character. Routed through the one helper.
+        let address = js_parse_int_radix(&stem, 16);
+
+        let linked_path = Path::new(work).join(format!("{stem}.bin"));
+        let linked = std::fs::read(&linked_path)
+            .map_err(|error| format!("{}: {error}", linked_path.display()))?;
+        let elf = Path::new(work).join(format!("{stem}.elf"));
+        let symbols = Command::new("arm-none-eabi-nm")
+            .args(["-S", "--defined-only"])
+            .arg(&elf)
+            .output()
+            .map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
+
+        // PORT NOTE -- the `exitCode === 0` test is load-bearing: a failed `nm`
+        // falls back to the entry symbol's own size rather than erroring. This also
+        // carried a gcc2951 exclusion, dropped with that family.
+        let extent = if symbols.status.success() {
+            let text = String::from_utf8_lossy(&symbols.stdout);
+            linked_function_extent(&text, &format!("Func_{stem}"), address, linked.len() as f64)?
+        } else {
+            verification.actual.len() as f64
+        };
+
+        // Promoted sources may own a complete multi-function span after their
+        // reference `.s` row has been removed. In that case the linked extent is
+        // the authoritative candidate boundary; the verification object only knows
+        // the entry symbol's head size.
+        let expected_size = region_size(root, &stem).unwrap_or(linked.len() as f64);
+
+        // PORT NOTE -- `subarray` CLAMPS. `address - ROM_BASE` is hugely negative
+        // for an overlay address, which JavaScript resolves from the END of the
+        // ROM, not from 0 (`js_subarray` implements the real `ToIntegerOrInfinity`
+        // rule). Rust `&rom[a..b]` would panic. Reproduced, not fixed.
+        let actual = js_subarray(&linked, 0.0, extent);
+        let begin = address - ROM_BASE;
+        let expected = js_subarray(&rom, begin, begin + expected_size);
+
+        std::fs::write(&candidate_path, &actual)
+            .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
+        std::fs::write(&reference_path, &expected)
+            .map_err(|error| format!("{}: {error}", reference_path.display()))?;
+        std::fs::write(&key_path, cache_key.as_bytes())
+            .map_err(|error| format!("{}: {error}", key_path.display()))?;
+        (actual, expected, "fresh")
+    };
 
     let left = disassemble(&candidate_path.to_string_lossy(), 0.0)?;
     let right = disassemble(&reference_path.to_string_lossy(), 0.0)?;
@@ -126,6 +175,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         to_js_number_string(expected.len() as f64)?,
         to_js_number_string(differing.len() as f64)?,
     ));
+    stdout.push_str(&format!("compile={compile}\n"));
     // Ordered instruction streams, then aligned as sequences.
     let ordered = |map: &crate::disasm::Rows| -> Vec<String> {
         let mut keys: Vec<f64> = map.keys().collect();
@@ -146,9 +196,26 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     let (class, wrong) = residual_class(&left_lines, &right_lines);
     stdout.push_str(&format!("class={class} wrong_instructions={wrong}\n"));
     if options.align {
+        let pairs = align_streams(&left_lines, &right_lines);
+        let matched = first_residual_index(&pairs);
+        stdout.push_str(&format!(
+            "matched_prefix={}\n",
+            to_js_number_string(matched as f64)?
+        ));
+        let (start, end) = if options.first {
+            let stop = pairs.len().min(matched.saturating_add(FIRST_WINDOW));
+            stdout.push_str(&format!(
+                "showing={} omitted={}\n",
+                to_js_number_string((stop - matched) as f64)?,
+                to_js_number_string((pairs.len() - stop) as f64)?,
+            ));
+            (matched, stop)
+        } else {
+            (0, pairs.len())
+        };
         stdout.push_str("      candidate                      reference\n");
-        for (candidate, reference) in align_streams(&left_lines, &right_lines) {
-            let mark = match (&candidate, &reference) {
+        for (candidate, reference) in &pairs[start..end] {
+            let mark = match (candidate, reference) {
                 (Some(a), Some(b)) if a == b => " ",
                 (Some(_), Some(_)) => "!",
                 (Some(_), None) => "+",
@@ -158,6 +225,9 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             let a = slice_utf16(&pad_end(candidate.as_deref().unwrap_or(""), 30), 30);
             let b = reference.as_deref().unwrap_or("");
             stdout.push_str(&format!("  {mark} {a} {b}\n"));
+        }
+        if options.first {
+            let _ = std::fs::write(&first_path, stdout.as_bytes());
         }
         return Ok(RenderOutput {
             stdout,
@@ -194,6 +264,111 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         differing_halfwords: differing.len(),
         rows: offsets.len(),
     })
+}
+
+fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
+    let started = Instant::now();
+    let stem = basename_without(&options.source, ".c").to_string();
+    let reference_s = root.join("asm").join(format!("{stem}.s"));
+    if !reference_s.is_file() {
+        return Err(format!(
+            "--asm expects a main-image owner with {path}",
+            path = reference_s.display()
+        ));
+    }
+
+    let scored_source = if let Some(patch) = options.patch.as_deref() {
+        let dest = Path::new(work).join("try").join(format!("{stem}.c"));
+        let text = if patch == "-" {
+            let mut text = String::new();
+            std::io::Read::read_to_string(&mut std::io::stdin(), &mut text)
+                .map_err(|error| format!("stdin: {error}"))?;
+            text
+        } else {
+            std::fs::read_to_string(patch).map_err(|error| format!("{patch}: {error}"))?
+        };
+        apply_unified_diff(&options.source, &text, &dest)?;
+        dest.to_string_lossy().into_owned()
+    } else {
+        options.source.clone()
+    };
+
+    let assembly = compile_to_assembly(
+        &scored_source,
+        &options.source,
+        work,
+        &options.flags,
+        CompilerTarget::Gs1,
+        &options.configuration,
+    )?;
+    let candidate_text =
+        std::fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
+    let reference_text = std::fs::read_to_string(&reference_s)
+        .map_err(|error| format!("{}: {error}", reference_s.display()))?;
+    let candidate_insns = gas_insns(&candidate_text);
+    let reference_insns = gas_insns(&reference_text);
+
+    let work_dir = Path::new(work);
+    let cand_path = work_dir.join("candidate.insns");
+    let ref_path = work_dir.join("reference.insns");
+    let prev_path = work_dir.join("previous.insns");
+    let had_prev = cand_path.is_file();
+    if had_prev {
+        let _ = std::fs::rename(&cand_path, &prev_path);
+    }
+    std::fs::write(&cand_path, candidate_insns.join("\n") + "\n")
+        .map_err(|error| format!("{}: {error}", cand_path.display()))?;
+    std::fs::write(&ref_path, reference_insns.join("\n") + "\n")
+        .map_err(|error| format!("{}: {error}", ref_path.display()))?;
+
+    let vs_ref = git_diff_stat(&ref_path, &cand_path)?;
+    let vs_prev = if had_prev {
+        Some(git_diff_stat(&prev_path, &cand_path)?)
+    } else {
+        None
+    };
+    let elapsed = started.elapsed().as_secs_f64() * 1000.0;
+
+    let mut stdout = format!(
+        "elapsed_ms={elapsed:.0} compile=s-only\n\
+         candidate_insns={} reference_insns={}\n",
+        candidate_insns.len(),
+        reference_insns.len()
+    );
+    stdout.push_str("vs reference:\n");
+    stdout.push_str(&vs_ref);
+    if let Some(prev) = vs_prev {
+        stdout.push_str("vs previous candidate:\n");
+        stdout.push_str(&prev);
+    }
+    Ok(RenderOutput {
+        stdout,
+        candidate_length: candidate_insns.len(),
+        reference_length: reference_insns.len(),
+        differing_halfwords: 0,
+        rows: 1,
+    })
+}
+
+fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
+    let output = Command::new("git")
+        .args([
+            "diff",
+            "--no-index",
+            "--stat",
+            "--stat-width=80",
+            &old.to_string_lossy(),
+            &new.to_string_lossy(),
+        ])
+        .output()
+        .map_err(|error| format!("git diff: {error}"))?;
+    // git diff --no-index exits 1 when the files differ, 0 when they match.
+    let text = String::from_utf8_lossy(&output.stdout).into_owned();
+    if text.is_empty() {
+        Ok("  identical\n".to_string())
+    } else {
+        Ok(text)
+    }
 }
 
 
@@ -410,6 +585,64 @@ fn register_width(rest: &[char]) -> usize {
         return word.len();
     }
     0
+}
+
+/// First aligned row whose displayed instruction texts differ.
+pub fn first_residual_index(pairs: &[(Option<String>, Option<String>)]) -> usize {
+    pairs
+        .iter()
+        .position(|(candidate, reference)| match (candidate, reference) {
+            (Some(left), Some(right)) => left != right,
+            (None, None) => false,
+            _ => true,
+        })
+        .unwrap_or(pairs.len())
+}
+
+fn source_cache_key(
+    source: &str,
+    flags: &[String],
+    patch: Option<&str>,
+) -> Result<String, String> {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+
+    let bytes = std::fs::read(source).map_err(|error| format!("{source}: {error}"))?;
+    let mut hasher = DefaultHasher::new();
+    bytes.hash(&mut hasher);
+    flags.hash(&mut hasher);
+    patch.hash(&mut hasher);
+    Ok(format!("{:016x}", hasher.finish()))
+}
+
+fn cached_first_report(key_path: &Path, cache_key: &str, first_path: &Path) -> Option<String> {
+    let stored = std::fs::read_to_string(key_path).ok()?;
+    if stored.trim() != cache_key {
+        return None;
+    }
+    let text = std::fs::read_to_string(first_path).ok()?;
+    if text.is_empty() {
+        return None;
+    }
+    Some(text.replacen("compile=fresh\n", "compile=cache\n", 1))
+}
+
+fn cached_bins(
+    cache_key: &str,
+    key_path: &Path,
+    candidate_path: &Path,
+    reference_path: &Path,
+) -> Option<(Vec<u8>, Vec<u8>, &'static str)> {
+    let stored = std::fs::read_to_string(key_path).ok()?;
+    if stored.trim() != cache_key {
+        return None;
+    }
+    let actual = std::fs::read(candidate_path).ok()?;
+    let expected = std::fs::read(reference_path).ok()?;
+    if actual.is_empty() || expected.is_empty() {
+        return None;
+    }
+    Some((actual, expected, "cache"))
 }
 
 /// Longest-common-subsequence alignment of two instruction streams.
@@ -668,6 +901,18 @@ mod tests {
         assert_eq!(pad_start_zero(&hex_lower(26.0), 4), "001a");
         // Never truncates: a five-digit offset widens the column.
         assert_eq!(pad_start_zero(&hex_lower(0x1_0000 as f64), 4), "10000");
+    }
+
+    #[test]
+    fn first_residual_skips_the_matching_prefix() {
+        let pairs = vec![
+            (Some("push {lr}".into()), Some("push {lr}".into())),
+            (Some("movs r0, #0".into()), Some("movs r0, #0".into())),
+            (Some("str r0, [sp, #64]".into()), Some("str r0, [sp, #60]".into())),
+            (Some("bx lr".into()), Some("bx lr".into())),
+        ];
+        assert_eq!(first_residual_index(&pairs), 2);
+        assert_eq!(first_residual_index(&pairs[..2]), 2);
     }
 
     #[test]

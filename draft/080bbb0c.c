@@ -379,23 +379,35 @@ do {                                                                           \
     }                                                                          \
 }
 
-#define ADJUST_ATKDEF(field, delta, turns, value_expr, text)                   \
+/* ターン数フィールドはオフセット定数で渡す。冒頭の代入が call-saved に住み、
+ * プッシュ2回をまたいで生き延びる(306 は即値に畳めず const-prop が残す)。 */
+#define ATK_TURNS 0x132
+#define DEF_TURNS 0x134
+#define RES_TURNS 0x136
+
+#define ADJUST_ATKDEF(field, delta, toff_c, value_expr, text)                  \
 {                                                                              \
+    s32 toff;                                                                  \
+                                                                               \
+    toff = (toff_c);                                                           \
     (field) += (delta);                                                        \
     CLAMP_MOD(field);                                                          \
     BattleUnit_Recalculate(target_id);                                         \
     BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
     BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
-    (turns) = 7;                                                               \
+    *(u8 *)((u8 *)target + toff) = 7;                                          \
 }
 
 #define ADJUST_RES(delta, value_expr, text)                                 \
 {                                                                              \
+    s32 toff;                                                                  \
+                                                                               \
+    toff = RES_TURNS;                                                          \
     target->res_modifier += (delta);                                             \
     CLAMP_MOD(target->res_modifier);                                             \
     BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                        \
     BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                               \
-    target->res_modifier_turns = 7;                                                    \
+    *(u8 *)((u8 *)target + toff) = 7;                                          \
 }
 
 #define SET_STATUS7(field, text)                                               \
@@ -1141,42 +1153,42 @@ hp_tail:
         break;
 
     case EFX_ATK_DOWN1:
-        ADJUST_ATKDEF(target->attack_modifier, -1, target->attack_modifier_turns,
+        ADJUST_ATKDEF(target->attack_modifier, -1, ATK_TURNS,
                       copy->attack - target->attack, MSG_ATK_DOWN);
         break;
 
     case EFX_ATK_DOWN2:
-        ADJUST_ATKDEF(target->attack_modifier, -2, target->attack_modifier_turns,
+        ADJUST_ATKDEF(target->attack_modifier, -2, ATK_TURNS,
                       copy->attack - target->attack, MSG_ATK_DOWN);
         break;
 
     case EFX_ATK_UP1:
-        ADJUST_ATKDEF(target->attack_modifier, 1, target->attack_modifier_turns,
+        ADJUST_ATKDEF(target->attack_modifier, 1, ATK_TURNS,
                       target->attack - copy->attack, MSG_ATK_UP);
         break;
 
     case EFX_ATK_UP2:
-        ADJUST_ATKDEF(target->attack_modifier, 2, target->attack_modifier_turns,
+        ADJUST_ATKDEF(target->attack_modifier, 2, ATK_TURNS,
                       target->attack - copy->attack, MSG_ATK_UP);
         break;
 
     case EFX_DEF_DOWN1:
-        ADJUST_ATKDEF(target->defense_modifier, -1, target->defense_modifier_turns,
+        ADJUST_ATKDEF(target->defense_modifier, -1, DEF_TURNS,
                       copy->defense - target->defense, MSG_DEF_DOWN);
         break;
 
     case EFX_DEF_DOWN2:
-        ADJUST_ATKDEF(target->defense_modifier, -2, target->defense_modifier_turns,
+        ADJUST_ATKDEF(target->defense_modifier, -2, DEF_TURNS,
                       copy->defense - target->defense, MSG_DEF_DOWN);
         break;
 
     case EFX_DEF_UP1:
-        ADJUST_ATKDEF(target->defense_modifier, 1, target->defense_modifier_turns,
+        ADJUST_ATKDEF(target->defense_modifier, 1, DEF_TURNS,
                       target->defense - copy->defense, MSG_DEF_UP);
         break;
 
     case EFX_DEF_UP2:
-        ADJUST_ATKDEF(target->defense_modifier, 2, target->defense_modifier_turns,
+        ADJUST_ATKDEF(target->defense_modifier, 2, DEF_TURNS,
                       target->defense - copy->defense, MSG_DEF_UP);
         break;
 

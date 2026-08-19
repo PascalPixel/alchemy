@@ -137,6 +137,20 @@
       "shape": "walk pseudos jsave/probe/woff, second attempt after slots+r6 converged",
       "wrong": 1702,
       "note": "copy-prop folds all three again (no lr/ip in output); ref's movs lr,r4 / movs ip,r1 must come from reload or a source shape not yet found. Region is ~15 rows"
+    },
+    {
+      "shape": "walk probe recomputed from work in the else-arm",
+      "wrong": 1555,
+      "note": "gcse folds it; output byte-identical"
+    },
+    {
+      "shape": "volatile 255-probe in the walk",
+      "wrong": 1577,
+      "note": "blocks too much, +13 normalized rows"
+    },
+    {
+      "shape": "def-body split via local pressure",
+      "note": "toff allocation is the global allocno lottery: our atk toffs held r6 at commit 5d4afa4e6 and lost it again after unrelated edits; ref itself is mixed 3-early/5-late across the eight bodies. The split follows global coloring convergence, not local spelling"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."

@@ -167,6 +167,8 @@ struct AlchemyBackend {
     name: String,
     identity: String,
     target: PreparedTarget,
+    target_instructions: Vec<Instruction>,
+    baseline_measurement: Measurement,
 }
 
 impl AlchemyBackend {
@@ -177,6 +179,9 @@ impl AlchemyBackend {
             .unwrap_or("alchemy")
             .to_string();
         let target = PreparedTarget::prepare(path, base_source)?;
+        let target_instructions = disassemble_bytes(target.expected())?;
+        let baseline_measurement =
+            alchemy_measurement(target.baseline(), &target_instructions)?;
         let implementation_signature = current_executable_signature()?;
         let compiler_signature = alchemy_bundle::bundle::compiler_bundle_signature();
         let host_signature = alchemy_bundle::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
@@ -190,6 +195,8 @@ impl AlchemyBackend {
                 &host_signature,
             ),
             target,
+            target_instructions,
+            baseline_measurement,
         })
     }
 }
@@ -217,7 +224,7 @@ fn alchemy_identity(
     host_signature: &str,
 ) -> String {
     let mut stream = Vec::new();
-    append_identity_field(&mut stream, "alchemy-permuter-alchemy-backend-v2");
+    append_identity_field(&mut stream, "alchemy-permuter-alchemy-backend-v3-insns");
     append_identity_field(&mut stream, target_identity);
     append_identity_field(&mut stream, implementation_signature);
     append_identity_field(&mut stream, compiler_signature);
@@ -235,13 +242,88 @@ impl Backend for AlchemyBackend {
     }
 
     fn baseline(&self) -> Measurement {
-        self.target.baseline().into()
+        self.baseline_measurement.clone()
     }
 
     fn measure(&self, source: &str) -> Result<Measurement, String> {
         let score = self.target.compile(source)?;
-        Ok((&score).into())
+        alchemy_measurement(&score, &self.target_instructions)
     }
+}
+
+/// Score an Alchemy candidate on its instruction stream, not its byte phase.
+///
+/// The raw halfword count collapses to noise the moment sizes diverge: one
+/// missing instruction shifts every later byte, so a structural improvement
+/// can read as a regression. Disassembling both sides and scoring the LCS
+/// instruction diff (operand differences cheap, insertions and deletions
+/// expensive) keeps the fitness aligned with what a reconstruction session
+/// actually steers by. Byte equality remains the sole meaning of `exact`;
+/// the halfword count survives as a tie-break within equal instruction
+/// scores and in the summary.
+fn alchemy_measurement(
+    score: &ByteScore,
+    target_instructions: &[Instruction],
+) -> Result<Measurement, String> {
+    let actual_instructions = disassemble_bytes(&score.actual)?;
+    let instructions = instruction_score(&actual_instructions, target_instructions);
+    let byte: Measurement = score.into();
+    Ok(Measurement {
+        exact: byte.exact,
+        score: instructions
+            .score
+            .saturating_mul(1000)
+            .saturating_add((byte.differences as u64).min(999)),
+        differences: instructions.differences,
+        expected_size: byte.expected_size,
+        actual_size: byte.actual_size,
+        first_difference: instructions.first_difference,
+        fingerprint: byte.fingerprint,
+        summary: format!("{}; {}", instructions.summary, byte.summary),
+    })
+}
+
+/// Disassemble a raw Thumb byte image for scoring. Pool words decode as
+/// `.word` rows and count like instructions, which is correct: a changed
+/// pool value is a real difference. PC-relative literal offsets and the
+/// disassembler's address annotations are stripped, because they shift with
+/// any size change and would charge one insertion as dozens of operand
+/// differences.
+fn disassemble_bytes(bytes: &[u8]) -> Result<Vec<Instruction>, String> {
+    let temp = TempDir::new("insns")?;
+    let path = temp.0.join("image.bin");
+    fs::write(&path, bytes).map_err(|error| format!("{}: {error}", path.display()))?;
+    let command: Vec<String> = [
+        "arm-none-eabi-objdump",
+        "-D",
+        "-b",
+        "binary",
+        "-m",
+        "armv4t",
+        "-M",
+        "force-thumb",
+    ]
+    .into_iter()
+    .map(String::from)
+    .collect();
+    let output = command_output(&command, &[path.as_path()], &temp.0)?;
+    let text = String::from_utf8(output).map_err(|_| "objdump emitted non-UTF-8 output")?;
+    let mut instructions = parse_disassembly(&text);
+    for instruction in &mut instructions {
+        if let Some(at) = instruction.row.find(" @") {
+            instruction.row.truncate(at);
+        }
+        while let Some(start) = instruction.row.find("[pc, #") {
+            let Some(length) = instruction.row[start..].find(']') else {
+                break;
+            };
+            instruction.row.replace_range(start..start + length + 1, "[pc]");
+        }
+    }
+    if instructions.is_empty() {
+        return Err("candidate image disassembled to no instructions".to_string());
+    }
+    Ok(instructions)
 }
 
 struct TempDir(PathBuf);

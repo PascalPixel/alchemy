@@ -95,65 +95,65 @@ void Func_080b8000(s32 slot);                     /* スロットの再描画 */
 #define Actor_RefreshSlot Func_080b8000
 
 /* テキスト番号。assets/text/message_archive.json の英文から命名。 */
-#define MSG_HP_RECOVER    0x81d /* 「HPが N かいふくした！」 */
-#define MSG_PP_RECOVER    0x81e /* 「PPが N かいふくした！」 */
-#define MSG_HP_FULL       0x820 /* 「HPがぜんかいふくした！」 */
-#define MSG_PP_FULL       0x821 /* 「PPがぜんかいふくした！」 */
-#define MSG_CRITICAL      0x822 /* 「かいしんのいちげき！」 */
-#define MSG_BITTER_BLOW   0x823 /* 「つうこんのいちげき！」 */
-#define MSG_FELLED        0x824 /* 「あいてを たおした！」 */
-#define MSG_GOES_DOWN     0x825 /* 「たおれてしまった…」 */
-#define MSG_DMG_E         0x826 /* 「Nの ダメージ！」敵側 */
-#define MSG_DMG_P         0x827 /* 「Nの ダメージ！」味方側 */
-#define MSG_PP_LOSS_E     0x829 /* 「PPを Nうしなった！」敵側 */
-#define MSG_PP_LOSS_P     0x82a /* 「PPを Nうしなった！」味方側 */
-#define MSG_DMG_EMPH_E    0x831 /* ±affinity で 。/！/！！！ 敵側 */
-#define MSG_DMG_EMPH_P    0x834 /* ±affinity で 。/！/！！！ 味方側 */
-#define MSG_SPIRIT_DRAIN  0x84c /* 「せいしんを すいとられた！」 */
-#define MSG_KO_DOWN       0x84f /* 「たおれた！」 */
-#define MSG_SUFFOCATE     0x850 /* 「いきができない！」 */
-#define MSG_NO_EFFECT     0x854 /* 「しかし こうかがなかった！」 */
-#define MSG_LEECH_GAIN    0x85e /* 「さらに PPを Nかいふく！」 */
-#define MSG_LEECH_TAKE    0x85f /* 「PPを Nすいとられた！」 */
-#define MSG_ATK_DOWN      0x860 /* 「こうげきが Nさがった！」 */
-#define MSG_ATK_UP        0x861 /* 「こうげきが Nあがった！」 */
-#define MSG_DEF_DOWN      0x862 /* 「ぼうぎょが Nさがった！」 */
-#define MSG_DEF_UP        0x863 /* 「ぼうぎょが Nあがった！」 */
-#define MSG_REVIVED       0x864 /* 「いきかえった！」 */
-#define MSG_RES_DOWN      0x865 /* 「たいせいが Nさがった！」 */
-#define MSG_RES_UP        0x866 /* 「たいせいが Nあがった！」 */
-#define MSG_POISONED      0x867 /* 「どくに おかされた！」 */
-#define MSG_DELUSION      0x868 /* 「げんわくに つつまれた！」 */
-#define MSG_CONFUSED      0x869 /* 「こんらんした！」 */
-#define MSG_CHARMED       0x86a /* 「こころを うばわれた！」 */
-#define MSG_STUNNED       0x86b /* 「スタンした！」 */
-#define MSG_ASLEEP        0x86c /* 「ねむってしまった！」 */
-#define MSG_PSY_BLOCK     0x86d /* 「エナジーを ふうじられた！」 */
-#define MSG_REFRAIN       0x86f /* 「リフレインに はばまれた！」 */
-#define MSG_REFLECT       0x870 /* 「リフレクの こうか！」 */
-#define MSG_EVIL_SPIRIT   0x872 /* 「あくりょうに とりつかれた！」 */
-#define MSG_DEATH_CURSE   0x873 /* 「しのせんこくを うけた！」 */
-#define MSG_VENOM         0x874 /* 「もうどくに おかされた！」 */
-#define MSG_DEATH_COUNT   0x875 /* 「しにがみが てまねく… N」 */
-#define MSG_PSY_SEAL      0x876 /* 「エナジーを シールされた！」 */
-#define MSG_AGI_UP        0x877 /* 「すばやさが Nあがった！」 */
-#define MSG_AGI_DOWN      0x878 /* 「すばやさが Nさがった！」 */
-#define MSG_READIES       0x87d /* 「みがまえた！」 */
-#define MSG_CHALLENGE     0x87e /* 「たたかいに もえてきた！」 */
-#define MSG_IMMOBILE      0x87f /* 「うごけなくなった！」 */
-#define MSG_AURA          0x881 /* 「まもりのオーラに つつまれた！」 */
-#define MSG_AURA_2        0x882 /* 「まもりのオーラに つつまれた！」強 */
-#define MSG_CURE_POISON   0x884 /* 「どくが きえた！」 */
-#define MSG_CURE_DELUSION 0x88b /* 「めが みえるようになった！」 */
-#define MSG_CURE_SEAL     0x88c /* 「シールが とけた！」 */
-#define MSG_CURE_STUN     0x88d /* 「スタンが なおった！」 */
-#define MSG_CURE_SPIRIT   0x88f /* 「しにがみが はなれた！」 */
-#define MSG_CURE_CURSE    0x894 /* 「しのせんこくを ふりはらった！」 */
-#define MSG_BUFFS_RESET   0x896 /* 「のうりょくが もとにもどった！」 */
-#define MSG_SPLIT_OFF     0x8f3 /* 「ぶんれつした！」 */
-#define MSG_SPLIT_FAIL    0x8f4 /* 「ぶんれつに しっぱいした！」 */
-#define MSG_APPEARS       0x8f5 /* 「あらわれた！！」 */
-#define MSG_NO_ONE_CAME   0x8f6 /* 「しかし だれもこなかった！」 */
+#define MSG_HP_RECOVER    0x81d                   /* 「HPが N かいふくした！」 */
+#define MSG_PP_RECOVER    0x81e                   /* 「PPが N かいふくした！」 */
+#define MSG_HP_FULL       0x820                   /* 「HPがぜんかいふくした！」 */
+#define MSG_PP_FULL       0x821                   /* 「PPがぜんかいふくした！」 */
+#define MSG_CRITICAL      0x822                   /* 「かいしんのいちげき！」 */
+#define MSG_BITTER_BLOW   0x823                   /* 「つうこんのいちげき！」 */
+#define MSG_FELLED        0x824                   /* 「あいてを たおした！」 */
+#define MSG_GOES_DOWN     0x825                   /* 「たおれてしまった…」 */
+#define MSG_DMG_E         0x826                   /* 「Nの ダメージ！」敵側 */
+#define MSG_DMG_P         0x827                   /* 「Nの ダメージ！」味方側 */
+#define MSG_PP_LOSS_E     0x829                   /* 「PPを Nうしなった！」敵側 */
+#define MSG_PP_LOSS_P     0x82a                   /* 「PPを Nうしなった！」味方側 */
+#define MSG_DMG_EMPH_E    0x831                   /* ±affinity で 。/！/！！！ 敵側 */
+#define MSG_DMG_EMPH_P    0x834                   /* ±affinity で 。/！/！！！ 味方側 */
+#define MSG_SPIRIT_DRAIN  0x84c                   /* 「せいしんを すいとられた！」 */
+#define MSG_KO_DOWN       0x84f                   /* 「たおれた！」 */
+#define MSG_SUFFOCATE     0x850                   /* 「いきができない！」 */
+#define MSG_NO_EFFECT     0x854                   /* 「しかし こうかがなかった！」 */
+#define MSG_LEECH_GAIN    0x85e                   /* 「さらに PPを Nかいふく！」 */
+#define MSG_LEECH_TAKE    0x85f                   /* 「PPを Nすいとられた！」 */
+#define MSG_ATK_DOWN      0x860                   /* 「こうげきが Nさがった！」 */
+#define MSG_ATK_UP        0x861                   /* 「こうげきが Nあがった！」 */
+#define MSG_DEF_DOWN      0x862                   /* 「ぼうぎょが Nさがった！」 */
+#define MSG_DEF_UP        0x863                   /* 「ぼうぎょが Nあがった！」 */
+#define MSG_REVIVED       0x864                   /* 「いきかえった！」 */
+#define MSG_RES_DOWN      0x865                   /* 「たいせいが Nさがった！」 */
+#define MSG_RES_UP        0x866                   /* 「たいせいが Nあがった！」 */
+#define MSG_POISONED      0x867                   /* 「どくに おかされた！」 */
+#define MSG_DELUSION      0x868                   /* 「げんわくに つつまれた！」 */
+#define MSG_CONFUSED      0x869                   /* 「こんらんした！」 */
+#define MSG_CHARMED       0x86a                   /* 「こころを うばわれた！」 */
+#define MSG_STUNNED       0x86b                   /* 「スタンした！」 */
+#define MSG_ASLEEP        0x86c                   /* 「ねむってしまった！」 */
+#define MSG_PSY_BLOCK     0x86d                   /* 「エナジーを ふうじられた！」 */
+#define MSG_REFRAIN       0x86f                   /* 「リフレインに はばまれた！」 */
+#define MSG_REFLECT       0x870                   /* 「リフレクの こうか！」 */
+#define MSG_EVIL_SPIRIT   0x872                   /* 「あくりょうに とりつかれた！」 */
+#define MSG_DEATH_CURSE   0x873                   /* 「しのせんこくを うけた！」 */
+#define MSG_VENOM         0x874                   /* 「もうどくに おかされた！」 */
+#define MSG_DEATH_COUNT   0x875                   /* 「しにがみが てまねく… N」 */
+#define MSG_PSY_SEAL      0x876                   /* 「エナジーを シールされた！」 */
+#define MSG_AGI_UP        0x877                   /* 「すばやさが Nあがった！」 */
+#define MSG_AGI_DOWN      0x878                   /* 「すばやさが Nさがった！」 */
+#define MSG_READIES       0x87d                   /* 「みがまえた！」 */
+#define MSG_CHALLENGE     0x87e                   /* 「たたかいに もえてきた！」 */
+#define MSG_IMMOBILE      0x87f                   /* 「うごけなくなった！」 */
+#define MSG_AURA          0x881                   /* 「まもりのオーラに つつまれた！」 */
+#define MSG_AURA_2        0x882                   /* 「まもりのオーラに つつまれた！」強 */
+#define MSG_CURE_POISON   0x884                   /* 「どくが きえた！」 */
+#define MSG_CURE_DELUSION 0x88b                   /* 「めが みえるようになった！」 */
+#define MSG_CURE_SEAL     0x88c                   /* 「シールが とけた！」 */
+#define MSG_CURE_STUN     0x88d                   /* 「スタンが なおった！」 */
+#define MSG_CURE_SPIRIT   0x88f                   /* 「しにがみが はなれた！」 */
+#define MSG_CURE_CURSE    0x894                   /* 「しのせんこくを ふりはらった！」 */
+#define MSG_BUFFS_RESET   0x896                   /* 「のうりょくが もとにもどった！」 */
+#define MSG_SPLIT_OFF     0x8f3                   /* 「ぶんれつした！」 */
+#define MSG_SPLIT_FAIL    0x8f4                   /* 「ぶんれつに しっぱいした！」 */
+#define MSG_APPEARS       0x8f5                   /* 「あらわれた！！」 */
+#define MSG_NO_ONE_CAME   0x8f6                   /* 「しかし だれもこなかった！」 */
 
 /* 効果番号。挙動から付けた慎重な名前で、原作の識別子の主張ではない。 */
 enum {
@@ -247,12 +247,10 @@ enum {
 
 #define TEXT_SIDE(player, enemy)                                               \
 do {                                                                           \
-    s32 text;                                                                  \
     if ((u32)target_id <= 7)                                                   \
-        text = (player);                                                       \
+        BattleEvent_Push(BATTLE_EVENT_TEXT, (player));                         \
     else                                                                       \
-        text = (enemy);                                                        \
-    BattleEvent_Push(BATTLE_EVENT_TEXT, text);                                    \
+        BattleEvent_Push(BATTLE_EVENT_TEXT, (enemy));                          \
 } while (0)
 
 #define TAKE_PWR()                                                             \
@@ -494,23 +492,32 @@ after_power:
                 Summon_ResetCharge(st);
             BattleUnit_Assign(rec, st, ch & 0x7fff);
             slots = (s16 *)((u8 *)work + 2);
-            if (slots[50] == 254) {
-                slots[50] = rec;
-            } else {
+            {
+                s32 off;
                 s32 i;
-                s16 *p;
+                s32 j;
 
-                p = slots + 50;
-                for (i = 0; i <= 5; i++) {
-                    if (p[0] == 255) {
-                        p[0] = rec;
-                        p[1] = 255;
-                        break;
-                    }
-                    p++;
-                    if (p[0] == 254) {
-                        p[0] = rec;
-                        break;
+                off = 100;
+                if (*(s16 *)((u8 *)slots + off) == 254) {
+                    *(s16 *)((u8 *)slots + off) = rec;
+                } else {
+                    i = 0;
+                    j = 0;
+                    for (;;) {
+                        if (*(s16 *)((u8 *)slots + off) == 255) {
+                            *(s16 *)((u8 *)slots + off) = rec;
+                            *(s16 *)((u8 *)slots + (j + 102)) = 255;
+                            break;
+                        }
+                        i++;
+                        off += 2;
+                        j += 2;
+                        if (i > 5)
+                            break;
+                        if (*(s16 *)((u8 *)slots + off) == 254) {
+                            *(s16 *)((u8 *)slots + off) = rec;
+                            break;
+                        }
                     }
                 }
             }
@@ -534,9 +541,9 @@ after_power:
             Actor_Commit();
             count = Actor_ListSlots(saved);
             if (count > 0) {
-                s16 *q;
+                u16 *q;
 
-                q = saved;
+                q = (u16 *)saved;
                 while (count != 0) {
                     count--;
                     Actor_RefreshSlot(*q);
@@ -544,10 +551,10 @@ after_power:
                 }
             }
             BattleEvent_Push(BATTLE_EVENT_UNIT, rec);
-            if (action_id == 0x1f7)
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_APPEARS);
-            else
+            if (action_id != 0x1f7)
                 BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_OFF);
+            else
+                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_APPEARS);
         } else if (action_id == 0x1f7) {
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_FAIL);
         } else {
@@ -567,10 +574,15 @@ after_power:
             if (tbl[0] == (s16)target_id) {
                 hit = 1;
             } else {
-                for (n = 1; n <= 19; n++) {
-                    if (tbl[n * 8] == (s16)target_id) {
-                        hit = 1;
-                        break;
+                n = 1;
+                if (*(s16 *)((u8 *)work + 764) == (s16)target_id) {
+                    hit = 1;
+                } else {
+                    while (++n <= 19) {
+                        if (*(s16 *)((u8 *)tbl + (n << 4)) == (s16)target_id) {
+                            hit = 1;
+                            break;
+                        }
                     }
                 }
             }
@@ -661,19 +673,19 @@ after_power:
             } while (pass <= 1);
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            cur -= dmg;
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
-            if (cur <= dmg) {
-                dealt = cur;
-                target->hp = 0;
+            if (cur > 0)
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            else {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-                TEXT_SIDE(MSG_GOES_DOWN, MSG_GOES_DOWN);
-            } else {
-                dealt = dmg;
-                target->hp = (s16)(cur - dmg);
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                cur = 0;
+                TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
             }
+            dealt = target->hp - cur;
+            target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
             break;
         }
@@ -694,8 +706,8 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            TEXT_SIDE(MSG_PP_LOSS_P, MSG_PP_LOSS_E);
             pp -= dmg;
+            TEXT_SIDE(MSG_PP_LOSS_P, MSG_PP_LOSS_E);
             if (pp <= 0)
                 pp = 0;
             BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
@@ -737,15 +749,15 @@ after_power:
             TAKE_PWR();
             pp = target->pp;
             TAKE_BONUS();
-            dmg = Battle_CalcPower(pwr, bonus, 256);
+            dmg = Battle_CalcPower(action->power, bonus, 256);
             dmg = Math_Div(PpDmgFalloff[offset] * dmg, 100);
             dmg *= adjust;
             APPLY_GUARD();
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            TEXT_SIDE(MSG_DMG_P, MSG_DMG_E);
             pp -= dmg;
+            TEXT_SIDE(MSG_DMG_P, MSG_DMG_E);
             if (pp <= 0)
                 pp = 0;
             BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
@@ -819,8 +831,8 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
             cur -= dmg;
+            TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
             if (cur > 0)
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             else {
@@ -871,15 +883,15 @@ pp_store:
             TAKE_PWR();
             cur = target->hp;
             TAKE_BONUS();
-            dmg = Battle_CalcPower(pwr, bonus, 256);
+            dmg = Battle_CalcPower(action->power, bonus, 256);
             dmg *= adjust;
             dmg = Math_Div(HpDmgFalloff[offset] * dmg, 100);
             APPLY_GUARD();
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            TEXT_SIDE(MSG_DMG_P, MSG_DMG_E);
             cur -= dmg;
+            TEXT_SIDE(MSG_DMG_P, MSG_DMG_E);
             if (cur > 0)
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             else {
@@ -904,16 +916,15 @@ hp_tail:
 
     /* 付加効果 */
     BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-    n = action->effect;
-    if (BattleEffect_Classify(n) == 0 && target->hp == 0
-        && BattleEffect_OnDead(n) == 0)
+    if (BattleEffect_Classify(action->effect) == 0 && target->hp == 0
+        && BattleEffect_OnDead(action->effect) == 0)
         goto done;
     if (hit == 0)
         goto done;
-    if ((u32)(n - 3) > 66)
+    if ((u32)(action->effect - 3) > 66)
         goto done;
 
-    switch (n) {
+    switch (action->effect) {
     case EFX_CURE_ALL:
         if (target->delusion != 0) {
             target->delusion = 0;
@@ -1205,10 +1216,10 @@ hp_tail:
     case EFX_DRAIN_HP:
     case EFX_DRAIN_HP_HALF:
         dmg = dealt;
-        if (n == EFX_DRAIN_HP_HALF)
+        if (action->effect == EFX_DRAIN_HP_HALF)
             dmg /= 2;
         if (actor->hp + dmg > actor->max_hp) {
-            dmg = actor->max_hp - actor->hp;
+            dmg = *(u16 *)&actor->max_hp - *(u16 *)&actor->hp;
             actor->hp = actor->max_hp;
         } else {
             actor->hp = (s16)(actor->hp + dmg);
@@ -1227,7 +1238,7 @@ hp_tail:
     case EFX_DRAIN_PP:
         dmg = dealt;
         if (actor->pp + dmg > actor->max_pp) {
-            dmg = actor->max_pp - actor->pp;
+            dmg = *(u16 *)&actor->max_pp - *(u16 *)&actor->pp;
             actor->pp = actor->max_pp;
         } else {
             actor->pp = (s16)(actor->pp + dmg);

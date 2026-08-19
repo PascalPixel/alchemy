@@ -906,12 +906,17 @@ after_power:
                 }
                 dmg = Battle_CalcPower(dmg, bonus, 256);
                 dmg *= adjust;
-                if (nibble == 6)
-                    dmg = Math_Div(HpDmgFalloff6[offset] * dmg, 100);
-                else if (nibble == 5)
+                switch (nibble) {
+                case 5:
                     dmg = Math_Div(HpDmgFalloff5[offset] * dmg, 100);
-                else if (nibble == 8)
+                    break;
+                case 6:
+                    dmg = Math_Div(HpDmgFalloff6[offset] * dmg, 100);
+                    break;
+                case 8:
                     dmg = Math_Div(HpDmgFalloff8[offset] * dmg, 100);
+                    break;
+                }
                 dmg += BattleRandom_Next() & 3;
                 APPLY_GUARD();
                 if (BattleFlag_Test(366) != 0 && *cmd == 6 && cur > dmg) {
@@ -1080,19 +1085,20 @@ hp_tail:
     case EFX_HEAL_60:
     case EFX_HEAL_30:
     {
-        u16 old;
-        u16 maxu;
+        s32 old;
+        s32 maxu;
+        s32 maxv;
         s32 heal;
 
-        old = target->hp;
+        old = *(volatile u16 *)&target->hp;
         heal = target->hp;
-        maxu = target->max_hp;
+        maxu = *(volatile u16 *)&target->max_hp;
+        maxv = target->max_hp;
         if (action->effect == EFX_HEAL_60)
-            tmp = target->max_hp * 60;
+            tmp = maxv * 60;
         else
-            tmp = target->max_hp * 30;
-        tmp = Math_Div(tmp, 100);
-        heal += tmp;
+            tmp = maxv * 30;
+        heal += Math_Div(tmp, 100);
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;
@@ -1118,8 +1124,7 @@ hp_tail:
         maxv = target->max_pp;
         heal = target->pp;
         old = heal;
-        tmp = Math_Div(maxv * 7, 100);
-        heal += tmp;
+        heal += Math_Div(maxv * 7, 100);
         if (heal > maxv)
             heal = maxv;
         tmp = heal - old;

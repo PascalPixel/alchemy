@@ -774,13 +774,7 @@ pp_store:
             break;
 
         case 3:
-            if (hit == 0) {
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x827);
-                break;
-            }
-        {
+            if (hit != 0) {
             s32 pwr;
 
             TAKE_PWR();
@@ -808,7 +802,11 @@ hp_tail:
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
             break;
-        }
+            }
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
+            break;
 
         }
     }
@@ -874,49 +872,78 @@ hp_tail:
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88d);
         }
         target->status_13c = 0;
-        if (target->status_13d == 0)
+        if (target->status_13d != 0) {
+            target->status_13d = 0;
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88c);
+        }
+        if (target->status_141 == 0)
             break;
-        target->status_13d = 0;
+        target->status_141 = 0;
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88c);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x894);
         break;
 
     case EFX_HEAL_60:
     case EFX_HEAL_30:
-        if (n == EFX_HEAL_60)
-            tmp = Math_Div(target->max_hp * 60, 100);
+    {
+        u16 old;
+        u16 maxu;
+        s32 heal;
+
+        old = target->hp;
+        heal = target->hp;
+        maxu = target->max_hp;
+        if (action->effect == EFX_HEAL_60)
+            tmp = target->max_hp * 60;
         else
-            tmp = Math_Div(target->max_hp * 30, 100);
-        if (target->hp + tmp > target->max_hp)
-            tmp = target->max_hp - target->hp;
+            tmp = target->max_hp * 30;
+        tmp = Math_Div(tmp, 100);
+        heal += tmp;
+        if (heal > (s16)maxu)
+            heal = (s16)maxu;
+        tmp = heal - (s16)old;
         if (tmp == 0 && nibble != 1)
             break;
-        target->hp = (s16)(target->hp + tmp);
-        if (target->hp == target->max_hp)
+        if (heal == (s16)maxu)
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820);
         else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81d);
         }
+        target->hp = (s16)heal;
         BattleUnit_UpdateRatios(target_id);
         break;
+    }
 
     case EFX_PP_RESTORE_7:
-        tmp = Math_Div(target->max_pp * 7, 100);
-        if (target->pp + tmp > target->max_pp)
-            tmp = target->max_pp - target->pp;
+    {
+        s32 old;
+        s32 maxv;
+        s32 heal;
+
+        maxv = target->max_pp;
+        heal = target->pp;
+        old = heal;
+        tmp = Math_Div(maxv * 7, 100);
+        heal += tmp;
+        if (heal > maxv)
+            heal = maxv;
+        tmp = heal - old;
         if (tmp == 0 && nibble != 11)
             break;
-        target->pp = (s16)(target->pp + tmp);
-        if (target->pp == target->max_pp)
+        if (heal == maxv)
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821);
         else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81e);
         }
+        target->pp = (s16)heal;
         BattleUnit_UpdateRatios(target_id);
         break;
+    }
 
     case EFX_AGI_SET_UP8:
         S8OF(target->agility_modifier) = 8;
@@ -1067,11 +1094,11 @@ hp_tail:
     case EFX_RETIRE:
         BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x84f);
         else if (action_id == 219)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x850);
         else
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x883);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x84c);
         target->hp = 0;
         BattleUnit_UpdateRatios(target_id);
         break;
@@ -1134,7 +1161,7 @@ hp_tail:
         if (dmg == 0)
             break;
         BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-        TEXT_SIDE(0x827, 0x826);
+        TEXT_SIDE(0x85f, 0x85e);
         BattleUnit_Drain(actor_id, dmg);
         break;
 

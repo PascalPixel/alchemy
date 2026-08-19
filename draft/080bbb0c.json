@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6284,
+    "candidate_bytes": 6292,
     "reference_bytes": 6332,
-    "wrong_instructions": 1513,
-    "differing_halfwords": 2742,
+    "wrong_instructions": 1551,
+    "differing_halfwords": 2785,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 138,
+    "insn_diff_rows_normalized": 129,
     "frame": "100 == reference"
   },
   "shape": {
@@ -61,7 +61,8 @@
     "do{}while(0) macro wrappers (CLAMP_MOD, TAKE_BONUS, APPLY_GUARD, TEXT_SIDE) emit NOTE_INSN_LOOP_BEG/END pairs that survive to sched2 and act as same-register scheduling barriers; bare-brace macros remove them. KO push pairs now match the reference order (r0 before r1 at the second push), tid-copy before cur=0",
     "dependence-table method validated end to end: rtl-schedule table + -fsched-verbose=5 traced the tie to insn 8949's barrier-induced dependence on the r1 copy",
     "falloff 5/6/8 select really is a switch: balanced tree, one selector load (earlier rejection was measured against stale insns)",
-    "HEAL_60: volatile u16 mentions give the reference's four independent loads; maxv read once ahead of the if; div result added directly into heal (both restore-7 and heal-60)"
+    "HEAL_60: volatile u16 mentions give the reference's four independent loads; maxv read once ahead of the if; div result added directly into heal (both restore-7 and heal-60)",
+    "power routed through dmg at the three CalcPower sites: dmg = action->power; dmg = Battle_CalcPower(dmg, ...) -- the reference's ldrh into r5 plus copy to r0 is the accumulator, and the ldrh outranks the 128 build in the dependence table because dmg's chain is longer"
   ],
   "unexpressed": [
     {

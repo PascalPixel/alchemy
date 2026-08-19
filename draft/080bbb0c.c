@@ -878,7 +878,7 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             pp -= dmg;
-            TEXT_SIDE(MSG_DMG_P, MSG_DMG_E);
+            TEXT_SIDE_V(MSG_DMG_P, MSG_DMG_E);
             if (pp <= 0)
                 pp = 0;
             BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);

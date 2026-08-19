@@ -44,6 +44,32 @@ s32 Func_08077190(s32 power, s32 scale, s32 factor);
 void Func_08077120(s32 unit, s32 amount);
 s32 Func_080bbae8(s32 effect);
 
+/* 再構成用の別名。ABI 境界の宣言は Func_ のまま。 */
+#define Sys_Alloc            Func_08004938
+#define Sys_Free             Func_08002df0
+#define Mem_Copy             Func_080072f0
+#define Sys_SetMode          Func_08015130
+#define Math_Div             Func_080022ec
+#define Math_Mod             Func_080022f4
+#define Battle_HitCheck      Func_08077178
+#define Battle_CalcAttack    Func_08077180
+#define Battle_CalcPower     Func_08077188
+#define Battle_CalcRestore   Func_08077190
+#define BattleUnit_Drain     Func_08077120
+#define BattleUnit_Assign    Func_08077140
+#define BattleEffect_OnDead  Func_080bbae8
+#define Summon_FindSlot      Func_080b7514
+#define Summon_ClassId       Func_080c1fa8
+#define Summon_ClassValid    Func_080b6cdc
+#define Summon_TakeCharge    Func_080c1df4
+#define Summon_ResetCharge   Func_080c1f50
+#define Summon_Refresh       Func_080b7548
+#define Actor_GetObject      Func_080b7dd0
+#define Actor_Place          Func_080b6f44
+#define Actor_Commit         Func_080b6c90
+#define Actor_ListSlots      Func_080b6ae0
+#define Actor_RefreshSlot    Func_080b8000
+
 /* 属性テーブルはユニット+36 の s16 対。威力テーブルは +72。 */
 #define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 4))
 #define S8OF(v) (*(s8 *)&(v))
@@ -73,7 +99,7 @@ s32 Func_080bbae8(s32 effect);
             if (guard == 1)                                                    \
                 dmg /= 2;                                                      \
             else                                                               \
-                dmg = Func_080022ec(dmg, 10);                                  \
+                dmg = Math_Div(dmg, 10);                                  \
         }                                                                      \
     } while (0)
 
@@ -84,7 +110,7 @@ do {                                                                           \
         text = (player);                                                       \
     else                                                                       \
         text = (enemy);                                                        \
-    Func_080bbabc(BATTLE_EVENT_TEXT, text);                                    \
+    BattleEvent_Push(BATTLE_EVENT_TEXT, text);                                    \
 } while (0)
 
 #define TAKE_PWR()                                                             \
@@ -99,13 +125,13 @@ do {                                                                           \
     if (target->hp <= dmg) {                                                   \
         dealt = target->hp;                                                    \
         target->hp = 0;                                                        \
-        Func_080bbabc(BATTLE_EVENT_ACTOR_RESOLVE, target_id);                  \
-        Func_080bbabc(BATTLE_EVENT_UNIT, target_id);                           \
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);                  \
+        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                           \
         TEXT_SIDE(ko_lo, ko_hi);                                               \
     } else {                                                                   \
         dealt = dmg;                                                           \
         target->hp = (s16)(target->hp - dmg);                                  \
-        Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);                   \
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);                   \
     }                                                                          \
 }
 
@@ -128,12 +154,12 @@ do {                                                                           \
     } else {                                                                   \
         (cur) = (s16)((cur) + dmg);                                            \
     }                                                                          \
-    Func_080bbabc(BATTLE_EVENT_UNIT, target_id);                               \
+    BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                               \
     if ((cur) == (maxv))                                                       \
-        Func_080bbabc(BATTLE_EVENT_TEXT, (full_text));                         \
+        BattleEvent_Push(BATTLE_EVENT_TEXT, (full_text));                         \
     else {                                                                     \
-        Func_080bbabc(BATTLE_EVENT_VALUE, dmg);                                \
-        Func_080bbabc(BATTLE_EVENT_TEXT, (part_text));                         \
+        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);                                \
+        BattleEvent_Push(BATTLE_EVENT_TEXT, (part_text));                         \
     }                                                                          \
 }
 
@@ -142,8 +168,8 @@ do {                                                                           \
     (field) += (delta);                                                        \
     CLAMP_MOD(field);                                                          \
     BattleUnit_Recalculate(target_id);                                         \
-    Func_080bbabc(BATTLE_EVENT_VALUE, (value_expr));                           \
-    Func_080bbabc(BATTLE_EVENT_TEXT, (text));                                  \
+    BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
+    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
     (turns) = 7;                                                               \
 }
 
@@ -151,14 +177,14 @@ do {                                                                           \
 {                                                                              \
     target->agility_modifier += (delta);                                       \
     CLAMP_MOD(target->agility_modifier);                                       \
-    Func_080bbabc(BATTLE_EVENT_VALUE, (value_expr));                           \
-    Func_080bbabc(BATTLE_EVENT_TEXT, (text));                                  \
+    BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
+    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
     target->agility_modifier_turns = 7;                                        \
 }
 
 #define SET_STATUS7(field, text)                                               \
 {                                                                              \
-    Func_080bbabc(BATTLE_EVENT_TEXT, (text));                                  \
+    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
     (field) = 7;                                                               \
 }
 
@@ -207,7 +233,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     skip = 0;
     sign = 0;
     size = sizeof(struct BattleUnit);
-    copy = (struct BattleUnit *)Func_08004938(size);
+    copy = (struct BattleUnit *)Sys_Alloc(size);
 
     actor_id = plan->actor_id;
     target_id = plan->target_ids[slot];
@@ -219,7 +245,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     action = BattleAction_Get(action_id);
     actor = BattleUnit_Get(actor_id);
     target = BattleUnit_Get(target_id);
-    Func_080072f0(copy, target, size, Data_03001388);
+    Mem_Copy(copy, target, size, Data_03001388);
 
     if (action->range != 255) {
         offset = plan->target_offsets[slot];
@@ -299,13 +325,13 @@ after_power:
         chance += 30;
         chance *= 0x28f;
         if (chance > (BattleRandom_Next() & 0xffff))
-            Func_080bbabc(BATTLE_EVENT_SCRIPT_UPDATE, 5);
+            BattleEvent_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
 
     nibble = action->target_flags & 15;
     result = plan->target_results[slot];
     if (result == -1)
-        result = Func_08077178(
+        result = Battle_HitCheck(
             actor_id, target_id, range, action->effect, Data_080c2ab8[offset]);
     hit = result;
 
@@ -314,17 +340,17 @@ after_power:
         s32 rec;
 
         st = actor->class_id;
-        rec = Func_080b7514();
+        rec = Summon_FindSlot();
         if (action->effect == 51)
-            st = Func_080c1fa8(*(s32 *)work);
-        if (hit != 0 && Func_080b6cdc(st) != 0 && rec >= 0) {
+            st = Summon_ClassId(*(s32 *)work);
+        if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
             s32 ch;
             s16 *slots;
 
-            ch = Func_080c1df4(st, 1);
+            ch = Summon_TakeCharge(st, 1);
             if (ch & 0x8000)
-                Func_080c1f50(st);
-            Func_08077140(rec, st, ch & 0x7fff);
+                Summon_ResetCharge(st);
+            BattleUnit_Assign(rec, st, ch & 0x7fff);
             slots = (s16 *)((u8 *)work + 2);
             if (slots[50] == 254) {
                 slots[50] = rec;
@@ -346,13 +372,13 @@ after_power:
                     }
                 }
             }
-            Func_080b7548();
+            Summon_Refresh();
             {
                 void *obj;
                 s32 x;
                 s32 y;
 
-                obj = Func_080b7dd0(rec);
+                obj = Actor_GetObject(rec);
                 x = *(s32 *)((u8 *)obj + 12);
                 if (x < 0)
                     x += 0xffff;
@@ -361,29 +387,29 @@ after_power:
                 if (y < 0)
                     y += 0xffff;
                 y >>= 16;
-                Func_080b6f44(obj, rec, x, y);
+                Actor_Place(obj, rec, x, y);
             }
-            Func_080b6c90();
-            count = Func_080b6ae0(saved);
+            Actor_Commit();
+            count = Actor_ListSlots(saved);
             if (count > 0) {
                 s16 *q;
 
                 q = saved;
                 while (count != 0) {
                     count--;
-                    Func_080b8000(*q);
+                    Actor_RefreshSlot(*q);
                     q++;
                 }
             }
-            Func_080bbabc(BATTLE_EVENT_UNIT, rec);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, rec);
             if (action_id == 0x1f7)
-                Func_080bbabc(BATTLE_EVENT_TEXT, 0x8f5);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8f5);
             else
-                Func_080bbabc(BATTLE_EVENT_TEXT, 0x8f3);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8f3);
         } else if (action_id == 0x1f7) {
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x8f4);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8f4);
         } else {
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x8f6);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x8f6);
         }
     }
 
@@ -414,7 +440,7 @@ after_power:
             skip = 1;
         } else if (efx == 55) {
             if (actor->hp != 0)
-                Func_080bbabc(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
         } else if (efx == 32) {
             if (target->pp != 0)
                 nibble = 10;
@@ -427,12 +453,14 @@ after_power:
     if (skip == 0
         && (target->hp != 0 || BattleEffect_Classify(action->effect) != 0)
         && (u32)(nibble + 1) <= 12) {
+        s32 pp;
+        s32 cur;
+
         switch (nibble + 1) {
         case 4:
         case 5:
         {
             s32 pwr;
-            s32 cur;
 
             scale = target->defense;
             cur = target->hp;
@@ -445,19 +473,19 @@ after_power:
                     bonus = 0;
                 pwr = action->power;
                 if (nibble == 4)
-                    dmg = Func_080022ec(
-                        Func_08077180(actor->attack, scale, 0, bonus) * pwr,
+                    dmg = Math_Div(
+                        Battle_CalcAttack(actor->attack, scale, 0, bonus) * pwr,
                         10);
                 else
-                    dmg = Func_08077180(actor->attack, scale, pwr, bonus);
+                    dmg = Battle_CalcAttack(actor->attack, scale, pwr, bonus);
                 dmg *= adjust;
                 if (modifier == 1)
                     dmg = dmg * 5 / 4;
                 else if (modifier != 0)
                     dmg = dmg * 3 / 2;
-                dmg += (u8)Func_080022f4(((u8 *)target)[15], 5) + 6;
+                dmg += (u8)Math_Mod(((u8 *)target)[15], 5) + 6;
                 if (pass == 0) {
-                    Func_080bbabc(BATTLE_EVENT_MARK, 0);
+                    BattleEvent_Push(BATTLE_EVENT_MARK, 0);
                     {
                         s32 text;
 
@@ -465,7 +493,7 @@ after_power:
                             text = 0x823;
                         else
                             text = 0x822;
-                        Func_080bbabc(BATTLE_EVENT_TEXT_CONTINUE, text);
+                        BattleEvent_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
                     }
                 }
                 dmg += BattleRandom_Next() & 3;
@@ -483,20 +511,20 @@ after_power:
                 }
                 pass++;
             } while (pass <= 1);
-            Func_080bbabc(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             TEXT_SIDE(0x834 + sign, 0x831 + sign);
             if (cur <= dmg) {
                 dealt = cur;
                 target->hp = 0;
-                Func_080bbabc(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
                 TEXT_SIDE(0x825, 0x825);
             } else {
                 dealt = dmg;
                 target->hp = (s16)(cur - dmg);
-                Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             }
             BattleUnit_UpdateRatios(target_id);
             break;
@@ -507,19 +535,24 @@ after_power:
             s32 pwr;
 
             TAKE_PWR();
+            pp = target->pp;
             TAKE_BONUS();
-            dmg = Func_08077188(pwr, bonus, 256);
-            dmg = Func_080022ec(Data_080c2ac0[offset] * dmg, 100);
+            dmg = Battle_CalcPower(action->power, bonus, 256);
+            dmg = Math_Div(Data_080c2ac0[offset] * dmg, 100);
             dmg *= adjust;
             APPLY_GUARD();
-            if (action->effect == 32 && dmg > target->pp)
-                dmg = target->pp;
-            Func_080bbabc(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            if (action->effect == 32 && dmg > pp)
+                dmg = pp;
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             TEXT_SIDE(0x82a, 0x829);
-            APPLY_PP_HIT();
-            Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            pp -= dmg;
+            if (pp <= 0)
+                pp = 0;
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            dealt = target->pp - pp;
+            target->pp = pp;
             BattleUnit_UpdateRatios(target_id);
             break;
         }
@@ -527,18 +560,48 @@ after_power:
         case 2:
         {
             s32 pwr;
-            s32 cur;
 
             TAKE_PWR();
             cur = target->hp;
-            dmg = Func_08077190(pwr, range == 4 ? 100 : power, 256);
-            dmg = Func_080022ec(Data_080c2ad8[offset] * dmg, 100);
+            dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
+            dmg = Math_Div(Data_080c2ad8[offset] * dmg, 100);
             dmg *= adjust;
             dmg += BattleRandom_Next() & 3;
-            HEAL_CUR(cur, target->max_hp, 0x820, 0x81d);
-            target->hp = (s16)cur;
-            BattleUnit_UpdateRatios(target_id);
-            break;
+            cur += dmg;
+            if (cur > target->max_hp) {
+                cur = target->max_hp;
+                dmg = cur - target->hp;
+            }
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            if (cur == target->max_hp)
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820);
+            else {
+                BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81d);
+            }
+            goto hp_tail;
+        }
+
+        case 0:
+        {
+            s32 pwr;
+
+            TAKE_PWR();
+            pp = target->pp;
+            TAKE_BONUS();
+            dmg = Battle_CalcPower(pwr, bonus, 256);
+            dmg = Math_Div(Data_080c2af0[offset] * dmg, 100);
+            dmg *= adjust;
+            APPLY_GUARD();
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            TEXT_SIDE(0x827, 0x826);
+            pp -= dmg;
+            if (pp <= 0)
+                pp = 0;
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            goto pp_store;
         }
 
         case 6:
@@ -546,14 +609,16 @@ after_power:
         case 9:
         {
             s32 pwr;
+            s32 kind;
 
             TAKE_PWR();
             pass = 1;
+            cur = target->hp;
             do {
                 TAKE_BONUS();
                 if (pass == 0)
                     bonus = 0;
-                dmg = pwr;
+                dmg = action->power;
                 if (*cmd == 6) {
                     s32 item;
 
@@ -564,66 +629,84 @@ after_power:
                         case 6:
                         case 12:
                         case 18:
-                            item = 3;
+                            kind = 3;
                             break;
                         case 1:
                         case 7:
                         case 13:
                         case 19:
-                            item = 6;
+                            kind = 6;
                             break;
                         case 2:
                         case 8:
                         case 14:
                         case 20:
-                            item = 9;
+                            kind = 9;
                             break;
-                        default:
-                            item = 12;
+                        case 3:
+                        case 9:
+                        case 15:
+                        case 21:
+                            kind = 12;
                             break;
                         }
-                        dmg += Func_080022ec(item * target->max_hp, 100);
+                        dmg += Math_Div(kind * target->max_hp, 100);
                     }
                 }
-                dmg = Func_08077188(dmg, bonus, 256);
+                dmg = Battle_CalcPower(dmg, bonus, 256);
                 dmg *= adjust;
                 if (nibble == 6)
-                    mult = Data_080c2b38;
+                    dmg = Math_Div(Data_080c2b38[offset] * dmg, 100);
                 else if (nibble == 5)
-                    mult = Data_080c2b08;
+                    dmg = Math_Div(Data_080c2b08[offset] * dmg, 100);
                 else if (nibble == 8)
-                    mult = Data_080c2b20;
-                else
-                    mult = 0;
-                if (mult != 0)
-                    dmg = Func_080022ec(mult[offset] * dmg, 100);
+                    dmg = Math_Div(Data_080c2b20[offset] * dmg, 100);
                 dmg += BattleRandom_Next() & 3;
                 APPLY_GUARD();
-                if (BattleFlag_Test(366) != 0 && *cmd == 6 && target->hp > dmg) {
-                    dmg = target->hp;
+                if (BattleFlag_Test(366) != 0 && *cmd == 6 && cur > dmg) {
+                    dmg = cur;
                 }
                 pass++;
             } while (pass <= 1);
-            Func_080bbabc(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             TEXT_SIDE(0x834 + sign, 0x831 + sign);
-            APPLY_HP_HIT(0x825, 0x824);
-            break;
+            cur -= dmg;
+            if (cur > 0)
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            else {
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+                cur = 0;
+                TEXT_SIDE(0x825, 0x824);
+            }
+            goto hp_tail;
         }
 
         case 12:
         {
             s32 pwr;
-            s32 cur;
 
             TAKE_PWR();
-            cur = target->pp;
-            dmg = Func_08077190(pwr, range == 4 ? 100 : power, 256);
-            dmg = Func_080022ec(Data_080c2b50[offset] * dmg, 100);
+            pp = target->pp;
+            dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
+            dmg = Math_Div(Data_080c2b50[offset] * dmg, 100);
             dmg *= adjust;
-            HEAL_CUR(cur, target->max_pp, 0x821, 0x81e);
-            target->pp = (s16)cur;
+            pp += dmg;
+            if (pp > target->max_pp) {
+                pp = target->max_pp;
+                dmg = pp - target->pp;
+            }
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            if (pp == target->max_pp)
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821);
+            else {
+                BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81e);
+            }
+pp_store:
+            target->pp = (s16)pp;
             BattleUnit_UpdateRatios(target_id);
             break;
         }
@@ -635,68 +718,49 @@ after_power:
 
         case 3:
             if (hit == 0) {
-                Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);
-                Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-                Func_080bbabc(BATTLE_EVENT_TEXT, 0x827);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0x827);
                 break;
             }
         {
             s32 pwr;
-            s32 cur;
 
             TAKE_PWR();
             cur = target->hp;
             TAKE_BONUS();
-            dmg = Func_08077188(pwr, bonus, 256);
+            dmg = Battle_CalcPower(pwr, bonus, 256);
             dmg *= adjust;
-            dmg = Func_080022ec(Data_080c2b68[offset] * dmg, 100);
+            dmg = Math_Div(Data_080c2b68[offset] * dmg, 100);
             APPLY_GUARD();
-            Func_080bbabc(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             TEXT_SIDE(0x827, 0x826);
             cur -= dmg;
             if (cur > 0)
-                Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             else {
-                Func_080bbabc(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(0x825, 0x824);
             }
+hp_tail:
             dealt = target->hp - cur;
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
             break;
         }
 
-        case 0:
-        {
-            s32 pwr;
-
-            TAKE_PWR();
-            TAKE_BONUS();
-            dmg = Func_08077188(pwr, bonus, 256);
-            dmg = Func_080022ec(Data_080c2af0[offset] * dmg, 100);
-            dmg *= adjust;
-            APPLY_GUARD();
-            Func_080bbabc(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-            TEXT_SIDE(0x827, 0x826);
-            APPLY_PP_HIT();
-            Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            BattleUnit_UpdateRatios(target_id);
-            break;
-        }
         }
     }
 
     /* 付加効果 */
-    Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+    BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
     n = action->effect;
     if (BattleEffect_Classify(n) == 0 && target->hp == 0
-        && Func_080bbae8(n) == 0)
+        && BattleEffect_OnDead(n) == 0)
         goto done;
     if (hit == 0)
         goto done;
@@ -707,115 +771,94 @@ after_power:
     case 64:
         if (target->status_138 != 0) {
             target->status_138 = 0;
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x88b);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88b);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->status_13b != 0) {
             target->status_13b = 0;
-            Func_080bbabc(BATTLE_EVENT_RESET, 0);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x88d);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88d);
         }
         target->status_13c = 0;
         if (target->status_13d != 0) {
             target->status_13d = 0;
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x88c);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88c);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->status_141 != 0) {
             target->status_141 = 0;
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x894);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x894);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->status_140 != 0) {
             target->status_140 = 0;
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x88f);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88f);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
         }
         if (target->status_131 != 0) {
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x884);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x884);
             target->status_131 = 0;
         }
-        Func_080bbabc(BATTLE_EVENT_RESET, 0);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         break;
 
     case 4:
         if (target->status_138 != 0) {
             target->status_138 = 0;
-            Func_080bbabc(BATTLE_EVENT_RESET, 0);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x88b);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88b);
         }
         if (target->status_13b != 0) {
             target->status_13b = 0;
-            Func_080bbabc(BATTLE_EVENT_RESET, 0);
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x88d);
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88d);
         }
         target->status_13c = 0;
         if (target->status_13d == 0)
             break;
         target->status_13d = 0;
-        Func_080bbabc(BATTLE_EVENT_RESET, 0);
-        Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x88c);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88c);
         break;
 
     case 61:
     case 62:
         if (n == 61)
-            tmp = Func_080022ec(target->max_hp * 60, 100);
+            tmp = Math_Div(target->max_hp * 60, 100);
         else
-            tmp = Func_080022ec(target->max_hp * 30, 100);
+            tmp = Math_Div(target->max_hp * 30, 100);
         if (target->hp + tmp > target->max_hp)
             tmp = target->max_hp - target->hp;
         if (tmp == 0 && nibble != 1)
             break;
         target->hp = (s16)(target->hp + tmp);
         if (target->hp == target->max_hp)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x820);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820);
         else {
-            Func_080bbabc(BATTLE_EVENT_VALUE, tmp);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x81d);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81d);
         }
         BattleUnit_UpdateRatios(target_id);
         break;
 
     case 63:
-        tmp = Func_080022ec(target->max_pp * 7, 100);
+        tmp = Math_Div(target->max_pp * 7, 100);
         if (target->pp + tmp > target->max_pp)
             tmp = target->max_pp - target->pp;
         if (tmp == 0 && nibble != 11)
             break;
         target->pp = (s16)(target->pp + tmp);
         if (target->pp == target->max_pp)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x821);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821);
         else {
-            Func_080bbabc(BATTLE_EVENT_VALUE, tmp);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x81e);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81e);
         }
         BattleUnit_UpdateRatios(target_id);
-        break;
-
-    case 5:
-        S8OF(target->attack_modifier) = 8;
-        target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
-        Func_080bbabc(BATTLE_EVENT_VALUE, target->agility - copy->agility);
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x860);
-        break;
-
-    case 6:
-        S8OF(target->attack_modifier) = 252;
-        target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
-        Func_080bbabc(BATTLE_EVENT_VALUE, copy->agility - target->agility);
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x861);
-        break;
-
-    case 58:
-        ADJUST_ATKDEF(target->attack_modifier, -1, target->attack_modifier_turns,
-                      copy->attack - target->attack, 0x877);
         break;
 
     case 59:
@@ -823,14 +866,9 @@ after_power:
                       copy->attack - target->attack, 0x878);
         break;
 
-    case 7:
-        ADJUST_ATKDEF(target->attack_modifier, 1, target->attack_modifier_turns,
-                      target->attack - copy->attack, 0x860);
-        break;
-
-    case 8:
-        ADJUST_ATKDEF(target->attack_modifier, 2, target->attack_modifier_turns,
-                      target->attack - copy->attack, 0x860);
+    case 58:
+        ADJUST_ATKDEF(target->attack_modifier, -1, target->attack_modifier_turns,
+                      copy->attack - target->attack, 0x877);
         break;
 
     case 9:
@@ -838,14 +876,30 @@ after_power:
                       copy->defense - target->defense, 0x862);
         break;
 
-    case 10:
-        ADJUST_ATKDEF(target->defense_modifier, -2, target->defense_modifier_turns,
-                      copy->defense - target->defense, 0x863);
+    case 8:
+        ADJUST_ATKDEF(target->attack_modifier, 2, target->attack_modifier_turns,
+                      target->attack - copy->attack, 0x860);
         break;
 
-    case 11:
-        ADJUST_ATKDEF(target->defense_modifier, 1, target->defense_modifier_turns,
-                      target->defense - copy->defense, 0x862);
+    case 7:
+        ADJUST_ATKDEF(target->attack_modifier, 1, target->attack_modifier_turns,
+                      target->attack - copy->attack, 0x860);
+        break;
+
+    case 6:
+        S8OF(target->attack_modifier) = 252;
+        target->agility_modifier_turns = 5;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x861);
+        break;
+
+    case 13:
+        if (target->hp != 0)
+            break;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
+        target->hp = target->max_hp;
+        BattleUnit_UpdateRatios(target_id);
         break;
 
     case 12:
@@ -853,34 +907,22 @@ after_power:
                       target->defense - copy->defense, 0x863);
         break;
 
-    case 13:
-        if (target->hp != 0)
-            break;
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x854);
-        target->hp = target->max_hp;
-        BattleUnit_UpdateRatios(target_id);
+    case 11:
+        ADJUST_ATKDEF(target->defense_modifier, 1, target->defense_modifier_turns,
+                      target->defense - copy->defense, 0x862);
         break;
 
-    case 16:
-        if (target->hp != 0)
-            break;
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x854);
-        target->hp = (s16)(target->max_hp / 2);
-        BattleUnit_UpdateRatios(target_id);
+    case 10:
+        ADJUST_ATKDEF(target->defense_modifier, -2, target->defense_modifier_turns,
+                      copy->defense - target->defense, 0x863);
         break;
 
-    case 17:
-        if (target->hp != 0)
-            break;
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x854);
-        target->hp = (s16)Func_080022ec(target->max_hp * 8, 10);
-        BattleUnit_UpdateRatios(target_id);
-        break;
-
-    case 3:
-        if (target->agility_modifier != 0)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x84c);
-        target->agility_modifier = 0;
+    case 5:
+        S8OF(target->attack_modifier) = 8;
+        target->agility_modifier_turns = 5;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x860);
         break;
 
     case 56:
@@ -891,25 +933,47 @@ after_power:
         ADJUST_AGI(-2, (copy->agility_modifier - target->agility_modifier) * 20, 0x870);
         break;
 
-    case 14:
-        ADJUST_AGI(1, (target->agility_modifier - copy->agility_modifier) * 20, 0x86f);
+    case 3:
+        if (target->agility_modifier != 0)
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x84c);
+        target->agility_modifier = 0;
+        break;
+
+    case 17:
+        if (target->hp != 0)
+            break;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
+        target->hp = (s16)Math_Div(target->max_hp * 8, 10);
+        BattleUnit_UpdateRatios(target_id);
+        break;
+
+    case 16:
+        if (target->hp != 0)
+            break;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
+        target->hp = (s16)(target->max_hp / 2);
+        BattleUnit_UpdateRatios(target_id);
         break;
 
     case 15:
         ADJUST_AGI(2, (target->agility_modifier - copy->agility_modifier) * 20, 0x870);
         break;
 
+    case 14:
+        ADJUST_AGI(1, (target->agility_modifier - copy->agility_modifier) * 20, 0x86f);
+        break;
+
     case 18:
         if (target->status_131 != 0)
             break;
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x867);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x867);
         target->status_131 = 1;
         break;
 
     case 19:
         if (target->status_131 > 1)
             break;
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x874);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x874);
         target->status_131 = 2;
         break;
 
@@ -944,13 +1008,13 @@ after_power:
         break;
 
     case 27:
-        Func_080bbabc(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x882);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
         else if (action_id == 219)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x882);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
         else
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x883);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x883);
         target->hp = 0;
         BattleUnit_UpdateRatios(target_id);
         break;
@@ -974,13 +1038,13 @@ after_power:
         } else {
             actor->hp = (s16)(actor->hp + dmg);
         }
-        Func_080bbabc(BATTLE_EVENT_RESET, 0);
-        Func_080bbabc(BATTLE_EVENT_UNIT, actor_id);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
         if (actor->hp == actor->max_hp)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x820);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x820);
         else {
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x81d);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81d);
         }
         BattleUnit_UpdateRatios(actor_id);
         break;
@@ -993,28 +1057,28 @@ after_power:
         } else {
             actor->pp = (s16)(actor->pp + dmg);
         }
-        Func_080bbabc(BATTLE_EVENT_RESET, 0);
-        Func_080bbabc(BATTLE_EVENT_UNIT, actor_id);
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0);
+        BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
         if (actor->pp == actor->max_pp)
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x821);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x821);
         else {
-            Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x81e);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x81e);
         }
         BattleUnit_UpdateRatios(actor_id);
         break;
 
     case 69:
-        dmg = Func_080022ec(dealt, 10);
+        dmg = Math_Div(dealt, 10);
         if (target->pp < dmg)
             dmg = target->pp;
         if (actor->pp + dmg > actor->max_pp)
             dmg = actor->max_pp - actor->pp;
         if (dmg == 0)
             break;
-        Func_080bbabc(BATTLE_EVENT_VALUE, dmg);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
         TEXT_SIDE(0x827, 0x826);
-        Func_08077120(actor_id, dmg);
+        BattleUnit_Drain(actor_id, dmg);
         break;
 
     case 33:
@@ -1036,60 +1100,60 @@ after_power:
         target->status_12e = 0;
         target->status_12f = 0;
         target->status_12d = 0;
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x896);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x896);
         break;
 
     case 26:
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x872);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x872);
         target->status_140 = 1;
         break;
 
     case 28:
         if (target->status_141 == 0) {
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x873);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x873);
             target->status_141 = 7;
             break;
         }
         if (target->status_141 <= 1)
             break;
         target->status_141 -= 1;
-        Func_080bbabc(BATTLE_EVENT_VALUE, target->status_141);
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x875);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->status_141);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x875);
         break;
 
     case 66:
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x87d);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87d);
         ((u8 *)target)[0x144] = 2;
         break;
 
     case 54:
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x87e);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87e);
         target->battle_end_state = 1;
         if ((u32)target_id <= 7)
             ((u8 *)work)[67] |= 2;
         break;
 
     case 53:
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x87f);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87f);
         target->forced_action = 1;
         break;
 
     case 46:
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x881);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x881);
         if (S8OF(target->guard_level) > 0)
             break;
         S8OF(target->guard_level) = 1;
         break;
 
     case 47:
-        Func_080bbabc(BATTLE_EVENT_TEXT, 0x882);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
         if (S8OF(target->guard_level) > 1)
             break;
         S8OF(target->guard_level) = 2;
         break;
 
     case 45:
-        Func_080bbabc(BATTLE_EVENT_TEXT, (u32)-1);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, (u32)-1);
         break;
 
     default:
@@ -1098,20 +1162,20 @@ after_power:
 
 done:
     /* 終了処理 */
-    Func_080bbabc(BATTLE_EVENT_RESET, 0);
+    BattleEvent_Push(BATTLE_EVENT_RESET, 0);
     if (target->hp != 0) {
         if (target->status_13c != 0 && target->status_13c <= 6
             && dealt > 0 && (BattleRandom_Next() & 3) == 0) {
             target->status_13c = 0;
-            Func_080bbabc(BATTLE_EVENT_UNIT, target_id);
-            Func_080bbabc(BATTLE_EVENT_TEXT, 0x85f);
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x85f);
         }
     }
-    Func_08002df0(copy);
+    Sys_Free(copy);
     BattleUnit_Recalculate(target_id);
-    Func_08015130(((u8 *)Data_03001e74)[65]);
+    Sys_SetMode(((u8 *)Data_03001e74)[65]);
     if (target->hp != 0)
-        Func_080bbabc(BATTLE_EVENT_ACTOR_FINISH, target_id);
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (actor->status_140 != 0 && (BattleRandom_Next() & 3) == 0 && dealt > 0) {
         s32 share;
 

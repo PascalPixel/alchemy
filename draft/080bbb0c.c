@@ -795,9 +795,17 @@ after_power:
             } while (pass <= 1);
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            cur -= dmg;
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            TEXT_SIDE_V(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
+            {
+                s32 text;
+
+                if ((u32)target_id <= 7)
+                    text = MSG_DMG_EMPH_P + affinity;
+                else
+                    text = MSG_DMG_EMPH_E + affinity;
+                cur -= dmg;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+            }
             if (cur > 0)
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             else {
@@ -956,8 +964,16 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            cur -= dmg;
-            TEXT_SIDE_V(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
+            {
+                s32 text;
+
+                if ((u32)target_id <= 7)
+                    text = MSG_DMG_EMPH_P + affinity;
+                else
+                    text = MSG_DMG_EMPH_E + affinity;
+                cur -= dmg;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+            }
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);

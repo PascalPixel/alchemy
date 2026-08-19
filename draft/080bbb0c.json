@@ -3,10 +3,10 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6344,
+    "candidate_bytes": 6340,
     "reference_bytes": 6332,
-    "wrong_instructions": 1490,
-    "differing_halfwords": 2490,
+    "wrong_instructions": 1486,
+    "differing_halfwords": 2697,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
@@ -48,7 +48,11 @@
     "sleep-wake gate as nested ifs (fold-const kept off), text 0x883",
     "shared =1/=2 store tails (.L205/.L207) reproduced by plain stores + crossjump",
     "declaration block in reference spill order (early decl = high slot): frame 104->100, 16/21 slot usage counts exact",
-    "multi-target: tid local, n=0, while((u32)++n<=19), full expression per iteration"
+    "multi-target: tid local, n=0, while((u32)++n<=19), full expression per iteration",
+    "kind at function scope between power and cmd (ref slots: power=12 kind=8 cmd=4)",
+    "DK_ATTACK: defense and action->power each read once into a local (def r1->fp, apwr r5 across the call), raw-proven",
+    "multi-target scan compares target_id (sl) directly, no tid local",
+    "saved-slot refresh: do-while, count-- before the call, *q++"
   ],
   "unexpressed": [
     {
@@ -79,6 +83,26 @@
     {
       "shape": "HEAL_CUR cap-before-add in cases 2/12",
       "wrong": "reference adds, caps, re-derives display delta from the field"
+    },
+    {
+      "shape": "walk pseudos jsave/probe/woff matching ref lr/ip + second 100",
+      "wrong": 1788,
+      "note": "coloring churn +306; ref provably has them, retry after other regions settle"
+    },
+    {
+      "shape": "falloff else-if -> switch",
+      "wrong": 1620,
+      "note": "chain already emits the balanced tree; switch is codegen-identical but recolors"
+    },
+    {
+      "shape": "goto loop to suppress strength reduction",
+      "wrong": 1574,
+      "note": "goto did not stop SR; walker persists either way"
+    },
+    {
+      "shape": "scan-2 walking tbl itself to break the CSE fold",
+      "wrong": 1826,
+      "note": "fold persists, plus churn"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."

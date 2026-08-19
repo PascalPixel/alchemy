@@ -44,6 +44,63 @@ s32 Func_08077190(s32 power, s32 scale, s32 factor);
 void Func_08077120(s32 unit, s32 amount);
 s32 Func_080bbae8(s32 effect);
 
+/* 効果番号。挙動から付けた慎重な名前で、原作の識別子の主張ではない。 */
+enum {
+    EFX_AGI_RESET = 3,
+    EFX_CURE_PART = 4,
+    EFX_ATK_SET_UP8 = 5,
+    EFX_ATK_SET_DOWN4 = 6,
+    EFX_ATK_UP1 = 7,
+    EFX_ATK_UP2 = 8,
+    EFX_DEF_DOWN1 = 9,
+    EFX_DEF_DOWN2 = 10,
+    EFX_DEF_UP1 = 11,
+    EFX_DEF_UP2 = 12,
+    EFX_REVIVE_FULL = 13,
+    EFX_AGI_UP1 = 14,
+    EFX_AGI_UP2 = 15,
+    EFX_REVIVE_HALF = 16,
+    EFX_REVIVE_80 = 17,
+    EFX_AIL131_1 = 18,
+    EFX_AIL131_2 = 19,
+    EFX_AIL138 = 20,
+    EFX_AIL139 = 21,
+    EFX_AIL13A = 22,
+    EFX_AIL13B = 23,
+    EFX_AIL13C = 24,
+    EFX_AIL13D_LOW = 25,
+    EFX_AIL140 = 26,
+    EFX_RETIRE = 27,
+    EFX_AIL141 = 28,
+    EFX_AIL13E = 29,
+    EFX_AIL13F = 30,
+    EFX_DRAIN_HP = 31,
+    EFX_DRAIN_PP = 32,
+    EFX_BUFF_CLEAR = 33,
+    EFX_LETHAL = 34,
+    EFX_HALF_DEF = 35,
+    EFX_TEXT_NONE = 45,
+    EFX_GUARD1 = 46,
+    EFX_GUARD2 = 47,
+    EFX_STANDBY = 50,
+    EFX_STANDBY_WORK = 51,
+    EFX_FORCE_ACTION = 53,
+    EFX_BATTLE_END = 54,
+    EFX_ACTOR_FLASH = 55,
+    EFX_AGI_DOWN1 = 56,
+    EFX_AGI_DOWN2 = 57,
+    EFX_ATK_DOWN1 = 58,
+    EFX_ATK_DOWN2 = 59,
+    EFX_DRAIN_HP_HALF = 60,
+    EFX_HEAL_60 = 61,
+    EFX_HEAL_30 = 62,
+    EFX_PP_RESTORE_7 = 63,
+    EFX_CURE_ALL = 64,
+    EFX_SET_144 = 66,
+    EFX_AIL13D_HIGH = 67,
+    EFX_PP_LEECH = 69,
+};
+
 /* 再構成用の別名。ABI 境界の宣言は Func_ のまま。 */
 #define Sys_Alloc            Func_08004938
 #define Sys_Free             Func_08002df0
@@ -341,7 +398,7 @@ after_power:
 
         st = actor->class_id;
         rec = Summon_FindSlot();
-        if (action->effect == 51)
+        if (action->effect == EFX_STANDBY_WORK)
             st = Summon_ClassId(*(s32 *)work);
         if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
             s32 ch;
@@ -417,7 +474,7 @@ after_power:
         s32 efx;
 
         efx = action->effect;
-        if (efx == 53) {
+        if (efx == EFX_FORCE_ACTION) {
             s16 *tbl;
 
             hit = 0;
@@ -432,16 +489,16 @@ after_power:
                     }
                 }
             }
-        } else if (efx == 35) {
+        } else if (efx == EFX_HALF_DEF) {
             half = 1;
-        } else if (efx == 34) {
+        } else if (efx == EFX_LETHAL) {
             crush = 1;
-        } else if (efx == 27) {
+        } else if (efx == EFX_RETIRE) {
             skip = 1;
-        } else if (efx == 55) {
+        } else if (efx == EFX_ACTOR_FLASH) {
             if (actor->hp != 0)
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
-        } else if (efx == 32) {
+        } else if (efx == EFX_DRAIN_PP) {
             if (target->pp != 0)
                 nibble = 10;
             else
@@ -541,7 +598,7 @@ after_power:
             dmg = Math_Div(Data_080c2ac0[offset] * dmg, 100);
             dmg *= adjust;
             APPLY_GUARD();
-            if (action->effect == 32 && dmg > pp)
+            if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
@@ -768,7 +825,7 @@ hp_tail:
         goto done;
 
     switch (n) {
-    case 64:
+    case EFX_CURE_ALL:
         if (target->status_138 != 0) {
             target->status_138 = 0;
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88b);
@@ -803,7 +860,7 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         break;
 
-    case 4:
+    case EFX_CURE_PART:
         if (target->status_138 != 0) {
             target->status_138 = 0;
             BattleEvent_Push(BATTLE_EVENT_RESET, 0);
@@ -825,9 +882,9 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x88c);
         break;
 
-    case 61:
-    case 62:
-        if (n == 61)
+    case EFX_HEAL_60:
+    case EFX_HEAL_30:
+        if (n == EFX_HEAL_60)
             tmp = Math_Div(target->max_hp * 60, 100);
         else
             tmp = Math_Div(target->max_hp * 30, 100);
@@ -845,7 +902,7 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case 63:
+    case EFX_PP_RESTORE_7:
         tmp = Math_Div(target->max_pp * 7, 100);
         if (target->pp + tmp > target->max_pp)
             tmp = target->max_pp - target->pp;
@@ -861,32 +918,32 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case 59:
+    case EFX_ATK_DOWN2:
         ADJUST_ATKDEF(target->attack_modifier, -2, target->attack_modifier_turns,
                       copy->attack - target->attack, 0x878);
         break;
 
-    case 58:
+    case EFX_ATK_DOWN1:
         ADJUST_ATKDEF(target->attack_modifier, -1, target->attack_modifier_turns,
                       copy->attack - target->attack, 0x877);
         break;
 
-    case 9:
+    case EFX_DEF_DOWN1:
         ADJUST_ATKDEF(target->defense_modifier, -1, target->defense_modifier_turns,
                       copy->defense - target->defense, 0x862);
         break;
 
-    case 8:
+    case EFX_ATK_UP2:
         ADJUST_ATKDEF(target->attack_modifier, 2, target->attack_modifier_turns,
                       target->attack - copy->attack, 0x860);
         break;
 
-    case 7:
+    case EFX_ATK_UP1:
         ADJUST_ATKDEF(target->attack_modifier, 1, target->attack_modifier_turns,
                       target->attack - copy->attack, 0x860);
         break;
 
-    case 6:
+    case EFX_ATK_SET_DOWN4:
         S8OF(target->attack_modifier) = 252;
         target->agility_modifier_turns = 5;
         BattleUnit_Recalculate(target_id);
@@ -894,7 +951,7 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x861);
         break;
 
-    case 13:
+    case EFX_REVIVE_FULL:
         if (target->hp != 0)
             break;
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
@@ -902,22 +959,22 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case 12:
+    case EFX_DEF_UP2:
         ADJUST_ATKDEF(target->defense_modifier, 2, target->defense_modifier_turns,
                       target->defense - copy->defense, 0x863);
         break;
 
-    case 11:
+    case EFX_DEF_UP1:
         ADJUST_ATKDEF(target->defense_modifier, 1, target->defense_modifier_turns,
                       target->defense - copy->defense, 0x862);
         break;
 
-    case 10:
+    case EFX_DEF_DOWN2:
         ADJUST_ATKDEF(target->defense_modifier, -2, target->defense_modifier_turns,
                       copy->defense - target->defense, 0x863);
         break;
 
-    case 5:
+    case EFX_ATK_SET_UP8:
         S8OF(target->attack_modifier) = 8;
         target->agility_modifier_turns = 5;
         BattleUnit_Recalculate(target_id);
@@ -925,21 +982,21 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x860);
         break;
 
-    case 56:
+    case EFX_AGI_DOWN1:
         ADJUST_AGI(-1, (copy->agility_modifier - target->agility_modifier) * 20, 0x86f);
         break;
 
-    case 57:
+    case EFX_AGI_DOWN2:
         ADJUST_AGI(-2, (copy->agility_modifier - target->agility_modifier) * 20, 0x870);
         break;
 
-    case 3:
+    case EFX_AGI_RESET:
         if (target->agility_modifier != 0)
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x84c);
         target->agility_modifier = 0;
         break;
 
-    case 17:
+    case EFX_REVIVE_80:
         if (target->hp != 0)
             break;
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
@@ -947,7 +1004,7 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case 16:
+    case EFX_REVIVE_HALF:
         if (target->hp != 0)
             break;
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
@@ -955,59 +1012,59 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case 15:
+    case EFX_AGI_UP2:
         ADJUST_AGI(2, (target->agility_modifier - copy->agility_modifier) * 20, 0x870);
         break;
 
-    case 14:
+    case EFX_AGI_UP1:
         ADJUST_AGI(1, (target->agility_modifier - copy->agility_modifier) * 20, 0x86f);
         break;
 
-    case 18:
+    case EFX_AIL131_1:
         if (target->status_131 != 0)
             break;
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x867);
         target->status_131 = 1;
         break;
 
-    case 19:
+    case EFX_AIL131_2:
         if (target->status_131 > 1)
             break;
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x874);
         target->status_131 = 2;
         break;
 
-    case 20:
+    case EFX_AIL138:
         SET_STATUS7(target->status_138, 0x868);
         break;
 
-    case 21:
+    case EFX_AIL139:
         SET_STATUS7(target->status_139, 0x869);
         break;
 
-    case 22:
+    case EFX_AIL13A:
         SET_STATUS7(target->status_13a, 0x86a);
         break;
 
-    case 23:
+    case EFX_AIL13B:
         SET_STATUS7(target->status_13b, 0x86b);
         break;
 
-    case 24:
+    case EFX_AIL13C:
         SET_STATUS7(target->status_13c, 0x86c);
         break;
 
-    case 25:
+    case EFX_AIL13D_LOW:
         TEXT_SIDE(0x86d, 0x876);
         target->status_13d |= 7;
         break;
 
-    case 67:
+    case EFX_AIL13D_HIGH:
         TEXT_SIDE(0x86d, 0x876);
         target->status_13d |= 16;
         break;
 
-    case 27:
+    case EFX_RETIRE:
         BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
@@ -1019,18 +1076,18 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case 29:
+    case EFX_AIL13E:
         SET_STATUS7(target->status_13e, 0x86f);
         break;
 
-    case 30:
+    case EFX_AIL13F:
         SET_STATUS7(target->status_13f, 0x870);
         break;
 
-    case 31:
-    case 60:
+    case EFX_DRAIN_HP:
+    case EFX_DRAIN_HP_HALF:
         dmg = dealt;
-        if (n == 60)
+        if (n == EFX_DRAIN_HP_HALF)
             dmg /= 2;
         if (actor->hp + dmg > actor->max_hp) {
             dmg = actor->max_hp - actor->hp;
@@ -1049,7 +1106,7 @@ hp_tail:
         BattleUnit_UpdateRatios(actor_id);
         break;
 
-    case 32:
+    case EFX_DRAIN_PP:
         dmg = dealt;
         if (actor->pp + dmg > actor->max_pp) {
             dmg = actor->max_pp - actor->pp;
@@ -1068,7 +1125,7 @@ hp_tail:
         BattleUnit_UpdateRatios(actor_id);
         break;
 
-    case 69:
+    case EFX_PP_LEECH:
         dmg = Math_Div(dealt, 10);
         if (target->pp < dmg)
             dmg = target->pp;
@@ -1081,7 +1138,7 @@ hp_tail:
         BattleUnit_Drain(actor_id, dmg);
         break;
 
-    case 33:
+    case EFX_BUFF_CLEAR:
         if (target->attack_modifier > 0) {
             target->attack_modifier = 0;
             target->attack_modifier_turns = 0;
@@ -1103,12 +1160,12 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x896);
         break;
 
-    case 26:
+    case EFX_AIL140:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x872);
         target->status_140 = 1;
         break;
 
-    case 28:
+    case EFX_AIL141:
         if (target->status_141 == 0) {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0x873);
             target->status_141 = 7;
@@ -1121,38 +1178,38 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x875);
         break;
 
-    case 66:
+    case EFX_SET_144:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87d);
         ((u8 *)target)[0x144] = 2;
         break;
 
-    case 54:
+    case EFX_BATTLE_END:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87e);
         target->battle_end_state = 1;
         if ((u32)target_id <= 7)
             ((u8 *)work)[67] |= 2;
         break;
 
-    case 53:
+    case EFX_FORCE_ACTION:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x87f);
         target->forced_action = 1;
         break;
 
-    case 46:
+    case EFX_GUARD1:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x881);
         if (S8OF(target->guard_level) > 0)
             break;
         S8OF(target->guard_level) = 1;
         break;
 
-    case 47:
+    case EFX_GUARD2:
         BattleEvent_Push(BATTLE_EVENT_TEXT, 0x882);
         if (S8OF(target->guard_level) > 1)
             break;
         S8OF(target->guard_level) = 2;
         break;
 
-    case 45:
+    case EFX_TEXT_NONE:
         BattleEvent_Push(BATTLE_EVENT_TEXT, (u32)-1);
         break;
 

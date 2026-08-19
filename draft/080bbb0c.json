@@ -3,15 +3,16 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6352,
+    "candidate_bytes": 6344,
     "reference_bytes": 6332,
-    "wrong_instructions": 1616,
-    "differing_halfwords": 2803,
+    "wrong_instructions": 1490,
+    "differing_halfwords": 2490,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 242
+    "insn_diff_rows_normalized": 236,
+    "frame": "100 == reference"
   },
   "shape": {
     "calls": null,
@@ -45,7 +46,9 @@
     "TAKE_PWR without a variable in the five re-reading bodies",
     "BUFF_CLEAR clears 12c,12d,12e,12f in order",
     "sleep-wake gate as nested ifs (fold-const kept off), text 0x883",
-    "shared =1/=2 store tails (.L205/.L207) reproduced by plain stores + crossjump"
+    "shared =1/=2 store tails (.L205/.L207) reproduced by plain stores + crossjump",
+    "declaration block in reference spill order (early decl = high slot): frame 104->100, 16/21 slot usage counts exact",
+    "multi-target: tid local, n=0, while((u32)++n<=19), full expression per iteration"
   ],
   "unexpressed": [
     {

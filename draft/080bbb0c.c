@@ -345,6 +345,13 @@ do {                                                                           \
 
 s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
 {
+    /*
+     * 宣言順はスピルスロット順(先頭ほど高位)。参照の割付:
+     * offset=fp action=76 actor=72 actor_id=68 action_id=64 bonus=60
+     * work=56 half=52 adjust=48 dealt=44 crush=40 hit=36 modifier=32
+     * skip=28 nibble=24 affinity=20 copy=16 power=12 (temp)=8 cmd=4
+     * target=r7 target_id=sl range=r9 saved=84..
+     */
     s32 offset;
     struct BattleAction *action;
     struct BattleUnit *actor;
@@ -364,7 +371,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     struct BattleUnit *copy;
     s32 power;
     s16 *cmd;
-    s32 size;
     s32 target_id;
     s32 range;
     struct BattleUnit *target;
@@ -376,8 +382,8 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 guard;
     s16 saved[8];
     s32 count;
-    s32 *mult;
     s32 tmp;
+    s32 size;
 
     bonus = 0;
     work = BattleWorkPtr;
@@ -583,14 +589,20 @@ after_power:
             s16 *tbl;
 
             hit = 0;
-            tbl = (s16 *)((u8 *)work + 748);
-            if (tbl[0] == (s16)target_id) {
-                hit = 1;
-            } else {
-                for (n = 1; n <= 19; n++) {
-                    if (*(s16 *)((u8 *)tbl + (n << 4)) == (s16)target_id) {
-                        hit = 1;
-                        break;
+            {
+                s32 tid;
+
+                tid = (s16)target_id;
+                tbl = (s16 *)((u8 *)work + 748);
+                if (tbl[0] == tid) {
+                    hit = 1;
+                } else {
+                    n = 0;
+                    while ((u32)++n <= 19) {
+                        if (*(s16 *)((u8 *)work + 748 + (n << 4)) == tid) {
+                            hit = 1;
+                            break;
+                        }
                     }
                 }
             }
@@ -646,10 +658,12 @@ after_power:
                     dmg = Battle_CalcAttack(actor->attack, scale,
                                             action->power, bonus);
                 dmg *= adjust;
-                if (modifier == 1)
-                    dmg = dmg * 5 / 4;
-                else if (modifier != 0)
-                    dmg = dmg * 3 / 2;
+                if (modifier != 0) {
+                    if (modifier == 1)
+                        dmg = dmg * 5 / 4;
+                    else
+                        dmg = dmg * 3 / 2;
+                }
                 dmg += (u8)Math_Mod(((u8 *)target)[15], 5) + 6;
                 if (pass == 0) {
                     BattleEvent_Push(BATTLE_EVENT_MARK, 0);

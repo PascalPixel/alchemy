@@ -686,7 +686,7 @@ after_power:
         s32 efx;
 
         efx = action->effect;
-        if (efx == EFX_IMMOBILIZE) {
+        if (action->effect == EFX_IMMOBILIZE) {
             s32 hidx;
 
             hit = 0;
@@ -707,16 +707,16 @@ after_power:
                         goto scan_next;
                 }
             }
-        } else if (efx == EFX_HALF_DEF) {
+        } else if (action->effect == EFX_HALF_DEF) {
             half = 1;
-        } else if (efx == EFX_LETHAL) {
+        } else if (action->effect == EFX_LETHAL) {
             crush = 1;
-        } else if (efx == EFX_INSTANT_DOWN) {
+        } else if (action->effect == EFX_INSTANT_DOWN) {
             skip = 1;
         } else if (efx == EFX_ACTOR_FLASH) {
             if (actor->hp != 0)
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
-        } else if (efx == EFX_DRAIN_PP) {
+        } else if (action->effect == EFX_DRAIN_PP) {
             if (target->pp != 0)
                 nibble = 10;
             else

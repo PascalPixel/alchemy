@@ -836,8 +836,16 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            pp -= dmg;
-            TEXT_SIDE(MSG_PP_LOSS_P, MSG_PP_LOSS_E);
+            {
+                s32 text;
+
+                if ((u32)target_id <= 7)
+                    text = MSG_PP_LOSS_P;
+                else
+                    text = MSG_PP_LOSS_E;
+                pp -= dmg;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+            }
             if (pp <= 0)
                 pp = 0;
             BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
@@ -886,8 +894,16 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            pp -= dmg;
-            TEXT_SIDE_V(MSG_DMG_P, MSG_DMG_E);
+            {
+                s32 text;
+
+                if ((u32)target_id <= 7)
+                    text = MSG_DMG_P;
+                else
+                    text = MSG_DMG_E;
+                pp -= dmg;
+                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+            }
             if (pp <= 0)
                 pp = 0;
             BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);

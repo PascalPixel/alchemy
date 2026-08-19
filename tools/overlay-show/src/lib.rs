@@ -5,6 +5,7 @@
 //! header comment for the full rationale; it is reproduced there, not
 //! duplicated here.
 
+pub mod gas;
 pub mod reconstruct;
 
 use std::path::PathBuf;

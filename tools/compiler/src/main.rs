@@ -9,6 +9,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("mode-sweep", "plan, score and report compiler-mode sweeps"),
     ("search-modes", "search compiler mode combinations"),
     ("shape-sweep", "bounded source-shape search, with the iterative descent driver"),
+    ("reconstruct", "draft C from a main-image .s file, into work/"),
     ("thumb-disasm", "thumb disasm"),
     ("candidate-show", "compile one candidate and show the byte comparison"),
     ("candidate-explain", "explain a candidate's routing and flags"),
@@ -83,6 +84,18 @@ fn main() -> ExitCode {
             Ok(()) => ExitCode::SUCCESS,
             Err(message) => { eprintln!("error: {message}"); ExitCode::FAILURE }
         },
+        "reconstruct" => match overlay_show::reconstruct::run(&rest) {
+            Ok(lines) => {
+                for line in lines {
+                    println!("{line}");
+                }
+                ExitCode::SUCCESS
+            }
+            Err(message) => {
+                eprintln!("{message}");
+                ExitCode::FAILURE
+            }
+        },
         other => {
             eprintln!("unknown compiler command: {other}\n\n{USAGE}"); list(); ExitCode::from(2)
         }
@@ -123,5 +136,5 @@ fn self_test() -> ExitCode {
 }
 
 fn dispatchable(name: &str) -> bool {
-    matches!(name, "bl-symbols" | "candidate-explain" | "candidate-show" | "corpus-regression" | "dashboard-server" | "decomp-diagnose" | "main-rank" | "mode-cohort" | "mode-sweep" | "permute" | "residuals" | "rtl-align" | "rtl-insn" | "rtl-schedule" | "rtl-sexpr" | "search-modes" | "shape-sweep" | "thumb-disasm")
+    matches!(name, "bl-symbols" | "candidate-explain" | "candidate-show" | "corpus-regression" | "dashboard-server" | "decomp-diagnose" | "main-rank" | "mode-cohort" | "mode-sweep" | "permute" | "reconstruct" | "residuals" | "rtl-align" | "rtl-insn" | "rtl-schedule" | "rtl-sexpr" | "search-modes" | "shape-sweep" | "thumb-disasm")
 }

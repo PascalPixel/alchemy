@@ -158,6 +158,48 @@ pub fn verify_candidate(
     )
 }
 
+/// gcc `-S` only: same flags as [`verify_candidate_routed`], no assembler,
+/// linker, or ROM. The confirmation loop that git-diffs `.s` files needs this
+/// and nothing else -- linking the owner is what turned a 30 ms compile into
+/// half a second.
+pub fn compile_to_assembly(
+    source: &str,
+    routing_source: &str,
+    output_directory: &str,
+    extra_compiler_flags: &[String],
+    compiler: CompilerTarget,
+    configuration: &CandidateCompilerConfiguration,
+) -> Result<String, String> {
+    let stem = source_stem(source);
+    std::fs::create_dir_all(output_directory)
+        .map_err(|error| format!("{output_directory}: {error}"))?;
+    let assembly = Path::new(output_directory)
+        .join(format!("{stem}.s"))
+        .to_string_lossy()
+        .into_owned();
+    let preprocessed = Path::new(output_directory)
+        .join(format!("{stem}.i"))
+        .to_string_lossy()
+        .into_owned();
+
+    let mut options =
+        SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
+    options.family = configuration.family;
+    let mut add_flags = extra_compiler_flags.to_vec();
+    add_flags.extend(configuration.add_flags.iter().cloned());
+    options.flags = Some(CompilerFlagMutations {
+        add_flags,
+        remove_flags: configuration.remove_flags.clone(),
+    });
+    options.preprocessed_output = Some(preprocessed);
+    let plan = source_to_assembly_plan(&options)?;
+    let cwd = root();
+    for step in &plan.steps {
+        run(&step.command, cwd)?;
+    }
+    Ok(assembly)
+}
+
 /// Compile a temporary candidate using the compiler family and flags owned by
 /// `routing_source`. Keeping the physical input separate from its eventual
 /// repository path is required by parallel search tools; otherwise every

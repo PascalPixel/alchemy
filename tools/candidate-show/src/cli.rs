@@ -4,7 +4,7 @@ use std::path::Path;
 
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
 
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 
@@ -28,6 +28,26 @@ pub struct Options {
     /// exactly when it is most needed. Aligning as sequences shows the
     /// insertion or deletion as itself and keeps the rest lined up.
     pub align: bool,
+    /// Align, then print only the first residual window. Implies `--align`.
+    ///
+    /// A 6 KB owner produces thousands of aligned rows. The next edit is the
+    /// first `+`/`-`/`!` after the matching prefix; everything after that is
+    /// phase noise until that row is fixed. `--first` is the confirmation
+    /// loop: score line, prefix length, then that window.
+    pub first: bool,
+    /// gcc `-S` plus a git diff of insn lines against `asm/<stem>.s`.
+    ///
+    /// Skips the ROM, the assembler, the linker and objdump. That is the
+    /// confirmation loop: 30 ms for this owner instead of the 500 ms
+    /// linked-byte score. Size match without matching insns is not progress;
+    /// this is the insn view.
+    pub asm: bool,
+    /// Unified diff applied to a copy of the candidate before scoring.
+    ///
+    /// The original source is not written. `FILE` is `-` for stdin. The copy
+    /// lives under the work directory, so two patches of the same owner do not
+    /// clobber each other if they pass distinct `--work` dirs.
+    pub patch: Option<String>,
 }
 
 #[derive(Debug)]
@@ -71,8 +91,13 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             remove_flags: Vec::new(),
         },
         align: false,
+        first: false,
+        asm: false,
+        patch: None,
     };
     let mut align = false;
+    let mut first = false;
+    let mut asm = false;
     let mut rest: Vec<String> = Vec::new();
     let mut index = 0usize;
     while index < argv.len() {
@@ -91,6 +116,16 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             // keeps a trial flag out of every other region's build.
             "--align" => {
                 align = true;
+            }
+            "--first" => {
+                first = true;
+                align = true;
+            }
+            "--asm" => {
+                asm = true;
+            }
+            "--patch" => {
+                options.patch = take(&mut index).cloned();
             }
             "--flags" => {
                 let value = take(&mut index).ok_or_else(|| {
@@ -127,6 +162,8 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         options.work = Some(default_work(root, &options.source));
     }
     options.align = align;
+    options.first = first;
+    options.asm = asm;
     Ok(ParseOutcome::Options(Box::new(options)))
 }
 
@@ -310,5 +347,25 @@ mod tests {
     #[test]
     fn two_positionals_report_the_short_usage() {
         assert_eq!(parse(&["a.c", "b.c"]).unwrap_err(), SHORT_USAGE);
+    }
+
+    #[test]
+    fn first_implies_align() {
+        let options = unwrap_options(&["a.c", "--first"]);
+        assert!(options.first);
+        assert!(options.align);
+    }
+
+    #[test]
+    fn patch_stores_the_path() {
+        let options = unwrap_options(&["a.c", "--patch", "delta.diff"]);
+        assert_eq!(options.patch.as_deref(), Some("delta.diff"));
+    }
+
+    #[test]
+    fn asm_is_a_switch() {
+        let options = unwrap_options(&["a.c", "--asm"]);
+        assert!(options.asm);
+        assert!(!unwrap_options(&["a.c"]).asm);
     }
 }

@@ -10,7 +10,8 @@ This is the only guide. `AGENTS.md` and `CLAUDE.md` are symlinks to it, and
 
 A change counts when the rebuilt bytes equal the released ROM. Everything else
 -- readable C, better names, faster tools -- is worth doing, and is not the same
-thing.
+thing. A candidate the same *length* as the reference, or whose first eighty
+instructions match, is not a change until the contents match.
 
 ## Contents
 
@@ -18,6 +19,7 @@ thing.
 - [Setting up](#setting-up)
 - [The loop](#the-loop)
 - [Reading a residual](#reading-a-residual)
+- [How gcc 2.96 places things](#how-gcc-296-places-things)
 - [Source style](#source-style)
 - [Shapes that decide bytes](#shapes-that-decide-bytes)
 - [Where the project is](#where-the-project-is)
@@ -57,7 +59,13 @@ symbol list, pseudocode, script, generated output, or notes. Public
 decompilation projects may inform generic repository, build, testing and
 publication conventions; their game code, labels, assets and game knowledge may
 not be used. Generic tools and public architecture or compiler documentation
-are fine.
+are fine. Era-appropriate C *style* -- C89, short names, macros for repeated
+tails, `switch`/`break` -- may be read from public pret trees such as
+pokeemerald. Their functions, types, and labels may not.
+
+Splitting one owner across many `.c` files and compiling them together would
+not explain the output of this compiler. The owner is one translation unit. Do
+not spend a session proving that.
 
 ### The publication boundary
 
@@ -118,7 +126,10 @@ Func_080f9b4c:
 ```
 
 Claim permanence only from what the instructions show. An owner is not
-permanent because it is hard.
+permanent because it is hard. `main:0x080bbb0c` is 6,332 bytes with no
+permanence marker -- no Thumb multiple-transfer, no SWI, no veneer idiom, no
+entry in `asm/classification.json`. Every byte of it is reachable as C. Hard
+is not permanent.
 
 ### Tools cited by sources but no longer present
 
@@ -184,21 +195,34 @@ make build-claimed   # links every byte-exact owner
 make verify          # the authoritative gate
 ```
 
+Build the compiler binary once per checkout (or after a tools change):
+
+```bash
+cargo build --release --manifest-path tools/compiler/Cargo.toml
+```
+
+The inner loop invokes that binary directly. `cargo run` on every shot spends
+the whole budget on startup.
+
 ---
 
 ## The loop
 
 Read the target assembly, work out what C the original author wrote, write that
-C, compile it, compare the bytes, fix the difference. Repeat until identical.
+C, compile it, compare the **instructions**, fix the difference. Repeat until
+identical.
 
-What this repository adds is **feedback**. You are not diffing by eye. The tools
-compile your candidate, link it at its real address, compare it against the
-reference bytes, and say how far off you are and in what way. A gate then
+What this repository adds is **feedback**. You are not diffing by eye. The
+tools compile your candidate and tell you whether the edit moved the assembly
+at all, then, when you ask, whether the linked bytes match the ROM. A gate
 refuses to adopt anything that does not reproduce.
 
-There are two tiers and no third place for work to sit. A byte is exact C that
+There are two tiers and no third place that counts. A byte is exact C that
 rebuilds identically, or it is assembly. Your unfinished candidate lives in
-`work/`, which is gitignored -- not in the tree, and not in a commit.
+`work/`, which is gitignored. What you have learned lives in `recon/`. A
+compiling snapshot of the C may sit next to the record as `recon/<owner>.c` so
+a compaction or a fresh worktree does not start from zero; it is not exact, it
+is not a coverage figure, and it is deleted when the owner is adopted.
 
 ### 1. Pick an owner
 
@@ -244,7 +268,9 @@ arguments -- `overlay reconstruct resource_3bd:13f8` writes a first draft into
 `work/` from the owner's own disassembly: the calls and their arguments, the
 literal pools skipped rather than decoded, a value held in a callee-saved
 register recognised as a local, loads and stores through a held pointer, and
-counted loops with their real bounds.
+counted loops with their real bounds. A main-image owner is the same lift
+from its assembly: `compiler reconstruct asm/080bbb0c.s` (or just `080bbb0c`)
+assembles the `.s`, objdumps it, and writes `work/080bbb0c.c`.
 
 It is a starting point and not a reconstruction. It models what the bytes
 plainly show and is silent about everything else -- it writes no `if`, so the
@@ -281,6 +307,13 @@ between two members is itself evidence. If a shape resists across the whole
 cohort, that is a real finding worth recording; if it resists on one member and
 not the others, the member is what is different, not the compiler.
 
+A large main-image owner is the exception that still wants a cohort *of
+shapes*, not of files: grep the open owners for the idiom in front of you
+(`negs` mask, six-argument spill, `cmp sl, #7` / `bhi`) and read a finished
+sibling that already emits it. One 6 KB function with no second reading is how
+a session spends an afternoon on `slots[50]` while 1,800 instructions elsewhere
+stay wrong.
+
 Ways to find one:
 
 - `overlay twins` groups owners by identical shape and names a solved member
@@ -304,19 +337,33 @@ never a source draft. Get these facts first:
 
 - **Boundaries and entry.** Prologue shape, frame size, which registers are
   saved, stack slots and arguments, and whether a shared tail is reached from
-  elsewhere.
+  elsewhere. Declaration order of the locals is the stack-slot order: first
+  scalar that lives across calls tends to get fp, the next a high spill, later
+  ones the remaining slots. On `080bbb0c`, `offset` first and `action` second
+  is `fp` and `[sp,#76]`; `result` declared before `cmd` is how `cmd` lands at
+  `[sp,#4]`.
 - **Types and signedness**, read off the load widths. `ldrb`/`ldrsb`/`ldrh`/
   `ldrsh` are declarations, not hints. A `lsls`/`asrs` pair is a sign extension
-  the source asked for.
+  the source asked for. `cmp #7` / `bhi` is an unsigned compare; `ble` is
+  signed. They are not interchangeable spellings of the same test.
 - **Control flow.** Loop heads and bottoms, switch and jump-table layout,
-  branch cascades, fall-through seams.
+  branch cascades, fall-through seams. A jump-table slot that points at the
+  instruction *after* the switch is an empty `case` with `break`, not a body
+  that happens to live there. On `080bbb0c` the nibble table's cases 1, 8 and
+  10 all encode `0x080bc666`, which is after-switch; filling them as HP-hit
+  bodies made the function *longer* and more wrong.
 - **Aggregate layout.** Which offsets cluster around which base registers, and
   which cells are read through one pointer and written through another.
 - **Constants.** Which live in the literal pool and which are built inline. A
-  pooled word and an inline `movs` are different source spellings.
+  pooled word and an inline `movs` are different source spellings. Thumb
+  `ldrsh` has no immediate offset: a load from `base + 100` is
+  `movs r2, #100` / `ldrsh r3, [r1, r2]`, and `slots[50]` folds to
+  `adds r1, #102` / `ldrsh [r1, r5]` with r5 zeroed. Those are different
+  source shapes.
 - **Calls and side effects**, and every value's lifetime across them.
 
 `overlay disasm`, `overlay show` and `overlay entry` decode overlay bytes.
+Main-image assembly is the `.s` already in `asm/`.
 
 Before you start, check whether the owner is C at all. A region is permanently
 assembly only when its instructions could not have come from this compiler --
@@ -324,6 +371,13 @@ see [Permanent assembly](#permanent-assembly). Grepping the span for `stmia`,
 `ldmia`, `swi` and the `mov ip, lr` / `bx ip` pair takes a second. Note that a
 SINGLE-register `ldmia r1!, {r3}` is ordinary C: Thumb has no post-incrementing
 `ldr`, so that is what `*p++` compiles to. The multi-register form is the tell.
+
+Open the target `.s` and the compiler's `.s` for the candidate side by side.
+`--align` is a pairing of two objdump streams; a literal pool word objdumps as
+whatever its bytes encode (`lsrs r0, r4, #32`, `stmia`, `bkpt`). That is not
+an extra instruction. `git diff` of gcc `-S` output against gcc `-S` output
+does not have that trap. Use both views, and believe the one that is looking
+at real insns.
 
 ### 3. Write the compiler's input, not its output
 
@@ -344,43 +398,91 @@ leaves the first read of `g` used only inside the test block, so it sinks there,
 and the reference loads it before the loop.
 
 The bound runs both ways: write machine-producing structure, not modern style.
-Prefer the shape a 2001 author would have written.
+Prefer the shape a 2001 author would have written. C89. Macros for a tail that
+repeats across cases (`TEXT_SIDE`, `TAKE_PWR`, `APPLY_HP_HIT`), not `static
+inline` -- at `-O2` a static helper that is not inlined becomes a second
+symbol and `candidate-show` refuses the object. `switch` / `break`. No
+`for (s32 i = 0; ...)`. Short names.
 
-### 4. Score it and read the residual
+### 4. Confirm the edit, then score the owner
+
+Two tools, two questions. Do not use one for the other.
+
+**Did this edit move the assembly?** gcc `-S` and `git diff` of the insn
+lines. No ROM, no link, no objdump of the image. Invoke the binary, not
+`cargo run`:
 
 ```bash
-# a main-image owner
-cargo run --release --manifest-path tools/compiler/Cargo.toml -- \
-  candidate-show work/080bbb0c.c --align
+tools/compiler/target/release/compiler candidate-show work/080bbb0c.c --asm
+```
 
-# an overlay row -- same output, same flag, no span argument
+Warm, on the 6 KB owner, that is about 50 ms. It prints insn counts, a
+`git diff --stat` against `asm/<addr>.s`, and a second stat against the
+previous candidate. `vs previous candidate: identical` means the C change was
+a no-op in RTL -- stop theorising and write a different shape. A real edit
+shows up as insertions and deletions, not as a halfword number that happens
+to stay 2744.
+
+If a small edit leaves `identical` and you are no longer sure the loop is
+live, stub a switch. On `080bbb0c`, emptying the nibble and effect switches
+dropped 2,484 insns to 419 and produced 2,269 deletions against the previous
+candidate in 30 ms. That is the proof. Restore the C afterwards.
+
+**Do the linked bytes match?** That is the score, and it is the only number
+that can go in a `recon/` record or an adoption:
+
+```bash
+tools/compiler/target/release/compiler candidate-show work/080bbb0c.c --align
+```
+
+`--align` pairs the two *objdump* streams as sequences. Without it the two
+sides are matched by offset, which only works while they are the same length:
+one extra instruction shifts everything after it and every later row reads as
+a difference. The tool warns you when that applies.
+
+`--first` is `--align` cropped to the first residual window. Use it when you
+are walking a matching prefix. Do not use it as the only view of a 6 KB
+owner: the opening can match through the register-save sequence while 1,800
+instructions in the body stay wrong.
+
+`--patch FILE` applies a unified diff to a copy and scores that. Single
+shots. A four-way `--patch` fan-out on this owner took fourteen minutes;
+do not do that. `--patch` is `git apply` of `incoming.diff` from the work
+directory's `try/` parent -- a fragment without a header is not a patch.
+
+For an overlay row the linked-byte score is the same idea, same `--align`,
+no span argument:
+
+```bash
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
   score work/resource_3b2_c_02000da4.c --align
 ```
 
-**Read the diff, not the number.** `--align` pairs the two instruction streams
-as sequences, so an extra or missing instruction shows up as itself:
+Then make the smallest source change that explains what you saw, confirm it
+moved the asm, and score again.
 
-```
-  + push  {lr}                          <- we emit this, the reference does not
-  ! ldr   r3, [pc, #20]    ldr r0, ...  <- both have it, operands differ
-    ldr   r3, [r0, #0]     ldr r3, ...  <- identical
-```
+**Chase overall halfwords, not size, not the opening.** A 6,332-byte draft
+with 2,929 differing halfwords is *size-exact and mostly wrong*. A 6,280-byte
+draft with 2,744 differing halfwords and 1,862 wrong instructions is better
+even though it is 52 bytes short. The 52 bytes are missing insns, not a
+frame to pad. Quote `differing_halfwords` and `wrong_instructions`. Never
+quote the size ratio as completeness -- of 348 drafts at 85% of reference
+size or better, the median matched ten percent of their instructions.
 
-Without `--align` the two sides are matched by offset, which only works while
-they are the same length: one extra instruction shifts everything after it and
-every later row reads as a difference. The tool warns you when that applies.
+On a large owner the matching `--align` prefix is real and also a trap. An
+opening that keeps enough values live across calls reproduces the
+seven-instruction register-save sequence on `080bbb0c` exactly. Protecting
+that prefix (`matched_prefix=81`) while refusing any edit that recolours it
+is how a session spends its budget on the first residual. Extra late
+allocnos -- a new `off`, a hotter `ch`, a `u16` where an `s32` was --
+recolour the *whole function*, prefix included, because gcc 2.96 does not
+split live ranges. Drop overall halfwords first. The opening comes back when
+the body stops inventing allocnos.
 
-Then make the smallest source change that explains what you saw, and score
-again.
-
-**A large owner still gives partial signal.** The matching prefix at the top of
-`--align` is real: on `080bbb0c`, 6,332 bytes in a single function, an opening
-that merely keeps enough values live across calls reproduces the whole
-seven-instruction register-save sequence exactly. Each block you write correctly
-extends that prefix, and the first `+`/`-` row is the next thing to write. Only
-the frame size -- `sub sp, #100` -- waits for the whole body, because the frame
-is as big as the widest spill anywhere in it.
+The frame size (`sub sp, #100`) waits for the whole body: it is as big as
+the widest spill anywhere in it. Dropping `result` shrinks it to 96;
+`APPLY_HP_HIT(cur)` as a new live value grows it to 104. Read the frame as a
+count of live slots, not as a constant to match.
 
 `overlay candidate-rank` and `compiler main-candidate-rank` rank the drafts in
 `work/` by what is wrong with them rather than by how much differs. Read
@@ -390,7 +492,8 @@ is as big as the widest spill anywhere in it.
 
 Adoption is gated. It rebuilds and compares before it accepts anything, and it
 refuses everything else -- a candidate that is 32 bytes against a 6,332-byte
-reference is rejected at `+0x0` with both sizes named.
+reference is rejected at `+0x0` with both sizes named. `differing_halfwords`
+must be 0. A matching file size is not that.
 
 ```bash
 # main image: proves a src_<address>.c draft, installs to exact/
@@ -433,6 +536,9 @@ compares every adopted row against the bytes it replaced and names any that no
 longer reproduce. Run it after any merge that brought in adoptions from both
 sides.
 
+Delete the `recon/` record, and the snapshot `.c` if you kept one, when the
+owner is adopted. The gate will remind you about the record.
+
 ### 6. When an owner will not converge
 
 Take another owner. A main-image owner needs nothing done to it -- the build
@@ -444,6 +550,13 @@ Understanding accumulates: every owner you finish becomes a worked example of
 what correct source looks like for this compiler, and the next one is easier
 because of it. `exact_reading_list` and `overlay twins` are how you find the
 relevant examples.
+
+Record what you tried. A large owner taken most of the way used to leave
+nothing behind but prose in a commit message. `recon/<owner>.json` carries the
+score the tools reported, `unexpressed` in instruction counts, and `rejected`
+with the number that killed each dead end. Copy the compiling draft to
+`recon/<owner>.c` as well if you cannot afford to lose it -- `work/` does not
+survive a clone, a worktree, or a context compaction.
 
 ### Merging another branch, or main back into yours
 
@@ -471,9 +584,10 @@ those two are not auto-resolved.
 
 ## Reading a residual
 
-A differing-halfword count says how much differs. It does not say what kind of
-problem you have, and the two are not related. `overlay score` and the rankers
-classify every residual, and the class is the first thing to read:
+A differing-halfword count says how much differs *at matching file offsets*.
+It does not say what kind of problem you have, and on a size mismatch it is
+mostly phase. `overlay score` and the rankers classify every residual, and the
+class is the first thing to read:
 
 | class           | what it means                                                           | worth reading? |
 | --------------- | ----------------------------------------------------------------------- | -------------- |
@@ -485,7 +599,16 @@ classify every residual, and the class is the first thing to read:
 | `unemittable`   | the reference _appears_ to use an instruction this compiler cannot emit | confirm first  |
 
 Rank `wrong` and `size mismatch` first. A small halfword count on a blocked row
-is not a near miss.
+is not a near miss. A large owner whose *size* matches and whose
+`wrong_instructions` is still in the thousands is not nearly finished.
+
+**Read `git diff` of the insn streams for structure, `--align` for the next
+pair, the halfword count for the gate.** `--align` is a sequence pairing of
+objdump lines; pool words in the image disassemble as instructions and show
+up as 90-line "missing" hunks that are not code. `git diff` of two gcc `-S`
+listings (`--asm`'s `vs previous candidate`) is the view that answers "did
+this edit do anything". The linked-byte halfword count is the view that
+answers "may I adopt".
 
 **Do not read `ordering` and `allocation` as compiler verdicts.** Both mean the
 same thing far more often than they mean a wall: the source does not yet express
@@ -579,6 +702,74 @@ reference rebuilds it, is cse unifying two identical `(const_int N)` trees into
 one pseudo that reload then gives a register. And a pair of comparisons that
 differ as `cmp #9`/`blt` against `cmp #8`/`ble` is `fold-const.c` rewriting `<`
 against a positive constant. Neither is reachable by respelling the source.
+
+---
+
+## How gcc 2.96 places things
+
+This is the compiler the owners were built with. The residual is its output.
+Reading it as "the allocator picked wrong" is how a session respells the same
+function. The passes, in order, are the ones that matter:
+
+local-alloc, then global-alloc, then reload. There is no live-range splitting.
+An allocno is one pseudo for its whole life. Its priority is roughly
+`floor_log2(n_refs) * n_refs / live_length * 10000 * size`. Heating a local --
+more refs, a longer life -- can steal a LO register from the opening of a
+6 KB function even when the local is block-scoped to a later `if`.
+
+Thumb wants LO_REGS first. `-fcall-used-r4` means a value that lives across a
+call and wants a LO register gets r5, r6 or r7. HI order is r8, sl, r9, fp.
+Stack slots among spills follow declaration order.
+
+CSE hashes equivalent trees. Two reads of `tbl[1]` become one `ldrh` plus
+`lsl`/`asr`; `p = (s16 *)((u8 *)target + 36)` after `tbl` already holds that
+address becomes `mov r2, r4`. The walk on `080bbb0c` that matches is
+`off = 2; *(s16 *)((u8 *)tbl + off)`, which emits `movs r2, #2` /
+`ldrsh [r4, r2]`. Integer punning, `volatile`, unions, and `p += 18` all CSE
+back to the same `mov`.
+
+`fold-const` rewrites `(x + 30) * 0x28f` into `x * 0x28f + 30 * 0x28f`.
+`chance += 30; chance *= 0x28f` is the source that leaves `adds #30` / `muls`
+in the RTL. It also rewrites `<` against a positive constant, which is the
+`cmp #9`/`blt` versus `cmp #8`/`ble` pair above.
+
+A ternary of two constants is if-converted: load the true-arm, maybe overwrite
+with the false-arm. `(u32)target_id <= 7 ? player : enemy` therefore emits
+`ldr player` / `cmp #7` / `bls keep` / `ldr enemy`, which is `bls`, not the
+reference's `cmp #7` / `bhi else` / `ldr player` / `b done` / `ldr enemy`.
+The unsigned compare is necessary and not sufficient; the *statement shape*
+has to be if/else through a temporary so both arms are stores, not a
+conditional overwrite. A signed `target_id <= 7` emits `ble` and is twelve
+`bhi` sites short on `080bbb0c`.
+
+Reusing a local is not free. `ch` from `Func_080c1df4` dies after `Func_08077140`
+in the reference; assigning `ch = 100` and walking the slots loop through it
+extends the live range, heats the allocno, and recolours the opening
+(`matched_prefix` 81 → 11) while *raising* halfwords. A new nested `s32 off`
+for the same 100 does the same. The reference rematerialises 100 twice
+(`movs r2, #100` then `movs r0, #100`) because the loop offset mutates and
+the first 100 is a different value.
+
+`--asm` reporting `identical` against the previous candidate is CSE or
+if-conversion eating the spelling you thought you had written. Write a
+different shape. Do not add an allocno to force a register: on a large owner
+that is how the opening dies.
+
+`shape-sweep --descend` will invert an `if`/`else` and call it progress. On
+`080bbb0c` one round moved a distance and cut four bytes; the C was wrong.
+Read the residual, then revert anything the sweep cannot explain.
+
+`alchemy_permuter` searches source shape. Pointed at this owner it produced
+one mutation that compiled, `s32 dmg` → `u32`, which dropped halfwords by
+shrinking the function. That is a size regression, not a match. The permuter
+cannot reach an ordering residual and will not invent the statement shape the
+reference's lifetimes imply. Aim it at `wrong`, and treat a match as something
+to explain.
+
+RTL dumps (`-da`, `rtl-insn`, `rtl-schedule`) answer which pass produced a
+shape. `18.greg` is after reload; `23.sched2` is after the post-reload
+scheduler. If the two listings already differ at greg, it is not the
+scheduler.
 
 ---
 
@@ -704,6 +895,12 @@ bytes: a non-void return keeps a value live across the caller's argument setup.
 If your arguments are set up in the wrong order, check the prototype before you
 suspect the allocator.
 
+Unsigned compares are declarations too. `cmp rX, #7` / `bhi` is
+`(u32)id <= 7` as the `if` condition (branch to else when unsigned-higher).
+The same test written signed is `ble`. Twelve sites on `080bbb0c` are this
+one fact: `target_id` was loaded with `ldrb` into sl, and every side-text
+pick is unsigned.
+
 ### Loads, stores and re-reads
 
 Fixed addresses touched more than once should be declared objects, not
@@ -731,6 +928,14 @@ A field the reference loads ONCE and uses twice is a local in the source. Read
 it into the local before its first use rather than writing the field expression
 twice; the compiler will common them either way, but the load lands where the
 first mention is.
+
+Indexed halfword addressing on Thumb is a register offset. To get
+`movs r2, #100` / `adds r1, #2` / `ldrsh r3, [r1, r2]` the 100 has to be a
+value the compiler cannot fold into the pointer. `slots[50]` after
+`slots = work + 2` *is* that fold (`adds #102`). A dedicated local for 100
+that then walks a loop is a new allocno on a large owner and recolours the
+opening. The walk-compare that already works -- a nested `s32 off; off = 2;`
+used once -- is the short-lived version of the same idea.
 
 ### Constants and locals
 
@@ -761,14 +966,18 @@ distinction alone is the whole residual:
 ```
 
 Reach for locals whenever the reference holds a value in a register across a
-call or stores two of them together, and reach for literals when it rebuilds the
-value each time.
+call or stores two of them together, and reach for literals when it rebuilds
+the value each time -- including when it rebuilds 100 twice in the same block.
 
 A candidate exactly four bytes short of its reference is usually missing one
 pool word. Either a constant is spelled as a literal where the reference links
 a symbol, or the value is dead in your source and the compiler dropped it --
 check for a variable that is assigned in one branch and read in another before
 reaching for `Value_<addr>`.
+
+Declaration order of function-scope locals is the spill-slot order. Changing
+it to make a later block more convenient moves `action` off `[sp,#76]` and
+breaks an opening that was already right.
 
 ### Statement and control-flow shape
 
@@ -799,6 +1008,11 @@ An overlay function pointer is the LINKED address, not the overlay-relative one.
 The pool word for `Func_02001d78` in an overlay linked at 0x02008000 is
 0x02009d79: the routine, plus the Thumb bit, at its linked address. Read the base
 off a finished sibling.
+
+Shared tails are `goto`, not duplicated assignments. On `080bbb0c` the
+element-weapon power and the `power = 100` path meet at one label; writing
+`power = 100` in both arms, or a dummy `if (power < 0)`, emits an extra
+branch the reference does not have.
 
 ---
 
@@ -892,6 +1106,14 @@ So what looks like the compiler parking constants is substantially a source that
 does not yet say everything the original said -- an incomplete reconstruction
 reads as an allocation difference, and closing the gap closes both.
 
+`080bbb0c` is the same lesson at main-image scale. A size-exact 6,332-byte
+draft still differed in 2,929 halfwords. Expressing summon `class_id` /
+`Func_080b7514` / `1df4(st, 1)` and the case-4/5 early `cur` dropped that to
+2,744 wrong-halfwords at 6,280 bytes. The missing 52 bytes are insns, mostly
+the slots loop's `movs #100` / `ip` / `lr` setup, not a frame to grow. Call
+count is already 231 against the reference's 239 -- seven of those are
+`Func_080bbabc`. Completeness is the insn git-diff, not the file size.
+
 Backward branches matter more than their count suggests. `resource_3bf:3054` has
 NONE: it is 636 calls with no loop anywhere, which is why a linear
 reconstruction could be structurally complete for it. `resource_3bd:13f8` has
@@ -914,6 +1136,10 @@ overlay bytes, because we did the small ones: the median adopted owner is 46
 bytes and the median owner still parked is 204. What remains is filtered twice
 over, once for size and once for having already failed. The way out is
 reconstructing large functions by reading them.
+
+A main-image owner of several kilobytes is the same work, with the extra
+constraint that every new local is a global colouring decision. Do not "fix
+the start of the file" while the body is still missing statements.
 
 ### Veneers stay in the denominator
 
@@ -942,18 +1168,21 @@ member cannot promote its package.
 Your C lives in `work/`, which is gitignored. What you have LEARNED lives in
 `recon/`, which is not. Those are different things and the split is the point.
 
-A byte is exact C or it is assembly. There is still no third directory for C
-that does not reproduce, and `two-tier-check` still fails if one appears.
+A byte is exact C or it is assembly. There is still no third directory that
+*counts*, and `two-tier-check` still fails if unproven C appears where a
+coverage figure could add it up.
 
 **`work/` -- the scratchpad.** Every tool that scores a source takes a path, so
 `candidate-show work/080a1234.c --align` and
 `score work/resource_373_c_0200034c.c --align` work exactly as they would from
 anywhere else. Adoption moves the file to `exact/` when it matches. Nothing here
 is committed and nothing here survives a fresh clone, which is correct: an
-unproven source is not an asset.
+unproven source is not an asset. Nothing here survives a context compaction
+either. If you cannot afford to lose the draft, copy it.
 
 **`recon/<owner>.json` -- the record.** One per owner under active
-reconstruction, holding measurements and a recipe. Never C, never ROM bytes.
+reconstruction, holding measurements and a recipe. Never ROM bytes. The
+`score` object is what the tools reported.
 
 ```json
 {
@@ -962,6 +1191,7 @@ reconstruction, holding measurements and a recipe. Never C, never ROM bytes.
   "score": {
     "candidate_bytes": 5908,
     "wrong_instructions": 629,
+    "differing_halfwords": 2744,
     "class": "wrong"
   },
   "shape": { "calls": 703, "loops": 3, "memory_ops": 47 },
@@ -984,7 +1214,12 @@ it a coverage number could add up, and `check_unmatchable` fails a record whose
 owner has since gone exact, whose `wrong_instructions` is 0, or which carries no
 score at all.
 
-What it buys is the thing `work/` cannot: a large owner taken most of the way
+**`recon/<owner>.c` -- the snapshot.** A compiling copy of the `work/` draft,
+so the next session has the source and not only the JSON. It is unproven C. It
+is not a third tier. It is not quoted as coverage. Delete it with the JSON
+when the owner is adopted.
+
+What this buys is the thing `work/` cannot: a large owner taken most of the way
 used to leave nothing behind but prose in a commit message, so a clone or a
 fresh worktree started again from zero. `unexpressed` is the honest remaining
 work in instruction counts, and `rejected` carries the number that killed each
@@ -1016,12 +1251,15 @@ Of 348 drafts at 85% of reference size or better, six match 90% of their
 instructions. The median matches ten percent. Size ratio is not completeness and
 must never be quoted as it -- that is the same move that made 862,856 bytes of
 semantic C read as 74% coverage, and it was made again in this repository in
-August 2026 before anyone checked it.
+August 2026 before anyone checked it, and again on `080bbb0c` when a 6,332-byte
+file with 2,929 differing halfwords was treated as close because the lengths
+agreed.
 
 The figures that mean something are `differing_halfwords`, which is zero only
 when the owner reproduces, and `wrong_instructions`, which is zero when the
 source is structurally right and only the schedule differs. Those are what a
-`recon/` record stores. Quote those.
+`recon/` record stores. Quote those. Quote the `--asm` insn counts when you
+are talking about structure. Do not quote the file size.
 
 `semantic/regions.json` and `semantic/main-regions.json` survive as the audited
 owner boundaries for regions discovery did not index -- evidence about where an
@@ -1034,6 +1272,69 @@ owner starts and ends, which is independent of anyone's C.
 These were open, cost real effort, and are now closed by measurement. They are
 recorded so nobody reopens them on a hunch, and so the shape of the evidence is
 available if a residual ever looks like one of them again.
+
+### A matching file size is not a matching owner
+
+Measured on `main:0x080bbb0c`. A draft of 6,332 bytes against a 6,332-byte
+reference still differed in 2,929 halfwords and 1,997 instructions. A draft of
+6,280 bytes differed in 2,744 halfwords and 1,862 instructions. The shorter
+one is better. The 52-byte gap is missing insns (slots-loop setup, seven
+`Func_080bbabc` sites), not a frame to pad. Do not spend a session making the
+lengths agree.
+
+### Protecting a matching prefix is not dropping halfwords
+
+The same owner matches 81 instructions into the opening -- register saves,
+`sub sp, #100`, `action` at `[sp,#76]`, `offset` in fp, `cmd` at `[sp,#4]` --
+and then differs. Edits that add or heat a late allocno drop that prefix to
+10 or 11 and *raise* halfwords. Edits that only chase the first `--align` `+`
+row while the body is missing statements do not move the gate number. Walk
+the body. Let the opening recolour; it comes back when the allocno set does.
+
+### `cargo run` is not the confirmation loop
+
+On this owner, `cargo run --release … candidate-show --align` is about 510 ms,
+most of it startup plus ROM/link/objdump. `tools/compiler/target/release/compiler
+candidate-show work/080bbb0c.c --asm` is about 50 ms warm: gcc `-S` and
+`git diff` of insn lines. Four parallel `--patch` shots took fourteen minutes.
+Single shots. Invoke the binary. Use `--asm` until the previous-candidate
+diff says the edit did something; then `--align` for the linked-byte score.
+
+### Reusing a local still recolours if you extend its life
+
+`ch` on the summon path of `080bbb0c` is live from `Func_080c1df4` through
+`Func_08077140` and then dead. The reference rematerialises 100 for the slots
+loop. Assigning `ch = 100` and indexing through it across that loop heats the
+allocno (more refs, longer live range) and recolours the opening. A new
+`s32 off = 100` does the same. Short-lived nested `off = 2` for one compare
+does not. The difference is the live range, not the name.
+
+### A ternary of two constants is not if/else
+
+`(u32)target_id <= 7 ? player : enemy` if-converts to load-then-maybe-overwrite
+and emits `bls`. The reference is `cmp #7` / `bhi` with two separate loads.
+Write if/else through a temporary. A signed `<= 7` emits `ble` and is a
+different instruction, not a near miss.
+
+### `slots[50]` is not `base + 100`
+
+Thumb `ldrsh` is `[Rn, Rm]`. `slots[50]` after `slots = work + 2` folds to
+`adds #102`. The reference is `movs r2, #100` / `adds r1, #2` /
+`ldrsh [r1, r2]`, then copies into `ip` / `r0` / `lr`. Forcing that with a
+new allocno on a large owner is how the opening dies. Record it; do not pay
+for it twice.
+
+### Jump-table slots that share the after-switch address are empty cases
+
+On `080bbb0c` nibble cases 1, 8 and 10 all encode `0x080bc666`, the
+instruction after the switch. Filling them as HP-hit bodies grew the
+function to 6,368 bytes. Empty `break` is the source.
+
+### Bundling many `.c` files would not explain this output
+
+The owner is one translation unit at `-O2`. Cutting it into helpers that the
+compiler must see together does not reconstruct the original, and a static
+helper that is not inlined becomes a second symbol the scorer rejects.
 
 ### The host does not reach the bytes
 
@@ -1161,6 +1462,10 @@ owners that are byte-count exact with zero wrong instructions, two halfwords
 from reproducing -- it did not improve them once, across 200,000 candidates and
 ten owners, with 89% of mutations failing to compile at all.
 
+On `080bbb0c` two seeds of 1,000 iterations produced one compiling mutation,
+`s32 dmg` → `u32`, which dropped halfwords by deleting instructions (6,296
+bytes against 6,332). That is not a match.
+
 That is not bad luck, it is the wrong instrument. The permuter searches SOURCE
 SHAPE. An ordering residual is the post-reload scheduler choosing between two
 independent instructions after the source has had its say, and when the source
@@ -1168,11 +1473,14 @@ is already right there is no shape left to mutate that is not worse. Aim it at
 rows the score calls `wrong`, and read the residual first so you know which you
 have. Treat a match it finds as something to explain before adopting.
 
-### The tooling is frozen
+### The tooling is frozen, except a flag that makes the loop faster
 
-The loop needs about eight commands and they all exist. Adding a tool now
+The loop needs about eight commands and they all exist. Adding a *binary* now
 requires deleting one, and measurement that explains why we are stuck is no
-longer a deliverable.
+longer a deliverable. A flag on an existing command that cuts the confirmation
+loop from 510 ms to 50 ms is the loop, not a new tool. `--asm` on
+`candidate-show` is that flag. Do not add a second way to git-diff two
+listings.
 
 ---
 
@@ -1199,8 +1507,9 @@ reference, not a reading list.
 
 |                                        |                                                         |
 | -------------------------------------- | ------------------------------------------------------- |
-| `overlay score`                        | compile a candidate, diff it, classify the residual     |
-| `candidate-show`                       | the same for a main-image owner                         |
+| `candidate-show --asm`                 | gcc `-S` + git diff of insns; did this edit move anything |
+| `candidate-show --align`               | linked-byte score for a main-image owner                |
+| `overlay score --align`                | the same for an overlay row                             |
 | `overlay adopt` / `park`               | install a proven row, or take one back out              |
 | `overlay audit --all`                  | re-prove every adopted row still reproduces             |
 | `overlay candidate-rank` / `main-rank` | pick the next owner by what is wrong with it            |
@@ -1282,9 +1591,12 @@ across a cohort rather than on the single owner that suggested it.
 | `main_candidate_rank`        | Ranks main-image candidates by residual class, as `overlay candidate-rank` does for overlays. |
 
 The `compiler` binary additionally hosts `candidate-show` (size, reference size
-and differing halfwords for a candidate), `thumb-disasm`, and the RTL readers
-`rtl-insn`, `rtl-sexpr`, `rtl-schedule` and `rtl-align`, which read the
-compiler's own dumps when you need to know which pass produced a shape.
+and differing halfwords for a candidate; `--asm` for gcc `-S` plus git diff of
+insns; `--align` / `--first` / `--patch` for the linked-byte view),
+`reconstruct` (draft C from a main-image `.s` file into `work/`),
+`thumb-disasm`, and the RTL readers `rtl-insn`, `rtl-sexpr`, `rtl-schedule`
+and `rtl-align`, which read the compiler's own dumps when you need to know
+which pass produced a shape.
 
 ### check -- the gates
 

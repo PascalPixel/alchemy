@@ -24,6 +24,7 @@ dashboard-server = { path = "../dashboard-server" }
 mode-cohort = { path = "../mode-cohort" }
 decomp-diagnose = { path = "../decomp-diagnose" }
 compiler-corpus-regression = { path = "../compiler-corpus-regression" }
+overlay-show = { path = "../overlay-show" }
 
 [[bin]]
 name = "compiler"

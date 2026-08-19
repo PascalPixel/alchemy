@@ -115,6 +115,7 @@ dependencies = [
  "main-candidate-rank",
  "mode-cohort",
  "mode-sweep",
+ "overlay-show",
  "rtl-align",
  "rtl-insn",
  "rtl-schedule",
@@ -167,6 +168,10 @@ name = "equivalent"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+
+[[package]]
+name = "exact-reading-list"
+version = "0.1.0"
 
 [[package]]
 name = "hashbrown"
@@ -232,6 +237,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "overlay-call-targets"
+version = "0.1.0"
+dependencies = [
+ "exact-reading-list",
+ "overlay-disasm",
+]
+
+[[package]]
 name = "overlay-disasm"
 version = "0.1.0"
 dependencies = [
@@ -241,6 +254,14 @@ dependencies = [
  "alchemy-symbols",
  "cache-entry",
  "discover",
+]
+
+[[package]]
+name = "overlay-show"
+version = "0.1.0"
+dependencies = [
+ "overlay-call-targets",
+ "overlay-disasm",
 ]
 
 [[package]]

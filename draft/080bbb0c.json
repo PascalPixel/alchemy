@@ -13,7 +13,9 @@
     "insn_diff_rows": 807,
     "insn_diff_rows_normalized": 111,
     "frame": "100 == reference",
-    "walk_window_rows": 12
+    "walk_window_rows": 12,
+    "insn_diff_rows_nop_filtered": 104,
+    "note2": "seven of the remaining rows are movs r0,r0 alignment pads before the reference's jump tables and pools; they cannot be written in C and reappear automatically at size parity"
   },
   "shape": {
     "calls": null,

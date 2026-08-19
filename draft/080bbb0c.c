@@ -996,8 +996,16 @@ after_power:
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-                cur = 0;
-                TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
+                {
+                    s32 text;
+
+                    if ((u32)target_id <= 7)
+                        text = MSG_GOES_DOWN;
+                    else
+                        text = MSG_FELLED;
+                    cur = 0;
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                }
             } else
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             goto hp_tail;

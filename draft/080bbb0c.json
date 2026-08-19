@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6276,
+    "candidate_bytes": 6284,
     "reference_bytes": 6332,
-    "wrong_instructions": 1509,
-    "differing_halfwords": 2678,
+    "wrong_instructions": 1513,
+    "differing_halfwords": 2742,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 152,
+    "insn_diff_rows_normalized": 138,
     "frame": "100 == reference"
   },
   "shape": {
@@ -59,7 +59,9 @@
     "ADJUST_ATKDEF/ADJUST_RES carry the turns field as an offset constant assigned to a local at the top: the assignment lives in a call-saved register across both pushes (306/308/310 exceed the movs immediate, so const-prop keeps the pseudo). r6 usage 84 -> 161 against the reference's 156; the attack handler now matches to two scheduler rows",
     "turns store is *(u8 *)((u8 *)target + toff) = 7 through that local",
     "do{}while(0) macro wrappers (CLAMP_MOD, TAKE_BONUS, APPLY_GUARD, TEXT_SIDE) emit NOTE_INSN_LOOP_BEG/END pairs that survive to sched2 and act as same-register scheduling barriers; bare-brace macros remove them. KO push pairs now match the reference order (r0 before r1 at the second push), tid-copy before cur=0",
-    "dependence-table method validated end to end: rtl-schedule table + -fsched-verbose=5 traced the tie to insn 8949's barrier-induced dependence on the r1 copy"
+    "dependence-table method validated end to end: rtl-schedule table + -fsched-verbose=5 traced the tie to insn 8949's barrier-induced dependence on the r1 copy",
+    "falloff 5/6/8 select really is a switch: balanced tree, one selector load (earlier rejection was measured against stale insns)",
+    "HEAL_60: volatile u16 mentions give the reference's four independent loads; maxv read once ahead of the if; div result added directly into heal (both restore-7 and heal-60)"
   ],
   "unexpressed": [
     {
@@ -117,11 +119,6 @@
       "note": "coloring churn +306; ref provably has them, retry after other regions settle"
     },
     {
-      "shape": "falloff else-if -> switch",
-      "wrong": 1620,
-      "note": "chain already emits the balanced tree; switch is codegen-identical but recolors"
-    },
-    {
       "shape": "goto loop to suppress strength reduction",
       "wrong": 1574,
       "note": "goto did not stop SR; walker persists either way"
@@ -130,11 +127,6 @@
       "shape": "scan-2 walking tbl itself to break the CSE fold",
       "wrong": 1826,
       "note": "fold persists, plus churn"
-    },
-    {
-      "shape": "HEAL_60 dual-width reads: u16-typed locals, s32 locals with u16 puns, shared maxs local",
-      "wrong": 1554,
-      "note": "every spelling folds the ldrh through the ldrsh (sxth(uxth(sxth x)) collapses); ref emits ldrh #56 + ldrh #52 alongside both ldrsh. 6-insn region, mechanism unknown"
     },
     {
       "shape": "muls operand order via source operand order (kind*max vs max*kind, dmg*tbl vs tbl*dmg)",

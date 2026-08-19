@@ -791,7 +791,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = Battle_CalcPower(action->power, bonus, 256);
+            dmg = action->power;
+            dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(PpLossFalloff[offset] * dmg, 100);
             dmg *= adjust;
             APPLY_GUARD();
@@ -842,7 +843,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = Battle_CalcPower(action->power, bonus, 256);
+            dmg = action->power;
+            dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(PpDmgFalloff[offset] * dmg, 100);
             dmg *= adjust;
             APPLY_GUARD();
@@ -978,7 +980,8 @@ pp_store:
                 break;
             cur = target->hp;
             TAKE_BONUS();
-            dmg = Battle_CalcPower(action->power, bonus, 256);
+            dmg = action->power;
+            dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg *= adjust;
             dmg = Math_Div(HpDmgFalloff[offset] * dmg, 100);
             APPLY_GUARD();

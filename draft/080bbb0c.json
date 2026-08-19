@@ -3,10 +3,10 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6332,
+    "candidate_bytes": 6272,
     "reference_bytes": 6332,
-    "wrong_instructions": 1490,
-    "differing_halfwords": 2559,
+    "wrong_instructions": 1585,
+    "differing_halfwords": 2618,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
@@ -55,7 +55,9 @@
     "saved-slot refresh: do-while, count-- before the call, *q++",
     "all 60 message ids are absolute Value_<hex> symbols: the reference pools 0x820/0x850/0x860/0x870, which thumb_shiftable_const proves a literal never does",
     "multi-target loop index via nested s32 idx (copy-prop folds it; emission unchanged, recorded)",
-    "actor drain heals (EFX_DRAIN_HP/_HALF/_PP): add-cap-rederive through a block-scope heal local, single store at the end, full-test re-reads the max field -- size now equals the reference exactly"
+    "actor drain heals (EFX_DRAIN_HP/_HALF/_PP): add-cap-rederive through a block-scope heal local, single store at the end, full-test re-reads the max field -- size now equals the reference exactly",
+    "ADJUST_ATKDEF/ADJUST_RES carry the turns field as an offset constant assigned to a local at the top: the assignment lives in a call-saved register across both pushes (306/308/310 exceed the movs immediate, so const-prop keeps the pseudo). r6 usage 84 -> 161 against the reference's 156; the attack handler now matches to two scheduler rows",
+    "turns store is *(u8 *)((u8 *)target + toff) = 7 through that local"
   ],
   "unexpressed": [
     {

@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6316,
+    "candidate_bytes": 6344,
     "reference_bytes": 6332,
-    "wrong_instructions": 1984,
-    "differing_halfwords": 2959,
+    "wrong_instructions": 1740,
+    "differing_halfwords": 2635,
     "class": "wrong",
     "matched_prefix": 7,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 323
+    "insn_diff_rows_normalized": 288
   },
   "shape": {
     "calls": null,
@@ -32,7 +32,13 @@
     "63 max-held-in-register shape",
     "effect 4 status_141 block",
     "case 3 hit-arm after body with text 0x854",
-    "27/69 true texts (0x84f/0x850/0x84c, 0x85f/0x85e)"
+    "27/69 true texts (0x84f/0x850/0x84c, 0x85f/0x85e)",
+    "TEXT_SIDE as per-arm pushes (crossjump forms the shared tail; bhi/bls variance is branch-range)",
+    "case 4/5 subtract-shape KO tail with own dealt/store",
+    "slots walk as dual byte-offset walkers (off, j) matching both inductions",
+    "saved list walked as u16",
+    "effect tail re-reads action->effect, no n variable",
+    "drain caps re-derive via u16 field pair"
   ],
   "unexpressed": [
     {

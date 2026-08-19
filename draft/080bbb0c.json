@@ -192,6 +192,10 @@
     {
       "shape": "permuter campaigns",
       "note": "16,500 candidates over halfword, instruction, and coloring-weighted fitness: zero improving mutations. Improving moves are coordinated multi-statement changes"
+    },
+    {
+      "shape": "walk-engine permuter, 30000 candidates on the 66-row landscape (seed 77, keep-prob 0.6, pret walk engine)",
+      "wrong": "no improvement: best=baseline 1146 rows / 2885 halfwords; 0 compile failures; run out/perm-w27"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

@@ -319,7 +319,7 @@ pub fn pass_help() -> String {
 }
 
 #[derive(Clone, Copy)]
-struct SplitMix64(u64);
+pub(crate) struct SplitMix64(pub(crate) u64);
 
 impl SplitMix64 {
     fn next(&mut self) -> u64 {
@@ -330,7 +330,7 @@ impl SplitMix64 {
         value ^ (value >> 31)
     }
 
-    fn index(&mut self, length: usize) -> usize {
+    pub(crate) fn index(&mut self, length: usize) -> usize {
         (self.next() as usize) % length
     }
 }
@@ -1456,6 +1456,8 @@ fn weighted_index(variants: &[Mutation], weights: &Weights, random: &mut SplitMi
     variants.len() - 1
 }
 
+const MAX_ITERATION_POOL: usize = 4096;
+
 pub(crate) fn try_mutate_marked_with_weights(
     source: &str,
     seed: u64,
@@ -1474,7 +1476,31 @@ pub(crate) fn try_mutate_marked_with_weights(
     let identity = materialize(source);
     let mut output = vec![("identity".to_string(), source.to_string())];
     let mut seen = BTreeSet::from([identity]);
-    for mutation in marked_variants_bounded(source, weights, limit, MAX_PLAN_BYTES)? {
+    let mut random = SplitMix64(seed ^ fingerprint(source));
+    // Enumerate more variants than requested and sample them with the seed;
+    // taking the enumeration head made every seed test the same plan, which
+    // silently turned seed sweeps into reruns of one fixed candidate set.
+    let mut pool = marked_variants_bounded(
+        source,
+        weights,
+        limit.saturating_mul(4).min(MAX_ITERATION_POOL),
+        MAX_PLAN_BYTES,
+    )?;
+    let mut order: Vec<usize> = (0..pool.len()).collect();
+    for at in (1..order.len()).rev() {
+        order.swap(at, random.index(at + 1));
+    }
+    for pick in order {
+        let mutation = std::mem::replace(
+            &mut pool[pick],
+            crate::randomize::Mutation {
+                id: String::new(),
+                source: String::new(),
+            },
+        );
+        if mutation.source.is_empty() {
+            continue;
+        }
         let rendered = materialize(&mutation.source);
         if seen.insert(rendered) {
             output.push((mutation.id, mutation.source));
@@ -1489,7 +1515,6 @@ pub(crate) fn try_mutate_marked_with_weights(
             }
         }
     }
-    let mut random = SplitMix64(seed ^ fingerprint(source));
     let mut misses = 0usize;
     while output.len() < limit && misses < limit.saturating_mul(20).max(100) {
         let parent_index = random.index(output.len());

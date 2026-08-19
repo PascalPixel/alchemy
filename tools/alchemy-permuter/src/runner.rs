@@ -1195,6 +1195,146 @@ fn run_workers(
     }
 }
 
+/// pret-style cumulative mutation walk: each worker keeps a persistent
+/// candidate and, with probability keep-prob, stacks another randomization
+/// pass on top of it; otherwise it restarts from the base. Compile failures
+/// always restart. Score does not gate the walk -- depth is stochastic, which
+/// is what makes coordinated multi-pass edits reachable at all.
+#[allow(clippy::too_many_arguments)]
+fn walk_workers(
+    backend: Arc<dyn Backend>,
+    base_source: Arc<String>,
+    weights: Arc<Weights>,
+    total: usize,
+    jobs: usize,
+    seed: u64,
+    keep_prob_permille: u32,
+    stop_exact: bool,
+    journal: Arc<Journal>,
+) -> Result<Vec<Evaluated>, String> {
+    let counter = Arc::new(AtomicUsize::new(0));
+    let stop = Arc::new(AtomicBool::new(false));
+    let (sender, receiver) = mpsc::channel();
+    let worker_count = jobs.max(1);
+    let mut workers = Vec::with_capacity(worker_count);
+    for worker in 0..worker_count {
+        let backend = Arc::clone(&backend);
+        let base_source = Arc::clone(&base_source);
+        let weights = Arc::clone(&weights);
+        let counter = Arc::clone(&counter);
+        let stop = Arc::clone(&stop);
+        let sender = sender.clone();
+        let journal = Arc::clone(&journal);
+        workers.push(std::thread::spawn(move || {
+            let mut rng = crate::randomize::SplitMix64(
+                seed ^ (worker as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ 0x5851_f42d_4c95_7f2d,
+            );
+            let mut current: Option<(String, String)> = None; // (source, lineage)
+            loop {
+                if stop_exact && stop.load(AtomicOrdering::Acquire) {
+                    break;
+                }
+                let index = counter.fetch_add(1, AtomicOrdering::Relaxed);
+                if index >= total {
+                    break;
+                }
+                let keep = current.is_some() && rng.index(1000) < keep_prob_permille as usize;
+                if !keep {
+                    current = Some((base_source.as_ref().clone(), String::from("base")));
+                }
+                let (cur_source, lineage) = current.clone().expect("walk candidate");
+                let variants = match crate::randomize::try_mutate_marked_with_weights(
+                    &cur_source,
+                    rng.0 ^ index as u64,
+                    8,
+                    &weights,
+                ) {
+                    Ok(variants) => variants,
+                    Err(_) => {
+                        current = None;
+                        continue;
+                    }
+                };
+                let mut pool: Vec<_> = variants
+                    .into_iter()
+                    .filter(|m| m.id != "identity")
+                    .collect();
+                if pool.is_empty() {
+                    current = None;
+                    continue;
+                }
+                let pick = rng.index(pool.len());
+                let mutation = pool.swap_remove(pick);
+                let candidate = Candidate {
+                    index,
+                    manual_seed: worker,
+                    mutation: format!("{lineage}>{}", mutation.id),
+                    source: mutation.source.clone(),
+                    fingerprint: source_fingerprint(&mutation.source),
+                };
+                let started = Instant::now();
+                let cached = journal.cached(&candidate.fingerprint);
+                let measurement = if let Some(cached) = cached.as_ref() {
+                    if cached.exact {
+                        backend.measure(&candidate.source)
+                    } else {
+                        Ok(cached.clone())
+                    }
+                } else {
+                    let measured = backend.measure(&candidate.source);
+                    if let Ok(measurement) = &measured {
+                        let _ = journal.record(&candidate.fingerprint, measurement);
+                    }
+                    measured
+                };
+                match &measurement {
+                    Ok(measurement) => {
+                        if measurement.exact {
+                            stop.store(true, AtomicOrdering::Release);
+                        }
+                        current = Some((mutation.source, candidate.mutation.clone()));
+                    }
+                    Err(_) => {
+                        current = None;
+                    }
+                }
+                let elapsed = started.elapsed();
+                if sender
+                    .send(Ok(Evaluated {
+                        candidate,
+                        measurement,
+                        elapsed,
+                    }))
+                    .is_err()
+                {
+                    break;
+                }
+            }
+        }));
+    }
+    drop(sender);
+    let mut evaluated = Vec::new();
+    let mut worker_error: Option<String> = None;
+    for result in receiver {
+        match result {
+            Ok(item) => evaluated.push(item),
+            Err(error) => {
+                let _: String = error;
+                worker_error.get_or_insert("walk worker failed".to_string());
+            }
+        }
+    }
+    for worker in workers {
+        if worker.join().is_err() && worker_error.is_none() {
+            worker_error = Some("alchemy-permuter walk worker panicked".into());
+        }
+    }
+    match worker_error {
+        Some(error) => Err(error),
+        None => Ok(evaluated),
+    }
+}
+
 fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), String> {
     let input = backend::load_input(candidate)?;
     if input.source.len() > MAX_SOURCE_BYTES {
@@ -1226,15 +1366,20 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     } else {
         Weights::for_profile("gcc")
     };
-    let candidates = candidate_plan(
-        &permutation,
-        if options.debug { 1 } else { options.iterations },
-        options.seed,
-        options.manual_only,
-        &weights,
-        input.source.len(),
-    )?;
-    output_budget_preflight(&candidates, options.top)?;
+    let candidates = if options.walk {
+        Vec::new()
+    } else {
+        let planned = candidate_plan(
+            &permutation,
+            if options.debug { 1 } else { options.iterations },
+            options.seed,
+            options.manual_only,
+            &weights,
+            input.source.len(),
+        )?;
+        output_budget_preflight(&planned, options.top)?;
+        planned
+    };
     // The baseline is the contributor's untouched source, not whichever
     // randomized mutation happens to occupy candidate slot zero. Using the
     // first mutation here made the displayed threshold seed-dependent and
@@ -1248,8 +1393,8 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         "backend={} bases={} candidates={} jobs={} baseline={} ({})",
         target.name(),
         permutation.count(),
-        candidates.len(),
-        options.jobs.min(candidates.len()),
+        if options.walk { options.iterations } else { candidates.len() },
+        if options.walk { options.jobs } else { options.jobs.min(candidates.len()) },
         baseline.score,
         baseline.summary
     );
@@ -1272,6 +1417,48 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let mut failures = 0usize;
     let mut compile_time = Duration::ZERO;
     let mut exact_found = false;
+    if options.walk {
+        let evaluated = walk_workers(
+            Arc::clone(&target),
+            Arc::new(input.source.clone()),
+            Arc::new(weights.clone()),
+            options.iterations,
+            options.jobs,
+            options.seed,
+            options.keep_prob_permille,
+            options.stop_exact,
+            Arc::clone(&journal),
+        )?;
+        attempted = evaluated.len();
+        for item in evaluated.iter() {
+            compile_time += item.elapsed;
+            match &item.measurement {
+                Ok(measurement) => {
+                    let former_best = best;
+                    if measurement.score < best {
+                        best = measurement.score;
+                        println!(
+                            "new-best={} candidate={} mutation={} {}",
+                            best, item.candidate.index, item.candidate.mutation, measurement.summary
+                        );
+                    }
+                    if measurement.exact {
+                        exact_found = true;
+                    }
+                    if retain_result(options, &baseline, former_best, measurement) {
+                        owned.push((item.candidate.clone(), measurement.clone()));
+                    }
+                }
+                Err(error) => {
+                    failures += 1;
+                    if options.show_errors {
+                        eprintln!("candidate {}: {error}", item.candidate.index);
+                    }
+                }
+            }
+        }
+        let _ = exact_found;
+    } else {
     let mut round_candidates = Some(candidates);
     for round in 0..options.chain.max(1) {
         if round > 0 || round_candidates.is_none() {
@@ -1319,13 +1506,18 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
                     if measurement.exact {
                         exact_found = true;
                     }
-                    if measurement.score <= chain_score
-                        && item.candidate.mutation != "identity"
-                        && round_best
-                            .map(|(_, score)| measurement.score < score)
-                            .unwrap_or(true)
-                    {
-                        round_best = Some((item.candidate.index, measurement.score));
+                    if measurement.score <= chain_score && item.candidate.mutation != "identity" {
+                        let take = match round_best {
+                            None => true,
+                            Some((_, score)) if measurement.score < score => true,
+                            // Rotate among equal-score ties so different
+                            // rounds and seeds drift along different paths.
+                            Some((_, score)) if measurement.score == score => (round % 3) != 0,
+                            _ => false,
+                        };
+                        if take {
+                            round_best = Some((item.candidate.index, measurement.score));
+                        }
                     }
                     if retain_result(options, &baseline, former_best, measurement) {
                         owned.push((item.candidate.clone(), measurement.clone()));
@@ -1358,6 +1550,8 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         if exact_found && options.stop_exact {
             break;
         }
+    }
+
     }
 
     let mut retained: Vec<(&Candidate, &Measurement)> = owned

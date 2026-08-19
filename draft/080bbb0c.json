@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6344,
+    "candidate_bytes": 6352,
     "reference_bytes": 6332,
-    "wrong_instructions": 1740,
-    "differing_halfwords": 2635,
+    "wrong_instructions": 1616,
+    "differing_halfwords": 2803,
     "class": "wrong",
-    "matched_prefix": 7,
+    "matched_prefix": 11,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 288
+    "insn_diff_rows_normalized": 242
   },
   "shape": {
     "calls": null,
@@ -38,7 +38,14 @@
     "slots walk as dual byte-offset walkers (off, j) matching both inductions",
     "saved list walked as u16",
     "effect tail re-reads action->effect, no n variable",
-    "drain caps re-derive via u16 field pair"
+    "drain caps re-derive via u16 field pair",
+    "single gated offset (zero when object->state==255)",
+    "hit seeded from target_results, no result variable",
+    "case 4/5: no power gate; KO arms inline in 4/5, 3, 6/7/9",
+    "TAKE_PWR without a variable in the five re-reading bodies",
+    "BUFF_CLEAR clears 12c,12d,12e,12f in order",
+    "sleep-wake gate as nested ifs (fold-const kept off), text 0x883",
+    "shared =1/=2 store tails (.L205/.L207) reproduced by plain stores + crossjump"
   ],
   "unexpressed": [
     {

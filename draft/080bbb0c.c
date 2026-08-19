@@ -774,10 +774,9 @@ after_power:
                     {
                         s32 text;
 
+                        text = MSG_CRITICAL;
                         if ((u32)target_id <= 7)
-                            text = MSG_BITTER_BLOW;
-                        else
-                            text = MSG_CRITICAL;
+                            text += 1;
                         BattleEvent_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
                     }
                 }

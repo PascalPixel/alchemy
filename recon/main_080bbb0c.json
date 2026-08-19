@@ -2,12 +2,13 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "measured": "2026-08-17",
-    "candidate_bytes": 100,
+    "measured": "2026-08-19",
+    "candidate_bytes": 6280,
     "reference_bytes": 6332,
-    "wrong_instructions": 2908,
-    "differing_halfwords": 3159,
-    "class": "unemittable (advisory, size mismatch)"
+    "wrong_instructions": 1862,
+    "differing_halfwords": 2744,
+    "class": "wrong",
+    "matched_prefix": 81
   },
   "shape": {
     "calls": null,
@@ -20,9 +21,14 @@
   ],
   "unexpressed": [
     {
-      "op": "everything after the opening",
+      "op": "movs #100 / ip / lr slots-loop setup",
       "count": null,
-      "where": "whole body"
+      "where": "slots loop"
+    },
+    {
+      "op": "bl Func_080bbabc",
+      "count": 7,
+      "where": "call count 231 vs 239"
     }
   ],
   "verified_against_reference": [

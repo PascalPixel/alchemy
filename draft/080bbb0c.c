@@ -1166,7 +1166,12 @@ hp_tail:
         break;
 
     case EFX_AGI_SET_DOWN4:
-        S8OF(target->agility_modifier) = 252;
+    {
+        s32 v;
+
+        v = -4;
+        S8OF(target->agility_modifier) = v;
+    }
         target->agility_modifier_turns = 5;
         BattleUnit_Recalculate(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);

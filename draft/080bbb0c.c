@@ -600,8 +600,11 @@ after_power:
                 } else {
                     for (;;) {
                         if (*(s16 *)((u8 *)slots + off) == 255) {
+                            s32 t;
+
+                            t = jsave + 102;
                             *(s16 *)((u8 *)slots + off) = rec;
-                            *(s16 *)((u8 *)slots + (jsave + 102)) = 255;
+                            *(s16 *)((u8 *)slots + t) = 255;
                             break;
                         }
                         i++;

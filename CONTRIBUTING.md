@@ -224,11 +224,12 @@ at all, then, when you ask, whether the linked bytes match the ROM. A gate
 refuses to adopt anything that does not reproduce.
 
 There are two tiers and no third place that counts. A byte is exact C that
-rebuilds identically, or it is assembly. Your unfinished candidate lives in
-`work/`, which is gitignored. What you have learned lives in `recon/`. A
-compiling snapshot of the C may sit next to the record as `recon/<owner>.c` so
-a compaction or a fresh worktree does not start from zero; it is not exact, it
-is not a coverage figure, and it is deleted when the owner is adopted.
+rebuilds identically, or it is assembly. In between, an owner you are working
+on lives in exactly ONE file: `draft/<owner>.c`, committed, with its
+measurement record `draft/<owner>.json` beside it. `scratch/` is gitignored
+and holds everything disposable -- spelling sweeps, variant directories, tool
+output. Nothing in either place counts toward coverage; the gates guarantee
+that, not the gitignore.
 
 ### 1. Pick an owner
 
@@ -264,15 +265,18 @@ whole function is far easier than a third of its size in dense arithmetic. And
 count the finished owners in the same overlay -- where a hundred are already
 done, the structs, callees and idioms are established.
 
-Name your draft after the owner: `work/080bbb0c.c`, or
-`work/resource_3b2_c_02000da4.c`. The rankers find drafts by that name.
+The owner's one file is `draft/080bbb0c.c`, or
+`draft/resource_3b2_c_02000da4.c`. The rankers find drafts by that name, in
+`draft/` and `scratch/` both; a stem present in both ranks once, from
+`draft/`.
 
 For a call-dense owner, `overlay reconstruct resource_3bd:13f8` writes a first
-draft into `work/` from the owner's own disassembly; a main-image owner is the
+draft into `scratch/` from the owner's own disassembly; a main-image owner is the
 same lift from its assembly, `compiler reconstruct asm/080bbb0c.s`. It models
 what the bytes plainly show and is silent about everything else -- it writes
 no `if`, so the control flow is yours to read and add. Its output goes to
-`work/` and nowhere else; the tool refuses any other path, because a generator
+`scratch/` and nowhere else; the tool refuses any other path -- promote it to
+`draft/` when you have read it and started real work, because a generator
 aimed at every owner is exactly the machine that produced 862,856 bytes of C
 nobody could use. Score it before believing any of it.
 
@@ -419,7 +423,7 @@ lines. No ROM, no link, no objdump of the image. Invoke the binary, not
 `cargo run`:
 
 ```bash
-tools/compiler/target/release/compiler candidate-show work/080bbb0c.c --asm
+tools/compiler/target/release/compiler candidate-show draft/080bbb0c.c --asm
 ```
 
 Warm, on the 6 KB owner, that is about 60 ms. It prints insn counts, a
@@ -429,10 +433,10 @@ a no-op in RTL -- stop theorising and write a different shape. A real edit
 shows up as insertions and deletions.
 
 **Do the linked bytes match?** That is the score, and it is the only number
-that can go in a `recon/` record or an adoption:
+that can go in a `draft/` record or an adoption:
 
 ```bash
-tools/compiler/target/release/compiler candidate-show work/080bbb0c.c --align
+tools/compiler/target/release/compiler candidate-show draft/080bbb0c.c --align
 ```
 
 `--first` is `--align` cropped to the first residual window. `--patch FILE`
@@ -445,7 +449,7 @@ span argument:
 
 ```bash
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
-  score work/resource_3b2_c_02000da4.c --align
+  score draft/resource_3b2_c_02000da4.c --align
 ```
 
 Then make the smallest source change that explains what you saw, confirm it
@@ -462,11 +466,11 @@ must be 0. A matching file size is not that.
 
 ```bash
 # main image: proves a src_<address>.c draft, installs to exact/
-make dispatch-decomp ARGS='integrate_matches /path/to/draft --apply'
+make dispatch-decomp ARGS='integrate_matches draft/<address>.c --apply'
 
 # overlay: rehearses the whole overlay, then splices the row in
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- \
-  adopt resource_373:034c --source work/resource_373_c_0200034c.c --apply
+  adopt resource_373:034c --source draft/resource_373_c_0200034c.c --apply
 ```
 
 An owner discovery has not indexed needs its size given explicitly, as
@@ -497,13 +501,13 @@ cargo run --release --manifest-path tools/overlay/Cargo.toml -- park resource_37
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- audit --all
 ```
 
-`park` restores a row's assembly and returns its C to your worktree. `audit`
+`park` restores a row's assembly and returns its C to `draft/`. `audit`
 compares every adopted row against the bytes it replaced and names any that no
 longer reproduce. Run it after any merge that brought in adoptions from both
 sides.
 
-Delete the `recon/` record, and the snapshot `.c` if you kept one, when the
-owner is adopted. The gate will remind you about the record.
+Delete the `draft/` pair -- the `.c` and its record -- when the owner is
+adopted; `integrate_matches` does it for you on the main image. The gate will remind you about the record.
 
 ### 6. When an owner will not converge
 
@@ -517,11 +521,9 @@ what correct source looks like for this compiler, and the next one is easier
 because of it. `exact_reading_list` and `overlay twins` are how you find the
 relevant examples.
 
-Record what you tried. `recon/<owner>.json` carries the score the tools
+Record what you tried. `draft/<owner>.json` carries the score the tools
 reported, `unexpressed` in instruction counts, and `rejected` with the number
-that killed each dead end. Copy the compiling draft to `recon/<owner>.c` as
-well if you cannot afford to lose it -- `work/` does not survive a clone, a
-worktree, or a context compaction.
+that killed each dead end. The draft itself is already committed beside it.
 
 ### Merging another branch, or main back into yours
 
@@ -573,7 +575,7 @@ spill slots are the compiler's choice, downstream of your allocno set. Two
 structure-only view:
 
 ```bash
-cd work/candidate-show/080bbb0c
+cd scratch/candidate-show/080bbb0c
 perl -pe 's/\br(1[0-2]|[0-9])\b/rr/g; s/\b(sl|fp|ip)\b/rr/g; s/\[sp, #\d+\]/[sp,N]/g' \
   reference.insns > /tmp/ref.n
 perl -pe 's/\br(1[0-2]|[0-9])\b/rr/g; s/\b(sl|fp|ip)\b/rr/g; s/\[sp, #\d+\]/[sp,N]/g' \
@@ -674,7 +676,7 @@ anything: a linear reconstruction can be structurally complete only for a
 function that has none, which is why `resource_3bf:3054` -- 636 calls, no loop
 anywhere -- got closest without closing.
 
-**Keep the record current.** The `recon/` entry for a large owner is the
+**Keep the record current.** The `draft/` record for a large owner is the
 session hand-off: score, per-body findings under `expressed`, the honest
 remainder under `unexpressed`, and every measured dead end under `rejected`
 with the number that killed it. `080bbb0c`'s record is the worked example.
@@ -1222,22 +1224,24 @@ well-named member cannot promote its package.
 
 ### Where unfinished work lives
 
-Your C lives in `work/`, which is gitignored. What you have LEARNED lives in
-`recon/`, which is not. Those are different things and the split is the point.
+One owner, one file: `draft/<owner>.c`, committed, with `draft/<owner>.json`
+beside it holding the measurements. `scratch/` is gitignored and holds
+everything disposable. There is no third location and no copy step.
 
-A byte is exact C or it is assembly. There is still no third place that
-counts, and `two-tier-check` still fails if unproven C appears where a
-coverage figure could add it up.
+A byte is exact C or it is assembly. `draft/` does not weaken that:
+`two-tier-check` still fails if unproven C appears where a coverage figure
+could add it up, and no published number counts a draft. What `draft/` fixes
+is survival and truth -- the file a session worked on is the file the next
+session opens, on any machine, and there is never a question of which copy is
+current.
 
-**`work/` -- the scratchpad.** Every tool that scores a source takes a path.
-Adoption moves the file to `exact/` when it matches. Nothing here is committed
-and nothing here survives a fresh clone, which is correct: an unproven source
-is not an asset. Nothing here survives a context compaction either. If you
-cannot afford to lose the draft, copy it.
+**`draft/<owner>.c` -- the file.** Every scoring tool takes its path.
+Adoption moves it to `exact/` when it matches and removes the record.
+Unproven C in `draft/` is a workbench item, not an asset, and is never quoted
+as coverage.
 
-**`recon/<owner>.json` -- the record.** One per owner under active
-reconstruction, holding measurements and a recipe. Never ROM bytes. The
-`score` object is what the tools reported.
+**`draft/<owner>.json` -- the record.** Measurements and a recipe, never ROM
+bytes. The `score` object is what the tools reported.
 
 ```json
 {
@@ -1264,13 +1268,14 @@ in it a coverage number could add up, and `check_unmatchable` fails a record
 whose owner has since gone exact, whose `wrong_instructions` is 0, or which
 carries no score at all.
 
-**`recon/<owner>.c` -- the snapshot.** A compiling copy of the `work/` draft,
-so the next session has the source and not only the JSON. It is unproven C. It
-is not a third tier. It is not quoted as coverage. Delete it with the JSON
-when the owner is adopted.
+**`scratch/` -- everything disposable.** Spelling sweeps, variant
+directories, the drafter's raw output, per-owner tool work directories
+(`scratch/candidate-show/<stem>`). Nothing here is committed, nothing here
+survives a clone, and the publication gate refuses the directory outright if
+it is ever staged.
 
 **A draft is not progress, and its size is not its completeness.**
-`overlay reconstruct` will happily fill `work/` with a thousand drafts in
+`overlay reconstruct` will happily fill `scratch/` with a thousand drafts in
 eighty seconds. The dangerous part is not the files, it is the reporting: a
 draft at 92% of the reference's SIZE sounds nearly finished, and of 348 drafts
 at 85% of reference size or better, six matched 90% of their instructions and
@@ -1561,7 +1566,7 @@ across a cohort rather than on the single owner that suggested it.
 The `compiler` binary additionally hosts `candidate-show` (`--asm` for gcc
 `-S` plus git diff of canonicalised insns; `--align` / `--first` / `--patch`
 for the linked-byte view), `reconstruct` (draft C from a main-image `.s` file
-into `work/`), `thumb-disasm`, and the RTL readers `rtl-insn`, `rtl-sexpr`,
+into `scratch/`), `thumb-disasm`, and the RTL readers `rtl-insn`, `rtl-sexpr`,
 `rtl-schedule` and `rtl-align`, which read the compiler's own dumps when you
 need to know which pass produced a shape.
 

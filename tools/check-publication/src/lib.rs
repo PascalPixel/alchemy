@@ -49,6 +49,7 @@ const BLOCKED_DIRECTORIES: &[&str] = &[
     "reports",
     "rom",
     "roms",
+    "scratch",
     "toolchain",
     "toolchains",
     "work",

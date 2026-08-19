@@ -384,7 +384,7 @@ mod tests {
 
 // ---------------------------------------------------------------- recon records
 //
-// A record per owner under active reconstruction, in `recon/`. It holds
+// A record per owner under active reconstruction, in `draft/`. It holds
 // MEASUREMENTS and a recipe, never C and never ROM bytes.
 //
 // WHY IT IS NOT THE SEMANTIC TIER AGAIN. That tier stored unproven C and then
@@ -394,7 +394,7 @@ mod tests {
 // nothing in it that a coverage number could add up.
 //
 // WHY IT EXISTS. Before this, a large owner taken most of the way to exact left
-// nothing behind but prose in a commit message. `work/` is gitignored, so a
+// nothing behind but prose in a commit message. `scratch/` is gitignored, so a
 // clone or a fresh worktree started from zero against a sentence.
 
 /// One reconstruction record, read only as far as the gate needs it.
@@ -428,7 +428,7 @@ fn json_num(text: &str, key: &str) -> Option<i64> {
 }
 
 pub fn read_recon(root: &Path) -> Result<Vec<ReconRecord>, String> {
-    let dir = root.join("recon");
+    let dir = root.join("draft");
     let Ok(entries) = std::fs::read_dir(&dir) else {
         return Ok(Vec::new());
     };

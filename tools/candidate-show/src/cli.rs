@@ -191,7 +191,7 @@ fn default_work(root: &Path, source: &str) -> String {
             !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
         })
         .unwrap_or("candidate");
-    root.join("work/candidate-show")
+    root.join("scratch/candidate-show")
         .join(stem)
         .to_string_lossy()
         .into_owned()
@@ -248,7 +248,7 @@ mod tests {
         let options = unwrap_options(&["a.c"]);
         assert_eq!(options.source, "a.c");
         assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs1-en.gba"));
-        assert_eq!(options.work.as_deref(), Some("/repo/work/candidate-show/a"));
+        assert_eq!(options.work.as_deref(), Some("/repo/scratch/candidate-show/a"));
         assert_eq!(
             options.configuration.family,
             Some(CandidateCompilerFamily::Routed)
@@ -265,11 +265,11 @@ mod tests {
         let second = unwrap_options(&["semantic/08003e10.c"]);
         assert_eq!(
             first.work.as_deref(),
-            Some("/repo/work/candidate-show/08004838")
+            Some("/repo/scratch/candidate-show/08004838")
         );
         assert_eq!(
             second.work.as_deref(),
-            Some("/repo/work/candidate-show/08003e10")
+            Some("/repo/scratch/candidate-show/08003e10")
         );
         assert_ne!(first.work, second.work);
     }
@@ -287,7 +287,7 @@ mod tests {
         let options = unwrap_options(&["semantic/../odd name.c"]);
         assert_eq!(
             options.work.as_deref(),
-            Some("/repo/work/candidate-show/candidate")
+            Some("/repo/scratch/candidate-show/candidate")
         );
     }
 

@@ -666,7 +666,7 @@ pub fn run(
     // "you have written nothing yet", and the two could not be further apart.
     if rows.is_empty() {
         eprintln!(
-            "no overlay drafts in work/ -- this ranks candidates you have written, \
+            "no overlay drafts in draft/ or scratch/ -- this ranks candidates you have written, \
              named resource_<id>_c_<address>.c. Pick an owner from the Targets \
              table or `overlay twins` first."
         );

@@ -138,7 +138,7 @@ pub fn parse_arguments(argv: &[String], cwd: &Path) -> ParseOutcome {
             offset,
             source: resolve(cwd, &source),
             routing_source: resolve(cwd, &routing_source),
-            work: resolve_work(cwd, &work, "work/candidate-explain-overlay"),
+            work: resolve_work(cwd, &work, "scratch/candidate-explain-overlay"),
             span,
             remove_flags,
         }));
@@ -152,7 +152,7 @@ pub fn parse_arguments(argv: &[String], cwd: &Path) -> ParseOutcome {
     }
     ParseOutcome::Parsed(Box::new(Options::Main {
         source: resolve(cwd, &id),
-        work: resolve_work(cwd, &work, "work/candidate-explain-main"),
+        work: resolve_work(cwd, &work, "scratch/candidate-explain-main"),
     }))
 }
 

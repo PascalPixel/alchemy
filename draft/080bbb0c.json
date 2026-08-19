@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6352,
+    "candidate_bytes": 6332,
     "reference_bytes": 6332,
-    "wrong_instructions": 1504,
-    "differing_halfwords": 2600,
+    "wrong_instructions": 1490,
+    "differing_halfwords": 2559,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 236,
+    "insn_diff_rows_normalized": 212,
     "frame": "100 == reference"
   },
   "shape": {
@@ -54,7 +54,8 @@
     "multi-target scan compares target_id (sl) directly, no tid local",
     "saved-slot refresh: do-while, count-- before the call, *q++",
     "all 60 message ids are absolute Value_<hex> symbols: the reference pools 0x820/0x850/0x860/0x870, which thumb_shiftable_const proves a literal never does",
-    "multi-target loop index via nested s32 idx (copy-prop folds it; emission unchanged, recorded)"
+    "multi-target loop index via nested s32 idx (copy-prop folds it; emission unchanged, recorded)",
+    "actor drain heals (EFX_DRAIN_HP/_HALF/_PP): add-cap-rederive through a block-scope heal local, single store at the end, full-test re-reads the max field -- size now equals the reference exactly"
   ],
   "unexpressed": [
     {

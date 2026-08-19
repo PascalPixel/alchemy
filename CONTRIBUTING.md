@@ -16,6 +16,23 @@ match. This document is organised around how owners actually get closed:
 derive facts from the reference, write the C those facts imply, and let
 measurement arbitrate every disagreement.
 
+## The method in five lines
+
+1. **Read the compiler.** Its source is in the tree; every hard codegen
+   question settles faster there than by sweeping spellings.
+2. **Big edits, whole file.** Read the entire diff and the raw reference
+   end to end, then fix the systematic cause everywhere at once. Hunk-
+   chasing is how a session grinds.
+3. **Ignore size and the first-diff window until the last mile.** They are
+   phase and vanity while structure is wrong; steer on the normalized insn
+   diff and `wrong_instructions`.
+4. **`git diff` the whole file for hot regions.** The biggest hunk is the
+   next misread, and misreads score well by accident.
+5. **Humanize, humanize, humanize.** `case 43`, `status_12c`, `Func_38479`
+   is BS nobody can review. Names bound to evidence make wrong bindings
+   visible; the message archive and the pools are the ROM speaking for
+   itself.
+
 ## Contents
 
 - [Provenance and copyright](#provenance-and-copyright)

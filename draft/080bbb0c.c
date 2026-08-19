@@ -563,10 +563,17 @@ after_power:
     }
 
     nibble = action->target_flags & 15;
-    hit = plan->target_results[slot];
-    if (hit == -1)
-        hit = Battle_HitCheck(
-            actor_id, target_id, range, action->effect, HitFalloff[offset]);
+    {
+        s32 first;
+
+        first = plan->target_results[slot];
+        if (first == -1)
+            hit = Battle_HitCheck(
+                actor_id, target_id, range, action->effect,
+                HitFalloff[offset]);
+        else
+            hit = first;
+    }
 
     if ((u8)(action->effect + 206) <= 1) {
         s32 st;

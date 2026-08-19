@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6300,
+    "candidate_bytes": 6292,
     "reference_bytes": 6332,
     "wrong_instructions": 1535,
-    "differing_halfwords": 2762,
+    "differing_halfwords": 2812,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 117,
+    "insn_diff_rows_normalized": 116,
     "frame": "100 == reference",
     "walk_window_rows": 12
   },
@@ -70,7 +70,8 @@
     "the reference's atk family is itself mixed (two early-toff in r6, two rematerialized late): one uniform toff macro under varying per-body register pressure",
     "walk: jsave local (the reference's lr pseudo) with i/jsave/j initialized before the 254-test, matching the reference's pre-if init cluster. Found via a 32-variant matrix scored on the walk window: base2/woff/val toggles are inert or harmful; preinit+jsave alone lifts global coloring (wrong 1555 -> 1481, best yet)",
     "walk 254-recheck reads through a union member (union Cell). gcse's exp_equiv_p refuses MEMs whose MEM_ALIAS_SET differ, and lang_get_alias_set gives union accesses set 0 while the plain s16 cast carries the short set -- the PRE hoist that fabricated our ldrh cache cannot unify them. Walk window 26 -> 14 rows; the jsave-in-lr copy (movs r6, lr shape) materializes",
-    "found255 store index through a block local t = jsave + 102: arithmetic definitions survive copy propagation where plain copies fold, giving the reference's movs/adds/strh-indexed store"
+    "found255 store index through a block local t = jsave + 102: arithmetic definitions survive copy propagation where plain copies fold, giving the reference's movs/adds/strh-indexed store",
+    "hit assignment through a first local with per-arm stores: first = plan->target_results[slot]; if (first == -1) hit = HitCheck(...); else hit = first. The old shape stored hit before the test, spilling the ldrsb across the call; the reference defers the store into each arm. Clears the ldrsb spill and the HitCheck argument-order rows"
   ],
   "unexpressed": [
     {

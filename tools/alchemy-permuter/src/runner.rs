@@ -1259,70 +1259,131 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
 
     let backend_name = target.name().to_string();
     let target: Arc<dyn Backend> = Arc::from(target);
-    let candidates = Arc::new(candidates);
     let started = Instant::now();
-    let mut evaluated = run_workers(
-        target,
-        Arc::clone(&candidates),
-        options.jobs,
-        options.stop_exact,
-        baseline.clone(),
-        journal,
-    )?;
-    evaluated.sort_by_key(|item| item.candidate.index);
 
+    // Chained rounds: each round mutates the best source found so far, so
+    // coordinated multi-edit improvements become reachable and score ties
+    // let the search drift across plateaus the way pret's permuter does.
+    let mut chain_source = input.source.clone();
+    let mut chain_score = baseline.score;
     let mut best = baseline.score;
-    let mut retained = Vec::new();
+    let mut owned: Vec<(Candidate, Measurement)> = Vec::new();
+    let mut attempted = 0usize;
     let mut failures = 0usize;
     let mut compile_time = Duration::ZERO;
-    for (completed, item) in evaluated.iter().enumerate() {
-        compile_time += item.elapsed;
-        match &item.measurement {
-            Ok(measurement) => {
-                let former_best = best;
-                if measurement.score < best {
-                    best = measurement.score;
-                    println!(
-                        "new-best={} candidate={} mutation={} {}",
-                        best, item.candidate.index, item.candidate.mutation, measurement.summary
-                    );
+    let mut exact_found = false;
+    let mut round_candidates = Some(candidates);
+    for round in 0..options.chain.max(1) {
+        if round > 0 || round_candidates.is_none() {
+            let permutation = crate::perm::parse(&chain_source)?;
+            round_candidates = None;
+            let planned = candidate_plan(
+                &permutation,
+                options.iterations,
+                options.seed ^ (round as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15),
+                options.manual_only,
+                &weights,
+                chain_source.len(),
+            )?;
+            round_candidates = Some(planned);
+        }
+        let shared = Arc::new(round_candidates.take().expect("round candidates planned"));
+        let mut evaluated = run_workers(
+            Arc::clone(&target),
+            Arc::clone(&shared),
+            options.jobs,
+            options.stop_exact,
+            baseline.clone(),
+            Arc::clone(&journal),
+        )?;
+        evaluated.sort_by_key(|item| item.candidate.index);
+        attempted += evaluated.len();
+
+        let mut round_best: Option<(usize, u64)> = None;
+        for item in evaluated.iter() {
+            compile_time += item.elapsed;
+            match &item.measurement {
+                Ok(measurement) => {
+                    let former_best = best;
+                    if measurement.score < best {
+                        best = measurement.score;
+                        println!(
+                            "new-best={} round={} candidate={} mutation={} {}",
+                            best,
+                            round,
+                            item.candidate.index,
+                            item.candidate.mutation,
+                            measurement.summary
+                        );
+                    }
+                    if measurement.exact {
+                        exact_found = true;
+                    }
+                    if measurement.score <= chain_score
+                        && item.candidate.mutation != "identity"
+                        && round_best
+                            .map(|(_, score)| measurement.score < score)
+                            .unwrap_or(true)
+                    {
+                        round_best = Some((item.candidate.index, measurement.score));
+                    }
+                    if retain_result(options, &baseline, former_best, measurement) {
+                        owned.push((item.candidate.clone(), measurement.clone()));
+                    }
                 }
-                if retain_result(options, &baseline, former_best, measurement) {
-                    retained.push((&item.candidate, measurement));
-                }
-            }
-            Err(error) => {
-                failures += 1;
-                if options.show_errors {
-                    eprintln!("candidate {}: {error}", item.candidate.index);
+                Err(error) => {
+                    failures += 1;
+                    if options.show_errors {
+                        eprintln!("candidate {}: {error}", item.candidate.index);
+                    }
                 }
             }
         }
-        if !options.quiet && (completed + 1) % 100 == 0 {
+        if !options.quiet {
             println!(
-                "progress={}/{} best={} failures={}",
-                completed + 1,
-                evaluated.len(),
+                "round={} attempted={} best={} chain={} failures={}",
+                round,
+                attempted,
                 best,
+                chain_score,
                 failures
             );
         }
+        if let Some((index, score)) = round_best {
+            if let Some(item) = evaluated.iter().find(|item| item.candidate.index == index) {
+                chain_source = item.candidate.source.clone();
+                chain_score = score;
+            }
+        }
+        if exact_found && options.stop_exact {
+            break;
+        }
     }
+
+    let mut retained: Vec<(&Candidate, &Measurement)> = owned
+        .iter()
+        .map(|(candidate, measurement)| (candidate, measurement))
+        .collect();
     retained.sort_by(measurement_order);
     retained.truncate(options.top);
+    if let Some((candidate, _)) = retained.first() {
+        let best_path = run.path().join("best.c");
+        fs::write(&best_path, &candidate.source)
+            .map_err(|error| format!("{}: {error}", best_path.display()))?;
+    }
     save_results(
         &mut run,
         &backend_name,
         &baseline,
         &retained,
-        evaluated.len(),
+        attempted,
         failures,
     )?;
     let exact = retained.iter().any(|(_, measurement)| measurement.exact);
     println!(
         "done={} attempted={} failures={} best={} exact={} wall_ms={} compiler_ms={} output={}",
         backend_name,
-        evaluated.len(),
+        attempted,
         failures,
         best,
         exact,

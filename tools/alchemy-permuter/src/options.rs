@@ -15,6 +15,7 @@ pub const USAGE: &str = "usage: alchemy-permuter <candidate.c|legacy-directory>.
   --top N          retained improving candidates (default 12; max 256)\n\
   --output DIR     new, dedicated ignored run directory (or parent for many inputs)\n\
   --weights FILE   settings.toml-format randomization weights for any input kind\n\
+  --chain N        rounds that re-seed mutation from the best candidate so far\n\
   --manual-only    evaluate PERM_* choices without random mutation\n\
   --show-errors    display failed compiler diagnostics\n\
   --better-only    retain only candidates better than the baseline\n\
@@ -36,6 +37,7 @@ pub struct Options {
     pub top: usize,
     pub output: Option<PathBuf>,
     pub weights: Option<PathBuf>,
+    pub chain: usize,
     pub manual_only: bool,
     pub stop_exact: bool,
     pub show_errors: bool,
@@ -67,6 +69,7 @@ impl Options {
         let mut top = 12usize;
         let mut output = None;
         let mut weights = None;
+        let mut chain = 1usize;
         let mut manual_only = false;
         let mut stop_exact = true;
         let mut show_errors = false;
@@ -84,6 +87,10 @@ impl Options {
                         .get(at + 1)
                         .ok_or_else(|| "--weights requires a path".to_string())?;
                     weights = Some(PathBuf::from(value));
+                    at += 2;
+                }
+                "--chain" => {
+                    chain = positive(args.get(at + 1), "--chain")?.min(10_000);
                     at += 2;
                 }
                 "--iterations" => {
@@ -184,6 +191,7 @@ impl Options {
             top,
             output,
             weights,
+            chain,
             manual_only,
             stop_exact,
             show_errors,

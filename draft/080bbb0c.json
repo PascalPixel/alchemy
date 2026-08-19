@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6300,
+    "candidate_bytes": 6308,
     "reference_bytes": 6332,
-    "wrong_instructions": 1555,
-    "differing_halfwords": 2788,
+    "wrong_instructions": 1481,
+    "differing_halfwords": 2725,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 122,
+    "insn_diff_rows_normalized": 119,
     "frame": "100 == reference"
   },
   "shape": {
@@ -66,7 +66,8 @@
     "ADJUST_RES does NOT carry the early toff: the reference's res handlers build 310 after the pushes (movs #155 per body, crossjump shares only the lsls/strb tail). With the plain member store back, all four res bodies exist separately exactly as the reference lays them out. The early-toff pattern is ATK/DEF only.",
     "stub map: 13 of 14 out-of-line b-stubs already identical to the reference in content and predecessor count",
     "cross-jump depth rule measured: the final jump2 pass (after sched2) merges identical tails but never across a call insn -- the res bodies' movs #155 stays per-body for exactly that reason",
-    "the reference's atk family is itself mixed (two early-toff in r6, two rematerialized late): one uniform toff macro under varying per-body register pressure"
+    "the reference's atk family is itself mixed (two early-toff in r6, two rematerialized late): one uniform toff macro under varying per-body register pressure",
+    "walk: jsave local (the reference's lr pseudo) with i/jsave/j initialized before the 254-test, matching the reference's pre-if init cluster. Found via a 32-variant matrix scored on the walk window: base2/woff/val toggles are inert or harmful; preinit+jsave alone lifts global coloring (wrong 1555 -> 1481, best yet)"
   ],
   "unexpressed": [
     {

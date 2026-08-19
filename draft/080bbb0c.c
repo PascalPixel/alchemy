@@ -586,17 +586,19 @@ after_power:
                 s32 off;
                 s32 i;
                 s32 j;
+                s32 jsave;
 
                 off = 100;
+                i = 0;
+                jsave = 0;
+                j = 0;
                 if (*(s16 *)((u8 *)slots + off) == 254) {
                     *(s16 *)((u8 *)slots + off) = rec;
                 } else {
-                    i = 0;
-                    j = 0;
                     for (;;) {
                         if (*(s16 *)((u8 *)slots + off) == 255) {
                             *(s16 *)((u8 *)slots + off) = rec;
-                            *(s16 *)((u8 *)slots + (j + 102)) = 255;
+                            *(s16 *)((u8 *)slots + (jsave + 102)) = 255;
                             break;
                         }
                         i++;
@@ -604,6 +606,7 @@ after_power:
                         j += 2;
                         if (i > 5)
                             break;
+                        jsave = j;
                         if (*(s16 *)((u8 *)slots + off) == 254) {
                             *(s16 *)((u8 *)slots + off) = rec;
                             break;

@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6292,
+    "candidate_bytes": 6280,
     "reference_bytes": 6332,
-    "wrong_instructions": 1525,
-    "differing_halfwords": 2782,
+    "wrong_instructions": 1493,
+    "differing_halfwords": 2740,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 115,
+    "insn_diff_rows_normalized": 113,
     "frame": "100 == reference",
     "walk_window_rows": 12
   },
@@ -72,7 +72,8 @@
     "walk 254-recheck reads through a union member (union Cell). gcse's exp_equiv_p refuses MEMs whose MEM_ALIAS_SET differ, and lang_get_alias_set gives union accesses set 0 while the plain s16 cast carries the short set -- the PRE hoist that fabricated our ldrh cache cannot unify them. Walk window 26 -> 14 rows; the jsave-in-lr copy (movs r6, lr shape) materializes",
     "found255 store index through a block local t = jsave + 102: arithmetic definitions survive copy propagation where plain copies fold, giving the reference's movs/adds/strh-indexed store",
     "hit assignment through a first local with per-arm stores: first = plan->target_results[slot]; if (first == -1) hit = HitCheck(...); else hit = first. The old shape stored hit before the test, spilling the ldrsb across the call; the reference defers the store into each arm. Clears the ldrsb spill and the HitCheck argument-order rows",
-    "EFX_AGI_SET_DOWN4 stores -4 through an s32 local: the reference builds movs #4/negs in a register (sharable with the clamp constant) where the literal 252 truncates at expand"
+    "EFX_AGI_SET_DOWN4 stores -4 through an s32 local: the reference builds movs #4/negs in a register (sharable with the clamp constant) where the literal 252 truncates at expand",
+    "the two damage-emphasis TEXT sites decide the text in a variable and push once (TEXT_SIDE_V): the reference's arms are argument-only stubs feeding one shared push, which crossjump cannot have made because the match would cross the bl. Per-site measurement keeps the other ten sites per-arm"
   ],
   "unexpressed": [
     {

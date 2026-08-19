@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6272,
+    "candidate_bytes": 6276,
     "reference_bytes": 6332,
-    "wrong_instructions": 1488,
-    "differing_halfwords": 2773,
+    "wrong_instructions": 1551,
+    "differing_halfwords": 2779,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 113,
+    "insn_diff_rows_normalized": 111,
     "frame": "100 == reference",
     "walk_window_rows": 12
   },
@@ -73,7 +73,9 @@
     "found255 store index through a block local t = jsave + 102: arithmetic definitions survive copy propagation where plain copies fold, giving the reference's movs/adds/strh-indexed store",
     "hit assignment through a first local with per-arm stores: first = plan->target_results[slot]; if (first == -1) hit = HitCheck(...); else hit = first. The old shape stored hit before the test, spilling the ldrsb across the call; the reference defers the store into each arm. Clears the ldrsb spill and the HitCheck argument-order rows",
     "EFX_AGI_SET_DOWN4 stores -4 through an s32 local: the reference builds movs #4/negs in a register (sharable with the clamp constant) where the literal 252 truncates at expand",
-    "the two damage-emphasis TEXT sites decide the text in a variable and push once (TEXT_SIDE_V): the reference's arms are argument-only stubs feeding one shared push, which crossjump cannot have made because the match would cross the bl. Per-site measurement keeps the other ten sites per-arm"
+    "the two damage-emphasis TEXT sites decide the text in a variable and push once (TEXT_SIDE_V): the reference's arms are argument-only stubs feeding one shared push, which crossjump cannot have made because the match would cross the bl. Per-site measurement keeps the other ten sites per-arm",
+    "attack KO arm order: if (cur > 0) FINISH else KO at the attack case only (siblings measured better KO-first)",
+    "the two emphasis sites interleave cur -= dmg between the text select and the push -- hand-written order the reference's arm blocks carry the subtraction in"
   ],
   "unexpressed": [
     {

@@ -63,43 +63,41 @@
     "falloff 5/6/8 select really is a switch: balanced tree, one selector load (earlier rejection was measured against stale insns)",
     "HEAL_60: volatile u16 mentions give the reference's four independent loads; maxv read once ahead of the if; div result added directly into heal (both restore-7 and heal-60)",
     "power routed through dmg at the three CalcPower sites: dmg = action->power; dmg = Battle_CalcPower(dmg, ...) -- the reference's ldrh into r5 plus copy to r0 is the accumulator, and the ldrh outranks the 128 build in the dependence table because dmg's chain is longer",
-    "ADJUST_RES does NOT carry the early toff: the reference's res handlers build 310 after the pushes (movs #155 per body, crossjump shares only the lsls/strb tail). With the plain member store back, all four res bodies exist separately exactly as the reference lays them out. The early-toff pattern is ATK/DEF only."
+    "ADJUST_RES does NOT carry the early toff: the reference's res handlers build 310 after the pushes (movs #155 per body, crossjump shares only the lsls/strb tail). With the plain member store back, all four res bodies exist separately exactly as the reference lays them out. The early-toff pattern is ATK/DEF only.",
+    "stub map: 13 of 14 out-of-line b-stubs already identical to the reference in content and predecessor count",
+    "cross-jump depth rule measured: the final jump2 pass (after sched2) merges identical tails but never across a call insn -- the res bodies' movs #155 stays per-body for exactly that reason",
+    "the reference's atk family is itself mixed (two early-toff in r6, two rematerialized late): one uniform toff macro under varying per-body register pressure"
   ],
   "unexpressed": [
     {
-      "op": "KO/TEXT tail crossjump layout and stub placement",
-      "count": 120,
-      "where": "every damage case tail; bidirectional over/under-merging, downstream of sched ties"
+      "op": "def-modifier pair over-merge",
+      "count": 16,
+      "where": "jump2 (after sched2) merges our four identical def tails; the reference's bodies differ per-body because two hold toff in r6 and two rematerialize -- allocation pressure we inherit only when neighboring coloring converges"
     },
     {
-      "op": "scheduler tie micro-swaps (movs pairs, pool-load placement)",
-      "count": 50,
-      "where": "push sites and handler heads; LUID-class, doc's dependence-table method applies per site"
+      "op": "KO/TEXT stub placement and branch polarity",
+      "count": 40,
+      "where": "crossjump cannot cross calls (res merge depth proves it); which side of a call a tail lands decides bhi/bls and stub position"
     },
     {
-      "op": "summon slots walk pseudo set",
-      "count": 15,
-      "where": "lr/ip pseudos fold under copy-prop in every spelling tried"
+      "op": "summon slots walk",
+      "count": 26,
+      "where": "lr/ip reload pseudos; every source spelling folds"
     },
     {
-      "op": "multi-target scan index reassociation",
+      "op": "multi-target scan reassociation",
       "count": 10,
       "where": "fold-const regroups every spelling"
     },
     {
-      "op": "HEAL_60 dual-width reads",
-      "count": 6,
-      "where": "ldrh folds through ldrsh"
+      "op": "heal dual-width residue",
+      "count": 7,
+      "where": "one extra ldrh #52 placement"
     },
     {
-      "op": "muls operand order at two sites",
-      "count": 4,
-      "where": "rtx canonicalization, not source-reachable"
-    },
-    {
-      "op": "elem scan-2 rebuild vs CSE fold",
-      "count": 2,
-      "where": "scan-2 walker init"
+      "op": "scheduler ties and copy directions",
+      "count": 23,
+      "where": "scattered 1-2 row swaps"
     }
   ],
   "verified_against_reference": [

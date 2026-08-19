@@ -152,6 +152,24 @@
     {
       "shape": "def-body split via local pressure",
       "note": "toff allocation is the global allocno lottery: our atk toffs held r6 at commit 5d4afa4e6 and lost it again after unrelated edits; ref itself is mixed 3-early/5-late across the eight bodies. The split follows global coloring convergence, not local spelling"
+    },
+    {
+      "shape": "-fno-gcse routed for the whole TU",
+      "note": "fixes the walk fingerprint (single ldrsh, ip pseudo appears) but is globally worse: 872 vs 742 normalized bin rows. The reference was compiled with gcse on; its no-fold shapes have another source"
+    },
+    {
+      "shape": "scan probe via BattleWorkPtr cell re-read",
+      "wrong": 1455,
+      "note": "best global scores ever, but the emitted loop reads the cell where the reference reloads its spilled work local -- wrong instructions aligned by luck, rejected"
+    },
+    {
+      "shape": "volatile on the walk 254-recheck",
+      "wrong": 1565,
+      "note": "walk window 26->24, global flat; compasses disagree, parked"
+    },
+    {
+      "shape": "permuter campaigns",
+      "note": "16,500 candidates over halfword, instruction, and coloring-weighted fitness: zero improving mutations. Improving moves are coordinated multi-statement changes"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."

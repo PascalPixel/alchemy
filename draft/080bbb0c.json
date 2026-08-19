@@ -3,10 +3,10 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6340,
+    "candidate_bytes": 6352,
     "reference_bytes": 6332,
-    "wrong_instructions": 1486,
-    "differing_halfwords": 2697,
+    "wrong_instructions": 1504,
+    "differing_halfwords": 2600,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
@@ -52,7 +52,9 @@
     "kind at function scope between power and cmd (ref slots: power=12 kind=8 cmd=4)",
     "DK_ATTACK: defense and action->power each read once into a local (def r1->fp, apwr r5 across the call), raw-proven",
     "multi-target scan compares target_id (sl) directly, no tid local",
-    "saved-slot refresh: do-while, count-- before the call, *q++"
+    "saved-slot refresh: do-while, count-- before the call, *q++",
+    "all 60 message ids are absolute Value_<hex> symbols: the reference pools 0x820/0x850/0x860/0x870, which thumb_shiftable_const proves a literal never does",
+    "multi-target loop index via nested s32 idx (copy-prop folds it; emission unchanged, recorded)"
   ],
   "unexpressed": [
     {
@@ -69,6 +71,11 @@
       "op": "pooled 0x820 vs built 130<<4",
       "count": 2,
       "where": "case 2 and 61/62 full-heal text; bare constant cannot pool (thumb_shiftable_const), so the source spelling or the id is wrong"
+    },
+    {
+      "op": "scan index tree ((n<<4)+748)+work vs (work+(n<<4))+748",
+      "count": 10,
+      "where": "multi-target loop; fold-const reassociates every spelling tried"
     }
   ],
   "verified_against_reference": [

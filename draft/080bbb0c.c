@@ -413,6 +413,9 @@ enum {
     (field) = 7;                                                               \
 }
 
+/* 共用体経由の参照はエイリアス集合0。gcse が先頭の探査と統合できない。 */
+union Cell { s16 v; u16 u; };
+
 s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
 {
     /*
@@ -607,7 +610,7 @@ after_power:
                         if (i > 5)
                             break;
                         jsave = j;
-                        if (*(s16 *)((u8 *)slots + off) == 254) {
+                        if (((union Cell *)((u8 *)slots + off))->v == 254) {
                             *(s16 *)((u8 *)slots + off) = rec;
                             break;
                         }

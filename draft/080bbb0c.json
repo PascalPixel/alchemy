@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6292,
+    "candidate_bytes": 6300,
     "reference_bytes": 6332,
-    "wrong_instructions": 1551,
-    "differing_halfwords": 2785,
+    "wrong_instructions": 1555,
+    "differing_halfwords": 2788,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 129,
+    "insn_diff_rows_normalized": 122,
     "frame": "100 == reference"
   },
   "shape": {
@@ -62,7 +62,8 @@
     "dependence-table method validated end to end: rtl-schedule table + -fsched-verbose=5 traced the tie to insn 8949's barrier-induced dependence on the r1 copy",
     "falloff 5/6/8 select really is a switch: balanced tree, one selector load (earlier rejection was measured against stale insns)",
     "HEAL_60: volatile u16 mentions give the reference's four independent loads; maxv read once ahead of the if; div result added directly into heal (both restore-7 and heal-60)",
-    "power routed through dmg at the three CalcPower sites: dmg = action->power; dmg = Battle_CalcPower(dmg, ...) -- the reference's ldrh into r5 plus copy to r0 is the accumulator, and the ldrh outranks the 128 build in the dependence table because dmg's chain is longer"
+    "power routed through dmg at the three CalcPower sites: dmg = action->power; dmg = Battle_CalcPower(dmg, ...) -- the reference's ldrh into r5 plus copy to r0 is the accumulator, and the ldrh outranks the 128 build in the dependence table because dmg's chain is longer",
+    "ADJUST_RES does NOT carry the early toff: the reference's res handlers build 310 after the pushes (movs #155 per body, crossjump shares only the lsls/strb tail). With the plain member store back, all four res bodies exist separately exactly as the reference lays them out. The early-toff pattern is ATK/DEF only."
   ],
   "unexpressed": [
     {

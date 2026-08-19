@@ -1243,8 +1243,17 @@ hp_tail:
         break;
 
     case EFX_ATK_DOWN1:
-        ADJUST_ATKDEF(target->attack_modifier, -1, ATK_TURNS,
-                      copy->attack - target->attack, MSG_ATK_DOWN);
+    {
+        s32 toff;
+
+        target->attack_modifier += -1;
+        CLAMP_MOD(target->attack_modifier);
+        BattleUnit_Recalculate(target_id);
+        toff = ATK_TURNS;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
+        *(u8 *)((u8 *)target + toff) = 7;
+    }
         break;
 
     case EFX_ATK_DOWN2:

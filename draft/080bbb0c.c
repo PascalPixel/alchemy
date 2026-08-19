@@ -94,6 +94,20 @@ s32 Func_080b6ae0(s16 *entries);                  /* 表示スロット一覧。
 void Func_080b8000(s32 slot);                     /* スロットの再描画 */
 #define Actor_RefreshSlot Func_080b8000
 
+/* ダメージ種別 = nibble + 1。各ケースの挙動から命名。 */
+enum {
+    DK_PP_DMG = 0,      /* PPへの直接ダメージ */
+    DK_HP_HEAL = 2,     /* HP回復 */
+    DK_HP_DMG = 3,      /* 威力ベースのHPダメージ */
+    DK_ATTACK = 4,      /* 武器攻撃 */
+    DK_ATTACK_X = 5,    /* 武器攻撃 威力乗算/10 */
+    DK_HP_DMG_6 = 6,    /* 加算HPダメージ 減衰6系 */
+    DK_HP_DMG_7 = 7,    /* 加算HPダメージ 減衰5系 */
+    DK_HP_DMG_9 = 9,    /* 加算HPダメージ 減衰8系 */
+    DK_PP_DRAIN = 11,   /* PP吸収系(EFX_DRAIN_PPでnibble=10) */
+    DK_PP_HEAL = 12     /* PP回復 */
+};
+
 /* テキスト番号。assets/text/message_archive.json の英文から命名。 */
 #define MSG_HP_RECOVER    0x81d                   /* 「HPが N かいふくした！」 */
 #define MSG_PP_RECOVER    0x81e                   /* 「PPが N かいふくした！」 */
@@ -611,8 +625,8 @@ after_power:
          *  1/8/10 は空。
          */
         switch (nibble + 1) {
-        case 4:
-        case 5:
+        case DK_ATTACK:
+        case DK_ATTACK_X:
         {
             scale = target->defense;
             cur = target->hp;
@@ -682,7 +696,7 @@ after_power:
             break;
         }
 
-        case 11:
+        case DK_PP_DRAIN:
         {
             if (action->power == 0)
                 break;
@@ -708,7 +722,7 @@ after_power:
             break;
         }
 
-        case 2:
+        case DK_HP_HEAL:
         {
             s32 pwr;
 
@@ -733,7 +747,7 @@ after_power:
             goto hp_tail;
         }
 
-        case 0:
+        case DK_PP_DMG:
         {
             if (action->power == 0)
                 break;
@@ -754,9 +768,9 @@ after_power:
             goto pp_store;
         }
 
-        case 6:
-        case 7:
-        case 9:
+        case DK_HP_DMG_6:
+        case DK_HP_DMG_7:
+        case DK_HP_DMG_9:
         {
             s32 kind;
 
@@ -777,7 +791,7 @@ after_power:
                         switch (item) {
                         case 0:
                         case 6:
-                        case 12:
+                        case DK_PP_HEAL:
                         case 18:
                             kind = 3;
                             break;
@@ -793,7 +807,7 @@ after_power:
                         case 20:
                             kind = 9;
                             break;
-                        case 3:
+                        case DK_HP_DMG:
                         case 9:
                         case 15:
                         case 21:
@@ -863,6 +877,7 @@ pp_store:
         case 1:
         case 8:
         case 10:
+            /* 空スロット */
             break;
 
         case 3:

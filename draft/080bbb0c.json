@@ -3,10 +3,10 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6280,
+    "candidate_bytes": 6272,
     "reference_bytes": 6332,
-    "wrong_instructions": 1493,
-    "differing_halfwords": 2740,
+    "wrong_instructions": 1488,
+    "differing_halfwords": 2773,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
@@ -77,34 +77,34 @@
   ],
   "unexpressed": [
     {
-      "op": "def-modifier pair over-merge",
-      "count": 16,
-      "where": "jump2 (after sched2) merges our four identical def tails; the reference's bodies differ per-body because two hold toff in r6 and two rematerialize -- allocation pressure we inherit only when neighboring coloring converges"
-    },
-    {
-      "op": "KO/TEXT stub placement and branch polarity",
+      "op": "KO/TEXT stub placement, subs demotion, branch polarity",
       "count": 40,
-      "where": "crossjump cannot cross calls (res merge depth proves it); which side of a call a tail lands decides bhi/bls and stub position"
+      "where": "jump2 layout; shrinks as tails converge (579 went 13->9 from the text-var fix alone)"
     },
     {
-      "op": "summon slots walk",
-      "count": 26,
-      "where": "lr/ip reload pseudos; every source spelling folds"
+      "op": "scheduler/coloring texture",
+      "count": 45,
+      "where": "copy directions and pair orders the reference itself varies per site"
     },
     {
-      "op": "multi-target scan reassociation",
-      "count": 10,
-      "where": "fold-const regroups every spelling"
+      "op": "walk head (ip copy, second 100, 255 cache)",
+      "count": 8,
+      "where": "fold-locked; union/woff/base2 all measured on three landscapes"
     },
     {
-      "op": "heal dual-width residue",
-      "count": 7,
-      "where": "one extra ldrh #52 placement"
+      "op": "multi-target scan index tree",
+      "count": 6,
+      "where": "fold-const; array spellings measured worse"
     },
     {
-      "op": "scheduler ties and copy directions",
-      "count": 23,
-      "where": "scattered 1-2 row swaps"
+      "op": "def-body merge",
+      "count": 9,
+      "where": "jump2 + allocation lottery; re-rolls with every cascade"
+    },
+    {
+      "op": "heal load order and maxu copy",
+      "count": 5,
+      "where": "texture"
     }
   ],
   "verified_against_reference": [

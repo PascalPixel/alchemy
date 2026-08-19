@@ -692,14 +692,16 @@ after_power:
                 hit = 1;
             } else {
                 n = 0;
-                while ((u32)++n <= 19) {
+            scan_next:
+                n++;
+                if ((u32)n <= 19) {
                     s32 idx;
 
                     idx = (n << 4) + 748;
-                    if (*(s16 *)((u8 *)work + idx) == target_id) {
+                    if (*(s16 *)((u8 *)work + idx) == target_id)
                         hit = 1;
-                        break;
-                    }
+                    else
+                        goto scan_next;
                 }
             }
         } else if (efx == EFX_HALF_DEF) {

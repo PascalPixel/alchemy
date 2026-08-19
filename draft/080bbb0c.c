@@ -1248,13 +1248,21 @@ hp_tail:
         break;
 
     case EFX_ATK_DOWN2:
-        ADJUST_ATKDEF(target->attack_modifier, -2, ATK_TURNS,
-                      copy->attack - target->attack, MSG_ATK_DOWN);
+        target->attack_modifier += -2;
+        CLAMP_MOD(target->attack_modifier);
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
+        target->attack_modifier_turns = 7;
         break;
 
     case EFX_ATK_UP1:
-        ADJUST_ATKDEF(target->attack_modifier, 1, ATK_TURNS,
-                      target->attack - copy->attack, MSG_ATK_UP);
+        target->attack_modifier += 1;
+        CLAMP_MOD(target->attack_modifier);
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
+        target->attack_modifier_turns = 7;
         break;
 
     case EFX_ATK_UP2:
@@ -1295,8 +1303,12 @@ hp_tail:
         break;
 
     case EFX_DEF_UP2:
-        ADJUST_ATKDEF(target->defense_modifier, 2, DEF_TURNS,
-                      target->defense - copy->defense, MSG_DEF_UP);
+        target->defense_modifier += 2;
+        CLAMP_MOD(target->defense_modifier);
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
+        target->defense_modifier_turns = 7;
         break;
 
     case EFX_REVIVE_FULL:

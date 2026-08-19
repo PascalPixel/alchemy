@@ -7,53 +7,92 @@
 
 /* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
 
-extern void *Data_03001e74;
-extern u8 Data_03001388[];
-extern u8 Data_080c2ab8[];
+/* 戦闘ワークとコピー記述子 */
+extern void *Data_03001e74;                       /* 戦闘ワークへのポインタセル */
+#define BattleWorkPtr Data_03001e74
+extern u8 Data_03001388[];                        /* ユニット退避コピーの記述子 */
+#define UnitCopyDesc Data_03001388
 
-/* 距離テーブル。target_offsets の絶対値で引く百分率の減衰。 */
-#define HitFalloff     Data_080c2ab8
-#define PpLossFalloff  Data_080c2ac0
-#define HpHealFalloff  Data_080c2ad8
-#define PpDmgFalloff   Data_080c2af0
-#define HpDmgFalloff5  Data_080c2b08
-#define HpDmgFalloff8  Data_080c2b20
-#define HpDmgFalloff6  Data_080c2b38
-#define PpHealFalloff  Data_080c2b50
-#define HpDmgFalloff   Data_080c2b68
-extern s32 Data_080c2ac0[];
-extern s32 Data_080c2ad8[];
-extern s32 Data_080c2af0[];
-extern s32 Data_080c2b08[];
-extern s32 Data_080c2b20[];
-extern s32 Data_080c2b38[];
-extern s32 Data_080c2b50[];
-extern s32 Data_080c2b68[];
+/*
+ * 距離減衰テーブル。target_offsets の絶対値で引く百分率。
+ * 中心から離れるほど効果が落ちる。
+ */
+extern u8 Data_080c2ab8[];                        /* 命中率 */
+#define HitFalloff Data_080c2ab8
+extern s32 Data_080c2ac0[];                       /* PP喪失 「PPを うしなった！」 */
+#define PpLossFalloff Data_080c2ac0
+extern s32 Data_080c2ad8[];                       /* HP回復 */
+#define HpHealFalloff Data_080c2ad8
+extern s32 Data_080c2af0[];                       /* PPダメージ */
+#define PpDmgFalloff Data_080c2af0
+extern s32 Data_080c2b08[];                       /* HPダメージ 種別5 */
+#define HpDmgFalloff5 Data_080c2b08
+extern s32 Data_080c2b20[];                       /* HPダメージ 種別8 */
+#define HpDmgFalloff8 Data_080c2b20
+extern s32 Data_080c2b38[];                       /* HPダメージ 種別6 */
+#define HpDmgFalloff6 Data_080c2b38
+extern s32 Data_080c2b50[];                       /* PP回復 */
+#define PpHealFalloff Data_080c2b50
+extern s32 Data_080c2b68[];                       /* HPダメージ 種別3 */
+#define HpDmgFalloff Data_080c2b68
 
-u32 Func_08004938(s32 size);
-void Func_080072f0(void *dst, void *src, s32 size, void *fn);
+/* システム */
+u32 Func_08004938(s32 size);                      /* ワークをバンプ確保 (exact/08004938.c) */
+#define Sys_Alloc Func_08004938
+void Func_08002df0(void *buffer);                 /* Sys_Alloc の解放 */
+#define Sys_Free Func_08002df0
+void Func_080072f0(void *dst, void *src, s32 size, void *desc); /* 記述子付きコピー */
+#define Mem_Copy Func_080072f0
+void Func_08015130(s32 mode);                     /* ワーク+65 のモード適用。役割未確定 */
+#define Sys_SetMode Func_08015130
+
+/* 算術。ゼロ除算を避ける共有ルーチン */
 s32 Func_080022ec(s32 numerator, s32 denominator);
+#define Math_Div Func_080022ec
 s32 Func_080022f4(s32 numerator, s32 denominator);
-void Func_08002df0(void *buffer);
-void Func_08015130(s32 mode);
-s32 Func_080b7514(void);
-s32 Func_080c1fa8(s32);
-s32 Func_080b6cdc(s32);
-s32 Func_080c1df4(s32, s32);
-void Func_080c1f50(s32);
-void Func_08077140(s32 slot, s32 unit, s32 mask);
-void Func_080b7548(void);
-void *Func_080b7dd0(s32);
-void Func_080b6f44(void *obj, s32 unit, s32 x, s32 y);
-void Func_080b6c90(void);
-s32 Func_080b6ae0(s16 *entries);
-void Func_080b8000(s32);
+#define Math_Mod Func_080022f4
+
+/* 戦闘計算 */
 s32 Func_08077178(s32 actor, s32 target, s32 range, s32 effect, s32 table);
+#define Battle_HitCheck Func_08077178             /* 命中判定。table は HitFalloff の行 */
 s32 Func_08077180(s32 power, s32 scale, s32 unused, s32 bonus);
+#define Battle_CalcAttack Func_08077180           /* 武器攻撃のダメージ */
 s32 Func_08077188(s32 power, s32 bonus, s32 scale);
+#define Battle_CalcPower Func_08077188            /* 威力ベースのダメージ */
 s32 Func_08077190(s32 power, s32 scale, s32 factor);
-void Func_08077120(s32 unit, s32 amount);
-s32 Func_080bbae8(s32 effect);
+#define Battle_CalcRestore Func_08077190          /* 回復量 */
+void Func_08077120(s32 unit, s32 amount);         /* 吸収した分を行動側へ */
+#define BattleUnit_Drain Func_08077120
+void Func_08077140(s32 slot, s32 unit, s32 mask); /* 召喚ユニットの配置 */
+#define BattleUnit_Assign Func_08077140
+s32 Func_080bbae8(s32 effect);                    /* 倒れていても効く効果か */
+#define BattleEffect_OnDead Func_080bbae8
+
+/* 召喚（スタンバイ）。effect 50/51 の径路 */
+s32 Func_080b7514(void);                          /* 空きスロットを探す */
+#define Summon_FindSlot Func_080b7514
+s32 Func_080c1fa8(s32 work0);                     /* ワーク先頭語から召喚クラスを引く */
+#define Summon_ClassId Func_080c1fa8
+s32 Func_080b6cdc(s32 class_id);                  /* クラスが有効か */
+#define Summon_ClassValid Func_080b6cdc
+s32 Func_080c1df4(s32 class_id, s32 n);           /* チャージ取得。bit15 は要リセット */
+#define Summon_TakeCharge Func_080c1df4
+void Func_080c1f50(s32 class_id);                 /* チャージのリセット */
+#define Summon_ResetCharge Func_080c1f50
+void Func_080b7548(void);                         /* 配置後の更新 */
+#define Summon_Refresh Func_080b7548
+
+/* スプライト側 */
+void *Func_080b7dd0(s32 unit);                    /* 表示オブジェクトを引く */
+#define Actor_GetObject Func_080b7dd0
+void Func_080b6f44(void *obj, s32 unit, s32 x, s32 y); /* マスへ配置 */
+#define Actor_Place Func_080b6f44
+void Func_080b6c90(void);                         /* 配置の確定 */
+#define Actor_Commit Func_080b6c90
+s32 Func_080b6ae0(s16 *entries);                  /* 表示スロット一覧。個数を返す */
+#define Actor_ListSlots Func_080b6ae0
+void Func_080b8000(s32 slot);                     /* スロットの再描画 */
+#define Actor_RefreshSlot Func_080b8000
 
 /* テキスト番号。assets/text/message_archive.json の英文から命名。 */
 #define MSG_HP_RECOVER    0x81d /* 「HPが N かいふくした！」 */
@@ -172,32 +211,6 @@ enum {
     EFX_PSY_SEAL = 67,
     EFX_PP_LEECH = 69,
 };
-
-/* 再構成用の別名。ABI 境界の宣言は Func_ のまま。 */
-#define Sys_Alloc            Func_08004938
-#define Sys_Free             Func_08002df0
-#define Mem_Copy             Func_080072f0
-#define Sys_SetMode          Func_08015130
-#define Math_Div             Func_080022ec
-#define Math_Mod             Func_080022f4
-#define Battle_HitCheck      Func_08077178
-#define Battle_CalcAttack    Func_08077180
-#define Battle_CalcPower     Func_08077188
-#define Battle_CalcRestore   Func_08077190
-#define BattleUnit_Drain     Func_08077120
-#define BattleUnit_Assign    Func_08077140
-#define BattleEffect_OnDead  Func_080bbae8
-#define Summon_FindSlot      Func_080b7514
-#define Summon_ClassId       Func_080c1fa8
-#define Summon_ClassValid    Func_080b6cdc
-#define Summon_TakeCharge    Func_080c1df4
-#define Summon_ResetCharge   Func_080c1f50
-#define Summon_Refresh       Func_080b7548
-#define Actor_GetObject      Func_080b7dd0
-#define Actor_Place          Func_080b6f44
-#define Actor_Commit         Func_080b6c90
-#define Actor_ListSlots      Func_080b6ae0
-#define Actor_RefreshSlot    Func_080b8000
 
 /* 属性テーブルはユニット+36 の s16 対。威力テーブルは +72。 */
 #define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 4))
@@ -355,7 +368,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 tmp;
 
     bonus = 0;
-    work = Data_03001e74;
+    work = BattleWorkPtr;
     half = 0;
     dealt = 0;
     crush = 0;
@@ -374,7 +387,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     action = BattleAction_Get(action_id);
     actor = BattleUnit_Get(actor_id);
     target = BattleUnit_Get(target_id);
-    Mem_Copy(copy, target, size, Data_03001388);
+    Mem_Copy(copy, target, size, UnitCopyDesc);
 
     if (action->range != 255) {
         offset = plan->target_offsets[slot];
@@ -1335,7 +1348,7 @@ done:
     }
     Sys_Free(copy);
     BattleUnit_Recalculate(target_id);
-    Sys_SetMode(((u8 *)Data_03001e74)[65]);
+    Sys_SetMode(((u8 *)BattleWorkPtr)[65]);
     if (target->hp != 0)
         BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (actor->evil_spirit != 0 && (BattleRandom_Next() & 3) == 0 && dealt > 0) {

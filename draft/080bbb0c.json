@@ -75,7 +75,8 @@
     "EFX_AGI_SET_DOWN4 stores -4 through an s32 local: the reference builds movs #4/negs in a register (sharable with the clamp constant) where the literal 252 truncates at expand",
     "the two damage-emphasis TEXT sites decide the text in a variable and push once (TEXT_SIDE_V): the reference's arms are argument-only stubs feeding one shared push, which crossjump cannot have made because the match would cross the bl. Per-site measurement keeps the other ten sites per-arm",
     "attack KO arm order: if (cur > 0) FINISH else KO at the attack case only (siblings measured better KO-first)",
-    "the two emphasis sites interleave cur -= dmg between the text select and the push -- hand-written order the reference's arm blocks carry the subtraction in"
+    "the two emphasis sites interleave cur -= dmg between the text select and the push -- hand-written order the reference's arm blocks carry the subtraction in",
+    "session arc: 236 -> 111 normalized reference rows across ~30 committed source facts; the fix-cascade-reread loop is the working method and each cycle costs one landscape shift"
   ],
   "unexpressed": [
     {

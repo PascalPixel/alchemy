@@ -400,14 +400,11 @@ enum {
 
 #define ADJUST_RES(delta, value_expr, text)                                 \
 {                                                                              \
-    s32 toff;                                                                  \
-                                                                               \
-    toff = RES_TURNS;                                                          \
     target->res_modifier += (delta);                                             \
     CLAMP_MOD(target->res_modifier);                                             \
     BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                        \
     BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                               \
-    *(u8 *)((u8 *)target + toff) = 7;                                          \
+    target->res_modifier_turns = 7;                                                    \
 }
 
 #define SET_STATUS7(field, text)                                               \

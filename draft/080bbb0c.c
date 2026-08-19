@@ -887,7 +887,14 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            TAKE_BONUS();
+            /* 参照は range*4 を分岐前に計算し [sp,#12] へ退避する。power の再利用が唯一その形を出す。 */
+            power = range * 4;
+            if (range != 4) {
+                s32 off;
+
+                off = power + 72;
+                bonus = power - ((s16 *)((u8 *)target + off))[1];
+            }
             dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(PpDmgFalloff[offset] * dmg, 100);

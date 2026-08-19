@@ -1053,6 +1053,38 @@ where the first mention is. A field the reference RE-READS after an update it
 just computed is the opposite tell: the source mentions the field again rather
 than reusing the local -- the heal shape below depends on it.
 
+**A re-read that `volatile` overshoots is a union access.** gcse refuses to
+unify two memory expressions whose alias sets differ (`exp_equiv_p` in
+`gcse.c`), and the C front end gives any access made directly through a union
+alias set 0 (`lang_get_alias_set` in `c-common.c`) while a plain `s16` cast
+carries the short set. So a load the reference repeats where our build caches
+it -- without the total reload behaviour `volatile` would force -- reads
+through a union in the source. `080bbb0c`'s summon-slot recheck is the worked
+example: `((union Cell *)((u8 *)slots + off))->v` restored the fresh `ldrsh`
+and put the saved index copy in `lr` exactly as the reference shows.
+`exact/080b11c4.c` already uses the same pattern. The pun is not a universal
+solvent -- measured on the heal duals and the elem scan it is worse than what
+stands there -- so confirm per site.
+
+**Copy propagation folds copies and leaves arithmetic alone.** A pseudo the
+reference visibly holds (`movs lr, r4` and the like) that dies in every
+spelling was assigned with a plain copy; give it an arithmetic definition
+instead and it survives. `t = jsave + 102` reproduced the indexed store where
+`t = j` folded every time. The same asymmetry explains which of a macro's
+per-body offset locals live in registers and which rematerialize: constant
+definitions wider than a `movs` immediate are kept by const-prop, byte-sized
+ones are folded.
+
+**The final cross-jump runs after the scheduler and never matches across a
+call.** jump2 compares hard registers on fully scheduled code, so identical
+sibling bodies merge only when coloring made them byte-identical, and a tail
+containing a `bl` merges at most from the instruction after the call. Both
+rules were measured on `080bbb0c`'s modifier handlers: the res family keeps
+its four bodies because only the store tail clears the call barrier, and the
+atk/def families keep theirs only when per-body register pressure varies --
+which is why an over-merged pair is usually a coloring symptom, not a source
+error.
+
 ### Constants and locals
 
 A value that appears both as an immediate and out of a register is a variable,

@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6272,
+    "candidate_bytes": 6276,
     "reference_bytes": 6332,
-    "wrong_instructions": 1585,
-    "differing_halfwords": 2618,
+    "wrong_instructions": 1509,
+    "differing_halfwords": 2678,
     "class": "wrong",
     "matched_prefix": 11,
-    "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
+    "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 212,
+    "insn_diff_rows_normalized": 152,
     "frame": "100 == reference"
   },
   "shape": {
@@ -57,7 +57,9 @@
     "multi-target loop index via nested s32 idx (copy-prop folds it; emission unchanged, recorded)",
     "actor drain heals (EFX_DRAIN_HP/_HALF/_PP): add-cap-rederive through a block-scope heal local, single store at the end, full-test re-reads the max field -- size now equals the reference exactly",
     "ADJUST_ATKDEF/ADJUST_RES carry the turns field as an offset constant assigned to a local at the top: the assignment lives in a call-saved register across both pushes (306/308/310 exceed the movs immediate, so const-prop keeps the pseudo). r6 usage 84 -> 161 against the reference's 156; the attack handler now matches to two scheduler rows",
-    "turns store is *(u8 *)((u8 *)target + toff) = 7 through that local"
+    "turns store is *(u8 *)((u8 *)target + toff) = 7 through that local",
+    "do{}while(0) macro wrappers (CLAMP_MOD, TAKE_BONUS, APPLY_GUARD, TEXT_SIDE) emit NOTE_INSN_LOOP_BEG/END pairs that survive to sched2 and act as same-register scheduling barriers; bare-brace macros remove them. KO push pairs now match the reference order (r0 before r1 at the second push), tid-copy before cur=0",
+    "dependence-table method validated end to end: rtl-schedule table + -fsched-verbose=5 traced the tie to insn 8949's barrier-induced dependence on the r1 copy"
   ],
   "unexpressed": [
     {

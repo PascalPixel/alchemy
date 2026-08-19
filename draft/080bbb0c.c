@@ -370,6 +370,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 power;
+    s32 kind;
     s16 *cmd;
     s32 target_id;
     s32 range;
@@ -563,11 +564,10 @@ after_power:
                 u16 *q;
 
                 q = (u16 *)saved;
-                while (count != 0) {
+                do {
                     count--;
-                    Actor_RefreshSlot(*q);
-                    q++;
-                }
+                    Actor_RefreshSlot(*q++);
+                } while (count != 0);
             }
             BattleEvent_Push(BATTLE_EVENT_UNIT, rec);
             if (action_id != 0x1f7)
@@ -589,20 +589,14 @@ after_power:
             s16 *tbl;
 
             hit = 0;
-            {
-                s32 tid;
-
-                tid = (s16)target_id;
-                tbl = (s16 *)((u8 *)work + 748);
-                if (tbl[0] == tid) {
-                    hit = 1;
-                } else {
-                    n = 0;
-                    while ((u32)++n <= 19) {
-                        if (*(s16 *)((u8 *)work + 748 + (n << 4)) == tid) {
-                            hit = 1;
-                            break;
-                        }
+            if (*(s16 *)((u8 *)work + 748) == target_id) {
+                hit = 1;
+            } else {
+                n = 0;
+                while ((u32)++n <= 19) {
+                    if (*(s16 *)((u8 *)work + 748 + (n << 4)) == target_id) {
+                        hit = 1;
+                        break;
                     }
                 }
             }
@@ -640,23 +634,28 @@ after_power:
         case DK_ATTACK:
         case DK_ATTACK_X:
         {
-            scale = target->defense;
+            s32 def;
+            s32 apwr;
+
+            def = target->defense;
+            scale = def;
             cur = target->hp;
             if (half != 0)
-                scale = (u32)scale >> 1;
+                scale = (u32)def >> 1;
             pass = 1;
             do {
                 TAKE_BONUS();
                 if (pass == 0)
                     bonus = 0;
+                apwr = action->power;
                 if (nibble == 4)
                     dmg = Math_Div(
                         Battle_CalcAttack(actor->attack, scale, 0, bonus)
-                            * action->power,
+                            * apwr,
                         10);
                 else
-                    dmg = Battle_CalcAttack(actor->attack, scale,
-                                            action->power, bonus);
+                    dmg = Battle_CalcAttack(actor->attack, scale, apwr,
+                                            bonus);
                 dmg *= adjust;
                 if (modifier != 0) {
                     if (modifier == 1)
@@ -786,8 +785,6 @@ after_power:
         case DK_HP_DMG_7:
         case DK_HP_DMG_9:
         {
-            s32 kind;
-
             if (action->power == 0)
                 break;
             pass = 1;
@@ -805,7 +802,7 @@ after_power:
                         switch (item) {
                         case 0:
                         case 6:
-                        case DK_PP_HEAL:
+                        case 12:
                         case 18:
                             kind = 3;
                             break;
@@ -821,7 +818,7 @@ after_power:
                         case 20:
                             kind = 9;
                             break;
-                        case DK_HP_DMG:
+                        case 3:
                         case 9:
                         case 15:
                         case 21:

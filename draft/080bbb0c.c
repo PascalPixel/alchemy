@@ -465,6 +465,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s16 value;
     s32 dmg;
     s32 pass;
+    u8 *base;
     s32 scale;
     s32 guard;
     s16 saved[8];
@@ -619,12 +620,13 @@ after_power:
                     *(s16 *)((u8 *)slots + off) = rec;
                 } else {
                     for (;;) {
-                        if (*(s16 *)((u8 *)slots + off) == 255) {
+                        base = (u8 *)slots;
+                        if (*(s16 *)(base + off) == 255) {
                             s32 t;
 
                             t = jsave + 102;
-                            *(s16 *)((u8 *)slots + off) = rec;
-                            *(s16 *)((u8 *)slots + t) = 255;
+                            *(s16 *)(base + off) = rec;
+                            *(s16 *)(base + t) = 255;
                             break;
                         }
                         i++;
@@ -633,8 +635,8 @@ after_power:
                         if (i > 5)
                             break;
                         jsave = j;
-                        if (((union Cell *)((u8 *)slots + off))->v == 254) {
-                            *(s16 *)((u8 *)slots + off) = rec;
+                        if (((union Cell *)(base + off))->v == 254) {
+                            *(s16 *)(base + off) = rec;
                             break;
                         }
                     }

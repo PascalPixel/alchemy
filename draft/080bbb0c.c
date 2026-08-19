@@ -846,8 +846,8 @@ after_power:
                     text = MSG_PP_LOSS_P;
                 else
                     text = MSG_PP_LOSS_E;
-                pp -= dmg;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
@@ -904,8 +904,8 @@ after_power:
                     text = MSG_DMG_P;
                 else
                     text = MSG_DMG_E;
-                pp -= dmg;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
@@ -990,8 +990,8 @@ after_power:
                     text = MSG_DMG_EMPH_P + affinity;
                 else
                     text = MSG_DMG_EMPH_E + affinity;
-                cur -= dmg;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                cur -= dmg;
             }
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
@@ -1065,8 +1065,8 @@ pp_store:
                     text = MSG_DMG_P;
                 else
                     text = MSG_DMG_E;
-                cur -= dmg;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                cur -= dmg;
             }
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);

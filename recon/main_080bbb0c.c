@@ -46,21 +46,21 @@ s32 Func_080bbae8(s32 effect);
 
 /* 効果番号。挙動から付けた慎重な名前で、原作の識別子の主張ではない。 */
 enum {
-    EFX_AGI_RESET = 3,
+    EFX_AIL131_CLEAR = 3,
     EFX_CURE_PART = 4,
-    EFX_ATK_SET_UP8 = 5,
-    EFX_ATK_SET_DOWN4 = 6,
+    EFX_REVIVE_FULL = 5,
+    EFX_ATK_UP2 = 6,
     EFX_ATK_UP1 = 7,
-    EFX_ATK_UP2 = 8,
-    EFX_DEF_DOWN1 = 9,
-    EFX_DEF_DOWN2 = 10,
+    EFX_ATK_DOWN2 = 8,
+    EFX_ATK_DOWN1 = 9,
+    EFX_DEF_UP2 = 10,
     EFX_DEF_UP1 = 11,
-    EFX_DEF_UP2 = 12,
-    EFX_REVIVE_FULL = 13,
-    EFX_AGI_UP1 = 14,
-    EFX_AGI_UP2 = 15,
-    EFX_REVIVE_HALF = 16,
-    EFX_REVIVE_80 = 17,
+    EFX_DEF_DOWN2 = 12,
+    EFX_DEF_DOWN1 = 13,
+    EFX_MOD137_UP2 = 14,
+    EFX_MOD137_UP1 = 15,
+    EFX_MOD137_DOWN2 = 16,
+    EFX_MOD137_DOWN1 = 17,
     EFX_AIL131_1 = 18,
     EFX_AIL131_2 = 19,
     EFX_AIL138 = 20,
@@ -87,10 +87,10 @@ enum {
     EFX_FORCE_ACTION = 53,
     EFX_BATTLE_END = 54,
     EFX_ACTOR_FLASH = 55,
-    EFX_AGI_DOWN1 = 56,
-    EFX_AGI_DOWN2 = 57,
-    EFX_ATK_DOWN1 = 58,
-    EFX_ATK_DOWN2 = 59,
+    EFX_REVIVE_HALF = 56,
+    EFX_REVIVE_80 = 57,
+    EFX_AGI_SET_DOWN4 = 58,
+    EFX_AGI_SET_UP8 = 59,
     EFX_DRAIN_HP_HALF = 60,
     EFX_HEAL_60 = 61,
     EFX_HEAL_30 = 62,
@@ -230,13 +230,13 @@ do {                                                                           \
     (turns) = 7;                                                               \
 }
 
-#define ADJUST_AGI(delta, value_expr, text)                                    \
+#define ADJUST_MOD137(delta, value_expr, text)                                 \
 {                                                                              \
-    target->agility_modifier += (delta);                                       \
-    CLAMP_MOD(target->agility_modifier);                                       \
-    BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
-    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
-    target->agility_modifier_turns = 7;                                        \
+    target->status_137 += (delta);                                             \
+    CLAMP_MOD(target->status_137);                                             \
+    BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                        \
+    BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                               \
+    target->status_136 = 7;                                                    \
 }
 
 #define SET_STATUS7(field, text)                                               \
@@ -918,14 +918,40 @@ hp_tail:
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case EFX_ATK_DOWN2:
-        ADJUST_ATKDEF(target->attack_modifier, -2, target->attack_modifier_turns,
-                      copy->attack - target->attack, 0x878);
+    case EFX_AGI_SET_UP8:
+        S8OF(target->agility_modifier) = 8;
+        target->agility_modifier_turns = 5;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x877);
+        break;
+
+    case EFX_AGI_SET_DOWN4:
+        S8OF(target->agility_modifier) = 252;
+        target->agility_modifier_turns = 5;
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x878);
         break;
 
     case EFX_ATK_DOWN1:
         ADJUST_ATKDEF(target->attack_modifier, -1, target->attack_modifier_turns,
-                      copy->attack - target->attack, 0x877);
+                      copy->attack - target->attack, 0x860);
+        break;
+
+    case EFX_ATK_DOWN2:
+        ADJUST_ATKDEF(target->attack_modifier, -2, target->attack_modifier_turns,
+                      copy->attack - target->attack, 0x860);
+        break;
+
+    case EFX_ATK_UP1:
+        ADJUST_ATKDEF(target->attack_modifier, 1, target->attack_modifier_turns,
+                      target->attack - copy->attack, 0x861);
+        break;
+
+    case EFX_ATK_UP2:
+        ADJUST_ATKDEF(target->attack_modifier, 2, target->attack_modifier_turns,
+                      target->attack - copy->attack, 0x861);
         break;
 
     case EFX_DEF_DOWN1:
@@ -933,30 +959,14 @@ hp_tail:
                       copy->defense - target->defense, 0x862);
         break;
 
-    case EFX_ATK_UP2:
-        ADJUST_ATKDEF(target->attack_modifier, 2, target->attack_modifier_turns,
-                      target->attack - copy->attack, 0x860);
+    case EFX_DEF_DOWN2:
+        ADJUST_ATKDEF(target->defense_modifier, -2, target->defense_modifier_turns,
+                      copy->defense - target->defense, 0x862);
         break;
 
-    case EFX_ATK_UP1:
-        ADJUST_ATKDEF(target->attack_modifier, 1, target->attack_modifier_turns,
-                      target->attack - copy->attack, 0x860);
-        break;
-
-    case EFX_ATK_SET_DOWN4:
-        S8OF(target->attack_modifier) = 252;
-        target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x861);
-        break;
-
-    case EFX_REVIVE_FULL:
-        if (target->hp != 0)
-            break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
-        target->hp = target->max_hp;
-        BattleUnit_UpdateRatios(target_id);
+    case EFX_DEF_UP1:
+        ADJUST_ATKDEF(target->defense_modifier, 1, target->defense_modifier_turns,
+                      target->defense - copy->defense, 0x863);
         break;
 
     case EFX_DEF_UP2:
@@ -964,60 +974,50 @@ hp_tail:
                       target->defense - copy->defense, 0x863);
         break;
 
-    case EFX_DEF_UP1:
-        ADJUST_ATKDEF(target->defense_modifier, 1, target->defense_modifier_turns,
-                      target->defense - copy->defense, 0x862);
-        break;
-
-    case EFX_DEF_DOWN2:
-        ADJUST_ATKDEF(target->defense_modifier, -2, target->defense_modifier_turns,
-                      copy->defense - target->defense, 0x863);
-        break;
-
-    case EFX_ATK_SET_UP8:
-        S8OF(target->attack_modifier) = 8;
-        target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
-        BattleEvent_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
-        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x860);
-        break;
-
-    case EFX_AGI_DOWN1:
-        ADJUST_AGI(-1, (copy->agility_modifier - target->agility_modifier) * 20, 0x86f);
-        break;
-
-    case EFX_AGI_DOWN2:
-        ADJUST_AGI(-2, (copy->agility_modifier - target->agility_modifier) * 20, 0x870);
-        break;
-
-    case EFX_AGI_RESET:
-        if (target->agility_modifier != 0)
-            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x84c);
-        target->agility_modifier = 0;
-        break;
-
-    case EFX_REVIVE_80:
+    case EFX_REVIVE_FULL:
         if (target->hp != 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
-        target->hp = (s16)Math_Div(target->max_hp * 8, 10);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864);
+        target->hp = target->max_hp;
         BattleUnit_UpdateRatios(target_id);
         break;
 
     case EFX_REVIVE_HALF:
         if (target->hp != 0)
             break;
-        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x854);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864);
         target->hp = (s16)(target->max_hp / 2);
         BattleUnit_UpdateRatios(target_id);
         break;
 
-    case EFX_AGI_UP2:
-        ADJUST_AGI(2, (target->agility_modifier - copy->agility_modifier) * 20, 0x870);
+    case EFX_REVIVE_80:
+        if (target->hp != 0)
+            break;
+        BattleEvent_Push(BATTLE_EVENT_TEXT, 0x864);
+        target->hp = (s16)Math_Div(target->max_hp * 8, 10);
+        BattleUnit_UpdateRatios(target_id);
         break;
 
-    case EFX_AGI_UP1:
-        ADJUST_AGI(1, (target->agility_modifier - copy->agility_modifier) * 20, 0x86f);
+    case EFX_AIL131_CLEAR:
+        if (target->status_131 != 0)
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0x884);
+        target->status_131 = 0;
+        break;
+
+    case EFX_MOD137_DOWN1:
+        ADJUST_MOD137(-1, (copy->status_137 - target->status_137) * 20, 0x865);
+        break;
+
+    case EFX_MOD137_DOWN2:
+        ADJUST_MOD137(-2, (copy->status_137 - target->status_137) * 20, 0x865);
+        break;
+
+    case EFX_MOD137_UP1:
+        ADJUST_MOD137(1, (target->status_137 - copy->status_137) * 20, 0x866);
+        break;
+
+    case EFX_MOD137_UP2:
+        ADJUST_MOD137(2, (target->status_137 - copy->status_137) * 20, 0x866);
         break;
 
     case EFX_AIL131_1:

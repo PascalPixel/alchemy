@@ -114,7 +114,8 @@ void Func_080b8000(s32 slot);                     /* スロットの再描画 */
 #define MSG_SUFFOCATE     0x850                   /* 「いきができない！」 */
 #define MSG_NO_EFFECT     0x854                   /* 「しかし こうかがなかった！」 */
 #define MSG_LEECH_GAIN    0x85e                   /* 「さらに PPを Nかいふく！」 */
-#define MSG_LEECH_TAKE    0x85f                   /* 「PPを Nすいとられた！」 */
+#define MSG_LEECH_TAKE    0x85f /* 「PPを Nすいとられた！」 */
+#define MSG_WAKES         0x883 /* 「めをさました！」 */                   /* 「PPを Nすいとられた！」 */
 #define MSG_ATK_DOWN      0x860                   /* 「こうげきが Nさがった！」 */
 #define MSG_ATK_UP        0x861                   /* 「こうげきが Nあがった！」 */
 #define MSG_DEF_DOWN      0x862                   /* 「ぼうぎょが Nさがった！」 */
@@ -348,7 +349,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 power;
-    s32 result;
     s16 *cmd;
     s32 size;
     s32 target_id;
@@ -469,11 +469,10 @@ after_power:
     }
 
     nibble = action->target_flags & 15;
-    result = plan->target_results[slot];
-    if (result == -1)
-        result = Battle_HitCheck(
+    hit = plan->target_results[slot];
+    if (hit == -1)
+        hit = Battle_HitCheck(
             actor_id, target_id, range, action->effect, HitFalloff[offset]);
-    hit = result;
 
     if ((u8)(action->effect + 206) <= 1) {
         s32 st;
@@ -574,15 +573,10 @@ after_power:
             if (tbl[0] == (s16)target_id) {
                 hit = 1;
             } else {
-                n = 1;
-                if (*(s16 *)((u8 *)work + 764) == (s16)target_id) {
-                    hit = 1;
-                } else {
-                    while (++n <= 19) {
-                        if (*(s16 *)((u8 *)tbl + (n << 4)) == (s16)target_id) {
-                            hit = 1;
-                            break;
-                        }
+                for (n = 1; n <= 19; n++) {
+                    if (*(s16 *)((u8 *)tbl + (n << 4)) == (s16)target_id) {
+                        hit = 1;
+                        break;
                     }
                 }
             }
@@ -620,8 +614,6 @@ after_power:
         case 4:
         case 5:
         {
-            s32 pwr;
-
             scale = target->defense;
             cur = target->hp;
             if (half != 0)
@@ -631,13 +623,14 @@ after_power:
                 TAKE_BONUS();
                 if (pass == 0)
                     bonus = 0;
-                pwr = action->power;
                 if (nibble == 4)
                     dmg = Math_Div(
-                        Battle_CalcAttack(actor->attack, scale, 0, bonus) * pwr,
+                        Battle_CalcAttack(actor->attack, scale, 0, bonus)
+                            * action->power,
                         10);
                 else
-                    dmg = Battle_CalcAttack(actor->attack, scale, pwr, bonus);
+                    dmg = Battle_CalcAttack(actor->attack, scale,
+                                            action->power, bonus);
                 dmg *= adjust;
                 if (modifier == 1)
                     dmg = dmg * 5 / 4;
@@ -676,14 +669,13 @@ after_power:
             cur -= dmg;
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
-            if (cur > 0)
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            else {
+            if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
-            }
+            } else
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - cur;
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
@@ -692,9 +684,8 @@ after_power:
 
         case 11:
         {
-            s32 pwr;
-
-            TAKE_PWR();
+            if (action->power == 0)
+                break;
             pp = target->pp;
             TAKE_BONUS();
             dmg = Battle_CalcPower(action->power, bonus, 256);
@@ -744,9 +735,8 @@ after_power:
 
         case 0:
         {
-            s32 pwr;
-
-            TAKE_PWR();
+            if (action->power == 0)
+                break;
             pp = target->pp;
             TAKE_BONUS();
             dmg = Battle_CalcPower(action->power, bonus, 256);
@@ -768,10 +758,10 @@ after_power:
         case 7:
         case 9:
         {
-            s32 pwr;
             s32 kind;
 
-            TAKE_PWR();
+            if (action->power == 0)
+                break;
             pass = 1;
             cur = target->hp;
             do {
@@ -833,14 +823,13 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             cur -= dmg;
             TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
-            if (cur > 0)
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            else {
+            if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
-            }
+            } else
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             goto hp_tail;
         }
 
@@ -878,9 +867,8 @@ pp_store:
 
         case 3:
             if (hit != 0) {
-            s32 pwr;
-
-            TAKE_PWR();
+            if (action->power == 0)
+                break;
             cur = target->hp;
             TAKE_BONUS();
             dmg = Battle_CalcPower(action->power, bonus, 256);
@@ -892,14 +880,13 @@ pp_store:
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             cur -= dmg;
             TEXT_SIDE(MSG_DMG_P, MSG_DMG_E);
-            if (cur > 0)
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            else {
+            if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
-            }
+            } else
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
 hp_tail:
             dealt = target->hp - cur;
             target->hp = (s16)cur;
@@ -1283,9 +1270,9 @@ hp_tail:
         if (target->agility_modifier > 0)
             target->agility_modifier = 0;
         target->status_12c = 0;
+        target->status_12d = 0;
         target->status_12e = 0;
         target->status_12f = 0;
-        target->status_12d = 0;
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_BUFFS_RESET);
         break;
 
@@ -1350,11 +1337,12 @@ done:
     /* 終了処理 */
     BattleEvent_Push(BATTLE_EVENT_RESET, 0);
     if (target->hp != 0) {
-        if (target->sleep != 0 && target->sleep <= 6
+        if (target->sleep != 0)
+        if (target->sleep <= 6
             && dealt > 0 && (BattleRandom_Next() & 3) == 0) {
             target->sleep = 0;
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_LEECH_TAKE);
+            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_WAKES);
         }
     }
     Sys_Free(copy);

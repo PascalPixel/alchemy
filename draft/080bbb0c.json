@@ -6,7 +6,7 @@
     "candidate_bytes": 6292,
     "reference_bytes": 6332,
     "wrong_instructions": 1464,
-    "differing_halfwords": 2886,
+    "differing_halfwords": 2885,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
@@ -16,9 +16,10 @@
     "walk_window_rows": 12,
     "insn_diff_rows_nop_filtered": 66,
     "note2": "seven of the remaining rows are movs r0,r0 alignment pads before the reference's jump tables and pools; they cannot be written in C and reappear automatically at size parity",
-    "our_side_rows": 52,
+    "our_side_rows": 53,
     "candidate_insns": 2462,
-    "reference_insns": 2483
+    "reference_insns": 2483,
+    "raw_rows": "272 ours / 285 reference"
   },
   "shape": {
     "calls": null,
@@ -92,7 +93,8 @@
     "the crit text is MSG_CRITICAL with += 1 for the player side; 0x823 is never loaded, matching the reference's single load and adds #1",
     "def-down pair splits with late turns offsets at both sites: all five 154-builds present",
     "pool-value census is fully clean (222=222 words, every 0x8xx and offset value loads equally); remaining deficits are copies, shared push tails, and seven alignment nops",
-    "modifier family early/late map complete: ATK_DOWN1 and ATK_UP2 hold offsets across the pushes, the other six store plainly -- six pair-combinations measured, DOWN2+UP1 decisive"
+    "modifier family early/late map complete: ATK_DOWN1 and ATK_UP2 hold offsets across the pushes, the other six store plainly -- six pair-combinations measured, DOWN2+UP1 decisive",
+    "permuter walk finds: two init orderings in the summon block adopted; the walker's reachable neighborhood at current weights is clean after ~53k evaluations"
   ],
   "unexpressed": [
     {

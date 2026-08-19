@@ -61,24 +61,39 @@
   ],
   "unexpressed": [
     {
-      "op": "movs #100 / ip / lr slots-loop setup",
-      "count": null,
-      "where": "slots loop"
+      "op": "KO/TEXT tail crossjump layout and stub placement",
+      "count": 120,
+      "where": "every damage case tail; bidirectional over/under-merging, downstream of sched ties"
     },
     {
-      "op": "opening recolour",
-      "count": null,
-      "where": "matched_prefix 81 -> 7 after new pp/cur allocnos; body-first, opening comes back"
+      "op": "scheduler tie micro-swaps (movs pairs, pool-load placement)",
+      "count": 50,
+      "where": "push sites and handler heads; LUID-class, doc's dependence-table method applies per site"
     },
     {
-      "op": "pooled 0x820 vs built 130<<4",
-      "count": 2,
-      "where": "case 2 and 61/62 full-heal text; bare constant cannot pool (thumb_shiftable_const), so the source spelling or the id is wrong"
+      "op": "summon slots walk pseudo set",
+      "count": 15,
+      "where": "lr/ip pseudos fold under copy-prop in every spelling tried"
     },
     {
-      "op": "scan index tree ((n<<4)+748)+work vs (work+(n<<4))+748",
+      "op": "multi-target scan index reassociation",
       "count": 10,
-      "where": "multi-target loop; fold-const reassociates every spelling tried"
+      "where": "fold-const regroups every spelling"
+    },
+    {
+      "op": "HEAL_60 dual-width reads",
+      "count": 6,
+      "where": "ldrh folds through ldrsh"
+    },
+    {
+      "op": "muls operand order at two sites",
+      "count": 4,
+      "where": "rtx canonicalization, not source-reachable"
+    },
+    {
+      "op": "elem scan-2 rebuild vs CSE fold",
+      "count": 2,
+      "where": "scan-2 walker init"
     }
   ],
   "verified_against_reference": [
@@ -123,6 +138,11 @@
       "shape": "muls operand order via source operand order (kind*max vs max*kind, dmg*tbl vs tbl*dmg)",
       "wrong": 1552,
       "note": "emission order is unchanged by source order -- rtx canonicalization picks it from pseudo numbering; the two sites stay swapped vs ref. switch vs else-if for the 5/6/8 falloff is also emission-identical"
+    },
+    {
+      "shape": "walk pseudos jsave/probe/woff, second attempt after slots+r6 converged",
+      "wrong": 1702,
+      "note": "copy-prop folds all three again (no lr/ip in output); ref's movs lr,r4 / movs ip,r1 must come from reload or a source shape not yet found. Region is ~15 rows"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."

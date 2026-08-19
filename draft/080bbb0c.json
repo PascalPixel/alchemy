@@ -116,6 +116,11 @@
       "shape": "HEAL_60 dual-width reads: u16-typed locals, s32 locals with u16 puns, shared maxs local",
       "wrong": 1554,
       "note": "every spelling folds the ldrh through the ldrsh (sxth(uxth(sxth x)) collapses); ref emits ldrh #56 + ldrh #52 alongside both ldrsh. 6-insn region, mechanism unknown"
+    },
+    {
+      "shape": "muls operand order via source operand order (kind*max vs max*kind, dmg*tbl vs tbl*dmg)",
+      "wrong": 1552,
+      "note": "emission order is unchanged by source order -- rtx canonicalization picks it from pseudo numbering; the two sites stay swapped vs ref. switch vs else-if for the 5/6/8 falloff is also emission-identical"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."

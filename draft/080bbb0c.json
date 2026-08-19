@@ -88,34 +88,29 @@
   ],
   "unexpressed": [
     {
-      "op": "KO/TEXT stub placement, subs demotion, branch polarity",
-      "count": 40,
-      "where": "jump2 layout; shrinks as tails converge (579 went 13->9 from the text-var fix alone)"
-    },
-    {
-      "op": "scheduler/coloring texture",
-      "count": 45,
-      "where": "copy directions and pair orders the reference itself varies per site"
-    },
-    {
-      "op": "walk head (ip copy, second 100, 255 cache)",
-      "count": 8,
-      "where": "fold-locked; union/woff/base2 all measured on three landscapes"
-    },
-    {
-      "op": "multi-target scan index tree",
-      "count": 6,
-      "where": "fold-const; array spellings measured worse"
+      "op": "attack-KO FELLED arm share",
+      "count": 9,
+      "where": "ref loads FELLED twice (attack's arm jumps into case 3's suffix through the pushes to hp_tail); ours three times. Suffixes are source-identical; the merge waits on register identity"
     },
     {
       "op": "def-body merge",
       "count": 9,
-      "where": "jump2 + allocation lottery; re-rolls with every cascade"
+      "where": "same gate"
     },
     {
-      "op": "heal load order and maxu copy",
-      "count": 5,
+      "op": "walk head",
+      "count": 7,
+      "where": "ip copy, second 100, 255-cache; ~15 spellings measured"
+    },
+    {
+      "op": "scan-2 rebuild and 077188/077190 scheduling",
+      "count": 10,
       "where": "texture"
+    },
+    {
+      "op": "remaining copy/pair texture",
+      "count": 52,
+      "where": "register identity following the above"
     }
   ],
   "verified_against_reference": [

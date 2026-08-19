@@ -16,6 +16,8 @@ pub const USAGE: &str = "usage: alchemy-permuter <candidate.c|legacy-directory>.
   --output DIR     new, dedicated ignored run directory (or parent for many inputs)\n\
   --weights FILE   settings.toml-format randomization weights for any input kind\n\
   --chain N        rounds that re-seed mutation from the best candidate so far\n\
+  --walk           pret-style cumulative mutation walk (uses --iterations as total evals)\n\
+  --keep-prob P    walk continuation probability in 0..1 (default 0.6)\n\
   --manual-only    evaluate PERM_* choices without random mutation\n\
   --show-errors    display failed compiler diagnostics\n\
   --better-only    retain only candidates better than the baseline\n\
@@ -38,6 +40,8 @@ pub struct Options {
     pub output: Option<PathBuf>,
     pub weights: Option<PathBuf>,
     pub chain: usize,
+    pub walk: bool,
+    pub keep_prob_permille: u32,
     pub manual_only: bool,
     pub stop_exact: bool,
     pub show_errors: bool,
@@ -70,6 +74,8 @@ impl Options {
         let mut output = None;
         let mut weights = None;
         let mut chain = 1usize;
+        let mut walk = false;
+        let mut keep_prob_permille = 600u32;
         let mut manual_only = false;
         let mut stop_exact = true;
         let mut show_errors = false;
@@ -87,6 +93,19 @@ impl Options {
                         .get(at + 1)
                         .ok_or_else(|| "--weights requires a path".to_string())?;
                     weights = Some(PathBuf::from(value));
+                    at += 2;
+                }
+                "--walk" => {
+                    walk = true;
+                    at += 1;
+                }
+                "--keep-prob" => {
+                    let value = args
+                        .get(at + 1)
+                        .and_then(|v| v.parse::<f64>().ok())
+                        .filter(|v| (0.0..=1.0).contains(v))
+                        .ok_or_else(|| "--keep-prob requires a float in 0..1".to_string())?;
+                    keep_prob_permille = (value * 1000.0).round() as u32;
                     at += 2;
                 }
                 "--chain" => {
@@ -192,6 +211,8 @@ impl Options {
             output,
             weights,
             chain,
+            walk,
+            keep_prob_permille,
             manual_only,
             stop_exact,
             show_errors,

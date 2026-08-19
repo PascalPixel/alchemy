@@ -266,20 +266,43 @@ fn alchemy_measurement(
     target_instructions: &[Instruction],
 ) -> Result<Measurement, String> {
     let actual_instructions = disassemble_bytes(&score.actual)?;
-    let instructions = instruction_score(&actual_instructions, target_instructions);
+    // Whole-row LCS: a row either matches exactly (mnemonic and operands) or
+    // it is a differing row. The mnemonic-anchored scorer traded real rows
+    // for operand-level partial credit and walked candidates away from the
+    // reference while its number improved; byte-exactness needs row
+    // identity, so row identity is the fitness.
+    let a: Vec<&str> = actual_instructions.iter().map(|i| i.row.as_str()).collect();
+    let e: Vec<&str> = target_instructions.iter().map(|i| i.row.as_str()).collect();
+    let width = e.len() + 1;
+    let mut lcs = vec![0u32; (a.len() + 1) * width];
+    for left in (0..a.len()).rev() {
+        for right in (0..e.len()).rev() {
+            lcs[left * width + right] = if a[left] == e[right] {
+                1 + lcs[(left + 1) * width + right + 1]
+            } else {
+                lcs[(left + 1) * width + right].max(lcs[left * width + right + 1])
+            };
+        }
+    }
+    let common = lcs[0] as usize;
+    let differing = (a.len() - common) + (e.len() - common);
     let byte: Measurement = score.into();
     Ok(Measurement {
         exact: byte.exact,
-        score: instructions
-            .score
-            .saturating_mul(1000)
-            .saturating_add((byte.differences as u64).min(999)),
-        differences: instructions.differences,
+        score: (differing as u64)
+            .saturating_mul(100_000)
+            .saturating_add((byte.differences as u64).min(99_999)),
+        differences: differing,
         expected_size: byte.expected_size,
         actual_size: byte.actual_size,
-        first_difference: instructions.first_difference,
+        first_difference: byte.first_difference,
         fingerprint: byte.fingerprint,
-        summary: format!("{}; {}", instructions.summary, byte.summary),
+        summary: format!(
+            "{differing} differing rows ({} ours, {} reference); {}",
+            a.len() - common,
+            e.len() - common,
+            byte.summary
+        ),
     })
 }
 
@@ -313,11 +336,43 @@ fn disassemble_bytes(bytes: &[u8]) -> Result<Vec<Instruction>, String> {
         if let Some(at) = instruction.row.find(" @") {
             instruction.row.truncate(at);
         }
+        // Width suffixes follow branch distance, not source.
+        if let Some(stripped) = instruction.mnemonic.strip_suffix(".n") {
+            let bare = stripped.to_string();
+            instruction.row = instruction.row.replacen(&instruction.mnemonic, &bare, 1);
+            instruction.mnemonic = bare;
+        } else if let Some(stripped) = instruction.mnemonic.strip_suffix(".w") {
+            let bare = stripped.to_string();
+            instruction.row = instruction.row.replacen(&instruction.mnemonic, &bare, 1);
+            instruction.mnemonic = bare;
+        }
         while let Some(start) = instruction.row.find("[pc, #") {
             let Some(length) = instruction.row[start..].find(']') else {
                 break;
             };
             instruction.row.replace_range(start..start + length + 1, "[pc]");
+        }
+        // Branch and call targets are file offsets that shift with any size
+        // change upstream; fold them so a moved block is not billed as a
+        // difference on every branch row.
+        if instruction.mnemonic == "bl"
+            || instruction.mnemonic == "blx"
+            || instruction.mnemonic.starts_with('b')
+                && !instruction.mnemonic.starts_with("bic")
+                && instruction.mnemonic != "bkpt"
+        {
+            if let Some(space) = instruction.row.find(' ') {
+                let target = &instruction.row[space + 1..];
+                if target
+                    .trim_start_matches("0x")
+                    .chars()
+                    .all(|c| c.is_ascii_hexdigit())
+                    && !target.is_empty()
+                {
+                    instruction.row.truncate(space);
+                    instruction.row.push_str(" <t>");
+                }
+            }
         }
     }
     if instructions.is_empty() {

@@ -612,8 +612,8 @@ after_power:
                 s32 jsave;
 
                 off = 100;
-                jsave = 0;
                 i = 0;
+                jsave = 0;
                 j = 0;
                 if (*(s16 *)((u8 *)slots + off) == 254) {
                     *(s16 *)((u8 *)slots + off) = rec;

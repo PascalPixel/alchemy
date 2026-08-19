@@ -1274,8 +1274,17 @@ hp_tail:
         break;
 
     case EFX_DEF_UP1:
-        ADJUST_ATKDEF(target->defense_modifier, 1, DEF_TURNS,
-                      target->defense - copy->defense, MSG_DEF_UP);
+    {
+        s32 toff;
+
+        target->defense_modifier += 1;
+        CLAMP_MOD(target->defense_modifier);
+        BattleUnit_Recalculate(target_id);
+        toff = DEF_TURNS;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
+        *(u8 *)((u8 *)target + toff) = 7;
+    }
         break;
 
     case EFX_DEF_UP2:

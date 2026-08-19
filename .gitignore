@@ -4,6 +4,7 @@ assets/**/preview*.png
 .cmatch*/
 toolchain/
 toolchains/
+scratch/
 work/
 out/
 build/

@@ -197,7 +197,7 @@ fn gate() -> ExitCode {
         provisional.len()
     );
     eprintln!(
-        "recon records: {}\nchecked against {} audited and {} exact owner(s)",
+        "draft records: {}\nchecked against {} audited and {} exact owner(s)",
         recon.len(),
         semantic.len(),
         exact.len()

@@ -165,22 +165,30 @@ fn unmatchable_from_text(text: &str) -> std::collections::BTreeSet<String> {
     out
 }
 
-/// Main-image candidate sources: `semantic/08xxxxxx.c` and nothing else.
+/// Main-image candidate sources: `draft/08xxxxxx.c` and `scratch/08xxxxxx.c`.
+/// A stem present in both ranks once, from `draft/`.
 pub fn candidates(root: &Path) -> Vec<PathBuf> {
     let mut found = Vec::new();
-    let Ok(entries) = fs::read_dir(root.join("work")) else {
-        return found;
-    };
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.extension().and_then(|e| e.to_str()) != Some("c") {
-            continue;
-        }
-        let Some(stem) = path.file_stem().and_then(|s| s.to_str()) else {
+    let mut seen = std::collections::HashSet::new();
+    for dir in ["draft", "scratch"] {
+        let Ok(entries) = fs::read_dir(root.join(dir)) else {
             continue;
         };
-        if stem.len() == 8 && stem.starts_with('0') && stem.chars().all(|c| c.is_ascii_hexdigit()) {
-            found.push(path);
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().and_then(|e| e.to_str()) != Some("c") {
+                continue;
+            }
+            let Some(stem) = path.file_stem().and_then(|s| s.to_str()) else {
+                continue;
+            };
+            if stem.len() == 8
+                && stem.starts_with('0')
+                && stem.chars().all(|c| c.is_ascii_hexdigit())
+                && seen.insert(stem.to_string())
+            {
+                found.push(path);
+            }
         }
     }
     found.sort();
@@ -380,7 +388,7 @@ pub fn run(root: &Path, self_exe: &Path, subcommand: &[&str], args: &[String]) -
 
     let mut sources = candidates(root);
     if sources.is_empty() {
-        return Err("no main-image candidates under work/ -- put a draft there, named <address>.c".to_string());
+        return Err("no main-image candidates under draft/ or scratch/ -- put a draft there, named <address>.c".to_string());
     }
     // The register's job is to keep withdrawn owners out of this queue. The
     // overlay ranker had the same gap and had all four of its entries in the

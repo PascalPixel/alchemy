@@ -1479,7 +1479,7 @@ hp_tail:
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
-        if (heal == actor->max_pp)
+        if (heal == (u16)actor->max_pp)
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
         else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);

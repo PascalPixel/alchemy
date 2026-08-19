@@ -3,11 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6300,
-    "wrong_instructions": 1408,
+    "wrong_instructions": 1380,
     "differing_halfwords": 2858,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "220 ours / 237 reference (457 total)",
+    "raw_rows": "188 ours / 206 reference (394 total)",
     "class": "wrong"
   },
   "shape": {
@@ -85,7 +85,8 @@
     "modifier family early/late map complete: ATK_DOWN1 and ATK_UP2 hold offsets across the pushes, the other six store plainly -- six pair-combinations measured, DOWN2+UP1 decisive",
     "permuter walk finds: two init orderings in the summon block adopted; the walker's reachable neighborhood at current weights is clean after ~53k evaluations",
     "PP-damage case reuses power for range*4 before the range!=4 test (reference computes lsls #2 unconditionally and spills to [sp,#12]); found by pret decomp-permuter in a 5-minute run, verified against the reference bytes",
-    "summon walk holds (u8*)slots in a function-scope u8* local assigned at the loop head; the cast+type is the spelling that survives copy propagation (pret find, 9th spelling tried)"
+    "summon walk holds (u8*)slots in a function-scope u8* local assigned at the loop head; the cast+type is the spelling that survives copy propagation (pret find, 9th spelling tried)",
+    "PP-full heal compare re-reads max_pp as u16 (heal == (u16)actor->max_pp): mixed-width second mention; 63-row domino; found by a 12-way pret fan; the max_hp twin measured WORSE with the same cast and stays plain"
   ],
   "unexpressed": [
     {

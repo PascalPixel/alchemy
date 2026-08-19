@@ -144,6 +144,13 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             .map_err(|error| format!("{}: {error}", reference_path.display()))?;
         std::fs::write(&key_path, cache_key.as_bytes())
             .map_err(|error| format!("{}: {error}", key_path.display()))?;
+        // The first-report cache shares this key file. A plain `--align` run
+        // that refreshes the key without rewriting `first.txt` would leave a
+        // stale window that a later `--first` then serves as current -- it
+        // reported matched_prefix=11 against a source whose real prefix was
+        // 81. Drop the report whenever the bins are rebuilt; a `--first` run
+        // rewrites it below.
+        let _ = std::fs::remove_file(&first_path);
         (actual, expected, "fresh")
     };
 

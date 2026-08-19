@@ -3,15 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6288,
+    "candidate_bytes": 6316,
     "reference_bytes": 6332,
     "wrong_instructions": 1984,
     "differing_halfwords": 2959,
     "class": "wrong",
     "matched_prefix": 7,
-    "note": "normalized = registers and sp-offsets folded; the honest structural measure while coloring is unsettled",
+    "note": "candidate_insns 2491 vs 2483; halfwords phase-dominated until size settles",
     "insn_diff_rows": 807,
-    "insn_diff_rows_normalized": 370
+    "insn_diff_rows_normalized": 323
   },
   "shape": {
     "calls": null,
@@ -27,7 +27,12 @@
     "case 6/7/9 full body: item kind-switch (uninitialised kind on items 4,5,10,11,16,17), per-nibble tables, cur-based floor",
     "effect-switch case order matching reference emission (64,4,61/62,63,59,58,9..6,13..10,5,56,57,3,17..14,18..)",
     "nibble case 0 moved to reference position (after case 2)",
-    "effect ids rebound to the jump table (17 were scrambled), texts and fields verified against assembled pool words"
+    "effect ids rebound to the jump table (17 were scrambled), texts and fields verified against assembled pool words",
+    "heal 61/62 u16/s16 dual-read shape with single Div",
+    "63 max-held-in-register shape",
+    "effect 4 status_141 block",
+    "case 3 hit-arm after body with text 0x854",
+    "27/69 true texts (0x84f/0x850/0x84c, 0x85f/0x85e)"
   ],
   "unexpressed": [
     {

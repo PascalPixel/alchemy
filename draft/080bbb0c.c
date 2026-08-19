@@ -685,10 +685,11 @@ after_power:
 
         efx = action->effect;
         if (efx == EFX_IMMOBILIZE) {
-            s16 *tbl;
+            s32 hidx;
 
             hit = 0;
-            if (*(s16 *)((u8 *)work + 748) == target_id) {
+            hidx = 748;
+            if (*(s16 *)((u8 *)work + hidx) == target_id) {
                 hit = 1;
             } else {
                 n = 0;

@@ -321,6 +321,19 @@ enum {
         }                                                                      \
     }
 
+/* 文面を変数に決めてから1回だけ積む形。呼び先を挟んで統合できない共有尾は
+ * ソース側の変数だった(crossjump は bl を跨いで一致を探せない)。 */
+#define TEXT_SIDE_V(player, enemy)                                             \
+{                                                                              \
+    s32 text;                                                                  \
+                                                                               \
+    if ((u32)target_id <= 7)                                                   \
+        text = (player);                                                       \
+    else                                                                       \
+        text = (enemy);                                                        \
+    BattleEvent_Push(BATTLE_EVENT_TEXT, text);                                 \
+}
+
 #define TEXT_SIDE(player, enemy)                                               \
 {                                                                              \
     if ((u32)target_id <= 7)                                                   \
@@ -784,7 +797,7 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             cur -= dmg;
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
-            TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
+            TEXT_SIDE_V(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
@@ -943,7 +956,7 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             cur -= dmg;
-            TEXT_SIDE(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
+            TEXT_SIDE_V(MSG_DMG_EMPH_P + affinity, MSG_DMG_EMPH_E + affinity);
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);

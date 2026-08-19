@@ -3,12 +3,13 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6280,
+    "candidate_bytes": 6284,
     "reference_bytes": 6332,
-    "wrong_instructions": 1862,
-    "differing_halfwords": 2744,
+    "wrong_instructions": 2015,
+    "differing_halfwords": 2957,
     "class": "wrong",
-    "matched_prefix": 81
+    "matched_prefix": 7,
+    "note": "insn diff 885 rows; earlier state 2744hw/prefix81 had wrong case bodies aligned by luck"
   },
   "shape": {
     "calls": null,
@@ -17,7 +18,13 @@
     "memory_ops": null
   },
   "expressed": [
-    "prologue and first argument block only"
+    "prologue and first argument block only",
+    "case 11/0 pp subtract-floor tails with shared pp_store (.L85)",
+    "case 2/12 heal add-cap-rederive shape",
+    "case 2/3/6-7-9 shared hp_tail (.L77)",
+    "case 6/7/9 full body: item kind-switch (uninitialised kind on items 4,5,10,11,16,17), per-nibble tables, cur-based floor",
+    "effect-switch case order matching reference emission (64,4,61/62,63,59,58,9..6,13..10,5,56,57,3,17..14,18..)",
+    "nibble case 0 moved to reference position (after case 2)"
   ],
   "unexpressed": [
     {
@@ -26,15 +33,29 @@
       "where": "slots loop"
     },
     {
-      "op": "bl Func_080bbabc",
-      "count": 7,
-      "where": "call count 231 vs 239"
+      "op": "opening recolour",
+      "count": null,
+      "where": "matched_prefix 81 -> 7 after new pp/cur allocnos; body-first, opening comes back"
+    },
+    {
+      "op": "pooled 0x820 vs built 130<<4",
+      "count": 2,
+      "where": "case 2 and 61/62 full-heal text; bare constant cannot pool (thumb_shiftable_const), so the source spelling or the id is wrong"
     }
   ],
   "verified_against_reference": [
     "seven-instruction register-save prologue matches exactly"
   ],
   "blocked_by": "not blocked -- barely started",
-  "rejected": [],
+  "rejected": [
+    {
+      "shape": "APPLY_PP_HIT compare-first in cases 0/11",
+      "wrong": "reference subtracts then floors at zero"
+    },
+    {
+      "shape": "HEAL_CUR cap-before-add in cases 2/12",
+      "wrong": "reference adds, caps, re-derives display delta from the field"
+    }
+  ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C."
 }

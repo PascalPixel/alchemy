@@ -76,25 +76,26 @@ struct BattleUnit {
     u8 status_12e;                  /* 0x12e */
     u8 status_12f;                  /* 0x12f */
     u8 restraint;                   /* 0x130 */
-    s8 status_131;                  /* 0x131 */
+    s8 poison;                  /* 0x131 */
     u8 attack_modifier_turns;       /* 0x132 */
     s8 attack_modifier;             /* 0x133 */
     u8 defense_modifier_turns;      /* 0x134 */
     s8 defense_modifier;            /* 0x135 */
-    u8 status_136;                  /* 0x136 */
-    s8 status_137;                  /* 0x137 */
-    u8 status_138;                  /* 0x138 */
-    s8 status_139;                  /* 0x139 */
-    u8 status_13a;                  /* 0x13a */
-    u8 status_13b;                  /* 0x13b */
-    u8 status_13c;                  /* 0x13c */
-    u8 status_13d;                  /* 0x13d */
-    u8 status_13e;                  /* 0x13e */
-    s8 status_13f;                  /* 0x13f */
-    u8 status_140;                  /* 0x140 */
-    u8 status_141;                  /* 0x141 */
-    u8 unknown_142[3];
-    u8 forced_action;               /* 0x145 */
+    u8 res_modifier_turns;                  /* 0x136 */
+    s8 res_modifier;                  /* 0x137 */
+    u8 delusion;                  /* 0x138 */
+    s8 confusion;                  /* 0x139 */
+    u8 charm;                  /* 0x13a */
+    u8 stun;                  /* 0x13b */
+    u8 sleep;                  /* 0x13c */
+    u8 psy_seal;                  /* 0x13d */
+    u8 refrain;                  /* 0x13e */
+    s8 reflect;                  /* 0x13f */
+    u8 evil_spirit;                  /* 0x140 */
+    u8 death_count;                  /* 0x141 */
+    u8 unknown_142[2];
+    u8 ready_pose;                  /* 0x144 「みがまえた！」で2 */
+    u8 cannot_move;                 /* 0x145 */
     u8 agility_modifier_turns;      /* 0x146 */
     s8 agility_modifier;            /* 0x147 */
     s8 battle_end_state;            /* 0x148 */
@@ -158,12 +159,12 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Status13a,
     struct BattleUnit,
-    status_13a,
+    charm,
     0x13a);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Status140,
     struct BattleUnit,
-    status_140,
+    evil_spirit,
     0x140);
 
 #endif

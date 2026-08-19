@@ -3,10 +3,10 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6276,
+    "candidate_bytes": 6264,
     "reference_bytes": 6332,
-    "wrong_instructions": 1551,
-    "differing_halfwords": 2779,
+    "wrong_instructions": 1459,
+    "differing_halfwords": 2767,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
@@ -15,7 +15,8 @@
     "frame": "100 == reference",
     "walk_window_rows": 12,
     "insn_diff_rows_nop_filtered": 104,
-    "note2": "seven of the remaining rows are movs r0,r0 alignment pads before the reference's jump tables and pools; they cannot be written in C and reappear automatically at size parity"
+    "note2": "seven of the remaining rows are movs r0,r0 alignment pads before the reference's jump tables and pools; they cannot be written in C and reappear automatically at size parity",
+    "our_side_rows": 75
   },
   "shape": {
     "calls": null,
@@ -78,7 +79,8 @@
     "the two damage-emphasis TEXT sites decide the text in a variable and push once (TEXT_SIDE_V): the reference's arms are argument-only stubs feeding one shared push, which crossjump cannot have made because the match would cross the bl. Per-site measurement keeps the other ten sites per-arm",
     "attack KO arm order: if (cur > 0) FINISH else KO at the attack case only (siblings measured better KO-first)",
     "the two emphasis sites interleave cur -= dmg between the text select and the push -- hand-written order the reference's arm blocks carry the subtraction in",
-    "session arc: 236 -> 111 normalized reference rows across ~30 committed source facts; the fix-cascade-reread loop is the working method and each cycle costs one landscape shift"
+    "session arc: 236 -> 111 normalized reference rows across ~30 committed source facts; the fix-cascade-reread loop is the working method and each cycle costs one landscape shift",
+    "all five subtract-then-text tails interleave: message select, subtraction, single push -- attack, case-6 emphasis, drain, PP damage, case 3. Found as one family across two reread cycles; wrong 1551 -> 1459"
   ],
   "unexpressed": [
     {

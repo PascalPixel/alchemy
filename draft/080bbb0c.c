@@ -1263,31 +1263,21 @@ hp_tail:
         break;
 
     case EFX_DEF_DOWN1:
-    {
-        s32 toff;
-
         target->defense_modifier += -1;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        toff = DEF_TURNS;
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
-        *(u8 *)((u8 *)target + toff) = 7;
-    }
+        target->defense_modifier_turns = 7;
         break;
 
     case EFX_DEF_DOWN2:
-    {
-        s32 toff;
-
         target->defense_modifier += -2;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        toff = DEF_TURNS;
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
-        *(u8 *)((u8 *)target + toff) = 7;
-    }
+        target->defense_modifier_turns = 7;
         break;
 
     case EFX_DEF_UP1:

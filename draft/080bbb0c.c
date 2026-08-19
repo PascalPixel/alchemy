@@ -293,25 +293,25 @@ enum {
 #define S8OF(v) (*(s8 *)&(v))
 
 #define CLAMP_MOD(v)                                                           \
-    do {                                                                       \
+    {                                                                          \
         if ((v) < -4)                                                          \
             (v) = -4;                                                          \
         if ((v) > 4)                                                           \
             (v) = 4;                                                           \
-    } while (0)
+    }
 
 #define TAKE_BONUS()                                                           \
-    do {                                                                       \
+    {                                                                          \
         if (range != 4) {                                                      \
             s32 off;                                                           \
                                                                                \
             off = range * 4 + 72;                                              \
             bonus = power - ((s16 *)((u8 *)target + off))[1];                  \
         }                                                                      \
-    } while (0)
+    }
 
 #define APPLY_GUARD()                                                          \
-    do {                                                                       \
+    {                                                                          \
         guard = S8OF(target->guard_level);                                     \
         if (guard != 0) {                                                      \
             if (guard == 1)                                                    \
@@ -319,15 +319,15 @@ enum {
             else                                                               \
                 dmg = Math_Div(dmg, 10);                                  \
         }                                                                      \
-    } while (0)
+    }
 
 #define TEXT_SIDE(player, enemy)                                               \
-do {                                                                           \
+{                                                                              \
     if ((u32)target_id <= 7)                                                   \
         BattleEvent_Push(BATTLE_EVENT_TEXT, (player));                         \
     else                                                                       \
         BattleEvent_Push(BATTLE_EVENT_TEXT, (enemy));                          \
-} while (0)
+}
 
 #define TAKE_PWR()                                                             \
 {                                                                              \

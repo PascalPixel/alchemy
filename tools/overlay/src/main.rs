@@ -24,7 +24,7 @@ const USAGE: &str = "usage: overlay <command> [args]\n       overlay --list";
 
 const COMMANDS: &[(&str, &str)] = &[
     ("adopt", "adopt a matched overlay candidate"),
-    ("park", "un-adopt a row: restore its assembly, move its C to semantic/"),
+    ("park", "un-adopt a row: restore its assembly, move its C to draft/"),
     ("audit", "compare every adopted row against the bytes it replaced"),
     ("score", "show one overlay row beside the ROM, like candidate-show"),
     ("call-order-check", "check overlay call ordering"),

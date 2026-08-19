@@ -149,7 +149,8 @@ pub fn run_pipeline(directory: &str, apply: bool) -> Result<Report, String> {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;
             }
             let cleaned =
-                cleanup_installed_scratch(stem, &root_directory.join("work"), &today_utc())?;
+                cleanup_installed_scratch(stem, &root_directory.join("scratch"), &today_utc())?;
+                cleanup_installed_scratch(stem, &root_directory.join("draft"), &today_utc())?;
             if !cleaned.removed.is_empty() || cleaned.dossier_closed {
                 lines.push(format!(
                     "clean {stem} scratch={} wall={}",

@@ -609,9 +609,9 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
         fs::write(&assembly, &text).map_err(|error| error.to_string())?;
         let installed = root.join(format!("exact/{overlay}_c_{address:08x}.c"));
         if installed.exists() {
-            let parked = root.join(format!("semantic/{overlay}_c_{address:08x}.c"));
+            let parked = root.join(format!("draft/{overlay}_c_{address:08x}.c"));
             fs::rename(&installed, &parked).map_err(|error| {
-                format!("cannot move {} to semantic/: {error}", installed.display())
+                format!("cannot move {} to draft/: {error}", installed.display())
             })?;
         }
     }

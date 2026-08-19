@@ -153,15 +153,23 @@ pub fn reading_list(root: &Path) -> Result<Vec<Pairing>, String> {
         .get("functions")
         .and_then(Value::as_array)
         .unwrap_or(&[]);
-    // `work/` is where an unfinished candidate lives: gitignored, and the path
-    // every scoring tool already accepts. This read `semantic/` until that tier
-    // was deleted, after which it paired nothing and every caller reported
-    // success over an empty corpus.
-    let drafts = if root.join("work").exists() {
-        directory_names(&root.join("work"))
+    // A draft lives in `draft/` (committed) or `scratch/` (gitignored
+    // experiments); both are paths every scoring tool already accepts. This
+    // read `semantic/` until that tier was deleted, after which it paired
+    // nothing and every caller reported success over an empty corpus.
+    let mut drafts = if root.join("draft").exists() {
+        directory_names(&root.join("draft"))
     } else {
         HashSet::new()
     };
+    let scratch = if root.join("scratch").exists() {
+        directory_names(&root.join("scratch"))
+    } else {
+        HashSet::new()
+    };
+    for name in &scratch {
+        drafts.insert(name.clone());
+    }
     // PORT NOTE: the TS calls `readdirSync(join(ROOT, "exact"))` with no
     // `existsSync` guard, so a missing `exact/` is a thrown error there. Here it
     // is an explicit error for the same reason: a silently-empty `exact/` would
@@ -207,7 +215,11 @@ pub fn reading_list(root: &Path) -> Result<Vec<Pairing>, String> {
             overlay,
             address: format!("0x{address}"),
             bytes: row.get("span_bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            draft_source: format!("work/{base}"),
+            draft_source: if root.join("draft").join(&base).is_file() {
+                format!("draft/{base}")
+            } else {
+                format!("scratch/{base}")
+            },
             blocked: !starts_in_audited_span(start, intervals),
         });
     }

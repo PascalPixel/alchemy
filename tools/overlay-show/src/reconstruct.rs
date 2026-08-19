@@ -969,7 +969,7 @@ mod tests {
     fn drafts_cannot_leave_work() {
         let d = Draft { lines: vec!["int x;".into()], calls: 0, loops: 0, memory: 0 };
         let err = write_draft("exact/080bbb0c.c", &d).unwrap_err();
-        assert!(err.contains("work/"), "{err}");
+        assert!(err.contains("scratch/"), "{err}");
     }
 }
 
@@ -988,7 +988,7 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
             "usage: reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]".to_string(),
             "       reconstruct <asm/addr.s> [--out PATH]".to_string(),
             String::new(),
-            "Drafts C for one owner from its own disassembly, into work/.".to_string(),
+            "Drafts C for one owner from its own disassembly, into scratch/.".to_string(),
             "A .s file is assembled and lifted; an overlay row is shown and lifted.".to_string(),
             "It is a starting point. Score it before believing any of it.".to_string(),
         ]);
@@ -1026,7 +1026,7 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
     let d = draft(&listing, &func);
 
     let out = value_after("--out").unwrap_or_else(|| {
-        format!("work/{}_c_{:08x}.c", overlay, 0x0200_0000 + addr)
+        format!("scratch/{}_c_{:08x}.c", overlay, 0x0200_0000 + addr)
     });
     write_draft(&out, &d)?;
 
@@ -1103,10 +1103,10 @@ fn run_assembly(arg: &str, out: Option<String>) -> Result<Vec<String>, String> {
         .and_then(|s| s.to_str())
         .ok_or_else(|| format!("{}: cannot read stem", path.display()))?
         .to_string();
-    let work = std::path::PathBuf::from("work").join("reconstruct").join(&stem);
+    let work = std::path::PathBuf::from("scratch").join("reconstruct").join(&stem);
     let assembled = crate::gas::assemble_path(&path, &work)?;
     let d = draft(&assembled.listing, &assembled.func);
-    let out = out.unwrap_or_else(|| format!("work/{stem}.c"));
+    let out = out.unwrap_or_else(|| format!("scratch/{stem}.c"));
     write_draft(&out, &d)?;
     Ok(vec![
         format!(
@@ -1121,9 +1121,9 @@ fn run_assembly(arg: &str, out: Option<String>) -> Result<Vec<String>, String> {
 }
 
 fn write_draft(out: &str, d: &Draft) -> Result<(), String> {
-    if !out.starts_with("work/") {
+    if !out.starts_with("scratch/") {
         return Err(format!(
-            "{out}: drafts go under work/, which is gitignored -- an unread draft is not an asset"
+            "{out}: drafter output goes under scratch/, which is gitignored -- an unread draft is not an asset"
         ));
     }
     if let Some(parent) = std::path::Path::new(out).parent() {

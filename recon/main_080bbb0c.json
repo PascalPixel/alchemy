@@ -3,13 +3,15 @@
   "span_bytes": 6332,
   "score": {
     "measured": "2026-08-19",
-    "candidate_bytes": 6284,
+    "candidate_bytes": 6288,
     "reference_bytes": 6332,
-    "wrong_instructions": 2015,
-    "differing_halfwords": 2957,
+    "wrong_instructions": 1984,
+    "differing_halfwords": 2959,
     "class": "wrong",
     "matched_prefix": 7,
-    "note": "insn diff 885 rows; earlier state 2744hw/prefix81 had wrong case bodies aligned by luck"
+    "note": "normalized = registers and sp-offsets folded; the honest structural measure while coloring is unsettled",
+    "insn_diff_rows": 807,
+    "insn_diff_rows_normalized": 370
   },
   "shape": {
     "calls": null,
@@ -24,7 +26,8 @@
     "case 2/3/6-7-9 shared hp_tail (.L77)",
     "case 6/7/9 full body: item kind-switch (uninitialised kind on items 4,5,10,11,16,17), per-nibble tables, cur-based floor",
     "effect-switch case order matching reference emission (64,4,61/62,63,59,58,9..6,13..10,5,56,57,3,17..14,18..)",
-    "nibble case 0 moved to reference position (after case 2)"
+    "nibble case 0 moved to reference position (after case 2)",
+    "effect ids rebound to the jump table (17 were scrambled), texts and fields verified against assembled pool words"
   ],
   "unexpressed": [
     {

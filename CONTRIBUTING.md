@@ -1075,6 +1075,20 @@ per-body offset locals live in registers and which rematerialize: constant
 definitions wider than a `movs` immediate are kept by const-prop, byte-sized
 ones are folded.
 
+**Count pooled-value load sites before reading diffs.** Assemble the
+reference, map every literal-pool word to its value, and count the `ldr`
+sites per value; do the same for the candidate and diff the counts. Equal
+counts mean every body and every constant mention exists; a value the
+reference loads at fewer sites than you is arithmetic in the source (the
+crit text is `MSG_CRITICAL` plus one -- consecutive ids, one load, one
+`adds #1`); a value it loads at more sites is a body your build has merged.
+This census pinned `080bbb0c`'s def-body merge to one pair in a minute and
+found the crit arithmetic that three diff-reading passes had filed as
+texture. The merge fix is per-site lifetime drift: assigning a wide
+constant to a local late shortens the pseudo's range, raises its priority,
+wins a call-saved register, and the differentiated body stops the final
+cross-jump from merging it.
+
 **The final cross-jump runs after the scheduler and never matches across a
 call.** jump2 compares hard registers on fully scheduled code, so identical
 sibling bodies merge only when coloring made them byte-identical, and a tail

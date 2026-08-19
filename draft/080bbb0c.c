@@ -798,6 +798,7 @@ after_power:
             } while (pass <= 1);
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
+            cur -= dmg;
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             {
                 s32 text;
@@ -806,7 +807,6 @@ after_power:
                     text = MSG_DMG_EMPH_P + affinity;
                 else
                     text = MSG_DMG_EMPH_E + affinity;
-                cur -= dmg;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
             }
             if (cur > 0)

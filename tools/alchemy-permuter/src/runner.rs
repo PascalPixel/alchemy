@@ -1216,7 +1216,12 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     };
     validate_output_path(&output)?;
     let permutation = crate::perm::parse(&input.source)?;
-    let weights = if input.directory_mode {
+    let weights = if let Some(path) = &options.weights {
+        if !path.is_file() {
+            return Err(format!("--weights {}: no such file", path.display()));
+        }
+        Weights::from_settings(path, "gcc")?
+    } else if input.directory_mode {
         Weights::from_settings(&input.requested.join("settings.toml"), "base")?
     } else {
         Weights::for_profile("gcc")

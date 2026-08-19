@@ -14,6 +14,7 @@ pub const USAGE: &str = "usage: alchemy-permuter <candidate.c|legacy-directory>.
   --seed N         deterministic random seed (default 1)\n\
   --top N          retained improving candidates (default 12; max 256)\n\
   --output DIR     new, dedicated ignored run directory (or parent for many inputs)\n\
+  --weights FILE   settings.toml-format randomization weights for any input kind\n\
   --manual-only    evaluate PERM_* choices without random mutation\n\
   --show-errors    display failed compiler diagnostics\n\
   --better-only    retain only candidates better than the baseline\n\
@@ -34,6 +35,7 @@ pub struct Options {
     pub seed: u64,
     pub top: usize,
     pub output: Option<PathBuf>,
+    pub weights: Option<PathBuf>,
     pub manual_only: bool,
     pub stop_exact: bool,
     pub show_errors: bool,
@@ -64,6 +66,7 @@ impl Options {
         let mut seed = 1u64;
         let mut top = 12usize;
         let mut output = None;
+        let mut weights = None;
         let mut manual_only = false;
         let mut stop_exact = true;
         let mut show_errors = false;
@@ -76,6 +79,13 @@ impl Options {
         let mut at = 0usize;
         while at < args.len() {
             match args[at].as_str() {
+                "--weights" => {
+                    let value = args
+                        .get(at + 1)
+                        .ok_or_else(|| "--weights requires a path".to_string())?;
+                    weights = Some(PathBuf::from(value));
+                    at += 2;
+                }
                 "--iterations" => {
                     iterations = positive(args.get(at + 1), "--iterations")?;
                     if iterations > MAX_ITERATIONS {
@@ -173,6 +183,7 @@ impl Options {
             seed,
             top,
             output,
+            weights,
             manual_only,
             stop_exact,
             show_errors,

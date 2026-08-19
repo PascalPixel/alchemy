@@ -35,7 +35,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("inventory", "rebuild the overlay inventory"),
     ("mode-cohort", "compiler-mode cohort over overlays"),
     ("published", "report published overlays"),
-    ("reconstruct", "draft C for one owner from its own disassembly"),
+    ("reconstruct", "draft C for one owner from a row or a .s file"),
     ("show", "show one overlay"),
     ("twins", "find mirrored overlay pairs"),
     ("unindexed", "report unindexed overlays"),

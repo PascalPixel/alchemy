@@ -55,6 +55,35 @@ impl Val {
     }
 }
 
+/// Drop a `}` that would close the function, and close any block still open
+/// at the end. A large owner with mixed loops and ifs otherwise emits
+/// `if (} > 0)`-adjacent imbalance that is not C.
+fn balance_braces(lines: Vec<String>) -> Vec<String> {
+    let mut depth = 0i32;
+    let mut kept = Vec::with_capacity(lines.len());
+    for line in lines {
+        let opens = line.matches('{').count() as i32;
+        let closes = line.matches('}').count() as i32;
+        if depth - closes + opens < 0 {
+            continue;
+        }
+        depth = depth - closes + opens;
+        kept.push(line);
+    }
+    while depth > 0 {
+        kept.push("}".to_string());
+        depth -= 1;
+    }
+    kept
+}
+
+fn is_call_stmt(line: &str) -> bool {
+    let t = line.trim();
+    let t = t.strip_suffix(';').unwrap_or(t);
+    let Some(name) = t.split('(').next() else { return false };
+    name.starts_with("Func_") && t.ends_with(')') && !t.contains('{') && !t.contains('}')
+}
+
 fn hex(s: &str) -> Option<i64> {
     i64::from_str_radix(s.trim_start_matches("0x"), 16).ok()
 }
@@ -424,33 +453,39 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         if let Some(test) = and_join.get(&r.addr).cloned() {
             // The call for this arm was just emitted; fold it into the open
             // condition instead of testing it separately.
-            if let Some(prev) = out.pop() {
-                let call = prev.trim().trim_end_matches(';').to_string();
-                if let Some(name) = call.split('(').next() {
-                    if name.starts_with("Func_") { tested.insert(name.to_string()); }
-                }
-                if let Some(open) = out.iter_mut().rev().find(|l| l.trim_start().starts_with("if (")) {
-                    let closed = open.trim_end().trim_end_matches('{').trim_end().to_string();
-                    let inner = closed.trim_start().trim_start_matches("if (").trim_end_matches(')');
-                    let lead: String = open.chars().take_while(|c| c.is_whitespace()).collect();
-                    *open = format!("{lead}if ({inner} && {call} {test}) {{");
+            if out.last().is_some_and(|l| is_call_stmt(l)) {
+                if let Some(prev) = out.pop() {
+                    let call = prev.trim().trim_end_matches(';').to_string();
+                    if let Some(name) = call.split('(').next() {
+                        if name.starts_with("Func_") { tested.insert(name.to_string()); }
+                    }
+                    if let Some(open) = out.iter_mut().rev().find(|l| l.trim_start().starts_with("if (")) {
+                        let closed = open.trim_end().trim_end_matches('{').trim_end().to_string();
+                        let inner = closed.trim_start().trim_start_matches("if (").trim_end_matches(')');
+                        let lead: String = open.chars().take_while(|c| c.is_whitespace()).collect();
+                        *open = format!("{lead}if ({inner} && {call} {test}) {{");
+                    }
                 }
             }
             continue;
         }
         if let Some((test, _target, _join)) = if_at.get(&r.addr).cloned() {
             // The previous statement is the tested call. Fold it into the `if`
-            // rather than emitting it and then testing nothing.
-            if let Some(prev) = out.pop() {
-                let call = prev.trim().trim_end_matches(';').to_string();
-                if let Some(name) = call.split('(').next() {
-                    if name.starts_with("Func_") {
-                        tested.insert(name.to_string());
+            // rather than emitting it and then testing nothing. A close-brace
+            // or a loop head is not a call -- folding those produced
+            // `if (} > 0)` on large main-image owners.
+            if out.last().is_some_and(|l| is_call_stmt(l)) {
+                if let Some(prev) = out.pop() {
+                    let call = prev.trim().trim_end_matches(';').to_string();
+                    if let Some(name) = call.split('(').next() {
+                        if name.starts_with("Func_") {
+                            tested.insert(name.to_string());
+                        }
                     }
+                    out.push(format!("{}if ({call} {test}) {{", indent(depth)));
+                    depth += 1;
+                    continue;
                 }
-                out.push(format!("{}if ({call} {test}) {{", indent(depth)));
-                depth += 1;
-                continue;
             }
         }
 
@@ -686,21 +721,24 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         out.push(format!("{}}}", indent(depth)));
     }
 
-    // Promote only the temps something later reads.
+    // Promote only the temps something later reads, and only when the
+    // originating line is still a bare call. Folding that call into an `if`
+    // leaves `if (f() != 0) {` in the slot; prefixing `pN =` makes it not C.
     let mut used: BTreeSet<String> = BTreeSet::new();
     for (name, at) in &temp_line {
         let referenced = out
             .iter()
             .enumerate()
             .any(|(i, l)| i != *at && l.contains(name.as_str()));
-        if referenced {
+        if referenced && out.get(*at).is_some_and(|l| is_call_stmt(l)) {
             used.insert(name.clone());
             if let Some(f) = temp_fn.get(name) {
                 returns_pointer.insert(f.clone());
             }
             let line = out[*at].clone();
             let lead: String = line.chars().take_while(|c| c.is_whitespace()).collect();
-            out[*at] = format!("{lead}{name} = {};", line.trim_start());
+            let call = line.trim_start().trim_end_matches(';');
+            out[*at] = format!("{lead}{name} = {call};");
         }
     }
 
@@ -711,7 +749,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         "/* DRAFT for {func}: {calls} calls, {loops} loops, {memory} memory operations.",
         loops = loop_n
     ));
-    lines.push(" * Written by `overlay reconstruct` from the owner's own disassembly.".to_string());
+    lines.push(" * Written by reconstruct from the owner's own disassembly.".to_string());
     lines.push(" * It is a starting point, not a reconstruction: read the assembly and".to_string());
     lines.push(" * fix it. Score it before believing any of it. */".to_string());
     lines.push(String::new());
@@ -739,7 +777,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     if !base_values.is_empty() || loop_n > 0 || !used.is_empty() {
         lines.push(String::new());
     }
-    lines.extend(out);
+    lines.extend(balance_braces(out));
     lines.push("}".to_string());
 
     Draft { lines, calls, loops: loop_n, memory }
@@ -751,6 +789,27 @@ mod tests {
 
     fn listing(rows: &[&str]) -> Vec<String> {
         rows.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn extra_close_braces_are_dropped_and_open_blocks_are_closed() {
+        let kept = balance_braces(vec![
+            "    if (1) {".into(),
+            "        f();".into(),
+            "    }".into(),
+            "    }".into(),
+            "    if (2) {".into(),
+        ]);
+        assert_eq!(
+            kept,
+            vec![
+                "    if (1) {".to_string(),
+                "        f();".to_string(),
+                "    }".to_string(),
+                "    if (2) {".to_string(),
+                "}".to_string(),
+            ]
+        );
     }
 
     #[test]
@@ -849,6 +908,29 @@ mod tests {
     }
 
     #[test]
+    fn an_if_does_not_fold_a_close_brace_or_a_loop_head() {
+        let d = draft(
+            &listing(&[
+                " 2000000:\t2000      \tmovs\tr0, #0",
+                " 2000002:\t2800      \tcmp\tr0, #0",
+                " 2000004:\td001      \tbeq.n\t0x200000a",
+                " 2000006:\te7fe      \tb.n\t0x2000006",
+                " 2000008:\t2000      \tmovs\tr0, #0",
+                " 200000a:\tf000 f800 \tbl\t0x2000100",
+                " 200000e:\t2800      \tcmp\tr0, #0",
+                " 2000010:\td000      \tbeq.n\t0x2000014",
+                " 2000014:\t4770      \tbx\tlr",
+            ]),
+            "Func_02000000",
+        );
+        assert!(
+            d.lines.iter().all(|l| !l.contains("if (}") && !l.contains("= if (")),
+            "folding must not eat braces: {:?}",
+            d.lines
+        );
+    }
+
+    #[test]
     fn a_read_modify_write_through_a_pointer_is_one_statement() {
         let d = draft(
             &listing(&[
@@ -867,32 +949,63 @@ mod tests {
             d.lines
         );
     }
+
+    #[test]
+    fn a_dot_s_path_is_assembly_and_an_overlay_row_is_not() {
+        assert!(looks_like_assembly("asm/080bbb0c.s"));
+        assert!(looks_like_assembly("080bbb0c"));
+        assert!(looks_like_assembly("0x080bbb0c"));
+        assert!(!looks_like_assembly("resource_3bd:13f8"));
+        assert!(!looks_like_assembly("--out"));
+    }
+
+    #[test]
+    fn a_whole_overlay_listing_is_refused() {
+        let err = resolve_assembly("assets/code/resource_373_overlay.s").unwrap_err();
+        assert!(err.contains("<overlay>:<offsetHex>"), "{err}");
+    }
+
+    #[test]
+    fn drafts_cannot_leave_work() {
+        let d = Draft { lines: vec!["int x;".into()], calls: 0, loops: 0, memory: 0 };
+        let err = write_draft("exact/080bbb0c.c", &d).unwrap_err();
+        assert!(err.contains("work/"), "{err}");
+    }
 }
 
 /// `overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]`
+/// `overlay reconstruct <asm/addr.s> [--out PATH]`
+/// `compiler reconstruct <asm/addr.s> [--out PATH]`
 ///
 /// Writes the draft to `work/` and prints what it modelled. It never writes
 /// anywhere else: the tree has no home for C that does not reproduce, and this
 /// produces C that has not been read yet, which is further from reproducing
-/// than usual.
+/// than usual. A `.s` path is the main-image form: assemble the file, objdump
+/// it, and lift the listing the same way an overlay row is lifted.
 pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
     if argv.iter().any(|a| a == "-h" || a == "--help") {
         return Ok(vec![
-            "usage: overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]"
-                .to_string(),
+            "usage: reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]".to_string(),
+            "       reconstruct <asm/addr.s> [--out PATH]".to_string(),
             String::new(),
             "Drafts C for one owner from its own disassembly, into work/.".to_string(),
+            "A .s file is assembled and lifted; an overlay row is shown and lifted.".to_string(),
             "It is a starting point. Score it before believing any of it.".to_string(),
         ]);
     }
-    let target = argv
-        .iter()
-        .find(|a| a.contains(':') && !a.starts_with('-'))
-        .ok_or("give an owner as <overlay>:<offsetHex>")?;
-    let (overlay, offset) = target.split_once(':').ok_or("expected <overlay>:<offsetHex>")?;
     let value_after = |flag: &str| -> Option<String> {
         argv.iter().position(|a| a == flag).and_then(|i| argv.get(i + 1)).cloned()
     };
+
+    if let Some(path) = assembly_arg(argv) {
+        return run_assembly(&path, value_after("--out"));
+    }
+
+    let target = argv
+        .iter()
+        .find(|a| a.contains(':') && !a.starts_with('-'))
+        .ok_or("give an owner as <overlay>:<offsetHex> or a path to asm/<addr>.s")?;
+    let (overlay, offset) = target.split_once(':').ok_or("expected <overlay>:<offsetHex>")?;
 
     let mut show: Vec<String> = vec![overlay.to_string(), offset.to_string()];
     if let Some(span) = value_after("--span") {
@@ -915,15 +1028,7 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
     let out = value_after("--out").unwrap_or_else(|| {
         format!("work/{}_c_{:08x}.c", overlay, 0x0200_0000 + addr)
     });
-    if !out.starts_with("work/") {
-        return Err(format!(
-            "{out}: drafts go under work/, which is gitignored -- an unread draft is not an asset"
-        ));
-    }
-    if let Some(parent) = std::path::Path::new(&out).parent() {
-        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-    }
-    std::fs::write(&out, format!("{}\n", d.lines.join("\n"))).map_err(|e| e.to_string())?;
+    write_draft(&out, &d)?;
 
     Ok(vec![
         format!(
@@ -932,4 +1037,97 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
         ),
         "score it before believing any of it".to_string(),
     ])
+}
+
+fn assembly_arg(argv: &[String]) -> Option<String> {
+    argv.iter()
+        .find(|a| !a.starts_with('-') && looks_like_assembly(a))
+        .cloned()
+}
+
+fn looks_like_assembly(arg: &str) -> bool {
+    if arg.ends_with(".s") || arg.ends_with(".S") {
+        return true;
+    }
+    let trimmed = arg.strip_prefix("0x").or_else(|| arg.strip_prefix("0X")).unwrap_or(arg);
+    !trimmed.is_empty()
+        && trimmed.len() <= 8
+        && trimmed.bytes().all(|b| b.is_ascii_hexdigit())
+}
+
+fn resolve_assembly(arg: &str) -> Result<std::path::PathBuf, String> {
+    let given = std::path::PathBuf::from(arg);
+    if given.extension().and_then(|e| e.to_str()) == Some("s")
+        || given.extension().and_then(|e| e.to_str()) == Some("S")
+    {
+        if arg.contains("_overlay.s") {
+            return Err(format!(
+                "{arg}: a whole overlay listing is not one owner -- use <overlay>:<offsetHex>"
+            ));
+        }
+        if given.is_file() {
+            return Ok(given);
+        }
+        let rooted = repo_root().join(&given);
+        if rooted.is_file() {
+            return Ok(rooted);
+        }
+        return Err(format!("{arg}: no such assembly file"));
+    }
+    let digits = arg.strip_prefix("0x").or_else(|| arg.strip_prefix("0X")).unwrap_or(arg);
+    let addr = u32::from_str_radix(digits, 16).map_err(|_| format!("{arg}: not a hex address"))?;
+    let name = format!("{addr:08x}.s");
+    let relative = std::path::Path::new("asm").join(&name);
+    if relative.is_file() {
+        return Ok(relative);
+    }
+    let rooted = repo_root().join("asm").join(&name);
+    if rooted.is_file() {
+        return Ok(rooted);
+    }
+    Err(format!("asm/{name}: no such owner assembly"))
+}
+
+fn repo_root() -> std::path::PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .expect("overlay-show sits under tools/")
+        .to_path_buf()
+}
+
+fn run_assembly(arg: &str, out: Option<String>) -> Result<Vec<String>, String> {
+    let path = resolve_assembly(arg)?;
+    let stem = path
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .ok_or_else(|| format!("{}: cannot read stem", path.display()))?
+        .to_string();
+    let work = std::path::PathBuf::from("work").join("reconstruct").join(&stem);
+    let assembled = crate::gas::assemble_path(&path, &work)?;
+    let d = draft(&assembled.listing, &assembled.func);
+    let out = out.unwrap_or_else(|| format!("work/{stem}.c"));
+    write_draft(&out, &d)?;
+    Ok(vec![
+        format!(
+            "{}: {} calls, {} loops, {} memory operations -> {out}",
+            path.display(),
+            d.calls,
+            d.loops,
+            d.memory
+        ),
+        "score it before believing any of it".to_string(),
+    ])
+}
+
+fn write_draft(out: &str, d: &Draft) -> Result<(), String> {
+    if !out.starts_with("work/") {
+        return Err(format!(
+            "{out}: drafts go under work/, which is gitignored -- an unread draft is not an asset"
+        ));
+    }
+    if let Some(parent) = std::path::Path::new(out).parent() {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    std::fs::write(out, format!("{}\n", d.lines.join("\n"))).map_err(|e| e.to_string())
 }

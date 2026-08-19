@@ -1292,44 +1292,54 @@ hp_tail:
 
     case EFX_DRAIN_HP:
     case EFX_DRAIN_HP_HALF:
+    {
+        s32 heal;
+
+        heal = actor->hp;
         dmg = dealt;
         if (action->effect == EFX_DRAIN_HP_HALF)
             dmg /= 2;
-        if (actor->hp + dmg > actor->max_hp) {
-            dmg = *(u16 *)&actor->max_hp - *(u16 *)&actor->hp;
-            actor->hp = actor->max_hp;
-        } else {
-            actor->hp = (s16)(actor->hp + dmg);
+        heal += dmg;
+        if (heal > actor->max_hp) {
+            heal = actor->max_hp;
+            dmg = heal - actor->hp;
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
-        if (actor->hp == actor->max_hp)
+        if (heal == actor->max_hp)
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);
         else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
         }
+        actor->hp = (s16)heal;
         BattleUnit_UpdateRatios(actor_id);
         break;
+    }
 
     case EFX_DRAIN_PP:
+    {
+        s32 heal;
+
+        heal = actor->pp;
         dmg = dealt;
-        if (actor->pp + dmg > actor->max_pp) {
-            dmg = *(u16 *)&actor->max_pp - *(u16 *)&actor->pp;
-            actor->pp = actor->max_pp;
-        } else {
-            actor->pp = (s16)(actor->pp + dmg);
+        heal += dmg;
+        if (heal > actor->max_pp) {
+            heal = actor->max_pp;
+            dmg = heal - actor->pp;
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
-        if (actor->pp == actor->max_pp)
+        if (heal == actor->max_pp)
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
         else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
         }
+        actor->pp = (s16)heal;
         BattleUnit_UpdateRatios(actor_id);
         break;
+    }
 
     case EFX_PP_LEECH:
         dmg = Math_Div(dealt, 10);

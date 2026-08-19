@@ -6,7 +6,7 @@
     "candidate_bytes": 6276,
     "reference_bytes": 6332,
     "wrong_instructions": 1426,
-    "differing_halfwords": 2713,
+    "differing_halfwords": 2712,
     "class": "wrong",
     "matched_prefix": 11,
     "note": "insns files are written by --asm only; measure after --asm, never off a bare --align",
@@ -14,9 +14,9 @@
     "insn_diff_rows_normalized": 111,
     "frame": "100 == reference",
     "walk_window_rows": 12,
-    "insn_diff_rows_nop_filtered": 91,
+    "insn_diff_rows_nop_filtered": 87,
     "note2": "seven of the remaining rows are movs r0,r0 alignment pads before the reference's jump tables and pools; they cannot be written in C and reappear automatically at size parity",
-    "our_side_rows": 67
+    "our_side_rows": 63
   },
   "shape": {
     "calls": null,
@@ -83,7 +83,8 @@
     "all five subtract-then-text tails interleave: message select, subtraction, single push -- attack, case-6 emphasis, drain, PP damage, case 3. Found as one family across two reread cycles; wrong 1551 -> 1459",
     "multi-target scan is a goto loop with an idx local: no loop notes, so no strength reduction and no hoisting; the 748 rebuilds per iteration exactly as the reference emits (a stale-era rejection reversed by truthful measurement)",
     "scan head probe indexes through hidx = 748 (const-prop keeps constants wider than a movs immediate)",
-    "case-6 KO text interleaves cur = 0; the attack subtracts between UNIT and VALUE -- per-site drift mapped one site at a time"
+    "case-6 KO text interleaves cur = 0; the attack subtracts between UNIT and VALUE -- per-site drift mapped one site at a time",
+    "the four interleave sites subtract AFTER the text push in the source; the scheduler hoists the subs into the call setup and the movs #4 wins its tie at every site as the reference shows"
   ],
   "unexpressed": [
     {

@@ -292,6 +292,10 @@
     {
       "shape": "two-pointer elem read (row = target + range*4; value = row+38)",
       "wrong": "274 vs 272 in both statement orders; the ref keeps adds #36 by another means"
+    },
+    {
+      "shape": "first elem arm walks tbl destructively to force the second arm's +36 rebuild",
+      "wrong": "278 vs 272, and the second arm's head compare reads tbl after the walk -- semantics broken; the ref's exact pointer lifetimes at .L3/.L6 still unread"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

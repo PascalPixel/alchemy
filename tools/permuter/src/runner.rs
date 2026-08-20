@@ -484,6 +484,32 @@ impl Journal {
         self.cached.get(candidate).cloned()
     }
 
+    /// Imports rows from a prior run's journal whose header carries the same
+    /// cache identity. Rows land in memory only; this run's file records its
+    /// own measurements as they happen.
+    fn import(&mut self, path: &Path) -> Result<usize, String> {
+        let text = fs::read_to_string(path)
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        let header = format!("permuter-journal-v3\t{}", self.identity);
+        let mut lines = text.lines();
+        if lines.next() != Some(header.as_str()) {
+            return Err(format!(
+                "{}: journal identity does not match this backend; not importing",
+                path.display()
+            ));
+        }
+        let mut imported = 0usize;
+        for line in lines {
+            let fields = line.split('\t').collect::<Vec<_>>();
+            if let Some((fingerprint, measurement)) = parse_journal_row(&fields, &self.identity) {
+                if self.cached.insert(fingerprint, measurement).is_none() {
+                    imported += 1;
+                }
+            }
+        }
+        Ok(imported)
+    }
+
     fn record(&self, candidate: &str, measurement: &Measurement) -> Result<(), String> {
         let measurement = persisted_measurement(measurement);
         let first = measurement
@@ -615,6 +641,7 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
         actual_size,
         first_difference,
         fingerprint,
+        heat: Vec::new(),
         summary: fields[8].to_string(),
     };
     (journal_row_auth(identity, fields[0], &measurement) == fields[9])
@@ -1210,6 +1237,7 @@ fn walk_workers(
     seed: u64,
     keep_prob_permille: u32,
     stop_exact: bool,
+    heat_enabled: bool,
     journal: Arc<Journal>,
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
@@ -1230,6 +1258,7 @@ fn walk_workers(
                 seed ^ (worker as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ 0x5851_f42d_4c95_7f2d,
             );
             let mut current: Option<(String, String)> = None; // (source, lineage)
+            let mut last_heat: Vec<f32> = Vec::new();
             loop {
                 if stop_exact && stop.load(AtomicOrdering::Acquire) {
                     break;
@@ -1249,7 +1278,12 @@ fn walk_workers(
                     rng.0 ^ index as u64,
                     None,
                 )
-                .and_then(|mut r| r.randomize_named());
+                .and_then(|mut r| {
+                    if heat_enabled {
+                        r.set_heat(last_heat.clone());
+                    }
+                    r.randomize_named()
+                });
                 let (mutated_source, pass_name) = match mutated {
                     Ok(pair) => pair,
                     Err(_) => {
@@ -1285,6 +1319,7 @@ fn walk_workers(
                             stop.store(true, AtomicOrdering::Release);
                         }
                         current = Some((mutated_source.clone(), candidate.mutation.clone()));
+                        last_heat = measurement.heat.clone();
                     }
                     Err(_) => {
                         current = None;
@@ -1380,7 +1415,18 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let baseline = target.baseline();
     let identity = run_identity(&input, target.as_ref(), options.seed)?;
     let mut run = RunDirectory::claim(&output, &identity, options.resume)?;
-    let journal = Arc::new(Journal::open(&mut run, &identity, options.resume)?);
+    // Journal rows are keyed by candidate fingerprint, and a row's meaning is
+    // fixed by the backend (compiler, reference, comparison implementation)
+    // alone -- not by which base source or seed produced the candidate. Keying
+    // the journal on the backend identity lets chained rounds against the same
+    // owner reuse each other's measurements under --resume.
+    let cache_identity = target.identity();
+    let mut journal = Journal::open(&mut run, &cache_identity, options.resume)?;
+    if let Some(prior) = &options.journal_from {
+        let imported = journal.import(prior)?;
+        println!("journal: imported {imported} cached measurements from {}", prior.display());
+    }
+    let journal = Arc::new(journal);
     println!(
         "backend={} bases={} candidates={} jobs={} baseline={} ({})",
         target.name(),
@@ -1421,6 +1467,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             options.seed,
             options.keep_prob_permille,
             options.stop_exact,
+            options.heat,
             Arc::clone(&journal),
         )?;
         attempted = evaluated.len();
@@ -1636,6 +1683,7 @@ pub fn self_test() -> Result<(), String> {
         actual_size: 6,
         first_difference: Some(2),
         fingerprint: 0x1234,
+        heat: Vec::new(),
         summary: "journal control".into(),
     };
     {
@@ -1766,6 +1814,7 @@ mod tests {
             actual_size: 6,
             first_difference: Some(2),
             fingerprint: 0x1234,
+            heat: Vec::new(),
             summary: "journal control".into(),
         };
         {

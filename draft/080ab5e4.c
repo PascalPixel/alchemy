@@ -9,8 +9,15 @@ void Func_080022f4();
 void Func_08002304();
 s32 Func_080030f8();
 void Func_08015018();
+extern u8 *Data_03001f2c;                         /* 主ワークへのポインタ */
+extern u32 Data_03001c94;                         /* 進行フラグ語 */
+extern s16 Data_02000240[];
+#define MSG_DJINN_RECOVER_1 0xc4c                  /* 召喚後のジン回復の説明 */
+#define MSG_DJINN_RECOVER_2 0xc4d
+#define MSG_TUTORIAL_C40 0xc40
+#define MSG_TUTORIAL_C41 0xc41
 void Func_08015038();
-void Func_08015048();
+s32 Func_08015048();
 void Func_08015068();
 void Func_08015078();
 void Func_08015080();
@@ -46,6 +53,8 @@ void Func_080f9010();
 
 void Func_080ab5e4(void)
 {
+    u8 *seq;
+    s32 adv;
     s32 base;
     s32 i1;
     s32 i2;
@@ -172,82 +181,130 @@ void Func_080ab5e4(void)
     Func_080a1a40();
     if (Func_080030f8(1) != 0) {
     }
-    Func_080abd26();
-    for (i6 = 1; i6 < 0; i6++) {
-        Func_080a1a40(150, 26);
-        Func_080030f8(1);
+    /* ディスパッチ。seq+0x212c の状態値 1..28 で分岐し、tick 毎に seq+0x2128 を
+       加算する。空欄スロット 8 件は切替後アドレス共有。表は +0x74c。 */
+    seq = *(u8 **)((u8 *)Data_03001f2c + 388);
+    {
+        s32 state;
+
+        state = *(s32 *)(seq + 0x212c);
+        if (state != 0) {
+            (*(s32 *)(seq + 0x2128))++;
+            adv = 0;
+            switch (state) {
+            case 28:
+                if ((Data_03001c94 & 1) == 0) {
+                    Func_080a1a40(150, 26);
+                    Func_080030f8(1);
+                }
+                break;
+            case 27:
+                if (*(s32 *)(seq + 0x2128) != 60)
+                    break;
+                Func_08015038(MSG_DJINN_RECOVER_1, 9, 9, 1);
+                *((u8 *)Data_02000240 + 524) = 1;
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_08015018(0, 1);
+                Func_080aafb8(seq);
+                Func_080030f8(1);
+                Func_08015038(MSG_DJINN_RECOVER_2, 9, 9, 1);
+                *((u8 *)Data_02000240 + 524) = 1;
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_08015018(0, 1);
+                Func_080aafb8(seq);
+                Func_080b50f8();
+                Func_080b50f8();
+                Func_080b50f8();
+                break;
+            case 1:
+                if (*(s32 *)(seq + 0x2128) != 60)
+                    break;
+                Func_08015038(MSG_TUTORIAL_C40, 9, 9, 1);
+                *((u8 *)Data_02000240 + 524) = 1;
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_08015018(0, 1);
+                Func_080aafb8(seq);
+                break;
+            case 2:
+            case 4:
+            case 8:
+            case 9:
+            case 22:
+                if (*(s32 *)(seq + 0x2128) != 90)
+                    break;
+                adv = 1;
+                *(s32 *)(seq + 0x2128) = 0;
+                *(s32 *)(seq + 0x212c) += 1;
+                break;
+            case 3:
+                if (*(s32 *)(seq + 0x2128) != 90)
+                    break;
+                break;
+            case 6:
+            case 7:
+                if (*(s32 *)(seq + 0x2128) != 60)
+                    break;
+                Func_08015038(MSG_TUTORIAL_C41, 9, 9, 1);
+                *((u8 *)Data_02000240 + 524) = 1;
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_08015018(0, 1);
+                Func_080aafb8(seq);
+                break;
+            case 13:
+                if (*(s32 *)(seq + 0x2128) != 40)
+                    break;
+                break;
+            case 14:
+            case 16:
+            case 17:
+                if (*(s32 *)(seq + 0x2128) != 40)
+                    break;
+                break;
+            case 15:
+                if (*(s32 *)(seq + 0x2128) != 60)
+                    break;
+                Func_08015038(3140, 9, 9, 1);
+                Func_080a1ac0(2, 146);
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_080a1a40(2, 146);
+                Func_08015018(2, 1);
+                Func_080aafb8(seq);
+                Func_080030f8(1);
+                Func_08015038(3141, 9, 9, 1);
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_080a1a40(2, 146);
+                Func_08015018(2, 1);
+                Func_080aafb8(seq);
+                Func_080030f8(1);
+                Func_08015038(3142, 9, 9, 1);
+                while (Func_08015048() == 0)
+                    Func_080030f8(1);
+                Func_080a1a40(2, 146);
+                Func_08015018(2, 1);
+                Func_080aafb8(seq);
+                break;
+            case 18:
+            case 20:
+                if (*(s32 *)(seq + 0x2128) != 90)
+                    break;
+                break;
+            case 21:
+                if (*(s32 *)(seq + 0x2128) != 90)
+                    break;
+                break;
+            case 24:
+                if (*(s32 *)(seq + 0x2128) != 60)
+                    break;
+                break;
+            }
+        }
     }
-    Func_08015038(3148, 9, 9, 1);
-    for (i7 = 1; i7 < 0; i7++) {
-        Func_080030f8(1);
-        Func_08015048();
-    }
-    Func_08015018();
-    Func_080aafb8();
-    Func_080030f8(1);
-    Func_08015038(3149, 9, 9, 1);
-    for (i8 = 1; i8 < 0; i8++) {
-        Func_080030f8(1);
-        Func_08015048();
-    }
-    Func_08015018();
-    Func_080aafb8();
-    Func_080b50f8();
-    Func_080b50f8();
-    Func_080b50f8();
-    Func_080771b8(0, 0, 0);
-    Func_080771c8(0, 0, 0);
-    Func_08077010(0);
-    Func_08015038(3136, 9, 9, 1, 2);
-    for (i9 = 2; i9 < 0; i9++) {
-        Func_080030f8(1, 2);
-        Func_08015048(2);
-    }
-    Func_08015018();
-    Func_080aafb8();
-    Func_08015038(3137, 9, 9, 1, 16);
-    for (i10 = 1; i10 < 0; i10++) {
-        Func_080030f8(1, 16);
-        Func_08015048(16);
-    }
-    Func_08015018();
-    Func_080aafb8();
-    Func_08015038(3140, 9, 9, 1, 2);
-    Func_080a1ac0(2, 146);
-    for (i11 = 2; i11 < 0; i11++) {
-        Func_080030f8(1, 2);
-        Func_08015048(2);
-    }
-    for (i12 = 1; i12 < 0; i12++) {
-        Func_080a1a40(2, 146, 2);
-        Func_080030f8(1);
-    }
-    Func_08015018(2);
-    Func_080aafb8();
-    Func_080030f8(1);
-    Func_08015038(3141, 9, 9, 1);
-    for (i13 = 1; i13 < 0; i13++) {
-        Func_080030f8(1, 2);
-        Func_08015048(2);
-    }
-    for (i14 = 1; i14 < 0; i14++) {
-        Func_080a1a40(2, 146, 2);
-        Func_080030f8(1);
-    }
-    Func_08015018(2);
-    Func_080aafb8();
-    Func_080030f8(1);
-    Func_08015038(3142, 9, 9, 1);
-    for (i15 = 1; i15 < 0; i15++) {
-        Func_080030f8(1, 2);
-        Func_08015048(2);
-    }
-    for (i16 = 1; i16 < 0; i16++) {
-        Func_080a1a40(2, 146, 2);
-        Func_080030f8(1);
-    }
-    Func_08015018(2);
-    Func_080aafb8();
     if (Func_080030f8(1) != 0) {
     } else {
         if (Func_08077210(2, 32, 2, 0) == 0) {

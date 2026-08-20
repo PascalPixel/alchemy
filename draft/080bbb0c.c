@@ -1053,7 +1053,7 @@ after_power:
             TAKE_PWR();
             pp = target->pp;
             dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(pptbl[offset] * dmg, 100);
+            dmg = Math_Div(dmg * pptbl[offset], 100);
             dmg *= adjust;
             pp += dmg;
             if (pp > target->max_pp) {
@@ -1524,7 +1524,8 @@ dealt = target->hp - cur;
         heal += dmg;
         if (heal > actor->max_pp) {
             heal = actor->max_pp;
-            dmg = heal - old;
+            dmg = heal;
+            dmg = dmg - old;
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);

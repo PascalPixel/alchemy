@@ -1,0 +1,35 @@
+{
+  "owner": "main:0x080ab5e4",
+  "span_bytes": 4888,
+  "score": {
+    "candidate_bytes": null,
+    "wrong_instructions": null,
+    "differing_halfwords": null,
+    "class": "size mismatch",
+    "note": "scaffold seed, 342/2110 insns expressed"
+  },
+  "shape": {
+    "calls": 186,
+    "loops": 20,
+    "memory_ops": 3,
+    "jump_table_pool_targets": true
+  },
+  "domain": "Colosso tournament handler: texts 0x2128/0x212c (finals gating), 0xbbe (recovering), 0x219 (Warrior's Helm); IWRAM 0x03001c94/0x03001af8; reads Data_02000240",
+  "expressed": [
+    "call sequence from the reconstructor (186 calls)",
+    "constants"
+  ],
+  "unexpressed": [
+    {
+      "op": "control flow",
+      "count": "~all",
+      "where": "the drafter emitted zero-trip for/else fusions at 8 sites (rewritten to if(0) placeholders); every branch, loop and jump-table dispatch is still to read"
+    },
+    {
+      "op": "memory",
+      "count": "~58 narrow loads",
+      "where": "work-struct halfword arrays indexed off sp#76 base"
+    }
+  ],
+  "rejected": []
+}

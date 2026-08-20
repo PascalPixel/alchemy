@@ -7,7 +7,7 @@
     "differing_halfwords": 2329,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "133 ours / 139 reference (272 total)",
+    "raw_rows": "131 ours / 137 reference (268 total)",
     "class": "wrong",
     "note": "first size parity; differing_halfwords is now phase-free"
   },
@@ -112,7 +112,8 @@
     "PP-heal falloff multiply is dmg * pptbl[offset]",
     "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;",
     "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after",
-    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities"
+    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities",
+    "both PP-heal bodies load the target field (cur/pp) BEFORE the pwr guard block: two 2-row wins that also flip the action reload to r4 as the reference has"
   ],
   "unexpressed": [
     {

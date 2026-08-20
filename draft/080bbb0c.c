@@ -463,8 +463,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 *pptbl;
-    s32 *dmgtbl8;
-    s32 turns;
     s32 g1;
     s32 power;
     s16 hp0;
@@ -475,7 +473,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 range;
     struct BattleUnit *target;
     s32 n;
-    s16 value;
+    s32 value;
     s32 dmg;
     s32 pass;
     u8 *base;
@@ -546,15 +544,11 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
 
             off = 2;
             if (value <= *(s16 *)(BytePtr(tbl) + off)) {
-                s16 *p;
-
-                p = (s16 *)(BytePtr((s16 *)target) + 36);
                 do {
                     i++;
-                    p += 2;
                     if (i > 3)
                         break;
-                } while (value <= p[1]);
+                } while (value <= ELEM_AT(target, i));
             }
         }
         if (i == 4)
@@ -605,7 +599,6 @@ after_power:
             hit = first;
     }
     pptbl = PpHealFalloff;
-    dmgtbl8 = HpDmgFalloff8;
 
     if ((u8)(act->effect + 206) <= 1) {
         s32 st;
@@ -690,9 +683,9 @@ after_power:
             }
             BattleEvent_Push(BATTLE_EVENT_UNIT, rec);
             if (action_id != 0x1f7)
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_OFF);
-            else
                 BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_APPEARS);
+            else
+                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_OFF);
         } else if (action_id == 0x1f7) {
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_SPLIT_FAIL);
         } else {
@@ -1004,7 +997,7 @@ after_power:
                     dmg = Math_Div(HpDmgFalloff6[offset] * dmg, 100);
                     break;
                 case 8:
-                    dmg = Math_Div(dmg * dmgtbl8[offset], 100);
+                    dmg = Math_Div(dmg * HpDmgFalloff8[offset], 100);
                     break;
                 }
                 dmg += BattleRandom_Next() & 3;
@@ -1206,17 +1199,15 @@ dealt = target->hp - cur;
         s32 maxu;
         s32 maxv;
         s32 heal;
-        s32 amt;
 
         old = *(volatile u16 *)&target->hp;
         maxu = *(volatile u16 *)&target->max_hp;
         heal = target->hp;
         maxv = target->max_hp;
         if (action->effect == EFX_HEAL_60)
-            amt = maxv * 60;
+            heal += Math_Div(maxv * 60, 100);
         else
-            amt = maxv * 30;
-        heal += Math_Div(amt, 100);
+            heal += Math_Div(maxv * 30, 100);
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;
@@ -1282,18 +1273,12 @@ dealt = target->hp - cur;
         break;
 
     case EFX_ATK_DOWN1:
-    {
-        s32 toff;
-
         target->attack_modifier += -1;
-        turns = 7;
         CLAMP_MOD(target->attack_modifier);
         BattleUnit_Recalculate(target_id);
-        toff = ATK_TURNS;
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
-        *BytePtr((u8 *)target + toff) = turns;
-    }
+        target->attack_modifier_turns = 7;
         break;
 
     case EFX_ATK_DOWN2:
@@ -1315,8 +1300,12 @@ dealt = target->hp - cur;
         break;
 
     case EFX_ATK_UP2:
-        ADJUST_ATKDEF(target->attack_modifier, 2, ATK_TURNS,
-                      target->attack - copy->attack, MSG_ATK_UP);
+        target->attack_modifier += 2;
+        CLAMP_MOD(target->attack_modifier);
+        BattleUnit_Recalculate(target_id);
+        BattleEvent_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
+        target->attack_modifier_turns = 7;
         break;
 
     case EFX_DEF_DOWN1:
@@ -1338,17 +1327,12 @@ dealt = target->hp - cur;
         break;
 
     case EFX_DEF_UP1:
-    {
-        s32 toff;
-
         target->defense_modifier += 1;
         CLAMP_MOD(target->defense_modifier);
         BattleUnit_Recalculate(target_id);
-        toff = DEF_TURNS;
         BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
-        *BytePtr((u8 *)target + toff) = 7;
-    }
+        target->defense_modifier_turns = 7;
         break;
 
     case EFX_DEF_UP2:
@@ -1359,6 +1343,7 @@ dealt = target->hp - cur;
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
         target->defense_modifier_turns = 7;
         break;
+
 
     case EFX_REVIVE_FULL:
         if (target->hp != 0)
@@ -1517,24 +1502,22 @@ dealt = target->hp - cur;
 
     case EFX_DRAIN_PP:
     {
-        s32 old;
         s32 heal;
+        s32 amt;
 
         heal = actor->pp;
-        old = heal;
-        dmg = dealt;
-        heal += dmg;
+        amt = dealt;
+        heal += amt;
         if (heal > actor->max_pp) {
             heal = actor->max_pp;
-            dmg = heal;
-            dmg = dmg - old;
+            amt = heal - actor->pp;
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
         if (heal == actor->max_pp)
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
         else {
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BattleEvent_Push(BATTLE_EVENT_VALUE, amt);
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);
         }
         actor->pp = (s16)heal;

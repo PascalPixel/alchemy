@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "compiler-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fs2 = "0.4"
+sha2 = "0.10"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lib]
+name = "compiler_core"
+path = "src/lib.rs"

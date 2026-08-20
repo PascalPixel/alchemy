@@ -34,7 +34,7 @@ use std::collections::BTreeSet;
 use std::path::Path;
 use std::process::ExitCode;
 
-use alchemy_routing::routing::{
+use compiler_core::routing::{
     cflags_for_source, cflags_for_target, uses_agbcc_compiler, CompilerTarget,
 };
 
@@ -55,7 +55,9 @@ fn routed_extras(source: &str) -> Vec<String> {
 fn live_sources() -> Vec<String> {
     let mut found = Vec::new();
     for directory in ["semantic", "exact"] {
-        let Ok(entries) = std::fs::read_dir(directory) else { continue };
+        let Ok(entries) = std::fs::read_dir(directory) else {
+            continue;
+        };
         for entry in entries.filter_map(Result::ok) {
             let path = entry.path();
             if path.extension().and_then(|e| e.to_str()) != Some("c") {

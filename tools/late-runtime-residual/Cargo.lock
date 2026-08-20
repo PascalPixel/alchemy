@@ -16,10 +16,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "extract-resource"
-version = "0.1.0"
-
-[[package]]
 name = "hashbrown"
 version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -46,7 +42,6 @@ name = "late-runtime-data"
 version = "0.1.0"
 dependencies = [
  "canonical-json",
- "extract-resource",
  "serde_json",
 ]
 

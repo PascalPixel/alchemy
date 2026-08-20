@@ -12,7 +12,6 @@ path = "src/lib.rs"
 
 [dependencies]
 alignment-tail = { path = "../alignment-tail" }
-canonical-json = { path = "../canonical-json" }
 export-asset = { path = "../export-asset" }
 extract-resource = { path = "../extract-resource" }
 import-asset = { path = "../import-asset" }

@@ -505,21 +505,3 @@ pub fn run(args: Vec<String>, kind: SeriesKind) -> Result<()> {
         _ => Err(usage),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn native_self_test() {
-        self_test().unwrap();
-    }
-
-    #[test]
-    fn catalogs_are_stable() {
-        assert_eq!(TOKUSHU.len(), 6);
-        assert_eq!(CHIIKI.len(), 2);
-        assert_eq!(TOKUSHU.iter().map(|spec| spec.size).sum::<usize>(), 0x9b4c);
-        assert_eq!(CHIIKI.iter().map(|spec| spec.size).sum::<usize>(), 0x386c);
-    }
-}

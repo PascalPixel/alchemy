@@ -1,48 +1,24 @@
-//! CLI for this crate, moved out of `main.rs` so the command can be linked
-//! into a shared entry point instead of shipping its own executable.
-
-use crate::{
-    export_resource_01c, self_test, verify_resource_01c, Error, GLYPHS, RESOURCE_SIZE,
-};
-use std::path::Path;
+use crate::{build_resource_01c, Error};
 use std::io::{self, Write};
+use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str =
-    "usage: resource_01c export ROM --directory DIR | verify ROM --plan PLAN | --self-test";
+const USAGE: &str = "usage: resource_01c build-stdout PLAN";
 
 fn run(args: &[String]) -> Result<(), Error> {
-    if args.len() == 1 && args[0] == "--self-test" {
-        self_test()?;
-        println!("self-test=ok");
-        return Ok(());
+    if args.first().map(String::as_str) != Some("build-stdout") {
+        return Err(Error(USAGE.into()));
     }
-    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
-        println!("{USAGE}");
-        return Ok(());
-    }
-    if args.len() == 4 && args[0] == "export" && args[2] == "--directory" {
-        export_resource_01c(Path::new(&args[1]), Path::new(&args[3]))?;
-        println!("glyphs={GLYPHS} source_bytes={RESOURCE_SIZE}");
-        return Ok(());
-    }
-    if args.len() == 4 && args[0] == "verify" && args[2] == "--plan" {
-        println!(
-            "{}",
-            verify_resource_01c(Path::new(&args[1]), Path::new(&args[3]))?
-        );
-        return Ok(());
-    }
-    if args.len() == 2 && args[0] == "build-stdout" {
-        let (bytes, _) = crate::build_resource_01c(Path::new(&args[1]))?;
-        io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
-        return Ok(());
-    }
-    Err(Error(USAGE.into()))
+    let plan = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
+    let (bytes, _) = build_resource_01c(Path::new(plan))?;
+    io::stdout()
+        .write_all(&bytes)
+        .map_err(|e| Error(e.to_string()))?;
+    Ok(())
 }
 
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(&arguments.to_vec()) {
+pub fn entry(arguments: &[String]) -> ExitCode {
+    match run(arguments) {
         Ok(()) => ExitCode::SUCCESS,
         Err(Error(message)) => {
             eprintln!("error: {message}");

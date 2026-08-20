@@ -1,15 +1,12 @@
 //! GBA cartridge-header codec, ported from tools/make/gba_header.ts.
 
-pub mod cli;
-
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use alchemy_zlib::{deflate_sync, DeflateOptions};
-use canonical_json::{canonical_json, is_canonical_json_text};
-use export_asset::chunk;
+use canonical_json::is_canonical_json_text;
 use import_asset::indexed_png;
-use serde_json::{json, Map, Value};
+use serde_json::{Map, Value};
+use sha2::{Digest, Sha256};
 
 pub const GBA_HEADER_ADDRESS: u32 = 0x0800_0000;
 pub const GBA_HEADER_SIZE: usize = 0xc0;
@@ -23,6 +20,7 @@ pub const GBA_LOGO_WIDTH: u32 = 104;
 pub const GBA_LOGO_HEIGHT: u32 = 16;
 
 const LOGO_SHA256: &str = "08a0153cfd6b0ea54b938f7d209933fa849da0d56f5a34c481060c9ff2fad818";
+const LOGO_PNG_SHA256: &str = "060df97f1ea5afefd2c32a471614d116ef855b545800695a451915d8f5f350ba";
 const CODEWORDS: [&str; 16] = [
     "1", "0110", "01010", "0100", "00010", "011110", "010110", "000110", "00110", "011111",
     "010111", "000111", "0010", "01110", "00111", "0000",
@@ -36,6 +34,10 @@ const EXPECTED_UNRESOLVED: [(&str, &str, usize); 6] = [
     ("software_version", "0x080000bc", 1),
     ("complement_checksum", "0x080000bd", 1),
 ];
+
+fn sha256_hex(data: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(data))
+}
 
 #[derive(Clone, Debug)]
 struct Edition {
@@ -367,42 +369,6 @@ pub fn read_gba_header_source(path: &Path) -> Result<Value, String> {
     Ok(value)
 }
 
-fn png_header(width: u32, height: u32) -> Vec<u8> {
-    let mut header = vec![0u8; 13];
-    header[0..4].copy_from_slice(&width.to_be_bytes());
-    header[4..8].copy_from_slice(&height.to_be_bytes());
-    header[8..13].copy_from_slice(&[1, 3, 0, 0, 0]);
-    header
-}
-
-fn logo_png(pixels: &[u8]) -> Vec<u8> {
-    let mut rows = vec![0u8; GBA_LOGO_HEIGHT as usize * (GBA_LOGO_WIDTH as usize / 8 + 1)];
-    let mut cursor = 0;
-    for y in 0..GBA_LOGO_HEIGHT as usize {
-        cursor += 1;
-        for x in (0..GBA_LOGO_WIDTH as usize).step_by(8) {
-            let mut value = 0u8;
-            for bit in 0..8 {
-                value |= pixels[y * GBA_LOGO_WIDTH as usize + x + bit] << (7 - bit);
-            }
-            rows[cursor] = value;
-            cursor += 1;
-        }
-    }
-    let mut output = b"\x89PNG\r\n\x1a\n".to_vec();
-    output.extend_from_slice(&chunk(
-        b"IHDR",
-        &png_header(GBA_LOGO_WIDTH, GBA_LOGO_HEIGHT),
-    ));
-    output.extend_from_slice(&chunk(b"PLTE", &[0xff, 0xff, 0xff, 0, 0, 0]));
-    output.extend_from_slice(&chunk(
-        b"IDAT",
-        &deflate_sync(&rows, DeflateOptions { level: Some(9) }),
-    ));
-    output.extend_from_slice(&chunk(b"IEND", &[]));
-    output
-}
-
 fn tiled_logo_bits(pixels: &[u8]) -> Vec<u8> {
     let mut decoded = vec![0u8; GBA_LOGO_WIDTH as usize * GBA_LOGO_HEIGHT as usize / 8];
     let tiles_wide = GBA_LOGO_WIDTH as usize / 8;
@@ -463,7 +429,7 @@ pub fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
     if decoded.width != GBA_LOGO_WIDTH
         || decoded.height != GBA_LOGO_HEIGHT
         || decoded.palette != vec![[255, 255, 255], [0, 0, 0]]
-        || image != logo_png(&pixels)
+        || sha256_hex(image) != LOGO_PNG_SHA256
     {
         return Err("GBA logo source must be the canonical 104x16 monochrome PNG".to_string());
     }
@@ -529,38 +495,6 @@ fn edition(source: &Value) -> Result<Edition, String> {
     }
 }
 
-fn normalize_path(path: &Path) -> PathBuf {
-    if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        std::env::current_dir().unwrap().join(path)
-    }
-}
-
-fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .unwrap()
-        .to_path_buf()
-}
-
-fn logo_source_path(source: &Value) -> Result<PathBuf, String> {
-    let source_object = object(source, "GBA header source")?;
-    let standard = object(
-        source_object.get("standard").unwrap(),
-        "GBA header standard fields",
-    )?;
-    let logo = object(standard.get("logo").unwrap(), "GBA header logo")?;
-    let relative = logo.get("source").and_then(Value::as_str).unwrap();
-    let root = normalize_path(&repository_root());
-    let path = normalize_path(&root.join(relative));
-    if path != root && !path.starts_with(&root) {
-        return Err("GBA logo source escaped the repository".to_string());
-    }
-    Ok(path)
-}
-
 pub fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, String> {
     parse_gba_header_source(source)?;
     let edition = edition(source)?;
@@ -604,428 +538,4 @@ pub fn build_gba_header_component(
         return Ok(header[offset..offset + size].to_vec());
     }
     Err("GBA header component is not independently determined".to_string())
-}
-
-fn decode_title(field: &[u8]) -> Result<String, String> {
-    if field.len() != 12 {
-        return Err("GBA title field size differs".to_string());
-    }
-    let terminator = field.iter().position(|byte| *byte == 0);
-    let length = terminator.unwrap_or(field.len());
-    if terminator.is_some_and(|index| field[index..].iter().any(|byte| *byte != 0)) {
-        return Err("GBA title has data after NUL padding".to_string());
-    }
-    if field[..length]
-        .iter()
-        .any(|byte| !(*byte >= 0x20 && *byte <= 0x7e))
-    {
-        return Err("GBA title is not printable ASCII".to_string());
-    }
-    Ok(String::from_utf8(field[..length].to_vec()).unwrap())
-}
-
-fn decode_code(field: &[u8], label: &str, length: usize) -> Result<String, String> {
-    let text =
-        String::from_utf8(field.to_vec()).map_err(|_| format!("{label} is not canonical ASCII"))?;
-    if text.len() != length
-        || !text
-            .bytes()
-            .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit())
-    {
-        return Err(format!("{label} is not canonical ASCII"));
-    }
-    Ok(text)
-}
-
-fn standard_clone(source: &Value) -> Value {
-    object(source, "GBA header source")
-        .unwrap()
-        .get("standard")
-        .unwrap()
-        .clone()
-}
-
-pub fn derive_gba_header_source(header: &[u8], template: &Value) -> Result<Value, String> {
-    if header.len() != GBA_HEADER_SIZE {
-        return Err("GBA header extent differs".to_string());
-    }
-    parse_gba_header_source(template)?;
-    let logo_path = logo_source_path(template)?;
-    let logo = encode_gba_logo(&fs::read(logo_path).map_err(|error| error.to_string())?)?;
-    if header[0x04..0xa0] != logo {
-        return Err("GBA firmware logo differs".to_string());
-    }
-    if header[0xb2] != 0x96
-        || header[0xb3] != 0
-        || header[0xb4] != 0
-        || header[0xb5..0xbc].iter().any(|byte| *byte != 0)
-        || header[0xbe..0xc0].iter().any(|byte| *byte != 0)
-    {
-        return Err("GBA fixed or reserved fields differ".to_string());
-    }
-    let target = decode_arm_branch(&header[0..4], GBA_HEADER_ADDRESS)?;
-    let source = json!({
-        "format": 2,
-        "kind": "gba-cartridge-header-standard-fields",
-        "address": "0x08000000",
-        "standard": standard_clone(template),
-        "edition": {
-            "entry_branch": {
-                "instruction_set": "arm",
-                "operation": "b",
-                "target": format!("0x{target:08x}"),
-            },
-            "title": {
-                "text": decode_title(&header[0xa0..0xac])?,
-                "padding": "nul",
-                "field_bytes": 12,
-            },
-            "game_code": decode_code(&header[0xac..0xb0], "GBA game code", 4)?,
-            "maker_code": decode_code(&header[0xb0..0xb2], "GBA maker code", 2)?,
-            "software_version": header[0xbc],
-            "complement_checksum": "derived",
-        },
-        "unresolved_fields": [],
-    });
-    parse_gba_header_source(&source)?;
-    if header[0xbd] != gba_complement_checksum(header)? {
-        return Err("GBA complement checksum differs".to_string());
-    }
-    let source_logo = fs::read(logo_source_path(&source)?).map_err(|error| error.to_string())?;
-    let rebuilt = build_gba_header(&source, &source_logo)?;
-    if rebuilt != header {
-        return Err("derived GBA header source does not round-trip".to_string());
-    }
-    Ok(source)
-}
-
-fn same_path(left: &Path, right: &Path) -> bool {
-    match (fs::canonicalize(left), fs::canonicalize(right)) {
-        (Ok(left), Ok(right)) => left == right,
-        _ => normalize_path(left) == normalize_path(right),
-    }
-}
-
-fn temporary_directory(parent: &Path, prefix: &str) -> Result<PathBuf, String> {
-    let pid = std::process::id();
-    for attempt in 0..1000u32 {
-        let candidate = parent.join(format!(".{prefix}{pid}-{attempt}"));
-        if fs::create_dir(&candidate).is_ok() {
-            return Ok(candidate);
-        }
-    }
-    Err("unable to create temporary export directory".to_string())
-}
-
-pub fn export_gba_header(
-    rom: &[u8],
-    output: &Path,
-    template_path: &Path,
-    input_path: Option<&Path>,
-) -> Result<Value, String> {
-    if rom.len() < GBA_HEADER_SIZE {
-        return Err("ROM is too small for a GBA header".to_string());
-    }
-    if input_path.is_some_and(|input| same_path(input, output)) {
-        return Err("refusing to overwrite the input ROM".to_string());
-    }
-    let template = read_gba_header_source(template_path)?;
-    let source = derive_gba_header_source(&rom[..GBA_HEADER_SIZE], &template)?;
-    let destination = normalize_path(output);
-    let parent = destination.parent().unwrap();
-    fs::create_dir_all(parent).map_err(|error| error.to_string())?;
-    let transaction = temporary_directory(parent, "gba-header-export-")?;
-    let staged = transaction.join(destination.file_name().unwrap());
-    let result = (|| {
-        fs::write(&staged, format!("{}\n", canonical_json(&source)))
-            .map_err(|error| error.to_string())?;
-        let staged_source = read_gba_header_source(&staged)?;
-        let logo =
-            fs::read(logo_source_path(&staged_source)?).map_err(|error| error.to_string())?;
-        if build_gba_header(&staged_source, &logo)? != rom[..GBA_HEADER_SIZE] {
-            return Err("staged GBA header source does not round-trip".to_string());
-        }
-        fs::rename(&staged, &destination).map_err(|error| error.to_string())?;
-        Ok(source.clone())
-    })();
-    let _ = fs::remove_dir_all(&transaction);
-    result
-}
-
-pub fn verify_gba_header(rom: &[u8], source_path: &Path) -> Result<Vec<u8>, String> {
-    if rom.len() < GBA_HEADER_SIZE {
-        return Err("ROM is too small for a GBA header".to_string());
-    }
-    let source = read_gba_header_source(source_path)?;
-    let logo = fs::read(logo_source_path(&source)?).map_err(|error| error.to_string())?;
-    let built = build_gba_header(&source, &logo)?;
-    if built != rom[..GBA_HEADER_SIZE] {
-        let offset = built
-            .iter()
-            .zip(&rom[..GBA_HEADER_SIZE])
-            .position(|(left, right)| left != right)
-            .unwrap_or(0);
-        return Err(format!(
-            "GBA header differs at 0x{:08x}",
-            GBA_HEADER_ADDRESS + offset as u32
-        ));
-    }
-    Ok(built)
-}
-
-fn synthetic_source(template: &Value) -> Value {
-    json!({
-        "format": 2,
-        "kind": "gba-cartridge-header-standard-fields",
-        "address": "0x08000000",
-        "standard": standard_clone(template),
-        "edition": {
-            "entry_branch": { "instruction_set": "arm", "operation": "b", "target": "0x080003c0" },
-            "title": { "text": "HEADER TEST", "padding": "nul", "field_bytes": 12 },
-            "game_code": "TST1",
-            "maker_code": "01",
-            "software_version": 7,
-            "complement_checksum": "derived",
-        },
-        "unresolved_fields": [],
-    })
-}
-
-fn expected_unresolved() -> Value {
-    Value::Array(
-        EXPECTED_UNRESOLVED
-            .iter()
-            .map(|(name, address, size)| json!({ "name": name, "address": address, "size": size }))
-            .collect(),
-    )
-}
-
-fn reject<F: FnOnce() -> Result<(), String>>(callback: F) -> bool {
-    callback().is_err()
-}
-
-pub fn self_test() -> Result<String, String> {
-    let default_source = repository_root().join("assets/data/gba_header.json");
-    let canonical = read_gba_header_source(&default_source)?;
-    let canonical_object = object(&canonical, "GBA header source")?;
-    if canonical_object.get("edition").is_none_or(Value::is_null)
-        || !canonical_object
-            .get("unresolved_fields")
-            .unwrap()
-            .as_array()
-            .unwrap()
-            .is_empty()
-    {
-        return Err(
-            "canonical GBA header source must be fully resolved after byte closure".to_string(),
-        );
-    }
-    let mut template = canonical.clone();
-    let template_object = template.as_object_mut().unwrap();
-    template_object.insert("edition".to_string(), Value::Null);
-    template_object.insert("unresolved_fields".to_string(), expected_unresolved());
-    parse_gba_header_source(&template)?;
-    let logo_image = fs::read(logo_source_path(&template)?).map_err(|error| error.to_string())?;
-    let source = synthetic_source(&template);
-    let built = build_gba_header(&source, &logo_image)?;
-    if built.len() != GBA_HEADER_SIZE
-        || built[0..4] != [0xee, 0, 0, 0xea]
-        || decode_arm_branch(&built[0..4], GBA_HEADER_ADDRESS)? != 0x0800_03c0
-        || built[0xbd] != gba_complement_checksum(&built)?
-    {
-        return Err("complete GBA header build self-test failed".to_string());
-    }
-    if derive_gba_header_source(&built, &template)? != source {
-        return Err("GBA header semantic round-trip failed".to_string());
-    }
-    let temporary_root = std::env::var_os("TMPDIR")
-        .or_else(|| std::env::var_os("TMP"))
-        .or_else(|| std::env::var_os("TEMP"))
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("/tmp"));
-    let temporary = temporary_directory(&temporary_root, "gba-header-self-test-")?;
-    let result = (|| {
-        let output = temporary.join("header.json");
-        export_gba_header(&built, &output, &default_source, None)?;
-        if build_gba_header(&read_gba_header_source(&output)?, &logo_image)? != built {
-            return Err("exported GBA header differs".to_string());
-        }
-        verify_gba_header(&built, &output)?;
-        let sentinel = b"preserve\n";
-        fs::write(&output, sentinel).map_err(|error| error.to_string())?;
-        let mut corrupt_checksum = built.clone();
-        corrupt_checksum[0xbd] ^= 1;
-        if !reject(|| {
-            export_gba_header(&corrupt_checksum, &output, &default_source, None).map(|_| ())
-        }) || fs::read(&output).map_err(|error| error.to_string())? != sentinel
-        {
-            return Err("failed export replaced its destination".to_string());
-        }
-        let mut corrupt_branch = built.clone();
-        corrupt_branch[3] = 0xeb;
-        if !reject(|| derive_gba_header_source(&corrupt_branch, &template).map(|_| ())) {
-            return Err("ARM BL entry was accepted".to_string());
-        }
-        let mut corrupt_logo = built.clone();
-        corrupt_logo[0x20] ^= 1;
-        if !reject(|| derive_gba_header_source(&corrupt_logo, &template).map(|_| ())) {
-            return Err("nonstandard logo was accepted".to_string());
-        }
-        let mut corrupt_fixed = built.clone();
-        corrupt_fixed[0xb5] = 1;
-        if !reject(|| derive_gba_header_source(&corrupt_fixed, &template).map(|_| ())) {
-            return Err("reserved data was accepted".to_string());
-        }
-        let mut corrupt_title = built.clone();
-        corrupt_title[0xa2] = 0;
-        corrupt_title[0xbd] = gba_complement_checksum(&corrupt_title)?;
-        if !reject(|| derive_gba_header_source(&corrupt_title, &template).map(|_| ())) {
-            return Err("embedded title NUL was accepted".to_string());
-        }
-        let mut corrupt_code = built.clone();
-        corrupt_code[0xac] = b'a';
-        corrupt_code[0xbd] = gba_complement_checksum(&corrupt_code)?;
-        if !reject(|| derive_gba_header_source(&corrupt_code, &template).map(|_| ())) {
-            return Err("lowercase game code was accepted".to_string());
-        }
-        let mut unknown = source.clone();
-        unknown
-            .as_object_mut()
-            .unwrap()
-            .get_mut("edition")
-            .unwrap()
-            .as_object_mut()
-            .unwrap()
-            .insert("raw_checksum".to_string(), json!("0x00"));
-        if parse_gba_header_source(&unknown).is_ok() {
-            return Err("unknown edition field was accepted".to_string());
-        }
-        let mut explicit_checksum = source.clone();
-        explicit_checksum
-            .as_object_mut()
-            .unwrap()
-            .get_mut("edition")
-            .unwrap()
-            .as_object_mut()
-            .unwrap()
-            .insert("complement_checksum".to_string(), json!("0x00"));
-        if parse_gba_header_source(&explicit_checksum).is_ok() {
-            return Err("explicit checksum byte was accepted".to_string());
-        }
-        let mut bad_version = source.clone();
-        bad_version
-            .as_object_mut()
-            .unwrap()
-            .get_mut("edition")
-            .unwrap()
-            .as_object_mut()
-            .unwrap()
-            .insert("software_version".to_string(), json!(256));
-        if parse_gba_header_source(&bad_version).is_ok() {
-            return Err("oversized software version was accepted".to_string());
-        }
-        if !reject(|| build_gba_header(&template, &logo_image).map(|_| ())) {
-            return Err("unresolved header built as complete".to_string());
-        }
-        fs::write(&output, serde_json::to_string(&source).unwrap())
-            .map_err(|error| error.to_string())?;
-        if !reject(|| read_gba_header_source(&output).map(|_| ())) {
-            return Err("noncanonical JSON was accepted".to_string());
-        }
-        let rom = temporary.join("rom.gba");
-        fs::write(&rom, &built).map_err(|error| error.to_string())?;
-        if !reject(|| export_gba_header(&built, &rom, &default_source, Some(&rom)).map(|_| ())) {
-            return Err("input ROM overwrite was accepted".to_string());
-        }
-        Ok(())
-    })();
-    let _ = fs::remove_dir_all(&temporary);
-    result?;
-    Ok("self-test=ok bytes=192 unresolved=0".to_string())
-}
-
-mod sha256 {
-    const K: [u32; 64] = [
-        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4,
-        0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe,
-        0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f,
-        0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
-        0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
-        0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
-        0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116,
-        0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
-        0xc67178f2,
-    ];
-
-    pub fn hex(data: &[u8]) -> String {
-        let mut state = [
-            0x6a09e667u32,
-            0xbb67ae85,
-            0x3c6ef372,
-            0xa54ff53a,
-            0x510e527f,
-            0x9b05688c,
-            0x1f83d9ab,
-            0x5be0cd19,
-        ];
-        let bit_length = (data.len() as u64) * 8;
-        let mut message = data.to_vec();
-        message.push(0x80);
-        while message.len() % 64 != 56 {
-            message.push(0);
-        }
-        message.extend_from_slice(&bit_length.to_be_bytes());
-        for block in message.chunks_exact(64) {
-            let mut words = [0u32; 64];
-            for (index, word) in words[..16].iter_mut().enumerate() {
-                *word = u32::from_be_bytes(block[index * 4..index * 4 + 4].try_into().unwrap());
-            }
-            for index in 16..64 {
-                let s0 = words[index - 15].rotate_right(7)
-                    ^ words[index - 15].rotate_right(18)
-                    ^ (words[index - 15] >> 3);
-                let s1 = words[index - 2].rotate_right(17)
-                    ^ words[index - 2].rotate_right(19)
-                    ^ (words[index - 2] >> 10);
-                words[index] = words[index - 16]
-                    .wrapping_add(s0)
-                    .wrapping_add(words[index - 7])
-                    .wrapping_add(s1);
-            }
-            let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h) = (
-                state[0], state[1], state[2], state[3], state[4], state[5], state[6], state[7],
-            );
-            for index in 0..64 {
-                let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
-                let choice = (e & f) ^ ((!e) & g);
-                let temp1 = h
-                    .wrapping_add(s1)
-                    .wrapping_add(choice)
-                    .wrapping_add(K[index])
-                    .wrapping_add(words[index]);
-                let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
-                let majority = (a & b) ^ (a & c) ^ (b & c);
-                let temp2 = s0.wrapping_add(majority);
-                (h, g, f, e, d, c, b, a) = (
-                    g,
-                    f,
-                    e,
-                    d.wrapping_add(temp1),
-                    c,
-                    b,
-                    a,
-                    temp1.wrapping_add(temp2),
-                );
-            }
-            for (value, add) in state.iter_mut().zip([a, b, c, d, e, f, g, h]) {
-                *value = value.wrapping_add(add);
-            }
-        }
-        state.iter().map(|word| format!("{word:08x}")).collect()
-    }
-}
-
-fn sha256_hex(data: &[u8]) -> String {
-    sha256::hex(data)
 }

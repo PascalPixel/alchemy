@@ -13,11 +13,7 @@ edition = "2021"
 # `../lib/overlay_disasm.ts`, which `tools/lib/overlay_call_targets.ts` imports
 # for `assembleOverlay`.
 overlay-disasm = { path = "../overlay-disasm" }
-# `exact_reading_list`'s already-landed `src/json.rs` insertion-order JSON
-# reader, reused here for `out/decomp/overlays.json` rather than reinventing
-# it a third time (see `overlay-entry`, which took the same dependency for the
-# same reason).
-exact-reading-list = { path = "../exact-reading-list" }
+serde_json = "1"
 
 [lib]
 name = "overlay_call_targets"

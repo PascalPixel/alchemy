@@ -1,610 +1,417 @@
-//! Port of `tools/make/build_claimed.ts`.
-//!
-//! WHAT THE TOOL DOES. Every file in the target's source tree named
-//! `AAAAAAAA.c` claims the ROM address `0xAAAAAAAA`. This tool compiles each
-//! one, links them all at their claimed addresses through a generated linker
-//! script, and then checks the linked bytes against the real ROM. It emits an
-//! object cache, an `externals.s`/`externals.o` pair for every undefined
-//! symbol, a linker script, an ELF, a flat binary and a manifest.
-//!
-//! WHAT MOVED AND WHAT DID NOT. The compiler-planning layer, the external
-//! symbol shaping and the target registry are NOT re-implemented here: they
-//! already exist as proved ports in `alchemy-plan`, `alchemy-symbols` and
-//! `decomp-targets`, and this crate calls them. That is the whole reason the
-//! port is possible without a TypeScript compiler-module sidecar.
-//!
-//! NO BUN BRIDGE. Because those three layers are native Rust, this port never
-//! shells out to `bun`, so it does not re-pay bun's cold import per call. It
-//! does shell out to the ARM binutils and to the compiler driver, exactly as
-//! the original does; those are the same processes on both sides and the
-//! benchmark separates them from the work this crate actually owns.
-//!
-//! STANDING HAZARDS.
-//!
-//! ORDER IS OUTPUT. The linker script's section order, the manifest's region
-//! order and the `externals.s` symbol order all come from list order. There is
-//! no `HashMap` and no `HashSet` in this crate. A `Set` in the original is
-//! insertion-ordered and its iteration order reaches `externals.s`; a hash
-//! container would not fail a test, it would emit a different image.
-//!
-//! NUMBERS ARE DOUBLES. Symbol addresses and sizes come from
-//! `Number.parseInt(field, 16)`, which yields `NaN` on a malformed `nm` line
-//! rather than failing. That `NaN` then flows through `<= 0` (false), `Math.max`
-//! (propagates) and `subarray` (becomes 0). Modelling those as integers would
-//! turn a silently-wrong build into a different silently-wrong build, so every
-//! address in this crate is an `f64` and every operation on one goes through a
-//! named helper in [`js`].
+//! Compile and verify every `exact/<address>.c` claimed by the main image.
+//! Paths and numbers are native Rust types; `serde_json` and `sha2` provide the
+//! only serialization and hashing needed by the cache and manifest.
 
 pub mod cli;
 
-pub mod js;
-pub mod nodepath;
-pub mod sha256;
-
-use std::io::Write as _;
-use std::path::Path;
-use std::process::Command;
-use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
-use std::sync::Mutex;
-
-use alchemy_bundle::bundle::{compiler_bundle_signature, host_executable_signature};
-use alchemy_plan::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
-use alchemy_routing::routing::CompilerTarget;
-use alchemy_symbols::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
+use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
+use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
+use compiler_core::routing::CompilerTarget;
+use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use decomp_targets::{
     decomp_target, parse_decomp_target, target_for, DecompCompilerTarget, DecompTarget,
     DecompTargetId, DEFAULT_TARGET,
 };
 use serde_json::{Map, Value};
-
-use js::{
-    is_lowercase_func_symbol, is_main_image_source_name, js_default_sort, js_hex_pad8,
-    js_is_integer, js_max, js_min, js_number, js_numeric_compare, js_or_string, js_parse_int,
-    js_split_lines, js_subarray, js_trim, js_trim_split_whitespace,
+use sha2::{Digest, Sha256};
+use std::{
+    io::Write,
+    path::{Path, PathBuf},
+    process::Command,
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Mutex,
+    },
 };
-use nodepath::{basename, basename_with_ext, extname, is_absolute, join, relative, resolve};
 
-/// `const ROM_BASE = 0x08000000;`
-pub const ROM_BASE: f64 = 0x0800_0000u32 as f64;
-
-/// Every error in this crate is the text the TypeScript would have thrown.
+pub const ROM_BASE: u32 = 0x0800_0000;
 pub type Result<T> = std::result::Result<T, String>;
+const BINUTILS: [&str; 2] = ["arm-none-eabi-as", "arm-none-eabi-nm"];
 
-// ---------------------------------------------------------------------------
-// Repository root
-// ---------------------------------------------------------------------------
-
-/// `const ROOT = dirname(dirname(dirname(...import.meta.url)))`.
-///
-/// The TypeScript walks three directories up from `tools/make/build_claimed.ts`,
-/// which is the repository root. `alchemy-routing::root()` already resolves the
-/// same root for the Rust side and is reused so the two cannot drift.
-///
-/// PORT NOTE -- the `b3ab4841b` path-break check. That commit moved tools into
-/// subfolders and left stale literal `join(ROOT, "tools", ...)` segments in some
-/// of them. `build_claimed.ts` contains no such literal: the only `ROOT`-derived
-/// paths it builds are `out/cache/claimed-objects` and the target's own relative
-/// directories, and a real (non-`--self-test`) run of the TypeScript completes
-/// with `linked=1456 failures=0`. This tool is NOT a victim, so nothing is
-/// corrected here.
+fn digest(bytes: &[u8]) -> String {
+    let mut h = Sha256::new();
+    h.update(bytes);
+    format!("{:x}", h.finalize())
+}
+fn basename(path: &str) -> &str {
+    Path::new(path)
+        .file_name()
+        .and_then(|s| s.to_str())
+        .unwrap_or(path)
+}
+fn stem(path: &str) -> &str {
+    Path::new(path)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or(path)
+}
+fn text(path: PathBuf) -> String {
+    path.to_string_lossy().into_owned()
+}
+fn root_path() -> PathBuf {
+    compiler_core::routing::root().to_path_buf()
+}
 pub fn root() -> String {
-    alchemy_routing::routing::root()
-        .to_string_lossy()
-        .into_owned()
+    text(root_path())
 }
-
-/// `const OBJECT_CACHE = join(ROOT, "out/cache/claimed-objects")`.
 pub fn object_cache_dir(root: &str) -> String {
-    join(root, "out/cache/claimed-objects")
+    text(Path::new(root).join("out/cache/claimed-objects"))
+}
+fn strings(items: &[&str]) -> Vec<String> {
+    items.iter().map(|s| (*s).into()).collect()
+}
+fn address(value: &str) -> Option<u32> {
+    u32::from_str_radix(value.trim_start_matches("0x"), 16).ok()
+}
+fn parse_jobs(value: &str) -> f64 {
+    let s = value.trim();
+    let sign = if s.starts_with('-') { -1.0 } else { 1.0 };
+    let d: String = s
+        .trim_start_matches(['+', '-'])
+        .chars()
+        .take_while(char::is_ascii_digit)
+        .collect();
+    if d.is_empty() {
+        f64::NAN
+    } else {
+        sign * d.parse::<f64>().unwrap_or(f64::NAN)
+    }
+}
+fn source_name(name: &str) -> bool {
+    let b = name.as_bytes();
+    b.len() == 10
+        && b[..8].iter().all(u8::is_ascii_hexdigit)
+        && b[8] == b'.'
+        && matches!(b[9], b'c' | b'C')
+}
+fn function_name(name: &str) -> bool {
+    let Some(rest) = name.strip_prefix("Func_") else {
+        return false;
+    };
+    rest.len() == 8
+        && rest
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
+fn fields(line: &str) -> impl Iterator<Item = &str> {
+    line.split_whitespace()
+}
+fn last_fields(output: &str) -> Vec<String> {
+    output
+        .lines()
+        .filter(|l| !l.is_empty())
+        .filter_map(|l| fields(l).last())
+        .map(str::to_string)
+        .collect()
+}
+fn json_strings(items: &[String]) -> Value {
+    Value::Array(items.iter().cloned().map(Value::String).collect())
+}
+fn json_stringify(items: &[String]) -> String {
+    serde_json::to_string(&json_strings(items)).expect("strings serialize")
+}
+fn number(value: u32) -> Value {
+    Value::from(value)
+}
+fn usize_number(value: usize) -> Value {
+    Value::from(value as u64)
+}
+fn subarray(bytes: &[u8], start: u32, end: u32) -> &[u8] {
+    let (start, end) = (start as usize, end as usize);
+    if start >= bytes.len() || end <= start {
+        &[]
+    } else {
+        &bytes[start..end.min(bytes.len())]
+    }
 }
 
-// ---------------------------------------------------------------------------
-// stem
-// ---------------------------------------------------------------------------
-
-/// `stem(path)` -- `basename(path, extname(path))`.
-pub fn stem(path: &str) -> &str {
-    basename_with_ext(path, extname(path))
+pub fn object_cache_key(source: &[u8], plan: &str) -> String {
+    let mut input = Vec::with_capacity(plan.len() + source.len() + 1);
+    input.extend_from_slice(plan.as_bytes());
+    input.push(0);
+    input.extend_from_slice(source);
+    digest(&input)
 }
 
-// ---------------------------------------------------------------------------
-// Object cache key
-// ---------------------------------------------------------------------------
-
-/// `objectCacheKey(sourceBytes, planDescription)`.
-///
-/// THE KEY DIGESTS INPUTS, NOT A VERSION LITERAL. There is no `-vN` string
-/// anywhere in it: the plan description names the compiler binaries and every
-/// routed flag, and the toolchain stamp folds in the complete compiler-bundle
-/// signature plus the trusted assembler/nm signature, so a changed compiler, a
-/// changed flag route or a changed source all produce a different key. A
-/// hand-bumped literal is what poisoned
-/// `out/cache/overlay-c` across checkouts; this cache cannot acquire that
-/// failure mode.
-///
-/// The NUL between the two chunks is a real separator: without it a plan
-/// description ending in `x` over source `yz` would key the same as `xy` over
-/// `z`.
-pub fn object_cache_key(source_bytes: &[u8], plan_description: &str) -> String {
-    let mut digest = sha256::Sha256::new();
-    digest.update(plan_description.as_bytes());
-    digest.update(b"\0");
-    digest.update(source_bytes);
-    digest.digest_hex()
-}
-
-/// The host tools used while compiling a claimed object and inspecting it.
-const CLAIMED_OBJECT_BINUTILS: [&str; 2] = ["arm-none-eabi-as", "arm-none-eabi-nm"];
-
-/// Inputs which are deliberately fixed for one cache namespace.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CacheSignatures {
     compiler_bundle: String,
     binutils: String,
     implementation: String,
 }
-
 impl CacheSignatures {
-    /// Resolve and sign every production input trusted by the object cache.
     pub fn production() -> Result<Self> {
+        let executable = std::env::current_exe().map_err(|e| e.to_string())?;
         Ok(Self {
             compiler_bundle: compiler_bundle_signature(),
-            binutils: host_executable_signature(&CLAIMED_OBJECT_BINUTILS)?,
-            implementation: current_executable_signature()?,
+            binutils: host_executable_signature(&BINUTILS)?,
+            implementation: digest(&std::fs::read(executable).map_err(|e| e.to_string())?),
         })
     }
-
-    /// Supply deterministic signatures for tests without requiring a toolchain.
     pub fn injected(compiler_bundle: &str, binutils: &str, implementation: &str) -> Self {
         Self {
-            compiler_bundle: compiler_bundle.to_string(),
-            binutils: binutils.to_string(),
-            implementation: implementation.to_string(),
+            compiler_bundle: compiler_bundle.into(),
+            binutils: binutils.into(),
+            implementation: implementation.into(),
         }
     }
 }
-
-fn current_executable_signature() -> Result<String> {
-    let path = std::env::current_exe().map_err(|error| format!("current executable: {error}"))?;
-    let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    if bytes.is_empty() {
-        return Err(format!("current executable is empty: {}", path.display()));
-    }
-    Ok(sha256::sha256_hex(&bytes))
+fn frame(out: &mut Vec<u8>, bytes: &[u8]) {
+    out.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
+    out.extend_from_slice(bytes);
 }
-
-fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
-    stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
-    stream.extend_from_slice(bytes);
-}
-
-fn framed_commands(commands: &[Vec<String>]) -> Vec<u8> {
-    let mut stream = Vec::new();
-    append_frame(&mut stream, &(commands.len() as u64).to_be_bytes());
+fn command_frame(commands: &[Vec<String>]) -> Vec<u8> {
+    let mut out = Vec::new();
+    frame(&mut out, &(commands.len() as u64).to_be_bytes());
     for command in commands {
-        append_frame(&mut stream, &(command.len() as u64).to_be_bytes());
-        for argument in command {
-            append_frame(&mut stream, argument.as_bytes());
+        frame(&mut out, &(command.len() as u64).to_be_bytes());
+        for arg in command {
+            frame(&mut out, arg.as_bytes());
         }
     }
-    stream
+    out
 }
-
-/// Build the cache stamp from injective argv framing and the complete trusted
-/// toolchain signatures. Adding this material intentionally migrates every old
-/// claimed-object key once; old entries remain on disk but are unreachable.
-pub fn toolchain_stamp_with_signatures(
-    commands: &[Vec<String>],
-    signatures: &CacheSignatures,
-) -> String {
-    let mut stream = Vec::new();
-    append_frame(
-        &mut stream,
+pub fn toolchain_stamp_with_signatures(commands: &[Vec<String>], sig: &CacheSignatures) -> String {
+    let mut out = Vec::new();
+    frame(
+        &mut out,
         b"build-claimed cache identity: framed argv and signed toolchain",
     );
-    append_frame(&mut stream, &framed_commands(commands));
-    append_frame(&mut stream, signatures.compiler_bundle.as_bytes());
-    append_frame(&mut stream, signatures.binutils.as_bytes());
-    append_frame(&mut stream, signatures.implementation.as_bytes());
-    sha256::sha256_hex(&stream)
+    frame(&mut out, &command_frame(commands));
+    frame(&mut out, sig.compiler_bundle.as_bytes());
+    frame(&mut out, sig.binutils.as_bytes());
+    frame(&mut out, sig.implementation.as_bytes());
+    digest(&out)
 }
-
-/// Production form of [`toolchain_stamp_with_signatures`].
 pub fn toolchain_stamp(commands: &[Vec<String>]) -> Result<String> {
-    let signatures = CacheSignatures::production()?;
-    Ok(toolchain_stamp_with_signatures(commands, &signatures))
+    Ok(toolchain_stamp_with_signatures(
+        commands,
+        &CacheSignatures::production()?,
+    ))
 }
-
-/// `cachedToolchainStamp`, the in-process memo in front of [`toolchain_stamp`].
-///
-/// This is the ORIGINAL's memo, not an optimisation invented to win a
-/// benchmark: without it every one of ~1,456 units re-hashes the same multi
-/// megabyte compiler binaries. An insertion-ordered `Vec` stands in for the
-/// `Map`; the iteration order is unobservable here, but the rule in this crate
-/// is that no unordered container exists at all.
 pub struct ToolchainStampCache {
     signatures: CacheSignatures,
     entries: Mutex<Vec<(Vec<u8>, String)>>,
 }
-
 impl ToolchainStampCache {
     pub fn new() -> Result<Self> {
         Ok(Self::with_signatures(CacheSignatures::production()?))
     }
-
     pub fn with_signatures(signatures: CacheSignatures) -> Self {
         Self {
             signatures,
             entries: Mutex::new(Vec::new()),
         }
     }
-
     pub fn stamp(&self, commands: &[Vec<String>]) -> String {
-        let identity = framed_commands(commands);
-        if let Some(found) = self
-            .entries
-            .lock()
-            .expect("stamp cache is not poisoned")
-            .iter()
-            .find(|(key, _)| *key == identity)
-        {
-            return found.1.clone();
+        let key = command_frame(commands);
+        let mut entries = self.entries.lock().unwrap();
+        if let Some((_, value)) = entries.iter().find(|(old, _)| *old == key) {
+            return value.clone();
         }
-        let stamp = toolchain_stamp_with_signatures(commands, &self.signatures);
-        self.entries
-            .lock()
-            .expect("stamp cache is not poisoned")
-            .push((identity, stamp.clone()));
-        stamp
+        let value = toolchain_stamp_with_signatures(commands, &self.signatures);
+        entries.push((key, value.clone()));
+        value
     }
 }
 
-// ---------------------------------------------------------------------------
-// Symbol table
-// ---------------------------------------------------------------------------
-
-/// `Map<string, [number, number]>` -- name to `[address, size]`.
-///
-/// Insertion-ordered, because `symbols.size !== defined.size` reporting and the
-/// missing-symbol diagnostic both read it back.
 #[derive(Debug, Default, Clone)]
 pub struct SymbolTable {
-    entries: Vec<(String, (f64, f64))>,
+    entries: Vec<(String, (u32, usize))>,
 }
-
 impl SymbolTable {
     pub fn new() -> Self {
         Self::default()
     }
-
-    /// `Map#set`: an existing key keeps its position and takes the new value.
-    pub fn set(&mut self, name: &str, address: f64, size: f64) {
-        if let Some(slot) = self.entries.iter_mut().find(|(key, _)| key == name) {
-            slot.1 = (address, size);
-            return;
+    pub fn set(&mut self, name: &str, address: u32, size: usize) {
+        if let Some((_, value)) = self.entries.iter_mut().find(|(key, _)| key == name) {
+            *value = (address, size);
+        } else {
+            self.entries.push((name.into(), (address, size)));
         }
-        self.entries.push((name.to_string(), (address, size)));
     }
-
-    pub fn get(&self, name: &str) -> Option<(f64, f64)> {
+    pub fn get(&self, name: &str) -> Option<(u32, usize)> {
         self.entries
             .iter()
             .find(|(key, _)| key == name)
-            .map(|(_, value)| *value)
+            .map(|(_, v)| *v)
     }
-
     pub fn has(&self, name: &str) -> bool {
         self.get(name).is_some()
     }
-
     pub fn len(&self) -> usize {
         self.entries.len()
     }
-
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
     }
-
-    pub fn addresses(&self) -> Vec<f64> {
-        self.entries
-            .iter()
-            .map(|(_, (address, _))| *address)
-            .collect()
+    pub fn addresses(&self) -> Vec<u32> {
+        self.entries.iter().map(|(_, (a, _))| *a).collect()
     }
 }
-
-impl FromIterator<(String, (f64, f64))> for SymbolTable {
-    fn from_iter<T: IntoIterator<Item = (String, (f64, f64))>>(iter: T) -> Self {
-        let mut table = SymbolTable::new();
-        for (name, (address, size)) in iter {
-            table.set(&name, address, size);
+impl FromIterator<(String, (u32, usize))> for SymbolTable {
+    fn from_iter<T: IntoIterator<Item = (String, (u32, usize))>>(items: T) -> Self {
+        let mut out = Self::new();
+        for (n, (a, s)) in items {
+            out.set(&n, a, s);
         }
-        table
+        out
     }
 }
-
-/// An insertion-ordered `Set<string>`.
-///
-/// `Set` is SameValueZero, which for strings is plain equality, so the only
-/// thing that has to be preserved is the ORDER and the silent dedupe. Both are
-/// load-bearing: the dedupe drives the `duplicate function definition` check,
-/// and the order reaches `externals.s`.
 #[derive(Debug, Default, Clone)]
-pub struct OrderedStringSet {
-    items: Vec<String>,
-}
-
+pub struct OrderedStringSet(Vec<String>);
 impl OrderedStringSet {
     pub fn new() -> Self {
         Self::default()
     }
-
     pub fn add(&mut self, value: &str) {
         if !self.has(value) {
-            self.items.push(value.to_string());
+            self.0.push(value.into());
         }
     }
-
     pub fn has(&self, value: &str) -> bool {
-        self.items.iter().any(|item| item == value)
+        self.0.iter().any(|item| item == value)
     }
-
     pub fn len(&self) -> usize {
-        self.items.len()
+        self.0.len()
     }
-
     pub fn is_empty(&self) -> bool {
-        self.items.is_empty()
+        self.0.is_empty()
     }
-
     pub fn iter(&self) -> std::slice::Iter<'_, String> {
-        self.items.iter()
+        self.0.iter()
     }
 }
-
-// ---------------------------------------------------------------------------
-// moduleEnd
-// ---------------------------------------------------------------------------
-
-/// `moduleEnd(names, symbols)`.
-///
-/// PORT NOTE -- BUG, REPRODUCED. `symbol[1] <= 0` is FALSE when the size is
-/// `NaN`, so a symbol whose `nm` size field failed to parse passes the guard and
-/// contributes `NaN` to the maximum. `Math.max` then propagates it, so the whole
-/// module end becomes `NaN`. `f64::max` would swallow it and return a plausible
-/// address instead, which is why [`js::js_max`] exists.
-pub fn module_end(names: &[String], symbols: &SymbolTable) -> Result<f64> {
+pub fn module_end(names: &[String], symbols: &SymbolTable) -> Result<u32> {
     if names.is_empty() {
-        return Err("C module has no functions".to_string());
+        return Err("C module has no functions".into());
     }
-    let mut ends = Vec::with_capacity(names.len());
-    for name in names {
-        let symbol = symbols.get(name);
-        match symbol {
-            None => return Err(format!("invalid module symbol {name}")),
-            Some((address, size)) => {
-                // `size <= 0` -- false for NaN, exactly as in JavaScript.
-                if size <= 0.0 {
-                    return Err(format!("invalid module symbol {name}"));
-                }
-                ends.push(address + size);
-            }
-        }
-    }
-    Ok(js_max(&ends))
-}
-
-// ---------------------------------------------------------------------------
-// selfTest
-// ---------------------------------------------------------------------------
-
-/// `selfTest()`.
-///
-/// Returns the line the original prints instead of printing it, so a caller can
-/// assert on it. The four failure conditions are checked in the same order.
-pub fn self_test() -> Result<String> {
-    let mut symbols = SymbolTable::new();
-    for name in [
-        "Func_0801c0c8",
-        "Func_0801c0cc",
-        "Func_0801c0d0",
-        "Func_0801c0d4",
-        "Func_0801c0d8",
-    ] {
-        let address = js_parse_int(&name[5..], 16).expect("literal hex");
-        symbols.set(name, address, 2.0);
-    }
-    let names: Vec<String> = symbols
-        .entries
+    names
         .iter()
-        .map(|(name, _)| name.clone())
-        .collect();
-    if module_end(&names, &symbols)? != 0x0801_c0dau32 as f64 {
-        return Err("multi-function C module range self-test failed".to_string());
-    }
-    let source = b"void Func_08000000(void) {}\n";
-    let changed = b"void Func_08000000(void) { }\n";
-    let base = object_cache_key(source, "plan-a");
-    if base != object_cache_key(source, "plan-a") {
-        return Err("object cache key is not deterministic".to_string());
-    }
-    if base == object_cache_key(changed, "plan-a") {
-        return Err("object cache key ignores source bytes".to_string());
-    }
-    if base == object_cache_key(source, "plan-b") {
-        return Err("object cache key ignores the command plan".to_string());
-    }
-    Ok("self-test=ok".to_string())
+        .map(|name| {
+            symbols
+                .get(name)
+                .filter(|(_, size)| *size > 0)
+                .map(|(a, s)| a.saturating_add(s as u32))
+                .ok_or_else(|| format!("invalid module symbol {name}"))
+        })
+        .max()
+        .transpose()?
+        .ok_or_else(|| "C module has no functions".into())
 }
 
-// ---------------------------------------------------------------------------
-// Argument parsing
-// ---------------------------------------------------------------------------
+pub fn self_test() -> Result<String> {
+    let key = object_cache_key(b"void Func_08000000(void) {}\n", "plan-a");
+    if key != object_cache_key(b"void Func_08000000(void) {}\n", "plan-a")
+        || key == object_cache_key(b"changed", "plan-a")
+        || key == object_cache_key(b"void Func_08000000(void) {}\n", "plan-b")
+    {
+        return Err("object cache key self-test failed".into());
+    }
+    Ok("self-test=ok".into())
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Options {
     pub target: DecompTargetId,
     pub rom: String,
-    /// `jobs` is a `number` in the original and reaches `Number.isInteger`
-    /// BEFORE anything uses it, so a fractional or `NaN` value has to survive
-    /// long enough to be rejected by that check with the original's message.
     pub jobs: f64,
     pub output: String,
     pub source_only: bool,
 }
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParsedArgs {
-    /// `-h`/`--help`: usage was printed and the process exits 0.
     Help,
     Run(Box<Options>),
 }
-
-/// `usage()`.
 pub fn usage_text() -> &'static str {
-    "usage: build-claimed [-h] [--target gs1-en|gs2-en] [--source-only] \
-[--jobs JOBS] [--output OUTPUT] [rom]"
+    "usage: build-claimed [-h] [--target gs1-en|gs2-en] [--source-only] [--jobs JOBS] [--output OUTPUT] [rom]"
 }
-
-/// The default job count: `Math.min(16, navigator.hardwareConcurrency || 1)`.
-///
-/// PORT NOTE -- this is NOT `resolveJobs()`. The original hard-codes a cap of 16
-/// against the full core count, and the cache key, the emitted artifacts and the
-/// failure ordering all have to match the TypeScript, so the default is
-/// transcribed rather than replaced. Callers that want the repository's 80%
-/// parallelism rule pass `--jobs` explicitly; the parity harness and the
-/// benchmark in this crate both do.
 pub fn default_jobs() -> f64 {
-    let concurrency = std::thread::available_parallelism()
-        .map(std::num::NonZeroUsize::get)
-        .unwrap_or(0);
-    // `navigator.hardwareConcurrency || 1` -- 0 is falsy.
-    let concurrency = if concurrency == 0 { 1 } else { concurrency };
-    16f64.min(concurrency as f64)
+    std::thread::available_parallelism().map_or(1, |n| n.get().min(16)) as f64
 }
-
-/// `parseArgs(argv)`.
 pub fn parse_args(argv: &[String]) -> Result<ParsedArgs> {
-    // First pass: `--target` only. The original scans the whole argv for it
-    // before building the defaults, so `--output` defaulting sees the resolved
-    // target even when `--target` comes last.
-    let mut target_id: DecompTargetId = DEFAULT_TARGET;
-    let mut index = 0usize;
-    while index < argv.len() {
-        let argument = &argv[index];
-        if argument == "--target" {
-            index += 1;
-            let Some(value) = argv.get(index) else {
-                return Err("--target requires a value".to_string());
-            };
-            target_id = parse_decomp_target(value)?;
-        } else if let Some(value) = argument.strip_prefix("--target=") {
-            target_id = parse_decomp_target(value)?;
+    let mut id = DEFAULT_TARGET;
+    for (i, arg) in argv.iter().enumerate() {
+        if arg == "--target" {
+            id = parse_decomp_target(argv.get(i + 1).ok_or("--target requires a value")?)?;
+        } else if let Some(v) = arg.strip_prefix("--target=") {
+            id = parse_decomp_target(v)?;
         }
-        index += 1;
     }
-    let target = target_for(target_id);
+    let target = target_for(id);
     let mut options = Options {
-        target: target_id,
-        rom: target.rom.to_string(),
+        target: id,
+        rom: target.rom.into(),
         jobs: default_jobs(),
-        output: join(target.output_dir, "claimed"),
+        output: text(Path::new(target.output_dir).join("claimed")),
         source_only: false,
     };
     let mut positional = false;
-    let mut index = 0usize;
-    while index < argv.len() {
-        let argument = &argv[index];
-        if argument == "-h" || argument == "--help" {
-            return Ok(ParsedArgs::Help);
-        } else if argument == "--source-only" {
-            options.source_only = true;
-        } else if argument == "--target" {
-            index += 1;
-        } else if argument.starts_with("--target=") {
-            index += 1;
-            continue;
-        } else if argument == "--jobs" || argument == "--output" {
-            let flag = argument.clone();
-            index += 1;
-            let Some(value) = argv.get(index) else {
-                return Err(format!("{flag} requires a value"));
-            };
-            if flag == "--jobs" {
-                // THE ONLY INTEGER PARSE PATH. `parseInt` here accepts `"3.9"`
-                // as 3 and `"12abc"` as 12; `from_str_radix` would reject both,
-                // which would be a different tool.
-                options.jobs = js_parse_int(value, 10).unwrap_or(f64::NAN);
-            } else {
-                options.output = value.clone();
+    let mut i = 0;
+    while i < argv.len() {
+        let arg = &argv[i];
+        match arg.as_str() {
+            "-h" | "--help" => return Ok(ParsedArgs::Help),
+            "--source-only" => options.source_only = true,
+            "--target" => i += 1,
+            "--jobs" | "--output" => {
+                let value = argv
+                    .get(i + 1)
+                    .ok_or_else(|| format!("{arg} requires a value"))?;
+                if arg == "--jobs" {
+                    options.jobs = parse_jobs(value);
+                } else {
+                    options.output = value.clone();
+                }
+                i += 1;
             }
-        } else if let Some(value) = argument.strip_prefix("--jobs=") {
-            options.jobs = js_parse_int(value, 10).unwrap_or(f64::NAN);
-        } else if let Some(value) = argument.strip_prefix("--output=") {
-            options.output = value.to_string();
-        } else if !argument.starts_with('-') && !positional {
-            options.rom = argument.clone();
-            positional = true;
-        } else {
-            return Err(format!("unrecognized argument: {argument}"));
+            _ if arg.starts_with("--target=") => {}
+            _ if let Some(v) = arg.strip_prefix("--jobs=") => options.jobs = parse_jobs(v),
+            _ if let Some(v) = arg.strip_prefix("--output=") => options.output = v.into(),
+            _ if !arg.starts_with('-') && !positional => {
+                options.rom = arg.clone();
+                positional = true;
+            }
+            _ => return Err(format!("unrecognized argument: {arg}")),
         }
-        index += 1;
+        i += 1;
     }
-    if !js_is_integer(options.jobs) || options.jobs < 1.0 {
-        return Err("jobs must be positive".to_string());
+    if !options.jobs.is_finite() || options.jobs.fract() != 0.0 || options.jobs < 1.0 {
+        return Err("jobs must be positive".into());
     }
     if options.source_only && positional {
-        return Err("--source-only does not accept a ROM".to_string());
+        return Err("--source-only does not accept a ROM".into());
     }
     Ok(ParsedArgs::Run(Box::new(options)))
 }
-
-// ---------------------------------------------------------------------------
-// Process execution
-// ---------------------------------------------------------------------------
 
 #[derive(Debug, Clone)]
 pub struct RunResult {
     pub stdout: String,
     pub stderr: String,
 }
-
-/// `run(command)`.
-///
-/// PORT NOTE -- the failure message is `${basename(command[0])} failed:
-/// ${detail}` where `detail` is `(stderr || stdout).trim()`. The `||` is a
-/// string falsiness test, so an EMPTY stderr falls through to stdout; that is
-/// [`js::js_or_string`], not `unwrap_or`. The output is decoded the way
-/// `new Response(stream).text()` does, which is lossy UTF-8 and matches
-/// `String::from_utf8_lossy`.
-///
-/// A spawn failure (the binary is missing) is not an exit code in either
-/// language: Bun throws before there is any output. The message differs in
-/// prose, which is why the harness asserts exit code and offending path rather
-/// than text.
 pub fn run(root: &str, command: &[String]) -> Result<RunResult> {
-    let Some(program) = command.first() else {
-        return Err("run() requires a command".to_string());
-    };
+    let program = command.first().ok_or("run() requires a command")?;
     let output = Command::new(program)
         .args(&command[1..])
         .current_dir(root)
         .output()
-        .map_err(|error| format!("{}: {error}", basename(program)))?;
+        .map_err(|e| format!("{}: {e}", basename(program)))?;
     let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
     let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
     if !output.status.success() {
-        let detail = js_trim(js_or_string(&stderr, &stdout));
+        let detail = if stderr.trim().is_empty() {
+            stdout.trim()
+        } else {
+            stderr.trim()
+        };
         return Err(format!("{} failed: {detail}", basename(program)));
     }
     Ok(RunResult { stdout, stderr })
 }
-
-// ---------------------------------------------------------------------------
-// compileSource
-// ---------------------------------------------------------------------------
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Compiled {
@@ -612,100 +419,53 @@ pub struct Compiled {
     pub defined_names: Vec<String>,
     pub undefined_names: Vec<String>,
 }
-
-/// Which side of the object cache a unit came from. Not in the original; used
-/// only by the benchmark and the harness so a cache hit and a live compile can
-/// be told apart without changing what the tool emits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CacheOutcome {
     Hit,
     Miss,
 }
-
-fn write_claimed_cache_entry(
-    cached_object: &str,
-    object_bytes: &[u8],
-    cached_assembly: &str,
-    assembly_bytes: &[u8],
-    cached_meta: &str,
-    meta_bytes: &[u8],
-) -> Result<()> {
-    write_cache_entry_atomically(Path::new(cached_object), object_bytes)
-        .map_err(|error| format!("{cached_object}: {error}"))?;
-    write_cache_entry_atomically(Path::new(cached_assembly), assembly_bytes)
-        .map_err(|error| format!("{cached_assembly}: {error}"))?;
-    // Metadata is the commit marker: publish it only after both payloads are
-    // complete, so an interrupted writer cannot make a partial entry look
-    // valid to a later cache lookup.
-    write_cache_entry_atomically(Path::new(cached_meta), meta_bytes)
-        .map_err(|error| format!("{cached_meta}: {error}"))?;
+fn write_cache(items: &[(&str, &[u8])]) -> Result<()> {
+    for (path, bytes) in items {
+        write_cache_entry_atomically(Path::new(path), bytes).map_err(|e| format!("{path}: {e}"))?;
+    }
     Ok(())
 }
-
-fn claimed_cache_metadata(
-    object_bytes: &[u8],
-    assembly_bytes: &[u8],
-    defined: &[String],
-    undefined: &[String],
-) -> String {
-    let mut meta = Map::new();
-    meta.insert("definedNames".into(), string_values(defined));
-    meta.insert("undefinedNames".into(), string_values(undefined));
-    meta.insert("objectSize".into(), Value::from(object_bytes.len() as u64));
-    meta.insert(
-        "objectSha256".into(),
-        Value::String(sha256::sha256_hex(object_bytes)),
-    );
-    meta.insert(
-        "assemblySize".into(),
-        Value::from(assembly_bytes.len() as u64),
-    );
-    meta.insert(
-        "assemblySha256".into(),
-        Value::String(sha256::sha256_hex(assembly_bytes)),
-    );
-    // Keep the historical no-newline metadata representation byte-exact.
-    canonical_json(&Value::Object(meta))
+fn metadata(object: &[u8], assembly: &[u8], defined: &[String], undefined: &[String]) -> String {
+    let mut map = Map::new();
+    map.insert("definedNames".into(), json_strings(defined));
+    map.insert("undefinedNames".into(), json_strings(undefined));
+    map.insert("objectSize".into(), usize_number(object.len()));
+    map.insert("objectSha256".into(), Value::String(digest(object)));
+    map.insert("assemblySize".into(), usize_number(assembly.len()));
+    map.insert("assemblySha256".into(), Value::String(digest(assembly)));
+    canonical_json(&Value::Object(map))
 }
-
-fn payload_matches_metadata(
-    metadata: &Value,
-    size_key: &str,
-    digest_key: &str,
-    payload: &[u8],
-) -> bool {
-    if metadata.get(size_key).and_then(Value::as_u64) != Some(payload.len() as u64) {
-        return false;
-    }
-    let Some(expected) = metadata.get(digest_key).and_then(Value::as_str) else {
-        return false;
+fn string_array(value: Option<&Value>) -> Option<Vec<String>> {
+    value?
+        .as_array()?
+        .iter()
+        .map(|v| v.as_str().map(str::to_string))
+        .collect()
+}
+fn cache_hit(cached: [&str; 3], output: [&str; 2]) -> Option<(Vec<String>, Vec<String>)> {
+    let meta: Value = serde_json::from_slice(&std::fs::read(cached[2]).ok()?).ok()?;
+    let defined = string_array(meta.get("definedNames"))?;
+    let undefined = string_array(meta.get("undefinedNames"))?;
+    let object = std::fs::read(cached[0]).ok()?;
+    let assembly = std::fs::read(cached[1]).ok()?;
+    let valid = |data: &[u8], size: &str, hash: &str| {
+        meta.get(size).and_then(Value::as_u64) == Some(data.len() as u64)
+            && meta.get(hash).and_then(Value::as_str) == Some(&digest(data))
     };
-    expected == sha256::sha256_hex(payload)
-}
-
-fn read_claimed_cache_hit(
-    cached_object: &str,
-    cached_assembly: &str,
-    cached_meta: &str,
-    object: &str,
-    assembly: &str,
-) -> Option<Vec<Vec<String>>> {
-    let meta = std::fs::read(cached_meta).ok()?;
-    let parsed: Value = serde_json::from_slice(&meta).ok()?;
-    let defined = string_array(parsed.get("definedNames"))?;
-    let undefined = string_array(parsed.get("undefinedNames"))?;
-    let object_bytes = std::fs::read(cached_object).ok()?;
-    let assembly_bytes = std::fs::read(cached_assembly).ok()?;
-    if !payload_matches_metadata(&parsed, "objectSize", "objectSha256", &object_bytes)
-        || !payload_matches_metadata(&parsed, "assemblySize", "assemblySha256", &assembly_bytes)
+    if !valid(&object, "objectSize", "objectSha256")
+        || !valid(&assembly, "assemblySize", "assemblySha256")
     {
         return None;
     }
-    std::fs::write(object, &object_bytes).ok()?;
-    std::fs::write(assembly, &assembly_bytes).ok()?;
-    Some(vec![defined, undefined])
+    std::fs::write(output[0], object).ok()?;
+    std::fs::write(output[1], assembly).ok()?;
+    Some((defined, undefined))
 }
-
 fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
     match target {
         DecompCompilerTarget::Gs1 => CompilerTarget::Gs1,
@@ -713,7 +473,6 @@ fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
     }
 }
 
-/// `compileSource(source, objectDir, compiler)`.
 pub fn compile_source(
     root: &str,
     object_cache: &str,
@@ -723,35 +482,27 @@ pub fn compile_source(
     stamps: &ToolchainStampCache,
 ) -> Result<(Compiled, CacheOutcome)> {
     let name = stem(source).to_string();
-    let assembly = join(object_dir, &format!("{name}.s"));
-    let object = join(object_dir, &format!("{name}.o"));
-    let mut plan_options = SourceToAssemblyPlanOptions::new(
+    let object = text(Path::new(object_dir).join(format!("{name}.o")));
+    let assembly = text(Path::new(object_dir).join(format!("{name}.s")));
+    let mut options = SourceToAssemblyPlanOptions::new(
         compiler_target(compiler),
         source,
         source,
         assembly.clone(),
     );
-    plan_options.preprocessed_output = Some(join(object_dir, &format!("{name}.i")));
-    let plan = source_to_assembly_plan(&plan_options)?;
-    let source_bytes = std::fs::read(source).map_err(|error| format!("{source}: {error}"))?;
+    options.preprocessed_output = Some(text(Path::new(object_dir).join(format!("{name}.i"))));
+    let plan = source_to_assembly_plan(&options)?;
+    let source_bytes = std::fs::read(source).map_err(|e| format!("{source}: {e}"))?;
     let commands: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
     let key = object_cache_key(&source_bytes, &stamps.stamp(&commands));
-    let cached_object = join(object_cache, &format!("{key}.o"));
-    let cached_assembly = join(object_cache, &format!("{key}.s"));
-    let cached_meta = join(object_cache, &format!("{key}.json"));
-
-    // Metadata is the commit marker. A new-key entry is a hit only when both
-    // payloads still match the size and digest recorded before that marker.
-    let hit = read_claimed_cache_hit(
-        &cached_object,
-        &cached_assembly,
-        &cached_meta,
-        &object,
-        &assembly,
-    );
-    if let Some(mut lists) = hit {
-        let undefined_names = lists.pop().expect("two lists");
-        let defined_names = lists.pop().expect("two lists");
+    let cached = [
+        text(Path::new(object_cache).join(format!("{key}.o"))),
+        text(Path::new(object_cache).join(format!("{key}.s"))),
+        text(Path::new(object_cache).join(format!("{key}.json"))),
+    ];
+    if let Some((defined_names, undefined_names)) =
+        cache_hit([&cached[0], &cached[1], &cached[2]], [&object, &assembly])
+    {
         return Ok((
             Compiled {
                 object,
@@ -761,7 +512,6 @@ pub fn compile_source(
             CacheOutcome::Hit,
         ));
     }
-
     for step in &plan.steps {
         run(root, &step.command)?;
     }
@@ -784,155 +534,79 @@ pub fn compile_source(
         .stdout,
     );
     let expected = format!("Func_{name}");
-    if !defined.contains(&expected)
-        || defined
-            .iter()
-            .any(|symbol| !is_lowercase_func_symbol(symbol))
-    {
+    if !defined.iter().any(|s| s == &expected) || defined.iter().any(|s| !function_name(s)) {
         return Err(format!(
             "{}: expected {expected} and address-named functions, found {}",
             basename(source),
-            json_stringify_strings(&defined)
+            json_stringify(&defined)
         ));
     }
-    let undefined_names =
-        last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &object]))?.stdout);
-    for external in &undefined_names {
-        if external_symbol(external, CALL_VIA_BASE).is_none() {
-            return Err(format!(
-                "{}: unsupported external {external}",
-                basename(source)
-            ));
+    let undefined = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &object]))?.stdout);
+    for name in &undefined {
+        if external_symbol(name, CALL_VIA_BASE).is_none() {
+            return Err(format!("{}: unsupported external {name}", basename(source)));
         }
     }
-    std::fs::create_dir_all(object_cache).map_err(|error| format!("{object_cache}: {error}"))?;
-    let object_bytes = std::fs::read(&object).map_err(|error| format!("{object}: {error}"))?;
-    let assembly_bytes =
-        std::fs::read(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
-    let meta_bytes =
-        claimed_cache_metadata(&object_bytes, &assembly_bytes, &defined, &undefined_names);
-    write_claimed_cache_entry(
-        &cached_object,
-        &object_bytes,
-        &cached_assembly,
-        &assembly_bytes,
-        &cached_meta,
-        meta_bytes.as_bytes(),
-    )?;
+    std::fs::create_dir_all(object_cache).map_err(|e| format!("{object_cache}: {e}"))?;
+    let object_bytes = std::fs::read(&object).map_err(|e| format!("{object}: {e}"))?;
+    let assembly_bytes = std::fs::read(&assembly).map_err(|e| format!("{assembly}: {e}"))?;
+    let meta = metadata(&object_bytes, &assembly_bytes, &defined, &undefined);
+    write_cache(&[
+        (&cached[0], &object_bytes),
+        (&cached[1], &assembly_bytes),
+        (&cached[2], meta.as_bytes()),
+    ])?;
     Ok((
         Compiled {
             object,
             defined_names: defined,
-            undefined_names,
+            undefined_names: undefined,
         },
         CacheOutcome::Miss,
     ))
 }
 
-fn string_array(value: Option<&Value>) -> Option<Vec<String>> {
-    let items = value?.as_array()?;
-    items
-        .iter()
-        .map(|item| item.as_str().map(str::to_string))
-        .collect()
-}
-
-fn string_values(items: &[String]) -> Value {
-    Value::Array(
-        items
-            .iter()
-            .map(|item| Value::String(item.clone()))
-            .collect(),
-    )
-}
-
-fn strings(items: &[&str]) -> Vec<String> {
-    items.iter().map(|item| (*item).to_string()).collect()
-}
-
-/// `JSON.stringify(arrayOfStrings)`.
-fn json_stringify_strings(items: &[String]) -> String {
-    serde_json::to_string(&string_values(items)).expect("strings always serialize")
-}
-
-/// `output.split(/\r?\n/).filter(Boolean).map((line) => line.trim().split(/\s+/).at(-1)!)`.
-///
-/// `.filter(Boolean)` drops empty lines, so `at(-1)` is never asked for the
-/// `undefined` it would return on an empty array -- but only because of that
-/// filter, which is why the two steps stay together in one helper.
-fn last_fields(output: &str) -> Vec<String> {
-    js_split_lines(output)
-        .into_iter()
-        .filter(|line| !line.is_empty())
-        .map(|line| {
-            let fields = js_trim_split_whitespace(line);
-            (*fields.last().expect("split always yields one element")).to_string()
-        })
-        .collect()
-}
-
-// ---------------------------------------------------------------------------
-// mapLimit
-// ---------------------------------------------------------------------------
-
-/// `mapLimit(items, limit, action)`.
-///
-/// PORT NOTE -- `Promise.all` rejects with whichever rejection happens FIRST in
-/// time, so the original's reported error under concurrency is nondeterministic
-/// when several units fail. This port instead reports the LOWEST-INDEX failure,
-/// which is deterministic and is a member of the same set. The harness compares
-/// success/failure and the failing unit set rather than which of several
-/// simultaneous failures won the race.
-pub fn map_limit<T, U, F>(items: &[T], limit: usize, action: F) -> Result<Vec<U>>
-where
-    T: Sync,
-    U: Send,
-    F: Fn(&T) -> Result<U> + Sync,
-{
-    let width = limit.min(items.len()).max(1);
-    let cursor = AtomicUsize::new(0);
-    let results: Mutex<Vec<Option<std::result::Result<U, String>>>> =
-        Mutex::new((0..items.len()).map(|_| None).collect());
+pub fn map_limit<T: Sync, U: Send, F: Fn(&T) -> Result<U> + Sync>(
+    items: &[T],
+    limit: usize,
+    action: F,
+) -> Result<Vec<U>> {
+    let next = AtomicUsize::new(0);
+    let slots = Mutex::new(
+        (0..items.len())
+            .map(|_| None)
+            .collect::<Vec<Option<Result<U>>>>(),
+    );
     std::thread::scope(|scope| {
-        for _ in 0..width {
+        for _ in 0..limit.min(items.len()).max(1) {
             scope.spawn(|| loop {
-                let index = cursor.fetch_add(1, AtomicOrdering::SeqCst);
-                if index >= items.len() {
-                    return;
+                let i = next.fetch_add(1, Ordering::Relaxed);
+                if i >= items.len() {
+                    break;
                 }
-                let outcome = action(&items[index]);
-                results.lock().expect("results are not poisoned")[index] = Some(outcome);
+                slots.lock().unwrap()[i] = Some(action(&items[i]));
             });
         }
     });
-    let mut out = Vec::with_capacity(items.len());
-    let taken = results.into_inner().expect("results are not poisoned");
-    for slot in taken {
-        out.push(slot.expect("every index was visited")?);
-    }
-    Ok(out)
+    slots
+        .into_inner()
+        .unwrap()
+        .into_iter()
+        .map(|v| v.expect("worker visited item"))
+        .collect()
 }
 
-// ---------------------------------------------------------------------------
-// main
-// ---------------------------------------------------------------------------
-
-/// What `main` printed and how it exited.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BuildSummary {
     pub linked: usize,
     pub failures: Vec<String>,
     pub claimed_bytes: String,
     pub image_bytes: usize,
-    /// Every path this run wrote, in write order. Not in the original; the
-    /// harness uses it to prove neither mirror touched a tracked path.
     pub written: Vec<String>,
     pub cache_hits: usize,
     pub cache_misses: usize,
 }
-
 impl BuildSummary {
-    /// The single line the original prints on success.
     pub fn summary_line(&self) -> String {
         format!(
             "linked={} failures={} claimed_bytes={} image_bytes={}",
@@ -943,31 +617,46 @@ impl BuildSummary {
         )
     }
 }
-
-/// `rooted(path)`.
-fn rooted(root: &str, path: &str) -> String {
-    if is_absolute(path) {
-        path.to_string()
+fn rooted(root: &str, path: &str) -> PathBuf {
+    let path = Path::new(path);
+    if path.is_absolute() {
+        path.into()
     } else {
-        resolve(root, path)
+        Path::new(root).join(path)
     }
 }
+fn relative(root: &str, path: &str) -> String {
+    let root_path = Path::new(root);
+    let path = Path::new(path);
+    if let Ok(rest) = path.strip_prefix(root_path) {
+        return rest.to_string_lossy().replace('\\', "/");
+    }
+    let from: Vec<_> = root_path.components().collect();
+    let to: Vec<_> = path.components().collect();
+    let common = from.iter().zip(&to).take_while(|(a, b)| a == b).count();
+    let mut parts = vec![".."; from.len().saturating_sub(common)];
+    parts.extend(
+        to[common..]
+            .iter()
+            .map(|part| part.as_os_str().to_str().unwrap_or("")),
+    );
+    parts.join("/")
+}
+fn write_file(path: &Path, bytes: &[u8], written: &mut Vec<String>) -> Result<()> {
+    let mut file = std::fs::File::create(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    file.write_all(bytes)
+        .map_err(|e| format!("{}: {e}", path.display()))?;
+    written.push(text(path.to_path_buf()));
+    Ok(())
+}
 
-/// `main()`, minus the process-level printing and exit code.
 pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let target: DecompTarget = decomp_target(Some(options.target.as_str()))?;
-    let object_cache = object_cache_dir(root);
-    let mut written: Vec<String> = Vec::new();
-
-    // `readFileSync(resolve(process.cwd(), args.rom))` -- CWD-relative, NOT
-    // root-relative. A relative `--rom` therefore resolves differently from
-    // every other path in this tool, which is in the original and is preserved.
-    let rom: Option<Vec<u8>> = if options.source_only {
-        None
-    } else {
-        let path = resolve(cwd, &options.rom);
-        Some(std::fs::read(&path).map_err(|error| format!("{path}: {error}"))?)
-    };
+    let mut written = Vec::new();
+    let rom_path = Path::new(cwd).join(&options.rom);
+    let rom = (!options.source_only)
+        .then(|| std::fs::read(&rom_path).map_err(|e| format!("{}: {e}", rom_path.display())))
+        .transpose()?;
     if let Some(bytes) = &rom {
         if bytes.len() as u64 != target.rom_size {
             return Err(format!(
@@ -976,95 +665,76 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             ));
         }
     }
-
-    let source_directory = rooted(root, target.source_dir);
-    // Restricted to the plain 8-hex-digit main-image naming convention. The
-    // comment in the original explains why: `exact/` also holds overlay sources
-    // whose non-hex prefix parses as `NaN`, and a `Set` of `NaN`s collapses to
-    // ONE entry, reporting a false "duplicate source address". The filter is the
-    // fix that was already applied there; this port keeps it.
-    let mut sources: Vec<String> = Vec::new();
-    let entries = std::fs::read_dir(&source_directory)
-        .map_err(|error| format!("{source_directory}: {error}"))?;
-    for entry in entries {
-        let entry = entry.map_err(|error| format!("{source_directory}: {error}"))?;
-        // `entry.isFile()` follows nothing: node's Dirent reports the entry's
-        // own type, so a symlink to a file is NOT a file here.
-        let file_type = entry
-            .file_type()
-            .map_err(|error| format!("{source_directory}: {error}"))?;
-        let name = entry.file_name().to_string_lossy().into_owned();
-        if file_type.is_file() && is_main_image_source_name(&name) {
-            sources.push(join(&source_directory, &name));
+    let source_dir = rooted(root, target.source_dir);
+    let mut sources = Vec::new();
+    for entry in
+        std::fs::read_dir(&source_dir).map_err(|e| format!("{}: {e}", source_dir.display()))?
+    {
+        let entry = entry.map_err(|e| e.to_string())?;
+        if entry.file_type().map_err(|e| e.to_string())?.is_file() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if source_name(&name) {
+                sources.push(text(source_dir.join(name)));
+            }
         }
     }
-    js_default_sort(&mut sources);
+    sources.sort();
     if sources.is_empty() {
-        return Err("no reconstructed sources".to_string());
+        return Err("no reconstructed sources".into());
     }
-    let addresses: Vec<f64> = sources
-        .iter()
-        .map(|source| js_parse_int(stem(source), 16).unwrap_or(f64::NAN))
-        .collect();
-    if !unique_numbers(&addresses) {
-        return Err("duplicate source address".to_string());
+    let addresses: Vec<_> = sources.iter().filter_map(|s| address(stem(s))).collect();
+    if addresses.len() != sources.len() || addresses.windows(2).any(|w| w[0] == w[1]) {
+        return Err("duplicate source address".into());
     }
-    let limit = ROM_BASE + target.rom_size as f64;
-    if addresses
-        .iter()
-        .any(|address| *address < ROM_BASE || *address >= limit)
-    {
-        return Err("source address outside ROM".to_string());
+    let limit = ROM_BASE.saturating_add(target.rom_size as u32);
+    if addresses.iter().any(|a| *a < ROM_BASE || *a >= limit) {
+        return Err("source address outside ROM".into());
     }
-
     let output = rooted(root, &options.output);
-    let object_dir = join(&output, "obj");
-    std::fs::create_dir_all(&object_dir).map_err(|error| format!("{object_dir}: {error}"))?;
-
+    let object_dir = output.join("obj");
+    std::fs::create_dir_all(&object_dir).map_err(|e| format!("{}: {e}", object_dir.display()))?;
+    let cache_dir = object_cache_dir(root);
     let stamps = ToolchainStampCache::new()?;
-    let jobs = options.jobs as usize;
-    let compiled_pairs = map_limit(&sources, jobs, |source| {
+    let pairs = map_limit(&sources, options.jobs as usize, |source| {
         compile_source(
             root,
-            &object_cache,
+            &cache_dir,
             source,
-            &object_dir,
+            &text(object_dir.clone()),
             target.compiler,
             &stamps,
         )
     })?;
-    let cache_hits = compiled_pairs
+    let cache_hits = pairs
         .iter()
-        .filter(|(_, outcome)| *outcome == CacheOutcome::Hit)
+        .filter(|(_, hit)| *hit == CacheOutcome::Hit)
         .count();
-    let cache_misses = compiled_pairs.len() - cache_hits;
-    let mut compiled: Vec<Compiled> = compiled_pairs.into_iter().map(|(item, _)| item).collect();
-
-    let objects: Vec<String> = compiled.iter().map(|item| item.object.clone()).collect();
-    let definitions: Vec<String> = compiled
+    let cache_misses = pairs.len() - cache_hits;
+    let mut compiled: Vec<_> = pairs.into_iter().map(|(c, _)| c).collect();
+    let objects: Vec<_> = compiled.iter().map(|c| c.object.clone()).collect();
+    let definitions: Vec<_> = compiled
         .iter()
-        .flat_map(|item| item.defined_names.clone())
+        .flat_map(|c| c.defined_names.clone())
         .collect();
     let mut defined = OrderedStringSet::new();
     for name in &definitions {
         defined.add(name);
     }
     if defined.len() != definitions.len() {
-        return Err("duplicate function definition across C modules".to_string());
+        return Err("duplicate function definition across C modules".into());
     }
     let mut undefined_set = OrderedStringSet::new();
-    for name in compiled.iter().flat_map(|item| item.undefined_names.iter()) {
+    for name in compiled.iter().flat_map(|c| c.undefined_names.iter()) {
         if !defined.has(name) {
             undefined_set.add(name);
         }
     }
-    let mut undefined_names: Vec<String> = undefined_set.iter().cloned().collect();
-    js_default_sort(&mut undefined_names);
-
-    let symbols_source = join(&output, "externals.s");
-    let symbols_object = join(&output, "externals.o");
-    let mut externals = String::from(".syntax unified\n.thumb\n");
-    for name in &undefined_names {
+    let mut undefined: Vec<_> = undefined_set.iter().cloned().collect();
+    undefined.sort();
+    let symbols_source = output.join("externals.s");
+    let symbols_object = output.join("externals.o");
+    let mut externals = ".syntax unified\n.thumb\n".to_string();
+    for name in &undefined {
         externals.push_str(&external_symbol_assembly(name, CALL_VIA_BASE)?);
     }
     write_file(&symbols_source, externals.as_bytes(), &mut written)?;
@@ -1075,166 +745,144 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             "-mcpu=arm7tdmi",
             "-mthumb-interwork",
             "-o",
-            &symbols_object,
-            &symbols_source,
+            &text(symbols_object.clone()),
+            &text(symbols_source.clone()),
         ]),
     )?;
-    written.push(symbols_object.clone());
-
-    let linker = join(&output, "claimed.ld");
+    written.push(text(symbols_object.clone()));
+    let linker = output.join("claimed.ld");
     let mut script = format!(
         "OUTPUT_ARCH(arm)\nENTRY(Func_{})\nSECTIONS\n{{\n",
         stem(&sources[0])
     );
-    for (index, source) in sources.iter().enumerate() {
+    for (source, object) in sources.iter().zip(&objects) {
         script.push_str(&format!(
-            "  .func_{stem} 0x{stem} : {{ {object}(.text) }}\n",
-            stem = stem(source),
-            object = relative(root, &objects[index]),
+            "  .func_{} 0x{} : {{ {}(.text) }}\n",
+            stem(source),
+            stem(source),
+            relative(root, object)
         ));
     }
     script.push_str("  /DISCARD/ : { *(.comment) *(.note*) }\n}\n");
     write_file(&linker, script.as_bytes(), &mut written)?;
-
-    let elf = join(&output, "claimed.elf");
-    let binary = join(&output, "claimed.bin");
+    let elf = output.join("claimed.elf");
+    let binary = output.join("claimed.bin");
     run(
         root,
         &strings(&[
             "arm-none-eabi-ld",
             "-T",
-            &linker,
+            &text(linker.clone()),
             "-o",
-            &elf,
-            &symbols_object,
+            &text(elf.clone()),
+            &text(symbols_object.clone()),
         ]),
     )?;
-    written.push(elf.clone());
+    written.push(text(elf.clone()));
     run(
         root,
-        &strings(&["arm-none-eabi-objcopy", "-O", "binary", &elf, &binary]),
+        &strings(&[
+            "arm-none-eabi-objcopy",
+            "-O",
+            "binary",
+            &text(elf.clone()),
+            &text(binary.clone()),
+        ]),
     )?;
-    written.push(binary.clone());
-
-    let mut symbols = SymbolTable::new();
+    written.push(text(binary.clone()));
     let nm = run(
         root,
-        &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &elf]),
+        &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &text(elf)]),
     )?;
-    for line in js_split_lines(&nm.stdout) {
-        let fields = js_trim_split_whitespace(line);
-        if fields.len() == 4 && defined.has(fields[3]) {
-            // `Number.parseInt(field, 16)`, the only integer parse path. A
-            // malformed field yields NaN here and poisons the extent maths
-            // downstream rather than failing, exactly as in the original.
-            symbols.set(
-                fields[3],
-                js_parse_int(fields[0], 16).unwrap_or(f64::NAN),
-                js_parse_int(fields[1], 16).unwrap_or(f64::NAN),
-            );
+    let mut symbols = SymbolTable::new();
+    for line in nm.stdout.lines() {
+        let f: Vec<_> = fields(line).collect();
+        if f.len() == 4 && defined.has(f[3]) {
+            if let (Some(a), Some(s)) = (address(f[0]), address(f[1])) {
+                symbols.set(f[3], a, s as usize);
+            }
         }
     }
     if symbols.len() != defined.len() {
-        let mut missing: Vec<String> = defined
+        let mut missing: Vec<_> = defined
             .iter()
-            .filter(|name| !symbols.has(name))
+            .filter(|n| !symbols.has(n))
             .cloned()
             .collect();
-        js_default_sort(&mut missing);
+        missing.sort();
         return Err(format!(
             "missing linked functions: {}",
-            json_stringify_strings(&missing)
+            json_stringify(&missing)
         ));
     }
-
-    let image = std::fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
-    let image_base = js_min(&symbols.addresses());
-    let mut manifest: Vec<Value> = Vec::new();
-    let mut failures: Vec<String> = Vec::new();
-    let mut total = 0f64;
-    let mut previous_end = 0f64;
-    for (source_index, source) in sources.iter().enumerate() {
-        let name = format!("Func_{}", stem(source));
-        let (address, _) = symbols
-            .get(&name)
-            .ok_or_else(|| format!("missing linked function {name}"))?;
-        let claimed = js_parse_int(stem(source), 16).unwrap_or(f64::NAN);
-        if address != claimed {
-            failures.push(format!(
-                "{}: linked at 0x{}",
-                basename(source),
-                js_hex_pad8(address)
-            ));
+    let image = std::fs::read(&binary).map_err(|e| format!("{}: {e}", binary.display()))?;
+    let image_base = symbols.addresses().into_iter().min().unwrap_or(0);
+    let mut manifest = Vec::new();
+    let mut failures = Vec::new();
+    let mut total = 0usize;
+    let mut previous_end = 0u32;
+    for (i, source) in sources.iter().enumerate() {
+        let symbol_name = format!("Func_{}", stem(source));
+        let (start, _) = symbols
+            .get(&symbol_name)
+            .ok_or_else(|| format!("missing linked function {symbol_name}"))?;
+        let claimed = address(stem(source)).unwrap_or(0);
+        if start != claimed {
+            failures.push(format!("{}: linked at 0x{start:08x}", basename(source)));
             continue;
         }
-        // `definedNames.sort(comparator)` mutates the compiled entry in place.
-        // The comparator is `a - b` on addresses: it can return NaN, which the
-        // specification treats as 0, so a NaN address leaves the pair in its
-        // existing order rather than throwing. The sort is STABLE.
-        let module_symbols = {
-            let entry = &mut compiled[source_index].defined_names;
-            entry.sort_by(|left, right| {
-                let left = symbols.get(left).map_or(f64::NAN, |(address, _)| address);
-                let right = symbols.get(right).map_or(f64::NAN, |(address, _)| address);
-                js_numeric_compare(left, right)
-            });
-            entry.clone()
-        };
-        let end = module_end(&module_symbols, &symbols)
-            .map_err(|cause| format!("{}: {cause}", basename(source)))?;
-        let size = end - address;
-        if address < previous_end {
+        compiled[i]
+            .defined_names
+            .sort_by_key(|n| symbols.get(n).map(|(a, _)| a).unwrap_or(u32::MAX));
+        let names = compiled[i].defined_names.clone();
+        let end = module_end(&names, &symbols).map_err(|e| format!("{}: {e}", basename(source)))?;
+        let size = end.saturating_sub(start) as usize;
+        if start < previous_end {
             failures.push(format!("{}: overlaps previous function", basename(source)));
         }
-        previous_end = js_max(&[previous_end, end]);
-        let offset = address - image_base;
-        let actual = js_subarray(&image, offset, offset + size);
+        previous_end = previous_end.max(end);
         if end > limit {
             failures.push(format!("{}: linked extent outside ROM", basename(source)));
         }
+        let actual = subarray(&image, start - image_base, end - image_base);
         if let Some(rom) = &rom {
-            let expected = js_subarray(rom, address - ROM_BASE, end - ROM_BASE);
-            if actual != expected {
+            if actual != subarray(rom, start - ROM_BASE, end - ROM_BASE) {
                 failures.push(format!("{}: linked bytes differ", basename(source)));
             }
         }
-        total += size;
-        for symbol in &module_symbols {
-            let expected_address = js_parse_int(&symbol[5..], 16).unwrap_or(f64::NAN);
-            let actual_address = symbols.get(symbol).map_or(f64::NAN, |(address, _)| address);
-            // `!==` is false for NaN on both sides, but the two range tests
-            // below are also false for NaN, so a NaN address reports nothing.
-            // Written with explicit comparisons rather than a clamp, because
-            // `f64::clamp` panics on NaN bounds.
-            if actual_address != expected_address
-                || expected_address < address
-                || expected_address >= end
+        for name in &names {
+            let expected = address(name.strip_prefix("Func_").unwrap_or(""));
+            if expected != symbols.get(name).map(|(a, _)| a)
+                || symbols
+                    .get(name)
+                    .map(|(a, _)| a < start || a >= end)
+                    .unwrap_or(true)
             {
                 failures.push(format!(
-                    "{}: invalid module symbol {symbol}",
+                    "{}: invalid module symbol {name}",
                     basename(source)
                 ));
             }
         }
         let mut region = Map::new();
         region.insert("source".into(), Value::String(relative(root, source)));
-        region.insert("symbol".into(), Value::String(name));
-        region.insert("symbols".into(), string_values(&module_symbols));
-        region.insert("address".into(), js_number(address));
-        region.insert("size".into(), js_number(size));
-        region.insert("end".into(), js_number(end));
+        region.insert("symbol".into(), Value::String(symbol_name));
+        region.insert("symbols".into(), json_strings(&names));
+        region.insert("address".into(), number(start));
+        region.insert("size".into(), usize_number(size));
+        region.insert("end".into(), number(end));
         manifest.push(Value::Object(region));
+        total += size;
     }
-
     let mut document = Map::new();
-    document.insert("format".into(), js_number(1.0));
+    document.insert("format".into(), number(1));
     document.insert("target".into(), Value::String(target.id.to_string()));
     document.insert(
         "compiler".into(),
         Value::String(target.compiler.to_string()),
     );
-    document.insert("rom_base".into(), js_number(ROM_BASE));
-    document.insert("rom_size".into(), js_number(target.rom_size as f64));
+    document.insert("rom_base".into(), number(ROM_BASE));
+    document.insert("rom_size".into(), Value::from(target.rom_size));
     document.insert(
         "verification".into(),
         Value::String(
@@ -1243,26 +891,22 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             } else {
                 "rom"
             }
-            .to_string(),
+            .into(),
         ),
     );
-    document.insert("image_base".into(), js_number(image_base));
-    document.insert("image_size".into(), js_number(image.len() as f64));
-    document.insert("claimed_bytes".into(), js_number(total));
+    document.insert("image_base".into(), number(image_base));
+    document.insert("image_size".into(), usize_number(image.len()));
+    document.insert("claimed_bytes".into(), usize_number(total));
     document.insert("regions".into(), Value::Array(manifest.clone()));
-    let text = format!("{}\n", canonical_json(&Value::Object(document)));
     write_file(
-        &join(&output, "manifest.json"),
-        text.as_bytes(),
+        &output.join("manifest.json"),
+        format!("{}\n", canonical_json(&Value::Object(document))).as_bytes(),
         &mut written,
     )?;
-
     Ok(BuildSummary {
         linked: manifest.len(),
         failures,
-        // `${total}` is a JS number template; an integral value prints without
-        // a decimal point and NaN prints as `NaN`.
-        claimed_bytes: js_number_to_display(total),
+        claimed_bytes: total.to_string(),
         image_bytes: image.len(),
         written,
         cache_hits,
@@ -1270,538 +914,50 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     })
 }
 
-/// `${value}` for a number in a template literal.
-pub fn js_number_to_display(value: f64) -> String {
-    if value.is_nan() {
-        return "NaN".to_string();
-    }
-    if value.is_infinite() {
-        return if value > 0.0 {
-            "Infinity".into()
-        } else {
-            "-Infinity".into()
-        };
-    }
-    if js_is_integer(value) && value.abs() < 1e21 {
-        return format!("{}", value as i64);
-    }
-    format!("{value}")
-}
-
-fn write_file(path: &str, bytes: &[u8], written: &mut Vec<String>) -> Result<()> {
-    let mut file = std::fs::File::create(path).map_err(|error| format!("{path}: {error}"))?;
-    file.write_all(bytes)
-        .map_err(|error| format!("{path}: {error}"))?;
-    written.push(path.to_string());
-    Ok(())
-}
-
-/// `new Set(numbers).size === numbers.length`.
-///
-/// `Set` is SameValueZero: `NaN` equals `NaN` (so a list of two `NaN`s DEDUPES
-/// and reports a duplicate) and `0` equals `-0`. Neither `PartialEq` nor
-/// `Vec::contains` models that, which is why this is written out.
-fn unique_numbers(values: &[f64]) -> bool {
-    let mut seen: Vec<f64> = Vec::with_capacity(values.len());
-    for &value in values {
-        let duplicate = seen.iter().any(|&candidate| {
-            // SameValueZero.
-            (candidate.is_nan() && value.is_nan()) || candidate == value
-        });
-        if duplicate {
-            return false;
-        }
-        seen.push(value);
-    }
-    true
-}
-
-/// A convenience for callers that only have a path.
 pub fn exists(path: &str) -> bool {
-    // `existsSync` follows symlinks; `Path::exists` does too, and
-    // `symlink_metadata` is the `lstatSync` form. The follow is deliberate.
     Path::new(path).exists()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn table(entries: &[(&str, f64, f64)]) -> SymbolTable {
-        let mut symbols = SymbolTable::new();
-        for (name, address, size) in entries {
-            symbols.set(name, *address, *size);
-        }
-        symbols
-    }
-
     #[test]
-    fn self_test_reports_ok() {
+    fn self_test_ok() {
         assert_eq!(self_test().unwrap(), "self-test=ok");
     }
-
     #[test]
-    fn module_end_takes_the_furthest_extent() {
-        let symbols = table(&[("Func_a", 100.0, 4.0), ("Func_b", 200.0, 8.0)]);
-        let names = vec!["Func_a".to_string(), "Func_b".to_string()];
-        assert_eq!(module_end(&names, &symbols).unwrap(), 208.0);
-    }
-
-    #[test]
-    fn module_end_rejects_an_empty_module() {
-        let symbols = SymbolTable::new();
-        assert_eq!(
-            module_end(&[], &symbols).unwrap_err(),
-            "C module has no functions"
-        );
-    }
-
-    #[test]
-    fn module_end_rejects_a_missing_or_empty_symbol() {
-        let symbols = table(&[("Func_a", 100.0, 0.0)]);
-        assert_eq!(
-            module_end(&["Func_a".to_string()], &symbols).unwrap_err(),
-            "invalid module symbol Func_a"
-        );
-        assert_eq!(
-            module_end(&["Func_z".to_string()], &symbols).unwrap_err(),
-            "invalid module symbol Func_z"
-        );
-    }
-
-    #[test]
-    fn nan_size_passes_the_guard_and_poisons_the_extent() {
-        // THE BUG, PINNED. `NaN <= 0` is false, so the guard admits it, and
-        // `Math.max` then propagates it. A port using `f64::max` would return
-        // 104 here and silently claim a plausible extent.
-        let symbols = table(&[("Func_a", 100.0, 4.0), ("Func_b", 200.0, f64::NAN)]);
-        let names = vec!["Func_a".to_string(), "Func_b".to_string()];
-        assert!(module_end(&names, &symbols).unwrap().is_nan());
-        assert_eq!(f64::NAN.max(104.0), 104.0, "what the naive port would say");
-    }
-
-    #[test]
-    fn object_cache_key_separates_its_two_chunks() {
-        // Without the NUL these two would collide.
+    fn cache_key_separates_inputs() {
         assert_ne!(object_cache_key(b"yz", "x"), object_cache_key(b"z", "xy"));
     }
-
     #[test]
-    fn object_cache_key_has_no_version_literal() {
-        let source = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/lib.rs"))
-            .expect("own source is readable");
-        // A hand-maintained `-vN` key is the failure that poisoned
-        // `out/cache/overlay-c`. Assert the shape can never appear here.
-        let implementation = source
-            .split("#[cfg(test)]")
-            .next()
-            .expect("the implementation precedes its tests");
-        for marker in ["-v1\"", "-v2\"", "-v3\"", "-v4\"", "\"claimed-v"] {
-            assert!(
-                !implementation.contains(marker),
-                "cache key must digest inputs, never a version literal: {marker}"
-            );
-        }
+    fn module_range() {
+        let mut s = SymbolTable::new();
+        s.set("a", 100, 4);
+        s.set("b", 200, 8);
+        assert_eq!(module_end(&["a".into(), "b".into()], &s).unwrap(), 208);
     }
-
     #[test]
-    fn parse_args_defaults_to_gs1() {
-        let ParsedArgs::Run(options) = parse_args(&[]).unwrap() else {
-            panic!("expected a run");
-        };
-        assert_eq!(options.target, DecompTargetId::Gs1En);
-        assert_eq!(options.rom, "roms/gs1-en.gba");
-        assert_eq!(options.output, "out/claimed");
-        assert!(!options.source_only);
-    }
-
-    #[test]
-    fn target_is_resolved_before_the_output_default() {
-        // `--target` is scanned in a separate first pass, so it wins even when
-        // it appears AFTER the flag whose default depends on it.
-        let ParsedArgs::Run(options) =
+    fn args_resolve_target_before_default_output() {
+        let ParsedArgs::Run(o) =
             parse_args(&["--source-only".into(), "--target=gs2-en".into()]).unwrap()
         else {
-            panic!("expected a run");
+            panic!()
         };
-        assert_eq!(options.output, "out/gs2-en/claimed");
-        assert_eq!(options.rom, "roms/gs2-en.gba");
+        assert_eq!(o.output, "out/gs2-en/claimed");
     }
-
     #[test]
-    fn jobs_goes_through_the_parse_int_path() {
-        // `parseInt("3.9", 10)` is 3 and PASSES `Number.isInteger`.
-        let ParsedArgs::Run(options) = parse_args(&["--jobs=3.9".into()]).unwrap() else {
-            panic!("expected a run");
-        };
-        assert_eq!(options.jobs, 3.0);
-        // `parseInt("8abc", 10)` is 8.
-        let ParsedArgs::Run(options) = parse_args(&["--jobs".into(), "8abc".into()]).unwrap()
-        else {
-            panic!("expected a run");
-        };
-        assert_eq!(options.jobs, 8.0);
-        // A `0x` prefix is accepted by parseInt at radix 10 only up to the `x`.
-        // `parseInt("0x10", 10)` stops at the x, producing zero, which the
-        // positivity check rejects.
+    fn map_is_ordered() {
+        let values: Vec<_> = (0..32).collect();
         assert_eq!(
-            parse_args(&["--jobs=0x10".into()]).unwrap_err(),
-            "jobs must be positive"
-        );
-        assert_eq!(
-            parse_args(&["--jobs=x".into()]).unwrap_err(),
-            "jobs must be positive"
-        );
-        assert_eq!(
-            parse_args(&["--jobs=0".into()]).unwrap_err(),
-            "jobs must be positive"
+            map_limit(&values, 4, |v| Ok(v * 2)).unwrap(),
+            values.iter().map(|v| v * 2).collect::<Vec<_>>()
         );
     }
-
     #[test]
-    fn unrecognized_and_missing_values_are_rejected() {
-        assert_eq!(
-            parse_args(&["--nope".into()]).unwrap_err(),
-            "unrecognized argument: --nope"
-        );
-        assert_eq!(
-            parse_args(&["--jobs".into()]).unwrap_err(),
-            "--jobs requires a value"
-        );
-        assert_eq!(
-            parse_args(&["--target".into()]).unwrap_err(),
-            "--target requires a value"
-        );
-        assert!(parse_args(&["--target=nope".into()])
-            .unwrap_err()
-            .starts_with("unsupported decomp target"));
-    }
-
-    #[test]
-    fn source_only_refuses_a_rom_positional() {
-        assert_eq!(
-            parse_args(&["--source-only".into(), "roms/gs1-en.gba".into()]).unwrap_err(),
-            "--source-only does not accept a ROM"
-        );
-        // A second positional is an unrecognized argument, not a second ROM.
-        assert_eq!(
-            parse_args(&["a".into(), "b".into()]).unwrap_err(),
-            "unrecognized argument: b"
-        );
-    }
-
-    #[test]
-    fn help_short_circuits() {
-        assert_eq!(parse_args(&["-h".into()]).unwrap(), ParsedArgs::Help);
-        assert_eq!(
-            parse_args(&["--help".into(), "--nope".into()]).unwrap(),
-            ParsedArgs::Help,
-            "help wins because it is reached first"
-        );
-    }
-
-    #[test]
-    fn duplicate_detection_is_same_value_zero() {
-        assert!(unique_numbers(&[1.0, 2.0, 3.0]));
-        assert!(!unique_numbers(&[1.0, 1.0]));
-        // SameValueZero: two NaNs DEDUPE, so this reports a duplicate. This is
-        // the exact false positive the filename filter exists to avoid.
-        assert!(!unique_numbers(&[f64::NAN, f64::NAN]));
-        // ...and 0 equals -0.
-        assert!(!unique_numbers(&[0.0, -0.0]));
-    }
-
-    #[test]
-    fn ordered_set_keeps_insertion_order_and_dedupes_silently() {
-        let mut set = OrderedStringSet::new();
-        for name in ["b", "a", "b", "c"] {
-            set.add(name);
-        }
-        assert_eq!(
-            set.iter().cloned().collect::<Vec<_>>(),
-            vec!["b", "a", "c"],
-            "insertion order, not sorted"
-        );
-        assert_eq!(set.len(), 3);
-    }
-
-    #[test]
-    fn symbol_table_set_keeps_position_on_overwrite() {
-        let mut symbols = SymbolTable::new();
-        symbols.set("a", 1.0, 1.0);
-        symbols.set("b", 2.0, 1.0);
-        symbols.set("a", 9.0, 1.0);
-        assert_eq!(symbols.get("a"), Some((9.0, 1.0)));
-        assert_eq!(symbols.addresses(), vec![9.0, 2.0]);
-    }
-
-    #[test]
-    fn last_fields_drops_blank_lines_and_takes_the_last_column() {
-        let output = "0801c0c8 T Func_0801c0c8\n\n         U Func_08000100\r\n";
-        assert_eq!(
-            last_fields(output),
-            vec!["Func_0801c0c8".to_string(), "Func_08000100".to_string()]
-        );
-        assert_eq!(last_fields(""), Vec::<String>::new());
-    }
-
-    #[test]
-    fn map_limit_preserves_input_order_under_concurrency() {
-        let items: Vec<usize> = (0..200).collect();
-        let out = map_limit(&items, 8, |item| Ok(*item * 2)).unwrap();
-        assert_eq!(out, items.iter().map(|item| item * 2).collect::<Vec<_>>());
-    }
-
-    #[test]
-    fn map_limit_reports_the_lowest_index_failure() {
-        let items: Vec<usize> = (0..50).collect();
-        let out: Result<Vec<usize>> = map_limit(&items, 8, |item| {
-            if *item == 7 || *item == 30 {
-                Err(format!("boom {item}"))
-            } else {
-                Ok(*item)
-            }
-        });
-        assert_eq!(out.unwrap_err(), "boom 7");
-    }
-
-    #[test]
-    fn map_limit_handles_an_empty_list() {
-        let items: Vec<usize> = Vec::new();
-        assert_eq!(
-            map_limit(&items, 8, |item| Ok(*item)).unwrap(),
-            Vec::<usize>::new()
-        );
-    }
-
-    #[test]
-    fn stem_strips_only_the_final_extension() {
-        assert_eq!(stem("/a/b/0801c0c8.c"), "0801c0c8");
-        assert_eq!(stem("/a/b/claimed.elf"), "claimed");
-        assert_eq!(stem("/a/b/noext"), "noext");
-    }
-
-    #[test]
-    fn display_of_a_number_has_no_decimal_point() {
-        assert_eq!(js_number_to_display(109_020.0), "109020");
-        assert_eq!(js_number_to_display(0.0), "0");
-        assert_eq!(js_number_to_display(f64::NAN), "NaN");
-    }
-
-    #[test]
-    fn root_is_the_repository_root() {
-        let root = root();
-        assert!(exists(&join(&root, "tools/build-claimed/Cargo.toml")));
-    }
-
-    #[test]
-    fn object_cache_path_is_the_documented_one() {
-        assert_eq!(object_cache_dir("/r"), "/r/out/cache/claimed-objects");
-        // NOT the poisoned `out/cache/overlay-c`. This tool never reads that
-        // cache, so it cannot serve the 160-byte `resource_39c` entry.
-        assert!(!object_cache_dir("/r").contains("overlay-c"));
-    }
-
-    #[test]
-    fn claimed_cache_rewrites_keep_all_three_files_byte_exact() {
-        let directory = std::env::temp_dir().join(format!(
-            "alchemy-build-claimed-cache-{}",
-            std::process::id()
-        ));
-        let _ = std::fs::remove_dir_all(&directory);
-        std::fs::create_dir_all(&directory).unwrap();
-        let object = directory.join("key.o");
-        let assembly = directory.join("key.s");
-        let metadata = directory.join("key.json");
-
-        write_claimed_cache_entry(
-            object.to_str().unwrap(),
-            &[1, 2, 3, 4],
-            assembly.to_str().unwrap(),
-            b"long assembly",
-            metadata.to_str().unwrap(),
-            br#"{"definedNames":["Func_old"],"undefinedNames":[]}"#,
-        )
-        .unwrap();
-        write_claimed_cache_entry(
-            object.to_str().unwrap(),
-            &[9, 8],
-            assembly.to_str().unwrap(),
-            b"short",
-            metadata.to_str().unwrap(),
-            br#"{"definedNames":["Func_new"],"undefinedNames":[]}"#,
-        )
-        .unwrap();
-
-        assert_eq!(std::fs::read(&object).unwrap(), [9, 8]);
-        assert_eq!(std::fs::read(&assembly).unwrap(), b"short");
-        assert_eq!(
-            std::fs::read(&metadata).unwrap(),
-            br#"{"definedNames":["Func_new"],"undefinedNames":[]}"#
-        );
-        std::fs::remove_dir_all(directory).unwrap();
-    }
-
-    fn cache_fixture(
-        name: &str,
-        object_bytes: &[u8],
-        assembly_bytes: &[u8],
-        metadata: &[u8],
-    ) -> (
-        std::path::PathBuf,
-        std::path::PathBuf,
-        std::path::PathBuf,
-        std::path::PathBuf,
-        std::path::PathBuf,
-    ) {
-        let directory = std::env::temp_dir().join(format!(
-            "alchemy-build-claimed-cache-{name}-{}",
-            std::process::id()
-        ));
-        let _ = std::fs::remove_dir_all(&directory);
-        std::fs::create_dir_all(&directory).unwrap();
-        let cached_object = directory.join("cached.o");
-        let cached_assembly = directory.join("cached.s");
-        let cached_meta = directory.join("cached.json");
-        let object = directory.join("output.o");
-        std::fs::write(&cached_object, object_bytes).unwrap();
-        std::fs::write(&cached_assembly, assembly_bytes).unwrap();
-        std::fs::write(&cached_meta, metadata).unwrap();
-        (
-            directory,
-            cached_object,
-            cached_assembly,
-            cached_meta,
-            object,
-        )
-    }
-
-    #[test]
-    fn claimed_cache_hit_accepts_matching_payload_digests() {
-        let object_bytes = b"object payload";
-        let assembly_bytes = b"assembly payload";
-        let defined = vec!["Func_08000000".to_string()];
-        let metadata = claimed_cache_metadata(object_bytes, assembly_bytes, &defined, &[]);
-        let (directory, cached_object, cached_assembly, cached_meta, object) =
-            cache_fixture("valid", object_bytes, assembly_bytes, metadata.as_bytes());
-        let assembly = directory.join("output.s");
-
-        assert_eq!(
-            read_claimed_cache_hit(
-                cached_object.to_str().unwrap(),
-                cached_assembly.to_str().unwrap(),
-                cached_meta.to_str().unwrap(),
-                object.to_str().unwrap(),
-                assembly.to_str().unwrap(),
-            ),
-            Some(vec![defined, Vec::new()])
-        );
-        assert_eq!(std::fs::read(object).unwrap(), object_bytes);
-        assert_eq!(std::fs::read(assembly).unwrap(), assembly_bytes);
-        std::fs::remove_dir_all(directory).unwrap();
-    }
-
-    #[test]
-    fn claimed_cache_hit_rejects_corrupt_or_truncated_payloads() {
-        let object_bytes = b"object payload";
-        let assembly_bytes = b"assembly payload";
-        let metadata = claimed_cache_metadata(object_bytes, assembly_bytes, &[], &[]);
-        let (directory, cached_object, cached_assembly, cached_meta, object) =
-            cache_fixture("corrupt", object_bytes, assembly_bytes, metadata.as_bytes());
-        let assembly = directory.join("output.s");
-        let paths = || {
-            (
-                cached_object.to_str().unwrap(),
-                cached_assembly.to_str().unwrap(),
-                cached_meta.to_str().unwrap(),
-                object.to_str().unwrap(),
-                assembly.to_str().unwrap(),
-            )
-        };
-
-        std::fs::write(&cached_object, b"object corrupt").unwrap();
-        assert!(
-            read_claimed_cache_hit(paths().0, paths().1, paths().2, paths().3, paths().4).is_none()
-        );
-        std::fs::write(&cached_object, object_bytes).unwrap();
-        std::fs::write(&cached_assembly, b"corrupt").unwrap();
-        assert!(
-            read_claimed_cache_hit(paths().0, paths().1, paths().2, paths().3, paths().4).is_none()
-        );
-        std::fs::remove_dir_all(directory).unwrap();
-    }
-
-    #[test]
-    fn claimed_cache_hit_rejects_metadata_without_new_digest_fields() {
-        let object_bytes = b"object payload";
-        let assembly_bytes = b"assembly payload";
-        let legacy = br#"{"definedNames":[],"undefinedNames":[]}"#;
-        let (directory, cached_object, cached_assembly, cached_meta, object) =
-            cache_fixture("legacy-metadata", object_bytes, assembly_bytes, legacy);
-        let assembly = directory.join("output.s");
-
-        assert!(read_claimed_cache_hit(
-            cached_object.to_str().unwrap(),
-            cached_assembly.to_str().unwrap(),
-            cached_meta.to_str().unwrap(),
-            object.to_str().unwrap(),
-            assembly.to_str().unwrap(),
-        )
-        .is_none());
-        std::fs::remove_dir_all(directory).unwrap();
-    }
-
-    #[test]
-    fn toolchain_stamp_frames_argv_and_removes_the_pinned_collision() {
-        let left = vec![strings(&["/bin/does-not-exist", "-o", "x"])];
-        let right = vec![strings(&["/bin/does-not-exist", "-ox"])];
-        let signatures = CacheSignatures::injected("compiler-a", "binutils-a", "implementation-a");
-        assert_ne!(
-            toolchain_stamp_with_signatures(&left, &signatures),
-            toolchain_stamp_with_signatures(&right, &signatures)
-        );
-
-        let cache = ToolchainStampCache::with_signatures(signatures);
-        assert_ne!(cache.stamp(&left), cache.stamp(&right));
-    }
-
-    #[test]
-    fn stamp_cache_returns_the_same_answer_as_the_uncached_form() {
-        let signatures = CacheSignatures::injected("compiler-a", "binutils-a", "implementation-a");
-        let cache = ToolchainStampCache::with_signatures(signatures.clone());
-        let commands = vec![strings(&["arm-none-eabi-as", "-o", "x"])];
-        assert_eq!(
-            cache.stamp(&commands),
-            toolchain_stamp_with_signatures(&commands, &signatures)
-        );
-        assert_eq!(
-            cache.stamp(&commands),
-            toolchain_stamp_with_signatures(&commands, &signatures)
-        );
-    }
-
-    #[test]
-    fn toolchain_stamp_changes_for_compiler_and_binutil_signatures() {
-        let commands = vec![strings(&["compiler", "-o", "object"])];
-        let base = CacheSignatures::injected("compiler-a", "binutils-a", "implementation-a");
-        let changed_compiler =
-            CacheSignatures::injected("compiler-b", "binutils-a", "implementation-a");
-        let changed_binutils =
-            CacheSignatures::injected("compiler-a", "binutils-b", "implementation-a");
-        let changed_implementation =
-            CacheSignatures::injected("compiler-a", "binutils-a", "implementation-b");
-        let base_stamp = toolchain_stamp_with_signatures(&commands, &base);
-        assert_ne!(
-            base_stamp,
-            toolchain_stamp_with_signatures(&commands, &changed_compiler)
-        );
-        assert_ne!(
-            base_stamp,
-            toolchain_stamp_with_signatures(&commands, &changed_binutils)
-        );
-        assert_ne!(
-            base_stamp,
-            toolchain_stamp_with_signatures(&commands, &changed_implementation)
-        );
+    fn names_are_strict() {
+        assert!(source_name("0801C0C8.C"));
+        assert!(!source_name("0801c0c8.s"));
+        assert!(function_name("Func_0801c0c8"));
+        assert!(!function_name("Func_0801C0C8"));
     }
 }

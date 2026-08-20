@@ -123,7 +123,10 @@ fn canonical_binary_source(path: &str) -> bool {
 /// Why a repository path may not be published, or `None` if it may.
 pub fn publication_path_reason(path: &str) -> Option<&'static str> {
     let normalized = path.replace('\\', "/");
-    let components: Vec<&str> = normalized.split('/').filter(|item| !item.is_empty()).collect();
+    let components: Vec<&str> = normalized
+        .split('/')
+        .filter(|item| !item.is_empty())
+        .collect();
     let leaf = components
         .last()
         .map(|item| item.to_lowercase())
@@ -283,7 +286,6 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
     ))
 }
 
-
 /// The only markdown files this repository keeps.
 ///
 /// 31 markdown files were collapsed into one because agents did not read any of
@@ -296,7 +298,10 @@ pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md", "AGENTS.
 /// about growth, not about the ten data files already tracked.
 ///
 /// `tracked` is the set of paths already in HEAD.
-pub fn new_text_file_reason(path: &str, tracked: &std::collections::BTreeSet<String>) -> Option<String> {
+pub fn new_text_file_reason(
+    path: &str,
+    tracked: &std::collections::BTreeSet<String>,
+) -> Option<String> {
     let suffix = extension(path);
     if suffix != "txt" && suffix != "md" {
         return None;
@@ -468,14 +473,19 @@ impl Entry<'_> {
 fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
     // ls-files reads the INDEX, which already contains the file being staged, so
     // every new file would look tracked and the rule would never fire. Read HEAD.
-    git(root, &["ls-tree", "-r", "HEAD", "--name-only"], None, "tracked path scan")
-        .map(|out| {
-            String::from_utf8_lossy(&out)
-                .lines()
-                .map(str::to_string)
-                .collect()
-        })
-        .unwrap_or_default()
+    git(
+        root,
+        &["ls-tree", "-r", "HEAD", "--name-only"],
+        None,
+        "tracked path scan",
+    )
+    .map(|out| {
+        String::from_utf8_lossy(&out)
+            .lines()
+            .map(str::to_string)
+            .collect()
+    })
+    .unwrap_or_default()
 }
 
 /// The shared reject pass. Failure order follows entry order.
@@ -498,7 +508,10 @@ pub fn reject(entries: &[Entry]) -> Result<(), String> {
     if failures.is_empty() {
         Ok(())
     } else {
-        Err(format!("publication gate rejected:\n{}", failures.join("\n")))
+        Err(format!(
+            "publication gate rejected:\n{}",
+            failures.join("\n")
+        ))
     }
 }
 
@@ -611,7 +624,10 @@ pub fn check_staged(root: &Path) -> Result<(), String> {
     if failures.is_empty() {
         Ok(())
     } else {
-        Err(format!("publication gate rejected:\n{}", failures.join("\n")))
+        Err(format!(
+            "publication gate rejected:\n{}",
+            failures.join("\n")
+        ))
     }
 }
 
@@ -723,439 +739,46 @@ pub struct PushError {
 /// Paths the gate must refuse. Shared by the binary's self-test and the tests.
 pub const REJECTED_PATHS: &[&str] = &[
     "gs1-en.gba",
-        "gs1-ja.gba",
-        "gs1-de.gba",
-        "gs1-es.gba",
-        "gs1-fr.gba",
-        "gs1-it.gba",
-        "gs2-en.gba",
-        "gs2-ja.gba",
-        "gs2-de.gba",
-        "gs2-es.gba",
-        "gs2-fr.gba",
-        "gs2-it.gba",
-        "roms/private/gs1-en.gba",
-        "out/diff.json",
-        "work/rom.raw",
-        "alchemy-gcc/bin/compiler",
-        "analysis/regions.json",
-        "reports/comparison.json",
-        "dump.bin",
-        "private-diff.json",
-        "game.elf",
-        "gs1-en.gba.lz",
-        "regional.patch",
-        "engine.bsdiff",
-        ".cmatch-fresh/result.s",
-        "comparisons/shared-runs.json",
-        "compiler-output/function.s",
+    "gs1-ja.gba",
+    "gs1-de.gba",
+    "gs1-es.gba",
+    "gs1-fr.gba",
+    "gs1-it.gba",
+    "gs2-en.gba",
+    "gs2-ja.gba",
+    "gs2-de.gba",
+    "gs2-es.gba",
+    "gs2-fr.gba",
+    "gs2-it.gba",
+    "roms/private/gs1-en.gba",
+    "out/diff.json",
+    "work/rom.raw",
+    "alchemy-gcc/bin/compiler",
+    "analysis/regions.json",
+    "reports/comparison.json",
+    "dump.bin",
+    "private-diff.json",
+    "game.elf",
+    "gs1-en.gba.lz",
+    "regional.patch",
+    "engine.bsdiff",
+    ".cmatch-fresh/result.s",
+    "comparisons/shared-runs.json",
+    "compiler-output/function.s",
 ];
 
 /// Paths the gate must let through.
 pub const ACCEPTED_PATHS: &[&str] = &[
     "src/main.c",
-        "asm/080000c0.s",
-        "assets/graphics/title.png",
-        "assets/audio/theme.mid",
-        "assets/audio/wave.wav",
-        "assets/data/layout.json",
-        "tools/compare-roms/src/main.rs",
-        "tools/build-full/src/main.rs",
-        "assets/data/resource_2_build_stamp.txt",
-        "assets/maps/town/metatiles.bin",
-        "assets/maps/town/metatile_attributes.bin",
+    "asm/080000c0.s",
+    "assets/graphics/title.png",
+    "assets/audio/theme.mid",
+    "assets/audio/wave.wav",
+    "assets/data/layout.json",
+    "tools/compare-roms/src/main.rs",
+    "tools/build-full/src/main.rs",
+    "assets/data/resource_2_build_stamp.txt",
+    "assets/maps/town/metatiles.bin",
+    "assets/maps/town/metatile_attributes.bin",
     "rom.sha1",
 ];
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::fs;
-    use std::path::PathBuf;
-
-    #[test]
-    fn private_paths_are_rejected() {
-        assert!(!REJECTED_PATHS.is_empty(), "scanning nothing is not passing");
-        for path in REJECTED_PATHS {
-            assert!(
-                publication_path_reason(path).is_some(),
-                "private path accepted: {path}"
-            );
-        }
-    }
-
-    #[test]
-    fn source_paths_are_accepted() {
-        assert!(!ACCEPTED_PATHS.is_empty(), "scanning nothing is not passing");
-        for path in ACCEPTED_PATHS {
-            assert_eq!(
-                publication_path_reason(path),
-                None,
-                "source path rejected: {path}"
-            );
-        }
-    }
-
-    fn fake_rom() -> Vec<u8> {
-        let mut rom = vec![0u8; 0x8000];
-        rom[0xb2] = 0x96;
-        let mut sum: u8 = 0;
-        for byte in &rom[0xa0..=0xbc] {
-            sum = sum.wrapping_add(*byte);
-        }
-        rom[0xbd] = 0u8.wrapping_sub(sum).wrapping_sub(0x19);
-        rom
-    }
-
-    #[test]
-    fn disguised_binaries_are_rejected() {
-        assert_eq!(
-            publication_content_reason(&fake_rom()),
-            Some("GBA ROM image")
-        );
-        assert_eq!(
-            publication_content_reason(&[0x7f, 0x45, 0x4c, 0x46]),
-            Some("ELF build product")
-        );
-        assert_eq!(
-            publication_content_reason(b"!<arch>\n"),
-            Some("archive or object library")
-        );
-        assert_eq!(publication_content_reason(b"canonical source"), None);
-        assert_eq!(
-            publication_entry_reason("asm/08000000.s", b".incbin \"rom.gba\"\n").as_deref(),
-            Some("committed incbin payload")
-        );
-    }
-
-    #[test]
-    fn conflict_markers_are_rejected() {
-        assert!(conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some());
-        assert!(conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some());
-        // The shared entry reason must not flag markers because it also scans
-        // immutable outgoing history.
-        assert_eq!(
-            publication_entry_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n"),
-            None
-        );
-        // A bare ======= is a Markdown heading underline, not a conflict.
-        assert_eq!(
-            conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n"),
-            None
-        );
-        // <<<<<<< without the trailing space is ordinary prose or a diff sample.
-        assert_eq!(
-            conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n"),
-            None
-        );
-        assert_eq!(
-            conflict_marker_reason("assets/readme/x.png", b"<<<<<<< HEAD\n"),
-            None
-        );
-    }
-
-    #[test]
-    fn byte_dumps_in_messages_are_rejected() {
-        assert!(commit_message_reason("fixed the header\n\n00 11 22 33 44 55 66 77\n").is_some());
-        for accepted in [
-            "Close 12 owners the sweep left open\n",
-            "reverts 3d36cfb0aa11bb22cc33dd44ee55ff6677889900\n",
-            "resource_39b:e6c span 0x02000e6c..0x02000e78 is not audited\n",
-            "the prologue pushes r7 where the reference does not\n",
-            "the low halfword ff 00 stayed wrong\n",
-        ] {
-            assert_eq!(
-                commit_message_reason(accepted),
-                None,
-                "a legitimate commit message was rejected: {}",
-                accepted.trim()
-            );
-        }
-    }
-
-    // --- edge cases the TypeScript self-test missed ------------------------
-
-    #[test]
-    fn conflict_marker_reports_the_first_line() {
-        assert_eq!(
-            conflict_marker_reason("a.md", b"one\ntwo\n<<<<<<< HEAD\nx\n>>>>>>> t\n").as_deref(),
-            Some("unresolved conflict marker at line 3; resolve the merge before committing")
-        );
-    }
-
-    #[test]
-    fn eight_angle_brackets_are_not_a_marker() {
-        // `{7}` is exact and cannot backtrack, so an eighth bracket kills it.
-        assert_eq!(conflict_marker_reason("a.md", b"<<<<<<<< HEAD\n"), None);
-        assert!(conflict_marker_reason("a.md", b"<<<<<<< \n").is_some());
-    }
-
-    #[test]
-    fn byte_dump_needs_eight_pairs_in_a_row() {
-        assert_eq!(commit_message_reason("00 11 22 33 44 55 66"), None);
-        assert!(commit_message_reason("00 11 22 33 44 55 66 77").is_some());
-        assert!(commit_message_reason("zz 00 11 22 33 44 55 66 77 zz").is_some());
-        // A non-space separator breaks the run.
-        assert_eq!(commit_message_reason("00 11 22 33,44 55 66 77"), None);
-        // Tabs are allowed by the pattern.
-        assert!(commit_message_reason("00\t11\t22\t33\t44\t55\t66\t77").is_some());
-        // A three-character word is not a byte pair.
-        assert_eq!(commit_message_reason("00 11 22 33 444 55 66 77 88"), None);
-        // Nine pairs still trip it.
-        assert!(commit_message_reason("00 11 22 33 44 55 66 77 88").is_some());
-    }
-
-    #[test]
-    fn private_report_needs_a_delimited_word() {
-        assert_eq!(
-            publication_path_reason("notes/rundiffs.json"),
-            None,
-            "an embedded word must not trip the report rule"
-        );
-        assert_eq!(
-            publication_path_reason("notes/run-diff.json"),
-            Some("private analysis report")
-        );
-        assert_eq!(
-            publication_path_reason("notes/DIFF.JSON"),
-            Some("private analysis report")
-        );
-        // The report rule only applies to report extensions.
-        assert_eq!(publication_path_reason("notes/diff.md"), None);
-    }
-
-    #[test]
-    fn escapes_and_absolutes_are_invalid_paths() {
-        assert_eq!(
-            publication_path_reason("/etc/passwd"),
-            Some("invalid repository path")
-        );
-        assert_eq!(
-            publication_path_reason("src/../out/x.txt"),
-            Some("invalid repository path")
-        );
-        // Backslashes normalise to separators before the directory check.
-        assert_eq!(
-            publication_path_reason("out\\thing.txt"),
-            Some("private or generated directory")
-        );
-    }
-
-    #[test]
-    fn canonical_map_binaries_survive_only_under_assets_maps() {
-        assert_eq!(publication_path_reason("assets/maps/t/metatiles.bin"), None);
-        assert_eq!(
-            publication_path_reason("data/metatiles.bin"),
-            Some("private or generated file type")
-        );
-    }
-
-    #[test]
-    fn baserom_names_are_private() {
-        assert_eq!(
-            publication_path_reason("baserom"),
-            Some("private ROM name")
-        );
-        assert_eq!(
-            publication_path_reason("src/baserom.agb"),
-            Some("private ROM name")
-        );
-        assert_eq!(
-            publication_path_reason("src/a.rom.txt"),
-            Some("private ROM name")
-        );
-    }
-
-    #[test]
-    fn gba_header_must_match_exactly() {
-        let mut rom = fake_rom();
-        assert!(publication_content_reason(&rom).is_some());
-        rom[0xbd] ^= 1;
-        assert_eq!(publication_content_reason(&rom), None, "bad complement");
-        let short = fake_rom()[..0x4000].to_vec();
-        assert_eq!(publication_content_reason(&short), None, "bad size");
-    }
-
-    #[test]
-    fn wasm_and_mach_o_magics_are_executables() {
-        assert_eq!(
-            publication_content_reason(&[0x00, 0x61, 0x73, 0x6d]),
-            Some("native executable")
-        );
-        assert_eq!(
-            publication_content_reason(&[0xcf, 0xfa, 0xed, 0xfe]),
-            Some("native executable")
-        );
-        assert_eq!(publication_content_reason(b"MZ"), Some("native executable"));
-    }
-
-    #[test]
-    fn incbin_matches_only_at_a_line_start() {
-        assert!(
-            publication_entry_reason("a.s", b"\n   \t.INCBIN \"x\"\n").is_some(),
-            "leading whitespace and case must still match"
-        );
-        assert_eq!(
-            publication_entry_reason("a.s", b"call .incbinned\n"),
-            None,
-            "a word boundary is required after .incbin"
-        );
-        assert_eq!(
-            publication_entry_reason("a.c", b".incbin \"x\"\n"),
-            None,
-            "only asm sources are scanned for incbin"
-        );
-    }
-
-    // --- end-to-end against a temporary tree -------------------------------
-
-    struct Temp(PathBuf);
-
-    impl Drop for Temp {
-        fn drop(&mut self) {
-            let _ = fs::remove_dir_all(&self.0);
-        }
-    }
-
-    fn temp_repo(name: &str) -> Temp {
-        let root = std::env::temp_dir().join(format!("check-publication-{name}-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(&root).unwrap();
-        for args in [
-            vec!["init", "-q", "-b", "main"],
-            vec!["config", "user.email", "t@example.com"],
-            vec!["config", "user.name", "Test"],
-            vec!["config", "commit.gpgsign", "false"],
-        ] {
-            git(&root, &args, None, "setup").unwrap();
-        }
-        Temp(root)
-    }
-
-    fn write(root: &Path, path: &str, body: &[u8]) {
-        let full = root.join(path);
-        fs::create_dir_all(full.parent().unwrap()).unwrap();
-        fs::write(full, body).unwrap();
-    }
-
-    #[test]
-    fn staged_scan_gates_a_temp_tree() {
-        let repo = temp_repo("staged");
-        let root = repo.0.as_path();
-
-        // An empty index is a scan of nothing, and that is not a pass.
-        let empty = check_staged(root).unwrap_err();
-        assert_eq!(
-            empty,
-            "publication gate scanned nothing: no staged change to inspect"
-        );
-
-        write(root, "src/main.c", b"int main(void) { return 0; }\n");
-        git(root, &["add", "src/main.c"], None, "add").unwrap();
-        check_staged(root).unwrap();
-
-        write(root, "out/report.json", b"{}\n");
-        git(root, &["add", "-f", "out/report.json"], None, "add").unwrap();
-        assert_eq!(
-            check_staged(root).unwrap_err(),
-            "publication gate rejected:\nstaged out/report.json: private or generated directory"
-        );
-    }
-
-    #[test]
-    fn staged_scan_catches_content_and_markers() {
-        let repo = temp_repo("content");
-        let root = repo.0.as_path();
-
-        write(root, "notes.md", b"a\n<<<<<<< HEAD\nb\n");
-        git(root, &["add", "notes.md"], None, "add").unwrap();
-        assert_eq!(
-            check_staged(root).unwrap_err(),
-            "publication gate rejected:\nstaged notes.md: unresolved conflict marker at line 2; resolve the merge before committing"
-        );
-
-        write(root, "notes.md", b"clean\n");
-        write(root, "tool.sha1", &[0x7f, 0x45, 0x4c, 0x46, 0, 0]);
-        git(root, &["add", "notes.md", "tool.sha1"], None, "add").unwrap();
-        assert_eq!(
-            check_staged(root).unwrap_err(),
-            "publication gate rejected:\nstaged tool.sha1: ELF build product"
-        );
-    }
-
-    #[test]
-    fn push_scan_gates_outgoing_history() {
-        let repo = temp_repo("push");
-        let root = repo.0.as_path();
-
-        assert_eq!(
-            check_push(root, "").unwrap_err().error,
-            "publication gate scanned nothing: no ref update on stdin"
-        );
-
-        write(root, "src/main.c", b"int main(void) { return 0; }\n");
-        git(root, &["add", "src/main.c"], None, "add").unwrap();
-        git(root, &["commit", "-q", "-m", "seed"], None, "commit").unwrap();
-        let head = String::from_utf8_lossy(&git(root, &["rev-parse", "HEAD"], None, "rev").unwrap())
-            .trim()
-            .to_string();
-        let zero = "0".repeat(40);
-        let update = format!("refs/heads/main {head} refs/heads/main {zero}\n");
-        check_push(root, &update).unwrap();
-
-        // A commit that publishes a private blob.
-        write(root, "dump.bin", b"payload");
-        git(root, &["add", "-f", "dump.bin"], None, "add").unwrap();
-        git(root, &["commit", "-q", "-m", "leak"], None, "commit").unwrap();
-        let head = String::from_utf8_lossy(&git(root, &["rev-parse", "HEAD"], None, "rev").unwrap())
-            .trim()
-            .to_string();
-        let update = format!("refs/heads/main {head} refs/heads/main {zero}\n");
-        let failed = check_push(root, &update).unwrap_err();
-        assert!(
-            failed
-                .error
-                .contains("dump.bin: private or generated file type"),
-            "{}",
-            failed.error
-        );
-
-        // A malformed update line is rejected before any git call.
-        assert_eq!(
-            check_push(root, "three fields only").unwrap_err().error,
-            "invalid pre-push update"
-        );
-    }
-
-    #[test]
-    fn push_scan_gates_commit_messages() {
-        let repo = temp_repo("message");
-        let root = repo.0.as_path();
-        write(root, "src/main.c", b"int main(void) { return 0; }\n");
-        git(root, &["add", "src/main.c"], None, "add").unwrap();
-        git(
-            root,
-            &["commit", "-q", "-m", "header\n\n00 11 22 33 44 55 66 77\n"],
-            None,
-            "commit",
-        )
-        .unwrap();
-        let head = String::from_utf8_lossy(&git(root, &["rev-parse", "HEAD"], None, "rev").unwrap())
-            .trim()
-            .to_string();
-        let zero = "0".repeat(40);
-        let failed = check_push(
-            root,
-            &format!("refs/heads/main {head} refs/heads/main {zero}\n"),
-        )
-        .unwrap_err();
-        assert_eq!(failed.error, "refusing to publish 1 commit message(s)");
-        assert_eq!(failed.message_failures.len(), 1);
-        assert!(
-            failed.message_failures[0]
-                .ends_with(": commit message contains a raw byte dump"),
-            "{}",
-            failed.message_failures[0]
-        );
-    }
-}

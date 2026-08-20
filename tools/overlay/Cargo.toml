@@ -1,4 +1,3 @@
-# Bare `[workspace]`: independently buildable, like every other tool crate.
 [workspace]
 
 [package]
@@ -7,22 +6,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Every former overlay-* binary, now linked as a library. One executable,
-# the same capabilities, and a surface an agent can enumerate.
 overlay-adopt = { path = "../overlay-adopt" }
-overlay-call-order-check = { path = "../overlay-call-order-check" }
-overlay-candidate-rank = { path = "../overlay-candidate-rank" }
-overlay-certify = { path = "../overlay-certify" }
-overlay-entry = { path = "../overlay-entry" }
-overlay-gaps = { path = "../overlay-gaps" }
-overlay-inventory = { path = "../overlay-inventory" }
-overlay-mode-cohort = { path = "../overlay-mode-cohort" }
-overlay-published = { path = "../overlay-published" }
-overlay-show = { path = "../overlay-show" }
-overlay-twins = { path = "../overlay-twins" }
-overlay-unindexed = { path = "../overlay-unindexed" }
-overlay-showcase = { path = "../overlay-showcase" }
 overlay-disasm = { path = "../overlay-disasm" }
+overlay-show = { path = "../overlay-show" }
 
 [[bin]]
 name = "overlay"

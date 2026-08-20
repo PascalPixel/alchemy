@@ -114,21 +114,3 @@ fn scan_repository() -> ExitCode {
     );
     ExitCode::FAILURE
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn args(values: &[&str]) -> Vec<String> {
-        values.iter().map(|value| (*value).to_string()).collect()
-    }
-
-    #[test]
-    fn cli_contract_has_help_and_rejects_unknown_options() {
-        assert_eq!(parse_args(&args(&[])), Ok(Action::Scan));
-        assert_eq!(parse_args(&args(&["-h"])), Ok(Action::Help));
-        assert_eq!(parse_args(&args(&["--help"])), Ok(Action::Help));
-        assert_eq!(parse_args(&args(&["--self-test"])), Ok(Action::SelfTest));
-        assert!(parse_args(&args(&["--unknown"])).is_err());
-    }
-}

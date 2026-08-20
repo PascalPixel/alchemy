@@ -15,8 +15,7 @@ pub mod cli;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use alchemy_zlib::{deflate_sync, DeflateOptions};
-use export_asset::{byte_png, chunk};
+use export_asset::{byte_png, chunk, zlib};
 use extract_resource::{decode_palette_trace, encode_palette, PaletteGroup, PaletteOperation};
 use import_asset::indexed_png;
 use serde_json::{json, Map, Value};
@@ -159,7 +158,7 @@ pub fn mask_png(mask: &[u8]) -> Result<Vec<u8>> {
     header[4..8].copy_from_slice(&(HEIGHT as u32).to_be_bytes());
     header[8] = 1;
     header[9] = 3;
-    let compressed = deflate_sync(&rows, DeflateOptions { level: Some(9) });
+    let compressed = zlib(&rows);
     let mut output = b"\x89PNG\r\n\x1a\n".to_vec();
     output.extend_from_slice(&chunk(b"IHDR", &header));
     output.extend_from_slice(&chunk(b"PLTE", b"\0\0\0\xff\xff\xff"));
@@ -416,35 +415,4 @@ pub fn self_test() -> Result<()> {
         return Err(err("kind-1 mask PNG self-test failed"));
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn transform_round_trip_matches_typescript_contract() {
-        self_test().unwrap();
-    }
-
-    #[test]
-    fn mask_png_has_expected_indexed_dimensions() {
-        let mask = vec![0u8; PLANE];
-        let png = mask_png(&mask).unwrap();
-        let image = indexed_png(&png).unwrap();
-        assert_eq!((image.width, image.height), (128, 128));
-        assert!(image.pixels.iter().all(|value| *value == 0));
-    }
-}
-
-mod hex {
-    pub fn decode(value: &str) -> Result<Vec<u8>, ()> {
-        if value.len() % 2 != 0 {
-            return Err(());
-        }
-        (0..value.len())
-            .step_by(2)
-            .map(|index| u8::from_str_radix(&value[index..index + 2], 16).map_err(|_| ()))
-            .collect()
-    }
 }

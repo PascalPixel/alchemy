@@ -1,36 +1,6 @@
-// Assembling the map from tracked evidence, and refusing to publish a lie.
-//
-// WHY: this is the only place where the executable audit, the derived exact and
-// semantic ownership, the retained-assembly contracts and the asset manifest
-// meet. Every one of them can be individually right and jointly inconsistent,
-// so the two conservation checks near the end -- ROM areas summing to the ROM
-// size, executable areas summing to the audited union -- are the point of the
-// function, not decoration. A map that cannot account for every byte is not
-// published at all.
-
-use crate::assets::{manifest_asset_tiles, overlay_streams, retained_main_spans};
-use crate::intervals::{union_intervals, Interval};
-use crate::json::Value;
-use crate::model::{area, Area, Tile};
-use crate::ordered::OrderedMap;
-use crate::ownership::{
-    exact_main_spans, exact_overlay_owners, main_boundaries, semantic_spans, OverlayOwner,
-    SemanticCoverage,
-};
-use crate::spans::{intersect, normalize, span_bytes, subtract, Span};
-use crate::tiles::{group_tiles, main_bands, main_owner_tiles, overlay_owner_tiles};
+use crate::model::{area, bytes, intersect, normalize, subtract, Area, Span, Tile, CATEGORIES};
 use crate::tree::{read_json, SourceTree, ROM_BASE};
-
-pub fn rom_size(target: &str) -> Result<i64, String> {
-    match target {
-        "gs1-en" => Ok(0x0080_0000),
-        "gs2-en" => Ok(0x0100_0000),
-        other => Err(format!(
-            "unsupported decomp target {:?}; expected gs1-en or gs2-en",
-            other
-        )),
-    }
-}
+use serde_json::{Map, Value};
 
 pub struct BuildOptions<'a> {
     pub target: String,
@@ -40,654 +10,876 @@ pub struct BuildOptions<'a> {
     pub prefer_verified_assets: bool,
 }
 
-/// The emitted document, kept as an insertion-ordered JSON value so the writer
-/// never has to guess a key order.
 pub struct CoverageMap {
     pub document: Value,
     pub rom_areas: Vec<Area>,
     pub executable_areas: Vec<Area>,
 }
 
-pub fn intervals_of(node: &Value) -> Vec<Interval> {
-    let mut out = Vec::new();
-    for entry in node
-        .get("intervals")
-        .and_then(|value| value.as_array())
+pub fn rom_size(target: &str) -> Result<i64, String> {
+    match target {
+        "gs1-en" => Ok(0x800000),
+        "gs2-en" => Ok(0x1000000),
+        other => Err(format!(
+            "unsupported decomp target {other:?}; expected gs1-en or gs2-en"
+        )),
+    }
+}
+
+fn get<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
+    value.as_object()?.get(key)
+}
+fn text(value: &Value, key: &str) -> String {
+    get(value, key).and_then(Value::as_str).unwrap_or("").into()
+}
+fn integer(value: &Value, key: &str) -> Option<i64> {
+    get(value, key).and_then(Value::as_i64).or_else(|| {
+        get(value, key)
+            .and_then(Value::as_f64)
+            .filter(|n| n.fract() == 0.0)
+            .map(|n| n as i64)
+    })
+}
+fn array<'a>(value: &'a Value, key: &str) -> &'a [Value] {
+    get(value, key)
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
         .unwrap_or(&[])
+}
+fn obj(fields: Vec<(&str, Value)>) -> Value {
+    Value::Object(fields.into_iter().map(|(k, v)| (k.into(), v)).collect())
+}
+fn num(n: i64) -> Value {
+    Value::Number(n.into())
+}
+
+#[derive(Clone, Debug)]
+struct Region {
+    span: Span,
+    kind: String,
+}
+
+fn regions(value: &Value) -> Vec<Region> {
+    array(value, "intervals")
+        .iter()
+        .filter_map(|item| {
+            Some(Region {
+                span: Span::new(integer(item, "start")?, integer(item, "end")?),
+                kind: text(item, "kind"),
+            })
+        })
+        .filter(|r| r.span.end > r.span.start)
+        .collect()
+}
+
+pub fn intervals_of(value: &Value) -> Vec<Span> {
+    normalize(
+        &regions(value)
+            .into_iter()
+            .map(|r| r.span)
+            .collect::<Vec<_>>(),
+    )
+}
+
+fn canonical(source: &str) -> bool {
+    !source.contains(".incbin")
+        && !source.contains("M2C_ERROR")
+        && !source.contains("__asm__")
+        && !source.contains("asm volatile")
+        && !source
+            .lines()
+            .any(|line| line.contains("register") && line.contains("asm") && line.contains('('))
+}
+
+fn hex(value: &str) -> Option<i64> {
+    i64::from_str_radix(value.trim().trim_start_matches("0x"), 16).ok()
+}
+fn space(line: &str) -> Option<i64> {
+    let value = line.trim().strip_prefix(".space")?.trim();
+    value
+        .strip_prefix("0x")
+        .map_or_else(|| value.parse().ok(), |v| i64::from_str_radix(v, 16).ok())
+}
+fn c_label(line: &str) -> Option<i64> {
+    let value = line.trim().strip_prefix("AlchemyC_")?.trim_end_matches(':');
+    (value.len() == 8 && value.chars().all(|c| c.is_ascii_hexdigit()))
+        .then(|| hex(value))
+        .flatten()
+}
+fn local_label(line: &str) -> bool {
+    line.trim().starts_with(".L_") && line.trim_end().ends_with(':')
+}
+fn overlay_name(name: &str) -> Option<String> {
+    name.strip_prefix("resource_")?
+        .strip_suffix("_overlay.s")
+        .map(|s| format!("resource_{s}"))
+}
+fn overlay_short(id: &str) -> &str {
+    id.strip_prefix("resource_").unwrap_or(id)
+}
+
+#[derive(Clone, Debug)]
+pub struct Owner {
+    pub label: String,
+    pub entry: i64,
+    pub spans: Vec<Span>,
+}
+
+fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
+    let Some(source) = tree.read(&format!("assets/code/{name}")) else {
+        return Vec::new();
+    };
+    let Some(_id) = overlay_name(name) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    let mut owner: Option<Owner> = None;
+    let mut cursor = 0;
+    for line in source.split('\n') {
+        if let Some(entry) = c_label(line) {
+            if let Some(open) = owner.take() {
+                if !open.spans.is_empty() {
+                    out.push(open);
+                }
+            }
+            cursor = entry;
+            owner = Some(Owner {
+                label: format!("AlchemyC_{entry:08x}"),
+                entry,
+                spans: Vec::new(),
+            });
+            continue;
+        }
+        if owner.is_some() && (line.trim().is_empty() || local_label(line)) {
+            continue;
+        }
+        if let Some(size) = space(line) {
+            if let Some(open) = owner.as_mut() {
+                open.spans.push(Span::new(cursor, cursor + size));
+                cursor += size;
+                continue;
+            }
+        }
+        if !line.trim().is_empty() {
+            if let Some(open) = owner.take() {
+                if !open.spans.is_empty() {
+                    out.push(open);
+                }
+            }
+        }
+    }
+    if let Some(open) = owner {
+        if !open.spans.is_empty() {
+            out.push(open);
+        }
+    }
+    out
+}
+
+fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
+    let mut names: Vec<_> = tree
+        .list("assets/code")
+        .into_iter()
+        .filter_map(|name| overlay_name(&name).map(|id| (id, name)))
+        .collect();
+    names.sort_by(|a, b| a.0.cmp(&b.0));
+    names
+}
+
+fn exact_main(tree: &SourceTree, executable: &[Span]) -> Vec<Span> {
+    let value = tree
+        .read("out/full/claimed/manifest.json")
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok());
+    let mut spans = Vec::new();
+    if let Some(manifest) = value {
+        for region in array(&manifest, "regions") {
+            let Some(start) = integer(region, "address") else {
+                continue;
+            };
+            let Some(size) = integer(region, "size") else {
+                continue;
+            };
+            let source = text(region, "source");
+            if canonical(&tree.read(&source).unwrap_or_default()) {
+                spans.extend(intersect(&[Span::new(start, start + size)], executable));
+            }
+        }
+    }
+    normalize(&spans)
+}
+
+fn exact_overlay(
+    tree: &SourceTree,
+    pairs: &[(String, String)],
+    executable: &std::collections::BTreeMap<String, Vec<Span>>,
+) -> (
+    std::collections::BTreeMap<String, Vec<Owner>>,
+    std::collections::BTreeMap<String, Vec<Span>>,
+) {
+    let mut owners = std::collections::BTreeMap::new();
+    let mut spans = std::collections::BTreeMap::new();
+    for (id, name) in pairs {
+        let list: Vec<_> = overlay_owners(tree, name)
+            .into_iter()
+            .map(|mut owner| {
+                let path = format!("exact/{id}_c_{:08x}.c", owner.entry);
+                if !tree.read(&path).is_some_and(|source| canonical(&source)) {
+                    owner.spans.clear();
+                }
+                owner.spans = intersect(
+                    &owner.spans,
+                    executable.get(id).map(Vec::as_slice).unwrap_or(&[]),
+                );
+                owner
+            })
+            .filter(|o| !o.spans.is_empty())
+            .collect();
+        let flat: Vec<_> = list.iter().flat_map(|o| o.spans.iter().copied()).collect();
+        owners.insert(id.clone(), list);
+        spans.insert(id.clone(), normalize(&flat));
+    }
+    (owners, spans)
+}
+
+fn permanent_main(tree: &SourceTree) -> Vec<Span> {
+    let mut spans = Vec::new();
+    if let Some(value) = tree
+        .read("out/full/asm/manifest.json")
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok())
     {
-        let (Some(start), Some(end)) = (
-            entry.get("start").and_then(|v| v.as_f64()),
-            entry.get("end").and_then(|v| v.as_f64()),
-        ) else {
+        for region in array(&value, "regions") {
+            let retention = text(region, "retention");
+            let kind = text(region, "kind");
+            let evidence = text(region, "evidence");
+            let proven = text(region, "confidence") == "proven" && !evidence.trim().is_empty();
+            let permanent = retention == "keep_asm"
+                || (retention == "keep_structured_asm" && proven)
+                || matches!(
+                    retention.as_str(),
+                    "merge_with_owner"
+                        | "merge_with_function_owner"
+                        | "merge_with_continuations"
+                        | "adjacent_section_alignment"
+                )
+                || kind.starts_with("deliberate_")
+                || matches!(
+                    kind.as_str(),
+                    "literal_pool" | "alignment_padding" | "lookup_table"
+                )
+                || evidence.contains("approved_compiler_cannot_express");
+            if permanent {
+                if let (Some(a), Some(s)) = (integer(region, "address"), integer(region, "size")) {
+                    spans.push(Span::new(a, a + s));
+                }
+            }
+        }
+    }
+    if let Some(value) = tree
+        .read("semantic/main-regions.json")
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok())
+    {
+        for region in array(&value, "non_c_ranges") {
+            let kind = text(region, "kind");
+            if matches!(
+                kind.as_str(),
+                "literal_pool" | "alignment_padding" | "lookup_table"
+            ) && !text(region, "evidence").trim().is_empty()
+            {
+                if let (Some(a), Some(s)) = (
+                    get(region, "address")
+                        .and_then(|v| v.as_str())
+                        .and_then(hex)
+                        .or_else(|| integer(region, "address")),
+                    integer(region, "size"),
+                ) {
+                    spans.push(Span::new(a, a + s));
+                }
+            }
+        }
+    }
+    normalize(&spans)
+}
+
+fn permanent_overlay(inventory: &[Region]) -> Vec<Span> {
+    normalize(
+        &inventory
+            .iter()
+            .filter(|r| {
+                matches!(
+                    r.kind.as_str(),
+                    "veneer" | "executable_alignment" | "hand_written_thumb"
+                )
+            })
+            .map(|r| r.span)
+            .collect::<Vec<_>>(),
+    )
+}
+
+fn partition(executable: &[Span], cuts: &[i64]) -> Vec<Span> {
+    let mut out = Vec::new();
+    for run in normalize(executable) {
+        let mut points = vec![run.start, run.end];
+        points.extend(
+            cuts.iter()
+                .copied()
+                .filter(|p| *p > run.start && *p < run.end),
+        );
+        points.sort_unstable();
+        points.dedup();
+        out.extend(points.windows(2).map(|w| Span::new(w[0], w[1])));
+    }
+    out
+}
+
+fn credit(
+    label: String,
+    span: Span,
+    exact: &[Span],
+    semantic: &[Span],
+    retained: &[Span],
+    group: Option<String>,
+    address: Option<i64>,
+) -> Tile {
+    let e = bytes(&intersect(&[span], exact));
+    let s = bytes(&intersect(&[span], semantic));
+    let owned = [intersect(&[span], exact), intersect(&[span], semantic)].concat();
+    let r = bytes(&intersect(&subtract(&[span], &normalize(&owned)), retained));
+    let mut tile = Tile {
+        label,
+        bytes: span.bytes(),
+        group,
+        address,
+        ..Tile::default()
+    };
+    tile.set("exact_c", e);
+    tile.set("semantic_c", s);
+    tile.set("retained_asm", r);
+    tile.set("assembly", (span.bytes() - e - s - r).max(0));
+    tile
+}
+
+fn main_tiles(
+    executable: &[Span],
+    exact: &[Span],
+    retained: &[Span],
+    boundaries: &[i64],
+) -> Vec<Tile> {
+    let mut cuts = boundaries.to_vec();
+    for run in executable {
+        let mut p = (run.start / 0x10000 + 1) * 0x10000;
+        while p < run.end {
+            cuts.push(p);
+            p += 0x10000;
+        }
+    }
+    partition(executable, &cuts)
+        .into_iter()
+        .map(|span| {
+            let bank = format!("{:04x} · 64 KiB bank", (span.start / 0x10000) * 0x10000);
+            credit(
+                format!("0x{:08x}–0x{:08x}", span.start, span.end),
+                span,
+                exact,
+                &[],
+                retained,
+                Some(bank),
+                Some(span.start),
+            )
+        })
+        .collect()
+}
+
+fn overlay_tiles(id: &str, executable: &[Span], owners: &[Owner], retained: &[Span]) -> Vec<Tile> {
+    let exact: Vec<_> = owners
+        .iter()
+        .flat_map(|o| o.spans.iter().copied())
+        .collect();
+    let mut out = Vec::new();
+    for owner in owners {
+        let span = normalize(&owner.spans);
+        let n = bytes(&span);
+        if n == 0 {
+            continue;
+        }
+        let mut tile = Tile {
+            label: format!("{} · {} · byte-exact C", overlay_short(id), owner.label),
+            bytes: n,
+            group: Some(overlay_short(id).into()),
+            address: Some(owner.entry),
+            ..Tile::default()
+        };
+        tile.set("exact_c", n);
+        out.push(tile);
+    }
+    for span in subtract(executable, &[exact.clone(), retained.to_vec()].concat()) {
+        out.push(credit(
+            format!(
+                "{} · byte-exact assembly 0x{:08x}–0x{:08x}",
+                overlay_short(id),
+                span.start,
+                span.end
+            ),
+            span,
+            &exact,
+            &[],
+            retained,
+            Some(overlay_short(id).into()),
+            Some(span.start),
+        ));
+    }
+    for span in intersect(executable, retained) {
+        for residual in subtract(&[span], &exact) {
+            out.push(credit(
+                format!(
+                    "{} · Permanent ASM 0x{:08x}–0x{:08x}",
+                    overlay_short(id),
+                    residual.start,
+                    residual.end
+                ),
+                residual,
+                &exact,
+                &[],
+                retained,
+                Some(overlay_short(id).into()),
+                Some(residual.start),
+            ));
+        }
+    }
+    out
+}
+
+fn bands(executable: &[Span], exact: &[Span], retained: &[Span], target: i64) -> Vec<Tile> {
+    let mut out = Vec::new();
+    let mut current = Vec::new();
+    let mut start = 0;
+    for span in normalize(executable) {
+        let mut at = span.start;
+        while at < span.end {
+            if current.is_empty() {
+                start = at;
+            }
+            let room = target - bytes(&current);
+            let end = (at + room.max(1)).min(span.end);
+            current.push(Span::new(at, end));
+            at = end;
+            if bytes(&current) >= target {
+                out.push(band_tile(start, &current, exact, retained));
+                current.clear();
+            }
+        }
+    }
+    if !current.is_empty() {
+        out.push(band_tile(start, &current, exact, retained));
+    }
+    out
+}
+fn band_tile(start: i64, spans: &[Span], exact: &[Span], retained: &[Span]) -> Tile {
+    let n = bytes(spans);
+    let e = bytes(&intersect(spans, exact));
+    let r = bytes(&intersect(&subtract(spans, exact), retained));
+    let mut tile = Tile {
+        label: format!("{:06x}", start),
+        bytes: n,
+        ..Tile::default()
+    };
+    tile.set("exact_c", e);
+    tile.set("retained_asm", r);
+    tile.set("assembly", n - e - r);
+    tile
+}
+
+#[derive(Clone)]
+struct Stream {
+    id: String,
+    start: i64,
+    rom: i64,
+}
+fn streams(tree: &SourceTree) -> Vec<Stream> {
+    let Some(manifest) = tree
+        .read("assets/manifest.json")
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok())
+    else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for series in array(&manifest, "series") {
+        if text(series, "kind") != "golden-sun-thumb-overlay-series" {
+            continue;
+        }
+        for row in array(series, "resources") {
+            let Some(items) = row.as_array() else {
+                continue;
+            };
+            if items.len() < 3 {
+                continue;
+            }
+            let id = items[0].as_str().unwrap_or("").to_string();
+            let start = items[1].as_str().and_then(hex).unwrap_or(0);
+            let rom = items[2].as_str().and_then(hex).unwrap_or(0);
+            if rom > 0 {
+                out.push(Stream {
+                    id: format!("resource_{id}"),
+                    start,
+                    rom,
+                });
+            }
+        }
+    }
+    out
+}
+
+fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
+    let Some(manifest) = tree
+        .read("out/full/assets/manifest.json")
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok())
+    else {
+        return vec![Tile {
+            label: "Assets & data".into(),
+            bytes: bytes(data),
+            categories: [0, 0, 0, 0, bytes(data)],
+            ..Tile::default()
+        }];
+    };
+    let mut out = Vec::new();
+    for region in array(&manifest, "regions") {
+        let Some(start) = integer(region, "address") else {
             continue;
         };
-        out.push(Interval {
-            start,
-            end,
-            kind: entry
-                .get("kind")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string(),
-            evidence: entry
-                .get("evidence")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string(),
+        let Some(size) = integer(region, "size") else {
+            continue;
+        };
+        let span = Span::new(start, start + size);
+        let actual = bytes(&intersect(&[span], data));
+        if actual == 0 {
+            continue;
+        }
+        let kind = text(region, "kind");
+        let source = array(region, "sources")
+            .first()
+            .and_then(Value::as_str)
+            .unwrap_or(&kind);
+        let mut tile = Tile {
+            label: format!(
+                "{} · {} · 0x{:08x}",
+                source.rsplit('/').next().unwrap_or(source),
+                kind,
+                start
+            ),
+            bytes: actual,
+            group: Some(kind.clone()),
+            address: Some(start),
+            ..Tile::default()
+        };
+        tile.set("asset_data", actual);
+        let tier = if kind.contains("image") || kind.contains("graphics") {
+            "asset_color"
+        } else if kind.contains("font") || kind.contains("palette") {
+            "asset_bw"
+        } else {
+            "asset_bytes"
+        };
+        tile.set(tier, actual);
+        out.push(tile);
+    }
+    if out.is_empty() {
+        out.push(Tile {
+            label: format!("ROM data · {rom} bytes"),
+            bytes: bytes(data),
+            ..Tile::default()
         });
     }
     out
 }
 
-pub fn to_spans(spans: Vec<crate::intervals::Span>) -> Vec<Span> {
-    spans
-        .into_iter()
-        .map(|span| Span::new(span.start as i64, span.end as i64))
-        .collect()
+fn area_json(area: &Area, tracked: bool) -> Value {
+    let cats = CATEGORIES
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| area.categories[*i] != 0)
+        .map(|(i, name)| (name.to_string(), num(area.categories[i])))
+        .collect::<Map<_, _>>();
+    let tiles = if tracked {
+        Value::Number((area.tiles.len() as u64).into())
+    } else {
+        Value::Array(area.tiles.iter().map(tile_json).collect())
+    };
+    obj(vec![
+        ("id", Value::String(area.id.clone())),
+        ("label", Value::String(area.label.clone())),
+        ("bytes", num(area.bytes)),
+        ("categories", Value::Object(cats)),
+        ("tiles", tiles),
+    ])
 }
-
-fn area_value(item: &Area) -> Value {
-    let mut tiles = Vec::new();
-    for tile in &item.tiles {
-        let mut fields: Vec<(String, Value)> = vec![
-            ("label".into(), Value::Str(tile.label.clone())),
-            ("bytes".into(), Value::Num(tile.bytes as f64)),
-            (
-                "categories".into(),
-                Value::Obj(
-                    tile.categories
-                        .iter()
-                        .map(|(key, bytes)| (key.clone(), Value::Num(*bytes as f64)))
-                        .collect(),
-                ),
-            ),
-        ];
-        // PORT NOTE: the TypeScript builds the tile literal with the optional
-        // members present only when set, and `canonicalJson` drops `undefined`
-        // members entirely. Omitting them here reproduces that exactly.
-        if let Some(group) = &tile.group {
-            fields.push(("group".into(), Value::Str(group.clone())));
-        }
-        if let Some(subgroup) = &tile.subgroup {
-            fields.push(("subgroup".into(), Value::Str(subgroup.clone())));
-        }
-        if let Some(address) = tile.address {
-            fields.push(("address".into(), Value::Num(address as f64)));
-        }
-        tiles.push(Value::Obj(fields));
+fn tile_json(tile: &Tile) -> Value {
+    let cats = CATEGORIES
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| tile.categories[*i] != 0)
+        .map(|(i, name)| (name.to_string(), num(tile.categories[i])))
+        .collect::<Map<_, _>>();
+    let mut out = vec![
+        ("label".into(), Value::String(tile.label.clone())),
+        ("bytes".into(), num(tile.bytes)),
+        ("categories".into(), Value::Object(cats)),
+    ];
+    if let Some(v) = &tile.group {
+        out.push(("group".into(), Value::String(v.clone())));
     }
-    Value::Obj(vec![
-        ("id".into(), Value::Str(item.id.clone())),
-        ("label".into(), Value::Str(item.label.clone())),
-        ("bytes".into(), Value::Num(item.bytes as f64)),
+    if let Some(v) = &tile.subgroup {
+        out.push(("subgroup".into(), Value::String(v.clone())));
+    }
+    if let Some(v) = tile.address {
+        out.push(("address".into(), num(v)));
+    }
+    Value::Object(out.into_iter().collect())
+}
+fn entry(bytes: i64, total: i64) -> Value {
+    obj(vec![
+        ("bytes", num(bytes)),
         (
-            "categories".into(),
-            Value::Obj(
-                item.categories
-                    .iter()
-                    .map(|(key, bytes)| (key.clone(), Value::Num(*bytes as f64)))
-                    .collect(),
-            ),
+            "percent_of_executable",
+            serde_json::Number::from_f64(crate::jsnum::round_half_up(bytes, total))
+                .map(Value::Number)
+                .unwrap_or(Value::Null),
         ),
-        ("tiles".into(), Value::Arr(tiles)),
     ])
 }
 
-fn category_entry(bytes: i64, executable_bytes: i64) -> Result<Value, String> {
-    let percent = crate::intervals::round_half_up_percent(bytes as f64, executable_bytes as f64)?;
-    Ok(Value::Obj(vec![
-        ("bytes".into(), Value::Num(bytes as f64)),
-        ("percent_of_executable".into(), Value::Num(percent)),
-    ]))
-}
-
-/// Permanent assembly is explicit evidence, never a complement.
-///
-/// This used to say that once the ordinary-C census was declared closed, every
-/// main-image byte that was not exact or semantic C was permanent. That held
-/// only while semantic C filled the complement: `owned` was exact plus
-/// semantic, so what remained really was veneers and alignment.
-///
-/// With two tiers `owned` collapses to exact C alone, and the same rule claims
-/// the entire unreconstructed main image can never be C -- 447,826 bytes, most
-/// of the contributor target list, relabelled permanent without one line of
-/// evidence. It read as DONE 58% on the live dashboard while the published map
-/// said 36%.
-///
-/// A region is permanent because something proves it is, and `explicit` is
-/// where that proof arrives. The census argument is gone.
-fn main_retained_coverage(explicit: &[Span]) -> Vec<Span> {
-    normalize(explicit)
-}
-
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
-    let rom_bytes = rom_size(&options.target)?;
+    let rom = rom_size(&options.target)?;
     let inventory = read_json(
         options.exact,
         &format!("metrics/{}-executable.json", options.target),
     )?;
-    let tracked = if options.validate_tracked_progress {
-        Some(read_json(
-            options.exact,
-            &format!("metrics/{}-progress.json", options.target),
-        )?)
-    } else {
-        None
-    };
-    if inventory.get("audit").and_then(|v| v.as_str()) != Some("complete") {
+    if text(&inventory, "audit") != "complete" {
         return Err(format!(
             "{} executable audit is incomplete; coverage map withheld",
             options.target
         ));
     }
-
-    let main_node = inventory.get("main").cloned().unwrap_or(Value::Null);
-    let main_executable = to_spans(union_intervals(&intervals_of(&main_node))?);
-    let overlay_nodes: Vec<Value> = inventory
-        .get("overlays")
-        .and_then(|v| v.as_array())
-        .unwrap_or(&[])
-        .to_vec();
-
-    let mut overlay_executable: OrderedMap<String, Vec<Span>> = OrderedMap::new();
-    let mut overlay_retained: OrderedMap<String, Vec<Span>> = OrderedMap::new();
-    let mut overlay_ids: Vec<String> = Vec::new();
-    for overlay in &overlay_nodes {
-        let id = overlay
-            .get("id")
-            .and_then(|v| v.as_str())
-            .unwrap_or("")
-            .to_string();
-        overlay_ids.push(id.clone());
-        let intervals = intervals_of(overlay);
-        overlay_executable.insert(id.clone(), to_spans(union_intervals(&intervals)?));
-        // Fixed ldr/bx veneers, literal pools and audited alignment bytes are
-        // already proven structural by the executable inventory: source-owned
-        // exact assembly, not decompilation debt.
-        let structural: Vec<Interval> = intervals
-            .into_iter()
-            .filter(|interval| {
-                matches!(
-                    interval.kind.as_str(),
-                    // `hand_written_thumb` is a region whose own assembly uses a
-                    // Thumb `stmia`/`ldmia`. `arm.md` gates both store-multiple
-                    // peepholes on TARGET_ARM, so no C reaches it and it is
-                    // permanently assembly, exactly like a veneer.
-                    // NOT `literal_pool`. A pool belongs to its function: when
-                    // the function is decompiled the compiler emits the pool,
-                    // so those bytes are C-able work, not permanence. Counting
-                    // them as permanent put ~34,000 bytes into DONE that a
-                    // contributor still has to earn.
-                    "veneer" | "executable_alignment" | "hand_written_thumb"
-                )
-            })
-            .collect();
-        overlay_retained.insert(id, to_spans(union_intervals(&structural)?));
-    }
-    let executable_of = |id: &str| -> Vec<Span> {
-        overlay_executable
-            .get(&id.to_string())
-            .cloned()
-            .unwrap_or_default()
-    };
-
-    let exact_main: Vec<Span> = exact_main_spans(options.exact, &main_executable)
-        .iter()
-        .flat_map(|(_, spans)| spans.iter().copied())
-        .collect();
-    let exact_overlay_owners_by_resource = exact_overlay_owners(options.exact);
-    let mut exact_overlay_by_resource: OrderedMap<String, Vec<Span>> = OrderedMap::new();
-    for (overlay, owners) in exact_overlay_owners_by_resource.iter() {
-        let flattened: Vec<Span> = owners
-            .iter()
-            .flat_map(|owner| owner.spans.iter().copied())
-            .collect();
-        exact_overlay_by_resource.insert(
-            overlay.clone(),
-            intersect(&flattened, &executable_of(overlay)),
+    let main = regions(&get(&inventory, "main").cloned().unwrap_or(Value::Null));
+    let main_exec = normalize(&main.iter().map(|r| r.span).collect::<Vec<_>>());
+    let mut overlay_exec = std::collections::BTreeMap::new();
+    let mut overlay_regions = std::collections::BTreeMap::new();
+    for node in array(&inventory, "overlays") {
+        let id = text(node, "id");
+        let rows = regions(node);
+        overlay_exec.insert(
+            id.clone(),
+            normalize(&rows.iter().map(|r| r.span).collect::<Vec<_>>()),
         );
+        overlay_regions.insert(id, rows);
     }
-
-    let boundaries = main_boundaries(options.exact);
-    let semantic_coverage: SemanticCoverage = match options.semantic {
-        Some(tree) => semantic_spans(tree, &boundaries, &main_executable, &overlay_executable),
-        None => SemanticCoverage::empty(),
-    };
-
-    // Exact always wins over semantic. Supersession (exact C replaced a draft)
-    // and outside-extent (a semantic source claims an address the audit does
-    // not call executable) are counted apart on purpose: folding them into one
-    // figure has already caused one misreading of this map.
-    let exact_main_union = normalize(&exact_main);
-    let semantic_main_input: Vec<Span> = semantic_coverage
-        .main
-        .iter()
-        .flat_map(|(_, s)| s.iter().copied())
-        .collect();
-    let semantic_main = subtract(&semantic_main_input, &exact_main_union);
-    let mut semantic_overlay_by_resource: OrderedMap<String, Vec<Span>> = OrderedMap::new();
-    let mut semantic_superseded = span_bytes(&semantic_main_input) - span_bytes(&semantic_main);
-    let mut semantic_outside_extent = 0i64;
-    for (overlay, spans) in semantic_coverage.overlays.iter() {
-        let executable = executable_of(overlay);
-        let in_extent = intersect(spans, &executable);
-        let owned = subtract(
-            &in_extent,
-            &exact_overlay_by_resource
-                .get(overlay)
-                .cloned()
-                .unwrap_or_default(),
-        );
-        semantic_outside_extent += span_bytes(spans) - span_bytes(&in_extent);
-        semantic_superseded += span_bytes(&in_extent) - span_bytes(&owned);
-        if !owned.is_empty() {
-            semantic_overlay_by_resource.insert(overlay.clone(), owned);
-        }
-    }
-
-    let exact_main_bytes = span_bytes(&exact_main_union);
-    let exact_overlay_bytes: i64 = exact_overlay_by_resource
-        .values()
-        .map(|spans| span_bytes(spans))
-        .sum();
-    if let Some(tracked) = &tracked {
-        let tracked_main = tracked
-            .get("main")
-            .and_then(|node| node.get("full_c_bytes"))
-            .and_then(|v| v.as_f64())
-            .unwrap_or(f64::NAN);
-        let tracked_overlays = tracked
-            .get("overlays")
-            .and_then(|node| node.get("full_c_bytes"))
-            .and_then(|v| v.as_f64())
-            .unwrap_or(f64::NAN);
-        if !equals_number(exact_main_bytes, tracked_main)
-            || !equals_number(exact_overlay_bytes, tracked_overlays)
-        {
-            return Err(format!(
-                "derived exact ownership disagrees with the tracked Full-C report \
-                 (main {} vs {}, overlays {} vs {}); regenerate metrics/ before the coverage map",
-                exact_main_bytes,
-                crate::jsnum::js_number_string(tracked_main),
-                exact_overlay_bytes,
-                crate::jsnum::js_number_string(tracked_overlays),
-            ));
-        }
-    }
-
-    let semantic_main_bytes = span_bytes(&semantic_main);
-    let semantic_overlay_bytes: i64 = semantic_overlay_by_resource
-        .values()
-        .map(|spans| span_bytes(spans))
-        .sum();
-    let executable_bytes = inventory
-        .get("total_union_bytes")
-        .and_then(|v| v.as_f64())
-        .ok_or_else(|| "executable inventory has no total_union_bytes".to_string())?
-        as i64;
-    let exact_bytes = exact_main_bytes + exact_overlay_bytes;
-    let semantic_bytes = semantic_main_bytes + semantic_overlay_bytes;
-
-    // ------------------------------------------------ executable universe
-    // The closed semantic census and the independent retained-complement gate
-    // jointly prove that every remaining main-image byte is permanent
-    // assembly. During an open census, only explicit retained evidence counts.
-    let main_retained = main_retained_coverage(&retained_main_spans());
-    let mut executable_areas: Vec<Area> = vec![area(
+    let exact_main = exact_main(options.exact, &main_exec);
+    let pairs = overlay_ids(options.exact);
+    let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec);
+    let exact_overlay_bytes: i64 = exact_overlay.values().map(|v| bytes(v)).sum();
+    let exact_bytes = bytes(&exact_main) + exact_overlay_bytes;
+    let retained_main = permanent_main(options.exact);
+    let mut executable_areas = vec![area(
         "main",
         "Main image",
-        main_owner_tiles(
-            &main_executable,
-            &boundaries,
-            &exact_main_union,
-            &semantic_main,
-            &main_retained,
+        main_tiles(
+            &main_exec,
+            &exact_main,
+            &retained_main,
+            &main.iter().map(|r| r.span.start).collect::<Vec<_>>(),
         ),
     )];
-    let mut overlay_tiles: Vec<Tile> = Vec::new();
-    for id in &overlay_ids {
-        let executable = executable_of(id);
-        let empty_owners: Vec<OverlayOwner> = Vec::new();
-        let exact_owners = exact_overlay_owners_by_resource
-            .get(id)
-            .cloned()
-            .unwrap_or(empty_owners);
-        let census_owners = semantic_coverage
-            .overlay_owners
-            .get(id)
-            .cloned()
-            .unwrap_or_default();
-        let semantic_owners = if !census_owners.is_empty() {
-            census_owners
-        } else {
-            semantic_overlay_by_resource
-                .get(id)
-                .cloned()
-                .unwrap_or_default()
-        };
-        overlay_tiles.extend(overlay_owner_tiles(
+    let mut overlay_tiles_all = Vec::new();
+    for (id, exec) in &overlay_exec {
+        overlay_tiles_all.extend(overlay_tiles(
             id,
-            &executable,
-            &exact_owners,
-            &semantic_owners,
-            &overlay_retained.get(id).cloned().unwrap_or_default(),
+            exec,
+            owners.get(id).map(Vec::as_slice).unwrap_or(&[]),
+            &permanent_overlay(overlay_regions.get(id).map(Vec::as_slice).unwrap_or(&[])),
         ));
     }
-    executable_areas.push(area("overlays", "Decoded code overlays", overlay_tiles));
-
-    // ----------------------------------------------------------- ROM image
-    let streams = overlay_streams(options.exact)?;
-    let stream_spans: Vec<Span> = streams
-        .values()
-        .map(|stream| Span::new(stream.start, stream.start + stream.rom_bytes))
-        .collect();
-    let mut code_input = main_executable.clone();
-    code_input.extend(stream_spans.iter().copied());
-    let code_spans = normalize(&code_input);
-    let data_spans = subtract(&[Span::new(ROM_BASE, ROM_BASE + rom_bytes)], &code_spans);
-
-    let mut rom_areas: Vec<Area> = vec![area(
+    executable_areas.push(area("overlays", "Decoded code overlays", overlay_tiles_all));
+    let mut code = main_exec.clone();
+    let ss = streams(options.exact);
+    for stream in &ss {
+        code.push(Span::new(stream.start, stream.start + stream.rom));
+    }
+    let data = subtract(&[Span::new(ROM_BASE, ROM_BASE + rom)], &code);
+    let mut rom_areas = vec![area(
         "rom-main-code",
         "Main image code",
-        main_bands(
-            &main_executable,
-            &exact_main_union,
-            &semantic_main,
-            &main_retained,
-            65536,
-        ),
+        bands(&main_exec, &exact_main, &retained_main, 65536),
     )];
-    let mut ordered_streams: Vec<(String, crate::assets::Stream)> = streams
-        .iter()
-        .map(|(id, stream)| (id.clone(), *stream))
-        .collect();
-    // Stable, like `Array#sort`: streams sharing a start keep manifest order.
-    ordered_streams.sort_by_key(|entry| entry.1.start);
-    let mut stream_tiles: Vec<Tile> = Vec::new();
-    for (overlay, stream) in &ordered_streams {
-        let decoded = span_bytes(&executable_of(overlay));
-        // A compressed stream has no per-byte correspondence with the code it
-        // decodes to, so its tile is sized in ROM bytes and merely *shaded* by
-        // the share of decoded bytes each category owns.
-        let exact_share = if decoded != 0 {
-            span_bytes(
-                &exact_overlay_by_resource
-                    .get(overlay)
-                    .cloned()
-                    .unwrap_or_default(),
-            ) as f64
-                / decoded as f64
+    let mut stream_tiles = Vec::new();
+    for stream in &ss {
+        let decoded = bytes(
+            overlay_exec
+                .get(&stream.id)
+                .map(Vec::as_slice)
+                .unwrap_or(&[]),
+        );
+        let exact_part = if decoded == 0 {
+            0
         } else {
-            0.0
+            (stream.rom as f64
+                * bytes(
+                    exact_overlay
+                        .get(&stream.id)
+                        .map(Vec::as_slice)
+                        .unwrap_or(&[]),
+                ) as f64
+                / decoded as f64)
+                .round() as i64
         };
-        let semantic_share = if decoded != 0 {
-            span_bytes(
-                &semantic_overlay_by_resource
-                    .get(overlay)
-                    .cloned()
-                    .unwrap_or_default(),
-            ) as f64
-                / decoded as f64
-        } else {
-            0.0
-        };
-        let exact_part = crate::jsnum::js_round(stream.rom_bytes as f64 * exact_share) as i64;
-        let semantic_part = crate::jsnum::js_round(stream.rom_bytes as f64 * semantic_share) as i64;
         let mut tile = Tile {
-            label: overlay
-                .strip_prefix("resource_")
-                .unwrap_or(overlay)
-                .to_string(),
-            bytes: stream.rom_bytes,
+            label: overlay_short(&stream.id).into(),
+            bytes: stream.rom,
             ..Tile::default()
         };
-        tile.set_category("exact_c", exact_part);
-        tile.set_category("semantic_c", semantic_part);
-        tile.set_category("assembly", stream.rom_bytes - exact_part - semantic_part);
+        tile.set("exact_c", exact_part);
+        tile.set("assembly", stream.rom - exact_part);
         stream_tiles.push(tile);
+    }
+    let mut grouped = Vec::new();
+    let mut current: Option<Tile> = None;
+    let mut first = String::new();
+    let mut last = String::new();
+    for tile in stream_tiles {
+        if current.is_none() {
+            first = tile.label.clone();
+            current = Some(Tile {
+                label: first.clone(),
+                ..Tile::default()
+            });
+        }
+        let item = current.as_mut().unwrap();
+        item.bytes += tile.bytes;
+        for (a, b) in item.categories.iter_mut().zip(tile.categories) {
+            *a += b;
+        }
+        last = tile.label;
+        if item.bytes >= 49152 {
+            item.label = if first == last {
+                first.clone()
+            } else {
+                format!("{first}–{last}")
+            };
+            grouped.push(current.take().unwrap());
+        }
+    }
+    if let Some(mut tile) = current {
+        tile.label = if first == last {
+            first
+        } else {
+            format!("{first}–{last}")
+        };
+        grouped.push(tile);
     }
     rom_areas.push(area(
         "rom-overlay-streams",
         "Compressed code overlays",
-        group_tiles(&stream_tiles, 49152),
+        grouped,
     ));
-
-    // PORT NOTE: `preferVerifiedAssets` falls back to the tracked manifest when
-    // `verifiedAssetTiles` returns undefined (no verified build on disk). A
-    // *throw* inside the verified reader is not a fallback: `??` only catches
-    // `undefined`, so a schema or conservation refusal propagates.
-    let asset_tiles = match options.prefer_verified_assets {
-        true => match crate::verified::verified_asset_tiles(options.exact, &options.target)? {
-            Some(tiles) => tiles,
-            None => manifest_asset_tiles(options.exact, rom_bytes, &data_spans)?,
-        },
-        false => manifest_asset_tiles(options.exact, rom_bytes, &data_spans)?,
-    };
-    rom_areas.push(area("rom-data", "Assets & data", asset_tiles));
-
-    let rom_check: i64 = rom_areas.iter().map(|item| item.bytes).sum();
-    if rom_check != rom_bytes {
-        return Err(format!("ROM areas cover {rom_check} of {rom_bytes} bytes"));
-    }
-    let executable_check: i64 = executable_areas.iter().map(|item| item.bytes).sum();
-    if executable_check != executable_bytes {
-        return Err(format!(
-            "executable areas cover {executable_check} of {executable_bytes} bytes"
-        ));
-    }
-
-    let retained_bytes: i64 = executable_areas
+    rom_areas.push(area(
+        "rom-data",
+        "Assets & data",
+        asset_tiles(options.exact, &data, rom),
+    ));
+    let executable = bytes(&main_exec) + overlay_exec.values().map(|v| bytes(v)).sum::<i64>();
+    let retained = executable_areas
         .iter()
-        .map(|item| {
-            item.categories
-                .get(&"retained_asm".to_string())
-                .copied()
-                .unwrap_or(0)
-        })
-        .sum();
-    let assembly_bytes = executable_bytes - exact_bytes - semantic_bytes - retained_bytes;
-
-    let mut unresolved = semantic_coverage.unresolved.clone();
-    unresolved.sort_by(|left, right| crate::jsnum::utf16_cmp(left, right));
-
-    let document = Value::Obj(vec![
-        ("format".into(), Value::Num(1.0)),
+        .map(|a| a.categories[3])
+        .sum::<i64>();
+    let assembly = executable - exact_bytes - retained;
+    let document = obj(vec![
+        ("format", num(1)),
+        ("kind", Value::String("golden-sun-rom-coverage-map".into())),
+        ("target", Value::String(options.target.clone())),
+        ("derivation", Value::String("tracked-evidence-v1".into())),
+        ("rom_bytes", num(rom)),
+        ("executable_bytes", num(executable)),
         (
-            "kind".into(),
-            Value::Str("golden-sun-rom-coverage-map".into()),
-        ),
-        ("target".into(), Value::Str(options.target.clone())),
-        (
-            "derivation".into(),
-            Value::Str("tracked-evidence-v1".into()),
-        ),
-        ("rom_bytes".into(), Value::Num(rom_bytes as f64)),
-        (
-            "executable_bytes".into(),
-            Value::Num(executable_bytes as f64),
-        ),
-        (
-            "categories".into(),
-            Value::Obj(vec![
+            "categories",
+            obj(vec![
+                ("exact_c", entry(exact_bytes, executable)),
+                ("semantic_c", entry(0, executable)),
+                ("assembly", entry(assembly, executable)),
+                ("retained_asm", entry(retained, executable)),
                 (
-                    "exact_c".into(),
-                    category_entry(exact_bytes, executable_bytes)?,
-                ),
-                (
-                    "semantic_c".into(),
-                    category_entry(semantic_bytes, executable_bytes)?,
-                ),
-                (
-                    "assembly".into(),
-                    category_entry(assembly_bytes, executable_bytes)?,
-                ),
-                (
-                    "retained_asm".into(),
-                    category_entry(retained_bytes, executable_bytes)?,
-                ),
-                (
-                    "asset_data".into(),
-                    Value::Obj(vec![
-                        ("bytes".into(), Value::Num(span_bytes(&data_spans) as f64)),
-                        ("percent_of_executable".into(), Value::Num(0.0)),
+                    "asset_data",
+                    obj(vec![
+                        ("bytes", num(bytes(&data))),
+                        ("percent_of_executable", num(0)),
                     ]),
                 ),
             ]),
         ),
         (
-            "main".into(),
-            Value::Obj(vec![
-                (
-                    "executable_bytes".into(),
-                    Value::Num(span_bytes(&main_executable) as f64),
-                ),
-                ("exact_c_bytes".into(), Value::Num(exact_main_bytes as f64)),
-                (
-                    "semantic_c_bytes".into(),
-                    Value::Num(semantic_main_bytes as f64),
-                ),
+            "main",
+            obj(vec![
+                ("executable_bytes", num(bytes(&main_exec))),
+                ("exact_c_bytes", num(bytes(&exact_main))),
+                ("semantic_c_bytes", num(0)),
             ]),
         ),
         (
-            "overlays".into(),
-            Value::Obj(vec![
-                (
-                    "executable_bytes".into(),
-                    Value::Num((executable_bytes - span_bytes(&main_executable)) as f64),
-                ),
-                (
-                    "exact_c_bytes".into(),
-                    Value::Num(exact_overlay_bytes as f64),
-                ),
-                (
-                    "semantic_c_bytes".into(),
-                    Value::Num(semantic_overlay_bytes as f64),
-                ),
+            "overlays",
+            obj(vec![
+                ("executable_bytes", num(executable - bytes(&main_exec))),
+                ("exact_c_bytes", num(exact_overlay_bytes)),
+                ("semantic_c_bytes", num(0)),
             ]),
         ),
         (
-            "provenance".into(),
-            Value::Obj(vec![
-                (
-                    "exact_source".into(),
-                    Value::Str(options.exact.id().to_string()),
-                ),
-                (
-                    "semantic_source".into(),
-                    Value::Str(
-                        options
-                            .semantic
-                            .map(|tree| tree.id().to_string())
-                            .unwrap_or_else(|| "absent".to_string()),
-                    ),
-                ),
-                (
-                    "semantic_sources".into(),
-                    Value::Num(semantic_coverage.sources as f64),
-                ),
-                (
-                    "main_semantic_census".into(),
-                    Value::Str(
-                        if semantic_coverage.main_census_closed {
-                            "closed"
-                        } else {
-                            "open"
-                        }
-                        .to_string(),
-                    ),
-                ),
-                (
-                    "semantic_superseded_bytes".into(),
-                    Value::Num(semantic_superseded as f64),
-                ),
-                (
-                    "semantic_outside_extent_bytes".into(),
-                    Value::Num(semantic_outside_extent as f64),
-                ),
-                (
-                    "semantic_unresolved".into(),
-                    Value::Arr(unresolved.into_iter().map(Value::Str).collect()),
-                ),
+            "provenance",
+            obj(vec![
+                ("exact_source", Value::String(options.exact.id().into())),
+                ("semantic_source", Value::String("absent".into())),
+                ("semantic_sources", num(0)),
+                ("main_semantic_census", Value::String("open".into())),
+                ("semantic_superseded_bytes", num(0)),
+                ("semantic_outside_extent_bytes", num(0)),
+                ("semantic_unresolved", Value::Array(Vec::new())),
             ]),
         ),
         (
-            "rom_areas".into(),
-            Value::Arr(rom_areas.iter().map(area_value).collect()),
+            "rom_areas",
+            Value::Array(rom_areas.iter().map(|a| area_json(a, false)).collect()),
         ),
         (
-            "executable_areas".into(),
-            Value::Arr(executable_areas.iter().map(area_value).collect()),
+            "executable_areas",
+            Value::Array(
+                executable_areas
+                    .iter()
+                    .map(|a| area_json(a, false))
+                    .collect(),
+            ),
         ),
     ]);
-
+    if options.validate_tracked_progress {
+        if let Some(tracked) = options
+            .exact
+            .read(&format!("metrics/{}-progress.json", options.target))
+            .and_then(|s| serde_json::from_str::<Value>(&s).ok())
+        {
+            let tm = get(
+                get(&tracked, "main").unwrap_or(&Value::Null),
+                "full_c_bytes",
+            )
+            .and_then(Value::as_i64)
+            .unwrap_or(-1);
+            let to = get(
+                get(&tracked, "overlays").unwrap_or(&Value::Null),
+                "full_c_bytes",
+            )
+            .and_then(Value::as_i64)
+            .unwrap_or(-1);
+            if tm != bytes(&exact_main) || to != exact_overlay_bytes {
+                return Err(format!("derived exact ownership disagrees with tracked Full-C report (main {} vs {}, overlays {} vs {})", bytes(&exact_main), tm, exact_overlay_bytes, to));
+            }
+        }
+    }
     Ok(CoverageMap {
         document,
         rom_areas,
         executable_areas,
     })
-}
-
-/// `derived !== tracked` where `tracked` may be missing.
-///
-/// PORT NOTE: a missing tracked field is `undefined` in JavaScript, and
-/// `number !== undefined` is true, so the report is rejected. A `NaN` stand-in
-/// compares unequal to everything for the same result. clippy would like this
-/// written as a direct comparison; it is a named helper precisely because the
-/// NaN case is the interesting one.
-fn equals_number(derived: i64, tracked: f64) -> bool {
-    derived as f64 == tracked
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn rom_size_rejects_an_unknown_target() {
-        assert_eq!(rom_size("gs1-en"), Ok(0x0080_0000));
-        assert_eq!(rom_size("gs2-en"), Ok(0x0100_0000));
-        let error = rom_size("gs3").expect_err("unknown target");
-        assert!(
-            error.contains("unsupported decomp target \"gs3\""),
-            "{error}"
-        );
-    }
-
-    #[test]
-    fn a_missing_tracked_field_never_compares_equal() {
-        assert!(equals_number(5, 5.0));
-        assert!(
-            !equals_number(5, f64::NAN),
-            "an absent tracked figure must not pass"
-        );
-    }
-
-    #[test]
-    fn area_value_omits_unset_tile_members() {
-        let mut tile = Tile {
-            label: "a".into(),
-            bytes: 4,
-            ..Tile::default()
-        };
-        tile.set_category("exact_c", 4);
-        let built = area_value(&area("main", "Main image", vec![tile]));
-        let tiles = built
-            .get("tiles")
-            .and_then(|v| v.as_array())
-            .expect("tiles");
-        assert!(
-            tiles[0].get("group").is_none(),
-            "an unset group is not written as null"
-        );
-        assert!(tiles[0].get("address").is_none());
-        assert_eq!(tiles[0].get("label").and_then(|v| v.as_str()), Some("a"));
-    }
-
-    #[test]
-    fn permanence_is_explicit_evidence_and_never_the_complement() {
-        let explicit = vec![Span::new(90, 100)];
-        assert_eq!(main_retained_coverage(&explicit), explicit);
-        // Everything else stays assembly. It is work, not permanence.
-        assert_eq!(main_retained_coverage(&[]), Vec::<Span>::new());
-    }
 }

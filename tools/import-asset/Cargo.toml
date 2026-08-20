@@ -10,4 +10,4 @@ name = "import_asset"
 path = "src/lib.rs"
 
 [dependencies]
-alchemy-zlib = { path = "../zlib" }
+png = "0.17.1"

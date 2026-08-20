@@ -1,14 +1,87 @@
-// The drawable vocabulary: categories, tiles, areas.
-//
-// WHY: every later stage -- tiling, treemap, SVG, JSON -- agrees on these three
-// shapes, and the category *order* is load-bearing twice over. It is the
-// stacking order inside a tile (exact C at the bottom) and the iteration order
-// when category totals are written out, so it is a fixed list rather than a
-// map that some future edit could re-sort.
+//! The one byte-range and treemap model shared by progress and coverage.
 
-use crate::ordered::OrderedMap;
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Span {
+    pub start: i64,
+    pub end: i64,
+}
 
-pub const CATEGORY_ORDER: [&str; 5] = [
+impl Span {
+    pub const fn new(start: i64, end: i64) -> Self {
+        Self { start, end }
+    }
+    pub const fn bytes(self) -> i64 {
+        self.end - self.start
+    }
+}
+
+pub fn bytes(spans: &[Span]) -> i64 {
+    spans.iter().map(|s| s.bytes()).sum()
+}
+
+pub fn normalize(input: &[Span]) -> Vec<Span> {
+    let mut spans: Vec<_> = input.iter().copied().filter(|s| s.end > s.start).collect();
+    spans.sort_by_key(|s| (s.start, s.end));
+    let mut out: Vec<Span> = Vec::with_capacity(spans.len());
+    for span in spans {
+        match out.last_mut() {
+            Some(last) if span.start <= last.end => last.end = last.end.max(span.end),
+            _ => out.push(span),
+        }
+    }
+    out
+}
+
+pub fn intersect(left: &[Span], right: &[Span]) -> Vec<Span> {
+    let left = normalize(left);
+    let right = normalize(right);
+    let mut out = Vec::new();
+    for a in left {
+        for b in &right {
+            if b.start >= a.end {
+                break;
+            }
+            if let Some(span) = (a.start.max(b.start) < a.end.min(b.end))
+                .then(|| Span::new(a.start.max(b.start), a.end.min(b.end)))
+            {
+                out.push(span);
+            }
+        }
+    }
+    normalize(&out)
+}
+
+pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
+    let cuts = normalize(cuts);
+    let mut out = Vec::new();
+    for span in normalize(input) {
+        let mut cursor = span.start;
+        for cut in &cuts {
+            if cut.end <= cursor {
+                continue;
+            }
+            if cut.start >= span.end {
+                break;
+            }
+            if cut.start > cursor {
+                out.push(Span::new(cursor, cut.start.min(span.end)));
+            }
+            cursor = cursor.max(cut.end);
+        }
+        if cursor < span.end {
+            out.push(Span::new(cursor, span.end));
+        }
+    }
+    out
+}
+
+pub fn contains(outer: &[Span], inner: Span) -> bool {
+    normalize(outer)
+        .iter()
+        .any(|span| span.start <= inner.start && inner.end <= span.end)
+}
+
+pub const CATEGORIES: [&str; 5] = [
     "exact_c",
     "semantic_c",
     "assembly",
@@ -16,23 +89,15 @@ pub const CATEGORY_ORDER: [&str; 5] = [
     "asset_data",
 ];
 
-pub const ASSET_TIERS: [&str; 5] = [
-    "asset_bytes",
-    "asset_bw",
-    "asset_color",
-    "asset_extracted",
-    "asset_objects",
-];
+fn category_index(name: &str) -> Option<usize> {
+    CATEGORIES.iter().position(|item| *item == name)
+}
 
-/// One drawable leaf: a byte run of the image with its category composition.
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
     pub bytes: i64,
-    /// PORT NOTE: this is a JS object literal, so member order is insertion
-    /// order and reaches the emitted JSON verbatim. An `OrderedMap` is the only
-    /// faithful backing; a `BTreeMap` would silently alphabetise the keys.
-    pub categories: OrderedMap<String, i64>,
+    pub categories: [i64; 5],
     pub group: Option<String>,
     pub subgroup: Option<String>,
     pub address: Option<i64>,
@@ -40,16 +105,17 @@ pub struct Tile {
 
 impl Tile {
     pub fn category(&self, name: &str) -> i64 {
-        self.categories.get(&name.to_string()).copied().unwrap_or(0)
+        category_index(name).map_or(0, |i| self.categories[i])
     }
-
-    pub fn set_category(&mut self, name: &str, bytes: i64) {
-        self.categories.insert(name.to_string(), bytes);
+    pub fn set(&mut self, name: &str, value: i64) {
+        if let Some(i) = category_index(name) {
+            self.categories[i] = value;
+        }
     }
-
-    pub fn add_category(&mut self, name: &str, bytes: i64) {
-        let total = self.category(name) + bytes;
-        self.categories.insert(name.to_string(), total);
+    pub fn add(&mut self, name: &str, value: i64) {
+        if let Some(i) = category_index(name) {
+            self.categories[i] += value;
+        }
     }
 }
 
@@ -58,73 +124,83 @@ pub struct Area {
     pub id: String,
     pub label: String,
     pub bytes: i64,
-    pub categories: OrderedMap<String, i64>,
+    pub categories: [i64; 5],
     pub tiles: Vec<Tile>,
 }
 
-pub fn category_total(tiles: &[Tile], category: &str) -> i64 {
-    tiles.iter().map(|tile| tile.category(category)).sum()
-}
-
-/// `area(id, label, tiles)`.
-///
-/// PORT NOTE: a zero total is skipped (`if (bytes)`), so an area that touches a
-/// category only with zero bytes omits the key rather than writing `0`. Empty
-/// tiles are dropped from the drawn list but still counted in `bytes`, which is
-/// summed before the filter -- reproduced in that order below.
 pub fn area(id: &str, label: &str, tiles: Vec<Tile>) -> Area {
-    let mut categories = OrderedMap::new();
-    for category in CATEGORY_ORDER {
-        let bytes = category_total(&tiles, category);
-        if bytes != 0 {
-            categories.insert(category.to_string(), bytes);
+    let mut categories = [0; 5];
+    let bytes = tiles.iter().map(|tile| tile.bytes).sum();
+    for tile in &tiles {
+        for (slot, value) in categories.iter_mut().zip(tile.categories) {
+            *slot += value;
         }
     }
-    let bytes = tiles.iter().map(|tile| tile.bytes).sum();
     Area {
-        id: id.to_string(),
-        label: label.to_string(),
+        id: id.into(),
+        label: label.into(),
         bytes,
         categories,
-        tiles: tiles.into_iter().filter(|tile| tile.bytes > 0).collect(),
+        tiles: tiles.into_iter().filter(|t| t.bytes > 0).collect(),
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Rect {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
 
-    #[test]
-    fn area_omits_zero_categories_and_drops_empty_tiles() {
-        let mut solid = Tile {
-            label: "a".into(),
-            bytes: 10,
-            ..Tile::default()
-        };
-        solid.set_category("exact_c", 10);
-        solid.set_category("assembly", 0);
-        let empty = Tile {
-            label: "b".into(),
-            bytes: 0,
-            ..Tile::default()
-        };
-        let built = area("main", "Main image", vec![solid, empty]);
-        assert_eq!(built.bytes, 10);
-        assert_eq!(built.tiles.len(), 1, "a zero-byte tile is not drawn");
-        let keys: Vec<&String> = built.categories.keys().collect();
-        assert_eq!(keys, vec!["exact_c"], "a zero total omits the key entirely");
-    }
+#[derive(Clone, Copy, Debug)]
+pub struct Placed {
+    pub index: usize,
+    pub rect: Rect,
+}
 
-    #[test]
-    fn categories_keep_the_stacking_order_not_alphabetical_order() {
-        let mut tile = Tile::default();
-        tile.set_category("retained_asm", 1);
-        tile.set_category("exact_c", 1);
-        let keys: Vec<String> = tile.categories.keys().cloned().collect();
-        assert_eq!(
-            keys,
-            vec!["retained_asm", "exact_c"],
-            "insertion order, not sorted"
-        );
+/// Deterministic slice-and-dice treemap. Both tools use this same geometry so
+/// byte accounting and rendered ownership have one model.
+pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<Placed> {
+    let total: i64 = items.iter().map(&weight).sum();
+    if total <= 0 {
+        return Vec::new();
     }
+    let horizontal = frame.width >= frame.height;
+    let mut cursor = if horizontal { frame.x } else { frame.y };
+    let mut out = Vec::with_capacity(items.len());
+    for (index, item) in items.iter().enumerate() {
+        let share = weight(item).max(0) as f64 / total as f64;
+        let rect = if horizontal {
+            let width = if index + 1 == items.len() {
+                frame.x + frame.width - cursor
+            } else {
+                frame.width * share
+            };
+            let rect = Rect {
+                x: cursor,
+                y: frame.y,
+                width,
+                height: frame.height,
+            };
+            cursor += width;
+            rect
+        } else {
+            let height = if index + 1 == items.len() {
+                frame.y + frame.height - cursor
+            } else {
+                frame.height * share
+            };
+            let rect = Rect {
+                x: frame.x,
+                y: cursor,
+                width: frame.width,
+                height,
+            };
+            cursor += height;
+            rect
+        };
+        out.push(Placed { index, rect });
+    }
+    out
 }

@@ -2,4 +2,3 @@
 //! entry point instead of shipping a separate executable.
 
 pub mod entrypoint;
-

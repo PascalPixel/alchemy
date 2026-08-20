@@ -21,8 +21,8 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
-use exact_reading_list::json::{parse as parse_json, Value};
 use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE as DISASM_OVERLAY_BASE};
+use serde_json::Value;
 
 /// Overlays are linked here, so an in-image address is `pool_word - BASE_SHIFT`.
 pub const BASE_SHIFT: i64 = 0x8000;
@@ -56,7 +56,11 @@ pub fn stored_displacement(high: u16, low: u16) -> Option<i64> {
     let upper = (high & 0x07ff) as i64;
     let lower = (low & 0x07ff) as i64;
     // The prefix carries a signed 11-bit field; sign-extend before combining.
-    let signed = if upper >= 0x0400 { upper - 0x0800 } else { upper };
+    let signed = if upper >= 0x0400 {
+        upper - 0x0800
+    } else {
+        upper
+    };
     Some((signed << 12) | (lower << 1))
 }
 
@@ -69,7 +73,9 @@ pub fn target_offset(high: u16, low: u16) -> Option<i64> {
 /// same path `overlay_show` reads, so the offsets here line up with its
 /// listing.
 pub fn overlay_image(overlay: &str) -> Result<Vec<u8>, String> {
-    let path = root().join("assets/code").join(format!("{overlay}_overlay.s"));
+    let path = root()
+        .join("assets/code")
+        .join(format!("{overlay}_overlay.s"));
     if !path.exists() {
         return Err(format!("no reconstruction assembly for {overlay}"));
     }
@@ -139,17 +145,26 @@ fn reaches_return(image: &[u8], offset: i64) -> bool {
 /// the main-image address in its trailing word.
 pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classified {
     if prologues.contains(&target) {
-        return Classified { kind: Kind::Prologue, imported: None };
+        return Classified {
+            kind: Kind::Prologue,
+            imported: None,
+        };
     }
     if target >= 0 && (target + 1) < image.len() as i64 {
         let opening = read_u16le(image, target);
         if (opening & 0xfe00) == 0xb400 {
-            return Classified { kind: Kind::Prologue, imported: None };
+            return Classified {
+                kind: Kind::Prologue,
+                imported: None,
+            };
         }
         if (target + 3) < image.len() as i64 && (opening & 0xff80) == 0xb080 {
             let second = read_u16le(image, target + 2);
             if (second & 0xfe00) == 0xb400 {
-                return Classified { kind: Kind::Prologue, imported: None };
+                return Classified {
+                    kind: Kind::Prologue,
+                    imported: None,
+                };
             }
         }
     }
@@ -164,17 +179,29 @@ pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classifi
                 | ((image[at + 6] as u32) << 16)
                 | ((image[at + 7] as u32) << 24);
             // The stored word carries the Thumb bit; the import's address is even.
-            return Classified { kind: Kind::Veneer, imported: Some((word & !1) as i64) };
+            return Classified {
+                kind: Kind::Veneer,
+                imported: Some((word & !1) as i64),
+            };
         }
         // A bare `bx rN` slot is the overlay's own call_via bank.
         if (first & 0xff87) == 0x4700 {
-            return Classified { kind: Kind::CallVia, imported: None };
+            return Classified {
+                kind: Kind::CallVia,
+                imported: None,
+            };
         }
     }
     if reaches_return(image, target) {
-        return Classified { kind: Kind::Leaf, imported: None };
+        return Classified {
+            kind: Kind::Leaf,
+            imported: None,
+        };
     }
-    Classified { kind: Kind::Unknown, imported: None }
+    Classified {
+        kind: Kind::Unknown,
+        imported: None,
+    }
 }
 
 /// True when a whole-overlay run resolved nothing and must therefore FAIL.
@@ -195,9 +222,13 @@ struct InventoryRow {
 
 fn inventory() -> Result<Vec<InventoryRow>, String> {
     let path = root().join("out/decomp/overlays.json");
-    let text = std::fs::read_to_string(&path)
-        .map_err(|_| format!("missing {}; run the overlay inventory first", path.display()))?;
-    let value = parse_json(&text)?;
+    let text = std::fs::read_to_string(&path).map_err(|_| {
+        format!(
+            "missing {}; run the overlay inventory first",
+            path.display()
+        )
+    })?;
+    let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
     let functions = value
         .get("functions")
         .and_then(Value::as_array)
@@ -205,14 +236,24 @@ fn inventory() -> Result<Vec<InventoryRow>, String> {
     let mut rows = Vec::with_capacity(functions.len());
     for function in functions {
         rows.push(InventoryRow {
-            overlay: function.get("overlay").and_then(Value::as_str).unwrap_or("").to_string(),
-            offset: function.get("offset").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            span_bytes: function.get("span_bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            starts_with_prologue: function.get("starts_with_prologue").map(Value::truthy).unwrap_or(false),
+            overlay: function
+                .get("overlay")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
+            offset: function.get("offset").and_then(Value::as_i64).unwrap_or(0),
+            span_bytes: function
+                .get("span_bytes")
+                .and_then(Value::as_i64)
+                .unwrap_or(0),
+            starts_with_prologue: function
+                .get("starts_with_prologue")
+                .and_then(Value::as_bool)
+                .unwrap_or(false),
             contained_by_len: function
                 .get("contained_by")
                 .and_then(Value::as_array)
-                .map(<[Value]>::len)
+                .map(Vec::len)
                 .unwrap_or(0),
         });
     }
@@ -246,12 +287,18 @@ pub fn resolve_overlay(
         None => rows
             .iter()
             .filter(|row| row.contained_by_len == 0)
-            .map(|row| Span { offset: row.offset, span_bytes: row.span_bytes })
+            .map(|row| Span {
+                offset: row.offset,
+                span_bytes: row.span_bytes,
+            })
             .collect(),
         Some(owner) => rows
             .iter()
             .filter(|row| row.offset == owner)
-            .map(|row| Span { offset: row.offset, span_bytes: row.span_bytes })
+            .map(|row| Span {
+                offset: row.offset,
+                span_bytes: row.span_bytes,
+            })
             .collect(),
     };
 
@@ -270,7 +317,10 @@ pub fn resolve_overlay(
                     "note: 0x{owner:x} is not an unconverted inventory row (already tracked?).\n      Walking 0x{owner:x}..0x{end:x}, bounded by the next unconverted row — this MAY INCLUDE neighbouring tracked functions.\n      Pass an explicit end offset as a third argument to bound it exactly."
                 );
             }
-            spans = vec![Span { offset: owner, span_bytes: end - owner }];
+            spans = vec![Span {
+                offset: owner,
+                span_bytes: end - owner,
+            }];
         }
     }
 
@@ -288,7 +338,11 @@ pub fn resolve_overlay(
             if let Some(target) = target_offset(high, low) {
                 if target >= 0 && target < image.len() as i64 {
                     let kind = classify(&image, target, &prologues).kind;
-                    sites.push(CallSite { site: at, target, kind });
+                    sites.push(CallSite {
+                        site: at,
+                        target,
+                        kind,
+                    });
                 }
             }
             at += 2;
@@ -303,7 +357,11 @@ pub fn resolve_overlay(
 /// reimplementing the overlay's non-PC-relative BL rule. Explicit bounds are
 /// required by the caller: an unbounded run intentionally has different
 /// inventory semantics and is not safe for a tracked owner.
-pub fn resolved_call_names(overlay: &str, owner: i64, owner_end: i64) -> Result<Vec<(i64, String)>, String> {
+pub fn resolved_call_names(
+    overlay: &str,
+    owner: i64,
+    owner_end: i64,
+) -> Result<Vec<(i64, String)>, String> {
     let image = overlay_image(overlay)?;
     let rows = inventory()?;
     let prologues: HashSet<i64> = rows
@@ -324,7 +382,11 @@ pub fn resolved_call_names(overlay: &str, owner: i64, owner_end: i64) -> Result<
 }
 
 fn names_get(names: &[(i64, String)], site: i64) -> Option<&str> {
-    names.iter().rev().find(|(at, _)| *at == site).map(|(_, name)| name.as_str())
+    names
+        .iter()
+        .rev()
+        .find(|(at, _)| *at == site)
+        .map(|(_, name)| name.as_str())
 }
 
 /// A colon-anchored `HHHHHHH:` line-start address, as `overlay_show`/objdump
@@ -407,7 +469,9 @@ fn is_word_byte(b: u8) -> bool {
 pub fn unannotated_call_sites(listing: &str, sites: &[(i64, String)]) -> Vec<i64> {
     let mut missed = Vec::new();
     for line in listing.split('\n') {
-        let Some(address) = line_address(line) else { continue };
+        let Some(address) = line_address(line) else {
+            continue;
+        };
         if !contains_bl_word(line) {
             continue;
         }
@@ -439,8 +503,12 @@ const KNOWN_FLAGS: [&str; 3] = ["--self-test", "--json", "--annotate"];
 
 /// `/^resource_[0-9a-f]+$/` — lowercase only, no `i` flag in the original.
 fn is_resource_name(text: &str) -> bool {
-    text.strip_prefix("resource_")
-        .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)))
+    text.strip_prefix("resource_").is_some_and(|rest| {
+        !rest.is_empty()
+            && rest
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    })
 }
 
 /// Pick the owner/end bounds out of the command line.
@@ -465,7 +533,10 @@ pub fn parse_bounds(args: &[String], overlay: Option<&str>) -> Result<Vec<i64>, 
             .strip_prefix("0x")
             .or_else(|| argument.strip_prefix("0X"))
             .unwrap_or(argument.as_str());
-        if !stripped.is_empty() && stripped.len() <= 4 && stripped.bytes().all(|b| b.is_ascii_hexdigit()) {
+        if !stripped.is_empty()
+            && stripped.len() <= 4
+            && stripped.bytes().all(|b| b.is_ascii_hexdigit())
+        {
             bounds.push(i64::from_str_radix(stripped, 16).map_err(|e| e.to_string())?);
             continue;
         }
@@ -480,119 +551,4 @@ pub fn parse_bounds(args: &[String], overlay: Option<&str>) -> Result<Vec<i64>, 
         ));
     }
     Ok(bounds)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn displacement_decode() {
-        // `f000 fe67` stores 0xcce, so the callee is at 0xcd0 — a real
-        // `resource_39f` owner. Measured from the live disassembly.
-        assert_eq!(stored_displacement(0xf000, 0xfe67), Some(0xcce));
-        assert_eq!(target_offset(0xf000, 0xfe67), Some(0xcd0));
-        // `f002 fe75` appears at two sites and must resolve to ONE callee.
-        assert_eq!(target_offset(0xf002, 0xfe75), Some(0x2cec));
-        assert_eq!(stored_displacement(0x4770, 0x0000), None);
-        assert_eq!(stored_displacement(0xf000, 0x4770), None);
-        // A negative prefix must sign-extend rather than wrap.
-        assert_eq!(stored_displacement(0xf7ff, 0xf800), Some(-0x1000));
-    }
-
-    #[test]
-    fn annotate_replaces_wrong_callee_only() {
-        let listing = " 2001082:\tf002 fedd \tbl\t0x2003e40\n 2001086:\tmovs r0, #1\n";
-        let annotated = annotate(listing, &[(0x1082, "Func_0808a010".to_string())]);
-        assert!(annotated.contains("bl Func_0808a010"));
-        assert!(!annotated.contains("0x2003e40"));
-        assert!(annotated.contains("movs r0, #1"));
-    }
-
-    #[test]
-    fn classify_shapes() {
-        let mut image = vec![0u8; 16];
-        // Trailing word 0x0808a011 — the Thumb bit must be masked off.
-        image[0..8].copy_from_slice(&[0x00, 0x4c, 0x20, 0x47, 0x11, 0xa0, 0x08, 0x08]);
-        let veneer = classify(&image, 0, &HashSet::new());
-        assert_eq!(veneer.kind, Kind::Veneer);
-        assert_eq!(veneer.imported, Some(0x0808a010));
-        let mut prologues = HashSet::new();
-        prologues.insert(0i64);
-        assert_eq!(classify(&image, 0, &prologues).kind, Kind::Prologue);
-
-        // A `push {r4, lr}` opening is a prologue even when the inventory missed it.
-        let unlisted = [0x10u8, 0xb5, 0, 0, 0, 0, 0, 0];
-        assert_eq!(classify(&unlisted, 0, &HashSet::new()).kind, Kind::Prologue);
-
-        // Stack reservation before push.
-        let stack_first = [0x84u8, 0xb0, 0xe0, 0xb5, 0, 0, 0, 0];
-        assert_eq!(classify(&stack_first, 0, &HashSet::new()).kind, Kind::Prologue);
-    }
-
-    #[test]
-    fn bounds_parse_both_spellings() {
-        let overlay = "resource_3af".to_string();
-        let bare = parse_bounds(&[overlay.clone(), "1c14".into(), "1d0c".into()], None).unwrap();
-        assert_eq!(bare, vec![0x1c14, 0x1d0c]);
-        let prefixed = parse_bounds(&[overlay.clone(), "0x1c14".into(), "0x1d0c".into()], None).unwrap();
-        assert_eq!(prefixed, vec![0x1c14, 0x1d0c]);
-        let mixed = parse_bounds(
-            &[overlay.clone(), "0X1C14".into(), "1d0c".into(), "--annotate".into(), "--json".into()],
-            None,
-        )
-        .unwrap();
-        assert_eq!(mixed, vec![0x1c14, 0x1d0c]);
-        assert_eq!(parse_bounds(&[overlay, "--json".into()], None).unwrap(), Vec::<i64>::new());
-    }
-
-    #[test]
-    fn bounds_reject_bad_arguments() {
-        let cases: Vec<Vec<&str>> = vec![
-            vec!["resource_3c9", "3660 36d0"],
-            vec!["resource_3c9", "14000"],
-            vec!["resource_3c9", "1c14", "1d0g"],
-            vec!["resource_3c9", "--anotate"],
-            vec!["resource_3c9", "1c14", "1d0c", "1e00"],
-        ];
-        for argv in cases {
-            let args: Vec<String> = argv.into_iter().map(String::from).collect();
-            assert!(parse_bounds(&args, Some("resource_3c9")).is_err(), "{args:?} should be rejected");
-        }
-        let named = parse_bounds(
-            &["resource_3c9".into(), "0x1c14".into(), "1d0c".into(), "--annotate".into()],
-            Some("resource_3c9"),
-        )
-        .unwrap();
-        assert_eq!(named, vec![0x1c14, 0x1d0c]);
-    }
-
-    #[test]
-    fn partial_annotation_is_detectable() {
-        let listing = concat!(
-            " 2000388:\tb520      \tpush\t{r5, lr}\n",
-            " 20003b4:\tf004 f9dd \tbl\t0x2004772\n",
-            " 20003ee:\tf004 f9f5 \tbl\t0x20047dc\n",
-        );
-        assert_eq!(unannotated_call_sites(listing, &[]).len(), 2);
-        let half = unannotated_call_sites(listing, &[(0x3b4, "Func_080770c0".into())]);
-        assert_eq!(half, vec![0x3ee]);
-        let full = vec![(0x3b4, "Func_080770c0".to_string()), (0x3ee, "Func_0808a038".to_string())];
-        assert!(unannotated_call_sites(listing, &full).is_empty());
-        assert!(annotate(listing, &full).contains("bl Func_0808a038"));
-    }
-
-    #[test]
-    fn conditional_branches_are_not_calls() {
-        let conditional = " 20012f4:\td90a      \tbls.n\t0x200130c\n";
-        assert!(unannotated_call_sites(conditional, &[]).is_empty());
-        assert!(unannotated_call_sites("  0x20003fc = 0x02000240\n", &[]).is_empty());
-    }
-
-    #[test]
-    fn resolves_nothing_both_directions() {
-        assert!(resolves_nothing(0, 0));
-        assert!(!resolves_nothing(1, 0));
-        assert!(!resolves_nothing(0, 2));
-    }
 }

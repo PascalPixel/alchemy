@@ -1,4 +1,0 @@
-[package]
-name = "jobs"
-version.workspace = true
-edition.workspace = true

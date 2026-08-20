@@ -10,8 +10,8 @@ name = "kind1_map_grid"
 path = "src/lib.rs"
 
 [dependencies]
-alchemy-zlib = { path = "../zlib" }
 export-asset = { path = "../export-asset" }
 extract-resource = { path = "../extract-resource" }
 import-asset = { path = "../import-asset" }
+hex = "0.4"
 serde_json = { version = "1", features = ["preserve_order"] }

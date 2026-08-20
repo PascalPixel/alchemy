@@ -7,12 +7,12 @@
 use std::path::Path;
 use std::process::Command;
 
-use alchemy_plan::nodepath::{basename, extname};
-use alchemy_plan::plan::{
+use compiler_core::nodepath::{basename, extname};
+use compiler_core::plan::{
     source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions,
 };
-use alchemy_routing::routing::{root, CompilerTarget};
-use alchemy_symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
+use compiler_core::routing::{root, CompilerTarget};
+use compiler_core::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 
 use crate::jsnum::{hex8, parse_hex};
 use crate::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
@@ -20,7 +20,7 @@ use crate::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
 /// `ROM_BASE`.
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
 
-/// `CandidateCompilerFamily` is `alchemy_plan`'s `CompilerFamily`; the
+/// `CandidateCompilerFamily` is `compiler_core`'s `CompilerFamily`; the
 /// TypeScript declares the same six-member union a second time rather than
 /// importing it. One name here, deliberately.
 pub type CandidateCompilerFamily = CompilerFamily;

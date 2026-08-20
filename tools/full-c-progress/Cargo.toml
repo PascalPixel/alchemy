@@ -10,6 +10,4 @@ name = "full_c_progress"
 path = "src/lib.rs"
 
 [dependencies]
-alchemy-bundle = { path = "../alchemy-bundle" }
-cache-entry = { path = "../cache-entry" }
-overlay-disasm = { path = "../overlay-disasm" }
+serde_json = { version = "1", features = ["preserve_order"] }

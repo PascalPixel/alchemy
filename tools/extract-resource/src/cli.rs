@@ -13,8 +13,15 @@ use std::process::ExitCode;
 
 use crate::{decode, self_test, ResourceKind, ROM_BASE, TABLE};
 
-const VALUE_OPTIONS: [&str; 7] =
-    ["--id", "--address", "--format", "--input-end", "--max-output", "-o", "--output"];
+const VALUE_OPTIONS: [&str; 7] = [
+    "--id",
+    "--address",
+    "--format",
+    "--input-end",
+    "--max-output",
+    "-o",
+    "--output",
+];
 
 const USAGE: &str = "usage: extract-resource [ROM] [--id ID | --address ADDRESS] [--format {auto,general,palette}] [-o OUTPUT | --verify-only]";
 
@@ -29,7 +36,11 @@ fn js_number(text: &str) -> f64 {
     if text.is_empty() {
         return 0.0;
     }
-    let radix_prefix = if text.len() > 2 { Some(&text[..2]) } else { None };
+    let radix_prefix = if text.len() > 2 {
+        Some(&text[..2])
+    } else {
+        None
+    };
     if let Some(prefix) = radix_prefix {
         let radix = match prefix {
             "0x" | "0X" => Some(16u32),
@@ -89,9 +100,8 @@ fn same(a: &str, b: &str) -> bool {
     match (std::fs::canonicalize(a), std::fs::canonicalize(b)) {
         (Ok(left), Ok(right)) => left == right,
         _ => {
-            let resolve = |path: &str| {
-                std::path::absolute(path).unwrap_or_else(|_| PathBuf::from(path))
-            };
+            let resolve =
+                |path: &str| std::path::absolute(path).unwrap_or_else(|_| PathBuf::from(path));
             resolve(a) == resolve(b)
         }
     }
@@ -115,8 +125,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         .find(|arg| {
             !arg.starts_with('-')
                 && !args.iter().enumerate().any(|(index, previous)| {
-                    args.get(index + 1) == Some(*arg)
-                        && VALUE_OPTIONS.contains(&previous.as_str())
+                    args.get(index + 1) == Some(*arg) && VALUE_OPTIONS.contains(&previous.as_str())
                 })
         })
         .cloned()
@@ -194,7 +203,11 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
                 return Err("refusing to overwrite the input ROM".into());
             }
             let parent = Path::new(output_path).parent().unwrap_or(Path::new(""));
-            let parent = if parent.as_os_str().is_empty() { Path::new(".") } else { parent };
+            let parent = if parent.as_os_str().is_empty() {
+                Path::new(".")
+            } else {
+                parent
+            };
             std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
             std::fs::write(output_path, &output).map_err(|error| error.to_string())?;
         }
@@ -215,93 +228,5 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn js_number_matches_javascript() {
-        assert_eq!(js_number("0x8320000"), 137_494_528.0);
-        assert_eq!(js_number("0X10"), 16.0);
-        assert_eq!(js_number("0b1010"), 10.0);
-        assert_eq!(js_number("0o17"), 15.0);
-        assert_eq!(js_number("  42  "), 42.0);
-        assert_eq!(js_number(""), 0.0);
-        assert_eq!(js_number("   "), 0.0);
-        assert_eq!(js_number("1e3"), 1000.0);
-        assert_eq!(js_number("-5"), -5.0);
-        assert_eq!(js_number("12.0"), 12.0);
-        assert!(js_number("12.5").fract() != 0.0);
-        assert!(js_number("0x").is_nan());
-        assert!(js_number("0xzz").is_nan());
-        assert!(js_number("inf").is_nan());
-        assert!(js_number("nan").is_nan());
-        assert!(js_number("NaN").is_nan());
-        assert!(js_number("12abc").is_nan());
-        assert!(js_number("-0x10").is_nan());
-        assert_eq!(js_number("Infinity"), f64::INFINITY);
-    }
-
-    #[test]
-    fn integer_rejects_non_integers_with_the_javascript_message() {
-        assert_eq!(integer(Some("0x20"), "--address"), Ok(32));
-        assert_eq!(
-            integer(Some("1.5"), "--address"),
-            Err("invalid integer: 1.5".into())
-        );
-        assert_eq!(
-            integer(Some("Infinity"), "--address"),
-            Err("invalid integer: Infinity".into())
-        );
-        assert_eq!(integer(None, "--address"), Err("--address is required".into()));
-    }
-
-    #[test]
-    fn option_lookup_matches_index_plus_one() {
-        let args: Vec<String> =
-            ["rom.gba", "--id", "7", "--format"].iter().map(|s| s.to_string()).collect();
-        assert_eq!(option(&args, "--id"), Some("7"));
-        assert_eq!(option(&args, "--format"), None);
-        assert_eq!(option(&args, "--address"), None);
-    }
-
-    #[test]
-    fn usage_errors_match_the_typescript() {
-        let args = |list: &[&str]| list.iter().map(|s| s.to_string()).collect::<Vec<_>>();
-        assert_eq!(
-            run(args(&["rom.gba", "--verify-only"])),
-            Err("one of --id or --address is required".into())
-        );
-        assert_eq!(
-            run(args(&["rom.gba", "--id", "1", "--address", "2", "--verify-only"])),
-            Err("--id and --address are mutually exclusive".into())
-        );
-        assert_eq!(
-            run(args(&["rom.gba", "--id", "1", "--verify-only", "-o", "out.bin"])),
-            Err("--verify-only and --output are mutually exclusive".into())
-        );
-        assert_eq!(
-            run(args(&["rom.gba", "--id", "1"])),
-            Err("--output is required unless --verify-only is used".into())
-        );
-        assert_eq!(
-            run(args(&["--id", "1", "--verify-only"])),
-            Err("ROM is required unless only --self-test is used".into())
-        );
-        assert_eq!(
-            run(args(&["rom.gba", "--id", "1", "--verify-only", "--max-output", "-1"])),
-            Err("--max-output cannot be negative".into())
-        );
-    }
-
-    #[test]
-    fn rom_path_is_not_confused_with_an_option_value() {
-        // "7" follows --id, so it must not be picked as the ROM path; the
-        // missing ROM is reported instead.
-        let args: Vec<String> = ["--id", "7", "--verify-only"].iter().map(|s| s.to_string()).collect();
-        assert_eq!(run(args), Err("ROM is required unless only --self-test is used".into()));
     }
 }

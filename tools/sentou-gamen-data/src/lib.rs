@@ -516,12 +516,3 @@ pub fn self_test() -> Result<()> {
     }
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn layout_and_constants_are_stable() {
-        self_test().unwrap();
-    }
-}

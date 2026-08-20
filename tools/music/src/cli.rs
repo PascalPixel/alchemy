@@ -1,95 +1,61 @@
-//! CLI for this crate, moved out of `main.rs` so the command can be linked
-//! into a shared entry point instead of shipping its own executable.
-
+use crate::{build_sound_table, Result, SoundTableEntry, SoundTableSource, SymbolValue};
 use std::io::Write;
 use std::process::ExitCode;
 
-use crate::{
-    build_sound_table, canonical_json, cli_integer, extract_sound_table, option, self_test, Result,
-    SoundTableEntry, SoundTableSource, SymbolValue,
-};
-
-const USAGE: &str =
-    "usage: music extract-sound-table ROM --address ADDRESS --count COUNT -o OUTPUT\n       music build-stdout SOURCE | --self-test\n       music [-h|--help]";
-
-fn validate_options(args: &[String]) -> std::result::Result<(), String> {
-    let valued = ["-o", "--address", "--count"];
-    let mut index = 0;
-    while index < args.len() {
-        let argument = args[index].as_str();
-        if valued.contains(&argument) {
-            if index + 1 >= args.len() {
-                return Err(format!("{argument} requires a value"));
-            }
-            index += 2;
-            continue;
-        }
-        if matches!(argument, "-h" | "--help" | "--self-test") {
-            index += 1;
-            continue;
-        }
-        if argument.starts_with('-') {
-            return Err(format!("unknown option: {argument}"));
-        }
-        index += 1;
-    }
-    Ok(())
-}
+const USAGE: &str = "usage: music build-stdout SOURCE";
 
 fn source(path: &str) -> Result<SoundTableSource> {
-    let bytes = std::fs::read(path).map_err(|error| format!("{path}: {error}"))?;
     let value: serde_json::Value =
-        serde_json::from_slice(&bytes).map_err(|error| format!("{path}: {error}"))?;
+        serde_json::from_slice(&std::fs::read(path).map_err(|e| format!("{path}: {e}"))?)
+            .map_err(|e| e.to_string())?;
     let object = value
         .as_object()
-        .ok_or_else(|| "unsupported sound-table source".to_string())?;
+        .ok_or_else(|| "sound table must be an object".to_string())?;
     let fields = object
         .get("fields")
         .and_then(serde_json::Value::as_array)
-        .ok_or_else(|| "unsupported sound-table source".to_string())?
+        .ok_or_else(|| "sound table fields are missing".to_string())?
         .iter()
         .map(|item| {
             item.as_str()
-                .map(str::to_string)
-                .ok_or_else(|| "unsupported sound-table source".to_string())
+                .map(str::to_owned)
+                .ok_or_else(|| "sound table field is not a string".to_string())
         })
         .collect::<Result<Vec<_>>>()?;
     let symbols = object
         .get("symbols")
         .and_then(serde_json::Value::as_object)
-        .ok_or_else(|| "unsupported sound-table source".to_string())?
+        .ok_or_else(|| "sound table symbols are missing".to_string())?
         .iter()
         .map(|(name, item)| {
-            let value = if let Some(text) = item.as_str() {
-                SymbolValue::Text(text.to_string())
-            } else if let Some(number) = item.as_f64() {
-                SymbolValue::Number(number)
-            } else {
-                return Err("unsupported sound-table source".to_string());
-            };
+            let value = item
+                .as_str()
+                .map(|v| SymbolValue::Text(v.to_owned()))
+                .or_else(|| item.as_f64().map(SymbolValue::Number))
+                .ok_or_else(|| "sound table symbol is not scalar".to_string())?;
             Ok((name.clone(), value))
         })
         .collect::<Result<Vec<_>>>()?;
     let entries = object
         .get("entries")
         .and_then(serde_json::Value::as_array)
-        .ok_or_else(|| "unsupported sound-table source".to_string())?
+        .ok_or_else(|| "sound table entries are missing".to_string())?
         .iter()
         .map(|item| {
             let pair = item
                 .as_array()
-                .ok_or_else(|| "unsupported sound-table source".to_string())?;
+                .ok_or_else(|| "sound table entry is not a pair".to_string())?;
             if pair.len() != 2 {
-                return Err("unsupported sound-table source".to_string());
+                return Err("sound table entry is not a pair".into());
             }
             Ok(SoundTableEntry {
                 header: pair[0]
                     .as_str()
-                    .ok_or_else(|| "unsupported sound-table source".to_string())?
-                    .to_string(),
+                    .ok_or_else(|| "sound table header is not a string".to_string())?
+                    .to_owned(),
                 player: pair[1]
                     .as_i64()
-                    .ok_or_else(|| "unsupported sound-table source".to_string())?,
+                    .ok_or_else(|| "sound table player is not an integer".to_string())?,
             })
         })
         .collect::<Result<Vec<_>>>()?;
@@ -97,108 +63,39 @@ fn source(path: &str) -> Result<SoundTableSource> {
         format: object
             .get("format")
             .and_then(serde_json::Value::as_i64)
-            .ok_or_else(|| "unsupported sound-table source".to_string())?,
+            .ok_or_else(|| "sound table format is missing".to_string())?,
         fields,
         auxiliary: object
             .get("auxiliary")
             .and_then(serde_json::Value::as_str)
-            .ok_or_else(|| "unsupported sound-table source".to_string())?
-            .to_string(),
+            .ok_or_else(|| "sound table auxiliary is missing".to_string())?
+            .to_owned(),
         symbols,
         entries,
     })
 }
 
 fn run(args: &[String]) -> Result<()> {
-    validate_options(args).map_err(|message| message.to_string())?;
-    if args.iter().any(|a| a == "-h" || a == "--help") {
-        println!("{USAGE}");
-        return Ok(());
+    if args.first().map(String::as_str) != Some("build-stdout") {
+        return Err(USAGE.into());
     }
-    if args.iter().any(|a| a == "--self-test") {
-        self_test()?;
-        println!("self-test=ok");
-        return Ok(());
-    }
-    if let [command, input] = args {
-        if command == "build-stdout" {
-            let (built, report) = build_sound_table(&source(input)?)?;
-            let mut players = serde_json::Map::new();
-            let mut counts = report.players.clone();
-            counts.sort_by_key(|(key, _)| key.parse::<u64>().unwrap_or(u64::MAX));
-            for (key, count) in counts {
-                players.insert(key, serde_json::json!(count));
-            }
-            eprintln!(
-                "{}",
-                serde_json::json!({
-                    "entries": report.entries,
-                    "unique_headers": report.unique_headers,
-                    "players": players,
-                    "mirrored_auxiliary": report.mirrored_auxiliary,
-                })
-            );
-            std::io::stdout()
-                .write_all(&built)
-                .map_err(|error| error.to_string())?;
-            return Ok(());
-        }
-    }
-    if args.first().map(String::as_str) != Some("extract-sound-table")
-        || args.get(1).is_none_or(String::is_empty)
-    {
-        println!("{USAGE}");
-        return Ok(());
-    }
-    let rom = std::fs::read(&args[1]).map_err(|e| format!("{}: {e}", args[1]))?;
-    let source = extract_sound_table(
-        &rom,
-        cli_integer(&option(args, "--address")?, "--address")?,
-        cli_integer(&option(args, "--count")?, "--count")?,
-    )?;
-    let output = option(args, "-o")?;
-    std::fs::write(&output, canonical_json(&source.to_json()) + "\n")
-        .map_err(|e| format!("{output}: {e}"))?;
-    let (built, report) = build_sound_table(&source)?;
-    println!(
-        "entries={} unique_headers={} bytes={}",
-        report.entries,
-        report.unique_headers,
-        built.len()
+    let path = args.get(1).ok_or_else(|| USAGE.to_string())?;
+    let (bytes, report) = build_sound_table(&source(path)?)?;
+    eprintln!(
+        "{{\"entries\":{},\"unique_headers\":{}}}",
+        report.entries, report.unique_headers
     );
-    Ok(())
+    std::io::stdout()
+        .write_all(&bytes)
+        .map_err(|e| e.to_string())
 }
 
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    let args: Vec<String> = arguments.to_vec();
-    match run(&args) {
+pub fn entry(arguments: &[String]) -> ExitCode {
+    match run(arguments) {
         Ok(()) => ExitCode::SUCCESS,
         Err(message) => {
             eprintln!("error: {message}");
             ExitCode::FAILURE
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn args(values: &[&str]) -> Vec<String> {
-        values.iter().map(|value| (*value).to_string()).collect()
-    }
-
-    #[test]
-    fn help_aliases_succeed_before_file_access() {
-        assert!(run(&args(&["-h"])).is_ok());
-        assert!(run(&args(&["--help"])).is_ok());
-    }
-
-    #[test]
-    fn unknown_option_is_rejected_before_file_access() {
-        assert_eq!(
-            run(&args(&["extract-sound-table", "missing.gba", "--bogus"])).unwrap_err(),
-            "unknown option: --bogus"
-        );
     }
 }

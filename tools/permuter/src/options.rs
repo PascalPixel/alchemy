@@ -26,6 +26,8 @@ pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [opti
   --quiet          suppress periodic progress output\n\
   --debug          compile and report only the baseline\n\
   --resume         reuse completed candidates from a matching journal\n\
+  --journal-from FILE  import cached measurements from a prior run's journal\n\
+  --heat           bias mutation sites toward currently-differing rows\n\
   --stop-on-zero   stop when an exact candidate is found (default)\n\
   --keep-going     do not stop at the first byte-exact candidate\n\
   --self-test      run parser, mutation, scoring, and runner checks";
@@ -51,6 +53,8 @@ pub struct Options {
     pub quiet: bool,
     pub debug: bool,
     pub resume: bool,
+    pub journal_from: Option<std::path::PathBuf>,
+    pub heat: bool,
 }
 
 fn positive(value: Option<&String>, flag: &str) -> Result<usize, String> {
@@ -85,6 +89,8 @@ impl Options {
         let mut quiet = false;
         let mut debug = false;
         let mut resume = false;
+    let mut journal_from: Option<std::path::PathBuf> = None;
+    let mut heat = false;
         let mut at = 0usize;
         while at < args.len() {
             match args[at].as_str() {
@@ -177,6 +183,16 @@ impl Options {
                     debug = true;
                     at += 1;
                 }
+                "--journal-from" => {
+                    journal_from = Some(std::path::PathBuf::from(
+                        args.get(at + 1).ok_or("--journal-from requires a value")?,
+                    ));
+                    at += 2;
+                }
+                "--heat" => {
+                    heat = true;
+                    at += 1;
+                }
                 "--resume" => {
                     resume = true;
                     at += 1;
@@ -222,6 +238,8 @@ impl Options {
             quiet,
             debug,
             resume,
+            journal_from,
+            heat,
         })
     }
 }

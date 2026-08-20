@@ -1133,7 +1133,7 @@ fn perm_reorder_stmts(
     let mut source_inds: Vec<usize> = Vec::new();
     for (i, c) in cands.iter().enumerate() {
         if let Some(info) = &c.after {
-            if !info.has_nested_block {
+            if !info.has_nested_block && !info.is_jump {
                 source_inds.push(i);
             }
         }

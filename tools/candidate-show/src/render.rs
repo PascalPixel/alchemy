@@ -1,7 +1,7 @@
 use crate::{
     cli::Options,
     disasm::{disassemble, Rows},
-    insns::gas_insns,
+    insns::gas_function_insns,
     jsparse::{js_parse_int_radix, pad_end, pad_start_zero, slice_utf16},
     patch::apply_unified_diff,
 };
@@ -243,11 +243,11 @@ fn render_bytes(
     };
     let (left_lines, right_lines) = (ordered(&left), ordered(&right));
     let (class, wrong) = residual_class(&left_lines, &right_lines);
-    let mut out = format!("candidate={} reference={} differing_halfwords={}\\ncompile={compile}\\nclass={class} wrong_instructions={wrong}\\n", n(actual.len())?, n(expected.len())?, n(differing.len())?);
+    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\n", n(actual.len())?, n(expected.len())?, n(differing.len())?);
     if options.align {
         let pairs = align_streams(&left_lines, &right_lines);
         let matched = first_residual_index(&pairs);
-        out.push_str(&format!("matched_prefix={}\\n", n(matched)?));
+        out.push_str(&format!("matched_prefix={}\n", n(matched)?));
         let start = if options.first { matched } else { 0 };
         let end = if options.first {
             pairs.len().min(matched + 48)
@@ -256,12 +256,12 @@ fn render_bytes(
         };
         if options.first {
             out.push_str(&format!(
-                "showing={} omitted={}\\n",
+                "showing={} omitted={}\n",
                 n(end - start)?,
                 n(pairs.len() - end)?
             ));
         }
-        out.push_str("      candidate                      reference\\n");
+        out.push_str("      candidate                      reference\n");
         for (candidate, reference) in &pairs[start..end] {
             let mark = match (candidate, reference) {
                 (Some(a), Some(b)) if a == b => " ",
@@ -271,7 +271,7 @@ fn render_bytes(
                 _ => " ",
             };
             out.push_str(&format!(
-                "  {mark} {} {}\\n",
+                "  {mark} {} {}\n",
                 slice_utf16(&pad_end(candidate.as_deref().unwrap_or(""), 30), 30),
                 reference.as_deref().unwrap_or("")
             ));
@@ -282,9 +282,9 @@ fn render_bytes(
         }
     } else {
         if actual.len() != expected.len() {
-            out.push_str("  note: the two sides are different lengths, so the offset view below is\\n             phase-shifted and every later row will read as a difference.\\n             Re-run with --align to see the insertion or deletion itself.\\n");
+            out.push_str("  note: the two sides are different lengths, so the offset view below is\n             phase-shifted and every later row will read as a difference.\n             Re-run with --align to see the insertion or deletion itself.\n");
         }
-        out.push_str("      offset  candidate                      reference\\n");
+        out.push_str("      offset  candidate                      reference\n");
         for offset in offsets {
             let mark = if differing.contains(&(offset as usize)) {
                 "!"
@@ -292,7 +292,7 @@ fn render_bytes(
                 " "
             };
             out.push_str(&format!(
-                "  {mark} {}  {} {}\\n",
+                "  {mark} {}  {} {}\n",
                 pad_start_zero(&format!("{:x}", offset as u64), 4),
                 slice_utf16(&pad_end(left.get(offset).unwrap_or(""), 30), 30),
                 right.get(offset).unwrap_or("")
@@ -333,12 +333,15 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         CompilerTarget::Gs1,
         &options.configuration,
     )?;
-    let candidate = gas_insns(
+    let symbol = format!("Func_{stem}");
+    let candidate = gas_function_insns(
         &std::fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?,
+        &symbol,
     );
-    let expected = gas_insns(
+    let expected = gas_function_insns(
         &std::fs::read_to_string(&reference)
             .map_err(|error| format!("{}: {error}", reference.display()))?,
+        &symbol,
     );
     let dir = Path::new(work);
     let candidate_path = dir.join("candidate.insns");
@@ -347,15 +350,21 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
     if had_previous {
         let _ = std::fs::rename(&candidate_path, &previous);
     }
-    std::fs::write(&candidate_path, candidate.join("\\n") + "\\n")
+    std::fs::write(&candidate_path, candidate.join("\n") + "\n")
         .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
     let reference_path = dir.join("reference.insns");
-    std::fs::write(&reference_path, expected.join("\\n") + "\\n")
+    std::fs::write(&reference_path, expected.join("\n") + "\n")
         .map_err(|error| format!("{}: {error}", reference_path.display()))?;
-    let mut out = format!("elapsed_ms={:.0} compile=s-only\\ncandidate_insns={} reference_insns={}\\nvs reference:\\n{}", started.elapsed().as_secs_f64() * 1000.0, candidate.len(), expected.len(), git_diff_stat(&reference_path, &candidate_path)?);
+    let mut out = format!(
+        "elapsed_ms={:.0} compile=s-only\ncandidate_insns={} reference_insns={}\nvs reference:\n{}",
+        started.elapsed().as_secs_f64() * 1000.0,
+        candidate.len(),
+        expected.len(),
+        git_diff_stat(&reference_path, &candidate_path)?
+    );
     if had_previous {
         out.push_str(&format!(
-            "vs previous candidate:\\n{}",
+            "vs previous candidate:\n{}",
             git_diff_stat(&previous, &candidate_path)?
         ));
     }
@@ -380,7 +389,7 @@ fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
         .output()
         .map_err(|error| format!("git diff: {error}"))?;
     Ok(if output.stdout.is_empty() {
-        "  identical\\n".into()
+        "  identical\n".into()
     } else {
         String::from_utf8_lossy(&output.stdout).into_owned()
     })
@@ -531,7 +540,7 @@ fn cached_first(key_path: &Path, key: &str, report: &Path) -> Option<String> {
         .then(|| std::fs::read_to_string(report).ok())
         .flatten()
         .filter(|text| !text.is_empty())
-        .map(|text| text.replacen("compile=fresh\\n", "compile=cache\\n", 1))
+        .map(|text| text.replacen("compile=fresh\n", "compile=cache\n", 1))
 }
 fn cached_bins(
     key: &str,

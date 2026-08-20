@@ -198,6 +198,7 @@ pub fn prepare(
 #[derive(Clone)]
 struct AlchemyBackend {
     name: String,
+    symbol: String,
     identity: String,
     target: PreparedTarget,
     target_instructions: Vec<Instruction>,
@@ -213,19 +214,20 @@ impl AlchemyBackend {
             .unwrap_or("alchemy")
             .to_string();
         let target = PreparedTarget::prepare(path, base_source)?;
+        let stem = name.strip_suffix(".c").unwrap_or(&name);
+        let symbol = format!("Func_{stem}");
         let target_instructions = disassemble_bytes(target.expected())?;
         let target_source_instructions = if target.baseline_assembly().is_some() {
-            let stem = name.strip_suffix(".c").unwrap_or(&name);
             let reference = root().join("asm").join(format!("{stem}.s"));
             let source = fs::read_to_string(&reference)
                 .map_err(|error| format!("{}: {error}", reference.display()))?;
-            Some(candidate_show::insns::gas_insns(&source))
+            Some(candidate_show::insns::gas_function_insns(&source, &symbol))
         } else {
             None
         };
         let baseline_source_instructions = target
             .baseline_assembly()
-            .map(candidate_show::insns::gas_insns);
+            .map(|assembly| candidate_show::insns::gas_function_insns(assembly, &symbol));
         let baseline_measurement = alchemy_measurement(
             target.baseline(),
             &target_instructions,
@@ -238,6 +240,7 @@ impl AlchemyBackend {
             .map_err(|error| format!("Alchemy host tool signature: {error}"))?;
         Ok(Self {
             name,
+            symbol,
             identity: alchemy_identity(
                 &target.identity(),
                 &implementation_signature,
@@ -275,7 +278,10 @@ fn alchemy_identity(
     host_signature: &str,
 ) -> String {
     let mut stream = Vec::new();
-    append_identity_field(&mut stream, "permuter-alchemy-backend-v4-structural-insns");
+    append_identity_field(
+        &mut stream,
+        "permuter-alchemy-backend-v5-owner-scoped-insns",
+    );
     append_identity_field(&mut stream, target_identity);
     append_identity_field(&mut stream, implementation_signature);
     append_identity_field(&mut stream, compiler_signature);
@@ -298,8 +304,9 @@ impl Backend for AlchemyBackend {
 
     fn measure(&self, source: &str) -> Result<Measurement, String> {
         let (score, assembly) = self.target.compile(source)?;
-        let candidate_source_instructions =
-            assembly.as_deref().map(candidate_show::insns::gas_insns);
+        let candidate_source_instructions = assembly
+            .as_deref()
+            .map(|assembly| candidate_show::insns::gas_function_insns(assembly, &self.symbol));
         alchemy_measurement(
             &score,
             &self.target_instructions,

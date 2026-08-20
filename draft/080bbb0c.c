@@ -627,10 +627,10 @@ after_power:
                     j = 0;
                     for (;;) {
                         base = (u8 *)slots;
-                        if (*(s16 *)(base + woff) == 255) {
+                        if (*(s16 *)(woff + (s32)base) == 255) {
                             s32 t;
 
-                            *(s16 *)(base + woff) = rec;
+                            *(s16 *)(woff + base) = rec;
                             t = jsave + 102;
                             *(s16 *)(base + t) = 255;
                             break;
@@ -641,8 +641,8 @@ after_power:
                         if (i > 5)
                             break;
                         jsave = j;
-                        if (*(s16 *)(base + woff) == 254) {
-                            *(s16 *)(base + woff) = rec;
+                        if (*(s16 *)(woff + (s32)base) == 254) {
+                            *(s16 *)(woff + (s32)base) = rec;
                             break;
                         }
                     }
@@ -981,15 +981,15 @@ after_power:
                 }
                 dmg = Battle_CalcPower(dmg, bonus, 256);
                 dmg *= adjust;
-                switch (nibble) {
+                switch (nibble & 15) {
                 case 5:
                     dmg = Math_Div(HpDmgFalloff5[offset] * dmg, 100);
                     break;
-                case 6:
-                    dmg = Math_Div(HpDmgFalloff6[offset] * dmg, 100);
-                    break;
                 case 8:
                     dmg = Math_Div(dmg * HpDmgFalloff8[offset], 100);
+                    break;
+                case 6:
+                    dmg = Math_Div(dmg * HpDmgFalloff6[offset], 100);
                     break;
                 }
                 dmg += BattleRandom_Next() & 3;
@@ -1191,11 +1191,14 @@ dealt = target->hp - cur;
         s32 maxu;
         s32 maxv;
         s32 heal;
+        u16 *stat_ptr;
 
-        maxv = target->max_hp;
-        heal = target->hp;
-        old = *(u16 *)&target->hp;
-        maxu = *(u16 *)&target->max_hp;
+        stat_ptr = (u16 *)&target->hp;
+        old = *stat_ptr--;
+        heal = *(s16 *)(stat_ptr + 1);
+        stat_ptr--;
+        maxu = *stat_ptr--;
+        maxv = *(s16 *)(stat_ptr + 1);
         if (action->effect == EFX_HEAL_60)
             heal += Math_Div(maxv * 60, 100);
         else

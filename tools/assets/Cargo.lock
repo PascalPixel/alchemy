@@ -580,10 +580,10 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 name = "resource-01c"
 version = "0.1.0"
 dependencies = [
- "export-asset",
  "extract-resource",
  "import-asset",
  "serde_json",
+ "sha2",
 ]
 
 [[package]]
@@ -618,7 +618,6 @@ name = "resource-d1-d3"
 version = "0.1.0"
 dependencies = [
  "alignment-tail",
- "export-asset",
  "extract-resource",
  "import-asset",
  "serde_json",

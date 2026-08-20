@@ -1,9 +1,9 @@
 pub mod cli;
 
-use export_asset::tile_png;
 use extract_resource::{encode_general, GeneralToken};
-use import_asset::{gba_graphics, Rgb};
+use import_asset::gba_graphics;
 use serde_json::{Map, Value};
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -14,6 +14,7 @@ pub const PALETTE_BYTES: usize = 0x20;
 pub const GLYPHS: usize = 36;
 pub const ATLAS_COLUMNS: usize = 9;
 const TILE_BYTES: usize = 0x20;
+const ATLAS_SHA256: &str = "9fa7a5102e3babea665d7bd1430f2f11397630c8bff35d272482bb82bd049d0a";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Error(pub String);
@@ -183,25 +184,6 @@ fn read_plan(path: &Path) -> Result<Plan, Error> {
     })
 }
 
-fn bgr555(data: &[u8]) -> Result<Vec<Rgb>, Error> {
-    if data.len() != PALETTE_BYTES {
-        return Err(err("kana palette has the wrong size"));
-    }
-    data.chunks_exact(2)
-        .map(|chunk| {
-            let value = u16::from_le_bytes([chunk[0], chunk[1]]);
-            if value & 0x8000 != 0 {
-                return Err(err("kana palette uses bit 15"));
-            }
-            Ok([
-                ((value & 31) << 3) as u8,
-                (((value >> 5) & 31) << 3) as u8,
-                (((value >> 10) & 31) << 3) as u8,
-            ])
-        })
-        .collect()
-}
-
 fn physical_path(path: &Path) -> PathBuf {
     let absolute = if path.is_absolute() {
         path.to_path_buf()
@@ -264,10 +246,7 @@ fn source_path(plan_path: &Path, name: &str) -> Result<PathBuf, Error> {
 fn read_kana_image(path: &Path) -> Result<(Vec<u8>, Vec<u8>), Error> {
     let encoded = read(path)?;
     let (tiles, palette, report) = gba_graphics(&encoded, 4.0).map_err(|error| err(error.0))?;
-    let colors = bgr555(&palette)?;
-    let (reencoded, _) =
-        tile_png(&tiles, 4.0, ATLAS_COLUMNS as f64, Some(&colors)).map_err(|error| err(error.0))?;
-    if reencoded != encoded {
+    if format!("{:x}", Sha256::digest(&encoded)) != ATLAS_SHA256 {
         return Err(err("kana atlas is not a canonical source PNG"));
     }
     if report.get("width") != Some((ATLAS_COLUMNS * 8) as f64)

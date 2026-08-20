@@ -2,7 +2,7 @@
 //!
 //! Also hosts the iterative descent driver (`descend`), merged in from the
 //! short-lived `reverse-gcc296` crate. That crate rebuilt three transforms
-//! `alchemy-permuter` already had, plus `InlineSingleUseTemp` which lived here,
+//! `permuter` already had, plus `InlineSingleUseTemp` which lived here,
 //! plus the statement permutation `statement-order-sweep-main` already did. Only
 //! its arm-order transform, its iterative driver and its size-independent metric
 //! were new, so those merged here and the crate was deleted.

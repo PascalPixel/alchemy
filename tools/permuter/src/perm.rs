@@ -1,11 +1,11 @@
 use std::collections::BTreeMap;
 
-pub(crate) const IGNORE_START: &str = "/*__alchemy_permuter_ignore_start__*/";
-pub(crate) const IGNORE_END: &str = "/*__alchemy_permuter_ignore_end__*/";
-pub(crate) const PRETEND_START: &str = "/*__alchemy_permuter_pretend_start__*/";
-pub(crate) const PRETEND_END: &str = "/*__alchemy_permuter_pretend_end__*/";
-pub(crate) const RANDOM_START: &str = "/*__alchemy_permuter_random_start__*/";
-pub(crate) const RANDOM_END: &str = "/*__alchemy_permuter_random_end__*/";
+pub(crate) const IGNORE_START: &str = "/*__permuter_ignore_start__*/";
+pub(crate) const IGNORE_END: &str = "/*__permuter_ignore_end__*/";
+pub(crate) const PRETEND_START: &str = "/*__permuter_pretend_start__*/";
+pub(crate) const PRETEND_END: &str = "/*__permuter_pretend_end__*/";
+pub(crate) const RANDOM_START: &str = "/*__permuter_random_start__*/";
+pub(crate) const RANDOM_END: &str = "/*__permuter_random_end__*/";
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct EvalState {

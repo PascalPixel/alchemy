@@ -37,9 +37,9 @@ struct Evaluated {
     elapsed: Duration,
 }
 
-const RUN_MARKER: &str = ".alchemy-permuter-run";
-const ACTIVE_MARKER: &str = ".alchemy-permuter-active";
-const OWNERSHIP_MANIFEST: &str = ".alchemy-permuter-owned";
+const RUN_MARKER: &str = ".permuter-run";
+const ACTIVE_MARKER: &str = ".permuter-active";
+const OWNERSHIP_MANIFEST: &str = ".permuter-owned";
 
 #[cfg(unix)]
 mod safe_fs {
@@ -426,7 +426,7 @@ impl Journal {
     fn open(run: &mut RunDirectory, identity: &str, resume: bool) -> Result<Self, String> {
         run.register("journal.tsv")?;
         let path = run.path().join("journal.tsv");
-        let header = format!("alchemy-permuter-journal-v3\t{identity}");
+        let header = format!("permuter-journal-v3\t{identity}");
         let mut cached = BTreeMap::new();
         let existing = run.read_file_optional("journal.tsv")?;
         if resume {
@@ -550,7 +550,7 @@ fn persisted_measurement(measurement: &Measurement) -> Measurement {
 
 fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement) -> String {
     let mut bytes = Vec::new();
-    append_identity_field(&mut bytes, "alchemy-permuter-journal-row-v1");
+    append_identity_field(&mut bytes, "permuter-journal-row-v1");
     append_identity_field(&mut bytes, identity);
     append_identity_field(&mut bytes, candidate);
     append_identity_field(&mut bytes, if measurement.exact { "1" } else { "0" });
@@ -822,7 +822,7 @@ fn input_identity(input: &backend::Input) -> Result<String, String> {
     let source = fs::canonicalize(&input.source_path)
         .map_err(|error| format!("{}: {error}", input.source_path.display()))?;
     let mut bytes = Vec::new();
-    append_identity_field(&mut bytes, "alchemy-permuter-input-v2");
+    append_identity_field(&mut bytes, "permuter-input-v2");
     append_identity_field(&mut bytes, &requested.to_string_lossy());
     append_identity_field(&mut bytes, &source.to_string_lossy());
     append_identity_field(&mut bytes, &source_fingerprint(&input.source));
@@ -832,7 +832,7 @@ fn input_identity(input: &backend::Input) -> Result<String, String> {
 fn run_identity(input: &backend::Input, target: &dyn Backend, seed: u64) -> Result<String, String> {
     let input_identity = input_identity(input)?;
     let mut bytes = Vec::new();
-    append_identity_field(&mut bytes, "alchemy-permuter-run-v2");
+    append_identity_field(&mut bytes, "permuter-run-v2");
     append_identity_field(&mut bytes, &input_identity);
     append_identity_field(&mut bytes, &target.identity());
     append_identity_field(&mut bytes, &seed.to_string());
@@ -843,7 +843,7 @@ fn default_output(input: &backend::Input, seed: u64, identity: &str) -> PathBuf 
     let stem = safe_label(input);
     root()
         .join("out")
-        .join("alchemy-permuter")
+        .join("permuter")
         .join(format!("{stem}-{identity}-seed-{seed}"))
 }
 
@@ -1186,7 +1186,7 @@ fn run_workers(
     }
     for worker in workers {
         if worker.join().is_err() && worker_error.is_none() {
-            worker_error = Some("alchemy-permuter worker panicked".into());
+            worker_error = Some("permuter worker panicked".into());
         }
     }
     match worker_error {
@@ -1220,7 +1220,7 @@ fn walk_workers(
     for worker in 0..worker_count {
         let backend = Arc::clone(&backend);
         let base_source = Arc::clone(&base_source);
-        let weights = Arc::clone(&weights);
+        let _weights = Arc::clone(&weights);
         let counter = Arc::clone(&counter);
         let stop = Arc::clone(&stop);
         let sender = sender.clone();
@@ -1243,34 +1243,26 @@ fn walk_workers(
                     current = Some((base_source.as_ref().clone(), String::from("base")));
                 }
                 let (cur_source, lineage) = current.clone().expect("walk candidate");
-                let variants = match crate::randomize::try_mutate_marked_with_weights(
+                // The AST engine: parse, apply one weighted pret pass, emit.
+                let mutated = crate::astpass::AstRandomizer::new(
                     &cur_source,
                     rng.0 ^ index as u64,
-                    8,
-                    &weights,
-                ) {
-                    Ok(variants) => variants,
+                    None,
+                )
+                .and_then(|mut r| r.randomize_named());
+                let (mutated_source, pass_name) = match mutated {
+                    Ok(pair) => pair,
                     Err(_) => {
                         current = None;
                         continue;
                     }
                 };
-                let mut pool: Vec<_> = variants
-                    .into_iter()
-                    .filter(|m| m.id != "identity")
-                    .collect();
-                if pool.is_empty() {
-                    current = None;
-                    continue;
-                }
-                let pick = rng.index(pool.len());
-                let mutation = pool.swap_remove(pick);
                 let candidate = Candidate {
                     index,
                     manual_seed: worker,
-                    mutation: format!("{lineage}>{}", mutation.id),
-                    source: mutation.source.clone(),
-                    fingerprint: source_fingerprint(&mutation.source),
+                    mutation: format!("{lineage}>{pass_name}"),
+                    source: mutated_source.clone(),
+                    fingerprint: source_fingerprint(&mutated_source),
                 };
                 let started = Instant::now();
                 let cached = journal.cached(&candidate.fingerprint);
@@ -1292,7 +1284,7 @@ fn walk_workers(
                         if measurement.exact {
                             stop.store(true, AtomicOrdering::Release);
                         }
-                        current = Some((mutation.source, candidate.mutation.clone()));
+                        current = Some((mutated_source.clone(), candidate.mutation.clone()));
                     }
                     Err(_) => {
                         current = None;
@@ -1326,7 +1318,7 @@ fn walk_workers(
     }
     for worker in workers {
         if worker.join().is_err() && worker_error.is_none() {
-            worker_error = Some("alchemy-permuter walk worker panicked".into());
+            worker_error = Some("permuter walk worker panicked".into());
         }
     }
     match worker_error {
@@ -1418,9 +1410,11 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let mut compile_time = Duration::ZERO;
     let mut exact_found = false;
     if options.walk {
+        // The AST engine parses with lang-c, which needs preprocessed input.
+        let walk_base = crate::astpass::preprocess_for_ast(&input.source)?;
         let evaluated = walk_workers(
             Arc::clone(&target),
-            Arc::new(input.source.clone()),
+            Arc::new(walk_base),
             Arc::new(weights.clone()),
             options.iterations,
             options.jobs,
@@ -1622,16 +1616,16 @@ pub fn self_test() -> Result<(), String> {
     if validate_output_path(&root().join("semantic")).is_ok() {
         return Err("source directory was accepted as an output directory".into());
     }
-    if validate_output_path(&root().join("out").join("alchemy-permuter-self-test")).is_err() {
+    if validate_output_path(&root().join("out").join("permuter-self-test")).is_err() {
         return Err("repository ignored out/ was rejected as an output directory".into());
     }
-    if validate_output_path(&std::env::temp_dir().join("alchemy-permuter-custom-output-self-test"))
+    if validate_output_path(&std::env::temp_dir().join("permuter-custom-output-self-test"))
         .is_err()
     {
         return Err("custom OS temporary output was rejected".into());
     }
     let journal_dir = std::env::temp_dir().join(format!(
-        "alchemy-permuter-journal-self-test-{}",
+        "permuter-journal-self-test-{}",
         std::process::id()
     ));
     let measurement = Measurement {
@@ -1691,7 +1685,7 @@ mod tests {
 
     fn temporary_path(label: &str) -> PathBuf {
         std::env::temp_dir().join(format!(
-            "alchemy-permuter-runner-test-{label}-{}-{}",
+            "permuter-runner-test-{label}-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
@@ -1711,7 +1705,7 @@ mod tests {
     fn accepts_repository_out_and_custom_temporary_paths() {
         assert!(validate_output_path(&root().join("out").join("test-run")).is_ok());
         assert!(
-            validate_output_path(&std::env::temp_dir().join("alchemy-permuter-test-run")).is_ok()
+            validate_output_path(&std::env::temp_dir().join("permuter-test-run")).is_ok()
         );
     }
 

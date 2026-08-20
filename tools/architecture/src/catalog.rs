@@ -1,7 +1,7 @@
 //! "Does a tool for this already exist?"
 //!
 //! WHY THIS EXISTS. In one session I rebuilt existing work twice. `reverse-gcc296`
-//! reimplemented three `alchemy-permuter` passes, `shape-sweep`'s
+//! reimplemented three `permuter` passes, `shape-sweep`'s
 //! `InlineSingleUseTemp`, and `statement-order-sweep-main` outright (that last
 //! crate is now deleted, its job absorbed). Then, while
 //! auditing for exactly that failure, I wrote a duplicate of this very crate's
@@ -137,7 +137,7 @@ mod tests {
     fn corpus() -> Vec<Tool> {
         vec![
             tool("shape-sweep", Some("Native bounded source-shape search.")),
-            tool("alchemy-permuter", Some("Alchemy's native, bounded C permutation search.")),
+            tool("permuter", Some("Alchemy's native, bounded C permutation search.")),
             tool("statement-order-sweep-main", None),
             tool("sentou-hyouji", Some("Battle display resource decoding.")),
         ]
@@ -167,7 +167,7 @@ mod tests {
         let hits = search(&corpus(), &["search".into()]);
         let names: Vec<&str> = hits.iter().map(|t| t.name.as_str()).collect();
         assert!(names.contains(&"shape-sweep"));
-        assert!(names.contains(&"alchemy-permuter"));
+        assert!(names.contains(&"permuter"));
     }
 
     #[test]

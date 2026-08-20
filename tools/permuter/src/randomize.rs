@@ -311,7 +311,7 @@ impl Weights {
 }
 
 pub fn pass_help() -> String {
-    let mut output = String::from("alchemy-permuter randomization passes:\n");
+    let mut output = String::from("permuter randomization passes:\n");
     for pass in PassId::ALL {
         output.push_str(&format!("  {:34} {}\n", pass.name(), pass.description()));
     }

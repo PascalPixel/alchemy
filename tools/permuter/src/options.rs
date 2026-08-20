@@ -14,11 +14,12 @@ pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [opti
   --seed N         deterministic random seed (default 1)\n\
   --top N          retained improving candidates (default 12; max 256)\n\
   --output DIR     new, dedicated ignored run directory (or parent for many inputs)\n\
-  --weights FILE   settings.toml-format randomization weights for any input kind\n\
-  --chain N        rounds that re-seed mutation from the best candidate so far\n\
+  --weights FILE   settings.toml weights for planned search (not AST --walk)\n\
+  --chain N        planned-search rounds re-seeded from the best candidate\n\
   --walk           pret-style cumulative mutation walk (uses --iterations as total evals)\n\
-  --keep-prob P    walk continuation probability in 0..1 (default 0.6)\n\
-  --manual-only    evaluate PERM_* choices without random mutation\n\
+  --classic        enable heuristic pret passes; trust exact winners only\n\
+  --keep-prob P    AST-walk continuation probability in 0..1 (default 0.6)\n\
+  --manual-only    planned search: evaluate PERM_* choices without mutation\n\
   --show-errors    display failed compiler diagnostics\n\
   --better-only    retain only candidates better than the baseline\n\
   --best-only      retain only ties with or improvements over the current best\n\
@@ -27,7 +28,7 @@ pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [opti
   --debug          compile and report only the baseline\n\
   --resume         reuse completed candidates from a matching journal\n\
   --journal-from FILE  import cached measurements from a prior run's journal\n\
-  --heat           bias mutation sites toward currently-differing rows\n\
+  --heat           AST walk: bias sites toward currently-differing rows\n\
   --stop-on-zero   stop when an exact candidate is found (default)\n\
   --keep-going     do not stop at the first byte-exact candidate\n\
   --self-test      run parser, mutation, scoring, and runner checks";
@@ -43,6 +44,7 @@ pub struct Options {
     pub weights: Option<PathBuf>,
     pub chain: usize,
     pub walk: bool,
+    pub classic: bool,
     pub keep_prob_permille: u32,
     pub manual_only: bool,
     pub stop_exact: bool,
@@ -78,8 +80,11 @@ impl Options {
         let mut output = None;
         let mut weights = None;
         let mut chain = 1usize;
+        let mut chain_supplied = false;
         let mut walk = false;
+        let mut classic = false;
         let mut keep_prob_permille = 600u32;
+        let mut keep_prob_supplied = false;
         let mut manual_only = false;
         let mut stop_exact = true;
         let mut show_errors = false;
@@ -105,6 +110,10 @@ impl Options {
                     walk = true;
                     at += 1;
                 }
+                "--classic" => {
+                    classic = true;
+                    at += 1;
+                }
                 "--keep-prob" => {
                     let value = args
                         .get(at + 1)
@@ -112,10 +121,12 @@ impl Options {
                         .filter(|v| (0.0..=1.0).contains(v))
                         .ok_or_else(|| "--keep-prob requires a float in 0..1".to_string())?;
                     keep_prob_permille = (value * 1000.0).round() as u32;
+                    keep_prob_supplied = true;
                     at += 2;
                 }
                 "--chain" => {
                     chain = positive(args.get(at + 1), "--chain")?.min(10_000);
+                    chain_supplied = true;
                     at += 2;
                 }
                 "--iterations" => {
@@ -218,6 +229,28 @@ impl Options {
         if candidates.is_empty() {
             return Err(USAGE.to_string());
         }
+        if walk && weights.is_some() {
+            return Err(
+                "--weights is not supported with --walk; choose safe or --classic mode".to_string(),
+            );
+        }
+        if walk && chain_supplied {
+            return Err(
+                "--chain is not supported with --walk; the walk is already cumulative".to_string(),
+            );
+        }
+        if walk && manual_only {
+            return Err("--manual-only is not supported with --walk".to_string());
+        }
+        if classic && !walk {
+            return Err("--classic requires --walk".to_string());
+        }
+        if !walk && keep_prob_supplied {
+            return Err("--keep-prob requires --walk".to_string());
+        }
+        if !walk && heat {
+            return Err("--heat requires --walk".to_string());
+        }
         Ok(Self {
             candidates,
             iterations,
@@ -228,6 +261,7 @@ impl Options {
             weights,
             chain,
             walk,
+            classic,
             keep_prob_permille,
             manual_only,
             stop_exact,
@@ -253,13 +287,20 @@ pub fn self_test() -> Result<(), String> {
         "2",
         "--seed",
         "7",
-        "--manual-only",
+        "--walk",
+        "--classic",
+        "--heat",
     ]
     .into_iter()
     .map(str::to_string)
     .collect::<Vec<_>>();
     let options = Options::parse(&args)?;
-    if options.iterations != 9 || options.jobs != 2 || options.seed != 7 || !options.manual_only {
+    if options.iterations != 9
+        || options.jobs != 2
+        || options.seed != 7
+        || !options.classic
+        || !options.heat
+    {
         return Err("option parser lost a supplied value".into());
     }
     if options.candidates != [PathBuf::from("semantic/resource_373_c_02005b48.c")] {
@@ -276,6 +317,16 @@ pub fn self_test() -> Result<(), String> {
     .is_ok()
     {
         return Err("option parser accepted an unbounded iteration request".into());
+    }
+    if Options::parse(&[
+        "x.c".into(),
+        "--walk".into(),
+        "--weights".into(),
+        "settings.toml".into(),
+    ])
+    .is_ok()
+    {
+        return Err("option parser silently ignored walk weights".into());
     }
     Ok(())
 }
@@ -302,5 +353,34 @@ mod tests {
             "candidate.c".to_string(),
         ];
         assert!(Options::parse(&args).is_err());
+    }
+
+    #[test]
+    fn rejects_options_the_ast_walk_cannot_honor() {
+        assert!(Options::parse(&[
+            "candidate.c".into(),
+            "--walk".into(),
+            "--weights".into(),
+            "settings.toml".into(),
+        ])
+        .is_err());
+        assert!(Options::parse(&["candidate.c".into(), "--classic".into()]).is_err());
+        assert!(Options::parse(&[
+            "candidate.c".into(),
+            "--walk".into(),
+            "--chain".into(),
+            "2".into(),
+        ])
+        .is_err());
+        assert!(Options::parse(&[
+            "candidate.c".into(),
+            "--walk".into(),
+            "--manual-only".into(),
+        ])
+        .is_err());
+        assert!(
+            Options::parse(&["candidate.c".into(), "--keep-prob".into(), "0.5".into(),]).is_err()
+        );
+        assert!(Options::parse(&["candidate.c".into(), "--heat".into()]).is_err());
     }
 }

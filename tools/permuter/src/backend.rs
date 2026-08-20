@@ -187,6 +187,7 @@ struct AlchemyBackend {
     identity: String,
     target: PreparedTarget,
     target_instructions: Vec<Instruction>,
+    target_source_instructions: Option<Vec<String>>,
     baseline_measurement: Measurement,
 }
 
@@ -199,7 +200,24 @@ impl AlchemyBackend {
             .to_string();
         let target = PreparedTarget::prepare(path, base_source)?;
         let target_instructions = disassemble_bytes(target.expected())?;
-        let baseline_measurement = alchemy_measurement(target.baseline(), &target_instructions)?;
+        let target_source_instructions = if target.baseline_assembly().is_some() {
+            let stem = name.strip_suffix(".c").unwrap_or(&name);
+            let reference = root().join("asm").join(format!("{stem}.s"));
+            let source = fs::read_to_string(&reference)
+                .map_err(|error| format!("{}: {error}", reference.display()))?;
+            Some(candidate_show::insns::gas_insns(&source))
+        } else {
+            None
+        };
+        let baseline_source_instructions = target
+            .baseline_assembly()
+            .map(candidate_show::insns::gas_insns);
+        let baseline_measurement = alchemy_measurement(
+            target.baseline(),
+            &target_instructions,
+            baseline_source_instructions.as_deref(),
+            target_source_instructions.as_deref(),
+        )?;
         let implementation_signature = current_executable_signature()?;
         let compiler_signature = alchemy_bundle::bundle::compiler_bundle_signature();
         let host_signature = alchemy_bundle::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
@@ -214,6 +232,7 @@ impl AlchemyBackend {
             ),
             target,
             target_instructions,
+            target_source_instructions,
             baseline_measurement,
         })
     }
@@ -242,7 +261,7 @@ fn alchemy_identity(
     host_signature: &str,
 ) -> String {
     let mut stream = Vec::new();
-    append_identity_field(&mut stream, "permuter-alchemy-backend-v3-insns");
+    append_identity_field(&mut stream, "permuter-alchemy-backend-v4-structural-insns");
     append_identity_field(&mut stream, target_identity);
     append_identity_field(&mut stream, implementation_signature);
     append_identity_field(&mut stream, compiler_signature);
@@ -264,8 +283,15 @@ impl Backend for AlchemyBackend {
     }
 
     fn measure(&self, source: &str) -> Result<Measurement, String> {
-        let score = self.target.compile(source)?;
-        alchemy_measurement(&score, &self.target_instructions)
+        let (score, assembly) = self.target.compile(source)?;
+        let candidate_source_instructions =
+            assembly.as_deref().map(candidate_show::insns::gas_insns);
+        alchemy_measurement(
+            &score,
+            &self.target_instructions,
+            candidate_source_instructions.as_deref(),
+            self.target_source_instructions.as_deref(),
+        )
     }
 }
 
@@ -320,6 +346,78 @@ fn multiset_divergence(a: &[&str], e: &[&str]) -> usize {
         *counts.entry(r).or_insert(0) -= 1;
     }
     counts.values().map(|v| v.unsigned_abs() as usize).sum()
+}
+
+/// Fold allocator-owned spelling while preserving the instruction and source
+/// shape. This is the same normalization contributors use when deciding
+/// whether a large-owner edit changed structure: general registers and spill
+/// slot numbers follow global coloring and must not lead the search.
+fn structural_row(row: &str) -> String {
+    fn allocator_register(token: &str) -> bool {
+        if matches!(token, "sl" | "fp" | "ip") {
+            return true;
+        }
+        token
+            .strip_prefix('r')
+            .and_then(|digits| digits.parse::<u8>().ok())
+            .is_some_and(|register| register <= 12)
+    }
+
+    let mut normalized = String::with_capacity(row.len());
+    let bytes = row.as_bytes();
+    let mut at = 0usize;
+    while at < bytes.len() {
+        if bytes[at].is_ascii_alphanumeric() || bytes[at] == b'_' {
+            let start = at;
+            at += 1;
+            while at < bytes.len() && (bytes[at].is_ascii_alphanumeric() || bytes[at] == b'_') {
+                at += 1;
+            }
+            let token = &row[start..at];
+            if allocator_register(token) {
+                normalized.push_str("rr");
+            } else {
+                normalized.push_str(token);
+            }
+        } else {
+            normalized.push(bytes[at] as char);
+            at += 1;
+        }
+    }
+
+    let mut from = 0usize;
+    while let Some(relative) = normalized[from..].find("[sp, #") {
+        let start = from + relative;
+        let Some(relative_end) = normalized[start..].find(']') else {
+            break;
+        };
+        let end = start + relative_end;
+        let offset = &normalized[start + "[sp, #".len()..end];
+        if !offset.is_empty()
+            && offset
+                .strip_prefix('-')
+                .unwrap_or(offset)
+                .bytes()
+                .all(|byte| byte.is_ascii_digit())
+        {
+            normalized.replace_range(start..=end, "[sp,N]");
+            from = start + "[sp,N]".len();
+        } else {
+            from = end + 1;
+        }
+    }
+    normalized
+}
+
+fn packed_alchemy_score(structural: usize, raw: usize, halfwords: usize) -> u64 {
+    // The normalized source-instruction edit distance is the compass. Raw
+    // canonical rows break structural ties, and linked halfwords break only
+    // those remaining ties. Each field has a disjoint decimal range so a
+    // downstream metric can never outweigh an upstream one.
+    (structural as u64)
+        .saturating_mul(1_000_000_000)
+        .saturating_add((raw as u64).min(9_999).saturating_mul(100_000))
+        .saturating_add((halfwords as u64).min(99_999))
 }
 
 /// Exact insertion/deletion distance and the candidate-side rows omitted by
@@ -451,18 +549,37 @@ fn row_diff(a: &[&str], e: &[&str]) -> (usize, Vec<usize>) {
 fn alchemy_measurement(
     score: &ByteScore,
     target_instructions: &[Instruction],
+    candidate_source_instructions: Option<&[String]>,
+    target_source_instructions: Option<&[String]>,
 ) -> Result<Measurement, String> {
-    let actual_instructions = disassemble_bytes(&score.actual)?;
-    // Whole-row LCS: a row either matches exactly (mnemonic and operands) or
-    // it is a differing row. The mnemonic-anchored scorer traded real rows
-    // for operand-level partial credit and walked candidates away from the
-    // reference while its number improved; byte-exactness needs row
-    // identity, so row identity is the fitness.
-    let a: Vec<&str> = actual_instructions.iter().map(|i| i.row.as_str()).collect();
-    let e: Vec<&str> = target_instructions.iter().map(|i| i.row.as_str()).collect();
+    let (raw_a_owned, raw_e_owned, metric) =
+        match (candidate_source_instructions, target_source_instructions) {
+            (Some(candidate), Some(reference)) => {
+                (candidate.to_vec(), reference.to_vec(), "source")
+            }
+            _ => {
+                let actual = disassemble_bytes(&score.actual)?;
+                (
+                    actual.into_iter().map(|row| row.row).collect(),
+                    target_instructions
+                        .iter()
+                        .map(|row| row.row.clone())
+                        .collect(),
+                    "binary",
+                )
+            }
+        };
+    let raw_a: Vec<&str> = raw_a_owned.iter().map(String::as_str).collect();
+    let raw_e: Vec<&str> = raw_e_owned.iter().map(String::as_str).collect();
+    let normalized_a: Vec<String> = raw_a.iter().map(|row| structural_row(row)).collect();
+    let normalized_e: Vec<String> = raw_e.iter().map(|row| structural_row(row)).collect();
+    let a: Vec<&str> = normalized_a.iter().map(String::as_str).collect();
+    let e: Vec<&str> = normalized_e.iter().map(String::as_str).collect();
     let (differing, unmatched) = row_diff(&a, &e);
+    let (raw_differing, _) = row_diff(&raw_a, &raw_e);
     let common = (a.len() + e.len() - differing) / 2;
-    let bl_divergence = sequence_divergence(&rows_matching(&a, "bl "), &rows_matching(&e, "bl "));
+    let bl_divergence =
+        sequence_divergence(&rows_matching(&raw_a, "bl "), &rows_matching(&raw_e, "bl "));
     let store_divergence = multiset_divergence(
         &rows_matching_any(&a, &["strh ", "strb ", "str "]),
         &rows_matching_any(&e, &["strh ", "strb ", "str "]),
@@ -477,9 +594,13 @@ fn alchemy_measurement(
     let byte: Measurement = score.into();
     Ok(Measurement {
         exact: byte.exact,
-        score: (differing as u64)
-            .saturating_mul(100_000)
-            .saturating_add((byte.differences as u64).min(99_999)),
+        // Exact linked bytes are the objective and must sort ahead of every
+        // heuristic score even if source labels canonicalize differently.
+        score: if byte.exact {
+            0
+        } else {
+            packed_alchemy_score(differing, raw_differing, byte.differences)
+        },
         differences: differing,
         expected_size: byte.expected_size,
         actual_size: byte.actual_size,
@@ -489,7 +610,7 @@ fn alchemy_measurement(
         bl_divergence,
         store_divergence,
         summary: format!(
-            "{differing} differing rows ({} ours, {} reference); {}",
+            "{differing} structural rows/{metric} ({} ours, {} reference); {raw_differing} raw rows; {}",
             a.len() - common,
             e.len() - common,
             byte.summary
@@ -1071,7 +1192,7 @@ pub fn self_test() -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::row_diff;
+    use super::{packed_alchemy_score, row_diff, structural_row};
 
     fn quadratic_distance(a: &[&str], e: &[&str]) -> usize {
         let width = e.len() + 1;
@@ -1133,5 +1254,21 @@ mod tests {
         let (distance, heat) = row_diff(&candidate, &reference);
         assert_eq!(distance, 1_200);
         assert!(heat.is_empty());
+    }
+
+    #[test]
+    fn structural_rows_fold_allocator_owned_registers_and_spills() {
+        assert_eq!(structural_row("ldr r10, [sp, #76]"), "ldr rr, [sp,N]");
+        assert_eq!(structural_row("adds r0, r1, r12"), "adds rr, rr, rr");
+        assert_eq!(structural_row("mov sp, r0"), "mov sp, rr");
+        assert_eq!(structural_row("bl <t>"), "bl <t>");
+        assert_eq!(structural_row("str r0, [r1, #4]"), "str rr, [rr, #4]");
+    }
+
+    #[test]
+    fn structural_distance_dominates_raw_and_halfword_ties() {
+        assert!(packed_alchemy_score(7, 9_999, 99_999) < packed_alchemy_score(8, 0, 0));
+        assert!(packed_alchemy_score(8, 12, 99) < packed_alchemy_score(8, 13, 0));
+        assert!(packed_alchemy_score(8, 13, 98) < packed_alchemy_score(8, 13, 99));
     }
 }

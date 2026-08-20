@@ -3,11 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6308,
-    "wrong_instructions": 1315,
-    "differing_halfwords": 2864,
+    "wrong_instructions": 1283,
+    "differing_halfwords": 2857,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "154 ours / 168 reference (322 total)",
+    "raw_rows": "140 ours / 155 reference (295 total)",
     "class": "wrong"
   },
   "shape": {
@@ -90,7 +90,13 @@
     "the five ailment-family guards compare action->effect directly rather than the cached efx local (perm_expand_expr find, 23 rows)",
     "BytePtr, a gnu89 inline identity u8* helper over 13 raw-offset access sites: forces each base pointer through a call boundary; worth 35 rows on the cascade stack; likely a proxy for proper struct member access",
     "act, a second BattleAction pointer covering a 13-site scatter (target_flags, five effect reads, the classify pair, the switch head, and four power reads); worth 15 rows; one TAKE_PWR site expands with act while the other keeps the macro",
-    "ATK_DOWN1 assigns turns=7 between the modifier decrement and the clamp, and stores the local"
+    "ATK_DOWN1 assigns turns=7 between the modifier decrement and the clamp, and stores the local",
+    "ELEM_AT spells the stride as (range) * 2 * 2",
+    "DK_ATTACK_X reads hp through an s16 intermediate declared after power, loaded before defense",
+    "type-8 HP damage multiplies dmg * falloff, operand order",
+    "the agility modifier local is u8",
+    "PP drain display delta is dmg = heal; dmg = dmg - actor->pp; in two statements",
+    "EFX_PP_RESTORE_7 loads pp before max_pp"
   ],
   "unexpressed": [
     {

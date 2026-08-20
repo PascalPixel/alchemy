@@ -2,12 +2,12 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "candidate_bytes": 6308,
-    "wrong_instructions": 1275,
-    "differing_halfwords": 2859,
+    "candidate_bytes": 6304,
+    "wrong_instructions": 1261,
+    "differing_halfwords": 2855,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "133 ours / 148 reference (281 total)",
+    "raw_rows": "123 ours / 140 reference (263 total)",
     "class": "wrong"
   },
   "shape": {
@@ -99,7 +99,10 @@
     "EFX_PP_RESTORE_7 loads pp before max_pp",
     "three more multiply operand orders: dmg * PpDmgFalloff, target->max_hp * kind, dmg * HpDmgFalloff",
     "EFX_AGI_SET_DOWN4 stores through an s8* local assigned before the value block",
-    "EFX_RES_UP2 clamps through an s8* local assigned inside the first compare (ADJUST_RES expanded at this one site)"
+    "EFX_RES_UP2 clamps through an s8* local assigned inside the first compare (ADJUST_RES expanded at this one site)",
+    "HpHealFalloff base held in a s32* local assigned right after power=100, read as healtbl[offset]",
+    "two more multiply operand orders: dmg * PpLossFalloff, dmg * healtbl",
+    "GUARD1 sets guard_level through a local (g1 = 1)"
   ],
   "unexpressed": [
     {
@@ -219,5 +222,8 @@
   "parking_lot": [
     "Pascal 2026-08-19: reduce the tooling from 162k lines to ~40k. Biggest masses: coverage-map 9.3k, permuter 5.9k, build-assets 5.4k, full-c-progress 4.5k, per-asset data crates ~2-4k each x dozens. Likely levers: merge the ~50 asset-builder crates into one table-driven builder, collapse the metrics/coverage stack, dedupe the disasm/canonicalizer copies across candidate-show/overlay/permuter. Separate campaign; do not start mid-owner.",
     "port pret's reuse-existing-variable temp mutation (perm_temp_for_expr with existing-var reuse) into alchemy_permuter; measured gap: 75k of our candidates found nothing, pret found the power=range*4 fix in minutes"
+  ],
+  "notes": [
+    "cascade base sits 9 rows lower (254) via no-op block wrappers that perturb jump2's FELLED crossjump topology; semantically identical to the draft; the real source shape behind that CFG is still unread"
   ]
 }

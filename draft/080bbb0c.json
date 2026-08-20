@@ -2,12 +2,12 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "candidate_bytes": 6332,
-    "differing_halfwords": 1035,
-    "wrong_instructions": 473,
-    "raw_rows": "76 ours / 82 reference (158 total)",
+    "candidate_bytes": 6336,
+    "differing_halfwords": 2684,
+    "wrong_instructions": 1053,
+    "code_hunks_normalized": "38 hunks / 52 rows (pool and phase excluded)",
     "class": "wrong",
-    "note": "size parity"
+    "note": "size 6336 vs 6332: the heal-guard fold adds the reference's two pwr copies before the compensating ours-extra sites (attack FINISH triple, epilogue bx) are fixed; every raw metric from 0x578 on is phase. Diagnostic parity probe (-fno-regmove, NOT the original's flag): 6332 exact size, 730 differing halfwords, 427 wrong instructions -- the best honest content measurement on this owner. The 1035 state this replaces was parity-by-compensation."
   },
   "shape": {
     "calls": null,
@@ -117,7 +117,8 @@
     "DRAIN_PP uses a fresh amt local (not the outer dmg) and the clamp arm derives the display delta in one expression re-reading actor->pp",
     "the elem scan's second direction compares ELEM_AT(target, i) indexed by the loop counter -- no walked pointer; value is s32",
     "SEMANTIC FIX, reference-proven at 0x2ac-0x2b0: action 0x1f7 IS the split action -- the SPLIT_OFF/APPEARS binding was inverted in the draft",
-    "the percentage heal adds Math_Div per arm (no amt join variable)"
+    "the percentage heal adds Math_Div per arm (no amt join variable)",
+    "heal-body power guards (cases 2 and 12) read the FIELD and assign pwr after: if (act->power == 0) break; pwr = act->power; -- CSE keeps one ldrh, the guard consumes the load register (ref ldrh r3/cmp r3 rows now match), and pwr materializes as the reference's copy insn. The five sibling bodies already used this idiom; the old TAKE_PWR single-variable shape loaded straight into pwr's register with zero copies, which the reference disproves. act vs action mention choice at both sites is emission-neutral (all four combinations byte-identical)"
   ],
   "unexpressed": [
     {
@@ -163,7 +164,7 @@
     {
       "op": "coloring bifurcation",
       "count": 1,
-      "where": "case-12 heal head: the reference colors the range copy into r0 and holds pwr through r3->r5->r0 (two explicit copies, adds r5,r3,#0 and adds r0,r5,#0); ours colors pwr directly into r0 and the range copy into r5. This single r0 assignment flips the dealt-head scratch (r4 vs r5 at insn row ~711), which is the register-identity gate on the FELLED crossjump cluster. The lever, if one exists, is whatever makes pwr lose r0: an extra ref on the range mention or a clobber across pwr's range. Every ternary/order respelling ties. ALLOCNO DATA (our build): pwr is pseudo 384, 'used 3 times across 8 insns; set 1 time; user var; pref LO_REGS'; it allocates mid-order in greg's priority list and takes r0 as the first non-conflicting register in REG_ALLOC_ORDER {3,2,1,0,...}. The reference's equivalent faced one additional conflict at its turn and landed r5. The lever is the conflict set at 384's allocation, i.e. which OTHER allocno spans that window -- a global-pressure question; every local respelling of the head (act vs action, ternary arms, load order) leaves the conflict set unchanged and ties. FINAL DEPTH: both builds occupy the same six registers {r0,r1,r3,r4,r5,r6} in the window; there is no extra conflict. The roles swap because the ALLOCATION ORDER differs: greg's priority list (';; 180 regs to allocate: ...') ranks pseudos by floor_log2(n_refs)*n_refs/live_length*size, and which of (pwr=384, the action reload, the range copy) allocates first decides who gets r3 and cascades to the FELLED crossjump gate. The next instrument is a differ over the two builds' allocate-order lists -- which needs the reference's pseudo structure reconstructed, i.e. a byte-exact-in-progress problem. Alternatively: any source change that alters 384's n_refs or live_length by one unit reorders it; the honest candidates are which mention of pwr exists (macro vs expansion) at EACH TAKE_PWR site jointly, not per-site."
+      "where": "case-12 heal head: the reference colors the range copy into r0 and holds pwr through r3->r5->r0 (two explicit copies, adds r5,r3,#0 and adds r0,r5,#0); ours colors pwr directly into r0 and the range copy into r5. This single r0 assignment flips the dealt-head scratch (r4 vs r5 at insn row ~711), which is the register-identity gate on the FELLED crossjump cluster. The lever, if one exists, is whatever makes pwr lose r0: an extra ref on the range mention or a clobber across pwr's range. Every ternary/order respelling ties. ALLOCNO DATA (our build): pwr is pseudo 384, 'used 3 times across 8 insns; set 1 time; user var; pref LO_REGS'; it allocates mid-order in greg's priority list and takes r0 as the first non-conflicting register in REG_ALLOC_ORDER {3,2,1,0,...}. The reference's equivalent faced one additional conflict at its turn and landed r5. The lever is the conflict set at 384's allocation, i.e. which OTHER allocno spans that window -- a global-pressure question; every local respelling of the head (act vs action, ternary arms, load order) leaves the conflict set unchanged and ties. FINAL DEPTH: both builds occupy the same six registers {r0,r1,r3,r4,r5,r6} in the window; there is no extra conflict. The roles swap because the ALLOCATION ORDER differs: greg's priority list (';; 180 regs to allocate: ...') ranks pseudos by floor_log2(n_refs)*n_refs/live_length*size, and which of (pwr=384, the action reload, the range copy) allocates first decides who gets r3 and cascades to the FELLED crossjump gate. The next instrument is a differ over the two builds' allocate-order lists -- which needs the reference's pseudo structure reconstructed, i.e. a byte-exact-in-progress problem. Alternatively: any source change that alters 384's n_refs or live_length by one unit reorders it; the honest candidates are which mention of pwr exists (macro vs expansion) at EACH TAKE_PWR site jointly, not per-site. || SESSION UPDATE: the lever's first half is FOUND -- guard-on-field (now folded) gives pwr a copy-def pseudo and the ldrh/cmp rows match; residual is the one-vs-two copy depth and the r0 role swap, unchanged under -fno-regmove (allocation order, not regmove)"
     }
   ],
   "verified_against_reference": [
@@ -343,6 +344,31 @@
     {
       "shape": "double-100 as two source mentions (both placements, alone and with the tmp identity)",
       "wrong": "all variants overshoot to 6340 (+8): the reference's movs r2,#100 + movs r0,#100 is reload REMATERIALIZING one constant pseudo at the head use, not a second mention; the committed single off=100 is structure-true and the split is a coloring artifact"
+    },
+    {
+      "shape": "run30-r3 TEXT-opcode local (BATTLE_EVENT_TEXT held in a register across ~40 push sites)",
+      "wrong": "reference builds movs r0,#4 at 74 sites within two insns of the bl (102 total movs #4); the opcode is rebuilt per site, never held. r3's biggest family was pure phase compensation"
+    },
+    {
+      "shape": "run30-r3 Summon_FindSlot call hoist above the classify branch",
+      "wrong": "the reference's bl Func_080b7514 sits INSIDE the taken arm (.L13, after the +206 classify bls); the hoist is a call-move lie the baseline-relative guard let through"
+    },
+    {
+      "shape": "run30-r3 classify hoist (count = (u8)(act->effect+206) before hit selection)",
+      "wrong": "reference computes the classify at 0x1a2, after the hit join .L12, exactly where the draft has it"
+    },
+    {
+      "shape": "run30-r3 HitFalloff base local",
+      "wrong": "reference loads the pool base fresh at the call site (ldr r2,[pc,N] directly before ldrb r2,[r2,r4])"
+    },
+    {
+      "shape": "adjust load reordered before range (prologue order matches ref emission)",
+      "wrong": 1039,
+      "note": "emission does not follow source order in that window; scheduling owns it"
+    },
+    {
+      "shape": "elem scan direction-2 as indexed tbl mention (v3) and as q-walker (three spellings)",
+      "wrong": "indexed: giv init adds r2,r4,#2 -- the +2 still folds into the giv. q-walker: idx 2 and the walk shape appear (movs #2, [r2,r4]) but the preheader copies live tbl in one insn where the reference rebuilds target+36 in two; gcse unifies plus(target,36) through the live register in every spelling including a fresh (s16*)((u8*)target+36) init. cmd-reuse colors the walker into fp. Parked: walker+idx2 proven true, the init rebuild is the unsolved half. Grouping constants in source cannot help: RTL plus canonicalization rebuilds (t+4i)+38 regardless"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",
@@ -366,6 +392,11 @@
     "stock 2.96 test: rebuilt gs1cc with the pristine ASM_OUTPUT_ALIGN (the fork's only byte-moving deviation; all other fork commits are host-buildability, proven inert by the Red Hat i386 cross-check and the hash padding test). Score on this owner: identical, 2329hw/982wrong at 6332. The residual is a property of stock gcc 2.96, not of the fork. Chain rounds 4-5 plateau at ~1000hw search state.",
     "permuter A/B on the 998hw chain state, 30k candidates, same seed: control best 963hw vs --heat best 875hw (88 halfwords deeper, 2 rows better). Heat-biased site selection (LCS-backtracked differing-row positions weighting TempForExpr and ReorderStmts) is adopted as the default for chained runs; determinism with heat off is hash-identical to the pre-change engine. Cross-round journal import (--journal-from, backend-identity-keyed) landed alongside.",
     "the 100-matcher swarm cost ~26M agent tokens and its verify phase died at a usage limit; hand-harvest of its journal took the committed draft 2329 -> 1035 halfwords in under an hour of direct work. Eight matchers independently converged on the DRAIN_PP shape; convergence was the strongest usefulness signal in the claim list.",
-    "run30 chain sweep (out/run30-r1..r3): guarded descent 2329->1007->902->759 as pre-harvest search state. r3's 143hw round includes a Summon_Refresh call move that passed the bl guard because thresholds are baseline-RELATIVE (a move can hide under existing divergence) -- guard gap for the engine owner. r3's honest remainder is interlocked coloring families (constant-72 local, call-result locals, a guard-level pointer spanning the switch) that do NOT transplant onto the harvested draft (frame +4, 2637hw when ported piecemeal); superseded by the harvest at 1035. The r4-* directories are the engine owner's test matrix, untouched."
+    "run30 chain sweep (out/run30-r1..r3): guarded descent 2329->1007->902->759 as pre-harvest search state. r3's 143hw round includes a Summon_Refresh call move that passed the bl guard because thresholds are baseline-RELATIVE (a move can hide under existing divergence) -- guard gap for the engine owner. r3's honest remainder is interlocked coloring families (constant-72 local, call-result locals, a guard-level pointer spanning the switch) that do NOT transplant onto the harvested draft (frame +4, 2637hw when ported piecemeal); superseded by the harvest at 1035. The r4-* directories are the engine owner's test matrix, untouched.",
+    "engine hardened (this session): bl/store guards now carry row signatures -- at equal divergence a candidate must have IDENTICAL call sequence and store multiset to the baseline, so lateral trades (the r3 Summon_Refresh class) die in the walk, in retention, in best.c selection, and in chain re-seeding. Journal bumped to v3 (legacy v2 rows import with unknown signatures). Guarded walk from the 1035 draft: 100,000 candidates, 712 compile failures, ZERO improving mutations -- the AST engine's honest single-lineage neighborhood at that baseline was exhausted; do not spend walk compute again until a structural fold lands",
+    "run30-r3 759hw decomposed by reference reads: every named family was either already-committed, phase compensation, or a lie (chance+=30 moved after its use, heal+=dmg deleted in DRAIN_HP, double heal+=dmg in DRAIN_PP, amt=maxv dropping *30, p reset inside the walk loop, stale power/skip cross-case reads, three call moves). The vein is fully mined and disproven; nothing left to harvest from run30",
+    "-fno-regmove targeting map recomputed on the guard-fold draft: exact size parity returns and 730hw/427wrong materializes, proving the guard fold's content. The two insns regmove removes (restoring parity) sit in the walk head (ch&0x7fff copy chain) -- meaning the true source sheds ~2 insns at our-extra sites instead. The named our-extra sites: the attack FINISH triple at 0x54c (movs #11/mov r1,sl/bl -- the reference's attack FINISH arm is an empty block jumping to case 3's shared copy at 0xb28), the KO-arm FELLED pool load + movs #4 at 0x56c-0x574 (bhi/bls polarity), and the epilogue dead bx lr. At parity the case-3/6 suffix region 0xb00-0xb64 ALREADY matches the reference byte-for-byte including cur in r6, so the old register-identity gate on the FELLED merge is GONE: what remains is why our jump2 does not empty the attack arm into the 0xb28 copy -- the next single reading target, likely interacting with the bhi/bls range polarity of the arm's TEXT_SIDE",
+    "heal-head residual after the guard fold: ours emits ONE copy (adds r0,r3,#0 -- pwr coalesced into the arg) where the reference emits two (adds r5,r3,#0 then adds r0,r5,#0) with the range copy in r0 (ours r2). Same under -fno-regmove, so it is allocation order, not regmove: in the reference the range copy takes r0 first and pwr settles in r5, forcing the arg copy. The remaining lever is what makes the range copy prefer or win r0; every local respelling measured ties",
+    "walk head at parity (v2nr): ref extras are movs r0,#100 at 0x218 (the documented reload rematerialization of the off=100 pseudo at the store use) and the rec flow cmp r0,#0 before the copy (ref compares the raw FindSlot result then copies, ours copies then compares) plus adds r3,r2,#0 at 0x30e; DRAIN_PP head loads target->pp straight into r6 (ldrh r6,[r7,#52]) where ours loads r3 and copies -- the longwalk u16-key family points here; both are read-verified leads for next session"
   ]
 }

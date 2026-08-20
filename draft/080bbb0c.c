@@ -1199,8 +1199,8 @@ dealt = target->hp - cur;
         s32 maxv;
         s32 heal;
 
-        heal = target->hp;
         maxv = target->max_hp;
+        heal = target->hp;
         old = *(u16 *)&target->hp;
         maxu = *(u16 *)&target->max_hp;
         if (action->effect == EFX_HEAL_60)

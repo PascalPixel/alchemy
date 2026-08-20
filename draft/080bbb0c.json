@@ -2,12 +2,12 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "candidate_bytes": 6304,
-    "wrong_instructions": 1354,
-    "differing_halfwords": 2849,
+    "candidate_bytes": 6308,
+    "wrong_instructions": 1315,
+    "differing_halfwords": 2864,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "178 ours / 193 reference (371 total)",
+    "raw_rows": "154 ours / 168 reference (322 total)",
     "class": "wrong"
   },
   "shape": {
@@ -87,7 +87,10 @@
     "PP-damage case reuses power for range*4 before the range!=4 test (reference computes lsls #2 unconditionally and spills to [sp,#12]); found by pret decomp-permuter in a 5-minute run, verified against the reference bytes",
     "summon walk holds (u8*)slots in a function-scope u8* local assigned at the loop head; the cast+type is the spelling that survives copy propagation (pret find, 9th spelling tried)",
     "PP-full heal compare re-reads max_pp as u16 (heal == (u16)actor->max_pp): mixed-width second mention; 63-row domino; found by a 12-way pret fan; the max_hp twin measured WORSE with the same cast and stays plain",
-    "the five ailment-family guards compare action->effect directly rather than the cached efx local (perm_expand_expr find, 23 rows)"
+    "the five ailment-family guards compare action->effect directly rather than the cached efx local (perm_expand_expr find, 23 rows)",
+    "BytePtr, a gnu89 inline identity u8* helper over 13 raw-offset access sites: forces each base pointer through a call boundary; worth 35 rows on the cascade stack; likely a proxy for proper struct member access",
+    "act, a second BattleAction pointer covering a 13-site scatter (target_flags, five effect reads, the classify pair, the switch head, and four power reads); worth 15 rows; one TAKE_PWR site expands with act while the other keeps the macro",
+    "ATK_DOWN1 assigns turns=7 between the modifier decrement and the clamp, and stores the local"
   ],
   "unexpressed": [
     {
@@ -193,6 +196,10 @@
     {
       "shape": "pret find #2: function-scope s16* temp for slots base in the summon walk",
       "wrong": "absorbed by the power fix; identical insns on the new landscape"
+    },
+    {
+      "shape": "cascade extras: hoisted text-id local (8f3), kind=(dummy=12) chain, affinity reuse at the agility push",
+      "wrong": "marginal value 0 to -2 rows on the 313-row cascade stack; not folded"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

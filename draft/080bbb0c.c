@@ -899,7 +899,10 @@ after_power:
                 BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
                 BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);
             }
-            goto hp_tail;
+            dealt = target->hp - cur;
+            target->hp = (s16)cur;
+            BattleUnit_UpdateRatios(target_id);
+            break;
         }
 
         case DK_PP_DMG:
@@ -1027,7 +1030,10 @@ after_power:
                 }
             } else
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            goto hp_tail;
+            dealt = target->hp - cur;
+            target->hp = (s16)cur;
+            BattleUnit_UpdateRatios(target_id);
+            break;
         }
 
         case 12:
@@ -1094,8 +1100,7 @@ pp_store:
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
             } else
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-hp_tail:
-            dealt = target->hp - cur;
+dealt = target->hp - cur;
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);
             break;

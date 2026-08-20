@@ -89,8 +89,8 @@ impl Options {
         let mut quiet = false;
         let mut debug = false;
         let mut resume = false;
-    let mut journal_from: Option<std::path::PathBuf> = None;
-    let mut heat = false;
+        let mut journal_from: Option<std::path::PathBuf> = None;
+        let mut heat = false;
         let mut at = 0usize;
         while at < args.len() {
             match args[at].as_str() {

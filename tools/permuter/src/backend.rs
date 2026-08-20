@@ -199,8 +199,7 @@ impl AlchemyBackend {
             .to_string();
         let target = PreparedTarget::prepare(path, base_source)?;
         let target_instructions = disassemble_bytes(target.expected())?;
-        let baseline_measurement =
-            alchemy_measurement(target.baseline(), &target_instructions)?;
+        let baseline_measurement = alchemy_measurement(target.baseline(), &target_instructions)?;
         let implementation_signature = current_executable_signature()?;
         let compiler_signature = alchemy_bundle::bundle::compiler_bundle_signature();
         let host_signature = alchemy_bundle::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
@@ -281,7 +280,10 @@ impl Backend for AlchemyBackend {
 /// the halfword count survives as a tie-break within equal instruction
 /// scores and in the summary.
 fn rows_matching<'a>(rows: &[&'a str], prefix: &str) -> Vec<&'a str> {
-    rows.iter().copied().filter(|r| r.starts_with(prefix)).collect()
+    rows.iter()
+        .copied()
+        .filter(|r| r.starts_with(prefix))
+        .collect()
 }
 
 fn rows_matching_any<'a>(rows: &[&'a str], prefixes: &[&str]) -> Vec<&'a str> {
@@ -320,6 +322,132 @@ fn multiset_divergence(a: &[&str], e: &[&str]) -> usize {
     counts.values().map(|v| v.unsigned_abs() as usize).sum()
 }
 
+/// Exact insertion/deletion distance and the candidate-side rows omitted by
+/// one shortest edit script.
+///
+/// The old scorer materialised the full `(a.len() + 1) * (e.len() + 1)` LCS
+/// matrix for every compilation.  A large owner has roughly 2,500 rows, so
+/// eight workers repeatedly allocated about 200 MiB and visited more than six
+/// million cells per candidate.  Myers visits only the edit frontier.  The
+/// returned distance is exactly `a.len() + e.len() - 2 * LCS`, preserving the
+/// fitness function, while the backtrack supplies the same kind of heat map:
+/// candidate rows not selected by a shortest common subsequence.
+fn row_diff(a: &[&str], e: &[&str]) -> (usize, Vec<usize>) {
+    // One million frontier cells is about 8 MiB on a 64-bit host. Eight
+    // workers therefore remain comfortably bounded even when a candidate is
+    // unrelated to the reference. The exact distance needs only the prior
+    // frontier; only optional heat backtracking is abandoned beyond the cap.
+    const MAX_TRACE_CELLS: usize = 1_048_576;
+
+    fn band_get(band: &[isize], depth: usize, diagonal: isize) -> isize {
+        debug_assert!(diagonal >= -(depth as isize));
+        debug_assert!(diagonal <= depth as isize);
+        band[(diagonal + depth as isize) as usize]
+    }
+
+    let (a_len, e_len) = (a.len(), e.len());
+    let max_depth = a_len + e_len;
+    let mut trace: Vec<Vec<isize>> = Vec::new();
+    let mut trace_cells = 0usize;
+    let mut previous = Vec::new();
+    let mut keeping_trace = true;
+
+    for depth in 0..=max_depth {
+        let depth_i = depth as isize;
+        // Diagonals have the same parity as `depth`; the unused slots keep
+        // indexing by `diagonal + depth` simple and branch-free in the loop.
+        let mut current = vec![0isize; depth.saturating_mul(2) + 1];
+        for step in 0..=depth {
+            let diagonal = -depth_i + (step as isize * 2);
+            let mut x = if depth == 0 {
+                0
+            } else if diagonal == -depth_i {
+                let prior = if keeping_trace {
+                    trace.last().expect("prior Myers frontier")
+                } else {
+                    &previous
+                };
+                band_get(prior, depth - 1, diagonal + 1)
+            } else if diagonal == depth_i {
+                let prior = if keeping_trace {
+                    trace.last().expect("prior Myers frontier")
+                } else {
+                    &previous
+                };
+                band_get(prior, depth - 1, diagonal - 1) + 1
+            } else {
+                let prior = if keeping_trace {
+                    trace.last().expect("prior Myers frontier")
+                } else {
+                    &previous
+                };
+                let left = band_get(prior, depth - 1, diagonal - 1);
+                let down = band_get(prior, depth - 1, diagonal + 1);
+                if left < down {
+                    down
+                } else {
+                    left + 1
+                }
+            };
+            let mut y = x - diagonal;
+            while x < a_len as isize && y < e_len as isize && a[x as usize] == e[y as usize] {
+                x += 1;
+                y += 1;
+            }
+            current[(diagonal + depth_i) as usize] = x;
+            if x == a_len as isize && y == e_len as isize {
+                if !keeping_trace || trace_cells.saturating_add(current.len()) > MAX_TRACE_CELLS {
+                    return (depth, Vec::new());
+                }
+                trace.push(current);
+
+                let mut unmatched = Vec::new();
+                let (mut bx, mut by) = (a_len as isize, e_len as isize);
+                for back_depth in (1..=depth).rev() {
+                    let back_i = back_depth as isize;
+                    let diagonal = bx - by;
+                    let prior = &trace[back_depth - 1];
+                    let prior_diagonal = if diagonal == -back_i
+                        || (diagonal != back_i
+                            && band_get(prior, back_depth - 1, diagonal - 1)
+                                < band_get(prior, back_depth - 1, diagonal + 1))
+                    {
+                        diagonal + 1
+                    } else {
+                        diagonal - 1
+                    };
+                    let prior_x = band_get(prior, back_depth - 1, prior_diagonal);
+                    let prior_y = prior_x - prior_diagonal;
+
+                    // Walk back over the equal-row snake, then consume the
+                    // one insertion or deletion represented by this depth.
+                    while bx > prior_x && by > prior_y {
+                        bx -= 1;
+                        by -= 1;
+                    }
+                    if bx == prior_x {
+                        by -= 1;
+                    } else {
+                        bx -= 1;
+                        unmatched.push(bx as usize);
+                    }
+                }
+                unmatched.reverse();
+                return (depth, unmatched);
+            }
+        }
+        if keeping_trace && trace_cells.saturating_add(current.len()) <= MAX_TRACE_CELLS {
+            trace_cells += current.len();
+            trace.push(current);
+        } else {
+            keeping_trace = false;
+            trace.clear();
+            previous = current;
+        }
+    }
+    unreachable!("an insertion/deletion path always exists")
+}
+
 fn alchemy_measurement(
     score: &ByteScore,
     target_instructions: &[Instruction],
@@ -332,23 +460,9 @@ fn alchemy_measurement(
     // identity, so row identity is the fitness.
     let a: Vec<&str> = actual_instructions.iter().map(|i| i.row.as_str()).collect();
     let e: Vec<&str> = target_instructions.iter().map(|i| i.row.as_str()).collect();
-    let width = e.len() + 1;
-    let mut lcs = vec![0u32; (a.len() + 1) * width];
-    for left in (0..a.len()).rev() {
-        for right in (0..e.len()).rev() {
-            lcs[left * width + right] = if a[left] == e[right] {
-                1 + lcs[(left + 1) * width + right + 1]
-            } else {
-                lcs[(left + 1) * width + right].max(lcs[left * width + right + 1])
-            };
-        }
-    }
-    let common = lcs[0] as usize;
-    let differing = (a.len() - common) + (e.len() - common);
-    let bl_divergence = sequence_divergence(
-        &rows_matching(&a, "bl "),
-        &rows_matching(&e, "bl "),
-    );
+    let (differing, unmatched) = row_diff(&a, &e);
+    let common = (a.len() + e.len() - differing) / 2;
+    let bl_divergence = sequence_divergence(&rows_matching(&a, "bl "), &rows_matching(&e, "bl "));
     let store_divergence = multiset_divergence(
         &rows_matching_any(&a, &["strh ", "strb ", "str "]),
         &rows_matching_any(&e, &["strh ", "strb ", "str "]),
@@ -356,25 +470,10 @@ fn alchemy_measurement(
     // Backtrack the LCS to mark our-side rows that are not part of the
     // common subsequence; their fractional positions steer heat-biased
     // mutation toward the regions that still differ.
-    let mut heat = Vec::new();
-    {
-        let (mut left, mut right) = (0usize, 0usize);
-        while left < a.len() && right < e.len() {
-            if a[left] == e[right] {
-                left += 1;
-                right += 1;
-            } else if lcs[(left + 1) * width + right] >= lcs[left * width + right + 1] {
-                heat.push(left as f32 / a.len().max(1) as f32);
-                left += 1;
-            } else {
-                right += 1;
-            }
-        }
-        while left < a.len() {
-            heat.push(left as f32 / a.len().max(1) as f32);
-            left += 1;
-        }
-    }
+    let heat = unmatched
+        .into_iter()
+        .map(|left| left as f32 / a.len().max(1) as f32)
+        .collect();
     let byte: Measurement = score.into();
     Ok(Measurement {
         exact: byte.exact,
@@ -442,7 +541,9 @@ fn disassemble_bytes(bytes: &[u8]) -> Result<Vec<Instruction>, String> {
             let Some(length) = instruction.row[start..].find(']') else {
                 break;
             };
-            instruction.row.replace_range(start..start + length + 1, "[pc]");
+            instruction
+                .row
+                .replace_range(start..start + length + 1, "[pc]");
         }
         // Branch and call targets are file offsets that shift with any size
         // change upstream; fold them so a moved block is not billed as a
@@ -966,4 +1067,71 @@ pub fn self_test() -> Result<(), String> {
         return Err("current executable signature is not SHA-256".into());
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::row_diff;
+
+    fn quadratic_distance(a: &[&str], e: &[&str]) -> usize {
+        let width = e.len() + 1;
+        let mut lcs = vec![0usize; (a.len() + 1) * width];
+        for left in (0..a.len()).rev() {
+            for right in (0..e.len()).rev() {
+                lcs[left * width + right] = if a[left] == e[right] {
+                    1 + lcs[(left + 1) * width + right + 1]
+                } else {
+                    lcs[(left + 1) * width + right].max(lcs[left * width + right + 1])
+                };
+            }
+        }
+        a.len() + e.len() - 2 * lcs[0]
+    }
+
+    fn sequences() -> Vec<Vec<&'static str>> {
+        const TOKENS: [&str; 3] = ["a", "b", "c"];
+        let mut out = vec![Vec::new()];
+        for len in 1usize..=4 {
+            let count = TOKENS.len().pow(len as u32);
+            for mut value in 0..count {
+                let mut sequence = Vec::with_capacity(len);
+                for _ in 0..len {
+                    sequence.push(TOKENS[value % TOKENS.len()]);
+                    value /= TOKENS.len();
+                }
+                out.push(sequence);
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn myers_row_diff_matches_quadratic_lcs_exhaustively() {
+        let sequences = sequences();
+        for a in &sequences {
+            for e in &sequences {
+                let (distance, unmatched) = row_diff(a, e);
+                assert_eq!(distance, quadratic_distance(a, e), "a={a:?} e={e:?}");
+                assert!(unmatched.windows(2).all(|pair| pair[0] < pair[1]));
+                assert!(unmatched.iter().all(|index| *index < a.len()));
+                assert!(unmatched.len() <= distance);
+            }
+        }
+    }
+
+    #[test]
+    fn row_diff_heat_marks_candidate_deletions() {
+        let (distance, unmatched) = row_diff(&["head", "drop", "tail"], &["head", "tail", "new"]);
+        assert_eq!(distance, 2);
+        assert_eq!(unmatched, [1]);
+    }
+
+    #[test]
+    fn row_diff_bounds_trace_without_changing_large_distances() {
+        let candidate = vec!["candidate"; 600];
+        let reference = vec!["reference"; 600];
+        let (distance, heat) = row_diff(&candidate, &reference);
+        assert_eq!(distance, 1_200);
+        assert!(heat.is_empty());
+    }
 }

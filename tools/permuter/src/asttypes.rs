@@ -64,6 +64,7 @@ pub struct TypeMap {
     pub typedefs: BTreeMap<String, CType>,
     pub var_types: BTreeMap<String, CType>,
     pub local_vars: BTreeSet<String>,
+    pub enum_constants: BTreeSet<String>,
     /// struct/union tag -> ordered fields (None name = anonymous member).
     pub fields: BTreeMap<String, Vec<(Option<String>, CType)>>,
 }
@@ -167,8 +168,9 @@ pub fn same_type(a: &CType, b: &CType, tm: &TypeMap, allow_similar: bool) -> boo
             (CType::Enum(n1), CType::Enum(n2)) => {
                 return allow_similar || n1 == n2;
             }
-            (CType::Enum(_), CType::Basic { .. })
-            | (CType::Basic { .. }, CType::Enum(_)) => return allow_similar,
+            (CType::Enum(_), CType::Basic { .. }) | (CType::Basic { .. }, CType::Enum(_)) => {
+                return allow_similar
+            }
             (CType::Basic { names: n1, .. }, CType::Basic { names: n2, .. }) => {
                 if allow_similar {
                     return true;
@@ -189,9 +191,7 @@ pub fn same_type(a: &CType, b: &CType, tm: &TypeMap, allow_similar: bool) -> boo
 fn wrap_derived(mut t: CType, derived: &[Node<DerivedDeclarator>]) -> CType {
     for d in derived {
         t = match &d.node {
-            DerivedDeclarator::Pointer(_) | DerivedDeclarator::Block(_) => {
-                CType::Ptr(Box::new(t))
-            }
+            DerivedDeclarator::Pointer(_) | DerivedDeclarator::Block(_) => CType::Ptr(Box::new(t)),
             DerivedDeclarator::Array(_) => CType::Array(Box::new(t)),
             DerivedDeclarator::Function(_) | DerivedDeclarator::KRFunction(_) => {
                 CType::Func(Box::new(t))
@@ -280,9 +280,7 @@ pub fn ctype_from_decl_specifiers(specs: &[Node<DeclarationSpecifier>]) -> Resul
     Ok(CType::Basic { names, volatile })
 }
 
-pub fn ctype_from_specifier_qualifiers(
-    specs: &[Node<SpecifierQualifier>],
-) -> Result<CType, Fail> {
+pub fn ctype_from_specifier_qualifiers(specs: &[Node<SpecifierQualifier>]) -> Result<CType, Fail> {
     let mut names = Vec::new();
     let mut volatile = false;
     let mut tagged: Option<CType> = None;
@@ -356,8 +354,9 @@ fn register_type_specifier(ts: &TypeSpecifier, tm: &mut TypeMap) {
         }
         TypeSpecifier::Enum(et) => {
             for e in &et.node.enumerators {
-                tm.var_types
-                    .insert(e.node.identifier.node.name.clone(), CType::int());
+                let name = e.node.identifier.node.name.clone();
+                tm.var_types.insert(name.clone(), CType::int());
+                tm.enum_constants.insert(name);
             }
         }
         _ => {}
@@ -458,11 +457,10 @@ pub fn build_typemap(unit: &TranslationUnit, target_fn: &str) -> TypeMap {
                     for der in &f.node.declarator.node.derived {
                         if let DerivedDeclarator::Function(fd) = &der.node {
                             for p in &fd.node.parameters {
-                                let pbase =
-                                    match ctype_from_decl_specifiers(&p.node.specifiers) {
-                                        Ok(b) => b,
-                                        Err(_) => continue,
-                                    };
+                                let pbase = match ctype_from_decl_specifiers(&p.node.specifiers) {
+                                    Ok(b) => b,
+                                    Err(_) => continue,
+                                };
                                 if let Some(pd) = &p.node.declarator {
                                     let (pt, pname) = apply_declarator(pbase, &pd.node);
                                     if let Some(pname) = pname {

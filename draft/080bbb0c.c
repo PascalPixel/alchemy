@@ -878,13 +878,11 @@ after_power:
 
         case DK_HP_HEAL:
         {
-            s32 pwr;
-
             if (act->power == 0)
                 break;
-            pwr = act->power;
             cur = target->hp;
-            dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
+            dmg = act->power;
+            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * healtbl[offset], 100);
             dmg *= adjust;
             dmg += BattleRandom_Next() & 3;
@@ -1040,13 +1038,11 @@ after_power:
 
         case 12:
         {
-            s32 pwr;
-
             if (act->power == 0)
                 break;
-            pwr = act->power;
             pp = target->pp;
-            dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
+            dmg = act->power;
+            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * pptbl[offset], 100);
             dmg *= adjust;
             pp += dmg;

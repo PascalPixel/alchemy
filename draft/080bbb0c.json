@@ -7,7 +7,7 @@
     "differing_halfwords": 2329,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "131 ours / 137 reference (268 total)",
+    "raw_rows": "133 ours / 139 reference (272 total)",
     "class": "wrong",
     "note": "first size parity; differing_halfwords is now phase-free"
   },
@@ -112,8 +112,7 @@
     "PP-heal falloff multiply is dmg * pptbl[offset]",
     "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;",
     "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after",
-    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities",
-    "both PP-heal bodies load the target field (cur/pp) BEFORE the pwr guard block: two 2-row wins that also flip the action reload to r4 as the reference has"
+    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities"
   ],
   "unexpressed": [
     {
@@ -311,6 +310,10 @@
     {
       "shape": "long-lived pooled-text locals (split_text, wake_text) as conflict-adders for pseudo 384's window",
       "wrong": "274 vs 272 both; a pooled constant spanning the function spills rather than conflicting; the reference's extra conflict at 384's turn is still unidentified"
+    },
+    {
+      "shape": "field loads hoisted above the pwr guards (both heal bodies)",
+      "wrong": "net -4 rows but locally false: the reference's hp load is in the fallthrough block after the guard's bne, a block boundary the scheduler cannot cross; the r4 action-reload flip it caused must have another driver"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

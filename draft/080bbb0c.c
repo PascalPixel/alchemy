@@ -293,7 +293,7 @@ enum {
 };
 
 /* 属性テーブルはユニット+36 の s16 対。威力テーブルは +72。 */
-#define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 4))
+#define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 2 * 2))
 #define S8OF(v) (*(s8 *)&(v))
 
 #define CLAMP_MOD(v)                                                           \
@@ -462,6 +462,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     struct BattleUnit *copy;
     s32 turns;
     s32 power;
+    s16 hp0;
     s32 kind;
     s16 *cmd;
     s32 target_id;
@@ -751,9 +752,10 @@ after_power:
             s32 def;
             s32 apwr;
 
+            hp0 = target->hp;
             def = target->defense;
             scale = def;
-            cur = target->hp;
+            cur = hp0;
             if (half != 0)
                 scale = (u32)def >> 1;
             pass = 1;
@@ -989,7 +991,7 @@ after_power:
                     dmg = Math_Div(HpDmgFalloff6[offset] * dmg, 100);
                     break;
                 case 8:
-                    dmg = Math_Div(HpDmgFalloff8[offset] * dmg, 100);
+                    dmg = Math_Div(dmg * HpDmgFalloff8[offset], 100);
                     break;
                 }
                 dmg += BattleRandom_Next() & 3;
@@ -1221,8 +1223,8 @@ hp_tail:
         s32 maxv;
         s32 heal;
 
-        maxv = target->max_pp;
         heal = target->pp;
+        maxv = target->max_pp;
         old = heal;
         heal += Math_Div(maxv * 7, 100);
         if (heal > maxv)
@@ -1251,7 +1253,7 @@ hp_tail:
 
     case EFX_AGI_SET_DOWN4:
     {
-        s32 v;
+        u8 v;
 
         v = -4;
         S8OF(target->agility_modifier) = v;
@@ -1487,7 +1489,8 @@ hp_tail:
         heal += dmg;
         if (heal > actor->max_pp) {
             heal = actor->max_pp;
-            dmg = heal - actor->pp;
+            dmg = heal;
+            dmg = dmg - actor->pp;
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);

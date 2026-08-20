@@ -461,6 +461,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 *healtbl;
     s32 affinity;
     struct BattleUnit *copy;
+    s32 *pptbl;
     s32 turns;
     s32 g1;
     s32 power;
@@ -601,6 +602,7 @@ after_power:
         else
             hit = first;
     }
+    pptbl = PpHealFalloff;
 
     if ((u8)(act->effect + 206) <= 1) {
         s32 st;
@@ -713,7 +715,7 @@ after_power:
                 if ((u32)n <= 19) {
                     s32 idx;
 
-                    idx = (n << 4) + 748;
+                    idx = ((n << 1) << 3) + 748;
                     if (*(s16 *)(BytePtr(work) + idx) == target_id)
                         hit = 1;
                     else
@@ -843,7 +845,13 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            TAKE_BONUS();
+            if (range != 4) {
+                s32 off;
+
+                off = range * 4;
+                off = off + 72;
+                bonus = power - ((s16 *)((u8 *)target + off))[1];
+            }
             dmg = act->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
@@ -1043,7 +1051,7 @@ after_power:
             TAKE_PWR();
             pp = target->pp;
             dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(PpHealFalloff[offset] * dmg, 100);
+            dmg = Math_Div(pptbl[offset] * dmg, 100);
             dmg *= adjust;
             pp += dmg;
             if (pp > target->max_pp) {
@@ -1383,7 +1391,16 @@ dealt = target->hp - cur;
         break;
 
     case EFX_RES_DOWN2:
-        ADJUST_RES(-2, (copy->res_modifier - target->res_modifier) * 20, MSG_RES_DOWN);
+    {
+        target->res_modifier += -2;
+        if (-4 > target->res_modifier)
+            target->res_modifier = -4;
+        if (target->res_modifier > 4)
+            target->res_modifier = 4;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, (copy->res_modifier - target->res_modifier) * 20);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_RES_DOWN);
+        target->res_modifier_turns = 7;
+    }
         break;
 
     case EFX_RES_UP1:
@@ -1618,7 +1635,7 @@ done:
     if (target->hp != 0) {
         if (target->sleep != 0)
         if (target->sleep <= 6
-            && dealt > 0 && (BattleRandom_Next() & 3) == 0) {
+            && dealt > 0 && (3 & BattleRandom_Next()) == 0) {
             target->sleep = 0;
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_WAKES);

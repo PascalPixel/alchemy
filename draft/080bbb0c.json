@@ -3,13 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6332,
-    "wrong_instructions": 982,
-    "differing_halfwords": 2329,
-    "insn_diff_rows_nop_filtered": 61,
-    "our_side_rows": 50,
-    "raw_rows": "133 ours / 139 reference (272 total)",
+    "differing_halfwords": 1035,
+    "wrong_instructions": 473,
+    "raw_rows": "76 ours / 82 reference (158 total)",
     "class": "wrong",
-    "note": "first size parity; differing_halfwords is now phase-free"
+    "note": "size parity"
   },
   "shape": {
     "calls": null,
@@ -113,7 +111,13 @@
     "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;",
     "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after",
     "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities",
-    "classified via the sched2 dependence table: the x100 div-arg placement family ties at priority 71 and our movs #100 fills a load-latency stall the reference fills with allocation-born copies -- tie-locked behind coloring, the documented class"
+    "classified via the sched2 dependence table: the x100 div-arg placement family ties at priority 71 and our movs #100 fills a load-latency stall the reference fills with allocation-born copies -- tie-locked behind coloring, the documented class",
+    "swarm harvest (five verified families, hand-stacked): the modifier family stores through REAL struct members (attack/defense_modifier_turns = 7) -- BytePtr was a proxy exactly as recorded; ADJUST_ATKDEF expanded to plain statements at ATK_UP2",
+    "the falloff-8 arm reads HpDmgFalloff8[offset] directly; the dmgtbl8 table local is gone",
+    "DRAIN_PP uses a fresh amt local (not the outer dmg) and the clamp arm derives the display delta in one expression re-reading actor->pp",
+    "the elem scan's second direction compares ELEM_AT(target, i) indexed by the loop counter -- no walked pointer; value is s32",
+    "SEMANTIC FIX, reference-proven at 0x2ac-0x2b0: action 0x1f7 IS the split action -- the SPLIT_OFF/APPEARS binding was inverted in the draft",
+    "the percentage heal adds Math_Div per arm (no amt join variable)"
   ],
   "unexpressed": [
     {
@@ -360,6 +364,7 @@
     "chained-walk key catalog (search state out/longwalk-N/best.c, NOT folded): round2 heal=(u16)actor->pp [409hw], round3 volatile u16 local for the defense-clamp 4 [820hw], round4 pp=(u16)target->pp [100hw]; now at 1000hw/470wrong from 2329/982. All three keys are value-preserving pseudo-class changes (zero-extend defs, memory-resident constant). Blunt u16 header flip for pp/max_pp measures 2831hw -- the fields are s16 with per-site unsigned mentions, the documented dual-read pattern; the walk is enumerating those sites. Locally each key's load width contradicts the adjacent reference read, so none is foldable yet; the open question is whether the true source's mention structure produces both the ref's widths AND these classes, or whether the keys proxy a different global driver.",
     "extended stock-flag sweep beyond the approved matrix (13 flags, raw-object probe): every deviation is neutral or worse except -fno-regmove, which scores 2152hw vs 2329 at exact size on this draft. It is NOT the original's flag: 2 of 25 exact owners change under it (they are exact with regmove on, so the original had it on). Its 177hw gain marks sites where OUR source shapes trigger regmove coalescing and the original's did not -- usable as a targeting map: diff the standard vs -fno-regmove emissions and read the differing sites against the residual.",
     "stock 2.96 test: rebuilt gs1cc with the pristine ASM_OUTPUT_ALIGN (the fork's only byte-moving deviation; all other fork commits are host-buildability, proven inert by the Red Hat i386 cross-check and the hash padding test). Score on this owner: identical, 2329hw/982wrong at 6332. The residual is a property of stock gcc 2.96, not of the fork. Chain rounds 4-5 plateau at ~1000hw search state.",
-    "permuter A/B on the 998hw chain state, 30k candidates, same seed: control best 963hw vs --heat best 875hw (88 halfwords deeper, 2 rows better). Heat-biased site selection (LCS-backtracked differing-row positions weighting TempForExpr and ReorderStmts) is adopted as the default for chained runs; determinism with heat off is hash-identical to the pre-change engine. Cross-round journal import (--journal-from, backend-identity-keyed) landed alongside."
+    "permuter A/B on the 998hw chain state, 30k candidates, same seed: control best 963hw vs --heat best 875hw (88 halfwords deeper, 2 rows better). Heat-biased site selection (LCS-backtracked differing-row positions weighting TempForExpr and ReorderStmts) is adopted as the default for chained runs; determinism with heat off is hash-identical to the pre-change engine. Cross-round journal import (--journal-from, backend-identity-keyed) landed alongside.",
+    "the 100-matcher swarm cost ~26M agent tokens and its verify phase died at a usage limit; hand-harvest of its journal took the committed draft 2329 -> 1035 halfwords in under an hour of direct work. Eight matchers independently converged on the DRAIN_PP shape; convergence was the strongest usefulness signal in the claim list."
   ]
 }

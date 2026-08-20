@@ -154,6 +154,11 @@
       "op": "adds #36 and movs #100",
       "count": 3,
       "where": "early elem scan keeps target+36 unCSEd and the summon walk materializes off=100 in a register; both resist direct respelling"
+    },
+    {
+      "op": "coloring bifurcation",
+      "count": 1,
+      "where": "case-12 heal head: the reference colors the range copy into r0 and holds pwr through r3->r5->r0 (two explicit copies, adds r5,r3,#0 and adds r0,r5,#0); ours colors pwr directly into r0 and the range copy into r5. This single r0 assignment flips the dealt-head scratch (r4 vs r5 at insn row ~711), which is the register-identity gate on the FELLED crossjump cluster. The lever, if one exists, is whatever makes pwr lose r0: an extra ref on the range mention or a clobber across pwr's range. Every ternary/order respelling ties."
     }
   ],
   "verified_against_reference": [

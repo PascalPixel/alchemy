@@ -12,9 +12,11 @@ use crate::cemit::emit_translation_unit;
 /// Parses an already-preprocessed source and returns the re-emitted C, or
 /// the parse error.
 pub fn roundtrip(src: &str) -> Result<String, String> {
-    let mut config = Config::default();
-    config.flavor = Flavor::GnuC11;
-    config.cpp_command = String::new();
+    let config = Config {
+        flavor: Flavor::GnuC11,
+        cpp_command: String::new(),
+        ..Default::default()
+    };
     let parsed = parse_preprocessed(&config, src.to_string())
         .map_err(|error| format!("parse failed: {error}"))?;
     Ok(emit_translation_unit(&parsed.unit))

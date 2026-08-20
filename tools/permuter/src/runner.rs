@@ -488,8 +488,8 @@ impl Journal {
     /// cache identity. Rows land in memory only; this run's file records its
     /// own measurements as they happen.
     fn import(&mut self, path: &Path) -> Result<usize, String> {
-        let text = fs::read_to_string(path)
-            .map_err(|error| format!("{}: {error}", path.display()))?;
+        let text =
+            fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
         let header = format!("permuter-journal-v3\t{}", self.identity);
         let mut lines = text.lines();
         if lines.next() != Some(header.as_str()) {
@@ -1292,17 +1292,14 @@ fn walk_workers(
                 }
                 let (cur_source, lineage) = current.clone().expect("walk candidate");
                 // The AST engine: parse, apply one weighted pret pass, emit.
-                let mutated = crate::astpass::AstRandomizer::new(
-                    &cur_source,
-                    rng.0 ^ index as u64,
-                    None,
-                )
-                .and_then(|mut r| {
-                    if heat_enabled {
-                        r.set_heat(last_heat.clone());
-                    }
-                    r.randomize_named()
-                });
+                let mutated =
+                    crate::astpass::AstRandomizer::new(&cur_source, rng.0 ^ index as u64, None)
+                        .and_then(|mut r| {
+                            if heat_enabled {
+                                r.set_heat(last_heat.clone());
+                            }
+                            r.randomize_named()
+                        });
                 let (mutated_source, pass_name) = match mutated {
                     Ok(pair) => pair,
                     Err(_) => {
@@ -1347,12 +1344,12 @@ fn walk_workers(
                         {
                             current = None;
                         } else {
-                            current =
-                                Some((mutated_source.clone(), candidate.mutation.clone()));
+                            current = Some((mutated_source.clone(), candidate.mutation.clone()));
                             last_heat = measurement.heat.clone();
                             if let Ok(mut guard) = shared_best.lock() {
-                                let better =
-                                    guard.as_ref().map_or(true, |(s, _, _)| measurement.score < *s);
+                                let better = guard
+                                    .as_ref()
+                                    .is_none_or(|(s, _, _)| measurement.score < *s);
                                 if better {
                                     *guard = Some((
                                         measurement.score,
@@ -1466,15 +1463,26 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let mut journal = Journal::open(&mut run, &cache_identity, options.resume)?;
     if let Some(prior) = &options.journal_from {
         let imported = journal.import(prior)?;
-        println!("journal: imported {imported} cached measurements from {}", prior.display());
+        println!(
+            "journal: imported {imported} cached measurements from {}",
+            prior.display()
+        );
     }
     let journal = Arc::new(journal);
     println!(
         "backend={} bases={} candidates={} jobs={} baseline={} ({})",
         target.name(),
         permutation.count(),
-        if options.walk { options.iterations } else { candidates.len() },
-        if options.walk { options.jobs } else { options.jobs.min(candidates.len()) },
+        if options.walk {
+            options.iterations
+        } else {
+            candidates.len()
+        },
+        if options.walk {
+            options.jobs
+        } else {
+            options.jobs.min(candidates.len())
+        },
         baseline.score,
         baseline.summary
     );
@@ -1524,7 +1532,10 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
                         best = measurement.score;
                         println!(
                             "new-best={} candidate={} mutation={} {}",
-                            best, item.candidate.index, item.candidate.mutation, measurement.summary
+                            best,
+                            item.candidate.index,
+                            item.candidate.mutation,
+                            measurement.summary
                         );
                     }
                     if measurement.exact {
@@ -1544,99 +1555,94 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         }
         let _ = exact_found;
     } else {
-    let mut round_candidates = Some(candidates);
-    for round in 0..options.chain.max(1) {
-        if round > 0 || round_candidates.is_none() {
-            let permutation = crate::perm::parse(&chain_source)?;
-            round_candidates = None;
-            let planned = candidate_plan(
-                &permutation,
-                options.iterations,
-                options.seed ^ (round as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15),
-                options.manual_only,
-                &weights,
-                chain_source.len(),
+        let mut round_candidates = Some(candidates);
+        for round in 0..options.chain.max(1) {
+            if round > 0 || round_candidates.is_none() {
+                let permutation = crate::perm::parse(&chain_source)?;
+                let planned = candidate_plan(
+                    &permutation,
+                    options.iterations,
+                    options.seed ^ (round as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15),
+                    options.manual_only,
+                    &weights,
+                    chain_source.len(),
+                )?;
+                round_candidates = Some(planned);
+            }
+            let shared = Arc::new(round_candidates.take().expect("round candidates planned"));
+            let mut evaluated = run_workers(
+                Arc::clone(&target),
+                Arc::clone(&shared),
+                options.jobs,
+                options.stop_exact,
+                baseline.clone(),
+                Arc::clone(&journal),
             )?;
-            round_candidates = Some(planned);
-        }
-        let shared = Arc::new(round_candidates.take().expect("round candidates planned"));
-        let mut evaluated = run_workers(
-            Arc::clone(&target),
-            Arc::clone(&shared),
-            options.jobs,
-            options.stop_exact,
-            baseline.clone(),
-            Arc::clone(&journal),
-        )?;
-        evaluated.sort_by_key(|item| item.candidate.index);
-        attempted += evaluated.len();
+            evaluated.sort_by_key(|item| item.candidate.index);
+            attempted += evaluated.len();
 
-        let mut round_best: Option<(usize, u64)> = None;
-        for item in evaluated.iter() {
-            compile_time += item.elapsed;
-            match &item.measurement {
-                Ok(measurement) => {
-                    let former_best = best;
-                    if measurement.score < best {
-                        best = measurement.score;
-                        println!(
-                            "new-best={} round={} candidate={} mutation={} {}",
-                            best,
-                            round,
-                            item.candidate.index,
-                            item.candidate.mutation,
-                            measurement.summary
-                        );
-                    }
-                    if measurement.exact {
-                        exact_found = true;
-                    }
-                    if measurement.score <= chain_score && item.candidate.mutation != "identity" {
-                        let take = match round_best {
-                            None => true,
-                            Some((_, score)) if measurement.score < score => true,
-                            // Rotate among equal-score ties so different
-                            // rounds and seeds drift along different paths.
-                            Some((_, score)) if measurement.score == score => (round % 3) != 0,
-                            _ => false,
-                        };
-                        if take {
-                            round_best = Some((item.candidate.index, measurement.score));
+            let mut round_best: Option<(usize, u64)> = None;
+            for item in evaluated.iter() {
+                compile_time += item.elapsed;
+                match &item.measurement {
+                    Ok(measurement) => {
+                        let former_best = best;
+                        if measurement.score < best {
+                            best = measurement.score;
+                            println!(
+                                "new-best={} round={} candidate={} mutation={} {}",
+                                best,
+                                round,
+                                item.candidate.index,
+                                item.candidate.mutation,
+                                measurement.summary
+                            );
+                        }
+                        if measurement.exact {
+                            exact_found = true;
+                        }
+                        if measurement.score <= chain_score && item.candidate.mutation != "identity"
+                        {
+                            let take = match round_best {
+                                None => true,
+                                Some((_, score)) if measurement.score < score => true,
+                                // Rotate among equal-score ties so different
+                                // rounds and seeds drift along different paths.
+                                Some((_, score)) if measurement.score == score => (round % 3) != 0,
+                                _ => false,
+                            };
+                            if take {
+                                round_best = Some((item.candidate.index, measurement.score));
+                            }
+                        }
+                        if retain_result(options, &baseline, former_best, measurement) {
+                            owned.push((item.candidate.clone(), measurement.clone()));
                         }
                     }
-                    if retain_result(options, &baseline, former_best, measurement) {
-                        owned.push((item.candidate.clone(), measurement.clone()));
-                    }
-                }
-                Err(error) => {
-                    failures += 1;
-                    if options.show_errors {
-                        eprintln!("candidate {}: {error}", item.candidate.index);
+                    Err(error) => {
+                        failures += 1;
+                        if options.show_errors {
+                            eprintln!("candidate {}: {error}", item.candidate.index);
+                        }
                     }
                 }
             }
-        }
-        if !options.quiet {
-            println!(
-                "round={} attempted={} best={} chain={} failures={}",
-                round,
-                attempted,
-                best,
-                chain_score,
-                failures
-            );
-        }
-        if let Some((index, score)) = round_best {
-            if let Some(item) = evaluated.iter().find(|item| item.candidate.index == index) {
-                chain_source = item.candidate.source.clone();
-                chain_score = score;
+            if !options.quiet {
+                println!(
+                    "round={} attempted={} best={} chain={} failures={}",
+                    round, attempted, best, chain_score, failures
+                );
+            }
+            if let Some((index, score)) = round_best {
+                if let Some(item) = evaluated.iter().find(|item| item.candidate.index == index) {
+                    chain_source = item.candidate.source.clone();
+                    chain_score = score;
+                }
+            }
+            if exact_found && options.stop_exact {
+                break;
             }
         }
-        if exact_found && options.stop_exact {
-            break;
-        }
-    }
-
     }
 
     let mut retained: Vec<(&Candidate, &Measurement)> = owned
@@ -1710,15 +1716,12 @@ pub fn self_test() -> Result<(), String> {
     if validate_output_path(&root().join("out").join("permuter-self-test")).is_err() {
         return Err("repository ignored out/ was rejected as an output directory".into());
     }
-    if validate_output_path(&std::env::temp_dir().join("permuter-custom-output-self-test"))
-        .is_err()
+    if validate_output_path(&std::env::temp_dir().join("permuter-custom-output-self-test")).is_err()
     {
         return Err("custom OS temporary output was rejected".into());
     }
-    let journal_dir = std::env::temp_dir().join(format!(
-        "permuter-journal-self-test-{}",
-        std::process::id()
-    ));
+    let journal_dir =
+        std::env::temp_dir().join(format!("permuter-journal-self-test-{}", std::process::id()));
     let measurement = Measurement {
         exact: false,
         score: 17,
@@ -1798,9 +1801,7 @@ mod tests {
     #[test]
     fn accepts_repository_out_and_custom_temporary_paths() {
         assert!(validate_output_path(&root().join("out").join("test-run")).is_ok());
-        assert!(
-            validate_output_path(&std::env::temp_dir().join("permuter-test-run")).is_ok()
-        );
+        assert!(validate_output_path(&std::env::temp_dir().join("permuter-test-run")).is_ok());
     }
 
     #[test]

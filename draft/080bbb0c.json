@@ -2,12 +2,12 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "candidate_bytes": 6300,
-    "wrong_instructions": 1341,
-    "differing_halfwords": 2858,
+    "candidate_bytes": 6328,
+    "wrong_instructions": 952,
+    "differing_halfwords": 2197,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "187 ours / 206 reference (393 total)",
+    "raw_rows": "150 ours / 158 reference (308 total)",
     "class": "wrong"
   },
   "shape": {
@@ -101,7 +101,8 @@
     "EFX_RES_UP2 clamps through an s8* local assigned inside the first compare (ADJUST_RES expanded at this one site)",
     "HpHealFalloff base held in a s32* local assigned right after power=100, read as healtbl[offset]",
     "two more multiply operand orders: dmg * PpLossFalloff, dmg * healtbl",
-    "GUARD1 sets guard_level through a local (g1 = 1)"
+    "GUARD1 sets guard_level through a local (g1 = 1)",
+    "the hp store tail (dealt/store/recalculate) is duplicated plainly in the heal case, case 6, and case 3 -- no goto: crossjumping merges the suffix after each body's own ldrsh, which is exactly the reference's mid-statement share point; push census now 154=154 and the size gap is one pool word"
   ],
   "unexpressed": [
     {

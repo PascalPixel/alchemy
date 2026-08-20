@@ -1056,6 +1056,15 @@ fn perm_expand_expr(
         ensure(repl_cands.len() == 1 && !keep_var)?;
     }
 
+    // Removing the assignment is only sound when no later read can see the
+    // stale variable. The window's upper bound (the next write) is
+    // flow-insensitive -- a conditional write does not dominate the reads
+    // after it -- so require that the replacement covers every read from the
+    // definition to the end of the function.
+    if !keep_var {
+        ensure(reads.iter().all(|&r| r <= before || repl_set.contains(&r)))?;
+    }
+
     // Step 4: do the replacement.
     let body = fbody_mut(unit, fn_index);
     let var_for_match = var.clone();

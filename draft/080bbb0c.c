@@ -623,8 +623,8 @@ after_power:
                     s32 woff;
                     u8 *base;
 
-                    woff = 100;
                     j = 0;
+                    woff = 100;
                     for (;;) {
                         base = (u8 *)slots;
                         if (*(s16 *)(woff + (s32)base) == 255) {
@@ -779,17 +779,17 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                }
-                dmg += (u8)Math_Mod(((u8 *)target)[15], 5) + 6;
-                if (pass == 0) {
-                    BattleEvent_Push(BATTLE_EVENT_MARK, 0);
-                    {
-                        s32 text;
+                    dmg += (u8)Math_Mod(((u8 *)target)[15], 5) + 6;
+                    if (pass == 0) {
+                        BattleEvent_Push(BATTLE_EVENT_MARK, 0);
+                        {
+                            s32 text;
 
-                        text = MSG_CRITICAL;
-                        if ((u32)target_id <= 7)
-                            text += 1;
-                        BattleEvent_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
+                            text = MSG_CRITICAL;
+                            if ((u32)target_id <= 7)
+                                text += 1;
+                            BattleEvent_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
+                        }
                     }
                 }
                 dmg += BattleRandom_Next() & 3;
@@ -797,10 +797,11 @@ after_power:
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
-                    if (dmg < cur - 1)
+                    if (dmg < cur - 1) {
                         dmg = cur - 1;
-                    if (dmg <= 0)
-                        dmg = 1;
+                        if (dmg <= 0)
+                            dmg = 1;
+                    }
                 }
                 if (BattleFlag_Test(366) != 0 && *cmd == 5 && cur <= dmg) {
                     dmg = cur - 1;
@@ -976,8 +977,8 @@ after_power:
                             kind = 12;
                             break;
                         }
-                        dmg += Math_Div(target->max_hp * kind, 100);
                     }
+                    dmg += Math_Div(target->max_hp * kind, 100);
                 }
                 dmg = Battle_CalcPower(dmg, bonus, 256);
                 dmg *= adjust;

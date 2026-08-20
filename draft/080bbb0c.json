@@ -6,7 +6,7 @@
     "differing_halfwords": 2,
     "wrong_instructions": 0,
     "class": "ordering",
-    "note": "exact size, zero wrong instructions; the residual is one scheduled pair at 0x218/0x21c: our movs r4,#0 and the reload-generated slots->ip copy emit in swapped order against the reference"
+    "note": "3164 of 3166 halfwords exact; the residual is one transposed instruction pair, a sched2 LUID tie with the complete local negative result recorded in unexpressed"
   },
   "shape": {
     "calls": null,
@@ -131,9 +131,9 @@
   ],
   "unexpressed": [
     {
-      "op": "sched pair",
+      "op": "sched2 LUID tie",
       "count": 2,
-      "where": "0x218/0x21c: movs r4,#0 vs the slots->ip copy (reload insn 8501, highest LUID in its block, scheduled last among priority ties; the reference's copy has an early chain position). Two-pointer and cache-copy source spellings are copy-propagated away; init permutations plateau. Guarded walk running"
+      "where": "0x218/0x21c: mov ip,r1 (the walk block's base=slots copy) emits after movs r4,#0; the reference emits it before. EXHAUSTIVELY measured: 288-variant enumeration over init permutations, base-def positions (in-loop / else-head / block-head / pre-if), needless brace scopes, do-while barriers, and no-op reorder assignments -- 90 tie at 2, none below; plus a 100k guarded AST walk (dry) and ~30 hand spellings (probe-through-base, CellPtr inline boundary, two-pointer cache, double defs, giv j+100 form). Mechanism, read from haifa-sched.c rank_for_schedule and the -fsched-verbose ready lists: the three insns tie on priority, dependence class, and dependent count, falling to INSN_LUID; the copy's LUID is always highest because every local spelling folds to the same canonical RTL where loop.c's move_movables appends the hoisted copy at the preheader end and ce hoists the trio into the head block in chain order. The reference's earlier slot therefore implies an expansion-context difference that is NOT local to this block, or membership in the recorded scheduler-tie class"
     }
   ],
   "verified_against_reference": [
@@ -385,6 +385,7 @@
     "m2c current commit 19f2ddb was exercised with -t gba-gcc-c. Raw retained assembly first failed because its three absolute jump tables and unlabeled PC-relative pools hide CFG/data references from m2c. A temporary symbolizer rewrote all 102 jump-table entries and 117 literal loads to local labels; reassembly stayed byte-identical (6332-byte SHA-256 048e3314f76715251cceab06c00d6b5666611b94fbbf72a2f3440cdd8467fcd4). With the approved gs1cc preprocessor context, m2c recovered the full 1359-line function. [melee session, measured on the 1035 pre-fold draft]",
     "The m2c reconstruction was repaired in scratch for its 11 type-recovery error classes and compiled through gs1cc: candidate 6560 bytes, aligned reference 6564, 3179 differing halfwords, 2517 wrong instructions, objdiff v3.8.0 ARMv4T 67.7926%. The maintained draft remains decisively better at 6332 bytes, 1037 candidate-show-aligned differing halfwords (1035 on the permuter owner span), and 98.16525% structural. [melee session, measured on the 1035 pre-fold draft]",
     "Exhaustive objdiff address-window comparison found only two two-instruction runs exact in m2c but not the draft. +0x908 is allocator coincidence over an already-equivalent BattleFlag_Test(366) condition. +0x28a suggested delaying pointer/count setup in the saved-slot refresh loop; two semantics-preserving transplants were measured and rejected at 2408/2419 differing halfwords with an 8-byte size increase. No m2c block is fit to harvest on this draft. Keep m2c as an independent source-shape reader for raw owners, not as a replacement for a mature 98%-structural reconstruction. [melee session, measured on the 1035 pre-fold draft]",
-    "melee-session supersession notes: the objdiff elem-scan reading (+0xec rebuild) matches this session's giv spill-vs-allocate conclusion and both pointer-walk rejections are consistent; the m2c +0x28a saved-slot lead was CLOSED here by the tmp-routed count (their two transplant spellings were the wrong ones); the objdiff rerank of run30 independently corroborates the lie-descent disproof"
+    "melee-session supersession notes: the objdiff elem-scan reading (+0xec rebuild) matches this session's giv spill-vs-allocate conclusion and both pointer-walk rejections are consistent; the m2c +0x28a saved-slot lead was CLOSED here by the tmp-routed count (their two transplant spellings were the wrong ones); the objdiff rerank of run30 independently corroborates the lie-descent disproof",
+    "the last-pair campaign also produced: the loop.c/ce append-order proof (any hoisted copy chains last), the reload-inheritance reading of the walk-head probe, and the formatter incident (editor clang-format stripped macro continuations in the working tree once -- guarded by root .clang-format DisableFormat; drafts' era formatting is canonical)"
   ]
 }

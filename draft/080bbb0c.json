@@ -111,7 +111,8 @@
     "EFX_PP_LEECH's clamp re-reads target->pp through union Cell (fresh ldrsh where CSE would fold)",
     "PP-heal falloff multiply is dmg * pptbl[offset]",
     "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;",
-    "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after"
+    "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after",
+    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities"
   ],
   "unexpressed": [
     {

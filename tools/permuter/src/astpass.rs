@@ -44,15 +44,20 @@ const INT_TYPES: [&str; 6] = ["int", "char", "long", "short", "signed", "unsigne
 
 /// SplitMix64, the crate's deterministic generator (same constants as
 /// `randomize.rs`), with the distribution helpers the ported passes need.
-pub struct Rng(u64);
+pub struct Rng {
+    state: u64,
+    /// Optional heat context: (fractional differing-row positions, source
+    /// length). When set, span-weighted selection biases toward hot regions.
+    pub heat: Option<(Vec<f32>, usize)>,
+}
 
 impl Rng {
     pub fn new(seed: u64) -> Rng {
-        Rng(seed)
+        Rng { state: seed, heat: None }
     }
     fn next(&mut self) -> u64 {
-        self.0 = self.0.wrapping_add(0x9e37_79b9_7f4a_7c15);
-        let mut value = self.0;
+        self.state = self.state.wrapping_add(0x9e37_79b9_7f4a_7c15);
+        let mut value = self.state;
         value = (value ^ (value >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
         value = (value ^ (value >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
         value ^ (value >> 31)
@@ -81,6 +86,30 @@ impl Rng {
         }
         lo + self.index(hi - lo)
     }
+    pub fn span_weight(&self, offset: usize) -> f64 {
+        let Some((heat, len)) = &self.heat else { return 1.0 };
+        let f = offset as f32 / (*len).max(1) as f32;
+        let near = heat.iter().filter(|h| (*h - f).abs() <= 0.03).count();
+        1.0 + (4 * near.min(2)) as f64
+    }
+
+    /// Weighted index over parallel span offsets; uniform when no heat.
+    pub fn weighted_index_by_span(&mut self, spans: &[usize]) -> usize {
+        if self.heat.is_none() || spans.len() <= 1 {
+            return self.index(spans.len());
+        }
+        let weights: Vec<f64> = spans.iter().map(|s| self.span_weight(*s)).collect();
+        let total: f64 = weights.iter().sum();
+        let mut roll = self.f() * total;
+        for (i, w) in weights.iter().enumerate() {
+            if roll < *w {
+                return i;
+            }
+            roll -= *w;
+        }
+        spans.len() - 1
+    }
+
     pub fn choice<'a, T>(&mut self, items: &'a [T]) -> &'a T {
         &items[self.index(items.len())]
     }
@@ -184,6 +213,11 @@ pub struct AstRandomizer {
     fn_name: String,
     rng: Rng,
     only: Option<AstPass>,
+    /// Fractional positions of currently-differing candidate rows; when
+    /// non-empty, expression and statement selection is biased toward source
+    /// regions near them (positions map proportionally, which is crude but
+    /// monotone for a single switch-shaped function).
+    heat: Vec<f32>,
 }
 
 fn parse_unit(source: &str) -> Result<TranslationUnit, String> {
@@ -226,6 +260,19 @@ impl AstRandomizer {
     /// Parses and re-emits the input so that every later parse yields a
     /// fully braced tree with genuine, unique spans. The target function is
     /// the last function definition in the unit.
+    pub fn set_heat(&mut self, heat: Vec<f32>) {
+        self.heat = heat;
+    }
+
+    fn heat_weight(&self, offset: usize) -> f64 {
+        if self.heat.is_empty() {
+            return 1.0;
+        }
+        let f = offset as f32 / self.source.len().max(1) as f32;
+        let near = self.heat.iter().filter(|h| (*h - f).abs() <= 0.03).count();
+        1.0 + (4 * near.min(2)) as f64
+    }
+
     pub fn new(source: &str, seed: u64, only: Option<AstPass>) -> Result<AstRandomizer, String> {
         let unit = parse_unit(source)?;
         let mut fn_name = None;
@@ -245,6 +292,7 @@ impl AstRandomizer {
             fn_name,
             rng: Rng::new(seed),
             only,
+            heat: Vec::new(),
         })
     }
 
@@ -259,6 +307,11 @@ impl AstRandomizer {
 
     /// As `randomize`, also naming the pass that produced the mutation.
     pub fn randomize_named(&mut self) -> Result<(String, &'static str), String> {
+        self.rng.heat = if self.heat.is_empty() {
+            None
+        } else {
+            Some((self.heat.clone(), self.source.len()))
+        };
         let mut unit = parse_unit(&self.source)?;
         let fn_index = find_fn(&unit, &self.fn_name)?;
         for _ in 0..1000 {
@@ -599,7 +652,7 @@ fn perm_temp_for_expr(
                         break;
                     }
                     eind += 1;
-                    let mut prob = 1.0 / eind as f64;
+                    let mut prob = rng.span_weight(e.span.start) / eind as f64;
                     if matches!(
                         e.node,
                         Expression::Identifier(_) | Expression::Constant(_)
@@ -1148,7 +1201,11 @@ fn perm_reorder_stmts(
         }
     }
     ensure(!source_inds.is_empty())?;
-    let sourcei = *rng.choice(&source_inds);
+    let spans: Vec<usize> = source_inds
+        .iter()
+        .map(|&i| cands[i].after.as_ref().map(|a| a.start).unwrap_or(0))
+        .collect();
+    let sourcei = source_inds[rng.weighted_index_by_span(&spans)];
     let from = cands[sourcei].clone();
     let from_info = from.after.clone().ok_or(Fail)?;
     let mut sourcei_after = sourcei + 1;

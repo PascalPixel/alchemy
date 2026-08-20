@@ -30,7 +30,7 @@ const ALCHEMY_HOST_TOOLS: [&str; 4] = [
     "arm-none-eabi-objcopy",
 ];
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Measurement {
     pub exact: bool,
     pub score: u64,
@@ -40,6 +40,10 @@ pub struct Measurement {
     pub first_difference: Option<usize>,
     pub fingerprint: u64,
     pub summary: String,
+    /// Fractional positions (0..1) of our-side differing rows in the
+    /// candidate instruction stream; empty when the backend does not
+    /// compute a row diff. Guides heat-biased mutation; never persisted.
+    pub heat: Vec<f32>,
 }
 
 impl Measurement {
@@ -52,6 +56,7 @@ impl Measurement {
             actual_size: 0,
             first_difference: None,
             fingerprint: 0,
+            heat: Vec::new(),
             summary: message.to_string(),
         }
     }
@@ -68,6 +73,7 @@ impl From<&ByteScore> for Measurement {
             actual_size: score.actual_size,
             first_difference: score.first_difference,
             fingerprint: fingerprint(&score.actual),
+            heat: Vec::new(),
             summary: format!(
                 "{} differing halfwords, {} / {} bytes",
                 score.differing_halfwords, score.actual_size, score.expected_size
@@ -286,6 +292,28 @@ fn alchemy_measurement(
     }
     let common = lcs[0] as usize;
     let differing = (a.len() - common) + (e.len() - common);
+    // Backtrack the LCS to mark our-side rows that are not part of the
+    // common subsequence; their fractional positions steer heat-biased
+    // mutation toward the regions that still differ.
+    let mut heat = Vec::new();
+    {
+        let (mut left, mut right) = (0usize, 0usize);
+        while left < a.len() && right < e.len() {
+            if a[left] == e[right] {
+                left += 1;
+                right += 1;
+            } else if lcs[(left + 1) * width + right] >= lcs[left * width + right + 1] {
+                heat.push(left as f32 / a.len().max(1) as f32);
+                left += 1;
+            } else {
+                right += 1;
+            }
+        }
+        while left < a.len() {
+            heat.push(left as f32 / a.len().max(1) as f32);
+            left += 1;
+        }
+    }
     let byte: Measurement = score.into();
     Ok(Measurement {
         exact: byte.exact,
@@ -297,6 +325,7 @@ fn alchemy_measurement(
         actual_size: byte.actual_size,
         first_difference: byte.first_difference,
         fingerprint: byte.fingerprint,
+        heat,
         summary: format!(
             "{differing} differing rows ({} ours, {} reference); {}",
             a.len() - common,
@@ -698,6 +727,7 @@ fn instruction_score(actual: &[Instruction], expected: &[Instruction]) -> Measur
         actual_size: actual.len(),
         first_difference,
         fingerprint: row_fingerprint(actual),
+        heat: Vec::new(),
         summary: format!(
             "{operand_differences} operand, {reorderings} reordered, {insertions} inserted, {deletions} deleted instructions"
         ),

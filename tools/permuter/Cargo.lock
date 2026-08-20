@@ -10,17 +10,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "alchemy-permuter"
-version = "0.1.0"
-dependencies = [
- "alchemy-bundle",
- "alchemy-routing",
- "candidate-compiler",
- "overlay-disasm",
- "shape-sweep",
-]
-
-[[package]]
 name = "alchemy-plan"
 version = "0.1.0"
 dependencies = [
@@ -69,6 +58,12 @@ name = "discover"
 version = "0.1.0"
 
 [[package]]
+name = "lang-c"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "720e6492b795d1f6838eb2e51879ec3073be745a20e52c32a241b80b3c8ed998"
+
+[[package]]
 name = "overlay-disasm"
 version = "0.1.0"
 dependencies = [
@@ -78,6 +73,18 @@ dependencies = [
  "alchemy-symbols",
  "cache-entry",
  "discover",
+]
+
+[[package]]
+name = "permuter"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-routing",
+ "candidate-compiler",
+ "lang-c",
+ "overlay-disasm",
+ "shape-sweep",
 ]
 
 [[package]]

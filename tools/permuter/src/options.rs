@@ -8,7 +8,7 @@ pub const MAX_TOP: usize = 256;
 pub const MAX_SUMMARY_BYTES: usize = 1024;
 pub const MAX_JOURNAL_ROW_BYTES: usize = 2 * 1024;
 
-pub const USAGE: &str = "usage: alchemy-permuter <candidate.c|legacy-directory>... [options]\n\
+pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [options]\n\
   --iterations N   bounded generated candidates (default 1000)\n\
   --jobs N, -j N   parallel compiler workers (default CPUs-2; explicit max 64)\n\
   --seed N         deterministic random seed (default 1)\n\

@@ -559,7 +559,7 @@ pub fn declaration_order_variants(source: &str) -> Vec<Variant> {
 }
 
 /// NOTE ON LAYERING. This module deliberately does NOT call
-/// `alchemy-permuter::mutate`. The permuter already depends on this crate, so
+/// `permuter::mutate`. The permuter already depends on this crate, so
 /// depending back on it is a dependency cycle. The permuter is the right place
 /// to combine random sampling with this descent, not the other way round.
 ///

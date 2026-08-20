@@ -1165,7 +1165,7 @@ mod tests {
 
     #[test]
     fn temporary_candidate_uses_canonical_call_via_route() {
-        let temporary = "/tmp/alchemy-permuter/resource_373_c_02000608.c";
+        let temporary = "/tmp/permuter/resource_373_c_02000608.c";
         let canonical = "exact/resource_373_c_02000608.c";
         assert_ne!(
             overlay_call_via_base("resource_373", Some(temporary)) as i64,

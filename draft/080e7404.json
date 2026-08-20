@@ -1,0 +1,74 @@
+{
+  "owner": "main:0x080e7404",
+  "span_bytes": 3640,
+  "boundary": {
+    "start": "0x080e7404",
+    "end": "0x080e823c",
+    "evidence": "asm/080e7404.s contains one global owner; its assembled .text is 0xe38 bytes and the next owner begins at 0x080e823c. The generated 0x080e7404-0x080ec100 target is a contiguous ranked scope containing later owners, not this function boundary."
+  },
+  "score": {
+    "measured": "2026-08-20",
+    "candidate_bytes": 3620,
+    "reference_bytes": 3640,
+    "candidate_instructions": 1511,
+    "reference_instructions": 1532,
+    "wrong_instructions": 1352,
+    "differing_halfwords": 1736,
+    "class": "unemittable",
+    "objdiff_structural_percent": 68.28755,
+    "objdiff": {
+      "aligned_instructions": 1840,
+      "unchanged": 658,
+      "argument_mismatches": 660,
+      "opcode_mismatches": 7,
+      "replacements": 86,
+      "deletions": 223,
+      "insertions": 209
+    }
+  },
+  "shape": {
+    "reference_calls": 95,
+    "expressed_loops": 23,
+    "reference_pool_words": 94,
+    "symbolized_pool_references": 107,
+    "jump_table": false,
+    "frame_bytes_reference": 284,
+    "frame_bytes_candidate": 276
+  },
+  "expressed": [
+    "complete two-argument entry paths, runtime argument binding, display setup, mode-specific object creation, and shared teardown",
+    "all palette, DMA, VRAM, random-tile, and progressive reveal initialization, including the 128-byte random offset table and nested 256-cell clearing walk",
+    "the complete first effect phase through its 192-frame bound: palette ramp, 64 moving records, projection, table-driven rectangles, per-frame updates, and early termination gate",
+    "the complete second effect phase: 32 runtime records, 128 and 512 particle-record initializers, sound and object gates, three 64-record render/update walks, mode-specific transforms, and 54-frame bound",
+    "all six rectangle callback sites and all three word-copy sites as evidence-backed indirect calls through the local callback and IWRAM copy entry rather than phantom direct callees",
+    "all reference branches and tails through Func_080cdbc0, with no jump table or omitted assembly region"
+  ],
+  "unexpressed": [
+    {
+      "op": "aggregate recovery",
+      "count": "whole owner",
+      "where": "runtime offsets 0x7080-0x7828 and the 28-byte moving records remain M2C_FIELD accesses pending one evidence-backed shared structure"
+    },
+    {
+      "op": "source-shape repair",
+      "count": 1352,
+      "where": "normalized comparison still differs in declaration lifetimes, frame placement, register allocation, expression boundaries, and several loop spellings"
+    },
+    {
+      "op": "symbol recovery",
+      "count": "whole owner",
+      "where": "address-named callees, provisional stack names, and hyou_a/hyou_b table roles stay generic where current local evidence does not justify narrower English names"
+    }
+  ],
+  "rejected": [
+    {
+      "experiment": "retain m2c's direct Func_080072f0/Func_080072f4 calls",
+      "result": "3592 candidate bytes and 1772 differing halfwords; rejected because the reference loads 0x03001388 or Data_03001eec+0x1c before call-via-register veneers, proving indirect word-copy and rectangle callbacks"
+    }
+  ],
+  "notes": [
+    "The complete 0x080e7404-0x080e823c reference assembly and all literal pools were read; workbench symbolization found 107 PC-relative references and no jump table.",
+    "The owner is listed in asm/classification.json's thumb-multiple-transfer group because the reference uses Thumb multiple transfer. This remains ordinary C and does not claim that classified instruction shape.",
+    "Linked differing_halfwords is the completion measure. The draft is 20 bytes short and is not exact or adoptable."
+  ]
+}

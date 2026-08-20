@@ -1,0 +1,71 @@
+{
+  "owner": "main:0x080a9f10",
+  "span_bytes": 1336,
+  "score": {
+    "measured": "2026-08-20",
+    "candidate_bytes": 1340,
+    "reference_bytes": 1336,
+    "differing_halfwords": 571,
+    "wrong_instructions": 596,
+    "class": "wrong",
+    "candidate_instructions": 484,
+    "reference_instructions": 484,
+    "objdiff_structural_percent": 84.70123,
+    "note": "candidate-show linked owner-span measurement with approved routed gs1cc flags; exact normalized instruction-count parity, but two sides differ by four linked bytes"
+  },
+  "shape": {
+    "calls": 15,
+    "branches": 101,
+    "memory_ops": 105,
+    "loops": 2,
+    "jump_tables": 3,
+    "jump_table_entries": 74,
+    "symbolized_references": 89
+  },
+  "domain": "Applies the current effect record to one target or the runtime target list, updates capped signed values or six persistent stats, handles follow-up recovery/status operations, refreshes changed targets, and stores a result code.",
+  "expressed": [
+    "complete four-argument entry, target-id 9 remapping, 0xff multi-target selection, runtime target-list walk, and changed-target cleanup walk",
+    "complete primary kind switch including scaled capped value_38 updates, randomized 0x104-0x109 stat updates, and capped value_3a updates",
+    "complete 57-way follow-up switch with active cases 1, 2, 3, 5, 56, and 57, including shared observable result-code behavior",
+    "all three reference jump tables, all literal-pool-backed runtime offsets, every call site, both return paths, and the complete owner epilogue",
+    "evidence-backed aggregate widths and offsets for the effect record, target record, runtime target list/count, and runtime result code"
+  ],
+  "unexpressed": [
+    {
+      "op": "source-shape and allocation repair",
+      "count": 596,
+      "where": "normalized residual remains dominated by declaration lifetimes, register coloring, load ordering, and shared-tail formation despite exact 484/484 instruction-count parity"
+    },
+    {
+      "op": "semantic field naming",
+      "count": null,
+      "where": "offset-backed value/stat names remain deliberately neutral because local evidence establishes behavior and layout but not original identifiers"
+    }
+  ],
+  "verified_against_reference": [
+    "true owner extent 0x080a9f10-0x080aa448 is 1336 bytes; 0x080aa448-0x080aa56c consists of already-exact neighboring owners",
+    "workbench symbolization found 3 jump tables, 74 entries, and 89 pool/table references",
+    "candidate and reference each emit 484 normalized owner instructions",
+    "independent ARMv4T objdiff structural match is 84.70123%; the current Luna-to-Terra handoff threshold is 90%"
+  ],
+  "blocked_by": "The Luna pass was stopped at 84.70123%, below the 90% Terra handoff threshold; resume this same owner with Luna before any tier handoff.",
+  "rejected": [
+    {
+      "shape": "halfword unions plus a u16 working amount",
+      "result": "ARM structure-size rounding shifted later fields and repeated amount truncation grew the candidate to 1372 bytes with 610 differing halfwords"
+    },
+    {
+      "shape": "move the target-id assignment before the first call",
+      "result": "reduced normalized output to 483 instructions and worsened the linked score to 575 differing halfwords at 1340 bytes"
+    },
+    {
+      "shape": "fold follow-up kind 1 into one short-circuit cannot-apply guard",
+      "result": "shrunk the candidate to 1328 bytes and worsened the linked score to 574 differing halfwords"
+    }
+  ],
+  "notes": [
+    "The complete retained assembly and assembled listing were read; pools resolve Data_03001f2c and runtime offsets 0x219/0x25a, while the target list begins at 0x208.",
+    "No inline assembly, fixed-register variables, compiler barriers, copied instruction bytes, compiler changes, or nonlocal evidence were used.",
+    "This is a measured draft only; retained reference assembly remains authoritative."
+  ]
+}

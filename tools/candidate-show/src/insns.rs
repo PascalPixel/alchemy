@@ -1,10 +1,50 @@
 pub fn gas_insns(source: &str) -> Vec<String> {
-    source
-        .lines()
-        .filter_map(|line| {
+    gas_lines(source.lines().collect())
+}
+
+/// Read only one function from a GCC/GAS translation unit.
+///
+/// Candidate assembly can contain out-of-line helpers emitted after the owner
+/// (for example a non-static GNU89 `inline`). Those helpers are not part of
+/// the reference owner and must not steer structural scoring.
+pub fn gas_function_insns(source: &str, symbol: &str) -> Vec<String> {
+    let label = format!("{symbol}:");
+    let lines = source.lines().collect::<Vec<_>>();
+    let Some(start) = lines.iter().position(|line| line.trim() == label) else {
+        return gas_lines(lines);
+    };
+    let body = &lines[start + 1..];
+    let end = body
+        .iter()
+        .position(|line| {
             let line = line.trim();
-            (!line.is_empty() && !line.starts_with(['.', '@']) && !line.ends_with(':'))
-                .then(|| canonical(line))
+            line.starts_with(".size") && line.contains(symbol)
+        })
+        .unwrap_or(body.len());
+    gas_lines(body[..end].to_vec())
+}
+
+fn gas_lines(lines: Vec<&str>) -> Vec<String> {
+    lines
+        .iter()
+        .enumerate()
+        .filter_map(|(index, line)| {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with(['.', '@']) || line.ends_with(':') {
+                return None;
+            }
+            let instruction = canonical(line);
+            // Retained reference assembly spells alignment before literal
+            // pools as `mov r0, r0`; GCC emits the equivalent `.align 2, 0`.
+            // It is a real byte and remains covered by linked-byte scoring,
+            // but it is not a source-structure difference.
+            let next_is_pool = lines[index + 1..]
+                .iter()
+                .map(|line| line.trim())
+                .find(|line| !line.is_empty() && !line.starts_with('@'))
+                .is_some_and(|line| line.starts_with(".4byte") || line.starts_with(".word"));
+            (!(matches!(instruction.as_str(), "movs r0, r0" | "nop") && next_is_pool))
+                .then_some(instruction)
         })
         .collect()
 }
@@ -102,4 +142,35 @@ fn lo(reg: &str) -> bool {
         && reg.starts_with('r')
         && reg.as_bytes()[1].is_ascii_digit()
         && reg.as_bytes()[1] <= b'7'
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn scopes_owner_and_ignores_pool_alignment_spelling() {
+        let source = r#"
+Func_08000000:
+        mov r1, r2
+        movs r0, r0
+        .4byte 0x12345678
+        bx lr
+        .size Func_08000000,.-Func_08000000
+Helper:
+        bx lr
+"#;
+        assert_eq!(
+            gas_function_insns(source, "Func_08000000"),
+            ["adds r1, r2, #0", "bx lr"]
+        );
+    }
+
+    #[test]
+    fn falls_back_for_unsymbolized_snippets() {
+        assert_eq!(
+            gas_function_insns("mov r0, r1\n", "missing"),
+            ["adds r0, r1, #0"]
+        );
+    }
 }

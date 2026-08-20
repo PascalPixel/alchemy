@@ -822,14 +822,13 @@ after_power:
                     text = MSG_DMG_EMPH_E + affinity;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
             }
-            if (cur > 0)
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            else {
+            if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
-            }
+            } else
+                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - cur;
             target->hp = (s16)cur;
             BattleUnit_UpdateRatios(target_id);

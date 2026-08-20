@@ -630,24 +630,27 @@ after_power:
                 if (*(s16 *)(BytePtr(slots) + off) == 254) {
                     *(s16 *)(BytePtr(slots) + off) = rec;
                 } else {
+                    s32 woff;
+
+                    woff = 100;
                     for (;;) {
                         base = BytePtr(slots);
-                        if (*(s16 *)(base + off) == 255) {
+                        if (*(s16 *)(base + woff) == 255) {
                             s32 t;
 
                             t = jsave + 102;
-                            *(s16 *)(base + off) = rec;
+                            *(s16 *)(base + woff) = rec;
                             *(s16 *)(base + t) = 255;
                             break;
                         }
                         i++;
-                        off += 2;
+                        woff += 2;
                         j += 2;
                         if (i > 5)
                             break;
                         jsave = j;
-                        if (((union Cell *)(base + off))->v == 254) {
-                            *(s16 *)(base + off) = rec;
+                        if (((union Cell *)(base + woff))->v == 254) {
+                            *(s16 *)(base + woff) = rec;
                             break;
                         }
                     }
@@ -671,14 +674,15 @@ after_power:
                 Actor_Place(obj, rec, x, y);
             }
             Actor_Commit();
-            count = Actor_ListSlots(saved);
-            if (count > 0) {
+            tmp = Actor_ListSlots(saved);
+            if (tmp > 0) {
                 u16 *q;
 
                 q = (u16 *)saved;
+                count = tmp;
                 do {
-                    count--;
                     Actor_RefreshSlot(*q++);
+                    count--;
                 } while (count != 0);
             }
             BattleEvent_Push(BATTLE_EVENT_UNIT, rec);

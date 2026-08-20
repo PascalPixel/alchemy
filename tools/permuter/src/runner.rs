@@ -1197,7 +1197,12 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         output_budget_preflight(&planned, options.top)?;
         planned
     };
-    let target = backend::prepare(&input, &input.source, options.show_errors)?;
+    // The compiler baseline must be valid C. Planned sources may contain
+    // PERM_* directives, so materialize seed zero before preparing the
+    // routed target; compiling the raw template makes every explicit plan
+    // fail before its candidates can run.
+    let (base_source, _) = permutation.evaluate(0)?;
+    let target = backend::prepare(&input, &base_source, options.show_errors)?;
     let baseline = target.baseline();
     let identity = run_identity(&input, target.as_ref(), options.seed)?;
     let mut run = RunDirectory::claim(&output, &identity, options.resume)?;

@@ -3,111 +3,42 @@
 version = 4
 
 [[package]]
-name = "alchemy-bundle"
-version = "0.1.0"
+name = "aho-corasick"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba"
 dependencies = [
- "alchemy-routing",
+ "memchr",
 ]
 
 [[package]]
-name = "alchemy-lints"
-version = "0.1.0"
+name = "block-buffer"
+version = "0.10.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
 dependencies = [
- "alchemy-routing",
+ "generic-array",
 ]
 
 [[package]]
-name = "alchemy-plan"
-version = "0.1.0"
-dependencies = [
- "alchemy-bundle",
- "alchemy-routing",
-]
-
-[[package]]
-name = "alchemy-routing"
-version = "0.1.0"
-
-[[package]]
-name = "alchemy-symbols"
-version = "0.1.0"
-dependencies = [
- "alchemy-routing",
-]
-
-[[package]]
-name = "architecture"
-version = "0.1.0"
-dependencies = [
- "dispatch",
- "documented",
-]
-
-[[package]]
-name = "byte-value-regions"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "serde_json",
-]
-
-[[package]]
-name = "cache-entry"
-version = "0.1.0"
-
-[[package]]
-name = "cache-key-lint"
-version = "0.1.0"
-
-[[package]]
-name = "candidate-compiler"
-version = "0.1.0"
-dependencies = [
- "alchemy-plan",
- "alchemy-routing",
- "alchemy-symbols",
- "decomp-targets",
-]
-
-[[package]]
-name = "canonical-json"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
+name = "cfg-if"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
 name = "check"
 version = "0.1.0"
 dependencies = [
- "alchemy-lints",
- "architecture",
- "byte-value-regions",
- "cache-entry",
- "cache-key-lint",
  "check-commit-progress",
  "check-publication",
  "check-unmatchable",
- "compare-roms",
  "core-retained-audit",
  "coverage-map",
- "decomp-constraints",
- "decomp-targets",
- "discover",
- "executable-gap-sources",
- "extract-resource",
- "full-c-history",
  "full-c-progress",
  "integrate-matches",
- "jobs",
- "lang-ban",
- "late-runtime-data",
- "localization-tables",
- "music-residuals",
  "no-asm-c",
  "route-dump",
- "source-citations",
- "symbols",
 ]
 
 [[package]]
@@ -129,42 +60,54 @@ dependencies = [
 ]
 
 [[package]]
-name = "compare-roms"
+name = "compiler-core"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
- "serde_json",
+ "fs2",
+ "sha2",
 ]
 
 [[package]]
 name = "core-retained-audit"
 version = "0.1.0"
+dependencies = [
+ "serde_json",
+]
 
 [[package]]
 name = "coverage-map"
 version = "0.1.0"
-
-[[package]]
-name = "decomp-constraints"
-version = "0.1.0"
-
-[[package]]
-name = "decomp-targets"
-version = "0.1.0"
-
-[[package]]
-name = "discover"
-version = "0.1.0"
-
-[[package]]
-name = "dispatch"
-version = "0.1.0"
-
-[[package]]
-name = "documented"
-version = "0.1.0"
 dependencies = [
- "dispatch",
+ "serde_json",
+]
+
+[[package]]
+name = "cpufeatures"
+version = "0.2.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "crypto-common"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
+dependencies = [
+ "generic-array",
+ "typenum",
+]
+
+[[package]]
+name = "digest"
+version = "0.10.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
+dependencies = [
+ "block-buffer",
+ "crypto-common",
 ]
 
 [[package]]
@@ -174,24 +117,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "executable-gap-sources"
-version = "0.1.0"
-
-[[package]]
-name = "extract-resource"
-version = "0.1.0"
-
-[[package]]
-name = "full-c-history"
-version = "0.1.0"
+name = "fs2"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9564fc758e15025b46aa6643b1b77d047d1a56a1aea6e01002ac0c7026876213"
+dependencies = [
+ "libc",
+ "winapi",
+]
 
 [[package]]
 name = "full-c-progress"
 version = "0.1.0"
 dependencies = [
- "alchemy-bundle",
- "cache-entry",
- "overlay-disasm",
+ "serde_json",
+]
+
+[[package]]
+name = "generic-array"
+version = "0.14.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+dependencies = [
+ "typenum",
+ "version_check",
 ]
 
 [[package]]
@@ -214,10 +163,8 @@ dependencies = [
 name = "integrate-matches"
 version = "0.1.0"
 dependencies = [
- "alchemy-plan",
- "alchemy-routing",
- "alchemy-symbols",
- "candidate-compiler",
+ "compiler-core",
+ "regex",
 ]
 
 [[package]]
@@ -227,25 +174,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
-name = "jobs"
-version = "0.1.0"
-
-[[package]]
-name = "lang-ban"
-version = "0.1.0"
-
-[[package]]
-name = "late-runtime-data"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "extract-resource",
- "serde_json",
-]
-
-[[package]]
-name = "localization-tables"
-version = "0.1.0"
+name = "libc"
+version = "0.2.189"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
 
 [[package]]
 name = "memchr"
@@ -254,36 +186,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
-name = "music"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
-name = "music-residuals"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "music",
- "serde_json",
-]
-
-[[package]]
 name = "no-asm-c"
 version = "0.1.0"
-
-[[package]]
-name = "overlay-disasm"
-version = "0.1.0"
-dependencies = [
- "alchemy-bundle",
- "alchemy-plan",
- "alchemy-routing",
- "alchemy-symbols",
- "cache-entry",
- "discover",
-]
 
 [[package]]
 name = "proc-macro2"
@@ -304,10 +208,39 @@ dependencies = [
 ]
 
 [[package]]
+name = "regex"
+version = "1.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-automata",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-automata"
+version = "0.4.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-syntax"
+version = "0.8.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+
+[[package]]
 name = "route-dump"
 version = "0.1.0"
 dependencies = [
- "alchemy-routing",
+ "compiler-core",
 ]
 
 [[package]]
@@ -354,12 +287,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "source-citations"
-version = "0.1.0"
-
-[[package]]
-name = "symbols"
-version = "0.1.0"
+name = "sha2"
+version = "0.10.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest",
+]
 
 [[package]]
 name = "syn"
@@ -373,10 +309,44 @@ dependencies = [
 ]
 
 [[package]]
+name = "typenum"
+version = "1.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "version_check"
+version = "0.9.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+
+[[package]]
+name = "winapi"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419"
+dependencies = [
+ "winapi-i686-pc-windows-gnu",
+ "winapi-x86_64-pc-windows-gnu",
+]
+
+[[package]]
+name = "winapi-i686-pc-windows-gnu"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
+
+[[package]]
+name = "winapi-x86_64-pc-windows-gnu"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "zmij"

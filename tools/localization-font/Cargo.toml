@@ -10,9 +10,6 @@ name = "localization_font"
 path = "src/lib.rs"
 
 [dependencies]
-alchemy-zlib = { path = "../zlib" }
-canonical-json = { path = "../canonical-json" }
-export-asset = { path = "../export-asset" }
 extract-resource = { path = "../extract-resource" }
 import-asset = { path = "../import-asset" }
 serde_json = { version = "1", features = ["preserve_order"] }

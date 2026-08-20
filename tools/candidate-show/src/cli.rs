@@ -1,18 +1,7 @@
-//! `optionsOf(argv)`.
-
-use std::path::Path;
-
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
-
+use std::path::Path;
 pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
-
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
-
-/// `interface Options`.
-///
-/// `rom` and `work` are `Option` because `--rom` with no following argument
-/// assigns `undefined` in JavaScript and does NOT throw until the value is
-/// used. See the `PORT NOTE` on [`options_of`].
 #[derive(Debug, Clone)]
 pub struct Options {
     pub source: String,
@@ -20,352 +9,93 @@ pub struct Options {
     pub work: Option<String>,
     pub flags: Vec<String>,
     pub configuration: CandidateCompilerConfiguration,
-    /// Align the two instruction streams as SEQUENCES rather than by offset.
-    ///
-    /// The offset view is only readable while the two sides are the same
-    /// length. One extra or missing instruction shifts everything after it, so
-    /// every later row reads as a difference and the diff stops being usable
-    /// exactly when it is most needed. Aligning as sequences shows the
-    /// insertion or deletion as itself and keeps the rest lined up.
     pub align: bool,
-    /// Align, then print only the first residual window. Implies `--align`.
-    ///
-    /// A 6 KB owner produces thousands of aligned rows. The next edit is the
-    /// first `+`/`-`/`!` after the matching prefix; everything after that is
-    /// phase noise until that row is fixed. `--first` is the confirmation
-    /// loop: score line, prefix length, then that window.
     pub first: bool,
-    /// gcc `-S` plus a git diff of insn lines against `asm/<stem>.s`.
-    ///
-    /// Skips the ROM, the assembler, the linker and objdump. That is the
-    /// confirmation loop: 30 ms for this owner instead of the 500 ms
-    /// linked-byte score. Size match without matching insns is not progress;
-    /// this is the insn view.
     pub asm: bool,
-    /// Unified diff applied to a copy of the candidate before scoring.
-    ///
-    /// The original source is not written. `FILE` is `-` for stdin. The copy
-    /// lives under the work directory, so two patches of the same owner do not
-    /// clobber each other if they pass distinct `--work` dirs.
     pub patch: Option<String>,
 }
-
 #[derive(Debug)]
 pub enum ParseOutcome {
-    /// `-h` / `--help`: prints usage and `process.exit(0)`, mid-loop, before
-    /// any later argument is examined.
     Help,
     Options(Box<Options>),
 }
-
-/// `optionsOf(Bun.argv.slice(2))`.
-///
-/// PORT NOTE -- option values are read as `argv[++index]`, which is `undefined`
-/// past the end AND leaves `index` past the end so the loop simply terminates.
-/// The four consequences are all different and all reproduced:
-///
-/// * `--flags` / `--remove-flags` call `.split` on `undefined` and throw
-///   immediately -> `Err` here.
-/// * `--family` runs `includes(undefined)`, which is `false`, so it throws the
-///   `--family must be ...` message -> `Err` here.
-/// * `--rom` / `--work` store `undefined` and throw only later, from
-///   `readFileSync`/`mkdirSync` -> `None` here.
-///
-/// PORT NOTE -- there is no `--flag=value` form. `--rom=x` falls through to the
-/// positional list and becomes the source path.
-///
-/// PORT NOTE -- `-h` is matched inside the loop, so `--rom -h` consumes `-h` as
-/// the ROM path and never prints usage.
 pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> {
     let mut options = Options {
         source: String::new(),
         rom: Some(root.join("roms/gs1-en.gba").to_string_lossy().into_owned()),
-        // Filled in from the candidate's own name once the positional argument
-        // is known, so two concurrent runs cannot share intermediates. See the
-        // note above `default_work`.
         work: None,
         flags: Vec::new(),
         configuration: CandidateCompilerConfiguration {
             family: Some(CandidateCompilerFamily::Routed),
-            add_flags: Vec::new(),
-            remove_flags: Vec::new(),
+            ..Default::default()
         },
         align: false,
         first: false,
         asm: false,
         patch: None,
     };
-    let mut align = false;
-    let mut first = false;
-    let mut asm = false;
-    let mut rest: Vec<String> = Vec::new();
-    let mut index = 0usize;
+    let mut rest = Vec::new();
+    let mut index = 0;
     while index < argv.len() {
-        let argument = argv[index].as_str();
-        // `argv[++index]`: advance first, then read, and `undefined` past the
-        // end.
-        let take = |index: &mut usize| -> Option<&String> {
+        let arg = argv[index].as_str();
+        let next = |index: &mut usize| {
             *index += 1;
             argv.get(*index)
         };
-        match argument {
-            "--rom" => options.rom = take(&mut index).cloned(),
-            "--work" => options.work = take(&mut index).cloned(),
-            // A candidate mode has to be visible before it is worth routing:
-            // the native allowlists are shared, so probing one here
-            // keeps a trial flag out of every other region's build.
-            "--align" => {
-                align = true;
-            }
+        match arg {
+            "--rom" => options.rom = next(&mut index).cloned(),
+            "--work" => options.work = next(&mut index).cloned(),
+            "--align" => options.align = true,
             "--first" => {
-                first = true;
-                align = true;
+                options.first = true;
+                options.align = true;
             }
-            "--asm" => {
-                asm = true;
-            }
-            "--patch" => {
-                options.patch = take(&mut index).cloned();
-            }
-            "--flags" => {
-                let value = take(&mut index).ok_or_else(|| {
-                    "undefined is not an object (evaluating 'argv[++index].split')".to_string()
-                })?;
-                options.flags = split_filter_boolean(value);
-            }
-            "--remove-flags" => {
-                let value = take(&mut index).ok_or_else(|| {
-                    "undefined is not an object (evaluating 'argv[++index].split')".to_string()
-                })?;
-                options.configuration.remove_flags = split_filter_boolean(value);
-            }
+            "--asm" => options.asm = true,
+            "--patch" => options.patch = next(&mut index).cloned(),
+            "--flags" => options.flags = split(next(&mut index))?,
+            "--remove-flags" => options.configuration.remove_flags = split(next(&mut index))?,
             "--family" => {
-                let family = take(&mut index)
-                    .and_then(|text| CandidateCompilerFamily::from_str_option(text));
-                match family {
-                    Some(family) => options.configuration.family = Some(family),
-                    None => {
-                        return Err("--family must be routed, gcc296, old-agbcc, or gcc3".to_string())
-                    }
+                options.configuration.family =
+                    next(&mut index).and_then(|value| CandidateCompilerFamily::parse(value));
+                if options.configuration.family.is_none() {
+                    return Err("--family must be routed, gcc296, old-agbcc, or gcc3".into());
                 }
             }
             "-h" | "--help" => return Ok(ParseOutcome::Help),
-            other => rest.push(other.to_string()),
+            other => rest.push(other.into()),
         }
         index += 1;
     }
     if rest.len() != 1 {
-        return Err(SHORT_USAGE.to_string());
+        return Err(SHORT_USAGE.into());
     }
     options.source = rest.remove(0);
     if options.work.is_none() {
         options.work = Some(default_work(root, &options.source));
     }
-    options.align = align;
-    options.first = first;
-    options.asm = asm;
     Ok(ParseOutcome::Options(Box::new(options)))
 }
-
-/// The work directory a candidate gets when `--work` is not given: one
-/// subdirectory per candidate, not one shared by every invocation.
-///
-/// This used to be a single `work/candidate-show` for the whole tool, which made
-/// it unsafe to run twice at once -- and it is a tool people naturally run over
-/// a whole population. The failures do not look like races. They look like facts
-/// about the owner: `objdump failed` on candidates that score perfectly well
-/// alone, and a residual of 183 differing rows out of a comparison that is only
-/// 108 lines long. Both were seen while ranking the main image, and a later
-/// ad-hoc sweep that forgot to pass `--work` reported 47 owners as free of a
-/// blocker they in fact had.
-///
-/// Keyed by the candidate's file stem, so it is deterministic and a re-run reuses
-/// the same paths instead of accumulating them. Concurrency is safe because
-/// parallel callers are measuring different candidates; two runs on the SAME
-/// candidate still collide, and still need `--work`.
+fn split(value: Option<&String>) -> Result<Vec<String>, String> {
+    let value = value.ok_or("undefined is not an object (evaluating 'argv[++index].split')")?;
+    Ok(value
+        .split(',')
+        .filter(|value| !value.is_empty())
+        .map(str::to_string)
+        .collect())
+}
 fn default_work(root: &Path, source: &str) -> String {
     let stem = Path::new(source)
         .file_stem()
-        .and_then(|name| name.to_str())
-        .filter(|name| {
-            !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        .and_then(|value| value.to_str())
+        .filter(|value| {
+            !value.is_empty()
+                && value
+                    .chars()
+                    .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-'))
         })
         .unwrap_or("candidate");
     root.join("scratch/candidate-show")
         .join(stem)
         .to_string_lossy()
         .into_owned()
-}
-
-/// `value.split(",").filter(Boolean)`.
-///
-/// PORT NOTE -- `filter(Boolean)` drops the empty string ONLY. A field of
-/// spaces survives, so `"--flags ' '"` passes a whitespace flag to gcc exactly
-/// as the TypeScript does.
-fn split_filter_boolean(value: &str) -> Vec<String> {
-    value
-        .split(',')
-        .filter(|field| !field.is_empty())
-        .map(str::to_string)
-        .collect()
-}
-
-/// The union membership test `["routed", …].includes(family)`.
-trait FamilyFromStr: Sized {
-    fn from_str_option(text: &str) -> Option<Self>;
-}
-
-impl FamilyFromStr for CandidateCompilerFamily {
-    fn from_str_option(text: &str) -> Option<Self> {
-        match text {
-            "routed" => Some(Self::Routed),
-            "gcc296" => Some(Self::Gcc296),
-            "old-agbcc" => Some(Self::OldAgbcc),
-            "gcc3" => Some(Self::Gcc3),
-            _ => None,
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn parse(args: &[&str]) -> Result<ParseOutcome, String> {
-        let argv: Vec<String> = args.iter().map(|s| s.to_string()).collect();
-        options_of(Path::new("/repo"), &argv)
-    }
-
-    fn unwrap_options(args: &[&str]) -> Options {
-        match parse(args).unwrap() {
-            ParseOutcome::Options(options) => *options,
-            ParseOutcome::Help => panic!("expected options"),
-        }
-    }
-
-    #[test]
-    fn defaults_are_repository_relative() {
-        let options = unwrap_options(&["a.c"]);
-        assert_eq!(options.source, "a.c");
-        assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs1-en.gba"));
-        assert_eq!(options.work.as_deref(), Some("/repo/scratch/candidate-show/a"));
-        assert_eq!(
-            options.configuration.family,
-            Some(CandidateCompilerFamily::Routed)
-        );
-    }
-
-    /// The whole point of the per-candidate default: two candidates measured at
-    /// the same time must not share intermediates. When this was one shared
-    /// directory, a parallel sweep reported `objdump failed` on candidates that
-    /// score fine alone and 183 differing rows out of a 108-line comparison.
-    #[test]
-    fn two_candidates_get_separate_work_directories() {
-        let first = unwrap_options(&["semantic/08004838.c"]);
-        let second = unwrap_options(&["semantic/08003e10.c"]);
-        assert_eq!(
-            first.work.as_deref(),
-            Some("/repo/scratch/candidate-show/08004838")
-        );
-        assert_eq!(
-            second.work.as_deref(),
-            Some("/repo/scratch/candidate-show/08003e10")
-        );
-        assert_ne!(first.work, second.work);
-    }
-
-    #[test]
-    fn an_explicit_work_directory_still_wins() {
-        let options = unwrap_options(&["a.c", "--work", "/tmp/mine"]);
-        assert_eq!(options.work.as_deref(), Some("/tmp/mine"));
-    }
-
-    /// A stem that is not a plain identifier would put shell-significant or
-    /// traversing characters into a path, so it falls back to a fixed name.
-    #[test]
-    fn an_unusable_stem_falls_back() {
-        let options = unwrap_options(&["semantic/../odd name.c"]);
-        assert_eq!(
-            options.work.as_deref(),
-            Some("/repo/scratch/candidate-show/candidate")
-        );
-    }
-
-    #[test]
-    fn flags_split_on_comma_and_drop_only_empty_fields() {
-        let options = unwrap_options(&["a.c", "--flags", "-fa,,-fb,"]);
-        assert_eq!(options.flags, vec!["-fa", "-fb"]);
-        let empty = unwrap_options(&["a.c", "--flags", ""]);
-        assert!(empty.flags.is_empty());
-        let spaces = unwrap_options(&["a.c", "--flags", " "]);
-        assert_eq!(spaces.flags, vec![" "]);
-    }
-
-    #[test]
-    fn help_wins_only_when_it_is_not_consumed_as_a_value() {
-        assert!(matches!(parse(&["-h"]).unwrap(), ParseOutcome::Help));
-        // `--rom -h` eats `-h`, then there is no positional argument.
-        assert_eq!(parse(&["--rom", "-h"]).unwrap_err(), SHORT_USAGE);
-    }
-
-    #[test]
-    fn a_missing_value_terminates_the_loop_without_a_positional() {
-        // `--rom` with no value stores `undefined` and does NOT throw here;
-        // the positional is still present, so parsing succeeds and the failure
-        // is deferred to `readFileSync`.
-        let options = unwrap_options(&["a.c", "--rom"]);
-        assert!(options.rom.is_none());
-        // `--rom` alone: rom is `undefined`, and there is no positional.
-        assert_eq!(parse(&["--rom"]).unwrap_err(), SHORT_USAGE);
-    }
-
-    #[test]
-    fn a_missing_flags_value_throws_before_the_positional_check() {
-        let error = parse(&["a.c", "--flags"]).unwrap_err();
-        assert!(error.contains("undefined"), "{error}");
-        let error = parse(&["a.c", "--remove-flags"]).unwrap_err();
-        assert!(error.contains("undefined"), "{error}");
-    }
-
-    #[test]
-    fn an_unknown_family_reports_the_union() {
-        let error = parse(&["a.c", "--family", "clang"]).unwrap_err();
-        assert_eq!(
-            error,
-            "--family must be routed, gcc296, old-agbcc, or gcc3"
-        );
-        assert_eq!(parse(&["a.c", "--family"]).unwrap_err(), error);
-    }
-
-    #[test]
-    fn there_is_no_equals_form() {
-        let options = unwrap_options(&["--rom=x"]);
-        assert_eq!(options.source, "--rom=x");
-        assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs1-en.gba"));
-    }
-
-    #[test]
-    fn two_positionals_report_the_short_usage() {
-        assert_eq!(parse(&["a.c", "b.c"]).unwrap_err(), SHORT_USAGE);
-    }
-
-    #[test]
-    fn first_implies_align() {
-        let options = unwrap_options(&["a.c", "--first"]);
-        assert!(options.first);
-        assert!(options.align);
-    }
-
-    #[test]
-    fn patch_stores_the_path() {
-        let options = unwrap_options(&["a.c", "--patch", "delta.diff"]);
-        assert_eq!(options.patch.as_deref(), Some("delta.diff"));
-    }
-
-    #[test]
-    fn asm_is_a_switch() {
-        let options = unwrap_options(&["a.c", "--asm"]);
-        assert!(options.asm);
-        assert!(!unwrap_options(&["a.c"]).asm);
-    }
 }

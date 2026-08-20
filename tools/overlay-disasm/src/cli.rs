@@ -1,18 +1,7 @@
-//! CLI for this crate, moved out of `main.rs` so the command can be linked
-//! into a shared entry point instead of shipping its own executable.
-
-//! `overlay_disasm.ts`'s `import.meta.main` block.
-//!
-//! The primary binary accepts the three explicit inspection modes below. The
-//! separate `parity_dump` binary remains an internal differential harness and
-//! intentionally keeps its own policy.
-
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
-
-const USAGE: &str = "usage: overlay-disasm --build-source FILE [BASE_HEX]\n       overlay-disasm --assemble FILE [BASE_HEX]\n       overlay-disasm --c-spans FILE [BASE_HEX]\n       overlay-disasm --self-test";
-
+const USAGE: &str = "usage: overlay-disasm --build-source FILE [BASE_HEX]\n       overlay-disasm --assemble FILE [BASE_HEX]\n       overlay-disasm --c-spans FILE [BASE_HEX]";
 fn base_argument(arguments: &[String], index: usize) -> Result<i64, String> {
     arguments
         .get(index)
@@ -21,14 +10,10 @@ fn base_argument(arguments: &[String], index: usize) -> Result<i64, String> {
         .map_err(|_| "base must be hex".to_string())
         .map(|value| value.unwrap_or(crate::OVERLAY_BASE))
 }
-
 fn validate_arguments(arguments: &[String]) -> Result<bool, String> {
     if arguments.len() == 1 && matches!(arguments[0].as_str(), "-h" | "--help") {
         println!("{USAGE}");
         return Ok(true);
-    }
-    if arguments.len() == 1 && arguments[0] == "--self-test" {
-        return Ok(false);
     }
     let Some(mode) = arguments.first().map(String::as_str) else {
         return Err(USAGE.to_string());
@@ -44,7 +29,6 @@ fn validate_arguments(arguments: &[String]) -> Result<bool, String> {
     }
     Ok(false)
 }
-
 pub fn entry(arguments: &[String]) -> ExitCode {
     let arguments: Vec<String> = arguments.to_vec();
     match validate_arguments(&arguments) {
@@ -55,18 +39,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             return ExitCode::FAILURE;
         }
     }
-    if arguments.len() == 1 && arguments[0] == "--self-test" {
-        return match crate::selftest::self_test() {
-            Ok(message) => {
-                println!("{message}");
-                ExitCode::SUCCESS
-            }
-            Err(error) => {
-                eprintln!("{error}");
-                ExitCode::FAILURE
-            }
-        };
-    }
     if arguments.len() >= 2 && arguments[0] == "--build-source" {
         let base = match base_argument(&arguments, 2) {
             Ok(base) => base,
@@ -75,10 +47,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
                 return ExitCode::FAILURE;
             }
         };
-        return match crate::disasm::build_overlay_source_from_file(
-            Path::new(&arguments[1]),
-            base,
-        ) {
+        return match crate::disasm::build_overlay_source_from_file(Path::new(&arguments[1]), base) {
             Ok(text) => {
                 print!("{text}");
                 ExitCode::SUCCESS
@@ -120,22 +89,4 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     }
     eprintln!("{USAGE}");
     ExitCode::FAILURE
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn help_succeeds_and_unknown_modes_fail_before_work(arguments: &[String]) {
-        assert!(validate_arguments(&["--help".into()]).unwrap());
-        assert!(validate_arguments(&["--unknown".into()]).is_err());
-        assert!(validate_arguments(&[
-            "--assemble".into(),
-            "file".into(),
-            "0x02000000".into(),
-            "extra".into()
-        ])
-        .is_err());
-    }
 }

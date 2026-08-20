@@ -10,7 +10,6 @@ name = "static_sprite_series"
 path = "src/lib.rs"
 
 [dependencies]
-alchemy-zlib = { path = "../zlib" }
 canonical-json = { path = "../canonical-json" }
 extract-resource = { path = "../extract-resource" }
 export-asset = { path = "../export-asset" }

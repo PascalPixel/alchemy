@@ -1,9 +1,7 @@
 //! CLI for this crate, moved out of `main.rs` so the command can be linked
 //! into a shared entry point instead of shipping its own executable.
 
-use crate::{
-    build_namae_nyuuryoku, self_test, verify_namae_nyuuryoku, Error, ADDRESS, SIZE,
-};
+use crate::{build_namae_nyuuryoku, self_test, verify_namae_nyuuryoku, Error, ADDRESS, SIZE};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;

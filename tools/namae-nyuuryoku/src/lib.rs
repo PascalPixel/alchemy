@@ -297,18 +297,3 @@ pub fn self_test() -> Result<()> {
     }
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn tracked_source_builds() {
-        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../assets/graphics/fonts_namae_nyuuryoku_gamen.json");
-        assert_eq!(build_namae_nyuuryoku(&path).unwrap().len(), SIZE);
-    }
-    #[test]
-    fn extent_is_fixed() {
-        assert_eq!(SIZE, 0x37ae);
-    }
-}

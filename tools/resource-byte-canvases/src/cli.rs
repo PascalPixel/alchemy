@@ -5,8 +5,8 @@ use crate::{
     export_resource_byte_canvases, self_test, verify_resource_byte_canvases, Error, RESOURCES,
     SOURCE_BYTES,
 };
-use std::path::Path;
 use std::io::{self, Write};
+use std::path::Path;
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: resource-byte-canvases export ROM --directory DIR | verify ROM --directory DIR | --self-test";
@@ -29,7 +29,9 @@ fn run(args: &[String]) -> Result<(), Error> {
             .into_iter()
             .find(|item| item.id == args[2].to_lowercase())
             .ok_or_else(|| Error(format!("resource {} is absent", args[2])))?;
-        io::stdout().write_all(&resource.data).map_err(|e| Error(e.to_string()))?;
+        io::stdout()
+            .write_all(&resource.data)
+            .map_err(|e| Error(e.to_string()))?;
         return Ok(());
     }
     if args.len() == 4 && args[0] == "export" && args[2] == "--directory" {

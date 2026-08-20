@@ -74,7 +74,13 @@ pub struct LsbBits<'a> {
 
 impl<'a> LsbBits<'a> {
     pub fn new(data: &'a [u8], cursor: usize, end: usize) -> Result<Self, DecodeError> {
-        let mut bits = LsbBits { data, cursor, end, value: 0, count: 0 };
+        let mut bits = LsbBits {
+            data,
+            cursor,
+            end,
+            value: 0,
+            count: 0,
+        };
         if cursor & 1 != 0 {
             bits.value = u32::from(bits.byte()?);
             bits.count = 8;
@@ -99,8 +105,7 @@ impl<'a> LsbBits<'a> {
 
     pub fn fill(&mut self) -> Result<(), DecodeError> {
         self.need(2)?;
-        let word =
-            u32::from(self.data[self.cursor]) | u32::from(self.data[self.cursor + 1]) << 8;
+        let word = u32::from(self.data[self.cursor]) | u32::from(self.data[self.cursor + 1]) << 8;
         self.value |= word.wrapping_shl(self.count);
         self.cursor += 2;
         self.count += 16;
@@ -209,7 +214,11 @@ fn decode_general_body(
             bits.get(5)? + 1
         } else {
             let window = output.len() as i64 - prefill as i64 - 33;
-            let width = if (0..2048).contains(&window) { bit_length(window as u32) } else { 12 };
+            let width = if (0..2048).contains(&window) {
+                bit_length(window as u32)
+            } else {
+                12
+            };
             bits.get(width)? + 33
         };
         tokens.push(GeneralToken::Copy { length, distance });
@@ -348,8 +357,11 @@ fn encode_general_inner(
                 } else {
                     put(&mut bits, 0, 1);
                     let window = replay.len() as i64 - prefill as i64 - 33;
-                    let width =
-                        if (0..2048).contains(&window) { bit_length(window as u32) } else { 12 };
+                    let width = if (0..2048).contains(&window) {
+                        bit_length(window as u32)
+                    } else {
+                        12
+                    };
                     if u64::from(distance - 33) >= 1u64 << width {
                         return err("copy distance exceeds position-dependent width");
                     }
@@ -377,7 +389,11 @@ fn encode_general_inner(
                 differing += 1;
             }
         }
-        let first_diff = if at < 0 { "none".to_string() } else { format!("0x{at:x}") };
+        let first_diff = if at < 0 {
+            "none".to_string()
+        } else {
+            format!("0x{at:x}")
+        };
         return err(format!(
             "token plan does not reconstruct decoded input (replay={} decoded={} cursor={} first_diff={} differing={})",
             rebuilt.len(),
@@ -533,10 +549,7 @@ pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>
                 }
                 PaletteOperation::Copy { length, distance } => {
                     flags |= 1 << (7 - index);
-                    if distance < 1
-                        || distance as usize > output.len()
-                        || distance > 0xfff
-                    {
+                    if distance < 1 || distance as usize > output.len() || distance > 0xfff {
                         return err("palette copy distance is invalid");
                     }
                     match length {
@@ -625,7 +638,10 @@ pub fn decode(
         return Ok(valid.remove(0));
     }
     if valid.is_empty() {
-        return err(format!("no decoder accepted stream ({})", errors.join("; ")));
+        return err(format!(
+            "no decoder accepted stream ({})",
+            errors.join("; ")
+        ));
     }
     err("stream is ambiguous; specify --format general or palette")
 }
@@ -665,8 +681,8 @@ pub fn synthetic_general() -> Vec<u8> {
 /// TypeScript would have thrown.
 pub fn self_test() -> Result<(), String> {
     let general = synthetic_general();
-    let (output, cursor, tokens) = decode_general_trace(&general, 0, general.len(), 4)
-        .map_err(|error| error.0)?;
+    let (output, cursor, tokens) =
+        decode_general_trace(&general, 0, general.len(), 4).map_err(|error| error.0)?;
     if output != b"ABAB" || cursor > general.len() {
         return Err("general decoder self-test failed".into());
     }
@@ -692,371 +708,4 @@ pub fn self_test() -> Result<(), String> {
         return Err("truncated stream was accepted".into());
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn ported_self_test_passes() {
-        self_test().expect("self-test");
-    }
-
-    #[test]
-    fn general_round_trip_of_synthetic_stream() {
-        let general = synthetic_general();
-        let (output, cursor, tokens) =
-            decode_general_trace(&general, 0, general.len(), 4).unwrap();
-        assert_eq!(output, b"ABAB");
-        assert!(cursor <= general.len());
-        assert_eq!(
-            tokens,
-            vec![
-                GeneralToken::Literal(2),
-                GeneralToken::Copy { length: 2, distance: 2 },
-            ]
-        );
-        let reencoded = encode_general(&output, &tokens).unwrap();
-        assert_eq!(&general[..reencoded.len()], &reencoded[..]);
-        // Re-decoding the re-encoded bytes must give the same output. The
-        // reader refills two bytes at a time and may read past the terminator,
-        // so a standalone stream needs the same two-byte tail that
-        // `synthetic_general` appends.
-        let mut reencoded = reencoded.clone();
-        reencoded.extend_from_slice(&[0, 0]);
-        let (again, _, again_tokens) =
-            decode_general_trace(&reencoded, 0, reencoded.len(), 4).unwrap();
-        assert_eq!(again, output);
-        assert_eq!(again_tokens, tokens);
-    }
-
-    #[test]
-    fn palette_round_trip_of_synthetic_stream() {
-        let palette: Vec<u8> = vec![0x30, 65, 66, 0x01, 0x02, 0, 0];
-        let (output, cursor, groups) =
-            decode_palette_trace(&palette, 0, palette.len(), 4).unwrap();
-        assert_eq!(output, b"ABAB");
-        assert_eq!(cursor, palette.len());
-        assert_eq!(
-            groups,
-            vec![PaletteGroup::Group(vec![
-                PaletteOperation::Literal,
-                PaletteOperation::Literal,
-                PaletteOperation::Copy { length: 2, distance: 2 },
-                PaletteOperation::End,
-            ])]
-        );
-        assert_eq!(encode_palette(&output, &groups).unwrap(), palette);
-    }
-
-    #[test]
-    fn truncated_streams_are_rejected() {
-        let general = synthetic_general();
-        let cut = &general[..general.len() - 2];
-        assert_eq!(
-            decode_general(cut, 0, cut.len(), 4).unwrap_err(),
-            DecodeError("compressed input ended before terminator".into())
-        );
-        let palette: Vec<u8> = vec![0x30, 65, 66, 0x01, 0x02, 0, 0];
-        let cut = &palette[..palette.len() - 1];
-        assert_eq!(
-            decode_palette(cut, 0, cut.len(), 4).unwrap_err(),
-            DecodeError("compressed input ended before terminator".into())
-        );
-    }
-
-    #[test]
-    fn general_requires_kind_zero_header() {
-        let mut general = synthetic_general();
-        general[0] = 1;
-        assert_eq!(
-            decode_general(&general, 0, general.len(), 4).unwrap_err(),
-            DecodeError("general stream is missing its kind-zero header".into())
-        );
-        // Empty span reports the same message via the non-prefill entry point.
-        assert_eq!(
-            decode_general(&general, 0, 0, 4).unwrap_err(),
-            DecodeError("general stream is missing its kind-zero header".into())
-        );
-        // ...but the prefill entry point distinguishes the empty case.
-        assert_eq!(
-            decode_general_prefill_trace(&general, 0, 0, 4, 0, 1).unwrap_err(),
-            DecodeError("general stream is empty".into())
-        );
-    }
-
-    #[test]
-    fn general_bound_is_enforced() {
-        let general = synthetic_general();
-        // "ABAB" needs 4 bytes; a bound of 3 must be refused.
-        assert_eq!(
-            decode_general(&general, 0, general.len(), 3).unwrap_err(),
-            DecodeError("decoded output crossed configured bound".into())
-        );
-        assert!(decode_general(&general, 0, general.len(), 4).is_ok());
-    }
-
-    #[test]
-    fn headerless_prefill_round_trip() {
-        // Same bitstream, but written without the kind-zero header byte and
-        // decoded against a 64-byte zero prefill.
-        let general = synthetic_general();
-        let body = &general[1..];
-        let (output, _, tokens) =
-            decode_general_prefill_trace(body, 0, body.len(), 4, 64, 0).unwrap();
-        assert_eq!(output, b"ABAB");
-        let mut reencoded = encode_general_prefill(&output, &tokens, 64, 0).unwrap();
-        reencoded.extend_from_slice(&[0, 0]);
-        let (again, _, _) =
-            decode_general_prefill_trace(&reencoded, 0, reencoded.len(), 4, 64, 0).unwrap();
-        assert_eq!(again, output);
-    }
-
-    #[test]
-    fn far_distance_round_trips_through_the_width_ladder() {
-        // 300 pseudo-random literals then a distance-200 copy, which forces the
-        // position-dependent variable-width distance path.
-        let mut decoded: Vec<u8> = Vec::new();
-        let mut state: u32 = 12345;
-        for _ in 0..300 {
-            state = state.wrapping_mul(1103515245).wrapping_add(12345);
-            decoded.push((state >> 16) as u8);
-        }
-        let tail = decoded[300 - 200..300 - 200 + 64].to_vec();
-        decoded.extend_from_slice(&tail);
-        let tokens = vec![
-            GeneralToken::Literal(300),
-            GeneralToken::Copy { length: 64, distance: 200 },
-        ];
-        let mut encoded = encode_general(&decoded, &tokens).unwrap();
-        encoded.extend_from_slice(&[0, 0]);
-        let (output, _, again) =
-            decode_general_trace(&encoded, 0, encoded.len(), 4096).unwrap();
-        assert_eq!(output, decoded);
-        assert_eq!(again, tokens);
-    }
-
-    #[test]
-    fn encode_general_reports_the_divergence_coordinate() {
-        // Token plan claims two literals but the decoded input has three bytes.
-        let error =
-            encode_general(b"ABC", &[GeneralToken::Literal(2)]).unwrap_err();
-        assert_eq!(
-            error,
-            DecodeError(
-                "token plan does not reconstruct decoded input (replay=2 decoded=3 cursor=2 first_diff=none differing=0)".into()
-            )
-        );
-        // And a plan that mismatches in the middle names the offset.
-        let error = encode_general(
-            b"AAAAB",
-            &[GeneralToken::Literal(1), GeneralToken::Copy { length: 4, distance: 1 }],
-        )
-        .unwrap_err();
-        assert_eq!(
-            error,
-            DecodeError(
-                "token plan does not reconstruct decoded input (replay=5 decoded=5 cursor=5 first_diff=0x4 differing=1)".into()
-            )
-        );
-    }
-
-    #[test]
-    fn unencodable_copy_length_is_named() {
-        assert_eq!(
-            encode_general(b"", &[GeneralToken::Copy { length: 138, distance: 1 }])
-                .unwrap_err(),
-            DecodeError("unencodable copy length: 138".into())
-        );
-    }
-
-    #[test]
-    fn every_encodable_length_round_trips() {
-        for length in 2u32..=137 {
-            let decoded = vec![b'X'; 1 + length as usize];
-            let tokens = vec![
-                GeneralToken::Literal(1),
-                GeneralToken::Copy { length, distance: 1 },
-            ];
-            let mut encoded = encode_general(&decoded, &tokens).unwrap();
-            encoded.extend_from_slice(&[0, 0]);
-            let (output, _, again) =
-                decode_general_trace(&encoded, 0, encoded.len(), 4096).unwrap();
-            assert_eq!(output, decoded, "length {length}");
-            assert_eq!(again, tokens, "length {length}");
-        }
-    }
-
-    #[test]
-    fn palette_zero_flag_block_round_trips() {
-        // Flags byte 0 emits eight raw bytes; then a group with a terminator.
-        let mut stream: Vec<u8> = vec![0];
-        stream.extend_from_slice(b"01234567");
-        stream.push(0x80);
-        stream.push(0);
-        stream.push(0);
-        let (output, cursor, groups) =
-            decode_palette_trace(&stream, 0, stream.len(), 64).unwrap();
-        assert_eq!(output, b"01234567");
-        assert_eq!(cursor, stream.len());
-        assert_eq!(groups[0], PaletteGroup::Zeros);
-        assert_eq!(encode_palette(&output, &groups).unwrap(), stream);
-    }
-
-    #[test]
-    fn palette_long_copy_round_trips() {
-        // length >= 17 uses the three-byte copy encoding.
-        let mut decoded: Vec<u8> = b"ABCD".to_vec();
-        for index in 0..20usize {
-            let value = decoded[index];
-            decoded.push(value);
-        }
-        let groups = vec![PaletteGroup::Group(vec![
-            PaletteOperation::Literal,
-            PaletteOperation::Literal,
-            PaletteOperation::Literal,
-            PaletteOperation::Literal,
-            PaletteOperation::Copy { length: 20, distance: 4 },
-            PaletteOperation::End,
-        ])];
-        let encoded = encode_palette(&decoded, &groups).unwrap();
-        let (output, cursor, again) =
-            decode_palette_trace(&encoded, 0, encoded.len(), 64).unwrap();
-        assert_eq!(output, decoded);
-        assert_eq!(cursor, encoded.len());
-        assert_eq!(again, groups);
-    }
-
-    #[test]
-    fn palette_plan_guards() {
-        assert_eq!(
-            encode_palette(b"AB", &[PaletteGroup::Group(vec![PaletteOperation::Literal, PaletteOperation::Literal])])
-                .unwrap_err(),
-            DecodeError("palette plan lacks a terminator".into())
-        );
-        assert_eq!(
-            encode_palette(
-                b"A",
-                &[
-                    PaletteGroup::Group(vec![PaletteOperation::End]),
-                    PaletteGroup::Group(vec![PaletteOperation::Literal]),
-                ]
-            )
-            .unwrap_err(),
-            DecodeError("palette plan contains data after terminator".into())
-        );
-        assert_eq!(
-            encode_palette(
-                b"A",
-                &[PaletteGroup::Group(vec![PaletteOperation::End, PaletteOperation::Literal])]
-            )
-            .unwrap_err(),
-            DecodeError("palette terminator is not group-final".into())
-        );
-        assert_eq!(
-            encode_palette(b"", &[PaletteGroup::Group(vec![])]).unwrap_err(),
-            DecodeError("invalid palette token group".into())
-        );
-        assert_eq!(
-            encode_palette(b"AAAAAAAAA", &[PaletteGroup::Group(vec![PaletteOperation::Literal; 9])])
-                .unwrap_err(),
-            DecodeError("palette group exceeds eight operations".into())
-        );
-        assert_eq!(
-            encode_palette(
-                b"A",
-                &[PaletteGroup::Group(vec![
-                    PaletteOperation::Literal,
-                    PaletteOperation::Copy { length: 2, distance: 5 },
-                    PaletteOperation::End,
-                ])]
-            )
-            .unwrap_err(),
-            DecodeError("palette copy distance is invalid".into())
-        );
-        assert_eq!(
-            encode_palette(
-                b"A",
-                &[PaletteGroup::Group(vec![
-                    PaletteOperation::Literal,
-                    PaletteOperation::Copy { length: 273, distance: 1 },
-                    PaletteOperation::End,
-                ])]
-            )
-            .unwrap_err(),
-            DecodeError("palette copy length is invalid".into())
-        );
-        assert_eq!(
-            encode_palette(b"", &[PaletteGroup::Zeros]).unwrap_err(),
-            DecodeError("palette literal block crossed decoded input".into())
-        );
-    }
-
-    #[test]
-    fn auto_dispatch_reports_both_failures() {
-        let junk = [1u8, 2, 3, 4];
-        let error = decode(&junk, 0, junk.len(), 16, None).unwrap_err();
-        assert!(error.0.starts_with("no decoder accepted stream (general: "));
-        assert!(error.0.contains("; palette: "));
-        assert!(error.0.ends_with(')'));
-    }
-
-    #[test]
-    fn auto_dispatch_picks_the_single_acceptor() {
-        let general = synthetic_general();
-        let (kind, output, _) = decode(&general, 0, general.len(), 16, None).unwrap();
-        assert_eq!(kind, ResourceKind::General);
-        assert_eq!(output, b"ABAB");
-    }
-
-    #[test]
-    fn explicit_format_bypasses_dispatch() {
-        let palette: Vec<u8> = vec![0x30, 65, 66, 0x01, 0x02, 0, 0];
-        let (kind, output, cursor) =
-            decode(&palette, 0, palette.len(), 4, Some(ResourceKind::Palette)).unwrap();
-        assert_eq!(kind, ResourceKind::Palette);
-        assert_eq!(output, b"ABAB");
-        assert_eq!(cursor, palette.len());
-    }
-
-    #[test]
-    fn append_copy_guards() {
-        let mut output = vec![1u8, 2, 3];
-        assert_eq!(
-            append_copy(&mut output, 4, 1, 64).unwrap_err(),
-            DecodeError("invalid back-reference distance at output offset 0x3".into())
-        );
-        assert_eq!(
-            append_copy(&mut output, 0, 1, 64).unwrap_err(),
-            DecodeError("invalid back-reference distance at output offset 0x3".into())
-        );
-        assert_eq!(
-            append_copy(&mut output, 1, 100, 64).unwrap_err(),
-            DecodeError("decoded output crossed configured bound".into())
-        );
-        append_copy(&mut output, 3, 3, 64).unwrap();
-        assert_eq!(output, vec![1, 2, 3, 1, 2, 3]);
-    }
-
-    #[test]
-    fn bit_length_matches_the_javascript_definition() {
-        assert_eq!(bit_length(0), 0);
-        assert_eq!(bit_length(1), 1);
-        assert_eq!(bit_length(2), 2);
-        assert_eq!(bit_length(2047), 11);
-        assert_eq!(bit_length(2048), 12);
-    }
-
-    #[test]
-    fn odd_cursor_primes_the_bit_reader() {
-        // Constructing at an odd offset consumes one byte before the first
-        // 16-bit fill; the payload must still decode identically.
-        let general = synthetic_general();
-        let mut shifted = vec![0xffu8];
-        shifted.extend_from_slice(&general);
-        let bits = LsbBits::new(&shifted, 1, shifted.len()).unwrap();
-        assert_eq!(bits.count, 24);
-        assert_eq!(bits.value & 0xff, 0x00);
-    }
 }

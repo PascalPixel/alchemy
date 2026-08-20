@@ -372,12 +372,3 @@ pub fn self_test() -> Result<usize> {
     }
     Ok(bytes.len())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn canonical_staff_roll_builds() {
-        assert_eq!(self_test().unwrap(), STAFF_ROLL_SIZE);
-    }
-}

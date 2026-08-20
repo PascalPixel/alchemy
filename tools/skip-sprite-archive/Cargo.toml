@@ -10,8 +10,5 @@ name = "skip_sprite_archive"
 path = "src/lib.rs"
 
 [dependencies]
-alchemy-zlib = { path = "../zlib" }
-export-asset = { path = "../export-asset" }
-generated-files = { path = "../generated-files" }
 import-asset = { path = "../import-asset" }
 serde_json = { version = "1", features = ["preserve_order"] }

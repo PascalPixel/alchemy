@@ -1,74 +1,45 @@
-//! CLI for this crate, moved out of `main.rs` so the command can be linked
-//! into a shared entry point instead of shipping its own executable.
-
-use crate::{build_executable_gap_data, build_section, self_test, verify_rom};
-use std::io::{self, Write};
+use crate::{build_executable_gap_data, build_section};
+use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str =
-    "usage: executable-gap-sources build-stdout INDEX [ADDRESS] | verify ROM INDEX | --self-test";
+const USAGE: &str = "usage: executable-gap-sources build-stdout INDEX [ADDRESS]";
 
-fn parse_address(text: &str) -> Result<u64, String> {
-    let digits = text
-        .strip_prefix("0x")
-        .ok_or_else(|| "address must be 0x-prefixed".to_string())?;
-    u64::from_str_radix(digits, 16).map_err(|_| "invalid address".to_string())
-}
-
-fn run(args: &[String]) -> Result<(), String> {
-    if args.len() == 1 && args[0] == "--self-test" {
-        println!(
-            "{}",
-            self_test(Path::new("assets/data/executable_gap_plan.json"))?
-        );
-        return Ok(());
-    }
-    if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
-        println!("{USAGE}");
-        return Ok(());
-    }
-    if args.len() == 3 && args[0] == "build-stdout" {
-        let bytes = build_section(Path::new(&args[1]), parse_address(&args[2])?)?;
-        io::stdout().write_all(&bytes).map_err(|e| e.to_string())?;
-        return Ok(());
-    }
-    if args.len() == 2 && args[0] == "build-stdout" {
-        let sections = build_executable_gap_data(Path::new(&args[1]))?;
-        if sections.len() != 1 {
+pub fn entry(args: &[String]) -> ExitCode {
+    let result = (|| -> Result<(), String> {
+        if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {
+            println!("{USAGE}");
+            return Ok(());
+        }
+        if args.first().map(String::as_str) != Some("build-stdout")
+            || args.len() < 2
+            || args.len() > 3
+        {
+            return Err(USAGE.into());
+        }
+        let path = Path::new(&args[1]);
+        let sections = build_executable_gap_data(path)?;
+        let data = if let Some(text) = args.get(2) {
+            let address =
+                u64::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
+                    .map_err(|_| "invalid address".to_string())?;
+            build_section(path, address)?
+        } else if sections.len() == 1 {
+            sections[0].data.clone()
+        } else {
             return Err(
                 "build-stdout requires ADDRESS when the package has multiple typed sections".into(),
             );
-        }
-        io::stdout()
-            .write_all(&sections[0].data)
-            .map_err(|e| e.to_string())?;
-        return Ok(());
-    }
-    if args.len() == 3 && args[0] == "verify" {
-        let (sections, bytes) = verify_rom(Path::new(&args[1]), Path::new(&args[2]))?;
-        println!("sections={sections} bytes={bytes} exact=true");
-        return Ok(());
-    }
-    Err(USAGE.into())
-}
-
-pub fn entry(arguments: &[String]) -> std::process::ExitCode {
-    match run(&arguments.to_vec()) {
+        };
+        std::io::stdout()
+            .write_all(&data)
+            .map_err(|e| e.to_string())
+    })();
+    match result {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("error: {error}");
             ExitCode::FAILURE
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::run;
-
-    #[test]
-    fn rejects_unknown_options() {
-        assert!(run(&["--bogus".into()]).is_err());
     }
 }

@@ -10,7 +10,6 @@ name = "resource_01c"
 path = "src/lib.rs"
 
 [dependencies]
-canonical-json = { path = "../canonical-json" }
 export-asset = { path = "../export-asset" }
 extract-resource = { path = "../extract-resource" }
 import-asset = { path = "../import-asset" }

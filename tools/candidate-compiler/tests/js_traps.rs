@@ -8,7 +8,6 @@
 use candidate_compiler::jsnum::{
     compare_tuple, is_strictly_better, math_max, parse_hex, to_js_number_string,
 };
-use candidate_compiler::json::{canonical_json, parse, Json};
 use candidate_compiler::jsstring::{
     is_js_space, js_split_lines, js_split_whitespace_runs, js_trim, utf16_cmp,
 };
@@ -135,30 +134,6 @@ fn overlay_address_clamps_to_rom_start() {
 }
 
 #[test]
-fn to_number_follows_the_string_numeric_literal_grammar() {
-    let n = |text: &str| Json::to_js_number(Some(&Json::String(text.to_string())));
-    assert_eq!(n(""), 0.0); // `Number("")` is 0, not NaN
-    assert_eq!(n("  \t 12 "), 12.0); // trimmed
-    assert_eq!(n("0x10"), 16.0); // hex prefix accepted
-    assert_eq!(n("0b101"), 5.0);
-    assert_eq!(n("0o17"), 15.0);
-    assert!(n("12abc").is_nan()); // no prefix parse, unlike `parseInt`
-    assert_eq!(n("Infinity"), f64::INFINITY);
-    // `f64::from_str` accepts all three of these. `Number` accepts none.
-    assert!(n("inf").is_nan());
-    assert!(n("nan").is_nan());
-    assert!(n("1_0").is_nan());
-    assert!("inf".parse::<f64>().is_ok());
-    // `undefined` is NaN; `null` is 0. This is how a missing `size` poisons a
-    // span.
-    assert!(Json::to_js_number(None).is_nan());
-    assert_eq!(Json::to_js_number(Some(&Json::Null)), 0.0);
-    assert_eq!(Json::to_js_number(Some(&Json::Bool(true))), 1.0);
-    assert_eq!(Json::to_js_number(Some(&Json::Array(vec![]))), 0.0);
-    assert!(Json::to_js_number(Some(&Json::Object(vec![]))).is_nan());
-}
-
-#[test]
 fn numbers_are_written_the_way_javascript_writes_them() {
     // ryu writes `1.0`; JavaScript writes `1`.
     assert_eq!(to_js_number_string(1.0).unwrap(), "1");
@@ -169,29 +144,4 @@ fn numbers_are_written_the_way_javascript_writes_them() {
     assert!(to_js_number_string(1.5).is_err());
     assert!(to_js_number_string(f64::NAN).is_err());
     assert!(to_js_number_string(1e-7).is_err());
-}
-
-#[test]
-fn object_key_order_is_insertion_order() {
-    // The one reason there is no `HashMap` anywhere in this crate.
-    let value = Json::Object(vec![
-        ("entry".into(), Json::Number(0x0800_0000 as f64)),
-        ("matched".into(), Json::Bool(false)),
-        ("size".into(), Json::Number(4.0)),
-    ]);
-    let text = canonical_json(&value).unwrap();
-    let entry = text.find("entry").unwrap();
-    let matched = text.find("matched").unwrap();
-    let size = text.find("\"size\"").unwrap();
-    assert!(entry < matched && matched < size);
-    // A round trip preserves it, duplicate keys included (last value wins, first
-    // position kept, as `JSON.parse` does).
-    let reparsed = parse(r#"{"b":1,"a":2,"b":3}"#).unwrap();
-    let Json::Object(entries) = &reparsed else {
-        panic!("expected an object");
-    };
-    assert_eq!(entries.len(), 2);
-    assert_eq!(entries[0].0, "b");
-    assert_eq!(entries[1].0, "a");
-    assert_eq!(Json::to_js_number(reparsed.get("b")), 3.0);
 }

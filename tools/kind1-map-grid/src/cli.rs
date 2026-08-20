@@ -1,12 +1,13 @@
 //! CLI for this crate, moved out of `main.rs` so the command can be linked
 //! into a shared entry point instead of shipping its own executable.
 
-use std::process::ExitCode;
 use std::io::{self, Write};
+use std::process::ExitCode;
 
 use crate::{export_grid, self_test, verify_grid, Result, ROM_BASE};
 
-const USAGE: &str = "usage: kind1-map-grid [export|verify] ROM --address N --size N --directory DIR | --self-test";
+const USAGE: &str =
+    "usage: kind1-map-grid [export|verify] ROM --address N --size N --directory DIR | --self-test";
 
 fn option(args: &[String], name: &str) -> Result<String> {
     let index = args

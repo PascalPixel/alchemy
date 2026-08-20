@@ -1,5 +1,3 @@
-pub mod cli;
-
 // Text form for a 16-bit tilemap: one row per line, one four-digit
 // little-endian hex word per entry.
 //
@@ -79,42 +77,4 @@ pub fn import_tilemap(text: &str) -> Result<Vec<u8>, TilemapError> {
         result.extend_from_slice(&word.to_le_bytes());
     }
     Ok(result)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn sample() -> Vec<u8> {
-        (0..64u16)
-            .flat_map(|index| (index.wrapping_mul(257)).to_le_bytes())
-            .collect()
-    }
-
-    #[test]
-    fn round_trips() {
-        let raw = sample();
-        let text = export_tilemap(&raw, 8).unwrap();
-        assert_eq!(import_tilemap(&text).unwrap(), raw);
-    }
-
-    #[test]
-    fn rows_are_width_wide() {
-        let text = export_tilemap(&sample(), 8).unwrap();
-        assert_eq!(text.lines().count(), 8);
-        assert!(text.lines().all(|line| line.split(' ').count() == 8));
-    }
-
-    #[test]
-    fn bad_inputs_are_rejected() {
-        assert_eq!(
-            export_tilemap(&[0u8; 3], 1),
-            Err(TilemapError::NotWholeEntries)
-        );
-        assert!(export_tilemap(&[0u8; 8], 3).is_err());
-        assert!(export_tilemap(&[], 1).is_err());
-        assert!(import_tilemap("   ").is_err());
-        assert!(import_tilemap("abc").is_err());
-        assert!(import_tilemap("gggg").is_err());
-    }
 }

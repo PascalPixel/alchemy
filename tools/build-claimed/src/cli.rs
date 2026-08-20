@@ -21,8 +21,7 @@ pub fn entry(arguments: &[String]) {
         Ok(ParsedArgs::Run(options)) => options,
         Err(message) => fail(&message),
     };
-    let cwd = std::env::current_dir()
-        .unwrap_or_else(|error| fail(&format!("cwd: {error}")));
+    let cwd = std::env::current_dir().unwrap_or_else(|error| fail(&format!("cwd: {error}")));
     let repository = root();
     let summary = build(&options, &repository, &cwd.to_string_lossy())
         .unwrap_or_else(|message| fail(&message));

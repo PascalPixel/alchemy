@@ -10,18 +10,29 @@ const USAGE: &str = "usage: sentou_menu_data build INDEX --output FILE | build-s
 
 fn run(args: &[String]) -> Result<(), Error> {
     match args {
-        [flag] if flag == "--self-test" => { self_test()?; println!("self-test=ok"); Ok(()) }
-        [flag] if matches!(flag.as_str(), "--help" | "-h") => { println!("{USAGE}"); Ok(()) }
+        [flag] if flag == "--self-test" => {
+            self_test()?;
+            println!("self-test=ok");
+            Ok(())
+        }
+        [flag] if matches!(flag.as_str(), "--help" | "-h") => {
+            println!("{USAGE}");
+            Ok(())
+        }
         [command, index, flag, output] if command == "build" && flag == "--output" => {
             let bytes = build_sentou_menu_data(Path::new(index))?;
-            if let Some(parent) = Path::new(output).parent() { std::fs::create_dir_all(parent).map_err(|e| Error(e.to_string()))?; }
+            if let Some(parent) = Path::new(output).parent() {
+                std::fs::create_dir_all(parent).map_err(|e| Error(e.to_string()))?;
+            }
             std::fs::write(output, bytes).map_err(|e| Error(e.to_string()))?;
             println!("address=0x{ADDRESS:08x} bytes={SIZE}");
             Ok(())
         }
         [command, index] if command == "build-stdout" => {
             let bytes = build_sentou_menu_data(Path::new(index))?;
-            io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
+            io::stdout()
+                .write_all(&bytes)
+                .map_err(|e| Error(e.to_string()))?;
             Ok(())
         }
         [command, rom, index] if command == "verify" => {
@@ -37,6 +48,9 @@ fn run(args: &[String]) -> Result<(), Error> {
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     match run(&arguments.to_vec()) {
         Ok(()) => ExitCode::SUCCESS,
-        Err(error) => { eprintln!("error: {error}"); ExitCode::FAILURE }
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
+        }
     }
 }

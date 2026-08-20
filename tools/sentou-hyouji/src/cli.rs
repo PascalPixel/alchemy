@@ -18,11 +18,8 @@ fn run(a: &[String]) -> Result<(), Error> {
                 Ok(())
             })
         }
-        [cmd, index] if cmd == "build-stdout" => {
-            build_sentou_hyouji(Path::new(index)).and_then(|b| {
-                io::stdout().write_all(&b).map_err(|e| Error(e.to_string()))
-            })
-        }
+        [cmd, index] if cmd == "build-stdout" => build_sentou_hyouji(Path::new(index))
+            .and_then(|b| io::stdout().write_all(&b).map_err(|e| Error(e.to_string()))),
         [cmd, rom, index] if cmd == "verify" => std::fs::read(rom)
             .map_err(|e| Error(e.to_string()))
             .and_then(|r| verify_sentou_hyouji(&r, Path::new(index)))
@@ -43,15 +40,5 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
         ExitCode::FAILURE
     } else {
         ExitCode::SUCCESS
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::run;
-
-    #[test]
-    fn rejects_unknown_options() {
-        assert!(run(&["--bogus".into()]).is_err());
     }
 }

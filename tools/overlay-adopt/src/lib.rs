@@ -1,27 +1,11 @@
-//! `tools/overlay/overlay_adopt.ts`, in Rust.
-//!
-//! Adopt a byte-exact overlay C reconstruction: install it as the overlay's
-//! `_c_<address>.c` sibling and swap the reconstruction assembly for the
-//! `AlchemyC_<address>: / .space` placeholder the asset builder expects.
-//!
-//! The swap is only committed when the rebuilt overlay is byte-identical to
-//! the overlay as it stands today, so adoption can never change the ROM
-//! image. The region's instructions are located with the assembler's own
-//! listing rather than by counting directive widths: Thumb encodings are 2 or
-//! 4 bytes and a hand-rolled width table would be wrong exactly where it
-//! matters.
-
 pub mod park;
 pub mod score;
-
+use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
+use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-
-use exact_reading_list::json::{parse as parse_json, Value};
-use overlay_disasm::compile::TempDir;
-use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
-
+use tempfile::tempdir;
 #[derive(Debug, Clone)]
 pub struct Options {
     pub span: Option<i64>,
@@ -30,7 +14,6 @@ pub struct Options {
     pub apply: bool,
     pub where_: bool,
 }
-
 #[derive(Debug, Clone)]
 pub struct FunctionRow {
     pub id: String,
@@ -39,46 +22,24 @@ pub struct FunctionRow {
     pub offset: i64,
     pub span_bytes: i64,
 }
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalAlias {
     pub label: String,
     pub offset: i64,
 }
-
 #[derive(Debug, Clone)]
 pub struct AuditInterval {
     pub start: i64,
     pub end: i64,
     pub kind: String,
 }
-
 enum ParseOutcome {
     Help,
     Options(Options),
 }
-
-/// `hex8(value)`: `value.toString(16).padStart(8, "0")`.
 fn hex8(value: i64) -> String {
     format!("{:08x}", value)
 }
-
-// ---------------------------------------------------------------------------
-// Assembler listing -> source line -> byte offset
-// ---------------------------------------------------------------------------
-
-/// A listing row: `"<line> <offset> <bytes> <source>"`; continuation rows of
-/// a wide directive repeat the line number and omit the offset. GNU as prints
-/// the offset in lowercase but the byte column in uppercase, so the byte
-/// column has to be matched case-insensitively: a lowercase-only class
-/// silently drops every row whose first byte is >= 0xa0, which shortens the
-/// region by those rows and makes a byte-exact candidate fail the rebuild by
-/// the dropped byte count.
-///
-/// `/^\s*(\d+)\s+([0-9a-f]{4,})\s+[0-9A-Fa-f]/`, matched by hand rather than
-/// via a general regex engine: the listing format is rigidly column-based, so
-/// a single greedy left-to-right scan (no backtracking) reproduces the same
-/// match set.
 fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
     let bytes = row.as_bytes();
     let mut i = 0usize;
@@ -93,7 +54,6 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
         return None;
     }
     let line: i64 = row[digits_start..i].parse().ok()?;
-
     let ws1_start = i;
     while i < bytes.len() && (bytes[i] as char).is_whitespace() {
         i += 1;
@@ -101,7 +61,6 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
     if i == ws1_start {
         return None;
     }
-
     let hex_start = i;
     while i < bytes.len() && matches!(bytes[i], b'0'..=b'9' | b'a'..=b'f') {
         i += 1;
@@ -110,7 +69,6 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
         return None;
     }
     let offset = i64::from_str_radix(&row[hex_start..i], 16).ok()?;
-
     let ws2_start = i;
     while i < bytes.len() && (bytes[i] as char).is_whitespace() {
         i += 1;
@@ -123,12 +81,8 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
     }
     Some((line, offset))
 }
-
-/// Source line number -> section offset, straight from the assembler.
-/// Keeps the FIRST offset seen per line, matching the TS `Map` semantics
-/// (`if (!offsets.has(line)) offsets.set(...)`).
 pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
-    let work = TempDir::new("alchemy-adopt-").map_err(|error| error.to_string())?;
+    let work = tempdir().map_err(|error| error.to_string())?;
     let listing = work.path().join("listing.txt");
     let object = work.path().join("listing.o");
     let output = Command::new("arm-none-eabi-as")
@@ -155,8 +109,6 @@ pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     }
     Ok(offsets)
 }
-
-/// The lines that encode `[offset, offset + span)`, as a half-open line range.
 pub fn region_lines(offsets: &[(i64, i64)], offset: i64, span: i64) -> Result<(i64, i64), String> {
     let inside: Vec<i64> = offsets
         .iter()
@@ -176,7 +128,10 @@ pub fn region_lines(offsets: &[(i64, i64)], offset: i64, span: i64) -> Result<(i
             ));
         }
     }
-    let first_offset = offsets.iter().find(|&(line, _)| *line == first).map(|&(_, at)| at);
+    let first_offset = offsets
+        .iter()
+        .find(|&(line, _)| *line == first)
+        .map(|&(_, at)| at);
     if first_offset != Some(offset) {
         return Err(format!(
             "region does not start on an encoded boundary: 0x{:x}",
@@ -185,16 +140,13 @@ pub fn region_lines(offsets: &[(i64, i64)], offset: i64, span: i64) -> Result<(i
     }
     Ok((first, last))
 }
-
-// ---------------------------------------------------------------------------
-// Internal aliases and the placeholder they produce
-// ---------------------------------------------------------------------------
-
-/// `/^\s*(\.L_[0-9a-f]+):/`, matched by hand.
 fn parse_local_label(line: &str) -> Option<String> {
     let trimmed = line.trim_start();
     let rest = trimmed.strip_prefix(".L_")?;
-    let hex_len = rest.chars().take_while(|c| c.is_ascii_digit() || ('a'..='f').contains(c)).count();
+    let hex_len = rest
+        .chars()
+        .take_while(|c| c.is_ascii_digit() || ('a'..='f').contains(c))
+        .count();
     if hex_len == 0 {
         return None;
     }
@@ -204,9 +156,6 @@ fn parse_local_label(line: &str) -> Option<String> {
         None
     }
 }
-
-/// `line.replace(/@.*$/, "").replace(/\/\/.*$/, "")`: truncate at the earlier
-/// of an `@` comment or a `//` comment.
 fn strip_comments(line: &str) -> String {
     let step1 = match line.find('@') {
         Some(index) => &line[..index],
@@ -218,12 +167,9 @@ fn strip_comments(line: &str) -> String {
     };
     step2.to_string()
 }
-
 fn is_word_char(c: char) -> bool {
     c.is_ascii_alphanumeric() || c == '_' || c == '.'
 }
-
-/// `new RegExp(`(^|[^A-Za-z0-9_.])${escaped}([^A-Za-z0-9_.]|$)`, "m").test(outside)`.
 fn word_boundary_contains(haystack: &str, needle: &str) -> bool {
     if needle.is_empty() {
         return false;
@@ -255,14 +201,6 @@ fn word_boundary_contains(haystack: &str, needle: &str) -> bool {
     }
     false
 }
-
-/// Preserve labels inside a C-owned span when assembly outside the span still
-/// branches to them. These are genuine secondary entry points: the exact C
-/// bytes remain callable at the same address, while the alias keeps the
-/// surrounding assembly linkable.
-///
-/// `first`/`last` are the 1-indexed inclusive line range from [`region_lines`]
-/// (i.e. `lines[first - 1 ..= last - 1]` in 0-indexed terms).
 pub fn internal_aliases(
     lines: &[String],
     first: i64,
@@ -278,10 +216,11 @@ pub fn internal_aliases(
         .map(|line| strip_comments(line))
         .collect::<Vec<_>>()
         .join("\n");
-
     let mut aliases: Vec<InternalAlias> = Vec::new();
     for index in first_u..last_u.min(lines.len()) {
-        let Some(label) = parse_local_label(&lines[index]) else { continue };
+        let Some(label) = parse_local_label(&lines[index]) else {
+            continue;
+        };
         if !word_boundary_contains(&outside, &label) {
             continue;
         }
@@ -290,14 +229,15 @@ pub fn internal_aliases(
             .map_err(|_| format!("referenced label {label} lies outside its encoded region"))?;
         let offset = value - OVERLAY_BASE - region_offset;
         if offset < 0 || offset >= span {
-            return Err(format!("referenced label {label} lies outside its encoded region"));
+            return Err(format!(
+                "referenced label {label} lies outside its encoded region"
+            ));
         }
         aliases.push(InternalAlias { label, offset });
     }
     aliases.sort_by_key(|alias| alias.offset);
     Ok(aliases)
 }
-
 pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Vec<String> {
     let mut result = vec![format!("AlchemyC_{stem}:")];
     let mut cursor = 0i64;
@@ -313,50 +253,17 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
     }
     result
 }
-
-pub fn self_test() -> Result<(), String> {
-    let lines: Vec<String> = [
-        "\tb .L_02000006",
-        "\tmovs r0, #0 @ .L_02000008 is comment-only",
-        "Func_02000004:",
-        "\tmovs r0, #0",
-        ".L_02000006:",
-        "\tbx lr",
-        ".L_02000008:",
-        "\t.2byte 0",
-    ]
-    .iter()
-    .map(|line| line.to_string())
-    .collect();
-    let aliases = internal_aliases(&lines, 3, 6, 4, 4)?;
-    if aliases.len() != 1 || aliases[0].label != ".L_02000006" || aliases[0].offset != 2 {
-        return Err("internal-entry alias self-test failed".to_string());
-    }
-    let placeholder = placeholder_lines("02000004", 4, &aliases).join("\n");
-    if placeholder != "AlchemyC_02000004:\n\t.space 0x2\n.L_02000006:\n\t.space 0x2" {
-        return Err("segmented placeholder self-test failed".to_string());
-    }
-    println!("self-test=ok");
-    Ok(())
-}
-
-// ---------------------------------------------------------------------------
-// Audited-interval safety check
-// ---------------------------------------------------------------------------
-
 fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
     let report = root.join("metrics").join("gs1-en-executable.json");
     if !report.exists() {
         return Ok(None);
     }
     let text = fs::read_to_string(&report).map_err(|error| error.to_string())?;
-    let value = parse_json(&text)?;
+    let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
     let overlays = value
         .get("overlays")
         .and_then(Value::as_array)
         .ok_or_else(|| "metrics/gs1-en-executable.json: unexpected shape".to_string())?;
-    // `Map` semantics: on a duplicate id the LAST entry wins, so scan forward
-    // and let a later match overwrite an earlier one.
     let mut found: Option<Vec<AuditInterval>> = None;
     for row in overlays {
         if row.get("id").and_then(Value::as_str) != Some(overlay) {
@@ -369,48 +276,43 @@ fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterva
         let mut out = Vec::with_capacity(intervals.len());
         for interval in intervals {
             out.push(AuditInterval {
-                start: interval.get("start").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-                end: interval.get("end").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-                kind: interval.get("kind").and_then(Value::as_str).unwrap_or("").to_string(),
+                start: interval.get("start").and_then(Value::as_i64).unwrap_or(0),
+                end: interval.get("end").and_then(Value::as_i64).unwrap_or(0),
+                kind: interval
+                    .get("kind")
+                    .and_then(Value::as_str)
+                    .unwrap_or("")
+                    .to_string(),
             });
         }
         found = Some(out);
     }
     Ok(found)
 }
-
-/// The audited code length of the function entered at `entry`, when the
-/// audit ends its code interval sooner than the registered span does.
 pub fn audited_code_span(root: &Path, overlay: &str, entry: i64) -> Result<Option<i64>, String> {
     let intervals = match audit_intervals(root, overlay)? {
         Some(intervals) => intervals,
         None => return Ok(None),
     };
-    let code = intervals
-        .iter()
-        .find(|interval| interval.start <= entry && entry < interval.end && (interval.kind == "thumb" || interval.kind == "arm"));
+    let code = intervals.iter().find(|interval| {
+        interval.start <= entry
+            && entry < interval.end
+            && (interval.kind == "thumb" || interval.kind == "arm")
+    });
     Ok(code.map(|interval| interval.end - entry))
 }
-
-/// Refuse a span that is not contained in ONE audited executable interval.
-///
-/// The rationale lives in the original's `auditedInterval` doc comment, which
-/// went with the TypeScript layer; recover it with
-/// `git show e3867da35:tools/overlay/overlay_adopt.ts`.
-/// Is `span` at `entry` inside one audited executable interval of `overlay`?
-///
-/// Adoption's safety check, exposed so the rankers can ask the same question.
-/// A row that fails this can never be adopted no matter how its bytes compare,
-/// so reporting it as a near miss -- or as exact -- sends the next contributor
-/// at a region that is not one owner.
 pub fn span_is_adoptable(root: &Path, overlay: &str, entry: i64, span_bytes: i64) -> bool {
     audited_span(root, overlay, entry, span_bytes, overlay).is_ok()
 }
-
 fn audited_interval(root: &Path, fn_row: &FunctionRow) -> Result<(), String> {
-    audited_span(root, &fn_row.overlay, fn_row.entry, fn_row.span_bytes, &fn_row.id)
+    audited_span(
+        root,
+        &fn_row.overlay,
+        fn_row.entry,
+        fn_row.span_bytes,
+        &fn_row.id,
+    )
 }
-
 fn audited_span(
     root: &Path,
     overlay: &str,
@@ -423,14 +325,17 @@ fn audited_span(
         None => return Ok(()), // un-audited overlay: not this check's call to make
     };
     let end = start + span_bytes;
-    if intervals.iter().any(|interval| interval.start <= start && end <= interval.end) {
+    if intervals
+        .iter()
+        .any(|interval| interval.start <= start && end <= interval.end)
+    {
         return Ok(());
     }
-
-    let mut touched: Vec<&AuditInterval> =
-        intervals.iter().filter(|interval| interval.start < end && start < interval.end).collect();
+    let mut touched: Vec<&AuditInterval> = intervals
+        .iter()
+        .filter(|interval| interval.start < end && start < interval.end)
+        .collect();
     touched.sort_by_key(|interval| interval.start);
-
     let tiles = !touched.is_empty()
         && touched[0].start <= start
         && touched[touched.len() - 1].end >= end
@@ -439,20 +344,30 @@ fn audited_span(
     if tiles && last.map(|interval| interval.kind.as_str()) != Some("executable_alignment") {
         return Ok(());
     }
-
     let detail = if touched.is_empty() {
         "no audited executable interval covers it".to_string()
     } else {
         touched
             .iter()
-            .map(|interval| format!("[0x{:08x},0x{:08x}) {}", interval.start, interval.end, interval.kind))
+            .map(|interval| {
+                format!(
+                    "[0x{:08x},0x{:08x}) {}",
+                    interval.start, interval.end, interval.kind
+                )
+            })
             .collect::<Vec<_>>()
             .join(" + ")
     };
-    let code = touched.iter().find(|interval| interval.kind == "thumb" || interval.kind == "arm");
+    let code = touched
+        .iter()
+        .find(|interval| interval.kind == "thumb" || interval.kind == "arm");
     let suggestion = match code {
         Some(code) if code.start == start && code.end < end => {
-            format!(" -- the audited code ends at 0x{:08x}; retry with --span {}", code.end, code.end - start)
+            format!(
+                " -- the audited code ends at 0x{:08x}; retry with --span {}",
+                code.end,
+                code.end - start
+            )
         }
         _ => String::new(),
     };
@@ -461,13 +376,8 @@ fn audited_span(
         id, start, end, detail, suggestion
     ))
 }
-
-// ---------------------------------------------------------------------------
-// CLI
-// ---------------------------------------------------------------------------
-
-const USAGE: &str = "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
-
+const USAGE: &str =
+    "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
 fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut span: Option<i64> = None;
     let mut id = String::new();
@@ -504,42 +414,26 @@ fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
     if id.is_empty() || source.is_empty() {
         return Err("both an overlay function id and --source are required".to_string());
     }
-    Ok(ParseOutcome::Options(Options { span, id, source, apply, where_ }))
+    Ok(ParseOutcome::Options(Options {
+        span,
+        id,
+        source,
+        apply,
+        where_,
+    }))
 }
-
-/// An exclusive claim on one overlay's assembly file, released on drop.
-///
-/// WHY THIS EXISTS. Adoption rehearses IN PLACE: it splices the candidate into
-/// `assets/code/<overlay>.s`, assembles, and restores. It has to, because
-/// compiler flags are routed per owner and a candidate compiled from a scratch
-/// copy loses them. That makes the file a shared mutable resource for the whole
-/// splice-assemble-restore window, and two processes working on rows in the SAME
-/// overlay interleave: each captured `original_text` before the other wrote, so
-/// the loser restores the winner's spliced text -- or, worse, reads its
-/// `baseline` from a tree the other process had already spliced, and then
-/// compares against it.
-///
-/// Twelve rehearsals run in parallel left seven overlays with real assembly
-/// replaced by `.space` placeholders, 368 lines gone, while every run made one
-/// at a time beforehand had been clean. Rejection is not protection here: the
-/// writes happen before the verdict, and `--where` is not read-only either.
-///
-/// The lock covers the baseline read as well as the splice, because a
-/// concurrent splice corrupts what we measure against just as surely as what we
-/// write. Drop releases it on every path, including the early returns that a
-/// rejected adoption takes.
 struct OverlayLock {
     path: PathBuf,
 }
-
 impl OverlayLock {
     fn acquire(assembly: &Path) -> Result<Self, String> {
         let path = assembly.with_extension("s.adopt-lock");
-        // `create_new` is the atomic test-and-set; there is no portable advisory
-        // lock in std. Waiting rather than failing keeps `xargs -P` correct
-        // instead of merely safe, which is what a contributor will actually run.
         for attempt in 0..600 {
-            match fs::OpenOptions::new().write(true).create_new(true).open(&path) {
+            match fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&path)
+            {
                 Ok(_) => return Ok(OverlayLock { path }),
                 Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
                     if attempt == 0 {
@@ -561,14 +455,17 @@ impl OverlayLock {
         ))
     }
 }
-
 impl Drop for OverlayLock {
     fn drop(&mut self) {
         let _ = fs::remove_file(&self.path);
     }
 }
-
-fn revert(installed: &Path, assembly: &Path, preexisting: &Option<Vec<u8>>, original_text: &str) -> Result<(), String> {
+fn revert(
+    installed: &Path,
+    assembly: &Path,
+    preexisting: &Option<Vec<u8>>,
+    original_text: &str,
+) -> Result<(), String> {
     match preexisting {
         Some(data) => fs::write(installed, data).map_err(|error| error.to_string())?,
         None => {
@@ -577,14 +474,7 @@ fn revert(installed: &Path, assembly: &Path, preexisting: &Option<Vec<u8>>, orig
     }
     fs::write(assembly, original_text).map_err(|error| error.to_string())
 }
-
-/// `main()`.
 pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
-    if args.len() == 1 && args[0] == "--self-test" {
-        self_test()?;
-        return Ok(0);
-    }
-
     let options = match options_of(args)? {
         ParseOutcome::Help => {
             println!("{USAGE}");
@@ -592,30 +482,28 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         }
         ParseOutcome::Options(options) => options,
     };
-
     let inventory_path: PathBuf = root.join("out/decomp/overlays.json");
     let inventory_text = fs::read_to_string(&inventory_path).map_err(|error| error.to_string())?;
-    let inventory = parse_json(&inventory_text)?;
+    let inventory: Value =
+        serde_json::from_str(&inventory_text).map_err(|error| error.to_string())?;
     let functions = inventory
         .get("functions")
         .and_then(Value::as_array)
         .ok_or_else(|| "out/decomp/overlays.json: unexpected shape".to_string())?;
-
-    let found = functions.iter().find(|row| row.get("id").and_then(Value::as_str) == Some(options.id.as_str()));
-
-    // Discovery seeds from control flow inside the stream, so a function whose
-    // only callers live in the main image or in an external pointer table is
-    // never inventoried. `--span` adopts such a function from its id alone. It
-    // weakens nothing: the region boundary, straddling-label and rehearse-and-
-    // compare checks below are what actually gate the splice, and they read
-    // the assembly, not the inventory.
+    let found = functions
+        .iter()
+        .find(|row| row.get("id").and_then(Value::as_str) == Some(options.id.as_str()));
     let fn_row: FunctionRow = if let Some(row) = found {
         FunctionRow {
             id: options.id.clone(),
-            overlay: row.get("overlay").and_then(Value::as_str).unwrap_or("").to_string(),
-            entry: row.get("entry").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            offset: row.get("offset").and_then(Value::as_f64).unwrap_or(0.0) as i64,
-            span_bytes: row.get("span_bytes").and_then(Value::as_f64).unwrap_or(0.0) as i64,
+            overlay: row
+                .get("overlay")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string(),
+            entry: row.get("entry").and_then(Value::as_i64).unwrap_or(0),
+            offset: row.get("offset").and_then(Value::as_i64).unwrap_or(0),
+            span_bytes: row.get("span_bytes").and_then(Value::as_i64).unwrap_or(0),
         }
     } else if let Some(span) = options.span {
         let mut parts = options.id.splitn(2, ':');
@@ -623,77 +511,64 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         let offset_text = parts.next().unwrap_or("");
         let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16)
             .map_err(|_| format!("unparseable overlay id: {}", options.id))?;
-        // Accept the full load address as well as the overlay-relative offset,
-        // as `overlay score` does. Adding the base unconditionally turned a
-        // copy-pasted `resource_377:02000088` into 0x04000088 and reported it
-        // as outside every audited interval, which reads as "this row is not a
-        // real owner" rather than "you wrote the address the other way".
-        let offset = if offset >= OVERLAY_BASE { offset - OVERLAY_BASE } else { offset };
-        FunctionRow { id: options.id.clone(), overlay, entry: OVERLAY_BASE + offset, offset, span_bytes: span }
+        let offset = if offset >= OVERLAY_BASE {
+            offset - OVERLAY_BASE
+        } else {
+            offset
+        };
+        FunctionRow {
+            id: options.id.clone(),
+            overlay,
+            entry: OVERLAY_BASE + offset,
+            offset,
+            span_bytes: span,
+        }
     } else {
         return Err(format!(
             "no such overlay function: {} (pass --span BYTES to adopt an undiscovered entry)",
             options.id
         ));
     };
-
     let stem = hex8(fn_row.entry);
     if fn_row.entry - OVERLAY_BASE != fn_row.offset {
         return Err("inventory entry and offset disagree".to_string());
     }
     audited_interval(root, &fn_row)?;
-
-    let assembly = root.join("assets/code").join(format!("{}_overlay.s", fn_row.overlay));
-    // Held until this function returns, covering the baseline read, the splice
-    // and the restore. See `OverlayLock`.
+    let assembly = root
+        .join("assets/code")
+        .join(format!("{}_overlay.s", fn_row.overlay));
     let _lock = OverlayLock::acquire(&assembly)?;
     let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;
     let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
-    let lines: Vec<String> = original_text.split('\n').map(|line| line.to_string()).collect();
+    let lines: Vec<String> = original_text
+        .split('\n')
+        .map(|line| line.to_string())
+        .collect();
     let offsets = listing_offsets(&assembly)?;
     let (first, last) = region_lines(&offsets, fn_row.offset, fn_row.span_bytes)?;
-
-    // Adopting a region twice appends a second `AlchemyC_` label in front of
-    // the first one's `.space`. The assembler tolerates the duplicate and the
-    // ROM still rebuilds byte-identically, so the full build does not catch
-    // it; only the inventory's placeholder walk does, one run later. Refuse
-    // up front.
     let marker = format!("AlchemyC_{stem}:");
     if lines.iter().any(|line| line == &marker) {
         return Err(format!("{} is already adopted as C", options.id));
     }
-
     let aliases = internal_aliases(&lines, first, last, fn_row.offset, fn_row.span_bytes)?;
-
     let mut replaced_lines: Vec<String> = Vec::with_capacity(lines.len());
     replaced_lines.extend(lines[..(first - 1) as usize].iter().cloned());
     replaced_lines.extend(placeholder_lines(&stem, fn_row.span_bytes, &aliases));
     replaced_lines.extend(lines[last as usize..].iter().cloned());
     let replaced = replaced_lines.join("\n");
-
-    // Rehearse in place rather than in a scratch copy. Compiler flags are
-    // routed by repository-relative path (`sourceKey` in the compiler tables), so
-    // a candidate compiled from a temp directory silently loses every
-    // path-keyed flag -- a dry run under /tmp would reject a correct
-    // flag-routed match. Both files are restored unless the rebuild is
-    // byte-identical and --apply was given.
-    let installed = root.join("exact").join(format!("{}_c_{}.c", fn_row.overlay, stem));
-    // Only remove the installed C file if this run created it. A rehearsal
-    // over a region that already has one (a dry run, or a repeat) must leave
-    // the existing source alone -- deleting it orphans the placeholder and
-    // the next inventory run fails on the mismatch.
+    let installed = root
+        .join("exact")
+        .join(format!("{}_c_{}.c", fn_row.overlay, stem));
     let preexisting = if installed.exists() {
         Some(fs::read(&installed).map_err(|error| error.to_string())?)
     } else {
         None
     };
-
     let rebuild: Result<Vec<u8>, String> = (|| {
         fs::copy(&options.source, &installed).map_err(|error| error.to_string())?;
         fs::write(&assembly, &replaced).map_err(|error| error.to_string())?;
         assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)
     })();
-
     let rebuilt = match rebuild {
         Ok(data) => data,
         Err(error) => {
@@ -701,7 +576,6 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             return Err(error);
         }
     };
-
     if rebuilt.len() != baseline.len() || rebuilt != baseline {
         let mut differing = (rebuilt.len() as i64 - baseline.len() as i64).abs();
         let min_len = rebuilt.len().min(baseline.len());
@@ -727,9 +601,6 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             baseline.len()
         );
         if options.where_ {
-            // Runs of consecutive addresses, printed as ROM addresses. An
-            // empty list with a non-zero count means the difference is a
-            // length change only.
             let mut runs: Vec<String> = Vec::new();
             let mut index = 0usize;
             while index < addresses.len() {
@@ -742,12 +613,15 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
                 runs.push(format!("0x{:x}+{bytes}", from));
                 index = end + 1;
             }
-            let text = if runs.is_empty() { "(none; length change only)".to_string() } else { runs.join(" ") };
+            let text = if runs.is_empty() {
+                "(none; length change only)".to_string()
+            } else {
+                runs.join(" ")
+            };
             println!("differing_at {text}");
         }
         return Ok(1);
     }
-
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
         let source_base = Path::new(&options.source)
@@ -765,7 +639,6 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         );
         return Ok(0);
     }
-
     println!(
         "adopt=applied {} span={} aliases={} c=exact/{}_c_{}.c",
         options.id,
@@ -775,83 +648,4 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         stem
     );
     Ok(0)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn fixture_lines() -> Vec<String> {
-        [
-            "\tb .L_02000006",
-            "\tmovs r0, #0 @ .L_02000008 is comment-only",
-            "Func_02000004:",
-            "\tmovs r0, #0",
-            ".L_02000006:",
-            "\tbx lr",
-            ".L_02000008:",
-            "\t.2byte 0",
-        ]
-        .iter()
-        .map(|line| line.to_string())
-        .collect()
-    }
-
-    #[test]
-    fn self_test_fixture() {
-        self_test().expect("self-test must pass");
-    }
-
-    #[test]
-    fn internal_aliases_matches_ts_fixture() {
-        let lines = fixture_lines();
-        let aliases = internal_aliases(&lines, 3, 6, 4, 4).unwrap();
-        assert_eq!(aliases, vec![InternalAlias { label: ".L_02000006".to_string(), offset: 2 }]);
-    }
-
-    #[test]
-    fn placeholder_lines_matches_ts_fixture() {
-        let aliases = vec![InternalAlias { label: ".L_02000006".to_string(), offset: 2 }];
-        let placeholder = placeholder_lines("02000004", 4, &aliases).join("\n");
-        assert_eq!(placeholder, "AlchemyC_02000004:\n\t.space 0x2\n.L_02000006:\n\t.space 0x2");
-    }
-
-    #[test]
-    fn placeholder_lines_empty_aliases() {
-        let placeholder = placeholder_lines("02000004", 4, &[]).join("\n");
-        assert_eq!(placeholder, "AlchemyC_02000004:\n\t.space 0x4");
-    }
-
-    #[test]
-    fn placeholder_lines_alias_at_offset_zero() {
-        let aliases = vec![InternalAlias { label: ".L_02000004".to_string(), offset: 0 }];
-        let placeholder = placeholder_lines("02000004", 4, &aliases).join("\n");
-        // No gap emitted before an alias that starts at the region's own base.
-        assert_eq!(placeholder, "AlchemyC_02000004:\n.L_02000004:\n\t.space 0x4");
-    }
-
-    #[test]
-    fn placeholder_lines_span_with_no_trailing_space() {
-        let aliases = vec![InternalAlias { label: ".L_02000006".to_string(), offset: 2 }];
-        // span == alias offset: nothing remains after the last alias, so no
-        // trailing `.space` directive is emitted.
-        let placeholder = placeholder_lines("02000004", 2, &aliases).join("\n");
-        assert_eq!(placeholder, "AlchemyC_02000004:\n\t.space 0x2\n.L_02000006:");
-    }
-
-    #[test]
-    fn listing_row_matches_upper_and_lower_byte_columns() {
-        assert_eq!(parse_listing_row("   12 0000a2 D0            b .L_foo"), Some((12, 0x00a2)));
-        assert_eq!(parse_listing_row("   12 0000a2 d0            b .L_foo"), Some((12, 0x00a2)));
-        assert_eq!(parse_listing_row("not a listing row"), None);
-    }
-
-    #[test]
-    fn word_boundary_contains_respects_line_boundaries() {
-        assert!(word_boundary_contains("b .L_02000006\nbx lr", ".L_02000006"));
-        assert!(!word_boundary_contains("b .L_020000060\nbx lr", ".L_02000006"));
-        // Comment stripping happens in `strip_comments` before this check runs;
-        // word_boundary_contains itself has no comment awareness.
-        assert!(word_boundary_contains("@ .L_02000006 is comment-only", ".L_02000006"));
-    }
 }

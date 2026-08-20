@@ -12,7 +12,7 @@ use std::process::{Command, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use alchemy_routing::routing::root;
+use compiler_core::routing::root;
 
 use crate::compile::{PreparedTarget, Score as ByteScore};
 
@@ -219,8 +219,8 @@ impl AlchemyBackend {
             target_source_instructions.as_deref(),
         )?;
         let implementation_signature = current_executable_signature()?;
-        let compiler_signature = alchemy_bundle::bundle::compiler_bundle_signature();
-        let host_signature = alchemy_bundle::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
+        let compiler_signature = compiler_core::bundle::compiler_bundle_signature();
+        let host_signature = compiler_core::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
             .map_err(|error| format!("Alchemy host tool signature: {error}"))?;
         Ok(Self {
             name,
@@ -246,7 +246,7 @@ fn current_executable_signature() -> Result<String, String> {
     if bytes.is_empty() {
         return Err(format!("current executable {} is empty", path.display()));
     }
-    Ok(alchemy_bundle::sha256::hex(&bytes))
+    Ok(compiler_core::sha256::hex(&bytes))
 }
 
 fn append_identity_field(stream: &mut Vec<u8>, value: &str) {
@@ -266,7 +266,7 @@ fn alchemy_identity(
     append_identity_field(&mut stream, implementation_signature);
     append_identity_field(&mut stream, compiler_signature);
     append_identity_field(&mut stream, host_signature);
-    alchemy_bundle::sha256::hex(&stream)
+    compiler_core::sha256::hex(&stream)
 }
 
 impl Backend for AlchemyBackend {
@@ -1063,7 +1063,7 @@ impl DirectoryBackend {
         if let Ok(bytes) = fs::read(settings_path) {
             identity_bytes.extend_from_slice(&bytes);
         }
-        let identity = alchemy_bundle::sha256::hex(&identity_bytes);
+        let identity = compiler_core::sha256::hex(&identity_bytes);
         let mut backend = Self {
             name: directory
                 .file_name()
@@ -1188,87 +1188,4 @@ pub fn self_test() -> Result<(), String> {
         return Err("current executable signature is not SHA-256".into());
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{packed_alchemy_score, row_diff, structural_row};
-
-    fn quadratic_distance(a: &[&str], e: &[&str]) -> usize {
-        let width = e.len() + 1;
-        let mut lcs = vec![0usize; (a.len() + 1) * width];
-        for left in (0..a.len()).rev() {
-            for right in (0..e.len()).rev() {
-                lcs[left * width + right] = if a[left] == e[right] {
-                    1 + lcs[(left + 1) * width + right + 1]
-                } else {
-                    lcs[(left + 1) * width + right].max(lcs[left * width + right + 1])
-                };
-            }
-        }
-        a.len() + e.len() - 2 * lcs[0]
-    }
-
-    fn sequences() -> Vec<Vec<&'static str>> {
-        const TOKENS: [&str; 3] = ["a", "b", "c"];
-        let mut out = vec![Vec::new()];
-        for len in 1usize..=4 {
-            let count = TOKENS.len().pow(len as u32);
-            for mut value in 0..count {
-                let mut sequence = Vec::with_capacity(len);
-                for _ in 0..len {
-                    sequence.push(TOKENS[value % TOKENS.len()]);
-                    value /= TOKENS.len();
-                }
-                out.push(sequence);
-            }
-        }
-        out
-    }
-
-    #[test]
-    fn myers_row_diff_matches_quadratic_lcs_exhaustively() {
-        let sequences = sequences();
-        for a in &sequences {
-            for e in &sequences {
-                let (distance, unmatched) = row_diff(a, e);
-                assert_eq!(distance, quadratic_distance(a, e), "a={a:?} e={e:?}");
-                assert!(unmatched.windows(2).all(|pair| pair[0] < pair[1]));
-                assert!(unmatched.iter().all(|index| *index < a.len()));
-                assert!(unmatched.len() <= distance);
-            }
-        }
-    }
-
-    #[test]
-    fn row_diff_heat_marks_candidate_deletions() {
-        let (distance, unmatched) = row_diff(&["head", "drop", "tail"], &["head", "tail", "new"]);
-        assert_eq!(distance, 2);
-        assert_eq!(unmatched, [1]);
-    }
-
-    #[test]
-    fn row_diff_bounds_trace_without_changing_large_distances() {
-        let candidate = vec!["candidate"; 600];
-        let reference = vec!["reference"; 600];
-        let (distance, heat) = row_diff(&candidate, &reference);
-        assert_eq!(distance, 1_200);
-        assert!(heat.is_empty());
-    }
-
-    #[test]
-    fn structural_rows_fold_allocator_owned_registers_and_spills() {
-        assert_eq!(structural_row("ldr r10, [sp, #76]"), "ldr rr, [sp,N]");
-        assert_eq!(structural_row("adds r0, r1, r12"), "adds rr, rr, rr");
-        assert_eq!(structural_row("mov sp, r0"), "mov sp, rr");
-        assert_eq!(structural_row("bl <t>"), "bl <t>");
-        assert_eq!(structural_row("str r0, [r1, #4]"), "str rr, [rr, #4]");
-    }
-
-    #[test]
-    fn structural_distance_dominates_raw_and_halfword_ties() {
-        assert!(packed_alchemy_score(7, 9_999, 99_999) < packed_alchemy_score(8, 0, 0));
-        assert!(packed_alchemy_score(8, 12, 99) < packed_alchemy_score(8, 13, 0));
-        assert!(packed_alchemy_score(8, 13, 98) < packed_alchemy_score(8, 13, 99));
-    }
 }

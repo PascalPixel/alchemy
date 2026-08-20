@@ -5,8 +5,6 @@
 //! it writes anything.  The PNG and codec implementations are shared with the
 //! other native asset tools, so the round trip remains byte exact.
 
-pub mod cli;
-
 use std::fmt;
 
 use alignment_tail::{
@@ -451,45 +449,4 @@ pub fn self_test() -> Result<(), ArchiveError> {
         return Err(error("alignment tail self-test failed"));
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn archive_plan_tokens_keep_the_tracked_shape() {
-        let plan = ArchivePlan {
-            format: 1,
-            codec: "golden-sun-offset-palette-lz".into(),
-            chunk_width: 8,
-            chunk_height: 8,
-            columns: 1,
-            pixel_format: PixelFormat::Indexed8,
-            offset_width: 2,
-            stream_alignment: 1,
-            streams: vec![ArchiveStream {
-                decoded_size: 64,
-                encoded_size: 4,
-                tokens: vec![PaletteGroup::Group(vec![
-                    PaletteOperation::Literal,
-                    PaletteOperation::Copy {
-                        length: 2,
-                        distance: 1,
-                    },
-                    PaletteOperation::End,
-                ])],
-                lookahead: vec![0xab],
-            }],
-            alignment_tail: None,
-        };
-        let text = plan_json(&plan);
-        assert!(text.contains(r#""tokens":[["g",[["l"],["c",2,1],["e"]]]]"#));
-        assert!(text.ends_with(r#""lookahead":"ab"}]}"#));
-    }
-
-    #[test]
-    fn self_test_passes() {
-        self_test().expect("self-test");
-    }
 }

@@ -82,7 +82,7 @@ const LINKED_POSTPROCESS_SOURCE: [&[u8]; 3] = [
 ];
 pub fn self_digest() -> String {
     static CACHE: Mutex<Option<String>> = Mutex::new(None);
-    let slot = CACHE.lock().expect("self-digest lock");
+    let mut slot = CACHE.lock().expect("self-digest lock");
     if let Some(found) = slot.as_ref() {
         return found.clone();
     }
@@ -98,6 +98,7 @@ pub fn self_digest() -> String {
         "overlay_disasm read an EMPTY source; refusing to key the cache"
     );
     let digest = sha256::hex(&stream);
+    *slot = Some(digest.clone());
     digest
 }
 fn plan_stamp(commands: &[Vec<String>], work: &str) -> String {
@@ -293,17 +294,28 @@ fn routed_call_via_base(overlay: &str, routing_source: &str) -> i64 {
 fn definition_guard(name: &str) -> Regex {
     Regex::new(&format!(r"\b{name}\s*\([^;{{}}]*\)\s*\{{"), "")
 }
+fn c_identifier(text: &str) -> bool {
+    let mut bytes = text.bytes();
+    if !matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic()) {
+        return false;
+    }
+    bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+}
 fn source_defines_symbol(text: &str, symbol: &str) -> bool {
     if definition_guard(symbol).is_match(text) {
         return true;
     }
-    text.lines()
-        .filter_map(|line| {
-            let fields: Vec<_> = line.split_ascii_whitespace().collect();
-            (fields.len() == 3 && fields[0] == "#define" && fields[2] == symbol)
-                .then_some(fields[1])
-        })
-        .any(|alias| definition_guard(alias).is_match(text))
+    for line in text.lines() {
+        let fields: Vec<_> = line.split_ascii_whitespace().collect();
+        if fields.len() != 3 || fields[0] != "#define" || fields[2] != symbol {
+            continue;
+        }
+        let alias = fields[1];
+        if c_identifier(alias) && definition_guard(alias).is_match(text) {
+            return true;
+        }
+    }
+    false
 }
 pub fn compile_overlay_c(
     source: &Path,

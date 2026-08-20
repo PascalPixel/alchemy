@@ -324,7 +324,7 @@ fn update_readme(
     if let Some(end) = out.find("\n\nDONE measures") {
         if let Some(start) = out[..end].rfind("\n## DONE:") {
             let head_end = start + 1;
-            let replacement = format!("## DONE: Currently {}%", number(percent));
+            let replacement = format!("## DONE: Currently {}%", number(percent.floor()));
             out.replace_range(head_end..end, &replacement);
         }
     }

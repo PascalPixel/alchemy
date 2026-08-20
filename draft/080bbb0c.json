@@ -3,11 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6308,
-    "wrong_instructions": 1283,
-    "differing_halfwords": 2857,
+    "wrong_instructions": 1275,
+    "differing_halfwords": 2859,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "140 ours / 155 reference (295 total)",
+    "raw_rows": "133 ours / 148 reference (281 total)",
     "class": "wrong"
   },
   "shape": {
@@ -96,7 +96,10 @@
     "type-8 HP damage multiplies dmg * falloff, operand order",
     "the agility modifier local is u8",
     "PP drain display delta is dmg = heal; dmg = dmg - actor->pp; in two statements",
-    "EFX_PP_RESTORE_7 loads pp before max_pp"
+    "EFX_PP_RESTORE_7 loads pp before max_pp",
+    "three more multiply operand orders: dmg * PpDmgFalloff, target->max_hp * kind, dmg * HpDmgFalloff",
+    "EFX_AGI_SET_DOWN4 stores through an s8* local assigned before the value block",
+    "EFX_RES_UP2 clamps through an s8* local assigned inside the first compare (ADJUST_RES expanded at this one site)"
   ],
   "unexpressed": [
     {
@@ -206,6 +209,10 @@
     {
       "shape": "cascade extras: hoisted text-id local (8f3), kind=(dummy=12) chain, affinity reuse at the agility push",
       "wrong": "marginal value 0 to -2 rows on the 313-row cascade stack; not folded"
+    },
+    {
+      "shape": "cascade round-3 moved Summon_Refresh() from the summon case into DK_HP_HEAL for a 21-row gain",
+      "wrong": "the reference bl at .L19 sits directly after the summon walk; the gain was alignment luck; cascade promotions now check the bl sequence"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

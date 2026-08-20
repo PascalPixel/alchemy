@@ -44,6 +44,15 @@ pub struct Measurement {
     /// candidate instruction stream; empty when the backend does not
     /// compute a row diff. Guides heat-biased mutation; never persisted.
     pub heat: Vec<f32>,
+    /// Differing rows between the candidate's and the reference's
+    /// branch-and-link sequences. A candidate that moves a call scores well
+    /// by phase and is semantically false; the walk refuses to keep one
+    /// whose divergence exceeds the run baseline's.
+    pub bl_divergence: usize,
+    /// Multiset difference of store instructions (mnemonic and offset
+    /// operand). Catches stores moved between arms or deleted -- the second
+    /// measured lie class.
+    pub store_divergence: usize,
 }
 
 impl Measurement {
@@ -57,6 +66,8 @@ impl Measurement {
             first_difference: None,
             fingerprint: 0,
             heat: Vec::new(),
+            bl_divergence: 0,
+            store_divergence: 0,
             summary: message.to_string(),
         }
     }
@@ -74,6 +85,8 @@ impl From<&ByteScore> for Measurement {
             first_difference: score.first_difference,
             fingerprint: fingerprint(&score.actual),
             heat: Vec::new(),
+            bl_divergence: 0,
+            store_divergence: 0,
             summary: format!(
                 "{} differing halfwords, {} / {} bytes",
                 score.differing_halfwords, score.actual_size, score.expected_size
@@ -267,6 +280,46 @@ impl Backend for AlchemyBackend {
 /// actually steers by. Byte equality remains the sole meaning of `exact`;
 /// the halfword count survives as a tie-break within equal instruction
 /// scores and in the summary.
+fn rows_matching<'a>(rows: &[&'a str], prefix: &str) -> Vec<&'a str> {
+    rows.iter().copied().filter(|r| r.starts_with(prefix)).collect()
+}
+
+fn rows_matching_any<'a>(rows: &[&'a str], prefixes: &[&str]) -> Vec<&'a str> {
+    rows.iter()
+        .copied()
+        .filter(|r| prefixes.iter().any(|p| r.starts_with(p)))
+        .collect()
+}
+
+/// Ordered divergence: rows outside the longest common subsequence.
+fn sequence_divergence(a: &[&str], e: &[&str]) -> usize {
+    let width = e.len() + 1;
+    let mut lcs = vec![0u32; (a.len() + 1) * width];
+    for left in (0..a.len()).rev() {
+        for right in (0..e.len()).rev() {
+            lcs[left * width + right] = if a[left] == e[right] {
+                1 + lcs[(left + 1) * width + right + 1]
+            } else {
+                lcs[(left + 1) * width + right].max(lcs[left * width + right + 1])
+            };
+        }
+    }
+    let common = lcs[0] as usize;
+    (a.len() - common) + (e.len() - common)
+}
+
+/// Unordered divergence: symmetric multiset difference.
+fn multiset_divergence(a: &[&str], e: &[&str]) -> usize {
+    let mut counts: std::collections::BTreeMap<&str, i64> = std::collections::BTreeMap::new();
+    for r in a {
+        *counts.entry(r).or_insert(0) += 1;
+    }
+    for r in e {
+        *counts.entry(r).or_insert(0) -= 1;
+    }
+    counts.values().map(|v| v.unsigned_abs() as usize).sum()
+}
+
 fn alchemy_measurement(
     score: &ByteScore,
     target_instructions: &[Instruction],
@@ -292,6 +345,14 @@ fn alchemy_measurement(
     }
     let common = lcs[0] as usize;
     let differing = (a.len() - common) + (e.len() - common);
+    let bl_divergence = sequence_divergence(
+        &rows_matching(&a, "bl "),
+        &rows_matching(&e, "bl "),
+    );
+    let store_divergence = multiset_divergence(
+        &rows_matching_any(&a, &["strh ", "strb ", "str "]),
+        &rows_matching_any(&e, &["strh ", "strb ", "str "]),
+    );
     // Backtrack the LCS to mark our-side rows that are not part of the
     // common subsequence; their fractional positions steer heat-biased
     // mutation toward the regions that still differ.
@@ -326,6 +387,8 @@ fn alchemy_measurement(
         first_difference: byte.first_difference,
         fingerprint: byte.fingerprint,
         heat,
+        bl_divergence,
+        store_divergence,
         summary: format!(
             "{differing} differing rows ({} ours, {} reference); {}",
             a.len() - common,
@@ -728,6 +791,8 @@ fn instruction_score(actual: &[Instruction], expected: &[Instruction]) -> Measur
         first_difference,
         fingerprint: row_fingerprint(actual),
         heat: Vec::new(),
+        bl_divergence: 0,
+        store_divergence: 0,
         summary: format!(
             "{operand_differences} operand, {reorderings} reordered, {insertions} inserted, {deletions} deleted instructions"
         ),

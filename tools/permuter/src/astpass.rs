@@ -110,6 +110,16 @@ impl Rng {
         spans.len() - 1
     }
 
+    /// Heat-weighted choice keyed by each item's source span start; uniform
+    /// when no heat context is installed.
+    pub fn choice_by_span<'a, T>(&mut self, items: &'a [T], span: fn(&T) -> usize) -> &'a T {
+        if self.heat.is_none() || items.len() <= 1 {
+            return self.choice(items);
+        }
+        let spans: Vec<usize> = items.iter().map(span).collect();
+        &items[self.weighted_index_by_span(&spans)]
+    }
+
     pub fn choice<'a, T>(&mut self, items: &'a [T]) -> &'a T {
         &items[self.index(items.len())]
     }
@@ -1399,7 +1409,7 @@ fn perm_add_mask(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> 
     let f = fdef(unit, fn_index);
     let cands = block_expressions(&f.statement);
     ensure(!cands.is_empty())?;
-    let (id, expr) = rng.choice(&cands).clone();
+    let (id, expr) = rng.choice_by_span(&cands, |c| c.0 .0).clone();
     let t = decayed_expr_type(&expr.node, &tm)?;
     ensure(allowed_basic_type(&t, &tm, &INT_TYPES))?;
     let masks = ["FF", "FFFF", "FFFFFFFF", "FFFFFFFFFFFFFFFF"];
@@ -1433,7 +1443,7 @@ fn perm_xor_zero(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> 
     let f = fdef(unit, fn_index);
     let cands = block_expressions(&f.statement);
     ensure(!cands.is_empty())?;
-    let (id, expr) = rng.choice(&cands).clone();
+    let (id, expr) = rng.choice_by_span(&cands, |c| c.0 .0).clone();
     let t = decayed_expr_type(&expr.node, &tm)?;
     enum Plan {
         Xor,
@@ -1471,7 +1481,7 @@ fn perm_mult_zero(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
     let f = fdef(unit, fn_index);
     let cands = block_expressions(&f.statement);
     ensure(!cands.is_empty())?;
-    let (_, expr) = rng.choice(&cands).clone();
+    let (_, expr) = rng.choice_by_span(&cands, |c| c.0 .0).clone();
     ensure_arithmetic_type(&expr.node, &tm)?;
     ensure(!is_effectful(&expr.node))?;
     let zeroes: Vec<(Nid, Node<Expression>)> = cands
@@ -1491,7 +1501,7 @@ fn perm_mult_zero(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
         .cloned()
         .collect();
     ensure(!zeroes.is_empty())?;
-    let (zid, _) = rng.choice(&zeroes).clone();
+    let (zid, _) = rng.choice_by_span(&zeroes, |c| c.0 .0).clone();
     let value = expr.node.clone();
     let body = fbody_mut(unit, fn_index);
     ensure(replace_expr_by_id(body, zid, &mut |old| {
@@ -1506,7 +1516,7 @@ fn perm_cast_simple(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
     let f = fdef(unit, fn_index);
     let cands = block_expressions(&f.statement);
     ensure(!cands.is_empty())?;
-    let (id, expr) = rng.choice(&cands).clone();
+    let (id, expr) = rng.choice_by_span(&cands, |c| c.0 .0).clone();
     ensure_arithmetic_type(&expr.node, &tm)?;
     let integral: [&[&str]; 5] = [&["int"], &["char"], &["long"], &["short"], &["long", "long"]];
     let floating: [&[&str]; 2] = [&["float"], &["double"]];
@@ -1574,7 +1584,7 @@ fn perm_commutative(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
         }
     });
     ensure(!cands.is_empty())?;
-    let target = *rng.choice(&cands);
+    let target = *rng.choice_by_span(&cands, |c| c.0);
     let mut done = false;
     let body = fbody_mut(unit, fn_index);
     walk_stmt_exprs(body, &mut |e, _| {
@@ -1612,7 +1622,7 @@ fn perm_add_sub(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> R
         }
     });
     ensure(!cands.is_empty())?;
-    let (target, expr) = rng.choice(&cands).clone();
+    let (target, expr) = rng.choice_by_span(&cands, |c| c.0 .0).clone();
     enum Plan {
         NegateConst,
         UnwrapMinus,
@@ -1685,7 +1695,7 @@ fn perm_inequalities(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng)
         }
     });
     ensure(!cands.is_empty())?;
-    let target = *rng.choice(&cands);
+    let target = *rng.choice_by_span(&cands, |c| c.0);
     let plus1 = |e: Expression| binop(BinaryOperator::Plus, e, int_expr("1"));
     let minus1 = |e: Expression| binop(BinaryOperator::Minus, e, int_expr("1"));
     enum Plan {
@@ -1803,7 +1813,7 @@ fn perm_compound_assignment(
         }
     });
     ensure(!cands.is_empty())?;
-    let target = *rng.choice(&cands);
+    let target = *rng.choice_by_span(&cands, |c| c.0);
     let mut done = false;
     let body = fbody_mut(unit, fn_index);
     walk_stmt_exprs(body, &mut |e, _| {

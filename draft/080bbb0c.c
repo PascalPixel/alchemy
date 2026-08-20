@@ -462,6 +462,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 *pptbl;
+    s32 *dmgtbl8;
     s32 turns;
     s32 g1;
     s32 power;
@@ -603,6 +604,7 @@ after_power:
             hit = first;
     }
     pptbl = PpHealFalloff;
+    dmgtbl8 = HpDmgFalloff8;
 
     if ((u8)(act->effect + 206) <= 1) {
         s32 st;
@@ -1000,7 +1002,7 @@ after_power:
                     dmg = Math_Div(HpDmgFalloff6[offset] * dmg, 100);
                     break;
                 case 8:
-                    dmg = Math_Div(dmg * HpDmgFalloff8[offset], 100);
+                    dmg = Math_Div(dmg * dmgtbl8[offset], 100);
                     break;
                 }
                 dmg += BattleRandom_Next() & 3;
@@ -1513,15 +1515,16 @@ dealt = target->hp - cur;
 
     case EFX_DRAIN_PP:
     {
+        s32 old;
         s32 heal;
 
         heal = actor->pp;
+        old = heal;
         dmg = dealt;
         heal += dmg;
         if (heal > actor->max_pp) {
             heal = actor->max_pp;
-            dmg = heal;
-            dmg = dmg - actor->pp;
+            dmg = heal - old;
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
@@ -1539,7 +1542,7 @@ dealt = target->hp - cur;
     case EFX_PP_LEECH:
         dmg = Math_Div(dealt, 10);
         if (target->pp < dmg)
-            dmg = target->pp;
+            dmg = ((union Cell *)&target->pp)->v;
         if (actor->pp + dmg > actor->max_pp)
             dmg = actor->max_pp - actor->pp;
         if (dmg == 0)

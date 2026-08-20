@@ -548,7 +548,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
             if (value <= *(s16 *)(BytePtr(tbl) + off)) {
                 s16 *p;
 
-                p = (s16 *)((u8 *)target + 36);
+                p = (s16 *)(BytePtr((s16 *)target) + 36);
                 do {
                     i++;
                     p += 2;

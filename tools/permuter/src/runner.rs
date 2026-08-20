@@ -375,7 +375,12 @@ impl RunDirectory {
     fn remove_previous_results(&mut self) -> Result<(), String> {
         let previous = self.owned.iter().cloned().collect::<Vec<_>>();
         for name in previous {
-            if (name.starts_with("candidate-") && name.ends_with(".c")) || name == "report.json" {
+            if (name.starts_with("candidate-") && name.ends_with(".c"))
+                || matches!(
+                    name.as_str(),
+                    "best.c" | "best-UNVERIFIED.c" | "report.json"
+                )
+            {
                 #[cfg(unix)]
                 safe_fs::remove_file_at(&self.directory, &name)
                     .map_err(|error| format!("{}: {error}", self.path.display()))?;
@@ -785,9 +790,11 @@ fn measurement_order(
     left: &(&Candidate, &Measurement),
     right: &(&Candidate, &Measurement),
 ) -> Ordering {
-    left.1
-        .score
-        .cmp(&right.1.score)
+    right
+        .1
+        .exact
+        .cmp(&left.1.exact)
+        .then_with(|| left.1.score.cmp(&right.1.score))
         .then_with(|| left.1.differences.cmp(&right.1.differences))
         .then_with(|| {
             left.1
@@ -1003,7 +1010,10 @@ fn validate_output_path(output: &Path) -> Result<(), String> {
 
 fn validate_owned_name(name: &str) -> Result<(), String> {
     let valid = (name.starts_with("candidate-") && name.ends_with(".c"))
-        || matches!(name, "journal.tsv" | "report.json");
+        || matches!(
+            name,
+            "best.c" | "best-UNVERIFIED.c" | "journal.tsv" | "report.json"
+        );
     if !valid || name.contains('/') || name.contains('\\') {
         return Err(format!("invalid owned output name {name:?}"));
     }
@@ -1022,6 +1032,7 @@ fn parse_ownership_manifest(text: &str, path: &Path) -> Result<BTreeSet<String>,
 fn save_results(
     run: &mut RunDirectory,
     backend_name: &str,
+    search_mode: &str,
     baseline: &Measurement,
     retained: &[(&Candidate, &Measurement)],
     attempted: usize,
@@ -1038,13 +1049,28 @@ fn save_results(
     }
     run.remove_previous_results()?;
     for (rank, (candidate, measurement)) in retained.iter().enumerate() {
-        let name = format!("candidate-{rank:03}-score-{}.c", measurement.score);
+        let unverified = search_mode == "classic-exact-only" && !measurement.exact;
+        let marker = if unverified { "-UNVERIFIED" } else { "" };
+        let name = format!("candidate-{rank:03}-score-{}{marker}.c", measurement.score);
         run.register(&name)?;
         run.replace_owned_file(&name, candidate.source.as_bytes())?;
     }
+    if let Some((candidate, measurement)) = retained.first() {
+        let name = if search_mode == "classic-exact-only" && !measurement.exact {
+            "best-UNVERIFIED.c"
+        } else {
+            "best.c"
+        };
+        run.register(name)?;
+        run.replace_owned_file(name, candidate.source.as_bytes())?;
+    }
     let mut report = format!(
-        "{{\n  \"backend\": \"{}\",\n  \"baseline_score\": {},\n  \"attempted\": {},\n  \"compile_failures\": {},\n  \"results\": [",
-        json_escape(backend_name), baseline.score, attempted, failures
+        "{{\n  \"backend\": \"{}\",\n  \"search_mode\": \"{}\",\n  \"baseline_score\": {},\n  \"attempted\": {},\n  \"compile_failures\": {},\n  \"results\": [",
+        json_escape(backend_name),
+        json_escape(search_mode),
+        baseline.score,
+        attempted,
+        failures
     );
     for (index, (candidate, measurement)) in retained.iter().enumerate() {
         if index != 0 {
@@ -1239,13 +1265,13 @@ fn run_workers(
 fn walk_workers(
     backend: Arc<dyn Backend>,
     base_source: Arc<String>,
-    weights: Arc<Weights>,
     total: usize,
     jobs: usize,
     seed: u64,
     keep_prob_permille: u32,
     stop_exact: bool,
     heat_enabled: bool,
+    classic: bool,
     guard_bl: usize,
     guard_store: usize,
     journal: Arc<Journal>,
@@ -1262,7 +1288,6 @@ fn walk_workers(
     for worker in 0..worker_count {
         let backend = Arc::clone(&backend);
         let base_source = Arc::clone(&base_source);
-        let _weights = Arc::clone(&weights);
         let counter = Arc::clone(&counter);
         let stop = Arc::clone(&stop);
         let sender = sender.clone();
@@ -1292,14 +1317,23 @@ fn walk_workers(
                 }
                 let (cur_source, lineage) = current.clone().expect("walk candidate");
                 // The AST engine: parse, apply one weighted pret pass, emit.
-                let mutated =
-                    crate::astpass::AstRandomizer::new(&cur_source, rng.0 ^ index as u64, None)
-                        .and_then(|mut r| {
-                            if heat_enabled {
-                                r.set_heat(last_heat.clone());
-                            }
-                            r.randomize_named()
-                        });
+                let mode = if classic {
+                    crate::astpass::AstMode::Classic
+                } else {
+                    crate::astpass::AstMode::Safe
+                };
+                let mutated = crate::astpass::AstRandomizer::new_with_mode(
+                    &cur_source,
+                    rng.0 ^ index as u64,
+                    None,
+                    mode,
+                )
+                .and_then(|mut r| {
+                    if heat_enabled {
+                        r.set_heat(last_heat.clone());
+                    }
+                    r.randomize_named()
+                });
                 let (mutated_source, pass_name) = match mutated {
                     Ok(pair) => pair,
                     Err(_) => {
@@ -1469,9 +1503,17 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         );
     }
     let journal = Arc::new(journal);
+    let search_mode = if options.walk && options.classic {
+        "classic-exact-only"
+    } else if options.walk {
+        "safe"
+    } else {
+        "planned"
+    };
     println!(
-        "backend={} bases={} candidates={} jobs={} baseline={} ({})",
+        "backend={} mode={} bases={} candidates={} jobs={} baseline={} ({})",
         target.name(),
+        search_mode,
         permutation.count(),
         if options.walk {
             options.iterations
@@ -1511,13 +1553,13 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         let evaluated = walk_workers(
             Arc::clone(&target),
             Arc::new(walk_base),
-            Arc::new(weights.clone()),
             options.iterations,
             options.jobs,
             options.seed,
             options.keep_prob_permille,
             options.stop_exact,
             options.heat,
+            options.classic,
             baseline.bl_divergence,
             baseline.store_divergence,
             Arc::clone(&journal),
@@ -1651,14 +1693,10 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         .collect();
     retained.sort_by(measurement_order);
     retained.truncate(options.top);
-    if let Some((candidate, _)) = retained.first() {
-        let best_path = run.path().join("best.c");
-        fs::write(&best_path, &candidate.source)
-            .map_err(|error| format!("{}: {error}", best_path.display()))?;
-    }
     save_results(
         &mut run,
         &backend_name,
+        search_mode,
         &baseline,
         &retained,
         attempted,
@@ -1839,6 +1877,7 @@ mod tests {
         save_results(
             &mut run,
             "test",
+            "safe",
             &Measurement::failed("baseline"),
             &[],
             0,
@@ -1846,6 +1885,49 @@ mod tests {
         )
         .unwrap();
         assert_eq!(fs::read_to_string(&unrelated).unwrap(), "keep me");
+        drop(run);
+        fs::remove_dir_all(path).unwrap();
+    }
+
+    #[test]
+    fn classic_nonexact_output_is_marked_unverified_and_owned() {
+        let path = temporary_path("classic-unverified");
+        let mut run = RunDirectory::claim(&path, "identity", false).unwrap();
+        let candidate = super::Candidate {
+            index: 7,
+            manual_seed: 0,
+            mutation: "classic-probe".into(),
+            source: "int f(void) { return 1; }\n".into(),
+            fingerprint: "aa".repeat(32),
+        };
+        let measurement = Measurement {
+            exact: false,
+            score: 12,
+            differences: 1,
+            expected_size: 2,
+            actual_size: 2,
+            first_difference: Some(0),
+            fingerprint: 1,
+            heat: Vec::new(),
+            bl_divergence: 0,
+            store_divergence: 0,
+            summary: "not exact".into(),
+        };
+        save_results(
+            &mut run,
+            "test",
+            "classic-exact-only",
+            &Measurement::failed("baseline"),
+            &[(&candidate, &measurement)],
+            1,
+            0,
+        )
+        .unwrap();
+        assert!(path.join("best-UNVERIFIED.c").is_file());
+        assert!(!path.join("best.c").exists());
+        assert!(path.join("candidate-000-score-12-UNVERIFIED.c").is_file());
+        let manifest = fs::read_to_string(path.join(".permuter-owned")).unwrap();
+        assert!(manifest.lines().any(|line| line == "best-UNVERIFIED.c"));
         drop(run);
         fs::remove_dir_all(path).unwrap();
     }

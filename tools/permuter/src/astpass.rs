@@ -2,12 +2,12 @@
 //! `randomizer.py` (MIT) over the `lang-c` AST.
 //!
 //! The engine holds the candidate as emitted C text. Each `randomize()`
-//! call parses the text, picks a weighted random pass (pret's `gcc`
-//! weights), runs it -- a pass that raises `Fail` before mutating leaves
-//! the tree untouched and another pass is picked, exactly like pret's
-//! retry loop -- and re-emits via `cemit`. Mutations therefore stack
-//! across calls. PERM pragma regions are a stub: the randomization region
-//! is always unbounded.
+//! call parses the text, picks a weighted random pass from the selected safe
+//! or classic set, runs it -- a pass that raises `Fail` before mutating leaves
+//! the tree untouched and another pass is picked, exactly like pret's retry
+//! loop -- and re-emits via `cemit`. Mutations therefore stack across calls.
+//! PERM pragma regions are a stub: the randomization region is always
+//! unbounded.
 //!
 //! Probability constants are pret's, ported verbatim.
 
@@ -29,7 +29,6 @@ use crate::astutil::{
 use crate::cemit::emit_translation_unit;
 
 // Probability constants, ported from pret's randomizer.py.
-const PROB_RANDOMIZE_TYPE: f64 = 0.3;
 const PROB_REUSE_VAR: f64 = 0.5;
 const PROB_INS_BLOCK_DOWHILE: f64 = 0.5;
 const PROB_TEMP_PTR: f64 = 0.05;
@@ -173,6 +172,16 @@ pub enum AstPass {
     CompoundAssignment,
 }
 
+/// The default walk only stacks transformations guarded by conservative
+/// semantic checks. Classic mode exposes pret's broader,
+/// heuristic repertoire for exact-only searches; its non-exact winners must
+/// never be treated as source facts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AstMode {
+    Safe,
+    Classic,
+}
+
 impl AstPass {
     pub fn name(self) -> &'static str {
         match self {
@@ -195,7 +204,7 @@ impl AstPass {
         }
     }
     pub fn from_name(name: &str) -> Option<AstPass> {
-        DEFAULT_GCC_WEIGHTS
+        CLASSIC_GCC_WEIGHTS
             .iter()
             .find(|(p, _)| p.name() == name)
             .map(|(p, _)| *p)
@@ -204,7 +213,7 @@ impl AstPass {
 
 /// pret's `default_weights.toml` `[base]` values with the `[gcc]`
 /// overrides applied, restricted to the ported passes.
-pub const DEFAULT_GCC_WEIGHTS: [(AstPass, f64); 16] = [
+pub const CLASSIC_GCC_WEIGHTS: [(AstPass, f64); 16] = [
     (AstPass::TempForExpr, 100.0),
     (AstPass::ExpandExpr, 20.0),
     (AstPass::ReorderStmts, 10.0),
@@ -223,6 +232,17 @@ pub const DEFAULT_GCC_WEIGHTS: [(AstPass, f64); 16] = [
     (AstPass::CompoundAssignment, 5.0),
 ];
 
+/// Transformations allowed to seed and extend the default cumulative walk.
+/// The omitted classic passes are useful codegen probes, but are not
+/// universally value-preserving (casts, masks, boundary-shifted comparisons,
+/// intermediate assignments, and similar heuristics).
+pub const SAFE_GCC_WEIGHTS: [(AstPass, f64); 4] = [
+    (AstPass::TempForExpr, 100.0),
+    (AstPass::ExpandExpr, 20.0),
+    (AstPass::ReorderStmts, 10.0),
+    (AstPass::ReorderDecls, 10.0),
+];
+
 // ---------------------------------------------------------------- engine
 
 pub struct AstRandomizer {
@@ -230,6 +250,7 @@ pub struct AstRandomizer {
     fn_name: String,
     rng: Rng,
     only: Option<AstPass>,
+    mode: AstMode,
     /// Fractional positions of currently-differing candidate rows; when
     /// non-empty, expression and statement selection is biased toward source
     /// regions near them (positions map proportionally, which is crude but
@@ -294,6 +315,15 @@ impl AstRandomizer {
     }
 
     pub fn new(source: &str, seed: u64, only: Option<AstPass>) -> Result<AstRandomizer, String> {
+        Self::new_with_mode(source, seed, only, AstMode::Safe)
+    }
+
+    pub fn new_with_mode(
+        source: &str,
+        seed: u64,
+        only: Option<AstPass>,
+        mode: AstMode,
+    ) -> Result<AstRandomizer, String> {
         let unit = parse_unit(source)?;
         let mut fn_name = None;
         for ext in &unit.0 {
@@ -312,6 +342,7 @@ impl AstRandomizer {
             fn_name,
             rng: Rng::new(seed),
             only,
+            mode,
             heat: Vec::new(),
         })
     }
@@ -338,7 +369,13 @@ impl AstRandomizer {
         for _ in 0..1000 {
             let pass = match self.only {
                 Some(p) => p,
-                None => *random_weighted(&mut self.rng, &DEFAULT_GCC_WEIGHTS),
+                None => {
+                    let weights: &[(AstPass, f64)] = match self.mode {
+                        AstMode::Safe => &SAFE_GCC_WEIGHTS,
+                        AstMode::Classic => &CLASSIC_GCC_WEIGHTS,
+                    };
+                    *random_weighted(&mut self.rng, weights)
+                }
             };
             if run_pass(pass, &mut unit, fn_index, &mut self.rng).is_ok() {
                 // A source mutation may alter register pressure; it may not
@@ -459,42 +496,6 @@ fn bisect_left(list: &[usize], value: usize) -> usize {
     }
 }
 
-// ------------------------------------------------------------ type dice
-
-/// Port of `random_type`: a random integer type, half the time unsigned,
-/// half the time volatile.
-fn random_type(rng: &mut Rng) -> CType {
-    let mut names: Vec<String> = Vec::new();
-    if rng.chance(0.5) {
-        names.push("unsigned".to_string());
-    }
-    let widths: [(&[&str], f64); 5] = [
-        (&["char"], 1.0),
-        (&["short"], 1.0),
-        (&["int"], 2.0),
-        (&["long"], 0.5),
-        (&["long", "long"], 0.5),
-    ];
-    let picked: &&[&str] = random_weighted(rng, &widths);
-    names.extend(picked.iter().map(|s| s.to_string()));
-    let volatile = rng.chance(0.5);
-    CType::Basic { names, volatile }
-}
-
-/// Port of `randomize_type`.
-fn randomize_type(
-    t: &CType,
-    tm: &TypeMap,
-    rng: &mut Rng,
-    ensure_changed: bool,
-) -> Result<CType, Fail> {
-    if allowed_basic_type(t, tm, &INT_TYPES) {
-        return Ok(random_type(rng));
-    }
-    ensure(!ensure_changed)?;
-    Ok(t.clone())
-}
-
 // -------------------------------------------------------- temp_for_expr
 
 /// Port of `surrounding_writes`.
@@ -563,6 +564,55 @@ fn crosses_control_entry(place_start: usize, expression_start: usize, entries: &
         .any(|entry| place_start <= *entry && *entry < expression_start)
 }
 
+fn flow_barriers(statement: &Node<Statement>) -> Vec<usize> {
+    let mut barriers = Vec::new();
+    visit_stmts(statement, &mut |statement| {
+        if matches!(
+            statement.node,
+            Statement::Labeled(_)
+                | Statement::If(_)
+                | Statement::Switch(_)
+                | Statement::While(_)
+                | Statement::DoWhile(_)
+                | Statement::For(_)
+                | Statement::Goto(_)
+                | Statement::Continue
+                | Statement::Break
+        ) {
+            barriers.push(statement.span.start);
+            barriers.push(statement.span.end);
+        } else if matches!(statement.node, Statement::Return(_)) {
+            // A return expression is evaluated after the statement starts;
+            // its opening span is therefore not a control entry. Its end is
+            // still a barrier for a later label reached by another path.
+            barriers.push(statement.span.end);
+        }
+    });
+    barriers.sort_unstable();
+    barriers.dedup();
+    barriers
+}
+
+fn crosses_flow_barrier(start: usize, end: usize, barriers: &[usize]) -> bool {
+    barriers
+        .iter()
+        .any(|barrier| start < *barrier && *barrier <= end)
+}
+
+fn address_taken_variables(statement: &Node<Statement>) -> BTreeSet<String> {
+    let mut variables = BTreeSet::new();
+    scan_stmt_exprs(statement, &mut |expression, _| {
+        if let Expression::UnaryOperator(unary) = &expression.node {
+            if unary.node.operator.node == UnaryOperator::Address {
+                if let Expression::Identifier(identifier) = &unary.node.operand.node {
+                    variables.insert(identifier.node.name.clone());
+                }
+            }
+        }
+    });
+    variables
+}
+
 /// Port of `maybe_reuse_var`.
 #[allow(clippy::too_many_arguments)]
 fn maybe_reuse_var(
@@ -615,14 +665,25 @@ fn perm_temp_for_expr(
     let f = fdef(unit, fn_index);
     let writes = astutil::compute_write_locations(f);
     let reads = astutil::compute_read_locations(f);
-    let mut control_entries = Vec::new();
+    let barriers = flow_barriers(&f.statement);
+    let address_taken = address_taken_variables(&f.statement);
+    let mut complex_control_flow = false;
     visit_stmts(&f.statement, &mut |statement| {
-        if matches!(statement.node, Statement::Labeled(_)) {
-            control_entries.push(statement.span.start);
+        if matches!(
+            statement.node,
+            Statement::Labeled(_)
+                | Statement::If(_)
+                | Statement::Switch(_)
+                | Statement::While(_)
+                | Statement::DoWhile(_)
+                | Statement::For(_)
+                | Statement::Goto(_)
+                | Statement::Continue
+                | Statement::Break
+        ) {
+            complex_control_flow = true;
         }
     });
-    control_entries.sort_unstable();
-    control_entries.dedup();
     let should_make_ptr = rng.chance(PROB_TEMP_PTR);
 
     struct Cand {
@@ -641,7 +702,7 @@ fn perm_temp_for_expr(
         reuse_in: &[String],
         should_make_ptr: bool,
         tm: &TypeMap,
-        control_entries: &[usize],
+        barriers: &[usize],
         writes: &std::collections::BTreeMap<String, Vec<usize>>,
         einds: &mut std::collections::BTreeMap<Nid, usize>,
         candidates: &mut Vec<(Cand, f64)>,
@@ -686,7 +747,7 @@ fn perm_temp_for_expr(
                         &reuse,
                         should_make_ptr,
                         tm,
-                        control_entries,
+                        barriers,
                         writes,
                         einds,
                         candidates,
@@ -709,10 +770,10 @@ fn perm_temp_for_expr(
                 };
                 let (prev_write, _) = surrounding_writes(e, e.span.start, writes);
                 for place in assignment_cands.iter().rev() {
-                    // A goto, case, or default entry may jump past an
-                    // assignment inserted before its label. Never hoist a
-                    // temporary across such a control-flow entry.
-                    if crosses_control_entry(place.stmt_start, e.span.start, control_entries) {
+                    // Never move an evaluation into or out of a branch,
+                    // loop, switch arm, or labeled region. Source order is
+                    // not dominance, and a loop changes evaluation count.
+                    if crosses_control_entry(place.stmt_start, e.span.start, barriers) {
                         break;
                     }
                     // If the expression reads something written within
@@ -751,7 +812,7 @@ fn perm_temp_for_expr(
         &[],
         should_make_ptr,
         &tm,
-        &control_entries,
+        &barriers,
         &writes,
         &mut einds,
         &mut candidates,
@@ -790,21 +851,44 @@ fn perm_temp_for_expr(
         orig.clone()
     };
 
+    // Only a pure expression over non-aliased local scalars may move away
+    // from its original evaluation point or feed more than that one use.
+    // Memory reads, calls, volatile accesses, address calculations and
+    // mutation operators remain useful candidates, but their assignment is
+    // embedded at the chosen occurrence.
+    let mut dependencies = BTreeSet::new();
+    let movable = pure_local_reads(&assign_expr_node.node, &tm, &mut dependencies).is_ok()
+        && dependencies
+            .iter()
+            .all(|dependency| !address_taken.contains(dependency));
+    if !movable {
+        place = None;
+    }
+
     // Step 3: decide on a variable to hold the expression.
     let assign_before_start = place
         .as_ref()
         .map(|p| p.stmt_start)
         .unwrap_or(orig.span.start);
-    let reused_var = maybe_reuse_var(
-        reuse_cand.as_ref(),
-        assign_before_start,
-        orig.span.start,
-        &t,
-        &reads,
-        &writes,
-        &tm,
-        rng,
-    );
+    // Reusing a live variable is only flow-safe in a straight-line function;
+    // a source-order "next write" inside a branch or loop need not execute
+    // before that variable is read again. New temporaries have no such
+    // observable state.
+    let reused_var = if movable && !complex_control_flow {
+        maybe_reuse_var(
+            reuse_cand.as_ref(),
+            assign_before_start,
+            orig.span.start,
+            &t,
+            &reads,
+            &writes,
+            &tm,
+            rng,
+        )
+        .filter(|candidate| !address_taken.contains(candidate))
+    } else {
+        None
+    };
     let (reused, var) = match reused_var {
         Some(v) => (true, v),
         None => {
@@ -823,13 +907,15 @@ fn perm_temp_for_expr(
         surrounding_writes(&assign_expr_node, orig.span.start, &writes);
     prev_write = prev_write.max(assign_before_start.saturating_sub(1));
     let mut replace_cands: Vec<Nid> = Vec::new();
-    if is_effectful(&assign_expr_node.node) {
+    if place.is_none() || !movable {
         replace_cands.push(orig_id);
     } else {
         scan_stmt_exprs(&f.statement, &mut |e, is_expr| {
             if is_expr
+                && assign_before_start <= e.span.start
                 && prev_write < e.span.start
                 && e.span.start <= next_write
+                && !crosses_control_entry(assign_before_start, e.span.start, &barriers)
                 && equal_expr(&e.node, &orig.node)
             {
                 replace_cands.push(nid(e));
@@ -877,12 +963,9 @@ fn perm_temp_for_expr(
         insert_block_item(body, p.block, p.index, stmt);
     }
     if !reused {
-        let final_t = if rng.chance(PROB_RANDOMIZE_TYPE) {
-            randomize_type(&t, &tm, rng, false)?
-        } else {
-            t
-        };
-        insert_decl(body, &var, &final_t, rng)?;
+        // A temporary has the expression's actual type. Narrowing or
+        // changing signedness is a value transformation, not a permutation.
+        insert_decl(body, &var, &t, rng)?;
     }
     Ok(())
 }
@@ -936,10 +1019,14 @@ fn perm_expand_expr(
         },
         Other,
     }
+    let tm = typemap_for(unit, fn_index);
     let f = fdef(unit, fn_index);
+    let barriers = flow_barriers(&f.statement);
+    let address_taken = address_taken_variables(&f.statement);
     // Writes with payloads, in one traversal.
     let mut write_recs: std::collections::BTreeMap<usize, (String, WriteKind)> = Default::default();
     let mut writes: std::collections::BTreeMap<String, Vec<usize>> = Default::default();
+    let mut statement_assignments: BTreeSet<Nid> = BTreeSet::new();
     {
         // Parameters are writes with no expandable payload.
         for der in &f.declarator.node.derived {
@@ -960,6 +1047,7 @@ fn perm_expand_expr(
             stmt: &Node<Statement>,
             recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
             writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
+            statement_assignments: &mut BTreeSet<Nid>,
         ) {
             // Declarations.
             fn handle_decl(
@@ -1066,7 +1154,9 @@ fn perm_expand_expr(
                 }
             }
             match &stmt.node {
-                Statement::Labeled(l) => scan(&l.node.statement, recs, writes),
+                Statement::Labeled(l) => {
+                    scan(&l.node.statement, recs, writes, statement_assignments)
+                }
                 Statement::Compound(items) => {
                     for item in items {
                         match &item.node {
@@ -1080,29 +1170,38 @@ fn perm_expand_expr(
                                     }
                                 }
                             }
-                            BlockItem::Statement(s) => scan(s, recs, writes),
+                            BlockItem::Statement(s) => scan(s, recs, writes, statement_assignments),
                             BlockItem::StaticAssert(_) => {}
                         }
                     }
                 }
-                Statement::Expression(Some(e)) => exprs(e, recs, writes),
+                Statement::Expression(Some(e)) => {
+                    if let Expression::BinaryOperator(binary) = &e.node {
+                        if binary.node.operator.node == BinaryOperator::Assign
+                            && matches!(binary.node.lhs.node, Expression::Identifier(_))
+                        {
+                            statement_assignments.insert(nid(e));
+                        }
+                    }
+                    exprs(e, recs, writes);
+                }
                 Statement::If(i) => {
                     exprs(&i.node.condition, recs, writes);
-                    scan(&i.node.then_statement, recs, writes);
+                    scan(&i.node.then_statement, recs, writes, statement_assignments);
                     if let Some(e) = &i.node.else_statement {
-                        scan(e, recs, writes);
+                        scan(e, recs, writes, statement_assignments);
                     }
                 }
                 Statement::Switch(s) => {
                     exprs(&s.node.expression, recs, writes);
-                    scan(&s.node.statement, recs, writes);
+                    scan(&s.node.statement, recs, writes, statement_assignments);
                 }
                 Statement::While(w) => {
                     exprs(&w.node.expression, recs, writes);
-                    scan(&w.node.statement, recs, writes);
+                    scan(&w.node.statement, recs, writes, statement_assignments);
                 }
                 Statement::DoWhile(d) => {
-                    scan(&d.node.statement, recs, writes);
+                    scan(&d.node.statement, recs, writes, statement_assignments);
                     exprs(&d.node.expression, recs, writes);
                 }
                 Statement::For(fo) => {
@@ -1117,13 +1216,18 @@ fn perm_expand_expr(
                     if let Some(s) = &fo.node.step {
                         exprs(s, recs, writes);
                     }
-                    scan(&fo.node.statement, recs, writes);
+                    scan(&fo.node.statement, recs, writes, statement_assignments);
                 }
                 Statement::Return(Some(e)) => exprs(e, recs, writes),
                 _ => {}
             }
         }
-        scan(&f.statement, &mut write_recs, &mut writes);
+        scan(
+            &f.statement,
+            &mut write_recs,
+            &mut writes,
+            &mut statement_assignments,
+        );
         for locs in writes.values_mut() {
             locs.sort_unstable();
             locs.dedup();
@@ -1142,6 +1246,8 @@ fn perm_expand_expr(
     let keys: Vec<usize> = rev.keys().copied().collect();
     let index = *rng.choice(&keys);
     let var = rev[&index].clone();
+    ensure(nonvolatile_local_scalar(&var, &tm))?;
+    ensure(!address_taken.contains(&var))?;
 
     // Step 2: find the assignment it uses.
     let reads = all_reads.get(&var).cloned().unwrap_or_default();
@@ -1155,7 +1261,11 @@ fn perm_expand_expr(
     } else {
         var_writes[i]
     };
-    let (_, kind) = write_recs.get(&before).ok_or(Fail)?.clone();
+    let (written_var, kind) = write_recs.get(&before).ok_or(Fail)?.clone();
+    // Several declarators share the declaration span. The write index keeps
+    // that location for each name, while the payload map can hold only one;
+    // never substitute a sibling declarator's initializer by accident.
+    ensure(written_var == var)?;
     let (repl_expr, write_assign, write_decl) = match kind {
         WriteKind::DeclInit {
             decl_id,
@@ -1167,9 +1277,28 @@ fn perm_expand_expr(
             op_eq: true,
             rvalue,
             lvalue,
-        } => (rvalue, Some((id, lvalue)), None),
+        } => {
+            ensure(statement_assignments.contains(&id))?;
+            (rvalue, Some((id, lvalue)), None)
+        }
         _ => return Err(Fail),
     };
+
+    // Expanding a cached memory read, call, volatile access, or other
+    // effectful expression changes when that operation occurs. Restrict this
+    // pass to local scalar expressions whose dependencies cannot be changed
+    // through an alias.
+    let mut dependencies = BTreeSet::new();
+    pure_local_reads(&repl_expr.node, &tm, &mut dependencies)?;
+    // `value = value + 1; return value;` cannot become
+    // `return value + 1;`: the RHS read precedes the defining write, while
+    // the expanded read would observe the post-write value.
+    ensure(!dependencies.contains(&var))?;
+    ensure(
+        dependencies
+            .iter()
+            .all(|dependency| !address_taken.contains(dependency)),
+    )?;
 
     // Step 3: pick the range of reads to replace.
     let mut repl_cands: Vec<usize> = reads
@@ -1199,6 +1328,25 @@ fn perm_expand_expr(
         keep_var = rng.chance(PROB_KEEP_REPLACED_VAR);
     }
     let repl_set: std::collections::BTreeSet<usize> = repl_cands.iter().copied().collect();
+
+    // Source order alone is not dominance. A definition in an if/switch arm
+    // can be textually closest to a read after the arm while never executing
+    // on the path that reaches that read. Likewise, a dependency rewritten
+    // between the definition and use makes substitution stale. Treat every
+    // control boundary as a conservative barrier and require each local
+    // dependency to remain unchanged up to every replaced read.
+    for &read in &repl_cands {
+        ensure(!crosses_flow_barrier(before, read, &barriers))?;
+        for dependency in &dependencies {
+            if let Some(locations) = writes.get(dependency) {
+                ensure(
+                    !locations
+                        .iter()
+                        .any(|location| before < *location && *location < read),
+                )?;
+            }
+        }
+    }
 
     // Don't duplicate effectful expressions.
     if is_effectful(&repl_expr.node) {
@@ -1282,13 +1430,13 @@ fn nonvolatile_local_scalar(name: &str, tm: &TypeMap) -> bool {
     let Some(kind) = tm.var_types.get(name) else {
         return false;
     };
-    matches!(
-        resolve_typedefs(kind.clone(), tm),
+    match resolve_typedefs(kind.clone(), tm) {
         CType::Basic {
-            volatile: false,
-            ..
-        } | CType::Enum(_)
-    )
+            volatile: false, ..
+        } => allowed_basic_type(kind, tm, &INT_TYPES),
+        CType::Enum(_) => true,
+        _ => false,
+    }
 }
 
 /// Collect reads from an expression that is safe to move relative to another
@@ -1635,31 +1783,38 @@ fn perm_reorder_decls(
         ensure(toi != fromi && toi != fromi + 1)?;
     }
 
-    // Don't move a declaration past the next occurrence of its variables.
+    // A local's scope starts at its declaration. Moving it later must not
+    // strand an existing use; moving it earlier must not capture a use that
+    // currently resolves to an outer declaration or enum constant.
     ensure(!decl_info.names.is_empty())?;
-    let to_index = to
+    let destination_start = to
         .after
         .as_ref()
         .map(|a| a.start)
         .unwrap_or_else(|| fromb.1); // block end span
     for name in &decl_info.names {
-        let mut uses = 0usize;
-        // Identifier mentions.
+        let in_changed_scope = |position: usize| {
+            if destination_start < from_info.start {
+                destination_start <= position && position < from_info.start
+            } else {
+                from_info.start < position && position < destination_start
+            }
+        };
+        let mut conflict = false;
         scan_stmt_exprs(&f.statement, &mut |e, _| {
             if let Expression::Identifier(id) = &e.node {
-                if id.node.name == *name && e.span.start < to_index {
-                    uses += 1;
+                if id.node.name == *name && in_changed_scope(e.span.start) {
+                    conflict = true;
                 }
             }
         });
-        // Declarator mentions.
-        let mut count_decl = |d: &Node<Declaration>| {
+        let mut inspect_decl = |d: &Node<Declaration>| {
             for init in &d.node.declarators {
                 if let (_, Some(n2)) =
                     crate::asttypes::apply_declarator(CType::int(), &init.node.declarator.node)
                 {
-                    if n2 == *name && d.span.start < to_index {
-                        uses += 1;
+                    if n2 == *name && in_changed_scope(d.span.start) {
+                        conflict = true;
                     }
                 }
             }
@@ -1668,12 +1823,12 @@ fn perm_reorder_decls(
             if let Statement::Compound(items) = &s.node {
                 for item in items {
                     if let BlockItem::Declaration(d) = &item.node {
-                        count_decl(d);
+                        inspect_decl(d);
                     }
                 }
             }
         });
-        ensure(uses <= 1)?;
+        ensure(!conflict)?;
     }
 
     if fromb == tob && fromi < toi {
@@ -2562,11 +2717,11 @@ pub fn preprocess_for_ast(source: &str) -> Result<String, String> {
 
 #[cfg(test)]
 mod tests {
-    use lang_c::ast::BlockItem;
+    use lang_c::ast::{BlockItem, Expression, Statement, UnaryOperator};
 
     use super::{
-        call_sequence, crosses_control_entry, fdef, find_fn, parse_unit, typemap_for, AstPass,
-        AstRandomizer,
+        call_sequence, crosses_control_entry, fdef, find_fn, parse_unit, typemap_for, AstMode,
+        AstPass, AstRandomizer, SAFE_GCC_WEIGHTS,
     };
     use crate::asttypes::{apply_declarator, CType};
     use crate::astutil::{self, id_expr, is_lvalue};
@@ -2579,10 +2734,52 @@ mod tests {
         AstRandomizer::new(source, seed, Some(AstPass::ReorderDecls))?.randomize()
     }
 
+    fn expand(source: &str, seed: u64) -> Result<String, String> {
+        AstRandomizer::new(source, seed, Some(AstPass::ExpandExpr))?.randomize()
+    }
+
+    fn temporary(source: &str, seed: u64) -> Result<String, String> {
+        AstRandomizer::new(source, seed, Some(AstPass::TempForExpr))?.randomize()
+    }
+
     fn calls(source: &str) -> Vec<String> {
         let unit = parse_unit(source).unwrap();
         let index = find_fn(&unit, "f").unwrap();
         call_sequence(&fdef(&unit, index).statement)
+    }
+
+    #[test]
+    fn default_randomizer_only_uses_semantic_safe_set() {
+        let source = "int f(int a, int b) { int x; int y; x = a + b; y = x < b; if (y) { x += b; } return x; }";
+        let safe: std::collections::BTreeSet<&str> = SAFE_GCC_WEIGHTS
+            .iter()
+            .map(|(pass, _)| pass.name())
+            .collect();
+        let mut successes = 0;
+        for seed in 0..128 {
+            let mut randomizer = AstRandomizer::new(source, seed, None).unwrap();
+            let Ok((_, name)) = randomizer.randomize_named() else {
+                continue;
+            };
+            successes += 1;
+            assert!(safe.contains(name), "safe mode selected {name}");
+        }
+        assert!(successes > 0);
+    }
+
+    #[test]
+    fn classic_randomizer_exposes_heuristic_passes() {
+        let source = "int f(int a, int b) { int x; int y; x = a + b; y = x < b; if (y) { x += b; } return x; }";
+        let safe: std::collections::BTreeSet<&str> = SAFE_GCC_WEIGHTS
+            .iter()
+            .map(|(pass, _)| pass.name())
+            .collect();
+        let found = (0..256).any(|seed| {
+            AstRandomizer::new_with_mode(source, seed, None, AstMode::Classic)
+                .and_then(|mut randomizer| randomizer.randomize_named())
+                .is_ok_and(|(_, name)| !safe.contains(name))
+        });
+        assert!(found, "classic mode never selected a heuristic pass");
     }
 
     #[test]
@@ -2613,6 +2810,117 @@ mod tests {
         assert!(crosses_control_entry(40, 60, &entries));
         assert!(!crosses_control_entry(41, 60, &entries));
         assert!(!crosses_control_entry(20, 40, &entries));
+    }
+
+    #[test]
+    fn temporary_keeps_pointer_increment_inside_loop() {
+        let source = "int use(unsigned short); int f(unsigned short *q, int count) { do { count--; use(*(q++)); } while (count != 0); return count; }";
+        let mut successes = 0;
+        for seed in 0..512 {
+            let Ok(output) = temporary(source, seed) else {
+                continue;
+            };
+            successes += 1;
+            let unit = parse_unit(&output).unwrap();
+            let index = find_fn(&unit, "f").unwrap();
+            let body = &fdef(&unit, index).statement;
+            let mut loop_span = None;
+            astutil::visit_stmts(body, &mut |statement| {
+                if matches!(statement.node, Statement::DoWhile(_)) {
+                    loop_span = Some(statement.span);
+                }
+            });
+            let mut increment = None;
+            astutil::scan_stmt_exprs(body, &mut |expression, _| {
+                if let Expression::UnaryOperator(unary) = &expression.node {
+                    if unary.node.operator.node == UnaryOperator::PostIncrement {
+                        increment = Some(expression.span.start);
+                    }
+                }
+            });
+            let loop_span = loop_span.expect("normalized do loop");
+            let increment = increment.expect("q++ survives temporary materialization");
+            assert!(
+                loop_span.start <= increment && increment < loop_span.end,
+                "seed {seed} moved q++ outside its loop:\n{output}"
+            );
+        }
+        assert!(successes > 0);
+    }
+
+    #[test]
+    fn temporary_keeps_memory_read_inside_condition() {
+        let source = "struct S { int value; }; int f(int effect, struct S *s) { int value; value = 0; if (effect) { value = s->value; } return value; }";
+        let mut successes = 0;
+        for seed in 0..512 {
+            let Ok(output) = temporary(source, seed) else {
+                continue;
+            };
+            successes += 1;
+            let condition = output.find("if (").expect("normalized if");
+            if let Some(read) = output.find("s->value") {
+                assert!(
+                    read > condition,
+                    "seed {seed} hoisted a conditional memory read:\n{output}"
+                );
+            }
+        }
+        assert!(successes > 0);
+    }
+
+    #[test]
+    fn expand_rejects_memory_derived_values() {
+        let source = "struct S { int max; }; int f(struct S *s) { int value; value = s->max; return value; }";
+        for seed in 0..32 {
+            assert!(expand(source, seed).is_err());
+        }
+    }
+
+    #[test]
+    fn expand_rejects_conditional_definitions_that_do_not_dominate() {
+        let source = "int f(int cond) { int value; value = 0; if (cond) value = 1; return value; }";
+        for seed in 0..32 {
+            assert!(expand(source, seed).is_err());
+        }
+    }
+
+    #[test]
+    fn expand_rejects_changed_dependencies() {
+        let source = "int f(int input) { int value; value = input; input = 2; return value; }";
+        for seed in 0..32 {
+            assert!(expand(source, seed).is_err());
+        }
+    }
+
+    #[test]
+    fn expand_rejects_self_dependent_assignments() {
+        let source = "int f(int value) { value = value + 1; return value; }";
+        for seed in 0..32 {
+            assert!(expand(source, seed).is_err());
+        }
+    }
+
+    #[test]
+    fn expand_never_borrows_a_sibling_declarator_initializer() {
+        let source =
+            "int f(int input) { int first = input + 1, second = input + 2; return first; }";
+        for seed in 0..32 {
+            assert!(expand(source, seed).is_err());
+        }
+    }
+
+    #[test]
+    fn expand_keeps_straight_line_local_scalar_substitution() {
+        let source = "int f(int input) { int value; value = input + 1; return value; }";
+        let mut found = false;
+        for seed in 0..32 {
+            if let Ok(output) = expand(source, seed) {
+                found = true;
+                assert!(!output.contains("return value"));
+                assert!(output.contains("input + 1"));
+            }
+        }
+        assert!(found);
     }
 
     #[test]
@@ -2650,6 +2958,16 @@ mod tests {
 
         let initialized = "int side(void); int f(void) { int value = side(); return value; }";
         assert!(reorder_decls(initialized, 1).is_err());
+    }
+
+    #[test]
+    fn declaration_reorder_preserves_scope_bindings_in_both_directions() {
+        let captures_outer = "int value; int f(void) { int copy = value; int value; return copy; }";
+        let strands_use = "int f(void) { int value; int copy = value; return copy; }";
+        for seed in 0..32 {
+            assert!(reorder_decls(captures_outer, seed).is_err());
+            assert!(reorder_decls(strands_use, seed).is_err());
+        }
     }
 
     #[test]

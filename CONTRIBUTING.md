@@ -1494,6 +1494,22 @@ independent instructions after the source has had its say. Aim it at rows the
 score calls `wrong`, and read the residual first so you know which you have.
 Treat a match it finds as something to explain before adopting.
 
+The cumulative AST walk has two deliberately different contracts. `--walk`
+defaults to the conservative set: expression temporaries and expansion over
+non-aliased integer locals, plus dependency-checked statement and declaration
+reordering. Its non-exact `best.c` is allowed to seed another safe run, though
+it is still only a draft and still needs reading. `--walk --classic` exposes
+the broader pret heuristics -- casts, masks, split assignments, shifted
+inequalities and the rest. Those transformations are codegen probes, not a
+semantic promise. The report calls that mode `classic-exact-only`, and every
+non-exact source is named `UNVERIFIED`; only a byte-exact result may leave its
+run directory. Heat changes where either mode looks. It changes no part of
+that trust boundary. For a main-image owner, fitness ranks the canonical GCC
+source-instruction diff after folding register names and stack offsets, then
+uses raw canonical rows and linked halfwords only to break ties. Overlay owners
+currently use the corresponding linked-binary structural view. Zero linked
+halfwords remains the only exact result.
+
 Where a permuter run DOES pay -- pret's Python permuter, cascaded twelve wide
 over `080bbb0c` -- every find divides into exactly two kinds, and the score
 cannot tell them apart. Real source facts (operand orders, held table
@@ -1627,7 +1643,7 @@ owner's gate.
 | `decomp_constraints`    | Derives bounded structural constraints for a candidate.                                                       |
 | `shape_sweep`           | Tries bounded, behaviour-preserving source shapes with the compiler fixed; `--descend` drives it iteratively. |
 | `search_compiler_modes` | Searches approved compiler modes with the source fixed.                                                       |
-| `permuter`      | A bounded source-permutation search with linked-byte scoring.                                                 |
+| `permuter`      | Bounded safe or exact-only classic source permutation with linked-byte scoring.                             |
 
 ### compiler -- routed builds and comparisons
 

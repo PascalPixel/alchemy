@@ -266,6 +266,7 @@ dependencies = [
  "alchemy-bundle",
  "alchemy-routing",
  "candidate-compiler",
+ "candidate-show",
  "lang-c",
  "overlay-disasm",
  "shape-sweep",

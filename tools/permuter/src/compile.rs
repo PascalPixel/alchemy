@@ -22,6 +22,7 @@ pub struct PreparedTarget {
     basename: String,
     expected: Vec<u8>,
     baseline: Score,
+    baseline_assembly: Option<String>,
     kind: Kind,
 }
 
@@ -280,6 +281,7 @@ impl PreparedTarget {
                 basename,
                 expected,
                 baseline,
+                baseline_assembly: None,
                 kind: Kind::Overlay {
                     name,
                     address: compiled.address,
@@ -309,11 +311,15 @@ impl PreparedTarget {
                 ));
             }
             let baseline = score(verification.actual, &expected);
+            let assembly_path = work.path().join(format!("{candidate_stem}.s"));
+            let baseline_assembly = fs::read_to_string(&assembly_path)
+                .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
             Ok(Self {
                 original,
                 basename,
                 expected,
                 baseline,
+                baseline_assembly: Some(baseline_assembly),
                 kind: Kind::Core { rom },
             })
         }
@@ -327,6 +333,10 @@ impl PreparedTarget {
         &self.expected
     }
 
+    pub fn baseline_assembly(&self) -> Option<&str> {
+        self.baseline_assembly.as_deref()
+    }
+
     pub fn identity(&self) -> String {
         let path = self.original.to_string_lossy();
         let mut bytes = self.expected.clone();
@@ -335,11 +345,11 @@ impl PreparedTarget {
         alchemy_bundle::sha256::hex(&bytes)
     }
 
-    pub fn compile(&self, source: &str) -> Result<Score, String> {
+    pub fn compile(&self, source: &str) -> Result<(Score, Option<String>), String> {
         let work = TempDir::new("candidate")?;
         let path = work.path().join(&self.basename);
         fs::write(&path, source).map_err(|error| format!("{}: {error}", path.display()))?;
-        let actual = match &self.kind {
+        let (actual, assembly) = match &self.kind {
             Kind::Overlay { name, address } => {
                 let compiled =
                     compile_overlay_candidate(&path, work.path(), name, Some(&self.original), &[])?;
@@ -349,10 +359,10 @@ impl PreparedTarget {
                         compiled.address
                     ));
                 }
-                compiled.data
+                (compiled.data, None)
             }
             Kind::Core { rom } => {
-                verify_candidate_routed(
+                let verification = verify_candidate_routed(
                     &path.to_string_lossy(),
                     &self.original.to_string_lossy(),
                     rom,
@@ -361,11 +371,15 @@ impl PreparedTarget {
                     ROM_BASE,
                     CompilerTarget::Gs1,
                     &CandidateCompilerConfiguration::default(),
-                )?
-                .actual
+                )?;
+                let candidate_stem = stem(&path)?;
+                let assembly_path = work.path().join(format!("{candidate_stem}.s"));
+                let assembly = fs::read_to_string(&assembly_path)
+                    .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
+                (verification.actual, Some(assembly))
             }
         };
-        Ok(score(actual, &self.expected))
+        Ok((score(actual, &self.expected), assembly))
     }
 }
 

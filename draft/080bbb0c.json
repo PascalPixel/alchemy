@@ -331,6 +331,10 @@
     {
       "shape": "search instruments on the fixpoint: shape_sweep --pairs (9 shapes, 1 compiled, no improvement) and --descend (1019 compiles, converged; its one 'win' is a negated arm swap that scores 285 rows and breaks size parity on the canonical measure)",
       "wrong": "both bounded searches are dry on this owner; the descend driver's internal region metric is not the linked-byte compass"
+    },
+    {
+      "shape": "simultaneous fold of the two proven structures (double-100 in-cluster + amt->tmp identity)",
+      "wrong": "insn count reaches 2481/2483 (best ever) but raw rows 608 and normalized 45/40 both degrade: the pair alone does not converge the coloring; the storm needs the remaining tie-classified texture rows resolved too, which requires reading beyond what their dependence-table ties currently permit"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

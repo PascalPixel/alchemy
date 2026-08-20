@@ -2,11 +2,17 @@
   "owner": "main:0x080ab5e4",
   "span_bytes": 4888,
   "score": {
-    "candidate_bytes": 1492,
-    "wrong_instructions": 2041,
-    "differing_halfwords": 2438,
-    "class": "size mismatch",
-    "insns": "479/2110"
+    "candidate_bytes": 4748,
+    "reference_bytes": 4748,
+    "wrong_instructions": 2001,
+    "differing_halfwords": 2324,
+    "class": "size parity",
+    "objdiff_structural_percent": 58.86819,
+    "note": "workbench frame: 4748/4748 at 2324hw against the assembled function object. Main-checkout candidate-show frame: 4748 vs the 4888-byte owner span, 2394 differing halfwords -- the span includes trailing bytes the function object does not. Record both; the owner-span number is the adoption-relevant one.",
+    "candidate_show_owner_span": {
+      "reference_bytes": 4888,
+      "differing_halfwords": 2394
+    }
   },
   "shape": {
     "calls": 186,
@@ -16,33 +22,47 @@
   },
   "domain": "Colosso tournament handler: texts 0x2128/0x212c (finals gating), 0xbbe (recovering), 0x219 (Warrior's Helm); IWRAM 0x03001c94/0x03001af8; reads Data_02000240",
   "expressed": [
+    "complete entry paths for both arg0 values, local initialization, persistent tournament fields, and competitor-status array construction",
+    "full pre-dispatch UI and participant-selection control flow, including the nested loops and redraw paths omitted by the former linear call scaffold",
     "the 28-case mov-pc dispatch at +0x71c: state = *(seq+0x212c) (skip when 0), tick counter (seq+0x2128)++ each entry, jump table at +0x74c, eight empty slots sharing the after-switch address",
-    "seq derived as *(main-work[+388]) with main work at *(0x03001f2c)",
-    "case grammar: every body opens with if (counter != N) break -- N in {40,60,90}",
-    "case 27 fully: waits 60 then shows the two Djinn-recovery tutorial dialogs (0xc4c/0xc4d) through the 08015038/48/18 window family with the 080030f8(1) frame pump, flag byte at Data_02000240+524, refresh via 080aafb8(seq)",
-    "cases 1 and 6/7: same dialog idiom with 0xc40/0xc41",
-    "case 2/4/8/9/22 shared body: at tick 90, adv=1, counter=0, state+1",
-    "case 15: three-dialog sequence (3140-3142) with 080a1ac0/080a1a40 bracketing"
+    "all switch interiors, shared tails, dialog sequences, timing gates, and progression updates",
+    "complete post-dispatch input, recovery, reward, redraw, and final persistent-store paths through the owner return",
+    "the evidence-backed function signature s32 Func_080ab5e4(s32 arg0), replacing the former void(void) scaffold"
   ],
   "unexpressed": [
     {
-      "op": "head",
-      "count": "~1820 bytes",
-      "where": "0x0..0x71c pre-dispatch: kept as the drafter's linear call scaffold, control flow unread"
+      "op": "aggregate recovery",
+      "count": "whole owner",
+      "where": "raw M2C_FIELD offsets and numeric bases still need evidence-backed structs, arrays, and field names"
     },
     {
-      "op": "tail",
-      "count": "~1860 bytes",
-      "where": "0xbd4..end: arg==0 branch, flags&0x100 tests, 08077210 cluster, texts 0xbb1/0xbbe/0x219 -- unread"
+      "op": "symbol recovery",
+      "count": "whole owner",
+      "where": "m2c temporaries and Func_* callees remain provisional until callers, data, and text establish honest names"
     },
     {
-      "op": "case interiors",
-      "count": "7 bodies",
-      "where": "3,13,14/16/17,18/20,21,24,28-latter-half stubs pending"
+      "op": "source-shape repair",
+      "count": "2001 instructions",
+      "where": "all regions are represented, but normalized diffs still show wrong types, expression boundaries, declaration order, and aggregate shape"
     }
   ],
-  "rejected": [],
+  "rejected": [
+    {
+      "experiment": "heat-guided classic AST walk",
+      "candidates": 10000,
+      "result": "no exact candidate; 155 compile failures; best retained source is deliberately UNVERIFIED because classic mutations are not guaranteed semantics-preserving"
+    },
+    {
+      "experiment": "heat-guided safe AST walk",
+      "candidates": 10000,
+      "result": "journal composite improved from 1033216102394 to 880199202393, but independent candidate-show scoring worsened from 2324 to 2339 differing halfwords and changed candidate size from 4748 to 4780 bytes; not harvested"
+    }
+  ],
   "notes": [
-    "value-vs-use-site caution: 0x212c/0x2128 decode as the finals texts but are struct offsets here; 0xc4c/0xc4d are genuinely text ids at their push sites. Resolve by use, not by value."
+    "value-vs-use-site caution: 0x212c/0x2128 decode as the finals texts but are struct offsets here; 0xc4c/0xc4d are genuinely text ids at their push sites. Resolve by use, not by value.",
+    "m2c 19f2ddb reconstructed the complete owner after symbolizing one 28-entry jump table and 110 pool/table references. The default symbolic assembly reassembles byte-identically to the reference (SHA-256 d68f1ce2d575bfa118d30df90603a97e2b95596b9ec1ef143ff55e1e594d91d5).",
+    "The generated source was repaired only for gs1cc's recovered field widths and pointer types; no inline assembly, fixed-register variables, copied bytes, or compiler changes were used.",
+    "Compared with the former 1492-byte scaffold, the full candidate reaches exact 4748-byte size, improves the linked score from 2438 to 2324 differing halfwords, and improves objdiff v3.8.0 ARMv4T structural similarity from 22.23341% to 58.86819%. It remains a draft, not progress.",
+    "Two native permuter waves (20,000 requested candidates total, 12 workers, seeds 20260820/20260821) confirmed this is not a last-mile owner. The safe winner reduced normalized structural rows but worsened the independent byte score and rewrote 1,656 source lines. Repair aggregate types and source shape before another permutation run. Ignored reports remain under out/permuter/080ab5e4-r{1,2}."
   ]
 }

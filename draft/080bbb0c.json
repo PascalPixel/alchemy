@@ -148,6 +148,11 @@
       "op": "bl Func_080bbabc",
       "count": 3,
       "where": "jump2 merges three text/dealt push copies the reference keeps; the reference's two dealt-heads color differently (r2 vs r4) which blocks its merge chain; ours color identically; root cause is per-body register pressure"
+    },
+    {
+      "op": "adds #36 and movs #100",
+      "count": 3,
+      "where": "early elem scan keeps target+36 unCSEd and the summon walk materializes off=100 in a register; both resist direct respelling"
     }
   ],
   "verified_against_reference": [
@@ -275,6 +280,18 @@
     {
       "shape": "cur = 0 moved after break (cascade)",
       "wrong": "dead-code deletion of the KO zeroing; third lie form: value-flow changes invisible to both guards"
+    },
+    {
+      "shape": "actor->pp = (s16)actor->max_pp after the join (cascade cycle 10)",
+      "wrong": "wrong on the else path; 4 rows of phase; denylisted"
+    },
+    {
+      "shape": "if/else through a temp for the range==4?100:power ternary",
+      "wrong": "280 vs 272; the ternary stands"
+    },
+    {
+      "shape": "two-pointer elem read (row = target + range*4; value = row+38)",
+      "wrong": "274 vs 272 in both statement orders; the ref keeps adds #36 by another means"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

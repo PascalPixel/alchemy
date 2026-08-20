@@ -1,82 +1,86 @@
 # Contributing to Alchemy
 
-Alchemy is an unofficial clean-room reconstruction of the English release of
-_Golden Sun_ for the Game Boy Advance. The repository succeeds when its C and
-independently described assets rebuild the released ROM byte for byte.
+Alchemy is an unofficial clean-room reconstruction of the English Game Boy
+Advance release of _Golden Sun_. The project is finished when reconstructed C
+and independently described assets build the reference ROM byte for byte.
 
-This is the sole contributor guide. `AGENTS.md` and `CLAUDE.md` are symlinks to
-it; `README.md` is for end users. Do not add more Markdown or text guides.
+Readable code, useful names, fast tools, and good explanations make that work
+possible. They are not progress by themselves: only exact C and accepted
+permanent assembly contribute to DONE.
 
-Readable C, names, documentation, and fast tools matter. They do not count as
-decompilation progress until the rebuilt bytes match.
+This is the sole contributor guide. `AGENTS.md` and `CLAUDE.md` point here;
+`README.md` is for users. Keep project procedure in this file instead of
+creating another guide.
 
-## Ground rules
+## The contract
 
-### Evidence
+### Use only approved evidence
 
-Game-specific knowledge may come only from the approved local ROMs and this
-repository's own reconstruction work:
+Game-specific conclusions may come from this repository's reconstruction work
+and these locally held reference ROMs:
 
 ```text
 gs1-{en,ja,de,es,fr,it}.gba
 gs2-{en,ja,de,es,fr,it}.gba
 ```
 
-`gs1-en.gba` is the build target. Other editions may establish shared layout
-or behavior, but never an original name or authorship. Do not inspect another
-Golden Sun decompilation, symbol list, pseudocode dump, history, or notes.
-Generic compiler, architecture, C, Rust, and pret repository conventions are
-fine. Public pret game code is not evidence for this game.
+`gs1-en.gba` is the build target. Other editions may demonstrate shared layout
+or behavior, but they cannot establish original English names or authorship.
+Do not inspect another Golden Sun decompilation, symbol list, pseudocode dump,
+commit history, or private notes. Generic material about C, Rust, ARM, GCC,
+binary formats, decompilation, and public pret conventions is allowed; public
+game code is not evidence about this game.
 
-Names must say only what local evidence demonstrates. Message text, tables,
-callers, pools, and cross-edition correspondence are evidence. Familiar lore
-that has not been derived here is not.
+Use names only as specific as the local evidence permits. Callers, callees,
+message text, data tables, literal pools, and cross-edition correspondence are
+evidence. Familiarity with the game is not.
 
-### Publication
+### Publish reconstruction, never ROM material
 
-Publish reconstructed source, source assets, deterministic transform plans,
-and semantic metadata. Never commit or transmit ROMs, ROM fragments, binary
-patches, object files, ELFs, compiler output, opaque dumps, private analysis,
-credentials, or built game images. Never send local ROM content to a network
-service.
+The repository may contain reconstructed source, source-format assets,
+deterministic transform plans, and semantic metadata. Never commit or transmit
+ROMs, ROM fragments, patches containing reference bytes, object files, ELFs,
+compiler output, built game images, opaque binary dumps, credentials, or
+private analysis. Never upload local ROM content to a network service.
 
-`check-publication` checks staged and outgoing content, including material
-added and later deleted in the pushed range. It cannot verify provenance;
-contributors must honor the evidence boundary themselves.
+The publication checker examines staged and outgoing history, including files
+added and later deleted. It cannot prove provenance; the evidence boundary is
+still each contributor's responsibility.
 
-### C and assembly
+### Keep source states honest
 
-There are two build tiers:
+- `exact/` contains C whose linked bytes exactly match one complete owner.
+- `asm/` and overlay assembly retain every owner not yet represented by exact C.
+- `draft/<owner>.c` and `draft/<owner>.json` hold one active, measured near-match.
+- Ignored `scratch/` and `out/` hold experiments, generated candidates, and tool output.
 
-- Exact C: C that compiles to every reference byte.
-- Assembly: everything not yet expressed as exact C.
+There is no semantic-C progress tier. A plausible implementation, equal source
+length, high objdiff percentage, or successful compilation does not displace
+reference assembly.
 
-There is no semantic-C coverage tier. Active near-matches live as one
-`draft/<owner>.c` plus `draft/<owner>.json`. Disposable variants and tool
-output live in ignored `scratch/`. Neither counts toward progress.
+C must remain ordinary C. Do not use inline assembly, fixed-register variables,
+empty assembly barriers, copied instruction bytes, or equivalent escape
+hatches. `no-asm-c` enforces the mechanical part of this rule.
 
-Do not use inline assembly, fixed-register variables, empty assembly barriers,
-copied bytes, or equivalent escape hatches in C. An unfinished owner stays in
-`asm/` or its overlay assembly. `no-asm-c` enforces this.
+Permanent assembly is only for an instruction shape that the approved compiler
+cannot emit. Record the compiler evidence and scope in
+`asm/classification.json`. Size, difficulty, or a long-running search is not
+evidence of permanence.
 
-Permanent assembly is reserved for instruction shapes the compiler cannot
-emit. The claim and evidence belong in `asm/classification.json`. Difficulty,
-size, or a stubborn score is not evidence of permanence.
+## Prepare a checkout
 
-## Setup
+Install Rust, Ninja, and `arm-none-eabi-binutils`. Put approved ROMs in ignored
+`roms/` and stage the approved compiler bundle in `alchemy-gcc/dist/`.
 
-Install Rust and `arm-none-eabi-binutils`. Put the approved ROMs in ignored
-`roms/`. Build the staged compiler in `alchemy-gcc/dist/`.
-
-Enable the hooks and generated-file merge driver once:
+Configure hooks and the generated-file merge driver once:
 
 ```sh
 git config core.hooksPath .hooks
 git config merge.generated.driver true
 ```
 
-In a worktree, do not run `git submodule` commands. Link the main checkout's
-ROM directory and staged compiler output instead:
+Never run `git submodule` commands from a worktree. Reuse the main checkout's
+private inputs instead:
 
 ```sh
 ln -s /path/to/main/roms roms
@@ -84,229 +88,281 @@ mkdir -p alchemy-gcc
 ln -s /path/to/main/alchemy-gcc/dist alchemy-gcc/dist
 ```
 
-Start by proving the checkout:
+Prove the available build inputs before changing source, then build the
+release-mode inner-loop host:
 
 ```sh
 make build-claimed
-make verify
 cargo build --release --manifest-path tools/compiler/Cargo.toml
 ```
 
-Use release binaries in the inner loop. Repeated `cargo run` startup is large
-relative to a candidate compile.
+Use `tools/compiler/target/release/compiler` while iterating. Repeated
+`cargo run` startup is significant beside a candidate compile.
 
-## The reconstruction loop
+A dist-only worktree can compile and score candidates, but `make verify` also
+inspects the complete compiler source checkout. Run that authoritative gate
+from a checkout containing the recorded `alchemy-gcc` revision before merging
+or claiming verification.
 
-1. Pick an audited owner.
-2. Read its complete reference assembly and literal pools.
-3. Reconstruct plain, era-appropriate C from that evidence.
-4. Confirm the source edit changes assembly.
-5. Compare linked bytes.
-6. Fix the largest structural misread.
-7. Adopt only at zero differing bytes.
+## Recover one owner
 
-This order is deliberate. Compiler-option sweeps and random permutation are
-last-mile tools. They cannot repair a wrong algorithm, case binding, type,
-loop, or aggregate layout.
+The standard loop is:
 
-### Pick an owner, not a byte run
+1. Select one audited owner and establish its complete extent.
+2. Read the reference assembly, pools, tables, and observable behavior.
+3. Recover the algorithm, control flow, types, and aggregate layout in plain C.
+4. Compare instruction structure, then linked bytes.
+5. Correct the largest source-shape error and repeat.
+6. Use permutation only after the remaining differences are local.
+7. Adopt the owner only at zero differing reference bytes.
 
-An owner is one function-sized region with a fixed entry point. Main-image
-assembly is `asm/<address>.s`; adopted C is `exact/<address>.c`. Overlay rows
-live in `assets/code/resource_<id>_overlay.s`; adopted C is
+The order matters. Random source variation and compiler-option sweeps cannot
+repair a wrong function boundary, switch binding, loop, type, or algorithm.
+
+### 1. Select an owner
+
+An owner is a function-sized region with a fixed entry point, not merely a run
+of unresolved bytes. Main-image owners begin in `asm/<address>.s`; exact source
+lands in `exact/<address>.c`. Overlay owners live inside
+`assets/code/resource_<id>_overlay.s`; their exact source is named
 `exact/resource_<id>_c_<address>.c`.
 
-The generated Targets table ranks unresolved byte runs. A row may begin in a
-pool and is not necessarily a function entry. Select entries from
-`semantic/regions.json`, then ensure the full span lies inside one audited
-executable interval in `metrics/gs1-en-executable.json`. The adoption gate
-rejects spans crossing an unaudited gap.
+The generated Targets table ranks useful scopes, but a listed run may begin in
+a literal pool or include a continuation. Resolve the owner through
+`semantic/regions.json` and confirm that its full span is inside one audited
+interval in `metrics/gs1-en-executable.json`. Adoption rejects unaudited gaps.
 
-Prefer cohorts: owners or case bodies with the same instruction shape.
-Comparing siblings exposes the one source feature that controls codegen and
-prevents endless spelling changes to a single file.
+Prefer related owners or case bodies over isolated guesses. Siblings built by
+the same compiler often reveal which single source feature controls their
+different output.
 
-### Read before writing
+### 2. Establish the reference shape
 
-Establish these facts from the reference first:
+Before writing C, account for:
 
-- prologue, saved registers, frame, arguments, and owner boundary;
-- load widths and signedness;
-- loop and branch structure, fallthrough, and shared tails;
-- switch table values, targets, and source-order body layout;
-- literal-pool constants and addresses;
-- aggregate bases and field offsets;
-- calls, side effects, and values live across calls.
+- the entry point, complete owner boundary, arguments, return, frame, and saved registers;
+- branch direction, fallthrough, loops, shared tails, and early returns;
+- switch values, jump-table targets, and source-order case layout;
+- load and store widths, signedness, bitfields, and aggregate offsets;
+- literal pools, addresses, constants, calls, and values live across calls;
+- side effects and repeated reads that optimization is allowed to combine.
 
-Assemble and disassemble reference `.s` when resolving pools. Hand-counting PC
-offsets over alignments is not reliable. Message IDs can be resolved through
-`assets/text/message_archive.json`; nearby text often identifies a scene or
-binding directly.
+Assemble and disassemble reference `.s` when resolving pools and table targets;
+do not hand-count PC-relative offsets across alignment. Resolve message IDs
+through `assets/text/message_archive.json`. Text and neighboring tables often
+identify a scene or binding without importing outside knowledge.
 
-Write the compiler's likely input, not a transcription of optimized output.
-Start with ordinary arrays, structs, loops, switches, and expressions. GCC's
-strength reduction, tail merging, and register allocation should recreate the
-machine shape. Hand-performing those optimizations usually changes earlier
-passes and makes the result worse.
+### 3. Recover source structure
 
-Use C89 declarations, short evidence-backed names, and macros for genuinely
-repeated case tails. Preserve observable original mistakes. Do not keep names
-such as `Func_02000f80`, `status_12c`, or anonymous numeric cases once their
-meaning is locally established; good names expose bad bindings.
+Write the likely compiler input, not optimized assembly expressed in C syntax.
+Begin with ordinary structs, arrays, loops, switches, and expressions. Let GCC
+perform strength reduction, common-tail merging, and register allocation.
+Manually imitating those passes usually changes earlier RTL and moves the
+result farther away.
 
-## Main-image workflow
+Use C89 declarations and short evidence-backed names. Preserve observable
+original mistakes. Replace names such as `Func_02000f80`, `status_12c`, and
+anonymous numeric cases once local evidence supports something better; honest
+names make incorrect bindings visible.
 
-Create or update `draft/<address>.c`, then ask whether the edit changed the
-instruction stream:
+For a large or incomplete main-image owner, create a minimal compilable draft
+with the project headers and evidence-backed signature, then start with the
+structural workbench instead of hand-transcribing thousands of instructions:
+
+```sh
+git clone https://github.com/matt-kempster/m2c.git m2c
+tools/compiler/target/release/compiler workbench draft/080bbb0c.c
+```
+
+The generated Ninja graph:
+
+- preprocesses and compiles the draft through its routed gs1cc configuration;
+- assembles the complete reference owner and symbolizes pools and jump tables;
+- runs m2c with the actual gs1cc type context;
+- compares reference and candidate objects with objdiff's ARMv4T engine; and
+- probes the generated m2c source without treating missing recovered types as a graph failure.
+
+Results stay in ignored `out/workbench/<address>/`. A second invocation rebuilds
+only invalidated stages. Use `--m2c PATH`, `--output DIR`, or `--no-run` when
+needed. m2c output is a source-shape draft, and objdiff is a structural compass;
+neither can establish exactness.
+
+### 4. Iterate against the compiler
+
+Keep one active `draft/<address>.c`. First verify that an edit changed emitted
+assembly:
 
 ```sh
 tools/compiler/target/release/compiler candidate-show draft/080bbb0c.c --asm
 ```
 
-Score linked bytes only after the source shape moved:
+Then compare linked bytes:
 
 ```sh
 tools/compiler/target/release/compiler candidate-show draft/080bbb0c.c --align
 ```
 
-`--first` crops the first residual window. `--patch FILE` scores one unified
-diff without modifying the draft. Independent theories belong in separate
-work directories, not concurrent edits to one file.
+`--first` crops the first residual window. `--patch FILE` scores a unified diff
+without changing the draft. Put independent theories in separate working
+directories rather than racing edits against one tracked source file.
 
-Adopt only an exact owner:
+Read the complete normalized instruction diff and repair its largest coherent
+hunk. A large mismatch means the source shape is still wrong. Fix algorithms,
+case ownership, types, declaration lifetimes, and aggregates before trying
+spellings or flags.
+
+### 5. Permute only the last mile
+
+The native permuter is useful when the owner extent, behavior, control flow,
+types, declarations, and major expression boundaries are already credible. It
+can explore local expression, statement, and declaration order; it is not a
+decompiler.
 
 ```sh
-make dispatch-decomp ARGS='integrate_matches draft/<address>.c --apply'
+tools/compiler/target/release/compiler permute --help
 ```
 
-## Overlay workflow
+Use explicit `PERM_*` choices or semantics-preserving AST mutations. Mixed
+guided and unguided seeds are reasonable after a heat-guided run stagnates.
+Keep every run under ignored output, read a winner's complete diff, and rescore
+it independently before harvesting it. A lower internal score is not proof of
+semantic correctness.
 
-Use the overlay host for decoding, reconstruction, scoring, adoption, parking,
-and audits:
+### 6. Adopt only exact work
+
+For a main-image owner, adoption is allowed only when linked
+`differing_halfwords` is zero:
 
 ```sh
-cargo run --release --manifest-path tools/overlay/Cargo.toml -- show resource_373:034c
+mkdir -p scratch/adopt
+cp draft/<address>.c scratch/adopt/src_<address>.c
+cargo run --release --manifest-path tools/check/Cargo.toml -- integrate scratch/adopt
+cargo run --release --manifest-path tools/check/Cargo.toml -- integrate --apply scratch/adopt
+```
+
+Until then, retain the reference assembly. A nearly exact draft is useful
+research but does not count as DONE.
+
+## Work on overlays
+
+The structural workbench currently targets main-image owners. Use the overlay
+host for overlay decoding, scoring, adoption, parking, and audits:
+
+```sh
+cargo run --release --manifest-path tools/overlay/Cargo.toml -- show resource_373 034c
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- score draft/resource_373_c_0200034c.c --align
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- adopt resource_373:034c --source draft/resource_373_c_0200034c.c --apply
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- park resource_373:034c --apply
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- audit --all
 ```
 
-Adoption temporarily splices the row into its overlay, so run one adoption at
-a time. Scoring is read-only and may run in parallel. After merging branches
-that adopted overlays, regenerate coverage, run `overlay audit --all`, and
-verify the full build.
+Scoring is read-only and may run in parallel. Adoption temporarily splices one
+row into a shared overlay, so apply one adoption at a time. After merging any
+overlay adoption, regenerate coverage, run `overlay audit --all`, and prove the
+full build. Main-image success does not imply overlay or asset identity.
 
-## Measuring honestly
+## Interpret measurements correctly
 
-`differing_halfwords` is the gate: adoption requires zero. It is not a useful
-compass while lengths differ, because one missing instruction shifts every
-later byte.
+Use comparisons in this order:
 
-The normalized instruction diff is the compass. Work the largest hunk in the
-whole-file diff, not the first colored row. Register names and spill slots are
-allocator output; normalize them when deciding whether source structure is
-still wrong.
+1. Linked `differing_halfwords` decides exactness and adoption.
+2. Normalized instruction diffs locate structural disagreement.
+3. Objdiff percentages and permuter scores rank experiments only.
 
-A matching prefix is real but fragile. One changed live range can recolor an
-entire function. A frame-size difference means the maximum live spill set
-differs somewhere; do not pad the source to imitate the number. Equal file
-size is not completeness.
+When candidate and reference lengths differ, one insertion can shift every
+later halfword, so the raw differing count is a poor compass. When lengths are
+equal, zero is still the only completion state.
 
-When a structurally justified edit makes an aggregate score worse, trust the
-reference reading. Plausible but incorrectly bound bodies can align by luck.
+Work the largest coherent hunk in the complete instruction diff, not whichever
+colored line appears first. Register names, spills, and frame size are compiler
+consequences. A frame mismatch means some live range differs; adding dummy
+locals to imitate the number does not fix the cause.
 
-## The permuter
+A matching prefix is real but fragile because one changed live range can
+recolor the rest of an owner. Conversely, a plausible but incorrectly bound
+body can align by luck. Prefer reference-backed structural conclusions over an
+aggregate score that happens to improve.
 
-Use the permuter after the algorithm, control flow, declarations, and owner
-extent are credible. It is good at local expression, declaration, and
-statement-order choices. It is not a decompiler.
+## Treat the compiler as evidence
 
-The native permuter supports explicit `PERM_*` choices, AST randomization,
-parallel workers, heat guidance, chained improvements, resume/import, and an
-exact stop. See the live CLI before a run:
+The compiler source is part of the reconstruction environment. Before sweeping
+equivalent C spellings, inspect the relevant GCC 2.96 pass. Source order affects
+switch-body layout; signed loads, bitfields, constants, address forms,
+declaration order, alias sets, scheduling, and cross-jumping all change RTL and
+register allocation.
 
-```sh
-tools/compiler/target/release/compiler permute --help
-```
+Compiler changes belong in the separate compiler repository, together with its
+GPL notices, corresponding source, tests, and reproducible build instructions.
+The main repository records the staged compiler revision and approved bundle
+digests. Never invent a target option or patch the compiler merely to conceal
+an incorrect source reconstruction.
 
-Keep run output outside tracked source. Harvest a candidate only after reading
-its complete diff and independently rescoring it. Do not let a heat map prevent
-exploration; mixed guided and unguided seeds are appropriate when a run has
-stagnated.
+## Keep tooling portable and small
 
-## Read the compiler
+There are six public executable hosts: `build-assets`, `build-stage`, `assets`,
+`compiler`, `overlay`, and `check`. Contributor operations are subcommands of
+those hosts. A game-specific encoder may remain a library behind an asset host;
+it should not become another public command.
 
-The compiler source is part of the project. Before sweeping spellings, inspect
-the relevant GCC 2.96 pass. Source order controls switch-body layout. Signed
-loads, bitfields, constant construction, address forms, and declaration order
-all alter RTL before register allocation.
+Tooling is Rust. Use maintained crates or established external tools for
+generic plumbing such as JSON, PNG, DEFLATE, hashing, regex, temporary files,
+file locking, directory walking, object comparison, and build scheduling.
+Repository code should describe GBA and reconstruction-specific behavior.
+Names are neutral and descriptive, not prefixed with the project name.
 
-Compiler changes belong in the separate compiler repository with its GPL
-notices and corresponding source. The main repository records only the staged
-compiler revision/digests it accepts. Do not invent target options or use a
-compiler patch to hide a source reconstruction error.
+`make tooling-size` enforces the portable-toolkit budget. Keep a tool only when
+it is required to build, inspect, prove, adopt, or permute a reconstruction and
+would still be worth carrying into a new GBA decompilation project.
 
-## Tooling standard
+## Prove the repository
 
-There are six public executables: `build-assets`, `build-stage`, `assets`,
-`compiler`, `overlay`, and `check`. Contributor commands are subcommands of
-those hosts. Game-specific encoders may remain small libraries behind the
-asset host; they are not separate public tools.
-
-Repository tooling is Rust. Use maintained crates for generic formats and
-plumbing—JSON, PNG, DEFLATE, hashing, regex, temporary files, file locking,
-directory walking—instead of maintaining local substitutes. Our code should
-describe GBA and project-specific transformations. Tool and crate names are
-neutral and descriptive; do not prefix them with the project name.
-
-Keep tooling below the line budget enforced by `make tooling-size`. A tool
-survives only if it is required to build, prove, inspect, adopt, or permute a
-reconstruction and would be useful when starting another GBA decompilation.
-
-## Build and gates
+Use the narrowest useful command while iterating, then finish with the full
+gate:
 
 ```sh
 make build-claimed   # compile and link every adopted main-image owner
 make build-asm       # assemble retained main-image regions
 make build-assets    # rebuild tracked source assets
-make build-full      # compose and compare all owned regions
+make build-full      # compose and compare every owned region
 make build-rom       # produce the final ROM locally
 make coverage        # regenerate metrics, figures, and Targets
-make test            # focused tests and policy checks
-make verify          # authoritative gate
+make test            # tooling, policy, and focused regression tests
+make verify          # authoritative byte-identical repository gate
 ```
 
-`make verify` must end with a byte-identical full build and fresh generated
-artifacts. A successful compilation count is not a full build: overlay and
-asset mismatches can fail later in the pipeline.
+`make verify` must finish with a byte-identical full build and fresh generated
+artifacts. A clean compile count is insufficient: overlay reconstruction,
+compressed assets, ownership manifests, and final composition can fail later.
+Do not describe a change as verified when the authoritative gate stopped at a
+baseline or environment error; report that blocker separately.
 
-## Merging and committing
+## Merge and commit cleanly
 
-Generated metrics conflict when two branches adopt owners. Do not choose one
-side as truth. Complete the merge, run `make coverage`, audit overlays, and
-run `make verify`.
+Generated coverage files are products, not merge authorities. When branches
+adopt different owners, merge the source changes, regenerate with
+`make coverage`, audit overlays, and run `make verify`. Do not resolve generated
+metrics by choosing one branch's copy.
 
 Before committing:
 
-1. Inspect the entire diff and preserve unrelated user work.
-2. Remove scratch output and generated binaries.
-3. Run the focused test for changed tooling.
-4. Run `make verify`.
-5. Regenerate progress and use the required subject prefix.
+1. Inspect the complete diff and preserve unrelated work already in the tree.
+2. Remove or relocate scratch output, generated binaries, and temporary links.
+3. Run focused tests for the changed source or tooling.
+4. Run `make verify` and state its exact outcome.
+5. Generate, rather than guess, the required subject prefix.
 
 ```sh
 make progress-subject
 ```
 
-Subjects begin `☀️ N% – `. The percentage is generated; do not guess it.
-Codex commits are authored by Codex, Claude commits by Claude, and human work
-by the human who wrote it. Do not attribute an agent's changes to Pascal.
+Commit subjects begin `☀️ N% – `. Codex-written commits are authored by Codex,
+Claude-written commits by Claude, and human-written commits by that human. Do
+not attribute an agent's work to Pascal.
 
-When a large owner will not converge, record its honest draft measurement and
-move to another cohort. Finished owners are the best examples of this
-compiler's source shapes; understanding compounds even when one target does
-not close.
+If a large owner stops converging, leave one honest measured draft, record the
+remaining structural problem, and move to a related owner. Exact siblings are
+the best documentation of the approved compiler's source shapes; knowledge
+compounds even when one target does not close immediately.
 
 ## Targets
 

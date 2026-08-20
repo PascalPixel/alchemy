@@ -224,7 +224,7 @@ fn alchemy_identity(
     host_signature: &str,
 ) -> String {
     let mut stream = Vec::new();
-    append_identity_field(&mut stream, "alchemy-permuter-alchemy-backend-v3-insns");
+    append_identity_field(&mut stream, "permuter-alchemy-backend-v3-insns");
     append_identity_field(&mut stream, target_identity);
     append_identity_field(&mut stream, implementation_signature);
     append_identity_field(&mut stream, compiler_signature);
@@ -391,7 +391,7 @@ impl TempDir {
             .as_nanos();
         let count = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
         let path = std::env::temp_dir().join(format!(
-            "alchemy-permuter-generic-{label}-{}-{time}-{count}",
+            "permuter-generic-{label}-{}-{time}-{count}",
             std::process::id()
         ));
         fs::create_dir(&path).map_err(|error| format!("{}: {error}", path.display()))?;

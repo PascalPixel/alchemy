@@ -45,7 +45,7 @@ impl TempDir {
             .as_nanos();
         let count = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
         let path = std::env::temp_dir().join(format!(
-            "alchemy-permuter-{label}-{}-{time}-{count}",
+            "permuter-{label}-{}-{time}-{count}",
             std::process::id()
         ));
         fs::create_dir(&path).map_err(|error| format!("{}: {error}", path.display()))?;

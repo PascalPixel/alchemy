@@ -10,17 +10,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "alchemy-permuter"
-version = "0.1.0"
-dependencies = [
- "alchemy-bundle",
- "alchemy-routing",
- "candidate-compiler",
- "overlay-disasm",
- "shape-sweep",
-]
-
-[[package]]
 name = "alchemy-plan"
 version = "0.1.0"
 dependencies = [
@@ -104,7 +93,6 @@ dependencies = [
 name = "compiler"
 version = "0.1.0"
 dependencies = [
- "alchemy-permuter",
  "audit-residuals",
  "bl-site-symbols",
  "candidate-explain",
@@ -116,6 +104,7 @@ dependencies = [
  "mode-cohort",
  "mode-sweep",
  "overlay-show",
+ "permuter",
  "rtl-align",
  "rtl-insn",
  "rtl-schedule",
@@ -206,6 +195,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
+name = "lang-c"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "720e6492b795d1f6838eb2e51879ec3073be745a20e52c32a241b80b3c8ed998"
+
+[[package]]
 name = "main-candidate-rank"
 version = "0.1.0"
 
@@ -262,6 +257,18 @@ version = "0.1.0"
 dependencies = [
  "overlay-call-targets",
  "overlay-disasm",
+]
+
+[[package]]
+name = "permuter"
+version = "0.1.0"
+dependencies = [
+ "alchemy-bundle",
+ "alchemy-routing",
+ "candidate-compiler",
+ "lang-c",
+ "overlay-disasm",
+ "shape-sweep",
 ]
 
 [[package]]

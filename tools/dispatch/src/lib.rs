@@ -477,12 +477,12 @@ const OVERLAY: &[Entry] = &[
 
 const SEARCH: &[Entry] = &[
     Entry {
-        name: "alchemy_permuter",
-        target: Target::Sub("tools/compiler/target/release/compiler", "permute"),
-    },
-    Entry {
         name: "decomp_constraints",
         target: Target::Sub("tools/check/target/release/check", "decomp-constraints"),
+    },
+    Entry {
+        name: "permuter",
+        target: Target::Sub("tools/compiler/target/release/compiler", "permute"),
     },
     Entry {
         name: "search_compiler_modes",
@@ -852,7 +852,7 @@ mod tests {
         assert!(find_entry(Group::Overlay, "overlay_disasm").is_some());
         assert!(find_entry(Group::Overlay, "overlay_certify").is_some());
         assert!(find_entry(Group::Search, "shape_sweep").is_some());
-        assert!(find_entry(Group::Search, "alchemy_permuter").is_some());
+        assert!(find_entry(Group::Search, "permuter").is_some());
         // Consolidation removed most standalone diagnostics; the ones left
         // are hosts and the crates that must run when dispatch is broken.
         assert_eq!(non_public_targets().len(), 3);

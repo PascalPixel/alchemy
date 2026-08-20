@@ -44,7 +44,7 @@ fn main() -> ExitCode {
 
         "mode-cohort" => { mode_cohort::entrypoint::entry(&rest); ExitCode::SUCCESS }
         "decomp-diagnose" => { decomp_diagnose::entrypoint::entry(&rest); ExitCode::SUCCESS }
-        "permute" => match alchemy_permuter::run(rest.clone()) {
+        "permute" => match permuter::run(rest.clone()) {
             Ok(()) => ExitCode::SUCCESS,
             Err(message) => { eprintln!("error: {message}"); ExitCode::FAILURE }
         },

@@ -652,6 +652,10 @@ pub struct StmtInfo {
     pub start: usize,
     pub is_decl: bool,
     pub has_nested_block: bool,
+    /// Control transfers (break/continue/return/goto) must never move or
+    /// vanish: relocating one changes which statements execute, and the
+    /// search's biggest false gains have all been exactly that.
+    pub is_jump: bool,
     pub decl: Option<DeclInfo>,
 }
 
@@ -692,11 +696,19 @@ fn stmt_info(item: &Node<BlockItem>) -> StmtInfo {
         }
         _ => (false, None),
     };
+    let is_jump = matches!(
+        &item.node,
+        BlockItem::Statement(st) if matches!(
+            st.node,
+            Statement::Break | Statement::Continue | Statement::Return(_) | Statement::Goto(_)
+        )
+    );
     StmtInfo {
         id: item_nid(item),
         start: item_nid(item).0,
         is_decl,
         has_nested_block: has_nested_block(&item.node),
+        is_jump,
         decl,
     }
 }

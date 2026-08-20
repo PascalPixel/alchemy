@@ -907,14 +907,7 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            /* 参照は range*4 を分岐前に計算し [sp,#12] へ退避する。power の再利用が唯一その形を出す。 */
-            power = range * 4;
-            if (range != 4) {
-                s32 off;
-
-                off = power + 72;
-                bonus = power - ((s16 *)((u8 *)target + off))[1];
-            }
+            TAKE_BONUS();
             dmg = act->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
@@ -1196,16 +1189,17 @@ hp_tail:
         s32 maxu;
         s32 maxv;
         s32 heal;
+        s32 amt;
 
         old = *(volatile u16 *)&target->hp;
-        heal = target->hp;
         maxu = *(volatile u16 *)&target->max_hp;
+        heal = target->hp;
         maxv = target->max_hp;
         if (action->effect == EFX_HEAL_60)
-            tmp = maxv * 60;
+            amt = maxv * 60;
         else
-            tmp = maxv * 30;
-        heal += Math_Div(tmp, 100);
+            amt = maxv * 30;
+        heal += Math_Div(amt, 100);
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;
@@ -1509,7 +1503,7 @@ hp_tail:
         }
         BattleEvent_Push(BATTLE_EVENT_RESET, 0);
         BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);
-        if (heal == (u16)actor->max_pp)
+        if (heal == actor->max_pp)
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);
         else {
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);

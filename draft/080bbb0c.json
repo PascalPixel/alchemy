@@ -296,6 +296,10 @@
     {
       "shape": "first elem arm walks tbl destructively to force the second arm's +36 rebuild",
       "wrong": "278 vs 272, and the second arm's head compare reads tbl after the walk -- semantics broken; the ref's exact pointer lifetimes at .L3/.L6 still unread"
+    },
+    {
+      "shape": "cascade cycle 11 stack",
+      "wrong": "every mutation semantically false: (u16)max_hp compare, (u8)heal store truncation, clamp delta moved out of its arm, empty tautology if"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",
@@ -304,6 +308,7 @@
     "port pret's reuse-existing-variable temp mutation (perm_temp_for_expr with existing-var reuse) into alchemy_permuter; measured gap: 75k of our candidates found nothing, pret found the power=range*4 fix in minutes"
   ],
   "notes": [
-    "cascade base sits 9 rows lower (254) via no-op block wrappers that perturb jump2's FELLED crossjump topology; semantically identical to the draft; the real source shape behind that CFG is still unread"
+    "cascade base sits 9 rows lower (254) via no-op block wrappers that perturb jump2's FELLED crossjump topology; semantically identical to the draft; the real source shape behind that CFG is still unread",
+    "cascade campaign closed after 11 cycles: ~30 verified source facts folded (526 -> 272 rows, size parity), but cycles 9-11 yield only semantic lies in fresh spellings (u16/u8 width casts the reference reads signed, clamp arms hoisted, dead-code moves). The remaining 272 rows are coloring/crossjump topology; the named reading targets are the elem-scan pointer lifetimes (.L3/.L6), the FELLED merge pressure cluster, and the summon walk's off=100 materialization."
   ]
 }

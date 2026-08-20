@@ -16,7 +16,7 @@
 use lang_c::ast::*;
 use lang_c::span::{Node, Span};
 
-use crate::asttypes::is_assign_op;
+use crate::asttypes::{is_assign_op, TypeMap};
 use crate::cemit;
 
 /// Node identity: (span.start, span.end) in the current candidate text.
@@ -100,9 +100,10 @@ pub fn equal_expr(a: &Expression, b: &Expression) -> bool {
 
 // --------------------------------------------------------- classification
 
-pub fn is_lvalue(e: &Expression) -> bool {
+pub fn is_lvalue(e: &Expression, tm: &TypeMap) -> bool {
     match e {
-        Expression::Identifier(_) | Expression::Member(_) => true,
+        Expression::Identifier(identifier) => !tm.enum_constants.contains(&identifier.node.name),
+        Expression::Member(_) => true,
         Expression::BinaryOperator(b) => {
             matches!(b.node.operator.node, BinaryOperator::Index)
         }
@@ -128,11 +129,7 @@ pub fn is_effectful(e: &Expression) -> bool {
             }
         }
         Expression::Call(_) => found = true,
-        Expression::BinaryOperator(b) => {
-            if is_assign_op(&b.node.operator.node) {
-                found = true;
-            }
-        }
+        Expression::BinaryOperator(b) if is_assign_op(&b.node.operator.node) => found = true,
         _ => {}
     });
     found
@@ -536,7 +533,7 @@ pub fn visit_decls_mut(stmt: &mut Node<Statement>, f: &mut dyn FnMut(&mut Node<D
 
 /// Nested blocks of one statement, in pret's `for_nested_blocks` order.
 /// After the engine's normalization every returned statement is a Compound.
-pub fn nested_blocks<'a>(stmt: &'a Node<Statement>) -> Vec<&'a Node<Statement>> {
+pub fn nested_blocks(stmt: &Node<Statement>) -> Vec<&Node<Statement>> {
     let mut out = Vec::new();
     collect_nested(stmt, &mut out);
     out
@@ -576,7 +573,7 @@ pub fn has_nested_block(item: &BlockItem) -> bool {
     }
 }
 
-pub fn block_items<'a>(block: &'a Node<Statement>) -> &'a Vec<Node<BlockItem>> {
+pub fn block_items(block: &Node<Statement>) -> &Vec<Node<BlockItem>> {
     match &block.node {
         Statement::Compound(items) => items,
         _ => panic!("block is not a compound; the engine normalizes candidates"),
@@ -625,7 +622,12 @@ pub fn with_block<R>(
     }
 }
 
-pub fn insert_block_item(root: &mut Node<Statement>, block: Nid, index: usize, item: Node<BlockItem>) -> bool {
+pub fn insert_block_item(
+    root: &mut Node<Statement>,
+    block: Nid,
+    index: usize,
+    item: Node<BlockItem>,
+) -> bool {
     let mut item = Some(item);
     with_block(root, block, &mut |items| {
         let at = index.min(items.len());
@@ -905,9 +907,11 @@ fn collect_writes(stmt: &Node<Statement>, add: &mut dyn FnMut(&str, usize)) {
     }
 }
 
-/// Port of `find_var_reads`, with pret's exact skip rules: `&id` is not a
-/// read; an assignment whose lvalue is a plain identifier is skipped
-/// entirely (both sides); a member access reads only its base expression.
+/// Finds variable reads used by the data-flow-sensitive AST passes. `&id` is
+/// not a value read and a plain assignment does not read its lvalue, but its
+/// right-hand side must still be visited. The old pret-compatible traversal
+/// skipped both sides of `copy = Func(size)`, which let `perm_expand_expr`
+/// erase the definition of `size` while leaving that use uninitialized.
 pub fn find_var_reads(fdef: &FunctionDefinition) -> Vec<(String, usize)> {
     let mut out = Vec::new();
     reads_stmt(&fdef.statement, &mut out);
@@ -1000,9 +1004,13 @@ fn reads_expr(e: &Node<Expression>, out: &mut Vec<(String, usize)>) {
         }
         Expression::Member(m) => reads_expr(&m.node.expression, out),
         Expression::BinaryOperator(b) => {
-            if is_assign_op(&b.node.operator.node)
-                && matches!(&b.node.lhs.node, Expression::Identifier(_))
-            {
+            if is_assign_op(&b.node.operator.node) {
+                if b.node.operator.node != BinaryOperator::Assign
+                    || !matches!(&b.node.lhs.node, Expression::Identifier(_))
+                {
+                    reads_expr(&b.node.lhs, out);
+                }
+                reads_expr(&b.node.rhs, out);
                 return;
             }
             reads_expr(&b.node.lhs, out);
@@ -1053,14 +1061,9 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
     use crate::asttypes::CType;
     let mut ptrs = 0usize;
     let mut cur = t;
-    loop {
-        match cur {
-            CType::Ptr(inner) => {
-                ptrs += 1;
-                cur = inner;
-            }
-            _ => break,
-        }
+    while let CType::Ptr(inner) = cur {
+        ptrs += 1;
+        cur = inner;
     }
     let mut specifiers: Vec<Node<DeclarationSpecifier>> = Vec::new();
     match cur {
@@ -1088,7 +1091,10 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
                 specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(ts))));
             }
         }
-        CType::Struct { is_union, name: tag } => {
+        CType::Struct {
+            is_union,
+            name: tag,
+        } => {
             if tag.is_empty() {
                 return None;
             }

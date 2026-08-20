@@ -114,8 +114,8 @@ pub fn gate_validity(path: &str, args: &[String]) -> Result<(), String> {
                 if seed >= count {
                     break;
                 }
-                let out = AstRandomizer::new(&source, seed as u64, None)
-                    .and_then(|mut r| r.randomize());
+                let out =
+                    AstRandomizer::new(&source, seed as u64, None).and_then(|mut r| r.randomize());
                 let out = match out {
                     Ok(o) => o,
                     Err(_) => {

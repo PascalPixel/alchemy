@@ -11,12 +11,14 @@
 //!
 //! Probability constants are pret's, ported verbatim.
 
+use std::collections::{BTreeMap, BTreeSet};
+
 use lang_c::ast::*;
 use lang_c::span::Node;
 
 use crate::asttypes::{
-    allowed_basic_type, build_typemap, decayed_expr_type, ensure,
-    expr_type, is_assign_op, pointer_decay, resolve_typedefs, same_type, CType, Fail, TypeMap,
+    allowed_basic_type, build_typemap, decayed_expr_type, ensure, expr_type, is_assign_op,
+    pointer_decay, resolve_typedefs, same_type, CType, Fail, TypeMap,
 };
 use crate::astutil::{
     self, binop, equal_expr, expr_stmt, find_var_reads_in_expr, id_expr, insert_block_item,
@@ -53,7 +55,10 @@ pub struct Rng {
 
 impl Rng {
     pub fn new(seed: u64) -> Rng {
-        Rng { state: seed, heat: None }
+        Rng {
+            state: seed,
+            heat: None,
+        }
     }
     fn next(&mut self) -> u64 {
         self.state = self.state.wrapping_add(0x9e37_79b9_7f4a_7c15);
@@ -87,7 +92,9 @@ impl Rng {
         lo + self.index(hi - lo)
     }
     pub fn span_weight(&self, offset: usize) -> f64 {
-        let Some((heat, len)) = &self.heat else { return 1.0 };
+        let Some((heat, len)) = &self.heat else {
+            return 1.0;
+        };
         let f = offset as f32 / (*len).max(1) as f32;
         let near = heat.iter().filter(|h| (*h - f).abs() <= 0.03).count();
         1.0 + (4 * near.min(2)) as f64
@@ -231,9 +238,11 @@ pub struct AstRandomizer {
 }
 
 fn parse_unit(source: &str) -> Result<TranslationUnit, String> {
-    let mut config = lang_c::driver::Config::default();
-    config.flavor = lang_c::driver::Flavor::GnuC11;
-    config.cpp_command = String::new();
+    let config = lang_c::driver::Config {
+        flavor: lang_c::driver::Flavor::GnuC11,
+        cpp_command: String::new(),
+        ..Default::default()
+    };
     lang_c::driver::parse_preprocessed(&config, source.to_string())
         .map(|p| p.unit)
         .map_err(|e| format!("parse failed: {e}"))
@@ -266,21 +275,22 @@ fn fbody_mut(unit: &mut TranslationUnit, index: usize) -> &mut Node<Statement> {
     }
 }
 
+fn call_sequence(body: &Node<Statement>) -> Vec<String> {
+    let mut calls = Vec::new();
+    scan_stmt_exprs(body, &mut |expression, _| {
+        if let Expression::Call(call) = &expression.node {
+            calls.push(crate::cemit::emit_expression(&call.node.callee.node));
+        }
+    });
+    calls
+}
+
 impl AstRandomizer {
     /// Parses and re-emits the input so that every later parse yields a
     /// fully braced tree with genuine, unique spans. The target function is
     /// the last function definition in the unit.
     pub fn set_heat(&mut self, heat: Vec<f32>) {
         self.heat = heat;
-    }
-
-    fn heat_weight(&self, offset: usize) -> f64 {
-        if self.heat.is_empty() {
-            return 1.0;
-        }
-        let f = offset as f32 / self.source.len().max(1) as f32;
-        let near = self.heat.iter().filter(|h| (*h - f).abs() <= 0.03).count();
-        1.0 + (4 * near.min(2)) as f64
     }
 
     pub fn new(source: &str, seed: u64, only: Option<AstPass>) -> Result<AstRandomizer, String> {
@@ -324,12 +334,23 @@ impl AstRandomizer {
         };
         let mut unit = parse_unit(&self.source)?;
         let fn_index = find_fn(&unit, &self.fn_name)?;
+        let calls = call_sequence(&fdef(&unit, fn_index).statement);
         for _ in 0..1000 {
             let pass = match self.only {
                 Some(p) => p,
                 None => *random_weighted(&mut self.rng, &DEFAULT_GCC_WEIGHTS),
             };
             if run_pass(pass, &mut unit, fn_index, &mut self.rng).is_ok() {
+                // A source mutation may alter register pressure; it may not
+                // add, remove, or reorder observable calls. The compiled BL
+                // guard compares against the reference and can therefore
+                // accept a semantically wrong move when that move happens to
+                // improve alignment. This invariant compares with the walk's
+                // own parent and rejects the lie before invoking gcc.
+                if call_sequence(&fdef(&unit, fn_index).statement) != calls {
+                    unit = parse_unit(&self.source)?;
+                    continue;
+                }
                 let out = emit_translation_unit(&unit);
                 self.source = out.clone();
                 return Ok((out, pass.name()));
@@ -413,7 +434,9 @@ fn ensure_arithmetic_type(e: &Expression, tm: &TypeMap) -> Result<(), Fail> {
     ensure(allowed_basic_type(
         &t,
         tm,
-        &["int", "char", "long", "short", "signed", "unsigned", "float", "double"],
+        &[
+            "int", "char", "long", "short", "signed", "unsigned", "float", "double",
+        ],
     ))
 }
 
@@ -459,7 +482,12 @@ fn random_type(rng: &mut Rng) -> CType {
 }
 
 /// Port of `randomize_type`.
-fn randomize_type(t: &CType, tm: &TypeMap, rng: &mut Rng, ensure_changed: bool) -> Result<CType, Fail> {
+fn randomize_type(
+    t: &CType,
+    tm: &TypeMap,
+    rng: &mut Rng,
+    ensure_changed: bool,
+) -> Result<CType, Fail> {
     if allowed_basic_type(t, tm, &INT_TYPES) {
         return Ok(random_type(rng));
     }
@@ -529,6 +557,12 @@ fn pick_random_subset(rng: &mut Rng, cands: &[Nid], mid: usize) -> Vec<Nid> {
     out
 }
 
+fn crosses_control_entry(place_start: usize, expression_start: usize, entries: &[usize]) -> bool {
+    entries
+        .iter()
+        .any(|entry| place_start <= *entry && *entry < expression_start)
+}
+
 /// Port of `maybe_reuse_var`.
 #[allow(clippy::too_many_arguments)]
 fn maybe_reuse_var(
@@ -581,6 +615,14 @@ fn perm_temp_for_expr(
     let f = fdef(unit, fn_index);
     let writes = astutil::compute_write_locations(f);
     let reads = astutil::compute_read_locations(f);
+    let mut control_entries = Vec::new();
+    visit_stmts(&f.statement, &mut |statement| {
+        if matches!(statement.node, Statement::Labeled(_)) {
+            control_entries.push(statement.span.start);
+        }
+    });
+    control_entries.sort_unstable();
+    control_entries.dedup();
     let should_make_ptr = rng.chance(PROB_TEMP_PTR);
 
     struct Cand {
@@ -593,10 +635,13 @@ fn perm_temp_for_expr(
     let mut einds: std::collections::BTreeMap<Nid, usize> = Default::default();
 
     // Step 1: assign probabilities to each place/expression.
+    #[allow(clippy::too_many_arguments)]
     fn rec(
         block: &Node<Statement>,
         reuse_in: &[String],
         should_make_ptr: bool,
+        tm: &TypeMap,
+        control_entries: &[usize],
         writes: &std::collections::BTreeMap<String, Vec<usize>>,
         einds: &mut std::collections::BTreeMap<Nid, usize>,
         candidates: &mut Vec<(Cand, f64)>,
@@ -610,10 +655,8 @@ fn perm_temp_for_expr(
         for (index, item) in items.iter().enumerate() {
             if let BlockItem::Declaration(d) = &item.node {
                 for init in &d.node.declarators {
-                    let (t, name) = crate::asttypes::apply_declarator(
-                        CType::int(),
-                        &init.node.declarator.node,
-                    );
+                    let (t, name) =
+                        crate::asttypes::apply_declarator(CType::int(), &init.node.declarator.node);
                     if let Some(name) = name {
                         match t {
                             CType::Array(_) => {}
@@ -638,14 +681,24 @@ fn perm_temp_for_expr(
             }
             if let BlockItem::Statement(s) = &item.node {
                 for nb in nested_blocks(s) {
-                    rec(nb, &reuse, should_make_ptr, writes, einds, candidates, rng);
+                    rec(
+                        nb,
+                        &reuse,
+                        should_make_ptr,
+                        tm,
+                        control_entries,
+                        writes,
+                        einds,
+                        candidates,
+                        rng,
+                    );
                 }
             }
             scan_item_exprs(item, &mut |e, is_expr| {
                 if !is_expr {
                     return;
                 }
-                if should_make_ptr && !is_lvalue(&e.node) {
+                if should_make_ptr && !is_lvalue(&e.node, tm) {
                     return;
                 }
                 let orig_id = nid(e);
@@ -656,6 +709,12 @@ fn perm_temp_for_expr(
                 };
                 let (prev_write, _) = surrounding_writes(e, e.span.start, writes);
                 for place in assignment_cands.iter().rev() {
+                    // A goto, case, or default entry may jump past an
+                    // assignment inserted before its label. Never hoist a
+                    // temporary across such a control-flow entry.
+                    if crosses_control_entry(place.stmt_start, e.span.start, control_entries) {
+                        break;
+                    }
                     // If the expression reads something written within
                     // [place, expr), the assignment would move too high up.
                     if place.stmt_start <= prev_write {
@@ -663,10 +722,7 @@ fn perm_temp_for_expr(
                     }
                     eind += 1;
                     let mut prob = rng.span_weight(e.span.start) / eind as f64;
-                    if matches!(
-                        e.node,
-                        Expression::Identifier(_) | Expression::Constant(_)
-                    ) {
+                    if matches!(e.node, Expression::Identifier(_) | Expression::Constant(_)) {
                         prob *= if should_make_ptr { 0.15 } else { 0.5 };
                     }
                     let reuse_cand = if reuse.is_empty() {
@@ -694,6 +750,8 @@ fn perm_temp_for_expr(
         &f.statement,
         &[],
         should_make_ptr,
+        &tm,
+        &control_entries,
         &writes,
         &mut einds,
         &mut candidates,
@@ -719,13 +777,12 @@ fn perm_temp_for_expr(
         decayed_expr_type(&orig.node, &tm)?
     };
     // Always use pointers when replacing structs.
-    if !wrapped {
-        if matches!(resolve_typedefs(t.clone(), &tm), CType::Struct { .. })
-            && is_lvalue(&orig.node)
-        {
-            wrapped = true;
-            t = CType::ptr(expr_type(&orig.node, &tm)?);
-        }
+    if !wrapped
+        && matches!(resolve_typedefs(t.clone(), &tm), CType::Struct { .. })
+        && is_lvalue(&orig.node, &tm)
+    {
+        wrapped = true;
+        t = CType::ptr(expr_type(&orig.node, &tm)?);
     }
     let assign_expr_node: Node<Expression> = if wrapped {
         Node::new(unary(UnaryOperator::Address, orig.node.clone()), orig.span)
@@ -779,7 +836,10 @@ fn perm_temp_for_expr(
             }
         });
     }
-    let mid = replace_cands.iter().position(|&i| i == orig_id).ok_or(Fail)?;
+    let mid = replace_cands
+        .iter()
+        .position(|&i| i == orig_id)
+        .ok_or(Fail)?;
     let subset = pick_random_subset(rng, &replace_cands, mid);
     let replace_set: std::collections::BTreeSet<Nid> = subset.into_iter().collect();
 
@@ -829,7 +889,12 @@ fn perm_temp_for_expr(
 
 /// Port of `insert_decl`: a new declaration at a random index within the
 /// function body's leading declaration run.
-fn insert_decl(body: &mut Node<Statement>, var: &str, t: &CType, rng: &mut Rng) -> Result<(), Fail> {
+fn insert_decl(
+    body: &mut Node<Statement>,
+    var: &str,
+    t: &CType,
+    rng: &mut Rng,
+) -> Result<(), Fail> {
     let decl = astutil::make_decl(var, t).ok_or(Fail)?;
     if let Statement::Compound(items) = &mut body.node {
         let mut index = items.len();
@@ -891,14 +956,21 @@ fn perm_expand_expr(
                 }
             }
         }
-        fn scan(stmt: &Node<Statement>, recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>, writes: &mut std::collections::BTreeMap<String, Vec<usize>>) {
+        fn scan(
+            stmt: &Node<Statement>,
+            recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
+            writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
+        ) {
             // Declarations.
-            fn handle_decl(d: &Node<Declaration>, recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>, writes: &mut std::collections::BTreeMap<String, Vec<usize>>) {
+            fn handle_decl(
+                d: &Node<Declaration>,
+                recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
+                writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
+            ) {
                 for (di, init) in d.node.declarators.iter().enumerate() {
-                    if let (_, Some(name)) = crate::asttypes::apply_declarator(
-                        CType::int(),
-                        &init.node.declarator.node,
-                    ) {
+                    if let (_, Some(name)) =
+                        crate::asttypes::apply_declarator(CType::int(), &init.node.declarator.node)
+                    {
                         let payload = match &init.node.initializer {
                             Some(i) => match &i.node {
                                 Initializer::Expression(e) => Some(((**e).clone(), false)),
@@ -921,7 +993,11 @@ fn perm_expand_expr(
                     }
                 }
             }
-            fn exprs(e: &Node<Expression>, recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>, writes: &mut std::collections::BTreeMap<String, Vec<usize>>) {
+            fn exprs(
+                e: &Node<Expression>,
+                recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
+                writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
+            ) {
                 match &e.node {
                     Expression::UnaryOperator(u) => {
                         if matches!(
@@ -933,7 +1009,10 @@ fn perm_expand_expr(
                         ) {
                             if let Expression::Identifier(id) = &u.node.operand.node {
                                 recs.insert(e.span.start, (id.node.name.clone(), WriteKind::Other));
-                                writes.entry(id.node.name.clone()).or_default().push(e.span.start);
+                                writes
+                                    .entry(id.node.name.clone())
+                                    .or_default()
+                                    .push(e.span.start);
                             }
                         }
                         exprs(&u.node.operand, recs, writes);
@@ -956,7 +1035,10 @@ fn perm_expand_expr(
                                         },
                                     ),
                                 );
-                                writes.entry(id.node.name.clone()).or_default().push(e.span.start);
+                                writes
+                                    .entry(id.node.name.clone())
+                                    .or_default()
+                                    .push(e.span.start);
                             }
                         }
                         exprs(&b.node.lhs, recs, writes);
@@ -1102,7 +1184,11 @@ fn perm_expand_expr(
         let side = rng.index(3);
         let h = repl_cands.len();
         let mut loi = if side == 0 { 0 } else { rng.randint(0, myi) };
-        let mut hii = if side == 1 { h } else { rng.randint(myi + 1, h) };
+        let mut hii = if side == 1 {
+            h
+        } else {
+            rng.randint(myi + 1, h)
+        };
         if loi == 0 && hii == h {
             loi = myi;
             hii = myi + 1;
@@ -1183,14 +1269,198 @@ fn perm_expand_expr(
 
 // -------------------------------------------------------- reorder passes
 
-/// Port of `perm_reorder_stmts`: move one statement somewhere else, with a
-/// distance-weighted target distribution.
+#[derive(Clone, Debug, Default)]
+struct LocalEffects {
+    reads: BTreeSet<String>,
+    writes: BTreeSet<String>,
+}
+
+fn nonvolatile_local_scalar(name: &str, tm: &TypeMap) -> bool {
+    if !tm.local_vars.contains(name) {
+        return false;
+    }
+    let Some(kind) = tm.var_types.get(name) else {
+        return false;
+    };
+    matches!(
+        resolve_typedefs(kind.clone(), tm),
+        CType::Basic {
+            volatile: false,
+            ..
+        } | CType::Enum(_)
+    )
+}
+
+/// Collect reads from an expression that is safe to move relative to another
+/// local-scalar assignment. Calls, memory accesses, address-taking and all
+/// mutation operators are deliberately rejected: without alias and effect
+/// information none of them can be proven independent.
+fn pure_local_reads(
+    expression: &Expression,
+    tm: &TypeMap,
+    reads: &mut BTreeSet<String>,
+) -> Result<(), Fail> {
+    match expression {
+        Expression::Identifier(identifier) => {
+            let name = &identifier.node.name;
+            ensure(nonvolatile_local_scalar(name, tm))?;
+            reads.insert(name.clone());
+            Ok(())
+        }
+        Expression::Constant(_)
+        | Expression::StringLiteral(_)
+        | Expression::SizeOfTy(_)
+        | Expression::SizeOfVal(_)
+        | Expression::AlignOf(_)
+        | Expression::OffsetOf(_) => Ok(()),
+        Expression::UnaryOperator(unary) => {
+            ensure(matches!(
+                unary.node.operator.node,
+                UnaryOperator::Plus
+                    | UnaryOperator::Minus
+                    | UnaryOperator::Complement
+                    | UnaryOperator::Negate
+            ))?;
+            pure_local_reads(&unary.node.operand.node, tm, reads)
+        }
+        Expression::Cast(cast) => pure_local_reads(&cast.node.expression.node, tm, reads),
+        Expression::BinaryOperator(binary) => {
+            ensure(
+                !is_assign_op(&binary.node.operator.node)
+                    && binary.node.operator.node != BinaryOperator::Index,
+            )?;
+            pure_local_reads(&binary.node.lhs.node, tm, reads)?;
+            pure_local_reads(&binary.node.rhs.node, tm, reads)
+        }
+        Expression::Conditional(conditional) => {
+            pure_local_reads(&conditional.node.condition.node, tm, reads)?;
+            pure_local_reads(&conditional.node.then_expression.node, tm, reads)?;
+            pure_local_reads(&conditional.node.else_expression.node, tm, reads)
+        }
+        Expression::Comma(items) => {
+            for item in items.iter() {
+                pure_local_reads(&item.node, tm, reads)?;
+            }
+            Ok(())
+        }
+        Expression::Member(_)
+        | Expression::Call(_)
+        | Expression::CompoundLiteral(_)
+        | Expression::GenericSelection(_)
+        | Expression::VaArg(_)
+        | Expression::Statement(_) => Err(Fail),
+    }
+}
+
+fn local_effects(item: &Node<BlockItem>, tm: &TypeMap) -> Result<LocalEffects, Fail> {
+    let mut effects = LocalEffects::default();
+    match &item.node {
+        BlockItem::Declaration(declaration) => {
+            ensure(declaration.node.declarators.len() == 1)?;
+            let declarator = &declaration.node.declarators[0].node;
+            let (_, name) =
+                crate::asttypes::apply_declarator(CType::int(), &declarator.declarator.node);
+            let name = name.ok_or(Fail)?;
+            ensure(nonvolatile_local_scalar(&name, tm))?;
+            let initializer = declarator.initializer.as_ref().ok_or(Fail)?;
+            let Initializer::Expression(expression) = &initializer.node else {
+                return Err(Fail);
+            };
+            pure_local_reads(&expression.node, tm, &mut effects.reads)?;
+            effects.writes.insert(name);
+        }
+        BlockItem::Statement(statement) => {
+            let Statement::Expression(Some(expression)) = &statement.node else {
+                return Err(Fail);
+            };
+            let Expression::BinaryOperator(binary) = &expression.node else {
+                return Err(Fail);
+            };
+            ensure(is_assign_op(&binary.node.operator.node))?;
+            let Expression::Identifier(identifier) = &binary.node.lhs.node else {
+                return Err(Fail);
+            };
+            let name = &identifier.node.name;
+            ensure(nonvolatile_local_scalar(name, tm))?;
+            pure_local_reads(&binary.node.rhs.node, tm, &mut effects.reads)?;
+            if binary.node.operator.node != BinaryOperator::Assign {
+                effects.reads.insert(name.clone());
+            }
+            effects.writes.insert(name.clone());
+        }
+        BlockItem::StaticAssert(_) => return Err(Fail),
+    }
+    Ok(effects)
+}
+
+fn effects_commute(left: &LocalEffects, right: &LocalEffects) -> bool {
+    left.writes.is_disjoint(&right.writes)
+        && left.writes.is_disjoint(&right.reads)
+        && left.reads.is_disjoint(&right.writes)
+}
+
+fn collect_reorder_facts(
+    statement: &Node<Statement>,
+    tm: &TypeMap,
+    blocks: &mut BTreeMap<Nid, Vec<Nid>>,
+    effects: &mut BTreeMap<Nid, LocalEffects>,
+) {
+    match &statement.node {
+        Statement::Labeled(labeled) => {
+            collect_reorder_facts(&labeled.node.statement, tm, blocks, effects)
+        }
+        Statement::Compound(items) => {
+            blocks.insert(
+                nid(statement),
+                items.iter().map(astutil::item_nid).collect(),
+            );
+            for item in items {
+                if let Ok(found) = local_effects(item, tm) {
+                    effects.insert(astutil::item_nid(item), found);
+                }
+                if let BlockItem::Statement(child) = &item.node {
+                    collect_reorder_facts(child, tm, blocks, effects);
+                }
+            }
+        }
+        Statement::If(branch) => {
+            collect_reorder_facts(&branch.node.then_statement, tm, blocks, effects);
+            if let Some(other) = &branch.node.else_statement {
+                collect_reorder_facts(other, tm, blocks, effects);
+            }
+        }
+        Statement::Switch(switch) => {
+            collect_reorder_facts(&switch.node.statement, tm, blocks, effects)
+        }
+        Statement::While(loop_) => {
+            collect_reorder_facts(&loop_.node.statement, tm, blocks, effects)
+        }
+        Statement::DoWhile(loop_) => {
+            collect_reorder_facts(&loop_.node.statement, tm, blocks, effects)
+        }
+        Statement::For(loop_) => collect_reorder_facts(&loop_.node.statement, tm, blocks, effects),
+        _ => {}
+    }
+}
+
+/// Move a local-scalar assignment across statements proven independent in
+/// the same compound block. Pret's unrestricted pass is useful as an idea
+/// generator, but in a cumulative walk it also moved calls between switch
+/// arms and transferred arithmetic from one effect handler to another. Those
+/// candidates score well by phase and poison every later mutation. Keeping
+/// the move within one block and checking every crossed statement preserves
+/// the productive declaration/assignment ordering search without that class
+/// of semantic lie.
 fn perm_reorder_stmts(
     unit: &mut TranslationUnit,
     fn_index: usize,
     rng: &mut Rng,
 ) -> Result<(), Fail> {
     let f = fdef(unit, fn_index);
+    let tm = typemap_for(unit, fn_index);
+    let mut blocks = BTreeMap::new();
+    let mut effects = BTreeMap::new();
+    collect_reorder_facts(&f.statement, &tm, &mut blocks, &mut effects);
     let mut cands: Vec<InsPoint> = insertion_points(&f.statement, true);
     cands.retain(|c| match &c.after {
         Some(info) if info.is_decl => info
@@ -1202,48 +1472,62 @@ fn perm_reorder_stmts(
         _ => true,
     });
 
-    let mut source_inds: Vec<usize> = Vec::new();
-    for (i, c) in cands.iter().enumerate() {
-        if let Some(info) = &c.after {
-            if !info.has_nested_block && !info.is_jump {
-                source_inds.push(i);
-            }
-        }
-    }
+    let source_inds: Vec<usize> = cands
+        .iter()
+        .enumerate()
+        .filter_map(|(index, point)| {
+            point.after.as_ref().and_then(|info| {
+                (!info.has_nested_block && !info.is_jump && effects.contains_key(&info.id))
+                    .then_some(index)
+            })
+        })
+        .collect();
     ensure(!source_inds.is_empty())?;
     let spans: Vec<usize> = source_inds
         .iter()
-        .map(|&i| cands[i].after.as_ref().map(|a| a.start).unwrap_or(0))
+        .map(|index| cands[*index].after.as_ref().map_or(0, |info| info.start))
         .collect();
     let sourcei = source_inds[rng.weighted_index_by_span(&spans)];
-    let from = cands[sourcei].clone();
-    let from_info = from.after.clone().ok_or(Fail)?;
-    let mut sourcei_after = sourcei + 1;
-    let after_matches = sourcei_after < cands.len()
-        && cands[sourcei_after]
-            .before
-            .as_ref()
-            .map(|b| b.id == from_info.id)
-            .unwrap_or(false);
-    if from_info.is_decl || sourcei_after == cands.len() || !after_matches {
-        sourcei_after -= 1;
-    }
+    let source = &cands[sourcei];
+    let from_info = source.after.as_ref().ok_or(Fail)?;
+    let from_effects = effects.get(&from_info.id).ok_or(Fail)?;
+    let items = blocks.get(&source.block).ok_or(Fail)?;
 
     let mut weighted: Vec<(usize, f64)> = Vec::new();
-    for i in 0..cands.len() {
-        let dist = (sourcei as isize - i as isize).max(i as isize - sourcei_after as isize);
-        if dist <= 0 {
+    for (toi_index, to) in cands.iter().enumerate() {
+        if to.block != source.block
+            || to.index == source.index
+            || to.index == source.index + 1
+            || to.after.as_ref().map(|a| a.is_decl).unwrap_or(false)
+        {
             continue;
         }
-        if cands[i].after.as_ref().map(|a| a.is_decl).unwrap_or(false) {
-            // Don't move to before a declaration (C89 compat).
+        // A declaration stays in place while its initializer becomes an
+        // assignment, so that assignment may only move later.
+        if from_info.is_decl && to.index <= source.index + 1 {
             continue;
         }
-        let prob = ((dist + 1) as f64).powf(-1.5) + 0.5 / cands.len() as f64;
-        weighted.push((i, prob));
+        let crossed = if to.index < source.index {
+            &items[to.index..source.index]
+        } else {
+            &items[source.index + 1..to.index]
+        };
+        if !crossed.iter().all(|item| {
+            effects
+                .get(item)
+                .map(|other| effects_commute(from_effects, other))
+                .unwrap_or(false)
+        }) {
+            continue;
+        }
+        let distance = source.index.abs_diff(to.index);
+        let probability = ((distance + 1) as f64).powf(-1.5) + 0.5 / cands.len() as f64;
+        weighted.push((toi_index, probability));
     }
     ensure(!weighted.is_empty())?;
     let toi_index = *random_weighted(rng, &weighted);
+    let from = cands[sourcei].clone();
+    let from_info = from.after.clone().ok_or(Fail)?;
     let to = cands[toi_index].clone();
     let (fromb, fromi) = (from.block, from.index);
     let (tob, mut toi) = (to.block, to.index);
@@ -1293,8 +1577,9 @@ fn perm_reorder_stmts(
     Ok(())
 }
 
-/// Port of `perm_reorder_decls`: move one declaration, staying within
-/// block starts and declaration runs, never past a use.
+/// Move one uninitialized declaration within its own compound block and
+/// never past a use. Cross-block movement made outer locals disappear into
+/// a nested scope; moving an initializer changes when its expression runs.
 fn perm_reorder_decls(
     unit: &mut TranslationUnit,
     fn_index: usize,
@@ -1313,14 +1598,24 @@ fn perm_reorder_decls(
     let source_inds: Vec<usize> = cands
         .iter()
         .enumerate()
-        .filter(|(_, c)| c.after.as_ref().map(|a| a.is_decl).unwrap_or(false))
+        .filter(|(_, c)| {
+            c.after
+                .as_ref()
+                .and_then(|after| after.decl.as_ref())
+                .and_then(|decl| decl.single.as_ref())
+                .is_some_and(|(_, has_initializer)| !has_initializer)
+        })
         .map(|(i, _)| i)
         .collect();
     ensure(!source_inds.is_empty())?;
     let sourcei = *rng.choice(&source_inds);
+    let from = cands[sourcei].clone();
 
     let mut weighted: Vec<(usize, f64)> = Vec::new();
     for i in 0..cands.len() {
+        if cands[i].block != from.block {
+            continue;
+        }
         let dist = (sourcei as isize - i as isize).max(i as isize - (sourcei as isize + 1));
         if dist <= 0 {
             continue;
@@ -1331,7 +1626,6 @@ fn perm_reorder_decls(
     ensure(!weighted.is_empty())?;
     let desti = *random_weighted(rng, &weighted);
 
-    let from = cands[sourcei].clone();
     let to = cands[desti].clone();
     let from_info = from.after.clone().ok_or(Fail)?;
     let decl_info = from_info.decl.clone().ok_or(Fail)?;
@@ -1361,10 +1655,9 @@ fn perm_reorder_decls(
         // Declarator mentions.
         let mut count_decl = |d: &Node<Declaration>| {
             for init in &d.node.declarators {
-                if let (_, Some(n2)) = crate::asttypes::apply_declarator(
-                    CType::int(),
-                    &init.node.declarator.node,
-                ) {
+                if let (_, Some(n2)) =
+                    crate::asttypes::apply_declarator(CType::int(), &init.node.declarator.node)
+                {
                     if n2 == *name && d.span.start < to_index {
                         uses += 1;
                     }
@@ -1511,14 +1804,24 @@ fn perm_mult_zero(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
 
 /// Port of `perm_cast_simple`: cast a random arithmetic expression to a
 /// random integral or floating type.
-fn perm_cast_simple(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> Result<(), Fail> {
+fn perm_cast_simple(
+    unit: &mut TranslationUnit,
+    fn_index: usize,
+    rng: &mut Rng,
+) -> Result<(), Fail> {
     let tm = typemap_for(unit, fn_index);
     let f = fdef(unit, fn_index);
     let cands = block_expressions(&f.statement);
     ensure(!cands.is_empty())?;
     let (id, expr) = rng.choice_by_span(&cands, |c| c.0 .0).clone();
     ensure_arithmetic_type(&expr.node, &tm)?;
-    let integral: [&[&str]; 5] = [&["int"], &["char"], &["long"], &["short"], &["long", "long"]];
+    let integral: [&[&str]; 5] = [
+        &["int"],
+        &["char"],
+        &["long"],
+        &["short"],
+        &["long", "long"],
+    ];
     let floating: [&[&str]; 2] = [&["float"], &["double"]];
     let mut names: Vec<&str> = Vec::new();
     if rng.chance(0.5) {
@@ -1557,7 +1860,11 @@ fn perm_cast_simple(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
 
 /// Port of `perm_commutative`: swap the operands of a commutative binary
 /// operation (flipping the direction of comparisons).
-fn perm_commutative(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> Result<(), Fail> {
+fn perm_commutative(
+    unit: &mut TranslationUnit,
+    fn_index: usize,
+    rng: &mut Rng,
+) -> Result<(), Fail> {
     let f = fdef(unit, fn_index);
     let mut cands: Vec<Nid> = Vec::new();
     let is_comm = |op: &BinaryOperator| {
@@ -1678,7 +1985,11 @@ fn perm_add_sub(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> R
 }
 
 /// Port of `perm_inequalities`: `a < b` <-> `a <= b - 1` and friends.
-fn perm_inequalities(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> Result<(), Fail> {
+fn perm_inequalities(
+    unit: &mut TranslationUnit,
+    fn_index: usize,
+    rng: &mut Rng,
+) -> Result<(), Fail> {
     let f = fdef(unit, fn_index);
     let mut cands: Vec<Nid> = Vec::new();
     scan_stmt_exprs(&f.statement, &mut |e, _| {
@@ -1699,8 +2010,8 @@ fn perm_inequalities(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng)
     let plus1 = |e: Expression| binop(BinaryOperator::Plus, e, int_expr("1"));
     let minus1 = |e: Expression| binop(BinaryOperator::Minus, e, int_expr("1"));
     enum Plan {
-        BothSides(bool),   // true = plus1
-        ShiftOp(bool),     // true = change left side
+        BothSides(bool), // true = plus1
+        ShiftOp(bool),   // true = change left side
     }
     let plan = if rng.f() < 0.25 {
         Plan::BothSides(*rng.choice(&[true, false]))
@@ -1728,7 +2039,8 @@ fn perm_inequalities(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng)
                 }
                 Plan::ShiftOp(left) => {
                     let op = b.node.operator.node.clone();
-                    let toward_le = matches!(op, BinaryOperator::Less | BinaryOperator::GreaterOrEqual);
+                    let toward_le =
+                        matches!(op, BinaryOperator::Less | BinaryOperator::GreaterOrEqual);
                     b.node.operator.node = match op {
                         BinaryOperator::Less => BinaryOperator::LessOrEqual,
                         BinaryOperator::GreaterOrEqual => BinaryOperator::Greater,
@@ -1854,10 +2166,9 @@ fn perm_condition(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
         Statement::If(i) => cands.push((nid(s), Some((*i.node.condition).clone()))),
         Statement::While(w) => cands.push((nid(s), Some((*w.node.expression).clone()))),
         Statement::DoWhile(d) => cands.push((nid(s), Some((*d.node.expression).clone()))),
-        Statement::For(fo) => cands.push((
-            nid(s),
-            fo.node.condition.as_ref().map(|c| (**c).clone()),
-        )),
+        Statement::For(fo) => {
+            cands.push((nid(s), fo.node.condition.as_ref().map(|c| (**c).clone())))
+        }
         _ => {}
     });
     ensure(!cands.is_empty())?;
@@ -1884,10 +2195,8 @@ fn perm_condition(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
                 | BinaryOperator::GreaterOrEqual
         )
     };
-    let cmp_cond = match &cond.node {
-        Expression::BinaryOperator(b) if is_cmp(&b.node.operator.node) => true,
-        _ => false,
-    };
+    let cmp_cond =
+        matches!(&cond.node, Expression::BinaryOperator(b) if is_cmp(&b.node.operator.node));
     let plan = if cmp_cond && rng.chance(0.9) {
         if let Expression::BinaryOperator(b) = &cond.node {
             let op = &b.node.operator.node;
@@ -2061,10 +2370,11 @@ fn perm_split_assignment(
     // Fetch the split node's sides for the type check.
     let mut split_expr: Option<Node<Expression>> = None;
     scan_stmt_exprs(&f.statement, &mut |e, _| {
-        if nid(e) == split && matches!(e.node, Expression::BinaryOperator(_)) {
-            if split_expr.is_none() {
-                split_expr = Some(e.clone());
-            }
+        if nid(e) == split
+            && matches!(e.node, Expression::BinaryOperator(_))
+            && split_expr.is_none()
+        {
+            split_expr = Some(e.clone());
         }
     });
     let split_expr = split_expr.ok_or(Fail)?;
@@ -2248,4 +2558,145 @@ pub fn preprocess_for_ast(source: &str) -> Result<String, String> {
         ));
     }
     String::from_utf8(out.stdout).map_err(|e| format!("xgcc -E output: {e}"))
+}
+
+#[cfg(test)]
+mod tests {
+    use lang_c::ast::BlockItem;
+
+    use super::{
+        call_sequence, crosses_control_entry, fdef, find_fn, parse_unit, typemap_for, AstPass,
+        AstRandomizer,
+    };
+    use crate::asttypes::{apply_declarator, CType};
+    use crate::astutil::{self, id_expr, is_lvalue};
+
+    fn reorder(source: &str, seed: u64) -> Result<String, String> {
+        AstRandomizer::new(source, seed, Some(AstPass::ReorderStmts))?.randomize()
+    }
+
+    fn reorder_decls(source: &str, seed: u64) -> Result<String, String> {
+        AstRandomizer::new(source, seed, Some(AstPass::ReorderDecls))?.randomize()
+    }
+
+    fn calls(source: &str) -> Vec<String> {
+        let unit = parse_unit(source).unwrap();
+        let index = find_fn(&unit, "f").unwrap();
+        call_sequence(&fdef(&unit, index).statement)
+    }
+
+    #[test]
+    fn read_analysis_keeps_assignment_rhs_uses() {
+        let source = "int use(int); int f(void) { int size; int copy; size = 4; copy = use(size); size += 1; return size; }";
+        let unit = parse_unit(source).unwrap();
+        let index = find_fn(&unit, "f").unwrap();
+        let reads = astutil::compute_read_locations(fdef(&unit, index));
+        assert_eq!(reads.get("size").map(Vec::len), Some(3));
+        assert!(!reads.contains_key("copy"));
+    }
+
+    #[test]
+    fn enum_constants_are_not_pointer_temp_lvalues() {
+        let source = "enum Mode { MODE = 1 }; int global; int f(void) { int local; return MODE + local + global; }";
+        let unit = parse_unit(source).unwrap();
+        let index = find_fn(&unit, "f").unwrap();
+        let tm = typemap_for(&unit, index);
+        assert!(!is_lvalue(&id_expr("MODE"), &tm));
+        assert!(is_lvalue(&id_expr("local"), &tm));
+        assert!(is_lvalue(&id_expr("global"), &tm));
+    }
+
+    #[test]
+    fn temporary_assignment_never_crosses_a_control_entry() {
+        let entries = [40, 100];
+        assert!(crosses_control_entry(20, 60, &entries));
+        assert!(crosses_control_entry(40, 60, &entries));
+        assert!(!crosses_control_entry(41, 60, &entries));
+        assert!(!crosses_control_entry(20, 40, &entries));
+    }
+
+    #[test]
+    fn declaration_reorder_stays_in_scope_and_skips_initializers() {
+        let source = "int f(int cond) { int chance; int value; { int off; off = cond; chance = off; } value = chance; return value; }";
+        let mut successes = 0;
+        for seed in 0..64 {
+            let Ok(output) = reorder_decls(source, seed) else {
+                continue;
+            };
+            successes += 1;
+            let unit = parse_unit(&output).unwrap();
+            let index = find_fn(&unit, "f").unwrap();
+            let root_names: Vec<String> = astutil::block_items(&fdef(&unit, index).statement)
+                .iter()
+                .filter_map(|item| match &item.node {
+                    BlockItem::Declaration(declaration) => Some(
+                        declaration
+                            .node
+                            .declarators
+                            .iter()
+                            .filter_map(|declarator| {
+                                apply_declarator(CType::int(), &declarator.node.declarator.node).1
+                            })
+                            .collect::<Vec<_>>(),
+                    ),
+                    _ => None,
+                })
+                .flatten()
+                .collect();
+            assert!(root_names.iter().any(|name| name == "chance"));
+            assert!(root_names.iter().any(|name| name == "value"));
+        }
+        assert!(successes > 0);
+
+        let initialized = "int side(void); int f(void) { int value = side(); return value; }";
+        assert!(reorder_decls(initialized, 1).is_err());
+    }
+
+    #[test]
+    fn reorder_moves_independent_local_scalar_assignments() {
+        let source = "int f(int a, int b, int c, int d) { int x; int y; x = a + b; y = c + d; return x + y; }";
+        let output = reorder(source, 1).unwrap();
+        assert!(output.find("y = (c + d)").unwrap() < output.find("x = (a + b)").unwrap());
+    }
+
+    #[test]
+    fn reorder_rejects_data_dependencies() {
+        let source = "int f(int a) { int x; int y; x = a; y = x + 1; return y; }";
+        assert!(reorder(source, 1).is_err());
+    }
+
+    #[test]
+    fn reorder_never_crosses_calls_or_compound_blocks() {
+        let calls = "int first(void); void touch(void); int f(int a, int b) { int x; int y; x = a; touch(); y = b; return x + y; }";
+        assert!(reorder(calls, 1).is_err());
+
+        let blocks = "int f(int a) { int x; int y; if (a) { x = 1; } else { y = 2; } return a; }";
+        assert!(reorder(blocks, 1).is_err());
+    }
+
+    #[test]
+    fn reorder_never_transfers_effects_between_switch_handlers() {
+        let source = "int f(int effect, int dmg) { int heal = 0; switch (effect) { case 1: heal += dmg; break; case 2: heal += dmg; break; } return heal; }";
+        assert!(reorder(source, 1).is_err());
+    }
+
+    #[test]
+    fn reorder_rejects_memory_and_volatile_accesses() {
+        let memory = "int f(int *p, int a) { int x; int y; x = *p; y = a; return x + y; }";
+        assert!(reorder(memory, 1).is_err());
+
+        let volatile =
+            "int f(volatile int status, int a) { int x; int y; x = status; y = a; return x + y; }";
+        assert!(reorder(volatile, 1).is_err());
+    }
+
+    #[test]
+    fn call_sequence_detects_moves_but_ignores_noop_wrappers() {
+        let base = "void first(void); void second(void); void f(void) { first(); second(); }";
+        let wrapped =
+            "void first(void); void second(void); void f(void) { if (1) { first(); } second(); }";
+        let moved = "void first(void); void second(void); void f(void) { second(); first(); }";
+        assert_eq!(calls(base), calls(wrapped));
+        assert_ne!(calls(base), calls(moved));
+    }
 }

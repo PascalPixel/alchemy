@@ -756,8 +756,10 @@ pub fn emit_expression(e: &Expression) -> String {
 
 pub fn self_test() -> Result<(), String> {
     let src = "int f(int a) { return a * 2 + 1; }";
-    let mut cfg = lang_c::driver::Config::default();
-    cfg.flavor = lang_c::driver::Flavor::GnuC11;
+    let cfg = lang_c::driver::Config {
+        flavor: lang_c::driver::Flavor::GnuC11,
+        ..Default::default()
+    };
     let parsed = lang_c::driver::parse_preprocessed(&cfg, src.to_string())
         .map_err(|e| format!("cemit self-test parse failed: {e}"))?;
     let emitted = emit_translation_unit(&parsed.unit);

@@ -458,9 +458,11 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 modifier;
     s32 skip;
     s32 nibble;
+    s32 *healtbl;
     s32 affinity;
     struct BattleUnit *copy;
     s32 turns;
+    s32 g1;
     s32 power;
     s16 hp0;
     s32 kind;
@@ -569,6 +571,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     } else
         cmd = &plan->command;
     power = 100;
+    healtbl = HpHealFalloff;
 after_power:
 
     if (plan->command == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
@@ -843,7 +846,7 @@ after_power:
             TAKE_BONUS();
             dmg = act->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
-            dmg = Math_Div(PpLossFalloff[offset] * dmg, 100);
+            dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
@@ -881,7 +884,7 @@ after_power:
             }
             cur = target->hp;
             dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(HpHealFalloff[offset] * dmg, 100);
+            dmg = Math_Div(dmg * healtbl[offset], 100);
             dmg *= adjust;
             dmg += BattleRandom_Next() & 3;
             cur += dmg;
@@ -1591,7 +1594,8 @@ hp_tail:
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AURA);
         if (S8OF(target->guard_level) > 0)
             break;
-        S8OF(target->guard_level) = 1;
+        g1 = 1;
+        S8OF(target->guard_level) = g1;
         break;
 
     case EFX_GUARD2:

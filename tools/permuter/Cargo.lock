@@ -43,6 +43,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "candidate-show"
+version = "0.1.0"
+dependencies = [
+ "alchemy-routing",
+ "candidate-compiler",
+]
+
+[[package]]
 name = "decomp-diagnose"
 version = "0.1.0"
 dependencies = [
@@ -82,6 +90,7 @@ dependencies = [
  "alchemy-bundle",
  "alchemy-routing",
  "candidate-compiler",
+ "candidate-show",
  "lang-c",
  "overlay-disasm",
  "shape-sweep",

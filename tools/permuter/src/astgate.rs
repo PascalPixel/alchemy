@@ -13,7 +13,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use crate::astpass::{AstPass, AstRandomizer};
+use crate::astpass::{AstMode, AstPass, AstRandomizer};
 
 fn read(path: &str) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|e| format!("read {path}: {e}"))
@@ -46,7 +46,12 @@ pub fn run_ast_randomize(path: &str, args: &[String]) -> Result<(), String> {
     let only = arg_value(args, "--pass")
         .map(|name| AstPass::from_name(&name).ok_or(format!("unknown pass {name}")))
         .transpose()?;
-    let mut r = AstRandomizer::new(&source, seed, only)?;
+    let mode = if args.iter().any(|argument| argument == "--classic") {
+        AstMode::Classic
+    } else {
+        AstMode::Safe
+    };
+    let mut r = AstRandomizer::new_with_mode(&source, seed, only, mode)?;
     for _ in 0..count {
         let out = r.randomize()?;
         print!("{out}");

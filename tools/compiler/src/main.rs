@@ -1,6 +1,8 @@
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: compiler <candidate-show|permute|dashboard-server> [args]";
+mod workbench;
+
+const USAGE: &str = "usage: compiler <candidate-show|permute|workbench|dashboard-server> [args]";
 
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
@@ -21,6 +23,8 @@ fn main() -> ExitCode {
                 ExitCode::FAILURE
             }
         },
+        "workbench" => result(workbench::run(rest)),
+        "__workbench-step" => result(workbench::run_step(rest)),
         "dashboard-server" => {
             dashboard_server::cli::entry(rest);
             ExitCode::SUCCESS
@@ -32,6 +36,16 @@ fn main() -> ExitCode {
         _ => {
             eprintln!("unknown compiler command: {command}\n{USAGE}");
             ExitCode::from(2)
+        }
+    }
+}
+
+fn result(value: Result<(), String>) -> ExitCode {
+    match value {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
         }
     }
 }

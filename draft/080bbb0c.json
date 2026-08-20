@@ -306,6 +306,10 @@
     {
       "shape": "cascade cycle 11 stack",
       "wrong": "every mutation semantically false: (u16)max_hp compare, (u8)heal store truncation, clamp delta moved out of its arm, empty tautology if"
+    },
+    {
+      "shape": "long-lived pooled-text locals (split_text, wake_text) as conflict-adders for pseudo 384's window",
+      "wrong": "274 vs 272 both; a pooled constant spanning the function spills rather than conflicting; the reference's extra conflict at 384's turn is still unidentified"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

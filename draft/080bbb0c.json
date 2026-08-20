@@ -3,11 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6324,
-    "differing_halfwords": 2630,
-    "wrong_instructions": 1072,
-    "code_hunks_normalized": "24 hunks / 33 rows (pool and phase excluded)",
+    "differing_halfwords": 2624,
+    "wrong_instructions": 1050,
+    "code_hunks_normalized": "23 hunks / 30 rows (pool and phase excluded)",
     "class": "wrong",
-    "note": "raw halfwords are phase (8-byte deficit against the reference distributed over the remaining named ref-extras); the normalized inventory is the compass"
+    "note": "raw halfwords are phase; the normalized inventory is the compass"
   },
   "shape": {
     "calls": null,
@@ -120,7 +120,8 @@
     "the percentage heal adds Math_Div per arm (no amt join variable)",
     "heal-body power guards (cases 2 and 12) read the FIELD and assign pwr after: if (act->power == 0) break; pwr = act->power; -- CSE keeps one ldrh, the guard consumes the load register (ref ldrh r3/cmp r3 rows now match), and pwr materializes as the reference's copy insn. The five sibling bodies already used this idiom; the old TAKE_PWR single-variable shape loaded straight into pwr's register with zero copies, which the reference disproves. act vs action mention choice at both sites is emission-neutral (all four combinations byte-identical)",
     "attack KO arm is KO-first (if (cur <= 0) {...} else FINISH), mirroring case 3: jump2 then empties the attack FINISH arm into case 3's shared copy (b .L at the cmp) and the whole KO arm matches the reference row-for-row INCLUDING register texture (mov r3,sl / movs r6,#0 / bls polarity / per-arm FELLED ldr jumping into the shared movs #4 push). The 'FINISH-first measured better' rejection was landscape-dependent and is reversed; the FELLED crossjump cluster, the bhi/bls polarity, and the extra FELLED pool load are all resolved by this one arm-order fact",
-    "heal bodies route power through dmg exactly like the three CalcPower siblings: dmg = act->power; dmg = Battle_CalcRestore(dmg, ...) -- pwr is gone. dmg's long-lived callee-saved home (r5) generates the reference's full copy chain (adds r5,r3,#0 from the guard load, adds r0,r5,#0 at the call, adds r5,r0,#0 for the result) and both heal-head clusters close row-for-row including register texture. Found via the greg/flow2 RTL dumps: pwr's separate 2-ref pseudo took r0 by arg-copy preference and reload_cse collapsed the chain; dmg's pseudo cannot take r0 because it crosses the Math_Div calls. The recorded expressed[60] sibling pattern was the answer all along"
+    "heal bodies route power through dmg exactly like the three CalcPower siblings: dmg = act->power; dmg = Battle_CalcRestore(dmg, ...) -- pwr is gone. dmg's long-lived callee-saved home (r5) generates the reference's full copy chain (adds r5,r3,#0 from the guard load, adds r0,r5,#0 at the call, adds r5,r0,#0 for the result) and both heal-head clusters close row-for-row including register texture. Found via the greg/flow2 RTL dumps: pwr's separate 2-ref pseudo took r0 by arg-copy preference and reload_cse collapsed the chain; dmg's pseudo cannot take r0 because it crosses the Math_Div calls. The recorded expressed[60] sibling pattern was the answer all along",
+    "HEAL_60 head: all four reads are PLAIN, signed-before-unsigned per field (heal, maxv, old=(u16)&hp, maxu=(u16)&max_hp). The volatile puns were a proxy: volatile splits each load into a HImode temp plus copy at expand (combine cannot merge through volatile), which is why maxu could never load straight into r6. With plain reads the four loads survive because derivation is asymmetric -- combine turns a LATER sext into shifts of an existing zext temp for free, but rederiving a zext from a sext costs two insns, so signed-first keeps every load. maxu now emits ldrh r6,[r7,#52] directly and mov r8 comes late, both matching the reference; the residual is maxv's scheduling position (one load) and old-temp r0 vs r4 coloring"
   ],
   "unexpressed": [
     {
@@ -375,6 +376,10 @@
     {
       "shape": "HEAL_60 pun orderings (maxu-first, hp-pair interleave, maxu-last) hunting the reference's direct ldrh r6 maxu load",
       "wrong": "2696 all; maxu still loads through a temp with an explicit copy; the swap variant's -2 hunk weight is unrelated noise"
+    },
+    {
+      "shape": "union Cell reads for the HEAL_60 puns (old/maxu, and maxv)",
+      "wrong": "cse derives across the union at this site (value-level, not mem-level); loads collapse. unsigned-first orders also collapse (t5/t10). The volatile-was-a-proxy insight plus signed-first ordering is the fix"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

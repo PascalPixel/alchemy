@@ -4,8 +4,8 @@ use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use alchemy_routing::routing::{root, CompilerTarget};
 use candidate_compiler::{verify_candidate_routed, CandidateCompilerConfiguration, ROM_BASE};
+use compiler_core::routing::{root, CompilerTarget};
 use overlay_disasm::{assemble_overlay, compile_overlay_candidate, OverlaySource, OVERLAY_BASE};
 
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -342,7 +342,7 @@ impl PreparedTarget {
         let mut bytes = self.expected.clone();
         bytes.push(0);
         bytes.extend_from_slice(path.as_bytes());
-        alchemy_bundle::sha256::hex(&bytes)
+        compiler_core::sha256::hex(&bytes)
     }
 
     pub fn compile(&self, source: &str) -> Result<(Score, Option<String>), String> {

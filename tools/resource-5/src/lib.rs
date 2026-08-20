@@ -1,17 +1,7 @@
-//! Native port of `tools/make/resource_5.ts`.
-//!
-//! Resource 5 is the large gameplay-database block.  The JSON document is
-//! deliberately kept as the public interchange format; this crate owns the
-//! standalone export, build, verify, and self-test commands for the native
-//! asset pipeline.
-
-use canonical_json::canonical_json;
-use serde_json::{json, Map, Value};
+use serde_json::{Map, Value};
 use std::fs;
 use std::io::{self, Write};
-use std::path::Path;
 
-pub const ROM_BASE: usize = 0x0800_0000;
 pub const ADDRESS: usize = 0x0807_a828;
 pub const END: usize = 0x0808_a000;
 pub const ALIGNMENT: usize = 0x0808_962c;
@@ -89,29 +79,6 @@ fn u32(value: &Value, label: &str) -> Result<u32> {
     Ok(unsigned(value, 0xffff_ffff, label)? as u32)
 }
 
-fn read_u16(data: &[u8], offset: usize) -> u16 {
-    u16::from_le_bytes([data[offset], data[offset + 1]])
-}
-fn read_i16(data: &[u8], offset: usize) -> i16 {
-    i16::from_le_bytes([data[offset], data[offset + 1]])
-}
-fn read_u32(data: &[u8], offset: usize) -> u32 {
-    u32::from_le_bytes([
-        data[offset],
-        data[offset + 1],
-        data[offset + 2],
-        data[offset + 3],
-    ])
-}
-fn read_i32(data: &[u8], offset: usize) -> i32 {
-    i32::from_le_bytes([
-        data[offset],
-        data[offset + 1],
-        data[offset + 2],
-        data[offset + 3],
-    ])
-}
-
 fn write_u16(data: &mut [u8], offset: usize, value: u16) {
     data[offset..offset + 2].copy_from_slice(&value.to_le_bytes());
 }
@@ -123,28 +90,6 @@ fn write_u32(data: &mut [u8], offset: usize, value: u32) {
 }
 fn write_i32(data: &mut [u8], offset: usize, value: i32) {
     data[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
-}
-
-fn all_zero(data: &[u8], start: usize, end: usize, label: &str) -> Result<()> {
-    if data[start..end].iter().any(|byte| *byte != 0) {
-        return err(format!(
-            "{label} has a nonzero reserved byte at +0x{:x}",
-            data[start..end].iter().position(|byte| *byte != 0).unwrap() + start
-        ));
-    }
-    Ok(())
-}
-
-fn name_slot(data: &[u8]) -> Result<&'static str> {
-    if data == [0x20; 14] {
-        Ok("space")
-    } else if data == [0; 14] {
-        Ok("zero")
-    } else if data[0] == 0xff && data[1..].iter().all(|byte| *byte == 0) {
-        Ok("sentinel")
-    } else {
-        err("combatant name slot has an unsupported fill")
-    }
 }
 
 fn build_name_slot(value: &Value) -> Result<Vec<u8>> {
@@ -243,41 +188,6 @@ fn parse_document(value: &Value) -> Result<&Map<String, Value>> {
     Ok(source)
 }
 
-fn export_item(data: &[u8]) -> Result<Value> {
-    all_zero(data, 5, 6, "item")?;
-    all_zero(data, 7, 8, "item")?;
-    all_zero(data, 13, 14, "item")?;
-    all_zero(data, 16, 20, "item")?;
-    all_zero(data, 21, 24, "item")?;
-    for offset in [26, 27, 30, 31, 34, 35, 38, 39, 42, 43] {
-        if data[offset] != 0 {
-            return err(format!("item has a nonzero reserved byte at +0x{offset:x}"));
-        }
-    }
-    Ok(json!([
-        read_u16(data, 0),
-        data[2],
-        data[3],
-        read_u16(data, 4),
-        read_u16(data, 6),
-        read_i16(data, 8),
-        data[10] as i8,
-        data[11],
-        data[12],
-        read_u16(data, 14),
-        data[20],
-        data[24],
-        data[25] as i8,
-        data[28],
-        data[29] as i8,
-        data[32],
-        data[33] as i8,
-        data[36],
-        data[37] as i8,
-        read_u16(data, 40),
-    ]))
-}
-
 fn build_item(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = list(value, 20, &format!("items[{index}]"))?;
     let mut result = vec![0; 44];
@@ -299,16 +209,6 @@ fn build_item(value: &Value, index: usize) -> Result<Vec<u8>> {
     }
     write_u16(&mut result, 40, u16(&item[19], "item unleash_ability")?);
     Ok(result)
-}
-
-fn export_ability(data: &[u8]) -> Result<Value> {
-    all_zero(data, 6, 8, "ability")?;
-    all_zero(data, 14, 16, "ability")?;
-    Ok(json!({
-        "element": data[0], "target": data[1], "damage_class": data[2], "effect": data[3],
-        "animation": read_u16(data, 4), "range": data[8], "category": data[9],
-        "power": read_u16(data, 10), "chance": read_u16(data, 12),
-    }))
 }
 
 fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
@@ -355,27 +255,6 @@ fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
         u16(field(ability, "chance")?, "ability chance")?,
     );
     Ok(result)
-}
-
-fn export_combatant(data: &[u8]) -> Result<Value> {
-    if data[14] != 0 {
-        return err("combatant name terminator is nonzero");
-    }
-    all_zero(data, 30, 40, "combatant")?;
-    Ok(json!({
-        "name_slot": name_slot(&data[0..14])?, "level": data[15], "hp": read_u16(data, 16),
-        "pp": read_u16(data, 18), "attack": read_u16(data, 20), "defense": read_u16(data, 22),
-        "agility": read_u16(data, 24), "luck": data[26], "turns": data[27],
-        "hp_regeneration": read_u16(data, 28),
-        "initial_abilities": [read_u16(data, 40), read_u16(data, 42), read_u16(data, 44), read_u16(data, 46)],
-        "initial_ability_counts": data[48..52].to_vec(), "elemental_profile": data[52],
-        "behavior": data[53], "flags": read_u16(data, 54),
-        "secondary_abilities": [read_u16(data, 56), read_u16(data, 58), read_u16(data, 60), read_u16(data, 62)],
-        "secondary_ability_counts": data[64..68].to_vec(),
-        "battle_traits": [read_u16(data, 68), read_u16(data, 70), read_u16(data, 72), read_u16(data, 74)],
-        "experience_reward": read_u16(data, 76), "sprite": read_u16(data, 78),
-        "reward_tier": read_u16(data, 80), "coin_reward": read_u16(data, 82),
-    }))
 }
 
 fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
@@ -471,25 +350,6 @@ fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-fn export_hero_growth(data: &[u8]) -> Result<Value> {
-    all_zero(data, 0, 80, "hero growth")?;
-    if data[151] != 0 {
-        return err("hero growth class padding is nonzero");
-    }
-    all_zero(data, 178, 180, "hero growth")?;
-    let checkpoint = |offset: usize| -> Vec<Value> {
-        (0..6)
-            .map(|index| json!(read_u16(data, offset + index * 2)))
-            .collect()
-    };
-    Ok(json!({
-        "hp": checkpoint(80), "pp": checkpoint(92), "attack": checkpoint(104),
-        "defense": checkpoint(116), "agility": checkpoint(128), "luck": data[140..146].to_vec(),
-        "elemental_levels": data[146..150].to_vec(), "class_id": data[150],
-        "initial_abilities": (0..13).map(|index| json!(read_u16(data, 152 + index * 2))).collect::<Vec<_>>(),
-    }))
-}
-
 fn build_hero_growth(value: &Value, index: usize) -> Result<Vec<u8>> {
     let growth = object(value, &format!("hero_growth[{index}]"))?;
     exact_keys(
@@ -560,19 +420,6 @@ fn build_hero_growth(value: &Value, index: usize) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-fn export_class(data: &[u8]) -> Result<Value> {
-    all_zero(data, 14, 16, "class")?;
-    for offset in (16..80).step_by(4) {
-        all_zero(data, offset + 2, offset + 4, "class ability")?;
-    }
-    Ok(json!({
-        "family": read_i32(data, 0), "djinn_requirements": data[4..8].to_vec(),
-        "stat_multipliers": data[8..14].to_vec(),
-        "abilities": (0..16).map(|index| json!({"id": data[16 + index * 4], "level": data[17 + index * 4]})).collect::<Vec<_>>(),
-        "traits": data[80..84].to_vec(),
-    }))
-}
-
 fn build_class(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = object(value, &format!("classes[{index}]"))?;
     exact_keys(
@@ -626,16 +473,6 @@ fn build_class(value: &Value, index: usize) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-fn export_elemental_profile(data: &[u8]) -> Value {
-    json!({
-        "element": read_i32(data, 0), "levels": data[4..8].to_vec(),
-        "stats": (0..4).map(|index| json!({
-            "power": read_u16(data, 8 + index * 4),
-            "resistance": read_u16(data, 10 + index * 4),
-        })).collect::<Vec<_>>(),
-    })
-}
-
 fn build_elemental_profile(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = object(value, &format!("elemental_profiles[{index}]"))?;
     exact_keys(
@@ -673,117 +510,6 @@ fn build_elemental_profile(value: &Value, index: usize) -> Result<Vec<u8>> {
         );
     }
     Ok(result)
-}
-
-fn at(rom: &[u8], address: usize, size: usize) -> &[u8] {
-    &rom[address - ROM_BASE..address - ROM_BASE + size]
-}
-
-fn records(rom: &[u8], address: usize, count: usize, size: usize) -> Vec<&[u8]> {
-    (0..count)
-        .map(|index| at(rom, address + index * size, size))
-        .collect()
-}
-
-pub fn export_document(rom: &[u8]) -> Result<Value> {
-    if rom.len() < END - ROM_BASE {
-        return err("ROM is too small for resource 5");
-    }
-    let alignment = at(rom, ALIGNMENT, END - ALIGNMENT);
-    all_zero(alignment, 0, alignment.len(), "resource 5 alignment")?;
-    let experience = at(rom, 0x0807_a830, 8 * 99 * 4);
-    let inventory = at(rom, 0x0807_b490, 512);
-    let party = at(rom, 0x0807_b690, 6 * 4);
-    let level_experience = (0..8)
-        .map(|hero| {
-            (0..99)
-                .map(|level| json!(read_u32(experience, (hero * 99 + level) * 4)))
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
-    let inventory_counter_slots = inventory
-        .iter()
-        .map(|value| {
-            if *value == 0 {
-                Value::Null
-            } else {
-                json!(value - 1)
-            }
-        })
-        .collect::<Vec<_>>();
-    let item_values = records(rom, 0x0807_b6a8, 324, 44)
-        .into_iter()
-        .map(export_item)
-        .collect::<Result<Vec<_>>>()?;
-    let ability_values = records(rom, 0x0807_ee58, 519, 16)
-        .into_iter()
-        .map(export_ability)
-        .collect::<Result<Vec<_>>>()?;
-    let combatant_values = records(rom, 0x0808_0ec8, 165, 84)
-        .into_iter()
-        .map(export_combatant)
-        .collect::<Result<Vec<_>>>()?;
-    let hero_values = records(rom, 0x0808_44ec, 8, 180)
-        .into_iter()
-        .map(export_hero_growth)
-        .collect::<Result<Vec<_>>>()?;
-    let summon_values = records(rom, 0x0808_4a9c, 16, 8)
-        .into_iter()
-        .map(|data| json!({"ability_id": read_u32(data, 0), "djinn_cost": data[4..8].to_vec()}))
-        .collect::<Vec<_>>();
-    let class_values = records(rom, 0x0808_4b1c, 203, 84)
-        .into_iter()
-        .map(export_class)
-        .collect::<Result<Vec<_>>>()?;
-    let matrix_data = at(rom, 0x0808_8db8, 128);
-    let matrix = (0..8)
-        .map(|row| {
-            (0..4)
-                .map(|column| json!(read_i32(matrix_data, (row * 4 + column) * 4)))
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
-    let profile_values = records(rom, 0x0808_8e38, 44, 24)
-        .into_iter()
-        .map(|data| Ok(export_elemental_profile(data)))
-        .collect::<Result<Vec<_>>>()?;
-    let scale_values = records(rom, 0x0808_9258, 5, 4)
-        .into_iter()
-        .map(|data| json!({"input": read_i16(data, 0), "output": read_i16(data, 2)}))
-        .collect::<Vec<_>>();
-    let djinn_values = records(rom, 0x0808_926c, 80, 12)
-        .into_iter()
-        .map(|data| {
-            all_zero(data, 2, 4, "Djinn")?;
-            all_zero(data, 10, 12, "Djinn")?;
-            Ok(json!({
-                "name_message": read_u16(data, 0),
-                "stat_bonuses": data[4..10].iter().map(|value| json!(*value as i8)).collect::<Vec<_>>(),
-            }))
-        })
-        .collect::<Result<Vec<_>>>()?;
-    Ok(json!({
-        "format": 1,
-        "kind": "golden-sun-gameplay-databases",
-        "address": "0x0807a828",
-        "size": "0x0000f7d8",
-        "alignment_bytes": alignment.len(),
-        "progression_groups": at(rom, 0x0807_a828, 8).to_vec(),
-        "level_experience": level_experience,
-        "inventory_counter_slots": inventory_counter_slots,
-        "party_order": (0..6).map(|index| json!(read_i32(party, index * 4))).collect::<Vec<_>>(),
-        "items": item_values,
-        "abilities": ability_values,
-        "combatants": combatant_values,
-        "hero_growth": hero_values,
-        "summon_order": at(rom, 0x0808_4a8c, 16).to_vec(),
-        "summons": summon_values,
-        "classes": class_values,
-        "class_family_matrix": matrix,
-        "elemental_profiles": profile_values,
-        "signed_scale_curve": scale_values,
-        "djinn": djinn_values,
-    }))
 }
 
 pub fn build_resource_5(value: &Value) -> Result<Vec<u8>> {
@@ -1006,212 +732,17 @@ pub fn build_resource_5(value: &Value) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-fn read_json(path: &Path) -> Result<Value> {
-    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))
-}
-
-fn write(path: &Path, bytes: &[u8]) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+pub fn run(args: Vec<String>) -> Result<()> {
+    if args.first().map(String::as_str) != Some("build-stdout") {
+        return err("usage: resource-5 build-stdout SOURCE");
     }
-    fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
-}
-
-pub fn export_resource_5(rom_path: &Path, output_path: &Path) -> Result<usize> {
-    let rom = fs::read(rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
-    let source = export_document(&rom)?;
-    let rebuilt = build_resource_5(&source)?;
-    let original = &rom[ADDRESS - ROM_BASE..END - ROM_BASE];
-    if rebuilt != original {
-        return err("exported resource 5 does not round-trip");
-    }
-    write(
-        output_path,
-        format!("{}\n", canonical_json(&source)).as_bytes(),
-    )?;
-    Ok(rebuilt.len())
-}
-
-pub fn verify_resource_5(rom_path: &Path, source_path: &Path) -> Result<usize> {
-    let rom = fs::read(rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
-    let source = read_json(source_path)?;
-    let built = build_resource_5(&source)?;
-    if rom.len() < END - ROM_BASE || built != rom[ADDRESS - ROM_BASE..END - ROM_BASE] {
-        return err("resource 5 differs from ROM");
-    }
-    Ok(built.len())
-}
-
-pub fn self_test() -> Result<()> {
-    let name = vec![0x20; 14];
-    if name_slot(&name)? != "space" || build_name_slot(&json!("space"))? != name {
-        return err("name-slot self-test failed");
-    }
-    let item = vec![0; 44];
-    if build_item(&export_item(&item)?, 0)? != item {
-        return err("item self-test failed");
-    }
-    let ability = vec![0; 16];
-    if build_ability(&export_ability(&ability)?, 0)? != ability {
-        return err("ability self-test failed");
-    }
-    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .unwrap();
-    let rom = root.join("roms/gs1-en.gba");
-    let source = root.join("assets/data/resource_5_database.json");
-    if rom.is_file() && source.is_file() {
-        verify_resource_5(&rom, &source)?;
-    }
-    Ok(())
-}
-
-fn positional(args: &[String]) -> Vec<String> {
-    args.iter()
-        .enumerate()
-        .filter(|(index, value)| {
-            !value.starts_with('-')
-                && !(*index > 0 && matches!(args[*index - 1].as_str(), "-o" | "--output"))
-        })
-        .map(|(_, value)| value.clone())
-        .collect()
-}
-
-fn output(args: &[String]) -> Option<String> {
-    args.iter()
-        .enumerate()
-        .filter(|(_, value)| matches!(value.as_str(), "-o" | "--output"))
-        .filter_map(|(index, _)| args.get(index + 1).cloned())
-        .next_back()
-}
-
-fn validate_options(args: &[String]) -> Result<()> {
-    let mut index = 0;
-    while index < args.len() {
-        match args[index].as_str() {
-            "-o" | "--output" => {
-                if index + 1 >= args.len() {
-                    return err(format!("{} requires a value", args[index]));
-                }
-                index += 2;
-            }
-            "-h" | "--help" | "--self-test" => index += 1,
-            argument if argument.starts_with('-') => {
-                return err(format!("unknown option: {argument}"));
-            }
-            _ => index += 1,
-        }
-    }
-    Ok(())
-}
-
-pub fn run(mut args: Vec<String>) -> Result<()> {
-    validate_options(&args)?;
-    if args.iter().any(|value| value == "-h" || value == "--help") {
-        println!("usage: resource-5 {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}");
-        return Ok(());
-    }
-    if args.iter().any(|value| value == "--self-test") {
-        self_test()?;
-        println!("self-test=ok");
-        if args.len() == 1 {
-            return Ok(());
-        }
-        args.retain(|value| value != "--self-test");
-    }
-    let words = positional(&args);
-    if words.is_empty()
-        || args
-            .iter()
-            .any(|value| matches!(value.as_str(), "-h" | "--help"))
-    {
-        println!("usage: resource-5 {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}");
-        return Ok(());
-    }
-    let target = output(&args);
-    match words.as_slice() {
-        [command, input] if command == "export" => {
-            let target = target.ok_or_else(|| "export requires ROM and -o SOURCE".to_string())?;
-            let bytes = export_resource_5(Path::new(input), Path::new(&target))?;
-            println!("identical=true bytes={bytes} items=324 abilities=519 combatants=165 classes=203 djinn=80");
-        }
-        [command, input] if command == "build" => {
-            let target = target.ok_or_else(|| "build requires SOURCE and -o FILE".to_string())?;
-            let source = read_json(Path::new(input))?;
-            let bytes = build_resource_5(&source)?;
-            write(Path::new(&target), &bytes)?;
-            println!("bytes={}", bytes.len());
-        }
-        [command, input] if command == "build-stdout" => {
-            let source = read_json(Path::new(input))?;
-            let bytes = build_resource_5(&source)?;
-            io::stdout()
-                .write_all(&bytes)
-                .map_err(|error| error.to_string())?;
-        }
-        [command, rom, source] if command == "verify" => {
-            let bytes = verify_resource_5(Path::new(rom), Path::new(source))?;
-            println!("identical=true bytes={bytes} address=0x{ADDRESS:x}");
-        }
-        _ => println!("usage: resource-5 {{export ROM -o SOURCE|build SOURCE -o FILE|verify ROM SOURCE|--self-test}}"),
-    }
-    Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn primitive_records_round_trip() {
-        let item = vec![0; 44];
-        assert_eq!(build_item(&export_item(&item).unwrap(), 0).unwrap(), item);
-        let ability = vec![0; 16];
-        assert_eq!(
-            build_ability(&export_ability(&ability).unwrap(), 0).unwrap(),
-            ability
-        );
-    }
-
-    #[test]
-    fn strict_document_header() {
-        let mut value = json!({
-            "format": 1, "kind": "golden-sun-gameplay-databases", "address": "0x0807a828",
-            "size": "0x0000f7d8", "alignment_bytes": END - ALIGNMENT,
-            "progression_groups": [0,0,0,0,0,0,0,0],
-            "level_experience": (0..8).map(|_| (0..99).map(|_| json!(0)).collect::<Vec<_>>()).collect::<Vec<_>>(),
-            "inventory_counter_slots": vec![Value::Null; 512], "party_order": vec![json!(0); 6],
-            "items": vec![json!([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]); 324], "abilities": vec![json!({"element":0,"target":0,"damage_class":0,"effect":0,"animation":0,"range":0,"category":0,"power":0,"chance":0}); 519],
-            "combatants": vec![json!({"name_slot":"zero","level":0,"hp":0,"pp":0,"attack":0,"defense":0,"agility":0,"luck":0,"turns":0,"hp_regeneration":0,"initial_abilities":[0,0,0,0],"initial_ability_counts":[0,0,0,0],"elemental_profile":0,"behavior":0,"flags":0,"secondary_abilities":[0,0,0,0],"secondary_ability_counts":[0,0,0,0],"battle_traits":[0,0,0,0],"experience_reward":0,"sprite":0,"reward_tier":0,"coin_reward":0}); 165],
-            "hero_growth": vec![json!({"hp":[0,0,0,0,0,0],"pp":[0,0,0,0,0,0],"attack":[0,0,0,0,0,0],"defense":[0,0,0,0,0,0],"agility":[0,0,0,0,0,0],"luck":[0,0,0,0,0,0],"elemental_levels":[0,0,0,0],"class_id":0,"initial_abilities":[0,0,0,0,0,0,0,0,0,0,0,0,0]}); 8],
-            "summon_order": vec![json!(0); 16], "summons": vec![json!({"ability_id":0,"djinn_cost":[0,0,0,0]}); 16],
-            "classes": vec![json!({"family":0,"djinn_requirements":[0,0,0,0],"stat_multipliers":[0,0,0,0,0,0],"abilities":vec![json!({"id":0,"level":0});16],"traits":[0,0,0,0]});203],
-            "class_family_matrix": vec![vec![json!(0);4];8],
-            "elemental_profiles": vec![json!({"element":0,"levels":[0,0,0,0],"stats":vec![json!({"power":0,"resistance":0});4]});44],
-            "signed_scale_curve": vec![json!({"input":0,"output":0});5],
-            "djinn": vec![json!({"name_message":0,"stat_bonuses":[0,0,0,0,0,0]});80]
-        });
-        assert!(parse_document(&value).is_ok());
-        value
-            .as_object_mut()
-            .unwrap()
-            .insert("extra".into(), json!(1));
-        assert!(parse_document(&value).is_err());
-    }
-
-    #[test]
-    fn unknown_options_are_rejected_before_file_access() {
-        assert_eq!(
-            run(vec![
-                "verify".into(),
-                "missing.gba".into(),
-                "missing.json".into(),
-                "--bogus".into(),
-            ])
-            .unwrap_err(),
-            "unknown option: --bogus"
-        );
-    }
+    let source = args
+        .get(1)
+        .ok_or_else(|| "build-stdout requires a source".to_string())?;
+    let text = fs::read_to_string(source).map_err(|error| format!("{source}: {error}"))?;
+    let value: Value = serde_json::from_str(&text).map_err(|error| format!("{source}: {error}"))?;
+    let bytes = build_resource_5(&value)?;
+    io::stdout()
+        .write_all(&bytes)
+        .map_err(|error| error.to_string())
 }

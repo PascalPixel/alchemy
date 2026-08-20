@@ -5,18 +5,6 @@ name = "shape-sweep"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-# Native candidate compilation and the overlay linker are shared Rust APIs.
-# Keeping this crate on those APIs means the shape axis observes the same
-# compiler routing and linking rules as the other candidate tools.
-candidate-compiler = { path = "../candidate-compiler" }
-# `owner_reference`: the owner's authoritative extent. Scoring against
-# `verify_candidate`'s own `expected` truncates the reference to the candidate's
-# length, which makes the length term in `differing_halfwords` always zero.
-decomp-diagnose = { path = "../decomp-diagnose" }
-alchemy-routing = { path = "../alchemy-routing" }
-overlay-disasm = { path = "../overlay-disasm" }
-
 [lib]
 name = "shape_sweep"
 path = "src/lib.rs"

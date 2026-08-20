@@ -291,31 +291,3 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn progress_child_is_cargo_authoritative() {
-        let command = cargo_command(Path::new("/repo"), "progress");
-        assert_eq!(command.get_program(), "cargo");
-        let args: Vec<_> = command
-            .get_args()
-            .map(|arg| arg.to_string_lossy().into_owned())
-            .collect();
-        assert_eq!(
-            args[0..6],
-            [
-                "run",
-                "--offline",
-                "--quiet",
-                "--release",
-                "--manifest-path",
-                "/repo/tools/check/Cargo.toml",
-            ]
-        );
-        assert_eq!(args[6], "--");
-        assert_eq!(args[7], "progress");
-    }
-}

@@ -6,25 +6,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-mode-sweep = { path = "../mode-sweep" }
-search-compiler-modes = { path = "../search-compiler-modes" }
-shape-sweep = { path = "../shape-sweep" }
-thumb-disasm = { path = "../thumb-disasm" }
 candidate-show = { path = "../candidate-show" }
-candidate-explain = { path = "../candidate-explain" }
-main-candidate-rank = { path = "../main-candidate-rank" }
-rtl-insn = { path = "../rtl-insn" }
-rtl-sexpr = { path = "../rtl-sexpr" }
-rtl-schedule = { path = "../rtl-schedule" }
-rtl-align = { path = "../rtl-align" }
-audit-residuals = { path = "../audit-residuals" }
-bl-site-symbols = { path = "../bl-site-symbols" }
-permuter = { path = "../permuter" }
 dashboard-server = { path = "../dashboard-server" }
-mode-cohort = { path = "../mode-cohort" }
-decomp-diagnose = { path = "../decomp-diagnose" }
-compiler-corpus-regression = { path = "../compiler-corpus-regression" }
-overlay-show = { path = "../overlay-show" }
+permuter = { path = "../permuter" }
 
 [[bin]]
 name = "compiler"

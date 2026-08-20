@@ -6,7 +6,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-alchemy-bundle = { path = "../alchemy-bundle" }
+compiler-core = { path = "../compiler-core" }
 cache-entry = { path = "../cache-entry" }
 canonical-json = { path = "../canonical-json" }
 serde = { version = "1", features = ["derive"] }

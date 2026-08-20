@@ -11,18 +11,15 @@ edition = "2021"
 [dependencies]
 # Sibling crates, not third-party dependencies. These are the landed slices of
 # Native compiler planning and symbol dependencies:
-#   alchemy-plan    -> sourceToAssemblyPlan, CompilerTarget
-#   alchemy-symbols -> externalSymbol, externalSymbolAssembly, CALL_VIA_BASE
+#   compiler-core -> compilation plans, routing, and external symbols
 # A second copy of either is exactly the hand-sync problem this port exists to
 # end.
-#   alchemy-routing -> `CompilerTarget`, `root()` (the repository root)
+#   compiler-core -> `CompilerTarget`, `root()` (the repository root)
 # `canonical_json.ts` is 27 lines and is reimplemented in `src/json.rs` over
 # this crate's own insertion-ordered value type rather than pulled in through
 # `tools/canonical-json`, which would drag `serde_json` in as this crate's
 # only third-party dependency for no gain.
-alchemy-plan = { path = "../alchemy-plan" }
-alchemy-symbols = { path = "../alchemy-symbols" }
-alchemy-routing = { path = "../alchemy-routing" }
+compiler-core = { path = "../compiler-core" }
 # `./decomp_targets.ts`, already ported.
 decomp-targets = { path = "../decomp-targets" }
 

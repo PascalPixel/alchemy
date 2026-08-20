@@ -15,11 +15,14 @@ edition = "2021"
 #                      modules (`jsnum`, `jsstring`, `json`) the port leans on.
 #                      `candidate_show.ts` imports the first four from
 #                      the shared candidate compiler directly.
-#   alchemy-routing -> `root()` (the repository root) and `CompilerTarget`.
+#   compiler-core -> `root()` (the repository root) and `CompilerTarget`.
 # The compiler tables are reached transitively through `candidate-compiler`;
 # `candidate_show.ts` never imports them by name.
 candidate-compiler = { path = "../candidate-compiler" }
-alchemy-routing = { path = "../alchemy-routing" }
+serde_json = { version = "1", features = ["preserve_order"] }
+regex = "1"
+sha2 = "0.10"
+compiler-core = { path = "../compiler-core" }
 
 [lib]
 name = "candidate_show"

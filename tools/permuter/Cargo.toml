@@ -6,13 +6,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-alchemy-bundle = { path = "../alchemy-bundle" }
-alchemy-routing = { path = "../alchemy-routing" }
+compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
 candidate-show = { path = "../candidate-show" }
 lang-c = "0.15.1"
 overlay-disasm = { path = "../overlay-disasm" }
 shape-sweep = { path = "../shape-sweep" }
+serde_json = { version = "1", features = ["preserve_order"] }
 
 [lib]
 name = "permuter"

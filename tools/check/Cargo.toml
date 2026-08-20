@@ -6,34 +6,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cache-entry = { path = "../cache-entry" }
+check-commit-progress = { path = "../check-commit-progress" }
 check-publication = { path = "../check-publication" }
 check-unmatchable = { path = "../check-unmatchable" }
-symbols = { path = "../symbols" }
 core-retained-audit = { path = "../core-retained-audit" }
-decomp-constraints = { path = "../decomp-constraints" }
-decomp-targets = { path = "../decomp-targets" }
-discover = { path = "../discover" }
-executable-gap-sources = { path = "../executable-gap-sources" }
-extract-resource = { path = "../extract-resource" }
-late-runtime-data = { path = "../late-runtime-data" }
-music-residuals = { path = "../music-residuals" }
-source-citations = { path = "../source-citations" }
-cache-key-lint = { path = "../cache-key-lint" }
-no-asm-c = { path = "../no-asm-c" }
-compare-roms = { path = "../compare-roms" }
-lang-ban = { path = "../lang-ban" }
-check-commit-progress = { path = "../check-commit-progress" }
 coverage-map = { path = "../coverage-map" }
-byte-value-regions = { path = "../byte-value-regions" }
-architecture = { path = "../architecture" }
-alchemy-lints = { path = "../alchemy-lints" }
-jobs = { path = "../jobs" }
-integrate-matches = { path = "../integrate-matches" }
-full-c-history = { path = "../full-c-history" }
-localization-tables = { path = "../localization-tables" }
-route-dump = { path = "../route-dump" }
 full-c-progress = { path = "../full-c-progress" }
+integrate-matches = { path = "../integrate-matches" }
+no-asm-c = { path = "../no-asm-c" }
+route-dump = { path = "../route-dump" }
 
 [[bin]]
 name = "check"

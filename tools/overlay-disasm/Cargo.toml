@@ -12,13 +12,11 @@ path = "src/lib.rs"
 [dependencies]
 # Sibling crates owning the former compiler-module surface. These are not
 # third-party dependencies; they are the Rust half of the same tree.
-alchemy-symbols = { path = "../alchemy-symbols" }
-alchemy-plan = { path = "../alchemy-plan" }
-alchemy-bundle = { path = "../alchemy-bundle" }
+compiler-core = { path = "../compiler-core" }
 # `CompilerTarget` lives here. This dependency is read-only for this crate.
-alchemy-routing = { path = "../alchemy-routing" }
-discover = { path = "../discover" }
 cache-entry = { path = "../cache-entry" }
+regex = "1.13.1"
+tempfile = "3"
 
 [profile.release]
 opt-level = 3

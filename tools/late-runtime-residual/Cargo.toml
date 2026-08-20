@@ -6,6 +6,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-canonical-json = { path = "../canonical-json" }
 late-runtime-data = { path = "../late-runtime-data" }
+serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }

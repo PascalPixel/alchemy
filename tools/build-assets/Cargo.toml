@@ -6,7 +6,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-alchemy-bundle = { path = "../alchemy-bundle" }
+compiler-core = { path = "../compiler-core" }
 alignment-tail = { path = "../alignment-tail" }
 asset-paths = { path = "../asset-paths" }
 audio-engine-data = { path = "../audio-engine-data" }
@@ -23,6 +23,7 @@ tilemap = { path = "../tilemap" }
 wordstream = { path = "../wordstream" }
 gba-header = { path = "../gba-header" }
 serde_json = { version = "1", features = ["preserve_order"] }
+sha1 = "0.10"
 
 [[bin]]
 name = "build-assets"

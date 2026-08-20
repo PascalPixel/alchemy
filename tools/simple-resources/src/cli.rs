@@ -1,13 +1,14 @@
 //! CLI for this crate, moved out of `main.rs` so the command can be linked
 //! into a shared entry point instead of shipping its own executable.
 
-use crate::{build_simple_resource, export_simple_resources, self_test, verify_simple_resources, Error};
+use crate::{
+    build_simple_resource, export_simple_resources, self_test, verify_simple_resources, Error,
+};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str =
-    "usage: simple-resources [--self-test] {export|verify} ROM --directory ASSETS";
+const USAGE: &str = "usage: simple-resources [--self-test] {export|verify} ROM --directory ASSETS";
 fn option(args: &[String], name: &str) -> Result<String, Error> {
     let i = args
         .iter()
@@ -44,7 +45,9 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
             .trim_start_matches("0x");
         let id = u32::from_str_radix(id, 16).map_err(|_| Error("invalid resource id".into()))?;
         let bytes = build_simple_resource(id, Path::new(root))?;
-        io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
+        io::stdout()
+            .write_all(&bytes)
+            .map_err(|e| Error(e.to_string()))?;
         return Ok(());
     }
     let rom = args

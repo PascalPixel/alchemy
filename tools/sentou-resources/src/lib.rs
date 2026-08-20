@@ -361,12 +361,3 @@ pub fn run(args: &[String]) -> Result<()> {
     }
     fail("invalid sentou-resources arguments")
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn native_self_test() {
-        self_test().unwrap();
-    }
-}

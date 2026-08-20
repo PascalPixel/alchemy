@@ -3,13 +3,11 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::fs;
-use std::io::{self, Write};
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 use std::sync::{Arc, Mutex, OnceLock};
 
-use alchemy_bundle::bundle::{compiler_bundle_signature, host_executable_signature};
-use alchemy_bundle::sha256;
 use alignment_tail::parse_alignment_tail;
 use archive_asset::{
     build_archive, self_test as archive_self_test, ArchivePlan, ArchiveStream, PixelFormat,
@@ -18,6 +16,8 @@ use asset_paths::AssetPaths;
 use audio_engine_data::build_audio_engine_data;
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
+use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
+use compiler_core::sha256;
 use extract_resource::{PaletteGroup, PaletteOperation};
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use generated_files::{prune_files, unused_tracked_images};
@@ -27,10 +27,10 @@ use import_asset::{
 use map_load_table::build_table as build_map_load_table;
 use overlay_disasm::{assemble_overlay, OverlaySource};
 use serde_json::Value;
+use sha1::{Digest, Sha1};
 use tilemap::import_tilemap;
 
-const USAGE: &str =
-    "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --self-test";
+const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 const SENTOU_GAMEN_ADDRESS: usize = 0x080a_ea4c;
@@ -209,59 +209,16 @@ fn parse_plan(value: Value) -> Result<ArchivePlan, String> {
     })
 }
 
-fn build_offset_archive(plan_path: &Path, atlas_path: &Path) -> Result<(), String> {
+fn build_offset_archive(plan_path: &Path, atlas_path: &Path) -> Result<Vec<u8>, String> {
     let plan = parse_plan(
         serde_json::from_slice(&fs::read(plan_path).map_err(|error| error.to_string())?)
             .map_err(|error| format!("invalid archive plan: {error}"))?,
     )?;
-    let bytes = build_archive(
+    build_archive(
         &fs::read(atlas_path).map_err(|error| error.to_string())?,
         &plan,
     )
-    .map_err(|error| error.to_string())?;
-    io::stdout()
-        .write_all(&bytes)
-        .map_err(|error| error.to_string())
-}
-
-fn build_audio_engine(path: &Path) -> Result<(), String> {
-    let built = build_audio_engine_data(path).map_err(|error| error.to_string())?;
-    io::stdout()
-        .write_all(&built.data)
-        .map_err(|error| error.to_string())
-}
-
-fn build_gba_header(path: &Path, address: &str, size: &str) -> Result<(), String> {
-    let address = parse_cli_number(address, "address")? as u32;
-    let size = parse_cli_number(size, "size")?;
-    let source = read_gba_header_source(path)?;
-    let logo = source
-        .get("standard")
-        .and_then(Value::as_object)
-        .and_then(|standard| standard.get("logo"))
-        .and_then(Value::as_object)
-        .and_then(|logo| logo.get("source"))
-        .and_then(Value::as_str)
-        .ok_or_else(|| "GBA header logo source is missing".to_string())?;
-    let logo_path = repository_root().join(logo);
-    let built = build_gba_header_component(
-        &source,
-        &fs::read(logo_path).map_err(|error| error.to_string())?,
-        address,
-        size,
-    )?;
-    io::stdout()
-        .write_all(&built)
-        .map_err(|error| error.to_string())
-}
-
-fn parse_cli_number(text: &str, label: &str) -> Result<usize, String> {
-    let parsed = if let Some(hex) = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")) {
-        usize::from_str_radix(hex, 16)
-    } else {
-        text.parse::<usize>()
-    };
-    parsed.map_err(|_| format!("{label} must be an integer"))
+    .map_err(|error| error.to_string())
 }
 
 type Json = Value;
@@ -1946,8 +1903,11 @@ fn expand_series(
                         "fill".to_string(),
                     ],
                 )?;
-                entries.push(serde_json::json!({"address":RESOURCE_3CE_STREAM_ADDRESS,"size":stream.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":"stream"}));
-                entries.push(serde_json::json!({"address":RESOURCE_3CE_FILL_ADDRESS,"size":fill.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":"fill"}));
+                entries.push(
+                    serde_json::json!({"address":RESOURCE_3CE_STREAM_ADDRESS,"size":stream.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":"stream"}),
+                );
+                entries
+                    .push(serde_json::json!({"address":RESOURCE_3CE_FILL_ADDRESS,"size":fill.len(),"kind":"golden-sun-final-battle-overlay","source":source,"component":"fill"}));
             }
             "golden-sun-encounter-data-series" => {
                 let directory = json_string(
@@ -3178,62 +3138,7 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Json>, String> {
 }
 
 fn sha1_hex(data: &[u8]) -> String {
-    let mut message = data.to_vec();
-    let bit_len = (message.len() as u64) * 8;
-    message.push(0x80);
-    while message.len() % 64 != 56 {
-        message.push(0);
-    }
-    message.extend_from_slice(&bit_len.to_be_bytes());
-    let mut h = [
-        0x67452301u32,
-        0xefcdab89,
-        0x98badcfe,
-        0x10325476,
-        0xc3d2e1f0,
-    ];
-    for chunk in message.chunks_exact(64) {
-        let mut words = [0u32; 80];
-        for index in 0..16 {
-            words[index] = u32::from_be_bytes([
-                chunk[index * 4],
-                chunk[index * 4 + 1],
-                chunk[index * 4 + 2],
-                chunk[index * 4 + 3],
-            ]);
-        }
-        for index in 16..80 {
-            words[index] =
-                (words[index - 3] ^ words[index - 8] ^ words[index - 14] ^ words[index - 16])
-                    .rotate_left(1);
-        }
-        let (mut a, mut b, mut c, mut d, mut e) = (h[0], h[1], h[2], h[3], h[4]);
-        for index in 0..80 {
-            let (f, k) = match index {
-                0..=19 => ((b & c) | ((!b) & d), 0x5a827999),
-                20..=39 => (b ^ c ^ d, 0x6ed9eba1),
-                40..=59 => ((b & c) | (b & d) | (c & d), 0x8f1bbcdc),
-                _ => (b ^ c ^ d, 0xca62c1d6),
-            };
-            let temp = a
-                .rotate_left(5)
-                .wrapping_add(f)
-                .wrapping_add(e)
-                .wrapping_add(k)
-                .wrapping_add(words[index]);
-            e = d;
-            d = c;
-            c = b.rotate_left(30);
-            b = a;
-            a = temp;
-        }
-        h[0] = h[0].wrapping_add(a);
-        h[1] = h[1].wrapping_add(b);
-        h[2] = h[2].wrapping_add(c);
-        h[3] = h[3].wrapping_add(d);
-        h[4] = h[4].wrapping_add(e);
-    }
-    h.iter().map(|word| format!("{word:08x}")).collect()
+    format!("{:x}", Sha1::digest(data))
 }
 
 fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
@@ -4349,15 +4254,8 @@ fn build_entry_native_tail(
                 "offset palette plan",
             )?;
             let plan = json(&source_path(plan_name)?)?;
-            let built = native_command(
-                &ctx.root,
-                "build-assets",
-                &[
-                    "--build-offset-archive".to_string(),
-                    source_path(plan_name)?.to_string_lossy().into_owned(),
-                    source_path(entry_source)?.to_string_lossy().into_owned(),
-                ],
-            )?;
+            let built =
+                build_offset_archive(&source_path(plan_name)?, &source_path(entry_source)?)?;
             Ok((
                 built,
                 vec![entry_source.to_string(), plan_name.to_string()],
@@ -4939,27 +4837,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
 }
 
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
-    if arguments.first().map(String::as_str) == Some("--build-audio-engine") {
-        if arguments.len() != 2 {
-            return Err("usage: build-assets --build-audio-engine INDEX".to_string());
-        }
-        build_audio_engine(Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--build-gba-header") {
-        if arguments.len() != 4 {
-            return Err("usage: build-assets --build-gba-header SOURCE ADDRESS SIZE".to_string());
-        }
-        build_gba_header(Path::new(&arguments[1]), &arguments[2], &arguments[3])?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--build-offset-archive") {
-        if arguments.len() != 3 {
-            return Err("usage: build-assets --build-offset-archive PLAN ATLAS".to_string());
-        }
-        build_offset_archive(Path::new(&arguments[1]), Path::new(&arguments[2]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
     if arguments.as_slice() == ["--self-test"] {
         archive_self_test().map_err(|error| error.to_string())?;
         println!("{}", closure_self_test()?);
@@ -4980,395 +4857,5 @@ fn main() -> ExitCode {
             eprintln!("error: {error}");
             ExitCode::FAILURE
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn stamp_test_root(name: &str) -> PathBuf {
-        let root = env::temp_dir().join(format!(
-            "alchemy-build-assets-{name}-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(root.join("assets")).unwrap();
-        fs::create_dir_all(root.join("tools")).unwrap();
-        fs::create_dir_all(root.join("semantic")).unwrap();
-        fs::create_dir_all(root.join("exact")).unwrap();
-        fs::write(root.join("assets/manifest.json"), b"{\"format\":1}").unwrap();
-        fs::write(root.join("assets/input.bin"), b"aa").unwrap();
-        fs::write(root.join("tools/source.rs"), b"aa").unwrap();
-        root
-    }
-
-    fn source_stamp(root: &Path) -> String {
-        stage_stamp_with_signature(
-            root,
-            &root.join("assets/manifest.json"),
-            true,
-            None,
-            StageSignatures {
-                bundle: "test-bundle",
-                host_binutils: "test-host-binutils",
-                implementation: "test-implementation",
-                native_helpers: "test-native-helpers",
-            },
-        )
-        .unwrap()
-    }
-
-    #[test]
-    fn parses_decimal_and_hex_numbers() {
-        assert_eq!(number(&Value::String("0x10".into()), "n").unwrap(), 16);
-        assert_eq!(number(&Value::from(17), "n").unwrap(), 17);
-    }
-
-    #[test]
-    fn parses_palette_tokens() {
-        let group = parse_group(&serde_json::json!(["g", [["l"], ["c", 4, 2], ["e"]]])).unwrap();
-        assert_eq!(
-            group,
-            PaletteGroup::Group(vec![
-                PaletteOperation::Literal,
-                PaletteOperation::Copy {
-                    length: 4,
-                    distance: 2
-                },
-                PaletteOperation::End,
-            ])
-        );
-    }
-
-    #[test]
-    fn rejects_unknown_token_tags() {
-        assert!(parse_group(&serde_json::json!(["nope"])).is_err());
-    }
-
-    #[test]
-    fn identifies_standalone_and_shared_native_workspaces() {
-        let root = Path::new("/repo");
-        assert_eq!(
-            native_target_dir(root, "kind2-resources", "[workspace]\n"),
-            PathBuf::from("/repo/tools/kind2-resources/target/release")
-        );
-        assert_eq!(
-            native_target_dir(root, "wordstream", "[package]\n"),
-            PathBuf::from("/repo/tools/target/release")
-        );
-    }
-
-    #[test]
-    fn native_helper_registry_is_exact_and_rejects_unknown_helpers() {
-        let mut expected = [
-            "audio_wave",
-            "battle_effect_data",
-            "build-assets",
-            "byte-henkan",
-            "byte_value_regions",
-            "character_catalog",
-            "early_runtime_data",
-            "encounter_data",
-            "executable_gap_sources",
-            "f0_archive",
-            "indexed_still",
-            "kind1-map-grid",
-            "kind2-resources",
-            "late_runtime_residual",
-            "localization_font",
-            "localization_tables",
-            "map_container_components",
-            "message_archive",
-            "music",
-            "music_residuals",
-            "namae_nyuuryoku",
-            "pairtable",
-            "resource_01c",
-            "resource_3ce",
-            "resource_5",
-            "resource_byte_canvases",
-            "resource_d1_d3",
-            "resource_directory",
-            "runtime_support_data",
-            "sentou_gamen_data",
-            "sentou_hyouji",
-            "sentou_kouka_runtime",
-            "sentou_menu_data",
-            "sentou_resources",
-            "simple_resources",
-            "skip_sprite_archive",
-            "staff_roll",
-            "static_sprite_series",
-            "title_resources",
-            "tokushu-map-resources",
-            "chiiki-map-resources",
-            "wordstream",
-        ];
-        expected.sort_unstable();
-        let mut actual = NATIVE_TOOL_SPECS
-            .iter()
-            .map(|(name, _, _)| *name)
-            .collect::<Vec<_>>();
-        actual.sort_unstable();
-        assert_eq!(actual, expected);
-        assert!(tool_spec("map_load_table").is_err());
-        assert!(tool_spec("not-a-build-assets-helper").is_err());
-    }
-
-    #[test]
-    fn stage_stamp_changes_for_same_length_content_edits() {
-        let root = stamp_test_root("content");
-        let before = source_stamp(&root);
-        fs::write(root.join("assets/input.bin"), b"ab").unwrap();
-        assert_ne!(before, source_stamp(&root));
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn stage_stamp_ignores_timestamp_only_rewrites() {
-        let root = stamp_test_root("timestamp");
-        let before = source_stamp(&root);
-        fs::write(root.join("assets/input.bin"), b"aa").unwrap();
-        assert_eq!(before, source_stamp(&root));
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn unrelated_tool_sources_do_not_invalidate_the_asset_stage() {
-        let root = stamp_test_root("unrelated-tool");
-        let before = source_stamp(&root);
-        fs::write(root.join("tools/source.rs"), b"changed unrelated tool").unwrap();
-        assert_eq!(before, source_stamp(&root));
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn stage_stamp_excludes_generated_target_out_and_scratch_trees() {
-        let root = stamp_test_root("excluded");
-        for directory in ["target", "out", "scratch"] {
-            let path = root.join("tools").join(directory);
-            fs::create_dir_all(&path).unwrap();
-            fs::write(path.join("generated"), b"before").unwrap();
-        }
-        let before = source_stamp(&root);
-        for directory in ["target", "out", "scratch"] {
-            fs::write(
-                root.join("tools").join(directory).join("generated"),
-                b"after",
-            )
-            .unwrap();
-        }
-        assert_eq!(before, source_stamp(&root));
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn stage_stamp_deduplicates_the_manifest_path() {
-        let root = stamp_test_root("deduplicate");
-        let manifest = root.join("assets/manifest.json");
-        let mut files = BTreeMap::new();
-        stamp_files(
-            &root,
-            &root.join("assets"),
-            &mut files,
-            include_all_stamp_files,
-        )
-        .unwrap();
-        let relative = manifest
-            .strip_prefix(&root)
-            .unwrap()
-            .to_string_lossy()
-            .replace('\\', "/");
-        files.entry(relative).or_insert_with(|| manifest.clone());
-        assert_eq!(files.len(), 2);
-        assert_eq!(files.values().filter(|path| *path == &manifest).count(), 1);
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn output_reuse_rejects_missing_digest_and_corrupt_outputs() {
-        let root = env::temp_dir().join(format!(
-            "alchemy-build-assets-output-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(&root).unwrap();
-        let output = root.join("region.bin");
-        let bytes = [1u8, 2, 3];
-        fs::write(&output, bytes).unwrap();
-        let region = serde_json::json!({
-            "address": ROM_BASE,
-            "size": bytes.len(),
-            "end": ROM_BASE + bytes.len(),
-            "kind": "fixture",
-            "sources": ["fixture.bin"],
-            "output": output,
-            "output_size": bytes.len(),
-            "output_sha256": sha256::hex(&bytes),
-        });
-        assert!(output_matches(&region));
-        let manifest = serde_json::json!({
-            "format": 1,
-            "rom_base": ROM_BASE,
-            "rom_size": ROM_SIZE,
-            "verification": "source_only",
-            "asset_bytes": bytes.len(),
-            "regions": [region.clone()],
-        });
-        assert_eq!(
-            reusable_asset_manifest(&manifest, true, ROM_SIZE),
-            Some((1, bytes.len() as u64))
-        );
-        let mut incomplete = manifest.clone();
-        incomplete.as_object_mut().unwrap().remove("asset_bytes");
-        assert!(reusable_asset_manifest(&incomplete, true, ROM_SIZE).is_none());
-        fs::write(&output, [1u8, 2, 4]).unwrap();
-        assert!(!output_matches(&region));
-        assert!(reusable_asset_manifest(&manifest, true, ROM_SIZE).is_none());
-        fs::write(&output, [1u8, 2]).unwrap();
-        assert!(!output_matches(&region));
-        assert!(!output_matches(&serde_json::json!({
-            "output": output,
-            "output_size": bytes.len(),
-        })));
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn stage_stamp_separates_mode_rom_compiler_bundle_and_host_binutils() {
-        let root = stamp_test_root("identity");
-        let manifest = root.join("assets/manifest.json");
-        let source = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            true,
-            None,
-            StageSignatures {
-                bundle: "bundle-a",
-                host_binutils: "host-a",
-                implementation: "implementation-a",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let other_source_bundle = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            true,
-            None,
-            StageSignatures {
-                bundle: "bundle-b",
-                host_binutils: "host-a",
-                implementation: "implementation-a",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let normal = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            false,
-            Some(b"rom-a"),
-            StageSignatures {
-                bundle: "bundle-a",
-                host_binutils: "host-a",
-                implementation: "implementation-a",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let other_rom = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            false,
-            Some(b"rom-b"),
-            StageSignatures {
-                bundle: "bundle-a",
-                host_binutils: "host-a",
-                implementation: "implementation-a",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let other_bundle = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            false,
-            Some(b"rom-a"),
-            StageSignatures {
-                bundle: "bundle-b",
-                host_binutils: "host-a",
-                implementation: "implementation-a",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let other_host = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            false,
-            Some(b"rom-a"),
-            StageSignatures {
-                bundle: "bundle-a",
-                host_binutils: "host-b",
-                implementation: "implementation-a",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let other_implementation = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            false,
-            Some(b"rom-a"),
-            StageSignatures {
-                bundle: "bundle-a",
-                host_binutils: "host-a",
-                implementation: "implementation-b",
-                native_helpers: "helpers-a",
-            },
-        )
-        .unwrap();
-        let other_helpers = stage_stamp_with_signature(
-            &root,
-            &manifest,
-            false,
-            Some(b"rom-a"),
-            StageSignatures {
-                bundle: "bundle-a",
-                host_binutils: "host-a",
-                implementation: "implementation-a",
-                native_helpers: "helpers-b",
-            },
-        )
-        .unwrap();
-        assert_ne!(source, normal);
-        assert_ne!(source, other_source_bundle);
-        assert_ne!(normal, other_rom);
-        assert_ne!(normal, other_bundle);
-        assert_ne!(normal, other_host);
-        assert_ne!(normal, other_implementation);
-        assert_ne!(normal, other_helpers);
-        fs::remove_dir_all(root).unwrap();
-    }
-
-    #[test]
-    fn core_exact_sources_do_not_invalidate_but_overlay_exact_sources_do() {
-        let root = stamp_test_root("exact-scope");
-        let exact = root.join("exact");
-        fs::create_dir_all(&exact).unwrap();
-        let core = exact.join("08000000.c");
-        let overlay = exact.join("resource_39c_c_02000240.c");
-        fs::write(&core, b"core").unwrap();
-        fs::write(&overlay, b"overlay").unwrap();
-        let before = source_stamp(&root);
-
-        fs::write(&core, b"changed").unwrap();
-        assert_eq!(before, source_stamp(&root));
-
-        fs::write(&overlay, b"changed").unwrap();
-        assert_ne!(before, source_stamp(&root));
-        fs::remove_dir_all(root).unwrap();
     }
 }

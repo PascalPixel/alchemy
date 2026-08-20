@@ -10,7 +10,6 @@ edition = "2021"
 # Archival extractors, now linked as libraries. They are the provenance record
 # for committed assets, so they must survive; they simply do not need to be
 # separate executables. See docs/ENTRY-POINTS.md.
-tilemap = { path = "../tilemap" }
 wordstream = { path = "../wordstream" }
 pairtable = { path = "../pairtable" }
 indexed-still = { path = "../indexed-still" }
@@ -22,15 +21,11 @@ localization-tables = { path = "../localization-tables" }
 byte-value-regions = { path = "../byte-value-regions" }
 executable-gap-sources = { path = "../executable-gap-sources" }
 music-residuals = { path = "../music-residuals" }
-documented = { path = "../documented" }
-remaining-survey = { path = "../remaining-survey" }
-exact-reading-list = { path = "../exact-reading-list" }
 f0-archive = { path = "../f0-archive" }
 simple-resources = { path = "../simple-resources" }
 kind2-resources = { path = "../kind2-resources" }
 resource-01c = { path = "../resource-01c" }
 resource-byte-canvases = { path = "../resource-byte-canvases" }
-archive-asset = { path = "../archive-asset" }
 skip-sprite-archive = { path = "../skip-sprite-archive" }
 static-sprite-series = { path = "../static-sprite-series" }
 localization-font = { path = "../localization-font" }
@@ -41,10 +36,7 @@ music = { path = "../music" }
 kind1-map-grid = { path = "../kind1-map-grid" }
 resource-directory = { path = "../resource-directory" }
 late-runtime-residual = { path = "../late-runtime-residual" }
-gba-header = { path = "../gba-header" }
 early-runtime-data = { path = "../early-runtime-data" }
-export-asset = { path = "../export-asset" }
-import-asset = { path = "../import-asset" }
 message-archive = { path = "../message-archive" }
 resource-3ce = { path = "../resource-3ce" }
 resource-5 = { path = "../resource-5" }
@@ -52,14 +44,12 @@ resource-d1-d3 = { path = "../resource-d1-d3" }
 title-resources = { path = "../title-resources" }
 sentou-resources = { path = "../sentou-resources" }
 map-resources = { path = "../map-resources" }
-audio-engine-data = { path = "../audio-engine-data" }
 battle-effect-data = { path = "../battle-effect-data" }
 runtime-support-data = { path = "../runtime-support-data" }
 sentou-kouka-runtime = { path = "../sentou-kouka-runtime" }
 sentou-menu-data = { path = "../sentou-menu-data" }
 sentou-gamen-data = { path = "../sentou-gamen-data" }
 sentou-hyouji = { path = "../sentou-hyouji" }
-alchemy-zlib = { path = "../zlib" }
 
 [[bin]]
 name = "assets"

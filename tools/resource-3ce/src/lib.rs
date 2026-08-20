@@ -1,18 +1,12 @@
-//! Native port of tools/make/resource_3ce.ts.
-
-use canonical_json::canonical_json;
-use extract_resource::{decode_general_trace, encode_general, GeneralToken};
-use overlay_disasm::{assemble_overlay, build_overlay_source, OverlaySource};
-use serde_json::{json, Map, Value};
+use extract_resource::{encode_general, GeneralToken};
+use overlay_disasm::{assemble_overlay, OverlaySource};
+use serde_json::{Map, Value};
 use std::fs;
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
 pub type Result<T> = std::result::Result<T, String>;
-pub const ROM_BASE: usize = 0x0800_0000;
 pub const ROM_END: usize = 0x0880_0000;
-pub const DIRECTORY_ADDRESS: usize = 0x0832_0000;
-pub const RESOURCE_ID: usize = 0x03ce;
 pub const RESOURCE_ADDRESS: usize = 0x087f_cd20;
 pub const DECODED_ADDRESS: i64 = 0x0200_0000;
 pub const STREAM_SIZE: usize = 0x0799;
@@ -83,22 +77,6 @@ fn json_file(path: &Path) -> Result<Value> {
     let bytes = fs::read(path).map_err(|e| format!("{}: {e}", path.display()))?;
     serde_json::from_str(&String::from_utf8_lossy(&bytes))
         .map_err(|e| format!("{}: {e}", path.display()))
-}
-
-fn layout_document() -> Value {
-    json!({
-        "format": 1, "kind": "golden-sun-final-battle-overlay", "resource_id": "0x3ce",
-        "address": address(RESOURCE_ADDRESS), "decoded_address": address(DECODED_ADDRESS as usize),
-        "stream_size": hex(STREAM_SIZE, 3), "decoded_size": hex(DECODED_SIZE, 4),
-        "overlay": "overlay.s", "compression_plan": "stream.lz.json",
-        "selection": {
-            "table": "0x0809f1a8", "record_index": 200, "record_address": "0x0809f7e8",
-            "resource_id": "0x3ce", "group": 70, "variant": 1, "effect_id": 0,
-            "consumers": ["Func_0808a8e4", "Func_0808ab48", "Func_0808ab74"]
-        },
-        "padding": {"address": address(PADDING_ADDRESS), "size": 3, "alignment": 4, "policy": "fallback"},
-        "zero_fill": {"address": address(FILL_ADDRESS), "end": address(ROM_END), "value": 0}
-    })
 }
 
 fn parse_layout(v: &Value) -> Result<Layout> {
@@ -288,29 +266,6 @@ fn layout_paths(path: &Path, layout: &Layout) -> Result<(PathBuf, PathBuf)> {
     ))
 }
 
-fn clean_overlay_source(decoded: &[u8]) -> Result<String> {
-    let source = build_overlay_source(decoded, DECODED_ADDRESS)?;
-    Ok(source
-        .lines()
-        .map(|line| {
-            let bytes = line.as_bytes();
-            let Some(at) = bytes.iter().position(|b| *b == b'@') else {
-                return line.to_owned();
-            };
-            if at == 0 || !matches!(bytes[at - 1], b' ' | b'\t') {
-                return line.to_owned();
-            }
-            let mut start = at;
-            while start > 0 && matches!(bytes[start - 1], b' ' | b'\t') {
-                start -= 1;
-            }
-            line[..start].to_owned()
-        })
-        .collect::<Vec<_>>()
-        .join("\n")
-        + "\n")
-}
-
 pub fn build_resource_3ce(path: &Path) -> Result<Resource3ceBuild> {
     let layout = parse_layout(&json_file(path)?)?;
     let (overlay, plan) = layout_paths(path, &layout)?;
@@ -333,232 +288,12 @@ pub fn build_resource_3ce(path: &Path) -> Result<Resource3ceBuild> {
     })
 }
 
-fn range(rom: &[u8], start: usize, end: usize) -> Result<Vec<u8>> {
-    let first = start as i64 - ROM_BASE as i64;
-    let last = end as i64 - ROM_BASE as i64;
-    if first < 0 || last < first || last > rom.len() as i64 {
-        return err("resource 3ce range lies outside the ROM");
-    }
-    Ok(rom[first as usize..last as usize].to_vec())
-}
-fn verify_directory(rom: &[u8]) -> Result<()> {
-    let at = DIRECTORY_ADDRESS - ROM_BASE + RESOURCE_ID * 4;
-    if at + 4 > rom.len()
-        || u32::from_le_bytes(rom[at..at + 4].try_into().unwrap()) != RESOURCE_ADDRESS as u32
-    {
-        return err("resource directory does not select resource 3ce");
-    }
-    Ok(())
-}
-fn verify_selection(rom: &[u8]) -> Result<()> {
-    let at = 0x0809_f7e8usize - ROM_BASE;
-    if at + 8 > rom.len()
-        || i16::from_le_bytes(rom[at..at + 2].try_into().unwrap()) != RESOURCE_ID as i16
-        || rom[at + 2] as i8 != 70
-        || rom[at + 3] as i8 != 1
-        || u16::from_le_bytes(rom[at + 4..at + 6].try_into().unwrap()) != 0
-        || u16::from_le_bytes(rom[at + 6..at + 8].try_into().unwrap()) != 0
-    {
-        return err("battle-effect descriptor does not select resource 3ce");
-    }
-    Ok(())
-}
-pub fn verify_resource_3ce(rom: &[u8], path: &Path) -> Result<Resource3ceBuild> {
-    if rom.len() != ROM_END - ROM_BASE {
-        return err("resource 3ce verifier requires the 8 MiB canonical ROM");
-    }
-    verify_directory(rom)?;
-    verify_selection(rom)?;
-    let built = build_resource_3ce(path)?;
-    if built.stream
-        != range(
-            rom,
-            built.stream_address,
-            built.stream_address + built.stream.len(),
-        )?
-    {
-        return err("resource 3ce stream differs from ROM");
-    }
-    if built.fill != range(rom, built.fill_address, ROM_END)? {
-        return err("resource 3ce structural fill differs from ROM");
-    }
-    Ok(built)
-}
-fn token_value(token: GeneralToken) -> Value {
-    match token {
-        GeneralToken::Literal(n) => json!(["l", n]),
-        GeneralToken::Copy { length, distance } => json!(["c", length, distance]),
-    }
-}
-pub fn export_resource_3ce(rom: &[u8], dir: &Path) -> Result<Value> {
-    if rom.len() != ROM_END - ROM_BASE {
-        return err("resource 3ce exporter requires the 8 MiB canonical ROM");
-    }
-    verify_directory(rom)?;
-    verify_selection(rom)?;
-    let start = RESOURCE_ADDRESS - ROM_BASE;
-    let (decoded, used, tokens) =
-        decode_general_trace(rom, start, rom.len(), 0x100000).map_err(|e| e.0)?;
-    if decoded.len() != DECODED_SIZE {
-        return err("resource 3ce decoded size differs");
-    }
-    let stream = encode_general(&decoded, &tokens).map_err(|e| e.0)?;
-    if stream.len() != STREAM_SIZE || stream != rom[start..start + STREAM_SIZE] {
-        return err("resource 3ce token replay differs from ROM");
-    }
-    if used < start + STREAM_SIZE || used > FILL_ADDRESS - ROM_BASE {
-        return err("resource 3ce decoder crossed its aligned allocation");
-    }
-    if rom[FILL_ADDRESS - ROM_BASE..].iter().any(|b| *b != 0) {
-        return err("resource 3ce ROM tail is not structural zero fill");
-    }
-    let layout = layout_document();
-    let plan = json!({"format":1,"codec":"golden-sun-general-lz","decoded_size":hex(DECODED_SIZE,4),"tokens":tokens.into_iter().map(token_value).collect::<Vec<_>>()});
-    fs::create_dir_all(dir).map_err(|e| e.to_string())?;
-    fs::write(
-        dir.join("layout.json"),
-        format!("{}\n", canonical_json(&layout)),
-    )
-    .map_err(|e| e.to_string())?;
-    fs::write(
-        dir.join("stream.lz.json"),
-        format!("{}\n", canonical_json(&plan)),
-    )
-    .map_err(|e| e.to_string())?;
-    fs::write(dir.join("overlay.s"), clean_overlay_source(&decoded)?).map_err(|e| e.to_string())?;
-    verify_resource_3ce(rom, &dir.join("layout.json"))?;
-    Ok(layout)
-}
-
-pub fn self_test() -> Result<()> {
-    parse_layout(&layout_document())?;
-    let mut extra = layout_document();
-    extra
-        .as_object_mut()
-        .unwrap()
-        .insert("extra".into(), json!(1));
-    if parse_layout(&extra).is_ok() {
-        return err("resource 3ce adversarial layout was accepted");
-    }
-    let mut plan = json!({"format":1,"codec":"golden-sun-general-lz","decoded_size":hex(DECODED_SIZE,4),"tokens":[["l",DECODED_SIZE]]});
-    parse_plan(&plan)?;
-    plan.as_object_mut()
-        .unwrap()
-        .insert("lookahead".into(), json!("00"));
-    if parse_plan(&plan).is_ok() {
-        return err("resource 3ce opaque lookahead was accepted");
-    }
-    for invalid in [
-        json!([["l", DECODED_SIZE.to_string()]]),
-        json!([["l", DECODED_SIZE, 0]]),
-        json!([["c", 2, 1]]),
-        json!([["x", DECODED_SIZE]]),
-    ] {
-        let malformed = json!({"format":1,"codec":"golden-sun-general-lz","decoded_size":hex(DECODED_SIZE,4),"tokens":invalid});
-        if parse_plan(&malformed).is_ok() {
-            return err("resource 3ce malformed token plan was accepted");
-        }
-    }
-    Ok(())
-}
-
-fn option(args: &[String], names: &[&str]) -> Option<String> {
-    args.iter()
-        .position(|a| names.contains(&a.as_str()))
-        .and_then(|i| args.get(i + 1).cloned())
-}
-fn positional(args: &[String]) -> Vec<String> {
-    let valued = ["-o", "--output"];
-    args.iter()
-        .enumerate()
-        .filter(|(i, a)| {
-            !a.starts_with('-') && !(*i > 0 && valued.contains(&args[*i - 1].as_str()))
-        })
-        .map(|(_, a)| a.clone())
-        .collect()
-}
-
-fn validate_options(args: &[String]) -> Result<()> {
-    let mut index = 0;
-    while index < args.len() {
-        match args[index].as_str() {
-            "-o" | "--output" => {
-                if index + 1 >= args.len() {
-                    return err(format!("{} requires a value", args[index]));
-                }
-                index += 2;
-            }
-            "-h" | "--help" | "--self-test" => index += 1,
-            argument if argument.starts_with('-') => {
-                return err(format!("unknown option: {argument}"));
-            }
-            _ => index += 1,
-        }
-    }
-    Ok(())
-}
-
-pub fn run(mut args: Vec<String>) -> Result<()> {
-    validate_options(&args)?;
-    if args.iter().any(|a| a == "-h" || a == "--help") {
-        println!("usage: resource-3ce {{export ROM DIRECTORY|verify ROM LAYOUT|build-stream LAYOUT|build-fill LAYOUT}} [-o FILE] | --self-test");
-        return Ok(());
-    }
-    if args.iter().any(|a| a == "--self-test") {
-        self_test()?;
-        println!("self-test=ok");
-        if args.len() == 1 {
-            return Ok(());
-        }
-        args.retain(|a| a != "--self-test");
-    }
-    let words = positional(&args);
-    let command = words.first().map(String::as_str);
-    if command.is_none() || args.iter().any(|a| a == "-h" || a == "--help") {
-        println!("usage: resource-3ce {{export ROM DIRECTORY|verify ROM LAYOUT|build-stream LAYOUT|build-fill LAYOUT}} [-o FILE] | --self-test");
-        return Ok(());
-    }
-    match (command, words.get(1), words.get(2)) {
-        (Some("export"), Some(input), Some(dir)) => {
-            export_resource_3ce(&fs::read(input).map_err(|e| e.to_string())?, Path::new(dir))?;
-            println!(
-                "stream=0x{:x} decoded=0x{:x} fill=0x{:x} fallback={}",
-                STREAM_SIZE,
-                DECODED_SIZE,
-                ROM_END - FILL_ADDRESS,
-                PADDING_SIZE
-            );
-        }
-        (Some("verify"), Some(input), Some(path)) => {
-            let b = verify_resource_3ce(
-                &fs::read(input).map_err(|e| e.to_string())?,
-                Path::new(path),
-            )?;
-            println!(
-                "identical=true claimed={} fallback={}",
-                b.stream.len() + b.fill.len(),
-                b.fallback_size
-            );
-        }
-        (Some("build-stream"), Some(path), None) | (Some("build-fill"), Some(path), None) => {
-            let output = option(&args, &["-o", "--output"])
-                .ok_or_else(|| "resource 3ce build requires --output".to_string())?;
-            if Path::new(path) == Path::new(&output) {
-                return err("refusing to overwrite source layout");
-            }
-            let b = build_resource_3ce(Path::new(path))?;
-            let data = if command == Some("build-stream") {
-                &b.stream
-            } else {
-                &b.fill
-            };
-            if let Some(parent) = Path::new(&output).parent() {
-                fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-            }
-            fs::write(&output, data).map_err(|e| e.to_string())?;
-            println!("bytes={}", data.len());
-        }
-        (Some("build-stdout"), Some(path), Some(component)) => {
+pub fn run(args: Vec<String>) -> Result<()> {
+    let Some(command) = args.first().map(String::as_str) else {
+        return err("resource 3ce build requires a command");
+    };
+    match (command, args.get(1), args.get(2)) {
+        ("build-stdout", Some(path), Some(component)) => {
             let b = build_resource_3ce(Path::new(path))?;
             let data = match component.as_str() {
                 "stream" => &b.stream,
@@ -567,35 +302,7 @@ pub fn run(mut args: Vec<String>) -> Result<()> {
             };
             io::stdout().write_all(data).map_err(|e| e.to_string())?;
         }
-        _ => return err(format!("unknown command: {}", command.unwrap_or(""))),
+        _ => return err(format!("unknown build command: {command}")),
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn self_test_contract() {
-        self_test().unwrap();
-    }
-    #[test]
-    fn layout_is_stable() {
-        let text = canonical_json(&layout_document());
-        assert!(text.contains("\"resource_id\": \"0x3ce\""));
-    }
-
-    #[test]
-    fn unknown_options_are_rejected_before_file_access() {
-        assert_eq!(
-            run(vec![
-                "verify".into(),
-                "missing.gba".into(),
-                "missing.json".into(),
-                "--bogus".into(),
-            ])
-            .unwrap_err(),
-            "unknown option: --bogus"
-        );
-    }
 }

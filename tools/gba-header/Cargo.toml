@@ -11,7 +11,6 @@ path = "src/lib.rs"
 
 [dependencies]
 canonical-json = { path = "../canonical-json" }
-export-asset = { path = "../export-asset" }
 import-asset = { path = "../import-asset" }
-alchemy-zlib = { path = "../zlib" }
 serde_json = { version = "1", features = ["preserve_order"] }
+sha2 = "0.10"

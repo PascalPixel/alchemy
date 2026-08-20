@@ -1,42 +1,19 @@
-//! Score one overlay row the same way a main-image owner is scored.
-//!
-//! WHY THIS EXISTS. A main-image owner is scored with `candidate-show`, which
-//! prints the two instruction streams side by side. An overlay row had no
-//! equivalent: you rehearsed an adoption and got a single differing-byte count,
-//! or you knew the span and reached for a scratch tool. Two different
-//! instruments for the same question is how incompatible numbers get pooled
-//! into one table, and how a contributor learns to rank by a scalar instead of
-//! reading the diff.
-//!
-//! This prints the same shape as `candidate-show`, takes the same `--align`,
-//! and needs no span argument: the span comes from the row's placeholder when
-//! it is adopted, from the overlay inventory when it is parked, from the
-//! reviewed boundary in `semantic/regions.json` when discovery never indexed
-//! the owner, and from the audited interval only as a last resort. The
-//! reference comes from the ROM.
-
-use std::path::{Path, PathBuf};
-
+use crate::park::{placeholder_span, truth_window};
 use candidate_show::disasm::disassemble;
 use candidate_show::render::align_streams;
 use overlay_disasm::compile::compile_overlay_c;
 use overlay_disasm::OVERLAY_BASE;
-
-use crate::park::{placeholder_span, truth_window};
-
-fn temp_dir(tag: &str) -> PathBuf {
-    let path = std::env::temp_dir().join(format!("alchemy-score-{tag}-{}", std::process::id()));
-    let _ = std::fs::create_dir_all(&path);
-    path
-}
-
-/// `<overlay>:<hex>` or a `semantic/`/`exact/` source path.
+use std::path::{Path, PathBuf};
+use tempfile::tempdir;
 fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     if let Some((overlay, address)) = target.split_once(':') {
         let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
             .map_err(|_| format!("{target}: address must be hexadecimal"))?;
-        // Accept both the full address and the overlay-relative offset.
-        let address = if address < OVERLAY_BASE { address + OVERLAY_BASE } else { address };
+        let address = if address < OVERLAY_BASE {
+            address + OVERLAY_BASE
+        } else {
+            address
+        };
         return Ok((overlay.to_string(), address));
     }
     let name = Path::new(target)
@@ -51,7 +28,6 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     let _ = root;
     Ok((overlay.to_string(), address))
 }
-
 fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, String> {
     for directory in ["semantic", "exact"] {
         let path = root.join(format!("{directory}/{overlay}_c_{address:08x}.c"));
@@ -63,12 +39,6 @@ fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, Strin
         "no semantic/ or exact/ source for {overlay}:{address:08x}"
     ))
 }
-
-
-/// The row's own span from the overlay inventory.
-///
-/// Preferred over the audited interval, which runs to the end of a whole
-/// executable run and would report one function's span as many.
 fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     let text = std::fs::read_to_string(root.join("out/decomp/overlays.json")).ok()?;
     let value: serde_json::Value = serde_json::from_str(&text).ok()?;
@@ -77,7 +47,9 @@ fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
             continue;
         }
         let entry = match function.get("entry")? {
-            serde_json::Value::String(text) => i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?,
+            serde_json::Value::String(text) => {
+                i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?
+            }
             other => other.as_i64()?,
         };
         if entry == address {
@@ -86,24 +58,6 @@ fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     }
     None
 }
-
-/// The row's reviewed span from `semantic/regions.json`.
-///
-/// CONTRIBUTING: that file "records the reviewed boundary for an owner
-/// discovery did not index", which is exactly the case this covers. Without it
-/// the chain falls through to the audited code interval, and that stops at the
-/// end of the CODE -- so an owner whose reviewed extent includes its own
-/// trailing literal pool gets measured short by the size of the pool, against a
-/// candidate that contains it.
-///
-/// resource_391:0608 is the witness. Registered at 696 bytes with the evidence
-/// "seven-word pool at 0x020008a4-0x020008bf"; the derived span was 666. At 666
-/// it reported 14 wrong instructions and read as real work. At 696 it is
-/// `ordering` with none: one call's argument setup, which no source moves.
-///
-/// Ranked BELOW the inventory, not above it. `bl-site-symbols` already pins
-/// that precedence in `inventory_has_priority_over_manual_regions`, and this
-/// keeps the two agreeing.
 fn reviewed_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     let text = std::fs::read_to_string(root.join("semantic/regions.json")).ok()?;
     let value: serde_json::Value = serde_json::from_str(&text).ok()?;
@@ -123,7 +77,6 @@ fn reviewed_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     }
     None
 }
-
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut align = false;
     let mut target = None;
@@ -133,7 +86,6 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut override_span: Option<i64> = None;
     for argument in argv {
         if expecting_flags {
-            // Comma-separated, so one shell word carries a whole set.
             extra.extend(argument.split(',').map(str::to_string));
             expecting_flags = false;
             continue;
@@ -169,12 +121,6 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
     let (overlay, address) = resolve(root, &target)?;
-    // An explicit path is scored AS GIVEN. Deriving the source from the
-    // filename instead would silently score the tree's copy, so every variant
-    // in a `/tmp` scratch directory would report the same number and a whole
-    // experiment would read as "no source shape moves it".
-    // Absolutised: the compile runs from a work directory, so a relative path
-    // reaches the compiler as a missing file rather than as this source.
     let explicit = Path::new(&target);
     let source = if explicit.is_file() {
         explicit
@@ -183,7 +129,6 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     } else {
         source_for(root, &overlay, address)?
     };
-
     let span = match override_span {
         Some(span) => Some(span),
         None => placeholder_span(root, &overlay, address)?
@@ -191,37 +136,32 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             .or_else(|| reviewed_span(root, &overlay, address))
             .or(crate::audited_code_span(root, &overlay, address)?),
     }
-        .ok_or_else(|| {
-            format!("{overlay}:{address:08x} has neither a placeholder nor an audited span")
-        })?;
+    .ok_or_else(|| {
+        format!("{overlay}:{address:08x} has neither a placeholder nor an audited span")
+    })?;
     let (reference, oracle) = truth_window(root, &overlay, address, span)?;
-
-    let work = temp_dir("work");
-    let compiled = compile_overlay_c(&source, &work, &overlay, None, &extra)?;
-
+    let work = tempdir().map_err(|error| error.to_string())?;
+    let compiled = compile_overlay_c(&source, work.path(), &overlay, None, &extra)?;
     let differing = reference
         .chunks(2)
         .zip(compiled.data.chunks(2))
         .filter(|(left, right)| left != right)
         .count()
         + reference.len().abs_diff(compiled.data.len()).div_ceil(2);
-
     println!(
         "candidate={} reference={} differing_halfwords={differing} source={} reference_from={oracle}",
         compiled.data.len(),
         reference.len(),
         source.strip_prefix(root).unwrap_or(&source).display(),
     );
-
-    let bin = temp_dir("bin");
-    let ours = bin.join("candidate.bin");
-    let theirs = bin.join("reference.bin");
+    let bin = tempdir().map_err(|error| error.to_string())?;
+    let ours = bin.path().join("candidate.bin");
+    let theirs = bin.path().join("reference.bin");
     std::fs::write(&ours, &compiled.data).map_err(|error| error.to_string())?;
     std::fs::write(&theirs, &reference).map_err(|error| error.to_string())?;
     let base = address as f64;
     let left = disassemble(&ours.to_string_lossy(), base)?;
     let right = disassemble(&theirs.to_string_lossy(), base)?;
-
     let ordered = |rows: &candidate_show::disasm::Rows| -> Vec<String> {
         let mut keys: Vec<f64> = rows.keys().collect();
         keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
@@ -231,26 +171,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     };
     let left_lines = ordered(&left);
     let right_lines = ordered(&right);
-
-    // WHICH RESIDUALS ARE WORTH YOUR TIME.
-    //
-    // Two rows can show the same differing-halfword count and be completely
-    // different problems. If both sides hold the SAME instructions and only
-    // their order differs, no source shape reaches it -- the order is decided
-    // after reload, by `rank_for_schedule`'s tie-break chain, and the C no
-    // longer controls it. If some instruction is genuinely wrong, the source
-    // is wrong and reading it will find the defect.
-    //
-    // Measured 2026-08-17 over the 282 size-exact parked overlay rows: 98 rows
-    // (14,858 bytes) are ordering-only and 183 rows (47,456 bytes) carry a
-    // wrong instruction. Ranking those 183 by this count, rather than by
-    // differing halfwords, is what puts a readable defect at the top.
-    //
-    // Shared with `overlay candidate-rank`, so the bulk table and the single
-    // owner never disagree about which residuals are worth reading.
     let (class, wrong) = candidate_show::render::residual_class(&left_lines, &right_lines);
     println!("class={class} wrong_instructions={wrong}");
-
     if align {
         println!("      candidate                      reference");
         for (candidate, reference) in align_streams(&left_lines, &right_lines) {
@@ -279,7 +201,5 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             println!("  {mark} {a:<30} {b}");
         }
     }
-    let _ = std::fs::remove_dir_all(&work);
-    let _ = std::fs::remove_dir_all(&bin);
     Ok(if differing == 0 { 0 } else { 1 })
 }

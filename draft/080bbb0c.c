@@ -61,9 +61,9 @@ s32 Func_08077188(s32 power, s32 bonus, s32 scale);
 #define Battle_CalcPower Func_08077188            /* 威力ベースのダメージ */
 s32 Func_08077190(s32 power, s32 scale, s32 factor);
 #define Battle_CalcRestore Func_08077190          /* 回復量 */
-void Func_08077120(s32 unit, s32 amount);         /* 吸収した分を行動側へ */
+s16 Func_08077120(s32 unit, s32 amount);          /* 吸収した分を行動側へ */
 #define BattleUnit_Drain Func_08077120
-void Func_08077140(s32 slot, s32 unit, s32 mask); /* 召喚ユニットの配置 */
+s32 Func_08077140(s32 slot, s32 unit, s32 mask);  /* 召喚ユニットの配置 */
 #define BattleUnit_Assign Func_08077140
 s32 Func_080bbae8(s32 effect);                    /* 倒れていても効く効果か */
 #define BattleEffect_OnDead Func_080bbae8
@@ -77,7 +77,7 @@ s32 Func_080b6cdc(s32 class_id);                  /* クラスが有効か */
 #define Summon_ClassValid Func_080b6cdc
 s32 Func_080c1df4(s32 class_id, s32 n);           /* チャージ取得。bit15 は要リセット */
 #define Summon_TakeCharge Func_080c1df4
-void Func_080c1f50(s32 class_id);                 /* チャージのリセット */
+s32 Func_080c1f50(s32 class_id);                  /* チャージのリセット */
 #define Summon_ResetCharge Func_080c1f50
 void Func_080b7548(void);                         /* 配置後の更新 */
 #define Summon_Refresh Func_080b7548
@@ -94,18 +94,18 @@ s32 Func_080b6ae0(s16 *entries);                  /* 表示スロット一覧。
 void Func_080b8000(s32 slot);                     /* スロットの再描画 */
 #define Actor_RefreshSlot Func_080b8000
 
-/* ダメージ種別 = nibble + 1。各ケースの挙動から命名。 */
+/* target_flags 下位4ビットのダメージ種別。各ケースの挙動から命名。 */
 enum {
-    DK_PP_DMG = 0,      /* PPへの直接ダメージ */
-    DK_HP_HEAL = 2,     /* HP回復 */
-    DK_HP_DMG = 3,      /* 威力ベースのHPダメージ */
-    DK_ATTACK = 4,      /* 武器攻撃 */
-    DK_ATTACK_X = 5,    /* 武器攻撃 威力乗算/10 */
-    DK_HP_DMG_6 = 6,    /* 加算HPダメージ 減衰6系 */
-    DK_HP_DMG_7 = 7,    /* 加算HPダメージ 減衰5系 */
-    DK_HP_DMG_9 = 9,    /* 加算HPダメージ 減衰8系 */
-    DK_PP_DRAIN = 11,   /* PP吸収系(EFX_DRAIN_PPでnibble=10) */
-    DK_PP_HEAL = 12     /* PP回復 */
+    DK_PP_DMG = -1,     /* PPへの直接ダメージ */
+    DK_HP_HEAL = 1,     /* HP回復 */
+    DK_HP_DMG = 2,      /* 威力ベースのHPダメージ */
+    DK_ATTACK = 3,      /* 武器攻撃 */
+    DK_ATTACK_X = 4,    /* 武器攻撃 威力乗算/10 */
+    DK_HP_DMG_6 = 5,    /* 加算HPダメージ 減衰6系 */
+    DK_HP_DMG_7 = 6,    /* 加算HPダメージ 減衰5系 */
+    DK_HP_DMG_9 = 8,    /* 加算HPダメージ 減衰8系 */
+    DK_PP_DRAIN = 10,   /* PP吸収系(EFX_DRAIN_PPでnibble=10) */
+    DK_PP_HEAL = 11     /* PP回復 */
 };
 
 /* テキスト番号。assets/text/message_archive.json の英文から命名。 */
@@ -170,9 +170,7 @@ extern char Value_000008f3;
 extern char Value_000008f4;
 extern char Value_000008f5;
 extern char Value_000008f6;
-/* 復元補助: 生オフセット参照をコール境界に通すと参照のレジスタ流が一致する。
-   本来は正しい構造体メンバ参照の代役と思われる。gnu89 inline はシンボルを出さない。 */
-inline u8 *BytePtr(s16 *p) { return (u8 *)p; }
+#define BytePtr(p) ((u8 *)(p))
 
 #define MSG_HP_RECOVER ((s32)&Value_0000081d)                   /* 「HPが N かいふくした！」 */
 #define MSG_PP_RECOVER ((s32)&Value_0000081e)                   /* 「PPが N かいふくした！」 */
@@ -293,6 +291,11 @@ enum {
 };
 
 /* 属性テーブルはユニット+36 の s16 対。威力テーブルは +72。 */
+struct AffinityPair {
+    s16 low;
+    s16 high;
+};
+
 #define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 2 * 2))
 #define S8OF(v) (*(s8 *)&(v))
 
@@ -430,9 +433,6 @@ enum {
     (field) = 7;                                                               \
 }
 
-/* 共用体経由の参照はエイリアス集合0。gcse が先頭の探査と統合できない。 */
-union Cell { s16 v; u16 u; };
-
 s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
 {
     /*
@@ -446,7 +446,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     struct BattleAction *action;
     struct BattleUnit *actor;
     s32 actor_id;
-    struct BattleAction *act;
     s32 action_id;
     s32 bonus;
     void *work;
@@ -458,11 +457,8 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 modifier;
     s32 skip;
     s32 nibble;
-    u32 hpu;
-    s32 *healtbl;
     s32 affinity;
     struct BattleUnit *copy;
-    s32 *pptbl;
     s32 g1;
     s32 power;
     s16 hp0;
@@ -476,7 +472,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 value;
     s32 dmg;
     s32 pass;
-    u8 *base;
     s32 scale;
     s8 *am;
     s32 guard;
@@ -505,7 +500,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     action = BattleAction_Get(action_id);
     actor = BattleUnit_Get(actor_id);
     target = BattleUnit_Get(target_id);
-    act = action;
     Mem_Copy(copy, target, size, UnitCopyDesc);
 
     if (action->range != 255) {
@@ -548,7 +542,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
                     i++;
                     if (i > 3)
                         break;
-                } while (value <= ELEM_AT(target, i));
+                } while (value <= ((struct AffinityPair *)((u8 *)target + 36))[i].high);
             }
         }
         if (i == 4)
@@ -568,7 +562,6 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     } else
         cmd = &plan->command;
     power = 100;
-    healtbl = HpHealFalloff;
 after_power:
 
     if (plan->command == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
@@ -586,27 +579,25 @@ after_power:
             BattleEvent_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
 
-    nibble = act->target_flags & 15;
+    nibble = action->target_flags & 15;
     {
         s32 first;
 
         first = plan->target_results[slot];
         if (first == -1)
             hit = Battle_HitCheck(
-                actor_id, target_id, range, act->effect,
+                actor_id, target_id, range, action->effect,
                 HitFalloff[offset]);
         else
             hit = first;
     }
-    pptbl = PpHealFalloff;
-
-    if ((u8)(act->effect + 206) <= 1) {
+    if ((u8)(action->effect + 206) <= 1) {
         s32 st;
         s32 rec;
 
         st = actor->class_id;
         rec = Summon_FindSlot();
-        if (act->effect == EFX_STANDBY_WORK)
+        if (action->effect == EFX_STANDBY_WORK)
             st = Summon_ClassId(*(s32 *)work);
         if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
             s32 ch;
@@ -626,20 +617,21 @@ after_power:
                 off = 100;
                 i = 0;
                 jsave = 0;
-                j = 0;
                 if (*(s16 *)(BytePtr(slots) + off) == 254) {
                     *(s16 *)(BytePtr(slots) + off) = rec;
                 } else {
                     s32 woff;
+                    u8 *base;
 
                     woff = 100;
+                    j = 0;
                     for (;;) {
-                        base = BytePtr(slots);
+                        base = (u8 *)slots;
                         if (*(s16 *)(base + woff) == 255) {
                             s32 t;
 
-                            t = jsave + 102;
                             *(s16 *)(base + woff) = rec;
+                            t = jsave + 102;
                             *(s16 *)(base + t) = 255;
                             break;
                         }
@@ -649,7 +641,7 @@ after_power:
                         if (i > 5)
                             break;
                         jsave = j;
-                        if (((union Cell *)(base + woff))->v == 254) {
+                        if (*(s16 *)(base + woff) == 254) {
                             *(s16 *)(base + woff) = rec;
                             break;
                         }
@@ -674,16 +666,20 @@ after_power:
                 Actor_Place(obj, rec, x, y);
             }
             Actor_Commit();
-            tmp = Actor_ListSlots(saved);
-            if (tmp > 0) {
-                u16 *q;
+            {
+                s32 listed;
 
-                q = (u16 *)saved;
-                count = tmp;
-                do {
-                    Actor_RefreshSlot(*q++);
-                    count--;
-                } while (count != 0);
+                listed = Actor_ListSlots(saved);
+                if (listed > 0) {
+                    u16 *q;
+
+                    q = (u16 *)saved;
+                    count = listed;
+                    do {
+                        Actor_RefreshSlot(*q++);
+                        count--;
+                    } while (count != 0);
+                }
             }
             BattleEvent_Push(BATTLE_EVENT_UNIT, rec);
             if (action_id != 0x1f7)
@@ -701,7 +697,7 @@ after_power:
         s32 efx;
 
         efx = action->effect;
-        if (act->effect == EFX_IMMOBILIZE) {
+        if (action->effect == EFX_IMMOBILIZE) {
             s32 hidx;
 
             hit = 0;
@@ -728,7 +724,7 @@ after_power:
             crush = 1;
         } else if (action->effect == EFX_INSTANT_DOWN) {
             skip = 1;
-        } else if (efx == EFX_ACTOR_FLASH) {
+        } else if (action->effect == EFX_ACTOR_FLASH) {
             if (actor->hp != 0)
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
         } else if (action->effect == EFX_DRAIN_PP) {
@@ -741,18 +737,16 @@ after_power:
 
     /* ダメージ種別。HP が残っているか、分類が非ゼロなら種別スイッチへ。 */
     if (skip == 0
-        && (target->hp != 0 || BattleEffect_Classify(action->effect) != 0)
-        && (u32)(nibble + 1) <= 12) {
+        && (target->hp != 0 || BattleEffect_Classify(action->effect) != 0)) {
         s32 pp;
         s32 cur;
 
         /*
-         * ダメージ種別 nibble+1:
-         *  0 PPダメージ(別系)  2 HP回復  3 HPダメージ  4/5 武器攻撃
-         *  6/7/9 加算攻撃(アイテム・distance テーブル別)  11 PP吸収系  12 PP回復
-         *  1/8/10 は空。
+         * -1 PPダメージ(別系)  1 HP回復  2 HPダメージ  3/4 武器攻撃
+         *  5/6/8 加算攻撃(アイテム・distance テーブル別)  10 PP吸収系  11 PP回復
+         *  0/7/9 は空。
          */
-        switch (nibble + 1) {
+        switch (nibble) {
         case DK_ATTACK:
         case DK_ATTACK_X:
         {
@@ -851,7 +845,7 @@ after_power:
                 off = off + 72;
                 bonus = power - ((s16 *)((u8 *)target + off))[1];
             }
-            dmg = act->power;
+            dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
             dmg *= adjust;
@@ -882,12 +876,12 @@ after_power:
 
         case DK_HP_HEAL:
         {
-            if (act->power == 0)
+            if (action->power == 0)
                 break;
             cur = target->hp;
-            dmg = act->power;
+            dmg = action->power;
             dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(dmg * healtbl[offset], 100);
+            dmg = Math_Div(dmg * HpHealFalloff[offset], 100);
             dmg *= adjust;
             dmg += BattleRandom_Next() & 3;
             cur += dmg;
@@ -914,7 +908,7 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = act->power;
+            dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
             dmg *= adjust;
@@ -944,9 +938,8 @@ after_power:
         {
             if (action->power == 0)
                 break;
-            hpu = target->hp;
+            cur = target->hp;
             pass = 1;
-            cur = hpu;
             do {
                 TAKE_BONUS();
                 if (pass == 0)
@@ -1025,11 +1018,11 @@ after_power:
                 {
                     s32 text;
 
+                    cur = 0;
                     if ((u32)target_id <= 7)
                         text = MSG_GOES_DOWN;
                     else
                         text = MSG_FELLED;
-                    cur = 0;
                     BattleEvent_Push(BATTLE_EVENT_TEXT, text);
                 }
             } else
@@ -1040,14 +1033,14 @@ after_power:
             break;
         }
 
-        case 12:
+        case DK_PP_HEAL:
         {
-            if (act->power == 0)
+            if (action->power == 0)
                 break;
             pp = target->pp;
-            dmg = act->power;
+            dmg = action->power;
             dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(dmg * pptbl[offset], 100);
+            dmg = Math_Div(dmg * PpHealFalloff[offset], 100);
             dmg *= adjust;
             pp += dmg;
             if (pp > target->max_pp) {
@@ -1067,19 +1060,19 @@ pp_store:
             break;
         }
 
-        case 1:
-        case 8:
-        case 10:
+        case 0:
+        case 7:
+        case 9:
             /* 空スロット */
             break;
 
-        case 3:
+        case DK_HP_DMG:
             if (hit != 0) {
-            if (act->power == 0)
+            if (action->power == 0)
                 break;
             cur = target->hp;
             TAKE_BONUS();
-            dmg = act->power;
+            dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg *= adjust;
             dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
@@ -1119,15 +1112,15 @@ dealt = target->hp - cur;
 
     /* 付加効果 */
     BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-    if (BattleEffect_Classify(act->effect) == 0 && target->hp == 0
-        && BattleEffect_OnDead(act->effect) == 0)
+    if (BattleEffect_Classify(action->effect) == 0 && target->hp == 0
+        && BattleEffect_OnDead(action->effect) == 0)
         goto done;
     if (hit == 0)
         goto done;
     if ((u32)(action->effect - 3) > 66)
         goto done;
 
-    switch (act->effect) {
+    switch (action->effect) {
     case EFX_CURE_ALL:
         if (target->delusion != 0) {
             target->delusion = 0;
@@ -1527,7 +1520,7 @@ dealt = target->hp - cur;
     case EFX_PP_LEECH:
         dmg = Math_Div(dealt, 10);
         if (target->pp < dmg)
-            dmg = ((union Cell *)&target->pp)->v;
+            dmg = target->pp;
         if (actor->pp + dmg > actor->max_pp)
             dmg = actor->max_pp - actor->pp;
         if (dmg == 0)

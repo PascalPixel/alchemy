@@ -53,6 +53,16 @@ pub struct Measurement {
     /// operand). Catches stores moved between arms or deleted -- the second
     /// measured lie class.
     pub store_divergence: usize,
+    /// Fingerprints of the candidate's own ordered `bl` row sequence and of
+    /// its sorted store-row multiset. Divergence counts alone are
+    /// baseline-relative: a lateral call or store move can hide under
+    /// existing divergence by trading one differing row for another at the
+    /// same count. At equal divergence the guards therefore also require
+    /// the candidate's rows to be identical to the baseline's. Zero means
+    /// unknown (failed builds, byte-only backends, legacy journal rows);
+    /// unknown never satisfies an equal-divergence comparison.
+    pub bl_signature: u64,
+    pub store_signature: u64,
 }
 
 impl Measurement {
@@ -68,6 +78,8 @@ impl Measurement {
             heat: Vec::new(),
             bl_divergence: 0,
             store_divergence: 0,
+            bl_signature: 0,
+            store_signature: 0,
             summary: message.to_string(),
         }
     }
@@ -87,6 +99,8 @@ impl From<&ByteScore> for Measurement {
             heat: Vec::new(),
             bl_divergence: 0,
             store_divergence: 0,
+            bl_signature: 0,
+            store_signature: 0,
             summary: format!(
                 "{} differing halfwords, {} / {} bytes",
                 score.differing_halfwords, score.actual_size, score.expected_size
@@ -336,6 +350,19 @@ fn sequence_divergence(a: &[&str], e: &[&str]) -> usize {
     (a.len() - common) + (e.len() - common)
 }
 
+/// FNV fingerprint over a row list, order-sensitive. Sort the rows first
+/// for multiset identity.
+fn rows_signature(rows: &[&str]) -> u64 {
+    let mut hash = 0xcbf2_9ce4_8422_2325u64;
+    for row in rows {
+        for byte in row.as_bytes() {
+            hash = (hash ^ *byte as u64).wrapping_mul(0x100_0000_01b3);
+        }
+        hash = (hash ^ u64::from(b'\n')).wrapping_mul(0x100_0000_01b3);
+    }
+    hash
+}
+
 /// Unordered divergence: symmetric multiset difference.
 fn multiset_divergence(a: &[&str], e: &[&str]) -> usize {
     let mut counts: std::collections::BTreeMap<&str, i64> = std::collections::BTreeMap::new();
@@ -578,12 +605,19 @@ fn alchemy_measurement(
     let (differing, unmatched) = row_diff(&a, &e);
     let (raw_differing, _) = row_diff(&raw_a, &raw_e);
     let common = (a.len() + e.len() - differing) / 2;
-    let bl_divergence =
-        sequence_divergence(&rows_matching(&raw_a, "bl "), &rows_matching(&raw_e, "bl "));
+    let bl_rows = rows_matching(&raw_a, "bl ");
+    let bl_divergence = sequence_divergence(&bl_rows, &rows_matching(&raw_e, "bl "));
+    let bl_signature = rows_signature(&bl_rows);
+    let store_rows = rows_matching_any(&a, &["strh ", "strb ", "str "]);
     let store_divergence = multiset_divergence(
-        &rows_matching_any(&a, &["strh ", "strb ", "str "]),
+        &store_rows,
         &rows_matching_any(&e, &["strh ", "strb ", "str "]),
     );
+    let store_signature = {
+        let mut sorted = store_rows;
+        sorted.sort_unstable();
+        rows_signature(&sorted)
+    };
     // Backtrack the LCS to mark our-side rows that are not part of the
     // common subsequence; their fractional positions steer heat-biased
     // mutation toward the regions that still differ.
@@ -609,6 +643,8 @@ fn alchemy_measurement(
         heat,
         bl_divergence,
         store_divergence,
+        bl_signature,
+        store_signature,
         summary: format!(
             "{differing} structural rows/{metric} ({} ours, {} reference); {raw_differing} raw rows; {}",
             a.len() - common,
@@ -1015,6 +1051,8 @@ fn instruction_score(actual: &[Instruction], expected: &[Instruction]) -> Measur
         heat: Vec::new(),
         bl_divergence: 0,
         store_divergence: 0,
+        bl_signature: 0,
+        store_signature: 0,
         summary: format!(
             "{operand_differences} operand, {reorderings} reordered, {insertions} inserted, {deletions} deleted instructions"
         ),

@@ -881,11 +881,9 @@ after_power:
         {
             s32 pwr;
 
-            {
-                pwr = act->power;
-                if (pwr == 0)
-                    break;
-            }
+            if (act->power == 0)
+                break;
+            pwr = act->power;
             cur = target->hp;
             dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * healtbl[offset], 100);
@@ -1045,7 +1043,9 @@ after_power:
         {
             s32 pwr;
 
-            TAKE_PWR();
+            if (act->power == 0)
+                break;
+            pwr = act->power;
             pp = target->pp;
             dmg = Battle_CalcRestore(pwr, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * pptbl[offset], 100);

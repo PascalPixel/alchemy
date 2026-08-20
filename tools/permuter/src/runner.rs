@@ -285,7 +285,7 @@ impl Journal {
             .first_difference
             .map_or_else(|| "-".into(), |n| n.to_string());
         let line = format!(
-            "{candidate}\t{}\t{}\t{}\t{}\t{}\t{}\t{:016x}\t{}\t{}\t{}\t{}\n",
+            "{candidate}\t{}\t{}\t{}\t{}\t{}\t{}\t{:016x}\t{}\t{}\t{}\t{}\t{:016x}\t{:016x}\n",
             u8::from(measurement.exact),
             measurement.score,
             measurement.differences,
@@ -296,7 +296,9 @@ impl Journal {
             measurement.bl_divergence,
             measurement.store_divergence,
             measurement.summary,
-            journal_row_auth(&self.identity, candidate, &measurement)
+            journal_row_auth(&self.identity, candidate, &measurement, true),
+            measurement.bl_signature,
+            measurement.store_signature,
         );
         let mut size = self
             .bytes_written
@@ -338,10 +340,18 @@ fn persisted_measurement(measurement: &Measurement) -> Measurement {
     value
 }
 
-fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement) -> String {
-    let mut bytes = Vec::new();
-    for value in [
-        "permuter-journal-row-v2".to_string(),
+fn journal_row_auth(
+    identity: &str,
+    candidate: &str,
+    measurement: &Measurement,
+    v3: bool,
+) -> String {
+    let mut values = vec![
+        if v3 {
+            "permuter-journal-row-v3".to_string()
+        } else {
+            "permuter-journal-row-v2".to_string()
+        },
         identity.to_string(),
         candidate.to_string(),
         u8::from(measurement.exact).to_string(),
@@ -354,9 +364,15 @@ fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement) 
             .map_or_else(|| "-".into(), |n| n.to_string()),
         measurement.bl_divergence.to_string(),
         measurement.store_divergence.to_string(),
-        format!("{:016x}", measurement.fingerprint),
-        measurement.summary.clone(),
-    ] {
+    ];
+    if v3 {
+        values.push(format!("{:016x}", measurement.bl_signature));
+        values.push(format!("{:016x}", measurement.store_signature));
+    }
+    values.push(format!("{:016x}", measurement.fingerprint));
+    values.push(measurement.summary.clone());
+    let mut bytes = Vec::new();
+    for value in values {
         bytes.extend_from_slice(&(value.len() as u64).to_be_bytes());
         bytes.extend_from_slice(value.as_bytes());
     }
@@ -364,7 +380,11 @@ fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement) 
 }
 
 fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measurement)> {
-    if fields.len() != 12
+    // 12 fields is the legacy v2 row; 14 appends the bl/store signatures.
+    // Legacy rows import with unknown (zero) signatures, which still serve
+    // compile dedup but never satisfy an equal-divergence guard comparison.
+    let v3 = fields.len() == 14;
+    if !(v3 || fields.len() == 12)
         || fields[0].is_empty()
         || fields[10].len() > MAX_SUMMARY_BYTES
         || fields[10].contains(['\r', '\n'])
@@ -389,6 +409,16 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
     let fingerprint = u64::from_str_radix(fields[7], 16).ok()?;
     let bl_divergence = fields[8].parse().ok()?;
     let store_divergence = fields[9].parse().ok()?;
+    let bl_signature = if v3 {
+        u64::from_str_radix(fields[12], 16).ok()?
+    } else {
+        0
+    };
+    let store_signature = if v3 {
+        u64::from_str_radix(fields[13], 16).ok()?
+    } else {
+        0
+    };
     if score == u64::MAX
         || first_difference.is_some_and(|n| n > expected_size.max(actual_size))
         || (exact
@@ -410,9 +440,11 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
         heat: Vec::new(),
         bl_divergence,
         store_divergence,
+        bl_signature,
+        store_signature,
         summary: fields[10].into(),
     };
-    (journal_row_auth(identity, fields[0], &measurement) == fields[11])
+    (journal_row_auth(identity, fields[0], &measurement, v3) == fields[11])
         .then(|| (fields[0].into(), measurement))
 }
 
@@ -790,6 +822,22 @@ fn output_budget_preflight(candidates: &[Candidate], top: usize) -> Result<(), S
     Ok(())
 }
 
+/// Semantic-lie guard. Divergence must never exceed the baseline's, and at
+/// EQUAL divergence the candidate's own row signature must match the
+/// baseline's: the count alone is baseline-relative, so a lateral call or
+/// store move can hide under existing divergence by trading one differing
+/// row for another. Only a strict move toward the reference may change the
+/// rows. Exact candidates are definitionally true.
+fn guard_accepts(baseline: &Measurement, value: &Measurement) -> bool {
+    value.exact
+        || ((value.bl_divergence < baseline.bl_divergence
+            || (value.bl_divergence == baseline.bl_divergence
+                && value.bl_signature == baseline.bl_signature))
+            && (value.store_divergence < baseline.store_divergence
+                || (value.store_divergence == baseline.store_divergence
+                    && value.store_signature == baseline.store_signature)))
+}
+
 fn retain_result(
     options: &Options,
     baseline: &Measurement,
@@ -797,6 +845,7 @@ fn retain_result(
     measurement: &Measurement,
 ) -> bool {
     measurement.score != u64::MAX
+        && guard_accepts(baseline, measurement)
         && (!options.better_only || measurement.score < baseline.score)
         && (!options.best_only || measurement.score <= former_best)
         && !options
@@ -898,8 +947,7 @@ fn walk_workers(
     stop_exact: bool,
     heat_enabled: bool,
     classic: bool,
-    guard_bl: usize,
-    guard_store: usize,
+    guard: Measurement,
     journal: Arc<Journal>,
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
@@ -908,7 +956,7 @@ fn walk_workers(
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for worker in 0..jobs.max(1) {
-        let (backend, base_source, counter, stop, sender, best, journal) = (
+        let (backend, base_source, counter, stop, sender, best, journal, guard) = (
             Arc::clone(&backend),
             Arc::clone(&base_source),
             Arc::clone(&counter),
@@ -916,6 +964,7 @@ fn walk_workers(
             sender.clone(),
             Arc::clone(&best),
             Arc::clone(&journal),
+            guard.clone(),
         );
         workers.push(std::thread::spawn(move || {
             let mut rng = crate::randomize::SplitMix64(
@@ -983,7 +1032,7 @@ fn walk_workers(
                     if value.exact {
                         stop.store(true, AtomicOrdering::Release);
                     }
-                    if value.bl_divergence <= guard_bl && value.store_divergence <= guard_store {
+                    if guard_accepts(&guard, value) {
                         current = Some((source.clone(), candidate.mutation.clone()));
                         heat = value.heat.clone();
                         if let Ok(mut guard) = best.lock() {
@@ -1049,7 +1098,8 @@ fn collect_results(
         match &item.measurement {
             Ok(measurement) => {
                 let former = *best_score;
-                if measurement.score < *best_score {
+                let guarded = guard_accepts(baseline, measurement);
+                if guarded && measurement.score < *best_score {
                     *best_score = measurement.score;
                     if let Some(round) = round {
                         println!(
@@ -1072,7 +1122,8 @@ fn collect_results(
                 }
                 *exact_found |= measurement.exact;
                 if let Some(round) = round {
-                    if measurement.score <= chain_limit.unwrap_or(baseline.score)
+                    if guarded
+                        && measurement.score <= chain_limit.unwrap_or(baseline.score)
                         && item.candidate.mutation != "identity"
                         && round_best.is_none_or(|(_, score)| {
                             measurement.score < score
@@ -1211,8 +1262,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             options.stop_exact,
             options.heat,
             options.classic,
-            baseline.bl_divergence,
-            baseline.store_divergence,
+            baseline.clone(),
             Arc::clone(&journal),
         )?;
         collect_results(
@@ -1349,7 +1399,7 @@ mod tests {
         let weights = Weights::for_profile("gcc");
         assert!(candidate_plan(&permutation, MAX_ITERATIONS + 1, 1, false, &weights, 64).is_err());
         assert!(validate_output_path(&root().join("semantic")).is_err());
-        let measurement = Measurement {
+        let mut measurement = Measurement {
             exact: false,
             score: 17,
             differences: 3,
@@ -1360,10 +1410,12 @@ mod tests {
             heat: Vec::new(),
             bl_divergence: 0,
             store_divergence: 0,
+            bl_signature: 0,
+            store_signature: 0,
             summary: "journal control".into(),
         };
-        let auth = journal_row_auth("identity", "candidate", &measurement);
-        assert!(parse_journal_row(
+        let legacy_auth = journal_row_auth("identity", "candidate", &measurement, false);
+        let legacy = parse_journal_row(
             &[
                 "candidate",
                 "0",
@@ -1376,10 +1428,62 @@ mod tests {
                 "0",
                 "0",
                 "journal control",
-                &auth
+                &legacy_auth,
             ],
-            "identity"
-        )
-        .is_some());
+            "identity",
+        );
+        assert!(legacy.is_some_and(|(_, m)| m.bl_signature == 0 && m.store_signature == 0));
+        measurement.bl_signature = 0xabcd;
+        measurement.store_signature = 0xef01;
+        let auth = journal_row_auth("identity", "candidate", &measurement, true);
+        let parsed = parse_journal_row(
+            &[
+                "candidate",
+                "0",
+                "17",
+                "3",
+                "8",
+                "6",
+                "2",
+                "0000000000001234",
+                "0",
+                "0",
+                "journal control",
+                &auth,
+                "000000000000abcd",
+                "000000000000ef01",
+            ],
+            "identity",
+        );
+        assert!(
+            parsed.is_some_and(|(_, m)| m.bl_signature == 0xabcd && m.store_signature == 0xef01)
+        );
+    }
+
+    #[test]
+    fn guard_rejects_lateral_divergence_trades() {
+        let mut baseline = Measurement::failed("baseline");
+        baseline.score = 100;
+        baseline.bl_divergence = 3;
+        baseline.store_divergence = 2;
+        baseline.bl_signature = 0x1111;
+        baseline.store_signature = 0x2222;
+        let mut candidate = baseline.clone();
+        // Equal divergence with identical rows continues the walk.
+        assert!(guard_accepts(&baseline, &candidate));
+        // Equal divergence with different rows is a lateral trade: a moved
+        // call or store hiding under existing divergence.
+        candidate.bl_signature = 0x3333;
+        assert!(!guard_accepts(&baseline, &candidate));
+        // A strict move toward the reference may change the rows.
+        candidate.bl_divergence = 2;
+        assert!(guard_accepts(&baseline, &candidate));
+        // Unknown (legacy journal) signatures never satisfy equality.
+        candidate.bl_divergence = 3;
+        candidate.bl_signature = 0;
+        assert!(!guard_accepts(&baseline, &candidate));
+        // Exact bytes are definitionally true.
+        candidate.exact = true;
+        assert!(guard_accepts(&baseline, &candidate));
     }
 }

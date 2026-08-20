@@ -3,11 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6332,
-    "wrong_instructions": 990,
+    "wrong_instructions": 982,
     "differing_halfwords": 2329,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "137 ours / 143 reference (280 total)",
+    "raw_rows": "133 ours / 139 reference (272 total)",
     "class": "wrong",
     "note": "first size parity; differing_halfwords is now phase-free"
   },
@@ -110,7 +110,8 @@
     "HpDmgFalloff8 held in a second table local beside pptbl",
     "EFX_PP_LEECH's clamp re-reads target->pp through union Cell (fresh ldrsh where CSE would fold)",
     "PP-heal falloff multiply is dmg * pptbl[offset]",
-    "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;"
+    "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;",
+    "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after"
   ],
   "unexpressed": [
     {

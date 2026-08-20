@@ -458,6 +458,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 modifier;
     s32 skip;
     s32 nibble;
+    u32 hpu;
     s32 *healtbl;
     s32 affinity;
     struct BattleUnit *copy;
@@ -951,8 +952,9 @@ after_power:
         {
             if (action->power == 0)
                 break;
+            hpu = target->hp;
             pass = 1;
-            cur = target->hp;
+            cur = hpu;
             do {
                 TAKE_BONUS();
                 if (pass == 0)

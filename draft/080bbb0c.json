@@ -112,7 +112,8 @@
     "PP-heal falloff multiply is dmg * pptbl[offset]",
     "DRAIN_PP clamp splits the delta: dmg = heal; dmg = dmg - old;",
     "DK_HP_DMG_9 reads hp into a u32 local before pass=1 (hpu), copied to cur after",
-    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities"
+    "elem arm 2 rebuilds through BytePtr: entry copy lands at the loop head and the .L5 head reads [r4,r2] as the reference does; the ref's 2-insn rebuild (copy target; adds #36) still folds to a 1-insn tbl copy in every spelling tried (plain, tbl2 between arms, cast-copy chain) -- cse unifies plus(target,36) through register quantities",
+    "classified via the sched2 dependence table: the x100 div-arg placement family ties at priority 71 and our movs #100 fills a load-latency stall the reference fills with allocation-born copies -- tie-locked behind coloring, the documented class"
   ],
   "unexpressed": [
     {
@@ -322,6 +323,10 @@
     {
       "shape": "pun order swap (old, heal, maxu, maxv)",
       "wrong": "byte-identical; CSE-neutral"
+    },
+    {
+      "shape": "summon-walk head check with literal 100 plus a separate off=100 (the reference's double materialization, confirmed: movs r2,#100 AND movs r0,#100)",
+      "wrong": "structurally right (+3 insns toward parity) but every placement measured: else-arm 281, cluster-head/mid/tail 607 -- the in-cluster position the reference shows recolors half the function; needs multi-site convergence first"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

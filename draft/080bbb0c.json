@@ -2,12 +2,12 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "candidate_bytes": 6336,
-    "differing_halfwords": 2684,
-    "wrong_instructions": 1053,
-    "code_hunks_normalized": "38 hunks / 52 rows (pool and phase excluded)",
+    "candidate_bytes": 6320,
+    "differing_halfwords": 2696,
+    "wrong_instructions": 1106,
+    "code_hunks_normalized": "36 hunks / 48 rows (pool and phase excluded)",
     "class": "wrong",
-    "note": "size 6336 vs 6332: the heal-guard fold adds the reference's two pwr copies before the compensating ours-extra sites (attack FINISH triple, epilogue bx) are fixed; every raw metric from 0x578 on is phase. Diagnostic parity probe (-fno-regmove, NOT the original's flag): 6332 exact size, 730 differing halfwords, 427 wrong instructions -- the best honest content measurement on this owner. The 1035 state this replaces was parity-by-compensation."
+    "note": "size 6320 vs 6332: every compensating ours-extra is now gone and the deficit is the SUM of the named ref-extras still missing (heal copy depth x2, walk-head double-100 and rec flow, DRAIN region direct-load, elem idx split). Raw halfwords are phase from 0x546 on; the normalized code-hunk list is the compass and every hunk is a named reading target."
   },
   "shape": {
     "calls": null,
@@ -118,7 +118,8 @@
     "the elem scan's second direction compares ELEM_AT(target, i) indexed by the loop counter -- no walked pointer; value is s32",
     "SEMANTIC FIX, reference-proven at 0x2ac-0x2b0: action 0x1f7 IS the split action -- the SPLIT_OFF/APPEARS binding was inverted in the draft",
     "the percentage heal adds Math_Div per arm (no amt join variable)",
-    "heal-body power guards (cases 2 and 12) read the FIELD and assign pwr after: if (act->power == 0) break; pwr = act->power; -- CSE keeps one ldrh, the guard consumes the load register (ref ldrh r3/cmp r3 rows now match), and pwr materializes as the reference's copy insn. The five sibling bodies already used this idiom; the old TAKE_PWR single-variable shape loaded straight into pwr's register with zero copies, which the reference disproves. act vs action mention choice at both sites is emission-neutral (all four combinations byte-identical)"
+    "heal-body power guards (cases 2 and 12) read the FIELD and assign pwr after: if (act->power == 0) break; pwr = act->power; -- CSE keeps one ldrh, the guard consumes the load register (ref ldrh r3/cmp r3 rows now match), and pwr materializes as the reference's copy insn. The five sibling bodies already used this idiom; the old TAKE_PWR single-variable shape loaded straight into pwr's register with zero copies, which the reference disproves. act vs action mention choice at both sites is emission-neutral (all four combinations byte-identical)",
+    "attack KO arm is KO-first (if (cur <= 0) {...} else FINISH), mirroring case 3: jump2 then empties the attack FINISH arm into case 3's shared copy (b .L at the cmp) and the whole KO arm matches the reference row-for-row INCLUDING register texture (mov r3,sl / movs r6,#0 / bls polarity / per-arm FELLED ldr jumping into the shared movs #4 push). The 'FINISH-first measured better' rejection was landscape-dependent and is reversed; the FELLED crossjump cluster, the bhi/bls polarity, and the extra FELLED pool load are all resolved by this one arm-order fact"
   ],
   "unexpressed": [
     {
@@ -369,6 +370,10 @@
     {
       "shape": "elem scan direction-2 as indexed tbl mention (v3) and as q-walker (three spellings)",
       "wrong": "indexed: giv init adds r2,r4,#2 -- the +2 still folds into the giv. q-walker: idx 2 and the walk shape appear (movs #2, [r2,r4]) but the preheader copies live tbl in one insn where the reference rebuilds target+36 in two; gcse unifies plus(target,36) through the live register in every spelling including a fresh (s16*)((u8*)target+36) init. cmd-reuse colors the walker into fp. Parked: walker+idx2 proven true, the init rebuild is the unsolved half. Grouping constants in source cannot help: RTL plus canonicalization rebuilds (t+4i)+38 regardless"
+    },
+    {
+      "shape": "HEAL_60 pun orderings (maxu-first, hp-pair interleave, maxu-last) hunting the reference's direct ldrh r6 maxu load",
+      "wrong": "2696 all; maxu still loads through a temp with an explicit copy; the swap variant's -2 hunk weight is unrelated noise"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",
@@ -397,6 +402,8 @@
     "run30-r3 759hw decomposed by reference reads: every named family was either already-committed, phase compensation, or a lie (chance+=30 moved after its use, heal+=dmg deleted in DRAIN_HP, double heal+=dmg in DRAIN_PP, amt=maxv dropping *30, p reset inside the walk loop, stale power/skip cross-case reads, three call moves). The vein is fully mined and disproven; nothing left to harvest from run30",
     "-fno-regmove targeting map recomputed on the guard-fold draft: exact size parity returns and 730hw/427wrong materializes, proving the guard fold's content. The two insns regmove removes (restoring parity) sit in the walk head (ch&0x7fff copy chain) -- meaning the true source sheds ~2 insns at our-extra sites instead. The named our-extra sites: the attack FINISH triple at 0x54c (movs #11/mov r1,sl/bl -- the reference's attack FINISH arm is an empty block jumping to case 3's shared copy at 0xb28), the KO-arm FELLED pool load + movs #4 at 0x56c-0x574 (bhi/bls polarity), and the epilogue dead bx lr. At parity the case-3/6 suffix region 0xb00-0xb64 ALREADY matches the reference byte-for-byte including cur in r6, so the old register-identity gate on the FELLED merge is GONE: what remains is why our jump2 does not empty the attack arm into the 0xb28 copy -- the next single reading target, likely interacting with the bhi/bls range polarity of the arm's TEXT_SIDE",
     "heal-head residual after the guard fold: ours emits ONE copy (adds r0,r3,#0 -- pwr coalesced into the arg) where the reference emits two (adds r5,r3,#0 then adds r0,r5,#0) with the range copy in r0 (ours r2). Same under -fno-regmove, so it is allocation order, not regmove: in the reference the range copy takes r0 first and pwr settles in r5, forcing the arg copy. The remaining lever is what makes the range copy prefer or win r0; every local respelling measured ties",
-    "walk head at parity (v2nr): ref extras are movs r0,#100 at 0x218 (the documented reload rematerialization of the off=100 pseudo at the store use) and the rec flow cmp r0,#0 before the copy (ref compares the raw FindSlot result then copies, ours copies then compares) plus adds r3,r2,#0 at 0x30e; DRAIN_PP head loads target->pp straight into r6 (ldrh r6,[r7,#52]) where ours loads r3 and copies -- the longwalk u16-key family points here; both are read-verified leads for next session"
+    "walk head at parity (v2nr): ref extras are movs r0,#100 at 0x218 (the documented reload rematerialization of the off=100 pseudo at the store use) and the rec flow cmp r0,#0 before the copy (ref compares the raw FindSlot result then copies, ours copies then compares) plus adds r3,r2,#0 at 0x30e; DRAIN_PP head loads target->pp straight into r6 (ldrh r6,[r7,#52]) where ours loads r3 and copies -- the longwalk u16-key family points here; both are read-verified leads for next session",
+    "post-KO-first hunk inventory (the complete remaining distance, 36 hunks/48 rows): elem-scan idx split 0xec/0xf6 (parked, walker+idx2 proven); walk head 0x218-0x30e (double-100 rematerialization, ip/r4 order, rec compare-before-copy, adds r3,r2); heal-head copy depth at 0x648/0x990 (ref adds r5,r3,#0 + adds r0,r5,#0 vs our single coalesced copy, plus pool-base register roles); nibble reload slot texture 0x882-0x896; movs r6,#0 position 0x962; cmp #32/pool order 0xa94; DRAIN region head 0xe0e-0xe1e where the reference loads the u16 field straight into r6 (ldrh r6,[r7,#52]) and keeps r4 for r8 while ours loads r3 and copies -- the longwalk u16-key convergence site, first candidate for the next read",
+    "allocation-order endgame, read-verified this session: the three remaining insn-count families are one mechanism. (1) heal heads: the reference's range copy holds r0 across the ternary compare, which conflicts pwr out of r0 and forces the r3->r5->r0 two-copy chain; ours gives the range copy r2 (the natural first-free scan), pwr ties to r0, one copy. (2) HEAL_60: the reference loads maxu straight into call-saved r6 while our load temp fails to coalesce -- downstream of the same ordering. (3) walk head double-100 is reload rematerialization, also allocation-owned. No local respelling reaches these: the next instrument is the greg allocno-order dump (scratch/rtl toolchain) on our build to identify which pseudo's priority must shift by one unit, then find the source mention that shifts it. Everything else in the 36-hunk inventory is either this class or the two parked reads (elem init rebuild, walk-head rec flow)"
   ]
 }

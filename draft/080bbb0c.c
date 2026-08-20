@@ -466,6 +466,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 kind;
     s16 *cmd;
     s32 target_id;
+    s8 *rm;
     s32 range;
     struct BattleUnit *target;
     s32 n;
@@ -474,6 +475,7 @@ s32 Func_080bbb0c(struct BattlePlan *plan, s32 slot)
     s32 pass;
     u8 *base;
     s32 scale;
+    s8 *am;
     s32 guard;
     s16 saved[8];
     s32 count;
@@ -912,7 +914,7 @@ after_power:
             }
             dmg = act->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
-            dmg = Math_Div(PpDmgFalloff[offset] * dmg, 100);
+            dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
@@ -978,7 +980,7 @@ after_power:
                             kind = 12;
                             break;
                         }
-                        dmg += Math_Div(kind * target->max_hp, 100);
+                        dmg += Math_Div(target->max_hp * kind, 100);
                     }
                 }
                 dmg = Battle_CalcPower(dmg, bonus, 256);
@@ -1074,7 +1076,7 @@ pp_store:
             dmg = act->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg *= adjust;
-            dmg = Math_Div(HpDmgFalloff[offset] * dmg, 100);
+            dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
             APPLY_GUARD();
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
@@ -1252,11 +1254,12 @@ hp_tail:
         break;
 
     case EFX_AGI_SET_DOWN4:
+        am = &S8OF(target->agility_modifier);
     {
         u8 v;
 
         v = -4;
-        S8OF(target->agility_modifier) = v;
+        *am = v;
     }
         target->agility_modifier_turns = 5;
         BattleUnit_Recalculate(target_id);
@@ -1386,7 +1389,16 @@ hp_tail:
         break;
 
     case EFX_RES_UP2:
-        ADJUST_RES(2, (target->res_modifier - copy->res_modifier) * 20, MSG_RES_UP);
+    {
+        target->res_modifier += 2;
+        if (*(rm = &S8OF(target->res_modifier)) < -4)
+            target->res_modifier = -4;
+        if (target->res_modifier > 4)
+            target->res_modifier = 4;
+        BattleEvent_Push(BATTLE_EVENT_VALUE, (target->res_modifier - copy->res_modifier) * 20);
+        BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_RES_UP);
+        target->res_modifier_turns = 7;
+    }
         break;
 
     case EFX_POISON:

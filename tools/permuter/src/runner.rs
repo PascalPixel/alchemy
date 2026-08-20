@@ -517,7 +517,7 @@ impl Journal {
             .map_or_else(|| "-".to_string(), |value| value.to_string());
         let authentication = journal_row_auth(&self.identity, candidate, &measurement);
         let line = format!(
-            "{candidate}\t{}\t{}\t{}\t{}\t{}\t{}\t{:016x}\t{}\t{}\n",
+            "{candidate}\t{}\t{}\t{}\t{}\t{}\t{}\t{:016x}\t{}\t{}\t{}\t{}\n",
             u8::from(measurement.exact),
             measurement.score,
             measurement.differences,
@@ -525,6 +525,8 @@ impl Journal {
             measurement.actual_size,
             first,
             measurement.fingerprint,
+            measurement.bl_divergence,
+            measurement.store_divergence,
             measurement.summary,
             authentication,
         );
@@ -576,7 +578,7 @@ fn persisted_measurement(measurement: &Measurement) -> Measurement {
 
 fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement) -> String {
     let mut bytes = Vec::new();
-    append_identity_field(&mut bytes, "permuter-journal-row-v1");
+    append_identity_field(&mut bytes, "permuter-journal-row-v2");
     append_identity_field(&mut bytes, identity);
     append_identity_field(&mut bytes, candidate);
     append_identity_field(&mut bytes, if measurement.exact { "1" } else { "0" });
@@ -590,17 +592,19 @@ fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement) 
             .first_difference
             .map_or_else(|| "-".to_string(), |value| value.to_string()),
     );
+    append_identity_field(&mut bytes, &measurement.bl_divergence.to_string());
+    append_identity_field(&mut bytes, &measurement.store_divergence.to_string());
     append_identity_field(&mut bytes, &format!("{:016x}", measurement.fingerprint));
     append_identity_field(&mut bytes, &measurement.summary);
     alchemy_bundle::sha256::hex(&bytes)
 }
 
 fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measurement)> {
-    if fields.len() != 10
+    if fields.len() != 12
         || fields[0].is_empty()
-        || fields[8].len() > MAX_SUMMARY_BYTES
-        || fields[8].contains(['\r', '\n'])
-        || fields[9].is_empty()
+        || fields[10].len() > MAX_SUMMARY_BYTES
+        || fields[10].contains(['\r', '\n'])
+        || fields[11].is_empty()
     {
         return None;
     }
@@ -633,6 +637,8 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
     if first_difference.is_some_and(|index| index > expected_size.max(actual_size)) {
         return None;
     }
+    let bl_divergence: usize = fields[8].parse().ok()?;
+    let store_divergence: usize = fields[9].parse().ok()?;
     let measurement = Measurement {
         exact,
         score,
@@ -642,9 +648,11 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
         first_difference,
         fingerprint,
         heat: Vec::new(),
-        summary: fields[8].to_string(),
+        bl_divergence,
+        store_divergence,
+        summary: fields[10].to_string(),
     };
-    (journal_row_auth(identity, fields[0], &measurement) == fields[9])
+    (journal_row_auth(identity, fields[0], &measurement) == fields[11])
         .then_some((fields[0].to_string(), measurement))
 }
 
@@ -1238,10 +1246,16 @@ fn walk_workers(
     keep_prob_permille: u32,
     stop_exact: bool,
     heat_enabled: bool,
+    guard_bl: usize,
+    guard_store: usize,
     journal: Arc<Journal>,
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
+    // Shared best-so-far: keep-prob resets restart from here rather than the
+    // base, so every worker climbs from the swarm's frontier (parallel hill
+    // climbing with migration).
+    let shared_best: Arc<Mutex<Option<(u64, String, String)>>> = Arc::new(Mutex::new(None));
     let (sender, receiver) = mpsc::channel();
     let worker_count = jobs.max(1);
     let mut workers = Vec::with_capacity(worker_count);
@@ -1253,6 +1267,7 @@ fn walk_workers(
         let stop = Arc::clone(&stop);
         let sender = sender.clone();
         let journal = Arc::clone(&journal);
+        let shared_best = Arc::clone(&shared_best);
         workers.push(std::thread::spawn(move || {
             let mut rng = crate::randomize::SplitMix64(
                 seed ^ (worker as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ 0x5851_f42d_4c95_7f2d,
@@ -1269,7 +1284,11 @@ fn walk_workers(
                 }
                 let keep = current.is_some() && rng.index(1000) < keep_prob_permille as usize;
                 if !keep {
-                    current = Some((base_source.as_ref().clone(), String::from("base")));
+                    let best = shared_best.lock().ok().and_then(|g| g.clone());
+                    current = Some(match best {
+                        Some((_, source, lineage)) => (source, format!("{lineage}~")),
+                        None => (base_source.as_ref().clone(), String::from("base")),
+                    });
                 }
                 let (cur_source, lineage) = current.clone().expect("walk candidate");
                 // The AST engine: parse, apply one weighted pret pass, emit.
@@ -1318,8 +1337,31 @@ fn walk_workers(
                         if measurement.exact {
                             stop.store(true, AtomicOrdering::Release);
                         }
-                        current = Some((mutated_source.clone(), candidate.mutation.clone()));
-                        last_heat = measurement.heat.clone();
+                        // Semantic guard: a candidate whose call sequence or
+                        // store census diverges beyond the run baseline's is
+                        // climbing a phase hill the reference disproves;
+                        // never keep it, never let it seed the shared best.
+                        // It still reports as an evaluated candidate.
+                        if measurement.bl_divergence > guard_bl
+                            || measurement.store_divergence > guard_store
+                        {
+                            current = None;
+                        } else {
+                            current =
+                                Some((mutated_source.clone(), candidate.mutation.clone()));
+                            last_heat = measurement.heat.clone();
+                            if let Ok(mut guard) = shared_best.lock() {
+                                let better =
+                                    guard.as_ref().map_or(true, |(s, _, _)| measurement.score < *s);
+                                if better {
+                                    *guard = Some((
+                                        measurement.score,
+                                        mutated_source.clone(),
+                                        candidate.mutation.clone(),
+                                    ));
+                                }
+                            }
+                        }
                     }
                     Err(_) => {
                         current = None;
@@ -1468,6 +1510,8 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             options.keep_prob_permille,
             options.stop_exact,
             options.heat,
+            baseline.bl_divergence,
+            baseline.store_divergence,
             Arc::clone(&journal),
         )?;
         attempted = evaluated.len();
@@ -1684,6 +1728,8 @@ pub fn self_test() -> Result<(), String> {
         first_difference: Some(2),
         fingerprint: 0x1234,
         heat: Vec::new(),
+        bl_divergence: 0,
+        store_divergence: 0,
         summary: "journal control".into(),
     };
     {
@@ -1815,6 +1861,8 @@ mod tests {
             first_difference: Some(2),
             fingerprint: 0x1234,
             heat: Vec::new(),
+            bl_divergence: 0,
+            store_divergence: 0,
             summary: "journal control".into(),
         };
         {

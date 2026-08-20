@@ -1481,7 +1481,7 @@ open per site; the compiler-side answer is closed.
 
 ### The permuter cannot reach an ordering residual
 
-`alchemy_permuter` is a real port of pret's decomp-permuter, 29 randomisation
+`permuter` is a real port of pret's decomp-permuter, 29 randomisation
 passes. On this corpus it closed nothing: 97 rows at 1,500 to 2,500 candidates
 each improved 18 and matched 0. Pointed at the best targets the project has --
 owners two halfwords from reproducing -- it did not improve them once, across
@@ -1493,6 +1493,22 @@ SHAPE. An ordering residual is the post-reload scheduler choosing between two
 independent instructions after the source has had its say. Aim it at rows the
 score calls `wrong`, and read the residual first so you know which you have.
 Treat a match it finds as something to explain before adopting.
+
+Where a permuter run DOES pay -- pret's Python permuter, cascaded twelve wide
+over `080bbb0c` -- every find divides into exactly two kinds, and the score
+cannot tell them apart. Real source facts (operand orders, held table
+pointers, copy-lifetime locals, a duplicated tail) verify against the
+reference's own bytes: the pool word, the spill slot, the `bl`, the store the
+finding predicts is THERE. Phase lies score just as well or better -- a call
+moved to the wrong body, a store hoisted into one arm of its join, a width
+cast the reference reads signed, a value clobbered dead -- because plausible
+instructions align against other bodies' instructions. Eleven cycles measured
+the split: about thirty verified facts against ten lies, two of which were
+committed and later retracted when the reference disproved them. So: never
+fold a permuter find from its score. Read the reference at the site it
+touches, and gate the search mechanically -- linked bytes, the `bl` target
+sequence, a store census by offset -- knowing each gate only catches the lie
+class it names.
 
 ### Smaller ones, so nobody pays twice
 
@@ -1611,7 +1627,7 @@ owner's gate.
 | `decomp_constraints`    | Derives bounded structural constraints for a candidate.                                                       |
 | `shape_sweep`           | Tries bounded, behaviour-preserving source shapes with the compiler fixed; `--descend` drives it iteratively. |
 | `search_compiler_modes` | Searches approved compiler modes with the source fixed.                                                       |
-| `alchemy_permuter`      | A bounded source-permutation search with linked-byte scoring.                                                 |
+| `permuter`      | A bounded source-permutation search with linked-byte scoring.                                                 |
 
 ### compiler -- routed builds and comparisons
 

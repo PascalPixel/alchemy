@@ -3,11 +3,11 @@
   "span_bytes": 6332,
   "score": {
     "candidate_bytes": 6328,
-    "wrong_instructions": 950,
-    "differing_halfwords": 2197,
+    "wrong_instructions": 930,
+    "differing_halfwords": 2255,
     "insn_diff_rows_nop_filtered": 61,
     "our_side_rows": 50,
-    "raw_rows": "145 ours / 153 reference (298 total)",
+    "raw_rows": "137 ours / 146 reference (283 total)",
     "class": "wrong"
   },
   "shape": {
@@ -104,7 +104,10 @@
     "GUARD1 sets guard_level through a local (g1 = 1)",
     "the hp store tail (dealt/store/recalculate) is duplicated plainly in the heal case, case 6, and case 3 -- no goto: crossjumping merges the suffix after each body's own ldrsh, which is exactly the reference's mid-statement share point; push census now 154=154 and the size gap is one pool word",
     "PpHealFalloff held in a s32* local (pptbl) assigned after the hit selection, before the +206 guard (10 rows)",
-    "scan idx spelled ((n << 1) << 3) + 748; DK_PP_DRAIN's off computed in two statements (off = range*4; off += 72) giving the three-operand lsls; RES_DOWN2 clamps with -4 > x; the sleep guard masks with 3 & rand -- individually byte-neutral, kept as cascade-matched spellings"
+    "scan idx spelled ((n << 1) << 3) + 748; DK_PP_DRAIN's off computed in two statements (off = range*4; off += 72) giving the three-operand lsls; RES_DOWN2 clamps with -4 > x; the sleep guard masks with 3 & rand -- individually byte-neutral, kept as cascade-matched spellings",
+    "EFX_DRAIN_PP holds old pp in a local and the clamp arm computes dmg = heal - old from the copy (ref r2 at 0x1568), not a field re-read",
+    "HpDmgFalloff8 held in a second table local beside pptbl",
+    "EFX_PP_LEECH's clamp re-reads target->pp through union Cell (fresh ldrsh where CSE would fold)"
   ],
   "unexpressed": [
     {
@@ -252,6 +255,14 @@
     {
       "shape": "actor->hp store moved inside the heal==max arm (cascade)",
       "wrong": "worth 76 rows, ALL phase: every reference 0x821 site stores after the join (f1a, 15a8); a store-move lie invisible to the bl guard"
+    },
+    {
+      "shape": "dmg = (heal = dealt) in EFX_DRAIN_PP (cascade)",
+      "wrong": "ref 0x156a adds r5,r5,r6 is heal += dealt; the 92-row marginal was phase again"
+    },
+    {
+      "shape": "text id 0x85f held in a char* from function start (cascade)",
+      "wrong": "removing it from the stack IMPROVED the score by 2"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",

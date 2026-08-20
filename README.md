@@ -22,7 +22,7 @@ is distributed by this repository. _Golden Sun_ and its original material are
 copyright Nintendo and Camelot Software Planning. Alchemy is not affiliated
 with or endorsed by either company.
 
-## DONE: Currently 37%
+## DONE: Currently 36%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus code that is permanently assembly. Nothing else counts.
@@ -60,14 +60,14 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=b899b032)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=4b08c9b3cac16631)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=01460aac)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=251a2692f384ae2e)
 
 ### Images and data
 
@@ -78,7 +78,7 @@ or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
 ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
 same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=e865af5f)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=792cd3c89cb9f217)
 
 ### Music and sound
 
@@ -89,7 +89,7 @@ Every file now carries a name instead of a ROM index, but read the tier as
 `music_walking_passage_quintet_full`, `effect_sample_large_oneshot` — and none of
 them claims a title or a scene. Nothing was taken from outside the ROM.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=d4f23519)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=b40d538dfe095aa0)
 
 ## Contributing and project status
 

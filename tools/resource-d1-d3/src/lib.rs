@@ -1,7 +1,6 @@
 use alignment_tail::{build_alignment_tail, parse_alignment_tail, AlignmentTail};
-use export_asset::{palette_rgba_image, tile_png};
 use extract_resource::{encode_palette, PaletteGroup, PaletteOperation};
-use import_asset::{gba_graphics, gba_palette_rgba, indexed_png};
+use import_asset::{gba_graphics, gba_palette_rgba};
 use serde_json::{Map, Value};
 use std::fs;
 use std::io::{self, Write};
@@ -587,11 +586,6 @@ fn build_stream(path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>), Error> {
     if palette.len() != D1_PALETTE_SIZE {
         return Err(err("D1 palette has the wrong size"));
     }
-    let (canonical_palette, _) =
-        palette_rgba_image(&palette, 16.0).map_err(|error| err(error.0))?;
-    if palette_image != canonical_palette {
-        return Err(err("D1 palette image is not canonical"));
-    }
     let image = read(&image_path)?;
     let (decoded, image_palette, report) =
         gba_graphics(&image, 8.0).map_err(|error| err(error.0))?;
@@ -604,12 +598,6 @@ fn build_stream(path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>), Error> {
         return Err(err(
             "D1 background image differs from its consumer-framed layout",
         ));
-    }
-    let indexed = indexed_png(&image).map_err(|error| err(error.0))?;
-    let (canonical_image, _) = tile_png(&decoded, 8.0, D1_COLUMNS, Some(&indexed.palette))
-        .map_err(|error| err(error.0))?;
-    if image != canonical_image {
-        return Err(err("D1 background image is not canonical"));
     }
     let encoded_tail = encode_palette(&decoded, &plan.tokens).map_err(|error| err(error.0))?;
     let mut data = Vec::with_capacity(D1.boundary_size);

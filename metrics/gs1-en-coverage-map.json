@@ -12,7 +12,7 @@
     },
     "semantic_c": {
       "bytes": 0,
-      "percent_of_executable": 0
+      "percent_of_executable": 0.0
     },
     "assembly": {
       "bytes": 855068,
@@ -23,7 +23,7 @@
       "percent_of_executable": 16.05
     },
     "asset_data": {
-      "bytes": 7298755,
+      "bytes": 7300700,
       "percent_of_executable": 0
     }
   },
@@ -61,21 +61,21 @@
     {
       "id": "rom-overlay-streams",
       "label": "Compressed code overlays",
-      "bytes": 541489,
+      "bytes": 539544,
       "categories": {
-        "exact_c": 124681,
-        "assembly": 416808
+        "exact_c": 123840,
+        "assembly": 415704
       },
       "tiles": 11
     },
     {
       "id": "rom-data",
       "label": "Assets & data",
-      "bytes": 7298755,
+      "bytes": 7300700,
       "categories": {
-        "asset_data": 7298755
+        "asset_data": 7300700
       },
-      "tiles": 2335
+      "tiles": 2336
     }
   ],
   "executable_areas": [
@@ -88,7 +88,7 @@
         "assembly": 293842,
         "retained_asm": 153984
       },
-      "tiles": 3202
+      "tiles": 867
     },
     {
       "id": "overlays",

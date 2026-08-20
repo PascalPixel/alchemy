@@ -19,8 +19,6 @@ const ZERO_FILL_ADDRESS: u32 = 0x080e_f054;
 const TENKAI_ADDRESS: u32 = 0x080f_0000;
 const CALLBACK_COUNT: usize = 407;
 const USAGE: &str = "usage: sentou-kouka-runtime build-stdout INDEX";
-const HYOU_A_BOUNDARIES: &str = "0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e";
-const HYOU_B_BOUNDARIES: &str = "0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e,0x080e";
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Error(pub String);
 impl std::fmt::Display for Error {
@@ -96,28 +94,6 @@ fn table_width(kind: TableType) -> usize {
         TableType::U8 => 1,
         TableType::U16 => 2,
     }
-}
-fn boundaries(text: &str) -> Vec<u32> {
-    text.split(',')
-        .map(|value| u32::from_str_radix(value.trim_start_matches("0x"), 16).unwrap())
-        .collect()
-}
-fn table_specs(boundaries: &[u32], first_u16: bool) -> Vec<(u32, u32, TableType)> {
-    boundaries
-        .windows(2)
-        .enumerate()
-        .map(|(index, pair)| {
-            (
-                pair[0],
-                pair[1],
-                if first_u16 && index == 0 {
-                    TableType::U16
-                } else {
-                    TableType::U8
-                },
-            )
-        })
-        .collect()
 }
 fn number(value: &Value, kind: TableType, label: &str) -> Result<u32> {
     let value = unsigned(
@@ -212,12 +188,7 @@ fn encode_signed(value: &Value, count: usize, label: &str) -> Result<Vec<u8>> {
     }
     Ok(output)
 }
-fn build_table(
-    path: &Path,
-    specs: &[(u32, u32, TableType)],
-    address: u32,
-    end: u32,
-) -> Result<Vec<u8>> {
+fn build_table(path: &Path, address: u32, end: u32, first_u16: bool) -> Result<Vec<u8>> {
     let document = read_document(path)?;
     let source = object(&document, "effect table source")?;
 
@@ -227,15 +198,21 @@ fn build_table(
     {
         return fail("effect table extent differs");
     }
-    let tables = array(
-        field(source, "tables", "effect tables")?,
-        specs.len(),
-        "effect tables",
-    )?;
+    let tables = field(source, "tables", "effect tables")?
+        .as_array()
+        .ok_or_else(|| Error("effect tables must be an array".to_string()))?;
+    if tables.is_empty() {
+        return fail("effect tables must not be empty");
+    }
     let mut output = Vec::new();
-    for (index, (table, (start, finish, kind))) in tables.iter().zip(specs).enumerate() {
+    let mut cursor = address;
+    for (index, table) in tables.iter().enumerate() {
         let table = object(table, &format!("effect table {index}"))?;
-
+        let kind = if first_u16 && index == 0 {
+            TableType::U16
+        } else {
+            TableType::U8
+        };
         let expected_name = format!(
             "{}_{}",
             if address == HYOU_A_ADDRESS {
@@ -251,19 +228,23 @@ fn build_table(
             "u8"
         };
         if string(table, "name", "effect table")? != expected_name
-            || string(table, "address", "effect table")? != hex(*start)
+            || string(table, "address", "effect table")? != hex(cursor)
             || string(table, "type", "effect table")? != expected_type
         {
             return fail(format!("effect table {index} identity differs"));
         }
-        output.extend(encode_values(
-            field(table, "values", "effect table")?,
-            *kind,
-            ((*finish - *start) as usize) / table_width(*kind),
-            &expected_name,
-        )?);
+        let values = field(table, "values", "effect table")?;
+        let count = values
+            .as_array()
+            .ok_or_else(|| Error(format!("{expected_name} requires an array")))?
+            .len();
+        let encoded = encode_values(values, kind, count, &expected_name)?;
+        cursor = cursor
+            .checked_add(encoded.len() as u32)
+            .ok_or_else(|| Error("effect table extent overflowed".to_string()))?;
+        output.extend(encoded);
     }
-    if output.len() != (end - address) as usize {
+    if cursor != end || output.len() != (end - address) as usize {
         return fail("effect table output size differs");
     }
     Ok(output)
@@ -507,9 +488,9 @@ pub fn build_sentou_kouka_runtime(index_path: &Path) -> Result<Vec<u8>> {
     )?);
     output.extend(build_table(
         &source_path(directory, &sources, &sources.hyou_a),
-        &table_specs(&boundaries(HYOU_A_BOUNDARIES), true),
         HYOU_A_ADDRESS,
         KANSUU_ADDRESS,
+        true,
     )?);
     output.extend(build_callbacks(&source_path(
         directory,
@@ -518,9 +499,9 @@ pub fn build_sentou_kouka_runtime(index_path: &Path) -> Result<Vec<u8>> {
     ))?);
     output.extend(build_table(
         &source_path(directory, &sources, &sources.hyou_b),
-        &table_specs(&boundaries(HYOU_B_BOUNDARIES), false),
         HYOU_B_ADDRESS,
         GOUSEI_IRO_ADDRESS,
+        false,
     )?);
     output.extend(assemble(
         &source_path(directory, &sources, &sources.gousei_iro),

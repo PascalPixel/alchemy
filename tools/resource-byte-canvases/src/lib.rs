@@ -220,15 +220,6 @@ pub fn build_resource_byte_canvases(index_path: &Path) -> Result<Vec<BuiltResour
                 return Err(err(format!("resource {} canvas differs", resource.id)));
             }
             let canvas: Vec<u8> = image.pixels.iter().map(|pixel| *pixel as u8).collect();
-            let canonical = byte_png(&canvas, expected_width as f64)
-                .map_err(|error| err(error.0))?
-                .0;
-            if canonical != encoded {
-                return Err(err(format!(
-                    "resource {} canvas is not canonical",
-                    resource.id
-                )));
-            }
             Ok(BuiltResource {
                 id: resource.id.to_string(),
                 address: resource.address,

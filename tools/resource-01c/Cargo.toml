@@ -10,7 +10,7 @@ name = "resource_01c"
 path = "src/lib.rs"
 
 [dependencies]
-export-asset = { path = "../export-asset" }
 extract-resource = { path = "../extract-resource" }
 import-asset = { path = "../import-asset" }
 serde_json = { version = "1", features = ["preserve_order"] }
+sha2 = "0.10"

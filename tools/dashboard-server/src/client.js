@@ -102,6 +102,7 @@ function render(snapshot) {
     metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} exact or permanent bytes`, "done"),
     metric("EN exact C", percent(summary.exactPercent), `${bytes(summary.exactBytes)} linked bytes`, "exact"),
     metric("Tracked C", percent(summary.trackedPercent), `${bytes(summary.trackedBytes)} visible bytes · never counted as DONE`, "tracked"),
+    metric("Cross-edition", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross"),
     metric("JA base", bytes(summary.jaSources), summary.jaSources === 1 ? "canonical source owner" : "canonical source owners", "base"),
     metric("EN candidates", bytes(summary.enSources), "awaiting JA re-derivation or proven EN delta", "derived"),
   );

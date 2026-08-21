@@ -203,6 +203,8 @@ owner in all six GS1 editions:
 ```sh
 tools/compiler/target/release/compiler cross-edition 080bbb0c
 tools/compiler/target/release/compiler cross-edition --calls 080bbb0c
+tools/compiler/target/release/compiler cross-edition --all \
+  --write recon/gs1/exact-correspondence.json
 ```
 
 The comparison is JA-relative. During the transition, an exact EN object may
@@ -215,10 +217,23 @@ not instruction differences. `--calls` decodes corresponding callees, allowing
 one proved owner to seed neighboring correspondences. Use `--json` for ignored
 machine-readable output.
 
+The corpus scan uses every byte-exact EN main-image object as a relocation-aware
+probe. A global match requires a unique relocation-free anchor of at least 16
+bytes. Short owners receive a second, bounded locality pass only when their
+entire unmasked core is exact near a proved neighbor; conflicting owner order
+or duplicate destinations are rejected. The generated index separates
+`shared_core`, `regional_core`, and unresolved owners and records how each
+location was established. It maps evidence across editions; it does not make
+the EN C exact for another edition or prove that edition's complete owner
+boundary.
+
 When core bytes remain, inspect those exact offsets as possible regional source
 changes. A smaller JA owner is useful evidence for a different source shape,
 but edition order alone does not establish why it differs. The current
 calibration result is recorded in `recon/gs1/cross-edition.json`.
+The full exact-corpus locator output is
+`recon/gs1/exact-correspondence.json`; regenerate it with
+`make correspondence` whenever exact main-image ownership changes.
 
 ### 3. Recover source structure
 

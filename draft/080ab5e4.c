@@ -312,12 +312,12 @@ s32 Func_080ab5e4(s32 arg0)
     temp_r0_47 = Math_Mod(packedPos, 0xA);
     statusPtr = (new_var85 = (new_var56 = status));
     sp30 = ((s32)temp_r0_47);
-    sp2C = 0;
-    sp28 = 0;
-    sp24 = 0;
+    sp3C = ((-1) & 0xFFFF);
     sp20 = new_var89;
     sp20 = (sp20 = 0);
-    sp3C = ((-1) & 0xFFFF);
+    sp24 = 0;
+    sp28 = 0;
+    sp2C = 0;
     var_r3_61 = (&status[7]);
     do
     {

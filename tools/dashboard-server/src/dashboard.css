@@ -38,11 +38,12 @@ h1 { margin: 0; font: var(--weyard-font); font-size: clamp(32px, 5vw, 64px); lin
 .edition.active:first-child { border-color: var(--gold); box-shadow: inset 0 2px 0 var(--gold); }
 .edition.active { border-color: var(--violet); }
 .arrow { color: var(--gold); }
-.metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; margin-top: 20px; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: var(--line); }
+.metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; margin-top: 20px; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: var(--line); }
 .metric { min-height: 108px; padding: 15px 16px; background: var(--raised); box-shadow: inset 0 3px 0 #555; }
 .metric.done { box-shadow: inset 0 3px 0 var(--green); }
 .metric.exact { box-shadow: inset 0 3px 0 var(--violet); }
 .metric.tracked, .metric.base { box-shadow: inset 0 3px 0 var(--gold); }
+.metric.cross { box-shadow: inset 0 3px 0 var(--green); }
 .metric.derived { box-shadow: inset 0 3px 0 var(--cyan); }
 .metric-label { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .metric-value { margin-top: 10px; font-size: clamp(20px, 2.2vw, 31px); font-weight: 800; letter-spacing: -.05em; }

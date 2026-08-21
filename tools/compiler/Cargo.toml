@@ -10,6 +10,7 @@ candidate-compiler = { path = "../candidate-compiler" }
 candidate-show = { path = "../candidate-show" }
 compiler-core = { path = "../compiler-core" }
 dashboard-server = { path = "../dashboard-server" }
+extract-resource = { path = "../extract-resource" }
 objdiff-core = { version = "3.8.0", default-features = false, features = ["arm", "std"] }
 permuter = { path = "../permuter" }
 regex = "1.12"

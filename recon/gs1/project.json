@@ -9,6 +9,11 @@
     "exactness_is_per_edition": true,
     "assembly_is_displaced_per_edition": true
   },
+  "correspondence": {
+    "calibration": "recon/gs1/cross-edition.json",
+    "exact_main": "recon/gs1/exact-correspondence.json",
+    "exact_overlays": "recon/gs1/exact-overlay-correspondence.json"
+  },
   "editions": {
     "ja": {
       "role": "base",

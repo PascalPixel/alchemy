@@ -80,6 +80,10 @@
     {
       "shape": "hoist all 14 (sp18 - sp38) occurrences to one shared 'slot' local, recomputed at both sp18-reassignment points (semantically verified safe: every read precedes any subsequent sp38 mutation on its own path)",
       "wrong": "normalized weight 994 vs the committed draft's 979 -- a real regression, not a tie. Traced via -fno-gcse diagnostic: field-load counts (ldrb, [r,#48]) are IDENTICAL between standard and -fno-gcse builds, ruling out simple field-read folding as the mechanism. RTL evidence (080ab5e4.c.07.gcse dump) shows gcse's PRE pass adds ~29 insns (11 new pseudos, 1137-1147) rather than removing redundancy -- pseudo 1139 = reg40-reg48 (one definition, insn 5484) is a PARTIAL, PATH-SPECIFIC hoist, not a whole-function CSE the way a single shared C local reproduces. A blunt full hoist overshoots what GCSE actually does and makes the match worse."
+    },
+    {
+      "shape": "narrower (sp18-sp38) hoist scopes: 9-site cluster only (lines ~306-376), and separate per-if/else-pair locals (slotA/slotB for the two nearest branch pairs)",
+      "wrong": "narrow-9: weight 981 (still worse than 979, though close). paired if/else: weight 1108 (much worse). Neither reproduces the -fno-gcse gain; four total hoisting scopes tried (full-14, narrow-9, paired-if/else, and the original full hoist) all tie or regress. This suggests pseudo 1139 (reg40-reg48, the one PRE insertion I traced) is NOT the primary driver of the 56-row -fno-gcse improvement -- gcse creates 11 new pseudos total (1137-1147) across the whole function, and the real gain is likely a distributed, multi-site interaction (or downstream scheduling shift) that cannot be isolated to one C expression. -fno-gcse is retired as a source-reproducible lever for this session; it remains a valid DIAGNOSTIC signal only (and using the flag itself is not permitted for adoption -- the approved compiler flags are fixed)."
     }
   ],
   "notes": [

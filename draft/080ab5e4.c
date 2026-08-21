@@ -895,9 +895,7 @@ block_193:
                 if ((Func_08077210(temp_r7_1696, temp_r6_1701, temp_r5_1702) != 0) || (Func_08077208(temp_r7_1696, temp_r6_1701, temp_r5_1702) != 0)) {
                     sp44 = 1;
                 }
-                goto block_198;
             }
-block_198:
             if (sp44 == 0) {
                 Func_080f9010(0x72);
                 Func_08015278(M2C_FIELD(sp4C, s32 *, 0x30));

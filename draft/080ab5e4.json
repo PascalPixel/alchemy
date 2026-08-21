@@ -33,6 +33,11 @@
   ],
   "unexpressed": [
     {
+      "op": "post-dialog control flow",
+      "count": "~150 instructions (the session's largest remaining cluster)",
+      "where": "the four 'sp48 = 1; goto loop_36;' sites (after the 0xBBE/0xBB0-0xBAE dialog blocks) are almost certainly WRONG: reference asm .L98/.L99/.L101 region (asm/080ab5e4.s lines ~1507-1600) shows these sites do NOT jump back to the dispatch loop. Instead they fall into a shared 3-instruction test (.L99 at line 305, itself inside the per-competitor status-display loop around .L12-.L19, lines 260-310) reached via `bl .L99` -- i.e. a genuine GCC crossjump-shared tail, not a backward goto. The true source shape is closer to: after the dialog, test a local flag and branch into specific arms of the SAME per-competitor display loop that the arg0==0 case already walks (Func_08015080 calls with 0xBB0/0xBAF/0xBAE, competitor count from M2C_FIELD(sp4C,u8*,0x219)). m2c's structuring pass turned the shared-tail bl into what LOOKED like a backward goto to the wrong label (loop_36, the outer dispatch head) because it couldn't distinguish 'call a shared snippet and return' from 'jump back'. This needs the per-competitor loop's true structure re-read from asm lines 220-310 and correlated against the four dialog-exit sites individually before touching source -- do not guess-fix without re-verifying each site's target arm"
+    },
+    {
       "op": "store deficit",
       "count": 43,
       "where": "instruction-mix histogram: ours 104 str vs reference 147. Frame is 88 bytes/18 addressed slots against the reference's 108/21, so the reference keeps roughly three to five more values in memory across calls. These are spills that follow from source shape -- more distinct live locals than m2c's collapsed temporaries -- not from missing statements (strb/strh already match)"
@@ -41,11 +46,6 @@
       "op": "byte-load signedness",
       "count": "5-7",
       "where": "reference ldrsb 13 / ldrb 38; ours ldrsb 8 / ldrb 45. The status array is read SIGNED (ldr the pointer, ldr the index, ldrsb, cmp #4), so the m2c (u8) casts on sp1C[...] at the mask sites are candidates for removal; check each against its reference site before changing"
-    },
-    {
-      "op": "block placement",
-      "count": 61,
-      "where": "a 61-instruction flag/status block emits at ours 0x1178 but reference 0xd38; the accompanying replace hunk shows ours setting a selector to 8 where the reference sets 1 (the var_r3_1107 = 2 / 8 paths into block_159). Read those two paths against the reference before moving them"
     },
     {
       "op": "aggregate recovery",

@@ -35,6 +35,7 @@ s32 Func_080ab5e4(s32 arg0)
     s32 sp18;
     int new_var42;
     s32 sp20;
+    s32 *new_var153;
     int new_var111;
     void *new_var95;
     s8 **new_var17;
@@ -93,6 +94,7 @@ s32 Func_080ab5e4(s32 arg0)
     s32 sp24;
     int new_var54;
     int new_var69;
+    s8 *new_var152;
     s32 temp_r1_2240;
     s32 new_var93;
     s32 temp_r1_126;
@@ -274,6 +276,7 @@ s32 Func_080ab5e4(s32 arg0)
     s32 *new_var107;
     u8 temp_r2_2137;
     int new_var34;
+    s8 **new_var154;
     u8 temp_r2_2165;
     int new_var114;
     void *temp_r3_18;
@@ -491,7 +494,7 @@ s32 Func_080ab5e4(s32 arg0)
         while (0);
         if (sp3C != (-1))
         {
-            sp28 = ((u32)(*((u16 *)(((s8 *)temp_r9_32) + (((sp38 * 0xA) + sp3C) * 2)))));
+            sp28 = ((u32)(*((u16 *)((new_var152 = ((s8 *)temp_r9_32)) + (((sp38 * 0xA) + sp3C) * 2)))));
         }
         Func_08015270(*win10C);
         if (mode == 1)
@@ -510,8 +513,8 @@ s32 Func_080ab5e4(s32 arg0)
             sp0 = sp48;
             new_var120 = 0x5001;
             new_var114 = 0;
-            Func_08015280(*win10C, (((u32)(0xE0 & (new_var58 = (*((u16 *)(((s8 *)(new_var123 = ctx)) + new_var121)))))) >> 5) + new_var120, 6, new_var114);
-            Func_08015080(0xBB3, *win10C, 0x38, new_var114);
+            Func_08015280(*win10C, (((u32)(0xE0 & (new_var58 = (*((u16 *)(((s8 *)(new_var123 = ctx)) + new_var121)))))) >> 5) + new_var120, 6, 0);
+            Func_08015080(0xBB3, *win10C, 0x38, 0);
             new_var69 = new_var102;
             Func_08015080(new_var69, *(new_var125 = win10C), new_var114, 8);
         }
@@ -646,7 +649,7 @@ s32 Func_080ab5e4(s32 arg0)
         {
             sp4 = 0xE;
             sp0 = 1;
-            Func_080ab1f4(*((s32 *)(new_var31 = (((s8 *)(new_var71 = ctx)) + 0x30))), (new_var45 = ((*(new_var76 = (&sp18))) - sp38)) + 1, sp30 + 2, 6);
+            Func_080ab1f4(*(new_var153 = ((s32 *)(new_var31 = (((s8 *)(new_var71 = ctx)) + 0x30)))), (new_var45 = ((*(new_var76 = (&sp18))) - sp38)) + 1, sp30 + 2, 6);
         }
         (*((s8 *)(((s8 *)(*((void **)0x03001E8C))) + 0xEA3))) = 1;
     }
@@ -857,7 +860,7 @@ s32 Func_080ab5e4(s32 arg0)
                         do
                         {
                             sp8 = var_r4_1290;
-                            Func_080a1a40(2, 0x92);
+                            Func_080a1a40((unsigned long long)2, 0x92);
                             Func_080030f8(1);
                         }
                         while (!((*((u32 *)0x03001C94)) & 1));
@@ -948,19 +951,23 @@ s32 Func_080ab5e4(s32 arg0)
             break;
         }
     }
-    if (mode != 0)
+    do
     {
-        goto block_186;
+        if (mode != 0)
+        {
+            goto block_186;
+        }
+        if (!(0x100 & var_r4_907))
+        {
+            goto block_183;
+        }
+        if (sp3C == (-1))
+        {
+            goto block_193;
+        }
+        sp44 = 0;
     }
-    if (!(0x100 & var_r4_907))
-    {
-        goto block_183;
-    }
-    if (sp3C == (-1))
-    {
-        goto block_193;
-    }
-    sp44 = 0;
+    while (0);
     new_var47 = 0xF00;
     new_var145 = ((u32)(new_var47 & sp28));
     temp_r7_1504 = (new_var145 >> 8);
@@ -1102,7 +1109,8 @@ s32 Func_080ab5e4(s32 arg0)
                                         {
                                             temp_r7_1856 = (*var_sl_1853);
                                             var_sl_1853 += 1;
-                                            temp_r4_1863 = (((u32)(temp_r7_1856 & 0xF00)) >> 8);
+                                            temp_r4_1863 = 8;
+                                            temp_r4_1863 = (((u32)(temp_r7_1856 & 0xF00)) >> temp_r4_1863);
                                             var_r8_1869 = 0;
                                             temp_r6_1871 = (((u32)(temp_r7_1856 & 0xE0)) >> 5);
                                             temp_r5_1872 = (((short)temp_r7_1856) & ((unsigned int)0x1F));
@@ -1177,7 +1185,7 @@ s32 Func_080ab5e4(s32 arg0)
                                             new_var78 = sp30;
                                             new_var78 = (new_var78 + 2);
                                             Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), new_var75, new_var78, 6);
-                                            temp_r2_2035 = ((u8)(*(new_var17 = (&statusPtr)))[sp38]);
+                                            temp_r2_2035 = ((u8)(*(new_var154 = (new_var17 = (&statusPtr))))[sp38]);
                                             if (!(4 & temp_r2_2035))
                                             {
                                                 if (1 & temp_r2_2035)
@@ -1366,10 +1374,11 @@ s32 Func_080ab5e4(s32 arg0)
                                 Func_080f9010(0x72);
                             goto loop_36;
                         }
-                        temp_r7_1696 = (((u32)((unsigned char)(0xF00 & sp28))) >> 8);
+                        temp_r7_1696 = ((u32)((unsigned char)(0xF00 & sp28)));
+                        temp_r7_1696 = (temp_r7_1696 >> 8);
                         new_var134 = 5;
                         sp44 = 0;
-                        temp_r6_1701 = ((u32)(0xE0 & sp28));
+                        temp_r6_1701 = ((double)((u32)(0xE0 & sp28)));
                         temp_r6_1701 = new_var134;
                         temp_r6_1701 = (temp_r6_1701 >> temp_r6_1701);
                         temp_r5_1702 = ((double)sp28);
@@ -1398,7 +1407,7 @@ s32 Func_080ab5e4(s32 arg0)
                         var_r5_1634 = 4;
                         if (mode & ((u8)statusPtr[sp38]))
                         {
-                            if (sp38 == (*((s8 *)(((s8 *)ctx) + 0x1C))))
+                            if (sp38 == (((((*((s8 *)(((s8 *)ctx) + 0x1C))) & 0xFF) & 0xFF) & 0xFF) & 0xFF))
                             {
                                 var_r5_1634 = 2;
                                 do
@@ -1428,7 +1437,7 @@ s32 Func_080ab5e4(s32 arg0)
     if (sp3C != (-1))
     {
         new_var96 = (sp34 + 0x178);
-        temp_r2_2357 = (*((u16 *)(((s8 *)temp_r9_32) + (((new_var110 = (sp38 * 0xA)) + sp3C) * 2))));
+        temp_r2_2357 = (*((u16 *)(((s8 *)temp_r9_32) + (((new_var110 = (0xA * sp38)) + sp3C) * 2))));
         new_var25 = new_var96;
         new_var72 = (0x1F & temp_r2_2357);
         new_var140 = 2;

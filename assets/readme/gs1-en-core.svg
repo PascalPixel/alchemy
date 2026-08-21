@@ -3617,7 +3617,8 @@
 <text class="weyard rectangle-label" x="333.4129592752272" y="30">0x080bbb0a–0x080bbb0c</text>
 </g>
 <g aria-label="0x080bbb0c–0x080bd3e2: 6,358 bytes">
-<rect x="330.9149068866678" y="22.5" width="5.191456769591001" height="257" style="fill:hsl(275 95% 55%);fill:oklch(0.550 0.170 295)"/>
+<rect x="330.9149068866678" y="278.44904057879836" width="5.191456769591001" height="1.0509594212016358" style="fill:hsl(275 0% 93%);fill:oklch(0.928 0.001 295)"/>
+<rect x="330.9149068866678" y="22.5" width="5.191456769591001" height="255.94904057879836" style="fill:hsl(275 95% 55%);fill:oklch(0.552 0.169 295)"/>
 <rect x="330.4149068866678" y="22" width="6.191456769591001" height="10" fill="hsl(275 70% 24%)" fill-opacity=".9"/>
 <text class="weyard rectangle-label" x="333.4149068866678" y="30">0x080bbb0c–0x080bd3e2</text>
 </g>

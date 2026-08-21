@@ -1,7 +1,7 @@
 use crate::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
 use crate::routing::{
-    agbcc_driver, bundle, bundle_for_target, cflags, driver_for_target, gs2_bundle, root,
-    uses_agbcc_compiler, CompilerTarget,
+    agbcc_driver, bundle, bundle_for_target, cflags, driver_for_target, root, uses_agbcc_compiler,
+    CompilerTarget,
 };
 use crate::sha256;
 use fs2::FileExt;
@@ -351,16 +351,11 @@ pub fn validate_experimental_compiler(
 }
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
-    let gs2 = gs2_bundle();
     vec![
         bundle_dir.join("xgcc"),
         bundle_dir.join("cpp"),
         bundle_dir.join("tradcpp"),
         bundle_dir.join("cc1"),
-        gs2.join("xgcc"),
-        gs2.join("cpp0"),
-        gs2.join("tradcpp0"),
-        gs2.join("cc1"),
         agbcc_driver(),
         gcc3_driver(),
     ]

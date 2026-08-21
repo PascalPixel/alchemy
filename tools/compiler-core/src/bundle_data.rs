@@ -21,36 +21,12 @@ const GS1: &[ExecutableDigests] = &[
         &["f7d1aeb098815f9b98c5df25bb47bab89aa14b1ab184b63c1472986f515fa3dd"],
     ),
 ];
-const GS2: &[ExecutableDigests] = &[
-    (
-        "xgcc",
-        &["128520f13ff01aee64a984b1279a6e3a682a3679de44c99296064f46fb1e8ec2"],
-    ),
-    (
-        "cpp0",
-        &["b4ac7f5ff7fd74f4eca40385832fd0360d13cb5d4f0b6c8b3ead4a67d2f3d5b0"],
-    ),
-    (
-        "tradcpp0",
-        &["7698319dfea3647dace68ffb5c3dbc0fd459f3a859699acb47c669d3eb8956a3"],
-    ),
-    (
-        "cc1",
-        &["91b2a67275a100e8b6695d85ef2d82d1fd144853cbcb361ddf1d8be31858230f"],
-    ),
-];
 const EMPTY_GS1: &[ExecutableDigests] =
     &[("xgcc", &[]), ("cpp", &[]), ("tradcpp", &[]), ("cc1", &[])];
-const EMPTY_GS2: &[ExecutableDigests] = &[
-    ("xgcc", &[]),
-    ("cpp0", &[]),
-    ("tradcpp0", &[]),
-    ("cc1", &[]),
-];
-const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS2)];
+const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 
 pub static EXPECTED: &[HostTargets] = &[
-    ("darwin-arm64", &[("gs1", GS1), ("gs2", GS2)]),
+    ("darwin-arm64", &[("gs1", GS1), ("gs2", GS1)]),
     ("darwin-x64", EMPTY),
     ("linux-x64", EMPTY),
     ("linux-arm64", EMPTY),

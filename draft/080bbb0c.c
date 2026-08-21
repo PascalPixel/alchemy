@@ -657,29 +657,31 @@ after_power:
                 if (*(s16 *)(((u8 *)(slots)) + off) == 254) {
                     *(s16 *)(((u8 *)(slots)) + off) = rec;
                 } else {
-                    s32 woff;
+                    s32 t;
                     u8 *base;
+                    s32 g1;
 
                     j = 0;
-                    woff = 100;
+                    g1 = 100;
                     for (;;) {
                         base = (u8 *)slots;
-                        if (*(s16 *)(woff + (s32)base) == 255) {
+                        if (*(s16 *)(g1 + (s32)base) == 255) {
                             s32 t;
 
-                            *(s16 *)(woff + base) = rec;
+                            *(s16 *)(base + g1) = rec;
                             t = jsave + 102;
                             *(s16 *)(base + t) = 255;
                             break;
                         }
                         i++;
-                        woff += 2;
-                        j += 2;
+                        g1 += 2;
+                        t = j + 2;
+                        j = t;
                         if (i > 5)
                             break;
-                        jsave = j;
-                        if (*(s16 *)(woff + (s32)base) == 254) {
-                            *(s16 *)(woff + (s32)base) = rec;
+                        jsave = t;
+                        if (*(s16 *)(g1 + (s32)base) == 254) {
+                            *(s16 *)(g1 + (s32)base) = rec;
                             break;
                         }
                     }

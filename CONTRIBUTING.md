@@ -168,8 +168,68 @@ result farther away.
 
 Use C89 declarations and short evidence-backed names. Preserve observable
 original mistakes. Replace names such as `Func_02000f80`, `status_12c`, and
-anonymous numeric cases once local evidence supports something better; honest
-names make incorrect bindings visible.
+anonymous numeric cases only when local evidence supports something better;
+honest names make incorrect bindings visible.
+
+#### Recover source voice, not a modern API
+
+Reconstructed identifiers are reading aids, not claims about the lost source's
+original spelling. The ROM can establish roles and relationships, but it does
+not contain local variable names, typedef names, comments, header boundaries,
+or macro spellings. Do not turn behavioral confidence into authorship claims.
+
+This was a Japanese commercial C codebase built in 2000--2001. Its exact house
+style is not recoverable, but a contemporary source voice is a better neutral
+default than a modern English framework style:
+
+- Prefer short, conventional C names at local scope: `dmg`, `hit`, `efx`,
+  `res`, `pos`, `cnt`, `work`, `tbl`, `buf`, and similarly compact compounds.
+  A longer name is warranted when it prevents two live roles from being
+  confused, not merely because modern code usually spells words out.
+- Preserve established domain abbreviations and compact numeric distinctions.
+  For example, `EFX_RES_UP1` can be more honest than
+  `BATTLE_EFFECT_RESISTANCE_UP_1`: the former describes a compact effect-table
+  label, while the latter invents a global namespace and modern naming scheme.
+- The recorded preprocessor admits ASCII letters and `_` at identifier start,
+  then ASCII digits as well; it does not classify full-width or half-width kana
+  as identifier characters. Romanized Japanese, English abbreviations, and
+  mixed domain shorthand are all historically plausible, but the exact choice
+  is not recoverable from the binary. Do not manufacture kana or romaji merely
+  to make source look Japanese.
+- Japanese comments already carrying useful technical or behavioral meaning
+  may remain Japanese. Translate or rewrite a comment when that makes its
+  evidence clearer, not for cosmetic language uniformity. Keep compiler-shape
+  notes beside the expression or declaration whose form they constrain.
+- Do not expand every identifier mechanically. Names such as `amount_dealt`,
+  `BattleAction_ResolveTarget`, and `BattleWork_ApplyMode` may read smoothly but
+  are wrong when the evidence supports only `dmg`, an address-based function,
+  or an unresolved mode setter.
+- Preserve terse or slightly awkward source when it explains the reference
+  output. A raw offset, reused temporary, fallthrough, or unusual operand order
+  should receive a concise reconstruction note rather than a fictitious
+  abstraction.
+
+Treat headers as coherent source groupings, not as a readability score or a
+claim about the original directory tree. A large exact owner may move stable
+declarations into focused headers even before a second owner uses them. Keep
+the grouping narrow and source-like: `battle_efx.h`, `battle_msg.h`, and
+`battle_calc.h` fit compact table vocabulary; `battle_action_messages.h` and a
+new hierarchy of long English APIs usually invent a modern architecture.
+
+Keep compiler-shaping macros, speculative aliases, one-off aggregate views,
+and declaration-order notes beside the owner whose output they constrain.
+Splitting declarations from implementation is useful; hiding the source shape
+that made the owner exact is not.
+
+Use these promotion tests:
+
+1. The declarations form one stable vocabulary, table family, or interface.
+2. The proposed name is no more specific than the local evidence.
+3. Moving the declaration does not conceal an owner-specific compiler shape.
+4. The header is useful as a unit, rather than a bag of unrelated leftovers.
+
+If any test fails, keep the declaration local. Humanization should expose the
+recovered algorithm, roles, and constraints while leaving uncertainty visible.
 
 For a large or incomplete main-image owner, create a minimal compilable draft
 with the project headers and evidence-backed signature, then start with the

@@ -13,6 +13,7 @@ typedef s32 M2C_UNK;
     (*(type_ptr)((s8 *)(expr) + (offset)))
 
 s32 Func_080ab5e4(s32 arg0) {
+    s8 status[8];
     s32 sp0;
     s32 sp4;
     u32 sp8;
@@ -143,16 +144,16 @@ s32 Func_080ab5e4(s32 arg0) {
     sp34 = temp_r2_25;
     temp_r9_32 = M2C_FIELD(temp_r3_18, void **, 0x184);
     temp_r5_34 = M2C_FIELD(sp4C, u16 *, temp_r2_25 + 0x174);
-    sp38 = (s32) Func_08002304(temp_r5_34, 0xA);
+    sp38 = (u16) Func_08002304(temp_r5_34, 0xA);
     temp_r0_47 = Func_080022f4(temp_r5_34, 0xA);
-    sp1C = (s8 *) (&sp0 + 0x64);
+    sp1C = status;
     sp30 = (s32) temp_r0_47;
     sp2C = 0;
     sp28 = 0;
     sp24 = 0;
     sp20 = 0;
     sp3C = -1;
-    var_r3_61 = &sp0 + 0x6B;
+    var_r3_61 = &status[7];
     do {
         *var_r3_61 = 0;
         var_r3_61 -= 1;
@@ -408,20 +409,16 @@ loop_36:
             } else {
                 temp_r5_1001 = Func_08015038(0xC4C, 9, 9, 1);
                 *(s8 *)0x0200044C = 1;
-loop_108:
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_108;
                 }
                 Func_08015018(temp_r5_1001, 1);
                 Func_080aafb8(temp_r9_32);
                 Func_080030f8(1);
                 temp_r5_1029 = Func_08015038(0xC4D, 9, 9, 1);
                 *(u8 *)0x0200044C = 1;
-loop_111:
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_111;
                 }
                 Func_08015018(temp_r5_1029, 1);
                 Func_080aafb8(temp_r9_32);
@@ -444,10 +441,8 @@ block_167:
                 sp8 = 0;
                 temp_r5_1083 = Func_08015038(0xC40, 9, 9, 1);
                 *(u8 *)0x0200044C = 1;
-loop_117:
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_117;
                 }
                 Func_08015018(temp_r5_1083, 1);
                 Func_080aafb8(temp_r9_32);
@@ -493,10 +488,8 @@ block_162:
                 sp8 = 0;
                 temp_r5_1163 = Func_08015038(0xC41, 9, 9, 1);
                 *(u8 *)0x0200044C = 1;
-loop_129:
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_129;
                 }
                 Func_08015018(temp_r5_1163, 1);
                 Func_080aafb8(temp_r9_32);
@@ -533,11 +526,9 @@ loop_129:
                 sp8 = 0;
                 temp_r5_1278 = Func_08015038(0xC44, 9, 9, 1);
                 Func_080a1ac0(2, 0x92);
-loop_142:
                 var_r4_1290 = sp8;
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_142;
                 }
                 if (!(*(u32 *)0x03001C94 & 1)) {
                     do {
@@ -551,11 +542,9 @@ loop_142:
                 Func_080aafb8(temp_r9_32);
                 Func_080030f8(1);
                 temp_r5_1327 = Func_08015038(0xC45, 9, 9, 1);
-loop_148:
                 var_r4_1337 = sp8;
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_148;
                 }
                 if (!(*(u32 *)0x03001C94 & 1)) {
                     do {
@@ -569,11 +558,9 @@ loop_148:
                 Func_080aafb8(temp_r9_32);
                 Func_080030f8(1);
                 temp_r5_1374 = Func_08015038(0xC46, 9, 9, 1);
-loop_154:
                 var_r4_1384 = sp8;
-                if (Func_08015048() == 0) {
+                while (Func_08015048() == 0) {
                     Func_080030f8(1);
-                    goto loop_154;
                 }
                 if (!(*(u32 *)0x03001C94 & 1)) {
                     do {

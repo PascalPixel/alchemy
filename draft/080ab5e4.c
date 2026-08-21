@@ -55,9 +55,11 @@ s32 Func_080ab5e4(s32 arg0)
     s32 sp0;
     s32 new_var5;
     void *new_var66;
+    s32 *new_var91;
     s32 sp4;
     u32 sp8;
     s8 *new_var22;
+    u32 *new_var86;
     s32 sp14;
     s32 sp18;
     s8 *statusPtr;
@@ -155,11 +157,13 @@ s32 Func_080ab5e4(s32 arg0)
     s32 statusFlags;
     u32 *new_var8;
     s32 var_r0_255;
+    int new_var88;
     s32 var_r3_1124;
     s32 new_var9;
     int new_var82;
     s32 result;
     int new_var77;
+    int new_var89;
     s32 var_r5_1785;
     s32 var_r5_237;
     s32 var_r6_240;
@@ -170,7 +174,6 @@ s32 Func_080ab5e4(s32 arg0)
     int new_var29;
     void *new_var79;
     s8 *new_var19;
-    s8 *var_r1_82;
     u32 new_var63;
     s8 *new_var42;
     s8 *var_r2_152;
@@ -178,6 +181,7 @@ s32 Func_080ab5e4(s32 arg0)
     s8 var_r1_2077;
     int new_var38;
     s8 var_r1_2127;
+    s8 *var_r1_82;
     s8 var_r1_2319;
     u16 *var_sl_1853;
     u16 temp_r0_47;
@@ -227,8 +231,10 @@ s32 Func_080ab5e4(s32 arg0)
     u32 temp_r7_600;
     u32 var_r3_581;
     u32 var_r4_1290;
+    s8 *new_var90;
     u32 var_r4_1337;
     int new_var4;
+    int new_var87;
     u32 *new_var61;
     int new_var43;
     u32 var_r4_1384;
@@ -252,6 +258,8 @@ s32 Func_080ab5e4(s32 arg0)
     void *events;
     u32 *new_var41;
     void *temp_r5_343;
+    s8 *new_var84;
+    s8 *new_var85;
     s32 *new_var78;
     mode = arg0;
     temp_r3_18 = (new_var66 = (*((void **)0x03001F2C)));
@@ -266,12 +274,13 @@ s32 Func_080ab5e4(s32 arg0)
     packedPos = (*((u16 *)(((s8 *)ctx) + (new_var70 + new_var2))));
     sp38 = ((u16)Func_08002304(packedPos, 0xA));
     temp_r0_47 = Func_080022f4(packedPos, 0xA);
-    statusPtr = (new_var56 = status);
+    statusPtr = (new_var85 = (new_var56 = status));
     sp30 = ((s32)temp_r0_47);
     sp2C = 0;
     sp28 = 0;
     sp24 = 0;
-    sp20 = 0;
+    sp20 = new_var89;
+    sp20 = (sp20 = 0);
     sp3C = ((-1) & 0xFFFF);
     var_r3_61 = (&status[7]);
     do
@@ -317,7 +326,8 @@ s32 Func_080ab5e4(s32 arg0)
                 {
                     if (statusPtr[sp38] == 4)
                     {
-                        temp_r0_119 = (sp38 + 1);
+                        temp_r0_119 = 1;
+                        temp_r0_119 = (sp38 + temp_r0_119);
                         sp38 = temp_r0_119;
                         sp38 = Func_080aa538(temp_r0_119, *((u8 *)(((s8 *)ctx) + 0x219)));
                     }
@@ -350,7 +360,7 @@ s32 Func_080ab5e4(s32 arg0)
                 }
                 else
                 {
-                    if (slotFlags[sp44] != 0)
+                    if (slotFlags[(short)sp44] != 0)
                     {
                         (*var_r2_152) = 0;
                     }
@@ -386,7 +396,7 @@ s32 Func_080ab5e4(s32 arg0)
         while (0);
         sp0 = 7;
         sp4 = 6;
-        Func_080ab2ec(new_var52 = ((short)(*((s32 *)(new_var6 = (((s8 *)(new_var73 = ctx)) + 0x30))))), (char)((temp_r5_204 * 7) + 1), 2);
+        Func_080ab2ec(new_var52 = ((char)((short)(*((s32 *)(new_var6 = (((s8 *)(new_var73 = ctx)) + 0x30)))))), (char)((temp_r5_204 * 7) + 1), 2);
         var_r5_237 = 0;
         if (((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))) > 0)
         {
@@ -441,20 +451,27 @@ s32 Func_080ab5e4(s32 arg0)
         }
         temp_r6_339 = (*((s32 *)(((s8 *)ctx) + 0x10)));
         new_var34 = 0x208;
-        temp_r5_343 = Func_08077008(*((u16 *)(((s8 *)ctx) + ((sp38 * 2) + new_var34))));
+        temp_r5_343 = Func_08077008(*((u16 *)((new_var84 = ((s8 *)ctx)) + ((sp38 * 2) + new_var34))));
         Func_08015270(temp_r6_339);
         do
         {
             Func_08015090(temp_r5_343, temp_r6_339, 0, 0);
             new_var15 = 0x129;
-            do
+            if (1)
             {
-                Func_08015080((*((u8 *)(((s8 *)temp_r5_343) + new_var15))) + 0x741, temp_r6_339, 0, 8);
+                do
+                {
+                    do
+                    {
+                        Func_08015080((*((u8 *)(((s8 *)temp_r5_343) + new_var15))) + 0x741, temp_r6_339, 0, 8);
+                    }
+                    while (0);
+                    Func_08015090((void *)0x080AF28C, temp_r6_339, 0x30, 0);
+                    sp0 = sp48;
+                }
+                while (0);
+                Func_080150b0(*((u8 *)(((s8 *)temp_r5_343) + 0xF)), 2, temp_r6_339, 0x48);
             }
-            while (0);
-            Func_08015090((void *)0x080AF28C, temp_r6_339, 0x30, 0);
-            sp0 = sp48;
-            Func_080150b0(*((u8 *)(((s8 *)temp_r5_343) + 0xF)), 2, temp_r6_339, 0x48);
             if (mode == 0)
             {
                 Func_08015080(0xBA9, temp_r6_339, 0, 0x10);
@@ -480,7 +497,7 @@ s32 Func_080ab5e4(s32 arg0)
             Func_08015280(*windowPtr, (((u32)(new_var65 & ((unsigned char)(*((u16 *)(((s8 *)ctx) + 0x178)))))) >> 5) + new_var67, 6, 0);
             new_var64 = 0xBB4;
             Func_08015080(0xBB3, *windowPtr, 0x38, (float)0);
-            Func_08015080(new_var64, *windowPtr, 0, 8);
+            Func_08015080(new_var64, *windowPtr, 0, (long long)8);
         }
         if (sp3C == (-1))
         {
@@ -539,7 +556,7 @@ s32 Func_080ab5e4(s32 arg0)
                     new_var77 = 0;
                     sp8 = 0xB9A;
                     Func_08015080(0xB9A, *windowPtr, new_var77, 0);
-                    temp_r5_596 = (((u32)(0xF00 & sp28)) >> 8);
+                    temp_r5_596 = (((u32)(0xF00 & (*(new_var86 = (&sp28))))) >> 8);
                     do
                     {
                         temp_r7_600 = ((new_var54 = ((u32)(0xE0 & sp28))) >> 5);
@@ -620,7 +637,8 @@ s32 Func_080ab5e4(s32 arg0)
             sp0 = 0x68;
             new_var36 = (0x1F & sp28);
             Func_08015068(*((s32 *)(0x30 + ((s8 *)ctx))), 0, 0x60, 0xE0);
-            Func_08015080((((((u32)(0xE0 & sp28)) >> 5) * 0x14) + new_var36) + 0x666, new_var = (*((s32 *)(((s8 *)ctx) - (-0x30)))), 0, 0x60);
+            new_var88 = (-0x30);
+            Func_08015080((((((u32)(0xE0 & sp28)) >> 5) * 0x14) + new_var36) + 0x666, new_var = (*((s32 *)(((s8 *)ctx) - new_var88))), 0, 0x60);
         }
         if (!(1 & ((u8)statusPtr[sp38])))
         {
@@ -628,7 +646,7 @@ s32 Func_080ab5e4(s32 arg0)
             sp0 = 1;
             Func_080ab1f4(*(new_var11 = (&(*((s32 *)(((s8 *)ctx) + 0x30))))), (sp18 - sp38) + 1, sp30 + 2, 6);
         }
-        (*((s8 *)(((s8 *)(*((void **)((int)0x03001E8C)))) + 0xEA3))) = 1;
+        (*((s8 *)(((s8 *)(*((void **)((int)((unsigned short)0x03001E8C))))) + 0xEA3))) = 1;
     }
     if (1 & ((u8)statusPtr[sp38]))
     {
@@ -695,12 +713,13 @@ s32 Func_080ab5e4(s32 arg0)
                         Func_080aafb8(events);
                         Func_080030f8(1);
                         temp_r5_1029 = Func_08015038(0xC4D, 9, 9, 1);
-                        (*((u8 *)0x0200044C)) = 1;
+                        (*((u8 *)((short)0x0200044C))) = 1;
                         while (Func_08015048() == 0)
                         {
                             Func_080030f8(1);
                         }
                         Func_08015018(temp_r5_1029, 1);
+                        new_var87 = 2;
                         Func_080aafb8(events);
                         (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
                         Func_080b50f8();
@@ -709,7 +728,7 @@ s32 Func_080ab5e4(s32 arg0)
                         Func_080771b8(0u, 0u, 0);
                         Func_080771c8(0u, 0u, 0);
                         Func_08077010(0u);
-                        statusFlags = 2;
+                        statusFlags = new_var87;
                         block_167:
                             var_r4_907 = 2;
                     }
@@ -734,7 +753,7 @@ s32 Func_080ab5e4(s32 arg0)
                         while (0);
                         Func_080aafb8(events);
                         (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        (*((s32 *)(((s8 *)events) + 0x212C))) = 2;
+                        (*((s32 *)((new_var90 = ((s8 *)events)) + 0x212C))) = 2;
                         var_r4_907 = sp8;
                     }
                 break;
@@ -840,7 +859,7 @@ s32 Func_080ab5e4(s32 arg0)
                             do
                             {
                                 sp8 = var_r4_1290;
-                                Func_080a1a40(2, 0x92);
+                                Func_080a1a40((unsigned long long)2, 0x92);
                                 Func_080030f8(1);
                             }
                             while (!((*((u32 *)0x03001C94)) & 1));
@@ -850,24 +869,28 @@ s32 Func_080ab5e4(s32 arg0)
                         Func_080aafb8(events);
                         Func_080030f8(1);
                         temp_r5_1327 = Func_08015038(0xC45, 9, 9, 1);
-                        var_r4_1337 = sp8;
-                        while (Func_08015048() == 0)
+                        do
                         {
-                            Func_080030f8(1);
-                        }
-                        if (!(1 & (*((u32 *)0x03001C94))))
-                        {
-                            do
+                            var_r4_1337 = sp8;
+                            while (Func_08015048() == 0)
                             {
-                                sp8 = var_r4_1337;
-                                Func_080a1a40(2, 0x92);
                                 Func_080030f8(1);
                             }
-                            while (!((*((u32 *)0x03001C94)) & 1));
+                            if (!(1 & (*((u32 *)0x03001C94))))
+                            {
+                                do
+                                {
+                                    sp8 = var_r4_1337;
+                                    Func_080a1a40(2, 0x92);
+                                    Func_080030f8(1);
+                                }
+                                while (!((*((u32 *)0x03001C94)) & 1));
+                            }
+                            sp8 = var_r4_1337;
+                            Func_08015018(temp_r5_1327, 1);
+                            Func_080aafb8(events);
                         }
-                        sp8 = var_r4_1337;
-                        Func_08015018(temp_r5_1327, 1);
-                        Func_080aafb8(events);
+                        while (0);
                         Func_080030f8(1);
                         temp_r5_1374 = Func_08015038(0xC46, 9, 9, 1);
                         var_r4_1384 = sp8;
@@ -912,7 +935,7 @@ s32 Func_080ab5e4(s32 arg0)
                         }
                 break;
                 case 20:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) == 0x5A)
+                    if ((*((s32 *)(0x2128 + ((s8 *)events)))) == 0x5A)
                     {
                         (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
                         statusFlags = 0x20;
@@ -1122,7 +1145,7 @@ s32 Func_080ab5e4(s32 arg0)
                                             new_var49 = temp_r1_1953;
                                             sp40 = new_var49;
                                         }
-                                        while (new_var49 < ((s32)(*((u8 *)(((s8 *)events) + sp14)))));
+                                        while (new_var49 < ((((s32)(*((u8 *)(((s8 *)events) + sp14)))) - 1) + 1));
                                     }
                                     temp_r1_1966 = (sp44 + 1);
                                     sp14 += 1;
@@ -1183,132 +1206,136 @@ s32 Func_080ab5e4(s32 arg0)
                                     }
                                     else
                                     {
-                                        if (0x80 & statusFlags)
+                                        do
                                         {
-                                            if (1)
+                                            if (0x80 & statusFlags)
                                             {
-                                                Func_080f9010(0x6F);
-                                            }
-                                            if (!(4 & ((u8)statusPtr[sp38])))
-                                            {
-                                                sp4 = 0xF;
-                                                sp0 = 1;
-                                                Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), ((new_var80 = sp18) - sp38) + 1, sp30 + 2, 6);
-                                                sp30 += 1;
-                                                do
+                                                if (1)
                                                 {
-                                                    var_r1_2127 = (*((s8 *)(((s8 *)events) + (new_var17 = (sp38 + 0xA0)))));
-                                                    if (var_r1_2127 == 0)
+                                                    Func_080f9010(0x6F);
+                                                }
+                                                if (!(4 & ((u8)statusPtr[sp38])))
+                                                {
+                                                    sp4 = 0xF;
+                                                    sp0 = 1;
+                                                    Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), ((new_var80 = sp18) - sp38) + 1, sp30 + 2, 6);
+                                                    sp30 += 1;
+                                                    do
                                                     {
-                                                        var_r1_2127 = 1;
+                                                        var_r1_2127 = (*((s8 *)(((s8 *)events) + (new_var17 = (sp38 + 0xA0)))));
+                                                        if (var_r1_2127 == 0)
+                                                        {
+                                                            var_r1_2127 = 1;
+                                                        }
                                                     }
-                                                }
-                                                while (0);
-                                                sp30 = Func_080aa538(sp30, (u8)var_r1_2127);
-                                                temp_r2_2137 = ((u8)statusPtr[sp38]);
-                                                if ((1 & temp_r2_2137) && (!(4 & temp_r2_2137)))
-                                                {
-                                                    statusPtr[sp38] = (-2);
-                                                    statusPtr[sp38] = (statusPtr[sp38] & temp_r2_2137);
-                                                    sp30 = 0;
-                                                }
-                                                else
-                                                {
-                                                    if (sp30 == 0)
+                                                    while (0);
+                                                    sp30 = Func_080aa538(sp30, (u8)var_r1_2127);
+                                                    temp_r2_2137 = ((u8)statusPtr[sp38]);
+                                                    if ((1 & temp_r2_2137) && (!(4 & temp_r2_2137)))
                                                     {
-                                                        temp_r2_2165 = ((u8)statusPtr[sp38]);
-                                                        if (2 & temp_r2_2165)
+                                                        statusPtr[sp38] = (-2);
+                                                        statusPtr[sp38] = (statusPtr[sp38] & temp_r2_2137);
+                                                        sp30 = 0;
+                                                    }
+                                                    else
+                                                    {
+                                                        if (sp30 == 0)
+                                                        {
+                                                            temp_r2_2165 = ((u8)statusPtr[sp38]);
+                                                            if (2 & temp_r2_2165)
+                                                            {
+                                                                do
+                                                                {
+                                                                }
+                                                                while (0);
+                                                                statusPtr[*(new_var59 = (&(*(new_var13 = (&sp38)))))] = (1 | temp_r2_2165);
+                                                            }
+                                                        }
+                                                    }
+                                                    sp2C = sp30;
+                                                    sp48 = 2;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (0x20 & statusFlags)
+                                                {
+                                                    Func_080f9010(0x6F);
+                                                    if (!(4 & ((u8)statusPtr[sp38])))
+                                                    {
+                                                        sp0 = 1;
+                                                        sp4 = 0xF;
+                                                        Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (sp18 - sp38) + 1, sp30 + 2, 6);
+                                                    }
+                                                    temp_r3_2211 = (sp38 - 1);
+                                                    sp38 = temp_r3_2211;
+                                                    sp38 = Func_080aa538(temp_r3_2211, *((u8 *)(((s8 *)ctx) + 0x219)));
+                                                    if (mode == 0)
+                                                    {
+                                                        sp44 = 0;
+                                                        if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
                                                         {
                                                             do
                                                             {
+                                                                if (statusPtr[sp38] == 4)
+                                                                {
+                                                                    temp_r0_2233 = (sp38 - 1);
+                                                                    sp38 = temp_r0_2233;
+                                                                    sp38 = Func_080aa538(temp_r0_2233, *((u8 *)(((s8 *)ctx) + 0x219)));
+                                                                }
+                                                                temp_r1_2240 = (sp44 + 1);
+                                                                sp44 = temp_r1_2240;
                                                             }
-                                                            while (0);
-                                                            statusPtr[*(new_var59 = (&(*(new_var13 = (&sp38)))))] = (1 | temp_r2_2165);
+                                                            while (temp_r1_2240 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
                                                         }
                                                     }
+                                                    goto block_281;
                                                 }
-                                                sp2C = sp30;
-                                                sp48 = 2;
+                                                if (0x10 & statusFlags)
+                                                {
+                                                    Func_080f9010(0x6F);
+                                                    if (!(4 & ((u8)statusPtr[sp38])))
+                                                    {
+                                                        sp0 = 1;
+                                                        sp4 = 0xF;
+                                                        Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (sp18 - sp38) + 1, sp30 + 2, 6);
+                                                    }
+                                                    temp_r3_2279 = (sp38 + 1);
+                                                    sp38 = temp_r3_2279;
+                                                    sp38 = Func_080aa538(temp_r3_2279, *((u8 *)(((s8 *)ctx) + 0x219)));
+                                                    if (mode == 0)
+                                                    {
+                                                        sp44 = 0;
+                                                        if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
+                                                        {
+                                                            do
+                                                            {
+                                                                if (statusPtr[sp38] == 4)
+                                                                {
+                                                                    temp_r0_2301 = (sp38 + 1);
+                                                                    sp38 = temp_r0_2301;
+                                                                    sp38 = Func_080aa538(temp_r0_2301, *((u8 *)(((s8 *)ctx) + 0x219)));
+                                                                }
+                                                                temp_r1_2308 = (sp44 - (-1));
+                                                                sp44 = temp_r1_2308;
+                                                            }
+                                                            while (temp_r1_2308 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+                                                        }
+                                                    }
+                                                    block_281:
+                                                        sp30 = sp2C;
+                                                    var_r1_2319 = (*((s8 *)(((s8 *)events) + (new_var25 = (sp38 + 0xA0)))));
+                                                    if (var_r1_2319 == 0)
+                                                    {
+                                                        var_r1_2319 = 1;
+                                                    }
+                                                    sp30 = Func_080aa538(sp30, (u8)var_r1_2319);
+                                                    sp48 = 2;
+                                                    sp18 = (sp38 * 8);
+                                                }
                                             }
                                         }
-                                        else
-                                        {
-                                            if (0x20 & statusFlags)
-                                            {
-                                                Func_080f9010(0x6F);
-                                                if (!(4 & ((u8)statusPtr[sp38])))
-                                                {
-                                                    sp0 = 1;
-                                                    sp4 = 0xF;
-                                                    Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (sp18 - sp38) + 1, sp30 + 2, 6);
-                                                }
-                                                temp_r3_2211 = (sp38 - 1);
-                                                sp38 = temp_r3_2211;
-                                                sp38 = Func_080aa538(temp_r3_2211, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                if (mode == 0)
-                                                {
-                                                    sp44 = 0;
-                                                    if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
-                                                    {
-                                                        do
-                                                        {
-                                                            if (statusPtr[sp38] == 4)
-                                                            {
-                                                                temp_r0_2233 = (sp38 - 1);
-                                                                sp38 = temp_r0_2233;
-                                                                sp38 = Func_080aa538(temp_r0_2233, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                            }
-                                                            temp_r1_2240 = (sp44 + 1);
-                                                            sp44 = temp_r1_2240;
-                                                        }
-                                                        while (temp_r1_2240 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
-                                                    }
-                                                }
-                                                goto block_281;
-                                            }
-                                            if (0x10 & statusFlags)
-                                            {
-                                                Func_080f9010(0x6F);
-                                                if (!(4 & ((u8)statusPtr[sp38])))
-                                                {
-                                                    sp0 = 1;
-                                                    sp4 = 0xF;
-                                                    Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (sp18 - sp38) + 1, sp30 + 2, 6);
-                                                }
-                                                temp_r3_2279 = (sp38 + 1);
-                                                sp38 = temp_r3_2279;
-                                                sp38 = Func_080aa538(temp_r3_2279, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                if (mode == 0)
-                                                {
-                                                    sp44 = 0;
-                                                    if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
-                                                    {
-                                                        do
-                                                        {
-                                                            if (statusPtr[sp38] == 4)
-                                                            {
-                                                                temp_r0_2301 = (sp38 + 1);
-                                                                sp38 = temp_r0_2301;
-                                                                sp38 = Func_080aa538(temp_r0_2301, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                            }
-                                                            temp_r1_2308 = (sp44 - (-1));
-                                                            sp44 = temp_r1_2308;
-                                                        }
-                                                        while (temp_r1_2308 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
-                                                    }
-                                                }
-                                                block_281:
-                                                    sp30 = sp2C;
-                                                var_r1_2319 = (*((s8 *)(((s8 *)events) + (new_var25 = (sp38 + 0xA0)))));
-                                                if (var_r1_2319 == 0)
-                                                {
-                                                    var_r1_2319 = 1;
-                                                }
-                                                sp30 = Func_080aa538(sp30, (u8)var_r1_2319);
-                                                sp48 = 2;
-                                                sp18 = (sp38 * 8);
-                                            }
-                                        }
+                                        while (0);
                                     }
                                 goto loop_36;
                             }
@@ -1347,7 +1374,7 @@ s32 Func_080ab5e4(s32 arg0)
                         Func_08015278(*(new_var78 = (new_var20 = ((s32 *)(((s8 *)ctx) + 0x30)))));
                         sp0 = 0x68;
                         new_var69 = 0x30;
-                        Func_08015068(*((s32 *)(((s8 *)ctx) + new_var69)), 0, 0x50, 0xD8);
+                        Func_08015068(*(new_var91 = ((s32 *)(((s8 *)ctx) + new_var69))), 0, 0x50, 0xD8);
                         Func_08015078(0xBBE, *((s32 *)(new_var22 = (((s8 *)ctx) + 0x30))), 0, 0x60);
                         goto loop_36;
                     }

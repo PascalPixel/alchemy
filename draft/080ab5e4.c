@@ -14,10 +14,11 @@
  * needs to be redone once this is byte-exact. Not byte-exact yet.
  */
 typedef s32 M2C_UNK;
-
 s32 Func_080ab5e4(s32 arg0)
 {
     int new_var47;
+    u32 sp28;
+    s32 sp48;
     int new_var87;
     s32 *win10C;
     void *new_var20;
@@ -31,9 +32,8 @@ s32 Func_080ab5e4(s32 arg0)
     s32 sp18;
     int new_var42;
     s32 sp20;
-    s32 sp48;
+    int new_var111;
     void *new_var95;
-    u32 sp28;
     s8 **new_var17;
     s32 sp30;
     s32 sp34;
@@ -255,7 +255,8 @@ s32 Func_080ab5e4(s32 arg0)
     ctx = temp_r3_18;
     temp_r9_32 = (*((void **)(((s8 *)temp_r3_18) + 0x184)));
     sp48 = 1;
-    new_var87 = (mode * new_var27);
+    new_var111 = (mode * new_var27);
+    new_var87 = new_var111;
     temp_r2_25 = new_var87;
     new_var65 = 0;
     sp34 = temp_r2_25;
@@ -1032,9 +1033,9 @@ s32 Func_080ab5e4(s32 arg0)
                                                         temp_r5_1909 = new_var56;
                                                         new_var106 = 0xE0;
                                                         new_var77 = (temp_r7_1856 & new_var106);
-                                                        temp_r6_1910 = (((u32)new_var77) >> 5);
-                                                        Func_080771b0(((u32)(temp_r7_1856 & 0xF00)) >> 8, temp_r6_1910, 0x1F & temp_r7_1856);
-                                                        Func_080771c0(temp_r5_1909, temp_r6_1910, 0x1F & temp_r7_1856);
+                                                        ;
+                                                        Func_080771b0(((u32)(temp_r7_1856 & 0xF00)) >> 8, ((u32)new_var77) >> 5, 0x1F & temp_r7_1856);
+                                                        Func_080771c0(temp_r5_1909, ((u32)new_var77) >> 5, 0x1F & temp_r7_1856);
                                                         Func_08077010(temp_r5_1909);
                                                     }
                                                 }

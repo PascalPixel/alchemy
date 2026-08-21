@@ -55,10 +55,17 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  *     pressure. Named rather than inlined for that reason, not because
  *     they carry independent meaning beyond the field offset itself.
  *   - colorHigh/pixelColorHigh: (value & 0xF00) >> 8, the same
- *     color/tile-info high-channel decomposition used throughout this file
- *     (paired with 0xE0>>5 and 0x1F low-channel extractions at other call
- *     sites, not consolidated here since each is a separately compiled
- *     instance).
+ *     high-nibble decomposition used throughout this file (paired with
+ *     0xE0>>5 and 0x1F low-nibble extractions at other call sites, not
+ *     consolidated here since each is a separately compiled instance).
+ *     NAMING CAVEAT: called into Func_08077210/Func_08077208/
+ *     Func_080771b0 etc, on the same 0x08077xxx page as
+ *     exact/080bbb0c.c's Battle_HitCheck/Battle_CalcAttack/
+ *     Battle_CalcPower/Battle_CalcRestore. That's page-adjacency, not
+ *     proof, but it's reason enough to doubt the "color/tile" reading
+ *     this whole file assumed -- these could be decomposing a packed
+ *     stat/ability value instead. Not renaming on adjacency alone; flagging
+ *     so a future pass checks this before trusting the color framing.
  *
  * differing_halfwords=2177 at 4804/4888 bytes; not byte-exact. r18/r19 (two
  * permuter adoptions after the 39ad6a9a5/8a658af50 hand-humanization pass)

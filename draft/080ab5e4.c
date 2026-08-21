@@ -1161,7 +1161,7 @@ s32 Func_080ab5e4(s32 arg0)
                                     sp10 = 0;
                                     loop_225:
                                         sp40 = 0;
-                                    if (((s32)(*((u8 *)(((s8 *)events) + sp14)))) > 0)
+                                    if (((s32)(*((s8 *)(((s8 *)events) + sp14)))) > 0)
                                     {
                                         var_sl_1853 = ((sp10 * 2) + events);
                                         do
@@ -1209,7 +1209,7 @@ s32 Func_080ab5e4(s32 arg0)
                                             new_var49 = temp_r1_1953;
                                             sp40 = new_var49;
                                         }
-                                        while (new_var49 < ((((s32)(*((u8 *)(((s8 *)events) + sp14)))) - 1) + 1));
+                                        while (new_var49 < ((((s32)(*((s8 *)(((s8 *)events) + sp14)))) - 1) + 1));
                                     }
                                     temp_r1_1966 = (sp44 + 1);
                                     sp44 = temp_r1_1966;

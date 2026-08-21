@@ -1,5 +1,11 @@
 #include "types.h"
 
+/* Division/modulo pair used to split packedPos-style base-10 values. */
+s32 Func_08002304(s32 numerator, s32 denominator);
+#define Math_Div Func_08002304
+s32 Func_080022f4(s32 numerator, s32 denominator);
+#define Math_Mod Func_080022f4                     /* same address as exact/080bbb0c.c's Math_Mod */
+
 /*
  * Colosso tournament selection and progression handler.
  *
@@ -27,10 +33,14 @@
  *     Func_08015xxx layout calls; its address is computed lazily at first
  *     use, matching the reference (see 21dc7e844).
  *   - packedPos: a per-mode u16 field at ctx + mode*2 + 0x174, decomposed
- *     via Func_08002304/Func_080022f4(packedPos, 10) into sp38 (remainder)
- *     and sp30-then-temp_r0_47 (quotient); the function's tail recombines
- *     them as sp38 + sp30*0xA and writes the result back to the same
- *     field, confirming the round*10+slot packing.
+ *     via Math_Div/Math_Mod(packedPos, 10) into sp38 (quotient) and
+ *     sp30-then-temp_r0_47 (remainder). Corrected from an earlier,
+ *     backwards labeling of this pair (main:b33ebf347 merge) once
+ *     exact/080bbb0c.c's own Math_Div/Math_Mod naming confirmed Func_08002304
+ *     is the divide and Func_080022f4 (the address 080bbb0c calls Math_Mod)
+ *     is the modulo. sp38 and sp30 both get mutated later, so the tail's
+ *     sp38 + sp30*0xA recombination is a new value, not a round-trip of the
+ *     original packedPos.
  *   - result: the function's return value, set to a small status code
  *     (1/2/3/4/7/0xA/or 0-var_r5_1785) on each exit path.
  *   - statusFlags: *(s32*)0x03001B04, read once at entry and tested
@@ -291,8 +301,8 @@ s32 Func_080ab5e4(s32 arg0)
     new_var70 = temp_r2_25;
     packedPosFieldOffset = 0x174;
     packedPos = (*((u16 *)(((s8 *)ctx) + (new_var70 + packedPosFieldOffset))));
-    sp38 = ((u16)Func_08002304(packedPos, 0xA));
-    temp_r0_47 = Func_080022f4(packedPos, 0xA);
+    sp38 = ((u16)Math_Div(packedPos, 0xA));
+    temp_r0_47 = Math_Mod(packedPos, 0xA);
     statusPtr = (new_var85 = (new_var56 = status));
     sp30 = ((s32)temp_r0_47);
     sp2C = 0;
@@ -403,9 +413,9 @@ s32 Func_080ab5e4(s32 arg0)
     if (mode == 1)
     {
         temp_r6_199 = (*((u16 *)(((s8 *)ctx) + 0x174)));
-        temp_r5_204 = Func_08002304(temp_r6_199, 0xA);
+        temp_r5_204 = Math_Div(temp_r6_199, 0xA);
         ;
-        temp_r2_218 = Func_080022f4(temp_r6_199, 0xA);
+        temp_r2_218 = Math_Mod(temp_r6_199, 0xA);
         sp0 = mode;
         sp4 = 0xE;
         Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (temp_r5_204 * 7) + 1, temp_r2_218 + 2, (double)6);

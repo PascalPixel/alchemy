@@ -620,27 +620,29 @@ after_power:
                 if (*(s16 *)(BytePtr(slots) + off) == 254) {
                     *(s16 *)(BytePtr(slots) + off) = rec;
                 } else {
+                    s32 woff;
                     u8 *base;
 
                     j = 0;
+                    woff = 100;
                     for (;;) {
                         base = (u8 *)slots;
-                        if (*(s16 *)(off + (s32)base) == 255) {
+                        if (*(s16 *)(woff + (s32)base) == 255) {
                             s32 t;
 
-                            *(s16 *)(off + base) = rec;
+                            *(s16 *)(woff + base) = rec;
                             t = jsave + 102;
                             *(s16 *)(base + t) = 255;
                             break;
                         }
                         i++;
-                        off += 2;
+                        woff += 2;
                         j += 2;
                         if (i > 5)
                             break;
                         jsave = j;
-                        if (*(s16 *)(off + (s32)base) == 254) {
-                            *(s16 *)(off + (s32)base) = rec;
+                        if (*(s16 *)(woff + (s32)base) == 254) {
+                            *(s16 *)(woff + (s32)base) = rec;
                             break;
                         }
                     }

@@ -2,11 +2,11 @@
   "owner": "main:0x080bbb0c",
   "span_bytes": 6332,
   "score": {
-    "candidate_bytes": 6328,
-    "differing_halfwords": 2700,
-    "wrong_instructions": 952,
-    "class": "missing-instruction",
-    "note": "The linked halfword count is inflated by the four-byte length shift. The complete normalized instruction diff is local: four candidate rows replace five reference rows at the summon walker head. The candidate lacks the reference's second movs #100 rematerialization; no later instruction-shape disagreement remains."
+    "candidate_bytes": 6332,
+    "differing_halfwords": 2,
+    "wrong_instructions": 0,
+    "class": "ordering",
+    "note": "3164 of 3166 halfwords exact; the residual is one transposed instruction pair, a sched2 LUID tie with the complete local negative result recorded in unexpressed"
   },
   "shape": {
     "calls": null,
@@ -121,25 +121,25 @@
     "attack KO arm is KO-first (if (cur <= 0) {...} else FINISH), mirroring case 3: jump2 then empties the attack FINISH arm into case 3's shared copy (b .L at the cmp) and the whole KO arm matches the reference row-for-row INCLUDING register texture (mov r3,sl / movs r6,#0 / bls polarity / per-arm FELLED ldr jumping into the shared movs #4 push). The 'FINISH-first measured better' rejection was landscape-dependent and is reversed; the FELLED crossjump cluster, the bhi/bls polarity, and the extra FELLED pool load are all resolved by this one arm-order fact",
     "heal bodies route power through dmg exactly like the three CalcPower siblings: dmg = act->power; dmg = Battle_CalcRestore(dmg, ...) -- pwr is gone. dmg's long-lived callee-saved home (r5) generates the reference's full copy chain (adds r5,r3,#0 from the guard load, adds r0,r5,#0 at the call, adds r5,r0,#0 for the result) and both heal-head clusters close row-for-row including register texture. Found via the greg/flow2 RTL dumps: pwr's separate 2-ref pseudo took r0 by arg-copy preference and reload_cse collapsed the chain; dmg's pseudo cannot take r0 because it crosses the Math_Div calls. The recorded expressed[60] sibling pattern was the answer all along",
     "HEAL_60 head: all four reads are PLAIN, signed-before-unsigned per field (heal, maxv, old=(u16)&hp, maxu=(u16)&max_hp). The volatile puns were a proxy: volatile splits each load into a HImode temp plus copy at expand (combine cannot merge through volatile), which is why maxu could never load straight into r6. With plain reads the four loads survive because derivation is asymmetric -- combine turns a LATER sext into shifts of an existing zext temp for free, but rederiving a zext from a sext costs two insns, so signed-first keeps every load. maxu now emits ldrh r6,[r7,#52] directly and mov r8 comes late, both matching the reference; the residual is maxv's scheduling position (one load) and old-temp r0 vs r4 coloring",
-    "summon walk uses one offset variable across the initial 254 probe and the 255/254 search loop. This is the direct algorithmic source shape: the reference rematerializes 100 for the loop-carried induction after the probe, while the compiler currently coalesces both roles into one r0 pseudo. Removing the artificial second woff variable deletes only that rematerialization in normalized assembly and exposes the final compiler-allocation question cleanly.",
+    "summon walk double-100 RESOLVED: the walker's offset is its own block variable initialized inside the else arm (s32 woff = 100 after the probe branch) -- a second =100 def in a different extended basic block, which cse cannot unify (w4 proved same-EBB inits coalesce). The probe and hit-store keep off; emission now shows movs r2,#100 for the probe/hit-store and movs r0,#100 for the walker with registers matching the reference exactly. The walker's [r0,r6] vs our [r6,r0] mem operand order is allocator texture (source addend order is canonicalized away)",
     "saved-slot refresh routes the count through tmp: tmp = Actor_ListSlots(saved); if (tmp > 0) { q = (u16 *)saved; count = tmp; do { Actor_RefreshSlot(*q++); count--; } ... } -- both copies sink into the guarded arm as the reference shows, and the do-body loads before the decrement. Restores exact size parity",
     "HEAL_60 pun order maxv,heal,old,maxu edges the raw gate to 349 at equal structure (the old-temp/maxu window trades against the maxv slot)",
     "attack case: the Math_Mod(target[15],5)+6 bonus and the pass-0 crit push are NESTED inside if (modifier != 0) -- unmodified targets get neither; read directly from the reference's beq target at 0x464",
     "crush clamp: the dmg<=0 floor is nested inside the dmg<cur-1 arm (the floor only runs after the cap assignment) -- an original quirk preserved, read from the bge target at 0x4ee",
     "item-kind damage: dmg += Math_Div(target->max_hp*kind,100) sits OUTSIDE the (u32)item<=21 guard, so out-of-range items add with kind uninitialized -- an original bug preserved, read from the bhi target at 0x7f6",
-    "walk-head source has no duplicate offset declaration or manual initialization-order tuning; i, j, jsave, and the single off variable express the actual two-index walk"
+    "walk-head else arm orders j=0 before woff=100 (one halfword better on the scheduled cluster)"
   ],
   "unexpressed": [
     {
-      "op": "loop-offset rematerialization",
-      "count": 1,
-      "where": "At +0x204..+0x224 the reference loads the one-off probe with r2=100, then emits base=slots, r0=100, and j=0 before the search loop. The authentic one-offset source allocates off directly to r0 from its first use, so GCC emits only r0=100 and shifts base/j around it. GCC 2.96 RTL identifies off as a BIV and global allocation gives its whole lifetime r0. The remaining task is to recover the ordinary-C lifetime or expression boundary that causes the first probe use to be rematerialized in r2 while the loop-carried BIV starts in r0."
+      "op": "sched2 LUID tie",
+      "count": 2,
+      "where": "0x218/0x21c: mov ip,r1 (the walk block's base=slots copy) emits after movs r4,#0; the reference emits it before. EXHAUSTIVELY measured: 288-variant enumeration over init permutations, base-def positions (in-loop / else-head / block-head / pre-if), needless brace scopes, do-while barriers, and no-op reorder assignments -- 90 tie at 2, none below; plus a 100k guarded AST walk (dry) and ~30 hand spellings (probe-through-base, CellPtr inline boundary, two-pointer cache, double defs, giv j+100 form). Mechanism, read from haifa-sched.c rank_for_schedule and the -fsched-verbose ready lists: the three insns tie on priority, dependence class, and dependent count, falling to INSN_LUID; the copy's LUID is always highest because every local spelling folds to the same canonical RTL where loop.c's move_movables appends the hoisted copy at the preheader end and ce hoists the trio into the head block in chain order. The reference's earlier slot therefore implies an expansion-context difference that is NOT local to this block, or membership in the recorded scheduler-tie class"
     }
   ],
   "verified_against_reference": [
     "seven-instruction register-save prologue matches exactly"
   ],
-  "blocked_by": "one missing GCC 2.96 rematerialization at the summon walker head",
+  "blocked_by": "not blocked -- barely started",
   "rejected": [
     {
       "shape": "APPLY_PP_HIT compare-first in cases 0/11",
@@ -346,6 +346,10 @@
     {
       "shape": "union Cell reads for the HEAL_60 puns (old/maxu, and maxv)",
       "wrong": "cse derives across the union at this site (value-level, not mem-level); loads collapse. unsigned-first orders also collapse (t5/t10). The volatile-was-a-proxy insight plus signed-first ordering is the fix"
+    },
+    {
+      "shape": "one-offset summon walk (off walks; woff removed) -- Codex 37e56742d",
+      "wrong": "6328 bytes / 2700hw: the compiler shares one off pseudo between probe and walker and never rematerializes the reference's second movs #100; the normalized diff is 4 rows vs 5 (one missing insn). The two-offset spelling (woff=100 in the else arm) keeps exact size with only the transposed pair. Also measured: two-giv walker (jsave=i*2, index i*2+100, no j) -- loop.c does not strength-reduce it here; per-iteration recompute, +4 bytes, jsave loses lr"
     }
   ],
   "note": "Largest target in the list. No permanence marker anywhere in the span -- no Thumb multiple-transfer, no SWI, no veneer idiom, nothing in asm/classification.json -- so every byte is reachable as C.",
@@ -386,8 +390,6 @@
     "The m2c reconstruction was repaired in scratch for its 11 type-recovery error classes and compiled through gs1cc: candidate 6560 bytes, aligned reference 6564, 3179 differing halfwords, 2517 wrong instructions, objdiff v3.8.0 ARMv4T 67.7926%. The maintained draft remains decisively better at 6332 bytes, 1037 candidate-show-aligned differing halfwords (1035 on the permuter owner span), and 98.16525% structural. [melee session, measured on the 1035 pre-fold draft]",
     "Exhaustive objdiff address-window comparison found only two two-instruction runs exact in m2c but not the draft. +0x908 is allocator coincidence over an already-equivalent BattleFlag_Test(366) condition. +0x28a suggested delaying pointer/count setup in the saved-slot refresh loop; two semantics-preserving transplants were measured and rejected at 2408/2419 differing halfwords with an 8-byte size increase. No m2c block is fit to harvest on this draft. Keep m2c as an independent source-shape reader for raw owners, not as a replacement for a mature 98%-structural reconstruction. [melee session, measured on the 1035 pre-fold draft]",
     "melee-session supersession notes: the objdiff elem-scan reading (+0xec rebuild) matches this session's giv spill-vs-allocate conclusion and both pointer-walk rejections are consistent; the m2c +0x28a saved-slot lead was CLOSED here by the tmp-routed count (their two transplant spellings were the wrong ones); the objdiff rerank of run30 independently corroborates the lie-descent disproof",
-    "the last-pair campaign also produced: the loop.c/ce append-order proof (any hoisted copy chains last), the reload-inheritance reading of the walk-head probe, and the formatter incident (editor clang-format stripped macro continuations in the working tree once -- guarded by root .clang-format DisableFormat; drafts' era formatting is canonical)",
-    "external PRET-ecosystem trial on the final 2-halfword draft (2026-08-21): splat64 0.50.0 / splat 1d09139 cannot initialize a GBA disassembler and aborts with `No disassembler for requested platform` even with `is_unsupported_platform: true`; it is not a GBA splitter. asm-differ f49f9b2 in ARM little-endian binary mode over the linked 6,332-byte spans scores 120 and isolates the same sole reorder at +0x218..+0x21c, with no additional structural lead. pret/decomp-permuter 2795247 first scored a noisy relocatable-object proxy at 2,440; after correcting its adapter to linked ELFs with identical symbols, the honest base is 80 (one reorder and four register fields, with no insertions or deletions). Six-worker random runs found two internal score-60 families. Swapping `woff = 100` before `j = 0` and splitting `t = jsave + 102` worsens authoritative linked scoring from 2 to 3 halfwords (`woff,j,base` versus required `base,woff,j`). Routing `j` through the existing dead `tmp` local keeps the authoritative distance at 2 but changes the candidate from `j,woff,base` to `woff,base,j`, reducing the residual to one adjacent base/offset swap; a seeded second round found no lower score. None is adopted as a dependency: Splat is inapplicable, asm-differ duplicates the linked native/objdiff view, and upstream PRET's score still does not rank authoritative linked-byte distance correctly.",
-    "final ARM option-equivalence sweep on the 2-halfword draft: -march=armv4t, -mtune=arm7tdmi, -mapcs-32, -mno-apcs-frame, -mno-apcs-stack-check, -msoft-float, -mhard-float, and -mlittle-endian are byte-neutral at 2; -mno-thumb-interwork is 52; arm7/arm710/arm6 lose Thumb and are thousands wrong; arm9/arm920t/arm9tdmi tuning is 2046. No shipped target spelling changes the scheduler tie. Struct-typed queue access changes alias analysis globally (2704 halfwords); an ordinary static inline extraction is byte-identical and retains the same 2."
+    "the last-pair campaign also produced: the loop.c/ce append-order proof (any hoisted copy chains last), the reload-inheritance reading of the walk-head probe, and the formatter incident (editor clang-format stripped macro continuations in the working tree once -- guarded by root .clang-format DisableFormat; drafts' era formatting is canonical)"
   ]
 }

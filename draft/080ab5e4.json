@@ -33,9 +33,9 @@
   ],
   "unexpressed": [
     {
-      "op": "post-dialog control flow",
-      "count": "~150 instructions (the session's largest remaining cluster)",
-      "where": "the four 'sp48 = 1; goto loop_36;' sites (after the 0xBBE/0xBB0-0xBAE dialog blocks) are almost certainly WRONG: reference asm .L98/.L99/.L101 region (asm/080ab5e4.s lines ~1507-1600) shows these sites do NOT jump back to the dispatch loop. Instead they fall into a shared 3-instruction test (.L99 at line 305, itself inside the per-competitor status-display loop around .L12-.L19, lines 260-310) reached via `bl .L99` -- i.e. a genuine GCC crossjump-shared tail, not a backward goto. The true source shape is closer to: after the dialog, test a local flag and branch into specific arms of the SAME per-competitor display loop that the arg0==0 case already walks (Func_08015080 calls with 0xBB0/0xBAF/0xBAE, competitor count from M2C_FIELD(sp4C,u8*,0x219)). m2c's structuring pass turned the shared-tail bl into what LOOKED like a backward goto to the wrong label (loop_36, the outer dispatch head) because it couldn't distinguish 'call a shared snippet and return' from 'jump back'. This needs the per-competitor loop's true structure re-read from asm lines 220-310 and correlated against the four dialog-exit sites individually before touching source -- do not guess-fix without re-verifying each site's target arm"
+      "op": "crossjump merge (corrected)",
+      "count": "~150 instructions",
+      "where": "CORRECTION to the prior note in this file: loop_36 IS the right target for the 'sp48 = 1; goto loop_36;' sites -- draft line ~247 (Func_08015270(win10C); field5=1; sp18=sp38*8; loop_36: temp_r7_312=sp48; if(temp_r7_312==0){}else{switch...}) maps DIRECTLY onto asm .L99 (ldr r7,[sp,#72]; cmp r7,#0; bne .L18; b .L19). The reference's 'bl .L99' at the dialog-exit sites is GCC's own crossjump decision to share that landing test as a bl-callable block, not a different C-level control-flow shape. Our build isn't getting the same crossjump merge, which is a global-coloring/register-pressure question (the sched2-LUID-tie class documented on 080bbb0c), not a source-shape bug -- do not 'fix' the goto target again without re-deriving this from scratch"
     },
     {
       "op": "store deficit",

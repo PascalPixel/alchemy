@@ -28,10 +28,10 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  *   - mode: arg0, compared against 0 and 1 to select which per-slot status
  *     pass and layout call run; a third mode is handled by the fallback
  *     path further down.
- *   - windowPtr: ctx's field at +0x10C, always used through one
- *     dereference (*windowPtr) as a window-handle argument to the
- *     Func_08015xxx layout calls; its address is computed lazily at first
- *     use, matching the reference (see 21dc7e844).
+ *   - windowPtr: ctx's field at +0x10C, used through one dereference as a
+ *     window-handle argument to the Func_08015xxx layout calls.  The first
+ *     call reads the field directly; the address is retained only from the
+ *     second call onward.  Both EN and JA emit that two-stage lifetime.
  *   - packedPos: a per-mode u16 field at ctx + mode*2 + 0x174, decomposed
  *     via Math_Div/Math_Mod(packedPos, 10) into sp38 (quotient) and
  *     sp30-then-temp_r0_47 (remainder). Corrected from an earlier,
@@ -46,8 +46,8 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  *   - statusFlags: *(s32*)0x03001B04, read once at entry and tested
  *     bit-by-bit (0x10/0x20/0x40/0x80) later to pick a message ID.
  *
- *   - packedPosFieldOffset/colorHighFieldOffset/windowFlagsFieldOffset: the
- *     M2C_FIELD offsets 0x174/0x258/0x178 hoisted into named temps by the
+ *   - colorHighFieldOffset/windowFlagsFieldOffset: the M2C_FIELD offsets
+ *     0x258/0x178 hoisted into named temps by the
  *     r18 permuter adoption. Every other M2C_FIELD offset in this file is a
  *     bare hex literal, so keeping these as literals would be the honest
  *     choice -- but measured: inlining them regresses differing_halfwords
@@ -67,9 +67,11 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  *     stat/ability value instead. Not renaming on adjacency alone; flagging
  *     so a future pass checks this before trusting the color framing.
  *
- * differing_halfwords=2177 at 4804/4888 bytes; not byte-exact. r18/r19 (two
- * permuter adoptions after the 39ad6a9a5/8a658af50 hand-humanization pass)
- * reintroduced ~90 new_varN locals from the permuter's own preprocessing.
+ * differing_halfwords=2293 and wrong_instructions=1671 at 4804/4888 bytes;
+ * not byte-exact. The frame, high stack boundary, two local-array addresses,
+ * and first 20 instructions are admitted invariants. r18/r19 (two permuter
+ * adoptions after the 39ad6a9a5/8a658af50 hand-humanization pass) reintroduced
+ * ~90 new_varN locals from the permuter's own preprocessing.
  * Checked a sample: most are pure address-of captures embedded in a
  * dereference (*(new_varN = &something)), used exactly once beyond their
  * declaration -- pointer aliases with no independent meaning, not distinct
@@ -85,17 +87,19 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  */
 s32 Func_080ab5e4(s32 arg0)
 {
-    s8 status[8];
+    struct {
+        u8 slotFlags[8];
+        u8 unk8[8];
+        s8 status[8];
+    } slotWork;
     s32 *windowPtr;
     int new_var45;
     s32 sp0;
-    s32 new_var5;
     void *new_var66;
     s32 *new_var91;
     s32 sp4;
     u32 sp8;
     s8 *new_var22;
-    u32 *new_var86;
     s32 sp14;
     s32 sp18;
     s8 *statusPtr;
@@ -118,7 +122,6 @@ s32 Func_080ab5e4(s32 arg0)
     s32 new_var80;
     void *ctx;
     s32 mode;
-    u8 slotFlags[8];
     s8 *new_var48;
     s8 *new_var75;
     s8 *new_var6;
@@ -141,11 +144,10 @@ s32 Func_080ab5e4(s32 arg0)
     s32 temp_r1_2308;
     int colorHighFieldOffset;
     s32 sp24;
-    int packedPosFieldOffset;
     s32 sp10;
     u32 pixelColorHigh;
     s32 eventCode;
-    s32 temp_r2_25;
+    s32 packedPosOffset;
     short new_var52;
     int new_var60;
     s32 *new_var76;
@@ -156,7 +158,6 @@ s32 Func_080ab5e4(s32 arg0)
     int new_var74;
     s32 temp_r3_1597;
     s32 new_var49;
-    s32 *new_var53;
     s32 temp_r3_1908;
     s32 temp_r3_1936;
     s32 temp_r3_2211;
@@ -199,7 +200,6 @@ s32 Func_080ab5e4(s32 arg0)
     int new_var82;
     s32 result;
     int new_var77;
-    int new_var89;
     s32 var_r5_1785;
     s32 var_r5_237;
     s32 var_r6_240;
@@ -242,7 +242,6 @@ s32 Func_080ab5e4(s32 arg0)
     int new_var65;
     u32 temp_r5_1598;
     u32 temp_r5_1909;
-    s32 *new_var59;
     int new_var44;
     u32 temp_r5_1937;
     u32 temp_r5_515;
@@ -263,7 +262,6 @@ s32 Func_080ab5e4(s32 arg0)
     u32 temp_r7_1504;
     u32 temp_r7_1696;
     int new_var64;
-    s32 new_var70;
     u32 temp_r7_600;
     u32 var_r3_581;
     u32 var_r4_1290;
@@ -278,8 +276,6 @@ s32 Func_080ab5e4(s32 arg0)
     u32 var_r4_606;
     int new_var46;
     u32 var_r4_907;
-    s32 *new_var13;
-    s32 *new_var14;
     s8 *new_var57;
     u8 *var_r2_85;
     u8 temp_r2_2035;
@@ -292,7 +288,6 @@ s32 Func_080ab5e4(s32 arg0)
     int new_var26;
     int new_var35;
     void *events;
-    u32 *new_var41;
     void *temp_r5_343;
     s8 *new_var84;
     s8 *new_var85;
@@ -302,23 +297,19 @@ s32 Func_080ab5e4(s32 arg0)
     ctx = temp_r3_18;
     events = (*((void **)(((s8 *)temp_r3_18) + 0x184)));
     sp48 = 1;
-    temp_r2_25 = 2;
-    temp_r2_25 = (mode * temp_r2_25);
-    sp34 = temp_r2_25;
-    new_var70 = temp_r2_25;
-    packedPosFieldOffset = 0x174;
-    packedPos = (*((u16 *)(((s8 *)ctx) + (new_var70 + packedPosFieldOffset))));
+    sp34 = mode * 2;
+    packedPosOffset = sp34 + 0x174;
+    packedPos = (*((u16 *)(((s8 *)ctx) + packedPosOffset)));
     sp38 = ((u16)Math_Div(packedPos, 0xA));
     temp_r0_47 = Math_Mod(packedPos, 0xA);
-    statusPtr = (new_var85 = (new_var56 = status));
+    statusPtr = (new_var85 = (new_var56 = slotWork.status));
     sp30 = ((s32)temp_r0_47);
     sp3C = ((-1) & 0xFFFF);
-    sp20 = new_var89;
-    sp20 = (sp20 = 0);
+    sp20 = 0;
     sp24 = 0;
     sp28 = 0;
     sp2C = 0;
-    var_r3_61 = (&status[7]);
+    var_r3_61 = (&slotWork.status[7]);
     do
     {
         (*var_r3_61) = 0;
@@ -377,7 +368,7 @@ s32 Func_080ab5e4(s32 arg0)
     }
     else
     {
-        Func_080ae714(slotFlags, new_var47 = (*((s8 *)(((s8 *)ctx) + 0x1C))));
+        Func_080ae714(slotWork.slotFlags, new_var47 = (*((s8 *)(((s8 *)ctx) + 0x1C))));
         do
         {
         }
@@ -396,7 +387,7 @@ s32 Func_080ab5e4(s32 arg0)
                 }
                 else
                 {
-                    if (slotFlags[(short)sp44] != 0)
+                    if (slotWork.slotFlags[(short)sp44] != 0)
                     {
                         (*var_r2_152) = 0;
                     }
@@ -468,10 +459,9 @@ s32 Func_080ab5e4(s32 arg0)
             while (var_r5_237 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
         }
     }
-    windowPtr = ((s32 *)(((s8 *)temp_r3_18) + 0x10C));
-    Func_08015270(*windowPtr);
+    Func_08015270(*((s32 *)(((s8 *)temp_r3_18) + 0x10C)));
     (*((s8 *)(((s8 *)(*((void **)(((s8 *)ctx) + 0x14)))) + 5))) = 1;
-    sp18 = ((*(new_var53 = (&sp38))) * 8);
+    sp18 = sp38 * 8;
     loop_36:
         temp_r7_312 = sp48;
     if (temp_r7_312 == 0)
@@ -516,6 +506,7 @@ s32 Func_080ab5e4(s32 arg0)
             {
                 sp28 = ((u32)(*((u16 *)(((s8 *)events) + (new_var43 = (((sp38 * 0xA) + sp3C) * 2))))));
             }
+            windowPtr = ((s32 *)(((s8 *)temp_r3_18) + 0x10C));
             Func_08015270(*windowPtr);
         }
         while (0);
@@ -558,7 +549,7 @@ s32 Func_080ab5e4(s32 arg0)
                         Func_08015080(0xB99, *windowPtr, 0, (double)0);
                     }
                     temp_r6_509 = (((u32)(0xF00 & sp28)) >> 8);
-                    new_var38 = (0xE0 & (*(new_var41 = (&sp28))));
+                    new_var38 = (0xE0 & sp28);
                     temp_r7_514 = (0x1F & sp28);
                     temp_r5_515 = (((u32)new_var38) >> 5);
                     if ((Func_08077210(temp_r6_509, temp_r5_515, temp_r7_514) != 0) || (Func_08077208(temp_r6_509, temp_r5_515, temp_r7_514) != 0))
@@ -571,8 +562,7 @@ s32 Func_080ab5e4(s32 arg0)
                         {
                             Func_080ad608(mode, temp_r5_515, 2);
                         }
-                        new_var5 = sp38;
-                        Func_080ad5b4(mode, ((sp18 - new_var5) * 8) + 0x30, 0x3E, 0);
+                        Func_080ad5b4(mode, ((sp18 - sp38) * 8) + 0x30, 0x3E, 0);
                     }
                     else
                     {
@@ -582,7 +572,7 @@ s32 Func_080ab5e4(s32 arg0)
                         new_var82 = 1;
                         new_var26 = new_var82;
                         Func_080ad608(new_var9, new_var21, new_var26);
-                        Func_080ad5b4(new_var9, ((sp18 - new_var5) * 8) + 0x30, 0x3E, new_var26);
+                        Func_080ad5b4(new_var9, ((sp18 - sp38) * 8) + 0x30, 0x3E, new_var26);
                     }
                     new_var83 = (((u32)temp_r7_312) >> 1);
                     var_r3_581 = new_var83;
@@ -592,7 +582,7 @@ s32 Func_080ab5e4(s32 arg0)
                     new_var77 = 0;
                     sp8 = 0xB9A;
                     Func_08015080(0xB9A, *windowPtr, new_var77, 0);
-                    temp_r5_596 = (((u32)(0xF00 & (*(new_var86 = (&sp28))))) >> 8);
+                    temp_r5_596 = (((u32)(0xF00 & sp28)) >> 8);
                     do
                     {
                         temp_r7_600 = ((new_var54 = ((u32)(0xE0 & sp28))) >> 5);
@@ -1205,7 +1195,7 @@ s32 Func_080ab5e4(s32 arg0)
                                                 sp4 = 0xF;
                                                 new_var39 = (sp30 + 2);
                                                 sp0 = 1;
-                                                Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (new_var51 = ((*(new_var14 = (&sp18))) - sp38)) + 1, new_var39, 6);
+                                                Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (new_var51 = (sp18 - sp38)) + 1, new_var39, 6);
                                             }
                                             while (0);
                                             temp_r2_2035 = ((u8)(*(new_var24 = (&statusPtr)))[sp38]);
@@ -1284,7 +1274,7 @@ s32 Func_080ab5e4(s32 arg0)
                                                                 {
                                                                 }
                                                                 while (0);
-                                                                statusPtr[*(new_var59 = (&(*(new_var13 = (&sp38)))))] = (1 | temp_r2_2165);
+                                                                statusPtr[sp38] = (1 | temp_r2_2165);
                                                             }
                                                         }
                                                     }
@@ -1457,4 +1447,3 @@ s32 Func_080ab5e4(s32 arg0)
     (*((u16 *)(((s8 *)ctx) + (sp34 + 0x174)))) = (sp38 + (sp30 * 0xA));
     return result;
 }
-

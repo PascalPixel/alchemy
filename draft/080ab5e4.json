@@ -2,15 +2,15 @@
   "owner": "main:0x080ab5e4",
   "span_bytes": 4888,
   "score": {
-    "candidate_bytes": 4840,
+    "candidate_bytes": 4804,
     "reference_bytes": 4888,
-    "differing_halfwords": 2348,
-    "wrong_instructions": 1857,
+    "differing_halfwords": 2293,
+    "wrong_instructions": 1671,
     "class": "wrong",
-    "normalized_insn_diff": "316 ours / 345 reference structural rows, deficit 29 (was 47 at session start)",
+    "normalized_insn_diff": "objdiff 68.53684%; 1093 unchanged, 690 argument mismatches, 17 opcode mismatches, 65 replacements, 330 deletions, 285 insertions",
     "bl_sequence": "184 ours / 184 reference -- EXACT",
     "frame": "sub sp, #108 on both sides -- EXACT (was 92 vs 108 at session start)",
-    "note": "still 48 bytes short of size parity; raw halfwords remain phase-dominated, normalized instruction diff and bl-sequence alignment are the compasses"
+    "note": "invariant-first candidate: exact 108-byte frame, arg0 at sp+80, ctx at sp+76, slotFlags at sp+84, status at sp+100, and 20-instruction exact prefix; still 84 bytes short and not exact"
   },
   "shape": {
     "calls": 186,
@@ -25,11 +25,11 @@
     "all switch interiors, shared tails, dialog sequences, timing gates, and progression updates",
     "complete post-dispatch input, recovery, reward, redraw, and final persistent-store paths through the owner return",
     "the evidence-backed function signature s32 Func_080ab5e4(s32 arg0), replacing the former void(void) scaffold",
-    "the competitor-status array is a real 8-byte local (s8 status[8]) at the top of the frame, declared first: m2c faked it as (&sp0 + 0x64), s32* arithmetic that put the address 400 bytes off and mis-sized the frame. The reference clears it as a byte walk from &status[7] down to &status[0] (strb/subs/cmp/bge) and keeps a pointer local to &status[0]",
+    "slotFlags and status are members of one 24-byte local work buffer: slotFlags[8] at sp+84, an evidence-visible unknown 8-byte middle region at sp+92, and status[8] at sp+100. This naturally emits the exact 108-byte frame and both array addresses without fake scalar pressure. The reference clears status as a byte walk from &status[7] down to &status[0] (strb/subs/cmp/bge) and keeps a pointer local to &status[0]",
     "the packed tournament value's div and mod results are both zero-extended to u16 (the reference lsls/lsrs #16 pair after each of Func_08002304 and Func_080022f4)",
     "all seven dialog-wait sites are rotated while loops -- while (Func_08015048() == 0) Func_080030f8(1); -- so the frame pump is emitted BEFORE the poll, as the reference's b-to-test/body/test layout shows. m2c's top-tested goto loop emitted them in the opposite order; this one family closed 14 of the 26 bl-sequence hunks",
     "the arg0 dispatch arms are ordered == 0 first: the reference emits the tournament-status body (sp24/sp20 dialog pair plus its bitfield block) as the fallthrough of the arg0 test and branches away for the nonzero case. m2c's != 0 first ordering put the wrong block at .L24",
-    "the 0x10C window handle is reached through a POINTER local: the reference computes &sp4C[0x10C] once (movs #134/lsls #1/adds/mov r8) and keeps the ADDRESS in call-saved r8 across the dialog calls, dereferencing it as ldr r1,[r8]. All 13 sites use it. By contrast 0x30 stays a direct ldr [base,#48] immediate and 0x219 is a pool-loaded index, so neither takes a pointer local",
+    "the first 0x10C window-handle call reads the field directly; only the second call computes and retains its address for the remaining uses. EN and JA both emit this two-stage lifetime. Hoisting the pointer from the first call invented a long-lived sp+84 scalar and displaced both local arrays",
     "the three block_159 selector paths (case 27, case 1/3/7/8/21 nonzero arm, case 17/19) share the same two-statement tail (store the selector to +0x212C; var_r4_907 = sp8). Inlined at each site instead of a shared label+goto so crossjump can form the reference's share point locally; the shared-label form kept a live var_r3_1107 across all three call sites that the reference does not carry",
     "sp54 was m2c's scalar mistyping of a second byte buffer (M2C_UNK=s32, matching the same array-truncation pattern already fixed for the status array): the reference's Func_080ae714(&buf, count) fills a buffer at sp+84 that is later read with 'ldrb r3,[r5,r7]' (byte-indexed by the loop counter), proving 1-byte element stride. The old '*(&sp54 + sp44)' spelling did pointer arithmetic in 4-byte (s32) units instead -- a real correctness bug, now fixed as 'u8 buf54[8]; ... buf54[sp44]'. Score-neutral (979, 6 bytes shuffled but same normalized weight) but adopted on evidence: matches the reference's actual instruction shape and removes a latent out-of-bounds/wrong-stride read for any sp44 > 0",
     "var_sl_1853's inner-loop advance is +1 (one u16 element), not +2: reference emits 'movs r3,#2; add sl,r3' -- a literal 2-BYTE raw register add, which for a u16-aligned pointer is exactly one element. The old '+= 2' spelling (2 ELEMENTS = 4 bytes in C pointer arithmetic) silently walked half as many entries per apparent outer-loop iteration bound. Fixed to '+= 1'. Score-neutral (979) but a genuine, byte-proven correctness fix -- found by the same method as the sp54 buffer bug: re-reading a loop's raw pointer-advance instruction against its C-level increment instead of trusting m2c's literal transcription",
@@ -70,6 +70,10 @@
     }
   ],
   "rejected": [
+    {
+      "shape": "one struct containing every scalar and both arrays from sp+24 through sp+107",
+      "wrong": "GCC retained a struct-base pointer, grew the frame to 120 bytes, reduced the exact prefix from 20 to 7 instructions, and regressed to 2334 wrong instructions. The 24-byte array aggregate is admitted; the surrounding scalar slots must continue to arise from their real lifetimes."
+    },
     {
       "experiment": "heat-guided classic AST walk",
       "candidates": 10000,
@@ -123,6 +127,8 @@
     }
   ],
   "notes": [
+    "Cross-edition scan locates the JA counterpart at 0x080a24e0 (the generic anchor vote initially reported 0x080a24d0 because this region changes length). JA and EN share the entry frame, stack-slot order, first loops, and compiler shape, but differ by roughly 1,249 non-relocation bytes across the EN-sized window; JA is structural ancestry evidence, not a copyable implementation.",
+    "The invariant-first pass removed two false live ranges introduced by the automated candidate: windowPtr was hoisted one call too early, and new_var5 was assigned only on one branch then read uninitialized on its sibling. Splitting the pointer lifetime and using sp38 directly removed the two extra scalar slots. Grouping slotFlags[8], unknown[8], and status[8] then restored the exact 108-byte frame and observed array addresses. Removing five one-use address-capture aliases extended the exact prefix from 9 to 20 instructions and reduced wrong instructions from 1857 to 1671. No permuter was used.",
     "value-vs-use-site caution: 0x212c/0x2128 decode as the finals texts but are struct offsets here; 0xc4c/0xc4d are genuinely text ids at their push sites. Resolve by use, not by value.",
     "m2c 19f2ddb reconstructed the complete owner after symbolizing one 28-entry jump table and 110 pool/table references. The default symbolic assembly reassembles byte-identically to the reference (SHA-256 d68f1ce2d575bfa118d30df90603a97e2b95596b9ec1ef143ff55e1e594d91d5).",
     "The generated source was repaired only for gs1cc's recovered field widths and pointer types; no inline assembly, fixed-register variables, copied bytes, or compiler changes were used.",

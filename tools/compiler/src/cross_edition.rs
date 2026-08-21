@@ -172,7 +172,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
             )
         })
         .collect::<Vec<_>>();
-    let call_targets = call_targets(&relocations, &found)?;
+    let call_targets = if options.calls {
+        call_targets(&relocations, &found)?
+    } else {
+        Vec::new()
+    };
     let mut relocation_kinds = BTreeMap::new();
     for relocation in &relocations {
         *relocation_kinds.entry(relocation.kind.clone()).or_default() += 1;
@@ -599,7 +603,10 @@ fn call_targets(
                 let entry = &found[edition];
                 let mut targets = offsets
                     .iter()
-                    .map(|offset| thumb_bl_target(&entry.bytes, entry.start, *offset))
+                    .map(|offset| {
+                        thumb_bl_target(&entry.bytes, entry.start, *offset)
+                            .map_err(|error| format!("{edition}: {error}"))
+                    })
                     .collect::<Result<Vec<_>, _>>()?;
                 targets.sort_unstable();
                 targets.dedup();

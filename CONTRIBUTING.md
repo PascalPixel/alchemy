@@ -165,6 +165,16 @@ original mistakes. Replace names such as `Func_02000f80`, `status_12c`, and
 anonymous numeric cases once local evidence supports something better; honest
 names make incorrect bindings visible.
 
+A trailing address, register hint, or SSA counter in an identifier
+(`temp_r3_1908`, `var_sl_1853`, `sp4C`, `Func_080ab5e4` used as a *local*
+variable-style name) is a placeholder, not a name, regardless of how
+plausible it reads. Humanizing a function means every symbol it declares or
+touches loses its number once its role has local evidence: parameters,
+locals, fields, and included/edited headers alike, not just the identifiers
+that happen to repeat often. Partial passes that rename a few well-evidenced
+locals and leave the rest as `tempN`/`spN` are progress, not completion; say
+so plainly rather than calling the pass "humanized."
+
 For a large or incomplete main-image owner, create a minimal compilable draft
 with the project headers and evidence-backed signature, then start with the
 structural workbench instead of hand-transcribing thousands of instructions:

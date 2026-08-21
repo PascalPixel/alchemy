@@ -228,8 +228,8 @@ fn stem_set(table: &'static [&'static str]) -> &'static HashSet<String> {
 }
 
 /// Overlay routing follows the OWNER, not the directory its C currently sits
-/// in. `exact/` and `semantic/` are two homes for the same owner, and `adopt`
-/// and `park` move the file between them, so an entry written `exact/<owner>.c`
+/// in. `exact/` and the edition corpus are two homes for the same owner, and
+/// `adopt` and `park` move the file between them, so an entry written `exact/<owner>.c`
 /// has to keep routing that owner after a park. `source_key` is a repo-relative
 /// path and silently stops matching, which drops the owner's sanctioned stock
 /// flags and leaves it compiling as something it never was -- the bytes then

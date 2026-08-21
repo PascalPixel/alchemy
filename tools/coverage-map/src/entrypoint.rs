@@ -5,7 +5,7 @@ use crate::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--semantic-ref <ref>|worktree|none] [--write|--check|--self-test]";
+const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--self-test]";
 
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
@@ -101,7 +101,7 @@ fn target_path(target: &str) -> PathBuf {
 struct Options {
     target: String,
     exact: Option<String>,
-    semantic: Option<String>,
+    recon: Option<String>,
     write: bool,
     check: bool,
     self_test: bool,
@@ -137,9 +137,9 @@ fn parse(argv: &[String]) -> Result<Options, String> {
                 i += 1;
                 o.exact = argv.get(i).cloned();
             }
-            "--semantic-ref" => {
+            "--recon-ref" | "--semantic-ref" => {
                 i += 1;
-                o.semantic = argv.get(i).cloned();
+                o.recon = argv.get(i).cloned();
             }
             "--write" => o.write = true,
             "--check" => o.check = true,
@@ -174,14 +174,14 @@ fn tracked(map: &Value) -> Value {
 fn summary(doc: &Value) -> Result<String, String> {
     let executable = field(doc, &["executable_bytes"]);
     let exact = field(doc, &["categories", "exact_c", "bytes"]);
-    let semantic = field(doc, &["categories", "semantic_c", "bytes"]);
+    let semantic = field(doc, &["categories", "tracked_c", "bytes"]);
     let retained = field(doc, &["categories", "retained_asm", "bytes"]);
     if !executable.is_finite() || !retained.is_finite() {
         return Err("coverage map lacks executable totals".into());
     }
     let ceiling = executable - retained;
     let percent = crate::jsnum::round_half_up(exact as i64, ceiling as i64);
-    Ok(format!("target={} rom={} executable={} exact={} ({}%) semantic={} ({}%) c_able={} exact_of_c_able={}% semantic_source={}", get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"), commas(field(doc, &["rom_bytes"]) as i64), commas(executable as i64), commas(exact as i64), number(field(doc, &["categories", "exact_c", "percent_of_executable"])), commas(semantic as i64), number(field(doc, &["categories", "semantic_c", "percent_of_executable"])), commas(ceiling as i64), number(percent), get(get(doc, "provenance").unwrap_or(&Value::Null), "semantic_source").and_then(Value::as_str).unwrap_or("undefined")))
+    Ok(format!("target={} rom={} executable={} exact={} ({}%) tracked={} ({}%) c_able={} exact_of_c_able={}% tracked_source={}", get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"), commas(field(doc, &["rom_bytes"]) as i64), commas(executable as i64), commas(exact as i64), number(field(doc, &["categories", "exact_c", "percent_of_executable"])), commas(semantic as i64), number(field(doc, &["categories", "tracked_c", "percent_of_executable"])), commas(ceiling as i64), number(percent), get(get(doc, "provenance").unwrap_or(&Value::Null), "tracked_source").and_then(Value::as_str).unwrap_or("undefined")))
 }
 
 #[derive(Clone)]
@@ -201,7 +201,7 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
     let mut spaces = std::collections::BTreeSet::new();
     for area in &map.executable_areas {
         for tile in &area.tiles {
-            let target_bytes = tile.category("semantic_c") + tile.category("assembly");
+            let target_bytes = tile.category("tracked_c") + tile.category("assembly");
             let namespace = if area.id == "main" {
                 "main".into()
             } else {
@@ -215,7 +215,7 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
                     label: tile.label.clone(),
                     scope: tile.bytes,
                     target: target_bytes,
-                    semantic: tile.category("semantic_c"),
+                    semantic: tile.category("tracked_c"),
                     assembly: tile.category("assembly"),
                     exact: tile.category("exact_c"),
                     retained: tile.category("retained_asm"),
@@ -247,7 +247,7 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
                 ("label", Value::String(r.label.clone())),
                 ("scope_bytes", num(r.scope)),
                 ("target_bytes", num(r.target)),
-                ("semantic_c_bytes", num(r.semantic)),
+                ("tracked_c_bytes", num(r.semantic)),
                 ("assembly_bytes", num(r.assembly)),
                 ("exact_c_leverage_bytes", num(r.exact)),
                 ("permanent_assembly_bytes", num(r.retained)),
@@ -261,13 +261,13 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
     let assembly = rows.iter().map(|r| r.assembly).sum::<i64>();
     let exact_leverage = rows.iter().map(|r| r.exact).sum::<i64>();
     let retained_leverage = rows.iter().map(|r| r.retained).sum::<i64>();
-    let document = obj(vec![("format", num(1)), ("kind", Value::String("golden-sun-core-target-index".into())), ("target", Value::String(target.into())), ("derivation", Value::String("coverage-owner-scopes-v1".into())), ("policy", obj(vec![("unit", Value::String("audited source-owner scope or contiguous unresolved executable run".into())), ("ordering", Value::String("scope_bytes descending, then target_bytes descending, then namespace and address".into())), ("target_categories", Value::Array(vec![Value::String("semantic_c".into()), Value::String("assembly".into())])), ("overlap", Value::String("none; broader campaign cuts are intentionally excluded".into()))])), ("accounting", obj(vec![("executable_bytes", num(executable)), ("audited_address_spaces", num(spaces.len() as i64)), ("address_spaces_with_targets", num(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64)), ("target_count", num(rows.len() as i64)), ("target_scope_bytes", num(scope)), ("target_bytes", num(unresolved)), ("semantic_c_bytes", num(semantic)), ("assembly_bytes", num(assembly)), ("exact_c_leverage_bytes", num(exact_leverage)), ("permanent_assembly_leverage_bytes", num(retained_leverage)), ("resolved_only_bytes", num(executable - scope))])), ("targets", Value::Array(values))]);
+    let document = obj(vec![("format", num(1)), ("kind", Value::String("golden-sun-core-target-index".into())), ("target", Value::String(target.into())), ("derivation", Value::String("coverage-owner-scopes-v1".into())), ("policy", obj(vec![("unit", Value::String("audited source-owner scope or contiguous unresolved executable run".into())), ("ordering", Value::String("scope_bytes descending, then target_bytes descending, then namespace and address".into())), ("target_categories", Value::Array(vec![Value::String("tracked_c".into()), Value::String("assembly".into())])), ("overlap", Value::String("none; broader campaign cuts are intentionally excluded".into()))])), ("accounting", obj(vec![("executable_bytes", num(executable)), ("audited_address_spaces", num(spaces.len() as i64)), ("address_spaces_with_targets", num(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64)), ("target_count", num(rows.len() as i64)), ("target_scope_bytes", num(scope)), ("target_bytes", num(unresolved)), ("tracked_c_bytes", num(semantic)), ("assembly_bytes", num(assembly)), ("exact_c_leverage_bytes", num(exact_leverage)), ("permanent_assembly_leverage_bytes", num(retained_leverage)), ("resolved_only_bytes", num(executable - scope))])), ("targets", Value::Array(values))]);
     let visible: Vec<_> = rows
         .iter()
         .enumerate()
         .filter(|(_, r)| r.scope >= 1000)
         .collect();
-    let mut md = format!("This section is generated. It is the primary contributor target list:\nnon-overlapping audited source-owner scopes (or contiguous unresolved\nexecutable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.\n\n- **Unfinished scopes:** {}\n- **Address spaces scanned:** {} ({} still contain targets)\n- **Target bytes:** {} semantic-C or unresolved-assembly bytes\n- **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n- **Executable bytes accounted for:** {}\n\n### Main target list\n\nThis table contains every scope of at least 1,000 bytes ({} rows). The complete\n{}-row index, including the smallest audited owners, is\n[`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).\n\n| Rank | Scope | Target | Namespace / owner |\n|---:|---:|---:|---|\n", commas(rows.len() as i64), commas(spaces.len() as i64), commas(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64), commas(unresolved), commas(executable - scope), commas(executable), visible.len(), commas(rows.len() as i64));
+    let mut md = format!("This section is generated. It is the primary contributor target list:\nnon-overlapping audited source-owner scopes (or contiguous unresolved\nexecutable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.\n\n- **Unfinished scopes:** {}\n- **Address spaces scanned:** {} ({} still contain targets)\n- **Target bytes:** {} tracked-C or unresolved-assembly bytes\n- **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n- **Executable bytes accounted for:** {}\n\n### Main target list\n\nThis table contains every scope of at least 1,000 bytes ({} rows). The complete\n{}-row index, including the smallest audited owners, is\n[`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).\n\n| Rank | Scope | Target | Namespace / owner |\n|---:|---:|---:|---|\n", commas(rows.len() as i64), commas(spaces.len() as i64), commas(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64), commas(unresolved), commas(executable - scope), commas(executable), visible.len(), commas(rows.len() as i64));
     for (i, r) in visible {
         md.push_str(&format!(
             "| {} | {} | {} | `{}:{}` |\n",
@@ -356,14 +356,18 @@ fn run(argv: &[String]) -> Result<String, String> {
             ref_tree(id).ok_or_else(|| format!("exact source ref {id} is not available here"))?
         }
     };
-    let semantic = match o.semantic.as_deref() {
+    let semantic = match o.recon.as_deref() {
         Some("none") => None,
-        _ => None,
+        None | Some("worktree") => Some(work_tree()),
+        Some(id) => Some(
+            ref_tree(id)
+                .ok_or_else(|| format!("reconstruction source ref {id} is not available here"))?,
+        ),
     };
     let map = build_coverage_map(&BuildOptions {
         target: o.target.clone(),
         exact: &exact,
-        semantic: semantic.as_ref(),
+        recon: semantic.as_ref(),
         validate_tracked_progress: true,
         prefer_verified_assets: true,
     })?;

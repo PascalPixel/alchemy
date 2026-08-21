@@ -233,9 +233,9 @@ pub static NO_EXPENSIVE_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3a2_c_02000924.c",
 ];
 pub static NO_GCSE_OVERLAY_SOURCES: &[&str] = &[
-    "semantic/resource_3c2_c_0200006c.c",
+    "recon/gs1/en/overlays/resource_3c2_c_0200006c.c",
     "exact/resource_3c2_c_0200006c.c",
-    "semantic/resource_3c7_c_020000c8.c",
+    "recon/gs1/en/overlays/resource_3c7_c_020000c8.c",
     "exact/resource_3c7_c_020000c8.c",
     "exact/resource_375_c_02000be0.c",
     "exact/resource_38f_c_020008ec.c",

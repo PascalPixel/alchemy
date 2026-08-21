@@ -25,7 +25,7 @@ const TREES: [(&str, &str); 4] = [
     ("images", "Images"),
     ("music", "Music"),
 ];
-const COVERAGE_DIRS: [&str; 5] = ["asm", "assets", "metrics", "semantic", "exact"];
+const COVERAGE_DIRS: [&str; 6] = ["asm", "assets", "metrics", "semantic", "exact", "recon"];
 
 pub mod cli {
     pub fn entry(args: &[String]) {
@@ -185,7 +185,11 @@ pub struct Live {
     executable: f64,
     exact: f64,
     percent: f64,
+    tracked: f64,
+    tracked_percent: f64,
     retained: f64,
+    ja_sources: usize,
+    en_sources: usize,
 }
 #[derive(Default)]
 pub struct State {
@@ -208,16 +212,35 @@ fn map_number(map: &CoverageMap, path: &[&str]) -> Option<f64> {
     }
     v.as_f64()
 }
+fn count_c(path: &Path) -> usize {
+    let mut count = 0;
+    let mut stack = vec![path.to_path_buf()];
+    while let Some(path) = stack.pop() {
+        let Ok(metadata) = std::fs::symlink_metadata(&path) else {
+            continue;
+        };
+        if metadata.is_dir() {
+            if let Ok(entries) = std::fs::read_dir(path) {
+                stack.extend(entries.flatten().map(|entry| entry.path()));
+            }
+        } else if path.extension().is_some_and(|extension| extension == "c") {
+            count += 1;
+        }
+    }
+    count
+}
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
     let map = build_coverage_map(&BuildOptions {
         target: "gs1-en".into(),
         exact: &tree,
-        semantic: Some(&tree),
+        recon: Some(&tree),
         validate_tracked_progress: false,
         prefer_verified_assets: true,
     })?;
     let trees = render_box_trees(&map, Some(&tree), true)?;
+    let ja_sources = count_c(&root().join("recon/gs1/ja"));
+    let en_sources = count_c(&root().join("recon/gs1/en"));
     let revision = BOX_TREES
         .iter()
         .map(|name| {
@@ -229,6 +252,9 @@ fn compute() -> Result<Live, String> {
             )
         })
         .collect::<Vec<_>>()
+        .into_iter()
+        .chain([ja_sources.to_string(), en_sources.to_string()])
+        .collect::<Vec<_>>()
         .join("-");
     let n = |key| map_number(&map, key).unwrap_or(0.0);
     Ok(Live {
@@ -238,7 +264,11 @@ fn compute() -> Result<Live, String> {
         executable: n(&["executable_bytes"]),
         exact: n(&["categories", "exact_c", "bytes"]),
         percent: n(&["categories", "exact_c", "percent_of_executable"]),
+        tracked: n(&["categories", "tracked_c", "bytes"]),
+        tracked_percent: n(&["categories", "tracked_c", "percent_of_executable"]),
         retained: n(&["categories", "retained_asm", "bytes"]),
+        ja_sources,
+        en_sources,
     })
 }
 fn iso_now() -> String {
@@ -278,8 +308,16 @@ fn snapshot() -> Json {
                 ("executableBytes", Json::Num(c.executable)),
                 ("exactBytes", Json::Num(c.exact)),
                 ("exactPercent", Json::Num(c.percent)),
+                ("trackedBytes", Json::Num(c.tracked)),
+                ("trackedPercent", Json::Num(c.tracked_percent)),
                 ("retainedBytes", Json::Num(c.retained)),
                 ("doneBytes", Json::Num(c.exact + c.retained)),
+                (
+                    "donePercent",
+                    Json::Num((c.exact + c.retained) * 100.0 / c.executable.max(1.0)),
+                ),
+                ("jaSources", Json::Num(c.ja_sources as f64)),
+                ("enSources", Json::Num(c.en_sources as f64)),
             ])
         });
         Json::obj(vec![
@@ -301,6 +339,15 @@ fn snapshot() -> Json {
             ("scanning", Json::Bool(s.scanning)),
             ("error", s.error.clone().map_or(Json::Undefined, Json::Str)),
             ("trees", trees),
+            (
+                "project",
+                Json::obj(vec![
+                    ("game", Json::str("Golden Sun")),
+                    ("baseEdition", Json::str("ja")),
+                    ("buildEdition", Json::str("en")),
+                    ("derivedEditions", Json::str("en · de · es · fr · it")),
+                ]),
+            ),
             ("summary", summary),
         ])
     })

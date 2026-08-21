@@ -83,7 +83,7 @@ pub fn contains(outer: &[Span], inner: Span) -> bool {
 
 pub const CATEGORIES: [&str; 5] = [
     "exact_c",
-    "semantic_c",
+    "tracked_c",
     "assembly",
     "retained_asm",
     "asset_data",

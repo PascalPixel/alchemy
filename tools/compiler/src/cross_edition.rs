@@ -15,7 +15,7 @@ const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
-const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
+const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
 struct Report {
@@ -168,6 +168,8 @@ struct RelocationSite {
     size: usize,
     kind: String,
     symbol: String,
+    addend: i64,
+    external: bool,
 }
 
 struct LiteralSite {
@@ -185,6 +187,29 @@ struct Options {
     all: bool,
     all_overlays: bool,
     write: Option<PathBuf>,
+    edition_build: Option<PathBuf>,
+}
+
+#[derive(Debug, Serialize)]
+struct EditionBuildReport {
+    schema_version: u32,
+    game: &'static str,
+    source_edition: &'static str,
+    source: String,
+    object: String,
+    owner_symbol: String,
+    size: usize,
+    all_exact: bool,
+    editions: Vec<EditionBuildEntry>,
+}
+
+#[derive(Debug, Serialize)]
+struct EditionBuildEntry {
+    edition: String,
+    start: String,
+    external_symbols: BTreeMap<String, String>,
+    differing_bytes: usize,
+    byte_exact: bool,
 }
 
 struct EditionRoms {
@@ -246,6 +271,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
         options.calls,
         None,
     )?;
+    let edition_build = options
+        .edition_build
+        .as_deref()
+        .map(|path| write_edition_build(path, owner, &object_path, &report, &roms))
+        .transpose()?;
     if options.json {
         println!(
             "{}",
@@ -255,10 +285,10 @@ pub fn run(args: &[String]) -> Result<(), String> {
     } else {
         print_report(&report, options.calls);
     }
-    if report.core_identical {
+    if report.core_identical && edition_build.as_ref().map_or(true, |build| build.all_exact) {
         Ok(())
     } else {
-        Err("one or more editions differ outside EN relocation and literal fields".into())
+        Err("one or more editions are not byte-exact".into())
     }
 }
 
@@ -378,6 +408,202 @@ fn analyze_owner(
     Ok(report)
 }
 
+fn write_edition_build(
+    path: &Path,
+    owner: &str,
+    object_path: &Path,
+    report: &Report,
+    roms: &EditionRoms,
+) -> Result<EditionBuildReport, String> {
+    let (size, _, _, relocations) = relocation_mask(object_path, owner)?;
+    if size != report.size {
+        return Err(format!(
+            "edition build object size {size} differs from located owner size {}",
+            report.size
+        ));
+    }
+    let owner_symbol = format!("Func_{owner}");
+    let output_root = PathBuf::from("out")
+        .join("cross-edition")
+        .join(owner)
+        .join("linked");
+    fs::create_dir_all(&output_root)
+        .map_err(|error| format!("{}: {error}", output_root.display()))?;
+
+    let mut editions = Vec::with_capacity(EDITIONS.len());
+    for edition in EDITIONS {
+        let start = report_start(report, edition)?;
+        let reference = roms.images[edition]
+            .get(start..start + size)
+            .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
+        let values = derive_external_symbols(&relocations, reference, start)?;
+        let linked = link_owner_for_edition(
+            &output_root,
+            edition,
+            object_path,
+            &owner_symbol,
+            ROM_BASE + start as u64,
+            &values,
+        )?;
+        let differing_bytes = reference
+            .iter()
+            .zip(&linked)
+            .filter(|(left, right)| left != right)
+            .count()
+            + reference.len().abs_diff(linked.len());
+        editions.push(EditionBuildEntry {
+            edition: edition.into(),
+            start: format!("0x{:08x}", ROM_BASE + start as u64),
+            external_symbols: values
+                .into_iter()
+                .map(|(name, value)| (name, format!("0x{value:08x}")))
+                .collect(),
+            differing_bytes,
+            byte_exact: differing_bytes == 0,
+        });
+    }
+
+    let build = EditionBuildReport {
+        schema_version: 1,
+        game: "gs1",
+        source_edition: "ja",
+        source: "recon/gs1/ja/main/080b2b0c.c".into(),
+        object: object_path.display().to_string(),
+        owner_symbol,
+        size,
+        all_exact: editions.iter().all(|edition| edition.byte_exact),
+        editions,
+    };
+    if let Some(parent) = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+    {
+        fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+    }
+    let json = serde_json::to_string_pretty(&build)
+        .map_err(|error| format!("serialize edition build: {error}"))?
+        + "\n";
+    fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
+    println!(
+        "edition_build={} owner={} editions={} all_exact={}",
+        path.display(),
+        owner,
+        build.editions.len(),
+        build.all_exact
+    );
+    Ok(build)
+}
+
+fn derive_external_symbols(
+    relocations: &[RelocationSite],
+    reference: &[u8],
+    start: usize,
+) -> Result<BTreeMap<String, u64>, String> {
+    let mut values = BTreeMap::new();
+    for site in relocations.iter().filter(|site| site.external) {
+        let value = if is_thumb_call(site) {
+            thumb_bl_target(reference, start, site.offset)?
+        } else if site.kind == "R_ARM_ABS32" {
+            let bytes = reference
+                .get(site.offset..site.offset + 4)
+                .ok_or_else(|| format!("{} relocation extends past owner", site.symbol))?;
+            let word = u32::from_le_bytes(bytes.try_into().expect("four-byte relocation"));
+            let value = word.wrapping_sub(site.addend as u32) as u64;
+            if symbol_is_thumb(&site.symbol) {
+                value & !1
+            } else {
+                value
+            }
+        } else {
+            return Err(format!(
+                "unsupported external relocation {} for {}",
+                site.kind, site.symbol
+            ));
+        };
+        if let Some(previous) = values.insert(site.symbol.clone(), value) {
+            if previous != value {
+                return Err(format!(
+                    "{} resolves inconsistently: 0x{previous:08x} and 0x{value:08x}",
+                    site.symbol
+                ));
+            }
+        }
+    }
+    Ok(values)
+}
+
+fn symbol_is_thumb(name: &str) -> bool {
+    name.starts_with("Func_") || name.starts_with("_call_via_")
+}
+
+fn link_owner_for_edition(
+    output_root: &Path,
+    edition: &str,
+    object_path: &Path,
+    owner_symbol: &str,
+    start: u64,
+    values: &BTreeMap<String, u64>,
+) -> Result<Vec<u8>, String> {
+    let output = output_root.join(edition);
+    fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
+    let symbols_source = output.join("symbols.s");
+    let symbols_object = output.join("symbols.o");
+    let elf = output.join("owner.elf");
+    let binary = output.join("owner.bin");
+    let mut source = String::from(".syntax unified\n.thumb\n");
+    for (name, value) in values {
+        let directive = if symbol_is_thumb(name) {
+            ".thumb_set"
+        } else {
+            ".set"
+        };
+        source.push_str(&format!(
+            ".global {name}\n{directive} {name}, 0x{value:08x}\n"
+        ));
+    }
+    fs::write(&symbols_source, source)
+        .map_err(|error| format!("{}: {error}", symbols_source.display()))?;
+
+    run_tool(
+        Command::new("arm-none-eabi-as")
+            .args(["-mcpu=arm7tdmi", "-mthumb-interwork", "-o"])
+            .arg(&symbols_object)
+            .arg(&symbols_source),
+        "assemble edition symbols",
+    )?;
+    run_tool(
+        Command::new("arm-none-eabi-ld")
+            .arg(format!("-Ttext=0x{start:08x}"))
+            .args(["-e", owner_symbol, "-o"])
+            .arg(&elf)
+            .arg(object_path)
+            .arg(&symbols_object),
+        "link edition owner",
+    )?;
+    run_tool(
+        Command::new("arm-none-eabi-objcopy")
+            .args(["-O", "binary", "-j", ".text"])
+            .arg(&elf)
+            .arg(&binary),
+        "extract edition owner",
+    )?;
+    fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))
+}
+
+fn run_tool(command: &mut Command, label: &str) -> Result<(), String> {
+    let output = command
+        .output()
+        .map_err(|error| format!("{label}: {error}"))?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(format!(
+            "{label} failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ))
+    }
+}
+
 fn parse(args: &[String]) -> Result<Options, String> {
     let mut owner = None;
     let mut object = None;
@@ -388,6 +614,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
     let mut all = false;
     let mut all_overlays = false;
     let mut write = None;
+    let mut edition_build = None;
     let mut index = 0;
     while index < args.len() {
         match args[index].as_str() {
@@ -411,6 +638,10 @@ fn parse(args: &[String]) -> Result<Options, String> {
                 index += 1;
                 write = Some(PathBuf::from(args.get(index).ok_or(USAGE)?));
             }
+            "--edition-build" => {
+                index += 1;
+                edition_build = Some(PathBuf::from(args.get(index).ok_or(USAGE)?));
+            }
             "-h" | "--help" => return Err(USAGE.into()),
             value if value.starts_with('-') => {
                 return Err(format!("unknown option: {value}\n{USAGE}"))
@@ -431,6 +662,9 @@ fn parse(args: &[String]) -> Result<Options, String> {
     if !all && !all_overlays && write.is_some() {
         return Err(format!("--write requires a corpus scan\n{USAGE}"));
     }
+    if (all || all_overlays) && edition_build.is_some() {
+        return Err(format!("--edition-build requires one owner\n{USAGE}"));
+    }
     if (all || all_overlays) && (object.is_some() || calls || json) {
         return Err(format!(
             "corpus scans omit single-object options and write JSON directly\n{USAGE}"
@@ -450,6 +684,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
         all,
         all_overlays,
         write,
+        edition_build,
     })
 }
 
@@ -1478,9 +1713,8 @@ fn relocation_mask(
             .reloc_name(relocation.flags)
             .map(str::to_string)
             .unwrap_or_else(|| format!("{:?}", relocation.flags));
-        let symbol = object
-            .symbols
-            .get(relocation.target_symbol)
+        let target = object.symbols.get(relocation.target_symbol);
+        let symbol = target
             .map(|symbol| symbol.name.clone())
             .unwrap_or_else(|| "<missing>".into());
         sites.push(RelocationSite {
@@ -1488,6 +1722,8 @@ fn relocation_mask(
             size: end - start,
             kind,
             symbol,
+            addend: relocation.addend,
+            external: target.is_some_and(|symbol| symbol.section.is_none()),
         });
     }
     Ok((size, symbol.address, mask, sites))

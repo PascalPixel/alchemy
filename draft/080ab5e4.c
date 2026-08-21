@@ -152,7 +152,6 @@ s32 Func_080ab5e4(s32 arg0) {
     temp_r3_18 = *(void **)0x03001F2C;
     ctx = temp_r3_18;
     temp_r9_32 = M2C_FIELD(temp_r3_18, void **, 0x184);
-    win10C = (s32 *) ((s8 *) temp_r3_18 + 0x10C);
     temp_r2_25 = mode * 2;
     sp48 = 1;
     sp34 = temp_r2_25;
@@ -258,6 +257,7 @@ s32 Func_080ab5e4(s32 arg0) {
             } while (var_r5_237 < (s32) M2C_FIELD(ctx, u8 *, 0x219));
         }
     }
+    win10C = (s32 *) ((s8 *) temp_r3_18 + 0x10C);
     Func_08015270((*win10C));
     M2C_FIELD(M2C_FIELD(ctx, void **, 0x14), s8 *, 5) = 1;
     sp18 = sp38 * 8;

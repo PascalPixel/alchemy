@@ -26,6 +26,10 @@ gs2-{en,ja,de,es,fr,it}.gba
 
 `gs1-en.gba` is the build target. Other editions may demonstrate shared layout
 or behavior, but they cannot establish original English names or authorship.
+Use `gs1-ja.gba` as the origin for cross-edition address and code comparisons;
+this does not change the English build target or prove that a particular JA
+owner is older or simpler. Test that hypothesis from emitted structure instead
+of assuming it from the edition.
 Do not inspect another Golden Sun decompilation, symbol list, pseudocode dump,
 commit history, or private notes. Generic material about C, Rust, ARM, GCC,
 binary formats, decompilation, and public pret conventions is allowed; public
@@ -157,6 +161,35 @@ Assemble and disassemble reference `.s` when resolving pools and table targets;
 do not hand-count PC-relative offsets across alignment. Resolve message IDs
 through `assets/text/message_archive.json`. Text and neighboring tables often
 identify a scene or binding without importing outside knowledge.
+
+#### Compare editions through relocations
+
+A raw offset-for-offset ROM diff confuses code with layout. Localized builds
+move functions, call targets, tables, message constants, literal pools, and
+jump-table destinations; every moved address can recolor several instruction
+bytes without changing the C.
+
+Once an EN owner is exact, use its object relocations to locate and compare the
+same owner in all six GS1 editions:
+
+```sh
+tools/compiler/target/release/compiler cross-edition 080bbb0c
+tools/compiler/target/release/compiler cross-edition --calls 080bbb0c
+```
+
+The comparison is JA-relative. EN remains the reconstruction and build target,
+and its exact object supplies the relocation sites because those sites are
+known rather than guessed. The object's disassembled literal fields are tracked
+separately. `core_diff_bytes=0` means every edition byte outside relocations and
+literal data agrees; differing branch encodings and pool words are then layout
+evidence, not instruction differences. `--calls` decodes the corresponding
+callee address in each ROM, allowing one proved owner to seed neighboring
+function correspondences. Use `--json` for an ignored machine-readable report.
+
+When core bytes remain, inspect those exact offsets as possible regional source
+changes. A smaller JA owner is useful evidence for an earlier or simpler source
+shape, but edition order alone does not establish that conclusion. The current
+calibration result is recorded in `semantic/gs1-cross-edition.json`.
 
 ### 3. Recover source structure
 

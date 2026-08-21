@@ -68,6 +68,10 @@
       "experiment": "heat-guided safe AST walk",
       "candidates": 10000,
       "result": "journal composite improved from 1033216102394 to 880199202393, but independent candidate-show scoring worsened from 2324 to 2339 differing halfwords and changed candidate size from 4748 to 4780 bytes; not harvested"
+    },
+    {
+      "experiment": "guarded safe AST walk, 100k candidates, seed 1 (out/colosso-r1)",
+      "wrong": "best.c scores raw halfwords=2353/wrong_instructions=1884/size=4740 (all 'improved' vs the committed draft's 2401/2003/4728), but the normalized instruction diff (same POOL-filtered LCS metric used throughout this owner's record) is WORSE: weight 1062 vs the committed draft's 979. This is the documented raw-metrics-mislead-while-short-of-parity trap (same class as 080bbb0c's phase-dominated halfword counts) -- the permuter's own packed score optimizes raw diff counts, not the normalized compass, and found a structurally worse candidate that looks better on the naive metric. NOT adopted."
     }
   ],
   "notes": [

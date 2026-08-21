@@ -20,8 +20,7 @@ use std::{
 use structural::StructuralReport;
 use walkdir::WalkDir;
 
-const USAGE: &str =
-    "usage: compiler workbench <draft/ADDRESS.c> [--m2c PATH] [--output DIR] [--no-run]";
+const USAGE: &str = "usage: compiler workbench <recon/gs1/en/main/ADDRESS.c> [--m2c PATH] [--output DIR] [--no-run]";
 
 #[derive(Debug)]
 struct Options {
@@ -512,13 +511,16 @@ mod tests {
     #[test]
     fn parses_workbench_options() {
         let options = parse_options(&[
-            "draft/080ab5e4.c".into(),
+            "recon/gs1/en/main/080ab5e4.c".into(),
             "--m2c".into(),
             "m2c/m2c.py".into(),
             "--no-run".into(),
         ])
         .unwrap();
-        assert_eq!(options.source, PathBuf::from("draft/080ab5e4.c"));
+        assert_eq!(
+            options.source,
+            PathBuf::from("recon/gs1/en/main/080ab5e4.c")
+        );
         assert_eq!(options.m2c, Some(PathBuf::from("m2c/m2c.py")));
         assert!(!options.run);
     }
@@ -526,9 +528,9 @@ mod tests {
     #[test]
     fn validates_owner_stems() {
         assert_eq!(
-            owner_stem(Path::new("draft/080AB5E4.c")).unwrap(),
+            owner_stem(Path::new("recon/gs1/en/main/080AB5E4.c")).unwrap(),
             "080ab5e4"
         );
-        assert!(owner_stem(Path::new("draft/best.c")).is_err());
+        assert!(owner_stem(Path::new("recon/gs1/en/main/best.c")).is_err());
     }
 }

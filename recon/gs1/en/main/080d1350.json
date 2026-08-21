@@ -1,6 +1,13 @@
 {
   "owner": "main:0x080d1350",
   "span_bytes": 964,
+  "edition": {
+    "role": "derived-candidate",
+    "edition": "en",
+    "base_owner": null,
+    "base_edition": "ja",
+    "rebase_status": "correspondence-needed"
+  },
   "boundary": {
     "start": "0x080d1350",
     "end": "0x080d1714",

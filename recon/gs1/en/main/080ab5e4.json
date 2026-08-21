@@ -1,6 +1,14 @@
 {
   "owner": "main:0x080ab5e4",
   "span_bytes": 4888,
+  "edition": {
+    "role": "derived-candidate",
+    "edition": "en",
+    "base_owner": "main:0x080a24e0",
+    "base_edition": "ja",
+    "rebase_status": "required",
+    "evidence": "entry correspondence established by the cross-edition ROM scan; the JA owner changes length and source structure, so this EN candidate must be derived from JA rather than copied into the base corpus"
+  },
   "score": {
     "candidate_bytes": 4804,
     "reference_bytes": 4888,

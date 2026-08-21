@@ -280,7 +280,7 @@ impl Options {
 
 pub fn self_test() -> Result<(), String> {
     let args = [
-        "semantic/resource_373_c_02005b48.c",
+        "recon/gs1/en/overlays/resource_373_c_02005b48.c",
         "--iterations",
         "9",
         "--jobs",
@@ -303,7 +303,11 @@ pub fn self_test() -> Result<(), String> {
     {
         return Err("option parser lost a supplied value".into());
     }
-    if options.candidates != [PathBuf::from("semantic/resource_373_c_02005b48.c")] {
+    if options.candidates
+        != [PathBuf::from(
+            "recon/gs1/en/overlays/resource_373_c_02005b48.c",
+        )]
+    {
         return Err("option parser lost its candidate list".into());
     }
     if Options::parse(&["--jobs".into(), "0".into(), "x.c".into()]).is_ok() {

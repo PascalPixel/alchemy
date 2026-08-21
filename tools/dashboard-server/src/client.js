@@ -1,8 +1,7 @@
 // Browser client for the Rust dashboard server.
 function append(parent, child) {
   if (Array.isArray(child)) {
-    for (const item of child)
-      append(parent, item);
+    for (const item of child) append(parent, item);
   } else if (child && typeof child === "object" && child.nodeType) {
     parent.appendChild(child);
   } else if (child !== undefined && child !== null && child !== false) {
@@ -12,39 +11,35 @@ function append(parent, child) {
 function h(tag, attributes = {}, ...children) {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(attributes)) {
-    if (key === "className")
-      node.className = String(value ?? "");
-    else if (value !== undefined && value !== null && value !== false) {
+    if (key === "className") node.className = String(value ?? "");
+    else if (value !== undefined && value !== null && value !== false)
       node.setAttribute(key, value === true ? "" : String(value));
-    }
   }
-  for (const child of children)
-    append(node, child);
+  for (const child of children) append(node, child);
   return node;
 }
-var root = h("div", { id: "root" }, h("div", { className: "loading", role: "status" }, "Reading the stones…"));
+const root = h("div", { id: "root" }, h("div", { className: "loading", role: "status" }, "Reading the stones…"));
 document.body.replaceChildren(root);
-var tooltip = h("div", { className: "hover-tooltip", role: "tooltip", hidden: true });
+const tooltip = h("div", { className: "hover-tooltip", role: "tooltip", hidden: true });
 document.body.append(tooltip);
-var pageVersion = "";
-var lastRevision = "";
-var lastError = "";
+let pageVersion = "";
+let lastRevision = "";
+let lastError = "";
+const number = new Intl.NumberFormat("en");
+function bytes(value) { return number.format(Math.round(value ?? 0)); }
+function percent(value) { return `${Number(value ?? 0).toFixed(2)}%`; }
+function upper(value) { return String(value ?? "").toUpperCase(); }
+
 async function requestSnapshot() {
   const response = await fetch("/snapshot", { cache: "no-store" });
-  if (!response.ok)
-    throw new Error(`/snapshot returned ${response.status}`);
+  if (!response.ok) throw new Error(`/snapshot returned ${response.status}`);
   return response.json();
 }
-function hideTooltip() {
-  tooltip.hidden = true;
-}
+function hideTooltip() { tooltip.hidden = true; }
 function showTooltip(event) {
   const target = event.target instanceof Element ? event.target.closest("g[aria-label]") : null;
   const label = target?.getAttribute("aria-label")?.trim();
-  if (!label) {
-    hideTooltip();
-    return;
-  }
+  if (!label) { hideTooltip(); return; }
   tooltip.textContent = label;
   tooltip.hidden = false;
   const gap = 14;
@@ -58,76 +53,101 @@ function showTooltip(event) {
 }
 async function loadTree(section, tree, title, revision) {
   const response = await fetch(`/svg/${tree}?v=${encodeURIComponent(revision)}`);
-  if (!response.ok)
-    throw new Error(`/svg/${tree} returned ${response.status}`);
+  if (!response.ok) throw new Error(`/svg/${tree} returned ${response.status}`);
   const parsed = new DOMParser().parseFromString(await response.text(), "image/svg+xml");
   const svg = parsed.documentElement;
-  if (svg.localName !== "svg")
-    throw new Error(`/svg/${tree} did not return an SVG`);
+  if (svg.localName !== "svg") throw new Error(`/svg/${tree} did not return an SVG`);
   svg.classList.add("tree-image");
   svg.setAttribute("aria-label", `${title} coverage graph`);
-  section.replaceChildren(svg);
+  section.querySelector(".chart")?.replaceChildren(svg);
 }
 function panel(tree, title, revision) {
-  const section = h("section", { className: `panel p-${tree}` });
-  loadTree(section, tree, title, revision).catch((error) => {
-    showError(error instanceof Error ? error.message : String(error));
-  });
+  const chart = h("div", { className: "chart" }, h("div", { className: "chart-loading" }, "Reading…"));
+  const section = h("section", { className: `panel p-${tree}` },
+    h("header", { className: "panel-title" }, h("span", {}, title), h("span", {}, tree === "core" || tree === "overlays" ? "EN build" : "shared assets")),
+    chart,
+  );
+  loadTree(section, tree, title, revision).catch((error) => showError(error instanceof Error ? error.message : String(error)));
   return section;
+}
+function metric(label, value, detail, tone = "") {
+  return h("article", { className: `metric ${tone}` },
+    h("div", { className: "metric-label" }, label),
+    h("div", { className: "metric-value" }, value),
+    h("div", { className: "metric-detail" }, detail),
+  );
+}
+function edition(code, role, active = false) {
+  return h("div", { className: `edition ${active ? "active" : ""}` },
+    h("strong", {}, upper(code)), h("span", {}, role));
 }
 function render(snapshot) {
   hideTooltip();
+  const summary = snapshot.summary;
+  const project = snapshot.project;
+  const header = h("header", { className: "masthead" },
+    h("div", { className: "identity" },
+      h("div", { className: "kicker" }, "ALCHEMY · RECONSTRUCTION LEDGER"),
+      h("h1", {}, project.game),
+      h("p", {}, "One source history, six released editions. Reconstruct from the Japanese program outward; prove every derived ROM independently."),
+    ),
+    h("div", { className: "flow", "aria-label": "Edition derivation" },
+      edition(project.baseEdition, "canonical base", true),
+      h("span", { className: "arrow", "aria-hidden": "true" }, "→"),
+      edition(project.buildEdition, "derived build", true),
+      ...project.derivedEditions.split(" · ").filter((code) => code !== project.buildEdition).map((code) => edition(code, "derived")),
+    ),
+  );
+  const metrics = h("section", { className: "metrics", "aria-label": "Project metrics" },
+    metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} exact or permanent bytes`, "done"),
+    metric("EN exact C", percent(summary.exactPercent), `${bytes(summary.exactBytes)} linked bytes`, "exact"),
+    metric("Tracked C", percent(summary.trackedPercent), `${bytes(summary.trackedBytes)} visible bytes · never counted as DONE`, "tracked"),
+    metric("JA base", bytes(summary.jaSources), summary.jaSources === 1 ? "canonical source owner" : "canonical source owners", "base"),
+    metric("EN candidates", bytes(summary.enSources), "awaiting JA re-derivation or proven EN delta", "derived"),
+  );
+  const legend = h("div", { className: "legend" },
+    h("span", {}, h("i", { className: "swatch exact" }), "Exact C"),
+    h("span", {}, h("i", { className: "swatch tracked" }), "Tracked C"),
+    h("span", {}, h("i", { className: "swatch retained" }), "Permanent ASM"),
+    h("span", {}, h("i", { className: "swatch open" }), "Open"),
+    h("span", { id: "scan-state", className: "scan-state" }, snapshot.scanning ? "Scanning…" : "Live"),
+  );
   const trees = Object.entries(snapshot.trees).map(([tree, title]) => panel(tree, title, snapshot.revision));
-  const main = h("main", { className: "trees" }, trees);
-  root.replaceChildren(main);
+  root.replaceChildren(h("div", { className: "shell" }, header, metrics, legend, h("main", { className: "trees" }, trees)));
   lastRevision = snapshot.revision;
   lastError = "";
-  if (snapshot.summary !== undefined) {
-    document.title = `Alchemy — ${snapshot.summary.exactPercent.toFixed(2)}% exact C`;
-  }
+  document.title = `Alchemy — JA base · ${percent(summary.donePercent)} EN done`;
 }
 function showError(message) {
-  if (message === lastError)
-    return;
+  if (message === lastError) return;
   root.querySelector(".error")?.remove();
   root.prepend(h("div", { className: "error", role: "alert" }, `Dashboard update failed: ${message}`));
   lastError = message;
 }
-function clearError() {
-  root.querySelector(".error")?.remove();
-  lastError = "";
-}
+function clearError() { root.querySelector(".error")?.remove(); lastError = ""; }
 function accept(snapshot) {
-  if (pageVersion !== "" && snapshot.page !== pageVersion) {
-    location.reload();
-    return;
-  }
+  if (pageVersion !== "" && snapshot.page !== pageVersion) { location.reload(); return; }
   pageVersion = snapshot.page;
   root.setAttribute("aria-busy", String(snapshot.scanning));
-  if (snapshot.error !== undefined)
-    showError(snapshot.error);
+  if (snapshot.error !== undefined) showError(snapshot.error);
   else {
     clearError();
-    if (snapshot.revision !== lastRevision)
-      render(snapshot);
+    if (snapshot.revision !== lastRevision) render(snapshot);
+    else {
+      const state = root.querySelector("#scan-state");
+      if (state) state.textContent = snapshot.scanning ? "Scanning…" : "Live";
+    }
   }
 }
 async function refresh() {
-  try {
-    accept(await requestSnapshot());
-  } catch (error) {
-    showError(error instanceof Error ? error.message : String(error));
-  }
+  try { accept(await requestSnapshot()); }
+  catch (error) { showError(error instanceof Error ? error.message : String(error)); }
 }
 await refresh();
-var events = new EventSource("/events");
+const events = new EventSource("/events");
 events.addEventListener("update", (event) => {
-  try {
-    accept(JSON.parse(event.data));
-  } catch (error) {
-    showError(error instanceof Error ? error.message : String(error));
-  }
+  try { accept(JSON.parse(event.data)); }
+  catch (error) { showError(error instanceof Error ? error.message : String(error)); }
 });
 root.addEventListener("pointermove", showTooltip);
 root.addEventListener("pointerleave", hideTooltip);
-

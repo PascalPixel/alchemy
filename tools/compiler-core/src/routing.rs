@@ -1,6 +1,6 @@
 //! Native compiler-routing surface used by `verify` through
 //! `source_to_assembly_plan`.
-//! Ported here: `ROOT`, `BUNDLE`/`DRIVER`/`GS2_*`/`AGBCC_*` path constants,
+//! Ported here: `ROOT`, `BUNDLE`/`DRIVER`/`AGBCC_*` path constants,
 //! `CFLAGS`/`GS2_CFLAGS`/`AGBCC_CFLAGS`, `bundleForTarget`, `driverForTarget`,
 //! `cflagsForTarget`, `sourceStem`, `overlayStem`, `sourceKey`,
 //! `cflagsForSource`, `cflagsForTargetSource`, `usesAgbccCompiler`, and every
@@ -35,12 +35,6 @@ pub fn bundle() -> PathBuf {
 pub fn driver() -> PathBuf {
     bundle().join("xgcc")
 }
-pub fn gs2_bundle() -> PathBuf {
-    bundle().join("gs2")
-}
-pub fn gs2_driver() -> PathBuf {
-    gs2_bundle().join("xgcc")
-}
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
@@ -63,14 +57,18 @@ impl CompilerTarget {
 pub fn bundle_for_target(target: CompilerTarget) -> PathBuf {
     match target {
         CompilerTarget::Gs1 => bundle(),
-        CompilerTarget::Gs2 => gs2_bundle(),
+        // GS2 is a separate build target, not a separate compiler family.
+        // Battle_08120454 uses ordinary r7 allocation and preserves multiple
+        // GCC 2.96 instruction sequences inherited from GS1; the former GS2
+        // route selected GCC 3.0 and fixed r7, so it could not emit the owner.
+        CompilerTarget::Gs2 => bundle(),
     }
 }
 
 pub fn driver_for_target(target: CompilerTarget) -> PathBuf {
     match target {
         CompilerTarget::Gs1 => driver(),
-        CompilerTarget::Gs2 => gs2_driver(),
+        CompilerTarget::Gs2 => driver(),
     }
 }
 
@@ -96,9 +94,9 @@ pub fn cflags() -> Vec<String> {
 }
 
 pub fn gs2_cflags() -> Vec<String> {
-    let mut flags = cflags();
-    flags.push("-ffixed-r7".to_string());
-    flags
+    // Keep this target-specific surface: GS2 may establish measured flag
+    // deltas without changing its compiler family or GS1's command line.
+    cflags()
 }
 
 pub fn agbcc_cflags() -> Vec<String> {

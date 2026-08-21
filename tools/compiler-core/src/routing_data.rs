@@ -115,7 +115,7 @@ pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
     "exact/resource_3c5_c_02000ab0.c",
     "exact/resource_3cb_c_02001050.c",
 ];
-pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080bbb0c"];
+pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080b2b0c", "080bbb0c"];
 pub static NO_GCSE_SOURCES: &[&str] = &[
     "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec", "08004144",
 ];

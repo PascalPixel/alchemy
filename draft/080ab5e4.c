@@ -151,11 +151,11 @@ s32 Func_080ab5e4(s32 arg0) {
     mode = arg0;
     temp_r3_18 = *(void **)0x03001F2C;
     ctx = temp_r3_18;
+    temp_r9_32 = M2C_FIELD(temp_r3_18, void **, 0x184);
     win10C = (s32 *) ((s8 *) temp_r3_18 + 0x10C);
     temp_r2_25 = mode * 2;
     sp48 = 1;
     sp34 = temp_r2_25;
-    temp_r9_32 = M2C_FIELD(temp_r3_18, void **, 0x184);
     temp_r5_34 = M2C_FIELD(ctx, u16 *, temp_r2_25 + 0x174);
     sp38 = (u16) Func_08002304(temp_r5_34, 0xA);
     temp_r0_47 = Func_080022f4(temp_r5_34, 0xA);

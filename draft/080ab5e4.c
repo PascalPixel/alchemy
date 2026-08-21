@@ -1184,9 +1184,9 @@ s32 Func_080ab5e4(s32 arg0)
                                         while (new_var49 < ((((s32)(*((u8 *)(((s8 *)events) + sp14)))) - 1) + 1));
                                     }
                                     temp_r1_1966 = (sp44 + 1);
+                                    sp44 = temp_r1_1966;
                                     sp14 += 1;
                                     sp10 += 0xA;
-                                    sp44 = temp_r1_1966;
                                     if (temp_r1_1966 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
                                     {
                                         goto loop_225;

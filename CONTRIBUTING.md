@@ -205,6 +205,8 @@ tools/compiler/target/release/compiler cross-edition 080bbb0c
 tools/compiler/target/release/compiler cross-edition --calls 080bbb0c
 tools/compiler/target/release/compiler cross-edition --all \
   --write recon/gs1/exact-correspondence.json
+tools/compiler/target/release/compiler cross-edition --all-overlays \
+  --write recon/gs1/exact-overlay-correspondence.json
 ```
 
 The comparison is JA-relative. During the transition, an exact EN object may
@@ -227,13 +229,23 @@ location was established. It maps evidence across editions; it does not make
 the EN C exact for another edition or prove that edition's complete owner
 boundary.
 
+Exact overlay C is scanned separately because its owners live inside compressed
+resource containers rather than at ROM addresses. The overlay scan locates each
+edition's resource directory through its self-pointer, decodes resources
+`36f`--`3ce`, and compares owners within the corresponding resource. Its mask is
+limited to Thumb `bl` fields and words reached by PC-relative literal loads.
+Long owners use global core anchors; short owners require either exact bytes at
+the same resource offset or exact masked core near a proved neighbor. The same
+duplicate and owner-order rejection applies. The result is recorded in
+`recon/gs1/exact-overlay-correspondence.json`.
+
 When core bytes remain, inspect those exact offsets as possible regional source
 changes. A smaller JA owner is useful evidence for a different source shape,
 but edition order alone does not establish why it differs. The current
 calibration result is recorded in `recon/gs1/cross-edition.json`.
 The full exact-corpus locator output is
 `recon/gs1/exact-correspondence.json`; regenerate it with
-`make correspondence` whenever exact main-image ownership changes.
+`make correspondence` whenever exact main-image or overlay ownership changes.
 
 ### 3. Recover source structure
 

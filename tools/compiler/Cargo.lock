@@ -100,6 +100,7 @@ dependencies = [
  "candidate-show",
  "compiler-core",
  "dashboard-server",
+ "extract-resource",
  "objdiff-core",
  "permuter",
  "regex",
@@ -211,6 +212,10 @@ dependencies = [
  "libc",
  "windows-sys",
 ]
+
+[[package]]
+name = "extract-resource"
+version = "0.1.0"
 
 [[package]]
 name = "fastrand"

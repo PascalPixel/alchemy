@@ -205,6 +205,17 @@ struct Correspondence {
     regional: usize,
     unresolved: usize,
 }
+impl Correspondence {
+    fn add(self, other: Self) -> Self {
+        Self {
+            total: self.total + other.total,
+            matched: self.matched + other.matched,
+            shared: self.shared + other.shared,
+            regional: self.regional + other.regional,
+            unresolved: self.unresolved + other.unresolved,
+        }
+    }
+}
 #[derive(Default)]
 pub struct State {
     coverage: Option<Live>,
@@ -274,7 +285,9 @@ fn compute() -> Result<Live, String> {
     let trees = render_box_trees(&map, Some(&tree), true)?;
     let ja_sources = count_c(&root().join("recon/gs1/ja"));
     let en_sources = count_c(&root().join("recon/gs1/en"));
-    let correspondence = correspondence(&root().join("recon/gs1/exact-correspondence.json"))?;
+    let correspondence = correspondence(&root().join("recon/gs1/exact-correspondence.json"))?.add(
+        correspondence(&root().join("recon/gs1/exact-overlay-correspondence.json"))?,
+    );
     let revision = BOX_TREES
         .iter()
         .map(|name| {

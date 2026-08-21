@@ -711,7 +711,7 @@ loop_225:
                                 var_sl_1853 = (sp10 * 2) + temp_r9_32;
                                 do {
                                     temp_r7_1856 = *var_sl_1853;
-                                    var_sl_1853 += 2;
+                                    var_sl_1853 += 1;
                                     temp_r4_1863 = (u32) (temp_r7_1856 & 0xF00) >> 8;
                                     var_r8_1869 = 0;
                                     temp_r6_1871 = (u32) (temp_r7_1856 & 0xE0) >> 5;

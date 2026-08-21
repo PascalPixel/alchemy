@@ -52,6 +52,9 @@ fn fill(tree: &str, category: &str, fraction: f64) -> String {
     if category == "retained_asm" {
         return format!("fill:{ASM}");
     }
+    if category == "tracked_c" {
+        return "fill:#f4c95d".into();
+    }
     let (h, okh, _, _) = hue(tree);
     let f = fraction.clamp(0.0, 1.0);
     let light = 93.0 - 38.0 * f;

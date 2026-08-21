@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "purpose": "One record per owner under active reconstruction. The neighboring C is preserved as a source hypothesis; neither the C nor this record claims ROM ownership. Measurements are edition-qualified, and exactness is awarded separately for every edition.",
+  "rules": [
+    "A record remains useful after one edition becomes exact when it describes correspondence or a different edition's delta.",
+    "`score` is what the tools actually reported, with the date. `check recon --verify` recompiles and refuses a record whose score has drifted.",
+    "`unexpressed` is the work left in the measured edition, in instruction counts read off that reference.",
+    "`rejected` exists so nobody repeats a measured dead end. Every entry carries the number that killed it."
+  ]
+}

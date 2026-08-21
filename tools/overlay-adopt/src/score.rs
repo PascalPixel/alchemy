@@ -29,14 +29,14 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     Ok((overlay.to_string(), address))
 }
 fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, String> {
-    for directory in ["semantic", "exact"] {
+    for directory in ["recon/gs1/en/overlays", "exact"] {
         let path = root.join(format!("{directory}/{overlay}_c_{address:08x}.c"));
         if path.exists() {
             return Ok(path);
         }
     }
     Err(format!(
-        "no semantic/ or exact/ source for {overlay}:{address:08x}"
+        "no tracked or exact source for {overlay}:{address:08x}"
     ))
 }
 fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {

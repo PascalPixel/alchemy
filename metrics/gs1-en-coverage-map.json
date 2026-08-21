@@ -7,16 +7,16 @@
   "executable_bytes": 1347122,
   "categories": {
     "exact_c": {
-      "bytes": 275776,
-      "percent_of_executable": 20.47
+      "bytes": 282108,
+      "percent_of_executable": 20.94
     },
-    "semantic_c": {
-      "bytes": 0,
-      "percent_of_executable": 0.0
+    "tracked_c": {
+      "bytes": 68628,
+      "percent_of_executable": 5.09
     },
     "assembly": {
-      "bytes": 855068,
-      "percent_of_executable": 63.47
+      "bytes": 780108,
+      "percent_of_executable": 57.91
     },
     "retained_asm": {
       "bytes": 216278,
@@ -29,22 +29,22 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 100538,
-    "semantic_c_bytes": 0
+    "exact_c_bytes": 106870,
+    "tracked_c_bytes": 7584
   },
   "overlays": {
     "executable_bytes": 798758,
     "exact_c_bytes": 175238,
-    "semantic_c_bytes": 0
+    "tracked_c_bytes": 61044
   },
   "provenance": {
     "exact_source": "worktree",
-    "semantic_source": "absent",
-    "semantic_sources": 0,
-    "main_semantic_census": "open",
-    "semantic_superseded_bytes": 0,
-    "semantic_outside_extent_bytes": 0,
-    "semantic_unresolved": []
+    "tracked_source": "worktree",
+    "tracked_sources": 55,
+    "main_tracked_census": "recon/gs1/en/main/*.json",
+    "tracked_superseded_bytes": 0,
+    "tracked_outside_extent_bytes": 0,
+    "tracked_unresolved": []
   },
   "rom_areas": [
     {
@@ -52,8 +52,9 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 100538,
-        "assembly": 293842,
+        "exact_c": 106870,
+        "tracked_c": 7584,
+        "assembly": 279926,
         "retained_asm": 153984
       },
       "tiles": 9
@@ -64,7 +65,8 @@
       "bytes": 539544,
       "categories": {
         "exact_c": 123840,
-        "assembly": 415704
+        "tracked_c": 33166,
+        "assembly": 382538
       },
       "tiles": 11
     },
@@ -84,8 +86,9 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 100538,
-        "assembly": 293842,
+        "exact_c": 106870,
+        "tracked_c": 7584,
+        "assembly": 279926,
         "retained_asm": 153984
       },
       "tiles": 867
@@ -96,10 +99,11 @@
       "bytes": 798758,
       "categories": {
         "exact_c": 175238,
-        "assembly": 561226,
+        "tracked_c": 61044,
+        "assembly": 500182,
         "retained_asm": 62294
       },
-      "tiles": 5505
+      "tiles": 5543
     }
   ]
 }

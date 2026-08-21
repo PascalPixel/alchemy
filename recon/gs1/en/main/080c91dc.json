@@ -1,6 +1,13 @@
 {
   "owner": "main:0x080c91dc",
   "span_bytes": 1360,
+  "edition": {
+    "role": "derived-candidate",
+    "edition": "en",
+    "base_owner": null,
+    "base_edition": "ja",
+    "rebase_status": "correspondence-needed"
+  },
   "boundary": {
     "start": "0x080c91dc",
     "end": "0x080c972c",

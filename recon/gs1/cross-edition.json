@@ -55,6 +55,17 @@
       "core_identical": true
     }
   ],
+  "candidate_owners": [
+    {
+      "base_owner": "080a24e0",
+      "derived_owners": {
+        "en": "080ab5e4"
+      },
+      "status": "regional-source-divergence",
+      "evidence": "The entry correspondence survives multiple leading instruction anchors. JA and EN share the entry frame, stack-slot order, first loops, and compiler family, but the JA owner changes length. A global EN-sized anchor vote lands 0x10 bytes early, so source-different owners require entry-first location and explicit boundary recovery.",
+      "next": "Recover the JA boundary and source into recon/gs1/ja/main/080a24e0.c, then express the EN owner as a measured delta."
+    }
+  ],
   "propagation": {
     "seed_en_owner": "080bbb0c",
     "shared_core_en_owners": [

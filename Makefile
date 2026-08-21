@@ -29,7 +29,7 @@ TOOLING_LINE_LIMIT := 40000
 
 .PHONY: help verify test lint build-tools tool-tests tooling-size \
 	build-claimed build-asm build-assets build-full build-rom \
-	standard-check pristine-options-check two-tier-check core-retained-check \
+	standard-check pristine-options-check corpus-check core-retained-check \
 	check-owners progress progress-check progress-subject \
 	coverage coverage-check dashboard clean clean-preview
 
@@ -85,12 +85,17 @@ core-retained-check:
 check-owners:
 	$(CHECK) owners
 
-two-tier-check:
-	@if ls semantic/*.c >/dev/null 2>&1; then \
-		printf 'semantic C is not a build tier; move active work to draft/ or scratch/\n'; \
+corpus-check:
+	@test -f recon/gs1/project.json
+	@if test -d draft; then \
+		printf 'legacy draft/ directory found; use recon/gs1/<edition>/\n'; \
 		exit 1; \
 	fi
-	@printf 'two tiers ok: exact C and assembly\n'
+	@if find semantic -maxdepth 1 -name '*.c' -print | grep -q .; then \
+		printf 'source hypotheses belong in recon/, not semantic/ metadata\n'; \
+		exit 1; \
+	fi
+	@printf 'corpus ok: JA base, edition-qualified candidates, exact ownership separate\n'
 
 build-tools:
 	@set -e; for host in $(HOSTS); do \
@@ -125,7 +130,7 @@ lint: standard-check pristine-options-check
 test: lint tooling-size tool-tests
 	$(CHECK) publication --self-test
 
-verify: test build-full two-tier-check core-retained-check check-owners progress-check coverage-check
+verify: test build-full corpus-check core-retained-check check-owners progress-check coverage-check
 
 standard-check:
 	@printf '%s\n' $(GCC296_CFLAGS) | grep -v '^-I' | sort > /tmp/alchemy-standard-makefile.txt

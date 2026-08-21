@@ -1,6 +1,13 @@
 {
   "owner": "main:0x080a9f10",
   "span_bytes": 1336,
+  "edition": {
+    "role": "derived-candidate",
+    "edition": "en",
+    "base_owner": null,
+    "base_edition": "ja",
+    "rebase_status": "correspondence-needed"
+  },
   "score": {
     "measured": "2026-08-20",
     "candidate_bytes": 1340,

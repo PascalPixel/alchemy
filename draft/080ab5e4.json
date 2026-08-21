@@ -2,14 +2,14 @@
   "owner": "main:0x080ab5e4",
   "span_bytes": 4888,
   "score": {
-    "candidate_bytes": 4744,
+    "candidate_bytes": 4728,
     "reference_bytes": 4888,
-    "differing_halfwords": 2398,
-    "wrong_instructions": 2029,
+    "differing_halfwords": 2401,
+    "wrong_instructions": 2003,
     "class": "wrong",
-    "normalized_insn_diff": "2187 ours / 2258 reference, 414 hunks, weight 1308 (was 1570 at session start)",
-    "bl_sequence": "183 ours / 184 reference, 10 hunks (was 26)",
-    "note": "the candidate is still 144 bytes short, so raw halfwords and wrong_instructions are phase-dominated and NOT the compass; the normalized instruction diff and bl-sequence alignment are. Both improved substantially this session"
+    "normalized_insn_diff": "2179 ours / 2258 reference, 419 hunks, weight 1279 (was 1308)",
+    "bl_sequence": "183 ours / 184 reference (unchanged)",
+    "note": "still short of size parity; raw halfwords remain phase-dominated, normalized instruction diff and bl-sequence alignment are the compasses"
   },
   "shape": {
     "calls": 186,
@@ -28,7 +28,8 @@
     "the packed tournament value's div and mod results are both zero-extended to u16 (the reference lsls/lsrs #16 pair after each of Func_08002304 and Func_080022f4)",
     "all seven dialog-wait sites are rotated while loops -- while (Func_08015048() == 0) Func_080030f8(1); -- so the frame pump is emitted BEFORE the poll, as the reference's b-to-test/body/test layout shows. m2c's top-tested goto loop emitted them in the opposite order; this one family closed 14 of the 26 bl-sequence hunks",
     "the arg0 dispatch arms are ordered == 0 first: the reference emits the tournament-status body (sp24/sp20 dialog pair plus its bitfield block) as the fallthrough of the arg0 test and branches away for the nonzero case. m2c's != 0 first ordering put the wrong block at .L24",
-    "the 0x10C window handle is reached through a POINTER local: the reference computes &sp4C[0x10C] once (movs #134/lsls #1/adds/mov r8) and keeps the ADDRESS in call-saved r8 across the dialog calls, dereferencing it as ldr r1,[r8]. All 13 sites use it. By contrast 0x30 stays a direct ldr [base,#48] immediate and 0x219 is a pool-loaded index, so neither takes a pointer local"
+    "the 0x10C window handle is reached through a POINTER local: the reference computes &sp4C[0x10C] once (movs #134/lsls #1/adds/mov r8) and keeps the ADDRESS in call-saved r8 across the dialog calls, dereferencing it as ldr r1,[r8]. All 13 sites use it. By contrast 0x30 stays a direct ldr [base,#48] immediate and 0x219 is a pool-loaded index, so neither takes a pointer local",
+    "the three block_159 selector paths (case 27, case 1/3/7/8/21 nonzero arm, case 17/19) share the same two-statement tail (store the selector to +0x212C; var_r4_907 = sp8). Inlined at each site instead of a shared label+goto so crossjump can form the reference's share point locally; the shared-label form kept a live var_r3_1107 across all three call sites that the reference does not carry"
   ],
   "unexpressed": [
     {

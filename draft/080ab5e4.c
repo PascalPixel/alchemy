@@ -31,7 +31,6 @@ s32 Func_080ab5e4(s32 arg0) {
     s32 sp0;
     s32 sp4;
     u32 sp8;
-    s32 spC;
     s32 sp10;
     s32 sp14;
     s32 sp18;
@@ -653,7 +652,6 @@ block_162:
         temp_r3_1572 = 0x1F & sp28;
         temp_r5_1573 = (u32) (0xF00 & sp28) >> 8;
         temp_r6_1574 = (u32) (0xE0 & sp28) >> 5;
-        spC = temp_r3_1572;
         Func_080771b8(temp_r5_1573, temp_r6_1574, temp_r3_1572);
         Func_080771c8(temp_r5_1573, temp_r6_1574, temp_r3_1572);
     } else {
@@ -662,7 +660,6 @@ block_162:
         temp_r3_1597 = 0x1F & sp28;
         temp_r5_1598 = (u32) (0xF00 & sp28) >> 8;
         temp_r6_1599 = (u32) (0xE0 & sp28) >> 5;
-        spC = temp_r3_1597;
         Func_080771b0(temp_r5_1598, temp_r6_1599, temp_r3_1597);
         Func_080771c0(temp_r5_1598, temp_r6_1599, temp_r3_1597);
     }
@@ -739,7 +736,6 @@ loop_225:
                                                 temp_r3_1908 = 0x1F & temp_r7_1856;
                                                 temp_r5_1909 = (u32) (temp_r7_1856 & 0xF00) >> 8;
                                                 temp_r6_1910 = (u32) (temp_r7_1856 & 0xE0) >> 5;
-                                                spC = temp_r3_1908;
                                                 Func_080771b0(temp_r5_1909, temp_r6_1910, temp_r3_1908);
                                                 Func_080771c0(temp_r5_1909, temp_r6_1910, temp_r3_1908);
                                                 Func_08077010(temp_r5_1909);
@@ -748,7 +744,6 @@ loop_225:
                                             temp_r3_1936 = 0x1F & temp_r7_1856;
                                             temp_r5_1937 = (u32) (temp_r7_1856 & 0xF00) >> 8;
                                             temp_r6_1938 = (u32) (temp_r7_1856 & 0xE0) >> 5;
-                                            spC = temp_r3_1936;
                                             Func_080771b8(temp_r5_1937, temp_r6_1938, temp_r3_1936);
                                             Func_080771c8(temp_r5_1937, temp_r6_1938, temp_r3_1936);
                                             Func_08077010(temp_r5_1937);

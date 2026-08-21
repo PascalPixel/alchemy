@@ -190,6 +190,20 @@ pub struct Live {
     retained: f64,
     ja_sources: usize,
     en_sources: usize,
+    correspondence_total: usize,
+    correspondence_matched: usize,
+    correspondence_shared: usize,
+    correspondence_regional: usize,
+    correspondence_unresolved: usize,
+}
+
+#[derive(Default)]
+struct Correspondence {
+    total: usize,
+    matched: usize,
+    shared: usize,
+    regional: usize,
+    unresolved: usize,
 }
 #[derive(Default)]
 pub struct State {
@@ -229,6 +243,25 @@ fn count_c(path: &Path) -> usize {
     }
     count
 }
+fn correspondence(path: &Path) -> Result<Correspondence, String> {
+    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let value: serde_json::Value =
+        serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))?;
+    let number = |key: &str| {
+        value
+            .get(key)
+            .and_then(serde_json::Value::as_u64)
+            .map(|value| value as usize)
+            .ok_or_else(|| format!("{} lacks numeric {key}", path.display()))
+    };
+    Ok(Correspondence {
+        total: number("owners_total")?,
+        matched: number("matched_owners")?,
+        shared: number("shared_core_owners")?,
+        regional: number("regional_core_owners")?,
+        unresolved: number("unresolved_owners")?,
+    })
+}
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
     let map = build_coverage_map(&BuildOptions {
@@ -241,6 +274,7 @@ fn compute() -> Result<Live, String> {
     let trees = render_box_trees(&map, Some(&tree), true)?;
     let ja_sources = count_c(&root().join("recon/gs1/ja"));
     let en_sources = count_c(&root().join("recon/gs1/en"));
+    let correspondence = correspondence(&root().join("recon/gs1/exact-correspondence.json"))?;
     let revision = BOX_TREES
         .iter()
         .map(|name| {
@@ -253,7 +287,14 @@ fn compute() -> Result<Live, String> {
         })
         .collect::<Vec<_>>()
         .into_iter()
-        .chain([ja_sources.to_string(), en_sources.to_string()])
+        .chain([
+            ja_sources.to_string(),
+            en_sources.to_string(),
+            correspondence.matched.to_string(),
+            correspondence.shared.to_string(),
+            correspondence.regional.to_string(),
+            correspondence.unresolved.to_string(),
+        ])
         .collect::<Vec<_>>()
         .join("-");
     let n = |key| map_number(&map, key).unwrap_or(0.0);
@@ -269,6 +310,11 @@ fn compute() -> Result<Live, String> {
         retained: n(&["categories", "retained_asm", "bytes"]),
         ja_sources,
         en_sources,
+        correspondence_total: correspondence.total,
+        correspondence_matched: correspondence.matched,
+        correspondence_shared: correspondence.shared,
+        correspondence_regional: correspondence.regional,
+        correspondence_unresolved: correspondence.unresolved,
     })
 }
 fn iso_now() -> String {
@@ -318,6 +364,26 @@ fn snapshot() -> Json {
                 ),
                 ("jaSources", Json::Num(c.ja_sources as f64)),
                 ("enSources", Json::Num(c.en_sources as f64)),
+                (
+                    "correspondenceTotal",
+                    Json::Num(c.correspondence_total as f64),
+                ),
+                (
+                    "correspondenceMatched",
+                    Json::Num(c.correspondence_matched as f64),
+                ),
+                (
+                    "correspondenceShared",
+                    Json::Num(c.correspondence_shared as f64),
+                ),
+                (
+                    "correspondenceRegional",
+                    Json::Num(c.correspondence_regional as f64),
+                ),
+                (
+                    "correspondenceUnresolved",
+                    Json::Num(c.correspondence_unresolved as f64),
+                ),
             ])
         });
         Json::obj(vec![

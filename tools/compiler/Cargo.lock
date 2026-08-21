@@ -164,6 +164,7 @@ name = "dashboard-server"
 version = "0.1.0"
 dependencies = [
  "coverage-map",
+ "serde_json",
 ]
 
 [[package]]

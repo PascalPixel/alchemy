@@ -31,7 +31,7 @@ TOOLING_LINE_LIMIT := 40000
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check pristine-options-check corpus-check core-retained-check \
 	check-owners progress progress-check progress-subject \
-	coverage coverage-check dashboard clean clean-preview
+	correspondence correspondence-check coverage coverage-check dashboard clean clean-preview
 
 help:
 	@printf '%s\n' \
@@ -43,6 +43,7 @@ help:
 		'make tooling-size     enforce the portable-toolkit budget' \
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
+		'make correspondence   match exact EN owners across GS1 editions' \
 		'make coverage         refresh dashboard data and figures' \
 		'make dashboard        serve the dashboard on localhost:4649'
 
@@ -73,10 +74,17 @@ progress-check:
 progress-subject:
 	$(CHECK) progress --subject
 
-coverage:
+correspondence: build-claimed
+	$(COMPILER) cross-edition --all --write recon/gs1/exact-correspondence.json
+
+correspondence-check: build-claimed
+	$(COMPILER) cross-edition --all --write out/exact-correspondence.check.json
+	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.check.json
+
+coverage: correspondence
 	$(CHECK) coverage --write
 
-coverage-check:
+coverage-check: correspondence-check
 	$(CHECK) coverage --check
 
 core-retained-check:

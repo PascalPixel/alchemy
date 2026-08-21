@@ -352,8 +352,8 @@ s32 Func_080ab5e4(s32 arg0)
             }
             while (0);
         }
-        sp2C = sp30;
         sp44 = 0;
+        sp2C = sp30;
         if (((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))) > 0)
         {
             do

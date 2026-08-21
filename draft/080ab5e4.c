@@ -857,8 +857,8 @@ s32 Func_080ab5e4(s32 arg0)
                     else
                     {
                         (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        statusFlags = 2;
                         var_r4_907 = 2;
+                        statusFlags = 2;
                         (*((s32 *)(((s8 *)events) + 0x212C))) = ((s32)((*((s32 *)(((s8 *)events) + 0x212C))) + 1));
                     }
                 break;

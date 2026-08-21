@@ -37,6 +37,12 @@ fn basename_without<'a>(path: &'a str, extension: &str) -> &'a str {
         .filter(|value| !value.is_empty())
         .unwrap_or(base)
 }
+/// The reference owner's byte length, from a generated build manifest.
+/// `out/` is gitignored build output; a fresh git worktree has none until
+/// `make build-asm`/`make build-full` runs there. Returns `None` in that
+/// case -- the caller must error rather than substitute a fallback, since
+/// any fallback derived from the candidate would compare the source
+/// against itself and silently report a plausible-looking wrong score.
 fn region_size(root: &Path, stem: &str) -> Option<f64> {
     let path = ["out/full/asm/manifest.json", "out/asm/manifest.json"]
         .iter()
@@ -81,51 +87,56 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             });
         }
     }
-    let (actual, expected, compile) =
-        if let Some(pair) = cached_bins(&key, &key_path, &candidate_path, &reference_path) {
-            pair
-        } else {
-            let source = match patch_text.as_deref() {
-                Some(patch) => {
-                    let dest = work.join("try").join(format!("{stem}.c"));
-                    apply_unified_diff(&options.source, patch, &dest)?;
-                    dest.to_string_lossy().into_owned()
-                }
-                None => options.source.clone(),
-            };
-            let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
-            let verification = verify_candidate(
-                &source,
-                &rom,
-                work.to_string_lossy().as_ref(),
-                &options.flags,
-                ROM_BASE,
-                CompilerTarget::Gs1,
-                &options.configuration,
-            )?;
-            let address = js_parse_int_radix(&stem, 16);
-            let linked_path = work.join(format!("{stem}.bin"));
-            let linked = std::fs::read(&linked_path)
-                .map_err(|error| format!("{}: {error}", linked_path.display()))?;
-            let extent = nm_extent(
-                work.join(format!("{stem}.elf")),
-                &format!("Func_{stem}"),
-                address,
-                linked.len() as f64,
-            )?
-            .unwrap_or(verification.actual.len() as f64);
-            let size = region_size(root, &stem).unwrap_or(linked.len() as f64);
-            let actual = js_subarray(&linked, 0.0, extent);
-            let expected = js_subarray(&rom, address - ROM_BASE, address - ROM_BASE + size);
-            std::fs::write(&candidate_path, &actual)
-                .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
-            std::fs::write(&reference_path, &expected)
-                .map_err(|error| format!("{}: {error}", reference_path.display()))?;
-            std::fs::write(&key_path, key.as_bytes())
-                .map_err(|error| format!("{}: {error}", key_path.display()))?;
-            let _ = std::fs::remove_file(&first_path);
-            (actual, expected, "fresh")
+    let (actual, expected, compile) = if let Some(pair) =
+        cached_bins(&key, &key_path, &candidate_path, &reference_path)
+    {
+        pair
+    } else {
+        let source = match patch_text.as_deref() {
+            Some(patch) => {
+                let dest = work.join("try").join(format!("{stem}.c"));
+                apply_unified_diff(&options.source, patch, &dest)?;
+                dest.to_string_lossy().into_owned()
+            }
+            None => options.source.clone(),
         };
+        let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
+        let verification = verify_candidate(
+            &source,
+            &rom,
+            work.to_string_lossy().as_ref(),
+            &options.flags,
+            ROM_BASE,
+            CompilerTarget::Gs1,
+            &options.configuration,
+        )?;
+        let address = js_parse_int_radix(&stem, 16);
+        let linked_path = work.join(format!("{stem}.bin"));
+        let linked = std::fs::read(&linked_path)
+            .map_err(|error| format!("{}: {error}", linked_path.display()))?;
+        let extent = nm_extent(
+            work.join(format!("{stem}.elf")),
+            &format!("Func_{stem}"),
+            address,
+            linked.len() as f64,
+        )?
+        .unwrap_or(verification.actual.len() as f64);
+        let size = region_size(root, &stem).ok_or_else(|| {
+                format!(
+                    "no owner-size entry for {stem} in out/asm/manifest.json or out/full/asm/manifest.json -- run `make build-asm` (or `make build-full`) to generate it before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
+                )
+            })?;
+        let actual = js_subarray(&linked, 0.0, extent);
+        let expected = js_subarray(&rom, address - ROM_BASE, address - ROM_BASE + size);
+        std::fs::write(&candidate_path, &actual)
+            .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
+        std::fs::write(&reference_path, &expected)
+            .map_err(|error| format!("{}: {error}", reference_path.display()))?;
+        std::fs::write(&key_path, key.as_bytes())
+            .map_err(|error| format!("{}: {error}", key_path.display()))?;
+        let _ = std::fs::remove_file(&first_path);
+        (actual, expected, "fresh")
+    };
     render_bytes(
         actual,
         expected,
@@ -560,4 +571,52 @@ fn n(value: usize) -> Result<String, String> {
 }
 fn js_cmp(a: &f64, b: &f64) -> Ordering {
     a.partial_cmp(b).unwrap_or(Ordering::Equal)
+}
+#[cfg(test)]
+mod region_size_tests {
+    use super::*;
+    use std::fs;
+
+    fn scratch_root(name: &str) -> std::path::PathBuf {
+        let dir = std::env::temp_dir().join(format!("candidate-show-region-size-test-{name}"));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(dir.join("out/asm")).unwrap();
+        dir
+    }
+
+    #[test]
+    fn reads_the_owner_size_from_the_generated_manifest() {
+        let root = scratch_root("present");
+        fs::write(
+            root.join("out/asm/manifest.json"),
+            r#"{"regions":[{"source":"asm/080ab5e4.s","size":4888}]}"#,
+        )
+        .unwrap();
+        assert_eq!(region_size(&root, "080ab5e4"), Some(4888.0));
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn returns_none_without_falling_back_when_the_manifest_is_absent() {
+        // out/ is gitignored build output; a fresh git worktree has none
+        // until `make build-asm`/`make build-full` runs there. Regression
+        // guard for the bug where render() silently substituted the
+        // candidate's own linked length here, comparing the source
+        // against itself and reporting a plausible-looking wrong score.
+        let root = scratch_root("absent");
+        assert_eq!(region_size(&root, "080ab5e4"), None);
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn returns_none_when_the_manifest_lacks_this_owner() {
+        let root = scratch_root("other-owner");
+        fs::write(
+            root.join("out/asm/manifest.json"),
+            r#"{"regions":[{"source":"asm/080bbb0c.s","size":6332}]}"#,
+        )
+        .unwrap();
+        assert_eq!(region_size(&root, "080ab5e4"), None);
+        let _ = fs::remove_dir_all(&root);
+    }
 }

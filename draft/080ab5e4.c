@@ -36,16 +36,35 @@
  *   - statusFlags: *(s32*)0x03001B04, read once at entry and tested
  *     bit-by-bit (0x10/0x20/0x40/0x80) later to pick a message ID.
  *
- * differing_halfwords=2364 at 4756/4888 bytes; still a genuine mismatch in
- * structure, not just naming, so most of the remaining locals are still
- * provisional m2c names (sp/temp/reg/var_rN). Two hand attempts this
- * session to nudge register pressure toward the reference's 108-byte frame
- * (hoisting/merging a shared subexpression) both measured worse and were
- * reverted; an automated permuter search did close half that gap by
- * splitting expressions into extra locals, but at the cost of ~150
- * unnamed, ungrounded new_varN locals that can't be humanized honestly, so
- * that state was reverted (39ad6a9a5) in favor of this hand-understood one.
- * Keep every edit tied to local evidence and score it through gs1cc.
+ *   - packedPosFieldOffset/colorHighFieldOffset/windowFlagsFieldOffset: the
+ *     M2C_FIELD offsets 0x174/0x258/0x178 hoisted into named temps by the
+ *     r18 permuter adoption. Every other M2C_FIELD offset in this file is a
+ *     bare hex literal, so keeping these as literals would be the honest
+ *     choice -- but measured: inlining them regresses differing_halfwords
+ *     2177->2312, so they're load-bearing for the reference's register
+ *     pressure. Named rather than inlined for that reason, not because
+ *     they carry independent meaning beyond the field offset itself.
+ *   - colorHigh/pixelColorHigh: (value & 0xF00) >> 8, the same
+ *     color/tile-info high-channel decomposition used throughout this file
+ *     (paired with 0xE0>>5 and 0x1F low-channel extractions at other call
+ *     sites, not consolidated here since each is a separately compiled
+ *     instance).
+ *
+ * differing_halfwords=2177 at 4804/4888 bytes; not byte-exact. r18/r19 (two
+ * permuter adoptions after the 39ad6a9a5/8a658af50 hand-humanization pass)
+ * reintroduced ~90 new_varN locals from the permuter's own preprocessing.
+ * Checked a sample: most are pure address-of captures embedded in a
+ * dereference (*(new_varN = &something)), used exactly once beyond their
+ * declaration -- pointer aliases with no independent meaning, not distinct
+ * program state. Renaming those with invented names would misrepresent
+ * them as meaningful; they're left as new_varN pending either a systematic
+ * naming convention for "redundant register-pressure capture" or their
+ * removal once the owner no longer needs the pressure they add (removal is
+ * NOT safe right now -- verified it regresses the score, see above). The
+ * remaining new_varN/temp_rN/var_rN locals with real computed values or
+ * field-offset roles are candidates for the same treatment given above;
+ * this is a partial pass, not a finished one. Keep every edit tied to
+ * local evidence and score it through gs1cc.
  */
 s32 Func_080ab5e4(s32 arg0)
 {
@@ -103,11 +122,11 @@ s32 Func_080ab5e4(s32 arg0)
     s8 **new_var31;
     s32 temp_r1_2240;
     s32 temp_r1_2308;
-    int new_var16;
+    int colorHighFieldOffset;
     s32 sp24;
-    int new_var2;
+    int packedPosFieldOffset;
     s32 sp10;
-    u32 new_var27;
+    u32 pixelColorHigh;
     s32 eventCode;
     s32 temp_r2_25;
     short new_var52;
@@ -249,10 +268,10 @@ s32 Func_080ab5e4(s32 arg0)
     u8 temp_r2_2035;
     u8 temp_r2_2137;
     int new_var72;
-    u32 new_var18;
+    u32 colorHigh;
     u8 temp_r2_2165;
     void *temp_r3_18;
-    int new_var23;
+    int windowFlagsFieldOffset;
     int new_var26;
     int new_var35;
     void *events;
@@ -270,8 +289,8 @@ s32 Func_080ab5e4(s32 arg0)
     temp_r2_25 = (mode * temp_r2_25);
     sp34 = temp_r2_25;
     new_var70 = temp_r2_25;
-    new_var2 = 0x174;
-    packedPos = (*((u16 *)(((s8 *)ctx) + (new_var70 + new_var2))));
+    packedPosFieldOffset = 0x174;
+    packedPos = (*((u16 *)(((s8 *)ctx) + (new_var70 + packedPosFieldOffset))));
     sp38 = ((u16)Func_08002304(packedPos, 0xA));
     temp_r0_47 = Func_080022f4(packedPos, 0xA);
     statusPtr = (new_var85 = (new_var56 = status));
@@ -489,8 +508,8 @@ s32 Func_080ab5e4(s32 arg0)
             new_var67 = 0x5001;
             sp8 = 0xBB2;
             Func_08015080(0xBB2, *windowPtr, 0, 0);
-            new_var23 = 0x178;
-            temp_r2_424 = (*((u16 *)(((s8 *)(new_var79 = ctx)) + new_var23)));
+            windowFlagsFieldOffset = 0x178;
+            temp_r2_424 = (*((u16 *)(((s8 *)(new_var79 = ctx)) + windowFlagsFieldOffset)));
             Func_08015120((((((u32)(0xE0 & temp_r2_424)) >> 5) * 0x14) + (0x1F & temp_r2_424)) + 0x12C, 4);
             new_var65 = 0xE0;
             sp0 = sp48;
@@ -997,10 +1016,10 @@ s32 Func_080ab5e4(s32 arg0)
         new_var74 = 8;
         new_var58 = 0x1F;
         ;
-        new_var18 = (((u32)(0xF00 & sp28)) >> new_var74);
+        colorHigh = (((u32)(0xF00 & sp28)) >> new_var74);
         new_var60 = new_var58;
         temp_r3_1572 = (new_var60 & sp28);
-        temp_r5_1573 = new_var18;
+        temp_r5_1573 = colorHigh;
         temp_r6_1574 = (((u32)(0xE0 & sp28)) >> 5);
         Func_080771b8(temp_r5_1573, temp_r6_1574, temp_r3_1572);
         Func_080771c8(temp_r5_1573, temp_r6_1574, temp_r3_1572);
@@ -1131,10 +1150,10 @@ s32 Func_080ab5e4(s32 arg0)
                                                 {
                                                     if ((temp_r7_1856 >> 0xF) != 0)
                                                     {
-                                                        new_var27 = (((u32)(temp_r7_1856 & 0xF00)) >> 8);
+                                                        pixelColorHigh = (((u32)(temp_r7_1856 & 0xF00)) >> 8);
                                                         temp_r6_1938 = (((u32)(temp_r7_1856 & 0xE0)) >> 5);
                                                         temp_r3_1936 = (0x1F & temp_r7_1856);
-                                                        temp_r5_1937 = new_var27;
+                                                        temp_r5_1937 = pixelColorHigh;
                                                         Func_080771b8(temp_r5_1937, temp_r6_1938, temp_r3_1936);
                                                         Func_080771c8(temp_r5_1937, temp_r6_1938, temp_r3_1936);
                                                         Func_08077010(temp_r5_1937);
@@ -1415,8 +1434,8 @@ s32 Func_080ab5e4(s32 arg0)
         (*((s8 *)(((s8 *)ctx) + temp_r0_2363))) = (0x1F & temp_r2_2357);
         ;
         (*((s8 *)(((s8 *)ctx) + new_var55))) = ((s8)(((u32)(0xE0 & temp_r2_2357)) >> 5));
-        new_var16 = 0x258;
-        (*((s8 *)(((s8 *)ctx) + (mode + new_var16)))) = ((s8)(((u32)(0xF00 & temp_r2_2357)) >> 8));
+        colorHighFieldOffset = 0x258;
+        (*((s8 *)(((s8 *)ctx) + (mode + colorHighFieldOffset)))) = ((s8)(((u32)(0xF00 & temp_r2_2357)) >> 8));
     }
     (*((u16 *)(((s8 *)ctx) + (sp34 + 0x174)))) = (sp38 + (sp30 * 0xA));
     return result;

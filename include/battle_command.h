@@ -100,6 +100,5 @@ s32 Func_080be378(
 s32 Func_080bbb0c(struct BattlePlan *plan, s32 target_slot);
 
 #define BattleCommand_BuildPlan       Func_080be378
-#define BattleAction_ResolveTarget    Func_080bbb0c
 
 #endif

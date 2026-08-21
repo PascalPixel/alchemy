@@ -117,7 +117,13 @@ The standard loop is:
 7. Adopt the owner only at zero differing reference bytes.
 
 The order matters. Random source variation and compiler-option sweeps cannot
-repair a wrong function boundary, switch binding, loop, type, or algorithm.
+repair a wrong function boundary, switch binding, loop, type, or algorithm. A
+candidate that is vastly non-matching is not a weak near-match to be nursed
+forward: it is evidence that the overall C shape is wrong. Replace the bad
+shape instead of preserving a lucky prefix, register assignment, or local
+instruction coincidence. In some cases the missing shape is one the approved
+compiler cannot emit at all; classify permanent assembly only after recording
+that compiler evidence.
 
 ### 1. Select an owner
 
@@ -211,7 +217,40 @@ hunk. A large mismatch means the source shape is still wrong. Fix algorithms,
 case ownership, types, declaration lifetimes, and aggregates before trying
 spellings or flags.
 
-### 5. Permute only the last mile
+### 5. Invert a stalled last mile
+
+Large mismatches and tiny stubborn mismatches require opposite responses. For
+a large mismatch, discard the overall source shape. For an otherwise close
+candidate whose same small scheduling, ordering, or allocation hunk survives
+several genuinely different source families, stop trying to save the aggregate
+score. Make the stubborn hunk the starting constraint instead.
+
+These are early- and late-stage forms of the same rule: let the scale and
+persistence of the emitted disagreement challenge the source shape. Do not
+mistake the effort already invested in a candidate for evidence that its shape
+must be preserved.
+
+1. State the exact emitted invariant: the contiguous instructions, register
+   roles, frame, branch direction, or other local shape that must not move.
+2. Find ordinary C that emits that invariant naturally, even if hundreds of
+   surrounding instructions become worse.
+3. Freeze the invariant as a hard admission check. Keep a near-exact candidate
+   that violates it only as diagnostic evidence; do not continue tuning it.
+4. Repair outward from the admitted candidate, one coherent diff region at a
+   time, rejecting every edit that loses the invariant.
+5. Move the best admitted candidate into permutation once the remaining source
+   boundaries and behavior are credible.
+
+This inversion is warranted when independent source families keep reproducing
+the same local defect, compiler dumps explain why its ancestry or scheduling is
+locked, and new edits merely recolor the same values or move the defect. Do not
+spend an open-ended search on two halfwords because the rest of the function
+happens to match. Once that evidence exists, inversion is the next structural
+experiment, not an emergency tactic reserved for exhaustive spelling search.
+Conversely, do not invert on the first bad score: establish the repeated local
+constraint with complete diffs and distinct structural experiments first.
+
+### 6. Permute only the last mile
 
 The native permuter is useful when the owner extent, behavior, control flow,
 types, declarations, and major expression boundaries are already credible. It
@@ -225,10 +264,12 @@ tools/compiler/target/release/compiler permute --help
 Use explicit `PERM_*` choices or semantics-preserving AST mutations. Mixed
 guided and unguided seeds are reasonable after a heat-guided run stagnates.
 Keep every run under ignored output, read a winner's complete diff, and rescore
-it independently before harvesting it. A lower internal score is not proof of
-semantic correctness.
+it independently before harvesting it. When a search has a frozen local
+invariant, apply that admission check to every retained winner; a lower internal
+score that breaks the invariant is a rejected candidate. A lower internal score
+is not proof of semantic correctness.
 
-### 6. Adopt only exact work
+### 7. Adopt only exact work
 
 For a main-image owner, adoption is allowed only when linked
 `differing_halfwords` is zero:

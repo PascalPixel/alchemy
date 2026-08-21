@@ -726,7 +726,6 @@ loop_225:
                                     var_r8_1869 = 0;
                                     temp_r6_1871 = (u32) (temp_r7_1856 & 0xE0) >> 5;
                                     temp_r5_1872 = temp_r7_1856 & 0x1F;
-                                    sp8 = temp_r4_1863;
                                     if ((Func_08077210(temp_r4_1863, temp_r6_1871, temp_r5_1872) != 0) || (Func_08077208(temp_r4_1863, temp_r6_1871, temp_r5_1872) != 0)) {
                                         var_r8_1869 = 1;
                                     }

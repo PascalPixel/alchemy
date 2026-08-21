@@ -77,7 +77,6 @@ s32 Func_080ab5e4(s32 arg0) {
     s32 temp_r7_723;
     s32 var_fp_905;
     s32 var_r0_255;
-    s32 var_r3_1107;
     s32 var_r3_1124;
     s32 var_r5_1634;
     s32 var_r5_1785;
@@ -449,9 +448,7 @@ block_167:
                 Func_08015018(temp_r5_1083, 1);
                 Func_080aafb8(temp_r9_32);
                 M2C_FIELD(temp_r9_32, s32 *, 0x2128) = 0;
-                var_r3_1107 = 2;
-block_159:
-                M2C_FIELD(temp_r9_32, s32 *, 0x212C) = var_r3_1107;
+                M2C_FIELD(temp_r9_32, s32 *, 0x212C) = 2;
                 var_r4_907 = sp8;
             }
             break;
@@ -496,8 +493,8 @@ block_162:
                 Func_08015018(temp_r5_1163, 1);
                 Func_080aafb8(temp_r9_32);
                 M2C_FIELD(temp_r9_32, s32 *, 0x2128) = 0;
-                var_r3_1107 = 8;
-                goto block_159;
+                M2C_FIELD(temp_r9_32, s32 *, 0x212C) = 8;
+                var_r4_907 = sp8;
             }
             break;
         case 12:
@@ -576,8 +573,8 @@ block_162:
                 Func_080aafb8(temp_r9_32);
                 Func_080030f8(1);
                 M2C_FIELD(temp_r9_32, s32 *, 0x2128) = 0;
-                var_r3_1107 = 0x10;
-                goto block_159;
+                M2C_FIELD(temp_r9_32, s32 *, 0x212C) = 0x10;
+                var_r4_907 = sp8;
             }
             break;
         case 17:

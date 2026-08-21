@@ -329,7 +329,7 @@ s32 Func_080ab5e4(s32 arg0)
     {
         Func_080aafb8(events);
         sp44 = 0;
-        if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
+        if (mode < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
         {
             var_r1_82 = statusPtr;
             do
@@ -348,13 +348,13 @@ s32 Func_080ab5e4(s32 arg0)
                     sp44 = temp_r5_95;
                     var_r1_82 += 1;
                 }
-                while (temp_r5_95 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+                while (temp_r5_95 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
             }
             while (0);
         }
         sp44 = 0;
         sp2C = sp30;
-        if (((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))) > 0)
+        if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) > 0)
         {
             do
             {
@@ -370,7 +370,7 @@ s32 Func_080ab5e4(s32 arg0)
                     temp_r1_126 = (sp44 + 1);
                     sp44 = temp_r1_126;
                 }
-                while (temp_r1_126 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+                while (temp_r1_126 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
             }
             while (0);
         }
@@ -383,7 +383,7 @@ s32 Func_080ab5e4(s32 arg0)
         }
         while (0);
         sp44 = 0;
-        if (((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))) > 0)
+        if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) > 0)
         {
             var_r0_148 = statusPtr;
             var_r1_151 = (0xA0 + events);
@@ -414,7 +414,7 @@ s32 Func_080ab5e4(s32 arg0)
                 var_r1_151 += 1;
                 var_r2_152 += 1;
             }
-            while (sp44 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+            while (sp44 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
         }
     }
     if (mode == 1)
@@ -434,7 +434,7 @@ s32 Func_080ab5e4(s32 arg0)
         sp4 = 6;
         Func_080ab2ec(new_var52 = ((char)((short)(*((s32 *)(new_var6 = (((s8 *)(new_var73 = ctx)) + 0x30)))))), (char)((temp_r5_204 * 7) + 1), 2);
         var_r5_237 = 0;
-        if (((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))) > 0)
+        if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) > 0)
         {
             var_r6_240 = 8;
             do
@@ -465,7 +465,7 @@ s32 Func_080ab5e4(s32 arg0)
                 var_r5_237 += 1;
                 var_r6_240 += 0x38;
             }
-            while (var_r5_237 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+            while (var_r5_237 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
         }
     }
     windowPtr = ((s32 *)(((s8 *)temp_r3_18) + 0x10C));
@@ -1152,7 +1152,7 @@ s32 Func_080ab5e4(s32 arg0)
                                     Func_080f9010(0xAF);
                                 }
                                 sp44 = 0;
-                                if (((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))) <= 0)
+                                if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) <= 0)
                                 {
                                 }
                                 else
@@ -1215,7 +1215,7 @@ s32 Func_080ab5e4(s32 arg0)
                                     sp44 = temp_r1_1966;
                                     sp14 += 1;
                                     sp10 += 0xA;
-                                    if (temp_r1_1966 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
+                                    if (temp_r1_1966 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
                                     {
                                         goto loop_225;
                                     }
@@ -1337,7 +1337,7 @@ s32 Func_080ab5e4(s32 arg0)
                                                     if (mode == 0)
                                                     {
                                                         sp44 = 0;
-                                                        if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
+                                                        if (mode < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
                                                         {
                                                             do
                                                             {
@@ -1350,7 +1350,7 @@ s32 Func_080ab5e4(s32 arg0)
                                                                 temp_r1_2240 = (sp44 + 1);
                                                                 sp44 = temp_r1_2240;
                                                             }
-                                                            while (temp_r1_2240 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+                                                            while (temp_r1_2240 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
                                                         }
                                                     }
                                                     goto block_281;
@@ -1370,7 +1370,7 @@ s32 Func_080ab5e4(s32 arg0)
                                                     if (mode == 0)
                                                     {
                                                         sp44 = 0;
-                                                        if (mode < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))))
+                                                        if (mode < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
                                                         {
                                                             do
                                                             {
@@ -1383,7 +1383,7 @@ s32 Func_080ab5e4(s32 arg0)
                                                                 temp_r1_2308 = (sp44 - (-1));
                                                                 sp44 = temp_r1_2308;
                                                             }
-                                                            while (temp_r1_2308 < ((s32)(*((u8 *)(((s8 *)ctx) + 0x219)))));
+                                                            while (temp_r1_2308 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
                                                         }
                                                     }
                                                     block_281:

@@ -602,6 +602,7 @@ after_power:
         if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
             s32 ch;
             s16 *slots;
+            s32 cursor;
 
             ch = Summon_TakeCharge(st, 1);
             if (ch & 0x8000)
@@ -620,29 +621,29 @@ after_power:
                 if (*(s16 *)(BytePtr(slots) + off) == 254) {
                     *(s16 *)(BytePtr(slots) + off) = rec;
                 } else {
+                    s32 woff;
                     s32 next;
                     u8 *base;
-                    s32 woff;
 
                     j = 0;
                     woff = 100;
                     for (;;) {
                         base = (u8 *)slots;
-                        if (*(s16 *)(woff + (s32)base) == 255) {
-                            s32 t;
-
-                            *(s16 *)(base + woff) = rec;
-                            t = jsave + 102;
-                            *(s16 *)(base + t) = 255;
+                        cursor = j + 100;
+                        n = *(s16 *)(cursor + (s32)base);
+                        if (n == 255) {
+                            *(s16 *)((s32)base + cursor) = rec;
+                            next = jsave + 102;
+                            *(s16 *)(base + next) = n;
                             break;
                         }
                         i++;
-                        woff += 2;
                         next = j + 2;
                         j = next;
                         if (i > 5)
                             break;
                         jsave = next;
+                        woff = next + 100;
                         if (*(s16 *)(woff + (s32)base) == 254) {
                             *(s16 *)(woff + (s32)base) = rec;
                             break;
@@ -652,20 +653,20 @@ after_power:
             }
             Summon_Refresh();
             {
-                void *obj;
                 s32 x;
                 s32 y;
 
-                obj = Actor_GetObject(rec);
-                x = *(s32 *)(BytePtr(obj) + 12);
+                /* The slot cursor is dead here; its word now carries the object. */
+                cursor = (s32)Actor_GetObject(rec);
+                x = *(s32 *)(cursor + 12);
                 if (x < 0)
                     x += 0xffff;
-                y = *(s32 *)(BytePtr(obj) + 16);
+                y = *(s32 *)(cursor + 16);
                 x >>= 16;
                 if (y < 0)
                     y += 0xffff;
                 y >>= 16;
-                Actor_Place(obj, rec, x, y);
+                Actor_Place((void *)cursor, rec, x, y);
             }
             Actor_Commit();
             {

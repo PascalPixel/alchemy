@@ -12,7 +12,10 @@ use std::{
 
 const ROM_BASE: u64 = 0x0800_0000;
 const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
-const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE])";
+const OVERLAY_BASE: u64 = 0x0200_0000;
+const OVERLAY_FIRST: usize = 0x36f;
+const OVERLAY_LAST: usize = 0x3ce;
+const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
 struct Report {
@@ -85,6 +88,51 @@ struct UnresolvedOwner {
 }
 
 #[derive(Debug, Serialize)]
+struct OverlayCorpusReport {
+    schema_version: u32,
+    game: &'static str,
+    source_edition: &'static str,
+    base_edition: &'static str,
+    source_state: &'static str,
+    resources_total: usize,
+    owners_total: usize,
+    owner_symbol_bytes: usize,
+    matched_owners: usize,
+    matched_bytes: usize,
+    shared_core_owners: usize,
+    shared_core_bytes: usize,
+    regional_core_owners: usize,
+    regional_core_bytes: usize,
+    unresolved_owners: usize,
+    resource_tables: BTreeMap<String, String>,
+    editions: Vec<EditionSummary>,
+    owners: Vec<OverlayCorpusOwner>,
+    unresolved: Vec<OverlayUnresolvedOwner>,
+}
+
+#[derive(Debug, Serialize)]
+struct OverlayCorpusOwner {
+    en_owner: String,
+    source: String,
+    resource: String,
+    size: usize,
+    core_bytes: usize,
+    status: &'static str,
+    starts: BTreeMap<String, String>,
+    location_methods: BTreeMap<String, &'static str>,
+    core_diff_bytes_from_ja: BTreeMap<String, usize>,
+}
+
+#[derive(Debug, Serialize)]
+struct OverlayUnresolvedOwner {
+    en_owner: String,
+    source: String,
+    resource: String,
+    size: usize,
+    error: String,
+}
+
+#[derive(Debug, Serialize)]
 struct EditionReport {
     edition: String,
     start: String,
@@ -135,6 +183,7 @@ struct Options {
     json: bool,
     calls: bool,
     all: bool,
+    all_overlays: bool,
     write: Option<PathBuf>,
 }
 
@@ -162,9 +211,27 @@ struct LocationAnchor {
     starts: BTreeMap<&'static str, usize>,
 }
 
+struct OverlayOwner {
+    name: String,
+    source: String,
+    resource: usize,
+    en_offset: usize,
+    size: usize,
+}
+
+struct OverlayMatch {
+    owner: OverlayOwner,
+    mask: Vec<bool>,
+    starts: BTreeMap<&'static str, usize>,
+    methods: BTreeMap<&'static str, &'static str>,
+}
+
 pub fn run(args: &[String]) -> Result<(), String> {
     let options = parse(args)?;
     let roms = read_roms(&options.rom_dir)?;
+    if options.all_overlays {
+        return run_all_overlays(&options, &roms);
+    }
     if options.all {
         return run_all(&options, &roms);
     }
@@ -244,7 +311,7 @@ fn analyze_owner(
                     .and_then(|values| values.get(edition).copied())
                     .ok_or(global_error)
                     .and_then(|predicted| {
-                        locate_near_exact(en_owner, &mask, rom, predicted, 0x1000)
+                        locate_near_exact(en_owner, &mask, rom, predicted, 0x1000, ROM_BASE)
                     })
             })
             .map_err(|error| format!("{edition}: {error}"))?;
@@ -319,6 +386,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
     let mut json = false;
     let mut calls = false;
     let mut all = false;
+    let mut all_overlays = false;
     let mut write = None;
     let mut index = 0;
     while index < args.len() {
@@ -326,6 +394,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
             "--json" => json = true,
             "--calls" => calls = true,
             "--all" => all = true,
+            "--all-overlays" => all_overlays = true,
             "--rom-dir" => {
                 index += 1;
                 rom_dir = PathBuf::from(args.get(index).ok_or(USAGE)?);
@@ -351,18 +420,23 @@ fn parse(args: &[String]) -> Result<Options, String> {
         }
         index += 1;
     }
-    if all && owner.is_some() {
-        return Err(format!("--all does not accept an owner\n{USAGE}"));
-    }
-    if !all && write.is_some() {
-        return Err(format!("--write requires --all\n{USAGE}"));
-    }
-    if all && (object.is_some() || calls || json) {
+    if all && all_overlays {
         return Err(format!(
-            "--all uses --object-dir, omits call expansion, and writes JSON directly\n{USAGE}"
+            "--all and --all-overlays are mutually exclusive\n{USAGE}"
         ));
     }
-    if !all {
+    if (all || all_overlays) && owner.is_some() {
+        return Err(format!("corpus scans do not accept an owner\n{USAGE}"));
+    }
+    if !all && !all_overlays && write.is_some() {
+        return Err(format!("--write requires a corpus scan\n{USAGE}"));
+    }
+    if (all || all_overlays) && (object.is_some() || calls || json) {
+        return Err(format!(
+            "corpus scans omit single-object options and write JSON directly\n{USAGE}"
+        ));
+    }
+    if !all && !all_overlays {
         let value = owner.as_deref().ok_or(USAGE)?;
         owner_address(value)?;
     }
@@ -374,6 +448,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
         json,
         calls,
         all,
+        all_overlays,
         write,
     })
 }
@@ -648,6 +723,597 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         print!("{json}");
     }
     Ok(())
+}
+
+fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String> {
+    let owner_list = exact_overlay_owners()?;
+    let (resource_tables, decoded) = decode_overlay_resources(roms)?;
+    let mut matches = BTreeMap::new();
+    let mut failures = BTreeMap::new();
+
+    for (index, owner) in owner_list.iter().enumerate() {
+        match analyze_overlay_owner(owner, &decoded, None) {
+            Ok(found) => {
+                matches.insert(owner.name.clone(), found);
+            }
+            Err(error) => {
+                failures.insert(owner.name.clone(), error);
+            }
+        }
+        if (index + 1) % 200 == 0 || index + 1 == owner_list.len() {
+            eprintln!(
+                "overlay global matched={}/{} unresolved={}",
+                matches.len(),
+                index + 1,
+                failures.len()
+            );
+        }
+    }
+
+    remove_overlay_order_conflicts(&mut matches, &mut failures, "global")?;
+    let global_hints = overlay_location_anchors(&matches);
+    let retry = failures.keys().cloned().collect::<Vec<_>>();
+    let by_name = owner_list
+        .iter()
+        .map(|owner| (owner.name.as_str(), owner))
+        .collect::<BTreeMap<_, _>>();
+    for (index, name) in retry.iter().enumerate() {
+        let owner = by_name[name.as_str()];
+        let hints = match nearest_overlay_hints(owner, &global_hints) {
+            Ok(hints) => hints,
+            Err(error) => {
+                failures.insert(name.clone(), error);
+                continue;
+            }
+        };
+        match analyze_overlay_owner(owner, &decoded, Some(&hints)) {
+            Ok(found) => {
+                matches.insert(name.clone(), found);
+                failures.remove(name);
+            }
+            Err(error) => {
+                failures.insert(name.clone(), error);
+            }
+        }
+        if (index + 1) % 200 == 0 || index + 1 == retry.len() {
+            eprintln!(
+                "overlay locality matched={}/{} unresolved={}",
+                matches.len(),
+                owner_list.len(),
+                failures.len()
+            );
+        }
+    }
+    remove_overlay_order_conflicts(&mut matches, &mut failures, "locality")?;
+
+    let mut owners = Vec::new();
+    let mut edition_totals = EDITIONS
+        .into_iter()
+        .map(|edition| (edition, [0usize; 6]))
+        .collect::<BTreeMap<_, _>>();
+    let mut shared_core_bytes = 0;
+    let mut regional_core_bytes = 0;
+    for found in matches.into_values() {
+        let ja_start = found.starts["ja"];
+        let ja = overlay_window(
+            &decoded,
+            "ja",
+            found.owner.resource,
+            ja_start,
+            found.owner.size,
+        )?;
+        let mut starts = BTreeMap::new();
+        let mut methods = BTreeMap::new();
+        let mut differences = BTreeMap::new();
+        let mut shared = true;
+        for edition in EDITIONS {
+            let start = found.starts[edition];
+            let other = overlay_window(
+                &decoded,
+                edition,
+                found.owner.resource,
+                start,
+                found.owner.size,
+            )?;
+            let difference = core_diff_bytes(ja, other, &found.mask);
+            shared &= difference == 0;
+            starts.insert(
+                edition.to_string(),
+                format!("0x{:08x}", OVERLAY_BASE + start as u64),
+            );
+            methods.insert(edition.to_string(), found.methods[edition]);
+            differences.insert(edition.to_string(), difference);
+            let totals = edition_totals.get_mut(edition).expect("known edition");
+            totals[0] += 1;
+            totals[1] += found.owner.size;
+            if difference == 0 {
+                totals[2] += 1;
+                totals[3] += found.owner.size;
+            } else {
+                totals[4] += 1;
+                totals[5] += found.owner.size;
+            }
+        }
+        if shared {
+            shared_core_bytes += found.owner.size;
+        } else {
+            regional_core_bytes += found.owner.size;
+        }
+        owners.push(OverlayCorpusOwner {
+            en_owner: found.owner.name.clone(),
+            source: found.owner.source.clone(),
+            resource: format!("resource_{:03x}", found.owner.resource),
+            size: found.owner.size,
+            core_bytes: found.mask.iter().filter(|masked| !**masked).count(),
+            status: if shared {
+                "shared_core"
+            } else {
+                "regional_core"
+            },
+            starts,
+            location_methods: methods,
+            core_diff_bytes_from_ja: differences,
+        });
+    }
+    owners.sort_by(|left, right| left.en_owner.cmp(&right.en_owner));
+
+    let unresolved = owner_list
+        .iter()
+        .filter_map(|owner| {
+            failures
+                .get(&owner.name)
+                .map(|error| OverlayUnresolvedOwner {
+                    en_owner: owner.name.clone(),
+                    source: owner.source.clone(),
+                    resource: format!("resource_{:03x}", owner.resource),
+                    size: owner.size,
+                    error: error.clone(),
+                })
+        })
+        .collect::<Vec<_>>();
+    let editions = EDITIONS
+        .into_iter()
+        .map(|edition| {
+            let totals = edition_totals[edition];
+            EditionSummary {
+                edition: edition.into(),
+                matched_owners: totals[0],
+                matched_bytes: totals[1],
+                core_identical_owners: totals[2],
+                core_identical_bytes: totals[3],
+                core_different_owners: totals[4],
+                core_different_bytes: totals[5],
+            }
+        })
+        .collect();
+    let report = OverlayCorpusReport {
+        schema_version: 1,
+        game: "gs1",
+        source_edition: "en",
+        base_edition: "ja",
+        source_state: "byte-exact overlay C",
+        resources_total: OVERLAY_LAST - OVERLAY_FIRST + 1,
+        owners_total: owner_list.len(),
+        owner_symbol_bytes: owner_list.iter().map(|owner| owner.size).sum(),
+        matched_owners: owners.len(),
+        matched_bytes: owners.iter().map(|owner| owner.size).sum(),
+        shared_core_owners: owners
+            .iter()
+            .filter(|owner| owner.status == "shared_core")
+            .count(),
+        shared_core_bytes,
+        regional_core_owners: owners
+            .iter()
+            .filter(|owner| owner.status == "regional_core")
+            .count(),
+        regional_core_bytes,
+        unresolved_owners: unresolved.len(),
+        resource_tables,
+        editions,
+        owners,
+        unresolved,
+    };
+    let json = serde_json::to_string_pretty(&report)
+        .map_err(|error| format!("serialize overlay corpus report: {error}"))?
+        + "\n";
+    if let Some(path) = &options.write {
+        if let Some(parent) = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+        {
+            fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+        }
+        fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
+        println!(
+            "overlay_correspondence={} owners={} matched={} shared_core={} regional_core={} unresolved={}",
+            path.display(),
+            report.owners_total,
+            report.matched_owners,
+            report.shared_core_owners,
+            report.regional_core_owners,
+            report.unresolved_owners
+        );
+    } else {
+        print!("{json}");
+    }
+    Ok(())
+}
+
+fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
+    let mut assembly = BTreeMap::<usize, Vec<String>>::new();
+    let mut owners = Vec::new();
+    for entry in fs::read_dir("exact").map_err(|error| format!("exact: {error}"))? {
+        let path = entry.map_err(|error| error.to_string())?.path();
+        let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+            continue;
+        };
+        let Some(stem) = name.strip_suffix(".c") else {
+            continue;
+        };
+        let Some((resource, address)) = stem.split_once("_c_") else {
+            continue;
+        };
+        let Some(resource) = resource.strip_prefix("resource_") else {
+            continue;
+        };
+        let Ok(resource) = usize::from_str_radix(resource, 16) else {
+            continue;
+        };
+        if !(OVERLAY_FIRST..=OVERLAY_LAST).contains(&resource)
+            || address.len() != 8
+            || !address.bytes().all(|byte| byte.is_ascii_hexdigit())
+        {
+            continue;
+        }
+        let absolute = u64::from_str_radix(address, 16).map_err(|error| error.to_string())?;
+        let en_offset = absolute
+            .checked_sub(OVERLAY_BASE)
+            .ok_or_else(|| format!("{name}: address is below overlay base"))?
+            as usize;
+        if !assembly.contains_key(&resource) {
+            let source = format!("assets/code/resource_{resource:03x}_overlay.s");
+            let text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
+            assembly.insert(resource, text.lines().map(str::to_string).collect());
+        }
+        let tag = format!("AlchemyC_{absolute:08x}:");
+        let lines = &assembly[&resource];
+        let start = lines
+            .iter()
+            .position(|line| line.trim() == tag)
+            .ok_or_else(|| format!("{name}: missing {tag} placeholder"))?;
+        let mut size = 0usize;
+        for line in &lines[start + 1..] {
+            let trimmed = line.trim();
+            if let Some(value) = trimmed.strip_prefix(".space ") {
+                size += parse_usize(value.trim())?;
+            } else if trimmed.starts_with(".L_") && trimmed.ends_with(':') {
+                continue;
+            } else {
+                break;
+            }
+        }
+        if size == 0 {
+            return Err(format!("{name}: exact placeholder has no span"));
+        }
+        owners.push(OverlayOwner {
+            name: format!("resource_{resource:03x}:0x{absolute:08x}"),
+            source: format!("exact/{name}"),
+            resource,
+            en_offset,
+            size,
+        });
+    }
+    owners.sort_by_key(|owner| (owner.resource, owner.en_offset));
+    if owners.is_empty() {
+        return Err("exact/ contains no exact overlay C owners".into());
+    }
+    Ok(owners)
+}
+
+fn parse_usize(value: &str) -> Result<usize, String> {
+    value
+        .strip_prefix("0x")
+        .map_or_else(|| value.parse(), |hex| usize::from_str_radix(hex, 16))
+        .map_err(|error| format!("invalid integer {value}: {error}"))
+}
+
+type DecodedOverlays = BTreeMap<&'static str, BTreeMap<usize, Vec<u8>>>;
+
+fn decode_overlay_resources(
+    roms: &EditionRoms,
+) -> Result<(BTreeMap<String, String>, DecodedOverlays), String> {
+    let mut tables = BTreeMap::new();
+    let mut decoded = BTreeMap::new();
+    for edition in EDITIONS {
+        let rom = &roms.images[edition];
+        let table = resource_table(rom)?;
+        tables.insert(
+            edition.to_string(),
+            format!("0x{:08x}", ROM_BASE + table as u64),
+        );
+        let mut resources = BTreeMap::new();
+        for resource in OVERLAY_FIRST..=OVERLAY_LAST {
+            let start = resource_pointer(rom, table, resource)?;
+            let next = resource_pointer(rom, table, resource + 1).ok();
+            let end = next
+                .filter(|next| *next > start && *next <= rom.len())
+                .unwrap_or(rom.len());
+            let (bytes, _) = match rom[start] {
+                0 => extract_resource::decode_general(rom, start, end, 0x10_0000),
+                1 => extract_resource::decode_palette(rom, start + 1, end, 0x10_0000),
+                tag => return Err(format!("{edition}: resource {resource:03x} has tag {tag}")),
+            }
+            .map_err(|error| format!("{edition}: resource {resource:03x}: {error}"))?;
+            resources.insert(resource, bytes);
+        }
+        decoded.insert(edition, resources);
+    }
+    Ok((tables, decoded))
+}
+
+fn resource_table(rom: &[u8]) -> Result<usize, String> {
+    (0..rom.len().saturating_sub(8))
+        .step_by(4)
+        .find(|offset| {
+            u32::from_le_bytes(rom[*offset..*offset + 4].try_into().unwrap()) as u64 == ROM_BASE
+                && u32::from_le_bytes(rom[*offset + 4..*offset + 8].try_into().unwrap()) as u64
+                    == ROM_BASE + *offset as u64
+        })
+        .ok_or("resource directory self-pointer was not found".into())
+}
+
+fn resource_pointer(rom: &[u8], table: usize, resource: usize) -> Result<usize, String> {
+    let at = table
+        .checked_add(resource * 4)
+        .ok_or("resource directory offset overflow")?;
+    let address = u32::from_le_bytes(
+        rom.get(at..at + 4)
+            .ok_or("resource directory extends past ROM")?
+            .try_into()
+            .unwrap(),
+    ) as u64;
+    rom_offset(address, rom.len())
+}
+
+fn overlay_window<'a>(
+    decoded: &'a DecodedOverlays,
+    edition: &str,
+    resource: usize,
+    start: usize,
+    size: usize,
+) -> Result<&'a [u8], String> {
+    decoded[edition][&resource]
+        .get(start..start + size)
+        .ok_or_else(|| format!("{edition}: resource {resource:03x} owner extends past container"))
+}
+
+fn overlay_mask(owner: &[u8], en_offset: usize) -> Vec<bool> {
+    let mut mask = vec![false; owner.len()];
+    for at in (0..owner.len().saturating_sub(3)).step_by(2) {
+        let high = u16::from_le_bytes([owner[at], owner[at + 1]]);
+        let low = u16::from_le_bytes([owner[at + 2], owner[at + 3]]);
+        if high & 0xf800 == 0xf000 && low & 0xf800 == 0xf800 {
+            mask[at..at + 4].fill(true);
+        }
+    }
+    for at in (0..owner.len().saturating_sub(1)).step_by(2) {
+        let instruction = u16::from_le_bytes([owner[at], owner[at + 1]]);
+        if instruction & 0xf800 != 0x4800 {
+            continue;
+        }
+        let pc = (OVERLAY_BASE + en_offset as u64 + at as u64 + 4) & !3;
+        let target = pc + u64::from(instruction & 0xff) * 4;
+        let Some(literal) = target.checked_sub(OVERLAY_BASE + en_offset as u64) else {
+            continue;
+        };
+        let literal = literal as usize;
+        if literal + 4 <= mask.len() {
+            mask[literal..literal + 4].fill(true);
+        }
+    }
+    mask
+}
+
+fn analyze_overlay_owner(
+    owner: &OverlayOwner,
+    decoded: &DecodedOverlays,
+    hints: Option<&BTreeMap<&str, usize>>,
+) -> Result<OverlayMatch, String> {
+    let en = overlay_window(decoded, "en", owner.resource, owner.en_offset, owner.size)?;
+    let mask = overlay_mask(en, owner.en_offset);
+    let core_bytes = mask.iter().filter(|masked| !**masked).count();
+    if core_bytes < 4 {
+        let raw_identical = EDITIONS.into_iter().all(|edition| {
+            overlay_window(
+                decoded,
+                edition,
+                owner.resource,
+                owner.en_offset,
+                owner.size,
+            ) == Ok(en)
+        });
+        if raw_identical {
+            return Ok(OverlayMatch {
+                owner: OverlayOwner {
+                    name: owner.name.clone(),
+                    source: owner.source.clone(),
+                    resource: owner.resource,
+                    en_offset: owner.en_offset,
+                    size: owner.size,
+                },
+                mask,
+                starts: EDITIONS
+                    .into_iter()
+                    .map(|edition| (edition, owner.en_offset))
+                    .collect(),
+                methods: EDITIONS
+                    .into_iter()
+                    .map(|edition| {
+                        (
+                            edition,
+                            if edition == "en" {
+                                "source"
+                            } else {
+                                "resource_offset_exact"
+                            },
+                        )
+                    })
+                    .collect(),
+            });
+        }
+        return Err(format!(
+            "only {core_bytes} bytes remain after masking Thumb calls and literal fields"
+        ));
+    }
+    let owner_anchors = anchors(en, &mask);
+    let mut starts = BTreeMap::new();
+    let mut methods = BTreeMap::new();
+    starts.insert("en", owner.en_offset);
+    methods.insert("en", "source");
+    for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
+        let container = &decoded[edition][&owner.resource];
+        let located = if owner_anchors.is_empty() {
+            Err("no relocation-free anchor found in decoded resource".into())
+        } else {
+            locate(en, &mask, &owner_anchors, container)
+        };
+        let (start, method) = match located {
+            Ok((start, _)) => (start, "global_thumb_anchor"),
+            Err(_) if container.get(owner.en_offset..owner.en_offset + owner.size) == Some(en) => {
+                (owner.en_offset, "resource_offset_exact")
+            }
+            Err(global_error) => {
+                let predicted = hints
+                    .and_then(|values| values.get(edition).copied())
+                    .ok_or(global_error)
+                    .map_err(|error| format!("{edition}: {error}"))?;
+                let (start, _) =
+                    locate_near_exact(en, &mask, container, predicted, 0x1000, OVERLAY_BASE)
+                        .map_err(|error| format!("{edition}: {error}"))?;
+                (start, "neighbor_exact")
+            }
+        };
+        starts.insert(edition, start);
+        methods.insert(edition, method);
+    }
+    Ok(OverlayMatch {
+        owner: OverlayOwner {
+            name: owner.name.clone(),
+            source: owner.source.clone(),
+            resource: owner.resource,
+            en_offset: owner.en_offset,
+            size: owner.size,
+        },
+        mask,
+        starts,
+        methods,
+    })
+}
+
+struct OverlayLocationAnchor {
+    resource: usize,
+    en_offset: usize,
+    starts: BTreeMap<&'static str, usize>,
+}
+
+fn overlay_location_anchors(
+    matches: &BTreeMap<String, OverlayMatch>,
+) -> Vec<OverlayLocationAnchor> {
+    matches
+        .values()
+        .map(|found| OverlayLocationAnchor {
+            resource: found.owner.resource,
+            en_offset: found.owner.en_offset,
+            starts: found.starts.clone(),
+        })
+        .collect()
+}
+
+fn nearest_overlay_hints(
+    owner: &OverlayOwner,
+    anchors: &[OverlayLocationAnchor],
+) -> Result<BTreeMap<&'static str, usize>, String> {
+    let anchor = anchors
+        .iter()
+        .filter(|anchor| anchor.resource == owner.resource)
+        .min_by_key(|anchor| anchor.en_offset.abs_diff(owner.en_offset))
+        .ok_or_else(|| format!("resource_{:03x}: no global anchors", owner.resource))?;
+    let mut hints = BTreeMap::new();
+    for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
+        let predicted =
+            anchor.starts[edition] as i128 + owner.en_offset as i128 - anchor.en_offset as i128;
+        if predicted >= 0 {
+            hints.insert(edition, predicted as usize);
+        }
+    }
+    Ok(hints)
+}
+
+fn remove_overlay_order_conflicts(
+    matches: &mut BTreeMap<String, OverlayMatch>,
+    failures: &mut BTreeMap<String, String>,
+    phase: &str,
+) -> Result<(), String> {
+    loop {
+        let mut conflict = None;
+        for resource in OVERLAY_FIRST..=OVERLAY_LAST {
+            let names = matches
+                .iter()
+                .filter(|(_, found)| found.owner.resource == resource)
+                .map(|(name, _)| name.clone())
+                .collect::<Vec<_>>();
+            for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
+                for pair in names.windows(2) {
+                    if matches[&pair[1]].starts[edition] <= matches[&pair[0]].starts[edition] {
+                        conflict = Some((edition, pair[0].clone(), pair[1].clone()));
+                        break;
+                    }
+                }
+                if conflict.is_some() {
+                    break;
+                }
+            }
+            if conflict.is_some() {
+                break;
+            }
+        }
+        let Some((edition, left, right)) = conflict else {
+            return Ok(());
+        };
+        let left_error = overlay_prediction_error(&left, edition, matches, [&left, &right]);
+        let right_error = overlay_prediction_error(&right, edition, matches, [&left, &right]);
+        let rejected = if right_error >= left_error {
+            right
+        } else {
+            left
+        };
+        matches.remove(&rejected);
+        failures.insert(
+            rejected,
+            format!("{edition}: {phase} counterpart conflicts with neighboring proved owner order"),
+        );
+    }
+}
+
+fn overlay_prediction_error(
+    owner: &str,
+    edition: &str,
+    matches: &BTreeMap<String, OverlayMatch>,
+    excluded: [&str; 2],
+) -> usize {
+    let found = &matches[owner];
+    let neighbor = matches
+        .iter()
+        .filter(|(name, candidate)| {
+            candidate.owner.resource == found.owner.resource && !excluded.contains(&name.as_str())
+        })
+        .min_by_key(|(_, candidate)| candidate.owner.en_offset.abs_diff(found.owner.en_offset));
+    let Some((_, neighbor)) = neighbor else {
+        return usize::MAX;
+    };
+    let predicted = neighbor.starts[edition] as i128 + found.owner.en_offset as i128
+        - neighbor.owner.en_offset as i128;
+    found.starts[edition].abs_diff(predicted.max(0) as usize)
 }
 
 fn location_anchors(reports: &BTreeMap<String, Report>) -> Result<Vec<LocationAnchor>, String> {
@@ -989,6 +1655,7 @@ fn locate_near_exact(
     rom: &[u8],
     predicted: usize,
     radius: usize,
+    address_base: u64,
 ) -> Result<(usize, usize), String> {
     if owner.len() > rom.len() {
         return Err("owner is larger than ROM".into());
@@ -1007,13 +1674,13 @@ fn locate_near_exact(
     let Some(&(distance, start)) = exact.first() else {
         return Err(format!(
             "no exact core within {radius:#x} bytes of predicted 0x{:08x}",
-            ROM_BASE + predicted as u64
+            address_base + predicted as u64
         ));
     };
     if exact.get(1).is_some_and(|next| next.0 == distance) {
         return Err(format!(
             "ambiguous exact core near predicted 0x{:08x}",
-            ROM_BASE + predicted as u64
+            address_base + predicted as u64
         ));
     }
     Ok((start, 0))
@@ -1273,7 +1940,10 @@ mod tests {
         let mut rom = vec![0xff; 128];
         rom[24..36].copy_from_slice(&owner);
         rom[88..100].copy_from_slice(&owner);
-        assert_eq!(locate_near_exact(&owner, &mask, &rom, 80, 32), Ok((88, 0)));
+        assert_eq!(
+            locate_near_exact(&owner, &mask, &rom, 80, 32, ROM_BASE),
+            Ok((88, 0))
+        );
     }
 
     #[test]
@@ -1283,9 +1953,29 @@ mod tests {
         let mut rom = vec![0xff; 128];
         rom[24..36].copy_from_slice(&owner);
         rom[56..68].copy_from_slice(&owner);
-        assert!(locate_near_exact(&owner, &mask, &rom, 40, 32)
+        assert!(locate_near_exact(&owner, &mask, &rom, 40, 32, ROM_BASE)
             .unwrap_err()
             .contains("ambiguous"));
+    }
+
+    #[test]
+    fn finds_relocated_resource_directory_from_self_pointer() {
+        let mut rom = vec![0xff; 64];
+        rom[16..20].copy_from_slice(&(ROM_BASE as u32).to_le_bytes());
+        rom[20..24].copy_from_slice(&((ROM_BASE + 16) as u32).to_le_bytes());
+        assert_eq!(resource_table(&rom), Ok(16));
+    }
+
+    #[test]
+    fn masks_overlay_calls_and_reached_literal_words() {
+        let mut owner = vec![0; 16];
+        owner[0..2].copy_from_slice(&0x4801u16.to_le_bytes());
+        owner[4..6].copy_from_slice(&0xf000u16.to_le_bytes());
+        owner[6..8].copy_from_slice(&0xf800u16.to_le_bytes());
+        let mask = overlay_mask(&owner, 0);
+        assert_eq!(&mask[0..4], &[false; 4]);
+        assert_eq!(&mask[4..12], &[true; 8]);
+        assert_eq!(&mask[12..16], &[false; 4]);
     }
 
     #[test]

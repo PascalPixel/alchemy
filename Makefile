@@ -76,10 +76,13 @@ progress-subject:
 
 correspondence: build-claimed
 	$(COMPILER) cross-edition --all --write recon/gs1/exact-correspondence.json
+	$(COMPILER) cross-edition --all-overlays --write recon/gs1/exact-overlay-correspondence.json
 
 correspondence-check: build-claimed
 	$(COMPILER) cross-edition --all --write out/exact-correspondence.check.json
+	$(COMPILER) cross-edition --all-overlays --write out/exact-overlay-correspondence.check.json
 	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.check.json
+	cmp recon/gs1/exact-overlay-correspondence.json out/exact-overlay-correspondence.check.json
 
 coverage: correspondence
 	$(CHECK) coverage --write

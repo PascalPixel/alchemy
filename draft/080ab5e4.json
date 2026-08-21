@@ -2,17 +2,13 @@
   "owner": "main:0x080ab5e4",
   "span_bytes": 4888,
   "score": {
-    "candidate_bytes": 4748,
-    "reference_bytes": 4748,
-    "wrong_instructions": 2001,
-    "differing_halfwords": 2324,
-    "class": "size parity",
-    "objdiff_structural_percent": 58.86819,
-    "note": "workbench frame: 4748/4748 at 2324hw against the assembled function object. Main-checkout candidate-show frame: 4748 vs the 4888-byte owner span, 2394 differing halfwords -- the span includes trailing bytes the function object does not. Record both; the owner-span number is the adoption-relevant one.",
-    "candidate_show_owner_span": {
-      "reference_bytes": 4888,
-      "differing_halfwords": 2394
-    }
+    "candidate_bytes": 4732,
+    "reference_bytes": 4888,
+    "differing_halfwords": 2371,
+    "wrong_instructions": 2029,
+    "class": "wrong",
+    "normalized_insn_diff": "2181 ours / 2258 reference, 382 hunks, weight 1484",
+    "note": "raw halfwords are phase-dominated while the candidate is short; the normalized instruction diff and the bl-sequence alignment are the working compasses"
   },
   "shape": {
     "calls": 186,
@@ -23,11 +19,13 @@
   "domain": "Colosso tournament handler: texts 0x2128/0x212c (finals gating), 0xbbe (recovering), 0x219 (Warrior's Helm); IWRAM 0x03001c94/0x03001af8; reads Data_02000240",
   "expressed": [
     "complete entry paths for both arg0 values, local initialization, persistent tournament fields, and competitor-status array construction",
-    "full pre-dispatch UI and participant-selection control flow, including the nested loops and redraw paths omitted by the former linear call scaffold",
     "the 28-case mov-pc dispatch at +0x71c: state = *(seq+0x212c) (skip when 0), tick counter (seq+0x2128)++ each entry, jump table at +0x74c, eight empty slots sharing the after-switch address",
     "all switch interiors, shared tails, dialog sequences, timing gates, and progression updates",
     "complete post-dispatch input, recovery, reward, redraw, and final persistent-store paths through the owner return",
-    "the evidence-backed function signature s32 Func_080ab5e4(s32 arg0), replacing the former void(void) scaffold"
+    "the evidence-backed function signature s32 Func_080ab5e4(s32 arg0), replacing the former void(void) scaffold",
+    "the competitor-status array is a real 8-byte local (s8 status[8]) at the top of the frame, declared first: m2c faked it as (&sp0 + 0x64), s32* arithmetic that put the address 400 bytes off and mis-sized the frame. The reference clears it as a byte walk from &status[7] down to &status[0] (strb/subs/cmp/bge) and keeps a pointer local to &status[0]",
+    "the packed tournament value's div and mod results are both zero-extended to u16 (the reference lsls/lsrs #16 pair after each of Func_08002304 and Func_080022f4)",
+    "all seven dialog-wait sites are rotated while loops -- while (Func_08015048() == 0) Func_080030f8(1); -- so the frame pump is emitted BEFORE the poll, as the reference's b-to-test/body/test layout shows. m2c's top-tested goto loop emitted them in the opposite order; this one family closed 14 of the 26 bl-sequence hunks"
   ],
   "unexpressed": [
     {

@@ -32,19 +32,29 @@
   ],
   "unexpressed": [
     {
+      "op": "store deficit",
+      "count": 43,
+      "where": "instruction-mix histogram: ours 104 str vs reference 147. Frame is 88 bytes/18 addressed slots against the reference's 108/21, so the reference keeps roughly three to five more values in memory across calls. These are spills that follow from source shape -- more distinct live locals than m2c's collapsed temporaries -- not from missing statements (strb/strh already match)"
+    },
+    {
+      "op": "byte-load signedness",
+      "count": "5-7",
+      "where": "reference ldrsb 13 / ldrb 38; ours ldrsb 8 / ldrb 45. The status array is read SIGNED (ldr the pointer, ldr the index, ldrsb, cmp #4), so the m2c (u8) casts on sp1C[...] at the mask sites are candidates for removal; check each against its reference site before changing"
+    },
+    {
+      "op": "block placement",
+      "count": 61,
+      "where": "a 61-instruction flag/status block emits at ours 0x1178 but reference 0xd38; the accompanying replace hunk shows ours setting a selector to 8 where the reference sets 1 (the var_r3_1107 = 2 / 8 paths into block_159). Read those two paths against the reference before moving them"
+    },
+    {
       "op": "aggregate recovery",
       "count": "whole owner",
-      "where": "raw M2C_FIELD offsets and numeric bases still need evidence-backed structs, arrays, and field names"
+      "where": "raw M2C_FIELD offsets still need evidence-backed structs and field names; 0x30 (19 uses) and 0x219 (19 uses) are the remaining hot fields, direct-immediate and pool-indexed respectively"
     },
     {
       "op": "symbol recovery",
       "count": "whole owner",
-      "where": "m2c temporaries and Func_* callees remain provisional until callers, data, and text establish honest names"
-    },
-    {
-      "op": "source-shape repair",
-      "count": "2001 instructions",
-      "where": "all regions are represented, but normalized diffs still show wrong types, expression boundaries, declaration order, and aggregate shape"
+      "where": "m2c temporaries and Func_* callees remain provisional"
     }
   ],
   "rejected": [
@@ -64,6 +74,8 @@
     "m2c 19f2ddb reconstructed the complete owner after symbolizing one 28-entry jump table and 110 pool/table references. The default symbolic assembly reassembles byte-identically to the reference (SHA-256 d68f1ce2d575bfa118d30df90603a97e2b95596b9ec1ef143ff55e1e594d91d5).",
     "The generated source was repaired only for gs1cc's recovered field widths and pointer types; no inline assembly, fixed-register variables, copied bytes, or compiler changes were used.",
     "Compared with the former 1492-byte scaffold, the full candidate reaches exact 4748-byte size, improves the linked score from 2438 to 2324 differing halfwords, and improves objdiff v3.8.0 ARMv4T structural similarity from 22.23341% to 58.86819%. It remains a draft, not progress.",
-    "Two native permuter waves (20,000 requested candidates total, 12 workers, seeds 20260820/20260821) confirmed this is not a last-mile owner. The safe winner reduced normalized structural rows but worsened the independent byte score and rewrote 1,656 source lines. Repair aggregate types and source shape before another permutation run. Ignored reports remain under out/permuter/080ab5e4-r{1,2}."
+    "Two native permuter waves (20,000 requested candidates total, 12 workers, seeds 20260820/20260821) confirmed this is not a last-mile owner. The safe winner reduced normalized structural rows but worsened the independent byte score and rewrote 1,656 source lines. Repair aggregate types and source shape before another permutation run. Ignored reports remain under out/permuter/080ab5e4-r{1,2}.",
+    "session method note: while the candidate is short of 4888 bytes, raw differing_halfwords and wrong_instructions are phase-dominated and mislead (the 0x10C pointer local improved structure sharply while raising raw halfwords). The working compasses are the normalized instruction diff and the bl-sequence alignment; adopt only on linked bytes once size parity is reached",
+    "the switch case order (27,26,0,1/3/7/8/21,2,5/6,12,13/15/16,14,17/19,20,23) already matches the reference emission order because m2c derived it from the jump table -- do not re-litigate case ordering; the remaining work is within-case structure"
   ]
 }

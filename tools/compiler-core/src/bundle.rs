@@ -134,7 +134,7 @@ pub fn gcc3_cflags() -> Vec<String> {
         "-nostdinc".into(),
         "-ffreestanding".into(),
         "-ffixed-r7".into(),
-        format!("-I{}", root().join("include").display()),
+        format!("-I{}", root().join("games/gs1/include").display()),
     ]
 }
 pub const HOST_KEYS: [&str; 4] = ["darwin-arm64", "darwin-x64", "linux-x64", "linux-arm64"];
@@ -449,20 +449,29 @@ fn append_bundle_path_signature(stream: &mut Vec<u8>, path: &Path) {
         Err(_) => append_signature_frame(stream, b"missing"),
     }
 }
-fn compiler_bundle_signature_for_paths(paths: &[PathBuf], include: &Path) -> String {
+fn compiler_bundle_signature_for_paths(paths: &[PathBuf], includes: &[PathBuf]) -> String {
     let mut stream: Vec<u8> = Vec::new();
     append_signature_frame(&mut stream, b"alchemy compiler bundle v2");
     for path in paths {
         append_bundle_path_signature(&mut stream, path);
     }
-    append_signature_frame(&mut stream, b"alchemy compiler include tree v1");
-    append_compiler_input_tree(&mut stream, include, include);
+    append_signature_frame(&mut stream, b"alchemy compiler include trees v2");
+    for include in includes {
+        append_signature_frame(&mut stream, &path_bytes(include));
+        append_compiler_input_tree(&mut stream, include, include);
+    }
     sha256::hex(&stream)
 }
 pub fn compiler_bundle_signature_uncached() -> String {
     ensure_compiler_bundle_access()
         .unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
-    compiler_bundle_signature_for_paths(&signature_paths(), &root().join("include"))
+    compiler_bundle_signature_for_paths(
+        &signature_paths(),
+        &[
+            root().join("games/gs1/include"),
+            root().join("games/gs2/include"),
+        ],
+    )
 }
 pub fn compiler_bundle_signature() -> String {
     ensure_compiler_bundle_access()

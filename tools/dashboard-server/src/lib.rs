@@ -25,7 +25,18 @@ const TREES: [(&str, &str); 4] = [
     ("images", "Images"),
     ("music", "Music"),
 ];
-const COVERAGE_DIRS: [&str; 6] = ["asm", "assets", "metrics", "semantic", "exact", "recon"];
+const COVERAGE_DIRS: [&str; 10] = [
+    "games/gs1/asm",
+    "games/gs1/assets",
+    "games/gs1/metrics",
+    "games/gs1/semantic",
+    "games/gs1/src",
+    "games/gs1/recon",
+    "games/gs1/project.json",
+    "games/gs2",
+    "games/gs2/project.json",
+    "games/alchemy",
+];
 
 pub mod cli {
     pub fn entry(args: &[String]) {
@@ -151,7 +162,7 @@ fn root() -> PathBuf {
         })
 }
 fn font() -> PathBuf {
-    root().join("assets/fonts/weyard.otf")
+    root().join("games/gs1/assets/fonts/weyard.otf")
 }
 fn mtime(path: &Path) -> f64 {
     std::fs::metadata(path)
@@ -163,7 +174,8 @@ fn mtime(path: &Path) -> f64 {
         })
 }
 fn page_version() -> String {
-    coverage_map::sha1::sha1_hex(assets::STYLES.as_bytes())[..16].into()
+    let client = client::bundled_client().unwrap_or_default();
+    coverage_map::sha1::sha1_hex(format!("{}\0{client}", assets::STYLES).as_bytes())[..16].into()
 }
 fn port() -> u16 {
     std::env::var("ALCHEMY_DASHBOARD_PORT")
@@ -188,8 +200,10 @@ pub struct Live {
     tracked: f64,
     tracked_percent: f64,
     retained: f64,
-    ja_sources: usize,
-    en_sources: usize,
+    gs1_ja_sources: usize,
+    gs1_en_sources: usize,
+    gs2_ja_sources: usize,
+    gs2_en_sources: usize,
     correspondence_total: usize,
     correspondence_matched: usize,
     correspondence_shared: usize,
@@ -283,11 +297,14 @@ fn compute() -> Result<Live, String> {
         prefer_verified_assets: true,
     })?;
     let trees = render_box_trees(&map, Some(&tree), true)?;
-    let ja_sources = count_c(&root().join("recon/gs1/ja"));
-    let en_sources = count_c(&root().join("recon/gs1/en"));
-    let correspondence = correspondence(&root().join("recon/gs1/exact-correspondence.json"))?.add(
-        correspondence(&root().join("recon/gs1/exact-overlay-correspondence.json"))?,
-    );
+    let gs1_ja_sources = count_c(&root().join("games/gs1/recon/ja"));
+    let gs1_en_sources = count_c(&root().join("games/gs1/recon/en"));
+    let gs2_ja_sources = count_c(&root().join("games/gs2/recon/ja"));
+    let gs2_en_sources = count_c(&root().join("games/gs2/recon/en"));
+    let correspondence = correspondence(&root().join("games/gs1/recon/exact-correspondence.json"))?
+        .add(correspondence(
+            &root().join("games/gs1/recon/exact-overlay-correspondence.json"),
+        )?);
     let revision = BOX_TREES
         .iter()
         .map(|name| {
@@ -301,8 +318,10 @@ fn compute() -> Result<Live, String> {
         .collect::<Vec<_>>()
         .into_iter()
         .chain([
-            ja_sources.to_string(),
-            en_sources.to_string(),
+            gs1_ja_sources.to_string(),
+            gs1_en_sources.to_string(),
+            gs2_ja_sources.to_string(),
+            gs2_en_sources.to_string(),
             correspondence.matched.to_string(),
             correspondence.shared.to_string(),
             correspondence.regional.to_string(),
@@ -321,8 +340,10 @@ fn compute() -> Result<Live, String> {
         tracked: n(&["categories", "tracked_c", "bytes"]),
         tracked_percent: n(&["categories", "tracked_c", "percent_of_executable"]),
         retained: n(&["categories", "retained_asm", "bytes"]),
-        ja_sources,
-        en_sources,
+        gs1_ja_sources,
+        gs1_en_sources,
+        gs2_ja_sources,
+        gs2_en_sources,
         correspondence_total: correspondence.total,
         correspondence_matched: correspondence.matched,
         correspondence_shared: correspondence.shared,
@@ -375,8 +396,13 @@ fn snapshot() -> Json {
                     "donePercent",
                     Json::Num((c.exact + c.retained) * 100.0 / c.executable.max(1.0)),
                 ),
-                ("jaSources", Json::Num(c.ja_sources as f64)),
-                ("enSources", Json::Num(c.en_sources as f64)),
+                ("gs1JaSources", Json::Num(c.gs1_ja_sources as f64)),
+                ("gs1EnSources", Json::Num(c.gs1_en_sources as f64)),
+                ("gs2JaSources", Json::Num(c.gs2_ja_sources as f64)),
+                ("gs2EnSources", Json::Num(c.gs2_en_sources as f64)),
+                ("historicalTargets", Json::Num(12.0)),
+                ("fullTargets", Json::Num(1.0)),
+                ("compileOnlyTargets", Json::Num(11.0)),
                 (
                     "correspondenceTotal",
                     Json::Num(c.correspondence_total as f64),
@@ -421,10 +447,11 @@ fn snapshot() -> Json {
             (
                 "project",
                 Json::obj(vec![
-                    ("game", Json::str("Golden Sun")),
-                    ("baseEdition", Json::str("ja")),
-                    ("buildEdition", Json::str("en")),
-                    ("derivedEditions", Json::str("en · de · es · fr · it")),
+                    ("title", Json::str("Golden Sun · The Lost Age")),
+                    ("gs1", Json::str("ja · en · de · es · fr · it")),
+                    ("gs2", Json::str("ja · en · de · es · fr · it")),
+                    ("fullTarget", Json::str("gs1-en")),
+                    ("integration", Json::str("Alchemy")),
                 ]),
             ),
             ("summary", summary),
@@ -606,8 +633,8 @@ impl Watcher {
             .map(|p| (p.clone(), fingerprint(&p)))
             .collect::<Vec<_>>();
         for p in [
-            "out/full/asm/manifest.json",
-            "out/full/assets/manifest.json",
+            "out/gs1-en/full/asm/manifest.json",
+            "out/gs1-en/full/assets/manifest.json",
             "out/decomp/diagnose/.revision",
         ]
         .iter()
@@ -744,8 +771,11 @@ pub fn run(bind: Option<SocketAddr>) -> std::io::Result<()> {
 pub fn self_test() -> Result<String, String> {
     let js = client::bundled_client().map_err(|e| e.to_string())?;
     if !assets::STYLES.contains(".hover-tooltip")
+        || !assets::STYLES.contains(".products")
         || !js.contains("EventSource")
         || !js.contains("closest(\"g[aria-label]\")")
+        || !js.contains("historicalProduct")
+        || !js.contains("compile-only")
     {
         return Err("dashboard assets are incomplete".into());
     }

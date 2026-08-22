@@ -14,11 +14,11 @@ pub struct AssetPaths {
 }
 
 impl AssetPaths {
-    /// `root` is the repository root. A missing `assets/graphics` yields an
+    /// `root` is the repository root. A missing `games/gs1/assets/graphics` yields an
     /// empty listing, which resolves every resource to its unrelocated path.
     pub fn new(root: impl AsRef<Path>) -> Self {
         let root = root.as_ref().to_path_buf();
-        let graphics_listing = fs::read_dir(root.join("assets/graphics"))
+        let graphics_listing = fs::read_dir(root.join("games/gs1/assets/graphics"))
             .map(|entries| {
                 entries
                     .filter_map(Result::ok)
@@ -41,9 +41,9 @@ impl AssetPaths {
             .iter()
             .any(|file| file.starts_with(&relocated))
         {
-            return format!("assets/graphics/map_resource_{name}");
+            return format!("games/gs1/assets/graphics/map_resource_{name}");
         }
-        format!("assets/graphics/resource_{name}")
+        format!("games/gs1/assets/graphics/resource_{name}")
     }
 
     /// 分類済みの battle/characters と field/characters を順に探し、
@@ -54,7 +54,7 @@ impl AssetPaths {
         for semantic in ["battle", "field"] {
             let relocated = self
                 .root
-                .join("assets/graphics")
+                .join("games/gs1/assets/graphics")
                 .join(format!("{semantic}_characters_{flat}"));
             if relocated.exists() {
                 return relocated;

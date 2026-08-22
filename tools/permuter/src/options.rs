@@ -280,7 +280,7 @@ impl Options {
 
 pub fn self_test() -> Result<(), String> {
     let args = [
-        "recon/gs1/en/overlays/resource_373_c_02005b48.c",
+        "games/gs1/recon/en/overlays/resource_373_c_02005b48.c",
         "--iterations",
         "9",
         "--jobs",
@@ -305,7 +305,7 @@ pub fn self_test() -> Result<(), String> {
     }
     if options.candidates
         != [PathBuf::from(
-            "recon/gs1/en/overlays/resource_373_c_02005b48.c",
+            "games/gs1/recon/en/overlays/resource_373_c_02005b48.c",
         )]
     {
         return Err("option parser lost its candidate list".into());

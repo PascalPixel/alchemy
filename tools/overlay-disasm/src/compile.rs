@@ -155,7 +155,7 @@ pub fn overlay_c_sources(source: &OverlaySource) -> Vec<PathBuf> {
     let Some(anchor) = source.c_source_anchor() else {
         return Vec::new();
     };
-    let directory = root().join("exact");
+    let directory = root().join("games/gs1/src");
     let stripped = Regex::new(r"overlay\.s$", "").replace_first(basename(anchor), "");
     let prefix = format!("{stripped}c_");
     if !directory.exists() {

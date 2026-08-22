@@ -1,0 +1,78 @@
+{
+  "format": 2,
+  "game": "gs1",
+  "canonical_edition": "ja",
+  "default_target": "gs1-en",
+  "build_model": "shared-source-edition-defines",
+  "layout": {
+    "source": "games/gs1/src",
+    "assembly": "games/gs1/asm",
+    "assets": "games/gs1/assets",
+    "include": "games/gs1/include",
+    "metrics": "games/gs1/metrics",
+    "reconstruction": "games/gs1/recon",
+    "semantic": "games/gs1/semantic"
+  },
+  "correspondence": {
+    "calibration": "games/gs1/recon/cross-edition.json",
+    "exact_main": "games/gs1/recon/exact-correspondence.json",
+    "exact_main_builds": "games/gs1/recon/exact-main-builds.json",
+    "exact_overlays": "games/gs1/recon/exact-overlay-correspondence.json"
+  },
+  "editions": {
+    "ja": {
+      "target": "gs1-ja",
+      "define": "GS1_EDITION_JA",
+      "role": "canonical",
+      "rom": "roms/gs1-ja.gba",
+      "output": "out/gs1-ja",
+      "verification": "compile-only"
+    },
+    "en": {
+      "target": "gs1-en",
+      "define": "GS1_EDITION_EN",
+      "role": "derived-default",
+      "rom": "roms/gs1-en.gba",
+      "output": "out/gs1-en",
+      "verification": "full"
+    },
+    "de": {
+      "target": "gs1-de",
+      "define": "GS1_EDITION_DE",
+      "role": "derived",
+      "rom": "roms/gs1-de.gba",
+      "output": "out/gs1-de",
+      "verification": "compile-only"
+    },
+    "es": {
+      "target": "gs1-es",
+      "define": "GS1_EDITION_ES",
+      "role": "derived",
+      "rom": "roms/gs1-es.gba",
+      "output": "out/gs1-es",
+      "verification": "compile-only"
+    },
+    "fr": {
+      "target": "gs1-fr",
+      "define": "GS1_EDITION_FR",
+      "role": "derived",
+      "rom": "roms/gs1-fr.gba",
+      "output": "out/gs1-fr",
+      "verification": "compile-only"
+    },
+    "it": {
+      "target": "gs1-it",
+      "define": "GS1_EDITION_IT",
+      "role": "derived",
+      "rom": "roms/gs1-it.gba",
+      "output": "out/gs1-it",
+      "verification": "compile-only"
+    }
+  },
+  "policy": {
+    "source_direction": "ja-to-derived-editions",
+    "tracked_source_claims_bytes": false,
+    "exactness_is_per_edition": true,
+    "rom_fallback_is_build_progress": false
+  }
+}

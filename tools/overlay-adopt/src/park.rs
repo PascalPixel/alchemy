@@ -47,7 +47,7 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
     String::from_utf8(output.stdout).map_err(|error| error.to_string())
 }
 fn pre_adoption_text(root: &Path, overlay: &str, address: i64) -> Result<String, String> {
-    let relative = format!("assets/code/{overlay}_overlay.s");
+    let relative = format!("games/gs1/assets/code/{overlay}_overlay.s");
     let tag = format!("AlchemyC_{address:08x}:");
     let log = git(
         root,
@@ -240,7 +240,7 @@ pub fn reference_bytes(
     Ok(image[start..end].to_vec())
 }
 pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
-    let path = root.join(format!("assets/code/{overlay}_overlay.s"));
+    let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
     let assembly = fs::read_to_string(&path).map_err(|error| error.to_string())?;
     let lines: Vec<&str> = assembly.split('\n').collect();
     let mut addresses = Vec::new();
@@ -260,7 +260,7 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
         let Some((_, _, span)) = placeholder_block(&lines, address) else {
             continue;
         };
-        let source = root.join(format!("exact/{overlay}_c_{address:08x}.c"));
+        let source = root.join(format!("games/gs1/src/{overlay}_c_{address:08x}.c"));
         if !source.exists() {
             continue;
         }
@@ -310,7 +310,7 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
 pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
-        for entry in fs::read_dir(root.join("assets/code")).map_err(|e| e.to_string())? {
+        for entry in fs::read_dir(root.join("games/gs1/assets/code")).map_err(|e| e.to_string())? {
             let name = entry
                 .map_err(|e| e.to_string())?
                 .file_name()
@@ -336,8 +336,8 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     Ok(if findings == 0 { 0 } else { 1 })
 }
 fn rom_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    let manifest = fs::read_to_string(root.join("assets/manifest.json"))
-        .map_err(|error| format!("assets/manifest.json: {error}"))?;
+    let manifest = fs::read_to_string(root.join("games/gs1/assets/manifest.json"))
+        .map_err(|error| format!("games/gs1/assets/manifest.json: {error}"))?;
     let want = format!("\"{}\"", overlay.trim_start_matches("resource_"));
     let mut address = 0usize;
     let mut compressed = 0usize;
@@ -393,7 +393,7 @@ pub fn truth_window(
     let assembled = match placeholder_span(root, overlay, address) {
         Ok(None) => {
             let path = root
-                .join("assets/code")
+                .join("games/gs1/assets/code")
                 .join(format!("{overlay}_overlay.s"));
             match assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE) {
                 Ok(image) => match image.get(start..start + span as usize) {
@@ -417,7 +417,7 @@ pub fn truth_window(
         })
 }
 pub fn placeholder_span(root: &Path, overlay: &str, address: i64) -> Result<Option<i64>, String> {
-    let path = root.join(format!("assets/code/{overlay}_overlay.s"));
+    let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
     let assembly =
         std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
     let lines: Vec<&str> = assembly.split('\n').collect();
@@ -430,7 +430,7 @@ pub struct Parked {
     pub lines: usize,
 }
 pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result<Parked, String> {
-    let assembly = root.join(format!("assets/code/{overlay}_overlay.s"));
+    let assembly = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
     let original = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     let lines: Vec<&str> = original.split('\n').collect();
     let (start, end, span) = placeholder_block(&lines, address).ok_or_else(|| {
@@ -483,9 +483,11 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
     }
     if apply {
         fs::write(&assembly, &text).map_err(|error| error.to_string())?;
-        let installed = root.join(format!("exact/{overlay}_c_{address:08x}.c"));
+        let installed = root.join(format!("games/gs1/src/{overlay}_c_{address:08x}.c"));
         if installed.exists() {
-            let parked = root.join(format!("recon/gs1/en/overlays/{overlay}_c_{address:08x}.c"));
+            let parked = root.join(format!(
+                "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
+            ));
             fs::rename(&installed, &parked).map_err(|error| {
                 format!(
                     "cannot move {} to the EN reconstruction corpus: {error}",

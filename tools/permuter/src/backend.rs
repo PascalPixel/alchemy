@@ -218,7 +218,7 @@ impl AlchemyBackend {
         let symbol = format!("Func_{stem}");
         let target_instructions = disassemble_bytes(target.expected())?;
         let target_source_instructions = if target.baseline_assembly().is_some() {
-            let reference = root().join("asm").join(format!("{stem}.s"));
+            let reference = root().join("games/gs1/asm").join(format!("{stem}.s"));
             let source = fs::read_to_string(&reference)
                 .map_err(|error| format!("{}: {error}", reference.display()))?;
             Some(candidate_show::insns::gas_function_insns(&source, &symbol))

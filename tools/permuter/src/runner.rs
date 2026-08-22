@@ -1578,7 +1578,7 @@ pub fn self_test() -> Result<(), String> {
     if first != candidate_plan(&permutation, 20, 9, false, &weights, 64)? || first.len() != 2 {
         return Err("runner plan is not deterministic".into());
     }
-    if validate_output_path(&root().join("semantic")).is_ok()
+    if validate_output_path(&root().join("games/gs1/semantic")).is_ok()
         || validate_output_path(&root().join("out").join("permuter-self-test")).is_err()
         || validate_output_path(&std::env::temp_dir().join("permuter-self-test")).is_err()
     {
@@ -1596,7 +1596,7 @@ mod tests {
         let permutation = crate::perm::parse("int f(void) { return 1; }").unwrap();
         let weights = Weights::for_profile("gcc");
         assert!(candidate_plan(&permutation, MAX_ITERATIONS + 1, 1, false, &weights, 64).is_err());
-        assert!(validate_output_path(&root().join("semantic")).is_err());
+        assert!(validate_output_path(&root().join("games/gs1/semantic")).is_err());
         let mut measurement = Measurement {
             exact: false,
             score: 17,

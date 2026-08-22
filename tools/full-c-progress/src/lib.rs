@@ -352,12 +352,12 @@ fn source_span(value: &Value, root: &Path) -> Option<Span> {
 }
 
 fn main_exact(root: &Path, target: &str, namespace: &Namespace) -> Result<Vec<Span>, String> {
-    let dir = if target == "gs2-en" {
-        "out/gs2-en"
-    } else {
-        "out"
-    };
-    let manifest = json(&root.join(dir).join("full/claimed/manifest.json"))?;
+    let manifest = json(
+        &root
+            .join("out")
+            .join(target)
+            .join("full/claimed/manifest.json"),
+    )?;
     let spans: Vec<_> = array(&manifest, "regions")
         .iter()
         .filter_map(|row| source_span(row, root))
@@ -406,7 +406,7 @@ fn overlay_source_spans(
     let Some(id) = overlay_id(file) else {
         return Ok(Vec::new());
     };
-    let source = read(&root.join("assets/code").join(file))?;
+    let source = read(&root.join("games/gs1/assets/code").join(file))?;
     let mut owners: Vec<Vec<Span>> = Vec::new();
     let mut current: Option<Vec<Span>> = None;
     let mut cursor = 0;
@@ -449,7 +449,7 @@ fn overlay_source_spans(
         let Some(entry) = spans.first().map(|span| span.start) else {
             continue;
         };
-        let path = root.join(format!("exact/{id}_c_{entry:08x}.c"));
+        let path = root.join(format!("games/gs1/src/{id}_c_{entry:08x}.c"));
         if path.exists() && canonical(&read(&path)?) {
             exact.extend(spans);
         }
@@ -458,7 +458,7 @@ fn overlay_source_spans(
 }
 
 fn overlay_exact(root: &Path, value: &Inventory) -> Result<BTreeMap<String, Vec<Span>>, String> {
-    let mut files = std::fs::read_dir(root.join("assets/code"))
+    let mut files = std::fs::read_dir(root.join("games/gs1/assets/code"))
         .map_err(|error| format!("cannot list overlay assembly: {error}"))?
         .filter_map(|item| {
             item.ok()
@@ -546,17 +546,24 @@ fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String
 }
 
 fn report_path(root: &Path, target: &str) -> PathBuf {
-    root.join("metrics").join(format!("{target}-progress.json"))
+    root.join("games")
+        .join(target.split('-').next().unwrap_or("gs1"))
+        .join("metrics")
+        .join(format!("{target}-progress.json"))
 }
 
 fn inventory_path(root: &Path, target: &str) -> PathBuf {
-    root.join("metrics")
+    root.join("games")
+        .join(target.split('-').next().unwrap_or("gs1"))
+        .join("metrics")
         .join(format!("{target}-executable.json"))
 }
 
 fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
     let value = json(
         &root
+            .join("games")
+            .join(target.split('-').next().unwrap_or("gs1"))
             .join("metrics")
             .join(format!("{target}-coverage-map.json")),
     )?;
@@ -569,8 +576,8 @@ fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
     .ok_or_else(|| "coverage map has no categories.retained_asm.bytes".into())
 }
 
-fn check_build(root: &Path) -> Result<(), String> {
-    let value = json(&root.join("out/full/rebuilt.json"))?;
+fn check_build(root: &Path, target: &str) -> Result<(), String> {
+    let value = json(&root.join("out").join(target).join("full/rebuilt.json"))?;
     if get(&value, "byte_identical") != Some(&Value::Bool(true)) {
         return Err("the last full build was not byte-identical".into());
     }
@@ -737,7 +744,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         if cached != expected {
             return Err(format!("tracked {} Full-C report is stale", options.target));
         }
-        check_build(&root)?;
+        check_build(&root, &options.target)?;
     }
     if options.subject {
         Ok(subject(&current, permanent_bytes(&root, &options.target)?)?)

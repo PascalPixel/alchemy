@@ -85,7 +85,8 @@ fn permanent_asm_bytes(root: &Path, target: &str) -> Result<u64, String> {
     // The INDEX copy, like the progress report above it. Reading the working
     // tree would let an unstaged map set the percentage of a commit that does
     // not contain it.
-    let path = format!("metrics/{target}-coverage-map.json");
+    let game = target.split('-').next().unwrap_or("gs1");
+    let path = format!("games/{game}/metrics/{target}-coverage-map.json");
     let text = git(root, &["show", &format!(":{path}")])
         .map_err(|_| format!("stage {path} before committing"))?;
     let document: serde_json::Value =
@@ -198,11 +199,11 @@ fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
 fn report_required(paths: &[String], target: &str) -> bool {
     paths.iter().any(|path| {
         if target == "gs1-en" {
-            path.starts_with("src/")
-                || path.starts_with("asm/")
-                || path.starts_with("include/")
-                || path == "metrics/gs1-en-executable.json"
-                || (path.starts_with("assets/code/resource_")
+            path.starts_with("games/gs1/src/")
+                || path.starts_with("games/gs1/asm/")
+                || path.starts_with("games/gs1/include/")
+                || path == "games/gs1/metrics/gs1-en-executable.json"
+                || (path.starts_with("games/gs1/assets/code/resource_")
                     && (path.ends_with("_overlay.s")
                         || path
                             .rsplit('/')
@@ -212,7 +213,7 @@ fn report_required(paths: &[String], target: &str) -> bool {
             path.starts_with("games/gs2/src/")
                 || path.starts_with("games/gs2/asm/")
                 || path.starts_with("games/gs2/include/")
-                || path == "metrics/gs2-en-executable.json"
+                || path == "games/gs2/metrics/gs2-en-executable.json"
         }
     })
 }
@@ -270,7 +271,8 @@ fn run(arguments: &[String]) -> Result<(), String> {
         .ok_or("usage: check-commit-progress [--target TARGET] COMMIT_MESSAGE")?;
     let root = root();
     let paths = staged_paths(&root)?;
-    let report_path = format!("metrics/{target}-progress.json");
+    let game = target.split('-').next().unwrap_or("gs1");
+    let report_path = format!("games/{game}/metrics/{target}-progress.json");
     let staged_text = git(&root, &["show", &format!(":{report_path}")])
         .map_err(|_| format!("stage {report_path} before committing"))?;
     let staged_value: Value = serde_json::from_str(&staged_text).map_err(|e| e.to_string())?;

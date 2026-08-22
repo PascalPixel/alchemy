@@ -110,7 +110,7 @@ fn extension(path: &str) -> String {
 
 fn canonical_binary_source(path: &str) -> bool {
     let normalized = path.replace('\\', "/").to_lowercase();
-    if !normalized.starts_with("assets/maps/") {
+    if !normalized.starts_with("games/gs1/assets/maps/") {
         return false;
     }
     let leaf = match normalized.rfind('/') {
@@ -469,11 +469,38 @@ impl Entry<'_> {
     }
 }
 
-/// Paths already in HEAD, so the new-text-file rule only fires on growth.
+fn rename_destinations(value: &[u8]) -> std::collections::BTreeSet<String> {
+    let fields = String::from_utf8_lossy(value)
+        .split('\0')
+        .filter(|field| !field.is_empty())
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+    let mut destinations = std::collections::BTreeSet::new();
+    let mut index = 0usize;
+    while index < fields.len() {
+        let status = &fields[index];
+        index += 1;
+        if status.starts_with('R') {
+            // A rename record is status, old path, new path. Copies remain
+            // growth and deliberately do not receive this exemption.
+            if index + 1 >= fields.len() {
+                break;
+            }
+            destinations.insert(fields[index + 1].clone());
+            index += 2;
+        } else {
+            index += 1;
+        }
+    }
+    destinations
+}
+
+/// Paths already in HEAD, plus destinations proved to be staged renames, so
+/// the new-text-file rule fires on growth rather than on directory moves.
 fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
     // ls-files reads the INDEX, which already contains the file being staged, so
     // every new file would look tracked and the rule would never fire. Read HEAD.
-    git(
+    let mut tracked: std::collections::BTreeSet<String> = git(
         root,
         &["ls-tree", "-r", "HEAD", "--name-only"],
         None,
@@ -485,7 +512,16 @@ fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
             .map(str::to_string)
             .collect()
     })
-    .unwrap_or_default()
+    .unwrap_or_default();
+    if let Ok(out) = git(
+        root,
+        &["diff", "--cached", "--name-status", "--find-renames", "-z"],
+        None,
+        "staged rename scan",
+    ) {
+        tracked.extend(rename_destinations(&out));
+    }
+    tracked
 }
 
 /// The shared reject pass. Failure order follows entry order.
@@ -770,15 +806,32 @@ pub const REJECTED_PATHS: &[&str] = &[
 /// Paths the gate must let through.
 pub const ACCEPTED_PATHS: &[&str] = &[
     "src/main.c",
-    "asm/080000c0.s",
-    "assets/graphics/title.png",
-    "assets/audio/theme.mid",
-    "assets/audio/wave.wav",
-    "assets/data/layout.json",
+    "games/gs1/asm/080000c0.s",
+    "games/gs1/assets/graphics/title.png",
+    "games/gs1/assets/audio/theme.mid",
+    "games/gs1/assets/audio/wave.wav",
+    "games/gs1/assets/data/layout.json",
     "tools/compare-roms/src/main.rs",
     "tools/build-full/src/main.rs",
-    "assets/data/resource_2_build_stamp.txt",
-    "assets/maps/town/metatiles.bin",
-    "assets/maps/town/metatile_attributes.bin",
+    "games/gs1/assets/data/resource_2_build_stamp.txt",
+    "games/gs1/assets/maps/town/metatiles.bin",
+    "games/gs1/assets/maps/town/metatile_attributes.bin",
     "rom.sha1",
 ];
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn staged_rename_destinations_are_not_new_files() {
+        let destinations = rename_destinations(
+            b"R100\0assets/data/table.txt\0games/gs1/assets/data/table.txt\0\
+              A\0games/gs1/assets/data/new.txt\0\
+              C100\0assets/data/table.txt\0games/gs2/assets/data/copy.txt\0",
+        );
+        assert!(destinations.contains("games/gs1/assets/data/table.txt"));
+        assert!(!destinations.contains("games/gs1/assets/data/new.txt"));
+        assert!(!destinations.contains("games/gs2/assets/data/copy.txt"));
+    }
+}

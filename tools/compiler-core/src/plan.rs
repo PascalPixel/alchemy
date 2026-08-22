@@ -146,6 +146,10 @@ pub struct SourceToAssemblyPlanOptions {
     pub output: String,
     pub family: Option<CompilerFamily>,
     pub flags: Option<CompilerFlagMutations>,
+    /// Flags consumed by preprocessing rather than cc1. This distinction is
+    /// load-bearing for old-agbcc: its compile step receives an already
+    /// preprocessed `.i` file and rejects driver-level `-D` options.
+    pub preprocessor_flags: Vec<String>,
     /// old_agbcc consumes preprocessed input. Supplying this makes intermediate
     /// ownership explicit; otherwise it is placed beside the assembly output.
     pub preprocessed_output: Option<String>,
@@ -167,6 +171,7 @@ impl SourceToAssemblyPlanOptions {
             output: output.into(),
             family: None,
             flags: None,
+            preprocessor_flags: Vec::new(),
             preprocessed_output: None,
             dumpbase: None,
         }
@@ -349,10 +354,11 @@ pub fn source_to_assembly_plan(
         };
         steps.push(CompilerCommandStep {
             kind: StepKind::Preprocess,
-            command: direct_preprocessor_command_with_minor(
+            command: direct_preprocessor_command_with_minor_and_flags(
                 &options.input,
                 &compiler_input,
                 gcc_minor,
+                &options.preprocessor_flags,
             )?,
         });
         let mut command = vec![
@@ -370,6 +376,7 @@ pub fn source_to_assembly_plan(
         });
     } else {
         let mut arguments = flags.clone();
+        arguments.extend(options.preprocessor_flags.iter().cloned());
         arguments.push("-S".to_string());
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
@@ -413,7 +420,7 @@ pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<Stri
 /// PORT NOTE -- `-D__GNUC__=2` IS HARD-CODED, and that is a real defect once
 /// `sourceToAssemblyPlan` reaches here for the `gcc3` family. gcc3 preprocesses
 /// with `__GNUC__=2 __GNUC_MINOR__=0`, which is gcc 2.0, not gcc 3.0: any header
-/// in `include/` guarded on `__GNUC__ >= 3` takes the wrong branch, and the 2.0
+/// in `games/gs1/include/` guarded on `__GNUC__ >= 3` takes the wrong branch, and the 2.0
 /// combination is a version that never existed in this tree. It is reproduced
 /// rather than corrected because every gcc3 sweep already on record was measured
 /// through this preprocessor invocation, and changing the macro changes the
@@ -429,8 +436,17 @@ pub fn direct_preprocessor_command_with_minor(
     output: &str,
     gcc_minor: i64,
 ) -> Result<Vec<String>> {
+    direct_preprocessor_command_with_minor_and_flags(input, output, gcc_minor, &[])
+}
+
+fn direct_preprocessor_command_with_minor_and_flags(
+    input: &str,
+    output: &str,
+    gcc_minor: i64,
+    flags: &[String],
+) -> Result<Vec<String>> {
     validate_bundle(CompilerTarget::Gs1)?;
-    Ok(vec![
+    let mut command = vec![
         bundle().join("cpp").to_string_lossy().into_owned(),
         "-lang-c".into(),
         "-nostdinc".into(),
@@ -449,10 +465,12 @@ pub fn direct_preprocessor_command_with_minor(
         "-D__ELF__".into(),
         "-Dthumb".into(),
         "-D__thumb__".into(),
-        format!("-I{}", root().join("include").display()),
-        input.to_string(),
-        output.to_string(),
-    ])
+        format!("-I{}", root().join("games/gs1/include").display()),
+    ];
+    command.extend(flags.iter().cloned());
+    command.push(input.to_string());
+    command.push(output.to_string());
+    Ok(command)
 }
 
 /// `directCompilerCommand(input, output, dumpbase, source = dumpbase)`.
@@ -524,4 +542,50 @@ pub fn direct_compiler_command_for_source(
     out.push("-o".to_string());
     out.push(output.to_string());
     Ok(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn edition_define_stays_in_old_agbcc_preprocessor_step() {
+        let mut options = SourceToAssemblyPlanOptions::new(
+            CompilerTarget::Gs1,
+            "games/gs1/src/080000c0.c",
+            "candidate.c",
+            "candidate.s",
+        );
+        options.family = Some(CompilerFamily::OldAgbcc);
+        options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
+
+        let plan = source_to_assembly_plan(&options).unwrap();
+        assert!(plan.steps[0]
+            .command
+            .iter()
+            .any(|argument| argument == "-DGS1_EDITION_JA=1"));
+        assert!(!plan.steps[1]
+            .command
+            .iter()
+            .any(|argument| argument.starts_with("-DGS1_EDITION_")));
+    }
+
+    #[test]
+    fn edition_define_reaches_gcc296_driver() {
+        let mut options = SourceToAssemblyPlanOptions::new(
+            CompilerTarget::Gs2,
+            "games/gs2/src/08120450.c",
+            "candidate.c",
+            "candidate.s",
+        );
+        options.family = Some(CompilerFamily::Gcc296);
+        options.preprocessor_flags = vec!["-DGS2_EDITION_IT=1".into()];
+
+        let plan = source_to_assembly_plan(&options).unwrap();
+        assert_eq!(plan.steps.len(), 1);
+        assert!(plan.steps[0]
+            .command
+            .iter()
+            .any(|argument| argument == "-DGS2_EDITION_IT=1"));
+    }
 }

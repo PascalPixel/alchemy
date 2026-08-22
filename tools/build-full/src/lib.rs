@@ -7,7 +7,9 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use canonical_json::canonical_json;
-use decomp_targets::{parse_decomp_target, target_for, DecompTargetId, DEFAULT_TARGET};
+use decomp_targets::{
+    parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
+};
 use serde_json::{json, Map, Number, Value};
 
 const ROM_BASE: u64 = 0x0800_0000;
@@ -237,7 +239,7 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
 /// `build-claimed` and `build-asm` lost their `[[bin]]` in the entry-point
 /// consolidation and are linked as libraries. Naming their manifests here made
 /// every `build-full` fail with cargo's "a bin target must be available",
-/// which -- because `make progress` reads `out/full/` and only this stage
+/// which -- because `make progress` reads `out/gs1-en/full/` and only this stage
 /// writes it -- left the reported percentage frozen at the last complete run
 /// with nothing saying so.
 fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
@@ -532,6 +534,12 @@ fn place_regions(
 
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, String> {
     let target = target_for(options.target);
+    if target.build_support != BuildSupport::Full {
+        return Err(format!(
+            "{} is compile-only; run `make {}` until its edition link map, assembly, and assets are reconstructed",
+            target.id, target.id
+        ));
+    }
     let rom_path = if Path::new(&options.rom).is_absolute() {
         PathBuf::from(&options.rom)
     } else {

@@ -153,7 +153,7 @@ pub fn run(argv: &[String]) -> Result<Outcome, String> {
         }
     };
     let source_path = root()
-        .join("assets/code")
+        .join("games/gs1/assets/code")
         .join(format!("{}_overlay.s", options.overlay));
     let data = assemble_overlay(&OverlaySource::path(&source_path), OVERLAY_BASE)?;
     let length = if options.length > 0 {

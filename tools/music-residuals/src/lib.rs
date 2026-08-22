@@ -1,4 +1,4 @@
-//! Native build and verification for `assets/audio/residuals_index.json`.
+//! Native build and verification for `games/gs1/assets/audio/residuals_index.json`.
 //!
 //! The residual package is deliberately small: four empty sound headers, the
 //! audited reserve stream, and the zero-filled tail alignment. Sequence byte

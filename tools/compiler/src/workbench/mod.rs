@@ -21,7 +21,7 @@ use std::{
 use structural::StructuralReport;
 use walkdir::WalkDir;
 
-const USAGE: &str = "usage: compiler workbench <recon/gs1/en/main/ADDRESS.c> [--m2c PATH] [--output DIR] [--no-run]";
+const USAGE: &str = "usage: compiler workbench <games/gs1/recon/en/main/ADDRESS.c> [--m2c PATH] [--output DIR] [--no-run]";
 
 #[derive(Debug)]
 struct Options {
@@ -52,7 +52,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let source = absolute_existing(repository, &options.source)?;
     let stem = owner_stem(&source)?;
     let symbol = format!("Func_{stem}");
-    let reference_asm = repository.join("asm").join(format!("{stem}.s"));
+    let reference_asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
     if !reference_asm.is_file() {
         return Err(format!(
             "{}: missing main-image reference assembly",
@@ -271,7 +271,7 @@ fn prepare_output(
 }
 
 fn headers(repository: &Path) -> Result<Vec<PathBuf>, String> {
-    let include = repository.join("include");
+    let include = repository.join("games/gs1/include");
     let mut paths = WalkDir::new(&include)
         .into_iter()
         .filter_map(Result::ok)
@@ -516,7 +516,7 @@ mod tests {
     #[test]
     fn parses_workbench_options() {
         let options = parse_options(&[
-            "recon/gs1/en/main/080ab5e4.c".into(),
+            "games/gs1/recon/en/main/080ab5e4.c".into(),
             "--m2c".into(),
             "m2c/m2c.py".into(),
             "--no-run".into(),
@@ -524,7 +524,7 @@ mod tests {
         .unwrap();
         assert_eq!(
             options.source,
-            PathBuf::from("recon/gs1/en/main/080ab5e4.c")
+            PathBuf::from("games/gs1/recon/en/main/080ab5e4.c")
         );
         assert_eq!(options.m2c, Some(PathBuf::from("m2c/m2c.py")));
         assert!(!options.run);
@@ -533,9 +533,9 @@ mod tests {
     #[test]
     fn validates_owner_stems() {
         assert_eq!(
-            owner_stem(Path::new("recon/gs1/en/main/080AB5E4.c")).unwrap(),
+            owner_stem(Path::new("games/gs1/recon/en/main/080AB5E4.c")).unwrap(),
             "080ab5e4"
         );
-        assert!(owner_stem(Path::new("recon/gs1/en/main/best.c")).is_err());
+        assert!(owner_stem(Path::new("games/gs1/recon/en/main/best.c")).is_err());
     }
 }

@@ -29,7 +29,7 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     Ok((overlay.to_string(), address))
 }
 fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, String> {
-    for directory in ["recon/gs1/en/overlays", "exact"] {
+    for directory in ["games/gs1/recon/en/overlays", "games/gs1/src"] {
         let path = root.join(format!("{directory}/{overlay}_c_{address:08x}.c"));
         if path.exists() {
             return Ok(path);
@@ -59,7 +59,7 @@ fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     None
 }
 fn reviewed_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
-    let text = std::fs::read_to_string(root.join("semantic/regions.json")).ok()?;
+    let text = std::fs::read_to_string(root.join("games/gs1/semantic/regions.json")).ok()?;
     let value: serde_json::Value = serde_json::from_str(&text).ok()?;
     for region in value.get("manual_regions")?.as_array()? {
         if region.get("overlay")?.as_str()? != overlay {

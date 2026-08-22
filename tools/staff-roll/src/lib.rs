@@ -365,7 +365,7 @@ pub fn verify_staff_roll(rom_path: &Path, index_path: &Path) -> Result<usize> {
 
 pub fn self_test() -> Result<usize> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let index = root.join("assets/text/staff_roll_index.json");
+    let index = root.join("games/gs1/assets/text/staff_roll_index.json");
     let bytes = build_inner(&index)?;
     if bytes.len() != STAFF_ROLL_SIZE {
         return Err(err("staff-roll self-test size differs"));

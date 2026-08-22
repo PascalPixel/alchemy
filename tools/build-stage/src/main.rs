@@ -22,23 +22,10 @@ fn main() -> ExitCode {
             0 => ExitCode::SUCCESS,
             _ => ExitCode::FAILURE,
         },
-        "rom" => {
-            let mut full = vec![
-                "--output".into(),
-                "out/rom/rom.gba".into(),
-                "--claimed-output".into(),
-                "out/rom/claimed".into(),
-                "--asm-output".into(),
-                "out/rom/asm".into(),
-                "--asset-output".into(),
-                "out/rom/assets".into(),
-            ];
-            full.extend(rest);
-            match build_full::cli::run(&full) {
-                0 => ExitCode::SUCCESS,
-                _ => ExitCode::FAILURE,
-            }
-        }
+        "rom" => match build_full::cli::run(&rest) {
+            0 => ExitCode::SUCCESS,
+            _ => ExitCode::FAILURE,
+        },
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

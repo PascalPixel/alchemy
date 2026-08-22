@@ -1,0 +1,33 @@
+{
+  "format": 2,
+  "game": "gs2",
+  "canonical_edition": "ja",
+  "default_target": "gs2-en",
+  "build_model": "shared-source-edition-defines",
+  "layout": {
+    "source": "games/gs2/src",
+    "assembly": "games/gs2/asm",
+    "assets": "games/gs2/assets",
+    "include": "games/gs2/include",
+    "metrics": "games/gs2/metrics",
+    "reconstruction": "games/gs2/recon",
+    "semantic": "games/gs2/semantic"
+  },
+  "correspondence": {
+    "calibration": "games/gs2/recon/cross-edition.json"
+  },
+  "editions": {
+    "ja": {"target": "gs2-ja", "define": "GS2_EDITION_JA", "role": "canonical", "rom": "roms/gs2-ja.gba", "output": "out/gs2-ja", "verification": "compile-only"},
+    "en": {"target": "gs2-en", "define": "GS2_EDITION_EN", "role": "derived-default", "rom": "roms/gs2-en.gba", "output": "out/gs2-en", "verification": "compile-only"},
+    "de": {"target": "gs2-de", "define": "GS2_EDITION_DE", "role": "derived", "rom": "roms/gs2-de.gba", "output": "out/gs2-de", "verification": "compile-only"},
+    "es": {"target": "gs2-es", "define": "GS2_EDITION_ES", "role": "derived", "rom": "roms/gs2-es.gba", "output": "out/gs2-es", "verification": "compile-only"},
+    "fr": {"target": "gs2-fr", "define": "GS2_EDITION_FR", "role": "derived", "rom": "roms/gs2-fr.gba", "output": "out/gs2-fr", "verification": "compile-only"},
+    "it": {"target": "gs2-it", "define": "GS2_EDITION_IT", "role": "derived", "rom": "roms/gs2-it.gba", "output": "out/gs2-it", "verification": "compile-only"}
+  },
+  "policy": {
+    "source_direction": "ja-to-derived-editions",
+    "tracked_source_claims_bytes": false,
+    "exactness_is_per_edition": true,
+    "rom_fallback_is_build_progress": false
+  }
+}

@@ -1,0 +1,546 @@
+{
+ "format": 1,
+ "ordinary_census": {
+  "status": "closed",
+  "check": "make semantic-check",
+  "evidence": "The 2026-07-31 complete main-image census found zero ordinary executable owners without exact or reviewed semantic C. The executable complement consists only of retained runtime/veneer/assembly structure and the pools/alignment excluded by the registered owners below."
+ },
+ "non_c_ranges": [
+  {
+   "address": "0x08002344",
+   "size": 512,
+   "kind": "lookup_table",
+   "evidence": "The deliberate-math classification splits this exported Data_08002344 subregion from the two preceding Thumb owners: 256 .hword quarter-sine values, with no reachable instruction or branch target inside it."
+  },
+  {
+   "address": "0x080044ca",
+   "size": 6,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800447c.s, source lines 45-46: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08004bca",
+   "size": 10,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08004ab0.s, source lines 142-144: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08004e4c",
+   "size": 8,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08004d2c.s, source lines 145-146: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08004fda",
+   "size": 10,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08004e54.s, source lines 196-198: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080052dc",
+   "size": 24,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08005268.s, source lines 69-74: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800c84e",
+   "size": 46,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800c62c.s, source lines 293-304: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800d2f2",
+   "size": 18,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800d14c.s, source lines 229-233: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800d572",
+   "size": 26,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800d340.s, source lines 302-308: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800d650",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800d340.s, source lines 417-417: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800dcbe",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800daf0.s, source lines 254-261: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800def8",
+   "size": 12,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800dd70.s, source lines 200-202: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800f186",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Directive-only tail of games/gs1/asm/0800ee14.s after the registered executable owner; the .2byte/.4byte values at source lines 450-457 are code-unreachable pool data."
+  },
+  {
+   "address": "0x0800f62a",
+   "size": 46,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800f2f8.s, source lines 412-423: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800f720",
+   "size": 24,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800f2f8.s, source lines 526-531: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800f7d8",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800f2f8.s, source lines 612-612: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0800fd22",
+   "size": 58,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0800fb38.s, source lines 246-260: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08010210",
+   "size": 32,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08010000.s, source lines 287-294: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080103f8",
+   "size": 44,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08010230.s, source lines 250-260: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080113bc",
+   "size": 40,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080111b4.s, source lines 257-266: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08012502",
+   "size": 22,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080123f4.s, source lines 144-149: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080160c4",
+   "size": 56,
+   "kind": "literal_pool",
+   "evidence": "Directive-only trailing pool of the registered 0x08016018 module, represented by the fourteen .4byte words in games/gs1/asm/08016018.s."
+  },
+  {
+   "address": "0x0801c9be",
+   "size": 2,
+   "kind": "alignment_padding",
+   "evidence": "Two-byte alignment immediately before the independently adopted empty callback at 0x0801c9c0."
+  },
+  {
+   "address": "0x0801c9c2",
+   "size": 2,
+   "kind": "alignment_padding",
+   "evidence": "Two-byte alignment between the independently adopted empty callbacks at 0x0801c9c0 and 0x0801c9c4."
+  },
+  {
+   "address": "0x0801c9c6",
+   "size": 2,
+   "kind": "alignment_padding",
+   "evidence": "Two-byte alignment before the remaining semantic leaf at 0x0801c9c8."
+  },
+  {
+   "address": "0x0801ca16",
+   "size": 2,
+   "kind": "alignment_padding",
+   "evidence": "Two-byte trailing alignment after the semantic leaf at 0x0801c9c8."
+  },
+  {
+   "address": "0x0801ca18",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Single trailing pool word 0x0000057c after the semantic leaf at 0x0801c9c8."
+  },
+  {
+   "address": "0x0801cc44",
+   "size": 12,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0801cbd4.s, source lines 70-72: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0801ccbc",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0801cc50.s, source lines 68-68: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08021dfa",
+   "size": 2,
+   "kind": "alignment_padding",
+   "evidence": "Two-byte alignment before the independently adopted exact-C owner at 0x08021dfc."
+  },
+  {
+   "address": "0x08026e72",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Pool tail following the complete 0x08026080 multi-row owner; games/gs1/asm/08026b44.s labels the subspan as pool-tail data and emits only .2byte/.4byte directives."
+  },
+  {
+   "address": "0x0808b00e",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0808ae74.s, source lines 215-222: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0808b636",
+   "size": 22,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0808b3ec.s, source lines 303-308: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0808c0fc",
+   "size": 44,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0808bec0.s, source lines 310-320: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0808c2be",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0808bec0.s, source lines 529-536: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08090ae6",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 80-83: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08090e46",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 513-520: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08090ee2",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 582-585: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08090f06",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 599-602: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080910da",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 829-832: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08091106",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 849-852: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08091170",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08090a5c.s, source lines 904-904: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08093688",
+   "size": 24,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080935d4.s, source lines 96-101: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08093e12",
+   "size": 22,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08093c00.s, source lines 259-264: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809470e",
+   "size": 34,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08094544.s, source lines 247-255: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809586c",
+   "size": 24,
+   "kind": "literal_pool",
+   "evidence": "Six-word directive-only tail pool after the registered 0x08095778 owner and before the exact-C owner at 0x08095884."
+  },
+  {
+   "address": "0x080979fa",
+   "size": 22,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080979a4.s, source lines 53-58: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x08097a48",
+   "size": 12,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/08097a10.s, source lines 37-39: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809837c",
+   "size": 36,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080982dc.s, source lines 92-100: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809933c",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080992f0.s, source lines 46-46: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080994a4",
+   "size": 28,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080993b0.s, source lines 124-130: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809a7e6",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0809a738.s, source lines 92-95: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809a884",
+   "size": 12,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0809a7f4.s, source lines 78-80: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809b8e4",
+   "size": 16,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0809b86c.s, source lines 69-72: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x0809ba26",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/0809b8f4.s, source lines 166-169: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080ad746",
+   "size": 18,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080ad6d4.s, source lines 66-70: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080ad79e",
+   "size": 6,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080ad6d4.s, source lines 104-105: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080adb7e",
+   "size": 54,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080ad6d4.s, source lines 566-579: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080adc76",
+   "size": 78,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080ad6d4.s, source lines 677-696: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080adf1a",
+   "size": 74,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080ad6d4.s, source lines 986-1004: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080ae2b4",
+   "size": 64,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080ad6d4.s, source lines 1415-1430: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080b7f6a",
+   "size": 6,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080b7f20.s, source lines 41-42: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080b821a",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080b81c8.s, source lines 45-48: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080b84bc",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080b845c.s, source lines 51-51: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080b852a",
+   "size": 6,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080b84c0.s, source lines 57-58: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080b987c",
+   "size": 20,
+   "kind": "literal_pool",
+   "evidence": "Five-word interior pool between the registered 0x080b9724 and 0x080b9890 executable ranges; games/gs1/asm/080b9724.s emits only .4byte directives here."
+  },
+  {
+   "address": "0x080bf1e8",
+   "size": 32,
+   "kind": "literal_pool",
+   "evidence": "Trailing literal pool of the registered 0x080be378 owner; its PC-relative provenance and exclusion are recorded on that owner."
+  },
+  {
+   "address": "0x080c0b6a",
+   "size": 42,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080c0a24.s, source lines 177-187: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080c0bbe",
+   "size": 10,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080c0a24.s, source lines 213-215: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080c0ea6",
+   "size": 2,
+   "kind": "alignment_padding",
+   "evidence": "Two-byte alignment before the exact-C owner at 0x080c0ea8; the reconstruction is the single filler instruction movs r0, r0."
+  },
+  {
+   "address": "0x080c1418",
+   "size": 32,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080c11ec.s, source lines 293-300: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080c168a",
+   "size": 70,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080c1470.s, source lines 267-284: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080c19b0",
+   "size": 100,
+   "kind": "literal_pool",
+   "evidence": "Twenty-five-word directive-only tail pool after the registered 0x080c1798 owner and before the exact-C owner at 0x080c1a14."
+  },
+  {
+   "address": "0x080d4d50",
+   "size": 32,
+   "kind": "literal_pool",
+   "evidence": "Eight-word embedded pool explicitly excluded between the registered 0x080d4ce8 executable ranges; every word is emitted as .4byte in games/gs1/asm/080d4ce8.s."
+  },
+  {
+   "address": "0x080d5c98",
+   "size": 32,
+   "kind": "literal_pool",
+   "evidence": "Eight-word interior pool explicitly excluded between the two registered 0x080d5c48 executable ranges."
+  },
+  {
+   "address": "0x080d5e40",
+   "size": 20,
+   "kind": "literal_pool",
+   "evidence": "Five-word LiteralPool_080d5e40 tail explicitly excluded from the registered 0x080d5c48 owner."
+  },
+  {
+   "address": "0x080d7862",
+   "size": 26,
+   "kind": "literal_pool",
+   "evidence": "Interior pool explicitly excluded from the complete 0x080d765c multi-row owner; games/gs1/asm/080d77b4.s emits only .2byte/.4byte directives in this subspan."
+  },
+  {
+   "address": "0x080dddb8",
+   "size": 40,
+   "kind": "literal_pool",
+   "evidence": "Trailing literal pool of the registered 0x080dd9c0 owner; its PC-relative provenance and exclusion are recorded on that owner."
+  },
+  {
+   "address": "0x080e3a0a",
+   "size": 10,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080e3994.s, source lines 61-63: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080ecbb8",
+   "size": 32,
+   "kind": "literal_pool",
+   "evidence": "Eight-word directive-only pool excluded from the registered 0x080ecae8 multi-row owner."
+  },
+  {
+   "address": "0x080f3104",
+   "size": 12,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 81-83: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f3136",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 107-114: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f344e",
+   "size": 30,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 502-509: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f34ea",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 571-574: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f350e",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 588-591: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f36e2",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 818-821: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f370e",
+   "size": 14,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 838-841: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080f3778",
+   "size": 4,
+   "kind": "literal_pool",
+   "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080f3078.s, source lines 893-893: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
+  },
+  {
+   "address": "0x080fa164",
+   "size": 8,
+   "kind": "literal_pool",
+   "evidence": "Two-word directive-only tail pool after the registered 0x080f9f6c module and before the semantic owner at 0x080fa16c."
+  }
+ ],
+ "main_owners": [],
+ "manual_regions": []
+}

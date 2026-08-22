@@ -1,5 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 void Func_080a2268(
     const u8 *object, s32 x, s32 y, s32 width, s32 height, u32 field)
@@ -40,6 +41,6 @@ void Func_080a2268(
             height--;
             x += 64;
         } while (height != 0);
-        base[0xEA3] = 1;
+        base[RENDER_DIRTY_OFS] = 1;
     }
 }

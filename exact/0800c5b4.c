@@ -4,10 +4,12 @@ s32 Func_080030f8(s32);
 s32 Func_080042c8(u32 value);
 s32 Func_0808a330(s32, s32);
 s32 Func_0808a348(s32);
+void Func_0800c62c(void);
+void Func_0800c880(void);
 
 void Func_0800c5b4(void) {
-    Func_080042c8(0x0800C62D);
-    Func_080042c8(0x0800C881);
+    Func_080042c8((u32)Func_0800c62c);
+    Func_080042c8((u32)Func_0800c880);
     Func_0808a330(0x10000, 1);
     Func_0808a348(1);
     Func_080030f8(1);

@@ -25,10 +25,11 @@
  *     arguments at some sites and three at others. Do not assume
  */
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_080072f0(s32, s32, s32, s32);
 
 void Func_08003d04(void) {
-    *(s8 *)0x03001D00 = 0;
-    Func_080072f0(0x03001400, 0x400, 0x03001D00, 0x03000164);
+    *(s8 *)ADDR_03001D00 = 0;
+    Func_080072f0(ADDR_03001400, 0x400, ADDR_03001D00, 0x03000164);
 }

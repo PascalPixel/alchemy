@@ -50,6 +50,21 @@ struct BattleWorkPage {
     hp0 = target->hp;                                                        \
     scale = target->defense
 #define BATTLE_ATTACK_HP hp0
+#define BATTLE_ATTACK_REPORT()                                               \
+    {                                                                         \
+        BATTLE_ATTACK_HP -= dmg;                                              \
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);                \
+        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                       \
+        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);                            \
+    }
+#define BATTLE_PP_DAMAGE_LIMIT(dmg, pp)                                    \
+    if ((dmg) > (pp))                                                      \
+        (dmg) = (pp)
+#define BATTLE_DAMAGE_ROUND_DECL s32 round
+#define BATTLE_DAMAGE_ROUND round
+#define BATTLE_HP_HEAL_GATE(cur)                                           \
+    if ((cur) == 0)                                                       \
+        break
 #define BATTLE_ATTACK_PREP()                                              \
     {                                                                     \
         kind = actor->attack;                                             \
@@ -515,32 +530,33 @@ struct BattleWorkPage {
     case 0x46:                                                             \
     case 0x47:                                                             \
     case 0x4c:
-#define BATTLE_HEAL_AMOUNT(heal, maxv)                                     \
+#define BATTLE_HEAL_PREP(old, heal, maxu, maxv, stat_ptr)                  \
     {                                                                      \
-        if (action->effect == 0x46) {                                      \
-            (heal) += (maxv) / 2;                                          \
+        (stat_ptr) = (u16 *)&target->hp;                                   \
+        (old) = *(stat_ptr)--;                                             \
+        (heal) = *(s16 *)(stat_ptr + 1);                                   \
+        if (action->effect == 0x4c) {                                      \
+            (stat_ptr) = (u16 *)&target->max_hp;                           \
+            (maxv) = *(s16 *)(stat_ptr);                                   \
+            (maxu) = *(stat_ptr)--;                                        \
+            (heal) += Math_Div((maxv) * 2, 5);                             \
+        } else if (action->effect == 0x47) {                               \
+            (stat_ptr) = (u16 *)&target->max_hp;                           \
+            (maxv) = *(s16 *)(stat_ptr);                                   \
+            (maxu) = *(stat_ptr)--;                                        \
+            (heal) += Math_Div((maxv) * 7, 10);                            \
+        } else if (action->effect == 0x46) {                               \
+            (stat_ptr) = (u16 *)&target->max_hp;                           \
+            (maxu) = *(stat_ptr)--;                                        \
+            (heal) += (s16)(maxu) / 2;                                     \
         } else {                                                           \
-            s32 num;                                                       \
-            s32 den;                                                       \
-                                                                           \
-            switch (action->effect) {                                      \
-            case 0x4c:                                                     \
-                num = (maxv) * 2;                                          \
-                den = 5;                                                   \
-                break;                                                     \
-            case 0x47:                                                     \
-                num = (maxv) * 7;                                          \
-                den = 10;                                                  \
-                break;                                                     \
-            default:                                                       \
-                if (action->effect == EFX_HEAL_60)                         \
-                    num = (maxv) * 60;                                     \
-                else                                                       \
-                    num = (maxv) * 30;                                     \
-                den = 100;                                                 \
-                break;                                                     \
-            }                                                              \
-            (heal) += Math_Div(num, den);                                  \
+            (stat_ptr) = (u16 *)&target->max_hp;                           \
+            (maxu) = *(stat_ptr)--;                                        \
+            (maxv) = *(s16 *)(stat_ptr + 1);                               \
+            if (action->effect == EFX_HEAL_60)                             \
+                (heal) += Math_Div((maxv) * 60, 100);                      \
+            else                                                           \
+                (heal) += Math_Div((maxv) * 30, 100);                      \
         }                                                                  \
     }
 
@@ -572,8 +588,8 @@ struct BattleWorkPage {
 #define BATTLE_PP_RESTORE_BODY()                                           \
     {                                                                      \
         s32 heal;                                                         \
-        u16 old;                                                          \
-        u16 maxu;                                                         \
+        s32 old;                                                          \
+        s32 maxu;                                                         \
         s32 inc;                                                          \
         s32 maxv;                                                         \
         u16 *stat_ptr;                                                    \
@@ -581,23 +597,18 @@ struct BattleWorkPage {
         stat_ptr = (u16 *)&target->pp;                                    \
         old = *stat_ptr--;                                                \
         heal = *(s16 *)(stat_ptr + 1);                                    \
-        stat_ptr--;                                                       \
-        maxu = *stat_ptr--;                                               \
-        maxv = *(s16 *)(stat_ptr + 1);                                    \
         if (action->effect == 0x4d) {                                     \
+            maxv = *(s16 *)((u8 *)target + 54);                           \
+            maxu = *(u16 *)((u8 *)target + 54);                           \
             inc = (s16)Math_Div(maxv, 10);                                \
+        } else if (action->effect == 0x4e) {                              \
+            maxv = *(s16 *)((u8 *)target + 54);                           \
+            maxu = *(u16 *)((u8 *)target + 54);                           \
+            inc = Math_Div(maxv * 3, 10);                                 \
         } else {                                                          \
-            s32 num;                                                      \
-            s32 den;                                                      \
-                                                                           \
-            if (action->effect == 0x4e) {                                 \
-                den = 10;                                                 \
-                num = maxv * 3;                                           \
-            } else {                                                      \
-                num = maxv * 7;                                           \
-                den = 100;                                                \
-            }                                                             \
-            inc = Math_Div(num, den);                                     \
+            maxv = *(s16 *)((u8 *)target + 54);                           \
+            maxu = *(u16 *)((u8 *)target + 54);                           \
+            inc = Math_Div(maxv * 7, 100);                                \
         }                                                                 \
         heal += inc;                                                      \
         if (heal > (s16)maxu)                                             \

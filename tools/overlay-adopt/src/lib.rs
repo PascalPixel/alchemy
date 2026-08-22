@@ -254,7 +254,9 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
     result
 }
 fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
-    let report = root.join("metrics").join("gs1-en-executable.json");
+    let report = root
+        .join("games/gs1/metrics")
+        .join("gs1-en-executable.json");
     if !report.exists() {
         return Ok(None);
     }
@@ -263,7 +265,7 @@ fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterva
     let overlays = value
         .get("overlays")
         .and_then(Value::as_array)
-        .ok_or_else(|| "metrics/gs1-en-executable.json: unexpected shape".to_string())?;
+        .ok_or_else(|| "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string())?;
     let mut found: Option<Vec<AuditInterval>> = None;
     for row in overlays {
         if row.get("id").and_then(Value::as_str) != Some(overlay) {
@@ -272,7 +274,9 @@ fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterva
         let intervals = row
             .get("intervals")
             .and_then(Value::as_array)
-            .ok_or_else(|| "metrics/gs1-en-executable.json: unexpected shape".to_string())?;
+            .ok_or_else(|| {
+                "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string()
+            })?;
         let mut out = Vec::with_capacity(intervals.len());
         for interval in intervals {
             out.push(AuditInterval {
@@ -449,7 +453,7 @@ impl OverlayLock {
         }
         Err(format!(
             "{} is still locked after 60s. If no other adoption is running, a \
-             previous one was killed mid-splice: check `git status assets/code/` \
+             previous one was killed mid-splice: check `git status games/gs1/assets/code/` \
              before deleting the lock file.",
             path.display()
         ))
@@ -535,7 +539,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     audited_interval(root, &fn_row)?;
     let assembly = root
-        .join("assets/code")
+        .join("games/gs1/assets/code")
         .join(format!("{}_overlay.s", fn_row.overlay));
     let _lock = OverlayLock::acquire(&assembly)?;
     let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;
@@ -557,7 +561,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     replaced_lines.extend(lines[last as usize..].iter().cloned());
     let replaced = replaced_lines.join("\n");
     let installed = root
-        .join("exact")
+        .join("games/gs1/src")
         .join(format!("{}_c_{}.c", fn_row.overlay, stem));
     let preexisting = if installed.exists() {
         Some(fs::read(&installed).map_err(|error| error.to_string())?)
@@ -640,7 +644,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         return Ok(0);
     }
     println!(
-        "adopt=applied {} span={} aliases={} c=exact/{}_c_{}.c",
+        "adopt=applied {} span={} aliases={} c=games/gs1/src/{}_c_{}.c",
         options.id,
         fn_row.span_bytes,
         aliases.len(),

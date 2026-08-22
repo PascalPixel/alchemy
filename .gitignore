@@ -1,5 +1,5 @@
 .DS_Store
-assets/**/preview*.png
+games/*/assets/**/preview*.png
 .cache/
 .cmatch*/
 toolchain/
@@ -26,8 +26,8 @@ roms/
 *.gba
 *.rom
 *.bin
-!assets/maps/**/metatiles.bin
-!assets/maps/**/metatile_attributes.bin
+!games/gs1/assets/maps/**/metatiles.bin
+!games/gs1/assets/maps/**/metatile_attributes.bin
 *.elf
 *.o
 *.a
@@ -78,4 +78,4 @@ target/
 
 # Adoption's per-overlay lock (see OverlayLock in tools/overlay-adopt). Lives
 # beside the tracked assembly it guards, so it must never become committable.
-assets/code/*.adopt-lock
+games/*/assets/code/*.adopt-lock

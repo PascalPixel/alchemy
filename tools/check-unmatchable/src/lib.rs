@@ -19,7 +19,7 @@ fn json(path: &Path) -> Result<Value, String> {
 
 fn exact(root: &Path) -> Result<HashSet<String>, String> {
     let mut stems = HashSet::new();
-    for entry in std::fs::read_dir(root.join("exact")).map_err(|error| error.to_string())? {
+    for entry in std::fs::read_dir(root.join("games/gs1/src")).map_err(|error| error.to_string())? {
         let path = entry.map_err(|error| error.to_string())?.path();
         if path.extension().and_then(|value| value.to_str()) == Some("c") {
             if let Some(stem) = path.file_stem().and_then(|value| value.to_str()) {
@@ -28,18 +28,18 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
         }
     }
     if stems.is_empty() {
-        return Err("exact/ contains no C owners".into());
+        return Err("games/gs1/src/ contains no C owners".into());
     }
     Ok(stems)
 }
 
 fn audited(root: &Path) -> Result<HashSet<String>, String> {
-    let document = json(&root.join("semantic/regions.json"))?;
+    let document = json(&root.join("games/gs1/semantic/regions.json"))?;
     let mut stems = HashSet::new();
     for row in document
         .get("manual_regions")
         .and_then(Value::as_array)
-        .ok_or("semantic/regions.json has no manual_regions")?
+        .ok_or("games/gs1/semantic/regions.json has no manual_regions")?
     {
         let Some(overlay) = row.get("overlay").and_then(Value::as_str) else {
             continue;
@@ -52,7 +52,7 @@ fn audited(root: &Path) -> Result<HashSet<String>, String> {
         stems.insert(format!("{overlay}_c_{address:08x}"));
     }
     if stems.is_empty() {
-        return Err("semantic/regions.json contains no audited owners".into());
+        return Err("games/gs1/semantic/regions.json contains no audited owners".into());
     }
     Ok(stems)
 }
@@ -62,11 +62,11 @@ fn validate_unmatchable(
     exact: &HashSet<String>,
     audited: &HashSet<String>,
 ) -> Result<usize, String> {
-    let document = json(&root.join("semantic/unmatchable.json"))?;
+    let document = json(&root.join("games/gs1/semantic/unmatchable.json"))?;
     let rows = document
         .get("unmatchable")
         .and_then(Value::as_array)
-        .ok_or("semantic/unmatchable.json has no unmatchable array")?;
+        .ok_or("games/gs1/semantic/unmatchable.json has no unmatchable array")?;
     let mut seen = HashSet::new();
     for row in rows {
         let owner = row
@@ -115,18 +115,18 @@ fn validate_unmatchable(
 }
 
 fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
-    let document = json(&root.join("exact/provisional.json"))?;
+    let document = json(&root.join("games/gs1/src/provisional.json"))?;
     let rows = document
         .get("provisional")
         .and_then(Value::as_array)
-        .ok_or("exact/provisional.json has no provisional array")?;
+        .ok_or("games/gs1/src/provisional.json has no provisional array")?;
     for row in rows {
         let owner = row
             .get("owner")
             .and_then(Value::as_str)
             .ok_or("provisional owner missing")?;
         if !exact.contains(owner) {
-            return Err(format!("{owner} is provisional but not in exact/"));
+            return Err(format!("{owner} is provisional but not in games/gs1/src/"));
         }
         if row
             .get("reason")

@@ -1223,11 +1223,11 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
 
 fn closure_self_test() -> Result<String, String> {
     let root = repository_root();
-    let missing = root.join("assets/data/closure/__self_test_missing__/index.json");
+    let missing = root.join("games/gs1/assets/data/closure/__self_test_missing__/index.json");
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("assets/audio/waves/index.json");
+    let index = root.join("games/gs1/assets/audio/waves/index.json");
     let document: Value = serde_json::from_slice(
         &fs::read(index).map_err(|error| format!("PCM self-test index: {error}"))?,
     )
@@ -1690,7 +1690,7 @@ fn expand_series(
                         "prefill id",
                     )?
                     .to_ascii_lowercase();
-                    let directory = format!("assets/data/resource_{name}");
+                    let directory = format!("games/gs1/assets/data/resource_{name}");
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"raw-lz-bytes","size":resource.get("decoded_size"),"source":format!("{directory}_content.png")}] }));
                 }
             }
@@ -1700,7 +1700,7 @@ fn expand_series(
                         .as_array()
                         .ok_or("overlay resource tuple malformed")?;
                     let name = json_string(&tuple[0], "overlay id")?.to_ascii_lowercase();
-                    let directory = format!("assets/code/resource_{name}");
+                    let directory = format!("games/gs1/assets/code/resource_{name}");
                     entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
             }
@@ -1708,7 +1708,7 @@ fn expand_series(
                 for grid in series_values(series, "grids")? {
                     let tuple = grid.as_array().ok_or("grid tuple malformed")?;
                     let name = json_string(&tuple[0], "grid id")?.to_ascii_lowercase();
-                    let directory = format!("assets/maps/resource_{name}");
+                    let directory = format!("games/gs1/assets/maps/resource_{name}");
                     entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-kind1-grid","source":directory,"plan":format!("{directory}_grid_grid.kind1.json")}));
                 }
             }
@@ -1716,7 +1716,7 @@ fn expand_series(
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
-                    let directory = format!("assets/maps/resource_{name}");
+                    let directory = format!("games/gs1/assets/maps/resource_{name}");
                     let container = json_number(&tuple[1], "map container")?;
                     let mut offsets = serde_json::Map::new();
                     for raw in &tuple[3..] {
@@ -3597,7 +3597,7 @@ fn build_entry_native_tail(
                 .chain(document["mtf_banks"].as_array().into_iter().flatten())
             {
                 nested.push(format!(
-                    "assets/{}",
+                    "games/gs1/assets/{}",
                     flat_asset_name(json_string(
                         item.get("source").ok_or("font source missing")?,
                         "font source"
@@ -3605,14 +3605,14 @@ fn build_entry_native_tail(
                 ));
             }
             nested.push(format!(
-                "assets/{}",
+                "games/gs1/assets/{}",
                 flat_asset_name(json_string(
                     &document["packed_images"]["source"],
                     "packed image source"
                 )?)
             ));
             nested.push(format!(
-                "assets/{}",
+                "games/gs1/assets/{}",
                 flat_asset_name(json_string(&document["font"]["source"], "font source")?)
             ));
             for name in &nested {
@@ -3625,7 +3625,10 @@ fn build_entry_native_tail(
                     "build-stdout".to_string(),
                     source_path(entry_source)?.to_string_lossy().into_owned(),
                     "--root".to_string(),
-                    ctx.root.join("assets").to_string_lossy().into_owned(),
+                    ctx.root
+                        .join("games/gs1/assets")
+                        .to_string_lossy()
+                        .into_owned(),
                 ],
             )?;
             Ok((
@@ -3667,7 +3670,7 @@ fn build_entry_native_tail(
                 )
             {
                 nested.push(format!(
-                    "assets/{}",
+                    "games/gs1/assets/{}",
                     flat_asset_name(json_string(
                         item.get("source").ok_or("battle graphic source missing")?,
                         "battle graphic source"
@@ -3681,7 +3684,10 @@ fn build_entry_native_tail(
                 "build-stdout".to_string(),
                 source_path(entry_source)?.to_string_lossy().into_owned(),
                 "--root".to_string(),
-                ctx.root.join("assets").to_string_lossy().into_owned(),
+                ctx.root
+                    .join("games/gs1/assets")
+                    .to_string_lossy()
+                    .into_owned(),
             ];
             let (built, _) = native_with_report(&ctx.root, "battle_effect_data", &args)?;
             Ok((
@@ -4193,14 +4199,14 @@ fn build_entry_native_tail(
             )?;
             let sources = match id {
                 2 => vec![
-                    "assets/data/resource_2_build_stamp.txt".to_string(),
-                    "assets/data/resource_2_layout.json".to_string(),
+                    "games/gs1/assets/data/resource_2_build_stamp.txt".to_string(),
+                    "games/gs1/assets/data/resource_2_layout.json".to_string(),
                 ],
-                0x13 => vec!["assets/graphics/resource_13_font.4bpp.png".to_string()],
-                0x14 => vec!["assets/graphics/resource_14_words.rgba.png".to_string()],
+                0x13 => vec!["games/gs1/assets/graphics/resource_13_font.4bpp.png".to_string()],
+                0x14 => vec!["games/gs1/assets/graphics/resource_14_words.rgba.png".to_string()],
                 0x18 => vec![
-                    "assets/graphics/resource_18_screen.8bpp.png".to_string(),
-                    "assets/graphics/resource_18_screen.lz.json".to_string(),
+                    "games/gs1/assets/graphics/resource_18_screen.8bpp.png".to_string(),
+                    "games/gs1/assets/graphics/resource_18_screen.lz.json".to_string(),
                 ],
                 _ => return Err("unsupported simple resource".to_string()),
             };
@@ -4211,7 +4217,7 @@ fn build_entry_native_tail(
                 &ctx.root,
                 "simple_resources",
                 "build-stdout",
-                &ctx.root.join("assets").to_string_lossy(),
+                &ctx.root.join("games/gs1/assets").to_string_lossy(),
                 &[format!("{id:x}")],
             )?;
             Ok((built, sources, serde_json::json!({"resource_id":id})))
@@ -4306,8 +4312,8 @@ struct BuildOptions {
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
     let mut options = BuildOptions {
         rom: "roms/gs1-en.gba".to_string(),
-        manifest: root.join("assets/manifest.json"),
-        output: root.join("out/assets"),
+        manifest: root.join("games/gs1/assets/manifest.json"),
+        output: root.join("out/gs1-en/assets"),
         source_only: false,
     };
     let mut positional = false;
@@ -4411,7 +4417,7 @@ fn is_overlay_exact_source(relative: &str) -> bool {
     let components = path.components().collect::<Vec<_>>();
     let Some(exact_index) = components
         .iter()
-        .position(|component| component.as_os_str() == std::ffi::OsStr::new("exact"))
+        .position(|component| component.as_os_str() == std::ffi::OsStr::new("src"))
     else {
         return false;
     };
@@ -4465,13 +4471,13 @@ fn stage_stamp_with_signature(
     let mut files = BTreeMap::new();
     stamp_files(
         root,
-        &root.join("assets"),
+        &root.join("games/gs1/assets"),
         &mut files,
         include_all_stamp_files,
     )?;
     stamp_files(
         root,
-        &root.join("exact"),
+        &root.join("games/gs1/src"),
         &mut files,
         is_overlay_exact_source,
     )?;
@@ -4794,7 +4800,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .collect::<Vec<_>>();
     prune_files(&options.output, "*.bin", keep.iter())
         .map_err(|error| format!("asset output cleanup: {error}"))?;
-    let unused = unused_tracked_images(&root, all_sources.iter(), ["assets/readme/"])
+    let unused = unused_tracked_images(&root, all_sources.iter(), ["games/gs1/assets/readme/"])
         .map_err(|error| format!("tracked image audit: {error}"))?;
     if !unused.is_empty() {
         let shown = unused

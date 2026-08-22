@@ -81,7 +81,7 @@ pub fn repo_root() -> String {
 }
 pub fn default_catalog_path() -> String {
     Path::new(&repo_root())
-        .join("assets/data/early_runtime_data.json")
+        .join("games/gs1/assets/data/early_runtime_data.json")
         .to_string_lossy()
         .into_owned()
 }

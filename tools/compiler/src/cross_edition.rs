@@ -585,7 +585,7 @@ fn edition_build_report(
         .join("linked");
     fs::create_dir_all(&output_root)
         .map_err(|error| format!("{}: {error}", output_root.display()))?;
-    let source_path = PathBuf::from("exact").join(format!("{owner}.c"));
+    let source_path = PathBuf::from("games/gs1/src").join(format!("{owner}.c"));
     let edition_variant = source_uses_edition_variant(&source_path)?;
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
@@ -676,7 +676,7 @@ fn edition_build_report(
         schema_version: 1,
         game: "gs1",
         source_edition: "en",
-        source: format!("exact/{owner}.c"),
+        source: format!("games/gs1/src/{owner}.c"),
         object: object_path.display().to_string(),
         owner_symbol,
         size,
@@ -718,7 +718,7 @@ fn write_corpus_edition_build(
             Ok(build) => owners.push(build),
             Err(error) => failures.push(EditionBuildFailure {
                 en_owner: owner.clone(),
-                source: format!("exact/{owner}.c"),
+                source: format!("games/gs1/src/{owner}.c"),
                 error,
             }),
         }
@@ -960,7 +960,7 @@ fn run_tool(command: &mut Command, label: &str) -> Result<(), String> {
 fn parse(args: &[String]) -> Result<Options, String> {
     let mut owner = None;
     let mut object = None;
-    let mut object_dir = PathBuf::from("out/full/claimed/obj");
+    let mut object_dir = PathBuf::from("out/gs1-en/full/claimed/obj");
     let mut rom_dir = PathBuf::from("roms");
     let mut json = false;
     let mut calls = false;
@@ -1070,7 +1070,7 @@ fn resolve_object(
     }
     let paths = [
         object_dir.join(format!("{owner}.o")),
-        PathBuf::from(format!("out/claimed/obj/{owner}.o")),
+        PathBuf::from(format!("out/gs1-en/claimed/obj/{owner}.o")),
     ];
     paths
         .into_iter()
@@ -1103,7 +1103,9 @@ fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
             (path.extension().is_some_and(|extension| extension == "o")
                 && owner.len() == 8
                 && owner.bytes().all(|byte| byte.is_ascii_hexdigit())
-                && Path::new("exact").join(format!("{owner}.c")).is_file())
+                && Path::new("games/gs1/src")
+                    .join(format!("{owner}.c"))
+                    .is_file())
             .then(|| owner.to_ascii_lowercase())
         })
         .collect::<Vec<_>>();
@@ -1239,7 +1241,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         }
         owners.push(CorpusOwner {
             en_owner: owner.clone(),
-            source: format!("exact/{owner}.c"),
+            source: format!("games/gs1/src/{owner}.c"),
             size: report.size,
             status: if report.core_identical {
                 "shared_core"
@@ -1256,7 +1258,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         .into_iter()
         .map(|(owner, error)| UnresolvedOwner {
             en_owner: owner.clone(),
-            source: format!("exact/{owner}.c"),
+            source: format!("games/gs1/src/{owner}.c"),
             error,
         })
         .collect::<Vec<_>>();
@@ -1544,7 +1546,7 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
 fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     let mut assembly = BTreeMap::<usize, Vec<String>>::new();
     let mut owners = Vec::new();
-    for entry in fs::read_dir("exact").map_err(|error| format!("exact: {error}"))? {
+    for entry in fs::read_dir("games/gs1/src").map_err(|error| format!("games/gs1/src: {error}"))? {
         let path = entry.map_err(|error| error.to_string())?.path();
         let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
             continue;
@@ -1573,7 +1575,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             .ok_or_else(|| format!("{name}: address is below overlay base"))?
             as usize;
         if !assembly.contains_key(&resource) {
-            let source = format!("assets/code/resource_{resource:03x}_overlay.s");
+            let source = format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s");
             let text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
             assembly.insert(resource, text.lines().map(str::to_string).collect());
         }
@@ -1599,7 +1601,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
         }
         owners.push(OverlayOwner {
             name: format!("resource_{resource:03x}:0x{absolute:08x}"),
-            source: format!("exact/{name}"),
+            source: format!("games/gs1/src/{name}"),
             resource,
             en_offset,
             size,
@@ -1607,7 +1609,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     }
     owners.sort_by_key(|owner| (owner.resource, owner.en_offset));
     if owners.is_empty() {
-        return Err("exact/ contains no exact overlay C owners".into());
+        return Err("games/gs1/src/ contains no exact overlay C owners".into());
     }
     Ok(owners)
 }

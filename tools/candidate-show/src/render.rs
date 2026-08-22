@@ -44,10 +44,13 @@ fn basename_without<'a>(path: &'a str, extension: &str) -> &'a str {
 /// any fallback derived from the candidate would compare the source
 /// against itself and silently report a plausible-looking wrong score.
 fn region_size(root: &Path, stem: &str) -> Option<f64> {
-    let path = ["out/full/asm/manifest.json", "out/asm/manifest.json"]
-        .iter()
-        .map(|path| root.join(path))
-        .find(|path| path.exists())?;
+    let path = [
+        "out/gs1-en/full/asm/manifest.json",
+        "out/gs1-en/asm/manifest.json",
+    ]
+    .iter()
+    .map(|path| root.join(path))
+    .find(|path| path.exists())?;
     let document: Value = serde_json::from_str(&std::fs::read_to_string(path).ok()?).ok()?;
     document["regions"].as_array()?.iter().find_map(|region| {
         (basename_without(region["source"].as_str()?, ".s") == stem)
@@ -123,7 +126,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .unwrap_or(verification.actual.len() as f64);
         let size = region_size(root, &stem).ok_or_else(|| {
                 format!(
-                    "no owner-size entry for {stem} in out/asm/manifest.json or out/full/asm/manifest.json -- run `make build-asm` (or `make build-full`) to generate it before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
+                    "no owner-size entry for {stem} in out/gs1-en/asm/manifest.json or out/gs1-en/full/asm/manifest.json -- run `make build-asm` (or `make build-full`) to generate it before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
                 )
             })?;
         let actual = js_subarray(&linked, 0.0, extent);
@@ -321,7 +324,7 @@ fn render_bytes(
 fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
     let started = Instant::now();
     let stem = basename_without(&options.source, ".c").to_string();
-    let reference = root.join("asm").join(format!("{stem}.s"));
+    let reference = root.join("games/gs1/asm").join(format!("{stem}.s"));
     if !reference.is_file() {
         return Err(format!(
             "--asm expects a main-image owner with {}",
@@ -580,7 +583,7 @@ mod region_size_tests {
     fn scratch_root(name: &str) -> std::path::PathBuf {
         let dir = std::env::temp_dir().join(format!("candidate-show-region-size-test-{name}"));
         let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(dir.join("out/asm")).unwrap();
+        fs::create_dir_all(dir.join("out/gs1-en/asm")).unwrap();
         dir
     }
 
@@ -588,8 +591,8 @@ mod region_size_tests {
     fn reads_the_owner_size_from_the_generated_manifest() {
         let root = scratch_root("present");
         fs::write(
-            root.join("out/asm/manifest.json"),
-            r#"{"regions":[{"source":"asm/080ab5e4.s","size":4888}]}"#,
+            root.join("out/gs1-en/asm/manifest.json"),
+            r#"{"regions":[{"source":"games/gs1/asm/080ab5e4.s","size":4888}]}"#,
         )
         .unwrap();
         assert_eq!(region_size(&root, "080ab5e4"), Some(4888.0));
@@ -612,8 +615,8 @@ mod region_size_tests {
     fn returns_none_when_the_manifest_lacks_this_owner() {
         let root = scratch_root("other-owner");
         fs::write(
-            root.join("out/asm/manifest.json"),
-            r#"{"regions":[{"source":"asm/080bbb0c.s","size":6332}]}"#,
+            root.join("out/gs1-en/asm/manifest.json"),
+            r#"{"regions":[{"source":"games/gs1/asm/080bbb0c.s","size":6332}]}"#,
         )
         .unwrap();
         assert_eq!(region_size(&root, "080ab5e4"), None);

@@ -77,9 +77,23 @@ function metric(label, value, detail, tone = "") {
     h("div", { className: "metric-detail" }, detail),
   );
 }
-function edition(code, role, active = false) {
-  return h("div", { className: `edition ${active ? "active" : ""}` },
+function edition(code, role, tone = "") {
+  return h("div", { className: `edition ${tone}` },
     h("strong", {}, upper(code)), h("span", {}, role));
+}
+function historicalProduct(name, editions, fullTarget) {
+  const game = name.toLowerCase();
+  return h("section", { className: "product" },
+    h("div", { className: "product-name" }, name),
+    h("div", { className: "edition-row" },
+      ...editions.split(" · ").map((code) => {
+        const target = `${game}-${code}`;
+        if (target === fullTarget) return edition(code, "full build", "full");
+        if (code === "ja") return edition(code, "canonical", "base");
+        return edition(code, "compile-only");
+      }),
+    ),
+  );
 }
 function render(snapshot) {
   hideTooltip();
@@ -88,23 +102,25 @@ function render(snapshot) {
   const header = h("header", { className: "masthead" },
     h("div", { className: "identity" },
       h("div", { className: "kicker" }, "ALCHEMY · RECONSTRUCTION LEDGER"),
-      h("h1", {}, project.game),
-      h("p", {}, "One source history, six released editions. Reconstruct from the Japanese program outward; prove every derived ROM independently."),
+      h("h1", {}, project.title),
+      h("p", {}, "Two shared historical source trees, twelve edition targets, and one separate reintegration product. Japanese is canonical within each game; every derived ROM must still be proved independently."),
     ),
-    h("div", { className: "flow", "aria-label": "Edition derivation" },
-      edition(project.baseEdition, "canonical base", true),
-      h("span", { className: "arrow", "aria-hidden": "true" }, "→"),
-      edition(project.buildEdition, "derived build", true),
-      ...project.derivedEditions.split(" · ").filter((code) => code !== project.buildEdition).map((code) => edition(code, "derived")),
+    h("div", { className: "products", "aria-label": "Historical and integration products" },
+      historicalProduct("GS1", project.gs1, project.fullTarget),
+      historicalProduct("GS2", project.gs2, project.fullTarget),
+      h("section", { className: "product integration" },
+        h("div", { className: "product-name" }, project.integration),
+        h("div", { className: "integration-copy" }, "GS1 + GS2 reintegration · no reference ROM"),
+      ),
     ),
   );
   const metrics = h("section", { className: "metrics", "aria-label": "Project metrics" },
     metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} exact or permanent bytes`, "done"),
     metric("EN exact C", percent(summary.exactPercent), `${bytes(summary.exactBytes)} linked bytes`, "exact"),
     metric("Tracked C", percent(summary.trackedPercent), `${bytes(summary.trackedBytes)} visible bytes · never counted as DONE`, "tracked"),
-    metric("Exact corpus ×6", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross"),
-    metric("JA base", bytes(summary.jaSources), summary.jaSources === 1 ? "canonical source owner" : "canonical source owners", "base"),
-    metric("EN candidates", bytes(summary.enSources), "awaiting JA re-derivation or proven EN delta", "derived"),
+    metric("GS1 corpus ×6", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross"),
+    metric("Canonical JA", bytes(summary.gs1JaSources + summary.gs2JaSources), `GS1 ${bytes(summary.gs1JaSources)} · GS2 ${bytes(summary.gs2JaSources)} tracked source owners`, "base"),
+    metric("Historical targets", bytes(summary.historicalTargets), `${bytes(summary.fullTargets)} full · ${bytes(summary.compileOnlyTargets)} compile-only · Alchemy separate`, "derived"),
   );
   const legend = h("div", { className: "legend" },
     h("span", {}, h("i", { className: "swatch exact" }), "Exact C"),
@@ -117,7 +133,7 @@ function render(snapshot) {
   root.replaceChildren(h("div", { className: "shell" }, header, metrics, legend, h("main", { className: "trees" }, trees)));
   lastRevision = snapshot.revision;
   lastError = "";
-  document.title = `Alchemy — JA base · ${percent(summary.donePercent)} EN done`;
+  document.title = `Alchemy — 12 targets · ${percent(summary.donePercent)} GS1 EN done`;
 }
 function showError(message) {
   if (message === lastError) return;

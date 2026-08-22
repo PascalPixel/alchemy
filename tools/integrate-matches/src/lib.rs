@@ -161,7 +161,7 @@ fn linked_bytes(
     let object = format!("{prefix}.o");
 
     if kind == Kind::C {
-        let routing_source = repository.join("exact").join(format!("{stem}.c"));
+        let routing_source = repository.join("games/gs1/src").join(format!("{stem}.c"));
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Gs1,
             routing_source.to_string_lossy().to_string(),
@@ -395,7 +395,11 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             .strip_prefix("src_")
             .and_then(|name| name.strip_suffix(".c"))
             .unwrap();
-        if repository.join("exact").join(format!("{stem}.c")).exists() {
+        if repository
+            .join("games/gs1/src")
+            .join(format!("{stem}.c"))
+            .exists()
+        {
             continue;
         }
         let candidate = directory.join(&name);
@@ -405,7 +409,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             rejected.push((stem.to_string(), "carries an m2c helper".to_string()));
             continue;
         }
-        let asm = repository.join("asm").join(format!("{stem}.s"));
+        let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
         if !asm.exists() || !valid_address(stem) {
             continue;
         }
@@ -437,10 +441,10 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
     if apply {
         for (stem, _) in &accepted {
             let candidate = directory.join(format!("src_{stem}.c"));
-            let exact = repository.join("exact").join(format!("{stem}.c"));
+            let exact = repository.join("games/gs1/src").join(format!("{stem}.c"));
             fs::copy(&candidate, &exact)
                 .map_err(|error| format!("{}: {error}", exact.display()))?;
-            let asm = repository.join("asm").join(format!("{stem}.s"));
+            let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
             if asm.exists() {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;
             }

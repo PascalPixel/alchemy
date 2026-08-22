@@ -12,7 +12,7 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
-pub const SOURCE_ROOTS: [&str; 5] = ["assets", "games", "include", "semantic", "exact"];
+pub const SOURCE_ROOTS: [&str; 1] = ["games"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Finding {

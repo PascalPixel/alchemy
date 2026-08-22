@@ -72,11 +72,18 @@ pub fn driver_for_target(target: CompilerTarget) -> PathBuf {
     }
 }
 
-fn include_flag() -> String {
-    format!("-I{}", root().join("include").display())
+fn include_flag(target: CompilerTarget) -> String {
+    format!(
+        "-I{}",
+        root()
+            .join("games")
+            .join(target.as_str())
+            .join("include")
+            .display()
+    )
 }
 
-pub fn cflags() -> Vec<String> {
+fn base_cflags(target: CompilerTarget) -> Vec<String> {
     [
         "-O2",
         "-mthumb",
@@ -89,14 +96,18 @@ pub fn cflags() -> Vec<String> {
     ]
     .iter()
     .map(|s| (*s).to_string())
-    .chain(std::iter::once(include_flag()))
+    .chain(std::iter::once(include_flag(target)))
     .collect()
+}
+
+pub fn cflags() -> Vec<String> {
+    base_cflags(CompilerTarget::Gs1)
 }
 
 pub fn gs2_cflags() -> Vec<String> {
     // Keep this target-specific surface: GS2 may establish measured flag
     // deltas without changing its compiler family or GS1's command line.
-    cflags()
+    base_cflags(CompilerTarget::Gs2)
 }
 
 pub fn agbcc_cflags() -> Vec<String> {
@@ -110,6 +121,20 @@ pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
     match target {
         CompilerTarget::Gs1 => cflags(),
         CompilerTarget::Gs2 => gs2_cflags(),
+    }
+}
+
+#[cfg(test)]
+mod target_tests {
+    use super::*;
+
+    #[test]
+    fn each_game_uses_its_own_include_tree() {
+        let gs1 = cflags_for_target(CompilerTarget::Gs1);
+        let gs2 = cflags_for_target(CompilerTarget::Gs2);
+        assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+        assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
+        assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
     }
 }
 
@@ -226,8 +251,8 @@ fn stem_set(table: &'static [&'static str]) -> &'static HashSet<String> {
 }
 
 /// Overlay routing follows the OWNER, not the directory its C currently sits
-/// in. `exact/` and the edition corpus are two homes for the same owner, and
-/// `adopt` and `park` move the file between them, so an entry written `exact/<owner>.c`
+/// in. `games/gs1/src/` and the edition corpus are two homes for the same owner, and
+/// `adopt` and `park` move the file between them, so an entry written `games/gs1/src/<owner>.c`
 /// has to keep routing that owner after a park. `source_key` is a repo-relative
 /// path and silently stops matching, which drops the owner's sanctioned stock
 /// flags and leaves it compiling as something it never was -- the bytes then

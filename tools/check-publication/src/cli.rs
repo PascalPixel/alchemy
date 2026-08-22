@@ -88,7 +88,8 @@ fn self_test() -> ExitCode {
         ),
         (
             "committed incbin payload was accepted",
-            publication_entry_reason("asm/08000000.s", b".incbin \"rom.gba\"\n").as_deref()
+            publication_entry_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n")
+                .as_deref()
                 == Some("committed incbin payload"),
         ),
         (
@@ -113,7 +114,7 @@ fn self_test() -> ExitCode {
         ),
         (
             "a binary extension was scanned for conflict markers",
-            conflict_marker_reason("assets/readme/x.png", b"<<<<<<< HEAD\n").is_none(),
+            conflict_marker_reason("games/gs1/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none(),
         ),
         (
             "a byte dump in a commit message was accepted",

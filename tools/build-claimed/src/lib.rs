@@ -1,4 +1,4 @@
-//! Compile and verify every `exact/<address>.c` claimed by the main image.
+//! Compile and verify every `games/gs1/src/<address>.c` claimed by the main image.
 //! Paths and numbers are native Rust types; `serde_json` and `sha2` provide the
 //! only serialization and hashing needed by the cache and manifest.
 
@@ -11,8 +11,8 @@ use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use decomp_targets::{
-    decomp_target, parse_decomp_target, target_for, DecompCompilerTarget, DecompTarget,
-    DecompTargetId, DEFAULT_TARGET,
+    decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
+    DecompTarget, DecompTargetId, DEFAULT_TARGET,
 };
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
@@ -320,6 +320,7 @@ pub struct Options {
     pub jobs: f64,
     pub output: String,
     pub source_only: bool,
+    pub compile_only: bool,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParsedArgs {
@@ -327,7 +328,7 @@ pub enum ParsedArgs {
     Run(Box<Options>),
 }
 pub fn usage_text() -> &'static str {
-    "usage: build-claimed [-h] [--target gs1-en|gs2-en] [--source-only] [--jobs JOBS] [--output OUTPUT] [rom]"
+    "usage: build-claimed [-h] [--target GAME-EDITION] [--compile-only|--source-only] [--jobs JOBS] [--output OUTPUT] [rom]"
 }
 pub fn default_jobs() -> f64 {
     std::thread::available_parallelism().map_or(1, |n| n.get().min(16)) as f64
@@ -348,6 +349,7 @@ pub fn parse_args(argv: &[String]) -> Result<ParsedArgs> {
         jobs: default_jobs(),
         output: text(Path::new(target.output_dir).join("claimed")),
         source_only: false,
+        compile_only: false,
     };
     let mut positional = false;
     let mut i = 0;
@@ -356,6 +358,7 @@ pub fn parse_args(argv: &[String]) -> Result<ParsedArgs> {
         match arg.as_str() {
             "-h" | "--help" => return Ok(ParsedArgs::Help),
             "--source-only" => options.source_only = true,
+            "--compile-only" => options.compile_only = true,
             "--target" => i += 1,
             "--jobs" | "--output" => {
                 let value = argv
@@ -382,8 +385,18 @@ pub fn parse_args(argv: &[String]) -> Result<ParsedArgs> {
     if !options.jobs.is_finite() || options.jobs.fract() != 0.0 || options.jobs < 1.0 {
         return Err("jobs must be positive".into());
     }
-    if options.source_only && positional {
-        return Err("--source-only does not accept a ROM".into());
+    if options.source_only && options.compile_only {
+        return Err("--source-only and --compile-only are mutually exclusive".into());
+    }
+    if (options.source_only || options.compile_only) && positional {
+        return Err(format!(
+            "{} does not accept a ROM",
+            if options.compile_only {
+                "--compile-only"
+            } else {
+                "--source-only"
+            }
+        ));
     }
     Ok(ParsedArgs::Run(Box::new(options)))
 }
@@ -479,6 +492,7 @@ pub fn compile_source(
     source: &str,
     object_dir: &str,
     compiler: DecompCompilerTarget,
+    edition_define: &str,
     stamps: &ToolchainStampCache,
 ) -> Result<(Compiled, CacheOutcome)> {
     let name = stem(source).to_string();
@@ -490,6 +504,7 @@ pub fn compile_source(
         source,
         assembly.clone(),
     );
+    options.preprocessor_flags = vec![format!("-D{edition_define}=1")];
     options.preprocessed_output = Some(text(Path::new(object_dir).join(format!("{name}.i"))));
     let plan = source_to_assembly_plan(&options)?;
     let source_bytes = std::fs::read(source).map_err(|e| format!("{source}: {e}"))?;
@@ -598,6 +613,7 @@ pub fn map_limit<T: Sync, U: Send, F: Fn(&T) -> Result<U> + Sync>(
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BuildSummary {
+    pub compiled: usize,
     pub linked: usize,
     pub failures: Vec<String>,
     pub claimed_bytes: String,
@@ -609,7 +625,8 @@ pub struct BuildSummary {
 impl BuildSummary {
     pub fn summary_line(&self) -> String {
         format!(
-            "linked={} failures={} claimed_bytes={} image_bytes={}",
+            "compiled={} linked={} failures={} claimed_bytes={} image_bytes={}",
+            self.compiled,
             self.linked,
             self.failures.len(),
             self.claimed_bytes,
@@ -652,9 +669,15 @@ fn write_file(path: &Path, bytes: &[u8], written: &mut Vec<String>) -> Result<()
 
 pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let target: DecompTarget = decomp_target(Some(options.target.as_str()))?;
+    if !options.compile_only && target.build_support != BuildSupport::Full {
+        return Err(format!(
+            "{} is compile-only; run `make {}` until its edition link map and ownership surfaces are reconstructed",
+            target.id, target.id
+        ));
+    }
     let mut written = Vec::new();
     let rom_path = Path::new(cwd).join(&options.rom);
-    let rom = (!options.source_only)
+    let rom = (!options.source_only && !options.compile_only)
         .then(|| std::fs::read(&rom_path).map_err(|e| format!("{}: {e}", rom_path.display())))
         .transpose()?;
     if let Some(bytes) = &rom {
@@ -702,6 +725,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             source,
             &text(object_dir.clone()),
             target.compiler,
+            target.edition_define,
             &stamps,
         )
     })?;
@@ -731,6 +755,54 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     let mut undefined: Vec<_> = undefined_set.iter().cloned().collect();
     undefined.sort();
+    if options.compile_only {
+        let modules = sources
+            .iter()
+            .zip(&compiled)
+            .map(|(source, module)| {
+                let mut row = Map::new();
+                row.insert("source".into(), Value::String(relative(root, source)));
+                row.insert(
+                    "object".into(),
+                    Value::String(relative(root, &module.object)),
+                );
+                row.insert("symbols".into(), json_strings(&module.defined_names));
+                row.insert(
+                    "undefined_symbols".into(),
+                    json_strings(&module.undefined_names),
+                );
+                Value::Object(row)
+            })
+            .collect();
+        let mut document = Map::new();
+        document.insert("format".into(), number(1));
+        document.insert("target".into(), Value::String(target.id.to_string()));
+        document.insert(
+            "compiler".into(),
+            Value::String(target.compiler.to_string()),
+        );
+        document.insert(
+            "edition_define".into(),
+            Value::String(target.edition_define.into()),
+        );
+        document.insert("verification".into(), Value::String("compile_only".into()));
+        document.insert("modules".into(), Value::Array(modules));
+        write_file(
+            &output.join("manifest.json"),
+            format!("{}\n", canonical_json(&Value::Object(document))).as_bytes(),
+            &mut written,
+        )?;
+        return Ok(BuildSummary {
+            compiled: compiled.len(),
+            linked: 0,
+            failures: Vec::new(),
+            claimed_bytes: "not-linked".into(),
+            image_bytes: 0,
+            written,
+            cache_hits,
+            cache_misses,
+        });
+    }
     let symbols_source = output.join("externals.s");
     let symbols_object = output.join("externals.o");
     let mut externals = ".syntax unified\n.thumb\n".to_string();
@@ -904,6 +976,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         &mut written,
     )?;
     Ok(BuildSummary {
+        compiled: compiled.len(),
         linked: manifest.len(),
         failures,
         claimed_bytes: total.to_string(),
@@ -944,6 +1017,21 @@ mod tests {
             panic!()
         };
         assert_eq!(o.output, "out/gs2-en/claimed");
+    }
+    #[test]
+    fn compile_only_is_an_explicit_non_linking_mode() {
+        let ParsedArgs::Run(options) = parse_args(&[
+            "--target=gs1-de".into(),
+            "--compile-only".into(),
+            "--output=out/gs1-de/compile".into(),
+        ])
+        .unwrap() else {
+            panic!()
+        };
+        assert!(options.compile_only);
+        assert!(!options.source_only);
+        assert_eq!(options.output, "out/gs1-de/compile");
+        assert!(parse_args(&["--source-only".into(), "--compile-only".into()]).is_err());
     }
     #[test]
     fn map_is_ordered() {

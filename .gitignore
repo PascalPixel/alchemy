@@ -58,6 +58,12 @@ roms/
 *.gz
 *.7z
 *.log
+
+# GCC pass dumps are named after the source (for example,
+# 08120454.c.12.life) and are emitted into the compiler's working directory.
+# A diagnostic compile run from the repository root must never flood Git status.
+/*.c.[0-9][0-9].*
+/*.c.[0-9][0-9][0-9].*
 tools/scratch/*
 !tools/scratch/README.md
 

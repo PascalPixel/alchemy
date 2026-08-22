@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -12,7 +13,7 @@ void Func_08096d2c(void *arg0) {
     *(volatile s16 *)((u8 *)arg0 + 0x64) = temp_r3;
     temp_r0 = (s16)temp_r3;
     if (temp_r0 > 0x1F) {
-        Func_08009098((s32)arg0, 0x0809F0B0);
+        Func_08009098((s32)arg0, Data_0809f0b0);
         return;
     }
     temp_r0 = Func_08002322(temp_r0 << 10);

@@ -30,7 +30,7 @@ void Func_080e155c(s32 arg0, u32 arg1) {
         temp_r3 = temp_r2 + 0x20;
         M2C_FIELD(temp_r1_2, s16 *, 4) = temp_r6_2;
         M2C_FIELD(temp_r1_2, s16 *, 6) = temp_r3;
-        temp_r1_3 = (void *)0x03001CE0;
+        temp_r1_3 = (void *)ADDR_03001CE0;
         M2C_FIELD(temp_r1_3, s32 *, 0xC) = 0x78 - temp_r6_2;
         M2C_FIELD(temp_r1_3, s32 *, 0x10) = 0x78 - temp_r2;
         *temp_r0 -= 1;
@@ -41,7 +41,7 @@ void Func_080e155c(s32 arg0, u32 arg1) {
     M2C_FIELD(temp_r2_2, s16 *, 4) = temp_r0_2;
     temp_r0_2 = M2C_FIELD(temp_r1, s32 *, 0x77A4);
     M2C_FIELD(temp_r2_2, s16 *, 6) = temp_r0_2;
-    temp_r2_3 = (void *)0x03001CE0;
+    temp_r2_3 = (void *)ADDR_03001CE0;
     M2C_FIELD(temp_r2_3, s32 *, 0xC) = 0x78;
     M2C_FIELD(temp_r2_3, s32 *, 0x10) = 0x78;
 }

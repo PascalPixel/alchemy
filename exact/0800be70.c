@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct MapBase {
     u16 unused;
@@ -16,7 +17,7 @@ void Func_0800be70(u8 *object, u32 position)
     u8 offset_mask;
 
     destination = (u16 *)(0x06010000
-        + ((struct MapBase *)0x03001B10)[object[0x1C]].offset);
+        + ((struct MapBase *)ADDR_03001B10)[object[0x1C]].offset);
     count = (object[0x20] * object[0x21]) / 64;
     row = 0;
 

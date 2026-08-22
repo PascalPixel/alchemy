@@ -107,7 +107,7 @@ s32 Func_080b1a14(void)
             Func_080b1dec(state->detail_window, actor);
         }
 
-        if ((*(volatile u32 *)0x03001c94 & 1) != 0) {
+        if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
             Func_080030f8(1);
             if (Func_08077248(actor) == 0) {
                 Func_080f9010(0x71);
@@ -124,7 +124,7 @@ s32 Func_080b1a14(void)
             continue;
         }
 
-        if ((*(volatile u32 *)0x03001c94 & 2) != 0) {
+        if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
             Func_080f9010(0x71);
             Func_080a1030();
             Func_08015018(list_window, 2);
@@ -134,12 +134,12 @@ s32 Func_080b1a14(void)
             return 0;
         }
 
-        if ((*(volatile u32 *)0x03001b04 & 0x20) != 0) {
+        if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
             Func_080f9010(0x6f);
             selection--;
             redraw = 1;
         }
-        if ((*(volatile u32 *)0x03001b04 & 0x10) != 0) {
+        if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
             Func_080f9010(0x6f);
             selection++;
             redraw = 1;

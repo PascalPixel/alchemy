@@ -1,4 +1,5 @@
 #include "types.h"
+#include "flash_data.h"
 
 struct FlashInfo_0800711c {
     u8 filler0[36];
@@ -22,7 +23,7 @@ u16 Func_0800711c(u16 sector)
     Func_08006ac0(savedCode);
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xfffc) |
-        ((struct FlashInfo_0800711c *)0x08007c10)->control;
+        ((struct FlashInfo_0800711c *)Data_08007c10)->control;
 
     current = sector << 4;
     current = (u16)(current << 1);

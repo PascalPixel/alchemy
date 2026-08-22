@@ -26,6 +26,7 @@
  *     pattern-matched against other files.
  */
 #include "types.h"
+#include "flash_data.h"
 
 /* 0x08007c10 のフラッシュ設定表。wait は WAITCNT の SRAM 待ち値。 */
 struct FlashConfig08007028 {
@@ -51,7 +52,7 @@ u16 Func_08007028(void)
 
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) |
-        ((struct FlashConfig08007028 *)0x08007C10)->wait;
+        ((struct FlashConfig08007028 *)Data_08007c10)->wait;
 
     command = (volatile u8 *)0x0E005555;
     *command = 0xAA;

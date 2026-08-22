@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -18,7 +19,7 @@ void Func_08099920(void *object) {
 
     if ((s32) M2C_FIELD(object, s32 *, 0xC) <= (s32) M2C_FIELD(object, s32 *, 0x14)) {
         M2C_FIELD(object, s16 *, 0x5E) = phase;
-        Func_08009098(object, 0x0809F0B0);
+        Func_08009098(object, Data_0809f0b0);
         temp_r0 = NULL;
         M2C_FIELD(object, void **, 0x6C) = temp_r0;
         for (var_r7 = 0; var_r7 <= 2; var_r7++) {
@@ -35,7 +36,7 @@ void Func_08099920(void *object) {
             ptr2 = &M2C_FIELD(temp_r0, s16 *, 0x5E);
             phase2 = 6;
             *ptr2 = phase2;
-            Func_08009098(temp_r0, 0x0809F0B0);
+            Func_08009098(temp_r0, Data_0809f0b0);
         }
     }
 }

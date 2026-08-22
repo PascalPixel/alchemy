@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern void Func_080f2ebc(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3);
 
@@ -13,7 +14,7 @@ typedef struct {
 } State;
 
 void Func_080f3858(s32 arg0) {
-    State *state = *(State **)0x03001ED0;
+    State *state = *(State **)ADDR_03001ED0;
 
     if (state != 0) {
         state->value = arg0;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -14,6 +15,6 @@ void Func_080999a8(void *object) {
     temp_r5 = Rand();
     M2C_FIELD(object, s32 *, 8) = (s32) (M2C_FIELD(object, s32 *, 8) + (temp_r5 - Rand()));
     if ((s32) M2C_FIELD(object, s32 *, 0xC) <= (s32) M2C_FIELD(object, s32 *, 0x14)) {
-        Func_08009098(object, 0x0809F0B0);
+        Func_08009098(object, Data_0809f0b0);
     }
 }

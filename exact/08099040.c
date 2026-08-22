@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 s32 Func_08009098(void *, s32);
 void Func_08099040(void *object)
@@ -13,7 +14,7 @@ void Func_08099040(void *object)
     *((s32 *) (new_var + 0x18)) = temp_r3;
     if (temp_r3 <= 0x1000)
     {
-      Func_08009098(object, 0x0809F0B0);
+      Func_08009098(object, Data_0809f0b0);
     }
   }
 }

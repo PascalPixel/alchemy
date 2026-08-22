@@ -1,9 +1,11 @@
 #include "types.h"
+#include "object_efx.h"
 
 extern void *Func_08096c80(s32, s32, s32, s32);
 extern void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2);
 extern void Func_08009080(void *, s32);
 extern void Func_08009098(void *, void *);
+extern void Func_08097b70(void *);
 extern u32 Func_08004458(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Func_08004458
@@ -29,7 +31,7 @@ void *Func_08098070(void *source)
         return 0;
     *(s32 *)((s8 *)parent + 0x1c) = 0x4000;
     *(s32 *)((s8 *)parent + 0x18) = 0x4000;
-    *(s32 *)((s8 *)parent + 0x6c) = 0x08097b71;
+    *(s32 *)((s8 *)parent + 0x6c) = (s32)Func_08097b70;
     *(s32 *)((s8 *)parent + 0x30) = 0x20000;
     *(s32 *)((s8 *)parent + 0x34) = 0x20000;
     zero = 0;
@@ -43,7 +45,7 @@ void *Func_08098070(void *source)
                               *(s32 *)((s8 *)source + 12) + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            Func_08009098(child, (void *)0x0809f0d4);
+            Func_08009098(child, &Data_0809f0d4);
             x = Rand() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
             *(s32 *)((s8 *)child + 0x30) = x;

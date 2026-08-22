@@ -1,10 +1,11 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s16 *Func_08004970(s32 arg0)
 {
-    s32 stateAddress = 0x03001E50;
+    s32 stateAddress = ADDR_03001E50;
     u32 temp_r0_2;
     u32 temp_r0;
     u32 temp_r3;

@@ -1,5 +1,12 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE) || defined(GS1_EDITION_FR)
+#define ACTION_Y 120
+#else
+#define ACTION_Y 128
+#endif
 
 struct Effect_080b153c {
     s16 value;
@@ -77,7 +84,7 @@ s32 Func_080b153c(s32 actor, s32 item)
             chance = 30;
 
         battle->action = 12;
-        Func_080b0a6c(0, 0x80, 0x30);
+        Func_080b0a6c(0, ACTION_Y, 0x30);
         result = Func_080b1614(quantity, chance, effect->value);
     }
     return result;

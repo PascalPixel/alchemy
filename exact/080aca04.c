@@ -1,7 +1,14 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+
+#if defined(GS1_EDITION_JA)
+#define ALT_PARAM 4
+#else
+#define ALT_PARAM 2
+#endif
 
 s32 Func_080acab8(s32, s32, s32, u8, s32, s32, s32, s32, s32);
 
@@ -15,7 +22,7 @@ s32 Func_080aca04(s32 arg0, s32 arg1) {
         Func_080acab8(M2C_FIELD(temp_r7, s32 *, 0x34), 0, 0, M2C_FIELD(temp_r7, u8 *, 0x259), 1, arg0, 2, arg1, 1);
         Func_080acab8(M2C_FIELD(temp_r7, s32 *, 0x24), 0, 0, M2C_FIELD(temp_r7, u8 *, 0x258), arg0, 1, 2, arg1, arg0);
     } else {
-        Func_080acab8(M2C_FIELD(temp_r7, s32 *, 0x34), 0, 0, M2C_FIELD(temp_r7, u8 *, 0x21B), 1, 0, 2, arg1, 1);
+        Func_080acab8(M2C_FIELD(temp_r7, s32 *, 0x34), 0, 0, M2C_FIELD(temp_r7, u8 *, 0x21B), 1, 0, ALT_PARAM, arg1, 1);
         Func_080acab8(M2C_FIELD(temp_r7, s32 *, 0x24), 0, 0, M2C_FIELD(temp_r7, u8 *, 0x21A), 0, 0, 1, arg1, 0);
     }
     return 1;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -33,11 +34,11 @@ void Func_080174f8(s32 argument)
     state = Data_03001e8c.state;
     control = Data_03001e8c.control;
     result = 0;
-    FIELD(state, s8, 0xEA5) = 2;
+    FIELD(state, s8, RENDER_MENU_STATE_OFS) = 2;
     index = Func_08018038(argument, 1);
     one = 1;
-    FIELD(state, s8, 0xEA5) = one;
-    active_offset = 0xEB0 + index * 2;
+    FIELD(state, s8, RENDER_MENU_STATE_OFS) = one;
+    active_offset = RENDER_ENTRY_TBL_OFS + index * 2;
 
     if (FIELD(state, u16, active_offset) != 0) {
         existing = FIELD(control, struct Work *, 0);

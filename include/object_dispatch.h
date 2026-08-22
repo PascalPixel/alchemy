@@ -31,4 +31,12 @@ struct DispatchObject {
 
 void Func_0800c2d8(struct DispatchObject *object, u32 value);
 
+extern const u32 Data_08013590[];
+extern const u32 Data_080135a8[];
+extern const u32 Data_080135c0[];
+extern const u32 Data_080135d8[];
+extern const u32 Data_080135f0[];
+extern const u32 Data_08013608[];
+extern const u32 Data_08013620[];
+
 #endif

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 struct Work;
 
@@ -9,7 +10,7 @@ void Func_08019854(void *);
 
 void Func_08016868(void)
 {
-    u8 *channel = *(u8 **)ADDR_03001E8C + 0x620;
+    u8 *channel = *(u8 **)ADDR_03001E8C + RENDER_CHANNEL_OFS;
     s32 channel_no = 0;
     s32 one = 1;
 

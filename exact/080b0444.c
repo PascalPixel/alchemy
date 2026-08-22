@@ -1,6 +1,13 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
+#if defined(GS1_EDITION_JA)
+#define FINAL_ARG 2
+#else
+#define FINAL_ARG 1
+#endif
 
 /*
  * This owner's view of Data_02000240, which include/battle_effect_runtime.h
@@ -32,6 +39,6 @@ s32 Func_080b0444(void)
     FIELD((void *)Func_08077008(3), s8 *, 0x131) = 1;
     FIELD((void *)Func_08077008(5), s8 *, 0x131) = 1;
     FIELD((void *)Func_08077008(2), s8 *, 0x140) = 1;
-    Func_080b0278(1, 0x1e);
+    Func_080b0278(FINAL_ARG, 0x1e);
     return 0;
 }

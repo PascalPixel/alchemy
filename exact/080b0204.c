@@ -7,12 +7,13 @@ s32 Func_08002dd8(s32);
 s32 Func_08003f3c(u16);
 s32 Func_08004278(s32);
 s32 Func_08015140();
+extern u8 Data_080b00f5;
 
 void Func_080b0204(void) {
     void *temp_r5;
 
     temp_r5 = *(void **)ADDR_03001F2C;
-    Func_08004278(0x080B00F5);
+    Func_08004278((s32)&Data_080b00f5);
     Func_08015140();
     Func_08003f3c(M2C_FIELD(temp_r5, u16 *, 0x390));
     Func_08003f3c(M2C_FIELD(temp_r5, u16 *, 0x392));

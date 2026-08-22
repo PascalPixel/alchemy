@@ -1,5 +1,12 @@
 #include "render_input.h"
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE)
+#define TABLE_ADDR 0x03001B20
+#else
+#define TABLE_ADDR 0x03001B10
+#endif
 
 void *Func_08015e8c(void);
 void Func_08003f3c(u32);
@@ -33,7 +40,7 @@ struct RenderOutput *Func_0801eadc(
     /* Xをbit16～24、Yをbit0～7へ置き、arg1のフラグを重ねる。 */
     output->packed = (x << 16) | y | arg1;
     output->table.value =
-        ((struct TableEntry *)0x03001b10)[arg0].value >> 5;
+        ((struct TableEntry *)TABLE_ADDR)[arg0].value >> 5;
     output->sentinel = 0xff;
     output->zero = 0;
     output->x = x;

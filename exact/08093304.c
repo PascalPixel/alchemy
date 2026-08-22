@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct State08093304 {
     u8 padding[0x12F4];
@@ -21,12 +22,12 @@ void Func_08093304(s32 arg0)
     s32 result;
 
     if (arg0 == (s32)0x80000000) {
-        FIELD(state, s16, 0x12F4) = (value = 0);
-        FIELD(state, s16, 0x12F6) = value;
+        FIELD(state, s16, RENDER_RESULT_OFS) = (value = 0);
+        FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     } else {
         result = Func_080915ac(Func_08092ba8(arg0));
         value = Data_0809fc28[Data_02000240[0x20C]];
-        FIELD(state, s16, 0x12F4) = result;
-        FIELD(state, s16, 0x12F6) = value;
+        FIELD(state, s16, RENDER_RESULT_OFS) = result;
+        FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     }
 }

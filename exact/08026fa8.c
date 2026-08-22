@@ -1,16 +1,28 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define TEXT_COUNT 32
+#else
+#define TEXT_COUNT 52
+#endif
 
 void Func_080030f8(s32);
 s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_08016418(struct Work *work, s32 release);
 volatile unsigned char Func_08016738(void);
 void Func_08017aa4(s16 *, s32, s32, s32);
+#if defined(GS1_EDITION_JA)
+void Func_0801965c(s32, s16 *, s32);
+#else
 s32 Func_0801965c(s32, s16 *, s32);
+#endif
 
 extern u8 Data_02000240[];
 extern void * volatile Data_03001e74;
 extern volatile s32 Data_03001c94;
 extern void *Data_03001f34;
+extern char Value_00000845;
 
 s32 Func_08026fa8(void) {
     s16 buffer[64];
@@ -35,7 +47,7 @@ s32 Func_08026fa8(void) {
 active:
         work = Func_080162d4(0, 7, 30, 4, 42);
         Func_08016738();
-        Func_0801965c(0x845, buffer, 52);
+        Func_0801965c((s32)&Value_00000845, buffer, TEXT_COUNT);
         Func_08017aa4(buffer, work, 0, 4);
         do {
             Func_080030f8(1);

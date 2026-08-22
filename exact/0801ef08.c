@@ -1,5 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 struct Window {
     s32 handle;
@@ -20,7 +21,7 @@ void Func_0801ef08(s32 arg0) {
     s8 *busy;
 
     window = Func_080048f4(0x10, 0x10);
-    busy = (s8 *)((u8 *)*(void **)ADDR_03001E8C + 0xEA6);
+    busy = (s8 *)((u8 *)*(void **)ADDR_03001E8C + RENDER_MENU_BUSY_OFS);
     zero = 0;
     *busy = 1;
     Func_0801eea0(arg0);

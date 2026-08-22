@@ -1,14 +1,21 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define WORK_NO 0x8BE
+#else
+#define WORK_NO 0x976
+#endif
 
 /* 連続する2要素へ0x3e7を設定する。 */
 void Func_08019d0c(void)
 {
     s16 *work = (s16 *)*(void **)ADDR_03001E8C;
-    s32 no = 0x976;
+    s32 no = WORK_NO;
 
     do {
         work[no] = 0x3e7;
         no++;
-    } while (no != 0x978);
+    } while (no != WORK_NO + 2);
 }

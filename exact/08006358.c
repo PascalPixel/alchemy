@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 typedef void (*InterruptHandler)(void);
 
@@ -9,7 +10,7 @@ void Func_08006358(void)
     s16 *work;
     s32 handler;
 
-    work = (s16 *)0x03001CB0;
+    work = (s16 *)ADDR_03001CB0;
     do {
         do {
         } while (0);

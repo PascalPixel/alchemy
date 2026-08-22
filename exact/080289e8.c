@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 extern s32 Func_0801f77c(void);
 extern void *Func_080284dc(void);
@@ -49,7 +50,7 @@ s32 Func_080289e8(void) {
     if ((*(s16 *)0x02002010) != 0) {
         Func_080287a8(0x1E);
     }
-    Func_08028808(0x11, 7, 0);
+    Func_08028808(0x11, TYPE_MENU_WIDTH, 0);
     result = Func_08028574(initial);
     Func_0802851c();
     if (result >= 0) {

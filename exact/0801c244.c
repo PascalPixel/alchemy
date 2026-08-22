@@ -1,4 +1,10 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || \
+    defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define HAS_LOCALIZED_MENU_GUARD 1
+#endif
 
 extern u8 *Data_03001ebc;
 
@@ -10,6 +16,8 @@ s32 Func_080a1000(void);
 s32 Func_080a1008(void);
 s32 Func_080a1010(void);
 s32 Func_080a1040(void);
+void Func_080030f8(s32);
+void Func_0808a5f8(void);
 
 s32 Func_0801c244(void)
 {
@@ -23,6 +31,13 @@ s32 Func_0801c244(void)
 loop:
     Func_0801c2d0();
     selection = Func_08028920(selection);
+#if defined(HAS_LOCALIZED_MENU_GUARD)
+    state[0xcca] = 1;
+    if (*(s16 *)(state + 0xcb8) != 0) {
+        Func_0808a5f8();
+        Func_080030f8(1);
+    }
+#endif
     result = Func_0801c2e4();
 
     switch (selection) {
@@ -56,5 +71,8 @@ loop:
         break;
     }
 
+#if defined(HAS_LOCALIZED_MENU_GUARD)
+    state[0xcca] = 0;
+#endif
     return result;
 }

@@ -1,5 +1,16 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define SLOT1_ID_OFS 0x117E
+#define SLOT0_ID_OFS 0x117C
+#define SLOT_VALUE_OFS 0x1180
+#else
+#define SLOT1_ID_OFS 0x12EE
+#define SLOT0_ID_OFS 0x12EC
+#define SLOT_VALUE_OFS 0x12F0
+#endif
 
 s32 Func_080770c0(s32);
 s32 Func_08019d2c(s32);
@@ -25,15 +36,15 @@ void Func_0801ed40(u32 slot, s32 character, s32 value)
     character_id = Func_08019d2c(character);
     if (character_id != -1U) {
         if (slot > 1U) {
-            if (*(u16 *)(state + 0x12ee) == character_id) {
+            if (*(u16 *)(state + SLOT1_ID_OFS) == character_id) {
                 slot = 1;
-            } else if (*(u16 *)(state + 0x12ec) == character_id) {
+            } else if (*(u16 *)(state + SLOT0_ID_OFS) == character_id) {
                 slot = 0;
             } else {
                 return;
             }
         }
-        offset = 0x12f0 + slot * 2;
+        offset = SLOT_VALUE_OFS + slot * 2;
         current = *(u16 *)(state + offset);
         Func_0801a4fc(character_id, value, &current, &result, slot + 0xe, 1);
     }

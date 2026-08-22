@@ -1,8 +1,16 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define ITEM_TEXT_X 0x28
+#else
+#define ITEM_TEXT_X 0x20
+#endif
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void Func_08015080(s32, s32, s32, s32);
+extern char Value_00000b33;
 
 void Func_080a45cc(void *values, s32 destination)
 {
@@ -16,13 +24,13 @@ void Func_080a45cc(void *values, s32 destination)
     if (value == missing)
         Func_080150b8(0xe);
 
-    resource = 0xb33;
+    resource = (u32)&Value_00000b33;
     Func_08015080(resource, destination, 0, 0x18);
     Func_080150b8(0xf);
     if (FIELD(values, s8 *, 1) == missing)
         Func_080150b8(0xe);
 
-    Func_08015080(resource + 1, destination, 0x20, 0x18);
+    Func_08015080(resource + 1, destination, ITEM_TEXT_X, 0x18);
     Func_080150b8(0xf);
     if (FIELD(values, s8 *, 3) == missing)
         Func_080150b8(0xe);
@@ -42,6 +50,6 @@ void Func_080a45cc(void *values, s32 destination)
     if (FIELD(values, s8 *, 4) == missing)
         Func_080150b8(0xe);
 
-    Func_08015080(resource + 5, destination, 0x20, 0x20);
+    Func_08015080(resource + 5, destination, ITEM_TEXT_X, 0x20);
     Func_080150b8(0xf);
 }

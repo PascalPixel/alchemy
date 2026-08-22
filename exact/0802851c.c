@@ -7,6 +7,7 @@ void Func_08016418(struct Work *work, s32 release);
 s32 Func_08003f3c(u32 index);
 void Func_08002dd8(s32);
 void Func_080030f8(u32);
+extern u8 Data_08028195;
 
 void Func_0802851c(void) {
     struct Work *childWork;
@@ -15,7 +16,7 @@ void Func_0802851c(void) {
     void *work;
 
     work = *(void **)ADDR_03001F38;
-    Func_08004278((void *)0x08028195);
+    Func_08004278(&Data_08028195);
     childWork = M2C_FIELD(work, struct Work *, 0x78);
     if (childWork != 0) {
         Func_08016418(childWork, 2);

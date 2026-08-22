@@ -1,4 +1,5 @@
 #include "types.h"
+#include "battle_msg.h"
 
 struct Transition_080b874c {
     s32 value;
@@ -44,7 +45,7 @@ s32 Func_080b874c(s16 *argument)
 
     switch (argument[3]) {
     case 99:
-        Func_080151c8(0x843);
+        Func_080151c8((s32)&Value_00000843);
         if (Func_080b8824(argument) != 0)
             return 1;
         break;

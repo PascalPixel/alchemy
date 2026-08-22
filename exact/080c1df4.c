@@ -1,4 +1,11 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define CH_CNT 26
+#else
+#define CH_CNT 9
+#endif
 
 /* 効果音チャンネル管理。番号表を線形探索し、既存なら次の空きビットを */
 /* 剰余で回して確保、無ければ表末尾に新規登録する。 */
@@ -38,7 +45,7 @@ s32 Func_080c1df4(s32 no)
             return 0x8001;
         }
         for (; retry <= 31; retry++) {
-            ch = Func_080022fc(w->ch[i] + 1, 9);
+            ch = Func_080022fc(w->ch[i] + 1, CH_CNT);
             w->ch[i] = ch;
             if ((w->use[i] & (1 << (s8)ch)) == 0)
                 break;
@@ -51,7 +58,7 @@ s32 Func_080c1df4(s32 no)
         w->no[num] = no;
         w->use[num] = 0;
         w->num = num + 1;
-        return 9;
+        return CH_CNT;
     }
     return -1;
 }

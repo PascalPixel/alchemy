@@ -5,13 +5,14 @@ void Func_08004278(void *);
 void Func_0809bb34(void *);
 void Func_08002dd8(s32);
 void Func_080030f8(s32);
+extern u8 Data_08095885;
 
 void Func_080958e4(void) {
     u8 *var_r5 = *(u8 **)ADDR_03001F30;
     u8 *var_r6;
     s32 var_r7;
 
-    Func_08004278((void *)0x08095885);
+    Func_08004278(&Data_08095885);
     var_r6 = var_r5 + 157;
     var_r5 += 88;
     for (var_r7 = 23; var_r7 >= 0; var_r7--) {

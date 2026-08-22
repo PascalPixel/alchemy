@@ -1,6 +1,13 @@
 #include "menu_result.h"
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define GROUP_LEN 6
+#else
+#define GROUP_LEN 5
+#endif
 
 extern u8 *Data_03001f2c;
 s32 Func_08077008(s32);
@@ -38,10 +45,10 @@ s32 Func_080a8b8c(struct MenuResult *result, s32 index)
     if (limit == 0) {
         value = 0;
     }
-    quotient = Func_080022ec(value, 5);
-    remainder = Func_080022fc(value, 5);
-    groups = Func_080022ec(limit, 5);
-    if (Func_080022fc(limit, 5) != 0) {
+    quotient = Func_080022ec(value, GROUP_LEN);
+    remainder = Func_080022fc(value, GROUP_LEN);
+    groups = Func_080022ec(limit, GROUP_LEN);
+    if (Func_080022fc(limit, GROUP_LEN) != 0) {
         groups++;
     }
     result->value0 = encoded;

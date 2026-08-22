@@ -35,6 +35,9 @@ extern void Func_08009080(struct Object_08092624 *, s32);
 extern void Func_08009098(struct Object_08092624 *, const void *);
 extern void Func_080929d8(struct Object_08092624 *);
 extern s32 Func_08002304(s32, s32);
+extern const u8 Data_0809fbec[];
+extern const u8 Data_0809fc04[];
+extern u8 Data_080925e1;
 
 void Func_08092624(struct Object_08092624 *source, s32 optional)
 {
@@ -48,11 +51,11 @@ void Func_08092624(struct Object_08092624 *source, s32 optional)
         switch (Rand() & 1) {
         case 1:
             Func_08009080(object, 2);
-            Func_08009098(object, (const void *)0x0809fbec);
+            Func_08009098(object, Data_0809fbec);
             break;
         default:
             Func_08009080(object, 1);
-            Func_08009098(object, (const void *)0x0809fc04);
+            Func_08009098(object, Data_0809fc04);
             break;
         }
 
@@ -66,7 +69,7 @@ void Func_08092624(struct Object_08092624 *source, s32 optional)
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;
-        object->callback_6c = (void (*)(void))0x080925e1;
+        object->callback_6c = (void (*)(void))&Data_080925e1;
         child->field_26 = 0;
         child->copied_09 = source->child->copied_09;
     }

@@ -9,6 +9,8 @@ struct State080c1084 {
     u16 field_650;
 };
 
+extern s8 Data_080c5c10[];
+
 void Func_080c1084(void) {
     s32 _c0 = ADDR_03001E74;
     s8 *table;
@@ -20,7 +22,7 @@ void Func_080c1084(void) {
     if ((state != NULL) && (state->field_650 != 0)) {
         M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F90;
         M2C_FIELD((void *)0x04000050, s16 *, 2) = 0x10;
-        table = (s8 *)0x080C5C10;
+        table = Data_080c5c10;
         *(s16 *)0x04000054 = table[state->index];
         index = state->index;
         next = (index + 1) & 0xF;

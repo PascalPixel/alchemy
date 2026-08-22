@@ -1,8 +1,41 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void Func_08096cdc(void *object, s32 mode, s32 value);
+
+#if defined(GS1_EDITION_JA)
+#define WORK_CELL_ADDR  0x03001F30
+#define RENDER_CELL_ADDR 0x03001EBC
+#define CALLBACK_1      0x0808DEFD
+#define CALLBACK_2      0x0808DF39
+#define MESSAGE_NO      0x94B
+#elif defined(GS1_EDITION_DE)
+#define WORK_CELL_ADDR  0x03001F40
+#define RENDER_CELL_ADDR 0x03001ECC
+#define CALLBACK_1      0x0809A5B1
+#define CALLBACK_2      0x0809A5ED
+#define MESSAGE_NO      0xA16
+#elif defined(GS1_EDITION_ES) || defined(GS1_EDITION_FR)
+#define WORK_CELL_ADDR  0x03001F30
+#define RENDER_CELL_ADDR 0x03001EBC
+#define CALLBACK_1      0x0809BFA1
+#define CALLBACK_2      0x0809BFDD
+#define MESSAGE_NO      0xA16
+#elif defined(GS1_EDITION_IT)
+#define WORK_CELL_ADDR  0x03001F30
+#define RENDER_CELL_ADDR 0x03001EBC
+#define CALLBACK_1      0x08096FA1
+#define CALLBACK_2      0x08096FDD
+#define MESSAGE_NO      0xA16
+#else
+#define WORK_CELL_ADDR  0x03001F30
+#define RENDER_CELL_ADDR 0x03001EBC
+#define CALLBACK_1      0x08096F15
+#define CALLBACK_2      0x08096F51
+#define MESSAGE_NO      0x926
+#endif
 
 void Func_0809728c(void)
 {
@@ -13,8 +46,8 @@ void Func_0809728c(void)
     void *temp_r6;
     void *temp_sl;
 
-    temp_r6 = *(void **)0x03001F30;
-    temp_sl = *(void **)0x03001EBC;
+    temp_r6 = *(void **)WORK_CELL_ADDR;
+    temp_sl = *(void **)RENDER_CELL_ADDR;
     zero = 0;
     temp_r5 = *(void **)((u8 *)temp_r6 + 0x10);
     event_value = (s32)(*(s16 *)((u8 *)(temp_r6) + 0x1C));
@@ -28,21 +61,21 @@ void Func_0809728c(void)
     *(s32 *)((u8 *)(temp_r5) + 0x2C) = 0;
     if ((s8)M2C_FIELD(temp_r6, s8 *, 0x22) != 0) {
         Func_080f9010(212);
-        M2C_FIELD(temp_r5, s32 *, 0x6C) = 0x08096F15;
+        M2C_FIELD(temp_r5, s32 *, 0x6C) = CALLBACK_1;
     }
     if ((s8)M2C_FIELD(temp_r6, s8 *, 0x23) != 0) {
         Func_08096cdc(temp_r5, 1, 0);
         Func_08015120((s32)temp_r7, 4);
         if ((s8)M2C_FIELD(temp_r6, s8 *, 0x21) != 0) {
-            Func_08015040((void *)0x926, (s32)*(s8 *)((u8 *)(temp_r6) + 0x71C));
+            Func_08015040((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(temp_r6) + 0x71C));
         } else {
-            Func_08015040((void *)0x926, (s32)*(s8 *)((u8 *)(temp_r6) + 0x71C));
+            Func_08015040((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(temp_r6) + 0x71C));
         }
         Func_08096cdc(temp_r5, 0, 0x10);
     }
     if (Func_080770c0(0x140) != 0) {
         if ((s8)M2C_FIELD(temp_r6, s8 *, 0x22) != 0) {
-            M2C_FIELD(temp_r5, s32 *, 0x6C) = 0x08096F51;
+            M2C_FIELD(temp_r5, s32 *, 0x6C) = CALLBACK_2;
         }
         Func_08009080(temp_r5, 0x15);
     } else {

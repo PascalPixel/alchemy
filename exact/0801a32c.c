@@ -4,6 +4,7 @@ void Func_08003fa4(void *, s32, void *);
 extern u8 Data_08031864;
 extern u8 Value_08031864;
 extern u8 Data_08031864_b;
+extern u8 Data_08031864_c;
 
 s32 Func_0801a32c(u32 value, s32 unused, void *destination)
 {
@@ -20,7 +21,7 @@ s32 Func_0801a32c(u32 value, s32 unused, void *destination)
         break;
     case 0:
     default:
-        source = (void *)0x08031864;
+        source = &Data_08031864_c;
         break;
     }
     Func_08003fa4(destination, 32, source);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 extern s8 Data_08037403[];
 extern s8 Data_080373f7[];
@@ -42,7 +43,7 @@ s32 Func_08028920(s32 input)
     }
     Func_080287a8(2);
     Func_080287a8(7);
-    Func_08028808(17, 7, 0);
+    Func_08028808(17, SELECT_MENU_WIDTH, 0);
     value = Func_08028574(input);
     Func_0802851c();
 

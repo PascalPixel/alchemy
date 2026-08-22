@@ -962,10 +962,10 @@ after_power:
                     text = MSG_DMG_EMPH_E + affinity;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
-                BATTLE_AFTER_DAMAGE(cur);
             }
             if (cur <= 0 && BATTLE_SURVIVES_KO())
                 cur = 1;
+            BATTLE_AFTER_DAMAGE(cur);
             if (cur <= 0) {
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
@@ -1444,6 +1444,9 @@ dealt = target->hp - cur;
     case EFX_DRAIN_HP:
     case EFX_DRAIN_HP_HALF:
     {
+#ifdef BATTLE_HP_DRAIN_BODY
+        BATTLE_HP_DRAIN_BODY();
+#else
         s32 heal;
 
         heal = actor->hp;
@@ -1465,6 +1468,7 @@ dealt = target->hp - cur;
         }
         actor->hp = (s16)heal;
         BattleUnit_UpdateRatios(actor_id);
+#endif
         break;
     }
 
@@ -1570,7 +1574,7 @@ dealt = target->hp - cur;
     case EFX_GUARD1:
     BATTLE_GUARD1_CASES
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AURA);
-        if (S8OF(target->guard_level) > 0)
+        if (BATTLE_GUARD_VALUE(target) > 0)
             break;
         g1 = 1;
         S8OF(target->guard_level) = g1;
@@ -1581,7 +1585,7 @@ dealt = target->hp - cur;
     case EFX_GUARD2:
     BATTLE_GUARD2_CASES
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AURA_2);
-        if (S8OF(target->guard_level) > BATTLE_GUARD2_THRESHOLD)
+        if (BATTLE_GUARD_VALUE(target) > BATTLE_GUARD2_THRESHOLD)
             break;
         S8OF(target->guard_level) = BATTLE_GUARD2_LEVEL;
         break;

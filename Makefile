@@ -4,7 +4,7 @@
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
                  -fno-builtin -nostdinc -ffreestanding \
-                 -fcall-used-r4 -Iinclude
+                 -fcall-used-r4 -Igames/gs1/include
 
 TOOLS := tools
 CARGO ?= cargo
@@ -26,6 +26,9 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
 TOOLING_LINE_LIMIT := 40000
+TARGET ?= gs1-en
+HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
+	gs2-ja gs2-en gs2-de gs2-es gs2-fr gs2-it
 
 .PHONY: help verify test lint build-tools tool-tests tooling-size \
 	build-claimed build-asm build-assets build-full build-rom \
@@ -33,10 +36,13 @@ TOOLING_LINE_LIMIT := 40000
 	check-owners progress progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check dashboard clean clean-preview
+.PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
 	@printf '%s\n' \
 		'make verify           authoritative byte-exact gate' \
+		'make targets          compile shared source for all 12 historical targets' \
+		'make gs1-ja           compile one edition-qualified source target' \
 		'make build-rom        rebuild the ROM' \
 		'make build-full       rebuild and compare every owned byte' \
 		'make build-assets     rebuild source assets' \
@@ -50,7 +56,7 @@ help:
 		'make dashboard        serve the dashboard on localhost:4649'
 
 build-claimed:
-	$(BUILD) claimed
+	$(BUILD) claimed --target $(TARGET)
 
 build-asm:
 	$(BUILD) asm
@@ -59,10 +65,15 @@ build-assets:
 	$(ASSETS)
 
 build-full:
-	$(BUILD) full
+	$(BUILD) full --target $(TARGET)
 
 build-rom:
-	$(BUILD) rom
+	$(BUILD) rom --target $(TARGET)
+
+targets: $(HISTORICAL_TARGETS)
+
+$(HISTORICAL_TARGETS):
+	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
 dashboard:
 	$(COMPILER) dashboard-server --bind 0.0.0.0:4649
@@ -77,27 +88,27 @@ progress-subject:
 	$(CHECK) progress --subject
 
 correspondence: build-claimed
-	$(COMPILER) cross-edition --all --write recon/gs1/exact-correspondence.json
-	$(COMPILER) cross-edition --all-overlays --write recon/gs1/exact-overlay-correspondence.json
+	$(COMPILER) cross-edition --all --write games/gs1/recon/exact-correspondence.json
+	$(COMPILER) cross-edition --all-overlays --write games/gs1/recon/exact-overlay-correspondence.json
 
 correspondence-check: build-claimed
 	$(COMPILER) cross-edition --all --write out/exact-correspondence.check.json
 	$(COMPILER) cross-edition --all-overlays --write out/exact-overlay-correspondence.check.json
-	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.check.json
-	cmp recon/gs1/exact-overlay-correspondence.json out/exact-overlay-correspondence.check.json
+	cmp games/gs1/recon/exact-correspondence.json out/exact-correspondence.check.json
+	cmp games/gs1/recon/exact-overlay-correspondence.json out/exact-overlay-correspondence.check.json
 
 edition-builds: build-claimed
-	$(COMPILER) cross-edition --all --object-dir out/claimed/obj \
+	$(COMPILER) cross-edition --all --object-dir out/gs1-en/claimed/obj \
 		--write out/exact-correspondence.edition-builds.json \
-		--edition-build recon/gs1/exact-main-builds.json
-	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.edition-builds.json
+		--edition-build games/gs1/recon/exact-main-builds.json
+	cmp games/gs1/recon/exact-correspondence.json out/exact-correspondence.edition-builds.json
 
 edition-builds-check: build-claimed
-	$(COMPILER) cross-edition --all --object-dir out/claimed/obj \
+	$(COMPILER) cross-edition --all --object-dir out/gs1-en/claimed/obj \
 		--write out/exact-correspondence.edition-builds.check.json \
 		--edition-build out/exact-main-builds.check.json
-	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.edition-builds.check.json
-	cmp recon/gs1/exact-main-builds.json out/exact-main-builds.check.json
+	cmp games/gs1/recon/exact-correspondence.json out/exact-correspondence.edition-builds.check.json
+	cmp games/gs1/recon/exact-main-builds.json out/exact-main-builds.check.json
 
 coverage: correspondence
 	$(CHECK) coverage --write
@@ -112,18 +123,18 @@ check-owners:
 	$(CHECK) owners
 
 corpus-check:
-	@test -f recon/gs1/project.json
-	@test -f recon/gs2/project.json
+	@test -f games/gs1/project.json
+	@test -f games/gs2/project.json
 	@test -f games/alchemy/project.json
 	@if test -d draft; then \
-		printf 'legacy draft/ directory found; use recon/gs1/<edition>/\n'; \
+		printf 'legacy draft/ directory found; use games/gs1/recon/<edition>/\n'; \
 		exit 1; \
 	fi
-	@if find semantic -maxdepth 1 -name '*.c' -print | grep -q .; then \
-		printf 'source hypotheses belong in recon/, not semantic/ metadata\n'; \
+	@if find games/gs1/semantic -maxdepth 1 -name '*.c' -print | grep -q .; then \
+		printf 'source hypotheses belong in games/gs1/recon/, not games/gs1/semantic/ metadata\n'; \
 		exit 1; \
 	fi
-	@printf 'corpus ok: GS1/GS2 JA bases, 12 reference editions, Alchemy integration separate\n'
+	@printf 'corpus ok: two shared-source games, 12 edition targets, Alchemy integration separate\n'
 
 build-tools:
 	@set -e; for host in $(HOSTS); do \

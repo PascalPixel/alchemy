@@ -15,7 +15,7 @@ fn catalog_path() -> PathBuf {
                 .unwrap()
                 .to_path_buf()
         })
-        .join("assets/data/late_runtime_catalog.json")
+        .join("games/gs1/assets/data/late_runtime_catalog.json")
 }
 
 pub fn entry(args: &[String]) -> ExitCode {

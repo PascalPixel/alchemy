@@ -89,11 +89,15 @@ fn write(path: &Path, text: &str) -> Result<(), String> {
 }
 fn map_path(target: &str) -> PathBuf {
     root()
+        .join("games")
+        .join(target.split('-').next().unwrap_or("gs1"))
         .join("metrics")
         .join(format!("{target}-coverage-map.json"))
 }
 fn target_path(target: &str) -> PathBuf {
     root()
+        .join("games")
+        .join(target.split('-').next().unwrap_or("gs1"))
         .join("metrics")
         .join(format!("{target}-core-targets.json"))
 }
@@ -267,7 +271,7 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
         .enumerate()
         .filter(|(_, r)| r.scope >= 1000)
         .collect();
-    let mut md = format!("This section is generated. It is the primary contributor target list:\nnon-overlapping audited source-owner scopes (or contiguous unresolved\nexecutable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.\n\n- **Unfinished scopes:** {}\n- **Address spaces scanned:** {} ({} still contain targets)\n- **Target bytes:** {} tracked-C or unresolved-assembly bytes\n- **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n- **Executable bytes accounted for:** {}\n\n### Main target list\n\nThis table contains every scope of at least 1,000 bytes ({} rows). The complete\n{}-row index, including the smallest audited owners, is\n[`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).\n\n| Rank | Scope | Target | Namespace / owner |\n|---:|---:|---:|---|\n", commas(rows.len() as i64), commas(spaces.len() as i64), commas(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64), commas(unresolved), commas(executable - scope), commas(executable), visible.len(), commas(rows.len() as i64));
+    let mut md = format!("This section is generated. It is the primary contributor target list:\nnon-overlapping audited source-owner scopes (or contiguous unresolved\nexecutable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.\n\n- **Unfinished scopes:** {}\n- **Address spaces scanned:** {} ({} still contain targets)\n- **Target bytes:** {} tracked-C or unresolved-assembly bytes\n- **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n- **Executable bytes accounted for:** {}\n\n### Main target list\n\nThis table contains every scope of at least 1,000 bytes ({} rows). The complete\n{}-row index, including the smallest audited owners, is\n[`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).\n\n| Rank | Scope | Target | Namespace / owner |\n|---:|---:|---:|---|\n", commas(rows.len() as i64), commas(spaces.len() as i64), commas(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64), commas(unresolved), commas(executable - scope), commas(executable), visible.len(), commas(rows.len() as i64));
     for (i, r) in visible {
         md.push_str(&format!(
             "| {} | {} | {} | `{}:{}` |\n",
@@ -330,7 +334,7 @@ fn update_readme(
     }
     for (id, svg) in trees {
         let version = svg_cache_version(svg);
-        let needle = format!("assets/readme/{target}-{id}.svg");
+        let needle = format!("games/gs1/assets/readme/{target}-{id}.svg");
         if let Some(pos) = out.find(&needle) {
             let end = pos + needle.len();
             let rest = &out[end..];

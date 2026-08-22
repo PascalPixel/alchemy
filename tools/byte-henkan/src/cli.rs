@@ -13,7 +13,7 @@ fn run(args: &[String]) -> Result<(), String> {
         return self_test();
     }
     if args.iter().any(|arg| arg == "--help" || arg == "-h") {
-        println!("usage: byte-henkan [TABLE.json]  (default assets/data/byte_henkan_hyou.json)");
+        println!("usage: byte-henkan [TABLE.json]  (default games/gs1/assets/data/byte_henkan_hyou.json)");
         return Ok(());
     }
     if let [command, source] = args {
@@ -36,7 +36,7 @@ fn run(args: &[String]) -> Result<(), String> {
             .expect("crate directory has a parent")
             .parent()
             .expect("tools has a parent")
-            .join("assets/data/byte_henkan_hyou.json"),
+            .join("games/gs1/assets/data/byte_henkan_hyou.json"),
     };
     println!("bytes={}", build_byte_henkan_tables(&source)?.len());
     Ok(())

@@ -11,7 +11,7 @@ pub fn run(arguments: &[String]) -> i32 {
     }
     let options = match parse_args(arguments) {
         Ok(ParseOutcome::Help) => {
-            println!("usage: build-full [-h] [--target gs1-en|gs2-en] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] [--asm-output ASM_OUTPUT] [--asset-manifest ASSET_MANIFEST] [--asset-output ASSET_OUTPUT] [--jobs JOBS] [--source-only] [rom] | --self-test");
+            println!("usage: build-full [-h] [--target GAME-EDITION] [-o OUTPUT] [--claimed-output CLAIMED_OUTPUT] [--asm-output ASM_OUTPUT] [--asset-manifest ASSET_MANIFEST] [--asset-output ASSET_OUTPUT] [--jobs JOBS] [--source-only] [rom] | --self-test");
             return 0;
         }
         Ok(ParseOutcome::Run(options)) => options,

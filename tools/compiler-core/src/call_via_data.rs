@@ -58,30 +58,30 @@ pub static OVERLAY_CALL_VIA_BASE: &[(&str, u64)] = &[
 /// entry. One address per overlay serves every site in a narrow address range,
 /// so a row far from the rest gets its own.
 pub static SOURCE_CALL_VIA_BASE: &[(&str, u64)] = &[
-    ("exact/resource_373_c_02005610.c", 0x0200_b794),
+    ("games/gs1/src/resource_373_c_02005610.c", 0x0200_b794),
     (
-        "recon/gs1/en/overlays/resource_373_c_02000608.c",
+        "games/gs1/recon/en/overlays/resource_373_c_02000608.c",
         0x0200_68d6,
     ),
-    ("exact/resource_373_c_02000608.c", 0x0200_68d6),
+    ("games/gs1/src/resource_373_c_02000608.c", 0x0200_68d6),
     (
-        "recon/gs1/en/overlays/resource_389_c_02000608.c",
+        "games/gs1/recon/en/overlays/resource_389_c_02000608.c",
         0x0200_1c9a,
     ),
-    ("exact/resource_389_c_02000608.c", 0x0200_1c9a),
+    ("games/gs1/src/resource_389_c_02000608.c", 0x0200_1c9a),
     (
-        "recon/gs1/en/overlays/resource_391_c_02000608.c",
+        "games/gs1/recon/en/overlays/resource_391_c_02000608.c",
         0x0200_34ae,
     ),
-    ("exact/resource_391_c_02000608.c", 0x0200_34ae),
+    ("games/gs1/src/resource_391_c_02000608.c", 0x0200_34ae),
     (
-        "recon/gs1/en/overlays/resource_392_c_02000608.c",
+        "games/gs1/recon/en/overlays/resource_392_c_02000608.c",
         0x0200_160e,
     ),
-    ("exact/resource_392_c_02000608.c", 0x0200_160e),
+    ("games/gs1/src/resource_392_c_02000608.c", 0x0200_160e),
     (
-        "recon/gs1/en/overlays/resource_393_c_02000608.c",
+        "games/gs1/recon/en/overlays/resource_393_c_02000608.c",
         0x0200_1656,
     ),
-    ("exact/resource_393_c_02000608.c", 0x0200_1656),
+    ("games/gs1/src/resource_393_c_02000608.c", 0x0200_1656),
 ];

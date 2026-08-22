@@ -54,7 +54,7 @@ fn routed_extras(source: &str) -> Vec<String> {
 
 fn live_sources() -> Vec<String> {
     let mut found = Vec::new();
-    for directory in ["semantic", "exact"] {
+    for directory in ["games/gs1/semantic", "games/gs1/src"] {
         let Ok(entries) = std::fs::read_dir(directory) else {
             continue;
         };
@@ -88,7 +88,7 @@ fn self_test() -> Result<(), String> {
         return Err("baseline lost -mthumb".to_string());
     }
     // A source with no routing entry must report no extras.
-    if !routed_extras("recon/gs1/en/main/does_not_exist_08ffffff.c").is_empty() {
+    if !routed_extras("games/gs1/recon/en/main/does_not_exist_08ffffff.c").is_empty() {
         return Err("an unrouted source reported routed flags".to_string());
     }
     // Routed extras must never duplicate a baseline flag.
@@ -155,7 +155,9 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             .collect()
     };
     for source in sources {
-        if !Path::new(&source).exists() && !source.starts_with("recon/gs1/en/main/does_not_exist") {
+        if !Path::new(&source).exists()
+            && !source.starts_with("games/gs1/recon/en/main/does_not_exist")
+        {
             eprintln!("warning: {source} does not exist on disk");
         }
         if only_routed && routed_extras(&source).is_empty() {

@@ -1,0 +1,1225 @@
+{
+  "format": 1,
+  "kind": "golden-sun-kind1-map-series",
+  "note": "The 174 ordinary field maps. chiiki_index.json and tokushu_index.json covered the 8 special series; these had no index at all. address and size are derived from games/gs1/assets/data/resource_directory.json -- slot address, and size to the next populated slot -- a derivation that reproduces every entry in both existing indexes exactly. `location` is null throughout: the ROM table joining a map to its name has not been found, and message_archive bank 9 holds only 99 location names against 182 maps, so there is no positional mapping to take.",
+  "resources": [
+    {
+      "id": "128",
+      "address": "0x084ba758",
+      "size": "0x34c",
+      "directory": "resource_128",
+      "location": null
+    },
+    {
+      "id": "12e",
+      "address": "0x084bafc0",
+      "size": "0x5410",
+      "directory": "resource_12e",
+      "location": null
+    },
+    {
+      "id": "134",
+      "address": "0x084c9b2c",
+      "size": "0x51c8",
+      "directory": "resource_134",
+      "location": null
+    },
+    {
+      "id": "13a",
+      "address": "0x084d8790",
+      "size": "0x313c",
+      "directory": "resource_13a",
+      "location": null
+    },
+    {
+      "id": "140",
+      "address": "0x084e3fa8",
+      "size": "0x2154",
+      "directory": "resource_140",
+      "location": null
+    },
+    {
+      "id": "146",
+      "address": "0x084ee110",
+      "size": "0x3114",
+      "directory": "resource_146",
+      "location": null
+    },
+    {
+      "id": "14c",
+      "address": "0x084f7c50",
+      "size": "0x3418",
+      "directory": "resource_14c",
+      "location": null
+    },
+    {
+      "id": "152",
+      "address": "0x0850202c",
+      "size": "0xbd4",
+      "directory": "resource_152",
+      "location": null
+    },
+    {
+      "id": "158",
+      "address": "0x08506444",
+      "size": "0x2428",
+      "directory": "resource_158",
+      "location": null
+    },
+    {
+      "id": "15e",
+      "address": "0x0850be10",
+      "size": "0x121c",
+      "directory": "resource_15e",
+      "location": null
+    },
+    {
+      "id": "164",
+      "address": "0x085132dc",
+      "size": "0xd78",
+      "directory": "resource_164",
+      "location": null
+    },
+    {
+      "id": "169",
+      "address": "0x08517e64",
+      "size": "0xe78",
+      "directory": "resource_169",
+      "location": null
+    },
+    {
+      "id": "16f",
+      "address": "0x0851c56c",
+      "size": "0xd28",
+      "directory": "resource_16f",
+      "location": null
+    },
+    {
+      "id": "170",
+      "address": "0x0851d294",
+      "size": "0xc18",
+      "directory": "resource_170",
+      "location": null
+    },
+    {
+      "id": "176",
+      "address": "0x085200f0",
+      "size": "0x1aac",
+      "directory": "resource_176",
+      "location": null
+    },
+    {
+      "id": "17c",
+      "address": "0x08525930",
+      "size": "0x2008",
+      "directory": "resource_17c",
+      "location": null
+    },
+    {
+      "id": "182",
+      "address": "0x0852c200",
+      "size": "0x1ce8",
+      "directory": "resource_182",
+      "location": null
+    },
+    {
+      "id": "184",
+      "address": "0x0852e044",
+      "size": "0x1f48",
+      "directory": "resource_184",
+      "location": null
+    },
+    {
+      "id": "18a",
+      "address": "0x085392d4",
+      "size": "0x2700",
+      "directory": "resource_18a",
+      "location": null
+    },
+    {
+      "id": "190",
+      "address": "0x08541c64",
+      "size": "0xa6c",
+      "directory": "resource_190",
+      "location": null
+    },
+    {
+      "id": "196",
+      "address": "0x08544fc8",
+      "size": "0x1b38",
+      "directory": "resource_196",
+      "location": null
+    },
+    {
+      "id": "19c",
+      "address": "0x085500e0",
+      "size": "0x10f4",
+      "directory": "resource_19c",
+      "location": null
+    },
+    {
+      "id": "1a2",
+      "address": "0x08556c8c",
+      "size": "0x1430",
+      "directory": "resource_1a2",
+      "location": null
+    },
+    {
+      "id": "1a8",
+      "address": "0x0855f2ac",
+      "size": "0x1d24",
+      "directory": "resource_1a8",
+      "location": null
+    },
+    {
+      "id": "1a9",
+      "address": "0x08560fd0",
+      "size": "0xf44",
+      "directory": "resource_1a9",
+      "location": null
+    },
+    {
+      "id": "1aa",
+      "address": "0x08561f14",
+      "size": "0x29e8",
+      "directory": "resource_1aa",
+      "location": null
+    },
+    {
+      "id": "1b0",
+      "address": "0x0856b834",
+      "size": "0x2f40",
+      "directory": "resource_1b0",
+      "location": null
+    },
+    {
+      "id": "1b1",
+      "address": "0x0856e774",
+      "size": "0x2dcc",
+      "directory": "resource_1b1",
+      "location": null
+    },
+    {
+      "id": "1b2",
+      "address": "0x08571540",
+      "size": "0x1ce4",
+      "directory": "resource_1b2",
+      "location": null
+    },
+    {
+      "id": "1b8",
+      "address": "0x0857bd88",
+      "size": "0x17ac",
+      "directory": "resource_1b8",
+      "location": null
+    },
+    {
+      "id": "1bd",
+      "address": "0x08582120",
+      "size": "0x1304",
+      "directory": "resource_1bd",
+      "location": null
+    },
+    {
+      "id": "1be",
+      "address": "0x08583424",
+      "size": "0x1d58",
+      "directory": "resource_1be",
+      "location": null
+    },
+    {
+      "id": "1c4",
+      "address": "0x0858eeb4",
+      "size": "0x2a74",
+      "directory": "resource_1c4",
+      "location": null
+    },
+    {
+      "id": "1c8",
+      "address": "0x08593acc",
+      "size": "0xd78",
+      "directory": "resource_1c8",
+      "location": null
+    },
+    {
+      "id": "1cb",
+      "address": "0x085965fc",
+      "size": "0x189c",
+      "directory": "resource_1cb",
+      "location": null
+    },
+    {
+      "id": "1d0",
+      "address": "0x0859e2c0",
+      "size": "0x16cc",
+      "directory": "resource_1d0",
+      "location": null
+    },
+    {
+      "id": "1d6",
+      "address": "0x085a6aa0",
+      "size": "0x1ec8",
+      "directory": "resource_1d6",
+      "location": null
+    },
+    {
+      "id": "1dc",
+      "address": "0x085af064",
+      "size": "0x18a0",
+      "directory": "resource_1dc",
+      "location": null
+    },
+    {
+      "id": "1e2",
+      "address": "0x085b86e0",
+      "size": "0x16d8",
+      "directory": "resource_1e2",
+      "location": null
+    },
+    {
+      "id": "1eb",
+      "address": "0x085c3968",
+      "size": "0x1344",
+      "directory": "resource_1eb",
+      "location": null
+    },
+    {
+      "id": "1ed",
+      "address": "0x085c4e08",
+      "size": "0x25bc",
+      "directory": "resource_1ed",
+      "location": null
+    },
+    {
+      "id": "1f8",
+      "address": "0x085d204c",
+      "size": "0x2890",
+      "directory": "resource_1f8",
+      "location": null
+    },
+    {
+      "id": "1fe",
+      "address": "0x085dc868",
+      "size": "0x18d0",
+      "directory": "resource_1fe",
+      "location": null
+    },
+    {
+      "id": "204",
+      "address": "0x085e6820",
+      "size": "0x248c",
+      "directory": "resource_204",
+      "location": null
+    },
+    {
+      "id": "20a",
+      "address": "0x085ee828",
+      "size": "0x1570",
+      "directory": "resource_20a",
+      "location": null
+    },
+    {
+      "id": "210",
+      "address": "0x085f46e0",
+      "size": "0x1a18",
+      "directory": "resource_210",
+      "location": null
+    },
+    {
+      "id": "213",
+      "address": "0x085f7674",
+      "size": "0x153c",
+      "directory": "resource_213",
+      "location": null
+    },
+    {
+      "id": "216",
+      "address": "0x085faff8",
+      "size": "0x1758",
+      "directory": "resource_216",
+      "location": null
+    },
+    {
+      "id": "219",
+      "address": "0x085ff240",
+      "size": "0x1c98",
+      "directory": "resource_219",
+      "location": null
+    },
+    {
+      "id": "21f",
+      "address": "0x08606a9c",
+      "size": "0x28bc",
+      "directory": "resource_21f",
+      "location": null
+    },
+    {
+      "id": "225",
+      "address": "0x08610e9c",
+      "size": "0xe18",
+      "directory": "resource_225",
+      "location": null
+    },
+    {
+      "id": "226",
+      "address": "0x08611cb4",
+      "size": "0x1a10",
+      "directory": "resource_226",
+      "location": null
+    },
+    {
+      "id": "22c",
+      "address": "0x0861b4fc",
+      "size": "0x1b0c",
+      "directory": "resource_22c",
+      "location": null
+    },
+    {
+      "id": "22d",
+      "address": "0x0861d008",
+      "size": "0x1e40",
+      "directory": "resource_22d",
+      "location": null
+    },
+    {
+      "id": "22e",
+      "address": "0x0861ee48",
+      "size": "0x1b28",
+      "directory": "resource_22e",
+      "location": null
+    },
+    {
+      "id": "22f",
+      "address": "0x08620970",
+      "size": "0x2178",
+      "directory": "resource_22f",
+      "location": null
+    },
+    {
+      "id": "230",
+      "address": "0x08622ae8",
+      "size": "0xf28",
+      "directory": "resource_230",
+      "location": null
+    },
+    {
+      "id": "231",
+      "address": "0x08623a10",
+      "size": "0x2f80",
+      "directory": "resource_231",
+      "location": null
+    },
+    {
+      "id": "234",
+      "address": "0x08628d08",
+      "size": "0xfd4",
+      "directory": "resource_234",
+      "location": null
+    },
+    {
+      "id": "23a",
+      "address": "0x0862fd24",
+      "size": "0xe60",
+      "directory": "resource_23a",
+      "location": null
+    },
+    {
+      "id": "23c",
+      "address": "0x08630cdc",
+      "size": "0xc64",
+      "directory": "resource_23c",
+      "location": null
+    },
+    {
+      "id": "23d",
+      "address": "0x08631940",
+      "size": "0xdd0",
+      "directory": "resource_23d",
+      "location": null
+    },
+    {
+      "id": "23e",
+      "address": "0x08632710",
+      "size": "0x1290",
+      "directory": "resource_23e",
+      "location": null
+    },
+    {
+      "id": "23f",
+      "address": "0x086339a0",
+      "size": "0xee8",
+      "directory": "resource_23f",
+      "location": null
+    },
+    {
+      "id": "240",
+      "address": "0x08634888",
+      "size": "0x10d8",
+      "directory": "resource_240",
+      "location": null
+    },
+    {
+      "id": "241",
+      "address": "0x08635960",
+      "size": "0x31c8",
+      "directory": "resource_241",
+      "location": null
+    },
+    {
+      "id": "247",
+      "address": "0x0863eedc",
+      "size": "0x35d4",
+      "directory": "resource_247",
+      "location": null
+    },
+    {
+      "id": "248",
+      "address": "0x086424b0",
+      "size": "0x3b08",
+      "directory": "resource_248",
+      "location": null
+    },
+    {
+      "id": "249",
+      "address": "0x08645fb8",
+      "size": "0x3d10",
+      "directory": "resource_249",
+      "location": null
+    },
+    {
+      "id": "24a",
+      "address": "0x08649cc8",
+      "size": "0x4060",
+      "directory": "resource_24a",
+      "location": null
+    },
+    {
+      "id": "24b",
+      "address": "0x0864dd28",
+      "size": "0x2288",
+      "directory": "resource_24b",
+      "location": null
+    },
+    {
+      "id": "251",
+      "address": "0x08654a20",
+      "size": "0x1d1c",
+      "directory": "resource_251",
+      "location": null
+    },
+    {
+      "id": "253",
+      "address": "0x086568d4",
+      "size": "0x1fa4",
+      "directory": "resource_253",
+      "location": null
+    },
+    {
+      "id": "259",
+      "address": "0x086610b0",
+      "size": "0x2b6c",
+      "directory": "resource_259",
+      "location": null
+    },
+    {
+      "id": "25c",
+      "address": "0x08666130",
+      "size": "0x17dc",
+      "directory": "resource_25c",
+      "location": null
+    },
+    {
+      "id": "25e",
+      "address": "0x08667ac0",
+      "size": "0x1574",
+      "directory": "resource_25e",
+      "location": null
+    },
+    {
+      "id": "25f",
+      "address": "0x08669034",
+      "size": "0x29d0",
+      "directory": "resource_25f",
+      "location": null
+    },
+    {
+      "id": "260",
+      "address": "0x0866ba04",
+      "size": "0x22c8",
+      "directory": "resource_260",
+      "location": null
+    },
+    {
+      "id": "261",
+      "address": "0x0866dccc",
+      "size": "0x15d8",
+      "directory": "resource_261",
+      "location": null
+    },
+    {
+      "id": "262",
+      "address": "0x0866f2a4",
+      "size": "0x20c0",
+      "directory": "resource_262",
+      "location": null
+    },
+    {
+      "id": "263",
+      "address": "0x08671364",
+      "size": "0x232c",
+      "directory": "resource_263",
+      "location": null
+    },
+    {
+      "id": "264",
+      "address": "0x08673690",
+      "size": "0x2c24",
+      "directory": "resource_264",
+      "location": null
+    },
+    {
+      "id": "265",
+      "address": "0x086762b4",
+      "size": "0x1488",
+      "directory": "resource_265",
+      "location": null
+    },
+    {
+      "id": "266",
+      "address": "0x0867773c",
+      "size": "0xd24",
+      "directory": "resource_266",
+      "location": null
+    },
+    {
+      "id": "268",
+      "address": "0x086785c0",
+      "size": "0x193c",
+      "directory": "resource_268",
+      "location": null
+    },
+    {
+      "id": "269",
+      "address": "0x08679efc",
+      "size": "0x1e1c",
+      "directory": "resource_269",
+      "location": null
+    },
+    {
+      "id": "26b",
+      "address": "0x0867be7c",
+      "size": "0x34c4",
+      "directory": "resource_26b",
+      "location": null
+    },
+    {
+      "id": "26c",
+      "address": "0x0867f340",
+      "size": "0x2820",
+      "directory": "resource_26c",
+      "location": null
+    },
+    {
+      "id": "272",
+      "address": "0x086882a8",
+      "size": "0x24e0",
+      "directory": "resource_272",
+      "location": null
+    },
+    {
+      "id": "273",
+      "address": "0x0868a788",
+      "size": "0x28e8",
+      "directory": "resource_273",
+      "location": null
+    },
+    {
+      "id": "274",
+      "address": "0x0868d070",
+      "size": "0x1fa0",
+      "directory": "resource_274",
+      "location": null
+    },
+    {
+      "id": "27a",
+      "address": "0x08695d1c",
+      "size": "0x2e1c",
+      "directory": "resource_27a",
+      "location": null
+    },
+    {
+      "id": "280",
+      "address": "0x0869ffb0",
+      "size": "0xdfc",
+      "directory": "resource_280",
+      "location": null
+    },
+    {
+      "id": "281",
+      "address": "0x086a0dac",
+      "size": "0x1178",
+      "directory": "resource_281",
+      "location": null
+    },
+    {
+      "id": "282",
+      "address": "0x086a1f24",
+      "size": "0x1dc4",
+      "directory": "resource_282",
+      "location": null
+    },
+    {
+      "id": "284",
+      "address": "0x086a3e6c",
+      "size": "0x1fc8",
+      "directory": "resource_284",
+      "location": null
+    },
+    {
+      "id": "288",
+      "address": "0x086a83c0",
+      "size": "0x26bc",
+      "directory": "resource_288",
+      "location": null
+    },
+    {
+      "id": "28a",
+      "address": "0x086aac40",
+      "size": "0xf34",
+      "directory": "resource_28a",
+      "location": null
+    },
+    {
+      "id": "291",
+      "address": "0x086b4d80",
+      "size": "0xe08",
+      "directory": "resource_291",
+      "location": null
+    },
+    {
+      "id": "294",
+      "address": "0x086b70a0",
+      "size": "0x119c",
+      "directory": "resource_294",
+      "location": null
+    },
+    {
+      "id": "29a",
+      "address": "0x086bf154",
+      "size": "0xaec",
+      "directory": "resource_29a",
+      "location": null
+    },
+    {
+      "id": "29c",
+      "address": "0x086bfe14",
+      "size": "0x1358",
+      "directory": "resource_29c",
+      "location": null
+    },
+    {
+      "id": "2a2",
+      "address": "0x086c56b8",
+      "size": "0x1d80",
+      "directory": "resource_2a2",
+      "location": null
+    },
+    {
+      "id": "2a4",
+      "address": "0x086c75e0",
+      "size": "0x21b8",
+      "directory": "resource_2a4",
+      "location": null
+    },
+    {
+      "id": "2a6",
+      "address": "0x086c992c",
+      "size": "0x11e8",
+      "directory": "resource_2a6",
+      "location": null
+    },
+    {
+      "id": "2ac",
+      "address": "0x086cf47c",
+      "size": "0xcd4",
+      "directory": "resource_2ac",
+      "location": null
+    },
+    {
+      "id": "2ae",
+      "address": "0x086d02d0",
+      "size": "0x18b8",
+      "directory": "resource_2ae",
+      "location": null
+    },
+    {
+      "id": "2b0",
+      "address": "0x086d1d0c",
+      "size": "0x1a90",
+      "directory": "resource_2b0",
+      "location": null
+    },
+    {
+      "id": "2b2",
+      "address": "0x086d3918",
+      "size": "0x1d3c",
+      "directory": "resource_2b2",
+      "location": null
+    },
+    {
+      "id": "2b5",
+      "address": "0x086d58f8",
+      "size": "0x1ea4",
+      "directory": "resource_2b5",
+      "location": null
+    },
+    {
+      "id": "2b7",
+      "address": "0x086d7924",
+      "size": "0xf5c",
+      "directory": "resource_2b7",
+      "location": null
+    },
+    {
+      "id": "2b9",
+      "address": "0x086d8a18",
+      "size": "0x110c",
+      "directory": "resource_2b9",
+      "location": null
+    },
+    {
+      "id": "2bb",
+      "address": "0x086d9ce0",
+      "size": "0x2aa4",
+      "directory": "resource_2bb",
+      "location": null
+    },
+    {
+      "id": "2bd",
+      "address": "0x086dc8f8",
+      "size": "0x13e8",
+      "directory": "resource_2bd",
+      "location": null
+    },
+    {
+      "id": "2bf",
+      "address": "0x086dde98",
+      "size": "0x2928",
+      "directory": "resource_2bf",
+      "location": null
+    },
+    {
+      "id": "2c1",
+      "address": "0x086e0968",
+      "size": "0x23fc",
+      "directory": "resource_2c1",
+      "location": null
+    },
+    {
+      "id": "2c3",
+      "address": "0x086e2ef4",
+      "size": "0x3280",
+      "directory": "resource_2c3",
+      "location": null
+    },
+    {
+      "id": "2c5",
+      "address": "0x086e6354",
+      "size": "0xf0c",
+      "directory": "resource_2c5",
+      "location": null
+    },
+    {
+      "id": "2c6",
+      "address": "0x086e7260",
+      "size": "0x1688",
+      "directory": "resource_2c6",
+      "location": null
+    },
+    {
+      "id": "2c8",
+      "address": "0x086e8a78",
+      "size": "0x2a70",
+      "directory": "resource_2c8",
+      "location": null
+    },
+    {
+      "id": "2ca",
+      "address": "0x086eb670",
+      "size": "0xb4c",
+      "directory": "resource_2ca",
+      "location": null
+    },
+    {
+      "id": "2d0",
+      "address": "0x086f21ac",
+      "size": "0x1544",
+      "directory": "resource_2d0",
+      "location": null
+    },
+    {
+      "id": "2d2",
+      "address": "0x086f387c",
+      "size": "0x10dc",
+      "directory": "resource_2d2",
+      "location": null
+    },
+    {
+      "id": "2da",
+      "address": "0x086fdf50",
+      "size": "0x20a8",
+      "directory": "resource_2da",
+      "location": null
+    },
+    {
+      "id": "2e0",
+      "address": "0x08707960",
+      "size": "0x1a94",
+      "directory": "resource_2e0",
+      "location": null
+    },
+    {
+      "id": "2e6",
+      "address": "0x0871086c",
+      "size": "0x1230",
+      "directory": "resource_2e6",
+      "location": null
+    },
+    {
+      "id": "2e8",
+      "address": "0x08711bf8",
+      "size": "0xfa8",
+      "directory": "resource_2e8",
+      "location": null
+    },
+    {
+      "id": "2e9",
+      "address": "0x08712ba0",
+      "size": "0x167c",
+      "directory": "resource_2e9",
+      "location": null
+    },
+    {
+      "id": "2ea",
+      "address": "0x0871421c",
+      "size": "0xed8",
+      "directory": "resource_2ea",
+      "location": null
+    },
+    {
+      "id": "2ec",
+      "address": "0x08715260",
+      "size": "0x19b8",
+      "directory": "resource_2ec",
+      "location": null
+    },
+    {
+      "id": "2ed",
+      "address": "0x08716c18",
+      "size": "0xf74",
+      "directory": "resource_2ed",
+      "location": null
+    },
+    {
+      "id": "2ee",
+      "address": "0x08717b8c",
+      "size": "0x1164",
+      "directory": "resource_2ee",
+      "location": null
+    },
+    {
+      "id": "2f0",
+      "address": "0x08718e8c",
+      "size": "0x164c",
+      "directory": "resource_2f0",
+      "location": null
+    },
+    {
+      "id": "2f2",
+      "address": "0x0871a618",
+      "size": "0x1dbc",
+      "directory": "resource_2f2",
+      "location": null
+    },
+    {
+      "id": "2f3",
+      "address": "0x0871c3d4",
+      "size": "0x1348",
+      "directory": "resource_2f3",
+      "location": null
+    },
+    {
+      "id": "2f5",
+      "address": "0x0871d898",
+      "size": "0x277c",
+      "directory": "resource_2f5",
+      "location": null
+    },
+    {
+      "id": "2f7",
+      "address": "0x087201ac",
+      "size": "0x29ec",
+      "directory": "resource_2f7",
+      "location": null
+    },
+    {
+      "id": "2f8",
+      "address": "0x08722b98",
+      "size": "0x13ec",
+      "directory": "resource_2f8",
+      "location": null
+    },
+    {
+      "id": "2f9",
+      "address": "0x08723f84",
+      "size": "0x1508",
+      "directory": "resource_2f9",
+      "location": null
+    },
+    {
+      "id": "2fa",
+      "address": "0x0872548c",
+      "size": "0x3ec0",
+      "directory": "resource_2fa",
+      "location": null
+    },
+    {
+      "id": "2fc",
+      "address": "0x0872950c",
+      "size": "0x1170",
+      "directory": "resource_2fc",
+      "location": null
+    },
+    {
+      "id": "2fe",
+      "address": "0x0872a7d4",
+      "size": "0x10a0",
+      "directory": "resource_2fe",
+      "location": null
+    },
+    {
+      "id": "301",
+      "address": "0x0872e3a4",
+      "size": "0x12ec",
+      "directory": "resource_301",
+      "location": null
+    },
+    {
+      "id": "302",
+      "address": "0x0872f690",
+      "size": "0x2240",
+      "directory": "resource_302",
+      "location": null
+    },
+    {
+      "id": "304",
+      "address": "0x087319c8",
+      "size": "0x2a70",
+      "directory": "resource_304",
+      "location": null
+    },
+    {
+      "id": "305",
+      "address": "0x08734438",
+      "size": "0x18d8",
+      "directory": "resource_305",
+      "location": null
+    },
+    {
+      "id": "30d",
+      "address": "0x0873f32c",
+      "size": "0x26ac",
+      "directory": "resource_30d",
+      "location": null
+    },
+    {
+      "id": "313",
+      "address": "0x08748b44",
+      "size": "0x19c0",
+      "directory": "resource_313",
+      "location": null
+    },
+    {
+      "id": "315",
+      "address": "0x0874a678",
+      "size": "0x1770",
+      "directory": "resource_315",
+      "location": null
+    },
+    {
+      "id": "316",
+      "address": "0x0874bde8",
+      "size": "0x189c",
+      "directory": "resource_316",
+      "location": null
+    },
+    {
+      "id": "318",
+      "address": "0x0874d83c",
+      "size": "0x1870",
+      "directory": "resource_318",
+      "location": null
+    },
+    {
+      "id": "31a",
+      "address": "0x0874f22c",
+      "size": "0x192c",
+      "directory": "resource_31a",
+      "location": null
+    },
+    {
+      "id": "31b",
+      "address": "0x08750b58",
+      "size": "0x1edc",
+      "directory": "resource_31b",
+      "location": null
+    },
+    {
+      "id": "31e",
+      "address": "0x08752d30",
+      "size": "0xc40",
+      "directory": "resource_31e",
+      "location": null
+    },
+    {
+      "id": "322",
+      "address": "0x08755c3c",
+      "size": "0x2d18",
+      "directory": "resource_322",
+      "location": null
+    },
+    {
+      "id": "324",
+      "address": "0x08758b3c",
+      "size": "0x25fc",
+      "directory": "resource_324",
+      "location": null
+    },
+    {
+      "id": "325",
+      "address": "0x0875b138",
+      "size": "0xca0",
+      "directory": "resource_325",
+      "location": null
+    },
+    {
+      "id": "326",
+      "address": "0x0875bdd8",
+      "size": "0x4604",
+      "directory": "resource_326",
+      "location": null
+    },
+    {
+      "id": "328",
+      "address": "0x087604e4",
+      "size": "0x1bd4",
+      "directory": "resource_328",
+      "location": null
+    },
+    {
+      "id": "32a",
+      "address": "0x08762228",
+      "size": "0x1940",
+      "directory": "resource_32a",
+      "location": null
+    },
+    {
+      "id": "32c",
+      "address": "0x08763cc4",
+      "size": "0x14dc",
+      "directory": "resource_32c",
+      "location": null
+    },
+    {
+      "id": "32d",
+      "address": "0x087651a0",
+      "size": "0x1550",
+      "directory": "resource_32d",
+      "location": null
+    },
+    {
+      "id": "32e",
+      "address": "0x087666f0",
+      "size": "0x1ec4",
+      "directory": "resource_32e",
+      "location": null
+    },
+    {
+      "id": "32f",
+      "address": "0x087685b4",
+      "size": "0x1954",
+      "directory": "resource_32f",
+      "location": null
+    },
+    {
+      "id": "337",
+      "address": "0x0876f3bc",
+      "size": "0xf94",
+      "directory": "resource_337",
+      "location": null
+    },
+    {
+      "id": "33d",
+      "address": "0x08773af0",
+      "size": "0x1190",
+      "directory": "resource_33d",
+      "location": null
+    },
+    {
+      "id": "33f",
+      "address": "0x08774e48",
+      "size": "0x34c",
+      "directory": "resource_33f",
+      "location": null
+    },
+    {
+      "id": "345",
+      "address": "0x087756b0",
+      "size": "0x34c",
+      "directory": "resource_345",
+      "location": null
+    },
+    {
+      "id": "34b",
+      "address": "0x08775f18",
+      "size": "0x34c",
+      "directory": "resource_34b",
+      "location": null
+    },
+    {
+      "id": "351",
+      "address": "0x08776780",
+      "size": "0x34c",
+      "directory": "resource_351",
+      "location": null
+    },
+    {
+      "id": "357",
+      "address": "0x08776fe8",
+      "size": "0x34c",
+      "directory": "resource_357",
+      "location": null
+    },
+    {
+      "id": "35d",
+      "address": "0x08777850",
+      "size": "0x34c",
+      "directory": "resource_35d",
+      "location": null
+    },
+    {
+      "id": "363",
+      "address": "0x087780b8",
+      "size": "0x34c",
+      "directory": "resource_363",
+      "location": null
+    },
+    {
+      "id": "369",
+      "address": "0x08778920",
+      "size": "0x34c",
+      "directory": "resource_369",
+      "location": null
+    }
+  ]
+}

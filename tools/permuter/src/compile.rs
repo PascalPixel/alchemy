@@ -116,7 +116,7 @@ fn integer_field(line: &str, key: &str) -> Option<usize> {
 }
 
 fn registered_overlay_span(name: &str, address: i64) -> Result<usize, String> {
-    let path = root().join("semantic").join("regions.json");
+    let path = root().join("games/gs1/semantic").join("regions.json");
     let text = fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
     let mut overlay = None;
     let mut entry = None;
@@ -173,7 +173,7 @@ fn checked(program: &str, arguments: &[String], work: &Path) -> Result<(), Strin
 }
 
 fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
-    let source = root().join("asm").join(format!("{stem}.s"));
+    let source = root().join("games/gs1/asm").join(format!("{stem}.s"));
     if !source.is_file() {
         return Err(format!(
             "{} is missing; core owner span is unknown",
@@ -262,7 +262,7 @@ impl PreparedTarget {
             let compiled =
                 compile_overlay_candidate(&base, work.path(), &name, Some(&original), &[])?;
             let reference_path = root()
-                .join("assets")
+                .join("games/gs1/assets")
                 .join("code")
                 .join(format!("{name}_overlay.s"));
             let reference = assemble_overlay(&OverlaySource::path(reference_path), OVERLAY_BASE)?;

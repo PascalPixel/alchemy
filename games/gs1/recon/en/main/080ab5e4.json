@@ -1,0 +1,157 @@
+{
+  "owner": "main:0x080ab5e4",
+  "span_bytes": 4888,
+  "edition": {
+    "role": "derived-candidate",
+    "edition": "en",
+    "base_owner": "main:0x080a24e0",
+    "base_edition": "ja",
+    "rebase_status": "required",
+    "evidence": "entry correspondence established by the cross-edition ROM scan; the JA owner changes length and source structure, so this EN candidate must be derived from JA rather than copied into the base corpus"
+  },
+  "score": {
+    "candidate_bytes": 4804,
+    "reference_bytes": 4888,
+    "differing_halfwords": 2293,
+    "wrong_instructions": 1671,
+    "class": "wrong",
+    "normalized_insn_diff": "objdiff 68.53684%; 1093 unchanged, 690 argument mismatches, 17 opcode mismatches, 65 replacements, 330 deletions, 285 insertions",
+    "bl_sequence": "184 ours / 184 reference -- EXACT",
+    "frame": "sub sp, #108 on both sides -- EXACT (was 92 vs 108 at session start)",
+    "note": "invariant-first candidate: exact 108-byte frame, arg0 at sp+80, ctx at sp+76, slotFlags at sp+84, status at sp+100, and 20-instruction exact prefix; still 84 bytes short and not exact"
+  },
+  "shape": {
+    "calls": 186,
+    "loops": 20,
+    "memory_ops": 3,
+    "jump_table_pool_targets": true
+  },
+  "domain": "Colosso tournament handler: texts 0x2128/0x212c (finals gating), 0xbbe (recovering), 0x219 (Warrior's Helm); IWRAM 0x03001c94/0x03001af8; reads Data_02000240",
+  "expressed": [
+    "complete entry paths for both arg0 values, local initialization, persistent tournament fields, and competitor-status array construction",
+    "the 28-case mov-pc dispatch at +0x71c: state = *(seq+0x212c) (skip when 0), tick counter (seq+0x2128)++ each entry, jump table at +0x74c, eight empty slots sharing the after-switch address",
+    "all switch interiors, shared tails, dialog sequences, timing gates, and progression updates",
+    "complete post-dispatch input, recovery, reward, redraw, and final persistent-store paths through the owner return",
+    "the evidence-backed function signature s32 Func_080ab5e4(s32 arg0), replacing the former void(void) scaffold",
+    "slotFlags and status are members of one 24-byte local work buffer: slotFlags[8] at sp+84, an evidence-visible unknown 8-byte middle region at sp+92, and status[8] at sp+100. This naturally emits the exact 108-byte frame and both array addresses without fake scalar pressure. The reference clears status as a byte walk from &status[7] down to &status[0] (strb/subs/cmp/bge) and keeps a pointer local to &status[0]",
+    "the packed tournament value's div and mod results are both zero-extended to u16 (the reference lsls/lsrs #16 pair after each of Func_08002304 and Func_080022f4)",
+    "all seven dialog-wait sites are rotated while loops -- while (Func_08015048() == 0) Func_080030f8(1); -- so the frame pump is emitted BEFORE the poll, as the reference's b-to-test/body/test layout shows. m2c's top-tested goto loop emitted them in the opposite order; this one family closed 14 of the 26 bl-sequence hunks",
+    "the arg0 dispatch arms are ordered == 0 first: the reference emits the tournament-status body (sp24/sp20 dialog pair plus its bitfield block) as the fallthrough of the arg0 test and branches away for the nonzero case. m2c's != 0 first ordering put the wrong block at .L24",
+    "the first 0x10C window-handle call reads the field directly; only the second call computes and retains its address for the remaining uses. EN and JA both emit this two-stage lifetime. Hoisting the pointer from the first call invented a long-lived sp+84 scalar and displaced both local arrays",
+    "the three block_159 selector paths (case 27, case 1/3/7/8/21 nonzero arm, case 17/19) share the same two-statement tail (store the selector to +0x212C; var_r4_907 = sp8). Inlined at each site instead of a shared label+goto so crossjump can form the reference's share point locally; the shared-label form kept a live var_r3_1107 across all three call sites that the reference does not carry",
+    "sp54 was m2c's scalar mistyping of a second byte buffer (M2C_UNK=s32, matching the same array-truncation pattern already fixed for the status array): the reference's Func_080ae714(&buf, count) fills a buffer at sp+84 that is later read with 'ldrb r3,[r5,r7]' (byte-indexed by the loop counter), proving 1-byte element stride. The old '*(&sp54 + sp44)' spelling did pointer arithmetic in 4-byte (s32) units instead -- a real correctness bug, now fixed as 'u8 buf54[8]; ... buf54[sp44]'. Score-neutral (979, 6 bytes shuffled but same normalized weight) but adopted on evidence: matches the reference's actual instruction shape and removes a latent out-of-bounds/wrong-stride read for any sp44 > 0",
+    "var_sl_1853's inner-loop advance is +1 (one u16 element), not +2: reference emits 'movs r3,#2; add sl,r3' -- a literal 2-BYTE raw register add, which for a u16-aligned pointer is exactly one element. The old '+= 2' spelling (2 ELEMENTS = 4 bytes in C pointer arithmetic) silently walked half as many entries per apparent outer-loop iteration bound. Fixed to '+= 1'. Score-neutral (979) but a genuine, byte-proven correctness fix -- found by the same method as the sp54 buffer bug: re-reading a loop's raw pointer-advance instruction against its C-level increment instead of trusting m2c's literal transcription",
+    "the frame is now size-exact (sub sp,#108) and the bl sequence is count-exact (184/184); both were off at the start of this session",
+    "the seven dialog-wait sites are PLAIN while loops in source -- while (Func_08015048()==0) Func_080030f8(1); -- GCC performs the rotation itself. Hand-writing the rotated form if(c){do{b}while(c);} duplicates the poll call (14 sites vs the reference's 7, total bl 190 vs 184) and pads size toward parity with instructions the reference does not contain. Tried and reverted (7a8d2a54a, dd575d756); do not redo it",
+    "ctx+0x1C, the local status[] array, and the events+0xA0 per-slot array are all read SIGNED (reference ldrsb at asm 116/136/157/175/244/1698/1789/1899); events+0xA0 was the one still unsigned here and is now fixed"
+  ],
+  "unexpressed": [
+    {
+      "op": "store deficit",
+      "count": 29,
+      "where": "instruction histogram over differing regions: ours 89 str vs reference 118. Candidate addresses 23 distinct stack slots (0..88) against the reference's 21 (0..80) at the SAME 108-byte frame -- the reference reserves sp+84..91 for slotFlags[8] (add r5,sp,#84) and sp+100..107 for status[8], keeping scalars inside 0..80. Two extra scalar slots here are spilling where the reference does not. This is the main remaining lever"
+    },
+    {
+      "op": "crossjump merge (corrected)",
+      "count": "~150 instructions",
+      "where": "CORRECTION to the prior note in this file: loop_36 IS the right target for the 'sp48 = 1; goto loop_36;' sites -- draft line ~247 (Func_08015270(win10C); field5=1; sp18=sp38*8; loop_36: temp_r7_312=sp48; if(temp_r7_312==0){}else{switch...}) maps DIRECTLY onto asm .L99 (ldr r7,[sp,#72]; cmp r7,#0; bne .L18; b .L19). The reference's 'bl .L99' at the dialog-exit sites is GCC's own crossjump decision to share that landing test as a bl-callable block, not a different C-level control-flow shape. Our build isn't getting the same crossjump merge, which is a global-coloring/register-pressure question (the sched2-LUID-tie class documented on 080bbb0c), not a source-shape bug -- do not 'fix' the goto target again without re-deriving this from scratch"
+    },
+    {
+      "op": "store deficit",
+      "count": 43,
+      "where": "instruction-mix histogram: ours 104 str vs reference 147. Frame is 88 bytes/18 addressed slots against the reference's 108/21, so the reference keeps roughly three to five more values in memory across calls. These are spills that follow from source shape -- more distinct live locals than m2c's collapsed temporaries -- not from missing statements (strb/strh already match)"
+    },
+    {
+      "op": "byte-load signedness",
+      "count": "5-7",
+      "where": "reference ldrsb 13 / ldrb 38; ours ldrsb 8 / ldrb 45. The status array is read SIGNED (ldr the pointer, ldr the index, ldrsb, cmp #4), so the m2c (u8) casts on sp1C[...] at the mask sites are candidates for removal; check each against its reference site before changing"
+    },
+    {
+      "op": "aggregate recovery",
+      "count": "whole owner",
+      "where": "raw M2C_FIELD offsets still need evidence-backed structs and field names; 0x30 (19 uses) and 0x219 (19 uses) are the remaining hot fields, direct-immediate and pool-indexed respectively"
+    },
+    {
+      "op": "symbol recovery",
+      "count": "whole owner",
+      "where": "m2c temporaries and Func_* callees remain provisional"
+    }
+  ],
+  "rejected": [
+    {
+      "shape": "one struct containing every scalar and both arrays from sp+24 through sp+107",
+      "wrong": "GCC retained a struct-base pointer, grew the frame to 120 bytes, reduced the exact prefix from 20 to 7 instructions, and regressed to 2334 wrong instructions. The 24-byte array aggregate is admitted; the surrounding scalar slots must continue to arise from their real lifetimes."
+    },
+    {
+      "experiment": "heat-guided classic AST walk",
+      "candidates": 10000,
+      "result": "no exact candidate; 155 compile failures; best retained source is deliberately UNVERIFIED because classic mutations are not guaranteed semantics-preserving"
+    },
+    {
+      "experiment": "heat-guided safe AST walk",
+      "candidates": 10000,
+      "result": "journal composite improved from 1033216102394 to 880199202393, but independent candidate-show scoring worsened from 2324 to 2339 differing halfwords and changed candidate size from 4748 to 4780 bytes; not harvested"
+    },
+    {
+      "experiment": "guarded safe AST walk, 100k candidates, seed 1 (out/colosso-r1)",
+      "wrong": "best.c scores raw halfwords=2353/wrong_instructions=1884/size=4740 (all 'improved' vs the committed draft's 2401/2003/4728), but the normalized instruction diff (same POOL-filtered LCS metric used throughout this owner's record) is WORSE: weight 1062 vs the committed draft's 979. This is the documented raw-metrics-mislead-while-short-of-parity trap (same class as 080bbb0c's phase-dominated halfword counts) -- the permuter's own packed score optimizes raw diff counts, not the normalized compass, and found a structurally worse candidate that looks better on the naive metric. NOT adopted."
+    },
+    {
+      "experiment": "classic-mode permuter walk, 100k candidates, seed 2, journal-imported from r1 (out/colosso-r2)",
+      "wrong": "best-UNVERIFIED.c reaches 4788/4888 bytes (closest size yet) at 2389hw/1901 wrong instructions, but normalized weight is 1017, still worse than the committed draft's 979 -- confirms the same raw-metrics-mislead pattern found in r1, independently. Also UNVERIFIED by construction (classic-mode mutations are not guaranteed semantics-preserving); not auditable by hand at ~150 chained mutations. Not adopted."
+    },
+    {
+      "shape": "hoist all 14 (sp18 - sp38) occurrences to one shared 'slot' local, recomputed at both sp18-reassignment points (semantically verified safe: every read precedes any subsequent sp38 mutation on its own path)",
+      "wrong": "normalized weight 994 vs the committed draft's 979 -- a real regression, not a tie. Traced via -fno-gcse diagnostic: field-load counts (ldrb, [r,#48]) are IDENTICAL between standard and -fno-gcse builds, ruling out simple field-read folding as the mechanism. RTL evidence (080ab5e4.c.07.gcse dump) shows gcse's PRE pass adds ~29 insns (11 new pseudos, 1137-1147) rather than removing redundancy -- pseudo 1139 = reg40-reg48 (one definition, insn 5484) is a PARTIAL, PATH-SPECIFIC hoist, not a whole-function CSE the way a single shared C local reproduces. A blunt full hoist overshoots what GCSE actually does and makes the match worse."
+    },
+    {
+      "shape": "narrower (sp18-sp38) hoist scopes: 9-site cluster only (lines ~306-376), and separate per-if/else-pair locals (slotA/slotB for the two nearest branch pairs)",
+      "wrong": "narrow-9: weight 981 (still worse than 979, though close). paired if/else: weight 1108 (much worse). Neither reproduces the -fno-gcse gain; four total hoisting scopes tried (full-14, narrow-9, paired-if/else, and the original full hoist) all tie or regress. This suggests pseudo 1139 (reg40-reg48, the one PRE insertion I traced) is NOT the primary driver of the 56-row -fno-gcse improvement -- gcse creates 11 new pseudos total (1137-1147) across the whole function, and the real gain is likely a distributed, multi-site interaction (or downstream scheduling shift) that cannot be isolated to one C expression. -fno-gcse is retired as a source-reproducible lever for this session; it remains a valid DIAGNOSTIC signal only (and using the flag itself is not permitted for adoption -- the approved compiler flags are fixed)."
+    },
+    {
+      "shape": "declaration-order reshuffling (first-use order, reverse first-use, last-use order, reverse last-use -- 4 variants covering the whole declaration block, 122 locals)",
+      "wrong": "all four tie EXACTLY at weight 979 (identical to the committed draft's own arbitrary m2c declaration order). One variant (first-use order) improved wrong_instructions to 1979 (from 2003) while leaving the normalized weight unchanged -- another confirmation that wrong_instructions is not a safe compass this far from parity. Unlike 080bbb0c (where declaration order in reference-spill order was a real, documented factor), this build's register allocator is insensitive to source declaration order entirely -- ruled out as a lever for this owner."
+    },
+    {
+      "experiment": "hand-written rotated wait loops",
+      "result": "duplicated Func_08015048 at all 7 sites; bl 190 vs 184. Size looked better (4800->4840) but by padding. Reverted"
+    },
+    {
+      "experiment": "removing the 48 pure single-use address-capture new_varN locals",
+      "result": "4880->4872 bytes and wrong_instructions 1859->1895; they are load-bearing for register pressure despite carrying no meaning. Keep them"
+    },
+    {
+      "experiment": "declaration reordering to fix stack-slot assignment",
+      "result": "no effect; GCC assigns slots by liveness here, not declaration order"
+    },
+    {
+      "experiment": "split-assignment, commutative swap, redundant mask, comparison-operand flip",
+      "result": "all zero-effect; GCC canonicalizes pure expression-spelling changes. Only genuine statement reordering moves this owner"
+    },
+    {
+      "experiment": "statement reordering sweep",
+      "candidates": 50,
+      "result": "5 adopted wins (d21020a53, 08c7fbd2f, cb7f83ae7, 2dfa17a86 and the entry-order fix cb4e9e9a8); saturated afterwards. Independent adjacent statements only -- the correct order is per-site, not a general rule"
+    }
+  ],
+  "notes": [
+    "Cross-edition scan locates the JA counterpart at 0x080a24e0 (the generic anchor vote initially reported 0x080a24d0 because this region changes length). JA and EN share the entry frame, stack-slot order, first loops, and compiler shape, but differ by roughly 1,249 non-relocation bytes across the EN-sized window; JA is structural ancestry evidence, not a copyable implementation.",
+    "The invariant-first pass removed two false live ranges introduced by the automated candidate: windowPtr was hoisted one call too early, and new_var5 was assigned only on one branch then read uninitialized on its sibling. Splitting the pointer lifetime and using sp38 directly removed the two extra scalar slots. Grouping slotFlags[8], unknown[8], and status[8] then restored the exact 108-byte frame and observed array addresses. Removing five one-use address-capture aliases extended the exact prefix from 9 to 20 instructions and reduced wrong instructions from 1857 to 1671. No permuter was used.",
+    "value-vs-use-site caution: 0x212c/0x2128 decode as the finals texts but are struct offsets here; 0xc4c/0xc4d are genuinely text ids at their push sites. Resolve by use, not by value.",
+    "m2c 19f2ddb reconstructed the complete owner after symbolizing one 28-entry jump table and 110 pool/table references. The default symbolic assembly reassembles byte-identically to the reference (SHA-256 d68f1ce2d575bfa118d30df90603a97e2b95596b9ec1ef143ff55e1e594d91d5).",
+    "The generated source was repaired only for gs1cc's recovered field widths and pointer types; no inline assembly, fixed-register variables, copied bytes, or compiler changes were used.",
+    "Compared with the former 1492-byte scaffold, the full candidate reaches exact 4748-byte size, improves the linked score from 2438 to 2324 differing halfwords, and improves objdiff v3.8.0 ARMv4T structural similarity from 22.23341% to 58.86819%. It remains a draft, not progress.",
+    "Two native permuter waves (20,000 requested candidates total, 12 workers, seeds 20260820/20260821) confirmed this is not a last-mile owner. The safe winner reduced normalized structural rows but worsened the independent byte score and rewrote 1,656 source lines. Repair aggregate types and source shape before another permutation run. Ignored reports remain under out/permuter/080ab5e4-r{1,2}.",
+    "session method note: while the candidate is short of 4888 bytes, raw differing_halfwords and wrong_instructions are phase-dominated and mislead (the 0x10C pointer local improved structure sharply while raising raw halfwords). The working compasses are the normalized instruction diff and the bl-sequence alignment; adopt only on linked bytes once size parity is reached",
+    "the switch case order (27,26,0,1/3/7/8/21,2,5/6,12,13/15/16,14,17/19,20,23) already matches the reference emission order because m2c derived it from the jump table -- do not re-litigate case ordering; the remaining work is within-case structure",
+    "block_198's only goto/label pair was a no-op (fell through to the same statement immediately after its own closing brace); removed as dead-code cleanup, emission-neutral (verified byte-identical before/after). The two near-duplicate 'recovering' dialog call blocks (Func_080f9010(0x72)/Func_08015278/Func_08015068/Func_08015078 sequence at lines ~630 and ~903) ARE a genuine original duplication -- both m2c sites are real, reached via different flag-setting paths (sp3C==-1 direct vs the two-check sp44 path); the divergence from the reference is in how the guard flags and intermediate gotos are threaded, not in missing/extra statements. Unresolved lead for next session.",
+    "both parallel 100k permuter walks (safe AST and classic) against the current hand-derived draft independently confirm the normalized-instruction-weight compass: each found a candidate that scores better on raw halfwords/wrong-instructions/size but WORSE on the POOL-filtered normalized diff (1062 and 1017 respectively, vs the committed draft's 979). The permuter's own packed score is not a safe adoption gate this far from size parity on this owner -- do not adopt permuter winners here without independently recomputing the normalized weight first, exactly as this session did.",
+    "verified this session: all three reference occurrences of 'movs r0,#114; bl Func_080f9010' (games/gs1/asm/080ab5e4.s lines 1488, 1620, 1665) map 1:1 onto the draft's three existing sites (lines ~630 full pattern, ~888 bare block_193, ~903 full pattern) -- no missing block in this family. The reference's first byte-level divergence is the prologue itself (sub sp,#88 vs #108, offset 0x0e), and the function head (arg0 staging, the two P-pointer/temp_r9_32/temp_r5_34 reads) matches the reference near-verbatim already -- the 20-byte frame gap is a distributed spill-slot deficit accumulated across the body, not a single findable bug. A targeted reuse experiment (sharing temp_r2_424 across its two field-read sites at line ~281) measured emission-neutral (normalized weight 981 vs 979, a tie within noise) -- GCC already handles that redundancy for free; not adopted. -fno-regmove parity probe measured no improvement here (unlike its 080bbb0c precedent).",
+    "-fno-gcse diagnostic CONFIRMED as a genuine structural lever (weight 923 vs 979, verified via the same POOL-filtered LCS metric) but its exact source-level equivalent remains unfound: gcse's PRE inserts a path-specific partial hoist (not a whole-function shared local), and reproducing PRE's exact CFG-driven insertion points via C source restructuring is not achievable by the blunt full-hoist tried this session. This is the same class as 080bbb0c's scheduler-tie residual: a real, measured, compiler-internal effect not yet reduced to a source spelling. Next step for a future session: read gcse.c's PRE placement algorithm (edge insertion at specific CFG edges, not block-level), or bisect which SUBSET of the 14 call sites the PRE actually covers by selectively hoisting smaller groups and rescoring each against the compass.",
+    "store-sequence alignment (str/strb/strh instructions only, aligned like the bl-sequence compass) found the true shape of the 43-instruction store deficit: the reference spills specifically r4 to [sp,#8] 27 times (24 reloads) across the whole function body, ours does this only ~1-3 times. Verified this is NOT one persistent value stuck needing constant respill (the one candidate constant checked, 0x080AF28C, appears exactly once in both builds' pools) -- it is -fcall-used-r4 (a project build flag making r4 caller-saved) combined with the register allocator choosing r4 for many DIFFERENT short-lived cross-call values throughout the reference, where our build's allocator picks other (callee-saved, no-respill-needed) registers for the equivalent values. This is a global allocation-PRIORITY difference, not a locatable single-site bug -- the same 'measured, not locally reachable' class as 080bbb0c's scheduler-tie residual, but spanning the whole function rather than one instruction pair. No source-level lever for this was found or attempted to be forced this session; it would need the same allocno-priority-dump instrument that worked for 080bbb0c's final pair, applied at much larger scale (many pseudos, not one).",
+    "cumulative session total: two 100k permuter walks, an 8-flag diagnostic sweep, four -fno-gcse hoisting-scope experiments, a store-sequence localization of the deficit to r4-allocation-priority, and four declaration-order variants. Every technique that worked for 080bbb0c's much smaller residual has now been tried here at least once; none has closed this owner's gap. The remaining 979-weight distance is real but requires either the allocno-priority-dump instrument applied per-pseudo at a scale (130 pseudos to allocate, vs 080bbb0c's much smaller problem) not attempted this session, or continued incremental structural reading of the ~40% of the function not yet individually verified against the reference (case 13/15/16/14/17/19/20/23 bodies and the post-switch tail past line ~950).",
+    "SUSPECT: the 0x219 signedness adopted in 86f953cf4 is NOT evidence-backed. Every ldrsb site in the reference reads ctx+0x1C, status[], or events+0xA0; 0x219 is read with ldrb via a pool-loaded offset. The (u8*)->(s8*) change measured strongly better (size 4800->4840, structural deficit 47->29) but by a register-pressure side effect, and it introduces the +7 asrs / +9 lsls excess visible in the histogram. Revisit before adoption",
+    "NAMING CAVEAT: Func_08077210/Func_08077208/Func_080771b0 sit on the same 0x08077xxx page as games/gs1/src/080bbb0c.c's Battle_HitCheck/Battle_CalcAttack/Battle_CalcPower. The 0xF00>>8 / 0xE0>>5 / 0x1F decomposition feeding them may be a packed stat/ability value, not the color/tile reading this file has assumed. Page adjacency is not proof; check before trusting either name",
+    "Func_080022f4 is the same address as 080bbb0c's Math_Mod, and Func_08002304 is its sibling divide -- aliased here as Math_Div/Math_Mod. An earlier labeling in this file had the two backwards; corrected"
+  ]
+}

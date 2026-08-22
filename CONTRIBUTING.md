@@ -1,9 +1,10 @@
 # Contributing to Alchemy
 
 Alchemy is an unofficial clean-room reconstruction of the Game Boy Advance
-releases of _Golden Sun_. The Japanese release is the canonical source base.
-The English release is the first complete derived build and remains the ROM
-that `make verify` currently reproduces byte for byte.
+releases of _Golden Sun_ and _Golden Sun: The Lost Age_. The Japanese edition
+of each game is its canonical source base. English GS1 is the first complete
+derived build and remains the ROM that `make verify` currently reproduces byte
+for byte.
 
 Readable code, useful names, fast tools, and good explanations make that work
 possible. They are not progress by themselves: only exact C and accepted
@@ -25,12 +26,13 @@ gs1-{en,ja,de,es,fr,it}.gba
 gs2-{en,ja,de,es,fr,it}.gba
 ```
 
-`gs1-ja.gba` is the reconstruction base. Recover the JA owner and its source
-shape first, then derive EN, DE, ES, FR, and IT by measuring their differences
-from it. `gs1-en.gba` is still the current full-build target while the other
-edition build surfaces are brought online. Base means the origin of the source
-model, not permission to assume that every JA owner is smaller, older, or
-simpler; test those claims from emitted structure.
+`gs1-ja.gba` and `gs2-ja.gba` are the reconstruction bases for their respective
+games. Recover the JA owner and its source shape first, then derive EN, DE, ES,
+FR, and IT by measuring their differences from it. `gs1-en.gba` is still the
+only full-build target while the other edition build surfaces are brought
+online. Base means the origin of the source model, not permission to assume
+that every JA owner is smaller, older, or simpler; test those claims from
+emitted structure.
 
 Other editions cannot establish original English names or authorship. A shared
 owner may support shared source, while a changed constant, message binding,
@@ -57,16 +59,50 @@ The publication checker examines staged and outgoing history, including files
 added and later deleted. It cannot prove provenance; the evidence boundary is
 still each contributor's responsibility.
 
-### Keep source and ownership separate
+### Keep products, editions, source, and ownership separate
 
-- `recon/gs1/ja/` is the canonical tracked source corpus.
-- `recon/gs1/{en,de,es,fr,it}/` contains measured edition deltas and candidates
-  that have not yet been rebased onto JA.
-- `recon/gs1/project.json` declares the base, current build, and edition paths.
-- `exact/` currently installs C proven byte-exact for the EN derived build.
-- `asm/` and overlay assembly retain every EN owner not yet represented by
-  exact EN C.
-- Ignored `scratch/` and `out/` hold disposable experiments and tool output.
+There are three product trees:
+
+- `games/gs1/` and `games/gs2/` are independent historical games. Each has one
+  shared `src/`, `asm/`, `assets/`, `include/`, `metrics/`, `semantic/`, and
+  `recon/` layout declared by its `project.json`.
+- `games/alchemy/` is the future reintegration of both games. It has no
+  reference ROM. Integration-only source and assets belong there, never in a
+  historical tree.
+- Ignored `scratch/` and `out/` hold disposable experiments, compiler output,
+  and per-target build products.
+
+The pret-style build model is one source tree per game, not one copied tree per
+edition. The twelve historical targets compile that game's shared source with
+exactly one edition define and write isolated outputs beneath
+`out/<game>-<edition>/`:
+
+```text
+GS1_EDITION_{JA,EN,DE,ES,FR,IT}
+GS2_EDITION_{JA,EN,DE,ES,FR,IT}
+```
+
+`make targets` compiles all twelve routes. `make gs1-ja` or `make gs2-fr`
+compiles one. A compile-only target proves preprocessing, compiler routing, and
+object production; it does not prove edition addresses, linking, ownership,
+assets, or ROM identity. The registry therefore rejects a full build for every
+target except `gs1-en` until those surfaces actually exist. Never use a
+reference-ROM fallback to make an unfinished target look linkable.
+
+Within each game, `recon/ja/` is the canonical tracked source corpus and
+`recon/{en,de,es,fr,it}/` contains measured edition deltas or candidates not yet
+rebased onto JA. An empty derived-edition directory means that no delta has
+been established; it never means the edition is identical to JA. Main-image
+files live under an edition's `main/` directory and decoded overlays under
+`overlays/`.
+
+The current GS1 ownership surface remains transitional but exact:
+
+- `games/gs1/src/` installs C proven byte-exact for the EN derived build.
+- `games/gs1/asm/` and overlay assembly retain every EN owner not represented
+  by exact EN C.
+- `games/gs1/recon/cross-edition.json` and the exact correspondence indexes map
+  proved owners back to JA and across the other derived editions.
 
 Tracked reconstruction C is a useful source state, not a progress tier. It may
 be readable, behaviorally complete, or one instruction from matching and still
@@ -75,20 +111,16 @@ for every edition. This preserves the old semantic corpus without repeating
 its accounting mistake.
 
 The source graph is directional: JA is the shared base, and EN, DE, ES, FR,
-and IT are measured deltas. Main-image files live under an edition's `main/`
-directory; decoded overlays live under `overlays/`. `recon/gs1/cross-edition.json`
-records proved correspondences and regional divergence.
+and IT are measured deltas. The inherited sources under
+`games/gs1/recon/en/` remain EN hypotheses until their JA owners are recovered.
+Do not move one into `ja/` merely because a scan found the address. Establish
+its JA boundary, emitted structure, and correspondence first.
 
-An empty derived-edition directory means no source delta has been established;
-it does not mean that edition is identical to JA. Likewise, the inherited
-sources under `recon/gs1/en/` remain EN hypotheses until their JA owners are
-recovered. Do not move one into `ja/` merely because a scan found the address.
-Establish its JA boundary, emitted structure, and correspondence first.
-
-The current `exact/`, `asm/`, `assets/`, and `metrics/gs1-en-*` paths remain the
-installed EN build surface while edition-qualified build surfaces are added.
-This keeps the repository verifiable during migration and prevents a folder
-rename from masquerading as six reconstructed ROMs.
+The current `games/gs1/src/`, `games/gs1/asm/`, `games/gs1/assets/`, and
+`games/gs1/metrics/gs1-en-*` paths are the installed EN ownership and build
+surface. Their location inside a shared game tree does not make them exact for
+another edition. Exactness and assembly displacement are recorded separately
+per edition; a folder move or successful compile claims no bytes.
 
 C must remain ordinary C. Do not use inline assembly, fixed-register variables,
 empty assembly barriers, copied instruction bytes, or equivalent escape
@@ -96,8 +128,8 @@ hatches. `no-asm-c` enforces the mechanical part of this rule.
 
 Permanent assembly is only for an instruction shape that the approved compiler
 cannot emit. Record the compiler evidence and scope in
-`asm/classification.json`. Size, difficulty, or a long-running search is not
-evidence of permanence.
+`games/gs1/asm/classification.json`. Size, difficulty, or a long-running search
+is not evidence of permanence.
 
 ## Prepare a checkout
 
@@ -160,15 +192,15 @@ that compiler evidence.
 ### 1. Select an owner
 
 An owner is a function-sized region with a fixed entry point, not merely a run
-of unresolved bytes. Main-image owners begin in `asm/<address>.s`; exact source
-lands in `exact/<address>.c`. Overlay owners live inside
-`assets/code/resource_<id>_overlay.s`; their exact source is named
-`exact/resource_<id>_c_<address>.c`.
+of unresolved bytes. Main-image owners begin in `games/gs1/asm/<address>.s`; exact source
+lands in `games/gs1/src/<address>.c`. Overlay owners live inside
+`games/gs1/assets/code/resource_<id>_overlay.s`; their exact source is named
+`games/gs1/src/resource_<id>_c_<address>.c`.
 
 The generated Targets table ranks useful scopes, but a listed run may begin in
 a literal pool or include a continuation. Resolve the owner through
-`semantic/regions.json` and confirm that its full span is inside one audited
-interval in `metrics/gs1-en-executable.json`. Adoption rejects unaudited gaps.
+`games/gs1/semantic/regions.json` and confirm that its full span is inside one audited
+interval in `games/gs1/metrics/gs1-en-executable.json`. Adoption rejects unaudited gaps.
 
 Prefer related owners or case bodies over isolated guesses. Siblings built by
 the same compiler often reveal which single source feature controls their
@@ -187,7 +219,7 @@ Before writing C, account for:
 
 Assemble and disassemble reference `.s` when resolving pools and table targets;
 do not hand-count PC-relative offsets across alignment. Resolve message IDs
-through `assets/text/message_archive.json`. Text and neighboring tables often
+through `games/gs1/assets/text/message_archive.json`. Text and neighboring tables often
 identify a scene or binding without importing outside knowledge.
 
 #### Compare editions through relocations
@@ -204,9 +236,9 @@ owner in all six GS1 editions:
 tools/compiler/target/release/compiler cross-edition 080bbb0c
 tools/compiler/target/release/compiler cross-edition --calls 080bbb0c
 tools/compiler/target/release/compiler cross-edition --all \
-  --write recon/gs1/exact-correspondence.json
+  --write games/gs1/recon/exact-correspondence.json
 tools/compiler/target/release/compiler cross-edition --all-overlays \
-  --write recon/gs1/exact-overlay-correspondence.json
+  --write games/gs1/recon/exact-overlay-correspondence.json
 ```
 
 The comparison is JA-relative. During the transition, an exact EN object may
@@ -237,14 +269,14 @@ limited to Thumb `bl` fields and words reached by PC-relative literal loads.
 Long owners use global core anchors; short owners require either exact bytes at
 the same resource offset or exact masked core near a proved neighbor. The same
 duplicate and owner-order rejection applies. The result is recorded in
-`recon/gs1/exact-overlay-correspondence.json`.
+`games/gs1/recon/exact-overlay-correspondence.json`.
 
 When core bytes remain, inspect those exact offsets as possible regional source
 changes. A smaller JA owner is useful evidence for a different source shape,
 but edition order alone does not establish why it differs. The current
-calibration result is recorded in `recon/gs1/cross-edition.json`.
+calibration result is recorded in `games/gs1/recon/cross-edition.json`.
 The full exact-corpus locator output is
-`recon/gs1/exact-correspondence.json`; regenerate it with
+`games/gs1/recon/exact-correspondence.json`; regenerate it with
 `make correspondence` whenever exact main-image or overlay ownership changes.
 
 ### 3. Recover source structure
@@ -336,7 +368,7 @@ structural workbench instead of hand-transcribing thousands of instructions:
 
 ```sh
 git clone https://github.com/matt-kempster/m2c.git m2c
-tools/compiler/target/release/compiler workbench recon/gs1/en/main/080bbb0c.c
+tools/compiler/target/release/compiler workbench games/gs1/recon/en/main/080bbb0c.c
 ```
 
 The generated Ninja graph:
@@ -355,17 +387,17 @@ neither can establish exactness.
 ### 4. Iterate against the compiler
 
 Keep one active edition-qualified corpus file. New shared recovery begins in
-`recon/gs1/ja/`; the EN path below is for an inherited EN candidate or a real
+`games/gs1/recon/ja/`; the EN path below is for an inherited EN candidate or a real
 EN delta. First verify that an edit changed emitted assembly:
 
 ```sh
-tools/compiler/target/release/compiler candidate-show recon/gs1/en/main/080bbb0c.c --asm
+tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/080bbb0c.c --asm
 ```
 
 Then compare linked bytes:
 
 ```sh
-tools/compiler/target/release/compiler candidate-show recon/gs1/en/main/080bbb0c.c --align
+tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/080bbb0c.c --align
 ```
 
 `--first` crops the first residual window. `--patch FILE` scores a unified diff
@@ -439,7 +471,7 @@ For a main-image owner, adoption is allowed only when linked
 
 ```sh
 mkdir -p scratch/adopt
-cp recon/gs1/en/main/<address>.c scratch/adopt/src_<address>.c
+cp games/gs1/recon/en/main/<address>.c scratch/adopt/src_<address>.c
 cargo run --release --manifest-path tools/check/Cargo.toml -- integrate scratch/adopt
 cargo run --release --manifest-path tools/check/Cargo.toml -- integrate --apply scratch/adopt
 ```
@@ -454,8 +486,8 @@ host for overlay decoding, scoring, adoption, parking, and audits:
 
 ```sh
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- show resource_373 034c
-cargo run --release --manifest-path tools/overlay/Cargo.toml -- score recon/gs1/en/overlays/resource_373_c_0200034c.c --align
-cargo run --release --manifest-path tools/overlay/Cargo.toml -- adopt resource_373:034c --source recon/gs1/en/overlays/resource_373_c_0200034c.c --apply
+cargo run --release --manifest-path tools/overlay/Cargo.toml -- score games/gs1/recon/en/overlays/resource_373_c_0200034c.c --align
+cargo run --release --manifest-path tools/overlay/Cargo.toml -- adopt resource_373:034c --source games/gs1/recon/en/overlays/resource_373_c_0200034c.c --apply
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- park resource_373:034c --apply
 cargo run --release --manifest-path tools/overlay/Cargo.toml -- audit --all
 ```
@@ -530,6 +562,7 @@ Use the narrowest useful command while iterating, then finish with the full
 gate:
 
 ```sh
+make targets         # compile the shared source through all 12 edition routes
 make build-claimed   # compile and link every adopted main-image owner
 make build-asm       # assemble retained main-image regions
 make build-assets    # rebuild tracked source assets
@@ -539,6 +572,11 @@ make coverage        # regenerate metrics, figures, and Targets
 make test            # tooling, policy, and focused regression tests
 make verify          # authoritative byte-identical repository gate
 ```
+
+The commands below `make targets` operate on `TARGET`, which defaults to the
+only full-build target, `gs1-en`. Compile-only targets intentionally reject
+full linking until their edition address map, ownership, assembly, and assets
+are installed.
 
 `make verify` must finish with a byte-identical full build and fresh generated
 artifacts. A clean compile count is insufficient: overlay reconstruction,
@@ -590,7 +628,7 @@ executable runs), sorted largest to smallest. Regenerate with `make coverage` --
 
 This table contains every scope of at least 1,000 bytes (269 rows). The complete
 1,975-row index, including the smallest audited owners, is
-[`metrics/gs1-en-core-targets.json`](metrics/gs1-en-core-targets.json).
+[`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
 |---:|---:|---:|---|

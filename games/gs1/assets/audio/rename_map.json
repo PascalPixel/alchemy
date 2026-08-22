@@ -1,0 +1,5119 @@
+{
+ "format": 1,
+ "entries": [
+  {
+   "song_id": 80,
+   "symbol": "sound_080",
+   "class": "music",
+   "stem": "sound_080",
+   "file": "sequences/music_slow_hit_quartet_full.mid",
+   "sidecar": "sequences/music_slow_hit_quartet_full.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180688",
+    "track_count": 4,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 81,
+   "symbol": "sound_081",
+   "class": "music",
+   "stem": "sound_081",
+   "file": "sequences/music_languid_hit_quintet_wide.mid",
+   "sidecar": "sequences/music_languid_hit_quintet_wide.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180778",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 82,
+   "symbol": "sound_082",
+   "class": "music",
+   "stem": "sound_082",
+   "file": "sequences/music_walking_brief_quartet_mid.mid",
+   "sidecar": "sequences/music_walking_brief_quartet_mid.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180834",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 83,
+   "symbol": "sound_083",
+   "class": "music",
+   "stem": "sound_083",
+   "file": "sequences/music_walking_brief_quartet_full_alpha.mid",
+   "sidecar": "sequences/music_walking_brief_quartet_full_alpha.json",
+   "played_by": [
+    "08091d94"
+   ],
+   "player": 0,
+   "header": {
+    "address": "0x08180930",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 84,
+   "symbol": "sound_084",
+   "class": "music",
+   "stem": "sound_084",
+   "file": "sequences/music_slow_brief_duo_wide.mid",
+   "sidecar": "sequences/music_slow_brief_duo_wide.json",
+   "player": 0,
+   "header": {
+    "address": "0x081809fc",
+    "track_count": 4,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 85,
+   "symbol": "sound_085",
+   "class": "music",
+   "stem": "sound_085",
+   "file": "sequences/music_slow_hit_duo_mid.mid",
+   "sidecar": "sequences/music_slow_hit_duo_mid.json",
+   "played_by": [
+    "0801fb48"
+   ],
+   "player": 0,
+   "header": {
+    "address": "0x08180a60",
+    "track_count": 3,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 86,
+   "symbol": "sound_086",
+   "class": "music",
+   "stem": "sound_086",
+   "file": "sequences/music_languid_brief_duo_full.mid",
+   "sidecar": "sequences/music_languid_brief_duo_full.json",
+   "played_by": [
+    "080b3398"
+   ],
+   "player": 0,
+   "header": {
+    "address": "0x08180be4",
+    "track_count": 3,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 87,
+   "symbol": "sound_087",
+   "class": "music",
+   "stem": "sound_087",
+   "file": "sequences/music_brisk_brief_trio_full.mid",
+   "sidecar": "sequences/music_brisk_brief_trio_full.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180c70",
+    "track_count": 4,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 88,
+   "symbol": "sound_088",
+   "class": "music",
+   "stem": "sound_088",
+   "file": "sequences/music_brisk_brief_duo_full.mid",
+   "sidecar": "sequences/music_brisk_brief_duo_full.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180d34",
+    "track_count": 4,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 89,
+   "symbol": "sound_089",
+   "class": "music",
+   "stem": "sound_089",
+   "file": "sequences/music_walking_hit_quartet_full.mid",
+   "sidecar": "sequences/music_walking_hit_quartet_full.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180e10",
+    "track_count": 4,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 91,
+   "symbol": "sound_091",
+   "class": "music",
+   "stem": "sound_091",
+   "file": "sequences/music_walking_hit_trio_full.mid",
+   "sidecar": "sequences/music_walking_hit_trio_full.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180e78",
+    "track_count": 3,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 92,
+   "symbol": "sound_092",
+   "class": "music",
+   "stem": "sound_092",
+   "file": "sequences/music_walking_brief_quartet_full_beta.mid",
+   "sidecar": "sequences/music_walking_brief_quartet_full_beta.json",
+   "player": 0,
+   "header": {
+    "address": "0x08180f30",
+    "track_count": 4,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 93,
+   "symbol": "sound_093",
+   "class": "music",
+   "stem": "sound_093",
+   "file": "sequences/music_brisk_brief_quintet_full.mid",
+   "sidecar": "sequences/music_brisk_brief_quintet_full.json",
+   "player": 0,
+   "header": {
+    "address": "0x0818109c",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 95,
+   "symbol": "sound_095",
+   "class": "music",
+   "stem": "sound_095",
+   "file": null,
+   "sidecar": null,
+   "player": 0,
+   "header": {
+    "address": "0x081810b8",
+    "track_count": 0,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   }
+  },
+  {
+   "song_id": 0,
+   "symbol": "sound_000",
+   "class": "music",
+   "stem": "sound_000",
+   "file": "sequences/music_slow_passage_sextet_full.mid",
+   "sidecar": "sequences/music_slow_passage_sextet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x081604ac",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 1,
+   "symbol": "sound_001",
+   "class": "music",
+   "stem": "sound_001",
+   "file": "sequences/music_walking_passage_quintet_full_alpha.mid",
+   "sidecar": "sequences/music_walking_passage_quintet_full_alpha.json",
+   "player": 1,
+   "header": {
+    "address": "0x08160fa0",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 2,
+   "symbol": "sound_002",
+   "class": "music",
+   "stem": "sound_002",
+   "file": "sequences/music_slow_passage_quintet_full.mid",
+   "sidecar": "sequences/music_slow_passage_quintet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08161558",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 3,
+   "symbol": "sound_003",
+   "class": "music",
+   "stem": "sound_003",
+   "file": "sequences/music_walking_passage_trio_full.mid",
+   "sidecar": "sequences/music_walking_passage_trio_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08161cac",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 4,
+   "symbol": "sound_004",
+   "class": "music",
+   "stem": "sound_004",
+   "file": "sequences/music_slow_passage_duo_wide.mid",
+   "sidecar": "sequences/music_slow_passage_duo_wide.json",
+   "player": 1,
+   "header": {
+    "address": "0x08162058",
+    "track_count": 3,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 5,
+   "symbol": "sound_005",
+   "class": "music",
+   "stem": "sound_005",
+   "file": "sequences/music_slow_passage_septet_full.mid",
+   "sidecar": "sequences/music_slow_passage_septet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08162918",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 6,
+   "symbol": "sound_006",
+   "class": "music",
+   "stem": "sound_006",
+   "file": "sequences/music_walking_passage_septet_full_alpha.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_alpha.json",
+   "player": 1,
+   "header": {
+    "address": "0x081632f8",
+    "track_count": 9,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 7,
+   "symbol": "sound_007",
+   "class": "music",
+   "stem": "sound_007",
+   "file": "sequences/music_walking_passage_quintet_full_beta.mid",
+   "sidecar": "sequences/music_walking_passage_quintet_full_beta.json",
+   "player": 1,
+   "header": {
+    "address": "0x08163d54",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 8,
+   "symbol": "sound_008",
+   "class": "music",
+   "stem": "sound_008",
+   "file": "sequences/music_brisk_passage_quintet_full_alpha.mid",
+   "sidecar": "sequences/music_brisk_passage_quintet_full_alpha.json",
+   "player": 1,
+   "header": {
+    "address": "0x081643c0",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 9,
+   "symbol": "sound_009",
+   "class": "music",
+   "stem": "sound_009",
+   "file": "sequences/music_walking_phrase_sextet_full.mid",
+   "sidecar": "sequences/music_walking_phrase_sextet_full.json",
+   "played_by": [
+    "080f4008",
+    "080f6008"
+   ],
+   "player": 1,
+   "header": {
+    "address": "0x08164bd8",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 10,
+   "symbol": "sound_010",
+   "class": "music",
+   "stem": "sound_010",
+   "file": "sequences/music_walking_phrase_quintet_full.mid",
+   "sidecar": "sequences/music_walking_phrase_quintet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x081652bc",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 19,
+   "symbol": "sound_019",
+   "class": "music",
+   "stem": "sound_019",
+   "file": null,
+   "sidecar": null,
+   "player": 1,
+   "header": {
+    "address": "0x081652d8",
+    "track_count": 0,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   }
+  },
+  {
+   "song_id": 20,
+   "symbol": "sound_020",
+   "class": "music",
+   "stem": "sound_020",
+   "file": "sequences/music_walking_passage_sextet_full_alpha.mid",
+   "sidecar": "sequences/music_walking_passage_sextet_full_alpha.json",
+   "player": 1,
+   "header": {
+    "address": "0x08165d5c",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 21,
+   "symbol": "sound_021",
+   "class": "music",
+   "stem": "sound_021",
+   "file": "sequences/music_slow_passage_trio_full.mid",
+   "sidecar": "sequences/music_slow_passage_trio_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08166494",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 22,
+   "symbol": "sound_022",
+   "class": "music",
+   "stem": "sound_022",
+   "file": "sequences/music_languid_phrase_septet_full_alpha.mid",
+   "sidecar": "sequences/music_languid_phrase_septet_full_alpha.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816776c",
+    "track_count": 10,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 23,
+   "symbol": "sound_023",
+   "class": "music",
+   "stem": "sound_023",
+   "file": "sequences/music_languid_passage_quartet_full.mid",
+   "sidecar": "sequences/music_languid_passage_quartet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816868c",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 24,
+   "symbol": "sound_024",
+   "class": "music",
+   "stem": "sound_024",
+   "file": "sequences/music_languid_phrase_septet_full_beta.mid",
+   "sidecar": "sequences/music_languid_phrase_septet_full_beta.json",
+   "player": 1,
+   "header": {
+    "address": "0x08169960",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 25,
+   "symbol": "sound_025",
+   "class": "music",
+   "stem": "sound_025",
+   "file": "sequences/music_languid_phrase_quintet_full.mid",
+   "sidecar": "sequences/music_languid_phrase_quintet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816a5f8",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 26,
+   "symbol": "sound_026",
+   "class": "music",
+   "stem": "sound_026",
+   "file": "sequences/music_slow_phrase_sextet_wide.mid",
+   "sidecar": "sequences/music_slow_phrase_sextet_wide.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816acd8",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 27,
+   "symbol": "sound_027",
+   "class": "music",
+   "stem": "sound_027",
+   "file": "sequences/music_walking_passage_quintet_full_gamma.mid",
+   "sidecar": "sequences/music_walking_passage_quintet_full_gamma.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816bb78",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 28,
+   "symbol": "sound_028",
+   "class": "music",
+   "stem": "sound_028",
+   "file": "sequences/music_walking_passage_septet_full_beta.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_beta.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816c780",
+    "track_count": 9,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 29,
+   "symbol": "sound_029",
+   "class": "music",
+   "stem": "sound_029",
+   "file": "sequences/music_walking_passage_septet_full_gamma.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_gamma.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816da9c",
+    "track_count": 9,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 30,
+   "symbol": "sound_030",
+   "class": "music",
+   "stem": "sound_030",
+   "file": "sequences/music_slow_phrase_quintet_full.mid",
+   "sidecar": "sequences/music_slow_phrase_quintet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816e090",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 40,
+   "symbol": "sound_040",
+   "class": "music",
+   "stem": "sound_040",
+   "file": "sequences/music_walking_passage_octet_full.mid",
+   "sidecar": "sequences/music_walking_passage_octet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816eb24",
+    "track_count": 10,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 41,
+   "symbol": "sound_041",
+   "class": "music",
+   "stem": "sound_041",
+   "file": "sequences/music_walking_passage_septet_full_delta.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_delta.json",
+   "player": 1,
+   "header": {
+    "address": "0x0816f5f0",
+    "track_count": 9,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 42,
+   "symbol": "sound_042",
+   "class": "music",
+   "stem": "sound_042",
+   "file": "sequences/music_walking_passage_septet_full_epsilon.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_epsilon.json",
+   "player": 1,
+   "header": {
+    "address": "0x081701fc",
+    "track_count": 9,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 43,
+   "symbol": "sound_043",
+   "class": "music",
+   "stem": "sound_043",
+   "file": "sequences/music_walking_passage_septet_full_zeta.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_zeta.json",
+   "player": 1,
+   "header": {
+    "address": "0x08170fb4",
+    "track_count": 10,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 50,
+   "symbol": "sound_050",
+   "class": "music",
+   "stem": "sound_050",
+   "file": "sequences/music_walking_passage_septet_full_eta.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_eta.json",
+   "player": 1,
+   "header": {
+    "address": "0x08171af8",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 51,
+   "symbol": "sound_051",
+   "class": "music",
+   "stem": "sound_051",
+   "file": "sequences/music_walking_passage_sextet_full_beta.mid",
+   "sidecar": "sequences/music_walking_passage_sextet_full_beta.json",
+   "player": 1,
+   "header": {
+    "address": "0x08173a14",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 52,
+   "symbol": "sound_052",
+   "class": "music",
+   "stem": "sound_052",
+   "file": "sequences/music_walking_phrase_quartet_full.mid",
+   "sidecar": "sequences/music_walking_phrase_quartet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08175380",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 53,
+   "symbol": "sound_053",
+   "class": "music",
+   "stem": "sound_053",
+   "file": "sequences/music_brisk_passage_quintet_full_beta.mid",
+   "sidecar": "sequences/music_brisk_passage_quintet_full_beta.json",
+   "player": 1,
+   "header": {
+    "address": "0x08176f88",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 54,
+   "symbol": "sound_054",
+   "class": "music",
+   "stem": "sound_054",
+   "file": "sequences/music_brisk_passage_septet_full.mid",
+   "sidecar": "sequences/music_brisk_passage_septet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08178ea0",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 55,
+   "symbol": "sound_055",
+   "class": "music",
+   "stem": "sound_055",
+   "file": "sequences/music_brisk_passage_quintet_full_gamma.mid",
+   "sidecar": "sequences/music_brisk_passage_quintet_full_gamma.json",
+   "player": 1,
+   "header": {
+    "address": "0x081799c0",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 58,
+   "symbol": "sound_058",
+   "class": "music",
+   "stem": "sound_058",
+   "file": "sequences/music_brisk_short_quintet_full.mid",
+   "sidecar": "sequences/music_brisk_short_quintet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x08179d5c",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 59,
+   "symbol": "sound_059",
+   "class": "music",
+   "stem": "sound_059",
+   "file": "sequences/music_languid_short_duo_wide.mid",
+   "sidecar": "sequences/music_languid_short_duo_wide.json",
+   "player": 1,
+   "header": {
+    "address": "0x08179f38",
+    "track_count": 3,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 60,
+   "symbol": "sound_060",
+   "class": "music",
+   "stem": "sound_060",
+   "file": "sequences/music_languid_phrase_trio_full_alpha.mid",
+   "sidecar": "sequences/music_languid_phrase_trio_full_alpha.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817a574",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 61,
+   "symbol": "sound_061",
+   "class": "music",
+   "stem": "sound_061",
+   "file": "sequences/music_slow_phrase_quintet_wide.mid",
+   "sidecar": "sequences/music_slow_phrase_quintet_wide.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817ad08",
+    "track_count": 6,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 62,
+   "symbol": "sound_062",
+   "class": "music",
+   "stem": "sound_062",
+   "file": "sequences/music_languid_phrase_duo_full.mid",
+   "sidecar": "sequences/music_languid_phrase_duo_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817b068",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 63,
+   "symbol": "sound_063",
+   "class": "music",
+   "stem": "sound_063",
+   "file": "sequences/music_brisk_passage_sextet_full.mid",
+   "sidecar": "sequences/music_brisk_passage_sextet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817be30",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 64,
+   "symbol": "sound_064",
+   "class": "music",
+   "stem": "sound_064",
+   "file": "sequences/music_languid_brief_trio_wide.mid",
+   "sidecar": "sequences/music_languid_brief_trio_wide.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817c0d0",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 67,
+   "symbol": "sound_067",
+   "class": "music",
+   "stem": "sound_067",
+   "file": "sequences/music_walking_extended_quintet_full.mid",
+   "sidecar": "sequences/music_walking_extended_quintet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817de2c",
+    "track_count": 8,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 70,
+   "symbol": "sound_070",
+   "class": "music",
+   "stem": "sound_070",
+   "file": "sequences/music_walking_passage_quartet_full.mid",
+   "sidecar": "sequences/music_walking_passage_quartet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817e8e8",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 72,
+   "symbol": "sound_072",
+   "class": "music",
+   "stem": "sound_072",
+   "file": "sequences/music_languid_phrase_trio_full_beta.mid",
+   "sidecar": "sequences/music_languid_phrase_trio_full_beta.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817f0d0",
+    "track_count": 5,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 74,
+   "symbol": "sound_074",
+   "class": "music",
+   "stem": "sound_074",
+   "file": "sequences/music_walking_passage_septet_full_theta.mid",
+   "sidecar": "sequences/music_walking_passage_septet_full_theta.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817fbd4",
+    "track_count": 11,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 75,
+   "symbol": "sound_075",
+   "class": "music",
+   "stem": "sound_075",
+   "file": "sequences/music_walking_short_quartet_full.mid",
+   "sidecar": "sequences/music_walking_short_quartet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x0817fe48",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 76,
+   "symbol": "sound_076",
+   "class": "music",
+   "stem": "sound_076",
+   "file": "sequences/music_brisk_phrase_sextet_full.mid",
+   "sidecar": "sequences/music_brisk_phrase_sextet_full.json",
+   "player": 1,
+   "header": {
+    "address": "0x081805bc",
+    "track_count": 7,
+    "priority": 0,
+    "reverb": 178,
+    "tone_bank": "0x080fba78",
+    "tone_bank_role": "music-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 101,
+   "symbol": "sound_101",
+   "class": "sfx",
+   "stem": "sound_101",
+   "file": "sequences/effect_walking_hit_mono_narrow_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "080b17e4"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x08181118",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 102,
+   "symbol": "sound_102",
+   "class": "sfx",
+   "stem": "sound_102",
+   "file": "sequences/effect_walking_hit_mono_narrow_beta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08181154",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 105,
+   "symbol": "sound_105",
+   "class": "sfx",
+   "stem": "sound_105",
+   "file": "sequences/effect_driving_hit_duo_mid_alpha.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08181250",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 108,
+   "symbol": "sound_108",
+   "class": "sfx",
+   "stem": "sound_108",
+   "file": "sequences/effect_walking_hit_mono_single_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "08026e80"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x08181308",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 109,
+   "symbol": "sound_109",
+   "class": "sfx",
+   "stem": "sound_109",
+   "file": "sequences/effect_slow_hit_mono_single_alpha.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818132c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 110,
+   "symbol": "sound_110",
+   "class": "sfx",
+   "stem": "sound_110",
+   "file": "sequences/effect_slow_hit_mono_narrow_alpha.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818134c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 112,
+   "symbol": "sound_112",
+   "class": "sfx",
+   "stem": "sound_112",
+   "file": "sequences/effect_brisk_hit_mono_mid_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0801b424",
+    "080286a0",
+    "080b1a14"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x081813d0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 113,
+   "symbol": "sound_113",
+   "class": "sfx",
+   "stem": "sound_113",
+   "file": "sequences/effect_driving_hit_mono_mid_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0801b424",
+    "080a2444",
+    "080b1a14"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x08181428",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 114,
+   "symbol": "sound_114",
+   "class": "sfx",
+   "stem": "sound_114",
+   "file": "sequences/effect_walking_hit_mono_mid_beta.mid",
+   "sidecar": null,
+   "played_by": [
+    "080a32b8"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x08181488",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 116,
+   "symbol": "sound_116",
+   "class": "sfx",
+   "stem": "sound_116",
+   "file": "sequences/effect_brisk_hit_duo_wide.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x081814f4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 117,
+   "symbol": "sound_117",
+   "class": "sfx",
+   "stem": "sound_117",
+   "file": "sequences/effect_brisk_hit_mono_wide_alpha.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08181518",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 126,
+   "symbol": "sound_126",
+   "class": "sfx",
+   "stem": "sound_126",
+   "file": "sequences/effect_walking_hit_mono_full.mid",
+   "sidecar": "sequences/effect_walking_hit_mono_full.json",
+   "played_by": [
+    "0808c30c",
+    "080985a8"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x08181710",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 173,
+   "symbol": "sound_173",
+   "class": "sfx",
+   "stem": "sound_173",
+   "file": "sequences/effect_brisk_hit_mono_mid_gamma.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08182164",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 174,
+   "symbol": "sound_174",
+   "class": "sfx",
+   "stem": "sound_174",
+   "file": "sequences/effect_brisk_hit_mono_mid_delta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x081821b8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 175,
+   "symbol": "sound_175",
+   "class": "sfx",
+   "stem": "sound_175",
+   "file": "sequences/effect_brisk_hit_mono_mid_epsilon.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818220c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 182,
+   "symbol": "sound_182",
+   "class": "sfx",
+   "stem": "sound_182",
+   "file": "sequences/effect_languid_hit_trio_narrow_alpha.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818240c",
+    "track_count": 3,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 195,
+   "symbol": "sound_195",
+   "class": "sfx",
+   "stem": "sound_195",
+   "file": "sequences/effect_languid_hit_mono_narrow_theta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x081827cc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 201,
+   "symbol": "sound_201",
+   "class": "sfx",
+   "stem": "sound_201",
+   "file": "sequences/effect_slow_hit_mono_wide.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08182f5c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 203,
+   "symbol": "sound_203",
+   "class": "sfx",
+   "stem": "sound_203",
+   "file": "sequences/effect_slow_hit_mono_narrow_epsilon.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08182fb4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 204,
+   "symbol": "sound_204",
+   "class": "sfx",
+   "stem": "sound_204",
+   "file": "sequences/effect_brisk_hit_duo_narrow_beta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818303c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 214,
+   "symbol": "sound_214",
+   "class": "sfx",
+   "stem": "sound_214",
+   "file": "sequences/effect_brisk_hit_duo_full_gamma.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x081832d0",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 224,
+   "symbol": "sound_224",
+   "class": "sfx",
+   "stem": "sound_224",
+   "file": "sequences/effect_languid_hit_mono_single_epsilon.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08183510",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 289,
+   "symbol": "sound_289",
+   "class": "sfx",
+   "stem": "sound_289",
+   "file": "sequences/effect_brisk_hit_duo_single.mid",
+   "sidecar": null,
+   "played_by": [
+    "08092708"
+   ],
+   "player": 2,
+   "header": {
+    "address": "0x08184224",
+    "track_count": 2,
+    "priority": 0,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 292,
+   "symbol": "sound_292",
+   "class": "sfx",
+   "stem": "sound_292",
+   "file": "sequences/effect_driving_hit_mono_single_mubeta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08184314",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 293,
+   "symbol": "sound_293",
+   "class": "sfx",
+   "stem": "sound_293",
+   "file": "sequences/effect_driving_hit_mono_single_nubeta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818434c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 303,
+   "symbol": "sound_303",
+   "class": "sfx",
+   "stem": "sound_303",
+   "file": "sequences/effect_driving_hit_mono_narrow_eta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x081843e0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 305,
+   "symbol": "sound_305",
+   "class": "sfx",
+   "stem": "sound_305",
+   "file": "sequences/effect_slow_hit_mono_mid_epsilon.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x08184444",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 309,
+   "symbol": "sound_309",
+   "class": "sfx",
+   "stem": "sound_309",
+   "file": "sequences/effect_walking_hit_duo_wide_beta.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x0818456c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 310,
+   "symbol": "sound_310",
+   "class": "sfx",
+   "stem": "sound_310",
+   "file": "sequences/effect_walking_hit_duo_single.mid",
+   "sidecar": null,
+   "player": 2,
+   "header": {
+    "address": "0x081845c4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 104,
+   "symbol": "sound_104",
+   "class": "sfx",
+   "stem": "sound_104",
+   "file": "sequences/effect_driving_brief_trio_narrow.mid",
+   "sidecar": "sequences/effect_driving_brief_trio_narrow.json",
+   "player": 3,
+   "header": {
+    "address": "0x081811ec",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 107,
+   "symbol": "sound_107",
+   "class": "sfx",
+   "stem": "sound_107",
+   "file": "sequences/effect_walking_short_mono_mid.mid",
+   "sidecar": "sequences/effect_walking_short_mono_mid.json",
+   "player": 3,
+   "header": {
+    "address": "0x081812e4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 118,
+   "symbol": "sound_118",
+   "class": "sfx",
+   "stem": "sound_118",
+   "file": "sequences/effect_brisk_hit_mono_single_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181534",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 119,
+   "symbol": "sound_119",
+   "class": "sfx",
+   "stem": "sound_119",
+   "file": "sequences/effect_brisk_hit_mono_single_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181550",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 120,
+   "symbol": "sound_120",
+   "class": "sfx",
+   "stem": "sound_120",
+   "file": "sequences/effect_brisk_hit_mono_mid_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181578",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 121,
+   "symbol": "sound_121",
+   "class": "sfx",
+   "stem": "sound_121",
+   "file": "sequences/effect_brisk_hit_mono_full.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081815c0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 122,
+   "symbol": "sound_122",
+   "class": "sfx",
+   "stem": "sound_122",
+   "file": "sequences/effect_brisk_hit_mono_wide_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081815fc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 124,
+   "symbol": "sound_124",
+   "class": "sfx",
+   "stem": "sound_124",
+   "file": "sequences/effect_brisk_hit_mono_narrow_delta.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808e078",
+    "0808ece0"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08181680",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 125,
+   "symbol": "sound_125",
+   "class": "sfx",
+   "stem": "sound_125",
+   "file": "sequences/effect_brisk_hit_mono_narrow_epsilon.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808ec50"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x081816a0",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 127,
+   "symbol": "sound_127",
+   "class": "sfx",
+   "stem": "sound_127",
+   "file": "sequences/effect_walking_hit_mono_wide_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181738",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 132,
+   "symbol": "sound_132",
+   "class": "sfx",
+   "stem": "sound_132",
+   "file": "sequences/effect_brisk_hit_mono_wide_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x0818183c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 133,
+   "symbol": "sound_133",
+   "class": "sfx",
+   "stem": "sound_133",
+   "file": "sequences/effect_driving_hit_mono_mid_beta.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808c30c",
+    "0808c3a4"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08181870",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 134,
+   "symbol": "sound_134",
+   "class": "sfx",
+   "stem": "sound_134",
+   "file": "sequences/effect_brisk_hit_duo_full_alpha.mid",
+   "sidecar": "sequences/effect_brisk_hit_duo_full_alpha.json",
+   "played_by": [
+    "0808c30c",
+    "080985fc",
+    "08098c08"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x081818c4",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 135,
+   "symbol": "sound_135",
+   "class": "sfx",
+   "stem": "sound_135",
+   "file": "sequences/effect_brisk_hit_duo_full_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181914",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 136,
+   "symbol": "sound_136",
+   "class": "sfx",
+   "stem": "sound_136",
+   "file": "sequences/effect_slow_hit_mono_narrow_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181940",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 137,
+   "symbol": "sound_137",
+   "class": "sfx",
+   "stem": "sound_137",
+   "file": "sequences/effect_walking_brief_mono_single_alpha.mid",
+   "sidecar": "sequences/effect_walking_brief_mono_single_alpha.json",
+   "player": 3,
+   "header": {
+    "address": "0x0818197c",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 138,
+   "symbol": "sound_138",
+   "class": "sfx",
+   "stem": "sound_138",
+   "file": "sequences/effect_languid_hit_mono_narrow_beta.mid",
+   "sidecar": null,
+   "played_by": [
+    "08098070",
+    "08098a84",
+    "0809a3c4",
+    "080a4754"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x081819a4",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 140,
+   "symbol": "sound_140",
+   "class": "sfx",
+   "stem": "sound_140",
+   "file": "sequences/effect_slow_hit_trio_mid_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181a68",
+    "track_count": 2,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 141,
+   "symbol": "sound_141",
+   "class": "sfx",
+   "stem": "sound_141",
+   "file": "sequences/effect_walking_short_mono_narrow.mid",
+   "sidecar": "sequences/effect_walking_short_mono_narrow.json",
+   "player": 3,
+   "header": {
+    "address": "0x08181ac4",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 142,
+   "symbol": "sound_142",
+   "class": "sfx",
+   "stem": "sound_142",
+   "file": "sequences/effect_walking_hit_duo_full_alpha.mid",
+   "sidecar": "sequences/effect_walking_hit_duo_full_alpha.json",
+   "player": 3,
+   "header": {
+    "address": "0x08181b40",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 143,
+   "symbol": "sound_143",
+   "class": "sfx",
+   "stem": "sound_143",
+   "file": "sequences/effect_driving_hit_duo_mid_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181b68",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 144,
+   "symbol": "sound_144",
+   "class": "sfx",
+   "stem": "sound_144",
+   "file": "sequences/effect_brisk_hit_duo_mid.mid",
+   "sidecar": null,
+   "played_by": [
+    "08096048"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08181bd0",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 145,
+   "symbol": "sound_145",
+   "class": "sfx",
+   "stem": "sound_145",
+   "file": "sequences/effect_slow_hit_duo_mid_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181c3c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 151,
+   "symbol": "sound_151",
+   "class": "sfx",
+   "stem": "sound_151",
+   "file": "sequences/effect_walking_hit_trio_wide.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181d2c",
+    "track_count": 3,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 154,
+   "symbol": "sound_154",
+   "class": "sfx",
+   "stem": "sound_154",
+   "file": "sequences/effect_brisk_hit_mono_wide_delta.mid",
+   "sidecar": null,
+   "played_by": [
+    "080981b0",
+    "08099738"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08181df8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 158,
+   "symbol": "sound_158",
+   "class": "sfx",
+   "stem": "sound_158",
+   "file": "sequences/effect_walking_hit_mono_mid_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181e94",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 159,
+   "symbol": "sound_159",
+   "class": "sfx",
+   "stem": "sound_159",
+   "file": "sequences/effect_walking_hit_mono_wide_gamma.mid",
+   "sidecar": null,
+   "played_by": [
+    "08094428"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08181eb8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 160,
+   "symbol": "sound_160",
+   "class": "sfx",
+   "stem": "sound_160",
+   "file": "sequences/effect_walking_hit_mono_mid_delta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181ee0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 161,
+   "symbol": "sound_161",
+   "class": "sfx",
+   "stem": "sound_161",
+   "file": "sequences/effect_brisk_hit_mono_wide_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181f04",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 162,
+   "symbol": "sound_162",
+   "class": "sfx",
+   "stem": "sound_162",
+   "file": "sequences/effect_languid_brief_mono_narrow_alpha.mid",
+   "sidecar": "sequences/effect_languid_brief_mono_narrow_alpha.json",
+   "player": 3,
+   "header": {
+    "address": "0x08181f30",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 163,
+   "symbol": "sound_163",
+   "class": "sfx",
+   "stem": "sound_163",
+   "file": "sequences/effect_languid_brief_mono_narrow_beta.mid",
+   "sidecar": "sequences/effect_languid_brief_mono_narrow_beta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08181f5c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 164,
+   "symbol": "sound_164",
+   "class": "sfx",
+   "stem": "sound_164",
+   "file": "sequences/effect_languid_hit_mono_narrow_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08181f7c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 165,
+   "symbol": "sound_165",
+   "class": "sfx",
+   "stem": "sound_165",
+   "file": "sequences/effect_driving_brief_mono_wide.mid",
+   "sidecar": "sequences/effect_driving_brief_mono_wide.json",
+   "player": 3,
+   "header": {
+    "address": "0x08181ff4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 166,
+   "symbol": "sound_166",
+   "class": "sfx",
+   "stem": "sound_166",
+   "file": "sequences/effect_walking_brief_mono_single_beta.mid",
+   "sidecar": "sequences/effect_walking_brief_mono_single_beta.json",
+   "player": 3,
+   "header": {
+    "address": "0x0818201c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 168,
+   "symbol": "sound_168",
+   "class": "sfx",
+   "stem": "sound_168",
+   "file": "sequences/effect_brisk_hit_duo_narrow_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182078",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 169,
+   "symbol": "sound_169",
+   "class": "sfx",
+   "stem": "sound_169",
+   "file": "sequences/effect_walking_brief_mono_single_gamma.mid",
+   "sidecar": "sequences/effect_walking_brief_mono_single_gamma.json",
+   "player": 3,
+   "header": {
+    "address": "0x081820a0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 170,
+   "symbol": "sound_170",
+   "class": "sfx",
+   "stem": "sound_170",
+   "file": "sequences/effect_walking_brief_mono_single_delta.mid",
+   "sidecar": "sequences/effect_walking_brief_mono_single_delta.json",
+   "player": 3,
+   "header": {
+    "address": "0x081820c8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 176,
+   "symbol": "sound_176",
+   "class": "sfx",
+   "stem": "sound_176",
+   "file": "sequences/effect_brisk_hit_mono_mid_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182238",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 177,
+   "symbol": "sound_177",
+   "class": "sfx",
+   "stem": "sound_177",
+   "file": "sequences/effect_brisk_hit_mono_mid_eta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182264",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 178,
+   "symbol": "sound_178",
+   "class": "sfx",
+   "stem": "sound_178",
+   "file": "sequences/effect_languid_brief_duo_mid.mid",
+   "sidecar": "sequences/effect_languid_brief_duo_mid.json",
+   "player": 3,
+   "header": {
+    "address": "0x081822c8",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 179,
+   "symbol": "sound_179",
+   "class": "sfx",
+   "stem": "sound_179",
+   "file": "sequences/effect_brisk_phrase_mono_single.mid",
+   "sidecar": "sequences/effect_brisk_phrase_mono_single.json",
+   "player": 3,
+   "header": {
+    "address": "0x08182310",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 180,
+   "symbol": "sound_180",
+   "class": "sfx",
+   "stem": "sound_180",
+   "file": "sequences/effect_slow_hit_duo_wide.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182374",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 181,
+   "symbol": "sound_181",
+   "class": "sfx",
+   "stem": "sound_181",
+   "file": "sequences/effect_languid_hit_trio_mid.mid",
+   "sidecar": "sequences/effect_languid_hit_trio_mid.json",
+   "player": 3,
+   "header": {
+    "address": "0x081823b0",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 183,
+   "symbol": "sound_183",
+   "class": "sfx",
+   "stem": "sound_183",
+   "file": "sequences/effect_languid_hit_trio_narrow_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182448",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 184,
+   "symbol": "sound_184",
+   "class": "sfx",
+   "stem": "sound_184",
+   "file": "sequences/effect_driving_hit_duo_narrow_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182520",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 185,
+   "symbol": "sound_185",
+   "class": "sfx",
+   "stem": "sound_185",
+   "file": "sequences/effect_driving_hit_mono_narrow_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182548",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 186,
+   "symbol": "sound_186",
+   "class": "sfx",
+   "stem": "sound_186",
+   "file": "sequences/effect_driving_hit_mono_narrow_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182570",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 187,
+   "symbol": "sound_187",
+   "class": "sfx",
+   "stem": "sound_187",
+   "file": "sequences/effect_slow_hit_mono_mid_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182598",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 188,
+   "symbol": "sound_188",
+   "class": "sfx",
+   "stem": "sound_188",
+   "file": "sequences/effect_slow_hit_mono_narrow_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081825c0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 189,
+   "symbol": "sound_189",
+   "class": "sfx",
+   "stem": "sound_189",
+   "file": "sequences/effect_slow_hit_duo_mid_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x0818261c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 190,
+   "symbol": "sound_190",
+   "class": "sfx",
+   "stem": "sound_190",
+   "file": "sequences/effect_slow_hit_mono_mid_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081826a4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 191,
+   "symbol": "sound_191",
+   "class": "sfx",
+   "stem": "sound_191",
+   "file": "sequences/effect_languid_hit_mono_single_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081826c0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 192,
+   "symbol": "sound_192",
+   "class": "sfx",
+   "stem": "sound_192",
+   "file": "sequences/effect_languid_hit_mono_narrow_eta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081826f0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 193,
+   "symbol": "sound_193",
+   "class": "sfx",
+   "stem": "sound_193",
+   "file": "sequences/effect_languid_hit_duo_full.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182760",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 194,
+   "symbol": "sound_194",
+   "class": "sfx",
+   "stem": "sound_194",
+   "file": "sequences/effect_languid_hit_mono_single_delta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x0818279c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 196,
+   "symbol": "sound_196",
+   "class": "sfx",
+   "stem": "sound_196",
+   "file": "sequences/effect_driving_brief_mono_narrow.mid",
+   "sidecar": "sequences/effect_driving_brief_mono_narrow.json",
+   "player": 3,
+   "header": {
+    "address": "0x08182824",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 197,
+   "symbol": "sound_197",
+   "class": "sfx",
+   "stem": "sound_197",
+   "file": "sequences/effect_brisk_brief_mono_single_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182a58",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 198,
+   "symbol": "sound_198",
+   "class": "sfx",
+   "stem": "sound_198",
+   "file": "sequences/effect_brisk_brief_mono_single_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182bf4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 199,
+   "symbol": "sound_199",
+   "class": "sfx",
+   "stem": "sound_199",
+   "file": "sequences/effect_languid_brief_mono_single_beta.mid",
+   "sidecar": "sequences/effect_languid_brief_mono_single_beta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08182dcc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 202,
+   "symbol": "sound_202",
+   "class": "sfx",
+   "stem": "sound_202",
+   "file": "sequences/effect_slow_hit_duo_narrow.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08182f8c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 205,
+   "symbol": "sound_205",
+   "class": "sfx",
+   "stem": "sound_205",
+   "file": "sequences/effect_brisk_brief_mono_narrow_gamma.mid",
+   "sidecar": "sequences/effect_brisk_brief_mono_narrow_gamma.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183070",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 206,
+   "symbol": "sound_206",
+   "class": "sfx",
+   "stem": "sound_206",
+   "file": "sequences/effect_slow_hit_mono_full.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081830a4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 208,
+   "symbol": "sound_208",
+   "class": "sfx",
+   "stem": "sound_208",
+   "file": "sequences/effect_slow_hit_trio_mid_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081830f0",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 209,
+   "symbol": "sound_209",
+   "class": "sfx",
+   "stem": "sound_209",
+   "file": "sequences/effect_languid_hit_mono_mid.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183190",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 210,
+   "symbol": "sound_210",
+   "class": "sfx",
+   "stem": "sound_210",
+   "file": "sequences/effect_slow_hit_mono_narrow_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081831d0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 211,
+   "symbol": "sound_211",
+   "class": "sfx",
+   "stem": "sound_211",
+   "file": "sequences/effect_slow_hit_mono_narrow_eta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183208",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 212,
+   "symbol": "sound_212",
+   "class": "sfx",
+   "stem": "sound_212",
+   "file": "sequences/effect_languid_hit_duo_narrow_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0809728c",
+    "08099160"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08183238",
+    "track_count": 2,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 213,
+   "symbol": "sound_213",
+   "class": "sfx",
+   "stem": "sound_213",
+   "file": "sequences/effect_driving_hit_mono_single_delta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183288",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 215,
+   "symbol": "sound_215",
+   "class": "sfx",
+   "stem": "sound_215",
+   "file": "sequences/effect_walking_hit_mono_single_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x0818330c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 216,
+   "symbol": "sound_216",
+   "class": "sfx",
+   "stem": "sound_216",
+   "file": "sequences/effect_brisk_hit_mono_narrow_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183344",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 217,
+   "symbol": "sound_217",
+   "class": "sfx",
+   "stem": "sound_217",
+   "file": "sequences/effect_slow_hit_mono_mid_delta.mid",
+   "sidecar": null,
+   "played_by": [
+    "08092708"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x08183374",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 218,
+   "symbol": "sound_218",
+   "class": "sfx",
+   "stem": "sound_218",
+   "file": "sequences/effect_slow_hit_mono_single_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183390",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 219,
+   "symbol": "sound_219",
+   "class": "sfx",
+   "stem": "sound_219",
+   "file": "sequences/effect_languid_hit_duo_narrow_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081833b8",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 220,
+   "symbol": "sound_220",
+   "class": "sfx",
+   "stem": "sound_220",
+   "file": "sequences/effect_walking_hit_duo_wide_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "08099160"
+   ],
+   "player": 3,
+   "header": {
+    "address": "0x0818344c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 221,
+   "symbol": "sound_221",
+   "class": "sfx",
+   "stem": "sound_221",
+   "file": "sequences/effect_brisk_hit_mono_mid_theta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x0818347c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 222,
+   "symbol": "sound_222",
+   "class": "sfx",
+   "stem": "sound_222",
+   "file": "sequences/effect_driving_hit_mono_wide.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081834b8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 223,
+   "symbol": "sound_223",
+   "class": "sfx",
+   "stem": "sound_223",
+   "file": "sequences/effect_walking_hit_mono_narrow_delta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081834e0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 225,
+   "symbol": "sound_225",
+   "class": "sfx",
+   "stem": "sound_225",
+   "file": "sequences/effect_brisk_hit_duo_narrow_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183534",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 226,
+   "symbol": "sound_226",
+   "class": "sfx",
+   "stem": "sound_226",
+   "file": "sequences/effect_slow_hit_duo_single.mid",
+   "sidecar": "sequences/effect_slow_hit_duo_single.json",
+   "player": 3,
+   "header": {
+    "address": "0x0818356c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 228,
+   "symbol": "sound_228",
+   "class": "sfx",
+   "stem": "sound_228",
+   "file": "sequences/effect_slow_hit_duo_mid_epsilon.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081835c4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 229,
+   "symbol": "sound_229",
+   "class": "sfx",
+   "stem": "sound_229",
+   "file": "sequences/effect_slow_hit_duo_mid_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081835e8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 230,
+   "symbol": "sound_230",
+   "class": "sfx",
+   "stem": "sound_230",
+   "file": "sequences/effect_slow_hit_mono_narrow_theta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183610",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 231,
+   "symbol": "sound_231",
+   "class": "sfx",
+   "stem": "sound_231",
+   "file": "sequences/effect_slow_hit_duo_mid_eta.mid",
+   "sidecar": "sequences/effect_slow_hit_duo_mid_eta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183650",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 232,
+   "symbol": "sound_232",
+   "class": "sfx",
+   "stem": "sound_232",
+   "file": "sequences/effect_slow_hit_duo_mid_theta.mid",
+   "sidecar": "sequences/effect_slow_hit_duo_mid_theta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183688",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 233,
+   "symbol": "sound_233",
+   "class": "sfx",
+   "stem": "sound_233",
+   "file": "sequences/effect_driving_hit_mono_narrow_delta.mid",
+   "sidecar": "sequences/effect_driving_hit_mono_narrow_delta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183728",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 234,
+   "symbol": "sound_234",
+   "class": "sfx",
+   "stem": "sound_234",
+   "file": "sequences/effect_languid_hit_mono_single_zeta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183744",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 235,
+   "symbol": "sound_235",
+   "class": "sfx",
+   "stem": "sound_235",
+   "file": "sequences/effect_driving_hit_duo_narrow_beta.mid",
+   "sidecar": "sequences/effect_driving_hit_duo_narrow_beta.json",
+   "player": 3,
+   "header": {
+    "address": "0x081837e0",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 238,
+   "symbol": "sound_238",
+   "class": "sfx",
+   "stem": "sound_238",
+   "file": "sequences/effect_languid_hit_duo_mid.mid",
+   "sidecar": "sequences/effect_languid_hit_duo_mid.json",
+   "player": 3,
+   "header": {
+    "address": "0x081838a8",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 239,
+   "symbol": "sound_239",
+   "class": "sfx",
+   "stem": "sound_239",
+   "file": "sequences/effect_driving_hit_duo_narrow_gamma.mid",
+   "sidecar": "sequences/effect_driving_hit_duo_narrow_gamma.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183934",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 240,
+   "symbol": "sound_240",
+   "class": "sfx",
+   "stem": "sound_240",
+   "file": "sequences/effect_brisk_hit_mono_narrow_eta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183964",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 241,
+   "symbol": "sound_241",
+   "class": "sfx",
+   "stem": "sound_241",
+   "file": "sequences/effect_walking_brief_mono_mid.mid",
+   "sidecar": "sequences/effect_walking_brief_mono_mid.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183a2c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 242,
+   "symbol": "sound_242",
+   "class": "sfx",
+   "stem": "sound_242",
+   "file": "sequences/effect_brisk_hit_trio_mid.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183a84",
+    "track_count": 3,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 243,
+   "symbol": "sound_243",
+   "class": "sfx",
+   "stem": "sound_243",
+   "file": "sequences/effect_brisk_hit_duo_narrow_delta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183abc",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 244,
+   "symbol": "sound_244",
+   "class": "sfx",
+   "stem": "sound_244",
+   "file": "sequences/effect_brisk_brief_duo_full.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183b34",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 245,
+   "symbol": "sound_245",
+   "class": "sfx",
+   "stem": "sound_245",
+   "file": "sequences/effect_brisk_brief_mono_narrow_delta.mid",
+   "sidecar": "sequences/effect_brisk_brief_mono_narrow_delta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183b70",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 247,
+   "symbol": "sound_247",
+   "class": "sfx",
+   "stem": "sound_247",
+   "file": "sequences/effect_languid_brief_mono_narrow_gamma.mid",
+   "sidecar": "sequences/effect_languid_brief_mono_narrow_gamma.json",
+   "player": 3,
+   "header": {
+    "address": "0x08183c10",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 248,
+   "symbol": "sound_248",
+   "class": "sfx",
+   "stem": "sound_248",
+   "file": "sequences/effect_walking_hit_duo_full_beta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183c50",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 249,
+   "symbol": "sound_249",
+   "class": "sfx",
+   "stem": "sound_249",
+   "file": "sequences/effect_languid_hit_mono_narrow_iota.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183c88",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 253,
+   "symbol": "sound_253",
+   "class": "sfx",
+   "stem": "sound_253",
+   "file": "sequences/effect_driving_hit_duo_narrow_delta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08183d6c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 288,
+   "symbol": "sound_288",
+   "class": "sfx",
+   "stem": "sound_288",
+   "file": null,
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081841f8",
+    "track_count": 0,
+    "priority": 120,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   }
+  },
+  {
+   "song_id": 290,
+   "symbol": "sound_290",
+   "class": "sfx",
+   "stem": "sound_290",
+   "file": "sequences/effect_languid_brief_duo_wide_alpha.mid",
+   "sidecar": "sequences/effect_languid_brief_duo_wide_alpha.json",
+   "player": 3,
+   "header": {
+    "address": "0x0818427c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 291,
+   "symbol": "sound_291",
+   "class": "sfx",
+   "stem": "sound_291",
+   "file": "sequences/effect_languid_brief_duo_wide_beta.mid",
+   "sidecar": "sequences/effect_languid_brief_duo_wide_beta.json",
+   "player": 3,
+   "header": {
+    "address": "0x081842d8",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 300,
+   "symbol": "sound_300",
+   "class": "sfx",
+   "stem": "sound_300",
+   "file": "sequences/effect_driving_hit_mono_mid_gamma.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x0818437c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 306,
+   "symbol": "sound_306",
+   "class": "sfx",
+   "stem": "sound_306",
+   "file": "sequences/effect_brisk_hit_mono_narrow_theta.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08184470",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 307,
+   "symbol": "sound_307",
+   "class": "sfx",
+   "stem": "sound_307",
+   "file": "sequences/effect_brisk_hit_duo_narrow_epsilon.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x081844a0",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 308,
+   "symbol": "sound_308",
+   "class": "sfx",
+   "stem": "sound_308",
+   "file": "sequences/effect_walking_brief_quartet_wide_alpha.mid",
+   "sidecar": null,
+   "player": 3,
+   "header": {
+    "address": "0x08184528",
+    "track_count": 4,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 311,
+   "symbol": "sound_311",
+   "class": "sfx",
+   "stem": "sound_311",
+   "file": "sequences/effect_walking_brief_quartet_wide_beta.mid",
+   "sidecar": "sequences/effect_walking_brief_quartet_wide_beta.json",
+   "player": 3,
+   "header": {
+    "address": "0x08184680",
+    "track_count": 4,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 111,
+   "symbol": "sound_111",
+   "class": "sfx",
+   "stem": "sound_111",
+   "file": "sequences/effect_brisk_hit_mono_narrow_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0801b424",
+    "080286a0",
+    "080b1a14"
+   ],
+   "player": 4,
+   "header": {
+    "address": "0x0818137c",
+    "track_count": 1,
+    "priority": 90,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 256,
+   "symbol": "sound_256",
+   "class": "sfx",
+   "stem": "sound_256",
+   "file": "sequences/effect_driving_hit_mono_single_theta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183d90",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 257,
+   "symbol": "sound_257",
+   "class": "sfx",
+   "stem": "sound_257",
+   "file": "sequences/effect_driving_hit_mono_single_iota.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183db0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 258,
+   "symbol": "sound_258",
+   "class": "sfx",
+   "stem": "sound_258",
+   "file": "sequences/effect_driving_hit_mono_single_kappa.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183dd0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 259,
+   "symbol": "sound_259",
+   "class": "sfx",
+   "stem": "sound_259",
+   "file": "sequences/effect_driving_hit_mono_single_lambda.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183df0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 260,
+   "symbol": "sound_260",
+   "class": "sfx",
+   "stem": "sound_260",
+   "file": "sequences/effect_driving_hit_mono_single_mu.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183e10",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 261,
+   "symbol": "sound_261",
+   "class": "sfx",
+   "stem": "sound_261",
+   "file": "sequences/effect_driving_hit_mono_single_nu.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183e30",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 262,
+   "symbol": "sound_262",
+   "class": "sfx",
+   "stem": "sound_262",
+   "file": "sequences/effect_driving_hit_mono_single_xi.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183e50",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 263,
+   "symbol": "sound_263",
+   "class": "sfx",
+   "stem": "sound_263",
+   "file": "sequences/effect_driving_hit_mono_single_omicron.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183e74",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 264,
+   "symbol": "sound_264",
+   "class": "sfx",
+   "stem": "sound_264",
+   "file": "sequences/effect_driving_hit_mono_single_pi.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183e98",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 265,
+   "symbol": "sound_265",
+   "class": "sfx",
+   "stem": "sound_265",
+   "file": "sequences/effect_driving_hit_mono_single_rho.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183ebc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 266,
+   "symbol": "sound_266",
+   "class": "sfx",
+   "stem": "sound_266",
+   "file": "sequences/effect_driving_hit_mono_single_sigma.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183ee0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 267,
+   "symbol": "sound_267",
+   "class": "sfx",
+   "stem": "sound_267",
+   "file": "sequences/effect_driving_hit_mono_single_tau.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183f04",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 268,
+   "symbol": "sound_268",
+   "class": "sfx",
+   "stem": "sound_268",
+   "file": "sequences/effect_driving_hit_mono_single_upsilon.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183f28",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 269,
+   "symbol": "sound_269",
+   "class": "sfx",
+   "stem": "sound_269",
+   "file": "sequences/effect_driving_hit_mono_single_phi.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183f4c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 270,
+   "symbol": "sound_270",
+   "class": "sfx",
+   "stem": "sound_270",
+   "file": "sequences/effect_driving_hit_mono_single_chi.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183f70",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 271,
+   "symbol": "sound_271",
+   "class": "sfx",
+   "stem": "sound_271",
+   "file": "sequences/effect_driving_hit_mono_single_psi.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183f94",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 272,
+   "symbol": "sound_272",
+   "class": "sfx",
+   "stem": "sound_272",
+   "file": "sequences/effect_driving_hit_mono_single_omega.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183fb8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 273,
+   "symbol": "sound_273",
+   "class": "sfx",
+   "stem": "sound_273",
+   "file": "sequences/effect_driving_hit_mono_single_alphabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08183fdc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 274,
+   "symbol": "sound_274",
+   "class": "sfx",
+   "stem": "sound_274",
+   "file": "sequences/effect_driving_hit_mono_single_betabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184000",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 275,
+   "symbol": "sound_275",
+   "class": "sfx",
+   "stem": "sound_275",
+   "file": "sequences/effect_driving_hit_mono_single_gammabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184024",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 276,
+   "symbol": "sound_276",
+   "class": "sfx",
+   "stem": "sound_276",
+   "file": "sequences/effect_driving_hit_mono_single_deltabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184048",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 277,
+   "symbol": "sound_277",
+   "class": "sfx",
+   "stem": "sound_277",
+   "file": "sequences/effect_driving_hit_mono_single_epsilonbeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x0818406c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 278,
+   "symbol": "sound_278",
+   "class": "sfx",
+   "stem": "sound_278",
+   "file": "sequences/effect_driving_hit_mono_single_zetabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184090",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 279,
+   "symbol": "sound_279",
+   "class": "sfx",
+   "stem": "sound_279",
+   "file": "sequences/effect_driving_hit_mono_single_etabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x081840b4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 280,
+   "symbol": "sound_280",
+   "class": "sfx",
+   "stem": "sound_280",
+   "file": "sequences/effect_brisk_hit_mono_single_delta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x081840dc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 281,
+   "symbol": "sound_281",
+   "class": "sfx",
+   "stem": "sound_281",
+   "file": "sequences/effect_brisk_hit_mono_single_epsilon.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184104",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 282,
+   "symbol": "sound_282",
+   "class": "sfx",
+   "stem": "sound_282",
+   "file": "sequences/effect_brisk_hit_mono_single_zeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x0818412c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 283,
+   "symbol": "sound_283",
+   "class": "sfx",
+   "stem": "sound_283",
+   "file": "sequences/effect_brisk_hit_mono_single_eta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184154",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 284,
+   "symbol": "sound_284",
+   "class": "sfx",
+   "stem": "sound_284",
+   "file": "sequences/effect_driving_hit_mono_single_thetabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x08184178",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 285,
+   "symbol": "sound_285",
+   "class": "sfx",
+   "stem": "sound_285",
+   "file": "sequences/effect_driving_hit_mono_single_iotabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x0818419c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 286,
+   "symbol": "sound_286",
+   "class": "sfx",
+   "stem": "sound_286",
+   "file": "sequences/effect_driving_hit_mono_single_kappabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x081841c4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 287,
+   "symbol": "sound_287",
+   "class": "sfx",
+   "stem": "sound_287",
+   "file": "sequences/effect_driving_hit_mono_single_lambdabeta.mid",
+   "sidecar": null,
+   "player": 4,
+   "header": {
+    "address": "0x081841ec",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 115,
+   "symbol": "sound_115",
+   "class": "sfx",
+   "stem": "sound_115",
+   "file": "sequences/effect_brisk_hit_mono_narrow_beta.mid",
+   "sidecar": null,
+   "played_by": [
+    "08099160"
+   ],
+   "player": 5,
+   "header": {
+    "address": "0x081814cc",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 123,
+   "symbol": "sound_123",
+   "class": "sfx",
+   "stem": "sound_123",
+   "file": "sequences/effect_brisk_hit_mono_narrow_gamma.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808bde0",
+    "0808d828"
+   ],
+   "player": 5,
+   "header": {
+    "address": "0x08181660",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 128,
+   "symbol": "sound_128",
+   "class": "sfx",
+   "stem": "sound_128",
+   "file": "sequences/effect_driving_hit_mono_narrow_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808d828"
+   ],
+   "player": 5,
+   "header": {
+    "address": "0x08181770",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 129,
+   "symbol": "sound_129",
+   "class": "sfx",
+   "stem": "sound_129",
+   "file": "sequences/effect_slow_hit_mono_mid_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808d828"
+   ],
+   "player": 5,
+   "header": {
+    "address": "0x081817a8",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 236,
+   "symbol": "sound_236",
+   "class": "sfx",
+   "stem": "sound_236",
+   "file": "sequences/effect_brisk_hit_mono_single_gamma.mid",
+   "sidecar": null,
+   "player": 5,
+   "header": {
+    "address": "0x08183808",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 237,
+   "symbol": "sound_237",
+   "class": "sfx",
+   "stem": "sound_237",
+   "file": "sequences/effect_languid_hit_mono_single_eta.mid",
+   "sidecar": null,
+   "player": 5,
+   "header": {
+    "address": "0x08183834",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 250,
+   "symbol": "sound_250",
+   "class": "sfx",
+   "stem": "sound_250",
+   "file": "sequences/effect_driving_hit_mono_single_epsilon.mid",
+   "sidecar": null,
+   "player": 5,
+   "header": {
+    "address": "0x08183cb8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 251,
+   "symbol": "sound_251",
+   "class": "sfx",
+   "stem": "sound_251",
+   "file": "sequences/effect_driving_hit_mono_single_zeta.mid",
+   "sidecar": null,
+   "player": 5,
+   "header": {
+    "address": "0x08183ce8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 252,
+   "symbol": "sound_252",
+   "class": "sfx",
+   "stem": "sound_252",
+   "file": "sequences/effect_driving_hit_mono_single_eta.mid",
+   "sidecar": null,
+   "player": 5,
+   "header": {
+    "address": "0x08183d18",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 298,
+   "symbol": "sound_298",
+   "class": "sfx",
+   "stem": "sound_298",
+   "file": null,
+   "sidecar": null,
+   "played_by": [
+    "08091ff0"
+   ],
+   "player": 5,
+   "header": {
+    "address": "0x08184358",
+    "track_count": 0,
+    "priority": 120,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   }
+  },
+  {
+   "song_id": 156,
+   "symbol": "sound_156",
+   "class": "sfx",
+   "stem": "sound_156",
+   "file": "sequences/effect_languid_hit_mono_single_beta.mid",
+   "sidecar": null,
+   "player": 6,
+   "header": {
+    "address": "0x08181e3c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 157,
+   "symbol": "sound_157",
+   "class": "sfx",
+   "stem": "sound_157",
+   "file": "sequences/effect_languid_hit_mono_narrow_epsilon.mid",
+   "sidecar": null,
+   "player": 6,
+   "header": {
+    "address": "0x08181e5c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 304,
+   "symbol": "sound_304",
+   "class": "sfx",
+   "stem": "sound_304",
+   "file": "sequences/effect_slow_hit_duo_mid_iota.mid",
+   "sidecar": "sequences/effect_slow_hit_duo_mid_iota.json",
+   "player": 6,
+   "header": {
+    "address": "0x08184418",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 100,
+   "symbol": "sound_100",
+   "class": "sfx",
+   "stem": "sound_100",
+   "file": "sequences/effect_languid_hit_mono_narrow_alpha.mid",
+   "sidecar": "sequences/effect_languid_hit_mono_narrow_alpha.json",
+   "player": 7,
+   "header": {
+    "address": "0x081810e0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 103,
+   "symbol": "sound_103",
+   "class": "sfx",
+   "stem": "sound_103",
+   "file": "sequences/effect_walking_hit_mono_mid_alpha.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x081811a4",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 106,
+   "symbol": "sound_106",
+   "class": "sfx",
+   "stem": "sound_106",
+   "file": "sequences/effect_driving_hit_mono_single_alpha.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x08181270",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 130,
+   "symbol": "sound_130",
+   "class": "sfx",
+   "stem": "sound_130",
+   "file": "sequences/effect_walking_hit_mono_wide_beta.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x081817d0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 131,
+   "symbol": "sound_131",
+   "class": "sfx",
+   "stem": "sound_131",
+   "file": "sequences/effect_slow_hit_duo_mid_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "080981b0"
+   ],
+   "player": 7,
+   "header": {
+    "address": "0x08181810",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 139,
+   "symbol": "sound_139",
+   "class": "sfx",
+   "stem": "sound_139",
+   "file": "sequences/effect_walking_hit_mono_narrow_gamma.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x081819d4",
+    "track_count": 1,
+    "priority": 110,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 146,
+   "symbol": "sound_146",
+   "class": "sfx",
+   "stem": "sound_146",
+   "file": "sequences/effect_languid_hit_mono_single_alpha.mid",
+   "sidecar": null,
+   "played_by": [
+    "0808ec8c"
+   ],
+   "player": 7,
+   "header": {
+    "address": "0x08181c5c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 147,
+   "symbol": "sound_147",
+   "class": "sfx",
+   "stem": "sound_147",
+   "file": "sequences/effect_languid_hit_mono_narrow_gamma.mid",
+   "sidecar": "sequences/effect_languid_hit_mono_narrow_gamma.json",
+   "player": 7,
+   "header": {
+    "address": "0x08181c7c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 148,
+   "symbol": "sound_148",
+   "class": "sfx",
+   "stem": "sound_148",
+   "file": "sequences/effect_languid_hit_mono_narrow_delta.mid",
+   "sidecar": "sequences/effect_languid_hit_mono_narrow_delta.json",
+   "player": 7,
+   "header": {
+    "address": "0x08181c9c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 149,
+   "symbol": "sound_149",
+   "class": "sfx",
+   "stem": "sound_149",
+   "file": "sequences/effect_languid_brief_duo_narrow.mid",
+   "sidecar": "sequences/effect_languid_brief_duo_narrow.json",
+   "player": 7,
+   "header": {
+    "address": "0x08181ccc",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 150,
+   "symbol": "sound_150",
+   "class": "sfx",
+   "stem": "sound_150",
+   "file": "sequences/effect_languid_brief_mono_single_alpha.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x08181cf0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 152,
+   "symbol": "sound_152",
+   "class": "sfx",
+   "stem": "sound_152",
+   "file": "sequences/effect_driving_hit_mono_single_beta.mid",
+   "sidecar": null,
+   "played_by": [
+    "08092560"
+   ],
+   "player": 7,
+   "header": {
+    "address": "0x08181d6c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 153,
+   "symbol": "sound_153",
+   "class": "sfx",
+   "stem": "sound_153",
+   "file": "sequences/effect_driving_hit_mono_single_gamma.mid",
+   "sidecar": null,
+   "played_by": [
+    "08092560"
+   ],
+   "player": 7,
+   "header": {
+    "address": "0x08181dac",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 155,
+   "symbol": "sound_155",
+   "class": "sfx",
+   "stem": "sound_155",
+   "file": "sequences/effect_brisk_hit_mono_wide_epsilon.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x08181e20",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 167,
+   "symbol": "sound_167",
+   "class": "sfx",
+   "stem": "sound_167",
+   "file": "sequences/effect_slow_hit_mono_single_beta.mid",
+   "sidecar": null,
+   "played_by": [
+    "080984c0"
+   ],
+   "player": 7,
+   "header": {
+    "address": "0x08182044",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 171,
+   "symbol": "sound_171",
+   "class": "sfx",
+   "stem": "sound_171",
+   "file": "sequences/effect_brisk_brief_mono_narrow_alpha.mid",
+   "sidecar": "sequences/effect_brisk_brief_mono_narrow_alpha.json",
+   "player": 7,
+   "header": {
+    "address": "0x081820ec",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 172,
+   "symbol": "sound_172",
+   "class": "sfx",
+   "stem": "sound_172",
+   "file": "sequences/effect_brisk_brief_mono_narrow_beta.mid",
+   "sidecar": "sequences/effect_brisk_brief_mono_narrow_beta.json",
+   "player": 7,
+   "header": {
+    "address": "0x08182110",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 200,
+   "symbol": "sound_200",
+   "class": "sfx",
+   "stem": "sound_200",
+   "file": "sequences/effect_slow_hit_mono_narrow_delta.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x08182f0c",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 227,
+   "symbol": "sound_227",
+   "class": "sfx",
+   "stem": "sound_227",
+   "file": "sequences/effect_slow_hit_duo_mid_delta.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x0818359c",
+    "track_count": 2,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 246,
+   "symbol": "sound_246",
+   "class": "sfx",
+   "stem": "sound_246",
+   "file": "sequences/effect_walking_hit_mono_single_gamma.mid",
+   "sidecar": null,
+   "played_by": [
+    "0809b11c"
+   ],
+   "player": 7,
+   "header": {
+    "address": "0x08183be8",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 0,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 301,
+   "symbol": "sound_301",
+   "class": "sfx",
+   "stem": "sound_301",
+   "file": "sequences/effect_driving_hit_mono_narrow_epsilon.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x081843a0",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  },
+  {
+   "song_id": 302,
+   "symbol": "sound_302",
+   "class": "sfx",
+   "stem": "sound_302",
+   "file": "sequences/effect_driving_hit_mono_narrow_zeta.mid",
+   "sidecar": null,
+   "player": 7,
+   "header": {
+    "address": "0x081843bc",
+    "track_count": 1,
+    "priority": 100,
+    "reverb": 128,
+    "tone_bank": "0x080fc138",
+    "tone_bank_role": "effects-bank"
+   },
+   "name_is_provisional": true
+  }
+ ],
+ "comment": "song_id -> extracted file, the ROM's ordering for it, and the evidence for naming one. Entries are sorted by (player, song_id), which is the ROM's own grouping -- see `ordering`. Every stem still carries the ROM's numbering, so the music tier reads Extracted and not Named. That is not an extraction gap: a name has to say what the sound IS, and neither the sound table nor the sequence bytes say that. `played_by` is the only linkage that could name one: the owners whose reconstructed C calls Func_080f9010 -- the linker veneer to the engine dispatcher Func_080f9080, whose first argument is the song id -- with this id as a LITERAL. 52 such sites across 34 ids; 22 of those ids have exactly one caller. A further 41 owners call the dispatcher with a computed id and cannot be attributed, and no overlay calls it with a literal. NAMING IS BLOCKED, and the reason is measured rather than assumed: the corpus has established 341 descriptive identities, and ZERO of them are reachable from any sound caller. They are all overlay-local Func_02xxxxxx aliases while every caller of the dispatcher is a main-image Func_08xxxxxx. So `played_by` says 'this id is played from there' and nothing more -- not what it sounds like, not which scene owns it. Naming waits on main-image caller identities, which is ordinary decompilation and not audio work. Do not invent names to move the tier. Derived from games/gs1/src/ and games/gs1/assets/audio/song_table.json; regenerate rather than editing by hand.",
+ "accounting": {
+  "song_table_entries": 312,
+  "extracted_sequences": 260,
+  "per_song_empty_headers": [
+   19,
+   95,
+   288,
+   298
+  ],
+  "aliases_of_shared_empty_header": 48,
+  "note": "312 = 260 extracted + 4 per-song empty headers + 48 table slots pointing at the shared sound_empty at 0x080fd044. Checked against residuals_index.json: all four empty ids are listed there, so the four entries with a null file are accounted for and are not extraction gaps."
+ },
+ "ordering": {
+  "primary": "player",
+  "secondary": "song_id",
+  "note": "The ROM's own ordering, not an imposed one. Every entry in the sound table at 0x080fc684 carries a player number beside its header pointer, and that number partitions the 312 slots exactly: players 0 and 1 hold all 58 music sequences, players 2 through 7 all 202 effects, with no exception either way. So the `class` field is confirmed ROM-derived rather than a heuristic on track counts. A player is a voice-allocation group in the m4a engine, so two sounds on different players can sound together and two on the same player cannot -- which is why the grouping is worth carrying.",
+  "players": {
+   "0": {
+    "class": "music",
+    "sequences": 13,
+    "track_counts": [
+     4,
+     5,
+     6,
+     7
+    ],
+    "bytes_min": 950,
+    "bytes_max": 3949
+   },
+   "1": {
+    "class": "music",
+    "sequences": 45,
+    "track_counts": [
+     4,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12
+    ],
+    "bytes_min": 2159,
+    "bytes_max": 64492
+   },
+   "2": {
+    "class": "sfx",
+    "sequences": 29,
+    "track_counts": [
+     2,
+     3,
+     4
+    ],
+    "bytes_min": 464,
+    "bytes_max": 2607
+   },
+   "3": {
+    "class": "sfx",
+    "sequences": 106,
+    "track_counts": [
+     2,
+     3,
+     4,
+     5
+    ],
+    "bytes_min": 445,
+    "bytes_max": 3875
+   },
+   "4": {
+    "class": "sfx",
+    "sequences": 33,
+    "track_counts": [
+     2
+    ],
+    "bytes_min": 499,
+    "bytes_max": 620
+   },
+   "5": {
+    "class": "sfx",
+    "sequences": 9,
+    "track_counts": [
+     2
+    ],
+    "bytes_min": 523,
+    "bytes_max": 863
+   },
+   "6": {
+    "class": "sfx",
+    "sequences": 3,
+    "track_counts": [
+     2
+    ],
+    "bytes_min": 469,
+    "bytes_max": 584
+   },
+   "7": {
+    "class": "sfx",
+    "sequences": 22,
+    "track_counts": [
+     2,
+     3
+    ],
+    "bytes_min": 449,
+    "bytes_max": 2432
+   }
+  },
+  "shared_empty_slots": 48,
+  "duplicate_sequences": "none: all 260 extracted sequences are byte-distinct (sha1 over the .mid)",
+  "axes": {
+   "player": "The partition. Players 0-1 carry all 58 extracted music sequences, 2-7 all 202 effects, no exception. A player is a voice-allocation group, so two sounds on one player cannot overlap.",
+   "priority": "The engine's own precedence: Func_080faa58 refuses to start a song whose priority does not beat the playing one. All 60 music headers are priority 0. Effects are 100 for 187 of them, with 90 on one, 110 on thirteen and 120 on two -- so those sixteen are the sounds meant to cut through, and that is an ordering the ROM states rather than one inferred.",
+   "tone_bank": "Exactly two banks across all 264 headers, and they partition by class perfectly: 0x080fba78 for all 60 music, 0x080fc138 for all 204 effects. This is the third independent ROM axis agreeing with `class` and `player`, which is why the music/effect split can be stated as fact rather than as a track-count heuristic. The two banks are also the only audio objects here that CAN be named from evidence -- they are the instrument sets a .sf2 extraction would produce, one for music and one for effects.",
+   "reverb": "Bit 7 gates the reverb call in Func_080faa58. All 60 music headers carry 178 (bit 7 set). Effects carry 0 for 188 and 128 for 16, so those sixteen take reverb where the rest do not."
+  }
+ },
+ "wave_attribution": {
+  "note": "Which tone bank uses each PCM sample, and at which MIDI program. Read from the two banks in the ROM -- 12-byte m4a tone entries, the word at +4 being the wave pointer -- and joined to games/gs1/assets/audio/waves/index.json by address. The split is clean: wave_00..wave_13 are music instruments, wave_20..wave_31 effect samples. wave_14..wave_19 resolve from neither bank directly, because a tone entry of type 0x40 or 0x80 points at a keysplit or percussion sub-table instead of a wave, and those were not followed. Recorded HERE and not in waves_index.json, which is a build input read by build-assets and pinned by tools/audio-wave/tests/real_assets.rs; this file is read by no tool, so extending it cannot break the build. This is attribution, not a name: it says a sample is the music bank's program 8, not what instrument that is.",
+  "bank_addresses": {
+   "music-bank": "0x080fba78",
+   "effects-bank": "0x080fc138"
+  },
+  "waves": {
+   "wave_00": {
+    "bank": "music-bank",
+    "program": 8
+   },
+   "wave_01": {
+    "bank": "music-bank",
+    "program": 24
+   },
+   "wave_02": {
+    "bank": "music-bank",
+    "program": 33
+   },
+   "wave_03": {
+    "bank": "music-bank",
+    "program": 45
+   },
+   "wave_04": {
+    "bank": "music-bank",
+    "program": 46
+   },
+   "wave_05": {
+    "bank": "music-bank",
+    "program": 47
+   },
+   "wave_06": {
+    "bank": "music-bank",
+    "program": 48
+   },
+   "wave_07": {
+    "bank": "music-bank",
+    "program": 52
+   },
+   "wave_08": {
+    "bank": "music-bank",
+    "program": 56
+   },
+   "wave_09": {
+    "bank": "music-bank",
+    "program": 61
+   },
+   "wave_10": {
+    "bank": "music-bank",
+    "program": 68
+   },
+   "wave_11": {
+    "bank": "music-bank",
+    "program": 72
+   },
+   "wave_12": {
+    "bank": "music-bank",
+    "program": 73
+   },
+   "wave_13": {
+    "bank": "music-bank",
+    "program": 75
+   },
+   "wave_20": {
+    "bank": "effects-bank",
+    "program": 50
+   },
+   "wave_21": {
+    "bank": "effects-bank",
+    "program": 51
+   },
+   "wave_22": {
+    "bank": "effects-bank",
+    "program": 52
+   },
+   "wave_23": {
+    "bank": "effects-bank",
+    "program": 53
+   },
+   "wave_24": {
+    "bank": "effects-bank",
+    "program": 54
+   },
+   "wave_25": {
+    "bank": "effects-bank",
+    "program": 55
+   },
+   "wave_26": {
+    "bank": "effects-bank",
+    "program": 57
+   },
+   "wave_27": {
+    "bank": "effects-bank",
+    "program": 58
+   },
+   "wave_28": {
+    "bank": "effects-bank",
+    "program": 59
+   },
+   "wave_29": {
+    "bank": "effects-bank",
+    "program": 70
+   },
+   "wave_30": {
+    "bank": "effects-bank",
+    "program": 71
+   },
+   "wave_31": {
+    "bank": "effects-bank",
+    "program": 72
+   }
+  },
+  "unattributed": [
+   "wave_14",
+   "wave_15",
+   "wave_16",
+   "wave_17",
+   "wave_18",
+   "wave_19"
+  ]
+ },
+ "layout": {
+  "sequences": "games/gs1/assets/audio/sequences/ -- index.json plus <class>_<id>.mid and its sidecar",
+  "waves": "games/gs1/assets/audio/waves/ -- index.json plus wave_<nn>.pcm<n>.wav",
+  "note": "Both folders are derived, not decorative: build-assets takes the sequence directory from the index's own parent, and the wave prefix from the index's filename with `index.json` stripped. Moving each index into a folder named for its contents therefore moved the assets with it and left the wave prefix empty, which is why `waves_wave_00.pcm8.wav` became `waves/wave_00.pcm8.wav` with no code change. The manifest already declared `games/gs1/assets/audio/waves/residual/index.json` for a pending package, so this is the layout that was intended."
+ },
+ "naming": {
+  "status": "provisional",
+  "note": "The 260 sequence names are MANUFACTURED and meant to be replaced by ear. Each is <class>_<tempo>_<length>_<voices>_<range>, every part measured from the sequence itself: tempo band from the first set-tempo meta event, length band in beats from the longest track over the division, voice count from distinct program changes, pitch range from the lowest and highest note. Ties in a bucket take a Greek-letter suffix in song-id order. Nothing here claims a title or a scene. No name came from outside the ROM, which the evidence boundary forbids and which would have put unverifiable claims into the tree; what a name asserts is only what the bytes say. Replacing one is a single JSON edit: build-assets reads sequences/index.json's `names` map and falls back to <class>_<id> for any id absent from it."
+ }
+}

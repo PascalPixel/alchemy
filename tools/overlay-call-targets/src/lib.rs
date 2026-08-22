@@ -74,7 +74,7 @@ pub fn target_offset(high: u16, low: u16) -> Option<i64> {
 /// listing.
 pub fn overlay_image(overlay: &str) -> Result<Vec<u8>, String> {
     let path = root()
-        .join("assets/code")
+        .join("games/gs1/assets/code")
         .join(format!("{overlay}_overlay.s"));
     if !path.exists() {
         return Err(format!("no reconstruction assembly for {overlay}"));

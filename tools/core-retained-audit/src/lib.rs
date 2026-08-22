@@ -169,10 +169,10 @@ fn stale(output: &Path, source: &Path) -> Result<(), String> {
 }
 
 pub fn audit(root: &Path) -> Result<Audit, String> {
-    let inventory_path = root.join("metrics/gs1-en-executable.json");
-    let asm_path = root.join("out/full/asm/manifest.json");
-    let claimed_path = root.join("out/full/claimed/manifest.json");
-    stale(&asm_path, &root.join("asm/classification.json"))?;
+    let inventory_path = root.join("games/gs1/metrics/gs1-en-executable.json");
+    let asm_path = root.join("out/gs1-en/full/asm/manifest.json");
+    let claimed_path = root.join("out/gs1-en/full/claimed/manifest.json");
+    stale(&asm_path, &root.join("games/gs1/asm/classification.json"))?;
 
     let inventory = document(&inventory_path)?;
     let asm = regions(&document(&asm_path)?, true)?;

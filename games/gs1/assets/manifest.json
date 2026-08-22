@@ -1,0 +1,3901 @@
+{
+  "format": 1,
+  "closure_packages": [
+    {
+      "id": "header_edition",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "games/gs1/assets/data/closure/header_edition/index.json",
+      "expected_ranges": [{"address": "0x08000000",  "size": "0x04"},  {"address": "0x080000a0",  "size": "0x12"},  {"address": "0x080000bc",  "size": "0x02"}]
+    },
+    {
+      "id": "early_runtime",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "games/gs1/assets/data/closure/early_runtime/index.json",
+      "expected_ranges": [{"address": "0x08012f20",  "size": "0x864"},  {"address": "0x0801403c",  "size": "0xfc4"}]
+    },
+    {
+      "id": "late_runtime",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "games/gs1/assets/data/closure/late_runtime/index.json",
+      "expected_ranges": [{"address": "0x080f38bc",  "size": "0x744"},  {"address": "0x080f53ce",  "size": "0xc32"},  {"address": "0x080f86f8",  "size": "0x908"}]
+    },
+    {
+      "id": "mixed_gap_data",
+      "kind": "golden-sun-asset-fragment",
+      "availability": "pending",
+      "index": "games/gs1/assets/data/closure/mixed_gap_data/index.json",
+      "expected_ranges": [
+        {
+          "address": "0x08000404",
+          "size": "0x2f8"
+        },
+        {
+          "address": "0x0800731c",
+          "size": "0x04"
+        },
+        {
+          "address": "0x08007320",
+          "size": "0x38"
+        },
+        {
+          "address": "0x08007358",
+          "size": "0x424"
+        }
+      ]
+    },
+    {
+      "id": "residual_pcm_waves",
+      "kind": "golden-sun-pcm-wave-series",
+      "availability": "pending",
+      "index": "games/gs1/assets/audio/waves/residual/index.json",
+      "expected_ranges": [{"address": "0x0811dac8",  "size": "0x70"}]
+    }
+  ],
+  "regions": [
+    {
+      "kind": "golden-sun-byte-value-region-package",
+      "source": "games/gs1/assets/data/final_byte_regions_index.json"
+    },
+    {
+      "address": "0x08000404",
+      "size": "0x2f8",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x0800731c",
+      "size": "0x04",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x08007320",
+      "size": "0x38",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x08007358",
+      "size": "0x424",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/executable_gaps/index.json"
+    },
+    {
+      "address": "0x080b5204",
+      "size": "0x08",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/veneer_island_residual/index.json"
+    },
+    {
+      "address": "0x080b5218",
+      "size": "0x20",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/veneer_island_residual/index.json"
+    },
+    {
+      "address": "0x080b5238",
+      "size": "0x20",
+      "kind": "golden-sun-executable-gap-data",
+      "source": "games/gs1/asm/veneer_island_residual/index.json"
+    },
+    {
+      "address": "0x083cd090",
+      "size": "0x488",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "049"
+    },
+    {
+      "address": "0x083cd518",
+      "size": "0x5ec",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "04a"
+    },
+    {
+      "address": "0x083d85e0",
+      "size": "0x444",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "061"
+    },
+    {
+      "address": "0x083dc1f8",
+      "size": "0x220",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "064"
+    },
+    {
+      "address": "0x083dc854",
+      "size": "0x114",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "066"
+    },
+    {
+      "address": "0x083e2ae4",
+      "size": "0x29c",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "073"
+    },
+    {
+      "address": "0x083f5f4c",
+      "size": "0x7b0",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "0a5"
+    },
+    {
+      "address": "0x083f66fc",
+      "size": "0x518",
+      "kind": "golden-sun-resource-byte-canvas",
+      "source": "games/gs1/assets/graphics/resource_byte_closure_index.json",
+      "resource_id": "0a6"
+    },
+    {
+      "address": "0x080f38bc",
+      "size": "0x744",
+      "kind": "golden-sun-late-runtime-residual",
+      "source": "games/gs1/assets/data/late_runtime_residual_index.json"
+    },
+    {
+      "address": "0x080f53ce",
+      "size": "0xc32",
+      "kind": "golden-sun-late-runtime-residual",
+      "source": "games/gs1/assets/data/late_runtime_residual_index.json"
+    },
+    {
+      "address": "0x080f86f8",
+      "size": "0x908",
+      "kind": "golden-sun-late-runtime-residual",
+      "source": "games/gs1/assets/data/late_runtime_residual_index.json"
+    },
+    {
+      "address": "0x08012f20",
+      "size": "0x864",
+      "kind": "golden-sun-early-runtime-data",
+      "source": "games/gs1/assets/data/early_runtime_index.json"
+    },
+    {
+      "address": "0x0801403c",
+      "size": "0xfc4",
+      "kind": "golden-sun-early-runtime-data",
+      "source": "games/gs1/assets/data/early_runtime_index.json"
+    },
+    {
+      "address": "0x08000000",
+      "size": "0xa0",
+      "kind": "gba-cartridge-header-standard-fields",
+      "source": "games/gs1/assets/data/gba_header.json"
+    },
+    {
+      "address": "0x080000a0",
+      "size": "0x1c",
+      "kind": "gba-cartridge-header-standard-fields",
+      "source": "games/gs1/assets/data/gba_header.json"
+    },
+    {
+      "address": "0x080000bc",
+      "size": "0x04",
+      "kind": "gba-cartridge-header-standard-fields",
+      "source": "games/gs1/assets/data/gba_header.json"
+    },
+    {
+      "address": "0x0800777c",
+      "size": "0x1e0",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x0800795c",
+      "size": "0x38",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "games/gs1/assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x080079b0",
+      "size": "0x70",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "games/gs1/assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007aa4",
+      "size": "0x70",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "games/gs1/assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007b3c",
+      "size": "0x88",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "games/gs1/assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007bcc",
+      "size": "0x70",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "games/gs1/assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x08007c64",
+      "size": "0x139c",
+      "kind": "golden-sun-runtime-support-data",
+      "source": "games/gs1/assets/data/runtime_support.json"
+    },
+    {
+      "address": "0x080092b8",
+      "size": "0x900",
+      "kind": "golden-sun-byte-henkan-tables",
+      "source": "games/gs1/assets/data/byte_henkan_hyou.json"
+    },
+    {
+      "address": "0x08013784",
+      "size": "0x8b8",
+      "kind": "golden-sun-map-load-table",
+      "source": "games/gs1/assets/maps/map_load_table.json"
+    },
+    {
+      "address": "0x08029910",
+      "size": "0xa550",
+      "kind": "golden-sun-localization-font",
+      "source": "games/gs1/assets/text/localization_font.json"
+    },
+    {
+      "address": "0x08033e60",
+      "size": "0x98",
+      "kind": "golden-sun-localization-tables",
+      "source": "games/gs1/assets/data/localization_tables_table_08033e60.json"
+    },
+    {
+      "address": "0x08033ef8",
+      "size": "0x400",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/fonts_localization_font_tile_08033ef8.4bpp.png"
+    },
+    {
+      "address": "0x080342f8",
+      "size": "0x400",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/fonts_localization_font_tile_080342f8.4bpp.png"
+    },
+    {
+      "address": "0x080346f8",
+      "size": "0x2000",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/fonts_localization_font_tile_080346f8.4bpp.png"
+    },
+    {
+      "address": "0x080366f8",
+      "size": "0x1dc",
+      "kind": "golden-sun-localization-tables",
+      "source": "games/gs1/assets/data/localization_tables_table_080366f8.json"
+    },
+    {
+      "address": "0x080368d4",
+      "size": "0x800",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/fonts_localization_font_tile_080368d4.4bpp.png"
+    },
+    {
+      "address": "0x080370d4",
+      "size": "0x390",
+      "kind": "golden-sun-localization-tables",
+      "source": "games/gs1/assets/data/localization_tables_table_080370d4.json"
+    },
+    {
+      "address": "0x08037464",
+      "size": "0x3c3a4",
+      "kind": "golden-sun-message-archive",
+      "source": "games/gs1/assets/text/message_archive.json"
+    },
+    {
+      "address": "0x08073812",
+      "size": "0x40",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/08073812.gbapal.png"
+    },
+    {
+      "address": "0x08073852",
+      "size": "0x37ae",
+      "kind": "golden-sun-namae-nyuuryoku",
+      "source": "games/gs1/assets/graphics/fonts_namae_nyuuryoku_gamen.json"
+    },
+    {
+      "address": "0x0807a828",
+      "size": "0xf7d8",
+      "kind": "golden-sun-gameplay-databases",
+      "source": "games/gs1/assets/data/resource_5_database.json"
+    },
+    {
+      "address": "0x0809c410",
+      "size": "0x4bf0",
+      "kind": "golden-sun-battle-effect-data",
+      "source": "games/gs1/assets/data/battle_effect_data_layout.json"
+    },
+    {
+      "address": "0x080aea4c",
+      "size": "0x15b4",
+      "kind": "golden-sun-sentou-gamen-data",
+      "source": "games/gs1/assets/graphics/sentou_gamen_index.json"
+    },
+    {
+      "address": "0x080b3940",
+      "size": "0x16c0",
+      "kind": "golden-sun-sentou-menu-data",
+      "source": "games/gs1/assets/data/sentou_menu_index.json"
+    },
+    {
+      "address": "0x080c2a0a",
+      "size": "0x3126",
+      "kind": "golden-sun-sentou-hyouji",
+      "source": "games/gs1/assets/graphics/sentou_hyouji_index.json"
+    },
+    {
+      "address": "0x080c5b30",
+      "size": "0xe0",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/gs1/assets/graphics/080c5b30.4bpp.png"
+    },
+    {
+      "address": "0x080eda78",
+      "size": "0x27dc",
+      "kind": "golden-sun-sentou-kouka-runtime",
+      "source": "games/gs1/assets/code/sentou_kouka_index.json"
+    },
+    {
+      "address": "0x080f0a5c",
+      "size": "0x15a4",
+      "kind": "golden-sun-staff-roll",
+      "source": "games/gs1/assets/text/staff_roll_index.json"
+    },
+    {
+      "address": "0x080fb792",
+      "size": "0xef2",
+      "kind": "golden-sun-audio-engine-data",
+      "source": "games/gs1/assets/audio/engine_index.json"
+    },
+    {
+      "address": "0x080fc684",
+      "size": "0x9c0",
+      "kind": "golden-sun-sound-table",
+      "source": "games/gs1/assets/audio/song_table.json"
+    },
+    {
+      "address": "0x08185024",
+      "size": "0x8530",
+      "kind": "golden-sun-character-catalog",
+      "source": "games/gs1/assets/data/chr_catalog.json"
+    },
+    {
+      "address": "0x0818d554",
+      "size": "0x19acc",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_0818_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x081a7020",
+      "size": "0x3a1ec",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_081a_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x081e120c",
+      "size": "0x14ebc",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_081e_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x081f60c8",
+      "size": "0x2a098",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_081f_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x08220160",
+      "size": "0x24e60",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_zenhan_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x08244fc0",
+      "size": "0x48018",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x0828cfd8",
+      "size": "0x28088",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_0828_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x082b5060",
+      "size": "0x4bf14",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_082b_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x08300f74",
+      "size": "0x1f08c",
+      "kind": "golden-sun-static-sprite-series",
+      "source": "games/gs1/assets/graphics/characters_chr_0830_index.json",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+    },
+    {
+      "address": "0x08320000",
+      "size": "0xfa0",
+      "kind": "golden-sun-resource-directory",
+      "source": "games/gs1/assets/data/resource_directory.json"
+    },
+    {
+      "address": "0x08320fa0",
+      "size": "0x10",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x2"
+    },
+    {
+      "address": "0x08320fb0",
+      "size": "0x2000",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x13"
+    },
+    {
+      "address": "0x08322fb0",
+      "size": "0x8c0",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x14"
+    },
+    {
+      "address": "0x08323870",
+      "size": "0x1177",
+      "kind": "golden-sun-title-lz",
+      "source": "games/gs1/assets/graphics/resource_15_container.json"
+    },
+    {
+      "address": "0x083249e8",
+      "size": "0x66c0",
+      "kind": "golden-sun-title-lz",
+      "source": "games/gs1/assets/graphics/resource_16_container.json"
+    },
+    {
+      "address": "0x0832b0a8",
+      "size": "0x86f8",
+      "kind": "golden-sun-title-lz",
+      "source": "games/gs1/assets/graphics/resource_17_container.json"
+    },
+    {
+      "address": "0x083337a0",
+      "size": "0x828",
+      "kind": "golden-sun-simple-resource",
+      "resource_id": "0x18"
+    },
+    {
+      "address": "0x08333fc8",
+      "size": "0x182a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_19_stream.lz.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0x1c0",
+          "source": "games/gs1/assets/graphics/resource_19_palette.png"
+        },
+        {
+          "kind": "gba-tilemap16",
+          "size": "0x800",
+          "source": "games/gs1/assets/graphics/resource_19_bg2.tilemap"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x4000",
+          "source": "games/gs1/assets/graphics/resource_19_static.8bpp.png"
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x1000",
+          "source": "games/gs1/assets/graphics/resource_19_dynamic.8bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x0833ac08",
+      "size": "0x2b4",
+      "kind": "golden-sun-kana-glyph-bank",
+      "source": "games/gs1/assets/graphics/resource_01c_stream.json"
+    },
+    {
+      "address": "0x083ee384",
+      "size": "0x80",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/palettes_direct_palettes_8d.png"
+    },
+    {
+      "address": "0x08403388",
+      "size": "0x80",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/palettes_direct_palettes_bb.png"
+    },
+    {
+      "address": "0x084090cc",
+      "size": "0x80",
+      "kind": "gba-palette",
+      "source": "games/gs1/assets/graphics/palettes_direct_palettes_c4.png"
+    },
+    {
+      "address": "0x084101d0",
+      "size": "0x10a5",
+      "kind": "golden-sun-d1-d3-resource",
+      "resource_id": "0x0d1",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_index.json"
+    },
+    {
+      "address": "0x08411278",
+      "size": "0x1a8",
+      "kind": "golden-sun-d1-d3-resource",
+      "resource_id": "0x0d2",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_index.json"
+    },
+    {
+      "address": "0x08411420",
+      "size": "0x54",
+      "kind": "golden-sun-d1-d3-resource",
+      "resource_id": "0x0d3",
+      "source": "games/gs1/assets/graphics/resources_d1_d3_index.json"
+    },
+    {
+      "address": "0x08411474",
+      "size": "0xf828",
+      "kind": "golden-sun-offset-palette-lz",
+      "source": "games/gs1/assets/maps/world_map_chunks.rgba.png",
+      "plan": "games/gs1/assets/maps/world_map_chunks.archive.json"
+    },
+    {
+      "address": "0x08420c9c",
+      "size": "0x39ec",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/maps/world_map_tile_pairs.lz.json",
+      "components": [{"kind": "rgba-bytes",  "size": "0x4488",  "source": "games/gs1/assets/maps/world_map_tile_pairs.rgba.png"}]
+    },
+    {
+      "address": "0x08424688",
+      "size": "0x152",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/maps/world_map_animation.lz.json",
+      "components": [{"kind": "little-u16-text",  "size": "0x3a2",  "source": "games/gs1/assets/maps/world_map_animation.commands.txt"}]
+    },
+    {
+      "address": "0x084247dc",
+      "size": "0x48e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/maps/world_map_terrain.lz.json",
+      "components": [{"kind": "rgba-bytes",  "size": "0x1000",  "source": "games/gs1/assets/maps/world_map_terrain.rgba.png"}]
+    },
+    {
+      "address": "0x08424c6c",
+      "size": "0x1f5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_d8.lz.json",
+      "components": [{"kind": "gba-palette",  "size": "0x1c0",  "source": "games/gs1/assets/graphics/resources_d8_e3_d8.palette.png"}]
+    },
+    {
+      "address": "0x08424e64",
+      "size": "0x16ba",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_d9.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_d9.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x08426520",
+      "size": "0x151e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_da.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_da.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x08427a40",
+      "size": "0xbca",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_db.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_db.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x0842860c",
+      "size": "0xb72",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_dc.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_dc.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x08429180",
+      "size": "0x1ea8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_dd.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x4000",  "source": "games/gs1/assets/graphics/resources_d8_e3_dd.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x0842b028",
+      "size": "0x1f0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_de.lz.json",
+      "components": [{"kind": "gba-palette",  "size": "0x1c0",  "source": "games/gs1/assets/graphics/resources_d8_e3_de.palette.png"}]
+    },
+    {
+      "address": "0x0842b218",
+      "size": "0x159e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_df.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_df.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x0842c7b8",
+      "size": "0x14ae",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_e0.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_e0.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x0842dc68",
+      "size": "0x908",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_e1.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_e1.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x0842e570",
+      "size": "0x904",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_e2.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x2000",  "source": "games/gs1/assets/graphics/resources_d8_e3_e2.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x0842ee74",
+      "size": "0x1540",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resources_d8_e3_e3.lz.json",
+      "components": [{"kind": "gba-8bpp-tiles",  "size": "0x4000",  "source": "games/gs1/assets/graphics/resources_d8_e3_e3.tiles.8bpp.png"}]
+    },
+    {
+      "address": "0x084303b4",
+      "size": "0x189a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/resource_e4_e6_e4.lz.json",
+      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e4.pairs.txt"}]
+    },
+    {
+      "address": "0x08431c50",
+      "size": "0x15c6",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/resource_e4_e6_e5.lz.json",
+      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e5.pairs.txt"}]
+    },
+    {
+      "address": "0x08433218",
+      "size": "0x1a8e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/data/resource_e4_e6_e6.lz.json",
+      "components": [{"kind": "little-u16-pairs",  "size": "0x7080",  "source": "games/gs1/assets/data/resource_e4_e6_e6.pairs.txt"}]
+    },
+    {
+      "address": "0x08434ca8",
+      "size": "0x1250",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_e7_stream.lz.json",
+      "components": [
+        {
+          "kind": "gba-palette",
+          "size": "0xa0",
+          "source": "games/gs1/assets/graphics/resource_e7_palettes.png"
+        },
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2000",
+          "source": "games/gs1/assets/graphics/resource_e7_frames.4bpp.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08435ef8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_e8.rgba.png"
+    },
+    {
+      "address": "0x08435ff8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_e9.rgba.png"
+    },
+    {
+      "address": "0x084360f8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_ea.rgba.png"
+    },
+    {
+      "address": "0x084361f8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_eb.rgba.png"
+    },
+    {
+      "address": "0x084362f8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_ec.rgba.png"
+    },
+    {
+      "address": "0x084363f8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_ed.rgba.png"
+    },
+    {
+      "address": "0x084364f8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_ee.rgba.png"
+    },
+    {
+      "address": "0x084365f8",
+      "size": "0x100",
+      "kind": "gba-palette-rgba",
+      "source": "games/gs1/assets/graphics/palettes_palette_animation_ef.rgba.png"
+    },
+    {
+      "address": "0x084366f8",
+      "size": "0x592c",
+      "kind": "golden-sun-mtf4-archive",
+      "source": "games/gs1/assets/graphics/resource_f0",
+      "plan": "games/gs1/assets/graphics/resource_f0_archive.json"
+    },
+    {
+      "address": "0x0843c024",
+      "size": "0x3842",
+      "kind": "golden-sun-offset-palette-lz",
+      "source": "games/gs1/assets/graphics/resource_f1_atlas.8bpp.png",
+      "plan": "games/gs1/assets/graphics/resource_f1_stream.archive.json"
+    },
+    {
+      "address": "0x0843f868",
+      "size": "0x21b2",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_f2_stream.lz.json",
+      "components": [
+        {
+          "kind": "zero-skip-sprite-archive",
+          "size": "0x35ac",
+          "source": "games/gs1/assets/graphics/resource_f2",
+          "plan": "games/gs1/assets/graphics/resource_f2_archive.json",
+          "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+        }
+      ]
+    },
+    {
+      "address": "0x08441a1c",
+      "size": "0x18f4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/gs1/assets/graphics/resource_f3_stream.lz.json",
+      "components": [
+        {
+          "kind": "zero-skip-sprite-archive",
+          "size": "0x2844",
+          "source": "games/gs1/assets/graphics/resource_f3",
+          "plan": "games/gs1/assets/graphics/resource_f3_archive.json",
+          "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
+        }
+      ]
+    }
+  ],
+  "series": [
+    {
+      "kind": "golden-sun-sound-sequence-series",
+      "index": "games/gs1/assets/audio/sequences/index.json"
+    },
+    {
+      "kind": "golden-sun-music-residuals",
+      "index": "games/gs1/assets/audio/residuals_index.json"
+    },
+    {
+      "kind": "golden-sun-pcm-wave-series",
+      "index": "games/gs1/assets/audio/waves/index.json"
+    },
+    {
+      "kind": "golden-sun-delta7-still-series",
+      "index": "games/gs1/assets/graphics/backgrounds_index.json",
+      "width": 256,
+      "height": 120,
+      "palette_entries": 128,
+      "resources": [
+        {
+          "id": "1d",
+          "address": "0x0833aebc",
+          "size": "0x4442"
+        },
+        {
+          "id": "1e",
+          "address": "0x0833f300",
+          "size": "0x4700"
+        },
+        {
+          "id": "1f",
+          "address": "0x08343a00",
+          "size": "0x411c"
+        },
+        {
+          "id": "20",
+          "address": "0x08347b1c",
+          "size": "0x4218"
+        },
+        {
+          "id": "21",
+          "address": "0x0834bd34",
+          "size": "0x3d3a"
+        },
+        {
+          "id": "22",
+          "address": "0x0834fa70",
+          "size": "0x35ee"
+        },
+        {
+          "id": "23",
+          "address": "0x08353060",
+          "size": "0x3e58"
+        },
+        {
+          "id": "24",
+          "address": "0x08356eb8",
+          "size": "0x3b74"
+        },
+        {
+          "id": "25",
+          "address": "0x0835aa2c",
+          "size": "0x40d6"
+        },
+        {
+          "id": "26",
+          "address": "0x0835eb04",
+          "size": "0x3f7c"
+        },
+        {
+          "id": "27",
+          "address": "0x08362a80",
+          "size": "0x4400"
+        },
+        {
+          "id": "28",
+          "address": "0x08366e80",
+          "size": "0x400c"
+        },
+        {
+          "id": "29",
+          "address": "0x0836ae8c",
+          "size": "0x4326"
+        },
+        {
+          "id": "2a",
+          "address": "0x0836f1b4",
+          "size": "0x3a28"
+        },
+        {
+          "id": "2b",
+          "address": "0x08372bdc",
+          "size": "0x4076"
+        },
+        {
+          "id": "2c",
+          "address": "0x08376c54",
+          "size": "0x383e"
+        },
+        {
+          "id": "2d",
+          "address": "0x0837a494",
+          "size": "0x4a36"
+        },
+        {
+          "id": "2e",
+          "address": "0x0837eecc",
+          "size": "0x49fa"
+        },
+        {
+          "id": "2f",
+          "address": "0x083838c8",
+          "size": "0x427a"
+        },
+        {
+          "id": "30",
+          "address": "0x08387b44",
+          "size": "0x3660"
+        },
+        {
+          "id": "31",
+          "address": "0x0838b1a4",
+          "size": "0x3b4a"
+        },
+        {
+          "id": "32",
+          "address": "0x0838ecf0",
+          "size": "0x3e88"
+        },
+        {
+          "id": "33",
+          "address": "0x08392b78",
+          "size": "0x4032"
+        },
+        {
+          "id": "34",
+          "address": "0x08396bac",
+          "size": "0x4a8e"
+        },
+        {
+          "id": "35",
+          "address": "0x0839b63c",
+          "size": "0x42b2"
+        },
+        {
+          "id": "36",
+          "address": "0x0839f8f0",
+          "size": "0x397e"
+        },
+        {
+          "id": "37",
+          "address": "0x083a3270",
+          "size": "0x4210"
+        },
+        {
+          "id": "38",
+          "address": "0x083a7480",
+          "size": "0x4374"
+        },
+        {
+          "id": "39",
+          "address": "0x083ab7f4",
+          "size": "0x42b6"
+        },
+        {
+          "id": "3a",
+          "address": "0x083afaac",
+          "size": "0x471c"
+        },
+        {
+          "id": "3b",
+          "address": "0x083b41c8",
+          "size": "0x3484"
+        },
+        {
+          "id": "3c",
+          "address": "0x083b764c",
+          "size": "0x33fc"
+        },
+        {
+          "id": "3d",
+          "address": "0x083baa48",
+          "size": "0x39aa"
+        },
+        {
+          "id": "3e",
+          "address": "0x083be3f4",
+          "size": "0x517e"
+        }
+      ]
+    },
+    {
+      "kind": "golden-sun-map-component-series",
+      "families": [
+        ["128",  "0x084ba758",  "0x3c",  [0,  "0x084ba794",  "0x8"],  [1,  "0x084ba79c",  "0x8"],  [5,  "0x084baaa0",  "0x4"]],
+        ["12e",  "0x084bafc0",  "0x3c",  [0,  "0x084baffc",  "0x2dbc"],  [1,  "0x084bddb8",  "0xec"],  [3,  "0x084c0264",  "0x168"],  [5,  "0x084c03cc",  "0x4"]],
+        ["134",  "0x084c9b2c",  "0x3c",  [0,  "0x084c9b68",  "0x2dfc"],  [1,  "0x084cc964",  "0xec"],  [3,  "0x084cebd8",  "0x110"],  [5,  "0x084cece8",  "0xc"]],
+        ["13a",  "0x084d8790",  "0x3c",  [0,  "0x084d87cc",  "0x1ad8"],  [1,  "0x084da2a4",  "0x68"],  [3,  "0x084db7e8",  "0xdc"],  [5,  "0x084db8c4",  "0x8"]],
+        ["140",  "0x084e3fa8",  "0x3c",  [0,  "0x084e3fe4",  "0x12e8"],  [1,  "0x084e52cc",  "0x3c"],  [5,  "0x084e60f4",  "0x8"]],
+        [
+          "146",
+          "0x084ee110",
+          "0x3c",
+          [0, "0x084ee14c", "0x187c"],
+          [1, "0x084ef9c8", "0x38"],
+          [3, "0x084f10e4", "0xe8"],
+          [4, "0x084f11cc", "0x10"],
+          [5, "0x084f11dc", "0x48"]
+        ],
+        [
+          "14c",
+          "0x084f7c50",
+          "0x3c",
+          [0, "0x084f7c8c", "0x1954"],
+          [1, "0x084f95e0", "0x40"],
+          [3, "0x084fae2c", "0x1bc"],
+          [4, "0x084fafe8", "0x10"],
+          [5, "0x084faff8", "0x70"]
+        ],
+        [
+          "152",
+          "0x0850202c",
+          "0x3c",
+          [0, "0x08502068", "0x604"],
+          [1, "0x0850266c", "0x20"],
+          [3, "0x08502b30", "0xbc"],
+          [4, "0x08502bec", "0x10"],
+          [5, "0x08502bfc", "0x4"]
+        ],
+        ["158",  "0x08506444",  "0x3c",  [0,  "0x08506480",  "0x81c"],  [1,  "0x08506c9c",  "0x2c"],  [5,  "0x08508868",  "0x4"]],
+        [
+          "15e",
+          "0x0850be10",
+          "0x3c",
+          [0, "0x0850be4c", "0x618"],
+          [1, "0x0850c464", "0x8"],
+          [3, "0x0850cd30", "0x2c8"],
+          [4, "0x0850cff8", "0x2c"],
+          [5, "0x0850d024", "0x8"]
+        ],
+        [
+          "164",
+          "0x085132dc",
+          "0x3c",
+          [0, "0x08513318", "0x41c"],
+          [1, "0x08513734", "0xc"],
+          [3, "0x08513f28", "0x118"],
+          [4, "0x08514040", "0x10"],
+          [5, "0x08514050", "0x4"]
+        ],
+        [
+          "169",
+          "0x08517e64",
+          "0x3c",
+          [0, "0x08517ea0", "0x640"],
+          [1, "0x085184e0", "0x8"],
+          [3, "0x08518c8c", "0x28"],
+          [4, "0x08518cb4", "0x20"],
+          [5, "0x08518cd4", "0x8"]
+        ],
+        [
+          "16f",
+          "0x0851c56c",
+          "0x3c",
+          [0, "0x0851c5a8", "0x388"],
+          [1, "0x0851c930", "0x8"],
+          [3, "0x0851d220", "0x44"],
+          [4, "0x0851d264", "0x28"],
+          [5, "0x0851d28c", "0x8"]
+        ],
+        [
+          "170",
+          "0x0851d294",
+          "0x3c",
+          [0, "0x0851d2d0", "0x2fc"],
+          [1, "0x0851d5cc", "0x8"],
+          [3, "0x0851de3c", "0x44"],
+          [4, "0x0851de80", "0x28"],
+          [5, "0x0851dea8", "0x4"]
+        ],
+        [
+          "176",
+          "0x085200f0",
+          "0x3c",
+          [0, "0x0852012c", "0xb38"],
+          [1, "0x08520c64", "0x14"],
+          [3, "0x08521914", "0x260"],
+          [4, "0x08521b74", "0x24"],
+          [5, "0x08521b98", "0x4"]
+        ],
+        [
+          "17c",
+          "0x08525930",
+          "0x3c",
+          [0, "0x0852596c", "0xefc"],
+          [1, "0x08526868", "0x8"],
+          [3, "0x085278d8", "0x38"],
+          [4, "0x08527910", "0x24"],
+          [5, "0x08527934", "0x4"]
+        ],
+        [
+          "182",
+          "0x0852c200",
+          "0x3c",
+          [0, "0x0852c23c", "0x830"],
+          [1, "0x0852ca6c", "0x8"],
+          [3, "0x0852de74", "0x44"],
+          [4, "0x0852deb8", "0x28"],
+          [5, "0x0852dee0", "0x8"]
+        ],
+        ["184",  "0x0852e044",  "0x3c",  [0,  "0x0852e080",  "0x1170"],  [1,  "0x0852f1f0",  "0x48"],  [5,  "0x0852ff84",  "0x8"]],
+        [
+          "18a",
+          "0x085392d4",
+          "0x3c",
+          [0, "0x08539310", "0x1128"],
+          [1, "0x0853a438", "0x30"],
+          [3, "0x0853b8a0", "0x100"],
+          [4, "0x0853b9a0", "0x10"],
+          [5, "0x0853b9b0", "0x24"]
+        ],
+        [
+          "190",
+          "0x08541c64",
+          "0x3c",
+          [0, "0x08541ca0", "0x35c"],
+          [1, "0x08541ffc", "0x8"],
+          [3, "0x085425e0", "0xc8"],
+          [4, "0x085426a8", "0x10"],
+          [5, "0x085426b8", "0x18"]
+        ],
+        [
+          "196",
+          "0x08544fc8",
+          "0x3c",
+          [0, "0x08545004", "0x102c"],
+          [1, "0x08546030", "0x44"],
+          [3, "0x085469f8", "0xfc"],
+          [4, "0x08546af4", "0x8"],
+          [5, "0x08546afc", "0x4"]
+        ],
+        [
+          "19c",
+          "0x085500e0",
+          "0x3c",
+          [0, "0x0855011c", "0x618"],
+          [1, "0x08550734", "0x14"],
+          [3, "0x08550ff4", "0x1c8"],
+          [4, "0x085511bc", "0x14"],
+          [5, "0x085511d0", "0x4"]
+        ],
+        [
+          "1a2",
+          "0x08556c8c",
+          "0x3c",
+          [0, "0x08556cc8", "0x598"],
+          [1, "0x08557260", "0x28"],
+          [3, "0x08557f78", "0x120"],
+          [4, "0x08558098", "0x18"],
+          [5, "0x085580b0", "0xc"]
+        ],
+        [
+          "1a8",
+          "0x0855f2ac",
+          "0x3c",
+          [0, "0x0855f2e8", "0xb1c"],
+          [1, "0x0855fe04", "0x30"],
+          [3, "0x08560e74", "0x13c"],
+          [4, "0x08560fb0", "0x18"],
+          [5, "0x08560fc8", "0x8"]
+        ],
+        [
+          "1a9",
+          "0x08560fd0",
+          "0x3c",
+          [0, "0x0856100c", "0x4a0"],
+          [1, "0x085614ac", "0x2c"],
+          [3, "0x08561dd8", "0x120"],
+          [4, "0x08561ef8", "0x18"],
+          [5, "0x08561f10", "0x4"]
+        ],
+        [
+          "1aa",
+          "0x08561f14",
+          "0x3c",
+          [0, "0x08561f50", "0xd6c"],
+          [1, "0x08562cbc", "0x2c"],
+          [3, "0x085647b0", "0x134"],
+          [4, "0x085648e4", "0x10"],
+          [5, "0x085648f4", "0x8"]
+        ],
+        [
+          "1b0",
+          "0x0856b834",
+          "0x3c",
+          [0, "0x0856b870", "0xc28"],
+          [1, "0x0856c498", "0x2c"],
+          [3, "0x0856e628", "0x134"],
+          [4, "0x0856e75c", "0x10"],
+          [5, "0x0856e76c", "0x8"]
+        ],
+        [
+          "1b1",
+          "0x0856e774",
+          "0x3c",
+          [0, "0x0856e7b0", "0x9dc"],
+          [1, "0x0856f18c", "0x14"],
+          [3, "0x085713f8", "0x134"],
+          [4, "0x0857152c", "0x10"],
+          [5, "0x0857153c", "0x4"]
+        ],
+        [
+          "1b2",
+          "0x08571540",
+          "0x3c",
+          [0, "0x0857157c", "0xdb8"],
+          [1, "0x08572334", "0x28"],
+          [3, "0x085730ac", "0x16c"],
+          [4, "0x08573218", "0x8"],
+          [5, "0x08573220", "0x4"]
+        ],
+        [
+          "1b8",
+          "0x0857bd88",
+          "0x3c",
+          [0, "0x0857bdc4", "0x3e4"],
+          [1, "0x0857c1a8", "0x2c"],
+          [3, "0x0857d3c0", "0x158"],
+          [4, "0x0857d518", "0x10"],
+          [5, "0x0857d528", "0xc"]
+        ],
+        ["1bd",  "0x08582120",  "0x3c",  [0,  "0x0858215c",  "0x2f8"],  [1,  "0x08582454",  "0x24"],  [3,  "0x085832c8",  "0x158"],  [5,  "0x08583420",  "0x4"]],
+        [
+          "1be",
+          "0x08583424",
+          "0x3c",
+          [0, "0x08583460", "0x106c"],
+          [1, "0x085844cc", "0x44"],
+          [3, "0x08585148", "0x20"],
+          [4, "0x08585168", "0x8"],
+          [5, "0x08585170", "0xc"]
+        ],
+        [
+          "1c4",
+          "0x0858eeb4",
+          "0x3c",
+          [0, "0x0858eef0", "0x1684"],
+          [1, "0x08590574", "0x40"],
+          [3, "0x08591828", "0xcc"],
+          [4, "0x085918f4", "0x10"],
+          [5, "0x08591904", "0x24"]
+        ],
+        [
+          "1c8",
+          "0x08593acc",
+          "0x3c",
+          [0, "0x08593b08", "0x400"],
+          [1, "0x08593f08", "0x14"],
+          [3, "0x08594620", "0x204"],
+          [4, "0x08594824", "0x1c"],
+          [5, "0x08594840", "0x4"]
+        ],
+        ["1cb",  "0x085965fc",  "0x3c",  [0,  "0x08596638",  "0xde0"],  [1,  "0x08597418",  "0x28"],  [3,  "0x08597d80",  "0x114"],  [5,  "0x08597e94",  "0x4"]],
+        ["1d0",  "0x0859e2c0",  "0x3c",  [0,  "0x0859e2fc",  "0xc24"],  [1,  "0x0859ef20",  "0x30"],  [5,  "0x0859f988",  "0x4"]],
+        [
+          "1d6",
+          "0x085a6aa0",
+          "0x3c",
+          [0, "0x085a6adc", "0xb44"],
+          [1, "0x085a7620", "0x40"],
+          [3, "0x085a8838", "0xdc"],
+          [4, "0x085a8914", "0x8"],
+          [5, "0x085a891c", "0x4c"]
+        ],
+        [
+          "1dc",
+          "0x085af064",
+          "0x3c",
+          [0, "0x085af0a0", "0xc18"],
+          [1, "0x085afcb8", "0x10"],
+          [3, "0x085b08e8", "0x8"],
+          [4, "0x085b08f0", "0x8"],
+          [5, "0x085b08f8", "0xc"]
+        ],
+        [
+          "1e2",
+          "0x085b86e0",
+          "0x3c",
+          [0, "0x085b871c", "0x814"],
+          [1, "0x085b8f30", "0x3c"],
+          [3, "0x085b9c84", "0x100"],
+          [4, "0x085b9d84", "0x10"],
+          [5, "0x085b9d94", "0x24"]
+        ],
+        [
+          "1eb",
+          "0x085c3968",
+          "0x3c",
+          [0, "0x085c39a4", "0x6f4"],
+          [1, "0x085c4098", "0x18"],
+          [3, "0x085c4a8c", "0x204"],
+          [4, "0x085c4c90", "0x18"],
+          [5, "0x085c4ca8", "0x4"]
+        ],
+        ["1ed",  "0x085c4e08",  "0x3c",  [0,  "0x085c4e44",  "0x15c0"],  [1,  "0x085c6404",  "0xc"],  [3,  "0x085c7344",  "0x7c"],  [5,  "0x085c73c0",  "0x4"]],
+        ["1f8",  "0x085d204c",  "0x3c",  [0,  "0x085d2088",  "0x12d0"],  [1,  "0x085d3358",  "0x24"],  [3,  "0x085d46c4",  "0x20c"],  [5,  "0x085d48d0",  "0xc"]],
+        ["1fe",  "0x085dc868",  "0x3c",  [0,  "0x085dc8a4",  "0xe54"],  [1,  "0x085dd6f8",  "0x10"],  [5,  "0x085de134",  "0x4"]],
+        [
+          "204",
+          "0x085e6820",
+          "0x3c",
+          [0, "0x085e685c", "0x12ec"],
+          [1, "0x085e7b48", "0x8"],
+          [3, "0x085e8c80", "0x8"],
+          [4, "0x085e8c88", "0x18"],
+          [5, "0x085e8ca0", "0xc"]
+        ],
+        [
+          "20a",
+          "0x085ee828",
+          "0x3c",
+          [0, "0x085ee864", "0x738"],
+          [1, "0x085eef9c", "0x20"],
+          [3, "0x085efd7c", "0x8"],
+          [4, "0x085efd84", "0x10"],
+          [5, "0x085efd94", "0x4"]
+        ],
+        [
+          "210",
+          "0x085f46e0",
+          "0x3c",
+          [0, "0x085f471c", "0xd20"],
+          [1, "0x085f543c", "0x28"],
+          [3, "0x085f5fac", "0x140"],
+          [4, "0x085f60ec", "0x8"],
+          [5, "0x085f60f4", "0x4"]
+        ],
+        ["213",  "0x085f7674",  "0x3c",  [0,  "0x085f76b0",  "0x428"],  [1,  "0x085f7ad8",  "0x2c"],  [3,  "0x085f89a4",  "0x204"],  [5,  "0x085f8ba8",  "0x8"]],
+        ["216",  "0x085faff8",  "0x3c",  [0,  "0x085fb034",  "0x418"],  [1,  "0x085fb44c",  "0x2c"],  [3,  "0x085fc540",  "0x204"],  [5,  "0x085fc744",  "0xc"]],
+        [
+          "219",
+          "0x085ff240",
+          "0x3c",
+          [0, "0x085ff27c", "0xf74"],
+          [1, "0x086001f0", "0x38"],
+          [3, "0x08600ebc", "0x8"],
+          [4, "0x08600ec4", "0x8"],
+          [5, "0x08600ecc", "0xc"]
+        ],
+        [
+          "21f",
+          "0x08606a9c",
+          "0x3c",
+          [0, "0x08606ad8", "0x14a4"],
+          [1, "0x08607f7c", "0x34"],
+          [3, "0x0860917c", "0x1b0"],
+          [4, "0x0860932c", "0x10"],
+          [5, "0x0860933c", "0x1c"]
+        ],
+        [
+          "225",
+          "0x08610e9c",
+          "0x3c",
+          [0, "0x08610ed8", "0x328"],
+          [1, "0x08611200", "0x8"],
+          [3, "0x08611b48", "0x150"],
+          [4, "0x08611c98", "0x18"],
+          [5, "0x08611cb0", "0x4"]
+        ],
+        [
+          "226",
+          "0x08611cb4",
+          "0x3c",
+          [0, "0x08611cf0", "0x818"],
+          [1, "0x08612508", "0xc"],
+          [3, "0x08613428", "0x268"],
+          [4, "0x08613690", "0x28"],
+          [5, "0x086136b8", "0xc"]
+        ],
+        [
+          "22c",
+          "0x0861b4fc",
+          "0x3c",
+          [0, "0x0861b538", "0x940"],
+          [1, "0x0861be78", "0x10"],
+          [3, "0x0861cd6c", "0x268"],
+          [4, "0x0861cfd4", "0x28"],
+          [5, "0x0861cffc", "0xc"]
+        ],
+        [
+          "22d",
+          "0x0861d008",
+          "0x3c",
+          [0, "0x0861d044", "0xaa0"],
+          [1, "0x0861dae4", "0x1c"],
+          [3, "0x0861ebac", "0x268"],
+          [4, "0x0861ee14", "0x28"],
+          [5, "0x0861ee3c", "0xc"]
+        ],
+        [
+          "22e",
+          "0x0861ee48",
+          "0x3c",
+          [0, "0x0861ee84", "0xa30"],
+          [1, "0x0861f8b4", "0x1c"],
+          [3, "0x086206dc", "0x268"],
+          [4, "0x08620944", "0x28"],
+          [5, "0x0862096c", "0x4"]
+        ],
+        [
+          "22f",
+          "0x08620970",
+          "0x3c",
+          [0, "0x086209ac", "0xed8"],
+          [1, "0x08621884", "0x4c"],
+          [3, "0x0862280c", "0x2b8"],
+          [4, "0x08622ac4", "0x20"],
+          [5, "0x08622ae4", "0x4"]
+        ],
+        ["230",  "0x08622ae8",  "0x3c",  [0,  "0x08622b24",  "0x448"],  [1,  "0x08622f6c",  "0x38"],  [3,  "0x086237a0",  "0x268"],  [5,  "0x08623a08",  "0x8"]],
+        [
+          "231",
+          "0x08623a10",
+          "0x3c",
+          [0, "0x08623a4c", "0x1cb4"],
+          [1, "0x08625700", "0x48"],
+          [3, "0x08626814", "0x16c"],
+          [4, "0x08626980", "0x8"],
+          [5, "0x08626988", "0x8"]
+        ],
+        [
+          "234",
+          "0x08628d08",
+          "0x3c",
+          [0, "0x08628d44", "0x718"],
+          [1, "0x0862945c", "0x1c"],
+          [3, "0x08629c14", "0xac"],
+          [4, "0x08629cc0", "0x10"],
+          [5, "0x08629cd0", "0xc"]
+        ],
+        [
+          "23a",
+          "0x0862fd24",
+          "0x3c",
+          [0, "0x0862fd60", "0x324"],
+          [1, "0x08630084", "0x10"],
+          [3, "0x0863095c", "0x204"],
+          [4, "0x08630b60", "0x1c"],
+          [5, "0x08630b7c", "0x8"]
+        ],
+        [
+          "23c",
+          "0x08630cdc",
+          "0x3c",
+          [0, "0x08630d18", "0x314"],
+          [1, "0x0863102c", "0x14"],
+          [3, "0x0863171c", "0x204"],
+          [4, "0x08631920", "0x1c"],
+          [5, "0x0863193c", "0x4"]
+        ],
+        [
+          "23d",
+          "0x08631940",
+          "0x3c",
+          [0, "0x0863197c", "0x358"],
+          [1, "0x08631cd4", "0x14"],
+          [3, "0x086324ec", "0x204"],
+          [4, "0x086326f0", "0x1c"],
+          [5, "0x0863270c", "0x4"]
+        ],
+        [
+          "23e",
+          "0x08632710",
+          "0x3c",
+          [0, "0x0863274c", "0x560"],
+          [1, "0x08632cac", "0x10"],
+          [3, "0x08633778", "0x204"],
+          [4, "0x0863397c", "0x1c"],
+          [5, "0x08633998", "0x8"]
+        ],
+        [
+          "23f",
+          "0x086339a0",
+          "0x3c",
+          [0, "0x086339dc", "0x340"],
+          [1, "0x08633d1c", "0x1c"],
+          [3, "0x08634660", "0x204"],
+          [4, "0x08634864", "0x1c"],
+          [5, "0x08634880", "0x8"]
+        ],
+        [
+          "240",
+          "0x08634888",
+          "0x3c",
+          [0, "0x086348c4", "0x338"],
+          [1, "0x08634bfc", "0x28"],
+          [3, "0x0863573c", "0x204"],
+          [4, "0x08635940", "0x1c"],
+          [5, "0x0863595c", "0x4"]
+        ],
+        ["241",  "0x08635960",  "0x3c",  [0,  "0x0863599c",  "0x1b90"],  [1,  "0x0863752c",  "0x24"],  [3,  "0x08638a60",  "0xc4"],  [5,  "0x08638b24",  "0x4"]],
+        ["247",  "0x0863eedc",  "0x3c",  [0,  "0x0863ef18",  "0x1dec"],  [1,  "0x08640d04",  "0x24"],  [3,  "0x086423e4",  "0xc4"],  [5,  "0x086424a8",  "0x8"]],
+        ["248",  "0x086424b0",  "0x3c",  [0,  "0x086424ec",  "0x20b8"],  [1,  "0x086445a4",  "0x28"],  [3,  "0x08645eec",  "0xc4"],  [5,  "0x08645fb0",  "0x8"]],
+        ["249",  "0x08645fb8",  "0x3c",  [0,  "0x08645ff4",  "0x20cc"],  [1,  "0x086480c0",  "0xc"],  [5,  "0x08649cc0",  "0x8"]],
+        [
+          "24a",
+          "0x08649cc8",
+          "0x3c",
+          [0, "0x08649d04", "0x2790"],
+          [1, "0x0864c494", "0x48"],
+          [3, "0x0864dba8", "0x16c"],
+          [4, "0x0864dd14", "0x8"],
+          [5, "0x0864dd1c", "0xc"]
+        ],
+        [
+          "24b",
+          "0x0864dd28",
+          "0x3c",
+          [0, "0x0864dd64", "0x1170"],
+          [1, "0x0864eed4", "0x34"],
+          [3, "0x0864fed0", "0x94"],
+          [4, "0x0864ff64", "0x10"],
+          [5, "0x0864ff74", "0x3c"]
+        ],
+        [
+          "251",
+          "0x08654a20",
+          "0x3c",
+          [0, "0x08654a5c", "0xf98"],
+          [1, "0x086559f4", "0x34"],
+          [3, "0x086565f0", "0x13c"],
+          [4, "0x0865672c", "0x8"],
+          [5, "0x08656734", "0x8"]
+        ],
+        [
+          "253",
+          "0x086568d4",
+          "0x3c",
+          [0, "0x08656910", "0xd6c"],
+          [1, "0x0865767c", "0x78"],
+          [3, "0x08658778", "0xec"],
+          [4, "0x08658864", "0x10"],
+          [5, "0x08658874", "0x4"]
+        ],
+        [
+          "259",
+          "0x086610b0",
+          "0x3c",
+          [0, "0x086610ec", "0x1634"],
+          [1, "0x08662720", "0x40"],
+          [3, "0x08663b1c", "0xcc"],
+          [4, "0x08663be8", "0x10"],
+          [5, "0x08663bf8", "0x24"]
+        ],
+        [
+          "25c",
+          "0x08666130",
+          "0x3c",
+          [0, "0x0866616c", "0x840"],
+          [1, "0x086669ac", "0x30"],
+          [3, "0x086677ac", "0x14c"],
+          [4, "0x086678f8", "0x10"],
+          [5, "0x08667908", "0x4"]
+        ],
+        [
+          "25e",
+          "0x08667ac0",
+          "0x3c",
+          [0, "0x08667afc", "0x7bc"],
+          [1, "0x086682b8", "0x14"],
+          [3, "0x08668ee8", "0x138"],
+          [4, "0x08669020", "0x10"],
+          [5, "0x08669030", "0x4"]
+        ],
+        [
+          "25f",
+          "0x08669034",
+          "0x3c",
+          [0, "0x08669070", "0xb74"],
+          [1, "0x08669be4", "0x44"],
+          [3, "0x0866b8b4", "0x138"],
+          [4, "0x0866b9ec", "0x10"],
+          [5, "0x0866b9fc", "0x8"]
+        ],
+        [
+          "260",
+          "0x0866ba04",
+          "0x3c",
+          [0, "0x0866ba40", "0xc2c"],
+          [1, "0x0866c66c", "0x20"],
+          [3, "0x0866db80", "0x138"],
+          [4, "0x0866dcb8", "0x10"],
+          [5, "0x0866dcc8", "0x4"]
+        ],
+        [
+          "261",
+          "0x0866dccc",
+          "0x3c",
+          [0, "0x0866dd08", "0x710"],
+          [1, "0x0866e418", "0x58"],
+          [3, "0x0866f150", "0x138"],
+          [4, "0x0866f288", "0x10"],
+          [5, "0x0866f298", "0xc"]
+        ],
+        [
+          "262",
+          "0x0866f2a4",
+          "0x3c",
+          [0, "0x0866f2e0", "0xabc"],
+          [1, "0x0866fd9c", "0x48"],
+          [3, "0x08671214", "0x138"],
+          [4, "0x0867134c", "0x10"],
+          [5, "0x0867135c", "0x8"]
+        ],
+        [
+          "263",
+          "0x08671364",
+          "0x3c",
+          [0, "0x086713a0", "0xbf4"],
+          [1, "0x08671f94", "0x58"],
+          [3, "0x0867353c", "0x138"],
+          [4, "0x08673674", "0x10"],
+          [5, "0x08673684", "0xc"]
+        ],
+        [
+          "264",
+          "0x08673690",
+          "0x3c",
+          [0, "0x086736cc", "0xf1c"],
+          [1, "0x086745e8", "0x24"],
+          [3, "0x08676164", "0x138"],
+          [4, "0x0867629c", "0x10"],
+          [5, "0x086762ac", "0x8"]
+        ],
+        [
+          "265",
+          "0x086762b4",
+          "0x3c",
+          [0, "0x086762f0", "0x654"],
+          [1, "0x08676944", "0x34"],
+          [3, "0x086775f0", "0x138"],
+          [4, "0x08677728", "0x10"],
+          [5, "0x08677738", "0x4"]
+        ],
+        [
+          "266",
+          "0x0867773c",
+          "0x3c",
+          [0, "0x08677778", "0x3bc"],
+          [1, "0x08677b34", "0x1c"],
+          [3, "0x08678170", "0x2c4"],
+          [4, "0x08678434", "0x24"],
+          [5, "0x08678458", "0x8"]
+        ],
+        [
+          "268",
+          "0x086785c0",
+          "0x3c",
+          [0, "0x086785fc", "0x89c"],
+          [1, "0x08678e98", "0x14"],
+          [3, "0x08679dac", "0x138"],
+          [4, "0x08679ee4", "0x10"],
+          [5, "0x08679ef4", "0x8"]
+        ],
+        [
+          "269",
+          "0x08679efc",
+          "0x3c",
+          [0, "0x08679f38", "0xa48"],
+          [1, "0x0867a980", "0x20"],
+          [3, "0x0867bbcc", "0x138"],
+          [4, "0x0867bd04", "0x10"],
+          [5, "0x0867bd14", "0x4"]
+        ],
+        [
+          "26b",
+          "0x0867be7c",
+          "0x3c",
+          [0, "0x0867beb8", "0x20cc"],
+          [1, "0x0867df84", "0x3c"],
+          [3, "0x0867f1c0", "0x16c"],
+          [4, "0x0867f32c", "0x8"],
+          [5, "0x0867f334", "0xc"]
+        ],
+        ["26c",  "0x0867f340",  "0x3c",  [0,  "0x0867f37c",  "0xf14"],  [1,  "0x08680290",  "0x14"],  [3,  "0x086819c0",  "0x194"],  [5,  "0x08681b54",  "0xc"]],
+        ["272",  "0x086882a8",  "0x3c",  [0,  "0x086882e4",  "0xc10"],  [1,  "0x08688ef4",  "0x18"],  [3,  "0x0868a5dc",  "0x198"],  [5,  "0x0868a774",  "0x14"]],
+        ["273",  "0x0868a788",  "0x3c",  [0,  "0x0868a7c4",  "0xcc8"],  [1,  "0x0868b48c",  "0x34"],  [3,  "0x0868ced0",  "0x198"],  [5,  "0x0868d068",  "0x8"]],
+        [
+          "274",
+          "0x0868d070",
+          "0x3c",
+          [0, "0x0868d0ac", "0x12b4"],
+          [1, "0x0868e360", "0x2c"],
+          [3, "0x0868ef3c", "0xc0"],
+          [4, "0x0868effc", "0x8"],
+          [5, "0x0868f004", "0xc"]
+        ],
+        [
+          "27a",
+          "0x08695d1c",
+          "0x3c",
+          [0, "0x08695d58", "0x1714"],
+          [1, "0x0869746c", "0x54"],
+          [3, "0x086989a0", "0x15c"],
+          [4, "0x08698afc", "0x10"],
+          [5, "0x08698b0c", "0x2c"]
+        ],
+        [
+          "280",
+          "0x0869ffb0",
+          "0x3c",
+          [0, "0x0869ffec", "0x488"],
+          [1, "0x086a0474", "0x20"],
+          [3, "0x086a0c3c", "0x15c"],
+          [4, "0x086a0d98", "0x10"],
+          [5, "0x086a0da8", "0x4"]
+        ],
+        [
+          "281",
+          "0x086a0dac",
+          "0x3c",
+          [0, "0x086a0de8", "0x8c4"],
+          [1, "0x086a16ac", "0x24"],
+          [3, "0x086a1e58", "0xc0"],
+          [4, "0x086a1f18", "0x8"],
+          [5, "0x086a1f20", "0x4"]
+        ],
+        [
+          "282",
+          "0x086a1f24",
+          "0x3c",
+          [0, "0x086a1f60", "0xc18"],
+          [1, "0x086a2b78", "0x3c"],
+          [3, "0x086a3b80", "0x144"],
+          [4, "0x086a3cc4", "0x8"],
+          [5, "0x086a3ccc", "0x1c"]
+        ],
+        [
+          "284",
+          "0x086a3e6c",
+          "0x3c",
+          [0, "0x086a3ea8", "0x111c"],
+          [1, "0x086a4fc4", "0x3c"],
+          [3, "0x086a5e14", "0x8"],
+          [4, "0x086a5e1c", "0x8"],
+          [5, "0x086a5e24", "0x10"]
+        ],
+        [
+          "288",
+          "0x086a83c0",
+          "0x3c",
+          [0, "0x086a83fc", "0x11c8"],
+          [1, "0x086a95c4", "0x20"],
+          [3, "0x086aa8a4", "0x1b0"],
+          [4, "0x086aaa54", "0x10"],
+          [5, "0x086aaa64", "0x18"]
+        ],
+        [
+          "28a",
+          "0x086aac40",
+          "0x3c",
+          [0, "0x086aac7c", "0x31c"],
+          [1, "0x086aaf98", "0x14"],
+          [3, "0x086ab950", "0x204"],
+          [4, "0x086abb54", "0x1c"],
+          [5, "0x086abb70", "0x4"]
+        ],
+        [
+          "291",
+          "0x086b4d80",
+          "0x3c",
+          [0, "0x086b4dbc", "0x5e8"],
+          [1, "0x086b53a4", "0x18"],
+          [3, "0x086b5a74", "0x100"],
+          [4, "0x086b5b74", "0x10"],
+          [5, "0x086b5b84", "0x4"]
+        ],
+        ["294",  "0x086b70a0",  "0x3c",  [0,  "0x086b70dc",  "0x918"],  [1,  "0x086b79f4",  "0x40"],  [3,  "0x086b8200",  "0x38"],  [5,  "0x086b8238",  "0x4"]],
+        ["29a",  "0x086bf154",  "0x3c",  [0,  "0x086bf190",  "0x46c"],  [1,  "0x086bf5fc",  "0x10"],  [3,  "0x086bfc18",  "0x24"],  [5,  "0x086bfc3c",  "0x4"]],
+        [
+          "29c",
+          "0x086bfe14",
+          "0x3c",
+          [0, "0x086bfe50", "0x870"],
+          [1, "0x086c06c0", "0x44"],
+          [3, "0x086c10ec", "0x64"],
+          [4, "0x086c1150", "0x10"],
+          [5, "0x086c1160", "0xc"]
+        ],
+        ["2a2",  "0x086c56b8",  "0x3c",  [0,  "0x086c56f4",  "0xea0"],  [1,  "0x086c6594",  "0x48"],  [3,  "0x086c73a4",  "0x88"],  [5,  "0x086c742c",  "0xc"]],
+        ["2a4",  "0x086c75e0",  "0x3c",  [0,  "0x086c761c",  "0x1450"],  [1,  "0x086c8a6c",  "0x48"],  [3,  "0x086c964c",  "0x140"],  [5,  "0x086c978c",  "0xc"]],
+        [
+          "2a6",
+          "0x086c992c",
+          "0x3c",
+          [0, "0x086c9968", "0x4d8"],
+          [1, "0x086c9e40", "0x14"],
+          [3, "0x086caaec", "0x8"],
+          [4, "0x086caaf4", "0x10"],
+          [5, "0x086cab04", "0x10"]
+        ],
+        [
+          "2ac",
+          "0x086cf47c",
+          "0x3c",
+          [0, "0x086cf4b8", "0x304"],
+          [1, "0x086cf7bc", "0x8"],
+          [3, "0x086cfeb0", "0x268"],
+          [4, "0x086d0118", "0x28"],
+          [5, "0x086d0140", "0x10"]
+        ],
+        ["2ae",  "0x086d02d0",  "0x3c",  [0,  "0x086d030c",  "0x6d0"],  [1,  "0x086d09dc",  "0x14"],  [3,  "0x086d18d4",  "0x298"],  [5,  "0x086d1b6c",  "0x1c"]],
+        [
+          "2b0",
+          "0x086d1d0c",
+          "0x3c",
+          [0, "0x086d1d48", "0x814"],
+          [1, "0x086d255c", "0x14"],
+          [3, "0x086d34ec", "0x298"],
+          [4, "0x086d3784", "0x8"],
+          [5, "0x086d378c", "0x10"]
+        ],
+        ["2b2",  "0x086d3918",  "0x3c",  [0,  "0x086d3954",  "0x920"],  [1,  "0x086d4274",  "0x48"],  [3,  "0x086d5434",  "0x210"],  [5,  "0x086d5644",  "0x10"]],
+        [
+          "2b5",
+          "0x086d58f8",
+          "0x3c",
+          [0, "0x086d5934", "0xcf4"],
+          [1, "0x086d6628", "0x28"],
+          [3, "0x086d7770", "0x8"],
+          [4, "0x086d7778", "0x14"],
+          [5, "0x086d778c", "0x10"]
+        ],
+        [
+          "2b7",
+          "0x086d7924",
+          "0x3c",
+          [0, "0x086d7960", "0x330"],
+          [1, "0x086d7c90", "0x24"],
+          [3, "0x086d865c", "0x204"],
+          [4, "0x086d8860", "0x10"],
+          [5, "0x086d8870", "0x10"]
+        ],
+        [
+          "2b9",
+          "0x086d8a18",
+          "0x3c",
+          [0, "0x086d8a54", "0x48c"],
+          [1, "0x086d8ee0", "0xc"],
+          [3, "0x086d98f4", "0x204"],
+          [4, "0x086d9af8", "0x1c"],
+          [5, "0x086d9b14", "0x10"]
+        ],
+        ["2bb",  "0x086d9ce0",  "0x3c",  [0,  "0x086d9d1c",  "0x19c4"],  [1,  "0x086db6e0",  "0x3c"],  [3,  "0x086dc6f4",  "0x88"],  [5,  "0x086dc77c",  "0x8"]],
+        ["2bd",  "0x086dc8f8",  "0x3c",  [0,  "0x086dc934",  "0xac8"],  [1,  "0x086dd3fc",  "0x3c"],  [3,  "0x086ddc9c",  "0x38"],  [5,  "0x086ddcd4",  "0xc"]],
+        [
+          "2bf",
+          "0x086dde98",
+          "0x3c",
+          [0, "0x086dded4", "0x9d4"],
+          [1, "0x086de8a8", "0x4c"],
+          [3, "0x086e0658", "0x14c"],
+          [4, "0x086e07a4", "0x10"],
+          [5, "0x086e07b4", "0xc"]
+        ],
+        [
+          "2c1",
+          "0x086e0968",
+          "0x3c",
+          [0, "0x086e09a4", "0x13dc"],
+          [1, "0x086e1d80", "0x6c"],
+          [3, "0x086e2c50", "0xf8"],
+          [4, "0x086e2d48", "0x8"],
+          [5, "0x086e2d50", "0x14"]
+        ],
+        [
+          "2c3",
+          "0x086e2ef4",
+          "0x3c",
+          [0, "0x086e2f30", "0x1870"],
+          [1, "0x086e47a0", "0x48"],
+          [3, "0x086e5fe4", "0x15c"],
+          [4, "0x086e6140", "0x10"],
+          [5, "0x086e6150", "0x24"]
+        ],
+        [
+          "2c5",
+          "0x086e6354",
+          "0x3c",
+          [0, "0x086e6390", "0x680"],
+          [1, "0x086e6a10", "0x24"],
+          [3, "0x086e70f0", "0x15c"],
+          [4, "0x086e724c", "0x10"],
+          [5, "0x086e725c", "0x4"]
+        ],
+        ["2c6",  "0x086e7260",  "0x3c",  [0,  "0x086e729c",  "0xbac"],  [1,  "0x086e7e48",  "0x30"],  [5,  "0x086e88e4",  "0x4"]],
+        [
+          "2c8",
+          "0x086e8a78",
+          "0x3c",
+          [0, "0x086e8ab4", "0xfd4"],
+          [1, "0x086e9a88", "0x38"],
+          [3, "0x086eb3a8", "0x108"],
+          [4, "0x086eb4b0", "0x8"],
+          [5, "0x086eb4b8", "0x30"]
+        ],
+        [
+          "2ca",
+          "0x086eb670",
+          "0x3c",
+          [0, "0x086eb6ac", "0x334"],
+          [1, "0x086eb9e0", "0x8"],
+          [3, "0x086ec0ac", "0xe0"],
+          [4, "0x086ec18c", "0x2c"],
+          [5, "0x086ec1b8", "0x4"]
+        ],
+        [
+          "2d0",
+          "0x086f21ac",
+          "0x3c",
+          [0, "0x086f21e8", "0x6ac"],
+          [1, "0x086f2894", "0x30"],
+          [3, "0x086f352c", "0x198"],
+          [4, "0x086f36c4", "0x28"],
+          [5, "0x086f36ec", "0x4"]
+        ],
+        [
+          "2d2",
+          "0x086f387c",
+          "0x3c",
+          [0, "0x086f38b8", "0x744"],
+          [1, "0x086f3ffc", "0x48"],
+          [3, "0x086f488c", "0xc0"],
+          [4, "0x086f494c", "0x8"],
+          [5, "0x086f4954", "0x4"]
+        ],
+        [
+          "2da",
+          "0x086fdf50",
+          "0x3c",
+          [0, "0x086fdf8c", "0xacc"],
+          [1, "0x086fea58", "0x20"],
+          [3, "0x086ffdc0", "0x220"],
+          [4, "0x086fffe0", "0x8"],
+          [5, "0x086fffe8", "0x10"]
+        ],
+        [
+          "2e0",
+          "0x08707960",
+          "0x3c",
+          [0, "0x0870799c", "0x8dc"],
+          [1, "0x08708278", "0x34"],
+          [3, "0x0870916c", "0x274"],
+          [4, "0x087093e0", "0x8"],
+          [5, "0x087093e8", "0xc"]
+        ],
+        [
+          "2e6",
+          "0x0871086c",
+          "0x3c",
+          [0, "0x087108a8", "0x354"],
+          [1, "0x08710bfc", "0x10"],
+          [3, "0x087118e0", "0x1b0"],
+          [4, "0x08711a90", "0x8"],
+          [5, "0x08711a98", "0x4"]
+        ],
+        [
+          "2e8",
+          "0x08711bf8",
+          "0x3c",
+          [0, "0x08711c34", "0x254"],
+          [1, "0x08711e88", "0x10"],
+          [3, "0x08712b28", "0x68"],
+          [4, "0x08712b90", "0x8"],
+          [5, "0x08712b98", "0x8"]
+        ],
+        [
+          "2e9",
+          "0x08712ba0",
+          "0x3c",
+          [0, "0x08712bdc", "0x6cc"],
+          [1, "0x087132a8", "0x10"],
+          [3, "0x087141a4", "0x68"],
+          [4, "0x0871420c", "0x8"],
+          [5, "0x08714214", "0x8"]
+        ],
+        [
+          "2ea",
+          "0x0871421c",
+          "0x3c",
+          [0, "0x08714258", "0x2e8"],
+          [1, "0x08714540", "0x20"],
+          [3, "0x08715090", "0x3c"],
+          [4, "0x087150cc", "0x24"],
+          [5, "0x087150f0", "0x4"]
+        ],
+        [
+          "2ec",
+          "0x08715260",
+          "0x3c",
+          [0, "0x0871529c", "0x5cc"],
+          [1, "0x08715868", "0x10"],
+          [3, "0x087169b0", "0x258"],
+          [4, "0x08716c08", "0x8"],
+          [5, "0x08716c10", "0x8"]
+        ],
+        [
+          "2ed",
+          "0x08716c18",
+          "0x3c",
+          [0, "0x08716c54", "0x2b8"],
+          [1, "0x08716f0c", "0x2c"],
+          [3, "0x08717b40", "0x3c"],
+          [4, "0x08717b7c", "0x8"],
+          [5, "0x08717b84", "0x8"]
+        ],
+        [
+          "2ee",
+          "0x08717b8c",
+          "0x3c",
+          [0, "0x08717bc8", "0x878"],
+          [1, "0x08718440", "0x14"],
+          [3, "0x08718bc8", "0x11c"],
+          [4, "0x08718ce4", "0x8"],
+          [5, "0x08718cec", "0x4"]
+        ],
+        [
+          "2f0",
+          "0x08718e8c",
+          "0x3c",
+          [0, "0x08718ec8", "0x5d8"],
+          [1, "0x087194a0", "0x28"],
+          [3, "0x0871a394", "0x120"],
+          [4, "0x0871a4b4", "0x18"],
+          [5, "0x0871a4cc", "0xc"]
+        ],
+        [
+          "2f2",
+          "0x0871a618",
+          "0x3c",
+          [0, "0x0871a654", "0xa2c"],
+          [1, "0x0871b080", "0x38"],
+          [3, "0x0871c298", "0x120"],
+          [4, "0x0871c3b8", "0x18"],
+          [5, "0x0871c3d0", "0x4"]
+        ],
+        [
+          "2f3",
+          "0x0871c3d4",
+          "0x3c",
+          [0, "0x0871c410", "0xa7c"],
+          [1, "0x0871ce8c", "0x20"],
+          [3, "0x0871d6f0", "0x20"],
+          [4, "0x0871d710", "0x8"],
+          [5, "0x0871d718", "0x4"]
+        ],
+        [
+          "2f5",
+          "0x0871d898",
+          "0x3c",
+          [0, "0x0871d8d4", "0xb30"],
+          [1, "0x0871e404", "0x14"],
+          [3, "0x0871fe98", "0x158"],
+          [4, "0x0871fff0", "0x10"],
+          [5, "0x08720000", "0x14"]
+        ],
+        [
+          "2f7",
+          "0x087201ac",
+          "0x3c",
+          [0, "0x087201e8", "0xc94"],
+          [1, "0x08720e7c", "0x10"],
+          [3, "0x08722a2c", "0x158"],
+          [4, "0x08722b84", "0x10"],
+          [5, "0x08722b94", "0x4"]
+        ],
+        [
+          "2f8",
+          "0x08722b98",
+          "0x3c",
+          [0, "0x08722bd4", "0x588"],
+          [1, "0x0872315c", "0x28"],
+          [3, "0x08723e18", "0x158"],
+          [4, "0x08723f70", "0x10"],
+          [5, "0x08723f80", "0x4"]
+        ],
+        [
+          "2f9",
+          "0x08723f84",
+          "0x3c",
+          [0, "0x08723fc0", "0x5cc"],
+          [1, "0x0872458c", "0x10"],
+          [3, "0x0872531c", "0x158"],
+          [4, "0x08725474", "0x10"],
+          [5, "0x08725484", "0x8"]
+        ],
+        [
+          "2fa",
+          "0x0872548c",
+          "0x3c",
+          [0, "0x087254c8", "0x2818"],
+          [1, "0x08727ce0", "0x28"],
+          [3, "0x087291d4", "0x16c"],
+          [4, "0x08729340", "0x8"],
+          [5, "0x08729348", "0x4"]
+        ],
+        [
+          "2fc",
+          "0x0872950c",
+          "0x3c",
+          [0, "0x08729548", "0x688"],
+          [1, "0x08729bd0", "0x10"],
+          [3, "0x0872a4cc", "0x18c"],
+          [4, "0x0872a658", "0x1c"],
+          [5, "0x0872a674", "0x8"]
+        ],
+        [
+          "2fe",
+          "0x0872a7d4",
+          "0x3c",
+          [0, "0x0872a810", "0x4d0"],
+          [1, "0x0872ace0", "0x8"],
+          [3, "0x0872b758", "0xec"],
+          [4, "0x0872b844", "0x2c"],
+          [5, "0x0872b870", "0x4"]
+        ],
+        [
+          "301",
+          "0x0872e3a4",
+          "0x3c",
+          [0, "0x0872e3e0", "0x3d8"],
+          [1, "0x0872e7b8", "0x10"],
+          [3, "0x0872f560", "0xec"],
+          [4, "0x0872f64c", "0x2c"],
+          [5, "0x0872f678", "0x18"]
+        ],
+        ["302",  "0x0872f690",  "0x3c",  [0,  "0x0872f6cc",  "0xc68"],  [1,  "0x08730334",  "0x10"],  [3,  "0x0873172c",  "0x198"],  [5,  "0x087318c4",  "0xc"]],
+        ["304",  "0x087319c8",  "0x3c",  [0,  "0x08731a04",  "0x10ac"],  [1,  "0x08732ab0",  "0x28"],  [5,  "0x0873442c",  "0xc"]],
+        [
+          "305",
+          "0x08734438",
+          "0x3c",
+          [0, "0x08734474", "0x768"],
+          [1, "0x08734bdc", "0x10"],
+          [3, "0x08735bc4", "0x138"],
+          [4, "0x08735cfc", "0x10"],
+          [5, "0x08735d0c", "0x4"]
+        ],
+        [
+          "30d",
+          "0x0873f32c",
+          "0x3c",
+          [0, "0x0873f368", "0xc04"],
+          [1, "0x0873ff6c", "0x2c"],
+          [3, "0x08741868", "0x150"],
+          [4, "0x087419b8", "0x10"],
+          [5, "0x087419c8", "0x10"]
+        ],
+        [
+          "313",
+          "0x08748b44",
+          "0x3c",
+          [0, "0x08748b80", "0xc60"],
+          [1, "0x087497e0", "0x6c"],
+          [3, "0x0874a4d8", "0x20"],
+          [4, "0x0874a4f8", "0x8"],
+          [5, "0x0874a500", "0x4"]
+        ],
+        [
+          "315",
+          "0x0874a678",
+          "0x3c",
+          [0, "0x0874a6b4", "0xa2c"],
+          [1, "0x0874b0e0", "0x50"],
+          [3, "0x0874bdc4", "0x14"],
+          [4, "0x0874bdd8", "0x8"],
+          [5, "0x0874bde0", "0x8"]
+        ],
+        [
+          "316",
+          "0x0874bde8",
+          "0x3c",
+          [0, "0x0874be24", "0x864"],
+          [1, "0x0874c688", "0x2c"],
+          [3, "0x0874d430", "0x238"],
+          [4, "0x0874d668", "0x14"],
+          [5, "0x0874d67c", "0x8"]
+        ],
+        [
+          "318",
+          "0x0874d83c",
+          "0x3c",
+          [0, "0x0874d878", "0x73c"],
+          [1, "0x0874dfb4", "0x1c"],
+          [3, "0x0874ee18", "0x268"],
+          [4, "0x0874f080", "0x28"],
+          [5, "0x0874f0a8", "0x4"]
+        ],
+        [
+          "31a",
+          "0x0874f22c",
+          "0x3c",
+          [0, "0x0874f268", "0x7a8"],
+          [1, "0x0874fa10", "0x28"],
+          [3, "0x087508bc", "0x268"],
+          [4, "0x08750b24", "0x28"],
+          [5, "0x08750b4c", "0xc"]
+        ],
+        [
+          "31b",
+          "0x08750b58",
+          "0x3c",
+          [0, "0x08750b94", "0xdb8"],
+          [1, "0x0875194c", "0x28"],
+          [3, "0x08752a14", "0x8"],
+          [4, "0x08752a1c", "0x8"],
+          [5, "0x08752a24", "0x10"]
+        ],
+        ["31e",  "0x08752d30",  "0x3c",  [0,  "0x08752d6c",  "0x2a0"],  [1,  "0x0875300c",  "0x18"],  [3,  "0x08753768",  "0x204"],  [5,  "0x0875396c",  "0x4"]],
+        [
+          "322",
+          "0x08755c3c",
+          "0x3c",
+          [0, "0x08755c78", "0xfd4"],
+          [1, "0x08756c4c", "0x34"],
+          [3, "0x087587d8", "0x150"],
+          [4, "0x08758928", "0x10"],
+          [5, "0x08758938", "0x1c"]
+        ],
+        [
+          "324",
+          "0x08758b3c",
+          "0x3c",
+          [0, "0x08758b78", "0xb94"],
+          [1, "0x0875970c", "0x28"],
+          [3, "0x0875af8c", "0x180"],
+          [4, "0x0875b10c", "0x10"],
+          [5, "0x0875b11c", "0x1c"]
+        ],
+        [
+          "325",
+          "0x0875b138",
+          "0x3c",
+          [0, "0x0875b174", "0x3a8"],
+          [1, "0x0875b51c", "0x10"],
+          [3, "0x0875bdc0", "0x8"],
+          [4, "0x0875bdc8", "0x8"],
+          [5, "0x0875bdd0", "0x8"]
+        ],
+        ["326",  "0x0875bdd8",  "0x3c",  [0,  "0x0875be14",  "0x1990"],  [1,  "0x0875d7a4",  "0x18"],  [5,  "0x087603d8",  "0x4"]],
+        [
+          "328",
+          "0x087604e4",
+          "0x3c",
+          [0, "0x08760520", "0x7f0"],
+          [1, "0x08760d10", "0x10"],
+          [3, "0x08761dfc", "0x288"],
+          [4, "0x08762084", "0x28"],
+          [5, "0x087620ac", "0xc"]
+        ],
+        [
+          "32a",
+          "0x08762228",
+          "0x3c",
+          [0, "0x08762264", "0x77c"],
+          [1, "0x087629e0", "0x18"],
+          [3, "0x08763904", "0x248"],
+          [4, "0x08763b4c", "0x10"],
+          [5, "0x08763b5c", "0xc"]
+        ],
+        [
+          "32c",
+          "0x08763cc4",
+          "0x3c",
+          [0, "0x08763d00", "0x67c"],
+          [1, "0x0876437c", "0x14"],
+          [3, "0x08764f44", "0x248"],
+          [4, "0x0876518c", "0x10"],
+          [5, "0x0876519c", "0x4"]
+        ],
+        [
+          "32d",
+          "0x087651a0",
+          "0x3c",
+          [0, "0x087651dc", "0x544"],
+          [1, "0x08765720", "0x10"],
+          [3, "0x08766490", "0x248"],
+          [4, "0x087666d8", "0x10"],
+          [5, "0x087666e8", "0x8"]
+        ],
+        [
+          "32e",
+          "0x087666f0",
+          "0x3c",
+          [0, "0x0876672c", "0x8e8"],
+          [1, "0x08767014", "0x18"],
+          [3, "0x08768350", "0x248"],
+          [4, "0x08768598", "0x10"],
+          [5, "0x087685a8", "0xc"]
+        ],
+        ["32f",  "0x087685b4",  "0x3c",  [0,  "0x087685f0",  "0x7dc"],  [1,  "0x08768dcc",  "0x30"],  [3,  "0x08769c9c",  "0x268"],  [5,  "0x08769f04",  "0x4"]],
+        [
+          "337",
+          "0x0876f3bc",
+          "0x3c",
+          [0, "0x0876f3f8", "0x64c"],
+          [1, "0x0876fa44", "0x1c"],
+          [3, "0x08770234", "0x110"],
+          [4, "0x08770344", "0x8"],
+          [5, "0x0877034c", "0x4"]
+        ],
+        [
+          "33d",
+          "0x08773af0",
+          "0x3c",
+          [0, "0x08773b2c", "0x750"],
+          [1, "0x0877427c", "0x20"],
+          [3, "0x08774b28", "0x14c"],
+          [4, "0x08774c74", "0x8"],
+          [5, "0x08774c7c", "0x4"]
+        ],
+        ["33f",  "0x08774e48",  "0x3c",  [0,  "0x08774e84",  "0x8"],  [1,  "0x08774e8c",  "0x8"],  [5,  "0x08775190",  "0x4"]],
+        ["345",  "0x087756b0",  "0x3c",  [0,  "0x087756ec",  "0x8"],  [1,  "0x087756f4",  "0x8"],  [5,  "0x087759f8",  "0x4"]],
+        ["34b",  "0x08775f18",  "0x3c",  [0,  "0x08775f54",  "0x8"],  [1,  "0x08775f5c",  "0x8"],  [5,  "0x08776260",  "0x4"]],
+        ["351",  "0x08776780",  "0x3c",  [0,  "0x087767bc",  "0x8"],  [1,  "0x087767c4",  "0x8"],  [5,  "0x08776ac8",  "0x4"]],
+        ["357",  "0x08776fe8",  "0x3c",  [0,  "0x08777024",  "0x8"],  [1,  "0x0877702c",  "0x8"],  [5,  "0x08777330",  "0x4"]],
+        ["35d",  "0x08777850",  "0x3c",  [0,  "0x0877788c",  "0x8"],  [1,  "0x08777894",  "0x8"],  [5,  "0x08777b98",  "0x4"]],
+        ["363",  "0x087780b8",  "0x3c",  [0,  "0x087780f4",  "0x8"],  [1,  "0x087780fc",  "0x8"],  [5,  "0x08778400",  "0x4"]],
+        ["369",  "0x08778920",  "0x3c",  [0,  "0x0877895c",  "0x8"],  [1,  "0x08778964",  "0x8"],  [5,  "0x08778c68",  "0x4"]]
+      ]
+    },
+    {
+      "kind": "golden-sun-standalone-palette-series",
+      "palettes": [
+        {
+          "id": "1e6",
+          "address": "0x085bd08c",
+          "size": "0x180"
+        },
+        {
+          "id": "1f4",
+          "address": "0x085ceed8",
+          "size": "0x168"
+        },
+        {
+          "id": "1f7",
+          "address": "0x085d1ee4",
+          "size": "0x168"
+        },
+        {
+          "id": "28d",
+          "address": "0x086adc28",
+          "size": "0x1a8"
+        },
+        {
+          "id": "2b4",
+          "address": "0x086d5780",
+          "size": "0x178"
+        },
+        {
+          "id": "2d5",
+          "address": "0x086f65ec",
+          "size": "0x150"
+        },
+        {
+          "id": "308",
+          "address": "0x087379ec",
+          "size": "0xe4"
+        },
+        {
+          "id": "31d",
+          "address": "0x08752ba8",
+          "size": "0x188"
+        },
+        {
+          "id": "321",
+          "address": "0x08755b58",
+          "size": "0xe4"
+        },
+        {
+          "id": "332",
+          "address": "0x0876aa28",
+          "size": "0xe8"
+        }
+      ]
+    },
+    {
+      "kind": "golden-sun-map-grid-series",
+      "grids": [
+        ["128", "0x084ba7a4", "0x2fc"],
+        ["12e", "0x084bdea4", "0x23c0"],
+        ["134", "0x084cca50", "0x2188"],
+        ["13a", "0x084da30c", "0x14dc"],
+        ["140", "0x084e5308", "0xdec"],
+        ["146", "0x084efa00", "0x16e4"],
+        ["14c", "0x084f9620", "0x180c"],
+        ["152", "0x0850268c", "0x4a4"],
+        ["158", "0x08506cc8", "0x1ba0"],
+        ["15e", "0x0850c46c", "0x8c4"],
+        ["164", "0x08513740", "0x7e8"],
+        ["169", "0x085184e8", "0x7a4"],
+        ["16f", "0x0851c938", "0x8e8"],
+        ["170", "0x0851d5d4", "0x868"],
+        ["176", "0x08520c78", "0xc9c"],
+        ["17c", "0x08526870", "0x1068"],
+        ["182", "0x0852ca74", "0x1400"],
+        ["184", "0x0852f238", "0xd4c"],
+        ["18a", "0x0853a468", "0x1438"],
+        ["190", "0x08542004", "0x5dc"],
+        ["196", "0x08546074", "0x984"],
+        ["19c", "0x08550748", "0x8ac"],
+        ["1a2", "0x08557288", "0xcf0"],
+        ["1a8", "0x0855fe34", "0x1040"],
+        ["1a9", "0x085614d8", "0x900"],
+        ["1aa", "0x08562ce8", "0x1ac8"],
+        ["1b0", "0x0856c4c4", "0x2164"],
+        ["1b1", "0x0856f1a0", "0x2258"],
+        ["1b2", "0x0857235c", "0xd50"],
+        ["1b8", "0x0857c1d4", "0x11ec"],
+        ["1bd", "0x08582478", "0xe50"],
+        ["1be", "0x08584510", "0xc38"],
+        ["1c4", "0x085905b4", "0x1274"],
+        ["1c8", "0x08593f1c", "0x704"],
+        ["1cb", "0x08597440", "0x940"],
+        ["1d0", "0x0859ef50", "0xa38"],
+        ["1d6", "0x085a7660", "0x11d8"],
+        ["1dc", "0x085afcc8", "0xc20"],
+        ["1e2", "0x085b8f6c", "0xd18"],
+        ["1eb", "0x085c40b0", "0x9dc"],
+        ["1ed", "0x085c6410", "0xf34"],
+        ["1f8", "0x085d337c", "0x1348"],
+        ["1fe", "0x085dd708", "0xa2c"],
+        ["204", "0x085e7b50", "0x1130"],
+        ["20a", "0x085eefbc", "0xdc0"],
+        ["210", "0x085f5464", "0xb48"],
+        ["213", "0x085f7b04", "0xea0"],
+        ["216", "0x085fb478", "0x10c8"],
+        ["219", "0x08600228", "0xc94"],
+        ["21f", "0x08607fb0", "0x11cc"],
+        ["225", "0x08611208", "0x940"],
+        ["226", "0x08612514", "0xf14"],
+        ["22c", "0x0861be88", "0xee4"],
+        ["22d", "0x0861db00", "0x10ac"],
+        ["22e", "0x0861f8d0", "0xe0c"],
+        ["22f", "0x086218d0", "0xf3c"],
+        ["230", "0x08622fa4", "0x7fc"],
+        ["231", "0x08625748", "0x10cc"],
+        ["234", "0x08629478", "0x79c"],
+        ["23a", "0x08630094", "0x8c8"],
+        ["23c", "0x08631040", "0x6dc"],
+        ["23d", "0x08631ce8", "0x804"],
+        ["23e", "0x08632cbc", "0xabc"],
+        ["23f", "0x08633d38", "0x928"],
+        ["240", "0x08634c24", "0xb18"],
+        ["241", "0x08637550", "0x1510"],
+        ["247", "0x08640d28", "0x16bc"],
+        ["248", "0x086445cc", "0x1920"],
+        ["249", "0x086480cc", "0x1bf4"],
+        ["24a", "0x0864c4dc", "0x16cc"],
+        ["24b", "0x0864ef08", "0xfc8"],
+        ["251", "0x08655a28", "0xbc8"],
+        ["253", "0x086576f4", "0x1084"],
+        ["259", "0x08662760", "0x13bc"],
+        ["25c", "0x086669dc", "0xdd0"],
+        ["25e", "0x086682cc", "0xc1c"],
+        ["25f", "0x08669c28", "0x1c8c"],
+        ["260", "0x0866c68c", "0x14f4"],
+        ["261", "0x0866e470", "0xce0"],
+        ["262", "0x0866fde4", "0x1430"],
+        ["263", "0x08671fec", "0x1550"],
+        ["264", "0x0867460c", "0x1b58"],
+        ["265", "0x08676978", "0xc78"],
+        ["266", "0x08677b50", "0x620"],
+        ["268", "0x08678eac", "0xf00"],
+        ["269", "0x0867a9a0", "0x122c"],
+        ["26b", "0x0867dfc0", "0x1200"],
+        ["26c", "0x086802a4", "0x171c"],
+        ["272", "0x08688f0c", "0x16d0"],
+        ["273", "0x0868b4c0", "0x1a10"],
+        ["274", "0x0868e38c", "0xbb0"],
+        ["27a", "0x086974c0", "0x14e0"],
+        ["280", "0x086a0494", "0x7a8"],
+        ["281", "0x086a16d0", "0x788"],
+        ["282", "0x086a2bb4", "0xfcc"],
+        ["284", "0x086a5000", "0xe14"],
+        ["288", "0x086a95e4", "0x12c0"],
+        ["28a", "0x086aafac", "0x9a4"],
+        ["291", "0x086b53bc", "0x6b8"],
+        ["294", "0x086b7a34", "0x7cc"],
+        ["29a", "0x086bf60c", "0x60c"],
+        ["29c", "0x086c0704", "0x9e8"],
+        ["2a2", "0x086c65dc", "0xdc8"],
+        ["2a4", "0x086c8ab4", "0xb98"],
+        ["2a6", "0x086c9e54", "0xc98"],
+        ["2ac", "0x086cf7c4", "0x6ec"],
+        ["2ae", "0x086d09f0", "0xee4"],
+        ["2b0", "0x086d2570", "0xf7c"],
+        ["2b2", "0x086d42bc", "0x1178"],
+        ["2b5", "0x086d6650", "0x1120"],
+        ["2b7", "0x086d7cb4", "0x9a8"],
+        ["2b9", "0x086d8eec", "0xa08"],
+        ["2bb", "0x086db71c", "0xfd8"],
+        ["2bd", "0x086dd438", "0x864"],
+        ["2bf", "0x086de8f4", "0x1d64"],
+        ["2c1", "0x086e1dec", "0xe64"],
+        ["2c3", "0x086e47e8", "0x17fc"],
+        ["2c5", "0x086e6a34", "0x6bc"],
+        ["2c6", "0x086e7e78", "0xa6c"],
+        ["2c8", "0x086e9ac0", "0x18e8"],
+        ["2ca", "0x086eb9e8", "0x6c4"],
+        ["2d0", "0x086f28c4", "0xc68"],
+        ["2d2", "0x086f4044", "0x848"],
+        ["2da", "0x086fea78", "0x1348"],
+        ["2e0", "0x087082ac", "0xec0"],
+        ["2e6", "0x08710c0c", "0xcd4"],
+        ["2e8", "0x08711e98", "0xc90"],
+        ["2e9", "0x087132b8", "0xeec"],
+        ["2ea", "0x08714560", "0xb30"],
+        ["2ec", "0x08715878", "0x1138"],
+        ["2ed", "0x08716f38", "0xc08"],
+        ["2ee", "0x08718454", "0x774"],
+        ["2f0", "0x087194c8", "0xecc"],
+        ["2f2", "0x0871b0b8", "0x11e0"],
+        ["2f3", "0x0871ceac", "0x844"],
+        ["2f5", "0x0871e418", "0x1a80"],
+        ["2f7", "0x08720e8c", "0x1ba0"],
+        ["2f8", "0x08723184", "0xc94"],
+        ["2f9", "0x0872459c", "0xd80"],
+        ["2fa", "0x08727d08", "0x14cc"],
+        ["2fc", "0x08729be0", "0x8ec"],
+        ["2fe", "0x0872ace8", "0xa70"],
+        ["301", "0x0872e7c8", "0xd98"],
+        ["302", "0x08730344", "0x13e8"],
+        ["304", "0x08732ad8", "0x1954"],
+        ["305", "0x08734bec", "0xfd8"],
+        ["30d", "0x0873ff98", "0x18d0"],
+        ["313", "0x0874984c", "0xc8c"],
+        ["315", "0x0874b130", "0xc94"],
+        ["316", "0x0874c6b4", "0xd7c"],
+        ["318", "0x0874dfd0", "0xe48"],
+        ["31a", "0x0874fa38", "0xe84"],
+        ["31b", "0x08751974", "0x10a0"],
+        ["31e", "0x08753024", "0x744"],
+        ["322", "0x08756c80", "0x1b58"],
+        ["324", "0x08759734", "0x1858"],
+        ["325", "0x0875b52c", "0x894"],
+        ["326", "0x0875d7bc", "0x2c1c"],
+        ["328", "0x08760d20", "0x10dc"],
+        ["32a", "0x087629f8", "0xf0c"],
+        ["32c", "0x08764390", "0xbb4"],
+        ["32d", "0x08765730", "0xd60"],
+        ["32e", "0x0876702c", "0x1324"],
+        ["32f", "0x08768dfc", "0xea0"],
+        ["337", "0x0876fa60", "0x7d4"],
+        ["33d", "0x0877429c", "0x88c"],
+        ["33f", "0x08774e94", "0x2fc"],
+        ["345", "0x087756fc", "0x2fc"],
+        ["34b", "0x08775f64", "0x2fc"],
+        ["351", "0x087767cc", "0x2fc"],
+        ["357", "0x08777034", "0x2fc"],
+        ["35d", "0x0877789c", "0x2fc"],
+        ["363", "0x08778104", "0x2fc"],
+        ["369", "0x0877896c", "0x2fc"]
+      ]
+    },
+    {
+      "kind": "golden-sun-map-charblock-series",
+      "charblock_layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      },
+      "animation_layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-animation-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      },
+      "families": [
+        ["128",  "0x084baaa4",  "0xc",  "0x084bae80",  "0x140",  ["0x084baab0",  "0x150",  null],  ["0x084bac00",  "0x140",  null],  ["0x084bad40",  "0x140",  null]],
+        ["12e",  "0x084c03d0",  "0x190",  "0x084c7c9c",  "0x1e90",  ["0x084c0560",  "0x2b34",  null],  ["0x084c3094",  "0x252c",  null],  ["0x084c55c0",  "0x26dc",  null]],
+        ["134",  "0x084cecf4",  "0x194",  "0x084d68c4",  "0x1ecc",  ["0x084cee88",  "0x2c54",  null],  ["0x084d1adc",  "0x2608",  null],  ["0x084d40e4",  "0x27e0",  null]],
+        ["13a",  "0x084db8cc",  "0x180",  "0x084e2f34",  "0x1074",  ["0x084dba4c",  "0x27bc",  null],  ["0x084de208",  "0x2648",  null],  ["0x084e0850",  "0x26e4",  null]],
+        ["140",  "0x084e60fc",  "0x194",  "0x084ecfc8",  "0x1148",  ["0x084e6290",  "0x2840",  null],  ["0x084e8ad0",  "0x1e18",  null],  ["0x084ea8e8",  "0x26e0",  null]],
+        ["146",  "0x084f1224",  "0x1ac",  "0x084f6988",  "0x12c8",  ["0x084f13d0",  "0x1a7c",  null],  ["0x084f2e4c",  "0x2540",  null],  ["0x084f538c",  "0x15fc",  null]],
+        ["14c",  "0x084fb068",  "0x190",  "0x08500b20",  "0x150c",  ["0x084fb1f8",  "0x1db0",  null],  ["0x084fcfa8",  "0x256c",  null],  ["0x084ff514",  "0x160c",  null]],
+        [
+          "152",
+          "0x08502c00",
+          "0x100",
+          "0x08505bf0",
+          "0x854",
+          ["0x08502d00", "0x13e4", null],
+          ["0x085040e4", "0x1184", "games/gs1/assets/graphics/map_resource_152_charblock2.objects.json"],
+          ["0x08505268", "0x988", null]
+        ],
+        [
+          "158",
+          "0x0850886c",
+          "0xe4",
+          "0x0850bcd0",
+          "0x140",
+          ["0x08508950", "0x11ec", "games/gs1/assets/graphics/map_resource_158_charblock1.objects.json"],
+          ["0x08509b3c", "0x1c88", null],
+          ["0x0850b7c4", "0x50c", null]
+        ],
+        ["15e",  "0x0850d02c",  "0x15c",  "0x08512a98",  "0x844",  ["0x0850d188",  "0x29d8",  null],  ["0x0850fb60",  "0x1a4c",  null],  ["0x085115ac",  "0x14ec",  null]],
+        ["164",  "0x08514054",  "0x134",  null,  null,  ["0x08514188",  "0x2480",  null],  ["0x08516608",  "0xd7c",  null],  ["0x08517384",  "0xae0",  null]],
+        ["169",  "0x08518cdc",  "0x154",  "0x0851c344",  "0x228",  ["0x08518e30",  "0x1f80",  null],  ["0x0851adb0",  "0x948",  null],  ["0x0851b6f8",  "0xc4c",  null]],
+        ["170",  "0x0851deac",  "0x114",  "0x0851fad0",  "0x620",  ["0x0851dfc0",  "0x10bc",  null],  ["0x0851f07c",  "0x90c",  null],  ["0x0851f988",  "0x148",  null]],
+        ["176",  "0x08521b9c",  "0x128",  "0x085257f0",  "0x140",  ["0x08521cc4",  "0x1888",  null],  ["0x0852354c",  "0x1364",  null],  ["0x085248b0",  "0xf40",  null]],
+        ["17c",  "0x08527938",  "0x10c",  "0x0852c0c0",  "0x140",  ["0x08527a44",  "0x1fe4",  null],  ["0x08529a28",  "0x1724",  null],  ["0x0852b14c",  "0xf74",  null]],
+        ["182", "0x0852dee8", "0x15c", null, null],
+        [
+          "184",
+          "0x0852ff8c",
+          "0x184",
+          "0x08537a80",
+          "0x1854",
+          ["0x08530110", "0x2b54", "games/gs1/assets/graphics/map_resource_184_charblock1.objects.json"],
+          ["0x08532c64", "0x26c4", null],
+          ["0x08535328", "0x2758", null]
+        ],
+        ["18a",  "0x0853b9d4",  "0x1a0",  "0x08540fb4",  "0xcb0",  ["0x0853bb74",  "0x1c2c",  null],  ["0x0853d7a0",  "0x2548",  null],  ["0x0853fce8",  "0x12cc",  null]],
+        [
+          "190",
+          "0x085426d0",
+          "0xf4",
+          "0x08544224",
+          "0xda4",
+          ["0x085427c4", "0x112c", "games/gs1/assets/graphics/map_resource_190_charblock1.objects.json"],
+          ["0x085438f0", "0x7ac", null],
+          ["0x0854409c", "0x188", null]
+        ],
+        ["196",  "0x08546b00",  "0x19c",  "0x0854e85c",  "0x1884",  ["0x08546c9c",  "0x2d54",  null],  ["0x085499f0",  "0x268c",  null],  ["0x0854c07c",  "0x27e0",  null]],
+        ["19c",  "0x085511d4",  "0xcc",  "0x08556b4c",  "0x140",  ["0x085512a0",  "0x27a4",  null],  ["0x08553a44",  "0x215c",  null],  ["0x08555ba0",  "0xfac",  null]],
+        [
+          "1a2",
+          "0x085580bc",
+          "0x124",
+          "0x0855ec98",
+          "0x614",
+          ["0x085581e0", "0x2c18", "games/gs1/assets/graphics/map_resource_1a2_charblock1.objects.json"],
+          ["0x0855adf8", "0x20fc", null],
+          ["0x0855cef4", "0x1da4", null]
+        ],
+        ["1aa",  "0x085648fc",  "0x19c",  "0x08569dfc",  "0x1a38",  ["0x08564a98",  "0x2444",  null],  ["0x08566edc",  "0x2458",  null],  ["0x08569334",  "0xac8",  null]],
+        ["1b2",  "0x08573224",  "0x19c",  "0x0857a09c",  "0x1cec",  ["0x085733c0",  "0x2bb0",  null],  ["0x08575f70",  "0x20d4",  null],  ["0x08578044",  "0x2058",  null]],
+        ["1b8",  "0x0857d534",  "0x19c",  null,  null,  ["0x0857d6d0",  "0x2b40",  null],  ["0x08580210",  "0x1dd0",  null],  ["0x08581fe0",  "0x140",  null]],
+        ["1be",  "0x0858517c",  "0x184",  "0x0858d31c",  "0x1b98",  ["0x08585300",  "0x2df8",  null],  ["0x085880f8",  "0x28c8",  null],  ["0x0858a9c0",  "0x295c",  null]],
+        ["1c4",  "0x08591928",  "0x1a8",  null,  null,  ["0x08591ad0",  "0x16fc",  null],  ["0x085931cc",  "0x900",  null]],
+        ["1c8",  "0x08594844",  "0x160",  null,  null,  ["0x085949a4",  "0x1c58",  null]],
+        ["1cb",  "0x08597e98",  "0x184",  null,  null,  ["0x0859801c",  "0x2b3c",  null],  ["0x0859ab58",  "0x277c",  null],  ["0x0859d2d4",  "0xfec",  null]],
+        ["1d0",  "0x0859f98c",  "0x1ac",  "0x085a6960",  "0x140",  ["0x0859fb38",  "0x2d94",  null],  ["0x085a28cc",  "0x2718",  null],  ["0x085a4fe4",  "0x197c",  null]],
+        ["1d6",  "0x085a8968",  "0x1a4",  "0x085ade10",  "0x1254",  ["0x085a8b0c",  "0x20a0",  null],  ["0x085aabac",  "0xf8c",  null],  ["0x085abb38",  "0x22d8",  null]],
+        ["1dc",  "0x085b0904",  "0x184",  "0x085b81d4",  "0x50c",  ["0x085b0a88",  "0x2c20",  null],  ["0x085b36a8",  "0x22e4",  null],  ["0x085b598c",  "0x2848",  null]],
+        ["1e2",  "0x085b9db8",  "0x1a4",  null,  null,  ["0x085b9f5c",  "0x1904",  null]],
+        ["1eb", "0x085c4cac", "0x15c", null, null],
+        ["1ed",  "0x085c73c4",  "0x178",  "0x085cc898",  "0x840",  ["0x085c753c",  "0x2b84",  null],  ["0x085ca0c0",  "0x1d70",  null],  ["0x085cbe30",  "0xa68",  null]],
+        ["1f8",  "0x085d48dc",  "0x134",  "0x085dadec",  "0x1a7c",  ["0x085d4a10",  "0x2c3c",  null],  ["0x085d764c",  "0x1fdc",  null],  ["0x085d9628",  "0x17c4",  null]],
+        ["1fe",  "0x085de138",  "0x17c",  "0x085e5948",  "0xed8",  ["0x085de2b4",  "0x2bb0",  null],  ["0x085e0e64",  "0x2274",  null],  ["0x085e30d8",  "0x2870",  null]],
+        ["204",  "0x085e8cac",  "0x190",  "0x085ee6e8",  "0x140",  ["0x085e8e3c",  "0x1fe4",  null],  ["0x085eae20",  "0x2c44",  null],  ["0x085eda64",  "0xc84",  null]],
+        ["20a",  "0x085efd98",  "0x16c",  "0x085f45a0",  "0x140",  ["0x085eff04",  "0x1d5c",  null],  ["0x085f1c60",  "0x140",  null],  ["0x085f1da0",  "0x2800",  null]],
+        ["210",  "0x085f60f8",  "0x1a0",  null,  null,  ["0x085f6298",  "0x13dc",  null]],
+        ["213",  "0x085f8bb0",  "0x190",  null,  null,  ["0x085f8d40",  "0x22b8",  null]],
+        ["216",  "0x085fc750",  "0x188",  null,  null,  ["0x085fc8d8",  "0x2968",  null]],
+        ["219",  "0x08600ed8",  "0x148",  "0x08606800",  "0x29c",  ["0x08601020",  "0x1cf4",  null],  ["0x08602d14",  "0x14b8",  null],  ["0x086041cc",  "0x2634",  null]],
+        ["21f",  "0x08609358",  "0x1c8",  "0x0860f92c",  "0x1570",  ["0x08609520",  "0x2904",  null],  ["0x0860be24",  "0x1eac",  null],  ["0x0860dcd0",  "0x1c5c",  null]],
+        ["226",  "0x086136c4",  "0x170",  "0x08619bb8",  "0x1944",  ["0x08613834",  "0x28c0",  null],  ["0x086160f4",  "0x27c8",  null],  ["0x086188bc",  "0x12fc",  null]],
+        ["231",  "0x08626990",  "0x1c0",  null,  null,  ["0x08626b50",  "0x21b8",  null]],
+        ["234",  "0x08629cdc",  "0x1dc",  "0x0862f188",  "0xb9c",  ["0x08629eb8",  "0x24f0",  null],  ["0x0862c3a8",  "0x186c",  null],  ["0x0862dc14",  "0x1574",  null]],
+        ["23a", "0x08630b84", "0x158", null, null],
+        ["241",  "0x08638b28",  "0x16c",  "0x0863e2c8",  "0xc14",  ["0x08638c94",  "0x2d9c",  null],  ["0x0863ba30",  "0x2190",  null],  ["0x0863dbc0",  "0x708",  null]],
+        ["24b",  "0x0864ffb0",  "0x194",  "0x086544cc",  "0x554",  ["0x08650144",  "0x1510",  null],  ["0x08651654",  "0x1de4",  null],  ["0x08653438",  "0x1094",  null]],
+        ["251", "0x0865673c", "0x198", null, null],
+        ["253",  "0x08658878",  "0x164",  "0x0865fda4",  "0x130c",  ["0x086589dc",  "0x2c10",  null],  ["0x0865b5ec",  "0x2064",  null],  ["0x0865d650",  "0x2754",  null]],
+        ["259",  "0x08663c1c",  "0x1cc",  null,  null,  ["0x08663de8",  "0x2348",  null]],
+        ["25c", "0x0866790c", "0x1b4", null, null],
+        ["266", "0x08678460", "0x160", null, null],
+        ["269", "0x0867bd18", "0x164", null, null],
+        ["26c",  "0x08681b60",  "0xf4",  "0x08686890",  "0x1a18",  ["0x08681c54",  "0x28f0",  null],  ["0x08684544",  "0x220c",  null],  ["0x08686750",  "0x140",  null]],
+        ["274",  "0x0868f010",  "0x17c",  "0x08695118",  "0xc04",  ["0x0868f18c",  "0x1fac",  null],  ["0x08691138",  "0x2778",  null],  ["0x086938b0",  "0x1868",  null]],
+        ["27a",  "0x08698b38",  "0x1c8",  "0x0869ecdc",  "0x12d4",  ["0x08698d00",  "0x2378",  null],  ["0x0869b078",  "0x206c",  null],  ["0x0869d0e4",  "0x1bf8",  null]],
+        ["282", "0x086a3ce8", "0x184", null, null],
+        ["284",  "0x086a5e34",  "0x18c",  null,  null,  ["0x086a5fc0",  "0x1a84",  null],  ["0x086a7a44",  "0x97c",  null]],
+        ["288", "0x086aaa7c", "0x1c4", null, null],
+        ["28a", "0x086abb74", "0x14c", null, null],
+        ["291",  "0x086b5b88",  "0x1c0",  null,  null,  ["0x086b5d48",  "0x1358",  null]],
+        ["294",  "0x086b823c",  "0x1d4",  "0x086be7b8",  "0x99c",  ["0x086b8410",  "0x2090",  null],  ["0x086ba4a0",  "0x2100",  null],  ["0x086bc5a0",  "0x2218",  null]],
+        ["29a", "0x086bfc40", "0x1d4", null, null],
+        ["29c",  "0x086c116c",  "0x1e4",  "0x086c5150",  "0x568",  ["0x086c1350",  "0x13f4",  null],  ["0x086c2744",  "0x1798",  null],  ["0x086c3edc",  "0x1274",  null]],
+        ["2a2", "0x086c7438", "0x1a8", null, null],
+        ["2a4", "0x086c9798", "0x194", null, null],
+        ["2a6",  "0x086cab14",  "0x188",  "0x086cf33c",  "0x140",  ["0x086cac9c",  "0x1ed8",  null],  ["0x086ccb74",  "0x2674",  null],  ["0x086cf1e8",  "0x154",  null]],
+        ["2ac", "0x086d0150", "0x180", null, null],
+        ["2ae", "0x086d1b88", "0x184", null, null],
+        ["2b0", "0x086d379c", "0x17c", null, null],
+        ["2b2", "0x086d5654", "0x12c", null, null],
+        ["2b5", "0x086d779c", "0x188", null, null],
+        ["2b7", "0x086d8880", "0x198", null, null],
+        ["2b9", "0x086d9b24", "0x1bc", null, null],
+        ["2bb", "0x086dc784", "0x174", null, null],
+        ["2bd", "0x086ddce0", "0x1b8", null, null],
+        ["2bf", "0x086e07c0", "0x1a8", null, null],
+        ["2c1", "0x086e2d64", "0x190", null, null],
+        ["2c3", "0x086e6174", "0x1e0", null, null],
+        ["2c6", "0x086e88e8", "0x190", null, null],
+        ["2c8", "0x086eb4e8", "0x188", null, null],
+        ["2ca",  "0x086ec1bc",  "0x168",  "0x086f0e34",  "0x1378",  ["0x086ec324",  "0x2a14",  null],  ["0x086eed38",  "0x1c40",  null],  ["0x086f0978",  "0x4bc",  null]],
+        ["2d0", "0x086f36f0", "0x18c", null, null],
+        ["2d2", "0x086f4958", "0x190", null, null],
+        ["2da",  "0x086ffff8",  "0x14c",  "0x08705ae0",  "0x1e80",  ["0x08700144",  "0x2908",  null],  ["0x08702a4c",  "0x1c4c",  null],  ["0x08704698",  "0x1448",  null]],
+        ["2e0",  "0x087093f4",  "0x13c",  "0x0870ecf0",  "0x1b7c",  ["0x08709530",  "0x2734",  null],  ["0x0870bc64",  "0x1c44",  null],  ["0x0870d8a8",  "0x1448",  null]],
+        ["2e6", "0x08711a9c", "0x15c", null, null],
+        ["2ea", "0x087150f4", "0x16c", null, null],
+        ["2ee", "0x08718cf0", "0x19c", null, null],
+        ["2f0", "0x0871a4d8", "0x140", null, null],
+        ["2f3", "0x0871d71c", "0x17c", null, null],
+        ["2f5", "0x08720014", "0x198", null, null],
+        ["2fa", "0x0872934c", "0x1c0", null, null],
+        ["2fc", "0x0872a67c", "0x158", null, null],
+        ["2fe",  "0x0872b874",  "0x164",  null,  null,  ["0x0872b9d8",  "0x29cc",  null]],
+        ["302", "0x087318d0", "0xf8", null, null],
+        ["305", "0x08735d10", "0x174", null, null],
+        ["30d",  "0x087419d8",  "0x1e4",  "0x08747534",  "0x1610",  ["0x08741bbc",  "0x1e80",  null],  ["0x08743a3c",  "0x1ebc",  null],  ["0x087458f8",  "0x1c3c",  null]],
+        ["313", "0x0874a504", "0x174", null, null],
+        ["316", "0x0874d684", "0x1b8", null, null],
+        ["318", "0x0874f0ac", "0x180", null, null],
+        ["31b", "0x08752a34", "0x174", null, null],
+        ["31e", "0x08753970", "0x1a8", null, null],
+        ["322", "0x08758954", "0x1e8", null, null],
+        ["326", "0x087603dc", "0x108", null, null],
+        ["328", "0x087620b8", "0x170", null, null],
+        ["32a", "0x08763b68", "0x15c", null, null],
+        ["32f", "0x08769f08", "0x104", null, null],
+        ["337",  "0x08770350",  "0x1ac",  "0x08772c6c",  "0xe84",  ["0x087704fc",  "0x1858",  null],  ["0x08771d54",  "0xc70",  null],  ["0x087729c4",  "0x2a8",  null]],
+        ["33d", "0x08774c80", "0x1c8", null, null],
+        ["33f",  "0x08775194",  "0xc",  "0x08775570",  "0x140",  ["0x087751a0",  "0x150",  null],  ["0x087752f0",  "0x140",  null],  ["0x08775430",  "0x140",  null]],
+        ["345",  "0x087759fc",  "0xc",  "0x08775dd8",  "0x140",  ["0x08775a08",  "0x150",  null],  ["0x08775b58",  "0x140",  null],  ["0x08775c98",  "0x140",  null]],
+        ["34b",  "0x08776264",  "0xc",  "0x08776640",  "0x140",  ["0x08776270",  "0x150",  null],  ["0x087763c0",  "0x140",  null],  ["0x08776500",  "0x140",  null]],
+        ["351",  "0x08776acc",  "0xc",  "0x08776ea8",  "0x140",  ["0x08776ad8",  "0x150",  null],  ["0x08776c28",  "0x140",  null],  ["0x08776d68",  "0x140",  null]],
+        ["357",  "0x08777334",  "0xc",  "0x08777710",  "0x140",  ["0x08777340",  "0x150",  null],  ["0x08777490",  "0x140",  null],  ["0x087775d0",  "0x140",  null]],
+        ["35d",  "0x08777b9c",  "0xc",  "0x08777f78",  "0x140",  ["0x08777ba8",  "0x150",  null],  ["0x08777cf8",  "0x140",  null],  ["0x08777e38",  "0x140",  null]],
+        ["363",  "0x08778404",  "0xc",  "0x087787e0",  "0x140",  ["0x08778410",  "0x150",  null],  ["0x08778560",  "0x140",  null],  ["0x087786a0",  "0x140",  null]],
+        ["369",  "0x08778c6c",  "0xc",  "0x08779048",  "0x140",  ["0x08778c78",  "0x150",  null],  ["0x08778dc8",  "0x140",  null],  ["0x08778f08",  "0x140",  null]]
+      ]
+    },
+    {
+      "kind": "golden-sun-zero-skip-sprite-series",
+      "palette": "games/gs1/assets/graphics/0800777c.gbapal.png",
+      "resources": [
+        {
+          "id": "f4",
+          "address": "0x08443310",
+          "size": "0x2872",
+          "decoded_size": "0x393f",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "f5",
+          "address": "0x08445b84",
+          "size": "0x3222",
+          "decoded_size": "0x5a92",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "f6",
+          "address": "0x08448da8",
+          "size": "0x1702",
+          "decoded_size": "0x250a",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "f7",
+          "address": "0x0844a4ac",
+          "size": "0x2c9c",
+          "decoded_size": "0x43ec",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "f8",
+          "address": "0x0844d148",
+          "size": "0x193c",
+          "decoded_size": "0x261d",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "f9",
+          "address": "0x0844ea84",
+          "size": "0x260e",
+          "decoded_size": "0x3c35",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "fa",
+          "address": "0x08451094",
+          "size": "0x4b04",
+          "decoded_size": "0x6bbb",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "fb",
+          "address": "0x08455b98",
+          "size": "0x3e7e",
+          "decoded_size": "0x60c3",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "fc",
+          "address": "0x08459a18",
+          "size": "0x4490",
+          "decoded_size": "0x6999",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "fd",
+          "address": "0x0845dea8",
+          "size": "0x364a",
+          "decoded_size": "0x5112",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "fe",
+          "address": "0x084614f4",
+          "size": "0x3092",
+          "decoded_size": "0x443d",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "ff",
+          "address": "0x08464588",
+          "size": "0x340e",
+          "decoded_size": "0x475a",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "100",
+          "address": "0x08467998",
+          "size": "0x286a",
+          "decoded_size": "0x3e8c",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "101",
+          "address": "0x0846a204",
+          "size": "0xca8",
+          "decoded_size": "0x1737",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "102",
+          "address": "0x0846aeac",
+          "size": "0xe46",
+          "decoded_size": "0x1850",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "103",
+          "address": "0x0846bcf4",
+          "size": "0xe16",
+          "decoded_size": "0x1619",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "104",
+          "address": "0x0846cb0c",
+          "size": "0xcea",
+          "decoded_size": "0x1612",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "105",
+          "address": "0x0846d7f8",
+          "size": "0x2b48",
+          "decoded_size": "0x4662",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "106",
+          "address": "0x08470340",
+          "size": "0x2324",
+          "decoded_size": "0x4351",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "107",
+          "address": "0x08472664",
+          "size": "0x35f4",
+          "decoded_size": "0x4df1",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "108",
+          "address": "0x08475c58",
+          "size": "0x105a",
+          "decoded_size": "0x176a",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "109",
+          "address": "0x08476cb4",
+          "size": "0xd0a",
+          "decoded_size": "0x133a",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "10a",
+          "address": "0x084779c0",
+          "size": "0xa84",
+          "decoded_size": "0x12c0",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "10b",
+          "address": "0x08478444",
+          "size": "0xeb0",
+          "decoded_size": "0x1382",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "10c",
+          "address": "0x084792f4",
+          "size": "0x7de",
+          "decoded_size": "0xa1c",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "10d",
+          "address": "0x08479ad4",
+          "size": "0xc70",
+          "decoded_size": "0x10a0",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "10e",
+          "address": "0x0847a744",
+          "size": "0xc18",
+          "decoded_size": "0xff0",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "10f",
+          "address": "0x0847b35c",
+          "size": "0x774",
+          "decoded_size": "0xa00",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "110",
+          "address": "0x0847bad0",
+          "size": "0xc18",
+          "decoded_size": "0x12b7",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "111",
+          "address": "0x0847c6e8",
+          "size": "0xc78",
+          "decoded_size": "0x136b",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "112",
+          "address": "0x0847d360",
+          "size": "0x9ce",
+          "decoded_size": "0xd2f",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "113",
+          "address": "0x0847dd30",
+          "size": "0xc1c",
+          "decoded_size": "0xea7",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "114",
+          "address": "0x0847e94c",
+          "size": "0x26b4",
+          "decoded_size": "0x40ea",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "115",
+          "address": "0x08481000",
+          "size": "0x2712",
+          "decoded_size": "0x3ae5",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "116",
+          "address": "0x08483714",
+          "size": "0x4f54",
+          "decoded_size": "0x7720",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "117",
+          "address": "0x08488668",
+          "size": "0x18f0",
+          "decoded_size": "0x21cf",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "118",
+          "address": "0x08489f58",
+          "size": "0x2a3a",
+          "decoded_size": "0x3b3d",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "119",
+          "address": "0x0848c994",
+          "size": "0xbea",
+          "decoded_size": "0x1749",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "id": "11a",
+          "address": "0x0848d580",
+          "size": "0x4bb4",
+          "decoded_size": "0x7410",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "11b",
+          "address": "0x08492134",
+          "size": "0x236a",
+          "decoded_size": "0x3d81",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "11c",
+          "address": "0x084944a0",
+          "size": "0x19a0",
+          "decoded_size": "0x2a1a",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "11d",
+          "address": "0x08495e40",
+          "size": "0x3bfc",
+          "decoded_size": "0x4f89",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "11e",
+          "address": "0x08499a3c",
+          "size": "0xcc6",
+          "decoded_size": "0x1a37",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "11f",
+          "address": "0x0849a704",
+          "size": "0x40c6",
+          "decoded_size": "0x64c5",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "120",
+          "address": "0x0849e7cc",
+          "size": "0x36c6",
+          "decoded_size": "0x5bf2",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "121",
+          "address": "0x084a1e94",
+          "size": "0x4228",
+          "decoded_size": "0x5c2e",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "122",
+          "address": "0x084a60bc",
+          "size": "0x3da8",
+          "decoded_size": "0x546a",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "123",
+          "address": "0x084a9e64",
+          "size": "0x2b1c",
+          "decoded_size": "0x4718",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "124",
+          "address": "0x084ac980",
+          "size": "0x47f4",
+          "decoded_size": "0x7831",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "125",
+          "address": "0x084b1174",
+          "size": "0x4f80",
+          "decoded_size": "0x7fed",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "126",
+          "address": "0x084b60f4",
+          "size": "0x279c",
+          "decoded_size": "0x3b09",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "127",
+          "address": "0x084b8890",
+          "size": "0x1ec8",
+          "decoded_size": "0x2ecb",
+          "width": 64,
+          "height": 64
+        }
+      ]
+    },
+    {
+      "kind": "golden-sun-thumb-overlay-series",
+      "base": "0x02000000",
+      "resources": [
+        ["36f", "0x08779188", "0x460", "0x652"],
+        ["370", "0x087795e8", "0x11e0", "0x171a"],
+        ["371", "0x0877a7c8", "0x3554", "0x679c"],
+        ["372", "0x0877dd1c", "0x2b7c", "0x57f8"],
+        ["373", "0x08780898", "0x3ac8", "0x782c"],
+        ["374", "0x08784360", "0x1cdc", "0x3ed4"],
+        ["375", "0x0878603c", "0xed0", "0x20c2"],
+        ["376", "0x08786f0c", "0xef8", "0x2260"],
+        ["377", "0x08787e04", "0x14c4", "0x2d1c"],
+        ["378", "0x087892c8", "0x1970", "0x4190"],
+        ["379", "0x0878ac38", "0x674", "0xeb6"],
+        ["37a", "0x0878b2ac", "0x14c0", "0x2ddc"],
+        ["37b", "0x0878c76c", "0x1514", "0x2978"],
+        ["37c", "0x0878dc80", "0xc0", "0x158"],
+        ["37d", "0x0878dd40", "0xd8", "0x178"],
+        ["37e", "0x0878de18", "0xd0", "0x16c"],
+        ["37f", "0x0878dee8", "0x10a0", "0x269c"],
+        ["380", "0x0878ef88", "0x280c", "0x5190"],
+        ["381", "0x08791794", "0x1fd4", "0x3ab8"],
+        ["382", "0x08793768", "0x1358", "0x28f4"],
+        ["383", "0x08794ac0", "0x2c80", "0x64f8"],
+        ["384", "0x08797740", "0x250", "0x4d0"],
+        ["385", "0x08797990", "0xe1c", "0x1a40"],
+        ["386", "0x087987ac", "0x618", "0xbf0"],
+        ["387", "0x08798dc4", "0xbd4", "0x1500"],
+        ["388", "0x08799998", "0x124", "0x1f4"],
+        ["389", "0x08799abc", "0x101c", "0x18ec"],
+        ["38a", "0x0879aad8", "0x67c", "0xa14"],
+        ["38b", "0x0879b154", "0xf70", "0x1d88"],
+        ["38c", "0x0879c0c4", "0x674", "0xdf4"],
+        ["38d", "0x0879c738", "0x1658", "0x30b0"],
+        ["38e", "0x0879dd90", "0x830", "0xe98"],
+        ["38f", "0x0879e5c0", "0x1a50", "0x368c"],
+        ["390", "0x087a0010", "0x49c", "0x964"],
+        ["391", "0x087a04ac", "0x1b44", "0x3384"],
+        ["392", "0x087a1ff0", "0xc00", "0x10a4"],
+        ["393", "0x087a2bf0", "0xc00", "0x10d4"],
+        ["394", "0x087a37f0", "0xb80", "0x12b8"],
+        ["395", "0x087a4370", "0xea4", "0x1dbc"],
+        ["396", "0x087a5214", "0x15c4", "0x2dbc"],
+        ["397", "0x087a67d8", "0x30c", "0x586"],
+        ["398", "0x087a6ae4", "0x7b4", "0x10a4"],
+        ["399", "0x087a7298", "0x19f4", "0x31ec"],
+        ["39a", "0x087a8c8c", "0x17a4", "0x3328"],
+        ["39b", "0x087aa430", "0x1ea8", "0x2ffc"],
+        ["39c", "0x087ac2d8", "0x4128", "0x7018"],
+        ["39d", "0x087b0400", "0x1c78", "0x3c80"],
+        ["39e", "0x087b2078", "0x24e0", "0x5210"],
+        ["39f", "0x087b4558", "0x2110", "0x3e2c"],
+        ["3a0", "0x087b6668", "0x1128", "0x1d98"],
+        ["3a1", "0x087b7790", "0x78c", "0xdf4"],
+        ["3a2", "0x087b7f1c", "0xd94", "0x1de0"],
+        ["3a3", "0x087b8cb0", "0x1004", "0x1eb0"],
+        ["3a4", "0x087b9cb4", "0x29dc", "0x5238"],
+        ["3a5", "0x087bc690", "0x1820", "0x26c2"],
+        ["3a6", "0x087bdeb0", "0x16f8", "0x2690"],
+        ["3a7", "0x087bf5a8", "0x13d4", "0x2234"],
+        ["3a8", "0x087c097c", "0x26c8", "0x5134"],
+        ["3a9", "0x087c3044", "0x768", "0xf18"],
+        ["3aa", "0x087c37ac", "0xe60", "0x2184"],
+        ["3ab", "0x087c460c", "0x1368", "0x2550"],
+        ["3ac", "0x087c5974", "0x588", "0xcc8"],
+        ["3ad", "0x087c5efc", "0xcb0", "0x1e4c"],
+        ["3ae", "0x087c6bac", "0xff0", "0x2414"],
+        ["3af", "0x087c7b9c", "0x2aa0", "0x5b2c"],
+        ["3b0", "0x087ca63c", "0xc84", "0x191c"],
+        ["3b1", "0x087cb2c0", "0x3aac", "0x7f84"],
+        ["3b2", "0x087ced6c", "0x211c", "0x3db4"],
+        ["3b3", "0x087d0e88", "0x2258", "0x36cc"],
+        ["3b4", "0x087d30e0", "0x1a14", "0x2f84"],
+        ["3b5", "0x087d4af4", "0xd44", "0x1d48"],
+        ["3b6", "0x087d5838", "0xbe0", "0x1dec"],
+        ["3b7", "0x087d6418", "0x1274", "0x206a"],
+        ["3b8", "0x087d768c", "0x1f50", "0x5b38"],
+        ["3b9", "0x087d95dc", "0x1aec", "0x41b8"],
+        ["3ba", "0x087db0c8", "0x2ac0", "0x4750"],
+        ["3bb", "0x087ddb88", "0x2da0", "0x4bf0"],
+        ["3bc", "0x087e0928", "0x34e0", "0x5b78"],
+        ["3bd", "0x087e3e08", "0x2564", "0x4904"],
+        ["3be", "0x087e636c", "0x1208", "0x1d94"],
+        ["3bf", "0x087e7574", "0x39b4", "0x7774"],
+        ["3c0", "0x087eaf28", "0xed4", "0x1a00"],
+        ["3c1", "0x087ebdfc", "0x3a0", "0x8b4"],
+        ["3c2", "0x087ec19c", "0x7cc", "0x13cc"],
+        ["3c3", "0x087ec968", "0x738", "0xe9c"],
+        ["3c4", "0x087ed0a0", "0x2454", "0x417c"],
+        ["3c5", "0x087ef4f4", "0x1f98", "0x3cf4"],
+        ["3c6", "0x087f148c", "0xd2c", "0x20e8"],
+        ["3c7", "0x087f21b8", "0xd5c", "0x21a8"],
+        ["3c8", "0x087f2f14", "0x3f50", "0x780c"],
+        ["3c9", "0x087f6e64", "0x3688", "0x6760"],
+        ["3ca", "0x087fa4ec", "0xfbc", "0x1af8"],
+        ["3cb", "0x087fb4a8", "0x1170", "0x1f4c"],
+        ["3cc", "0x087fc618", "0x108", "0x2a0"],
+        ["3cd", "0x087fc720", "0x600", "0xad0"]
+      ]
+    },
+    {
+      "kind": "golden-sun-prefill-lz-series",
+      "resources": [
+        {
+          "id": "1a",
+          "address": "0x083357f4",
+          "size": "0x1910",
+          "decoded_size": "0x9692"
+        },
+        {
+          "id": "1b",
+          "address": "0x08337104",
+          "size": "0x3b04",
+          "decoded_size": "0x964d"
+        },
+        {
+          "id": "40",
+          "address": "0x083c3cf8",
+          "size": "0x1334",
+          "decoded_size": "0x6a98"
+        },
+        {
+          "id": "41",
+          "address": "0x083c502c",
+          "size": "0x64c",
+          "decoded_size": "0x1003"
+        },
+        {
+          "id": "43",
+          "address": "0x083c8498",
+          "size": "0x3024",
+          "decoded_size": "0x7f38"
+        },
+        {
+          "id": "51",
+          "address": "0x083cfc00",
+          "size": "0x3d0",
+          "decoded_size": "0x5ed"
+        },
+        {
+          "id": "53",
+          "address": "0x083d0870",
+          "size": "0x4a4",
+          "decoded_size": "0x7d2"
+        },
+        {
+          "id": "54",
+          "address": "0x083d0d14",
+          "size": "0x534",
+          "decoded_size": "0x86a"
+        },
+        {
+          "id": "55",
+          "address": "0x083d1248",
+          "size": "0xc84",
+          "decoded_size": "0x2038"
+        },
+        {
+          "id": "57",
+          "address": "0x083d2324",
+          "size": "0x106c",
+          "decoded_size": "0x1ddc"
+        },
+        {
+          "id": "59",
+          "address": "0x083d4358",
+          "size": "0x25c",
+          "decoded_size": "0x441"
+        },
+        {
+          "id": "5a",
+          "address": "0x083d45b4",
+          "size": "0x175c",
+          "decoded_size": "0x3601"
+        },
+        {
+          "id": "5b",
+          "address": "0x083d5d10",
+          "size": "0x300",
+          "decoded_size": "0x45c"
+        },
+        {
+          "id": "62",
+          "address": "0x083d8a24",
+          "size": "0x1bd4",
+          "decoded_size": "0x3c7f"
+        },
+        {
+          "id": "63",
+          "address": "0x083da5f8",
+          "size": "0x1c00",
+          "decoded_size": "0x4a1b"
+        },
+        {
+          "id": "68",
+          "address": "0x083dcb04",
+          "size": "0x5e0",
+          "decoded_size": "0xa16"
+        },
+        {
+          "id": "6b",
+          "address": "0x083de298",
+          "size": "0x540",
+          "decoded_size": "0x10b3"
+        },
+        {
+          "id": "6d",
+          "address": "0x083df018",
+          "size": "0x390",
+          "decoded_size": "0x6ca"
+        },
+        {
+          "id": "6e",
+          "address": "0x083df3a8",
+          "size": "0x1258",
+          "decoded_size": "0x42d2"
+        },
+        {
+          "id": "6f",
+          "address": "0x083e0600",
+          "size": "0xaf0",
+          "decoded_size": "0x102f"
+        },
+        {
+          "id": "70",
+          "address": "0x083e10f0",
+          "size": "0xdd8",
+          "decoded_size": "0x1ad4"
+        },
+        {
+          "id": "78",
+          "address": "0x083e3d18",
+          "size": "0x4c8",
+          "decoded_size": "0x9f4"
+        },
+        {
+          "id": "79",
+          "address": "0x083e41e0",
+          "size": "0x3dc",
+          "decoded_size": "0x66e"
+        },
+        {
+          "id": "7b",
+          "address": "0x083e4968",
+          "size": "0xad4",
+          "decoded_size": "0x1653"
+        },
+        {
+          "id": "7d",
+          "address": "0x083e54c0",
+          "size": "0x144c",
+          "decoded_size": "0x3006"
+        },
+        {
+          "id": "7e",
+          "address": "0x083e690c",
+          "size": "0xd9c",
+          "decoded_size": "0x2b6c"
+        },
+        {
+          "id": "7f",
+          "address": "0x083e76a8",
+          "size": "0x21c",
+          "decoded_size": "0x3f7"
+        },
+        {
+          "id": "80",
+          "address": "0x083e78c4",
+          "size": "0x2fc",
+          "decoded_size": "0x53d"
+        },
+        {
+          "id": "81",
+          "address": "0x083e7bc0",
+          "size": "0x3a0",
+          "decoded_size": "0x6e0"
+        },
+        {
+          "id": "82",
+          "address": "0x083e7f60",
+          "size": "0x16b0",
+          "decoded_size": "0x27c8"
+        },
+        {
+          "id": "83",
+          "address": "0x083e9610",
+          "size": "0x760",
+          "decoded_size": "0x1a2f"
+        },
+        {
+          "id": "85",
+          "address": "0x083eab3c",
+          "size": "0xc74",
+          "decoded_size": "0x144a"
+        },
+        {
+          "id": "86",
+          "address": "0x083eb7b0",
+          "size": "0x84",
+          "decoded_size": "0xcc"
+        },
+        {
+          "id": "88",
+          "address": "0x083eb8b8",
+          "size": "0x3e8",
+          "decoded_size": "0x766"
+        },
+        {
+          "id": "89",
+          "address": "0x083ebca0",
+          "size": "0x558",
+          "decoded_size": "0xa34"
+        },
+        {
+          "id": "8a",
+          "address": "0x083ec1f8",
+          "size": "0xc18",
+          "decoded_size": "0x1296"
+        },
+        {
+          "id": "8b",
+          "address": "0x083ece10",
+          "size": "0xcd4",
+          "decoded_size": "0x1230"
+        },
+        {
+          "id": "8c",
+          "address": "0x083edae4",
+          "size": "0x8a0",
+          "decoded_size": "0xc73"
+        },
+        {
+          "id": "8f",
+          "address": "0x083ee9ec",
+          "size": "0x3a4",
+          "decoded_size": "0x7b3"
+        },
+        {
+          "id": "91",
+          "address": "0x083eefec",
+          "size": "0x3b8",
+          "decoded_size": "0x651"
+        },
+        {
+          "id": "92",
+          "address": "0x083ef3a4",
+          "size": "0x26c",
+          "decoded_size": "0x43c"
+        },
+        {
+          "id": "93",
+          "address": "0x083ef610",
+          "size": "0x440",
+          "decoded_size": "0x705"
+        },
+        {
+          "id": "94",
+          "address": "0x083efa50",
+          "size": "0x2b4",
+          "decoded_size": "0x436"
+        },
+        {
+          "id": "95",
+          "address": "0x083efd04",
+          "size": "0xb88",
+          "decoded_size": "0x1830"
+        },
+        {
+          "id": "97",
+          "address": "0x083f1e50",
+          "size": "0xa6c",
+          "decoded_size": "0xfcc"
+        },
+        {
+          "id": "a0",
+          "address": "0x083f5cb8",
+          "size": "0x84",
+          "decoded_size": "0x136"
+        },
+        {
+          "id": "a7",
+          "address": "0x083f6c14",
+          "size": "0x624",
+          "decoded_size": "0x961"
+        },
+        {
+          "id": "a8",
+          "address": "0x083f7238",
+          "size": "0x868",
+          "decoded_size": "0x1006"
+        },
+        {
+          "id": "a9",
+          "address": "0x083f7aa0",
+          "size": "0x424",
+          "decoded_size": "0x6dc"
+        },
+        {
+          "id": "ad",
+          "address": "0x083f9af8",
+          "size": "0x198c",
+          "decoded_size": "0x6c18"
+        },
+        {
+          "id": "af",
+          "address": "0x083fb870",
+          "size": "0x12e8",
+          "decoded_size": "0x2131"
+        },
+        {
+          "id": "b1",
+          "address": "0x083fd7e4",
+          "size": "0x4d0",
+          "decoded_size": "0xbf6"
+        },
+        {
+          "id": "b2",
+          "address": "0x083fdcb4",
+          "size": "0x694",
+          "decoded_size": "0x118c"
+        },
+        {
+          "id": "b4",
+          "address": "0x083fed7c",
+          "size": "0xbfc",
+          "decoded_size": "0x17f4"
+        },
+        {
+          "id": "b8",
+          "address": "0x0840175c",
+          "size": "0x640",
+          "decoded_size": "0xb0e"
+        },
+        {
+          "id": "b9",
+          "address": "0x08401d9c",
+          "size": "0x1588",
+          "decoded_size": "0x250a"
+        },
+        {
+          "id": "bc",
+          "address": "0x084036f4",
+          "size": "0x5a0",
+          "decoded_size": "0xbda"
+        },
+        {
+          "id": "bd",
+          "address": "0x08403c94",
+          "size": "0x334",
+          "decoded_size": "0x551"
+        },
+        {
+          "id": "c1",
+          "address": "0x08406988",
+          "size": "0xda0",
+          "decoded_size": "0x1f6d"
+        },
+        {
+          "id": "c2",
+          "address": "0x08407728",
+          "size": "0x1200",
+          "decoded_size": "0x1bd8"
+        },
+        {
+          "id": "c3",
+          "address": "0x08408928",
+          "size": "0x7a4",
+          "decoded_size": "0xc28"
+        },
+        {
+          "id": "cc",
+          "address": "0x0840bfcc",
+          "size": "0x6b8",
+          "decoded_size": "0xc11"
+        },
+        {
+          "id": "cd",
+          "address": "0x0840c684",
+          "size": "0x914",
+          "decoded_size": "0xd5c"
+        },
+        {
+          "id": "cf",
+          "address": "0x0840eacc",
+          "size": "0x1050",
+          "decoded_size": "0x1742"
+        },
+        {
+          "id": "d0",
+          "address": "0x0840fb1c",
+          "size": "0x6b4",
+          "decoded_size": "0xaf1"
+        }
+      ]
+    },
+    {
+      "kind": "golden-sun-standalone-tile-series",
+      "resources": [
+        {
+          "id": "1e7",
+          "address": "0x085bd20c",
+          "size": "0x2b84"
+        },
+        {
+          "id": "1e8",
+          "address": "0x085bfd90",
+          "size": "0x1d70"
+        },
+        {
+          "id": "1e9",
+          "address": "0x085c1b00",
+          "size": "0x1044"
+        },
+        {
+          "id": "1ea",
+          "address": "0x085c2b44",
+          "size": "0xe24"
+        },
+        {
+          "id": "1f5",
+          "address": "0x085cf040",
+          "size": "0x1148"
+        },
+        {
+          "id": "28e",
+          "address": "0x086addd0",
+          "size": "0x2c44"
+        },
+        {
+          "id": "28f",
+          "address": "0x086b0a14",
+          "size": "0x23e4"
+        },
+        {
+          "id": "290",
+          "address": "0x086b2df8",
+          "size": "0x1f88"
+        },
+        {
+          "id": "2d6",
+          "address": "0x086f673c",
+          "size": "0x29e0"
+        },
+        {
+          "id": "2d7",
+          "address": "0x086f911c",
+          "size": "0x1c94"
+        },
+        {
+          "id": "2d8",
+          "address": "0x086fadb0",
+          "size": "0x1898"
+        },
+        {
+          "id": "2d9",
+          "address": "0x086fc648",
+          "size": "0x1908"
+        },
+        {
+          "id": "309",
+          "address": "0x08737ad0",
+          "size": "0x2618"
+        },
+        {
+          "id": "30a",
+          "address": "0x0873a0e8",
+          "size": "0x27b0"
+        },
+        {
+          "id": "30b",
+          "address": "0x0873c898",
+          "size": "0x106c"
+        },
+        {
+          "id": "30c",
+          "address": "0x0873d904",
+          "size": "0x1a28"
+        },
+        {
+          "id": "333",
+          "address": "0x0876ab10",
+          "size": "0x29c"
+        },
+        {
+          "id": "334",
+          "address": "0x0876adac",
+          "size": "0x2168"
+        },
+        {
+          "id": "335",
+          "address": "0x0876cf14",
+          "size": "0x1ef4"
+        },
+        {
+          "id": "336",
+          "address": "0x0876ee08",
+          "size": "0x5b4"
+        }
+      ]
+    },
+    {
+      "kind": "golden-sun-color-table-series",
+      "resources": [
+        {
+          "id": "46",
+          "address": "0x083ccf04",
+          "size": "0x84"
+        },
+        {
+          "id": "47",
+          "address": "0x083ccf88",
+          "size": "0x84"
+        },
+        {
+          "id": "48",
+          "address": "0x083cd00c",
+          "size": "0x84"
+        },
+        {
+          "id": "60",
+          "address": "0x083d855c",
+          "size": "0x84"
+        },
+        {
+          "id": "77",
+          "address": "0x083e3c94",
+          "size": "0x84"
+        },
+        {
+          "id": "7c",
+          "address": "0x083e543c",
+          "size": "0x84"
+        },
+        {
+          "id": "87",
+          "address": "0x083eb834",
+          "size": "0x84"
+        },
+        {
+          "id": "9f",
+          "address": "0x083f5c34",
+          "size": "0x84"
+        },
+        {
+          "id": "a1",
+          "address": "0x083f5d3c",
+          "size": "0x84"
+        },
+        {
+          "id": "a2",
+          "address": "0x083f5dc0",
+          "size": "0x84"
+        },
+        {
+          "id": "a3",
+          "address": "0x083f5e44",
+          "size": "0x84"
+        },
+        {
+          "id": "a4",
+          "address": "0x083f5ec8",
+          "size": "0x84"
+        },
+        {
+          "id": "c8",
+          "address": "0x0840b958",
+          "size": "0x84"
+        },
+        {
+          "id": "ca",
+          "address": "0x0840bec4",
+          "size": "0x84"
+        },
+        {
+          "id": "cb",
+          "address": "0x0840bf48",
+          "size": "0x84"
+        }
+      ]
+    },
+    {
+      "kind": "golden-sun-sentou-resource-series",
+      "index": "games/gs1/assets/graphics/sentou_index.json"
+    },
+    {
+      "kind": "golden-sun-tokushu-map-series",
+      "index": "games/gs1/assets/maps/tokushu_index.json"
+    },
+    {
+      "kind": "golden-sun-chiiki-map-series",
+      "index": "games/gs1/assets/maps/chiiki_index.json"
+    },
+    {
+      "kind": "golden-sun-final-battle-overlay-series",
+      "source": "games/gs1/assets/code/resource_3ce_layout.json"
+    },
+    {
+      "kind": "golden-sun-encounter-data-series",
+      "directory": "games/gs1/assets/data/encounter_data"
+    }
+  ]
+}

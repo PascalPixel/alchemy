@@ -1,28 +1,50 @@
 <p align="center">
-  <img src="assets/readme/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
-  <img src="assets/readme/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
-  <img src="assets/readme/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
-  <img src="assets/readme/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
+  <img src="games/gs1/assets/readme/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
+  <img src="games/gs1/assets/readme/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
+  <img src="games/gs1/assets/readme/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
+  <img src="games/gs1/assets/readme/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
 </p>
 
 <h1 align="center">Alchemy</h1>
 
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-Alchemy is an unofficial clean-room reconstruction of the six Japanese and
-European releases of _Golden Sun_ for the Game Boy Advance. The Japanese ROM
-is the canonical source base; the English ROM is currently the first complete
-derived build target. The project documents and rebuilds the program, assets,
-and data needed to study the original game and its regional construction.
+Alchemy is an unofficial clean-room reconstruction of _Golden Sun_ and
+_Golden Sun: The Lost Age_ for the Game Boy Advance: two games, each with
+Japanese, English, German, Spanish, French, and Italian editions. The Japanese
+edition of each game is its canonical source base. The English _Golden Sun_
+ROM is currently the first complete derived build target.
 
-Everything here is reconstructed from the original cartridge itself. No other
-Golden Sun project supplies code, names, or game knowledge to this one.
+The historical reconstructions are also the preservation base for Alchemy's
+eventual third product: one reintegrated game spanning both games' content.
+That integration lives separately from the twelve historical targets, so it
+cannot blur or weaken their reconstruction evidence.
+
+Everything here is reconstructed from the approved cartridges themselves. No
+other Golden Sun project supplies code, names, or game knowledge to this one.
 
 The project is a decompilation and preservation effort, not a remake, ROM hack,
 emulator, or game distribution. No ROM is distributed by this repository.
 _Golden Sun_ and its original material are
 copyright Nintendo and Camelot Software Planning. Alchemy is not affiliated
 with or endorsed by either company.
+
+## Repository shape
+
+The layout follows the useful pret convention: one shared source tree per
+game, selected per edition at build time, rather than six copied source trees.
+
+- `games/gs1/` contains the shared GS1 source, retained assembly, source
+  assets, headers, reconstruction corpus, semantic records, and metrics.
+- `games/gs2/` is the equivalent independent product tree for GS2.
+- `games/alchemy/` contains only the future reintegration. It has no reference
+  ROM and never counts as a historical byte-exact target.
+
+Each historical target has its own edition define and isolated output under
+`out/<game>-<edition>/`. `make targets` proves that all twelve source routes
+compile. That is deliberately weaker than reproduction: only `gs1-en` has its
+complete link, ownership, asset, and byte-identical verification surfaces
+installed today. `make verify` remains that authoritative full-ROM gate.
 
 ## DONE: Currently 36%
 
@@ -64,14 +86,14 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](assets/readme/gs1-en-core.svg?v=4f5393356dfef7fb)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=4f5393356dfef7fb)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](assets/readme/gs1-en-overlays.svg?v=52a66db6dc37008b)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=52a66db6dc37008b)
 
 ### Images and data
 
@@ -82,7 +104,7 @@ or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
 ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
 same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](assets/readme/gs1-en-images.svg?v=792cd3c89cb9f217)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=792cd3c89cb9f217)
 
 ### Music and sound
 
@@ -93,7 +115,7 @@ Every file now carries a name instead of a ROM index, but read the tier as
 `music_walking_passage_quintet_full`, `effect_sample_large_oneshot` — and none of
 them claims a title or a scene. Nothing was taken from outside the ROM.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](assets/readme/gs1-en-music.svg?v=b40d538dfe095aa0)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=b40d538dfe095aa0)
 
 ## Contributing and project status
 

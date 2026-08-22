@@ -126,7 +126,7 @@ pub struct Owner {
 }
 
 fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
-    let Some(source) = tree.read(&format!("assets/code/{name}")) else {
+    let Some(source) = tree.read(&format!("games/gs1/assets/code/{name}")) else {
         return Vec::new();
     };
     let Some(_id) = overlay_name(name) else {
@@ -178,7 +178,7 @@ fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
 
 fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
-        .list("assets/code")
+        .list("games/gs1/assets/code")
         .into_iter()
         .filter_map(|name| overlay_name(&name).map(|id| (id, name)))
         .collect();
@@ -188,7 +188,7 @@ fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
 
 fn exact_main(tree: &SourceTree, executable: &[Span]) -> Vec<Span> {
     let value = tree
-        .read("out/full/claimed/manifest.json")
+        .read("out/gs1-en/full/claimed/manifest.json")
         .and_then(|s| serde_json::from_str::<Value>(&s).ok());
     let mut spans = Vec::new();
     if let Some(manifest) = value {
@@ -209,7 +209,7 @@ fn exact_main(tree: &SourceTree, executable: &[Span]) -> Vec<Span> {
 }
 
 fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) {
-    let directory = "recon/gs1/en/main";
+    let directory = "games/gs1/recon/en/main";
     let mut spans = Vec::new();
     let mut sources = 0;
     for name in tree.list(directory) {
@@ -248,9 +248,9 @@ fn candidate_overlay(
     tree: &SourceTree,
     executable: &std::collections::BTreeMap<String, Vec<Span>>,
 ) -> (std::collections::BTreeMap<String, Vec<Span>>, usize) {
-    let directory = "recon/gs1/en/overlays";
+    let directory = "games/gs1/recon/en/overlays";
     let reviewed = tree
-        .read("semantic/regions.json")
+        .read("games/gs1/semantic/regions.json")
         .and_then(|source| serde_json::from_str::<Value>(&source).ok())
         .unwrap_or(Value::Null);
     let mut extents = std::collections::BTreeMap::new();
@@ -318,7 +318,7 @@ fn exact_overlay(
         let list: Vec<_> = overlay_owners(tree, name)
             .into_iter()
             .map(|mut owner| {
-                let path = format!("exact/{id}_c_{:08x}.c", owner.entry);
+                let path = format!("games/gs1/src/{id}_c_{:08x}.c", owner.entry);
                 if !tree.read(&path).is_some_and(|source| canonical(&source)) {
                     owner.spans.clear();
                 }
@@ -340,7 +340,7 @@ fn exact_overlay(
 fn permanent_main(tree: &SourceTree) -> Vec<Span> {
     let mut spans = Vec::new();
     if let Some(value) = tree
-        .read("out/full/asm/manifest.json")
+        .read("out/gs1-en/full/asm/manifest.json")
         .and_then(|s| serde_json::from_str::<Value>(&s).ok())
     {
         for region in array(&value, "regions") {
@@ -371,7 +371,7 @@ fn permanent_main(tree: &SourceTree) -> Vec<Span> {
         }
     }
     if let Some(value) = tree
-        .read("semantic/main-regions.json")
+        .read("games/gs1/semantic/main-regions.json")
         .and_then(|s| serde_json::from_str::<Value>(&s).ok())
     {
         for region in array(&value, "non_c_ranges") {
@@ -635,7 +635,7 @@ struct Stream {
 }
 fn streams(tree: &SourceTree) -> Vec<Stream> {
     let Some(manifest) = tree
-        .read("assets/manifest.json")
+        .read("games/gs1/assets/manifest.json")
         .and_then(|s| serde_json::from_str::<Value>(&s).ok())
     else {
         return Vec::new();
@@ -669,7 +669,7 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
 
 fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     let Some(manifest) = tree
-        .read("out/full/assets/manifest.json")
+        .read("out/gs1-en/full/assets/manifest.json")
         .and_then(|s| serde_json::from_str::<Value>(&s).ok())
     else {
         return vec![Tile {
@@ -787,9 +787,10 @@ fn entry(bytes: i64, total: i64) -> Value {
 
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
     let rom = rom_size(&options.target)?;
+    let game = options.target.split('-').next().unwrap_or("gs1");
     let inventory = read_json(
         options.exact,
-        &format!("metrics/{}-executable.json", options.target),
+        &format!("games/{game}/metrics/{}-executable.json", options.target),
     )?;
     if text(&inventory, "audit") != "complete" {
         return Err(format!(
@@ -1036,7 +1037,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                 ),
                 (
                     "main_tracked_census",
-                    Value::String("recon/gs1/en/main/*.json".into()),
+                    Value::String("games/gs1/recon/en/main/*.json".into()),
                 ),
                 ("tracked_superseded_bytes", num(0)),
                 ("tracked_outside_extent_bytes", num(0)),
@@ -1060,7 +1061,10 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     if options.validate_tracked_progress {
         if let Some(tracked) = options
             .exact
-            .read(&format!("metrics/{}-progress.json", options.target))
+            .read(&format!(
+                "games/{game}/metrics/{}-progress.json",
+                options.target
+            ))
             .and_then(|s| serde_json::from_str::<Value>(&s).ok())
         {
             let tm = get(

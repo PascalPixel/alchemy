@@ -1,0 +1,44 @@
+{
+  "format": 2,
+  "kind": "gba-cartridge-header-standard-fields",
+  "address": "0x08000000",
+  "standard": {
+    "logo": {
+      "codec": "gba-bios-huffman-logo",
+      "source": "games/gs1/assets/graphics/system_nintendo_logo.1bpp.png",
+      "width": 104,
+      "height": 16,
+      "bpp": 1
+    },
+    "fixed_value": "0x96",
+    "unit_code": "0x00",
+    "device_type": "0x00",
+    "reserved_zero_ranges": [
+      {
+        "address": "0x080000b5",
+        "size": 7
+      },
+      {
+        "address": "0x080000be",
+        "size": 2
+      }
+    ]
+  },
+  "edition": {
+    "entry_branch": {
+      "instruction_set": "arm",
+      "operation": "b",
+      "target": "0x080003c0"
+    },
+    "title": {
+      "text": "Golden_Sun_A",
+      "padding": "nul",
+      "field_bytes": 12
+    },
+    "game_code": "AGSE",
+    "maker_code": "01",
+    "software_version": 0,
+    "complement_checksum": "derived"
+  },
+  "unresolved_fields": []
+}

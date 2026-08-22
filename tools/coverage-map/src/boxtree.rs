@@ -128,7 +128,7 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         height: 258.0,
     };
     let mut out = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 540 304\" width=\"540\" height=\"304\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{} box tree, {} band\">", description, edge)];
-    if let Ok(bytes) = std::fs::read(root().join("assets/fonts/weyard.otf")) {
+    if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
         out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}.rectangle-label{{font-size:8px;}}</style></defs>", base64(&bytes)));
     } else {
         out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.rectangle-label{font-size:8px}</style>".into());
@@ -212,7 +212,7 @@ pub fn svg_cache_version(svg: &str) -> String {
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
-        .join("assets/readme")
+        .join("games/gs1/assets/readme")
         .join(format!("{target}-{tree}.svg"))
 }
 pub fn readme_path() -> std::path::PathBuf {

@@ -3,7 +3,7 @@
 //! Absorbed the former `resource` and `data` hosts: three binaries for one job
 //! was the same sprawl this consolidation exists to remove.
 //!
-//! These tools ran once, produced the 11,636 files committed under `assets/`,
+//! These tools ran once, produced the 11,636 files committed under `games/gs1/assets/`,
 //! and have not been needed since. They are NOT deletable: in a clean-room
 //! decompilation the extractor is the provenance record proving an asset was
 //! derived from the ROM by a documented transform. They simply do not each need

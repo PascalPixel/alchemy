@@ -423,11 +423,14 @@ tools/compiler/target/release/compiler permute --help
 
 Use explicit `PERM_*` choices or semantics-preserving AST mutations. Mixed
 guided and unguided seeds are reasonable after a heat-guided run stagnates.
-Keep every run under ignored output, read a winner's complete diff, and rescore
-it independently before harvesting it. When a search has a frozen local
-invariant, apply that admission check to every retained winner; a lower internal
-score that breaks the invariant is a rejected candidate. A lower internal score
-is not proof of semantic correctness.
+Keep every run under ignored output. Each strict improvement is published
+immediately as `best.c` (or `best-UNVERIFIED.c` in classic mode) with a running
+`report.json`, so a long or interrupted run does not hide its best source until
+shutdown. Read a winner's complete diff and rescore it independently before
+harvesting it. When a search has a frozen local invariant, apply that admission
+check to every retained winner; a lower internal score that breaks the invariant
+is a rejected candidate. A lower internal score is not proof of semantic
+correctness.
 
 ### 7. Adopt only exact work
 

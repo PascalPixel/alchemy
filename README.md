@@ -46,7 +46,7 @@ compile. That is deliberately weaker than reproduction: only `gs1-en` has its
 complete link, ownership, asset, and byte-identical verification surfaces
 installed today. `make verify` remains that authoritative full-ROM gate.
 
-## DONE: Currently 36%
+## DONE: Currently 40%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus code that is permanently assembly. Nothing else counts.
@@ -86,14 +86,14 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=4f5393356dfef7fb)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=4967d7ec8baf4a71)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=52a66db6dc37008b)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=a86ed4ebf6d1b116)
 
 ### Images and data
 

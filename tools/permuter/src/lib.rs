@@ -45,11 +45,12 @@ pub fn run(args: Vec<String>) -> Result<(), String> {
 fn self_test() -> Result<(), String> {
     backend::self_test()?;
     cemit::self_test()?;
+    astpass::self_test()?;
     perm::self_test()?;
     randomize::self_test()?;
     options::self_test()?;
     compile::self_test()?;
     runner::self_test()?;
-    println!("self-test=ok tool=permuter checks=7");
+    println!("self-test=ok tool=permuter checks=8");
     Ok(())
 }

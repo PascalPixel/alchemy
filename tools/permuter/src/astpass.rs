@@ -2699,7 +2699,7 @@ pub fn preprocess_for_ast(source: &str) -> Result<String, String> {
             "alchemy-gcc/dist/",
             "-E",
             "-P",
-            "-Iinclude",
+            "-Igames/gs1/include",
             "-D__attribute__(x)=",
         ])
         .arg(&input)
@@ -2713,4 +2713,12 @@ pub fn preprocess_for_ast(source: &str) -> Result<String, String> {
         ));
     }
     String::from_utf8(out.stdout).map_err(|e| format!("xgcc -E output: {e}"))
+}
+
+pub fn self_test() -> Result<(), String> {
+    let source = preprocess_for_ast("#include \"types.h\"\ns32 permuter_ast_probe;\n")?;
+    if !source.contains("permuter_ast_probe") {
+        return Err("AST preprocessor dropped the probe declaration".into());
+    }
+    Ok(())
 }

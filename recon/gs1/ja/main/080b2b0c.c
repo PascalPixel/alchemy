@@ -66,6 +66,10 @@ struct AffinityPair {
 #define BATTLE_ATTACK_HP cur
 #endif
 
+#ifndef BATTLE_HP_HEAL_GATE
+#define BATTLE_HP_HEAL_GATE(cur)
+#endif
+
 #ifndef BATTLE_DAMAGE_BLOCKED
 #define BATTLE_DAMAGE_BLOCKED() 0
 #endif
@@ -224,6 +228,25 @@ struct AffinityPair {
         guard = BATTLE_GUARD_VALUE(target);                                   \
         BATTLE_GUARD_DAMAGE();                                                \
     }
+
+#ifndef BATTLE_ATTACK_REPORT
+#define BATTLE_ATTACK_REPORT()                                               \
+    {                                                                         \
+        BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);                \
+        BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                       \
+        BATTLE_ATTACK_HP -= dmg;                                              \
+        BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);                            \
+    }
+#endif
+
+#ifndef BATTLE_PP_DAMAGE_LIMIT
+#define BATTLE_PP_DAMAGE_LIMIT(dmg, pp)
+#endif
+
+#ifndef BATTLE_DAMAGE_ROUND_DECL
+#define BATTLE_DAMAGE_ROUND_DECL
+#define BATTLE_DAMAGE_ROUND pass
+#endif
 
 /* 文面を変数に決めてから1回だけ積む形。呼び先を挟んで統合できない共有尾は
  * ソース側の変数だった(crossjump は bl を跨いで一致を探せない)。 */
@@ -755,10 +778,7 @@ after_power:
                 }
                 pass++;
             } while (pass <= 1);
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            BATTLE_ATTACK_HP -= dmg;
-            BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
+            BATTLE_ATTACK_REPORT();
             {
                 s32 text;
 
@@ -808,6 +828,7 @@ after_power:
             APPLY_GUARD();
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
+            BATTLE_PP_DAMAGE_LIMIT(dmg, pp);
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
@@ -835,6 +856,7 @@ after_power:
             if (action->power == 0)
                 break;
             cur = target->hp;
+            BATTLE_HP_HEAL_GATE(cur);
             dmg = action->power;
             dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * HpHealFalloff[offset], 100);
@@ -894,15 +916,17 @@ after_power:
         case DK_HP_DMG_7:
         case DK_HP_DMG_9:
         {
+            BATTLE_DAMAGE_ROUND_DECL;
+
             if (BATTLE_DAMAGE_BLOCKED())
                 break;
             if (action->power == 0)
                 break;
             cur = target->hp;
-            pass = 1;
+            BATTLE_DAMAGE_ROUND = 1;
             do {
                 TAKE_BONUS();
-                if (pass == 0)
+                if (BATTLE_DAMAGE_ROUND == 0)
                     bonus = 0;
                 dmg = action->power;
                 BATTLE_POWER_BONUS(dmg);
@@ -924,8 +948,8 @@ after_power:
                 if (BATTLE_DAMAGE_KO_CONDITION(cur, dmg)) {
                     dmg = cur;
                 }
-                pass++;
-            } while (pass <= 1);
+                BATTLE_DAMAGE_ROUND++;
+            } while (BATTLE_DAMAGE_ROUND <= 1);
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
@@ -1130,6 +1154,9 @@ dealt = target->hp - cur;
         s32 heal;
         u16 *stat_ptr;
 
+#ifdef BATTLE_HEAL_PREP
+        BATTLE_HEAL_PREP(old, heal, maxu, maxv, stat_ptr);
+#else
         stat_ptr = (u16 *)&target->hp;
         old = *stat_ptr--;
         heal = *(s16 *)(stat_ptr + 1);
@@ -1137,6 +1164,7 @@ dealt = target->hp - cur;
         maxu = *stat_ptr--;
         maxv = *(s16 *)(stat_ptr + 1);
         BATTLE_HEAL_AMOUNT(heal, maxv);
+#endif
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;

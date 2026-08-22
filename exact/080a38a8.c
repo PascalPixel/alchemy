@@ -1,5 +1,6 @@
 #include "far_runtime.h"
 #include "types.h"
+#include "global_cells.h"
 
 struct State080a38a8 {
     u8 padding_00[0x20];
@@ -12,7 +13,7 @@ void Func_080a9cbc(void);
 void Func_080a38a8(s32 mode) {
     struct State080a38a8 *state;
 
-    state = *(struct State080a38a8 **)0x03001F2C;
+    state = *(struct State080a38a8 **)ADDR_03001F2C;
     Func_080a9cbc();
     Func_08015270(state->handle);
     Func_080a9a5c(state->handle, mode, 0);

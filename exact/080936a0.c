@@ -13,6 +13,7 @@
  * corroborates 080e15e8's reading at a second call site.
  */
 #include "types.h"
+#include "global_cells.h"
 
 typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
 
@@ -29,7 +30,7 @@ void Func_080041d8(const void *arg0, s32 arg1);
 
 void Func_080936a0(s32 arg0, s32 arg1)
 {
-    struct Work_080936a0 *state = *(struct Work_080936a0 **)0x03001e70;
+    struct Work_080936a0 *state = *(struct Work_080936a0 **)ADDR_03001E70;
     s32 handle;
     s32 result;
 

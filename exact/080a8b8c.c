@@ -1,5 +1,6 @@
 #include "menu_result.h"
 #include "types.h"
+#include "global_cells.h"
 
 extern u8 *Data_03001f2c;
 s32 Func_08077008(s32);
@@ -19,7 +20,7 @@ static __inline__ s8 LoadSignedByte(s32 base, s32 offset)
 s32 Func_080a8b8c(struct MenuResult *result, s32 index)
 {
     s32 encoded;
-    s32 base = *(s32 *)0x03001F2C;
+    s32 base = *(s32 *)ADDR_03001F2C;
     s32 offset = index + 0x218;
     s32 entries = base + 2;
     s32 limit;

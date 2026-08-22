@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct Work;
 
@@ -8,7 +9,7 @@ void Func_08019854(void *);
 
 void Func_08016868(void)
 {
-    u8 *channel = *(u8 **)0x03001e8c + 0x620;
+    u8 *channel = *(u8 **)ADDR_03001E8C + 0x620;
     s32 channel_no = 0;
     s32 one = 1;
 

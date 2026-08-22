@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -8,7 +9,7 @@ void Func_08016418(struct Work *work, s32 release);
 void Func_0801c428(void) {
     void *temp_r0;
 
-    temp_r0 = M2C_FIELD(*(void **)0x03001EBC, void **, 0x230);
+    temp_r0 = M2C_FIELD(*(void **)ADDR_03001EBC, void **, 0x230);
     if ((temp_r0 != NULL) && (M2C_FIELD(temp_r0, u16 *, 0x16) != 0)) {
         Func_08016418(temp_r0, 2);
         Func_08004278(0x0801C3E9);

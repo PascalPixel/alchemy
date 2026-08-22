@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -8,7 +9,7 @@ s32 Func_08017364(void) {
     void **channel;
     void *entry;
 
-    channel = *(s32 *)0x03001E8C + 0x620;
+    channel = *(s32 *)ADDR_03001E8C + 0x620;
     channel_no = 0;
 loop_1:
     entry = *channel;

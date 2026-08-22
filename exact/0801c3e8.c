@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_08004278(s32);
 void Func_08016418(struct Work *work, s32 release);
@@ -9,7 +10,7 @@ void Func_0801c3e8(void)
   u16 temp_r3;
   void *temp_r1;
   int new_var3;
-  temp_r1 = *((void **) 0x03001EBC);
+  temp_r1 = *((void **) ADDR_03001EBC);
   new_var2 = temp_r1;
   *((u16 *) (((u8 *) new_var2) + 0x234)) = (temp_r3 = (*((u16 *) (((u8 *) new_var2) + 0x234))) + 0xFFFF);
   new_var3 = 0;

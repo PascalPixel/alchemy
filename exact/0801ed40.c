@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_080770c0(s32);
 s32 Func_08019d2c(s32);
@@ -12,7 +13,7 @@ void Func_0801ed40(u32 slot, s32 character, s32 value)
     u8 *state;
     s32 offset;
 
-    state = *(u8 **)0x03001e8c;
+    state = *(u8 **)ADDR_03001E8C;
 
     if (Func_080770c0(0x20) != 0) {
         if (character == 0)

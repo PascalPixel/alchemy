@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_080a9d84(void);
 void Func_080a17c4(void *);
@@ -12,7 +13,7 @@ void Func_080a9d3c(const u8 *flags)
     s32 value;
     u16 kind;
 
-    base = *(u8 **)0x03001f2c;
+    base = *(u8 **)ADDR_03001F2C;
     Func_080a9d84();
     index = 0;
     slot = (void **)(base + 200);

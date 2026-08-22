@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct Effect_080b153c {
     s16 value;
@@ -45,7 +46,7 @@ s32 Func_080b153c(s32 actor, s32 item)
     s32 maximum;
     s32 result;
 
-    battle = *(struct BattleState_080b153c **)0x03001f2c;
+    battle = *(struct BattleState_080b153c **)ADDR_03001F2C;
     actor_state = Func_08077008(actor);
     effect = Func_08077018(item);
     result = 1;

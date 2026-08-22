@@ -1,8 +1,9 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_080cd418(void)
 {
-    u8 *src = *(u8 **)0x03001eec;
+    u8 *src = *(u8 **)ADDR_03001EEC;
 
     *(u16 *)0x04000040 = *(u16 *)(src + 0x77bc); /* WIN0H */
     *(u16 *)0x04000044 = *(u16 *)(src + 0x77be); /* WIN0V */

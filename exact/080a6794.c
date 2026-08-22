@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct MenuRuntime {
     u8 padding_000[0x20];
@@ -30,7 +31,7 @@ void Func_080a6794(void)
     s32 row;
     void **output;
 
-    runtime = *(struct MenuRuntime **)0x03001f2c;
+    runtime = *(struct MenuRuntime **)ADDR_03001F2C;
     handle = Func_080a1814(runtime);
     Func_080a1870(handle, 2, 2, 8, 0);
 

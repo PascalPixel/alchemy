@@ -1,5 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
+#include "global_cells.h"
 
 extern volatile s16 Data_0200200c;
 
@@ -23,7 +24,7 @@ s32 Func_0801f77c(void)
         s32 first;
 
         temp_r0 = Func_08005c68();
-        var_r1 = (void *)*(volatile s32 *)0x03001F1C;
+        var_r1 = (void *)*(volatile s32 *)ADDR_03001F1C;
         second = (s16 *)&Data_0200200c;
         temp_r3 = 0x02002010;
         *(volatile s16 *)temp_r3 = 0;
@@ -42,7 +43,7 @@ s32 Func_0801f77c(void)
             }
         }
 
-        if ((*(volatile s32 *)0x03001AE8 & 0x120) != 0x120) {
+        if ((*(volatile s32 *)ADDR_03001AE8 & 0x120) != 0x120) {
             *(volatile s16 *)0x02002010 = 0;
         }
     }

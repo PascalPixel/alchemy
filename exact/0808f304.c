@@ -1,11 +1,12 @@
 #include "types.h"
+#include "global_cells.h"
 
 u32 Func_0808f304(void)
 {
   s16 temp_r3_2;
   u32 var_r0;
   void *temp_r3;
-  temp_r3 = *((void **) 0x03001EBC);
+  temp_r3 = *((void **) ADDR_03001EBC);
   var_r0 = 0;
   if (temp_r3 != ((void *) 0))
   {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 u32 Func_08019944(u32 value, u32 clear)
 {
@@ -10,7 +11,7 @@ u32 Func_08019944(u32 value, u32 clear)
     u32 result;
     u32 zero;
 
-    base = *(u8 **)0x03001E8C;
+    base = *(u8 **)ADDR_03001E8C;
     result = 0;
     index = 0;
     zero = index;

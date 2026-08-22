@@ -1,5 +1,6 @@
 #include "map.h"
 #include "types.h"
+#include "global_cells.h"
 
 struct MapWork_0801219c {
     u8 unknown_000[0x190];
@@ -17,7 +18,7 @@ s32 Func_0801219c(struct WorldPosition *position)
 
     x = position->x / 65536;
     y = (position->y - *(s32 *)((u8 *)position + 4)) / 65536;
-    work = *(struct MapWork_0801219c **)0x03001E70;
+    work = *(struct MapWork_0801219c **)ADDR_03001E70;
     if (work == NULL)
         return 0;
     cell = work->cells;

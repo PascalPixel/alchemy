@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 u32 Func_08004458(void);
 s32 Func_08002304(s32, s32);
@@ -12,7 +13,7 @@ u32 Func_08005810(s32 mode)
     u8 *slot;
     u8 value;
 
-    slot = *(u8 **)0x03001F1C;
+    slot = *(u8 **)ADDR_03001F1C;
     count = 0;
     index = 0;
     do {

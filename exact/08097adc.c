@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern void Func_08004278(s32);
 extern s32 Func_08015360(s32, s32);
@@ -7,7 +8,7 @@ extern u8 Data_02000240[];
 void Func_08097adc(void) {
     void *temp_r5;
 
-    temp_r5 = *(void **)0x03001E8C;
+    temp_r5 = *(void **)ADDR_03001E8C;
     Func_08004278(0x08097869);
     *(volatile s16 *)0x050001E2 = 0x7FFF;
     *(s16 *)0x050001E6 = 0;

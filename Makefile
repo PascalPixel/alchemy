@@ -31,7 +31,8 @@ TOOLING_LINE_LIMIT := 40000
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check pristine-options-check corpus-check core-retained-check \
 	check-owners progress progress-check progress-subject \
-	correspondence correspondence-check coverage coverage-check dashboard clean clean-preview
+	correspondence correspondence-check edition-builds edition-builds-check \
+	coverage coverage-check dashboard clean clean-preview
 
 help:
 	@printf '%s\n' \
@@ -44,6 +45,7 @@ help:
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
 		'make correspondence   match exact EN owners across GS1 editions' \
+		'make edition-builds   relink exact EN C across GS1 editions' \
 		'make coverage         refresh dashboard data and figures' \
 		'make dashboard        serve the dashboard on localhost:4649'
 
@@ -83,6 +85,19 @@ correspondence-check: build-claimed
 	$(COMPILER) cross-edition --all-overlays --write out/exact-overlay-correspondence.check.json
 	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.check.json
 	cmp recon/gs1/exact-overlay-correspondence.json out/exact-overlay-correspondence.check.json
+
+edition-builds: build-claimed
+	$(COMPILER) cross-edition --all --object-dir out/claimed/obj \
+		--write out/exact-correspondence.edition-builds.json \
+		--edition-build recon/gs1/exact-main-builds.json
+	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.edition-builds.json
+
+edition-builds-check: build-claimed
+	$(COMPILER) cross-edition --all --object-dir out/claimed/obj \
+		--write out/exact-correspondence.edition-builds.check.json \
+		--edition-build out/exact-main-builds.check.json
+	cmp recon/gs1/exact-correspondence.json out/exact-correspondence.edition-builds.check.json
+	cmp recon/gs1/exact-main-builds.json out/exact-main-builds.check.json
 
 coverage: correspondence
 	$(CHECK) coverage --write

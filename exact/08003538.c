@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define REG32(address) (*(volatile u32 *)(address))
 
@@ -12,7 +13,7 @@ void Func_08003538(void)
     volatile u32 *active;
 
     if (counter <= 0) {
-        REG32(0x03001b04) = REG32(0x03001ae8);
+        REG32(0x03001b04) = REG32(ADDR_03001AE8);
         flags = REG32(0x03001b04);
         if (counter == 0)
             REG32(0x03001b00) = 6;
@@ -68,6 +69,6 @@ void Func_08003538(void)
     }
 
     REG32(0x03001c94) =
-        (REG32(0x03001ae8) ^ REG32(0x03001cf4)) & REG32(0x03001ae8);
-    REG32(0x03001cf4) = REG32(0x03001ae8);
+        (REG32(ADDR_03001AE8) ^ REG32(0x03001cf4)) & REG32(ADDR_03001AE8);
+    REG32(0x03001cf4) = REG32(ADDR_03001AE8);
 }

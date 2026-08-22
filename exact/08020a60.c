@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct Window_08020a60 {
     u8 padding[12];
@@ -15,7 +16,7 @@ typedef char Window_08020a60_x_offset[
 
 void Func_08020a60(const struct Window_08020a60 *object,
     s32 x, s32 y, s32 width, s32 height, u32 field) {
-    u8 *base = *(u8 **)0x03001E8C;
+    u8 *base = *(u8 **)ADDR_03001E8C;
 
     x += object->x + 1;
     y += object->y + 1;

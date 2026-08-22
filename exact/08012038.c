@@ -1,5 +1,6 @@
 #include "types.h"
 #include "map.h"
+#include "global_cells.h"
 
 u8 Func_08012038(s32 layer, s32 x, s32 y)
 {
@@ -7,7 +8,7 @@ u8 Func_08012038(s32 layer, s32 x, s32 y)
     s32 cell_address;
     s32 layer_offset;
 
-    state = *(struct MapState **)0x03001E70;
+    state = *(struct MapState **)ADDR_03001E70;
     x >>= 20;
     y >>= 20;
     cell_address = 0x02010000;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_080198dc(void)
 {
@@ -8,8 +9,8 @@ void Func_080198dc(void)
     volatile u32 *word_ptr;
     volatile u16 *half_ptr;
 
-    word_base = (u32 *)((u8 *)*(u32 *)0x03001e8c + 0x12bc);
-    half_base = (u16 *)((u8 *)*(u32 *)0x03001e8c + 0x12dc);
+    word_base = (u32 *)((u8 *)*(u32 *)ADDR_03001E8C + 0x12bc);
+    half_base = (u16 *)((u8 *)*(u32 *)ADDR_03001E8C + 0x12dc);
     no = 0;
 
     /* 対応する値と識別子は同じ順序で消去する。 */

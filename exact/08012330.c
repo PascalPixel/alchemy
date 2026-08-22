@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct Work_08012330 {
     s32 unknown_00;
@@ -11,7 +12,7 @@ void Func_08012330(s32 value0, s32 value1, s32 value2)
 {
     struct Work_08012330 *work;
 
-    work = *(struct Work_08012330 **)0x03001E70;
+    work = *(struct Work_08012330 **)ADDR_03001E70;
     if (value0 >= 0) {
         work->value_04 = value0;
     }

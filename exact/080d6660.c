@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 typedef void (*Callback)(s32 *);
 
@@ -15,7 +16,7 @@ void Func_080d6660(s32 *state)
     Func_080048b0(39, 0x782c);
     Func_080048b0(40, 0x4000);
 
-    destination = (s32 **)(*(s32 *)0x03001eec + 0x7828);
+    destination = (s32 **)(*(s32 *)ADDR_03001EEC + 0x7828);
     index = state[0];
     *destination = state;
     if (index == 0)

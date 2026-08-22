@@ -309,6 +309,31 @@ fn replace_targets(text: &str, section: &str) -> Result<String, String> {
         &text[end..]
     ))
 }
+
+fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
+    let done = exact + retained;
+    let share = |bytes: f64| {
+        if executable == 0.0 {
+            0.0
+        } else {
+            bytes * 100.0 / executable
+        }
+    };
+    format!(
+        "|                    |       bytes |                   share |\n\
+         | ------------------ | ----------: | ----------------------: |\n\
+         | Exact C            | {:>11} | {:>8.1}% of executable |\n\
+         | Permanent assembly | {:>11} | {:>8.1}% of executable |\n\
+         | **DONE**           | **{:>7}** | **{:.1}% of executable** |",
+        commas(exact as i64),
+        share(exact),
+        commas(retained as i64),
+        share(retained),
+        commas(done as i64),
+        share(done)
+    )
+}
+
 fn update_readme(
     text: &str,
     target: &str,
@@ -332,6 +357,27 @@ fn update_readme(
             out.replace_range(head_end..end, &replacement);
         }
     }
+    if let Some(start) = out.find("|                    |       bytes |                   share |")
+    {
+        if let Some(end) = out[start..].find("\n\nPermanent assembly") {
+            out.replace_range(
+                start..start + end,
+                &readme_metrics(exact, retained, executable),
+            );
+        }
+    }
+    if let Some(start) = out.find("**exact C stands at ") {
+        let value_start = start + "**exact C stands at ".len();
+        if let Some(end) = out[value_start..].find("%**") {
+            let c_able = executable - retained;
+            let c_share = if c_able == 0.0 {
+                0.0
+            } else {
+                exact * 100.0 / c_able
+            };
+            out.replace_range(value_start..value_start + end, &format!("{c_share:.1}"));
+        }
+    }
     for (id, svg) in trees {
         let version = svg_cache_version(svg);
         let needle = format!("games/gs1/assets/readme/{target}-{id}.svg");
@@ -344,6 +390,23 @@ fn update_readme(
         }
     }
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::readme_metrics;
+
+    #[test]
+    fn readme_metrics_reports_all_done_categories() {
+        assert_eq!(
+            readme_metrics(282_436.0, 343_206.0, 1_347_122.0),
+            "|                    |       bytes |                   share |\n\
+             | ------------------ | ----------: | ----------------------: |\n\
+             | Exact C            |     282,436 |     21.0% of executable |\n\
+             | Permanent assembly |     343,206 |     25.5% of executable |\n\
+             | **DONE**           | **625,642** | **46.4% of executable** |"
+        );
+    }
 }
 
 fn run(argv: &[String]) -> Result<String, String> {

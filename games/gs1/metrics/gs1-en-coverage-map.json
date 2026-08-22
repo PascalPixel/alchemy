@@ -7,20 +7,20 @@
   "executable_bytes": 1347122,
   "categories": {
     "exact_c": {
-      "bytes": 282108,
-      "percent_of_executable": 20.94
+      "bytes": 282436,
+      "percent_of_executable": 20.97
     },
     "tracked_c": {
-      "bytes": 60720,
-      "percent_of_executable": 4.51
+      "bytes": 46820,
+      "percent_of_executable": 3.48
     },
     "assembly": {
-      "bytes": 747502,
-      "percent_of_executable": 55.49
+      "bytes": 674660,
+      "percent_of_executable": 50.08
     },
     "retained_asm": {
-      "bytes": 256792,
-      "percent_of_executable": 19.06
+      "bytes": 343206,
+      "percent_of_executable": 25.48
     },
     "asset_data": {
       "bytes": 7300700,
@@ -29,13 +29,13 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 106870,
-    "tracked_c_bytes": 7584
+    "exact_c_bytes": 107198,
+    "tracked_c_bytes": 2696
   },
   "overlays": {
     "executable_bytes": 798758,
     "exact_c_bytes": 175238,
-    "tracked_c_bytes": 53136
+    "tracked_c_bytes": 44124
   },
   "provenance": {
     "exact_source": "worktree",
@@ -52,10 +52,10 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 106870,
-        "tracked_c": 7584,
-        "assembly": 247320,
-        "retained_asm": 186590
+        "exact_c": 107198,
+        "tracked_c": 2696,
+        "assembly": 210504,
+        "retained_asm": 227966
       },
       "tiles": 9
     },
@@ -65,8 +65,8 @@
       "bytes": 539544,
       "categories": {
         "exact_c": 123840,
-        "tracked_c": 29261,
-        "assembly": 386443
+        "tracked_c": 23704,
+        "assembly": 392000
       },
       "tiles": 11
     },
@@ -86,10 +86,10 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 106870,
-        "tracked_c": 7584,
-        "assembly": 247320,
-        "retained_asm": 186590
+        "exact_c": 107198,
+        "tracked_c": 2696,
+        "assembly": 210504,
+        "retained_asm": 227966
       },
       "tiles": 867
     },
@@ -99,11 +99,11 @@
       "bytes": 798758,
       "categories": {
         "exact_c": 175238,
-        "tracked_c": 53136,
-        "assembly": 500182,
-        "retained_asm": 70202
+        "tracked_c": 44124,
+        "assembly": 464156,
+        "retained_asm": 115240
       },
-      "tiles": 5529
+      "tiles": 5480
     }
   ]
 }

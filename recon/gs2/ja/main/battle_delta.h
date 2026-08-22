@@ -39,7 +39,7 @@ struct BattleWorkPage {
         (cur) = 0
 #define BATTLE_SCALE_DEFENSE()                                            \
     if (half != 0) {                                                      \
-        scale /= 2;                                                       \
+        scale = def / 2;                                                  \
         if (half == 2)                                                    \
             scale = 0;                                                    \
     }
@@ -48,7 +48,8 @@ struct BattleWorkPage {
 #define BATTLE_ATTACK_STACK_ORDER
 #define BATTLE_ATTACK_LOADS()                                                \
     hp0 = target->hp;                                                        \
-    scale = target->defense
+    def = target->defense;                                                   \
+    scale = def
 #define BATTLE_ATTACK_HP hp0
 #define BATTLE_ATTACK_REPORT()                                               \
     {                                                                         \
@@ -79,6 +80,8 @@ struct BattleWorkPage {
 #define BATTLE_EVIL_SPIRIT_ACTIVE()                                        \
     (action_id != 0x193 && actor->evil_spirit != 0)
 #define BATTLE_DAMAGE_GATE() (action->effect != 0x4b || slot == 0)
+/* 0x189 is an explicit zero row.  Its empty case keeps the original
+ * decision-tree balance; folding it into default changes the emitted tree. */
 #define BATTLE_POWER_BONUS(dmg)                                             \
     if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4      \
         || *cmd == 6 || *cmd == 10) {                                      \
@@ -87,6 +90,7 @@ struct BattleWorkPage {
         rate = 0;                                                          \
         switch (action_id) {                                               \
         default:                                                           \
+        case 0x189:                                                        \
             break;                                                         \
         case 0x196:                                                        \
         case 0x184:                                                        \
@@ -95,6 +99,8 @@ struct BattleWorkPage {
             rate = 3;                                                      \
             break;                                                         \
         case 0x199:                                                        \
+        case 0x191:                                                        \
+        case 0x18f:                                                        \
         case 0x187:                                                        \
         case 0x17f:                                                        \
             rate = 12;                                                     \
@@ -106,12 +112,16 @@ struct BattleWorkPage {
         case 0x190:                                                        \
         case 0x18d:                                                        \
         case 0x185:                                                        \
+        case 0x180:                                                        \
         case 0x17d:                                                        \
             rate = 6;                                                      \
             break;                                                         \
         case 0x18e:                                                        \
         case 0x188:                                                        \
         case 0x186:                                                        \
+        case 0x19a:                                                        \
+        case 0x198:                                                        \
+        case 0x17e:                                                        \
             rate = 9;                                                      \
             break;                                                         \
         case 0x192:                                                        \
@@ -366,7 +376,7 @@ struct BattleWorkPage {
                     ((u8 *)work)[0x56b]--;                                   \
                     qi = ((s8 *)work)[0x56a] + 1;                            \
                     ((s8 *)work)[0x56a] =                                   \
-                        qi - (((qi + (qi >> 31)) >> 1) * 2);                 \
+                        qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2);       \
                 }                                                            \
                 if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) {                 \
                     Func_081203c8((u8 *)work + 0x66, rec);                    \
